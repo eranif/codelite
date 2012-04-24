@@ -41,7 +41,7 @@
 #include <wx/utils.h>
 #include <wx/xrc/xmlres.h>
 #include "parse_thread.h"
-
+#include "sv_symbol_tree.h"
 
 //--------------------------------------------
 //Plugin Interface
@@ -220,7 +220,6 @@ void SymbolViewPlugin::CreateGUIControls()
 		m_symView = new wxPanel(book);
 		book->AddPage(m_symView, _("Symbols"), false);
 	}
-
 
 	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
 	m_symView->SetSizer(sz);
@@ -972,31 +971,44 @@ void SymbolViewPlugin::CreateSymbolTree(const wxString &path, WindowStack *paren
 		return;
 
 	m_mgr->SetStatusMessage(_("Building SymbolView tree..."), 0);
+    
+    if (!path.EndsWith(wxT(".project")) && !path.EndsWith(wxT(".workspace")))
+    {
+        //build the outline view
+        svSymbolTree* m_treeOutline = new svSymbolTree( parent, m_mgr, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE|wxNO_BORDER);
+        m_treeOutline->SetSymbolsImages(svSymbolTree::CreateSymbolTreeImages());
+        m_treeOutline->BuildTree(path);
+        m_treeOutline->ExpandAll();
+        parent->Add(m_treeOutline, path);
+    }
+    else
+    {
+        // make new empty tree
+        SymTree *tree = new SymTree(parent);
+        parent->Add(tree, path);
+        tree->SetImageList(m_imagesList);
 
-	// make new empty tree
-	SymTree *tree = new SymTree(parent);
-	parent->Add(tree, path);
-	tree->SetImageList(m_imagesList);
+        // set root node text and icon
+        wxFileName fn(path);
+        std::map<wxString,int>::iterator i = m_image.find(fn.GetExt());
+        wxTreeItemId root;
+        if (i != m_image.end()) {
+            root = tree->AddRoot(fn.GetName(), i->second);
+        } else {
+            root = tree->AddRoot(fn.GetFullName(), m_image[wxT("file")]);
+        }
 
-	// set root node text and icon
-	wxFileName fn(path);
-	std::map<wxString,int>::iterator i = m_image.find(fn.GetExt());
-	wxTreeItemId root;
-	if (i != m_image.end()) {
-		root = tree->AddRoot(fn.GetName(), i->second);
-	} else {
-		root = tree->AddRoot(fn.GetFullName(), m_image[wxT("file")]);
-	}
+        // add the top level children and expand
+        LoadChildren(tree, root);
+        tree->Expand(root);
 
-	// add the top level children and expand
-	LoadChildren(tree, root);
-	tree->Expand(root);
-
-	// hook up event handlers
-	tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SymbolViewPlugin::OnNodeExpanding), NULL, this);
-	tree->Connect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(SymbolViewPlugin::OnNodeKeyDown), NULL, this);
-    tree->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(SymbolViewPlugin::OnNodeSelected), NULL, this);
-	tree->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(SymbolViewPlugin::OnNodeDClick), NULL, this);
+        // hook up event handlers
+        tree->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(SymbolViewPlugin::OnNodeExpanding), NULL, this);
+        tree->Connect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(SymbolViewPlugin::OnNodeKeyDown), NULL, this);
+        tree->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler(SymbolViewPlugin::OnNodeSelected), NULL, this);
+        tree->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(SymbolViewPlugin::OnNodeDClick), NULL, this);
+    }
+    m_mgr->SetStatusMessage(wxEmptyString, 0);
 }
 
 /**

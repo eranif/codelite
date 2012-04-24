@@ -7,9 +7,11 @@
   </Plugins>
   <VirtualDirectory Name="src">
     <File Name="symbolview.cpp"/>
+    <File Name="sv_symbol_tree.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="symbolview.h"/>
+    <File Name="sv_symbol_tree.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>

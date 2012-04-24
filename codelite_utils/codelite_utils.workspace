@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="codelite_utils" Database="./codelite_utils.tags">
+  <Project Name="build_all" Path="build_all.project" Active="Yes"/>
+  <Project Name="codelite_cppcheck" Path="/Users/eran/software/codelite/sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
+  <Project Name="codelite_indexer" Path="/Users/eran/software/codelite/sdk/codelite_indexer/codelite_indexer.project" Active="No"/>
+  <Project Name="wx-config" Path="/Users/eran/software/codelite/sdk/wxconfig/wx-config.project" Active="No"/>
+  <Project Name="makedir" Path="/Users/eran/software/codelite/TestDir/makedir.project" Active="No"/>
+  <Project Name="le_exec" Path="/Users/eran/software/codelite/le_exec/le_exec.project" Active="No"/>
+  <Project Name="autorev" Path="/Users/eran/software/codelite/AutoRevision/autorev/autorev.project" Active="No"/>
+  <Project Name="codelite_launcher" Path="/Users/eran/software/codelite/codelite_launcher/codelite_launcher.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Project Name="build_all" ConfigName="Debug"/>
+      <Project Name="codelite_cppcheck" ConfigName="Debug"/>
+      <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
+      <Project Name="wx-config" ConfigName="Debug"/>
+      <Project Name="makedir" ConfigName="DebugUnicode"/>
+      <Project Name="le_exec" ConfigName="Debug"/>
+      <Project Name="autorev" ConfigName="Debug"/>
+      <Project Name="codelite_launcher" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="autorev" ConfigName="Release"/>
+      <Project Name="build_all" ConfigName="Release"/>
+      <Project Name="codelite_cppcheck" ConfigName="Release"/>
+      <Project Name="codelite_indexer" ConfigName="Release_Win"/>
+      <Project Name="codelite_launcher" ConfigName="Release"/>
+      <Project Name="le_exec" ConfigName="Release"/>
+      <Project Name="makedir" ConfigName="ReleaseUnicode"/>
+      <Project Name="wx-config" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

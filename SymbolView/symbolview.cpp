@@ -328,10 +328,6 @@ void SymbolViewPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
-        size_t pos = size_t(-1);
-        if (menu->FindChildItem(XRCID("find_decl"), &pos) != NULL) {
-            menu->Insert(pos, XRCID("show_tag_in_symview"), _("Show in Symbol View"));
-        }
 	} else if (type == MenuTypeFileExplorer) {
 	} else if (type == MenuTypeFileView_Workspace) {
 	} else if (type == MenuTypeFileView_Project) {

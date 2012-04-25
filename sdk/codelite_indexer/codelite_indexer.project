@@ -120,7 +120,6 @@
     <File Name="network/clindexerprotocol.h"/>
     <File Name="network/cl_indexer_macros.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Unix"/>
   <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Debug_Win"/>
   <Dependencies Name="Release_Win"/>
@@ -332,4 +331,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug_Unix"/>
 </CodeLite_Project>

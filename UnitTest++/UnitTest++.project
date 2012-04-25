@@ -100,6 +100,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

@@ -58,7 +58,7 @@ protected:
 	void OnItemSelected(wxCommandEvent &e);
 	
 public:
-	QuickOutlineDlg( wxWindow* parent, const wxString &fileName, int id = wxID_ANY, wxString title = wxEmptyString, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 371,386 ), int style = wxBORDER_SIMPLE);
+	QuickOutlineDlg( wxWindow* parent, const wxString &fileName, int id = wxID_ANY, wxString title = wxEmptyString, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 371,386 ), int style = wxDEFAULT_DIALOG_STYLE);
 	virtual ~QuickOutlineDlg();
 };
 

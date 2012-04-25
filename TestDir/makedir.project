@@ -79,4 +79,5 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
 </CodeLite_Project>

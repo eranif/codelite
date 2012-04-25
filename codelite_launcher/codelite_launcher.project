@@ -9,8 +9,6 @@
     <File Name="codelite_launcher.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -96,4 +94,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

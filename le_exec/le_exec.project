@@ -51,4 +51,5 @@
   </Settings>
   <Dependencies/>
   <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

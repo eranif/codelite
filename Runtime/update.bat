@@ -20,8 +20,11 @@ xcopy codelite-icons.zip "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy locale\* "%ProgramFiles(x86)%\CodeLite\locale\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %WXWIN%\lib\gcc_dll\wxmsw292u_gcc_custom.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
+if %WXWIN% == "" GOTO OTHERS
+xcopy %WXWIN%\lib\gcc_dll\wxmsw*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+
+:OTHERS
 :: Copy the misc files
 copy codelite_indexer.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy codelite_cppcheck.exe "%ProgramFiles(x86)%\CodeLite\" /Y
@@ -35,4 +38,3 @@ copy rm.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy astyle.sample "%ProgramFiles(x86)%\CodeLite\" /Y
 copy pthreadGC2.dll "%ProgramFiles(x86)%\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "%ProgramFiles(x86)%\CodeLite\" /Y
-

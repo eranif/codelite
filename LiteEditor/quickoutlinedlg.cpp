@@ -58,7 +58,7 @@ BEGIN_EVENT_TABLE(QuickOutlineDlg, wxDialog)
 END_EVENT_TABLE()
 
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString &fileName, int id, wxString title, wxPoint pos, wxSize size, int style )
-		: wxDialog( parent, id, title, pos, size, style|wxRAISED_BORDER|wxRESIZE_BORDER)
+		: wxDialog( parent, id, title, pos, size, style|wxRESIZE_BORDER)
 		, m_fileName(fileName)
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );

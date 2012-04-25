@@ -8,18 +8,20 @@
   <Project Name="le_exec" Path="/Users/eran/software/codelite/le_exec/le_exec.project" Active="No"/>
   <Project Name="autorev" Path="/Users/eran/software/codelite/AutoRevision/autorev/autorev.project" Active="No"/>
   <Project Name="codelite_launcher" Path="/Users/eran/software/codelite/codelite_launcher/codelite_launcher.project" Active="No"/>
+  <Project Name="UnitTest++" Path="/Users/eran/software/codelite/UnitTest++/UnitTest++.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Project Name="autorev" ConfigName="Debug"/>
       <Project Name="build_all" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
-      <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
-      <Project Name="makedir" ConfigName="DebugUnicode"/>
-      <Project Name="le_exec" ConfigName="Debug"/>
-      <Project Name="autorev" ConfigName="Debug"/>
+      <Project Name="codelite_indexer" ConfigName="Debug_Win"/>
       <Project Name="codelite_launcher" ConfigName="Debug"/>
+      <Project Name="le_exec" ConfigName="Debug"/>
+      <Project Name="makedir" ConfigName="DebugUnicode"/>
+      <Project Name="UnitTest++" ConfigName="Debug"/>
+      <Project Name="wx-config" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="autorev" ConfigName="Release"/>
       <Project Name="build_all" ConfigName="Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Release"/>
@@ -28,6 +30,7 @@
       <Project Name="le_exec" ConfigName="Release"/>
       <Project Name="makedir" ConfigName="ReleaseUnicode"/>
       <Project Name="wx-config" ConfigName="Release"/>
+      <Project Name="UnitTest++" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

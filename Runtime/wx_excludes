@@ -1,0 +1,9 @@
+\.svn\
+gtk\
+gtk1\
+osx\
+os2\
+motif\
+unix\
+X11\
+cocoa\

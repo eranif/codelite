@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -26,9 +26,6 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	bSizer5->Add( m_treeCtrl, 1, wxEXPAND, 0 );
 	
-	m_staticline1 = new wxStaticLine( m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer5->Add( m_staticline1, 0, wxEXPAND, 5 );
-	
 	m_mainPanel->SetSizer( bSizer5 );
 	m_mainPanel->Layout();
 	bSizer5->Fit( m_mainPanel );
@@ -36,7 +33,6 @@ NewQuickWatch::NewQuickWatch( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
-	mainSizer->Fit( this );
 	
 	this->Centre( wxBOTH );
 	
@@ -62,5 +58,4 @@ NewQuickWatch::~NewQuickWatch()
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler( NewQuickWatch::OnItemExpanded ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler( NewQuickWatch::OnExpandItem ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( NewQuickWatch::OnItemMenu ), NULL, this );
-	
 }

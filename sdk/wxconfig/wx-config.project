@@ -10,8 +10,6 @@
   <VirtualDirectory Name="src">
     <File Name="wx-config-win.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -98,4 +96,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

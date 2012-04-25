@@ -47,7 +47,17 @@ CppWordScanner::CppWordScanner(const std::string &fileName)
 		
 		wxString tmp;
 		thefile.ReadAll( &tmp, fontEncConv );
-		m_text = tmp.mb_str().data();
+		if(tmp.IsEmpty()) {
+			// Try another converter
+			fontEncConv = wxFONTENCODING_UTF8;
+			thefile.ReadAll(&tmp, fontEncConv);
+		}
+		
+		if(!tmp.IsEmpty()) {
+			
+			m_text = tmp.mb_str(fontEncConv).data();
+			
+		}
 	}
 	doInit();
 }

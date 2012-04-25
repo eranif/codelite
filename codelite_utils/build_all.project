@@ -91,20 +91,19 @@
   <Dependencies Name="Release">
     <Project Name="autorev"/>
     <Project Name="codelite_cppcheck"/>
-    <Project Name="codelite_indexer"/>
     <Project Name="codelite_launcher"/>
+    <Project Name="codelite_indexer"/>
     <Project Name="le_exec"/>
     <Project Name="makedir"/>
     <Project Name="wx-config"/>
   </Dependencies>
   <Dependencies Name="Debug">
-    <Project Name="UnitTest++"/>
-    <Project Name="autorev"/>
     <Project Name="codelite_cppcheck"/>
+    <Project Name="autorev"/>
     <Project Name="codelite_indexer"/>
     <Project Name="codelite_launcher"/>
     <Project Name="le_exec"/>
-    <Project Name="makedir"/>
     <Project Name="wx-config"/>
+    <Project Name="makedir"/>
   </Dependencies>
 </CodeLite_Project>

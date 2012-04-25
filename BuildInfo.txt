@@ -20,17 +20,23 @@ Building:
 // Windows: MinGW 
 //-----------------------------------------------------
 
-The following are required prior building codelite using CodeLite:
-1. wxWidgets (2.8 or later) in Unicode Shared installed on your machine 
-2. MinGW + WinAPI for MinGW (gcc compiler 3.4.5 or later)
+To build: 
+Download CodeLite for Windows (can be downloaded from here: 
+https://sourceforge.net/projects/codelite/files/Releases/
 
-To build: Download CodeLite for Windows (can be downloaded from here: https://sourceforge.net/projects/codelite/files/Releases/) - make sure to pick the version that includes both MinGW AND wxWidgets
+ !!! make sure to pick the version that includes both MinGW AND wxWidgets !!!
 
-Open the file trunk/LiteEditor.workspace - and hit 'F7'
+Step 1:
+Open the file trunk/codelite_utils/codelite_utils.workspace
+Select the 'Release' configuration and build it using F7
+
+Step 2:
+Close the workspace and load the workspace trunk/LiteEditor.workspace - and hit 'F7'
 
 Once build is done, you can copy the files to the target directory by running the script:
 
 	trunk/Runtime/update.bat
+	
  Note that you may need to udpate the script to point it to the codelite installation directory
  
 //---------------------------------------------------------

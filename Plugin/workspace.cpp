@@ -328,8 +328,8 @@ bool Workspace::CreateProject(const wxString &name, const wxString &path, const 
 
 	// make the project path to be relative to the workspace, if it's sensible to do so
 	wxFileName tmp(path + wxFileName::GetPathSeparator() + name + wxT(".project"));
-	MakeRelativeIfSensible(tmp, m_fileName.GetPath());
-
+	tmp.MakeRelativeTo(m_fileName.GetPath());
+	
 	// Add an entry to the workspace file
 	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
 	node->AddProperty(wxT("Name"), name);
@@ -403,8 +403,8 @@ bool Workspace::AddProject(const wxString & path, wxString &errMsg)
 		DoAddProject(newProject);
 
 		// Add an entry to the workspace file
-		MakeRelativeIfSensible(fn, m_fileName.GetPath());
-
+		fn.MakeRelativeTo(m_fileName.GetPath());
+		
 		wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
 		node->AddProperty(wxT("Name"), fn.GetName());
 		node->AddProperty(wxT("Path"), fn.GetFullPath(wxPATH_UNIX));

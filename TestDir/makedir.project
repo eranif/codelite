@@ -9,7 +9,6 @@
     <File Name="makedir.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -80,4 +79,5 @@
     </Configuration>
   </Settings>
   <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

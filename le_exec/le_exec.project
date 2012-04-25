@@ -50,6 +50,6 @@
     </Configuration>
   </Settings>
   <Dependencies/>
-  <Dependencies Name="Release"/>
   <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

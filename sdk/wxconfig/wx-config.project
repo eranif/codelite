@@ -96,6 +96,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Release"/>
   <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

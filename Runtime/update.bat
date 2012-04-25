@@ -21,7 +21,7 @@ xcopy locale\* "%ProgramFiles(x86)%\CodeLite\locale\" /E /I /H /Y /EXCLUDE:exclu
 xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
-if %WXWIN% == "" GOTO OTHERS
+if "%WXWIN%" == "" GOTO OTHERS
 xcopy %WXWIN%\lib\gcc_dll\wxmsw*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
 :OTHERS

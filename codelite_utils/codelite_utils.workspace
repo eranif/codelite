@@ -10,7 +10,7 @@
   <Project Name="codelite_launcher" Path="/Users/eran/software/codelite/codelite_launcher/codelite_launcher.project" Active="No"/>
   <Project Name="UnitTest++" Path="/Users/eran/software/codelite/UnitTest++/UnitTest++.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="autorev" ConfigName="Debug"/>
       <Project Name="build_all" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
@@ -21,7 +21,7 @@
       <Project Name="UnitTest++" ConfigName="Debug"/>
       <Project Name="wx-config" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="autorev" ConfigName="Release"/>
       <Project Name="build_all" ConfigName="Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Release"/>

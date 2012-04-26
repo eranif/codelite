@@ -70,7 +70,7 @@ public:
 	/**
 	 * Destructor .
 	 */
-	virtual ~FileViewTree(void);
+	virtual ~FileViewTree();
 
 	/**
 	 * Create tree, usually called after constructing FileViewTree with default constructor.
@@ -157,8 +157,8 @@ protected:
 	virtual void OnRenameVirtualFolder(wxCommandEvent &e);
 	virtual wxTreeItemId ItemByFullPath(const wxString &fullPath);
 	virtual void OnLocalWorkspaceSettings(wxCommandEvent &e);
-
-
+	virtual void OnOpenWithDefaultApplication(wxCommandEvent &event);
+	
 
 	// Tree sorting
 	virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);

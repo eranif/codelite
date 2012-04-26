@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <wx/tokenzr.h>
+#include <wx/mimetype.h>
 #include "build_settings_config.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
@@ -54,6 +55,8 @@
 #include "yestoalldlg.h"
 #include "editorsettingslocal.h"
 #include "localworkspace.h"
+#include "fileexplorertree.h"
+#include "fileexplorer.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -94,6 +97,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
 	EVT_MENU( XRCID( "preprocess_item" ),              FileViewTree::OnPreprocessItem )
 	EVT_MENU( XRCID( "rename_item" ),                  FileViewTree::OnRenameItem )
 	EVT_MENU( XRCID( "rename_virtual_folder" ),        FileViewTree::OnRenameVirtualFolder )
+	EVT_MENU( XRCID("open_with_default_application"),  FileViewTree::OnOpenWithDefaultApplication)
 
 	EVT_UPDATE_UI( XRCID( "remove_project" ),          FileViewTree::OnBuildInProgress)
 	EVT_UPDATE_UI( XRCID( "set_as_active" ),           FileViewTree::OnBuildInProgress)
@@ -135,7 +139,7 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 {
 	Create( parent, id, pos, size, style |wxBORDER_NONE );
 	MSWSetNativeTheme(this);
-	
+
 	// Initialise images map
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 	wxImageList *images = new wxImageList( 16, 16, true );
@@ -682,7 +686,7 @@ bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPa
 	if (!(srcitem.IsOk() && includeitem.IsOk())) {
 		return false; // The alleged parent folder doesn't have a relevant matching pair of children
 	}
-	
+
 	// We're winning. Now it's just a matter of putting the cpp file into :src, etc
 	wxArrayString cppfiles, hfiles;
 	for (int c = (int)paths.GetCount()-1; c >= 0 ; --c) {
@@ -1097,7 +1101,7 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
 	ProjectSettingsDlg dlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
 	                        projectName,
 	                        title );
-							
+
 	if(dlg.ShowModal() == wxID_OK) {
 		ManagerST::Get()->UpdateParserPaths(true);
 	}
@@ -1652,10 +1656,10 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	{
 		// Create a progress dialog
 		clProgressDlg *prgDlg = new clProgressDlg(NULL,
-												  _("Importing files ..."), 
-												  wxT(""), 
-												  (int)files.GetCount());
-		
+		        _("Importing files ..."),
+		        wxT(""),
+		        (int)files.GetCount());
+
 		// get list of files
 		std::vector<wxFileName> vExistingFiles;
 		wxArrayString existingFiles;
@@ -1979,4 +1983,43 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 void FileViewTree::OnRetagInProgressUI(wxUpdateUIEvent& event)
 {
 	event.Enable( !ManagerST::Get()->GetRetagInProgress() );
+}
+
+void FileViewTree::OnOpenWithDefaultApplication(wxCommandEvent& event)
+{
+	wxArrayTreeItemIds items;
+	GetMultiSelection(items);
+
+	wxMimeTypesManager *mgr = wxTheMimeTypesManager;
+	for(size_t i=0; i<items.GetCount(); i++) {
+		wxTreeItemId item = items.Item(i);
+		FilewViewTreeItemData* itemData = static_cast<FilewViewTreeItemData*>( GetItemData(item) );
+		if ( itemData && itemData->GetData().GetKind() == ProjectItem::TypeFile ) {
+			
+			wxFileName fn(itemData->GetData().GetFile());
+			wxFileType *type = mgr->GetFileTypeFromExtension(fn.GetExt());
+			bool bFoundCommand = false;
+			wxUnusedVar(bFoundCommand);
+			
+			if(type) {
+
+				wxString cmd = type->GetOpenCommand(fn.GetFullPath());
+				delete type;
+
+				if ( !cmd.IsEmpty() ) {
+					bFoundCommand = true;
+					wxExecute(cmd);
+					
+				}
+			}
+
+#ifdef __WXGTK__
+			if( !bFoundCommand && itemData && itemData->GetData().GetKind() == ProjectItem::TypeFile ) {
+				// All hell break loose, try xdg-open
+				wxString cmd = wxString::Format(wxT("xdg-open \"%s\""), fn.GetFullPath().c_str());
+				wxExecute(cmd);
+			}
+#endif
+		}
+	}
 }

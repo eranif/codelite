@@ -965,6 +965,9 @@
         <object class="wxMenuItem" name="open_in_editor">
             <label>Open in CodeLite</label>
         </object>
+		<object class="wxMenuItem" name="open_with_default_application">
+            <label>Open With &amp;Default Application</label>
+        </object>
         <object class="wxMenuItem" name="compile_item">
             <label>Compile</label>
         </object>

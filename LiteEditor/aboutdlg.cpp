@@ -23,8 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include <wx/ffile.h>
 #include <wx/dcmemory.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/settings.h>
 #include "aboutdlg.h"
 #include "contributers.h"
 #include "windowattrmanager.h"
@@ -46,6 +48,24 @@ AboutDlg::AboutDlg( wxWindow* parent, const wxString &mainTitle )
 	// set the page content
 	m_htmlWin3->SetPage(wxString::FromUTF8(about_hex));
 	m_buttonOk->SetFocus();
+	
+	wxFileName license(ManagerST::Get()->GetStarupDirectory() + wxFileName::GetPathSeparator() + wxT("LICENSE"));
+	if(license.FileExists()) {
+		wxFFile fp(license.GetFullPath());
+		if(fp.IsOpened()) {
+			wxString content;
+			fp.ReadAll(&content, wxConvUTF8);
+			fp.Close();
+			
+			m_textCtrlLicense->SetEditable(true);
+			wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+			font.SetFamily(wxFONTFAMILY_TELETYPE);
+			m_textCtrlLicense->SetFont(font);
+			
+			m_textCtrlLicense->ChangeValue(content);
+			m_textCtrlLicense->SetEditable(false);
+		}
+	}
 	CentreOnScreen();
 }
 

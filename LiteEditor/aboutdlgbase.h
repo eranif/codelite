@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -14,14 +14,15 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/statbmp.h>
-#include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/string.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/html/htmlwin.h>
+#include <wx/textctrl.h>
 #include <wx/notebook.h>
 #include <wx/stattext.h>
 #include <wx/hyperlink.h>
@@ -45,6 +46,8 @@ class AboutDlgBase : public wxDialog
 		wxStaticBitmap* m_bitmap;
 		wxPanel* m_panel4;
 		wxHtmlWindow* m_htmlWin3;
+		wxPanel* m_panel3;
+		wxTextCtrl* m_textCtrlLicense;
 		wxStaticText* m_staticTextHomePage;
 		wxHyperlinkCtrl* m_hyperlink1;
 		wxStaticText* m_staticText2;
@@ -54,8 +57,7 @@ class AboutDlgBase : public wxDialog
 		wxButton* m_buttonOk;
 	
 	public:
-		
-		AboutDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("About CodeLite"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		AboutDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("About CodeLite"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
 		~AboutDlgBase();
 	
 };

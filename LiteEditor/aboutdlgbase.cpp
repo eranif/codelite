@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -22,7 +22,7 @@ AboutDlgBase::AboutDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
 	m_bitmap = new wxStaticBitmap( m_panel1, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( m_bitmap, 1, wxEXPAND, 5 );
+	bSizer3->Add( m_bitmap, 1, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
 	m_panel1->SetSizer( bSizer3 );
 	m_panel1->Layout();
@@ -39,6 +39,17 @@ AboutDlgBase::AboutDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 	m_panel4->Layout();
 	bSizer4->Fit( m_panel4 );
 	m_notebook1->AddPage( m_panel4, _("Credits"), false );
+	m_panel3 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer5;
+	bSizer5 = new wxBoxSizer( wxVERTICAL );
+	
+	m_textCtrlLicense = new wxTextCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2 );
+	bSizer5->Add( m_textCtrlLicense, 1, wxEXPAND, 5 );
+	
+	m_panel3->SetSizer( bSizer5 );
+	m_panel3->Layout();
+	bSizer5->Fit( m_panel3 );
+	m_notebook1->AddPage( m_panel3, _("License"), false );
 	
 	mainSizer->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 	

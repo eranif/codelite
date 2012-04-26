@@ -41,7 +41,7 @@ struct ByteState {
 class WXDLLIMPEXP_CL TextStates
 {
 public:
-	std::string               text;
+	std::string            text;
 	std::vector<ByteState> states;
 	std::vector<int>       lineToPos;
 	int                    pos;
@@ -88,8 +88,8 @@ typedef SmartPtr<TextStates> TextStatesPtr;
 class WXDLLIMPEXP_CL CppWordScanner
 {
 	wxSortedArrayString m_arr;
-	std::string            m_filename;
-	std::string            m_text;
+	std::string         m_filename;
+	wxString            m_text;
 	int                 m_offset;
 
 public:

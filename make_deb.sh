@@ -184,6 +184,7 @@ cp -pr Runtime/config/codelite.xml.default.gtk fakeroot/${PREFIX}/share/codelite
 cp -pr Runtime/rc/menu.xrc fakeroot/${PREFIX}/share/codelite/rc/
 cp -pfr Runtime/templates/* fakeroot/${PREFIX}/share/codelite/templates/
 cp -pfr Runtime/lexers/* fakeroot/${PREFIX}/share/codelite/lexers/
+cp -pf InnoSetup/license.txt fakeroot/${PREFIX}/share/codelite/LICENSE
 cp -pr lib/Debugger.so fakeroot/${PREFIX}/lib/codelite/debuggers/
 cp -pr lib/CodeFormatter.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/Copyright.so fakeroot/${PREFIX}/lib/codelite/

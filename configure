@@ -804,6 +804,7 @@ createInstallTarget()
 	echo "	@cp -fpr lib/Debugger.so \"\$(DESTDIR)${plugins_dir}/debuggers/\"" >> Makefile
 	echo "	@chmod 0644 \"\$(DESTDIR)${plugins_dir}/debuggers\"/*.so" >> Makefile
 	echo "	@cp -fpr Runtime/index.html \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
+	echo "	@cp -fpr InnoSetup/license.txt \"\$(DESTDIR)${prefix}/share/codelite/LICENSE\"" >> Makefile
 	echo "	@cp -fpr Runtime/astyle.sample \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
 	echo "	@cp -fpr Runtime/svnreport.html \"\$(DESTDIR)${prefix}/share/codelite/\"" >> Makefile
 	echo "	@cp -fpr Runtime/images/*.png \"\$(DESTDIR)${prefix}/share/codelite/images/\"" >> Makefile

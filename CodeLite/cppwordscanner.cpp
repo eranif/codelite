@@ -40,22 +40,12 @@ CppWordScanner::CppWordScanner(const std::string &fileName)
 	
 	wxFFile thefile(wxString(fileName.c_str(), wxConvUTF8), wxT("rb"));
 	if(thefile.IsOpened()) {
-		wxFileOffset size = thefile.Length();
-		std::string fileData;
-		fileData.reserve(size);
-
-		wxString tmp;
-		thefile.ReadAll( &tmp, fontEncConv );
-		if(tmp.IsEmpty()) {
+		m_text.Clear();
+		thefile.ReadAll( &m_text, fontEncConv );
+		if(m_text.IsEmpty()) {
 			// Try another converter
 			fontEncConv = wxFONTENCODING_UTF8;
-			thefile.ReadAll(&tmp, fontEncConv);
-		}
-		
-		if(!tmp.IsEmpty()) {
-			
-			m_text = tmp.mb_str(fontEncConv).data();
-			
+			thefile.ReadAll(&m_text, fontEncConv);
 		}
 	}
 	doInit();
@@ -63,7 +53,7 @@ CppWordScanner::CppWordScanner(const std::string &fileName)
 
 CppWordScanner::CppWordScanner(const std::string& fileName, const std::string& text, int offset)
 	: m_filename(fileName)
-	, m_text    (text.c_str())
+	, m_text    (wxString(text.c_str(), wxConvUTF8))
 	, m_offset  (offset)
 {
 	doInit();
@@ -250,7 +240,7 @@ TextStatesPtr CppWordScanner::states()
 		return NULL;
 	}
 
-	bitmap->text = m_text.c_str();
+	bitmap->text = m_text.mb_str(wxConvUTF8).data();
 
 	int state(STATE_NORMAL);
 	int depth(0);

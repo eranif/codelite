@@ -36,15 +36,14 @@ CppWordScanner::CppWordScanner(const std::string &fileName)
 {
 	// disable log
 	wxLogNull nolog;
-
+	wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
+	
 	wxFFile thefile(wxString(fileName.c_str(), wxConvUTF8), wxT("rb"));
 	if(thefile.IsOpened()) {
 		wxFileOffset size = thefile.Length();
 		std::string fileData;
 		fileData.reserve(size);
 
-		wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
-		
 		wxString tmp;
 		thefile.ReadAll( &tmp, fontEncConv );
 		if(tmp.IsEmpty()) {
@@ -94,7 +93,7 @@ void CppWordScanner::Match(const std::string& word, CppTokensMap& l, int from, i
 void CppWordScanner::doFind(const std::string& filter, CppTokensMap& l, int from, int to)
 {
 	int state(STATE_NORMAL);
-	StringAccessor accessor(wxString(m_text.c_str(), wxConvUTF8));
+	StringAccessor accessor(m_text);
 	CppToken token;
 	int lineNo(0);
 	

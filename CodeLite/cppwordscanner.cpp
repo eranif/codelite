@@ -246,8 +246,7 @@ TextStatesPtr CppWordScanner::states()
 	int depth(0);
 	int lineNo(0);
 
-	StringAccessor accessor(wxString(m_text.c_str(), wxConvUTF8));
-
+	StringAccessor accessor(m_text);
 	for (size_t i=0; i<m_text.size(); i++) {
 
 		// Keep track of line numbers

@@ -21,7 +21,7 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-	: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200), wxRESIZE_BORDER|wxSIMPLE_BORDER )
+	: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
 	, m_debugger(NULL)
 	, m_keepCurrentPosition(false)
 {

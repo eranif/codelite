@@ -35,9 +35,7 @@ class NewQuickWatch : public wxDialog
 		wxTreeCtrl* m_treeCtrl;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnEnterWindow( wxMouseEvent& event ){ event.Skip(); }
 		virtual void OnKeyDown( wxKeyEvent& event ){ event.Skip(); }
-		virtual void OnLeaveWindow( wxMouseEvent& event ){ event.Skip(); }
 		virtual void OnLeftDown( wxMouseEvent& event ){ event.Skip(); }
 		virtual void OnMouseMove( wxMouseEvent& event ){ event.Skip(); }
 		virtual void OnEditLabelStart( wxTreeEvent& event ){ event.Skip(); }

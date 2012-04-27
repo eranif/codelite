@@ -23,35 +23,31 @@ public:
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 	: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200), wxRESIZE_BORDER|wxSIMPLE_BORDER )
 	, m_debugger(NULL)
-	, m_leftWindow(false)
+	, m_keepCurrentPosition(false)
 {
 	Hide();
 	Centre();
 	MSWSetNativeTheme(m_treeCtrl);
 	WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
 
-	m_timer  = new wxTimer(this);
 	m_timer2 = new wxTimer(this);
-
-	Connect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer),  NULL, this);
-	Connect(m_timer2->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
+	m_mousePosTimer = new wxTimer(this);
+	
+	Connect(m_timer2->GetId(),        wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
+	Connect(m_mousePosTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnCheckMousePosTimer), NULL, this);
 }
 
 DisplayVariableDlg::~DisplayVariableDlg()
 {
-	Disconnect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer),  NULL, this);
 	Disconnect(m_timer2->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
 
-	m_timer->Stop();
-	delete m_timer;
-	m_timer = NULL;
-
 	m_timer2->Stop();
-	delete m_timer2;
-	m_timer2 = NULL;
-
+	m_mousePosTimer->Stop();
+	
+	wxDELETE(m_timer2);
+	wxDELETE(m_mousePosTimer);
+	
 	WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
-
 }
 
 void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
@@ -212,6 +208,7 @@ void DisplayVariableDlg::HideDialog()
 {
 	DoCleanUp();
 	wxDialog::Show(false);
+	m_mousePosTimer->Stop();
 }
 
 void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
@@ -249,6 +246,7 @@ void DisplayVariableDlg::ShowDialog(bool center)
 		editor->SetFocus();
 		editor->SetActive();
 	}
+	m_mousePosTimer->Start(200);
 }
 
 void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
@@ -268,50 +266,6 @@ void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e)
 void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event)
 {
 	event.Skip();
-}
-
-void DisplayVariableDlg::OnLeaveWindow(wxMouseEvent& e)
-{
-	m_leftWindow = true;
-	m_timer->Start(500, true);
-	e.Skip();
-}
-
-void DisplayVariableDlg::OnEnterWindow(wxMouseEvent& e)
-{
-	m_leftWindow = false;
-	e.Skip();
-}
-
-void DisplayVariableDlg::OnTimer(wxTimerEvent& e)
-{
-	if ( m_leftWindow ) {
-		wxMouseState state = wxGetMouseState();
-		// This is to fix a 'MouseCapture' bug on Linux while leaving the mouse Window
-		// and mouse button is clicked and scrolling the scrollbar (H or Vertical)
-		// The UI hangs
-#if wxVERSION_NUMBER < 2900
-		if (state.LeftDown()) {
-#else
-		if (state.LeftIsDown()) {
-#endif
-			// Don't Hide, just restart the timer
-			m_timer->Start(500, true);
-			return;
-		}
-
-		// The wxEVT_LEAVE_WINDOW event happened when the mouse leaves the *client* area
-		// That makes it impossible to resize the dialog, or even to use the scrollbar
-		// So test if we're still inside the NC area + a bit to spare
-		wxRect rect = GetScreenRect().Inflate(10,30);
-		if ( rect.Contains(wxGetMousePosition()) ) {
-			// Don't Hide, just restart the timer
-			m_timer->Start(500, true);
-		} else {
-			m_leftWindow = false;
-			HideDialog();
-		}
-	}
 }
 
 void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
@@ -459,6 +413,11 @@ void DisplayVariableDlg::OnTimer2(wxTimerEvent& e)
 
 void DisplayVariableDlg::DoAdjustPosition()
 {
+	if ( m_keepCurrentPosition ) {
+		// Reset the flag
+		m_keepCurrentPosition = false;
+		return; 
+	}
 	Move( ::wxGetMousePosition() );
 }
 
@@ -480,12 +439,20 @@ void DisplayVariableDlg::OnEditLabelEnd(wxTreeEvent& event)
 	
 	// Create a new expression and ask GDB to evaluate it for us
 	wxString typecast = event.GetLabel();
-	typecast.Replace(m_itemOldValue, wxT(""));
-	
-	newExpr.Prepend(wxT("(")).Append(wxT(")"));
-	newExpr.Prepend(typecast);
-	
+	if(typecast.Find(m_itemOldValue) == wxNOT_FOUND) {
+		// The new type does not contain the old type, perform a simple re-evaluation
+		newExpr = DoGetItemPath(event.GetItem());
+		
+	} else {
+		typecast.Replace(m_itemOldValue, wxT(""));
+		newExpr.Prepend(wxT("(")).Append(wxT(")"));
+		newExpr.Prepend(typecast);
+	}
 	HideDialog();
+	
+	// When the new tooltip shows, do not move the the dialog position
+	// Incase an error will take place, the flag will be reset
+	m_keepCurrentPosition = true;
 	m_debugger->CreateVariableObject( newExpr, false, DBG_USERR_QUICKWACTH );
 }
 
@@ -493,4 +460,33 @@ void DisplayVariableDlg::OnEditLabelStart(wxTreeEvent& event)
 {
 	m_itemOldValue = m_treeCtrl->GetItemText(event.GetItem());
 	event.Skip();
+}
+
+void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEvent& event)
+{
+	wxUnusedVar(event);
+	m_keepCurrentPosition = false;
+}
+
+void DisplayVariableDlg::OnCheckMousePosTimer(wxTimerEvent& e)
+{
+	wxRect rect = GetScreenRect().Inflate(20, 30);
+	bool mouseLeftWidow = !rect.Contains( ::wxGetMousePosition() );
+	if(mouseLeftWidow) {
+		
+		wxMouseState state = wxGetMouseState();
+		// This is to fix a 'MouseCapture' bug on Linux while leaving the mouse Window
+		// and mouse button is clicked and scrolling the scrollbar (H or Vertical)
+		// The UI hangs
+#if wxVERSION_NUMBER < 2900
+		if (state.LeftDown()) {
+#else
+		if (state.LeftIsDown()) {
+#endif
+			// Don't Hide, just restart the timer
+			return;
+		}
+		
+		HideDialog();
+	}
 }

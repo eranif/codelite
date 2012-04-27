@@ -151,12 +151,12 @@
                                     <property name="window_name"></property>
                                     <property name="window_style">wxNO_BORDER</property>
                                     <event name="OnChar"></event>
-                                    <event name="OnEnterWindow">OnEnterWindow</event>
+                                    <event name="OnEnterWindow"></event>
                                     <event name="OnEraseBackground"></event>
                                     <event name="OnKeyDown">OnKeyDown</event>
                                     <event name="OnKeyUp"></event>
                                     <event name="OnKillFocus"></event>
-                                    <event name="OnLeaveWindow">OnLeaveWindow</event>
+                                    <event name="OnLeaveWindow"></event>
                                     <event name="OnLeftDClick"></event>
                                     <event name="OnLeftDown">OnLeftDown</event>
                                     <event name="OnLeftUp"></event>

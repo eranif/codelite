@@ -3119,9 +3119,12 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
 
 	case DBG_UR_VARIABLEOBJCREATEERR:
 		// Variable creation error, remove it from the relevant table
-		if(/*event.m_userReason == DBG_USERR_LOCALS || */event.m_userReason == DBG_USERR_WATCHTABLE) {
+		if(event.m_userReason == DBG_USERR_WATCHTABLE) {
 			clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnCreateVariableObjError( event );
-			//clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnCreateVariableObjError( event );
+			
+		} else if(event.m_userReason == DBG_USERR_QUICKWACTH) {
+			GetDebuggerTip()->OnCreateVariableObjError( event );
+			
 		}
 		break;
 

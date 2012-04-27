@@ -25,6 +25,20 @@ CCColourisePage::CCColourisePage( wxWindow* parent, const TagsOptionsData &data 
 	m_checkBoxColourMacroBlocks->Enable(false);
 #endif
 	m_spinCtrlMaxItemToColour->SetValue  (data.GetMaxItemToColour() );
+
+	// wxFB marks the checkboxes' labels to be localised. We really don't want e.g. "class" or "enum" translated
+	m_checkBoxClass->SetLabel(wxT("class"));
+	m_checkBoxEnum->SetLabel(wxT("enum"));
+	m_checkBoxFunction->SetLabel(wxT("function"));
+	m_checkBoxMacro->SetLabel(wxT("macro"));
+	m_checkBoxNamespace->SetLabel(wxT("namespace"));
+	m_checkBoxPrototype->SetLabel(wxT("prototype"));
+	m_checkBoxStruct->SetLabel(wxT("struct"));
+	m_checkBoxTypedef->SetLabel(wxT("typedef"));
+	m_checkBoxUnion->SetLabel(wxT("union"));
+	m_checkBoxEnumerator->SetLabel(wxT("enumerator"));
+	m_checkBoxMember->SetLabel(wxT("member"));
+	m_checkBoxVariable->SetLabel(wxT("variable"));
 }
 
 void CCColourisePage::OnColourWorkspaceUI( wxUpdateUIEvent& event )

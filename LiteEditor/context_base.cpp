@@ -78,7 +78,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 
 	rCtrl.StyleClearAll();
 	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
-
+	
 	// Define the styles for the editing margin
 	rCtrl.StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("FOREST GREEN")));
 	rCtrl.StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
@@ -97,8 +97,31 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
         styles = lexPtr->GetProperties();
 		rCtrl.SetProperty(wxT("styling.within.preprocessor"), lexPtr->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
     }
-
+	
+	// Find the default style
+	wxFont defaultFont;
+	bool foundDefaultStyle = false;
 	std::list<StyleProperty>::iterator iter = styles.begin();
+	for (; iter != styles.end(); iter++) {
+		if(iter->GetId() == 0) {
+			defaultFont = wxFont(iter->GetFontSize(), 
+						  wxFONTFAMILY_TELETYPE, 
+						  iter->GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+						  iter->IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, 
+						  iter->GetUnderlined(), 
+						  iter->GetFaceName());
+			foundDefaultStyle = true;
+			break;
+		}
+	}
+	
+	if (foundDefaultStyle) {
+		for(int i=0; i<256; i++) {
+			rCtrl.StyleSetFont(i, defaultFont);
+		}
+	}
+	
+	iter = styles.begin();
 	for (; iter != styles.end(); iter++) {
 
 		StyleProperty sp        = (*iter);

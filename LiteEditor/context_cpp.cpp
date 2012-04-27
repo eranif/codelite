@@ -1916,12 +1916,12 @@ void ContextCpp::ApplySettings()
     EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &cmpColoursOptions);
     rCtrl.StyleSetBackground(eAnnotationStyleError, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
     rCtrl.StyleSetForeground(eAnnotationStyleError, cmpColoursOptions.GetErrorColour());
-    rCtrl.StyleSetFont(eAnnotationStyleError, guiFont);
+    //rCtrl.StyleSetFont(eAnnotationStyleError, guiFont);
 
     // Warning
     rCtrl.StyleSetBackground(eAnnotationStyleWarning, DrawingUtils::LightColour(cmpColoursOptions.GetErrorColour(), 9.0));
     rCtrl.StyleSetForeground(eAnnotationStyleWarning, cmpColoursOptions.GetWarnColour());
-    rCtrl.StyleSetFont(eAnnotationStyleWarning, guiFont);
+    //rCtrl.StyleSetFont(eAnnotationStyleWarning, guiFont);
 }
 
 void ContextCpp::Initialize()

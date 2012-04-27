@@ -28,7 +28,7 @@ public:
 	bool                             m_leftWindow;
 	wxString                         m_fullpath;
 	wxTreeItemId                     m_hoveredItem;
-
+	wxString                         m_itemOldValue;
 protected:
 	bool     IsFakeItem(const wxTreeItemId &item);
 	wxString DoGetItemPath(const wxTreeItemId &item);
@@ -51,6 +51,8 @@ protected:
 	void OnItemMenu(wxTreeEvent& event);
 	void OnMenuSelection(wxCommandEvent &e);
 	void OnMouseMove( wxMouseEvent& event );
+	void OnEditLabelEnd(wxTreeEvent& event);
+	void OnEditLabelStart(wxTreeEvent& event);
 
 
 

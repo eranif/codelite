@@ -21,9 +21,9 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-		: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200), wxRESIZE_BORDER|wxSIMPLE_BORDER )
-		, m_debugger(NULL)
-		, m_leftWindow(false)
+	: NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200), wxRESIZE_BORDER|wxSIMPLE_BORDER )
+	, m_debugger(NULL)
+	, m_leftWindow(false)
 {
 	Hide();
 	Centre();
@@ -92,8 +92,8 @@ void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugge
 	vob.isAFake = false;
 
 	wxTreeItemId root = m_treeCtrl->AddRoot( m_variableName, -1, -1, new QWTreeData(vob) );
-	
-	// Mac does not return value for the root item... 
+
+	// Mac does not return value for the root item...
 	// we need to force another evaluate call here
 #ifdef __WXMAC__
 	m_debugger->EvaluateVariableObject( m_mainVariableObject, DBG_USERR_QUICKWACTH );
@@ -205,6 +205,7 @@ void DisplayVariableDlg::DoCleanUp()
 	m_mainVariableObject = wxT("");
 	m_variableName = wxT("");
 	m_expression = wxT("");
+	m_itemOldValue.Clear();
 }
 
 void DisplayVariableDlg::HideDialog()
@@ -215,7 +216,19 @@ void DisplayVariableDlg::HideDialog()
 
 void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 {
-	HideDialog();
+	if(event.GetKeyCode() == WXK_F2) {
+		wxTreeItemId item = m_treeCtrl->GetSelection();
+		if(item.IsOk() && !IsFakeItem(item)) {
+			m_treeCtrl->EditLabel(item);
+			
+		} else {
+			HideDialog();
+		}
+		
+	} else {
+		HideDialog();
+		
+	}
 }
 
 void DisplayVariableDlg::ShowDialog(bool center)
@@ -318,9 +331,11 @@ void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
 
 	menu.Append(XRCID("tip_add_watch"),  _("Add Watch"));
 	menu.Append(XRCID("tip_copy_value"), _("Copy Value to Clipboard"));
-
-	menu.Connect(XRCID("tip_add_watch"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
-	menu.Connect(XRCID("tip_copy_value"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
+	menu.Append(XRCID("edit_item"),      _("Edit..."));
+	
+	menu.Connect(XRCID("tip_add_watch"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
+	menu.Connect(XRCID("tip_copy_value"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
+	menu.Connect(XRCID("edit_item"),      wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
 
 	m_treeCtrl->PopupMenu( &menu );
 }
@@ -347,10 +362,23 @@ wxString DisplayVariableDlg::DoGetItemPath(const wxTreeItemId& treeItem)
 		// Are we at root yet?
 		if ( m_treeCtrl->GetRootItem() == item )
 			break;
-
+		
+		// Surround this expression with parenthesiss
 		item = m_treeCtrl->GetItemParent(item);
 	}
-	return fullpath;
+	
+	wxString exprWithParentheses;
+	wxArrayString items = ::wxStringTokenize(fullpath, wxT("."), wxTOKEN_STRTOK);
+	for(size_t i=0; i<items.GetCount(); i++) {
+		exprWithParentheses << items.Item(i);
+		exprWithParentheses.Prepend(wxT("(")).Append(wxT(")."));
+	}
+	
+	if(!items.IsEmpty()) {
+		exprWithParentheses.RemoveLast();
+	}
+	
+	return exprWithParentheses;
 }
 
 bool DisplayVariableDlg::IsFakeItem(const wxTreeItemId& item)
@@ -383,6 +411,10 @@ void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
 			wxString itemText = m_treeCtrl->GetItemText(item);
 			itemText = itemText.AfterFirst(wxT('='));
 			CopyToClipboard( itemText );
+
+		} else if (e.GetId() == XRCID("edit_item")) {
+			m_itemOldValue = m_treeCtrl->GetItemText(item);
+			m_treeCtrl->EditLabel( item );
 		}
 	}
 }
@@ -430,3 +462,35 @@ void DisplayVariableDlg::DoAdjustPosition()
 	Move( ::wxGetMousePosition() );
 }
 
+void DisplayVariableDlg::OnEditLabelEnd(wxTreeEvent& event)
+{
+	if(event.GetLabel().IsEmpty()) {
+		event.Veto();
+		return;
+	}
+
+	event.Skip();
+	if(m_itemOldValue.IsEmpty()) {
+		event.Veto();
+		return;
+	}
+	
+	wxString newExpr = DoGetItemPath(event.GetItem());
+	m_treeCtrl->SetItemText(event.GetItem(), event.GetLabel());
+	
+	// Create a new expression and ask GDB to evaluate it for us
+	wxString typecast = event.GetLabel();
+	typecast.Replace(m_itemOldValue, wxT(""));
+	
+	newExpr.Prepend(wxT("(")).Append(wxT(")"));
+	newExpr.Prepend(typecast);
+	
+	HideDialog();
+	m_debugger->CreateVariableObject( newExpr, false, DBG_USERR_QUICKWACTH );
+}
+
+void DisplayVariableDlg::OnEditLabelStart(wxTreeEvent& event)
+{
+	m_itemOldValue = m_treeCtrl->GetItemText(event.GetItem());
+	event.Skip();
+}

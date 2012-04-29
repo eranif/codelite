@@ -1024,7 +1024,7 @@ void MainBook::DoPositionFindBar(int where)
 
 void MainBook::OnDebugEnded(wxCommandEvent& e)
 {
-	ManagerST::Get()->GetDebuggerTip()->HideDialog();
+	//ManagerST::Get()->GetDebuggerTip()->HideDialog();
 	e.Skip();
 }
 

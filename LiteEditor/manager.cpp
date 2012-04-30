@@ -3287,10 +3287,16 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
 		DebuggerConfigTool::Get()->ReadObject(wxT("DebuggerCommands"), &data);
 		DebuggerPreDefinedTypes preDefTypes = data.GetActiveSet();
 
-		wxString preDefinedType =
-		    preDefTypes.GetPreDefinedTypeForTypename(event.m_variableObject.typeName, event.m_expression);
-		if (!preDefinedType.IsEmpty()) {
-			dbgr->CreateVariableObject( preDefinedType, false, DBG_USERR_QUICKWACTH );
+		wxString preDefinedType = preDefTypes.GetPreDefinedTypeForTypename(event.m_variableObject.typeName, event.m_expression);
+		wxString exp, pdt;
+		pdt = preDefinedType;
+		exp = event.m_expression;
+		
+		pdt.Trim().Trim(false);
+		exp.Trim().Trim(false);
+		
+		if (!pdt.IsEmpty() && pdt != exp) {
+			dbgr->CreateVariableObject( pdt, false, DBG_USERR_QUICKWACTH );
 #ifdef __WXMAC__
 			if(!event.m_variableObject.gdbId.IsEmpty()) {
 				dbgr->DeleteVariableObject(event.m_variableObject.gdbId);

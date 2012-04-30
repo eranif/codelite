@@ -108,14 +108,15 @@ clToolBar *CodeFormatter::CreateToolBar(wxWindow *parent)
 
 		tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
 		tb->SetToolBitmapSize(wxSize(size, size));
-
+		
+		BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
 		if (size == 24) {
-			tb->AddTool(XRCID("format_source"), _("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format24")), _("Format Source Code"));
-			tb->AddTool(XRCID("formatter_options"), _("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options24")), _("Source Code Formatter Options..."));
+			tb->AddTool(XRCID("format_source"),     _("Format Source"),  bmpLoader->LoadBitmap(wxT("toolbars/24/codeformatter/code-format")),         _("Format Source Code"));
+			tb->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap(wxT("toolbars/24/codeformatter/code-format-options")), _("Source Code Formatter Options..."));
 		} else {
 			//16
-			tb->AddTool(XRCID("format_source"), _("Format Source"), wxXmlResource::Get()->LoadBitmap(wxT("code_format16")), _("Format Source Code"));
-			tb->AddTool(XRCID("formatter_options"), _("Format Options"), wxXmlResource::Get()->LoadBitmap(wxT("code_format_options16")), _("Source Code Formatter Options..."));
+			tb->AddTool(XRCID("format_source"),     _("Format Source"),  bmpLoader->LoadBitmap(wxT("toolbars/16/codeformatter/code-format")),         _("Format Source Code"));
+			tb->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap(wxT("toolbars/16/codeformatter/code-format-options")), _("Source Code Formatter Options..."));
 		}
 
 #if defined (__WXMAC__)

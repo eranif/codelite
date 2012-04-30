@@ -137,8 +137,11 @@ void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
 	for (size_t i = 0; i < rootDirs.Count(); ++i) {
 		wxArrayString someFiles;
 		const wxString& rootDir = rootDirs.Item(i);
+		// Check both translations and otherwise: the history may have contained either
 		if (rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE) || rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)
-					|| rootDir == wxGetTranslation(SEARCH_IN_PROJECT) || rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE)) {
+					|| rootDir == wxGetTranslation(SEARCH_IN_PROJECT) || rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE)
+					|| rootDir == SEARCH_IN_WORKSPACE || rootDir == SEARCH_IN_CURR_FILE_PROJECT
+					|| rootDir == SEARCH_IN_PROJECT || rootDir == SEARCH_IN_CURRENT_FILE) {
 			someFiles = data->GetFiles();
 			// filter files which does not match the criteria
 			FilterFiles(someFiles, data);

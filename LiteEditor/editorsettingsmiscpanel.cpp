@@ -50,7 +50,12 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 	} else {
 		m_toolbarIconSize->SetSelection(1);
 	}
-
+	
+	if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
+		m_choiceIconSet->SetSelection(1);
+	else 
+		m_choiceIconSet->SetSelection(0); // Default
+	
 	m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
 	m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
 
@@ -187,6 +192,22 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	} else {
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 	}
+	
+	size_t flags = options->GetOptions();
+	bool useClassic = flags & OptionsConfig::Opt_IconSet_Classic;
+	
+	// Clear old settings
+	flags &= ~(OptionsConfig::Opt_IconSet_Classic  );
+	flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
+	
+	if(m_choiceIconSet->GetSelection() == 0) 
+		flags |= OptionsConfig::Opt_IconSet_Classic;
+	else
+		flags |= OptionsConfig::Opt_IconSet_FreshFarm;
+		
+	options->SetOptions(flags);
+	bool newUseClassic = flags & OptionsConfig::Opt_IconSet_Classic;
+	m_restartRequired = ((newUseClassic != useClassic) || m_restartRequired);
 }
 
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)

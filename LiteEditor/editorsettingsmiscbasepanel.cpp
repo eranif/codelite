@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -22,16 +22,40 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
-	wxString m_toolbarIconSizeChoices[] = { _("Toolbar uses small icons (16x16)"), _("Toolbar uses large icons (24x24)") };
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_staticText7 = new wxStaticText( m_panel1, wxID_ANY, _("Icon Set:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7->Wrap( -1 );
+	fgSizer4->Add( m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxString m_choiceIconSetChoices[] = { _("Classic"), _("Fresh Farm") };
+	int m_choiceIconSetNChoices = sizeof( m_choiceIconSetChoices ) / sizeof( wxString );
+	m_choiceIconSet = new wxChoice( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceIconSetNChoices, m_choiceIconSetChoices, 0 );
+	m_choiceIconSet->SetSelection( 1 );
+	fgSizer4->Add( m_choiceIconSet, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	
+	m_staticText8 = new wxStaticText( m_panel1, wxID_ANY, _("Toolbar Icon Size:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8->Wrap( -1 );
+	fgSizer4->Add( m_staticText8, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxString m_toolbarIconSizeChoices[] = { _("Samll Icons (16x16)"), _("Large Icons (24x24)") };
 	int m_toolbarIconSizeNChoices = sizeof( m_toolbarIconSizeChoices ) / sizeof( wxString );
 	m_toolbarIconSize = new wxChoice( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_toolbarIconSizeNChoices, m_toolbarIconSizeChoices, 0 );
 	m_toolbarIconSize->SetSelection( 1 );
-	bSizer8->Add( m_toolbarIconSize, 0, wxALL|wxEXPAND, 5 );
+	fgSizer4->Add( m_toolbarIconSize, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer8->Add( fgSizer4, 1, wxEXPAND, 5 );
 	
 	m_useSingleToolbar = new wxCheckBox( m_panel1, wxID_ANY, _("Use single toolbar"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	bSizer8->Add( m_useSingleToolbar, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxEnableMSWTheme = new wxCheckBox( m_panel1, wxID_ANY, _("Enable Windows(R) theme for Vista / Windows 7"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	bSizer8->Add( m_checkBoxEnableMSWTheme, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer2->Add( bSizer8, 0, wxEXPAND|wxALL, 5 );
@@ -43,18 +67,22 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
 	m_showSplashScreen = new wxCheckBox( m_panel1, wxID_ANY, _("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_showSplashScreen->SetValue(true); 
+	m_showSplashScreen->SetValue(true);
+	
 	bSizer6->Add( m_showSplashScreen, 0, wxALL, 5 );
 	
 	m_singleAppInstance = new wxCheckBox( m_panel1, wxID_ANY, _("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0 );
+	
 	bSizer6->Add( m_singleAppInstance, 0, wxALL, 5 );
 	
 	m_versionCheckOnStartup = new wxCheckBox( m_panel1, wxID_ANY, _("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_versionCheckOnStartup->SetValue(true); 
+	m_versionCheckOnStartup->SetValue(true);
+	
 	bSizer6->Add( m_versionCheckOnStartup, 0, wxALL, 5 );
 	
 	m_fullFilePath = new wxCheckBox( m_panel1, wxID_ANY, _("Show file's full path in frame title"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_fullFilePath->SetValue(true); 
+	m_fullFilePath->SetValue(true);
+	
 	bSizer6->Add( m_fullFilePath, 0, wxALL, 5 );
 	
 	bSizer2->Add( bSizer6, 0, wxEXPAND|wxALL, 5 );
@@ -83,7 +111,8 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	fgSizer1->Add( m_fileEncoding, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_SetLocale = new wxCheckBox( m_panel2, wxID_ANY, _("Enable localization"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SetLocale->SetValue(true); 
+	m_SetLocale->SetValue(true);
+	
 	m_SetLocale->SetToolTip( _("View CodeLite's strings translated into a different language, if available.  This will also make CodeLite use other aspects of the locale.") );
 	
 	fgSizer1->Add( m_SetLocale, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -196,5 +225,4 @@ EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
 	m_clearButton->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnClearUI ), NULL, this );
 	m_choice4->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnLogVerbosityChanged ), NULL, this );
 	m_buttonOpenLog->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnShowLogFile ), NULL, this );
-	
 }

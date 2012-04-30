@@ -215,6 +215,7 @@ cp -pr Runtime/astyle.sample fakeroot/${PREFIX}/share/codelite/
 cp -pr Runtime/src/* fakeroot/${PREFIX}/share/codelite/src/
 cp -pr Runtime/images/*.png fakeroot/${PREFIX}/share/codelite/images/
 cp -pr Runtime/codelite-icons.zip fakeroot/${PREFIX}/share/codelite/
+cp -pr Runtime/codelite-icons-fresh-farm.zip fakeroot/${PREFIX}/share/codelite/
 
 cp -pr AUTHORS fakeroot/${PREFIX}/share/codelite/
 cp -pr COPYING fakeroot/${PREFIX}/share/codelite/

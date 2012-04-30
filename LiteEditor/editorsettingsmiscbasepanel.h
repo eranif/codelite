@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Apr 16 2008)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -11,19 +11,19 @@
 #include <wx/intl.h>
 
 #include <wx/string.h>
-#include <wx/choice.h>
+#include <wx/stattext.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/checkbox.h>
+#include <wx/choice.h>
 #include <wx/sizer.h>
+#include <wx/checkbox.h>
 #include <wx/statline.h>
 #include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/stattext.h>
 #include <wx/button.h>
 #include <wx/spinctrl.h>
 #include <wx/aui/auibook.h>
@@ -41,6 +41,9 @@ class EditorSettingsMiscBasePanel : public wxPanel
 	protected:
 		wxAuiNotebook* m_auinotebook1;
 		wxPanel* m_panel1;
+		wxStaticText* m_staticText7;
+		wxChoice* m_choiceIconSet;
+		wxStaticText* m_staticText8;
 		wxChoice* m_toolbarIconSize;
 		wxCheckBox* m_useSingleToolbar;
 		wxCheckBox* m_checkBoxEnableMSWTheme;
@@ -69,18 +72,17 @@ class EditorSettingsMiscBasePanel : public wxPanel
 		wxButton* m_buttonOpenLog;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnEnableThemeUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void LocaleChkUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void LocaleStaticUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void LocaleChoiceUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnClearButtonClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClearUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void OnLogVerbosityChanged( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnShowLogFile( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEnableThemeUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void LocaleChkUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void LocaleStaticUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void LocaleChoiceUpdateUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnClearButtonClick( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnClearUI( wxUpdateUIEvent& event ){ event.Skip(); }
+		virtual void OnLogVerbosityChanged( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnShowLogFile( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
-		
 		EditorSettingsMiscBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 449,382 ), long style = wxTAB_TRAVERSAL );
 		~EditorSettingsMiscBasePanel();
 	

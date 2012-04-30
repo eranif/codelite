@@ -17,6 +17,7 @@ xcopy templates\databaselayer\* "%ProgramFiles(x86)%\CodeLite\templates\database
 xcopy templates\qmake\* "%ProgramFiles(x86)%\CodeLite\templates\qmake\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy codelite-icons.zip "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes
+xcopy codelite-icons-fresh-farm.zip "%ProgramFiles(x86)%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy locale\* "%ProgramFiles(x86)%\CodeLite\locale\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes

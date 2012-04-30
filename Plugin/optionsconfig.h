@@ -43,7 +43,9 @@ public:
 		TabAll                       = TabClassic | TabGlossy | TabCurved,
 		Opt_AutoCompleteCurlyBraces  = 0x00000008,
 		Opt_AutoCompleteNormalBraces = 0x00000010,
-		Opt_SmartAddFiles            = 0x00000020
+		Opt_SmartAddFiles            = 0x00000020,
+		Opt_IconSet_FreshFarm        = 0x00000040,
+		Opt_IconSet_Classic          = 0x00000100
 	};
 
 protected:

@@ -3,6 +3,8 @@
 #include <wx/stdpaths.h>
 #include <wx/ffile.h>
 #include "globals.h"
+#include "editor_config.h"
+#include "optionsconfig.h"
 
 std::map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::map<wxString, wxString> BitmapLoader::m_manifest;
@@ -14,8 +16,15 @@ BitmapLoader::~BitmapLoader()
 BitmapLoader::BitmapLoader()
 	: m_bMapPopulated(false)
 {
+	wxString zipname;
+	
+	if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
+		zipname = wxT("codelite-icons-fresh-farm.zip");
+	else
+		zipname = wxT("codelite-icons.zip");
+		
 	if(m_manifest.empty() || m_toolbarsBitmaps.empty()) {
-		m_zipPath = wxFileName(wxStandardPaths::Get().GetDataDir(), wxT("codelite-icons.zip"));
+		m_zipPath = wxFileName(wxStandardPaths::Get().GetDataDir(), zipname);
 		if(m_zipPath.FileExists()) {
 			doLoadManifest();
 			doLoadBitmaps();

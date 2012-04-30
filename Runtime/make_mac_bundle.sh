@@ -104,6 +104,7 @@ cp svnreport.html ./CodeLite.app/Contents/SharedSupport/
 cp *.icns ./CodeLite.app/Contents/Resources/
 cp -pr src/*.gz ./CodeLite.app/Contents/Resources/
 cp -pr codelite-icons.zip ./CodeLite.app/Contents/SharedSupport/
+cp -pr codelite-icons-fresh-farm.zip ./CodeLite.app/Contents/SharedSupport/
 
 ## copy empty layout file
 cp config/codelite.layout.default ./CodeLite.app/Contents/SharedSupport/config/codelite.layout

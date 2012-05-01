@@ -193,17 +193,18 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 		EditorConfigST::Get()->SaveLongValue(wxT("LoadSavedPrespective"), 1);
 	}
 	
-	size_t flags = options->GetOptions();
+	size_t flags    = options->GetOptions();
+	size_t oldFlags = oldOptions->GetOptions();
 	
 	// Keep the old icon-set flags, this is done for deciding whether we should
 	// prompt the user for possible restart
 	size_t oldIconFlags(0); 
 	size_t newIconFlags(0);
 	
-	if(flags & OptionsConfig::Opt_IconSet_Classic)
+	if(oldFlags & OptionsConfig::Opt_IconSet_Classic)
 		oldIconFlags |= OptionsConfig::Opt_IconSet_Classic;
 	
-	if(flags & OptionsConfig::Opt_IconSet_FreshFarm)
+	if(oldFlags & OptionsConfig::Opt_IconSet_FreshFarm)
 		oldIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
 	
 	if(oldIconFlags == 0)

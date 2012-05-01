@@ -194,20 +194,37 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 	}
 	
 	size_t flags = options->GetOptions();
-	bool useClassic = flags & OptionsConfig::Opt_IconSet_Classic;
 	
+	// Keep the old icon-set flags, this is done for deciding whether we should
+	// prompt the user for possible restart
+	size_t oldIconFlags(0); 
+	size_t newIconFlags(0);
+	
+	if(flags & OptionsConfig::Opt_IconSet_Classic)
+		oldIconFlags |= OptionsConfig::Opt_IconSet_Classic;
+	
+	if(flags & OptionsConfig::Opt_IconSet_FreshFarm)
+		oldIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
+	
+	if(oldIconFlags == 0)
+		oldIconFlags = OptionsConfig::Opt_IconSet_Classic;
+		
 	// Clear old settings
 	flags &= ~(OptionsConfig::Opt_IconSet_Classic  );
 	flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
 	
-	if(m_choiceIconSet->GetSelection() == 0) 
+	if(m_choiceIconSet->GetSelection() == 0) {
+		newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
 		flags |= OptionsConfig::Opt_IconSet_Classic;
-	else
+		
+	} else {
+		newIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
 		flags |= OptionsConfig::Opt_IconSet_FreshFarm;
 		
+	}
+		
 	options->SetOptions(flags);
-	bool newUseClassic = flags & OptionsConfig::Opt_IconSet_Classic;
-	m_restartRequired = ((newUseClassic != useClassic) || m_restartRequired);
+	m_restartRequired = ((oldIconFlags != newIconFlags) || m_restartRequired);
 }
 
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)

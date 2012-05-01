@@ -186,18 +186,16 @@ void SubversionView::CreatGUIControls()
 	tb->AddTool(XRCID("svn_open_local_repo_browser"), _("Select a Directory to View..."), bmpLdr->LoadBitmap(wxT("toolbars/16/standard/file_open")), _("Select a Directory to View..."), wxITEM_NORMAL);
 	tb->AddSeparator();
 
-	tb->AddTool(XRCID("svn_stop"),         _("Stop current svn process"), bmpLdr->LoadBitmap(wxT("toolbars/16/build/stop")), _( "Stop current svn process" ) );
-	tb->AddTool(XRCID("svn_cleanup"),      _("Svn Cleanup"), wxXmlResource::Get()->LoadBitmap ( wxT ( "eraser" ) ), _( "Svn Cleanup" ) );
-
+	tb->AddTool(XRCID("svn_stop"),         _("Stop current svn process"), bmpLdr->LoadBitmap(wxT("subversion/16/stop")),       _( "Stop current svn process" ) );
+	tb->AddTool(XRCID("svn_cleanup"),      _("Svn Cleanup"),              bmpLdr->LoadBitmap(wxT("subversion/16/cleanup")),    _( "Svn Cleanup" ) );
+	tb->AddSeparator();                                                                                                        
+	tb->AddTool(XRCID("svn_checkout"),     _("Svn Checkout"),             bmpLdr->LoadBitmap(wxT("subversion/16/checkout")),   _( "Svn Checkout" ) );
+	tb->AddSeparator(); 
+	tb->AddTool(XRCID("svn_refresh"),      _("Refresh View"),             bmpLdr->LoadBitmap(wxT("subversion/16/refresh")),  _( "Refresh View" ) );
 	tb->AddSeparator();
-	tb->AddTool(XRCID("svn_checkout"),         _("Svn Checkout"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_checkout" ) ), _( "Svn Checkout" ) );
-
-	tb->AddSeparator();
-	tb->AddTool(XRCID("svn_refresh"),      _("Refresh View"), bmpLdr->LoadBitmap ( wxT ( "output-pane/16/reload" ) ), _( "Refresh View" ) );
-	tb->AddSeparator();
-	tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"), bmpLdr->LoadBitmap(wxT("output-pane/16/clear")), _("Clear Svn Output Tab"), wxITEM_NORMAL);
-	tb->AddTool(XRCID("svn_settings"),     _("Svn Settings..."), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_settings" ) ), _( "Svn Settings..." ) );
-	tb->AddTool(XRCID("svn_info"),         _("Svn Info"), wxXmlResource::Get()->LoadBitmap ( wxT ( "svn_info" ) ), _( "Svn Info" ) );
+	tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"),     bmpLdr->LoadBitmap(wxT("output-pane/16/clear")),     _("Clear Svn Output Tab"), wxITEM_NORMAL);
+	tb->AddTool(XRCID("svn_settings"),     _("Svn Settings..."),          bmpLdr->LoadBitmap(wxT("subversion/16/settings")),  _( "Svn Settings..." ) );
+	tb->AddTool(XRCID("svn_info"),         _("Svn Info"),                 bmpLdr->LoadBitmap(wxT("subversion/16/info")),      _( "Svn Info" ) );
 
 	tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnClearOuptut), NULL, this);
 	tb->Connect(XRCID("svn_stop"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SubversionView::OnStop),        NULL, this);

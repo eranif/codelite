@@ -2843,3 +2843,9 @@ wxString TagsManager::DoReplaceMacrosFromDatabase(const wxString& name)
 	}
 	return newName;
 }
+
+void TagsManager::GetTagsByPartialName(const wxString& partialName, std::vector<TagEntryPtr>& tags)
+{
+	GetDatabase()->GetTagsByPartName(partialName, tags);
+}
+

@@ -1541,13 +1541,13 @@ TagEntryPtr TagsStorageSQLite::GetTagsByNameLimitOne(const wxString& name)
 	try {
 		if(name.IsEmpty())
 			return NULL;
-		
+
 		std::vector<TagEntryPtr> tags;
 		wxString sql;
 		sql << wxT("select * from tags where ");
 		DoAddNamePartToQuery(sql, name, false, false);
 		sql << wxT(" LIMIT 1 ");
-		
+
 		DoFetchTags(sql, tags);
 		if(tags.size() == 1)
 			return tags.at(0);
@@ -1559,4 +1559,23 @@ TagEntryPtr TagsStorageSQLite::GetTagsByNameLimitOne(const wxString& name)
 	}
 	return NULL;
 
+}
+
+void TagsStorageSQLite::GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags)
+{
+	try {
+		if(partname.IsEmpty())
+			return;
+		
+		wxString tmpName(partname);
+		tmpName.Replace(wxT("_"), wxT("^_"));
+		
+		wxString sql;
+		sql << wxT("select * from tags where name like '%%") << tmpName << wxT("%%' ESCAPE '^' ");
+		DoAddLimitPartToQuery(sql, tags);
+		DoFetchTags(sql, tags);
+
+	} catch (wxSQLite3Exception &e) {
+		CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
+	}
 }

@@ -178,7 +178,7 @@ void OpenResourceDialog::DoPopulateTags()
 	if(prefix.IsEmpty())
 		return;
 
-	m_manager->GetTagsManager()->GetTagsByName(prefix, tags);
+	m_manager->GetTagsManager()->GetTagsByPartialName(prefix, tags);
 	
 	for (size_t i=0; i<tags.size(); i++) {
 		TagEntryPtr tag = tags.at(i);
@@ -221,11 +221,11 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 	if (!curSel.Trim().Trim(false).IsEmpty()) {
 
 		curSel = curSel.MakeLower().Trim().Trim(false);
-		std::multimap<wxString, wxString>::iterator iter  = m_files.lower_bound(curSel);
+		std::multimap<wxString, wxString>::iterator iter  = m_files.begin();
 		for(; iter != m_files.end(); iter++) {
-			// Take only keys that 'StartsWith'
-			if(!iter->first.StartsWith(curSel))
-				break;
+			// Take only keys that 'Contains' the filter
+			if(!iter->first.Contains(curSel))
+				continue;
 				
 			wxFileName fn(iter->second);
 			FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());

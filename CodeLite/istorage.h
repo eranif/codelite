@@ -465,6 +465,11 @@ public:
 	virtual void GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr> &tags, bool exactMatch = false) = 0;
 	
 	/**
+	 * @brief return list of tags for a given partial name
+	 */
+	virtual void GetTagsByPartName(const wxString &partname, std::vector<TagEntryPtr> &tags) = 0;
+	
+	/**
 	 * @brief search for a single match in the database for an entry with a given name
 	 */
 	virtual TagEntryPtr GetTagsByNameLimitOne(const wxString& name) = 0;

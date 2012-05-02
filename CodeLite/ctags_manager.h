@@ -604,6 +604,11 @@ public:
 	void GetTagsByName(const wxString &prefix, std::vector<TagEntryPtr> &tags);
 	
 	/**
+	 * @brief return list of tags by name (or part of it)
+	 */
+	void GetTagsByPartialName(const wxString &partialName, std::vector<TagEntryPtr> &tags);
+	
+	/**
 	 * @brief return list of tags by KIND
 	 * @param tags [output]
 	 * @param kind the kind of the tags to fetch from the database

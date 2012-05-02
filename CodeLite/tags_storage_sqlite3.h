@@ -121,16 +121,6 @@ public:
 
 	wxSQLite3Statement GetPrepareStatement(const wxString& sql) {
 		return wxSQLite3Database::PrepareStatement(sql);
-//		std::map<wxString, wxSQLite3Statement>::iterator iter = m_statements.find(sql);
-//		if(iter == m_statements.end()) {
-//			m_statements[sql] = wxSQLite3Database::PrepareStatement(sql);
-//		}
-//
-//		try {
-//			m_statements[sql].Reset();
-//		} catch (...) {
-//		}
-//		return m_statements[sql];
 	}
 };
 
@@ -585,11 +575,13 @@ public:
 	 * @copydoc ITagStorage::GetMacrosDefined
 	 */
 	virtual void GetMacrosDefined(const std::set<std::string>& files, const std::set<wxString>& usedMacros, wxArrayString& defMacros);
-	
+
 	/**
 	 * @brief search for a single match in the database for an entry with a given name
 	 */
 	TagEntryPtr GetTagsByNameLimitOne(const wxString& name);
+	void GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags);
+
 
 };
 

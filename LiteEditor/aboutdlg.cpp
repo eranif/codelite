@@ -49,9 +49,12 @@ AboutDlg::AboutDlg( wxWindow* parent, const wxString &mainTitle )
 	m_htmlWin3->SetPage(wxString::FromUTF8(about_hex));
 	m_buttonOk->SetFocus();
 	
-	wxFileName license(ManagerST::Get()->GetStarupDirectory() + wxFileName::GetPathSeparator() + wxT("LICENSE"));
+	wxFileName license(ManagerST::Get()->GetInstallDir() + wxFileName::GetPathSeparator() + wxT("LICENSE"));
+	
+	wxString licenseFullname = license.GetFullPath();
+	
 	if(license.FileExists()) {
-		wxFFile fp(license.GetFullPath());
+		wxFFile fp(licenseFullname);
 		if(fp.IsOpened()) {
 			wxString content;
 			fp.ReadAll(&content, wxConvUTF8);

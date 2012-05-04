@@ -32,7 +32,7 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
 
 	m_timer2 = new wxTimer(this);
 	m_mousePosTimer = new wxTimer(this);
-	
+
 	Connect(m_timer2->GetId(),        wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
 	Connect(m_mousePosTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnCheckMousePosTimer), NULL, this);
 }
@@ -43,10 +43,10 @@ DisplayVariableDlg::~DisplayVariableDlg()
 
 	m_timer2->Stop();
 	m_mousePosTimer->Stop();
-	
+
 	wxDELETE(m_timer2);
 	wxDELETE(m_mousePosTimer);
-	
+
 	WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
 }
 
@@ -216,15 +216,15 @@ void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 	if(event.GetKeyCode() == WXK_F2) {
 		wxTreeItemId item = m_treeCtrl->GetSelection();
 		if(item.IsOk() && !IsFakeItem(item)) {
-			m_treeCtrl->EditLabel(item);
-			
+			DoEditItem(item);
+
 		} else {
 			HideDialog();
 		}
-		
+
 	} else {
 		HideDialog();
-		
+
 	}
 }
 
@@ -286,7 +286,7 @@ void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
 	menu.Append(XRCID("tip_add_watch"),  _("Add Watch"));
 	menu.Append(XRCID("tip_copy_value"), _("Copy Value to Clipboard"));
 	menu.Append(XRCID("edit_item"),      _("Edit..."));
-	
+
 	menu.Connect(XRCID("tip_add_watch"),  wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
 	menu.Connect(XRCID("tip_copy_value"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
 	menu.Connect(XRCID("edit_item"),      wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(DisplayVariableDlg::OnMenuSelection), NULL, this);
@@ -316,22 +316,22 @@ wxString DisplayVariableDlg::DoGetItemPath(const wxTreeItemId& treeItem)
 		// Are we at root yet?
 		if ( m_treeCtrl->GetRootItem() == item )
 			break;
-		
+
 		// Surround this expression with parenthesiss
 		item = m_treeCtrl->GetItemParent(item);
 	}
-	
+
 	wxString exprWithParentheses;
 	wxArrayString items = ::wxStringTokenize(fullpath, wxT("."), wxTOKEN_STRTOK);
 	for(size_t i=0; i<items.GetCount(); i++) {
 		exprWithParentheses << items.Item(i);
 		exprWithParentheses.Prepend(wxT("(")).Append(wxT(")."));
 	}
-	
+
 	if(!items.IsEmpty()) {
 		exprWithParentheses.RemoveLast();
 	}
-	
+
 	return exprWithParentheses;
 }
 
@@ -367,8 +367,7 @@ void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
 			CopyToClipboard( itemText );
 
 		} else if (e.GetId() == XRCID("edit_item")) {
-			m_itemOldValue = m_treeCtrl->GetItemText(item);
-			m_treeCtrl->EditLabel( item );
+			DoEditItem(item);
 		}
 	}
 }
@@ -416,50 +415,9 @@ void DisplayVariableDlg::DoAdjustPosition()
 	if ( m_keepCurrentPosition ) {
 		// Reset the flag
 		m_keepCurrentPosition = false;
-		return; 
+		return;
 	}
 	Move( ::wxGetMousePosition() );
-}
-
-void DisplayVariableDlg::OnEditLabelEnd(wxTreeEvent& event)
-{
-	if(event.GetLabel().IsEmpty()) {
-		event.Veto();
-		return;
-	}
-
-	event.Skip();
-	if(m_itemOldValue.IsEmpty()) {
-		event.Veto();
-		return;
-	}
-	
-	wxString newExpr = DoGetItemPath(event.GetItem());
-	m_treeCtrl->SetItemText(event.GetItem(), event.GetLabel());
-	
-	// Create a new expression and ask GDB to evaluate it for us
-	wxString typecast = event.GetLabel();
-	if(typecast.Find(m_itemOldValue) == wxNOT_FOUND) {
-		// The new type does not contain the old type, perform a simple re-evaluation
-		newExpr = DoGetItemPath(event.GetItem());
-		
-	} else {
-		typecast.Replace(m_itemOldValue, wxT(""));
-		newExpr.Prepend(wxT("(")).Append(wxT(")"));
-		newExpr.Prepend(typecast);
-	}
-	HideDialog();
-	
-	// When the new tooltip shows, do not move the the dialog position
-	// Incase an error will take place, the flag will be reset
-	m_keepCurrentPosition = true;
-	m_debugger->CreateVariableObject( newExpr, false, DBG_USERR_QUICKWACTH );
-}
-
-void DisplayVariableDlg::OnEditLabelStart(wxTreeEvent& event)
-{
-	m_itemOldValue = m_treeCtrl->GetItemText(event.GetItem());
-	event.Skip();
 }
 
 void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEvent& event)
@@ -473,7 +431,7 @@ void DisplayVariableDlg::OnCheckMousePosTimer(wxTimerEvent& e)
 	wxRect rect = GetScreenRect().Inflate(20, 30);
 	bool mouseLeftWidow = !rect.Contains( ::wxGetMousePosition() );
 	if(mouseLeftWidow) {
-		
+
 		wxMouseState state = wxGetMouseState();
 		// This is to fix a 'MouseCapture' bug on Linux while leaving the mouse Window
 		// and mouse button is clicked and scrolling the scrollbar (H or Vertical)
@@ -486,7 +444,38 @@ void DisplayVariableDlg::OnCheckMousePosTimer(wxTimerEvent& e)
 			// Don't Hide, just restart the timer
 			return;
 		}
-		
+
 		HideDialog();
 	}
+}
+
+void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
+{
+	if(item.IsOk() == false)
+		return;
+
+	wxString oldText = m_treeCtrl->GetItemText(item);
+	wxString newExpr = wxGetTextFromUser(_("Edit Expression"), _("Edit Expression"), oldText, this);
+	if(newExpr.IsEmpty())
+		return;
+
+	m_treeCtrl->SetItemText(item, newExpr);
+
+	// Create a new expression and ask GDB to evaluate it for us
+	wxString typecast = newExpr;
+	if(typecast.Find(oldText) == wxNOT_FOUND) {
+		// The new type does not contain the old type, perform a simple re-evaluation
+		newExpr = DoGetItemPath(item);
+
+	} else {
+		typecast.Replace(oldText, wxT(""));
+		newExpr.Prepend(wxT("(")).Append(wxT(")"));
+		newExpr.Prepend(typecast);
+	}
+	HideDialog();
+
+	// When the new tooltip shows, do not move the the dialog position
+	// Incase an error will take place, the flag will be reset
+	m_keepCurrentPosition = true;
+	m_debugger->CreateVariableObject( newExpr, false, DBG_USERR_QUICKWACTH);
 }

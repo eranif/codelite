@@ -31,11 +31,12 @@ public:
 	wxString                         m_itemOldValue;
 	bool                             m_keepCurrentPosition;
 	
+	
 protected:
 	bool     IsFakeItem(const wxTreeItemId &item);
 	wxString DoGetItemPath(const wxTreeItemId &item);
 	void     DoAdjustPosition();
-
+	void     DoEditItem(const wxTreeItemId &item);
 protected:
 	// Handlers for NewQuickWatch events.
 	void OnExpandItem  ( wxTreeEvent& event );
@@ -51,10 +52,6 @@ protected:
 	void OnItemMenu(wxTreeEvent& event);
 	void OnMenuSelection(wxCommandEvent &e);
 	void OnMouseMove( wxMouseEvent& event );
-	void OnEditLabelEnd(wxTreeEvent& event);
-	void OnEditLabelStart(wxTreeEvent& event);
-
-
 
 public:
 	/** Constructor */

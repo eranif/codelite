@@ -11,6 +11,8 @@
 #include "globals.h"
 #include <wx/cursor.h>
 
+static wxRect s_Rect;
+
 class QWTreeData : public wxTreeItemData
 {
 public:
@@ -232,8 +234,8 @@ void DisplayVariableDlg::ShowDialog(bool center)
 {
 	// Pass the focus back to the main editor
 	if ( !center ) {
-		DoAdjustPosition();
 		wxDialog::Show();
+		DoAdjustPosition();
 
 	} else {
 		Centre();
@@ -413,8 +415,12 @@ void DisplayVariableDlg::OnTimer2(wxTimerEvent& e)
 void DisplayVariableDlg::DoAdjustPosition()
 {
 	if ( m_keepCurrentPosition ) {
+		
 		// Reset the flag
 		m_keepCurrentPosition = false;
+		Move(s_Rect.GetTopLeft());
+		
+		s_Rect = wxRect();
 		return;
 	}
 	Move( ::wxGetMousePosition() );
@@ -455,23 +461,33 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 		return;
 
 	wxString oldText = m_treeCtrl->GetItemText(item);
-	wxString newExpr = wxGetTextFromUser(_("Edit Expression"), _("Edit Expression"), oldText, this);
-	if(newExpr.IsEmpty())
+	wxString newText = wxGetTextFromUser(_("Edit Expression"), _("Edit Expression"), oldText, this);
+	if(newText.IsEmpty())
 		return;
-
-	m_treeCtrl->SetItemText(item, newExpr);
+	
+	wxString newExpr = DoGetItemPath(item);
+	m_treeCtrl->SetItemText(item, newText);
 
 	// Create a new expression and ask GDB to evaluate it for us
-	wxString typecast = newExpr;
+	wxString typecast = newText;
 	if(typecast.Find(oldText) == wxNOT_FOUND) {
 		// The new type does not contain the old type, perform a simple re-evaluation
 		newExpr = DoGetItemPath(item);
 
 	} else {
 		typecast.Replace(oldText, wxT(""));
-		newExpr.Prepend(wxT("(")).Append(wxT(")"));
+		typecast.Trim().Trim(false);
+		
+		if(!typecast.StartsWith(wxT("(")))
+			typecast.Prepend(wxT("("));
+		
+		if(!typecast.EndsWith(wxT(")")))
+			typecast.Append(wxT("("));
+			
 		newExpr.Prepend(typecast);
 	}
+	
+	s_Rect = GetScreenRect();
 	HideDialog();
 
 	// When the new tooltip shows, do not move the the dialog position

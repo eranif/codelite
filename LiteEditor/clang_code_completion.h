@@ -62,6 +62,9 @@ protected:
 	void OnAllEditorsClosing(wxCommandEvent &e);
 	void OnAllEditorsClosed(wxCommandEvent &e);
 	
+	void OnBuildStarted(wxCommandEvent &e);
+	void OnBuildEnded(wxCommandEvent &e);
+	
 private:
 	ClangCodeCompletion();
 	~ClangCodeCompletion();

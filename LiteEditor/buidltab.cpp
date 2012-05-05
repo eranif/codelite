@@ -488,6 +488,7 @@ void BuildTab::OnRepeatOutputUI ( wxUpdateUIEvent& e )
 
 void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 {
+	e.Skip();
     m_building = true;
 
     // Clear all compiler parsing information
@@ -552,11 +553,13 @@ void BuildTab::OnBuildStarted ( wxCommandEvent &e )
 
 void BuildTab::OnBuildAddLine ( wxCommandEvent &e )
 {
+	e.Skip();
     AppendText ( e.GetString() );
 }
 
 void BuildTab::OnBuildEnded ( wxCommandEvent &e )
 {
+	e.Skip();
     m_building = false;
     AppendText (wxGetTranslation(BUILD_END_MSG));
 

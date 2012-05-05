@@ -156,6 +156,14 @@ BuildConfigPtr ProjectSettings::GetNextBuildConfiguration(ProjectSettingsCookie 
 
 void ProjectSettings::SetBuildConfiguration(const BuildConfigPtr bc)
 {
+	if(!bc) return;
+	
+	// delete the old build configuration pointer if any
+	std::map<wxString, BuildConfigPtr>::iterator iter = m_configs.find(bc->GetName());
+	if(iter != m_configs.end())
+		m_configs.erase(iter);
+	
+	// replace with the new one
 	m_configs[bc->GetName()] = bc;
 }
 

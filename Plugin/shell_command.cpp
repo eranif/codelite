@@ -68,7 +68,12 @@ void ShellCommand::SendStartMsg()
 {
     wxCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
     event.SetString(m_info.GetSynopsis());
-    EventNotifier::Get()->AddPendingEvent(event);
+	
+	BuildEventDetails *eventData = new BuildEventDetails();
+	eventData->SetProjectName(m_info.GetProject());
+	eventData->SetConfiguration(m_info.GetConfiguration());
+	event.SetClientObject(eventData);
+	EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void ShellCommand::SendEndMsg()

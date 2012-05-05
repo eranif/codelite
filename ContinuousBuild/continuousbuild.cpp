@@ -198,6 +198,13 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	}
 
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_STARTED);
+	
+	// Associate the build event details
+	BuildEventDetails *eventData = new BuildEventDetails();
+	eventData->SetProjectName(projectName);
+	eventData->SetConfiguration(bldConf->GetName());
+	event.SetClientObject(eventData);
+	// Fire it up
 	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
 	
 	EnvSetter env(NULL, NULL, projectName);

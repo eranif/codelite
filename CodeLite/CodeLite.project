@@ -35,6 +35,8 @@
     <File Name="parsedtoken.cpp"/>
     <File Name="file_logger.h"/>
     <File Name="file_logger.cpp"/>
+    <File Name="compiler_command_line_parser.cpp"/>
+    <File Name="compiler_command_line_parser.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
@@ -188,7 +190,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="-g;-Wall" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -226,6 +228,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2">
@@ -266,6 +273,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
@@ -305,6 +317,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
   </Settings>
 </CodeLite_Project>

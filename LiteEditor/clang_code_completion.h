@@ -9,6 +9,7 @@
 #include "entry.h"
 #include "clang_driver.h"
 #include "clang_output_parser_api.h"
+#include <set>
 
 class IEditor;
 class IManager;
@@ -22,17 +23,28 @@ class IManager;
  */
 class ClangCodeCompletion : public wxEvtHandler
 {
+public:
+	typedef std::set<wxString> Set_t;
 
+protected:
 	static ClangCodeCompletion* ms_instance;
 	ClangDriver                 m_clang;
 	bool                        m_allEditorsAreClosing;
+	Set_t                       m_compilerSearchPaths;
+	Set_t                       m_compilerMacros;
+	bool                        m_parseBuildOutput;
+	wxString                    m_projectCompiled;
+	wxString                    m_configurationCompiled;
+	wxString                    m_processOutput;
 	
 	friend class ClangDriver;
-
 public:
 	static ClangCodeCompletion* Instance();
 	static void Release();
 
+	bool IsParseBuildOutput() const {
+		return m_parseBuildOutput;
+	}
 	/**
 	 * @brief perform codecompletion in the editor
 	 */
@@ -52,19 +64,21 @@ public:
 	void CancelCodeComplete();
 	void ClearCache();
 	bool IsCacheEmpty();
-	
+
 protected:
 	void DoCleanUp();
-
+	wxString DoGetCompiledLine() const;
+	
 	// Event handling
 	void OnFileLoaded(wxCommandEvent &e);
 	void OnFileSaved(wxCommandEvent &e);
 	void OnAllEditorsClosing(wxCommandEvent &e);
 	void OnAllEditorsClosed(wxCommandEvent &e);
-	
+
 	void OnBuildStarted(wxCommandEvent &e);
 	void OnBuildEnded(wxCommandEvent &e);
-	
+	void OnBuildOutput(wxCommandEvent &e);
+
 private:
 	ClangCodeCompletion();
 	~ClangCodeCompletion();

@@ -697,6 +697,8 @@
       <File Name="clang_result_parser.cpp"/>
       <File Name="clang_result_parser.h"/>
     </VirtualDirectory>
+    <File Name="clang_local_paths.h"/>
+    <File Name="clang_local_paths.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

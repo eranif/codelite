@@ -631,3 +631,47 @@ bool Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
 	}
 	return false;
 }
+
+bool Archive::Read(const wxString& name, std::set<wxString>& s)
+{
+	if (!m_root) {
+		return false;
+	}
+
+	wxXmlNode *node = FindNodeByName(m_root, wxT("std_string_set"), name);
+	if (node) {
+		//fill the output array with the values
+		s.clear();
+		wxXmlNode *child = node->GetChildren();
+		while (child) {
+			if (child->GetName() == wxT("SetEntry")) {
+				wxString value;
+				value = child->GetNodeContent();
+				s.insert(value);
+			}
+			child = child->GetNext();
+		}
+		return true;
+	}
+	return false;
+}
+
+bool Archive::Write(const wxString& name, const std::set<wxString>& s)
+{
+	if (!m_root) {
+		return false;
+	}
+
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("std_string_set"));
+	m_root->AddChild(node);
+	node->AddProperty(wxT("Name"), name);
+
+	//add an entry for each wxString in the array
+	std::set<wxString>::const_iterator iter = s.begin();
+	for ( ; iter != s.end(); iter++ ) {
+		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SetEntry"));
+		node->AddChild(child);
+		SetNodeContent(child, *iter);
+	}
+	return true;
+}

@@ -32,6 +32,7 @@
 #include <wx/gdicmn.h>
 #include <vector>
 #include <map>
+#include <set>
 #include "codelite_exports.h"
 
 class wxXmlNode;
@@ -79,6 +80,7 @@ public:
 	bool Write(const wxString &name, const wxColour &colour);
 	bool Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
 	bool Write(const wxString &name, const std::map<wxString, wxString> &strinMap);
+	bool Write(const wxString &name, const std::set<wxString> &s);
 	bool WriteCData(const wxString &name, const wxString &value);
 
 	//--------------------
@@ -98,6 +100,7 @@ public:
 	bool Read(const wxString &name, wxColour &colour);
 	bool Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr);
 	bool Read(const wxString &name, std::map<wxString, wxString> &strinMap);
+	bool Read(const wxString &name, std::set<wxString> &s);
 	bool ReadCData(const wxString &name, wxString &value);
 
 private:

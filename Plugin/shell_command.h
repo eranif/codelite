@@ -39,6 +39,35 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED;
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
 
 /**
+ * @class BuildEventDetails
+ * @brief associated data that (ClientData) which is sent with the 
+ * wxEVT_SHELL_COMMAND_STARTED and wxEVT_SHELL_COMMAND_STARTED_NOCLEAN events
+ */
+class WXDLLIMPEXP_SDK BuildEventDetails : public wxClientData
+{
+	wxString m_projectName;
+	wxString m_configuration;
+
+public:
+	BuildEventDetails() {}
+	virtual ~BuildEventDetails() {}
+
+
+	void SetConfiguration(const wxString& configuration) {
+		this->m_configuration = configuration;
+	}
+	void SetProjectName(const wxString& projectName) {
+		this->m_projectName = projectName;
+	}
+	const wxString& GetConfiguration() const {
+		return m_configuration;
+	}
+	const wxString& GetProjectName() const {
+		return m_projectName;
+	}
+};
+
+/**
  * \class CompilerAction
  * \brief
  * \author Eran

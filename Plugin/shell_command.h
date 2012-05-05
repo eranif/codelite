@@ -48,7 +48,6 @@ class WXDLLIMPEXP_SDK ShellCommand : public wxEvtHandler
 {
 protected:
 	IProcess*     m_proc;
-	wxEvtHandler *m_owner;
 	wxArrayString m_lines;
 	QueueCommand  m_info;
 
@@ -80,8 +79,7 @@ public:
 	}
 public:
 	//construct a compiler action
-	// \param owner the window owner for this action
-	ShellCommand(wxEvtHandler *owner, const QueueCommand &buildInfo);
+	ShellCommand(const QueueCommand &buildInfo);
 
 	virtual ~ShellCommand() {}
 	virtual void Process(IManager *manager) = 0;

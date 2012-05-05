@@ -40,8 +40,8 @@
 #include "dirsaver.h"
 #include "plugin.h"
 
-CompileRequest::CompileRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly, bool preprocessOnly)
-		: ShellCommand(owner, buildInfo)
+CompileRequest::CompileRequest(const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly, bool preprocessOnly)
+		: ShellCommand(buildInfo)
 		, m_fileName(fileName)
 		, m_premakeOnly(runPremakeOnly)
 		, m_preprocessOnly(preprocessOnly)

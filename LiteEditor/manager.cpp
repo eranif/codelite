@@ -2819,8 +2819,7 @@ void Manager::RunCustomPreMakeCommand ( const wxString &project )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
-	m_shellProcess = new CompileRequest ( clMainFrame::Get(),  //owner window
-	                                      info,
+	m_shellProcess = new CompileRequest ( info,
 	                                      wxEmptyString, //no file name (valid only for build file only)
 	                                      true );        //run premake step only
 	m_shellProcess->Process(PluginManager::Get());
@@ -2860,10 +2859,10 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
 	}
 	switch ( info.GetKind() ) {
 	case QueueCommand::Build:
-		m_shellProcess = new CompileRequest ( clMainFrame::Get(), info, fileName, false, preprocessOnly );
+		m_shellProcess = new CompileRequest ( info, fileName, false, preprocessOnly );
 		break;
 	case  QueueCommand::CustomBuild:
-		m_shellProcess = new CustomBuildRequest ( clMainFrame::Get(), info, fileName );
+		m_shellProcess = new CustomBuildRequest ( info, fileName );
 		break;
 	default:
 		m_shellProcess = NULL;
@@ -2898,7 +2897,7 @@ void Manager::DoBuildProject ( const QueueCommand& buildInfo )
 		delete m_shellProcess;
 	}
 
-	m_shellProcess = new CompileRequest ( clMainFrame::Get(), buildInfo );
+	m_shellProcess = new CompileRequest ( buildInfo );
 	m_shellProcess->Process(PluginManager::Get());
 }
 
@@ -2911,7 +2910,7 @@ void Manager::DoCleanProject ( const QueueCommand& buildInfo )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
-	m_shellProcess = new CleanRequest ( clMainFrame::Get(), buildInfo );
+	m_shellProcess = new CleanRequest ( buildInfo );
 	m_shellProcess->Process(PluginManager::Get());
 }
 
@@ -2936,7 +2935,7 @@ void Manager::DoCustomBuild ( const QueueCommand& buildInfo )
 	if ( m_shellProcess ) {
 		delete m_shellProcess;
 	}
-	m_shellProcess = new CustomBuildRequest ( clMainFrame::Get(), buildInfo, wxEmptyString );
+	m_shellProcess = new CustomBuildRequest ( buildInfo, wxEmptyString );
 	m_shellProcess->Process( PluginManager::Get() );
 }
 

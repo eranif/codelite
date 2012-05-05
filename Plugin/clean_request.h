@@ -40,7 +40,7 @@ public:
 	 * its dependencies as appeard in the build order dialog
 	 * \param projectName the selected project to build
 	 */
-	CleanRequest(wxEvtHandler *owner, const QueueCommand &info);
+	CleanRequest(const QueueCommand &info);
 
 	///dtor
 	virtual ~CleanRequest();

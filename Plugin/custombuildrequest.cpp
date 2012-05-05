@@ -39,8 +39,8 @@
 #include "plugin.h"
 #include "macros.h"
 
-CustomBuildRequest::CustomBuildRequest(wxEvtHandler *owner, const QueueCommand &buildInfo, const wxString &fileName)
-		: ShellCommand(owner, buildInfo)
+CustomBuildRequest::CustomBuildRequest(const QueueCommand &buildInfo, const wxString &fileName)
+		: ShellCommand(buildInfo)
 		, m_fileName(fileName)
 {
 }

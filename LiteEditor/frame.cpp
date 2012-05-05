@@ -537,7 +537,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,                   clMainFrame::OnDatabaseUpgrade )
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE_INTER,             clMainFrame::OnDatabaseUpgradeInternally)
 	EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU,          clMainFrame::OnRefreshPerspectiveMenu)
-	EVT_COMMAND(wxID_ANY, wxEVT_SHELL_COMMAND_PROCESS_ENDED,       clMainFrame::OnBuildEnded)
 	EVT_MENU   (XRCID("update_num_builders_count"),                clMainFrame::OnUpdateNumberOfBuildProcesses)
 	EVT_MENU   (XRCID("goto_codelite_download_url"),               clMainFrame::OnGotoCodeLiteDownloadPage)
 
@@ -615,8 +614,8 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 	wxTheApp->Connect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
-	//wxTheApp->Connect(wxEVT_CLANG_PCH_CACHE_STARTED, wxCommandEventHandler(clMainFrame::OnPchCacheStarted),          NULL, this);
-	//wxTheApp->Connect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(clMainFrame::OnPchCacheEnded),            NULL, this);
+	
+	EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
 }
 
 clMainFrame::~clMainFrame(void)
@@ -629,9 +628,8 @@ clMainFrame::~clMainFrame(void)
 	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
-	//wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_STARTED, wxCommandEventHandler(clMainFrame::OnPchCacheStarted),          NULL, this);
-	//wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(clMainFrame::OnPchCacheEnded),            NULL, this);
-
+	
+	EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
 
 	delete m_timer;
 	delete m_statusbarTimer;

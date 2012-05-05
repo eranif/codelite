@@ -28,6 +28,7 @@
 #include "globals.h"
 #include "workspace.h"
 #include "shell_command.h"
+#include "event_notifier.h"
 #include "wx/tokenzr.h"
 #include "asyncprocess.h"
 
@@ -41,22 +42,18 @@ EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ShellCommand::OnProcessOutput)
 EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ShellCommand::OnProcessTerminated)
 END_EVENT_TABLE()
 
-ShellCommand::ShellCommand(wxEvtHandler *owner, const QueueCommand &buildInfo)
+ShellCommand::ShellCommand(const QueueCommand &buildInfo)
 		: m_proc(NULL)
-		, m_owner(owner)
 		, m_info(buildInfo)
 {
 }
 
 void ShellCommand::AppendLine(const wxString &line)
 {
-	if ( !m_owner)
-		return;
-
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
 	event.SetString(line);
     event.SetInt(m_info.GetKind());
-	m_owner->AddPendingEvent(event);
+	EventNotifier::Get()->AddPendingEvent(event);
 
 	m_lines.Add(line);
 }
@@ -69,23 +66,16 @@ void ShellCommand::Stop()
 
 void ShellCommand::SendStartMsg()
 {
-	if ( !m_owner)
-		return;
-
-    wxCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED
-                                              : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
+    wxCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
     event.SetString(m_info.GetSynopsis());
-    m_owner->AddPendingEvent(event);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void ShellCommand::SendEndMsg()
 {
-	if ( !m_owner)
-		return;
-
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
     event.SetString(m_info.GetSynopsis());
-	m_owner->AddPendingEvent(event);
+	EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void ShellCommand::DoPrintOutput(const wxString &out)

@@ -39,8 +39,8 @@
 #include "workspace.h"
 #include "plugin.h"
 
-CleanRequest::CleanRequest(wxEvtHandler *owner, const QueueCommand &info)
-		: ShellCommand(owner, info)
+CleanRequest::CleanRequest(const QueueCommand &info)
+		: ShellCommand(info)
 {
 }
 

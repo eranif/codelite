@@ -40,7 +40,7 @@ public:
 	 * \param projectName the selected project to build
 	 * \param configurationName the workspace selected configuration
 	 */
-	CompileRequest(	wxEvtHandler *owner, const QueueCommand &buildInfo,
+	CompileRequest( const QueueCommand &buildInfo,
 					const wxString &fileName = wxEmptyString,
 					bool runPremakeOnly = false,
                     bool preprocessOnly = false

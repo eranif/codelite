@@ -6,17 +6,22 @@
 #include "codelite_exports.h"
 
 
-class WXDLLIMPEXP_CL CommandLineParser
+class WXDLLIMPEXP_CL CompilerCommandLineParser
 {
+public:
+	typedef std::set<wxString> Set_t;
+
+protected:
 	wxArrayString m_includes;
 	wxArrayString m_macros;
-	int m_argc;
-	char **m_argv;
+	int           m_argc;
+	char **       m_argv;
+	wxString      m_diretory;
 
 public:
-	CommandLineParser(const wxString &cmdline);
-	virtual ~CommandLineParser();
-	
+	CompilerCommandLineParser(const wxString &cmdline);
+	virtual ~CompilerCommandLineParser();
+
 	wxString GetCompileLine() const;
 	void SetArgc(int argc) {
 		this->m_argc = argc;
@@ -42,6 +47,9 @@ public:
 
 	int GetArgc() const {
 		return m_argc;
+	}
+	const wxString& GetDiretory() const {
+		return m_diretory;
 	}
 };
 

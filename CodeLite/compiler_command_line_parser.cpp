@@ -131,9 +131,10 @@ char **buildargv (const char *input, int &argc)
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
-CommandLineParser::CommandLineParser(const wxString &cmdline)
+CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
 {
 	m_argc = 0;
+	m_argv = NULL;
 	
 	wxString c = cmdline;
 	
@@ -144,29 +145,38 @@ CommandLineParser::CommandLineParser(const wxString &cmdline)
 	c.Replace(wxT("\\"), wxT("/"));
 	c.Replace(wxT("@@GERESH@@"), wxT("\\\""));
 	
-	m_argv = buildargv(c.mb_str(wxConvUTF8).data(), m_argc);
+	// Check for makefile directory changes lines
+	if(cmdline.Contains(wxT("Entering directory `"))) {
+		wxString currentDir = cmdline.AfterFirst(wxT('`'));
+		m_diretory = currentDir.BeforeLast(wxT('\''));
 
-	for(int i=0; i<m_argc; i++) {
-		wxString opt = wxString(m_argv[i], wxConvUTF8);
-		opt.Trim().Trim(false);
+	} else {
+	
+		m_argv = buildargv(c.mb_str(wxConvUTF8).data(), m_argc);
+
+		for(int i=0; i<m_argc; i++) {
+			wxString opt = wxString(m_argv[i], wxConvUTF8);
+			opt.Trim().Trim(false);
+			
+			wxString rest;
+			if(opt.StartsWith(wxT("-I"), &rest))
+				m_includes.Add(rest);
+			
+			else if(opt.StartsWith(wxT("-D"), &rest))
+				m_macros.Add(rest);
+		}
 		
-		wxString rest;
-		if(opt.StartsWith(wxT("-I"), &rest))
-			m_includes.Add(rest);
-		
-		if(opt.StartsWith(wxT("-D"), &rest))
-			m_macros.Add(rest);
 	}
 }
 
-CommandLineParser::~CommandLineParser()
+CompilerCommandLineParser::~CompilerCommandLineParser()
 {
 	freeargv(m_argv);
 	m_argv = NULL;
 	m_argc = 0;
 }
 
-wxString CommandLineParser::GetCompileLine() const
+wxString CompilerCommandLineParser::GetCompileLine() const
 {
 	wxString s;
 	for(size_t i=0; i<m_includes.GetCount(); i++) {

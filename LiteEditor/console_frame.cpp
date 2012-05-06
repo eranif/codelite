@@ -6,7 +6,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include <wx/app.h>
-#include "console_frame.h"
+#include "console_frame.h" 
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "plugin.h"
@@ -36,7 +36,7 @@ ConsoleFrame::ConsoleFrame( wxWindow* parent, wxWindowID id )
 }
 
 ConsoleFrame::~ConsoleFrame()
-{
+{ 
 	// Disconnect Events
 	EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(ConsoleFrame::OnDebuggerEnded), NULL, this);
 	//wxTheApp->Disconnect(wxEVT_DEBUG_EDITOR_GOT_CONTROL,  wxCommandEventHandler(ConsoleFrame::OnEditorGotControl), NULL, this);

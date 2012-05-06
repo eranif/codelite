@@ -67,6 +67,8 @@ public:
 
 protected:
 	void DoCleanUp();
+	void DoProcessOutput();
+	
 	wxString DoGetCompiledLine() const;
 	
 	// Event handling

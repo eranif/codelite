@@ -197,23 +197,12 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
 	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_projectCompiled, m_configurationCompiled);
 	ProjectPtr     project = WorkspaceST::Get()->FindProjectByName(m_projectCompiled, errMsg);
 	if(!bldConf || !project) return;
-	
+
 	// Parse the output
 	m_compilerSearchPaths.clear();
 	m_compilerMacros.clear();
-	
-	wxArrayString lines = ::wxStringTokenize(m_processOutput, wxT("\r\n"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<lines.GetCount(); i++) {
-		CommandLineParser cmdLineParser(lines.Item(i));
-		// Collect the macros / includes
-		for(size_t i=0; i<cmdLineParser.GetIncludes().GetCount(); i++) {
-			m_compilerSearchPaths.insert(cmdLineParser.GetIncludes().Item(i));
-		}
-		for(size_t i=0; i<cmdLineParser.GetMacros().GetCount(); i++) {
-			m_compilerMacros.insert(cmdLineParser.GetMacros().Item(i));
-		}
-	}
-	
+	DoProcessOutput();
+
 	ClangLocalPaths clangLocalInfo(project->GetFileName());
 	if(m_compilerMacros.empty() == false) {
 		clangLocalInfo.Options(m_configurationCompiled).SetMacros(m_compilerMacros);
@@ -222,7 +211,7 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
 		clangLocalInfo.Options(m_configurationCompiled).SetSearchPaths(m_compilerSearchPaths);
 	}
 	clangLocalInfo.Save();
-	
+
 	m_projectCompiled.Clear();
 	m_configurationCompiled.Clear();
 	e.Skip();
@@ -273,7 +262,7 @@ wxString ClangCodeCompletion::DoGetCompiledLine() const
 	for(; iter != m_compilerSearchPaths.end(); iter++) {
 		s << wxT("-I") << *iter << wxT(" ");
 	}
-	
+
 	iter = m_compilerMacros.begin();
 	for(; iter != m_compilerMacros.end(); iter++) {
 		s << wxT("-D") << *iter << wxT(" ");
@@ -282,5 +271,51 @@ wxString ClangCodeCompletion::DoGetCompiledLine() const
 	s.Trim().Trim(false);
 	return s;
 }
+void ClangCodeCompletion::DoProcessOutput()
+{
+	Set_t directories;
+	
+	wxArrayString lines = ::wxStringTokenize(m_processOutput, wxT("\r\n"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		CompilerCommandLineParser cmdLineParser(lines.Item(i));
+		// Collect the macros / includes
+		for(size_t i=0; i<cmdLineParser.GetIncludes().GetCount(); i++) {
+			m_compilerSearchPaths.insert(cmdLineParser.GetIncludes().Item(i));
+		}
+		for(size_t i=0; i<cmdLineParser.GetMacros().GetCount(); i++) {
+			m_compilerMacros.insert(cmdLineParser.GetMacros().Item(i));
+		}
+		
+		if(cmdLineParser.GetDiretory().IsEmpty() == false) {
+			directories.insert(cmdLineParser.GetDiretory());
+		}
+	}
+	
+	// Convert the paths from relative path to full path
+	Set_t fullPaths;
+	Set_t::const_iterator iter = m_compilerSearchPaths.begin();
+	for(; iter != m_compilerSearchPaths.end(); iter++) {
+		bool convertedToFullpath = false;
+		Set_t::const_iterator dirIter = directories.begin();
+		for(; dirIter != directories.end(); dirIter++) {
+			wxFileName fn(*iter, wxT(""));
+			if(fn.MakeAbsolute(*dirIter) && fn.DirExists()) {
+				fullPaths.insert(fn.GetFullPath());
+				//wxPrintf(wxT("Adding full path: %s\n"), fn.GetFullPath().c_str());
+				convertedToFullpath = true;
+				break;
+			}
+		}
+		
+		if(!convertedToFullpath) {
+			//wxPrintf(wxT("Adding relative path: %s\n"), iter->c_str());
+			fullPaths.insert(*iter);
+		}
+	}
+	
+	m_compilerSearchPaths = fullPaths;
+}
 
 #endif // HAS_LIBCLANG
+
+

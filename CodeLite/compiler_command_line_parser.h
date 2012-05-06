@@ -3,6 +3,7 @@
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
+#include <set>
 #include "codelite_exports.h"
 
 

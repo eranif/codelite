@@ -38,6 +38,15 @@ ClangLocalPaths::ClangLocalPaths(const wxFileName &projectFile)
 	}
 
 	m_isOk = m_doc.Load(m_filename.GetFullPath());
+	if(!m_isOk) {
+		wxFFile fp(m_filename.GetFullPath(), wxT("w+b"));
+		if(fp.IsOpened()) {
+			fp.Write(wxT("<ClangCodeCompletion/>"));
+			fp.Close();
+		}
+		
+		m_isOk = m_doc.Load(m_filename.GetFullPath());
+	}
 	
 	if(m_isOk) {
 		wxXmlNode *root = m_doc.GetRoot();

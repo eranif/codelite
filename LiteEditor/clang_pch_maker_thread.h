@@ -7,6 +7,7 @@
 #include "clangpch_cache.h"
 #include <clang-c/Index.h>
 #include <set>
+#include "fileextmanager.h"
 
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   ;
@@ -97,7 +98,7 @@ public:
 	virtual ~ClangWorkerThread();
 
 protected:
-	char**             MakeCommandLine(const wxString& command, int &argc, bool isHeader);
+	char**             MakeCommandLine(const wxString& command, int &argc, FileExtManager::FileType fileType);
 	void               DoCacheResult(CXTranslationUnit TU, const wxString &filename);
 	std::set<wxString> DoGetUsedMacros(const wxString &filename);
 	void DoSetStatusMsg(const wxString &msg);

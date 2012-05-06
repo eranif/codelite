@@ -134,8 +134,6 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 
 	FileExtManager::FileType type = FileExtManager::GetType(task->GetFileName());
-	bool isSource = (type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp);
-
 	std::string c_dirtyBuffer = cstr(task->GetDirtyBuffer());
 	std::string c_filename    = cstr(task->GetFileName());
 
@@ -149,7 +147,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		DoSetStatusMsg(wxString::Format(wxT("clang: parsing file %s..."), fn.GetFullName().c_str()));
 		
 		int argc(0);
-		char **argv = MakeCommandLine(task->GetCompilationArgs(), argc, !isSource);
+		char **argv = MakeCommandLine(task->GetCompilationArgs(), argc, type);
 
 		for(int i=0; i<argc; i++) {
 			CL_DEBUG(wxT("Command Line Argument: %s"), wxString(argv[i], wxConvUTF8).c_str());
@@ -369,13 +367,19 @@ bool ClangWorkerThread::IsCacheEmpty()
 	return m_cache.IsEmpty();
 }
 
-char** ClangWorkerThread::MakeCommandLine(const wxString& command, int& argc, bool isHeader)
+char** ClangWorkerThread::MakeCommandLine(const wxString& command, int& argc, FileExtManager::FileType fileType)
 {
+	bool isHeader = !(fileType == FileExtManager::TypeSourceC || fileType == FileExtManager::TypeSourceCpp);
 	wxArrayString tokens = wxStringTokenize(command, wxT(" \t\n\r"), wxTOKEN_STRTOK);
 	if(isHeader) {
 		tokens.Add(wxT("-x"));
 		tokens.Add(wxT("c++-header"));
 	}
+	
+	if(fileType == FileExtManager::TypeSourceC) {
+		tokens.Add(wxT("-std=c99"));
+	}
+	
 	tokens.Add(wxT("-w"));
 	tokens.Add(wxT("-ferror-limit=1000"));
 	argc = tokens.GetCount();

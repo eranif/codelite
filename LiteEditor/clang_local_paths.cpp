@@ -16,6 +16,16 @@ void ClangCodeCompletionOptions::Serialize(Archive& arch)
 	arch.Write(wxT("m_searchPaths"), m_searchPaths);
 }
 
+void ClangCodeCompletionOptions::UpdateSearchPaths(const Set_t& searchPaths)
+{
+	m_searchPaths.insert(searchPaths.begin(), searchPaths.end());
+}
+
+void ClangCodeCompletionOptions::UpdateMacros(const Set_t& macros)
+{
+	m_macros.insert(macros.begin(), macros.end());
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -44,20 +54,20 @@ ClangLocalPaths::ClangLocalPaths(const wxFileName &projectFile)
 			fp.Write(wxT("<ClangCodeCompletion/>"));
 			fp.Close();
 		}
-		
+
 		m_isOk = m_doc.Load(m_filename.GetFullPath());
 	}
-	
+
 	if(m_isOk) {
 		wxXmlNode *root = m_doc.GetRoot();
 		wxXmlNode *child = root->GetChildren();
 		while ( child ) {
-			
+
 			if(child->GetName() == wxT("Configuration")) {
 				wxString confName;
 				confName = child->GetPropVal(wxT("Name"), wxEmptyString);
 				ClangCodeCompletionOptions c;
-				
+
 				Archive ar;
 				ar.SetXmlNode(child);
 				c.DeSerialize(ar);
@@ -76,19 +86,19 @@ ClangLocalPaths::~ClangLocalPaths()
 void ClangLocalPaths::Save()
 {
 	if(!m_isOk) return;
-	
+
 	// Delete all XML
 	wxXmlNode *root = m_doc.GetRoot();
 	wxXmlNode *child = root->GetChildren();
 	while (child) {
 		wxXmlNode *n = child->GetNext();
-		
+
 		root->RemoveChild(child);
 		delete child;
-		
+
 		child = n;
 	}
-	
+
 	Map_t::iterator iter = m_confOptions.begin();
 	for(; iter != m_confOptions.end(); iter++) {
 		wxXmlNode *node = new wxXmlNode(wxXML_ELEMENT_NODE, wxT("Configuration"));
@@ -98,7 +108,7 @@ void ClangLocalPaths::Save()
 		iter->second.Serialize(arch);
 		root->AddChild(node);
 	}
-	
+
 	m_doc.Save(m_filename.GetFullPath());
 }
 

@@ -204,13 +204,19 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
 	DoProcessOutput();
 
 	ClangLocalPaths clangLocalInfo(project->GetFileName());
+	bool saveRequired = false;
 	if(m_compilerMacros.empty() == false) {
-		clangLocalInfo.Options(m_configurationCompiled).SetMacros(m_compilerMacros);
+		clangLocalInfo.Options(m_configurationCompiled).UpdateMacros(m_compilerMacros);
+		saveRequired = true;
 	}
 	if(m_compilerSearchPaths.empty() == false) {
-		clangLocalInfo.Options(m_configurationCompiled).SetSearchPaths(m_compilerSearchPaths);
+		clangLocalInfo.Options(m_configurationCompiled).UpdateSearchPaths(m_compilerSearchPaths);
+		saveRequired = true;
 	}
-	clangLocalInfo.Save();
+	
+	if(saveRequired) {
+		clangLocalInfo.Save();
+	}
 
 	m_projectCompiled.Clear();
 	m_configurationCompiled.Clear();

@@ -67,9 +67,6 @@ public:
 
 protected:
 	void DoCleanUp();
-	void DoProcessOutput();
-	
-	wxString DoGetCompiledLine() const;
 	
 	// Event handling
 	void OnFileLoaded(wxCommandEvent &e);
@@ -80,7 +77,7 @@ protected:
 	void OnBuildStarted(wxCommandEvent &e);
 	void OnBuildEnded(wxCommandEvent &e);
 	void OnBuildOutput(wxCommandEvent &e);
-
+	void OnClangPathResolved(wxCommandEvent &e);
 private:
 	ClangCodeCompletion();
 	~ClangCodeCompletion();

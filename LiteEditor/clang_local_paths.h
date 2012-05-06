@@ -1,6 +1,8 @@
 #ifndef CLANGLOCALPATHS_H
 #define CLANGLOCALPATHS_H
 
+#if HAS_LIBCLANG
+
 #include "precompiled_header.h"
 #include <wx/filename.h>
 #include <wx/xml/xml.h>
@@ -57,5 +59,5 @@ public:
 	ClangCodeCompletionOptions& Options(const wxString &config);
 	void Save();
 };
-
+#endif // HAS_LIBCLANG
 #endif // CLANGLOCALPATHS_H

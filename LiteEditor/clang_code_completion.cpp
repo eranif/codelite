@@ -5,6 +5,7 @@
 #include "shell_command.h"
 #include "compiler_command_line_parser.h"
 #include "event_notifier.h"
+#include "clang_path_resolver_thread.h"
 #include "ctags_manager.h"
 #include "tags_options_data.h"
 #include "includepathlocator.h"
@@ -24,6 +25,7 @@
 #include <wx/arrstr.h>
 #include "procutils.h"
 #include "clang_local_paths.h"
+#include "manager.h"
 
 ClangCodeCompletion* ClangCodeCompletion::ms_instance = 0;
 
@@ -39,6 +41,7 @@ ClangCodeCompletion::ClangCodeCompletion()
 	EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler(ClangCodeCompletion::OnBuildStarted),      NULL, this);
 	EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED,   wxCommandEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
 	EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_ADDLINE,         wxCommandEventHandler(ClangCodeCompletion::OnBuildOutput),       NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_COMMAND_CLANG_PATH_RESOLVED,   wxCommandEventHandler(ClangCodeCompletion::OnClangPathResolved), NULL, this);
 }
 
 ClangCodeCompletion::~ClangCodeCompletion()
@@ -51,6 +54,7 @@ ClangCodeCompletion::~ClangCodeCompletion()
 	EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler(ClangCodeCompletion::OnBuildStarted),      NULL, this);
 	EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED,   wxCommandEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
 	EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_ADDLINE,         wxCommandEventHandler(ClangCodeCompletion::OnBuildOutput),       NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CLANG_PATH_RESOLVED,   wxCommandEventHandler(ClangCodeCompletion::OnClangPathResolved), NULL, this);
 }
 
 ClangCodeCompletion* ClangCodeCompletion::Instance()
@@ -192,35 +196,15 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
 	m_parseBuildOutput = false;
 	wxString errMsg;
 
-	// In order to update the build configuration, we need the following objects:
-	// ProjectPtr, SettingsPtr and BuildConfigPtr
-	BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_projectCompiled, m_configurationCompiled);
-	ProjectPtr     project = WorkspaceST::Get()->FindProjectByName(m_projectCompiled, errMsg);
-	if(!bldConf || !project) return;
-
-	// Parse the output
-	m_compilerSearchPaths.clear();
-	m_compilerMacros.clear();
-	DoProcessOutput();
-
-	ClangLocalPaths clangLocalInfo(project->GetFileName());
-	bool saveRequired = false;
-	if(m_compilerMacros.empty() == false) {
-		clangLocalInfo.Options(m_configurationCompiled).UpdateMacros(m_compilerMacros);
-		saveRequired = true;
-	}
-	if(m_compilerSearchPaths.empty() == false) {
-		clangLocalInfo.Options(m_configurationCompiled).UpdateSearchPaths(m_compilerSearchPaths);
-		saveRequired = true;
-	}
+	ProjectPtr project = WorkspaceST::Get()->FindProjectByName(m_projectCompiled, errMsg);
+	if(!project) return;
 	
-	if(saveRequired) {
-		clangLocalInfo.Save();
-	}
-
-	m_projectCompiled.Clear();
-	m_configurationCompiled.Clear();
-	e.Skip();
+	std::set<wxString> workspaceFiles;
+	ManagerST::Get()->GetWorkspaceFiles(workspaceFiles);
+	
+	// Construct a thread to process the output 
+	ClangPathResolverThread *thr = new ClangPathResolverThread(workspaceFiles, m_processOutput);
+	thr->Start();
 }
 
 void ClangCodeCompletion::OnBuildStarted(wxCommandEvent& e)
@@ -261,67 +245,50 @@ void ClangCodeCompletion::OnBuildOutput(wxCommandEvent& e)
 	}
 }
 
-wxString ClangCodeCompletion::DoGetCompiledLine() const
+void ClangCodeCompletion::OnClangPathResolved(wxCommandEvent& e)
 {
-	wxString s;
-	Set_t::const_iterator iter = m_compilerSearchPaths.begin();
-	for(; iter != m_compilerSearchPaths.end(); iter++) {
-		s << wxT("-I") << *iter << wxT(" ");
-	}
-
-	iter = m_compilerMacros.begin();
-	for(; iter != m_compilerMacros.end(); iter++) {
-		s << wxT("-D") << *iter << wxT(" ");
-	}
-
-	s.Trim().Trim(false);
-	return s;
-}
-void ClangCodeCompletion::DoProcessOutput()
-{
-	Set_t directories;
-	
-	wxArrayString lines = ::wxStringTokenize(m_processOutput, wxT("\r\n"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<lines.GetCount(); i++) {
-		CompilerCommandLineParser cmdLineParser(lines.Item(i));
-		// Collect the macros / includes
-		for(size_t i=0; i<cmdLineParser.GetIncludes().GetCount(); i++) {
-			m_compilerSearchPaths.insert(cmdLineParser.GetIncludes().Item(i));
-		}
-		for(size_t i=0; i<cmdLineParser.GetMacros().GetCount(); i++) {
-			m_compilerMacros.insert(cmdLineParser.GetMacros().Item(i));
+	std::pair<Set_t*, Set_t*> *data = (std::pair<Set_t*, Set_t*> *)e.GetClientData();
+	if(data) {
+		
+		wxString errMsg;
+		ProjectPtr project = WorkspaceST::Get()->FindProjectByName(m_projectCompiled, errMsg);
+		if(!project) {
+			// Release all allocated data
+			delete data->first;
+			delete data->second;
+			delete data;
+			return;
 		}
 		
-		if(cmdLineParser.GetDiretory().IsEmpty() == false) {
-			directories.insert(cmdLineParser.GetDiretory());
+		// Parse the output
+		m_compilerSearchPaths.swap(*data->first);
+		m_compilerMacros.swap(*data->second);
+		
+		// Release all allocated data
+		delete data->first;
+		delete data->second;
+		delete data;
+		
+		ClangLocalPaths clangLocalInfo(project->GetFileName());
+		bool saveRequired = false;
+		if(m_compilerMacros.empty() == false) {
+			clangLocalInfo.Options(m_configurationCompiled).UpdateMacros(m_compilerMacros);
+			saveRequired = true;
 		}
-	}
-	
-	// Convert the paths from relative path to full path
-	Set_t fullPaths;
-	Set_t::const_iterator iter = m_compilerSearchPaths.begin();
-	for(; iter != m_compilerSearchPaths.end(); iter++) {
-		bool convertedToFullpath = false;
-		Set_t::const_iterator dirIter = directories.begin();
-		for(; dirIter != directories.end(); dirIter++) {
-			wxFileName fn(*iter, wxT(""));
-			if(fn.MakeAbsolute(*dirIter) && fn.DirExists()) {
-				fullPaths.insert(fn.GetFullPath());
-				//wxPrintf(wxT("Adding full path: %s\n"), fn.GetFullPath().c_str());
-				convertedToFullpath = true;
-				break;
-			}
+		if(m_compilerSearchPaths.empty() == false) {
+			clangLocalInfo.Options(m_configurationCompiled).UpdateSearchPaths(m_compilerSearchPaths);
+			saveRequired = true;
 		}
 		
-		if(!convertedToFullpath) {
-			//wxPrintf(wxT("Adding relative path: %s\n"), iter->c_str());
-			fullPaths.insert(*iter);
+		if(saveRequired) {
+			clangLocalInfo.Save();
+			m_clang.ClearCache();
 		}
 	}
 	
-	m_compilerSearchPaths = fullPaths;
+	m_projectCompiled.Clear();
+	m_configurationCompiled.Clear();
 }
 
 #endif // HAS_LIBCLANG
-
 

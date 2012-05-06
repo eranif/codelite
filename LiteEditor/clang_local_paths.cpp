@@ -1,3 +1,5 @@
+#if HAS_LIBCLANG
+
 #include "clang_local_paths.h"
 #include "globals.h"
 #include <wx/ffile.h>
@@ -123,3 +125,6 @@ ClangCodeCompletionOptions& ClangLocalPaths::Options(const wxString& config)
 	iter = m_confOptions.find(config);
 	return iter->second;
 }
+
+#endif // HAS_LIBCLANG
+

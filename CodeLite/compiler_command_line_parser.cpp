@@ -20,7 +20,7 @@
 #define ISBLANK(ch) ((ch) == ' ' || (ch) == '\t')
 #define INITIAL_MAXARGC 8	/* Number of args + NULL in initial argv */
 
-void freeargv (char **vector)
+static void freeargv (char **vector)
 {
 	register char **scan;
 

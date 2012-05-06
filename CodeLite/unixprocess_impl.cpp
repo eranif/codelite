@@ -60,7 +60,7 @@ extern char *strdup ();		/* Duplicate a string */
 
 #define INITIAL_MAXARGC 8	/* Number of args + NULL in initial argv */
 
-void freeargv (char **vector)
+static void freeargv (char **vector)
 {
 	register char **scan;
 

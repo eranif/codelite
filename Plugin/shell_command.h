@@ -40,13 +40,15 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
 
 /**
  * @class BuildEventDetails
- * @brief associated data that (ClientData) which is sent with the 
+ * @brief associated data that (ClientData) which is sent with the
  * wxEVT_SHELL_COMMAND_STARTED and wxEVT_SHELL_COMMAND_STARTED_NOCLEAN events
  */
 class WXDLLIMPEXP_SDK BuildEventDetails : public wxClientData
 {
 	wxString m_projectName;
 	wxString m_configuration;
+	bool     m_isClean;
+	bool     m_isCustomProject;
 
 public:
 	BuildEventDetails() {}
@@ -64,6 +66,18 @@ public:
 	}
 	const wxString& GetProjectName() const {
 		return m_projectName;
+	}
+	void SetIsClean(bool isClean) {
+		this->m_isClean = isClean;
+	}
+	void SetIsCustomProject(bool isCustomProject) {
+		this->m_isCustomProject = isCustomProject;
+	}
+	bool IsClean() const {
+		return m_isClean;
+	}
+	bool IsCustomProject() const {
+		return m_isCustomProject;
 	}
 };
 

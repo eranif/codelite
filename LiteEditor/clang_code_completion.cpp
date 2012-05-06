@@ -215,8 +215,12 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
 	}
 	
 	ClangLocalPaths clangLocalInfo(project->GetFileName());
-	clangLocalInfo.Options(m_configurationCompiled).SetMacros(m_compilerMacros);
-	clangLocalInfo.Options(m_configurationCompiled).SetSearchPaths(m_compilerSearchPaths);
+	if(m_compilerMacros.empty() == false) {
+		clangLocalInfo.Options(m_configurationCompiled).SetMacros(m_compilerMacros);
+	}
+	if(m_compilerSearchPaths.empty() == false) {
+		clangLocalInfo.Options(m_configurationCompiled).SetSearchPaths(m_compilerSearchPaths);
+	}
 	clangLocalInfo.Save();
 	
 	m_projectCompiled.Clear();
@@ -236,13 +240,15 @@ void ClangCodeCompletion::OnBuildStarted(wxCommandEvent& e)
 		return;
 	}
 
+	bool isClean = false;
 	BuildEventDetails *d = dynamic_cast<BuildEventDetails*>(e.GetClientObject());
 	if(d) {
 		m_projectCompiled       = d->GetProjectName();
 		m_configurationCompiled = d->GetConfiguration();
+		isClean                 = d->IsClean();
 	}
 
-	m_parseBuildOutput = true;
+	m_parseBuildOutput = !isClean;
 	m_compilerSearchPaths.clear();
 	m_compilerMacros.clear();
 }

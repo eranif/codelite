@@ -203,6 +203,9 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	BuildEventDetails *eventData = new BuildEventDetails();
 	eventData->SetProjectName(projectName);
 	eventData->SetConfiguration(bldConf->GetName());
+	eventData->SetIsCustomProject(bldConf->IsCustomBuild());
+	eventData->SetIsClean(false);
+	
 	event.SetClientObject(eventData);
 	// Fire it up
 	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);

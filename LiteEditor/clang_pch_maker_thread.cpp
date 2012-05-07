@@ -377,7 +377,7 @@ char** ClangWorkerThread::MakeCommandLine(const wxString& command, int& argc, Fi
 	}
 	
 	if(fileType == FileExtManager::TypeSourceC) {
-		tokens.Add(wxT("-std=c99"));
+		tokens.Add(wxT("-std=gnu++98"));
 	}
 	
 	tokens.Add(wxT("-w"));

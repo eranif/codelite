@@ -376,10 +376,11 @@ bool ClangWorkerThread::IsCacheEmpty()
 	return m_cache.IsEmpty();
 }
 
-char** ClangWorkerThread::MakeCommandLine(const wxString& command, int& argc, FileExtManager::FileType fileType)
+char** ClangWorkerThread::MakeCommandLine(const wxArrayString& command, int& argc, FileExtManager::FileType fileType)
 {
 	bool isHeader = !(fileType == FileExtManager::TypeSourceC || fileType == FileExtManager::TypeSourceCpp);
-	wxArrayString tokens = wxStringTokenize(command, wxT(" \t\n\r"), wxTOKEN_STRTOK);
+	wxArrayString tokens;
+	tokens.insert(tokens.end(), command.begin(), command.end());
 	if(isHeader) {
 		tokens.Add(wxT("-x"));
 		tokens.Add(wxT("c++-header"));

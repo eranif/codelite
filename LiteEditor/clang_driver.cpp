@@ -3,6 +3,7 @@
 #include "clang_driver.h"
 #include "clang_code_completion.h"
 #include <wx/regex.h>
+#include "compiler_command_line_parser.h"
 #include "file_logger.h"
 #include "clang_local_paths.h"
 #include "pluginmanager.h"
@@ -163,14 +164,14 @@ void ClangDriver::Abort()
 	DoCleanup();
 }
 
-wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxString &projectPath)
+wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxString &projectPath)
 {
-	wxString compilationArgs;
+	wxArrayString compileArgs;
 	wxArrayString args;
 	wxString      errMsg;
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	if(!matrix) {
-		return wxT("");
+		return compileArgs;
 	}
 
 	wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
@@ -178,7 +179,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	// Now that we got the selected workspace configuration, extract the related project configuration
 	ProjectPtr proj =  WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
 	if(!proj) {
-		return wxT("");
+		return compileArgs;
 	}
 
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, proj->GetName());
@@ -211,8 +212,8 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 
 			// expand backticks, if the option is not a backtick the value remains
 			// unchanged
-			cmpOption = DoExpandBacktick(cmpOption, projectName);
-			args.Add( cmpOption );
+			wxArrayString opts = DoExpandBacktick(cmpOption, projectName);
+			args.insert(args.end(), opts.begin(), opts.end());
 		}
 
 		// get the compiler preprocessor and add them as well
@@ -250,7 +251,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	for(size_t i=0; i<globalIncludes.GetCount(); i++) {
 		wxFileName fn(globalIncludes.Item(i).Trim().Trim(false), wxT(""));
 		fn.MakeAbsolute(projectPath);
-		compilationArgs << wxT(" -I") << fn.GetPath() << wxT(" ");
+		compileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -263,7 +264,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	for(size_t i=0; i<workspaceIncls.GetCount(); i++) {
 		wxFileName fn(workspaceIncls.Item(i).Trim().Trim(false), wxT(""));
 		fn.MakeAbsolute(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
-		compilationArgs << wxT(" -I") << fn.GetPath() << wxT(" ");
+		compileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
 	}
 
 	// Options
@@ -272,7 +273,8 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 
 	wxArrayString workspaceCmpOptions = wxStringTokenize(strWorkspaceCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<workspaceCmpOptions.GetCount(); i++) {
-		compilationArgs << DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false), projectName) << wxT(" ");
+		wxArrayString opts = DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false), projectName);
+		compileArgs.insert(compileArgs.end(), opts.begin(), opts.end());
 	}
 
 	// Macros
@@ -280,7 +282,7 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 	LocalWorkspaceST::Get()->GetParserMacros(strWorkspaceMacros);
 	wxArrayString workspaceMacros = wxStringTokenize(strWorkspaceMacros, wxT("\n\r"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<workspaceMacros.GetCount(); i++) {
-		compilationArgs << wxT(" -D") << workspaceMacros.Item(i).Trim().Trim(false) << wxT(" ");
+		compileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -299,12 +301,11 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 				continue;
 			
 			p = MacroManager::Instance()->Expand(p, PluginManager::Get(), proj->GetName());
-			
 			wxFileName fn(p, wxT(""));
 			if(fn.IsRelative()) {
 				fn.MakeAbsolute(projectPath);
 			}
-			compilationArgs << wxT(" -I") << fn.GetPath() << wxT(" ");
+			compileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
 		}
 
 		// Options
@@ -312,32 +313,42 @@ wxString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxSt
 
 		wxArrayString projCmpOptions = wxStringTokenize(strProjCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
 		for(size_t i=0; i<projCmpOptions.GetCount(); i++) {
-			compilationArgs << DoExpandBacktick(projCmpOptions.Item(i).Trim().Trim(false), projectName) << wxT(" ");
+			wxArrayString opts = DoExpandBacktick(projCmpOptions.Item(i).Trim().Trim(false), projectName);
+			compileArgs.insert(compileArgs.end(), opts.begin(), opts.end());
 		}
 
 		// Macros
 		wxString strProjMacros = dependProjbldConf->GetClangPPFlags();
 		wxArrayString projMacros = wxStringTokenize(strProjMacros, wxT("\n\r"), wxTOKEN_STRTOK);
 		for(size_t i=0; i<projMacros.GetCount(); i++) {
-			compilationArgs << wxT(" -D") << projMacros.Item(i).Trim().Trim(false) << wxT(" ");
+			wxString arg;
+			arg << wxT("-D") << projMacros.Item(i).Trim().Trim(false);
+			compileArgs.Add(arg);
 		}
 	}
-
-	for(size_t i=0; i<args.size(); i++) {
-		compilationArgs << wxT(" ") << args.Item(i);
-	}
+	compileArgs.insert(compileArgs.end(), args.begin(), args.end());
 
 	// Remove some of the flags which are known to cause problems to clang
-	compilationArgs.Replace(wxT("-fno-strict-aliasing"), wxT(""));
-	compilationArgs.Replace(wxT("-mthreads"),            wxT(""));
-	compilationArgs.Replace(wxT("-pipe"),                wxT(""));
-	compilationArgs.Replace(wxT("-fmessage-length=0"),   wxT(""));
-	compilationArgs.Replace(wxT("-fPIC"),                wxT(""));
+	int where = wxNOT_FOUND;
+	where = compileArgs.Index(wxT("-fno-strict-aliasing"));
+	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
 
-	return compilationArgs;
+	where = compileArgs.Index(wxT("-mthreads"));
+	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+
+	where = compileArgs.Index(wxT("-pipe"));
+	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+
+	where = compileArgs.Index(wxT("-fmessage-length=0"));
+	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+
+	where = compileArgs.Index(wxT("-fPIC"));
+	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+		
+	return compileArgs;
 }
 
-wxString ClangDriver::DoExpandBacktick(const wxString& backtick, const wxString &projectName)
+wxArrayString ClangDriver::DoExpandBacktick(const wxString& backtick, const wxString &projectName)
 {
 	wxString tmp;
 	wxString cmpOption = backtick;
@@ -362,7 +373,12 @@ wxString ClangDriver::DoExpandBacktick(const wxString& backtick, const wxString 
 			cmpOption = m_backticks.find(cmpOption)->second;
 		}
 	}
-	return cmpOption;
+	
+	CompilerCommandLineParser p(cmpOption);
+	wxArrayString opts;
+	opts.insert(opts.end(), p.GetIncludesWithPrefix().begin(), p.GetIncludesWithPrefix().end());
+	opts.insert(opts.end(), p.GetMacrosWithPrefix().begin(),   p.GetMacrosWithPrefix().end());
+	return opts;
 }
 
 void ClangDriver::ClearCache()
@@ -644,7 +660,7 @@ void ClangDriver::QueueRequest(IEditor *editor, WorkingContext context)
 
 void ClangDriver::ReparseFile(const wxString& filename)
 {
-	ClangThreadRequest *req = new ClangThreadRequest(m_index, filename, wxT(""), wxT(""), wxT(""), ::CTX_ReparseTU, 0, 0);
+	ClangThreadRequest *req = new ClangThreadRequest(m_index, filename, wxT(""), wxArrayString(), wxT(""), ::CTX_ReparseTU, 0, 0);
 	m_pchMakerThread.Add( req );
 	CL_DEBUG(wxT("Queued request to re-parse file: %s"), filename.c_str());
 }
@@ -658,7 +674,15 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e)
 	// Reparse the current file
 	IEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor) {
-		ReparseFile(editor->GetFileName().GetFullPath());
+		wxString outputProjectPath;
+		ClangThreadRequest *req = new ClangThreadRequest(m_index, 
+														 editor->GetFileName().GetFullPath(), 
+														 wxT(""), 
+														 DoPrepareCompilationArgs(editor->GetProjectName(), outputProjectPath),
+														 wxT(""), 
+														 ::CTX_CachePCH, 0, 0);
+		m_pchMakerThread.Add( req );
+		CL_DEBUG(wxT("Queued request to build TU for file: %s"), editor->GetFileName().GetFullPath().c_str());
 	}
 }
 

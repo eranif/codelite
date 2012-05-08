@@ -15,6 +15,8 @@ public:
 protected:
 	wxArrayString m_includes;
 	wxArrayString m_macros;
+	wxArrayString m_macrosWithPrefix;
+	wxArrayString m_includesWithPrefix;
 	int           m_argc;
 	char **       m_argv;
 	wxString      m_diretory;
@@ -51,6 +53,12 @@ public:
 	}
 	const wxString& GetDiretory() const {
 		return m_diretory;
+	}
+	const wxArrayString& GetIncludesWithPrefix() const {
+		return m_includesWithPrefix;
+	}
+	const wxArrayString& GetMacrosWithPrefix() const {
+		return m_macrosWithPrefix;
 	}
 };
 

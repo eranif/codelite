@@ -159,13 +159,16 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
 			opt.Trim().Trim(false);
 			
 			wxString rest;
-			if(opt.StartsWith(wxT("-I"), &rest))
+			if(opt.StartsWith(wxT("-I"), &rest)) {
 				m_includes.Add(rest);
+				m_includesWithPrefix.Add(opt);
+			}
 			
-			else if(opt.StartsWith(wxT("-D"), &rest))
+			else if(opt.StartsWith(wxT("-D"), &rest)) {
 				m_macros.Add(rest);
+				m_macrosWithPrefix.Add(opt);
+			}
 		}
-		
 	}
 }
 

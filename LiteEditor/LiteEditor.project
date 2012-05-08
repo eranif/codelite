@@ -892,6 +892,7 @@
         <![CDATA[PATH=$(WX_HOME):$(PATH)
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -982,20 +983,13 @@ $(WorkspacePath)/sdk/clang/include</SearchPaths>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion>
-        <ClangCmpFlags>`wx-config --cflags`
-`pkg-config --cflags gtk+-2.0`</ClangCmpFlags>
-        <ClangPP>HAS_LIBCLANG
-INSTALL_DIR=\" \"</ClangPP>
-        <SearchPaths>$(WorkspacePath)/PCH
-$(WorkspacePath)/CodeLite
-$(WorkspacePath)/sdk/wxsqlite3/include
-$(WorkspacePath)/sdk/wxscintilla/include
-$(WorkspacePath)/Plugin
-$(WorkspacePath)/Interfaces
-$(WorkspacePath)/sdk/clang/include</SearchPaths>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
       </Completion>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -1022,7 +1016,8 @@ $(WorkspacePath)/sdk/clang/include</SearchPaths>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
-        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
+        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -1051,8 +1046,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion>
         <ClangCmpFlags/>
@@ -1086,6 +1080,7 @@ svninfo.cpp:
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Release" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
+      
       
       
       
@@ -1152,6 +1147,7 @@ resources.cpp: resources.xrc
       <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./WinDbg29" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[
+      
       
       
       

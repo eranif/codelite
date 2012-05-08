@@ -11,6 +11,7 @@
 
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   ;
+extern const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED ;
 
 enum WorkingContext {
     CTX_CodeCompletion,

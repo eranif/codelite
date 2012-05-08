@@ -4,6 +4,7 @@
 #include "clang_pch_maker_thread.h"
 #include <wx/thread.h>
 #include <wx/stdpaths.h>
+#include "event_notifier.h"
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 #include "y.tab.h"
@@ -18,6 +19,7 @@
 
 const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started");
 const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   = XRCID("clang_pch_cache_ended");
+const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED = XRCID("clang_pch_cache_cleared");
 
 extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
 
@@ -124,13 +126,13 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	if( !task ) {
 		wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
 		eEnd.SetClientData(NULL);
-		wxTheApp->AddPendingEvent(eEnd);
+		EventNotifier::Get()->AddPendingEvent(eEnd);
 		return;
 	}
 
 	// Send start event
 	wxCommandEvent e(wxEVT_CLANG_PCH_CACHE_STARTED);
-	wxTheApp->AddPendingEvent(e);
+	EventNotifier::Get()->AddPendingEvent(e);
 
 
 	FileExtManager::FileType type = FileExtManager::GetType(task->GetFileName());
@@ -185,7 +187,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			CL_DEBUG(wxT("Failed to parse Translation UNIT..."));
 			wxCommandEvent eEnd(wxEVT_CLANG_PCH_CACHE_ENDED);
 			eEnd.SetClientData(NULL);
-			wxTheApp->AddPendingEvent(eEnd);
+			EventNotifier::Get()->AddPendingEvent(eEnd);
 			return;
 		}
 	}
@@ -302,7 +304,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	}
 
 	eEnd.SetClientData(reply);
-	wxTheApp->AddPendingEvent(eEnd);
+	EventNotifier::Get()->AddPendingEvent(eEnd);
 }
 
 std::set<wxString> ClangWorkerThread::DoGetUsedMacros(const wxString &filename)
@@ -356,9 +358,16 @@ void ClangWorkerThread::DoCacheResult(CXTranslationUnit TU, const wxString &file
 
 void ClangWorkerThread::ClearCache()
 {
-	wxCriticalSectionLocker locker(m_cs);
-	m_cache.Clear();
+	{
+		wxCriticalSectionLocker locker(m_cs);
+		m_cache.Clear();
+	}
+	
 	this->DoSetStatusMsg(wxT("clang: cache cleared"));
+	
+	// Notify about cache clear
+	wxCommandEvent e(wxEVT_CLANG_PCH_CACHE_CLEARED);
+	EventNotifier::Get()->AddPendingEvent(e);
 }
 
 bool ClangWorkerThread::IsCacheEmpty()
@@ -400,7 +409,7 @@ void ClangWorkerThread::DoSetStatusMsg(const wxString& msg)
 	e.SetString(msg.c_str());
 	e.SetInt(0);
 	e.SetId(10);
-	wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(e);
+	EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
 }
 
 #endif // HAS_LIBCLANG

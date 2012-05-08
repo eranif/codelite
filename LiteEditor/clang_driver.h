@@ -61,9 +61,11 @@ public:
 	void ClearCache();
 	bool IsCacheEmpty();
 	
-	DECLARE_EVENT_TABLE()
+	// Event Handlers
 	void OnPrepareTUEnded(wxCommandEvent &e);
+	void OnCacheCleared(wxCommandEvent &e);
 };
+
 #endif // HAS_LIBCLANG
 
 #endif // CLANGDRIVER_H

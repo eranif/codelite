@@ -24,6 +24,7 @@
 #include "fileextmanager.h"
 #include "globals.h"
 #include <set>
+#include "event_notifier.h"
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -31,9 +32,9 @@ static bool wxIsWhitespace(wxChar ch)
 }
 
 #define cstr(x) x.mb_str(wxConvUTF8).data()
-
-BEGIN_EVENT_TABLE(ClangDriver, wxEvtHandler)
-END_EVENT_TABLE()
+#define CHECK_CLANG_ENABLED() \
+	if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED))\
+		return;\
 
 ClangDriver::ClangDriver()
 	: m_isBusy(false)
@@ -43,15 +44,19 @@ ClangDriver::ClangDriver()
 	m_index = clang_createIndex(0, 0);
 	m_pchMakerThread.SetSleepInterval(30);
 	m_pchMakerThread.Start();
-	wxTheApp->Connect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared), NULL, this);
 }
 
 ClangDriver::~ClangDriver()
 {
+	// Disconnect all events before we perform anything elase
+	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared), NULL, this);
+	
 	m_pchMakerThread.Stop();
 	m_pchMakerThread.ClearCache(); // clear cache and dispose all translation units
 	clang_disposeIndex(m_index);
-	wxTheApp->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
 }
 
 ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, WorkingContext context)
@@ -642,6 +647,19 @@ void ClangDriver::ReparseFile(const wxString& filename)
 	ClangThreadRequest *req = new ClangThreadRequest(m_index, filename, wxT(""), wxT(""), wxT(""), ::CTX_ReparseTU, 0, 0);
 	m_pchMakerThread.Add( req );
 	CL_DEBUG(wxT("Queued request to re-parse file: %s"), filename.c_str());
+}
+
+void ClangDriver::OnCacheCleared(wxCommandEvent& e)
+{
+	e.Skip();
+	
+	CHECK_CLANG_ENABLED();
+		
+	// Reparse the current file
+	IEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+	if(editor) {
+		ReparseFile(editor->GetFileName().GetFullPath());
+	}
 }
 
 #endif // HAS_LIBCLANG

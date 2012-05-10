@@ -1162,12 +1162,12 @@ void ContextCpp::OnKeyDown(wxKeyEvent &event)
 
 void ContextCpp::OnFindImpl(wxCommandEvent &event)
 {
-    DoGotoSymbol(GetTagAtCaret(true, true));
+    CodeCompletionManager::Get().GotoImpl( &GetCtrl() );
 }
 
 void ContextCpp::OnFindDecl(wxCommandEvent &event)
 {
-    DoGotoSymbol(GetTagAtCaret(true, false));
+	CodeCompletionManager::Get().GotoDecl( &GetCtrl() );
 }
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)

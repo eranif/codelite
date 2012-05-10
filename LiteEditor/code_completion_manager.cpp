@@ -4,6 +4,7 @@
 #include <vector>
 #include "ctags_manager.h"
 #include "entry.h"
+#include "frame.h"
 
 static CodeCompletionManager ms_CodeCompletionManager;
 
@@ -163,3 +164,77 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
 	ClangCodeCompletion::Instance()->ListMacros(editor);
 #endif
 }
+
+void CodeCompletionManager::GotoImpl(LEditor* editor)
+{
+	DoUpdateOptions();
+	
+	bool res = false;
+	
+	if(GetOptions() & CC_CTAGS_ENABLED) {
+		res = DoCtagsGotoImpl(editor);
+	}
+
+	if(!res && (GetOptions() & CC_CLANG_ENABLED)) {
+		DoClangGotoImpl(editor);
+	}
+}
+
+void CodeCompletionManager::DoClangGotoImpl(LEditor* editor)
+{
+	wxUnusedVar(editor);
+#if HAS_LIBCLANG
+
+#endif
+}
+
+bool CodeCompletionManager::DoCtagsGotoImpl(LEditor* editor)
+{
+	TagEntryPtr tag = editor->GetContext()->GetTagAtCaret(true, true);
+	if (tag) {
+        LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
+		if(!editor) {
+			return false;
+		}
+        editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+		return true;
+    }
+	return false;
+}
+
+void CodeCompletionManager::DoClangGotoDecl(LEditor* editor)
+{
+	wxUnusedVar(editor);
+#if HAS_LIBCLANG
+
+#endif
+}
+
+bool CodeCompletionManager::DoCtagsGotoDecl(LEditor* editor)
+{
+	TagEntryPtr tag = editor->GetContext()->GetTagAtCaret(true, false);
+	if (tag) {
+        LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
+		if(!editor) {
+			return false;
+		}
+        editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+		return true;
+    }
+	return false;
+}
+
+void CodeCompletionManager::GotoDecl(LEditor* editor)
+{
+	DoUpdateOptions();
+	bool res = false;
+	
+	if(GetOptions() & CC_CTAGS_ENABLED) {
+		res = DoCtagsGotoDecl(editor);
+	}
+
+	if(!res && (GetOptions() & CC_CLANG_ENABLED)) {
+		DoClangGotoDecl(editor);
+	}
+}
+

@@ -217,17 +217,9 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	reply->filename   = task->GetFileName().c_str();
 	reply->results    = NULL;
 
-	if( task->GetContext() == CTX_CodeCompletion ||
-	    task->GetContext() == CTX_WordCompletion ||
-	    task->GetContext() == CTX_Calltip) {
-#if 0
-		//CL_DEBUG(wxT("Calling clang_reparseTranslationUnit..."));
-		//clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
-		//CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done"));
-#endif
+	if( task->GetContext() == CTX_CodeCompletion || task->GetContext() == CTX_WordCompletion || task->GetContext() == CTX_Calltip) {
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
 		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
-		// Do the code-completion
 		reply->results = clang_codeCompleteAt(TU,
 		                                      cstr(task->GetFileName()),
 		                                      task->GetLine(),
@@ -392,6 +384,13 @@ char** ClangWorkerThread::MakeCommandLine(const wxArrayString& command, int& arg
 	
 	tokens.Add(wxT("-w"));
 	tokens.Add(wxT("-ferror-limit=1000"));
+	tokens.Add(wxT("-nobuiltininc"));
+
+#ifdef __WXMSW__
+	tokens.Add(wxT("-fms-extensions"));
+	tokens.Add(wxT("-fdelayed-template-parsing"));
+#endif
+
 	argc = tokens.GetCount();
 	char** argv = new char*[argc];
 

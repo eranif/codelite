@@ -1,3 +1,5 @@
-#include <stdio.h>
-#define ERAN 1
-#define FOO(x, y) 1
+#include <set>
+#include <string>
+void foo() {
+std::set<std::string> myset;
+myset.find("eran")

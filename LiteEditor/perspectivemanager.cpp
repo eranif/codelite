@@ -215,7 +215,7 @@ void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
 
 bool PerspectiveManager::IsDefaultActive() const
 {
-	return GetActive() == NORMAL_LAYOUT;
+	return GetActive() == wxT("Default");
 }
 
 void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()

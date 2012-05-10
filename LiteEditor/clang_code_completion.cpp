@@ -129,6 +129,10 @@ void ClangCodeCompletion::OnFileLoaded(wxCommandEvent& e)
 			// sanity
 			if(editor->GetProjectName().IsEmpty() || editor->GetFileName().GetFullName().IsEmpty())
 				return;
+			
+			if(!TagsManagerST::Get()->IsValidCtagsFile(editor->GetFileName()))
+				return;
+				
 			m_clang.SetContext(CTX_CachePCH);
 			m_clang.CodeCompletion(editor);
 		}
@@ -178,6 +182,11 @@ void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
 	// Incase a file has been saved, we need to reparse its translation unit
 	wxString *filename = (wxString*)e.GetClientData();
 	if(filename) {
+		
+		wxFileName fn(*filename);
+		if(!TagsManagerST::Get()->IsValidCtagsFile(fn))
+			return;
+			
 		m_clang.ReparseFile(*filename);
 	}
 }

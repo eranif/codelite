@@ -167,7 +167,11 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
 			else if(opt.StartsWith(wxT("-D"), &rest)) {
 				m_macros.Add(rest);
 				m_macrosWithPrefix.Add(opt);
-			}
+			} 
+            
+            else if(opt.StartsWith(wxT("-include-path"))) {
+                m_includesWithPrefix.Add(opt);
+            }
 		}
 	}
 }

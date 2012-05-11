@@ -103,7 +103,7 @@ class ClangWorkerThread : public WorkerThread
 {
     friend class CacheReturner;
 protected:
-    wxCriticalSection m_cs;
+    wxCriticalSection m_criticalSection;
     ClangTUCache     m_cache;
 
 public:

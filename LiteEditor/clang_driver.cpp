@@ -28,11 +28,12 @@
 #include <set>
 #include "event_notifier.h"
 
+
 static bool wxIsWhitespace(wxChar ch)
 {
 	return ch == wxT(' ') || ch == wxT('\t') || ch == wxT('\r') || ch == wxT('\n');
 }
-
+ 
 #define cstr(x) x.mb_str(wxConvUTF8).data()
 #define CHECK_CLANG_ENABLED() \
 	if(!(TagsManagerST::Get()->GetCtagsOptions().GetClangOptions() & CC_CLANG_ENABLED))\
@@ -102,7 +103,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 		wxString sel = editor->GetSelection();
 		if(sel.IsEmpty()) {
 			filterWord = editor->GetWordAtCaret();
-			
+             
 		} else {
 			filterWord = sel;
 			column = editor->GetSelectionStart() - lineStartPos + 1;
@@ -197,18 +198,18 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 	if(!proj) {
 		return compileArgs;
 	}
-
+    
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, proj->GetName());
 	BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), projectSelConf);
-
-	projectPath = proj->GetFileName().GetPath();
-	if(dependProjbldConf) {
+        
+    projectPath = proj->GetFileName().GetPath();
+    if(dependProjbldConf) {
 		CL_DEBUG(wxT("DoPrepareCompilationArgs(): Project=%s, Conf=%s"), projectName.c_str(), dependProjbldConf->GetName().c_str());
 	}
-
+    
 	// for non custom projects, take the settings from the build configuration
 	if(dependProjbldConf && !dependProjbldConf->IsCustomBuild()) {
-
+ 
 		// Get the include paths and add them
 		wxString projectIncludePaths = dependProjbldConf->GetIncludePath();
 		wxArrayString projectIncludePathsArr = wxStringTokenize(projectIncludePaths, wxT(";"), wxTOKEN_STRTOK);
@@ -224,9 +225,13 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 		for(size_t i=0; i<projectCompileOptionsArr.GetCount(); i++) {
 
 			wxString cmpOption (projectCompileOptionsArr.Item(i));
+            
 			cmpOption.Trim().Trim(false);
-
-			// expand backticks, if the option is not a backtick the value remains
+            cmpOption = MacroManager::Instance()->Expand(cmpOption,  PluginManager::Get(),  
+                                                            projectName, 
+                                                            dependProjbldConf->GetName());
+            
+            // expand backticks, if the option is not a backtick the value remains
 			// unchanged
 			wxArrayString opts = DoExpandBacktick(cmpOption, projectName);
 			args.insert(args.end(), opts.begin(), opts.end());
@@ -316,7 +321,8 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 			if(p.IsEmpty())
 				continue;
 			
-			p = MacroManager::Instance()->Expand(p, PluginManager::Get(), proj->GetName());
+			p = MacroManager::Instance()->Expand(p, PluginManager::Get(), proj->GetName(), dependProjbldConf->GetName()
+            );
 			wxFileName fn(p, wxT(""));
 			if(fn.IsRelative()) {
 				fn.MakeAbsolute(projectPath);
@@ -405,7 +411,7 @@ void ClangDriver::ClearCache()
 
 bool ClangDriver::IsCacheEmpty()
 {
-	return m_pchMakerThread.IsCacheEmpty();
+    return m_pchMakerThread.IsCacheEmpty();
 }
 
 void ClangDriver::DoCleanup()
@@ -416,7 +422,8 @@ void ClangDriver::DoCleanup()
 
 void ClangDriver::DoParseCompletionString(CXCompletionString str, int depth, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue)
 {
-	bool collectingSignature = false;
+ 
+    bool collectingSignature = false;
 	int numOfChunks = clang_getNumCompletionChunks(str);
 	for (int j=0 ; j<numOfChunks; j++) {
 
@@ -700,12 +707,12 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e)
 		wxString outputProjectPath, pchFile;
 		ClangThreadRequest *req = new ClangThreadRequest(m_index, 
 														 editor->GetFileName().GetFullPath(), 
-														 wxT(""), 
+														 editor->GetEditorText(), 
 														 DoPrepareCompilationArgs(editor->GetProjectName(), outputProjectPath, pchFile),
 														 wxT(""), 
 														 ::CTX_CachePCH, 0, 0);
 		m_pchMakerThread.Add( req );
-		CL_DEBUG(wxT("Queued request to build TU for file: %s"), editor->GetFileName().GetFullPath().c_str());
+		CL_DEBUG(wxT("OnCacheCleared:: Queued request to build TU for file: %s"), editor->GetFileName().GetFullPath().c_str());
 	}
 }
 

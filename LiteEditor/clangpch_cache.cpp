@@ -58,7 +58,7 @@ void ClangTUCache::AddPCH(const wxString& filename, CXTranslationUnit tu)
 		}
 		
 		if(key_to_remove.IsEmpty() == false) {
-			CL_DEBUG1(wxT("Removing entry for key: %s"), key_to_remove.c_str());
+			CL_DEBUG(wxT("Removing entry for key: %s"), key_to_remove.c_str());
 			RemoveEntry(key_to_remove);
 		}
 	}
@@ -69,8 +69,10 @@ void ClangTUCache::Clear()
 	CL_DEBUG(wxT("clang PCH cache cleared!"));
 	std::map<wxString, ClangCacheEntry>::iterator it = m_cache.begin();
 	for(; it != m_cache.end(); it++) {
-		if(it->second.TU)
+		if(it->second.TU) {
+            CL_DEBUG(wxT("Deleting TU: %x"), (void*)it->second.TU);
 			clang_disposeTranslationUnit(it->second.TU);
+        }
 	}
 	m_cache.clear();
 }
@@ -79,6 +81,7 @@ void ClangTUCache::RemoveEntry(const wxString& filename)
 {
 	std::map<wxString, ClangCacheEntry>::iterator iter = m_cache.find(filename);
 	if(iter != m_cache.end()) {
+        CL_DEBUG(wxT("clang_disposeTranslationUnit for TU: %x"), (void*)iter->second.TU);
 		clang_disposeTranslationUnit(iter->second.TU);
 		m_cache.erase(iter);
 	}

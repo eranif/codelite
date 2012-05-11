@@ -103,6 +103,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         return;
     }
 
+    CL_DEBUG(wxT("==========> [ ClangPchMakerThread ] ProcessRequest started: %s"), task->GetFileName().c_str());
+    
     // Send start event
     wxCommandEvent e(wxEVT_CLANG_PCH_CACHE_STARTED);
     EventNotifier::Get()->AddPendingEvent(e);
@@ -111,10 +113,12 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
     FileExtManager::FileType type = FileExtManager::GetType(task->GetFileName());
     std::string c_dirtyBuffer = cstr(task->GetDirtyBuffer());
     std::string c_filename    = cstr(task->GetFileName());
-
+    
+    CL_DEBUG(wxT("ClangWorkerThread:: processing request %d"), (int)task->GetContext());
+    
     CXUnsavedFile unsavedFile = { c_filename.c_str(), c_dirtyBuffer.c_str(), c_dirtyBuffer.length() };
     CXTranslationUnit TU = findEntry(task->GetFileName());
-
+    CL_DEBUG(wxT("ClangWorkerThread:: found cached TU: %x"), (void*)TU);
     bool reparseRequired = true;
     if(!TU) {
 
@@ -160,7 +164,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
             EventNotifier::Get()->AddPendingEvent(eEnd);
             return;
         }
-    }
+    } 
 
 
     // Construct a cache-returner class
@@ -253,6 +257,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
         CL_DEBUG(wxT("Traversing TU..."));
         CXCursorVisitor visitor = MacrosCallback;
+//        clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU));
         clang_visitChildren(clang_getTranslationUnitCursor(TU), visitor, (CXClientData)&clientData);
 
         clientData.interestingMacros = DoGetUsedMacros(reply->filename);
@@ -311,23 +316,23 @@ std::set<wxString> ClangWorkerThread::DoGetUsedMacros(const wxString &filename)
 
 CXTranslationUnit ClangWorkerThread::findEntry(const wxString& filename)
 {
-    wxCriticalSectionLocker locker(m_cs);
+    wxCriticalSectionLocker locker(m_criticalSection);
     CXTranslationUnit TU = m_cache.GetPCH(filename);
     return TU;
 }
 
 void ClangWorkerThread::DoCacheResult(CXTranslationUnit TU, const wxString &filename)
 {
-    wxCriticalSectionLocker locker(m_cs);
+    wxCriticalSectionLocker locker(m_criticalSection);
     m_cache.AddPCH( filename, TU);
-    CL_DEBUG(wxT("caching Translation Unit file: %s"), filename.c_str());
+    CL_DEBUG(wxT("caching Translation Unit file: %s, %x"), filename.c_str(), (void*)TU);
     CL_DEBUG(wxT(" ==========> [ ClangPchMakerThread ] PCH creation ended successfully <=============="));
 }
 
 void ClangWorkerThread::ClearCache()
 {
     {
-        wxCriticalSectionLocker locker(m_cs);
+        wxCriticalSectionLocker locker(m_criticalSection);
         m_cache.Clear();
     }
 
@@ -340,7 +345,7 @@ void ClangWorkerThread::ClearCache()
 
 bool ClangWorkerThread::IsCacheEmpty()
 {
-    wxCriticalSectionLocker locker(m_cs);
+    wxCriticalSectionLocker locker(m_criticalSection);
     return m_cache.IsEmpty();
 }
 
@@ -362,7 +367,6 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
 #ifdef __WXMSW__
     tokens.Add(wxT("-std=c++0x"));
 #endif
-
     tokens.Add(wxT("-w"));
     tokens.Add(wxT("-ferror-limit=1000"));
     tokens.Add(wxT("-nobuiltininc"));
@@ -371,7 +375,7 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
     tokens.Add(wxT("-fms-extensions"));
     tokens.Add(wxT("-fdelayed-template-parsing"));
 #endif
-    
+
 //    static bool gotPCH = false;
 //    if(!gotPCH) {
 //        int nArgc(0);
@@ -396,7 +400,7 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
 //        }
 //        gotPCH = true;
 //    }
-//    
+    
     char **argv = ClangUtils::MakeArgv(tokens, argc);
     return argv;
 }

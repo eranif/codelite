@@ -167,6 +167,11 @@ void ClangCodeCompletion::WordComplete(IEditor* editor)
 
 void ClangCodeCompletion::ListMacros(IEditor* editor)
 {
+    if(m_clang.IsBusy())
+        return;
+        
+    // FIXME: Make it work !
+    return;
 	m_clang.QueueRequest(editor, CTX_Macros);
 }
 
@@ -174,7 +179,7 @@ void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
 {
 	e.Skip();
 
-	if( ! (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & ::CC_DISABLE_AUTO_PARSING) ) {
+	if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & ::CC_DISABLE_AUTO_PARSING) {
 		CL_DEBUG(wxT("ClangCodeCompletion::OnFileSaved: Auto-parsing of saved files is disabled"));
 		return;
 	}
@@ -186,7 +191,6 @@ void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
 		wxFileName fn(*filename);
 		if(!TagsManagerST::Get()->IsValidCtagsFile(fn))
 			return;
-			
 		m_clang.ReparseFile(*filename);
 	}
 }

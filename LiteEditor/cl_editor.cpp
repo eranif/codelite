@@ -3871,7 +3871,8 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 				if ( StringFindReplacer::Search ( pattern, UTF8Length ( pattern, pattern.Len() ), display_name, flags, pos1, match_len1 ) ) {
 
 					// select only the word
-					if ( GetContext()->IsCommentOrString ( pos+pos1 ) ) {
+					// Check that pos1 is *not* 0 otherwise will get into an infinite loop
+					if ( pos1 && GetContext()->IsCommentOrString ( pos+pos1 ) ) {
 						// try again
 						offset = pos + pos1;
 						again = true;

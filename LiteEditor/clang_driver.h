@@ -36,6 +36,7 @@ protected:
 	wxArrayString       DoExpandBacktick(const wxString &backtick, const wxString &projectName);
 	void                DoParseCompletionString(CXCompletionString str, int depth, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
 	void                DoProcessMacros(ClangThreadReply *reply);
+	void                DoGotoDefinition(ClangThreadReply *reply);
 	ClangThreadRequest* DoMakeClangThreadRequest(IEditor* editor, WorkingContext context);
 	
 public:

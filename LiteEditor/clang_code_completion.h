@@ -58,6 +58,10 @@ public:
 	 */
 	void ListMacros(IEditor *editor);
 	/**
+	 * @brief go to the definition under the caret
+	 */
+	void GotoDeclaration(IEditor *editor);
+	/**
 	 * @brief display calltip for a function
 	 */
 	void Calltip(IEditor *editor);

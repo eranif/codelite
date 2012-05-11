@@ -299,5 +299,15 @@ void ClangCodeCompletion::OnClangPathResolved(wxCommandEvent& e)
 	m_configurationCompiled.Clear();
 }
 
+void ClangCodeCompletion::GotoDeclaration(IEditor* editor)
+{
+	if(m_clang.IsBusy())
+		return;
+
+	m_clang.SetContext(CTX_GotoDefinition);
+	m_clang.CodeCompletion(editor);	
+}
+
+
 #endif // HAS_LIBCLANG
 

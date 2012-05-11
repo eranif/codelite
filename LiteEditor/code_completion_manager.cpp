@@ -184,7 +184,7 @@ void CodeCompletionManager::DoClangGotoImpl(LEditor* editor)
 {
 	wxUnusedVar(editor);
 #if HAS_LIBCLANG
-
+	ClangCodeCompletion::Instance()->GotoDeclaration(editor);
 #endif
 }
 
@@ -206,7 +206,7 @@ void CodeCompletionManager::DoClangGotoDecl(LEditor* editor)
 {
 	wxUnusedVar(editor);
 #if HAS_LIBCLANG
-
+	ClangCodeCompletion::Instance()->GotoDeclaration(editor);
 #endif
 }
 

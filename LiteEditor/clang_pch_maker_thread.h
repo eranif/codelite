@@ -19,7 +19,8 @@ enum WorkingContext {
     CTX_CachePCH,
     CTX_WordCompletion,
 	CTX_Macros,
-	CTX_ReparseTU
+	CTX_ReparseTU,
+	CTX_GotoDefinition
 };
 
 struct ClangThreadReply
@@ -30,6 +31,8 @@ struct ClangThreadReply
 	wxString               macrosAsString;
 	CXCodeCompleteResults *results;
 	wxString               errorMessage;
+	unsigned               line;
+	unsigned               col;
 };
 
 class ClangThreadRequest : public ThreadRequest
@@ -106,6 +109,7 @@ protected:
 	void               DoCacheResult(CXTranslationUnit TU, const wxString &filename);
 	std::set<wxString> DoGetUsedMacros(const wxString &filename);
 	void DoSetStatusMsg(const wxString &msg);
+	void               DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply);
 	
 public:
 	virtual void ProcessRequest(ThreadRequest* request);

@@ -3,6 +3,7 @@
 #include "clang_driver.h"
 #include "clang_code_completion.h"
 #include <wx/regex.h>
+#include "navigationmanager.h"
 #include "compiler_command_line_parser.h"
 #include "file_logger.h"
 #include "clang_local_paths.h"
@@ -96,8 +97,14 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 	int lineStartPos = editor->PosFromLine( editor->GetCurrentLine() );
 	int column       = editor->GetCurrentPosition() - lineStartPos  + 1;
 	int lineNumber   = editor->GetCurrentLine() + 1;
-	column -= (int) filterWord.Length();
-
+	
+	if(context != CTX_GotoDefinition) {
+		column -= (int) filterWord.Length();
+		
+	} else {
+		filterWord = editor->GetWordAtCaret();
+	}
+	
 	// Column can not be lower than 1
 	switch(context) {
 	case CTX_Calltip:
@@ -479,6 +486,13 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 		return; // Nothing more to be done
 	}
 	
+	if(reply->context == CTX_GotoDefinition) {
+		// Unlike other context's the 'filename' specified here
+		// does not belong to an editor (it could, but it is not necessarily true)
+		DoGotoDefinition(reply);
+		return;	
+	}
+	
 	// Adjust the activeEditor to fit the filename
 	IEditor *editor = clMainFrame::Get()->GetMainBook()->FindEditor(reply->filename);
 	if(!editor) {
@@ -686,4 +700,18 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e)
 	}
 }
 
+void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)
+{
+	CHECK_CLANG_ENABLED();
+	LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(reply->filename, wxEmptyString, reply->line);
+	if(editor) {
+		int pos = editor->PositionFromLine(reply->line - 1);
+		editor->FindAndSelect(reply->filterWord, 
+							  reply->filterWord, 
+							  pos, 
+							  NavMgr::Get());
+	}
+}
+
 #endif // HAS_LIBCLANG
+

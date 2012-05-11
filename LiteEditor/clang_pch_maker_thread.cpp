@@ -14,6 +14,7 @@
 #include "procutils.h"
 #include "fileextmanager.h"
 #include <wx/xrc/xmlres.h>
+#include "clang_utils.h"
 
 #define cstr(x) x.mb_str(wxConvUTF8).data()
 
@@ -76,40 +77,6 @@ enum CXChildVisitResult MacrosCallback(CXCursor cursor,
 
 	}
 	return CXChildVisit_Continue;
-}
-
-static void printDiagnosticsToLog(CXTranslationUnit TU)
-{
-	//// Report diagnostics to the log file
-	const unsigned diagCount = clang_getNumDiagnostics(TU);
-	for(unsigned i=0; i<diagCount; i++) {
-		CXDiagnostic diag     = clang_getDiagnostic(TU, i);
-		CXString diagStr      = clang_formatDiagnostic(diag, clang_defaultDiagnosticDisplayOptions());
-		wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-		if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
-			CL_DEBUG(wxT("Diagnostic: %s"), wxDiagString.c_str());
-
-		}
-		clang_disposeString(diagStr);
-		clang_disposeDiagnostic(diag);
-	}
-}
-
-static void printCompletionDiagnostics(CXCodeCompleteResults *res)
-{
-	//// Report diagnostics to the log file
-	const unsigned diagCount = clang_codeCompleteGetNumDiagnostics(res);
-	for(unsigned i=0; i<diagCount; i++) {
-		CXDiagnostic diag = clang_codeCompleteGetDiagnostic(res, i);
-		CXString diagStr = clang_getDiagnosticSpelling(diag);
-		wxString wxDiagString = wxString(clang_getCString(diagStr), wxConvUTF8);
-
-
-
-		CL_DEBUG(wxT("Completion diagnostic [%d]: %s"), clang_getDiagnosticSeverity(diag), wxDiagString.c_str());
-		clang_disposeString(diagStr);
-		clang_disposeDiagnostic(diag);
-	}
 }
 
 ClangWorkerThread::ClangWorkerThread()
@@ -217,7 +184,10 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	reply->filename   = task->GetFileName().c_str();
 	reply->results    = NULL;
 
-	if( task->GetContext() == CTX_CodeCompletion || task->GetContext() == CTX_WordCompletion || task->GetContext() == CTX_Calltip) {
+	if( task->GetContext() == CTX_CodeCompletion || 
+		task->GetContext() == CTX_WordCompletion || 
+		task->GetContext() == CTX_Calltip) 
+	{
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
 		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
 		reply->results = clang_codeCompleteAt(TU,
@@ -260,7 +230,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			}
 
 			CL_DEBUG(wxT("Found %u matches"), reply->results->NumResults);
-			printCompletionDiagnostics(reply->results);
+			ClangUtils::printCompletionDiagnostics(reply->results);
 		}
 		
 		if(!displayTip.IsEmpty() && hasErrors) {
@@ -293,6 +263,10 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		wxString macros = clientData.intersect();
 		CL_DEBUG(wxT("The following macros will be passed to scintilla: %s"), macros.c_str());
 		reply->macrosAsString = macros.c_str(); // Make sure we create a new copy and not using ref-count
+		
+	} else if(task->GetContext() == CTX_GotoDefinition) {
+		DoGotoDefinition(TU, task, reply);
+		
 	}
 
 	eEnd.SetClientData(reply);
@@ -412,4 +386,14 @@ void ClangWorkerThread::DoSetStatusMsg(const wxString& msg)
 	EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
 }
 
+void ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply)
+{
+	// Test to see if we are pointing a function
+	CXCursor cur;
+	if(ClangUtils::GetCursorAt(TU, request->GetFileName(), request->GetLine(), request->GetColumn(), cur)) {
+		ClangUtils::GetCursorLocation(cur, reply->filename, reply->line, reply->col);
+	}
+}
+
 #endif // HAS_LIBCLANG
+

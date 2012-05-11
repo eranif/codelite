@@ -264,7 +264,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		CL_DEBUG(wxT("The following macros will be passed to scintilla: %s"), macros.c_str());
 		reply->macrosAsString = macros.c_str(); // Make sure we create a new copy and not using ref-count
 		
-	} else if(task->GetContext() == CTX_GotoDefinition) {
+	} else if(task->GetContext() == CTX_GotoDecl || task->GetContext() == CTX_GotoImpl) {
 		DoGotoDefinition(TU, task, reply);
 		
 	}
@@ -392,6 +392,11 @@ void ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadReque
 	// Test to see if we are pointing a function
 	CXCursor cur;
 	if(ClangUtils::GetCursorAt(TU, request->GetFileName(), request->GetLine(), request->GetColumn(), cur)) {
+		
+		if(request->GetContext() == CTX_GotoImpl && !clang_isCursorDefinition(cur)) {
+			cur = clang_getCursorDefinition(cur);
+		}
+		
 		ClangUtils::GetCursorLocation(cur, reply->filename, reply->line, reply->col);
 	}
 }

@@ -98,10 +98,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 	int column       = editor->GetCurrentPosition() - lineStartPos  + 1;
 	int lineNumber   = editor->GetCurrentLine() + 1;
 	
-	if(context != CTX_GotoDefinition) {
-		column -= (int) filterWord.Length();
-		
-	} else {
+	if(context == CTX_GotoDecl || context == CTX_GotoImpl) {
 		wxString sel = editor->GetSelection();
 		if(sel.IsEmpty()) {
 			filterWord = editor->GetWordAtCaret();
@@ -110,6 +107,9 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 			filterWord = sel;
 			column = editor->GetSelectionStart() - lineStartPos + 1;
 		}
+		
+	} else {
+		column -= (int) filterWord.Length();
 	}
 	
 	// Column can not be lower than 1
@@ -493,7 +493,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 		return; // Nothing more to be done
 	}
 	
-	if(reply->context == CTX_GotoDefinition) {
+	if(reply->context == CTX_GotoDecl || reply->context == CTX_GotoImpl) {
 		// Unlike other context's the 'filename' specified here
 		// does not belong to an editor (it could, but it is not necessarily true)
 		DoGotoDefinition(reply);

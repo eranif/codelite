@@ -184,7 +184,7 @@ void CodeCompletionManager::DoClangGotoImpl(LEditor* editor)
 {
 	wxUnusedVar(editor);
 #if HAS_LIBCLANG
-	ClangCodeCompletion::Instance()->GotoDeclaration(editor);
+	ClangCodeCompletion::Instance()->GotoImplementation(editor);
 #endif
 }
 

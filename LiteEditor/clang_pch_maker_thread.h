@@ -20,7 +20,8 @@ enum WorkingContext {
     CTX_WordCompletion,
 	CTX_Macros,
 	CTX_ReparseTU,
-	CTX_GotoDefinition
+	CTX_GotoDecl,
+	CTX_GotoImpl
 };
 
 struct ClangThreadReply

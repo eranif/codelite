@@ -304,10 +304,21 @@ void ClangCodeCompletion::GotoDeclaration(IEditor* editor)
 	if(m_clang.IsBusy())
 		return;
 
-	m_clang.SetContext(CTX_GotoDefinition);
+	m_clang.SetContext(CTX_GotoDecl);
 	m_clang.CodeCompletion(editor);	
+}
+
+void ClangCodeCompletion::GotoImplementation(IEditor* editor)
+{
+	if(m_clang.IsBusy())
+		return;
+
+	m_clang.SetContext(CTX_GotoImpl);
+	m_clang.CodeCompletion(editor);	
+	
 }
 
 
 #endif // HAS_LIBCLANG
+
 

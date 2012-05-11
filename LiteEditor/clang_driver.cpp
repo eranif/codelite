@@ -690,6 +690,8 @@ void ClangDriver::QueueRequest(IEditor *editor, WorkingContext context)
 
 void ClangDriver::ReparseFile(const wxString& filename)
 {
+	CHECK_CLANG_ENABLED();
+
 	ClangThreadRequest *req = new ClangThreadRequest(m_index, filename, wxT(""), wxArrayString(), wxT(""), ::CTX_ReparseTU, 0, 0);
 	m_pchMakerThread.Add( req );
 	CL_DEBUG(wxT("Queued request to re-parse file: %s"), filename.c_str());

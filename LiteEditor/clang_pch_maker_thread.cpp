@@ -356,6 +356,7 @@ char** ClangWorkerThread::MakeCommandLine(const wxArrayString& command, int& arg
 		tokens.Add(wxT("-std=gnu++98"));
 	}
 	
+	tokens.Add(wxT("-std=c++0x"));
 	tokens.Add(wxT("-w"));
 	tokens.Add(wxT("-ferror-limit=1000"));
 	tokens.Add(wxT("-nobuiltininc"));

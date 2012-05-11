@@ -3811,7 +3811,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 		realPattern = true;
 	}
 
-	size_t flags = wxSD_MATCHCASE;
+	size_t flags = wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD;
 
 	pattern.Trim();
 	if(pattern.IsEmpty())
@@ -3841,7 +3841,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 
 	do {
 		again = false;
-		flags = wxSD_MATCHCASE;
+		flags = wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD;;
 
 		if ( StringFindReplacer::Search ( GetText(), offset, pattern, flags, pos, match_len ) ) {
 

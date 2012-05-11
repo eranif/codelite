@@ -102,7 +102,14 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 		column -= (int) filterWord.Length();
 		
 	} else {
-		filterWord = editor->GetWordAtCaret();
+		wxString sel = editor->GetSelection();
+		if(sel.IsEmpty()) {
+			filterWord = editor->GetWordAtCaret();
+			
+		} else {
+			filterWord = sel;
+			column = editor->GetSelectionStart() - lineStartPos + 1;
+		}
 	}
 	
 	// Column can not be lower than 1

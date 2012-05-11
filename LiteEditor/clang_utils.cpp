@@ -31,10 +31,16 @@ bool ClangUtils::GetCursorAt(CXTranslationUnit &unit, const wxString &filename, 
 	if(clang_isInvalid(cursor.kind))
 		return false;
 
-	if(cursor.kind == CXCursor_MemberRef || cursor.kind == CXCursor_MemberRefExpr || cursor.kind == CXCursor_TypeRef || cursor.kind == CXCursor_DeclRefExpr) {
+	if(cursor.kind == CXCursor_MemberRef     ||
+	   cursor.kind == CXCursor_MemberRefExpr ||
+	   cursor.kind == CXCursor_TypeRef       ||
+	   cursor.kind == CXCursor_DeclRefExpr   ||
+	   cursor.kind == CXCursor_TemplateRef   ||
+	   cursor.kind == CXCursor_NamespaceRef  
+	)
+	{
 		cursor = clang_getCursorReferenced(cursor);
 	}
-
 	cur = cursor;
 	return true;
 }

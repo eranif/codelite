@@ -87,6 +87,7 @@ enum CXChildVisitResult MacrosCallback(CXCursor cursor,
 
 ClangWorkerThread::ClangWorkerThread()
 {
+    clang_toggleCrashRecovery(1);
 }
 
 ClangWorkerThread::~ClangWorkerThread()

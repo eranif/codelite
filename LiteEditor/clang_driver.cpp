@@ -128,10 +128,12 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 	}
 	
 	wxString projectPath;
+    wxString pchFile;
+    wxArrayString compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), projectPath, pchFile);
 	ClangThreadRequest* request = new ClangThreadRequest(m_index,
 														 fileName,
 														 currentBuffer,
-														 DoPrepareCompilationArgs(editor->GetProjectName(), projectPath),
+														 compileFlags,
 														 filterWord,
 														 context,
 														 lineNumber,
@@ -178,7 +180,7 @@ void ClangDriver::Abort()
 	DoCleanup();
 }
 
-wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxString &projectPath)
+wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxString& projectPath, wxString& pchfile)
 {
 	wxArrayString compileArgs;
 	wxArrayString args;
@@ -695,11 +697,11 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e)
 	// Reparse the current file
 	IEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor) {
-		wxString outputProjectPath;
+		wxString outputProjectPath, pchFile;
 		ClangThreadRequest *req = new ClangThreadRequest(m_index, 
 														 editor->GetFileName().GetFullPath(), 
 														 wxT(""), 
-														 DoPrepareCompilationArgs(editor->GetProjectName(), outputProjectPath),
+														 DoPrepareCompilationArgs(editor->GetProjectName(), outputProjectPath, pchFile),
 														 wxT(""), 
 														 ::CTX_CachePCH, 0, 0);
 		m_pchMakerThread.Add( req );

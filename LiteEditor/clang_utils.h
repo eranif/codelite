@@ -34,6 +34,9 @@ public:
 	 * @brief print code completion's diagnostics to codelite's log file
 	 */
 	static void printCompletionDiagnostics(CXCodeCompleteResults *res);
+    
+    static char** MakeArgv(const wxArrayString &arr, int &argc);
+    static void FreeArgv(char **argv, int argc);
 };
 
 #endif // HAS_LIBCLANG

@@ -77,5 +77,28 @@ void ClangUtils::printCompletionDiagnostics(CXCodeCompleteResults *res)
 	}
 }
 
+void ClangUtils::FreeArgv(char** argv, int argc)
+{
+    for(int i=0; i<argc; i++) {
+        free(argv[i]);
+    }
+    delete [] argv;
+}
+
+char** ClangUtils::MakeArgv(const wxArrayString& arr, int& argc)
+{
+    argc = arr.GetCount();
+    char** argv = new char*[argc];
+
+    if(arr.IsEmpty())
+        return argv;
+
+    for(size_t i=0; i<arr.GetCount(); i++) {
+        argv[i] = strdup(arr.Item(i).mb_str(wxConvUTF8).data());
+    }
+    return argv;
+}
+
 #endif // #if HAS_LIBCLANG
+
 

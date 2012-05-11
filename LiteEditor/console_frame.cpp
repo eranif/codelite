@@ -5,7 +5,7 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include <wx/app.h>
+#include <wx/app.h> 
 #include "console_frame.h" 
 #include "drawingutils.h"
 #include "event_notifier.h"

@@ -7,7 +7,6 @@ void usage(const char* program)
 {
     printf("Usage: %s {parse|write-pch|reparse|print-macros} <file> [output-folder] <compiler options>\n", program);
     printf("    parse <file> and compile it into an AST\n");
-    printf("    reparse <AST-file>\n");
     printf("    write-pch <header-file> <output-folder> <compiler-options> compile <header-file> and store it as PCH for boosting compilation\n");
     printf("    print-macros <source-file> <AST-file> load the AST and print all macros into stdout\n");
     exit (0);

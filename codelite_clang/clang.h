@@ -11,7 +11,6 @@ public:
     enum {
         Parse,
         WritePch,
-        ReParse,
         PrintMacros
     };
 
@@ -31,7 +30,6 @@ public:
     
 protected:
     int DoParse();
-    int DoReparse();
     int DoWritePch();
     int DoPrintMacros();
     

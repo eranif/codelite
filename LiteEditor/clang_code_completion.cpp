@@ -174,8 +174,9 @@ void ClangCodeCompletion::ListMacros(IEditor* editor)
 
 void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
 {
-	e.Skip();
-
+    e.Skip();
+    CHECK_CLANG_ENABLED();
+    
 	if( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & ::CC_DISABLE_AUTO_PARSING) {
 		CL_DEBUG(wxT("ClangCodeCompletion::OnFileSaved: Auto-parsing of saved files is disabled"));
 		return;

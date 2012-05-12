@@ -12,6 +12,7 @@
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED ;
+extern const wxEventType wxEVT_CLANG_TU_CREATE_ERROR ;
 
 enum WorkingContext {
     CTX_CodeCompletion,
@@ -116,7 +117,8 @@ protected:
     std::set<wxString> DoGetUsedMacros(const wxString &filename);
     void DoSetStatusMsg(const wxString &msg);
     void               DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply);
-
+    void               PostEvent(int type);
+    
 public:
     virtual void ProcessRequest(ThreadRequest* request);
     CXTranslationUnit findEntry(const wxString &filename);

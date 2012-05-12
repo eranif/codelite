@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Jun  6 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -1417,6 +1417,23 @@ PSCompletionBase::PSCompletionBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_splitter1->SplitHorizontally( m_panel14, m_panel15, 0 );
 	bSizer34->Add( m_splitter1, 1, wxEXPAND, 5 );
 	
+	wxBoxSizer* bSizer39;
+	bSizer39 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText50 = new wxStaticText( this, wxID_ANY, _("Use precompiled header:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText50->Wrap( -1 );
+	m_staticText50->SetToolTip( _("Select the pre-compiled header to use.\nUsing a pre-compile header will faster clang compilation time in order of magnitude") );
+	
+	bSizer39->Add( m_staticText50, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_filePickerClangPCH = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	bSizer39->Add( m_filePickerClangPCH, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_button32 = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+	bSizer39->Add( m_button32, 0, wxALL, 5 );
+	
+	bSizer34->Add( bSizer39, 0, wxEXPAND, 5 );
+	
 	this->SetSizer( bSizer34 );
 	this->Layout();
 	
@@ -1424,6 +1441,7 @@ PSCompletionBase::PSCompletionBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_textCtrlSearchPaths->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlMacros->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
+	m_button32->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompletionBase::OnBrowsePCH ), NULL, this );
 }
 
 PSCompletionBase::~PSCompletionBase()
@@ -1432,5 +1450,6 @@ PSCompletionBase::~PSCompletionBase()
 	m_textCtrlSearchPaths->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlMacros->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
+	m_button32->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSCompletionBase::OnBrowsePCH ), NULL, this );
 	
 }

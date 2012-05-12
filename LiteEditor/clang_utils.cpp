@@ -99,6 +99,45 @@ char** ClangUtils::MakeArgv(const wxArrayString& arr, int& argc)
     return argv;
 }
 
+void ClangUtils::MakePCHIfNeeded(const wxArrayString& tokens, const CXIndex& index)
+{
+    // Copy the tokens
+    wxArrayString mytokens;
+    wxString      pchfile;
+    mytokens.insert(mytokens.end(), tokens.begin(), tokens.end());
+    
+    int where = mytokens.Index(wxT("-include-pch"));
+    if(where != wxNOT_FOUND) {
+        
+        int pchfileIndex = where + 1;
+        if(mytokens.GetCount() > pchfileIndex) {
+            
+            pchfile = mytokens.Item(pchfileIndex);
+            mytokens.RemoveAt(where, 2);
+            
+        } else {
+            // Invalid tokens
+            // Found -include-pch but not the actual pch file...
+            return;
+        }
+        
+        // At this point, pchfile contains the file that we should create for faster code-completion
+        // Now we simply test to see if this file exists
+        wxFileName filename(pchfile);
+        wxFileName filename_h(pchfile);
+        
+        filename.SetExt(wxT("clang-pch"));
+        
+        if(filename.FileExists()) {
+            return;
+        }
+        
+        // We needed to create it...
+        
+    }
+}
+
 #endif // #if HAS_LIBCLANG
+
 
 

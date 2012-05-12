@@ -9,16 +9,17 @@
   
   
   
+  
   ]]>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="test_clang" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="test_clang" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Linux_64" Selected="no">
+    <WorkspaceConfiguration Name="Linux_64" Selected="yes">
       <Project Name="test_clang" ConfigName="Linux_64"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Linux_32" Selected="no">

@@ -71,8 +71,14 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 				m_clangCmpFlags = clang_cmp_flags->GetNodeContent();
 				m_clangCmpFlags.Trim().Trim(false);
 			}
-			
+            
+            wxXmlNode* clang_pch = XmlUtils::FindFirstByTagName(completion, wxT("ClangPCH"));
+            if(clang_pch) {
+                m_ccPCH = clang_pch->GetNodeContent();
+                m_ccPCH.Trim().Trim(false);
+            }
 		}
+        
 		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
 		if (compile) {
 			m_compilerRequired = XmlUtils::ReadBool(compile, wxT("Required"), true);

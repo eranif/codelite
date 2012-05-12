@@ -169,9 +169,6 @@ void ClangCodeCompletion::ListMacros(IEditor* editor)
 {
     if(m_clang.IsBusy())
         return;
-        
-    // FIXME: Make it work !
-    return;
 	m_clang.QueueRequest(editor, CTX_Macros);
 }
 

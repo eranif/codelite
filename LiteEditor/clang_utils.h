@@ -37,6 +37,12 @@ public:
     
     static char** MakeArgv(const wxArrayString &arr, int &argc);
     static void FreeArgv(char **argv, int argc);
+    
+    /**
+     * @brief make PCH if needed based on the command line arguments provided in the 'tokens' array
+     * This function will create the PCH if one of the tokens is '-include-pch'
+     */
+    static void MakePCHIfNeeded(const wxArrayString &tokens, const CXIndex &index);
 };
 
 #endif // HAS_LIBCLANG

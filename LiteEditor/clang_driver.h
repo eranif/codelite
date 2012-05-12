@@ -65,6 +65,7 @@ public:
 	// Event Handlers
 	void OnPrepareTUEnded(wxCommandEvent &e);
 	void OnCacheCleared(wxCommandEvent &e);
+	void OnTUCreateError(wxCommandEvent &e);
 };
 
 #endif // HAS_LIBCLANG

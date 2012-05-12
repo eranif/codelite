@@ -137,7 +137,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
 	m_argv = NULL;
 	
 	wxString c = cmdline;
-	
+    
 	// HACK
 	// Since our code does not handle \ properly when its part of a directory name
 	// we replace it with forward slash
@@ -169,8 +169,11 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
 				m_macrosWithPrefix.Add(opt);
 			} 
             
-            else if(opt.StartsWith(wxT("-include-path"))) {
+            else if(opt.StartsWith(wxT("-include-path"), &rest)) {
                 m_includesWithPrefix.Add(opt);
+                
+                rest.Trim().Trim(false);
+                m_pchFile = rest;
             }
 		}
 	}

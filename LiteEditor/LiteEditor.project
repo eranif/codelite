@@ -897,6 +897,7 @@
       
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -991,7 +992,7 @@ resources.cpp: resources.xrc
 </CustomPreBuild>
       </AdditionalRules>
       <Completion>
-        <ClangCmpFlags>-include-pch /home/eran/mypch.pch</ClangCmpFlags>
+        <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
@@ -1021,6 +1022,7 @@ resources.cpp: resources.xrc
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
+      
       
       ]]>
       </Environment>
@@ -1099,6 +1101,7 @@ svninfo.cpp:
       
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -1154,6 +1157,7 @@ resources.cpp: resources.xrc
       <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./WinDbg29" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[
+      
       
       
       

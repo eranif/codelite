@@ -87,4 +87,11 @@ void ClangTUCache::RemoveEntry(const wxString& filename)
 	}
 }
 
+bool ClangTUCache::Contains(const wxString& filename) const
+{
+    return m_cache.find(filename) != m_cache.end();
+}
+
 #endif // HAS_LIBCLANG
+
+

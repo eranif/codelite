@@ -29,6 +29,7 @@ public:
 	void AddPCH(const wxString& filename, CXTranslationUnit tu);
 	void RemoveEntry(const wxString &filename);
 	void Clear();
+    bool Contains(const wxString &filename) const;
 	bool IsEmpty() const {
 		return m_cache.empty();
 	}

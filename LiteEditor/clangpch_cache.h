@@ -50,6 +50,7 @@ public:
 	void RemoveEntry(const wxString &filename);
 	void Clear();
     bool Contains(const wxString &filename) const;
+	wxString GetTuFileName(const wxString &sourceFile) const;
 	bool IsEmpty() const {
 		return m_cache.empty();
 	}

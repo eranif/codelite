@@ -10,8 +10,10 @@ class Clang
 public:
     enum {
         Parse,
-        WritePch,
-        PrintMacros
+        //WritePch,
+        PrintMacros,
+		ParseMacros,
+		CC
     };
 
 protected:
@@ -22,7 +24,8 @@ protected:
     wxString m_outputFolder;
     char**   m_argv;
     int      m_argc;
-    
+    wxString m_loc;
+	
 public:
     static enum CXChildVisitResult MacrosCallback(CXCursor cursor,
                                                   CXCursor parent,
@@ -30,9 +33,11 @@ public:
     
 protected:
     int DoParse();
-    int DoWritePch();
+    //int DoWritePch();
     int DoPrintMacros();
-    
+    int DoCC();
+	int DoParseMacros();
+	
 public:
     Clang(const char* file, const char* command, int argc, char **argv);
     virtual ~Clang();

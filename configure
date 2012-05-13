@@ -66,7 +66,8 @@ createVariables()
 	## is_64bit will probably hold yes or no, but could also contain data from an environmental variable
 	compiler_extras="$is_64bit"
 	c_compiler_extras="$is_64bit"
-
+	
+	
 	# If it wasn't overridden, implement the normal behaviour
 	if [ "$os_name" = "Darwin" ]; then
 		if [ "$is_64bit" = "yes" ]; then
@@ -77,9 +78,9 @@ createVariables()
 			c_compiler_extras="-m32 "
 
                         ## clang
-                        lib_clang_cmp_flags=" -DHAS_LIBCLANG -I./sdk/clang/include "
-                        lib_clang_link_flags=" -L./sdk/clang/lib -lclang "
-                        lib_clang="./sdk/clang/lib/libclang.dylib"
+                        lib_clang_cmp_flags=" -DHAS_LIBCLANG -I${CONFIGURE_PATH}/sdk/clang/include "
+                        lib_clang_link_flags=" -L${CONFIGURE_PATH}/sdk/clang/lib -lclang "
+                        lib_clang="${CONFIGURE_PATH}/sdk/clang/lib/libclang.dylib"
                         with_clang="yes"
 
 		fi
@@ -90,9 +91,9 @@ createVariables()
 			c_compiler_extras="-DON_64_BIT "
 			
 			## clang 
-			lib_clang_cmp_flags=" -DHAS_LIBCLANG -I./sdk/clang/Linux/x86_64/include "
-			lib_clang_link_flags=" -L./sdk/clang/Linux/x86_64/lib -lclang "
-			lib_clang="./sdk/clang/Linux/x86_64/lib/libclang.so"
+			lib_clang_cmp_flags=" -DHAS_LIBCLANG -I${CONFIGURE_PATH}/sdk/clang/Linux/x86_64/include "
+			lib_clang_link_flags=" -L${CONFIGURE_PATH}/sdk/clang/Linux/x86_64/lib -lclang "
+			lib_clang="${CONFIGURE_PATH}/sdk/clang/Linux/x86_64/lib/libclang.so"
 			with_clang="yes"
 			
 		elif [ "$is_64bit" = "no" ]; then
@@ -100,9 +101,9 @@ createVariables()
 			c_compiler_extras=""
 			
 			## clang 
-			lib_clang_cmp_flags=" -DHAS_LIBCLANG -I./sdk/clang/Linux/i386/include "
-			lib_clang_link_flags=" -L./sdk/clang/Linux/i386/lib -lclang "
-			lib_clang="./sdk/clang/Linux/i386/lib/libclang.so"
+			lib_clang_cmp_flags=" -DHAS_LIBCLANG -I${CONFIGURE_PATH}/sdk/clang/Linux/i386/include "
+			lib_clang_link_flags=" -L${CONFIGURE_PATH}/sdk/clang/Linux/i386/lib -lclang "
+			lib_clang="${CONFIGURE_PATH}/sdk/clang/Linux/i386/lib/libclang.so"
 			with_clang="yes"
 			
 		fi
@@ -198,7 +199,7 @@ createMainTargets()
     if [ "$enable_pch" = "yes" ]; then
         pch_target=" pch_header "
     fi
-	target_all="all : $pch_target pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_indexer codelite_cppcheck Plugins LiteEditor "
+	target_all="all : $pch_target pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_clang codelite_indexer codelite_cppcheck Plugins LiteEditor "
   
 	## additional database backends
 
@@ -212,7 +213,7 @@ createMainTargets()
 	fi
     
 	## add the "all" target to the makefile
-	echo ".PHONY: PrintMsg" >> Makefile
+	echo ".PHONY: PrintMsg codelite_clang" >> Makefile
 	echo "${target_all}" >> Makefile
 	echo "" >> Makefile
     
@@ -225,6 +226,10 @@ createMainTargets()
 	echo "codelite_indexer:" >> Makefile
 	echo "	@cd sdk/codelite_indexer/ && \$(MAKE)" >> Makefile
 	echo "	cp -fr sdk/codelite_indexer/codelite_indexer Runtime/." >> Makefile
+	echo "" >> Makefile
+
+	echo "codelite_clang:" >> Makefile
+	echo "	@cd codelite_clang/ && \$(MAKE)" >> Makefile
 	echo "" >> Makefile
 
 	echo "codelite_cppcheck:" >> Makefile
@@ -242,6 +247,7 @@ createMainTargets()
 	echo "	@cd PCH && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_indexer && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_cppcheck && \$(MAKE) clean" >> Makefile
+	echo "	@cd codelite_clang/ && \$(MAKE) clean" >> Makefile
 	echo "	\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
 	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "" >> Makefile
@@ -375,6 +381,83 @@ createCodeLiteCppcheckMakefile ()
 	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
 	echo "	\$(RM) -fr ${configuration}/*.o.d" >> Makefile
 	echo "	\$(RM) -fr codelite_cppcheck" >> Makefile
+
+	## restore the path
+	cd "$current_wd"
+}
+
+createCodeLiteClangMakefile()
+{
+	files_list="$1"
+	echo "Generating codelite_clang/Makefile..."
+	current_wd=`pwd`
+
+	cd ./codelite_clang/
+
+	## remove old Makefile
+	rm -fr Makefile
+
+	if [ "$enable_debug" = "yes" ]; then
+		debug_flag=" -g "
+		configuration="Debug"
+		optimization=" -O0 "
+	else
+		configuration="Release"
+		debug_flag=""
+		optimization=" -O2 "
+	fi
+
+	echo "OPT=${optimization}" >> Makefile
+	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "CXX=${compiler_name}" >> Makefile
+	echo "CMP=\$(CXX) \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CC=${c_compiler_name}" >> Makefile
+	echo "GCC=\$(CC) \$(DEBUG) \$(OPT) " >> Makefile
+	echo "" >> Makefile
+	echo "all: codelite_clang" >> Makefile
+
+	createObjectList "*.cpp" "codelite_clang_objects"
+	
+	for a_file in $files_list
+	do
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file_with_ext .cpp`
+		file_extension=`basename $a_file | cut -d. -f2`
+		
+		a_file_no_ext="codelite_clang_objects"_${a_file_no_ext}
+		
+		
+		echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+		echo "	\$(CMP) ${lib_clang_cmp_flags} `wx-config --cflags --unicode` -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+		echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+		echo "	\$(CMP) ${lib_clang_cmp_flags} `wx-config --cflags --unicode` -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+	done
+	
+	echo "-include ${configuration}/*.d" >> Makefile
+	echo >> Makefile
+
+	echo "codelite_clang: make_dirs \$(codelite_clang_objects)" >> Makefile
+
+	## On FreeBSD, -ldl is part og libc
+	if [ "$os_name" = "FreeBSD" ]; then
+		echo "	\$(CMP) -o codelite-clang ${rpaths} ${lib_clang_link_flags} \$(codelite_clang_objects) -lpthread `wx-config --libs --unicode`" >> Makefile
+	else
+		echo "	\$(CMP) -o codelite-clang ${rpaths} ${lib_clang_link_flags} \$(codelite_clang_objects) -lpthread -ldl `wx-config --libs --unicode`" >> Makefile
+	fi
+
+	echo >> Makefile
+
+	echo "make_dirs:" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	@echo \"----------Building project:[ codelite_clang  ${configuration} ]----------\"" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	test -d ${configuration} || mkdir ${configuration}" >> Makefile
+	echo >> Makefile
+
+	echo "clean: " >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o.d" >> Makefile
+	echo "	\$(RM) -fr codelite-clang" >> Makefile
 
 	## restore the path
 	cd "$current_wd"
@@ -775,6 +858,7 @@ createInstallTarget()
 	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_kill_children\"" >> Makefile
 	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_xterm\"" >> Makefile
 	echo "	@cp sdk/codelite_indexer/codelite_indexer \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@cp codelite_clang/codelite-clang \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
 	echo "	@cp sdk/codelite_cppcheck/codelite_cppcheck \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
 	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/applications\"" >> Makefile
 	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite\"" >> Makefile
@@ -849,6 +933,7 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_kill_children\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_xterm\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_indexer\"" >> Makefile
+	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite-clang\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_cppcheck\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLiteUR\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLiteUD\"" >> Makefile
@@ -901,6 +986,7 @@ Show_Help_and_Exit()
 
 ## main
 # checkCURL
+CONFIGURE_PATH=`pwd`
 
 ## Create variables needed by the makefile
 enable_debug="no"
@@ -1074,6 +1160,7 @@ fi
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
+createCodeLiteClangMakefile  "codelite_clang/*.cpp"
 createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/cli/*.cpp sdk/codelite_cppcheck/lib/*.cpp"
 createInstallTarget
 createUnInstallTarget

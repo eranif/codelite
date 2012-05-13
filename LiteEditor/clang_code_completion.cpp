@@ -167,9 +167,7 @@ void ClangCodeCompletion::WordComplete(IEditor* editor)
 
 void ClangCodeCompletion::ListMacros(IEditor* editor)
 {
-    if(m_clang.IsBusy())
-        return;
-	m_clang.QueueRequest(editor, CTX_Macros);
+	m_clang.GetMacros(editor);
 }
 
 void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)

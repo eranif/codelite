@@ -114,13 +114,12 @@ public:
 protected:
     char**             MakeCommandLine(ClangThreadRequest* req, int& argc, FileExtManager::FileType fileType);
     void               DoCacheResult(CXTranslationUnit TU, const wxString &filename, const wxString &pch);
-    std::set<wxString> DoGetUsedMacros(const wxString &filename);
     void DoSetStatusMsg(const wxString &msg);
     void               DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply);
     void               PostEvent(int type);
-    
+    CXTranslationUnit  DoCreateTU(CXIndex index, ClangThreadRequest *task, bool reparse);
 public:
-    virtual void ProcessRequest(ThreadRequest* request);
+    virtual void ProcessRequest(ThreadRequest* task);
     ClangCacheEntry findEntry(const wxString &filename);
     void              ClearCache();
     bool              IsCacheEmpty();

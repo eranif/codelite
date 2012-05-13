@@ -91,7 +91,14 @@ bool ClangTUCache::Contains(const wxString& filename) const
     return m_cache.find(filename) != m_cache.end();
 }
 
-#endif // HAS_LIBCLANG
+wxString ClangTUCache::GetTuFileName(const wxString& sourceFile) const
+{
+	std::map<wxString, ClangCacheEntry>::const_iterator iter = m_cache.find(sourceFile);
+	if(iter != m_cache.end())
+		return iter->second.fileTU;
+	return wxT("");
+}
 
+#endif // HAS_LIBCLANG
 
 

@@ -2,7 +2,10 @@
 
 #include "clang_driver.h"
 #include "clang_code_completion.h"
+#include "clang_macro_handler.h"
 #include <wx/regex.h>
+#include "asyncprocess.h"
+#include "processreaderthread.h"
 #include "navigationmanager.h"
 #include "compiler_command_line_parser.h"
 #include "file_logger.h"
@@ -50,6 +53,7 @@ ClangDriver::ClangDriver()
 	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
 	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),   NULL, this);
 	EventNotifier::Get()->Connect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError),  NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE, wxCommandEventHandler(ClangDriver::OnDeletMacroHandler),  NULL, this);
 }
 
 ClangDriver::~ClangDriver()
@@ -58,6 +62,7 @@ ClangDriver::~ClangDriver()
 	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded),  NULL, this);
 	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),  NULL, this);
 	EventNotifier::Get()->Disconnect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE, wxCommandEventHandler(ClangDriver::OnDeletMacroHandler),  NULL, this);
 	
 	m_pchMakerThread.Stop();
 	m_pchMakerThread.ClearCache(); // clear cache and dispose all translation units
@@ -750,6 +755,46 @@ void ClangDriver::OnTUCreateError(wxCommandEvent& e)
 	DoCleanup();
 }
 
+void ClangDriver::GetMacros(IEditor *editor)
+{
+	wxString projectPath;
+    wxString pchFile;
+    wxArrayString compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), projectPath, pchFile);
+	
+	wxString cmd;
+	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+	exePath.SetFullName(wxT("codelite-clang"));
+	
+#ifdef __WXMSW__
+	exePath.SetExt(wxT("exe"));
+#endif
+	
+	wxFileName outputFolder(pchFile);
+	
+	cmd << wxT("\"") << exePath.GetFullPath() << wxT("\" parse-macros \"") << editor->GetFileName().GetFullPath() << wxT("\" \"") << outputFolder.GetPath() << wxT("\" ");
+	for(size_t i=0; i<compileFlags.GetCount(); i++) {
+		cmd << compileFlags.Item(i) << wxT(" ");
+	}
+	
+	ClangMacroHandler *handler = new ClangMacroHandler();
+	handler->SetProcessAndEditor( ::CreateAsyncProcess(handler, cmd), editor );
+	
+	if(handler->GetProcess() == NULL) {
+		delete handler;
+		return;
+	}
+}
+
+void ClangDriver::OnDeletMacroHandler(wxCommandEvent& e)
+{
+	ClangMacroHandler *h = reinterpret_cast<ClangMacroHandler*>(e.GetClientData());
+	if( h ) {
+		delete h;
+	}
+}
+
 #endif // HAS_LIBCLANG
+
+
 
 

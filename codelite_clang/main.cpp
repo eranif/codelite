@@ -9,6 +9,7 @@ void usage(const char* program)
     printf("    parse <file> and compile it into an AST\n");
     printf("    write-pch <header-file> <output-folder> <compiler-options> compile <header-file> and store it as PCH for boosting compilation\n");
     printf("    print-macros <source-file> <AST-file> load the AST and print all macros into stdout\n");
+	printf("    code-complete <source-file> <AST-file> <line:col>\n");
     exit (0);
 }
 

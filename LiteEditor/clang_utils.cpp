@@ -137,6 +137,15 @@ void ClangUtils::MakePCHIfNeeded(const wxArrayString& tokens, const CXIndex& ind
     }
 }
 
+CXTranslationUnit ClangUtils::LoadTU(CXIndex index, const ClangCacheEntry& entry)
+{
+	if(entry.IsOk() == false)
+		return NULL;
+	
+	return clang_createTranslationUnit(index, entry.fileTU.mb_str(wxConvUTF8).data());
+}
+
+
 #endif // #if HAS_LIBCLANG
 
 

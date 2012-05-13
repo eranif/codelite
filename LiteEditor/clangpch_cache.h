@@ -11,8 +11,28 @@
 
 struct ClangCacheEntry
 {
+public:
 	CXTranslationUnit TU;
 	time_t            lastAccessed;
+	wxString          fileTU;
+	wxString          sourceFile;
+	
+public:
+	
+	ClangCacheEntry() : TU(NULL), lastAccessed(0) {}
+	ClangCacheEntry(const ClangCacheEntry &rhs) {
+		*this = rhs;
+	}
+	
+	void operator=(const ClangCacheEntry &rhs) {
+		this->TU           = rhs.TU;
+		this->lastAccessed = rhs.lastAccessed;
+		this->fileTU       = rhs.fileTU;
+		this->sourceFile   = rhs.sourceFile;
+	}
+	bool IsOk() const {
+		return TU != NULL;
+	}
 };
 
 class ClangTUCache
@@ -25,8 +45,8 @@ public:
 	ClangTUCache();
 	virtual ~ClangTUCache();
 
-	CXTranslationUnit GetPCH(const wxString &filename);
-	void AddPCH(const wxString& filename, CXTranslationUnit tu);
+	ClangCacheEntry GetPCH(const wxString &filename);
+	void AddPCH(ClangCacheEntry entry);
 	void RemoveEntry(const wxString &filename);
 	void Clear();
     bool Contains(const wxString &filename) const;

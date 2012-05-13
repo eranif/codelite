@@ -119,7 +119,9 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
     CL_DEBUG(wxT("ClangWorkerThread:: processing request %d"), (int)task->GetContext());
 
     CXUnsavedFile unsavedFile = { c_filename.c_str(), c_dirtyBuffer.c_str(), c_dirtyBuffer.length() };
-    CXTranslationUnit TU = findEntry(task->GetFileName());
+	
+	ClangCacheEntry cacheEntry = findEntry(task->GetFileName());
+    CXTranslationUnit TU = cacheEntry.TU;
     CL_DEBUG(wxT("ClangWorkerThread:: found cached TU: %x"), (void*)TU);
     bool reparseRequired = true;
     if(!TU) {
@@ -198,7 +200,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
     // Construct a cache-returner class
     // which makes sure that the TU is cached
     // when we leave the current scope
-    CacheReturner cr(this, task->GetFileName(), TU);
+    CacheReturner cr(this, task->GetFileName(), task->GetPchFile(), TU);
 
     DoSetStatusMsg(wxT("Ready"));
 
@@ -332,17 +334,22 @@ std::set<wxString> ClangWorkerThread::DoGetUsedMacros(const wxString &filename)
     return pps;
 }
 
-CXTranslationUnit ClangWorkerThread::findEntry(const wxString& filename)
+ClangCacheEntry ClangWorkerThread::findEntry(const wxString& filename)
 {
     wxCriticalSectionLocker locker(m_criticalSection);
-    CXTranslationUnit TU = m_cache.GetPCH(filename);
-    return TU;
+    ClangCacheEntry entry = m_cache.GetPCH(filename);
+    return entry;
 }
 
-void ClangWorkerThread::DoCacheResult(CXTranslationUnit TU, const wxString &filename)
+void ClangWorkerThread::DoCacheResult(CXTranslationUnit TU, const wxString& filename, const wxString& pch)
 {
     wxCriticalSectionLocker locker(m_criticalSection);
-    m_cache.AddPCH( filename, TU);
+	ClangCacheEntry cacheEntry;
+	cacheEntry.TU = TU;
+	cacheEntry.fileTU = pch;
+	cacheEntry.sourceFile = filename;
+    m_cache.AddPCH(cacheEntry);
+	
     CL_DEBUG(wxT("caching Translation Unit file: %s, %x"), filename.c_str(), (void*)TU);
     CL_DEBUG(wxT(" ==========> [ ClangPchMakerThread ] PCH creation ended successfully <=============="));
 }

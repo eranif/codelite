@@ -48,14 +48,16 @@ ClangDriver::ClangDriver()
 	m_pchMakerThread.SetSleepInterval(30);
 	m_pchMakerThread.Start();
 	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared), NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),   NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError),  NULL, this);
 }
 
 ClangDriver::~ClangDriver()
 {
 	// Disconnect all events before we perform anything elase
-	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared), NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_ENDED, wxCommandEventHandler(ClangDriver::OnPrepareTUEnded),  NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),  NULL, this);
+	EventNotifier::Get()->Disconnect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError), NULL, this);
 	
 	m_pchMakerThread.Stop();
 	m_pchMakerThread.ClearCache(); // clear cache and dispose all translation units
@@ -130,7 +132,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 	
 	wxString projectPath;
     wxString pchFile;
-    wxArrayString compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), projectPath, pchFile);
+    wxArrayString compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath, pchFile);
 	ClangThreadRequest* request = new ClangThreadRequest(m_index,
 														 fileName,
 														 currentBuffer,
@@ -139,6 +141,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 														 context,
 														 lineNumber,
 														 column);
+	request->SetPchFile(pchFile);
 	return request;
 }
 
@@ -181,7 +184,7 @@ void ClangDriver::Abort()
 	DoCleanup();
 }
 
-wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, wxString& projectPath, wxString& pchfile)
+wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wxString& sourceFile, wxString& projectPath, wxString& pchfile)
 {
 	wxArrayString compileArgs;
 	wxArrayString args;
@@ -201,12 +204,21 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
     
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, proj->GetName());
 	BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), projectSelConf);
-        
-    projectPath = proj->GetFileName().GetPath();
+	
+	projectPath = proj->GetFileName().GetPath();
     if(dependProjbldConf) {
 		CL_DEBUG(wxT("DoPrepareCompilationArgs(): Project=%s, Conf=%s"), projectName.c_str(), dependProjbldConf->GetName().c_str());
 	}
     
+	// Build the TU file name
+	wxFileName fnSourceFile(sourceFile);
+	pchfile << projectPath << wxFileName::GetPathSeparator() << wxT(".clang");
+	{
+		wxLogNull nl;
+		wxMkdir(projectPath);
+	}
+	pchfile << wxFileName::GetPathSeparator() << fnSourceFile.GetFullName() << wxT(".TU");
+	
 	// for non custom projects, take the settings from the build configuration
 	if(dependProjbldConf && !dependProjbldConf->IsCustomBuild()) {
  
@@ -321,8 +333,7 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 			if(p.IsEmpty())
 				continue;
 			
-			p = MacroManager::Instance()->Expand(p, PluginManager::Get(), proj->GetName(), dependProjbldConf->GetName()
-            );
+			p = MacroManager::Instance()->Expand(p, PluginManager::Get(), proj->GetName(), dependProjbldConf->GetName());
 			wxFileName fn(p, wxT(""));
 			if(fn.IsRelative()) {
 				fn.MakeAbsolute(projectPath);
@@ -710,9 +721,11 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e)
 		ClangThreadRequest *req = new ClangThreadRequest(m_index, 
 														 editor->GetFileName().GetFullPath(), 
 														 editor->GetEditorText(), 
-														 DoPrepareCompilationArgs(editor->GetProjectName(), outputProjectPath, pchFile),
+														 DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), outputProjectPath, pchFile),
 														 wxT(""), 
 														 ::CTX_CachePCH, 0, 0);
+														
+		req->SetPchFile(pchFile);
 		m_pchMakerThread.Add( req );
 		CL_DEBUG(wxT("OnCacheCleared:: Queued request to build TU for file: %s"), editor->GetFileName().GetFullPath().c_str());
 	}
@@ -733,6 +746,8 @@ void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)
 
 void ClangDriver::OnTUCreateError(wxCommandEvent& e)
 {
+	e.Skip();
+	DoCleanup();
 }
 
 #endif // HAS_LIBCLANG

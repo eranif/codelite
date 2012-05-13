@@ -14,35 +14,31 @@ ClangTUCache::~ClangTUCache()
 {
 }
 
-CXTranslationUnit ClangTUCache::GetPCH(const wxString& filename)
+ClangCacheEntry ClangTUCache::GetPCH(const wxString& filename)
 {
 	std::map<wxString, ClangCacheEntry>::iterator iter = m_cache.find(filename);
 	if(iter == m_cache.end()) {
-		return 0;
+		return ClangCacheEntry();
 	}
 	// Remove this entry from the cache. It is up to the caller to place it back!
-	
-	CXTranslationUnit TU = iter->second.TU;
+	ClangCacheEntry entry = iter->second;
 	m_cache.erase(iter);
-	
-	return TU;
+	return entry;
 }
 
-void ClangTUCache::AddPCH(const wxString& filename, CXTranslationUnit tu)
+void ClangTUCache::AddPCH(ClangCacheEntry entry)
 {
 	// See if we already have a cache entry for this file name
-	std::map<wxString, ClangCacheEntry>::iterator iter = m_cache.find(filename);
-	if(iter != m_cache.end() && iter->second.TU == tu) {
+	std::map<wxString, ClangCacheEntry>::iterator iter = m_cache.find(entry.sourceFile);
+	if(iter != m_cache.end() && iter->second.TU == entry.TU) {
 		// the entry in the cache is the same as this one
 		// Just update the access-time
 		iter->second.lastAccessed = time(NULL);
 		return;
 	}
 
-	ClangCacheEntry entry;
-	entry.TU = tu;
 	entry.lastAccessed = time(NULL);
-	m_cache.insert(std::make_pair<wxString, ClangCacheEntry>(filename, entry));
+	m_cache.insert(std::make_pair<wxString, ClangCacheEntry>(entry.sourceFile, entry));
 	
 	if(m_cache.size() > m_maxItems) {
 		CL_DEBUG1(wxT("clang PCH cache size reached its maximum size, removing last accessed entry"));
@@ -84,6 +80,9 @@ void ClangTUCache::RemoveEntry(const wxString& filename)
         CL_DEBUG(wxT("clang_disposeTranslationUnit for TU: %x"), (void*)iter->second.TU);
 		clang_disposeTranslationUnit(iter->second.TU);
 		m_cache.erase(iter);
+		
+		wxLogNull nolog;
+		wxRemoveFile(iter->second.fileTU);
 	}
 }
 
@@ -93,5 +92,6 @@ bool ClangTUCache::Contains(const wxString& filename) const
 }
 
 #endif // HAS_LIBCLANG
+
 
 

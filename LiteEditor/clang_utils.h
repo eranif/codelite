@@ -6,10 +6,12 @@
 #include "precompiled_header.h"
 #include <clang-c/Index.h>
 #include <wx/string.h>
+#include "clangpch_cache.h"
 
 class ClangUtils 
 {
 public:
+	static CXTranslationUnit LoadTU(CXIndex index, const ClangCacheEntry &entry);
 	/**
 	 * @brief return the location of the current cursor
 	 * @param cursor   [input]

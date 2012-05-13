@@ -32,7 +32,7 @@ protected:
 	
 protected:
 	void                DoCleanup();
-	wxArrayString       DoPrepareCompilationArgs(const wxString &projectName, wxString &projectPath, wxString &pchfile);
+	wxArrayString       DoPrepareCompilationArgs(const wxString &projectName, const wxString &sourceFile, wxString &projectPath, wxString &pchfile);
 	wxArrayString       DoExpandBacktick(const wxString &backtick, const wxString &projectName);
 	void                DoParseCompletionString(CXCompletionString str, int depth, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
 	void                DoProcessMacros(ClangThreadReply *reply);

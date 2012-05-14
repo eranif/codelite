@@ -8,9 +8,10 @@
     <File Name="clang.cpp"/>
     <File Name="clang_utils.h"/>
     <File Name="clang_utils.cpp"/>
-    <File Name="../CodeLite/cpp_scanner.cpp"/>
-    <File Name="../CodeLite/cpp_scanner.h"/>
-    <File Name="../CodeLite/lex.yy.cpp"/>
+    <File Name="cpp_scanner.cpp"/>
+    <File Name="cpp_scanner.h"/>
+    <File Name="lex.yy.cpp"/>
+    <File Name="y.tab.h"/>
   </VirtualDirectory>
   <Dependencies Name="Release"/>
   <Settings Type="Executable">
@@ -23,6 +24,45 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
+    <Configuration Name="Debug_Linux_32" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="../sdk/clang/Linux/i386/include"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes)" Required="yes">
+        <LibraryPath Value="../sdk/clang/Linux/i386/lib"/>
+        <Library Value="libclang.so"/>
+      </Linker>
+      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="parse-macros /home/eran/main.cpp /tmp -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/x86_64-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -ferror-limit=1000 -w -nobuiltininc -I/usr/include/gtk-2.0 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths>../sdk/clang/Linux/x86_64/include</SearchPaths>
+      </Completion>
+    </Configuration>
     <Configuration Name="Debug_Linux_64" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="../sdk/clang/Linux/x86_64/include"/>
@@ -34,7 +74,8 @@
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="parse-macros /home/eran/main.cpp /tmp -I/usr/include/c++/4.4 -I/usr/include/c++/4.4/x86_64-linux-gnu -I/usr/include/c++/4.4/backward -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include -I/usr/lib/gcc/x86_64-linux-gnu/4.4.6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -ferror-limit=1000 -w -nobuiltininc -I/usr/include/gtk-2.0 -I/usr/lib/x86_64-linux-gnu/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -73,7 +114,8 @@
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Debug" Command="./codelite-clang.exe" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -112,7 +154,8 @@
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

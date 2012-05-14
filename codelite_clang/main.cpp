@@ -3,6 +3,10 @@
 #include <clang-c/Index.h>
 #include "clang.h"
 
+#ifdef _WIN32
+#    include <Windows.h>
+#endif
+
 void usage(const char* program)
 {
     printf("Usage: %s {parse|parse-macros|code-complete} <file> [output-folder] <compiler options>\n", program);
@@ -14,6 +18,11 @@ void usage(const char* program)
 
 int main( int argc, char** argv )
 {
+#ifdef _WIN32
+	// No windows crash dialogs
+	SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOGPFAULTERRORBOX|SEM_NOOPENFILEERRORBOX);
+#endif
+
     wxInitialize(argc, argv);
     if(argc < 3) {
         usage(argv[0]);

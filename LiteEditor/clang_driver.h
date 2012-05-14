@@ -35,7 +35,6 @@ protected:
 	wxArrayString       DoPrepareCompilationArgs(const wxString &projectName, const wxString &sourceFile, wxString &projectPath, wxString &pchfile);
 	wxArrayString       DoExpandBacktick(const wxString &backtick, const wxString &projectName);
 	void                DoParseCompletionString(CXCompletionString str, int depth, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
-	void                DoProcessMacros(ClangThreadReply *reply);
 	void                DoGotoDefinition(ClangThreadReply *reply);
 	ClangThreadRequest* DoMakeClangThreadRequest(IEditor* editor, WorkingContext context);
 	
@@ -70,6 +69,7 @@ public:
 	void OnPrepareTUEnded(wxCommandEvent &e);
 	void OnCacheCleared(wxCommandEvent &e);
 	void OnTUCreateError(wxCommandEvent &e);
+	void OnWorkspaceLoaded(wxCommandEvent &event);
 };
 
 #endif // HAS_LIBCLANG

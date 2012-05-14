@@ -16,22 +16,14 @@ struct MacroClientData {
 	std::set<wxString> interestingMacros;
 	wxString           filename;
 
-	wxString intersect() const {
-		std::set<wxString> resultSet;
+	void intersect() const {
 		std::set<wxString>::const_iterator iter = this->interestingMacros.begin();
 		for(; iter != this->interestingMacros.end(); iter++) {
 			if(this->macros.find(*iter) != this->macros.end()) {
 				// this macro exists in both lists
-				resultSet.insert(*iter);
+				wxPrintf(wxT("\nMACRO: %s"), iter->c_str());
 			}
 		}
-
-		wxString macrosAsStr;
-		std::set<wxString>::const_iterator it = resultSet.begin();
-		for(; it != resultSet.end(); it++) {
-			macrosAsStr << (*it) << wxT(" ");
-		}
-		return macrosAsStr;
 	}
 };
 
@@ -260,8 +252,9 @@ int Clang::DoPrintMacros()
 		clientData.interestingMacros = m_interestingMacros;
 		
 		// Intersect between the lists and print it 
-		// as a space delimited string to the stdout
-		wxPrintf(wxT("%s\n"), clientData.intersect().c_str());
+		// to stdout
+		clientData.intersect();
+		wxPrintf(wxT("\n"));
 		return 0;
 	}
 	return -1;

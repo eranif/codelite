@@ -4,6 +4,7 @@
 #include "clang_code_completion.h"
 #include "clang_macro_handler.h"
 #include <wx/regex.h>
+#include "clangpch_cache.h"
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 #include "navigationmanager.h"
@@ -30,7 +31,7 @@
 #include "globals.h"
 #include <set>
 #include "event_notifier.h"
-
+#include "plugin.h"
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -54,6 +55,7 @@ ClangDriver::ClangDriver()
 	EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),   NULL, this);
 	EventNotifier::Get()->Connect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError),  NULL, this);
 	EventNotifier::Get()->Connect(wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE, wxCommandEventHandler(ClangDriver::OnDeletMacroHandler),  NULL, this);
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(ClangDriver::OnWorkspaceLoaded), NULL, this);
 }
 
 ClangDriver::~ClangDriver()
@@ -63,7 +65,8 @@ ClangDriver::~ClangDriver()
 	EventNotifier::Get()->Disconnect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),  NULL, this);
 	EventNotifier::Get()->Disconnect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError), NULL, this);
 	EventNotifier::Get()->Disconnect(wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE, wxCommandEventHandler(ClangDriver::OnDeletMacroHandler),  NULL, this);
-	
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(ClangDriver::OnWorkspaceLoaded), NULL, this);
+
 	m_pchMakerThread.Stop();
 	m_pchMakerThread.ClearCache(); // clear cache and dispose all translation units
 	clang_disposeIndex(m_index);
@@ -217,11 +220,13 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
     
 	// Build the TU file name
 	wxFileName fnSourceFile(sourceFile);
-	pchfile << projectPath << wxFileName::GetPathSeparator() << wxT(".clang");
+	pchfile << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator() << wxT(".clang");
+	
 	{
 		wxLogNull nl;
-		wxMkdir(projectPath);
+		wxMkdir(pchfile);
 	}
+	
 	pchfile << wxFileName::GetPathSeparator() << fnSourceFile.GetFullName() << wxT(".TU");
 	
 	// for non custom projects, take the settings from the build configuration
@@ -539,10 +544,6 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	case CTX_CachePCH:
 		// Nothing more to be done
 		return;
-	case CTX_Macros:
-		// Prepare list of macros
-		DoProcessMacros(reply);
-		return;
 	default:
 		break;
 	}
@@ -678,15 +679,6 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 	}
 }
 
-void ClangDriver::DoProcessMacros(ClangThreadReply *reply)
-{
-	// Scintilla preprocessor management
-	m_activeEditor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("1"));
-	m_activeEditor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
-	m_activeEditor->GetScintilla()->SetKeyWords(4, reply->macrosAsString);
-	m_activeEditor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
-}
-
 void ClangDriver::QueueRequest(IEditor *editor, WorkingContext context)
 {
 	if(!editor)
@@ -694,7 +686,6 @@ void ClangDriver::QueueRequest(IEditor *editor, WorkingContext context)
 
 	switch(context) {
 	case CTX_CachePCH:
-	case CTX_Macros:
 		break;
 	default:
 		CL_DEBUG(wxT("Context %d id not allowed to be queued"), (int)context);
@@ -795,7 +786,19 @@ void ClangDriver::OnDeletMacroHandler(wxCommandEvent& e)
 	}
 }
 
+void ClangDriver::OnWorkspaceLoaded(wxCommandEvent& event)
+{
+	event.Skip();
+	
+	wxLogNull nolog;
+	wxString cachePath;
+	cachePath << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator() << wxT(".clang");
+	wxMkdir(cachePath);
+	ClangTUCache::DeleteDirectoryContent(cachePath);
+}
+
 #endif // HAS_LIBCLANG
+
 
 
 

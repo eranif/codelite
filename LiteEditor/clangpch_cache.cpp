@@ -99,6 +99,19 @@ wxString ClangTUCache::GetTuFileName(const wxString& sourceFile) const
 	return wxT("");
 }
 
+void ClangTUCache::DeleteDirectoryContent(const wxString& directory)
+{
+	wxArrayString files;
+	wxDir::GetAllFiles(directory, &files, wxT("*.TU"));
+	wxLogNull nolog;
+	
+	CL_DEBUG(wxT("Clearing clang TU cache from %s"), directory.c_str());
+	CL_DEBUG(wxT("Total of %d files"), (int)files.GetCount());
+	
+	for(size_t i=0; i<files.GetCount(); i++) {
+		::wxRemoveFile(files.Item(i));
+		CL_DEBUG(wxT("Deleting .. %s"), files.Item(i).c_str());
+	}
+}
+
 #endif // HAS_LIBCLANG
-
-

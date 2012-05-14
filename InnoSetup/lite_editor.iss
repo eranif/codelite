@@ -33,6 +33,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "..\Runtime\CodeLite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "..\Runtime\codelite-clang.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "C:\wx-trunk\lib\gcc_dll\wxmsw294u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

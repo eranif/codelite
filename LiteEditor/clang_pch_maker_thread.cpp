@@ -22,63 +22,7 @@ const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED = XRCID("clang_pch_cache_started
 const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   = XRCID("clang_pch_cache_ended");
 const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED = XRCID("clang_pch_cache_cleared");
 const wxEventType wxEVT_CLANG_TU_CREATE_ERROR   = XRCID("clang_pch_create_error");
-
 extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
-
-////////////////////////////////////////////////////////////////////////////
-// Internal class used for traversing the macro found in a translation UNIT
-
-struct MacroClientData {
-	std::set<wxString> macros;
-	std::set<wxString> interestingMacros;
-	wxString           filename;
-
-	wxString intersect() const {
-		std::set<wxString> resultSet;
-		std::set<wxString>::const_iterator iter = this->interestingMacros.begin();
-		for(; iter != this->interestingMacros.end(); iter++) {
-			if(this->macros.find(*iter) != this->macros.end()) {
-				// this macro exists in both lists
-				resultSet.insert(*iter);
-			}
-		}
-
-		wxString macrosAsStr;
-		std::set<wxString>::const_iterator it = resultSet.begin();
-		for(; it != resultSet.end(); it++) {
-			macrosAsStr << (*it) << wxT(" ");
-		}
-		return macrosAsStr;
-	}
-};
-
-enum CXChildVisitResult MacrosCallback(CXCursor cursor,
-                                       CXCursor parent,
-                                       CXClientData clientData)
-{
-	// Get all macros here...
-	if(cursor.kind == CXCursor_MacroDefinition) {
-
-		// Dont collect macro defined in this file
-		CXSourceLocation loc = clang_getCursorLocation(cursor);
-		CXFile file;
-		unsigned line, col, off;
-		clang_getSpellingLocation(loc, &file, &line, &col, &off);
-
-		CXString strFileName = clang_getFileName(file);
-		wxFileName fn(wxString(clang_getCString(strFileName), wxConvUTF8));
-		clang_disposeString(strFileName);
-		MacroClientData *cd = (MacroClientData*)clientData;
-
-		if(cd->filename != fn.GetFullPath()) {
-			CXString displayName = clang_getCursorDisplayName(cursor);
-			cd->macros.insert(wxString(clang_getCString(displayName), wxConvUTF8));
-			clang_disposeString(displayName);
-		}
-
-	}
-	return CXChildVisit_Continue;
-}
 
 ClangWorkerThread::ClangWorkerThread()
 {

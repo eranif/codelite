@@ -34,6 +34,7 @@ copy ..\sdk\clang\lib\clang.dll "%ProgramFiles(x86)%\CodeLite\" /Y
 copy makedir.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy le_exec.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy CodeLite.exe "%ProgramFiles(x86)%\CodeLite\" /Y
+copy codelite-clang.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy patch.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy rm.exe "%ProgramFiles(x86)%\CodeLite\" /Y
 copy astyle.sample "%ProgramFiles(x86)%\CodeLite\" /Y

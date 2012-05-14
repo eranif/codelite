@@ -149,16 +149,14 @@
       <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options="-O2" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="../sdk/clang/include"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --debug=no --libs --unicode=yes);-O2" Required="yes">
         <LibraryPath Value="../sdk/clang/lib"/>
         <Library Value="clang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)
-      
-      ]]>
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

@@ -19,7 +19,6 @@ enum WorkingContext {
     CTX_Calltip,
     CTX_CachePCH,
     CTX_WordCompletion,
-    CTX_Macros,
     CTX_ReparseTU,
     CTX_GotoDecl,
     CTX_GotoImpl

@@ -46,17 +46,25 @@ void ClangMacroHandler::OnClangProcessTerminated(wxCommandEvent& e)
 		delete m_process;
 		m_process = NULL;
 	}
-
-	m_output.Trim().Trim(false);
+	
+	wxString macrosAsString;
+	wxArrayString lines = ::wxStringTokenize(m_output, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		wxString rest;
+		if(lines.Item(i).StartsWith(wxT("MACRO:"), &rest)) {
+			rest.Trim().Trim(false);
+			macrosAsString << wxT(" ") << rest;
+		}
+	}
 
 	// Process the output here...
-	CL_DEBUG(wxT("ClangMacroHandler: Macros collected: %s"), m_output.c_str());
+	CL_DEBUG(wxT("ClangMacroHandler: Macros collected: %s"), macrosAsString.c_str());
 	
 	if(m_editor) {
 		// Scintilla preprocessor management
 		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("1"));
 		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
-		m_editor->GetScintilla()->SetKeyWords(4, m_output);
+		m_editor->GetScintilla()->SetKeyWords(4, macrosAsString);
 		m_editor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
 	}
 	

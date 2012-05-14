@@ -54,6 +54,8 @@ public:
 	bool IsEmpty() const {
 		return m_cache.empty();
 	}
+	
+	static void DeleteDirectoryContent(const wxString &directory);
 };
 #endif // HAS_LIBCLANG
 #endif // CLANGPCHCACHE_H

@@ -1,5 +1,6 @@
 #if HAS_LIBCLANG
 
+#include <wx/log.h>
 #include <wx/dir.h>
 #include "clangpch_cache.h"
 #include <wx/stdpaths.h>

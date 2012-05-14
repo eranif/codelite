@@ -229,8 +229,12 @@ createMainTargets()
 	echo "" >> Makefile
 
 	echo "codelite_clang:" >> Makefile
-	echo "	@cd codelite_clang/ && \$(MAKE)" >> Makefile
-	echo "" >> Makefile
+	if [ "$with_clang" = "yes" ]; then 
+		echo "	@cd codelite_clang/ && \$(MAKE)" >> Makefile
+		echo "" >> Makefile
+	else
+		echo "	@echo codelite-clang will not be build" >> Makefile
+	fi
 
 	echo "codelite_cppcheck:" >> Makefile
 	echo "	@cd sdk/codelite_cppcheck/ && \$(MAKE)" >> Makefile
@@ -247,7 +251,10 @@ createMainTargets()
 	echo "	@cd PCH && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_indexer && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_cppcheck && \$(MAKE) clean" >> Makefile
-	echo "	@cd codelite_clang/ && \$(MAKE) clean" >> Makefile
+	
+	if [ "$with_clang" = "yes" ]; then 
+		echo "	@cd codelite_clang/ && \$(MAKE) clean" >> Makefile
+	fi
 	echo "	\$(RM) \$(OUTPUT_DIR)/*.a \$(OUTPUT_DIR)/*.so" >> Makefile
 	echo "	\$(RM) -fr \$(OBJ_DIR)" >> Makefile
 	echo "" >> Makefile
@@ -858,7 +865,9 @@ createInstallTarget()
 	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_kill_children\"" >> Makefile
 	echo "	@chmod +x \"\$(DESTDIR)${prefix}/bin/codelite_xterm\"" >> Makefile
 	echo "	@cp sdk/codelite_indexer/codelite_indexer \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
-	echo "	@cp codelite_clang/codelite-clang \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	if [ "$with_clang" = "yes" ]; then 
+		echo "	@cp codelite_clang/codelite-clang \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	fi
 	echo "	@cp sdk/codelite_cppcheck/codelite_cppcheck \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
 	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/applications\"" >> Makefile
 	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite\"" >> Makefile
@@ -933,7 +942,9 @@ createUnInstallTarget()
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_kill_children\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_xterm\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_indexer\"" >> Makefile
-	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite-clang\"" >> Makefile
+	if [ "$with_clang" = "yes" ]; then 
+		echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite-clang\"" >> Makefile
+	fi
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/codelite_cppcheck\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLiteUR\"" >> Makefile
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${prefix}/bin/CodeLiteUD\"" >> Makefile
@@ -1160,7 +1171,11 @@ fi
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
-createCodeLiteClangMakefile  "codelite_clang/*.cpp"
+
+if [ "$with_clang" = "yes" ]; then 
+	createCodeLiteClangMakefile  "codelite_clang/*.cpp"
+fi
+
 createCodeLiteCppcheckMakefile "sdk/codelite_cppcheck/cli/*.cpp sdk/codelite_cppcheck/lib/*.cpp"
 createInstallTarget
 createUnInstallTarget

@@ -244,7 +244,7 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
 	tokens.Add(wxT("-ferror-limit=1000"));
 	tokens.Add(wxT("-nobuiltininc"));
 
-#ifdef __WXMSW__
+#ifdef _MSC_VER
 	tokens.Add(wxT("-fms-extensions"));
 	tokens.Add(wxT("-fdelayed-template-parsing"));
 #endif

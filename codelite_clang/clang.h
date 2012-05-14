@@ -8,6 +8,8 @@
 class Clang
 {
 public:
+
+	typedef std::set<wxString> Set_t;
     enum {
         Parse,
         //WritePch,
@@ -25,6 +27,7 @@ protected:
     char**   m_argv;
     int      m_argc;
     wxString m_loc;
+	Set_t    m_interestingMacros;
 	
 public:
     static enum CXChildVisitResult MacrosCallback(CXCursor cursor,
@@ -33,10 +36,12 @@ public:
     
 protected:
     int DoParse();
-    //int DoWritePch();
     int DoPrintMacros();
     int DoCC();
 	int DoParseMacros();
+	
+	// Helpers
+	void DoGetUsedMacros(const wxString &filename);
 	
 public:
     Clang(const char* file, const char* command, int argc, char **argv);

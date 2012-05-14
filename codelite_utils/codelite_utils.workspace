@@ -8,6 +8,7 @@
   <Project Name="codelite_cppcheck" Path="../sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
   <Project Name="codelite_indexer" Path="../sdk/codelite_indexer/codelite_indexer.project" Active="No"/>
   <Project Name="wx-config" Path="../sdk/wxconfig/wx-config.project" Active="No"/>
+  <Project Name="codelite_clang" Path="../codelite_clang/codelite_clang.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="autorev" ConfigName="Debug"/>
@@ -18,10 +19,12 @@
       <Project Name="le_exec" ConfigName="Debug"/>
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="wx-config" ConfigName="Debug"/>
+      <Project Name="codelite_clang" ConfigName="Debug_Linux_64"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="autorev" ConfigName="Release"/>
       <Project Name="build_all" ConfigName="Release"/>
+      <Project Name="codelite_clang" ConfigName="Windows_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Release"/>
       <Project Name="codelite_indexer" ConfigName="Release_Win"/>
       <Project Name="codelite_launcher" ConfigName="Release"/>

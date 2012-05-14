@@ -5,10 +5,9 @@
 
 void usage(const char* program)
 {
-    printf("Usage: %s {parse|write-pch|reparse|print-macros} <file> [output-folder] <compiler options>\n", program);
-    printf("    parse <file> and compile it into an AST\n");
-    printf("    write-pch <header-file> <output-folder> <compiler-options> compile <header-file> and store it as PCH for boosting compilation\n");
-    printf("    print-macros <source-file> <AST-file> load the AST and print all macros into stdout\n");
+    printf("Usage: %s {parse|parse-macros|code-complete} <file> [output-folder] <compiler options>\n", program);
+    printf("    parse <source-file> <output-folder> <compiler-agruments> and compile it into an AST\n");
+    printf("    parse-macros <source-file> <output-folder> <compiler-arguments> parse if needed and print all macros found into stdout\n");
 	printf("    code-complete <source-file> <AST-file> <line:col>\n");
     exit (0);
 }

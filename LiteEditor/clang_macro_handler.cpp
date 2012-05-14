@@ -8,6 +8,7 @@
 #include <wx/regex.h>
 #include "file_logger.h"
 #include "globals.h"
+#include "wx/wxscintilla.h"
 
 const wxEventType wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE = XRCID("wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE");
 
@@ -46,9 +47,18 @@ void ClangMacroHandler::OnClangProcessTerminated(wxCommandEvent& e)
 		m_process = NULL;
 	}
 
+	m_output.Trim().Trim(false);
+
 	// Process the output here...
-	wxArrayString macros = ::wxStringTokenize(m_output, wxT("\n\r"), wxTOKEN_STRTOK);
-	CL_DEBUG(wxT("ClangMacroHandler: Found %d macros"), (int) macros.GetCount());
+	CL_DEBUG(wxT("ClangMacroHandler: Macros collected: %s"), m_output.c_str());
+	
+	if(m_editor) {
+		// Scintilla preprocessor management
+		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("1"));
+		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
+		m_editor->GetScintilla()->SetKeyWords(4, m_output);
+		m_editor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
+	}
 	
 	wxCommandEvent evt(wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE);
 	evt.SetClientData(this);
@@ -75,45 +85,8 @@ void ClangMacroHandler::OnEditorClosing(wxCommandEvent& e)
 	}
 }
 
-void ClangMacroHandler::DoGetUsedMacros(const wxString &filename)
-{
-	static wxRegEx reMacro(wxT("#[ \t]*((if)|(elif)|(ifdef)|(ifndef))[ \t]*"));
-
-	m_interestingMacros.clear();
-	wxString fileContent;
-	if(!::ReadFileWithConversion(filename, fileContent)) {
-		return;
-	}
-
-	CppScannerPtr scanner(new CppScanner());
-	wxArrayString lines = wxStringTokenize(fileContent, wxT("\r\n"));
-	for(size_t i=0; i<lines.GetCount(); i++) {
-		wxString line = lines.Item(i).Trim(false);
-		if(line.StartsWith(wxT("#")) && reMacro.IsValid() && reMacro.Matches(line)) {
-			// Macro line
-			wxString match = reMacro.GetMatch(line, 0);
-			wxString ppLine = line.Mid(match.Len());
-
-			scanner->Reset();
-			std::string cstr = ppLine.mb_str(wxConvUTF8).data();
-			scanner->SetText(cstr.c_str());
-			int type(0);
-			while( (type = scanner->yylex()) != 0 ) {
-				if(type == IDENTIFIER) {
-					wxString intMacro = wxString(scanner->YYText(), wxConvUTF8);
-					CL_DEBUG1(wxT("Found interesting macro: %s"), intMacro.c_str());
-					m_interestingMacros.insert(intMacro);
-				}
-			}
-		}
-	}
-}
-
 void ClangMacroHandler::SetProcessAndEditor(IProcess* process, IEditor* editor)
 {
 	this->m_process = process;
 	this->m_editor  = editor;
-	if(m_editor) {
-		DoGetUsedMacros(m_editor->GetFileName().GetFullPath());
-	}
 }

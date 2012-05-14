@@ -16,9 +16,6 @@ class ClangMacroHandler : public wxEvtHandler
 	IEditor*           m_editor;
 	std::set<wxString> m_interestingMacros;
 	
-protected:
-	void DoGetUsedMacros(const wxString &filename);
-	
 public:
 	ClangMacroHandler();
 	virtual ~ClangMacroHandler();

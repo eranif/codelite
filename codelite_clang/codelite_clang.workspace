@@ -2,11 +2,14 @@
 <CodeLite_Workspace Name="codelite_clang" Database="./codelite_clang.tags">
   <Project Name="codelite_clang" Path="codelite_clang.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Release" Selected="no">
-      <Project Name="codelite_clang" ConfigName="Release"/>
-    </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Linux_64" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_Linux_64" Selected="no">
       <Project Name="codelite_clang" ConfigName="Debug_Linux_64"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Windows_Debug" Selected="no">
+      <Project Name="codelite_clang" ConfigName="Windows_Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Windows_Release" Selected="yes">
+      <Project Name="codelite_clang" ConfigName="Windows_Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

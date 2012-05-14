@@ -3,6 +3,10 @@
 #include <wx/filename.h>
 #include "clang_utils.h"
 #include <wx/ffile.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
+#include "../CodeLite/cpp_scanner.h"
+#include "../CodeLite/y.tab.h"
 
 ////////////////////////////////////////////////////////////////////////////
 // Internal class used for traversing the macro found in a translation UNIT
@@ -145,13 +149,6 @@ Clang::Clang(const char* file, const char* command, int argc, char** argv)
 		argv++;
 		argc--;
 		
-	
-//	} else if(cmd == wxT("write-pch")) {
-//		m_command = WritePch;
-//		m_outputFolder = wxString(argv[0], wxConvUTF8);
-//		argv++;
-//		argc--;
-
 	} else if(cmd == wxT("print-macros")) {
 		m_command = PrintMacros;
 		m_astFile = wxString(argv[0], wxConvUTF8);
@@ -250,16 +247,21 @@ int Clang::DoPrintMacros()
 	CXTranslationUnit TU = clang_createTranslationUnit(index, m_astFile.mb_str(wxConvUTF8).data());
 
 	if(TU) {
+		// Traverse the AST and get a list of macros collected
 		CXCursorVisitor visitor = Clang::MacrosCallback;
 		clang_visitChildren(clang_getTranslationUnitCursor(TU), visitor, (CXClientData)&clientData);
 		clang_disposeTranslationUnit(TU);
 		clang_disposeIndex(index);
 
-		std::set<wxString>::iterator iter = clientData.macros.begin();
-		for(; iter != clientData.macros.end(); iter++) {
-			wxPrintf(wxT("%s\n"), iter->c_str());
-		}
-
+		// get a list of "interestring" macros from the current source file
+		// By interesting we refer to macros that are actually used in the 
+		// current source file
+		DoGetUsedMacros(m_file);
+		clientData.interestingMacros = m_interestingMacros;
+		
+		// Intersect between the lists and print it 
+		// as a space delimited string to the stdout
+		wxPrintf(wxT("%s\n"), clientData.intersect().c_str());
 		return 0;
 	}
 	return -1;
@@ -337,3 +339,38 @@ int Clang::DoParseMacros()
 	return DoPrintMacros();
 }
 
+void Clang::DoGetUsedMacros(const wxString &filename)
+{
+	static wxRegEx reMacro(wxT("#[ \t]*((if)|(elif)|(ifdef)|(ifndef))[ \t]*"));
+
+	m_interestingMacros.clear();
+	wxString fileContent;
+	
+	wxFFile fp(filename, wxT("rb"));
+	if(fp.IsOpened()) {
+		fp.ReadAll(&fileContent, wxConvUTF8);
+		fp.Close();
+	}
+
+	CppScannerPtr scanner(new CppScanner());
+	wxArrayString lines = wxStringTokenize(fileContent, wxT("\r\n"));
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		wxString line = lines.Item(i).Trim(false);
+		if(line.StartsWith(wxT("#")) && reMacro.IsValid() && reMacro.Matches(line)) {
+			// Macro line
+			wxString match = reMacro.GetMatch(line, 0);
+			wxString ppLine = line.Mid(match.Len());
+
+			scanner->Reset();
+			std::string cstr = ppLine.mb_str(wxConvUTF8).data();
+			scanner->SetText(cstr.c_str());
+			int type(0);
+			while( (type = scanner->yylex()) != 0 ) {
+				if(type == IDENTIFIER) {
+					wxString intMacro = wxString(scanner->YYText(), wxConvUTF8);
+					m_interestingMacros.insert(intMacro);
+				}
+			}
+		}
+	}
+}

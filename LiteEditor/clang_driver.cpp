@@ -763,8 +763,8 @@ void ClangDriver::GetMacros(IEditor *editor)
 	
 	wxString cmd;
 	wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-	exePath.SetFullName(wxT("codelite-clang"));
-	
+	exePath.SetFullName(wxT("codelite-clang")); 
+	 
 #ifdef __WXMSW__
 	exePath.SetExt(wxT("exe"));
 #endif
@@ -777,6 +777,8 @@ void ClangDriver::GetMacros(IEditor *editor)
 	}
 	
 	ClangMacroHandler *handler = new ClangMacroHandler();
+
+	CL_DEBUG(wxT("Executing command: %s"), cmd.c_str());
 	handler->SetProcessAndEditor( ::CreateAsyncProcess(handler, cmd), editor );
 	
 	if(handler->GetProcess() == NULL) {

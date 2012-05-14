@@ -216,7 +216,7 @@ int Clang::DoParse()
 	                       | CXTranslationUnit_SkipFunctionBodies);
 	if(TU) {
 
-		ClangUtils::printDiagnosticsToLog(TU);
+		//ClangUtils::printDiagnosticsToLog(TU);
 
 		// The output file
 		wxString outputFile;

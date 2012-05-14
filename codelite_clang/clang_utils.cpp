@@ -12,7 +12,7 @@ void ClangUtils::printDiagnosticsToLog(CXTranslationUnit& TU)
         
 		if(!wxDiagString.Contains(wxT("'dllimport' attribute"))) {
 			fprintf(stdout, "Diagnostic: %s\n", clang_getCString(diagStr));
-
+        
 		}
 		clang_disposeString(diagStr);
 		clang_disposeDiagnostic(diag);

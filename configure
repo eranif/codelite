@@ -447,9 +447,9 @@ createCodeLiteClangMakefile()
 
 	## On FreeBSD, -ldl is part og libc
 	if [ "$os_name" = "FreeBSD" ]; then
-		echo "	\$(CMP) -o codelite-clang ${rpaths} ${lib_clang_link_flags} \$(codelite_clang_objects) -lpthread `wx-config --libs --unicode`" >> Makefile
+		echo "	\$(CMP) -o codelite-clang ${rpaths} \$(codelite_clang_objects) ${lib_clang_link_flags} -lpthread `wx-config --libs --unicode`" >> Makefile
 	else
-		echo "	\$(CMP) -o codelite-clang ${rpaths} ${lib_clang_link_flags} \$(codelite_clang_objects) -lpthread -ldl `wx-config --libs --unicode`" >> Makefile
+		echo "	\$(CMP) -o codelite-clang ${rpaths} \$(codelite_clang_objects) ${lib_clang_link_flags} -lpthread -ldl `wx-config --libs --unicode`" >> Makefile
 	fi
 
 	echo >> Makefile

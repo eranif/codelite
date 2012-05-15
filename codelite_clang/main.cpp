@@ -23,7 +23,7 @@ int main( int argc, char** argv )
 	SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOGPFAULTERRORBOX|SEM_NOOPENFILEERRORBOX);
 #endif
 
-    wxInitialize(argc, argv);
+    wxInitialize();
     if(argc < 3) {
         usage(argv[0]);
     }

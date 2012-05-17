@@ -64,7 +64,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 	ClangCacheEntry cacheEntry = findEntry(task->GetFileName());
 	CXTranslationUnit TU = cacheEntry.TU;
-	CL_DEBUG(wxT("ClangWorkerThread:: found cached TU: %x"), (void*)TU);
+	CL_DEBUG(wxT("ClangWorkerThread:: found cached TU: %p"), (void*)TU);
 	bool reparseRequired = true;
 
 	if(!TU) {
@@ -89,7 +89,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
 		} else {
 
-			CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %x"), task->GetFileName().c_str(), (void*)TU);
+			CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
 
 			// The only thing that left to be done here, is to dispose the TU
 			clang_disposeTranslationUnit(TU);
@@ -198,7 +198,7 @@ void ClangWorkerThread::DoCacheResult(CXTranslationUnit TU, const wxString& file
 	cacheEntry.sourceFile = filename;
 	m_cache.AddPCH(cacheEntry);
 
-	CL_DEBUG(wxT("caching Translation Unit file: %s, %x"), filename.c_str(), (void*)TU);
+	CL_DEBUG(wxT("caching Translation Unit file: %s, %p"), filename.c_str(), (void*)TU);
 	CL_DEBUG(wxT(" ==========> [ ClangPchMakerThread ] PCH creation ended successfully <=============="));
 }
 
@@ -356,7 +356,7 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
 			return TU;
 
 		} else {
-			CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %x"), task->GetFileName().c_str(), (void*)TU);
+			CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
 
 			// The only thing that left to be done here, is to dispose the TU
 			clang_disposeTranslationUnit(TU);

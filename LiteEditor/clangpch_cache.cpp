@@ -67,7 +67,7 @@ void ClangTUCache::Clear()
 	std::map<wxString, ClangCacheEntry>::iterator it = m_cache.begin();
 	for(; it != m_cache.end(); it++) {
 		if(it->second.TU) {
-            CL_DEBUG(wxT("Deleting TU: %x"), (void*)it->second.TU);
+            CL_DEBUG(wxT("Deleting TU: %p"), (void*)it->second.TU);
 			clang_disposeTranslationUnit(it->second.TU);
         }
 	}
@@ -78,7 +78,7 @@ void ClangTUCache::RemoveEntry(const wxString& filename)
 {
 	std::map<wxString, ClangCacheEntry>::iterator iter = m_cache.find(filename);
 	if(iter != m_cache.end()) {
-        CL_DEBUG(wxT("clang_disposeTranslationUnit for TU: %x"), (void*)iter->second.TU);
+        CL_DEBUG(wxT("clang_disposeTranslationUnit for TU: %p"), (void*)iter->second.TU);
 		clang_disposeTranslationUnit(iter->second.TU);
 		m_cache.erase(iter);
 		

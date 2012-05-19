@@ -829,7 +829,7 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
     wxFileName otherFile(fileName);
     wxString ext = fileName.GetExt();
     wxArrayString exts;
-
+    
     //replace the file extension
     if (IsSource(ext)) {
         //try to find a header file
@@ -847,12 +847,22 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
         exts.Add(wxT("c"));
     }
 
+    // search in current directory first
     for (size_t i=0; i<exts.GetCount(); i++) {
         otherFile.SetExt(exts.Item(i));
-        if (TryOpenFile(otherFile))
+        
+        if (TryOpenFile(otherFile, false))
             return;
     }
 
+    // if that failed, now look in entire workspace
+    for (size_t i=0; i<exts.GetCount(); i++) {
+        otherFile.SetExt(exts.Item(i));
+        
+        if (TryOpenFile(otherFile, true))
+            return;
+    }
+    
     long res(wxNOT_FOUND);
 
     // we failed to locate matched file, offer the user to create one
@@ -923,7 +933,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName &rhs, wxString &lhs)
     return false;
 }
 
-bool ContextCpp::TryOpenFile(const wxFileName &fileName)
+bool ContextCpp::TryOpenFile(const wxFileName &fileName, bool lookInEntireWorkspace)
 {
     if (fileName.FileExists()) {
         //we got a match
@@ -932,6 +942,8 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
                 proj, wxNOT_FOUND, wxNOT_FOUND, (enum OF_extra)(OF_PlaceNextToCurrent | OF_AddJump));
     }
 
+    if (!lookInEntireWorkspace) return false;
+    
     //ok, the file does not exist in the current directory, try to find elsewhere
     //whithin the workspace files
     std::vector<wxFileName> files;
@@ -944,6 +956,7 @@ bool ContextCpp::TryOpenFile(const wxFileName &fileName)
                     proj, wxNOT_FOUND, wxNOT_FOUND, (enum OF_extra)(OF_PlaceNextToCurrent | OF_AddJump));
         }
     }
+    
     return false;
 }
 

@@ -1594,24 +1594,43 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
-	ManagerST::Get()->SetShutdownInProgress(true);
+    wxString msg;
+    bool boDoNotClose = false;
 
-	// Stop the search thread
-	ManagerST::Get()->KillProgram();
+    // Check for running retag thread
+	if (ManagerST::Get()->GetRetagInProgress()) {
+        msg << wxT("The retag of the Workspace is currently in progress.\n")
+            << wxT("Do you want to close any way?");
 
-	// Stop any debugging session if any
-	IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
-	if(debugger && debugger->IsRunning())
-		ManagerST::Get()->DbgStop();
+        int rc = wxMessageBox(msg, wxT("Retag of the Workspace in progress..."), wxYES_NO|wxCENTER|wxICON_QUESTION);
+        if (rc == wxNO) {
+            boDoNotClose = true;
+        }
+    }
 
-	SearchThreadST::Get()->StopSearch();
+    if (!boDoNotClose) {
+        ManagerST::Get()->SetShutdownInProgress(true);
 
-	SaveLayoutAndSession();
+        // Stop the retag thread
+        ParseThreadST::Get()->Stop();
 
-	// In case we got some data in the clipboard, flush it so it will be available
-	// after our process exits
-	wxTheClipboard->Flush();
-	event.Skip();
+        // Stop the search thread
+        ManagerST::Get()->KillProgram();
+        SearchThreadST::Get()->StopSearch();
+
+        // Stop any debugging session if any
+        IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
+        if(debugger && debugger->IsRunning())
+            ManagerST::Get()->DbgStop();
+
+        SaveLayoutAndSession();
+
+        // In case we got some data in the clipboard, flush it so it will be available
+        // after our process exits
+        wxTheClipboard->Flush();
+
+        event.Skip();
+    }
 }
 
 void clMainFrame::LoadSession(const wxString &sessionName)

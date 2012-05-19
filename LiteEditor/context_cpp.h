@@ -58,7 +58,7 @@ class ContextCpp : public ContextBase
 	static wxBitmap m_otherFileBmp;
 
 private:
-	bool TryOpenFile(const wxFileName &fileName);
+	bool TryOpenFile(const wxFileName &fileName, bool lookInEntireWorkspace = true);
 	void DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl);
 	void DisplayFilesCompletionBox(const wxString &word);
 	bool DoGetFunctionBody(long curPos, long &blockStartPos, long &blockEndPos, wxString &content);

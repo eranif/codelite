@@ -279,7 +279,7 @@ public:
 	 * Rollback transaction.
 	 */
 	void Rollback() {
-		return m_db->Begin();
+        return m_db->Rollback();
 	}
 
 	/**

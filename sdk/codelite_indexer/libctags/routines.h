@@ -84,7 +84,7 @@ typedef struct {
 extern void freeRoutineResources (void);
 extern void setExecutableName (const char *const path);
 extern const char *getExecutableName (void);
-extern void error (const errorSelection selection, const char *const format, ...) __printf__ (2, 3);
+extern void error (const errorSelection selection, const char *const format, ...) __ctags_printf__ (2, 3);
 
 /* Memory allocation functions */
 #ifdef NEED_PROTO_MALLOC

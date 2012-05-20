@@ -567,6 +567,8 @@ extern char *readSourceLines (vString* const vLine, fpos_t location, fpos_t endP
 	fsetpos (File.fp, &location);
 
 	startpos = ftell(File.fp);
+	(void) startpos;
+	
 	/* set the cursor at the end position */
 	fsetpos (File.fp, &endPos);
 	endpos   = ftell(File.fp);

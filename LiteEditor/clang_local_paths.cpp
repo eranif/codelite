@@ -10,17 +10,24 @@ void ClangCodeCompletionOptions::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_macros"),      m_macros);
 	arch.Read(wxT("m_searchPaths"), m_searchPaths);
+	arch.Read(wxT("m_frameworks"),  m_frameworks);
 }
 
 void ClangCodeCompletionOptions::Serialize(Archive& arch)
 {
 	arch.Write(wxT("m_macros"),      m_macros);
 	arch.Write(wxT("m_searchPaths"), m_searchPaths);
+	arch.Write(wxT("m_frameworks"),  m_frameworks);
 }
 
 void ClangCodeCompletionOptions::UpdateSearchPaths(const Set_t& searchPaths)
 {
 	m_searchPaths.insert(searchPaths.begin(), searchPaths.end());
+}
+
+void ClangCodeCompletionOptions::UpdateFrameworks(const Set_t& frameworks)
+{
+	m_frameworks.insert(frameworks.begin(), frameworks.end());
 }
 
 void ClangCodeCompletionOptions::UpdateMacros(const Set_t& macros)

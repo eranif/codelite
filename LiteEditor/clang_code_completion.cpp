@@ -26,6 +26,7 @@
 #include "procutils.h"
 #include "clang_local_paths.h"
 #include "manager.h"
+#include <memory>
 
 ClangCodeCompletion* ClangCodeCompletion::ms_instance = 0;
 
@@ -238,8 +239,6 @@ void ClangCodeCompletion::OnBuildStarted(wxCommandEvent& e)
 	}
 
 	m_parseBuildOutput = !isClean;
-	m_compilerSearchPaths.clear();
-	m_compilerMacros.clear();
 }
 
 void ClangCodeCompletion::OnBuildOutput(wxCommandEvent& e)
@@ -257,36 +256,32 @@ void ClangCodeCompletion::OnBuildOutput(wxCommandEvent& e)
 
 void ClangCodeCompletion::OnClangPathResolved(wxCommandEvent& e)
 {
-	std::pair<Set_t*, Set_t*> *data = (std::pair<Set_t*, Set_t*> *)e.GetClientData();
+	PathTripplet *data = (PathTripplet *)e.GetClientData();
 	if(data) {
 		
 		wxString errMsg;
 		ProjectPtr project = WorkspaceST::Get()->FindProjectByName(m_projectCompiled, errMsg);
+		std::auto_ptr<PathTripplet> spData( data  );
 		if(!project) {
 			// Release all allocated data
-			delete data->first;
-			delete data->second;
 			delete data;
 			return;
 		}
 		
-		// Parse the output
-		m_compilerSearchPaths.swap(*data->first);
-		m_compilerMacros.swap(*data->second);
-		
-		// Release all allocated data
-		delete data->first;
-		delete data->second;
-		delete data;
-		
 		ClangLocalPaths clangLocalInfo(project->GetFileName());
 		bool saveRequired = false;
-		if(m_compilerMacros.empty() == false) {
-			clangLocalInfo.Options(m_configurationCompiled).UpdateMacros(m_compilerMacros);
+		if(data->macros->empty() == false) {
+			clangLocalInfo.Options(m_configurationCompiled).UpdateMacros(*data->macros);
 			saveRequired = true;
 		}
-		if(m_compilerSearchPaths.empty() == false) {
-			clangLocalInfo.Options(m_configurationCompiled).UpdateSearchPaths(m_compilerSearchPaths);
+		
+		if(data->searchPaths->empty() == false) {
+			clangLocalInfo.Options(m_configurationCompiled).UpdateSearchPaths(*data->searchPaths);
+			saveRequired = true;
+		}
+		
+		if(data->frameworks->empty() == false) {
+			clangLocalInfo.Options(m_configurationCompiled).UpdateFrameworks(*data->frameworks);
 			saveRequired = true;
 		}
 		

@@ -30,8 +30,6 @@ protected:
 	static ClangCodeCompletion* ms_instance;
 	ClangDriver                 m_clang;
 	bool                        m_allEditorsAreClosing;
-	Set_t                       m_compilerSearchPaths;
-	Set_t                       m_compilerMacros;
 	bool                        m_parseBuildOutput;
 	wxString                    m_projectCompiled;
 	wxString                    m_configurationCompiled;

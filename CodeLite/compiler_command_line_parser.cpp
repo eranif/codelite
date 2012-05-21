@@ -175,6 +175,15 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
                 rest.Trim().Trim(false);
                 m_pchFile = rest;
             }
+			
+			// Support for Apple's Framework include paths
+            else if(opt.StartsWith(wxT("-F"), &rest)) {
+				
+                m_includesWithPrefix.Add(opt);
+				rest.Trim().Trim(false);
+				m_framworks.Add(rest);
+				
+            }
 		}
 	}
 }

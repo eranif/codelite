@@ -12,10 +12,11 @@ class ClangCodeCompletionOptions : public SerializedObject
 {
 public:
 	typedef std::set<wxString> Set_t;
-	
+
 protected:
 	Set_t    m_searchPaths;
 	Set_t    m_macros;
+	Set_t    m_frameworks;
 	wxString m_name;
 
 public:
@@ -31,13 +32,19 @@ public:
 	const wxString& GetName() const {
 		return m_name;
 	}
+	void UpdateFrameworks(const Set_t& frameworks);
 	void UpdateMacros(const Set_t& macros) ;
 	void UpdateSearchPaths(const Set_t& searchPaths) ;
-	std::set<wxString>& GetMacros() {
+	
+	Set_t& GetMacros() {
 		return m_macros;
 	}
-	std::set<wxString>& GetSearchPaths() {
+	Set_t& GetSearchPaths() {
 		return m_searchPaths;
+	}
+	
+	Set_t& GetFrameworks() {
+		return m_frameworks;
 	}
 };
 

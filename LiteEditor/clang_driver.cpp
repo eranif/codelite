@@ -283,6 +283,10 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 			args.Add( wxString::Format(wxT("-D%s"), iter->c_str()) );
 		}
 		
+		iter = opts.GetFrameworks().begin();
+		for(; iter != opts.GetFrameworks().end(); iter++) {
+			args.Add( wxString::Format(wxT("-F%s"), iter->c_str()) );
+		}
 	}
 
 	const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();

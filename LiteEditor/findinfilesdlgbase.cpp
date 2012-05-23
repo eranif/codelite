@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Sep  3 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -183,7 +183,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	
 	fgSizer41->Add( 0, 0, 0, wxEXPAND|wxBOTTOM, 10 );
 	
-	bSizer1->Add( fgSizer41, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	bSizer1->Add( fgSizer41, 1, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Sep  3 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -82,7 +82,7 @@ class FindInFilesDialogBase : public wxDialog
 	
 	public:
 		
-		FindInFilesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find in files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP ); 
+		FindInFilesDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find in files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxSTAY_ON_TOP ); 
 		~FindInFilesDialogBase();
 	
 };

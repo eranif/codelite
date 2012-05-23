@@ -42,7 +42,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_staticText8->Wrap( -1 );
 	fgSizer4->Add( m_staticText8, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_toolbarIconSizeChoices[] = { _("Samll Icons (16x16)"), _("Large Icons (24x24)") };
+	wxString m_toolbarIconSizeChoices[] = { _("Small Icons (16x16)"), _("Large Icons (24x24)") };
 	int m_toolbarIconSizeNChoices = sizeof( m_toolbarIconSizeChoices ) / sizeof( wxString );
 	m_toolbarIconSize = new wxChoice( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_toolbarIconSizeNChoices, m_toolbarIconSizeChoices, 0 );
 	m_toolbarIconSize->SetSelection( 1 );

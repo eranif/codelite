@@ -357,7 +357,7 @@
                                                         <property name="proportion">0</property>
                                                         <object class="wxChoice" expanded="0">
                                                             <property name="bg"></property>
-                                                            <property name="choices">&quot;Samll Icons (16x16)&quot; &quot;Large Icons (24x24)&quot;</property>
+                                                            <property name="choices">&quot;Small Icons (16x16)&quot; &quot;Large Icons (24x24)&quot;</property>
                                                             <property name="context_help"></property>
                                                             <property name="enabled">1</property>
                                                             <property name="fg"></property>

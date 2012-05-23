@@ -1,10 +1,12 @@
 #include "svn_file_explorer_traverser.h"
 #include "virtualdirtreectrl.h"
+#include "wx/wxsqlite3.h"
 
-SvnFileExplorerTraverser::SvnFileExplorerTraverser(wxTreeCtrl *tree, const Map_t &files, size_t imgCount)
+SvnFileExplorerTraverser::SvnFileExplorerTraverser(wxTreeCtrl *tree, const Map_t &files, size_t imgCount, const wxString &repoPath)
 	: wxTreeTraverser(tree)
 	, m_files(files)
 	, m_imgCount(imgCount)
+	, m_repoPath(repoPath)
 {
 }
 
@@ -22,8 +24,8 @@ void SvnFileExplorerTraverser::OnItem(const wxTreeItemId& item)
 			filename = wxFileName(itemData->GetFullpath(), wxT(""));
 		else
 			filename = itemData->GetFullpath();
-
-		if(!IsPathUnderSvn(filename.GetFullPath(), itemData->IsDir())) {
+			
+		if(!IsPathUnderSvn ( filename.GetFullPath(), itemData->IsDir() ) ) {
 
 			if(itemData->IsDir() && filename.GetDirCount()) {
 
@@ -112,39 +114,62 @@ bool SvnFileExplorerTraverser::IsPathUnderSvn(const wxString& path, bool isDir)
 		bool exists = ::wxDirExists(fn.GetPath());
 		m_svnPaths[fn.GetPath()] = exists;
 		return exists;
+		
 	} else {
 		return iter->second;
+		
 	}
 }
 
 void SvnFileExplorerTraverser::Traverse(const wxTreeItemId& item)
 {
 	m_rootItem = item;
-	
-	// Determine the root item for our repository
-	wxTreeItemId newRoot = item;
-	while (m_tree->GetRootItem() != newRoot) {
-		
-		VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(m_tree->GetItemData(newRoot));
-		if( itemData && IsPathUnderSvn(itemData->GetFullpath(), itemData->IsDir()) ) {
-			
-			m_rootItem = newRoot;
-			newRoot = m_tree->GetItemParent(newRoot);
-			
-		} else {
-			break;
-			
+
+	wxString wcDB;
+	wcDB << m_repoPath << wxFileName::GetPathSeparator() << wxT(".svn") << wxFileName::GetPathSeparator() << wxT("wc.db");
+	wxFileName fnDB = wcDB;
+	if(fnDB.FileExists()) {
+		// Version 1.7 or higher
+		// Load all the repository paths
+		m_svnPaths.clear();
+
+		try {
+			wxSQLite3Database db;
+			db.Open(fnDB.GetFullPath());
+			if(db.IsOpen()) {
+				wxString query;
+				query << wxT("select distinct(parent_relpath) from NODES");
+				wxSQLite3ResultSet rs = db.ExecuteQuery(query);
+				while (rs.NextRow()) {
+					wxString path;
+					path << m_repoPath << wxFileName::GetPathSeparator() << rs.GetString(0);
+					wxFileName fnPath(path, wxT(""));
+					fnPath.AppendDir(wxT(".svn"));
+					m_svnPaths[fnPath.GetPath()] = true;
+				}
+				db.Close();
+			}
+
+		} catch (wxSQLite3Exception &e) {
+
 		}
 	}
-	
-	wxTreeTraverser::Traverse(item);
+
+	// Determine the root item for our repository
+	VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(m_tree->GetItemData(item));
+	if( itemData && !IsPathUnderSvn(itemData->GetFullpath(), itemData->IsDir()) ) {
+		return;
+	}
+
+	wxTreeTraverser::Traverse(m_rootItem);
 
 	// Mark the parents as modified as well
 	if(!m_dirs.empty()) {
-		
 		m_dirs.insert(m_rootItem);
 		Set_t::const_iterator iter = m_dirs.begin();
+		
 		for(; iter != m_dirs.end(); iter++) {
+			
 			VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(m_tree->GetItemData(item));
 			if(!itemData)
 				continue;
@@ -154,7 +179,7 @@ void SvnFileExplorerTraverser::Traverse(const wxTreeItemId& item)
 			m_tree->SetItemImage(*iter, itemIndx, wxTreeItemIcon_Selected);
 			m_tree->SetItemImage(*iter, itemIndx, wxTreeItemIcon_SelectedExpanded);
 		}
-		
+
 	}
 }
 

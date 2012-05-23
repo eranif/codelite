@@ -35,7 +35,6 @@ TagsStorageSQLite::TagsStorageSQLite()
 	: ITagsStorage()
 {
 	m_db = new clSqliteDB();
-	m_db->SetBusyTimeout(10);
 	SetUseCache(true);
 }
 
@@ -66,6 +65,7 @@ void TagsStorageSQLite::OpenDatabase(const wxFileName& fileName)
 		if (!m_fileName.IsOk()) {
 			// First time we open the db
 			m_db->Open(fileName.GetFullPath());
+			m_db->SetBusyTimeout(10);
 			CreateSchema();
 			m_fileName = fileName;
 
@@ -74,6 +74,7 @@ void TagsStorageSQLite::OpenDatabase(const wxFileName& fileName)
 			// are different, Close previous db
 			m_db->Close();
 			m_db->Open(fileName.GetFullPath());
+			m_db->SetBusyTimeout(10);
 			CreateSchema();
 			m_fileName = fileName;
 
@@ -92,6 +93,9 @@ void TagsStorageSQLite::CreateSchema()
 	// (this needs to be done before the creation of the
 	// tables and indices)
 	try {
+		sql = wxT("PRAGMA journal_mode = OFF;");
+		m_db->ExecuteUpdate(sql);
+		
 		sql = wxT("PRAGMA synchronous = OFF;");
 		m_db->ExecuteUpdate(sql);
 

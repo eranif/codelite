@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  3 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -19,6 +19,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	wxFlexGridSizer* fgSizer41;
 	fgSizer41 = new wxFlexGridSizer( 0, 3, 0, 0 );
 	fgSizer41->AddGrowableCol( 1 );
+	fgSizer41->AddGrowableRow( 2 );
 	fgSizer41->SetFlexibleDirection( wxBOTH );
 	fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -58,7 +59,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	fgSizer41->Add( 0, 0, 0, wxEXPAND, 5 );
 	
 	m_listPaths = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	fgSizer41->Add( m_listPaths, 0, wxALL|wxEXPAND, 5 );
+	fgSizer41->Add( m_listPaths, 1, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
@@ -183,7 +184,7 @@ FindInFilesDialogBase::FindInFilesDialogBase( wxWindow* parent, wxWindowID id, c
 	
 	fgSizer41->Add( 0, 0, 0, wxEXPAND|wxBOTTOM, 10 );
 	
-	bSizer1->Add( fgSizer41, 1, wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	bSizer1->Add( fgSizer41, 1, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );

@@ -343,7 +343,7 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 		DoAddArrayToMap(ignoreFiles,      mymap, SvnFileExplorerTraverser::Ignored,     rootDir);
 
 		CL_DEBUG(wxT("wxTreeTraverser started..."));
-		SvnFileExplorerTraverser traverser(fileExplorer, mymap, m_fileExplorerLastBaseImgIdx);
+		SvnFileExplorerTraverser traverser(fileExplorer, mymap, m_fileExplorerLastBaseImgIdx, DoGetCurRepoPath());
 		traverser.Traverse(feRootItem);
 		CL_DEBUG(wxT("wxTreeTraverser started...end"));
 

@@ -35,13 +35,14 @@ protected:
 	MapPaths_t   m_svnPaths;
 	Set_t        m_dirs;
 	wxTreeItemId m_rootItem;
+	wxString     m_repoPath;
 	
 protected:
 	bool IsPathUnderSvn(const wxString& path, bool isDir);
 	void DoGetParentsUpToRoot(const wxTreeItemId &item, wxArrayTreeItemIds& items);
 	
 public:
-	SvnFileExplorerTraverser(wxTreeCtrl *tree, const Map_t &files, size_t imgCount);
+	SvnFileExplorerTraverser(wxTreeCtrl *tree, const Map_t &files, size_t imgCount, const wxString &repoPath);
 	virtual ~SvnFileExplorerTraverser();
 
 	void OnItem(const wxTreeItemId& item);

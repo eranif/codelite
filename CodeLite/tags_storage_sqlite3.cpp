@@ -93,7 +93,7 @@ void TagsStorageSQLite::CreateSchema()
 	// (this needs to be done before the creation of the
 	// tables and indices)
 	try {
-		sql = wxT("PRAGMA journal_mode = OFF;");
+		sql = wxT("PRAGMA journal_mode= OFF;");
 		m_db->ExecuteUpdate(sql);
 		
 		sql = wxT("PRAGMA synchronous = OFF;");

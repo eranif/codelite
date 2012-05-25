@@ -779,3 +779,9 @@ wxArrayString Workspace::GetAllProjectPaths()
 	}
 	return projects;
 }
+
+bool Workspace::IsOpen() const
+{
+	return m_doc.IsOk();
+}
+

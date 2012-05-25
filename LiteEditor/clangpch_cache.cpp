@@ -72,6 +72,15 @@ void ClangTUCache::Clear()
         }
 	}
 	m_cache.clear();
+	
+	// Clear the TU from the file system
+	if(WorkspaceST::Get()->IsOpen()) {
+		wxString clangFileSystemCacheDir;
+		clangFileSystemCacheDir << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() 
+								<< wxFileName::GetPathSeparator() 
+								<< wxT(".clang");
+		DeleteDirectoryContent(clangFileSystemCacheDir);
+	}
 }
 
 void ClangTUCache::RemoveEntry(const wxString& filename)

@@ -291,7 +291,11 @@ public:
 	void SetWorkspaceLastModifiedTime(time_t modificationTime) {
 		m_modifyTime = modificationTime;
 	}
-
+	
+	/**
+	 * @brief return true if a workspace is opened
+	 */
+	bool IsOpen() const;
 private:
 	/**
 	 * Do the actual add project

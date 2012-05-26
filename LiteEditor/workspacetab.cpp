@@ -96,7 +96,6 @@ void WorkspaceTab::CreateGUIControls()
 	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 	tb->AddTool(XRCID("project_properties"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_settings")),      _("Open Active Project Settings..."), wxITEM_NORMAL);
 	tb->AddTool(XRCID("set_project_active"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_select_active")), _("Select Active Project"),           wxITEM_NORMAL);
-	tb->AddSeparator();
 	tb->Realize();
 	sz->Add(tb, 0, wxEXPAND, 0);
 	

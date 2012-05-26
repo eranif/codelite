@@ -42,6 +42,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 	, m_useSeparateDebugArgs(false)
 	, m_pchInCommandLine(false)
 	, m_useSeparatePCHFlags(false)
+	, m_clangC11(false)
 {
 	if ( node ) {
 		m_name = XmlUtils::ReadString(node, wxT("Name"));
@@ -77,6 +78,8 @@ BuildConfig::BuildConfig(wxXmlNode *node)
                 m_ccPCH = clang_pch->GetNodeContent();
                 m_ccPCH.Trim().Trim(false);
             }
+			
+			m_clangC11 = XmlUtils::ReadBool(completion, wxT("EnableCpp11"));
 		}
         
 		wxXmlNode *compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
@@ -437,6 +440,7 @@ wxXmlNode *BuildConfig::ToXml() const
 	// Set the completion flags
 	wxXmlNode *completion = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Completion"));
 	node->AddChild(completion);
+	completion->AddProperty(wxT("EnableCpp11"), BoolToString(m_clangC11));
 	
 	wxXmlNode * search_paths = new wxXmlNode(completion, wxXML_ELEMENT_NODE, wxT("SearchPaths"));
 	XmlUtils::SetNodeContent(search_paths, m_ccSearchPaths);

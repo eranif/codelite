@@ -372,7 +372,13 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 			arg << wxT("-D") << projMacros.Item(i).Trim().Trim(false);
 			compileArgs.Add(arg);
 		}
+		
+		// Add C++ 11 support?
+		if(dependProjbldConf->IsClangC11()) {
+			compileArgs.Add(wxString::Format(wxT("-std=gnu++11")));
+		}
 	}
+	
 	compileArgs.insert(compileArgs.end(), args.begin(), args.end());
 
 	// Remove some of the flags which are known to cause problems to clang

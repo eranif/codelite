@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -175,7 +175,6 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	m_gbSizer1->Add( m_textCommandArguments, wxGBPosition( 8, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxUseDebugArgs = new wxCheckBox( m_generalPage, wxID_ANY, _("Use separate debug arguments"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	m_checkBoxUseDebugArgs->SetToolTip( _("When enabled, codelite will use the arguments specified in the 'Debug Arguments' when running the program under debugger. \nOtherwise, codelite will use the arguments speicified in the 'Program Arguments' field") );
 	
 	m_gbSizer1->Add( m_checkBoxUseDebugArgs, wxGBPosition( 9, 0 ), wxGBSpan( 1, 3 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -206,7 +205,6 @@ PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxP
 	bSizer17 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkBoxPauseWhenExecEnds = new wxCheckBox( m_generalPage, wxID_ANY, _("Pause when execution ends"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer17->Add( m_checkBoxPauseWhenExecEnds, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer19->Add( bSizer17, 0, wxEXPAND, 5 );
@@ -274,7 +272,6 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	compilerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkCompilerNeeded = new wxCheckBox( m_compilerPage, wxID_ANY, _("Compiler is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	compilerPageSizer->Add( m_checkCompilerNeeded, 0, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer3;
@@ -376,11 +373,9 @@ PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const w
 	sbSizer2->Add( bSizer33, 0, wxEXPAND, 5 );
 	
 	m_checkBoxPCHInCommandLine = new wxCheckBox( m_compilerPage, wxID_ANY, _("Explicitly include the PCH file in the command line using compiler switch"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer2->Add( m_checkBoxPCHInCommandLine, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxSeparatePCHFlags = new wxCheckBox( m_compilerPage, wxID_ANY, _("Use separate compilation flags for the PCH file:"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer2->Add( m_checkBoxSeparatePCHFlags, 0, wxALL|wxEXPAND, 5 );
 	
 	m_textCtrlPCHCompilationFlags = new wxTextCtrl( m_compilerPage, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_NO_VSCROLL|wxTE_RICH2 );
@@ -488,7 +483,6 @@ PSLinkPageBase::PSLinkPageBase( wxWindow* parent, wxWindowID id, const wxPoint& 
 	linkerPageSizer = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkLinkerNeeded = new wxCheckBox( m_linkerPage, wxID_ANY, _("Linker is not required for this project"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	linkerPageSizer->Add( m_checkLinkerNeeded, 0, wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer4;
@@ -639,7 +633,6 @@ PSDebuggerPageBase::PSDebuggerPageBase( wxWindow* parent, wxWindowID id, const w
 	bSizer192->Add( m_staticline121, 0, wxEXPAND | wxALL, 5 );
 	
 	m_checkBoxDbgRemote = new wxCheckBox( m_panelDebugger, wxID_ANY, _("Debugging remote target"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer192->Add( m_checkBoxDbgRemote, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer61;
@@ -734,8 +727,7 @@ PSResourcesPageBase::PSResourcesPageBase( wxWindow* parent, wxWindowID id, const
 	bSizer151 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkResourceNeeded = new wxCheckBox( m_resourceCmpPage, wxID_ANY, _("Resource Compiler is not needed"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkResourceNeeded->SetValue(true);
-	
+	m_checkResourceNeeded->SetValue(true); 
 	bSizer151->Add( m_checkResourceNeeded, 0, wxALL, 5 );
 	
 	m_gbSizer4 = new wxGridBagSizer( 0, 0 );
@@ -942,7 +934,6 @@ PSCustomBuildBasePage::PSCustomBuildBasePage( wxWindow* parent, wxWindowID id, c
 	bSizer15 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkEnableCustomBuild = new wxCheckBox( m_customBuildPage, wxID_ANY, _("Enable custom build"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer15->Add( m_checkEnableCustomBuild, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticline12 = new wxStaticLine( m_customBuildPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -1408,6 +1399,14 @@ PSCompletionBase::PSCompletionBase( wxWindow* parent, wxWindowID id, const wxPoi
 	m_splitter2->SplitHorizontally( m_panel16, m_panel17, 0 );
 	bSizer36->Add( m_splitter2, 1, wxEXPAND, 5 );
 	
+	wxBoxSizer* bSizer40;
+	bSizer40 = new wxBoxSizer( wxVERTICAL );
+	
+	m_checkBoxC11 = new wxCheckBox( m_panel15, wxID_ANY, _("Enable C++11 Standard"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer40->Add( m_checkBoxC11, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer36->Add( bSizer40, 0, wxEXPAND, 5 );
+	
 	m_panel15->SetSizer( bSizer36 );
 	m_panel15->Layout();
 	bSizer36->Fit( m_panel15 );
@@ -1416,11 +1415,13 @@ PSCompletionBase::PSCompletionBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	this->SetSizer( bSizer34 );
 	this->Layout();
+	bSizer34->Fit( this );
 	
 	// Connect Events
 	m_textCtrlSearchPaths->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlMacros->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
+	m_checkBoxC11->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 }
 
 PSCompletionBase::~PSCompletionBase()
@@ -1429,4 +1430,5 @@ PSCompletionBase::~PSCompletionBase()
 	m_textCtrlSearchPaths->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlMacros->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
+	m_checkBoxC11->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 }

@@ -172,13 +172,7 @@ FileViewTree::~FileViewTree()
 
 void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
-	bool multi (false);
-	long val   (0);
-	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {
-		val = 0;
-	}
-	val ? multi = true : multi = false;
-
+	bool multi (true);
 	style |= ( wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
 	if (multi) style |= wxTR_MULTIPLE ;
 
@@ -196,13 +190,7 @@ void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint&
 
 void FileViewTree::BuildTree()
 {
-	bool multi (false);
-	long val   (0);
-	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {
-		val = 0;
-	}
-	val ? multi = true : multi = false;
-
+	bool multi (true);
 	DeleteAllItems();
 	long flags = GetWindowStyle();
 	if ( multi ) {

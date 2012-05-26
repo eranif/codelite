@@ -97,13 +97,6 @@ void WorkspaceTab::CreateGUIControls()
 	tb->AddTool(XRCID("project_properties"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_settings")),      _("Open Active Project Settings..."), wxITEM_NORMAL);
 	tb->AddTool(XRCID("set_project_active"), wxEmptyString, bmpLoader->LoadBitmap(wxT("workspace/16/project_select_active")), _("Select Active Project"),           wxITEM_NORMAL);
 	tb->AddSeparator();
-
-	// add the 'multiple/single' tree style
-	long val (0);
-	if(EditorConfigST::Get()->GetLongValue(wxT("WspTreeMultipleSelection"), val) == false) {val = 0;}
-
-	tb->AddTool(XRCID("set_multi_selection"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("cursor")), _("Toggle Multiple/Single Selection"), wxITEM_CHECK);
-	tb->ToggleTool(XRCID("set_multi_selection"), val ? true : false);
 	tb->Realize();
 	sz->Add(tb, 0, wxEXPAND, 0);
 	
@@ -148,7 +141,6 @@ void WorkspaceTab::FreezeThaw(bool freeze /*=true*/)
 void WorkspaceTab::ConnectEvents()
 {
 	Connect( XRCID("link_editor"),        wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnLinkEditor));
-	Connect( XRCID("set_multi_selection"),wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnToggleMultiSelection));
 	Connect( XRCID("set_multi_selection"),wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnCollapseAllUI));
 	Connect( XRCID("collapse_all"),       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnCollapseAll));
 	Connect( XRCID("collapse_all"),       wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnCollapseAllUI));
@@ -393,16 +385,6 @@ void WorkspaceTab::OnProjectRemoved(wxCommandEvent& e)
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
-void WorkspaceTab::OnToggleMultiSelection(wxCommandEvent& e)
-{
-	EditorConfigST::Get()->SaveLongValue(wxT("WspTreeMultipleSelection"), e.IsChecked() ? 1 : 0);
-	// Reload the tree
-	int answer = wxMessageBox(_("Workspace reload is required\nWould you like to reload workspace now?"), _("CodeLite"), wxICON_INFORMATION|wxYES_NO|wxCANCEL, this);
-	if ( answer == wxYES ) {
-		wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-		clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
-	}
-}
 void WorkspaceTab::DoWorkspaceConfig()
 {
 	// Update the workspace configuration 

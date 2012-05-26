@@ -42,7 +42,6 @@ protected:
 	void DoWorkspaceConfig();
 	
 	void OnLinkEditor                (wxCommandEvent &e);
-	void OnToggleMultiSelection      (wxCommandEvent &e);
 	void OnCollapseAll               (wxCommandEvent &e);
 	void OnCollapseAllUI             (wxUpdateUIEvent&e);
 	void OnGoHome                    (wxCommandEvent &e);

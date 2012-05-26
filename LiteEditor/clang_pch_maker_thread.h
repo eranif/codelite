@@ -114,7 +114,7 @@ protected:
     char**             MakeCommandLine(ClangThreadRequest* req, int& argc, FileExtManager::FileType fileType);
     void               DoCacheResult(CXTranslationUnit TU, const wxString &filename, const wxString &pch);
     void DoSetStatusMsg(const wxString &msg);
-    void               DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply);
+    bool               DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply);
     void               PostEvent(int type);
     CXTranslationUnit  DoCreateTU(CXIndex index, ClangThreadRequest *task, bool reparse);
 public:

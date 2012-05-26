@@ -113,10 +113,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	reply->filterWord = task->GetFilterWord();
 	reply->filename   = task->GetFileName().c_str();
 	reply->results    = NULL;
-
-	if( task->GetContext() == CTX_CodeCompletion ||
-	    task->GetContext() == CTX_WordCompletion ||
-	    task->GetContext() == CTX_Calltip) {
+	
+	if( task->GetContext() == CTX_CodeCompletion || task->GetContext() == CTX_WordCompletion || task->GetContext() == CTX_Calltip) {
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
 		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
 		reply->results = clang_codeCompleteAt(TU,
@@ -172,14 +170,42 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			reply->results = NULL;
 			reply->errorMessage.RemoveLast();
 		}
-
+		
+		// Send the event
+		eEnd.SetClientData(reply);
+		EventNotifier::Get()->AddPendingEvent(eEnd);
+	
 	} else if(task->GetContext() == CTX_GotoDecl || task->GetContext() == CTX_GotoImpl) {
-		DoGotoDefinition(TU, task, reply);
+		
+		if(clang_reparseTranslationUnit(TU, 1, &unsavedFile, clang_defaultReparseOptions(TU)) != 0) {
+			// Failed to reparse TU, the only thing left to be done 
+			// is to dispose the TU
+			clang_disposeTranslationUnit(TU);
+			delete reply;
+			PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+			
+		} else {
+			// Attempt the 'Goto'
+			if(DoGotoDefinition(TU, task, reply)) {
+				eEnd.SetClientData(reply);
+				EventNotifier::Get()->AddPendingEvent(eEnd);
+				
+			} else {
+				
+				CL_DEBUG(wxT("Clang Goto Decl/Impl: could not find a cursor matching for position %s:%d:%d"), 
+						 task->GetFileName().c_str(), 
+						 (int)task->GetLine(),
+						 (int)task->GetColumn());
 
+				// Failed, delete the 'reply' allocatd earlier
+				delete reply;
+				PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+				
+			}
+		}
+	} else {
+		PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED);
 	}
-
-	eEnd.SetClientData(reply);
-	EventNotifier::Get()->AddPendingEvent(eEnd);
 }
 
 ClangCacheEntry ClangWorkerThread::findEntry(const wxString& filename)
@@ -287,7 +313,7 @@ void ClangWorkerThread::DoSetStatusMsg(const wxString& msg)
 	EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
 }
 
-void ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply)
+bool ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadRequest* request, ClangThreadReply* reply)
 {
 	// Test to see if we are pointing a function
 	CXCursor cur;
@@ -298,7 +324,9 @@ void ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadReque
 		}
 
 		ClangUtils::GetCursorLocation(cur, reply->filename, reply->line, reply->col);
+		return true;
 	}
+	return false;
 }
 
 void ClangWorkerThread::PostEvent(int type)

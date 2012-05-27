@@ -97,4 +97,11 @@ void ClangMacroHandler::SetProcessAndEditor(IProcess* process, IEditor* editor)
 {
 	this->m_process = process;
 	this->m_editor  = editor;
+	
+	if(m_editor) {
+		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
+		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+		m_editor->GetScintilla()->SetKeyWords(4, wxT(""));
+		m_editor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
+	}
 }

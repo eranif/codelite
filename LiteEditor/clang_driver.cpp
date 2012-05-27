@@ -758,6 +758,19 @@ void ClangDriver::OnTUCreateError(wxCommandEvent& e)
 
 void ClangDriver::GetMacros(IEditor *editor)
 {
+	if( !editor ) 
+		return;
+	
+	if(editor->GetProjectName().IsEmpty()) {
+		// This file is not part of the workspace
+		// do not attemp to color its preprocessors
+		editor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
+		editor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+		editor->GetScintilla()->SetKeyWords(4, wxT(""));
+		editor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
+		return;
+	}
+	
 	wxString projectPath;
     wxString pchFile;
     wxArrayString compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), projectPath, pchFile);

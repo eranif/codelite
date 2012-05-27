@@ -68,8 +68,12 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	bool reparseRequired = true;
 
 	if(!TU) {
+		// First time creating the TU
 		TU = DoCreateTU(task->GetIndex(), task, true);
 		reparseRequired = false;
+		cacheEntry.lastReparse = time(NULL);
+		cacheEntry.TU = TU;
+		cacheEntry.sourceFile = task->GetFileName();
 	}
 
 	if(!TU) {
@@ -86,7 +90,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... [CTX_ReparseTU]"));
 		if(clang_reparseTranslationUnit(TU, 0, NULL, clang_defaultReparseOptions(TU)) == 0) {
 			CL_DEBUG(wxT("Calling clang_reparseTranslationUnit... done [CTX_ReparseTU]"));
-
+			cacheEntry.lastReparse = time(NULL);
+			
 		} else {
 
 			CL_DEBUG(wxT("An error occured during reparsing of the TU for file %s. TU: %p"), task->GetFileName().c_str(), (void*)TU);
@@ -102,7 +107,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	// Construct a cache-returner class
 	// which makes sure that the TU is cached
 	// when we leave the current scope
-	CacheReturner cr(this, task->GetFileName(), task->GetPchFile(), TU);
+	CacheReturner cr(this, cacheEntry);
 
 	DoSetStatusMsg(wxT("Ready"));
 
@@ -124,7 +129,9 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 		                                      &unsavedFile,
 		                                      1,
 		                                      clang_defaultCodeCompleteOptions());
-
+		
+		cacheEntry.lastReparse = time(NULL);
+		
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt... done"));
 		wxString displayTip;
 		bool hasErrors(false);
@@ -177,13 +184,40 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	
 	} else if(task->GetContext() == CTX_GotoDecl || task->GetContext() == CTX_GotoImpl) {
 		
-		// Attempt the 'Goto'
-		if(DoGotoDefinition(TU, task, reply)) {
+		// Check to see if the file was modified since it was last reparsed
+		// If it does, we need to re-parse it again
+		wxFileName fnSource(cacheEntry.sourceFile);
+		time_t fileModificationTime = fnSource.GetModificationTime().GetTicks();
+		time_t lastReparseTime      = cacheEntry.lastReparse;
+		
+		if(fileModificationTime > lastReparseTime) {
+			// The file needs to be re-parsed
+			this->DoSetStatusMsg(wxString::Format(wxT("clang: re-parsing file %s..."), cacheEntry.sourceFile.c_str()));
+			
+			// Try reparsing the TU
+			if(clang_reparseTranslationUnit(TU, 1, &unsavedFile, clang_defaultReparseOptions(TU)) != 0) {
+				// Failed to reparse
+				cr.SetCancelled(true); // cancel the re-caching of the TU
+				CL_DEBUG(wxT("clang_reparseTranslationUnit failed for file: %s"), task->GetFileName().c_str());
+				clang_disposeTranslationUnit(TU);
+				delete reply;
+				PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+				return;
+			}
+			
+			// Update the 'lastReparse' field
+			cacheEntry.lastReparse = time(NULL);
+		}
+		
+		bool success = DoGotoDefinition(TU, task, reply);
+		if(success) {
+			DoSetStatusMsg(wxT(""));
+			
 			eEnd.SetClientData(reply);
 			EventNotifier::Get()->AddPendingEvent(eEnd);
 			
 		} else {
-			
+			DoSetStatusMsg(wxT("clang: no matches were found"));
 			CL_DEBUG(wxT("Clang Goto Decl/Impl: could not find a cursor matching for position %s:%d:%d"), 
 					 task->GetFileName().c_str(), 
 					 (int)task->GetLine(),
@@ -194,9 +228,9 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
 			
 		}
-	
 	} else {
 		PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED);
+		
 	}
 }
 
@@ -207,16 +241,12 @@ ClangCacheEntry ClangWorkerThread::findEntry(const wxString& filename)
 	return entry;
 }
 
-void ClangWorkerThread::DoCacheResult(CXTranslationUnit TU, const wxString& filename, const wxString& pch)
+void ClangWorkerThread::DoCacheResult(ClangCacheEntry entry)
 {
 	wxCriticalSectionLocker locker(m_criticalSection);
-	ClangCacheEntry cacheEntry;
-	cacheEntry.TU = TU;
-	cacheEntry.fileTU = pch;
-	cacheEntry.sourceFile = filename;
-	m_cache.AddPCH(cacheEntry);
-
-	CL_DEBUG(wxT("caching Translation Unit file: %s, %p"), filename.c_str(), (void*)TU);
+	m_cache.AddPCH(entry);
+	
+	CL_DEBUG(wxT("caching Translation Unit file: %s, %p"), entry.sourceFile.c_str(), (void*)entry.TU);
 	CL_DEBUG(wxT(" ==========> [ ClangPchMakerThread ] PCH creation ended successfully <=============="));
 }
 

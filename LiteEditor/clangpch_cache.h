@@ -16,10 +16,11 @@ public:
 	time_t            lastAccessed;
 	wxString          fileTU;
 	wxString          sourceFile;
+	time_t            lastReparse;
 	
 public:
 	
-	ClangCacheEntry() : TU(NULL), lastAccessed(0) {}
+	ClangCacheEntry() : TU(NULL), lastAccessed(0), lastReparse(0) {}
 	ClangCacheEntry(const ClangCacheEntry &rhs) {
 		*this = rhs;
 	}
@@ -29,7 +30,9 @@ public:
 		this->lastAccessed = rhs.lastAccessed;
 		this->fileTU       = rhs.fileTU;
 		this->sourceFile   = rhs.sourceFile;
+		this->lastReparse  = rhs.lastReparse;
 	}
+	
 	bool IsOk() const {
 		return TU != NULL;
 	}

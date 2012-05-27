@@ -177,32 +177,24 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	
 	} else if(task->GetContext() == CTX_GotoDecl || task->GetContext() == CTX_GotoImpl) {
 		
-		if(clang_reparseTranslationUnit(TU, 1, &unsavedFile, clang_defaultReparseOptions(TU)) != 0) {
-			// Failed to reparse TU, the only thing left to be done 
-			// is to dispose the TU
-			clang_disposeTranslationUnit(TU);
+		// Attempt the 'Goto'
+		if(DoGotoDefinition(TU, task, reply)) {
+			eEnd.SetClientData(reply);
+			EventNotifier::Get()->AddPendingEvent(eEnd);
+			
+		} else {
+			
+			CL_DEBUG(wxT("Clang Goto Decl/Impl: could not find a cursor matching for position %s:%d:%d"), 
+					 task->GetFileName().c_str(), 
+					 (int)task->GetLine(),
+					 (int)task->GetColumn());
+
+			// Failed, delete the 'reply' allocatd earlier
 			delete reply;
 			PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
 			
-		} else {
-			// Attempt the 'Goto'
-			if(DoGotoDefinition(TU, task, reply)) {
-				eEnd.SetClientData(reply);
-				EventNotifier::Get()->AddPendingEvent(eEnd);
-				
-			} else {
-				
-				CL_DEBUG(wxT("Clang Goto Decl/Impl: could not find a cursor matching for position %s:%d:%d"), 
-						 task->GetFileName().c_str(), 
-						 (int)task->GetLine(),
-						 (int)task->GetColumn());
-
-				// Failed, delete the 'reply' allocatd earlier
-				delete reply;
-				PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
-				
-			}
 		}
+	
 	} else {
 		PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED);
 	}

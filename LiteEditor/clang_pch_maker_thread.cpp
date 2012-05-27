@@ -360,8 +360,7 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
 		        | CXTranslationUnit_PrecompiledPreamble
 		        | CXTranslationUnit_Incomplete
 		        | CXTranslationUnit_DetailedPreprocessingRecord
-		        | CXTranslationUnit_CXXChainedPCH
-		        | CXTranslationUnit_SkipFunctionBodies;
+		        | CXTranslationUnit_CXXChainedPCH;
 	} else {
 		flags = CXTranslationUnit_Incomplete
 		        | CXTranslationUnit_SkipFunctionBodies

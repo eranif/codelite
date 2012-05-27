@@ -746,7 +746,7 @@ void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)
 		editor->FindAndSelect(reply->filterWord, 
 							  reply->filterWord, 
 							  pos, 
-							  NavMgr::Get());
+							  NULL);
 	}
 }
 

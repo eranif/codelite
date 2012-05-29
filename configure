@@ -770,7 +770,7 @@ createPluginMakefile()
 
 	createPluginTargets "${plugin_name}" "${post_install_path}"
 	if [ "$plugin_name" = "Subversion2" ] ; then
-	 	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT)"
+	 	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	elif [ "$plugin_name" = "DatabaseExplorer" ] ; then
 		## create custom CCFLAGS
 		dbl_flags="-DDBL_USE_SQLITE"

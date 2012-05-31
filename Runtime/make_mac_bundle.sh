@@ -47,6 +47,19 @@ fix_non_plugins_depends() {
 	done
 }
 
+fix_codelite_clang_deps() {
+	orig_path=`otool -L ./CodeLite.app/Contents/SharedSupport/codelite-clang  | grep libwx_* | awk '{print $1;}'`
+
+	## Loop over the files, and update the path of the wx library
+	for path in ${orig_path}
+	do
+		new_path=`echo ${path} | xargs basename`
+		install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./CodeLite.app/Contents/SharedSupport/codelite-clang
+	done
+	echo install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./CodeLite.app/Contents/SharedSupport/codelite-clang
+	install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./CodeLite.app/Contents/SharedSupport/codelite-clang
+}
+
 fix_codelite_indexer_deps() {
 
 	orig_path=`otool -L ./CodeLite.app/Contents/SharedSupport/codelite_indexer  | grep libwx_* | awk '{print $1;}'`
@@ -147,6 +160,7 @@ cp ../lib/libdblayersqliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxshapeframeworku.so ./CodeLite.app/Contents/MacOS/
 
 cp ./codelite_indexer  ./CodeLite.app/Contents/SharedSupport/
+cp ../codelite_clang/codelite-clang  ./CodeLite.app/Contents/SharedSupport/
 cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupport/
 cp ./OpenTerm   ./CodeLite.app/Contents/SharedSupport/
 cp plugins/resources/*.*  ./CodeLite.app/Contents/SharedSupport/plugins/resources/
@@ -161,6 +175,7 @@ for lang in locale/* ; do
 done
 
 fix_codelite_indexer_deps
+fix_codelite_clang_deps
 fix_shared_object_depends libwx_
 fix_non_plugins_depends ./lib/libwxscintillau.so
 fix_non_plugins_depends ./lib/libcodeliteu.so

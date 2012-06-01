@@ -108,7 +108,7 @@ clToolBar *CallGraph::CreateToolBar(wxWindow *parent)
 		}
 		tb->Realize();
 	}
-	return tb;
+	return tb; 
 }
 
 void CallGraph::CreatePluginMenu(wxMenu *pluginsMenu)
@@ -125,7 +125,7 @@ void CallGraph::CreatePluginMenu(wxMenu *pluginsMenu)
 	item = new wxMenuItem(menu, XRCID("cg_about"), _("About..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	//
-	pluginsMenu->Append(wxID_ANY, _("CallGraph"), menu);
+	pluginsMenu->Append(wxID_ANY, wxT("Call Graph"), menu);
 
 }
 

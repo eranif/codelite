@@ -68,14 +68,14 @@ uisettings::uisettings( wxWindow* parent, wxWindowID id, const wxString& title, 
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Node treshold (0 - 100) [%]"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( this, wxID_ANY, _("Node threshold (0 - 100) [%]"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	fgSizer2->Add( m_staticText6, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_spinCtrl_treshold_node = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100, 0 );
 	fgSizer2->Add( m_spinCtrl_treshold_node, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
-	m_staticText7 = new wxStaticText( this, wxID_ANY, _("Edge treshold (0 - 100) [%]"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7 = new wxStaticText( this, wxID_ANY, _("Edge threshold (0 - 100) [%]"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	fgSizer2->Add( m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	

@@ -10,6 +10,7 @@
 ## Copy files to the fakeroot directory structure
 cur_rev=`LC_ALL=C svn info | grep Revision | awk '{print $2;}'`
 arch=`uname -m`
+ubuntu_version=`cat /etc/issue | awk {'print $2;'}`
 libclang="sdk/clang/Linux/i386/lib/libclang.so"
 if [ "${arch}" = "i686" ]; then
     arch="i386"
@@ -25,7 +26,7 @@ parseCommandLine()
         "-d")   PREFIX="/usr";;
 
         "-u")   PREFIX="/usr"
-                cur_rev="${cur_rev}-ubuntu0";;
+                cur_rev="${cur_rev}-ubuntu0-${ubuntu_version}";;
 
         "--help" | "-h")    usage
                             exit 0;;

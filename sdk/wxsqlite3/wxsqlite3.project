@@ -35,9 +35,6 @@
   <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="WinDebugUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -166,4 +163,7 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
 </CodeLite_Project>

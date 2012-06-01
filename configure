@@ -1209,6 +1209,7 @@ echo "QmakePlugin\\" >> Makefile
 echo "git\\" >> Makefile
 echo "CppCheck\\" >> Makefile
 echo "DatabaseExplorer\\" >> Makefile
+echo "CallGraph\\" >> Makefile
 ## Mac Only
 if [ "$os_name" = "Darwin" ]; then
 	echo "MacBundler\\" >> Makefile
@@ -1238,6 +1239,7 @@ echo "ContinuousBuild_install\\" >> Makefile
 echo "QmakePlugin_install\\" >> Makefile
 echo "git_install\\" >> Makefile
 echo "DatabaseExplorer_install\\" >> Makefile
+echo "CallGraph_install\\" >> Makefile
 ## Mac only
 if [ "$os_name" = "Darwin" ]; then
 	echo "CppCheck_install\\" >> Makefile
@@ -1271,6 +1273,7 @@ echo "ContinuousBuild_clean\\" >> Makefile
 echo "QmakePlugin_clean\\" >> Makefile
 echo "git_clean\\" >> Makefile
 echo "DatabaseExplorer_clean\\" >> Makefile
+echo "CallGraph_clean\\" >> Makefile
 if [ "$os_name" = "Darwin" ]; then
 	echo "MacBundler_clean\\" >> Makefile
 fi
@@ -1301,6 +1304,7 @@ createPluginMakefile "QmakePlugin" "QmakePlugin" "\$(DESTDIR)${plugins_dir}/" ".
 createPluginMakefile "git" "git" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
 createPluginMakefile "cppchecker" "CppCheck" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
 createPluginMakefile "DatabaseExplorer" "DatabaseExplorer"  "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
+createPluginMakefile "CallGraph" "CallGraph"  "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"
 ## Mac only plugin: MacBundler
 if [ "$os_name" = "Darwin" ]; then
 	createPluginMakefile "MacBundler" "MacBundler" "\$(DESTDIR)${plugins_dir}/" "../Runtime/plugins"

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -88,6 +88,12 @@ AboutDlgBase::AboutDlgBase( wxWindow* parent, wxWindowID id, const wxString& tit
 	m_staticTextInformation = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticTextInformation->Wrap( -1 );
 	fgSizer1->Add( m_staticTextInformation, 0, wxALL, 5 );
+	
+	m_bitmapPayPal = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_bitmapPayPal, 0, wxALL, 5 );
+	
+	m_hyperlink3 = new wxHyperlinkCtrl( this, wxID_ANY, _("Donate via PayPal"), wxT("https://sourceforge.net/donate/index.php?group_id=202033"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	fgSizer1->Add( m_hyperlink3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	sbSizer1->Add( fgSizer1, 1, wxEXPAND, 5 );
 	

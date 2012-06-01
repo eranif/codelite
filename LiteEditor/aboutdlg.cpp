@@ -25,6 +25,7 @@
 #include "precompiled_header.h"
 #include <wx/ffile.h>
 #include <wx/dcmemory.h>
+#include "bitmap_loader.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/settings.h>
 #include "aboutdlg.h"
@@ -44,6 +45,9 @@ AboutDlg::AboutDlg( wxWindow* parent, const wxString &mainTitle )
 	m_bmp.LoadFile(splashscreen.GetFullPath(), wxBITMAP_TYPE_PNG);
 	m_bitmap->SetBitmap(m_bmp);
 	GetSizer()->Fit(this);
+	
+	BitmapLoader bmpLoader;
+	m_bitmapPayPal->SetBitmap(bmpLoader.LoadBitmap(wxT("about/32/paypal")));
 	
 	// set the page content
 	m_htmlWin3->SetPage(wxString::FromUTF8(about_hex));

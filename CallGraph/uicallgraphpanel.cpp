@@ -50,7 +50,7 @@ void uicallgraphpanel::OnSaveCallGraph(wxCommandEvent& event)
 {	
 		//wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
 
-		wxFileDialog saveFileDialog(this, _("Save call graph..."), _(""), wxT("CallGraph"), _("png files (*.png)|*.png"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+		wxFileDialog saveFileDialog(this, _("Save call graph..."), wxT(""), wxT("CallGraph"), _("png files (*.png)|*.png"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 
         if (saveFileDialog.ShowModal() == wxID_CANCEL)
             return;

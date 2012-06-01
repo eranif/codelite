@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:CodeLite r5437\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-22 18:27+0000\n"
+"Project-Id-Version: CodeLite r5579\n"
+"Report-Msgid-Bugs-To: david@codelite.co.uk\n"
+"POT-Creation-Date: 2012-06-01 19:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,21 +17,21 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: git/git.cpp:289
+#: git/git.cpp:290
 msgid ""
 "No active workspace found!\n"
 "Setting a repository path relies on an active workspace."
 msgstr ""
 
-#: git/git.cpp:291
+#: git/git.cpp:292
 msgid "Missing workspace"
 msgstr ""
 
-#: git/git.cpp:330
+#: git/git.cpp:331
 msgid "The selected directory does not contain any .git directory"
 msgstr ""
 
-#: git/git.cpp:1060
+#: git/git.cpp:1061
 msgid "created"
 msgstr ""
 
@@ -62,7 +62,7 @@ msgstr ""
 #: git/gitui.cpp:43 git/gitui.cpp:50 DatabaseExplorer/GUI.cpp:406
 #: DatabaseExplorer/GUI.cpp:1310 DatabaseExplorer/GUI.cpp:1319
 #: DatabaseExplorer/GUI.cpp:1372 QmakePlugin/qmakesettingsbasedlg.cpp:88
-#: Subversion2/subversion2_ui.cpp:938
+#: Subversion2/subversion2_ui.cpp:919
 msgid "Select a file"
 msgstr ""
 
@@ -89,7 +89,7 @@ msgstr ""
 #: LiteEditor/dbgcommandbasedlg.cpp:54 LiteEditor/depends_dlg.cpp:70
 #: LiteEditor/new_item_base_dlg.cpp:68 LiteEditor/movefuncimplbasedlg.cpp:81
 #: LiteEditor/manageperspectivesbasedlg.cpp:96
-#: LiteEditor/filechecklistbase.cpp:57 LiteEditor/aboutdlgbase.cpp:88
+#: LiteEditor/filechecklistbase.cpp:57 LiteEditor/aboutdlgbase.cpp:105
 #: LiteEditor/syntaxhighlightbasedlg.cpp:53
 #: LiteEditor/new_configuration_dlg.cpp:102
 #: LiteEditor/options_base_dlg2.cpp:45
@@ -105,11 +105,11 @@ msgstr ""
 #: QmakePlugin/newqtprojectbasedlg.cpp:90 UnitTestCPP/testclassbasedlg.cpp:103
 #: UnitTestCPP/newunittestbasedlg.cpp:69
 #: cppchecker/cppchecksettingsdlgbase.cpp:89
-#: Subversion2/subversion2_ui.cpp:139 Subversion2/subversion2_ui.cpp:212
-#: Subversion2/subversion2_ui.cpp:481 Subversion2/subversion2_ui.cpp:601
-#: Subversion2/subversion2_ui.cpp:737 Subversion2/subversion2_ui.cpp:795
-#: Subversion2/subversion2_ui.cpp:905 Subversion2/subversion2_ui.cpp:958
-#: Subversion2/subversion2_ui.cpp:1010
+#: Subversion2/subversion2_ui.cpp:117 Subversion2/subversion2_ui.cpp:189
+#: Subversion2/subversion2_ui.cpp:464 Subversion2/subversion2_ui.cpp:583
+#: Subversion2/subversion2_ui.cpp:719 Subversion2/subversion2_ui.cpp:777
+#: Subversion2/subversion2_ui.cpp:886 Subversion2/subversion2_ui.cpp:939
+#: Subversion2/subversion2_ui.cpp:991
 msgid "&OK"
 msgstr ""
 
@@ -130,9 +130,9 @@ msgstr ""
 #: MacBundler/macbundler.cpp:129 Plugin/virtualdirectoryselectorbase.cpp:45
 #: wxformbuilder/formbuildsettingsbasedlg.cpp:63
 #: wxformbuilder/wxfbitembasedlg.cpp:70 DatabaseExplorer/GUI.cpp:1005
-#: UnitTestCPP/testclassbasedlg.cpp:107 Subversion2/subversion2_ui.cpp:143
-#: Subversion2/subversion2_ui.cpp:216 Subversion2/subversion2_ui.cpp:293
-#: Subversion2/subversion2_ui.cpp:668 Subversion2/subversion2_ui.cpp:1014
+#: UnitTestCPP/testclassbasedlg.cpp:107 Subversion2/subversion2_ui.cpp:121
+#: Subversion2/subversion2_ui.cpp:193 Subversion2/subversion2_ui.cpp:270
+#: Subversion2/subversion2_ui.cpp:650 Subversion2/subversion2_ui.cpp:995
 msgid "Cancel"
 msgstr ""
 
@@ -722,8 +722,8 @@ msgstr ""
 #: LiteEditor/tabgroupbasedlgs.cpp:148 LiteEditor/symbols_dialog_base.cpp:42
 #: LiteEditor/tasksfindwhatdlgbase.cpp:51
 #: LiteEditor/tasksfindwhatdlgbase.cpp:125 Plugin/renamefilebasedlg.cpp:89
-#: Plugin/threebuttonbasedlg.cpp:51 Plugin/nameanddescbasedlg.cpp:63
-#: Plugin/openresourcedialogbase.cpp:55
+#: Plugin/threebuttonbasedlg.cpp:49 Plugin/nameanddescbasedlg.cpp:63
+#: Plugin/openresourcedialogbase.cpp:55 CallGraph/uisettings.cpp:136
 #: CodeFormatter/codeforammaterbasedlg.cpp:230 DatabaseExplorer/GUI.cpp:557
 #: DatabaseExplorer/GUI.cpp:857 Copyright/copyrights_options_base_dlg.cpp:79
 #: Copyright/copyrights_proj_sel_base_dlg.cpp:55
@@ -731,9 +731,9 @@ msgstr ""
 #: QmakePlugin/newqtprojectbasedlg.cpp:87
 #: UnitTestCPP/newunittestbasedlg.cpp:73
 #: cppchecker/cppchecksettingsdlgbase.cpp:93
-#: Subversion2/subversion2_ui.cpp:485 Subversion2/subversion2_ui.cpp:741
-#: Subversion2/subversion2_ui.cpp:799 Subversion2/subversion2_ui.cpp:909
-#: Subversion2/subversion2_ui.cpp:955
+#: Subversion2/subversion2_ui.cpp:468 Subversion2/subversion2_ui.cpp:723
+#: Subversion2/subversion2_ui.cpp:781 Subversion2/subversion2_ui.cpp:890
+#: Subversion2/subversion2_ui.cpp:936
 msgid "&Cancel"
 msgstr ""
 
@@ -745,7 +745,7 @@ msgstr ""
 #: abbreviation/abbreviationssettingsdlg.cpp:51
 #: abbreviation/abbreviationssettingsdlg.cpp:111
 #: abbreviation/abbreviationssettingsdlg.cpp:155
-#: abbreviation/abbreviation.cpp:224 Gizmos/newwxprojectdlg.cpp:81
+#: abbreviation/abbreviation.cpp:225 Gizmos/newwxprojectdlg.cpp:81
 #: Gizmos/newwxprojectdlg.cpp:89 Gizmos/pluginwizard_page1.cpp:79
 #: Gizmos/pluginwizard_page1.cpp:86 Gizmos/gizmos.cpp:318
 #: Gizmos/gizmos.cpp:337 Gizmos/newclassdlg.cpp:229 Gizmos/newclassdlg.cpp:242
@@ -758,33 +758,34 @@ msgstr ""
 #: CodeDesigner/codedesigneritemdlg.cpp:55 CodeDesigner/codedesigner.cpp:315
 #: CodeDesigner/codedesigner.cpp:328 CodeDesigner/codedesigner.cpp:475
 #: CodeDesigner/codedesigner.cpp:490 CodeDesigner/codedesigner.cpp:497
-#: CodeDesigner/codedesigner.cpp:511 LiteEditor/frame.cpp:1875
-#: LiteEditor/frame.cpp:2981 LiteEditor/frame.cpp:3497
-#: LiteEditor/newprojectdlg.cpp:172 LiteEditor/movefuncimpldlg.cpp:69
-#: LiteEditor/fileview.cpp:601 LiteEditor/fileview.cpp:966
-#: LiteEditor/fileview.cpp:1769 LiteEditor/compilerpatternspage.cpp:202
-#: LiteEditor/cl_editor.cpp:1142 LiteEditor/cl_editor.cpp:1147
-#: LiteEditor/cl_editor.cpp:1176 LiteEditor/cl_editor.cpp:1181
-#: LiteEditor/cl_editor.cpp:1192 LiteEditor/cl_editor.cpp:1207
-#: LiteEditor/cl_editor.cpp:1833 LiteEditor/cl_editor.cpp:1859
-#: LiteEditor/cl_editor.cpp:1890 LiteEditor/cl_editor.cpp:1918
-#: LiteEditor/depend_dlg_page.cpp:42 LiteEditor/depend_dlg_page.cpp:175
-#: LiteEditor/manager.cpp:2003 LiteEditor/manager.cpp:2054
-#: LiteEditor/manager.cpp:2482 LiteEditor/manager.cpp:2513
-#: LiteEditor/manager.cpp:2546 LiteEditor/tasks_find_what_dlg.cpp:50
-#: LiteEditor/fileexplorertree.cpp:348 LiteEditor/fileexplorertree.cpp:380
-#: LiteEditor/workspacetab.cpp:399 LiteEditor/ps_custom_build_page.cpp:88
-#: LiteEditor/findresultstab.cpp:305 LiteEditor/compilerfiletypespage.cpp:50
-#: LiteEditor/tabgroupspane.cpp:227 LiteEditor/tabgroupspane.cpp:269
-#: LiteEditor/tabgroupspane.cpp:446 LiteEditor/tabgroupspane.cpp:508
-#: LiteEditor/tabgroupspane.cpp:515 LiteEditor/tabgroupspane.cpp:573
-#: LiteEditor/tabgroupspane.cpp:609 LiteEditor/tabgroupspane.cpp:614
-#: LiteEditor/tabgroupspane.cpp:692 LiteEditor/tabgroupspane.cpp:715
-#: LiteEditor/context_cpp.cpp:865 LiteEditor/context_cpp.cpp:1119
-#: LiteEditor/context_cpp.cpp:1502 LiteEditor/context_cpp.cpp:1557
-#: LiteEditor/context_cpp.cpp:1659 LiteEditor/context_cpp.cpp:2091
+#: CodeDesigner/codedesigner.cpp:511 LiteEditor/frame.cpp:1897
+#: LiteEditor/frame.cpp:2999 LiteEditor/frame.cpp:3515
+#: LiteEditor/frame.cpp:3861 LiteEditor/newprojectdlg.cpp:172
+#: LiteEditor/movefuncimpldlg.cpp:69 LiteEditor/fileview.cpp:593
+#: LiteEditor/fileview.cpp:958 LiteEditor/fileview.cpp:1761
+#: LiteEditor/compilerpatternspage.cpp:202 LiteEditor/cl_editor.cpp:1143
+#: LiteEditor/cl_editor.cpp:1148 LiteEditor/cl_editor.cpp:1177
+#: LiteEditor/cl_editor.cpp:1182 LiteEditor/cl_editor.cpp:1193
+#: LiteEditor/cl_editor.cpp:1208 LiteEditor/cl_editor.cpp:1834
+#: LiteEditor/cl_editor.cpp:1860 LiteEditor/cl_editor.cpp:1891
+#: LiteEditor/cl_editor.cpp:1919 LiteEditor/depend_dlg_page.cpp:42
+#: LiteEditor/depend_dlg_page.cpp:175 LiteEditor/manager.cpp:1018
+#: LiteEditor/manager.cpp:2052 LiteEditor/manager.cpp:2104
+#: LiteEditor/manager.cpp:2532 LiteEditor/manager.cpp:2563
+#: LiteEditor/manager.cpp:2596 LiteEditor/tasks_find_what_dlg.cpp:50
+#: LiteEditor/fileexplorertree.cpp:402 LiteEditor/fileexplorertree.cpp:444
+#: LiteEditor/ps_custom_build_page.cpp:88 LiteEditor/findresultstab.cpp:305
+#: LiteEditor/compilerfiletypespage.cpp:50 LiteEditor/tabgroupspane.cpp:227
+#: LiteEditor/tabgroupspane.cpp:269 LiteEditor/tabgroupspane.cpp:446
+#: LiteEditor/tabgroupspane.cpp:508 LiteEditor/tabgroupspane.cpp:515
+#: LiteEditor/tabgroupspane.cpp:573 LiteEditor/tabgroupspane.cpp:609
+#: LiteEditor/tabgroupspane.cpp:614 LiteEditor/tabgroupspane.cpp:692
+#: LiteEditor/tabgroupspane.cpp:715 LiteEditor/context_cpp.cpp:875
+#: LiteEditor/context_cpp.cpp:1132 LiteEditor/context_cpp.cpp:1515
+#: LiteEditor/context_cpp.cpp:1570 LiteEditor/context_cpp.cpp:1672
+#: LiteEditor/context_cpp.cpp:2104
 #: LiteEditor/debugger_predefined_types_page.cpp:64
-#: LiteEditor/quickfindbar.cpp:138 LiteEditor/memoryview.cpp:157
+#: LiteEditor/quickfindbar.cpp:141 LiteEditor/memoryview.cpp:157
 #: LiteEditor/syntaxhighlightdlg.cpp:248 LiteEditor/new_item_dlg.cpp:146
 #: LiteEditor/edit_workspace_conf_dlg.cpp:125
 #: LiteEditor/configuration_manager_dlg.cpp:229
@@ -792,10 +793,10 @@ msgstr ""
 #: LiteEditor/new_configuration_dlg.cpp:125 LiteEditor/renamesymboldlg.cpp:100
 #: LiteEditor/compilercompileroptionspage.cpp:74
 #: LiteEditor/acceltabledlg.cpp:271 Plugin/workspace.cpp:233
-#: Plugin/workspace.cpp:415 Plugin/builder_gnumake.cpp:148
-#: wxformbuilder/wxfbitemdlg.cpp:51 wxformbuilder/wxformbuilder.cpp:231
-#: wxformbuilder/wxformbuilder.cpp:244 wxformbuilder/wxformbuilder.cpp:250
-#: wxformbuilder/wxformbuilder.cpp:260 wxformbuilder/wxformbuilder.cpp:303
+#: Plugin/workspace.cpp:415 Plugin/builder_gnumake.cpp:149
+#: wxformbuilder/wxfbitemdlg.cpp:51 wxformbuilder/wxformbuilder.cpp:232
+#: wxformbuilder/wxformbuilder.cpp:245 wxformbuilder/wxformbuilder.cpp:251
+#: wxformbuilder/wxformbuilder.cpp:261 wxformbuilder/wxformbuilder.cpp:304
 #: DatabaseExplorer/ClassGenerateDialog.cpp:93
 #: DatabaseExplorer/ClassGenerateDialog.cpp:98 Copyright/copyright.cpp:182
 #: Copyright/copyright.cpp:189 Copyright/copyright.cpp:195
@@ -803,8 +804,8 @@ msgstr ""
 #: Copyright/copyright.cpp:297 Copyright/copyright.cpp:352
 #: Copyright/copyright.cpp:405 Copyright/copyright.cpp:411
 #: Copyright/copyright.cpp:422 SnipWiz/swGlobals.h:50
-#: SnipWiz/editsnippetsdlg.cpp:195 QmakePlugin/qmakeplugin.cpp:386
-#: QmakePlugin/qmakeplugin.cpp:443 QmakePlugin/qmakeplugin.cpp:454
+#: SnipWiz/editsnippetsdlg.cpp:195 QmakePlugin/qmakeplugin.cpp:382
+#: QmakePlugin/qmakeplugin.cpp:439 QmakePlugin/qmakeplugin.cpp:450
 #: QmakePlugin/qmakesettingsdlg.cpp:94 UnitTestCPP/unittestpp.cpp:178
 #: UnitTestCPP/unittestpp.cpp:244 UnitTestCPP/unittestpp.cpp:297
 #: UnitTestCPP/unittestpp.cpp:434 UnitTestCPP/testclassdlg.cpp:124
@@ -852,46 +853,46 @@ msgstr ""
 msgid "Failed Files:"
 msgstr ""
 
-#: ContinuousBuild/continuousbuild.cpp:34
-#: ContinuousBuild/continuousbuild.cpp:55
+#: ContinuousBuild/continuousbuild.cpp:36
+#: ContinuousBuild/continuousbuild.cpp:57
 msgid "Continuous build plugin which compiles files on save and report errors"
 msgstr ""
 
-#: ContinuousBuild/continuousbuild.cpp:206
+#: ContinuousBuild/continuousbuild.cpp:219
 msgid "Compiling"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:65
+#: SymbolView/symbolview.cpp:66
 msgid "Show Symbols of File, Project, or Workspace"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:93
+#: SymbolView/symbolview.cpp:94
 msgid "Symbols View Plugin"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:116 Plugin/macros.h:96
+#: SymbolView/symbolview.cpp:117 Plugin/macros.h:96
 msgid "Current File"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:117
+#: SymbolView/symbolview.cpp:118
 msgid "Current Project"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:118
+#: SymbolView/symbolview.cpp:119
 msgid "Current Workspace"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:220
+#: SymbolView/symbolview.cpp:221
 msgid "Symbols"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:228 LiteEditor/workspacetab.cpp:89
-#: LiteEditor/fileexplorer.cpp:90 Subversion2/subversion_view.cpp:173
+#: SymbolView/symbolview.cpp:228 LiteEditor/workspacetab.cpp:90
+#: LiteEditor/fileexplorer.cpp:91 Subversion2/subversion_view.cpp:184
 msgid "Link Editor"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:230 LiteEditor/workspacetab.cpp:91
-#: LiteEditor/fileexplorer.cpp:92
+#: SymbolView/symbolview.cpp:230 LiteEditor/workspacetab.cpp:92
+#: LiteEditor/fileexplorer.cpp:93
 msgid "Collapse All"
 msgstr ""
 
@@ -899,27 +900,23 @@ msgstr ""
 msgid "Go to Active Editor Symbols"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:320
-msgid "Show in Symbol View"
-msgstr ""
-
-#: SymbolView/symbolview.cpp:677
+#: SymbolView/symbolview.cpp:686
 msgid "Global Functions and Variables"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:678
+#: SymbolView/symbolview.cpp:687
 msgid "Functions Prototypes"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:679
+#: SymbolView/symbolview.cpp:688
 msgid "Macros"
 msgstr ""
 
-#: SymbolView/symbolview.cpp:900
+#: SymbolView/symbolview.cpp:909
 msgid "Updating SymbolView tree..."
 msgstr ""
 
-#: SymbolView/symbolview.cpp:960
+#: SymbolView/symbolview.cpp:969
 msgid "Building SymbolView tree..."
 msgstr ""
 
@@ -945,21 +942,22 @@ msgstr ""
 msgid "An abbreviation with this name already exists!"
 msgstr ""
 
-#: abbreviation/abbreviation.cpp:53 abbreviation/abbreviation.cpp:67
+#: abbreviation/abbreviation.cpp:54 abbreviation/abbreviation.cpp:68
 msgid "Abbreviation plugin"
 msgstr ""
 
-#: abbreviation/abbreviation.cpp:90
+#: abbreviation/abbreviation.cpp:91
 msgid "Show Abbreviations"
 msgstr ""
 
-#: abbreviation/abbreviation.cpp:94 CodeDesigner/codedesigner.cpp:133
-#: wxformbuilder/wxformbuilder.cpp:106 Copyright/copyright.cpp:119
-#: SnipWiz/snipwiz.cpp:160 QmakePlugin/qmakeplugin.cpp:117 menu.xrc:907
+#: abbreviation/abbreviation.cpp:95 CodeDesigner/codedesigner.cpp:133
+#: wxformbuilder/wxformbuilder.cpp:107 CallGraph/callgraph.cpp:123
+#: CallGraph/uisettings.h:75 Copyright/copyright.cpp:119
+#: SnipWiz/snipwiz.cpp:160 QmakePlugin/qmakeplugin.cpp:116 menu.xrc:907
 msgid "Settings..."
 msgstr ""
 
-#: abbreviation/abbreviation.cpp:224
+#: abbreviation/abbreviation.cpp:225
 #, c-format
 msgid "Enter replacement for '%s':"
 msgstr ""
@@ -983,7 +981,7 @@ msgstr ""
 #: abbreviation/abbreviationssettingsbase.cpp:62
 #: ExternalTools/externaltoolsbasedlg.cpp:29
 #: LiteEditor/advanced_settings.cpp:76
-#: LiteEditor/project_settings_base_dlg.cpp:973
+#: LiteEditor/project_settings_base_dlg.cpp:966
 #: LiteEditor/simpletablebase.cpp:40 LiteEditor/compiler_pages.cpp:253
 #: LiteEditor/compiler_pages.cpp:407 LiteEditor/compiler_pages.cpp:458
 #: QmakePlugin/newqtprojectbasedlg.cpp:68
@@ -991,19 +989,19 @@ msgid "New..."
 msgstr ""
 
 #: abbreviation/abbreviationssettingsbase.cpp:65
-#: Gizmos/newclassbasedlg.cpp:153 LiteEditor/project_settings_base_dlg.cpp:979
+#: Gizmos/newclassbasedlg.cpp:153 LiteEditor/project_settings_base_dlg.cpp:972
 #: LiteEditor/simpletablebase.cpp:42 LiteEditor/compiler_pages.cpp:41
 #: LiteEditor/compiler_pages.cpp:85 LiteEditor/compiler_pages.cpp:257
 #: LiteEditor/compiler_pages.cpp:411 LiteEditor/compiler_pages.cpp:462
 #: LiteEditor/tasksfindwhatdlgbase.cpp:34 DatabaseExplorer/GUI.cpp:693
-#: QmakePlugin/qmakesettingsdlg.cpp:81 Subversion2/subversion2.cpp:211
-#: menu.xrc:731 menu.xrc:774 menu.xrc:1003 menu.xrc:1036
+#: QmakePlugin/qmakesettingsdlg.cpp:81 Subversion2/subversion2.cpp:213
+#: menu.xrc:731 menu.xrc:774 menu.xrc:1006 menu.xrc:1039
 msgid "Delete"
 msgstr ""
 
-#: abbreviation/abbreviationssettingsbase.cpp:68 LiteEditor/frame.cpp:1008
-#: LiteEditor/frame.cpp:1131 LiteEditor/frame.cpp:1205
-#: LiteEditor/frame.cpp:1293 DatabaseExplorer/ErdPanel.cpp:138
+#: abbreviation/abbreviationssettingsbase.cpp:68 LiteEditor/frame.cpp:1011
+#: LiteEditor/frame.cpp:1134 LiteEditor/frame.cpp:1208
+#: LiteEditor/frame.cpp:1296 DatabaseExplorer/ErdPanel.cpp:138
 #: DatabaseExplorer/GUI.cpp:213 DatabaseExplorer/GUI.cpp:835 menu.xrc:592
 #: menu.xrc:612
 msgid "Save"
@@ -1046,14 +1044,14 @@ msgstr ""
 
 #: Gizmos/newwxprojectdlg.cpp:102 LiteEditor/newprojectdlg.cpp:141
 #: LiteEditor/newprojectdlg.cpp:146 LiteEditor/newprojectdlg.cpp:151
-#: LiteEditor/fileview.cpp:933 LiteEditor/fileview.cpp:937
-#: LiteEditor/cl_editor.cpp:1099 LiteEditor/manager.cpp:255
-#: LiteEditor/manager.cpp:272 LiteEditor/manager.cpp:446
-#: LiteEditor/manager.cpp:510 LiteEditor/manager.cpp:555
-#: LiteEditor/manager.cpp:879 LiteEditor/manager.cpp:905
-#: LiteEditor/manager.cpp:1013 LiteEditor/manager.cpp:1153
+#: LiteEditor/fileview.cpp:925 LiteEditor/fileview.cpp:929
+#: LiteEditor/cl_editor.cpp:1100 LiteEditor/manager.cpp:256
+#: LiteEditor/manager.cpp:273 LiteEditor/manager.cpp:447
+#: LiteEditor/manager.cpp:511 LiteEditor/manager.cpp:556
+#: LiteEditor/manager.cpp:880 LiteEditor/manager.cpp:906
+#: LiteEditor/manager.cpp:1033 LiteEditor/manager.cpp:1173
 #: LiteEditor/advanced_settings.cpp:263 LiteEditor/newworkspacedlg.cpp:97
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:154
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:183 CallGraph/callgraph.cpp:292
 #: DatabaseExplorer/DbViewerPanel.cpp:433
 msgid "Error"
 msgstr ""
@@ -1147,7 +1145,7 @@ msgstr ""
 msgid "Uses an universal configuration if found."
 msgstr ""
 
-#: Gizmos/newwxprojectbasedlg.cpp:137 LiteEditor/aboutdlgbase.cpp:71
+#: Gizmos/newwxprojectbasedlg.cpp:137 LiteEditor/aboutdlgbase.cpp:82
 #: LiteEditor/pluginmgrdlg.cpp:141
 msgid "Version:"
 msgstr ""
@@ -1447,8 +1445,9 @@ msgstr ""
 
 #: ExternalTools/externaltoolsbasedlg.cpp:32
 #: LiteEditor/debuggersettingsbasedlg.cpp:105
-#: LiteEditor/project_settings_base_dlg.cpp:976
-#: LiteEditor/compiler_pages.cpp:46 LiteEditor/compiler_pages.cpp:90
+#: LiteEditor/project_settings_base_dlg.cpp:969
+#: LiteEditor/new_quick_watch_dlg.cpp:290 LiteEditor/compiler_pages.cpp:46
+#: LiteEditor/compiler_pages.cpp:90
 msgid "Edit..."
 msgstr ""
 
@@ -1528,7 +1527,7 @@ msgid "C"
 msgstr ""
 
 #: CodeDesigner/codedesigneritembasedlg.cpp:47
-#: LiteEditor/findinfilesdlgbase.cpp:179
+#: LiteEditor/findinfilesdlgbase.cpp:180
 msgid "C++"
 msgstr ""
 
@@ -1555,30 +1554,30 @@ msgstr ""
 
 #: CodeDesigner/codedesigneritembasedlg.cpp:90
 #: CodeDesigner/codedesignersettingsbasedlg.cpp:35
-#: LiteEditor/project_settings_base_dlg.cpp:152
-#: LiteEditor/project_settings_base_dlg.cpp:168
-#: LiteEditor/project_settings_base_dlg.cpp:197
-#: LiteEditor/project_settings_base_dlg.cpp:310
-#: LiteEditor/project_settings_base_dlg.cpp:323
-#: LiteEditor/project_settings_base_dlg.cpp:338
-#: LiteEditor/project_settings_base_dlg.cpp:353
-#: LiteEditor/project_settings_base_dlg.cpp:372
-#: LiteEditor/project_settings_base_dlg.cpp:519
-#: LiteEditor/project_settings_base_dlg.cpp:531
-#: LiteEditor/project_settings_base_dlg.cpp:544
-#: LiteEditor/project_settings_base_dlg.cpp:631
-#: LiteEditor/project_settings_base_dlg.cpp:763
-#: LiteEditor/project_settings_base_dlg.cpp:775
-#: LiteEditor/project_settings_base_dlg.cpp:959
-#: LiteEditor/project_settings_base_dlg.cpp:1095
-#: LiteEditor/project_settings_base_dlg.cpp:1105
-#: LiteEditor/project_settings_base_dlg.cpp:1115
-#: LiteEditor/project_settings_base_dlg.cpp:1125
-#: LiteEditor/project_settings_base_dlg.cpp:1151
-#: LiteEditor/project_settings_base_dlg.cpp:1161
-#: LiteEditor/project_settings_base_dlg.cpp:1173
-#: LiteEditor/project_settings_base_dlg.cpp:1199
-#: LiteEditor/project_settings_base_dlg.cpp:1209
+#: LiteEditor/project_settings_base_dlg.cpp:151
+#: LiteEditor/project_settings_base_dlg.cpp:167
+#: LiteEditor/project_settings_base_dlg.cpp:196
+#: LiteEditor/project_settings_base_dlg.cpp:308
+#: LiteEditor/project_settings_base_dlg.cpp:321
+#: LiteEditor/project_settings_base_dlg.cpp:336
+#: LiteEditor/project_settings_base_dlg.cpp:351
+#: LiteEditor/project_settings_base_dlg.cpp:370
+#: LiteEditor/project_settings_base_dlg.cpp:516
+#: LiteEditor/project_settings_base_dlg.cpp:528
+#: LiteEditor/project_settings_base_dlg.cpp:541
+#: LiteEditor/project_settings_base_dlg.cpp:627
+#: LiteEditor/project_settings_base_dlg.cpp:758
+#: LiteEditor/project_settings_base_dlg.cpp:770
+#: LiteEditor/project_settings_base_dlg.cpp:952
+#: LiteEditor/project_settings_base_dlg.cpp:1087
+#: LiteEditor/project_settings_base_dlg.cpp:1097
+#: LiteEditor/project_settings_base_dlg.cpp:1107
+#: LiteEditor/project_settings_base_dlg.cpp:1117
+#: LiteEditor/project_settings_base_dlg.cpp:1143
+#: LiteEditor/project_settings_base_dlg.cpp:1153
+#: LiteEditor/project_settings_base_dlg.cpp:1165
+#: LiteEditor/project_settings_base_dlg.cpp:1191
+#: LiteEditor/project_settings_base_dlg.cpp:1201
 #: LiteEditor/tabgroupbasedlgs.cpp:29 LiteEditor/newworkspacebasedlg.cpp:43
 #: wxformbuilder/formbuildsettingsbasedlg.cpp:35
 #: wxformbuilder/wxfbitembasedlg.cpp:55 DatabaseExplorer/GUI.cpp:1223
@@ -1591,7 +1590,7 @@ msgstr ""
 #: CodeDesigner/codedesigneritembasedlg.cpp:105
 #: LiteEditor/compiler_pages.cpp:533 LiteEditor/compiler_pages.cpp:602
 #: Plugin/virtualdirectoryselectorbase.cpp:41 DatabaseExplorer/GUI.cpp:1008
-#: DatabaseExplorer/GUI.cpp:1154 Subversion2/subversion2_ui.cpp:664
+#: DatabaseExplorer/GUI.cpp:1154 Subversion2/subversion2_ui.cpp:646
 msgid "OK"
 msgstr ""
 
@@ -1659,17 +1658,17 @@ msgstr ""
 msgid "Can't find CodeDesigner template file '%s'"
 msgstr ""
 
-#: CodeDesigner/codedesigner.cpp:490 wxformbuilder/wxformbuilder.cpp:244
+#: CodeDesigner/codedesigner.cpp:490 wxformbuilder/wxformbuilder.cpp:245
 #, c-format
 msgid "Failed to copy template file to '%s'"
 msgstr ""
 
-#: CodeDesigner/codedesigner.cpp:497 wxformbuilder/wxformbuilder.cpp:250
+#: CodeDesigner/codedesigner.cpp:497 wxformbuilder/wxformbuilder.cpp:251
 #, c-format
 msgid "Failed to read file '%s'"
 msgstr ""
 
-#: CodeDesigner/codedesigner.cpp:511 wxformbuilder/wxformbuilder.cpp:260
+#: CodeDesigner/codedesigner.cpp:511 wxformbuilder/wxformbuilder.cpp:261
 #, c-format
 msgid "Failed to write file '%s'"
 msgstr ""
@@ -1769,11 +1768,11 @@ msgstr ""
 msgid "Condition %s set for breakpoint %d"
 msgstr ""
 
-#: Debugger/debuggergdb.cpp:553
+#: Debugger/debuggergdb.cpp:558
 msgid "Can't interrupt debuggee process: I don't know its PID!"
 msgstr ""
 
-#: Debugger/debuggergdb.cpp:696
+#: Debugger/debuggergdb.cpp:701
 msgid "Failed to start debugger: permission denied"
 msgstr ""
 
@@ -1797,513 +1796,513 @@ msgstr ""
 msgid "Indentation only"
 msgstr ""
 
-#: LiteEditor/frame.cpp:647 LiteEditor/frame.cpp:3761
+#: LiteEditor/frame.cpp:652 LiteEditor/frame.cpp:3779
 msgid "CodeLite - Revision: "
 msgstr ""
 
-#: LiteEditor/frame.cpp:797
+#: LiteEditor/frame.cpp:807
 msgid "Output View"
 msgstr ""
 
-#: LiteEditor/frame.cpp:798 menu.xrc:219
+#: LiteEditor/frame.cpp:808 menu.xrc:219
 msgid "Workspace View"
 msgstr ""
 
-#: LiteEditor/frame.cpp:878 cscope/cscopetab.cpp:73 cscope/cscopetab.cpp:248
+#: LiteEditor/frame.cpp:881 cscope/cscopetab.cpp:73 cscope/cscopetab.cpp:248
 msgid "Ready"
 msgstr ""
 
-#: LiteEditor/frame.cpp:879 LiteEditor/frame.cpp:2329
-#: LiteEditor/frame.cpp:4612 LiteEditor/manager.cpp:3388
-#: CodeFormatter/codeformatter.cpp:166 cscope/cscopedbbuilderthread.cpp:62
+#: LiteEditor/frame.cpp:882 LiteEditor/frame.cpp:2351
+#: LiteEditor/frame.cpp:4630 LiteEditor/manager.cpp:3446
+#: CodeFormatter/codeformatter.cpp:167 cscope/cscopedbbuilderthread.cpp:62
 #: cppchecker/cppcheckreportpage.cpp:235
 msgid "Done"
 msgstr ""
 
-#: LiteEditor/frame.cpp:968
+#: LiteEditor/frame.cpp:971
 msgid "View As"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1004 LiteEditor/frame.cpp:1127
-#: LiteEditor/frame.cpp:1201 LiteEditor/frame.cpp:1289
+#: LiteEditor/frame.cpp:1007 LiteEditor/frame.cpp:1130
+#: LiteEditor/frame.cpp:1204 LiteEditor/frame.cpp:1292
 #: LiteEditor/tasksfindwhatdlgbase.cpp:28
 msgid "New"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1004 LiteEditor/frame.cpp:1127
-#: LiteEditor/frame.cpp:1201 LiteEditor/frame.cpp:1289
+#: LiteEditor/frame.cpp:1007 LiteEditor/frame.cpp:1130
+#: LiteEditor/frame.cpp:1204 LiteEditor/frame.cpp:1292
 msgid "New File"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1005 LiteEditor/frame.cpp:1128
-#: LiteEditor/frame.cpp:1202 LiteEditor/frame.cpp:1290
+#: LiteEditor/frame.cpp:1008 LiteEditor/frame.cpp:1131
+#: LiteEditor/frame.cpp:1205 LiteEditor/frame.cpp:1293
 #: DatabaseExplorer/ErdPanel.cpp:137
 msgid "Open"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1005 LiteEditor/frame.cpp:1128
-#: LiteEditor/frame.cpp:1202 LiteEditor/frame.cpp:1290
-#: LiteEditor/frame.cpp:1822
+#: LiteEditor/frame.cpp:1008 LiteEditor/frame.cpp:1131
+#: LiteEditor/frame.cpp:1205 LiteEditor/frame.cpp:1293
+#: LiteEditor/frame.cpp:1844
 msgid "Open File"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1006 LiteEditor/frame.cpp:1129
-#: LiteEditor/frame.cpp:1203 LiteEditor/frame.cpp:1291 menu.xrc:608
+#: LiteEditor/frame.cpp:1009 LiteEditor/frame.cpp:1132
+#: LiteEditor/frame.cpp:1206 LiteEditor/frame.cpp:1294 menu.xrc:608
 msgid "Reload"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1006 LiteEditor/frame.cpp:1129
-#: LiteEditor/frame.cpp:1203 LiteEditor/frame.cpp:1291
-msgid "Reload File"
 msgstr ""
 
 #: LiteEditor/frame.cpp:1009 LiteEditor/frame.cpp:1132
 #: LiteEditor/frame.cpp:1206 LiteEditor/frame.cpp:1294
-#: LiteEditor/cl_editor.cpp:1091 menu.xrc:615
+msgid "Reload File"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1012 LiteEditor/frame.cpp:1135
+#: LiteEditor/frame.cpp:1209 LiteEditor/frame.cpp:1297
+#: LiteEditor/cl_editor.cpp:1092 menu.xrc:615
 msgid "Save As"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1011 LiteEditor/frame.cpp:1134
-#: LiteEditor/frame.cpp:1208 LiteEditor/frame.cpp:1296
+#: LiteEditor/frame.cpp:1014 LiteEditor/frame.cpp:1137
+#: LiteEditor/frame.cpp:1211 LiteEditor/frame.cpp:1299
 #: LiteEditor/batchbuildbasedlg.cpp:72 LiteEditor/edit_configuration.cpp:100
-#: LiteEditor/findinfilesdlgbase.cpp:207 DatabaseExplorer/GUI.cpp:1059
+#: LiteEditor/findinfilesdlgbase.cpp:208 DatabaseExplorer/GUI.cpp:1059
 #: DatabaseExplorer/GUI.cpp:1246 DatabaseExplorer/DbViewerPanel.cpp:379
 #: SnipWiz/editsnippetsbasedlg.cpp:109 menu.xrc:578 menu.xrc:589 menu.xrc:598
 msgid "Close"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1011 LiteEditor/frame.cpp:1134
-#: LiteEditor/frame.cpp:1208 LiteEditor/frame.cpp:1296
+#: LiteEditor/frame.cpp:1014 LiteEditor/frame.cpp:1137
+#: LiteEditor/frame.cpp:1211 LiteEditor/frame.cpp:1299
 msgid "Close File"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1013 LiteEditor/frame.cpp:1136
-#: LiteEditor/frame.cpp:1210 LiteEditor/frame.cpp:1298
+#: LiteEditor/frame.cpp:1016 LiteEditor/frame.cpp:1139
+#: LiteEditor/frame.cpp:1213 LiteEditor/frame.cpp:1301
 #: DatabaseExplorer/ErdPanel.cpp:147 DatabaseExplorer/FrameCanvas.cpp:149
 #: menu.xrc:728 menu.xrc:765
 msgid "Cut"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1014 LiteEditor/frame.cpp:1137
-#: LiteEditor/frame.cpp:1211 LiteEditor/frame.cpp:1299
+#: LiteEditor/frame.cpp:1017 LiteEditor/frame.cpp:1140
+#: LiteEditor/frame.cpp:1214 LiteEditor/frame.cpp:1302
 #: DatabaseExplorer/ErdPanel.cpp:146 DatabaseExplorer/FrameCanvas.cpp:148
-#: menu.xrc:714 menu.xrc:768 menu.xrc:992
+#: menu.xrc:714 menu.xrc:768 menu.xrc:995
 msgid "Copy"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1015 LiteEditor/frame.cpp:1138
-#: LiteEditor/frame.cpp:1212 LiteEditor/frame.cpp:1300
+#: LiteEditor/frame.cpp:1018 LiteEditor/frame.cpp:1141
+#: LiteEditor/frame.cpp:1215 LiteEditor/frame.cpp:1303
 #: DatabaseExplorer/ErdPanel.cpp:148 DatabaseExplorer/FrameCanvas.cpp:150
 #: menu.xrc:717 menu.xrc:771
 msgid "Paste"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1017 LiteEditor/frame.cpp:1140
-#: LiteEditor/frame.cpp:1214 LiteEditor/frame.cpp:1302
+#: LiteEditor/frame.cpp:1020 LiteEditor/frame.cpp:1143
+#: LiteEditor/frame.cpp:1217 LiteEditor/frame.cpp:1305
 #: DatabaseExplorer/ErdPanel.cpp:150 menu.xrc:721 menu.xrc:758
 msgid "Undo"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1018 LiteEditor/frame.cpp:1141
-#: LiteEditor/frame.cpp:1215 LiteEditor/frame.cpp:1303
+#: LiteEditor/frame.cpp:1021 LiteEditor/frame.cpp:1144
+#: LiteEditor/frame.cpp:1218 LiteEditor/frame.cpp:1306
 #: DatabaseExplorer/ErdPanel.cpp:151 menu.xrc:724 menu.xrc:761
 msgid "Redo"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1019 LiteEditor/frame.cpp:1142
-#: LiteEditor/frame.cpp:1216 LiteEditor/frame.cpp:1304
+#: LiteEditor/frame.cpp:1022 LiteEditor/frame.cpp:1145
+#: LiteEditor/frame.cpp:1219 LiteEditor/frame.cpp:1307
 msgid "Backward"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1020 LiteEditor/frame.cpp:1143
-#: LiteEditor/frame.cpp:1217 LiteEditor/frame.cpp:1305
+#: LiteEditor/frame.cpp:1023 LiteEditor/frame.cpp:1146
+#: LiteEditor/frame.cpp:1220 LiteEditor/frame.cpp:1308
 msgid "Forward"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1022 LiteEditor/frame.cpp:1145
-#: LiteEditor/frame.cpp:1219 LiteEditor/frame.cpp:1307 menu.xrc:740
+#: LiteEditor/frame.cpp:1025 LiteEditor/frame.cpp:1148
+#: LiteEditor/frame.cpp:1222 LiteEditor/frame.cpp:1310 menu.xrc:740
 msgid "Toggle Bookmark"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1027 LiteEditor/frame.cpp:1312
+#: LiteEditor/frame.cpp:1030 LiteEditor/frame.cpp:1315
 msgid "Standard"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1041 LiteEditor/frame.cpp:1152
-#: LiteEditor/frame.cpp:1226 LiteEditor/frame.cpp:1328
+#: LiteEditor/frame.cpp:1044 LiteEditor/frame.cpp:1155
+#: LiteEditor/frame.cpp:1229 LiteEditor/frame.cpp:1331
 msgid "Find"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1042 LiteEditor/frame.cpp:1153
-#: LiteEditor/frame.cpp:1227 LiteEditor/frame.cpp:1329
-#: LiteEditor/output_pane.cpp:45
+#: LiteEditor/frame.cpp:1045 LiteEditor/frame.cpp:1156
+#: LiteEditor/frame.cpp:1230 LiteEditor/frame.cpp:1332
+#: LiteEditor/output_pane.cpp:46
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:46
 #: LiteEditor/quickfindbarbase.cpp:103 Plugin/editor_config.cpp:583
 #: Plugin/editor_config.cpp:612
 msgid "Replace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1043 LiteEditor/frame.cpp:1154
-#: LiteEditor/frame.cpp:1228 LiteEditor/frame.cpp:1330
+#: LiteEditor/frame.cpp:1046 LiteEditor/frame.cpp:1157
+#: LiteEditor/frame.cpp:1231 LiteEditor/frame.cpp:1333
 msgid "Find In Files"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1045 LiteEditor/frame.cpp:1156
-#: LiteEditor/frame.cpp:1230 LiteEditor/frame.cpp:1332
+#: LiteEditor/frame.cpp:1048 LiteEditor/frame.cpp:1159
+#: LiteEditor/frame.cpp:1233 LiteEditor/frame.cpp:1335
 msgid "Find Resource In Workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1047 LiteEditor/frame.cpp:1158
-#: LiteEditor/frame.cpp:1232 LiteEditor/frame.cpp:1334
+#: LiteEditor/frame.cpp:1050 LiteEditor/frame.cpp:1161
+#: LiteEditor/frame.cpp:1235 LiteEditor/frame.cpp:1337
 msgid "Highlight Word"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1053 LiteEditor/frame.cpp:1341
-#: LiteEditor/output_pane.cpp:40
+#: LiteEditor/frame.cpp:1056 LiteEditor/frame.cpp:1344
+#: LiteEditor/output_pane.cpp:41
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:41
 #: Plugin/editor_config.cpp:581 Plugin/editor_config.cpp:610 menu.xrc:653
 msgid "Search"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1066 LiteEditor/frame.cpp:1166
-#: LiteEditor/frame.cpp:1239 LiteEditor/frame.cpp:1353
+#: LiteEditor/frame.cpp:1069 LiteEditor/frame.cpp:1169
+#: LiteEditor/frame.cpp:1242 LiteEditor/frame.cpp:1356
 msgid "Build Active Project"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1067 LiteEditor/frame.cpp:1167
-#: LiteEditor/frame.cpp:1240 LiteEditor/frame.cpp:1354
-msgid "Stop Current Build"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1068 LiteEditor/frame.cpp:1168
-#: LiteEditor/frame.cpp:1241 LiteEditor/frame.cpp:1355
-msgid "Clean Active Project"
 msgstr ""
 
 #: LiteEditor/frame.cpp:1070 LiteEditor/frame.cpp:1170
 #: LiteEditor/frame.cpp:1243 LiteEditor/frame.cpp:1357
-msgid "Run Active Project"
+msgid "Stop Current Build"
 msgstr ""
 
 #: LiteEditor/frame.cpp:1071 LiteEditor/frame.cpp:1171
 #: LiteEditor/frame.cpp:1244 LiteEditor/frame.cpp:1358
+msgid "Clean Active Project"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1073 LiteEditor/frame.cpp:1173
+#: LiteEditor/frame.cpp:1246 LiteEditor/frame.cpp:1360
+msgid "Run Active Project"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1074 LiteEditor/frame.cpp:1174
+#: LiteEditor/frame.cpp:1247 LiteEditor/frame.cpp:1361
 msgid "Stop Running Program"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1076 LiteEditor/frame.cpp:1363
-#: LiteEditor/output_pane.cpp:41
+#: LiteEditor/frame.cpp:1079 LiteEditor/frame.cpp:1366
+#: LiteEditor/output_pane.cpp:42
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:31
 #: Plugin/editor_config.cpp:577 Plugin/editor_config.cpp:606 menu.xrc:832
 #: menu.xrc:846
 msgid "Build"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1090 LiteEditor/frame.cpp:1177
-#: LiteEditor/frame.cpp:1250
+#: LiteEditor/frame.cpp:1093 LiteEditor/frame.cpp:1180
+#: LiteEditor/frame.cpp:1253
 msgid "Start or Continue debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1091 LiteEditor/frame.cpp:1178
-#: LiteEditor/frame.cpp:1251 LiteEditor/frame.cpp:1378
+#: LiteEditor/frame.cpp:1094 LiteEditor/frame.cpp:1181
+#: LiteEditor/frame.cpp:1254 LiteEditor/frame.cpp:1381
 msgid "Stop debugger"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1092 LiteEditor/frame.cpp:1179
-#: LiteEditor/frame.cpp:1252 LiteEditor/frame.cpp:1379
-msgid "Pause debugger"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1093 LiteEditor/frame.cpp:1180
-#: LiteEditor/frame.cpp:1253 LiteEditor/frame.cpp:1380
-msgid "Restart debugger"
 msgstr ""
 
 #: LiteEditor/frame.cpp:1095 LiteEditor/frame.cpp:1182
 #: LiteEditor/frame.cpp:1255 LiteEditor/frame.cpp:1382
-msgid "Show Current Line"
+msgid "Pause debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1097 LiteEditor/frame.cpp:1184
-#: LiteEditor/frame.cpp:1257 LiteEditor/frame.cpp:1384
-msgid "Step Into"
-msgstr ""
-
-#: LiteEditor/frame.cpp:1097 LiteEditor/frame.cpp:1184
-#: LiteEditor/frame.cpp:1257 LiteEditor/frame.cpp:1384
-msgid "Step In"
+#: LiteEditor/frame.cpp:1096 LiteEditor/frame.cpp:1183
+#: LiteEditor/frame.cpp:1256 LiteEditor/frame.cpp:1383
+msgid "Restart debugger"
 msgstr ""
 
 #: LiteEditor/frame.cpp:1098 LiteEditor/frame.cpp:1185
 #: LiteEditor/frame.cpp:1258 LiteEditor/frame.cpp:1385
+msgid "Show Current Line"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1100 LiteEditor/frame.cpp:1187
+#: LiteEditor/frame.cpp:1260 LiteEditor/frame.cpp:1387
+msgid "Step Into"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1100 LiteEditor/frame.cpp:1187
+#: LiteEditor/frame.cpp:1260 LiteEditor/frame.cpp:1387
+msgid "Step In"
+msgstr ""
+
+#: LiteEditor/frame.cpp:1101 LiteEditor/frame.cpp:1188
+#: LiteEditor/frame.cpp:1261 LiteEditor/frame.cpp:1388
 #: DatabaseExplorer/GUI.cpp:1397
 msgid "Next"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1099 LiteEditor/frame.cpp:1186
-#: LiteEditor/frame.cpp:1259 LiteEditor/frame.cpp:1386
+#: LiteEditor/frame.cpp:1102 LiteEditor/frame.cpp:1189
+#: LiteEditor/frame.cpp:1262 LiteEditor/frame.cpp:1389
 msgid "Step Out"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1104 LiteEditor/frame.cpp:1391
-#: LiteEditor/output_pane.cpp:44
+#: LiteEditor/frame.cpp:1107 LiteEditor/frame.cpp:1394
+#: LiteEditor/output_pane.cpp:45
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:61
 #: LiteEditor/configuration_manager_dlg.cpp:129
 #: LiteEditor/debugcoredumpbase.cpp:84
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:154
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:183
 #: LiteEditor/quickdebugbase.cpp:93 Plugin/editor_config.cpp:589
 #: Plugin/editor_config.cpp:618
 msgid "Debug"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1114 LiteEditor/frame.cpp:1400
+#: LiteEditor/frame.cpp:1117 LiteEditor/frame.cpp:1403
 msgid "Main Toolbar"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1377
+#: LiteEditor/frame.cpp:1380
 msgid "Start / Continue debugger"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1711
+#: LiteEditor/frame.cpp:1733
 msgid "The file"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1711
+#: LiteEditor/frame.cpp:1733
 msgid "has been altered."
 msgstr ""
 
-#: LiteEditor/frame.cpp:1712
+#: LiteEditor/frame.cpp:1734
 msgid "Are you sure you want to lose all changes?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1713 LiteEditor/frame.cpp:2295
-#: LiteEditor/fileview.cpp:1117 LiteEditor/manager.cpp:2791
-#: LiteEditor/manager.cpp:2842 LiteEditor/manager.cpp:2881
+#: LiteEditor/frame.cpp:1735 LiteEditor/frame.cpp:2317
+#: LiteEditor/fileview.cpp:1109 LiteEditor/manager.cpp:2840
+#: LiteEditor/manager.cpp:2891 LiteEditor/manager.cpp:2930
 #: LiteEditor/tasks_find_what_dlg.cpp:64 LiteEditor/advanced_settings.cpp:313
-#: LiteEditor/mainbook.cpp:223 LiteEditor/edit_configuration.cpp:183
+#: LiteEditor/mainbook.cpp:224 LiteEditor/edit_configuration.cpp:183
 #: Subversion2/svn_checkout_dialog.cpp:62
 msgid "Confirm"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1764
+#: LiteEditor/frame.cpp:1786
 msgid "Open Workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1875
+#: LiteEditor/frame.cpp:1897
 msgid "Please enter a name for the tab group"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1889
+#: LiteEditor/frame.cpp:1911
 msgid "There is already a file with this name. Do you want to overwrite it?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1889 LiteEditor/fileview.cpp:896
-#: LiteEditor/fileview.cpp:923 LiteEditor/yestoalldlg.h:22
+#: LiteEditor/frame.cpp:1911 LiteEditor/fileview.cpp:888
+#: LiteEditor/fileview.cpp:915 LiteEditor/yestoalldlg.h:22
 msgid "Are you sure?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1911
+#: LiteEditor/frame.cpp:1933
 msgid "Tab group saved"
 msgstr ""
 
-#: LiteEditor/frame.cpp:1984
+#: LiteEditor/frame.cpp:2006
 msgid "Open Project"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2295
+#: LiteEditor/frame.cpp:2317
 msgid "Build ended with errors. Continue?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2310
+#: LiteEditor/frame.cpp:2332
 msgid "Build starting..."
 msgstr ""
 
-#: LiteEditor/frame.cpp:2361
+#: LiteEditor/frame.cpp:2383
 msgid "Failed to find Custom Build Target for event ID"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2527
+#: LiteEditor/frame.cpp:2549
 msgid "Update Number of Build Processes"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2531
+#: LiteEditor/frame.cpp:2553
 msgid ""
 "Should CodeLite adjust the number of concurrent build jobs to match the "
 "number of CPUs?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2577
+#: LiteEditor/frame.cpp:2599
 msgid ""
 "CodeLite could not find any search paths set for the code completion parser\n"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2578
+#: LiteEditor/frame.cpp:2600
 msgid ""
 "This means that CodeLite will *NOT* be able to offer any code completion for "
 "non-workspace files (e.g. string.h).\n"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2579
+#: LiteEditor/frame.cpp:2601
 msgid "To fix this, please set search paths for the parser\n"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2580
+#: LiteEditor/frame.cpp:2602
 msgid ""
 "This can be done from the main menu: Settings > Tags Settings > Include Files"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2587
+#: LiteEditor/frame.cpp:2609
 msgid "Code Completion search paths have been updated"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2645 LiteEditor/frame.cpp:4316
+#: LiteEditor/frame.cpp:2667 LiteEditor/frame.cpp:4334
 msgid ""
 "Your workspace symbols file does not match the current version of CodeLite. "
 "CodeLite will perform a full retag of the workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2715
+#: LiteEditor/frame.cpp:2733
 msgid "No workspaces found."
 msgstr ""
 
-#: LiteEditor/frame.cpp:2756
+#: LiteEditor/frame.cpp:2774
 msgid "No files found."
 msgstr ""
 
-#: LiteEditor/frame.cpp:2925
+#: LiteEditor/frame.cpp:2943
 msgid "Quick Links:"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2926
+#: LiteEditor/frame.cpp:2944
 msgid "CodeLite Wiki"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2927
+#: LiteEditor/frame.cpp:2945
 msgid "CodeLite Forums"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2928
+#: LiteEditor/frame.cpp:2946
 msgid "Create a New Workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2929
+#: LiteEditor/frame.cpp:2947
 msgid "Open a Workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2930
+#: LiteEditor/frame.cpp:2948
 msgid "Recently opened workspaces:"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2931
+#: LiteEditor/frame.cpp:2949
 msgid "Recently opened files:"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2934 LiteEditor/frame.cpp:3195
-#: LiteEditor/frame.cpp:3850
+#: LiteEditor/frame.cpp:2952 LiteEditor/frame.cpp:3213
+#: LiteEditor/frame.cpp:3868
 msgid "Welcome!"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2942
+#: LiteEditor/frame.cpp:2960
 msgid "Open MS Solution File"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2954
+#: LiteEditor/frame.cpp:2972
 msgid "Select the compiler to use:"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2954
+#: LiteEditor/frame.cpp:2972
 msgid "Choose compiler"
 msgstr ""
 
-#: LiteEditor/frame.cpp:2971
+#: LiteEditor/frame.cpp:2989
 msgid "Attempting to debug workspace with no active project? Ignoring."
 msgstr ""
 
-#: LiteEditor/frame.cpp:2981
+#: LiteEditor/frame.cpp:2999
 msgid "Would you like to build the project before debugging it?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3497
+#: LiteEditor/frame.cpp:3515
 msgid "Close this workspace, and load workspace '"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3525
+#: LiteEditor/frame.cpp:3543
 msgid "Download Now!"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3530
+#: LiteEditor/frame.cpp:3548
 msgid "A new version of CodeLite is available"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3534
+#: LiteEditor/frame.cpp:3552
 #, c-format
 msgid ""
 "Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3538
+#: LiteEditor/frame.cpp:3556
 msgid "CodeLite is up-to-date"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3920 LiteEditor/manager.cpp:2164
+#: LiteEditor/frame.cpp:3938 LiteEditor/manager.cpp:2214
 msgid "Debugging: "
 msgstr ""
 
-#: LiteEditor/frame.cpp:3923 LiteEditor/frame.cpp:3991
+#: LiteEditor/frame.cpp:3941 LiteEditor/frame.cpp:4009
 msgid "Could not start TTY console for debugger!"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3923 LiteEditor/frame.cpp:3991
+#: LiteEditor/frame.cpp:3941 LiteEditor/frame.cpp:4009
 msgid "codelite"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3988
+#: LiteEditor/frame.cpp:4006
 msgid "Debugging: '"
 msgstr ""
 
-#: LiteEditor/frame.cpp:3988
+#: LiteEditor/frame.cpp:4006
 msgid "' from '"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4192 menu.xrc:938
+#: LiteEditor/frame.cpp:4210 menu.xrc:938
 msgid "Reload Workspace"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4197
+#: LiteEditor/frame.cpp:4215
 msgid "&Don't reload"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4203
+#: LiteEditor/frame.cpp:4221
 msgid ""
 "Workspace or project settings have been modified, would you like to reload "
 "the workspace and all contained projects?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4456
+#: LiteEditor/frame.cpp:4474
 msgid "Tags cache cleared"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4515
+#: LiteEditor/frame.cpp:4533
 msgid "Some of the changes made requires restart of CodeLite"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4519
+#: LiteEditor/frame.cpp:4537
 msgid "Restart Now!"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4526
+#: LiteEditor/frame.cpp:4544
 msgid "Not now"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4529
+#: LiteEditor/frame.cpp:4547
 msgid "Some of the changes made require a restart of CodeLite. Restart now?"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4623
+#: LiteEditor/frame.cpp:4641
 #, c-format
 msgid "INFO: Retag workspace completed in %ld seconds (%lu files were scanned)"
 msgstr ""
 
-#: LiteEditor/frame.cpp:4633
+#: LiteEditor/frame.cpp:4651
 msgid "INFO: Retag workspace completed in 0 seconds (No files were retagged)"
 msgstr ""
 
@@ -2386,7 +2385,7 @@ msgstr ""
 
 #: LiteEditor/add_option_dialog.h:57 LiteEditor/free_text_dialog.h:57
 #: LiteEditor/tasksfindwhatdlgbase.cpp:31
-#: LiteEditor/compilerswitchespage.cpp:32 menu.xrc:999
+#: LiteEditor/compilerswitchespage.cpp:32 menu.xrc:1002
 msgid "Edit"
 msgstr ""
 
@@ -2405,7 +2404,7 @@ msgstr ""
 #: LiteEditor/listctrlpanel.cpp:47
 #: LiteEditor/editoroptionsgeneralrightmarginpanelbase.cpp:24
 #: LiteEditor/symbols_dialog.cpp:45 LiteEditor/breakpointdlg.h:64
-#: LiteEditor/errorstab.cpp:75 cscope/cscopetab.cpp:55
+#: LiteEditor/errorstab.cpp:76 cscope/cscopetab.cpp:55
 #: UnitTestCPP/unittestspage.cpp:58
 msgid "Line"
 msgstr ""
@@ -2675,7 +2674,7 @@ msgstr ""
 msgid "Ascii Viewer"
 msgstr ""
 
-#: LiteEditor/debuggerpane.cpp:49 LiteEditor/output_pane.cpp:43
+#: LiteEditor/debuggerpane.cpp:49 LiteEditor/output_pane.cpp:44
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:56
 #: Plugin/editor_config.cpp:587 Plugin/editor_config.cpp:616
 msgid "Output"
@@ -2701,25 +2700,25 @@ msgstr ""
 msgid "Select the scope of the search"
 msgstr ""
 
-#: LiteEditor/output_pane.cpp:42
+#: LiteEditor/output_pane.cpp:43
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:36
 #: Plugin/editor_config.cpp:579 Plugin/editor_config.cpp:608
 msgid "Errors"
 msgstr ""
 
-#: LiteEditor/output_pane.cpp:46
+#: LiteEditor/output_pane.cpp:47
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:72
 #: Plugin/editor_config.cpp:593 Plugin/editor_config.cpp:622
 msgid "Tasks"
 msgstr ""
 
-#: LiteEditor/output_pane.cpp:47
+#: LiteEditor/output_pane.cpp:48
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:67
 #: Plugin/editor_config.cpp:591 Plugin/editor_config.cpp:620
 msgid "Trace"
 msgstr ""
 
-#: LiteEditor/output_pane.cpp:48
+#: LiteEditor/output_pane.cpp:49
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:51
 #: Plugin/editor_config.cpp:585 Plugin/editor_config.cpp:614
 msgid "References"
@@ -2743,117 +2742,117 @@ msgstr ""
 msgid "If missing, append EOL at end of file"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:381
+#: LiteEditor/fileview.cpp:373
 msgid "Run "
 msgstr ""
 
-#: LiteEditor/fileview.cpp:773
+#: LiteEditor/fileview.cpp:765
 msgid "Add Existing Item"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:805
+#: LiteEditor/fileview.cpp:797
 msgid "New Item"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:888
+#: LiteEditor/fileview.cpp:880
 msgid "Are you sure you want remove '"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:892 LiteEditor/fileview.cpp:919
+#: LiteEditor/fileview.cpp:884 LiteEditor/fileview.cpp:911
 msgid "Apply to all Files"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:915
+#: LiteEditor/fileview.cpp:907
 msgid "Do you also want to delete the file '"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:915
+#: LiteEditor/fileview.cpp:907
 msgid "' from disc?"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:930
+#: LiteEditor/fileview.cpp:922
 msgid ""
 "An error occurred during file removal. Maybe it has been already deleted or "
 "you don't have the necessary permissions"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:964
+#: LiteEditor/fileview.cpp:956
 msgid " and all its content will be removed from the project."
 msgstr ""
 
-#: LiteEditor/fileview.cpp:984
+#: LiteEditor/fileview.cpp:976
 msgid "Virtual Directory Name:"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:984
+#: LiteEditor/fileview.cpp:976
 msgid "New Virtual Directory"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1092 LiteEditor/workspacetab.cpp:240
+#: LiteEditor/fileview.cpp:1084 LiteEditor/workspacetab.cpp:232
 msgid " Project Settings"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1114
+#: LiteEditor/fileview.cpp:1106
 msgid "You are about to remove project '"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1116
+#: LiteEditor/fileview.cpp:1108
 msgid " from the workspace, click 'Yes' to proceed or 'No' to abort."
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1248
+#: LiteEditor/fileview.cpp:1240
 msgid "Compiling file: "
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1248 LiteEditor/fileview.cpp:1268
+#: LiteEditor/fileview.cpp:1240 LiteEditor/fileview.cpp:1260
 msgid " of project "
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1268
+#: LiteEditor/fileview.cpp:1260
 msgid "Preprocessing file: "
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1496
+#: LiteEditor/fileview.cpp:1488
 msgid "Failed to find file: "
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1496
+#: LiteEditor/fileview.cpp:1488
 msgid " in FileView."
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1655
+#: LiteEditor/fileview.cpp:1647
 msgid "Importing files ..."
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1698
+#: LiteEditor/fileview.cpp:1690
 msgid "Adding file: "
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1762
+#: LiteEditor/fileview.cpp:1754
 msgid "New file name:"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1762
+#: LiteEditor/fileview.cpp:1754
 msgid "Rename file:"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1769
+#: LiteEditor/fileview.cpp:1761
 msgid "A File with that name already exists!"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1798
+#: LiteEditor/fileview.cpp:1790
 msgid "New virtual folder name:"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1798
+#: LiteEditor/fileview.cpp:1790
 msgid "Rename virtual folder:"
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1811 LiteEditor/fileview.cpp:1816
+#: LiteEditor/fileview.cpp:1803 LiteEditor/fileview.cpp:1808
 msgid "failed to rename virtual folder: "
 msgstr ""
 
-#: LiteEditor/fileview.cpp:1811
+#: LiteEditor/fileview.cpp:1803
 msgid ", reason: could not locate project "
 msgstr ""
 
@@ -2983,6 +2982,7 @@ msgid "Docking Style:"
 msgstr ""
 
 #: LiteEditor/editorsettingsdockingwindowsbase.cpp:119
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:35
 msgid "Classic"
 msgstr ""
 
@@ -3023,189 +3023,190 @@ msgstr ""
 msgid "Select word highlight colour:"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1099
+#: LiteEditor/cl_editor.cpp:1100
 msgid "Failed to save file"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1142
+#: LiteEditor/cl_editor.cpp:1143
 msgid "has the read-only attribute set"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1142
+#: LiteEditor/cl_editor.cpp:1143
 msgid "Would you like CodeLite to try and remove it?"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1146 LiteEditor/cl_editor.cpp:1175
-#: LiteEditor/cl_editor.cpp:1181
+#: LiteEditor/cl_editor.cpp:1147 LiteEditor/cl_editor.cpp:1176
+#: LiteEditor/cl_editor.cpp:1182
 msgid "Failed to open file"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1146 LiteEditor/cl_editor.cpp:1175
-#: LiteEditor/cl_editor.cpp:1181
+#: LiteEditor/cl_editor.cpp:1147 LiteEditor/cl_editor.cpp:1176
+#: LiteEditor/cl_editor.cpp:1182
 msgid "for write"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1175
+#: LiteEditor/cl_editor.cpp:1176
 msgid "Override it?"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1191
+#: LiteEditor/cl_editor.cpp:1192
 msgid "Save file failed!"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1191
+#: LiteEditor/cl_editor.cpp:1192
 msgid "Could not convert the file to the requested encoding"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1207
+#: LiteEditor/cl_editor.cpp:1208
 msgid "Failed to override read-only file"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1827 LiteEditor/cl_editor.cpp:1884
+#: LiteEditor/cl_editor.cpp:1828 LiteEditor/cl_editor.cpp:1885
+#: LiteEditor/quickfindbar.cpp:140
 msgid "CodeLite reached the end of the document, Search again from the start?"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1829
+#: LiteEditor/cl_editor.cpp:1830
 msgid "CodeLite reached the end of the document, Search again from the bottom?"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1858 LiteEditor/cl_editor.cpp:1917
+#: LiteEditor/cl_editor.cpp:1859 LiteEditor/cl_editor.cpp:1918
 msgid "Can not find the string '"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1886
+#: LiteEditor/cl_editor.cpp:1887 LiteEditor/quickfindbar.cpp:140
 msgid "CodeLite reached the top of the document, Search again from the bottom?"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1899 LiteEditor/quickfindbar.cpp:131
+#: LiteEditor/cl_editor.cpp:1900 LiteEditor/quickfindbar.cpp:131
 msgid "Reached end of document, continued from start"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:1900 LiteEditor/quickfindbar.cpp:131
+#: LiteEditor/cl_editor.cpp:1901 LiteEditor/quickfindbar.cpp:131
 msgid "Reached top of document, continued from bottom"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2346
+#: LiteEditor/cl_editor.cpp:2347
 msgid "Loading file..."
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2735
+#: LiteEditor/cl_editor.cpp:2736
 msgid "Remove Bookmark"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2735
+#: LiteEditor/cl_editor.cpp:2736
 msgid "Add Bookmark"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2738
+#: LiteEditor/cl_editor.cpp:2739
 msgid "Add Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2739
+#: LiteEditor/cl_editor.cpp:2740
 msgid "Add a Temporary Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2740
+#: LiteEditor/cl_editor.cpp:2741
 msgid "Add a Conditional Breakpoint.."
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2750
+#: LiteEditor/cl_editor.cpp:2751
 msgid "Remove Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2751
+#: LiteEditor/cl_editor.cpp:2752
 msgid "Ignore Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2757
+#: LiteEditor/cl_editor.cpp:2758
 msgid "Disable Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2757
+#: LiteEditor/cl_editor.cpp:2758
 msgid "Enable Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2759
+#: LiteEditor/cl_editor.cpp:2760
 msgid "Edit Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2761
+#: LiteEditor/cl_editor.cpp:2762
 msgid "Remove a Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2762
+#: LiteEditor/cl_editor.cpp:2763
 msgid "Ignore a Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2765
+#: LiteEditor/cl_editor.cpp:2766
 msgid "Toggle a breakpoint's enabled state"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2767
+#: LiteEditor/cl_editor.cpp:2768
 msgid "Edit a Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2774
+#: LiteEditor/cl_editor.cpp:2775
 msgid "Run to here"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2791
+#: LiteEditor/cl_editor.cpp:2792
 msgid "Enter the condition statement"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2791
+#: LiteEditor/cl_editor.cpp:2792
 msgid "Create Conditional Breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2828
+#: LiteEditor/cl_editor.cpp:2829
 msgid "Failed to insert breakpoint"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2831 LiteEditor/breakpointsmgr.cpp:117
+#: LiteEditor/cl_editor.cpp:2832 LiteEditor/breakpointsmgr.cpp:117
 msgid "Breakpoint successfully added"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2833 LiteEditor/breakpointsmgr.cpp:181
+#: LiteEditor/cl_editor.cpp:2834 LiteEditor/breakpointsmgr.cpp:181
 msgid "Temporary "
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2835
+#: LiteEditor/cl_editor.cpp:2836
 msgid "Conditional "
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2856 LiteEditor/breakpointdlg.cpp:90
+#: LiteEditor/cl_editor.cpp:2857 LiteEditor/breakpointdlg.cpp:90
 msgid "Breakpoint successfully deleted"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2861
+#: LiteEditor/cl_editor.cpp:2862
 msgid "No breakpoint found on this line"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2864
+#: LiteEditor/cl_editor.cpp:2865
 msgid "Breakpoint deletion failed"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2867
+#: LiteEditor/cl_editor.cpp:2868
 msgid "Breakpoint not deleted"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2971
+#: LiteEditor/cl_editor.cpp:2972
 msgid "More Watches"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2974 LiteEditor/new_quick_watch_dlg.cpp:323
+#: LiteEditor/cl_editor.cpp:2975 LiteEditor/new_quick_watch_dlg.cpp:288
 msgid "Add Watch"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2981
+#: LiteEditor/cl_editor.cpp:2982
 msgid "Run to cursor"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:2986
+#: LiteEditor/cl_editor.cpp:2987
 msgid "Jump to cursor"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3141 LiteEditor/cl_editor.cpp:3207
+#: LiteEditor/cl_editor.cpp:3142 LiteEditor/cl_editor.cpp:3208
 #, c-format
 msgid ""
 "Too many matches found, displaying %u. Keep typing to narrow the choices\n"
@@ -3213,11 +3214,11 @@ msgid ""
 "Tags Settings'"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3926
+#: LiteEditor/cl_editor.cpp:3928
 msgid "Watch"
 msgstr ""
 
-#: LiteEditor/cl_editor.cpp:3926
+#: LiteEditor/cl_editor.cpp:3928
 msgid "as"
 msgstr ""
 
@@ -3243,10 +3244,10 @@ msgstr ""
 
 #: LiteEditor/implementparentvirtualfunctionsbase.cpp:67
 #: LiteEditor/debuggersettingsbasedlg.cpp:236
-#: LiteEditor/project_settings_base_dlg.cpp:510
-#: LiteEditor/project_settings_base_dlg.cpp:1144
+#: LiteEditor/project_settings_base_dlg.cpp:507
+#: LiteEditor/project_settings_base_dlg.cpp:1136
 #: LiteEditor/setters_getters_base_dlg.cpp:129
-#: LiteEditor/findinfilesdlgbase.cpp:107
+#: LiteEditor/findinfilesdlgbase.cpp:108 CallGraph/uisettings.cpp:93
 msgid "Options:"
 msgstr ""
 
@@ -3271,7 +3272,7 @@ msgstr ""
 #: LiteEditor/manageperspectivesbasedlg.cpp:44
 #: LiteEditor/tabgroupbasedlgs.cpp:53 LiteEditor/tabgroupbasedlgs.cpp:144
 #: LiteEditor/tasksfindwhatdlgbase.cpp:47 Plugin/renamefilebasedlg.cpp:85
-#: Plugin/openresourcedialogbase.cpp:51
+#: Plugin/openresourcedialogbase.cpp:51 CallGraph/uisettings.cpp:132
 msgid "&Ok"
 msgstr ""
 
@@ -3501,7 +3502,7 @@ msgid "Displaying:"
 msgstr ""
 
 #: LiteEditor/debuggerasciiviewerbase.cpp:31
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:122
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:151
 #: cppchecker/cppcheckreportbasepage.cpp:40
 msgid "&Clear"
 msgstr ""
@@ -3537,11 +3538,11 @@ msgstr ""
 
 #: LiteEditor/project_settings_dlg.cpp:106
 #: LiteEditor/project_settings_dlg.cpp:111 LiteEditor/tags_options_dlg.cpp:71
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:65
-#: LiteEditor/findinfilesdlgbase.cpp:150
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:93
+#: LiteEditor/findinfilesdlgbase.cpp:151
 #: LiteEditor/tags_options_base_dlg.cpp:574 LiteEditor/options_dlg2.cpp:120
 #: cppchecker/cppchecksettingsdlgbase.cpp:39
-#: Subversion2/subversion2_ui.cpp:375
+#: Subversion2/subversion2_ui.cpp:356
 msgid "General"
 msgstr ""
 
@@ -3550,12 +3551,12 @@ msgid "Common Settings"
 msgstr ""
 
 #: LiteEditor/project_settings_dlg.cpp:112
-#: LiteEditor/project_settings_base_dlg.cpp:1133
+#: LiteEditor/project_settings_base_dlg.cpp:1125
 msgid "Compiler"
 msgstr ""
 
 #: LiteEditor/project_settings_dlg.cpp:113
-#: LiteEditor/project_settings_base_dlg.cpp:1181
+#: LiteEditor/project_settings_base_dlg.cpp:1173
 msgid "Linker"
 msgstr ""
 
@@ -3569,7 +3570,7 @@ msgid "Debugger"
 msgstr ""
 
 #: LiteEditor/project_settings_dlg.cpp:116
-#: LiteEditor/project_settings_base_dlg.cpp:1217
+#: LiteEditor/project_settings_base_dlg.cpp:1209
 msgid "Resources"
 msgstr ""
 
@@ -3746,9 +3747,9 @@ msgstr ""
 #: LiteEditor/debugcoredumpbase.cpp:49 LiteEditor/debugcoredumpbase.cpp:59
 #: LiteEditor/breakpoint_dlg_base.cpp:167 LiteEditor/quickdebugbase.cpp:37
 #: LiteEditor/quickdebugbase.cpp:49 Plugin/filepicker.h:70
-#: DatabaseExplorer/GUI.cpp:69 Subversion2/subversion2_ui.cpp:340
-#: Subversion2/subversion2_ui.cpp:396 Subversion2/subversion2_ui.cpp:422
-#: Subversion2/subversion2_ui.cpp:651
+#: DatabaseExplorer/GUI.cpp:69 Subversion2/subversion2_ui.cpp:317
+#: Subversion2/subversion2_ui.cpp:378 Subversion2/subversion2_ui.cpp:404
+#: Subversion2/subversion2_ui.cpp:633
 msgid "Browse"
 msgstr ""
 
@@ -3937,85 +3938,114 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: LiteEditor/manager.cpp:529
+#: LiteEditor/manager.cpp:530
 msgid "Importing MS solution..."
 msgstr ""
 
-#: LiteEditor/manager.cpp:835
+#: LiteEditor/manager.cpp:836
 msgid "Scanning for include files to parse..."
 msgstr ""
 
-#: LiteEditor/manager.cpp:2003
+#: LiteEditor/manager.cpp:985
 msgid ""
-"Failed to locate 'xterm' application required by CodeLite, please install it "
-"and try again!"
+"There is already a file in this folder with a name that matches using case-"
+"insensitive comparison"
+msgstr ""
+
+#: LiteEditor/manager.cpp:986
+msgid ""
+"\n"
+"This won't be a problem on Linux, but it may be on other, case-insensitive "
+"platforms"
+msgstr ""
+
+#: LiteEditor/manager.cpp:987
+msgid ""
+"\n"
+"\n"
+"Add the file anyway?"
+msgstr ""
+
+#: LiteEditor/manager.cpp:988
+msgid "Possible name-clash"
+msgstr ""
+
+#: LiteEditor/manager.cpp:1017
+#, c-format
+msgid "%u file(s) not added, probably due to a name-clash"
 msgstr ""
 
 #: LiteEditor/manager.cpp:2052
+msgid ""
+"Failed to locate the configured and default terminal application required by "
+"CodeLite, please install it or check your configuration!"
+msgstr ""
+
+#: LiteEditor/manager.cpp:2102
 msgid "Failed to launch debugger '"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2052
+#: LiteEditor/manager.cpp:2102
 msgid "': debugger not loaded\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2053
+#: LiteEditor/manager.cpp:2103
 msgid ""
 "Make sure that you have an open workspace and that the active project is of "
 "type 'Executable'"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2173 LiteEditor/manager.cpp:2181
+#: LiteEditor/manager.cpp:2223 LiteEditor/manager.cpp:2231
 msgid "Failed to initialize debugger: "
 msgstr ""
 
-#: LiteEditor/manager.cpp:2207
+#: LiteEditor/manager.cpp:2257
 msgid "Debug session started successfully!\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2289
+#: LiteEditor/manager.cpp:2339
 msgid "Debug session ended\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2478 LiteEditor/manager.cpp:2480
+#: LiteEditor/manager.cpp:2528 LiteEditor/manager.cpp:2530
 msgid "Program Received signal "
 msgstr ""
 
-#: LiteEditor/manager.cpp:2481
+#: LiteEditor/manager.cpp:2531
 msgid "Stack trace is available in the 'Call Stack' tab\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2512
+#: LiteEditor/manager.cpp:2562
 msgid ""
 "Assertion failed!\n"
 "Stack trace is available in the 'Call Stack' tab\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2544
+#: LiteEditor/manager.cpp:2594
 #, c-format
 msgid ""
 "Debugger exited with the following error string:\n"
 "%s"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2566
+#: LiteEditor/manager.cpp:2616
 msgid "Continuing...\n"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2790 LiteEditor/manager.cpp:2841
-#: LiteEditor/manager.cpp:2880
+#: LiteEditor/manager.cpp:2839 LiteEditor/manager.cpp:2890
+#: LiteEditor/manager.cpp:2929
 msgid "This would terminate the current debug session, continue?"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2804
+#: LiteEditor/manager.cpp:2853
 msgid "Preprocess File"
 msgstr ""
 
-#: LiteEditor/manager.cpp:2804
+#: LiteEditor/manager.cpp:2853
 msgid "Compile Single File"
 msgstr ""
 
-#: LiteEditor/manager.cpp:3339
+#: LiteEditor/manager.cpp:3397
 msgid "Retagging..."
 msgstr ""
 
@@ -4111,27 +4141,27 @@ msgstr ""
 msgid "Are you sure you want to revert to the default settings?"
 msgstr ""
 
-#: LiteEditor/fileexplorertree.cpp:99
+#: LiteEditor/fileexplorertree.cpp:110
 msgid "'"
 msgstr ""
 
-#: LiteEditor/fileexplorertree.cpp:99
+#: LiteEditor/fileexplorertree.cpp:110
 msgid "' is a directory. Are you sure you want to remove it and its content?"
 msgstr ""
 
-#: LiteEditor/fileexplorertree.cpp:100 LiteEditor/fileexplorertree.cpp:102
+#: LiteEditor/fileexplorertree.cpp:111 LiteEditor/fileexplorertree.cpp:113
 msgid "Remove Directory"
 msgstr ""
 
-#: LiteEditor/fileexplorertree.cpp:102
+#: LiteEditor/fileexplorertree.cpp:113
 msgid "Failed to remove directory"
 msgstr ""
 
-#: LiteEditor/fileexplorertree.cpp:348
+#: LiteEditor/fileexplorertree.cpp:402
 msgid "Failed to load shell terminal"
 msgstr ""
 
-#: LiteEditor/fileexplorertree.cpp:380
+#: LiteEditor/fileexplorertree.cpp:444
 #, c-format
 msgid ""
 "Could not find default application for file '%s'\n"
@@ -4154,43 +4184,43 @@ msgstr ""
 msgid "&Defaults"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:111
+#: LiteEditor/project_settings_base_dlg.cpp:110
 msgid "Project Type:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:120
+#: LiteEditor/project_settings_base_dlg.cpp:119
 msgid "Compiler:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:129
+#: LiteEditor/project_settings_base_dlg.cpp:128
 msgid "Debugger:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:138
+#: LiteEditor/project_settings_base_dlg.cpp:137
 msgid "Output File:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:145
+#: LiteEditor/project_settings_base_dlg.cpp:144
 msgid "Intermediate Folder:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:155
+#: LiteEditor/project_settings_base_dlg.cpp:154
 msgid "Program to Debug / Run:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:161
+#: LiteEditor/project_settings_base_dlg.cpp:160
 msgid "Program:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:171
+#: LiteEditor/project_settings_base_dlg.cpp:170
 msgid "Program Arguments:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:178
+#: LiteEditor/project_settings_base_dlg.cpp:177
 msgid "Use separate debug arguments"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:179
+#: LiteEditor/project_settings_base_dlg.cpp:178
 msgid ""
 "When enabled, codelite will use the arguments specified in the 'Debug "
 "Arguments' when running the program under debugger. \n"
@@ -4198,131 +4228,131 @@ msgid ""
 "Arguments' field"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:183
+#: LiteEditor/project_settings_base_dlg.cpp:182
 msgid "Debug Arguments:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:190
+#: LiteEditor/project_settings_base_dlg.cpp:189
 msgid "Working Folder:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:208
+#: LiteEditor/project_settings_base_dlg.cpp:207
 msgid "Pause when execution ends"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:276
+#: LiteEditor/project_settings_base_dlg.cpp:274
 msgid "Compiler is not required for this project"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:280
-#: LiteEditor/project_settings_base_dlg.cpp:754
-#: LiteEditor/project_settings_base_dlg.cpp:1192
+#: LiteEditor/project_settings_base_dlg.cpp:278
+#: LiteEditor/project_settings_base_dlg.cpp:749
+#: LiteEditor/project_settings_base_dlg.cpp:1184
 msgid "Compiler Options:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:286
+#: LiteEditor/project_settings_base_dlg.cpp:284
 msgid "Use with Global Settings:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:298
-#: LiteEditor/project_settings_base_dlg.cpp:1088
+#: LiteEditor/project_settings_base_dlg.cpp:296
+#: LiteEditor/project_settings_base_dlg.cpp:1080
 msgid "C++ Compiler Options:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:300
-#: LiteEditor/project_settings_base_dlg.cpp:306
+#: LiteEditor/project_settings_base_dlg.cpp:298
+#: LiteEditor/project_settings_base_dlg.cpp:304
 msgid ""
 "Additional compiler options to pass to the compiler provided as a semi-colon "
 "delimited list"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:313
-#: LiteEditor/project_settings_base_dlg.cpp:1098
+#: LiteEditor/project_settings_base_dlg.cpp:311
+#: LiteEditor/project_settings_base_dlg.cpp:1090
 msgid "C Compiler Options:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:319
+#: LiteEditor/project_settings_base_dlg.cpp:317
 msgid ""
 "Additional C compiler options to pass to the compiler provided as a semi-"
 "colon delimited list (used for C files only)"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:326
-#: LiteEditor/project_settings_base_dlg.cpp:766
+#: LiteEditor/project_settings_base_dlg.cpp:324
+#: LiteEditor/project_settings_base_dlg.cpp:761
 msgid "Include Paths:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:328
-#: LiteEditor/project_settings_base_dlg.cpp:334
+#: LiteEditor/project_settings_base_dlg.cpp:326
+#: LiteEditor/project_settings_base_dlg.cpp:332
 msgid ""
 "Include path to pass to the compiler (provided as semi-colon delimited list)"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:341
-#: LiteEditor/project_settings_base_dlg.cpp:1118
+#: LiteEditor/project_settings_base_dlg.cpp:339
+#: LiteEditor/project_settings_base_dlg.cpp:1110
 msgid "Preprocessor:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:343
-#: LiteEditor/project_settings_base_dlg.cpp:349
+#: LiteEditor/project_settings_base_dlg.cpp:341
+#: LiteEditor/project_settings_base_dlg.cpp:347
 msgid ""
 "macros (\"defines\") to pass to the compiler (provided as semi-colon "
 "delimited list)"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:361
+#: LiteEditor/project_settings_base_dlg.cpp:359
 msgid "Pre Compiled Headers:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:368
+#: LiteEditor/project_settings_base_dlg.cpp:366
 msgid "Specify here the pre-compiled header to use"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:377
+#: LiteEditor/project_settings_base_dlg.cpp:375
 msgid ""
 "Explicitly include the PCH file in the command line using compiler switch"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:380
+#: LiteEditor/project_settings_base_dlg.cpp:378
 msgid "Use separate compilation flags for the PCH file:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:385
+#: LiteEditor/project_settings_base_dlg.cpp:383
 msgid "Specify here different compiler flags for building the PCH file"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:488
+#: LiteEditor/project_settings_base_dlg.cpp:485
 msgid "Linker is not required for this project"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:492
+#: LiteEditor/project_settings_base_dlg.cpp:489
 msgid "Linker Options:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:498
-#: LiteEditor/project_settings_base_dlg.cpp:742
+#: LiteEditor/project_settings_base_dlg.cpp:495
+#: LiteEditor/project_settings_base_dlg.cpp:737
 msgid "Use with global settings :"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:522
+#: LiteEditor/project_settings_base_dlg.cpp:519
 msgid "Library Paths:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:534
-#: LiteEditor/project_settings_base_dlg.cpp:1164
+#: LiteEditor/project_settings_base_dlg.cpp:531
+#: LiteEditor/project_settings_base_dlg.cpp:1156
 msgid "Libraries:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:540
-#: LiteEditor/project_settings_base_dlg.cpp:1169
+#: LiteEditor/project_settings_base_dlg.cpp:537
+#: LiteEditor/project_settings_base_dlg.cpp:1161
 msgid "Enter any extra library names, separated by';' e.g. Foo  or  Foo;Bar"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:616
+#: LiteEditor/project_settings_base_dlg.cpp:612
 msgid "Select debugger path. Leave empty to use the default:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:627
+#: LiteEditor/project_settings_base_dlg.cpp:623
 msgid ""
 "You may override the global debugger executable path, by selecting another "
 "one here.\n"
@@ -4330,98 +4360,102 @@ msgid ""
 "settings"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:639
+#: LiteEditor/project_settings_base_dlg.cpp:635
 msgid "Debugging remote target"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:648
+#: LiteEditor/project_settings_base_dlg.cpp:644
 msgid "Host / tty:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:655
+#: LiteEditor/project_settings_base_dlg.cpp:651
 msgid "Port:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:667
+#: LiteEditor/project_settings_base_dlg.cpp:663
 msgid ""
 "Enter here any commands that should be passed to the debugger on startup:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:676
+#: LiteEditor/project_settings_base_dlg.cpp:672
 msgid ""
 "Enter here any commands that should be passed to the debugger after "
 "attaching the remote target:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:734
+#: LiteEditor/project_settings_base_dlg.cpp:729
 msgid "Resource Compiler is not needed"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:841
+#: LiteEditor/project_settings_base_dlg.cpp:835
 msgid "Environment variable set to use:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:850
+#: LiteEditor/project_settings_base_dlg.cpp:844
 msgid "Debugger 'PreDefined Types' set to use:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:864
+#: LiteEditor/project_settings_base_dlg.cpp:858
 msgid "Additional environment variables:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:943
+#: LiteEditor/project_settings_base_dlg.cpp:936
 msgid "Enable custom build"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:952
+#: LiteEditor/project_settings_base_dlg.cpp:945
 msgid "Working Directory:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:989
+#: LiteEditor/project_settings_base_dlg.cpp:982
 msgid "Makefile Generators:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1003
+#: LiteEditor/project_settings_base_dlg.cpp:996
 msgid "Command to use for makefile generation:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1108
-#: LiteEditor/project_settings_base_dlg.cpp:1202
+#: LiteEditor/project_settings_base_dlg.cpp:1100
+#: LiteEditor/project_settings_base_dlg.cpp:1194
 msgid "Additional Search Path:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1154
+#: LiteEditor/project_settings_base_dlg.cpp:1146
 msgid "Library Path:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1286
+#: LiteEditor/project_settings_base_dlg.cpp:1277
 msgid "Dependencies:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1295
+#: LiteEditor/project_settings_base_dlg.cpp:1286
 msgid "Rule action:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1309
+#: LiteEditor/project_settings_base_dlg.cpp:1300
 msgid ""
 "Define here a custom makefile rule to be executed in the pre-build steps.\n"
 "See the wiki for more help"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1359
+#: LiteEditor/project_settings_base_dlg.cpp:1348
 #: LiteEditor/workspacesettingsbase.cpp:110
 #: LiteEditor/tags_options_base_dlg.cpp:549
 msgid "Search paths:"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1383
+#: LiteEditor/project_settings_base_dlg.cpp:1371
 #: LiteEditor/workspacesettingsbase.cpp:136
 msgid "Compile flags (clang only):"
 msgstr ""
 
-#: LiteEditor/project_settings_base_dlg.cpp:1399
+#: LiteEditor/project_settings_base_dlg.cpp:1387
 #: LiteEditor/workspacesettingsbase.cpp:153
 msgid "Macros (clang only):"
+msgstr ""
+
+#: LiteEditor/project_settings_base_dlg.cpp:1405
+msgid "Enable C++11 Standard"
 msgstr ""
 
 #: LiteEditor/workspacesettingsbase.cpp:27
@@ -4458,34 +4492,24 @@ msgid ""
 "One macro per line"
 msgstr ""
 
-#: LiteEditor/workspacetab.cpp:41
+#: LiteEditor/workspacetab.cpp:42
 msgid "<Open Configuration Manager...>"
 msgstr ""
 
-#: LiteEditor/workspacetab.cpp:92
+#: LiteEditor/workspacetab.cpp:93
 msgid "Goto Active Project"
 msgstr ""
 
-#: LiteEditor/workspacetab.cpp:96
+#: LiteEditor/workspacetab.cpp:97
 msgid "Open Active Project Settings..."
 msgstr ""
 
-#: LiteEditor/workspacetab.cpp:97
+#: LiteEditor/workspacetab.cpp:98
 msgid "Select Active Project"
 msgstr ""
 
-#: LiteEditor/workspacetab.cpp:104
-msgid "Toggle Multiple/Single Selection"
-msgstr ""
-
-#: LiteEditor/workspacetab.cpp:112
+#: LiteEditor/workspacetab.cpp:105
 msgid "Select the workspace build configuration"
-msgstr ""
-
-#: LiteEditor/workspacetab.cpp:399
-msgid ""
-"Workspace reload is required\n"
-"Would you like to reload workspace now?"
 msgstr ""
 
 #: LiteEditor/build_page.cpp:57
@@ -4600,31 +4624,31 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
-#: LiteEditor/mainbook.cpp:217
+#: LiteEditor/mainbook.cpp:218
 msgid "Save changes to '"
 msgstr ""
 
-#: LiteEditor/mainbook.cpp:415
+#: LiteEditor/mainbook.cpp:416
 msgid "Untitled"
 msgstr ""
 
-#: LiteEditor/mainbook.cpp:676 LiteEditor/mainbook.cpp:776
+#: LiteEditor/mainbook.cpp:677 LiteEditor/mainbook.cpp:777
 #: LiteEditor/replaceinfilespanel.cpp:376
 msgid "Save Modified Files"
 msgstr ""
 
-#: LiteEditor/mainbook.cpp:677 LiteEditor/mainbook.cpp:777
+#: LiteEditor/mainbook.cpp:678 LiteEditor/mainbook.cpp:778
 #: LiteEditor/replaceinfilespanel.cpp:377
 msgid ""
 "Some files are modified.\n"
 "Choose the files you would like to save."
 msgstr ""
 
-#: LiteEditor/mainbook.cpp:710
+#: LiteEditor/mainbook.cpp:711
 msgid "Reload Modified Files"
 msgstr ""
 
-#: LiteEditor/mainbook.cpp:710
+#: LiteEditor/mainbook.cpp:711
 msgid ""
 "Files have been modified outside the editor.\n"
 "Choose which files you would like to reload."
@@ -5022,7 +5046,7 @@ msgstr ""
 msgid "Disable Smart Indentation"
 msgstr ""
 
-#: LiteEditor/aboutdlgbase.h:58
+#: LiteEditor/aboutdlgbase.h:64
 msgid "About CodeLite"
 msgstr ""
 
@@ -5070,89 +5094,89 @@ msgstr ""
 msgid "Add Include File"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:865
+#: LiteEditor/context_cpp.cpp:875
 msgid "No matched file was found, would you like to create one?"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1115
+#: LiteEditor/context_cpp.cpp:1128
 msgid "This file does not seem to contain the declaration for '"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1116
+#: LiteEditor/context_cpp.cpp:1129
 msgid "The declaration of '"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1116
+#: LiteEditor/context_cpp.cpp:1129
 msgid "' is located at '"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1117
+#: LiteEditor/context_cpp.cpp:1130
 msgid "Would you like CodeLite to open this file for you?"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1502
+#: LiteEditor/context_cpp.cpp:1515
 msgid "Cant resolve scope properly. Found <"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1557
+#: LiteEditor/context_cpp.cpp:1570
 msgid "'Add Functions Implementation' can only work inside valid scope, got ("
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1589
+#: LiteEditor/context_cpp.cpp:1602
 msgid "Implement All Un-Implemented Functions"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1659
+#: LiteEditor/context_cpp.cpp:1672
 msgid "Function '"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1659
+#: LiteEditor/context_cpp.cpp:1672
 msgid "' already has a body"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:1679
+#: LiteEditor/context_cpp.cpp:1692
 msgid "Add Function Implementation"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2044
+#: LiteEditor/context_cpp.cpp:2057
 msgid "No matches were found!"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2044 LiteEditor/context_cpp.cpp:2048
+#: LiteEditor/context_cpp.cpp:2057 LiteEditor/context_cpp.cpp:2061
 msgid "Refactoring local variable"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2048
+#: LiteEditor/context_cpp.cpp:2061
 msgid "Insert New Variable Name:"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2091
+#: LiteEditor/context_cpp.cpp:2104
 msgid "The replacement symbol is the same as the original. Try again?"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2174
+#: LiteEditor/context_cpp.cpp:2187
 msgid "Symbol renamed"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2185
+#: LiteEditor/context_cpp.cpp:2198
 msgid "Please save the file before retagging it"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2465
+#: LiteEditor/context_cpp.cpp:2478
 msgid "Select file to open:"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2465 DatabaseExplorer/ErdCommitWizard.cpp:150
+#: LiteEditor/context_cpp.cpp:2478 DatabaseExplorer/ErdCommitWizard.cpp:150
 #: DatabaseExplorer/ErdCommitWizard.cpp:156
 #: DatabaseExplorer/ErdCommitWizard.cpp:374
 msgid "Select file"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2479
+#: LiteEditor/context_cpp.cpp:2492
 msgid "New File Name:"
 msgstr ""
 
-#: LiteEditor/context_cpp.cpp:2479
+#: LiteEditor/context_cpp.cpp:2492
 msgid "Create File"
 msgstr ""
 
@@ -5244,31 +5268,31 @@ msgstr ""
 msgid "Select core dump:"
 msgstr ""
 
-#: LiteEditor/buidltab.cpp:71 LiteEditor/buidltab.cpp:72
+#: LiteEditor/buidltab.cpp:72 LiteEditor/buidltab.cpp:73
 msgid "Set compiler colours..."
 msgstr ""
 
-#: LiteEditor/buidltab.cpp:562
+#: LiteEditor/buidltab.cpp:566
 msgid "errors"
 msgstr ""
 
-#: LiteEditor/buidltab.cpp:562
+#: LiteEditor/buidltab.cpp:566
 msgid "warnings"
 msgstr ""
 
-#: LiteEditor/buidltab.cpp:569
+#: LiteEditor/buidltab.cpp:573
 msgid "total time"
 msgstr ""
 
-#: LiteEditor/buidltab.cpp:569
+#: LiteEditor/buidltab.cpp:573
 msgid "seconds"
 msgstr ""
 
-#: LiteEditor/buidltab.cpp:574
+#: LiteEditor/buidltab.cpp:578
 msgid "(Build Cancelled)"
 msgstr ""
 
-#: LiteEditor/buidltab.cpp:600
+#: LiteEditor/buidltab.cpp:604
 msgid "Build ended: "
 msgstr ""
 
@@ -5281,11 +5305,11 @@ msgstr ""
 msgid "Attach debugger to process:"
 msgstr ""
 
-#: LiteEditor/simpletablebase.cpp:44 menu.xrc:1006
+#: LiteEditor/simpletablebase.cpp:44 menu.xrc:1009
 msgid "Delete All"
 msgstr ""
 
-#: LiteEditor/simpletablebase.cpp:52 menu.xrc:1032
+#: LiteEditor/simpletablebase.cpp:52 menu.xrc:1035
 msgid "Refresh"
 msgstr ""
 
@@ -5384,7 +5408,7 @@ msgstr ""
 
 #: LiteEditor/edit_workspace_conf_dlg.cpp:137
 #: LiteEditor/edit_configuration.cpp:143 LiteEditor/edit_configuration.cpp:165
-#: Subversion2/subversion2.cpp:214
+#: Subversion2/subversion2.cpp:216
 msgid "Rename"
 msgstr ""
 
@@ -5451,18 +5475,21 @@ msgstr ""
 msgid "Executable"
 msgstr ""
 
-#: LiteEditor/new_quick_watch_dlg.cpp:25 LiteEditor/new_quick_watch_dlg.cpp:27
-#: LiteEditor/newquickwatch.h:52
+#: LiteEditor/new_quick_watch_dlg.cpp:26 LiteEditor/newquickwatch.h:48
 msgid "Display Variable"
 msgstr ""
 
-#: LiteEditor/new_quick_watch_dlg.cpp:71
-#: LiteEditor/new_quick_watch_dlg.cpp:130
+#: LiteEditor/new_quick_watch_dlg.cpp:65
+#: LiteEditor/new_quick_watch_dlg.cpp:124
 msgid "Loading..."
 msgstr ""
 
-#: LiteEditor/new_quick_watch_dlg.cpp:324
+#: LiteEditor/new_quick_watch_dlg.cpp:289
 msgid "Copy Value to Clipboard"
+msgstr ""
+
+#: LiteEditor/new_quick_watch_dlg.cpp:464
+msgid "Edit Expression"
 msgstr ""
 
 #: LiteEditor/newkeyshortcutdlg.cpp:38
@@ -5795,7 +5822,7 @@ msgstr ""
 msgid "Evaluate"
 msgstr ""
 
-#: LiteEditor/memoryviewbase.cpp:54 Subversion2/subversion2.cpp:192
+#: LiteEditor/memoryviewbase.cpp:54 Subversion2/subversion2.cpp:194
 msgid "Update"
 msgstr ""
 
@@ -5845,7 +5872,7 @@ msgstr ""
 
 #: LiteEditor/compiler_pages.cpp:36 LiteEditor/compiler_pages.cpp:80
 #: SnipWiz/editsnippetsbasedlg.cpp:73 SnipWiz/templateclassbasedlg.cpp:160
-#: cppchecker/cppchecksettingsdlgbase.cpp:57 Subversion2/subversion2.cpp:208
+#: cppchecker/cppchecksettingsdlgbase.cpp:57 Subversion2/subversion2.cpp:210
 msgid "Add"
 msgstr ""
 
@@ -5991,20 +6018,28 @@ msgstr ""
 msgid "Credits"
 msgstr ""
 
-#: LiteEditor/aboutdlgbase.cpp:53
+#: LiteEditor/aboutdlgbase.cpp:52
+msgid "License"
+msgstr ""
+
+#: LiteEditor/aboutdlgbase.cpp:64
 msgid "Home Page:"
 msgstr ""
 
-#: LiteEditor/aboutdlgbase.cpp:59
+#: LiteEditor/aboutdlgbase.cpp:70
 msgid "http://www.codelite.org"
 msgstr ""
 
-#: LiteEditor/aboutdlgbase.cpp:62
+#: LiteEditor/aboutdlgbase.cpp:73
 msgid "CodeLite Forum:"
 msgstr ""
 
-#: LiteEditor/aboutdlgbase.cpp:68
+#: LiteEditor/aboutdlgbase.cpp:79
 msgid "http://www.codelite.org/forum/"
+msgstr ""
+
+#: LiteEditor/aboutdlgbase.cpp:95
+msgid "Donate via PayPal"
 msgstr ""
 
 #: LiteEditor/syntaxhighlightbasedlg.cpp:20
@@ -6210,11 +6245,11 @@ msgstr ""
 msgid "Rename Symbol"
 msgstr ""
 
-#: LiteEditor/app.cpp:825
+#: LiteEditor/app.cpp:840
 msgid "WARNING: Failed to load environment variable PATH!"
 msgstr ""
 
-#: LiteEditor/app.cpp:884
+#: LiteEditor/app.cpp:899
 msgid "WARNING: Failed to update environment variable PATH"
 msgstr ""
 
@@ -6234,7 +6269,7 @@ msgstr ""
 msgid "disabled"
 msgstr ""
 
-#: LiteEditor/pluginmgrdlg.cpp:140 Subversion2/subversion2_ui.cpp:572
+#: LiteEditor/pluginmgrdlg.cpp:140 Subversion2/subversion2_ui.cpp:554
 msgid "Author:"
 msgstr ""
 
@@ -6547,7 +6582,7 @@ msgstr ""
 msgid "Apply to all"
 msgstr ""
 
-#: LiteEditor/yestoallbasedlg.cpp:32 Plugin/threebuttonbasedlg.cpp:44
+#: LiteEditor/yestoallbasedlg.cpp:32 Plugin/threebuttonbasedlg.cpp:42
 msgid "&Yes"
 msgstr ""
 
@@ -6674,7 +6709,7 @@ msgstr ""
 msgid "Regular Expression:"
 msgstr ""
 
-#: LiteEditor/breakpoint_dlg_base.cpp:37 LiteEditor/findinfilesdlgbase.cpp:49
+#: LiteEditor/breakpoint_dlg_base.cpp:37 LiteEditor/findinfilesdlgbase.cpp:50
 msgid "&Add"
 msgstr ""
 
@@ -6902,34 +6937,34 @@ msgstr ""
 msgid "Resolve Ambiguity"
 msgstr ""
 
-#: LiteEditor/errorstab.cpp:74 Plugin/threebuttonbasedlg.cpp:26
+#: LiteEditor/errorstab.cpp:75 Plugin/threebuttonbasedlg.cpp:26
 msgid "Message"
 msgstr ""
 
-#: LiteEditor/errorstab.cpp:87
+#: LiteEditor/errorstab.cpp:88
 msgid "Build Output"
 msgstr ""
 
-#: LiteEditor/errorstab.cpp:242
+#: LiteEditor/errorstab.cpp:243
 msgid "Build ended successfully."
 msgstr ""
 
-#: LiteEditor/errorstab.cpp:258
+#: LiteEditor/errorstab.cpp:259
 #, c-format
 msgid "Build ended with %d warning(s)"
 msgstr ""
 
-#: LiteEditor/errorstab.cpp:263
+#: LiteEditor/errorstab.cpp:264
 #, c-format
 msgid "Build ended with %d errors"
 msgstr ""
 
-#: LiteEditor/errorstab.cpp:268
+#: LiteEditor/errorstab.cpp:269
 #, c-format
 msgid "Build ended with %d errors, %d warnings"
 msgstr ""
 
-#: LiteEditor/messagepane_base.cpp:41 Subversion2/subversion2_ui.cpp:112
+#: LiteEditor/messagepane_base.cpp:41 Subversion2/subversion2_ui.cpp:90
 msgid "Message:"
 msgstr ""
 
@@ -6999,116 +7034,128 @@ msgstr ""
 msgid "Down"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:25
-msgid "Toolbar uses small icons (16x16)"
-msgstr ""
-
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:25
-msgid "Toolbar uses large icons (24x24)"
-msgstr ""
-
 #: LiteEditor/editorsettingsmiscbasepanel.cpp:31
-msgid "Use single toolbar"
+msgid "Icon Set:"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:34
-msgid "Enable Windows(R) theme for Vista / Windows 7"
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:35
+msgid "Fresh Farm"
+msgstr ""
+
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:41
+msgid "Toolbar Icon Size:"
 msgstr ""
 
 #: LiteEditor/editorsettingsmiscbasepanel.cpp:45
+msgid "Small Icons (16x16)"
+msgstr ""
+
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:45
+msgid "Large Icons (24x24)"
+msgstr ""
+
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:53
+msgid "Use single toolbar"
+msgstr ""
+
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:57
+msgid "Enable Windows(R) theme for Vista / Windows 7"
+msgstr ""
+
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:69
 msgid "Show splashscreen on startup"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:49
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:74
 msgid "Allow only single instance running"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:52
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:78
 msgid "Check for new version on startup"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:56
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:83
 msgid "Show file's full path in frame title"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:76
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:104
 msgid "File font encoding:"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:85
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:113
 msgid "Enable localization"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:87
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:116
 msgid ""
 "View CodeLite's strings translated into a different language, if available.  "
 "This will also make CodeLite use other aspects of the locale."
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:94
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:123
 msgid "Locale to use:"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:101
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:130
 msgid ""
 "These are the locales that are available on your system. There won't "
 "necessarily be CodeLite translations for all of them."
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:110
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:139
 msgid "Encoding & Locale"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:118
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:147
 msgid "Clear recent workspace / files history"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:125
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:154
 msgid "Max items kept in find / replace dialog:"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:132
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:161
 msgid "Maximum number of tabs opened in the editor:"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:142
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:171
 msgid "History"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:150
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:179
 msgid "Log file verbosity:"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:154
-#: MacBundler/macbundler.cpp:419 cppchecker/cppchecker.cpp:337
-#: cppchecker/cppchecker.cpp:465
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:183
+#: MacBundler/macbundler.cpp:419 cppchecker/cppchecker.cpp:338
+#: cppchecker/cppchecker.cpp:466
 msgid "Warning"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:154
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:183
 msgid "Developer"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:158
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:187
 msgid ""
 "codelite logs to file various events, this option controls the logging "
 "verbosity"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:162
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:191
 msgid "Open.."
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:163
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:192
 msgid "Open the log file into an editor"
 msgstr ""
 
-#: LiteEditor/editorsettingsmiscbasepanel.cpp:170
+#: LiteEditor/editorsettingsmiscbasepanel.cpp:199
 #: DatabaseExplorer/GUI.cpp:1047
 msgid "Log"
 msgstr ""
 
-#: LiteEditor/fileexplorer.cpp:93
+#: LiteEditor/fileexplorer.cpp:94
 msgid "Goto Current Directory"
 msgstr ""
 
@@ -7140,145 +7187,145 @@ msgstr ""
 msgid "&Create"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:26
+#: LiteEditor/findinfilesdlgbase.cpp:27
 msgid "Find What :"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:31
+#: LiteEditor/findinfilesdlgbase.cpp:32
 msgid "String to search"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:39
+#: LiteEditor/findinfilesdlgbase.cpp:40
 msgid "Look in :"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:46 Plugin/dirpicker.h:69
+#: LiteEditor/findinfilesdlgbase.cpp:47 Plugin/dirpicker.h:69
 msgid "Select a folder:"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:66
+#: LiteEditor/findinfilesdlgbase.cpp:67
 msgid "-"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:67
+#: LiteEditor/findinfilesdlgbase.cpp:68
 msgid "Remove the selected search path"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:71
+#: LiteEditor/findinfilesdlgbase.cpp:72
 msgid "X"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:72
+#: LiteEditor/findinfilesdlgbase.cpp:73
 msgid "Clear the search path list"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:79
+#: LiteEditor/findinfilesdlgbase.cpp:80
 msgid "File Mask:"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:83 LiteEditor/findinfilesdlgbase.cpp:84
+#: LiteEditor/findinfilesdlgbase.cpp:84 LiteEditor/findinfilesdlgbase.cpp:85
 msgid "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:85
+#: LiteEditor/findinfilesdlgbase.cpp:86
 msgid "*.*"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:86
+#: LiteEditor/findinfilesdlgbase.cpp:87
 msgid "Search these file types"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:93
+#: LiteEditor/findinfilesdlgbase.cpp:94
 msgid "Files Encoding:"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:100
+#: LiteEditor/findinfilesdlgbase.cpp:101
 msgid "Use this file encoding when scanning files for matches"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:121
+#: LiteEditor/findinfilesdlgbase.cpp:122
 msgid "&Match case"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:122
+#: LiteEditor/findinfilesdlgbase.cpp:123
 msgid "Toggle case sensitive search"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:126
+#: LiteEditor/findinfilesdlgbase.cpp:127
 msgid "Match &whole word"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:127
+#: LiteEditor/findinfilesdlgbase.cpp:128
 msgid "Toggle whole word search"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:131
+#: LiteEditor/findinfilesdlgbase.cpp:132
 msgid "Regular &expression"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:132
+#: LiteEditor/findinfilesdlgbase.cpp:133
 msgid "The 'Find What' field is a regular expression"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:136
+#: LiteEditor/findinfilesdlgbase.cpp:137
 msgid "&Save modified files before searching"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:137
+#: LiteEditor/findinfilesdlgbase.cpp:138
 msgid "Save any modified files before search starts"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:141
+#: LiteEditor/findinfilesdlgbase.cpp:142
 msgid "Display search results in separate tab"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:160
+#: LiteEditor/findinfilesdlgbase.cpp:161
 msgid "Display the C++ scope of the match"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:161
+#: LiteEditor/findinfilesdlgbase.cpp:162
 msgid "Display the class + function name for the matches"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:165
+#: LiteEditor/findinfilesdlgbase.cpp:166
 msgid "Hide matches found in comments"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:168
+#: LiteEditor/findinfilesdlgbase.cpp:169
 msgid "Hide matches found inside strings"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:171
+#: LiteEditor/findinfilesdlgbase.cpp:172
 msgid "Use different colour for matches found in comments"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:191
+#: LiteEditor/findinfilesdlgbase.cpp:192
 msgid "&Find"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:193
+#: LiteEditor/findinfilesdlgbase.cpp:194
 msgid "Begin search"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:197
+#: LiteEditor/findinfilesdlgbase.cpp:198
 msgid "&Replace"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:198
+#: LiteEditor/findinfilesdlgbase.cpp:199
 msgid ""
 "Search for matches and place them in the 'Replace' window as candidates for "
 "possible replace operation"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:202
+#: LiteEditor/findinfilesdlgbase.cpp:203
 msgid "Sto&p"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:203
+#: LiteEditor/findinfilesdlgbase.cpp:204
 msgid "Stop the current search"
 msgstr ""
 
-#: LiteEditor/findinfilesdlgbase.cpp:208
+#: LiteEditor/findinfilesdlgbase.cpp:209
 msgid "Close this dialog"
 msgstr ""
 
@@ -7828,21 +7875,21 @@ msgstr ""
 msgid "Make this project output a bundle"
 msgstr ""
 
-#: Plugin/compile_request.cpp:69 Plugin/clean_request.cpp:67
-#: Plugin/custombuildrequest.cpp:63
+#: Plugin/compile_request.cpp:70 Plugin/clean_request.cpp:67
+#: Plugin/custombuildrequest.cpp:64
 msgid "Cant find project: "
 msgstr ""
 
-#: Plugin/compile_request.cpp:146 Plugin/custombuildrequest.cpp:139
+#: Plugin/compile_request.cpp:141 Plugin/custombuildrequest.cpp:132
 msgid "Command line is empty. Build aborted."
 msgstr ""
 
-#: Plugin/compile_request.cpp:189 Plugin/custombuildrequest.cpp:225
+#: Plugin/compile_request.cpp:184 Plugin/custombuildrequest.cpp:218
 msgid "Failed to start build process, command: "
 msgstr ""
 
-#: Plugin/compile_request.cpp:189 Plugin/clean_request.cpp:147
-#: Plugin/custombuildrequest.cpp:225
+#: Plugin/compile_request.cpp:184 Plugin/clean_request.cpp:147
+#: Plugin/custombuildrequest.cpp:218
 msgid ", process terminated with exit code: 0"
 msgstr ""
 
@@ -7857,7 +7904,7 @@ msgid ""
 "Working Directory: %s\n"
 msgstr ""
 
-#: Plugin/virtualdirtreectrl.cpp:139
+#: Plugin/virtualdirtreectrl.cpp:140
 msgid "Please wait, scanning directory..."
 msgstr ""
 
@@ -7885,7 +7932,7 @@ msgstr ""
 msgid "Remember my answer and dont ask me again"
 msgstr ""
 
-#: Plugin/threebuttonbasedlg.cpp:48
+#: Plugin/threebuttonbasedlg.cpp:46
 msgid "&No"
 msgstr ""
 
@@ -8235,7 +8282,7 @@ msgstr ""
 msgid "Failed to start clean process, command: "
 msgstr ""
 
-#: Plugin/custombuildrequest.cpp:181
+#: Plugin/custombuildrequest.cpp:174
 #, c-format
 msgid "MESSAGE: Entering directory `%s'\n"
 msgstr ""
@@ -8248,91 +8295,91 @@ msgstr ""
 msgid "Available Macros:"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:107
+#: Plugin/builder_gnumake.cpp:108
 msgid "Exporting makefile...\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:111
+#: Plugin/builder_gnumake.cpp:112
 msgid "Exporting makefile...done\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:115
+#: Plugin/builder_gnumake.cpp:116
 msgid "Cant open project '"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:125
+#: Plugin/builder_gnumake.cpp:126
 msgid "Cant find build configuration for project '"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:131
+#: Plugin/builder_gnumake.cpp:132
 msgid "Reading project dependencies...\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:133
+#: Plugin/builder_gnumake.cpp:134
 msgid "Reading project dependencies...done\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:146
+#: Plugin/builder_gnumake.cpp:147
 msgid "CodeLite can not find project '"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:146
+#: Plugin/builder_gnumake.cpp:147
 msgid "' which is required\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:147
+#: Plugin/builder_gnumake.cpp:148
 msgid "for building project '"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:147
+#: Plugin/builder_gnumake.cpp:148
 msgid ""
 "'.\n"
 "Would you like to remove it from the dependency list?"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:183
+#: Plugin/builder_gnumake.cpp:184
 msgid "Generating makefile...\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:269
+#: Plugin/builder_gnumake.cpp:270
 #, c-format
 msgid "Generating makefile for project %s...\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:277
+#: Plugin/builder_gnumake.cpp:278
 #, c-format
 msgid "Generating makefile for project %s...done\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:426
+#: Plugin/builder_gnumake.cpp:427
 msgid "Generating makefile...done\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:429
+#: Plugin/builder_gnumake.cpp:430
 msgid "Writing makefile...\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:433
+#: Plugin/builder_gnumake.cpp:434
 msgid "Writing makefile...done\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:783
+#: Plugin/builder_gnumake.cpp:784
 msgid "Looping over the file list...done\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:784
+#: Plugin/builder_gnumake.cpp:785
 msgid "Creating file targets...done\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:789
+#: Plugin/builder_gnumake.cpp:790
 msgid "Creating clean targets...\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:807
+#: Plugin/builder_gnumake.cpp:808
 msgid "Loading file list for clean...\n"
 msgstr ""
 
-#: Plugin/builder_gnumake.cpp:809
+#: Plugin/builder_gnumake.cpp:810
 msgid "Loading file list...done\n"
 msgstr ""
 
@@ -8370,57 +8417,182 @@ msgstr ""
 msgid "Generate"
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:60 wxformbuilder/wxformbuilder.cpp:80
+#: wxformbuilder/wxformbuilder.cpp:61 wxformbuilder/wxformbuilder.cpp:81
 msgid "wxFormBuilder integration with CodeLite"
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:125
+#: wxformbuilder/wxformbuilder.cpp:126
 msgid "Open with wxFormBuilder..."
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:148
+#: wxformbuilder/wxformbuilder.cpp:149
 msgid "New wxDialog..."
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:151
+#: wxformbuilder/wxformbuilder.cpp:152
 msgid "New wxDialog with Default Buttons..."
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:154
+#: wxformbuilder/wxformbuilder.cpp:155
 msgid "New wxFrame..."
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:157
+#: wxformbuilder/wxformbuilder.cpp:158
 msgid "New wxPanel..."
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:166
+#: wxformbuilder/wxformbuilder.cpp:167
 msgid "New wxDialog"
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:179
+#: wxformbuilder/wxformbuilder.cpp:180
 msgid "New wxFrame"
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:191
+#: wxformbuilder/wxformbuilder.cpp:192
 msgid "New wxPanel"
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:231
+#: wxformbuilder/wxformbuilder.cpp:232
 #, c-format
 msgid "Can't find wxFormBuilder template file '%s'"
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:303
+#: wxformbuilder/wxformbuilder.cpp:304
 msgid "Please select a 'fbp' (Form Builder Project) file only"
 msgstr ""
 
-#: wxformbuilder/wxformbuilder.cpp:350
+#: wxformbuilder/wxformbuilder.cpp:351
 msgid "New wxDialog with Default Buttons"
 msgstr ""
 
 #: wxformbuilder/formbuildsettingsbasedlg.h:56
 msgid "wxFormBuilder Settings..."
+msgstr ""
+
+#: CallGraph/uicallgraphpanel.cpp:53
+msgid "Save call graph..."
+msgstr ""
+
+#: CallGraph/uicallgraphpanel.cpp:53
+msgid "png files (*.png)|*.png"
+msgstr ""
+
+#: CallGraph/uicallgraph.cpp:28
+msgid "Save call graph to..."
+msgstr ""
+
+#: CallGraph/uicallgraph.cpp:32
+msgid "Close call graph"
+msgstr ""
+
+#: CallGraph/uicallgraph.cpp:60
+msgid " Function name "
+msgstr ""
+
+#: CallGraph/uicallgraph.cpp:61
+msgid " Total time % "
+msgstr ""
+
+#: CallGraph/uicallgraph.cpp:62
+msgid " Self time % "
+msgstr ""
+
+#: CallGraph/uicallgraph.cpp:63
+msgid " Called "
+msgstr ""
+
+#: CallGraph/uisettingsdlg.cpp:40
+msgid "Select gprof..."
+msgstr ""
+
+#: CallGraph/uisettingsdlg.cpp:49
+msgid "Select dot..."
+msgstr ""
+
+#: CallGraph/callgraph.cpp:105 CallGraph/callgraph.cpp:107
+#: CallGraph/callgraph.cpp:120 CallGraph/callgraph.cpp:137
+msgid "Show call graph"
+msgstr ""
+
+#: CallGraph/callgraph.cpp:105 CallGraph/callgraph.cpp:107
+#: CallGraph/callgraph.cpp:120
+msgid "Show call graph for selected/active project"
+msgstr ""
+
+#: CallGraph/callgraph.cpp:125
+msgid "About..."
+msgstr ""
+
+#: CallGraph/callgraph.cpp:137
+msgid "Show call graph for selected project"
+msgstr ""
+
+#: CallGraph/callgraph.cpp:155 CallGraph/callgraph.cpp:195
+msgid "CallGraph"
+msgstr ""
+
+#: CallGraph/callgraph.cpp:191
+msgid ""
+"Create application call graph from profiling information provided by gprof "
+"tool.   \n"
+"\n"
+msgstr ""
+
+#: CallGraph/callgraph.cpp:196
+msgid "v1.0"
+msgstr ""
+
+#: CallGraph/callgraph.cpp:198
+msgid "2012 (C) Tomas Bata University, Zlin, Czech Republic"
+msgstr ""
+
+#: CallGraph/callgraph.cpp:199 DatabaseExplorer/databaseexplorer.cpp:249
+msgid "http://www.fai.utb.cz"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:25
+msgid "Select path for Gprof:"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:32 CallGraph/uisettings.cpp:42
+msgid "Select..."
+msgstr ""
+
+#: CallGraph/uisettings.cpp:35
+msgid "Select path for Dot:"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:57
+msgid "Settings for CALL graph"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:59
+msgid "Resolutions:"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:71
+msgid "Node threshold (0 - 100) [%]"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:78
+msgid "Edge threshold (0 - 100) [%]"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:105
+msgid "Short names"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:108
+msgid "Number of node load level colors (max 10)"
+msgstr ""
+
+#: CallGraph/uisettings.cpp:115
+msgid "Strip parameters   "
+msgstr ""
+
+#: CallGraph/uisettings.cpp:118
+msgid "Number of edge load level colors (max 10)"
 msgstr ""
 
 #: CodeFormatter/astyle_main.cpp:410
@@ -8691,35 +8863,35 @@ msgstr ""
 msgid "Source Code Formatter (AStyle)"
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:113 CodeFormatter/codeformatter.cpp:117
+#: CodeFormatter/codeformatter.cpp:114 CodeFormatter/codeformatter.cpp:118
 msgid "Format Source"
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:113 CodeFormatter/codeformatter.cpp:117
+#: CodeFormatter/codeformatter.cpp:114 CodeFormatter/codeformatter.cpp:118
 msgid "Format Source Code"
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:114 CodeFormatter/codeformatter.cpp:118
+#: CodeFormatter/codeformatter.cpp:115 CodeFormatter/codeformatter.cpp:119
 msgid "Format Options"
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:114 CodeFormatter/codeformatter.cpp:118
+#: CodeFormatter/codeformatter.cpp:115 CodeFormatter/codeformatter.cpp:119
 msgid "Source Code Formatter Options..."
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:139
+#: CodeFormatter/codeformatter.cpp:140
 msgid "Format Current Source"
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:142
+#: CodeFormatter/codeformatter.cpp:143
 msgid "Options..."
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:144
+#: CodeFormatter/codeformatter.cpp:145
 msgid "Source Code Formatter"
 msgstr ""
 
-#: CodeFormatter/codeformatter.cpp:164
+#: CodeFormatter/codeformatter.cpp:165
 msgid "Formatting"
 msgstr ""
 
@@ -8886,8 +9058,8 @@ msgid "The SQL script has been saved to '%s'."
 msgstr ""
 
 #: DatabaseExplorer/ErdPanel.cpp:224 DatabaseExplorer/ErdPanel.cpp:375
-#: DatabaseExplorer/databaseexplorer.cpp:68
-#: DatabaseExplorer/databaseexplorer.cpp:244
+#: DatabaseExplorer/databaseexplorer.cpp:69
+#: DatabaseExplorer/databaseexplorer.cpp:245
 msgid "DatabaseExplorer"
 msgstr ""
 
@@ -8923,40 +9095,36 @@ msgstr ""
 msgid "The chart has been saved to '%s'."
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:21
+#: DatabaseExplorer/databaseexplorer.cpp:22
 msgid "0.2.0 Beta"
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:69
-#: DatabaseExplorer/databaseexplorer.cpp:115
+#: DatabaseExplorer/databaseexplorer.cpp:70
+#: DatabaseExplorer/databaseexplorer.cpp:116
 msgid "DatabaseExplorer for CodeLite"
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:165
+#: DatabaseExplorer/databaseexplorer.cpp:166
 msgid "About dialog..."
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:171
+#: DatabaseExplorer/databaseexplorer.cpp:172
 msgid "Database Explorer"
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:191
+#: DatabaseExplorer/databaseexplorer.cpp:192
 msgid "Open with DatabaseExplorer..."
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:240
+#: DatabaseExplorer/databaseexplorer.cpp:241
 msgid ""
 "Cross-platform database plugin designed for managing data, ERD and code "
 "generation.\n"
 "\n"
 msgstr ""
 
-#: DatabaseExplorer/databaseexplorer.cpp:247
-msgid "2011 (C) Tomas Bata University, Zlin, Czech Republic"
-msgstr ""
-
 #: DatabaseExplorer/databaseexplorer.cpp:248
-msgid "http://www.fai.utb.cz"
+msgid "2011 (C) Tomas Bata University, Zlin, Czech Republic"
 msgstr ""
 
 #: DatabaseExplorer/GUI.h:84
@@ -9422,7 +9590,7 @@ msgid "Database user name"
 msgstr ""
 
 #: DatabaseExplorer/GUI.cpp:461 DatabaseExplorer/GUI.cpp:518
-#: Subversion2/subversion2_ui.cpp:274
+#: Subversion2/subversion2_ui.cpp:251
 msgid "Password:"
 msgstr ""
 
@@ -9574,7 +9742,7 @@ msgstr ""
 msgid "Folder:"
 msgstr ""
 
-#: DatabaseExplorer/GUI.cpp:1207 Subversion2/subversion2_ui.cpp:992
+#: DatabaseExplorer/GUI.cpp:1207 Subversion2/subversion2_ui.cpp:973
 msgid "Select a folder"
 msgstr ""
 
@@ -9646,7 +9814,7 @@ msgstr ""
 msgid "Close selected connection"
 msgstr ""
 
-#: DatabaseExplorer/DbViewerPanel.cpp:42 Subversion2/subversion_view.cpp:185
+#: DatabaseExplorer/DbViewerPanel.cpp:42 Subversion2/subversion_view.cpp:194
 msgid "Refresh View"
 msgstr ""
 
@@ -10150,7 +10318,7 @@ msgid "Change"
 msgstr ""
 
 #: SnipWiz/editsnippetsbasedlg.cpp:79 SnipWiz/templateclassbasedlg.cpp:168
-#: cppchecker/cppchecksettingsdlgbase.cpp:62 menu.xrc:980
+#: cppchecker/cppchecksettingsdlgbase.cpp:62 menu.xrc:983
 msgid "Remove"
 msgstr ""
 
@@ -10381,33 +10549,33 @@ msgid ""
 "may override the generated variables)"
 msgstr ""
 
-#: QmakePlugin/qmakeplugin.cpp:39 QmakePlugin/qmakeplugin.cpp:52
+#: QmakePlugin/qmakeplugin.cpp:40 QmakePlugin/qmakeplugin.cpp:53
 msgid "Qt's QMake integration with CodeLite"
 msgstr ""
 
-#: QmakePlugin/qmakeplugin.cpp:93 QmakePlugin/qmakeplugin.cpp:96
+#: QmakePlugin/qmakeplugin.cpp:92 QmakePlugin/qmakeplugin.cpp:95
 msgid "Configure qmake"
 msgstr ""
 
-#: QmakePlugin/qmakeplugin.cpp:94 QmakePlugin/qmakeplugin.cpp:97
+#: QmakePlugin/qmakeplugin.cpp:93 QmakePlugin/qmakeplugin.cpp:96
 msgid "Create new qmake based project"
 msgstr ""
 
-#: QmakePlugin/qmakeplugin.cpp:114
+#: QmakePlugin/qmakeplugin.cpp:113
 msgid "New qmake based project..."
 msgstr ""
 
-#: QmakePlugin/qmakeplugin.cpp:386
+#: QmakePlugin/qmakeplugin.cpp:382
 msgid ""
 "There is no qmake defined, please define one from 'Plugins -> Qmake -> "
 "Settings'"
 msgstr ""
 
-#: QmakePlugin/qmakeplugin.cpp:443
+#: QmakePlugin/qmakeplugin.cpp:439
 msgid "Invalid project path!"
 msgstr ""
 
-#: QmakePlugin/qmakeplugin.cpp:453
+#: QmakePlugin/qmakeplugin.cpp:449
 #, c-format
 msgid "Failed to create .project file '%s'"
 msgstr ""
@@ -10421,7 +10589,7 @@ msgid "New qmake settings"
 msgstr ""
 
 #: QmakePlugin/qmakesettingsdlg.cpp:80 QmakePlugin/qmakesettingsdlg.cpp:105
-#: menu.xrc:976
+#: menu.xrc:979
 msgid "Rename..."
 msgstr ""
 
@@ -10430,8 +10598,8 @@ msgstr ""
 msgid "Are you sure you want to delete qmake settings '%s'?"
 msgstr ""
 
-#: QmakePlugin/qmakesettingsdlg.cpp:105 Subversion2/subversion_view.cpp:1158
-#: Subversion2/subversion2.cpp:957
+#: QmakePlugin/qmakesettingsdlg.cpp:105 Subversion2/subversion_view.cpp:1196
+#: Subversion2/subversion2.cpp:986
 msgid "New name:"
 msgstr ""
 
@@ -10613,49 +10781,49 @@ msgstr ""
 msgid "Add File:"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:41
+#: cppchecker/cppchecker.cpp:42
 msgid "CppChecker integration for CodeLite IDE"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:71
+#: cppchecker/cppchecker.cpp:72
 msgid "CppCheck integration for CodeLite IDE"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:111
+#: cppchecker/cppchecker.cpp:112
 msgid "Settings"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:124 cppchecker/cppchecker.cpp:131
-#: cppchecker/cppchecker.cpp:138
+#: cppchecker/cppchecker.cpp:125 cppchecker/cppchecker.cpp:132
+#: cppchecker/cppchecker.cpp:139
 msgid "CppCheck"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:157
+#: cppchecker/cppchecker.cpp:158
 msgid "CppCheckPlugin: Terminating cppcheck daemon..."
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:170 cppchecker/cppchecker.cpp:182
-#: cppchecker/cppchecker.cpp:193
+#: cppchecker/cppchecker.cpp:171 cppchecker/cppchecker.cpp:183
+#: cppchecker/cppchecker.cpp:194
 msgid "Run CppCheck"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:202 cppchecker/cppchecker.cpp:218
-#: cppchecker/cppchecker.cpp:256
+#: cppchecker/cppchecker.cpp:203 cppchecker/cppchecker.cpp:219
+#: cppchecker/cppchecker.cpp:257
 msgid ""
 "CppCheckPlugin: CppCheck is currently busy please wait for it to complete "
 "the current check"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:333
+#: cppchecker/cppchecker.cpp:334
 #, c-format
 msgid "Starting cppcheck: %s"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:337
+#: cppchecker/cppchecker.cpp:338
 msgid "Failed to launch codelite_cppcheck process!"
 msgstr ""
 
-#: cppchecker/cppchecker.cpp:465
+#: cppchecker/cppchecker.cpp:466
 msgid "Failed to open temporary file "
 msgstr ""
 
@@ -10722,106 +10890,106 @@ msgid ""
 "continue with the checkout?"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:70
+#: Subversion2/subversion2_ui.cpp:49
 msgid "Feature Request ID:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:79
+#: Subversion2/subversion2_ui.cpp:58
 msgid "Bug ID:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:97
+#: Subversion2/subversion2_ui.cpp:75
 msgid "Modified Paths:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:127
+#: Subversion2/subversion2_ui.cpp:105
 msgid "Recent commit messages:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:178
+#: Subversion2/subversion2_ui.cpp:155
 msgid "Source URL:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:185
+#: Subversion2/subversion2_ui.cpp:162
 msgid "Target URL:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:197
+#: Subversion2/subversion2_ui.cpp:174
 msgid "Comment:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:265
+#: Subversion2/subversion2_ui.cpp:242
 msgid "Username:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:289
+#: Subversion2/subversion2_ui.cpp:266
 msgid "&Login"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:333
+#: Subversion2/subversion2_ui.cpp:310
 msgid "Executable:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:337
+#: Subversion2/subversion2_ui.cpp:314
 msgid "svn"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:345
+#: Subversion2/subversion2_ui.cpp:322
 msgid "Ignore the following file patterns:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:349
+#: Subversion2/subversion2_ui.cpp:326
 msgid ""
 "*.o *.obj *.exe *.lib *.so *.dll *.a *.dynlib *.exp *.ilk *.pdb *.d *.tags *."
 "suo *.ncb *.bak *.orig *.dll *.mine *.o.d *.session Debug Release "
 "DebugUnicode ReleaseUnicode"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:355
+#: Subversion2/subversion2_ui.cpp:332
 msgid "When adding file(s) to project, add it to svn as well"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:358
+#: Subversion2/subversion2_ui.cpp:336
 msgid "Retag workspace after svn update, revert or applying patch"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:361
+#: Subversion2/subversion2_ui.cpp:340
 msgid ""
 "When renaming a file in the project, rename it in the repository as well"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:364
+#: Subversion2/subversion2_ui.cpp:344
 msgid "Use POSIX Locale"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:366
+#: Subversion2/subversion2_ui.cpp:347
 msgid ""
 "When checked, CodeLite will use the default \"C\" locale instead of the "
 "current locale. This will ensure that svn command line output is parsed "
 "properly."
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:380
+#: Subversion2/subversion2_ui.cpp:361
 msgid "Use external diff tool"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:389
+#: Subversion2/subversion2_ui.cpp:371
 msgid "External Diff Viewer:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:404
+#: Subversion2/subversion2_ui.cpp:386
 msgid "External Diff"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:415
+#: Subversion2/subversion2_ui.cpp:397
 msgid "SSH Client:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:425
+#: Subversion2/subversion2_ui.cpp:407
 msgid "SSH Client arguments:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:437
+#: Subversion2/subversion2_ui.cpp:419
 msgid ""
 "The SSH client field should contain the command to be\n"
 "used by the SVN command line client for establishing a secured channel. \n"
@@ -10832,268 +11000,269 @@ msgid ""
 "If you dont need SSH channel, leave this field empty"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:446
+#: Subversion2/subversion2_ui.cpp:428
 msgid "SSH Client"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:452
+#: Subversion2/subversion2_ui.cpp:434
 msgid "Auto Revision:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:454
+#: Subversion2/subversion2_ui.cpp:436
 msgid "Add revision number as preprocessor definition in the compilation line"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:460
+#: Subversion2/subversion2_ui.cpp:443
 msgid "Preprocessor name:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:464
+#: Subversion2/subversion2_ui.cpp:447
 msgid "SVN_REVISION"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:474
+#: Subversion2/subversion2_ui.cpp:457
 msgid "Integration"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:539
+#: Subversion2/subversion2_ui.cpp:521
 msgid "Root URL:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:550
+#: Subversion2/subversion2_ui.cpp:532
 msgid "URL:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:561
+#: Subversion2/subversion2_ui.cpp:543
 msgid "Revision:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:583
+#: Subversion2/subversion2_ui.cpp:565
 msgid "Date:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:634
+#: Subversion2/subversion2_ui.cpp:616
 msgid "URL of repository:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:644
+#: Subversion2/subversion2_ui.cpp:626
 msgid "Checkout directory:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:709
+#: Subversion2/subversion2_ui.cpp:690
 msgid "From revision:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:716
+#: Subversion2/subversion2_ui.cpp:697
 msgid "To revision:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:728
+#: Subversion2/subversion2_ui.cpp:709
 msgid "Create compact log"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:770
+#: Subversion2/subversion2_ui.cpp:752
 msgid "From Revision:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:774
+#: Subversion2/subversion2_ui.cpp:756
 msgid "BASE"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:777
+#: Subversion2/subversion2_ui.cpp:759
 msgid "To Revision:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:846
+#: Subversion2/subversion2_ui.cpp:827
 msgid "Title"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:858
+#: Subversion2/subversion2_ui.cpp:839
 msgid "Bug URL Pattern:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:863
+#: Subversion2/subversion2_ui.cpp:844
 msgid ""
 "Enter here the URL for the bug details.\n"
 "For example: http://mytracker.com?bug_id=$(BUGID)"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:867
+#: Subversion2/subversion2_ui.cpp:848
 msgid "Bug Message Pattern:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:872
+#: Subversion2/subversion2_ui.cpp:853
 msgid ""
 "Enter here the message to add to the commit log. You may use the $(BUG_URL) "
 "and $(BUGID) macros.\n"
 "An example: \"Fixed: BUG#$(BUGID), See $(BUG_URL) for more details\""
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:876
+#: Subversion2/subversion2_ui.cpp:857
 msgid "Feature URL Pattern:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:881
+#: Subversion2/subversion2_ui.cpp:862
 msgid ""
 "Enter here the URL for the feature request details.\n"
 "For example: http://mytracker.com?fr_id=$(FRID)"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:885
+#: Subversion2/subversion2_ui.cpp:866
 msgid "Feature Message Pattern:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:890
+#: Subversion2/subversion2_ui.cpp:871
 msgid ""
 "Enter here the message to add to the commit log. You may use the $(FR_URL) "
 "and $(FRID) macros.\n"
 "An example: \"Implements FR#$(FRID), See $(FR_URL) for more details\""
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:941
+#: Subversion2/subversion2_ui.cpp:922
 msgid "Do not change EOL, apply patch as it is"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:941
+#: Subversion2/subversion2_ui.cpp:922
 msgid "Change to Windows style (CRLF)"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:941
+#: Subversion2/subversion2_ui.cpp:922
 msgid "Change to UNIX style (LF)"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:943
+#: Subversion2/subversion2_ui.cpp:924
 msgid "Change patch line endings (EOL):"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:988
+#: Subversion2/subversion2_ui.cpp:969
 msgid "Select path:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.cpp:997
+#: Subversion2/subversion2_ui.cpp:978
 msgid "Recently used paths:"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:175
+#: Subversion2/subversion_view.cpp:186
 msgid "Select a Directory to View..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:178
+#: Subversion2/subversion_view.cpp:189
 msgid "Stop current svn process"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:179
+#: Subversion2/subversion_view.cpp:190
 msgid "Svn Cleanup"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:182 Subversion2/subversion2_ui.h:291
+#: Subversion2/subversion_view.cpp:192 Subversion2/subversion2_ui.h:274
 msgid "Svn Checkout"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:187
+#: Subversion2/subversion_view.cpp:196
 msgid "Clear Svn Output Tab"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:188
+#: Subversion2/subversion_view.cpp:197
 msgid "Svn Settings..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:189 Subversion2/subversion2_ui.h:259
+#: Subversion2/subversion_view.cpp:198 Subversion2/subversion2_ui.h:243
 msgid "Svn Info"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:247 Subversion2/subversion_view.cpp:1087
-#: Subversion2/subversion_view.cpp:1095
+#: Subversion2/subversion_view.cpp:268 Subversion2/subversion_view.cpp:1125
+#: Subversion2/subversion_view.cpp:1133
 #: Subversion2/svn_select_local_repo_dlg.cpp:78
+#: Subversion2/subversion2.cpp:380
 msgid "<No repository path is selected>"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:426 Subversion2/subversion_view.cpp:449
-#: Subversion2/subversion_view.cpp:478
+#: Subversion2/subversion_view.cpp:493 Subversion2/subversion_view.cpp:516
+#: Subversion2/subversion_view.cpp:545
 msgid "Create Diff..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:431
+#: Subversion2/subversion_view.cpp:498
 msgid "Open File..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:452
+#: Subversion2/subversion_view.cpp:519
 msgid "Blame..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:457 Subversion2/subversion2.cpp:239
+#: Subversion2/subversion_view.cpp:524 Subversion2/subversion2.cpp:241
 msgid "Ignore this file"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:458 Subversion2/subversion2.cpp:240
+#: Subversion2/subversion_view.cpp:525 Subversion2/subversion2.cpp:242
 msgid "Ignore this file pattern"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:471 Subversion2/subversion_view.cpp:669
+#: Subversion2/subversion_view.cpp:538 Subversion2/subversion_view.cpp:707
 msgid "Create Tag"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:472 Subversion2/subversion_view.cpp:628
+#: Subversion2/subversion_view.cpp:539 Subversion2/subversion_view.cpp:666
 msgid "Create Branch"
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:475
+#: Subversion2/subversion_view.cpp:542
 msgid "Switch URL..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:479
+#: Subversion2/subversion_view.cpp:546
 msgid "Apply Patch..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:480
+#: Subversion2/subversion_view.cpp:547
 msgid "Apply Patch - Dry Run..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:483 Subversion2/subversion2.cpp:233
+#: Subversion2/subversion_view.cpp:550 Subversion2/subversion2.cpp:235
 msgid "Change Log..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:486
+#: Subversion2/subversion_view.cpp:553
 msgid "Properties..."
 msgstr ""
 
-#: Subversion2/subversion_view.cpp:1158 Subversion2/subversion2.cpp:957
+#: Subversion2/subversion_view.cpp:1196 Subversion2/subversion2.cpp:986
 msgid "Svn rename..."
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:106
+#: Subversion2/subversion2_ui.h:95
 msgid "Svn Commit"
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:138
+#: Subversion2/subversion2_ui.h:126
 msgid "Create Svn Tag"
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:178
+#: Subversion2/subversion2_ui.h:164
 msgid "Login"
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:232
+#: Subversion2/subversion2_ui.h:217
 msgid "Subversion Preferences"
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:316
+#: Subversion2/subversion2_ui.h:298
 msgid "Svn Log"
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:340
+#: Subversion2/subversion2_ui.h:321
 msgid "Svn Diff..."
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:390
+#: Subversion2/subversion2_ui.h:369
 msgid "Svn Properties..."
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:411
+#: Subversion2/subversion2_ui.h:389
 msgid "Select patch file:"
 msgstr ""
 
-#: Subversion2/subversion2_ui.h:440
+#: Subversion2/subversion2_ui.h:417
 msgid "Select Local Repository:"
 msgstr ""
 
@@ -11105,19 +11274,19 @@ msgstr ""
 msgid "Remove paths"
 msgstr ""
 
-#: Subversion2/svn_command_handlers.cpp:93
+#: Subversion2/svn_command_handlers.cpp:94
 msgid "===== APPLYING PATCH - DRY RUN =====\n"
 msgstr ""
 
-#: Subversion2/svn_command_handlers.cpp:95
+#: Subversion2/svn_command_handlers.cpp:96
 msgid "===== OUTPUT END =====\n"
 msgstr ""
 
-#: Subversion2/svn_command_handlers.cpp:130
+#: Subversion2/svn_command_handlers.cpp:131
 msgid "Change Log"
 msgstr ""
 
-#: Subversion2/svn_command_handlers.cpp:181
+#: Subversion2/svn_command_handlers.cpp:182
 msgid "Loading Svn blame dialog...\n"
 msgstr ""
 
@@ -11129,59 +11298,59 @@ msgstr ""
 msgid "Server certificate verification failed. Retrying...\n"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:105 Subversion2/subversion2.cpp:123
+#: Subversion2/subversion2.cpp:107 Subversion2/subversion2.cpp:125
 msgid "Subversion plugin for codelite2.0 based on the svn command line tool"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:167
+#: Subversion2/subversion2.cpp:169
 msgid "Subversion Options"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:188
+#: Subversion2/subversion2.cpp:190
 msgid "Display this path in the Subversion View"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:195
+#: Subversion2/subversion2.cpp:197
 msgid "Commit"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:200
+#: Subversion2/subversion2.cpp:202
 msgid "Lock file"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:203
+#: Subversion2/subversion2.cpp:205
 msgid "UnLock file"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:219
+#: Subversion2/subversion2.cpp:221
 msgid "Revert"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:223
+#: Subversion2/subversion2.cpp:225
 msgid "Create Diff"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:225
+#: Subversion2/subversion2.cpp:227
 msgid "Apply Patch"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:229
+#: Subversion2/subversion2.cpp:231
 msgid "Blame ..."
 msgstr ""
 
-#: Subversion2/subversion2.cpp:241
+#: Subversion2/subversion2.cpp:243
 msgid "Ignore"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:415
+#: Subversion2/subversion2.cpp:422
 msgid "Insert base revision to diff against:"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:415
+#: Subversion2/subversion2.cpp:422
 msgid "Diff against"
 msgstr ""
 
-#: Subversion2/subversion2.cpp:848
+#: Subversion2/subversion2.cpp:881
 msgid "Enter new URL:"
 msgstr ""
 
@@ -11224,11 +11393,11 @@ msgstr ""
 msgid "Highlight this revision"
 msgstr ""
 
-#: Subversion2/svn_console.cpp:136
+#: Subversion2/svn_console.cpp:137
 msgid "Aborted.\n"
 msgstr ""
 
-#: Subversion2/svn_console.cpp:192
+#: Subversion2/svn_console.cpp:200
 msgid "Failed to launch Subversion client.\n"
 msgstr ""
 
@@ -12000,82 +12169,82 @@ msgstr ""
 msgid "Open in CodeLite"
 msgstr ""
 
-#: menu.xrc:969
-msgid "Compile"
-msgstr ""
-
-#: menu.xrc:972
-msgid "Preprocess"
-msgstr ""
-
-#: menu.xrc:986
-msgid "Delete Compiler"
-msgstr ""
-
-#: menu.xrc:995
-msgid "Copy Value Only"
-msgstr ""
-
-#: menu.xrc:1010
-msgid "Display Format"
-msgstr ""
-
-#: menu.xrc:1012
-msgid "Natural"
-msgstr ""
-
-#: menu.xrc:1015
-msgid "Hexadecimal"
-msgstr ""
-
-#: menu.xrc:1018
-msgid "Binary"
-msgstr ""
-
-#: menu.xrc:1021
-msgid "Octal"
-msgstr ""
-
-#: menu.xrc:1024
-msgid "Decimal"
-msgstr ""
-
-#: menu.xrc:1040
-msgid "Search..."
-msgstr ""
-
-#: menu.xrc:1045
-msgid "Tags"
-msgstr ""
-
-#: menu.xrc:1047
-msgid "Global Parser Paths"
-msgstr ""
-
-#: menu.xrc:1049 menu.xrc:1058
-msgid "Add to include paths"
-msgstr ""
-
-#: menu.xrc:1052 menu.xrc:1061
-msgid "Add to exclude paths"
-msgstr ""
-
-#: menu.xrc:1056
-msgid "Workspace Parser Paths"
-msgstr ""
-
-#: menu.xrc:1068
-msgid "&Open"
-msgstr ""
-
-#: menu.xrc:1071
-msgid "Open in &editor"
-msgstr ""
-
-#: menu.xrc:1075
+#: menu.xrc:969 menu.xrc:1078
 msgid "Open With &Default Application"
 msgstr ""
 
-#: menu.xrc:1079
+#: menu.xrc:972
+msgid "Compile"
+msgstr ""
+
+#: menu.xrc:975
+msgid "Preprocess"
+msgstr ""
+
+#: menu.xrc:989
+msgid "Delete Compiler"
+msgstr ""
+
+#: menu.xrc:998
+msgid "Copy Value Only"
+msgstr ""
+
+#: menu.xrc:1013
+msgid "Display Format"
+msgstr ""
+
+#: menu.xrc:1015
+msgid "Natural"
+msgstr ""
+
+#: menu.xrc:1018
+msgid "Hexadecimal"
+msgstr ""
+
+#: menu.xrc:1021
+msgid "Binary"
+msgstr ""
+
+#: menu.xrc:1024
+msgid "Octal"
+msgstr ""
+
+#: menu.xrc:1027
+msgid "Decimal"
+msgstr ""
+
+#: menu.xrc:1043
+msgid "Search..."
+msgstr ""
+
+#: menu.xrc:1048
+msgid "Tags"
+msgstr ""
+
+#: menu.xrc:1050
+msgid "Global Parser Paths"
+msgstr ""
+
+#: menu.xrc:1052 menu.xrc:1061
+msgid "Add to include paths"
+msgstr ""
+
+#: menu.xrc:1055 menu.xrc:1064
+msgid "Add to exclude paths"
+msgstr ""
+
+#: menu.xrc:1059
+msgid "Workspace Parser Paths"
+msgstr ""
+
+#: menu.xrc:1071
+msgid "&Open"
+msgstr ""
+
+#: menu.xrc:1074
+msgid "Open in &editor"
+msgstr ""
+
+#: menu.xrc:1082
 msgid "Open Shell here"
 msgstr ""

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -42,6 +42,9 @@ class uisettings : public wxDialog
 		wxStaticText* m_staticText_path_dot;
 		wxTextCtrl* m_textCtrl_path_dot;
 		wxButton* m_button_select_dot;
+		
+		
+		
 		wxStaticText* m_staticText5;
 		wxStaticText* m_staticText6;
 		wxSpinCtrl* m_spinCtrl_treshold_node;
@@ -69,7 +72,7 @@ class uisettings : public wxDialog
 	
 	public:
 		
-		uisettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		uisettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~uisettings();
 	
 };

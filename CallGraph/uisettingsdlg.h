@@ -39,6 +39,7 @@ protected:
 public:
 	/** Constructor */
 	uisettingsdlg( wxWindow* parent, IManager *mgr);//, CallGraph *plugin );
+	virtual ~uisettingsdlg();
 };
 
 #endif

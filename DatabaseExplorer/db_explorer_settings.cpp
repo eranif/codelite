@@ -66,6 +66,7 @@ void DbConnectionInfo::DeSerialize(Archive& arch)
 	arch.Read(wxT("m_defaultDatabase"), m_defaultDatabase);
 	arch.Read(wxT("m_password")       , m_password       );
 	arch.Read(wxT("m_server")         , m_server         );
+	arch.Read(wxT("m_port")			  , m_port	    	 );
 	arch.Read(wxT("m_username")       , m_username       );
 }
 
@@ -76,6 +77,7 @@ void DbConnectionInfo::Serialize(Archive& arch)
 	arch.Write(wxT("m_defaultDatabase"), m_defaultDatabase);
 	arch.Write(wxT("m_password")       , m_password       );
 	arch.Write(wxT("m_server")         , m_server         );
+	arch.Write(wxT("m_port")		   , m_port			  );
 	arch.Write(wxT("m_username")       , m_username       );
 }
 

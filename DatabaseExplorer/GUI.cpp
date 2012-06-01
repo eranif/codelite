@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 24 2011)
+// C++ code generated with wxFormBuilder (version May  7 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -69,6 +69,7 @@ _ImageExportDialog::_ImageExportDialog( wxWindow* parent, wxWindowID id, const w
 	m_button29 = new wxButton( this, wxID_ANY, _("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
 	fpSizer->Add( m_button29, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
+	
 	mainSizer->Add( fpSizer, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* scaleSizer;
@@ -88,7 +89,9 @@ _ImageExportDialog::_ImageExportDialog( wxWindow* parent, wxWindowID id, const w
 	
 	customScaleSizer->Add( m_textCtrlScale, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 	
+	
 	scaleSizer->Add( customScaleSizer, 1, wxEXPAND, 5 );
+	
 	
 	mainSizer->Add( scaleSizer, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 	
@@ -104,7 +107,9 @@ _ImageExportDialog::_ImageExportDialog( wxWindow* parent, wxWindowID id, const w
 	m_sdbSizer2Cancel = new wxButton( this, wxID_CANCEL );
 	m_sdbSizer2->AddButton( m_sdbSizer2Cancel );
 	m_sdbSizer2->Realize();
+	
 	mainSizer->Add( m_sdbSizer2, 0, wxBOTTOM|wxRIGHT|wxALIGN_RIGHT, 5 );
+	
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -132,6 +137,7 @@ _ImageExportDialog::~_ImageExportDialog()
 _ThumbPane::_ThumbPane( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
 {
 	mainSizer = new wxBoxSizer( wxVERTICAL );
+	
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -226,9 +232,12 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	bSizer26->Add( m_btnExecute, 0, wxALL, 5 );
 	
+	
 	bSizer25->Add( bSizer26, 0, wxEXPAND, 5 );
 	
+	
 	bSizer23->Add( bSizer25, 1, wxEXPAND, 5 );
+	
 	
 	m_panel13->SetSizer( bSizer23 );
 	m_panel13->Layout();
@@ -274,11 +283,13 @@ _SqlCommandPanel::_SqlCommandPanel( wxWindow* parent, wxWindowID id, const wxPoi
 	m_labelStatus->Wrap( -1 );
 	bSizer24->Add( m_labelStatus, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
+	
 	m_panel14->SetSizer( bSizer24 );
 	m_panel14->Layout();
 	bSizer24->Fit( m_panel14 );
 	m_splitter1->SplitHorizontally( m_panel13, m_panel14, 163 );
 	fgSizer3->Add( m_splitter1, 1, wxEXPAND, 5 );
+	
 	
 	this->SetSizer( fgSizer3 );
 	this->Layout();
@@ -323,6 +334,7 @@ _AdapterSelectDlg::_AdapterSelectDlg( wxWindow* parent, wxWindowID id, const wxS
 	m_button24 = new wxButton( this, wxID_ANY, _("PostgreSQL"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer9->Add( m_button24, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	this->SetSizer( bSizer9 );
 	this->Layout();
 	bSizer9->Fit( this );
@@ -358,6 +370,7 @@ _DbViewerPanel::_DbViewerPanel( wxWindow* parent, wxWindowID id, const wxPoint& 
 	m_treeDatabases->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 	
 	bSizer28->Add( m_treeDatabases, 1, wxEXPAND, 5 );
+	
 	
 	this->SetSizer( bSizer28 );
 	this->Layout();
@@ -406,10 +419,12 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_filePickerSqlite = new wxFilePickerCtrl( m_Sqlite, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All Files (*)|*|Database file (*.sqlite;*.tags;*.db)|*.sqlite;*.tags;*.db"), wxDefaultPosition, wxSize( -1,-1 ), wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
 	fgSizer41->Add( m_filePickerSqlite, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
+	
 	bSizer27->Add( fgSizer41, 0, wxEXPAND, 5 );
 	
 	m_listCtrlRecentFiles = new wxListCtrl( m_Sqlite, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL );
 	bSizer27->Add( m_listCtrlRecentFiles, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	m_Sqlite->SetSizer( bSizer27 );
 	m_Sqlite->Layout();
@@ -467,6 +482,7 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	
 	fgSizer4->Add( m_txPassword, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	fgSizer3->Add( fgSizer4, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer8;
@@ -478,7 +494,9 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_listBox2 = new wxListBox( m_MySqlPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), 0, NULL, 0 ); 
 	bSizer8->Add( m_listBox2, 1, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 	
+	
 	fgSizer3->Add( bSizer8, 0, wxALIGN_CENTER_HORIZONTAL|wxALL|wxEXPAND, 5 );
+	
 	
 	m_MySqlPanel->SetSizer( fgSizer3 );
 	m_MySqlPanel->Layout();
@@ -508,6 +526,13 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_txPgServer = new wxTextCtrl( m_PostgrePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), 0 );
 	fgSizer42->Add( m_txPgServer, 1, wxALL|wxEXPAND, 5 );
 	
+	m_staticText35 = new wxStaticText( m_PostgrePanel, wxID_ANY, _("Port:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText35->Wrap( -1 );
+	fgSizer42->Add( m_staticText35, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_txPgPort = new wxTextCtrl( m_PostgrePanel, wxID_ANY, _("5432"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer42->Add( m_txPgPort, 1, wxALL|wxEXPAND, 5 );
+	
 	m_staticText21 = new wxStaticText( m_PostgrePanel, wxID_ANY, _("User name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText21->Wrap( -1 );
 	fgSizer42->Add( m_staticText21, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -529,6 +554,7 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_txPgDatabase = new wxTextCtrl( m_PostgrePanel, wxID_ANY, _("postgres"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer42->Add( m_txPgDatabase, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer_1->Add( fgSizer42, 0, wxEXPAND, 5 );
 	
 	m_staticline7 = new wxStaticLine( m_PostgrePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -536,6 +562,7 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	
 	m_listBoxPg = new wxListBox( m_PostgrePanel, wxID_PG_LIST, wxDefaultPosition, wxSize( -1,100 ), 0, NULL, 0 ); 
 	bSizer_1->Add( m_listBoxPg, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	m_PostgrePanel->SetSizer( bSizer_1 );
 	m_PostgrePanel->Layout();
@@ -557,7 +584,9 @@ _DBSettingsDialog::_DBSettingsDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_button36 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer28->Add( m_button36, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
+	
 	bSizer4->Add( bSizer28, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	
 	
 	this->SetSizer( bSizer4 );
 	this->Layout();
@@ -615,10 +644,12 @@ _ErdPanel::_ErdPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	m_wxsfPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_wxsfSizer = new wxBoxSizer( wxVERTICAL );
 	
+	
 	m_wxsfPanel->SetSizer( m_wxsfSizer );
 	m_wxsfPanel->Layout();
 	m_wxsfSizer->Fit( m_wxsfPanel );
 	fgSizer7->Add( m_wxsfPanel, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
+	
 	
 	this->SetSizer( fgSizer7 );
 	this->Layout();
@@ -661,6 +692,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_txTableName = new wxTextCtrl( m_panel8, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
 	sbSizer5->Add( m_txTableName, 1, wxALL, 5 );
 	
+	
 	m_panel8->SetSizer( sbSizer5 );
 	m_panel8->Layout();
 	sbSizer5->Fit( m_panel8 );
@@ -693,10 +725,12 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_button10 = new wxButton( m_panel14, wxID_DEL, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_button10, 0, wxALL, 5 );
 	
+	
 	m_panel14->SetSizer( bSizer8 );
 	m_panel14->Layout();
 	bSizer8->Fit( m_panel14 );
 	fgSizer11->Add( m_panel14, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	
 	
 	m_panel13->SetSizer( fgSizer11 );
 	m_panel13->Layout();
@@ -756,6 +790,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_staticText251->Wrap( -1 );
 	bSizer19->Add( m_staticText251, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
+	
 	bSizer7->Add( bSizer19, 0, wxEXPAND|wxALIGN_RIGHT, 5 );
 	
 	m_chNotNull = new wxCheckBox( m_pageType, wxID_ANY, _("Not null"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -763,6 +798,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	
 	m_chAutoIncrement = new wxCheckBox( m_pageType, wxID_ANY, _("Auto increment"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer7->Add( m_chAutoIncrement, 0, wxALL, 5 );
+	
 	
 	m_pageType->SetSizer( bSizer7 );
 	m_pageType->Layout();
@@ -823,7 +859,9 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_radioOnUpdate->SetSelection( 0 );
 	gbSizer2->Add( m_radioOnUpdate, wxGBPosition( 0, 2 ), wxGBSpan( 4, 1 ), wxALL|wxEXPAND|wxALIGN_RIGHT, 5 );
 	
+	
 	bSizer11->Add( gbSizer2, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
 	
 	m_pageConstraint->SetSizer( bSizer11 );
 	m_pageConstraint->Layout();
@@ -835,12 +873,15 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_button9 = new wxButton( m_panel9, wxID_SAVE, _("Save"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer18->Add( m_button9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
+	
 	sbSizer6->Add( bSizer18, 0, 0, 5 );
+	
 	
 	m_panel9->SetSizer( sbSizer6 );
 	m_panel9->Layout();
 	sbSizer6->Fit( m_panel9 );
 	fgSizer10->Add( m_panel9, 1, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
+	
 	
 	m_panel7->SetSizer( fgSizer10 );
 	m_panel7->Layout();
@@ -857,7 +898,9 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_button28 = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer27->Add( m_button28, 0, wxALL, 5 );
 	
+	
 	fgSizer9->Add( bSizer27, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
 	
 	this->SetSizer( fgSizer9 );
 	this->Layout();
@@ -945,12 +988,11 @@ _CreateForeignKey::_CreateForeignKey( wxWindow* parent, wxWindowID id, const wxS
 	m_cmbSrcCol = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN|wxCB_READONLY ); 
 	sbSizer7->Add( m_cmbSrcCol, 0, wxALL, 5 );
 	
+	
 	fgSizer12->Add( sbSizer7, 1, wxEXPAND|wxTOP|wxBOTTOM|wxLEFT, 5 );
 	
 	wxGridBagSizer* gbSizer1;
 	gbSizer1 = new wxGridBagSizer( 0, 0 );
-	gbSizer1->AddGrowableCol( 0 );
-	gbSizer1->AddGrowableRow( 0 );
 	gbSizer1->SetFlexibleDirection( wxVERTICAL );
 	gbSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -972,6 +1014,10 @@ _CreateForeignKey::_CreateForeignKey( wxWindow* parent, wxWindowID id, const wxS
 	m_radioOnUpdate->SetSelection( 0 );
 	gbSizer1->Add( m_radioOnUpdate, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
+	
+	gbSizer1->AddGrowableCol( 0 );
+	gbSizer1->AddGrowableRow( 0 );
+	
 	fgSizer12->Add( gbSizer1, 1, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer8;
@@ -991,6 +1037,7 @@ _CreateForeignKey::_CreateForeignKey( wxWindow* parent, wxWindowID id, const wxS
 	m_cmbDstCol = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN|wxCB_READONLY ); 
 	sbSizer8->Add( m_cmbDstCol, 0, wxALL, 5 );
 	
+	
 	fgSizer12->Add( sbSizer8, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 	
 	
@@ -1008,7 +1055,9 @@ _CreateForeignKey::_CreateForeignKey( wxWindow* parent, wxWindowID id, const wxS
 	m_btnOK = new wxButton( this, wxID_ANY, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer12->Add( m_btnOK, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	fgSizer12->Add( bSizer12, 1, wxEXPAND|wxALIGN_RIGHT, 5 );
+	
 	
 	this->SetSizer( fgSizer12 );
 	this->Layout();
@@ -1051,6 +1100,7 @@ _LogDialog::_LogDialog( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	sbSizer9->Add( m_textCtrl11, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	fgSizer13->Add( sbSizer9, 1, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer13;
@@ -1059,7 +1109,9 @@ _LogDialog::_LogDialog( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_button18 = new wxButton( this, wxID_ANY, _("Close"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer13->Add( m_button18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
+	
 	fgSizer13->Add( bSizer13, 1, wxEXPAND|wxBOTTOM, 5 );
+	
 	
 	this->SetSizer( fgSizer13 );
 	this->Layout();
@@ -1106,6 +1158,7 @@ _ViewSettings::_ViewSettings( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	m_txName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer14->Add( m_txName, 1, wxALL, 5 );
+	
 	
 	fgSizer14->Add( bSizer14, 1, wxEXPAND, 5 );
 	
@@ -1154,9 +1207,12 @@ _ViewSettings::_ViewSettings( wxWindow* parent, wxWindowID id, const wxString& t
 	m_btnOK = new wxButton( this, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer14->Add( m_btnOK, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
+	
 	sbSizer12->Add( fgSizer14, 1, wxEXPAND, 5 );
 	
+	
 	bSizer15->Add( sbSizer12, 1, wxEXPAND|wxALL, 5 );
+	
 	
 	this->SetSizer( bSizer15 );
 	this->Layout();
@@ -1223,6 +1279,7 @@ _ClassGenerateDialog::_ClassGenerateDialog( wxWindow* parent, wxWindowID id, con
 	m_btnBrowseVirtualDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer26->Add( m_btnBrowseVirtualDir, 0, wxALL, 5 );
 	
+	
 	fgSizer19->Add( fgSizer26, 1, wxEXPAND, 5 );
 	
 	m_staticText29 = new wxStaticText( this, wxID_ANY, _("Log:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -1235,6 +1292,7 @@ _ClassGenerateDialog::_ClassGenerateDialog( wxWindow* parent, wxWindowID id, con
 	
 	fgSizer19->Add( 0, 0, 1, wxEXPAND, 5 );
 	
+	
 	bSizer22->Add( fgSizer19, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer20;
@@ -1246,7 +1304,9 @@ _ClassGenerateDialog::_ClassGenerateDialog( wxWindow* parent, wxWindowID id, con
 	m_button26 = new wxButton( this, wxID_CLOSE, _("Close"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer20->Add( m_button26, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
+	
 	bSizer22->Add( bSizer20, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+	
 	
 	this->SetSizer( bSizer22 );
 	this->Layout();
@@ -1292,6 +1352,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_treeConnection = new wxTreeCtrl( m_pnSelDatabase, wxID_ANY, wxDefaultPosition, wxSize( 300,-1 ), wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT );
 	fgSizer21->Add( m_treeConnection, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	m_pnSelDatabase->SetSizer( fgSizer21 );
 	m_pnSelDatabase->Layout();
 	fgSizer21->Fit( m_pnSelDatabase );
@@ -1325,6 +1386,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_btnBackup = new wxButton( m_pnBackup, wxID_ANY, _("Backup !"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer22->Add( m_btnBackup, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
+	
 	m_pnBackup->SetSizer( fgSizer22 );
 	m_pnBackup->Layout();
 	fgSizer22->Fit( m_pnBackup );
@@ -1355,7 +1417,9 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	
 	bSizer23->Add( 0, 0, 1, wxEXPAND, 5 );
 	
+	
 	fgSizer24->Add( bSizer23, 1, wxEXPAND, 5 );
+	
 	
 	m_panel20->SetSizer( fgSizer24 );
 	m_panel20->Layout();
@@ -1378,6 +1442,7 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_btnRestore = new wxButton( m_panel201, wxID_ANY, _("Restore"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer241->Add( m_btnRestore, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
+	
 	m_panel201->SetSizer( fgSizer241 );
 	m_panel201->Layout();
 	fgSizer241->Fit( m_panel201 );
@@ -1397,7 +1462,9 @@ _ErdCommitDialog::_ErdCommitDialog( wxWindow* parent, wxWindowID id, const wxStr
 	m_btnNext = new wxButton( this, wxID_ANY, _("Next"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer22->Add( m_btnNext, 0, wxALL, 5 );
 	
+	
 	fgSizer20->Add( bSizer22, 1, wxEXPAND, 5 );
+	
 	
 	this->SetSizer( fgSizer20 );
 	this->Layout();
@@ -1491,7 +1558,9 @@ _CodePreviewDialog::_CodePreviewDialog( wxWindow* parent, wxWindowID id, const w
 	m_sdbSizer2OK = new wxButton( this, wxID_OK );
 	m_sdbSizer2->AddButton( m_sdbSizer2OK );
 	m_sdbSizer2->Realize();
+	
 	fgSizer25->Add( m_sdbSizer2, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	
 	
 	this->SetSizer( fgSizer25 );
 	this->Layout();

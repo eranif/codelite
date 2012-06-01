@@ -42,7 +42,6 @@
     <File Name="CodePreviewDialog.cpp"/>
     <File Name="ClassGenerateDialog.cpp"/>
     <File Name="AdapterSelectDlg.cpp"/>
-    <File Name="Ids.cpp"/>
     <File Name="databaseexplorer.cpp"/>
     <File Name="db_explorer_settings.cpp"/>
     <File Name="imageexportdialog.cpp"/>
@@ -65,7 +64,6 @@
     <File Name="MySqlType.h"/>
     <File Name="MySqlDbAdapter.h"/>
     <File Name="LogDialog.h"/>
-    <File Name="Ids.h"/>
     <File Name="IDbType.h"/>
     <File Name="IDbItem.h"/>
     <File Name="IDbAdapter.h"/>
@@ -94,7 +92,7 @@
     <File Name="AdapterSelectDlg.h"/>
     <File Name="GUI.fbp"/>
     <File Name="db_explorer_settings.h"/>
-    <File Name="DbViewerPanel.cpp"/>
+    <File Name="imageexportdialog.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -140,7 +138,9 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[
+      
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -187,7 +187,9 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[
+      
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -235,7 +237,9 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./WinDebugUnicode" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[
+      
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -286,7 +290,9 @@
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinReleaseUnicode" Command="codelite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[
+      
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

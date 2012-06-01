@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 24 2011)
+// C++ code generated with wxFormBuilder (version May  7 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -260,6 +260,8 @@ class _DBSettingsDialog : public wxDialog
 		wxTextCtrl* m_txPgName;
 		wxStaticText* m_staticText12;
 		wxTextCtrl* m_txPgServer;
+		wxStaticText* m_staticText35;
+		wxTextCtrl* m_txPgPort;
 		wxStaticText* m_staticText21;
 		wxTextCtrl* m_txPgUserName;
 		wxStaticText* m_staticText31;

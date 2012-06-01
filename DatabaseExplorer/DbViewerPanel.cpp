@@ -388,6 +388,7 @@ void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
 				}
 
 				m_pagesAdded.Clear();
+				
 			}
 		}
 		/* else

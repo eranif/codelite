@@ -11,8 +11,9 @@ PostgreSqlDbAdapter::PostgreSqlDbAdapter() {
 	this->m_password = wxT("");
 	this->m_adapterType = atPOSTGRES;
 }
-PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName,const wxString& defaultDb, const wxString& userName, const wxString& password) {
+PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName,const int port,const wxString& defaultDb, const wxString& userName, const wxString& password) {
 	this->m_serverName = serverName;
+	this->m_port = port;
 	this->m_userName = userName;
 	this->m_password = password;
 	this->m_defaultDb = defaultDb;
@@ -32,8 +33,9 @@ DatabaseLayer* PostgreSqlDbAdapter::GetDatabaseLayer(const wxString& dbName) {
 
 #ifdef DBL_USE_POSTGRES
 	if (!CanConnect())  return new PostgresDatabaseLayer();
-	if (!dbName.IsEmpty()) dbLayer = new PostgresDatabaseLayer(this->m_serverName,dbName, this->m_userName, this->m_password);
-	else dbLayer = new PostgresDatabaseLayer(this->m_serverName,this->m_defaultDb, this->m_userName, this->m_password);
+	if (m_port == 0) m_port = 5432;
+	if (!dbName.IsEmpty()) dbLayer = new PostgresDatabaseLayer(this->m_serverName,this->m_port, dbName, this->m_userName, this->m_password);
+	else dbLayer = new PostgresDatabaseLayer(this->m_serverName,this->m_port,this->m_defaultDb, this->m_userName, this->m_password);
 
 #endif
 
@@ -544,7 +546,7 @@ IDbType* PostgreSqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE t
 	return newType;
 }
 IDbAdapter* PostgreSqlDbAdapter::Clone() {
-	return new PostgreSqlDbAdapter(m_serverName, m_defaultDb, m_userName, m_password);
+	return new PostgreSqlDbAdapter(m_serverName,m_port, m_defaultDb, m_userName, m_password);
 }
 
 

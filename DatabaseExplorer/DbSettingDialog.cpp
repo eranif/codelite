@@ -143,7 +143,9 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
 #ifdef DBL_USE_POSTGRES
 	try {
 		//MysqlDatabaseLayer *DbLayer = new MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
-		IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(),m_txPgDatabase->GetValue(),m_txPgUserName->GetValue(),m_txPgPassword->GetValue());
+		long portNumber = 0;
+		m_txPgPort->GetValue().ToLong(&portNumber);
+		IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(),portNumber,m_txPgDatabase->GetValue(),m_txPgUserName->GetValue(),m_txPgPassword->GetValue());
 
 		wxString serverName = m_txPgServer->GetValue();
 		m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
@@ -315,12 +317,15 @@ void DbSettingDialog::DoSavePgSQLHistory()
 	EditorConfigST::Get()->ReadObject(wxT("DbExplorerSettings"), &settings);
 	DbConnectionInfoVec pgconns = settings.GetPgSQLConnections();
 	
+	long port = 0;
 	DbConnectionInfo conn;
 	conn.SetConnectionType (DbConnectionInfo::DbConnTypePgSQL);
 	conn.SetConnectionName (m_txPgName->GetValue());
 	conn.SetDefaultDatabase(m_txPgDatabase->GetValue());
 	conn.SetPassword       (m_txPgPassword->GetValue());
-	conn.SetServer         (m_txPgServer->GetValue());
+	conn.SetServer         (m_txPgServer->GetValue());	
+	m_txPgPort->GetValue().ToLong(&port);
+	conn.SetPort(port);
 	conn.SetUsername       (m_txPgUserName->GetValue());
 	
 	if(!conn.IsValid())
@@ -356,6 +361,7 @@ void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, c
 				// populate the PgSQL fields
 				m_txPgName->SetValue(conns.at(i).GetConnectionName());
 				m_txPgServer->SetValue(conns.at(i).GetServer());
+				m_txPgPort->SetValue(wxString::Format(wxT("%i"),conns.at(i).GetPort()));
 				m_txPgUserName->SetValue(conns.at(i).GetUsername());
 				m_txPgPassword->SetValue(conns.at(i).GetPassword());
 				m_txPgDatabase->SetValue(conns.at(i).GetDefaultDatabase());

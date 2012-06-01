@@ -16,7 +16,7 @@ class PostgreSqlDbAdapter : public IDbAdapter {
 
 public:
 	PostgreSqlDbAdapter();
-	PostgreSqlDbAdapter(const wxString& serverName,const wxString& defaultDb, const wxString& userName, const wxString& password);
+	PostgreSqlDbAdapter(const wxString& serverName,const int port, const wxString& defaultDb, const wxString& userName, const wxString& password);
 	~PostgreSqlDbAdapter();
 
 	virtual bool GetColumns(DBETable* pTab);
@@ -56,6 +56,7 @@ protected:
 	IDbType* parseTypeString(const wxString& typeString);
 
 	wxString m_serverName;
+	int m_port;
 	wxString m_userName;
 	wxString m_password;
 	wxString m_defaultDb;

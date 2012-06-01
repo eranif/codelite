@@ -8,6 +8,7 @@ class DbConnectionInfo : public SerializedObject
 protected:
 	wxString m_connectionName;
 	wxString m_server;
+	int 	 m_port;
 	wxString m_password;
 	wxString m_username;
 	wxString m_defaultDatabase;
@@ -35,6 +36,9 @@ public:
 	void SetServer(const wxString& server) {
 		this->m_server = server;
 	}
+	void SetPort(const int port) {
+		this->m_port = port;
+	}
 	void SetUsername(const wxString& username) {
 		this->m_username = username;
 	}
@@ -46,6 +50,9 @@ public:
 	}
 	const wxString& GetServer() const {
 		return m_server;
+	}
+	const int  GetPort() const {
+		return m_port;
 	}
 	const wxString& GetUsername() const {
 		return m_username;

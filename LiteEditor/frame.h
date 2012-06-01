@@ -54,6 +54,7 @@ class WorkspaceTab;
 class FileExplorer;
 class OutputTabWindow;
 class DockablePaneMenuManager;
+class MyMenuBar;
 
 //--------------------------------
 // Helper class
@@ -108,6 +109,8 @@ class clMainFrame : public wxFrame
 	bool                                  m_loadLastSession;
 	wxSizer*                              m_horzSizer;
 	StatusbarTimer*                       m_statusbarTimer;
+	MyMenuBar*                            m_myMenuBar;
+	
 protected:
 	bool IsEditorEvent(wxEvent &event);
 

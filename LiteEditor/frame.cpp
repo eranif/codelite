@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "my_menu_bar.h"
 #include "bitmap_loader.h"
 #include <wx/wupdlock.h>
 #include "file_logger.h"
@@ -620,6 +621,11 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 
 clMainFrame::~clMainFrame(void)
 {
+	// this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
+	// see this wxWidgets bug report for more details:
+	//  http://trac.wxwidgets.org/ticket/14292
+	delete m_myMenuBar; 
+	
 	wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
 	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
 	wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
@@ -776,7 +782,12 @@ void clMainFrame::CreateGUIControls(void)
 	m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
 	// Load the menubar from XRC and set this frame's menubar to it.
-	SetMenuBar(wxXmlResource::Get()->LoadMenuBar(wxT("main_menu")));
+	wxMenuBar *mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu")); 
+	
+	// Under GTK we need this wrapper class to avoid warnings when codelite exists
+	m_myMenuBar = new MyMenuBar();
+	m_myMenuBar->Set(mb);
+	SetMenuBar(mb);
 
 	// Set up dynamic parts of menu.
 	CreateViewAsSubMenu();

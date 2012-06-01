@@ -49,6 +49,7 @@
 	  <CompilerOption Name="-fopenmp">Enable OpenMP (compilation).</CompilerOption>
       <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
 	  <LinkerOption Name="-fopenmp">Enable OpenMP (linkage).</LinkerOption>
+	  <LinkerOption Name="-pg">Profile code when executed.</LinkerOption>
     </Compiler>
     <Compiler Name="gnu gcc">
       <Switch Name="ArchiveOutput" Value=" "/>

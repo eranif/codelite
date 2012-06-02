@@ -50,6 +50,7 @@
       <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
 	  <LinkerOption Name="-fopenmp">Enable OpenMP (linkage).</LinkerOption>
 	  <LinkerOption Name="-pg">Profile code when executed.</LinkerOption>
+	  <LinkerOption Name="-mwindows">Prevent a useless terminal console appearing with MSWindows GUI programs.</LinkerOption>
     </Compiler>
     <Compiler Name="gnu gcc">
       <Switch Name="ArchiveOutput" Value=" "/>
@@ -99,6 +100,8 @@
 	  <CompilerOption Name="-fopenmp">Enable OpenMP (compilation).</CompilerOption>
       <LinkerOption Name="-s">Remove all symbol table and relocation information from the executable.</LinkerOption>
 	  <LinkerOption Name="-fopenmp">Enable OpenMP (linkage).</LinkerOption>
+	  <LinkerOption Name="-pg">Profile code when executed.</LinkerOption>
+	  <LinkerOption Name="-mwindows">Prevent a useless terminal console appearing with MSWindows GUI programs.</LinkerOption>
     </Compiler>
     <Compiler Name="cobra" GenerateDependenciesFiles="no">
       <Switch Name="ArchiveOutput" Value="-ert"/>

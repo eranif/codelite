@@ -462,6 +462,12 @@ void Manager::CreateProject ( ProjectData &data )
 	ProjectSettingsCookie cookie;
 	BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration ( cookie );
 	while ( bldConf ) {
+#ifndef __WXMSW__
+	// The -mwindows linker flag is at best useless in !MSW, and breaks linking in the latest g++ (fedora17)
+		wxString linkoptions = bldConf->GetLinkOptions();
+		linkoptions.Replace(wxT("-mwindows;"), wxT(""));
+		bldConf->SetLinkOptions(linkoptions);
+#endif
 		bldConf->SetCompilerType ( data.m_cmpType );
 		bldConf = settings->GetNextBuildConfiguration ( cookie );
 	}

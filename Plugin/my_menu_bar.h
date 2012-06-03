@@ -2,8 +2,9 @@
 #define MYMENUBAR_H
 
 #include <wx/menu.h>
+#include "codelite_exports.h"
 
-class MyMenuBar : public wxMenuBar
+class WXDLLIMPEXP_SDK MyMenuBar : public wxMenuBar
 {
 	wxMenuBar* m_mb;
 public:

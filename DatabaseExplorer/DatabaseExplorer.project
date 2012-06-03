@@ -46,6 +46,7 @@
     <File Name="db_explorer_settings.cpp"/>
     <File Name="imageexportdialog.cpp"/>
     <File Name="imageexportdialog.h"/>
+    <File Name="DbViewerPanel.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="databaseexplorer.h"/>

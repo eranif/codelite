@@ -855,7 +855,10 @@ bool Subversion2::IsPathUnderSvn(const wxString& path)
 
 	if(wxDirExists(svnDirectory2.c_str()))
 		return true;
-
+    
+    if( m_subversionView->GetRootDir().IsEmpty() == false)
+        return true;
+        
 	return false;
 }
 

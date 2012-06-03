@@ -9,6 +9,8 @@
 #include <wx/image.h>
 #include <wx/bitmap.h>
 #include <wx/aboutdlg.h>
+#include <wx/datetime.h> 
+#include "imacromanager.h"
 
 /*!
   * \brief Class for include plugin to CodeLite.
@@ -47,7 +49,7 @@ wxString wxbuildinfo()
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
 	PluginInfo info;
-	info.SetAuthor(wxT("Václav Špruček, Tomas Bata University in Zlin, www.fai.utb.cz"));
+	info.SetAuthor(wxT("Václav Špruček, Michal Bližňák, Tomas Bata University in Zlin, www.fai.utb.cz"));
 	info.SetName(wxT("Call Graph"));
 	info.SetDescription(wxT("Create application call graph from profiling information provided by gprof tool."));
 	info.SetVersion(wxT("v1.0"));
@@ -152,7 +154,7 @@ void CallGraph::HookPopupMenu(wxMenu *menu, MenuType type)
 		//TODO::Append items for the file view/Project context menu
 		if ( !menu->FindItem( XRCID("cg_show_callgraph_popup") ) ) {
 			menu->PrependSeparator();
-			menu->Prepend( XRCID("cg_show_callgraph_popup"), _("CallGraph"), CreateProjectPopMenu() );
+			menu->Prepend( XRCID("cg_show_callgraph_popup"), _("Call Graph"), CreateProjectPopMenu() );
 		}
 	} else if (type == MenuTypeFileView_Folder) {
 		//TODO::Append items for the file view/Virtual folder context menu
@@ -192,7 +194,7 @@ void CallGraph::OnAbout(wxCommandEvent& event)
 	desc << wxbuildinfo() << wxT("\n\n");
 
 	wxAboutDialogInfo info;
-	info.SetName(_("CallGraph"));
+	info.SetName(_("Call Graph"));
 	info.SetVersion(_("v1.0"));
 	info.SetDescription(desc);
 	info.SetCopyright(_("2012 (C) Tomas Bata University, Zlin, Czech Republic"));
@@ -268,11 +270,9 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 	bool isproject = false;
 	bool issettings = false;
 
-	wxString errMsg, projectPath, projectPathActive, projectName, debugDirectory;
-	debugDirectory = wxT("./Debug");
-	//
+	wxString errMsg, projectPath, projectPathActive, projectName, workingDirectory;
 	m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &confData);
-	//
+	
 	if (m_mgr->GetWorkspace()) {
 		TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
 		if( info.m_itemType == ProjectItem::TypeProject) projectName = info.m_text;
@@ -280,13 +280,13 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
 		ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName( projectName, errMsg );
 		if (proj) {
-			BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf(proj->GetName(), debugDirectory);
+			BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf(proj->GetName(), m_mgr->GetWorkspace()->GetBuildMatrix()->GetSelectedConfigurationName());
 			if(bldConf) {
-				debugDirectory = bldConf->GetIntermediateDirectory(); // ./Debug - name for intermediate folder
+				workingDirectory = m_mgr->GetMacrosManager()->Expand( bldConf->GetWorkingDirectory(), m_mgr, proj->GetName() );
 			}
 			projectPath =  proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ); //path for active project
 			projectPathActive = projectPath;
-			projectPath += debugDirectory + stvariables::sd;
+			projectPath += workingDirectory + stvariables::sd;
 			isproject = true;
 		} else {
 			wxMessageBox( errMsg, _("Error"), wxOK | wxICON_HAND );
@@ -300,7 +300,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 		issettings = true;
 	}
 
-	if (isgmonfile && isproject && issettings) { // kontrola zda je spravne nastaven plugin
+	if (isgmonfile && isproject && issettings) {// check plugin settings
 		// start for parsing and writing to the dot language file
 		bool candot = false;
 		GprofParser *pgp = new GprofParser();
@@ -317,13 +317,12 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 			candot = true;
 		} else
 			wxMessageBox(wxT("CallGraph failed to get profiling data, please build the project again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
-		//
 
 		if(candot) {
 			//DotWriter to output png file
 			pdw->setLineParser(&(pgp->lines));
 			pdw->setDotWriterFromDialogSettings(m_mgr);//(confData.GetColorsNode(),confData.GetColorsEdge(),confData.GetTresholdNode(),confData.GetTresholdEdge(),confData.GetBoxName(),confData.GetBoxParam());
-			//
+
 			pdw->WriteToDotLanguade();
 			pdw->SendToDotAppOutputDirectory(projectPathActive);
 
@@ -339,7 +338,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
 		//show image and greate table in the editor tab page
 		if(wxFileExists(projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname)) {
-			m_mgr->AddEditorPage( new uicallgraphpanel( m_mgr->GetEditorPaneNotebook(), m_mgr, projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname, &(pgp->lines)), wxT("Call graph for \"") + projectName +  wxT("\""));
+			m_mgr->AddEditorPage( new uicallgraphpanel( m_mgr->GetEditorPaneNotebook(), m_mgr, projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname, &(pgp->lines)), wxT("Call graph for \"") + projectName +  wxT("\" ") + wxDateTime::Now().Format(wxT("%Y-%m-%d %H:%M:%S")));
 		} else {
 			//wxMessageBox(wxT("File CallGraph.png is not exist and can not be open in page."));
 			wxMessageBox(wxT("Failed to open file CallGraph.png, please build the project and try this plugin again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
@@ -356,7 +355,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 		
 		if (!isgmonfile) {
 			wxString msg;
-			msg << wxT("Failed to display CallGraph. Please check the following:\n")
+			msg << wxT("Failed to display call graph. Please check the following:\n")
 				<< wxT("1. Make sure that your project is compiled AND linked with the '-pg' flag\n")
 				<< wxT("2. You need to RUN your project at least once to be able to view the call-graph\n"); 
 			wxMessageBox(msg, wxT("CallGraph"), wxOK | wxICON_WARNING);
@@ -366,7 +365,6 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
 		}
 	}
-
 }
 
 void CallGraph::OnSettings(wxCommandEvent& event)

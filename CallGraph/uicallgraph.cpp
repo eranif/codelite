@@ -58,8 +58,8 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_grid->EnableDragColSize( true );
 	m_grid->SetColLabelSize( 30 );
 	m_grid->SetColLabelValue( 0, _(" Function name ") );
-	m_grid->SetColLabelValue( 1, _(" Total time % ") );
-	m_grid->SetColLabelValue( 2, _(" Self time % ") );
+	m_grid->SetColLabelValue( 1, _(" Total time (%) ") );
+	m_grid->SetColLabelValue( 2, _(" Self time (s) ") );
 	m_grid->SetColLabelValue( 3, _(" Called ") );
 	m_grid->SetColLabelAlignment( wxALIGN_CENTRE, wxALIGN_CENTRE );
 	

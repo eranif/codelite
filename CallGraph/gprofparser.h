@@ -31,6 +31,7 @@ private:
 	bool iscycle;
 	bool islom;
 	bool isplus;	
+	bool isspontaneous;	
 	
 public:
 	/**

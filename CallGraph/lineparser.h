@@ -23,7 +23,7 @@ public:
 	int index;
 	float time ;
 	float self;
-	float childern;
+	float children;
 	int called0;
 	int called1;
 	wxString name;

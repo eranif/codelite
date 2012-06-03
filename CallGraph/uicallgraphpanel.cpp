@@ -104,7 +104,8 @@ void uicallgraphpanel::CreateAndInserDataToTable()
 			//name   time %   self  children    called
 			m_grid->SetCellValue(nr, 0, line->name);
 			m_grid->SetCellValue(nr, 1, wxString::Format(wxT("%.2f"),line->time));
-			m_grid->SetCellValue(nr, 2, wxString::Format(wxT("%.2f"),line->self));
+			m_grid->SetCellValue(nr, 2, wxString::Format(wxT("%.2f"),line->self + line->children));
+
 			//m_grid->SetCellValue(nr, 3, wxString::Format(wxT("%.2f"),line->childern));
 			//
 			int callsum;

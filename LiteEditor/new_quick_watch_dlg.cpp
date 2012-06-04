@@ -209,6 +209,7 @@ void DisplayVariableDlg::DoCleanUp()
 void DisplayVariableDlg::HideDialog()
 {
 	DoCleanUp();
+    //asm("int3");
 	wxDialog::Show(false);
 	m_mousePosTimer->Stop();
 }
@@ -244,7 +245,9 @@ void DisplayVariableDlg::ShowDialog(bool center)
 
 	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(editor) {
+#ifndef __WXMAC__
 		clMainFrame::Get()->Raise();
+#endif
 		editor->SetFocus();
 		editor->SetActive();
 	}
@@ -303,6 +306,11 @@ wxString DisplayVariableDlg::DoGetItemPath(const wxTreeItemId& treeItem)
 	while ( item.IsOk() ) {
 		wxString text = m_treeCtrl->GetItemText(item);
 		text = text.BeforeFirst(wxT('='));
+
+#ifdef __WXMAC__
+        // Mac puts the type in square brackets, remove them as well
+        text = text.BeforeFirst(wxT('['));
+#endif
 		text.Trim().Trim(false);
 
 		if ( item != m_treeCtrl->GetRootItem() ) {
@@ -435,7 +443,9 @@ void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEvent& event)
 void DisplayVariableDlg::OnCheckMousePosTimer(wxTimerEvent& e)
 {
 	wxRect rect = GetScreenRect().Inflate(20, 30);
-	bool mouseLeftWidow = !rect.Contains( ::wxGetMousePosition() );
+    
+    wxPoint pt = ::wxGetMousePosition();
+	bool mouseLeftWidow = !rect.Contains( pt );
 	if(mouseLeftWidow) {
 
 		wxMouseState state = wxGetMouseState();
@@ -461,6 +471,9 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 		return;
 
 	wxString oldText = m_treeCtrl->GetItemText(item);
+    oldText = oldText.BeforeFirst(wxT('='));
+    oldText.Trim().Trim(false);
+    
 	wxString newText = wxGetTextFromUser(_("Edit Expression"), _("Edit Expression"), oldText, this);
 	if(newText.IsEmpty())
 		return;
@@ -478,12 +491,14 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 		typecast.Replace(oldText, wxT(""));
 		typecast.Trim().Trim(false);
 		
+        if(!typecast.IsEmpty()) {
 		if(!typecast.StartsWith(wxT("(")))
 			typecast.Prepend(wxT("("));
 		
 		if(!typecast.EndsWith(wxT(")")))
-			typecast.Append(wxT("("));
-			
+			typecast.Append(wxT(")"));
+        }
+        
 		newExpr.Prepend(typecast);
 	}
 	

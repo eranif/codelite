@@ -22,7 +22,6 @@ DotWriter::DotWriter()
 	graph = wxT("");
 	output = wxT("");
 	mlines = NULL;
-	m_mgr = NULL;
 	dwcn = 0;
 	dwce = 0;
 	dwtn = 0;
@@ -37,15 +36,14 @@ DotWriter::~DotWriter()
 
 }
 
-void DotWriter::setLineParser(LineParserList *pLines )//, int numOfLines)
+void DotWriter::SetLineParser(LineParserList *pLines )//, int numOfLines)
 {
 	mlines = pLines;
 }
 
-void DotWriter::setDotWriterFromDialogSettings(IManager *mgr)
+void DotWriter::SetDotWriterFromDialogSettings(IManager *mgr)
 {
-	m_mgr = mgr;
-	m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &confData);
+	mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &confData);
 	dwcn = confData.GetColorsNode();
 	dwce = confData.GetColorsEdge();
 	dwtn = confData.GetTresholdNode();
@@ -54,7 +52,17 @@ void DotWriter::setDotWriterFromDialogSettings(IManager *mgr)
 	dwbparam = confData.GetBoxParam();
 }
 
-void DotWriter::WriteToDotLanguade()
+void DotWriter::SetDotWriterFromDetails(int colnode, int coledge, int thrnode, int thredge, bool boxname, bool boxparam)
+{
+	dwcn = colnode;
+	dwce = coledge;
+	dwtn = thrnode;
+	dwte = thredge;
+	dwbname = boxname;
+	dwbparam = boxparam;
+}
+
+void DotWriter::WriteToDotLanguage()
 {
 	int pl_index = 0;
 	float pl_time = 0;

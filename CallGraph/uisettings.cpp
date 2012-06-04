@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec 21 2009)
+// C++ code generated with wxFormBuilder (version Apr 10 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -51,6 +51,7 @@ uisettings::uisettings( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
+	
 	mainSizer->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer;
@@ -82,6 +83,7 @@ uisettings::uisettings( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_spinCtrl_treshold_edge = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100, 0 );
 	fgSizer2->Add( m_spinCtrl_treshold_edge, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
+	
 	sbSizer->Add( fgSizer2, 0, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer1;
@@ -93,6 +95,7 @@ uisettings::uisettings( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_staticText8 = new wxStaticText( this, wxID_ANY, _("Options:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText8->Wrap( -1 );
 	bSizer1->Add( m_staticText8, 0, wxALL, 5 );
+	
 	
 	sbSizer->Add( bSizer1, 0, wxEXPAND, 5 );
 	
@@ -122,7 +125,9 @@ uisettings::uisettings( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_spinCtrl_colors_edge = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1 );
 	fgSizer3->Add( m_spinCtrl_colors_edge, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
+	
 	sbSizer->Add( fgSizer3, 1, wxEXPAND|wxBOTTOM, 5 );
+	
 	
 	mainSizer->Add( sbSizer, 1, wxEXPAND|wxALL, 5 );
 	
@@ -136,7 +141,9 @@ uisettings::uisettings( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_buttonCancel = new wxButton( this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( m_buttonCancel, 0, wxALL, 5 );
 	
+	
 	mainSizer->Add( bSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	
 	
 	this->SetSizer( mainSizer );
 	this->Layout();
@@ -162,4 +169,5 @@ uisettings::~uisettings()
 	m_checkBox_Parametrs->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( uisettings::OnCheckParam ), NULL, this );
 	m_buttonOk->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( uisettings::OnButton_click_ok ), NULL, this );
 	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( uisettings::OnButton_click_cancel ), NULL, this );
+	
 }

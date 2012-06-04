@@ -66,6 +66,17 @@ public:
 	 */
 	virtual void UnPlug();
 	
+	/**
+	 * @brief Return string with value path for external application gprof which is stored in configuration data.
+	 * @return Path to 'gprof' tool
+	 */
+	wxString GetGprofPath();
+	/**
+	 * @brief Return string with value path for external application dot which is stored in configuration data.
+	 * @return Path to 'dot' tool
+	 */
+	wxString GetDotPath();
+	
 protected:
 	/**
 	 * @brief Function create and open About dialog Call graph plugin.
@@ -82,16 +93,6 @@ protected:
 	 * @param event Reference to event class
 	 */
 	void OnSettings(wxCommandEvent &event);
-	/**
-	 * @brief Return string with value path for external application gprof which is stored in configuration data.
-	 * @return Path to 'gprof' tool
-	 */
-	wxString GetGprofPath();
-	/**
-	 * @brief Return string with value path for external application dot which is stored in configuration data.
-	 * @return Path to 'dot' tool
-	 */
-	wxString GetDotPath();
 	
 	/**
 	 * @brief Create custom plugin's popup menu.
@@ -112,5 +113,8 @@ protected:
 	ConfCallGraph confData; // object confData type ConfCallGraph with stored configuration data
 
 };
+
+extern CallGraph* thePlugin;
+
 #endif //CallGraph
 

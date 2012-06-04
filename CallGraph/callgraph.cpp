@@ -16,7 +16,7 @@
   * \brief Class for include plugin to CodeLite.
   */
 
-static CallGraph* thePlugin = NULL;
+CallGraph* thePlugin = NULL;
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -284,7 +284,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 			if(bldConf) {
 				workingDirectory = m_mgr->GetMacrosManager()->Expand( bldConf->GetWorkingDirectory(), m_mgr, proj->GetName() );
 			}
-			projectPath =  proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ); //path for active project
+			projectPath = proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ); //path for active project
 			projectPathActive = projectPath;
 			projectPath += workingDirectory + stvariables::sd;
 			isproject = true;
@@ -320,10 +320,10 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
 		if(candot) {
 			//DotWriter to output png file
-			pdw->setLineParser(&(pgp->lines));
-			pdw->setDotWriterFromDialogSettings(m_mgr);//(confData.GetColorsNode(),confData.GetColorsEdge(),confData.GetTresholdNode(),confData.GetTresholdEdge(),confData.GetBoxName(),confData.GetBoxParam());
+			pdw->SetLineParser(&(pgp->lines));
+			pdw->SetDotWriterFromDialogSettings(m_mgr);
 
-			pdw->WriteToDotLanguade();
+			pdw->WriteToDotLanguage();
 			pdw->SendToDotAppOutputDirectory(projectPathActive);
 
 			if (pdw->DotFileExist(projectPathActive)) {
@@ -338,7 +338,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
 		//show image and greate table in the editor tab page
 		if(wxFileExists(projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname)) {
-			m_mgr->AddEditorPage( new uicallgraphpanel( m_mgr->GetEditorPaneNotebook(), m_mgr, projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname, &(pgp->lines)), wxT("Call graph for \"") + projectName +  wxT("\" ") + wxDateTime::Now().Format(wxT("%Y-%m-%d %H:%M:%S")));
+			m_mgr->AddEditorPage( new uicallgraphpanel( m_mgr->GetEditorPaneNotebook(), m_mgr, projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname, projectPathActive, &(pgp->lines)), wxT("Call graph for \"") + projectName +  wxT("\" ") + wxDateTime::Now().Format(wxT("%Y-%m-%d %H:%M:%S")));
 		} else {
 			//wxMessageBox(wxT("File CallGraph.png is not exist and can not be open in page."));
 			wxMessageBox(wxT("Failed to open file CallGraph.png, please build the project and try this plugin again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);

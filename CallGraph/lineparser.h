@@ -33,7 +33,9 @@ public:
 	bool child; //  output from primary line
 	bool cycle; 
 	bool recursive;
-	int  cycleid;	
+	int  cycleid;
+	
+	LineParser* Clone();
 };
 
 WX_DECLARE_LIST( LineParser, LineParserList );

@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec 21 2009)
+// C++ code generated with wxFormBuilder (version Apr 10 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __uisettings__
-#define __uisettings__
+#ifndef __UISETTINGS_H__
+#define __UISETTINGS_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -42,9 +43,6 @@ class uisettings : public wxDialog
 		wxStaticText* m_staticText_path_dot;
 		wxTextCtrl* m_textCtrl_path_dot;
 		wxButton* m_button_select_dot;
-		
-		
-		
 		wxStaticText* m_staticText5;
 		wxStaticText* m_staticText6;
 		wxSpinCtrl* m_spinCtrl_treshold_node;
@@ -72,9 +70,9 @@ class uisettings : public wxDialog
 	
 	public:
 		
-		uisettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		uisettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~uisettings();
 	
 };
 
-#endif //__uisettings__
+#endif //__UISETTINGS_H__

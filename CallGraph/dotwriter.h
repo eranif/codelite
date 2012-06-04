@@ -44,10 +44,6 @@ protected:
 	 * @brief Object confData type ConfCallGraph with stored configuration data.
 	 */
 	ConfCallGraph confData;
-	/**
-	 * @brief Pointer m_mgr type of IManager.
-	 */
-	IManager *m_mgr;
 
 public:
 	/**
@@ -59,20 +55,31 @@ public:
 	 */
 	~DotWriter();
 	/**
-	 * @brief Function setup object DotWriter and assign the pointer pLines.
+	 * @brief Function sets object DotWriter and assign the pointer pLines.
 	 * @param pLines
 	 */	
-	void setLineParser(LineParserList *pLines);
+	void SetLineParser(LineParserList *pLines);
 	/**
-	 * @brief Function setup object DotWriter from stored configuration data.
+	 * @brief Function sets object DotWriter from stored configuration data.
 	 * @param mgr
 	 */	
-	void setDotWriterFromDialogSettings(IManager *mgr);
+	void SetDotWriterFromDialogSettings(IManager *mgr);
+	
+	/**
+	 * @brief Function sets object DotWriter from given data.
+	 * @param colnode
+	 * @param coledge
+	 * @param thrnode
+	 * @param thredge
+	 * @param boxname
+	 * @param boxparam
+	 */
+	void SetDotWriterFromDetails(int colnode, int coledge, int thrnode, int thredge, bool boxname, bool boxparam);
 	//
 	/**
 	 * @brief Function create data in the DOT language and prepare it to write.
 	 */
-	void WriteToDotLanguade();
+	void WriteToDotLanguage();
 	/**
 	 * @brief Function write data in the DOT language to file dot.txt.
 	 * @param path for file where write file with DOT language.

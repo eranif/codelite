@@ -22,7 +22,7 @@
     <long Value="2" Name="size"/>
     <SerializedObject Name="PreDefinedSet0">
       <wxString Value="Default" Name="m_name"/>
-      <bool Value="1" Name="m_active"/>
+      <bool Value="0" Name="m_active"/>
       <long Value="4" Name="size"/>
       <SerializedObject Name="DebuggerCmd0">
         <wxString Value="std::string" Name="m_name"/>
@@ -47,7 +47,7 @@
     </SerializedObject>
     <SerializedObject Name="PreDefinedSet1">
       <wxString Value="wxWidgets-29" Name="m_name"/>
-      <bool Value="0" Name="m_active"/>
+      <bool Value="1" Name="m_active"/>
       <long Value="4" Name="size"/>
       <SerializedObject Name="DebuggerCmd0">
         <wxString Value="std::string" Name="m_name"/>

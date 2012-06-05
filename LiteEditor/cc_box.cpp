@@ -517,7 +517,7 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 
     LEditor *editor = GetEditor();
     int insertPos = editor->WordStartPosition(editor->GetCurrentPos(), true);
-	int endPos    = editor->WordEndPosition(editor->GetCurrentPos(), true);
+	int endPos    = editor->GetCurrentPos(); //editor->WordEndPosition(editor->GetCurrentPos(), true);
 	
     editor->SetSelection(insertPos, endPos);
     editor->ReplaceSelection(word);

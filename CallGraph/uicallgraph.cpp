@@ -68,6 +68,20 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_menuItem2 = new wxMenuItem( m_menu1, wxID_ANY, wxString( _("Close call graph") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menu1->Append( m_menuItem2 );
 	
+	m_menu1->AppendSeparator();
+	
+	wxMenuItem* m_menuItem3;
+	m_menuItem3 = new wxMenuItem( m_menu1, wxID_ANY, wxString( _("Zoom in") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu1->Append( m_menuItem3 );
+	
+	wxMenuItem* m_menuItem4;
+	m_menuItem4 = new wxMenuItem( m_menu1, wxID_ANY, wxString( _("Zoom out") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu1->Append( m_menuItem4 );
+	
+	wxMenuItem* m_menuItem5;
+	m_menuItem5 = new wxMenuItem( m_menu1, wxID_ANY, wxString( _("Zoom 100%") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu1->Append( m_menuItem5 );
+	
 	m_scrolledWindow->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( uicallgraph::m_scrolledWindowOnContextMenu ), NULL, this ); 
 	
 	bSizer2->Add( m_scrolledWindow, 1, wxEXPAND|wxLEFT, 5 );
@@ -90,7 +104,10 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_grid->SetMargins( 0, 0 );
 	
 	// Columns
-	m_grid->AutoSizeColumns();
+	m_grid->SetColSize( 0, 300 );
+	m_grid->SetColSize( 1, 100 );
+	m_grid->SetColSize( 2, 100 );
+	m_grid->SetColSize( 3, 75 );
 	m_grid->EnableDragColMove( false );
 	m_grid->EnableDragColSize( true );
 	m_grid->SetColLabelSize( 30 );
@@ -110,7 +127,7 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	// Cell Defaults
 	m_grid->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_TOP );
-	bSizer3->Add( m_grid, 0, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( m_grid, 1, wxALL|wxEXPAND, 5 );
 	
 	
 	m_panel2->SetSizer( bSizer3 );
@@ -125,18 +142,32 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	// Connect Events
 	m_buttonRefresh->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( uicallgraph::OnRefreshClick ), NULL, this );
+	m_scrolledWindow->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( uicallgraph::OnLeftDown ), NULL, this );
+	m_scrolledWindow->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( uicallgraph::OnLeftUp ), NULL, this );
+	m_scrolledWindow->Connect( wxEVT_MOTION, wxMouseEventHandler( uicallgraph::OnMouseMove ), NULL, this );
+	m_scrolledWindow->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( uicallgraph::OnMouseWheel ), NULL, this );
 	m_scrolledWindow->Connect( wxEVT_PAINT, wxPaintEventHandler( uicallgraph::OnPaint ), NULL, this );
 	this->Connect( m_menuItem1->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnSaveCallGraph ) );
 	this->Connect( m_menuItem2->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnClosePanel ) );
+	this->Connect( m_menuItem3->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomIn ) );
+	this->Connect( m_menuItem4->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomOut ) );
+	this->Connect( m_menuItem5->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoom100 ) );
 }
 
 uicallgraph::~uicallgraph()
 {
 	// Disconnect Events
 	m_buttonRefresh->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( uicallgraph::OnRefreshClick ), NULL, this );
+	m_scrolledWindow->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( uicallgraph::OnLeftDown ), NULL, this );
+	m_scrolledWindow->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( uicallgraph::OnLeftUp ), NULL, this );
+	m_scrolledWindow->Disconnect( wxEVT_MOTION, wxMouseEventHandler( uicallgraph::OnMouseMove ), NULL, this );
+	m_scrolledWindow->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( uicallgraph::OnMouseWheel ), NULL, this );
 	m_scrolledWindow->Disconnect( wxEVT_PAINT, wxPaintEventHandler( uicallgraph::OnPaint ), NULL, this );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnSaveCallGraph ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnClosePanel ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomIn ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomOut ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoom100 ) );
 	
 	delete m_menu1; 
 }

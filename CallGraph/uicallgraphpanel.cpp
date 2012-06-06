@@ -7,29 +7,32 @@
 #include <wx/xrc/xmlres.h>
 #include "callgraph.h"
 
-uicallgraphpanel::uicallgraphpanel(wxWindow *parent, IManager *mgr, const wxString& imagepath, const wxString& projectpath, LineParserList *pLines) : uicallgraph(parent)
+uicallgraphpanel::uicallgraphpanel(wxWindow *parent, IManager *mgr, const wxString& imagepath, const wxString& projectpath, int suggestedThreshold, LineParserList *pLines) : uicallgraph(parent)
 {
 	m_mgr = mgr;
 	pathimage = imagepath;
 	pathproject = projectpath;
+	m_scale = 1;
 
 	// copy lines to local storage
 	m_lines.DeleteContents( true );
 	for(LineParserList::iterator it = pLines->begin(); it != pLines->end(); ++it)
 		m_lines.Append((*it)->Clone());
 
+	m_bmpOrig.LoadFile(pathimage, wxBITMAP_TYPE_PNG);
 	UpdateImage();
 
 	m_scrolledWindow->SetBackgroundColour(wxColour(255, 255, 255));
 	m_scrolledWindow->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
 	m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &confData);
-	CreateAndInserDataToTable(confData.GetTresholdNode());
+	if( suggestedThreshold == -1 ) suggestedThreshold = confData.GetTresholdNode();
 
-	m_spinNT->SetValue(confData.GetTresholdNode());
+	CreateAndInserDataToTable(suggestedThreshold);
+
+	m_spinNT->SetValue(suggestedThreshold);
 	m_spinET->SetValue(confData.GetTresholdEdge());
 	m_checkBoxSN->SetValue(confData.GetBoxName());
-	
 	m_grid->Update();
 }
 
@@ -47,7 +50,7 @@ void uicallgraphpanel::OnPaint(wxPaintEvent& event)
 	ptVirt.y -= 20;
 
 	wxAutoBufferedPaintDC dc(m_scrolledWindow);
-	wxMemoryDC memDC(m_Bmp);
+	wxMemoryDC memDC(m_bmpScaled);
 
 	dc.SetBrush( wxBrush( m_scrolledWindow->GetBackgroundColour() ) );
 	dc.Clear();
@@ -58,12 +61,12 @@ void uicallgraphpanel::OnSaveCallGraph(wxCommandEvent& event)
 {
 	//wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
 
-	wxFileDialog saveFileDialog(this, _("Save call graph..."), wxT(""), wxT("CallGraph"), _("png files (*.png)|*.png"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+	wxFileDialog saveFileDialog(this, _("Save call graph..."), wxT(""), wxT("CallGraph"), wxT("png files (*.png)|*.png"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 
 	if (saveFileDialog.ShowModal() == wxID_CANCEL)
 		return;
 
-	m_Bmp.SaveFile(saveFileDialog.GetPath(), wxBITMAP_TYPE_PNG);
+	m_bmpOrig.SaveFile(saveFileDialog.GetPath(), wxBITMAP_TYPE_PNG);
 }
 
 void uicallgraphpanel::OnClosePanel(wxCommandEvent& event)
@@ -96,9 +99,6 @@ void uicallgraphpanel::CreateAndInserDataToTable(int nodethr)
 		}
 		it = it->GetNext();
 	}
-
-	m_grid->AutoSize();
-	m_grid->Fit();
 }
 
 void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
@@ -125,11 +125,11 @@ void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 		cmddotProcess.Redirect();
 		wxExecute(cmddot, wxEXEC_SYNC, &cmddotProcess);
 
+		m_bmpOrig.LoadFile(pathimage, wxBITMAP_TYPE_PNG);
 		UpdateImage();
-		m_scrolledWindow->Refresh();
 
 	} else
-		wxMessageBox(wxT("CallGraph failed to save file with DOT language, please build the project again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+		wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
 
 	// update call table
 	CreateAndInserDataToTable(m_spinNT->GetValue());
@@ -137,8 +137,67 @@ void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 
 void uicallgraphpanel::UpdateImage()
 {
-	m_Bmp.LoadFile(pathimage, wxBITMAP_TYPE_PNG);
-	int x = m_Bmp.GetWidth() + 30;
-	int y = m_Bmp.GetHeight() + 30;
+	wxBusyCursor busy;
+	
+	wxImage img = m_bmpOrig.ConvertToImage();
+	m_bmpScaled = wxBitmap(img.Scale( m_bmpOrig.GetWidth()*m_scale,
+									m_bmpOrig.GetHeight()*m_scale,
+									wxIMAGE_QUALITY_HIGH ));
+
+	int x = m_bmpScaled.GetWidth() + 30;
+	int y = m_bmpScaled.GetHeight() + 30;
 	m_scrolledWindow->SetVirtualSize(x, y);
+	m_scrolledWindow->Refresh(false);
+}
+
+void uicallgraphpanel::OnLeftDown(wxMouseEvent& event)
+{
+	m_scrolledWindow->GetViewStart( &m_viewPortOrigin.x, &m_viewPortOrigin.y );
+	m_startigPoint = event.GetPosition();
+	m_scrolledWindow->SetCursor( wxCursor(wxCURSOR_SIZING) );
+}
+
+void uicallgraphpanel::OnMouseMove(wxMouseEvent& event)
+{
+	if( event.LeftIsDown() ) {
+		int dx, dy;
+		m_scrolledWindow->GetScrollPixelsPerUnit( &dx, &dy );
+		m_scrolledWindow->Scroll( m_viewPortOrigin.x + (m_startigPoint.x - event.GetPosition().x)/dx,
+		                          m_viewPortOrigin.y + (m_startigPoint.y - event.GetPosition().y)/dy );
+	}
+
+}
+void uicallgraphpanel::OnLeftUp(wxMouseEvent& event)
+{
+	m_scrolledWindow->SetCursor( *wxSTANDARD_CURSOR );
+}
+
+void uicallgraphpanel::OnMouseWheel(wxMouseEvent& event)
+{
+	if( event.ControlDown() ) {
+		m_scale += (float)event.GetWheelRotation()/(event.GetWheelDelta()*10);
+		if( m_scale < 0.1 ) m_scale = 0.1;
+		else if( m_scale > 1 ) m_scale = 1;
+		UpdateImage();
+	}
+}
+
+void uicallgraphpanel::OnZoom100(wxCommandEvent& event)
+{
+	m_scale = 1;
+	UpdateImage();
+}
+
+void uicallgraphpanel::OnZoomIn(wxCommandEvent& event)
+{
+	m_scale = m_scale + 0.1;
+	if( m_scale > 1 ) m_scale = 1;
+	UpdateImage();
+}
+
+void uicallgraphpanel::OnZoomOut(wxCommandEvent& event)
+{
+	m_scale = m_scale - 0.1;
+	if( m_scale < 0.1 ) m_scale = 0.1;
+	UpdateImage();
 }

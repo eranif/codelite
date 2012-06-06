@@ -74,7 +74,7 @@ void DotWriter::WriteToDotLanguage()
 
 	graph = wxT("graph [ranksep=\"0.25\", fontname=") + fontname + wxT(", nodesep=\"0.125\"];");
 
-	hnode = wxT("node [label=\"\\N\", fontsize=\"10.00\", fontname=") + fontname + wxT(", style=\"") + style + wxT("\", height=0, width=0, shape=") + shape + wxT(", fontcolor=") + cwhite + wxT("];");
+	hnode = wxT("node [label=\"\\N\", fontsize=\"9.00\", fontname=") + fontname + wxT(", style=\"") + style + wxT("\", height=0, width=0, shape=") + shape + wxT(", fontcolor=") + cwhite + wxT("];");
 
 	hedge = wxT("edge [fontname=") + fontname + wxT("];");
 
@@ -144,7 +144,7 @@ void DotWriter::WriteToDotLanguage()
 			//dedge += wxT("\\n");
 			dedge += wxString::Format(wxT("%i"),line->called0);
 			dedge += wxT("x");
-			dedge += wxT("\" ,arrowsize=\"0.50\", fontsize=\"10.00\", fontcolor=\"");
+			dedge += wxT("\" ,arrowsize=\"0.50\", fontsize=\"9.00\", fontcolor=\"");
 			dedge += cblack;
 			dedge += wxT("\", penwidth=\"2.00\"];"); // labeldistance=\"4.00\",
 			//
@@ -158,7 +158,7 @@ void DotWriter::WriteToDotLanguage()
 
 	if (!is_node) { // if the call graph is empty create new graph with label node
 		output = wxT("digraph e {0 [label=");
-		output += wxT("\"Call Graph is empty, please check settings of node resolutions for this plugin!\"");
+		output += _("\"The call-graph is empty; please check the node/edge threshold and the project settings!\"");
 		output += wxT(", shape=none, height=2, width=2, fontname=Arial, fontsize=14.00];}");
 	}
 }

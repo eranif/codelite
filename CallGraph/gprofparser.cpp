@@ -3,6 +3,8 @@
 #include <wx/regex.h>
 #include <wx/strconv.h>
 
+int cmpint(int* a, int* b) { return *b - *a; }
+
 GprofParser::GprofParser()
 {
 	lineheader = false;
@@ -32,6 +34,7 @@ void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
 	//wxTextOutputStream tout( out );
 
 	isspontaneous = false;
+	calls.clear();
 
 	while(!m_pInputStream->Eof()) {
 		readlinetext = text.ReadLine();
@@ -233,7 +236,9 @@ void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
 						line->child = false;
 					}
 				}
+				
 				lines.Append( line );
+				calls[ wxRound(line->time) ] = calls[ wxRound(line->time) ] + 1;
 			}
 		} else if (lineheader) {
 			break;
@@ -241,4 +246,29 @@ void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
 	}
 
 	delete [] nameandid;
+}
+
+int GprofParser::GetSuggestedNodeThreshold()
+{
+	sortedCalls.Clear();
+	
+	for( OccurenceMap::iterator it = calls.begin(); it != calls.end(); ++it )
+		sortedCalls.Add( it->first );
+		
+	sortedCalls.Sort(cmpint);
+	int totalCount = 0;
+	int minCallTime = INT_MAX;
+	
+	for( size_t i = 0; i < sortedCalls.GetCount() && totalCount < 100; ++i )
+	{
+		totalCount += calls[ sortedCalls[i] ];
+		if( totalCount < 100 && sortedCalls[i] < minCallTime  ) minCallTime = sortedCalls[i];
+	}
+	
+	if( minCallTime < 0 ) minCallTime = 0;
+	else if( minCallTime > 100 ) minCallTime = 100;
+	
+	if( sortedCalls.GetCount() > 1 && totalCount >= 100 ) return minCallTime;
+	else
+		return -1;
 }

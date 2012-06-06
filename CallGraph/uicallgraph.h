@@ -59,9 +59,16 @@ class uicallgraph : public wxPanel
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnRefreshClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnLeftDown( wxMouseEvent& event ) { event.Skip(); }
+		virtual void OnLeftUp( wxMouseEvent& event ) { event.Skip(); }
+		virtual void OnMouseMove( wxMouseEvent& event ) { event.Skip(); }
+		virtual void OnMouseWheel( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnPaint( wxPaintEvent& event ) { event.Skip(); }
 		virtual void OnSaveCallGraph( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClosePanel( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnZoomIn( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnZoomOut( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnZoom100( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

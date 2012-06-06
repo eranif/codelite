@@ -21,7 +21,7 @@ class LineParser
 {	
 public:
 	int index;
-	float time ;
+	float time;
 	float self;
 	float children;
 	int called0;

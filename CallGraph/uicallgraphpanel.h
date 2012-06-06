@@ -21,7 +21,7 @@ class uicallgraphpanel : public uicallgraph
 {
 
 public:
-	uicallgraphpanel(wxWindow *parent, IManager *mgr, const wxString& imagepath, const wxString& projectpath, LineParserList *pLines);
+	uicallgraphpanel(wxWindow *parent, IManager *mgr, const wxString& imagepath, const wxString& projectpath, int suggestedThreshold, LineParserList *pLines);
 	virtual ~uicallgraphpanel();
 
 protected:
@@ -29,16 +29,27 @@ protected:
 	virtual void OnSaveCallGraph(wxCommandEvent& event);
 	virtual void OnClosePanel(wxCommandEvent& event);
 	virtual void OnRefreshClick(wxCommandEvent& event);
+	virtual void OnLeftDown(wxMouseEvent& event);
+	virtual void OnLeftUp(wxMouseEvent& event);
+	virtual void OnMouseMove(wxMouseEvent& event);
+	virtual void OnMouseWheel(wxMouseEvent& event);
+	virtual void OnZoom100(wxCommandEvent& event);
+	virtual void OnZoomIn(wxCommandEvent& event);
+	virtual void OnZoomOut(wxCommandEvent& event);
 
 	void CreateAndInserDataToTable(int nodethr);
 	void UpdateImage();
 
-	wxBitmap m_Bmp;
+	wxBitmap m_bmpOrig;
+	wxBitmap m_bmpScaled;
 	IManager *m_mgr;
 	wxString pathimage;
 	wxString pathproject;
 	LineParserList m_lines;
 	ConfCallGraph confData; // stored configuration data
+	wxPoint m_viewPortOrigin;
+	wxPoint m_startigPoint;
+	float m_scale;
 };
 
 #endif // UICALLGRAPHPANEL_H

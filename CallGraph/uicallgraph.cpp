@@ -84,7 +84,7 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	m_scrolledWindow->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( uicallgraph::m_scrolledWindowOnContextMenu ), NULL, this ); 
 	
-	bSizer2->Add( m_scrolledWindow, 1, wxEXPAND|wxLEFT, 5 );
+	bSizer2->Add( m_scrolledWindow, 1, wxEXPAND, 5 );
 	
 	
 	m_panel1->SetSizer( bSizer2 );
@@ -127,7 +127,7 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	// Cell Defaults
 	m_grid->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_TOP );
-	bSizer3->Add( m_grid, 1, wxALL|wxEXPAND, 5 );
+	bSizer3->Add( m_grid, 1, wxEXPAND, 5 );
 	
 	
 	m_panel2->SetSizer( bSizer3 );

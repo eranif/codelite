@@ -290,7 +290,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 			projectPath += workingDirectory + stvariables::sd;
 			isproject = true;
 		} else {
-			wxMessageBox( errMsg, _("Error"), wxOK | wxICON_HAND );
+			wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND, m_mgr->GetTheApp()->GetTopWindow());
 		}
 	}
 	if (wxFileExists(projectPath + stvariables::gmonfile)) {
@@ -318,7 +318,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 			pgp->GprofParserStream(m_pInputStream);
 			candot = true;
 		} else
-			wxMessageBox(wxT("CallGraph failed to get profiling data, please build the project again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+			wxMessageBox(_("CallGraph failed to get profiling data, please build the project again."),
+										wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
 
 		if(candot) {
 			ConfCallGraph conf;
@@ -337,7 +338,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 				                             conf.GetBoxName(),
 				                             conf.GetBoxParam());
 
-				wxMessageBox( wxString::Format(_("The CallGraph plugin suggests using node threshold %d to speed up call-graph creation. You can alter it on the call-graph panel."), suggestedThreshold), wxT("CallGraph"), wxOK | wxICON_INFORMATION );
+				wxMessageBox(wxString::Format(_("The CallGraph plugin suggests using node threshold %d to speed up call-graph creation. You can alter it on the call-graph panel."),
+							suggestedThreshold), wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
 			}
 
 			pdw->WriteToDotLanguage();
@@ -350,7 +352,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 				cmddotProcess.Redirect();
 				wxExecute(cmddot,wxEXEC_SYNC, &cmddotProcess);
 			} else
-				wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+				wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."),
+									wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
 		}
 
 		//show image and greate table in the editor tab page
@@ -358,7 +361,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 			m_mgr->AddEditorPage( new uicallgraphpanel( m_mgr->GetEditorPaneNotebook(), m_mgr, projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname, projectPathActive, suggestedThreshold, &(pgp->lines)), wxT("Call graph for \"") + projectName +  wxT("\" ") + wxDateTime::Now().Format(wxT("%Y-%m-%d %H:%M:%S")));
 		} else {
 			//wxMessageBox(wxT("File CallGraph.png is not exist and can not be open in page."));
-			wxMessageBox(_("Failed to open file CallGraph.png. Please rebuild the project, then try again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+			wxMessageBox(_("Failed to open file CallGraph.png. Please rebuild the project, then try again."),
+									wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
 		}
 
 		// delete objects
@@ -375,10 +379,10 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 			msg << _("Failed to display the call-graph. Please check the following:\n")
 			    << _("1. Make sure that your project is compiled AND linked with the '-pg' flag\n")
 			    << _("2. You need to RUN your project at least once to be able to view the call-graph\n");
-			wxMessageBox(msg, wxT("CallGraph"), wxOK | wxICON_WARNING);
+			wxMessageBox(msg, wxT("CallGraph"), wxOK | wxICON_WARNING, m_mgr->GetTheApp()->GetTopWindow());
 
 		} else {
-			wxMessageBox(_("Please check the plugin settings."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+			wxMessageBox(_("Please check the plugin settings."), wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
 
 		}
 	}

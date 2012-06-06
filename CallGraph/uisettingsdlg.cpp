@@ -85,7 +85,7 @@ void uisettingsdlg::OnButton_click_ok( wxCommandEvent& event )
 	if ((wxFileExists(m_textCtrl_path_gprof->GetValue())) && (wxFileExists(m_textCtrl_path_dot->GetValue()))) {
 		EndModal(wxID_OK);
 	} else {
-		wxMessageBox(_("Please check settings for plugin."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+		wxMessageBox(_("Please check settings for plugin."), wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
 	}
 
 	//event.Skip();

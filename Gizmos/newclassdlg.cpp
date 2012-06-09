@@ -67,7 +67,7 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory){
 		wxString path = VirtualDirectorySelector::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false);
 		if(path.IsEmpty() == false){
-			m_textCtrlVD->SetValue(path);
+			m_textCtrlVD->ChangeValue(path);
 		}
 	}
 
@@ -90,7 +90,7 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	
 	DoUpdateGeneratedPath();
 	
-	m_textCtrlFileName->Enable( false );
+	//m_textCtrlFileName->Enable( false );
 	GetSizer()->Layout();
 	Centre();
 	m_textClassName->SetFocus();
@@ -316,7 +316,7 @@ void NewClassDlg::OnTextEnter(wxCommandEvent &e)
 	}
 
 	file_name.MakeLower();
-	m_textCtrlFileName->SetValue( file_name );
+	m_textCtrlFileName->ChangeValue( file_name );
 }
 
 void NewClassDlg::OnUseUnderscores(wxCommandEvent& e)
@@ -326,7 +326,7 @@ void NewClassDlg::OnUseUnderscores(wxCommandEvent& e)
 		file_name = doSpliteByCaptilization(file_name);
 	}
 	file_name.MakeLower();
-	m_textCtrlFileName->SetValue( file_name );
+	m_textCtrlFileName->ChangeValue( file_name );
 }
 
 void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent &e)
@@ -354,7 +354,7 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 	}
 	wxString new_path = wxDirSelector(_("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if(new_path.IsEmpty() == false){
-		m_textCtrlGenFilePath->SetValue(new_path);
+		m_textCtrlGenFilePath->ChangeValue(new_path);
 	}
 }
 
@@ -363,7 +363,7 @@ void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
 	wxUnusedVar(e);
 	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
 	if(dlg.ShowModal() == wxID_OK){
-		m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
+		m_textCtrlVD->ChangeValue(dlg.GetVirtualDirectoryPath());
 		DoUpdateGeneratedPath();
 	}
 }
@@ -382,7 +382,7 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent &e)
 			nameSpace << dlg.GetSelection().m_scope << wxT("::");
 		}
 		nameSpace << dlg.GetSelection().m_name;
-		m_textCtrlNamespace->SetValue(nameSpace);
+		m_textCtrlNamespace->ChangeValue(nameSpace);
 	}
 }
 
@@ -470,6 +470,6 @@ void NewClassDlg::DoUpdateGeneratedPath()
 	
 	ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
 	if(proj) {
-		m_textCtrlGenFilePath->SetValue(proj->GetBestPathForVD(vd));
+		m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd));
 	}
 }

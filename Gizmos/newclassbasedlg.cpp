@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  3 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -46,7 +46,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	fgSizer1->Add( m_staticTextNamespace, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textCtrlNamespace = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	m_textCtrlNamespace->SetToolTip( _("Place this class inside a namespace") );
+	m_textCtrlNamespace->SetToolTip( _("Place this class inside a namspace") );
 	
 	fgSizer1->Add( m_textCtrlNamespace, 0, wxALL|wxEXPAND, 5 );
 	
@@ -71,32 +71,32 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Generated Files Path:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText2->Wrap( -1 );
-	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_textCtrlGenFilePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	m_textCtrlGenFilePath->SetToolTip( _("Generated files path (directory)") );
-	
-	fgSizer1->Add( m_textCtrlGenFilePath, 1, wxALL|wxEXPAND, 5 );
-	
-	m_buttonBrowseFolder = new wxButton( this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer1->Add( m_buttonBrowseFolder, 0, wxALL, 5 );
-	
-	
-	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
-	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Select Virtual Directory:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_textCtrlVD = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_RICH2 );
-	m_textCtrlVD->SetToolTip( _("Select the virtual folder to place the generated files inside CodeLite's project") );
+	m_textCtrlVD->SetToolTip( _("The new class needs to be put somewhere. Select which of the project's virtual folders to use.") );
 	
 	fgSizer1->Add( m_textCtrlVD, 0, wxALL|wxEXPAND, 5 );
 	
 	m_buttonSelectVD = new wxButton( this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_buttonSelectVD, 0, wxALL, 5 );
+	
+	
+	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Generated Files Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_textCtrlGenFilePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlGenFilePath->SetToolTip( _("Where on the filesystem should the new class's files be put? This will normally be the directory corresponding to the Virtual Directory; but you can enter an alternative directory here if you wish.") );
+	
+	fgSizer1->Add( m_textCtrlGenFilePath, 1, wxALL|wxEXPAND, 5 );
+	
+	m_buttonBrowseFolder = new wxButton( this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_buttonBrowseFolder, 0, wxALL, 5 );
 	
 	bSizer1->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
 	
@@ -122,6 +122,8 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	bSizer8->Add( m_checkBoxUseUnderscores, 0, wxALL, 5 );
 	
 	m_textCtrlFileName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	m_textCtrlFileName->SetToolTip( _("This is the base-name for the file(s) that will be generated. If the new class is called Foo, by default the files will be foo.cpp and foo.h. If you'd prefer different names, type the base-name here.") );
+	
 	bSizer8->Add( m_textCtrlFileName, 1, wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( bSizer8, 0, wxEXPAND|wxALL, 5 );
@@ -205,8 +207,8 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	// Connect Events
 	m_textClassName->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewClassBaseDlg::OnTextEnter ), NULL, this );
 	m_buttonBrowseNamespaces->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseNamespace ), NULL, this );
-	m_buttonBrowseFolder->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
 	m_buttonSelectVD->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseVD ), NULL, this );
+	m_buttonBrowseFolder->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
 	m_checkBoxInline->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckInline ), NULL, this );
 	m_checkBoxUseUnderscores->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnUseUnderscores ), NULL, this );
 	m_listCtrl1->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( NewClassBaseDlg::OnListItemActivated ), NULL, this );
@@ -224,8 +226,8 @@ NewClassBaseDlg::~NewClassBaseDlg()
 	// Disconnect Events
 	m_textClassName->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( NewClassBaseDlg::OnTextEnter ), NULL, this );
 	m_buttonBrowseNamespaces->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseNamespace ), NULL, this );
-	m_buttonBrowseFolder->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
 	m_buttonSelectVD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseVD ), NULL, this );
+	m_buttonBrowseFolder->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnBrowseFolder ), NULL, this );
 	m_checkBoxInline->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckInline ), NULL, this );
 	m_checkBoxUseUnderscores->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnUseUnderscores ), NULL, this );
 	m_listCtrl1->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( NewClassBaseDlg::OnListItemActivated ), NULL, this );

@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Sep  3 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __newclassbasedlg__
-#define __newclassbasedlg__
+#ifndef __NEWCLASSBASEDLG_H__
+#define __NEWCLASSBASEDLG_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -40,22 +41,17 @@ class NewClassBaseDlg : public wxDialog
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textClassName;
 		wxStaticText* m_staticText9;
-		
 		wxStaticText* m_staticTextNamespace;
 		wxTextCtrl* m_textCtrlNamespace;
 		wxButton* m_buttonBrowseNamespaces;
-		
 		wxStaticText* m_staticText6;
 		wxTextCtrl* m_textCtrlBlockGuard;
-		
-		
-		wxStaticText* m_staticText2;
-		wxTextCtrl* m_textCtrlGenFilePath;
-		wxButton* m_buttonBrowseFolder;
-		
 		wxStaticText* m_staticText4;
 		wxTextCtrl* m_textCtrlVD;
 		wxButton* m_buttonSelectVD;
+		wxStaticText* m_staticText2;
+		wxTextCtrl* m_textCtrlGenFilePath;
+		wxButton* m_buttonBrowseFolder;
 		wxStaticText* m_staticText8;
 		wxStaticLine* m_staticline6;
 		wxCheckBox* m_checkBoxInline;
@@ -78,8 +74,8 @@ class NewClassBaseDlg : public wxDialog
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnTextEnter( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseNamespace( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnBrowseFolder( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBrowseVD( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBrowseFolder( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnCheckInline( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnUseUnderscores( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnListItemActivated( wxListEvent& event ) { event.Skip(); }
@@ -99,4 +95,4 @@ class NewClassBaseDlg : public wxDialog
 	
 };
 
-#endif //__newclassbasedlg__
+#endif //__NEWCLASSBASEDLG_H__

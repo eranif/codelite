@@ -271,6 +271,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 	bool issettings = false;
 
 	wxString errMsg, projectPath, projectPathActive, projectName, workingDirectory, outFile;
+	wxFileName outFn;
 	m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &confData);
 
 	if (m_mgr->GetWorkspace()) {
@@ -280,22 +281,46 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
 		ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName( projectName, errMsg );
 		if (proj) {
-			BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf(proj->GetName(), m_mgr->GetWorkspace()->GetBuildMatrix()->GetSelectedConfigurationName());
+			BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf(proj->GetName(), wxT(""));
 			if(bldConf) {
-				outFile =  m_mgr->GetMacrosManager()->Expand( bldConf->GetOutputFileName(), m_mgr, proj->GetName() );
-				workingDirectory = m_mgr->GetMacrosManager()->Expand( bldConf->GetWorkingDirectory(), m_mgr, proj->GetName() );
+				outFile =  m_mgr->GetMacrosManager()->Expand( bldConf->GetCommand(), m_mgr, proj->GetName() );
+				outFn = wxFileName(outFile);
+				if (outFn.IsRelative()) {
+					workingDirectory = m_mgr->GetMacrosManager()->Expand( bldConf->GetWorkingDirectory(), m_mgr, proj->GetName() );
+				}
 			}
 			projectPath = proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ); //path for active project
-			projectPathActive = projectPath;
+			
 			projectPath += workingDirectory + stvariables::sd;
 			isproject = true;
+
+			if (outFn.IsRelative()) {
+				projectPathActive = projectPath;
+			}	
 		} else {
 			wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND, m_mgr->GetTheApp()->GetTopWindow());
 		}
 	}
 	if (wxFileExists(projectPath + stvariables::gmonfile)) {
 		isgmonfile = true;
+	} else if (outFn.IsAbsolute() && outFn.GetPath(wxPATH_GET_SEPARATOR) != projectPath) {
+		// If it's not in the workspace (and for a custom makefile it probably won't be) try in the binary's dir
+		if (wxFileExists(outFn.GetPath(wxPATH_GET_SEPARATOR) + stvariables::gmonfile)) {
+			projectPath = outFn.GetPath(wxPATH_GET_SEPARATOR);
+			isgmonfile = true;
+		}
+	} else { // If all else fails, throw the problem back at the user
+		wxString gmonFp = wxFileSelector(_("Please select the gprof file to analyse (it's probably called 'gmon.out')"));
+		if (gmonFp.empty() || !wxFileExists(gmonFp)) {
+			return;
+		}
+		wxFileName gmonFn(gmonFp);
+		if (wxFileExists(gmonFn.GetPath(wxPATH_GET_SEPARATOR) + stvariables::gmonfile)) {
+			projectPath = gmonFn.GetPath(wxPATH_GET_SEPARATOR);
+			isgmonfile = true;
+		}
 	}
+		
 
 	if ((wxFileExists(GetGprofPath())) && (wxFileExists(GetDotPath()))) {
 		issettings = true;
@@ -310,7 +335,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
 		wxProcess gprofProcess;
 		gprofProcess.Redirect();
-		wxString cmdgprof = GetGprofPath() + stvariables::sw + stvariables::sq + projectPathActive + outFile + stvariables::filetype + stvariables::sq + stvariables::sw + stvariables::sq + projectPath + stvariables::gmonfile + stvariables::sq;
+		wxString cmdgprof = GetGprofPath() + stvariables::sw + stvariables::sq + projectPathActive + outFile + stvariables::filetype + 
+									stvariables::sq + stvariables::sw + stvariables::sq + projectPath + stvariables::gmonfile + stvariables::sq;
 		wxExecute(cmdgprof, wxEXEC_SYNC, &gprofProcess);
 		m_pInputStream = gprofProcess.GetInputStream();
 

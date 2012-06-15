@@ -48,12 +48,10 @@
 static Copyright* thePlugin = NULL;
 
 // Internal events used by this plugin
-enum {
-	CR_copyrights_options = 11000,
-	CR_insert_copyrights,
-	CR_batch_insert_copyrights,
-	CR_insert_prj_copyrights
-};
+const wxEventType CR_copyrights_options      = wxNewEventType();
+const wxEventType CR_insert_copyrights       = wxNewEventType();
+const wxEventType CR_batch_insert_copyrights = wxNewEventType();
+const wxEventType CR_insert_prj_copyrights   = wxNewEventType();
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -79,23 +77,19 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 	return PLUGIN_INTERFACE_VERSION;
 }
 
+//BEGIN_EVENT_TABLE(Copyright, IPlugin)
+//END_EVENT_TABLE()
 Copyright::Copyright(IManager *manager)
 		: IPlugin(manager)
-		, m_topWin(NULL)
 		, m_projectSepItem(NULL)
 		, m_workspaceSepItem(NULL)
 {
 	m_longName = _("Copyright Plugin - a small plugin that allows you to place copyright block on top of your source files");
 	m_shortName = wxT("Copyright");
-	m_topWin = m_mgr->GetTheApp();
 }
 
 Copyright::~Copyright()
 {
-	m_topWin->Disconnect(CR_copyrights_options,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
-	m_topWin->Disconnect(CR_insert_copyrights,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
-	m_topWin->Disconnect(CR_batch_insert_copyrights, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
-	m_topWin->Disconnect(CR_insert_prj_copyrights,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
 }
 
 clToolBar *Copyright::CreateToolBar(wxWindow *parent)
@@ -122,18 +116,18 @@ void Copyright::CreatePluginMenu(wxMenu *pluginsMenu)
 	pluginsMenu->Append(wxID_ANY, _("Copyrights"), menu);
 
 	// connect events
-	m_topWin->Connect(CR_copyrights_options,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions), NULL, this);
-	m_topWin->Connect(CR_insert_copyrights,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
-	m_topWin->Connect(CR_batch_insert_copyrights, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights), NULL, this);
-	m_topWin->Connect(CR_insert_prj_copyrights,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
+	wxTheApp->Connect(CR_copyrights_options,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnOptions),                 NULL, this);
+	wxTheApp->Connect(CR_insert_copyrights,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights),        NULL, this);
+	wxTheApp->Connect(CR_batch_insert_copyrights, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnInsertCopyrights),        NULL, this);
+	wxTheApp->Connect(CR_insert_prj_copyrights,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Copyright::OnProjectInsertCopyrights), NULL, this);
 }
 
 void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
 
-		if (!menu->FindItem(XRCID("insert_copyrights"))) {
-			menu->Append(XRCID("insert_copyrights"), _("Insert Copyright Block"), wxEmptyString);
+		if (!menu->FindItem(CR_insert_copyrights)) {
+			menu->Append(CR_insert_copyrights, _("Insert Copyright Block"), wxEmptyString);
 		}
 
 	} else if (type == MenuTypeFileExplorer) {
@@ -144,8 +138,8 @@ void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
 			m_workspaceSepItem = menu->PrependSeparator();
 		}
 
-		if (!menu->FindItem(XRCID("batch_insert_copyrights"))) {
-			menu->Prepend(XRCID("batch_insert_copyrights"), _("Batch Insert of Copyright Block"), wxEmptyString);
+		if (!menu->FindItem(CR_insert_copyrights)) {
+			menu->Prepend(CR_insert_copyrights, _("Batch Insert of Copyright Block"), wxEmptyString);
 		}
 
 	} else if (type == MenuTypeFileView_Project) {
@@ -153,14 +147,10 @@ void Copyright::HookPopupMenu(wxMenu *menu, MenuType type)
 			m_projectSepItem = menu->PrependSeparator();
 		}
 
-		if (!menu->FindItem(XRCID("insert_prj_copyrights"))) {
-			menu->Prepend(XRCID("insert_prj_copyrights"), _("Insert Copyright Block"), wxEmptyString);
+		if (!menu->FindItem(CR_insert_prj_copyrights)) {
+			menu->Prepend(CR_insert_prj_copyrights, _("Insert Copyright Block"), wxEmptyString);
 		}
 
-	} else if (type == MenuTypeFileView_Folder) {
-		//TODO::Append items for the file view/Virtual folder context menu
-	} else if (type == MenuTypeFileView_File) {
-		//TODO::Append items for the file view/file context menu
 	}
 }
 

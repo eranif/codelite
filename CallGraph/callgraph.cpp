@@ -337,6 +337,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 		gprofProcess.Redirect();
 		wxString cmdgprof = GetGprofPath() + stvariables::sw + stvariables::sq + projectPathActive + outFile + stvariables::filetype + 
 									stvariables::sq + stvariables::sw + stvariables::sq + projectPath + stvariables::gmonfile + stvariables::sq;
+        wxMessageBox(cmdgprof);
 		wxExecute(cmdgprof, wxEXEC_SYNC, &gprofProcess);
 		m_pInputStream = gprofProcess.GetInputStream();
 

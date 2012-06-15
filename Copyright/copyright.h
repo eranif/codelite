@@ -29,7 +29,6 @@
 class wxMenuItem;
 class Copyright : public IPlugin
 {
-	wxEvtHandler *m_topWin;
 	wxMenuItem* m_projectSepItem;
 	wxMenuItem* m_workspaceSepItem;
 
@@ -48,7 +47,8 @@ public:
 	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
 	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
 	virtual void UnPlug();
-
+	
+	//DECLARE_EVENT_TABLE()
 	// event handlers
 	void OnOptions(wxCommandEvent &e);
 	void OnInsertCopyrights(wxCommandEvent &e);

@@ -195,7 +195,7 @@ void CallGraph::OnAbout(wxCommandEvent& event)
 
 	wxAboutDialogInfo info;
 	info.SetName(_("Call Graph"));
-	info.SetVersion(_("v1.0"));
+	info.SetVersion(_("v1.1.0"));
 	info.SetDescription(desc);
 	info.SetCopyright(_("2012 (C) Tomas Bata University, Zlin, Czech Republic"));
 	info.SetWebSite(_("http://www.fai.utb.cz"));
@@ -266,10 +266,6 @@ wxString CallGraph::GetDotPath()
 
 void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 {
-	bool isgmonfile = false;
-	bool isproject = false;
-	bool issettings = false;
-
 	wxString errMsg, projectPath, projectPathActive, projectName, workingDirectory, outFile;
 	wxFileName outFn;
 	m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &confData);
@@ -289,129 +285,120 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 					workingDirectory = m_mgr->GetMacrosManager()->Expand( bldConf->GetWorkingDirectory(), m_mgr, proj->GetName() );
 				}
 			}
-			projectPath = proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ); //path for active project
-			
-			projectPath += workingDirectory + stvariables::sd;
-			isproject = true;
+			projectPath = proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) + workingDirectory + stvariables::sd;; //path for active project
 
 			if (outFn.IsRelative()) {
 				projectPathActive = projectPath;
 			}	
 		} else {
-			wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND, m_mgr->GetTheApp()->GetTopWindow());
-		}
-	}
-	if (wxFileExists(projectPath + stvariables::gmonfile)) {
-		isgmonfile = true;
-	} else if (outFn.IsAbsolute() && outFn.GetPath(wxPATH_GET_SEPARATOR) != projectPath) {
-		// If it's not in the workspace (and for a custom makefile it probably won't be) try in the binary's dir
-		if (wxFileExists(outFn.GetPath(wxPATH_GET_SEPARATOR) + stvariables::gmonfile)) {
-			projectPath = outFn.GetPath(wxPATH_GET_SEPARATOR);
-			isgmonfile = true;
-		}
-	} else { // If all else fails, throw the problem back at the user
-		wxString gmonFp = wxFileSelector(_("Please select the gprof file to analyse (it's probably called 'gmon.out')"));
-		if (gmonFp.empty() || !wxFileExists(gmonFp)) {
+			wxMessageBox(errMsg, wxT("CallGraph"), wxOK | wxICON_ERROR, m_mgr->GetTheApp()->GetTopWindow());
 			return;
 		}
-		wxFileName gmonFn(gmonFp);
-		if (wxFileExists(gmonFn.GetPath(wxPATH_GET_SEPARATOR) + stvariables::gmonfile)) {
-			projectPath = gmonFn.GetPath(wxPATH_GET_SEPARATOR);
-			isgmonfile = true;
+	} else {
+		wxMessageBox(_("Unable to get opened workspace."), wxT("CallGraph"), wxOK | wxICON_ERROR, m_mgr->GetTheApp()->GetTopWindow());
+		return;
+	}
+	
+	bool gmonfound = true;
+	
+	if (!wxFileExists(projectPath + stvariables::gmonfile)) {
+		gmonfound = false;
+		
+		if (outFn.IsAbsolute() && outFn.GetPath(wxPATH_GET_SEPARATOR) != projectPath) {
+			// If it's not in the workspace (and for a custom makefile it probably won't be) try in the binary's dir
+			if (wxFileExists(outFn.GetPath(wxPATH_GET_SEPARATOR) + stvariables::gmonfile)) {
+				projectPath = outFn.GetPath(wxPATH_GET_SEPARATOR);
+				gmonfound = true;
+			}
+		} else { // If all else fails, throw the problem back at the user
+			wxString gmonFp = wxFileSelector(_("Please select the gprof file to analyse (it's probably called 'gmon.out')."));
+			wxFileName gmonFn(gmonFp);
+			if (wxFileExists(gmonFn.GetPath(wxPATH_GET_SEPARATOR) + stvariables::gmonfile)) {
+				projectPath = gmonFn.GetPath(wxPATH_GET_SEPARATOR);
+				gmonfound = true;
+			}
 		}
+	}
+	
+	if( !gmonfound ) {
+		wxString msg;
+		msg << _("Failed to locate gmon.out file. Please check the following:\n")
+			<< _("1. Make sure that your project is compiled AND linked with the '-pg' flag\n")
+			<< _("2. You need to RUN your project at least once to be able to view the call-graph\n");
+		wxMessageBox(msg, wxT("CallGraph"), wxOK | wxICON_WARNING, m_mgr->GetTheApp()->GetTopWindow());
+		return;
 	}
 		
-
-	if ((wxFileExists(GetGprofPath())) && (wxFileExists(GetDotPath()))) {
-		issettings = true;
+	if ( !wxFileExists(GetGprofPath()) || !wxFileExists(GetDotPath()) ) {
+		wxMessageBox(_T("Failed to locate required tools (gprof, dot). Please check the plugin settings."), wxT("CallGraph"), wxOK | wxICON_ERROR, m_mgr->GetTheApp()->GetTopWindow());
+		return;
 	}
 
-	if (isgmonfile && isproject && issettings) {// check plugin settings
-		// start for parsing and writing to the dot language file
-		bool candot = false;
-		int suggestedThreshold = -1;
-		GprofParser *pgp = new GprofParser();
-		DotWriter *pdw = new DotWriter();
+	// start for parsing and writing to the dot language file
+	int suggestedThreshold = -1;
+	GprofParser pgp;
+	DotWriter pdw;
 
-		wxProcess gprofProcess;
-		gprofProcess.Redirect();
-		wxString cmdgprof = GetGprofPath() + stvariables::sw + stvariables::sq + projectPathActive + outFile + stvariables::filetype + 
-									stvariables::sq + stvariables::sw + stvariables::sq + projectPath + stvariables::gmonfile + stvariables::sq;
-        wxMessageBox(cmdgprof);
-		wxExecute(cmdgprof, wxEXEC_SYNC, &gprofProcess);
-		m_pInputStream = gprofProcess.GetInputStream();
+	wxProcess gprofProcess;
+	gprofProcess.Redirect();
+	if( !stvariables::filetype.IsEmpty() && outFile.Contains( stvariables::filetype ) ) outFile.Replace( stvariables::filetype, wxEmptyString );
+	wxString cmdgprof = GetGprofPath() + stvariables::sw + stvariables::sq + projectPathActive + outFile + stvariables::filetype +
+						stvariables::sq + stvariables::sw + stvariables::sq + projectPath + stvariables::gmonfile + stvariables::sq;
+	wxExecute(cmdgprof, wxEXEC_SYNC, &gprofProcess);
+	m_pInputStream = gprofProcess.GetInputStream();
 
-		if(m_pInputStream->CanRead()) {
-			pgp->GprofParserStream(m_pInputStream);
-			candot = true;
-		} else
-			wxMessageBox(_("CallGraph failed to get profiling data, please build the project again."),
-										wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
-
-		if(candot) {
-			ConfCallGraph conf;
-			m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &conf);
-			//DotWriter to output png file
-			pdw->SetLineParser(&(pgp->lines));
-			suggestedThreshold = pgp->GetSuggestedNodeThreshold();
-			if( suggestedThreshold < conf.GetTresholdNode() ) {
-				suggestedThreshold = conf.GetTresholdNode();
-				pdw->SetDotWriterFromDialogSettings(m_mgr);
-			} else {
-				pdw->SetDotWriterFromDetails(conf.GetColorsNode(),
-				                             conf.GetColorsEdge(),
-				                             suggestedThreshold,
-				                             conf.GetTresholdEdge(),
-				                             conf.GetBoxName(),
-				                             conf.GetBoxParam());
-
-				wxMessageBox(wxString::Format(_("The CallGraph plugin suggests using node threshold %d to speed up call-graph creation. You can alter it on the call-graph panel."),
-							suggestedThreshold), wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
-			}
-
-			pdw->WriteToDotLanguage();
-			pdw->SendToDotAppOutputDirectory(projectPathActive);
-
-			if (pdw->DotFileExist(projectPathActive)) {
-				//-Gcharset=Latin1		//UTF-8
-				wxString cmddot = GetDotPath() + stvariables::sw + wxT("-Tpng -o") + stvariables::sw + projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname  + stvariables::sw + projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dottxtname;
-				wxProcess cmddotProcess;
-				cmddotProcess.Redirect();
-				wxExecute(cmddot,wxEXEC_SYNC, &cmddotProcess);
-			} else
-				wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."),
-									wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
-		}
-
-		//show image and greate table in the editor tab page
-		if(wxFileExists(projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname)) {
-			m_mgr->AddEditorPage( new uicallgraphpanel( m_mgr->GetEditorPaneNotebook(), m_mgr, projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname, projectPathActive, suggestedThreshold, &(pgp->lines)), wxT("Call graph for \"") + projectName +  wxT("\" ") + wxDateTime::Now().Format(wxT("%Y-%m-%d %H:%M:%S")));
-		} else {
-			//wxMessageBox(wxT("File CallGraph.png is not exist and can not be open in page."));
-			wxMessageBox(_("Failed to open file CallGraph.png. Please rebuild the project, then try again."),
-									wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
-		}
-
-		// delete objects
-		delete pgp;
-		pgp = 0;
-
-		delete pdw;
-		pdw = 0;
-
+	if(m_pInputStream->CanRead()) {
+		pgp.GprofParserStream(m_pInputStream);
 	} else {
+		wxMessageBox(_("CallGraph failed to get profiling data. Please check the project settings and build it again."),
+					wxT("CallGraph"), wxOK | wxICON_ERROR, m_mgr->GetTheApp()->GetTopWindow());
+		return;
+	}
 
-		if (!isgmonfile) {
-			wxString msg;
-			msg << _("Failed to display the call-graph. Please check the following:\n")
-			    << _("1. Make sure that your project is compiled AND linked with the '-pg' flag\n")
-			    << _("2. You need to RUN your project at least once to be able to view the call-graph\n");
-			wxMessageBox(msg, wxT("CallGraph"), wxOK | wxICON_WARNING, m_mgr->GetTheApp()->GetTopWindow());
+	ConfCallGraph conf;
+	m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &conf);
+	//DotWriter to output png file
+	pdw.SetLineParser(&(pgp.lines));
+	suggestedThreshold = pgp.GetSuggestedNodeThreshold();
+	if( suggestedThreshold < conf.GetTresholdNode() ) {
+		suggestedThreshold = conf.GetTresholdNode();
+		pdw.SetDotWriterFromDialogSettings(m_mgr);
+	} else {
+		pdw.SetDotWriterFromDetails(conf.GetColorsNode(),
+									conf.GetColorsEdge(),
+									suggestedThreshold,
+									conf.GetTresholdEdge(),
+									conf.GetHideParams(),
+									conf.GetStripParams(),
+									conf.GetHideNamespaces());
 
-		} else {
-			wxMessageBox(_("Please check the plugin settings."), wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
+		wxMessageBox(wxString::Format(_("The CallGraph plugin has suggested node threshold %d to speed-up the call graph creation. You can alter it on the call graph panel."),
+					suggestedThreshold), wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
+	}
 
-		}
+	pdw.WriteToDotLanguage();
+	pdw.SendToDotAppOutputDirectory(projectPathActive);
+
+	if (pdw.DotFileExist(projectPathActive)) {
+		//-Gcharset=Latin1		//UTF-8
+		wxString cmddot = GetDotPath() + stvariables::sw + wxT("-Tpng -o") + stvariables::sw + projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname  + stvariables::sw + projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dottxtname;
+		wxProcess cmddotProcess;
+		cmddotProcess.Redirect();
+		wxExecute(cmddot, wxEXEC_SYNC, &cmddotProcess);
+	} else {
+		wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."),
+					wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
+		return;
+	}
+
+	//show image and greate table in the editor tab page
+	if(wxFileExists(projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname)) {
+		m_mgr->AddEditorPage( new uicallgraphpanel( m_mgr->GetEditorPaneNotebook(), m_mgr, projectPathActive + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname, projectPathActive, suggestedThreshold, &(pgp.lines)), wxT("Call graph for \"") + projectName +  wxT("\" ") + wxDateTime::Now().Format(wxT("%Y-%m-%d %H:%M:%S")));
+	} else {
+		//wxMessageBox(wxT("File CallGraph.png is not exist and can not be open in page."));
+		wxMessageBox(_("Failed to open file CallGraph.png. Please check the project settings, rebuild the project and try again."),
+					wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
+		return;
 	}
 }
 

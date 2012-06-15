@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 10 2012)
+// C++ code generated with wxFormBuilder (version May  7 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -53,9 +53,10 @@ class uisettings : public wxDialog
 		wxCheckBox* m_checkBox_Names;
 		wxStaticText* m_staticText9;
 		wxSpinCtrl* m_spinCtrl_colors_node;
-		wxCheckBox* m_checkBox_Parametrs;
+		wxCheckBox* m_checkBox_Parameters;
 		wxStaticText* m_staticText10;
 		wxSpinCtrl* m_spinCtrl_colors_edge;
+		wxCheckBox* m_checkBox_Namespaces;
 		wxButton* m_buttonOk;
 		wxButton* m_buttonCancel;
 		

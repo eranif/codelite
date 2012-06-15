@@ -32,7 +32,8 @@ uicallgraphpanel::uicallgraphpanel(wxWindow *parent, IManager *mgr, const wxStri
 
 	m_spinNT->SetValue(suggestedThreshold);
 	m_spinET->SetValue(confData.GetTresholdEdge());
-	m_checkBoxSN->SetValue(confData.GetBoxName());
+	m_checkBoxHP->SetValue(confData.GetHideParams());
+	m_checkBoxHN->SetValue(confData.GetHideNamespaces());
 	m_grid->Update();
 }
 
@@ -112,8 +113,9 @@ void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 	                           confData.GetColorsEdge(),
 	                           m_spinNT->GetValue(),
 	                           m_spinET->GetValue(),
-	                           m_checkBoxSN->GetValue(),
-	                           confData.GetBoxParam());
+	                           m_checkBoxHP->GetValue(),
+	                           confData.GetStripParams(),
+							   m_checkBoxHN->GetValue());
 
 	dw.WriteToDotLanguage();
 	dw.SendToDotAppOutputDirectory(pathproject);
@@ -138,11 +140,11 @@ void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 void uicallgraphpanel::UpdateImage()
 {
 	wxBusyCursor busy;
-	
+
 	wxImage img = m_bmpOrig.ConvertToImage();
 	m_bmpScaled = wxBitmap(img.Scale( m_bmpOrig.GetWidth()*m_scale,
-									m_bmpOrig.GetHeight()*m_scale,
-									wxIMAGE_QUALITY_HIGH ));
+	                                  m_bmpOrig.GetHeight()*m_scale,
+	                                  wxIMAGE_QUALITY_HIGH ));
 
 	int x = m_bmpScaled.GetWidth() + 30;
 	int y = m_bmpScaled.GetHeight() + 30;
@@ -184,8 +186,14 @@ void uicallgraphpanel::OnMouseWheel(wxMouseEvent& event)
 
 void uicallgraphpanel::OnZoom100(wxCommandEvent& event)
 {
-	m_scale = 1;
-	UpdateImage();
+	float xscale = (float)(m_scrolledWindow->GetClientSize().x-40) / m_bmpOrig.GetWidth();
+	float yscale = (float)(m_scrolledWindow->GetClientSize().y-40) / m_bmpOrig.GetHeight();
+	
+	m_scale = xscale < yscale ? xscale : yscale;
+	
+	if( m_scale < 0.1 ) m_scale = 0.1;
+	else if( m_scale > 1 ) m_scale = 1;
+	UpdateImage();	
 }
 
 void uicallgraphpanel::OnZoomIn(wxCommandEvent& event)
@@ -199,5 +207,11 @@ void uicallgraphpanel::OnZoomOut(wxCommandEvent& event)
 {
 	m_scale = m_scale - 0.1;
 	if( m_scale < 0.1 ) m_scale = 0.1;
+	UpdateImage();
+}
+
+void uicallgraphpanel::OnZoomOriginal(wxCommandEvent& event)
+{
+	m_scale = 1;
 	UpdateImage();
 }

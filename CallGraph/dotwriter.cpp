@@ -3,6 +3,7 @@
 #include <wx/file.h>
 #include <wx/msgdlg.h>
 #include <wx/math.h>
+#include <wx/regex.h>
 #include <math.h>
 
 
@@ -26,8 +27,9 @@ DotWriter::DotWriter()
 	dwce = 0;
 	dwtn = 0;
 	dwte = 0;
-	dwbname = false;
-	dwbparam = false;
+	dwhideparams = false;
+	dwhidenamespaces = false;
+	dwstripparams = false;
 	writedotfile = false;
 }
 
@@ -48,18 +50,20 @@ void DotWriter::SetDotWriterFromDialogSettings(IManager *mgr)
 	dwce = confData.GetColorsEdge();
 	dwtn = confData.GetTresholdNode();
 	dwte = confData.GetTresholdEdge();
-	dwbname = confData.GetBoxName();
-	dwbparam = confData.GetBoxParam();
+	dwhideparams = confData.GetHideParams();
+	dwhidenamespaces = confData.GetHideNamespaces();
+	dwstripparams = confData.GetStripParams();
 }
 
-void DotWriter::SetDotWriterFromDetails(int colnode, int coledge, int thrnode, int thredge, bool boxname, bool boxparam)
+void DotWriter::SetDotWriterFromDetails(int colnode, int coledge, int thrnode, int thredge, bool hideparams, bool stripparams, bool hidenamespaces)
 {
 	dwcn = colnode;
 	dwce = coledge;
 	dwtn = thrnode;
 	dwte = thredge;
-	dwbname = boxname;
-	dwbparam = boxparam;
+	dwhideparams = hideparams;
+	dwstripparams = stripparams;
+	dwhidenamespaces = hidenamespaces;
 }
 
 void DotWriter::WriteToDotLanguage()
@@ -163,7 +167,7 @@ void DotWriter::WriteToDotLanguage()
 	}
 }
 
-void DotWriter::SendToDotAppOutputDirectory(wxString apppathfolder)
+void DotWriter::SendToDotAppOutputDirectory(const wxString& apppathfolder)
 {
 	wxString dotfilespath = apppathfolder + stvariables::dotfilesdir + stvariables::sd;
 	wxString dottxtpath = dotfilespath + stvariables::dottxtname;
@@ -186,7 +190,7 @@ void DotWriter::SendToDotAppOutputDirectory(wxString apppathfolder)
 	}
 }
 
-bool DotWriter::DotFileExist(wxString apppathfolder)
+bool DotWriter::DotFileExist(const wxString& apppathfolder)
 {
 	wxString dotfilespath = apppathfolder + stvariables::dotfilesdir + stvariables::sd + stvariables::dottxtname;
 
@@ -195,14 +199,28 @@ bool DotWriter::DotFileExist(wxString apppathfolder)
 	else return false;
 }
 
-wxString DotWriter::OptionsShortNameAndParameters(wxString name)
+wxString DotWriter::OptionsShortNameAndParameters(const wxString& name)
 {
-	if (name.Contains(wxT('(')) && name.Contains(wxT(')')) && dwbname) {
-		wxString out = name.BeforeFirst(wxT('('));
-		out += wxT("()"); // for function return just ()
+	if ( (dwhidenamespaces || dwhideparams) && name.Contains(wxT('(')) && name.Contains(wxT(')')) ) {		
+		wxString out = name;
+
+		if( dwhidenamespaces ) {
+			wxRegEx re( wxT("::[a-zA-Z_~]+[a-zA-Z_0-9<!=\\-\\+\\*/%]*\\(.*\\)[ ]*(const)?[ ]*$"), wxRE_ADVANCED );
+		
+			if( re.Matches( name ) ) {
+				out = re.GetMatch( name );
+				out.Replace( wxT("::"), wxEmptyString );
+			} 	
+		}
+		
+		if( dwhideparams ) {
+			out = out.BeforeFirst(wxT('('));
+			out += wxT("()"); // for function return just ()
+		}
+		
 		return out;
 
-	} else if (name.Contains(wxT('(')) && name.Contains(wxT(')')) && dwbparam) {
+	} else if (name.Contains(wxT('(')) && name.Contains(wxT(')')) && dwstripparams) {
 		wxString out = name.BeforeFirst(wxT('('));
 		wxString sub = name.AfterFirst(wxT('(')).BeforeFirst(wxT(')'));
 		if (sub.IsEmpty()) {
@@ -290,7 +308,7 @@ wxString DotWriter::DefineColorForNodeEdge(int index)
 	return colors[index];
 }
 
-bool DotWriter::IsInArray(int index, wxArrayInt arr)
+bool DotWriter::IsInArray(int index, const wxArrayInt& arr)
 {
 	for(unsigned int i = 0; i < arr.GetCount(); i++) {
 		if (arr.Item(i) == index) return true;

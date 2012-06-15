@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 10 2012)
+// C++ code generated with wxFormBuilder (version May  7 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -32,8 +32,11 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_spinET = new wxSpinCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 60,-1 ), wxSP_ARROW_KEYS, 0, 100, 0 );
 	bSizer4->Add( m_spinET, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 	
-	m_checkBoxSN = new wxCheckBox( m_panel3, wxID_ANY, _("Short names"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer4->Add( m_checkBoxSN, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	m_checkBoxHP = new wxCheckBox( m_panel3, wxID_ANY, _("Hide parameters"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer4->Add( m_checkBoxHP, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_checkBoxHN = new wxCheckBox( m_panel3, wxID_ANY, _("Hide namespaces"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer4->Add( m_checkBoxHN, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	
 	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
@@ -81,6 +84,10 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	wxMenuItem* m_menuItem5;
 	m_menuItem5 = new wxMenuItem( m_menu1, wxID_ANY, wxString( _("Zoom 100%") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menu1->Append( m_menuItem5 );
+	
+	wxMenuItem* m_menuItem6;
+	m_menuItem6 = new wxMenuItem( m_menu1, wxID_ANY, wxString( _("Zoom 1:1") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu1->Append( m_menuItem6 );
 	
 	m_scrolledWindow->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( uicallgraph::m_scrolledWindowOnContextMenu ), NULL, this ); 
 	
@@ -152,6 +159,7 @@ uicallgraph::uicallgraph( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	this->Connect( m_menuItem3->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomIn ) );
 	this->Connect( m_menuItem4->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomOut ) );
 	this->Connect( m_menuItem5->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoom100 ) );
+	this->Connect( m_menuItem6->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomOriginal ) );
 }
 
 uicallgraph::~uicallgraph()
@@ -168,6 +176,7 @@ uicallgraph::~uicallgraph()
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomIn ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomOut ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoom100 ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( uicallgraph::OnZoomOriginal ) );
 	
 	delete m_menu1; 
 }

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 10 2012)
+// C++ code generated with wxFormBuilder (version May  7 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -47,7 +47,8 @@ class uicallgraph : public wxPanel
 		wxSpinCtrl* m_spinNT;
 		wxStaticText* m_staticText2;
 		wxSpinCtrl* m_spinET;
-		wxCheckBox* m_checkBoxSN;
+		wxCheckBox* m_checkBoxHP;
+		wxCheckBox* m_checkBoxHN;
 		wxButton* m_buttonRefresh;
 		wxStaticLine* m_staticline1;
 		wxSplitterWindow* m_splitter;
@@ -69,6 +70,7 @@ class uicallgraph : public wxPanel
 		virtual void OnZoomIn( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnZoomOut( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnZoom100( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnZoomOriginal( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

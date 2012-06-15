@@ -7,8 +7,9 @@ m_colorsEdge(1),
 m_colorsNode(1),
 m_tresholdNode(0),
 m_tresholdEdge(0),
-m_boxName(false),
-m_boxParam(false)
+m_boxHideParams(false),
+m_boxHideNamespaces(false),
+m_boxStripParams(false)
 {
 }
 
@@ -27,8 +28,9 @@ void ConfCallGraph::DeSerialize(Archive& arch)
 	arch.Read(wxT("m_tresholdNode"), m_tresholdNode);
 	arch.Read(wxT("m_tresholdEdge"), m_tresholdEdge);
 	
-	arch.Read(wxT("m_boxName"), m_boxName);
-	arch.Read(wxT("m_boxParam"), m_boxParam);
+	arch.Read(wxT("m_boxHideParams"), m_boxHideParams);
+	arch.Read(wxT("m_boxHideNamespaces"), m_boxHideNamespaces);
+	arch.Read(wxT("m_boxStripParams"), m_boxStripParams);
 }
 
 void ConfCallGraph::Serialize(Archive& arch)
@@ -42,6 +44,7 @@ void ConfCallGraph::Serialize(Archive& arch)
 	arch.Write(wxT("m_tresholdNode"), m_tresholdNode);
 	arch.Write(wxT("m_tresholdEdge"), m_tresholdEdge);
 	
-	arch.Write(wxT("m_boxName"), m_boxName);
-	arch.Write(wxT("m_boxParam"), m_boxParam);
+	arch.Write(wxT("m_boxHideParams"), m_boxHideParams);
+	arch.Write(wxT("m_boxHideNamespaces"), m_boxHideNamespaces);
+	arch.Write(wxT("m_boxStripParams"), m_boxStripParams);
 }

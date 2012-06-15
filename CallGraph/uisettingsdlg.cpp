@@ -17,11 +17,12 @@ uisettingsdlg::uisettingsdlg( wxWindow* parent, IManager *mgr)//, CallGraph *plu
 	m_spinCtrl_treshold_node->SetValue(confData.GetTresholdNode());
 	m_spinCtrl_colors_node->SetValue(confData.GetColorsNode());
 	m_spinCtrl_colors_edge->SetValue(confData.GetColorsEdge());
-	m_checkBox_Names->SetValue(confData.GetBoxName());
-	m_checkBox_Parametrs->SetValue(confData.GetBoxParam());
+	m_checkBox_Names->SetValue(confData.GetHideParams());
+	m_checkBox_Parameters->SetValue(confData.GetStripParams());
+	m_checkBox_Namespaces->SetValue(confData.GetHideNamespaces());
 	//
-	if(m_checkBox_Names->IsChecked()) m_checkBox_Parametrs->Disable();
-	if(m_checkBox_Parametrs->IsChecked()) m_checkBox_Names->Disable();
+	if(m_checkBox_Names->IsChecked()) m_checkBox_Parameters->Disable();
+	if(m_checkBox_Parameters->IsChecked()) m_checkBox_Names->Disable();
 	//
 
 	GetSizer()->Fit(this);
@@ -58,34 +59,21 @@ void uisettingsdlg::OnButton_click_ok( wxCommandEvent& event )
 	// store values
 	//ConfCallGraph confData;
 	confData.SetGprofPath(m_textCtrl_path_gprof->GetValue());
-	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-	//
 	confData.SetDotPath(m_textCtrl_path_dot->GetValue());
-	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-	//
 	confData.SetTresholdNode(m_spinCtrl_treshold_node->GetValue());
-	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-	//
 	confData.SetTresholdEdge(m_spinCtrl_treshold_edge->GetValue());
-	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-	//
 	confData.SetColorsEdge(m_spinCtrl_colors_edge->GetValue());
-	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-	//
 	confData.SetColorsNode(m_spinCtrl_colors_node->GetValue());
+	confData.SetHideParams(m_checkBox_Names->GetValue());
+	confData.SetHideNamespaces(m_checkBox_Namespaces->GetValue());
+	confData.SetStripParams(m_checkBox_Parameters->GetValue());
+	
 	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-
-	confData.SetBoxName(m_checkBox_Names->GetValue());
-	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-
-	confData.SetBoxParam(m_checkBox_Parametrs->GetValue());
-	m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-
 
 	if ((wxFileExists(m_textCtrl_path_gprof->GetValue())) && (wxFileExists(m_textCtrl_path_dot->GetValue()))) {
 		EndModal(wxID_OK);
 	} else {
-		wxMessageBox(_("Please check settings for plugin."), wxT("CallGraph"), wxOK | wxICON_INFORMATION, m_mgr->GetTheApp()->GetTopWindow());
+		wxMessageBox(_("Please check the external tools' paths settings."), wxT("CallGraph"), wxOK | wxICON_ERROR, m_mgr->GetTheApp()->GetTopWindow());
 	}
 
 	//event.Skip();
@@ -100,13 +88,13 @@ void uisettingsdlg::OnButton_click_cancel( wxCommandEvent& event )
 void uisettingsdlg::OnCheckName(wxCommandEvent& event)
 {
 	if(m_checkBox_Names->IsChecked())
-		m_checkBox_Parametrs->Disable();
-	else m_checkBox_Parametrs->Enable();
+		m_checkBox_Parameters->Disable();
+	else m_checkBox_Parameters->Enable();
 }
 
 void uisettingsdlg::OnCheckParam(wxCommandEvent& event)
 {
-	if(m_checkBox_Parametrs->IsChecked())
+	if(m_checkBox_Parameters->IsChecked())
 		m_checkBox_Names->Disable();
 	else m_checkBox_Names->Enable();
 }

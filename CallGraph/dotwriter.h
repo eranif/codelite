@@ -32,8 +32,9 @@ private:
 	LineParserList *mlines;
 	wxString output;
 	bool writedotfile;
-	bool dwbname;
-	bool dwbparam;
+	bool dwhideparams;
+	bool dwstripparams;
+	bool dwhidenamespaces;
 	int dwcn;
 	int dwce;
 	int dwtn;
@@ -71,10 +72,11 @@ public:
 	 * @param coledge
 	 * @param thrnode
 	 * @param thredge
-	 * @param boxname
-	 * @param boxparam
+	 * @param hideparams
+	 * @param stripparams
+	 * @param hidenamespaces
 	 */
-	void SetDotWriterFromDetails(int colnode, int coledge, int thrnode, int thredge, bool boxname, bool boxparam);
+	void SetDotWriterFromDetails(int colnode, int coledge, int thrnode, int thredge, bool hideparams, bool stripparams, bool hidenamespaces);
 	//
 	/**
 	 * @brief Function create data in the DOT language and prepare it to write.
@@ -84,18 +86,18 @@ public:
 	 * @brief Function write data in the DOT language to file dot.txt.
 	 * @param path for file where write file with DOT language.
 	 */
-	void SendToDotAppOutputDirectory(wxString path);
+	void SendToDotAppOutputDirectory(const wxString& path);
 	/**
 	 * @brief Function return bool value if the file in the DOT language is exist.
 	 * @param path for file where is file with DOT language placed.
 	 */
-	bool DotFileExist(wxString path);
+	bool DotFileExist(const wxString& path);
 	//
 	/**
 	 * @brief Function return string modified by the options in the dialog settings of the plugin.
 	 * @param name of the function stored in the list of objects.
 	 */
-	wxString OptionsShortNameAndParameters(wxString name);
+	wxString OptionsShortNameAndParameters(const wxString& name);
 	/**
 	 * @brief Function return string of color by the index value.
 	 * @param index of the color, this value return function ReturnIndexForColor.
@@ -111,7 +113,7 @@ public:
 	 * @param index of the function stored in the list of objects.
 	 * @param array of index by nodes added to the call graph.
 	 */
-	bool IsInArray(int index, wxArrayInt array);
+	bool IsInArray(int index, const wxArrayInt& array);
 	/**
 	 * @brief Function return optimal index for color by the value time and options in the dialog settings of the plugin.
 	 * @param time of the function stored in the list of objects.

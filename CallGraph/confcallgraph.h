@@ -28,8 +28,9 @@ class ConfCallGraph : public SerializedObject
 	int m_tresholdNode;
 	int m_tresholdEdge;
 	
-	bool m_boxName;
-	bool m_boxParam;
+	bool m_boxHideParams;
+	bool m_boxStripParams;
+	bool m_boxHideNamespaces;
 
 public:
 	/**
@@ -72,12 +73,15 @@ public:
 		this->m_tresholdEdge = trashEdge;
 	}
 	
-	void SetBoxName(bool boxName){
-		this->m_boxName = boxName;
+	void SetHideParams(bool hide){
+		this->m_boxHideParams = hide;
 	}
 	
-	void SetBoxParam(bool boxParam){
-		this->m_boxParam = boxParam;
+	void SetStripParams(bool hide){
+		this->m_boxStripParams = hide;
+	}
+	void SetHideNamespaces(bool hide){
+		this->m_boxHideNamespaces = hide;
 	}
 	
 	////////////////////////////////////////////
@@ -106,14 +110,17 @@ public:
 		return m_tresholdEdge;
 	}
 	
-	bool GetBoxName() {
-		return m_boxName;
+	bool GetHideParams() {
+		return m_boxHideParams;
 	}
 	
-	bool GetBoxParam() {
-		return m_boxParam;
+	bool GetStripParams() {
+		return m_boxStripParams;
 	}
 	
+	bool GetHideNamespaces() {
+		return m_boxHideNamespaces;
+	}
 	
 };
 #endif // __confcallgraph__

@@ -36,6 +36,7 @@ protected:
 	virtual void OnZoom100(wxCommandEvent& event);
 	virtual void OnZoomIn(wxCommandEvent& event);
 	virtual void OnZoomOut(wxCommandEvent& event);
+	virtual void OnZoomOriginal(wxCommandEvent& event);
 
 	void CreateAndInserDataToTable(int nodethr);
 	void UpdateImage();

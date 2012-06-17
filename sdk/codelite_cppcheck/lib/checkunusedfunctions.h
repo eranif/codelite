@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,49 +22,74 @@
 #define checkunusedfunctionsH
 //---------------------------------------------------------------------------
 
+#include "check.h"
 #include "tokenize.h"
 #include "errorlogger.h"
 
 /// @addtogroup Checks
 /// @{
 
-class CheckUnusedFunctions
-{
+class CheckUnusedFunctions: public Check {
 public:
-    CheckUnusedFunctions(ErrorLogger *errorLogger = 0);
-    ~CheckUnusedFunctions();
+    /** @brief This constructor is used when registering the CheckUnusedFunctions */
+    CheckUnusedFunctions() : Check(myName()), templates(false)
+    { }
 
-    /**
-     * Errors found by this class are forwarded to the given
-     * errorlogger.
-     * @param errorLogger The errorlogger to be used.
-     */
-    void setErrorLogger(ErrorLogger *errorLogger);
+    /** @brief This constructor is used when running checks. */
+    CheckUnusedFunctions(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
+        : Check(myName(), tokenizer, settings, errorLogger), templates(false)
+    { }
 
     // Parse current tokens and determine..
     // * Check what functions are used
     // * What functions are declared
     void parseTokens(const Tokenizer &tokenizer);
 
-
-    void check();
+    void check(ErrorLogger * const errorLogger);
 
 private:
-    ErrorLogger *_errorLogger;
 
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+        CheckUnusedFunctions c(0, settings, errorLogger);
+        c.unusedFunctionError(errorLogger, "", 0, "funcName");
+    }
 
-    class FunctionUsage
-    {
+    /**
+     * Dummy implementation, just to provide error for --errorlist
+     */
+    void unusedFunctionError(ErrorLogger * const errorLogger,
+                             const std::string &filename, unsigned int lineNumber,
+                             const std::string &funcname);
+
+    /**
+     * Dummy implementation, just to provide error for --errorlist
+     */
+    void runSimplifiedChecks(const Tokenizer *, const Settings *, ErrorLogger *) {
+
+    }
+
+    std::string myName() const {
+        return "Unused functions";
+    }
+
+    std::string classInfo() const {
+        return "Check for functions that are never called\n";
+    }
+
+    class FunctionUsage {
     public:
-        FunctionUsage() : usedSameFile(false), usedOtherFile(false)
+        FunctionUsage() : lineNumber(0), usedSameFile(false), usedOtherFile(false)
         { }
 
         std::string filename;
+        unsigned int lineNumber;
         bool   usedSameFile;
         bool   usedOtherFile;
     };
 
     std::map<std::string, FunctionUsage> _functions;
+
+    bool templates;
 };
 /// @}
 //---------------------------------------------------------------------------

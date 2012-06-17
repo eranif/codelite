@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,60 +19,85 @@
 
 
 #include "mathlib.h"
+#include "errorlogger.h"
 
-
-#include <fstream>
 #include <string>
-#include <cstring>
-#include <iostream>
 #include <sstream>
 #include <cstdlib>
 #include <cmath>
 #include <cctype>
 
-long MathLib::toLongNumber(const std::string &str)
+MathLib::bigint MathLib::toLongNumber(const std::string &str)
 {
-    if (str.compare(0, 2, "0x") == 0
-        || str.compare(0, 3, "+0x") == 0
-        || str.compare(0, 3, "-0x") == 0)
-    {
-        return std::strtoul(str.c_str(), '\0', 16);
+    // hexadecimal numbers:
+    if (isHex(str)) {
+        bigint ret = 0;
+        std::istringstream istr(str);
+        istr >> std::hex >> ret;
+        return ret;
     }
-    if (str.compare(0, 1, "0") == 0
-        ||  str.compare(0, 2, "+0") == 0
-        ||  str.compare(0, 2, "-0") == 0)
-    {
-        return std::strtoul(str.c_str(), '\0', 8);
+
+    // octal numbers:
+    if (isOct(str)) {
+        bigint ret = 0;
+        std::istringstream istr(str);
+        istr >> std::oct >> ret;
+        return ret;
     }
-    return (str.find("E", 0) != std::string::npos || str.find("e", 0) != std::string::npos)
-           ? static_cast<long>(std::atof(str.c_str()))
-           : std::atol(str.c_str());
+
+    if (str.find_first_of("eE") != std::string::npos)
+        return static_cast<bigint>(std::atof(str.c_str()));
+
+    bigint ret = 0;
+    std::istringstream istr(str);
+    istr >> ret;
+    return ret;
 }
 
 double MathLib::toDoubleNumber(const std::string &str)
 {
-    if (str.compare(0, 2, "0x") == 0)
-    {
-        return std::strtoul(str.c_str(), '\0', 16);
-    }
-    std::istringstream istr(str.c_str());
+    if (isHex(str))
+        return static_cast<double>(toLongNumber(str));
+    // nullcheck
+    else if (isNullValue(str))
+        return 0.0;
+    // otherwise, convert to double
+    std::istringstream istr(str);
     double ret;
     istr >> ret;
     return ret;
 }
 
-template <typename T>
-std::string MathLib::toString(T d)
+bool MathLib::isFloat(const std::string &s)
 {
-    std::ostringstream result;
-    result << d;
-    std::string strResult(result.str());
-    if (strResult == "-0"
-        || strResult == "+0"
-        || strResult == "-0."
-        || strResult == "+0.")
-        return std::string("0");
-    return result.str();
+    // every number that contains a . is a float
+    if (s.find("." , 0) != std::string::npos)
+        return true;
+    // scientific notation
+    return(s.find("E-", 0) != std::string::npos
+           || s.find("e-", 0) != std::string::npos);
+}
+
+bool MathLib::isNegative(const std::string &s)
+{
+    // remember position
+    std::string::size_type n = 0;
+    // eat up whitespace
+    while (std::isspace(s[n])) ++n;
+    // every negative number has a negative sign
+    return(s[n] == '-');
+}
+
+bool MathLib::isOct(const std::string& str)
+{
+    bool sign = str[0]=='-' || str[0]=='+';
+    return(str[sign?1:0] == '0' && (str.size() == 1 || isOctalDigit(str[sign?2:1])) && !isFloat(str));
+}
+
+bool MathLib::isHex(const std::string& str)
+{
+    bool sign = str[0]=='-' || str[0]=='+';
+    return(str.compare(sign?1:0, 2, "0x") == 0 || str.compare(sign?1:0, 2, "0X") == 0);
 }
 
 bool MathLib::isInt(const std::string & s)
@@ -87,12 +112,11 @@ bool MathLib::isInt(const std::string & s)
 
     // prechecking has nothing found,...
     // gather information
-    enum Representation
-    {
-        eScientific = 0  // NumberE+Number or NumberENumber
-        , eOctal        // starts with 0
-        , eHex          // starts with 0x
-        , eDefault      // Numbers with a (possible) trailing u or U or l or L for unsigned or long datatypes
+    enum Representation {
+        eScientific = 0, // NumberE+Number or NumberENumber
+        eOctal,          // starts with 0
+        eHex,            // starts with 0x
+        eDefault         // Numbers with a (possible) trailing u or U or l or L for unsigned or long datatypes
     };
     // create an instance
     Representation Mode = eDefault;
@@ -104,16 +128,11 @@ bool MathLib::isInt(const std::string & s)
     while (std::isspace(s[n])) ++n;
 
     // determine type
-    if (s.find("E", 0) != std::string::npos)
-    {
+    if (s.find("E", 0) != std::string::npos) {
         Mode = eScientific;
-    }
-    else if (s.find("0x", n, 2) != std::string::npos)
-    {
+    } else if (isHex(s)) {
         Mode = eHex;
-    }
-    else if (s.length() > 1 && s[0] == '0' && std::isdigit(s[1]))
-    {
+    } else if (isOct(s)) {
         Mode = eOctal;
     }
 
@@ -121,14 +140,12 @@ bool MathLib::isInt(const std::string & s)
     if (s[n] == '-' || s[n] == '+') ++n;
 
     // check scientific notation
-    if (Mode == eScientific)
-    {
+    if (Mode == eScientific) {
         // check digits
         while (std::isdigit(s[n])) ++n;
 
         // check scientific notation
-        if (std::tolower(s[n]) == 'e')
-        {
+        if (std::tolower(s[n]) == 'e') {
             ++n;
             // check positive exponent
             if (s[n] == '+') ++n;
@@ -139,24 +156,33 @@ bool MathLib::isInt(const std::string & s)
         }
     }
     // check hex notation
-    else if (Mode == eHex)
-    {
+    else if (Mode == eHex) {
         ++n; // 0
         ++n; // x
         while (std::isxdigit(s[n]))
             ++n;
+
+        while (std::tolower(s[n]) == 'u' || std::tolower(s[n]) == 'l') ++n; // unsigned or long (long)
     }
     // check octal notation
-    else if (Mode == eOctal)
-    {
+    else if (Mode == eOctal) {
+        ++n; // 0
         while (isOctalDigit(s[n]))
             ++n;
-    }
-    else if (Mode == eDefault)
-    {
-        while (std::isdigit(s[n])) ++n;
-        // unsigned or long
-        while (std::tolower(s[n]) == 'u' || std::tolower(s[n]) == 'l') ++n;
+
+        while (std::tolower(s[n]) == 'u' || std::tolower(s[n]) == 'l') ++n; // unsigned or long (long)
+    } else if (Mode == eDefault) {
+        // starts with digit
+        bool bStartsWithDigit=false;
+        while (std::isdigit(s[n])) {
+            bStartsWithDigit=true;
+            ++n;
+        };
+
+        while (std::tolower(s[n]) == 'u' || std::tolower(s[n]) == 'l') ++n; // unsigned or long (long)
+
+        if (!bStartsWithDigit)
+            return false;
     }
     // eat up whitespace
     while (std::isspace(s[n]))
@@ -164,80 +190,72 @@ bool MathLib::isInt(const std::string & s)
 
     // if everything goes good, we are at the end of the string and no digits/character
     // is here --> return true, but if something was found eg. 12E+12AA return false
-    if (s[n])
-        return false;
-    return true;
-
+    return(n >= s.length());
 }
 
 std::string MathLib::add(const std::string & first, const std::string & second)
 {
-    if (MathLib::isInt(first) && MathLib::isInt(second))
-    {
-        return toString<long>(toLongNumber(first) + toLongNumber(second));
+    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+        return toString<bigint>(toLongNumber(first) + toLongNumber(second));
     }
     return toString<double>(toDoubleNumber(first) + toDoubleNumber(second));
 }
 
 std::string MathLib::subtract(const std::string &first, const std::string &second)
 {
-    if (MathLib::isInt(first) && MathLib::isInt(second))
-    {
-        return toString<long>(toLongNumber(first) - toLongNumber(second));
+    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+        return toString<bigint>(toLongNumber(first) - toLongNumber(second));
     }
     return toString<double>(toDoubleNumber(first) - toDoubleNumber(second));
 }
 
 std::string MathLib::divide(const std::string &first, const std::string &second)
 {
-    if (MathLib::isInt(first) && MathLib::isInt(second))
-    {
-        return toString<long>(toLongNumber(first) / toLongNumber(second));
+    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+        return toString<bigint>(toLongNumber(first) / toLongNumber(second));
     }
     return toString<double>(toDoubleNumber(first) / toDoubleNumber(second));
 }
 
 std::string MathLib::multiply(const std::string &first, const std::string &second)
 {
-    if (MathLib::isInt(first) && MathLib::isInt(second))
-    {
-        return toString<long>(toLongNumber(first) * toLongNumber(second));
+    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+        return toString<bigint>(toLongNumber(first) * toLongNumber(second));
     }
     return toString<double>(toDoubleNumber(first) * toDoubleNumber(second));
 }
 
+std::string MathLib::mod(const std::string &first, const std::string &second)
+{
+    if (MathLib::isInt(first) && MathLib::isInt(second)) {
+        return toString<MathLib::bigint>(toLongNumber(first) % toLongNumber(second));
+    }
+    return toString<double>(fmod(toDoubleNumber(first),toDoubleNumber(second)));
+}
+
 std::string MathLib::calculate(const std::string &first, const std::string &second, char action)
 {
-    std::string result("0");
-
-    switch (action)
-    {
+    switch (action) {
     case '+':
-        result = MathLib::add(first, second);
-        break;
+        return MathLib::add(first, second);
 
     case '-':
-        result = MathLib::subtract(first, second);
-        break;
+        return MathLib::subtract(first, second);
 
     case '*':
-        result = MathLib::multiply(first, second);
-        break;
+        return MathLib::multiply(first, second);
 
     case '/':
-        result = MathLib::divide(first, second);
-        break;
+        return MathLib::divide(first, second);
+
+    case '%':
+        return MathLib::mod(first, second);
 
     default:
-        std::cerr << "##### If you see this, there is a bug: "
-                  << "MathLib::calculate() was called with unknown action '"
-                  << action
-                  << "' #####"
-                  << std::endl;
-        break;
+        throw InternalError(0, std::string("Unexpected action '") + action + "' in MathLib::calculate(). Please report this to Cppcheck developers.");
     }
 
-    return result;
+    return "0";
 }
 
 std::string MathLib::sin(const std::string &tok)
@@ -262,16 +280,49 @@ std::string MathLib::abs(const std::string &tok)
     return toString<double>(std::abs(toDoubleNumber(tok)));
 }
 
+bool MathLib::isEqual(const std::string &first, const std::string &second)
+{
+    // this conversion is needed for formating
+    // e.g. if first=0.1 and second=1.0E-1, the direct comparison of the strings whould fail
+    return toString<double>(toDoubleNumber(first)) == toString<double>(toDoubleNumber(second));
+}
+
+bool MathLib::isNotEqual(const std::string &first, const std::string &second)
+{
+    return !isEqual(first, second);
+}
+
 bool MathLib::isGreater(const std::string &first, const std::string &second)
 {
     return toDoubleNumber(first) > toDoubleNumber(second);
 }
 
-bool MathLib::isOctalDigit(char c)
+bool MathLib::isGreaterEqual(const std::string &first, const std::string &second)
 {
-    if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7')
-        return true;
-
-    return false;
+    return toDoubleNumber(first) >= toDoubleNumber(second);
 }
 
+bool MathLib::isLess(const std::string &first, const std::string &second)
+{
+    return toDoubleNumber(first) < toDoubleNumber(second);
+}
+
+bool MathLib::isLessEqual(const std::string &first, const std::string &second)
+{
+    return toDoubleNumber(first) <= toDoubleNumber(second);
+}
+
+bool MathLib::isNullValue(const std::string &str)
+{
+    return (str == "-0"        || str == "0"      || str == "+0"
+            || str == "-0.0"   || str == "0.0"    || str == "+0.0"
+            || str == "-0."    || str == "+0."
+            || str == "-0E-00" || str == "-0E+00" || str == "+0E+00" || str == "+0E-00"
+            || str == "-0e-00" || str == "-0e+00" || str == "+0e+00" || str == "+0e-00"
+            || str == "-0E-0");
+}
+
+bool MathLib::isOctalDigit(char c)
+{
+    return(c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7');
+}

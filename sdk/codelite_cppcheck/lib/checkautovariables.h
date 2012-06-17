@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,30 +24,33 @@
 
 #include "check.h"
 #include "token.h"
-#include <set>
 
 /// @addtogroup Checks
 /// @{
 
 
-class CheckAutoVariables : public Check
-{
+class CheckAutoVariables : public Check {
 public:
     /** This constructor is used when registering the CheckClass */
-    CheckAutoVariables() : Check()
+    CheckAutoVariables() : Check(myName())
     { }
 
-    /** This constructor is used when running checks.. */
+    /** This constructor is used when running checks. */
     CheckAutoVariables(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-            : Check(tokenizer, settings, errorLogger)
+        : Check(myName(), tokenizer, settings, errorLogger)
     { }
 
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-    {
+    /** @brief Run checks against the normal token list */
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+        CheckAutoVariables checkAutoVariables(tokenizer, settings, errorLogger);
+        checkAutoVariables.returnReference();
+    }
+
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
         CheckAutoVariables checkAutoVariables(tokenizer, settings, errorLogger);
         checkAutoVariables.autoVariables();
         checkAutoVariables.returnPointerToLocalArray();
-        checkAutoVariables.returnReference();
+        checkAutoVariables.returncstr();
     }
 
     /** Check auto variables */
@@ -63,14 +66,10 @@ public:
     void returncstr();
 
 private:
-    std::set<std::string> fp_list;
-    std::set<unsigned int> vd_list;
-    std::set<unsigned int> vda_list;
-    bool errorAv(const Token* left, const Token* right);
+    bool isRefArg(unsigned int varId);
+    bool isPtrArg(unsigned int varId);
     bool isAutoVar(unsigned int varId);
     bool isAutoVarArray(unsigned int varId);
-    void addVD(unsigned int varId);
-    void addVDA(unsigned int varId);
 
     /**
      * Returning a temporary object?
@@ -79,35 +78,38 @@ private:
      */
     bool returnTemporary(const Token *tok) const;
 
+    void errorReturnAddressToAutoVariable(const Token *tok);
     void errorReturnPointerToLocalArray(const Token *tok);
-    void errorAutoVariableAssignment(const Token *tok);
+    void errorAutoVariableAssignment(const Token *tok, bool inconclusive);
     void errorReturnReference(const Token *tok);
     void errorReturnTempReference(const Token *tok);
-    void errorReturnAutocstr(const Token *tok);
     void errorReturnTempPointer(const Token *tok);
+    void errorInvalidDeallocation(const Token *tok);
+    void errorReturnAddressOfFunctionParameter(const Token *tok, const std::string &varname);
 
-    void getErrorMessages()
-    {
-        errorAutoVariableAssignment(0);
-        errorReturnPointerToLocalArray(0);
-        errorReturnReference(0);
-        errorReturnTempReference(0);
-        errorReturnAutocstr(0);
-        errorReturnTempPointer(0);
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+        CheckAutoVariables c(0,settings,errorLogger);
+        c.errorAutoVariableAssignment(0, false);
+        c.errorReturnAddressToAutoVariable(0);
+        c.errorReturnPointerToLocalArray(0);
+        c.errorReturnReference(0);
+        c.errorReturnTempReference(0);
+        c.errorReturnTempPointer(0);
+        c.errorInvalidDeallocation(0);
+        c.errorReturnAddressOfFunctionParameter(0, "parameter");
     }
 
-    std::string name() const
-    {
+    std::string myName() const {
         return "Auto Variables";
     }
 
-    std::string classInfo() const
-    {
+    std::string classInfo() const {
         return "A pointer to a variable is only valid as long as the variable is in scope.\n"
                "Check:\n"
                "* returning a pointer to auto or temporary variable\n"
                "* assigning address of an variable to an effective parameter of a function\n"
-               "* returning reference to local/temporary variable\n";
+               "* returning reference to local/temporary variable\n"
+               "* returning address of function parameter\n";
     }
 };
 /// @}

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,44 +19,73 @@
 #ifndef THREADEXECUTOR_H
 #define THREADEXECUTOR_H
 
-#include <vector>
+#include <map>
 #include <string>
 #include <list>
 #include "settings.h"
 #include "errorlogger.h"
 
+#if (defined(__GNUC__) || defined(__sun)) && !defined(__MINGW32__)
+#define THREADING_MODEL_FORK
+#endif
+
+/// @addtogroup CLI
+/// @{
+
 /**
  * This class will take a list of filenames and settings and check then
  * all files using threads.
  */
-class ThreadExecutor : public ErrorLogger
-{
+class ThreadExecutor : public ErrorLogger {
 public:
-    ThreadExecutor(const std::vector<std::string> &filenames, const Settings &settings, ErrorLogger &_errorLogger);
+    ThreadExecutor(const std::map<std::string, size_t> &files, Settings &settings, ErrorLogger &_errorLogger);
     virtual ~ThreadExecutor();
     unsigned int check();
     virtual void reportOut(const std::string &outmsg);
     virtual void reportErr(const ErrorLogger::ErrorMessage &msg);
-    virtual void reportStatus(unsigned int index, unsigned int max);
+
+    /**
+     * @brief Add content to a file, to be used in unit testing.
+     *
+     * @param path File name (used as a key to link with real file).
+     * @param content If the file would be a real file, this should be
+     * the content of the file.
+     */
+    void addFileContent(const std::string &path, const std::string &content);
 
 private:
-    const std::vector<std::string> &_filenames;
-    const Settings &_settings;
+    const std::map<std::string, size_t> &_files;
+    Settings &_settings;
     ErrorLogger &_errorLogger;
     unsigned int _fileCount;
 
-#if (defined(__GNUC__) || defined(__sun)) && !defined(__MINGW32__)
+#ifdef THREADING_MODEL_FORK
+
+    /** @brief Key is file name, and value is the content of the file */
+    std::map<std::string, std::string> _fileContents;
 private:
-    bool handleRead(unsigned int &result);
-    void writeToPipe(char type, const std::string &data);
-    int _pipe[2];
+    enum PipeSignal {REPORT_OUT='1',REPORT_ERROR='2', CHILD_END='3'};
+
+    /**
+     * Read from the pipe, parse and handle what ever is in there.
+     *@return -1 in case of error
+     *         0 if there is nothing in the pipe to be read
+     *         1 if we did read something
+     */
+    int handleRead(int rpipe, unsigned int &result);
+    void writeToPipe(PipeSignal type, const std::string &data);
+    /**
+     * Write end of status pipe, different for each child.
+     * Not used in master process.
+     */
+    int _wpipe;
     std::list<std::string> _errorList;
+
 public:
     /**
      * @return true if support for threads exist.
      */
-    static bool isEnabled()
-    {
+    static bool isEnabled() {
         return true;
     }
 #else
@@ -64,8 +93,7 @@ public:
     /**
      * @return true if support for threads exist.
      */
-    static bool isEnabled()
-    {
+    static bool isEnabled() {
         return false;
     }
 #endif
@@ -77,5 +105,7 @@ private:
     /** disabled assignment operator */
     void operator=(const ThreadExecutor &);
 };
+
+/// @}
 
 #endif // THREADEXECUTOR_H

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,49 +22,46 @@
 //---------------------------------------------------------------------------
 
 #include "check.h"
-#include "settings.h"
 
 class Token;
+class Scope;
+class Function;
 
 /// @addtogroup Checks
 /// @{
 
 
 /** @brief %Check classes. Uninitialized member variables, non-conforming operators, missing virtual destructor, etc */
-class CheckClass : public Check
-{
+class CheckClass : public Check {
 public:
     /** @brief This constructor is used when registering the CheckClass */
-    CheckClass() : Check()
+    CheckClass() : Check(myName()), symbolDatabase(NULL)
     { }
 
-    /** @brief This constructor is used when running checks.. */
-    CheckClass(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-            : Check(tokenizer, settings, errorLogger)
-    { }
+    /** @brief This constructor is used when running checks. */
+    CheckClass(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger);
 
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-    {
+    /** @brief Run checks on the normal token list */
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
         CheckClass checkClass(tokenizer, settings, errorLogger);
+
+        // can't be a simplified check .. the 'sizeof' is used.
         checkClass.noMemset();
     }
 
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-    {
+    /** @brief Run checks on the simplified token list */
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
         CheckClass checkClass(tokenizer, settings, errorLogger);
 
-        if (settings->_checkCodingStyle)
-        {
-            checkClass.constructors();
-            checkClass.operatorEq();
-            checkClass.privateFunctions();
-            checkClass.operatorEqRetRefThis();
-            if (settings->_showAll)
-            {
-                checkClass.thisSubtraction();
-                checkClass.operatorEqToSelf();
-            }
-        }
+        // Coding style checks
+        checkClass.constructors();
+        checkClass.operatorEq();
+        checkClass.privateFunctions();
+        checkClass.operatorEqRetRefThis();
+        checkClass.thisSubtraction();
+        checkClass.operatorEqToSelf();
+        checkClass.initializerList();
+
         checkClass.virtualDestructor();
         checkClass.checkConst();
     }
@@ -78,12 +75,16 @@ public:
 
     /**
      * @brief %Check that the memsets are valid.
-     * The 'memset' function can do dangerous things if used wrong.
+     * The 'memset' function can do dangerous things if used wrong. If it
+     * is used on STL containers for instance it will clear all its data
+     * and then the STL container may leak memory or worse have an invalid state.
+     * It can also overwrite the virtual table.
      * Important: The checking doesn't work on simplified tokens list.
      */
     void noMemset();
+    void checkMemsetType(const Scope *start, const Token *tok, const Scope *type);
 
-    /** @brief 'operator=' should return something.. */
+    /** @brief 'operator=' should return something and it should not be const. */
     void operatorEq();
 
     /** @brief 'operator=' should return reference to *this */
@@ -100,109 +101,126 @@ public:
 
     /** @brief can member function be const? */
     void checkConst();
+
+    /** @brief Check initializer list order */
+    void initializerList();
+
 private:
-
-    /** @brief Information about a member variable. Used when checking for uninitialized variables */
-    class Var
-    {
-    public:
-        Var(const std::string &name_, bool init = false, bool priv = false, Var *next = 0)
-                : name(name_)
-        {
-            this->init = init;
-            this->priv = priv;
-            this->next = next;
-        }
-
-        /** @brief name of variable */
-        const std::string name;
-
-        /** @brief has this variable been initialized? */
-        bool        init;
-
-        /** @brief is this variable declared in the private section? */
-        bool        priv;
-
-        /** @brief next Var item */
-        Var *next;
-    };
-
-    /**
-     * @brief parse a scope for a constructor or member function and set the "init" flags in the provided varlist
-     * @param tok1 pointer to class declaration
-     * @param ftok pointer to the function that should be checked
-     * @param varlist variable list (the "init" flag will be set in these variables)
-     * @param classname name of class
-     * @param callstack the function doesn't look into recursive function calls.
-     * @param isStruct if this is a struct instead of a class
-     */
-    void initializeVarList(const Token *tok1, const Token *ftok, Var *varlist, const std::string &classname, std::list<std::string> &callstack, bool isStruct);
-
-    /** @brief initialize a variable in the varlist */
-    void initVar(Var *varlist, const std::string &varname);
-
-    /**
-     * @brief get varlist from a class definition
-     * @param tok1 pointer to class definition
-     * @param withClasses if class variables should be extracted too.
-     * @param isStruct is this a struct?
-     */
-    Var *getVarList(const Token *tok1, bool withClasses, bool isStruct);
-
-    // Check constructors for a specified class
-    void checkConstructors(const Token *tok1, const std::string &funcname, bool hasPrivateConstructor, bool isStruct);
-
-    bool sameFunc(int nest, const Token *firstEnd, const Token *secondEnd);
-    bool checkConstFunc(const Token *paramStart, const Token *paramEnd);
+    const SymbolDatabase *symbolDatabase;
 
     // Reporting errors..
     void noConstructorError(const Token *tok, const std::string &classname, bool isStruct);
-    void uninitVarError(const Token *tok, const std::string &classname, const std::string &varname, bool hasPrivateConstructor);
+    void uninitVarError(const Token *tok, const std::string &classname, const std::string &varname);
     void operatorEqVarError(const Token *tok, const std::string &classname, const std::string &varname);
     void unusedPrivateFunctionError(const Token *tok, const std::string &classname, const std::string &funcname);
-    void memsetClassError(const Token *tok, const std::string &memfunc);
-    void memsetStructError(const Token *tok, const std::string &memfunc, const std::string &classname);
-    void operatorEqReturnError(const Token *tok);
+    void memsetError(const Token *tok, const std::string &memfunc, const std::string &classname, const std::string &type);
+    void operatorEqReturnError(const Token *tok, const std::string &className);
     void virtualDestructorError(const Token *tok, const std::string &Base, const std::string &Derived);
     void thisSubtractionError(const Token *tok);
     void operatorEqRetRefThisError(const Token *tok);
     void operatorEqToSelfError(const Token *tok);
-
     void checkConstError(const Token *tok, const std::string &classname, const std::string &funcname);
+    void checkConstError2(const Token *tok1, const Token *tok2, const std::string &classname, const std::string &funcname);
+    void initializerListError(const Token *tok1,const Token *tok2, const std::string & classname, const std::string &varname);
 
-    void getErrorMessages()
-    {
-        noConstructorError(0, "classname", false);
-        uninitVarError(0, "classname", "varname", false);
-        operatorEqVarError(0, "classname", "");
-        unusedPrivateFunctionError(0, "classname", "funcname");
-        memsetClassError(0, "memfunc");
-        memsetStructError(0, "memfunc", "classname");
-        operatorEqReturnError(0);
-        virtualDestructorError(0, "Base", "Derived");
-        thisSubtractionError(0);
-        operatorEqRetRefThisError(0);
-        operatorEqToSelfError(0);
-        checkConstError(0, "class", "function");
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+        CheckClass c(0, settings, errorLogger);
+        c.noConstructorError(0, "classname", false);
+        c.uninitVarError(0, "classname", "varname");
+        c.operatorEqVarError(0, "classname", "");
+        c.unusedPrivateFunctionError(0, "classname", "funcname");
+        c.memsetError(0, "memfunc", "classname", "class");
+        c.operatorEqReturnError(0, "class");
+        c.virtualDestructorError(0, "Base", "Derived");
+        c.thisSubtractionError(0);
+        c.operatorEqRetRefThisError(0);
+        c.operatorEqToSelfError(0);
+        c.checkConstError(0, "class", "function");
+        c.initializerListError(0, 0, "class", "variable");
     }
 
-    std::string name() const
-    {
+    std::string myName() const {
         return "Class";
     }
 
-    std::string classInfo() const
-    {
+    std::string classInfo() const {
         return "Check the code for each class.\n"
                "* Missing constructors\n"
                "* Are all variables initialized by the constructors?\n"
-               "* [[CheckMemset|Warn if memset, memcpy etc are used on a class]]\n"
+               "* Warn if memset, memcpy etc are used on a class\n"
                "* If it's a base class, check that the destructor is virtual\n"
                "* Are there unused private functions\n"
                "* 'operator=' should return reference to self\n"
                "* 'operator=' should check for assignment to self\n"
                "* Constness for member functions\n";
     }
+
+    // operatorEqRetRefThis helper function
+    void checkReturnPtrThis(const Scope *scope, const Function *func, const Token *tok, const Token *last);
+
+    // operatorEqToSelf helper functions
+    bool hasAllocation(const Function *func, const Scope* scope);
+    bool hasAssignSelf(const Function *func, const Token *rhs);
+
+    // checkConst helper functions
+    bool isMemberVar(const Scope *scope, const Token *tok);
+    bool isConstMemberFunc(const Scope *scope, const Token *tok);
+    bool checkConstFunc(const Scope *scope, const Function *func);
+    /** @brief check if this function is virtual in the base classes */
+    bool isVirtualFunc(const Scope *scope, const Token *functionToken) const;
+
+    // constructors helper function
+    /** @brief Information about a member variable. Used when checking for uninitialized variables */
+    struct Usage {
+        Usage() : assign(false), init(false) { }
+
+        /** @brief has this variable been assigned? */
+        bool assign;
+
+        /** @brief has this variable been initialized? */
+        bool init;
+    };
+
+    bool isBaseClassFunc(const Token *tok, const Scope *scope);
+
+    /**
+     * @brief assign a variable in the varlist
+     * @param varname name of variable to mark assigned
+     * @param scope pointer to variable Scope
+     * @param usage reference to usage vector
+     */
+    void assignVar(const std::string &varname, const Scope *scope, std::vector<Usage> &usage);
+
+    /**
+     * @brief initialize a variable in the varlist
+     * @param varname name of variable to mark initialized
+     * @param scope pointer to variable Scope
+     * @param usage reference to usage vector
+     */
+    void initVar(const std::string &varname, const Scope *scope, std::vector<Usage> &usage);
+
+    /**
+     * @brief set all variables in list assigned
+     * @param usage reference to usage vector
+     */
+    void assignAllVar(std::vector<Usage> &usage) const;
+
+    /**
+     * @brief set all variables in list not assigned and not initialized
+     * @param usage reference to usage vector
+     */
+    void clearAllVar(std::vector<Usage> &usage) const;
+
+    /**
+     * @brief parse a scope for a constructor or member function and set the "init" flags in the provided varlist
+     * @param func reference to the function that should be checked
+     * @param callstack the function doesn't look into recursive function calls.
+     * @param scope pointer to variable Scope
+     * @param usage reference to usage vector
+     */
+    void initializeVarList(const Function &func, std::list<std::string> &callstack, const Scope *scope, std::vector<Usage> &usage);
+
+    bool canNotCopy(const Scope *scope) const;
 };
 /// @}
 //---------------------------------------------------------------------------

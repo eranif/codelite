@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2011 Marek Zmysłowski and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,28 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef FileListerH
-#define FileListerH
-
-#include <vector>
-#include <string>
+#ifndef standardsH
+#define standardsH
 
 /// @addtogroup Core
 /// @{
 
 
-class FileLister
-{
-public:
-    static void recursiveAddFiles(std::vector<std::string> &filenames, const std::string &path, bool recursive);
-    static std::string simplifyPath(const char *originalPath);
-    static bool sameFileName(const std::string &fname1, const std::string &fname2);
-    static bool acceptFile(const std::string &filename);
-private:
+/**
+ * @brief This is just a container for standards settings.
+ * This struct contains all possible standards that cppcheck recognize.
+ */
+struct Standards {
+    /** Code is C99 standard */
+    bool c99;
 
+    /** Code is posix */
+    bool posix;
+
+    /** Code follows C++11 standard */
+    bool cpp11;
+
+    /** This constructor clear all the variables **/
+    Standards() : c99(false), posix(false), cpp11(false) {};
 };
 
 /// @}
 
-#endif // #ifndef FILELISTER_H
+#endif // standardsH

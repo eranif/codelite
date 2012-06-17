@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,7 @@
  *
  * The Token class also has other functions for management of token list, matching tokens, etc.
  */
-class Token
-{
+class Token {
 private:
     Token **tokensBack;
 
@@ -44,22 +43,25 @@ private:
     Token();
 
 public:
-    Token(Token **tokensBack);
+    explicit Token(Token **tokensBack);
     ~Token();
 
     void str(const std::string &s);
 
+    /**
+     * Concatenate two (quoted) strings. Automatically cuts of the last/first character.
+     * Example: "hello ""world" -> "hello world". Used by the token simplifier.
+     */
     void concatStr(std::string const& b);
 
-    const std::string &str() const
-    {
+    const std::string &str() const {
         return _str;
     }
 
     /**
-     * Unlink and delete next token.
+     * Unlink and delete the next 'index' tokens.
      */
-    void deleteNext();
+    void deleteNext(unsigned long index = 1);
 
     /**
      * Returns token in given index, related to this token.
@@ -69,7 +71,14 @@ public:
     const Token *tokAt(int index) const;
     Token *tokAt(int index);
 
-    std::string strAt(int index) const;
+    /**
+     * Returns the link to the token in given index, related to this token.
+     * For example index 1 would return the link to next token.
+     */
+    const Token *linkAt(int index) const;
+    Token *linkAt(int index);
+
+    const std::string &strAt(int index) const;
 
     /**
      * Match given token (or list of tokens) to a pattern list.
@@ -96,19 +105,23 @@ public:
      * Match given token (or list of tokens) to a pattern list.
      *
      * Possible patterns
-     * "%any%" any token
-     * "%var%" any token which is a name or type e.g. "hello" or "int"
-     * "%name%" any token which is a name or type e.g. "hello" or "int"
-     * "%type%" Anything that can be a variable type, e.g. "int", but not "delete".
-     * "%num%" Any numeric token, e.g. "23"
-     * "%bool%" true or false
-     * "%str%" Any token starting with "-character (C-string).
-     * "%varid%" Match with parameter varid
-     * "[abc]" Any of the characters 'a' or 'b' or 'c'
-     * "int|void|char" Any of the strings, int, void or char
-     * "int|void|char|" Any of the strings, int, void or char or empty string
-     * "!!else" No tokens or any token that is not "else".
-     * "someRandomText" If token contains "someRandomText".
+     * - "%any%" any token
+     * - "%var%" any token which is a name or type e.g. "hello" or "int"
+     * - "%type%" Anything that can be a variable type, e.g. "int", but not "delete".
+     * - "%num%" Any numeric token, e.g. "23"
+     * - "%bool%" true or false
+     * - "%str%" Any token starting with &quot;-character (C-string).
+     * - "%varid%" Match with parameter varid
+     * - "%or%" A bitwise-or operator '|'
+     * - "%oror%" A logical-or operator '||'
+     * - "[abc]" Any of the characters 'a' or 'b' or 'c'
+     * - "int|void|char" Any of the strings, int, void or char
+     * - "int|void|char|" Any of the strings, int, void or char or empty string
+     * - "!!else" No tokens or any token that is not "else".
+     * - "someRandomText" If token contains "someRandomText".
+     *
+     * multi-compare patterns such as "int|void|char" can contain %or%, %oror% and %op%
+     * but it is not recommended to put such an %cmd% as the first pattern.
      *
      * The patterns can be also combined to compare to multiple tokens at once
      * by separating tokens with a space, e.g.
@@ -116,9 +129,12 @@ public:
      * "const" or "void" and token after that is '{'. If even one of the tokens does not
      * match its pattern, false is returned.
      *
+     * @todo pattern "%type%|%num%" should mean either a type or a num.
+     *
      * @param tok List of tokens to be compared to the pattern
      * @param pattern The pattern against which the tokens are compared,
      * e.g. "const" or ") const|volatile| {".
+     * @param varid if %varid% is given in the pattern the Token::varId will be matched against this argument
      * @return true if given token matches with given pattern
      *         false if given token does not match with given pattern
      */
@@ -131,23 +147,101 @@ public:
      *
      * @param tok token with C-string
      **/
-    static size_t getStrLength(const Token *tok);
+    static std::size_t getStrLength(const Token *tok);
 
-    bool isName() const
-    {
+    bool isName() const {
         return _isName;
     }
-    bool isNumber() const
-    {
+    void isName(bool name) {
+        _isName = name;
+    }
+    bool isNumber() const {
         return _isNumber;
     }
-    bool isBoolean() const
-    {
+    void isNumber(bool number) {
+        _isNumber = number;
+    }
+    bool isArithmeticalOp() const {
+        return (_str=="<<" || _str==">>" || (_str.size()==1 && _str.find_first_of("+-*/%") != std::string::npos));
+    }
+    bool isOp() const {
+        return (isArithmeticalOp() ||
+                _str == "&&" ||
+                _str == "||" ||
+                _str == "==" ||
+                _str == "!=" ||
+                _str == "<"  ||
+                _str == "<=" ||
+                _str == ">"  ||
+                _str == ">=" ||
+                (_str.size() == 1 && _str.find_first_of("&|^~!") != std::string::npos));
+    }
+    bool isExtendedOp() const {
+        return isOp() ||
+               (_str.size() == 1 && _str.find_first_of(",[]()?:") != std::string::npos);
+    }
+    bool isAssignmentOp() const {
+        return (_str == "="   ||
+                _str == "+="  ||
+                _str == "-="  ||
+                _str == "*="  ||
+                _str == "/="  ||
+                _str == "%="  ||
+                _str == "&="  ||
+                _str == "^="  ||
+                _str == "|="  ||
+                _str == "<<=" ||
+                _str == ">>=");
+    }
+    bool isBoolean() const {
         return _isBoolean;
+    }
+    void isBoolean(bool boolean) {
+        _isBoolean = boolean;
+    }
+    bool isUnsigned() const {
+        return _isUnsigned;
+    }
+    void isUnsigned(bool sign) {
+        _isUnsigned = sign;
+    }
+    bool isSigned() const {
+        return _isSigned;
+    }
+    void isSigned(bool sign) {
+        _isSigned = sign;
+    }
+    bool isPointerCompare() const {
+        return _isPointerCompare;
+    }
+    void isPointerCompare(bool b) {
+        _isPointerCompare = b;
+    }
+    bool isLong() const {
+        return _isLong;
+    }
+    void isLong(bool size) {
+        _isLong = size;
+    }
+    bool isUnused() const {
+        return _isUnused;
+    }
+    void isUnused(bool used) {
+        _isUnused = used;
     }
     bool isStandardType() const;
 
+    bool isExpandedMacro() const {
+        return _isExpandedMacro;
+    }
+    void setExpandedMacro(bool m) {
+        _isExpandedMacro = m;
+    }
+
+    static const Token *findsimplematch(const Token *tok, const char pattern[]);
+    static const Token *findsimplematch(const Token *tok, const char pattern[], const Token *end);
     static const Token *findmatch(const Token *tok, const char pattern[], unsigned int varId = 0);
+    static const Token *findmatch(const Token *tok, const char pattern[], const Token *end, unsigned int varId = 0);
 
     /**
      * Needle is build from multiple alternatives. If one of
@@ -164,26 +258,21 @@ public:
      */
     static int multiCompare(const char *haystack, const char *needle);
 
-    unsigned int linenr() const
-    {
+    unsigned int linenr() const {
         return _linenr;
     }
-    void linenr(unsigned int linenr)
-    {
-        _linenr = linenr;
+    void linenr(unsigned int lineNumber) {
+        _linenr = lineNumber;
     }
 
-    unsigned int fileIndex() const
-    {
+    unsigned int fileIndex() const {
         return _fileIndex;
     }
-    void fileIndex(unsigned int fileIndex)
-    {
-        _fileIndex = fileIndex;
+    void fileIndex(unsigned int indexOfFile) {
+        _fileIndex = indexOfFile;
     }
 
-    Token *next() const
-    {
+    Token *next() const {
         return _next;
     }
 
@@ -200,22 +289,19 @@ public:
     /**
      * Insert new token after this token. This function will handle
      * relations between next and previous token also.
-     * @param str String for the new token.
+     * @param tokenStr String for the new token.
      */
-    void insertToken(const std::string &str);
+    void insertToken(const std::string &tokenStr);
 
-    Token *previous() const
-    {
+    Token *previous() const {
         return _previous;
     }
 
 
-    unsigned int varId() const
-    {
+    unsigned int varId() const {
         return _varId;
     }
-    void varId(unsigned int id)
-    {
+    void varId(unsigned int id) {
         _varId = id;
     }
 
@@ -247,35 +333,39 @@ public:
     static void replace(Token *replaceThis, Token *start, Token *end);
 
     /** Stringify a token list (with or without varId) */
-    std::string stringifyList(bool varid = 0, const char *title = 0) const;
+    std::string stringify(const Token* end) const;
+    std::string stringifyList(bool varid = false, const char *title = 0) const;
     std::string stringifyList(bool varid, const char *title, const std::vector<std::string> &fileNames) const;
 
     /**
-     * This is intended to be used for the first token in the list
-     * Do not use this for the tokens at the end of the list unless the
-     * token is the last token in the list.
+     * Remove the contents for this token from the token list.
+     *
+     * The contents are replaced with the contents of the next token and
+     * the next token is unlinked and deleted from the token list.
+     *
+     * So this token will still be valid after the 'deleteThis()'.
      */
     void deleteThis();
 
     /**
      * Create link to given token
-     * @param link The token where this token should link
+     * @param linkToToken The token where this token should link
      * to.
      */
-    void link(Token *link)
-    {
-        _link = link;
+    void link(Token *linkToToken) {
+        _link = linkToToken;
     }
 
     /**
      * Return token where this token links to.
      * Supported links are:
      * "{" <-> "}"
+     * "(" <-> ")"
+     * "[" <-> "]"
      *
      * @return The token where this token links to.
      */
-    Token *link() const
-    {
+    Token *link() const {
         return _link;
     }
 
@@ -293,7 +383,7 @@ public:
     std::string strValue() const;
 
     /**
-     * Move srcStart and srcEnd tokens and all tokens between then
+     * Move srcStart and srcEnd tokens and all tokens between them
      * into new a location. Only links between tokens are changed.
      * @param srcStart This is the first token to be moved
      * @param srcEnd The last token to be moved
@@ -301,48 +391,89 @@ public:
      */
     static void move(Token *srcStart, Token *srcEnd, Token *newLocation);
 
-private:
-    void next(Token *next)
-    {
-        _next = next;
+    /** Get progressValue */
+    unsigned int progressValue() const {
+        return _progressValue;
     }
-    void previous(Token *previous)
-    {
-        _previous = previous;
+
+    /** Calculate progress values for all tokens */
+    void assignProgressValues() {
+        unsigned int total_count = 0;
+        for (Token *tok = this; tok; tok = tok->next())
+            ++total_count;
+        unsigned int count = 0;
+        for (Token *tok = this; tok; tok = tok->next())
+            tok->_progressValue = count++ * 100 / total_count;
+    }
+
+    /**
+     * Returns the first token of the next argument. Does only work on argument
+     * lists. Returns 0, if there is no next argument
+     */
+    Token* nextArgument() const;
+
+private:
+    void next(Token *nextToken) {
+        _next = nextToken;
+    }
+    void previous(Token *previousToken) {
+        _previous = previousToken;
     }
 
     /**
      * Works almost like strcmp() except returns only 0 or 1 and
-     * if str has empty space ' ' character, that character is handled
-     * as if it were '\0'
+     * if str has empty space &apos; &apos; character, that character is handled
+     * as if it were &apos;\\0&apos;
      */
     static int firstWordEquals(const char *str, const char *word);
 
     /**
      * Works almost like strchr() except
-     * if str has empty space ' ' character, that character is handled
-     * as if it were '\0'
+     * if str has empty space &apos; &apos; character, that character is handled
+     * as if it were &apos;\\0&apos;
      */
     static const char *chrInFirstWord(const char *str, char c);
 
     /**
      * Works almost like strlen() except
-     * if str has empty space ' ' character, that character is handled
-     * as if it were '\0'
+     * if str has empty space &apos; &apos; character, that character is handled
+     * as if it were &apos;\\0&apos;
      */
     static int firstWordLen(const char *str);
 
 
-    std::string _str;
-    bool _isName;
-    bool _isNumber;
-    bool _isBoolean;
-    unsigned int _varId;
     Token *_next;
     Token *_previous;
     Token *_link;
+
+    bool _isName;
+    bool _isNumber;
+    bool _isBoolean;
+    bool _isUnsigned;
+    bool _isSigned;
+    bool _isPointerCompare;
+    bool _isLong;
+    bool _isUnused;
+    bool _isStandardType;
+    bool _isExpandedMacro;
+    unsigned int _varId;
     unsigned int _fileIndex;
     unsigned int _linenr;
+
+    /** Updates internal property cache like _isName or _isBoolean.
+        Called after any _str() modification. */
+    void update_property_info();
+
+    /** Update internal property cache about isStandardType() */
+    void update_property_isStandardType();
+
+    /**
+     * A value from 0-100 that provides a rough idea about where in the token
+     * list this token is located.
+     */
+    unsigned int _progressValue;
+
+    std::string _str;
 };
 
 /// @}

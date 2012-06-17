@@ -6,13 +6,23 @@ OBJECTS_DIR = temp
 CONFIG += warn_on
 CONFIG -= qt app_bundle
 
+BASEPATH = ../externals/tinyxml/
+include($$PWD/../externals/tinyxml/tinyxml.pri)
+BASEPATH = ../lib/
 include($$PWD/../lib/lib.pri)
 
 SOURCES += main.cpp \
            cppcheckexecutor.cpp \
+           cmdlineparser.cpp \
+           filelister.cpp \
+           pathmatch.cpp \
            threadexecutor.cpp
-HEADERS += cppcheckexecutor.cpp \
-           threadexecutor.cpp
+
+HEADERS += cppcheckexecutor.h \
+           cmdlineparser.h \
+           filelister.h \
+           pathmatch.h \
+           threadexecutor.h
 
 CONFIG(release, debug|release) {
 	DEFINES += NDEBUG
@@ -20,6 +30,7 @@ CONFIG(release, debug|release) {
 
 win32 {
     CONFIG += embed_manifest_exe console
+    DEFINES += _CRT_SECURE_NO_WARNINGS
     RC_FILE = cppcheck.rc
     HEADERS += resource.h
     LIBS += -lshlwapi
@@ -27,7 +38,7 @@ win32 {
 
 # Add more strict compiling flags for GCC
 contains(QMAKE_CXX, g++) {
-    QMAKE_CXXFLAGS_WARN_ON += -Wextra -pedantic -Wfloat-equal -Wcast-qual -Wlogical-op
+    QMAKE_CXXFLAGS_WARN_ON += -Wextra -pedantic -Wfloat-equal -Wcast-qual -Wlogical-op -Wno-long-long
 
     CONFIG(debug, debug|release) {
         # checked STL

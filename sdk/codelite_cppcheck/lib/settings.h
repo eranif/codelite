@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,155 +16,212 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef settingsH
+#define settingsH
 
 #include <list>
+#include <vector>
 #include <string>
-#include <istream>
-#include <map>
 #include <set>
+#include "suppressions.h"
+#include "standards.h"
 
 /// @addtogroup Core
 /// @{
 
 
 /**
- * This is just a container for general settings so that we don't need
+ * @brief This is just a container for general settings so that we don't need
  * to pass individual values to functions or constructors now or in the
  * future when we might have even more detailed settings.
  */
-class Settings
-{
+class Settings {
 private:
-    /** classes that are automaticly deallocated */
-    std::set<std::string> _autoDealloc;
-
-    /** Code to append in the checks */
+    /** @brief Code to append in the checks */
     std::string _append;
 
-    /** enable extra checks by id */
-    std::map<std::string, bool> _enabled;
+    /** @brief enable extra checks by id */
+    std::set<std::string> _enabled;
 
-    /** terminate checking */
+    /** @brief terminate checking */
     bool _terminate;
+
 public:
     Settings();
-    virtual ~Settings();
 
-    bool _debug;
-    bool _showAll;
-    bool _checkCodingStyle;
+    /** @brief Is --debug given? */
+    bool debug;
+
+    /** @brief Is --debug-warnings given? */
+    bool debugwarnings;
+
+    /** @brief Is --debug-fp given? */
+    bool debugFalsePositive;
+
+    /** @brief Inconclusive checks */
+    bool inconclusive;
+
+    /**
+     * When this flag is false (default) then experimental
+     * heuristics and checks are disabled.
+     *
+     * It should not be possible to enable this from any client.
+     */
+    bool experimental;
+
+    /** @brief Is --quiet given? */
     bool _errorsOnly;
+
+    /** @brief Is --inline-suppr given? */
     bool _inlineSuppressions;
+
+    /** @brief Is --verbose given? */
     bool _verbose;
 
-    /** Request termination of checking */
-    void terminate()
-    {
+    /** @brief Request termination of checking */
+    void terminate() {
         _terminate = true;
     }
 
-    /** termination? */
-    bool terminated() const
-    {
+    /** @brief termination requested? */
+    bool terminated() const {
         return _terminate;
     }
 
-    /** Force checking t he files with "too many" configurations. */
+    /** @brief Force checking the files with "too many" configurations (--force). */
     bool _force;
 
-    /** write xml results */
+    /** @brief Use relative paths in output. */
+    bool _relativePaths;
+
+    /** @brief Paths used as base for conversion to relative paths. */
+    std::vector<std::string> _basePaths;
+
+    /** @brief write XML results (--xml) */
     bool _xml;
 
-    /** How many processes/threads should do checking at the same
-        time. Default is 1. */
+    /** @brief XML version (--xmlver=..) */
+    int _xml_version;
+
+    /** @brief How many processes/threads should do checking at the same
+        time. Default is 1. (-j N) */
     unsigned int _jobs;
 
-    /** If errors are found, this value is returned from main().
+    /** @brief If errors are found, this value is returned from main().
         Default value is 0. */
     int _exitCode;
 
-    /** The output format in which the errors are printed in text mode,
+    /** @brief The output format in which the errors are printed in text mode,
         e.g. "{severity} {file}:{line} {message} {id}" */
     std::string _outputFormat;
 
-    /** show timing information */
-    bool _showtime;
+    /** @brief show timing information (--showtime=file|summary|top5) */
+    unsigned int _showtime;
 
-    /** List of include paths, e.g. "my/includes/" which should be used
-        for finding include files inside source files. */
+    /** @brief List of include paths, e.g. "my/includes/" which should be used
+        for finding include files inside source files. (-I) */
     std::list<std::string> _includePaths;
 
-    /** Fill list of automaticly deallocated classes */
-    void autoDealloc(std::istream &istr);
+    /** @brief assign append code (--append) */
+    bool append(const std::string &filename);
 
-    /** Add class to list of automatically deallocated classes */
-    void addAutoAllocClass(const std::string &name);
+    /** @brief get append code (--append) */
+    const std::string &append() const;
 
-    /** is a class automaticly deallocated? */
-    bool isAutoDealloc(const std::string &classname) const;
-
-    /** assign append code */
-    void append(const std::string &filename);
-
-    /** get append code */
-    std::string append() const;
+    /** @brief Maximum number of configurations to check before bailing.
+        Default is 12. (--max-configs=N) */
+    int _maxConfigs;
 
     /**
-     * Returns true if given id is in the list of
-     * enabled extra checks. See addEnabled()
+     * @brief Returns true if given id is in the list of
+     * enabled extra checks (--enable)
      * @param str id for the extra check, e.g. "style"
      * @return true if the check is enabled.
      */
     bool isEnabled(const std::string &str) const;
 
     /**
-     * Enable extra checks by id. See isEnabled()
+     * @brief Enable extra checks by id. See isEnabled()
      * @param str single id or list of id values to be enabled
      * or empty string to enable all. e.g. "style,possibleError"
+     * @return error message. empty upon success
      */
-    void addEnabled(const std::string &str);
+    std::string addEnabled(const std::string &str);
 
-    /** class for handling suppressions */
-    class Suppressions
-    {
-    private:
-        /** List of error which the user doesn't want to see. */
-        std::map<std::string, std::map<std::string, std::list<int> > > _suppressions;
-    public:
-        /**
-         * Don't show errors listed in the file.
-         * @param istr Open file stream where errors can be read.
-         * @return true on success, false in syntax error is noticed.
-         */
-        bool parseFile(std::istream &istr);
-
-        /**
-         * Don't show this error. If file and/or line are optional. In which case
-         * the errorId alone is used for filtering.
-         * @param errorId, the id for the error, e.g. "arrayIndexOutOfBounds"
-         * @param file File name with the path, e.g. "src/main.cpp"
-         * @param line number, e.g. "123"
-         */
-        void addSuppression(const std::string &errorId, const std::string &file = "", unsigned int line = 0);
-
-        /**
-         * Returns true if this message should not be shown to the user.
-         * @param errorId, the id for the error, e.g. "arrayIndexOutOfBounds"
-         * @param file File name with the path, e.g. "src/main.cpp"
-         * @param line number, e.g. "123"
-         * @return true if this error is suppressed.
-         */
-        bool isSuppressed(const std::string &errorId, const std::string &file, unsigned int line);
-
-    };
-
-    /** suppress message */
+    /** @brief suppress message (--suppressions) */
     Suppressions nomsg;
 
-    /** suppress exitcode */
+    /** @brief suppress exitcode */
     Suppressions nofail;
+
+    /** @brief defines given by the user */
+    std::string userDefines;
+
+    /** @brief undefines given by the user */
+    std::set<std::string> userUndefs;
+
+    /** @brief Experimental 2 pass checking of files */
+    bool test_2_pass;
+
+    /** @brief --report-progress */
+    bool reportProgress;
+
+#ifdef HAVE_RULES
+    /** Rule */
+    class Rule {
+    public:
+        Rule()
+            : id("rule") // default id
+            , severity("style") { // default severity
+        }
+
+        std::string pattern;
+        std::string id;
+        std::string severity;
+        std::string summary;
+    };
+
+    /**
+     * @brief Extra rules
+     */
+    std::list<Rule> rules;
+#endif
+
+    /** Is the 'configuration checking' wanted? */
+    bool checkConfiguration;
+
+    /** Struct contains standards settings */
+    Standards standards;
+
+    /** size of standard types */
+    unsigned int sizeof_bool;
+    unsigned int sizeof_short;
+    unsigned int sizeof_int;
+    unsigned int sizeof_long;
+    unsigned int sizeof_long_long;
+    unsigned int sizeof_float;
+    unsigned int sizeof_double;
+    unsigned int sizeof_long_double;
+    unsigned int sizeof_size_t;
+    unsigned int sizeof_pointer;
+
+    enum PlatformType {
+        Unspecified, // whatever system this code was compiled on
+        Win32A,
+        Win32W,
+        Win64,
+        Unix32,
+        Unix64
+    };
+
+    /** platform type */
+    PlatformType platformType;
+
+    /** set the platform type for predefined platforms */
+    bool platform(PlatformType type);
+
+    /** set the platform type for user specified platforms */
+    bool platformFile(const std::string &filename);
 };
 
 /// @}

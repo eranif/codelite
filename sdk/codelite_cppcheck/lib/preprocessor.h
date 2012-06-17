@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +25,36 @@
 #include <istream>
 #include <string>
 #include <list>
-#include "errorlogger.h"
-#include "settings.h"
+
+class ErrorLogger;
+class Settings;
 
 /// @addtogroup Core
 /// @{
 
-/** @brief The cppcheck preprocessor. It has special functionality for extracting the various ifdef configurations that exist in a source file. */
-class Preprocessor
-{
+/**
+ * @brief The cppcheck preprocessor.
+ * The preprocessor has special functionality for extracting the various ifdef
+ * configurations that exist in a source file.
+ */
+class Preprocessor {
 public:
+
+    /**
+     * Include file types.
+     */
+    enum HeaderTypes {
+        NoHeader = 0,
+        UserHeader,
+        SystemHeader
+    };
+
+    /** character that is inserted in expanded macros */
+    static char macroChar;
+
     Preprocessor(Settings *settings = 0, ErrorLogger *errorLogger = 0);
+
+    static bool missingIncludeFlag;
 
     /**
      * Extract the code for each configuration
@@ -54,10 +73,10 @@ public:
      * Extract the code for each configuration. Use this with getcode() to get the
      * file data for each individual configuration.
      *
-     * @param istr The (file/string) stream to read from.
+     * @param srcCodeStream The (file/string) stream to read from.
      * @param processedFile Give reference to empty string as a parameter,
      * function will fill processed file here. Use this also as a filedata parameter
-     * to getcode() if you recieved more than once configurations.
+     * to getcode() if you received more than once configurations.
      * @param resultConfigurations List of configurations. Pass these one by one
      * to getcode() with processedFile.
      * @param filename The name of the file to check e.g. "src/main.cpp"
@@ -67,21 +86,15 @@ public:
      * Note that if path from given filename is also extracted and that is used as
      * a last include path if include file was not found from earlier paths.
      */
-    void preprocess(std::istream &istr, std::string &processedFile, std::list<std::string> &resultConfigurations, const std::string &filename, const std::list<std::string> &includePaths);
+    void preprocess(std::istream &srcCodeStream, std::string &processedFile, std::list<std::string> &resultConfigurations, const std::string &filename, const std::list<std::string> &includePaths);
 
     /** Just read the code into a string. Perform simple cleanup of the code */
-    static std::string read(std::istream &istr, const std::string &filename, Settings *settings);
-
-    /** Just read the code into a string. Perform simple cleanup of the code */
-    static std::string read(std::istream &istr)
-    {
-        return read(istr, "", 0);
-    }
+    std::string read(std::istream &istr, const std::string &filename);
 
     /**
      * Get preprocessed code for a given configuration
      */
-    static std::string getcode(const std::string &filedata, std::string cfg, const std::string &filename, ErrorLogger *errorLogger);
+    std::string getcode(const std::string &filedata, const std::string &cfg, const std::string &filename);
 
     /**
      * simplify condition
@@ -89,8 +102,13 @@ public:
      * @param condition The condition to simplify
      * @param match if true, 'defined(A)' is replaced with 0 if A is not defined
      */
-    static void simplifyCondition(const std::map<std::string, std::string> &variables, std::string &condition, bool match);
+    void simplifyCondition(const std::map<std::string, std::string> &variables, std::string &condition, bool match);
 
+    /**
+     * preprocess all whitespaces
+     * @param processedFile The data to be processed
+     */
+    static void preprocessWhitespaces(std::string &processedFile);
 protected:
 
     /**
@@ -101,7 +119,7 @@ protected:
      * @param errorType id string for error
      * @param errorText Plain text
      */
-    static void writeError(const std::string &fileName, const int linenr, ErrorLogger *errorLogger, const std::string &errorType, const std::string &errorText);
+    static void writeError(const std::string &fileName, const unsigned int linenr, ErrorLogger *errorLogger, const std::string &errorType, const std::string &errorText);
 
     /**
      * Replace "#if defined" with "#ifdef" where possible
@@ -112,38 +130,53 @@ protected:
     static std::string replaceIfDefined(const std::string &str);
 
     /**
-     * expand macros in code. #ifdefs etc are ignored so the code must be a single configuration
+     * expand macros in code. ifdefs etc are ignored so the code must be a single configuration
      * @param code The input code
      * @param filename filename of source file
+     * @param cfg user given -D configuration
      * @param errorLogger Error logger to write errors to (if any)
      * @return the expanded string
      */
-    static std::string expandMacros(const std::string &code, std::string filename, ErrorLogger *errorLogger);
+    static std::string expandMacros(const std::string &code, std::string filename, const std::string &cfg, ErrorLogger *errorLogger);
 
     /**
      * Remove comments from code. This should only be called from read().
+     * If there are inline suppressions, the _settings member is modified
      * @param str Code processed by read().
+     * @param filename filename
      * @return code without comments
-     * @throws std::runtime_error when code contains unhandled characters
      */
-    static std::string removeComments(const std::string &str, const std::string &filename, Settings *settings);
+    std::string removeComments(const std::string &str, const std::string &filename);
 
     /**
-     * Remove redundant parantheses from preprocessor commands. This should only be called from read().
-     * @param str Code processed by read().
-     * @return code with reduced parantheses
+     * Cleanup 'if 0' from the code
+     * @param code Code processed by read().
+     * @return code without 'if 0'
      */
-    static std::string removeParantheses(const std::string &str);
+    static std::string removeIf0(const std::string &code);
+
+    /**
+     * Remove redundant parentheses from preprocessor commands. This should only be called from read().
+     * @param str Code processed by read().
+     * @return code with reduced parentheses
+     */
+    static std::string removeParentheses(const std::string &str);
+
+    /**
+     * clean up #-preprocessor lines (only)
+     * @param processedFile The data to be processed
+     */
+    std::string preprocessCleanupDirectives(const std::string &processedFile) const;
 
     /**
      * Returns the string between double quote characters or \< \> characters.
      * @param str e.g. \code#include "menu.h"\endcode or \code#include <menu.h>\endcode
      * After function call it will contain e.g. "menu.h" without double quotes.
-     * @return 0 empty string if double quotes or \< \> were not found.
-     *         1 if file surrounded with "" was found
-     *         2 if file surrounded with \<\> was found
+     * @return NoHeader empty string if double quotes or \< \> were not found.
+     *         UserHeader if file surrounded with "" was found
+     *         SystemHeader if file surrounded with \<\> was found
      */
-    static int getHeaderFileName(std::string &str);
+    static Preprocessor::HeaderTypes getHeaderFileName(std::string &str);
 private:
 
     /**
@@ -176,14 +209,31 @@ public:
      * @param def condition
      * @return result when evaluating the condition
      */
-    static bool match_cfg_def(const std::map<std::string, std::string> &cfg, std::string def);
+    bool match_cfg_def(std::map<std::string, std::string> cfg, std::string def);
+
+    static void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings);
+
+    /**
+     * handle includes for a specific configuration
+     * @param code code in string
+     * @param filePath filename of code
+     * @param includePaths Paths where headers might be
+     * @param defs defines (only values)
+     * @param includes provide a empty list. this is just used to prevent recursive inclusions.
+     * \return resulting string
+     */
+    std::string handleIncludes(const std::string &code, const std::string &filePath, const std::list<std::string> &includePaths, std::map<std::string,std::string> &defs, std::list<std::string> includes = std::list<std::string>());
 
 private:
+    void missingInclude(const std::string &filename, unsigned int linenr, const std::string &header, bool userheader);
+
+    void error(const std::string &filename, unsigned int linenr, const std::string &msg);
+
     /**
      * Search includes from code and append code from the included
      * file
      * @param code The source code to modify
-     * @param filename The name of the file to check e.g. "src/main.cpp"
+     * @param filePath Relative path to file to check e.g. "src/main.cpp"
      * @param includePaths List of paths where incude files should be searched from,
      * single path can be e.g. in format "include/".
      * There must be a path separator at the end. Default parameter is empty list.
@@ -191,10 +241,13 @@ private:
      * a last include path if include file was not found from earlier paths.
      * @return modified source code
      */
-    void handleIncludes(std::string &code, const std::string &filename, const std::list<std::string> &includePaths);
+    void handleIncludes(std::string &code, const std::string &filePath, const std::list<std::string> &includePaths);
 
     Settings *_settings;
     ErrorLogger *_errorLogger;
+
+    /** filename for cpp/c file - useful when reporting errors */
+    std::string file0;
 };
 
 /// @}

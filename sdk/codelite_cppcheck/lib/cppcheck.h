@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,116 +19,127 @@
 #ifndef CPPCHECK_H
 #define CPPCHECK_H
 
-#include <string>
-#include <list>
-#include <sstream>
-#include <vector>
-#include <map>
 #include "settings.h"
 #include "errorlogger.h"
 #include "checkunusedfunctions.h"
+
+#include <string>
+#include <list>
+#include <istream>
 
 /// @addtogroup Core
 /// @{
 
 /**
- * This is the base class which will use other classes to do
+ * @brief This is the base class which will use other classes to do
  * static code analysis for C and C++ code to find possible
  * errors or places that could be improved.
  * Usage: See check() for more info.
  */
-class CppCheck : public ErrorLogger
-{
+class CppCheck : ErrorLogger {
 public:
     /**
-     * Constructor.
+     * @brief Constructor.
      */
-    CppCheck(ErrorLogger &errorLogger);
+    CppCheck(ErrorLogger &errorLogger, bool useGlobalSuppressions);
 
     /**
-     * Destructor.
+     * @brief Destructor.
      */
     virtual ~CppCheck();
 
     /**
-     * This starts the actual checking. Note that you must call
+     * @brief This starts the actual checking. Note that you must call
      * parseFromArgs() or settings() and addFile() before calling this.
      * @return amount of errors found or 0 if none were found.
      */
-    unsigned int check();
 
     /**
-     * Adjust the settings before doing the check. E.g. show only
-     * actual bugs or also coding style issues.
-     *
-     * @param settings New settings which will overwrite the old.
+      * @brief Check the file.
+      * This function checks one given file for errors.
+      * @param path Path to the file to check.
+      * @return amount of errors found or 0 if none were found.
+      * @note You must set settings before calling this function (by calling
+      *  settings()).
+      */
+    unsigned int check(const std::string &path);
+
+    /**
+      * @brief Check the file.
+      * This function checks one "virtual" file. The file is not read from
+      * the disk but the content is given in @p content. In errors the @p path
+      * is used as a filename.
+      * @param path Path to the file to check.
+      * @param content File content as a string.
+      * @return amount of errors found or 0 if none were found.
+      * @note You must set settings before calling this function (by calling
+      *  settings()).
+      */
+    unsigned int check(const std::string &path, const std::string &content);
+
+    /**
+     * @brief Check function usage.
+     * @note Call this after all files has been checked
      */
-    void settings(const Settings &settings);
+    void checkFunctionUsage();
 
     /**
-     * Get copy of current settings.
-     * @return a copy of current settings
+     * @brief Get reference to current settings.
+     * @return a reference to current settings
      */
-    Settings settings() const;
+    Settings &settings();
 
     /**
-     * Add new file to be checked.
-     *
-     * @param path Relative or absolute path to the file to be checked,
-     * e.g. "cppcheck.cpp". Note that only source files (.c, .cc or .cpp)
-     * should be added to the list. Include files are gathered automatically.
-     * You can also give path, e.g. "src/" which will be scanned for source
-     * files recursively.
-     */
-    void addFile(const std::string &path);
-
-    /**
-     * Add new unreal file to be checked.
-     *
-     * @param path File name (used for error reporting).
-     * @param content If the file would be a real file, this should be
-     * the content of the file.
-     */
-    void addFile(const std::string &path, const std::string &content);
-
-    /**
-     * Remove all files added with addFile() and parseFromArgs().
-     */
-    void clearFiles();
-
-    /**
-     * Parse command line args and get settings and file lists
-     * from there.
-     *
-     * @param argc argc from main()
-     * @param argv argv from main()
-     * @throw std::runtime_error when errors are found in the input
-     */
-    void parseFromArgs(int argc, const char* const argv[]);
-
-    /**
-     * Returns current version number as a string.
+     * @brief Returns current version number as a string.
      * @return version, e.g. "1.38"
      */
     static const char * version();
 
-    const std::vector<std::string> &filenames() const;
+    /**
+     * @brief Returns extra version info as a string.
+     * This is for returning extra version info, like Git commit id, build
+     * time/date etc.
+     * @return extra version info, e.g. "04d42151" (Git commit id).
+     */
+    static const char * extraVersion();
 
-    virtual void reportStatus(unsigned int index, unsigned int max);
+    virtual void reportStatus(unsigned int fileindex, unsigned int filecount, size_t sizedone, size_t sizetotal);
 
     /**
-     * Terminate checking. The checking will be terminated ASAP.
+     * @brief Terminate checking. The checking will be terminated as soon as possible.
      */
-    void terminate()
-    {
+    void terminate() {
         _settings.terminate();
     }
 
+    /**
+     * @brief Call all "getErrorMessages" in all registered Check classes.
+     * Also print out XML header and footer.
+     */
+    void getErrorMessages();
+
+    /**
+     * @brief Analyse file - It's public so unit tests can be written
+     */
+    void analyseFile(std::istream &f, const std::string &filename);
+
+    /**
+     * @brief Get dependencies. Use this after calling 'check'.
+     */
+    const std::set<std::string>& dependencies() const {
+        return _dependencies;
+    }
+
 private:
+
+    /** @brief Process one file. */
+    unsigned int processFile(const std::string& filename);
+
+    /** @brief Check file */
     void checkFile(const std::string &code, const char FileName[]);
 
     /**
-     * Errors and warnings are directed here.
+     * @brief Errors and warnings are directed here.
      *
      * @param msg Errors messages are normally in format
      * "[filepath:line number] Message", e.g.
@@ -137,26 +148,39 @@ private:
     virtual void reportErr(const ErrorLogger::ErrorMessage &msg);
 
     /**
-     * Information about progress is directed here.
+     * @brief Information about progress is directed here.
      *
      * @param outmsg Message to show, e.g. "Checking main.cpp..."
      */
     virtual void reportOut(const std::string &outmsg);
 
+    /**
+     * @brief Check given code. If error is found, return true
+     * and print out source of the file. Try to reduce the code
+     * while still showing the error.
+     */
+    bool findError(std::string code, const char FileName[]);
+
+    /**
+     * @brief Replace "from" strings with "to" strings in "code"
+     * and return it.
+     */
+    static void replaceAll(std::string& code, const std::string &from, const std::string &to);
+
     unsigned int exitcode;
     std::list<std::string> _errorList;
-    std::ostringstream _errout;
     Settings _settings;
-    std::vector<std::string> _filenames;
-    /** Key is file name, and value is the content of the file */
-    std::map<std::string, std::string> _fileContents;
+    bool _useGlobalSuppressions;
+    std::string _fileContent;
+    std::set<std::string> _dependencies;
+
+    void reportProgress(const std::string &filename, const char stage[], const unsigned int value);
+
     CheckUnusedFunctions _checkUnusedFunctions;
     ErrorLogger &_errorLogger;
 
-    /** Current configuration */
-    std::string     cfg;
-
-    std::list<std::string> _xmllist;
+    /** @brief Current preprocessor configuration */
+    std::string cfg;
 };
 
 /// @}

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,84 +30,92 @@ class Token;
 /// @{
 
 
-class CheckExceptionSafety : public Check
-{
+
+/**
+ * @brief %Check exception safety (exceptions shouldn't cause leaks nor corrupt data)
+ *
+ * The problem with these checks is that Cppcheck can't determine what the valid
+ * values are for variables. But in some cases (dead pointers) it can be determined
+ * that certain variable values are corrupt.
+ */
+
+class CheckExceptionSafety : public Check {
 public:
     /** This constructor is used when registering the CheckClass */
-    CheckExceptionSafety() : Check()
+    CheckExceptionSafety() : Check(myName())
     { }
 
-    /** This constructor is used when running checks.. */
+    /** This constructor is used when running checks. */
     CheckExceptionSafety(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-            : Check(tokenizer, settings, errorLogger)
+        : Check(myName(), tokenizer, settings, errorLogger)
     { }
 
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-    {
+    /** Checks that uses the simplified token list */
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
         CheckExceptionSafety checkExceptionSafety(tokenizer, settings, errorLogger);
         checkExceptionSafety.destructors();
-        checkExceptionSafety.unsafeNew();
-        checkExceptionSafety.realloc();
         checkExceptionSafety.deallocThrow();
+        checkExceptionSafety.checkRethrowCopy();
+        checkExceptionSafety.checkCatchExceptionByValue();
     }
-
 
     /** Don't throw exceptions in destructors */
     void destructors();
 
-    /** unsafe use of "new" */
-    void unsafeNew();
-
-    /** Unsafe realloc */
-    void realloc();
-
-    /** deallocating memory and then throw */
+    /** deallocating memory and then throw (dead pointer) */
     void deallocThrow();
+
+    /** Don't rethrow a copy of the caught exception; use a bare throw instead */
+    void checkRethrowCopy();
+
+    /** @brief %Check for exceptions that are caught by value instead of by reference */
+    void checkCatchExceptionByValue();
 
 private:
     /** Don't throw exceptions in destructors */
-    void destructorsError(const Token * const tok)
-    {
-        reportError(tok, Severity::style, "exceptThrowInDestructor", "Throwing exception in destructor");
+    void destructorsError(const Token * const tok) {
+        reportError(tok, Severity::error, "exceptThrowInDestructor", "Throwing exception in destructor");
     }
 
-    /** Unsafe use of new */
-    void unsafeNewError(const Token * const tok, const std::string &varname)
-    {
-        reportError(tok, Severity::style, "exceptNew", "Upon exception there is memory leak: " + varname);
+    void deallocThrowError(const Token * const tok, const std::string &varname) {
+        reportError(tok, Severity::warning, "exceptDeallocThrow", "Throwing exception in invalid state, " + varname + " points at deallocated memory");
     }
 
-    /** Unsafe reallocation */
-    void reallocError(const Token * const tok, const std::string &varname)
-    {
-        reportError(tok, Severity::style, "exceptRealloc", "Upon exception " + varname + " becomes a dead pointer");
+    void rethrowCopyError(const Token * const tok, const std::string &varname) {
+        reportError(tok, Severity::style, "exceptRethrowCopy",
+                    "Throwing a copy of the caught exception instead of rethrowing the original exception\n"
+                    "Rethrowing an exception with 'throw " + varname + ";' makes an unnecessary copy of '" + varname + "'.\n"
+                    "To rethrow the caught exception without unnecessary copying or slicing, use a bare 'throw;'.");
     }
 
-    void deallocThrowError(const Token * const tok, const std::string &varname)
-    {
-        reportError(tok, Severity::error, "exceptDeallocThrow", "Throwing exception in invalid state, " + varname + " points at deallocated memory");
+    void catchExceptionByValueError(const Token *tok) {
+        reportError(tok, Severity::style,
+                    "catchExceptionByValue", "Exception should be caught by reference.\n"
+                    "The exception is caught as a value. It could be caught "
+                    "as a (const) reference which is usually recommended in C++.");
     }
 
-    void getErrorMessages()
-    {
-        destructorsError(0);
-        unsafeNewError(0, "p");
-        reallocError(0, "p");
-        deallocThrowError(0, "p");
+    /** Generate all possible errors (for --errorlist) */
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+        CheckExceptionSafety c(0, settings, errorLogger);
+        c.destructorsError(0);
+        c.deallocThrowError(0, "p");
+        c.rethrowCopyError(0, "varname");
+        c.catchExceptionByValueError(0);
     }
 
-    std::string name() const
-    {
+    /** Short description of class (for --doc) */
+    std::string myName() const {
         return "Exception Safety";
     }
 
-    std::string classInfo() const
-    {
+    /** wiki formatted description of the class (for --doc) */
+    std::string classInfo() const {
         return "Checking exception safety\n"
                "* Throwing exceptions in destructors\n"
-               "* Unsafe use of 'new'\n"
-               "* Unsafe reallocation\n"
-               "* Throwing exception during invalid state";
+               "* Throwing exception during invalid state\n"
+               "* Throwing a copy of a caught exception instead of rethrowing the original exception\n"
+               "* exception caught by value instead of by reference";
     }
 };
 /// @}

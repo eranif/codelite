@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,23 +23,25 @@
 
 class Token;
 class Check;
+class SymbolDatabase;
 
 /**
  * Base class for Execution Paths checking
  * An execution path is a linear list of statements. There are no "if"/.. to worry about.
  **/
-class ExecutionPath
-{
+class ExecutionPath {
 private:
     /** No implementation */
     void operator=(const ExecutionPath &);
 
 protected:
-    const unsigned int varId;
     Check * const owner;
 
+    /** Are two execution paths equal? */
+    virtual bool is_equal(const ExecutionPath *) const = 0;
+
 public:
-    ExecutionPath(Check *c, unsigned int id) : varId(id), owner(c), ifinfo(0)
+    ExecutionPath(Check *c, unsigned int id) : owner(c), numberOfIf(0), varId(id)
     { }
 
     virtual ~ExecutionPath()
@@ -48,17 +50,20 @@ public:
     /** Implement this in each derived class. This function must create a copy of the current instance */
     virtual ExecutionPath *copy() = 0;
 
-    /** Some kind of if-information */
-    unsigned int ifinfo;
+    /** print checkdata */
+    void print() const;
+
+    /** number of if blocks */
+    unsigned int numberOfIf;
+
+    const unsigned int varId;
 
     /**
      * bail out all execution paths
      * @param checks the execution paths to bail out on
      **/
-    static void bailOut(std::list<ExecutionPath *> &checks)
-    {
-        while (!checks.empty())
-        {
+    static void bailOut(std::list<ExecutionPath *> &checks) {
+        while (!checks.empty()) {
             delete checks.back();
             checks.pop_back();
         }
@@ -69,21 +74,16 @@ public:
      * @param checks the execution paths to bail out on
      * @param varid the specific variable id
      **/
-    static void bailOutVar(std::list<ExecutionPath *> &checks, const unsigned int varid)
-    {
+    static void bailOutVar(std::list<ExecutionPath *> &checks, const unsigned int varid) {
         if (varid == 0)
             return;
 
         std::list<ExecutionPath *>::iterator it = checks.begin();
-        while (it != checks.end())
-        {
-            if ((*it)->varId == varid)
-            {
+        while (it != checks.end()) {
+            if ((*it)->varId == varid) {
                 delete *it;
                 checks.erase(it++);
-            }
-            else
-            {
+            } else {
                 ++it;
             }
         }
@@ -92,11 +92,10 @@ public:
     /**
      * Parse tokens at given location
      * @param tok token to parse
-     * @param foundError If an error is found this is set to true
      * @param checks The execution paths. All execution paths in the list are executed in the current scope.
      * @return the token before the "next" token.
      **/
-    virtual const Token *parse(const Token &tok, bool &foundError, std::list<ExecutionPath *> &checks) const = 0;
+    virtual const Token *parse(const Token &tok, std::list<ExecutionPath *> &checks) const = 0;
 
     /**
      * Parse condition
@@ -106,13 +105,29 @@ public:
      **/
     virtual bool parseCondition(const Token &tok, std::list<ExecutionPath *> &checks);
 
+    /**
+     * Parse loop body
+     * @param tok the first token in the loop body (the token after the {)
+     * @param checks The execution paths
+     */
+    virtual void parseLoopBody(const Token *tok, std::list<ExecutionPath *> &checks) const {
+        (void)tok;
+        (void)checks;
+    }
+
     /** going out of scope - all execution paths end */
     virtual void end(const std::list<ExecutionPath *> & /*checks*/, const Token * /*tok*/) const
     { }
+
+    bool operator==(const ExecutionPath &e) const {
+        return bool(varId == e.varId && is_equal(&e));
+    }
+
+    static void checkScope(const Token *tok, std::list<ExecutionPath *> &checks);
 };
 
 
-void checkExecutionPaths(const Token *tok, ExecutionPath *c);
+void checkExecutionPaths(const SymbolDatabase *symbolDatabase, ExecutionPath *c);
 
 
 #endif

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2009 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,35 +20,54 @@
 #ifndef mathlibH
 #define mathlibH
 
-#include "token.h"
+#include <string>
+#include <sstream>
 
 /// @addtogroup Core
 /// @{
 
+/** @brief simple math functions that uses operands stored in std::string. useful when performing math on tokens. */
 
-class MathLib
-{
+class MathLib {
 public:
-    static long toLongNumber(const std::string & str);
+    typedef long long bigint;
+
+    static bigint toLongNumber(const std::string & str);
     static double toDoubleNumber(const std::string & str);
 
     template<typename T>
-    static std::string toString(T d);
+    static std::string toString(const T &d) {
+        std::ostringstream result;
+        result << d;
+        if (isNullValue(result.str()))
+            return std::string("0");
+        return result.str();
+    }
 
     static bool isInt(const std::string & str);
+    static bool isFloat(const std::string &str);
+    static bool isNegative(const std::string &str);
+    static bool isHex(const std::string& str);
+    static bool isOct(const std::string& str);
 
     static std::string add(const std::string & first, const std::string & second);
     static std::string subtract(const std::string & first, const std::string & second);
     static std::string multiply(const std::string & first, const std::string & second);
     static std::string divide(const std::string & first, const std::string & second);
+    static std::string mod(const std::string & first, const std::string & second);
     static std::string calculate(const std::string & first, const std::string & second, char action);
 
     static std::string sin(const std::string & tok);
     static std::string cos(const std::string & tok);
     static std::string tan(const std::string & tok);
     static std::string abs(const std::string & tok);
+    static bool isEqual(const std::string & first, const std::string & second);
+    static bool isNotEqual(const std::string & first, const std::string & second);
     static bool isGreater(const std::string & first, const std::string & second);
-
+    static bool isGreaterEqual(const std::string & first, const std::string & second);
+    static bool isLess(const std::string & first, const std::string & second);
+    static bool isLessEqual(const std::string & first, const std::string & second);
+    static bool isNullValue(const std::string &tok);
     /**
      * Return true if given character is 0,1,2,3,4,5,6 or 7.
      * @param c The character to check

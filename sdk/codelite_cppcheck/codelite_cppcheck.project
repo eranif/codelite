@@ -14,6 +14,12 @@
     <File Name="cli/resource.h"/>
     <File Name="cli/threadexecutor.cpp"/>
     <File Name="cli/threadexecutor.h"/>
+    <File Name="cli/cmdlineparser.cpp"/>
+    <File Name="cli/cmdlineparser.h"/>
+    <File Name="cli/filelister.cpp"/>
+    <File Name="cli/filelister.h"/>
+    <File Name="cli/pathmatch.cpp"/>
+    <File Name="cli/pathmatch.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="lib">
     <File Name="lib/check.h"/>
@@ -23,12 +29,8 @@
     <File Name="lib/checkbufferoverrun.h"/>
     <File Name="lib/checkclass.cpp"/>
     <File Name="lib/checkclass.h"/>
-    <File Name="lib/checkdangerousfunctions.cpp"/>
-    <File Name="lib/checkdangerousfunctions.h"/>
     <File Name="lib/checkexceptionsafety.cpp"/>
     <File Name="lib/checkexceptionsafety.h"/>
-    <File Name="lib/checkheaders.cpp"/>
-    <File Name="lib/checkheaders.h"/>
     <File Name="lib/checkmemoryleak.cpp"/>
     <File Name="lib/checkmemoryleak.h"/>
     <File Name="lib/checkother.cpp"/>
@@ -44,8 +46,6 @@
     <File Name="lib/errorlogger.h"/>
     <File Name="lib/executionpath.cpp"/>
     <File Name="lib/executionpath.h"/>
-    <File Name="lib/filelister.cpp"/>
-    <File Name="lib/filelister.h"/>
     <File Name="lib/mathlib.cpp"/>
     <File Name="lib/mathlib.h"/>
     <File Name="lib/preprocessor.cpp"/>
@@ -56,6 +56,37 @@
     <File Name="lib/token.h"/>
     <File Name="lib/tokenize.cpp"/>
     <File Name="lib/tokenize.h"/>
+    <File Name="lib/check64bit.cpp"/>
+    <File Name="lib/check64bit.h"/>
+    <File Name="lib/checkassignif.cpp"/>
+    <File Name="lib/checkassignif.h"/>
+    <File Name="lib/checkboost.cpp"/>
+    <File Name="lib/checkboost.h"/>
+    <File Name="lib/checkinternal.cpp"/>
+    <File Name="lib/checkinternal.h"/>
+    <File Name="lib/checknonreentrantfunctions.cpp"/>
+    <File Name="lib/checknonreentrantfunctions.h"/>
+    <File Name="lib/checknullpointer.cpp"/>
+    <File Name="lib/checknullpointer.h"/>
+    <File Name="lib/checkobsoletefunctions.cpp"/>
+    <File Name="lib/checkobsoletefunctions.h"/>
+    <File Name="lib/checkpostfixoperator.cpp"/>
+    <File Name="lib/checkpostfixoperator.h"/>
+    <File Name="lib/checkuninitvar.cpp"/>
+    <File Name="lib/checkuninitvar.h"/>
+    <File Name="lib/checkunusedvar.cpp"/>
+    <File Name="lib/checkunusedvar.h"/>
+    <File Name="lib/path.cpp"/>
+    <File Name="lib/path.h"/>
+    <File Name="lib/standards.h"/>
+    <File Name="lib/suppressions.cpp"/>
+    <File Name="lib/suppressions.h"/>
+    <File Name="lib/symboldatabase.cpp"/>
+    <File Name="lib/symboldatabase.h"/>
+    <File Name="lib/templatesimplifier.cpp"/>
+    <File Name="lib/templatesimplifier.h"/>
+    <File Name="lib/timer.cpp"/>
+    <File Name="lib/timer.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">

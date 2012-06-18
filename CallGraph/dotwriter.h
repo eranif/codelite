@@ -45,6 +45,15 @@ protected:
 	 * @brief Object confData type ConfCallGraph with stored configuration data.
 	 */
 	ConfCallGraph confData;
+	
+	/**
+	 * @brief Get positions of STL template signs
+	 * @param txt
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	bool GetOuterTempleate(const wxString& txt, int *start, int *end);
 
 public:
 	/**

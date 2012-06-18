@@ -15,7 +15,7 @@ GprofParser::GprofParser()
 	iscycle = false;
 	islom = false;
 	isplus = false;
-
+	isspontaneous = false;
 };
 
 GprofParser::~GprofParser()
@@ -26,6 +26,7 @@ GprofParser::~GprofParser()
 
 void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
 {
+	wxRegEx re;
 	readlinetext = wxT("");
 	readlinetexttemp = wxT("");
 	wxCSConv conv( wxT("ISO-8859-1") );
@@ -53,6 +54,7 @@ void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
 			} else if (lineheader) {
 				delete [] nameandid;
 				nameandid = new char[nameLen + 1]; // dynam array for pointer nameandid
+				memset(nameandid, 0, nameLen + 1);
 
 				LineParser *line = new LineParser();
 
@@ -72,14 +74,9 @@ void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
 				line->self = -1;
 				line->time = -1;
 
-
-				wxRegEx removeSpace;
-				if( removeSpace.Compile( wxT("[ ]{2,}") ) ) {
-					if( removeSpace.Matches( readlinetext ) ) {
-						removeSpace.Replace( &readlinetext, wxT(" ") );
-					}
+				if(re.Compile(wxT("[ ]{2,}")) && re.Matches( readlinetext )) {
+					re.Replace(&readlinetext, wxT(" "));
 				}
-				//
 
 				if (readlinetext.Contains(wxT("."))) isdot = true;
 				else isdot = false;
@@ -87,19 +84,20 @@ void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
 				if (readlinetext.Contains(wxT("cycle"))) iscycle = true;
 				else iscycle = false;
 
-				if (readlinetext.Contains(wxT("/"))) islom = true;
+				//if (readlinetext.Contains(wxT("/"))) islom = true;
+				if(re.Compile( wxT("[0-9]+/[0-9]+"), wxRE_ADVANCED) && re.Matches( readlinetext)) islom = true;
 				else islom = false;
 
-				if (readlinetext.Contains(wxT("+"))) isplus = true;
+				//if (readlinetext.Contains(wxT("+"))) isplus = true;
+				if(re.Compile( wxT("([0-9]+)\\+([0-9]+)"), wxRE_ADVANCED) && re.Matches( readlinetext)) { 
+					isplus = true;
+					//readlinetext.Replace( wxT("+"), wxT(" ") );
+					re.Replace(&readlinetext, wxT("\\1 \\2"));
+				}
 				else isplus = false;
 
 				wxString dot = wxLocale::GetInfo(wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER);
 				readlinetext.Replace( wxT("."), dot );
-
-				//nahrazeni plus za mezeru
-				if(isplus) {
-					readlinetext.Replace( wxT("+"), wxT(" ") );
-				}
 
 				if ((readlinetext[0] == '[') && (readlinetext[(readlinetext.length()) - 1] == ']')) {
 					primaryline = true;

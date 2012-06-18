@@ -360,7 +360,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 	//DotWriter to output png file
 	pdw.SetLineParser(&(pgp.lines));
 	suggestedThreshold = pgp.GetSuggestedNodeThreshold();
-	if( suggestedThreshold < conf.GetTresholdNode() ) {
+	if( suggestedThreshold <= conf.GetTresholdNode() ) {
 		suggestedThreshold = conf.GetTresholdNode();
 		pdw.SetDotWriterFromDialogSettings(m_mgr);
 	} else {

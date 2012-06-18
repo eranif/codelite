@@ -205,12 +205,18 @@ wxString DotWriter::OptionsShortNameAndParameters(const wxString& name)
 		wxString out = name;
 
 		if( dwhidenamespaces ) {
-			wxRegEx re( wxT("::[a-zA-Z_~]+[a-zA-Z_0-9<!=\\-\\+\\*/%]*\\(.*\\)[ ]*(const)?[ ]*$"), wxRE_ADVANCED );
-		
-			if( re.Matches( name ) ) {
+			wxRegEx re;			
+			// remove STL
+			int start, end;
+			while( GetOuterTempleate(out, &start, &end )) {
+				out.Replace(out.Mid( start, end - start + 1), wxT("%STL%"));
+			}
+			out.Replace(wxT("%STL%"), wxT("<...>"));
+			// remove namespace
+			if( re.Compile( wxT("::[a-zA-Z_~]+[a-zA-Z_0-9<!=\\-\\+\\*/%]*\\(.*\\)[ ]*(const)?[ ]*$"), wxRE_ADVANCED ) && re.Matches( name ) ) {
 				out = re.GetMatch( name );
 				out.Replace( wxT("::"), wxEmptyString );
-			} 	
+			}
 		}
 		
 		if( dwhideparams ) {
@@ -323,4 +329,26 @@ wxString DotWriter::DefineColorForLabel(int index)
 	} else {
 		return cblack;
 	}
+}
+
+bool DotWriter::GetOuterTempleate(const wxString& txt, int* start, int* end)
+{	
+	int cnt = 0;
+	int pos = 0;
+	
+	for( wxString::const_iterator it = txt.begin(); it != txt.end(); ++it ) {
+		if( *it == wxT('<') ) {
+			if( cnt == 0 ) *start = pos;
+			cnt++;
+		} else if( *it == wxT('>') ) {
+			cnt--;
+			if( cnt == 0 ) *end = pos;
+			return true;
+		}
+		pos++;
+	}
+	
+	*start = -1;
+	*end = -1;
+	return false;
 }

@@ -1256,7 +1256,11 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 	std::vector<wxFileName> *files = (std::vector<wxFileName>*) e.GetClientData();
 	if (files && !files->empty()) {
 
-		if(files->size() > 1) {
+	/*The commented-out code below is because the original caused a crash in the 'else' section:
+	see https://sourceforge.net/tracker/index.php?func=detail&aid=3535567&group_id=202033&atid=979960
+	As I don't understand this under-commented code, I've just hacked it away. This solves the crash,
+	without any obvious side-effect (perhaps the 'else' was a premature optimisation...) DH */
+//		if(files->size() > 1) {
 			DoClearSymbolView();
 
 			// Tag only visible files
@@ -1267,7 +1271,9 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 				clWindowUpdateLocker locker(m_viewStack);
 				UpdateTrees(filePaths, false);
 			}
-		} else {
+			
+			ShowSymbolTree();	// Make the tree visible again: this didn't happen previously...
+/*		} else {
 
 			wxArrayString filePaths;
 			for (size_t i = 0; i < files->size(); i++) {
@@ -1276,7 +1282,7 @@ void SymbolViewPlugin::OnFileRetagged(wxCommandEvent& e)
 			clWindowUpdateLocker locker(m_viewStack);
 			UpdateTrees(filePaths, true);
 
-		}
+		}*/
 	}
 	e.Skip();
 }

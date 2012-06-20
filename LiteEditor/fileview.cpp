@@ -682,7 +682,7 @@ bool FileViewTree::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPa
 		if (file.Right(4) == wxT(".cpp")) {
 			cppfiles.Add(file);
 			paths.RemoveAt(c);
-		} else if (file.Right(2) == wxT(".h")) {
+		} else if ((file.Right(2) == wxT(".h")) || (file.Right(4) == wxT(".hpp"))) {
 			hfiles.Add(file);
 			paths.RemoveAt(c);
 		}

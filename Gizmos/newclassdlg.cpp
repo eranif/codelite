@@ -52,6 +52,7 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	m_checkBoxImplPureVirtual->SetValue( data.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
 	m_checkBoxImplVirtual->SetValue    ( data.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
 	m_checkBoxInline->SetValue         ( data.GetFlags() & NewClassDlgData::FileIniline);
+	m_checkBoxHpp->SetValue            ( data.GetFlags() & NewClassDlgData::HppHeader);
 	m_checkBoxSingleton->SetValue      ( data.GetFlags() & NewClassDlgData::Singleton);
 	m_checkBoxUseUnderscores->SetValue ( data.GetFlags() & NewClassDlgData::UseUnderscores);
 	m_checkBoxVirtualDtor->SetValue    ( data.GetFlags() & NewClassDlgData::VirtualDtor);
@@ -201,6 +202,9 @@ void NewClassDlg::OnButtonOK(wxCommandEvent &e)
 	if(m_checkBoxInline->IsChecked())
 		flags |= NewClassDlgData::FileIniline;
 
+	if(m_checkBoxHpp->IsChecked())
+		flags |= NewClassDlgData::HppHeader;
+
 	if(m_checkBoxSingleton->IsChecked())
 		flags |= NewClassDlgData::Singleton;
 
@@ -293,6 +297,7 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
 		info.isInline = false;
 		info.isSingleton = this->IsSingleton();
 	}
+	info.hppHeader          = this->HppHeader();
 	info.path               = this->GetClassPath().Trim().Trim(false);
 	info.isAssingable       = this->IsCopyableClass();
 	info.fileName           = this->GetClassFile().Trim().Trim(false);
@@ -472,4 +477,9 @@ void NewClassDlg::DoUpdateGeneratedPath()
 	if(proj) {
 		m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd));
 	}
+}
+
+void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
+{
+	event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty()));
 }

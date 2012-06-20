@@ -55,6 +55,7 @@ class NewClassBaseDlg : public wxDialog
 		wxStaticText* m_staticText8;
 		wxStaticLine* m_staticline6;
 		wxCheckBox* m_checkBoxInline;
+		wxCheckBox* m_checkBoxHpp;
 		wxCheckBox* m_checkBoxUseUnderscores;
 		wxTextCtrl* m_textCtrlFileName;
 		wxStaticText* m_staticText7;
@@ -86,6 +87,7 @@ class NewClassBaseDlg : public wxDialog
 		virtual void OnButtonDeleteUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void OnCheckImpleAllVirtualFunctions( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnOkUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:

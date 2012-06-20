@@ -394,19 +394,34 @@ void WizardsPlugin::DoCreateNewClass()
 
 void WizardsPlugin::CreateClass(const NewClassInfo &info)
 {
+	// Start by finding the best choice for tabs/spaces.
+	// Use the preference for the target VirtualDir, not the active project, in case the user perversely adds to an inactive one.
+	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();	// Globals first
+	wxString TargetProj = info.virtualDirectory.BeforeFirst(wxT(':'));
+	if (!TargetProj.empty()) {
+		LocalWorkspaceST::Get()->GetOptions(options, TargetProj);	// Then override with any local ones
+	}
+
+	wxString separator(wxT("\t"));
+	if (!options->GetIndentUsesTabs()) {
+		separator = wxString(wxT(' '), wxMax(1, options->GetTabWidth()));
+	}
+
 	wxString macro(info.blockGuard);
 	if( macro.IsEmpty() ) {
 		// use the name instead
 		macro = info.name;
 		macro.MakeUpper();
-		macro << wxT("_H");
+		macro << (info.hppHeader ? wxT("_HPP") : wxT("_H"));
 	}
+
+	wxString headerExt = (info.hppHeader ? wxT(".hpp") : wxT(".h"));
 
 	wxString srcFile;
 	srcFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".cpp");
 
 	wxString hdrFile;
-	hdrFile << info.path << wxFileName::GetPathSeparator() << info.fileName << wxT(".h");
+	hdrFile << info.path << wxFileName::GetPathSeparator() << info.fileName << headerExt;
 
 	//create cpp + h file
 	wxString cpp;
@@ -421,7 +436,7 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 
 	wxString closeMethod;
 	if (info.isInline)
-		closeMethod = wxT("\n\t{\n\t}\n");
+		closeMethod << wxT('\n') << separator << wxT("{\n") << separator << wxT("}\n");
 	else
 		closeMethod = wxT(";\n");
 
@@ -453,46 +468,46 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 		}
 		header = header.BeforeLast(wxT(','));
 	}
-	header << wxT(" {\n\n");
+	header << wxT("\n{\n");
 
 	if (info.isSingleton) {
-		header << wxT("\tstatic ") << info.name << wxT("* ms_instance;\n\n");
+		header << separator << wxT("static ") << info.name << wxT("* ms_instance;\n\n");
 	}
 
 	if (info.isAssingable == false) {
 		//declare copy constructor & assingment operator as private
 		header << wxT("private:\n");
-		header << wxT("\t") << info.name << wxT("(const ") << info.name << wxT("& rhs)") << closeMethod;
-		header << wxT("\t") << info.name << wxT("& operator=(const ") << info.name << wxT("& rhs)") << closeMethod;
+		header << separator << info.name << wxT("(const ") << info.name << wxT("& rhs)") << closeMethod;
+		header << separator << info.name << wxT("& operator=(const ") << info.name << wxT("& rhs)") << closeMethod;
 		header << wxT("\n");
 	}
 
 	if (info.isSingleton) {
 		header << wxT("public:\n");
-		header << wxT("\tstatic ") << info.name << wxT("* Instance();\n");
-		header << wxT("\tstatic void Release();\n\n");
+		header << separator << wxT("static ") << info.name << wxT("* Instance();\n");
+		header << separator << wxT("static void Release();\n\n");
 
 		header << wxT("private:\n");
-		header << wxT("\t") << info.name << wxT("();\n");
+		header << separator << info.name << wxT("();\n");
 
 		if (info.isVirtualDtor) {
-			header << wxT("\tvirtual ~") << info.name << wxT("();\n\n");
+			header << separator << wxT("virtual ~") << info.name << wxT("();\n\n");
 		} else {
-			header << wxT("\t~") << info.name << wxT("();\n\n");
+			header << separator << wxT('~') << info.name << wxT("();\n\n");
 		}
 	} else {
 		header << wxT("public:\n");
-		header << wxT("\t") << info.name << wxT("()") << closeMethod;
+		header << separator << info.name << wxT("()") << closeMethod;
 		if (info.isVirtualDtor) {
-			header << wxT("\tvirtual ~") << info.name << wxT("()") << closeMethod << wxT("\n");
+			header << separator << wxT("virtual ~") << info.name << wxT("()") << closeMethod << wxT("\n");
 		} else {
-			header << wxT("\t~") << info.name << wxT("()") << closeMethod << wxT("\n");
+			header << separator << wxT('~') << info.name << wxT("()") << closeMethod << wxT("\n");
 		}
 
 	}
 
 	//add virtual function declaration
-	wxString v_decl = DoGetVirtualFuncDecl(info);
+	wxString v_decl = DoGetVirtualFuncDecl(info, separator);
 	if (v_decl.IsEmpty() == false) {
 		header << wxT("public:\n");
 		header << v_decl;
@@ -523,7 +538,7 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 	//----------------------------------------------------
 	if (!info.isInline)
 	{
-		cpp << wxT("#include \"") << info.fileName << wxT(".h\"\n\n");
+		cpp << wxT("#include \"") << info.fileName << headerExt << wxT("\"\n\n");
 
 		// Open namespace
 		if (!info.namespacesList.IsEmpty()) {
@@ -541,24 +556,28 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 		if (info.isSingleton) {
 			cpp << info.name << wxT("* ") << info.name << wxT("::Instance()\n");
 			cpp << wxT("{\n");
-			cpp << wxT("\tif(ms_instance == 0){\n");
-			cpp << wxT("\t\tms_instance = new ") << info.name << wxT("();\n");
-			cpp << wxT("\t}\n");
-			cpp << wxT("\treturn ms_instance;\n");
+			cpp << separator << wxT("if (ms_instance == 0) {\n");
+			cpp << separator << separator << wxT("ms_instance = new ") << info.name << wxT("();\n");
+			cpp << separator << wxT("}\n");
+			cpp << separator << wxT("return ms_instance;\n");
 			cpp << wxT("}\n\n");
 
 			cpp << wxT("void ") << info.name << wxT("::Release()\n");
 			cpp << wxT("{\n");
-			cpp << wxT("\tif(ms_instance){\n");
-			cpp << wxT("\t\tdelete ms_instance;\n");
-			cpp << wxT("\t}\n");
-			cpp << wxT("\tms_instance = 0;\n");
+			cpp << separator << wxT("if (ms_instance) {\n");
+			cpp << separator << separator << wxT("delete ms_instance;\n");
+			cpp << separator << wxT("}\n");
+			cpp << separator << wxT("ms_instance = 0;\n");
 			cpp << wxT("}\n\n");
 		}
 
 		cpp << DoGetVirtualFuncImpl(info);
 
 		// Close namespaces
+		if (info.namespacesList.Count()) {
+			cpp << wxT('\n');	// Thow in an initial \n to separate the first namespace '}' from the previous function's one
+		}
+
 		for (unsigned int i = 0; i < info.namespacesList.Count(); i++)
 		{
 			cpp << wxT("}\n\n");
@@ -886,7 +905,7 @@ wxString WizardsPlugin::DoGetVirtualFuncImpl(const NewClassInfo &info)
 	return impl;
 }
 
-wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
+wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info, const wxString& separator)
 {
 	if (info.implAllVirtual == false && info.implAllPureVirtual == false)
 		return wxEmptyString;
@@ -928,10 +947,13 @@ wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo &info)
 		TagEntryPtr tt = tags.at(i);
 		wxString ff = m_mgr->GetTagsManager()->FormatFunction(tt);
 
-		if (info.isInline)
-			ff.Replace (wxT(";"), wxT("\n\t{\n\t}"));
+		if (info.isInline) {
+			wxString braces;
+			braces << wxT('\n') << separator << wxT("{\n") << separator << wxT("}");
+			ff.Replace (wxT(";"), braces);
+		}
 
-		decl << wxT("\t") << ff;
+		decl << separator << ff;
 	}
 	return decl;
 }

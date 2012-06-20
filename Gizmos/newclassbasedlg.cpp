@@ -46,7 +46,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	fgSizer1->Add( m_staticTextNamespace, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textCtrlNamespace = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
-	m_textCtrlNamespace->SetToolTip( _("Place this class inside a namspace") );
+	m_textCtrlNamespace->SetToolTip( _("Place this class inside a namespace") );
 	
 	fgSizer1->Add( m_textCtrlNamespace, 0, wxALL|wxEXPAND, 5 );
 	
@@ -86,7 +86,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	
 	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Generated Files Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Generated File(s) Path:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -115,10 +115,24 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
-	m_checkBoxInline = new wxCheckBox( this, wxID_ANY, _("Inline (generate declaration and implementation in the header file)"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer8->Add( m_checkBoxInline, 0, wxALL, 5 );
+	wxGridSizer* gSizer1;
+	gSizer1 = new wxGridSizer( 0, 2, 0, 0 );
 	
-	m_checkBoxUseUnderscores = new wxCheckBox( this, wxID_ANY, _("Use underscores ('_') to separate between word captilizations "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxInline = new wxCheckBox( this, wxID_ANY, _("Inline class"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxInline->SetToolTip( _("Put both the declaration and the implementation in the header file") );
+	
+	gSizer1->Add( m_checkBoxInline, 0, wxALL, 5 );
+	
+	m_checkBoxHpp = new wxCheckBox( this, wxID_ANY, _("Create .hpp instead of .h"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxHpp->SetToolTip( _("If checked, the generated header file will be foo.hpp instead of foo.h") );
+	
+	gSizer1->Add( m_checkBoxHpp, 0, wxALL, 5 );
+	
+	bSizer8->Add( gSizer1, 1, wxEXPAND, 5 );
+	
+	m_checkBoxUseUnderscores = new wxCheckBox( this, wxID_ANY, _("Use underscores to separate filename words (see tooltip) "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxUseUnderscores->SetToolTip( _("If the class name is FooBarBaz, call the files foo_bar_baz.cpp etc instead of foobarbaz.cpp") );
+	
 	bSizer8->Add( m_checkBoxUseUnderscores, 0, wxALL, 5 );
 	
 	m_textCtrlFileName = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
@@ -150,6 +164,8 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 	
 	m_buttonAddInheritance = new wxButton( this, ID_ADD_INHERITANCE, _("Add..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_buttonAddInheritance->SetToolTip( _("Click to add a class from which to derive") );
+	
 	bSizer16->Add( m_buttonAddInheritance, 0, wxALL, 5 );
 	
 	m_buttonDelInheritance = new wxButton( this, ID_DELETE_INHERITANCE, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -166,7 +182,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_checkBoxCopyable = new wxCheckBox( this, wxID_ANY, _("Declare this class as non-copyable class"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxCopyable = new wxCheckBox( this, wxID_ANY, _("Declare this class non-copyable"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_checkBoxCopyable, 0, wxALL, 5 );
 	
 	m_checkBoxImplVirtual = new wxCheckBox( this, wxID_ANY, _("Implement all virtual functions"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -219,6 +235,7 @@ NewClassBaseDlg::NewClassBaseDlg( wxWindow* parent, wxWindowID id, const wxStrin
 	m_buttonDelInheritance->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( NewClassBaseDlg::OnButtonDeleteUI ), NULL, this );
 	m_checkBoxImplVirtual->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckImpleAllVirtualFunctions ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonOK ), NULL, this );
+	m_buttonOK->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( NewClassBaseDlg::OnOkUpdateUI ), NULL, this );
 }
 
 NewClassBaseDlg::~NewClassBaseDlg()
@@ -238,5 +255,6 @@ NewClassBaseDlg::~NewClassBaseDlg()
 	m_buttonDelInheritance->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( NewClassBaseDlg::OnButtonDeleteUI ), NULL, this );
 	m_checkBoxImplVirtual->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnCheckImpleAllVirtualFunctions ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( NewClassBaseDlg::OnButtonOK ), NULL, this );
+	m_buttonOK->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( NewClassBaseDlg::OnOkUpdateUI ), NULL, this );
 	
 }

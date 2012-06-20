@@ -34,7 +34,7 @@ class WizardsPlugin : public IPlugin
 {
 	void CreateClass(const NewClassInfo &info);
 	wxString DoGetVirtualFuncImpl(const NewClassInfo &info);
-	wxString DoGetVirtualFuncDecl(const NewClassInfo &info);
+	wxString DoGetVirtualFuncDecl(const NewClassInfo &info, const wxString& separator);
 	std::vector<wxMenuItem*> m_vdDynItems;
 protected:
 	void CreateWxProject(NewWxProjectInfo &info);

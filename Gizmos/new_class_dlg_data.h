@@ -14,7 +14,8 @@ public:
 		ImplAllVirtualFuncs     = 0x00000008,
 		ImplAllPureVirtualFuncs = 0x00000010,
 		FileIniline             = 0x00000020,
-		UseUnderscores          = 0x00000040
+		UseUnderscores          = 0x00000040,
+		HppHeader               = 0x00000080
 	};
 	
 public:

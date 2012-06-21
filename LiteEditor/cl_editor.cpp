@@ -729,7 +729,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 		long matchedPos(wxNOT_FOUND);
 		// incase ENTER was hit immediatly after we inserted '{' into the code...
 		if ( m_lastCharEntered == wxT('{')                         && // Last char entered was {
-			 m_autoAddMatchedCurlyBrace                                 && // auto-add-match-brace option is enabled
+			 m_autoAddMatchedCurlyBrace                            && // auto-add-match-brace option is enabled
 			 !m_disableSmartIndent                                 && // the disable smart indent option is NOT enabled
 			 MatchBraceBack(wxT('}'), GetCurrentPos(), matchedPos) && // Insert it only if it match an open brace
 			 !m_context->IsDefaultContext()                        && // the editor's context is NOT the default one
@@ -767,10 +767,14 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 
 	if (matchChar && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
 		if ( matchChar == ')' && m_autoAddNormalBraces) {
-			// avoid adding close brace if the next char is not a whitespace
-			// character
+			// Only add a close brace if the next char is whitespace
+			// or if it's an already-matched ')' (which keeps things syntactically correct)
+			long matchedPos(wxNOT_FOUND);
 			int nextChar = SafeGetChar(pos);
 			switch (nextChar) {
+			case ')' :	if (!MatchBraceBack(matchChar, PositionBeforePos(pos), matchedPos)) {
+							break;
+						}
 			case ' ' :
 			case '\t':
 			case '\n':

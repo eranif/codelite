@@ -3,13 +3,13 @@
 ConfCallGraph::ConfCallGraph()
 : m_gprofPath(wxT("")),
 m_dotPath(wxT("")),
-m_colorsEdge(1),
 m_colorsNode(1),
+m_colorsEdge(1),
 m_tresholdNode(0),
 m_tresholdEdge(0),
 m_boxHideParams(false),
-m_boxHideNamespaces(false),
-m_boxStripParams(false)
+m_boxStripParams(false),
+m_boxHideNamespaces(false)
 {
 }
 

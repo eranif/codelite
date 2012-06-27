@@ -74,6 +74,8 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
 
 	// Load settings
 	m_mgr->GetConfigTool()->ReadObject(wxT("CppCheck"), &m_settings);
+	// Now set default suppressions if none have been serialised
+	m_settings.SetDefaultSuppressedWarnings();
 
 	// Connect events
 	m_mgr->GetTheApp()->Connect(XRCID("cppcheck_settings_item"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnSettingsItem),          NULL, (wxEvtHandler*)this);
@@ -117,28 +119,30 @@ void CppCheckPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 void CppCheckPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
 	if (type == MenuTypeEditor) {
-		//TODO::Append items for the editor context menu
-	} else if (type == MenuTypeFileExplorer) {
-
+		// The editor context menu situation is identical to FileExplore, so piggyback
+		if (!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
+			menu->Append(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateFileExplorerPopMenu());
+		}
+	}
+	 else if (type == MenuTypeFileExplorer) {
 		if (!menu->FindItem(XRCID("CPPCHECK_EXPLORER_POPUP"))) {
 			m_explorerSepItem = menu->PrependSeparator();
 			menu->Prepend(XRCID("CPPCHECK_EXPLORER_POPUP"), _("CppCheck"), CreateFileExplorerPopMenu());
 		}
 
-	} else if (type == MenuTypeFileView_Workspace) {
-
+	} 
+	 else if (type == MenuTypeFileView_Workspace) {
 		if (!menu->FindItem(XRCID("CPPCHECK_WORKSPACE_POPUP"))) {
 			m_workspaceSepItem = menu->PrependSeparator();
 			menu->Prepend(XRCID("CPPCHECK_WORKSPACE_POPUP"), _("CppCheck"), CreateWorkspacePopMenu());
 		}
 
-	} else if (type == MenuTypeFileView_Project) {
-
+	} 
+	 else if (type == MenuTypeFileView_Project) {
 		if (!menu->FindItem(XRCID("CPPCHECK_PROJECT_POPUP"))) {
 			m_projectSepItem = menu->PrependSeparator();
 			menu->Prepend(XRCID("CPPCHECK_PROJECT_POPUP"), _("CppCheck"), CreateProjectPopMenu());
 		}
-
 	}
 }
 
@@ -171,6 +175,9 @@ wxMenu* CppCheckPlugin::CreateFileExplorerPopMenu()
 	item = new wxMenuItem(menu, XRCID("cppcheck_fileexplorer_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
+	item = new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
 	return menu;
 }
 
@@ -183,6 +190,9 @@ wxMenu* CppCheckPlugin::CreateProjectPopMenu()
 	item = new wxMenuItem(menu, XRCID("cppcheck_project_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
+	item = new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
 	return menu;
 }
 
@@ -192,6 +202,9 @@ wxMenu* CppCheckPlugin::CreateWorkspacePopMenu()
 	wxMenuItem *item(NULL);
 
 	item = new wxMenuItem(menu, XRCID("cppcheck_workspace_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
+	menu->Append(item);
+
+	item = new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 
 	return menu;
@@ -278,10 +291,10 @@ void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 		proj->GetFiles(tmpfiles, true);
 
 		// only C/C++ files
-		for (size_t i=0; i< tmpfiles.size(); i++ ) {
-			if ( FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSourceC ||
-			     FileExtManager::GetType( tmpfiles.at(i).GetFullPath() ) == FileExtManager::TypeSourceCpp ) {
-				m_filelist.Add( tmpfiles.at(i).GetFullPath() );
+		for (size_t i=0; i< tmpfiles.size(); i++) {
+			if (FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceC ||
+			    FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceCpp) {
+					m_filelist.Add(tmpfiles.at(i).GetFullPath());
 			}
 		}
 	}
@@ -302,7 +315,13 @@ void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
  */
 void CppCheckPlugin::OnSettingsItem(wxCommandEvent &e)
 {
-	CppCheckSettingsDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), &m_settings, m_mgr->GetConfigTool());
+	// Find the default path for the CppCheckSettingsDialog's wxFileDialog
+	wxString defaultpath;
+	IEditor* ed = m_mgr->GetActiveEditor();
+	if (ed && ed->GetFileName().IsOk()) {
+		defaultpath = ed->GetFileName().GetPath();
+	}
+	CppCheckSettingsDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), &m_settings, m_mgr->GetConfigTool(), defaultpath);
 	if (dlg.ShowModal() == wxID_OK) {
 		m_mgr->GetConfigTool()->WriteObject(wxT("CppCheck"), &m_settings);
 	}
@@ -331,7 +350,7 @@ void CppCheckPlugin::GetFileListFromDir(const wxString& root)
 void CppCheckPlugin::DoProcess()
 {
 	wxString command = DoGetCommand();
-	wxLogMessage(_("Starting cppcheck: %s"), command.c_str());
+	m_view->AppendLine(wxString::Format(_("Starting cppcheck: %s\n"), command.c_str()));
 
 	m_cppcheckProcess = CreateAsyncProcess(this, command);
 	if (!m_cppcheckProcess ) {

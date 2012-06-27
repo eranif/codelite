@@ -10,51 +10,94 @@ extern const wxEventType wxEVT_CPPCHECKJOB_CHECK_COMPLETED;
 extern const wxEventType wxEVT_CPPCHECKJOB_REPORT;
 
 class IPlugin;
+class wxCheckListBox;
 
 class CppCheckSettings : public SerializedObject
 {
-	bool          m_bAll;
-	bool          m_bForce;
-	bool          m_bStyle;
-	bool          m_bUnusedFunctions;
+	typedef std::map<wxString, wxString> StrStrMap;
+
+	bool          m_Style;
+	bool          m_Performance;
+	bool          m_Portability;
+	bool          m_UnusedFunctions;
+	bool          m_MissingIncludes;
+	bool          m_Information;
+	bool          m_PosixStandards;
+	bool          m_C99Standards;
+	bool          m_Cpp11Standards;
+	bool          m_Force;
 	wxArrayString m_excludeFiles;
+	StrStrMap     m_SuppressedWarnings0;     // The items unchecked in the checklistbox
+	StrStrMap     m_SuppressedWarnings1;     // The checked ones
+	StrStrMap     m_SuppressedWarningsOrig0; // Ditto, containing the original values
+	StrStrMap     m_SuppressedWarningsOrig1;
+	bool          m_saveSuppressedWarnings;
+
 public:
 	CppCheckSettings();
 
-	bool All() const {
-		return m_bAll;
+	bool GetStyle() const {
+		return m_Style;
 	}
-	bool Force() const {
-		return m_bForce;
+	bool GetPerformance() const {
+		return m_Performance;
 	}
-	bool Style() const {
-		return m_bStyle;
+	bool GetPortability() const {
+		return m_Portability;
 	}
-	bool UnusedFunctions() const {
-		return m_bUnusedFunctions;
+	bool GetUnusedFunctions() const {
+		return m_UnusedFunctions;
 	}
-
-	void All(bool bAll) {
-		m_bAll = bAll;
+	bool GetMissingIncludes() const {
+		return m_MissingIncludes;
 	}
-	void Force(bool bForce) {
-		m_bForce = bForce;
+	bool GetInformation() const {
+		return m_Information;
 	}
-	void Style(bool bStyle) {
-		m_bStyle = bStyle;
+	bool GetPosixStandards() const {
+		return m_PosixStandards;
 	}
-	void UnusedFunctions(bool bUnusedFunctions) {
-		m_bUnusedFunctions = bUnusedFunctions;
+	bool GetC99Standards() const {
+		return m_C99Standards;
 	}
-
-	void SetExcludeFiles(const wxArrayString& excludeFiles) {
-		this->m_excludeFiles = excludeFiles;
+	bool GetCpp11Standards() const {
+		return m_Cpp11Standards;
+	}
+	bool GetForce() const {
+		return m_Force;
 	}
 	const wxArrayString& GetExcludeFiles() const {
 		return m_excludeFiles;
 	}
-	virtual void Serialize(Archive &arch);
-	virtual void DeSerialize(Archive &arch);
+	const StrStrMap* GetSuppressedWarningsStrings0() const {
+		return &m_SuppressedWarnings0;
+	}
+	const StrStrMap* GetSuppressedWarningsStrings1() const {
+		return &m_SuppressedWarnings1;
+	}
+
+
+	void SetStyle(bool Style)                     { m_Style = Style; }
+	void SetPerformance(bool Performance)         { m_Performance = Performance; }
+	void SetPortability(bool Portability)         { m_Portability = Portability; }
+	void SetUnusedFunctions(bool UnusedFunctions) { m_UnusedFunctions = UnusedFunctions; }
+	void SetMissingIncludes(bool MissingIncludes) { m_MissingIncludes = MissingIncludes; }
+	void SetInformation(bool Information)         { m_Information = Information; }
+	void SetPosixStandards(bool PosixStandards)   { m_PosixStandards = PosixStandards; }
+	void SetC99Standards(bool C99Standards)       { m_C99Standards = C99Standards; }
+	void SetCpp11Standards(bool Cpp11Standards)   { m_Cpp11Standards = Cpp11Standards; }
+	void SetForce(bool Force)                     { m_Force = Force; }
+	void SetExcludeFiles(const wxArrayString& excludeFiles) {
+		m_excludeFiles = excludeFiles;
+	}
+	void AddSuppressedWarning(const wxString& key, const wxString& label, bool checked);
+	void RemoveSuppressedWarning(const wxString& key);
+	void SetSuppressedWarnings(wxCheckListBox* clb, const wxArrayString& keys);
+	void SetSaveSuppressedWarnings(bool save) { m_saveSuppressedWarnings = save; }
+	void SetDefaultSuppressedWarnings();
+
+	virtual void Serialize(Archive& arch);
+	virtual void DeSerialize(Archive& arch);
 
 	wxString GetOptions() const;
 };

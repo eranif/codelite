@@ -624,7 +624,9 @@ clMainFrame::~clMainFrame(void)
 	// this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
 	// see this wxWidgets bug report for more details:
 	//  http://trac.wxwidgets.org/ticket/14292
-	delete m_myMenuBar; 
+#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
+	delete m_myMenuBar;
+#endif
 	
 	wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
 	wxTheApp->Disconnect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
@@ -784,7 +786,7 @@ void clMainFrame::CreateGUIControls(void)
 	// Load the menubar from XRC and set this frame's menubar to it.
 	wxMenuBar *mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu")); 
 	
-	// Under GTK we need this wrapper class to avoid warnings when codelite exists
+	// Under wxGTK < 2.9.4 we need this wrapper class to avoid warnings on ubuntu when codelite exits
 	m_myMenuBar = new MyMenuBar();
 	m_myMenuBar->Set(mb);
 	SetMenuBar(mb);

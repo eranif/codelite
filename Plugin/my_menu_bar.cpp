@@ -15,7 +15,7 @@ MyMenuBar::MyMenuBar()
 
 MyMenuBar::~MyMenuBar()
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
 	if (m_mb && m_mb->m_widget) {
 		// Release our reference and set m_widget to NULL this is to avoid freeing the widget again in the d-tor of wxWindow
 		m_mb->m_widget = NULL;
@@ -25,7 +25,7 @@ MyMenuBar::~MyMenuBar()
 
 void MyMenuBar::Set(wxMenuBar* mb)
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
 	m_mb = mb;
 #else
 	wxUnusedVar(mb);

@@ -4869,20 +4869,8 @@ bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
 void clMainFrame::DoUpdatePerspectiveMenu()
 {
 	// Locate the "perspective_menu"
-	size_t count = GetMenuBar()->GetMenuCount();
-	size_t pos = wxString::npos;
-	for(size_t i=0; i<count; i++) {
-		if(GetMenuBar()->GetMenuLabelText(i) == wxT("Perspective")) {
-			pos = i;
-			break;
-		}
-	}
-
-	if(pos == wxString::npos) {
-		return;
-	}
-
-	wxMenu* menu = GetMenuBar()->GetMenu(pos);
+	wxMenu* menu = NULL;
+	GetMenuBar()->FindItem(XRCID("manage_perspectives"), &menu);
 	if(!menu) {
 		return;
 	}

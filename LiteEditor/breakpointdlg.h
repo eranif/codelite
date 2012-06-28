@@ -55,7 +55,7 @@ public:
 	BreakpointsListctrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxLC_REPORT | wxLC_SINGLE_SEL)
 		: wxListCtrl(parent, id, pos, size, style)
 		{
-			const wxChar* column_headers[] =
+			const wxString column_headers[] =
 			{
 				_("ID"),
 				_("Type"),

@@ -12,13 +12,32 @@
 #include <wx/debug.h>
 #include <wx/log.h>
 #include <wx/wupdlock.h>
+
 #ifdef __WXGTK20__
-// We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
-// See http://trac.wxwidgets.org/ticket/10883^M
+// We need this ugly hack to workaround a gtk2-wxGTK name-clash
+// See http://trac.wxwidgets.org/ticket/10883
 #define GSocket GlibGSocket
 #include <gtk-2.0/gtk/gtk.h>
 #undef GSocket
 #endif
+
+
+#if wxUSE_STD_CONTAINERS && wxVERSION_NUMBER >= 2900
+	// The following avoids an undefined reference from m_pagesData.DeleteObject(data) in Notebook::GTKOnPageReordered
+
+	// Copying this definition from wx/src/gtk/notebook.cpp prevents warnings from the WX_DEFINE_LIST below
+	class wxGtkNotebookPage: public wxObject
+	{
+	public:
+		GtkWidget* m_box;
+		GtkWidget* m_label;
+		GtkWidget* m_image;
+		int m_imageIndex;
+	};
+
+	#include "wx/listimpl.cpp"
+	WX_DEFINE_LIST(wxGtkNotebookPagesList)
+#endif // wxUSE_STD_CONTAINERS
 
 #include <wx/imaglist.h>
 

@@ -1951,7 +1951,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 	if ( GetSelectedText().IsEmpty() == false) {
 		if (flags & wxSD_SEARCH_BACKWARD) {
 			// searching up
-			if (StringFindReplacer::Search(GetSelectedText(), GetSelectedText().Len(), findWhat, flags, dummy, dummy_len, dummy_c, dummy_len_c) && dummy_len_c == (int)GetSelectedText().Len()) {
+			if (StringFindReplacer::Search(GetSelectedText().wc_str(), GetSelectedText().Len(), findWhat.wc_str(), flags, dummy, dummy_len, dummy_c, dummy_len_c) && dummy_len_c == (int)GetSelectedText().Len()) {
 				// place the caret at the start of the selection so the search will skip this selected text
 				int sel_start = GetSelectionStart();
 				int sel_end = GetSelectionEnd();
@@ -1959,7 +1959,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 			}
 		} else {
 			// searching down
-			if (StringFindReplacer::Search(GetSelectedText(), 0, findWhat, flags, dummy, dummy_len, dummy_c, dummy_len_c) && dummy_len_c == (int)GetSelectedText().Len()) {
+			if (StringFindReplacer::Search(GetSelectedText().wc_str(), 0, findWhat.wc_str(), flags, dummy, dummy_len, dummy_c, dummy_len_c) && dummy_len_c == (int)GetSelectedText().Len()) {
 				// place the caret at the end of the selection so the search will skip this selected text
 				int sel_start = GetSelectionStart();
 				int sel_end = GetSelectionEnd();
@@ -1971,7 +1971,7 @@ bool LEditor::FindAndSelect(const FindReplaceData &data)
 	int pos(0);
 	int match_len(0);
 
-	if ( StringFindReplacer::Search(GetText(), offset, findWhat, flags, pos, match_len) ) {
+	if ( StringFindReplacer::Search(GetText().wc_str(), offset, findWhat.wc_str(), flags, pos, match_len) ) {
 
 		SetEnsureCaretIsVisible(pos);
 
@@ -1998,7 +1998,7 @@ bool LEditor::Replace(const FindReplaceData &data)
 		int pos(0);
 		int match_len(0);
 		size_t flags = SearchFlags(data);
-		if ( StringFindReplacer::Search(GetSelectedText(), 0, data.GetFindString(), flags, pos, match_len) ) {
+		if ( StringFindReplacer::Search(GetSelectedText().wc_str(), 0, data.GetFindString().wc_str(), flags, pos, match_len) ) {
 			ReplaceSelection(data.GetReplaceString());
 			m_findReplaceDlg->IncReplacedCount();
 			m_findReplaceDlg->SetReplacementsMessage();
@@ -2242,7 +2242,7 @@ bool LEditor::ReplaceAll()
 	m_findReplaceDlg->ResetReplacedCount();
 
 	long savedPos = GetCurrentPos();
-	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
+	while ( StringFindReplacer::Search(txt.wc_str(), offset, findWhat.wc_str(), flags, pos, match_len, posInChars, match_lenInChars) ) {
 		// Manipulate the buffer
 		txt.Remove(posInChars, match_lenInChars);
 		txt.insert(posInChars, replaceWith);
@@ -2255,7 +2255,7 @@ bool LEditor::ReplaceAll()
 		}
 
 		m_findReplaceDlg->IncReplacedCount();
-		offset = pos + UTF8Length(replaceWith, replaceWith.length()); // match_len;
+		offset = pos + UTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
 	}
 
 	if ( replaceInSelectionOnly ) {
@@ -2318,7 +2318,7 @@ bool LEditor::MarkAll()
 	// set the active indicator to be 1
 	SetIndicatorCurrent(1);
 
-	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len) ) {
+	while ( StringFindReplacer::Search(txt.wc_str(), offset, findWhat.wc_str(), flags, pos, match_len) ) {
 		MarkerAdd(LineFromPosition(fixed_offset + pos), smt_bookmark);
 
 		// add indicator as well
@@ -3847,7 +3847,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 		again = false;
 		flags = wxSD_MATCHCASE | wxSD_MATCHWHOLEWORD;;
 
-		if ( StringFindReplacer::Search ( GetText(), offset, pattern, flags, pos, match_len ) ) {
+		if ( StringFindReplacer::Search ( GetText().wc_str(), offset, pattern.wc_str(), flags, pos, match_len ) ) {
 
 			int line = LineFromPosition ( pos );
 			wxString dbg_line = GetLine ( line ).Trim().Trim ( false );
@@ -3872,7 +3872,7 @@ bool LEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, in
 					pattern = pattern.BeforeFirst ( wxT ( '(' ) );
 				}
 
-				if ( StringFindReplacer::Search ( pattern, UTF8Length ( pattern, pattern.Len() ), display_name, flags, pos1, match_len1 ) ) {
+				if ( StringFindReplacer::Search ( pattern.wc_str(), UTF8Length ( pattern.wc_str(), pattern.Len() ), display_name.wc_str(), flags, pos1, match_len1 ) ) {
 
 					// select only the word
 					// Check that pos1 is *not* 0 otherwise will get into an infinite loop
@@ -3965,11 +3965,11 @@ bool LEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replace
 	int matchCount(0);
 	wxString txt = GetText();
 
-	while ( StringFindReplacer::Search(txt, offset, findWhat, flags, pos, match_len, posInChars, match_lenInChars) ) {
+	while ( StringFindReplacer::Search(txt.wc_str(), offset, findWhat.wc_str(), flags, pos, match_len, posInChars, match_lenInChars) ) {
 		txt.Remove(posInChars, match_lenInChars);
 		txt.insert(posInChars, replaceWith);
 		matchCount++;
-		offset = pos + UTF8Length(replaceWith, replaceWith.length()); // match_len;
+		offset = pos + UTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
 	}
 
 	// replace the buffer

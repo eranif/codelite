@@ -208,7 +208,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 	
 	event.SetClientObject(eventData);
 	// Fire it up
-	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
+	EventNotifier::Get()->AddPendingEvent(event);
 	
 	EnvSetter env(NULL, NULL, projectName);
 	CL_DEBUG(wxString::Format(wxT("cmd:%s\n"), cmd.c_str()));
@@ -232,7 +232,7 @@ void ContinuousBuild::OnBuildProcessEnded(wxCommandEvent& e)
 	m_view->RemoveFile(m_buildProcess.GetFileName());
 
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
-	m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
+	EventNotifier::Get()->AddPendingEvent(event);
 
 	int exitCode(-1);
 	if(IProcess::GetProcessExitCode(pid, exitCode) && exitCode != 0) {
@@ -284,7 +284,7 @@ void ContinuousBuild::OnBuildProcessOutput(wxCommandEvent& e)
 
 	wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
 	event.SetString(ped->GetData());
-    m_mgr->GetOutputPaneNotebook()->GetEventHandler()->AddPendingEvent(event);
+	EventNotifier::Get()->AddPendingEvent(event);
 
 	//m_mgr->AddBuildOuptut(ped->GetData(), false);
 	delete ped;

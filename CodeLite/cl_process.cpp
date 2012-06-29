@@ -54,25 +54,8 @@ void clProcess::SetPid(long pid)
 void clProcess::Terminate()
 {
 	wxLog::EnableLogging(false);
-	
-#ifdef __WXMSW__
-	std::vector<long> children;
-	children.push_back(this->GetPid());
-	ProcUtils::GetChildren(this->GetPid(), children);
-	
-	for(size_t i=0; i<children.size(); i++)
-	{
-		HANDLE process = ::OpenProcess( PROCESS_ALL_ACCESS, FALSE, ( DWORD ) children.at(i) );
-		if(process) {
-			::TerminateProcess(process, 0);
-			::CloseHandle(process);
-		}
-	}
-	
-#else
 	wxKillError rc;
 	wxKill(GetPid(), wxSIGKILL, &rc, wxKILL_CHILDREN);
-#endif
 
 	// Sleep for 20 ms to allow the process to be killed and
 	// the main frame to handle the event or else we can get

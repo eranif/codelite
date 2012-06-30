@@ -483,8 +483,12 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 
 	// Create a new expression and ask GDB to evaluate it for us
 	wxString typecast = newText;
-	if(typecast.Find(oldText) == wxNOT_FOUND) {
-		// The new type does not contain the old type, perform a simple re-evaluation
+    typecast.Trim().Trim(false);
+    
+    int where = typecast.Find(oldText);
+	if(where == wxNOT_FOUND || where == 0) {
+        // The new text edited by the user does not contain the "old" expression
+        // OR it does contain it, but with an additional text to the END
 		newExpr = DoGetItemPath(item);
 
 	} else {

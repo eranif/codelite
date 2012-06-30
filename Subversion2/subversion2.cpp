@@ -972,7 +972,7 @@ void Subversion2::OnFileRemoved(wxCommandEvent& event)
     wxArrayString *files = (wxArrayString*)event.GetClientData();
     if(files && !files->IsEmpty() && files->GetCount() == 1) {
         wxFileName fn(files->Item(0));
-        if(IsPathUnderSvn(fn.GetFullPath())) {
+        if(IsPathUnderSvn( fn.GetPath() )) {
             if(wxMessageBox(wxString::Format(wxT("Would you like to remove '%s' from svn as well?"), fn.GetFullName().c_str()),
                             wxT("Subversion"),
                             wxYES_NO|wxCANCEL|wxCENTER,

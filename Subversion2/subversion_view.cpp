@@ -840,7 +840,7 @@ void SubversionView::OnFileAdded(wxCommandEvent& event)
 			command << m_plugin->GetSvnExeName() << wxT(" add ");
 			for(size_t i=0; i<files->GetCount(); i++) {
 
-				if(m_plugin->IsPathUnderSvn(files->Item(i))) {
+				if(m_plugin->IsPathUnderSvn( wxFileName(files->Item(i)).GetPath() )) {
 					command << wxT("\"") << files->Item(i) << wxT("\" ");
 					addToSvn = true;
 				}
@@ -864,7 +864,7 @@ void SubversionView::OnFileRenamed(wxCommandEvent& event)
 		wxString oldName = files->Item(0);
 		wxString newName = files->Item(1);
 
-		if(m_plugin->IsPathUnderSvn(oldName) == false) {
+		if(m_plugin->IsPathUnderSvn( wxFileName(oldName).GetPath() ) == false) {
 			event.Skip();
 			return;
 		}

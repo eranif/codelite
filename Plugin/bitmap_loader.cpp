@@ -162,6 +162,6 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 void BitmapLoader::AddImage(int index, FileExtManager::FileType type)
 {
 	if(!m_bMapPopulated) {
-		m_fileIndexMap.insert(std::make_pair<FileExtManager::FileType , int>(type, index));
+		m_fileIndexMap.insert(std::make_pair(type, index));
 	}
 }

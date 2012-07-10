@@ -2915,7 +2915,7 @@ void LEditor::SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_dis
 	int markerHandle = MarkerAdd(lineno-1, markertype);
 
 	// keep the breakpoint info vector for this marker
-	m_breakpointsInfo.insert(std::make_pair<int, std::vector<BreakpointInfo> >(markerHandle, bps));
+	m_breakpointsInfo.insert(std::make_pair(markerHandle, bps));
 }
 
 void LEditor::DelAllBreakpointMarkers()

@@ -39,7 +39,7 @@ void ClangTUCache::AddPCH(ClangCacheEntry entry)
 	}
 
 	entry.lastAccessed = time(NULL);
-	m_cache.insert(std::make_pair<wxString, ClangCacheEntry>(entry.sourceFile, entry));
+	m_cache.insert(std::make_pair(entry.sourceFile, entry));
 	
 	if(m_cache.size() > m_maxItems) {
 		CL_DEBUG1(wxT("clang PCH cache size reached its maximum size, removing last accessed entry"));

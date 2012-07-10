@@ -353,7 +353,7 @@ bool CodeLiteApp::OnInit()
 #ifdef __WXMSW__
 	// as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/
 	// load the exception handler dll so we will get Dr MinGW at runtime
-	m_handler = LoadLibrary(wxT("exchndl.dll"));
+	//m_handler = LoadLibrary(wxT("exchndl.dll"));
 
 	// Enable this process debugging priviliges
 	EnableDebugPriv();

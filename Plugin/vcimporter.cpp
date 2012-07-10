@@ -130,8 +130,11 @@ bool VcImporter::OnProject(const wxString &firstLine, wxString &errMsg)
 
 	pd.id = tk2.NextToken();
 	RemoveGershaim(pd.id);
-
-	m_projects.insert(std::make_pair<wxString, VcProjectData>(pd.id, pd));
+    
+    std::pair<wxString, VcProjectData> p;
+    p.first = pd.id;
+    p.second = pd;
+	m_projects.insert( p );
 	//Skip all lines until EndProject section is found
 	wxString line;
 	while (true) {

@@ -75,7 +75,7 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager)
 				//convert std::vector to wxArrayString
 				for ( std::vector<wxFileName>::iterator it = fileNames.begin(); it != fileNames.end(); it ++ ) {
 					wxString name = it->GetFullName().MakeLower();
-					m_files.insert(std::make_pair<wxString, wxString>(name, it->GetFullPath()) );
+					m_files.insert(std::make_pair(name, it->GetFullPath()) );
 				}
 			}
 		}

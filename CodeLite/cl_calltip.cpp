@@ -142,13 +142,19 @@ void clCallTip::Initialize(const std::vector<TagEntryPtr> &tips)
 			int j = 0;
 			for(; j<(int)tmpsig.Len(); j++) {
 				if(tmpsig.GetChar(j) == wxT(',')) {
-					cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset)));
+                    std::pair<int, int> p;
+                    p.first = startOffset;
+                    p.second = (j - startOffset);
+					cti.paramLen.push_back(p);
 					startOffset = j + 1;
 				}
 			}
 			
 			if(startOffset != j) {
-				cti.paramLen.push_back(std::make_pair<int, int>(startOffset, (j - startOffset)));
+                std::pair<int, int> p;
+                p.first = startOffset;
+                p.second = (j - startOffset) ;
+				cti.paramLen.push_back(p);
 			}
 			cti.sig = raw_sig;
 			mymap[raw_sig] = cti;

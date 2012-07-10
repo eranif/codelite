@@ -195,7 +195,7 @@ void SQLCommandPanel::ExecuteSql()
 							break;
 						}
 
-						m_gridValues[std::make_pair<int, int>(rows,  i-1)] = value;
+						m_gridValues[std::make_pair(rows,  i-1)] = value;
 
 						// truncate the string to a reasonable string
 						if(value.Length() > 100) {

@@ -418,7 +418,10 @@ enum {
 	// Send dwell end event to the plugins to notify them
 	// to dismiss any displayed tooltip
 	// event.GetEventObject() holds a pointer to the editor
-	wxEVT_CMD_EDITOR_TIP_DWELL_END
+	wxEVT_CMD_EDITOR_TIP_DWELL_END,
+    
+    // Sent when the parser thread has completed a tagging request
+    wxEVT_CMD_RETAG_COMPLETED
 };
 
 //------------------------------------------------------------------

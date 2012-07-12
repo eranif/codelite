@@ -4655,6 +4655,9 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 	}
 	ManagerST::Get()->SetRetagInProgress(false);
 #endif
+
+    wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
+    EventNotifier::Get()->AddPendingEvent(tagEndEvent);
 }
 
 void clMainFrame::OnRetaggingProgress(wxCommandEvent& e)

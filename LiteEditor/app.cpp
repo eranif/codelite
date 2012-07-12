@@ -356,7 +356,7 @@ bool CodeLiteApp::OnInit()
 	//m_handler = LoadLibrary(wxT("exchndl.dll"));
 
 	// Enable this process debugging priviliges
-	EnableDebugPriv();
+	//EnableDebugPriv();
 #endif
 
 

@@ -26,7 +26,7 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 [Components]
 Name: "Editor";           Description: "CodeLite IDE (Editor + Plugins)";                               Types: full custom;
 Name: "MinGW";            Description: "GCC 4.6.1 (MinGW) full (gcc/g++/gdb/WinAPI)";                   Types: full;
-Name: "wxWidgets";        Description: "wxWidgets framework (trunk), built as monolithic shared debug/release"; Types: full;
+Name: "wxWidgets";        Description: "wxWidgets 2.9.4 framework (trunk), built as monolithic shared debug/release"; Types: full;
 Name: "UnitTestPP";       Description: "UnitTest++ 1.3 framework";                                      Types: full;
 
 [Tasks]
@@ -37,7 +37,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "..\Runtime\CodeLite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\codelite-clang.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-trunk\lib\gcc_dll\wxmsw294u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wxWidgets-2.9.4\lib\gcc_dll\wxmsw294u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
 Source: "..\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; Components: Editor;

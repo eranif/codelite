@@ -111,7 +111,7 @@ void WorkspacePane::CreateGUIControls()
 		cp->SetChildNoReparent(m_workspaceTab);
 	} else {
 		m_workspaceTab = new WorkspaceTab(m_book, name);
-		m_book->AddPage(m_workspaceTab, name, true);
+		m_book->AddPage(m_workspaceTab, name, true, wxNullBitmap);
 	}
 
 	// Add the explorer tab

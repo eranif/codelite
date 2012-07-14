@@ -152,8 +152,9 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
 	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/workspace")) );      //6
 	images->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxfb")) );                //7
 	images->Add( bmpLoader->LoadBitmap(wxT("workspace/16/project_active")) ); //8
-	images->Add( bmpLoader->LoadBitmap(wxT("mime/16/cd")) );                //9
+	images->Add( bmpLoader->LoadBitmap(wxT("mime/16/cd")) );                  //9
 	images->Add( bmpLoader->LoadBitmap(wxT("mime/16/erd")) );                //10
+    images->Add( bmpLoader->LoadBitmap(wxT("mime/16/wxcp")) );               //11
 
 	AssignImageList( images );
 
@@ -276,24 +277,37 @@ int FileViewTree::GetIconIndex( const ProjectItem &item )
 		wxFileName filename( item.GetFile() );
 		if ( filename.GetExt().CmpNoCase( wxT( "cpp" ) ) == 0 ) {
 			icondIndex = 3;
+            
 		} else if ( filename.GetExt().CmpNoCase( wxT( "cxx" ) ) == 0 ) {
 			icondIndex = 3;
+            
 		} else if ( filename.GetExt().CmpNoCase( wxT( "c++" ) ) == 0 ) {
 			icondIndex = 3;
+            
 		} else if ( filename.GetExt().CmpNoCase( wxT( "cc" ) ) == 0 ) {
 			icondIndex = 3;
+            
 		} else if ( filename.GetExt().CmpNoCase( wxT( "c" ) ) == 0 ) {
 			icondIndex = 2;
+            
 		} else if ( filename.GetExt().CmpNoCase( wxT( "h" ) ) == 0 ) {
 			icondIndex = 4;
+            
 		} else if ( filename.GetExt().CmpNoCase( wxT( "hpp" ) ) == 0 ) {
 			icondIndex = 4;
+            
 		} else if ( filename.GetExt().CmpNoCase(wxT("fbp")) == 0) {
 			icondIndex = 7;
+            
 		} else if ( filename.GetExt().CmpNoCase(wxT("cdp")) == 0) {
 			icondIndex = 9;
+            
 		} else if ( filename.GetExt().CmpNoCase(wxT("erd")) == 0) {
 			icondIndex = 10;
+            
+        } else if ( filename.GetExt().CmpNoCase(wxT("wxcp")) == 0) {
+            icondIndex = 11;
+            
 		} else {
 			icondIndex = 5;
 		}

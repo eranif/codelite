@@ -46,6 +46,7 @@ OpenResourceDialog::OpenResourceDialog( wxWindow* parent, IManager *manager)
 	m_tagImgMap[wxT("text")]               = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));
 	m_tagImgMap[wxT("c")]                  = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/c")));
 	m_tagImgMap[wxT("wxfb")]               = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/wxfb")));
+	m_tagImgMap[wxT("wxcp")]               = li->Add(bmpLoader->LoadBitmap(wxT("mime/16/wxcp")));
 	
 	m_listOptions->AssignImageList(li, wxIMAGE_LIST_SMALL);
 	
@@ -244,6 +245,9 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 			case FileExtManager::TypeFormbuilder:
 				imgId = m_tagImgMap[wxT("wxfb")];
 				break;
+            case FileExtManager::TypeWxCrafter:
+                imgId = m_tagImgMap[wxT("wxcp")];
+                break;
 			default:
 				break;
 			}

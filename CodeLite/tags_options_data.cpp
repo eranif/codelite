@@ -147,7 +147,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
 		, m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
 {
-	SetVersion(wxT("3.0.6"));
+	SetVersion(wxT("3.0.7"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -158,6 +158,7 @@ wxT("WXDLLIMPEXP_XML\n")
 wxT("WXDLLIMPEXP_XRC\n")
 wxT("WXDLLIMPEXP_ADV\n")
 wxT("WXDLLIMPEXP_AUI\n")
+wxT("WXDLLIMPEXP_FWD_ADV\n")
 wxT("WXDLLIMPEXP_CL\n")
 wxT("WXDLLIMPEXP_LE_SDK\n")
 wxT("WXDLLIMPEXP_SQLITE3\n")

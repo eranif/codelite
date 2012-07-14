@@ -154,6 +154,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))),     FileExtManager::TypeJS);
 	AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/workspace"))), FileExtManager::TypeWorkspace);
 	AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/project"))),   FileExtManager::TypeProject);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxfb"))),           FileExtManager::TypeWxCrafter);
 	
 	m_bMapPopulated = true;
 	return imageList;

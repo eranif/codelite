@@ -60,6 +60,7 @@ public:
 		TypeMakefile,
 		TypeText,
 		TypeScript,
+        TypeWxCrafter,
 		TypeOther = wxNOT_FOUND
 	};
 

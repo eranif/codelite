@@ -169,7 +169,7 @@ void PluginManager::Load()
 				wxLogMessage(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
 				if (!dl->GetError().IsEmpty()) {
 					wxLogMessage(dl->GetError());
-			}
+				}
 			}
 
 			if ( interface_version != PLUGIN_INTERFACE_VERSION ) {
@@ -244,19 +244,19 @@ void PluginManager::Load()
 
 				//Add menu entry at the 'View->Toolbars' menu for this toolbar
 				wxMenuItem* item = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("toolbars_menu"));
-					if (item) {
+				if (item) {
 					wxMenu* submenu = NULL;
-						submenu = item->GetSubMenu();
-						//add the new toolbar entry at the end of this menu
+					submenu = item->GetSubMenu();
+					//add the new toolbar entry at the end of this menu
 
-						int id = wxNewId();
-						wxString text(plugin->GetShortName());
-						text << _(" ToolBar");
-						wxMenuItem *newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
-						submenu->Append(newItem);
-						clMainFrame::Get()->RegisterToolbar(id, plugin->GetShortName());
-					}
+					int id = wxNewId();
+					wxString text(plugin->GetShortName());
+					text << _(" ToolBar");
+					wxMenuItem *newItem = new wxMenuItem(submenu, id, text, wxEmptyString, wxITEM_CHECK);
+					submenu->Append(newItem);
+					clMainFrame::Get()->RegisterToolbar(id, plugin->GetShortName());
 				}
+			}
 
 			//let the plugin plug its menu in the 'Plugins' menu at the menu bar
 			//the create menu will be placed as a sub menu of the 'Plugin' menu
@@ -649,7 +649,7 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
 {
 	if(IsWorkspaceOpen() == false)
 		return wxArrayString();
-		
+
 	wxArrayString args;
 
 	// Next apppend the user include paths
@@ -671,8 +671,7 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString &projectName,
 
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, proj->GetName());
 	BuildConfigPtr dependProjbldConf = GetWorkspace()->GetProjBuildConf(proj->GetName(), projectSelConf);
-	if(dependProjbldConf && dependProjbldConf->IsCustomBuild() == false)
-	{
+	if(dependProjbldConf && dependProjbldConf->IsCustomBuild() == false) {
 		// Get the include paths and add them
 		wxString projectIncludePaths = dependProjbldConf->GetIncludePath();
 		wxArrayString projectIncludePathsArr = wxStringTokenize(projectIncludePaths, wxT(";"), wxTOKEN_STRTOK);
@@ -743,3 +742,12 @@ wxWindow* PluginManager::GetPage(size_t page)
 	return clMainFrame::Get()->GetMainBook()->GetPage(page);
 }
 
+wxString PluginManager::GetPageTitle(wxWindow* win) const
+{
+	return clMainFrame::Get()->GetMainBook()->GetPageTitle(win);
+}
+
+void PluginManager::SetPageTitle(wxWindow* win, const wxString& title)
+{
+	clMainFrame::Get()->GetMainBook()->SetPageTitle(win, title);
+}

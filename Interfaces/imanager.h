@@ -394,7 +394,16 @@ public:
      */
     virtual bool SelectPage(wxWindow *win) = 0;
 
-
+	/**
+	 * @brief set the page's title
+	 */
+	virtual void SetPageTitle(wxWindow* win, const wxString &title) = 0;
+	
+	/**
+	 * @brief set the page's title
+	 */
+	virtual wxString GetPageTitle(wxWindow* win) const = 0;
+	
 	/**
 	 * @brief open new editor "untitiled"
 	 * @return pointer to the editor

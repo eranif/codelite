@@ -132,7 +132,7 @@ public:
 	bool CloseAllButThis(wxWindow *win);
 	bool CloseAll       (bool cancellable);
 
-	wxString GetPageTitle(wxWindow *win);
+	wxString GetPageTitle(wxWindow *win) const;
 	void     SetPageTitle(wxWindow *page, const wxString &name);
 	long     GetBookStyle();
 

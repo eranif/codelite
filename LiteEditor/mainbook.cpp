@@ -829,7 +829,7 @@ bool MainBook::CloseAll(bool cancellable)
 	return true;
 }
 
-wxString MainBook::GetPageTitle(wxWindow *page)
+wxString MainBook::GetPageTitle(wxWindow *page) const
 {
 	size_t selection = m_book->GetPageIndex(page);
 	if (selection != Notebook::npos)

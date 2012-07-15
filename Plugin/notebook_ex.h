@@ -100,7 +100,7 @@ public:
 	 * \param page page's index
 	 * \return the page or NULL if index is out of bounds
 	 */
-	wxWindow *GetPage(size_t page);
+	wxWindow *GetPage(size_t page) const;
 
 	/**
 	 * \brief return the page caption
@@ -147,14 +147,14 @@ public:
 	 * \param page page to search
 	 * \return page index, or Notebook::npos if page does not exist in the notebook
 	 */
-	size_t GetPageIndex(wxWindow *page);
+	size_t GetPageIndex(wxWindow *page) const; 
 
 	/**
 	 * \brief return page index by page text
 	 * \param text text to search for
 	 * \return page index, or Notebook::npos if page does not exist in the notebook
 	 */
-	size_t GetPageIndex(const wxString &text);
+	size_t GetPageIndex(const wxString &text) const;
 
 	/**
 	 * \brief returns the index within its tabctrl of the selected editor

@@ -53,7 +53,7 @@ class PluginManager : public IManager
 	BitmapLoader    *              m_bmpLoader;
 	std::set<MenuType>             m_menusToBeHooked;
 	std::map<wxString,wxString>    m_backticks;
-	
+
 private:
 	PluginManager();
 	virtual ~PluginManager();
@@ -128,11 +128,13 @@ public:
 	virtual IMacroManager*         GetMacrosManager();
 	virtual bool                   IsShutdownInProgress() const;
 	virtual BitmapLoader*          GetStdIcons();
-	virtual wxArrayString          GetProjectCompileFlags(const wxString &projectName, bool isCppFile);	
+	virtual wxArrayString          GetProjectCompileFlags(const wxString &projectName, bool isCppFile);
 	virtual void 				   AddEditorPage(wxWindow* page, const wxString& name);
 	virtual wxPanel* 			   GetEditorPaneNotebook();
 	virtual wxWindow* 			   GetActivePage();
 	virtual wxWindow* 			   GetPage(size_t page);
+	virtual wxString               GetPageTitle(wxWindow* win) const;
+	virtual void                   SetPageTitle(wxWindow* win, const wxString& title);
 
 	//------------------------------------
 	//End of IManager interface

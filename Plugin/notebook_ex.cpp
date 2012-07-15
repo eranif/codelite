@@ -151,7 +151,7 @@ size_t Notebook::GetSelection()
 	return static_cast<size_t>(wxAuiNotebook::GetSelection());
 }
 
-wxWindow* Notebook::GetPage(size_t page)
+wxWindow* Notebook::GetPage(size_t page) const
 {
 	if (page >= GetPageCount())
 		return NULL;
@@ -266,7 +266,7 @@ wxWindow* Notebook::GetCurrentPage()
 	return NULL;
 }
 
-size_t Notebook::GetPageIndex(wxWindow *page)
+size_t Notebook::GetPageIndex(wxWindow *page) const
 {
 	if ( !page )
 		return Notebook::npos;
@@ -279,7 +279,7 @@ size_t Notebook::GetPageIndex(wxWindow *page)
 	return Notebook::npos;
 }
 
-size_t Notebook::GetPageIndex(const wxString& text)
+size_t Notebook::GetPageIndex(const wxString& text) const
 {
 	for (size_t i=0; i< GetPageCount(); i++) {
 

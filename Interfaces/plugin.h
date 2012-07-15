@@ -421,7 +421,11 @@ enum {
 	wxEVT_CMD_EDITOR_TIP_DWELL_END,
     
     // Sent when the parser thread has completed a tagging request
-    wxEVT_CMD_RETAG_COMPLETED
+    wxEVT_CMD_RETAG_COMPLETED,
+    
+    // send a wxNotifyEvent about page closing.
+    // This event can be vetoed
+    wxEVT_NOTIFY_PAGE_CLOSING,
 };
 
 //------------------------------------------------------------------

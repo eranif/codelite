@@ -138,14 +138,23 @@ void MainBook::OnPageClosing(NotebookEvent &e)
 	e.Skip();
 
 	LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(e.GetSelection()));
-	if (!editor)
-		return;
-
-	if (AskUserToSave(editor)) {
-		SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
-	} else {
-		e.Veto();
-	}
+	if (editor) {
+        if (AskUserToSave(editor)) {
+            SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
+        } else {
+            e.Veto();
+        }
+        
+    } else {
+        
+        // Unknow type, ask the plugins - maybe they know about this type
+        wxNotifyEvent closeEvent(wxEVT_NOTIFY_PAGE_CLOSING);
+        closeEvent.SetClientData( m_book->GetPage(e.GetSelection()) );
+        EventNotifier::Get()->ProcessEvent(closeEvent);
+        if( !closeEvent.IsAllowed() ) {
+            e.Veto();
+        }
+    }
 }
 
 void MainBook::OnPageClosed(NotebookEvent &e)

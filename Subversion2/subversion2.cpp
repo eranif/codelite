@@ -303,8 +303,17 @@ void Subversion2::DoInitialize()
         size_t index = GetSettings().GetSvnTabIndex();
         if(index == Notebook::npos)
             book->AddPage(m_subversionView, svnCONSOLE_TEXT, false);
-        else
-            book->InsertPage(index, m_subversionView, svnCONSOLE_TEXT, false);
+			
+        else {
+			size_t count = book->GetPageCount();
+			if(index >= count) {
+				// Invalid index
+				book->AddPage(m_subversionView, svnCONSOLE_TEXT, false);
+				
+			} else {
+				book->InsertPage(index, m_subversionView, svnCONSOLE_TEXT, false);
+			}
+		}
     }
 
     DoSetSSH();

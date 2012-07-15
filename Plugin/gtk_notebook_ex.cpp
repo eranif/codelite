@@ -388,12 +388,21 @@ wxWindow* Notebook::GetPreviousSelection()
 
 void Notebook::OnIternalPageChanged(wxNotebookEvent &e)
 {
-	DoPageChangedEvent(e);
+	if(e.GetEventObject() == this) {
+		DoPageChangedEvent(e);
+		
+	} else {
+		e.Skip();
+	}
 }
 
 void Notebook::OnIternalPageChanging(wxNotebookEvent &e)
 {
-	DoPageChangingEvent(e);
+	if(e.GetEventObject() == this) {
+		DoPageChangingEvent(e);
+	} else {
+		e.Skip();
+	}
 }
 
 void Notebook::OnMouseMiddle(wxMouseEvent &e)

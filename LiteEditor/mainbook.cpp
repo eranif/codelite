@@ -959,6 +959,8 @@ bool MainBook::DoSelectPage(wxWindow* win)
 		clMainFrame::Get()->SetFrameTitle(NULL);
 		clMainFrame::Get()->SetStatusMessage(wxEmptyString, 1); // clear line & column indicator
 		UpdateNavBar(NULL);
+        SendCmdEvent(wxEVT_CMD_PAGE_CHANGED, win);
+        
 	} else {
 		if (editor->GetContext()->GetName() == wxT("C++")) {
 			if (clMainFrame::Get()->GetMenuBar()->FindMenu(wxT("C++")) == wxNOT_FOUND) {

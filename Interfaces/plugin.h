@@ -426,6 +426,12 @@ enum {
     // send a wxNotifyEvent about page closing.
     // This event can be vetoed
     wxEVT_NOTIFY_PAGE_CLOSING,
+    
+    // send an wxCommandEvent indicating that the mainbook page has changed.
+    // Unlike 'wxEVT_ACTIVE_EDITOR_CHANGED' this event is only sent when the 
+    // 'page' is not of type IEditor
+    // use event.GetClientData() to get a pointer to the wxWindow* 
+    wxEVT_CMD_PAGE_CHANGED
 };
 
 //------------------------------------------------------------------

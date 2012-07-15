@@ -27,6 +27,7 @@
 #include <wx/menu.h>
 #include <wx/log.h>
 #include "editor_config.h"
+#include "event_notifier.h"
 #include <wx/msgdlg.h>
 #include "workspace.h"
 #include "ctags_manager.h"
@@ -595,6 +596,15 @@ void WizardsPlugin::CreateClass(const NewClassInfo &info)
 	bool smartAddFiles = EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles;
 	if (!smartAddFiles || ! m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths) )
 		m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
+    
+    // Open the newly created classes in codelite
+    for(size_t i=0; i<paths.GetCount(); i++) {
+        m_mgr->OpenFile(paths.Item(i));
+    }
+    
+    // Notify codelite to parse the files
+    wxCommandEvent parseEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(parseEvent);
 }
 
 void WizardsPlugin::OnNewWxProject(wxCommandEvent &e)

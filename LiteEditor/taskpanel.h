@@ -37,7 +37,8 @@ private:
     wxArrayString m_extensions;
 	wxButton *m_findWhat;
     wxChoice *m_scope;
-
+    wxChoice *m_choiceEncoding;
+    
 protected:
     SearchData DoGetSearchData   ();
     void       OnFindWhat        (wxCommandEvent  &e);
@@ -45,7 +46,7 @@ protected:
     void       OnSearchUI        (wxUpdateUIEvent &e);
 	void       OnRepeatOutput    (wxCommandEvent  &e);
 	void       OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-	
+	void       OnEncodingSelected(wxCommandEvent& e);
     DECLARE_EVENT_TABLE()
 
 public:

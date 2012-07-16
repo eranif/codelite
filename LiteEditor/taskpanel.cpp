@@ -25,6 +25,7 @@
 #include <wx/xrc/xmlres.h>
 #include "editor_config.h"
 #include "taskspaneldata.h"
+#include <wx/fontmap.h>
 #include "tasks_find_what_dlg.h"
 #include <wx/tglbtn.h>
 #include "frame.h"
@@ -67,7 +68,38 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
     m_scope->SetSelection(0);
 	m_scope->SetToolTip(_("Select the scope of the search"));
     verticalPanelSizer->Add(m_scope, 0, wxEXPAND|wxALL, 5);
+    
+    m_choiceEncoding = new wxChoice(this, wxID_ANY);
+    verticalPanelSizer->Add(m_choiceEncoding, 0, wxEXPAND|wxALL, 5);
+    m_choiceEncoding->SetToolTip(_("Encoding to use for the search"));
+    
+    TasksPanelData d;
+	EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &d);
+    
+    // Set encoding
+	wxArrayString  astrEncodings;
+	wxFontEncoding fontEnc;
+	int            selection(0);
 
+	size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
+	for (size_t i = 0; i < iEncCnt; i++) {
+		fontEnc = wxFontMapper::GetEncoding(i);
+		if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+			continue;
+		}
+		wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
+		size_t pos = astrEncodings.Add(encodingName);
+
+		if(d.GetEncoding() == encodingName)
+			selection = static_cast<int>(pos);
+	}
+
+	m_choiceEncoding->Append(astrEncodings);
+	if(m_choiceEncoding->IsEmpty() == false)
+		m_choiceEncoding->SetSelection(selection);
+        
+    m_choiceEncoding->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected), NULL, this);
+    
 	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
 	
 	// grab the base class scintilla and put our sizer in its place
@@ -86,6 +118,7 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString &name)
 
 TaskPanel::~TaskPanel()
 {
+    m_choiceEncoding->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected), NULL, this);
 }
 
 SearchData TaskPanel::DoGetSearchData()
@@ -95,7 +128,7 @@ SearchData TaskPanel::DoGetSearchData()
     data.SetRegularExpression(true);
     data.SetMatchCase(false);
     data.SetMatchWholeWord(false);
-    data.SetEncoding(wxT("ISO-8859-1"));
+    data.SetEncoding(m_choiceEncoding->GetStringSelection());
     data.SetOwner(this);
 
 	wxString sfind;
@@ -182,3 +215,15 @@ void TaskPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 		e.Check(false);
 	}
 }
+
+void TaskPanel::OnEncodingSelected(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    
+    TasksPanelData d;
+	EditorConfigST::Get()->ReadObject(wxT("TasksPanelData"), &d);
+    
+    d.SetEncoding(m_choiceEncoding->GetStringSelection());
+    EditorConfigST::Get()->WriteObject(wxT("TasksPanelData"), &d);
+}
+

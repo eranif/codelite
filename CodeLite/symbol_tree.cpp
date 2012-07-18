@@ -130,14 +130,7 @@ void SymbolTree::Create(wxWindow *parent, const wxWindowID id, const wxPoint& po
 
 void SymbolTree::BuildTree(const wxFileName &fileName)
 {
-	// Clear the tree
-	DeleteAllItems();
-	m_items.clear();
-	m_globalsNode = wxTreeItemId();
-	m_prototypesNode = wxTreeItemId();
-	m_macrosNode = wxTreeItemId();
-	m_sortItems.clear();
-
+    Clear();
 	m_fileName = fileName;
 	// Get the current tree
 	m_tree = TagsManagerST::Get()->Load(m_fileName);
@@ -416,4 +409,16 @@ void SymbolTree::AddSymbols(const std::vector<std::pair<wxString, TagEntry> > &i
 	SortTree(m_sortItems);
 	m_sortItems.clear();
 	Thaw();
+}
+
+void SymbolTree::Clear()
+{
+	// Clear the tree
+	DeleteAllItems();
+	m_items.clear();
+	m_globalsNode = wxTreeItemId();
+	m_prototypesNode = wxTreeItemId();
+	m_macrosNode = wxTreeItemId();
+	m_sortItems.clear();
+    m_fileName.Clear();
 }

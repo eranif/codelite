@@ -26,8 +26,7 @@
 #include "globals.h"
 #include "stringsearcher.h"
 #include "stringsearcher.h"
-//#include "cl_editor.h"
-//#include "pluginmanager.h"
+#include <wx/wxscintilla.h>
 
 #include "sv_symbol_tree.h"
 //#include "manager.h"
@@ -220,4 +219,20 @@ wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
 void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxString& name)
 {
 	editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr());
+    m_manager->GetActiveEditor()->GetScintilla()->SetFocus();
 }
+
+void svSymbolTree::BuildTree(const wxFileName& fn)
+{
+    SymbolTree::BuildTree(fn);
+    wxTreeItemId root = GetRootItem();
+    if( root.IsOk() && ItemHasChildren(root) ) {
+        wxTreeItemIdValue cookie;
+        wxTreeItemId child = GetFirstChild(root, cookie);
+        while ( child.IsOk() ) {
+            Expand(child);
+            child = GetNextChild(root, cookie);
+        }
+    }
+}
+

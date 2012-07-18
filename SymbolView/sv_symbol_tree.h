@@ -48,7 +48,9 @@ public:
 	/// destructor
 	virtual ~svSymbolTree()
 	{};
-
+    
+    virtual void BuildTree(const wxFileName& fn);
+    
 	//activate the selected item.
 	//If there is no selection, retun false,
 	//else try to open the file associated with the 

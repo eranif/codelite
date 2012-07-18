@@ -450,6 +450,12 @@ void Notebook::OnInternalPageChanging(wxAuiNotebookEvent &e)
 
 void Notebook::DoPageChangedEvent(wxAuiNotebookEvent& e)
 {
+    if(e.GetEventObject() != this)
+    {
+        e.Skip();
+        return;
+    }
+    
 	if (!m_notify) {
 		e.Skip();
 		return;
@@ -468,6 +474,12 @@ void Notebook::DoPageChangedEvent(wxAuiNotebookEvent& e)
 
 void Notebook::DoPageChangingEvent(wxAuiNotebookEvent& e)
 {
+    if(e.GetEventObject() != this)
+    {
+        e.Skip();
+        return;
+    }
+    
 	if (!m_notify) {
 		e.Skip();
 		return;

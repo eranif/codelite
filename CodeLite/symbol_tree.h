@@ -80,9 +80,9 @@ protected:
 	wxFileName m_fileName;
 	std::map<wxString, void*> m_items;
 	TagTreePtr m_tree;
-	
+
 public:
-	/**
+    /**
 	 * Default cosntructor.
 	 */
 	SymbolTree();
@@ -97,6 +97,11 @@ public:
 	 */
 	SymbolTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	
+    /**
+     * @brief clear the tree content
+     */
+    void Clear();
+    
 	/**
 	 * Destructor .
 	 */
@@ -115,7 +120,7 @@ public:
 	/**
 	 * Construct a outline tree for fileName
 	 */
-	void BuildTree(const wxFileName &fileName);
+	virtual void BuildTree(const wxFileName &fileName);
 
 	/**
 	 * User provided icons for the symbols tree. 

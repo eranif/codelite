@@ -3502,6 +3502,9 @@ void clMainFrame::OnParsingThreadDone(wxCommandEvent& e)
 	if (editor) {
 		editor->UpdateColours();
 	}
+	
+	wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
+    EventNotifier::Get()->AddPendingEvent(tagEndEvent);
 }
 
 void clMainFrame::OnSingleInstanceOpenFiles(wxCommandEvent& e)

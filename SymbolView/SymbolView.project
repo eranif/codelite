@@ -8,6 +8,8 @@
   <VirtualDirectory Name="src">
     <File Name="symbolview.cpp"/>
     <File Name="sv_symbol_tree.cpp"/>
+    <File Name="sv_tab_panel.h"/>
+    <File Name="sv_tab_panel.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="symbolview.h"/>
@@ -20,6 +22,17 @@
   <Dependencies Name="WinRelease_29"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="wxcrafter.wxcp"/>
+    <VirtualDirectory Name="base">
+      <File Name="wxcrafter.h"/>
+      <File Name="wxcrafter.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="resources">
+      <File Name="wxcrafter_wxCraftBitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -37,22 +50,24 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch;-g;" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.a"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
+        <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinDebugUnicode" Command="./CodeLite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -78,6 +93,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2">
@@ -87,6 +107,7 @@
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
@@ -94,6 +115,7 @@
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libwxscintillau.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinReleaseUnicode" Command="./CodeLite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/Runtime" PauseExecWhenProcTerminates="no"/>
@@ -122,6 +144,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
@@ -163,7 +190,11 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

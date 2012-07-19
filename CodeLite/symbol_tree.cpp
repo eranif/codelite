@@ -32,6 +32,7 @@
 
 #include "symbol_tree.h"
 #include "ctags_manager.h"
+#include <wx/wupdlock.h>
 #include "tokenizer.h"
 
 
@@ -130,6 +131,7 @@ void SymbolTree::Create(wxWindow *parent, const wxWindowID id, const wxPoint& po
 
 void SymbolTree::BuildTree(const wxFileName &fileName)
 {
+	wxWindowUpdateLocker locker(this);
     Clear();
 	m_fileName = fileName;
 	// Get the current tree

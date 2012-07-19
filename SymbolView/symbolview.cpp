@@ -127,7 +127,9 @@ void SymbolViewPlugin::UnPlug()
 {
     size_t index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("Outline"));
     if (index != Notebook::npos) {
+		// this window might be floating
         m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
-        m_view->Destroy();
     }
+    m_view->Destroy();
+	m_view = NULL;
 }

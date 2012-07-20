@@ -23,7 +23,7 @@ xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%ProgramFiles(x86)%\CodeLite\"
 xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%WXWIN%" == "" GOTO OTHERS
-xcopy %WXWIN%\lib\gcc_dll\wxmsw*.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_gcc_cl.dll "%ProgramFiles(x86)%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
 :OTHERS
 :: Copy the misc files

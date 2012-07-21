@@ -28,6 +28,9 @@ YesToAllDlg::YesToAllDlg( wxWindow* parent, const wxString& message /*=wxT("This
 {
 	SetMessage(message);
 	m_checkBoxAll->SetValue(setcheck);
+    CenterOnScreen();
+    m_buttonOk->SetDefault();
+    m_checkBoxAll->SetFocus();
 }
 
 void YesToAllDlg::SetMessage(const wxString& message)

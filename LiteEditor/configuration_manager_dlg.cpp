@@ -45,7 +45,7 @@ ConfigurationManagerDlg::ConfigurationManagerDlg( wxWindow* parent )
 {
 	PopulateConfigurations();
 	InitDialog();
-	
+	CentreOnScreen();
 	WindowAttrManager::Load(this, wxT("ConfigurationManagerDlg"), NULL);
 }
 
@@ -101,11 +101,8 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 	if (!mainSizer) return;
 
 	Freeze();
-	// remove old entries from the configuration table
-	for ( wxSizerItemList::compatibility_iterator node = mainSizer->GetChildren().GetFirst(); node; node = node->GetNext() ) {
-		wxSizerItem *current = node->GetData();
-		current->GetWindow()->Destroy();
-	}
+	mainSizer->Clear(true);
+	
 	m_projSettingsMap.clear();
 
 	std::list<WorkspaceConfigurationPtr> configs = matrix->GetConfigurations();

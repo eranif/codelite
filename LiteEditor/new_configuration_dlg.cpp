@@ -67,6 +67,7 @@ NewConfigurationDlg::NewConfigurationDlg( wxWindow* parent, const wxString &proj
 	wxTextValidator validator(wxFILTER_ASCII);
 	m_textConfigurationName = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, validator );
 	bSizer3->Add( m_textConfigurationName, 0, wxALL|wxEXPAND, 5 );
+	m_textConfigurationName->SetFocus();
 	
 	m_staticText2 = new wxStaticText( m_panel1, wxID_ANY, _("Copy Settings from:"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer3->Add( m_staticText2, 0, wxALL, 5 );
@@ -108,8 +109,10 @@ NewConfigurationDlg::NewConfigurationDlg( wxWindow* parent, const wxString &proj
 	bSizer1->Add( bSizer2, 0, wxALIGN_RIGHT, 5 );
 	
 	ConnectButton(m_buttonOK, NewConfigurationDlg::OnButtonOK);
-
+	m_buttonOK->SetDefault();
 	this->SetSizer( bSizer1 );
+	CentreOnScreen();
+	GetSizer()->Fit(this);
 	this->Layout();
 }
 

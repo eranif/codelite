@@ -1099,139 +1099,82 @@ void ScintillaWX::DoAddChar(int key) {
 
 
 int  ScintillaWX::DoKeyDown(const wxKeyEvent& evt, bool* consumed) {
-#if wxVERSION_NUMBER < 2900
-	int key = evt.GetKeyCode();
-#else
-	int key;
-	if(evt.GetKeyCode() == 0 && evt.GetUnicodeKey() != 0) {
-		key = evt.GetUnicodeKey();
-	} else {
-		key = evt.GetKeyCode();
-	}
-#endif
-	
-	bool shift = evt.ShiftDown(),
-	     ctrl  = evt.ControlDown(),
-	     alt   = evt.AltDown();
+    int key = evt.GetKeyCode();
+    if (key == WXK_NONE) {
+        // This is a Unicode character not representable in Latin-1 or some key
+        // without key code at all (e.g. dead key or VK_PROCESSKEY under MSW).
+        if ( consumed )
+            *consumed = false;
+        return 0;
+    }
 
-	if (ctrl && key >= 1 && key <= 26 && key != WXK_BACK)
-		key += 'A' - 1;
+    bool shift = evt.ShiftDown(),
+         ctrl  = evt.ControlDown(),
+         alt   = evt.AltDown();
 
-	switch (key) {
-	case WXK_DOWN:              // fall through
-	case WXK_NUMPAD_DOWN:
-		key = SCK_DOWN;
-		break;
-	case WXK_UP:                // fall through
-	case WXK_NUMPAD_UP:
-		key = SCK_UP;
-		break;
-	case WXK_LEFT:              // fall through
-	case WXK_NUMPAD_LEFT:
-		key = SCK_LEFT;
-		break;
-	case WXK_RIGHT:             // fall through
-	case WXK_NUMPAD_RIGHT:
-		key = SCK_RIGHT;
-		break;
-	case WXK_HOME:              // fall through
-	case WXK_NUMPAD_HOME:
-		key = SCK_HOME;
-		break;
-	case WXK_END:               // fall through
-	case WXK_NUMPAD_END:
-		key = SCK_END;
-		break;
-#if !wxCHECK_VERSION(2, 7, 0)
-	case WXK_PRIOR:             // fall through
-	case WXK_NUMPAD_PRIOR:      // fall through
-#endif
-	case WXK_PAGEUP:            // fall through
-	case WXK_NUMPAD_PAGEUP:
-		key = SCK_PRIOR;
-		break;
-#if !wxCHECK_VERSION(2, 7, 0)
-	case WXK_NEXT:              // fall through
-	case WXK_NUMPAD_NEXT:       // fall through
-#endif
-	case WXK_PAGEDOWN:          // fall through
-	case WXK_NUMPAD_PAGEDOWN:
-		key = SCK_NEXT;
-		break;
-		//Eran - BEGIN
-	case WXK_NUMPAD_DELETE: //fall through
-		//Eran - END
-	case WXK_DELETE:
-		key = SCK_DELETE;
-		break;
+    if (ctrl && key >= 1 && key <= 26 && key != WXK_BACK)
+        key += 'A' - 1;
 
-		//Eran - BEGIN
-	case WXK_NUMPAD_INSERT://fall through
-		//Eran - END
-	case WXK_INSERT:
-		key = SCK_INSERT;
-		break;
-	case WXK_ESCAPE:
-		key = SCK_ESCAPE;
-		break;
-	case WXK_BACK:
-		key = SCK_BACK;
-		break;
-	case WXK_TAB:
-		key = SCK_TAB;
-		break;
-	case WXK_RETURN:            // fall through
-	case WXK_NUMPAD_ENTER:
-		key = SCK_RETURN;
-		break;
-	case WXK_ADD:               // fall through
-	case WXK_NUMPAD_ADD:
-		key = SCK_ADD;
-		break;
-	case WXK_SUBTRACT:          // fall through
-	case WXK_NUMPAD_SUBTRACT:
-		key = SCK_SUBTRACT;
-		break;
-	case WXK_DIVIDE:            // fall through
-	case WXK_NUMPAD_DIVIDE:
-		key = SCK_DIVIDE;
-		break;
-	case WXK_CONTROL:
-		key = 0;
-		break;
-	case WXK_ALT:
-		key = 0;
-		break;
-	case WXK_SHIFT:
-		key = 0;
-		break;
-	case WXK_MENU:
-		key = 0;
-		break;
-	}
+    switch (key) {
+    case WXK_DOWN:              key = SCK_DOWN;     break;
+    case WXK_UP:                key = SCK_UP;       break;
+    case WXK_LEFT:              key = SCK_LEFT;     break;
+    case WXK_RIGHT:             key = SCK_RIGHT;    break;
+    case WXK_HOME:              key = SCK_HOME;     break;
+    case WXK_END:               key = SCK_END;      break;
+    case WXK_PAGEUP:            key = SCK_PRIOR;    break;
+    case WXK_PAGEDOWN:          key = SCK_NEXT;     break;
+    case WXK_NUMPAD_DOWN:       key = SCK_DOWN;     break;
+    case WXK_NUMPAD_UP:         key = SCK_UP;       break;
+    case WXK_NUMPAD_LEFT:       key = SCK_LEFT;     break;
+    case WXK_NUMPAD_RIGHT:      key = SCK_RIGHT;    break;
+    case WXK_NUMPAD_HOME:       key = SCK_HOME;     break;
+    case WXK_NUMPAD_END:        key = SCK_END;      break;
+    case WXK_NUMPAD_PAGEUP:     key = SCK_PRIOR;    break;
+    case WXK_NUMPAD_PAGEDOWN:   key = SCK_NEXT;     break;
+    case WXK_NUMPAD_DELETE:     key = SCK_DELETE;   break;
+    case WXK_NUMPAD_INSERT:     key = SCK_INSERT;   break;
+    case WXK_DELETE:            key = SCK_DELETE;   break;
+    case WXK_INSERT:            key = SCK_INSERT;   break;
+    case WXK_ESCAPE:            key = SCK_ESCAPE;   break;
+    case WXK_BACK:              key = SCK_BACK;     break;
+    case WXK_TAB:               key = SCK_TAB;      break;
+    case WXK_NUMPAD_ENTER:      // fall through
+    case WXK_RETURN:            key = SCK_RETURN;   break;
+    case WXK_ADD:               // fall through
+    case WXK_NUMPAD_ADD:        key = SCK_ADD;      break;
+    case WXK_SUBTRACT:          // fall through
+    case WXK_NUMPAD_SUBTRACT:   key = SCK_SUBTRACT; break;
+    case WXK_DIVIDE:            // fall through
+    case WXK_NUMPAD_DIVIDE:     key = SCK_DIVIDE;   break;
+    case WXK_CONTROL:           key = 0; break;
+    case WXK_ALT:               key = 0; break;
+    case WXK_SHIFT:             key = 0; break;
+    case WXK_MENU:              key = SCK_MENU; break;
+    }
 
 #ifdef __WXMAC__
-	if ( evt.MetaDown() ) {
-		// check for a few common Mac Meta-key combos and remap them to Ctrl
-		// for Scintilla
-		switch ( key ) {
-		case 'Z':       // Undo
-		case 'X':       // Cut
-		case 'C':       // Copy
-		case 'V':       // Paste
-		case 'A':       // Select All
-			ctrl = true;
-			break;
-		}
-	}
+    if ( evt.MetaDown() ) {
+        // check for a few common Mac Meta-key combos and remap them to Ctrl
+        // for Scintilla
+        switch ( key ) {
+        case 'Z':       // Undo
+        case 'X':       // Cut
+        case 'C':       // Copy
+        case 'V':       // Paste
+        case 'A':       // Select All
+            ctrl = true;
+            break;
+        }
+    }
 #endif
 
-	int rv = KeyDown(key, shift, ctrl, alt, consumed);
+    int rv = KeyDown(key, shift, ctrl, alt, consumed);
 
-	if (key)
-		return rv;
-	else
-		return 1;
+    if (key)
+        return rv;
+    else
+        return 1;
 }
 
 

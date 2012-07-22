@@ -70,7 +70,7 @@
             <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxSTAY_ON_TOP</property>
+            <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass"></property>
             <property name="title">Find in files</property>
             <property name="toolbar_pane">0</property>

@@ -26,6 +26,7 @@
 #include "bitmap_loader.h"
 #include <wx/wupdlock.h>
 #include "drawingutils.h"
+#include "event_notifier.h"
 #include <wx/tokenzr.h>
 #include "editor_config.h"
 #include "globals.h"
@@ -140,7 +141,7 @@ void FindResultsTab::LoadFindInFilesData()
 
 	FindReplaceData data;
 	EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &data);
-	m_find = new FindInFilesDialog(NULL, wxID_ANY, data);
+	m_find = new FindInFilesDialog(EventNotifier::Get()->TopFrame(), wxID_ANY, data);
 }
 
 void FindResultsTab::SaveFindInFilesData()

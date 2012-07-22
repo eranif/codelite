@@ -27,6 +27,14 @@
 using namespace Scintilla;
 #endif							// end [CHANGED]
 
+#ifndef CL_KEY_NONE
+#if wxVERSION_NUMBER < 2902
+#    define CL_KEY_NONE 0
+#else
+#    define CL_KEY_NONE WXK_NONE
+#endif
+#endif
+
 //----------------------------------------------------------------------
 // Helper classes
 
@@ -1100,7 +1108,7 @@ void ScintillaWX::DoAddChar(int key) {
 
 int  ScintillaWX::DoKeyDown(const wxKeyEvent& evt, bool* consumed) {
     int key = evt.GetKeyCode();
-    if (key == WXK_NONE) {
+    if (key == CL_KEY_NONE) {
         // This is a Unicode character not representable in Latin-1 or some key
         // without key code at all (e.g. dead key or VK_PROCESSKEY under MSW).
         if ( consumed )

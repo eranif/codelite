@@ -33,20 +33,20 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_name6 = new wxMenu();
     m_menuBar->Append(m_name6, _("File"));
     
-    m_menuItem7 = new wxMenuItem(NULL, wxID_EXIT, _("Exit	Alt-X"), _("Quit"), wxITEM_NORMAL);
+    m_menuItem7 = new wxMenuItem(m_name6, wxID_EXIT, _("Exit	Alt-X"), _("Quit"), wxITEM_NORMAL);
     m_name6->Append(m_menuItem7);
     
     m_name8 = new wxMenu();
     m_menuBar->Append(m_name8, _("Help"));
     
-    m_menuItem9 = new wxMenuItem(NULL, wxID_ABOUT, _("About..."), _(""), wxITEM_NORMAL);
+    m_menuItem9 = new wxMenuItem(m_name8, wxID_ABOUT, _("About..."), _(""), wxITEM_NORMAL);
     m_name8->Append(m_menuItem9);
     
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);
     m_mainToolbar->SetToolBitmapSize(wxSize(16,16));
     
     
-    GetSizer()->Fit(this);
+    SetSize(wxSize(500,300));
     Centre();
     // Connect events
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);

@@ -637,4 +637,43 @@ subpage  subsection subsubsection test throw todo tparam typedef union until var
     <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="9"/>
   </Properties>
 </Lexer>
+  <Lexer Name="SQL" StylingWithinPreProcessor="no" Id="7">
+    <KeyWords0>absolute action add admin after aggregate  alias all allocate alter and any are array as asc  assertion at authorization  before begin binary bit blob boolean both breadth by  call cascade cascaded case cast catalog char character  check class clob close collate collation column commit  completion connect connection constraint constraints  constructor continue corresponding create cross cube current  current_date current_path current_role current_time current_timestamp  current_user cursor cycle  data date day deallocate dec decimal declare default  deferrable deferred delete depth deref desc describe descriptor  destroy destructor deterministic dictionary diagnostics disconnect  distinct domain double drop dynamic  each else end end-exec equals escape every except  exception exec execute external  false fetch first float for foreign found from free full  function  general get global go goto grant group grouping  having host hour  identity if ignore immediate in indicator initialize initially  inner inout input insert int integer intersect interval  into is isolation iterate  join  key  language large last lateral leading left less level like  limit local localtime localtimestamp locator  map match minute modifies modify module month  names national natural nchar nclob new next no none  not null numeric  object of off old on only open operation option  or order ordinality out outer output  pad parameter parameters partial path postfix precision prefix  preorder prepare preserve primary  prior privileges procedure public  read reads real recursive ref references referencing relative  restrict result return returns revoke right  role rollback rollup routine row rows  savepoint schema scroll scope search second section select  sequence session session_user set sets size smallint some| space  specific specifictype sql sqlexception sqlstate sqlwarning start  state statement static structure system_user  table temporary terminate than then time timestamp  timezone_hour timezone_minute to trailing transaction translation  treat trigger true  under union unique unknown  unnest update usage user using  value values varchar variable varying view  when whenever where with without work write  year  zone</KeyWords0>
+    <KeyWords1/>
+    <KeyWords2/>
+    <KeyWords3/>
+    <KeyWords4/>
+    <Extensions>*.sql</Extensions>
+    <Properties>
+      <Property Id="0" Name="Default" Bold="no" Face="" Colour="light grey" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#00FFFF" BgColour="#202020" Italic="yes" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="2" Name="Line Comment" Bold="no" Face="" Colour="#00FFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="3" Name="Doc comment" Bold="no" Face="" Colour="#80FFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="4" Name="Number" Bold="no" Face="" Colour="#FF80FF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="5" Name="Keyword" Bold="no" Face="" Colour="#F0F0F0" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="6" Name="Double quoted string" Bold="no" Face="" Colour="#FF8000" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="7" Name="Single quoted string" Bold="no" Face="" Colour="#FF8040" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="8" Name="SQL*Plus" Bold="no" Face="" Colour="#FFFFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="9" Name="SQL*Plus PROMPT" Bold="no" Face="" Colour="#FFFFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="10" Name="Operators" Bold="no" Face="" Colour="#FFFFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="11" Name="Identifiers" Bold="no" Face="" Colour="#97CBFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="12" Name="End of line where string is not closed / not used" Bold="no" Face="" Colour="#FF0000" BgColour="#202020" Italic="no" Underline="no" EolFilled="yes" Alpha="256" Size="10"/>
+      <Property Id="13" Name="SQL*Plus Comment" Bold="no" Face="" Colour="#80FFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="15" Name="Hash Line Comment" Bold="no" Face="" Colour="#80FFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="16" Name="Keywords2: Database objects" Bold="no" Face="" Colour="#8080C0" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="17" Name="Comment Doc Keyword" Bold="no" Face="" Colour="#FF0000" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="18" Name="Comment Doc Keyword Error" Bold="no" Face="" Colour="#FF0000" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="19" Name="User Keywords 1" Bold="no" Face="" Colour="#0000FF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="20" Name="User Keywords 2" Bold="no" Face="" Colour="#FF8000" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="21" Name="User Keywords 3" Bold="no" Face="" Colour="#0000FF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="22" Name="User Keywords 4" Bold="no" Face="" Colour="#0000FF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="#000000" BgColour="#BEBEBE" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
+      <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="#FFFF80" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#C0C0C0" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFF80" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FF0000" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+      <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#B0B0B0" BgColour="#202020" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
+    </Properties>
+  </Lexer>
 </Lexers>

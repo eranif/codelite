@@ -1025,8 +1025,9 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
 	}
 }
 
-bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath )
+bool Manager::RemoveFile( const wxString &fileName, const wxString &vdFullPath, wxString &fullpathRemoved, bool notify )
 {
+    fullpathRemoved.Clear();
 	wxString project = vdFullPath.BeforeFirst ( wxT ( ':' ) );
 	wxFileName absPath ( fileName );
 	absPath.MakeAbsolute ( GetProjectCwd ( project ) );
@@ -1041,9 +1042,15 @@ bool Manager::RemoveFile ( const wxString &fileName, const wxString &vdFullPath 
 	}
 
 	TagsManagerST::Get()->Delete ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName(), absPath.GetFullPath() );
-	wxArrayString files(1, &fileName);
-	SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
-
+    
+    // Set the fullpath of the removed file
+    fullpathRemoved = absPath.GetFullPath();
+    
+    if( notify ) {
+        wxArrayString files(1, &fileName);
+        SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
+    }
+    
 	return true;
 }
 
@@ -1052,7 +1059,8 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
 	// Step: 1
 	// remove the file from the workspace (this will erase it from the symbol database and will
 	// also close the editor that it is currently opened in (if any)
-	if (!RemoveFile(origName, vdFullPath))
+    wxString pathRemoved;
+	if ( !RemoveFile(origName, vdFullPath, pathRemoved) )
 		return false;
 
 	// Step: 2

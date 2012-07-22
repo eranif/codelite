@@ -874,7 +874,8 @@ void FileViewTree::DoRemoveItems()
 	bool ApplyToEachFileRemoval = false;
 	bool ApplyToEachFileDeletion = false;
 	bool AlsoDeleteFromDisc = false;
-
+    
+    wxArrayString filesRemoved;
 	for ( size_t i=0; i<num; i++ ) {
 		wxTreeItemId item = items.Item( i );
 		wxString name = GetItemText( item );
@@ -909,7 +910,13 @@ void FileViewTree::DoRemoveItems()
 					wxTreeItemId parent = GetItemParent( item );
 					if ( parent.IsOk() ) {
 						wxString path = GetItemPath( parent );
-						ManagerST::Get()->RemoveFile( data->GetData().GetFile(), path );
+                        
+                        // Remove the file. Do not fire an event here, we will send a "bulk" event 
+                        // with a list of all files removed
+                        wxString fullpathOfFileRemoved;
+						if(ManagerST::Get()->RemoveFile( data->GetData().GetFile(), path, fullpathOfFileRemoved, false)) {
+                            filesRemoved.Add(fullpathOfFileRemoved);
+                        }
 
 						wxString file_name(data->GetData().GetFile());
 						Delete( item );
@@ -961,6 +968,11 @@ void FileViewTree::DoRemoveItems()
 
 		}
 	}
+    
+    // Notify plugins if we actually removed files
+    if ( filesRemoved.IsEmpty() == false ) {
+        SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&filesRemoved);
+    }
 }
 
 void FileViewTree::DoRemoveVirtualFolder( wxTreeItemId &item )

@@ -409,8 +409,10 @@ public:
 	 * remove file from the workspace
 	 * \param fileName the full path of the file to be removed
 	 * \param vdFullPath the files' virtual directory path (including project)
+     * \param fullpathRemoved [output] set the full path of the file removed
+     * \param notify if set to true, this function will also fire the wxEVT_PROJ_FILE_REMOVED event
 	 */
-	bool RemoveFile(const wxString &fileName, const wxString &vdFullPath);
+	bool RemoveFile(const wxString& fileName, const wxString& vdFullPath, wxString& fullpathRemoved, bool notify = true);
 
 	/**
 	 * remove file from the workspace

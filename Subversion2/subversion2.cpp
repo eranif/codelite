@@ -979,16 +979,29 @@ void Subversion2::OnFileRemoved(wxCommandEvent& event)
 {
     event.Skip();
     wxArrayString *files = (wxArrayString*)event.GetClientData();
-    if(files && !files->IsEmpty() && files->GetCount() == 1) {
+    if(files && !files->IsEmpty()) {
+        
+        // test the first file, see if it is under SVN
         wxFileName fn(files->Item(0));
         if(IsPathUnderSvn( fn.GetPath() )) {
-            if(wxMessageBox(wxString::Format(wxT("Would you like to remove '%s' from svn as well?"), fn.GetFullName().c_str()),
+            // Build the message:
+            
+            wxString filesString;
+            wxString msg;
+            msg << _("Would you like to remove the following files from SVN?\n\n");
+            for(size_t i=0; i<files->GetCount(); i++) {
+                msg << files->Item(i) << wxT("\n");
+                filesString << wxT("\"") << files->Item(i) << wxT("\" ");
+            }
+            
+            if(wxMessageBox(msg,
                             wxT("Subversion"),
                             wxYES_NO|wxCANCEL|wxCENTER,
                             GetManager()->GetTheApp()->GetTopWindow()) == wxYES) {
+
                 wxString command;
                 RecreateLocalSvnConfigFile();
-                command << GetSvnExeName(false) << wxT(" delete --force \"") << fn.GetFullPath() << wxT("\"");
+                command << GetSvnExeName(false) << wxT(" delete --force ") <<filesString;
                 GetConsole()->Execute(command,
                                       m_subversionView->GetRootDir(),
                                       new SvnDefaultCommandHandler(this, event.GetId(),

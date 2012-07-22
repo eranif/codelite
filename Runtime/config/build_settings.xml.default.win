@@ -26,6 +26,7 @@
 	  <Pattern Name="Error" FileNameIndex="-1" LineNumberIndex="-1">\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)</Pattern>
 	  <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)</Pattern>
 	  <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)</Pattern>
+	  <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)</Pattern>
 	  <Pattern Name="Warning" FileNameIndex="2" LineNumberIndex="4">(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?</Pattern>
 	  <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>
@@ -75,6 +76,7 @@
 	  <Pattern Name="Error" FileNameIndex="-1" LineNumberIndex="-1">\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)</Pattern>
 	  <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)</Pattern>
 	  <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)</Pattern>
+      <Pattern Name="Warning" FileNameIndex="1" LineNumberIndex="3">([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)</Pattern>
 	  <Pattern Name="Warning" FileNameIndex="2" LineNumberIndex="4">(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?</Pattern>
 	  <GlobalIncludePath></GlobalIncludePath>
       <GlobalLibPath></GlobalLibPath>

@@ -126,43 +126,12 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
 	int pos = 0, len = 0;
 
 	if (!StringFindReplacer::Search(pinput, offset, find.wc_str(), flags, pos, len)) {
-
-		// wrap around and try again
-		wxString msg = fwd ? _("Reached end of document, continued from start") : _("Reached top of document, continued from bottom");
-
-		// Check to see if the user want to continue from start again
-		long res(wxNOT_FOUND);
-		if (!EditorConfigST::Get()->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
-		
-			// First time we are prompting to the user, or the user never
-			// checked the checkbox 'dont ask me again'
-			
-			fwd ? msg = _("CodeLite reached the end of the document, Search again from the start?") : msg = _("CodeLite reached the top of the document, Search again from the bottom?");
-			ThreeButtonDlg dlg(clMainFrame::Get(), msg, _("CodeLite"));
-			res = dlg.ShowModal();
-			if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {
-				//save this answer
-				EditorConfigST::Get()->SaveLongValue(wxT("FindNextWrapAroundAnswer"), res);
-			}
-		} else {
-			// The user doesn't want to be asked if it's OK to continue, but at least let him know he has
-			clMainFrame::Get()->SetStatusMessage(msg, 0);
-		}
-
-		if(res == wxID_OK) {
-
-			offset = fwd ? 0 : wxStrlen(pinput) - 1;
-			if (!StringFindReplacer::Search(pinput, offset, find.wc_str(), flags, pos, len)) {
-				m_findWhat->SetBackgroundColour(wxT("PINK"));
-				m_findWhat->Refresh();
-				return;
-			}
-
-		} else {
-			// res == wxID_CANCEL
-			return;
-		}
-
+        offset = fwd ? 0 : wxStrlen(pinput) - 1;
+        if (!StringFindReplacer::Search(pinput, offset, find.wc_str(), flags, pos, len)) {
+            m_findWhat->SetBackgroundColour(wxT("PINK"));
+            m_findWhat->Refresh();
+            return;
+        }
 	}
 
 	m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));

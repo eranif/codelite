@@ -36,8 +36,8 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "..\Runtime\CodeLite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\codelite-clang.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wxWidgets-2.9.4-sources\lib\gcc_dll\wxmsw294u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wxWidgets-2.9.4-sources\lib\gcc_dll\wxrc.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxrc.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
 Source: "..\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; Components: Editor;
@@ -68,8 +68,7 @@ Source: "..\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; Compo
 Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\codelite-icons.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\codelite-icons-fresh-farm.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\src\MinGW-4.6.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\src\MinGW-4.6.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\src\MinGW-4.6.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

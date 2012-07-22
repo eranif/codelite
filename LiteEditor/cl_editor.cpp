@@ -1814,57 +1814,33 @@ void LEditor::DoFindAndReplace(bool isReplaceDlg)
 
 void LEditor::OnFindDialog(wxCommandEvent& event)
 {
-	EditorConfig *conf = EditorConfigST::Get();
 	wxEventType type = event.GetEventType();
 	bool dirDown = ! (m_findReplaceDlg->GetData().GetFlags() & wxFRD_SEARCHUP ? true : false);
 
 	if ( type == wxEVT_FRD_FIND_NEXT ) {
 		FindNext(m_findReplaceDlg->GetData());
 	} else if ( type == wxEVT_FRD_REPLACE ) {
-
 		// Perform a "Replace" operation
-
 		if ( !Replace() ) {
-			long res(wxNOT_FOUND);
+            int saved_pos = GetCurrentPos();
 
-			wxString msg;
-			if ( dirDown ) {
-				msg << _("CodeLite reached the end of the document, Search again from the start?");
-			} else {
-				msg << _("CodeLite reached the end of the document, Search again from the bottom?");
-			}
+            // place the caret at the new position
+            if (dirDown) {
+                SetCaretAt(0);
+            } else {
+                SetCaretAt(GetLength());
+            }
 
-			if (!conf->GetLongValue(wxT("ReplaceWrapAroundAnswer"), res)) {
-				ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, _("CodeLite"));
-				res = dlg->ShowModal();
-				if (dlg->GetDontAskMeAgain() && res != wxID_CANCEL) {
-					//save this answer
-					conf->SaveLongValue(wxT("ReplaceWrapAroundAnswer"), res);
-				}
-				dlg->Destroy();
-			}
+            // replace again
+            if ( !Replace() ) {
+                // restore the caret
+                SetCaretAt( saved_pos );
 
-			if ( res == wxID_OK ) {
-				int saved_pos = GetCurrentPos();
-
-				// place the caret at the new position
-				if (dirDown) {
-					SetCaretAt(0);
-				} else {
-					SetCaretAt(GetLength());
-				}
-
-				// replace again
-				if ( !Replace() ) {
-					// restore the caret
-					SetCaretAt( saved_pos );
-
-					// popup a message
-					wxMessageBox(_("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
-					             _("CodeLite"),
-					             wxICON_WARNING | wxOK);
-				}
-			}
+                // popup a message
+                wxMessageBox(_("Can not find the string '") + m_findReplaceDlg->GetData().GetFindString() + wxT("'"),
+                             _("CodeLite"),
+                             wxICON_WARNING | wxOK);
+            }
 		}
 	} else if (type == wxEVT_FRD_REPLACEALL) {
 		ReplaceAll();
@@ -1879,51 +1855,24 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
 
 void LEditor::FindNext(const FindReplaceData &data)
 {
-	EditorConfig *conf = EditorConfigST::Get();
-
 	bool dirDown = ! (data.GetFlags() & wxFRD_SEARCHUP ? true : false);
 	if ( !FindAndSelect(data) ) {
-		long res(wxNOT_FOUND);
-		wxString msg;
-		if ( dirDown ) {
-			msg << _("CodeLite reached the end of the document, Search again from the start?");
-		} else {
-			msg << _("CodeLite reached the top of the document, Search again from the bottom?");
-		}
+        int saved_pos = GetCurrentPos();
+        if (dirDown) {
+            DoSetCaretAt(0);
+        } else {
+            DoSetCaretAt(GetLength());
+        }
 
-		if (!conf->GetLongValue(wxT("FindNextWrapAroundAnswer"), res)) {
-			ThreeButtonDlg *dlg = new ThreeButtonDlg(NULL, msg, _("CodeLite"));
-			res = dlg->ShowModal();
-			if (dlg->GetDontAskMeAgain() && res != wxID_CANCEL) {
-				//save this answer
-				conf->SaveLongValue(wxT("FindNextWrapAroundAnswer"), res);
-			}
-			dlg->Destroy();
-		} else {
-			// The user doesn't want to be asked if it's OK to continue, but at least let him know he has
-			wxString msg = dirDown ? _("Reached end of document, continued from start")
-			               : _("Reached top of document, continued from bottom");
-			clMainFrame::Get()->SetStatusMessage(msg, 0);
-		}
-
-		if (res == wxID_OK) {
-			int saved_pos = GetCurrentPos();
-			if (dirDown) {
-				DoSetCaretAt(0);
-			} else {
-				DoSetCaretAt(GetLength());
-			}
-
-			if ( !FindAndSelect(data) ) {
-				// restore the caret
-				DoSetCaretAt( saved_pos );
-				// Kill the "...continued from start" statusbar message
-				clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
-				wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
-				             _("CodeLite"),
-				             wxOK | wxICON_WARNING);
-			}
-		}
+        if ( !FindAndSelect(data) ) {
+            // restore the caret
+            DoSetCaretAt( saved_pos );
+            // Kill the "...continued from start" statusbar message
+            clMainFrame::Get()->SetStatusMessage(wxEmptyString, 0);
+            wxMessageBox(_("Can not find the string '") + data.GetFindString() + wxT("'"),
+                         _("CodeLite"),
+                         wxOK | wxICON_WARNING);
+        }
 	} else {
 		// The string *was* found, without needing to restart from the top
 		// So cancel any previous statusbar restart message

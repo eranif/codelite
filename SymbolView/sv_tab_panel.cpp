@@ -2,6 +2,7 @@
 #include "sv_symbol_tree.h"
 #include "event_notifier.h"
 #include "plugin.h"
+#include <wx/wxscintilla.h>
 
 SymbolViewTabPanel::SymbolViewTabPanel(wxWindow* parent, IManager* mgr)
     : SymbolViewTabPanelBaseClass(parent)
@@ -9,25 +10,25 @@ SymbolViewTabPanel::SymbolViewTabPanel(wxWindow* parent, IManager* mgr)
 {
     m_tree = new svSymbolTree(this, m_mgr, wxID_ANY);
     m_tree->AssignImageList( svSymbolTree::CreateSymbolTreeImages() );
-    
+
     GetSizer()->Add(m_tree, 1, wxEXPAND);
-    
+
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceLoaded), NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewTabPanel::OnActiveEditorChanged), NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewTabPanel::OnEditorClosed), NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnAllEditorsClosed), NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceClosed), NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(SymbolViewTabPanel::OnFilesTagged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewTabPanel::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewTabPanel::OnEditorClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(SymbolViewTabPanel::OnFilesTagged), NULL, this);
 }
 
 SymbolViewTabPanel::~SymbolViewTabPanel()
 {
-	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceLoaded), NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewTabPanel::OnActiveEditorChanged), NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewTabPanel::OnEditorClosed), NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnAllEditorsClosed), NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceClosed), NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(SymbolViewTabPanel::OnFilesTagged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewTabPanel::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewTabPanel::OnEditorClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnAllEditorsClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(SymbolViewTabPanel::OnFilesTagged), NULL, this);
 }
 
 void SymbolViewTabPanel::OnSearchSymbol(wxCommandEvent& event)
@@ -74,10 +75,16 @@ void SymbolViewTabPanel::OnWorkspaceLoaded(wxCommandEvent& e)
 void SymbolViewTabPanel::OnFilesTagged(wxCommandEvent& e)
 {
     e.Skip();
-	if(m_mgr->GetActiveEditor()) {
-		m_tree->BuildTree( m_mgr->GetActiveEditor()->GetFileName() );
-		
-	} else {
-		m_tree->Clear();
-	}
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if( editor ) {
+        m_tree->BuildTree( editor->GetFileName() );
+        
+        if(editor->GetScintilla()) {
+            // make sure we dont steal the focus from the editor...
+            editor->GetScintilla()->SetFocus();
+        }
+        
+    } else {
+        m_tree->Clear();
+    }
 }

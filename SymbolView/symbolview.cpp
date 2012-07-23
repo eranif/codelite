@@ -52,28 +52,28 @@ static SymbolViewPlugin* thePlugin = NULL;
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 {
-	if (thePlugin == 0) {
-		thePlugin = new SymbolViewPlugin(manager);
-	}
-	return thePlugin;
+    if (thePlugin == 0) {
+        thePlugin = new SymbolViewPlugin(manager);
+    }
+    return thePlugin;
 }
 
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
-	PluginInfo info;
-	info.SetAuthor(wxT("Eran Ifrah"));
-	info.SetName(wxT("Outline Plugin"));
-	info.SetDescription(_("Show Current the Layout of the current file"));
-	info.SetVersion(wxT("v1.0"));
+    PluginInfo info;
+    info.SetAuthor(wxT("Eran Ifrah"));
+    info.SetName(wxT("Outline"));
+    info.SetDescription(_("Show Current the Layout of the current file"));
+    info.SetVersion(wxT("v1.0"));
 
-	// this plugin starts as disabled by default
-	info.SetEnabled(false);
-	return info;
+    // this plugin starts as disabled by default
+    info.SetEnabled(true);
+    return info;
 }
 
 extern "C" EXPORT int GetPluginInterfaceVersion()
 {
-	return PLUGIN_INTERFACE_VERSION;
+    return PLUGIN_INTERFACE_VERSION;
 }
 
 
@@ -82,11 +82,11 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 //--------------------------------------------
 
 SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
-		: IPlugin(manager)
+    : IPlugin(manager)
 {
-	m_longName = _("Symbols View Plugin");
-	m_shortName = wxT("SymbolView");
-    
+    m_longName = _("Outline Plugin");
+    m_shortName = wxT("Outline");
+
     Notebook *book = m_mgr->GetWorkspacePaneNotebook();
     m_view = new SymbolViewTabPanel(book, m_mgr);
     book->AddPage(m_view, _("Outline"), false);
@@ -94,42 +94,42 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 
 SymbolViewPlugin::~SymbolViewPlugin()
 {
-	thePlugin = NULL;
+    thePlugin = NULL;
 }
 
 clToolBar *SymbolViewPlugin::CreateToolBar(wxWindow *parent)
 {
-	return NULL;
+    return NULL;
 }
 
 void SymbolViewPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-	wxUnusedVar(pluginsMenu);
+    wxUnusedVar(pluginsMenu);
 }
 
 void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
-	if (type == MenuTypeEditor) {
-        
-	} else if (type == MenuTypeFileExplorer) {
-        
-	} else if (type == MenuTypeFileView_Workspace) {
-        
-	} else if (type == MenuTypeFileView_Project) {
-        
-	} else if (type == MenuTypeFileView_Folder) {
-        
-	} else if (type == MenuTypeFileView_File) {
-	}
+    if (type == MenuTypeEditor) {
+
+    } else if (type == MenuTypeFileExplorer) {
+
+    } else if (type == MenuTypeFileView_Workspace) {
+
+    } else if (type == MenuTypeFileView_Project) {
+
+    } else if (type == MenuTypeFileView_Folder) {
+
+    } else if (type == MenuTypeFileView_File) {
+    }
 }
 
 void SymbolViewPlugin::UnPlug()
 {
     size_t index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("Outline"));
     if (index != Notebook::npos) {
-		// this window might be floating
+        // this window might be floating
         m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
     }
     m_view->Destroy();
-	m_view = NULL;
+    m_view = NULL;
 }

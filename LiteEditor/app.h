@@ -26,54 +26,71 @@
 #define LITEEDITOR_APP_H
 
 #include "frame.h"
+#include <set>
+
 class wxSplashScreen;
 class wxSingleInstanceChecker;
 
 class CodeLiteApp : public wxApp
 {
-	wxSplashScreen*          m_splash;
-	clMainFrame *            m_pMainFrame;
-	wxSingleInstanceChecker *m_singleInstance;
-	wxArrayString            m_parserPaths;
-	bool                     m_loadPlugins;
-	wxLocale				 m_locale;
+public:
+    enum PluginPolicy {
+        PP_None = 0,
+        PP_All,
+        PP_FromList
+    };
+
+protected:
+    wxSplashScreen*          m_splash;
+    clMainFrame *            m_pMainFrame;
+    wxSingleInstanceChecker *m_singleInstance;
+    wxArrayString            m_parserPaths;
+    wxLocale                 m_locale;
+    wxArrayString            m_allowedPlugins;
+    PluginPolicy             m_pluginLoadPolicy;
 
 private: // Methods
-	bool     CopySettings(const wxString &destDir, wxString& installPath);
-	bool     CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
-	void     MSWReadRegistry();
-	wxString DoFindMenuFile(const wxString& installDirectory, const wxString &requiredVersion);
+    bool     CopySettings(const wxString &destDir, wxString& installPath);
+    bool     CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
+    void     MSWReadRegistry();
+    wxString DoFindMenuFile(const wxString& installDirectory, const wxString &requiredVersion);
 
 #ifdef __WXMSW__
-	HINSTANCE m_handler;
+    HINSTANCE m_handler;
 #endif
 
 public:
-	CodeLiteApp(void);
-	virtual ~CodeLiteApp(void);
+    CodeLiteApp(void);
+    virtual ~CodeLiteApp(void);
 
-	void SetParserPaths(const wxArrayString& parserPaths) {
-		this->m_parserPaths = parserPaths;
-	}
-	const wxArrayString& GetParserPaths() const {
-		return m_parserPaths;
-	}
-	void SetLoadPlugins(bool loadPlugins) {
-		this->m_loadPlugins = loadPlugins;
-	}
-	bool GetLoadPlugins() const {
-		return m_loadPlugins;
-	}
-	void MacOpenFile(const wxString &fileName);
+    void SetAllowedPlugins(const wxArrayString& allowedPlugins) {
+        this->m_allowedPlugins = allowedPlugins;
+    }
+    void SetPluginLoadPolicy(const PluginPolicy& pluginLoadPolicy) {
+        this->m_pluginLoadPolicy = pluginLoadPolicy;
+    }
+    const wxArrayString& GetAllowedPlugins() const {
+        return m_allowedPlugins;
+    }
+    const PluginPolicy& GetPluginLoadPolicy() const {
+        return m_pluginLoadPolicy;
+    }
+    void SetParserPaths(const wxArrayString& parserPaths) {
+        this->m_parserPaths = parserPaths;
+    }
+    const wxArrayString& GetParserPaths() const {
+        return m_parserPaths;
+    }
+
+    void MacOpenFile(const wxString &fileName);
 
 protected:
-	virtual bool OnInit();
-	virtual int OnExit();
-	virtual void OnFatalException();
+    virtual bool OnInit();
+    virtual int OnExit();
+    virtual void OnFatalException();
 
     DECLARE_EVENT_TABLE()
     void OnAppAcitvated(wxActivateEvent &e);
 };
 
 #endif // LITEEDITOR_APP_H
-

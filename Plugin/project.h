@@ -38,12 +38,13 @@
 #include "project_settings.h"
 #include "optionsconfig.h"
 #include "localworkspace.h"
-
+#include <set>
+#include <vector>
 
 struct VisualWorkspaceNode {
-	wxString name;
-	int type;
-	wxTreeItemId itemId;
+    wxString name;
+    int type;
+    wxTreeItemId itemId;
 };
 
 /**
@@ -57,79 +58,79 @@ struct VisualWorkspaceNode {
 class WXDLLIMPEXP_SDK ProjectItem
 {
 public:
-	// The visible items
-	enum {
-		TypeVirtualDirectory,
-		TypeProject,
-		TypeFile,
-		TypeWorkspace
-	};
+    // The visible items
+    enum {
+        TypeVirtualDirectory,
+        TypeProject,
+        TypeFile,
+        TypeWorkspace
+    };
 
 public:
-	wxString m_key;
-	wxString m_displayName;
-	wxString m_file;
-	int m_kind;
+    wxString m_key;
+    wxString m_displayName;
+    wxString m_file;
+    int m_kind;
 
 public:
-	//---------------------------------------------------------------
-	// Constructors, destructor and assignment operator
-	//---------------------------------------------------------------
-	ProjectItem(const wxString &key, const wxString &displayName, const wxString &file, int kind)
-			: m_key(key)
-			, m_displayName(displayName)
-			, m_file(file)
-			, m_kind(kind) {
-	}
+    //---------------------------------------------------------------
+    // Constructors, destructor and assignment operator
+    //---------------------------------------------------------------
+    ProjectItem(const wxString &key, const wxString &displayName, const wxString &file, int kind)
+        : m_key(key)
+        , m_displayName(displayName)
+        , m_file(file)
+        , m_kind(kind) {
+    }
 
-	ProjectItem() : m_key(wxEmptyString), m_displayName(wxEmptyString), m_file(wxEmptyString), m_kind(TypeProject) {}
+    ProjectItem() : m_key(wxEmptyString), m_displayName(wxEmptyString), m_file(wxEmptyString), m_kind(TypeProject) {}
 
-	virtual ~ProjectItem() {}
+    virtual ~ProjectItem() {}
 
-	ProjectItem(const ProjectItem& item) {
-		*this = item;
-	}
+    ProjectItem(const ProjectItem& item) {
+        *this = item;
+    }
 
-	ProjectItem &operator=(const ProjectItem &item) {
-		if (this == &item) {
-			return *this;
-		}
+    ProjectItem &operator=(const ProjectItem &item) {
+        if (this == &item) {
+            return *this;
+        }
 
-		m_key = item.m_key;
-		m_displayName = item.m_displayName;
-		m_file = item.m_file;
-		m_kind = item.m_kind;
-		return *this;
-	}
+        m_key = item.m_key;
+        m_displayName = item.m_displayName;
+        m_file = item.m_file;
+        m_kind = item.m_kind;
+        return *this;
+    }
 
-	//-----------------------------------------
-	// Setters / Getters
-	//-----------------------------------------
-	const wxString &GetDisplayName() const {
-		return m_displayName;
-	}
-	const wxString &GetFile() const {
-		return m_file;
-	}
-	int GetKind() const {
-		return m_kind;
-	}
+    //-----------------------------------------
+    // Setters / Getters
+    //-----------------------------------------
+    const wxString &GetDisplayName() const {
+        return m_displayName;
+    }
+    const wxString &GetFile() const {
+        return m_file;
+    }
+    int GetKind() const {
+        return m_kind;
+    }
 
-	void SetDisplayName(const wxString &displayName) {
-		m_displayName = displayName;
-	}
-	void SetFile(const wxString &file) {
-		m_file = file;
-	}
-	void SetKind(int kind) {
-		m_kind = kind;
-	}
+    void SetDisplayName(const wxString &displayName) {
+        m_displayName = displayName;
+    }
+    void SetFile(const wxString &file) {
+        m_file = file;
+    }
+    void SetKind(int kind) {
+        m_kind = kind;
+    }
 
-	//------------------------------------------
-	// operations
-	const wxString& Key() const {
-		return m_key;
-	}
+    //------------------------------------------
+    // operations
+    const wxString& Key() const {
+        return m_key;
+    }
 };
 
 // useful typedefs
@@ -138,7 +139,10 @@ typedef SmartPtr<ProjectTree> ProjectTreePtr;
 typedef TreeNode<wxString, ProjectItem> ProjectTreeNode;
 
 class Project;
-typedef SmartPtr<Project> ProjectPtr;
+typedef SmartPtr<Project>       ProjectPtr;
+typedef std::set<wxFileName>    FileNameSet_t;
+typedef std::vector<wxFileName> FileNameVector_t;
+typedef std::set<wxString>      StringSet_t;
 
 /**
  * \ingroup LiteEditor
@@ -163,361 +167,366 @@ typedef SmartPtr<Project> ProjectPtr;
 class WXDLLIMPEXP_SDK Project
 {
 public:
-	static const wxString STATIC_LIBRARY;
-	static const wxString DYNAMIC_LIBRARY;
-	static const wxString EXECUTABLE;
+    static const wxString STATIC_LIBRARY;
+    static const wxString DYNAMIC_LIBRARY;
+    static const wxString EXECUTABLE;
 
 private:
-	wxXmlDocument m_doc;
-	wxFileName m_fileName;
-	bool m_tranActive;
-	bool m_isModified;
-	std::map<wxString, wxXmlNode*> m_vdCache;
-	time_t m_modifyTime;
+    wxXmlDocument m_doc;
+    wxFileName m_fileName;
+    bool m_tranActive;
+    bool m_isModified;
+    std::map<wxString, wxXmlNode*> m_vdCache;
+    time_t m_modifyTime;
 
 public:
-	const wxFileName &GetFileName() const {
-		return m_fileName;
-	}
+    const wxFileName &GetFileName() const {
+        return m_fileName;
+    }
 
-	/**
-	 * \brief copy this project and all the files under to new_path
-	 * \param file_name the new path of the project
-	 * \param new_name the new project name
-	 * \param description the new project description
-	 */
-	void CopyTo(const wxString &new_path, const wxString &new_name, const wxString &description);
+    /**
+     * \brief copy this project and all the files under to new_path
+     * \param file_name the new path of the project
+     * \param new_name the new project name
+     * \param description the new project description
+     */
+    void CopyTo(const wxString &new_path, const wxString &new_name, const wxString &description);
 
-	/**
-	 * \brief copy files (and virtual directories) from src project to this project
-	 * note that this call replaces the files that exists under this project
-	 * \param src
-	 */
-	void SetFiles(ProjectPtr src);
+    /**
+     * \brief copy files (and virtual directories) from src project to this project
+     * note that this call replaces the files that exists under this project
+     * \param src
+     */
+    void SetFiles(ProjectPtr src);
 
-	//--------------------------------------------------
-	// Ctor - Dtor
-	//--------------------------------------------------
+    //--------------------------------------------------
+    // Ctor - Dtor
+    //--------------------------------------------------
 
-	// default constructor
-	Project();
-	virtual ~Project();
+    // default constructor
+    Project();
+    virtual ~Project();
 
-	/**
-	 * \return project name
-	 */
-	wxString GetName() const;
-
-
-	/**
-	 * \brief return the project description as appears in the XML file
-	 * \return project description
-	 */
-	wxString GetDescription() const;
-
-	//-----------------------------------
-	// Project operations
-	//-----------------------------------
-	/**
-	 * Load project from file
-	 * \param path
-	 * \return
-	 */
-	bool Load(const wxString &path);
-	/**
-	 * \brief Create new project
-	 * \param name project name
-	 * \param description project description
-	 * \param path path of the file excluding  the file name (e.g. C:\)
-	 * \param projType project type: Project::STATIC_LIBRARY, Project::DYNAMIC_LIBRARY, Project::EXECUTABLE
-	 * \return true on success, false otherwise
-	 */
-	bool Create(const wxString &name, const wxString &description, const wxString &path, const wxString &projType);
-
-	/**
-	 * Add file to the project
-	 * \param fileName file full name and path
-	 * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
-	 *        and the file will be placed under it
-	 * \return
-	 */
-	bool AddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
-
-	/**
-	 * Add file to the project - dont check for file duplication, this
-	 * \param fileName file full name and path
-	 * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
-	 *        and the file will be placed under it
-	 * \return true on success, false otherwise
-	 */
-	bool FastAddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
-
-	/**
-	 * Remove file from the project
-	 * \param fileName file full path
-	 * \param virtualDir owner virtual directory
-	 * \return
-	 */
-	bool RemoveFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
-
-	/**
-	 * Rename file from the project
-	 * \param fileName file full path
-	 * \param virtualDir owner virtual directory
-	 * \return true on success, false otherwise
-	 */
-	bool RenameFile(const wxString &oldName, const wxString &virtualDir, const wxString &newName);
-
-	/**
-	 * \brief change the name of a virtual folder
-	 * \param oldVdPath full path of the virtual folder
-	 * \param newName the new name *only* of the virtual folder (without the path)
-	 * \return true on success, false otherwise
-	 */
-	bool RenameVirtualDirectory(const wxString &oldVdPath, const wxString &newName);
-
-	/**
-	 * Create new virtual directory
-	 * \param vdFullPath VD path to add
-	 * \return
-	 */
-	bool CreateVirtualDir(const wxString &vdFullPath, bool mkpath = false);
-
-	/**
-	 * remove a virtual directory
-	 * \param vdFullPath VD path to remove
-	 * \return
-	 */
-	bool DeleteVirtualDir(const wxString &vdFullPath);
-
-	/**
-	 * Return list of files by a virtual directory
-	 * \param vdFullPath virtual directory
-	 * \param files [output] list of files under this vdFullPath. The files format are in absolute path!
-	 */
-	void GetFilesByVirtualDir(const wxString &vdFullPath, wxArrayString &files);
-
-	/**
-	 * Save project settings
-	 */
-	void Save();
+    /**
+     * \return project name
+     */
+    wxString GetName() const;
 
 
-	/**
-	 * Return list of files in this project
-	 * \param files
-	 */
-	void GetFiles(std::vector<wxFileName> &files, bool absPath = false);
+    /**
+     * \brief return the project description as appears in the XML file
+     * \return project description
+     */
+    wxString GetDescription() const;
 
-	/**
-	 * Return list of files in this project as a wxString in blank separated format.
-	 * \param files
-	 */
-	wxString GetFiles(bool absPath = false);	
+    //-----------------------------------
+    // Project operations
+    //-----------------------------------
+    /**
+     * Load project from file
+     * \param path
+     * \return
+     */
+    bool Load(const wxString &path);
+    /**
+     * \brief Create new project
+     * \param name project name
+     * \param description project description
+     * \param path path of the file excluding  the file name (e.g. C:\)
+     * \param projType project type: Project::STATIC_LIBRARY, Project::DYNAMIC_LIBRARY, Project::EXECUTABLE
+     * \return true on success, false otherwise
+     */
+    bool Create(const wxString &name, const wxString &description, const wxString &path, const wxString &projType);
 
-	/**
-	 * Return list of files in this project - in both absolute and relative path
-	 * \param files relative paths
-	 * \param absFiles absolute paths
-	 */
-	void GetFiles(std::vector<wxFileName> &files, std::vector<wxFileName> &absFiles);
+    /**
+     * Add file to the project
+     * \param fileName file full name and path
+     * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
+     *        and the file will be placed under it
+     * \return
+     */
+    bool AddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
 
-	/**
-	 * Return a node pointing to any project-wide editor preferences
-	 */
-	wxXmlNode* GetProjectEditorOptions() const;
+    /**
+     * Add file to the project - dont check for file duplication, this
+     * \param fileName file full name and path
+     * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
+     *        and the file will be placed under it
+     * \return true on success, false otherwise
+     */
+    bool FastAddFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
 
-	/**
-	 * Add or update local project options
-	 */
-	void SetProjectEditorOptions(LocalOptionsConfigPtr opts);
+    /**
+     * Remove file from the project
+     * \param fileName file full path
+     * \param virtualDir owner virtual directory
+     * \return
+     */
+    bool RemoveFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
 
-	/**
-	 * Return the project build settings object by name
-	 */
-	ProjectSettingsPtr GetSettings() const;
+    /**
+     * Rename file from the project
+     * \param fileName file full path
+     * \param virtualDir owner virtual directory
+     * \return true on success, false otherwise
+     */
+    bool RenameFile(const wxString &oldName, const wxString &virtualDir, const wxString &newName);
 
-	/**
-	 * Add or update settings to the project
-	 */
-	void SetSettings(ProjectSettingsPtr settings);
+    /**
+     * \brief change the name of a virtual folder
+     * \param oldVdPath full path of the virtual folder
+     * \param newName the new name *only* of the virtual folder (without the path)
+     * \return true on success, false otherwise
+     */
+    bool RenameVirtualDirectory(const wxString &oldVdPath, const wxString &newName);
 
-	/**
-	 * Update global settings to the project
-	 */
-	void SetGlobalSettings(BuildConfigCommonPtr settings);
+    /**
+     * Create new virtual directory
+     * \param vdFullPath VD path to add
+     * \return
+     */
+    bool CreateVirtualDir(const wxString &vdFullPath, bool mkpath = false);
 
-	//-----------------------------------
-	// visual operations
-	//-----------------------------------
-	ProjectTreePtr AsTree();
+    /**
+     * remove a virtual directory
+     * \param vdFullPath VD path to remove
+     * \return
+     */
+    bool DeleteVirtualDir(const wxString &vdFullPath);
 
-	/**
-	 * \brief return the build order for a given configuration
-	 * \param configuration
-	 */
-	wxArrayString GetDependencies(const wxString &configuration) const;
+    /**
+     * Return list of files by a virtual directory
+     * \param vdFullPath virtual directory
+     * \param files [output] list of files under this vdFullPath. The files format are in absolute path!
+     */
+    void GetFilesByVirtualDir(const wxString &vdFullPath, wxArrayString &files);
 
-	/**
-	 * \brief set the dependencies for this project for a given configuration
-	 * \param deps
-	 * \param configuration
-	 */
-	void SetDependencies(wxArrayString &deps, const wxString &configuration);
+    /**
+     * Save project settings
+     */
+    void Save();
 
-	/**
-	 * Return true if a file already exist under the project
-	 */
-	bool IsFileExist(const wxString &fileName);
 
-	/**
-	 * \brief return true of the project was modified (in terms of files removed/added)
-	 */
-	bool IsModified();
+    /**
+     * Return list of files in this project
+     * \param files
+     */
+    void GetFiles(std::vector<wxFileName> &files, bool absPath = false);
 
-	/**
-	 * \brief
-	 */
-	void SetModified(bool mod);
+    /**
+     * Return list of files in this project as a wxString in blank separated format.
+     * \param files
+     */
+    wxString GetFiles(bool absPath = false);
 
-	// Transaction support to reduce overhead of disk writing
-	void BeginTranscation() {
-		m_tranActive = true;
-	}
-	void CommitTranscation() {
-		Save();
-	}
-	bool InTransaction() const {
-		return m_tranActive;
-	}
+    /**
+     * Return list of files in this project - in both absolute and relative path
+     * \param files relative paths
+     * \param absFiles absolute paths
+     */
+    void GetFiles(std::vector<wxFileName> &files, std::vector<wxFileName> &absFiles);
+    
+    /**
+     * @brief return a filename set of all the project files (in absolute paths)
+     */
+    void GetFiles(StringSet_t& files);
+    
+    /**
+     * Return a node pointing to any project-wide editor preferences
+     */
+    wxXmlNode* GetProjectEditorOptions() const;
 
-	wxString GetVDByFileName(const wxString &file);
+    /**
+     * Add or update local project options
+     */
+    void SetProjectEditorOptions(LocalOptionsConfigPtr opts);
 
-	/**
-	 * \brief return Tree representation of all virtual folders of this project
-	 * \return tree node. return NULL if no virtual folders exist
-	 */
-	TreeNode<wxString, VisualWorkspaceNode>* GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace);
+    /**
+     * Return the project build settings object by name
+     */
+    ProjectSettingsPtr GetSettings() const;
 
-	/**
-	 * @brief return the user saved information for custom data
-	 * @param name the object key
-	 * @param obj [output] container for the output
-	 * @return true on success.
-	 */
-	bool GetUserData(const wxString &name, SerializedObject *obj);
+    /**
+     * Add or update settings to the project
+     */
+    void SetSettings(ProjectSettingsPtr settings);
 
-	/**
-	 * @brief save user data in the project settings
-	 * @param name the name under which the data is to be saved
-	 * @param obj the data
-	 * @return true on success.
-	 */
-	bool SetUserData(const wxString &name, SerializedObject *obj);
+    /**
+     * Update global settings to the project
+     */
+    void SetGlobalSettings(BuildConfigCommonPtr settings);
 
-	/**
-	 * @brief set the project internal type (usually used to indicate internal types for the project
-	 * like 'GUI' or 'UnitTest++' etc.
-	 * @param internalType
-	 */
-	void SetProjectInternalType(const wxString &internalType);
-	/**
-	 * @brief return the project internal type
-	 * @return
-	 */
-	wxString GetProjectInternalType() const;
+    //-----------------------------------
+    // visual operations
+    //-----------------------------------
+    ProjectTreePtr AsTree();
 
-	/**
-	 * @brief return the plugins' data. This data is copied when using 'save project as template' functionality
-	 * @param plugin plugin name
-	 * @return plugins data or wxEmptyString
-	 */
-	wxString GetPluginData(const wxString &pluginName);
+    /**
+     * \brief return the build order for a given configuration
+     * \param configuration
+     */
+    wxArrayString GetDependencies(const wxString &configuration) const;
 
-	/**
-	 * @brief set the plugin data. This data is copied when using 'save project as template' functionality
-	 * @param plugin the plugins' name
-	 * @param data the data
-	 */
-	void SetPluginData(const wxString &pluginName, const wxString &data);
+    /**
+     * \brief set the dependencies for this project for a given configuration
+     * \param deps
+     * \param configuration
+     */
+    void SetDependencies(wxArrayString &deps, const wxString &configuration);
 
-	/**
-	 * @brief get all plugins data as map of plugin=value pair
-	 * @param pluginsDataMap [output]
-	 */
-	void GetAllPluginsData(std::map<wxString, wxString> &pluginsDataMap);
+    /**
+     * Return true if a file already exist under the project
+     */
+    bool IsFileExist(const wxString &fileName);
 
-	/**
-	 * @brief set all plugins data as map of plugin=value pair
-	 * @param pluginsDataMap
-	 */
-	void SetAllPluginsData(const std::map<wxString, wxString> &pluginsDataMap, bool saveToFile = true);
+    /**
+     * \brief return true of the project was modified (in terms of files removed/added)
+     */
+    bool IsModified();
 
-	//----------------------------------
-	//File modifications
-	//----------------------------------
+    /**
+     * \brief
+     */
+    void SetModified(bool mod);
 
-	/**
-	 * return the last modification time (on disk) of editor's underlying file
-	 */
-	time_t GetFileLastModifiedTime() const;
+    // Transaction support to reduce overhead of disk writing
+    void BeginTranscation() {
+        m_tranActive = true;
+    }
+    void CommitTranscation() {
+        Save();
+    }
+    bool InTransaction() const {
+        return m_tranActive;
+    }
 
-	/**
-	 * return/set the last modification time that was made by the editor
-	 */
-	time_t GetProjectLastModifiedTime() const {
-		return m_modifyTime;
-	}
-	void SetProjectLastModifiedTime(time_t modificationTime) {
-		m_modifyTime = modificationTime;
-	}
-	
-	wxString GetBestPathForVD(const wxString& vdPath);
+    wxString GetVDByFileName(const wxString &file);
 
-	/**
-	 * @brief return the project include paths (all backticks, $(shell ..) expanded)
-	 * The include paths are returned as an array in the order they appear in the
-	 * project settings
-	 */
-	wxArrayString GetIncludePaths();
+    /**
+     * \brief return Tree representation of all virtual folders of this project
+     * \return tree node. return NULL if no virtual folders exist
+     */
+    TreeNode<wxString, VisualWorkspaceNode>* GetVirtualDirectories(TreeNode<wxString, VisualWorkspaceNode>* workspace);
+
+    /**
+     * @brief return the user saved information for custom data
+     * @param name the object key
+     * @param obj [output] container for the output
+     * @return true on success.
+     */
+    bool GetUserData(const wxString &name, SerializedObject *obj);
+
+    /**
+     * @brief save user data in the project settings
+     * @param name the name under which the data is to be saved
+     * @param obj the data
+     * @return true on success.
+     */
+    bool SetUserData(const wxString &name, SerializedObject *obj);
+
+    /**
+     * @brief set the project internal type (usually used to indicate internal types for the project
+     * like 'GUI' or 'UnitTest++' etc.
+     * @param internalType
+     */
+    void SetProjectInternalType(const wxString &internalType);
+    /**
+     * @brief return the project internal type
+     * @return
+     */
+    wxString GetProjectInternalType() const;
+
+    /**
+     * @brief return the plugins' data. This data is copied when using 'save project as template' functionality
+     * @param plugin plugin name
+     * @return plugins data or wxEmptyString
+     */
+    wxString GetPluginData(const wxString &pluginName);
+
+    /**
+     * @brief set the plugin data. This data is copied when using 'save project as template' functionality
+     * @param plugin the plugins' name
+     * @param data the data
+     */
+    void SetPluginData(const wxString &pluginName, const wxString &data);
+
+    /**
+     * @brief get all plugins data as map of plugin=value pair
+     * @param pluginsDataMap [output]
+     */
+    void GetAllPluginsData(std::map<wxString, wxString> &pluginsDataMap);
+
+    /**
+     * @brief set all plugins data as map of plugin=value pair
+     * @param pluginsDataMap
+     */
+    void SetAllPluginsData(const std::map<wxString, wxString> &pluginsDataMap, bool saveToFile = true);
+
+    //----------------------------------
+    //File modifications
+    //----------------------------------
+
+    /**
+     * return the last modification time (on disk) of editor's underlying file
+     */
+    time_t GetFileLastModifiedTime() const;
+
+    /**
+     * return/set the last modification time that was made by the editor
+     */
+    time_t GetProjectLastModifiedTime() const {
+        return m_modifyTime;
+    }
+    void SetProjectLastModifiedTime(time_t modificationTime) {
+        m_modifyTime = modificationTime;
+    }
+
+    wxString GetBestPathForVD(const wxString& vdPath);
+
+    /**
+     * @brief return the project include paths (all backticks, $(shell ..) expanded)
+     * The include paths are returned as an array in the order they appear in the
+     * project settings
+     */
+    wxArrayString GetIncludePaths();
 private:
-	wxArrayString DoBacktickToIncludePath(const wxString &backtick);
-	void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
-	wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
+    wxArrayString DoBacktickToIncludePath(const wxString &backtick);
+    void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
+    wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);
 
-	// Recursive helper function
-	void RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeNode *nodeParent);
+    // Recursive helper function
+    void RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeNode *nodeParent);
 
-	// Return the node representing a virtual dir by name
-	// if no such virtual dir exist, create it.
-	wxXmlNode *GetVirtualDir(const wxString &vdFullPath);
+    // Return the node representing a virtual dir by name
+    // if no such virtual dir exist, create it.
+    wxXmlNode *GetVirtualDir(const wxString &vdFullPath);
 
-	// Create virtual dir and return its xml node
-	wxXmlNode *CreateVD(const wxString &vdFullPath, bool mkpath = false);
+    // Create virtual dir and return its xml node
+    wxXmlNode *CreateVD(const wxString &vdFullPath, bool mkpath = false);
 
-	void GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath = false);
-	void GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles);
-	/**
-	 * Return list of projects that this projects depends on
-	 */
-	wxArrayString GetDependencies() const;
-	
-	/**
-	 * @brief convert all the files paths to Unix format
-	 * @param parent
-	 */
-	void ConvertToUnixFormat(wxXmlNode *parent);
-	
-	bool SaveXmlFile();
+    void GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath = false);
+    void GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles);
+    /**
+     * Return list of projects that this projects depends on
+     */
+    wxArrayString GetDependencies() const;
+
+    /**
+     * @brief convert all the files paths to Unix format
+     * @param parent
+     */
+    void ConvertToUnixFormat(wxXmlNode *parent);
+
+    bool SaveXmlFile();
 };
 
 class WXDLLIMPEXP_SDK ProjectData
 {
 public:
-	wxString m_name;	//< project name
-	wxString m_path;	//< project directoy
-	ProjectPtr m_srcProject;
-	wxString m_cmpType; //< Project compiler type
+    wxString m_name;	//< project name
+    wxString m_path;	//< project directoy
+    ProjectPtr m_srcProject;
+    wxString m_cmpType; //< Project compiler type
 };
 
 //-----------------------------------------------------------------
@@ -533,20 +542,20 @@ public:
  */
 class WXDLLIMPEXP_SDK FilewViewTreeItemData : public wxTreeItemData
 {
-	ProjectItem m_item;
+    ProjectItem m_item;
 public:
-	FilewViewTreeItemData(const ProjectItem &item) : m_item(item) { }
-	const ProjectItem &GetData() const {
-		return m_item;
-	}
+    FilewViewTreeItemData(const ProjectItem &item) : m_item(item) { }
+    const ProjectItem &GetData() const {
+        return m_item;
+    }
 
-	void SetDisplayName(const wxString &displayName) {
-		m_item.SetDisplayName(displayName);
-	}
+    void SetDisplayName(const wxString &displayName) {
+        m_item.SetDisplayName(displayName);
+    }
 
-	void SetFile(const wxString &file) {
-		m_item.SetFile(file);
-	}
+    void SetFile(const wxString &file) {
+        m_item.SetFile(file);
+    }
 };
 
 #endif // PROJECT_H

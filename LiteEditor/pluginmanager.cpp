@@ -207,12 +207,14 @@ void PluginManager::Load()
             
             std::map< wxString, PluginInfo>::const_iterator iter = m_pluginsInfo.find(pluginInfo.GetName());
             if (iter == m_pluginsInfo.end()) {
+                wxLogMessage( wxT( "Did not find plugin" ) + pluginInfo.GetName() + wxT(" in configuration") );
                 //new plugin?, add it and use the default enabled/disabled for this plugin
                 actualPlugins[pluginInfo.GetName()] = pluginInfo;
                 if (pluginInfo.GetEnabled() == false) {
 #if wxVERSION_NUMBER < 2900
                     delete dl;
 #endif
+                    wxLogMessage( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" is not enabled by default. Plugin will not be loaded") );
                     continue;
                 }
             } else {
@@ -221,14 +223,15 @@ void PluginManager::Load()
                 // use the value set in it to determine whether this plugin should be enabled or disabled
                 PluginInfo pi = iter->second;
                 pluginInfo.SetEnabled(pi.GetEnabled());
-
                 actualPlugins[pluginInfo.GetName()] = pluginInfo;
                 if (pluginInfo.GetEnabled() == false) {
 #if wxVERSION_NUMBER < 2900
                     delete dl;
-#endif
+#endif      
+                    wxLogMessage( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will NOT be loaded") );
                     continue;
                 }
+                wxLogMessage( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will be loaded") );
             }
 
             //try and load the plugin

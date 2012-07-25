@@ -32,7 +32,7 @@
 #include "wx_xml_compatibility.h"
 
 ConfigTool::ConfigTool()
-: m_fileName(wxEmptyString)
+    : m_fileName(wxEmptyString)
 {
 }
 
@@ -42,32 +42,36 @@ ConfigTool::~ConfigTool()
 
 bool ConfigTool::Load(const wxString &basename, const wxString &version)
 {
-	wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);
-	bool loaded = m_doc.Load(initialSettings);
-	wxString xmlVersion = m_doc.GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
-	if ( xmlVersion != version ) {
-		loaded = m_doc.Load(ConfFileLocator::Instance()->GetDefaultCopy(basename));
-	}
-	m_fileName = ConfFileLocator::Instance()->GetLocalCopy(basename);
-	return loaded;
+    wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);
+    bool loaded = m_doc.Load(initialSettings);
+    wxString xmlVersion;
+    if ( loaded ) {
+        xmlVersion = m_doc.GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
+    }
+    
+    if ( xmlVersion != version ) {
+        loaded = m_doc.Load(ConfFileLocator::Instance()->GetDefaultCopy(basename));
+    }
+    m_fileName = ConfFileLocator::Instance()->GetLocalCopy(basename);
+    return loaded;
 }
 
 bool ConfigTool::WriteObject(const wxString &name, SerializedObject *obj)
 {
-	if(m_doc.IsOk() == false){
-		return false;
-	}
-	
-	if(!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
-		return false;
-	return m_doc.Save(m_fileName);
+    if(m_doc.IsOk() == false) {
+        return false;
+    }
+
+    if(!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
+        return false;
+    return m_doc.Save(m_fileName);
 }
 
 bool ConfigTool::ReadObject(const wxString &name, SerializedObject *obj)
 {
-	if(m_doc.IsOk() == false){
-		return false;
-	}
-	
-	return XmlUtils::StaticReadObject(m_doc.GetRoot(), name, obj);
+    if(m_doc.IsOk() == false) {
+        return false;
+    }
+
+    return XmlUtils::StaticReadObject(m_doc.GetRoot(), name, obj);
 }

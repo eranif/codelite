@@ -77,39 +77,33 @@ svSymbolTree::svSymbolTree(wxWindow *parent, IManager* manager, const wxWindowID
 	Connect(GetId(), wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEventHandler(svSymbolTree::OnMouseRightUp));
 	Connect(GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler(svSymbolTree::OnMouseDblClick));
 	Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(svSymbolTree::OnItemActivated));
+    Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(svSymbolTree::OnMouseDblClick), NULL, this);
 	MSWSetNativeTheme(this);
 }
 
 void svSymbolTree::OnMouseRightUp(wxTreeEvent &event)
 {
+    event.Skip();
 	wxTreeItemId item = event.GetItem();
 	if (item.IsOk()) {
 		SelectItem(item, true);
+        DoItemActivated(item, event, true);
 	}
 }
 
 void svSymbolTree::OnMouseDblClick(wxMouseEvent& event)
 {
-	//-----------------------------------------------------
-	// We override the doubleclick on item event
-	// to demonstrate how to access the tag information
-	// stored in the symbol tree
-	//-----------------------------------------------------
-
-	wxTreeItemId treeItem = GetSelection();
-	if (!treeItem) {
-		event.Skip();
-		return;
-	}
-
 	// Make sure the double click was done on an actual item
 	int flags = wxTREE_HITTEST_ONITEMLABEL;
-	if (HitTest(event.GetPosition(), flags) != treeItem) {
+    wxTreeItemId where = HitTest(event.GetPosition(), flags);
+    
+    if( where.IsOk() == false) {
 		event.Skip();
 		return;
 	}
-
-	DoItemActivated(treeItem, event, true);
+    
+    SelectItem(where);
+	DoItemActivated(where, event, true);
 }
 
 bool svSymbolTree::ActivateSelectedItem()
@@ -219,6 +213,7 @@ wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
 void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxString& name)
 {
 	editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr());
+    m_manager->GetActiveEditor()->GetScintilla()->SetSCIFocus(true);
     m_manager->GetActiveEditor()->GetScintilla()->SetFocus();
 }
 
@@ -235,4 +230,3 @@ void svSymbolTree::BuildTree(const wxFileName& fn)
         }
     }
 }
-

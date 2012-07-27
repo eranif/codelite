@@ -4,11 +4,16 @@
 #include "plugin.h"
 #include <wx/wxscintilla.h>
 
+const wxEventType wxEVT_SV_GOTO_DEFINITION  = wxNewEventType();
+const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
+
 SymbolViewTabPanel::SymbolViewTabPanel(wxWindow* parent, IManager* mgr)
     : SymbolViewTabPanelBaseClass(parent)
     , m_mgr(mgr)
 {
     m_tree = new svSymbolTree(this, m_mgr, wxID_ANY);
+    m_tree->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SymbolViewTabPanel::OnMenu), NULL, this);
+    
     m_tree->AssignImageList( svSymbolTree::CreateSymbolTreeImages() );
 
     GetSizer()->Add(m_tree, 1, wxEXPAND);
@@ -23,6 +28,8 @@ SymbolViewTabPanel::SymbolViewTabPanel(wxWindow* parent, IManager* mgr)
 
 SymbolViewTabPanel::~SymbolViewTabPanel()
 {
+    m_tree->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SymbolViewTabPanel::OnMenu), NULL, this);
+    
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SymbolViewTabPanel::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SymbolViewTabPanel::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SymbolViewTabPanel::OnEditorClosed), NULL, this);
@@ -88,3 +95,26 @@ void SymbolViewTabPanel::OnFilesTagged(wxCommandEvent& e)
         m_tree->Clear();
     }
 }
+void SymbolViewTabPanel::OnMenu(wxContextMenuEvent& e)
+{
+    wxMenu menu;
+    menu.Append(wxEVT_SV_GOTO_DEFINITION,  _("Goto Definition"));
+    menu.Append(wxEVT_SV_GOTO_DECLARATION, _("Goto Declaration"));
+    
+    menu.Connect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewTabPanel::OnGotoImpl), NULL, this);
+    menu.Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewTabPanel::OnGotoDecl), NULL, this);
+    m_tree->PopupMenu(&menu);
+}
+
+void SymbolViewTabPanel::OnGotoDecl(wxCommandEvent& e)
+{
+    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_decl"));
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
+}
+
+void SymbolViewTabPanel::OnGotoImpl(wxCommandEvent& e)
+{
+    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_impl"));
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
+}
+

@@ -67,7 +67,7 @@ protected:
 	virtual void OnMouseDblClick(wxMouseEvent& event);
 	virtual void OnMouseRightUp(wxTreeEvent& event);
 	virtual void OnItemActivated(wxTreeEvent &event);
-	bool DoItemActivated(wxTreeItemId item, wxEvent &event, bool notify);
+    bool DoItemActivated(wxTreeItemId item, wxEvent &event, bool notify);
 	void FindAndSelect(IEditor *editor, wxString &pattern, const wxString &name);
 	
 	wxTreeItemId TryGetPrevItem(wxTreeItemId item);

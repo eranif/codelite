@@ -25,6 +25,9 @@ public:
     void OnEditorClosed(wxCommandEvent &e);
     void OnAllEditorsClosed(wxCommandEvent &e);
     void OnFilesTagged(wxCommandEvent &e);
+    void OnMenu(wxContextMenuEvent &e);
+    void OnGotoImpl(wxCommandEvent &e);
+    void OnGotoDecl(wxCommandEvent &e);
 };
 
 #endif // SYMBOLVIEWTABPANEL_H

@@ -30,6 +30,7 @@
 #include "iconfigtool.h"
 #include "ikeyboard.h"
 #include "wx/treectrl.h"
+#include "project.h"
 #include "notebook_ex.h"
 #include "optionsconfig.h"
 #include "queuecommand.h"
@@ -57,23 +58,23 @@ class wxAuiManager;
 class TreeItemInfo
 {
 public:
-	typedef std::pair<wxFileName, wxTreeItemId> Pair_t;
-	typedef std::vector<Pair_t> Vector_t;
-	
+    typedef std::pair<wxFileName, wxTreeItemId> Pair_t;
+    typedef std::vector<Pair_t> Vector_t;
+
 public:
-	wxTreeItemId m_item;
-	wxFileName   m_fileName; //< FileName where available (FileView & File Explorer trees)
-	wxString     m_text;     //< Tree item text (all)
-	int          m_itemType; //< For FileView items (FileView only)
-	TreeItemInfo::Vector_t     m_items;    //< For file explorer which supports multiple selection (File Explorer tree only)
+    wxTreeItemId m_item;
+    wxFileName   m_fileName; //< FileName where available (FileView & File Explorer trees)
+    wxString     m_text;     //< Tree item text (all)
+    int          m_itemType; //< For FileView items (FileView only)
+    TreeItemInfo::Vector_t     m_items;    //< For file explorer which supports multiple selection (File Explorer tree only)
 };
 
 //---------------------------
 // List of available trees
 //---------------------------
 enum TreeType {
-	TreeFileView = 0,
-	TreeFileExplorer
+    TreeFileView = 0,
+    TreeFileExplorer
 };
 
 //------------------------------------------------------------------
@@ -90,209 +91,209 @@ enum TreeType {
 class IManager
 {
 public:
-	IManager() {}
-	virtual ~IManager() {}
+    IManager() {}
+    virtual ~IManager() {}
 
-	//return the current editor
-	/**
-	 * @brief return the active editor
-	 * @return pointer to the current editor, or NULL incase the active editor is not of type LEditor or no active editor open
-	 */
-	virtual IEditor *GetActiveEditor() = 0;
-	/**
-	 * @brief open file and make it the active editor
-	 * @param fileName the file to open - use absolute path
-	 * @param projectName project to associate this file - can be wxEmptyString
-	 * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
+    //return the current editor
+    /**
+     * @brief return the active editor
+     * @return pointer to the current editor, or NULL incase the active editor is not of type LEditor or no active editor open
+     */
+    virtual IEditor *GetActiveEditor() = 0;
+    /**
+     * @brief open file and make it the active editor
+     * @param fileName the file to open - use absolute path
+     * @param projectName project to associate this file - can be wxEmptyString
+     * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
      * @return true if file opened
-	 */
-	virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
+     */
+    virtual bool OpenFile(const wxString &fileName, const wxString &projectName = wxEmptyString, int lineno = wxNOT_FOUND) = 0;
 
-	/**
-	 * @brief Open file using browsing record
-	 * @param rec browsing record
-	 * @return true on success false otherwise
-	 */
-	virtual bool OpenFile(const BrowseRecord &rec) = 0;
+    /**
+     * @brief Open file using browsing record
+     * @param rec browsing record
+     * @return true on success false otherwise
+     */
+    virtual bool OpenFile(const BrowseRecord &rec) = 0;
 
-	/**
-	 * @brief return a pointer to the configuration tool
-	 * @sa IConfigTool
-	 */
-	virtual IConfigTool *GetConfigTool() = 0;
+    /**
+     * @brief return a pointer to the configuration tool
+     * @sa IConfigTool
+     */
+    virtual IConfigTool *GetConfigTool() = 0;
 
-	/**
-	 * @brief return TreeItemInfo for the selected tree item
-	 * @param type the tree we are interested in
-	 * @sa TreeItemInfo
-	 * @sa TreeType
-	 */
-	virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type) = 0;
-	/**
-	 * @brief returns a pointer to wxTreeCtrl by type
-	 * @param type the type of tree
-	 * @sa TreeType
-	 */
-	virtual wxTreeCtrl *GetTree(TreeType type) = 0;
+    /**
+     * @brief return TreeItemInfo for the selected tree item
+     * @param type the tree we are interested in
+     * @sa TreeItemInfo
+     * @sa TreeType
+     */
+    virtual TreeItemInfo GetSelectedTreeItemInfo(TreeType type) = 0;
+    /**
+     * @brief returns a pointer to wxTreeCtrl by type
+     * @param type the type of tree
+     * @sa TreeType
+     */
+    virtual wxTreeCtrl *GetTree(TreeType type) = 0;
 
-	/**
-	 * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
-	 * @return pointer to Notebook
-	 * @sa Notebook
-	 */
-	virtual Notebook *GetWorkspacePaneNotebook() = 0;
+    /**
+     * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
+     * @return pointer to Notebook
+     * @sa Notebook
+     */
+    virtual Notebook *GetWorkspacePaneNotebook() = 0;
 
-	/**
-	 * @brief return a pointer to the output pane notebook (the one with the 'output' title)
-	 * @return pointer to Notebook
-	 * @sa Notebook
-	 */
-	virtual Notebook* GetOutputPaneNotebook() = 0;
-	
-	virtual wxPanel* GetEditorPaneNotebook() = 0;
-	virtual void AddEditorPage(wxWindow *page, const wxString& name) = 0;	
-	virtual wxWindow* GetActivePage() = 0;
-	virtual wxWindow* GetPage(size_t page) = 0;
+    /**
+     * @brief return a pointer to the output pane notebook (the one with the 'output' title)
+     * @return pointer to Notebook
+     * @sa Notebook
+     */
+    virtual Notebook* GetOutputPaneNotebook() = 0;
 
-	/**
-	 * @brief return the startup directory of CodeLite which is also the base directory for searching installation files
-	 * @return a full path to the startup directory
-	 */
-	virtual wxString GetStartupDirectory() const = 0;
+    virtual wxPanel* GetEditorPaneNotebook() = 0;
+    virtual void AddEditorPage(wxWindow *page, const wxString& name) = 0;
+    virtual wxWindow* GetActivePage() = 0;
+    virtual wxWindow* GetPage(size_t page) = 0;
 
-	/**
-	 * @brief return the installation directory of codelite
-	 * @return a full path to codelite installation
-	 */
-	virtual wxString GetInstallDirectory() const = 0;
+    /**
+     * @brief return the startup directory of CodeLite which is also the base directory for searching installation files
+     * @return a full path to the startup directory
+     */
+    virtual wxString GetStartupDirectory() const = 0;
 
-	/**
-	 * @brief add project to the workspace
-	 * @param path full path to the project to add
-	 */
-	virtual void AddProject(const wxString & path) = 0;
+    /**
+     * @brief return the installation directory of codelite
+     * @return a full path to codelite installation
+     */
+    virtual wxString GetInstallDirectory() const = 0;
 
-	/**
-	 * @brief return true of a workspace is already open
-	 */
-	virtual bool IsWorkspaceOpen() const = 0;
+    /**
+     * @brief add project to the workspace
+     * @param path full path to the project to add
+     */
+    virtual void AddProject(const wxString & path) = 0;
 
-	/**
-	 * @brief return an instance to the tags manager - which allows access to CodeLite CodeCompletion API
-	 * @return a pointer to the tags manager
-	 * @sa TagsManager
-	 */
-	virtual TagsManager *GetTagsManager() = 0;
-	/**
-	 * @brief return a pointer to the workspace manager
-	 * @sa Workspace
-	 */
-	virtual Workspace *GetWorkspace() = 0;
+    /**
+     * @brief return true of a workspace is already open
+     */
+    virtual bool IsWorkspaceOpen() const = 0;
 
-	/**
-	 * @brief add files to a virtual folder in the project
-	 * @param item a tree item which represents the tree item of the virtual folder
-	 * @param paths an array of files to add
-	 * @return true on sucesss, false otherwise
-	 */
-	virtual bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths) = 0;
+    /**
+     * @brief return an instance to the tags manager - which allows access to CodeLite CodeCompletion API
+     * @return a pointer to the tags manager
+     * @sa TagsManager
+     */
+    virtual TagsManager *GetTagsManager() = 0;
+    /**
+     * @brief return a pointer to the workspace manager
+     * @sa Workspace
+     */
+    virtual Workspace *GetWorkspace() = 0;
 
-	/**
-	 * @brief add files to a virtual folder in the project
-	 * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
-	 * @param paths an array of files to add
-	 * @return true on sucesss, false otherwise
-	 */
-	virtual bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths) = 0;
+    /**
+     * @brief add files to a virtual folder in the project
+     * @param item a tree item which represents the tree item of the virtual folder
+     * @param paths an array of files to add
+     * @return true on sucesss, false otherwise
+     */
+    virtual bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths) = 0;
 
-	/**
-	 * @brief Add a pair of cpp/h files to the :src/include folders, if these exist
-	 * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
-	 * @param paths an array of files to add
-	 * @return true on sucesss, false otherwise
-	 */
-	virtual bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths) = 0;
+    /**
+     * @brief add files to a virtual folder in the project
+     * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
+     * @param paths an array of files to add
+     * @return true on sucesss, false otherwise
+     */
+    virtual bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths) = 0;
 
-	/**
-	 * @brief create virtual folder to parentPath
-	 * @param parentPath parent virtual directory full path in the form of <project>:vd1:vd2:...:vdN which must exist
-	 * @param vdName child VD name
-	 * @return true on success, false otherwise
-	 */
-	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName) = 0;
+    /**
+     * @brief Add a pair of cpp/h files to the :src/include folders, if these exist
+     * @param vdFullPath virtual directory full path in the form of <project>:vd1:vd2:...:vdN
+     * @param paths an array of files to add
+     * @return true on sucesss, false otherwise
+     */
+    virtual bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths) = 0;
 
-	/**
-	 * @brief return the size of the icons used by CodeLite
-	 * @return 16 or 24
-	 */
-	virtual int GetToolbarIconSize() = 0;
+    /**
+     * @brief create virtual folder to parentPath
+     * @param parentPath parent virtual directory full path in the form of <project>:vd1:vd2:...:vdN which must exist
+     * @param vdName child VD name
+     * @return true on success, false otherwise
+     */
+    virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName) = 0;
 
-	/**
-	 * @brief return true if toobars are allowed for plugins. This is useful for the Mac port of
-	 * codelite. On Mac, only single toolbar is allowed in the application (otherwise, the application
-	 * does not feet into the environment)
-	 * @return true if plugin can create a toolbar, false otherwise
-	 */
-	virtual bool AllowToolbar() = 0;
+    /**
+     * @brief return the size of the icons used by CodeLite
+     * @return 16 or 24
+     */
+    virtual int GetToolbarIconSize() = 0;
 
-	/**
-	 * @brief return a pointer to the docking manager (wxAUI)
-	 */
-	virtual wxAuiManager* GetDockingManager() = 0;
-	/**
-	 * @brief return a pointer to the environment manager
-	 * @sa EnvironmentConfig
-	 */
-	virtual EnvironmentConfig *GetEnv() = 0;
-	/**
-	 * @brief return a pointer to the job queue manager
-	 * @return job queue manager
-	 */
-	virtual JobQueue *GetJobQueue() = 0;
+    /**
+     * @brief return true if toobars are allowed for plugins. This is useful for the Mac port of
+     * codelite. On Mac, only single toolbar is allowed in the application (otherwise, the application
+     * does not feet into the environment)
+     * @return true if plugin can create a toolbar, false otherwise
+     */
+    virtual bool AllowToolbar() = 0;
 
-	/**
-	 * @brief return the project execution command as set in the project's settings
-	 * @param projectName the project
-	 * @param wd starting dirctory
-	 * @return the execution command or wxEmptyString if the project does not exist
-	 */
-	virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd) = 0;
+    /**
+     * @brief return a pointer to the docking manager (wxAUI)
+     */
+    virtual wxAuiManager* GetDockingManager() = 0;
+    /**
+     * @brief return a pointer to the environment manager
+     * @sa EnvironmentConfig
+     */
+    virtual EnvironmentConfig *GetEnv() = 0;
+    /**
+     * @brief return a pointer to the job queue manager
+     * @return job queue manager
+     */
+    virtual JobQueue *GetJobQueue() = 0;
 
-	/**
-	 * @brief return the application
-	 */
-	virtual wxApp *GetTheApp() = 0;
+    /**
+     * @brief return the project execution command as set in the project's settings
+     * @param projectName the project
+     * @param wd starting dirctory
+     * @return the execution command or wxEmptyString if the project does not exist
+     */
+    virtual wxString GetProjectExecutionCommand(const wxString &projectName, wxString &wd) = 0;
 
-	/**
-	 * @brief reload the current workspace, this function does not do anything if a workspace is not opened
-	 */
-	virtual void ReloadWorkspace() = 0;
+    /**
+     * @brief return the application
+     */
+    virtual wxApp *GetTheApp() = 0;
 
-	/**
-	 * @brief search for loaded plugin by its name, if the plugin is loaded returns its pointer
-	 * @param pluginName plugin to search
-	 * @return pointer to the plugin or NULL if it is not loaded
-	 */
-	virtual IPlugin *GetPlugin(const wxString &pluginName) = 0;
+    /**
+     * @brief reload the current workspace, this function does not do anything if a workspace is not opened
+     */
+    virtual void ReloadWorkspace() = 0;
 
-	/**
-	 * @brief output window for receiving async cmd events
-	 */
-	virtual wxEvtHandler *GetOutputWindow() = 0;
+    /**
+     * @brief search for loaded plugin by its name, if the plugin is loaded returns its pointer
+     * @param pluginName plugin to search
+     * @return pointer to the plugin or NULL if it is not loaded
+     */
+    virtual IPlugin *GetPlugin(const wxString &pluginName) = 0;
 
-	/**
-	 * @brief save all modified files
-	 */
-	virtual bool SaveAll() = 0;
+    /**
+     * @brief output window for receiving async cmd events
+     */
+    virtual wxEvtHandler *GetOutputWindow() = 0;
 
-	/**
-	 * @brief return the keyboard manager
-	 */
-	virtual IKeyboard *GetKeyboardManager() = 0;
+    /**
+     * @brief save all modified files
+     */
+    virtual bool SaveAll() = 0;
 
-	/**
-	 * @brief return the editor's settings object
-	 */
+    /**
+     * @brief return the keyboard manager
+     */
+    virtual IKeyboard *GetKeyboardManager() = 0;
+
+    /**
+     * @brief return the editor's settings object
+     */
     virtual OptionsConfigPtr GetEditorSettings() = 0;
 
     /**
@@ -310,69 +311,70 @@ public:
 
     /**
      * @brief show a (short) message in the status bar
-	 * @param msg the string to display
-	 * @param col the statusbar pane to use
-	 * @param seconds_to_live how many seconds to display it for; 0 == forever; -1 == use the default
+     * @param msg the string to display
+     * @param col the statusbar pane to use
+     * @param seconds_to_live how many seconds to display it for; 0 == forever; -1 == use the default
      */
     virtual void SetStatusMessage(const wxString &msg, int col, int seconds_to_live = wxID_ANY) = 0;
 
-	/**
-	 * @brief start processing commands from the queue
-	 */
-	virtual void ProcessCommandQueue() = 0;
+    /**
+     * @brief start processing commands from the queue
+     */
+    virtual void ProcessCommandQueue() = 0;
 
-	/**
-	 * @brief place a command on the internal queue of codelite to be processed. Each command is executed on
-	 * a separated process. The queue will not start processing, until a call to ProcessCommandQueue() is issued
-	 * @param cmd command to process
-	 */
-	virtual void PushQueueCommand(const QueueCommand &cmd) = 0;
+    /**
+     * @brief place a command on the internal queue of codelite to be processed. Each command is executed on
+     * a separated process. The queue will not start processing, until a call to ProcessCommandQueue() is issued
+     * @param cmd command to process
+     */
+    virtual void PushQueueCommand(const QueueCommand &cmd) = 0;
 
-	/**
-	 * @brief stop the current process execution and clear all commands from the queue
-	 */
-	virtual void StopAndClearQueue() = 0;
+    /**
+     * @brief stop the current process execution and clear all commands from the queue
+     */
+    virtual void StopAndClearQueue() = 0;
 
-	/**
-	 * return true if a compilation is in process (either clean or build)
-	 */
-	virtual bool IsBuildInProgress() const = 0;
+    /**
+     * return true if a compilation is in process (either clean or build)
+     */
+    virtual bool IsBuildInProgress() const = 0;
 
-	/**
-	 * @brief return true if a shutdown is currently in progress
-	 * @return
-	 */
-	virtual bool IsShutdownInProgress() const = 0;
+    /**
+     * @brief return true if a shutdown is currently in progress
+     * @return
+     */
+    virtual bool IsShutdownInProgress() const = 0;
 
-	/**
-	 * return true if the last buid ended successfully
-	 */
-	virtual bool IsBuildEndedSuccessfully() const = 0;
+    /**
+     * return true if the last buid ended successfully
+     */
+    virtual bool IsBuildEndedSuccessfully() const = 0;
 
-	/**
-	 * @brief return the project name of a file
-	 * @param fullPathFileName file to search
-	 * @return project name or wxEmptyString if the search failed
-	 */
-	virtual wxString GetProjectNameByFile( const wxString &fullPathFileName ) = 0;
+    /**
+     * @brief return the project name of a file
+     * @param fullPathFileName file to search
+     * @return project name or wxEmptyString if the search failed
+     */
+    virtual wxString GetProjectNameByFile( const wxString &fullPathFileName ) = 0;
 
-	/**
-	 * @brief accessor to singleton object in the application
-	 */
-	virtual BuildManager *GetBuildManager() = 0;
+    /**
+     * @brief accessor to singleton object in the application
+     */
+    virtual BuildManager *GetBuildManager() = 0;
 
-	/**
-	 * @brief accessor to singleton object in the application
-	 */
-	virtual BuildSettingsConfig *GetBuildSettingsConfigManager() = 0;
+    /**
+     * @brief accessor to singleton object in the application
+     */
+    virtual BuildSettingsConfig *GetBuildSettingsConfigManager() = 0;
 
-	/**
-	 * @brief return the singleton object of the navigation manager
-	 */
-	virtual NavMgr *GetNavigationMgr() = 0;
+    /**
+     * @brief return the singleton object of the navigation manager
+     */
+    virtual NavMgr *GetNavigationMgr() = 0;
 
-    void SetStatusMessage(const wxString &msg)
-        { SetStatusMessage(msg, 0); }
+    void SetStatusMessage(const wxString &msg) {
+        SetStatusMessage(msg, 0);
+    }
 
     /**
      * @brief close the named page in the mainbook
@@ -394,38 +396,43 @@ public:
      */
     virtual bool SelectPage(wxWindow *win) = 0;
 
-	/**
-	 * @brief set the page's title
-	 */
-	virtual void SetPageTitle(wxWindow* win, const wxString &title) = 0;
-	
-	/**
-	 * @brief set the page's title
-	 */
-	virtual wxString GetPageTitle(wxWindow* win) const = 0;
-	
-	/**
-	 * @brief open new editor "untitiled"
-	 * @return pointer to the editor
-	 */
-	virtual IEditor *NewEditor() = 0;
+    /**
+     * @brief set the page's title
+     */
+    virtual void SetPageTitle(wxWindow* win, const wxString &title) = 0;
 
-	/**
-	 * @brief return the macro manager
-	 */
-	virtual IMacroManager *GetMacrosManager() = 0;
+    /**
+     * @brief set the page's title
+     */
+    virtual wxString GetPageTitle(wxWindow* win) const = 0;
 
-	/**
-	 * @brief return the default icons loader class
-	 */
-	virtual BitmapLoader* GetStdIcons() = 0;
-	
-	/**
-	 * @brief return the compilation flags for a file in a given project
-	 */
-	virtual wxArrayString GetProjectCompileFlags(const wxString &projectName, bool isCppFile) = 0;
+    /**
+     * @brief open new editor "untitiled"
+     * @return pointer to the editor
+     */
+    virtual IEditor *NewEditor() = 0;
+
+    /**
+     * @brief return the macro manager
+     */
+    virtual IMacroManager *GetMacrosManager() = 0;
+
+    /**
+     * @brief return the default icons loader class
+     */
+    virtual BitmapLoader* GetStdIcons() = 0;
+
+    /**
+     * @brief return the compilation flags for a file in a given project
+     */
+    virtual wxArrayString GetProjectCompileFlags(const wxString &projectName, bool isCppFile) = 0;
+    
+    /**
+     * @brief return the selected project item. Note that this is different than
+     * returning the *active* project. A selected project, is the project that it is
+     * selected in the tree "blue highlight" or the parent of the selected item
+     */
+    virtual ProjectPtr GetSelectedProject() const = 0;
 };
-
-
 
 #endif //IMANAGER_H

@@ -32,44 +32,48 @@
 #include <vector>
 
 class wxMenuItem;
-class PipedProcess;
+class IProcess;
 
 class UnitTestPP : public IPlugin
 {
-	wxEvtHandler *m_topWindow;
-	PipedProcess *m_proc;
-
+    wxEvtHandler *m_topWindow;
+    IProcess *    m_proc;
+    wxString      m_output;
+    
 public:
-	UnitTestPP(IManager *manager);
-	~UnitTestPP();
+    UnitTestPP(IManager *manager);
+    ~UnitTestPP();
 
-	//--------------------------------------------
-	//Abstract methods
-	//--------------------------------------------
-	virtual clToolBar *CreateToolBar(wxWindow *parent);
-	virtual void CreatePluginMenu   (wxMenu *pluginsMenu);
-	virtual void HookPopupMenu      (wxMenu *menu, MenuType type);
-	virtual void UnPlug             ();
-	bool         IsUnitTestProject  (ProjectPtr p);
-	/**
-	 * @brief return list of the projects which are identified as UnitTests project
-	 * @return
-	 */
-	std::vector<ProjectPtr> GetUnitTestProjects();
+    //--------------------------------------------
+    //Abstract methods
+    //--------------------------------------------
+    virtual clToolBar *CreateToolBar(wxWindow *parent);
+    virtual void CreatePluginMenu   (wxMenu *pluginsMenu);
+    virtual void HookPopupMenu      (wxMenu *menu, MenuType type);
+    virtual void UnPlug             ();
+    bool         IsUnitTestProject  (ProjectPtr p);
+    /**
+     * @brief return list of the projects which are identified as UnitTests project
+     * @return
+     */
+    std::vector<ProjectPtr> GetUnitTestProjects();
 
 protected:
-	void       OnNewSimpleTest     (wxCommandEvent &e);
-	void       OnNewClassTest      (wxCommandEvent &e);
-	void       OnRunUnitTests      (wxCommandEvent &e);
-	void       OnRunUnitTestsUI    (wxUpdateUIEvent &e);
-	void       OnProcessTerminated (wxProcessEvent &e);
-	void       DoCreateSimpleTest  (const wxString &name, const wxString &projectName, const wxString &filename);
-	void       DoCreateFixtureTest (const wxString &name, const wxString &fixture, const wxString &projectName, const wxString &filename);
-	IEditor*   DoAddTestFile       (const wxString &filename, const wxString &projectName);
-	wxFileName FindBestSourceFile  (ProjectPtr proj, const wxFileName &filename);
+    DECLARE_EVENT_TABLE()
+    void       OnNewSimpleTest     (wxCommandEvent &e);
+    void       OnNewClassTest      (wxCommandEvent &e);
+    void       OnRunUnitTests      (wxCommandEvent &e);
+    void       OnMarkProjectAsUT   (wxCommandEvent &e);
+    void       OnRunUnitTestsUI    (wxUpdateUIEvent &e);
+    void       OnProcessTerminated (wxCommandEvent &e);
+    void       OnProcessRead       (wxCommandEvent &e);
+    void       DoCreateSimpleTest  (const wxString &name, const wxString &projectName, const wxString &filename);
+    void       DoCreateFixtureTest (const wxString &name, const wxString &fixture, const wxString &projectName, const wxString &filename);
+    IEditor*   DoAddTestFile       (const wxString &filename, const wxString &projectName);
+    wxFileName FindBestSourceFile  (ProjectPtr proj, const wxFileName &filename);
 
 private:
-	wxMenu*    CreateEditorPopMenu ();
+    wxMenu*    CreateEditorPopMenu ();
 };
 
 #endif //UnitTestPP

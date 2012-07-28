@@ -774,3 +774,9 @@ void PluginManager::SetPageTitle(wxWindow* win, const wxString& title)
 {
     clMainFrame::Get()->GetMainBook()->SetPageTitle(win, title);
 }
+
+ProjectPtr PluginManager::GetSelectedProject() const
+{
+    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->GetSelectedProject();
+}
+

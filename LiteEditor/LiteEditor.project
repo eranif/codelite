@@ -1000,8 +1000,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlags/>
@@ -1031,10 +1030,9 @@ resources.cpp: resources.xrc
         <Library Value="clang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --with-plugins outline" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . --with-plugins=outline,unittestpp" UseSeparateDebugArgs="no" DebugArguments="-b . --with-plugins=outline" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
-        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
-      ]]>
+        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="C:\GDB.745\bin\gdb.exe">
         <PostConnectCommands/>
@@ -1063,7 +1061,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlags/>
@@ -1094,30 +1093,9 @@ svninfo.cpp:
         <Library Value="clang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Release" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Release" Command="./codelite.exe" CommandArguments="-b . --with-plugins=outline" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default">
-        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      ]]>
+        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>

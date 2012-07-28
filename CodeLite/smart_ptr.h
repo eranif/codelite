@@ -82,7 +82,8 @@ class SmartPtr
 		 * \return Pointer to the row data 
 		 */
 		T* GetData() { return m_data; }
-
+        
+        const T* GetData() const { return m_data; }
 		/**
 		 * Increase reference counting by 1
 		 */
@@ -182,7 +183,11 @@ public:
 	{
 		return m_ref->GetData();
 	}
-
+    
+    const T* Get() const 
+    {
+        return m_ref->GetData();
+    }
 	/**
 	 * Overload the '->' operator 
 	 * \return pointer to the row data pointer

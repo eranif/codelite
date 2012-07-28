@@ -320,7 +320,7 @@ void TagsStorageSQLite::SelectTagsByFile(const wxString& file, std::vector<TagEn
 	OpenDatabase(databaseFileName);
 
 	wxString query;
-	query << wxT("select * from tags where file='") << file << wxT("' ");
+	query << wxT("select * from tags where file='") << file << wxT("' order by line asc");
 
 	DoFetchTags(query, tags);
 }

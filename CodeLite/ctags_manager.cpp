@@ -1246,7 +1246,7 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
     ParseThreadST::Get()->Add ( req );
 }
 
-void TagsManager::RetagFiles(const std::vector<wxFileName> &files, RetagType type)
+void TagsManager::RetagFiles(const std::vector<wxFileName> &files, RetagType type, wxEvtHandler *cb)
 {
     wxArrayString strFiles;
     // step 1: remove all non-tags files
@@ -1287,6 +1287,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, RetagType typ
 
     // step 5: build the database
     ParseRequest *req = new ParseRequest();
+    req->_evtHandler = cb; // Callback window
     req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 
     req->setType( type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES : ParseRequest::PR_PARSE_AND_STORE );

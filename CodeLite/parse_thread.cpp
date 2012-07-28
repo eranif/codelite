@@ -439,15 +439,21 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
 
 	// Clear the results
 	PPTable::Instance()->Clear();
-
+    
+    wxEvtHandler *pcb = m_notifiedWindow;
+    if ( req->_evtHandler ) {
+        // override the default notified window
+        pcb = req->_evtHandler;
+    }
+    
 	/// Send notification to the main window with our progress report
-	if(m_notifiedWindow) {
+	if( pcb ) {
 
 		wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
 		std::vector<std::string> *arrFiles = new std::vector<std::string>;
 		*arrFiles = req->_workspaceFiles;
 		retaggingCompletedEvent.SetClientData( arrFiles );
-		m_notifiedWindow->AddPendingEvent(retaggingCompletedEvent);
+		pcb->AddPendingEvent(retaggingCompletedEvent);
 
 	} else {
 		wxPrintf(wxT("parsing: done\n"), precent);
@@ -587,9 +593,15 @@ void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
 	TagsManagerST::Get()->FilterNonNeededFilesForRetaging(filesArr, db);
 	ParseAndStoreFiles(filesArr, -1, db);
 	
-	if(m_notifiedWindow) {
+    wxEvtHandler *pcb = m_notifiedWindow;
+    if ( req->_evtHandler ) {
+        // override the default notified window
+        pcb = req->_evtHandler;
+    }
+    
+	if( pcb ) {
 		wxCommandEvent e(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
 		e.SetClientData(NULL);
-		wxPostEvent(m_notifiedWindow, e);
+		wxPostEvent(pcb, e);
 	}
 }

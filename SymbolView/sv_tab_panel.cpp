@@ -6,6 +6,7 @@
 
 const wxEventType wxEVT_SV_GOTO_DEFINITION  = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
+const wxEventType wxEVT_SV_FIND_REFERENCES  = wxNewEventType();
 
 SymbolViewTabPanel::SymbolViewTabPanel(wxWindow* parent, IManager* mgr)
     : SymbolViewTabPanelBaseClass(parent)
@@ -41,10 +42,19 @@ SymbolViewTabPanel::~SymbolViewTabPanel()
 void SymbolViewTabPanel::OnSearchSymbol(wxCommandEvent& event)
 {
     event.Skip();
+    wxString name = m_textCtrlSearch->GetValue();
+    name.Trim().Trim(false);
+    m_tree->SelectItemByName(name);
 }
 
 void SymbolViewTabPanel::OnSearchEnter(wxCommandEvent& event)
 {
+    event.Skip();
+    wxString name = m_textCtrlSearch->GetValue();
+    name.Trim().Trim(false);
+    if(name.IsEmpty() == false) {
+        m_tree->ActivateSelectedItem();
+    }
 }
 
 void SymbolViewTabPanel::OnActiveEditorChanged(wxCommandEvent& e)
@@ -100,9 +110,12 @@ void SymbolViewTabPanel::OnMenu(wxContextMenuEvent& e)
     wxMenu menu;
     menu.Append(wxEVT_SV_GOTO_DEFINITION,  _("Goto Definition"));
     menu.Append(wxEVT_SV_GOTO_DECLARATION, _("Goto Declaration"));
+    menu.AppendSeparator();
+    menu.Append(wxEVT_SV_FIND_REFERENCES , _("Find References..."));
     
-    menu.Connect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewTabPanel::OnGotoImpl), NULL, this);
-    menu.Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewTabPanel::OnGotoDecl), NULL, this);
+    menu.Connect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewTabPanel::OnGotoImpl),      NULL, this);
+    menu.Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewTabPanel::OnGotoDecl),      NULL, this);
+    menu.Connect(wxEVT_SV_FIND_REFERENCES , wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SymbolViewTabPanel::OnFindReferenes), NULL, this);
     m_tree->PopupMenu(&menu);
 }
 
@@ -118,3 +131,8 @@ void SymbolViewTabPanel::OnGotoImpl(wxCommandEvent& e)
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
 }
 
+void SymbolViewTabPanel::OnFindReferenes(wxCommandEvent& e)
+{    
+    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_references"));
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
+}

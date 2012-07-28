@@ -28,6 +28,7 @@ public:
     void OnMenu(wxContextMenuEvent &e);
     void OnGotoImpl(wxCommandEvent &e);
     void OnGotoDecl(wxCommandEvent &e);
+    void OnFindReferenes(wxCommandEvent &e);
 };
 
 #endif // SYMBOLVIEWTABPANEL_H

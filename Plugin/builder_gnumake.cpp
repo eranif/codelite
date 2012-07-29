@@ -1232,9 +1232,15 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	}
 	
     wxString libraries = bldConf->GetLibraries();
-    libraries.Replace(wxT(";"), wxT(" "));
+    wxArrayString libsArr = ::wxStringTokenize(libraries, wxT(";"), wxTOKEN_STRTOK);
+    libraries.Clear();
+    libraries << wxT(" ");
+    for(size_t i=0; i<libsArr.GetCount(); i++) {
+        libsArr.Item(i).Trim().Trim(false);
+        libraries << wxT("\"") << libsArr.Item(i) << wxT("\" ");
+    }
     
-	text << wxT("IncludePath            := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
+    text << wxT("IncludePath            := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
 	text << wxT("IncludePCH             := ") << pchFile << wxT("\n");
 	text << wxT("RcIncludePath          := ") << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
 	text << wxT("Libs                   := ") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");

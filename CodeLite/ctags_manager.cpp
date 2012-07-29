@@ -2863,17 +2863,6 @@ bool TagsManager::AreTheSame(const TagEntryPtrVector_t& v1, const TagEntryPtrVec
     // Assuming that v1 and v2 are sorted!
     if( v1.size() != v2.size() )
         return false;
-    
-    CL_DEBUG(wxT("Vector 1:"));
-    for(size_t i=0; i<v1.size(); i++) {
-        CL_DEBUG(wxT("%s: %s : %s"), v1.at(i)->GetReturnValue().c_str(), v1.at(i)->GetFullDisplayName().c_str(), v1.at(i)->GetAccess());
-    }
-    
-    CL_DEBUG(wxT("Vector 2:"));
-    for(size_t i=0; i<v2.size(); i++) {
-        CL_DEBUG(wxT("%s: %s : %s"), v2.at(i)->GetReturnValue().c_str(), v2.at(i)->GetFullDisplayName().c_str(), v2.at(i)->GetAccess());
-    }
-    
     for(size_t i=0; i<v1.size(); i++) {
         if( v1.at(i)->CompareDisplayString(v2.at(i)) != 0 )
             return false;

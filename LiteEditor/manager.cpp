@@ -844,7 +844,7 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 	} else if ( type == TagsManager::Retag_Quick_No_Scan ) {
 		parsingRequest->setType(ParseRequest::PR_PARSE_FILE_NO_INCLUDES);
 		parsingRequest->setDbFile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-		parsingRequest->_evtHandler = this;
+		parsingRequest->_evtHandler = clMainFrame::Get();
 		parsingRequest->_quickRetag = true;
 		ParseThreadST::Get()->Add ( parsingRequest );
 

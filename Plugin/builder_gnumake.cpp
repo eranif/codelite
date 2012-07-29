@@ -996,9 +996,9 @@ void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf,
 		// In any case add the 'objects_file' target here
 		text << wxT("\t") << wxT("$(ArchiveTool) $(ArchiveOutputSwitch)$(OutputFile)");
 		if(cmp && cmp->GetReadObjectFilesFromList()) {
-			text << wxT(" @$(ObjectsFileList)\n");
+			text << wxT(" @$(ObjectsFileList) $(ArLibs)\n");
 		} else {
-			text << wxT(" $(Objects)\n");
+			text << wxT(" $(Objects) $(ArLibs)\n");
 		}
 		
 	} else if (type == Project::DYNAMIC_LIBRARY) {
@@ -1231,11 +1231,15 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 		}
 	}
 	
+    wxString libraries = bldConf->GetLibraries();
+    libraries.Replace(wxT(";"), wxT(" "));
+    
 	text << wxT("IncludePath            := ") << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
 	text << wxT("IncludePCH             := ") << pchFile << wxT("\n");
 	text << wxT("RcIncludePath          := ") << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
 	text << wxT("Libs                   := ") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
-
+    text << wxT("ArLibs                 := ") << libraries << wxT("\n");
+    
 	// add the global library path followed by the project library path
 	text << wxT("LibPath                :=") << ParseLibPath(cmp->GetGlobalLibPath(), proj->GetName(), bldConf->GetName()) << wxT(" ") << ParseLibPath(bldConf->GetLibPath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
 	text << wxT("\n\n");

@@ -790,13 +790,16 @@ void CodeLiteApp::MSWReadRegistry()
     // MinGW default installation (if exists)
     wxString pathEnv;
     wxGetEnv(wxT("PATH"), &pathEnv);
-    pathEnv << wxT(";") << ManagerST::Get()->GetInstallDir() << wxT(";");
-
+    
+    wxString codeliteInstallDir;
+    codeliteInstallDir << ManagerST::Get()->GetInstallDir() << wxT(";");
+    pathEnv.Prepend(codeliteInstallDir);
+    
     // Load the registry file
     wxString iniFile;
     iniFile << ManagerST::Get()->GetInstallDir() << wxFileName::GetPathSeparator() << wxT("registry.ini");
 
-    if (wxFileName::FileExists(iniFile)) {
+    if ( wxFileName::FileExists(iniFile) ) {
         clRegistry::SetFilename(iniFile);
         clRegistry registry;
 
@@ -811,12 +814,12 @@ void CodeLiteApp::MSWReadRegistry()
             // we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
             EnvMap envs = vars.GetVariables(wxT("Default"), false, wxT(""));
 
-            if (!envs.Contains(wxT("WXWIN"))) {
+            if ( !envs.Contains(wxT("WXWIN")) ) {
                 vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
                 vars.AddVariable(wxT("Default"), wxT("PATH"),  wxT("$(WXWIN)\\lib\\gcc_dll;$(PATH)"));
             }
 
-            if (!envs.Contains(wxT("WXCFG")))
+            if ( !envs.Contains(wxT("WXCFG")) )
                 vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
 
             EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
@@ -837,83 +840,12 @@ void CodeLiteApp::MSWReadRegistry()
 
         // Support for MinGW
         if (strMingw.IsEmpty() == false) {
-            // Add the installation include paths
-            pathEnv << wxT(";") << strMingw << wxT("\\bin");
-            wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw);
+            // Make sure that codelite's MinGW comes first before any other 
+            // MinGW installation that might exist on the machine
+            strMingw << wxFileName::GetPathSeparator() <<  wxT("bin;");
+            pathEnv.Prepend(strMingw);
         }
-
         wxSetEnv(wxT("PATH"), pathEnv);
-
-    } else {
-
-        // Use the old way: read values from registry. This code is kept so people using
-        // SVN build of codelite can continue working with it until an official build is released
-        // Update PATH environment variable with the install directory and
-        // MinGW default installation (if exists)
-        wxString pathEnv;
-        if (wxGetEnv(wxT("PATH"), &pathEnv) == false) {
-            wxLogMessage(_("WARNING: Failed to load environment variable PATH!"));
-        } else {
-            pathEnv << wxT(";") << ManagerST::Get()->GetInstallDir() << wxT(";");
-
-            // read the installation path of MinGW & WX
-            wxRegKey rk(wxT("HKEY_CURRENT_USER\\Software\\CodeLite"));
-            if (rk.Exists()) {
-                m_parserPaths.Clear();
-                wxString strWx, strMingw, strUnitTestPP;
-                if (rk.HasValue(wxT("wx"))) {
-                    rk.QueryValue(wxT("wx"), strWx);
-                }
-
-                if (rk.HasValue(wxT("mingw"))) {
-                    rk.QueryValue(wxT("mingw"), strMingw);
-                }
-
-                if (rk.HasValue(wxT("unittestpp"))) {
-                    rk.QueryValue(wxT("unittestpp"), strUnitTestPP);
-                }
-
-
-
-                if (strWx.IsEmpty() == false) {
-                    // we have WX installed on this machine, set the path of WXWIN & WXCFG to point to it
-                    EnvMap envs = vars.GetVariables(wxT("Default"), false, wxT(""));
-
-                    if (envs.Contains(wxT("WXWIN")) == false) {
-                        vars.AddVariable(wxT("Default"), wxT("WXWIN"), strWx);
-                        vars.AddVariable(wxT("Default"), wxT("PATH"),  wxT("$(WXWIN)\\lib\\gcc_dll;$(PATH)"));
-                    }
-
-                    if (envs.Contains(wxT("WXCFG")) == false)
-                        vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
-
-                    EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
-                    wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
-                }
-
-                if (strMingw.IsEmpty() == false) {
-                    // Add the installation include paths
-                    pathEnv << wxT(";") << strMingw << wxT("\\bin");
-                    wxSetEnv(wxT("MINGW_INCL_HOME"), strMingw);
-                }
-
-                // Support for UnitTest++
-                if (strUnitTestPP.IsEmpty() == false) {
-                    // we have UnitTest++ installed on this machine
-                    EnvMap envs = vars.GetVariables(wxT("Default"), false, wxT(""));
-
-                    if (!envs.Contains(wxT("UNIT_TEST_PP_SRC_DIR")) ) {
-                        vars.AddVariable(wxT("Default"), wxT("UNIT_TEST_PP_SRC_DIR"), strUnitTestPP);
-                    }
-
-                    EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
-                }
-            }
-
-            if (wxSetEnv(wxT("PATH"), pathEnv) == false) {
-                wxLogMessage(_("WARNING: Failed to update environment variable PATH"));
-            }
-        }
     }
 #endif
 }

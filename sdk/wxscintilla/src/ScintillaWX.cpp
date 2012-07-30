@@ -386,7 +386,6 @@ bool ScintillaWX::HaveMouseCapture() {
 void ScintillaWX::ScrollText(int linesToMove) {
 	int dy = vs.lineHeight * (linesToMove);
 	sci->ScrollWindow(0, dy);
-	sci->Update();
 }
 
 void ScintillaWX::SetVerticalScrollPos() {

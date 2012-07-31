@@ -162,8 +162,12 @@ void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)
 
 void UnitTestPP::UnPlug()
 {
+    if ( m_proc ) {
+        delete m_proc;
+        m_proc = NULL;
+    }
+    m_output.Clear();
 }
-
 
 wxMenu *UnitTestPP::CreateEditorPopMenu()
 {
@@ -339,6 +343,7 @@ void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
     
     EnvSetter es;
     //m_proc will be deleted upon termination
+    m_output.Clear();
     m_proc = ::CreateAsyncProcess(this, cmd);
 }
 

@@ -27,6 +27,7 @@
 #include "unittestspage.h"
 #include "macros.h"
 #include "unittestdata.h"
+#include "event_notifier.h"
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 #include "ctags_manager.h"
@@ -148,9 +149,9 @@ void UnitTestPP::CreatePluginMenu(wxMenu *pluginsMenu)
     pluginsMenu->Append(wxID_ANY, wxT("UnitTest++"), menu);
 
     //connect the events
-    menu->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest),    NULL, (wxEvtHandler*)this);
-    menu->Connect(XRCID("unittestpp_new_class_test"),  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest),     NULL, (wxEvtHandler*)this);
-    menu->Connect(XRCID("mark_project_as_ut"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnMarkProjectAsUT),  NULL, (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewSimpleTest),    NULL, (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("unittestpp_new_class_test"),  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnNewClassTest),     NULL, (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("mark_project_as_ut"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(UnitTestPP::OnMarkProjectAsUT),  NULL, (wxEvtHandler*)this);
 }
 
 void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)

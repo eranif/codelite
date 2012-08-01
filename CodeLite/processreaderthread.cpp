@@ -83,6 +83,7 @@ void* ProcessReaderThread::Entry()
 			}
 		}
 	}
+    Exit();
 	return NULL;
 }
 

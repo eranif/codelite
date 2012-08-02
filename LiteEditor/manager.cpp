@@ -2293,8 +2293,16 @@ void Manager::DbgStart ( long attachPid )
 		// debugging local target
 		dbgr->Run ( args, wxEmptyString );
 	}
-
+    
 	GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
+    
+    // Re-set the title (it might be modified by 'LoadPerspective')
+    wxAuiManager& aui = clMainFrame::Get()->GetDockingManager();
+	wxAuiPaneInfo& pi = aui.GetPane(wxT("Debugger Console"));
+	if(pi.IsOk() && pi.caption != title) {
+		pi.Caption(title);
+        aui.Update();
+	}
 }
 
 void Manager::DbgStop()

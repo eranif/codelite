@@ -83,12 +83,13 @@ void* ProcessReaderThread::Entry()
 			}
 		}
 	}
+    delete m_process;
+    m_process = NULL;
 	return NULL;
 }
 
 void ProcessReaderThread::Stop()
 {
-	// nothing to be done, this thread is detached
 }
 
 void ProcessReaderThread::Start(int priority)

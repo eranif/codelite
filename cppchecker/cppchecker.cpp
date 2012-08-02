@@ -160,7 +160,6 @@ void CppCheckPlugin::UnPlug()
 	// terminate the cppcheck daemon
 	if ( m_cppcheckProcess ) {
 		wxLogMessage(_("CppCheckPlugin: Terminating cppcheck daemon..."));
-		delete m_cppcheckProcess;
 		m_cppcheckProcess = NULL;
 	}
 }
@@ -304,7 +303,6 @@ void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
 {
 	m_filelist.Clear();
-	delete m_cppcheckProcess;
 	m_cppcheckProcess = NULL;
 
 	m_view->PrintStatusMessage();

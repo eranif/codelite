@@ -68,7 +68,6 @@ void SvnConsole::OnProcessEnd(wxCommandEvent& event)
 	delete ped;
 
 	if ( m_process ) {
-		delete m_process;
 		m_process = NULL;
 	}
 	
@@ -131,7 +130,6 @@ void SvnConsole::Clear()
 void SvnConsole::Stop()
 {
 	if (m_process) {
-		delete m_process;
 		m_process = NULL;
 	}
 	AppendText(_("Aborted.\n"));

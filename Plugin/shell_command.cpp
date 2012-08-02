@@ -95,7 +95,6 @@ void ShellCommand::DoPrintOutput(const wxString &out)
 void ShellCommand::CleanUp()
 {
 	if (m_proc) {
-		delete m_proc;
 		m_proc = NULL;
 	}
 	SendEndMsg();

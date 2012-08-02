@@ -158,13 +158,8 @@ TagsManager::~TagsManager()
         // Dont kill the indexer process, just terminate the
         // reader-thread (this is done by deleting the indexer object)
         m_canRestartIndexer = false;
-
-#ifndef __WXMSW__
         m_codeliteIndexerProcess->Terminate();
-#endif
-
-        delete m_codeliteIndexerProcess;
-
+        
 #ifndef __WXMSW__
         // Clear the socket file
         std::stringstream s;
@@ -330,10 +325,8 @@ void TagsManager::SetCodeLiteIndexerPath(const wxString& path)
 void TagsManager::OnIndexerTerminated(wxCommandEvent& event)
 {
     if(m_codeliteIndexerProcess) {
-        delete m_codeliteIndexerProcess;
         m_codeliteIndexerProcess = NULL;
     }
-
     StartCodeLiteIndexer();
 }
 

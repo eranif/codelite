@@ -95,7 +95,6 @@ void SvnCommand::OnProcessTerminated(wxCommandEvent& event)
 	}
 
 	if (m_process) {
-		delete m_process;
 		m_process = NULL;
 	}
 }

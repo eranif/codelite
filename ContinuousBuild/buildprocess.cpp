@@ -27,7 +27,6 @@ bool BuildProcess::Execute(const wxString& cmd, const wxString &fileName, const 
 void BuildProcess::Stop()
 {
 	if(m_process){
-		delete m_process;
 		m_process = NULL;
 	}
 	m_fileName.Clear();

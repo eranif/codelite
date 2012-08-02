@@ -319,7 +319,7 @@ bool DbgGdb::Run( const wxString &args, const wxString &comm )
 void DbgGdb::DoCleanup()
 {
 	if ( m_gdbProcess ) {
-		delete m_gdbProcess;
+        m_gdbProcess->Terminate();
 		m_gdbProcess = NULL;
 	}
 

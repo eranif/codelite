@@ -41,6 +41,7 @@ ProcessReaderThread::ProcessReaderThread()
 
 ProcessReaderThread::~ProcessReaderThread()
 {
+    m_notifiedWindow = NULL;
 }
 
 void* ProcessReaderThread::Entry()

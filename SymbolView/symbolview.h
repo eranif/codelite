@@ -43,6 +43,8 @@ class SymbolViewPlugin : public IPlugin
 {
 protected:
     SymbolViewTabPanel *m_view;
+    bool IsPaneDetached();
+    int DoFindTabIndex();
     
 public:
     //--------------------------------------------

@@ -10,6 +10,8 @@
     <File Name="sv_symbol_tree.cpp"/>
     <File Name="sv_tab_panel.h"/>
     <File Name="sv_tab_panel.cpp"/>
+    <File Name="outline_settings.cpp"/>
+    <File Name="outline_settings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="symbolview.h"/>
@@ -67,7 +69,7 @@
         <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins=outline" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

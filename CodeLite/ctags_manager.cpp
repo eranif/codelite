@@ -159,6 +159,7 @@ TagsManager::~TagsManager()
         // reader-thread (this is done by deleting the indexer object)
         m_canRestartIndexer = false;
         m_codeliteIndexerProcess->Terminate();
+        wxSleep(1);
         
 #ifndef __WXMSW__
         // Clear the socket file

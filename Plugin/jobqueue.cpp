@@ -38,6 +38,7 @@ JobQueueWorker::~JobQueueWorker()
 void JobQueueWorker::Stop()
 {
 	wxThread::Delete();
+	wxThread::Wait();
 }
 
 void JobQueueWorker::Start(int priority)

@@ -88,6 +88,7 @@ ThreadRequest *WorkerThread::GetRequest()
 void WorkerThread::Stop()
 {
 	wxThread::Delete();
+    wxThread::Wait();
 }
 
 void WorkerThread::Start(int priority)

@@ -319,7 +319,7 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 		}
 		DoLinkEditor();
 	}
-	return;
+	
 	DoCreateFileExplorerImages();
 
 	if(m_fileExplorerLastBaseImgIdx != -1) {

@@ -273,21 +273,22 @@ void UnixProcessImpl::Cleanup()
 
 #ifdef __WXGTK__
 	if(GetPid() != wxNOT_FOUND) {
-		// Kill the child process
-		if ( IsAlive() ) {
-			wxString cmd;
-			wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-			wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
-			cmd << wxT("/bin/sh -f ") << script.GetFullPath();
-			cmd << GetPid();
-			// If hard kill requested, pass -9
-			if(GetHardKill())
-				cmd << wxT(" -9");
-			wxExecute(cmd, wxEXEC_ASYNC);
-		}
+//		// Kill the child process
+//		if ( IsAlive() ) {
+//			wxString cmd;
+//			wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+//			wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
+//			cmd << wxT("/bin/sh -f ") << script.GetFullPath();
+//			cmd << GetPid();
+//			// If hard kill requested, pass -9
+//			if(GetHardKill())
+//				cmd << wxT(" -9");
+//			wxExecute(cmd, wxEXEC_ASYNC);
+//		}
 		// Perform process cleanup
-//		int status(0);
-//		waitpid(GetPid(), &status, WNOHANG);
+        wxKill(GetPid(), wxSIGTERM, NULL, wxKILL_CHILDREN);
+		int status(0);
+		waitpid(GetPid(), &status, 0);
 	}
 
 #else
@@ -444,22 +445,26 @@ void UnixProcessImpl::StartReaderThread()
 void UnixProcessImpl::Terminate()
 {
 #ifdef __WXGTK__
-
-	// Kill the child process
-	if ( IsAlive() ) {
-		wxString cmd;
-		wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-		wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
-		cmd << wxT("/bin/sh -f ") << script.GetFullPath();
-		cmd << GetPid();
-
-		// If hard kill requested, pass -9
-		if(GetHardKill())
-			cmd << wxT(" -9");
-		
-		wxArrayString dummyArr;
-		ProcUtils::SafeExecuteCommand(cmd, dummyArr);
-	}
+    
+    wxKill(GetPid(), wxSIGTERM, NULL, wxKILL_CHILDREN);
+    int status(0);
+    waitpid(GetPid(), &status, 0);
+        
+//	// Kill the child process
+//	if ( IsAlive() ) {
+//		wxString cmd;
+//		wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+//		wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
+//		cmd << wxT("/bin/sh -f ") << script.GetFullPath();
+//		cmd << GetPid();
+//
+//		// If hard kill requested, pass -9
+//		if(GetHardKill())
+//			cmd << wxT(" -9");
+//		
+//		wxArrayString dummyArr;
+//		ProcUtils::SafeExecuteCommand(cmd, dummyArr);
+//	}
 #else
 	wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
 #endif

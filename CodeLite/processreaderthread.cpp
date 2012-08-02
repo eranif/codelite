@@ -90,8 +90,8 @@ void ProcessReaderThread::Stop()
 {
 	// Notify the thread to stop
 	// and wait for its termination
-	if ( IsAlive() )
-		Delete();
+	Delete();
+    Wait();
 }
 
 void ProcessReaderThread::Start(int priority)

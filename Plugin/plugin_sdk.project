@@ -461,4 +461,10 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="JSON">
+    <File Name="cJSON.cpp"/>
+    <File Name="cJSON.h"/>
+    <File Name="json_node.cpp"/>
+    <File Name="json_node.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

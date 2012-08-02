@@ -164,7 +164,6 @@ void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)
 void UnitTestPP::UnPlug()
 {
     if ( m_proc ) {
-        delete m_proc;
         m_proc = NULL;
     }
     m_output.Clear();

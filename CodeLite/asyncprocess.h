@@ -37,7 +37,7 @@ enum IProcessCreateFlags {
 	IProcessCreateWithHiddenConsole   = 0x0000004  // Create process with a hidden console
 };
 
-class WXDLLIMPEXP_CL ProcessReaderThread;
+class ProcessReaderThread;
 /**
  * @class IProcess
  * @author eran

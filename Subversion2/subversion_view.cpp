@@ -317,8 +317,13 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 		if (m_treeCtrl->ItemHasChildren(root)) {
 			m_treeCtrl->Expand(root);
 		}
+		
 		DoLinkEditor();
 	}
+	
+#ifdef __WXMSW__	
+	return;
+#endif
 	
 	DoCreateFileExplorerImages();
 

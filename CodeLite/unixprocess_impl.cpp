@@ -21,7 +21,7 @@
 #    include <util.h>
 #endif
 
-static char  **argv;
+static char  **argv = NULL;
 static int    argc = 0;
 
 // ----------------------------------------------
@@ -264,12 +264,15 @@ void UnixProcessImpl::Cleanup()
 	close(GetReadHandle());
 	close(GetWriteHandle());
 
+#if 0
 	if ( m_thr ) {
 		// Stop the reader thread
 		m_thr->Stop();
 		delete m_thr;
 		m_thr = NULL;
 	}
+#endif
+	m_thr = NULL;
 
 #ifdef __WXGTK__
 	if(GetPid() != wxNOT_FOUND) {
@@ -412,7 +415,9 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
 	} else {
 		// Parent
 		close(slave);
-
+		freeargv(argv);
+		argc = 0;
+		
 		// disable ECHO
 		struct termios termio;
 		tcgetattr(master, &termio);

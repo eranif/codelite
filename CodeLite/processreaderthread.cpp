@@ -33,7 +33,7 @@ const wxEventType wxEVT_PROC_TERMINATED  = 10951;
 #endif
 
 ProcessReaderThread::ProcessReaderThread()
-		: wxThread(wxTHREAD_JOINABLE)
+		: wxThread(wxTHREAD_DETACHED)
 		, m_notifiedWindow( NULL )
 		, m_process       ( NULL )
 {
@@ -88,10 +88,7 @@ void* ProcessReaderThread::Entry()
 
 void ProcessReaderThread::Stop()
 {
-	// Notify the thread to stop
-	// and wait for its termination
-	Delete();
-    Wait();
+	// nothing to be done, this thread is detached
 }
 
 void ProcessReaderThread::Start(int priority)

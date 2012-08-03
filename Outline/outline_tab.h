@@ -29,6 +29,8 @@ public:
     void OnGotoImpl(wxCommandEvent &e);
     void OnGotoDecl(wxCommandEvent &e);
     void OnFindReferenes(wxCommandEvent &e);
+    void OnRenameSymbol(wxCommandEvent &e);
+    void OnItemSelectedUI(wxUpdateUIEvent &e);
 };
 
 #endif // SYMBOLVIEWTABPANEL_H

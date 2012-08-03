@@ -348,17 +348,12 @@ bool WinProcessImpl::IsAlive()
 
 void WinProcessImpl::Cleanup()
 {
-
-#if 0
 	// Under windows, the reader thread is detached
 	if ( m_thr ) {
 		// Stop the reader thread
 		m_thr->Stop();
 		delete m_thr;
-		m_thr = NULL;
 	}
-	
-#endif
 	m_thr = NULL;
 	
 	// terminate the process

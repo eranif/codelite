@@ -134,6 +134,7 @@ void wxTerminal::OnProcessEnd(wxCommandEvent& event)
 	ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
 	delete ped;
 	if( m_process ) {
+        delete m_process;
 		m_process = NULL;
 	}
 	if(m_exitWhenProcessDies) {
@@ -261,7 +262,7 @@ wxString wxTerminal::StartTTY()
 void wxTerminal::StopTTY()
 {
 	if(m_dummyProcess) {
-		m_dummyProcess = NULL;
+        delete m_dummyProcess;
 	}
 
 	m_dummyProcess = NULL;

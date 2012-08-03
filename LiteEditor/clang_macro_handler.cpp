@@ -43,6 +43,7 @@ void ClangMacroHandler::OnClangProcessTerminated(wxCommandEvent& e)
 	ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
 	delete ped;
 	if( m_process ) {
+        delete m_process;
 		m_process = NULL;
 	}
 	

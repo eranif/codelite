@@ -398,6 +398,8 @@ void wxFormBuilder::OnWxFBTerminated(wxCommandEvent& e)
 {
 	ProcessEventData *ped = (ProcessEventData*) e.GetClientData();
 	if(ped) {
+         if(ped->GetProcess())
+            delete ped->GetProcess();
 		delete ped;
 	}
 }

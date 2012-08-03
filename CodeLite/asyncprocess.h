@@ -37,7 +37,6 @@ enum IProcessCreateFlags {
 	IProcessCreateWithHiddenConsole   = 0x0000004  // Create process with a hidden console
 };
 
-class ProcessReaderThread;
 /**
  * @class IProcess
  * @author eran
@@ -47,8 +46,6 @@ class ProcessReaderThread;
  */
 class WXDLLIMPEXP_CL IProcess
 {
-    friend class ProcessReaderThread;
-    
 protected:
 	wxEvtHandler *            m_parent;
 	int                       m_pid;
@@ -56,8 +53,6 @@ protected:
 
 public:
 	IProcess(wxEvtHandler *parent) : m_parent(parent), m_pid(-1), m_hardKill(false) {}
-    
-protected:
 	virtual ~IProcess() {}
     
 public:

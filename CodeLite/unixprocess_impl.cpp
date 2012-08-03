@@ -264,45 +264,18 @@ void UnixProcessImpl::Cleanup()
 	close(GetReadHandle());
 	close(GetWriteHandle());
 
-#if 0
 	if ( m_thr ) {
 		// Stop the reader thread
 		m_thr->Stop();
 		delete m_thr;
-		m_thr = NULL;
 	}
-#endif
 	m_thr = NULL;
-
-#ifdef __WXGTK__
+    
 	if(GetPid() != wxNOT_FOUND) {
-//		// Kill the child process
-//		if ( IsAlive() ) {
-//			wxString cmd;
-//			wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-//			wxFileName script(exePath.GetPath(), wxT("codelite_kill_children "));
-//			cmd << wxT("/bin/sh -f ") << script.GetFullPath();
-//			cmd << GetPid();
-//			// If hard kill requested, pass -9
-//			if(GetHardKill())
-//				cmd << wxT(" -9");
-//			wxExecute(cmd, wxEXEC_ASYNC);
-//		}
-		// Perform process cleanup
         wxKill(GetPid(), wxSIGTERM, NULL, wxKILL_CHILDREN);
 		int status(0);
 		waitpid(GetPid(), &status, 0);
 	}
-
-#else
-//	if(GetPid() != wxNOT_FOUND) {
-//		wxKill (GetPid(), GetHardKill() ? wxSIGKILL : wxSIGTERM);
-//		// Perform process cleanup
-//		int status(0);
-//		waitpid(GetPid(), &status, WNOHANG);
-//	}
-#endif
-
 }
 
 bool UnixProcessImpl::IsAlive()

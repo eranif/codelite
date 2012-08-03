@@ -33,7 +33,7 @@ const wxEventType wxEVT_PROC_TERMINATED  = 10951;
 #endif
 
 ProcessReaderThread::ProcessReaderThread()
-		: wxThread(wxTHREAD_DETACHED)
+		: wxThread(wxTHREAD_JOINABLE)
 		, m_notifiedWindow( NULL )
 		, m_process       ( NULL )
 {
@@ -84,13 +84,16 @@ void* ProcessReaderThread::Entry()
 			}
 		}
 	}
-    delete m_process;
     m_process = NULL;
 	return NULL;
 }
 
 void ProcessReaderThread::Stop()
 {
+    // Notify the thread to exit and 
+    // wait for it
+    Delete();
+    Wait();
 }
 
 void ProcessReaderThread::Start(int priority)

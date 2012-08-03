@@ -1229,7 +1229,7 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName> &projectFiles)
     }
 
     // Put a request to the parsing thread to delete the tags for the 'projectFiles'
-    ParseRequest *req = new ParseRequest();
+    ParseRequest *req = new ParseRequest( ParseThreadST::Get()->GetNotifiedWindow() );
     req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
     req->setType  ( ParseRequest::PR_DELETE_TAGS_OF_FILES );
     req->_workspaceFiles.clear();
@@ -1280,7 +1280,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, RetagType typ
     DeleteFilesTags(strFiles);
 
     // step 5: build the database
-    ParseRequest *req = new ParseRequest();
+    ParseRequest *req = new ParseRequest( ParseThreadST::Get()->GetNotifiedWindow() );
     req->_evtHandler = cb; // Callback window
     req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 

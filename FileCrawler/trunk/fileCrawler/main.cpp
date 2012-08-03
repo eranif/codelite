@@ -11,10 +11,10 @@ int main(int argc, char **argv)
 {
 //	fcFileOpener::Instance()->AddSearchPath("C:/MinGW-3.4.5/include");
 //	fcFileOpener::Instance()->AddSearchPath("C:/wxWidgets-2.8.10/include");
-	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\include");
-	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\lib\\gcc\\mingw32\\4.4.0\\include\\c++");
-	fcFileOpener::Instance()->AddSearchPath("C:\\Users\\eran\\software\\codelite");
-	fcFileOpener::Instance()->AddExcludePath("C:\\MinGW-4.4.0\\lib\\gcc\\mingw32\\4.4.0\\include\\c++\\debug");
+//	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\include");
+//	fcFileOpener::Instance()->AddSearchPath("C:\\MinGW-4.4.0\\lib\\gcc\\mingw32\\4.4.0\\include\\c++");
+//	fcFileOpener::Instance()->AddSearchPath("C:\\Users\\eran\\software\\codelite");
+//	fcFileOpener::Instance()->AddExcludePath("C:\\MinGW-4.4.0\\lib\\gcc\\mingw32\\4.4.0\\include\\c++\\debug");
 //	fcFileOpener::Instance()->AddExcludePath("C:/wxWidgets-2.8.10/include/wx/unix");
 //	fcFileOpener::Instance()->AddExcludePath("C:/wxWidgets-2.8.10/include/wx/univ");
 
@@ -36,6 +36,13 @@ int main(int argc, char **argv)
 		for (; iter != fcFileOpener::Instance()->GetResults().end(); iter ++) {
 			printf("%s\n", (*iter).c_str());
 		}
+        
+        printf("---->\n");
+        const fcFileOpener::List_t& includeStatements = fcFileOpener::Instance()->GetIncludeStatements();
+        fcFileOpener::List_t::const_iterator it = includeStatements.begin();
+        for(; it != includeStatements.end(); ++it) {
+            printf("%s\n", (*it).c_str());
+        }
 	}
 
 	std::set<std::string> ns = fcFileOpener::Instance()->GetNamespaces();

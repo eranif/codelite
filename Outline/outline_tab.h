@@ -11,6 +11,9 @@ class OutlineTab : public OutlineTabBaseClass
 protected:
     IManager* m_mgr;
     svSymbolTree* m_tree;
+    
+    bool IsIncludeFileNode();
+    
 public:
     OutlineTab(wxWindow* parent, IManager* mgr);
     virtual ~OutlineTab();
@@ -27,6 +30,7 @@ public:
     void OnFilesTagged(wxCommandEvent &e);
     void OnMenu(wxContextMenuEvent &e);
     void OnGotoImpl(wxCommandEvent &e);
+    void OnOpenFile(wxCommandEvent &e);
     void OnGotoDecl(wxCommandEvent &e);
     void OnFindReferenes(wxCommandEvent &e);
     void OnRenameSymbol(wxCommandEvent &e);

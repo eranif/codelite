@@ -40,35 +40,6 @@
 class ITagsStorage;
 
 /**
- * @class ParseThreadEventData
- * @author eran
- * @date 10/04/09
- * @file parse_thread.h
- * @brief
- */
-class ParseThreadEventData
-{
-	wxString m_fileName;
-	std::vector<std::pair<wxString, TagEntry> >  m_items;
-public:
-	ParseThreadEventData() {}
-	~ParseThreadEventData() {}
-
-	void SetFileName(const wxString& fileName) {
-		this->m_fileName = fileName.c_str();
-	}
-	void SetItems(const std::vector<std::pair<wxString, TagEntry> >& items) {
-		this->m_items = items;
-	}
-	const wxString& GetFileName() const {
-		return m_fileName;
-	}
-	const std::vector<std::pair<wxString, TagEntry> >& GetItems() const {
-		return m_items;
-	}
-};
-
-/**
  * @class ParseRequest
  * @author eran
  * @date 10/04/09
@@ -86,25 +57,28 @@ public:
 	wxEvtHandler*            _evtHandler;
 	std::vector<std::string> _workspaceFiles;
 	bool                     _quickRetag;
+    int                      _uid;
+    
 public:
 	enum {
 		PR_FILESAVED,
 		PR_PARSEINCLUDES,
 		PR_PARSE_AND_STORE,
 		PR_DELETE_TAGS_OF_FILES,
-		PR_PARSE_FILE_NO_INCLUDES
+		PR_PARSE_FILE_NO_INCLUDES,
+        PR_PARSE_INCLUDE_STATEMENTS,
 	};
 
 public:
 
 	// ctor/dtor
-	ParseRequest() : _type (PR_FILESAVED), _evtHandler(NULL), _quickRetag(false) {}
+	ParseRequest(wxEvtHandler *handler) : _type (PR_FILESAVED), _evtHandler(handler), _quickRetag(false), _uid(-1) {}
 	virtual ~ParseRequest() ;
 
 	// accessors
-	void setFile     (const wxString &file     );
-	void setDbFile   (const wxString &dbfile   );
-	void setTags     (const wxString &tags     );
+	void setFile  (const wxString &file     );
+	void setDbFile(const wxString &dbfile   );
+	void setTags  (const wxString &tags     );
 
 	//Getters
 	const wxString& getDbfile() const {
@@ -166,7 +140,8 @@ private:
 
 	void       DoStoreTags   (const wxString &tags, const wxString &filename, int &count, ITagsStoragePtr db);
 	TagTreePtr DoTreeFromTags(const wxString &tags, int &count);
-
+    void DoNotifyReady(wxEvtHandler *caller);
+    
 private:
 
 	/**
@@ -175,32 +150,23 @@ private:
 	 */
 	void ProcessRequest(ThreadRequest *request);
 	/**
-	 * Send an event to the window with an array of items that where changed.
-	 * \param evtType Event type to send, one of:
-	 * - wxEVT_CMD_DEL_SYMBOL_TREE_ITEMS
-	 * - wxEVT_CMD_ADD_SYMBOL_TREE_ITEMS
-	 * - wxEVT_CMD_UPD_SYMBOL_TREE_ITEMS
-	 * \param items Vector of items that were modified/deleted/added
-	 */
-	void SendEvent(int evtType, const wxString &fileName, std::vector<std::pair<wxString, TagEntry> >  &items);
-
-	/**
 	 * @brief parse include files and retrieve a list of all
 	 * include files that should be tagged and inserted into
 	 * the external database
 	 * @param filename
 	 */
-	void ParseIncludeFiles(const wxString &filename, ITagsStoragePtr db);
+	void ParseIncludeFiles(ParseRequest *req, const wxString &filename, ITagsStoragePtr db);
 
 	void ProcessSimple            (ParseRequest *req);
 	void ProcessIncludes          (ParseRequest *req);
 	void ProcessParseAndStore     (ParseRequest *req);
 	void ProcessDeleteTagsOfFiles (ParseRequest *req);
 	void ProcessSimpleNoIncludes  (ParseRequest *req);
+	void ProcessIncludeStatements (ParseRequest *req);
 	void GetFileListToParse(const wxString &filename, wxArrayString &arrFiles);
-	void ParseAndStoreFiles(const wxArrayString &arrFiles, int initalCount, ITagsStoragePtr db);
+	void ParseAndStoreFiles(ParseRequest *req, const wxArrayString &arrFiles, int initalCount, ITagsStoragePtr db);
 
-	void FindIncludedFiles(ParseRequest *req);
+	void FindIncludedFiles(ParseRequest *req, std::set<std::string> *newSet);
 };
 
 class WXDLLIMPEXP_CL ParseThreadST 
@@ -210,103 +176,11 @@ public:
 	static ParseThread* Get();
 };
 
-/**
- * Holds information about events associated with SymbolTree object.
- */
-class WXDLLIMPEXP_CL SymbolTreeEvent : public wxNotifyEvent
-{
-	std::vector<std::pair<wxString, TagEntry> >  m_items;
-	wxString m_project;
-	wxString m_fileName;
-
-protected:
-	/**
-	 * @brief we provide our own 'copy' function for the event items
-	 * this is to avoide ref counting of the wxString items
-	 * @param items
-	 */
-	void CopyItems(const std::vector<std::pair<wxString, TagEntry> > & items) {
-		m_items.clear();
-		for (size_t i=0; i<items.size(); i++) {
-			std::pair<wxString, TagEntry> p;
-			p.first = items.at(i).first.c_str();
-			p.second = items.at(i).second;
-			m_items.push_back(p);
-		}
-	}
-
-
-public:
-	/**
-	 * Constructor
-	 * \param commandType Event type
-	 * \param winid Window ID
-	 * \param key Item key
-	 * \param data Item data
-	 */
-	SymbolTreeEvent(std::vector<std::pair<wxString, TagEntry> >  &items, wxEventType commandType = wxEVT_NULL, int winid = 0)
-			: wxNotifyEvent(commandType, winid) {
-		CopyItems(items);
-	}
-
-	/**
-	 * Construct event with project name
-	 * \param project project name
-	 * \param commandType Event type
-	 * \param winid Window ID
-	 */
-	SymbolTreeEvent(const wxString& project, const wxString &fileName, wxEventType commandType = wxEVT_NULL, int winid = 0)
-			: wxNotifyEvent(commandType, winid)
-			, m_project(project.c_str())
-			, m_fileName(fileName.c_str()) {
-	}
-
-	/**
-	 * Copy constructor
-	 * \param rhs Right hand side
-	 */
-	SymbolTreeEvent(const SymbolTreeEvent& rhs)
-			: wxNotifyEvent(rhs.GetEventType(), rhs.GetId())
-			, m_project(rhs.m_project.c_str())
-			, m_fileName(rhs.m_fileName.c_str()) {
-		CopyItems(rhs.m_items);
-	}
-
-	/**
-	 * Clone method to allow the event to be posted between threads.
-	 * \return
-	 */
-	wxEvent *Clone(void) const {
-		return new SymbolTreeEvent(*this);
-	}
-
-	SymbolTreeEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
-			: wxNotifyEvent(commandType, winid) {}
-
-	std::vector<std::pair<wxString, TagEntry> >& GetItems() {
-		return m_items;
-	}
-
-	const wxString& GetProject() const {
-		return m_project;
-	}
-
-	const wxString& GetFileName() const {
-		return m_fileName;
-	}
-
-	void SetFileName(const wxChar* fileName) {
-		m_fileName = fileName;
-	}
-};
-
-
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS;
 extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_INTERESTING_MACROS;
-
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_INCLUDE_STATEMENTS_DONE;
+extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_READY;
 #endif // CODELITE_PARSE_THREAD_H

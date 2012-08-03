@@ -819,7 +819,7 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 	}
 
 	// Create a parsing request
-	ParseRequest *parsingRequest = new ParseRequest();
+	ParseRequest *parsingRequest = new ParseRequest(clMainFrame::Get());
 	for (size_t i=0; i<projectFiles.size(); i++) {
 		// filter any non valid coding file
 		if(!TagsManagerST::Get()->IsValidCtagsFile(projectFiles.at(i)))
@@ -844,7 +844,6 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 	} else if ( type == TagsManager::Retag_Quick_No_Scan ) {
 		parsingRequest->setType(ParseRequest::PR_PARSE_FILE_NO_INCLUDES);
 		parsingRequest->setDbFile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-		parsingRequest->_evtHandler = clMainFrame::Get();
 		parsingRequest->_quickRetag = true;
 		ParseThreadST::Get()->Add ( parsingRequest );
 
@@ -866,7 +865,7 @@ void Manager::RetagFile ( const wxString& filename )
 	absFile.MakeAbsolute();
 
 	// Put a request to the parsing thread
-	ParseRequest *req = new ParseRequest();
+	ParseRequest *req = new ParseRequest( clMainFrame::Get() );
 	req->setDbFile   ( TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 	req->setFile     ( absFile.GetFullPath().c_str() );
 	req->setType     ( ParseRequest::PR_FILESAVED );

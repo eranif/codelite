@@ -157,6 +157,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
     EVT_MENU(XRCID("find_references"),              ContextCpp::OnFindReferences)
 	EVT_MENU(XRCID("sync_signatures"),              ContextCpp::OnSyncSignatures)
     EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
+    EVT_MENU(XRCID("open_include_file"),            ContextCpp::OnContextOpenDocument)
 END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(LEditor *container)
@@ -506,6 +507,11 @@ wxString ContextCpp::GetWordUnderCaret()
 void ContextCpp::OnContextOpenDocument(wxCommandEvent &event)
 {
     wxUnusedVar(event);
+    
+    // If the event contains a new selection, use it instead of the m_selectedWord
+    if( event.GetString().IsEmpty() == false )
+        m_selectedWord = event.GetString();
+        
     DoOpenWorkspaceFile();
 }
 
@@ -536,7 +542,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
         PrependMenuItemSeparator(menu);
         menuItemText <<_("Open Include File \"") << fileName << wxT("\"");
 
-        PrependMenuItem(menu, menuItemText, wxCommandEventHandler(ContextCpp::OnContextOpenDocument));
+        PrependMenuItem(menu, menuItemText, wxCommandEventHandler(ContextCpp::OnContextOpenDocument), XRCID("open_include_file"));
         m_selectedWord = fileName;
 
     } else {

@@ -187,8 +187,17 @@ void SymbolTree::BuildTree(const wxFileName &fileName)
         // Add the node
         AddItem(node);
     }
-
+    
     SortTree(m_sortItems);
+    if ( ItemHasChildren(m_globalsNode) == false ) {
+        Delete(m_globalsNode);
+    }
+    if ( ItemHasChildren(m_prototypesNode) == false ) {
+        Delete(m_prototypesNode);
+    }
+    if ( ItemHasChildren(m_macrosNode) == false ) {
+        Delete(m_macrosNode);
+    }
     Thaw();
 
     //select the root node by default
@@ -436,6 +445,7 @@ void SymbolTree::AddSymbols(const std::vector<std::pair<wxString, TagEntry> > &i
 void SymbolTree::Clear()
 {
     // Clear the tree
+    Freeze();
     DeleteAllItems();
     m_items.clear();
     m_globalsNode = wxTreeItemId();
@@ -443,4 +453,5 @@ void SymbolTree::Clear()
     m_macrosNode = wxTreeItemId();
     m_sortItems.clear();
     m_fileName.Clear();
+    Thaw();
 }

@@ -108,7 +108,7 @@ public:
     /**
      * @brief clear the tree content
      */
-    void Clear();
+    virtual void Clear();
 
     /**
      * Destructor .

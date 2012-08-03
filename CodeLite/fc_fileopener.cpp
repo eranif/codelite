@@ -159,3 +159,11 @@ void fcFileOpener::AddNamespace(const char* ns)
 {
 	_namespaces.insert(ns);
 }
+
+void fcFileOpener::AddIncludeStatement(const std::string& statement)
+{
+    if( std::find(_includeStatements.begin(), _includeStatements.end(), statement) == _includeStatements.end()) {
+        _includeStatements.push_back(statement);
+    }
+}
+

@@ -63,7 +63,7 @@ crawler_lexer.cpp: crawler.l
 	flex -L  -Pfc_ crawler.l
 	mv lex.fc_.c crawler_lexer.cpp</CustomPreBuild>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -85,8 +85,8 @@ crawler_lexer.cpp: crawler.l
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="no">#copy crawler* ..\..\..\CodeLite</Command>
-        <Command Enabled="no">#copy fc_* ..\..\..\CodeLite</Command>
+        <Command Enabled="yes">copy crawler* ..\..\..\CodeLite</Command>
+        <Command Enabled="yes">copy fc_* ..\..\..\CodeLite</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -106,7 +106,7 @@ crawler_lexer.cpp: crawler.l
 	mv lex.fc_.c crawler_lexer.cpp
 </CustomPreBuild>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>

@@ -438,7 +438,6 @@ protected:
 	void OnGrepWordUI        (wxUpdateUIEvent& e);
 
 	//handle symbol tree events
-	void OnParsingThreadDone          (wxCommandEvent  &e);
 	void OnParsingThreadMessage       (wxCommandEvent  &e);
 	void OnDatabaseUpgrade            (wxCommandEvent  &e);
 	void OnDatabaseUpgradeInternally  (wxCommandEvent  &e);
@@ -530,7 +529,8 @@ protected:
 	void OnLoadPerspective(wxCommandEvent &e);
 	void OnWorkspaceSettings(wxCommandEvent &e);
 	void OnWorkspaceEditorPreferences(wxCommandEvent &e);
-
+    void OnParserThreadReady(wxCommandEvent &e);
+    
 	// Clang
 	void OnPchCacheStarted(wxCommandEvent &e);
 	void OnPchCacheEnded  (wxCommandEvent &e);

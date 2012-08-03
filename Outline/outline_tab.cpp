@@ -8,6 +8,7 @@ const wxEventType wxEVT_SV_GOTO_DEFINITION  = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
 const wxEventType wxEVT_SV_FIND_REFERENCES  = wxNewEventType();
 const wxEventType wxEVT_SV_RENAME_SYMBOL    = wxNewEventType();
+const wxEventType wxEVT_SV_OPEN_FILE        = wxNewEventType();
 
 OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     : OutlineTabBaseClass(parent)
@@ -31,6 +32,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     Connect(wxEVT_SV_FIND_REFERENCES,  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     Connect(wxEVT_SV_RENAME_SYMBOL,    wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    
 }
 
 OutlineTab::~OutlineTab()
@@ -119,17 +121,24 @@ void OutlineTab::OnFilesTagged(wxCommandEvent& e)
 void OutlineTab::OnMenu(wxContextMenuEvent& e)
 {
     wxMenu menu;
-    menu.Append(wxEVT_SV_GOTO_DECLARATION, _("Goto Declaration"));
-    menu.Append(wxEVT_SV_GOTO_DEFINITION,  _("Goto Implementation"));
-    menu.AppendSeparator();
-    menu.Append(wxEVT_SV_FIND_REFERENCES , _("Find References..."));
-    menu.AppendSeparator();
-    menu.Append(wxEVT_SV_RENAME_SYMBOL , _("Rename Symbol..."));
     
-    menu.Connect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnGotoImpl),      NULL, this);
-    menu.Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnGotoDecl),      NULL, this);
-    menu.Connect(wxEVT_SV_FIND_REFERENCES , wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnFindReferenes), NULL, this);
-    menu.Connect(wxEVT_SV_RENAME_SYMBOL ,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnRenameSymbol),  NULL, this);
+    if ( IsIncludeFileNode() ) {
+        menu.Append(wxEVT_SV_OPEN_FILE, _("Open..."));
+        menu.Connect(wxEVT_SV_OPEN_FILE,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnOpenFile), NULL, this);
+        
+    } else {
+        menu.Append(wxEVT_SV_GOTO_DECLARATION, _("Goto Declaration"));
+        menu.Append(wxEVT_SV_GOTO_DEFINITION,  _("Goto Implementation"));
+        menu.AppendSeparator();
+        menu.Append(wxEVT_SV_FIND_REFERENCES , _("Find References..."));
+        menu.AppendSeparator();
+        menu.Append(wxEVT_SV_RENAME_SYMBOL , _("Rename Symbol..."));
+        
+        menu.Connect(wxEVT_SV_GOTO_DEFINITION,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnGotoImpl),      NULL, this);
+        menu.Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnGotoDecl),      NULL, this);
+        menu.Connect(wxEVT_SV_FIND_REFERENCES , wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnFindReferenes), NULL, this);
+        menu.Connect(wxEVT_SV_RENAME_SYMBOL ,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutlineTab::OnRenameSymbol),  NULL, this);
+    }
     
     m_tree->PopupMenu(&menu);
 }
@@ -162,5 +171,21 @@ void OutlineTab::OnItemSelectedUI(wxUpdateUIEvent& e)
 {
     IEditor *editor = m_mgr->GetActiveEditor();
     e.Enable(editor && editor->GetSelection().IsEmpty() == false);
+}
+
+bool OutlineTab::IsIncludeFileNode()
+{
+    return m_tree->IsSelectedItemIncludeFile();
+}
+
+void OutlineTab::OnOpenFile(wxCommandEvent& e)
+{
+    wxString includedFile = m_tree->GetSelectedIncludeFile();
+    if(includedFile.IsEmpty())
+        return;
+    
+    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("open_include_file"));
+    evt.SetString(includedFile);
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evt);
 }
 

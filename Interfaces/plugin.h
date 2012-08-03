@@ -128,12 +128,6 @@ enum {
 	// clientData is wxArrayString*: Item(0) = oldName
 	//                               Item(1) = newName
 	wxEVT_FILE_RENAMED,
-	//clientData is ParseThreadEventData*
-	wxEVT_SYNBOL_TREE_UPDATE_ITEM,
-	//clientData is ParseThreadEventData*
-	wxEVT_SYNBOL_TREE_DELETE_ITEM,
-	//clientData is ParseThreadEventData*
-	wxEVT_SYNBOL_TREE_ADD_ITEM,
 
 	//clientData is active editor (IEditor*)
 	wxEVT_ACTIVE_EDITOR_CHANGED,

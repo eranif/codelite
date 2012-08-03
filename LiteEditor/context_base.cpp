@@ -252,13 +252,16 @@ wxMenu* ContextBase::GetMenu()
 	return wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
 }
 
-void ContextBase::PrependMenuItem(wxMenu *menu, const wxString &text, wxObjectEventFunction func)
+void ContextBase::PrependMenuItem(wxMenu *menu, const wxString &text, wxObjectEventFunction func, int eventId)
 {
 	wxMenuItem *item;
 	wxString menuItemText;
-	item = new wxMenuItem(menu, wxNewId(), text);
+    if( eventId == -1 ) 
+        eventId = wxNewId();
+        
+	item = new wxMenuItem(menu, eventId, text);
 	menu->Prepend(item);
-	menu->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
+	menu->Connect(eventId, wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
 	m_dynItems.push_back(item);
 }
 

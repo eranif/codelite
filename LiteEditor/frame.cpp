@@ -498,6 +498,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	//-----------------------------------------------------------------
 	// C++ editor context menu
 	//-----------------------------------------------------------------
+    EVT_MENU(XRCID("open_include_file"),        clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("add_include_file"),         clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("swap_files"),               clMainFrame::OnCppContextMenu)
 	EVT_MENU(XRCID("find_decl"),                clMainFrame::OnCppContextMenu)
@@ -528,11 +529,11 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	//-----------------------------------------------------------------
 	// CodeLite-specific events
 	//-----------------------------------------------------------------
-	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_UPDATED_FILE_SYMBOLS, clMainFrame::OnParsingThreadDone   )
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_MESSAGE             , clMainFrame::OnParsingThreadMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE,     clMainFrame::OnClearTagsCache)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_COMPLETED,  clMainFrame::OnRetaggingCompelted)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS,   clMainFrame::OnRetaggingProgress)
+	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_READY,                clMainFrame::OnParserThreadReady)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR,                 clMainFrame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,                   clMainFrame::OnDatabaseUpgrade )
@@ -3489,24 +3490,6 @@ void clMainFrame::OnShowNavBarUI(wxUpdateUIEvent& e)
 	e.Check(GetMainBook()->IsNavBarShown());
 }
 
-void clMainFrame::OnParsingThreadDone(wxCommandEvent& e)
-{
-	if ( ManagerST::Get()->IsShutdownInProgress() ) {
-		// we are in shutdown progress, dont do anything
-		return;
-	}
-
-	wxUnusedVar(e);
-	SetStatusMessage(wxEmptyString, 0);
-	LEditor *editor = GetMainBook()->GetActiveEditor();
-	if (editor) {
-		editor->UpdateColours();
-	}
-	
-	wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
-    EventNotifier::Get()->AddPendingEvent(tagEndEvent);
-}
-
 void clMainFrame::OnSingleInstanceOpenFiles(wxCommandEvent& e)
 {
 	wxArrayString *arr = reinterpret_cast<wxArrayString*>(e.GetClientData());
@@ -4631,7 +4614,6 @@ void clMainFrame::UpdateAUI()
 void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 {
 	e.Skip();
-#if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
 	SetStatusMessage(_("Done"), 0);
 	GetWorkspacePane()->ClearProgress();
 
@@ -4656,10 +4638,9 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 		wxLogMessage(_("INFO: Retag workspace completed in 0 seconds (No files were retagged)"));
 
 	}
-	ManagerST::Get()->SetRetagInProgress(false);
-#endif
-
-    wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
+    
+	wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
+    tagEndEvent.SetClientData(e.GetClientData()); // pass the pointer to the original caller
     EventNotifier::Get()->AddPendingEvent(tagEndEvent);
 }
 
@@ -4937,4 +4918,22 @@ void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
 	wxString itemName = ManagerST::Get()->GetPerspectiveManager().NameFromMenuId(e.GetId());
 
 	e.Check(active.CmpNoCase(itemName) == 0);
+}
+
+void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
+{
+    e.Skip();
+    ManagerST::Get()->SetRetagInProgress(false);
+    
+	if ( ManagerST::Get()->IsShutdownInProgress() ) {
+		// we are in shutdown progress, dont do anything
+		return;
+	}
+
+	wxUnusedVar(e);
+	SetStatusMessage(wxEmptyString, 0);
+	LEditor *editor = GetMainBook()->GetActiveEditor();
+	if (editor) {
+		editor->UpdateColours();
+	}
 }

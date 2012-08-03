@@ -127,8 +127,10 @@ public:
 
     /**
      * Construct a outline tree for fileName
+     * possible return values:
+     * 
      */
-    virtual void BuildTree(const wxFileName &fileName);
+    virtual void BuildTree(const wxFileName &fileName, TagEntryPtrVector_t* tags = NULL);
 
     /**
      * User provided icons for the symbols tree.

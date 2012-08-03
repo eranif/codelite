@@ -129,26 +129,32 @@ void SymbolTree::Create(wxWindow *parent, const wxWindowID id, const wxPoint& po
     BuildTree( wxFileName() );
 }
 
-void SymbolTree::BuildTree(const wxFileName &fileName)
+void SymbolTree::BuildTree(const wxFileName &fileName, TagEntryPtrVector_t* tags /*NULL*/)
 {
     TagEntryPtrVector_t newTags;
-    
-    // Get the current database
-    ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
-    if ( ! db ) {
-        Clear();
-        return;
+    if ( !tags ) {
+        
+        // Get the current database
+        ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
+        if ( ! db ) {
+            Clear();
+            return;
+        }
+        // Load the new tags from the database
+        db->SelectTagsByFile(fileName.GetFullPath(), newTags);
+        // Compare the new tags with the old ones
+        if ( TagsManagerST::Get()->AreTheSame(newTags, m_currentTags) )
+            return;
+            
+        m_currentTags.clear();
+        m_currentTags.insert(m_currentTags.end(), newTags.begin(), newTags.end());
+        
+    } else {
+        
+        m_currentTags.clear();
+        m_currentTags.insert(m_currentTags.end(), tags->begin(), tags->end());
+        
     }
-    
-    // Load the new tags from the database
-    db->SelectTagsByFile(fileName.GetFullPath(), newTags);
-    
-    // Compare the new tags with the old ones
-    if ( TagsManagerST::Get()->AreTheSame(newTags, m_currentTags) ) 
-        return;
-    
-    m_currentTags.clear();
-    m_currentTags.insert(m_currentTags.end(), newTags.begin(), newTags.end());
     
     wxWindowUpdateLocker locker(this);
     Clear();

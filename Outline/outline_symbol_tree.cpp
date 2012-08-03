@@ -233,8 +233,18 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
 
 void svSymbolTree::BuildTree(const wxFileName& fn)
 {
-    Freeze();
-    SymbolTree::BuildTree(fn);
+    TagEntryPtrVector_t newTags;
+    ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
+    if ( !db ) {
+        return;
+    }
+    
+    db->SelectTagsByFile(fn.GetFullPath(), newTags);
+    if ( TagsManagerST::Get()->AreTheSame(newTags, m_currentTags) )
+        return;
+    
+    wxWindowUpdateLocker locker(this);
+    SymbolTree::BuildTree(fn, &newTags);
     
     // Request from the parsing thread list of include files
     ++m_uid;
@@ -254,8 +264,6 @@ void svSymbolTree::BuildTree(const wxFileName& fn)
             child = GetNextChild(root, cookie);
         }
     }
-    
-    Thaw();
 }
 
 wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::List_t& includes)
@@ -338,9 +346,14 @@ void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
     fcFileOpener::List_t* includes = (fcFileOpener::List_t*)e.GetClientData();
     if ( includes ) {
         if( m_uid == e.GetInt() ) {
+            wxWindowUpdateLocker locker(this);
             wxTreeItemId item = DoAddIncludeFiles(m_fileName, *includes);
             if( item.IsOk() ) {
-                EnsureVisible(item);
+                
+                if(ItemHasChildren(item)) {
+                    Expand(item);
+                }
+                ScrollTo(item);
             }
         }
         includes->clear();

@@ -27,7 +27,6 @@
   <Project Name="CppChecker" Path="cppchecker/CppChecker.project" Active="No"/>
   <Options/>
   <Project Name="Subversion2" Path="Subversion2/Subversion2.project" Active="No"/>
-  <Project Name="SymbolView" Path="SymbolView/SymbolView.project" Active="No"/>
   <Project Name="MacBundler" Path="MacBundler/MacBundler.project" Active="No"/>
   <Project Name="git" Path="git/git.project" Active="No"/>
   <Project Name="DatabaseExplorer" Path="DatabaseExplorer/DatabaseExplorer.project" Active="No"/>
@@ -35,96 +34,9 @@
   <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
   <Project Name="CodeFormatter" Path="CodeFormatter/CodeFormatter.project" Active="No"/>
   <Project Name="PCH" Path="PCH/PCH.project"/>
-  <Environment>
-    <![CDATA[
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  ]]>
-  </Environment>
+  <Environment/>
   <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
+  <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
@@ -150,14 +62,15 @@
       <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="Subversion2" ConfigName="WinReleaseUnicode"/>
-      <Project Name="SymbolView" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
@@ -181,12 +94,13 @@
       <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="Subversion2" ConfigName="WinDebugUnicode"/>
-      <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
+      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
+      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
@@ -194,7 +108,7 @@
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
-      <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
+      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion2" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
@@ -218,13 +132,14 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
+      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
-      <Project Name="SymbolView" ConfigName="WinDebugUnicode"/>
+      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="Subversion2" ConfigName="WinDebugUnicode"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
@@ -249,13 +164,14 @@
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="PCH" ConfigName="Debug"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
+      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_wxWidgets_29" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="Win_wxWidgets_29"/>
       <Project Name="wxscintilla" ConfigName="Win_wxWidgets_29"/>
       <Project Name="wxFormBuilder" ConfigName="Win_wxWidgets_29"/>
       <Project Name="UnitTestPP" ConfigName="Win_wxWidgets_29"/>
-      <Project Name="SymbolView" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="Outline" ConfigName="Win_wxWidgets_29"/>
       <Project Name="Subversion2" ConfigName="Win_wxWidgets_29"/>
       <Project Name="sqlite3" ConfigName="Common"/>
       <Project Name="snipwiz" ConfigName="Win_wxWidgets_29"/>
@@ -280,6 +196,7 @@
       <Project Name="CodeFormatter" ConfigName="Win_wxWidgets_29"/>
       <Project Name="PCH" ConfigName="Debug"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
+      <Project Name="Outline" ConfigName="Win_wxWidgets_29"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

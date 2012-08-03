@@ -668,7 +668,7 @@
     <Project Name="ExternalTools"/>
     <Project Name="QMakePlugin"/>
     <Project Name="Subversion2"/>
-    <Project Name="SymbolView"/>
+    <Project Name="Outline"/>
     <Project Name="abbreviation"/>
     <Project Name="wxFormBuilder"/>
     <Project Name="snipwiz"/>
@@ -724,7 +724,7 @@
     <Project Name="CppChecker"/>
     <Project Name="ExternalTools"/>
     <Project Name="QMakePlugin"/>
-    <Project Name="SymbolView"/>
+    <Project Name="Outline"/>
     <Project Name="abbreviation"/>
     <Project Name="snipwiz"/>
     <Project Name="wxFormBuilder"/>
@@ -773,7 +773,7 @@
     <Project Name="CppChecker"/>
     <Project Name="QMakePlugin"/>
     <Project Name="Subversion2"/>
-    <Project Name="SymbolView"/>
+    <Project Name="Outline"/>
     <Project Name="abbreviation"/>
     <Project Name="snipwiz"/>
     <Project Name="wxFormBuilder"/>
@@ -801,7 +801,7 @@
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
     <Project Name="Subversion2"/>
-    <Project Name="SymbolView"/>
+    <Project Name="Outline"/>
     <Project Name="git"/>
     <Project Name="DatabaseExplorer"/>
     <Project Name="CallGraph"/>
@@ -829,7 +829,7 @@
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
     <Project Name="Subversion2"/>
-    <Project Name="SymbolView"/>
+    <Project Name="Outline"/>
     <Project Name="git"/>
     <Project Name="DatabaseExplorer"/>
     <Project Name="CallGraph"/>
@@ -857,7 +857,7 @@
     <Project Name="QMakePlugin"/>
     <Project Name="CppChecker"/>
     <Project Name="Subversion2"/>
-    <Project Name="SymbolView"/>
+    <Project Name="Outline"/>
     <Project Name="git"/>
     <Project Name="DatabaseExplorer"/>
     <Project Name="CallGraph"/>

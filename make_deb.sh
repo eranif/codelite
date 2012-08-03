@@ -195,7 +195,7 @@ cp -pr lib/cscope.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/UnitTestCPP.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/ExternalTools.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/ContinuousBuild.so fakeroot/${PREFIX}/lib/codelite/
-cp -pr lib/SymbolView.so fakeroot/${PREFIX}/lib/codelite/
+cp -pr lib/Outline.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/SnipWiz.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/wxformbuilder.so fakeroot/${PREFIX}/lib/codelite/
 cp -pr lib/abbreviation.so fakeroot/${PREFIX}/lib/codelite/

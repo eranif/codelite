@@ -21,7 +21,7 @@
 #include <CodeLite/y.tab.h>
 #include <LiteEditor/cl_editor.h>
 #include <Interfaces/debugger.h>
-#include <SymbolView/symbolview.h>
+#include <Outline/outline.h>
 #include <wx/clipbrd.h>
 #include <wx/app.h>
 #include <Plugin/editor_config.h>

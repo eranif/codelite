@@ -61,5 +61,5 @@ public:
     virtual void HookPopupMenu(wxMenu *menu, MenuType type);
     virtual void UnPlug();
 };
-#endif //SymbolView
+#endif //Outline
 

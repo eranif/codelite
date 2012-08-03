@@ -6,16 +6,16 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
-    <File Name="symbolview.cpp"/>
-    <File Name="sv_symbol_tree.cpp"/>
-    <File Name="sv_tab_panel.h"/>
-    <File Name="sv_tab_panel.cpp"/>
     <File Name="outline_settings.cpp"/>
     <File Name="outline_settings.h"/>
+    <File Name="outline_symbol_tree.cpp"/>
+    <File Name="outline.cpp"/>
+    <File Name="outline_tab.h"/>
+    <File Name="outline_tab.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
-    <File Name="symbolview.h"/>
-    <File Name="sv_symbol_tree.h"/>
+    <File Name="outline_symbol_tree.h"/>
+    <File Name="outline.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -32,7 +32,7 @@
       <File Name="wxcrafter.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
-      <File Name="wxcrafter_wxCraftBitmaps.cpp"/>
+      <File Name="wxcrafter_bitmaps.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">

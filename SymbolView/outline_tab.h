@@ -6,14 +6,14 @@
 class IManager;
 class svSymbolTree;
 
-class SymbolViewTabPanel : public SymbolViewTabPanelBaseClass
+class OutlineTab : public OutlineTabBaseClass
 {
 protected:
     IManager* m_mgr;
     svSymbolTree* m_tree;
 public:
-    SymbolViewTabPanel(wxWindow* parent, IManager* mgr);
-    virtual ~SymbolViewTabPanel();
+    OutlineTab(wxWindow* parent, IManager* mgr);
+    virtual ~OutlineTab();
     void OnSearchSymbol(wxCommandEvent& event);
     void OnSearchEnter(wxCommandEvent& event);
 

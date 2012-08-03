@@ -37,13 +37,13 @@
 #include "macros.h"
 #include "workspace.h"
 #include "ctags_manager.h"
-#include "symbolview.h"
+#include "outline.h"
 #include "fileextmanager.h"
 #include <wx/busyinfo.h>
 #include <wx/utils.h>
 #include <wx/xrc/xmlres.h>
 #include "parse_thread.h"
-#include "sv_symbol_tree.h"
+#include "outline_symbol_tree.h"
 
 //--------------------------------------------
 //Plugin Interface
@@ -96,11 +96,11 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
     if( IsPaneDetached() ) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane *cp = new DockablePane(book->GetParent()->GetParent(), book, wxT("Outline"), wxNullBitmap, wxSize(200, 200));
-        m_view = new SymbolViewTabPanel(cp, m_mgr);
+        m_view = new OutlineTab(cp, m_mgr);
         cp->SetChildNoReparent(m_view);
 
     } else {
-        m_view = new SymbolViewTabPanel(book, m_mgr);
+        m_view = new OutlineTab(book, m_mgr);
         int index = os.GetTabIndex();
         if(index == wxNOT_FOUND)
             book->AddPage(m_view, wxT("Outline"), false);

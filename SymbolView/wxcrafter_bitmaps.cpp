@@ -40,6 +40,6 @@ void wxC682BInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_wxCraftBitmaps.cpp$._wxcrafter_wxCraftBitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_wxCraftBitmaps.cpp$._wxcrafter_wxCraftBitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_bitmaps.cpp$._wxcrafter_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_bitmaps.cpp$._wxcrafter_bitmaps.xrc"));
 }

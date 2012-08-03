@@ -29,7 +29,7 @@
 #include <map>
 #include <queue>
 #include <wx/choice.h>
-#include "sv_tab_panel.h"
+#include "outline_tab.h"
 #include <wx/imaglist.h>
 #include <wx/treectrl.h>
 #include <wx/splitter.h>
@@ -42,7 +42,7 @@
 class SymbolViewPlugin : public IPlugin
 {
 protected:
-    SymbolViewTabPanel *m_view;
+    OutlineTab *m_view;
     bool IsPaneDetached();
     int DoFindTabIndex();
     

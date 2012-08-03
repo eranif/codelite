@@ -24,7 +24,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"SymbolViewTabPanel"
+					"m_value":	"OutlineTab"
 				}, {
 					"type":	"string",
 					"m_label":	"Tooltip:",
@@ -48,7 +48,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	"sv_tab_panel"
+					"m_value":	"outline_tab"
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",

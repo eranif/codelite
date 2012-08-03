@@ -540,7 +540,7 @@ bool CodeLiteApp::OnInit()
     CL_SYSTEM(wxT("Starting codelite..."));
 
     // check for single instance
-    if ( !CheckSingularity(parser, ManagerST::Get()->GetOriginalCwd()) ) {
+    if ( !IsSingleInstance(parser, ManagerST::Get()->GetOriginalCwd()) ) {
         return false;
     }
 
@@ -719,7 +719,7 @@ void CodeLiteApp::OnFatalException()
 #endif
 }
 
-bool CodeLiteApp::CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir)
+bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser &parser, const wxString &curdir)
 {
     // check for single instance
     long singleInstance(1);

@@ -28,7 +28,7 @@
 #include "stringsearcher.h"
 #include <wx/wxscintilla.h>
 
-#include "sv_symbol_tree.h"
+#include "outline_symbol_tree.h"
 //#include "manager.h"
 //#include "frame.h"
 #include "bitmap_loader.h"
@@ -212,7 +212,12 @@ wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
 
 void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxString& name)
 {
-	editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr());
+	if( editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr()) == false ) {
+        // Could not select, clear the selection
+        editor->GetScintilla()->SetSelectionStart(wxNOT_FOUND);
+        editor->GetScintilla()->SetSelectionEnd(wxNOT_FOUND);
+    }
+    
     m_manager->GetActiveEditor()->GetScintilla()->SetSCIFocus(true);
     m_manager->GetActiveEditor()->GetScintilla()->SetFocus();
 }

@@ -8,7 +8,7 @@
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 
-class SymbolViewTabPanelBaseClass : public wxPanel
+class OutlineTabBaseClass : public wxPanel
 {
 protected:
     wxTextCtrl* m_textCtrlSearch;
@@ -18,8 +18,8 @@ protected:
     virtual void OnSearchEnter(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    SymbolViewTabPanelBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
-    virtual ~SymbolViewTabPanelBaseClass();
+    OutlineTabBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    virtual ~OutlineTabBaseClass();
 };
 
 #endif

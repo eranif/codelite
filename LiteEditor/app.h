@@ -51,7 +51,7 @@ protected:
 
 private: // Methods
     bool     CopySettings(const wxString &destDir, wxString& installPath);
-    bool     CheckSingularity(const wxCmdLineParser &parser, const wxString &curdir);
+    bool     IsSingleInstance(const wxCmdLineParser &parser, const wxString &curdir);
     void     MSWReadRegistry();
     wxString DoFindMenuFile(const wxString& installDirectory, const wxString &requiredVersion);
 

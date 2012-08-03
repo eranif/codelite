@@ -7,7 +7,7 @@ extern void wxC682BInitBitmapResources();
 static bool bBitmapLoaded = false;
 
 
-SymbolViewTabPanelBaseClass::SymbolViewTabPanelBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if ( !bBitmapLoaded ) {
@@ -29,14 +29,14 @@ SymbolViewTabPanelBaseClass::SymbolViewTabPanelBaseClass(wxWindow* parent, wxWin
     GetSizer()->Fit(this);
     Centre();
     // Connect events
-    m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SymbolViewTabPanelBaseClass::OnSearchSymbol), NULL, this);
-    m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SymbolViewTabPanelBaseClass::OnSearchEnter), NULL, this);
+    m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutlineTabBaseClass::OnSearchSymbol), NULL, this);
+    m_textCtrlSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutlineTabBaseClass::OnSearchEnter), NULL, this);
     
 }
 
-SymbolViewTabPanelBaseClass::~SymbolViewTabPanelBaseClass()
+OutlineTabBaseClass::~OutlineTabBaseClass()
 {
-    m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SymbolViewTabPanelBaseClass::OnSearchSymbol), NULL, this);
-    m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SymbolViewTabPanelBaseClass::OnSearchEnter), NULL, this);
+    m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OutlineTabBaseClass::OnSearchSymbol), NULL, this);
+    m_textCtrlSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OutlineTabBaseClass::OnSearchEnter), NULL, this);
     
 }

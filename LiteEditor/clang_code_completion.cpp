@@ -264,7 +264,6 @@ void ClangCodeCompletion::OnClangPathResolved(wxCommandEvent& e)
 		std::auto_ptr<PathTripplet> spData( data  );
 		if(!project) {
 			// Release all allocated data
-			delete data;
 			return;
 		}
 		

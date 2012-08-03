@@ -1281,7 +1281,10 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, RetagType typ
 
     // step 5: build the database
     ParseRequest *req = new ParseRequest( ParseThreadST::Get()->GetNotifiedWindow() );
-    req->_evtHandler = cb; // Callback window
+    if ( cb ) {
+        req->_evtHandler = cb; // Callback window
+    }
+    
     req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 
     req->setType( type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES : ParseRequest::PR_PARSE_AND_STORE );

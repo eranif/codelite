@@ -349,10 +349,9 @@ void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
             wxWindowUpdateLocker locker(this);
             wxTreeItemId item = DoAddIncludeFiles(m_fileName, *includes);
             if( item.IsOk() ) {
-                
-                if(ItemHasChildren(item)) {
-                    Expand(item);
-                }
+//                if(ItemHasChildren(item)) {
+//                    Expand(item);
+//                }
                 ScrollTo(item);
             }
         }

@@ -15,7 +15,8 @@
 #include "processreaderthread.h"
 #include <queue>
 #include <set>
-#include "progress_dialog.h"
+//#include "progress_dialog.h"
+#include <wx/progdlg.h>
 
 typedef struct gitAction {
 	int action;
@@ -33,6 +34,7 @@ class GitPlugin : public IPlugin
 		gitDeleteFile,
 		gitDiffFile,
 		gitDiffRepoCommit,
+		gitDiffRepoShow,
 		gitResetFile,
 		gitResetRepo,
 		gitPull,
@@ -47,6 +49,12 @@ class GitPlugin : public IPlugin
 		gitCommitList,
 		gitRebase,
 		gitGarbageCollection,
+#if 0
+		gitBisectStart,
+		gitBisectGood,
+		gitBisectBad,
+		gitBisectReset,
+#endif
 	};
 
 	wxArrayString m_localBranchList;
@@ -65,12 +73,13 @@ class GitPlugin : public IPlugin
 	std::queue<gitAction> m_gitActionQueue;
 
 	wxTimer m_progressTimer;
-	clProgressDlg* m_progressDialog;
+	wxProgressDialog* m_progressDialog;
 	wxString m_progressMessage;
 	wxString m_commandOutput;
 	bool m_bActionRequiresTreUpdate;
 	IProcess * m_process;
-	wxEvtHandler *m_topWindow;
+	wxEvtHandler *m_eventHandler;
+	wxWindow *m_topWindow;
 
 	clToolBar* m_pluginToolbar;
 	wxMenu* m_pluginMenu;
@@ -93,6 +102,7 @@ private:
 	
 	DECLARE_EVENT_TABLE();
 	// Event handlers
+	void OnInitDone(wxCommandEvent& e);
 	void OnProgressTimer(wxTimerEvent& Event);
 	void OnProcessTerminated(wxCommandEvent &event);
 	void OnProcessOutput(wxCommandEvent &event);
@@ -112,6 +122,7 @@ private:
 	void OnCreateBranch(wxCommandEvent &e);
 	void OnCommit(wxCommandEvent &e);
 	void OnCommitList(wxCommandEvent& e);
+	void OnShowDiffs(wxCommandEvent& e);
 	void OnPush(wxCommandEvent &e);
 	void OnPull(wxCommandEvent &e);
 	void OnResetRepository(wxCommandEvent &e);
@@ -119,8 +130,13 @@ private:
 	void OnListModified(wxCommandEvent& e);
 	void OnRefresh(wxCommandEvent& e);
 	void OnGarbageColletion(wxCommandEvent& e);
+#if 0
+	void OnBisectStart(wxCommandEvent& e);
+	void OnBisectGood(wxCommandEvent& e);
+	void OnBisectBad(wxCommandEvent& e);
+  void OnBisectReset(wxCommandEvent& e);
+#endif
 	void OnEnableGitRepoExists(wxUpdateUIEvent &e);
-	
 public:
 	GitPlugin(IManager *manager);
 	~GitPlugin();

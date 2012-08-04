@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Dec 13 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -28,6 +28,7 @@
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/listctrl.h>
+#include <wx/statbox.h>
 #include <wx/listbox.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -91,7 +92,7 @@ class GitCommitDlgBase : public wxDialog
 	
 	public:
 		
-		GitCommitDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		GitCommitDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 576,334 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~GitCommitDlgBase();
 		
 		void m_splitter2OnIdle( wxIdleEvent& )
@@ -116,26 +117,13 @@ class GitCommitListDlgBase : public wxDialog
 	private:
 	
 	protected:
-		wxSplitterWindow* m_splitter3;
-		wxPanel* m_panel5;
-		wxStaticText* m_staticText9;
 		wxListCtrl* m_commitListBox;
-		wxPanel* m_panel6;
-		wxSplitterWindow* m_splitter4;
-		wxPanel* m_panel7;
-		wxSplitterWindow* m_splitter5;
-		wxPanel* m_panel9;
-		wxStaticText* m_staticText10;
 		wxListBox* m_fileListBox;
-		wxPanel* m_panel10;
-		wxStaticText* m_staticText11;
 		GitCommitEditor* m_editor;
-		wxPanel* m_panel8;
-		wxStaticText* m_staticText12;
 		wxTextCtrl* m_commitMessage;
 		wxStaticLine* m_staticline4;
-		wxButton* m_button7;
-		wxButton* m_button8;
+		wxStdDialogButtonSizer* m_sdbSizer1;
+		wxButton* m_sdbSizer1OK;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnChangeCommit( wxListEvent& event ) { event.Skip(); }
@@ -144,26 +132,33 @@ class GitCommitListDlgBase : public wxDialog
 	
 	public:
 		
-		GitCommitListDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit list"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		GitCommitListDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit List"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 879,600 ), long style = wxCAPTION|wxCLOSE_BOX|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER );
 		~GitCommitListDlgBase();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class GitDiffDlgBase
+///////////////////////////////////////////////////////////////////////////////
+class GitDiffDlgBase : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxListBox* m_fileListBox;
+		GitCommitEditor* m_editor;
+		wxStaticLine* m_staticline4;
+		wxStdDialogButtonSizer* m_sdbSizer1;
+		wxButton* m_sdbSizer1OK;
 		
-		void m_splitter3OnIdle( wxIdleEvent& )
-		{
-			m_splitter3->SetSashPosition( 0 );
-			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter3OnIdle ), NULL, this );
-		}
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnChangeFile( wxCommandEvent& event ) { event.Skip(); }
 		
-		void m_splitter4OnIdle( wxIdleEvent& )
-		{
-			m_splitter4->SetSashPosition( 0 );
-			m_splitter4->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter4OnIdle ), NULL, this );
-		}
+	
+	public:
 		
-		void m_splitter5OnIdle( wxIdleEvent& )
-		{
-			m_splitter5->SetSashPosition( 0 );
-			m_splitter5->Disconnect( wxEVT_IDLE, wxIdleEventHandler( GitCommitListDlgBase::m_splitter5OnIdle ), NULL, this );
-		}
+		GitDiffDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Current Diffs"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 879,600 ), long style = wxCAPTION|wxCLOSE_BOX|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxRESIZE_BORDER );
+		~GitDiffDlgBase();
 	
 };
 

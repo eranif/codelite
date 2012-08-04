@@ -41,7 +41,13 @@ class WXDLLIMPEXP_SDK VolumeLocatorThread : public wxThread
 
 protected:
 	void* Entry();
-
+    
+public:
+    void Start() {
+        Create();
+        Run();
+    }
+    
 public:
 	VolumeLocatorThread(wxEvtHandler *owner);
 	~VolumeLocatorThread();

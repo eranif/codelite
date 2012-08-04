@@ -48,8 +48,9 @@ void* ProcessReaderThread::Entry()
 {
 	while ( true ) {
 		// Did we get a request to terminate?
-		if (TestDestroy())
+		if (TestDestroy()) {
 			break;
+        }
 
 		if ( m_process ) {
 			wxString buff;
@@ -84,6 +85,7 @@ void* ProcessReaderThread::Entry()
 			}
 		}
 	}
+    
     m_process = NULL;
 	return NULL;
 }
@@ -92,8 +94,13 @@ void ProcessReaderThread::Stop()
 {
     // Notify the thread to exit and 
     // wait for it
-    Delete();
-    Wait();
+    if ( IsAlive() ) {
+        Delete(NULL, wxTHREAD_WAIT_BLOCK);
+        
+    } else {
+        Wait(wxTHREAD_WAIT_BLOCK);
+        
+    }
 }
 
 void ProcessReaderThread::Start(int priority)

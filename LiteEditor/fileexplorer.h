@@ -52,7 +52,6 @@ private:
 #ifdef __WXMSW__
 #if wxUSE_FSVOLUME
 	wxChoice *m_volumes;
-	VolumeLocatorThread m_thread;
 
 	void OnVolumeChanged(wxCommandEvent &e);
 	void OnVolumes(wxCommandEvent &e);

@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "wx/xrc/xmlres.h"
+#include "wx/xrc/xmlres.h"
 #include "fileexplorer.h"
 #include "fileexplorertree.h"
 #include "wx/sizer.h"
@@ -38,19 +38,14 @@
 #include "frame.h"
 
 FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
-: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
-, m_caption(caption)
-, m_isLinkedToEditor(false)
-#ifdef __WXMSW__
-#if wxUSE_FSVOLUME
-, m_thread(this)
-#endif
-#endif
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
+    , m_caption(caption)
+    , m_isLinkedToEditor(false)
 {
-	long link(1);
-	EditorConfigST::Get()->GetLongValue(wxT("LinkFileExplorerToEditor"), link);
-	m_isLinkedToEditor = link ? true : false;
-	CreateGUIControls();
+    long link(1);
+    EditorConfigST::Get()->GetLongValue(wxT("LinkFileExplorerToEditor"), link);
+    m_isLinkedToEditor = link ? true : false;
+    CreateGUIControls();
 }
 
 FileExplorer::~FileExplorer()
@@ -63,42 +58,42 @@ FileExplorer::~FileExplorer()
 
 void FileExplorer::CreateGUIControls()
 {
-	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
-	SetSizer(mainSizer);
+    wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+    SetSizer(mainSizer);
 
-	wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
+    wxToolBar *tb = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER);
 
-	mainSizer->Add(tb, 0, wxEXPAND);
+    mainSizer->Add(tb, 0, wxEXPAND);
 
 #ifdef __WXMSW__
 #if wxUSE_FSVOLUME
-	wxArrayString volumes;
-	Connect(wxEVT_THREAD_VOLUME_COMPLETED, wxCommandEventHandler(FileExplorer::OnVolumes), NULL, this);
+    wxArrayString volumes;
+    Connect(wxEVT_THREAD_VOLUME_COMPLETED, wxCommandEventHandler(FileExplorer::OnVolumes), NULL, this);
+    
+    VolumeLocatorThread *thr = new VolumeLocatorThread(this);
+    thr->Start();
 
-	m_thread.Create();
-	m_thread.Run();
-
-	m_volumes = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, volumes, 0 );
-	mainSizer->Add(m_volumes, 0, wxEXPAND|wxALL, 1);
-	ConnectChoice(m_volumes, FileExplorer::OnVolumeChanged);
+    m_volumes = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, volumes, 0 );
+    mainSizer->Add(m_volumes, 0, wxEXPAND|wxALL, 1);
+    ConnectChoice(m_volumes, FileExplorer::OnVolumeChanged);
 #endif
 #endif
 
-	m_fileTree = new FileExplorerTree(this, wxID_ANY);
-	m_fileTree->Connect(wxVDTC_ROOT_CHANGED, wxCommandEventHandler(FileExplorer::OnRootChanged), NULL, this);
-	mainSizer->Add(m_fileTree, 1, wxEXPAND|wxALL, 1);
+    m_fileTree = new FileExplorerTree(this, wxID_ANY);
+    m_fileTree->Connect(wxVDTC_ROOT_CHANGED, wxCommandEventHandler(FileExplorer::OnRootChanged), NULL, this);
+    mainSizer->Add(m_fileTree, 1, wxEXPAND|wxALL, 1);
 
-	tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), _("Link Editor"), wxITEM_CHECK);
-	tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
-	tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), _("Collapse All"), wxITEM_NORMAL);
-	tb->AddTool(XRCID("go_home"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), _("Goto Current Directory"), wxITEM_NORMAL);
-	tb->Realize();
+    tb->AddTool(XRCID("link_editor"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), _("Link Editor"), wxITEM_CHECK);
+    tb->ToggleTool(XRCID("link_editor"), m_isLinkedToEditor);
+    tb->AddTool(XRCID("collapse_all"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("collapse")), _("Collapse All"), wxITEM_NORMAL);
+    tb->AddTool(XRCID("go_home"), wxEmptyString, wxXmlResource::Get()->LoadBitmap(wxT("gohome")), _("Goto Current Directory"), wxITEM_NORMAL);
+    tb->Realize();
 
-	Connect( XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnLinkEditor ));
-	Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnCollapseAll ));
-	Connect( XRCID("go_home"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnGoHome ));
+    Connect( XRCID("link_editor"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnLinkEditor ));
+    Connect( XRCID("collapse_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnCollapseAll ));
+    Connect( XRCID("go_home"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( FileExplorer::OnGoHome ));
 
-	mainSizer->Layout();
+    mainSizer->Layout();
 
     wxTheApp->Connect(XRCID("show_in_explorer"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnShowFile), NULL, this);
     wxTheApp->Connect(XRCID("show_in_explorer"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorer::OnShowFileUI), NULL, this);
@@ -108,30 +103,30 @@ void FileExplorer::CreateGUIControls()
 
 void FileExplorer::OnCollapseAll(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
+    wxUnusedVar(e);
     m_fileTree->CollapseAll();
     wxTreeItemId root = m_fileTree->GetRootItem();
     if (root.IsOk()) {
         m_fileTree->Expand(m_fileTree->GetRootItem());
     }
-	wxTreeItemId sel = m_fileTree->GetSelection();
-	if (sel.IsOk()) {
-		m_fileTree->EnsureVisible(sel);
+    wxTreeItemId sel = m_fileTree->GetSelection();
+    if (sel.IsOk()) {
+        m_fileTree->EnsureVisible(sel);
     }
-	m_fileTree->SetFocus();
+    m_fileTree->SetFocus();
 }
 
 void FileExplorer::OnGoHome(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
-	m_fileTree->ExpandToPath(wxGetCwd());
-	m_fileTree->SetFocus();
+    wxUnusedVar(e);
+    m_fileTree->ExpandToPath(wxGetCwd());
+    m_fileTree->SetFocus();
 }
 
 void FileExplorer::OnLinkEditor(wxCommandEvent &e)
 {
-	m_isLinkedToEditor = !m_isLinkedToEditor;
-	EditorConfigST::Get()->SaveLongValue(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
+    m_isLinkedToEditor = !m_isLinkedToEditor;
+    EditorConfigST::Get()->SaveLongValue(wxT("LinkFileExplorerToEditor"), m_isLinkedToEditor ? 1 : 0);
     if (m_isLinkedToEditor) {
         OnActiveEditorChanged(e);
     }
@@ -149,8 +144,8 @@ void FileExplorer::OnShowFile(wxCommandEvent& e)
 
 void FileExplorer::OnShowFileUI(wxUpdateUIEvent& e)
 {
-	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-	e.Enable(editor && editor->GetFileName().FileExists());
+    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    e.Enable(editor && editor->GetFileName().FileExists());
 }
 
 void FileExplorer::OnActiveEditorChanged(wxCommandEvent& e)
@@ -175,40 +170,40 @@ void FileExplorer::OnWorkspaceLoaded(wxCommandEvent& e)
 
 void FileExplorer::OnRootChanged(wxCommandEvent &e)
 {
-	wxTreeItemId root = m_fileTree->GetRootItem();
-	if(root.IsOk()){
-		wxString vol = m_fileTree->GetItemText(root);
+    wxTreeItemId root = m_fileTree->GetRootItem();
+    if(root.IsOk()) {
+        wxString vol = m_fileTree->GetItemText(root);
 #ifdef __WXMSW__
 #if wxUSE_FSVOLUME
         if(m_volumes->FindString(vol) == wxNOT_FOUND) {
             m_volumes->AppendString(vol);
         }
-		m_volumes->SetStringSelection(vol);
+        m_volumes->SetStringSelection(vol);
 #endif
 #endif
         SendCmdEvent(wxEVT_FILE_EXP_INIT_DONE);
-	}
-	e.Skip();
+    }
+    e.Skip();
 }
 
 #ifdef __WXMSW__
 #if wxUSE_FSVOLUME
 void FileExplorer::OnVolumeChanged(wxCommandEvent &e)
 {
-	wxUnusedVar(e);
-	m_fileTree->SetRootPath(m_volumes->GetStringSelection());
-	m_fileTree->SetFocus();
+    wxUnusedVar(e);
+    m_fileTree->SetRootPath(m_volumes->GetStringSelection());
+    m_fileTree->SetFocus();
 }
 
 void FileExplorer::OnVolumes(wxCommandEvent &e)
 {
-	wxString curvol = m_volumes->GetStringSelection();
-	wxArrayString volumes = wxStringTokenize(e.GetString(), wxT(";"), wxTOKEN_STRTOK);
-	int where = volumes.Index(curvol);
-	if(where != wxNOT_FOUND){
-		volumes.RemoveAt((size_t)where);
-	}
-	m_volumes->Append(volumes);
+    wxString curvol = m_volumes->GetStringSelection();
+    wxArrayString volumes = wxStringTokenize(e.GetString(), wxT(";"), wxTOKEN_STRTOK);
+    int where = volumes.Index(curvol);
+    if(where != wxNOT_FOUND) {
+        volumes.RemoveAt((size_t)where);
+    }
+    m_volumes->Append(volumes);
 }
 #endif
 #endif

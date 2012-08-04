@@ -87,8 +87,15 @@ ThreadRequest *WorkerThread::GetRequest()
 
 void WorkerThread::Stop()
 {
-	wxThread::Delete();
-    wxThread::Wait();
+    // Notify the thread to exit and 
+    // wait for it
+    if ( IsAlive() ) {
+        Delete(NULL, wxTHREAD_WAIT_BLOCK);
+        
+    } else {
+        Wait(wxTHREAD_WAIT_BLOCK);
+        
+    }
 }
 
 void WorkerThread::Start(int priority)

@@ -31,7 +31,7 @@
 #if wxUSE_FSVOLUME
 
 VolumeLocatorThread::VolumeLocatorThread(wxEvtHandler *owner)
-: wxThread(wxTHREAD_JOINABLE)
+: wxThread(wxTHREAD_DETACHED)
 , m_owner(owner)
 {
 }

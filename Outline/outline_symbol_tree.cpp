@@ -328,10 +328,9 @@ wxString svSymbolTree::GetSelectedIncludeFile() const
         return wxT("");
 
     included_file = GetItemText(item);
-    included_file.StartsWith(wxT("<"),  &included_file);
-    included_file.StartsWith(wxT("\""), &included_file);
-    included_file.EndsWith(wxT(">"),    &included_file);
-    included_file.EndsWith(wxT("\""),   &included_file);
+    included_file.Replace(wxT("\""), wxT(""));
+    included_file.Replace(wxT(">"), wxT(""));
+    included_file.Replace(wxT("<"), wxT(""));
     return included_file;
 }
 

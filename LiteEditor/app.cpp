@@ -322,7 +322,7 @@ CodeLiteApp::~CodeLiteApp(void)
     if ( m_singleInstance ) {
         delete m_singleInstance;
     }
-    wxAppBase::ExitMainLoop();
+//    wxAppBase::ExitMainLoop();
 }
 
 bool CodeLiteApp::OnInit()

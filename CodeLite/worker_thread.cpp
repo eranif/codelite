@@ -87,6 +87,12 @@ ThreadRequest *WorkerThread::GetRequest()
 
 void WorkerThread::Stop()
 {
+#if wxVERSION_NUMBER < 2904
+    if(IsAlive()) {
+        Delete();
+    }
+    Wait();
+#else    
     // Notify the thread to exit and 
     // wait for it
     if ( IsAlive() ) {
@@ -96,6 +102,8 @@ void WorkerThread::Stop()
         Wait(wxTHREAD_WAIT_BLOCK);
         
     }
+#endif
+
 }
 
 void WorkerThread::Start(int priority)

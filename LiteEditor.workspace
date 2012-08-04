@@ -70,7 +70,7 @@
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>

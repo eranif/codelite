@@ -89,7 +89,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"500,300"
+									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",

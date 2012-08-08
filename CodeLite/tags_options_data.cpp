@@ -147,7 +147,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
 		, m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
 {
-	SetVersion(wxT("3.0.7"));
+	SetVersion(wxT("3.0.8"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -246,7 +246,9 @@ wxT("std::deque::const_reference=_Tp\n")
 wxT("std::map::iterator=std::pair<_Key, _Tp>\n")
 wxT("std::map::const_iterator=std::pair<_Key,_Tp>\n")
 wxT("std::multimap::iterator=std::pair<_Key,_Tp>\n")
-wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>");
+wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>\n")
+wxT("wxOrderedMap::iterator=std::pair<Key,Value>\n")
+wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>\n");
 }
 
 TagsOptionsData::~TagsOptionsData()

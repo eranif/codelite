@@ -45,7 +45,8 @@ public:
 		Opt_AutoCompleteNormalBraces = 0x00000010,
 		Opt_SmartAddFiles            = 0x00000020,
 		Opt_IconSet_FreshFarm        = 0x00000040,
-		Opt_IconSet_Classic          = 0x00000100
+		Opt_IconSet_Classic          = 0x00000100,
+        Opt_AutoCompleteDoubleQuotes = 0x00000200,
 	};
 
 protected:
@@ -465,7 +466,12 @@ public:
 	bool GetAutoAddMatchedNormalBraces() const {
 		return HasOption(Opt_AutoCompleteNormalBraces);
 	}
-	
+	bool GetAutoCompleteDoubleQuotes() const {
+        return HasOption(Opt_AutoCompleteDoubleQuotes);
+    }
+    void SetAutoCompleteDoubleQuotes(bool b) {
+        return EnableOption(Opt_AutoCompleteDoubleQuotes, b);
+    }
 	void SetFoldBgColour(const wxColour& foldBgColour) {
 		this->m_foldBgColour = foldBgColour;
 	}

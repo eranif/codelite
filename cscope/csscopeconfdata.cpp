@@ -28,7 +28,7 @@
 CScopeConfData::CScopeConfData()
 		: m_cscopeFilepath(wxT(""))
 		, m_scanScope(SCOPE_ENTIRE_WORKSPACE)
-		, m_rebuildDb(true)
+		, m_rebuildDb(false)
 		, m_buildRevertedIndex(false)
 {
 #ifdef __WXMSW__

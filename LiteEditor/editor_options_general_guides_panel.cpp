@@ -45,7 +45,8 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
 	m_checkBoxHideChangeMarkerMargin->SetValue( options->GetHideChangeMarkerMargin() );
 	m_checkBoxDisableSemicolonShift->SetValue( options->GetDisableSemicolonShift() );
 	m_sliderCaretLineAlpha->SetValue(options->GetCaretLineAlpha());
-	
+	m_checkBoxDoubleQuotes->SetValue(options->GetAutoCompleteDoubleQuotes());
+    
 	const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"), wxTRANSLATE("Visible always"), wxTRANSLATE("Visible after indentation"), wxTRANSLATE("Indentation only") };
 	wxString currentWhitespace;
 	switch (options->GetShowWhitspaces()) {
@@ -80,7 +81,8 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 	options->SetHideChangeMarkerMargin( m_checkBoxHideChangeMarkerMargin->IsChecked() );
 	options->SetDisableSemicolonShift( m_checkBoxDisableSemicolonShift->IsChecked() );
 	options->SetCaretLineAlpha(m_sliderCaretLineAlpha->GetValue());
-	
+	options->SetAutoCompleteDoubleQuotes(m_checkBoxDoubleQuotes->IsChecked());
+    
 	// save the whitespace visibility
 	wxString Whitespace = m_WSstringManager.GetStringSelection();
 	int style(wxSCI_WS_INVISIBLE); // invisible

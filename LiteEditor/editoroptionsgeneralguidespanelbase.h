@@ -1,25 +1,26 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __editoroptionsgeneralguidespanelbase__
-#define __editoroptionsgeneralguidespanelbase__
+#ifndef __EDITOROPTIONSGENERALGUIDESPANELBASE_H__
+#define __EDITOROPTIONSGENERALGUIDESPANELBASE_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/checkbox.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
-#include <wx/sizer.h>
-#include <wx/statline.h>
 #include <wx/slider.h>
 #include <wx/clrpicker.h>
 #include <wx/panel.h>
@@ -42,14 +43,12 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 		wxCheckBox* m_checkBoxDisableSemicolonShift;
 		wxCheckBox* m_checkBoxAutoCompleteNormalBraces;
 		wxCheckBox* m_checkBoxHideChangeMarkerMargin;
-		
+		wxCheckBox* m_checkBoxDoubleQuotes;
 		wxStaticText* m_staticText2;
 		wxChoice* m_whitespaceStyle;
 		wxStaticText* m_staticText4;
 		wxChoice* m_choiceEOL;
-		wxStaticLine* m_staticline1;
 		wxCheckBox* m_highlightCaretLine;
-		
 		wxStaticText* m_staticText41;
 		wxSlider* m_sliderCaretLineAlpha;
 		wxStaticText* m_staticText1;
@@ -67,4 +66,4 @@ class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 	
 };
 
-#endif //__editoroptionsgeneralguidespanelbase__
+#endif //__EDITOROPTIONSGENERALGUIDESPANELBASE_H__

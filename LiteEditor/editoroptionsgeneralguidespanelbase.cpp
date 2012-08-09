@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar 22 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -13,6 +13,9 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 {
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticBoxSizer* sbSizer3;
+	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("General:") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
@@ -56,35 +59,50 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	
 	fgSizer1->Add( m_checkBoxHideChangeMarkerMargin, 0, wxALL, 5 );
 	
+	m_checkBoxDoubleQuotes = new wxCheckBox( this, wxID_ANY, _("Auto Complete Double Quotes '\"'"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_checkBoxDoubleQuotes, 0, wxALL, 5 );
 	
-	fgSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	sbSizer3->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
+	
+	bSizer1->Add( sbSizer3, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* sbSizer1;
+	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Whitespaces:") ), wxVERTICAL );
+	
+	wxFlexGridSizer* fgSizer3;
+	fgSizer3 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer3->AddGrowableCol( 1 );
+	fgSizer3->SetFlexibleDirection( wxBOTH );
+	fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Whitespace visibility:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
-	fgSizer1->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	fgSizer3->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxALIGN_RIGHT, 5 );
 	
 	wxArrayString m_whitespaceStyleChoices;
 	m_whitespaceStyle = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_whitespaceStyleChoices, 0 );
 	m_whitespaceStyle->SetSelection( 0 );
-	fgSizer1->Add( m_whitespaceStyle, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	fgSizer3->Add( m_whitespaceStyle, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, _("EOL Mode:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	m_staticText4->SetToolTip( _("Set the editor's EOL mode (End Of Line)") );
 	
-	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	fgSizer3->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 	
 	wxArrayString m_choiceEOLChoices;
 	m_choiceEOL = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceEOLChoices, 0 );
 	m_choiceEOL->SetSelection( 0 );
 	m_choiceEOL->SetToolTip( _("Set the editor's EOL mode (End Of Line). When set to 'Default' CodeLite will set the EOL according to the hosting OS") );
 	
-	fgSizer1->Add( m_choiceEOL, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	fgSizer3->Add( m_choiceEOL, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
-	bSizer1->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
+	sbSizer1->Add( fgSizer3, 1, wxEXPAND, 5 );
 	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	bSizer1->Add( sbSizer1, 0, wxEXPAND|wxALL, 5 );
+	
+	wxStaticBoxSizer* sbSizer2;
+	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Caret line:") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 3, 2, 0, 0 );
@@ -114,7 +132,12 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	m_caretLineColourPicker = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	fgSizer2->Add( m_caretLineColourPicker, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxEXPAND, 5 );
 	
-	bSizer1->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );
+	sbSizer2->Add( fgSizer2, 0, wxEXPAND|wxALL, 5 );
+	
+	bSizer1->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
+	
+	
+	bSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();

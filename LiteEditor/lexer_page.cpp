@@ -59,7 +59,7 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 	wxString initialColor     = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString();
 	wxString bgInitialColor   = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
 	wxFont   initialFont      = wxNullFont;
-	bool     initialEolFilled (false);
+	//bool     initialEolFilled (false);
 	bool     initialStyleWithinPreProcessor (true);
 
 	if (m_propertyList.empty() == false) {
@@ -72,7 +72,7 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
 		wxString face = p.GetFaceName();
 		bool bold = p.IsBold();
 		initialFont = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
-		initialEolFilled = p.GetEolFilled();
+		//initialEolFilled = p.GetEolFilled();
 	}
 	initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();
 

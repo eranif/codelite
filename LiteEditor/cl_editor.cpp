@@ -662,15 +662,21 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
     
     // add complete double qoutes
     if ( GetOptions()->GetAutoCompleteDoubleQuotes() ) {
-        if( event.GetKey() == wxT('"') && GetCharAt( pos ) == wxT('"') ) {
+        if( (event.GetKey() == wxT('"') && GetCharAt( pos ) == wxT('"')) || 
+			(event.GetKey() == wxT('\'') && GetCharAt( pos ) == wxT('\''))
+			)
+		{
             CharRight();
             DeleteBack();
             
         } else if( event.GetKey() == wxT('"') ){
             InsertText(pos, wxT("\""));
             
-        }
-    }
+        } else if ( event.GetKey() == wxT('\'') ) {
+            InsertText(pos, wxT("'"));
+			
+		}
+	}
     
 	// make sure line is visible
 	int curLine = LineFromPosition(pos);

@@ -180,6 +180,7 @@ void MainBook::OnProjectFileAdded(wxCommandEvent &e)
 	wxArrayString *files = (wxArrayString*) e.GetClientData();
 	if (!files)
 		return;
+		
 	for (size_t i = 0; i < files->GetCount(); i++) {
 		LEditor *editor = FindEditor(files->Item(i));
 		if (editor) {

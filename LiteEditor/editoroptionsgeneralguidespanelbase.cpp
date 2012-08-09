@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -59,7 +59,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	
 	fgSizer1->Add( m_checkBoxHideChangeMarkerMargin, 0, wxALL, 5 );
 	
-	m_checkBoxDoubleQuotes = new wxCheckBox( this, wxID_ANY, _("Auto Complete Double Quotes '\"'"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxDoubleQuotes = new wxCheckBox( this, wxID_ANY, _("Auto Complete Double / Single Quotes"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer1->Add( m_checkBoxDoubleQuotes, 0, wxALL, 5 );
 	
 	sbSizer3->Add( fgSizer1, 0, wxALL|wxEXPAND, 5 );
@@ -159,5 +159,4 @@ EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
 	m_sliderCaretLineAlpha->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_staticText1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_caretLineColourPicker->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
-	
 }

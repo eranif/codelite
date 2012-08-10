@@ -1,3 +1,5 @@
 - clang: make sure we don't attempt to track PP when the file is not a valid C++ file
 - clang: cache should be persistent (save / load from disk)
+- Installer: when installing codelite, make sure we override the 'registry.ini' file with the new file
+- Installer: when un-installing codelite, remove the 'codelite' folder completly
 

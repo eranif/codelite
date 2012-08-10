@@ -356,7 +356,15 @@ protected:
     {
         return std::find(m_libs.begin(), m_libs.end(), lib) != m_libs.end();
     }
-
+    
+    void removeLib(const std::string &lib)
+    {
+        std::vector<std::string>::iterator iter = std::find(m_libs.begin(), m_libs.end(), lib);
+        if( iter != m_libs.end() ) {
+            m_libs.erase(iter);
+        }
+    }
+    
     void addLib(const std::string& lib)
     {
         // adds the lib if its not present already
@@ -387,22 +395,25 @@ protected:
                 }
             }
         }
-
+        
         // assuming magic keyword 'std' as a lib parameter for non-monolithic
-        // magic keyword std: links with xrc,qa,html,adv,core,base_xml,base_net,base
+        // magic keyword std: links with xrc,qa,html,adv,core,base_xml,base_net,base,aui,richtext
         if (m_libs.empty() || libExists("std"))
         {
+            addLib("aui");
             addLib("xrc");
-            addLib("qa");
             addLib("html");
             addLib("adv");
             addLib("core");
             addLib("xml");
             addLib("net");
             addLib("base");
+            addLib("rich");
         }
+        
+        // not really a lib...
+        removeLib("std");
     }
-
     std::vector<std::string> m_libs;
 };
 
@@ -617,113 +628,70 @@ public:
 
             if (lib == "base")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    po["__WXLIB_BASE_p"] = addLib(po["LIB_BASENAME_BASE"]);
+                po["__WXLIB_BASE_p"] = addLib(po["LIB_BASENAME_BASE"]);
             }
             else if (lib == "net")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    po["__WXLIB_NET_p"] = addLib(po["LIB_BASENAME_BASE"] + "_net");
+                po["__WXLIB_NET_p"] = addLib(po["LIB_BASENAME_BASE"] + "_net");
             }
             else if (lib == "xml")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    po["__WXLIB_XML_p"] = addLib(po["LIB_BASENAME_BASE"] + "_xml");
+                po["__WXLIB_XML_p"] = addLib(po["LIB_BASENAME_BASE"] + "_xml");
             }
             else if (lib == "core")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    if (cfg["USE_GUI"] == "1")
-                        po["__WXLIB_CORE_p"] = addLib(po["LIB_BASENAME_MSW"] + "_core");
+                po["__WXLIB_CORE_p"] = addLib(po["LIB_BASENAME_MSW"] + "_core");
             }
             else if (lib == "adv")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    if (cfg["USE_GUI"] == "1")
-                        po["__WXLIB_ADV_p"] = addLib(po["LIB_BASENAME_MSW"] + "_adv");
+                po["__WXLIB_ADV_p"] = addLib(po["LIB_BASENAME_MSW"] + "_adv");
+            }
+            else if (lib == "rich")
+            {
+                po["__WXLIB_RICH_p"] = addLib(po["LIB_BASENAME_MSW"] + "_richtext");
             }
             else if (lib == "qa")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                {
-                    if (cfg["USE_GUI"] == "1")
-                    {
-                        if (cfg["USE_QA"] == "1")
-                        {
-                            po["__WXLIB_QA_p"] = addLib(po["LIB_BASENAME_MSW"] + "_qa");
-                            po["__WXLIB_CORE_p"] = addLib(po["LIB_BASENAME_MSW"] + "_core");
-                            po["__WXLIB_XML_p"] = addLib(po["LIB_BASENAME_BASE"] + "_xml");
-                        }
-                    }
-                }
+                po["__WXLIB_QA_p"] = addLib(po["LIB_BASENAME_MSW"] + "_qa");
+                po["__WXLIB_CORE_p"] = addLib(po["LIB_BASENAME_MSW"] + "_core");
+                po["__WXLIB_XML_p"] = addLib(po["LIB_BASENAME_BASE"] + "_xml");
             }
             else if (lib == "xrc")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                {
-                    if (cfg["USE_GUI"] == "1")
-                    {
-                        if (cfg["USE_XRC"] == "1")
-                        {
-                            po["__WXLIB_XRC_p"] = addLib(po["LIB_BASENAME_MSW"] + "_xrc");
-                            po["__WXLIB_XML_p"] = addLib(po["LIB_BASENAME_BASE"] + "_xml");
-                            po["__WXLIB_ADV_p"] = addLib(po["LIB_BASENAME_MSW"] + "_adv");
-                            po["__WXLIB_HTML_p"] = addLib(po["LIB_BASENAME_MSW"] + "_html");
-                        }
-                    }
-                }
+                po["__WXLIB_XRC_p"] = addLib(po["LIB_BASENAME_MSW"] + "_xrc");
+                po["__WXLIB_XML_p"] = addLib(po["LIB_BASENAME_BASE"] + "_xml");
+                po["__WXLIB_ADV_p"] = addLib(po["LIB_BASENAME_MSW"] + "_adv");
+                po["__WXLIB_HTML_p"] = addLib(po["LIB_BASENAME_MSW"] + "_html");
             }
             else if (lib == "aui")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    if (cfg["USE_GUI"] == "1")
-                        if (cfg["USE_AUI"] == "1")
-                            po["__WXLIB_AUI_p"] = addLib(po["LIB_BASENAME_MSW"] + "_aui");
+                po["__WXLIB_AUI_p"] = addLib(po["LIB_BASENAME_MSW"] + "_aui");
             }
             else if (lib == "html")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    if (cfg["USE_GUI"] == "1")
-                        if (cfg["USE_HTML"] == "1")
-                            po["__WXLIB_HTML_p"] = addLib(po["LIB_BASENAME_MSW"] + "_html");
+                po["__WXLIB_HTML_p"] = addLib(po["LIB_BASENAME_MSW"] + "_html");
             }
             else if (lib == "media")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    if (cfg["USE_GUI"] == "1")
-                        // if (cfg["USE_MEDIA"] == "1") // TODO: wx2.7 CVS haves an USE_MEDIA
-                        po["__WXLIB_MEDIA_p"] = addLib(po["LIB_BASENAME_MSW"] + "_media");
+                po["__WXLIB_MEDIA_p"] = addLib(po["LIB_BASENAME_MSW"] + "_media");
             }
             else if (lib == "odbc")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                    if (sho["wxUSE_ODBC"])
-                        po["__WXLIB_ODBC_p"] = addLib(po["LIB_BASENAME_BASE"] + "_odbc");
+                po["__WXLIB_ODBC_p"] = addLib(po["LIB_BASENAME_BASE"] + "_odbc");
             }
             else if (lib == "dbgrid")
             {
-                if (cfg["MONOLITHIC"] == "0")
-                {
-                    if (cfg["USE_GUI"] == "1")
-                    {
-                        if (sho["wxUSE_ODBC"])
-                        {
-                            po["__WXLIB_DBGRID_p"] = addLib(po["LIB_BASENAME_MSW"] + "_dbgrid");
-                            po["__WXLIB_ODBC_p"] = addLib(po["LIB_BASENAME_BASE"] + "_odbc");
-                            po["__WXLIB_ADV_p"] = addLib(po["LIB_BASENAME_MSW"] + "_adv");
-                        }
-                    }
-                }
+                po["__WXLIB_DBGRID_p"] = addLib(po["LIB_BASENAME_MSW"] + "_dbgrid");
+                po["__WXLIB_ODBC_p"] = addLib(po["LIB_BASENAME_BASE"] + "_odbc");
+                po["__WXLIB_ADV_p"] = addLib(po["LIB_BASENAME_MSW"] + "_adv");
             }
             else if (lib == "opengl" || lib == "gl")
             {
                 // TODO: it's opengl or gl?
                 /// Doesn't matter if it's monolithic or not
-                if (cfg["USE_OPENGL"] == "1")
-                    if (cfg["USE_GUI"] == "1")
-                        po["__WXLIB_OPENGL_p"]  = addLib(po["LIB_BASENAME_MSW"] + "_gl");
-                        po["__WXLIB_OPENGL_p"] += addLib("opengl32");
-                        po["__WXLIB_OPENGL_p"] += addLib("glu32");
+                po["__WXLIB_OPENGL_p"]  = addLib(po["LIB_BASENAME_MSW"] + "_gl");
+                po["__WXLIB_OPENGL_p"] += addLib("opengl32");
+                po["__WXLIB_OPENGL_p"] += addLib("glu32");
             }
             else
             {
@@ -848,6 +816,7 @@ public:
         libs += po["__WXLIB_DBGRID_p"] + po["__WXLIB_ODBC_p"] + po["__WXLIB_XRC_p"];
         libs += po["__WXLIB_QA_p"] + po["__WXLIB_AUI_p"] + po["__WXLIB_HTML_p"] + po["__WXLIB_ADV_p"];
         libs += po["__WXLIB_CORE_p"] + po["__WXLIB_XML_p"] + po["__WXLIB_NET_p"];
+        libs += po["__WXLIB_RICH_p"];
         libs += po["__WXLIB_BASE_p"] + po["__WXLIB_MONO_p"];
         libs += po["__LIB_TIFF_p"] + po["__LIB_JPEG_p"] + po["__LIB_PNG_p"];
         libs += po["__LIB_ZLIB_p"] + po["__LIB_REGEX_p"] + po["__LIB_EXPAT_p"];

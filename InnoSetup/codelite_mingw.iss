@@ -36,8 +36,19 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "..\Runtime\CodeLite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\codelite-clang.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+
+;; ---- wxWidgets DLLs 
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxbase294u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxbase294u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxbase294u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "C:\src\wx-sources-294\lib\gcc_dll\wxrc.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
 Source: "..\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; Components: Editor;

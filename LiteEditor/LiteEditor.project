@@ -320,8 +320,6 @@
       <File Name="newworkspacebasedlg.h"/>
       <File Name="newworkspacedlg.cpp"/>
       <File Name="newprojectdlg.h"/>
-      <File Name="newprojectbasedlg.cpp"/>
-      <File Name="newprojectbasedlg.h"/>
       <File Name="newprojectdlg.cpp"/>
       <File Name="new_item_base_dlg.h"/>
       <File Name="new_item_base_dlg.cpp"/>
@@ -1210,4 +1208,14 @@ svninfo.cpp:
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="wxcrafter.wxcp"/>
+    <VirtualDirectory Name="base">
+      <File Name="wxcrafter.h"/>
+      <File Name="wxcrafter.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="resources">
+      <File Name="wxcrafter_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

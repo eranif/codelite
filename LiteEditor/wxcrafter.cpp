@@ -46,7 +46,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer10->Add(m_listTemplates, 1, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    m_listTemplates->InsertColumn(m_listTemplates->GetColumnCount(), _("Template:"), wxLIST_FORMAT_LEFT, -1);
+    m_listTemplates->InsertColumn(m_listTemplates->GetColumnCount(), _("Template"), wxLIST_FORMAT_LEFT, -1);
     m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, 150);
     
@@ -134,7 +134,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     boxSizer2->Add(m_button4, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
     
     
-    GetSizer()->Fit(this);
+    SetSize(wxSize(-1,-1));
     Centre();
     // Connect events
     m_chCategories->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCategorySelected), NULL, this);
@@ -144,6 +144,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     m_bmpButton33->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
     m_cbSeparateDir->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_button3->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDlgBaseClass::OnOKUI), NULL, this);
+    m_button3->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCreate), NULL, this);
     
 }
 
@@ -156,5 +157,6 @@ NewProjectDlgBaseClass::~NewProjectDlgBaseClass()
     m_bmpButton33->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
     m_cbSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_button3->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDlgBaseClass::OnOKUI), NULL, this);
+    m_button3->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCreate), NULL, this);
     
 }

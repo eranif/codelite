@@ -86,6 +86,15 @@ public:
 
 class Manager : public wxEvtHandler, public IDebuggerObserver
 {
+public:
+    // Virtual Directory 'Create' error code
+    enum {
+        VD_OK,
+        VD_EXISTS,
+        VD_ERROR
+    };
+protected:
+    
 	friend class Singleton<Manager>;
 
 	wxString                m_installDir;
@@ -374,7 +383,7 @@ public:
 	 * \param virtualDirFullPath a dot separated string of the new virtual directory full path up to the parent project
 	 *        for example: to add a new VD name VD3 under: Project1->VD1->VD2 path should contain: Project1.VD1.VD2.VD3
 	 */
-	void AddVirtualDirectory(const wxString &virtualDirFullPath);
+	int AddVirtualDirectory(const wxString &virtualDirFullPath, bool createIt);
 
 	/**
 	 * Remove virtual directory from the workspace.

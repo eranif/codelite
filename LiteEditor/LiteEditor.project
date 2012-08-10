@@ -908,6 +908,8 @@
       
       
       
+      
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -968,10 +970,11 @@ $(WorkspacePath)/sdk/clang/include</SearchPaths>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/home/eran/root/bin/codelite" CommandArguments="--with-plugins=subversion" UseSeparateDebugArgs="yes" DebugArguments="--with-plugins=subversion" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="/home/eran/root/bin/codelite" CommandArguments="--with-plugins=outline" UseSeparateDebugArgs="yes" DebugArguments="--with-plugins=outline" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[SUDO_ASKPASS=/usr/bin/ssh-askpass
-LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
+LD_LIBRARY_PATH=/home/eran/root/lib/codelite/
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -999,7 +1002,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlags/>
@@ -1031,7 +1035,9 @@ resources.cpp: resources.xrc
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
-        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
+        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
+      
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="C:\GDB.745\bin\gdb.exe">
         <PostConnectCommands/>
@@ -1060,8 +1066,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlags/>
@@ -1094,7 +1099,9 @@ svninfo.cpp:
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Release" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default">
-        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
+        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
+      
+      ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -1172,6 +1179,8 @@ resources.cpp: resources.xrc
       
       
       
+      
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -1215,7 +1224,7 @@ svninfo.cpp:
       <File Name="wxcrafter.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
-      <File Name="wxcrafter_bitmaps.cpp"/>
+      <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
 </CodeLite_Project>

@@ -1009,13 +1009,16 @@ void FileViewTree::OnNewVirtualFolder( wxCommandEvent & WXUNUSED( event ) )
 void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent, const wxString &text )
 {
     wxString path = GetItemPath(parent) + wxT(":") + text;
-    ManagerST::Get()->AddVirtualDirectory(path);
+    
+    // Virtual directory already exists?
+    if ( ManagerST::Get()->AddVirtualDirectory(path, true) == Manager::VD_EXISTS )
+        return;
 
     ProjectItem itemData(path, text, wxEmptyString, ProjectItem::TypeVirtualDirectory);
-    AppendItem(	parent,								// parent
-                itemData.GetDisplayName(),			// display name
-                GetIconIndex( itemData ),			// item image index
-                GetIconIndex( itemData ),			// selected item image
+    AppendItem( parent,                             // parent
+                itemData.GetDisplayName(),          // display name
+                GetIconIndex( itemData ),           // item image index
+                GetIconIndex( itemData ),           // selected item image
                 new FilewViewTreeItemData( itemData ) );
 
     SortItem( parent );
@@ -1899,13 +1902,33 @@ bool FileViewTree::CreateVirtualDirectory(const wxString& parentPath, const wxSt
     if (item.IsOk()) {
         return true;
     }
-
-    item = ItemByFullPath(parentPath);
-    if (item.IsOk()) {
-        DoAddVirtualFolder(item, vdName);
-        return true;
+    
+    wxString project = parentPath.BeforeFirst(wxT(':'));
+    wxString parentVDs = parentPath.AfterFirst(wxT(':'));
+    wxArrayString vds = ::wxStringTokenize(parentVDs, wxT(":"), wxTOKEN_STRTOK);
+    
+    wxTreeItemId curItem = ItemByFullPath(project);
+    if ( !curItem.IsOk() )
+        // Could not locate the project item...
+        return false; 
+        
+    wxString path = project;
+    for(size_t i=0; i<vds.GetCount(); i++) {
+        path << wxT(":") << vds.Item(i);
+        wxTreeItemId tmpItem = ItemByFullPath(path);
+        if ( !tmpItem.IsOk() ) {
+            DoAddVirtualFolder(curItem, vds.Item(i));
+            
+        } else {
+            curItem = tmpItem;
+        }
     }
-    return false;
+    
+    if ( !curItem.IsOk() )
+        return false;
+    
+    DoAddVirtualFolder(curItem, vdName);
+    return true;
 }
 
 void FileViewTree::MarkActive(const wxString& projectName)

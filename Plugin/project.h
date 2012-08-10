@@ -139,6 +139,8 @@ typedef SmartPtr<ProjectTree> ProjectTreePtr;
 typedef TreeNode<wxString, ProjectItem> ProjectTreeNode;
 
 class Project;
+class Workspace;
+
 typedef SmartPtr<Project>       ProjectPtr;
 typedef std::set<wxFileName>    FileNameSet_t;
 typedef std::vector<wxFileName> FileNameVector_t;
@@ -170,7 +172,9 @@ public:
     static const wxString STATIC_LIBRARY;
     static const wxString DYNAMIC_LIBRARY;
     static const wxString EXECUTABLE;
-
+    
+    friend class Workspace;
+    
 private:
     wxXmlDocument m_doc;
     wxFileName m_fileName;

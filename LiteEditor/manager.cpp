@@ -877,14 +877,19 @@ void Manager::RetagFile ( const wxString& filename )
 
 //--------------------------- Project Files Mgmt -----------------------------
 
-void Manager::AddVirtualDirectory ( const wxString &virtualDirFullPath )
+int Manager::AddVirtualDirectory (const wxString& virtualDirFullPath, bool createIt)
 {
+    if ( WorkspaceST::Get()->IsVirtualDirectoryExists(virtualDirFullPath) ) {
+        return VD_EXISTS;
+    }
+    
 	wxString errMsg;
-	bool res = WorkspaceST::Get()->CreateVirtualDirectory ( virtualDirFullPath, errMsg );
+	bool res = WorkspaceST::Get()->CreateVirtualDirectory ( virtualDirFullPath, errMsg, createIt );
 	if ( !res ) {
 		wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
-		return;
+		return VD_ERROR;
 	}
+    return VD_OK;
 }
 
 void Manager::RemoveVirtualDirectory ( const wxString &virtualDirFullPath )

@@ -555,7 +555,7 @@ void Workspace::SetActiveProject(const wxString &name, bool active)
 	SaveXmlFile();
 }
 
-bool Workspace::CreateVirtualDirectory(const wxString &vdFullPath, wxString &errMsg)
+bool Workspace::CreateVirtualDirectory(const wxString &vdFullPath, wxString &errMsg, bool mkPath)
 {
 	wxStringTokenizer tkz(vdFullPath, wxT(":"));
 	wxString projName = tkz.GetNextToken();
@@ -571,7 +571,7 @@ bool Workspace::CreateVirtualDirectory(const wxString &vdFullPath, wxString &err
 	fixedPath += tkz.GetNextToken();
 
 	ProjectPtr proj = FindProjectByName(projName, errMsg);
-	return proj->CreateVirtualDir(fixedPath);
+	return proj->CreateVirtualDir(fixedPath, mkPath);
 }
 
 bool Workspace::RemoveVirtualDirectory(const wxString &vdFullPath, wxString &errMsg)
@@ -785,3 +785,28 @@ bool Workspace::IsOpen() const
 	return m_doc.IsOk();
 }
 
+
+bool Workspace::IsVirtualDirectoryExists(const wxString& vdFullPath)
+{
+	wxStringTokenizer tkz(vdFullPath, wxT(":"));
+	wxString projName = tkz.GetNextToken();
+
+	wxString fixedPath;
+	// Construct new path excluding the first token
+	size_t count = tkz.CountTokens();
+
+	for (size_t i=0; i<count-1; i++) {
+		fixedPath += tkz.GetNextToken();
+		fixedPath += wxT(":");
+	}
+	fixedPath += tkz.GetNextToken();
+
+    wxString errMsg;
+	ProjectPtr proj = FindProjectByName(projName, errMsg);
+    if ( !proj ) {
+        return false;
+    }
+    
+	wxXmlNode *vdNode = proj->GetVirtualDir(fixedPath);
+    return vdNode != NULL;
+}

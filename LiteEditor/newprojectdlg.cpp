@@ -72,9 +72,11 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
     
     int where = info.GetCategory();
     if (where == wxNOT_FOUND) {
-        where = 0;
+        where = m_chCategories->FindString(_("Console") );
+        if ( where == wxNOT_FOUND )
+            where = 0;
     }
-
+    
     m_chCategories->SetSelection(where);
     FillProjectTemplateListCtrl(m_chCategories->GetStringSelection());
 

@@ -280,7 +280,8 @@ static void ChildTerminatedSingalHandler(int signo)
         if(pid > 0) {
             // waitpid succeeded
             IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-
+            //::wxPrintf(wxT("Child terminatd %d\n"), pid);
+            
         } else {
             break;
 
@@ -288,7 +289,7 @@ static void ChildTerminatedSingalHandler(int signo)
     }
 
     // reinstall the handler
-    signal(SIGCHLD, ChildTerminatedSingalHandler);
+    //signal(SIGCHLD, ChildTerminatedSingalHandler);
 }
 
 #endif
@@ -335,8 +336,12 @@ bool CodeLiteApp::OnInit()
     sigprocmask(SIG_SETMASK, &mask_set, NULL);
 
     // Handle sigchld
-    signal(SIGCHLD, ChildTerminatedSingalHandler);
-
+    struct sigaction sa;
+    sigfillset(&sa.sa_mask);
+    sa.sa_handler = ChildTerminatedSingalHandler;
+    sa.sa_flags = 0;
+    sigaction(SIGCHLD, &sa, NULL);
+    
 #ifdef __WXGTK__
     // Insall signal handlers
     signal(SIGSEGV, WaitForDebugger);

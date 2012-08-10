@@ -38,7 +38,7 @@
   <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
   <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>

@@ -166,7 +166,11 @@ void OutputTabWindow::CreateGUIControls()
 #else
 	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
 #endif
-
+    
+    // We dont really want to collect undo in the output tabs...
+    m_sci->SetUndoCollection(false);
+    m_sci->EmptyUndoBuffer();
+    
 	InitStyle(m_sci, wxSCI_LEX_CONTAINER, false);
 
 	// Add the find bar
@@ -239,6 +243,7 @@ void OutputTabWindow::Clear()
 	if (m_sci) {
 		m_sci->SetReadOnly(false);
 		m_sci->ClearAll();
+		m_sci->EmptyUndoBuffer();
 		m_sci->SetScrollWidth(1);
 		m_sci->SetReadOnly(true);
 	}

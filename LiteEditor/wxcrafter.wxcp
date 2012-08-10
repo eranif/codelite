@@ -341,7 +341,7 @@
 															"m_properties":	[{
 																	"type":	"string",
 																	"m_label":	"Name:",
-																	"m_value":	"Template:"
+																	"m_value":	"Template"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Width:",
@@ -1083,6 +1083,12 @@
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event"
+										}, {
+											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnCreate(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
 										}],
 									"m_children":	[]
 								}, {

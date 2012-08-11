@@ -181,7 +181,7 @@ private:
     bool DoAddNewItem(wxTreeItemId &item, const wxString &filename, const wxString &vdFullpath);
     void DoRemoveProject(const wxString &name);
     void DoSetProjectActive(wxTreeItemId &item);
-    void DoAddVirtualFolder(wxTreeItemId &parent, const wxString &text);
+    wxTreeItemId DoAddVirtualFolder(wxTreeItemId &parent, const wxString &text);
     void DoRemoveVirtualFolder(wxTreeItemId &parent);
     void DoRemoveItems();
     void DoItemActivated(wxTreeItemId &item, wxEvent &event);

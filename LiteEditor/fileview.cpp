@@ -1006,24 +1006,26 @@ void FileViewTree::OnNewVirtualFolder( wxCommandEvent & WXUNUSED( event ) )
     }
 }
 
-void FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent, const wxString &text )
+wxTreeItemId FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent, const wxString &text )
 {
     wxString path = GetItemPath(parent) + wxT(":") + text;
     
     // Virtual directory already exists?
     if ( ManagerST::Get()->AddVirtualDirectory(path, true) == Manager::VD_EXISTS )
-        return;
-
+        return wxTreeItemId();
+    
+    wxTreeItemId item;
     ProjectItem itemData(path, text, wxEmptyString, ProjectItem::TypeVirtualDirectory);
-    AppendItem( parent,                             // parent
-                itemData.GetDisplayName(),          // display name
-                GetIconIndex( itemData ),           // item image index
-                GetIconIndex( itemData ),           // selected item image
-                new FilewViewTreeItemData( itemData ) );
+    item = AppendItem( parent,                             // parent
+                       itemData.GetDisplayName(),          // display name
+                       GetIconIndex( itemData ),           // item image index
+                       GetIconIndex( itemData ),           // selected item image
+                       new FilewViewTreeItemData( itemData ) );
 
     SortItem( parent );
     Expand( parent );
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
+    return item;
 }
 
 wxString FileViewTree::GetItemPath( wxTreeItemId &item )
@@ -1917,8 +1919,11 @@ bool FileViewTree::CreateVirtualDirectory(const wxString& parentPath, const wxSt
         path << wxT(":") << vds.Item(i);
         wxTreeItemId tmpItem = ItemByFullPath(path);
         if ( !tmpItem.IsOk() ) {
-            DoAddVirtualFolder(curItem, vds.Item(i));
-            
+            curItem = DoAddVirtualFolder(curItem, vds.Item(i));
+            if ( curItem.IsOk() == false ) {
+                // failed to add virtual directory
+                break;
+            }
         } else {
             curItem = tmpItem;
         }

@@ -173,16 +173,18 @@ public:
     static const wxString DYNAMIC_LIBRARY;
     static const wxString EXECUTABLE;
     
+    typedef std::map<wxString, wxXmlNode*> NodeMap_t;
+    
     friend class Workspace;
     
 private:
     wxXmlDocument m_doc;
-    wxFileName m_fileName;
-    bool m_tranActive;
-    bool m_isModified;
-    std::map<wxString, wxXmlNode*> m_vdCache;
-    time_t m_modifyTime;
-
+    wxFileName    m_fileName;
+    bool          m_tranActive;
+    bool          m_isModified;
+    NodeMap_t     m_vdCache;
+    time_t        m_modifyTime;
+    
 public:
     const wxFileName &GetFileName() const {
         return m_fileName;
@@ -494,6 +496,7 @@ public:
      */
     wxArrayString GetIncludePaths();
 private:
+    void DoDeleteVDFromCache(const wxString &vd);
     wxArrayString DoBacktickToIncludePath(const wxString &backtick);
     void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
     wxXmlNode *FindFile(wxXmlNode* parent, const wxString &file);

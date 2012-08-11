@@ -3,7 +3,8 @@
 		"m_generatedFilesDir":	"",
 		"m_objCounter":	9,
 		"m_includeFiles":	[],
-		"m_bitmapFunction":	"wxC9ED9InitBitmapResources"
+		"m_bitmapFunction":	"wxC9ED9InitBitmapResources",
+        "m_bitmapsFile" : "wxcrafter_bitmaps.cpp"
 	},
 	"windows":	[{
 			"m_type":	4402,

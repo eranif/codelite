@@ -304,11 +304,8 @@ bool Project::DeleteVirtualDir(const wxString &vdFullPath)
         }
 
         // remove the entry from the cache
-        std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
-        if(iter != m_vdCache.end()) {
-            m_vdCache.erase(iter);
-        }
-
+        DoDeleteVDFromCache(vdFullPath);
+        
         delete vd;
         SetModified(true);
         return SaveXmlFile();
@@ -1283,3 +1280,22 @@ wxArrayString Project::DoBacktickToIncludePath(const wxString& backtick)
     return paths;
 }
 
+void Project::DoDeleteVDFromCache(const wxString& vd)
+{
+    NodeMap_t::iterator iter = m_vdCache.lower_bound(vd);
+    if ( iter == m_vdCache.end() )
+        return;
+    
+    if ( iter->first.StartsWith(vd) == false )
+        return;
+    
+    NodeMap_t::iterator first = iter;
+    ++iter;
+    
+    // Loop and search for the first iterator that does not start with our prefix
+    for(; iter != m_vdCache.end(); ++iter) {
+        if ( iter->first.StartsWith(vd) == false )
+            break;
+    }
+    m_vdCache.erase(first, iter);
+}

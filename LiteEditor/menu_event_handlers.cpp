@@ -48,7 +48,14 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 		}
 
 	} else if (event.GetId() == wxID_CUT) {
-		editor->Cut();
+		if(editor->GetSelectedText().IsEmpty()) {
+			// If the selection is empty, copy the line.
+			editor->CopyAllowLine();
+			editor->LineDelete();
+		} else {
+			// If the text is selected, cut the selected text.
+			editor->Cut();
+		}
 
 	} else if (event.GetId() == wxID_PASTE) {
 		editor->Paste();
@@ -128,7 +135,7 @@ void EditHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
 		event.Enable(editor);
 
 	} else if (event.GetId() == wxID_CUT) {
-		event.Enable(editor && ( editor->GetSelectionStart() - editor->GetSelectionEnd() != 0 ));
+		event.Enable(editor);
 
 	} else if (event.GetId() == wxID_PASTE) {
 #ifdef __WXGTK__

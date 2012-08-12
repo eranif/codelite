@@ -1,6 +1,7 @@
 #ifndef IDBADAPTER_H
 #define IDBADAPTER_H
 #include <wx/wx.h>
+#include "smart_ptr.h"
 #include <wx/dynarray.h>
 #include <wx/dblayer/include/DatabaseLayer.h>
 #include "IDbType.h"
@@ -14,6 +15,8 @@ class View;
 class IDbType;
 
 
+typedef SmartPtr<DatabaseLayer> DatabaseLayerPtr;
+
 /*! \brief Basic virtual class for creating universal interface between different database servers. */
 class IDbAdapter {
 
@@ -26,7 +29,7 @@ public:
 	};
 	
 	/*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opend without defalut database. */
-	virtual DatabaseLayer* GetDatabaseLayer(const wxString& dbName) = 0;
+	virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName) = 0;
 	
 	/*! \brief Return true if dbAdapter is connected. DEPRECATED!!! */
 	virtual bool IsConnected() = 0;

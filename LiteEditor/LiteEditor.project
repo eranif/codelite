@@ -860,6 +860,16 @@
     <Project Name="DatabaseExplorer"/>
     <Project Name="CallGraph"/>
   </Dependencies>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="wxcrafter.wxcp"/>
+    <VirtualDirectory Name="base">
+      <File Name="wxcrafter.h"/>
+      <File Name="wxcrafter.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="resources">
+      <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -1002,8 +1012,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlags/>
@@ -1033,11 +1042,9 @@ resources.cpp: resources.xrc
         <Library Value="clang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins=databaseexplorer" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
-        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
-      
-      ]]>
+        <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="C:\GDB.745\bin\gdb.exe">
         <PostConnectCommands/>
@@ -1066,7 +1073,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlags/>
@@ -1217,14 +1225,4 @@ svninfo.cpp:
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="wxcrafter">
-    <File Name="wxcrafter.wxcp"/>
-    <VirtualDirectory Name="base">
-      <File Name="wxcrafter.h"/>
-      <File Name="wxcrafter.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="resources">
-      <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
 </CodeLite_Project>

@@ -20,8 +20,13 @@ DbConnection::DbConnection(const DbConnection& obj) : xsSerializable(obj)
 }
 DbConnection::~DbConnection()
 {
-	if (m_pDbAdapter) delete m_pDbAdapter;
+	if (m_pDbAdapter) {
+        m_pDbAdapter->CloseConnection();
+        delete m_pDbAdapter;
+        m_pDbAdapter = NULL;
+    }
 }
+
 void DbConnection::Load()
 {
 	if (m_pDbAdapter)

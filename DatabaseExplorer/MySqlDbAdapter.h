@@ -28,7 +28,7 @@ public:
 	virtual bool CanConnect();
 	virtual bool IsConnected();
 	virtual void CloseConnection();
-	virtual DatabaseLayer* GetDatabaseLayer(const wxString& dbName);
+	virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName);
 
 	virtual wxString GetUseDb(const wxString& dbName);
 	virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName);

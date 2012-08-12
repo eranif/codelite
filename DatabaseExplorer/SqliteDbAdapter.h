@@ -21,7 +21,7 @@ public:
 	SQLiteDbAdapter(const wxString& fileName) ;
 	~SQLiteDbAdapter();
 	virtual void CloseConnection();
-	virtual DatabaseLayer* GetDatabaseLayer(const wxString& dbName) ;
+	virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName) ;
 
 
 	virtual void GetDatabases(DbConnection* dbCon);

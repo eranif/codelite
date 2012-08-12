@@ -299,7 +299,7 @@ void WriteStructurePage::OnBtnShowSqlClick(wxCommandEvent& event) {
 }
 
 void WriteStructurePage::OnBtnWriteClick(wxCommandEvent& event) {
-	DatabaseLayer* pDbLayer = NULL;
+	DatabaseLayerPtr pDbLayer(NULL);
 	try {
 		pDbLayer = m_pParentWizard->GetSelectedDatabase()->GetDbAdapter()->GetDatabaseLayer(m_pParentWizard->GetSelectedDatabase()->GetName());
 		if (pDbLayer) {
@@ -398,7 +398,7 @@ void RestorePage::OnBtnRestoreClick(wxCommandEvent& event)
 {
 	if (m_restoreFile->GetPath().IsEmpty()) return;
 
-	DatabaseLayer* pDbLayer = NULL;
+	DatabaseLayerPtr pDbLayer(NULL);
 	Database* pDb = m_pParentWizard->GetSelectedDatabase();
 	Clear();
 	try {

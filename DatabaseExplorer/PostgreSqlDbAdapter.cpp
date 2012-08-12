@@ -27,7 +27,7 @@ void PostgreSqlDbAdapter::CloseConnection() {
 	this->m_pDbLayer->Close();
 }
 
-DatabaseLayer* PostgreSqlDbAdapter::GetDatabaseLayer(const wxString& dbName) {
+DatabaseLayerPtr PostgreSqlDbAdapter::GetDatabaseLayer(const wxString& dbName) {
 	DatabaseLayer* dbLayer = NULL;
 
 
@@ -276,7 +276,7 @@ wxString PostgreSqlDbAdapter::GetDefaultSelect(const wxString& cols, const wxStr
 bool PostgreSqlDbAdapter::GetColumns(DBETable* pTab) {
 	if (pTab) {
 //		SetDatabase(pTab->GetParentName());
-		DatabaseLayer* dbLayer = this->GetDatabaseLayer(pTab->GetParentName());
+		DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(pTab->GetParentName());
 
 		if (!dbLayer->IsOpen()) return NULL;
 		// loading columns
@@ -337,7 +337,6 @@ bool PostgreSqlDbAdapter::GetColumns(DBETable* pTab) {
 		}
 		dbLayer->CloseResultSet(database);
 		dbLayer->Close();
-		delete dbLayer;
 	}
 	return true;
 }
@@ -354,7 +353,7 @@ bool PostgreSqlDbAdapter::CanConnect() {
 }
 void PostgreSqlDbAdapter::GetDatabases(DbConnection* dbCon) {
 	if (dbCon) {
-		DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
+		DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(wxT(""));
 		if (dbLayer) {
 			if (!dbLayer->IsOpen()) return;
 
@@ -366,7 +365,6 @@ void PostgreSqlDbAdapter::GetDatabases(DbConnection* dbCon) {
 			}
 			dbLayer->CloseResultSet(databaze);
 			dbLayer->Close();
-			delete dbLayer;
 		}
 	}
 	return;
@@ -375,7 +373,7 @@ void PostgreSqlDbAdapter::GetDatabases(DbConnection* dbCon) {
 void PostgreSqlDbAdapter::GetTables(Database* db, bool includeViews) {
 	if (db) {
 		//SetDatabase(db->GetName());
-		DatabaseLayer* dbLayer = this->GetDatabaseLayer(db->GetName());
+		DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(db->GetName());
 		if (dbLayer) {
 			if (!dbLayer->IsOpen()) return;
 			// lading tables for database
@@ -394,7 +392,6 @@ void PostgreSqlDbAdapter::GetTables(Database* db, bool includeViews) {
 			}
 			dbLayer->CloseResultSet(tabulky);
 			dbLayer->Close();
-			delete dbLayer;
 		}
 	}
 	return;
@@ -467,7 +464,7 @@ wxString PostgreSqlDbAdapter::GetUseDb(const wxString& dbName) {
 void PostgreSqlDbAdapter::GetViews(Database* db) {
 	if (db) {
 		//SetDatabase(db->GetName());
-		DatabaseLayer* dbLayer = this->GetDatabaseLayer(db->GetName());
+		DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(db->GetName());
 		if (dbLayer) {
 			if (!dbLayer->IsOpen()) return;
 			// lading tables for database
@@ -482,7 +479,6 @@ void PostgreSqlDbAdapter::GetViews(Database* db) {
 			}
 			dbLayer->CloseResultSet(tabulky);
 			dbLayer->Close();
-			delete dbLayer;
 		}
 	}
 	return;

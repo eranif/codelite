@@ -85,7 +85,7 @@ void SQLCommandPanel::ExecuteSql()
 	clWindowUpdateLocker locker(this);
 	std::set<int> textCols;
 	std::set<int> blobCols;
-	DatabaseLayer* m_pDbLayer = m_pDbAdapter->GetDatabaseLayer(m_dbName);
+	DatabaseLayerPtr m_pDbLayer = m_pDbAdapter->GetDatabaseLayer(m_dbName);
 	if (m_pDbLayer->IsOpen()) {
 		// test for empty string
 		if (this->m_scintillaSQL->GetText() != wxT("")) {

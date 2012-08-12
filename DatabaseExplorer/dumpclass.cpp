@@ -62,7 +62,7 @@ int DumpClass::DumpTable(wxTextFile* pFile, DBETable* pTab) {
 		bool pocatek = false;
 
 		
-		DatabaseLayer* pDbLayer = m_pDbAdapter->GetDatabaseLayer(pTab->GetParentName());
+		DatabaseLayerPtr pDbLayer = m_pDbAdapter->GetDatabaseLayer(pTab->GetParentName());
 		if (pDbLayer){
 			//DatabaseResultSet* pResult = pDbLayer->RunQueryWithResults(wxString::Format(wxT("SELECT %s FROM %s.%s"), cols.c_str(),pTab->GetParentName().c_str(), pTab->GetName().c_str()));
 			DatabaseResultSet* pResult = pDbLayer->RunQueryWithResults(m_pDbAdapter->GetDefaultSelect(cols ,pTab->GetParentName(), pTab->GetName()));
@@ -123,7 +123,7 @@ int DumpClass::DumpTable(wxTextFile* pFile, DBETable* pTab) {
 			if (rowCount > 0) pFile->AddLine(wxT(";"));
 			pDbLayer->CloseResultSet(pResult);
 			pDbLayer->Close();
-			}			
+			}
 	}
 	return rowCount;
 }

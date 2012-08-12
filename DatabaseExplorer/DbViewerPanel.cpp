@@ -418,13 +418,13 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 				//TODO:LANG:
 				wxString dbName = wxGetTextFromUser(_("Database name"), _("Add database"));
 				if (!dbName.IsEmpty()) {
-					DatabaseLayer* pDbLayer = m_pEditedConnection->GetDbAdapter()->GetDatabaseLayer(wxT(""));
+					DatabaseLayerPtr pDbLayer = m_pEditedConnection->GetDbAdapter()->GetDatabaseLayer(wxT(""));
 					wxString sql = m_pEditedConnection->GetDbAdapter()->GetCreateDatabaseSql(dbName);
 					if (!sql.empty()) {
 
 						pDbLayer->RunQuery(sql);
 						pDbLayer->Close();
-						delete pDbLayer;
+						
 						//TODO:LANG:
 						wxMessageBox(_("Database created successfully"));
 
@@ -446,10 +446,9 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 						//TODO:LANG:
 						wxMessageDialog dlg(this, wxString::Format(_("Remove database '%s'?"),pDb->GetName().c_str()),_("Drop database"),wxYES_NO);
 						if (dlg.ShowModal() == wxID_YES) {
-							DatabaseLayer* pDbLayer = pDb->GetDbAdapter()->GetDatabaseLayer(wxT(""));
+							DatabaseLayerPtr pDbLayer = pDb->GetDbAdapter()->GetDatabaseLayer(wxT(""));
 							pDbLayer->RunQuery(dropSQL);
 							pDbLayer->Close();
-							delete pDbLayer;
 							//TODO:LANG:
 							wxMessageBox(_("Database dropped successfully"));
 							RefreshDbView();
@@ -510,10 +509,10 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 					//TODO:LANG:
 					wxMessageDialog dlg(this, wxString::Format(_("Remove table '%s'?"),pTab->GetName().c_str()),_("Drop table"),wxYES_NO);
 					if (dlg.ShowModal() == wxID_YES) {
-						DatabaseLayer* pDbLayer = pTab->GetDbAdapter()->GetDatabaseLayer(pTab->GetParentName());
+						DatabaseLayerPtr pDbLayer = pTab->GetDbAdapter()->GetDatabaseLayer(pTab->GetParentName());
 						pDbLayer->RunQuery(pTab->GetDbAdapter()->GetDropTableSql(pTab));
 						pDbLayer->Close();
-						delete pDbLayer;
+						
 						//TODO:LANG:
 						wxMessageBox(_("Table dropped successfully"));
 						RefreshDbView();
@@ -617,7 +616,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 
 bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
 {
-	DatabaseLayer* pDbLayer = NULL;
+	DatabaseLayerPtr pDbLayer(NULL);
 	LogDialog dialog( this );//TODO:Doresit parenta
 	dialog.Show();
 

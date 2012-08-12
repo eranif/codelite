@@ -30,7 +30,7 @@ void MySqlDbAdapter::CloseConnection()
 	this->m_pDbLayer->Close();
 }
 
-DatabaseLayer* MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName)
+DatabaseLayerPtr MySqlDbAdapter::GetDatabaseLayer(const wxString& dbName)
 {
 	DatabaseLayer* dbLayer = NULL;
 
@@ -179,7 +179,7 @@ wxString MySqlDbAdapter::GetDefaultSelect(const wxString& cols, const wxString& 
 }
 bool MySqlDbAdapter::GetColumns(DBETable* pTab)
 {
-	DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
+	DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(wxT(""));
 
 	if (!dbLayer->IsOpen()) return NULL;
 	// loading columns
@@ -225,7 +225,6 @@ bool MySqlDbAdapter::GetColumns(DBETable* pTab)
 	}
 	dbLayer->CloseResultSet(database);
 	dbLayer->Close();
-	delete dbLayer;
 	return true;
 }
 
@@ -260,7 +259,7 @@ bool MySqlDbAdapter::CanConnect()
 void MySqlDbAdapter::GetDatabases(DbConnection* dbCon)
 {
 	if (dbCon) {
-		DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
+		DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(wxT(""));
 		if (dbLayer) {
 			if (!dbLayer->IsOpen()) return;
 
@@ -272,7 +271,6 @@ void MySqlDbAdapter::GetDatabases(DbConnection* dbCon)
 			}
 			dbLayer->CloseResultSet(databaze);
 			dbLayer->Close();
-			delete dbLayer;
 		}
 	}
 	return;
@@ -281,7 +279,7 @@ void MySqlDbAdapter::GetDatabases(DbConnection* dbCon)
 void MySqlDbAdapter::GetTables(Database* db, bool includeViews)
 {
 	if (db) {
-		DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
+		DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(wxT(""));
 		if (dbLayer) {
 			if (!dbLayer->IsOpen()) return;
 			// lading tables for database
@@ -302,7 +300,6 @@ void MySqlDbAdapter::GetTables(Database* db, bool includeViews)
 				dbLayer->CloseResultSet(tabulky);
 			}
 			dbLayer->Close();
-			delete dbLayer;
 		}
 	}
 	return;
@@ -379,7 +376,7 @@ wxString MySqlDbAdapter::GetUseDb(const wxString& dbName)
 }
 void MySqlDbAdapter::GetViews(Database* db)
 {
-	DatabaseLayer* dbLayer = this->GetDatabaseLayer(wxT(""));
+	DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(wxT(""));
 
 	if (!dbLayer->IsOpen()) return;
 	// loading columns
@@ -390,9 +387,8 @@ void MySqlDbAdapter::GetViews(Database* db)
 		db->AddChild(pView);
 	}
 	dbLayer->CloseResultSet(database);
-
-
 }
+
 wxString MySqlDbAdapter::GetCreateViewSql(View* view, bool dropView)
 {
 	wxString str = wxT("");

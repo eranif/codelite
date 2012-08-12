@@ -46,39 +46,36 @@ void PreDefinedTypesPage::OnItemSelected( wxListEvent& event )
 void PreDefinedTypesPage::OnNewShortcut( wxCommandEvent& event )
 {
 	wxUnusedVar(event);
-	DbgCommandDlg *dlg = new DbgCommandDlg(this);
-	if (dlg->ShowModal() == wxID_OK) {
+	DbgCommandDlg dlg(this);
+    
+	if (dlg.ShowModal() == wxID_OK) {
+        
 		//add new command to the table
-		wxString name       = dlg->GetName();
-		wxString expression = dlg->GetExpression();
-		wxString dbgCmd     = dlg->GetDbgCommand();
-		long item;
-		wxListItem info;
-
-		//make sure that the expression does not exist
+		wxString name       = dlg.GetName();
+		wxString expression = dlg.GetExpression();
+		wxString dbgCmd     = dlg.GetDbgCommand();
+		
+		// Make sure that the expression does not exist
 		int count = m_listCtrl1->GetItemCount();
 		for(int i=0; i<count; i++) {
 			wxString existingName = GetColumnText(m_listCtrl1, i, 0);
 			if(name == existingName) {
-				dlg->Destroy();
 				wxMessageBox(_("A Debugger type with that name already exists"), _("CodeLite"), wxOK | wxICON_INFORMATION);
 				return;
 			}
 		}
 
 		// Set the item display name
-		info.SetColumn(0);
-		item = m_listCtrl1->InsertItem(info);
-
+        long item = ::AppendListCtrlRow(m_listCtrl1);
+        
 		SetColumnText(m_listCtrl1, item, 0, name       );
 		SetColumnText(m_listCtrl1, item, 1, expression );
 		SetColumnText(m_listCtrl1, item, 2, dbgCmd);
 
-		m_listCtrl1->SetColumnWidth(0, 100);
-		m_listCtrl1->SetColumnWidth(1, 200);
-		m_listCtrl1->SetColumnWidth(1, 200);
+		m_listCtrl1->SetColumnWidth(0, -1);
+		m_listCtrl1->SetColumnWidth(1, -1);
+		m_listCtrl1->SetColumnWidth(2, -1);
 	}
-	dlg->Destroy();
 }
 
 void PreDefinedTypesPage::OnEditShortcut( wxCommandEvent& event )

@@ -1611,16 +1611,16 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     wxString msg;
     bool boDoNotClose = false;
 
-    // Check for running retag thread
-	if (ManagerST::Get()->GetRetagInProgress()) {
-        msg << wxT("The retag of the Workspace is currently in progress.\n")
-            << wxT("Do you want to close any way?");
-
-        int rc = wxMessageBox(msg, wxT("Retag of the Workspace in progress..."), wxYES_NO|wxCENTER|wxICON_QUESTION);
-        if (rc == wxNO) {
-            boDoNotClose = true;
-        }
-    }
+    //// Check for running retag thread
+	//if (ManagerST::Get()->GetRetagInProgress()) {
+    //    msg << wxT("The retag of the Workspace is currently in progress.\n")
+    //        << wxT("Do you want to close any way?");
+    //
+    //    int rc = wxMessageBox(msg, wxT("Retag of the Workspace in progress..."), wxYES_NO|wxCENTER|wxICON_QUESTION);
+    //    if (rc == wxNO) {
+    //        boDoNotClose = true;
+    //    }
+    //}
 
     if (!boDoNotClose) {
         ManagerST::Get()->SetShutdownInProgress(true);

@@ -8,11 +8,14 @@
 #include <clang-c/Index.h>
 #include <set>
 #include "fileextmanager.h"
+#include <map>
 
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_STARTED ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_ENDED   ;
 extern const wxEventType wxEVT_CLANG_PCH_CACHE_CLEARED ;
 extern const wxEventType wxEVT_CLANG_TU_CREATE_ERROR ;
+
+typedef std::map<FileExtManager::FileType, wxArrayString> FileTypeCmpArgs_t;
 
 enum WorkingContext {
     CTX_CodeCompletion,
@@ -38,28 +41,39 @@ struct ClangThreadReply {
 class ClangThreadRequest : public ThreadRequest
 {
 private:
-	CXIndex        _index;
-	wxString       _fileName;
-	wxString       _dirtyBuffer;
-	wxArrayString  _compilationArgs;
-	wxString       _filterWord;
-	WorkingContext _context;
-	unsigned       _line;
-	unsigned       _column;
-	wxString       _pchFile;
+	CXIndex           _index;
+	wxString          _fileName;
+	wxString          _dirtyBuffer;
+	FileTypeCmpArgs_t _compilationArgs;
+	wxString          _filterWord;
+	WorkingContext    _context;
+	unsigned          _line;
+	unsigned          _column;
+	wxString          _pchFile;
 
 public:
-	ClangThreadRequest(CXIndex index, const wxString &filename, const wxString &dirtyBuffer, const wxArrayString &compArgs, const wxString &filterWord, WorkingContext context, unsigned line, unsigned column)
+	ClangThreadRequest(CXIndex index, const wxString &filename, const wxString &dirtyBuffer, const FileTypeCmpArgs_t &compArgs, const wxString &filterWord, WorkingContext context, unsigned line, unsigned column)
 		: _index(index)
 		, _fileName(filename.c_str())
 		, _dirtyBuffer(dirtyBuffer.c_str())
 		, _filterWord(filterWord)
 		, _context(context)
 		, _line(line)
-		, _column(column) {
-		for(size_t i=0; i<compArgs.GetCount(); i++) {
-			_compilationArgs.Add(compArgs.Item(i).c_str());
-		}
+		, _column(column) 
+    {
+        // Perform a deep copy of the map (as wxWidgets is not known for its wxString thread safety)
+        FileTypeCmpArgs_t::const_iterator iter = compArgs.begin();
+        for(; iter != compArgs.end(); ++iter) {
+            const wxArrayString& opts = iter->second;
+            FileExtManager::FileType type = iter->first;
+            
+            _compilationArgs.insert(std::make_pair(type, wxArrayString()));
+            wxArrayString& arr = _compilationArgs.at(type);
+            
+            for(size_t i=0; i<opts.GetCount(); i++) {
+                arr.Add(opts.Item(i).c_str());
+            }
+        }
 	}
 
 	void SetPchFile(const wxString& _pchFile) {
@@ -84,7 +98,7 @@ public:
 	const wxString& GetFileName() const {
 		return _fileName;
 	}
-	const wxArrayString& GetCompilationArgs() const {
+	const FileTypeCmpArgs_t& GetCompilationArgs() const {
 		return _compilationArgs;
 	}
 	CXIndex GetIndex() {

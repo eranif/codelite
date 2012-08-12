@@ -140,7 +140,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
 	
 	wxString projectPath;
     wxString pchFile;
-    wxArrayString compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath, pchFile);
+    FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath, pchFile);
 	ClangThreadRequest* request = new ClangThreadRequest(m_index,
 														 fileName,
 														 currentBuffer,
@@ -192,14 +192,22 @@ void ClangDriver::Abort()
 	DoCleanup();
 }
 
-wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wxString& sourceFile, wxString& projectPath, wxString& pchfile)
+FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectName, const wxString& sourceFile, wxString& projectPath, wxString& pchfile)
 {
-	wxArrayString compileArgs;
-	wxArrayString args;
-	wxString      errMsg;
+    FileTypeCmpArgs_t cmpArgs;
+    
+    cmpArgs.insert(std::make_pair(FileExtManager::TypeSourceC,   wxArrayString()));
+    cmpArgs.insert(std::make_pair(FileExtManager::TypeSourceCpp, wxArrayString()));
+    
+    wxArrayString args;
+    wxString      errMsg;
+    
+    wxArrayString &cppCompileArgs = cmpArgs.at(FileExtManager::TypeSourceCpp);
+    wxArrayString &cCompileArgs   = cmpArgs.at(FileExtManager::TypeSourceC);
+	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	if(!matrix) {
-		return compileArgs;
+		return cmpArgs;
 	}
 
 	wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
@@ -207,7 +215,7 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 	// Now that we got the selected workspace configuration, extract the related project configuration
 	ProjectPtr proj =  WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
 	if(!proj) {
-		return compileArgs;
+		return cmpArgs;
 	}
     
 	wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, proj->GetName());
@@ -298,7 +306,9 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 	for(size_t i=0; i<globalIncludes.GetCount(); i++) {
 		wxFileName fn(globalIncludes.Item(i).Trim().Trim(false), wxT(""));
 		fn.MakeAbsolute(projectPath);
-		compileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+        
+		cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+        cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -311,25 +321,35 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 	for(size_t i=0; i<workspaceIncls.GetCount(); i++) {
 		wxFileName fn(workspaceIncls.Item(i).Trim().Trim(false), wxT(""));
 		fn.MakeAbsolute(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
-		compileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+		cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+		cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
 	}
 
 	// Options
-	wxString strWorkspaceCmpOptions;
+    // TODO:: separate the C from the C++
+	wxString strWorkspaceCmpOptions, strWorkspaceCmpOptions_c;
 	LocalWorkspaceST::Get()->GetParserOptions(strWorkspaceCmpOptions);
-
+    LocalWorkspaceST::Get()->GetCParserOptions(strWorkspaceCmpOptions_c);
+    
 	wxArrayString workspaceCmpOptions = wxStringTokenize(strWorkspaceCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<workspaceCmpOptions.GetCount(); i++) {
 		wxArrayString opts = DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false), projectName);
-		compileArgs.insert(compileArgs.end(), opts.begin(), opts.end());
+		cppCompileArgs.insert(cppCompileArgs.end(), opts.begin(), opts.end());
 	}
-
+    
+    workspaceCmpOptions = wxStringTokenize(strWorkspaceCmpOptions_c, wxT("\n\r"), wxTOKEN_STRTOK);
+	for(size_t i=0; i<workspaceCmpOptions.GetCount(); i++) {
+		wxArrayString opts = DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false), projectName);
+        cCompileArgs.insert(cCompileArgs.end(), opts.begin(), opts.end()); 
+    }
+    
 	// Macros
 	wxString strWorkspaceMacros;
 	LocalWorkspaceST::Get()->GetParserMacros(strWorkspaceMacros);
 	wxArrayString workspaceMacros = wxStringTokenize(strWorkspaceMacros, wxT("\n\r"), wxTOKEN_STRTOK);
 	for(size_t i=0; i<workspaceMacros.GetCount(); i++) {
-		compileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
+		cppCompileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
+		cCompileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -352,16 +372,25 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 			if(fn.IsRelative()) {
 				fn.MakeAbsolute(projectPath);
 			}
-			compileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+			cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+			cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
 		}
 
-		// Options
+		// Options (C++)
 		wxString strProjCmpOptions = dependProjbldConf->GetClangCmpFlags();
-
 		wxArrayString projCmpOptions = wxStringTokenize(strProjCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
 		for(size_t i=0; i<projCmpOptions.GetCount(); i++) {
 			wxArrayString opts = DoExpandBacktick(projCmpOptions.Item(i).Trim().Trim(false), projectName);
-			compileArgs.insert(compileArgs.end(), opts.begin(), opts.end());
+			cppCompileArgs.insert(cppCompileArgs.end(), opts.begin(), opts.end());
+		}
+
+
+		// Options (C)
+		wxString strProjCCmpOptions = dependProjbldConf->GetClangCmpFlagsC();
+		projCmpOptions = wxStringTokenize(strProjCCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
+		for(size_t i=0; i<projCmpOptions.GetCount(); i++) {
+			wxArrayString opts = DoExpandBacktick(projCmpOptions.Item(i).Trim().Trim(false), projectName);
+			cCompileArgs.insert(cCompileArgs.end(), opts.begin(), opts.end());
 		}
 
 		// Macros
@@ -370,35 +399,54 @@ wxArrayString ClangDriver::DoPrepareCompilationArgs(const wxString& projectName,
 		for(size_t i=0; i<projMacros.GetCount(); i++) {
 			wxString arg;
 			arg << wxT("-D") << projMacros.Item(i).Trim().Trim(false);
-			compileArgs.Add(arg);
+			cppCompileArgs.Add(arg);
+			cCompileArgs.Add(arg);
 		}
 		
 		// Add C++ 11 support?
 		if(dependProjbldConf->IsClangC11()) {
-			compileArgs.Add(wxString::Format(wxT("-std=gnu++11")));
+			cppCompileArgs.Add(wxString::Format(wxT("-std=gnu++11")));
 		}
 	}
 	
-	compileArgs.insert(compileArgs.end(), args.begin(), args.end());
+	cppCompileArgs.insert(cppCompileArgs.end(), args.begin(), args.end());
+	cCompileArgs.insert(cCompileArgs.end(), args.begin(), args.end());
 
 	// Remove some of the flags which are known to cause problems to clang
 	int where = wxNOT_FOUND;
-	where = compileArgs.Index(wxT("-fno-strict-aliasing"));
-	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+    
+	where = cppCompileArgs.Index(wxT("-fno-strict-aliasing"));
+	if(where != wxNOT_FOUND) cppCompileArgs.RemoveAt(where);
+    
+	where = cppCompileArgs.Index(wxT("-mthreads"));
+	if(where != wxNOT_FOUND) cppCompileArgs.RemoveAt(where);
 
-	where = compileArgs.Index(wxT("-mthreads"));
-	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+	where = cppCompileArgs.Index(wxT("-pipe"));
+	if(where != wxNOT_FOUND) cppCompileArgs.RemoveAt(where);
 
-	where = compileArgs.Index(wxT("-pipe"));
-	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+	where = cppCompileArgs.Index(wxT("-fmessage-length=0"));
+	if(where != wxNOT_FOUND) cppCompileArgs.RemoveAt(where);
 
-	where = compileArgs.Index(wxT("-fmessage-length=0"));
-	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+	where = cppCompileArgs.Index(wxT("-fPIC"));
+	if(where != wxNOT_FOUND) cppCompileArgs.RemoveAt(where);
+	
+    // Now do the same for the "C" arguments
+    where = cCompileArgs.Index(wxT("-fno-strict-aliasing"));
+	if(where != wxNOT_FOUND) cCompileArgs.RemoveAt(where);
+    
+	where = cCompileArgs.Index(wxT("-mthreads"));
+	if(where != wxNOT_FOUND) cCompileArgs.RemoveAt(where);
 
-	where = compileArgs.Index(wxT("-fPIC"));
-	if(where != wxNOT_FOUND) compileArgs.RemoveAt(where);
+	where = cCompileArgs.Index(wxT("-pipe"));
+	if(where != wxNOT_FOUND) cCompileArgs.RemoveAt(where);
+
+	where = cCompileArgs.Index(wxT("-fmessage-length=0"));
+	if(where != wxNOT_FOUND) cCompileArgs.RemoveAt(where);
+
+	where = cCompileArgs.Index(wxT("-fPIC"));
+	if(where != wxNOT_FOUND) cCompileArgs.RemoveAt(where);
 		
-	return compileArgs;
+	return cmpArgs;
 }
 
 wxArrayString ClangDriver::DoExpandBacktick(const wxString& backtick, const wxString &projectName)
@@ -431,6 +479,9 @@ wxArrayString ClangDriver::DoExpandBacktick(const wxString& backtick, const wxSt
 	wxArrayString opts;
 	opts.insert(opts.end(), p.GetIncludesWithPrefix().begin(), p.GetIncludesWithPrefix().end());
 	opts.insert(opts.end(), p.GetMacrosWithPrefix().begin(),   p.GetMacrosWithPrefix().end());
+    
+    if( p.GetStandardWithPrefix().IsEmpty() == false )
+        opts.Add(p.GetStandardWithPrefix());
 	return opts;
 }
 
@@ -773,7 +824,7 @@ void ClangDriver::GetMacros(IEditor *editor)
 	
 	wxString projectPath;
     wxString pchFile;
-    wxArrayString compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), projectPath, pchFile);
+    FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), projectPath, pchFile);
 	
 	wxString cmd;
 #ifdef __WXMAC__
@@ -788,10 +839,22 @@ void ClangDriver::GetMacros(IEditor *editor)
 #endif
 	
 	wxFileName outputFolder(pchFile);
-	
-	cmd << wxT("\"") << exePath.GetFullPath() << wxT("\" parse-macros \"") << editor->GetFileName().GetFullPath() << wxT("\" \"") << outputFolder.GetPath() << wxT("\" ");
-	for(size_t i=0; i<compileFlags.GetCount(); i++) {
-		cmd << compileFlags.Item(i) << wxT(" ");
+	// Select the compilation args 
+    FileExtManager::FileType type = FileExtManager::TypeSourceCpp; // Default is C++
+    
+    switch(FileExtManager::GetType(editor->GetFileName().GetFullName())) {
+        case FileExtManager::TypeSourceC:
+            type = FileExtManager::TypeSourceC;
+            break;
+        default:
+            // Use the default
+            break; 
+    }
+    
+    const wxArrayString& compilerSwitches = compileFlags.at(type);
+    cmd << wxT("\"") << exePath.GetFullPath() << wxT("\" parse-macros \"") << editor->GetFileName().GetFullPath() << wxT("\" \"") << outputFolder.GetPath() << wxT("\" ");
+	for(size_t i=0; i<compilerSwitches.GetCount(); i++) {
+		cmd << compilerSwitches.Item(i) << wxT(" ");
 	}
 	
 	ClangMacroHandler *handler = new ClangMacroHandler();

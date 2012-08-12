@@ -81,8 +81,13 @@ class CodeCompletionBasePage : public wxPanel
 		wxPanel* m_panel6;
 		wxSplitterWindow* m_splitter3;
 		wxPanel* m_panel9;
+		wxSplitterWindow* m_splitter31;
+		wxPanel* m_panel61;
 		wxStaticText* m_staticText11;
 		wxTextCtrl* m_textCtrlCmpOptions;
+		wxPanel* m_panel7;
+		wxStaticText* m_staticText7;
+		wxTextCtrl* m_textCtrlCmpOptionsC;
 		wxPanel* m_panel10;
 		wxStaticText* m_staticText12;
 		wxTextCtrl* m_textCtrlMacros;
@@ -107,6 +112,12 @@ class CodeCompletionBasePage : public wxPanel
 		{
 			m_splitter3->SetSashPosition( 0 );
 			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter3OnIdle ), NULL, this );
+		}
+		
+		void m_splitter31OnIdle( wxIdleEvent& )
+		{
+			m_splitter31->SetSashPosition( 0 );
+			m_splitter31->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter31OnIdle ), NULL, this );
 		}
 	
 };

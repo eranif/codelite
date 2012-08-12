@@ -28,6 +28,7 @@ public:
 	wxArrayString GetIncludePaths() const;
 	wxString      GetMacros() const;
 	wxString      GetCmpOptions() const;
+    wxString      GetCmpOptionsC() const;
 	wxString      GetIncludePathsAsString() const;
 };
 

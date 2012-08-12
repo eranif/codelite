@@ -450,9 +450,6 @@ LocalWorkspace* LocalWorkspaceST::Get()
 
 void LocalWorkspace::GetParserOptions(wxString& opts)
 {
-	if(!SanityCheck())
-		return;
-	
 	opts.Clear();
 	if(!SanityCheck())
 		return;
@@ -542,3 +539,32 @@ void LocalWorkspace::SetCustomData(const wxString& name, const wxString& value)
 	SetCDATANodeContent(customNode, value);
 }
 
+
+void LocalWorkspace::GetCParserOptions(wxString& opts)
+{
+	opts.Clear();
+	if(!SanityCheck())
+		return;
+	
+	wxXmlNode* optsNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserCCmpOptions"));
+	if( optsNode ) {
+		opts = optsNode->GetNodeContent();
+		opts.Trim().Trim(false);
+	}
+}
+
+void LocalWorkspace::SetCParserOptions(const wxString& opts)
+{
+	if(!SanityCheck())
+		return;
+	
+	wxXmlNode* optsNode = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserCCmpOptions"));
+	if(optsNode) {
+		m_doc.GetRoot()->RemoveChild(optsNode);
+		delete optsNode;
+	}
+	
+	optsNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("WorkspaceParserCCmpOptions"));
+	m_doc.GetRoot()->AddChild(optsNode);
+	SetCDATANodeContent(optsNode, opts);
+}

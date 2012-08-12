@@ -109,7 +109,7 @@ CodeCompletionBasePage::CodeCompletionBasePage( wxWindow* parent, wxWindowID id,
 	
 	m_staticText5 = new wxStaticText( m_panel8, wxID_ANY, _("Search paths:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
-	bSizer24->Add( m_staticText5, 0, wxALL|wxEXPAND, 5 );
+	bSizer24->Add( m_staticText5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	m_textCtrlSearchPaths = new wxTextCtrl( m_panel8, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	m_textCtrlSearchPaths->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
@@ -133,15 +133,44 @@ CodeCompletionBasePage::CodeCompletionBasePage( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* bSizer22;
 	bSizer22 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText11 = new wxStaticText( m_panel9, wxID_ANY, _("Compile flags (clang only):"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText11->Wrap( -1 );
-	bSizer22->Add( m_staticText11, 0, wxALL|wxEXPAND, 5 );
+	m_splitter31 = new wxSplitterWindow( m_panel9, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
+	m_splitter31->Connect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter31OnIdle ), NULL, this );
 	
-	m_textCtrlCmpOptions = new wxTextCtrl( m_panel9, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
+	m_panel61 = new wxPanel( m_splitter31, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer91;
+	bSizer91 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText11 = new wxStaticText( m_panel61, wxID_ANY, _("C++ Compile flags (clang only):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11->Wrap( -1 );
+	bSizer91->Add( m_staticText11, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	m_textCtrlCmpOptions = new wxTextCtrl( m_panel61, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	m_textCtrlCmpOptions->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
 	m_textCtrlCmpOptions->SetToolTip( _("Add here options to be passed to clang when generating PCH file.\nbackticks expressions are allowed (e.g. `wx-config --cflags`)") );
 	
-	bSizer22->Add( m_textCtrlCmpOptions, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	bSizer91->Add( m_textCtrlCmpOptions, 1, wxEXPAND|wxLEFT, 5 );
+	
+	m_panel61->SetSizer( bSizer91 );
+	m_panel61->Layout();
+	bSizer91->Fit( m_panel61 );
+	m_panel7 = new wxPanel( m_splitter31, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText7 = new wxStaticText( m_panel7, wxID_ANY, _("C Compile flags (clang only):"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7->Wrap( -1 );
+	bSizer10->Add( m_staticText7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	m_textCtrlCmpOptionsC = new wxTextCtrl( m_panel7, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2 );
+	m_textCtrlCmpOptionsC->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+	
+	bSizer10->Add( m_textCtrlCmpOptionsC, 1, wxEXPAND|wxRIGHT, 5 );
+	
+	m_panel7->SetSizer( bSizer10 );
+	m_panel7->Layout();
+	bSizer10->Fit( m_panel7 );
+	m_splitter31->SplitVertically( m_panel61, m_panel7, 0 );
+	bSizer22->Add( m_splitter31, 1, wxEXPAND, 5 );
 	
 	m_panel9->SetSizer( bSizer22 );
 	m_panel9->Layout();
@@ -152,7 +181,7 @@ CodeCompletionBasePage::CodeCompletionBasePage( wxWindow* parent, wxWindowID id,
 	
 	m_staticText12 = new wxStaticText( m_panel10, wxID_ANY, _("Macros (clang only):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText12->Wrap( -1 );
-	bSizer23->Add( m_staticText12, 0, wxEXPAND|wxALL, 5 );
+	bSizer23->Add( m_staticText12, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	m_textCtrlMacros = new wxTextCtrl( m_panel10, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
 	m_textCtrlMacros->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
@@ -180,6 +209,7 @@ CodeCompletionBasePage::CodeCompletionBasePage( wxWindow* parent, wxWindowID id,
 	m_textCtrlSearchPaths->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_textCtrlCmpOptions->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlCmpOptions->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlCmpOptionsC->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlMacros->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 }
 
@@ -190,6 +220,7 @@ CodeCompletionBasePage::~CodeCompletionBasePage()
 	m_textCtrlSearchPaths->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
 	m_textCtrlCmpOptions->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlCmpOptions->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( CodeCompletionBasePage::OnClangCCEnabledUI ), NULL, this );
+	m_textCtrlCmpOptionsC->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	m_textCtrlMacros->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( CodeCompletionBasePage::OnCCContentModified ), NULL, this );
 	
 }

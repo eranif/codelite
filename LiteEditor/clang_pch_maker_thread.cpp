@@ -274,20 +274,23 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
 {
 	bool isHeader = !(fileType == FileExtManager::TypeSourceC || fileType == FileExtManager::TypeSourceCpp);
 	wxArrayString tokens;
-	const wxArrayString &command = req->GetCompilationArgs();
-	tokens.insert(tokens.end(), command.begin(), command.end());
+	const FileTypeCmpArgs_t &compilerArgsMap = req->GetCompilationArgs();
+    
+    wxArrayString options;
+    if ( compilerArgsMap.count( fileType ) ) {
+        // we got commands for this file type
+        options = compilerArgsMap.at(fileType);
+        
+    } else {
+        options = compilerArgsMap.at(FileExtManager::TypeSourceCpp);
+    }
+    
+	tokens.insert(tokens.end(), options.begin(), options.end());
 	if(isHeader) {
 		tokens.Add(wxT("-x"));
 		tokens.Add(wxT("c++-header"));
 	}
 
-	if(fileType == FileExtManager::TypeSourceC) {
-		tokens.Add(wxT("-std=gnu++98"));
-	}
-
-#ifdef __WXMSW__
-	tokens.Add(wxT("-std=c++0x"));
-#endif
 	tokens.Add(wxT("-w"));
 	tokens.Add(wxT("-ferror-limit=1000"));
 	tokens.Add(wxT("-nobuiltininc"));
@@ -321,7 +324,6 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
 //        }
 //        gotPCH = true;
 //    }
-
 	char **argv = ClangUtils::MakeArgv(tokens, argc);
 	return argv;
 }

@@ -73,6 +73,12 @@ BuildConfig::BuildConfig(wxXmlNode *node)
 				m_clangCmpFlags.Trim().Trim(false);
 			}
             
+            wxXmlNode * clang_c_cmp_flags = XmlUtils::FindFirstByTagName(completion, wxT("ClangCmpFlagsC"));
+			if(clang_c_cmp_flags) {
+				m_clangCmpFlagsC = clang_c_cmp_flags->GetNodeContent();
+				m_clangCmpFlagsC.Trim().Trim(false);
+			}
+            
             wxXmlNode* clang_pch = XmlUtils::FindFirstByTagName(completion, wxT("ClangPCH"));
             if(clang_pch) {
                 m_ccPCH = clang_pch->GetNodeContent();
@@ -450,6 +456,10 @@ wxXmlNode *BuildConfig::ToXml() const
 	
 	wxXmlNode * clang_cmp_flags = new wxXmlNode(completion, wxXML_ELEMENT_NODE, wxT("ClangCmpFlags"));
 	XmlUtils::SetNodeContent(clang_cmp_flags, m_clangCmpFlags);
+
+	wxXmlNode * clang_c_cmp_flags = new wxXmlNode(completion, wxXML_ELEMENT_NODE, wxT("ClangCmpFlagsC"));
+	XmlUtils::SetNodeContent(clang_c_cmp_flags, m_clangCmpFlagsC);
+    
 	return node;
 }
 

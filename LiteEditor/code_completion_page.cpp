@@ -12,15 +12,17 @@ CodeCompletionPage::CodeCompletionPage(wxWindow *parent, int type)
 	if(m_type == TypeWorkspace) {
 
 		wxArrayString excludePaths, includePaths;
-		wxString opts;
+		wxString opts, c_opts;
 		wxString macros;
 
 		LocalWorkspaceST::Get()->GetParserPaths(includePaths, excludePaths);
 		LocalWorkspaceST::Get()->GetParserOptions(opts);
+        LocalWorkspaceST::Get()->GetCParserOptions(c_opts);
 		LocalWorkspaceST::Get()->GetParserMacros(macros);
 
 		m_textCtrlSearchPaths->SetValue( wxImplode(includePaths, wxT("\n")) );
 		m_textCtrlCmpOptions->SetValue(opts);
+        m_textCtrlCmpOptionsC->SetValue(c_opts);
 		m_textCtrlMacros->SetValue(macros );
 
 	}
@@ -56,6 +58,7 @@ void CodeCompletionPage::Save()
 		LocalWorkspaceST::Get()->SetParserPaths(GetIncludePaths(), wxArrayString());
 		LocalWorkspaceST::Get()->SetParserMacros(GetMacros());
 		LocalWorkspaceST::Get()->SetParserOptions(GetCmpOptions());
+        LocalWorkspaceST::Get()->SetCParserOptions(GetCmpOptionsC());
 		LocalWorkspaceST::Get()->Flush();
 		
 #if HAS_LIBCLANG
@@ -71,3 +74,9 @@ void CodeCompletionPage::OnCCContentModified(wxCommandEvent& event)
 {
 	m_ccChanged = true;
 }
+
+wxString CodeCompletionPage::GetCmpOptionsC() const
+{
+    return m_textCtrlCmpOptionsC->GetValue();
+}
+

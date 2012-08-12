@@ -36,18 +36,11 @@ void PSGeneralPage::OnBrowseIntermediateDir( wxCommandEvent& event )
 		::wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
     
-    wxFileName fn(m_textCtrlItermediateDir->GetValue());
-	wxString initPath(wxEmptyString);
-
-	if (fn.DirExists()) {
-		fn.MakeAbsolute();
-		initPath = fn.GetFullPath();
-	}
-	wxString new_path = ::wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = ::wxDirSelector(_("Select working directory:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
-        wxFileName fn(new_path);
+        wxFileName fn(new_path, wxT(""));
         fn.MakeRelativeTo(); // Make the path relative to the project
-        new_path = fn.GetFullPath();
+        new_path = fn.GetPath();
         new_path.Replace(wxT("\\"), wxT("/"));
         
 		m_textCtrlItermediateDir->SetValue(new_path);
@@ -90,19 +83,12 @@ void PSGeneralPage::OnBrowseCommandWD( wxCommandEvent& event )
 		wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
     
-    wxFileName fn(m_textCtrlCommandWD->GetValue());
-	wxString initPath(wxEmptyString);
-	if (fn.DirExists()) {
-		fn.MakeAbsolute();
-		initPath = fn.GetFullPath();
-	}
-
-	wxString new_path = wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = ::wxDirSelector(_("Select working directory:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
         // make it relative to the current directory
-        wxFileName fn ( new_path );
+        wxFileName fn ( new_path, wxT("") );
         fn.MakeRelativeTo();
-        new_path = fn.GetFullPath();
+        new_path = fn.GetPath();
         new_path.Replace(wxT("\\"), wxT("/"));
 		m_textCtrlCommandWD->SetValue( new_path );
 	}

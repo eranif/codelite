@@ -6,12 +6,12 @@
 #include "dirsaver.h"
 #include "manager.h"
 
-PSGeneralPage::PSGeneralPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg )
+PSGeneralPage::PSGeneralPage( wxWindow* parent, const wxString &projectName, const wxString &conf, ProjectSettingsDlg *dlg )
 	: PSGeneralPageBase( parent )
 	, m_dlg(dlg)
 	, m_projectName(projectName)
+    , m_configName(conf)
 {
-
 }
 
 void PSGeneralPage::OnProjectCustumBuildUI( wxUpdateUIEvent& event )
@@ -33,44 +33,64 @@ void PSGeneralPage::OnBrowseIntermediateDir( wxCommandEvent& event )
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
 	if (p) {
-		wxSetWorkingDirectory(p->GetFileName().GetPath());
+		::wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
-
-	wxFileName fn(m_textCtrlItermediateDir->GetValue());
+    
+    wxFileName fn(m_textCtrlItermediateDir->GetValue());
 	wxString initPath(wxEmptyString);
 
 	if (fn.DirExists()) {
 		fn.MakeAbsolute();
 		initPath = fn.GetFullPath();
 	}
-	wxString new_path = wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+	wxString new_path = ::wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
+        wxFileName fn(new_path);
+        fn.MakeRelativeTo(); // Make the path relative to the project
+        new_path = fn.GetFullPath();
+        new_path.Replace(wxT("\\"), wxT("/"));
+        
 		m_textCtrlItermediateDir->SetValue(new_path);
 	}
 }
 
 void PSGeneralPage::OnBrowseProgram( wxCommandEvent& event )
 {
+    DirSaver ds;
 	wxUnusedVar(event);
-	wxString program = wxFileSelector(_("Select Program to Run / Debug:"));
+    
+    wxString workingDir = DoGetWorkingDirectory();
+    ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
+	if (p) {
+		::wxSetWorkingDirectory(p->GetFileName().GetPath());
+	} 
+    ::wxSetWorkingDirectory(workingDir);
+    
+	wxString program = ::wxFileSelector(_("Select Program to Run / Debug:"));
 	if (program.IsEmpty() == false) {
+        wxFileName fn ( program );
+        fn.MakeRelativeTo();
+        program = fn.GetFullPath();
+        program.Replace(wxT("\\"), wxT("/"));
+        if( program == fn.GetFullName() ) {
+            program.Prepend(wxT("./"));
+        }
 		m_textCommand->SetValue( program );
 	}
-
 }
 
 void PSGeneralPage::OnBrowseCommandWD( wxCommandEvent& event )
 {
 	DirSaver ds;
-
-	// Since all paths are relative to the project, set the working directory to the
+    
+    // Since all paths are relative to the project, set the working directory to the
 	// current project path
 	ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
 	if (p) {
 		wxSetWorkingDirectory(p->GetFileName().GetPath());
 	}
-
-	wxFileName fn(m_textCtrlCommandWD->GetValue());
+    
+    wxFileName fn(m_textCtrlCommandWD->GetValue());
 	wxString initPath(wxEmptyString);
 	if (fn.DirExists()) {
 		fn.MakeAbsolute();
@@ -79,12 +99,19 @@ void PSGeneralPage::OnBrowseCommandWD( wxCommandEvent& event )
 
 	wxString new_path = wxDirSelector(_("Select working directory:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 	if (new_path.IsEmpty() == false) {
-		m_textCtrlCommandWD->SetValue(new_path);
+        // make it relative to the current directory
+        wxFileName fn ( new_path );
+        fn.MakeRelativeTo();
+        new_path = fn.GetFullPath();
+        new_path.Replace(wxT("\\"), wxT("/"));
+		m_textCtrlCommandWD->SetValue( new_path );
 	}
 }
 
 void PSGeneralPage::Load(BuildConfigPtr buildConf)
 {
+    m_configName = buildConf->GetName();
+    
 	m_textOutputFilePicker->SetValue(buildConf->GetOutputFileName());
 	m_textCtrlItermediateDir->SetValue(buildConf->GetIntermediateDirectory());
 	m_textCommand->SetValue(buildConf->GetCommand());
@@ -168,3 +195,11 @@ void PSGeneralPage::OnUseDebugArgsUI(wxUpdateUIEvent& event)
 {
 	event.Enable(m_checkBoxUseDebugArgs->IsChecked());
 }
+
+wxString PSGeneralPage::DoGetWorkingDirectory()
+{
+    wxString expr = m_textCtrlCommandWD->GetValue();
+    expr = ::ExpandAllVariables(expr, WorkspaceST::Get(), m_projectName, m_configName, wxEmptyString);
+    return expr;
+}
+

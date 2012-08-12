@@ -106,7 +106,7 @@ void ProjectSettingsDlg::BuildTree()
 		selectedPage = _("General");
 	}
 	
-	PSGeneralPage *gp = new PSGeneralPage(m_treebook, m_projectName, this);
+    PSGeneralPage *gp = new PSGeneralPage(m_treebook, m_projectName, m_choiceConfig->GetStringSelection(), this);
 	m_treebook->AddPage(0, _("Common Settings"));
 	m_treebook->AddSubPage(gp,                                                       _("General"),               selectedPage == _("General"));
 	m_treebook->AddSubPage(new PSCompilerPage(m_treebook, m_projectName, this, gp),  _("Compiler"),              selectedPage == _("Compiler"));

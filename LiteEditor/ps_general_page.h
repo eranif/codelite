@@ -18,9 +18,12 @@ class PSGeneralPage : public PSGeneralPageBase, public IProjectSettingsPage
 {
 	ProjectSettingsDlg *m_dlg;
 	wxString            m_projectName;
-
-	StringManager m_stringManager;
-
+    wxString            m_configName;
+    StringManager m_stringManager;
+    
+protected:
+    wxString DoGetWorkingDirectory();
+    
 protected:
 	// Handlers for PSGeneralPageBase events.
 	void OnProjectCustumBuildUI( wxUpdateUIEvent& event );
@@ -33,7 +36,7 @@ protected:
 public:
 
 	/** Constructor */
-	PSGeneralPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg );
+	PSGeneralPage( wxWindow* parent, const wxString &projectName, const wxString &conf, ProjectSettingsDlg *dlg );
 	//// end generated class members
 	virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
 	virtual void Load(BuildConfigPtr buildConf);

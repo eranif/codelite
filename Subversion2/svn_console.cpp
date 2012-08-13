@@ -30,7 +30,7 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
 	m_sci->SetLexer(wxSCI_LEX_SVN);
 	m_sci->StyleClearAll();
 	m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SvnConsole::OnKeyDown), NULL, this);
-	
+	m_sci->SetUndoCollection(false); // dont allow undo/redo
 	DoInitializeFontsAndColours();
 }
 

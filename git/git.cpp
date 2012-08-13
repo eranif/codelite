@@ -792,7 +792,7 @@ void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnInitDone(wxCommandEvent& e)
 {
-    e.Skip(p);
+    e.Skip();
 	m_topWindow = m_mgr->GetTheApp()->GetTopWindow();
 	
 	if(!m_progressDialog) {

@@ -1107,7 +1107,7 @@ svninfo.cpp:
         <Library Value="clang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Release" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Release" Command="./codelite.exe" CommandArguments="-b . --with-plugins=subversion" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="Default">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

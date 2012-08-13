@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -31,6 +31,7 @@ SubversionPageBase::~SubversionPageBase()
 	// Disconnect Events
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( SubversionPageBase::OnItemActivated ), NULL, this );
 	m_treeCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( SubversionPageBase::OnTreeMenu ), NULL, this );
+	
 }
 
 CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -67,7 +68,6 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	bSizer3->Add( fgSizer13, 0, wxEXPAND, 5 );
 	
 	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME );
-	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( CommitDialogBase::m_splitter1OnIdle ), NULL, this );
 	m_panel1 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
@@ -99,7 +99,7 @@ CommitDialogBase::CommitDialogBase( wxWindow* parent, wxWindowID id, const wxStr
 	m_panel2->SetSizer( bSizer6 );
 	m_panel2->Layout();
 	bSizer6->Fit( m_panel2 );
-	m_splitter1->SplitVertically( m_panel1, m_panel2, 145 );
+	m_splitter1->SplitVertically( m_panel1, m_panel2, -1 );
 	bSizer3->Add( m_splitter1, 1, wxEXPAND|wxALL, 5 );
 	
 	m_staticText27 = new wxStaticText( this, wxID_ANY, _("Recent commit messages:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -137,6 +137,7 @@ CommitDialogBase::~CommitDialogBase()
 {
 	// Disconnect Events
 	m_choiceMessages->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( CommitDialogBase::OnChoiceMessage ), NULL, this );
+	
 }
 
 SvnCopyDialogBase::SvnCopyDialogBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -330,20 +331,16 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_panel3, wxID_ANY, wxEmptyString ), wxVERTICAL );
 	
 	m_checkBoxAddToSvn = new wxCheckBox( m_panel3, wxID_ANY, _("When adding file(s) to project, add it to svn as well"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer1->Add( m_checkBoxAddToSvn, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxRetag = new wxCheckBox( m_panel3, wxID_ANY, _("Retag workspace after svn update, revert or applying patch"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer1->Add( m_checkBoxRetag, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxRenameFile = new wxCheckBox( m_panel3, wxID_ANY, _("When renaming a file in the project, rename it in the repository as well"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer1->Add( m_checkBoxRenameFile, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxUsePosixLocale = new wxCheckBox( m_panel3, wxID_ANY, _("Use POSIX Locale"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_checkBoxUsePosixLocale->SetValue(true);
-	
+	m_checkBoxUsePosixLocale->SetValue(true); 
 	m_checkBoxUsePosixLocale->SetToolTip( _("When checked, CodeLite will use the default \"C\" locale instead of the current locale. This will ensure that svn command line output is parsed properly.") );
 	
 	sbSizer1->Add( m_checkBoxUsePosixLocale, 0, wxALL|wxEXPAND, 5 );
@@ -359,7 +356,6 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	bSizer16 = new wxBoxSizer( wxVERTICAL );
 	
 	m_checkBoxUseExternalDiff = new wxCheckBox( m_panel4, wxID_ANY, _("Use external diff tool"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer16->Add( m_checkBoxUseExternalDiff, 0, wxALL|wxEXPAND, 5 );
 	
 	wxFlexGridSizer* fgSizer5;
@@ -434,7 +430,6 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase( wxWindow* parent, wxWindowID
 	sbSizer5 = new wxStaticBoxSizer( new wxStaticBox( m_panel6, wxID_ANY, _("Auto Revision:") ), wxVERTICAL );
 	
 	m_checkBoxExposeRevisionMacro = new wxCheckBox( m_panel6, wxID_ANY, _("Add revision number as preprocessor definition in the compilation line"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	sbSizer5->Add( m_checkBoxExposeRevisionMacro, 0, wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer24;
@@ -500,6 +495,7 @@ SvnPreferencesDialogBase::~SvnPreferencesDialogBase()
 	m_staticText29->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_textCtrlMacroName->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnPreferencesDialogBase::OnAddRevisionMacroUI ), NULL, this );
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnPreferencesDialogBase::OnButtonOK ), NULL, this );
+	
 }
 
 SvnInfoDialog::SvnInfoDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -672,6 +668,7 @@ SvnCheckoutDialogBase::~SvnCheckoutDialogBase()
 	m_buttonBrowseDir->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnBrowseDirectory ), NULL, this );
 	m_button14->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( SvnCheckoutDialogBase::OnOK ), NULL, this );
 	m_button14->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( SvnCheckoutDialogBase::OnOkUI ), NULL, this );
+	
 }
 
 SvnLogDialog::SvnLogDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -707,7 +704,6 @@ SvnLogDialog::SvnLogDialog( wxWindow* parent, wxWindowID id, const wxString& tit
 	bSizer21->Add( 0, 0, 1, wxEXPAND|wxALL, 5 );
 	
 	m_compact = new wxCheckBox( this, wxID_ANY, _("Create compact log"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer21->Add( m_compact, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -815,6 +811,7 @@ ChangeLogPageBase::~ChangeLogPageBase()
 {
 	// Disconnect Events
 	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( ChangeLogPageBase::OnURL ), NULL, this );
+	
 }
 
 SvnPropsBaseDlg::SvnPropsBaseDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -1015,4 +1012,5 @@ SvnSelectLocalRepoBase::~SvnSelectLocalRepoBase()
 	m_listBoxPaths->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( SvnSelectLocalRepoBase::OnPathSelected ), NULL, this );
 	m_listBoxPaths->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( SvnSelectLocalRepoBase::OnPathActivated ), NULL, this );
 	m_listBoxPaths->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( SvnSelectLocalRepoBase::OnMenu ), NULL, this );
+	
 }

@@ -21,7 +21,6 @@ DbConnection::DbConnection(const DbConnection& obj) : xsSerializable(obj)
 DbConnection::~DbConnection()
 {
 	if (m_pDbAdapter) {
-        m_pDbAdapter->CloseConnection();
         delete m_pDbAdapter;
         m_pDbAdapter = NULL;
     }

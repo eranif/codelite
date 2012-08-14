@@ -73,9 +73,10 @@ CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, const 
 
     m_textCtrlMessage->SetFocus();
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if ( sashPos != wxNOT_FOUND )
+    if ( sashPos != wxNOT_FOUND ) {
         m_splitter1->SetSashPosition(sashPos);
-    
+        m_splitter1->Refresh();
+    }
     WindowAttrManager::Load(this, wxT("CommitDialog"), m_plugin->GetManager()->GetConfigTool());
 }
 

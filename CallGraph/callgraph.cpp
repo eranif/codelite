@@ -103,10 +103,20 @@ clToolBar *CallGraph::CreateToolBar(wxWindow *parent)
         tb->SetToolBitmapSize(wxSize(size, size));
 
         // Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
+		BitmapLoader *bmpLoader = m_mgr->GetStdIcons();
+		
         if (size == 24) {
-            tb->AddTool(XRCID("cg_show_callgraph"), _("Show call graph"), cg24_icon_xpm, _("Show call graph for selected/active project"), wxITEM_NORMAL);
+            tb->AddTool(XRCID("cg_show_callgraph"), 
+						_("Show call graph"), 
+						bmpLoader->LoadBitmap(wxT("callgraph/24/cg")), 
+						_("Show call graph for selected/active project"), 
+						wxITEM_NORMAL);
         } else {
-            tb->AddTool(XRCID("cg_show_callgraph"), _("Show call graph"), cg16_icon_xpm, _("Show call graph for selected/active project"), wxITEM_NORMAL);
+            tb->AddTool(XRCID("cg_show_callgraph"), 
+						_("Show call graph"), 
+						bmpLoader->LoadBitmap(wxT("callgraph/16/cg")), 
+						_("Show call graph for selected/active project"), 
+						wxITEM_NORMAL);
         }
         tb->Realize();
     }

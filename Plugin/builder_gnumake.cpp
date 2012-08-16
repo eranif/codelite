@@ -1146,10 +1146,10 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	// Expand the build macros into the generated makefile 
 	text << wxT("ProjectName            :=") << proj->GetName() << wxT("\n");
 	text << wxT("ConfigurationName      :=") << name << wxT("\n");
-	text << wxT("IntermediateDirectory  :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
-	text << wxT("OutDir                 := $(IntermediateDirectory)\n");
 	text << wxT("WorkspacePath          := \"") << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxT("\"\n");
 	text << wxT("ProjectPath            := \"") << proj->GetFileName().GetPath() << wxT("\"\n");
+	text << wxT("IntermediateDirectory  :=") << bldConf->GetIntermediateDirectory() << wxT("\n");
+	text << wxT("OutDir                 := $(IntermediateDirectory)\n");
 	text << wxT("CurrentFileName        :=\n"); // TODO:: Need implementation
 	text << wxT("CurrentFilePath        :=\n"); // TODO:: Need implementation
 	text << wxT("CurrentFileFullPath    :=\n"); // TODO:: Need implementation

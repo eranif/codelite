@@ -81,6 +81,9 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 	} else if (event.GetId() == XRCID("delete_line")) {
 		editor->LineDelete();
 
+	} else if (event.GetId() == XRCID("trim_trailing")) {
+		editor->TrimText(true, false);
+
 	} else if (event.GetId() == XRCID("to_lower")) {
 		editor->ChangeCase(true);
 
@@ -131,7 +134,7 @@ void EditHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
 {
 	LEditor *editor = dynamic_cast<LEditor*>(owner);
 
-	if (event.GetId() == wxID_COPY || event.GetId() == XRCID("to_lower") || event.GetId() == XRCID("to_upper")) {
+	if (event.GetId() == wxID_COPY || event.GetId() == XRCID("trim_trailing") || event.GetId() == XRCID("to_lower") || event.GetId() == XRCID("to_upper")) {
 		event.Enable(editor);
 
 	} else if (event.GetId() == wxID_CUT) {

@@ -525,7 +525,12 @@ public:
 	 */
 	void HighlightWord(bool highlight = true);
 
-	void TrimText();
+	/**
+	 * @brief Trim trailing whitespace and/or ensure the file ends with a newline
+	 * @param trim trim trailing whitespace
+	 * @param appendLf append a newline to the file if none is present
+	 */
+	void TrimText(bool trim, bool appendLf);
 
 	/**
 	 *--------------------------------------------------

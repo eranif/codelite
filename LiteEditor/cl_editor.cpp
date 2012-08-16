@@ -1183,7 +1183,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 	bool useBuiltIn = (GetOptions()->GetFileFontEncoding() == wxFONTENCODING_UTF8);
 
 	// trim lines / append LF if needed
-	TrimText();
+	TrimText(GetOptions()->GetTrimLine(), GetOptions()->GetAppendLF());
 
 	// BUG#2982452
 	// try to manually convert the text to make sure that the conversion does not fail
@@ -3493,10 +3493,8 @@ void LEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 	event.Skip();
 }
 
-void LEditor::TrimText()
+void LEditor::TrimText(bool trim, bool appendLf)
 {
-	bool trim                  = GetOptions()->GetTrimLine();
-	bool appendLf              = GetOptions()->GetAppendLF();
 	bool dontTrimCaretLine     = GetOptions()->GetDontTrimCaretLine();
 	bool trimOnlyModifiedLInes = GetOptions()->GetTrimOnlyModifiedLines();
 

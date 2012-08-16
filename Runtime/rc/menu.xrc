@@ -115,6 +115,10 @@
 				 <label>Center &amp;Line in Editor by Rolling</label>
 			 </object>
 			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+			<object class="wxMenuItem" name="trim_trailing">
+				 <label>Trim T&amp;railing Spaces</label>
+			 </object>
+			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 			<object class="wxMenuItem" name="to_upper">
 				 <label>Make Upper&amp;case</label>
 			 </object>

@@ -31,6 +31,7 @@ complete_word|Edit|Complete Word|Ctrl-SPACE
 function_call_tip|Edit|Display Function Calltip|Ctrl-Shift-SPACE
 convert_eol_win|Edit|Convert to Windows Format|
 convert_eol_unix|Edit|Convert to Unix Format|
+trim_trailing|Edit|Trim Trailing Spaces|
 word_wrap|View|Word Wrap|
 toggle_fold|View|Toggle Current Fold|Alt-RIGHT
 fold_all|View|Toggle All Folds|Ctrl-Alt-RIGHT

@@ -41,6 +41,7 @@ MenuManager::MenuManager(void)
 	PushHandler(new EditHandler(XRCID("delete_line_end")));
 	PushHandler(new EditHandler(XRCID("delete_line_start")));
 	PushHandler(new EditHandler(XRCID("transpose_lines")));
+	PushHandler(new EditHandler(XRCID("trim_trailing")));
 	PushHandler(new EditHandler(XRCID("to_upper")));
 	PushHandler(new EditHandler(XRCID("to_lower")));
 	PushHandler(new EditHandler(XRCID("swap_files")));

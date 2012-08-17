@@ -65,9 +65,10 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	ClangCacheEntry cacheEntry = findEntry(task->GetFileName());
 	CXTranslationUnit TU = cacheEntry.TU;
 	CL_DEBUG(wxT("ClangWorkerThread:: found cached TU: %p"), (void*)TU);
+    
 	bool reparseRequired = true;
-
 	if(!TU) {
+        
 		// First time creating the TU
 		TU = DoCreateTU(task->GetIndex(), task, true);
 		reparseRequired = false;
@@ -229,6 +230,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			
 		}
 	} else {
+        
+        delete reply;
 		PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED);
 		
 	}

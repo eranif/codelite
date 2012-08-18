@@ -199,13 +199,7 @@ int Clang::DoParse()
 	                       m_argv,
 	                       m_argc,
 	                       NULL, 0,
-	                       CXTranslationUnit_CXXPrecompiledPreamble
-	                       | CXTranslationUnit_CacheCompletionResults
-	                       | CXTranslationUnit_PrecompiledPreamble
-	                       | CXTranslationUnit_Incomplete
-	                       | CXTranslationUnit_DetailedPreprocessingRecord
-	                       | CXTranslationUnit_CXXChainedPCH
-	                       | CXTranslationUnit_SkipFunctionBodies);
+	                       clang_defaultEditingTranslationUnitOptions());
 	if(TU) {
 
 		//ClangUtils::printDiagnosticsToLog(TU);
@@ -273,17 +267,18 @@ int Clang::DoCC()
 
 	CXIndex idx = clang_createIndex(1, 1);
 	CXTranslationUnit TU = clang_createTranslationUnit(idx, m_astFile.mb_str(wxConvUTF8).data());
-	if(TU) {
-		wxFFile fp(m_file, wxT("rb"));
+    //CXTranslationUnit TU = clang_parseTranslationUnit(idx, m_file.mb_str(wxConvUTF8).data(), NULL, 0, NULL, 0, clang_defaultEditingTranslationUnitOptions());
+    if(TU) {
+		wxFFile fp("cc-test-mod.cpp", wxT("rb"));
 		if(fp.IsOpened()) {
 			wxString content;
 			fp.ReadAll(&content, wxConvUTF8);
 			fp.Close();
-
-			std::string cbFileName = m_file.mb_str(wxConvUTF8).data();
+            content.Replace(wxT("\r"), wxT(""));
+			std::string cbFileName = "cc-test-mod.cpp";
 			std::string cbBuffer   = content.mb_str(wxConvUTF8).data();
 			CXUnsavedFile unsavedFile = { cbFileName.c_str(), cbBuffer.c_str(), cbBuffer.length() };
-
+            
 			CXCodeCompleteResults *ccResults = clang_codeCompleteAt(TU, cbFileName.data(), line, col, &unsavedFile, 1, clang_defaultCodeCompleteOptions());
 			if(ccResults) {
 				unsigned numResults = ccResults->NumResults;

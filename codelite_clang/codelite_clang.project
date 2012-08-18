@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="codelite_clang" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0013Windows_Debug000000000000]]>
+    </Plugin>
+  </Plugins>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
@@ -57,7 +62,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths>../sdk/clang/Linux/x86_64/include</SearchPaths>
@@ -98,7 +104,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths>../sdk/clang/Linux/x86_64/include</SearchPaths>
@@ -113,11 +120,9 @@
         <Library Value="clang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Debug" Command="./codelite-clang.exe" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)
-      
-      ]]>
+      <General OutputFile="../Runtime/codelite-clang" IntermediateDirectory="./Debug" Command="./codelite-clang.exe" CommandArguments="code-complete cc-test.cpp C:/src/codelite/Runtime/cc-output-dir/cc-test.cpp.TU 10:5" UseSeparateDebugArgs="yes" DebugArguments="code-complete cc-test.cpp C:/src/codelite/Runtime/cc-output-dir/cc-test.cpp.TU 10:5" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="wxWidgets-29">
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/codelite/sdk/clang/Linux/x86_64/lib:$(LD_LIBRARY_PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -139,7 +144,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths>../sdk/clang/Linux/x86_64/include</SearchPaths>
@@ -178,7 +184,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths>../sdk/clang/Linux/x86_64/include</SearchPaths>

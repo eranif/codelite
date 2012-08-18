@@ -8,10 +8,10 @@
     <WorkspaceConfiguration Name="Windows_Debug" Selected="no">
       <Project Name="codelite_clang" ConfigName="Windows_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Windows_Release" Selected="no">
+    <WorkspaceConfiguration Name="Windows_Release" Selected="yes">
       <Project Name="codelite_clang" ConfigName="Windows_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Linux_32" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_Linux_32" Selected="no">
       <Project Name="codelite_clang" ConfigName="Debug_Linux_32"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

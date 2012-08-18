@@ -1,8 +1,6 @@
 #include "gitSettingsDlg.h"
 #include "windowattrmanager.h"
 
-#include "icons/icon_git.xpm"
-
 GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxColour& tracked,
                                const wxColour& diff, const wxString& pathGIT,
                                const wxString& pathGITK)

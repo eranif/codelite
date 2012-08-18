@@ -30,7 +30,6 @@
 #include "icons/menucleanup.xpm"
 #include "icons/menucommit.xpm"
 #include "icons/menudelete.xpm"
-#include "icons/menudiff.xpm"
 #include "icons/menuexport.xpm"
 #include "icons/menuimport.xpm"
 #include "icons/menulog.xpm"

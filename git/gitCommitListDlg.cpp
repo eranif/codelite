@@ -8,8 +8,6 @@
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 
-#include "icons/icon_git.xpm"
-
 BEGIN_EVENT_TABLE(GitCommitListDlg, wxDialog)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  GitCommitListDlg::OnProcessOutput)
 	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, GitCommitListDlg::OnProcessTerminated)

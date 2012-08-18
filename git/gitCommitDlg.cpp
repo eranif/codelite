@@ -3,7 +3,6 @@
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
 
-#include "icons/icon_git.xpm"
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, const wxString& repoDir)
 	: GitCommitDlgBase(parent)

@@ -269,7 +269,7 @@ int Clang::DoCC()
 	CXTranslationUnit TU = clang_createTranslationUnit(idx, m_astFile.mb_str(wxConvUTF8).data());
     //CXTranslationUnit TU = clang_parseTranslationUnit(idx, m_file.mb_str(wxConvUTF8).data(), NULL, 0, NULL, 0, clang_defaultEditingTranslationUnitOptions());
     if(TU) {
-		wxFFile fp("cc-test-mod.cpp", wxT("rb"));
+		wxFFile fp(wxT("cc-test-mod.cpp"), wxT("rb"));
 		if(fp.IsOpened()) {
 			wxString content;
 			fp.ReadAll(&content, wxConvUTF8);

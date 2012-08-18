@@ -248,7 +248,9 @@ createMainTargets()
 	echo "" >> Makefile
 
 	echo "clean: clean_plugins" >> Makefile
-	echo "	@cd PCH && \$(MAKE) clean" >> Makefile
+    if [ "$enable_pch" = "yes" ]; then
+        echo "	@cd PCH && \$(MAKE) clean" >> Makefile
+    fi
 	echo "	@cd sdk/codelite_indexer && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_cppcheck && \$(MAKE) clean" >> Makefile
 	

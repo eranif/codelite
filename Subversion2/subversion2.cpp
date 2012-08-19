@@ -16,7 +16,7 @@
 #include "svn_login_dialog.h"
 #include "svn_command_handlers.h"
 #include <wx/textdlg.h>
-#include "commit_dialog.h"
+#include "SvnCommitDialog.h"
 #include "svnstatushandler.h"
 #include "subversion_strings.h"
 #include <wx/menu.h>
@@ -1059,7 +1059,7 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
     bool nonInteractive = GetNonInteractiveMode(event);
     command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
 
-    CommitDialog dlg(EventNotifier::Get()->TopFrame(), files, svnInfo.m_sourceUrl, this);
+    SvnCommitDialog dlg(EventNotifier::Get()->TopFrame(), files, svnInfo.m_sourceUrl, this);
     if(dlg.ShowModal() == wxID_OK) {
 
 

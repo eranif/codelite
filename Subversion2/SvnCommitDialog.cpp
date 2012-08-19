@@ -1,4 +1,4 @@
-#include "commit_dialog.h"
+#include "SvnCommitDialog.h"
 #include <wx/tokenzr.h>
 #include "windowattrmanager.h"
 #include "imanager.h"
@@ -18,8 +18,8 @@ public:
     }
 };
 
-CommitDialog::CommitDialog(wxWindow* parent, Subversion2* plugin)
-    : CommitDialogBase( parent )
+SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
+    : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
 {
     m_checkListFiles->Clear();
@@ -41,17 +41,17 @@ CommitDialog::CommitDialog(wxWindow* parent, Subversion2* plugin)
     for(size_t i=0; i<previews.GetCount(); i++) {
         m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
     }
-    
+
+    m_textCtrlMessage->SetFocus();
+    WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
+
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if ( sashPos != wxNOT_FOUND )
         m_splitter1->SetSashPosition(sashPos);
-        
-    m_textCtrlMessage->SetFocus();
-    WindowAttrManager::Load(this, wxT("CommitDialog"), m_plugin->GetManager()->GetConfigTool());
 }
 
-CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, const wxString &url, Subversion2 *plugin)
-    : CommitDialogBase( parent )
+SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin)
+    : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_url(url)
 {
@@ -72,29 +72,27 @@ CommitDialog::CommitDialog( wxWindow* parent, const wxArrayString &paths, const 
     }
 
     m_textCtrlMessage->SetFocus();
+    WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if ( sashPos != wxNOT_FOUND ) {
+    if ( sashPos != wxNOT_FOUND )
         m_splitter1->SetSashPosition(sashPos);
-        m_splitter1->Refresh();
-    }
-    WindowAttrManager::Load(this, wxT("CommitDialog"), m_plugin->GetManager()->GetConfigTool());
 }
 
-CommitDialog::~CommitDialog()
+SvnCommitDialog::~SvnCommitDialog()
 {
     wxString message = m_textCtrlMessage->GetValue();
     m_plugin->GetCommitMessagesCache().AddMessage(message);
-    
+
     int sashPos = m_splitter1->GetSashPosition();
     SvnSettingsData ssd = m_plugin->GetSettings();
     ssd.SetCommitDlgSashPos(sashPos);
     m_plugin->SetSettings( ssd );
-    
-    
-    WindowAttrManager::Save(this, wxT("CommitDialog"), m_plugin->GetManager()->GetConfigTool());
+
+
+    WindowAttrManager::Save(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
 }
 
-wxString CommitDialog::GetMesasge()
+wxString SvnCommitDialog::GetMesasge()
 {
     SubversionLocalProperties props(m_url);
     wxString msg = NormalizeMessage(m_textCtrlMessage->GetValue());
@@ -159,7 +157,7 @@ wxString CommitDialog::GetMesasge()
     return msg;
 }
 
-wxString CommitDialog::NormalizeMessage(const wxString& message)
+wxString SvnCommitDialog::NormalizeMessage(const wxString& message)
 {
     wxString normalizedStr;
     // first remove the comment section of the text
@@ -180,7 +178,7 @@ wxString CommitDialog::NormalizeMessage(const wxString& message)
     return normalizedStr;
 }
 
-wxArrayString CommitDialog::GetPaths()
+wxArrayString SvnCommitDialog::GetPaths()
 {
     wxArrayString paths;
     for (size_t i=0; i<m_checkListFiles->GetCount(); i++) {
@@ -191,7 +189,7 @@ wxArrayString CommitDialog::GetPaths()
     return paths;
 }
 
-void CommitDialog::OnChoiceMessage(wxCommandEvent& e)
+void SvnCommitDialog::OnChoiceMessage(wxCommandEvent& e)
 {
     int idx = e.GetSelection();
     if(idx == wxNOT_FOUND)

@@ -1,5 +1,5 @@
 #include "svn_copy_dialog.h"
-#include "commit_dialog.h"  // NormalizeMessage()
+#include "SvnCommitDialog.h"
 
 SvnCopyDialog::SvnCopyDialog( wxWindow* parent )
 : SvnCopyDialogBase( parent )
@@ -21,7 +21,7 @@ void SvnCopyDialog::SetTargetURL(const wxString& url)
 
 wxString SvnCopyDialog::GetMessage()
 {
-	return CommitDialog::NormalizeMessage(m_textCtrlComment->GetValue());
+	return SvnCommitDialog::NormalizeMessage(m_textCtrlComment->GetValue());
 }
 
 wxString SvnCopyDialog::GetSourceURL()

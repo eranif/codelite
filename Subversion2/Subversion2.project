@@ -43,8 +43,6 @@
   <VirtualDirectory Name="UI">
     <File Name="subversion2_ui.cpp"/>
     <File Name="subversion2_ui.h"/>
-    <File Name="commit_dialog.h"/>
-    <File Name="commit_dialog.cpp"/>
     <File Name="svn_copy_dialog.h"/>
     <File Name="svn_copy_dialog.cpp"/>
     <File Name="svn_login_dialog.h"/>
@@ -69,6 +67,8 @@
     <File Name="svn_patch_dlg.h"/>
     <File Name="svn_select_local_repo_dlg.cpp"/>
     <File Name="svn_select_local_repo_dlg.h"/>
+    <File Name="SvnCommitDialog.h"/>
+    <File Name="SvnCommitDialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="subversion2.fbp"/>
@@ -244,4 +244,14 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="wxcrafter.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="wxcrafter_subversion2_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="wxcrafter.h"/>
+      <File Name="wxcrafter.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

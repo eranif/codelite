@@ -18,7 +18,7 @@
 #include "svn_login_dialog.h"
 #include "svn_command_handlers.h"
 #include "svn_copy_dialog.h"
-#include "commit_dialog.h"
+#include "SvnCommitDialog.h"
 #include "svn_default_command_handler.h"
 #include <wx/menu.h>
 #include <wx/dirdlg.h>

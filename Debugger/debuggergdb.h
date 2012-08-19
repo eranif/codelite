@@ -63,7 +63,8 @@ class DbgGdb : public wxEvtHandler, public IDebugger
 	wxArrayString               m_gdbOutputArr;
 	wxString                    m_gdbOutputIncompleteLine;
 	bool                        m_break_at_main;
-	
+	bool                        m_attachedMode;
+    
 public:
 	int                         m_internalBpId;
 

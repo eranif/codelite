@@ -134,6 +134,7 @@ DbgGdb::DbgGdb()
 	: m_debuggeePid( wxNOT_FOUND )
 	, m_cliHandler ( NULL )
 	, m_break_at_main( false )
+    , m_attachedMode(false)
 	, m_internalBpId( wxNOT_FOUND )
 {
 #ifdef __WXMSW__
@@ -216,7 +217,8 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 	if(sudoCmd.IsEmpty() == false) {
 		cmd.Prepend(sudoCmd + wxT(" "));
 	}
-
+    
+    m_attachedMode = true;
 	m_debuggeePid = pid;
 	cmd << wxT( " --pid=" ) << m_debuggeePid;
 	wxLogMessage( cmd );
@@ -259,7 +261,8 @@ bool DbgGdb::Start( const wxString &debuggerPath,
 #endif
 
 	m_debuggeePid = wxNOT_FOUND;
-
+    m_attachedMode = false;
+    
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), cwd.c_str() ) );
 	m_observer->UpdateAddLine( wxString::Format( wxT( "Starting debugger  : %s" ), cmd.c_str() ) );
@@ -322,7 +325,9 @@ void DbgGdb::DoCleanup()
         delete m_gdbProcess;
 		m_gdbProcess = NULL;
 	}
-
+    
+    m_attachedMode = false;
+    
 	SetIsRemoteDebugging( false );
 	EmptyQueue();
 	m_gdbOutputArr.Clear();
@@ -338,8 +343,12 @@ void DbgGdb::DoCleanup()
 
 bool DbgGdb::Stop()
 {
-	//return control to the program
-    ExecuteCmd(wxT( "kill inferior 1" ));
+	if ( !m_attachedMode ) {
+        // When not "attached" to process, kill the inferior before
+        // exiting
+        ExecuteCmd(wxT( "kill inferior 1" ));
+    }
+    
 	DoCleanup();
 	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
 	return true;

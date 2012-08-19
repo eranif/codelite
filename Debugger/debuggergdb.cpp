@@ -339,6 +339,7 @@ void DbgGdb::DoCleanup()
 bool DbgGdb::Stop()
 {
 	//return control to the program
+    ExecuteCmd(wxT( "kill inferior 1" ));
 	DoCleanup();
 	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
 	return true;

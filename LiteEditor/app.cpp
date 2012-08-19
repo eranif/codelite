@@ -711,13 +711,12 @@ bool CodeLiteApp::CopySettings(const wxString &destDir, wxString& installPath)
 void CodeLiteApp::OnFatalException()
 {
 #if wxUSE_STACKWALKER
-    Manager *mgr = ManagerST::Get();
-    wxString startdir = mgr->GetStarupDirectory();
-    startdir << wxT("/crash.log");
-
+    wxString startdir;
+    startdir << wxStandardPaths::Get().GetUserDataDir() << wxT("/crash.log");
+    
     wxFileOutputStream outfile(startdir);
     wxTextOutputStream out(outfile);
-    out.WriteString(wxDateTime::Now().FormatTime() + wxT("\n"));
+    out.WriteString(wxDateTime::Now().FormatDate() + wxT(" - ") + wxDateTime::Now().FormatTime() + wxT("\n"));
     StackWalker walker(&out);
     walker.Walk();
     wxAppBase::ExitMainLoop();

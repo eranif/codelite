@@ -231,5 +231,5 @@ void DebuggerPane::Clear()
 	GetFrameListView()->Clear();
 	GetThreadsView()->Clear();
 	GetMemoryView()->Clear();
-	GetDebugWindow()->Clear();
+	//GetDebugWindow()->Clear();
 }

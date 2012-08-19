@@ -2254,7 +2254,10 @@ void Manager::DbgStart ( long attachPid )
 
 	// notify plugins that the debugger just started
 	SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
-
+    
+    // Clear the debugger output window
+    clMainFrame::Get()->GetDebuggerPane()->Clear();
+    
 	// Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
 	// so that it uses debugger_ids instead of internal_ids
 	// Hmm. The above comment is probably no longer true; but it'll do no harm to Initialise() anyway

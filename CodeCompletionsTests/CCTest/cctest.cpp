@@ -204,6 +204,14 @@ TEST_FUNC(testLocalArgument)
 	return true;
 }
 
+TEST_FUNC(testBoostForeach)
+{
+	std::vector<TagEntryPtr> tags;
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/boost_foreach.h")), 3, wxT("str."), LoadFile(wxT("../tests/boost_foreach.h")), tags);
+	CHECK_SIZE(tags.size(), 544);
+	return true;
+}
+
 TEST_FUNC(testStdAutoPtr)
 {
 	std::vector<TagEntryPtr> tags;
@@ -223,8 +231,8 @@ TEST_FUNC(testVectorOfStdString_OperatorMeruba)
 TEST_FUNC(testWxOrderedMap)
 {
     TagEntryPtrVector_t tags;
-	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_wx_ordered_map.h")), 6, wxT("om.begin()->"), LoadFile(wxT("../tests/test_wx_ordered_map.h")), tags);
-	CHECK_SIZE(tags.size(), 210);
+	TagsManagerST::Get()->AutoCompleteCandidates(wxFileName(wxT("../tests/test_wx_ordered_map.h")), 2, wxT("om.begin()->first"), LoadFile(wxT("../tests/test_wx_ordered_map.h")), tags);
+	CHECK_SIZE(tags.size(), 544);
 	return true;
 }
 
@@ -338,6 +346,9 @@ void testCC()
 	// Load the tags database that is used during the test.
 	wxFileName fn(wxT("../../SampleWorkspace/SampleWorkspace.tags"));
 	TagsManagerST::Get()->OpenDatabase( fn );
+    
+    TagsOptionsData tod;
+    TagsManagerST::Get()->SetCtagsOptions(tod);
 	TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(5000); // For the testing to pass we need to set a huge number of matches
 	// Execute the tests
 	Tester::Instance()->RunTests();

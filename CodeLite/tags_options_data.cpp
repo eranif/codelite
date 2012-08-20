@@ -252,6 +252,8 @@ wxT("std::multimap::iterator=std::pair<_Key,_Tp>\n")
 wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>\n")
 wxT("wxOrderedMap::iterator=std::pair<Key,Value>\n")
 wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>\n");
+    DoUpdateTokensWxMap();
+    DoUpdateTokensWxMapReversed();
 }
 
 TagsOptionsData::~TagsOptionsData()

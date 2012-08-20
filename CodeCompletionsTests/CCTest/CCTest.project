@@ -40,6 +40,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -63,6 +64,7 @@
     <File Name="tests/test_typedef_iterator_inside_class.h"/>
     <File Name="tests/test_struct_declarator_in_func_argument.h"/>
     <File Name="tests/test_wx_ordered_map.h"/>
+    <File Name="tests/boost_foreach.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="TestFramework">

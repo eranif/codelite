@@ -560,8 +560,10 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
         // Collect all the tags from the current scope, and
         // from the global scope
         wxString curFunctionBody;
+        wxString textAfterTokenReplacements;
         int lastFuncLine = funcTag ? funcTag->GetLine() : -1;
-        scope = GetLanguage()->OptimizeScope(text, lastFuncLine, curFunctionBody);
+        textAfterTokenReplacements = GetLanguage()->ApplyCtagsReplacementTokens(text);
+        scope = GetLanguage()->OptimizeScope(textAfterTokenReplacements, lastFuncLine, curFunctionBody);
         std::vector<TagEntryPtr> tmpCandidates;
 
         // First get the scoped tags
@@ -571,7 +573,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
             GetGlobalTags(word, tmpCandidates);
         }
         // Allways collect the local and the function argument tags
-        GetLocalTags(word, scope,   tmpCandidates, PartialMatch | IgnoreCaseSensitive);
+        GetLocalTags(word, scope,   tmpCandidates, PartialMatch | IgnoreCaseSensitive | ReplaceTokens );
         GetLocalTags(word, funcSig, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
 
         for (size_t i=0; i<additionlScopes.size(); i++) {

@@ -147,7 +147,7 @@ TagsOptionsData::TagsOptionsData()
 		, m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
 		, m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
 {
-	SetVersion(wxT("3.0.10"));
+	SetVersion(wxT("3.0.11"));
 	// Initialize defaults
 	m_languages.Add(wxT("C++"));
 	m_tokens =
@@ -218,6 +218,7 @@ wxT("_GLIBCXX_BEGIN_NAMESPACE(%0)=namespace %0{\n")
 wxT("_GLIBCXX_END_NAMESPACE=}\n")
 wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{\n")
 wxT("wxDECLARE_EXPORTED_EVENT(%0,%1,%2)=int %1;\n")
+wxT("BOOST_FOREACH(%0, %1)=%0;\n")
 wxT("DECLARE_EVENT_TYPE(%0,%1)=int %0;\n")
 wxT("_GLIBCXX_END_NESTED_NAMESPACE=}\n")
 wxT("_GLIBCXX_VISIBILITY(%0)\n")

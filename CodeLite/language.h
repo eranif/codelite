@@ -40,9 +40,10 @@
 #include "codelite_exports.h"
 
 enum SearchFlags {
-    PartialMatch        = 1,
-    ExactMatch          = 2,
-    IgnoreCaseSensitive = 4
+    PartialMatch        = 0x00000001,
+    ExactMatch          = 0x00000002,
+    IgnoreCaseSensitive = 0x00000004,
+    ReplaceTokens       = 0x00000008,
 };
 
 class TagsManager;
@@ -235,7 +236,8 @@ public:
 	 * \param name optional name to look for (name can be partial).
 	 */
 	void GetLocalVariables(const wxString &in, std::vector<TagEntryPtr> &tags, const wxString &name = wxEmptyString, size_t flag = PartialMatch);
-
+    
+    wxString ApplyCtagsReplacementTokens(const wxString &in);
 
 	bool VariableFromPattern(const wxString &pattern, const wxString &name, Variable &var);
 	bool FunctionFromPattern(TagEntryPtr tag, clFunction &foo);

@@ -105,8 +105,12 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     }
     Centre();
     // Connect events
+    m_choiceMessages->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
+    
 }
 
 SvnCommitDialogBaseClass::~SvnCommitDialogBaseClass()
 {
+    m_choiceMessages->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
+    
 }

@@ -35,6 +35,7 @@ protected:
     wxButton* m_button4;
 
 protected:
+    virtual void OnChoiceMessage(wxCommandEvent& event) { event.Skip(); }
 
 public:
     SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

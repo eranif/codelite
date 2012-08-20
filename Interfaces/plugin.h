@@ -425,7 +425,11 @@ enum {
     // Unlike 'wxEVT_ACTIVE_EDITOR_CHANGED' this event is only sent when the 
     // 'page' is not of type IEditor
     // use event.GetClientData() to get a pointer to the wxWindow* 
-    wxEVT_CMD_PAGE_CHANGED
+    wxEVT_CMD_PAGE_CHANGED,
+    
+    // A "Start Debugger" command as been requested (via the menu Debug -> Start / Continue Debugger or via a Hotkey)
+    // a plugin can veto this event.
+    wxEVT_NOTIFY_DEBUGGER_START_CMD
 };
 
 //------------------------------------------------------------------

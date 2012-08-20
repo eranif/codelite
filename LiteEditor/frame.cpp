@@ -2982,8 +2982,17 @@ void clMainFrame::OnImportMSVS(wxCommandEvent &e)
 void clMainFrame::OnDebug(wxCommandEvent &e)
 {
 	wxUnusedVar(e);
+    
+    // Let the plugin know that we are about to start debugging
+    wxNotifyEvent dbgEvent(wxEVT_NOTIFY_DEBUGGER_START_CMD);
+    EventNotifier::Get()->ProcessEvent(dbgEvent);
+    if( !dbgEvent.IsAllowed() )
+        return;
+    
 	Manager *mgr = ManagerST::Get();
-
+    
+    
+    
 	IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
 	if (dbgr && dbgr->IsRunning()) {
 		//debugger is already running -> probably a continue command

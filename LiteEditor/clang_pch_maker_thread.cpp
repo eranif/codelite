@@ -282,10 +282,10 @@ char** ClangWorkerThread::MakeCommandLine(ClangThreadRequest* req, int& argc, Fi
     wxArrayString options;
     if ( compilerArgsMap.count( fileType ) ) {
         // we got commands for this file type
-        options = compilerArgsMap.at(fileType);
+        options = compilerArgsMap.find(fileType)->second;
         
     } else {
-        options = compilerArgsMap.at(FileExtManager::TypeSourceCpp);
+        options = compilerArgsMap.find(FileExtManager::TypeSourceCpp)->second;
     }
     
 	tokens.insert(tokens.end(), options.begin(), options.end());

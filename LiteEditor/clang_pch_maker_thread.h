@@ -68,7 +68,7 @@ public:
             FileExtManager::FileType type = iter->first;
             
             _compilationArgs.insert(std::make_pair(type, wxArrayString()));
-            wxArrayString& arr = _compilationArgs.at(type);
+            wxArrayString& arr = _compilationArgs[type];
             
             for(size_t i=0; i<opts.GetCount(); i++) {
                 arr.Add(opts.Item(i).c_str());

@@ -202,8 +202,8 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     wxArrayString args;
     wxString      errMsg;
     
-    wxArrayString &cppCompileArgs = cmpArgs.at(FileExtManager::TypeSourceCpp);
-    wxArrayString &cCompileArgs   = cmpArgs.at(FileExtManager::TypeSourceC);
+    wxArrayString &cppCompileArgs = cmpArgs[FileExtManager::TypeSourceCpp];
+    wxArrayString &cCompileArgs   = cmpArgs[FileExtManager::TypeSourceC];
 	
 	BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
 	if(!matrix) {
@@ -851,7 +851,7 @@ void ClangDriver::GetMacros(IEditor *editor)
             break; 
     }
     
-    const wxArrayString& compilerSwitches = compileFlags.at(type);
+    const wxArrayString& compilerSwitches = compileFlags[type];
     cmd << wxT("\"") << exePath.GetFullPath() << wxT("\" parse-macros \"") << editor->GetFileName().GetFullPath() << wxT("\" \"") << outputFolder.GetPath() << wxT("\" ");
 	for(size_t i=0; i<compilerSwitches.GetCount(); i++) {
 		cmd << compilerSwitches.Item(i) << wxT(" ");

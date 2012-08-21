@@ -107,7 +107,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 			
         else {
 			size_t count = book->GetPageCount();
-			if(index >= count) {
+			if(index >= (int)count) {
 				// Invalid index
 				book->AddPage(m_view, wxT("Outline"), false);
 				

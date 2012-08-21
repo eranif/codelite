@@ -323,10 +323,15 @@ void Subversion2::DoInitialize()
     wxArrayString output;
 
     command << GetSvnExeName(false) << wxT(" --help ");
-
+    
+#ifndef __WXMSW__
+    command << wxT("> /dev/null 2>&1");
+#endif
+    
     ProcUtils::ExecuteCommand(command, output);
-    RecreateLocalSvnConfigFile();
+    
     DoGetSvnVersion();
+    RecreateLocalSvnConfigFile();
 }
 
 SvnSettingsData Subversion2::GetSettings()

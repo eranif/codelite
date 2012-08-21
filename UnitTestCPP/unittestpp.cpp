@@ -492,6 +492,9 @@ void UnitTestPP::OnProcessTerminated(wxCommandEvent& e)
 {
     ProcessEventData *ped = (ProcessEventData*) e.GetClientData();
     delete ped;
+    if( m_proc ) {
+        delete m_proc;
+    }
     m_proc = NULL;
 
     wxArrayString arr = wxStringTokenize(m_output, wxT("\r\n"));

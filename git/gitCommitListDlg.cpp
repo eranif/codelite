@@ -77,6 +77,13 @@ void GitCommitListDlg::OnChangeFile(wxCommandEvent& e)
 /*******************************************************************************/
 void GitCommitListDlg::OnProcessTerminated(wxCommandEvent &event)
 {
+    ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
+    delete ped;
+    
+    if ( m_process )
+        delete m_process;
+    m_process = NULL;
+    
 	m_commitMessage->Clear();
 	m_fileListBox->Clear();
 	m_diffMap.clear();

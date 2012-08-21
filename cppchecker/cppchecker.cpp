@@ -305,8 +305,13 @@ void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
 {
 	m_filelist.Clear();
     
-    delete m_cppcheckProcess;
+    ProcessEventData* ped = (ProcessEventData*)e.GetClientData();
+    delete ped;
+    
+    if( m_cppcheckProcess )
+        delete m_cppcheckProcess;
 	m_cppcheckProcess = NULL;
+    
 	m_view->PrintStatusMessage();
 }
 

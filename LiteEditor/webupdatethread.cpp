@@ -102,7 +102,9 @@ void WebUpdateJob::Process(wxThread* thread)
 
 
 		if(shutdownRequest == false) {
+#ifndef __WXMAC__
 			delete in_stream;
+#endif
 			ParseFile();
 		}
 	}

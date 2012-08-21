@@ -2532,9 +2532,11 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 
 	EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"),   check);
 	EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
+#ifndef __WXMAC__
 	if ( check ) {
 		JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
 	}
+#endif
 
 	//update the build system to contain the number of CPUs
 	int cpus = wxThread::GetCPUCount();

@@ -1165,6 +1165,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 		}
 
 		if (m_process) {
+            delete m_process;
 			m_process = NULL;
 		}
 		m_commandOutput.Clear();
@@ -1282,6 +1283,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 	}
 
 	if (m_process) {
+        delete m_process;
 		m_process = NULL;
 	}
 	m_commandOutput.Clear();
@@ -1514,6 +1516,7 @@ void GitPlugin::DoCleanup()
 	m_commandOutput.Clear();
 	m_bActionRequiresTreUpdate = false;
 	if(m_process) {
+        delete m_process;
 		m_process = NULL;
 	}
 	m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).Caption( wxT("Workspace View"));

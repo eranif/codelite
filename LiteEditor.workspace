@@ -38,7 +38,7 @@
   <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
   <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
@@ -102,7 +102,7 @@
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="DebugUnicode"/>
       <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>

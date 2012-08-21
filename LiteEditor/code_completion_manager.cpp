@@ -102,6 +102,10 @@ void CodeCompletionManager::Calltip(LEditor* editor, int line, const wxString& e
 {
 	bool res (false);
 	DoUpdateOptions();
+    
+    if(::IsCppKeyword(word))
+        return;
+    
 	if(GetOptions() & CC_CTAGS_ENABLED) {
 		res = DoCtagsCalltip(editor, line, expr, text, word);
 	}

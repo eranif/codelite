@@ -782,7 +782,7 @@ bool IsCppKeyword(const wxString& word)
 		words.insert(wxT("catch"));
 	}
 
-	return words.find(word) != words.end();
+	return words.count(word) != 0;
 }
 
 bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir, wxString &targetFileName) {

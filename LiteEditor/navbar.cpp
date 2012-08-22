@@ -31,18 +31,24 @@
 #include "navbar.h"
 
 NavBar::NavBar(wxWindow* parent)
-	: NavBarBase(parent)
-	, m_startingUp(true)
+	: NavBarControlBaseClass(parent)
 {
 #ifdef __WXMAC__
 	m_scope->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 	m_func->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
-	m_splitter->Connect( wxEVT_IDLE, wxIdleEventHandler( NavBar::OnSplitterIdle), NULL, this );
+
+    long sashPos = -1;
+    EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), sashPos);
+    
+    if ( sashPos != wxNOT_FOUND ) {
+        m_splitter->SetSashPosition(sashPos);
+    }
 }
 
 NavBar::~NavBar()
 {
+    EditorConfigST::Get()->SaveLongValue(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
 }
 
 void NavBar::OnScopeListMouseDown(wxMouseEvent& e)
@@ -158,28 +164,4 @@ void NavBar::UpdateScope(TagEntryPtr tag)
 	}
 
 	Thaw();
-}
-
-void NavBar::OnSplitterPosChanged(wxSplitterEvent& event)
-{
-	event.Skip();
-	if(!m_startingUp) {
-		EditorConfigST::Get()->SaveLongValue(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
-	}
-}
-
-void NavBar::SetSashPosition(int pos)
-{
-	m_splitter->SetSashPosition(pos);
-	Layout();
-	m_startingUp = false;
-}
-
-void NavBar::OnSplitterIdle(wxIdleEvent& e)
-{
-	long pos(wxNOT_FOUND);
-	if(EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), pos)) {
-		m_splitter->SetSashPosition(pos);
-	}
-	m_splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( NavBar::OnSplitterIdle), NULL, this );
 }

@@ -134,7 +134,10 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     boxSizer2->Add(m_button4, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
     
     
-    SetSize(wxSize(-1,-1));
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
     Centre();
     // Connect events
     m_chCategories->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCategorySelected), NULL, this);
@@ -158,5 +161,68 @@ NewProjectDlgBaseClass::~NewProjectDlgBaseClass()
     m_cbSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_button3->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDlgBaseClass::OnOKUI), NULL, this);
     m_button3->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCreate), NULL, this);
+    
+}
+
+NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer36);
+    
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter->SetSashGravity(0.000000);
+    m_splitter->SetMinimumPaneSize(10);
+    
+    boxSizer36->Add(m_splitter, 1, wxBOTTOM|wxEXPAND, 5);
+    
+    m_splitterPage39 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage39->SetSizer(boxSizer42);
+    
+    wxArrayString m_scopeArr;
+    m_scope = new wxChoice(m_splitterPage39, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_scopeArr, 0);
+    
+    boxSizer42->Add(m_scope, 0, wxEXPAND, 5);
+    
+    m_splitterPage41 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter->SplitVertically(m_splitterPage39, m_splitterPage41, 200);
+    
+    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage41->SetSizer(boxSizer43);
+    
+    wxArrayString m_funcArr;
+    m_func = new wxChoice(m_splitterPage41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_funcArr, 0);
+    
+    boxSizer43->Add(m_func, 0, wxEXPAND, 5);
+    
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre();
+    // Connect events
+    m_scope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL, this);
+    m_scope->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnScopeListMouseDown), NULL, this);
+    m_func->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnFunction), NULL, this);
+    m_func->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnFuncListMouseDown), NULL, this);
+    
+}
+
+NavBarControlBaseClass::~NavBarControlBaseClass()
+{
+    m_scope->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL, this);
+    m_scope->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnScopeListMouseDown), NULL, this);
+    m_func->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnFunction), NULL, this);
+    m_func->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnFuncListMouseDown), NULL, this);
     
 }

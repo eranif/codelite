@@ -68,8 +68,6 @@ void MainBook::CreateGuiControls()
 
 	m_navBar = new NavBar(this);
 	sz->Add(m_navBar, 0, wxEXPAND);
-	m_navBar->Freeze();
-
 	long style = wxVB_HAS_X|wxVB_MOUSE_MIDDLE_CLOSE_TAB;
 
 #if !CL_USE_NATIVEBOOK
@@ -1098,10 +1096,6 @@ void MainBook::SetViewWordWrap(bool b)
 void MainBook::OnInitDone(wxCommandEvent& e)
 {
 	e.Skip();
-	long sashPos(150);
-	EditorConfigST::Get()->GetLongValue(wxT("NavBarSashPos"), sashPos);
-	m_navBar->SetSashPosition(sashPos);
-	m_navBar->Thaw();
 }
 
 wxWindow* MainBook::GetPage(size_t page)

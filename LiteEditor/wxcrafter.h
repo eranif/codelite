@@ -54,4 +54,25 @@ public:
     virtual ~NewProjectDlgBaseClass();
 };
 
+
+class NavBarControlBaseClass : public wxPanel
+{
+protected:
+    wxSplitterWindow* m_splitter;
+    wxPanel* m_splitterPage39;
+    wxChoice* m_scope;
+    wxPanel* m_splitterPage41;
+    wxChoice* m_func;
+
+protected:
+    virtual void OnScope(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnScopeListMouseDown(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnFunction(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFuncListMouseDown(wxMouseEvent& event) { event.Skip(); }
+
+public:
+    NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    virtual ~NavBarControlBaseClass();
+};
+
 #endif

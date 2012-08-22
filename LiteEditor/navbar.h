@@ -26,33 +26,28 @@
 #define __navbar__
 
 #include <vector>
-#include "navbarbase.h"
-#include <wx/choice.h>
 #include "entry.h"
+#include "wxcrafter.h"
 
 class LEditor;
 
-class NavBar : public NavBarBase
+class NavBar : public NavBarControlBaseClass
 {
-	bool m_startingUp;
 private:
-	std::vector<TagEntryPtr> m_tags;
-
+	TagEntryPtrVector_t m_tags;
+    
+protected:
 	void OnFuncListMouseDown (wxMouseEvent &e);
 	void OnScopeListMouseDown(wxMouseEvent &e);
 	void OnScope             (wxCommandEvent &e);
 	void OnFunction          (wxCommandEvent &e);
-	void OnSplitterPosChanged(wxSplitterEvent& event);
-	void OnSplitterIdle      (wxIdleEvent &e);
 	
 public:
 	NavBar(wxWindow *parent);
 	virtual ~NavBar();
 
 	void DoShow(bool s = true);
-
 	void UpdateScope(TagEntryPtr tag);
-	void SetSashPosition(int pos);
 };
 
 #endif // __navbar__

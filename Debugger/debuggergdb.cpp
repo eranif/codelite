@@ -25,6 +25,7 @@
 #include "debuggergdb.h"
 #include <wx/msgdlg.h>
 #include "processreaderthread.h"
+#include "event_notifier.h"
 #include "asyncprocess.h"
 #include <wx/ffile.h>
 #include "exelocator.h"
@@ -68,6 +69,8 @@ static wxFFile gfp(wxT("debugger.log"), wxT("w+"));
 #else
 #    define DBG_LOG 0
 #endif
+
+const wxEventType wxEVT_DBG_STOP_DEBUGGER = wxNewEventType();
 
 //Using the running image of child Thread 46912568064384 (LWP 7051).
 static wxRegEx reInfoProgram1( wxT( "\\(LWP[ \t]([0-9]+)\\)" ) );
@@ -151,6 +154,8 @@ DbgGdb::DbgGdb()
 		wxLogMessage( wxString::Format( wxT( "failed to install ConsoleCtrlHandler: %d" ), GetLastError() ) );
 	}
 #endif
+
+    EventNotifier::Get()->Connect(wxEVT_DBG_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
 }
 
 DbgGdb::~DbgGdb()
@@ -161,6 +166,7 @@ DbgGdb::~DbgGdb()
 		Kernel32Dll = NULL;
 	}
 #endif
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
 }
 
 void DbgGdb::RegisterHandler( const wxString &id, DbgCmdHandler *cmd )
@@ -344,13 +350,18 @@ void DbgGdb::DoCleanup()
 bool DbgGdb::Stop()
 {
 	if ( !m_attachedMode ) {
+        
         // When not "attached" to process, kill the inferior before
         // exiting
-        ExecuteCmd(wxT( "kill inferior 1" ));
+        if ( !Interrupt() || !WriteCommand(wxT( "kill inferior 1" ), new DbgCmdStopHandler(m_observer)) ) {
+            wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
+            EventNotifier::Get()->AddPendingEvent(event);
+        }
+        
+    } else {
+        wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
+        EventNotifier::Get()->AddPendingEvent(event);
     }
-    
-	DoCleanup();
-	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
 	return true;
 }
 
@@ -1342,4 +1353,11 @@ bool DbgGdb::Jump(wxString filename, int line)
 	command << wxT( "-exec-jump " ) << wxT( "\"\\\"" ) << tmpfileName << wxT( ":" ) << line << wxT( "\\\"\"" );
 	//return WriteCommand( command, new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 	return ExecCLICommand( command, new DbgCmdJumpHandler( m_observer ) );
+}
+
+void DbgGdb::OnKillGDB(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+	DoCleanup();
+	m_observer->UpdateGotControl( DBG_DBGR_KILLED );
 }

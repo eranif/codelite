@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include "dbgcmd.h"
+#include "event_notifier.h"
 #include "wx/tokenzr.h"
 #include "debuggergdb.h"
 #include "gdb_result_parser.h"
@@ -1375,4 +1376,11 @@ bool DbgCmdJumpHandler::ProcessOutput(const wxString& line)
 {
 	//TODO: handle questions like "Line 24 is not in `main(int, char**)'.  Jump anyway? (y or n) "
 	return false;
+}
+
+bool DbgCmdStopHandler::ProcessOutput(const wxString& line)
+{
+    wxUnusedVar(line);
+    wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
+    EventNotifier::Get()->AddPendingEvent(event);
 }

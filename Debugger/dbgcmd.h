@@ -446,4 +446,12 @@ public:
 	virtual bool ProcessOutput(const wxString & line);
 };
 
+class DbgCmdStopHandler : public DbgCmdHandler
+{
+public:
+	DbgCmdStopHandler(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+	virtual ~DbgCmdStopHandler() {}
+
+	virtual bool ProcessOutput(const wxString & line);
+};
 #endif //DBGCMD_H

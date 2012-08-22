@@ -52,6 +52,8 @@ class IProcess;
 
 WX_DECLARE_STRING_HASH_MAP(DbgCmdHandler*, HandlersMap);
 
+extern const wxEventType wxEVT_DBG_STOP_DEBUGGER;
+
 class DbgGdb : public wxEvtHandler, public IDebugger
 {
 	HandlersMap                 m_handlers;
@@ -156,5 +158,7 @@ public:
 	DECLARE_EVENT_TABLE()
 	void OnProcessEnd(wxCommandEvent &e);
 	void OnDataRead  (wxCommandEvent &e);
+    void OnKillGDB(wxCommandEvent &e);
+    
 };
 #endif //DBGINTERFACE_H

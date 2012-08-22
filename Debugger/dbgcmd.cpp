@@ -394,7 +394,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 		}
 
 
-	} else if (reason == wxT("signal-received")) {
+	} else if (reason == wxT("signal-received") && !m_gdb->IsGoingDown()) {
+        
 		//got signal
 		//which signal?
 		wxString signame;

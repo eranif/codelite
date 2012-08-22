@@ -139,6 +139,7 @@ DbgGdb::DbgGdb()
 	, m_break_at_main( false )
     , m_attachedMode(false)
 	, m_internalBpId( wxNOT_FOUND )
+    , m_goingDown(false)
 {
 #ifdef __WXMSW__
 	Kernel32Dll = LoadLibrary( wxT( "kernel32.dll" ) );
@@ -332,6 +333,7 @@ void DbgGdb::DoCleanup()
 		m_gdbProcess = NULL;
 	}
     
+    m_goingDown = false;
     m_attachedMode = false;
     
 	SetIsRemoteDebugging( false );
@@ -349,6 +351,7 @@ void DbgGdb::DoCleanup()
 
 bool DbgGdb::Stop()
 {
+    m_goingDown = true;
 	if ( !m_attachedMode ) {
         
         // When not "attached" to process, kill the inferior before
@@ -1045,6 +1048,7 @@ bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgE
 // Initialization stage
 bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
 {
+    m_goingDown = false;
 	m_internalBpId = wxNOT_FOUND;
 #ifdef __WXMSW__
 	ExecuteCmd( wxT( "set  new-console on" ) );

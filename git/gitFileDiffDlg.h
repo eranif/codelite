@@ -17,6 +17,7 @@ class GitFileDiffDlg : public wxDialog
   GitCommitEditor* m_editor;
   public:
     GitFileDiffDlg(wxWindow* parent);
+	~GitFileDiffDlg();
     void SetDiff(const wxString& diff);
 };
 

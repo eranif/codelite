@@ -1,5 +1,6 @@
 #include "gitFileDiffDlg.h"
 #include "gitCommitEditor.h"
+#include "windowattrmanager.h"
 
 #include "icons/icon_git.xpm"
 
@@ -19,7 +20,14 @@ GitFileDiffDlg::GitFileDiffDlg(wxWindow* parent)
   SetSizer(sizer);
   sizer->Fit(this);
   Layout();
+		
+  WindowAttrManager::Load(this, wxT("GitFileDiffDlg"), NULL);
+}
+/*******************************************************************************/
 
+GitFileDiffDlg::~GitFileDiffDlg()
+{
+	WindowAttrManager::Save(this, wxT("GitFileDiffDlg"), NULL);
 }
 /*******************************************************************************/
 void GitFileDiffDlg::SetDiff(const wxString& diff)

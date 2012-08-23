@@ -1680,15 +1680,6 @@ wxString BuilderGnuMake::GetBuildToolCommand(bool isCommandlineCommand) const
 	wxString jobsCmd;
 	wxString buildTool;
 
-#if defined (__WXMSW__)
-	wxString jobs = GetBuildToolJobs();
-	if (jobs == wxT("unlimited"))
-		jobsCmd = wxT(" -j ");
-	else
-		jobsCmd = wxT(" -j ") + jobs + wxT(" ");
-
-	buildTool = GetBuildToolName();
-#else
 	if (isCommandlineCommand) {
 		wxString jobs = GetBuildToolJobs();
 		if (jobs == wxT("unlimited"))
@@ -1701,7 +1692,7 @@ wxString BuilderGnuMake::GetBuildToolCommand(bool isCommandlineCommand) const
 		jobsCmd = wxEmptyString;
 		buildTool = wxT("$(MAKE)");
 	}
-#endif
+
 	//enclose the tool path in quatation marks
 	return wxT("\"") + buildTool + wxT("\" ") + jobsCmd + GetBuildToolOptions() ;
 }

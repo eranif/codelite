@@ -155,6 +155,10 @@ BuildSystemPage::BuildSystemPage(wxWindow *parent, wxString name)
 	choices.Add(_("2"));
 	choices.Add(_("3"));
 	choices.Add(_("4"));
+    choices.Add(_("6"));
+    choices.Add(_("8"));
+    choices.Add(_("10"));
+    choices.Add(_("12"));
 	choices.Add(_("unlimited"));
 	//choices.Add(wxT("unspecified"));  // TODO: hops enable this and use to suppress -j opt switch
 	m_choiceJobs = new wxComboBox(this, wxID_ANY, _("1"), wxDefaultPosition, wxDefaultSize, choices, wxCB_READONLY);

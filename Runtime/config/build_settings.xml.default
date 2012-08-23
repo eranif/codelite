@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<BuildSettings Version="2.0.7">
+<BuildSettings Version="2.1">
   <Compilers>
     <Compiler Name="gnu g++">
       <Switch Name="ArchiveOutput" Value=" "/>
@@ -12,9 +12,9 @@
       <Switch Name="Preprocessor" Value="-D"/>
 	  <Switch Name="PreprocessOnly" Value="-E "/>
       <Switch Name="Source" Value="-c "/>
-      <Tool Name="ArchiveTool" Value="ar rcus"/>
-      <Tool Name="CompilerName" Value="g++"/>
-      <Tool Name="C_CompilerName" Value="gcc"/>
+      <Tool Name="AR" Value="ar rcus"/>
+      <Tool Name="CXX" Value="g++"/>
+      <Tool Name="CC" Value="gcc"/>
       <Tool Name="LinkerName" Value="g++"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="g++ -shared -fPIC"/>
@@ -64,9 +64,9 @@
       <Switch Name="Preprocessor" Value="-D"/>
 	  <Switch Name="PreprocessOnly" Value="-E "/>
       <Switch Name="Source" Value="-c "/>
-      <Tool Name="ArchiveTool" Value="ar rcus"/>
-      <Tool Name="CompilerName" Value="gcc"/>
-      <Tool Name="C_CompilerName" Value="gcc"/>
+      <Tool Name="AR" Value="ar rcus"/>
+      <Tool Name="CXX" Value="gcc"/>
+      <Tool Name="CC" Value="gcc"/>
       <Tool Name="LinkerName" Value="gcc"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="gcc -shared -fPIC"/>
@@ -116,14 +116,14 @@
       <Switch Name="PreprocessOnly" Value=""/>
       <Switch Name="Preprocessor" Value=""/>
       <Switch Name="Source" Value="-c "/>
-      <Tool Name="ArchiveTool" Value=""/>
-      <Tool Name="CompilerName" Value="cobra.exe"/>
-      <Tool Name="C_CompilerName" Value="cobra.exe"/>
+      <Tool Name="AR" Value=""/>
+      <Tool Name="CXX" Value="cobra.exe"/>
+      <Tool Name="CC" Value="cobra.exe"/>
       <Tool Name="LinkerName" Value=""/>
       <Tool Name="ResourceCompiler" Value=""/>
       <Tool Name="SharedObjectLinkerName" Value=""/>
-      <File Extension="cobra" CompilationLine="$(CompilerName) $(SourceSwitch)  $(CmpOptions) $(FileFullName)" Kind="0"/>
-      <File Extension="cs" CompilationLine="$(CompilerName) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CmpOptions) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName).cs " Kind="0"/>
+      <File Extension="cobra" CompilationLine="$(CXX) $(SourceSwitch)  $(CXXFLAGS) $(FileFullName)" Kind="0"/>
+      <File Extension="cs" CompilationLine="$(CXX) $(SourceSwitch) &quot;$(FileFullPath)&quot; $(CXXFLAGS) $(ObjectSwitch)$(FilePath)$(IntermediateDirectory)/$(FileName).cs " Kind="0"/>
       <Option Name="ObjectSuffix" Value=".cobra.cs"/>
       <Option Name="DependSuffix" Value=""/>
       <Option Name="PreprocessSuffix" Value=""/>

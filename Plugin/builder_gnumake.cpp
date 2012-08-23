@@ -741,16 +741,16 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
 				if(!isCFile) {
 					// Add the PCH include line
-					compilationLine.Replace(wxT("$(CompilerName)"), wxT("$(CompilerName) $(IncludePCH)"));
+					compilationLine.Replace(wxT("$(CXX)"), wxT("$(CXX) $(IncludePCH)"));
 				}
 				
 				// set the file rule
 				text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile << wxT("\n");
 				text << wxT("\t") << compilationLine << wxT("\n");
 				
-				wxString cmpOptions(wxT("$(CmpOptions) $(IncludePCH)"));
+				wxString cmpOptions(wxT("$(CXXFLAGS) $(IncludePCH)"));
 				if(isCFile) {
-					cmpOptions = wxT("$(C_CmpOptions)");
+					cmpOptions = wxT("$(CFLAGS)");
 				}
 				
 				wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
@@ -994,7 +994,7 @@ void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf,
 	if (type == Project::STATIC_LIBRARY) {
 		//create a static library
 		// In any case add the 'objects_file' target here
-		text << wxT("\t") << wxT("$(ArchiveTool) $(ArchiveOutputSwitch)$(OutputFile)");
+		text << wxT("\t") << wxT("$(AR) $(ArchiveOutputSwitch)$(OutputFile)");
 		if(cmp && cmp->GetReadObjectFilesFromList()) {
 			text << wxT(" @$(ObjectsFileList) $(ArLibs)\n");
 		} else {
@@ -1157,7 +1157,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("Date                   :=") << wxDateTime::Now().FormatDate() << wxT("\n");
 	text << wxT("CodeLitePath           :=\"") << WorkspaceST::Get()->GetStartupDir() << wxT("\"\n");
 	text << wxT("LinkerName             :=") << cmp->GetTool(wxT("LinkerName")) << wxT("\n");
-	text << wxT("ArchiveTool            :=") << cmp->GetTool(wxT("ArchiveTool")) << wxT("\n");
+	text << wxT("AR                     :=") << cmp->GetTool(wxT("AR")) << wxT("\n");
 	text << wxT("SharedObjectLinkerName :=") << cmp->GetTool(wxT("SharedObjectLinkerName")) << wxT("\n");
 	text << wxT("ObjectSuffix           :=") << cmp->GetObjectSuffix() << wxT("\n");
 	text << wxT("DependSuffix           :=") << cmp->GetDependSuffix() << wxT("\n");
@@ -1169,8 +1169,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 	text << wxT("LibraryPathSwitch      :=") << cmp->GetSwitch(wxT("LibraryPath")) << wxT("\n");
 	text << wxT("PreprocessorSwitch     :=") << cmp->GetSwitch(wxT("Preprocessor")) << wxT("\n");
 	text << wxT("SourceSwitch           :=") << cmp->GetSwitch(wxT("Source")) << wxT("\n");
-	text << wxT("CompilerName           :=") << cmp->GetTool(wxT("CompilerName")) << wxT("\n");
-	text << wxT("C_CompilerName         :=") << cmp->GetTool(wxT("C_CompilerName")) << wxT("\n");
+	text << wxT("CXX                    :=") << cmp->GetTool(wxT("CXX")) << wxT("\n");
+	text << wxT("CC                     :=") << cmp->GetTool(wxT("CC")) << wxT("\n");
 	text << wxT("OutputFile             :=") << outputFile << wxT("\n");
 	text << wxT("Preprocessors          :=") << ParsePreprocessor(bldConf->GetPreprocessor()) << wxT("\n");
 	text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
@@ -1201,8 +1201,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 		cBuildOpts << wxT(" ") << additionalCompileFlags;
 	}
 	
-	text << wxT("CmpOptions             :=") << buildOpts  << wxT(" $(Preprocessors)") << wxT("\n");
-	text << wxT("C_CmpOptions           :=") << cBuildOpts << wxT(" $(Preprocessors)") << wxT("\n");
+	text << wxT("CXXFLAGS               :=") << buildOpts  << wxT(" $(Preprocessors)") << wxT("\n");
+	text << wxT("CFLAGS                 :=") << cBuildOpts << wxT(" $(Preprocessors)") << wxT("\n");
 
 	//only if resource compiler required, evaluate the resource variables
 	if (bldConf->IsResCompilerRequired()) {
@@ -1656,7 +1656,7 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
 		text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename << wxT(" $(PCHCompileFlags)\n");
 		
 	} else {
-		text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename << wxT(" $(CmpOptions) $(IncludePath)\n");
+		text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename << wxT(" $(CXXFLAGS) $(IncludePath)\n");
 	}
 	text << wxT("\n");
 }
@@ -1708,14 +1708,14 @@ wxString BuilderGnuMake::GetBuildToolCommand(bool isCommandlineCommand) const
 
 wxString BuilderGnuMake::DoGetCompilerMacro(const wxString& filename)
 {
-	wxString compilerMacro(wxT("$(CompilerName)"));
+	wxString compilerMacro(wxT("$(CXX)"));
 	switch(FileExtManager::GetType(filename)) {
 	case FileExtManager::TypeSourceC:
-		compilerMacro = wxT("$(C_CompilerName)");
+		compilerMacro = wxT("$(CC)");
 		break;
 	case FileExtManager::TypeSourceCpp:
 	default:
-		compilerMacro = wxT("$(CompilerName)");
+		compilerMacro = wxT("$(CXX)");
 		break;
 	}
 	return compilerMacro;

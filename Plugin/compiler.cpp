@@ -46,9 +46,9 @@ Compiler::Compiler(wxXmlNode *node)
     // ensure all relevant entries exist in tools map (makes sure they show up in build settings dlg)
     m_tools[wxT("LinkerName")]             = wxEmptyString;
     m_tools[wxT("SharedObjectLinkerName")] = wxEmptyString;
-    m_tools[wxT("CompilerName")]           = wxEmptyString;
-    m_tools[wxT("C_CompilerName")]         = wxEmptyString;
-    m_tools[wxT("ArchiveTool")]            = wxEmptyString;
+    m_tools[wxT("CXX")]                    = wxEmptyString;
+    m_tools[wxT("CC")]                     = wxEmptyString;
+    m_tools[wxT("AR")]                     = wxEmptyString;
     m_tools[wxT("ResourceCompiler")]       = wxEmptyString;
 
 	m_fileTypes.clear();
@@ -180,9 +180,9 @@ Compiler::Compiler(wxXmlNode *node)
 
 		m_tools[wxT("LinkerName")]             = wxT("g++");
 		m_tools[wxT("SharedObjectLinkerName")] = wxT("g++ -shared -fPIC");
-		m_tools[wxT("CompilerName")]           = wxT("g++");
-		m_tools[wxT("C_CompilerName")]         = wxT("gcc");
-		m_tools[wxT("ArchiveTool")]            = wxT("ar rcu");
+		m_tools[wxT("CXX")]           = wxT("g++");
+		m_tools[wxT("CC")]         = wxT("gcc");
+		m_tools[wxT("AR")]            = wxT("ar rcu");
 		m_tools[wxT("ResourceCompiler")]       = wxT("windres");
 		m_globalIncludePath                    = wxEmptyString;
 		m_globalLibPath                        = wxEmptyString;
@@ -199,13 +199,13 @@ Compiler::Compiler(wxXmlNode *node)
     }
 
 	if (m_fileTypes.empty()) {
-		AddCmpFileType(wxT("cpp"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("cxx"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("c++"), CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("c"),   CmpFileKindSource, wxT("$(C_CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(C_CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("cc"),  CmpFileKindSource, wxT("$(CompilerName) $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("m"),   CmpFileKindSource, wxT("$(CompilerName) -x objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
-		AddCmpFileType(wxT("mm"),  CmpFileKindSource, wxT("$(CompilerName) -x objective-c++ $(SourceSwitch) \"$(FileFullPath)\" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("cpp"), CmpFileKindSource, wxT("$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("cxx"), CmpFileKindSource, wxT("$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("c++"), CmpFileKindSource, wxT("$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("c"),   CmpFileKindSource, wxT("$(CC) $(SourceSwitch) \"$(FileFullPath)\" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("cc"),  CmpFileKindSource, wxT("$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("m"),   CmpFileKindSource, wxT("$(CXX) -x objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
+		AddCmpFileType(wxT("mm"),  CmpFileKindSource, wxT("$(CXX) -x objective-c++ $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)"));
 		AddCmpFileType(wxT("rc"),  CmpFileKindResource, wxT("$(RcCompilerName) -i \"$(FileFullPath)\" $(RcCmpOptions)   $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(RcIncludePath)"));
 	}
 }
@@ -337,14 +337,14 @@ wxString Compiler::GetTool(const wxString &name) const
 {
 	std::map<wxString, wxString>::const_iterator iter = m_tools.find(name);
 	if (iter == m_tools.end()) {
-		if(name == wxT("C_CompilerName")) {
-			// an upgrade, return the CompilerName
-			return GetTool(wxT("CompilerName"));
+		if(name == wxT("CC")) {
+			// an upgrade, return the CXX
+			return GetTool(wxT("CXX"));
 		}
 		return wxEmptyString;
 	}
-	if(name == wxT("C_CompilerName") && iter->second.empty()) {
-		return GetTool(wxT("CompilerName"));
+	if(name == wxT("CC") && iter->second.empty()) {
+		return GetTool(wxT("CXX"));
 	}
 	return iter->second;
 }

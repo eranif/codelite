@@ -95,19 +95,19 @@ void MacrosDlg::Initialize()
 		break;
 
 	case MacrosCompiler:
-		AddMacro(wxT("$(CompilerName)"),           _("Expands to the compiler name as set in the Tools tab"));
+		AddMacro(wxT("$(CXX)"),           _("Expands to the compiler name as set in the Tools tab"));
 		AddMacro(wxT("$(SourceSwitch)"),           _("Expands to the source switch (usually, -c)"));
 		AddMacro(wxT("$(FileFullPath)"),           _("The file full path (includes path+name+extension)"));
 		AddMacro(wxT("$(FileFullName)"),           _("The file full name (includes name+extension)"));
 		AddMacro(wxT("$(FileName)"),               _("The file name (name only)"));
 		AddMacro(wxT("$(FilePath)"),               _("The file's path with UNIX slashes, including terminating separator"));
-		AddMacro(wxT("$(CmpOptions)"),             _("Expands to the compiler options as set in the project settings"));
+		AddMacro(wxT("$(CXXFLAGS)"),             _("Expands to the compiler options as set in the project settings"));
 		AddMacro(wxT("$(RcCompilerName)"),         _("Expands to the resource compiler name"));
 		AddMacro(wxT("$(IntermediateDirectory)"),  _("Expands to the current project intermediate directory path, as set in the project settings"));
 		AddMacro(wxT("$(ConfigurationName)"),      _("Expands to the current project selected configuration"));
 		AddMacro(wxT("$(OutDir)"),                 _("An alias to $(IntermediateDirectory)"));
 		AddMacro(wxT("$(LinkerName)"),             _("Expands to the linker name as set in the Tools tab"));
-		AddMacro(wxT("$(ArchiveTool)"),            _("Expands to the archive tool (e.g. ar) name as set in the Tools tab"));
+		AddMacro(wxT("$(AR)"),            _("Expands to the archive tool (e.g. ar) name as set in the Tools tab"));
 		AddMacro(wxT("$(SharedObjectLinkerName)"), _("Expands to the shared object linker name as set in the Tools tab"));
 		AddMacro(wxT("$(ObjectSuffix)"),           _("Objects suffix (usually set to .o)"));
 		AddMacro(wxT("$(ObjectName)"),             _("The object name (without the suffix)"));

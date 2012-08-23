@@ -110,13 +110,13 @@ void BuilderGnuMakeOneStep::CreateTargets(const wxString &type, BuildConfigPtr b
 	
 	if (type == Project::STATIC_LIBRARY) {
 		//create a static library
-		text << wxT("\t") << wxT("$(CompilerName) $(ArchiveOutputSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CmpOptions) $(Srcs)\n");
+		text << wxT("\t") << wxT("$(CXX) $(ArchiveOutputSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
 	} else if (type == Project::DYNAMIC_LIBRARY) {
 		//create a shared library
-		text << wxT("\t") << wxT("$(CompilerName) $(ObjectSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CmpOptions) $(Srcs)\n");
+		text << wxT("\t") << wxT("$(CXX) $(ObjectSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
 	} else if (type == Project::EXECUTABLE) {
 		//create an executable
-		text << wxT("\t") << wxT("$(CompilerName) $(SourceSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CmpOptions) $(Srcs)\n");
+		text << wxT("\t") << wxT("$(CXX) $(SourceSwitch) $(OutputSwitch)$(OutputFile) $(Libs) $(CXXFLAGS) $(Srcs)\n");
 	}
 }
 

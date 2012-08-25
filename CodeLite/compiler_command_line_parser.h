@@ -30,7 +30,7 @@ public:
     virtual ~CompilerCommandLineParser();
 
     wxString GetCompileLine() const;
-
+    void MakeAbsolute(const wxString &path);
     const wxString& GetStandard() const {
         return m_standard;
     }

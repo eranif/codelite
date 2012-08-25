@@ -263,6 +263,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
                 cdb.Close();
 
                 CompilerCommandLineParser cclp(compilationLine);
+                cclp.MakeAbsolute(fnSourceFile.GetPath());
                 args.insert(args.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
                 args.insert(args.end(), cclp.GetMacrosWithPrefix().begin(),   cclp.GetMacrosWithPrefix().end());
                 args.Add(cclp.GetStandardWithPrefix());

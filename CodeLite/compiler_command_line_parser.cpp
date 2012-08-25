@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <wx/string.h>
-
+#include <wx/filename.h>
 
 //////////////////////////////////////////////////////
 // Helper C functions
@@ -226,4 +226,26 @@ wxString CompilerCommandLineParser::GetStandardWithPrefix() const
         return wxT("");
         
     return wxT("-std=") + m_standard;
+}
+
+void CompilerCommandLineParser::MakeAbsolute(const wxString &path)
+{
+    wxArrayString incls;
+    for(size_t i=0; i<m_includes.GetCount(); ++i) {
+        wxFileName fn(m_includes.Item(i), wxT(""));
+        fn.MakeAbsolute(path);
+        incls.Add(fn.GetFullPath());
+    }
+    
+    m_includes.Clear();
+    m_includes = incls;
+    
+    m_includesWithPrefix.Clear();
+    for(size_t i=0; i<m_framworks.GetCount(); ++i) {
+        m_includesWithPrefix.Add(wxT("-F") + m_framworks.Item(i));
+    }
+    
+    for(size_t i=0; i<m_includes.GetCount(); ++i) {
+        m_includesWithPrefix.Add(wxT("-I") + m_includes.Item(i));
+    }
 }

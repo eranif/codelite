@@ -76,7 +76,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName).exe" ..\Runtime</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>
@@ -99,4 +101,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

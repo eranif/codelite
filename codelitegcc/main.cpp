@@ -65,19 +65,6 @@ int main(int argc, char **argv)
 
 void SaveFileFlags(const std::string& dbname, const std::string& filename, const std::string& flags)
 {
-    sqlite3* db = NULL;
-    int rc = sqlite3_open(dbname.c_str(), &db);
-    if ( rc != SQLITE_OK) {
-        return;
-    }
-
-    sqlite3_stmt* statement = NULL;
-    // Prepare the statement
-    if( SQLITE_OK != sqlite3_prepare_v2(db, "REPLACE INTO COMPILATION_TABLE (FILE_NAME, COMPILE_FLAGS) VALUES (?, ?)", -1, &statement, NULL) ) {
-        sqlite3_close(db);
-        return;
-    }
-
     if( filename.empty() ) {
         //fprintf(stderr, "empty filename !\n");
         return;
@@ -87,10 +74,27 @@ void SaveFileFlags(const std::string& dbname, const std::string& filename, const
         //fprintf(stderr, "empty flags !\n");
         return;
     }
+    
+    sqlite3* db = NULL;
+    int rc = sqlite3_open(dbname.c_str(), &db);
+    if ( rc != SQLITE_OK) {
+        return;
+    }
+    
+    sqlite3_busy_timeout(db, 1000); // Busy handler for 1 second
+    
+    sqlite3_stmt* statement = NULL;
+    // Prepare the statement
+    if( SQLITE_OK != sqlite3_prepare_v2(db, "REPLACE INTO COMPILATION_TABLE (FILE_NAME, COMPILE_FLAGS) VALUES (?, ?)", -1, &statement, NULL) ) {
+        sqlite3_close(db);
+        return;
+    }
 
     sqlite3_bind_text(statement, 1, filename.c_str(), -1, NULL);
     sqlite3_bind_text(statement, 2, flags.c_str(), -1, NULL);
-    sqlite3_step(statement);
+    if ( sqlite3_step(statement) != SQLITE_DONE ) {
+        fprintf(stderr, "codelitegcc: unable to save compilation flags for file: '%s'. %s\n", filename.c_str(), sqlite3_errmsg(db));
+    }
     sqlite3_finalize(statement);
     sqlite3_close(db);
 }
@@ -146,7 +150,15 @@ std::string extract_file_name(const std::string& line)
 #ifdef _WIN32
     std::replace(filename.begin(), filename.end(), '/', '\\');
 #endif
-
+    
+    // trim whitespaces
+    
+    // rtrim
+    filename.erase(0, filename.find_first_not_of("\t\r\v\n "));
+    
+    // ltrim
+    filename.erase(filename.find_last_not_of("\t\r\v\n ")+1);
+    
     return filename;
 }
 

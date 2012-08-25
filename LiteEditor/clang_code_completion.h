@@ -30,19 +30,12 @@ protected:
 	static ClangCodeCompletion* ms_instance;
 	ClangDriver                 m_clang;
 	bool                        m_allEditorsAreClosing;
-	bool                        m_parseBuildOutput;
-	wxString                    m_projectCompiled;
-	wxString                    m_configurationCompiled;
-	wxString                    m_processOutput;
 	
 	friend class ClangDriver;
 public:
 	static ClangCodeCompletion* Instance();
 	static void Release();
 
-	bool IsParseBuildOutput() const {
-		return m_parseBuildOutput;
-	}
 	/**
 	 * @brief perform codecompletion in the editor
 	 */
@@ -71,7 +64,12 @@ public:
 	void CancelCodeComplete();
 	void ClearCache();
 	bool IsCacheEmpty();
-
+    
+    /**
+     * @brief return the clang compilatin database 
+     */
+    wxFileName GetCompilationDatabase() const;
+    
 protected:
 	void DoCleanUp();
 	
@@ -81,10 +79,9 @@ protected:
 	void OnAllEditorsClosing(wxCommandEvent &e);
 	void OnAllEditorsClosed(wxCommandEvent &e);
 
-	void OnBuildStarted(wxCommandEvent &e);
+	void OnBuildStarting(wxCommandEvent &e);
 	void OnBuildEnded(wxCommandEvent &e);
-	void OnBuildOutput(wxCommandEvent &e);
-	void OnClangPathResolved(wxCommandEvent &e);
+    
 private:
 	ClangCodeCompletion();
 	~ClangCodeCompletion();

@@ -60,7 +60,7 @@ protected:
 	void CreateCleanTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text);
 	// Override default methods defined in the builder interface
 	virtual wxString GetBuildToolCommand(bool isCommandlineCommand) const;
-
+    
 private:
 	void GenerateMakefile(ProjectPtr proj, const wxString &confToBuild, bool force, const wxArrayString &depsProj);
 	void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString &text);

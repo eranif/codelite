@@ -30,6 +30,8 @@
     <File Name="localworkspace.h"/>
     <File Name="localworkspace.cpp"/>
     <File Name="shell_command.cpp"/>
+    <File Name="compilation_database.h"/>
+    <File Name="compilation_database.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

@@ -192,4 +192,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Windows_Release"/>
 </CodeLite_Project>

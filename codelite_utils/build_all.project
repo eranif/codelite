@@ -106,5 +106,6 @@
     <Project Name="makedir"/>
     <Project Name="wx-config"/>
     <Project Name="codelite_clang"/>
+    <Project Name="codelitegcc"/>
   </Dependencies>
 </CodeLite_Project>

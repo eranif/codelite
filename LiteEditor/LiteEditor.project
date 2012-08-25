@@ -695,10 +695,6 @@
       <File Name="clang_result_parser.cpp"/>
       <File Name="clang_result_parser.h"/>
     </VirtualDirectory>
-    <File Name="clang_local_paths.h"/>
-    <File Name="clang_local_paths.cpp"/>
-    <File Name="clang_path_resolver_thread.cpp"/>
-    <File Name="clang_path_resolver_thread.h"/>
     <File Name="clang_utils.h"/>
     <File Name="clang_utils.cpp"/>
     <File Name="clang_macro_handler.h"/>

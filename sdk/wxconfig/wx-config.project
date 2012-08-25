@@ -11,7 +11,6 @@
     <File Name="wx-config-win.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -98,4 +97,5 @@ WXWIN=C:\src\wx-sources-294]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

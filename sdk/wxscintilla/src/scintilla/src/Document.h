@@ -174,6 +174,7 @@ public:
 };
 
 class Document;
+class ILexer;
 
 class LexInterface {
 protected:

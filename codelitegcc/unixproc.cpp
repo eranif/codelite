@@ -254,7 +254,8 @@ int ExecuteProcessUNIX(const std::string& commandline)
         freeargv(argv);
         argc = 0;
         int status(0);
-        waitpid(-1, &status, WNOHANG);
+        // wait for the process to terminate
+        waitpid(-1, &status, 0);
         return status;
     }
 }

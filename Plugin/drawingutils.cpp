@@ -33,7 +33,7 @@
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
 // See http://trac.wxwidgets.org/ticket/10883^M
 #define GSocket GlibGSocket
-#include <gtk-2.0/gtk/gtk.h>
+#include <gtk/gtk.h>
 #undef GSocket
 #endif
 //////////////////////////////////////////////////

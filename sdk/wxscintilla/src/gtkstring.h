@@ -15,7 +15,7 @@
 // Convenience class for g_freeing a gchar* on scope exit automatically
 // ----------------------------------------------------------------------------
 #ifdef __WXGTK20__
-#include <gtk-2.0/gtk/gtk.h>
+#include <gtk/gtk.h>
 #endif
 class MyGtkString
 {

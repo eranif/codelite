@@ -4,7 +4,7 @@
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
 // See http://trac.wxwidgets.org/ticket/10883
 #define GSocket GlibGSocket
-#include <gtk-2.0/gtk/gtk.h>
+#include <gtk/gtk.h>
 #undef GSocket
 #endif
 

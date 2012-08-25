@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <string.h>
 #include <string>
+#include <sys/wait.h>
 
 static char  **argv = NULL;
 static int    argc = 0;

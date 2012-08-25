@@ -199,7 +199,7 @@ createMainTargets()
     if [ "$enable_pch" = "yes" ]; then
         pch_target=" pch_header "
     fi
-	target_all="all : $pch_target pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_clang codelite_indexer codelite_cppcheck Plugins LiteEditor "
+	target_all="all : $pch_target pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_gcc codelite_clang codelite_indexer codelite_cppcheck Plugins LiteEditor "
   
 	## additional database backends
 
@@ -223,6 +223,11 @@ createMainTargets()
         echo "" >> Makefile
     fi
     
+	echo "codelite_gcc:" >> Makefile
+	echo "	@cd codelitegcc && \$(MAKE)" >> Makefile
+	echo "	cp -fr codelitegcc/codelitegcc Runtime/." >> Makefile
+	echo "" >> Makefile
+
 	echo "codelite_indexer:" >> Makefile
 	echo "	@cd sdk/codelite_indexer/ && \$(MAKE)" >> Makefile
 	echo "	cp -fr sdk/codelite_indexer/codelite_indexer Runtime/." >> Makefile
@@ -253,6 +258,7 @@ createMainTargets()
     fi
 	echo "	@cd sdk/codelite_indexer && \$(MAKE) clean" >> Makefile
 	echo "	@cd sdk/codelite_cppcheck && \$(MAKE) clean" >> Makefile
+	echo "	@cd codelitegcc && \$(MAKE) clean" >> Makefile
 	
 	if [ "$with_clang" = "yes" ]; then 
 		echo "	@cd codelite_clang/ && \$(MAKE) clean" >> Makefile
@@ -475,10 +481,10 @@ createCodeLiteClangMakefile()
 createCodeLiteGCCMakefile ()
 {
 	files_list="$1"
-	echo "Generating sdk/codelitegcc/Makefile..."
+	echo "Generating codelitegcc/Makefile..."
 	current_wd=`pwd`
 
-	cd ./sdk/codelitegcc/
+	cd codelitegcc/
 
 	## remove old Makefile
 	rm -fr Makefile
@@ -523,7 +529,7 @@ createCodeLiteGCCMakefile ()
 	echo "CC=${c_compiler_name}" >> Makefile
 	echo "GCC=\$(CC) ${c_codelitegcc_extras} \$(DEBUG) \$(OPT) " >> Makefile
 	echo "" >> Makefile
-	echo "all: codelite_indexer" >> Makefile
+	echo "all: codelite_gcc" >> Makefile
 
 	createObjectList "*c *.cpp" "codelitegcc_objects"
 
@@ -538,28 +544,23 @@ createCodeLiteGCCMakefile ()
 		a_file_no_ext="${object_list_name}_$a_file_no_ext"
 
 		if [ "$file_extension" = "c" ]; then
-			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} >> Makefile
 			echo "	\$(GCC) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(GCC) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		else
-			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} >> Makefile
 			echo "	\$(CMP) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
-			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(CMP) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 
 	done
-	echo "-include ${configuration}/*.d" >> Makefile
 	echo >> Makefile
 
-	echo "codelitegcc: make_dirs \$(codelitegcc_objects)" >> Makefile
+	echo "codelite_gcc: make_dirs \$(codelitegcc_objects)" >> Makefile
 
 	## On FreeBSD, -ldl is part og libc
 	if [ "$os_name" = "FreeBSD" ]; then
-		echo "	\$(CMP) -o codelitegcc \$(codelitegcc_objects) " >> Makefile
+		echo "	\$(CMP) -o codelitegcc \$(codelitegcc_objects) -lpthread" >> Makefile
 	else
-		echo "	\$(CMP) -o codelitegcc \$(codelitegcc_objects) -ldl" >> Makefile
+		echo "	\$(CMP) -o codelitegcc \$(codelitegcc_objects) -ldl -lpthread" >> Makefile
 	fi
 
 	echo >> Makefile
@@ -979,6 +980,7 @@ createInstallTarget()
 		echo "	@cp codelite_clang/codelite-clang \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
 	fi
 	echo "	@cp sdk/codelite_cppcheck/codelite_cppcheck \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
+	echo "	@cp codelitegcc/codelitegcc \"\$(DESTDIR)${prefix}/bin/\"" >> Makefile
 	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/applications\"" >> Makefile
 	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite\"" >> Makefile
 	echo "	@mkdir -p \"\$(DESTDIR)${prefix}/share/codelite/config\"" >> Makefile
@@ -1281,7 +1283,7 @@ fi
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
-#createCodeLiteGCCMakefile
+createCodeLiteGCCMakefile
 
 if [ "$with_clang" = "yes" ]; then 
 	createCodeLiteClangMakefile  "codelite_clang/*.cpp"

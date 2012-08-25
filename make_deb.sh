@@ -144,6 +144,8 @@ mkdir -p fakeroot/${PREFIX}/bin/
 cp ./Runtime/${EXE_NAME} fakeroot/${PREFIX}/bin/codelite
 cp sdk/codelite_indexer/codelite_indexer   fakeroot/${PREFIX}/bin/
 cp sdk/codelite_cppcheck/codelite_cppcheck fakeroot/${PREFIX}/bin/
+cp codelitegcc/codelitegcc fakeroot/${PREFIX}/bin/
+cp codelite_clang/codelite-clang fakeroot/${PREFIX}/bin/
 cp Runtime/codelite_exec                   fakeroot/${PREFIX}/bin/
 cp Runtime/codelite_kill_children          fakeroot/${PREFIX}/bin/
 cp Runtime/codelite_xterm                  fakeroot/${PREFIX}/bin/
@@ -253,5 +255,7 @@ generateMenuFile
 chmod +x fakeroot/${PREFIX}/bin/codelite
 chmod +x fakeroot/${PREFIX}/bin/codelite_indexer
 chmod +x fakeroot/${PREFIX}/bin/codelite_cppcheck
+chmod +x fakeroot/${PREFIX}/bin/codelitegcc
+chmod +x fakeroot/${PREFIX}/bin/codelite-clang
 
 fakeroot dpkg -b fakeroot/ ./

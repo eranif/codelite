@@ -243,8 +243,10 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     if ( dependProjbldConf ) {
         
         CompilationDatabase cdb;
-        if ( !wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) ) {
-            
+		static bool once = false;
+        if ( !wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) && !once ) {
+			once = true;
+			
             wxString msg;
             msg << _("Could not locate compilation database: ")
                 << cdb.GetFileName().GetFullPath() << wxT("\n\n")

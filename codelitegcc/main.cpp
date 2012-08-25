@@ -37,6 +37,14 @@ int main(int argc, char **argv)
     for ( int i=1; i<argc; ++i ) {
         // Wrap all arguments with spaces with double quotes
         std::string arg = argv[i];
+        
+        // re-escape double quotes if needed
+        size_t pos = arg.find('"');
+        while ( pos != std::string::npos ) {
+            arg.replace(pos, 1, "\\\""); // replace it with escapted slash
+            pos = arg.find('"', pos + 2);
+        }
+        
         if ( arg.find(' ') != std::string::npos ) {
             std::string a = "\"";
             a += arg;

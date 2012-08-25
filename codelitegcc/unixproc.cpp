@@ -254,9 +254,11 @@ int ExecuteProcessUNIX(const std::string& commandline)
         freeargv(argv);
         argc = 0;
         int status(0);
+        
         // wait for the process to terminate
-        waitpid(-1, &status, 0);
-        return status;
+        waitpid(rc, &status, 0);
+        
+        return WEXITSTATUS(status);
     }
 }
 #endif 

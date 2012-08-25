@@ -472,6 +472,114 @@ createCodeLiteClangMakefile()
 	cd "$current_wd"
 }
 
+createCodeLiteGCCMakefile ()
+{
+	files_list="$1"
+	echo "Generating sdk/codelitegcc/Makefile..."
+	current_wd=`pwd`
+
+	cd ./sdk/codelitegcc/
+
+	## remove old Makefile
+	rm -fr Makefile
+
+	# is_64bit will probably hold yes or no, but could also contain data from an environmental variable
+	codelitegcc_extras="$is_64bit"
+	c_codelitegcc_extras="$is_64bit"
+
+	# If it wasn't overridden, implement the normal behaviour
+	if [ "$os_name" = "Darwin" ]; then
+		if [ "$is_64bit" = "yes" ]; then
+			codelitegcc_extras="-m64 -DON_64_BIT "
+			c_codelitegcc_extras="-m64 -DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			codelitegcc_extras="-m32 "
+			c_codelitegcc_extras="-m32 "
+	fi
+	else # Not darwin
+	if [ "$is_64bit" = "yes" ]; then
+			codelitegcc_extras="-DON_64_BIT "
+			c_codelitegcc_extras="-DON_64_BIT "
+		elif [ "$is_64bit" = "no" ]; then
+			codelitegcc_extras=""	# Otherwise the word 'no' will be used!
+			c_codelitegcc_extras=""
+		fi
+	fi
+
+	if [ "$enable_debug" = "yes" ]; then
+		debug_flag=" -g "
+		configuration="Debug"
+		optimization=" -O0 "
+	else
+		configuration="Release"
+		debug_flag=""
+		optimization=" -O2 "
+	fi
+
+	echo "OPT=${optimization}" >> Makefile
+	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "CXX=${compiler_name}" >> Makefile
+	echo "CMP=\$(CXX) ${codelitegcc_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CC=${c_compiler_name}" >> Makefile
+	echo "GCC=\$(CC) ${c_codelitegcc_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "" >> Makefile
+	echo "all: codelite_indexer" >> Makefile
+
+	createObjectList "*c *.cpp" "codelitegcc_objects"
+
+	for a_file in $files_list
+	do
+		a_file_with_ext=`basename $a_file`
+		a_file_no_ext=`basename $a_file .cxx`
+		a_file_no_ext=`basename $a_file_no_ext .cpp`
+		a_file_no_ext=`basename $a_file_no_ext .c`
+		file_extension=`basename $a_file | cut -d. -f2`
+
+		a_file_no_ext="${object_list_name}_$a_file_no_ext"
+
+		if [ "$file_extension" = "c" ]; then
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(GCC) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(GCC) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		else
+			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
+			echo "	\$(CMP) -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
+			echo "	\$(CMP) -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		fi
+
+	done
+	echo "-include ${configuration}/*.d" >> Makefile
+	echo >> Makefile
+
+	echo "codelitegcc: make_dirs \$(codelitegcc_objects)" >> Makefile
+
+	## On FreeBSD, -ldl is part og libc
+	if [ "$os_name" = "FreeBSD" ]; then
+		echo "	\$(CMP) -o codelitegcc \$(codelitegcc_objects) " >> Makefile
+	else
+		echo "	\$(CMP) -o codelitegcc \$(codelitegcc_objects) -ldl" >> Makefile
+	fi
+
+	echo >> Makefile
+
+	echo "make_dirs:" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	@echo \"----------Building project:[ codelitegcc - ${configuration} ]----------\"" >> Makefile
+	echo "	@echo" >> Makefile
+	echo "	test -d ${configuration} || mkdir ${configuration}" >> Makefile
+	echo >> Makefile
+
+	echo "clean: " >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o" >> Makefile
+	echo "	\$(RM) -fr ${configuration}/*.o.d" >> Makefile
+	echo "	\$(RM) -fr codelitegcc" >> Makefile
+
+	## restore the path
+	cd "$current_wd"
+}
+
 createCodeLiteIndexerMakefile ()
 {
 	files_list="$1"
@@ -1173,6 +1281,7 @@ fi
 # Then the binary, and indexer
 createRules_exe "LiteEditor/*.cpp" "LiteEditorObjects" "LiteEditor" ${exe_name}
 createCodeLiteIndexerMakefile "sdk/codelite_indexer/*.cpp sdk/codelite_indexer/network/*.cpp sdk/codelite_indexer/libctags/*.c sdk/codelite_indexer/libctags/*.cpp"
+#createCodeLiteGCCMakefile
 
 if [ "$with_clang" = "yes" ]; then 
 	createCodeLiteClangMakefile  "codelite_clang/*.cpp"

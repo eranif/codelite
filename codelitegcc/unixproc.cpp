@@ -4,10 +4,12 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
 #include <string>
 #include <sys/wait.h>
 #include <sys/file.h>
+#include <sys/stat.h>
 #include <sys/stat.h>
 
 static char  **argv = NULL;
@@ -203,38 +205,6 @@ static void make_argv(const std::string& cmd)
 #define BUFF_STATE_NORMAL 0
 #define BUFF_STATE_IN_ESC 1
 
-static void RemoveTerminalColoring(char *buffer)
-{
-	char *saved_buff = buffer;
-	char tmpbuf[BUFF_SIZE+1];
-	memset(tmpbuf, 0, sizeof(tmpbuf));
-
-	short state = BUFF_STATE_NORMAL;
-	size_t i(0);
-
-	while(*buffer != 0) {
-		switch (state) {
-		case BUFF_STATE_NORMAL:
-			if(*buffer == 0x1B) { // found ESC char
-				state = BUFF_STATE_IN_ESC;
-
-			} else {
-				tmpbuf[i] = *buffer;
-				i++;
-			}
-			break;
-		case BUFF_STATE_IN_ESC:
-			if(*buffer == 'm') { // end of color sequence
-				state = BUFF_STATE_NORMAL;
-			}
-			break;
-		}
-		buffer++;
-	}
-	memset(saved_buff, 0, BUFF_SIZE);
-	memcpy(saved_buff, tmpbuf, strlen(tmpbuf));
-}
-
 int ExecuteProcessUNIX(const std::string& commandline)
 {
 	make_argv(commandline);
@@ -274,15 +244,22 @@ void WriteContent( const std::string& logfile, const std::string& filename, cons
 	if ( fd < 0 )
 		return;
 		
-	if (::flock(fd, LOCK_EX) < 0) {
+	if(::flock(fd, LOCK_EX) < 0) {
 		return;
 	}
 	
 	std::string line = filename + "|" + flags + "\n";
 	
+    FILE* fp = fopen(logfile.c_str(), "a+b");
+    if ( !fp ) {
+        perror("fopen");
+    }
+    
 	// Write the content
-	::write(fd, line.c_str(), line.length());
-	
+	::fprintf(fp, "%s", line.c_str());
+	::fflush(fp);
+    ::fclose(fp);
+    
 	// Release the lock
 	::flock(fd, LOCK_UN);
 	

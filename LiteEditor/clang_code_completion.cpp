@@ -190,6 +190,9 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
     ::wxUnsetEnv(wxT("CL_COMPILATION_DB"));
     ::wxUnsetEnv(wxT("CXX"));
     ::wxUnsetEnv(wxT("CC"));
+    
+    CompilationDatabase cdb;
+    cdb.Initialize();
 }
 
 void ClangCodeCompletion::OnBuildStarting(wxCommandEvent& e)

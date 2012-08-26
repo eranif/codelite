@@ -23,6 +23,7 @@ public:
     
     wxFileName GetFileName() const;
     wxString CompilationLine(const wxString &filename);
+    void Initialize();
 };
 
 #endif // COMPILATIONDATABASE_H

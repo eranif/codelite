@@ -1,6 +1,9 @@
 #include "compilation_database.h"
 #include <wx/filename.h>
 #include "workspace.h"
+#include <wx/tokenzr.h>
+#include <wx/log.h>
+#include <wx/ffile.h>
 
 CompilationDatabase::CompilationDatabase()
     : m_db(NULL)
@@ -82,5 +85,53 @@ void CompilationDatabase::Close()
         }
     }
     m_db = NULL;
+}
+
+void CompilationDatabase::Initialize()
+{
+    Open();
+    if ( !IsOpened() )
+        return;
+    
+    wxString textfile = GetFileName().GetFullPath();
+    textfile << wxT(".txt");
+    wxFFile fp(textfile, wxT("rb"));
+    if( fp.IsOpened() ) {
+        wxString content;
+        fp.ReadAll(&content, wxConvUTF8);
+        
+        if( content.IsEmpty() )
+            return;
+        
+        
+        wxArrayString lines = ::wxStringTokenize(content, wxT("\n\r"), wxTOKEN_STRTOK);
+        try {
+            
+            wxString sql;
+            sql = wxT("REPLACE INTO COMPILATION_TABLE (FILE_NAME, COMPILE_FLAGS) VALUES(?, ?)");
+            wxSQLite3Statement st = m_db->PrepareStatement(sql);
+        
+            m_db->ExecuteUpdate("BEGIN");
+            for(size_t i=0; i<lines.GetCount(); ++i) {
+                wxString file_name = lines.Item(i).BeforeFirst(wxT('|'));
+                wxString cmp_flags = lines.Item(i).AfterFirst(wxT('|'));
+                
+                file_name.Trim().Trim(false);
+                cmp_flags.Trim().Trim(false);
+                
+                st.Bind(1, file_name);
+                st.Bind(2, cmp_flags);
+                st.ExecuteUpdate();
+            }
+            m_db->ExecuteUpdate("COMMIT");
+        
+        } catch (wxSQLite3Exception &e) {
+            wxUnusedVar(e);
+        }
+        
+        wxLogNull nl;
+        ::wxRemoveFile(textfile);
+        
+    }
 }
 

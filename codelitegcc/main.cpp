@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
-#include "sqlite3.h"
 #include <string>
 #include <vector>
 #include <stdlib.h>
@@ -13,8 +12,6 @@ std::string extract_file_name( const std::string& line );
 char * normalize_path(const char * src, size_t src_len);
 
 void * Memrchr(const void *buf, int c, size_t num);
-
-void SaveFileFlags(const std::string &db, const std::string &filename, const std::string &flags);
 
 #ifndef _WIN32
 extern int ExecuteProcessUNIX(const std::string& commandline);
@@ -59,7 +56,10 @@ int main(int argc, char **argv)
     if ( pdb ) {
         std::string file_name = extract_file_name(commandline);
         if(file_name.empty() == false) {
-            SaveFileFlags(pdb, file_name, commandline);
+            std::string logfile = pdb;
+            logfile += ".txt";
+            
+            WriteContent(logfile, file_name, commandline);
         }
     }
 
@@ -71,42 +71,6 @@ int main(int argc, char **argv)
 #endif
 
     return exitCode;
-}
-
-void SaveFileFlags(const std::string& dbname, const std::string& filename, const std::string& flags)
-{
-    if( filename.empty() ) {
-        //fprintf(stderr, "empty filename !\n");
-        return;
-    }
-
-    if( flags.empty() ) {
-        //fprintf(stderr, "empty flags !\n");
-        return;
-    }
-    
-    sqlite3* db = NULL;
-    int rc = sqlite3_open(dbname.c_str(), &db);
-    if ( rc != SQLITE_OK) {
-        return;
-    }
-    
-    sqlite3_busy_timeout(db, 1000); // Busy handler for 1 second
-    
-    sqlite3_stmt* statement = NULL;
-    // Prepare the statement
-    if( SQLITE_OK != sqlite3_prepare_v2(db, "REPLACE INTO COMPILATION_TABLE (FILE_NAME, COMPILE_FLAGS) VALUES (?, ?)", -1, &statement, NULL) ) {
-        sqlite3_close(db);
-        return;
-    }
-
-    sqlite3_bind_text(statement, 1, filename.c_str(), -1, NULL);
-    sqlite3_bind_text(statement, 2, flags.c_str(), -1, NULL);
-    if ( sqlite3_step(statement) != SQLITE_DONE ) {
-        fprintf(stderr, "codelitegcc: unable to save compilation flags for file: '%s'. %s\n", filename.c_str(), sqlite3_errmsg(db));
-    }
-    sqlite3_finalize(statement);
-    sqlite3_close(db);
 }
 
 std::string extract_file_name(const std::string& line)

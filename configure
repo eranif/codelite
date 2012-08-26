@@ -531,7 +531,7 @@ createCodeLiteGCCMakefile ()
 	echo "" >> Makefile
 	echo "all: codelite_gcc" >> Makefile
 
-	createObjectList "*.c *.cpp" "codelitegcc_objects"
+	createObjectList "*.cpp" "codelitegcc_objects"
 
 	for a_file in $files_list
 	do

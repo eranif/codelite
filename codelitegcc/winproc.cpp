@@ -3,6 +3,7 @@
 #include <string>
 #include <conio.h>
 #include <limits.h>
+#include <io.h>
 
 int ExecuteProcessWIN(const std::string& commandline)
 {

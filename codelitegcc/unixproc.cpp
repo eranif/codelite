@@ -8,6 +8,7 @@
 #include <string>
 #include <sys/wait.h>
 #include <sys/file.h>
+#include <sys/stat.h>
 
 static char  **argv = NULL;
 static int    argc = 0;
@@ -273,8 +274,8 @@ void WriteContent( const std::string& logfile, const std::string& filename, cons
 	if ( fd < 0 )
 		return;
 		
-	if(::flock(fd, LOCK_EX) < 0) {
-		return false;
+	if (::flock(fd, LOCK_EX) < 0) {
+		return;
 	}
 	
 	std::string line = filename + "|" + flags + "\n";

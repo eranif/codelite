@@ -14,7 +14,7 @@ public:
     CompilationDatabase();
     virtual ~CompilationDatabase();
     
-    void Open();
+    void Open(const wxFileName& fn = wxFileName());
     void Close();
     
     bool IsOpened() const {
@@ -22,7 +22,7 @@ public:
     }
     
     wxFileName GetFileName() const;
-    wxString CompilationLine(const wxString &filename);
+    void CompilationLine(const wxString &filename, wxString &compliationLine, wxString &cwd);
     void Initialize();
 };
 

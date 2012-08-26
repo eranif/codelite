@@ -60,7 +60,12 @@ void WriteContent( const std::string& logfile, const std::string& filename, cons
 	// Move the write pointer to the end
 	::SetFilePointer(hFile, 0, NULL, FILE_END);
 	
-	std::string line = filename + "|" + flags + "\n";
+    char cwd[1024];
+    memset(cwd, 0, sizeof(cwd));
+    ::getcwd(cwd, sizeof(cwd));
+    
+	std::string line = filename + "|" + cwd + "|" + flags + "\n";
+	
 	DWORD dwBytesWritten = 0;
 	::WriteFile(hFile, line.c_str(), line.length(), &dwBytesWritten, NULL);
 	

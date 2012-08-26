@@ -15,7 +15,7 @@ CompilationDatabase::~CompilationDatabase()
     Close();
 }
 
-void CompilationDatabase::Open()
+void CompilationDatabase::Open(const wxFileName& fn)
 {
     // Close the old database
     if ( m_db ) {
@@ -31,7 +31,7 @@ void CompilationDatabase::Open()
         m_db->Open(dbfile.GetFullPath());
         
         // Create the schema
-        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, COMPILE_FLAGS TEXT)");
+        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, CWD TEXT, COMPILE_FLAGS TEXT)");
         m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX1 ON COMPILATION_TABLE(FILE_NAME)");
         
     } catch (wxSQLite3Exception &e) {
@@ -49,27 +49,28 @@ wxFileName CompilationDatabase::GetFileName() const
     return dbfile;
 }
 
-wxString CompilationDatabase::CompilationLine(const wxString& filename)
+void CompilationDatabase::CompilationLine(const wxString& filename, wxString &compliationLine, wxString &cwd)
 {
     if ( !IsOpened() )
-        return wxT("");
+        return;
         
     try {
         
         wxString sql;
-        sql = wxT("SELECT COMPILE_FLAGS FROM COMPILATION_TABLE WHERE FILE_NAME=?");
+        sql = wxT("SELECT COMPILE_FLAGS,CWD FROM COMPILATION_TABLE WHERE FILE_NAME=?");
         wxSQLite3Statement st = m_db->PrepareStatement(sql);
         st.Bind(1, filename);
         wxSQLite3ResultSet rs = st.ExecuteQuery();
         
         if ( rs.NextRow() ) {
-            return rs.GetString(0);
+            compliationLine = rs.GetString(0);
+            cwd             = rs.GetString(1);
+            return;
         }
         
     } catch (wxSQLite3Exception &e) {
         wxUnusedVar(e);
     }
-    return wxT("");
 }
 
 void CompilationDatabase::Close()
@@ -108,19 +109,23 @@ void CompilationDatabase::Initialize()
         try {
             
             wxString sql;
-            sql = wxT("REPLACE INTO COMPILATION_TABLE (FILE_NAME, COMPILE_FLAGS) VALUES(?, ?)");
+            sql = wxT("REPLACE INTO COMPILATION_TABLE (FILE_NAME, CWD, COMPILE_FLAGS) VALUES(?, ?, ?)");
             wxSQLite3Statement st = m_db->PrepareStatement(sql);
         
             m_db->ExecuteUpdate("BEGIN");
             for(size_t i=0; i<lines.GetCount(); ++i) {
-                wxString file_name = lines.Item(i).BeforeFirst(wxT('|'));
-                wxString cmp_flags = lines.Item(i).AfterFirst(wxT('|'));
+                wxArrayString parts = ::wxStringTokenize(lines.Item(i), wxT("|"), wxTOKEN_STRTOK);
+                if( parts.GetCount() != 3 )
+                    continue;
                 
-                file_name.Trim().Trim(false);
-                cmp_flags.Trim().Trim(false);
+                wxString file_name = parts.Item(0).Trim().Trim(false);
+                wxString cwd       = parts.Item(1).Trim().Trim(false);
+                wxString cmp_flags = parts.Item(2).Trim().Trim(false);;
                 
                 st.Bind(1, file_name);
-                st.Bind(2, cmp_flags);
+                st.Bind(2, cwd);
+                st.Bind(3, cmp_flags);
+                
                 st.ExecuteUpdate();
             }
             m_db->ExecuteUpdate("COMMIT");
@@ -128,6 +133,7 @@ void CompilationDatabase::Initialize()
         } catch (wxSQLite3Exception &e) {
             wxUnusedVar(e);
         }
+        
         
         wxLogNull nl;
         ::wxRemoveFile(textfile);

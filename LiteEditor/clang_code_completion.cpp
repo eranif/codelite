@@ -5,6 +5,7 @@
 #include "shell_command.h"
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
+#include "parse_thread.h"
 #include "event_notifier.h"
 #include "ctags_manager.h"
 #include "tags_options_data.h"
@@ -193,6 +194,10 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
     
     CompilationDatabase cdb;
     cdb.Initialize();
+    
+    // Send an event to clear the cache
+    wxCommandEvent clearCacheEvent(wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE);
+    wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(clearCacheEvent);
 }
 
 void ClangCodeCompletion::OnBuildStarting(wxCommandEvent& e)

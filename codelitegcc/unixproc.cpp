@@ -248,7 +248,12 @@ void WriteContent( const std::string& logfile, const std::string& filename, cons
 		return;
 	}
 	
-	std::string line = filename + "|" + flags + "\n";
+    char cwd[1024];
+    memset(cwd, 0, sizeof(cwd));
+    char* pcwd = ::getcwd(cwd, sizeof(cwd));
+    (void) pcwd;
+    
+	std::string line = filename + "|" + cwd + "|" + flags + "\n";
 	
     FILE* fp = fopen(logfile.c_str(), "a+b");
     if ( !fp ) {

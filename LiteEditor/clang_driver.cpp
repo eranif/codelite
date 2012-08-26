@@ -250,7 +250,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             wxString msg;
             msg << _("Could not locate compilation database: ")
                 << cdb.GetFileName().GetFullPath() << wxT("\n\n")
-                << _("This file should be created automatically for you\n. If you don't have it, please run a full rebuild of your workspace\n\n")
+                << _("This file should be created automatically for you.\nIf you don't have it, please run a full rebuild of your workspace\n\n")
                 << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX and CC environment variables like this:\n")
                 << _("CXX=codelitegcc g++\n")
                 << _("CC=codelitegcc gcc\n\n");
@@ -259,16 +259,18 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         } else {
             cdb.Open();
             if( cdb.IsOpened() ) {
-                wxString compilationLine = cdb.CompilationLine(fnSourceFile.GetFullPath());
+                wxString compilationLine, cwd;
+                cdb.CompilationLine(fnSourceFile.GetFullPath(), compilationLine, cwd);
                 cdb.Close();
 
                 CompilerCommandLineParser cclp(compilationLine);
-                cclp.MakeAbsolute(fnSourceFile.GetPath());
+                cclp.MakeAbsolute(cwd);
+                
                 args.insert(args.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
                 args.insert(args.end(), cclp.GetMacrosWithPrefix().begin(),   cclp.GetMacrosWithPrefix().end());
                 args.Add(cclp.GetStandardWithPrefix());
                 
-            }    
+            }
         }
     }
 

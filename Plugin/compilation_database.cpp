@@ -4,6 +4,7 @@
 #include <wx/tokenzr.h>
 #include <wx/log.h>
 #include <wx/ffile.h>
+#include "fileextmanager.h"
 
 CompilationDatabase::CompilationDatabase()
     : m_db(NULL)
@@ -56,10 +57,16 @@ void CompilationDatabase::CompilationLine(const wxString& filename, wxString &co
         
     try {
         
+		wxFileName file ( filename );
+		if( FileExtManager::GetType(file.GetFullName()) == FileExtManager::TypeHeader ) {
+			// This file is a header file, try locating the C++ file for it
+			file.SetExt(wxT("cpp"));
+		}
+		
         wxString sql;
         sql = wxT("SELECT COMPILE_FLAGS,CWD FROM COMPILATION_TABLE WHERE FILE_NAME=?");
         wxSQLite3Statement st = m_db->PrepareStatement(sql);
-        st.Bind(1, filename);
+        st.Bind(1, file.GetFullPath());
         wxSQLite3ResultSet rs = st.ExecuteQuery();
         
         if ( rs.NextRow() ) {

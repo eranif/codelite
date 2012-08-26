@@ -3,6 +3,7 @@
 #include <wx/app.h>
 #include "clang_pch_maker_thread.h"
 #include <wx/thread.h>
+#include "clang_unsaved_files.h"
 #include <wx/stdpaths.h>
 #include "event_notifier.h"
 #include <wx/regex.h>
@@ -55,12 +56,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	}
 
 	CL_DEBUG(wxT("==========> [ ClangPchMakerThread ] ProcessRequest started: %s"), task->GetFileName().c_str());
-	std::string c_dirtyBuffer = cstr(task->GetDirtyBuffer());
-	std::string c_filename    = cstr(task->GetFileName());
-
 	CL_DEBUG(wxT("ClangWorkerThread:: processing request %d"), (int)task->GetContext());
-
-	CXUnsavedFile unsavedFile = { c_filename.c_str(), c_dirtyBuffer.c_str(), c_dirtyBuffer.length() };
 
 	ClangCacheEntry cacheEntry = findEntry(task->GetFileName());
 	CXTranslationUnit TU = cacheEntry.TU;
@@ -122,13 +118,18 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 	
 	if( task->GetContext() == CTX_CodeCompletion || task->GetContext() == CTX_WordCompletion || task->GetContext() == CTX_Calltip) {
 		CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
+		
+		ClangThreadRequest::List_t usList = task->GetModifiedBuffers();
+		usList.push_back(std::make_pair(task->GetFileName(), task->GetDirtyBuffer()));
+		ClangUnsavedFiles usf(usList);
+		
 		CL_DEBUG(wxT("Location: %s:%u:%u"), task->GetFileName().c_str(), task->GetLine(), task->GetColumn());
 		reply->results = clang_codeCompleteAt(TU,
 		                                      cstr(task->GetFileName()),
 		                                      task->GetLine(),
 		                                      task->GetColumn(),
-		                                      &unsavedFile,
-		                                      1,
+		                                      usf.GetUnsavedFiles(),
+		                                      usf.GetCount(),
 		                                      clang_defaultCodeCompleteOptions());
 		
 		cacheEntry.lastReparse = time(NULL);
@@ -196,7 +197,11 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 			this->DoSetStatusMsg(wxString::Format(wxT("clang: re-parsing file %s..."), cacheEntry.sourceFile.c_str()));
 			
 			// Try reparsing the TU
-			if(clang_reparseTranslationUnit(TU, 1, &unsavedFile, clang_defaultReparseOptions(TU)) != 0) {
+			ClangThreadRequest::List_t usList = task->GetModifiedBuffers();
+			usList.push_back(std::make_pair(task->GetFileName(), task->GetDirtyBuffer()));
+			ClangUnsavedFiles usf(usList);
+		
+			if(clang_reparseTranslationUnit(TU, usf.GetCount(), usf.GetUnsavedFiles(), clang_defaultReparseOptions(TU)) != 0) {
 				// Failed to reparse
 				cr.SetCancelled(true); // cancel the re-caching of the TU
 				CL_DEBUG(wxT("clang_reparseTranslationUnit failed for file: %s"), task->GetFileName().c_str());

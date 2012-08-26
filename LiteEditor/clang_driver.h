@@ -37,6 +37,7 @@ protected:
 	void                DoParseCompletionString(CXCompletionString str, int depth, wxString &entryName, wxString &signature, wxString &completeString, wxString &returnValue);
 	void                DoGotoDefinition(ClangThreadReply *reply);
 	ClangThreadRequest* DoMakeClangThreadRequest(IEditor* editor, WorkingContext context);
+	ClangThreadRequest::List_t DoCreateListOfModifiedBuffers(IEditor *excludeEditor);
 	
 	// Event handlers
 	void OnDeletMacroHandler(wxCommandEvent &e);

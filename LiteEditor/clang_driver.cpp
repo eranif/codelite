@@ -32,6 +32,8 @@
 #include <set>
 #include "event_notifier.h"
 #include "plugin.h"
+#include "browse_record.h"
+#include "mainbook.h"
 
 static bool wxIsWhitespace(wxChar ch)
 {
@@ -137,8 +139,8 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
     default:
         break;
     }
-
-    wxString projectPath;
+	
+	wxString projectPath;
     wxString pchFile;
     FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath, pchFile);
     ClangThreadRequest* request = new ClangThreadRequest(m_index,
@@ -148,7 +150,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
             filterWord,
             context,
             lineNumber,
-            column);
+            column, DoCreateListOfModifiedBuffers(editor));
     request->SetPchFile(pchFile);
     return request;
 }
@@ -757,7 +759,7 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e)
                 editor->GetEditorText(),
                 DoPrepareCompilationArgs(editor->GetProjectName(), editor->GetFileName().GetFullPath(), outputProjectPath, pchFile),
                 wxT(""),
-                ::CTX_CachePCH, 0, 0);
+                ::CTX_CachePCH, 0, 0, DoCreateListOfModifiedBuffers(editor));
 
         req->SetPchFile(pchFile);
         m_pchMakerThread.Add( req );
@@ -863,4 +865,22 @@ void ClangDriver::OnWorkspaceLoaded(wxCommandEvent& event)
     wxMkdir(cachePath);
     ClangTUCache::DeleteDirectoryContent(cachePath);
 }
+
+ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* excludeEditor)
+{
+	// Collect all modified buffers and pass them to clang as well
+	ClangThreadRequest::List_t modifiedBuffers;
+	std::vector<LEditor*> editors;
+	clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
+	for(size_t i=0; i<editors.size(); i++) {
+		
+		if( editors.at(i) == excludeEditor || !editors.at(i)->IsModified())
+			continue;
+		
+		modifiedBuffers.push_back( std::make_pair( editors.at(i)->GetFileName().GetFullPath(), editors.at(i)->GetText() ) );
+	}
+	return modifiedBuffers;
+}
+
 #endif // HAS_LIBCLANG
+

@@ -699,6 +699,8 @@
     <File Name="clang_utils.cpp"/>
     <File Name="clang_macro_handler.h"/>
     <File Name="clang_macro_handler.cpp"/>
+    <File Name="clang_unsaved_files.h"/>
+    <File Name="clang_unsaved_files.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

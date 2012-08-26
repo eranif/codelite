@@ -40,6 +40,9 @@ struct ClangThreadReply {
 
 class ClangThreadRequest : public ThreadRequest
 {
+public:
+	typedef std::list<std::pair<wxString, wxString> > List_t;
+
 private:
 	CXIndex           _index;
 	wxString          _fileName;
@@ -50,30 +53,45 @@ private:
 	unsigned          _line;
 	unsigned          _column;
 	wxString          _pchFile;
+	List_t            _modifiedBuffers;
 
 public:
-	ClangThreadRequest(CXIndex index, const wxString &filename, const wxString &dirtyBuffer, const FileTypeCmpArgs_t &compArgs, const wxString &filterWord, WorkingContext context, unsigned line, unsigned column)
+	ClangThreadRequest( CXIndex index,
+	                    const wxString &filename,
+	                    const wxString &dirtyBuffer,
+	                    const FileTypeCmpArgs_t &compArgs,
+	                    const wxString &filterWord,
+	                    WorkingContext context,
+	                    unsigned line,
+	                    unsigned column,
+	                    const List_t& modifiedBuffers)
 		: _index(index)
 		, _fileName(filename.c_str())
 		, _dirtyBuffer(dirtyBuffer.c_str())
 		, _filterWord(filterWord)
 		, _context(context)
 		, _line(line)
-		, _column(column) 
-    {
-        // Perform a deep copy of the map (as wxWidgets is not known for its wxString thread safety)
-        FileTypeCmpArgs_t::const_iterator iter = compArgs.begin();
-        for(; iter != compArgs.end(); ++iter) {
-            const wxArrayString& opts = iter->second;
-            FileExtManager::FileType type = iter->first;
-            
-            _compilationArgs.insert(std::make_pair(type, wxArrayString()));
-            wxArrayString& arr = _compilationArgs[type];
-            
-            for(size_t i=0; i<opts.GetCount(); i++) {
-                arr.Add(opts.Item(i).c_str());
-            }
-        }
+		, _column(column) {
+		// Perform a deep copy of the map (as wxWidgets is not known for its wxString thread safety)
+		FileTypeCmpArgs_t::const_iterator iter = compArgs.begin();
+		for(; iter != compArgs.end(); ++iter) {
+			const wxArrayString& opts = iter->second;
+			FileExtManager::FileType type = iter->first;
+
+			_compilationArgs.insert(std::make_pair(type, wxArrayString()));
+			wxArrayString& arr = _compilationArgs[type];
+
+			for(size_t i=0; i<opts.GetCount(); i++) {
+				arr.Add(opts.Item(i).c_str());
+			}
+		}
+
+		// Copy the modified buffers
+		_modifiedBuffers.clear();
+		List_t::const_iterator listIter = modifiedBuffers.begin();
+		for(; listIter != modifiedBuffers.end(); ++listIter) {
+			_modifiedBuffers.push_back( std::make_pair(listIter->first.c_str(), listIter->second.c_str() ) );
+		}
 	}
 
 	void SetPchFile(const wxString& _pchFile) {
@@ -106,6 +124,9 @@ public:
 	}
 	WorkingContext GetContext() const {
 		return _context;
+	}
+	const List_t& GetModifiedBuffers() const {
+		return _modifiedBuffers;
 	}
 };
 
@@ -159,7 +180,7 @@ public:
 			m_thr->DoCacheResult(m_entry);
 		}
 	}
-	
+
 	void SetCancelled(bool cancelled) {
 		this->m_cancelled = cancelled;
 	}

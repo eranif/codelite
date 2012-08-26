@@ -22,6 +22,8 @@ extern int ExecuteProcessUNIX(const std::string& commandline);
 extern int ExecuteProcessWIN(const std::string& commandline);
 #endif
 
+extern void WriteContent( const std::string& logfile, const std::string& filename, const std::string& flags );
+
 // A thin wrapper around gcc
 // Its soul purpose is to parse gcc's output and to store the parsed output
 // in a sqlite database
@@ -31,8 +33,8 @@ int main(int argc, char **argv)
     if ( argc < 2 ) {
         return -1;
     }
-
-    const char *pdb = getenv("CL_COMPILATION_DB");
+	
+	const char *pdb = getenv("CL_COMPILATION_DB");
     std::string commandline;
     for ( int i=1; i<argc; ++i ) {
         // Wrap all arguments with spaces with double quotes

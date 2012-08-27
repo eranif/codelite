@@ -162,6 +162,7 @@ cp ../lib/libwxshapeframeworku.so ./CodeLite.app/Contents/MacOS/
 
 cp ./codelite_indexer  ./CodeLite.app/Contents/SharedSupport/
 cp ../codelite_clang/codelite-clang  ./CodeLite.app/Contents/SharedSupport/
+cp ../codelitegcc/codelitegcc  ./CodeLite.app/Contents/SharedSupport/
 cp ../sdk/codelite_cppcheck/codelite_cppcheck ./CodeLite.app/Contents/SharedSupport/
 cp ./OpenTerm   ./CodeLite.app/Contents/SharedSupport/
 cp plugins/resources/*.*  ./CodeLite.app/Contents/SharedSupport/plugins/resources/

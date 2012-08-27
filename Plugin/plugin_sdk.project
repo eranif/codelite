@@ -73,6 +73,8 @@
     <File Name="event_notifier.cpp"/>
     <File Name="wx_tree_traverser.h"/>
     <File Name="wx_tree_traverser.cpp"/>
+    <File Name="macromanager.cpp"/>
+    <File Name="macromanager.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

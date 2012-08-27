@@ -14,7 +14,6 @@
     <File Name="imanager.h"/>
     <File Name="plugin_version.h"/>
     <File Name="ikeyboard.h"/>
-    <File Name="imacromanager.h"/>
     <File Name="cl_defs.h"/>
   </VirtualDirectory>
   <Dependencies/>

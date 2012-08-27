@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "environmentconfig.h"
-#include "imacromanager.h"
 #include <wx/aui/framemanager.h>
+#include "macromanager.h"
 #include "async_executable_cmd.h"
 #include <wx/bitmap.h>
 #include "dirsaver.h"
@@ -232,8 +232,8 @@ void ExternalToolsPlugin::DoLaunchTool(const ToolInfo& ti)
 	working_dir = ti.GetWd();
 
 	if (m_mgr->IsWorkspaceOpen()) {
-		command     = m_mgr->GetMacrosManager()->Expand(command, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
-		working_dir = m_mgr->GetMacrosManager()->Expand(working_dir, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
+		command     = MacroManager::Instance()->Expand(command, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
+		working_dir = MacroManager::Instance()->Expand(working_dir, m_mgr, m_mgr->GetWorkspace()->GetActiveProjectName());
 	}
 
 	// check to see if we require to save all files before continuing

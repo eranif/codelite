@@ -125,7 +125,6 @@ public:
     virtual bool                   SelectPage(wxWindow *win);
     virtual NavMgr *               GetNavigationMgr();
     virtual IEditor*               NewEditor();
-    virtual IMacroManager*         GetMacrosManager();
     virtual bool                   IsShutdownInProgress() const;
     virtual BitmapLoader*          GetStdIcons();
     virtual wxArrayString          GetProjectCompileFlags(const wxString &projectName, bool isCppFile);

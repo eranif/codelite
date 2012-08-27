@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggersettings.h"
+#include "macromanager.h"
 
 DebuggerCmdData::DebuggerCmdData()
 {
@@ -131,7 +132,7 @@ wxString DebuggerPreDefinedTypes::GetPreDefinedTypeForTypename(const wxString& e
 			// Create variable object for this variable
 			// and display the content
 			wxString expression = dcd.GetCommand();
-			expression.Replace(wxT("$(Variable)"), name);
+			expression = MacroManager::Instance()->Replace(expression, wxT("variable"), name, true);
 			return expression;
 		}
 	}

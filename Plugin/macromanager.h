@@ -1,17 +1,14 @@
 #ifndef MACROMANAGER_H
 #define MACROMANAGER_H
 
-#include "imacromanager.h" // Base class: IMacroManager
 #include <wx/string.h>
+#include "codelite_exports.h"
 
 class IManager;
-class MacroManager : public IMacroManager {
-
-	static MacroManager* ms_instance;
-
+class WXDLLIMPEXP_SDK MacroManager
+{
 public:
 	static MacroManager* Instance();
-	static void Release();
 
 private:
 	MacroManager();
@@ -40,6 +37,25 @@ public:
 	 * $(ProjectOutputFile)
 	 */
 	wxString Expand(const wxString &expression, IManager *manager, const wxString &project, const wxString &confToBuild = wxEmptyString);
+	
+	
+	/**
+	 * @brief search for variableName and replace all its occurance with 'replaceWith'
+	 * This function supports the following formats:
+	 * $variableName
+	 * ${variableName}
+	 * $(variableName)
+	 * %variableName%
+	 */
+	wxString Replace(const wxString &inString, const wxString &variableName, const wxString &replaceWith, bool bIgnoreCase = false);
+	
+	/**
+	 * @brief search for variable in the inString.
+	 * @param inString [input]
+	 * @param name [output] name only
+	 * @param fullname [output] includes the $ / %%
+	 */
+	bool FindVariable(const wxString &inString, wxString &name, wxString &fullname);
 };
 
 #endif // MACROMANAGER_H

@@ -650,11 +650,6 @@ IEditor* PluginManager::NewEditor()
     return clMainFrame::Get()->GetMainBook()->NewEditor();
 }
 
-IMacroManager* PluginManager::GetMacrosManager()
-{
-    return MacroManager::Instance();
-
-}
 bool PluginManager::IsShutdownInProgress() const
 {
     return ManagerST::Get()->IsShutdownInProgress();

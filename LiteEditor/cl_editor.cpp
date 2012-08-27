@@ -27,6 +27,7 @@
 #include "precompiled_header.h"
 #include "cl_editor.h"
 #include "code_completion_manager.h"
+#include "macromanager.h"
 #include "event_notifier.h"
 #include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
@@ -661,7 +662,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	}
     
     // add complete double qoutes
-    if ( GetOptions()->GetAutoCompleteDoubleQuotes() ) {
+    if ( GetOptions()->GetAutoCompleteDoubleQuotes() && !m_context->IsCommentOrString(pos) ) {
         if( (event.GetKey() == wxT('"') && GetCharAt( pos ) == wxT('"')) || 
 			(event.GetKey() == wxT('\'') && GetCharAt( pos ) == wxT('\''))
 			)
@@ -3014,10 +3015,11 @@ void LEditor::OnDbgCustomWatch(wxCommandEvent &event)
 	//find the custom command to run
 	std::map<int, wxString>::iterator iter = m_customCmds.find(event.GetId());
 	if (iter != m_customCmds.end()) {
+		
 		//Replace $(Variable) with the actual string
 		wxString command = iter->second;
-		command.Replace(wxT("$(Variable)"), word);
-
+		command = MacroManager::Instance()->Replace(command, wxT("variable"), word, true);
+		
 		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(command);
 		clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
 		clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();

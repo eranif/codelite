@@ -7,10 +7,10 @@
 #include "workspace.h"
 #include "string.h"
 #include <wx/image.h>
+#include "macromanager.h"
 #include <wx/bitmap.h>
 #include <wx/aboutdlg.h>
 #include <wx/datetime.h>
-#include "imacromanager.h"
 
 /*!
   * \brief Class for include plugin to CodeLite.
@@ -289,10 +289,10 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
         if (proj) {
             BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf(proj->GetName(), wxT(""));
             if(bldConf) {
-                outFile =  m_mgr->GetMacrosManager()->Expand( bldConf->GetCommand(), m_mgr, proj->GetName() );
+                outFile =  MacroManager::Instance()->Expand( bldConf->GetCommand(), m_mgr, proj->GetName() );
                 outFn = wxFileName(outFile);
                 if (outFn.IsRelative()) {
-                    workingDirectory = m_mgr->GetMacrosManager()->Expand( bldConf->GetWorkingDirectory(), m_mgr, proj->GetName() );
+                    workingDirectory = MacroManager::Instance()->Expand( bldConf->GetWorkingDirectory(), m_mgr, proj->GetName() );
                 }
             }
             projectPath = proj->GetFileName().GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) + workingDirectory + stvariables::sd;; //path for active project

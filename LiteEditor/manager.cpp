@@ -25,6 +25,7 @@
 #include "precompiled_header.h"
 #include "event_notifier.h"
 #include "environmentconfig.h"
+#include "macromanager.h"
 #include "evnvarlist.h"
 #include "crawler_include.h"
 #include "renamefiledlg.h"
@@ -2691,8 +2692,8 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
 			if (cmd.GetName() == expression_type) {
 				// prepare the string to be evaluated
 				command = cmd.GetCommand();
-				command.Replace(wxT("$(Variable)"), expr);
-
+				command = MacroManager::Instance()->Replace(command, wxT("variable"), expr, true);
+				
 				dbg_command = cmd.GetDbgCommand();
 
 				//---------------------------------------------------

@@ -30,6 +30,7 @@
 #include "evnvarlist.h"
 #include "wx_xml_compatibility.h"
 #include <wx/log.h>
+#include "macromanager.h"
 
 static EnvironmentConfig* ms_instance = NULL;
 
@@ -185,13 +186,11 @@ void EnvironmentConfig::SetSettings(EvnVarList &vars)
 
 wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
 {
-	static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
 	wxString result(in);
-
-	while (reVarPattern.Matches(result)) {
-		wxString varName = reVarPattern.GetMatch(result, 2);
-		wxString text    = reVarPattern.GetMatch(result);
-
+	wxString varName, text;
+	
+	while ( MacroManager::Instance()->FindVariable(result, varName, text) ) {
+		
 		wxString replacement;
 		if(varName == wxT("MAKE")) {
 			//ignore this variable, since it is probably was passed here

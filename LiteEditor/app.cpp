@@ -612,7 +612,16 @@ bool CodeLiteApp::OnInit()
         }
     }
 
-
+	// Append the binary's dir to $PATH. This makes codelitegcc available even for a --prefix= installation
+#if defined(__WXMSW__)
+	wxChar pathsep(wxT(';'));
+#else
+	wxChar pathsep(wxT(':'));
+#endif
+	wxString oldpath; wxGetEnv(wxT("PATH"), &oldpath);
+	wxFileName execfpath(wxStandardPaths::Get().GetExecutablePath());
+	wxSetEnv(wxT("PATH"), oldpath + pathsep + execfpath.GetPath());
+wxString newpath;  wxGetEnv(wxT("PATH"), &newpath);
     // show splashscreen here
     bool showSplash;
 

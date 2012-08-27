@@ -256,8 +256,8 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
                 << cdb.GetFileName().GetFullPath() << wxT("\n\n")
                 << _("This file should be created automatically for you.\nIf you don't have it, please run a full rebuild of your workspace\n\n")
                 << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX and CC environment variables like this:\n")
-                << _("CXX=codelitegcc g++\n")
-                << _("CC=codelitegcc gcc\n\n");
+                << _("CXX=\"codelitegcc g++\"\n")
+                << _("CC=\"codelitegcc gcc\"\n\n");
                 
             clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
                                                             true,

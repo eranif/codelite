@@ -34,7 +34,7 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 	if(col2.IsOk() == false) {
 		col2 = DrawingUtils::DarkColour(col1, 2.0);
 	}
-#ifdef __WXMSW__
+#if 0
 	if(m_mswWithThemeEnabled) {
 		col1 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 4.0);
 		col2 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 2.0);

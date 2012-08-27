@@ -923,6 +923,7 @@
       
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -1000,7 +1001,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <Target Name="configure">./configure --enable-pch</Target>
         <Target Name="&lt;RELEASE&gt; install">sudo -A make install</Target>
         <Target Name="&lt;DEBUG&gt; make install">make install</Target>
-        <Target Name="./configure --enable-mysql">./configure --enable-mysql</Target>
+        <Target Name="./configure --enable-mysql --enable-pch">./configure --enable-mysql --enable-pch</Target>
         <Target Name="./configure --enable-debug --prefix=/home/eran/root  --enable-pch --enable-mysql">./configure --enable-debug --prefix=/home/eran/root    --enable-pch --enable-mysql</Target>
         <RebuildCommand>make clean &amp;&amp; make -j4</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
@@ -1050,6 +1051,7 @@ resources.cpp: resources.xrc
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b .  --no-plugins" UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)
+      
       
       
       
@@ -1123,6 +1125,7 @@ svninfo.cpp:
       
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -1179,6 +1182,7 @@ resources.cpp: resources.xrc
       <General OutputFile="../Runtime/codelite.exe" IntermediateDirectory="./WinDbg29" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[
+      
       
       
       

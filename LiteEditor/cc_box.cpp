@@ -768,7 +768,7 @@ void CCBox::DoShowTagTip()
             gotAComment = true;
         }
     }
-
+    
     if(!gotAComment) {
         if( tag.IsMethod() ) {
 
@@ -843,8 +843,14 @@ void CCBox::DoShowTagTip()
                 break;
             }
         }
-        if( foundComment ) {
-            wxString theComment(comment.c_str(), wxConvUTF8);
+        if( foundComment || !tag.GetComment().IsEmpty()) {
+            
+            wxString theComment;
+            if( !tag.GetComment().IsEmpty() )
+                theComment = tag.GetComment();
+            else
+                theComment = wxString(comment.c_str(), wxConvUTF8);
+                
             theComment = TagsManagerST::Get()->WrapLines(theComment);
             theComment.Trim(false);
             tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());

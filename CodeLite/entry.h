@@ -68,7 +68,7 @@ class WXDLLIMPEXP_CL TagEntry
     bool                         m_isClangTag;
     void*                        m_userData;   // This member is not saved into the database
     size_t                       m_flags;      // This member is not saved into the database
-
+    wxString                     m_comment;    // This member is not saved into the database
 public:
     enum {
         Tag_No_Signature_Format  = 0x00000001, // Do not attempt to format the signature. Use the GetSignature() as is
@@ -82,6 +82,12 @@ public:
      */
     TagEntry(const tagEntry& entry);
 
+    void SetComment(const wxString& comment) {
+        this->m_comment = comment;
+    }
+    const wxString& GetComment() const {
+        return m_comment;
+    }
     void SetFlags(size_t flags) {
         this->m_flags = flags;
     }

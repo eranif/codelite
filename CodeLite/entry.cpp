@@ -90,6 +90,7 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
     for ( ; iter != rhs.m_extFields.end(); iter ++ ) {
         m_extFields[iter->first.c_str()] = iter->second.c_str();
     }
+    m_comment = rhs.m_comment;
     return *this;
 }
 

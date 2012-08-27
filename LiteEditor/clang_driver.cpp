@@ -657,6 +657,16 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         tag->SetName      (entryName);
         tag->SetPattern   (entryPattern);
         tag->SetSignature (entrySignature);
+        
+        // Add support for clang comment parsing
+        CXString BriefComment = clang_getCompletionBriefComment(str);
+        const char* comment = clang_getCString(BriefComment);
+        if( comment && comment[0] != '\0' ) {
+            tag->SetComment(wxString(comment, wxConvUTF8));
+        }
+        
+        clang_disposeString(BriefComment);
+        
         switch(kind) {
         case CXCursor_EnumConstantDecl:
             tag->SetKind(wxT("enumerator"));

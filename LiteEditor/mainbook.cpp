@@ -981,6 +981,7 @@ void MainBook::ShowMessage( const wxString &message,
 							const CheckboxDetails &cb)
 {
 	m_messagePane->ShowMessage(message, showHideButton, bmp, btn1, btn2, btn3, cb);
+    clMainFrame::Get()->SendSizeEvent();
 }
 
 void MainBook::OnPageChanged(NotebookEvent& e)

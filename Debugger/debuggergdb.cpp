@@ -138,8 +138,8 @@ DbgGdb::DbgGdb()
 	, m_cliHandler ( NULL )
 	, m_break_at_main( false )
     , m_attachedMode(false)
-	, m_internalBpId( wxNOT_FOUND )
     , m_goingDown(false)
+	, m_internalBpId( wxNOT_FOUND )
 {
 #ifdef __WXMSW__
 	Kernel32Dll = LoadLibrary( wxT( "kernel32.dll" ) );
@@ -352,19 +352,15 @@ void DbgGdb::DoCleanup()
 bool DbgGdb::Stop()
 {
     m_goingDown = true;
+    
 	if ( !m_attachedMode ) {
         
-        // When not "attached" to process, kill the inferior before
-        // exiting
-        if ( !Interrupt() || !WriteCommand(wxT( "kill inferior 1" ), new DbgCmdStopHandler(m_observer)) ) {
-            wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
-            EventNotifier::Get()->AddPendingEvent(event);
-        }
+        wxKill(m_debuggeePid, wxSIGKILL, NULL, wxKILL_CHILDREN);
         
-    } else {
-        wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
-        EventNotifier::Get()->AddPendingEvent(event);
     }
+    
+    wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
+    EventNotifier::Get()->AddPendingEvent(event);
 	return true;
 }
 
@@ -1294,7 +1290,7 @@ void DbgGdb::GetDebugeePID(const wxString& line)
 			m_debuggeePid = m_gdbProcess->GetPid();
 
 		} else {
-			static wxRegEx reDebuggeePid2(wxT("Thread[ ]*(0[xX][0-9a-fA-F]+)[ ]+\\(LWP ([0-9]+)\\)"));
+			
 			static wxRegEx reDebuggerPidWin(wxT("New Thread ([0-9]+)\\.(0[xX][0-9a-fA-F]+)"));
 			static wxRegEx reGroupStarted(wxT("id=\"([0-9]+)\""));
 			static wxRegEx reSwitchToThread(wxT("Switching to process ([0-9]+)"));
@@ -1308,14 +1304,10 @@ void DbgGdb::GetDebugeePID(const wxString& line)
 				if(line.Contains(wxT("=thread-group-started")) && reGroupStarted.Matches(line)) {
 					debuggeePidStr = reGroupStarted.GetMatch(line, 1);
 
-				}
-				if(line.Contains(wxT("=thread-group-created")) && reGroupStarted.Matches(line)) {
+				} else if(line.Contains(wxT("=thread-group-created")) && reGroupStarted.Matches(line)) {
 					debuggeePidStr = reGroupStarted.GetMatch(line, 1);
 
-				} else if(reDebuggeePid2.Matches(line)) {
-					debuggeePidStr = reDebuggeePid2.GetMatch(line, 2);
-
-				} else if(reDebuggerPidWin.Matches(line)) {
+                } else if(reDebuggerPidWin.Matches(line)) {
 					debuggeePidStr = reDebuggerPidWin.GetMatch(line, 1);
 					
 				} else if(reSwitchToThread.Matches(line)) {

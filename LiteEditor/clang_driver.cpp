@@ -3,10 +3,12 @@
 #include "clang_driver.h"
 #include "clang_code_completion.h"
 #include "compilation_database.h"
+#include "pluginmanager.h"
 #include "clang_macro_handler.h"
 #include <wx/regex.h>
 #include "clangpch_cache.h"
 #include "asyncprocess.h"
+#include "frame.h"
 #include "processreaderthread.h"
 #include "navigationmanager.h"
 #include "compiler_command_line_parser.h"
@@ -256,7 +258,14 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
                 << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX and CC environment variables like this:\n")
                 << _("CXX=codelitegcc g++\n")
                 << _("CC=codelitegcc gcc\n\n");
-            ::wxMessageBox(msg, wxT("CodeLite"), wxOK|wxCENTER, wxTheApp->GetTopWindow());
+                
+            clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
+                                                            true,
+                                                            PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
+                                                            ButtonDetails(),
+                                                            ButtonDetails(),
+                                                            ButtonDetails(),
+                                                            CheckboxDetails(wxT("CodeCompletionMissingCompilationDB")));
             
         } else {
             cdb.Open();

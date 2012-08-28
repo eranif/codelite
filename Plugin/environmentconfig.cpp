@@ -32,6 +32,8 @@
 #include <wx/log.h>
 #include "macromanager.h"
 
+const wxString __NO_SUCH_ENV__ = wxT("__NO_SUCH_ENV__");
+
 static EnvironmentConfig* ms_instance = NULL;
 
 //------------------------------------------------------------------------------
@@ -144,10 +146,11 @@ void EnvironmentConfig::ApplyEnv(StringMap *overrideMap, const wxString &project
 
 		//keep old value before changing it
 		wxString oldVal(wxEmptyString);
-		wxGetEnv(key, &oldVal);
-		m_envSnapshot[key] = oldVal;
-
-
+		if( wxGetEnv(key, &oldVal) == false ) {
+            oldVal = __NO_SUCH_ENV__;
+        }
+        m_envSnapshot[key] = oldVal;
+        
 		// Incase this line contains other environment variables, expand them before setting this environment variable
 		wxString newVal = DoExpandVariables(val);
 
@@ -166,7 +169,13 @@ void EnvironmentConfig::UnApplyEnv()
 		for ( ; iter != m_envSnapshot.end(); iter++ ) {
 			wxString key = iter->first;
 			wxString value = iter->second;
-			wxSetEnv(key, value);
+            if ( value == __NO_SUCH_ENV__ ) {
+                // Remove the environment completely
+                ::wxUnsetEnv(key);
+            } else {
+                // Restore old value
+                ::wxSetEnv(key, value);
+            }
 		}
 		m_envSnapshot.clear();
 	}

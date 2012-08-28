@@ -270,6 +270,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         } else {
             cdb.Open();
             if( cdb.IsOpened() ) {
+                CL_DEBUG(wxT("Loading compilation flags for file: %s"), fnSourceFile.GetFullPath().c_str());
                 wxString compilationLine, cwd;
                 cdb.CompilationLine(fnSourceFile.GetFullPath(), compilationLine, cwd);
                 cdb.Close();
@@ -277,6 +278,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
                 CompilerCommandLineParser cclp(compilationLine);
                 cclp.MakeAbsolute(cwd);
                 
+                CL_DEBUG(wxT("Loaded compilation flags: %s"), compilationLine.c_str());
                 args.insert(args.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
                 args.insert(args.end(), cclp.GetMacrosWithPrefix().begin(),   cclp.GetMacrosWithPrefix().end());
                 args.Add(cclp.GetStandardWithPrefix());

@@ -9,6 +9,10 @@
 class WXDLLIMPEXP_SDK CompilationDatabase
 {
     wxSQLite3Database* m_db;
+protected:
+    void DropTables();
+    void CreateDatabase();
+    wxString GetDbVersion();
     
 public:
     CompilationDatabase();

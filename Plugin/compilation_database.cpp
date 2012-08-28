@@ -31,9 +31,7 @@ void CompilationDatabase::Open(const wxFileName& fn)
         dbfile.SetFullName(wxT("compilation.db"));
         m_db->Open(dbfile.GetFullPath());
         
-        // Create the schema
-        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, CWD TEXT, COMPILE_FLAGS TEXT)");
-        m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX1 ON COMPILATION_TABLE(FILE_NAME)");
+        CreateDatabase();
         
     } catch (wxSQLite3Exception &e) {
         
@@ -146,5 +144,68 @@ void CompilationDatabase::Initialize()
         ::wxRemoveFile(textfile);
         
     }
+}
+
+void CompilationDatabase::CreateDatabase()
+{
+    if ( !IsOpened() )
+        return;
+    
+    try {
+        
+        if ( GetDbVersion() != wxT("1.0") )
+            DropTables();
+        
+        // Create the schema
+        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, CWD TEXT, COMPILE_FLAGS TEXT)");
+        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS SCHEMA_VERSION (PROPERTY TEXT, VERSION TEXT)");
+        m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX1 ON COMPILATION_TABLE(FILE_NAME)");
+        m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS SCHEMA_VERSION_IDX1 ON SCHEMA_VERSION(VERSION)");
+        m_db->ExecuteUpdate("INSERT OR IGNORE INTO SCHEMA_VERSION (PROPERTY, VERSION) VALUES ('Db Version', '1.0')");
+        
+    } catch (wxSQLite3Exception &e) {
+        wxUnusedVar(e);
+    }
+}
+
+void CompilationDatabase::DropTables()
+{
+    if ( !IsOpened() )
+        return;
+    
+    try {
+        
+        // Create the schema
+        m_db->ExecuteUpdate("DROP TABLE COMPILATION_TABLE");
+        m_db->ExecuteUpdate("DROP TABLE SCHEMA_VERSION");
+        
+    } catch (wxSQLite3Exception &e) {
+        wxUnusedVar(e);
+    }
+}
+
+wxString CompilationDatabase::GetDbVersion()
+{
+    if ( !IsOpened() )
+        return wxT("");
+    
+    try {
+        
+        // Create the schema
+        wxString sql;
+        sql = wxT("SELECT VERSION FROM SCHEMA_VERSION WHERE PROPERTY = 'Db Version' ");
+        wxSQLite3Statement st = m_db->PrepareStatement(sql);
+        wxSQLite3ResultSet rs = st.ExecuteQuery();
+        
+        if ( rs.NextRow() ) {
+            wxString schemaVersion = rs.GetString(0);
+            return schemaVersion;
+        }
+ 
+        
+    } catch (wxSQLite3Exception &e) {
+        wxUnusedVar(e);
+    }
+    return wxT("");
 }
 

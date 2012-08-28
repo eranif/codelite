@@ -662,7 +662,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
 	}
     
     // add complete double qoutes
-    if ( GetOptions()->GetAutoCompleteDoubleQuotes() && !m_context->IsCommentOrString(pos) ) {
+    if ( GetOptions()->GetAutoCompleteDoubleQuotes() ) {
         if( (event.GetKey() == wxT('"') && GetCharAt( pos ) == wxT('"')) || 
 			(event.GetKey() == wxT('\'') && GetCharAt( pos ) == wxT('\''))
 			)
@@ -670,10 +670,10 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
             CharRight();
             DeleteBack();
             
-        } else if( event.GetKey() == wxT('"') ){
+        } else if( event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)){
             InsertText(pos, wxT("\""));
             
-        } else if ( event.GetKey() == wxT('\'') ) {
+        } else if ( event.GetKey() == wxT('\'') && !m_context->IsCommentOrString(pos)) {
             InsertText(pos, wxT("'"));
 			
 		}

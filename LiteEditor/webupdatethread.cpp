@@ -27,6 +27,7 @@
 #include <wx/url.h>
 #include <wx/tokenzr.h>
 #include "webupdatethread.h"
+#include "procutils.h"
 //#include <curl/curl.h>
 
 extern const wxChar *SvnRevision;
@@ -48,29 +49,33 @@ WebUpdateJob::~WebUpdateJob()
 
 void WebUpdateJob::Process(wxThread* thread)
 {
-//	CURL *curl(NULL);
-//	CURLcode res;
-//	curl_global_init(CURL_GLOBAL_DEFAULT);
-//	curl = curl_easy_init();
-//	if (curl) {
-//		// set the URL to the packages list
-//		curl_easy_setopt(curl, CURLOPT_URL, "http://codelite.org/packages.txt");
-//		// set callback for the write operation
-//		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteData);
-//		// pass this object to the callback
-//		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-//		// switch off verbose mode
-//		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
-//		// fetch!
-//		res = curl_easy_perform(curl);
-//
-//		if (res == CURLE_OK) {
-//			// compare the version
-//			ParseFile();
-//		}
-//	}
-//	curl_global_cleanup();
+#if defined(__WXMAC__)
 
+    wxFileName fn(wxT("/tmp/codelite-packages.txt"));
+    wxString command;
+    command << wxT("curl http://codelite.org/packages.txt  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+    {
+        wxLogNull noLog;
+        ::wxRemoveFile( fn.GetFullPath() );
+    }
+    
+    wxArrayString outputArr;
+    ProcUtils::SafeExecuteCommand(command, outputArr);
+    
+    if ( fn.FileExists() ) {
+        
+        wxFFile fp(fn.GetFullPath(), wxT("rb"));
+        if ( fp.IsOpened() ) {
+            
+            m_dataRead.Clear();
+            fp.ReadAll(&m_dataRead, wxConvUTF8);
+            
+            ParseFile();
+            
+        }
+    }
+    
+#else
 	wxURL url(wxT("http://codeliteorg.ipage.com/packages.txt"));
 	if (url.GetError() == wxURL_NOERR) {
 
@@ -102,12 +107,12 @@ void WebUpdateJob::Process(wxThread* thread)
 
 
 		if(shutdownRequest == false) {
-#ifndef __WXMAC__
 			delete in_stream;
-#endif
 			ParseFile();
 		}
 	}
+    
+#endif
 }
 
 size_t WebUpdateJob::WriteData(void* buffer, size_t size, size_t nmemb, void* obj)

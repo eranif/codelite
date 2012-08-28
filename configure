@@ -1267,7 +1267,7 @@ echo >> Makefile
 
 ## Create the rules
 # First the non-plugin .so libs:
-createRules_sharedObject  "Plugin/*.cpp Plugin/*.c" "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lwxscintilla\$(EXT) -lcodelite\$(EXT)"
+createRules_sharedObject  "Plugin/*.cpp Plugin/*.c" "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lwxscintilla\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp sdk/wxscintilla/src/scintilla/lexers/*.cxx sdk/wxscintilla/src/scintilla/lexlib/*.cxx" "ScintillaObjects" "Scintilla" "libwxscintilla\$(EXT)" "dont_copy"
 createRules_sharedObject  "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "libwxsqlite3\$(EXT)" "dont_copy" ""

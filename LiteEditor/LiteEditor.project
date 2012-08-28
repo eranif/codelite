@@ -900,28 +900,7 @@
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../Runtime/codelite" IntermediateDirectory="./ReleaseUnicode" Command="$(WorkspacePath)/Runtime/CodeLite.app/Contents/MacOS/codelite" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="wxWidgets-29">
-        <![CDATA[PATH=$(WX_HOME):$(PATH)
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      ]]>
+        <![CDATA[PATH=$(WX_HOME):$(PATH)]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -936,7 +915,7 @@
         <Target Name="configure">./configure</Target>
         <RebuildCommand>make -w clean all</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
-        <BuildCommand>make -w</BuildCommand>
+        <BuildCommand>make -w -e</BuildCommand>
         <PreprocessFileCommand>make Debug_gcc_unicode/$(CurrentFileName).o.i</PreprocessFileCommand>
         <SingleFileCommand>make Debug_gcc_unicode/$(CurrentFileName).o</SingleFileCommand>
         <MakefileGenerationCommand>./configure</MakefileGenerationCommand>
@@ -947,7 +926,8 @@
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1013,8 +993,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

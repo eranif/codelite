@@ -872,7 +872,7 @@ void LEditor::OnScnPainted(wxScintillaEvent &event)
 
 void LEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 {
-	int start, end;
+	int start = -1, end = -1;
 	if (preserveSelection) {
 		start = GetSelectionStart();
 		end   = GetSelectionEnd();

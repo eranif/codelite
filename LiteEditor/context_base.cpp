@@ -144,7 +144,9 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 			// selection colour
 			if(wxColour(sp.GetBgColour()).IsOk()) {
 				rCtrl.SetSelBackground(true, sp.GetBgColour());
+#ifndef __WXMAC__
 				rCtrl.SetSelAlpha(alpha);
+#endif
 			}
 
 		} else if ( sp.GetId() == CARET_ATTR_ID ) {

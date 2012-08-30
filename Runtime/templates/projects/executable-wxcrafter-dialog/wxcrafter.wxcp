@@ -15,9 +15,9 @@
 			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
-					"type":	"string",
+					"type":	"winid",
 					"m_label":	"ID:",
-					"m_value":	"wxID_ANY"
+					"m_winid":	"wxID_ANY"
 				}, {
 					"type":	"string",
 					"m_label":	"Size:",
@@ -99,9 +99,9 @@
 							"m_styles":	["wxLI_HORIZONTAL"],
 							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
-									"type":	"string",
+									"type":	"winid",
 									"m_label":	"ID:",
-									"m_value":	"wxID_ANY"
+									"m_winid":	"wxID_ANY"
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
@@ -157,9 +157,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_OK"
+											"m_winid":	"wxID_OK"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -204,9 +204,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_CANCEL"
+											"m_winid":	"wxID_CANCEL"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",

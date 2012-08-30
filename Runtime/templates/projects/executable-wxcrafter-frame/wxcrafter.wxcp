@@ -15,9 +15,9 @@
 			"m_styles":	["wxCAPTION", "wxRESIZE_BORDER", "wxMAXIMIZE_BOX", "wxMINIMIZE_BOX", "wxSYSTEM_MENU", "wxCLOSE_BOX"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
-					"type":	"string",
+					"type":	"winid",
 					"m_label":	"ID:",
-					"m_value":	"wxID_ANY"
+					"m_winid":	"wxID_ANY"
 				}, {
 					"type":	"string",
 					"m_label":	"Size:",
@@ -84,9 +84,9 @@
 							"m_styles":	["wxTAB_TRAVERSAL"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
-									"type":	"string",
+									"type":	"winid",
 									"m_label":	"ID:",
-									"m_value":	"wxID_ANY"
+									"m_winid":	"wxID_ANY"
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
@@ -144,9 +144,9 @@
 					"m_styles":	[],
 					"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 					"m_properties":	[{
-							"type":	"string",
+							"type":	"winid",
 							"m_label":	"ID:",
-							"m_value":	"wxID_ANY"
+							"m_winid":	"wxID_ANY"
 						}, {
 							"type":	"string",
 							"m_label":	"Size:",
@@ -204,9 +204,9 @@
 											"m_label":	"Name:",
 											"m_value":	"m_menuItem7"
 										}, {
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_EXIT"
+											"m_winid":	"wxID_EXIT"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
@@ -269,9 +269,9 @@
 											"m_label":	"Name:",
 											"m_value":	"m_menuItem9"
 										}, {
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ABOUT"
+											"m_winid":	"wxID_ABOUT"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
@@ -313,9 +313,9 @@
 					"m_styles":	["wxTB_FLAT"],
 					"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 					"m_properties":	[{
-							"type":	"string",
+							"type":	"winid",
 							"m_label":	"ID:",
-							"m_value":	"wxID_ANY"
+							"m_winid":	"wxID_ANY"
 						}, {
 							"type":	"string",
 							"m_label":	"Size:",

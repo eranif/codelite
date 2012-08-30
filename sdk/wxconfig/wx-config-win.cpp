@@ -326,9 +326,15 @@ public:
             std::string line;
             line = argv[i];
             split(line);
+			
+			if( line == "--libs" ) {
+				std::string libsList;
+				if( (i + 1) < argc ) {
+					libsList = argv[i+1];
+				}
+				parseLibs(libsList);
+			}
         }
-        parseLibs(argv[argc-1]);
-
         return true;
     }
 

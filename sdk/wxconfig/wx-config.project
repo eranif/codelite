@@ -11,6 +11,7 @@
     <File Name="wx-config-win.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -27,7 +28,7 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="--libs aui,xrc,rich" UseSeparateDebugArgs="yes" DebugArguments="--libs aui,xrc" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="--libs stc,std" UseSeparateDebugArgs="yes" DebugArguments="--libs aui,xrc --unicode=yes" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[WXCFG=gcc_dll\mswud
 WXWIN=C:\src\wx-sources-294]]>
@@ -53,6 +54,7 @@ WXWIN=C:\src\wx-sources-294]]>
         <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -91,11 +93,11 @@ WXWIN=C:\src\wx-sources-294]]>
         <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>

@@ -396,7 +396,8 @@ protected:
                 }
                 else
                 {
-                    m_libs.push_back(param);
+					if( param.empty() == false )
+						m_libs.push_back(param);
                     break;
                 }
             }

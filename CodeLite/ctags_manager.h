@@ -743,7 +743,14 @@ public:
      * @brief return true of v1 cotnains the same tags as v2
      */
     bool AreTheSame(const TagEntryPtrVector_t &v1, const TagEntryPtrVector_t &v2) const;
-
+	
+	/**
+	 * @brief insert functionBody into clsname. This function will search for best location 
+	 * to place the function body. set visibility to 0 for 'pubilc' function, 1 for 'protected' and 2 for private
+	 * return true if this function succeeded, false otherwise
+	 */
+	bool InsertFunctionDecl(const wxString &clsname, const wxString &functionDecl, wxString &sourceContent, int visibility = 0);
+	
 protected:
     std::map<wxString, bool> m_typeScopeCache;
     std::map<wxString, bool> m_typeScopeContainerCache;

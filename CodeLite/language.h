@@ -241,7 +241,14 @@ public:
 
 	bool VariableFromPattern(const wxString &pattern, const wxString &name, Variable &var);
 	bool FunctionFromPattern(TagEntryPtr tag, clFunction &foo);
-
+	
+	/**
+	 * @brief insert functionBody into clsname. This function will search for best location 
+	 * to place the function body. set visibility to 0 for 'pubilc' function, 1 for 'protected' and 2 for private
+	 * return true if this function succeeded, false otherwise
+	 */
+	bool InsertFunctionDecl(const wxString &clsname, const wxString &functionDecl, wxString &sourceContent, int visibility = 0);
+	
 private:
 	bool DoSearchByNameAndScope(const wxString &name,
 	                            const wxString &scopeName,

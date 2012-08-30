@@ -2872,3 +2872,9 @@ bool TagsManager::AreTheSame(const TagEntryPtrVector_t& v1, const TagEntryPtrVec
     }
     return true;
 }
+
+bool TagsManager::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent, int visibility)
+{
+	return GetLanguage()->InsertFunctionDecl(clsname, functionDecl, sourceContent, visibility);
+}
+

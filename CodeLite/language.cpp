@@ -2058,3 +2058,129 @@ wxString Language::ApplyCtagsReplacementTokens(const wxString& in)
     }
     return outputStr;
 }
+
+bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent, int visibility)
+{
+	// detemine the visibility requested
+	int typeVisibility = lexPUBLIC;
+	wxString strVisibility = wxT("public:\n");
+	switch(visibility) {
+	default:
+	case 0:
+		typeVisibility = lexPUBLIC;
+		strVisibility = wxT("public:\n");
+		break;
+		
+	case 1:
+		typeVisibility = lexPROTECTED;
+		strVisibility = wxT("protected:\n");
+		break;
+		
+	case 2:
+		typeVisibility = lexPRIVATE;
+		strVisibility = wxT("private:\n");
+		break;
+	}
+		
+	// step 1: locate the class
+	CppScanner scanner;
+	scanner.SetText( sourceContent.mb_str(wxConvUTF8).data() );
+	
+	bool success = false;
+	int type = 0;
+	while ( true ) {
+		type = scanner.yylex();
+		if ( type == 0) {
+			return false; // EOF
+		}
+		
+		if ( type == lexCLASS ) {
+			type = scanner.yylex();
+			if( type == IDENTIFIER ) {
+				wxString name(scanner.YYText(), wxConvUTF8);
+				if( name == clsname) {
+					// We found the lex
+					success = true;
+					break;
+				}
+			}
+		}
+	}
+	
+	if ( !success ) 
+		return false;
+	
+	// scanner is pointing on the class
+	// We now need to find the first opening curly brace
+	success = false;
+	while ( true ) {
+		type = scanner.yylex();
+		if ( type == 0 )
+			return false; // EOF
+		
+		if ( type == '{' ) {
+			success = true;
+			break;
+		}
+	}
+
+	if ( !success ) 
+		return false;
+	
+	
+	// search for requested visibility, if we could not locate it
+	// locate the class ending curly brace
+	success = false;
+	int depth                 = 1;
+	int visibilityLine        = wxNOT_FOUND;
+	int closingCurlyBraceLine = wxNOT_FOUND;
+	while ( true ) {
+		type = scanner.yylex();
+		if( type == 0) break;
+		
+		if( type == typeVisibility ) {
+			visibilityLine = scanner.LineNo();
+			break;
+		}
+		
+		if( type == '{' ) {
+			depth ++;
+			
+		} else if ( type == '}' ) {
+			depth --;
+			
+			if( depth == 0 ) {
+				// reached end of class
+				closingCurlyBraceLine = scanner.LineNo();
+				break;
+			}
+		}
+	}
+	
+	wxString strToInsert;
+	int insertLine = visibilityLine;
+	if(visibilityLine == wxNOT_FOUND) { 
+		// could not locate the visibility line
+		insertLine = closingCurlyBraceLine;
+		strToInsert << strVisibility << functionDecl;
+		insertLine--; // Place it one line on top of the curly brace
+		
+	} else {
+		strToInsert << functionDecl;
+	}
+	
+	if ( insertLine == wxNOT_FOUND )
+		// could not find any of the two
+		return false;
+	
+	wxString newContent;
+	wxArrayString lines = ::wxStringTokenize(sourceContent, wxT("\n"), wxTOKEN_RET_DELIMS);
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		if( insertLine == (int)i ) {
+			newContent << strToInsert << wxT("\n");
+		}
+		newContent << lines.Item(i);
+	}
+	sourceContent = newContent;
+	return true;
+}

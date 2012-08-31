@@ -2177,10 +2177,127 @@ bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& funct
 	wxArrayString lines = ::wxStringTokenize(sourceContent, wxT("\n"), wxTOKEN_RET_DELIMS);
 	for(size_t i=0; i<lines.GetCount(); i++) {
 		if( insertLine == (int)i ) {
-			newContent << strToInsert << wxT("\n");
+			newContent << strToInsert;
 		}
 		newContent << lines.Item(i);
 	}
 	sourceContent = newContent;
 	return true;
+}
+
+void Language::InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename, wxString& sourceContent, int &insertedLine)
+{
+	insertedLine = wxNOT_FOUND;
+	if( sourceContent.EndsWith(wxT("\n")) == false )
+		sourceContent << wxT("\n");
+	
+	// What we want to do is to add our function as the last function in the scope
+	ITagsStoragePtr storage = GetTagsManager()->GetDatabase();
+	if( !storage ) {
+		// By default, append the file function to the end of the file
+		sourceContent << functionImpl;
+		return;
+	}
+	
+	wxArrayString kinds;
+    kinds.Add(wxT("function"));
+	storage->SetUseCache(false);
+	TagEntryPtrVector_t tags;
+	storage->GetTagsByKindAndFile(kinds, filename, wxT("line"), ITagsStorage::OrderDesc, tags);
+	storage->SetUseCache(true);
+	
+	if ( tags.empty() ) {
+		// By default, append the file function to the end of the file
+		sourceContent << functionImpl;
+		return;
+	}
+	
+	TagEntryPtr tag = tags.at(0);
+	int line = tag->GetLine();
+	
+	// Search for the end of this function
+	// and place our function there...
+	CppScanner scanner;
+	scanner.SetText( sourceContent.mb_str(wxConvUTF8).data() );
+	
+	int type = 0;
+	
+	// Fast forward the scanner to the line number
+	while ( true ) {
+		type = scanner.yylex();
+		if( type == 0) {
+			sourceContent << functionImpl;
+			return;
+		}
+		
+		std::string stmp = scanner.YYText();
+		if ( scanner.LineNo() == line )
+			break;
+	}
+	
+	// search for the opening brace
+	int depth = 0;
+	while ( true ) {
+		type = scanner.yylex();
+		if( type == 0) {
+			// EOF? 
+			sourceContent << functionImpl;
+			return;
+		}
+		
+		if ( type == '{' ) {
+			depth ++;
+			break;
+		}
+	}
+	
+	if ( depth != 1 ) {
+		// could locate the open brace
+		sourceContent << functionImpl;
+		return;
+	}
+	
+	
+	// now search for the closing one...
+	int insertAtLine = wxNOT_FOUND;
+	while ( true ) {
+		type = scanner.yylex();
+		if( type == 0) {
+			// EOF? 
+			sourceContent << functionImpl;
+			return;
+		}
+		
+		if ( type == '{' ) {
+			depth ++;
+			
+		} else if ( type == '}' ) {
+			depth --;
+			
+			if( depth == 0 ) {
+				insertAtLine = scanner.lineno();
+				break;
+				
+			}
+		}
+	}
+	
+	insertedLine = insertAtLine;
+	
+	// if we got here, it means we got a match
+	wxString newContent;
+	bool codeInjected = false;
+	wxArrayString lines = ::wxStringTokenize(sourceContent, wxT("\n"), wxTOKEN_RET_DELIMS);
+	for(size_t i=0; i<lines.GetCount(); i++) {
+		if( insertAtLine == (int)i ) {
+			codeInjected = true;
+			newContent << functionImpl;
+		}
+		newContent << lines.Item(i);
+	}
+	
+	if( !codeInjected ) {
+		newContent << functionImpl;
+	}
+	sourceContent = newContent;
 }

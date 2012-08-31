@@ -2878,3 +2878,7 @@ bool TagsManager::InsertFunctionDecl(const wxString& clsname, const wxString& fu
 	return GetLanguage()->InsertFunctionDecl(clsname, functionDecl, sourceContent, visibility);
 }
 
+void TagsManager::InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename, wxString& sourceContent, int& insertedLine)
+{
+	return GetLanguage()->InsertFunctionImpl(clsname, functionImpl, filename, sourceContent, insertedLine);
+}

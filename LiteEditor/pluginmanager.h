@@ -135,7 +135,8 @@ public:
     virtual wxString               GetPageTitle(wxWindow* win) const;
     virtual void                   SetPageTitle(wxWindow* win, const wxString& title);
     virtual ProjectPtr             GetSelectedProject() const;
-    
+    virtual IEditor*               FindEditor(const wxString &filename) const;
+	
     //------------------------------------
     //End of IManager interface
     //------------------------------------

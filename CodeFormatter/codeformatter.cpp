@@ -152,13 +152,13 @@ void CodeFormatter::OnFormat(wxCommandEvent &e)
 
 	// If we got a file name in the event, use it instead of the active editor
 	if(fileToFormat.IsEmpty() == false) {
-		if(!m_mgr->OpenFile(fileToFormat)) {
-			return;
-		}
+		editor = m_mgr->FindEditor(fileToFormat);
+		
+	} else {
+		editor = m_mgr->GetActiveEditor();
 	}
 
 	// get the editor that requires formatting
-	editor = m_mgr->GetActiveEditor();
 	if (!editor)
 		return;
 

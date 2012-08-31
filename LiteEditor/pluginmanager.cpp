@@ -775,3 +775,7 @@ ProjectPtr PluginManager::GetSelectedProject() const
     return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->GetSelectedProject();
 }
 
+IEditor* PluginManager::FindEditor(const wxString& filename) const
+{
+	return clMainFrame::Get()->GetMainBook()->FindEditor(filename);
+}

@@ -360,18 +360,65 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
 			long id;
 			if (number.ToLong(&id)) {
 				if(id != wxNOT_FOUND && m_gdb->m_internalBpId == id) {
-
+					
+					//*stopped,reason="breakpoint-hit",disp="del",bkptno="1",frame={addr="0x0040131e",func="main",args=[{name="argc",value="1"},
+					//{name="argv",value="0x602420"}],file="C:/src/TestArea/TestEXE/main.cpp",fullname="C:\\src\\TestArea\\TestEXE\\main.cpp",line="5"},thread-id="1",stopped-threads="all"
+					
+					// try to locate the file name + line number:
+					int length = -1;
+					int filePos = line.Find(wxT("fullname=\""));
+					length = wxStrlen(wxT("fullname=\""));
+					wxString filename;
+					long curline = -1;
+					wxFileName curfile;
+					
+					if( filePos == wxNOT_FOUND ) {
+						filePos = line.Find(wxT("file=\""));
+						length = wxStrlen(wxT("file=\""));
+					}
+		
+					int linePos = line.Find(wxT("line=\""));
+					if ( linePos != wxNOT_FOUND ) {
+						wxString tmpLine = line.Mid(linePos + wxStrlen(wxT("line=\"")));
+						tmpLine = tmpLine.BeforeFirst(wxT('"'));
+						tmpLine.ToLong(&curline);
+					}
+					
+					if( filePos != wxNOT_FOUND ) {
+						filename = line.Mid(filePos + length);
+						filename = filename.BeforeFirst(wxT('"'));
+						filename.Replace(wxT("\\"), wxT("/"));
+						filename.Replace(wxT("//"), wxT("/"));
+						curfile = filename;
+					}
+					
 					m_observer->UpdateAddLine(wxString::Format(_("Internal breakpoint was hit (id=%d), Applying user breakpoints and continuing"), m_gdb->m_internalBpId));
 
 					// This is an internal breakpoint ID
 					m_gdb->m_internalBpId = wxNOT_FOUND;
-
+					
 					// Apply the breakpoints
 					m_gdb->SetBreakpoints();
-
+					
+					bool hasBreakOnMain = false;
+					const std::vector<BreakpointInfo>& bpList = m_gdb->GetBpList();
+					std::vector<BreakpointInfo>::const_iterator iter = bpList.begin();
+					for( ; iter != bpList.end(); ++iter ) {
+						wxFileName fn(iter->file);
+						int lineNo = iter->lineno;
+						
+						wxString bpFile  = fn.GetFullPath();
+						wxString gdbLine = curfile.GetFullPath();
+						if( bpFile == gdbLine && curline == lineNo ) {
+							hasBreakOnMain = true;
+							break;
+						}
+					}
+					
 					// Continue running; but only if the user didn't _want_ to break-at-main anyway!
-					if (!m_gdb->GetShouldBreakAtMain()) {
+					if (!m_gdb->GetShouldBreakAtMain() && !hasBreakOnMain) {
 						m_gdb->Continue();
+						
 					} else {
 						// If we're not Continue()ing, we need to do UpdateGotControl(), otherwise the user can't tell what's happened
 						UpdateGotControl(DBG_BP_HIT, func);

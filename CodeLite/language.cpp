@@ -2212,7 +2212,20 @@ void Language::InsertFunctionImpl(const wxString& clsname, const wxString& funct
 		return;
 	}
 	
-	TagEntryPtr tag = tags.at(0);
+	// Locate first tag from the requested scope
+	TagEntryPtr tag = NULL;
+	for(size_t i=0; i<tags.size(); i++) {	
+		if( tags.at(i)->GetParent() == clsname ) {
+			tag = tags.at(i);
+			break;
+		}
+	}
+	
+	if( !tag ) {
+		sourceContent << functionImpl;
+		return;
+	}
+	
 	int line = tag->GetLine();
 	
 	// Search for the end of this function

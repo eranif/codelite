@@ -174,25 +174,6 @@ private:
 	void ReplaceInFiles(const wxString &word, const std::list<CppToken> &li);
 
 	/**
-	* \brief open file specified by the 'fileName' parameter and append 'text'
-	* to its content
-	* \param fileName file to open. Must be in full path
-	* \param text string text to append
-	* \return true on success, false otherwise
-	*/
-	LEditor* OpenFileAndAppend(const wxString &fileName, const wxString &text);
-
-	/**
-	 * @brief open file specified by the 'fileName' parameter and append 'text'
-	 * to its content
-	 * @param fileName file to open. Must be in full path
-	 * @param text string text to append
-	 * @param format set to true of formatting should take place after text insertion
-	 * @return true on success, false otherwise
-	 */
-	bool OpenFileAppendAndFormat(const wxString &fileName, const wxString &text, bool format);
-
-	/**
 	 * @brief format editor
 	 * @param editor
 	 */

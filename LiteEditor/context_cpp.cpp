@@ -1759,10 +1759,14 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 
 void ContextCpp::DoFormatEditor(LEditor *editor)
 {
+	int curline = editor->GetCurrentLine();
 	wxCommandEvent formatEvent(XRCID("wxEVT_CF_FORMAT_STRING"));
 	formatEvent.SetString( editor->GetText() );
 	EventNotifier::Get()->ProcessEvent( formatEvent );
 	editor->SetText( formatEvent.GetString() );
+	
+	// Restore the line 
+	editor->GotoLine(curline);
 }
 
 void ContextCpp::OnFileSaved()

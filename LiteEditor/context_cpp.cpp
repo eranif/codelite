@@ -1766,7 +1766,8 @@ void ContextCpp::DoFormatEditor(LEditor *editor)
 	editor->SetText( formatEvent.GetString() );
 	
 	// Restore the line 
-	editor->GotoLine(curline);
+	int lastLineInDoc = editor->LineFromPosition( editor->GetLength() );
+	editor->GotoLine(lastLineInDoc > curline ? curline : lastLineInDoc );
 }
 
 void ContextCpp::OnFileSaved()

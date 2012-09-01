@@ -1157,9 +1157,12 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
 		if (code.IsEmpty() == false) {
 			editor.InsertTextWithIndentation(code, lineno);
 		}
-
+		
+		
+		int oldLine = editor.LineFromPos(editor.GetCurrentPos());
 		if ( s_dlg->GetFormatText() )
 			DoFormatEditor( &GetCtrl() );
+		editor.GotoLine( editor.GetLineCount() > oldLine ? oldLine : editor.GetLineCount() );
 	}
 }
 
@@ -1434,6 +1437,8 @@ void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 					implEditor->SetText( sourceContent );
 					DoFormatEditor( implEditor );
 					
+					implEditor->GotoLine( insertedLine != wxNOT_FOUND ? insertedLine : implEditor->GetLineCount() );
+					
 					// Remove the current body and replace it with ';'
 					rCtrl.SetTargetEnd(blockEndPos);
 					rCtrl.SetTargetStart(blockStartPos);
@@ -1562,15 +1567,18 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 		wxString impl     = dlg.GetImpl();
 		wxString decl     = dlg.GetDecl();
 		
+		int oldLine = rCtrl.LineFromPos( rCtrl.GetCurrentPos() );
 		wxString headerContent = GetCtrl().GetText();
 		if ( TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 1) ) // By default make the functions protected
 			rCtrl.SetText( headerContent );
 		else
 			rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
-			
+		
 		if (dlg.m_checkBoxFormat->IsChecked())
 			DoFormatEditor( &GetCtrl() );
-
+			
+		rCtrl.GotoLine( rCtrl.GetLineCount() > oldLine ? oldLine : rCtrl.GetLineCount() );
+		
 		// Open the implementation file and format it if needed
 		LEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(implFile);
 		if ( implEditor ) {
@@ -1648,8 +1656,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 		wxString sourceContent = editor->GetText();
 		TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
 		editor->SetText(sourceContent);
-		if( insertedLine != wxNOT_FOUND )
-			editor->GotoLine(insertedLine);
+		editor->GotoLine( insertedLine != wxNOT_FOUND ? insertedLine : editor->GetLineCount() );
 	}
 }
 
@@ -1751,23 +1758,17 @@ void ContextCpp::OnAddImpl(wxCommandEvent &e)
 			wxString sourceContent = editor->GetText();
 			TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
 			editor->SetText(sourceContent);
-			if( insertedLine != wxNOT_FOUND )
-				editor->GotoLine(insertedLine);
+			editor->GotoLine(insertedLine != wxNOT_FOUND ? insertedLine : editor->GetLineCount());
 		}
 	}
 }
 
 void ContextCpp::DoFormatEditor(LEditor *editor)
 {
-	int curline = editor->GetCurrentLine();
 	wxCommandEvent formatEvent(XRCID("wxEVT_CF_FORMAT_STRING"));
 	formatEvent.SetString( editor->GetText() );
 	EventNotifier::Get()->ProcessEvent( formatEvent );
 	editor->SetText( formatEvent.GetString() );
-	
-	// Restore the line 
-	int lastLineInDoc = editor->LineFromPosition( editor->GetLength() );
-	editor->GotoLine(lastLineInDoc > curline ? curline : lastLineInDoc );
 }
 
 void ContextCpp::OnFileSaved()

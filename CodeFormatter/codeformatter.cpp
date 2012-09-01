@@ -25,6 +25,7 @@
 #include "precompiled_header.h"
 #include "globals.h"
 #include "editor_config.h"
+#include "event_notifier.h"
 #include "codeformatter.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/app.h> //wxInitialize/wxUnInitialize
@@ -35,6 +36,8 @@
 #include "wx/menu.h"
 #include "file_logger.h"
 
+
+const wxEventType wxEVT_CF_FORMAT_STRING = XRCID("wxEVT_CF_FORMAT_STRING");
 
 extern "C" EXPORT char* STDCALL
 	AStyleMain(const char* pSourceIn,
@@ -93,10 +96,13 @@ CodeFormatter::CodeFormatter(IManager *manager)
 {
 	m_longName = _("Source Code Formatter (AStyle)");
 	m_shortName = wxT("CodeFormatter");
+	
+	EventNotifier::Get()->Connect(wxEVT_CF_FORMAT_STRING, wxCommandEventHandler(CodeFormatter::OnFormatString), NULL, this);
 }
 
 CodeFormatter::~CodeFormatter()
 {
+	EventNotifier::Get()->Disconnect(wxEVT_CF_FORMAT_STRING, wxCommandEventHandler(CodeFormatter::OnFormatString), NULL, this);
 }
 
 clToolBar *CodeFormatter::CreateToolBar(wxWindow *parent)
@@ -289,3 +295,61 @@ IManager* CodeFormatter::GetManager()
 {
 	return m_mgr;
 }
+
+void CodeFormatter::OnFormatString(wxCommandEvent& e)
+{
+	wxString str = e.GetString();
+	if(str.IsEmpty())
+		return;
+		
+	//execute the formatter
+	FormatOptions fmtroptions;
+	m_mgr->GetConfigTool()->ReadObject(wxT("FormatterOptions"), &fmtroptions);
+	wxString options = fmtroptions.ToString();
+
+	//determine indentation method and amount
+	bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
+	int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
+	int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
+	options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
+	
+	wxString output;
+	AstyleFormat(str, options, output);
+	output << DoGetGlobalEOLString();
+	
+	e.SetString( output );
+}
+
+int CodeFormatter::DoGetGlobalEOL() const
+{
+	OptionsConfigPtr options = m_mgr->GetEditorSettings();
+	if (options->GetEolMode() == wxT("Unix (LF)")) {
+		return 2;
+	} else if (options->GetEolMode() == wxT("Mac (CR)")) {
+		return 1;
+	} else if (options->GetEolMode() == wxT("Windows (CRLF)")) {
+		return 0;
+	} else {
+		// set the EOL by the hosting OS
+#if defined(__WXMAC__)
+		return 2;
+#elif defined(__WXGTK__)
+		return 2;
+#else
+		return 0;
+#endif
+	}
+}
+wxString CodeFormatter::DoGetGlobalEOLString() const
+{
+	switch ( DoGetGlobalEOL() ) {
+	case 0:
+		return wxT("\r\n");
+	case 1:
+		return wxT("\r");
+	case 2:
+	default:
+		return wxT("\n");
+	}
+}
+

@@ -50,6 +50,7 @@ public:
     // Readers
     ////////////////////////////////////////////////
     JSONElement   namedObject(const wxString& name) const ;
+	bool          hasNamedObject(const wxString &name) const;
     bool          toBool()           const ;
     wxString      toString()         const ;
     wxArrayString toArrayString()    const ;

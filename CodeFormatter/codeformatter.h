@@ -31,7 +31,9 @@ class CodeFormatter : public IPlugin
 {
 protected:
 	void DoFormatFile(IEditor *editor);
-
+	int DoGetGlobalEOL() const;
+	wxString DoGetGlobalEOLString() const;
+	
 public:
 	CodeFormatter(IManager *manager);
 	virtual ~CodeFormatter();
@@ -47,6 +49,10 @@ public:
 	void OnFormatOptions(wxCommandEvent &e);
 	void OnFormatUI(wxUpdateUIEvent &e);
 	void OnFormatOptionsUI(wxUpdateUIEvent &e);
+	
+	// Mainly for plugins that needs to format a source string
+	// without having to go through the file system
+	void OnFormatString(wxCommandEvent &e);
 };
 
 #endif //CODEFORMATTER_H

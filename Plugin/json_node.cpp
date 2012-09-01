@@ -365,3 +365,14 @@ wxArrayString JSONElement::toArrayString() const
     }
     return arr;
 }
+
+bool JSONElement::hasNamedObject(const wxString& name) const
+{
+    if(!_json) {
+        return false;
+    }
+
+    cJSON *obj = cJSON_GetObjectItem(_json, name.mb_str(wxConvUTF8).data());
+    return obj != NULL;
+}
+

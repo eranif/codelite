@@ -1104,7 +1104,7 @@ Show_Help_and_Exit()
 	echo "Either do: CXX=\"foo\" ./configure --<etc>"
 	echo "Or in that shell earlier, do: export CXX=\"foo\""
 	echo "Similarly you can put build flags e.g. \"-arch i386\" in the environmental variable ARCH_FLAGS"
-	exit
+	exit 0
 }
 
 ## main
@@ -1129,26 +1129,26 @@ if [ -z "$wxversionnumber" ]; then
 	# No wx-config, so why continue?
 	echo "No functional wx-config script was found in your PATH"
 	echo "Is the wxWidgets development package installed?"
-	exit
+	exit 1
 fi
 
 wxMAJOR_VERSION=`echo $wxversionnumber | awk -F. '{print $1}'`
 wxMINOR_VERSION=`echo $wxversionnumber | awk -F. '{print $2}'`
-# Should we ever need it: wxRELEASE_NUMBER=`echo $wxversionnumber | awk -F. '{print $3}'`
+wxRELEASE_NUMBER=`echo $wxversionnumber | awk -F. '{print $3}'`
 
 ## wx versions 2.9 and greater need an extra 'std,aui' in wx-config --libs
  # NB this logic will fail for wx versions < 2 ;)
 
 if [ "$os_name" != "Darwin" ]; then
-wxconfiglibs="wx-config --libs std,aui"
-if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
-	wxconfiglibs="wx-config --libs"
-fi
+    wxconfiglibs="wx-config --libs std,aui"
+    if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
+        wxconfiglibs="wx-config --libs"
+    fi
 else
-wxconfiglibs="wx-config --libs std"
-if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
-	wxconfiglibs="wx-config --libs"
-fi
+    wxconfiglibs="wx-config --libs std"
+    if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
+        wxconfiglibs="wx-config --libs"
+    fi
 fi
 
 ## Replace place holders in the desktop file
@@ -1230,6 +1230,13 @@ do
 		fi
 	shift
 done
+
+## Now we've Shown_Help_and_Exited, it's safe to check if the wx version is new enough
+if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ] && [ "$wxRELEASE_NUMBER" -lt 8 ]; then
+	echo "I'm afraid your wxWidgets version is too old to build CodeLite"
+	exit 1
+fi
+
 
 ## To where shall we install the .so libs which used to be static e.g. libwxscintillau.so
 # I'm using plugins_dir for simplicity, but creating its own name makes this easy to change

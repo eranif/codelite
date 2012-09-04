@@ -117,7 +117,16 @@ void BitmapLoader::doLoadBitmaps()
 	}
 }
 
-int BitmapLoader::GetMimeImageId(const wxString& filename)
+int BitmapLoader::GetMimeImageId(FileExtManager::FileType type) const
+{
+	FileExtManager::Init();
+	std::map<FileExtManager::FileType , int>::const_iterator iter = m_fileIndexMap.find(type);
+	if(iter == m_fileIndexMap.end())
+		return wxNOT_FOUND;
+	return iter->second;
+}
+
+int BitmapLoader::GetMimeImageId(const wxString& filename) const
 {
 	FileExtManager::Init();
 	
@@ -154,7 +163,9 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))),     FileExtManager::TypeJS);
 	AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/workspace"))), FileExtManager::TypeWorkspace);
 	AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/project"))),   FileExtManager::TypeProject);
-	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxfb"))),           FileExtManager::TypeWxCrafter);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxcp"))),           FileExtManager::TypeWxCrafter);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),            FileExtManager::TypeXRC);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/res"))),            FileExtManager::TypeResource);
 	
 	m_bMapPopulated = true;
 	return imageList;
@@ -166,3 +177,4 @@ void BitmapLoader::AddImage(int index, FileExtManager::FileType type)
 		m_fileIndexMap.insert(std::make_pair(type, index));
 	}
 }
+

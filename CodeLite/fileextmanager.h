@@ -61,6 +61,7 @@ public:
 		TypeText,
 		TypeScript,
         TypeWxCrafter,
+		TypeXRC,
 		TypeOther = wxNOT_FOUND
 	};
 

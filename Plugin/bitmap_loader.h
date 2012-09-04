@@ -32,7 +32,13 @@ public:
 	 * @brief return the image index in the image list prepared by MakeStandardMimeImageList()
 	 * @return wxNOT_FOUND if no match is found, the index otherwise
 	 */
-	int GetMimeImageId(const wxString &filename);
+	int GetMimeImageId(const wxString &filename) const;
+	
+	/**
+	 * @brief return the image index in the image list prepared by MakeStandardMimeImageList()
+	 * @return wxNOT_FOUND if no match is found, the index otherwise
+	 */
+	int GetMimeImageId(FileExtManager::FileType type) const;
 	
 protected:
 	void            doLoadManifest();

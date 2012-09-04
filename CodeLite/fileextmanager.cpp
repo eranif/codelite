@@ -27,8 +27,7 @@ void FileExtManager::Init()
 
 		m_map[wxT("rc")  ] = TypeResource;
 		m_map[wxT("res") ] = TypeResource;
-		m_map[wxT("xrc") ] = TypeResource;
-
+		
 		m_map[wxT("y")   ] = TypeYacc;
 		m_map[wxT("l")   ] = TypeLex;
 		m_map[wxT("ui")  ] = TypeQtForm;
@@ -45,6 +44,7 @@ void FileExtManager::Init()
 		m_map[wxT("phtml")] = TypePhp;
 		
 		m_map[wxT("xml")] = TypeXml;
+		m_map[wxT("xrc")] = TypeXRC;
 		m_map[wxT("css")] = TypeCSS;
 		m_map[wxT("js")]  = TypeJS;
 		m_map[wxT("py")]  = TypePython;
@@ -78,9 +78,12 @@ void FileExtManager::Init()
 		m_map[wxT("ini")] = TypeText;
 		
 		m_map[wxT("script")] = TypeScript;
-		m_map[wxT("sh")] = TypeScript;
-		m_map[wxT("bat")] = TypeScript;
-		m_map[wxT("bash")] = TypeScript;
+		m_map[wxT("sh")]     = TypeScript;
+		m_map[wxT("bat")]    = TypeScript;
+		m_map[wxT("bash")]   = TypeScript;
+		
+		m_map[wxT("wxcp")] = TypeWxCrafter;
+		m_map[wxT("xrc") ] = TypeXRC;
 	}
 }
 

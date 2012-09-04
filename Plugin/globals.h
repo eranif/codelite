@@ -338,6 +338,15 @@ public:
  */	
 	WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
 
+/**
+ * @brief return true if filename is a symbolic link
+ */
+WXDLLIMPEXP_SDK bool wxIsFileSymlink(const wxFileName &filename);
+
+/**
+ * @brief convert filename to the real path if filename is a symbolic link
+ */
+WXDLLIMPEXP_SDK wxFileName wxReadLink(const wxFileName &filename);
 
 #endif //GLOBALS_H
 

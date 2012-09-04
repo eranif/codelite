@@ -56,6 +56,8 @@
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
+#else
+#include <unistd.h>
 #endif
 
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
@@ -959,6 +961,39 @@ wxString wxShellExec(const wxString &cmd, const wxString &projectName)
 	return content;
 }
 
+bool wxIsFileSymlink(const wxFileName& filename)
+{
+#ifdef __WXMSW__
+    return false;
+#else
+    wxCharBuffer cb = filename.GetFullPath().mb_str(wxConvUTF8).data();
+    struct stat stat_buff;
+    if( ::stat(cb.data(), &stat_buff) < 0 )
+        return false;
+    return S_ISLNK(stat_buff.st_mode);
+#endif
+}
+
+wxFileName wxReadLink(const wxFileName & filename ) 
+{
+#ifndef __WXMSW__
+    if( wxIsFileSymlink(filename) ) {
+        wxFileName realFileName;
+        char _tmp[512];
+        memset(_tmp, 0, sizeof(_tmp));
+        ::readlink(filename.GetFullPath().mb_str(wxConvUTF8).data(), _tmp, sizeof(_tmp));
+        realFileName = wxFileName(wxString(_tmp, wxConvUTF8));
+        return realFileName;
+        
+    } else {
+        return filename;
+    }
+    
+#else
+    return filename;
+#endif
+}
+
 ////////////////////////////////////////
 // BOM
 ////////////////////////////////////////
@@ -1067,4 +1102,3 @@ clEventDisabler::~clEventDisabler()
 {
 	EventNotifier::Get()->DisableEvents(false);
 }
-

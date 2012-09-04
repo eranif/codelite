@@ -166,6 +166,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxcp"))),           FileExtManager::TypeWxCrafter);
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),            FileExtManager::TypeXRC);
 	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/res"))),            FileExtManager::TypeResource);
+	AddImage( imageList->Add( LoadBitmap(wxT("mime/16/sql"))),            FileExtManager::TypeSQL);
 	
 	m_bMapPopulated = true;
 	return imageList;

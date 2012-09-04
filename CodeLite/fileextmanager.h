@@ -62,6 +62,7 @@ public:
 		TypeScript,
         TypeWxCrafter,
 		TypeXRC,
+        TypeSQL,
 		TypeOther = wxNOT_FOUND
 	};
 

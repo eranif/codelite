@@ -114,6 +114,7 @@ GitPlugin::GitPlugin(IManager *manager)
 GitPlugin::~GitPlugin()
 {
 	delete m_progressDialog;
+    m_progressDialog = NULL;
 }
 /*******************************************************************************/
 clToolBar *GitPlugin::CreateToolBar(wxWindow *parent)
@@ -793,15 +794,6 @@ void GitPlugin::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
 	m_topWindow = m_mgr->GetTheApp()->GetTopWindow();
-	
-	if(!m_progressDialog) {
-		//m_progressDialog = new wxProgressDialog(m_topWindow, wxT("Git progress"), wxT("\n\n"), 101);
-		m_progressDialog = new wxProgressDialog(wxT("Git progress"),
-																					  wxT("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n"),
-																						101, m_topWindow);
-		m_progressDialog->SetIcon(wxICON(icon_git));
-		m_progressDialog->Hide();
-	}
 }
 /*******************************************************************************/
 void GitPlugin::ProcessGitActionQueue()
@@ -1442,28 +1434,37 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
 		}
 	}
 }
+
 /*******************************************************************************/
 void GitPlugin::OnProgressTimer(wxTimerEvent& Event)
 {
-	if(m_progressDialog->IsShown())
+	if(m_progressDialog && m_progressDialog->IsShown())
 		m_progressDialog->Pulse(wxT(""));
 }
 
 /*******************************************************************************/
 void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 {	
-	if(m_progressDialog) {
-		if(pulse) {
-			m_progressDialog->Pulse(message);
-			m_progressDialog->Layout();
-			m_progressTimer.Start(50);
-		} else {
-			m_progressMessage = message;
-			m_progressDialog->Update(0, message);
-			m_progressDialog->Layout();
-		}
-		m_progressDialog->Show();
+	// The dialog was previously created in OnInitDone(), but this caused a brief,
+    // or not-so-brief, 'show' before a Hide() took effect (and one lucky user
+    // got to see the dialog permanently...). So now it's created on demand
+    if(!m_progressDialog) {
+		m_progressDialog = new wxProgressDialog(wxT("Git progress"),
+                                                wxT("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n"),
+                                                101, m_topWindow);
+		m_progressDialog->SetIcon(wxICON(icon_git));
 	}
+
+    if(pulse) {
+        m_progressDialog->Pulse(message);
+        m_progressDialog->Layout();
+        m_progressTimer.Start(50);
+    } else {
+        m_progressMessage = message;
+        m_progressDialog->Update(0, message);
+        m_progressDialog->Layout();
+    }
+    m_progressDialog->Show();
 }
 
 /*******************************************************************************/

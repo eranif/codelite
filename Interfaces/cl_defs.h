@@ -31,4 +31,10 @@
 #    define CL_USE_NATIVEBOOK 0
 #endif
 
+#if wxVERSION_NUMBER < 2904
+#    define CL_USE_NEW_BUILD_TAB 0
+#else
+#    define CL_USE_NEW_BUILD_TAB 1
+#endif
+
 #endif // CL_DEFS_H

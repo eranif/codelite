@@ -118,8 +118,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
         GetEditor()->CallTipSetForegroundHighlight(wxT("YELLOW"));
         GetEditor()->m_isTipBgDark = true;
     }
-
-    m_listCtrl->SetFocus();
+	
     // return the focus to scintilla
     GetEditor()->SetActive();
     m_constructing = false;

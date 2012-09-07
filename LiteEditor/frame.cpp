@@ -74,7 +74,6 @@
 #include "environmentconfig.h"
 #include "findresultstab.h"
 #include "buidltab.h"
-#include "errorstab.h"
 #include "frame.h"
 #include "symbol_tree.h"
 #include "cpp_symbol_tree.h"

@@ -30,8 +30,11 @@
 #include "shelltab.h"
 
 class FindResultsTab;
+#if CL_USE_NEW_BUILD_TAB
+class NewBuildTab;
+#else
 class BuildTab;
-class ErrorsTab;
+#endif
 class ReplaceInFilesPanel;
 class ShellTab;
 class TaskPanel;
@@ -59,7 +62,6 @@ class OutputPane : public wxPanel
 public:
 	static const wxString FIND_IN_FILES_WIN;
 	static const wxString BUILD_WIN;
-	static const wxString ERRORS_WIN;
 	static const wxString OUTPUT_WIN;
 	static const wxString OUTPUT_DEBUG;
 	static const wxString REPLACE_IN_FILES;
@@ -74,8 +76,13 @@ private:
 	Notebook              *m_book;
 	FindResultsTab        *m_findResultsTab;
 	ReplaceInFilesPanel   *m_replaceResultsTab;
+	
+#if CL_USE_NEW_BUILD_TAB	
+	NewBuildTab           *m_buildWin;
+#else
 	BuildTab              *m_buildWin;
-	ErrorsTab             *m_errorsWin;
+#endif
+
 	ShellTab              *m_outputWind;
 	TaskPanel             *m_taskPanel;
 	FindUsageTab          *m_showUsageTab;
@@ -105,8 +112,11 @@ public:
 
 	FindResultsTab        *GetFindResultsTab   () { return m_findResultsTab;    }
 	ReplaceInFilesPanel   *GetReplaceResultsTab() { return m_replaceResultsTab; }
+#if CL_USE_NEW_BUILD_TAB
+	NewBuildTab           *GetBuildTab         () { return m_buildWin;          }
+#else
 	BuildTab              *GetBuildTab         () { return m_buildWin;          }
-	ErrorsTab             *GetErrorsTab        () { return m_errorsWin;         }
+#endif	
 	ShellTab              *GetOutputWindow     () { return m_outputWind;        }
 	FindUsageTab          *GetShowUsageTab     () { return m_showUsageTab;      }
 };

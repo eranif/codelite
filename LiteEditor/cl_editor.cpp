@@ -1408,10 +1408,6 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
 			tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
 			type = ct_breakpoint;
 
-		} else if (MarkerGet(line) & mmt_compiler) {
-			wxMemoryBuffer style_bytes;
-			tooltip = clMainFrame::Get()->GetOutputPane()->GetBuildTab()->GetBuildToolTip(fname, line, style_bytes);
-			type = ct_compiler_msg;
 		}
 
 		wxString tmpTip = tooltip;

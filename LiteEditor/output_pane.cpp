@@ -25,6 +25,7 @@
 #include <wx/xrc/xmlres.h>
 #include "frame.h"
 #include "editor_config.h"
+#include "new_build_tab.h"
 #include <wx/dcbuffer.h>
 #include "event_notifier.h"
 #include "pluginmanager.h"
@@ -34,13 +35,11 @@
 #include "dockablepanemenumanager.h"
 #include "replaceinfilespanel.h"
 #include "buidltab.h"
-#include "errorstab.h"
 #include "shelltab.h"
 #include "taskpanel.h"
 
 const wxString OutputPane::FIND_IN_FILES_WIN = _("Search");
 const wxString OutputPane::BUILD_WIN         = _("Build");
-const wxString OutputPane::ERRORS_WIN        = _("Errors");
 const wxString OutputPane::OUTPUT_WIN        = _("Output");
 const wxString OutputPane::OUTPUT_DEBUG      = _("Debug");
 const wxString OutputPane::REPLACE_IN_FILES  = _("Replace");
@@ -85,11 +84,12 @@ void OutputPane::CreateGUIControls()
 
 	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 
+#if CL_USE_NEW_BUILD_TAB	
+	m_buildWin = new NewBuildTab(m_book);
+#else	
 	m_buildWin = new BuildTab(m_book, wxID_ANY, wxGetTranslation(BUILD_WIN));
-	m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, wxXmlResource::Get()->LoadBitmap(wxT("build")));
-
-	m_errorsWin = new ErrorsTab(m_buildWin, m_book, wxID_ANY, wxGetTranslation(ERRORS_WIN));
-	m_book->AddPage(m_errorsWin, wxGetTranslation(ERRORS_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/errors")));
+#endif	
+	m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, bmpLoader->LoadBitmap(wxT("toolbars/16/build/build")));
 
 	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN), true);
 	m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));

@@ -546,8 +546,6 @@
     <File Name="memoryview.cpp"/>
     <File Name="memoryview.h"/>
     <File Name="memoryviewbase.cpp"/>
-    <File Name="errorstab.h"/>
-    <File Name="errorstab.cpp"/>
     <File Name="debuggerasciiviewerbase.cpp"/>
     <File Name="debuggerasciiviewerbase.h"/>
     <File Name="debuggerasciiviewer.h"/>
@@ -556,6 +554,10 @@
     <File Name="localstable.h"/>
     <File Name="findusagetab.h"/>
     <File Name="findusagetab.cpp"/>
+    <VirtualDirectory Name="BuildTab">
+      <File Name="new_build_tab.cpp"/>
+      <File Name="new_build_tab.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

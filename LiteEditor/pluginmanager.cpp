@@ -51,7 +51,6 @@
 #include "fileexplorer.h"
 #include "plugin_version.h"
 #include "workspacetab.h"
-#include "errorstab.h"
 
 PluginManager *PluginManager::Get()
 {

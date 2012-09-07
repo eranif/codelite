@@ -25,6 +25,10 @@
 #ifndef __buidltab__
 #define __buidltab__
 
+#include "cl_defs.h"
+
+#if !CL_USE_NEW_BUILD_TAB
+
 #include <map>
 #include <vector>
 #include <wx/regex.h>
@@ -150,8 +154,6 @@ public:
 	BuildTab(wxWindow *parent, wxWindowID id, const wxString &name);
 	~BuildTab();
 
-	wxString GetBuildToolTip(const wxString &fileName, int lineno, wxMemoryBuffer &styleBits);
-
 	bool GetBuildEndedSuccessfully() const {
 		return m_errorCount == 0 && !m_buildInterrupted;
 	}
@@ -159,4 +161,8 @@ public:
 		m_buildInterrupted = b;
 	}
 };
+#else // CL_USE_NEW_BUILD_TAB
+ // Include the new build tab
+#include "new_build_tab.h"
+#endif // CL_USE_NEW_BUILD_TAB
 #endif // __buidltab__

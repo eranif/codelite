@@ -10,6 +10,7 @@ static CodeCompletionManager ms_CodeCompletionManager;
 
 CodeCompletionManager::CodeCompletionManager()
 	: m_options(CC_CTAGS_ENABLED)
+	, m_wordCompletionRefreshNeeded(false)
 {
 }
 

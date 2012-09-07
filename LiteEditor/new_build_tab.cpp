@@ -108,7 +108,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
 	m_listctrl = new wxDataViewListCtrl(this, wxID_ANY );
 
 	// Make sure we have enought height for the icon
-	yy < 20 ? yy = 20 : yy = yy;
+	yy < 16 ? yy = 16 : yy = yy;
 	m_listctrl->SetRowHeight(yy);
 
 	bs->Add(m_listctrl, 1, wxEXPAND|wxALL);

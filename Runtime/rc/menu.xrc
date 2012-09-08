@@ -452,7 +452,7 @@
                 <label>Batch Build...</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenuItem" name="next_error">
+			<object class="wxMenuItem" name="next_build_error">
                 <label>Ne&amp;xt Build Error</label>
             </object>
         </object>

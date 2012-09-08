@@ -171,7 +171,9 @@ class NewBuildTab : public wxPanel
     BuildpaneScrollTo                   m_buildpaneScrollTo;
     BuildInfoList_t                     m_errorsAndWarningsList;
     BuildInfoList_t                     m_errorsList;
-
+    BuildInfoList_t::iterator           m_curError;
+    bool                                m_buildInProgress;
+    
 protected:
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);
@@ -182,7 +184,8 @@ protected:
     void DoClear();
     void MarkEditor(LEditor *editor);
     void DoToggleWindow();
-
+    void DoSelectAndOpen(const wxDataViewItem& item);
+    
 public:
     NewBuildTab(wxWindow* parent);
     virtual ~NewBuildTab();
@@ -200,8 +203,8 @@ protected:
     void OnLineSelected(wxDataViewEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnWorkspaceLoaded(wxCommandEvent &e);
-
-
+    void OnNextBuildError(wxCommandEvent &e);
+    void OnNextBuildErrorUI(wxUpdateUIEvent &e);
 };
 
 #endif // NEWBUILDTAB_H

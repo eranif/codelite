@@ -96,7 +96,9 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_showMe(BuildTabSettingsData::ShowOnStart)
     , m_skipWarnings(false)
     , m_buildpaneScrollTo(ScrollToFirstError)
+    , m_buildInProgress(false)
 {
+    m_curError = m_errorsAndWarningsList.end();
     m_errorBmp   = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/error-strip"));
     m_warningBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/warning-strip"));
     m_successBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/success-strip"));
@@ -129,7 +131,10 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_PROCESS_ENDED,   wxCommandEventHandler ( NewBuildTab::OnBuildEnded ),      NULL, this );
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(NewBuildTab::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(NewBuildTab::OnWorkspaceClosed), NULL, this);
-
+    
+    wxTheApp->Connect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( NewBuildTab::OnNextBuildError ),   NULL, this );
+    wxTheApp->Connect(XRCID("next_build_error"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler ( NewBuildTab::OnNextBuildErrorUI ), NULL, this );
+    
     m_listctrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NewBuildTab::OnLineSelected), NULL, this);
 }
 
@@ -139,11 +144,15 @@ NewBuildTab::~NewBuildTab()
     EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
     EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_ADDLINE,         wxCommandEventHandler ( NewBuildTab::OnBuildAddLine ),    NULL, this );
     EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_PROCESS_ENDED,   wxCommandEventHandler ( NewBuildTab::OnBuildEnded ),      NULL, this );
+    wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( NewBuildTab::OnNextBuildError ),   NULL, this );
+    wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler ( NewBuildTab::OnNextBuildErrorUI ), NULL, this );
 }
 
 void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
 {
     e.Skip();
+    m_buildInProgress = false;
+    
     DoProcessOutput(true, false);
 
     std::vector<LEditor*> editors;
@@ -175,7 +184,10 @@ void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
 
     // Hide / Show the build tab according to the settings
     DoToggleWindow();
-
+    
+    // make it invalid
+    m_curError = m_errorsAndWarningsList.begin();
+    
     // notify the plugins that the build had started
     PostCmdEvent(wxEVT_BUILD_ENDED);
 }
@@ -183,7 +195,8 @@ void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
 void NewBuildTab::OnBuildStarted(wxCommandEvent& e)
 {
     e.Skip();
-
+    m_buildInProgress = true;
+    
     // Reload the build settings data
     EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &m_buildTabSettings );
     m_textRenderer->SetErrFgColor(  m_buildTabSettings.GetErrorColour() );
@@ -448,18 +461,7 @@ void NewBuildTab::OnLineSelected(wxDataViewEvent& e)
     if(e.GetItem().IsOk() == false) {
         return;
     }
-
-    BuildLineInfo* bli = (BuildLineInfo*)m_listctrl->GetItemData(e.GetItem());
-
-    if( bli ) {
-        wxFileName fn(bli->GetFilename());
-        if ( fn.IsAbsolute() ) {
-            LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(bli->GetFilename(), wxT(""), bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
-            if ( editor ) {
-                MarkEditor( editor );
-            }
-        }
-    }
+    DoSelectAndOpen(e.GetItem());
 }
 
 void NewBuildTab::OnWorkspaceClosed(wxCommandEvent& e)
@@ -578,6 +580,73 @@ void NewBuildTab::DoToggleWindow()
 
     }
 }
+
+void NewBuildTab::OnNextBuildError(wxCommandEvent& e)
+{
+    // if we are here, we have at least something in the list of errors
+    if( m_errorsAndWarningsList.empty() )
+        return;
+
+    EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &m_buildTabSettings );
+    bool skipWarnings = m_buildTabSettings.GetSkipWarnings();
+
+    if( m_curError == m_errorsAndWarningsList.end() ) {
+        
+        m_curError = m_errorsAndWarningsList.begin();
+        if( m_curError == m_errorsAndWarningsList.end() )
+            // nothing to point to
+            return;
+    }
+    
+    // m_curError is valid
+    if ( skipWarnings ) {
+        
+        do {
+            if ( (*m_curError)->GetSeverity() == SV_ERROR ) {
+                // get the wxDataViewItem
+                wxDataViewItem item = m_listctrl->GetStore()->GetItem((*m_curError)->GetLineInBuildTab());
+                DoSelectAndOpen(item);
+                 ++m_curError;
+                return;
+                
+            } else {
+                ++m_curError;
+            }
+            
+        } while ( m_curError != m_errorsAndWarningsList.end() );
+        
+    } else {
+        wxDataViewItem item = m_listctrl->GetStore()->GetItem((*m_curError)->GetLineInBuildTab());
+        DoSelectAndOpen(item);
+         ++m_curError;
+    }
+}
+
+void NewBuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& e)
+{
+    e.Enable( !m_errorsAndWarningsList.empty() && !m_buildInProgress );
+}
+
+void NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
+{
+    if( item.IsOk() == false )
+        return;
+    
+    m_listctrl->EnsureVisible(item);
+    m_listctrl->Select(item);
+    
+    BuildLineInfo* bli = (BuildLineInfo*)m_listctrl->GetItemData(item);
+    if( bli ) {
+        wxFileName fn(bli->GetFilename());
+        if ( fn.IsAbsolute() ) {
+            LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(bli->GetFilename(), wxT(""), bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
+            if ( editor ) {
+                MarkEditor( editor );
+            }
+        }
+    }
+}
+
 
 ////////////////////////////////////////////
 // CmpPatter

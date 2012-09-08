@@ -4,12 +4,3 @@
 
 Subversion: 
 - Fixed an error when adding a file which is "(bin)"
-
-New Build Tab:
-- Remove obsolete settings from "Build Output and Appearance" namely:
-   Always show errors pane
-   Remove the compiler "annotations" 
-   Honour the font weight
-   Remove the BG color of the errors / warnings
-- Fixed "F4" functionality
-

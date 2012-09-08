@@ -1,5 +1,9 @@
 #ifndef BUILDTABTOPPANEL_H
 #define BUILDTABTOPPANEL_H
+#include "cl_defs.h"
+
+#if CL_USE_NEW_BUILD_TAB
+
 #include "wxcrafter.h"
 
 class NewBuildTab;
@@ -17,4 +21,6 @@ protected:
     virtual void OnSaveBuildOutput(wxCommandEvent& event);
     virtual void OnSaveBuildOutputUI(wxUpdateUIEvent& event);
 };
+#endif // CL_USE_NEW_BUILD_TAB
 #endif // BUILDTABTOPPANEL_H
+

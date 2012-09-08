@@ -1,4 +1,7 @@
 #include "BuildTabTopPanel.h"
+
+#if CL_USE_NEW_BUILD_TAB
+
 #include "new_build_tab.h"
 #include <wx/ffile.h>
 #include <wx/filename.h>
@@ -56,3 +59,5 @@ void BuildTabTopPanel::OnSaveBuildOutputUI(wxUpdateUIEvent& event)
 
     }
 }
+#endif 
+

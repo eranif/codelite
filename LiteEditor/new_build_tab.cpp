@@ -2,6 +2,7 @@
 #if CL_USE_NEW_BUILD_TAB
 
 #include "build_settings_config.h"
+#include <wx/choicdlg.h>
 #include "BuildTabTopPanel.h"
 #include "workspace.h"
 #include "globals.h"
@@ -170,7 +171,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     wxTheApp->Connect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( NewBuildTab::OnNextBuildError ),   NULL, this );
     wxTheApp->Connect(XRCID("next_build_error"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler ( NewBuildTab::OnNextBuildErrorUI ), NULL, this );
     
-    m_listctrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NewBuildTab::OnLineSelected), NULL, this);
+    m_listctrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NewBuildTab::OnLineSelected), NULL, this);
 }
 
 NewBuildTab::~NewBuildTab()
@@ -492,11 +493,10 @@ void NewBuildTab::DoSearchForDirectory(const wxString& line)
 
 void NewBuildTab::OnLineSelected(wxDataViewEvent& e)
 {
-    e.Skip();
-    if(e.GetItem().IsOk() == false) {
+    if(e.GetItem().IsOk() == false || !DoSelectAndOpen(e.GetItem()) ) {
+        e.Skip();
         return;
     }
-    DoSelectAndOpen(e.GetItem());
 }
 
 void NewBuildTab::OnWorkspaceClosed(wxCommandEvent& e)
@@ -662,10 +662,10 @@ void NewBuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& e)
     e.Enable( !m_errorsAndWarningsList.empty() && !m_buildInProgress );
 }
 
-void NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
+bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
 {
     if( item.IsOk() == false )
-        return;
+        return false;
     
     m_listctrl->EnsureVisible(item);
     m_listctrl->Select(item);
@@ -673,6 +673,53 @@ void NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
     BuildLineInfo* bli = (BuildLineInfo*)m_listctrl->GetItemData(item);
     if( bli ) {
         wxFileName fn(bli->GetFilename());
+        
+        if ( !fn.IsAbsolute() ) {
+            std::vector<wxFileName> files;
+            std::vector<wxFileName> candidates;
+            ManagerST::Get()->GetWorkspaceFiles(files, true);
+            
+            for(size_t i=0; i<files.size(); ++i) {
+                if( files.at(i).GetFullName() == fn.GetFullName() ) {
+                    candidates.push_back( files.at(i) );
+                }
+            }
+            
+            if ( candidates.empty() )
+                return false;
+            
+            if ( candidates.size() == 1 )
+                fn = candidates.at(0);
+                
+            else {
+                // prompt the user
+                wxArrayString fileArr;
+                for(size_t i=0; i<candidates.size(); ++i) {
+                    fileArr.Add( candidates.at(i).GetFullPath() );
+                }
+                
+                wxString selection = wxGetSingleChoice(_("Select a file to open:"), _("Choose a file"), fileArr);
+                if(selection.IsEmpty())
+                    return false;
+                    
+                fn = wxFileName(selection);
+                // if we resolved it now, open the file there is no point in searching this file
+                // in m_buildInfoPerFile since the key on this map is kept as full name
+                LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
+                if ( !editor ) {
+                    editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxT(""), bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
+                }
+                
+                if ( editor ) {
+                    // We already got compiler markers set here, just goto the line
+                    clMainFrame::Get()->GetMainBook()->SelectPage( editor );
+                    editor->GotoLine(bli->GetLineNumber());
+                    editor->SetActive();
+                    return true;
+                }
+            }
+        }
+        
         if ( fn.IsAbsolute() ) {
             // try to locate the editor first
             LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
@@ -685,17 +732,19 @@ void NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                 if ( editor->HasCompilerMarkers() ) {
                     // We already got compiler markers set here, just goto the line
                     clMainFrame::Get()->GetMainBook()->SelectPage( editor );
-                    editor->GotoLine(bli->GetLineNumber());
                     editor->SetActive();
-                    return;
+                    editor->GotoLine(bli->GetLineNumber());
+                    return true;
                 }
             }
             
             if ( editor ) {
                 MarkEditor( editor );
+                return true;
             }
         }
     }
+    return false;
 }
 
 wxString NewBuildTab::GetBuildContent() const

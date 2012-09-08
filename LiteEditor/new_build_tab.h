@@ -184,7 +184,7 @@ protected:
     void DoClear();
     void MarkEditor(LEditor *editor);
     void DoToggleWindow();
-    void DoSelectAndOpen(const wxDataViewItem& item);
+    bool DoSelectAndOpen(const wxDataViewItem& item);
 
 public:
     NewBuildTab(wxWindow* parent);

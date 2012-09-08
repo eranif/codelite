@@ -141,6 +141,7 @@ void CompilationDatabase::Initialize()
         
         
         wxLogNull nl;
+        fp.Close();
         ::wxRemoveFile(textfile);
         
     }

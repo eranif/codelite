@@ -2,6 +2,7 @@
 #if CL_USE_NEW_BUILD_TAB
 
 #include "build_settings_config.h"
+#include "BuildTabTopPanel.h"
 #include "workspace.h"
 #include "globals.h"
 #include "frame.h"
@@ -105,7 +106,10 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
 
     wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
     SetSizer(bs);
-
+    
+    BuildTabTopPanel* toolbox = new BuildTabTopPanel(this);
+    bs->Add(toolbox, 0, wxEXPAND);
+    
     // Determine the row height
     wxBitmap tmpBmp(1, 1);
     wxMemoryDC memDc;
@@ -113,7 +117,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     wxFont f = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     int xx, yy;
     memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &f);
-    m_listctrl = new wxDataViewListCtrl(this, wxID_ANY );
+    m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER|wxDV_SINGLE|wxDV_ROW_LINES );
 
     // Make sure we have enought height for the icon
     yy < 16 ? yy = 16 : yy = yy;
@@ -647,6 +651,18 @@ void NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
     }
 }
 
+wxString NewBuildTab::GetBuildContent() const
+{
+    wxString output;
+    for(int i=0; i<m_listctrl->GetItemCount(); ++i) {
+        wxString curline = m_listctrl->GetTextValue(i, 1);
+        curline.StartsWith(WARNING_MARKER, &curline);
+        curline.StartsWith(ERROR_MARKER,   &curline);
+        curline.StartsWith(SUMMARY_MARKER, &curline);
+        output << curline << wxT("\n");
+    }
+    return output;
+}
 
 ////////////////////////////////////////////
 // CmpPatter

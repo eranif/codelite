@@ -557,6 +557,8 @@
     <VirtualDirectory Name="BuildTab">
       <File Name="new_build_tab.cpp"/>
       <File Name="new_build_tab.h"/>
+      <File Name="BuildTabTopPanel.h"/>
+      <File Name="BuildTabTopPanel.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">

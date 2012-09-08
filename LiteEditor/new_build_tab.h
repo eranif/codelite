@@ -173,7 +173,7 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t                     m_errorsList;
     BuildInfoList_t::iterator           m_curError;
     bool                                m_buildInProgress;
-    
+
 protected:
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);
@@ -185,7 +185,7 @@ protected:
     void MarkEditor(LEditor *editor);
     void DoToggleWindow();
     void DoSelectAndOpen(const wxDataViewItem& item);
-    
+
 public:
     NewBuildTab(wxWindow* parent);
     virtual ~NewBuildTab();
@@ -196,6 +196,20 @@ public:
     void SetBuildInterrupted(bool b) {
         m_buildInterrupted = b;
     }
+
+    bool IsEmpty() const {
+        return m_listctrl->GetItemCount() == 0;
+    }
+
+    bool IsBuildInProgress() const {
+        return m_buildInProgress;
+    }
+    
+    void Clear() {
+        DoClear();
+    }
+    
+    wxString GetBuildContent() const;
 protected:
     void OnBuildStarted(wxCommandEvent &e);
     void OnBuildEnded(wxCommandEvent &e);

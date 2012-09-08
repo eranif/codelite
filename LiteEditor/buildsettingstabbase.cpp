@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  3 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -15,7 +15,7 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
-	fgSizer1 = new wxFlexGridSizer( 3, 4, 0, 0 );
+	fgSizer1 = new wxFlexGridSizer( 3, 3, 0, 0 );
 	fgSizer1->AddGrowableCol( 1 );
 	fgSizer1->AddGrowableCol( 2 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
@@ -24,12 +24,6 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	m_staticText3 = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer1->Add( m_staticText3, 0, wxALL, 5 );
-	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Background colour:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText4->Wrap( -1 );
-	m_staticText4->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
-	
-	fgSizer1->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	m_staticText5 = new wxStaticText( this, wxID_ANY, _("Foreground colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
@@ -47,9 +41,6 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_colourPickerError = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255, 98, 98 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer1->Add( m_colourPickerError, 0, wxALL|wxEXPAND, 5 );
-	
 	m_colourPickerErrorFg = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
 	fgSizer1->Add( m_colourPickerErrorFg, 0, wxALL|wxEXPAND, 5 );
 	
@@ -62,9 +53,6 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	m_staticText2->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 	
 	fgSizer1->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
-	
-	m_colourPickerWarnings = new wxColourPickerCtrl( this, wxID_ANY, wxColour( 255, 255, 170 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer1->Add( m_colourPickerWarnings, 0, wxALL|wxEXPAND, 5 );
 	
 	m_colourPickerWarningsFg = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
 	fgSizer1->Add( m_colourPickerWarningsFg, 0, wxALL|wxEXPAND, 5 );
@@ -83,19 +71,6 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	m_checkBoxAutoHide = new wxCheckBox( this, wxID_ANY, _("Automatically hide the build pane when there are neither errors nor warnings"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer2->Add( m_checkBoxAutoHide, 0, wxALL|wxEXPAND, 5 );
 	
-	m_checkBoxShowErrorPane = new wxCheckBox( this, wxID_ANY, _("Always show error pane after build"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer2->Add( m_checkBoxShowErrorPane, 0, wxALL, 5 );
-	
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 1, 1, 0, 0 );
-	fgSizer2->SetFlexibleDirection( wxBOTH );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-	
-	m_checkBoxErrorsFirstLine = new wxCheckBox( this, wxID_ANY, _("Show from beginning of errors list"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_checkBoxErrorsFirstLine, 0, wxALL, 5 );
-	
-	sbSizer2->Add( fgSizer2, 1, wxALIGN_LEFT|wxEXPAND|wxLEFT|wxRIGHT, 30 );
-	
 	wxString m_radioBuildPaneScrollDestinationChoices[] = { _("The first error"), _("The first warning or error"), _("The end") };
 	int m_radioBuildPaneScrollDestinationNChoices = sizeof( m_radioBuildPaneScrollDestinationChoices ) / sizeof( wxString );
 	m_radioBuildPaneScrollDestination = new wxRadioBox( this, wxID_ANY, _("After build finishes, if showing the build pane scroll to:"), wxDefaultPosition, wxDefaultSize, m_radioBuildPaneScrollDestinationNChoices, m_radioBuildPaneScrollDestinationChoices, 1, wxRA_SPECIFY_ROWS );
@@ -113,9 +88,6 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	wxStaticBoxSizer* sbSizer1;
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Errors / warnings markers:") ), wxVERTICAL );
 	
-	m_checkBoxDisplayAnnotations = new wxCheckBox( this, wxID_ANY, _("Compiler errors / warnings shown in text annotations"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer1->Add( m_checkBoxDisplayAnnotations, 0, wxALL|wxEXPAND, 5 );
-	
 	m_checkBoxDisplayMarkers = new wxCheckBox( this, wxID_ANY, _("Compiler errors / warnings marked with bookmarks"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer1->Add( m_checkBoxDisplayMarkers, 0, wxALL, 5 );
 	
@@ -124,14 +96,8 @@ BuildTabSettingsBase::BuildTabSettingsBase( wxWindow* parent, wxWindowID id, con
 	this->SetSizer( bSizer1 );
 	this->Layout();
 	bSizer1->Fit( this );
-	
-	// Connect Events
-	m_checkBoxErrorsFirstLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BuildTabSettingsBase::OnUpdateUI ), NULL, this );
 }
 
 BuildTabSettingsBase::~BuildTabSettingsBase()
 {
-	// Disconnect Events
-	m_checkBoxErrorsFirstLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( BuildTabSettingsBase::OnUpdateUI ), NULL, this );
-	
 }

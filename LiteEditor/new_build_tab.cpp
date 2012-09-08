@@ -26,14 +26,15 @@ static const wxChar* ERROR_MARKER   = wxT("@@ERROR@@");
 static const wxChar* SUMMARY_MARKER = wxT("@@SUMMARY@@");
 
 // A renderer for drawing the text
-class MyTextRenderer : public wxDataViewTextRenderer
+class MyTextRenderer : public wxDataViewCustomRenderer
 {
     wxFont              m_font;
     wxColour            m_greyColor;
     wxDataViewListCtrl *m_listctrl;
     wxColour            m_warnFgColor;
     wxColour            m_errFgColor;
-
+    wxVariant           m_value;
+    
 public:
     MyTextRenderer(wxDataViewListCtrl *listctrl) : m_listctrl(listctrl) {
         m_font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -42,7 +43,30 @@ public:
     }
 
     virtual ~MyTextRenderer() {}
+    
+    virtual wxSize GetSize() const {
+        int xx, yy;
+        wxBitmap bmp(1, 1);
+        wxMemoryDC dc;
+        dc.SelectObject(bmp);
+        
+        wxString s = m_value.GetString();
+        wxFont f(m_font);
+        f.SetWeight(wxFONTWEIGHT_BOLD);
+        dc.GetTextExtent(s, &xx, &yy, NULL, NULL, &f);
+        return wxSize(xx, yy);
+    }
 
+    virtual bool SetValue(const wxVariant& value) {
+        m_value = value;
+        return true;
+    }
+    
+    virtual bool GetValue(wxVariant& value) const {
+        value = m_value;
+        return true;
+    }
+    
     void SetErrFgColor(const wxColour& errFgColor) {
         this->m_errFgColor = errFgColor;
     }
@@ -56,33 +80,38 @@ public:
         return m_warnFgColor;
     }
     virtual bool Render(wxRect cell, wxDC *dc, int state) {
+        wxVariant v;
+        GetValue(v);
+        wxString str = v.GetString();
+        
         wxFont f(m_font);
         bool isSelected = state & wxDATAVIEW_CELL_SELECTED;
 
-        if ( m_text.StartsWith(ERROR_MARKER, &m_text) ) {
+        if ( str.StartsWith(ERROR_MARKER, &str) ) {
             if ( !isSelected ) {
                 dc->SetTextForeground( m_errFgColor );
             }
 
-        } else if( m_text.StartsWith(WARNING_MARKER, &m_text) ) {
+        } else if( str.StartsWith(WARNING_MARKER, &str) ) {
             if ( !isSelected ) {
                 dc->SetTextForeground( m_warnFgColor );
             }
-        } else if ( m_text.StartsWith(SUMMARY_MARKER, &m_text) ) {
+        } else if ( str.StartsWith(SUMMARY_MARKER, &str) ) {
             f.SetWeight(wxFONTWEIGHT_BOLD);
 
-        } else if( m_text.StartsWith(wxT("----")) ) {
+        } else if( str.StartsWith(wxT("----")) ) {
             f.SetStyle(wxFONTSTYLE_ITALIC);
             if ( !isSelected )
                 dc->SetTextForeground(m_greyColor);
 
-        } else if(m_text.Contains(wxT("Entering directory")) || m_text.Contains(wxT("Leaving directory"))) {
+        } else if(str.Contains(wxT("Entering directory")) || str.Contains(wxT("Leaving directory"))) {
             f.SetStyle(wxFONTSTYLE_ITALIC);
             if ( !isSelected )
                 dc->SetTextForeground(m_greyColor);
         }
         dc->SetFont(f);
-        return wxDataViewTextRenderer::Render(cell, dc, state);
+        RenderText(str, 0, cell, dc, state);
+        return true;
     }
 };
 

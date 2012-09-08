@@ -672,7 +672,23 @@ void NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
     if( bli ) {
         wxFileName fn(bli->GetFilename());
         if ( fn.IsAbsolute() ) {
-            LEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(bli->GetFilename(), wxT(""), bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
+            // try to locate the editor first
+            LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
+            if ( !editor ) {
+                
+                // Open it
+                editor = clMainFrame::Get()->GetMainBook()->OpenFile(bli->GetFilename(), wxT(""), bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
+                
+            } else {
+                if ( editor->HasCompilerMarkers() ) {
+                    // We already got compiler markers set here, just goto the line
+                    clMainFrame::Get()->GetMainBook()->SelectPage( editor );
+                    editor->GotoLine(bli->GetLineNumber());
+                    editor->SetActive();
+                    return;
+                }
+            }
+            
             if ( editor ) {
                 MarkEditor( editor );
             }

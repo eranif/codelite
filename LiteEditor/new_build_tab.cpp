@@ -109,9 +109,11 @@ public:
             if ( !isSelected )
                 dc->SetTextForeground(m_greyColor);
         }
+        
         dc->SetFont(f);
-        RenderText(str, 0, cell, dc, state);
+        dc->DrawText(str, cell.GetTopLeft());
         return true;
+        
     }
 };
 

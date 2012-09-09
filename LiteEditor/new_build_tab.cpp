@@ -29,6 +29,16 @@ static const wxChar* SUMMARY_MARKER_WARNING = wxT("@@SUMMARY_WARNING@@");
 static const wxChar* SUMMARY_MARKER_SUCCESS = wxT("@@SUMMARY_SUCCESS@@");
 static const wxChar* SUMMARY_MARKER         = wxT("@@SUMMARY@@");
 
+// Helper function to post an event to the frame
+void SetActive(LEditor* editor)
+{
+    wxCHECK_RET(editor, wxT("Null editor parameter"));
+
+    wxCommandEvent event(wxEVT_ACTIVATE_EDITOR);
+    event.SetEventObject(editor);
+    wxPostEvent(clMainFrame::Get(), event);
+}
+
 // A renderer for drawing the text
 class MyTextRenderer : public wxDataViewCustomRenderer
 {
@@ -524,10 +534,8 @@ void NewBuildTab::DoSearchForDirectory(const wxString& line)
 
 void NewBuildTab::OnLineSelected(wxDataViewEvent& e)
 {
-    e.Skip();
-    if(e.GetItem().IsOk() == false || !DoSelectAndOpen(e.GetItem()) ) {
-        e.Skip();
-        return;
+    if (e.GetItem().IsOk()) { 
+        DoSelectAndOpen(e.GetItem());
     }
 }
 
@@ -752,7 +760,7 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                     // We already got compiler markers set here, just goto the line
                     clMainFrame::Get()->GetMainBook()->SelectPage( editor );
                     editor->GotoLine(bli->GetLineNumber());
-                    editor->SetActive();
+                    SetActive(editor);
                     return true;
                 }
             }
@@ -770,8 +778,8 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                 if ( editor->HasCompilerMarkers() ) {
                     // We already got compiler markers set here, just goto the line
                     clMainFrame::Get()->GetMainBook()->SelectPage( editor );
-                    editor->SetActive();
                     editor->GotoLine(bli->GetLineNumber());
+                    SetActive(editor);
                     return true;
                 }
             }

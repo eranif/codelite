@@ -134,6 +134,7 @@ static int FrameTimerId = wxNewId();
 const wxEventType wxEVT_UPDATE_STATUS_BAR        = XRCID("update_status_bar");
 const wxEventType wxEVT_LOAD_PERSPECTIVE         = XRCID("load_perspective");
 const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU = XRCID("refresh_perspective_menu");
+const wxEventType wxEVT_ACTIVATE_EDITOR          = XRCID("activate_editor");
 
 #define CHECK_SHUTDOWN() {\
 		if(ManagerST::Get()->IsShutdownInProgress()){\
@@ -535,6 +536,8 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_COMPLETED,  clMainFrame::OnRetaggingCompelted)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS,   clMainFrame::OnRetaggingProgress)
 	EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_READY,                clMainFrame::OnParserThreadReady)
+    
+	EVT_COMMAND(wxID_ANY, wxEVT_ACTIVATE_EDITOR,                   clMainFrame::OnActivateEditor)
 
 	EVT_COMMAND(wxID_ANY, wxEVT_UPDATE_STATUS_BAR,                 clMainFrame::OnSetStatusMessage)
 	EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE,                   clMainFrame::OnDatabaseUpgrade )
@@ -4971,4 +4974,10 @@ void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event)
             event.Enable(false);
         }
     }
+}
+
+void clMainFrame::OnActivateEditor(wxCommandEvent& e)
+{
+    LEditor* editor = dynamic_cast<LEditor*>(e.GetEventObject()); 
+    if (editor) editor->SetActive();
 }

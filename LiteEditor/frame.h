@@ -62,6 +62,7 @@ class MyMenuBar;
 extern const wxEventType wxEVT_UPDATE_STATUS_BAR;
 extern const wxEventType wxEVT_LOAD_PERSPECTIVE ;
 extern const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU;
+extern const wxEventType wxEVT_ACTIVATE_EDITOR;
 
 struct StartPageData {
 	wxString name;
@@ -535,6 +536,10 @@ protected:
 	// Clang
 	void OnPchCacheStarted(wxCommandEvent &e);
 	void OnPchCacheEnded  (wxCommandEvent &e);
+    
+    // Misc
+	void OnActivateEditor (wxCommandEvent &e);
+    
 	DECLARE_EVENT_TABLE()
 };
 

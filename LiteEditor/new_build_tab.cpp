@@ -135,7 +135,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     m_errorBmp   = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/error-strip"));
     m_warningBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/warning-strip"));
     m_successBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/success-strip"));
-
+    m_fillerBmp  = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/filler-strip"));
     wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
     SetSizer(bs);
     
@@ -541,7 +541,7 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
         }
 
         // Append the line content
-        wxBitmap bmp = wxNullBitmap;
+        wxBitmap bmp = m_fillerBmp;
         if( buildLineInfo->GetSeverity() == SV_ERROR ) {
             bmp = m_errorBmp;
             if ( !isSummaryLine ) {

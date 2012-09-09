@@ -17,14 +17,23 @@ BitmapLoader::BitmapLoader()
 	: m_bMapPopulated(false)
 {
 	wxString zipname;
-	
+	wxFileName fn;
+
 	if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
 		zipname = wxT("codelite-icons-fresh-farm.zip");
 	else
 		zipname = wxT("codelite-icons.zip");
+    
+    // Under linux, take into account the --prefix
+#ifdef __WXGTK__
+    wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);
+    fn = wxFileName(bitmapPath, zipname);
+#else
+    fn = wxFileName(wxStandardPaths::Get().GetDataDir(), zipname);
+#endif
 		
 	if(m_manifest.empty() || m_toolbarsBitmaps.empty()) {
-		m_zipPath = wxFileName(wxStandardPaths::Get().GetDataDir(), zipname);
+		m_zipPath = fn;
 		if(m_zipPath.FileExists()) {
 			doLoadManifest();
 			doLoadBitmaps();

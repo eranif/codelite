@@ -159,6 +159,7 @@ class NewBuildTab : public wxPanel
     wxBitmap                            m_errorBmp;
     wxBitmap                            m_warningBmp;
     wxBitmap                            m_successBmp;
+    wxBitmap                            m_fillerBmp;
     MyTextRenderer*                     m_textRenderer;
     BuildTabSettingsData                m_buildTabSettings;
     bool                                m_buildInterrupted;

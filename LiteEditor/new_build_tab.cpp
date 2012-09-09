@@ -171,7 +171,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     wxTheApp->Connect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( NewBuildTab::OnNextBuildError ),   NULL, this );
     wxTheApp->Connect(XRCID("next_build_error"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler ( NewBuildTab::OnNextBuildErrorUI ), NULL, this );
     
-    m_listctrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NewBuildTab::OnLineSelected), NULL, this);
+    m_listctrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(NewBuildTab::OnLineSelected), NULL, this);
 }
 
 NewBuildTab::~NewBuildTab()
@@ -493,6 +493,7 @@ void NewBuildTab::DoSearchForDirectory(const wxString& line)
 
 void NewBuildTab::OnLineSelected(wxDataViewEvent& e)
 {
+    e.Skip();
     if(e.GetItem().IsOk() == false || !DoSelectAndOpen(e.GetItem()) ) {
         e.Skip();
         return;

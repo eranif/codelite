@@ -149,7 +149,10 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     wxFont f = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     int xx, yy;
     memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &f);
-    m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER|wxDV_SINGLE|wxDV_ROW_LINES );
+    int style = wxDV_NO_HEADER|wxDV_SINGLE;
+    style |= wxDV_ROW_LINES;
+
+    m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
     // Make sure we have enought height for the icon
     yy < 16 ? yy = 16 : yy = yy;

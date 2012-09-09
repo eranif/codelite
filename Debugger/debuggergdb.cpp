@@ -1185,7 +1185,10 @@ void DbgGdb::OnDataRead( wxCommandEvent& e )
 	wxString bufferRead;
 	bufferRead << ped->GetData();
 	delete ped;
-
+    
+    if( !m_gdbProcess->IsAlive() )
+        return;
+    
 	wxArrayString lines = wxStringTokenize( bufferRead, wxT( "\n" ), wxTOKEN_STRTOK );
 	if(lines.IsEmpty())
 		return;

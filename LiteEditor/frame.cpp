@@ -184,7 +184,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 	EVT_MENU(wxID_EXIT,                         clMainFrame::OnQuit)
 
 	EVT_UPDATE_UI(XRCID("refresh_file"),        clMainFrame::OnFileExistUpdateUI)
-	EVT_UPDATE_UI(XRCID("save_file"),           clMainFrame::OnFileExistUpdateUI)
+	EVT_UPDATE_UI(XRCID("save_file"),           clMainFrame::OnFileSaveUI)
 	EVT_UPDATE_UI(XRCID("save_file_as"),        clMainFrame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("save_all"),            clMainFrame::OnFileExistUpdateUI)
 	EVT_UPDATE_UI(XRCID("save_tab_group"),      clMainFrame::OnFileExistUpdateUI)
@@ -1663,12 +1663,19 @@ void clMainFrame::LoadSession(const wxString &sessionName)
 	}
 }
 
-void clMainFrame::OnSave(wxCommandEvent& WXUNUSED(event))
+void clMainFrame::OnSave(wxCommandEvent& event)
 {
 	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
 		editor->SaveFile();
-	}
+        
+	} else {
+        
+        // delegate it to the plugins
+        wxCommandEvent saveEvent(XRCID("save_file"));
+        EventNotifier::Get()->ProcessEvent(saveEvent);
+        
+    }
 }
 
 void clMainFrame::OnSaveAs(wxCommandEvent& WXUNUSED(event))
@@ -4946,4 +4953,22 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
 	if (editor) {
 		editor->UpdateColours();
 	}
+}
+
+void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event)
+{
+    CHECK_SHUTDOWN();
+    LEditor *editor = GetMainBook()->GetActiveEditor();
+    if ( editor ) {
+        event.Enable(editor->IsModified());
+        
+    } else {
+        wxWindow *page = GetMainBook()->GetCurrentPage();
+        if( page ) {
+            event.Skip();
+            
+        } else {
+            event.Enable(false);
+        }
+    }
 }

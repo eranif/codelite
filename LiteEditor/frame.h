@@ -355,6 +355,7 @@ protected:
 	void OnClose(wxCloseEvent &event);
 
 	void OnSave(wxCommandEvent& event);
+    void OnFileSaveUI(wxUpdateUIEvent &event);
 	void OnSaveAs(wxCommandEvent& event);
 	void OnFileReload(wxCommandEvent& event);
 	void OnFileLoadTabGroup(wxCommandEvent& event);

@@ -156,10 +156,6 @@ class NewBuildTab : public wxPanel
     MapCmpPatterns_t                    m_cmpPatterns;
     int                                 m_warnCount;
     int                                 m_errorCount;
-    wxBitmap                            m_errorBmp;
-    wxBitmap                            m_warningBmp;
-    wxBitmap                            m_successBmp;
-    wxBitmap                            m_fillerBmp;
     MyTextRenderer*                     m_textRenderer;
     BuildTabSettingsData                m_buildTabSettings;
     bool                                m_buildInterrupted;

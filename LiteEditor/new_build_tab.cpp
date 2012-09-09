@@ -22,9 +22,12 @@
 #include "output_pane.h"
 #include "macros.h"
 
-static const wxChar* WARNING_MARKER = wxT("@@WARNING@@");
-static const wxChar* ERROR_MARKER   = wxT("@@ERROR@@");
-static const wxChar* SUMMARY_MARKER = wxT("@@SUMMARY@@");
+static const wxChar* WARNING_MARKER         = wxT("@@WARNING@@");
+static const wxChar* ERROR_MARKER           = wxT("@@ERROR@@");
+static const wxChar* SUMMARY_MARKER_ERROR   = wxT("@@SUMMARY_ERROR@@");
+static const wxChar* SUMMARY_MARKER_WARNING = wxT("@@SUMMARY_WARNING@@");
+static const wxChar* SUMMARY_MARKER_SUCCESS = wxT("@@SUMMARY_SUCCESS@@");
+static const wxChar* SUMMARY_MARKER         = wxT("@@SUMMARY@@");
 
 // A renderer for drawing the text
 class MyTextRenderer : public wxDataViewCustomRenderer
@@ -35,9 +38,16 @@ class MyTextRenderer : public wxDataViewCustomRenderer
     wxColour            m_warnFgColor;
     wxColour            m_errFgColor;
     wxVariant           m_value;
+    wxBitmap            m_errorBmp;
+    wxBitmap            m_warningBmp;
+    wxBitmap            m_successBmp;
     
 public:
     MyTextRenderer(wxDataViewListCtrl *listctrl) : m_listctrl(listctrl) {
+        m_errorBmp   = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/error-message"));
+        m_warningBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/warning-message"));
+        m_successBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/success-message"));
+        
         m_font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
         m_font.SetFamily(wxFONTFAMILY_TELETYPE);
         m_greyColor = wxColour(wxT("LIGHT GREY"));
@@ -52,12 +62,14 @@ public:
         dc.SelectObject(bmp);
         
         wxString s = m_value.GetString();
-        wxFont f(m_font);
-        f.SetWeight(wxFONTWEIGHT_BOLD);
+        wxFont f = m_font;
         dc.GetTextExtent(s, &xx, &yy, NULL, NULL, &f);
+        
+        // Adjust the height to fit the bitmap height at least
+        yy < m_errorBmp.GetHeight() ? yy = m_errorBmp.GetHeight() : yy = yy;
         return wxSize(xx, yy);
     }
-
+    
     virtual bool SetValue(const wxVariant& value) {
         m_value = value;
         return true;
@@ -84,8 +96,9 @@ public:
         wxVariant v;
         GetValue(v);
         wxString str = v.GetString();
-        
-        wxFont f(m_font);
+        str.Trim();
+        wxPoint pt = cell.GetTopLeft();
+        wxFont f = m_font;
         bool isSelected = state & wxDATAVIEW_CELL_SELECTED;
 
         if ( str.StartsWith(ERROR_MARKER, &str) ) {
@@ -97,9 +110,10 @@ public:
             if ( !isSelected ) {
                 dc->SetTextForeground( m_warnFgColor );
             }
+            
         } else if ( str.StartsWith(SUMMARY_MARKER, &str) ) {
             f.SetWeight(wxFONTWEIGHT_BOLD);
-
+            
         } else if( str.StartsWith(wxT("----")) ) {
             f.SetStyle(wxFONTSTYLE_ITALIC);
             if ( !isSelected )
@@ -109,12 +123,28 @@ public:
             f.SetStyle(wxFONTSTYLE_ITALIC);
             if ( !isSelected )
                 dc->SetTextForeground(m_greyColor);
+                
+        }
+        
+        if(str.StartsWith(SUMMARY_MARKER_ERROR, &str)) {
+            dc->DrawBitmap(m_errorBmp, pt);
+            pt.x += m_errorBmp.GetWidth() + 2;
+            str.Prepend(wxT(": "));
+            
+        } else if( str.StartsWith(SUMMARY_MARKER_WARNING, &str)) {
+            dc->DrawBitmap(m_warningBmp, pt);
+            pt.x += m_warningBmp.GetWidth() + 2;
+            str.Prepend(wxT(": "));
+            
+        } else if(str.StartsWith(SUMMARY_MARKER_SUCCESS, &str)) {
+            dc->DrawBitmap(m_successBmp, pt);
+            pt.x += m_successBmp.GetWidth() + 2;
+            str.Prepend(wxT(": "));
         }
         
         dc->SetFont(f);
-        dc->DrawText(str, cell.GetTopLeft());
+        dc->DrawText(str, pt);
         return true;
-        
     }
 };
 
@@ -132,10 +162,6 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_buildInProgress(false)
 {
     m_curError = m_errorsAndWarningsList.end();
-    m_errorBmp   = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/error-strip"));
-    m_warningBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/warning-strip"));
-    m_successBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/success-strip"));
-    m_fillerBmp  = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/filler-strip"));
     wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
     SetSizer(bs);
     
@@ -146,7 +172,8 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     wxBitmap tmpBmp(1, 1);
     wxMemoryDC memDc;
     memDc.SelectObject(tmpBmp);
-    wxFont f = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    f.SetFamily(wxFONTFAMILY_TELETYPE);
     int xx, yy;
     memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &f);
     int style = wxDV_NO_HEADER|wxDV_SINGLE;
@@ -155,14 +182,13 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
     // Make sure we have enought height for the icon
-    yy < 16 ? yy = 16 : yy = yy;
+    yy < 12 ? yy = 12 : yy = yy;
     m_listctrl->SetRowHeight(yy);
 
     bs->Add(m_listctrl, 1, wxEXPAND|wxALL);
     int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
     m_textRenderer = new MyTextRenderer(m_listctrl);
-    m_listctrl->AppendBitmapColumn(wxT("!"), 0, wxDATAVIEW_CELL_INERT, 16);
-    m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 1, screenWidth, wxALIGN_LEFT));
+    m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 0, screenWidth, wxALIGN_LEFT));
 
     EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
     EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
@@ -439,7 +465,9 @@ void NewBuildTab::DoClear()
     for(int i=0; i<count; ++i) {
         wxDataViewItem item = m_listctrl->GetStore()->GetItem(i);
         BuildLineInfo* data = (BuildLineInfo*)m_listctrl->GetItemData(item);
-        delete data;
+        if ( data ) {
+            delete data;
+        }
     }
     m_listctrl->DeleteAllItems();
 
@@ -544,28 +572,34 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
         }
 
         // Append the line content
-        wxBitmap bmp = m_fillerBmp;
+        
         if( buildLineInfo->GetSeverity() == SV_ERROR ) {
-            bmp = m_errorBmp;
             if ( !isSummaryLine ) {
                 buildLine.Prepend(ERROR_MARKER);
             }
+            
         } else if( buildLineInfo->GetSeverity() == SV_WARNING ) {
-            bmp = m_warningBmp;
             if ( !isSummaryLine ) {
                 buildLine.Prepend(WARNING_MARKER);
             }
-        } else if ( buildLineInfo->GetSeverity() == SV_SUCCESS ) {
-            bmp = m_successBmp;
-
         }
-
+        
         if ( isSummaryLine ) {
+            
+            // Add a marker for drawing the bitmap
+            if ( m_errorCount ) {
+                buildLine.Prepend(SUMMARY_MARKER_ERROR);
+                
+            } else if ( m_warnCount ) {
+                buildLine.Prepend(SUMMARY_MARKER_WARNING);
+                
+            } else {
+                buildLine.Prepend(SUMMARY_MARKER_SUCCESS);
+            }
             buildLine.Prepend(SUMMARY_MARKER);
         }
 
         wxVector<wxVariant> data;
-        data.push_back( wxVariant(bmp) );
         data.push_back( wxVariant(buildLine) );
         m_listctrl->AppendItem(data, (wxUIntPtr)buildLineInfo);
         
@@ -759,6 +793,9 @@ wxString NewBuildTab::GetBuildContent() const
         curline.StartsWith(WARNING_MARKER, &curline);
         curline.StartsWith(ERROR_MARKER,   &curline);
         curline.StartsWith(SUMMARY_MARKER, &curline);
+        curline.StartsWith(SUMMARY_MARKER_ERROR, &curline);
+        curline.StartsWith(SUMMARY_MARKER_SUCCESS, &curline);
+        curline.StartsWith(SUMMARY_MARKER_WARNING, &curline);
         output << curline << wxT("\n");
     }
     return output;

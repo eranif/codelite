@@ -532,7 +532,7 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
             return;
         }
 
-        wxString buildLine = lines.Item(i).Trim().Trim(false);
+        wxString buildLine = lines.Item(i);//.Trim().Trim(false);
         // If this is a line similar to 'Entering directory `'
         // add the path in the directories array
         DoSearchForDirectory(buildLine);

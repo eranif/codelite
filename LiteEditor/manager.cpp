@@ -466,7 +466,14 @@ void Manager::CreateProject ( ProjectData &data )
 #ifndef __WXMSW__
 	// The -mwindows linker flag is at best useless in !MSW, and breaks linking in the latest g++ (fedora17)
 		wxString linkoptions = bldConf->GetLinkOptions();
-		linkoptions.Replace(wxT("-mwindows;"), wxT(""));
+        if (linkoptions.Contains(wxT("-mwindows;"))) {
+            linkoptions.Replace(wxT("-mwindows;"), wxT(""));
+        }
+        // And again, without the ';' to catch an end-of-line one 
+         else if (linkoptions.Contains(wxT(";-mwindows"))) {
+            linkoptions.Replace(wxT(";-mwindows"), wxT(""));
+         }
+
 		bldConf->SetLinkOptions(linkoptions);
 #endif
 		bldConf->SetCompilerType ( data.m_cmpType );

@@ -843,19 +843,34 @@ void FileViewTree::DoRemoveItems()
 	bool ApplyToEachFileDeletion = false;
 	bool AlsoDeleteFromDisc = false;
 
+    // We need to get the item names and data first. Why? Because if they're projects and multiple,
+    // removing the second one segs in GetItemText(item) or data->GetData() as 'item' is no longer valid.
+    // Why doesn't this happen for files and VDs too? Good question :/
+	wxArrayString namearray; wxArrayInt kindarray;
+    std::vector<FilewViewTreeItemData*> itemdata; 
+	for (size_t i=0; i<num; i++) {
+		wxTreeItemId item = items.Item(i);
+        if(item.IsOk()) {
+            namearray.Add(GetItemText(item));
+            FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
+            itemdata.push_back(data);
+            // Store the kind too, as this would become an invalid value
+            kindarray.Add(data->GetData().GetKind());
+        }
+    }
+
 	wxArrayString filesRemoved;
 	for ( size_t i=0; i<num; i++ ) {
 		wxTreeItemId item = items.Item( i );
-		wxString name = GetItemText( item );
-
 		if( !item.IsOk() ) {
 			continue;
 		}
 
-		FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+		wxString name = namearray.Item(i);
+		FilewViewTreeItemData* data = itemdata.at(i);
 
 		if ( data ) {
-			switch (data->GetData().GetKind()) {
+			switch (kindarray.Item(i)) {
 			case ProjectItem::TypeFile: {
 				int result = wxID_YES;
 				if ( ApplyToEachFileRemoval==false ) {
@@ -932,8 +947,6 @@ void FileViewTree::DoRemoveItems()
 			default:
 				break;
 			}
-
-
 		}
 	}
 

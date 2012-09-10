@@ -797,13 +797,14 @@ wxString NewBuildTab::GetBuildContent() const
 {
     wxString output;
     for(int i=0; i<m_listctrl->GetItemCount(); ++i) {
-        wxString curline = m_listctrl->GetTextValue(i, 1);
+        wxString curline = m_listctrl->GetTextValue(i, 0);
         curline.StartsWith(WARNING_MARKER, &curline);
         curline.StartsWith(ERROR_MARKER,   &curline);
         curline.StartsWith(SUMMARY_MARKER, &curline);
         curline.StartsWith(SUMMARY_MARKER_ERROR, &curline);
         curline.StartsWith(SUMMARY_MARKER_SUCCESS, &curline);
         curline.StartsWith(SUMMARY_MARKER_WARNING, &curline);
+        curline.Trim();
         output << curline << wxT("\n");
     }
     return output;

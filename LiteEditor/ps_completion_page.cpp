@@ -26,21 +26,17 @@ void PSCompletionPage::Clear()
 
 void PSCompletionPage::Load(BuildConfigPtr buildConf)
 {
-    m_textCtrlCmpOptions->SetValue(buildConf->GetClangCmpFlags());
     m_textCtrlMacros->SetValue(buildConf->GetClangPPFlags());
     m_textCtrlSearchPaths->SetValue(buildConf->GetCcSearchPaths());
-	m_checkBoxC11->SetValue(buildConf->IsClangC11());
-    m_textCtrlCmpOptionsC->SetValue(buildConf->GetClangCmpFlagsC());
+    m_checkBoxC11->SetValue(buildConf->IsClangC11());
 }
 
 void PSCompletionPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
-    buildConf->SetClangCmpFlags(m_textCtrlCmpOptions->GetValue());
     buildConf->SetClangPPFlags(m_textCtrlMacros->GetValue());
     buildConf->SetCcSearchPaths(m_textCtrlSearchPaths->GetValue());
-	buildConf->SetClangC11(m_checkBoxC11->IsChecked());
-	buildConf->SetClangCmpFlagsC(m_textCtrlCmpOptionsC->GetValue());
-    
+    buildConf->SetClangC11(m_checkBoxC11->IsChecked());
+
     // Save was requested
     if(m_ccSettingsModified) {
         m_ccSettingsModified = false;

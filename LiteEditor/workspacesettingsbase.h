@@ -1,16 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __WORKSPACESETTINGSBASE_H__
-#define __WORKSPACESETTINGSBASE_H__
+#ifndef __workspacesettingsbase__
+#define __workspacesettingsbase__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -61,7 +60,7 @@ class WorkspaceSettingsBase : public wxDialog
 	
 	public:
 		
-		WorkspaceSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		WorkspaceSettingsBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~WorkspaceSettingsBase();
 	
 };
@@ -79,16 +78,6 @@ class CodeCompletionBasePage : public wxPanel
 		wxStaticText* m_staticText5;
 		wxTextCtrl* m_textCtrlSearchPaths;
 		wxPanel* m_panel6;
-		wxSplitterWindow* m_splitter3;
-		wxPanel* m_panel9;
-		wxSplitterWindow* m_splitter31;
-		wxPanel* m_panel61;
-		wxStaticText* m_staticText11;
-		wxTextCtrl* m_textCtrlCmpOptions;
-		wxPanel* m_panel7;
-		wxStaticText* m_staticText7;
-		wxTextCtrl* m_textCtrlCmpOptionsC;
-		wxPanel* m_panel10;
 		wxStaticText* m_staticText12;
 		wxTextCtrl* m_textCtrlMacros;
 		
@@ -99,27 +88,15 @@ class CodeCompletionBasePage : public wxPanel
 	
 	public:
 		
-		CodeCompletionBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
+		CodeCompletionBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL );
 		~CodeCompletionBasePage();
-		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
-			m_splitter1->SetSashPosition( 0 );
-			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter1OnIdle ), NULL, this );
+		m_splitter1->SetSashPosition( 0 );
+		m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter1OnIdle ), NULL, this );
 		}
 		
-		void m_splitter3OnIdle( wxIdleEvent& )
-		{
-			m_splitter3->SetSashPosition( 0 );
-			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter3OnIdle ), NULL, this );
-		}
-		
-		void m_splitter31OnIdle( wxIdleEvent& )
-		{
-			m_splitter31->SetSashPosition( 0 );
-			m_splitter31->Disconnect( wxEVT_IDLE, wxIdleEventHandler( CodeCompletionBasePage::m_splitter31OnIdle ), NULL, this );
-		}
 	
 };
 
-#endif //__WORKSPACESETTINGSBASE_H__
+#endif //__workspacesettingsbase__

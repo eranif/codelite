@@ -1,16 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __PROJECT_SETTINGS_BASE_DLG_H__
-#define __PROJECT_SETTINGS_BASE_DLG_H__
+#ifndef __project_settings_base_dlg__
+#define __project_settings_base_dlg__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+
 #include <wx/string.h>
 #include <wx/choice.h>
 #include <wx/gdicmn.h>
@@ -66,7 +65,7 @@ class ProjectSettingsBaseDlg : public wxDialog
 	
 	public:
 		
-		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
 	
 };
@@ -118,7 +117,7 @@ class PSGeneralPageBase : public wxPanel
 	public:
 		wxGridBagSizer* m_gbSizer1;
 		
-		PSGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSGeneralPageBase();
 	
 };
@@ -170,7 +169,7 @@ class PSCompilerPageBase : public wxPanel
 	
 	public:
 		
-		PSCompilerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCompilerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCompilerPageBase();
 	
 };
@@ -188,6 +187,7 @@ class PSLinkPageBase : public wxPanel
 		wxGridBagSizer* m_gbSizer3;
 		wxStaticText* m_staticText3311;
 		wxChoice* m_choiceLnkUseWithGlobalSettings;
+		
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_textLinkerOptions;
 		wxButton* m_buttonLinkerOptions;
@@ -210,7 +210,7 @@ class PSLinkPageBase : public wxPanel
 	
 	public:
 		
-		PSLinkPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSLinkPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSLinkPageBase();
 	
 };
@@ -247,7 +247,7 @@ class PSDebuggerPageBase : public wxPanel
 	
 	public:
 		
-		PSDebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSDebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSDebuggerPageBase();
 	
 };
@@ -284,7 +284,7 @@ class PSResourcesPageBase : public wxPanel
 	
 	public:
 		
-		PSResourcesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSResourcesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSResourcesPageBase();
 	
 };
@@ -312,7 +312,7 @@ class PSEnvironmentBasePage : public wxPanel
 	
 	public:
 		
-		PSEnvironmentBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSEnvironmentBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSEnvironmentBasePage();
 	
 };
@@ -331,7 +331,7 @@ class PSBuildEventsBasePage : public wxPanel
 	
 	public:
 		
-		PSBuildEventsBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSBuildEventsBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSBuildEventsBasePage();
 	
 };
@@ -378,7 +378,7 @@ class PSCustomBuildBasePage : public wxPanel
 	
 	public:
 		
-		PSCustomBuildBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCustomBuildBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCustomBuildBasePage();
 	
 };
@@ -438,7 +438,7 @@ class GlobalSettingsBasePanel : public wxPanel
 	
 	public:
 		
-		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~GlobalSettingsBasePanel();
 	
 };
@@ -465,7 +465,7 @@ class PSCustomMakefileBasePage : public wxPanel
 	
 	public:
 		
-		PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCustomMakefileBasePage();
 	
 };
@@ -483,16 +483,6 @@ class PSCompletionBase : public wxPanel
 		wxStaticText* m_staticText47;
 		wxTextCtrl* m_textCtrlSearchPaths;
 		wxPanel* m_panel15;
-		wxSplitterWindow* m_splitter2;
-		wxPanel* m_panel16;
-		wxSplitterWindow* m_splitter3;
-		wxPanel* m_panel18;
-		wxStaticText* m_staticText48;
-		wxTextCtrl* m_textCtrlCmpOptions;
-		wxPanel* m_panel19;
-		wxStaticText* m_staticText50;
-		wxTextCtrl* m_textCtrlCmpOptionsC;
-		wxPanel* m_panel17;
 		wxStaticText* m_staticText49;
 		wxTextCtrl* m_textCtrlMacros;
 		wxCheckBox* m_checkBoxC11;
@@ -503,27 +493,15 @@ class PSCompletionBase : public wxPanel
 	
 	public:
 		
-		PSCompletionBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCompletionBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCompletionBase();
-		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
-			m_splitter1->SetSashPosition( 0 );
-			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter1OnIdle ), NULL, this );
+		m_splitter1->SetSashPosition( 0 );
+		m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter1OnIdle ), NULL, this );
 		}
 		
-		void m_splitter2OnIdle( wxIdleEvent& )
-		{
-			m_splitter2->SetSashPosition( 0 );
-			m_splitter2->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter2OnIdle ), NULL, this );
-		}
-		
-		void m_splitter3OnIdle( wxIdleEvent& )
-		{
-			m_splitter3->SetSashPosition( 157 );
-			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter3OnIdle ), NULL, this );
-		}
 	
 };
 
-#endif //__PROJECT_SETTINGS_BASE_DLG_H__
+#endif //__project_settings_base_dlg__

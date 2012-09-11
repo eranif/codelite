@@ -141,8 +141,8 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
     default:
         break;
     }
-	
-	wxString projectPath;
+
+    wxString projectPath;
     wxString pchFile;
     FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath, pchFile);
     ClangThreadRequest* request = new ClangThreadRequest(m_index,
@@ -209,27 +209,6 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     wxArrayString &cppCompileArgs = cmpArgs[FileExtManager::TypeSourceCpp];
     wxArrayString &cCompileArgs   = cmpArgs[FileExtManager::TypeSourceC];
 
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-    if(!matrix) {
-        return cmpArgs;
-    }
-
-    wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
-
-    // Now that we got the selected workspace configuration, extract the related project configuration
-    ProjectPtr proj =  WorkspaceST::Get()->FindProjectByName(projectName, errMsg);
-    if(!proj) {
-        return cmpArgs;
-    }
-
-    wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, proj->GetName());
-    BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), projectSelConf);
-
-    projectPath = proj->GetFileName().GetPath();
-    if(dependProjbldConf) {
-        CL_DEBUG(wxT("DoPrepareCompilationArgs(): Project=%s, Conf=%s"), projectName.c_str(), dependProjbldConf->GetName().c_str());
-    }
-
     // Build the TU file name
     wxFileName fnSourceFile(sourceFile);
     pchfile << WorkspaceST::Get()->GetWorkspaceFileName().GetPath() << wxFileName::GetPathSeparator() << wxT(".clang");
@@ -240,50 +219,45 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     }
 
     pchfile << wxFileName::GetPathSeparator() << fnSourceFile.GetFullName() << wxT(".TU");
-    
-    // Extracting the compilation arguments:
-    // This is simple, we only need to read them from the database created for us
-    // by codelitegcc
-    if ( dependProjbldConf ) {
-        
-        CompilationDatabase cdb;
-		static bool once = false;
-        if ( !wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) && !once ) {
-			once = true;
-			
-            wxString msg;
-            msg << _("Could not locate compilation database: ")
-                << cdb.GetFileName().GetFullPath() << wxT("\n\n")
-                << _("This file should be created automatically for you.\nIf you don't have it, please run a full rebuild of your workspace\n\n")
-                << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX and CC environment variables like this:\n")
-                << _("CXX=\"codelitegcc g++\"\n")
-                << _("CC=\"codelitegcc gcc\"\n\n");
-                
-            clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
-                                                            true,
-                                                            PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
-                                                            ButtonDetails(),
-                                                            ButtonDetails(),
-                                                            ButtonDetails(),
-                                                            CheckboxDetails(wxT("CodeCompletionMissingCompilationDB")));
-            
-        } else {
-            cdb.Open();
-            if( cdb.IsOpened() ) {
-                CL_DEBUG(wxT("Loading compilation flags for file: %s"), fnSourceFile.GetFullPath().c_str());
-                wxString compilationLine, cwd;
-                cdb.CompilationLine(fnSourceFile.GetFullPath(), compilationLine, cwd);
-                cdb.Close();
 
-                CompilerCommandLineParser cclp(compilationLine);
-                cclp.MakeAbsolute(cwd);
-                
-                CL_DEBUG(wxT("Loaded compilation flags: %s"), compilationLine.c_str());
-                args.insert(args.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
-                args.insert(args.end(), cclp.GetMacrosWithPrefix().begin(),   cclp.GetMacrosWithPrefix().end());
-                args.Add(cclp.GetStandardWithPrefix());
-                
-            }
+
+    CompilationDatabase cdb;
+    static bool once = false;
+    if ( !wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) && !once ) {
+        once = true;
+
+        wxString msg;
+        msg << _("Could not locate compilation database: ")
+            << cdb.GetFileName().GetFullPath() << wxT("\n\n")
+            << _("This file should be created automatically for you.\nIf you don't have it, please run a full rebuild of your workspace\n\n")
+            << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX and CC environment variables like this:\n")
+            << _("CXX=codelitegcc g++\n")
+            << _("CC=codelitegcc gcc\n\n");
+
+        clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
+                true,
+                PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/tip")),
+                ButtonDetails(),
+                ButtonDetails(),
+                ButtonDetails(),
+                CheckboxDetails(wxT("CodeCompletionMissingCompilationDB")));
+
+    } else {
+        cdb.Open();
+        if( cdb.IsOpened() ) {
+            CL_DEBUG(wxT("Loading compilation flags for file: %s"), fnSourceFile.GetFullPath().c_str());
+            wxString compilationLine, cwd;
+            cdb.CompilationLine(fnSourceFile.GetFullPath(), compilationLine, cwd);
+            cdb.Close();
+
+            CompilerCommandLineParser cclp(compilationLine);
+            cclp.MakeAbsolute(cwd);
+
+            CL_DEBUG(wxT("Loaded compilation flags: %s"), compilationLine.c_str());
+            args.insert(args.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
+            args.insert(args.end(), cclp.GetMacrosWithPrefix().begin(),   cclp.GetMacrosWithPrefix().end());
+            args.Add(cclp.GetStandardWithPrefix());
+
         }
     }
 
@@ -315,24 +289,6 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
     }
 
-    // Options
-    // TODO:: separate the C from the C++
-    wxString strWorkspaceCmpOptions, strWorkspaceCmpOptions_c;
-    LocalWorkspaceST::Get()->GetParserOptions(strWorkspaceCmpOptions);
-    LocalWorkspaceST::Get()->GetCParserOptions(strWorkspaceCmpOptions_c);
-
-    wxArrayString workspaceCmpOptions = wxStringTokenize(strWorkspaceCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
-    for(size_t i=0; i<workspaceCmpOptions.GetCount(); i++) {
-        wxArrayString opts = DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false), projectName);
-        cppCompileArgs.insert(cppCompileArgs.end(), opts.begin(), opts.end());
-    }
-
-    workspaceCmpOptions = wxStringTokenize(strWorkspaceCmpOptions_c, wxT("\n\r"), wxTOKEN_STRTOK);
-    for(size_t i=0; i<workspaceCmpOptions.GetCount(); i++) {
-        wxArrayString opts = DoExpandBacktick(workspaceCmpOptions.Item(i).Trim().Trim(false), projectName);
-        cCompileArgs.insert(cCompileArgs.end(), opts.begin(), opts.end());
-    }
-
     // Macros
     wxString strWorkspaceMacros;
     LocalWorkspaceST::Get()->GetParserMacros(strWorkspaceMacros);
@@ -340,63 +296,6 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     for(size_t i=0; i<workspaceMacros.GetCount(); i++) {
         cppCompileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
         cCompileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
-    }
-
-    ///////////////////////////////////////////////////////////////////////
-    // Project setting additional flags
-    ///////////////////////////////////////////////////////////////////////
-
-    if(dependProjbldConf) {
-
-        // Include paths
-        wxArrayString projIncls;
-        wxString projSearchPath = dependProjbldConf->GetCcSearchPaths();
-        projIncls = wxStringTokenize(projSearchPath, wxT("\r\n"), wxTOKEN_STRTOK);
-        for(size_t i=0; i<projIncls.GetCount(); i++) {
-            wxString p = projIncls.Item(i).Trim().Trim(false);
-            if(p.IsEmpty())
-                continue;
-
-            p = MacroManager::Instance()->Expand(p, PluginManager::Get(), proj->GetName(), dependProjbldConf->GetName());
-            wxFileName fn(p, wxT(""));
-            if(fn.IsRelative()) {
-                fn.MakeAbsolute(projectPath);
-            }
-            cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
-            cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
-        }
-
-        // Options (C++)
-        wxString strProjCmpOptions = dependProjbldConf->GetClangCmpFlags();
-        wxArrayString projCmpOptions = wxStringTokenize(strProjCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
-        for(size_t i=0; i<projCmpOptions.GetCount(); i++) {
-            wxArrayString opts = DoExpandBacktick(projCmpOptions.Item(i).Trim().Trim(false), projectName);
-            cppCompileArgs.insert(cppCompileArgs.end(), opts.begin(), opts.end());
-        }
-
-
-        // Options (C)
-        wxString strProjCCmpOptions = dependProjbldConf->GetClangCmpFlagsC();
-        projCmpOptions = wxStringTokenize(strProjCCmpOptions, wxT("\n\r"), wxTOKEN_STRTOK);
-        for(size_t i=0; i<projCmpOptions.GetCount(); i++) {
-            wxArrayString opts = DoExpandBacktick(projCmpOptions.Item(i).Trim().Trim(false), projectName);
-            cCompileArgs.insert(cCompileArgs.end(), opts.begin(), opts.end());
-        }
-
-        // Macros
-        wxString strProjMacros = dependProjbldConf->GetClangPPFlags();
-        wxArrayString projMacros = wxStringTokenize(strProjMacros, wxT("\n\r"), wxTOKEN_STRTOK);
-        for(size_t i=0; i<projMacros.GetCount(); i++) {
-            wxString arg;
-            arg << wxT("-D") << projMacros.Item(i).Trim().Trim(false);
-            cppCompileArgs.Add(arg);
-            cCompileArgs.Add(arg);
-        }
-
-        // Add C++ 11 support?
-        if(dependProjbldConf->IsClangC11()) {
-            cppCompileArgs.Add(wxString::Format(wxT("-std=gnu++11")));
-        }
     }
 
     cppCompileArgs.insert(cppCompileArgs.end(), args.begin(), args.end());
@@ -668,16 +567,16 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         tag->SetName      (entryName);
         tag->SetPattern   (entryPattern);
         tag->SetSignature (entrySignature);
-        
+
         // Add support for clang comment parsing
         CXString BriefComment = clang_getCompletionBriefComment(str);
         const char* comment = clang_getCString(BriefComment);
         if( comment && comment[0] != '\0' ) {
             tag->SetComment(wxString(comment, wxConvUTF8));
         }
-        
+
         clang_disposeString(BriefComment);
-        
+
         switch(kind) {
         case CXCursor_EnumConstantDecl:
             tag->SetKind(wxT("enumerator"));
@@ -889,19 +788,18 @@ void ClangDriver::OnWorkspaceLoaded(wxCommandEvent& event)
 
 ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* excludeEditor)
 {
-	// Collect all modified buffers and pass them to clang as well
-	ClangThreadRequest::List_t modifiedBuffers;
-	std::vector<LEditor*> editors;
-	clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
-	for(size_t i=0; i<editors.size(); i++) {
-		
-		if( editors.at(i) == excludeEditor || !editors.at(i)->IsModified())
-			continue;
-		
-		modifiedBuffers.push_back( std::make_pair( editors.at(i)->GetFileName().GetFullPath(), editors.at(i)->GetText() ) );
-	}
-	return modifiedBuffers;
+    // Collect all modified buffers and pass them to clang as well
+    ClangThreadRequest::List_t modifiedBuffers;
+    std::vector<LEditor*> editors;
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
+    for(size_t i=0; i<editors.size(); i++) {
+
+        if( editors.at(i) == excludeEditor || !editors.at(i)->IsModified())
+            continue;
+
+        modifiedBuffers.push_back( std::make_pair( editors.at(i)->GetFileName().GetFullPath(), editors.at(i)->GetText() ) );
+    }
+    return modifiedBuffers;
 }
 
 #endif // HAS_LIBCLANG
-

@@ -4,7 +4,8 @@
 		"m_objCounter":	24,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC38D8InitBitmapResources",
-		"m_bitmapsFile":	""
+		"m_bitmapsFile":	"",
+		"m_GenerateCodeTypes":	1
 	},
 	"windows":	[{
 			"m_type":	4421,
@@ -15,9 +16,9 @@
 			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
-					"type":	"string",
+					"type":	"winid",
 					"m_label":	"ID:",
-					"m_value":	"wxID_ANY"
+					"m_winid":	"wxID_ANY"
 				}, {
 					"type":	"string",
 					"m_label":	"Size:",
@@ -27,7 +28,7 @@
 					"m_label":	"Name:",
 					"m_value":	"SvnCommitDialog"
 				}, {
-					"type":	"string",
+					"type":	"multi-string",
 					"m_label":	"Tooltip:",
 					"m_value":	""
 				}, {
@@ -122,9 +123,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ANY"
+											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -134,7 +135,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_staticText32"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -150,7 +151,7 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Feature Request ID:"
 										}, {
@@ -169,9 +170,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ANY"
+											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -181,7 +182,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_textCtrlFrID"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -216,9 +217,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ANY"
+											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -228,7 +229,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_staticTextBugID"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -244,7 +245,7 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Bug ID:"
 										}, {
@@ -263,9 +264,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ANY"
+											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -275,7 +276,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_textCtrlBugID"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -311,9 +312,9 @@
 							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
 							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
-									"type":	"string",
+									"type":	"winid",
 									"m_label":	"ID:",
-									"m_value":	"wxID_ANY"
+									"m_winid":	"wxID_ANY"
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
@@ -323,7 +324,7 @@
 									"m_label":	"Name:",
 									"m_value":	"m_splitter1"
 								}, {
-									"type":	"string",
+									"type":	"multi-string",
 									"m_label":	"Tooltip:",
 									"m_value":	""
 								}, {
@@ -366,9 +367,9 @@
 									"m_styles":	["wxTAB_TRAVERSAL"],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ANY"
+											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -378,7 +379,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_panel1"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -423,9 +424,9 @@
 													"m_styles":	[],
 													"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 													"m_properties":	[{
-															"type":	"string",
+															"type":	"winid",
 															"m_label":	"ID:",
-															"m_value":	"wxID_ANY"
+															"m_winid":	"wxID_ANY"
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
@@ -435,7 +436,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_staticText17"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -451,7 +452,7 @@
 															"m_label":	"Font:",
 															"m_value":	""
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Label:",
 															"m_value":	"Modified Paths:"
 														}, {
@@ -470,9 +471,9 @@
 													"m_styles":	["wxLB_SINGLE"],
 													"m_sizerFlags":	["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
-															"type":	"string",
+															"type":	"winid",
 															"m_label":	"ID:",
-															"m_value":	"wxID_ANY"
+															"m_winid":	"wxID_ANY"
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
@@ -482,7 +483,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_checkListFiles"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -515,9 +516,9 @@
 									"m_styles":	["wxTAB_TRAVERSAL"],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ANY"
+											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -527,7 +528,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPage14"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -572,9 +573,9 @@
 													"m_styles":	[],
 													"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 													"m_properties":	[{
-															"type":	"string",
+															"type":	"winid",
 															"m_label":	"ID:",
-															"m_value":	"wxID_ANY"
+															"m_winid":	"wxID_ANY"
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
@@ -584,7 +585,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_staticText19"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -600,7 +601,7 @@
 															"m_label":	"Font:",
 															"m_value":	""
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Label:",
 															"m_value":	"Message:"
 														}, {
@@ -619,9 +620,9 @@
 													"m_styles":	["wxTE_RICH2", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE"],
 													"m_sizerFlags":	["wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
-															"type":	"string",
+															"type":	"winid",
 															"m_label":	"ID:",
-															"m_value":	"wxID_ANY"
+															"m_winid":	"wxID_ANY"
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
@@ -631,7 +632,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_textCtrlMessage"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -692,9 +693,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_ANY"
+											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -704,7 +705,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_choiceMessages"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -765,9 +766,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_OK"
+											"m_winid":	"wxID_OK"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -777,7 +778,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_button3"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	"Commit"
 										}, {
@@ -795,7 +796,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"Commit"
+											"m_value":	"&Commit"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",
@@ -812,9 +813,9 @@
 									"m_styles":	[],
 									"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
-											"type":	"string",
+											"type":	"winid",
 											"m_label":	"ID:",
-											"m_value":	"wxID_CANCEL"
+											"m_winid":	"wxID_CANCEL"
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
@@ -824,7 +825,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_button4"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {

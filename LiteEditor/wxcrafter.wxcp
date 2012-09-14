@@ -28,7 +28,7 @@
 					"m_label":	"Name:",
 					"m_value":	"NewProjectDlg"
 				}, {
-					"type":	"string",
+					"type":	"multi-string",
 					"m_label":	"Tooltip:",
 					"m_value":	""
 				}, {
@@ -97,7 +97,7 @@
 									"m_label":	"Name:",
 									"m_value":	"m_splitter5"
 								}, {
-									"type":	"string",
+									"type":	"multi-string",
 									"m_label":	"Tooltip:",
 									"m_value":	""
 								}, {
@@ -152,7 +152,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPageRight"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -209,7 +209,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_staticText34"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -225,7 +225,7 @@
 															"m_label":	"Font:",
 															"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Label:",
 															"m_value":	"Project category:"
 														}, {
@@ -256,7 +256,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_chCategories"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -309,7 +309,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_listTemplates"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -375,7 +375,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPageLeft"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -470,7 +470,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_staticText16"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -486,7 +486,7 @@
 																	"m_label":	"Font:",
 																	"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Project name:"
 																}, {
@@ -517,7 +517,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_txtProjName"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -570,7 +570,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_staticText18"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -586,7 +586,7 @@
 																	"m_label":	"Font:",
 																	"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Project path:"
 																}, {
@@ -636,7 +636,7 @@
 																			"m_label":	"Name:",
 																			"m_value":	"m_textCtrlProjectPath"
 																		}, {
-																			"type":	"string",
+																			"type":	"multi-string",
 																			"m_label":	"Tooltip:",
 																			"m_value":	""
 																		}, {
@@ -689,7 +689,7 @@
 																			"m_label":	"Name:",
 																			"m_value":	"m_bmpButton33"
 																		}, {
-																			"type":	"string",
+																			"type":	"multi-string",
 																			"m_label":	"Tooltip:",
 																			"m_value":	""
 																		}, {
@@ -743,7 +743,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_staticText21"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -759,7 +759,7 @@
 																	"m_label":	"Font:",
 																	"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Compiler:"
 																}, {
@@ -790,7 +790,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_chCompiler"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -861,7 +861,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_cbSeparateDir"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -914,7 +914,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_stxtFullFileName"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -930,7 +930,7 @@
 																	"m_label":	"Font:",
 																	"m_value":	""
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	""
 																}, {
@@ -985,7 +985,7 @@
 																	"m_label":	"Name:",
 																	"m_value":	"m_txtDescription"
 																}, {
-																	"type":	"string",
+																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
 																	"m_value":	""
 																}, {
@@ -1055,7 +1055,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_button3"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -1073,7 +1073,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"OK"
+											"m_value":	"&OK"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",
@@ -1114,7 +1114,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_button4"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -1164,7 +1164,7 @@
 					"m_label":	"Name:",
 					"m_value":	"NavBarControl"
 				}, {
-					"type":	"string",
+					"type":	"multi-string",
 					"m_label":	"Tooltip:",
 					"m_value":	""
 				}, {
@@ -1233,7 +1233,7 @@
 									"m_label":	"Name:",
 									"m_value":	"m_splitter"
 								}, {
-									"type":	"string",
+									"type":	"multi-string",
 									"m_label":	"Tooltip:",
 									"m_value":	""
 								}, {
@@ -1288,7 +1288,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPage39"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -1331,7 +1331,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxEXPAND"],
+													"m_sizerFlags":	["wxLEFT", "wxTOP", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1345,7 +1345,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_scope"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -1406,7 +1406,7 @@
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPage41"
 										}, {
-											"type":	"string",
+											"type":	"multi-string",
 											"m_label":	"Tooltip:",
 											"m_value":	""
 										}, {
@@ -1449,7 +1449,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxEXPAND"],
+													"m_sizerFlags":	["wxRIGHT", "wxTOP", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1463,7 +1463,7 @@
 															"m_label":	"Name:",
 															"m_value":	"m_func"
 														}, {
-															"type":	"string",
+															"type":	"multi-string",
 															"m_label":	"Tooltip:",
 															"m_value":	""
 														}, {
@@ -1527,7 +1527,7 @@
 					"m_label":	"Name:",
 					"m_value":	"BuildTabTopPanel"
 				}, {
-					"type":	"string",
+					"type":	"multi-string",
 					"m_label":	"Tooltip:",
 					"m_value":	""
 				}, {

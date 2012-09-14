@@ -129,7 +129,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer1->Add(boxSizer2, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button3 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button3 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_button3->SetDefault();
     
     boxSizer2->Add(m_button3, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
@@ -196,7 +196,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxArrayString m_scopeArr;
     m_scope = new wxChoice(m_splitterPage39, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_scopeArr, 0);
     
-    boxSizer42->Add(m_scope, 0, wxEXPAND, 5);
+    boxSizer42->Add(m_scope, 0, wxLEFT|wxTOP|wxEXPAND, 5);
     
     m_splitterPage41 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage39, m_splitterPage41, 200);
@@ -207,7 +207,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxArrayString m_funcArr;
     m_func = new wxChoice(m_splitterPage41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_funcArr, 0);
     
-    boxSizer43->Add(m_func, 0, wxEXPAND, 5);
+    boxSizer43->Add(m_func, 0, wxRIGHT|wxTOP|wxEXPAND, 5);
     
     
     SetSizeHints(-1,-1);

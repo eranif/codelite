@@ -100,8 +100,8 @@ class ASStreamIterator : public ASSourceIterator
 		void saveLastInputLine();
 
 	private:
-		ASStreamIterator(const ASStreamIterator& copy);       // copy constructor not to be imlpemented
-		ASStreamIterator& operator=(ASStreamIterator&);       // assignment operator not to be implemented
+		ASStreamIterator(const ASStreamIterator &copy);       // copy constructor not to be imlpemented
+		ASStreamIterator &operator=(ASStreamIterator &);      // assignment operator not to be implemented
 		T* inStream;           // pointer to the input stream
 		string buffer;         // current input line
 		string prevBuffer;     // previous input line
@@ -113,7 +113,7 @@ class ASStreamIterator : public ASSourceIterator
 		bool prevLineDeleted;  // the previous input line was deleted
 
 	public:	// inline functions
-		bool compareToInputBuffer(const string& nextLine_) const
+		bool compareToInputBuffer(const string &nextLine_) const
 		{ return (nextLine_ == prevBuffer); }
 		const char* getOutputEOL() const { return outputEOL; }
 		bool hasMoreLines() const { return !inStream->eof(); }
@@ -127,26 +127,26 @@ class ASStreamIterator : public ASSourceIterator
 class ASOptions
 {
 	public:
-		ASOptions(ASFormatter& formatterArg) : formatter(formatterArg) {}
+		ASOptions(ASFormatter &formatterArg) : formatter(formatterArg) {}
 		string getOptionErrors();
-		void importOptions(istream& in, vector<string> &optionsVector);
-		bool parseOptions(vector<string> &optionsVector, const string& errorInfo);
+		void importOptions(istream &in, vector<string> &optionsVector);
+		bool parseOptions(vector<string> &optionsVector, const string &errorInfo);
 
 	private:
 		// variables
-		ASFormatter& formatter;			// reference to the ASFormatter object
+		ASFormatter &formatter;			// reference to the ASFormatter object
 		stringstream optionErrors;		// option error messages
 
 		// functions
-		ASOptions& operator=(ASOptions&);          // not to be implemented
-		string getParam(const string& arg, const char* op);
-		string getParam(const string& arg, const char* op1, const char* op2);
+		ASOptions &operator=(ASOptions &);         // not to be implemented
+		string getParam(const string &arg, const char* op);
+		string getParam(const string &arg, const char* op1, const char* op2);
 		bool isOption(const string arg, const char* op);
-		bool isOption(const string& arg, const char* op1, const char* op2);
-		void isOptionError(const string& arg, const string& errorInfo);
-		bool isParamOption(const string& arg, const char* option);
-		bool isParamOption(const string& arg, const char* option1, const char* option2);
-		void parseOption(const string& arg, const string& errorInfo);
+		bool isOption(const string &arg, const char* op1, const char* op2);
+		void isOptionError(const string &arg, const string &errorInfo);
+		bool isParamOption(const string &arg, const char* option);
+		bool isParamOption(const string &arg, const char* option1, const char* option2);
+		void parseOption(const string &arg, const string &errorInfo);
 };
 
 #ifndef	ASTYLE_LIB
@@ -158,7 +158,7 @@ class ASOptions
 class ASConsole
 {
 	private:	// variables
-		ASFormatter& formatter;				// reference to the ASFormatter object
+		ASFormatter &formatter;				// reference to the ASFormatter object
 		ASLocalizer localizer;				// ASLocalizer object
 		// command line options
 		bool isRecursive;                   // recursive option
@@ -195,7 +195,7 @@ class ASConsole
 		vector<string> fileName;            // files to be processed including path
 
 	public:
-		ASConsole(ASFormatter& formatterArg) : formatter(formatterArg) {
+		ASConsole(ASFormatter &formatterArg) : formatter(formatterArg) {
 			// command line options
 			isRecursive = false;
 			origSuffix = ".orig";
@@ -221,11 +221,11 @@ class ASConsole
 		}
 
 		// functions
-		void convertLineEnds(ostringstream& out, int lineEnd);
+		void convertLineEnds(ostringstream &out, int lineEnd);
 		FileEncoding detectEncoding(const char* data, size_t dataSize) const;
 		void error() const;
 		void error(const char* why, const char* what) const;
-		void formatCinToCout() const;
+		void formatCinToCout();
 		vector<string> getArgvOptions(int argc, char** argv) const;
 		bool fileNameVectorIsEmpty();
 		int  getFilesFormatted();
@@ -259,8 +259,8 @@ class ASConsole
 		void setOrigSuffix(string suffix);
 		void setPreserveDate(bool state);
 		void setProgramLocale();
-		void standardizePath(string& path, bool removeBeginningSeparator=false) const;
-		bool stringEndsWith(const string& str, const string& suffix) const;
+		void standardizePath(string &path, bool removeBeginningSeparator=false) const;
+		bool stringEndsWith(const string &str, const string &suffix) const;
 		void updateExcludeVector(string suffixParam);
 		size_t Utf8Length(const char* data, size_t len, FileEncoding encoding) const;
 		size_t Utf8ToUtf16(char* utf8In, size_t inLen, FileEncoding encoding, char* utf16Out) const;
@@ -277,24 +277,24 @@ class ASConsole
 		vector<string> getFileName();
 
 	private:
-		ASConsole& operator=(ASConsole&);          // not to be implemented
-		void correctMixedLineEnds(ostringstream& out);
-		void formatFile(const string& fileName_);
-		string getCurrentDirectory(const string& fileName_) const;
-		void getFileNames(const string& directory, const string& wildcard);
-		void getFilePaths(string& filePath);
-		string getParam(const string& arg, const char* op);
+		ASConsole &operator=(ASConsole &);         // not to be implemented
+		void correctMixedLineEnds(ostringstream &out);
+		void formatFile(const string &fileName_);
+		string getCurrentDirectory(const string &fileName_) const;
+		void getFileNames(const string &directory, const string &wildcard);
+		void getFilePaths(string &filePath);
+		string getParam(const string &arg, const char* op);
 		void initializeOutputEOL(LineEndFormat lineEndFormat);
-		bool isOption(const string& arg, const char* op);
-		bool isOption(const string& arg, const char* op1, const char* op2);
-		bool isParamOption(const string& arg, const char* option);
-		bool isPathExclued(const string& subPath);
+		bool isOption(const string &arg, const char* op);
+		bool isOption(const string &arg, const char* op1, const char* op2);
+		bool isParamOption(const string &arg, const char* option);
+		bool isPathExclued(const string &subPath);
 		void printHelp() const;
-		void printMsg(const char* msg, const string& data) const;
+		void printMsg(const char* msg, const string &data) const;
 		void printSeparatingLine() const;
 		void printVerboseHeader() const;
 		void printVerboseStats(clock_t startTime) const;
-		FileEncoding readFile(const string& fileName, stringstream& in) const;
+		FileEncoding readFile(const string &fileName, stringstream &in) const;
 		void removeFile(const char* fileName_, const char* errMsg) const;
 		void renameFile(const char* oldFileName, const char* newFileName, const char* errMsg) const;
 		void setOutputEOL(LineEndFormat lineEndFormat, const char* currentEOL);
@@ -303,7 +303,7 @@ class ASConsole
 		int  swap16bit(int value) const;
 		int  waitForRemove(const char* oldFileName) const;
 		int  wildcmp(const char* wild, const char* data) const;
-		void writeFile(const string& fileName_, FileEncoding encoding, ostringstream& out) const;
+		void writeFile(const string &fileName_, FileEncoding encoding, ostringstream &out) const;
 #ifdef _WIN32
 		void displayLastError();
 #endif

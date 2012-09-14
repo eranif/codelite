@@ -56,6 +56,7 @@ const string ASResource::AS_OPERATOR = string("operator");
 const string ASResource::AS_TEMPLATE = string("template");
 const string ASResource::AS_TRY = string("try");
 const string ASResource::AS_CATCH = string("catch");
+const string ASResource::AS_THROW = string("throw");
 const string ASResource::AS_FINALLY = string("finally");
 const string ASResource::_AS_TRY = string("__try");
 const string ASResource::_AS_FINALLY = string("__finally");
@@ -374,7 +375,7 @@ void ASResource::buildNonParenHeaders(vector<const string*>* nonParenHeaders, in
  *
  * @param operators             a reference to the vector to be built.
  */
-void ASResource::buildOperators(vector<const string*>* operators)
+void ASResource::buildOperators(vector<const string*>* operators, int fileType)
 {
 	operators->push_back(&AS_PLUS_ASSIGN);
 	operators->push_back(&AS_MINUS_ASSIGN);
@@ -400,8 +401,6 @@ void ASResource::buildOperators(vector<const string*>* operators)
 	operators->push_back(&AS_LS_LS);
 	operators->push_back(&AS_QUESTION_QUESTION);
 	operators->push_back(&AS_EQUAL_GR);
-	operators->push_back(&AS_GCC_MIN_ASSIGN);
-	operators->push_back(&AS_GCC_MAX_ASSIGN);
 	operators->push_back(&AS_ARROW);
 	operators->push_back(&AS_AND);
 	operators->push_back(&AS_OR);
@@ -421,7 +420,11 @@ void ASResource::buildOperators(vector<const string*>* operators)
 	operators->push_back(&AS_BIT_AND);
 	operators->push_back(&AS_BIT_NOT);
 	operators->push_back(&AS_BIT_XOR);
-
+	if (fileType == C_TYPE)
+	{
+		operators->push_back(&AS_GCC_MIN_ASSIGN);
+		operators->push_back(&AS_GCC_MAX_ASSIGN);
+	}
 	sort(operators->begin(), operators->end(), sortOnLength);
 }
 
@@ -523,7 +526,7 @@ void ASResource::buildPreDefinitionHeaders(vector<const string*>* preDefinitionH
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // check if a specific line position contains a keyword.
-bool ASBase::findKeyword(const string& line, int i, const string& keyword) const
+bool ASBase::findKeyword(const string &line, int i, const string &keyword) const
 {
 	assert(isCharPotentialHeader(line, i));
 	// check the word
@@ -547,7 +550,7 @@ bool ASBase::findKeyword(const string& line, int i, const string& keyword) const
 
 // get the current word on a line
 // index must point to the beginning of the word
-string ASBase::getCurrentWord(const string& line, size_t index) const
+string ASBase::getCurrentWord(const string &line, size_t index) const
 {
 	assert(isCharPotentialHeader(line, index));
 	size_t lineLength = line.length();

@@ -36,9 +36,6 @@ namespace astyle
  */
 ASEnhancer::ASEnhancer()
 {
-	// the following prevents warning messages with cppcheck
-	// it will NOT compile if activated
-//	init();
 }
 
 /**
@@ -53,22 +50,22 @@ ASEnhancer::~ASEnhancer()
  *
  * init() is called each time an ASFormatter object is initialized.
  */
-void ASEnhancer::init(int fileType,
-                      int _indentLength,
-                      string _indentString,
+void ASEnhancer::init(int  _fileType,
+                      int  _indentLength,
+                      int  _tabLength,
+                      bool _useTabs,
+                      bool _forceTab,
                       bool _caseIndent,
                       bool _preprocessorIndent,
                       bool _emptyLineFill)
 {
 	// formatting variables from ASFormatter and ASBeautifier
-	ASBase::init(fileType);
+	ASBase::init(_fileType);
 	indentLength = _indentLength;
-	if (_indentString == "\t")
-		useTabs = true;
-	else
-		useTabs = false;
-
-	caseIndent    = _caseIndent;
+	tabLength = _tabLength;
+	useTabs = _useTabs;
+	forceTab = _forceTab;
+	caseIndent = _caseIndent;
 	preprocessorIndent = _preprocessorIndent;
 	emptyLineFill = _emptyLineFill;
 	quoteChar = '\'';
@@ -105,7 +102,7 @@ void ASEnhancer::init(int fileType,
  *
  * @param line       the original formatted line will be updated if necessary.
  */
-void ASEnhancer::enhance(string& line, bool isInPreprocessor, bool isInSQL)
+void ASEnhancer::enhance(string &line, bool isInPreprocessor, bool isInSQL)
 {
 	bool isSpecialChar = false;			// is a backslash escape character
 	shouldIndentLine = true;
@@ -266,7 +263,7 @@ void ASEnhancer::enhance(string& line, bool isInPreprocessor, bool isInSQL)
 			continue;
 		}
 
-		// just want unindented switch statements from this point
+		// just want unindented case statements from this point
 
 		if (caseIndent
 		        || switchDepth == 0
@@ -302,7 +299,7 @@ void ASEnhancer::enhance(string& line, bool isInPreprocessor, bool isInSQL)
  * @param i             the line index of the case statement.
  * @return              the line index of the colon.
  */
-size_t ASEnhancer::findCaseColon(string&  line, size_t caseIndex) const
+size_t ASEnhancer::findCaseColon(string  &line, size_t caseIndex) const
 {
 	size_t i = caseIndex;
 	bool isInQuote_ = false;
@@ -345,14 +342,51 @@ size_t ASEnhancer::findCaseColon(string&  line, size_t caseIndex) const
 }
 
 /**
- * indent a line by a given number of tabsets
+ * convert a force-tab indent to spaces
+ *
+ * @param line          a reference to the line that will be converted.
+ */
+void ASEnhancer::convertForceTabIndentToSpaces(string &line) const
+{
+	// replace tab indents with spaces
+	for (size_t i = 0; i < line.length(); i++)
+	{
+		if (!isWhiteSpace(line[i]))
+			break;
+		if (line[i] == '\t')
+		{
+			line.erase(i, 1);
+			line.insert(i, tabLength, ' ');
+			i += tabLength - 1;
+		}
+	}
+}
+
+/**
+ * convert a space indent to force-tab
+ *
+ * @param line          a reference to the line that will be converted.
+ */
+void ASEnhancer::convertSpaceIndentToForceTab(string &line) const
+{
+	assert(tabLength > 0);
+
+	// replace leading spaces with tab indents
+	size_t newSpaceIndentLength = line.find_first_not_of(" \t");
+	size_t tabCount = newSpaceIndentLength / tabLength;		// truncate extra spaces
+	line.erase(0U, tabCount * tabLength);
+	line.insert(0U, tabCount, '\t');
+}
+
+/**
+* indent a line by a given number of tabsets
  *    by inserting leading whitespace to the line argument.
  *
  * @param line          a reference to the line to indent.
- * @param unindent      the number of tabsets to insert.
+ * @param indent        the number of tabsets to insert.
  * @return              the number of characters inserted.
  */
-int ASEnhancer::indentLine(string&  line, int indent) const
+int ASEnhancer::indentLine(string  &line, int indent) const
 {
 	if (line.length() == 0
 	        && ! emptyLineFill)
@@ -360,12 +394,22 @@ int ASEnhancer::indentLine(string&  line, int indent) const
 
 	size_t charsToInsert;
 
-	if (useTabs)
+	if (forceTab && indentLength != tabLength)
+	{
+		// replace tab indents with spaces
+		convertForceTabIndentToSpaces(line);
+		// insert the space indents
+		charsToInsert = indent * indentLength;
+		line.insert(0U, charsToInsert, ' ');
+		// replace leading spaces with tab indents
+		convertSpaceIndentToForceTab(line);
+	}
+	else if (useTabs)
 	{
 		charsToInsert = indent;
 		line.insert(0U, charsToInsert, '\t');
 	}
-	else
+	else // spaces
 	{
 		charsToInsert = indent * indentLength;
 		line.insert(0U, charsToInsert, ' ');
@@ -382,7 +426,7 @@ int ASEnhancer::indentLine(string&  line, int indent) const
  * @param index         the current line index.
  * @return              true if a hit.
  */
-bool ASEnhancer::isBeginDeclareSectionSQL(string&  line, size_t index) const
+bool ASEnhancer::isBeginDeclareSectionSQL(string  &line, size_t index) const
 {
 	string word;
 	size_t hits = 0;
@@ -431,7 +475,7 @@ bool ASEnhancer::isBeginDeclareSectionSQL(string&  line, size_t index) const
  * @param index         the current line index.
  * @return              true if a hit.
  */
-bool ASEnhancer::isEndDeclareSectionSQL(string&  line, size_t index) const
+bool ASEnhancer::isEndDeclareSectionSQL(string  &line, size_t index) const
 {
 	string word;
 	size_t hits = 0;
@@ -480,7 +524,7 @@ bool ASEnhancer::isEndDeclareSectionSQL(string&  line, size_t index) const
  * @return     false = one-line bracket has not been reached.
  *             true  = one-line bracket has been reached.
  */
-bool ASEnhancer::isOneLineBlockReached(string& line, int startChar) const
+bool ASEnhancer::isOneLineBlockReached(string &line, int startChar) const
 {
 	assert(line[startChar] == '{');
 
@@ -554,7 +598,7 @@ bool ASEnhancer::isOneLineBlockReached(string& line, int startChar) const
  * @param index         the current line index.
  * @return              the new line index.
  */
-size_t ASEnhancer::processSwitchBlock(string& line, size_t index)
+size_t ASEnhancer::processSwitchBlock(string &line, size_t index)
 {
 	size_t i = index;
 	bool isPotentialKeyword = isCharPotentialHeader(line, i);
@@ -572,7 +616,7 @@ size_t ASEnhancer::processSwitchBlock(string& line, size_t index)
 	}
 	lookingForCaseBracket = false;                      // no opening bracket, don't indent
 
-	if (line[i] == '}')                                 // if close bracket
+	if (line[i] == '}')
 	{
 		sw.switchBracketCount--;
 		assert(sw.switchBracketCount <= bracketCount);
@@ -580,7 +624,7 @@ size_t ASEnhancer::processSwitchBlock(string& line, size_t index)
 		{
 			int lineUnindent = sw.unindentDepth;
 			if (line.find_first_not_of(" \t") == i
-			        && switchStack.size() > 0)
+			        && !switchStack.empty())
 				lineUnindent = switchStack[switchStack.size()-1].unindentDepth;
 			if (shouldIndentLine)
 			{
@@ -643,7 +687,7 @@ size_t ASEnhancer::processSwitchBlock(string& line, size_t index)
  * @param unindent      the number of tabsets to erase.
  * @return              the number of characters erased.
  */
-int ASEnhancer::unindentLine(string&  line, int unindent) const
+int ASEnhancer::unindentLine(string  &line, int unindent) const
 {
 	size_t whitespace = line.find_first_not_of(" \t");
 
@@ -653,21 +697,35 @@ int ASEnhancer::unindentLine(string&  line, int unindent) const
 	if (whitespace == 0)
 		return 0;
 
-	size_t charsToErase;                    // number of chars to erase
+	size_t charsToErase = 0;
 
-	if (useTabs)                            // if formatted with tabs
+	if (forceTab && indentLength != tabLength)
 	{
-		charsToErase = unindent;            // tabs to erase
-		if (charsToErase <= whitespace)     // if there is enough whitespace
-			line.erase(0, charsToErase);    // erase the tabs
+		// replace tab indents with spaces
+		convertForceTabIndentToSpaces(line);
+		// remove the space indents
+		size_t spaceIndentLength = line.find_first_not_of(" \t");
+		charsToErase = unindent * indentLength;
+		if (charsToErase <= spaceIndentLength)
+			line.erase(0, charsToErase);
+		else
+			charsToErase = 0;
+		// replace leading spaces with tab indents
+		convertSpaceIndentToForceTab(line);
+	}
+	else if (useTabs)
+	{
+		charsToErase = unindent;
+		if (charsToErase <= whitespace)
+			line.erase(0, charsToErase);
 		else
 			charsToErase = 0;
 	}
-	else
+	else // spaces
 	{
-		charsToErase = unindent * indentLength; // compute chars to erase
-		if (charsToErase <= whitespace)         // if there is enough whitespace
-			line.erase(0, charsToErase);        // erase the spaces
+		charsToErase = unindent * indentLength;
+		if (charsToErase <= whitespace)
+			line.erase(0, charsToErase);
 		else
 			charsToErase = 0;
 	}

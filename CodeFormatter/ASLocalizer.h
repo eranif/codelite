@@ -28,6 +28,11 @@
 #ifndef ASLOCALIZER_H
 #define ASLOCALIZER_H
 
+#include <string>
+#include <vector>
+
+using namespace std;
+
 namespace astyle
 {
 
@@ -73,23 +78,21 @@ class Translation
 // Polymorphism is used to call the correct language translator.
 // This class contains the translation vector and settext translation method.
 // The language vector is built by the language sub classes.
-// NOTE: this class must have virtual methods for typeid() to work.
+// NOTE: This class must have virtual methods for typeid() to work.
+//       typeid() is used by AStyleTestI18n_Localizer.cpp.
 {
 	public:
-		Translation() {};
-		string convertToMultiByte(const wstring& wideStr) const;
+		Translation() {}
+		virtual ~Translation() {}
+		string convertToMultiByte(const wstring &wideStr) const;
 		size_t getTranslationVectorSize() const;
-		bool getWideTranslation(const string& stringIn, wstring& wideOut) const;
-		string& translate(const string& stringIn) const;
+		bool getWideTranslation(const string &stringIn, wstring &wideOut) const;
+		string &translate(const string &stringIn) const;
 
 	protected:
-		void addPair(const string& english, const wstring& translated);
+		void addPair(const string &english, const wstring &translated);
 		// variables
 		vector<pair<string, wstring> > m_translation;		// translation vector
-
-	private:
-		// unused method so the class will be identified as polymorphic
-		virtual void virtualClass() {}
 };
 
 //----------------------------------------------------------------------------
@@ -110,10 +113,22 @@ class ChineseTraditional : public Translation
 		ChineseTraditional();
 };
 
+class Dutch : public Translation
+{
+	public:
+		Dutch();
+};
+
 class English : public Translation
 {
 	public:
 		English();
+};
+
+class Finnish : public Translation
+{
+	public:
+		Finnish();
 };
 
 class French : public Translation
@@ -134,11 +149,60 @@ class Hindi : public Translation
 		Hindi();
 };
 
+class Italian : public Translation
+{
+	public:
+		Italian();
+};
+
+class Japanese : public Translation
+{
+	public:
+		Japanese();
+};
+
+class Korean : public Translation
+{
+	public:
+		Korean();
+};
+
+class Polish : public Translation
+{
+	public:
+		Polish();
+};
+
+class Portuguese : public Translation
+{
+	public:
+		Portuguese();
+};
+
+class Russian : public Translation
+{
+	public:
+		Russian();
+};
+
 class Spanish : public Translation
 {
 	public:
 		Spanish();
 };
+
+class Swedish : public Translation
+{
+	public:
+		Swedish();
+};
+
+class Ukrainian : public Translation
+{
+	public:
+		Ukrainian();
+};
+
 
 #endif	//  ASTYLE_LIB
 

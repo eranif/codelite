@@ -1,12 +1,16 @@
 namespace foospace
 {
-int Foo()
+int Foo(int b)
 {
-	if (isBar) {
-		bar();
-		return 1;
-	} else
-		return 0;
+    if (b == 0) {
+        return 0;
+    }
+    else if (b == 1) {
+        return 2;
+    }
+    else {
+        return b * b;
+    }
 }
 
 class Foo

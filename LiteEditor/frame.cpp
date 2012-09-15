@@ -135,6 +135,7 @@ const wxEventType wxEVT_UPDATE_STATUS_BAR        = XRCID("update_status_bar");
 const wxEventType wxEVT_LOAD_PERSPECTIVE         = XRCID("load_perspective");
 const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU = XRCID("refresh_perspective_menu");
 const wxEventType wxEVT_ACTIVATE_EDITOR          = XRCID("activate_editor");
+const wxEventType wxEVT_LOAD_SESSION             = ::wxNewEventType();
 
 #define CHECK_SHUTDOWN() {\
 		if(ManagerST::Get()->IsShutdownInProgress()){\
@@ -621,6 +622,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 	wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	
+	EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
 	EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
 }
 
@@ -643,7 +645,8 @@ clMainFrame::~clMainFrame(void)
 	wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 	
 	EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
-
+	EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
+	
 	delete m_timer;
 	delete m_statusbarTimer;
 	ManagerST::Free();
@@ -2667,8 +2670,8 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 
 	// Load last session?
 	if (m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && m_loadLastSession) {
-		clWindowUpdateLocker locker(this);
-		LoadSession(SessionManager::Get().GetLastSession());
+		wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
+		EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
 	}
 
 	// ReTag workspace database if needed (this can happen due to schema version changes)
@@ -4980,4 +4983,10 @@ void clMainFrame::OnActivateEditor(wxCommandEvent& e)
 {
     LEditor* editor = dynamic_cast<LEditor*>(e.GetEventObject()); 
     if (editor) editor->SetActive();
+}
+
+void clMainFrame::OnLoadSession(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	LoadSession(SessionManager::Get().GetLastSession());
 }

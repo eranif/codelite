@@ -366,14 +366,14 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 
     // connect to the indexer
     if (!client.connect()) {
-        wxPrintf(wxT("Failed to connect to indexer ID %d!\n"), wxGetProcessId());
+        wxPrintf(wxT("Failed to connect to indexer ID %d!\n"), (int)wxGetProcessId());
         return;
     }
 
 
     // send the request
     if ( !clIndexerProtocol::SendRequest(&client, req) ) {
-        wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), wxGetProcessId());
+        wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), (int)wxGetProcessId());
         return;
     }
 

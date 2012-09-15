@@ -60,7 +60,7 @@ Section: devel
 Priority: optional
 Architecture: ${arch}
 Essential: no
-Depends: libwxgtk2.8-0, libgtk2.0-0
+Depends: libgtk2.0-0
 Recommends: gdb
 Conflicts: codelite-plugins
 Installed-Size: ${inst_size}
@@ -178,6 +178,18 @@ for lang in Runtime/locale/* ; do
 		cp -f Runtime/locale/$lang/codelite.mo fakeroot/usr/share/locale/$lang/LC_MESSAGES/
 	fi
 done
+
+## Copy wxWidgets 
+wxdir=`wx-config --libs | cut -d" " -f1| cut -dL -f2`
+if [ "$wxdir" != "" ] ; then
+	## prepare a temporary folder
+	current_dir=`pwd`
+	echo packaging wxWidgets ... from directory ${wxdir}
+	cd ${wxdir} 
+	tar cvf /tmp/clwx294.tar libwx*.so* 
+	tar xvf /tmp/clwx294.tar -C ${current_dir}/fakeroot/${PREFIX}/lib/codelite/
+	cd ${current_dir}
+fi
 
 cp -pr Runtime/config/build_settings.xml.default fakeroot/${PREFIX}/share/codelite/config/build_settings.xml.default
 cp -pr Runtime/config/plugins.xml.default fakeroot/${PREFIX}/share/codelite/config/plugins.xml.default

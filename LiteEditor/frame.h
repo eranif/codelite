@@ -466,6 +466,7 @@ protected:
 	void OnLinkClicked(wxHtmlLinkEvent &e);
 	void OnLoadLastSessionUI(wxUpdateUIEvent &event);
 	void OnLoadLastSession(wxCommandEvent &event);
+	void OnLoadSession(wxCommandEvent &e);
 	void OnShowWelcomePage(wxCommandEvent &event);
 	void OnShowWelcomePageUI(wxUpdateUIEvent &event);
 	void OnLoadWelcomePage(wxCommandEvent &event);

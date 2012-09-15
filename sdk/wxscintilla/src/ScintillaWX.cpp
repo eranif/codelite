@@ -103,6 +103,7 @@ public:
 		: wxSCICallTipBase(parent, param2),
 		  m_ct(ct), m_swx(swx), m_cx(-1), m_cy(-1) 
 	{
+		Hide();
 	}
 
 	~wxSCICallTip() {

@@ -60,7 +60,11 @@ public:
         
         m_font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
         m_font.SetFamily(wxFONTFAMILY_TELETYPE);
+#ifdef __WXGTK__
+		m_greyColor = wxColour(wxT("GREY"));
+#else
         m_greyColor = wxColour(wxT("LIGHT GREY"));
+#endif
     }
 
     virtual ~MyTextRenderer() {}

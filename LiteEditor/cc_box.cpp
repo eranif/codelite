@@ -47,6 +47,12 @@
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
 #endif
 
+#ifdef __WXGTK__
+#   define TIP_TIMER 100
+#else
+#   define TIP_TIMER 100
+#endif
+
 const wxEventType wxCMD_EVENT_SET_EDITOR_ACTIVE = XRCID("wxCMD_EVENT_SET_EDITOR_ACTIVE");
 
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
@@ -63,7 +69,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
     , m_hideExtInfoPane(true)
     , m_startPos(wxNOT_FOUND)
     , m_editor(parent)
-    , m_timer(NULL)
+
 {
 #ifdef __WXMAC__
     Hide();
@@ -73,10 +79,9 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
     HideCCBox();
     MSWSetNativeTheme(m_listCtrl);
 
-    m_timer            = new wxTimer(this);
     m_refreshListTimer = new wxTimer(this);
 
-    Connect(m_timer->GetId(),            wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip), NULL, this);
+
     Connect(m_refreshListTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(CCBox::OnRefreshList),    NULL, this);
 
     // load all the CC images
@@ -130,8 +135,6 @@ CCBox::~CCBox()
 {
     EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_Item_Commetns"), LEditor::m_ccShowItemsComments  ? 1 : 0);
     EditorConfigST::Get()->SaveLongValue(wxT("CC_Show_All_Members"),   LEditor::m_ccShowPrivateMembers ? 1 : 0);
-    Disconnect(m_timer->GetId(),  wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip),  NULL, this);
-    delete m_timer;
     delete m_refreshListTimer;
 }
 
@@ -157,20 +160,21 @@ void CCBox::OnItemSelected( wxListEvent& event )
 
     m_selectedItem = event.m_itemIndex;
 
-    m_timer->Stop();
-    m_timer->Start(100, true);
+    //m_timer->Stop();
+    //m_timer->Start(TIP_TIMER, true);
 
     LEditor *editor = GetEditor();
     if( editor ) {
         editor->CallTipCancel();
     }
-
+	
+	
 }
 
 void CCBox::RefreshList(const std::vector<TagEntryPtr>& tags, const wxString& word)
 {
     m_tags = tags;
-    m_timer->Stop();
+    //m_timer->Stop();
     Show(word);
 }
 
@@ -190,7 +194,7 @@ void CCBox::Show(const std::vector<TagEntryPtr> &tags, const wxString &word, boo
 
 void CCBox::Adjust()
 {
-    LEditor *editor = GetEditor();
+	LEditor *editor = GetEditor();
 
     int     point      = editor->GetCurrentPos();
     wxPoint pt         = editor->PointFromPosition(point); // Point is in editor's coordinates
@@ -239,18 +243,12 @@ void CCBox::Adjust()
         pt.y -= 5;
         ccPoint.y -= 5;
 #endif
-
     }
-
     // Not needed under wx29
-#if  defined(__WXMSW__) && (wxVERSION_NUMBER < 2900)
-    ccPoint = GetParent()->ScreenToClient(ccPoint);
-#endif
-
     Move(ccPoint);
     editor->m_ccPoint = pt;
     editor->m_ccPoint.x += 2;
-
+	
 #else
     wxSize  size       = GetParent()->GetClientSize();
     int diff = size.y - pt.y;
@@ -293,10 +291,13 @@ bool CCBox::SelectWord(const wxString& word)
         if (m_selectedItem != wxNOT_FOUND && m_selectedItem != item) {
             m_listCtrl->Select(m_selectedItem, false);
         }
-
-        m_selectedItem = item;
-        SelectItem(m_selectedItem);
-
+		
+		if ( m_selectedItem != item ) {
+			// We are changing selection
+			m_selectedItem = item;
+			SelectItem(m_selectedItem);
+		}
+		
         if(fullMatch) {
             // Incase we got a full match, insert the selection and release the completion box
             InsertSelection();
@@ -316,11 +317,11 @@ bool CCBox::SelectWord(const wxString& word)
 		}
 	}
 
-    m_timer->Stop();
-    m_timer->Start(100, true);
+    //m_timer->Stop();
+    //m_timer->Start(TIP_TIMER, true);
 
     m_refreshListTimer->Stop();
-    m_refreshListTimer->Start(100, true);
+    m_refreshListTimer->Start(TIP_TIMER, true);
     return fullMatch;
 }
 
@@ -366,12 +367,17 @@ void CCBox::SelectItem(long item)
 
     m_listCtrl->Select(item);
     m_listCtrl->EnsureVisible(item);
-    m_timer->Stop();
-    m_timer->Start(100, true);
-
-    LEditor *editor = GetEditor();
+    //m_timer->Stop();
+    //m_timer->Start(TIP_TIMER, true);
+	
+	LEditor *editor = GetEditor();
     if( editor ) {
         editor->CallTipCancel();
+    }
+	
+	CCItemInfo tag;
+    if(m_listCtrl->GetItemTagEntry(item, tag)) {
+        DoFormatDescriptionPage( tag );
     }
 }
 
@@ -487,10 +493,9 @@ void CCBox::Show(const wxString& word)
 #ifdef __WXGTK__
     if(wxPopupWindow::IsShown() == false)
         wxPopupWindow::Show();
-
-    clMainFrame::Get()->Raise();
-    GetEditor()->SetFocus();
-    GetEditor()->SetSCIFocus(true);
+		
+	GetEditor()->SetActive();
+    
 #else // Windows
     if(wxPopupTransientWindow::IsShown() == false)
         wxPopupTransientWindow::Show();
@@ -861,7 +866,7 @@ void CCBox::DoShowTagTip()
         }
     } // gotAComment = true
 
-    editor->CallTipCancel();
+	editor->CallTipCancel();
     m_startPos == wxNOT_FOUND ? m_startPos = editor->GetCurrentPos() : m_startPos;
 
     // if nothing to display skip this
@@ -869,8 +874,8 @@ void CCBox::DoShowTagTip()
     if(prefix.IsEmpty()) {
         return;
     }
-
-    editor->CallTipShowExt( m_startPos, prefix);
+	
+	editor->CallTipShowExt( m_startPos, prefix);
     int hightlightFrom = prefix.Find(tag.GetName());
     if(hightlightFrom != wxNOT_FOUND) {
         int highlightLen = tag.GetName().Length();
@@ -880,7 +885,7 @@ void CCBox::DoShowTagTip()
 
 void CCBox::DoFormatDescriptionPage(const CCItemInfo& item)
 {
-    LEditor *editor = GetEditor();
+	LEditor *editor = GetEditor();
     if( !editor ) {
         return;
     }
@@ -910,9 +915,6 @@ void CCBox::DoHideCCHelpTab()
     m_hideExtInfoPane = true;
     m_startPos = wxNOT_FOUND;
     m_currentItem.Reset();
-    if(m_timer) {
-        m_timer->Stop();
-    }
     LEditor *editor = GetEditor();
     if(editor)
         editor->CallTipCancel();

@@ -3135,9 +3135,10 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
         // create new completion box
         m_ccBox = new CCBox( this );
     }
-
+	
+	bool isRefereshing = CodeCompletionManager::Get().GetWordCompletionRefreshNeeded();
     // hide any previous occurance of the completion box
-    if(!CodeCompletionManager::Get().GetWordCompletionRefreshNeeded())
+    if( !isRefereshing )
         HideCompletionBox();
 
     if(tags.empty()) {
@@ -3183,8 +3184,10 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
                 ButtonDetails(),
                 CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
     }
-
-    m_ccBox->Adjust();
+	
+	if ( !isRefereshing )
+		m_ccBox->Adjust();
+		
     m_ccBox->Show(tags, word, showFullDecl, !showExtInfoPane, NULL);
 }
 

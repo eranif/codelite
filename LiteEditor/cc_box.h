@@ -59,7 +59,6 @@ class CCBox : public CCBoxBase
 	bool                     m_isTipBgDark;
 	CCItemInfo               m_currentItem;
 	LEditor*                 m_editor;
-	wxTimer*                 m_timer;
 	wxTimer*                 m_refreshListTimer;
 	bool                     m_isKeywordsList;
 protected:

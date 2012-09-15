@@ -39,6 +39,18 @@
 #include "plugin.h"
 #include "macros.h"
 
+#ifdef __WXMSW__
+#   define ECHO_CMD    wxT("@echo ")
+#   define ECHO_OFF    wxT("@echo off")
+#   define SILENCE_OP  wxT("@")
+#   define SCRIPT_EXT  wxT(".bat")
+#else
+#   define ECHO_CMD wxT("echo ")
+#   define ECHO_OFF wxT("")
+#   define SILENCE_OP  wxT("")
+#   define SCRIPT_EXT  wxT(".sh")
+#endif
+
 CustomBuildRequest::CustomBuildRequest(const QueueCommand &buildInfo, const wxString &fileName)
     : ShellCommand(buildInfo)
     , m_fileName(fileName)
@@ -256,37 +268,31 @@ bool CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
     // (in this exact order).
 
     wxString script;
-#ifdef __WXMSW__
-    script << wxT("@echo off\n");
-#endif
+    script << ECHO_OFF << wxT("\n");
+
     if (pre.IsEmpty() == false && !isClean) {
-        script << wxT("@echo Executing Pre Build commands ...\n");
+        script << ECHO_CMD << wxT("Executing Pre Build commands ...\n");
         for (size_t i=0; i<pre.GetCount(); i++) {
-            script << wxT("@") << pre.Item(i) << wxT("\n");
+            script << SILENCE_OP << pre.Item(i) << wxT("\n");
         }
-        script << wxT("@echo Done\n");
+        script << ECHO_CMD << wxT("Done\n");
     }
 
     // add the command
     script << cmd << wxT("\n");
 
     if (post.IsEmpty() == false && !isClean) {
-        script << wxT("@echo Executing Post Build commands ...\n");
+        script << ECHO_CMD << wxT("Executing Post Build commands ...\n");
         for (size_t i=0; i<post.GetCount(); i++) {
-            script << wxT("@") << post.Item(i) << wxT("\n");
+            script << SILENCE_OP << post.Item(i) << wxT("\n");
         }
-        script << wxT("@echo Done\n");
+        script << ECHO_CMD << wxT("Done\n");
     }
 
     // write the makefile
     wxFFile output;
     wxString fn;
-
-#ifdef __WXMSW__
-    fn << proj->GetName() << wxT(".bat");
-#else
-    fn << proj->GetName() << wxT(".sh");
-#endif
+    fn << proj->GetName() << SCRIPT_EXT;
 
     output.Open(fn, wxT("w+"));
     if (output.IsOpened()) {

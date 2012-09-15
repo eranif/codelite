@@ -27,7 +27,7 @@
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
 #include <wx/notebook.h>
-#include <wx/wxScintilla.h>
+#include <wx/wxscintilla.h>
 #ifdef __VISUALC__
 #include <wx/link_additions.h>
 #endif //__VISUALC__

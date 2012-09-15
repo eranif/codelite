@@ -181,7 +181,7 @@ void CustomBuildRequest::Process(IManager *manager)
     // in case our configuration includes post/pre build commands
     // we generate a makefile to include them as well and we update
     // the build command
-    DoUpdateCommand(manager, cmd, proj, bldConf, isClean);
+    bool bCommandAltered = DoUpdateCommand(manager, cmd, proj, bldConf, isClean);
 
 #ifdef __WXMSW__
     // Windows CD command requires the paths to be backslashe
@@ -192,7 +192,11 @@ void CustomBuildRequest::Process(IManager *manager)
     // Wrap the build command in the shell, so it will be able
     // to perform 'chain' commands like
     // cd SOMEWHERE && make && ...
-    WrapInShell(cmd);
+    
+    // Dont wrap the command if it was altered previously
+    if ( !bCommandAltered) {
+        WrapInShell(cmd);
+    }
 
     //print the build command
     AppendLine(cmd + wxT("\n"));
@@ -220,7 +224,7 @@ void CustomBuildRequest::Process(IManager *manager)
     }
 }
 
-void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean)
+bool CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf, bool isClean)
 {
     BuildCommandList preBuildCmds, postBuildCmds;
     wxArrayString pre, post;
@@ -245,7 +249,7 @@ void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
     }
 
     if (pre.empty() && post.empty()) {
-        return;
+        return false;
     }
 
     // we need to create a makefile which includes all the pre-build, the actual build command and the post-build commands
@@ -291,5 +295,11 @@ void CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
     }
 
     cmd.Clear();
+#ifdef __WXMSW__
     cmd << wxT("\"") << fn << wxT("\"");
+#else
+    // *nix
+    cmd << wxT("/bin/sh -f '") << fn << wxT("'");
+#endif
+    return true;
 }

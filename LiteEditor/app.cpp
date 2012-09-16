@@ -166,7 +166,13 @@ clSplashScreen::clSplashScreen(const wxBitmap& bmp)
 #endif
     , m_bmp(bmp)
 {
-    SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()));
+	
+#ifdef __WXGTK__
+    SetSize(wxSize(m_bmp.GetWidth() + 2, m_bmp.GetHeight() + 3) );
+#else
+	SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()) );
+#endif
+
     Show(true);
     SetThemeEnabled(true);
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
@@ -183,7 +189,11 @@ void clSplashScreen::OnEraseBackground(wxEraseEvent& e)
 void clSplashScreen::OnPaint(wxPaintEvent& e)
 {
     wxPaintDC dc(this);
-    dc.DrawBitmap(m_bmp, 0, 0, false);
+	wxRect rr = GetClientSize();
+	
+	int xx = (rr.GetWidth() -  m_bmp.GetWidth())/2;
+	int yy = (rr.GetHeight() - m_bmp.GetHeight())/2;
+	dc.DrawBitmap(m_bmp, xx, yy, false);
 }
 
 ///////////////////////////////////////////////////////////////////

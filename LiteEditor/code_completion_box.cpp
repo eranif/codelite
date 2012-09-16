@@ -22,8 +22,7 @@ CodeCompletionBox& CodeCompletionBox::Get()
 void CodeCompletionBox::Display(LEditor* editor, const TagEntryPtrVector_t& tags, const wxString& word, bool isKeywordList, wxEvtHandler* owner)
 {
     if ( m_ccBox ) {
-        m_ccBox->Destroy();
-        return;
+        Hide();
     }
     
     m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);

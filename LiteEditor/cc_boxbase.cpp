@@ -11,7 +11,7 @@
 #if wxVERSION_NUMBER >= 2809
 #include <wx/aui/auibar.h>
 #else
-	#include <wx/toolbar.h>
+#include <wx/toolbar.h>
 #endif
 #include <wx/xrc/xmlres.h>
 
@@ -20,42 +20,38 @@
 ///////////////////////////////////////////////////////////////////////////
 
 CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
-#if CC_USES_POPUPWIN
-	: CCBoxParent( parent, CC_STYLE )
-#else
-	: wxPanel( parent, id, pos, size, style )
-#endif
+    : wxPopupWindow( parent )
 {
-	SetSizeHints(BOX_WIDTH, BOX_HEIGHT);
-	wxBoxSizer* mainSizer = new wxBoxSizer( wxVERTICAL );
-	wxBoxSizer* topSizer  = new wxBoxSizer( wxHORIZONTAL );
-	SetSizer(mainSizer);
+    SetSizeHints(BOX_WIDTH, BOX_HEIGHT);
+    wxBoxSizer* mainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* topSizer  = new wxBoxSizer( wxHORIZONTAL );
+    SetSizer(mainSizer);
 
-	m_mainPanel = new CCBoxMainPanel(this);
-	m_mainPanel->SetSizer(topSizer);
-	mainSizer->Add(m_mainPanel, 1, wxEXPAND);
-	m_listCtrl = new CCVirtualListCtrl( m_mainPanel, 
-										wxID_ANY, 
-										wxDefaultPosition, 
-										wxSize(BOX_WIDTH - 5, BOX_HEIGHT - 2),
-										wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL);
+    m_mainPanel = new CCBoxMainPanel(this);
+    m_mainPanel->SetSizer(topSizer);
+    mainSizer->Add(m_mainPanel, 1, wxEXPAND);
+    m_listCtrl = new CCVirtualListCtrl( m_mainPanel,
+                                        wxID_ANY,
+                                        wxDefaultPosition,
+                                        wxSize(BOX_WIDTH - 5, BOX_HEIGHT - 2),
+                                        wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL);
 
-	topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 5 );
+    topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 5 );
     m_mainPanel->SetAutoLayout( true );
     GetSizer()->Fit(this);
 
-	// Connect Events
-	m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CCBoxBase::OnItemActivated ), NULL, this );
-	m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CCBoxBase::OnItemDeSelected ), NULL, this );
-	m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CCBoxBase::OnItemSelected ), NULL, this );
-	m_listCtrl->Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( CCBoxBase::OnKeyDown ), NULL, this );
+    // Connect Events
+    m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CCBoxBase::OnItemActivated ), NULL, this );
+    m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CCBoxBase::OnItemDeSelected ), NULL, this );
+    m_listCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CCBoxBase::OnItemSelected ), NULL, this );
+    m_listCtrl->Connect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( CCBoxBase::OnKeyDown ), NULL, this );
 }
 
 CCBoxBase::~CCBoxBase()
 {
-	// Disconnect Events
-	m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CCBoxBase::OnItemActivated ), NULL, this );
-	m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CCBoxBase::OnItemDeSelected ), NULL, this );
-	m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CCBoxBase::OnItemSelected ), NULL, this );
-	m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( CCBoxBase::OnKeyDown ), NULL, this );
+    // Disconnect Events
+    m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler( CCBoxBase::OnItemActivated ), NULL, this );
+    m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler( CCBoxBase::OnItemDeSelected ), NULL, this );
+    m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( CCBoxBase::OnItemSelected ), NULL, this );
+    m_listCtrl->Disconnect( wxEVT_COMMAND_LIST_KEY_DOWN, wxListEventHandler( CCBoxBase::OnKeyDown ), NULL, this );
 }

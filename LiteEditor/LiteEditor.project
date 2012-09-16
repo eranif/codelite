@@ -703,6 +703,8 @@
     <File Name="clang_macro_handler.cpp"/>
     <File Name="clang_unsaved_files.h"/>
     <File Name="clang_unsaved_files.cpp"/>
+    <File Name="code_completion_box.h"/>
+    <File Name="code_completion_box.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

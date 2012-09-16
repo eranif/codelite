@@ -28,6 +28,7 @@
 #include "cl_editor.h"
 #include "code_completion_manager.h"
 #include "macromanager.h"
+#include "code_completion_box.h"
 #include "event_notifier.h"
 #include "cl_editor_tip_window.h"
 #include "new_quick_watch_dlg.h"
@@ -141,7 +142,6 @@ LEditor::LEditor(wxWindow* parent)
     , m_rightClickMenu           (NULL)
     , m_popupIsOn                (false)
     , m_modifyTime               (0)
-    , m_ccBox                    (NULL)
     , m_isVisible                (true)
     , m_hyperLinkIndicatroStart  (wxNOT_FOUND)
     , m_hyperLinkIndicatroEnd    (wxNOT_FOUND)
@@ -654,7 +654,7 @@ void LEditor::OnCharAdded(wxScintillaEvent& event)
         if ( word.IsEmpty() ) {
             HideCompletionBox();
         } else {
-            if (m_ccBox->SelectWord(word)) {
+            if (CodeCompletionBox::Get().SelectWord(word)) {
                 canShowCompletionBox = false;
                 HideCompletionBox();
             }
@@ -2541,7 +2541,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
         case WXK_NUMPAD_ENTER:
         case WXK_RETURN:
         case WXK_TAB:
-            m_ccBox->InsertSelection();
+            CodeCompletionBox::Get().InsertSelection();
             HideCompletionBox();
             return;
 
@@ -2555,16 +2555,16 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
             HideCompletionBox();
             return;
         case WXK_UP:
-            m_ccBox->Previous();
+            CodeCompletionBox::Get().Previous();
             return;
         case WXK_DOWN:
-            m_ccBox->Next();
+            CodeCompletionBox::Get().Next();
             return;
         case WXK_PAGEUP:
-            m_ccBox->PreviousPage();
+            CodeCompletionBox::Get().PreviousPage();
             return;
         case WXK_PAGEDOWN:
-            m_ccBox->NextPage();
+            CodeCompletionBox::Get().NextPage();
             return;
         case WXK_BACK: {
 
@@ -2577,7 +2577,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
                     HideCompletionBox();
                 } else {
                     word.RemoveLast();
-                    if (m_ccBox->SelectWord(word)) {
+                    if (CodeCompletionBox::Get().SelectWord(word)) {
                         HideCompletionBox();
                     }
                 }
@@ -3068,37 +3068,8 @@ void LEditor::OnDragStart(wxScintillaEvent& e)
 
 void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, wxEvtHandler* owner)
 {
-    if ( m_ccBox == NULL ) {
-        // create new completion box
-        m_ccBox = new CCBox(this);
-    }
-
     if(tags.empty()) {
         return;
-    }
-
-    m_ccBox->SetAutoHide(false);
-    if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE)
-        m_ccBox->SetInsertSingleChoice(true);
-    else
-        m_ccBox->SetInsertSingleChoice(false);
-
-    // Show extra info pane for C++ tags
-    bool showExtInfoPane = (tags.at(0)->GetKind() == wxT("function")  ||
-                            tags.at(0)->GetKind() == wxT("prototype") ||
-                            tags.at(0)->GetKind() == wxT("class")     ||
-                            tags.at(0)->GetKind() == wxT("struct")    ||
-                            tags.at(0)->GetKind() == wxT("union")     ||
-                            tags.at(0)->GetKind() == wxT("namespace") ||
-                            tags.at(0)->GetKind() == wxT("member")    ||
-                            tags.at(0)->GetKind() == wxT("variable")  ||
-                            tags.at(0)->GetKind() == wxT("typedef")   ||
-                            tags.at(0)->GetKind() == wxT("macro")     ||
-                            tags.at(0)->GetKind() == wxT("enum")      ||
-                            tags.at(0)->GetKind() == wxT("enumerator"));
-    if(showExtInfoPane) {
-        // it will be disabled automatically when the CC box is dissmissed
-        m_ccBox->EnableExtInfoPane();
     }
 
     // If the number of elements exceeds the maximum query result,
@@ -3119,54 +3090,24 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
                 CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
     }
 
-    m_ccBox->Adjust();
-    if(CodeCompletionManager::Get().GetWordCompletionRefreshNeeded()) {
-
-        CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
-        m_ccBox->RefreshList(tags, word);
-
-    } else
-        m_ccBox->Show(tags, word, false, !showExtInfoPane, owner);
+    CodeCompletionBox::Get().Display(this, tags, word, tags.at(0)->GetKind() == wxT("cpp_keyword"), owner);
+    //if(CodeCompletionManager::Get().GetWordCompletionRefreshNeeded()) {
+    //    CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
+    //    CodeCompletionBox::Get().Display(this, tags, word, false, NULL);
+    //
+    //} else {
+    //}
 }
 
 void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl, bool autoHide, bool autoInsertSingleChoice)
 {
-    if ( m_ccBox == NULL ) {
-        // create new completion box
-        m_ccBox = new CCBox( this );
-    }
-	
-	bool isRefereshing = CodeCompletionManager::Get().GetWordCompletionRefreshNeeded();
+    //bool isRefereshing = CodeCompletionManager::Get().GetWordCompletionRefreshNeeded();
+    
     // hide any previous occurance of the completion box
-    if( !isRefereshing )
-        HideCompletionBox();
+    HideCompletionBox();
 
     if(tags.empty()) {
         return;
-    }
-
-    m_ccBox->SetAutoHide(autoHide);
-    if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE)
-        m_ccBox->SetInsertSingleChoice(true);
-    else
-        m_ccBox->SetInsertSingleChoice(false);
-
-    // Show extra info pane for C++ tags
-    bool showExtInfoPane = (tags.at(0)->GetKind() == wxT("function")  ||
-                            tags.at(0)->GetKind() == wxT("prototype") ||
-                            tags.at(0)->GetKind() == wxT("class")     ||
-                            tags.at(0)->GetKind() == wxT("struct")    ||
-                            tags.at(0)->GetKind() == wxT("union")     ||
-                            tags.at(0)->GetKind() == wxT("namespace") ||
-                            tags.at(0)->GetKind() == wxT("member")    ||
-                            tags.at(0)->GetKind() == wxT("variable")  ||
-                            tags.at(0)->GetKind() == wxT("typedef")   ||
-                            tags.at(0)->GetKind() == wxT("macro")     ||
-                            tags.at(0)->GetKind() == wxT("enum")      ||
-                            tags.at(0)->GetKind() == wxT("enumerator"));
-    if(showExtInfoPane) {
-        // it will be disabled automatically when the CC box is dissmissed
-        m_ccBox->EnableExtInfoPane();
     }
 
     // If the number of elements exceeds the maximum query result,
@@ -3184,18 +3125,13 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
                 ButtonDetails(),
                 CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
     }
-	
-	if ( !isRefereshing )
-		m_ccBox->Adjust();
-		
-    m_ccBox->Show(tags, word, showFullDecl, !showExtInfoPane, NULL);
+    
+    CodeCompletionBox::Get().Display(this, tags, word, tags.at(0)->GetKind() == wxT("cpp_keyword"), NULL);
 }
 
 void LEditor::HideCompletionBox()
 {
-    if (IsCompletionBoxShown()) {
-        m_ccBox->HideCCBox();
-    }
+    CodeCompletionBox::Get().Hide();
 }
 
 int LEditor::GetCurrLineHeight()
@@ -3263,7 +3199,7 @@ void LEditor::OnLeftDClick(wxScintillaEvent& event)
 
 bool LEditor::IsCompletionBoxShown()
 {
-    return m_ccBox && m_ccBox->IsShown();
+    return CodeCompletionBox::Get().IsShown();
 }
 
 int LEditor::GetCurrentLine()
@@ -3436,12 +3372,12 @@ int LEditor::GetStyleAtPos(int pos)
 
 void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 {
-    if ( m_ccBox == NULL ) {
-        // create new completion box
-        m_ccBox = new CCBox( this );
-    }
-
-    m_ccBox->RegisterImageForKind(kind, bmp);
+    //if ( m_ccBox == NULL ) {
+    //    // create new completion box
+    //    m_ccBox = new CCBox( this );
+    //}
+    //
+    //m_ccBox->RegisterImageForKind(kind, bmp);
 }
 
 int LEditor::WordStartPos(int pos, bool onlyWordCharacters)

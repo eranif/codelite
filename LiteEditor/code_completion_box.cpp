@@ -2,6 +2,7 @@
 #include "event_notifier.h"
 #include "cc_box.h"
 #include "ctags_manager.h"
+#include "code_completion_manager.h"
 
 CodeCompletionBox::CodeCompletionBox()
     : m_ccBox(NULL)
@@ -21,12 +22,28 @@ CodeCompletionBox& CodeCompletionBox::Get()
 
 void CodeCompletionBox::Display(LEditor* editor, const TagEntryPtrVector_t& tags, const wxString& word, bool isKeywordList, wxEvtHandler* owner)
 {
-    if ( m_ccBox ) {
-        Hide();
-    }
-    
-    m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
-    m_ccBox->Show(tags, word, isKeywordList, owner);
+	if ( !m_ccBox ) {
+		m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
+	}
+	
+	if ( !CodeCompletionManager::Get().GetWordCompletionRefreshNeeded() ) {
+		if ( m_ccBox ) {
+			Hide();
+		}
+		m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
+	} else {
+		
+		// turn off the flag
+		if ( !m_ccBox ) {
+			CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
+			return;
+		}
+	}
+	
+	m_ccBox->Show(tags, word, isKeywordList, owner);
+	// Show takes into account the return value of 'GetWordCompletionRefreshNeeded'
+	// this is why we reset the flag *after* the call to Show(..)
+	CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
 }
 
 void CodeCompletionBox::OnCCBoxDismissed(wxCommandEvent& e)
@@ -40,6 +57,10 @@ void CodeCompletionBox::OnCCBoxDismissed(wxCommandEvent& e)
 void CodeCompletionBox::Hide()
 {
     if ( m_ccBox ) {
+		// Cancel the calltip as well
+		if( m_ccBox->GetEditor() ) {
+			m_ccBox->GetEditor()->CallTipCancel();
+		}
         m_ccBox->Destroy();
     }
     m_ccBox = NULL;

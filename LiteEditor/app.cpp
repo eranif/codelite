@@ -660,8 +660,8 @@ wxString newpath;  wxGetEnv(wxT("PATH"), &newpath);
     } else {
         lineNumber = 0;
     }
-
-    for (size_t i=0; i< parser.GetParamCount(); i++) {
+	
+	for (size_t i=0; i< parser.GetParamCount(); i++) {
         wxString argument = parser.GetParam(i);
 
         //convert to full path and open it

@@ -1342,7 +1342,6 @@ void LEditor::CodeComplete()
         return;
 
     else {
-        CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
         // let the built-in context do the job
         m_context->CodeComplete();
 
@@ -3102,10 +3101,6 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
 void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl, bool autoHide, bool autoInsertSingleChoice)
 {
     //bool isRefereshing = CodeCompletionManager::Get().GetWordCompletionRefreshNeeded();
-    
-    // hide any previous occurance of the completion box
-    HideCompletionBox();
-
     if(tags.empty()) {
         return;
     }

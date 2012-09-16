@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -51,11 +51,9 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	bSizer8->Add( fgSizer4, 1, wxEXPAND, 5 );
 	
 	m_useSingleToolbar = new wxCheckBox( m_panel1, wxID_ANY, _("Use single toolbar"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer8->Add( m_useSingleToolbar, 0, wxALL|wxEXPAND, 5 );
 	
 	m_checkBoxEnableMSWTheme = new wxCheckBox( m_panel1, wxID_ANY, _("Enable Windows(R) theme for Vista / Windows 7"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer8->Add( m_checkBoxEnableMSWTheme, 0, wxALL|wxEXPAND, 5 );
 	
 	bSizer2->Add( bSizer8, 0, wxEXPAND|wxALL, 5 );
@@ -67,22 +65,18 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
 	m_showSplashScreen = new wxCheckBox( m_panel1, wxID_ANY, _("Show splashscreen on startup"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_showSplashScreen->SetValue(true);
-	
+	m_showSplashScreen->SetValue(true); 
 	bSizer6->Add( m_showSplashScreen, 0, wxALL, 5 );
 	
 	m_singleAppInstance = new wxCheckBox( m_panel1, wxID_ANY, _("Allow only single instance running"), wxDefaultPosition, wxDefaultSize, 0 );
-	
 	bSizer6->Add( m_singleAppInstance, 0, wxALL, 5 );
 	
 	m_versionCheckOnStartup = new wxCheckBox( m_panel1, wxID_ANY, _("Check for new version on startup"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_versionCheckOnStartup->SetValue(true);
-	
+	m_versionCheckOnStartup->SetValue(true); 
 	bSizer6->Add( m_versionCheckOnStartup, 0, wxALL, 5 );
 	
 	m_fullFilePath = new wxCheckBox( m_panel1, wxID_ANY, _("Show file's full path in frame title"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_fullFilePath->SetValue(true);
-	
+	m_fullFilePath->SetValue(true); 
 	bSizer6->Add( m_fullFilePath, 0, wxALL, 5 );
 	
 	bSizer2->Add( bSizer6, 0, wxEXPAND|wxALL, 5 );
@@ -90,7 +84,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_panel1->SetSizer( bSizer2 );
 	m_panel1->Layout();
 	bSizer2->Fit( m_panel1 );
-	m_auinotebook1->AddPage( m_panel1, _("General"), true, wxNullBitmap );
+	m_auinotebook1->AddPage( m_panel1, _("General"), false, wxNullBitmap );
 	m_panel2 = new wxPanel( m_auinotebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -111,8 +105,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	fgSizer1->Add( m_fileEncoding, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	m_SetLocale = new wxCheckBox( m_panel2, wxID_ANY, _("Enable localization"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SetLocale->SetValue(true);
-	
+	m_SetLocale->SetValue(true); 
 	m_SetLocale->SetToolTip( _("View CodeLite's strings translated into a different language, if available.  This will also make CodeLite use other aspects of the locale.") );
 	
 	fgSizer1->Add( m_SetLocale, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -148,27 +141,28 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_staticText2->Wrap( -1 );
 	fgSizer2->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_clearButton = new wxButton( m_panel3, wxID_ANY, _("&Clear"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer2->Add( m_clearButton, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	m_clearButton = new wxButton( m_panel3, wxID_CLEAR, _("&Clear"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_clearButton->SetDefault(); 
+	fgSizer2->Add( m_clearButton, 0, wxALIGN_RIGHT|wxALL, 5 );
 	
 	m_staticText3 = new wxStaticText( m_panel3, wxID_ANY, _("Max items kept in find / replace dialog:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_maxItemsFindReplace = new wxSpinCtrl( m_panel3, wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 50, 10 );
-	fgSizer2->Add( m_maxItemsFindReplace, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	m_maxItemsFindReplace = new wxTextCtrl( m_panel3, wxID_ANY, _("10"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	fgSizer2->Add( m_maxItemsFindReplace, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
 	m_staticText4 = new wxStaticText( m_panel3, wxID_ANY, _("Maximum number of tabs opened in the editor:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	fgSizer2->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_spinCtrlMaxOpenTabs = new wxSpinCtrl( m_panel3, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 5, 30, 15 );
-	fgSizer2->Add( m_spinCtrlMaxOpenTabs, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	m_spinCtrlMaxOpenTabs = new wxTextCtrl( m_panel3, wxID_ANY, _("15"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	fgSizer2->Add( m_spinCtrlMaxOpenTabs, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
 	m_panel3->SetSizer( fgSizer2 );
 	m_panel3->Layout();
 	fgSizer2->Fit( m_panel3 );
-	m_auinotebook1->AddPage( m_panel3, _("History"), false, wxNullBitmap );
+	m_auinotebook1->AddPage( m_panel3, _("History"), true, wxNullBitmap );
 	m_panel4 = new wxPanel( m_auinotebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer3;
 	fgSizer3 = new wxFlexGridSizer( 0, 3, 0, 0 );
@@ -225,4 +219,5 @@ EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
 	m_clearButton->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorSettingsMiscBasePanel::OnClearUI ), NULL, this );
 	m_choice4->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnLogVerbosityChanged ), NULL, this );
 	m_buttonOpenLog->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EditorSettingsMiscBasePanel::OnShowLogFile ), NULL, this );
+	
 }

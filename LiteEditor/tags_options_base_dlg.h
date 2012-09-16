@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec  2 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -22,12 +22,11 @@
 #include <wx/sizer.h>
 #include <wx/dialog.h>
 #include <wx/stattext.h>
-#include <wx/spinctrl.h>
+#include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/panel.h>
 #include <wx/slider.h>
-#include <wx/textctrl.h>
 #include <wx/hyperlink.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -71,7 +70,7 @@ class CCDisplayAndBehaviorBase : public wxPanel
 	
 	protected:
 		wxStaticText* m_staticText14;
-		wxSpinCtrl* m_spinCtrlNumberOfCCItems;
+		wxTextCtrl* m_spinCtrlNumberOfCCItems;
 		wxCheckBox* m_checkBoxEnableCaseSensitiveCompletion;
 		wxCheckBox* m_checkDisplayTypeInfo;
 		wxCheckBox* m_checkDisplayFunctionTip;
@@ -97,7 +96,7 @@ class CCColouringBasePage : public wxPanel
 	
 	protected:
 		wxStaticText* m_staticText72;
-		wxSpinCtrl* m_spinCtrlMaxItemToColour;
+		wxTextCtrl* m_spinCtrlMaxItemToColour;
 		wxCheckBox* m_checkColourLocalVars;
 		wxCheckBox* m_checkBoxColourMacroBlocks;
 		wxCheckBox* m_checkColourProjTags;

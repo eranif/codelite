@@ -24,23 +24,23 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editoroptionsgeneralindentationpanel.h"
+#include "globals.h"
 
 EditorOptionsGeneralIndentationPanel::EditorOptionsGeneralIndentationPanel( wxWindow* parent )
-: EditorOptionsGeneralIndetationPanelBase( parent )
-, TreeBookNode<EditorOptionsGeneralIndentationPanel>()
+    : EditorOptionsGeneralIndetationPanelBase( parent )
+    , TreeBookNode<EditorOptionsGeneralIndentationPanel>()
 {
-	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-	m_checkBoxDisableSmartIdent->SetValue(options->GetDisableSmartIndent());
-	m_indentsUsesTabs->SetValue(options->GetIndentUsesTabs());
-    m_indentWidth->SetValue(options->GetIndentWidth());
-    m_tabWidth->SetValue(options->GetTabWidth());
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    m_checkBoxDisableSmartIdent->SetValue(options->GetDisableSmartIndent());
+    m_indentsUsesTabs->SetValue(options->GetIndentUsesTabs());
+    m_indentWidth->SetValue( ::wxIntToString(options->GetIndentWidth()) ) ;
+    m_tabWidth->SetValue( ::wxIntToString(options->GetTabWidth()));
 }
 
 void EditorOptionsGeneralIndentationPanel::Save(OptionsConfigPtr options)
 {
-	options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
-    options->SetIndentWidth(m_indentWidth->GetValue());
-    options->SetTabWidth(m_tabWidth->GetValue());
-	options->SetDisableSmartIndent(m_checkBoxDisableSmartIdent->IsChecked());
+    options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
+    options->SetIndentWidth( ::wxStringToInt(m_tabWidth->GetValue(), 4, 1, 20) );
+    options->SetTabWidth( ::wxStringToInt(m_tabWidth->GetValue(), 4, 1, 20) );
+    options->SetDisableSmartIndent(m_checkBoxDisableSmartIdent->IsChecked());
 }
-

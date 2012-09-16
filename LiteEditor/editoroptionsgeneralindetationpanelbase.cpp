@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -28,17 +28,17 @@ EditorOptionsGeneralIndetationPanelBase::EditorOptionsGeneralIndetationPanelBase
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Columns per indentation level:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	fgSizer1->Add( m_staticText1, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( m_staticText1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_indentWidth = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 20, 4 );
-	fgSizer1->Add( m_indentWidth, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	m_indentWidth = new wxTextCtrl( this, wxID_ANY, _("4"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_indentWidth, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Columns per tab character in document:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
-	fgSizer1->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( m_staticText2, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_tabWidth = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 20, 4 );
-	fgSizer1->Add( m_tabWidth, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	m_tabWidth = new wxTextCtrl( this, wxID_ANY, _("4"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_tabWidth, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
 	bSizer1->Add( fgSizer1, 1, wxEXPAND, 5 );
 	

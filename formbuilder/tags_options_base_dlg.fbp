@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <wxFormBuilder_Project>
-    <FileVersion major="1" minor="11" />
+    <FileVersion major="1" minor="10" />
     <object class="Project" expanded="1">
         <property name="class_decoration"></property>
         <property name="code_generation">C++</property>
         <property name="disconnect_events">1</property>
         <property name="disconnect_mode">source_name</property>
-        <property name="disconnect_php_events">0</property>
         <property name="disconnect_python_events">0</property>
         <property name="embedded_files_path">res</property>
         <property name="encoding">UTF-8</property>
@@ -20,7 +19,6 @@
         <property name="path">../LiteEditor</property>
         <property name="precompiled_header">#ifdef WX_PRECOMP&#x0A;&#x0A;#include &quot;wx/wxprec.h&quot;&#x0A;&#x0A;#ifdef __BORLANDC__&#x0A;#pragma hdrstop&#x0A;#endif //__BORLANDC__&#x0A;&#x0A;#else&#x0A;#include &lt;wx/wx.h&gt;&#x0A;#endif //WX_PRECOMP</property>
         <property name="relative_path">1</property>
-        <property name="skip_php_events">1</property>
         <property name="skip_python_events">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
@@ -29,11 +27,8 @@
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
             <property name="TopDockable">1</property>
-            <property name="aui_layer"></property>
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
-            <property name="aui_position"></property>
-            <property name="aui_row"></property>
             <property name="best_size"></property>
             <property name="bg"></property>
             <property name="caption"></property>
@@ -56,6 +51,7 @@
             <property name="gripper">0</property>
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
+            <property name="layer"></property>
             <property name="max_size"></property>
             <property name="maximize_button">0</property>
             <property name="maximum_size"></property>
@@ -69,7 +65,9 @@
             <property name="pane_size"></property>
             <property name="pin_button">1</property>
             <property name="pos"></property>
+            <property name="position"></property>
             <property name="resize">Resizable</property>
+            <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
@@ -134,10 +132,7 @@
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
                         <property name="TopDockable">1</property>
-                        <property name="aui_layer"></property>
                         <property name="aui_name"></property>
-                        <property name="aui_position"></property>
-                        <property name="aui_row"></property>
                         <property name="best_size"></property>
                         <property name="bg"></property>
                         <property name="caption"></property>
@@ -161,6 +156,7 @@
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
                         <property name="include">#include &lt;wx/treebook.h&gt;</property>
+                        <property name="layer"></property>
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>
@@ -175,7 +171,9 @@
                         <property name="permission">protected</property>
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
+                        <property name="position"></property>
                         <property name="resize">Resizable</property>
+                        <property name="row"></property>
                         <property name="settings"></property>
                         <property name="show">1</property>
                         <property name="size"></property>
@@ -223,10 +221,7 @@
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
                         <property name="TopDockable">1</property>
-                        <property name="aui_layer"></property>
                         <property name="aui_name"></property>
-                        <property name="aui_position"></property>
-                        <property name="aui_row"></property>
                         <property name="best_size"></property>
                         <property name="bg"></property>
                         <property name="caption"></property>
@@ -246,6 +241,7 @@
                         <property name="gripper">0</property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
+                        <property name="layer"></property>
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>
@@ -260,7 +256,9 @@
                         <property name="permission">protected</property>
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
+                        <property name="position"></property>
                         <property name="resize">Resizable</property>
+                        <property name="row"></property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="style">wxLI_HORIZONTAL</property>
@@ -317,10 +315,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -342,6 +337,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_OK</property>
                                 <property name="label">&amp;OK</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -356,7 +352,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -405,10 +403,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -430,6 +425,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_CANCEL</property>
                                 <property name="label">Cancel</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -444,7 +440,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -493,11 +491,8 @@
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
             <property name="TopDockable">1</property>
-            <property name="aui_layer"></property>
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
-            <property name="aui_position"></property>
-            <property name="aui_row"></property>
             <property name="best_size"></property>
             <property name="bg"></property>
             <property name="caption"></property>
@@ -518,6 +513,7 @@
             <property name="gripper">0</property>
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
+            <property name="layer"></property>
             <property name="max_size"></property>
             <property name="maximize_button">0</property>
             <property name="maximum_size"></property>
@@ -531,7 +527,9 @@
             <property name="pane_size"></property>
             <property name="pin_button">1</property>
             <property name="pos"></property>
+            <property name="position"></property>
             <property name="resize">Resizable</property>
+            <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
             <property name="subclass"></property>
@@ -621,10 +619,7 @@
                                                 <property name="LeftDockable">1</property>
                                                 <property name="RightDockable">1</property>
                                                 <property name="TopDockable">1</property>
-                                                <property name="aui_layer"></property>
                                                 <property name="aui_name"></property>
-                                                <property name="aui_position"></property>
-                                                <property name="aui_row"></property>
                                                 <property name="best_size"></property>
                                                 <property name="bg"></property>
                                                 <property name="caption"></property>
@@ -645,6 +640,7 @@
                                                 <property name="hidden">0</property>
                                                 <property name="id">wxID_ANY</property>
                                                 <property name="label">Number of items to display in the completion box:</property>
+                                                <property name="layer"></property>
                                                 <property name="max_size"></property>
                                                 <property name="maximize_button">0</property>
                                                 <property name="maximum_size"></property>
@@ -659,7 +655,9 @@
                                                 <property name="permission">protected</property>
                                                 <property name="pin_button">1</property>
                                                 <property name="pos"></property>
+                                                <property name="position"></property>
                                                 <property name="resize">Resizable</property>
+                                                <property name="row"></property>
                                                 <property name="show">1</property>
                                                 <property name="size"></property>
                                                 <property name="style"></property>
@@ -711,17 +709,14 @@
                                         </object>
                                         <object class="sizeritem" expanded="1">
                                             <property name="border">5</property>
-                                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</property>
+                                            <property name="flag">wxALL</property>
                                             <property name="proportion">0</property>
-                                            <object class="wxSpinCtrl" expanded="1">
+                                            <object class="wxTextCtrl" expanded="1">
                                                 <property name="BottomDockable">1</property>
                                                 <property name="LeftDockable">1</property>
                                                 <property name="RightDockable">1</property>
                                                 <property name="TopDockable">1</property>
-                                                <property name="aui_layer"></property>
                                                 <property name="aui_name"></property>
-                                                <property name="aui_position"></property>
-                                                <property name="aui_row"></property>
                                                 <property name="best_size"></property>
                                                 <property name="bg"></property>
                                                 <property name="caption"></property>
@@ -741,12 +736,11 @@
                                                 <property name="gripper">0</property>
                                                 <property name="hidden">0</property>
                                                 <property name="id">wxID_ANY</property>
-                                                <property name="initial">50</property>
-                                                <property name="max">1000</property>
+                                                <property name="layer"></property>
                                                 <property name="max_size"></property>
                                                 <property name="maximize_button">0</property>
                                                 <property name="maximum_size"></property>
-                                                <property name="min">50</property>
+                                                <property name="maxlength">0</property>
                                                 <property name="min_size"></property>
                                                 <property name="minimize_button">0</property>
                                                 <property name="minimum_size"></property>
@@ -758,10 +752,12 @@
                                                 <property name="permission">protected</property>
                                                 <property name="pin_button">1</property>
                                                 <property name="pos"></property>
+                                                <property name="position"></property>
                                                 <property name="resize">Resizable</property>
+                                                <property name="row"></property>
                                                 <property name="show">1</property>
                                                 <property name="size"></property>
-                                                <property name="style">wxSP_ARROW_KEYS</property>
+                                                <property name="style">wxTE_RICH2</property>
                                                 <property name="subclass"></property>
                                                 <property name="toolbar_pane">0</property>
                                                 <property name="tooltip"></property>
@@ -795,8 +791,10 @@
                                                 <event name="OnRightUp"></event>
                                                 <event name="OnSetFocus"></event>
                                                 <event name="OnSize"></event>
-                                                <event name="OnSpinCtrl"></event>
-                                                <event name="OnSpinCtrlText"></event>
+                                                <event name="OnText"></event>
+                                                <event name="OnTextEnter"></event>
+                                                <event name="OnTextMaxLen"></event>
+                                                <event name="OnTextURL"></event>
                                                 <event name="OnUpdateUI"></event>
                                             </object>
                                         </object>
@@ -811,10 +809,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -836,6 +831,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Code Completion is case sensitive (improves performance)</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -850,7 +846,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -899,10 +897,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -924,6 +919,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Display type info tooltips</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -938,7 +934,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -987,10 +985,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1012,6 +1007,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Display function calltip</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -1026,7 +1022,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -1075,10 +1073,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1100,6 +1095,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Display completion box for language keywords</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -1114,7 +1110,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -1163,10 +1161,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1188,6 +1183,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Keep function signature un-formatted</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -1202,7 +1198,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -1279,10 +1277,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1304,6 +1299,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Retag workspace on workspace startup</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -1318,7 +1314,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -1367,10 +1365,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1392,6 +1387,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Disable auto parsing of saved files</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -1406,7 +1402,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -1455,10 +1453,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1480,6 +1475,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Scan all included files to locate &apos;using namespace&apos; statements</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -1494,7 +1490,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -1540,16 +1538,13 @@
                 </object>
             </object>
         </object>
-        <object class="Panel" expanded="0">
+        <object class="Panel" expanded="1">
             <property name="BottomDockable">1</property>
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
             <property name="TopDockable">1</property>
-            <property name="aui_layer"></property>
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
-            <property name="aui_position"></property>
-            <property name="aui_row"></property>
             <property name="best_size"></property>
             <property name="bg"></property>
             <property name="caption"></property>
@@ -1570,6 +1565,7 @@
             <property name="gripper">0</property>
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
+            <property name="layer"></property>
             <property name="max_size"></property>
             <property name="maximize_button">0</property>
             <property name="maximum_size"></property>
@@ -1583,7 +1579,9 @@
             <property name="pane_size"></property>
             <property name="pin_button">1</property>
             <property name="pos"></property>
+            <property name="position"></property>
             <property name="resize">Resizable</property>
+            <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
             <property name="subclass"></property>
@@ -1626,16 +1624,16 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxBoxSizer" expanded="0">
+            <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer16</property>
                 <property name="orient">wxVERTICAL</property>
                 <property name="permission">none</property>
-                <object class="sizeritem" expanded="0">
+                <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND|wxALL</property>
                     <property name="proportion">0</property>
-                    <object class="wxStaticBoxSizer" expanded="0">
+                    <object class="wxStaticBoxSizer" expanded="1">
                         <property name="id">wxID_ANY</property>
                         <property name="label"></property>
                         <property name="minimum_size"></property>
@@ -1661,10 +1659,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1685,6 +1680,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Maixmum number of *workspace* symbols to colour:</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -1699,7 +1695,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -1739,19 +1737,16 @@
                                         <event name="OnUpdateUI"></event>
                                     </object>
                                 </object>
-                                <object class="sizeritem" expanded="0">
+                                <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxALL|wxEXPAND</property>
-                                    <property name="proportion">1</property>
-                                    <object class="wxSpinCtrl" expanded="0">
+                                    <property name="flag">wxALL</property>
+                                    <property name="proportion">0</property>
+                                    <object class="wxTextCtrl" expanded="1">
                                         <property name="BottomDockable">1</property>
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -1771,12 +1766,11 @@
                                         <property name="gripper">0</property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="initial">1000</property>
-                                        <property name="max">10000</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
-                                        <property name="min">500</property>
+                                        <property name="maxlength">0</property>
                                         <property name="min_size"></property>
                                         <property name="minimize_button">0</property>
                                         <property name="minimum_size"></property>
@@ -1788,10 +1782,12 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
-                                        <property name="style">wxSP_ARROW_KEYS|wxSP_WRAP</property>
+                                        <property name="style">wxTE_RICH2</property>
                                         <property name="subclass"></property>
                                         <property name="toolbar_pane">0</property>
                                         <property name="tooltip"></property>
@@ -1799,7 +1795,7 @@
                                         <property name="validator_style">wxFILTER_NONE</property>
                                         <property name="validator_type">wxDefaultValidator</property>
                                         <property name="validator_variable"></property>
-                                        <property name="value"></property>
+                                        <property name="value">1000</property>
                                         <property name="window_extra_style"></property>
                                         <property name="window_name"></property>
                                         <property name="window_style"></property>
@@ -1825,8 +1821,10 @@
                                         <event name="OnRightUp"></event>
                                         <event name="OnSetFocus"></event>
                                         <event name="OnSize"></event>
-                                        <event name="OnSpinCtrl"></event>
-                                        <event name="OnSpinCtrlText"></event>
+                                        <event name="OnText"></event>
+                                        <event name="OnTextEnter"></event>
+                                        <event name="OnTextMaxLen"></event>
+                                        <event name="OnTextURL"></event>
                                         <event name="OnUpdateUI"></event>
                                     </object>
                                 </object>
@@ -1841,10 +1839,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -1866,6 +1861,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="label">Colour local variables</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -1880,7 +1876,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -1929,10 +1927,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -1954,6 +1949,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="label">Colour macro blocks with gray text colour when the macro is not defined</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -1968,7 +1964,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -2017,10 +2015,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -2042,6 +2037,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="label">Colour workspace tags</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -2056,7 +2052,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -2096,11 +2094,11 @@
                                 <event name="OnUpdateUI"></event>
                             </object>
                         </object>
-                        <object class="sizeritem" expanded="0">
+                        <object class="sizeritem" expanded="1">
                             <property name="border">15</property>
                             <property name="flag">wxEXPAND|wxRIGHT|wxLEFT</property>
                             <property name="proportion">0</property>
-                            <object class="wxFlexGridSizer" expanded="0">
+                            <object class="wxFlexGridSizer" expanded="1">
                                 <property name="cols">3</property>
                                 <property name="flexible_direction">wxBOTH</property>
                                 <property name="growablecols"></property>
@@ -2121,10 +2119,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2146,6 +2141,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">class</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2160,7 +2156,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2209,10 +2207,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2234,6 +2229,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">struct</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2248,7 +2244,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2297,10 +2295,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2322,6 +2317,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">function</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2336,7 +2332,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2385,10 +2383,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2410,6 +2405,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">enum</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2424,7 +2420,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2473,10 +2471,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2498,6 +2493,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">enumerator</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2512,7 +2508,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2561,10 +2559,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2586,6 +2581,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">union</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2600,7 +2596,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2649,10 +2647,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2674,6 +2669,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">prototype</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2688,7 +2684,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2737,10 +2735,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2762,6 +2757,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">typedef</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2776,7 +2772,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2825,10 +2823,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2850,6 +2845,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">macro</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2864,7 +2860,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -2913,10 +2911,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -2938,6 +2933,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">namespace</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -2952,7 +2948,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -3001,10 +2999,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -3026,6 +3021,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">member</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -3040,7 +3036,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -3089,10 +3087,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -3114,6 +3109,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">variable</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -3128,7 +3124,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -3179,11 +3177,8 @@
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
             <property name="TopDockable">1</property>
-            <property name="aui_layer"></property>
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
-            <property name="aui_position"></property>
-            <property name="aui_row"></property>
             <property name="best_size"></property>
             <property name="bg"></property>
             <property name="caption"></property>
@@ -3204,6 +3199,7 @@
             <property name="gripper">0</property>
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
+            <property name="layer"></property>
             <property name="max_size"></property>
             <property name="maximize_button">0</property>
             <property name="maximum_size"></property>
@@ -3217,7 +3213,9 @@
             <property name="pane_size"></property>
             <property name="pin_button">1</property>
             <property name="pos"></property>
+            <property name="position"></property>
             <property name="resize">Resizable</property>
+            <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
             <property name="subclass"></property>
@@ -3302,10 +3300,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -3327,6 +3322,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Auto-Display wordcompletion-box on typing</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -3341,7 +3337,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -3400,10 +3398,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -3424,6 +3419,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Minimum number of chars to type to show wordcompletion-box:</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -3438,7 +3434,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -3487,10 +3485,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -3510,6 +3505,7 @@
                                         <property name="gripper">0</property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
+                                        <property name="layer"></property>
                                         <property name="maxValue">25</property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
@@ -3526,7 +3522,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style">wxSL_AUTOTICKS|wxSL_HORIZONTAL|wxSL_LABELS</property>
@@ -3595,10 +3593,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -3620,6 +3615,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Auto-Insert single match</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -3634,7 +3630,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -3685,11 +3683,8 @@
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
             <property name="TopDockable">1</property>
-            <property name="aui_layer"></property>
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
-            <property name="aui_position"></property>
-            <property name="aui_row"></property>
             <property name="best_size"></property>
             <property name="bg"></property>
             <property name="caption"></property>
@@ -3710,6 +3705,7 @@
             <property name="gripper">0</property>
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
+            <property name="layer"></property>
             <property name="max_size"></property>
             <property name="maximize_button">0</property>
             <property name="maximum_size"></property>
@@ -3723,7 +3719,9 @@
             <property name="pane_size"></property>
             <property name="pin_button">1</property>
             <property name="pos"></property>
+            <property name="position"></property>
             <property name="resize">Resizable</property>
+            <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
             <property name="subclass"></property>
@@ -3792,10 +3790,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -3816,6 +3811,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="label">Add search path(s) for the parser.&#x0A;The search paths are used for locating include files</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -3830,7 +3826,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -3890,10 +3888,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -3913,6 +3908,7 @@
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -3928,7 +3924,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style">wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2</property>
@@ -3990,10 +3988,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -4015,6 +4010,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">&amp;Add...</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -4029,7 +4025,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -4094,10 +4092,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -4118,6 +4113,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="label">Add exclude path(s) for the parser.&#x0A;CodeLite will skip any file found inside these paths while scanning for include files</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -4132,7 +4128,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -4192,10 +4190,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -4215,6 +4210,7 @@
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -4230,7 +4226,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style">wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2</property>
@@ -4292,10 +4290,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -4317,6 +4312,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">&amp;Add...</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -4331,7 +4327,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -4382,11 +4380,8 @@
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
             <property name="TopDockable">1</property>
-            <property name="aui_layer"></property>
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
-            <property name="aui_position"></property>
-            <property name="aui_row"></property>
             <property name="best_size"></property>
             <property name="bg"></property>
             <property name="caption"></property>
@@ -4407,6 +4402,7 @@
             <property name="gripper">0</property>
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
+            <property name="layer"></property>
             <property name="max_size"></property>
             <property name="maximize_button">0</property>
             <property name="maximum_size"></property>
@@ -4420,7 +4416,9 @@
             <property name="pane_size"></property>
             <property name="pin_button">1</property>
             <property name="pos"></property>
+            <property name="position"></property>
             <property name="resize">Resizable</property>
+            <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
             <property name="subclass"></property>
@@ -4493,10 +4491,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -4517,6 +4512,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="label">File Types:</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -4531,7 +4527,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -4580,10 +4578,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -4603,6 +4598,7 @@
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -4618,7 +4614,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style">wxTE_RICH2</property>
@@ -4673,10 +4671,7 @@
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
                         <property name="TopDockable">1</property>
-                        <property name="aui_layer"></property>
                         <property name="aui_name"></property>
-                        <property name="aui_position"></property>
-                        <property name="aui_row"></property>
                         <property name="best_size"></property>
                         <property name="bg"></property>
                         <property name="caption"></property>
@@ -4696,6 +4691,7 @@
                         <property name="gripper">0</property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
+                        <property name="layer"></property>
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>
@@ -4710,7 +4706,9 @@
                         <property name="permission">protected</property>
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
+                        <property name="position"></property>
                         <property name="resize">Resizable</property>
+                        <property name="row"></property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="style">wxLI_HORIZONTAL</property>
@@ -4767,10 +4765,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -4791,6 +4786,7 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="label">CodeLite can suggest a list of &apos;Tokens&apos; that will be added to the &apos;Tokens&apos; table based on parsing the following header files &#x0A;(space separated list):</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -4805,7 +4801,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -4863,10 +4861,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -4886,6 +4881,7 @@
                                         <property name="gripper">0</property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -4901,7 +4897,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style">wxTE_RICH2</property>
@@ -4954,10 +4952,7 @@
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
-                                        <property name="aui_layer"></property>
                                         <property name="aui_name"></property>
-                                        <property name="aui_position"></property>
-                                        <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
                                         <property name="caption"></property>
@@ -4979,6 +4974,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Parse!</property>
+                                        <property name="layer"></property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
@@ -4993,7 +4989,9 @@
                                         <property name="permission">protected</property>
                                         <property name="pin_button">1</property>
                                         <property name="pos"></property>
+                                        <property name="position"></property>
                                         <property name="resize">Resizable</property>
+                                        <property name="row"></property>
                                         <property name="show">1</property>
                                         <property name="size"></property>
                                         <property name="style"></property>
@@ -5046,10 +5044,7 @@
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
                         <property name="TopDockable">1</property>
-                        <property name="aui_layer"></property>
                         <property name="aui_name"></property>
-                        <property name="aui_position"></property>
-                        <property name="aui_row"></property>
                         <property name="best_size"></property>
                         <property name="bg"></property>
                         <property name="bitmapsize"></property>
@@ -5070,6 +5065,7 @@
                         <property name="gripper">0</property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
+                        <property name="layer"></property>
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>
@@ -5084,7 +5080,9 @@
                         <property name="permission">protected</property>
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
+                        <property name="position"></property>
                         <property name="resize">Resizable</property>
+                        <property name="row"></property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="style"></property>
@@ -5132,10 +5130,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -5155,6 +5150,7 @@
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -5169,7 +5165,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="subclass"></property>
@@ -5219,10 +5217,7 @@
                                             <property name="LeftDockable">1</property>
                                             <property name="RightDockable">1</property>
                                             <property name="TopDockable">1</property>
-                                            <property name="aui_layer"></property>
                                             <property name="aui_name"></property>
-                                            <property name="aui_position"></property>
-                                            <property name="aui_row"></property>
                                             <property name="best_size"></property>
                                             <property name="bg"></property>
                                             <property name="caption"></property>
@@ -5242,6 +5237,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
+                                            <property name="layer"></property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -5257,7 +5253,9 @@
                                             <property name="permission">protected</property>
                                             <property name="pin_button">1</property>
                                             <property name="pos"></property>
+                                            <property name="position"></property>
                                             <property name="resize">Resizable</property>
+                                            <property name="row"></property>
                                             <property name="show">1</property>
                                             <property name="size"></property>
                                             <property name="style">wxTE_DONTWRAP|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2</property>
@@ -5322,10 +5320,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -5346,6 +5341,7 @@
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
                                                     <property name="label">List here list of tokens to be pre-processed by codelite-indexer. &#x0A;Usually, you would like to add here macros which confuse the parser&#x0A;Click the below link to read more about this feature and the syntax supported.</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -5360,7 +5356,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>
                                                     <property name="style"></property>
@@ -5409,10 +5407,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -5434,6 +5429,7 @@
                                                     <property name="hover_color"></property>
                                                     <property name="id">wxID_ANY</property>
                                                     <property name="label">Macros Handling</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -5449,7 +5445,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>
                                                     <property name="style">wxHL_DEFAULT_STYLE</property>
@@ -5516,10 +5514,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -5539,6 +5534,7 @@
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -5553,7 +5549,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="subclass"></property>
@@ -5615,10 +5613,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -5639,6 +5634,7 @@
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
                                                     <property name="label">Specify here a list of types which are to be specially handled while parsing C and C++ source files in the format of TYPE1=TYPE2.&#x0A;So when TYPE1 is found, CodeLite will offer completion as if it was TYPE2 was found</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -5653,7 +5649,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>
                                                     <property name="style"></property>
@@ -5704,10 +5702,7 @@
                                             <property name="LeftDockable">1</property>
                                             <property name="RightDockable">1</property>
                                             <property name="TopDockable">1</property>
-                                            <property name="aui_layer"></property>
                                             <property name="aui_name"></property>
-                                            <property name="aui_position"></property>
-                                            <property name="aui_row"></property>
                                             <property name="best_size"></property>
                                             <property name="bg"></property>
                                             <property name="caption"></property>
@@ -5727,6 +5722,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
+                                            <property name="layer"></property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -5742,7 +5738,9 @@
                                             <property name="permission">protected</property>
                                             <property name="pin_button">1</property>
                                             <property name="pos"></property>
+                                            <property name="position"></property>
                                             <property name="resize">Resizable</property>
+                                            <property name="row"></property>
                                             <property name="show">1</property>
                                             <property name="size"></property>
                                             <property name="style">wxTE_MULTILINE|wxTE_RICH2</property>
@@ -5798,11 +5796,8 @@
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
             <property name="TopDockable">1</property>
-            <property name="aui_layer"></property>
             <property name="aui_managed">0</property>
             <property name="aui_name"></property>
-            <property name="aui_position"></property>
-            <property name="aui_row"></property>
             <property name="best_size"></property>
             <property name="bg"></property>
             <property name="caption"></property>
@@ -5823,6 +5818,7 @@
             <property name="gripper">0</property>
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
+            <property name="layer"></property>
             <property name="max_size"></property>
             <property name="maximize_button">0</property>
             <property name="maximum_size"></property>
@@ -5836,7 +5832,9 @@
             <property name="pane_size"></property>
             <property name="pin_button">1</property>
             <property name="pos"></property>
+            <property name="position"></property>
             <property name="resize">Resizable</property>
+            <property name="row"></property>
             <property name="show">1</property>
             <property name="size">-1,-1</property>
             <property name="subclass"></property>
@@ -5893,10 +5891,7 @@
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
                         <property name="TopDockable">1</property>
-                        <property name="aui_layer"></property>
                         <property name="aui_name"></property>
-                        <property name="aui_position"></property>
-                        <property name="aui_row"></property>
                         <property name="best_size"></property>
                         <property name="bg"></property>
                         <property name="caption"></property>
@@ -5918,6 +5913,7 @@
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
                         <property name="label">Enable clang code completion</property>
+                        <property name="layer"></property>
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>
@@ -5932,7 +5928,9 @@
                         <property name="permission">protected</property>
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
+                        <property name="position"></property>
                         <property name="resize">Resizable</property>
+                        <property name="row"></property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="style"></property>
@@ -5981,10 +5979,7 @@
                         <property name="LeftDockable">1</property>
                         <property name="RightDockable">1</property>
                         <property name="TopDockable">1</property>
-                        <property name="aui_layer"></property>
                         <property name="aui_name"></property>
-                        <property name="aui_position"></property>
-                        <property name="aui_row"></property>
                         <property name="best_size"></property>
                         <property name="bg"></property>
                         <property name="bitmapsize"></property>
@@ -6005,6 +6000,7 @@
                         <property name="gripper">0</property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
+                        <property name="layer"></property>
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>
@@ -6019,7 +6015,9 @@
                         <property name="permission">protected</property>
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
+                        <property name="position"></property>
                         <property name="resize">Resizable</property>
+                        <property name="row"></property>
                         <property name="show">1</property>
                         <property name="size"></property>
                         <property name="style"></property>
@@ -6067,10 +6065,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -6090,6 +6085,7 @@
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -6104,7 +6100,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="subclass"></property>
@@ -6170,10 +6168,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -6195,6 +6190,7 @@
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
                                                     <property name="label">Use clang completion over ctags ccompletion</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -6209,7 +6205,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>
                                                     <property name="style"></property>
@@ -6260,10 +6258,7 @@
                                             <property name="LeftDockable">1</property>
                                             <property name="RightDockable">1</property>
                                             <property name="TopDockable">1</property>
-                                            <property name="aui_layer"></property>
                                             <property name="aui_name"></property>
-                                            <property name="aui_position"></property>
-                                            <property name="aui_row"></property>
                                             <property name="best_size"></property>
                                             <property name="bg"></property>
                                             <property name="caption"></property>
@@ -6283,6 +6278,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
+                                            <property name="layer"></property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -6297,7 +6293,9 @@
                                             <property name="permission">protected</property>
                                             <property name="pin_button">1</property>
                                             <property name="pos"></property>
+                                            <property name="position"></property>
                                             <property name="resize">Resizable</property>
+                                            <property name="row"></property>
                                             <property name="show">1</property>
                                             <property name="size"></property>
                                             <property name="style">wxLI_HORIZONTAL</property>
@@ -6345,10 +6343,7 @@
                                             <property name="LeftDockable">1</property>
                                             <property name="RightDockable">1</property>
                                             <property name="TopDockable">1</property>
-                                            <property name="aui_layer"></property>
                                             <property name="aui_name"></property>
-                                            <property name="aui_position"></property>
-                                            <property name="aui_row"></property>
                                             <property name="best_size"></property>
                                             <property name="bg"></property>
                                             <property name="caption"></property>
@@ -6369,6 +6364,7 @@
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
                                             <property name="label">Search paths:</property>
+                                            <property name="layer"></property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -6383,7 +6379,9 @@
                                             <property name="permission">protected</property>
                                             <property name="pin_button">1</property>
                                             <property name="pos"></property>
+                                            <property name="position"></property>
                                             <property name="resize">Resizable</property>
+                                            <property name="row"></property>
                                             <property name="show">1</property>
                                             <property name="size"></property>
                                             <property name="style"></property>
@@ -6432,10 +6430,7 @@
                                             <property name="LeftDockable">1</property>
                                             <property name="RightDockable">1</property>
                                             <property name="TopDockable">1</property>
-                                            <property name="aui_layer"></property>
                                             <property name="aui_name"></property>
-                                            <property name="aui_position"></property>
-                                            <property name="aui_row"></property>
                                             <property name="best_size"></property>
                                             <property name="bg"></property>
                                             <property name="caption"></property>
@@ -6455,6 +6450,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
+                                            <property name="layer"></property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
                                             <property name="maximum_size"></property>
@@ -6469,7 +6465,9 @@
                                             <property name="permission">protected</property>
                                             <property name="pin_button">1</property>
                                             <property name="pos"></property>
+                                            <property name="position"></property>
                                             <property name="resize">Resizable</property>
+                                            <property name="row"></property>
                                             <property name="show">1</property>
                                             <property name="size"></property>
                                             <property name="subclass"></property>
@@ -6519,10 +6517,7 @@
                                                         <property name="LeftDockable">1</property>
                                                         <property name="RightDockable">1</property>
                                                         <property name="TopDockable">1</property>
-                                                        <property name="aui_layer"></property>
                                                         <property name="aui_name"></property>
-                                                        <property name="aui_position"></property>
-                                                        <property name="aui_row"></property>
                                                         <property name="best_size"></property>
                                                         <property name="bg"></property>
                                                         <property name="caption"></property>
@@ -6542,6 +6537,7 @@
                                                         <property name="gripper">0</property>
                                                         <property name="hidden">0</property>
                                                         <property name="id">wxID_ANY</property>
+                                                        <property name="layer"></property>
                                                         <property name="max_size"></property>
                                                         <property name="maximize_button">0</property>
                                                         <property name="maximum_size"></property>
@@ -6557,7 +6553,9 @@
                                                         <property name="permission">protected</property>
                                                         <property name="pin_button">1</property>
                                                         <property name="pos"></property>
+                                                        <property name="position"></property>
                                                         <property name="resize">Resizable</property>
+                                                        <property name="row"></property>
                                                         <property name="show">1</property>
                                                         <property name="size"></property>
                                                         <property name="style">wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2</property>
@@ -6610,10 +6608,7 @@
                                                         <property name="LeftDockable">1</property>
                                                         <property name="RightDockable">1</property>
                                                         <property name="TopDockable">1</property>
-                                                        <property name="aui_layer"></property>
                                                         <property name="aui_name"></property>
-                                                        <property name="aui_position"></property>
-                                                        <property name="aui_row"></property>
                                                         <property name="best_size"></property>
                                                         <property name="bg"></property>
                                                         <property name="caption"></property>
@@ -6635,6 +6630,7 @@
                                                         <property name="hidden">0</property>
                                                         <property name="id">wxID_ANY</property>
                                                         <property name="label">Suggest search paths...</property>
+                                                        <property name="layer"></property>
                                                         <property name="max_size"></property>
                                                         <property name="maximize_button">0</property>
                                                         <property name="maximum_size"></property>
@@ -6649,7 +6645,9 @@
                                                         <property name="permission">protected</property>
                                                         <property name="pin_button">1</property>
                                                         <property name="pos"></property>
+                                                        <property name="position"></property>
                                                         <property name="resize">Resizable</property>
+                                                        <property name="row"></property>
                                                         <property name="show">1</property>
                                                         <property name="size"></property>
                                                         <property name="style"></property>
@@ -6704,10 +6702,7 @@
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
                                 <property name="TopDockable">1</property>
-                                <property name="aui_layer"></property>
                                 <property name="aui_name"></property>
-                                <property name="aui_position"></property>
-                                <property name="aui_row"></property>
                                 <property name="best_size"></property>
                                 <property name="bg"></property>
                                 <property name="caption"></property>
@@ -6727,6 +6722,7 @@
                                 <property name="gripper">0</property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
+                                <property name="layer"></property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
@@ -6741,7 +6737,9 @@
                                 <property name="permission">protected</property>
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
+                                <property name="position"></property>
                                 <property name="resize">Resizable</property>
+                                <property name="row"></property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
                                 <property name="subclass"></property>
@@ -6807,10 +6805,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -6831,6 +6826,7 @@
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
                                                     <property name="label">Clear clang translation unit cache:</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -6845,7 +6841,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>
                                                     <property name="style"></property>
@@ -6894,10 +6892,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -6919,6 +6914,7 @@
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_CLEAR</property>
                                                     <property name="label">Clear</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -6933,7 +6929,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>
                                                     <property name="style"></property>
@@ -6982,10 +6980,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -7006,6 +7001,7 @@
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
                                                     <property name="label">Parsing policy:</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -7020,7 +7016,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>
                                                     <property name="style"></property>
@@ -7069,10 +7067,7 @@
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
                                                     <property name="TopDockable">1</property>
-                                                    <property name="aui_layer"></property>
                                                     <property name="aui_name"></property>
-                                                    <property name="aui_position"></property>
-                                                    <property name="aui_row"></property>
                                                     <property name="best_size"></property>
                                                     <property name="bg"></property>
                                                     <property name="caption"></property>
@@ -7093,6 +7088,7 @@
                                                     <property name="gripper">0</property>
                                                     <property name="hidden">0</property>
                                                     <property name="id">wxID_ANY</property>
+                                                    <property name="layer"></property>
                                                     <property name="max_size"></property>
                                                     <property name="maximize_button">0</property>
                                                     <property name="maximum_size"></property>
@@ -7107,7 +7103,9 @@
                                                     <property name="permission">protected</property>
                                                     <property name="pin_button">1</property>
                                                     <property name="pos"></property>
+                                                    <property name="position"></property>
                                                     <property name="resize">Resizable</property>
+                                                    <property name="row"></property>
                                                     <property name="selection">1</property>
                                                     <property name="show">1</property>
                                                     <property name="size"></property>

@@ -53,7 +53,6 @@ void clProcess::SetPid(long pid)
 
 void clProcess::Terminate()
 {
-	wxLog::EnableLogging(false);
 	wxKillError rc;
 	wxKill(GetPid(), wxSIGKILL, &rc, wxKILL_CHILDREN);
 
@@ -61,7 +60,6 @@ void clProcess::Terminate()
 	// the main frame to handle the event or else we can get
 	// memory leak
 	wxMilliSleep( 150 );
-	wxLog::EnableLogging(true);
 }
 
 long clProcess::Start(bool hide)

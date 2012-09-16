@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec  2 2011)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -84,8 +84,8 @@ CCDisplayAndBehaviorBase::CCDisplayAndBehaviorBase( wxWindow* parent, wxWindowID
 	
 	bSizer23->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	m_spinCtrlNumberOfCCItems = new wxSpinCtrl( this, wxID_ANY, wxT("50"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 50, 1000, 50 );
-	bSizer23->Add( m_spinCtrlNumberOfCCItems, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+	m_spinCtrlNumberOfCCItems = new wxTextCtrl( this, wxID_ANY, _("50"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	bSizer23->Add( m_spinCtrlNumberOfCCItems, 0, wxALL, 5 );
 	
 	gSizer1->Add( bSizer23, 0, wxEXPAND, 5 );
 	
@@ -165,8 +165,8 @@ CCColouringBasePage::CCColouringBasePage( wxWindow* parent, wxWindowID id, const
 	m_staticText72->Wrap( -1 );
 	bSizer11->Add( m_staticText72, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_spinCtrlMaxItemToColour = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 500, 10000, 1000 );
-	bSizer11->Add( m_spinCtrlMaxItemToColour, 1, wxALL|wxEXPAND, 5 );
+	m_spinCtrlMaxItemToColour = new wxTextCtrl( this, wxID_ANY, _("1000"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	bSizer11->Add( m_spinCtrlMaxItemToColour, 0, wxALL, 5 );
 	
 	sbSizer4->Add( bSizer11, 0, wxEXPAND, 5 );
 	

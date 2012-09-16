@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Nov 18 2010)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -24,17 +24,15 @@ EditorSettingsCaretBase::EditorSettingsCaretBase( wxWindow* parent, wxWindowID i
 	m_staticText1->Wrap( -1 );
 	fgSizer1->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_spinCtrlBlinkPeriod = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 1000, 500 );
-	m_spinCtrlBlinkPeriod->SetToolTip( _("Set the caret blink period in milliseconds. Setting the period to 0 stops the caret blinking ") );
-	
-	fgSizer1->Add( m_spinCtrlBlinkPeriod, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	m_spinCtrlBlinkPeriod = new wxTextCtrl( this, wxID_ANY, _("500"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	fgSizer1->Add( m_spinCtrlBlinkPeriod, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
 	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Caret width (pixels):"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
 	fgSizer1->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_spinCtrlCaretWidth = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1 );
-	fgSizer1->Add( m_spinCtrlCaretWidth, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	m_spinCtrlCaretWidth = new wxTextCtrl( this, wxID_ANY, _("1"), wxDefaultPosition, wxDefaultSize, wxTE_RICH2 );
+	fgSizer1->Add( m_spinCtrlCaretWidth, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
 	mainSizer->Add( fgSizer1, 0, wxEXPAND|wxALL, 5 );
 	

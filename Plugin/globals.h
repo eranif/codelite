@@ -39,25 +39,25 @@ class IManager;
 
 class WXDLLIMPEXP_SDK BOM
 {
-	wxMemoryBuffer m_bom;
-	
+    wxMemoryBuffer m_bom;
+
 public:
-	BOM(const char* buffer, size_t len);
-	BOM();
-	~BOM();
-	
-	void Clear();
-	int Len() const;
-	wxFontEncoding Encoding();
-	static wxFontEncoding Encoding(const char* buff);
-	void SetData(const char* buffer, size_t len);
+    BOM(const char* buffer, size_t len);
+    BOM();
+    ~BOM();
+
+    void Clear();
+    int Len() const;
+    wxFontEncoding Encoding();
+    static wxFontEncoding Encoding(const char* buff);
+    void SetData(const char* buffer, size_t len);
 };
 
 class WXDLLIMPEXP_SDK clEventDisabler
 {
 public:
-	clEventDisabler();
-	~clEventDisabler();
+    clEventDisabler();
+    ~clEventDisabler();
 };
 
 /**
@@ -302,31 +302,31 @@ WXDLLIMPEXP_SDK wxString wxShellExec(const wxString &cmd, const wxString &projec
 class WXDLLIMPEXP_SDK StringManager
 {
 protected:
-	wxArrayString m_unlocalisedStringArray;
-	wxControlWithItems* p_control;
-	size_t m_size;
+    wxArrayString m_unlocalisedStringArray;
+    wxControlWithItems* p_control;
+    size_t m_size;
 public:
-	StringManager() : m_size(0) {}
+    StringManager() : m_size(0) {}
 
-/**
- * @brief Store the data, and load the strings into the control, localised
- * @param size size of the string array
- * @param strings the string array
- * @param current the option currently used
- * @param control the gui element, probably a wxChoice
- */
-	void AddStrings(size_t size, const wxString* const strings, const wxString& current, wxControlWithItems* control);
-/**
- * @brief Returns the unlocalised string corresponding to the selection
- * @return an unlocalised string
- */
-	wxString GetStringSelection() const;
-/**
- * @brief Sets m_control's selection to that corresponding to the unlocalised string
- * @param str an unlocalised string
- * @param dfault the default used if str is not found
- */	
-	void SetStringSelection(const wxString& str, size_t dfault = 0);
+    /**
+     * @brief Store the data, and load the strings into the control, localised
+     * @param size size of the string array
+     * @param strings the string array
+     * @param current the option currently used
+     * @param control the gui element, probably a wxChoice
+     */
+    void AddStrings(size_t size, const wxString* const strings, const wxString& current, wxControlWithItems* control);
+    /**
+     * @brief Returns the unlocalised string corresponding to the selection
+     * @return an unlocalised string
+     */
+    wxString GetStringSelection() const;
+    /**
+     * @brief Sets m_control's selection to that corresponding to the unlocalised string
+     * @param str an unlocalised string
+     * @param dfault the default used if str is not found
+     */
+    void SetStringSelection(const wxString& str, size_t dfault = 0);
 };
 
 /**
@@ -335,8 +335,8 @@ public:
  * @param str the new entry
  * @param maxsize the maximum number of items allowed in the arraystring. 0 means no maximum
  * @return the amended entries
- */	
-	WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
+ */
+WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxString& str, const size_t maxsize);
 
 /**
  * @brief return true if filename is a symbolic link
@@ -348,5 +348,14 @@ WXDLLIMPEXP_SDK bool wxIsFileSymlink(const wxFileName &filename);
  */
 WXDLLIMPEXP_SDK wxFileName wxReadLink(const wxFileName &filename);
 
-#endif //GLOBALS_H
+/**
+ * @brief convert string to integer using range validation and default value
+ */
+WXDLLIMPEXP_SDK int wxStringToInt(const wxString &str, int defval, int min = -1, int max = -1);
 
+/**
+ * @brief convert integer to string
+ */
+WXDLLIMPEXP_SDK wxString wxIntToString(int val);
+
+#endif //GLOBALS_H

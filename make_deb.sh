@@ -189,6 +189,7 @@ if [ "$wxdir" != "" ] ; then
 	tar cvf /tmp/clwx294.tar libwx*.so* 
 	tar xvf /tmp/clwx294.tar -C ${current_dir}/fakeroot/${PREFIX}/lib/codelite/
 	cd ${current_dir}
+	rm -f /tmp/clwx294.tar
 fi
 
 cp -pr Runtime/config/build_settings.xml.default fakeroot/${PREFIX}/share/codelite/config/build_settings.xml.default

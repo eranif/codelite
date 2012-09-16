@@ -71,7 +71,9 @@ public:
 	wxWindow *GetSelection(){return m_selTab;}
 	
 	/// Event handling
+	DECLARE_EVENT_TABLE()
 	void OnKeyUp(wxKeyEvent &event);
+	void OnKeyDown(wxKeyEvent &event);
 	void OnNavigationKey(wxNavigationKeyEvent &event);
 	void OnItemSelected(wxCommandEvent &event);
 	void PopulateListControl(Notebook *book);

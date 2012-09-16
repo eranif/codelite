@@ -31,10 +31,14 @@
 #include "wx/sizer.h"
 #include "notebook_ex.h"
 
+BEGIN_EVENT_TABLE(NotebookNavDialog, wxDialog)
+	EVT_NAVIGATION_KEY(NotebookNavDialog::OnNavigationKey)
+END_EVENT_TABLE()
+
 NotebookNavDialog::NotebookNavDialog(wxWindow* parent)
-		: m_listBox(NULL)
-		, m_selectedItem(static_cast<size_t>(-1))
-		, m_selTab(NULL)
+	: m_listBox(NULL)
+	, m_selectedItem(static_cast<size_t>(-1))
+	, m_selTab(NULL)
 {
 	Create(parent);
 	GetSizer()->Fit(this);
@@ -44,9 +48,9 @@ NotebookNavDialog::NotebookNavDialog(wxWindow* parent)
 }
 
 NotebookNavDialog::NotebookNavDialog()
-		: wxDialog()
-		, m_listBox(NULL)
-		, m_selectedItem(static_cast<size_t>(-1))
+	: wxDialog()
+	, m_listBox(NULL)
+	, m_selectedItem(static_cast<size_t>(-1))
 {
 }
 
@@ -56,39 +60,26 @@ NotebookNavDialog::~NotebookNavDialog()
 
 void NotebookNavDialog::Create(wxWindow* parent)
 {
-#if wxVERSION_NUMBER < 2900	
-	long style = wxBORDER_RAISED;
-#else
-	long style = wxDEFAULT_DIALOG_STYLE;
-#endif
-
-	if (  !wxDialog::Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, style) )
+	if (  !wxDialog::Create(parent, wxID_ANY, wxEmptyString) )
 		return;
-	//SetTransparent(200);
-
+		
 	wxBoxSizer *sz = new wxBoxSizer( wxVERTICAL );
 	SetSizer( sz );
 
-	long flags = wxLB_SINGLE | wxNO_BORDER ;
-	m_listBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(300, 200), 0, NULL, flags);
+	long flags = wxLB_SINGLE | wxNO_BORDER | wxWANTS_CHARS;
+	m_listBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(400, 400), 0, NULL, flags);
 
 	sz->Add( m_listBox, 1, wxEXPAND );
 	SetSizer( sz );
 
 	// Connect events to the list box
-	m_listBox->Connect(wxID_ANY, wxEVT_KEY_UP, wxKeyEventHandler(NotebookNavDialog::OnKeyUp), NULL, this);
-	Connect(wxID_ANY, wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(NotebookNavDialog::OnNavigationKey), NULL, this);
-	
-#if wxVERSION_NUMBER >= 2900	
-	m_listBox->Connect(wxID_ANY, wxEVT_NAVIGATION_KEY, wxNavigationKeyEventHandler(NotebookNavDialog::OnNavigationKey), NULL, this);
-#endif
-
+	m_listBox->Connect(wxID_ANY, wxEVT_KEY_UP,   wxKeyEventHandler(NotebookNavDialog::OnKeyUp),   NULL, this);
+	m_listBox->Connect(wxID_ANY, wxEVT_KEY_DOWN, wxKeyEventHandler(NotebookNavDialog::OnKeyDown), NULL, this);
 	m_listBox->Connect(wxID_ANY, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler(NotebookNavDialog::OnItemSelected), NULL, this);
-
+	
 	SetBackgroundColour( wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE) );
 	m_listBox->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	PopulateListControl( static_cast<Notebook*>( parent ) );
-
 	m_listBox->SetFocus();
 }
 
@@ -118,8 +109,8 @@ void NotebookNavDialog::OnNavigationKey(wxNavigationKeyEvent &event)
 		else
 			itemToSelect = selected - 1;
 	}
-
 	m_listBox->SetSelection( itemToSelect );
+	m_listBox->SetFocus();
 }
 
 void NotebookNavDialog::PopulateListControl(Notebook *book)
@@ -152,8 +143,29 @@ void NotebookNavDialog::CloseDialog()
 	m_selectedItem = m_listBox->GetSelection();
 	m_selTab = NULL;
 	std::map< int, wxWindow* >::iterator iter = m_tabsIndex.find(m_selectedItem);
-	if(iter != m_tabsIndex.end()){
+	if(iter != m_tabsIndex.end()) {
 		m_selTab = iter->second;
 	}
 	EndModal( wxID_OK );
 }
+
+void NotebookNavDialog::OnKeyDown(wxKeyEvent& event)
+{
+	if ( event.GetKeyCode() == WXK_TAB && event.ControlDown() && event.ShiftDown()) {
+		// Navigate forward
+		wxNavigationKeyEvent nav;
+		nav.SetDirection(false);
+		OnNavigationKey(nav);
+		
+		
+	} else if ( event.GetKeyCode() == WXK_TAB && event.ControlDown() ) {
+		// Navigate backward
+		wxNavigationKeyEvent nav;
+		nav.SetDirection(true);
+		OnNavigationKey(nav);
+		
+	} else {
+		event.Skip();
+	}
+}
+

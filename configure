@@ -165,7 +165,7 @@ createVariables()
 	echo "" >> Makefile
 	echo "CCFLAGS= ${lib_clang_cmp_flags} -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\"\\\"${prefix}/share/codelite\\\"\" -DPLUGINS_DIR=\"\\\"${plugins_dir}\\\"\"" >> Makefile
 	echo "LINK_FLAGS =  ${lib_clang_link_flags} -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
-	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) `${wxconfiglibs} ${wxcfg}` ${additional_links}" >> Makefile
+	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} `${wxconfiglibs} ${wxcfg}` ${additional_links}" >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
 	echo "" >> Makefile
 	if [ "$os_name" != "Darwin" ] ; then
@@ -883,8 +883,9 @@ createPluginMakefile()
 	createObjectList "*.cpp" "${plugin_name}Objects"
 
 	createPluginTargets "${plugin_name}" "${post_install_path}"
+	plugin_rpaths="-Wl,-rpath,\"$plugins_dir\""
 	if [ "$plugin_name" = "Subversion2" ] ; then
-	 	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
+	 	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	elif [ "$plugin_name" = "DatabaseExplorer" ] ; then
 		## create custom CCFLAGS
 		dbl_flags="-DDBL_USE_SQLITE"
@@ -903,9 +904,9 @@ createPluginMakefile()
 		if [ "$enable_postgres" = "yes" ] ; then
 			dbl_libs="$dbl_libs -ldblayerpostgres\$(EXT)"
 		fi
-	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}" "${dbl_flags}"
+	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}" "${dbl_flags}"
 	else
-	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
+	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
 	fi
 
 	## restore the path

@@ -84,7 +84,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_panel1->SetSizer( bSizer2 );
 	m_panel1->Layout();
 	bSizer2->Fit( m_panel1 );
-	m_auinotebook1->AddPage( m_panel1, _("General"), false, wxNullBitmap );
+	m_auinotebook1->AddPage( m_panel1, _("General"), true, wxNullBitmap );
 	m_panel2 = new wxPanel( m_auinotebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -162,7 +162,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel( wxWindow* parent, wxWi
 	m_panel3->SetSizer( fgSizer2 );
 	m_panel3->Layout();
 	fgSizer2->Fit( m_panel3 );
-	m_auinotebook1->AddPage( m_panel3, _("History"), true, wxNullBitmap );
+	m_auinotebook1->AddPage( m_panel3, _("History"), false, wxNullBitmap );
 	m_panel4 = new wxPanel( m_auinotebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgSizer3;
 	fgSizer3 = new wxFlexGridSizer( 0, 3, 0, 0 );

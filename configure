@@ -164,7 +164,7 @@ createVariables()
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
 	echo "CCFLAGS= ${lib_clang_cmp_flags} -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\"\\\"${prefix}/share/codelite\\\"\" -DPLUGINS_DIR=\"\\\"${plugins_dir}\\\"\"" >> Makefile
-	echo "LINK_FLAGS =  ${lib_clang_link_flags} -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
+	echo "LINK_FLAGS =  ${lib_clang_link_flags} -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
 	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} `${wxconfiglibs} ${wxcfg}` ${additional_links}" >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
 	echo "" >> Makefile
@@ -178,7 +178,7 @@ createVariables()
 	if [ "$os_name" = "FreeBSD" ]; then
 		echo "LINK_FLAGS += -lkvm" >> Makefile
 	fi
-	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/codelite_indexer/network -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxscintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/include -I${base_dir}/sdk/wxscintilla/src/scintilla/src -I${base_dir}/sdk/wxscintilla/src/scintilla/lexlib -I${base_dir}/sdk/wxscintilla/src/scintilla/lexers -I${base_dir}/sdk/wxshapeframework/include -I${base_dir}/sdk/databaselayer/include/wx/dblayer/include -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite -I${base_dir}/PCH " >> Makefile
+	echo "INCLUDES := \$(INCLUDES) -I. -I${base_dir}/sdk/codelite_indexer/network -I${base_dir}/sdk/wxsqlite3/include -I${base_dir}/sdk/wxsqlite3/sqlite3/include -I${base_dir}/sdk/wxshapeframework/include -I${base_dir}/sdk/databaselayer/include/wx/dblayer/include -I${base_dir}/Interfaces -I${base_dir}/Debugger -I${base_dir}/Plugin -I${base_dir}/CodeLite -I${base_dir}/PCH " >> Makefile
 	echo "" >> Makefile
 	echo "" >> Makefile
 }
@@ -200,7 +200,7 @@ createMainTargets()
     if [ "$enable_pch" = "yes" ]; then
         pch_target=" pch_header "
     fi
-	target_all="all : $pch_target pre_build Scintilla ShapeFramework $target_dbl SQLite CodeLite SDK codelite_gcc codelite_clang codelite_indexer codelite_cppcheck Plugins LiteEditor "
+	target_all="all : $pch_target pre_build ShapeFramework $target_dbl SQLite CodeLite SDK codelite_gcc codelite_clang codelite_indexer codelite_cppcheck Plugins LiteEditor "
   
 	## additional database backends
 
@@ -885,7 +885,7 @@ createPluginMakefile()
 	createPluginTargets "${plugin_name}" "${post_install_path}"
 	plugin_rpaths="-Wl,-rpath,\"$plugins_dir\""
 	if [ "$plugin_name" = "Subversion2" ] ; then
-	 	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
+	 	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT)"
 	elif [ "$plugin_name" = "DatabaseExplorer" ] ; then
 		## create custom CCFLAGS
 		dbl_flags="-DDBL_USE_SQLITE"
@@ -904,9 +904,9 @@ createPluginMakefile()
 		if [ "$enable_postgres" = "yes" ] ; then
 			dbl_libs="$dbl_libs -ldblayerpostgres\$(EXT)"
 		fi
-	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}" "${dbl_flags}"
+	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxshapeframework\$(EXT) ${dbl_libs}" "${dbl_flags}"
 	else
-	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxscintilla\$(EXT) -lwxsqlite3\$(EXT)"
+	  	createRules_sharedObject "*.cpp" "${plugin_name}Objects" "${plugin_name}" "${plugin_name}" "copy" "-L../lib ${plugin_rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT)"
 	fi
 
 	## restore the path
@@ -1155,7 +1155,7 @@ wxRELEASE_NUMBER=`echo $wxversionnumber | awk -F. '{print $3}'`
  # NB this logic will fail for wx versions < 2 ;)
 
 if [ "$os_name" != "Darwin" ]; then
-    wxconfiglibs="wx-config --libs std,aui"
+    wxconfiglibs="wx-config --libs std,aui,stc"
     if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
         wxconfiglibs="wx-config --libs"
     fi
@@ -1270,7 +1270,6 @@ createVariables "no"
 createPCH
 
 ## Create the various object lists
-createObjectList "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp sdk/wxscintilla/src/scintilla/lexers/*.cxx sdk/wxscintilla/src/scintilla/lexlib/*.cxx" "ScintillaObjects"
 createObjectList "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
@@ -1289,8 +1288,7 @@ echo >> Makefile
 
 ## Create the rules
 # First the non-plugin .so libs:
-createRules_sharedObject  "Plugin/*.cpp Plugin/*.c" "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lwxscintilla\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT)"
-createRules_sharedObject  "sdk/wxscintilla/src/scintilla/src/*.cxx sdk/wxscintilla/src/*.cpp sdk/wxscintilla/src/scintilla/lexers/*.cxx sdk/wxscintilla/src/scintilla/lexlib/*.cxx" "ScintillaObjects" "Scintilla" "libwxscintilla\$(EXT)" "dont_copy"
+createRules_sharedObject  "Plugin/*.cpp Plugin/*.c" "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lcodelite\$(EXT) -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "libwxsqlite3\$(EXT)" "dont_copy" ""
 createRules_sharedObject  "sdk/wxshapeframework/src/*.cpp sdk/wxshapeframework/src/wxxmlserializer/*.cpp" "wxShapeFrameworkObjects" "ShapeFramework" "libwxshapeframework\$(EXT)" "dont_copy"

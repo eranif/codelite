@@ -26,7 +26,7 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/statline.h>
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/bitmap.h>
@@ -139,7 +139,7 @@ class SvnShellBase : public wxPanel
 	private:
 	
 	protected:
-		wxScintilla* m_sci;
+		wxStyledTextCtrl* m_sci;
 	
 	public:
 		

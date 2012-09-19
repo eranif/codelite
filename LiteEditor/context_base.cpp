@@ -35,22 +35,22 @@
 
 static wxColor GetInactiveColor(const wxColor& col)
 {
-	wxUnusedVar(col);
+    wxUnusedVar(col);
 #ifdef __WXGTK__
-	return wxColor(wxT("GREY"));
+    return wxColor(wxT("GREY"));
 #else
-	return wxColor(wxT("LIGHT GREY"));
+    return wxColor(wxT("LIGHT GREY"));
 #endif
 }
 
 ContextBase::ContextBase(LEditor *container)
-		: m_container(container)
-		, m_name(wxEmptyString)
+    : m_container(container)
+    , m_name(wxEmptyString)
 {
 }
 
 ContextBase::ContextBase(const wxString &name)
-		: m_name(name)
+    : m_name(name)
 {
 }
 
@@ -61,177 +61,177 @@ ContextBase::~ContextBase()
 //provide basic indentation
 void ContextBase::AutoIndent(const wxChar &ch)
 {
-	if (ch == wxT('\n')) {
-		//just copy the previous line indentation
-		LEditor &rCtrl = GetCtrl();
-		int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
-		rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
-		//place the caret at the end of the line
+    if (ch == wxT('\n')) {
+        //just copy the previous line indentation
+        LEditor &rCtrl = GetCtrl();
+        int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
+        rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-1));
+        //place the caret at the end of the line
         rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
         rCtrl.ChooseCaretX();
-	}
+    }
 }
 
 void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 {
-	LEditor &rCtrl = GetCtrl();
+    LEditor &rCtrl = GetCtrl();
 
-	rCtrl.StyleClearAll();
-	rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
-	
-	// Define the styles for the editing margin
-	rCtrl.StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("FOREST GREEN")));
-	rCtrl.StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
+    rCtrl.StyleClearAll();
+    rCtrl.SetStyleBits(rCtrl.GetStyleBitsNeeded());
 
-	// by default indicators are set to be opaque rounded box
-	rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_ROUNDBOX);
-	rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_ROUNDBOX);
+    // Define the styles for the editing margin
+    rCtrl.StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("FOREST GREEN")));
+    rCtrl.StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
 
-	rCtrl.IndicatorSetAlpha(1, 80);
-	rCtrl.IndicatorSetAlpha(2, 80);
+    // by default indicators are set to be opaque rounded box
+    rCtrl.IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
+    rCtrl.IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
 
-	bool tooltip(false);
+    //rCtrl.IndicatorSetAlpha(1, 80);
+    //rCtrl.IndicatorSetAlpha(2, 80);
 
-	std::list<StyleProperty> styles;
+    bool tooltip(false);
+
+    std::list<StyleProperty> styles;
     if (lexPtr) {
         styles = lexPtr->GetProperties();
-		rCtrl.SetProperty(wxT("styling.within.preprocessor"), lexPtr->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
+        rCtrl.SetProperty(wxT("styling.within.preprocessor"), lexPtr->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
     }
-	
-	// Find the default style
-	wxFont defaultFont;
-	bool foundDefaultStyle = false;
-	std::list<StyleProperty>::iterator iter = styles.begin();
-	for (; iter != styles.end(); iter++) {
-		if(iter->GetId() == 0) {
-			defaultFont = wxFont(iter->GetFontSize(), 
-						  wxFONTFAMILY_TELETYPE, 
-						  iter->GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-						  iter->IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, 
-						  iter->GetUnderlined(), 
-						  iter->GetFaceName());
-			foundDefaultStyle = true;
-			break;
-		}
-	}
-	
-	if (foundDefaultStyle) {
-		for(int i=0; i<256; i++) {
-			rCtrl.StyleSetFont(i, defaultFont);
-		}
-	}
-	
-	iter = styles.begin();
-	for (; iter != styles.end(); iter++) {
 
-		StyleProperty sp        = (*iter);
-		int           size      = sp.GetFontSize();
-		wxString      face      = sp.GetFaceName();
-		bool          bold      = sp.IsBold();
-		bool          italic    = sp.GetItalic();
-		bool          underline = sp.GetUnderlined();
-		int           alpha     = sp.GetAlpha();
+    // Find the default style
+    wxFont defaultFont;
+    bool foundDefaultStyle = false;
+    std::list<StyleProperty>::iterator iter = styles.begin();
+    for (; iter != styles.end(); iter++) {
+        if(iter->GetId() == 0) {
+            defaultFont = wxFont(iter->GetFontSize(),
+                                 wxFONTFAMILY_TELETYPE,
+                                 iter->GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+                                 iter->IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
+                                 iter->GetUnderlined(),
+                                 iter->GetFaceName());
+            foundDefaultStyle = true;
+            break;
+        }
+    }
 
-		// handle special cases
-		if ( sp.GetId() == FOLD_MARGIN_ATTR_ID ) {
+    if (foundDefaultStyle) {
+        for(int i=0; i<256; i++) {
+            rCtrl.StyleSetFont(i, defaultFont);
+        }
+    }
 
-			// fold margin foreground colour
-			rCtrl.SetFoldMarginColour(true, sp.GetBgColour());
-			rCtrl.SetFoldMarginHiColour(true, sp.GetFgColour());
+    iter = styles.begin();
+    for (; iter != styles.end(); iter++) {
 
-		} else if ( sp.GetId() == SEL_TEXT_ATTR_ID ) {
+        StyleProperty sp        = (*iter);
+        int           size      = sp.GetFontSize();
+        wxString      face      = sp.GetFaceName();
+        bool          bold      = sp.IsBold();
+        bool          italic    = sp.GetItalic();
+        bool          underline = sp.GetUnderlined();
+        //int           alpha     = sp.GetAlpha();
 
-			// selection colour
-			if(wxColour(sp.GetBgColour()).IsOk()) {
-				rCtrl.SetSelBackground(true, sp.GetBgColour());
-#ifndef __WXMAC__
-				rCtrl.SetSelAlpha(alpha);
-#endif
-			}
+        // handle special cases
+        if ( sp.GetId() == FOLD_MARGIN_ATTR_ID ) {
 
-		} else if ( sp.GetId() == CARET_ATTR_ID ) {
+            // fold margin foreground colour
+            rCtrl.SetFoldMarginColour(true, sp.GetBgColour());
+            rCtrl.SetFoldMarginHiColour(true, sp.GetFgColour());
 
-			// caret colour
-			if(wxColour(sp.GetFgColour()).IsOk()) {
-				rCtrl.SetCaretForeground(sp.GetFgColour());
-			}
+        } else if ( sp.GetId() == SEL_TEXT_ATTR_ID ) {
 
-		} else {
-			int fontSize( size );
+            // selection colour
+            if(wxColour(sp.GetBgColour()).IsOk()) {
+                rCtrl.SetSelBackground(true, sp.GetBgColour());
+//#ifndef __WXMAC__
+//				rCtrl.SetSelAlpha(alpha);
+//#endif
+            }
 
-			wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
-			if (sp.GetId() == 0) { //default
-				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT, size);
-				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-				
-				// Inactive state is greater by 64 from its counterpart
-				wxColor inactiveColor = GetInactiveColor((*iter).GetFgColour());
-				rCtrl.StyleSetForeground(wxSCI_STYLE_DEFAULT + 64, inactiveColor);
-				rCtrl.StyleSetFont(wxSCI_STYLE_DEFAULT + 64,       font);
-				rCtrl.StyleSetSize(wxSCI_STYLE_DEFAULT + 64,       size);
-				
-				rCtrl.StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-				rCtrl.StyleSetSize(wxSCI_STYLE_LINENUMBER, size);
-				rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
-				rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
+        } else if ( sp.GetId() == CARET_ATTR_ID ) {
 
-				// test the background colour of the editor, if it is considered "dark"
-				// set the indicator to be hollow rectanlgle
-				StyleProperty sp = (*iter);
-				if ( DrawingUtils::IsDark(sp.GetBgColour()) ) {
-					rCtrl.IndicatorSetStyle(1, wxSCI_INDIC_BOX);
-					rCtrl.IndicatorSetStyle(2, wxSCI_INDIC_BOX);
-				}
-			} else if(sp.GetId() == wxSCI_STYLE_CALLTIP){
-				tooltip = true;
-				if(sp.GetFaceName().IsEmpty()){
-					font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-					fontSize = font.GetPointSize();
-				}
-			}
+            // caret colour
+            if(wxColour(sp.GetFgColour()).IsOk()) {
+                rCtrl.SetCaretForeground(sp.GetFgColour());
+            }
 
-			rCtrl.StyleSetFont(sp.GetId(), font);
-			rCtrl.StyleSetSize(sp.GetId(), fontSize);
-			rCtrl.StyleSetEOLFilled(sp.GetId(), iter->GetEolFilled());
+        } else {
+            int fontSize( size );
 
-			if(iter->GetId() == LINE_NUMBERS_ATTR_ID) {
-				// Set the line number colours only if requested
-				// otherwise, use default colours provided by scintilla
-				if(sp.GetBgColour().IsEmpty() == false)
-					rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
+            wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
+            if (sp.GetId() == 0) { //default
+                rCtrl.StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+                rCtrl.StyleSetSize(wxSTC_STYLE_DEFAULT, size);
+                rCtrl.StyleSetForeground(wxSTC_STYLE_DEFAULT, (*iter).GetFgColour());
 
-				if(sp.GetFgColour().IsEmpty() == false)
-					rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
-				else
-					rCtrl.StyleSetForeground(sp.GetId(), wxT("BLACK"));
+                // Inactive state is greater by 64 from its counterpart
+                wxColor inactiveColor = GetInactiveColor((*iter).GetFgColour());
+                rCtrl.StyleSetForeground(wxSTC_STYLE_DEFAULT + 64, inactiveColor);
+                rCtrl.StyleSetFont(wxSTC_STYLE_DEFAULT + 64,       font);
+                rCtrl.StyleSetSize(wxSTC_STYLE_DEFAULT + 64,       size);
 
-			} else {
-				rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
-				
-				// Inactive state is greater by 64 from its counterpart
-				wxColor inactiveColor = GetInactiveColor(iter->GetFgColour());
-				rCtrl.StyleSetForeground(sp.GetId() + 64, inactiveColor);
-				rCtrl.StyleSetFont(sp.GetId() + 64,       font);
-				rCtrl.StyleSetSize(sp.GetId() + 64,       size);
-				
-				rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
-			}
-		}
-	}
+                rCtrl.StyleSetBackground(wxSTC_STYLE_DEFAULT, (*iter).GetBgColour());
+                rCtrl.StyleSetSize(wxSTC_STYLE_LINENUMBER, size);
+                rCtrl.SetFoldMarginColour(true, (*iter).GetBgColour());
+                rCtrl.SetFoldMarginHiColour(true, (*iter).GetBgColour());
 
-	// set the calltip font
-	if( !tooltip ) {
-		wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-		rCtrl.StyleSetFont(wxSCI_STYLE_CALLTIP, font);
-	}
+                // test the background colour of the editor, if it is considered "dark"
+                // set the indicator to be hollow rectanlgle
+                StyleProperty sp = (*iter);
+                if ( DrawingUtils::IsDark(sp.GetBgColour()) ) {
+                    rCtrl.IndicatorSetStyle(1, wxSTC_INDIC_BOX);
+                    rCtrl.IndicatorSetStyle(2, wxSTC_INDIC_BOX);
+                }
+            } else if(sp.GetId() == wxSTC_STYLE_CALLTIP) {
+                tooltip = true;
+                if(sp.GetFaceName().IsEmpty()) {
+                    font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+                    fontSize = font.GetPointSize();
+                }
+            }
+
+            rCtrl.StyleSetFont(sp.GetId(), font);
+            rCtrl.StyleSetSize(sp.GetId(), fontSize);
+            rCtrl.StyleSetEOLFilled(sp.GetId(), iter->GetEolFilled());
+
+            if(iter->GetId() == LINE_NUMBERS_ATTR_ID) {
+                // Set the line number colours only if requested
+                // otherwise, use default colours provided by scintilla
+                if(sp.GetBgColour().IsEmpty() == false)
+                    rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
+
+                if(sp.GetFgColour().IsEmpty() == false)
+                    rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
+                else
+                    rCtrl.StyleSetForeground(sp.GetId(), wxT("BLACK"));
+
+            } else {
+                rCtrl.StyleSetForeground(sp.GetId(), sp.GetFgColour());
+
+                // Inactive state is greater by 64 from its counterpart
+                wxColor inactiveColor = GetInactiveColor(iter->GetFgColour());
+                rCtrl.StyleSetForeground(sp.GetId() + 64, inactiveColor);
+                rCtrl.StyleSetFont(sp.GetId() + 64,       font);
+                rCtrl.StyleSetSize(sp.GetId() + 64,       size);
+
+                rCtrl.StyleSetBackground(sp.GetId(), sp.GetBgColour());
+            }
+        }
+    }
+
+    // set the calltip font
+    if( !tooltip ) {
+        wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        rCtrl.StyleSetFont(wxSTC_STYLE_CALLTIP, font);
+    }
 }
 
 int ContextBase::GetHyperlinkRange(int pos, int &start, int &end)
 {
     LEditor &rCtrl = GetCtrl();
     int curstyle = rCtrl.GetStyleAt(pos);
-    if (curstyle == wxSCI_C_WORD2 || curstyle == wxSCI_C_GLOBALCLASS || curstyle == wxSCI_C_IDENTIFIER) {
+    if (curstyle == wxSTC_C_WORD2 || curstyle == wxSTC_C_GLOBALCLASS || curstyle == wxSTC_C_IDENTIFIER) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(pos, true);
         end = rCtrl.WordEndPos(pos, true);
@@ -245,95 +245,95 @@ void ContextBase::GoHyperlink(int start, int end, int type, bool alt)
 {
     wxUnusedVar(start);
     wxUnusedVar(end);
-	wxUnusedVar(type);
-	wxUnusedVar(alt);
+    wxUnusedVar(type);
+    wxUnusedVar(alt);
 }
 
 wxMenu* ContextBase::GetMenu()
 {
-	return wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
+    return wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
 }
 
 void ContextBase::PrependMenuItem(wxMenu *menu, const wxString &text, wxObjectEventFunction func, int eventId)
 {
-	wxMenuItem *item;
-	wxString menuItemText;
-    if( eventId == -1 ) 
+    wxMenuItem *item;
+    wxString menuItemText;
+    if( eventId == -1 )
         eventId = wxNewId();
-        
-	item = new wxMenuItem(menu, eventId, text);
-	menu->Prepend(item);
-	menu->Connect(eventId, wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
-	m_dynItems.push_back(item);
+
+    item = new wxMenuItem(menu, eventId, text);
+    menu->Prepend(item);
+    menu->Connect(eventId, wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
+    m_dynItems.push_back(item);
 }
 
 void ContextBase::PrependMenuItem(wxMenu *menu, const wxString &text, int id)
 {
-	wxMenuItem *item;
-	wxString menuItemText;
-	item = new wxMenuItem(menu, id, text);
-	menu->Prepend(item);
-	m_dynItems.push_back(item);
+    wxMenuItem *item;
+    wxString menuItemText;
+    item = new wxMenuItem(menu, id, text);
+    menu->Prepend(item);
+    m_dynItems.push_back(item);
 }
 
 void ContextBase::PrependMenuItemSeparator(wxMenu *menu)
 {
-	wxMenuItem *item;
-	item = new wxMenuItem(menu, wxID_SEPARATOR);
-	menu->Prepend(item);
-	m_dynItems.push_back(item);
+    wxMenuItem *item;
+    item = new wxMenuItem(menu, wxID_SEPARATOR);
+    menu->Prepend(item);
+    m_dynItems.push_back(item);
 }
 
 int ContextBase::DoGetCalltipParamterIndex()
 {
-	int index(0);
-	LEditor &ctrl =  GetCtrl();
-	int pos = ctrl.DoGetOpenBracePos();
-	if (pos != wxNOT_FOUND) {
+    int index(0);
+    LEditor &ctrl =  GetCtrl();
+    int pos = ctrl.DoGetOpenBracePos();
+    if (pos != wxNOT_FOUND) {
 
-		// loop over the text from pos -> current position and count the number of commas found
-		int depth(0);
-		bool exit_loop(false);
+        // loop over the text from pos -> current position and count the number of commas found
+        int depth(0);
+        bool exit_loop(false);
 
-		while ( pos < ctrl.GetCurrentPos() && !exit_loop ) {
-			wxChar ch        = ctrl.SafeGetChar(pos);
-			wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
+        while ( pos < ctrl.GetCurrentPos() && !exit_loop ) {
+            wxChar ch        = ctrl.SafeGetChar(pos);
+            wxChar ch_before = ctrl.SafeGetChar(ctrl.PositionBefore(pos));
 
-			if (IsCommentOrString(pos)) {
-				pos = ctrl.PositionAfter(pos);
-				continue;
-			}
+            if (IsCommentOrString(pos)) {
+                pos = ctrl.PositionAfter(pos);
+                continue;
+            }
 
-			switch (ch) {
-			case wxT(','):
-				if (depth == 0) index++;
-				break;
-			case wxT('{'):
-			case wxT('}'):
-			case wxT(';'):
-				// error?
-				exit_loop = true;
-				break;
-			case wxT('('):
-			case wxT('<'):
-			case wxT('['):
-				depth++;
-				break;
-			case wxT('>'):
-				if ( ch_before == wxT('-') ) {
-					// operator noting to do
-					break;
-				}
-				// fall through
-			case wxT(')'):
-			case wxT(']'):
-				depth--;
-				break;
-			default:
-				break;
-			}
-			pos = ctrl.PositionAfter(pos);
-		}
-	}
-	return index;
+            switch (ch) {
+            case wxT(','):
+                if (depth == 0) index++;
+                break;
+            case wxT('{'):
+            case wxT('}'):
+            case wxT(';'):
+                // error?
+                exit_loop = true;
+                break;
+            case wxT('('):
+            case wxT('<'):
+            case wxT('['):
+                depth++;
+                break;
+            case wxT('>'):
+                if ( ch_before == wxT('-') ) {
+                    // operator noting to do
+                    break;
+                }
+                // fall through
+            case wxT(')'):
+            case wxT(']'):
+                depth--;
+                break;
+            default:
+                break;
+            }
+            pos = ctrl.PositionAfter(pos);
+        }
+    }
+    return index;
 }

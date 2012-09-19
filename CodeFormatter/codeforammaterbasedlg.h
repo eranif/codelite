@@ -27,7 +27,7 @@
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
 #include <wx/notebook.h>
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #ifdef __VISUALC__
 #include <wx/link_additions.h>
 #endif //__VISUALC__
@@ -82,7 +82,7 @@ class CodeFormatterBaseDlg : public wxDialog
 		wxStaticText* m_staticText3;
 		wxTextCtrl* m_textCtrlUserFlags;
 		wxPanel* m_panelPreview;
-		wxScintilla* m_textCtrlPreview;
+		wxStyledTextCtrl* m_textCtrlPreview;
 		wxButton* m_buttonOK;
 		wxButton* m_buttonClose;
 		wxButton* m_buttonHelp;

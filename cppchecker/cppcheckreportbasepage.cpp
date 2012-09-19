@@ -20,7 +20,7 @@ CppCheckReportBasePage::CppCheckReportBasePage( wxWindow* parent, wxWindowID id,
 	wxBoxSizer* bSizer41;
 	bSizer41 = new wxBoxSizer( wxVERTICAL );
 	
-	m_outputText = new wxScintilla(this);
+	m_outputText = new wxStyledTextCtrl(this);
 	bSizer41->Add( m_outputText, 1, wxALL|wxEXPAND, 5 );
 	
 	m_staticTextFile = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );

@@ -29,12 +29,6 @@
   <Dependencies Name="WinRelease_29">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="Win_wxWidgets_29">
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
-    <Project Name="sqlite3"/>
-  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -164,6 +158,12 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
+  <Dependencies Name="WinReleaseUnicode">
+    <Project Name="sqlite3"/>
+  </Dependencies>
+  <Dependencies Name="Win_wxWidgets_29">
     <Project Name="sqlite3"/>
   </Dependencies>
 </CodeLite_Project>

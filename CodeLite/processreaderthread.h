@@ -45,7 +45,9 @@ class WXDLLIMPEXP_CL ProcessEventData
 
 public:
 	ProcessEventData() : m_process(NULL) {}
-	virtual ~ProcessEventData() {}
+	virtual ~ProcessEventData() {
+        m_data.Clear();
+    }
 
 	void SetData(const wxString& data) {
 		this->m_data = data.c_str();

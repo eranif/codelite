@@ -84,7 +84,7 @@
 #include "custombuildrequest.h"
 #include "compile_request.h"
 #include "clean_request.h"
-#include "buidltab.h"
+#include "new_build_tab.h"
 #include "tabgroupmanager.h"
 #include "manager.h"
 
@@ -190,6 +190,7 @@ Manager::Manager ( void )
     Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED,  wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, wxCommandEventHandler(Manager::OnBuildEnded), NULL, this);
 }
 
 Manager::~Manager ( void )
@@ -3598,3 +3599,14 @@ bool Manager::DbgCanInteract()
 
     return m_dbgCanInteract;
 }
+
+void Manager::OnBuildEnded(wxCommandEvent& e)
+{
+    // release the process object
+    e.Skip();
+    if ( m_shellProcess ) {
+        delete m_shellProcess;
+        m_shellProcess = NULL;
+    }
+}
+

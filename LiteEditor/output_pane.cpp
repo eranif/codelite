@@ -34,7 +34,7 @@
 #include "findusagetab.h"
 #include "dockablepanemenumanager.h"
 #include "replaceinfilespanel.h"
-#include "buidltab.h"
+#include "new_build_tab.h"
 #include "shelltab.h"
 #include "taskpanel.h"
 

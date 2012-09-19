@@ -32,6 +32,8 @@
     <File Name="shell_command.cpp"/>
     <File Name="compilation_database.h"/>
     <File Name="compilation_database.cpp"/>
+    <File Name="Markup.cpp"/>
+    <File Name="Markup.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>
@@ -255,8 +257,6 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -321,11 +321,10 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../Interfaces"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc --debug=yes --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
-        <Library Value="libwxscintillaud.dll"/>
         <Library Value="libUxTheme.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
@@ -372,11 +371,10 @@
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc --debug=no --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
-        <Library Value="libwxscintillau.dll"/>
         <Library Value="libUxTheme.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
@@ -422,11 +420,10 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../Interfaces"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc --debug=yes --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
-        <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
       <General OutputFile="../lib/gcc_lib/libplugin_sdkud.dll" IntermediateDirectory="./WinDbg_29" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
@@ -464,11 +461,14 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="JSON">
     <File Name="cJSON.cpp"/>
     <File Name="cJSON.h"/>
     <File Name="json_node.cpp"/>
     <File Name="json_node.h"/>
   </VirtualDirectory>
+  <Dependencies Name="Custom"/>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

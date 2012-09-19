@@ -45,40 +45,40 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
  */
 class WXDLLIMPEXP_SDK BuildEventDetails : public wxClientData
 {
-	wxString m_projectName;
-	wxString m_configuration;
-	bool     m_isClean;
-	bool     m_isCustomProject;
+    wxString m_projectName;
+    wxString m_configuration;
+    bool     m_isClean;
+    bool     m_isCustomProject;
 
 public:
-	BuildEventDetails() {}
-	virtual ~BuildEventDetails() {}
+    BuildEventDetails() {}
+    virtual ~BuildEventDetails() {}
 
 
-	void SetConfiguration(const wxString& configuration) {
-		this->m_configuration = configuration;
-	}
-	void SetProjectName(const wxString& projectName) {
-		this->m_projectName = projectName;
-	}
-	const wxString& GetConfiguration() const {
-		return m_configuration;
-	}
-	const wxString& GetProjectName() const {
-		return m_projectName;
-	}
-	void SetIsClean(bool isClean) {
-		this->m_isClean = isClean;
-	}
-	void SetIsCustomProject(bool isCustomProject) {
-		this->m_isCustomProject = isCustomProject;
-	}
-	bool IsClean() const {
-		return m_isClean;
-	}
-	bool IsCustomProject() const {
-		return m_isCustomProject;
-	}
+    void SetConfiguration(const wxString& configuration) {
+        this->m_configuration = configuration;
+    }
+    void SetProjectName(const wxString& projectName) {
+        this->m_projectName = projectName;
+    }
+    const wxString& GetConfiguration() const {
+        return m_configuration;
+    }
+    const wxString& GetProjectName() const {
+        return m_projectName;
+    }
+    void SetIsClean(bool isClean) {
+        this->m_isClean = isClean;
+    }
+    void SetIsCustomProject(bool isCustomProject) {
+        this->m_isCustomProject = isCustomProject;
+    }
+    bool IsClean() const {
+        return m_isClean;
+    }
+    bool IsCustomProject() const {
+        return m_isCustomProject;
+    }
 };
 
 /**
@@ -90,46 +90,41 @@ public:
 class WXDLLIMPEXP_SDK ShellCommand : public wxEvtHandler
 {
 protected:
-	IProcess*     m_proc;
-	wxArrayString m_lines;
-	QueueCommand  m_info;
+    IProcess*     m_proc;
+    wxArrayString m_lines;
+    QueueCommand  m_info;
 
 protected:
-	virtual void DoPrintOutput      (const wxString &out);
-	virtual void OnProcessOutput    (wxCommandEvent &e);
-	virtual void OnProcessTerminated(wxCommandEvent &e);
+    virtual void DoPrintOutput      (const wxString &out);
+    virtual void OnProcessOutput    (wxCommandEvent &e);
+    virtual void OnProcessTerminated(wxCommandEvent &e);
 
-	void CleanUp();
-	void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly);
+    void CleanUp();
+    void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly);
 
 public:
-	bool IsBusy() const {
-		return m_proc != NULL;
-	}
+    bool IsBusy() const {
+        return m_proc != NULL;
+    }
 
-	void Stop();
+    void Stop();
 
-	bool GetLines(wxArrayString &lines) {
-		lines = m_lines;
-		return true;
-	}
-
-	void SetInfo(const QueueCommand& info) {
-		this->m_info = info;
-	}
-	const QueueCommand& GetInfo() const {
-		return m_info;
-	}
+    void SetInfo(const QueueCommand& info) {
+        this->m_info = info;
+    }
+    const QueueCommand& GetInfo() const {
+        return m_info;
+    }
 public:
-	//construct a compiler action
-	ShellCommand(const QueueCommand &buildInfo);
+    //construct a compiler action
+    ShellCommand(const QueueCommand &buildInfo);
 
-	virtual ~ShellCommand() {}
-	virtual void Process(IManager *manager) = 0;
+    virtual ~ShellCommand() {}
+    virtual void Process(IManager *manager) = 0;
 
-	void AppendLine(const wxString &line);
-	void SendStartMsg();
-	void SendEndMsg();
-	DECLARE_EVENT_TABLE()
+    void AppendLine(const wxString &line);
+    void SendStartMsg();
+    void SendEndMsg();
+    DECLARE_EVENT_TABLE()
 };
 #endif

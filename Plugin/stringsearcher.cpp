@@ -26,8 +26,7 @@
 #include <wx/regex.h>
 #include <algorithm>
 #include <string>
-
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
+#include "globals.h"
 
 static std::wstring Reverse(const std::wstring &str)
 {

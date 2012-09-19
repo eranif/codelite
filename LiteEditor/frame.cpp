@@ -73,7 +73,7 @@
 #include "pluginmgrdlg.h"
 #include "environmentconfig.h"
 #include "findresultstab.h"
-#include "buidltab.h"
+#include "new_build_tab.h"
 #include "frame.h"
 #include "symbol_tree.h"
 #include "cpp_symbol_tree.h"
@@ -3347,11 +3347,11 @@ void clMainFrame::OnConvertEol(wxCommandEvent &e)
 {
 	LEditor *editor = GetMainBook()->GetActiveEditor();
 	if (editor) {
-		int eol(wxSCI_EOL_LF);
+		int eol(wxSTC_EOL_LF);
 		if (e.GetId() == XRCID("convert_eol_win")) {
-			eol = wxSCI_EOL_CRLF;
+			eol = wxSTC_EOL_CRLF;
 		} else if (e.GetId() == XRCID("convert_eol_mac")) {
-			eol = wxSCI_EOL_CR;
+			eol = wxSTC_EOL_CR;
 		}
 		editor->ConvertEOLs(eol);
 		editor->SetEOLMode(eol);
@@ -3491,14 +3491,22 @@ void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 	long highlightWord(1);
 
 	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
-
+    
+    // Notify all open editors that word hight is checked
+    wxCommandEvent evtEnable(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT);
 	if ( !highlightWord ) {
 		GetMainBook()->HighlightWord(true);
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 1);
+        evtEnable.SetInt(1);
+        
 	} else {
 		GetMainBook()->HighlightWord(false);
 		EditorConfigST::Get()->SaveLongValue(wxT("highlight_word"), 0);
+        evtEnable.SetInt(0);
+        
 	}
+    
+    EventNotifier::Get()->AddPendingEvent(evtEnable);
 }
 
 void clMainFrame::OnShowNavBar(wxCommandEvent& e)

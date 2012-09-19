@@ -8,22 +8,24 @@ typedef std::map<int, CppToken> UsageResultsMap;
 
 class FindUsageTab : public OutputTabWindow
 {
-	UsageResultsMap m_matches;
+    UsageResultsMap m_matches;
 protected:
-	void DoOpenResult(const CppToken& token);
-	
-public:
-	FindUsageTab(wxWindow* parent, const wxString &name);
-	virtual ~FindUsageTab();
+    void DoOpenResult(const CppToken& token);
 
 public:
-	virtual void Clear();
-	virtual void OnClearAllUI(wxUpdateUIEvent& e);
-	virtual void OnClearAll(wxCommandEvent& e);
-	virtual void OnMouseDClick(wxScintillaEvent& e);
-	virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+    FindUsageTab(wxWindow* parent, const wxString &name);
+    virtual ~FindUsageTab();
+
 public:
-	void ShowUsage(const std::list<CppToken> &matches, const wxString &searchWhat);
+    virtual void Clear();
+    virtual void OnClearAllUI(wxUpdateUIEvent& e);
+    virtual void OnClearAll(wxCommandEvent& e);
+    virtual void OnMouseDClick(wxStyledTextEvent& e);
+    virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+    virtual void OnStyleNeeded(wxStyledTextEvent& e);
+    
+public:
+    void ShowUsage(const std::list<CppToken> &matches, const wxString &searchWhat);
 
 };
 

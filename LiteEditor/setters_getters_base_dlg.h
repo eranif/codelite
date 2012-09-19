@@ -42,7 +42,7 @@
 #include <wx/checklst.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
 #include <wx/statline.h>

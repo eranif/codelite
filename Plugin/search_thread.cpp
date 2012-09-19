@@ -37,13 +37,12 @@
 #include "dirtraverser.h"
 #include "macros.h"
 #include "workspace.h"
+#include "globals.h"
 
 const wxEventType wxEVT_SEARCH_THREAD_MATCHFOUND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHEND = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHCANCELED = wxNewEventType();
 const wxEventType wxEVT_SEARCH_THREAD_SEARCHSTARTED = wxNewEventType();
-
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
 #define SEND_ST_EVENT()\
 	if (owner) {\

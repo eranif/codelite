@@ -188,14 +188,14 @@ ContextBase *ContextCpp::NewInstance(LEditor *container)
 	return new ContextCpp(container);
 }
 
-void ContextCpp::OnDwellEnd(wxScintillaEvent &event)
+void ContextCpp::OnDwellEnd(wxStyledTextEvent &event)
 {
 	LEditor &rCtrl = GetCtrl();
 	rCtrl.DoCancelCalltip();
 	event.Skip();
 }
 
-void ContextCpp::OnDwellStart(wxScintillaEvent &event)
+void ContextCpp::OnDwellStart(wxStyledTextEvent &event)
 {
 	LEditor &rCtrl = GetCtrl();
 
@@ -403,7 +403,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
 					ContextBase::AutoIndent(nChar);
 
 					// Indent this line according to the block indentation level
-					int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+					int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) ;
 					if (foldLevel) {
 						rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
 						rCtrl.ChooseCaretX();
@@ -456,15 +456,15 @@ bool ContextCpp::IsCommentOrString(long pos)
 {
 	int style;
 	style = GetCtrl().GetStyleAt(pos);
-	return (style == wxSCI_C_COMMENT                ||
-	        style == wxSCI_C_COMMENTLINE            ||
-	        style == wxSCI_C_COMMENTDOC             ||
-	        style == wxSCI_C_COMMENTLINEDOC         ||
-	        style == wxSCI_C_COMMENTDOCKEYWORD      ||
-	        style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
-	        style == wxSCI_C_STRING                 ||
-	        style == wxSCI_C_STRINGEOL              ||
-	        style == wxSCI_C_CHARACTER);
+	return (style == wxSTC_C_COMMENT                ||
+	        style == wxSTC_C_COMMENTLINE            ||
+	        style == wxSTC_C_COMMENTDOC             ||
+	        style == wxSTC_C_COMMENTLINEDOC         ||
+	        style == wxSTC_C_COMMENTDOCKEYWORD      ||
+	        style == wxSTC_C_COMMENTDOCKEYWORDERROR ||
+	        style == wxSTC_C_STRING                 ||
+	        style == wxSTC_C_STRINGEOL              ||
+	        style == wxSTC_C_CHARACTER);
 }
 
 //=============================================================================
@@ -761,7 +761,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 
 	// Get the word under the cursor OR the selected word
 	int word_start = -1, word_end = -1;
-	rCtrl.wxScintilla::GetSelection(&word_start, &word_end);
+	rCtrl.wxStyledTextCtrl::GetSelection(&word_start, &word_end);
 	if (word_start == word_end) {
 		word_start = rCtrl.WordStartPos(word_start, true);
 		word_end = rCtrl.WordEndPos(word_end, true);
@@ -1077,7 +1077,7 @@ void ContextCpp::OnCommentLine(wxCommandEvent &event)
 		end = std::max(start, editor.PositionBefore(end));
 	}
 
-	bool doingComment = editor.GetStyleAt(start) != wxSCI_C_COMMENTLINE;
+	bool doingComment = editor.GetStyleAt(start) != wxSTC_C_COMMENTLINE;
 
 	int line_start = editor.LineFromPosition(start);
 	int line_end   = editor.LineFromPosition(end);
@@ -1087,7 +1087,7 @@ void ContextCpp::OnCommentLine(wxCommandEvent &event)
 		start = editor.PositionFromLine(line_start);
 		if (doingComment) {
 			editor.InsertText(start, wxT("//"));
-		} else if (editor.GetStyleAt(start) == wxSCI_C_COMMENTLINE) {
+		} else if (editor.GetStyleAt(start) == wxSTC_C_COMMENTLINE) {
 			editor.SetAnchor(start);
 			editor.SetCurrentPos(editor.PositionAfter(editor.PositionAfter(start)));
 			editor.DeleteBackNotLine();
@@ -1219,11 +1219,11 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
 
 void ContextCpp::SetActive()
 {
-	wxScintillaEvent dummy;
+	wxStyledTextEvent dummy;
 	OnSciUpdateUI(dummy);
 }
 
-void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
+void ContextCpp::OnSciUpdateUI(wxStyledTextEvent &event)
 {
 	wxUnusedVar(event);
 	LEditor &ctrl = GetCtrl();
@@ -1253,7 +1253,7 @@ void ContextCpp::OnSciUpdateUI(wxScintillaEvent &event)
 	}
 }
 
-void ContextCpp::OnDbgDwellEnd(wxScintillaEvent &event)
+void ContextCpp::OnDbgDwellEnd(wxStyledTextEvent &event)
 {
 	wxUnusedVar(event);
 	// remove the debugger indicator
@@ -1261,7 +1261,7 @@ void ContextCpp::OnDbgDwellEnd(wxScintillaEvent &event)
 	GetCtrl().IndicatorClearRange(0, GetCtrl().GetLength());
 }
 
-void ContextCpp::OnDbgDwellStart(wxScintillaEvent & event)
+void ContextCpp::OnDbgDwellStart(wxStyledTextEvent & event)
 {
 	static wxRegEx reCppIndentifier(wxT("[a-zA-Z_][a-zA-Z0-9_]*"));
 
@@ -1791,13 +1791,13 @@ void ContextCpp::OnFileSaved()
 		return;
 	}
 
-	// wxSCI_C_WORD2
+	// wxSTC_C_WORD2
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS) {
 
 		// get list of all tags from the workspace
 		TagsManagerST::Get()->GetAllTagsNames(projectTags);
 	}
-	// wxSCI_C_GLOBALCLASS
+	// wxSTC_C_GLOBALCLASS
 	if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS) {
 		//---------------------------------------------------------------------
 		// Colour local variables
@@ -1952,8 +1952,8 @@ void ContextCpp::ApplySettings()
 	rCtrl.RegisterImage(17, m_otherFileBmp);
 
 	//delete uneeded commands
-	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL);
-	rCtrl.CmdKeyClear('/', wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT);
+	rCtrl.CmdKeyClear('/', wxSTC_SCMOD_CTRL);
+	rCtrl.CmdKeyClear('/', wxSTC_SCMOD_CTRL|wxSTC_SCMOD_SHIFT);
 
 	// update word characters to allow '~' as valid word character
 	rCtrl.SetWordChars(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"));
@@ -1993,12 +1993,12 @@ void ContextCpp::AutoAddComment()
 
 	bool dontadd = false;
 	switch (cur_style) {
-	case wxSCI_C_COMMENTLINE:
-	case wxSCI_C_COMMENTLINEDOC:
+	case wxSTC_C_COMMENTLINE:
+	case wxSTC_C_COMMENTLINEDOC:
 		dontadd = ! text.StartsWith( wxT("//") ) || !data.GetContinueCppComment();
 		break;
-	case wxSCI_C_COMMENT:
-	case wxSCI_C_COMMENTDOC:
+	case wxSTC_C_COMMENT:
+	case wxSTC_C_COMMENTDOC:
 		dontadd = !data.GetAddStarOnCComment();
 		break;
 	default:
@@ -2012,8 +2012,8 @@ void ContextCpp::AutoAddComment()
 
 	wxString toInsert;
 	switch (cur_style) {
-	case wxSCI_C_COMMENTLINE:
-	case wxSCI_C_COMMENTLINEDOC: {
+	case wxSTC_C_COMMENTLINE:
+	case wxSTC_C_COMMENTLINEDOC: {
 		if ( text.StartsWith( wxT("//") ) ) {
 			// try to parse the comment text and indentation
 			unsigned i = (text.Length() > 2 && text[2] == wxT('!')) ? 3 : 2; // support "//!" for doxygen
@@ -2033,7 +2033,7 @@ void ContextCpp::AutoAddComment()
 			if ( i < text.Length()-1 || i < 40 ) {
 				toInsert = text.substr(0,i);
 			} else {
-				if (cur_style == wxSCI_C_COMMENTLINEDOC && i >= 3)
+				if (cur_style == wxSTC_C_COMMENTLINEDOC && i >= 3)
 					toInsert = text.substr(0,3) + wxT(" ");
 				else
 					toInsert = wxT("// ");
@@ -2041,8 +2041,8 @@ void ContextCpp::AutoAddComment()
 		}
 	}
 	break;
-	case wxSCI_C_COMMENT:
-	case wxSCI_C_COMMENTDOC:
+	case wxSTC_C_COMMENT:
+	case wxSTC_C_COMMENTDOC:
 		if (rCtrl.GetStyleAt(rCtrl.PositionBefore(rCtrl.PositionBefore(curpos))) == cur_style) {
 			toInsert = rCtrl.GetCharAt(rCtrl.GetLineIndentPosition(line-1)) == wxT('*') ? wxT("* ") : wxT(" * ");
 		}
@@ -2059,12 +2059,12 @@ bool ContextCpp::IsComment(long pos)
 {
 	int style;
 	style = GetCtrl().GetStyleAt(pos);
-	return (style == wxSCI_C_COMMENT				||
-	        style == wxSCI_C_COMMENTLINE			||
-	        style == wxSCI_C_COMMENTDOC				||
-	        style == wxSCI_C_COMMENTLINEDOC			||
-	        style == wxSCI_C_COMMENTDOCKEYWORD		||
-	        style == wxSCI_C_COMMENTDOCKEYWORDERROR   );
+	return (style == wxSTC_C_COMMENT				||
+	        style == wxSTC_C_COMMENTLINE			||
+	        style == wxSTC_C_COMMENTDOC				||
+	        style == wxSTC_C_COMMENTLINEDOC			||
+	        style == wxSTC_C_COMMENTDOCKEYWORD		||
+	        style == wxSTC_C_COMMENTDOCKEYWORDERROR   );
 }
 
 void ContextCpp::OnRenameLocalSymbol(wxCommandEvent& e)
@@ -2161,7 +2161,7 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
 
 	// Try to maintain as far as possible the editor and line within it that the user started from.
 	// Otherwise a different editor may be selected, and the original one will have scrolled to the last replacement
-	int current_line = wxSCI_INVALID_POSITION;
+	int current_line = wxSTC_INVALID_POSITION;
 	LEditor* current = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if (current) {
 		current_line = current->GetCurrentLine();
@@ -2211,7 +2211,7 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
 
 	if (current) {
 		clMainFrame::Get()->GetMainBook()->SelectPage(current);
-		if (current_line != wxSCI_INVALID_POSITION) {
+		if (current_line != wxSTC_INVALID_POSITION) {
 			current->GotoLine(current_line);
 		}
 	}
@@ -2583,7 +2583,7 @@ void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
 	}
 }
 
-void ContextCpp::OnCallTipClick(wxScintillaEvent& e)
+void ContextCpp::OnCallTipClick(wxStyledTextEvent& e)
 {
 	e.Skip();
 }
@@ -2681,15 +2681,15 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
 
 		//Comment?
 		int style = ctrl->GetStyleAt(position);
-		if (style == wxSCI_C_COMMENT                    ||
-		    style == wxSCI_C_COMMENTLINE            ||
-		    style == wxSCI_C_COMMENTDOC             ||
-		    style == wxSCI_C_COMMENTLINEDOC         ||
-		    style == wxSCI_C_COMMENTDOCKEYWORD      ||
-		    style == wxSCI_C_COMMENTDOCKEYWORDERROR ||
-		    style == wxSCI_C_STRING                 ||
-		    style == wxSCI_C_STRINGEOL              ||
-		    style == wxSCI_C_CHARACTER) {
+		if (style == wxSTC_C_COMMENT                    ||
+		    style == wxSTC_C_COMMENTLINE            ||
+		    style == wxSTC_C_COMMENTDOC             ||
+		    style == wxSTC_C_COMMENTLINEDOC         ||
+		    style == wxSTC_C_COMMENTDOCKEYWORD      ||
+		    style == wxSTC_C_COMMENTDOCKEYWORDERROR ||
+		    style == wxSTC_C_STRING                 ||
+		    style == wxSTC_C_STRINGEOL              ||
+		    style == wxSTC_C_CHARACTER) {
 			continue;
 		}
 

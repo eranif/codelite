@@ -214,9 +214,9 @@ SvnShellBase::SvnShellBase( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	
 	// Create the default scintilla control
 	#ifdef __WXGTK__
-	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
+	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
 	#else
-	m_sci = new wxScintilla(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
+	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
 	#endif
 	bSizer9->Add( m_sci, 1, wxEXPAND, 5 );
 	

@@ -42,7 +42,7 @@ EnvVarsTableDlgBase::EnvVarsTableDlgBase( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 	
-	m_textCtrlDefault = new wxScintilla(m_panel1);
+	m_textCtrlDefault = new wxStyledTextCtrl(m_panel1);
 	bSizer5->Add( m_textCtrlDefault, 1, wxEXPAND, 5 );
 	
 	m_panel1->SetSizer( bSizer5 );
@@ -116,7 +116,7 @@ EnvVarSetPage::EnvVarSetPage( wxWindow* parent, wxWindowID id, const wxPoint& po
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
-	m_textCtrl = new wxScintilla(this);
+	m_textCtrl = new wxStyledTextCtrl(this);
 	bSizer6->Add( m_textCtrl, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer6 );

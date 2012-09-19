@@ -38,112 +38,109 @@ const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED = XRCID("wxEVT_SHELL_COMMAND
 const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN = XRCID("wxEVT_SHELL_COMMAND_STARTED_NOCLEAN");
 
 BEGIN_EVENT_TABLE(ShellCommand, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ShellCommand::OnProcessOutput)
-EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ShellCommand::OnProcessTerminated)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ShellCommand::OnProcessOutput)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ShellCommand::OnProcessTerminated)
 END_EVENT_TABLE()
 
 ShellCommand::ShellCommand(const QueueCommand &buildInfo)
-		: m_proc(NULL)
-		, m_info(buildInfo)
+    : m_proc(NULL)
+    , m_info(buildInfo)
 {
 }
 
 void ShellCommand::AppendLine(const wxString &line)
 {
-	wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
-	event.SetString(line);
+    wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
+    event.SetString(line);
     event.SetInt(m_info.GetKind());
-	EventNotifier::Get()->AddPendingEvent(event);
-
-	m_lines.Add(line);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void ShellCommand::Stop()
 {
-	//kill the build process
-	CleanUp();
+    //kill the build process
+    CleanUp();
 }
 
 void ShellCommand::SendStartMsg()
 {
     wxCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
     event.SetString(m_info.GetSynopsis());
-	
-	BuildEventDetails *eventData = new BuildEventDetails();
-	eventData->SetProjectName(m_info.GetProject());
-	eventData->SetConfiguration(m_info.GetConfiguration());
-	eventData->SetIsCustomProject(m_info.GetKind() == QueueCommand::CustomBuild);
-	eventData->SetIsClean(m_info.GetKind() == QueueCommand::Clean || (m_info.GetKind() == QueueCommand::CustomBuild && m_info.GetCustomBuildTarget() == wxT("clean")));
-	
-	event.SetClientObject(eventData);
-	EventNotifier::Get()->AddPendingEvent(event);
+
+    BuildEventDetails *eventData = new BuildEventDetails();
+    eventData->SetProjectName(m_info.GetProject());
+    eventData->SetConfiguration(m_info.GetConfiguration());
+    eventData->SetIsCustomProject(m_info.GetKind() == QueueCommand::CustomBuild);
+    eventData->SetIsClean(m_info.GetKind() == QueueCommand::Clean || (m_info.GetKind() == QueueCommand::CustomBuild && m_info.GetCustomBuildTarget() == wxT("clean")));
+
+    event.SetClientObject(eventData);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void ShellCommand::SendEndMsg()
 {
-	wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+    wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
     event.SetString(m_info.GetSynopsis());
-	EventNotifier::Get()->AddPendingEvent(event);
+    EventNotifier::Get()->AddPendingEvent(event);
 }
 
 void ShellCommand::DoPrintOutput(const wxString &out)
 {
-	// Write the buffer as-is to the build tab !!
-	AppendLine(out);
+    // Write the buffer as-is to the build tab !!
+    AppendLine(out);
 }
 
 void ShellCommand::CleanUp()
 {
-	if (m_proc) {
+    if (m_proc) {
         delete m_proc;
-		m_proc = NULL;
-	}
-	SendEndMsg();
+        m_proc = NULL;
+    }
+    SendEndMsg();
 }
 
 void ShellCommand::DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly)
 {
-	//when using custom build, user can select different working directory
-	if (proj) {
-		if (isCustom) {
-			//first set the path to the project working directory
-			::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+    //when using custom build, user can select different working directory
+    if (proj) {
+        if (isCustom) {
+            //first set the path to the project working directory
+            ::wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
-			BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
-			if (buildConf) {
-				wxString wd = buildConf->GetCustomBuildWorkingDir();
-				if (wd.IsEmpty()) {
-					// use the project path
-					wd = proj->GetFileName().GetPath();
-				} else {
-					// expand macros from path
-					wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
-				}
-				::wxSetWorkingDirectory(wd);
-			}
-		} else {
-			if(m_info.GetProjectOnly() || isFileOnly) {
-				//first set the path to the project working directory
-				::wxSetWorkingDirectory(proj->GetFileName().GetPath());
-			}
-		}
-	}
+            BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+            if (buildConf) {
+                wxString wd = buildConf->GetCustomBuildWorkingDir();
+                if (wd.IsEmpty()) {
+                    // use the project path
+                    wd = proj->GetFileName().GetPath();
+                } else {
+                    // expand macros from path
+                    wd = ExpandAllVariables(wd, WorkspaceST::Get(), proj->GetName(), buildConf->GetName(), wxEmptyString);
+                }
+                ::wxSetWorkingDirectory(wd);
+            }
+        } else {
+            if(m_info.GetProjectOnly() || isFileOnly) {
+                //first set the path to the project working directory
+                ::wxSetWorkingDirectory(proj->GetFileName().GetPath());
+            }
+        }
+    }
 }
 
 void ShellCommand::OnProcessOutput(wxCommandEvent& e)
 {
-	ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
-	if(ped) {
-		DoPrintOutput(ped->GetData());
-		delete ped;
-	}
-	e.Skip();
+    ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
+    if(ped) {
+        DoPrintOutput(ped->GetData());
+        delete ped;
+    }
+    e.Skip();
 }
 
 void ShellCommand::OnProcessTerminated(wxCommandEvent& e)
 {
-	ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
-	delete ped;
-	CleanUp();
+    ProcessEventData *ped = (ProcessEventData*)e.GetClientData();
+    delete ped;
+    CleanUp();
 }
-

@@ -6,6 +6,7 @@
 #include "pluginmanager.h"
 #include "clang_macro_handler.h"
 #include <wx/regex.h>
+#include "code_completion_box.h"
 #include "clangpch_cache.h"
 #include "asyncprocess.h"
 #include "frame.h"
@@ -161,8 +162,8 @@ void ClangDriver::CodeCompletion(IEditor* editor)
 {
     if(m_isBusy) {
         if(editor) {
-            editor->GetScintilla()->CallTipCancel();
-            editor->GetScintilla()->CallTipShow( editor->GetCurrentPosition(), wxT("Code Completion Message:\n@@LINE@@\nA lengthy operation is in progress..."));
+            editor->GetSTC()->CallTipCancel();
+            editor->GetSTC()->CallTipShow( editor->GetCurrentPosition(), wxT("Code Completion Message:\n<br>\nA lengthy operation is in progress..."));
         }
         return;
     }
@@ -502,8 +503,8 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         // Display an error message if needed, but not if the code-completion box
         // is visible
         if(reply->errorMessage.IsEmpty() == false && !m_activeEditor->IsCompletionBoxShown()) {
-            m_activeEditor->GetScintilla()->CallTipCancel();
-            m_activeEditor->GetScintilla()->CallTipShow( m_activeEditor->GetCurrentPosition(), reply->errorMessage );
+            CodeCompletionBox::Get().CancelTip();
+            CodeCompletionBox::Get().ShowTip(reply->errorMessage, dynamic_cast<LEditor*>(m_activeEditor));
         }
         return;
     }
@@ -714,10 +715,10 @@ void ClangDriver::GetMacros(IEditor *editor)
     if(editor->GetProjectName().IsEmpty()) {
         // This file is not part of the workspace
         // do not attemp to color its preprocessors
-        editor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
-        editor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-        editor->GetScintilla()->SetKeyWords(4, wxT(""));
-        editor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
+        editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
+        editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+        editor->GetSTC()->SetKeyWords(4, wxT(""));
+        editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
         return;
     }
 

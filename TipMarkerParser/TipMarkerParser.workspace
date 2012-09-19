@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="TipMarkerParser" Database="./TipMarkerParser.tags">
+  <Project Name="TipMarkerParser" Path="TipMarkerParser.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Project Name="TipMarkerParser" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Linux" Selected="yes">
+      <Project Name="TipMarkerParser" ConfigName="Linux"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

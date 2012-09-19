@@ -18,7 +18,7 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include <wx/panel.h>
 #include <wx/choicebk.h>
 #include <wx/button.h>
@@ -40,7 +40,7 @@ class EnvVarsTableDlgBase : public wxDialog
 		wxStaticText* m_staticText2;
 		wxChoicebook* m_notebook1;
 		wxPanel* m_panel1;
-		wxScintilla* m_textCtrlDefault;
+		wxStyledTextCtrl* m_textCtrlDefault;
 		wxButton* m_buttonNewSet;
 		wxButton* m_buttonDeleteSet;
 		wxButton* m_button5;
@@ -73,7 +73,7 @@ class EnvVarSetPage : public wxPanel
 	protected:
 	
 	public:
-		wxScintilla* m_textCtrl;
+		wxStyledTextCtrl* m_textCtrl;
 		
 		EnvVarSetPage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxTAB_TRAVERSAL ); 
 		~EnvVarSetPage();

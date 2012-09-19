@@ -26,68 +26,64 @@
 #define __outputtabwindow__
 
 #include <wx/panel.h>
-#include <wx/wxscintilla.h>
-
-#ifndef wxScintillaEventHandler
-#define wxScintillaEventHandler(func) \
-	(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
-#endif
+#include <wx/stc/stc.h>
 
 class QuickFindBar;
 class OutputTabWindow : public wxPanel
 {
 protected:
-	wxString      m_name;
+    wxString      m_name;
     wxToolBar   * m_tb;
-	wxScintilla * m_sci;
+    wxStyledTextCtrl * m_sci;
     bool          m_outputScrolls;
     bool          m_autoAppear;
     bool          m_autoAppearErrors;
     bool          m_errorsFirstLine;
-	QuickFindBar *m_findBar;
-	wxBoxSizer *  m_hSizer;
-	
-    static void DefineMarker(wxScintilla *sci, int marker, int markerType, wxColor fore, wxColor back);
-    static void InitStyle   (wxScintilla *sci, int lexer, bool folding);
+    QuickFindBar *m_findBar;
+    wxBoxSizer *  m_hSizer;
 
-	void CreateGUIControls();
-	void SetThisPaneIsSticky(bool stickiness);
+    static void DefineMarker(wxStyledTextCtrl *sci, int marker, int markerType, wxColor fore, wxColor back);
+    static void InitStyle   (wxStyledTextCtrl *sci, int lexer, bool folding);
 
-	virtual void AppendText(const wxString &text);
-	virtual bool IsFocused();
+    void CreateGUIControls();
+    void SetThisPaneIsSticky(bool stickiness);
 
-	//Event handlers
+    virtual void AppendText(const wxString &text);
+    virtual bool IsFocused();
+
+    //Event handlers
     virtual void OnOutputScrolls  (wxCommandEvent   &e);
-	virtual void OnSearchOutput   (wxCommandEvent   &e);
-	virtual void OnClearAll       (wxCommandEvent   &e);
-	virtual void OnWordWrap       (wxCommandEvent   &e);
-	virtual void OnCollapseAll    (wxCommandEvent   &e);
+    virtual void OnSearchOutput   (wxCommandEvent   &e);
+    virtual void OnClearAll       (wxCommandEvent   &e);
+    virtual void OnWordWrap       (wxCommandEvent   &e);
+    virtual void OnCollapseAll    (wxCommandEvent   &e);
     virtual void OnRepeatOutput   (wxCommandEvent   &e);
-	virtual void OnEdit           (wxCommandEvent   &e);
-	virtual void OnToggleHoldOpen (wxCommandEvent   &e);
+    virtual void OnEdit           (wxCommandEvent   &e);
+    virtual void OnToggleHoldOpen (wxCommandEvent   &e);
 
 
     virtual void OnOutputScrollsUI(wxUpdateUIEvent  &e);
     virtual void OnSearchOutputUI (wxUpdateUIEvent  &e);
-	virtual void OnClearAllUI     (wxUpdateUIEvent  &e);
-	virtual void OnWordWrapUI     (wxUpdateUIEvent  &e);
-	virtual void OnCollapseAllUI  (wxUpdateUIEvent  &e);
+    virtual void OnClearAllUI     (wxUpdateUIEvent  &e);
+    virtual void OnWordWrapUI     (wxUpdateUIEvent  &e);
+    virtual void OnCollapseAllUI  (wxUpdateUIEvent  &e);
     virtual void OnRepeatOutputUI (wxUpdateUIEvent  &e);
 
-	virtual void OnMouseDClick    (wxScintillaEvent &e);
-	virtual void OnHotspotClicked (wxScintillaEvent &e);
-	virtual void OnMarginClick    (wxScintillaEvent &e);
-	virtual void OnEditUI         (wxUpdateUIEvent  &e);
-	virtual void OnHideSearchBar  (wxCommandEvent   &e);
+    virtual void OnMouseDClick    (wxStyledTextEvent &e);
+    virtual void OnHotspotClicked (wxStyledTextEvent &e);
+    virtual void OnMarginClick    (wxStyledTextEvent &e);
+    virtual void OnEditUI         (wxUpdateUIEvent  &e);
+    virtual void OnHideSearchBar  (wxCommandEvent   &e);
     DECLARE_EVENT_TABLE()
 
 public:
-	OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name);
-	~OutputTabWindow();
+    OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString &name);
+    ~OutputTabWindow();
 
-	bool IsThisPaneSticky();
-	virtual void Clear();
-	const wxString &GetCaption() const {return m_name;}
+    bool IsThisPaneSticky();
+    virtual void Clear();
+    const wxString &GetCaption() const {
+        return m_name;
+    }
 };
 #endif // __outputtabwindow__
-

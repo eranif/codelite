@@ -34,7 +34,7 @@ DebuggerAsciiViewerBase::DebuggerAsciiViewerBase( wxWindow* parent, wxWindowID i
 	
 	mainSizer->Add( bSizer2, 0, wxEXPAND, 5 );
 	
-	m_textView = new wxScintilla(this);
+	m_textView = new wxStyledTextCtrl(this);
 	mainSizer->Add( m_textView, 1, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( mainSizer );

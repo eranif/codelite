@@ -46,6 +46,7 @@ Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_core_gcc_cl.dll"; DestDir: 
 Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "C:\src\wx-sources-294\lib\gcc_dll\wxrc.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 
 ;; ---- Others
@@ -65,7 +66,6 @@ Source: "..\Runtime\debuggers\*.dll"; DestDir: "{app}\debuggers"; Flags: ignorev
 Source: "..\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\clang\lib\clang.dll"; DestDir: "{app}\"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "..\lib\gcc_lib\libwxscintillau.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

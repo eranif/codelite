@@ -144,4 +144,7 @@
     </Configuration>
   </Settings>
   <Dependencies Name="Debug"/>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="ReleaseUnicode"/>
 </CodeLite_Project>

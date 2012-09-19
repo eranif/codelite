@@ -19,7 +19,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ class DebuggerAsciiViewerBase : public wxPanel
 		wxStaticText* m_staticText1;
 		wxTextCtrl* m_textCtrlExpression;
 		wxButton* m_buttonClear;
-		wxScintilla *m_textView;
+		wxStyledTextCtrl *m_textView;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClearView( wxCommandEvent& event ){ event.Skip(); }

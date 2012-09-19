@@ -9,12 +9,12 @@
 #define __gitCommitEditor__
 
 #include <wx/wx.h>
-#include "wx/wxscintilla.h"
+#include <wx/stc/stc.h>
 
-class GitCommitEditor : public wxScintilla
+class GitCommitEditor : public wxStyledTextCtrl
 {
 public:
-	GitCommitEditor(wxWindow* parent);
+    GitCommitEditor(wxWindow* parent);
 };
 
 #endif //__gitCommitEditor__

@@ -99,11 +99,11 @@ public:
 	virtual void SwapFiles(const wxFileName &fileName);
 
 	//Event handlers
-	virtual void OnDwellEnd(wxScintillaEvent &event);
-	virtual void OnDwellStart(wxScintillaEvent &event);
-	virtual void OnDbgDwellEnd(wxScintillaEvent &event);
-	virtual void OnDbgDwellStart(wxScintillaEvent &event);
-	virtual void OnSciUpdateUI(wxScintillaEvent &event);
+	virtual void OnDwellEnd(wxStyledTextEvent &event);
+	virtual void OnDwellStart(wxStyledTextEvent &event);
+	virtual void OnDbgDwellEnd(wxStyledTextEvent &event);
+	virtual void OnDbgDwellStart(wxStyledTextEvent &event);
+	virtual void OnSciUpdateUI(wxStyledTextEvent &event);
 	virtual void OnFileSaved();
 	virtual void AutoAddComment();
 
@@ -135,7 +135,7 @@ public:
 	virtual void OnSyncSignatures(wxCommandEvent &e);
 	virtual void OnRetagFile(wxCommandEvent &e);
 	virtual void OnUserTypedXChars(const wxString &word);
-	virtual void OnCallTipClick(wxScintillaEvent &e);
+	virtual void OnCallTipClick(wxStyledTextEvent &e);
 	virtual void OnCalltipCancel();
 	DECLARE_EVENT_TABLE()
 

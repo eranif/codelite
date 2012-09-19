@@ -108,7 +108,7 @@ void CodeFormatterDlg::InitDialog()
 		selection = 3;
 	}
 
-	m_textCtrlPreview->SetLexer(wxSCI_LEX_CPP);
+	m_textCtrlPreview->SetLexer(wxSTC_LEX_CPP);
 
 	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
 	wxFont font;
@@ -152,11 +152,11 @@ void CodeFormatterDlg::InitDialog()
 
 				wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
 				if (sp.GetId() == 0) { //default
-					m_textCtrlPreview->StyleSetFont(wxSCI_STYLE_DEFAULT, font);
-					m_textCtrlPreview->StyleSetSize(wxSCI_STYLE_DEFAULT, size);
-					m_textCtrlPreview->StyleSetForeground(wxSCI_STYLE_DEFAULT, (*iter).GetFgColour());
-					m_textCtrlPreview->StyleSetBackground(wxSCI_STYLE_DEFAULT, (*iter).GetBgColour());
-					m_textCtrlPreview->StyleSetSize(wxSCI_STYLE_LINENUMBER, size);
+					m_textCtrlPreview->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+					m_textCtrlPreview->StyleSetSize(wxSTC_STYLE_DEFAULT, size);
+					m_textCtrlPreview->StyleSetForeground(wxSTC_STYLE_DEFAULT, (*iter).GetFgColour());
+					m_textCtrlPreview->StyleSetBackground(wxSTC_STYLE_DEFAULT, (*iter).GetBgColour());
+					m_textCtrlPreview->StyleSetSize(wxSTC_STYLE_LINENUMBER, size);
 					m_textCtrlPreview->SetFoldMarginColour(true, (*iter).GetBgColour());
 					m_textCtrlPreview->SetFoldMarginHiColour(true, (*iter).GetBgColour());
 
@@ -164,10 +164,10 @@ void CodeFormatterDlg::InitDialog()
 					// set the indicator to be hollow rectanlgle
 					StyleProperty sp = (*iter);
 					if ( DrawingUtils::IsDark(sp.GetBgColour()) ) {
-						m_textCtrlPreview->IndicatorSetStyle(1, wxSCI_INDIC_BOX);
-						m_textCtrlPreview->IndicatorSetStyle(2, wxSCI_INDIC_BOX);
+						m_textCtrlPreview->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
+						m_textCtrlPreview->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
 					}
-				} else if(sp.GetId() == wxSCI_STYLE_CALLTIP) {
+				} else if(sp.GetId() == wxSTC_STYLE_CALLTIP) {
 					// do nothing
 				}
 

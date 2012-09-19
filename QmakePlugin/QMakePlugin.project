@@ -46,8 +46,6 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -193,4 +191,6 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

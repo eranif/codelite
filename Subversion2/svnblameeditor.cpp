@@ -6,12 +6,12 @@
 #include <wx/font.h>
 #include <wx/settings.h>
 
-BEGIN_EVENT_TABLE(SvnBlameEditor, wxScintilla)
+BEGIN_EVENT_TABLE(SvnBlameEditor, wxStyledTextCtrl)
     EVT_CONTEXT_MENU(SvnBlameEditor::OnContextMenu)
 END_EVENT_TABLE()
 
 SvnBlameEditor::SvnBlameEditor(wxWindow *win)
-    : wxScintilla(win)
+    : wxStyledTextCtrl(win)
 {
     Initialize();
 }
@@ -24,20 +24,20 @@ void SvnBlameEditor::Initialize()
 {
     // Initialize some styles
     StyleClearAll();
-    SetLexer(wxSCI_LEX_NULL);
+    SetLexer(wxSTC_LEX_NULL);
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
-    for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
+    for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
         StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         StyleSetForeground(i, *wxBLACK);
         StyleSetFont(i, font);
     }
 
-    SetMarginType (0, wxSCI_MARGIN_TEXT  );
-    SetMarginType (1, wxSCI_MARGIN_NUMBER);
-    SetMarginWidth(1, 4 + 5*TextWidth(wxSCI_STYLE_LINENUMBER, wxT("9")));
+    SetMarginType (0, wxSTC_MARGIN_TEXT  );
+    SetMarginType (1, wxSTC_MARGIN_NUMBER);
+    SetMarginWidth(1, 4 + 5*TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9")));
     SetMarginWidth(2, 0);
     SetMarginWidth(3, 0);
     SetMarginWidth(4, 0);
@@ -138,7 +138,7 @@ void SvnBlameEditor::OnContextMenu(wxContextMenuEvent& event)
         PopupMenu(&menu);
 
     } else {
-        wxScintilla::OnContextMenu(event);
+        wxStyledTextCtrl::OnContextMenu(event);
 
     }
 }

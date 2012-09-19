@@ -22,7 +22,6 @@
     <File Name="confcallgraph.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="DebugUnicode"/>
   <VirtualDirectory Name="uifm">
     <File Name="uisettings.fbp"/>
     <File Name="uicallgraph.fbp"/>
@@ -38,7 +37,10 @@
     <File Name="uicallgraphpanel.cpp"/>
     <File Name="toolbaricons.h"/>
   </VirtualDirectory>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -98,6 +100,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -150,6 +153,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -205,6 +209,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -220,7 +225,6 @@
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
-        <Preprocessor Value="WXUSINGDLL_SCI"/>
         <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
@@ -260,6 +264,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
       <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>

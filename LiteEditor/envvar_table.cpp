@@ -14,18 +14,18 @@ EnvVarsTableDlg::EnvVarsTableDlg( wxWindow* parent )
 	std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
 	wxString activePage = vars.GetActiveSet();
 
-	wxScintilla *sci = m_textCtrlDefault;
+	wxStyledTextCtrl *sci = m_textCtrlDefault;
 	sci->StyleClearAll();
-	sci->SetLexer(wxSCI_LEX_NULL);
+	sci->SetLexer(wxSTC_LEX_NULL);
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
-	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
+	for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
 		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 		sci->StyleSetForeground(i, *wxBLACK);
 		sci->StyleSetFont(i, font);
-		sci->SetWrapMode(wxSCI_WRAP_WORD);
+		sci->SetWrapMode(wxSTC_WRAP_WORD);
 	}
 
 	WindowAttrManager::Load(this, wxT("EnvVarsTableDlg"), NULL);
@@ -120,14 +120,14 @@ void EnvVarsTableDlg::DoAddPage(const wxString &name, const wxString &content, b
 {
 	clWindowUpdateLocker locker(this);
 	EnvVarSetPage *page = new EnvVarSetPage(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(0,0));
-	wxScintilla *sci = page->m_textCtrl;
+	wxStyledTextCtrl *sci = page->m_textCtrl;
 	sci->StyleClearAll();
-	sci->SetLexer(wxSCI_LEX_NULL);
+	sci->SetLexer(wxSTC_LEX_NULL);
 
 	wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
-	for (int i=0; i<=wxSCI_STYLE_DEFAULT; i++) {
+	for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
 		sci->StyleSetBackground(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 		sci->StyleSetForeground(i, *wxBLACK);
 		sci->StyleSetFont(i, font);

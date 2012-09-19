@@ -33,7 +33,7 @@
 #include <wx/dialog.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #ifdef __VISUALC__
 #include <wx/link_additions.h>
 #endif //__VISUALC__
@@ -150,7 +150,7 @@ class _SqlCommandPanel : public wxPanel
 		wxButton* m_button34;
 		wxSplitterWindow* m_splitter1;
 		wxPanel* m_panel13;
-		wxScintilla* m_scintillaSQL;
+		wxStyledTextCtrl* m_scintillaSQL;
 		wxButton* m_btnSave;
 		wxButton* m_btnLoad;
 		wxButton* m_btnExecute;
@@ -468,7 +468,7 @@ class _ViewSettings : public wxDialog
 		wxStaticText* m_staticText19;
 		wxTextCtrl* m_txName;
 		wxStaticLine* m_staticline2;
-		wxScintilla* m_scintilla2;
+		wxStyledTextCtrl* m_scintilla2;
 		wxButton* m_btnOK;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -578,7 +578,7 @@ class _CodePreviewDialog : public wxDialog
 	private:
 	
 	protected:
-		wxScintilla* m_scintilla3;
+		wxStyledTextCtrl* m_scintilla3;
 		wxStdDialogButtonSizer* m_sdbSizer2;
 		wxButton* m_sdbSizer2OK;
 		

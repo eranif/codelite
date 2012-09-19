@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : generic_context.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : generic_context.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "generic_context.h"
@@ -29,8 +29,8 @@
 ContextGeneric::ContextGeneric(LEditor *container, const wxString &name)
     : ContextBase(container)
 {
-	SetName(name);
-	ApplySettings();
+    SetName(name);
+    ApplySettings();
 }
 
 ContextGeneric::~ContextGeneric()
@@ -39,16 +39,16 @@ ContextGeneric::~ContextGeneric()
 
 ContextBase *ContextGeneric::NewInstance(LEditor *container)
 {
-	return new ContextGeneric(container, GetName());
+    return new ContextGeneric(container, GetName());
 }
 
 void ContextGeneric::ApplySettings()
 {
-	LexerConfPtr lexPtr;
-	if (EditorConfigST::Get()->IsOk()) {
-		lexPtr = EditorConfigST::Get()->GetLexer(GetName());
-	}
-	LEditor &rCtrl = GetCtrl();
+    LexerConfPtr lexPtr;
+    if (EditorConfigST::Get()->IsOk()) {
+        lexPtr = EditorConfigST::Get()->GetLexer(GetName());
+    }
+    LEditor &rCtrl = GetCtrl();
     if (lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
         for (int i = 0; i <= 4; ++i) {
@@ -58,7 +58,7 @@ void ContextGeneric::ApplySettings()
             rCtrl.SetKeyWords(i, keyWords);
         }
     } else {
-        rCtrl.SetLexer(wxSCI_LEX_NULL);
+        rCtrl.SetLexer(wxSTC_LEX_NULL);
     }
-	DoApplySettings(lexPtr);
+    DoApplySettings(lexPtr);
 }

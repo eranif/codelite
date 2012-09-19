@@ -28,6 +28,8 @@
 #include "cl_editor.h"
 #include "code_completion_manager.h"
 #include "macromanager.h"
+#include <wx/log.h>
+#include "event_notifier.h"
 #include "code_completion_box.h"
 #include "event_notifier.h"
 #include "cl_editor_tip_window.h"
@@ -61,14 +63,14 @@
 #include "debuggerconfigtool.h"
 #include "addincludefiledlg.h"
 #include "quickfindbar.h"
-#include "buidltab.h"
+#include "new_build_tab.h"
 #include "localworkspace.h"
 #include "findresultstab.h"
 
 // fix bug in wxscintilla.h
-#ifdef EVT_SCI_CALLTIP_CLICK
-#undef EVT_SCI_CALLTIP_CLICK
-#define EVT_SCI_CALLTIP_CLICK(id, fn)          DECLARE_EVENT_TABLE_ENTRY (wxEVT_SCI_CALLTIP_CLICK,          id, wxID_ANY, (wxObjectEventFunction) (wxEventFunction)  wxStaticCastEvent( wxScintillaEventFunction, & fn ), (wxObject *) NULL),
+#ifdef EVT_STC_CALLTIP_CLICK
+#undef EVT_STC_CALLTIP_CLICK
+#define EVT_STC_CALLTIP_CLICK(id, fn)          DECLARE_EVENT_TABLE_ENTRY (wxEVT_STC_CALLTIP_CLICK,          id, wxID_ANY, (wxObjectEventFunction) (wxEventFunction)  wxStaticCastEvent( wxStyledTextEventFunction, & fn ), (wxObject *) NULL),
 #endif
 
 #define NUMBER_MARGIN_ID        0
@@ -79,11 +81,6 @@
 
 #define CL_LINE_MODIFIED_STYLE      200
 #define CL_LINE_SAVED_STYLE         201
-
-#ifndef wxScintillaEventHandler
-#define wxScintillaEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxScintillaEventFunction, &func)
-#endif
 
 //debugger line marker xpms
 extern const char *arrow_right_green_xpm[];
@@ -96,19 +93,20 @@ extern const char *ConditionalBreakpt[];
 extern const char *ConditionalBreakptDisabled[];
 
 const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR = XRCID("remove_match_indicator");
-extern unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
+const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT  = ::wxNewEventType();
 
-BEGIN_EVENT_TABLE(LEditor, wxScintilla)
+#define MARKER_WORD_HIGHLIGHT 2
 
-    EVT_SCI_CHARADDED              (wxID_ANY, LEditor::OnCharAdded)
-    EVT_SCI_MARGINCLICK            (wxID_ANY, LEditor::OnMarginClick)
-    EVT_SCI_CALLTIP_CLICK          (wxID_ANY, LEditor::OnCallTipClick)
-    EVT_SCI_DWELLEND               (wxID_ANY, LEditor::OnDwellEnd)
-    EVT_SCI_PAINTED                (wxID_ANY, LEditor::OnScnPainted)
-    EVT_SCI_UPDATEUI               (wxID_ANY, LEditor::OnSciUpdateUI)
-    EVT_SCI_SAVEPOINTREACHED       (wxID_ANY, LEditor::OnSavePoint)
-    EVT_SCI_SAVEPOINTLEFT          (wxID_ANY, LEditor::OnSavePoint)
-    EVT_SCI_MODIFIED               (wxID_ANY, LEditor::OnChange)
+BEGIN_EVENT_TABLE(LEditor, wxStyledTextCtrl)
+    EVT_STC_CHARADDED              (wxID_ANY, LEditor::OnCharAdded)
+    EVT_STC_MARGINCLICK            (wxID_ANY, LEditor::OnMarginClick)
+    EVT_STC_CALLTIP_CLICK          (wxID_ANY, LEditor::OnCallTipClick)
+    EVT_STC_DWELLEND               (wxID_ANY, LEditor::OnDwellEnd)
+    EVT_STC_PAINTED                (wxID_ANY, LEditor::OnScnPainted)
+    EVT_STC_UPDATEUI               (wxID_ANY, LEditor::OnSciUpdateUI)
+    EVT_STC_SAVEPOINTREACHED       (wxID_ANY, LEditor::OnSavePoint)
+    EVT_STC_SAVEPOINTLEFT          (wxID_ANY, LEditor::OnSavePoint)
+    EVT_STC_MODIFIED               (wxID_ANY, LEditor::OnChange)
     EVT_CONTEXT_MENU               (LEditor::OnContextMenu)
     EVT_KEY_DOWN                   (LEditor::OnKeyDown)
     EVT_LEFT_DOWN                  (LEditor::OnLeftDown)
@@ -118,7 +116,7 @@ BEGIN_EVENT_TABLE(LEditor, wxScintilla)
     EVT_LEAVE_WINDOW               (LEditor::OnLeaveWindow)
     EVT_KILL_FOCUS                 (LEditor::OnFocusLost)
     EVT_SET_FOCUS                  (LEditor::OnFocus)
-    EVT_SCI_DOUBLECLICK            (wxID_ANY, LEditor::OnLeftDClick)
+    EVT_STC_DOUBLECLICK            (wxID_ANY, LEditor::OnLeftDClick)
     EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_FIND_NEXT, LEditor::OnFindDialog)
     EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_REPLACE, LEditor::OnFindDialog)
     EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_REPLACEALL, LEditor::OnFindDialog)
@@ -138,7 +136,7 @@ bool                    LEditor::m_ccShowItemsComments  = true ;
 bool                    LEditor::m_ccInitialized        = false;
 
 LEditor::LEditor(wxWindow* parent)
-    : wxScintilla                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
+    : wxStyledTextCtrl                (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
     , m_rightClickMenu           (NULL)
     , m_popupIsOn                (false)
     , m_modifyTime               (0)
@@ -159,14 +157,14 @@ LEditor::LEditor(wxWindow* parent)
     , m_pluginInitializedRMenu   (false)
     , m_positionToEnsureVisible  (wxNOT_FOUND)
 {
-    ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSCI_MARK_SMALLRECT;
-    ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSCI_MARK_ROUNDRECT;
-    ms_bookmarkShapes[wxT("Small Arrow")]       = wxSCI_MARK_ARROW;
-    ms_bookmarkShapes[wxT("Circle")]            = wxSCI_MARK_CIRCLE;
+    ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSTC_MARK_SMALLRECT;
+    ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
+    ms_bookmarkShapes[wxT("Small Arrow")]       = wxSTC_MARK_ARROW;
+    ms_bookmarkShapes[wxT("Circle")]            = wxSTC_MARK_CIRCLE;
 
     SetSyntaxHighlight();
-    CmdKeyClear(wxT('D'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
-    Connect(wxEVT_SCI_DWELLSTART, wxScintillaEventHandler(LEditor::OnDwellStart), NULL, this);
+    CmdKeyClear(wxT('D'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
+    Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(LEditor::OnDwellStart), NULL, this);
 
     // Initialise the breakpt-marker array
     FillBPtoMarkerArray();
@@ -184,10 +182,12 @@ LEditor::LEditor(wxWindow* parent)
     m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
 
     m_deltas = new EditorDeltasHolder;
+    EventNotifier::Get()->Connect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
 }
 
 LEditor::~LEditor()
 {
+    EventNotifier::Get()->Disconnect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
     delete m_deltas;
 }
 
@@ -290,7 +290,7 @@ void LEditor::SetCaretAt(long pos)
 void LEditor::SetProperties()
 {
     SetMultipleSelection(true);
-    SetRectangularSelectionModifier(wxSCI_SCMOD_CTRL);
+    SetRectangularSelectionModifier(wxSTC_SCMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     SetVirtualSpaceOptions(1);
     OptionsConfigPtr options = GetOptions();
@@ -304,11 +304,11 @@ void LEditor::SetProperties()
     m_disableSemicolonShift     = options->GetDisableSemicolonShift();
 
     if (!m_hightlightMatchedBraces) {
-        wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+        wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
         SetHighlightGuide(0);
     }
 
-    SetWrapMode(options->GetWordWrap() ? wxSCI_WRAP_WORD : wxSCI_WRAP_NONE);
+    SetWrapMode(options->GetWordWrap() ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
     SetViewWhiteSpace(options->GetShowWhitspaces());
     SetMouseDwellTime(500);
     SetProperty(wxT("fold"), wxT("1"));
@@ -326,7 +326,7 @@ void LEditor::SetProperties()
 
     // Fold and comments as well
     SetProperty(wxT("fold.comment"), wxT("1"));
-    SetModEventMask (wxSCI_MOD_DELETETEXT | wxSCI_MOD_INSERTTEXT  | wxSCI_PERFORMED_UNDO  | wxSCI_PERFORMED_REDO | wxSCI_MOD_BEFOREDELETE );
+    SetModEventMask (wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT  | wxSTC_PERFORMED_UNDO  | wxSTC_PERFORMED_REDO | wxSTC_MOD_BEFOREDELETE );
 
     int caretSlop = 1;
     int caretZone = 20;
@@ -351,8 +351,8 @@ void LEditor::SetProperties()
     SetCaretLineVisible(options->GetHighlightCaretLine());
     SetCaretLineBackground(options->GetCaretLineColour());
 
-    SetCaretLineBackgroundAlpha(options->GetCaretLineAlpha());
-    MarkerSetAlpha(smt_bookmark, 30);
+    //SetCaretLineBackAlpha(options->GetCaretLineAlpha());
+    //MarkerSetAlpha(smt_bookmark, 30);
 
     SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
 
@@ -363,9 +363,9 @@ void LEditor::SetProperties()
     //------------------------------------------
 
     // symbol margin
-    SetMarginType(SYMBOLS_MARGIN_ID, wxSCI_MARGIN_SYMBOL);
+    SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
     // Line numbes
-    SetMarginType(NUMBER_MARGIN_ID, wxSCI_MARGIN_NUMBER);
+    SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
 
     // line number margin displays every thing but folding, bookmarks and breakpoint
     SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
@@ -375,11 +375,11 @@ void LEditor::SetProperties()
     SetMarginMask     (EDIT_TRACKER_MARGIN_ID, 0);
 
     // Separators
-    SetMarginType     (SYMBOLS_MARGIN_SEP_ID, wxSCI_MARGIN_FORE);
+    SetMarginType     (SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_FORE);
     SetMarginMask     (SYMBOLS_MARGIN_SEP_ID, 0);
 
     // Fold margin - allow only folder symbols to display
-    SetMarginMask     (FOLD_MARGIN_ID, wxSCI_MASK_FOLDERS);
+    SetMarginMask     (FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
 
     // Set margins' width
     SetMarginWidth    (SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? 16 : 0);	// Symbol margin
@@ -389,11 +389,11 @@ void LEditor::SetProperties()
     SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, options->GetDisplayBookmarkMargin() ? 1 : 0);	// Symbol margin which acts as separator
 
     // allow everything except for the folding symbols
-    SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSCI_MASK_FOLDERS));
+    SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
 
     // Line number margin
 #ifdef __WXMSW__
-    int pixelWidth = 4 + 5*TextWidth(wxSCI_STYLE_LINENUMBER, wxT("9"));
+    int pixelWidth = 4 + 5*TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
 #else
     int pixelWidth = 4 + 5*8;
 #endif
@@ -418,69 +418,45 @@ void LEditor::SetProperties()
     //---------------------------------------------------
     // Define the folding style to be square
     if ( options->GetFoldStyle() == wxT("Flatten Tree Square Headers") ) {
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_BOXMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_BOXPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_LCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_BOXPLUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_BOXMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_BOXPLUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
     } else if ( options->GetFoldStyle() == wxT("Flatten Tree Circular Headers") ) {
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_CIRCLEMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_CIRCLEPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_LCORNERCURVE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_CIRCLEPLUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_CIRCLEMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_CIRCLEMINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_CIRCLEPLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_VLINE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_LCORNERCURVE, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_CIRCLEPLUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_CIRCLEMINUSCONNECTED, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
     } else if ( options->GetFoldStyle() == wxT("Simple") ) {
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_PLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_PLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-
-    } else if ( options->GetFoldStyle() == wxT("Arrows with Background Colour") ) {
-
-        wxColour bgcol = options->GetFoldBgColour();
-
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_ARROW_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
-
-    } else if ( options->GetFoldStyle() == wxT("Simple with Background Colour") ) {
-
-        wxColour bgcol = options->GetFoldBgColour();
-
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_MINUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_PLUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_FULLRECT, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_PLUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_MINUS_IN_BOX, wxColor(0xff, 0xff, 0xff), bgcol);
-        DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_FULLRECT_TAIL, wxColor(0xff, 0xff, 0xff), bgcol);
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_PLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_PLUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_MINUS, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
     } else { // use wxT("Arrows") as the default
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPEN, wxSCI_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDER, wxSCI_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERSUB, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEREND, wxSCI_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDEROPENMID, wxSCI_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
-        DefineMarker(wxSCI_MARKNUM_FOLDERMIDTAIL, wxSCI_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
+        DefineMarker(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND, wxColor(0xff, 0xff, 0xff), wxColor(0x80, 0x80, 0x80));
 
     }
 
     // Bookmark
-    int marker = wxSCI_MARK_ARROW;
+    int marker = wxSTC_MARK_ARROW;
     std::map<wxString, int>::iterator iter = ms_bookmarkShapes.find(options->GetBookmarkShape());
     if ( iter != ms_bookmarkShapes.end() ) {
         marker = iter->second;
@@ -506,10 +482,10 @@ void LEditor::SetProperties()
     MarkerSetForeground(smt_indicator, wxT("BLACK"));
 
     // warning and error markers
-    MarkerDefine(smt_warning, wxSCI_MARK_SHORTARROW);
+    MarkerDefine(smt_warning, wxSTC_MARK_SHORTARROW);
     MarkerSetForeground(smt_error, wxColor(128, 128, 0));
     MarkerSetBackground(smt_warning, wxColor(255, 215, 0));
-    MarkerDefine(smt_error, wxSCI_MARK_SHORTARROW);
+    MarkerDefine(smt_error, wxSTC_MARK_SHORTARROW);
     MarkerSetForeground(smt_error, wxColor(128, 0, 0));
     MarkerSetBackground(smt_error, wxColor(255, 0, 0));
 
@@ -519,9 +495,18 @@ void LEditor::SetProperties()
 #if defined(__WXMAC__)
     // turning off these two greatly improves performance
     // on Mac
-    SetTwoPhaseDraw(false);
-    SetBufferedDraw(false);
-
+    SetTwoPhaseDraw(true);
+    
+    // Using BufferedDraw as 'false'
+    // improves performance *alot*, however
+    // the downside is that the word hightlight does 
+    // not work...
+    // this is why we enable / disable it according to the "highlight word" toggle state
+    long highlightWord(1);
+	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
+    SetBufferedDraw(highlightWord == 1 ? true : false);
+    //wxLogMessage("Buffered draw is set to %d", (int)highlightWord);
+    
 #elif defined(__WXGTK__)
     SetTwoPhaseDraw(true);
     SetBufferedDraw(false);
@@ -539,7 +524,7 @@ void LEditor::SetProperties()
     SetIndent(options->GetIndentWidth());
     SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);
 
-    SetLayoutCache(wxSCI_CACHE_DOCUMENT);
+    SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 
     size_t frame_flags = clMainFrame::Get()->GetFrameGeneralInfo().GetFlags();
     SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);
@@ -548,24 +533,13 @@ void LEditor::SetProperties()
     //right click menu
     UsePopUp(m_rightClickMenu ? false : true);
 
-//#if defined(__WXMAC__)
-//	IndicatorSetUnder(1, false);
-//	IndicatorSetUnder(2, false);
-//	IndicatorSetUnder(HYPERLINK_INDICATOR, false);
-//	IndicatorSetUnder(MATCH_INDICATOR, false);
-//	IndicatorSetUnder(DEBUGGER_INDICATOR, false);
-//#else
     IndicatorSetUnder(1, true);
-    IndicatorSetUnder(2, true);
+    
     IndicatorSetUnder(HYPERLINK_INDICATOR, true);
     IndicatorSetUnder(MATCH_INDICATOR, true);
     IndicatorSetUnder(DEBUGGER_INDICATOR, true);
-//#endif
 
-    SetInidicatorValue(MATCH_INDICATOR,    1);
-    SetInidicatorValue(DEBUGGER_INDICATOR, 1);
-
-    SetUserIndicatorStyleAndColour(wxSCI_INDIC_SQUIGGLE, wxT("RED"));
+    SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, wxT("RED"));
 
     wxColour col2(wxT("LIGHT BLUE"));
     wxString val2 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
@@ -574,39 +548,44 @@ void LEditor::SetProperties()
     }
 
     IndicatorSetForeground(1, options->GetBookmarkBgColour());
-    IndicatorSetForeground(2, col2);
-    IndicatorSetStyle     (HYPERLINK_INDICATOR, wxSCI_INDIC_PLAIN);
-    IndicatorSetStyle     (MATCH_INDICATOR, wxSCI_INDIC_BOX);
+    
+    // Word highlight indicator
+    IndicatorSetStyle(MARKER_WORD_HIGHLIGHT, wxSTC_INDIC_ROUNDBOX);
+    IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
+    IndicatorSetForeground(MARKER_WORD_HIGHLIGHT, col2);
+    
+    IndicatorSetStyle     (HYPERLINK_INDICATOR, wxSTC_INDIC_PLAIN);
+    IndicatorSetStyle     (MATCH_INDICATOR, wxSTC_INDIC_BOX);
     IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
 
-    IndicatorSetStyle     (DEBUGGER_INDICATOR, wxSCI_INDIC_BOX);
+    IndicatorSetStyle     (DEBUGGER_INDICATOR, wxSTC_INDIC_BOX);
     IndicatorSetForeground(DEBUGGER_INDICATOR, wxT("GREY"));
 
-    CmdKeyClear(wxT('L'), wxSCI_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
+    CmdKeyClear(wxT('L'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
 
     // Set CamelCase caret movement
     if(options->GetCaretUseCamelCase()) {
         // selection
-        CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDPARTLEFTEXTEND);
-        CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDPARTRIGHTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_LEFT,  wxSTC_SCMOD_CTRL|wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDPARTLEFTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL|wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDPARTRIGHTEXTEND);
 
         // movement
-        CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL ,                  wxSCI_CMD_WORDPARTLEFT);
-        CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL,                   wxSCI_CMD_WORDPARTRIGHT);
+        CmdKeyAssign(wxSTC_KEY_LEFT,  wxSTC_SCMOD_CTRL ,                  wxSTC_CMD_WORDPARTLEFT);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL,                   wxSTC_CMD_WORDPARTRIGHT);
 
     } else {
         // selection
-        CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDLEFTEXTEND);
-        CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL|wxSCI_SCMOD_SHIFT, wxSCI_CMD_WORDRIGHTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_LEFT,  wxSTC_SCMOD_CTRL|wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDLEFTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL|wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDRIGHTEXTEND);
 
         // movement
-        CmdKeyAssign(wxSCI_KEY_LEFT,  wxSCI_SCMOD_CTRL,                   wxSCI_CMD_WORDLEFT);
-        CmdKeyAssign(wxSCI_KEY_RIGHT, wxSCI_SCMOD_CTRL,                   wxSCI_CMD_WORDRIGHT);
+        CmdKeyAssign(wxSTC_KEY_LEFT,  wxSTC_SCMOD_CTRL,                   wxSTC_CMD_WORDLEFT);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL,                   wxSTC_CMD_WORDRIGHT);
 
     }
 }
 
-void LEditor::OnSavePoint(wxScintillaEvent &event)
+void LEditor::OnSavePoint(wxStyledTextEvent &event)
 {
     if (!GetIsVisible())
         return;
@@ -641,8 +620,11 @@ void LEditor::OnSavePoint(wxScintillaEvent &event)
     }
 }
 
-void LEditor::OnCharAdded(wxScintillaEvent& event)
+void LEditor::OnCharAdded(wxStyledTextEvent& event)
 {
+    // allways cancel the tip 
+    CodeCompletionBox::Get().CancelTip();
+    
     int pos = GetCurrentPos();
     bool canShowCompletionBox(true);
 
@@ -857,7 +839,7 @@ void LEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/)
     }
 }
 
-void LEditor::OnScnPainted(wxScintillaEvent &event)
+void LEditor::OnScnPainted(wxStyledTextEvent &event)
 {
     if (m_positionToEnsureVisible == wxNOT_FOUND) {
         return;
@@ -878,7 +860,6 @@ void LEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
     }
 
     SetCaretAt(pos);
-    VerticalCentreCaret();
 
     // and finally restore any selection if requested
     if(preserveSelection && (start != end)) {
@@ -886,7 +867,7 @@ void LEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
     }
 }
 
-void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
+void LEditor::OnSciUpdateUI(wxStyledTextEvent &event)
 {
     // Get current position
     long pos = GetCurrentPos();
@@ -903,7 +884,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
 
     if (m_hightlightMatchedBraces) {
         if ( hasSelection ) {
-            wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
         } else if ( (charCurrnt == '<'   && charAfter  == '<')  ||  //<<
                     (charCurrnt == '<'   && charBefore == '<')  ||  //<<
                     (charCurrnt == '>'   && charAfter  == '>')  ||  //>>
@@ -912,7 +893,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
                     (beforeBefore == '>' && charBefore == '>')  ||  //>>
                     (beforeBefore == '-' && charBefore == '>')  ||  //->
                     (charCurrnt == '>'   && charBefore == '-'  ) ) { //->
-            wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+            wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
         } else {
             if ((charCurrnt == '{' || charCurrnt == '[' || GetCharAt(pos) == '<' || charCurrnt == '(') && !m_context->IsCommentOrString(pos)) {
                 BraceMatch((long)pos);
@@ -923,7 +904,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
             } else if ((charBefore == '}' || charBefore == '>' || charBefore == ']' ||charBefore == ')') && !m_context->IsCommentOrString(PositionBefore(pos))) {
                 BraceMatch((long)PositionBefore(pos));
             } else {
-                wxScintilla::BraceHighlight(wxSCI_INVALID_POSITION, wxSCI_INVALID_POSITION);
+                wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
             }
         }
     }
@@ -969,7 +950,7 @@ void LEditor::OnSciUpdateUI(wxScintillaEvent &event)
     m_context->OnSciUpdateUI(event);
 }
 
-void LEditor::OnMarginClick(wxScintillaEvent& event)
+void LEditor::OnMarginClick(wxStyledTextEvent& event)
 {
     int nLine = LineFromPosition(event.GetPosition());
     switch (event.GetMargin()) {
@@ -1026,7 +1007,7 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
             if (caret_line != wxNOT_FOUND && GetLineVisible(caret_line) == false) {
                 // the caret line is hidden (i.e. stuck in a fold) so set it somewhere else
                 while (caret_line >= 0) {
-                    if ((GetFoldLevel(caret_line) & wxSCI_FOLDLEVELHEADERFLAG) && GetLineVisible(caret_line)) {
+                    if ((GetFoldLevel(caret_line) & wxSTC_FOLDLEVELHEADERFLAG) && GetLineVisible(caret_line)) {
                         SetCaretAt(PositionFromLine(caret_line));
                         break;
                     }
@@ -1043,7 +1024,7 @@ void LEditor::OnMarginClick(wxScintillaEvent& event)
         // NB It fails if the cursor was originally inside the new fold; but at least then the fold head gets shown
         int foldparent = GetFoldParent(nLine);
         int firstvisibleline = GetFirstVisibleLine();
-        if (!(GetFoldLevel(nLine) & wxSCI_FOLDLEVELHEADERFLAG) // If the click was below the fold head
+        if (!(GetFoldLevel(nLine) & wxSTC_FOLDLEVELHEADERFLAG) // If the click was below the fold head
             && (foldparent < firstvisibleline)) {  // and the fold head is off the screen
             int linestoscroll = foldparent - GetLastChild(foldparent, -1);
             // If there are enough lines above the screen to scroll downwards, do so
@@ -1371,7 +1352,7 @@ void LEditor::GotoPreviousDefintion()
     m_context->GotoPreviousDefintion();
 }
 
-void LEditor::OnDwellStart(wxScintillaEvent & event)
+void LEditor::OnDwellStart(wxStyledTextEvent & event)
 {
     // First see if we're hovering over a breakpoint or build marker
     // Assume anywhere to the left of the fold margin qualifies
@@ -1429,7 +1410,7 @@ void LEditor::OnDwellStart(wxScintillaEvent & event)
     }
 }
 
-void LEditor::OnDwellEnd(wxScintillaEvent & event)
+void LEditor::OnDwellEnd(wxStyledTextEvent & event)
 {
     // Allow the plugins to override the default built-in behavior of displaying
     wxCommandEvent evtTypeinfo(wxEVT_CMD_EDITOR_TIP_DWELL_END, GetId());
@@ -1441,7 +1422,7 @@ void LEditor::OnDwellEnd(wxScintillaEvent & event)
     m_context->OnDbgDwellEnd(event);
 }
 
-void LEditor::OnCallTipClick(wxScintillaEvent& event)
+void LEditor::OnCallTipClick(wxStyledTextEvent& event)
 {
     m_context->OnCallTipClick(event);
 }
@@ -1708,9 +1689,9 @@ void LEditor::BraceMatch(long pos)
 {
     // Check if we have a match
     int indentCol = 0;
-    long endPos = wxScintilla::BraceMatch(pos);
-    if (endPos != wxSCI_INVALID_POSITION) {
-        wxScintilla::BraceHighlight(pos, endPos);
+    long endPos = wxStyledTextCtrl::BraceMatch(pos);
+    if (endPos != wxSTC_INVALID_POSITION) {
+        wxStyledTextCtrl::BraceHighlight(pos, endPos);
         if (GetIndentationGuides() != 0 && GetIndent() > 0) {
             // Highlight indent guide if exist
             indentCol  = std::min(GetLineIndentation(LineFromPosition(pos)), GetLineIndentation(LineFromPosition(endPos)));
@@ -1719,7 +1700,7 @@ void LEditor::BraceMatch(long pos)
             SetHighlightGuide(GetLineIndentation(LineFromPosition(pos)));
         }
     } else {
-        wxScintilla::BraceBadLight(pos);
+        wxStyledTextCtrl::BraceBadLight(pos);
     }
     SetHighlightGuide(indentCol);
 
@@ -1731,8 +1712,8 @@ void LEditor::BraceMatch(long pos)
 void LEditor::BraceMatch(const bool& bSelRegion)
 {
     // Check if we have a match
-    long endPos = wxScintilla::BraceMatch(GetCurrentPos());
-    if (endPos != wxSCI_INVALID_POSITION) {
+    long endPos = wxStyledTextCtrl::BraceMatch(GetCurrentPos());
+    if (endPos != wxSTC_INVALID_POSITION) {
         // Highlight indent guide if exist
         long startPos = GetCurrentPos();
         if (bSelRegion) {
@@ -1764,11 +1745,11 @@ void LEditor::SetActive()
     }
 
     SetFocus();
-    SetSCIFocus(true);
+    SetSTCFocus(true);
 
     m_context->SetActive();
 
-    wxScintillaEvent dummy;
+    wxStyledTextEvent dummy;
     OnSciUpdateUI(dummy);
 }
 
@@ -1989,7 +1970,7 @@ void LEditor::ToggleCurrentFold()
         if (GetLineVisible(line) == false) {
             // the caret line is hidden, make sure the caret is visible
             while (line >= 0) {
-                if ((GetFoldLevel(line) & wxSCI_FOLDLEVELHEADERFLAG) && GetLineVisible(line)) {
+                if ((GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) && GetLineVisible(line)) {
                     SetCaretAt(PositionFromLine(line));
                     break;
                 }
@@ -2007,7 +1988,7 @@ void LEditor::FoldAll()
     // First find the current fold-point, and ask it whether or not it's folded
     int lineSeek = GetCurrentLine();
     while ( true ) {
-        if ( GetFoldLevel(lineSeek) & wxSCI_FOLDLEVELHEADERFLAG )  break;
+        if ( GetFoldLevel(lineSeek) & wxSTC_FOLDLEVELHEADERFLAG )  break;
         int parentline = GetFoldParent( lineSeek );  // See if we're inside a fold area
         if ( parentline >= 0 ) {
             lineSeek = parentline;
@@ -2024,7 +2005,7 @@ void LEditor::FoldAll()
     bool SkipTopFold = false;
     if (expanded) {
         int topline = 0;
-        while ( !(GetFoldLevel(topline) & wxSCI_FOLDLEVELHEADERFLAG)) {
+        while ( !(GetFoldLevel(topline) & wxSTC_FOLDLEVELHEADERFLAG)) {
             // This line wasn't a fold-point, so inc until we find one
             if ( ++topline >= maxLine) return;
         }
@@ -2032,7 +2013,7 @@ void LEditor::FoldAll()
         if (BottomOfFold >= maxLine || BottomOfFold == -1) return;
         // We've found the bottom of the topmost fold-point. See if there's another fold below it
         ++BottomOfFold;
-        while ( !(GetFoldLevel(BottomOfFold) & wxSCI_FOLDLEVELHEADERFLAG)) {
+        while ( !(GetFoldLevel(BottomOfFold) & wxSTC_FOLDLEVELHEADERFLAG)) {
             if ( ++BottomOfFold >= maxLine) {
                 // If we're here, the top fold must encompass the whole file, so set the flag
                 SkipTopFold = true;
@@ -2043,15 +2024,15 @@ void LEditor::FoldAll()
 
     // Now go through the whole document, toggling folds that match the original one's level if we're collapsing
     // or all collapsed folds if we're expanding (so that internal folds get expanded too).
-    // The (level & wxSCI_FOLDLEVELHEADERFLAG) means "If this level is a Fold start"
-    // (level & wxSCI_FOLDLEVELNUMBERMASK) returns a value for the 'indent' of the fold.
-    // This starts at wxSCI_FOLDLEVELBASE==1024. A sub fold-point == 1025, a subsub 1026...
+    // The (level & wxSTC_FOLDLEVELHEADERFLAG) means "If this level is a Fold start"
+    // (level & wxSTC_FOLDLEVELNUMBERMASK) returns a value for the 'indent' of the fold.
+    // This starts at wxSTC_FOLDLEVELBASE==1024. A sub fold-point == 1025, a subsub 1026...
     for (int line = 0; line < maxLine; line++) {
         int level = GetFoldLevel(line);
-        // If we're skipping an all-encompassing fold, we use wxSCI_FOLDLEVELBASE+1
-        if ((level & wxSCI_FOLDLEVELHEADERFLAG) &&
-            (expanded ? ((level & wxSCI_FOLDLEVELNUMBERMASK) == (wxSCI_FOLDLEVELBASE + SkipTopFold)) :
-             ((level & wxSCI_FOLDLEVELNUMBERMASK) >= wxSCI_FOLDLEVELBASE ))) {
+        // If we're skipping an all-encompassing fold, we use wxSTC_FOLDLEVELBASE+1
+        if ((level & wxSTC_FOLDLEVELHEADERFLAG) &&
+            (expanded ? ((level & wxSTC_FOLDLEVELNUMBERMASK) == (wxSTC_FOLDLEVELBASE + SkipTopFold)) :
+             ((level & wxSTC_FOLDLEVELNUMBERMASK) >= wxSTC_FOLDLEVELBASE ))) {
             if ( GetFoldExpanded(line) == expanded ) ToggleFold( line );
         }
     }
@@ -2063,7 +2044,7 @@ void LEditor::FoldAll()
         if (curline != wxNOT_FOUND && GetLineVisible(curline) == false) {
             // the caret line is hidden, make sure the caret is visible
             while (curline >= 0) {
-                if ((GetFoldLevel(curline) & wxSCI_FOLDLEVELHEADERFLAG) && GetLineVisible(curline)) {
+                if ((GetFoldLevel(curline) & wxSTC_FOLDLEVELHEADERFLAG) && GetLineVisible(curline)) {
                     SetCaretAt(PositionFromLine(curline));
                     break;
                 }
@@ -2387,7 +2368,7 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos, size_t fla
 
     if(flags & Format_Text_Indent_Prev_Line) {
         indentSize = GetIndent();
-        int foldLevel = (GetFoldLevel(LineFromPosition(pos)) & wxSCI_FOLDLEVELNUMBERMASK) - wxSCI_FOLDLEVELBASE;
+        int foldLevel = (GetFoldLevel(LineFromPosition(pos)) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
         indent = foldLevel*indentSize;
 
     } else {
@@ -2504,6 +2485,9 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
+    // allways cancel the tip 
+    CodeCompletionBox::Get().CancelTip();
+    
     // Hide tooltip dialog if its ON
     IDebugger *   dbgr                = DebuggerMgr::Get().GetActiveDebugger();
     bool          dbgTipIsShown       = ManagerST::Get()->GetDebuggerTip()->IsShown();
@@ -2523,7 +2507,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
         if(info.showTooltipsOnlyWithControlKeyIsDown) {
             // CONTROL Key + Debugger is running and interactive
             // and no debugger tip is shown -> emulate "Dwell" event
-            wxScintillaEvent sciEvent;
+            wxStyledTextEvent sciEvent;
             wxPoint pt ( ScreenToClient(wxGetMousePosition()) );
             sciEvent.SetPosition( PositionFromPointClose(pt.x, pt.y));
 
@@ -2655,6 +2639,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 
     // hide completion box
     HideCompletionBox();
+    CodeCompletionBox::Get().CancelTip();
     GetFunctionTip()->Deactivate();
 
     if ( ManagerST::Get()->GetDebuggerTip()->IsShown() )
@@ -3029,7 +3014,7 @@ void LEditor::UpdateColours()
     // the Clang Worker Thread
     SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
     SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-    Colourise(0, wxSCI_INVALID_POSITION);
+    Colourise(0, wxSTC_INVALID_POSITION);
 
     if ( TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS           ||
          TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_WORKSPACE_TAGS ||
@@ -3055,12 +3040,12 @@ int LEditor::SafeGetChar(int pos)
     return GetCharAt(pos);
 }
 
-void LEditor::OnDragEnd(wxScintillaEvent& e)
+void LEditor::OnDragEnd(wxStyledTextEvent& e)
 {
     e.Skip();
 }
 
-void LEditor::OnDragStart(wxScintillaEvent& e)
+void LEditor::OnDragStart(wxStyledTextEvent& e)
 {
     e.Skip();
 }
@@ -3182,7 +3167,7 @@ void LEditor::HighlightWord(bool highlight)
     }
 }
 
-void LEditor::OnLeftDClick(wxScintillaEvent& event)
+void LEditor::OnLeftDClick(wxStyledTextEvent& event)
 {
     long highlight_word(0);
     EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlight_word);
@@ -3242,15 +3227,15 @@ int LEditor::GetEOLByContent()
     // get the EOL at first_eol_pos
     wxChar ch = SafeGetChar(first_eol_pos);
     if (ch == wxT('\n')) {
-        return wxSCI_EOL_LF;
+        return wxSTC_EOL_LF;
     }
 
     if ( ch == wxT('\r') ) {
         wxChar secondCh = SafeGetChar(first_eol_pos+1);
         if (secondCh == wxT('\n')) {
-            return wxSCI_EOL_CRLF;
+            return wxSTC_EOL_CRLF;
         } else {
-            return wxSCI_EOL_CR;
+            return wxSTC_EOL_CR;
         }
     }
     return wxNOT_FOUND;
@@ -3260,19 +3245,19 @@ int LEditor::GetEOLByOS()
 {
     OptionsConfigPtr options = GetOptions();
     if (options->GetEolMode() == wxT("Unix (LF)")) {
-        return wxSCI_EOL_LF;
+        return wxSTC_EOL_LF;
     } else if (options->GetEolMode() == wxT("Mac (CR)")) {
-        return wxSCI_EOL_CR;
+        return wxSTC_EOL_CR;
     } else if (options->GetEolMode() == wxT("Windows (CRLF)")) {
-        return wxSCI_EOL_CRLF;
+        return wxSTC_EOL_CRLF;
     } else {
         // set the EOL by the hosting OS
 #if defined(__WXMAC__)
-        return wxSCI_EOL_LF;
+        return wxSTC_EOL_LF;
 #elif defined(__WXGTK__)
-        return wxSCI_EOL_LF;
+        return wxSTC_EOL_LF;
 #else
-        return wxSCI_EOL_CRLF;
+        return wxSTC_EOL_CRLF;
 #endif
     }
 }
@@ -3302,22 +3287,22 @@ void LEditor::ShowFunctionTipFromCurrentPos()
 
 wxString LEditor::GetSelection()
 {
-    return wxScintilla::GetSelectedText();
+    return wxStyledTextCtrl::GetSelectedText();
 }
 
 int LEditor::GetSelectionStart()
 {
-    return wxScintilla::GetSelectionStart();
+    return wxStyledTextCtrl::GetSelectionStart();
 }
 
 int LEditor::GetSelectionEnd()
 {
-    return wxScintilla::GetSelectionEnd();
+    return wxStyledTextCtrl::GetSelectionEnd();
 }
 
 void LEditor::ReplaceSelection(const wxString& text)
 {
-    wxScintilla::ReplaceSelection(text);
+    wxStyledTextCtrl::ReplaceSelection(text);
 }
 
 void LEditor::ClearUserIndicators()
@@ -3328,12 +3313,12 @@ void LEditor::ClearUserIndicators()
 
 int LEditor::GetUserIndicatorEnd(int pos)
 {
-    return wxScintilla::IndicatorEnd(USER_INDICATOR, pos);
+    return wxStyledTextCtrl::IndicatorEnd(USER_INDICATOR, pos);
 }
 
 int LEditor::GetUserIndicatorStart(int pos)
 {
-    return wxScintilla::IndicatorStart(USER_INDICATOR, pos);
+    return wxStyledTextCtrl::IndicatorStart(USER_INDICATOR, pos);
 }
 
 void LEditor::SelectText(int startPos, int len)
@@ -3377,12 +3362,12 @@ void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 
 int LEditor::WordStartPos(int pos, bool onlyWordCharacters)
 {
-    return wxScintilla::WordStartPosition(pos, onlyWordCharacters);
+    return wxStyledTextCtrl::WordStartPosition(pos, onlyWordCharacters);
 }
 
 int LEditor::WordEndPos(int pos, bool onlyWordCharacters)
 {
-    return wxScintilla::WordEndPosition(pos, onlyWordCharacters);
+    return wxStyledTextCtrl::WordEndPosition(pos, onlyWordCharacters);
 }
 
 void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
@@ -3393,7 +3378,7 @@ void LEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
 
         IndicatorSetForeground(HYPERLINK_INDICATOR, wxT("NAVY"));
 
-        if (pos != wxSCI_INVALID_POSITION) {
+        if (pos != wxSTC_INVALID_POSITION) {
             m_hyperLinkType = m_context->GetHyperlinkRange(pos, m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd);
             if (m_hyperLinkType != wxID_NONE) {
                 IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
@@ -3485,13 +3470,13 @@ wxString LEditor::GetEolString()
 {
     wxString eol;
     switch (this->GetEOLMode()) {
-    case wxSCI_EOL_CR:
+    case wxSTC_EOL_CR:
         eol = wxT("\r");
         break;
-    case wxSCI_EOL_CRLF:
+    case wxSTC_EOL_CRLF:
         eol = wxT("\r\n");
         break;
-    case wxSCI_EOL_LF:
+    case wxSTC_EOL_LF:
         eol = wxT("\n");
         break;
     }
@@ -3613,14 +3598,14 @@ void LEditor::SetEOL()
 
 }
 
-void LEditor::OnChange(wxScintillaEvent& event)
+void LEditor::OnChange(wxStyledTextEvent& event)
 {
     if ( m_autoAddNormalBraces && !m_disableSmartIndent) {
-        if ( (event.GetModificationType() & wxSCI_MOD_BEFOREDELETE) && (event.GetModificationType() & wxSCI_PERFORMED_USER) ) {
+        if ( (event.GetModificationType() & wxSTC_MOD_BEFOREDELETE) && (event.GetModificationType() & wxSTC_PERFORMED_USER) ) {
             wxString deletedText = GetTextRange(event.GetPosition(), event.GetPosition() + event.GetLength());
             if ( deletedText.IsEmpty() == false && deletedText.Length() == 1 ) {
                 if ( deletedText.GetChar(0) == wxT('[') || deletedText.GetChar(0) == wxT('(') ) {
-                    int where = wxScintilla::BraceMatch(event.GetPosition());
+                    int where = wxStyledTextCtrl::BraceMatch(event.GetPosition());
                     if ( where != wxNOT_FOUND ) {
                         wxCommandEvent e(wxCMD_EVENT_REMOVE_MATCH_INDICATOR);
                         // the removal will take place after the actual deletion of the
@@ -3633,14 +3618,14 @@ void LEditor::OnChange(wxScintillaEvent& event)
         }
     }
 
-    if (event.GetModificationType() & wxSCI_MOD_INSERTTEXT || event.GetModificationType() & wxSCI_MOD_DELETETEXT) {
+    if (event.GetModificationType() & wxSTC_MOD_INSERTTEXT || event.GetModificationType() & wxSTC_MOD_DELETETEXT) {
 
         // Cache details of the number of lines added/removed
         // This is used to 'update' any affected FindInFiles result. See bug 3153847
-        if (event.GetModificationType() & wxSCI_PERFORMED_UNDO) {
+        if (event.GetModificationType() & wxSTC_PERFORMED_UNDO) {
             m_deltas->Pop();
         } else {
-            m_deltas->Push(event.GetPosition(), event.GetLength() * (event.GetModificationType() & wxSCI_MOD_DELETETEXT ? -1 : 1));
+            m_deltas->Push(event.GetPosition(), event.GetLength() * (event.GetModificationType() & wxSTC_MOD_DELETETEXT ? -1 : 1));
         }
 
         int numlines(event.GetLinesAdded());
@@ -3890,8 +3875,11 @@ void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 {
     // the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
     std::vector<std::pair<int, int> > *matches = highlightOutput->matches;
+    SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
 
-    SetIndicatorCurrent(2);
+#ifdef __WXMAC__
+	IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
+#endif
 
     // clear the old markers
     IndicatorClearRange(0, GetLength());
@@ -3925,23 +3913,23 @@ void LEditor::ChangeCase(bool toLower)
 
 int LEditor::LineFromPos(int pos)
 {
-    return wxScintilla::LineFromPosition(pos);
+    return wxStyledTextCtrl::LineFromPosition(pos);
 }
 
 int LEditor::PosFromLine(int line)
 {
-    return wxScintilla::PositionFromLine(line);
+    return wxStyledTextCtrl::PositionFromLine(line);
 }
 
 int LEditor::LineEnd(int line)
 {
-    int pos = wxScintilla::PositionFromLine(line);
-    return pos + wxScintilla::LineLength(line);
+    int pos = wxStyledTextCtrl::PositionFromLine(line);
+    return pos + wxStyledTextCtrl::LineLength(line);
 }
 
 wxString LEditor::GetTextRange(int startPos, int endPos)
 {
-    return wxScintilla::GetTextRange(startPos, endPos);
+    return wxStyledTextCtrl::GetTextRange(startPos, endPos);
 }
 
 void LEditor::OnSetActive(wxCommandEvent& e)
@@ -3976,22 +3964,22 @@ void LEditor::ShowCalltip(clCallTipPtr tip)
     // In an ideal world, we would like our tooltip to be placed
     // on top of the caret.
     wxPoint pt = PointFromPosition(GetCurrentPosition());
-    GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSCI_C_DEFAULT));
+    GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSTC_C_DEFAULT));
 }
 
 int LEditor::PositionAfterPos(int pos)
 {
-    return wxScintilla::PositionAfter(pos);
+    return wxStyledTextCtrl::PositionAfter(pos);
 }
 
 int LEditor::GetCharAtPos(int pos)
 {
-    return wxScintilla::GetCharAt(pos);
+    return wxStyledTextCtrl::GetCharAt(pos);
 }
 
 int LEditor::PositionBeforePos(int pos)
 {
-    return wxScintilla::PositionBefore(pos);
+    return wxStyledTextCtrl::PositionBefore(pos);
 }
 
 void LEditor::GetChanges(std::vector<int>& changes)
@@ -4003,3 +3991,19 @@ void LEditor::OnFindInFiles()
 {
     m_deltas->Clear();
 }
+
+void LEditor::OnHighlightWordChecked(wxCommandEvent& e)
+{
+    e.Skip();
+    // Mainly needed under Mac to toggle the 
+    // buffered drawing on and off
+#ifdef __WXMAC__
+    SetBufferedDraw(e.GetInt()  == 1 ? true : false);
+    //wxLogMessage("Settings buffered drawing to: %d", e.GetInt());
+    if( e.GetInt() ) {
+        Refresh();
+    }
+#endif
+
+}
+

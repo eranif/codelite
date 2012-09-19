@@ -19,7 +19,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #ifdef __VISUALC__
 #include <wx/link_additions.h>
 #endif //__VISUALC__
@@ -45,7 +45,7 @@ class AddIncludeFileDlgBase : public wxDialog
 		wxStaticText* m_staticText5;
 		wxTextCtrl* m_textCtrlFullPath;
 		wxStaticText* m_staticText6;
-		wxScintilla* m_textCtrlPreview;
+		wxStyledTextCtrl* m_textCtrlPreview;
 		wxButton* m_buttonUp;
 		wxButton* m_buttonDown;
 		wxStaticLine* m_staticline5;

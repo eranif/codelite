@@ -2,7 +2,7 @@
 #include "outline_symbol_tree.h"
 #include "event_notifier.h"
 #include "plugin.h"
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 
 const wxEventType wxEVT_SV_GOTO_DEFINITION  = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
@@ -109,9 +109,9 @@ void OutlineTab::OnFilesTagged(wxCommandEvent& e)
     if( editor ) {
         m_tree->BuildTree( editor->GetFileName() );
         
-        if(editor->GetScintilla()) {
+        if(editor->GetSTC()) {
             // make sure we dont steal the focus from the editor...
-            editor->GetScintilla()->SetFocus();
+            editor->GetSTC()->SetFocus();
         }
         
     } else {

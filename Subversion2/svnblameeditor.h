@@ -26,7 +26,7 @@
 #ifndef SVNBLAMEEDITOR_H
 #define SVNBLAMEEDITOR_H
 
-#include "wx/wxscintilla.h" // Base class
+#include <wx/stc/stc.h>
 #include <vector>
 
 struct BlameLineInfo {
@@ -34,7 +34,7 @@ struct BlameLineInfo {
 	int      style;
 };
 
-class SvnBlameEditor : public wxScintilla {
+class SvnBlameEditor : public wxStyledTextCtrl {
 	std::vector<BlameLineInfo> m_lineInfo;
 	int                        m_lineNumber;
 protected:

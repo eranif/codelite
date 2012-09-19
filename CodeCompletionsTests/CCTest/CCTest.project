@@ -140,7 +140,6 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
         <Library Value="libcodeliteud.so"/>
         <Library Value="libwxsqlite3ud.so"/>
         <Library Value="libpluginud.so"/>
-        <Library Value="libwxscintillaud.so"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/CCTest" IntermediateDirectory="./Debug" Command="./CCTest" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>

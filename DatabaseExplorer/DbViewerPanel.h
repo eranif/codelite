@@ -94,7 +94,7 @@ public:
 	
 	void OnPopupClick(wxCommandEvent &evt);
 	void RefreshDbView();
-	static void InitStyledTextCtrl(wxScintilla *sci);
+	static void InitStyledTextCtrl(wxStyledTextCtrl *sci);
 
 protected:
 

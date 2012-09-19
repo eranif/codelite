@@ -46,7 +46,6 @@
     <File Name="gitui.cpp"/>
     <File Name="gitui.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -161,21 +160,18 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/wxpropgrid/include"/>
         <IncludePath Value="../sdk/codelite_cppcheck"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="ASTYLE_LIB"/>
-        <Preprocessor Value="WXUSINGDLL_SCI"/>
         <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+      <Linker Options="$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libcodeliteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
-        <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
@@ -215,7 +211,6 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/wxpropgrid/include"/>
         <IncludePath Value="../sdk/codelite_cppcheck"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="../PCH"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -225,12 +220,11 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
-        <Library Value="libwxscintillau.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./WinReleaseUnicode" PauseExecWhenProcTerminates="yes"/>
@@ -261,5 +255,8 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

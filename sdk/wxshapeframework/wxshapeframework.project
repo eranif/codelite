@@ -106,10 +106,6 @@
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebug_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -321,5 +317,9 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinDebug_29"/>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

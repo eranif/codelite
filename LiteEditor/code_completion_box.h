@@ -4,9 +4,12 @@
 #include "cl_editor.h"
 #include <wx/event.h>
 
+class CCBoxTipWindow;
+class CCBox;
 class CodeCompletionBox : public wxEvtHandler
 {
     CCBox* m_ccBox;
+    CCBoxTipWindow* m_tip;
     
 private:
     CodeCompletionBox();
@@ -27,6 +30,14 @@ public:
     void Next();
     void PreviousPage();
     void NextPage();
+    /**
+     * @brief display a tooltip at the caret position of the editor
+     */
+    void ShowTip(const wxString &msg, LEditor* editor);
+    /**
+     * @brief dismiss the last calltip shown
+     */
+    void CancelTip();
 };
 
 #endif // CODECOMPLETIONBOX_H

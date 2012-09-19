@@ -77,8 +77,6 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -102,14 +100,12 @@
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
-        <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinDebugUnicode" Command="./codelite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
@@ -152,15 +148,13 @@
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libCodeLiteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
-        <Library Value="libwxscintillau.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="./WinReleaseUnicode" Command="./codelite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
@@ -202,14 +196,12 @@
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxscintilla/include"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
-        <Library Value="libwxscintillaud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../Runtime/plugins/Subversion2.dll" IntermediateDirectory="./WinDbg_29" Command="./codelite" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no"/>
@@ -243,7 +235,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <File Name="wxcrafter.wxcp"/>
     <VirtualDirectory Name="resources">
@@ -254,4 +245,7 @@
       <File Name="wxcrafter.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

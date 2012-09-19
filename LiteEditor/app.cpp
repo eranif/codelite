@@ -42,8 +42,8 @@
 #include "procutils.h"
 #include "globals.h"
 #include "frame.h"
-#include "buidltab.h"
 #include "asyncprocess.h" // IProcess
+#include "new_build_tab.h"
 
 #define __PERFORMANCE
 #include "performance.h"

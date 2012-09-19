@@ -743,7 +743,11 @@ public:
      * @param conf [output]
      */
     void GetActiveProjectAndConf(wxString &project, wxString& conf);
-
+    
+    /**
+     * @brief build ended event, sent by NewBuildTab
+     */
+    void OnBuildEnded(wxCommandEvent &e);
 protected:
     void DoBuildProject(const QueueCommand &buildInfo);
     void DoCleanProject(const QueueCommand &buildInfo);

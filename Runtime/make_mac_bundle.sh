@@ -153,7 +153,6 @@ cp ../lib/MacBundler.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/DatabaseExplorer.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/CallGraph.so ./CodeLite.app/Contents/SharedSupport/plugins/
 
-cp ../lib/libwxscintillau.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/
@@ -179,7 +178,6 @@ done
 fix_codelite_indexer_deps
 fix_codelite_clang_deps
 fix_shared_object_depends libwx_
-fix_non_plugins_depends ./lib/libwxscintillau.so
 fix_non_plugins_depends ./lib/libcodeliteu.so
 fix_non_plugins_depends ./lib/libpluginu.so
 fix_non_plugins_depends ./lib/libwxsqlite3u.so

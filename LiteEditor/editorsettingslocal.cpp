@@ -26,7 +26,7 @@
 #include "globals.h"
 #include "editorsettingslocal.h"
 #include "windowattrmanager.h"
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include <wx/fontmap.h>
 
 EditorSettingsLocal::EditorSettingsLocal( OptionsConfigPtr hrOptions, wxXmlNode* nde, enum prefsLevel level /*=pLevel_dunno*/, wxWindow* parent /*=NULL*/, wxWindowID id /*=wxID_ANY*/, const wxString& title /*=wxT("Local Preferences")*/)
@@ -75,14 +75,11 @@ void EditorSettingsLocal::DisplayHigherValues( const OptionsConfigPtr options )
 	const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"), wxTRANSLATE("Visible always"), wxTRANSLATE("Visible after indentation"), wxTRANSLATE("Indentation only") };
 	wxString currentWhitespace;
 	switch (options->GetShowWhitspaces()) {
-	case wxSCI_WS_VISIBLEALWAYS:
+	case wxSTC_WS_VISIBLEALWAYS:
 		currentWhitespace = wxT("Visible always");
 		break;
-	case wxSCI_WS_VISIBLEAFTERINDENT:
+	case wxSTC_WS_VISIBLEAFTERINDENT:
 		currentWhitespace = wxT("Visible after indentation");
-		break;
-	case wxSCI_WS_INDENTVISIBLE:
-		currentWhitespace = wxT("Indentation only");
 		break;
 	default:
 		currentWhitespace = wxT("Invisible");
@@ -164,14 +161,11 @@ void EditorSettingsLocal::DisplayLocalValues( const LocalOptionsConfigPtr option
 
 	if (options->ShowWhitespacesIsValid()) {
 		switch (options->GetShowWhitespaces()) {
-		case wxSCI_WS_VISIBLEALWAYS:
+		case wxSTC_WS_VISIBLEALWAYS:
 			m_WSstringManager.SetStringSelection(wxT("Visible always"));
 			break;
-		case wxSCI_WS_VISIBLEAFTERINDENT:
+		case wxSTC_WS_VISIBLEAFTERINDENT:
 			m_WSstringManager.SetStringSelection(wxT("Visible after indentation"));
-			break;
-		case wxSCI_WS_INDENTVISIBLE:
-			m_WSstringManager.SetStringSelection(wxT("Indentation only"));
 			break;
 		default:
 			m_WSstringManager.SetStringSelection(wxT("Invisible"));
@@ -240,13 +234,13 @@ void EditorSettingsLocal::OnOK( wxCommandEvent& event )
 	}
 	if (m_whitespaceStyle->IsEnabled()) {
 		wxString Whitespace = m_WSstringManager.GetStringSelection();
-		int style(wxSCI_WS_INVISIBLE); // invisible
+		int style(wxSTC_WS_INVISIBLE); // invisible
 		if (Whitespace == wxT("Visible always")) {
-			style = wxSCI_WS_VISIBLEALWAYS;
+			style = wxSTC_WS_VISIBLEALWAYS;
 		} else if (Whitespace == wxT("Visible after indentation")) {
-			style = wxSCI_WS_VISIBLEAFTERINDENT;
+			style = wxSTC_WS_VISIBLEAFTERINDENT;
 		} else if (Whitespace == wxT("Indentation only")) {
-			style = wxSCI_WS_INDENTVISIBLE;
+			style = wxSTC_WS_VISIBLEAFTERINDENT;
 		}
 		GetLocalOpts()->SetShowWhitespaces(style);
 	}

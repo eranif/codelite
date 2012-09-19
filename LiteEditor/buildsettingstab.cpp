@@ -23,10 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "frame.h"
-#include "buidltab.h"
 #include "buildsettingstab.h"
 #include "buildtabsettingsdata.h"
 #include "editor_config.h"
+#include "new_build_tab.h"
 
 BuildTabSetting::BuildTabSetting( wxWindow* parent )
     : BuildTabSettingsBase( parent )

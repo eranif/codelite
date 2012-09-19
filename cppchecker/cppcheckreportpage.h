@@ -19,34 +19,34 @@ class CppCheckPlugin;
 /** Implementing CppCheckReportBasePage */
 class CppCheckReportPage : public CppCheckReportBasePage
 {
-	IManager*           m_mgr;
-	CppCheckPlugin*     m_plugin;
+    IManager*           m_mgr;
+    CppCheckPlugin*     m_plugin;
 
 protected:
-	static int ColorLine ( int, const char *text, size_t &start, size_t &len );
+    //static int ColorLine ( int, const char *text, size_t &start, size_t &len );
 
 protected:
-	// Handlers for CppCheckReportBasePage events.
+    // Handlers for CppCheckReportBasePage events.
 
-	void OnClearReport          ( wxCommandEvent& event );
-	void OnStopChecking         ( wxCommandEvent& event );
-	void OnStopCheckingUI       (wxUpdateUIEvent &event);
-	void OnClearReportUI        (wxUpdateUIEvent &event);
+    void OnClearReport          ( wxCommandEvent& event );
+    void OnStopChecking         ( wxCommandEvent& event );
+    void OnStopCheckingUI       (wxUpdateUIEvent &event);
+    void OnClearReportUI        (wxUpdateUIEvent &event);
 
-	// Scintilla events
-	void OnOpenFile             (wxScintillaEvent &e);
+    // Scintilla events
+    void OnOpenFile             (wxStyledTextEvent& e);
 
 public:
-	/** Constructor */
-	CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheckPlugin* plugin);
-	virtual ~CppCheckReportPage();
+    /** Constructor */
+    CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheckPlugin* plugin);
+    virtual ~CppCheckReportPage();
 
-	void   Clear        ();
-	size_t GetErrorCount() const;
-	void   AppendLine   (const wxString &line);
-	void   PrintStatusMessage();
-	void   SetGaugeRange(int range);
-	void   SetMessage(const wxString &msg);
+    void   Clear        ();
+    size_t GetErrorCount() const;
+    void   AppendLine   (const wxString &line);
+    void   PrintStatusMessage();
+    void   SetGaugeRange(int range);
+    void   SetMessage(const wxString &msg);
 };
 
 #endif // __cppcheckreportpage__

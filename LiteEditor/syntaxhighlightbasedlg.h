@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __syntaxhighlightbasedlg__
-#define __syntaxhighlightbasedlg__
+#ifndef __SYNTAXHIGHLIGHTBASEDLG_H__
+#define __SYNTAXHIGHLIGHTBASEDLG_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -30,7 +31,6 @@
 #include <wx/listbox.h>
 #include <wx/checkbox.h>
 #include <wx/statline.h>
-#include <wx/slider.h>
 #include <wx/aui/auibook.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ class SyntaxHighlightBaseDlg : public wxDialog
 	
 	public:
 		
-		SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,373 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		SyntaxHighlightBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,373 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
 		~SyntaxHighlightBaseDlg();
 	
 };
@@ -93,9 +93,7 @@ class LexerPageBase : public wxPanel
 		wxColourPickerCtrl* m_colourPicker;
 		wxStaticText* m_staticText4;
 		wxColourPickerCtrl* m_bgColourPicker;
-		
 		wxCheckBox* m_eolFilled;
-		
 		wxCheckBox* m_styleWithinPreProcessor;
 		wxStaticLine* m_staticline1;
 		wxStaticText* m_staticText1;
@@ -107,8 +105,6 @@ class LexerPageBase : public wxPanel
 		wxPanel* m_panel3;
 		wxStaticText* m_staticText9;
 		wxColourPickerCtrl* m_colourPickerSelTextBgColour;
-		wxStaticText* m_staticText11;
-		wxSlider* m_sliderSelTextAlpha;
 		wxButton* m_buttonTextSelApplyToAll;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -125,15 +121,14 @@ class LexerPageBase : public wxPanel
 		virtual void OnEditKeyWordsButton3( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnEditKeyWordsButton4( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSelTextChanged( wxColourPickerEvent& event ) { event.Skip(); }
-		virtual void OnAlphaChanged( wxScrollEvent& event ) { event.Skip(); }
 		virtual void OnTextSelApplyToAll( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,272 ), long style = wxTAB_TRAVERSAL );
+		LexerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,272 ), long style = wxTAB_TRAVERSAL ); 
 		~LexerPageBase();
 	
 };
 
-#endif //__syntaxhighlightbasedlg__
+#endif //__SYNTAXHIGHLIGHTBASEDLG_H__

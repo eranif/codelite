@@ -26,7 +26,7 @@
 #define CONTEXT_BASE_H
 
 #include "wx/string.h"
-#include "wx/wxscintilla.h"
+#include <wx/stc/stc.h>
 #include "smart_ptr.h"
 #include "wx/filename.h"
 #include "lexer_configuration.h"
@@ -85,16 +85,16 @@ public:
 
 	// functions with default implementation:
 	virtual bool IsDefaultContext() const {return true;}
-	virtual void OnCallTipClick(wxScintillaEvent& event){event.Skip();}
+	virtual void OnCallTipClick(wxStyledTextEvent& event){event.Skip();}
 	virtual void OnCalltipCancel(){};
-	virtual void OnDwellEnd(wxScintillaEvent & event){event.Skip();}
-	virtual void OnDbgDwellEnd(wxScintillaEvent & event){event.Skip();}
-	virtual void OnDwellStart(wxScintillaEvent & event){event.Skip();}
-	virtual void OnDbgDwellStart(wxScintillaEvent & event){event.Skip();}
+	virtual void OnDwellEnd(wxStyledTextEvent & event){event.Skip();}
+	virtual void OnDbgDwellEnd(wxStyledTextEvent & event){event.Skip();}
+	virtual void OnDwellStart(wxStyledTextEvent & event){event.Skip();}
+	virtual void OnDbgDwellStart(wxStyledTextEvent & event){event.Skip();}
 	virtual void OnKeyDown(wxKeyEvent &event) {event.Skip();}
 	virtual void AddMenuDynamicContent(wxMenu *WXUNUSED(menu)) {}
 	virtual void RemoveMenuDynamicContent(wxMenu *WXUNUSED(menu)) {}
-	virtual void OnSciUpdateUI(wxScintillaEvent& WXUNUSED(event)){}
+	virtual void OnSciUpdateUI(wxStyledTextEvent& WXUNUSED(event)){}
 	virtual void OnFileSaved(){}
 	virtual void OnEnterHit(){}
 	virtual void RetagFile(){}

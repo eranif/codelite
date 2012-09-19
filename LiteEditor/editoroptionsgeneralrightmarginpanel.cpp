@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editoroptionsgeneralrightmarginpanel.h"
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include "globals.h"
 
 EditorOptionsGeneralRightMarginPanel::EditorOptionsGeneralRightMarginPanel( wxWindow* parent )
@@ -32,9 +32,9 @@ EditorOptionsGeneralRightMarginPanel::EditorOptionsGeneralRightMarginPanel( wxWi
     , TreeBookNode<EditorOptionsGeneralRightMarginPanel>()
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    m_radioBtnRMDisabled->SetValue(options->GetEdgeMode() == wxSCI_EDGE_NONE);
-    m_radioBtnRMLine->SetValue(options->GetEdgeMode() == wxSCI_EDGE_LINE);
-    m_radioBtnRMBackground->SetValue(options->GetEdgeMode() == wxSCI_EDGE_BACKGROUND);
+    m_radioBtnRMDisabled->SetValue(options->GetEdgeMode() == wxSTC_EDGE_NONE);
+    m_radioBtnRMLine->SetValue(options->GetEdgeMode() == wxSTC_EDGE_LINE);
+    m_radioBtnRMBackground->SetValue(options->GetEdgeMode() == wxSTC_EDGE_BACKGROUND);
     m_rightMarginColumn->ChangeValue( ::wxIntToString(options->GetEdgeColumn()) );
     m_rightMarginColour->SetColour(options->GetEdgeColour());
     EnableDisableRightMargin();
@@ -42,9 +42,9 @@ EditorOptionsGeneralRightMarginPanel::EditorOptionsGeneralRightMarginPanel( wxWi
 
 void EditorOptionsGeneralRightMarginPanel::Save(OptionsConfigPtr options)
 {
-    options->SetEdgeMode(m_radioBtnRMLine->GetValue()       ? wxSCI_EDGE_LINE :
-                         m_radioBtnRMBackground->GetValue() ? wxSCI_EDGE_BACKGROUND
-                         : wxSCI_EDGE_NONE);
+    options->SetEdgeMode(m_radioBtnRMLine->GetValue()       ? wxSTC_EDGE_LINE :
+                         m_radioBtnRMBackground->GetValue() ? wxSTC_EDGE_BACKGROUND
+                         : wxSTC_EDGE_NONE);
     options->SetEdgeColumn( ::wxStringToInt(m_rightMarginColumn->GetValue(), 80, 0, 256) );
     options->SetEdgeColour(m_rightMarginColour->GetColour());
 }

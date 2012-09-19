@@ -34,55 +34,55 @@ class IProcess;
 class Subversion2;
 
 struct SvnConsoleCommand {
-	SvnCommandHandler* handler;
-	wxString           cmd;
-	wxString           workingDirectory;
-	bool               printProcessOutput;
-	
-	SvnConsoleCommand() : handler(NULL), printProcessOutput(true) {}
-	~SvnConsoleCommand() {}
-	void clean() {
-		this->handler = NULL;
-		this->cmd.Clear();
-		this->workingDirectory.Clear();
-		this->printProcessOutput = true;
-	}
+    SvnCommandHandler* handler;
+    wxString           cmd;
+    wxString           workingDirectory;
+    bool               printProcessOutput;
+
+    SvnConsoleCommand() : handler(NULL), printProcessOutput(true) {}
+    ~SvnConsoleCommand() {}
+    void clean() {
+        this->handler = NULL;
+        this->cmd.Clear();
+        this->workingDirectory.Clear();
+        this->printProcessOutput = true;
+    }
 };
 
 class SvnConsole : public SvnShellBase
 {
-	std::deque<SvnConsoleCommand*> m_queue;
-	SvnConsoleCommand              m_currCmd;
-	wxString                       m_output;
-	IProcess*                      m_process;
-	Subversion2*                   m_plugin;
-	wxString                       m_url;
-	int                            m_inferiorEnd;
-	
-protected:
-	DECLARE_EVENT_TABLE()
-	virtual void OnReadProcessOutput(wxCommandEvent& event);
-	virtual void OnProcessEnd       (wxCommandEvent& event);
-	virtual void OnCharAdded        (wxScintillaEvent& event);
-	virtual void OnUpdateUI         (wxScintillaEvent& event);
-	virtual void OnKeyDown          (wxKeyEvent &event);
-	
-	void DoInitializeFontsAndColours();
-	void DoExecute(const wxString &cmd, SvnCommandHandler *handler, const wxString &workingDirectory, bool printProcessOutput);
-	void DoProcessNextCommand();
-	
-public:
-	SvnConsole(wxWindow *parent, Subversion2* plugin);
-	virtual ~SvnConsole();
+    std::deque<SvnConsoleCommand*> m_queue;
+    SvnConsoleCommand              m_currCmd;
+    wxString                       m_output;
+    IProcess*                      m_process;
+    Subversion2*                   m_plugin;
+    wxString                       m_url;
+    int                            m_inferiorEnd;
 
-	void Execute(const wxString &cmd, const wxString &workingDirectory, SvnCommandHandler *handler, bool printProcessOutput = true);
-	void ExecuteURL(const wxString &cmd, const wxString &url, SvnCommandHandler *handler, bool printProcessOutput = true);
-	void Clear  ();
-	void Stop   ();
-	void AppendText(const wxString &text);
-	bool IsRunning();
-	bool IsEmpty();
-	void EnsureVisible();
+protected:
+    DECLARE_EVENT_TABLE()
+    virtual void OnReadProcessOutput(wxCommandEvent& event);
+    virtual void OnProcessEnd       (wxCommandEvent& event);
+    virtual void OnCharAdded        (wxStyledTextEvent& event);
+    virtual void OnUpdateUI         (wxStyledTextEvent& event);
+    virtual void OnKeyDown          (wxKeyEvent &event);
+
+    void DoInitializeFontsAndColours();
+    void DoExecute(const wxString &cmd, SvnCommandHandler *handler, const wxString &workingDirectory, bool printProcessOutput);
+    void DoProcessNextCommand();
+
+public:
+    SvnConsole(wxWindow *parent, Subversion2* plugin);
+    virtual ~SvnConsole();
+
+    void Execute(const wxString &cmd, const wxString &workingDirectory, SvnCommandHandler *handler, bool printProcessOutput = true);
+    void ExecuteURL(const wxString &cmd, const wxString &url, SvnCommandHandler *handler, bool printProcessOutput = true);
+    void Clear  ();
+    void Stop   ();
+    void AppendText(const wxString &text);
+    bool IsRunning();
+    bool IsEmpty();
+    void EnsureVisible();
 
 };
 #endif // SVNSHELL_H

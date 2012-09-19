@@ -8,100 +8,100 @@
 #include <wx/regex.h>
 #include "file_logger.h"
 #include "globals.h"
-#include "wx/wxscintilla.h"
+#include <wx/stc/stc.h>
 
 const wxEventType wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE = XRCID("wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE");
 
 BEGIN_EVENT_TABLE(ClangMacroHandler, wxEvtHandler)
-	EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ClangMacroHandler::OnClangProcessTerminated)
-	EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangMacroHandler::OnClangProcessOutput)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, ClangMacroHandler::OnClangProcessTerminated)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  ClangMacroHandler::OnClangProcessOutput)
 END_EVENT_TABLE()
 
 ClangMacroHandler::ClangMacroHandler()
-	: m_process(NULL)
-	, m_editor(NULL)
+    : m_process(NULL)
+    , m_editor(NULL)
 {
-	EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING,      wxCommandEventHandler(ClangMacroHandler::OnEditorClosing), NULL, this);
-	EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangMacroHandler::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING,      wxCommandEventHandler(ClangMacroHandler::OnEditorClosing), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangMacroHandler::OnAllEditorsClosing), NULL, this);
 }
 
 ClangMacroHandler::~ClangMacroHandler()
 {
-	EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING,      wxCommandEventHandler(ClangMacroHandler::OnEditorClosing), NULL, this);
-	EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangMacroHandler::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING,      wxCommandEventHandler(ClangMacroHandler::OnEditorClosing), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING, wxCommandEventHandler(ClangMacroHandler::OnAllEditorsClosing), NULL, this);
 }
 
 void ClangMacroHandler::OnClangProcessOutput(wxCommandEvent& e)
 {
-	ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
-	m_output << ped->GetData();
-	delete ped;
+    ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
+    m_output << ped->GetData();
+    delete ped;
 }
 
 void ClangMacroHandler::OnClangProcessTerminated(wxCommandEvent& e)
 {
-	ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
-	delete ped;
-	if( m_process ) {
+    ProcessEventData *ped = (ProcessEventData *)e.GetClientData();
+    delete ped;
+    if( m_process ) {
         delete m_process;
-		m_process = NULL;
-	}
-	
-	wxString macrosAsString;
-	wxArrayString lines = ::wxStringTokenize(m_output, wxT("\n\r"), wxTOKEN_STRTOK);
-	for(size_t i=0; i<lines.GetCount(); i++) {
-		wxString rest;
-		if(lines.Item(i).StartsWith(wxT("MACRO:"), &rest)) {
-			rest.Trim().Trim(false);
-			macrosAsString << wxT(" ") << rest;
-		}
-	}
+        m_process = NULL;
+    }
 
-	// Process the output here...
-	CL_DEBUG(wxT("ClangMacroHandler: Macros collected: %s"), macrosAsString.c_str());
-	
-	if(m_editor) {
-		// Scintilla preprocessor management
-		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("1"));
-		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
-		m_editor->GetScintilla()->SetKeyWords(4, macrosAsString);
-		m_editor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
-	}
-	
-	wxCommandEvent evt(wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE);
-	evt.SetClientData(this);
-	EventNotifier::Get()->AddPendingEvent(evt);
+    wxString macrosAsString;
+    wxArrayString lines = ::wxStringTokenize(m_output, wxT("\n\r"), wxTOKEN_STRTOK);
+    for(size_t i=0; i<lines.GetCount(); i++) {
+        wxString rest;
+        if(lines.Item(i).StartsWith(wxT("MACRO:"), &rest)) {
+            rest.Trim().Trim(false);
+            macrosAsString << wxT(" ") << rest;
+        }
+    }
+
+    // Process the output here...
+    CL_DEBUG(wxT("ClangMacroHandler: Macros collected: %s"), macrosAsString.c_str());
+
+    if(m_editor) {
+        // Scintilla preprocessor management
+        m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("1"));
+        m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("1"));
+        m_editor->GetSTC()->SetKeyWords(4, macrosAsString);
+        m_editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
+    }
+
+    wxCommandEvent evt(wxEVT_CMD_CLANG_MACRO_HADNLER_DELETE);
+    evt.SetClientData(this);
+    EventNotifier::Get()->AddPendingEvent(evt);
 }
 
 void ClangMacroHandler::Cancel()
 {
-	m_editor = NULL;
+    m_editor = NULL;
 }
 
 void ClangMacroHandler::OnAllEditorsClosing(wxCommandEvent& e)
 {
-	e.Skip();
-	Cancel();
+    e.Skip();
+    Cancel();
 }
 
 void ClangMacroHandler::OnEditorClosing(wxCommandEvent& e)
 {
-	e.Skip();
-	IEditor *editor = reinterpret_cast<IEditor*>(e.GetClientData());
-	if(editor && editor == m_editor) {
-		Cancel();
-	}
+    e.Skip();
+    IEditor *editor = reinterpret_cast<IEditor*>(e.GetClientData());
+    if(editor && editor == m_editor) {
+        Cancel();
+    }
 }
 
 void ClangMacroHandler::SetProcessAndEditor(IProcess* process, IEditor* editor)
 {
-	this->m_process = process;
-	this->m_editor  = editor;
-	
-	if(m_editor) {
-		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
-		m_editor->GetScintilla()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
-		m_editor->GetScintilla()->SetKeyWords(4, wxT(""));
-		m_editor->GetScintilla()->Colourise(0, wxSCI_INVALID_POSITION);
-	}
+    this->m_process = process;
+    this->m_editor  = editor;
+
+    if(m_editor) {
+        m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.track.preprocessor"),  wxT("0"));
+        m_editor->GetSTC()->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+        m_editor->GetSTC()->SetKeyWords(4, wxT(""));
+        m_editor->GetSTC()->Colourise(0, wxSTC_INVALID_POSITION);
+    }
 }

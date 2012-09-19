@@ -10,7 +10,7 @@
 
 #include <wx/intl.h>
 
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -33,7 +33,7 @@ class CppCheckReportBasePage : public wxPanel
 	private:
 	
 	protected:
-		wxScintilla *m_outputText;
+		wxStyledTextCtrl *m_outputText;
 		wxStaticText* m_staticTextFile;
 		wxGauge* m_gauge;
 		wxButton* m_buttonClear;

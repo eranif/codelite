@@ -31,33 +31,33 @@
 class ReplaceInFilesPanel : public FindResultsTab
 {
     wxComboBox   *m_replaceWith;
-	wxGauge      *m_progress;
-	wxStaticText *m_replaceWithText;
+    wxGauge      *m_progress;
+    wxStaticText *m_replaceWithText;
 
-	void DoSaveResults(wxScintilla *sci, std::map<int,SearchResult>::iterator begin,
-                                         std::map<int,SearchResult>::iterator end);
+    void DoSaveResults(wxStyledTextCtrl *sci, std::map<int,SearchResult>::iterator begin,
+                       std::map<int,SearchResult>::iterator end);
 
-    wxScintilla *DoGetEditor(const wxString &fileName);
+    wxStyledTextCtrl *DoGetEditor(const wxString &fileName);
 
-	// Event handlers
+    // Event handlers
     virtual void OnSearchStart(wxCommandEvent   &e);
     virtual void OnSearchMatch(wxCommandEvent   &e);
     virtual void OnSearchEnded(wxCommandEvent   &e);
-	virtual void OnMarginClick(wxScintillaEvent &e);
+    virtual void OnMarginClick(wxStyledTextEvent &e);
 
-	virtual void OnMarkAll    (wxCommandEvent   &e);
-	virtual void OnUnmarkAll  (wxCommandEvent   &e);
-	virtual void OnReplace    (wxCommandEvent   &e);
+    virtual void OnMarkAll    (wxCommandEvent   &e);
+    virtual void OnUnmarkAll  (wxCommandEvent   &e);
+    virtual void OnReplace    (wxCommandEvent   &e);
 
-	virtual void OnMarkAllUI          (wxUpdateUIEvent  &e);
-	virtual void OnUnmarkAllUI        (wxUpdateUIEvent  &e);
-	virtual void OnReplaceUI          (wxUpdateUIEvent  &e);
-	virtual void OnReplaceWithComboUI (wxUpdateUIEvent  &e);
-	virtual void OnHoldOpenUpdateUI   (wxUpdateUIEvent& e);
+    virtual void OnMarkAllUI          (wxUpdateUIEvent  &e);
+    virtual void OnUnmarkAllUI        (wxUpdateUIEvent  &e);
+    virtual void OnReplaceUI          (wxUpdateUIEvent  &e);
+    virtual void OnReplaceWithComboUI (wxUpdateUIEvent  &e);
+    virtual void OnHoldOpenUpdateUI   (wxUpdateUIEvent& e);
     DECLARE_EVENT_TABLE()
 
 public:
-	ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString &name);
+    ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString &name);
 };
 
 #endif // __replaceinfilespanel__

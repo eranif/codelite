@@ -28,7 +28,7 @@
 #include "crawler_include.h"
 #include "stringsearcher.h"
 #include "stringsearcher.h"
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include "fc_fileopener.h"
 
 #include "outline_symbol_tree.h"
@@ -223,12 +223,12 @@ void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxStr
 {
     if( editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr()) == false ) {
         // Could not select, clear the selection
-        editor->GetScintilla()->SetSelectionStart(wxNOT_FOUND);
-        editor->GetScintilla()->SetSelectionEnd(wxNOT_FOUND);
+        editor->GetSTC()->SetSelectionStart(wxNOT_FOUND);
+        editor->GetSTC()->SetSelectionEnd(wxNOT_FOUND);
     }
 
-    m_manager->GetActiveEditor()->GetScintilla()->SetSCIFocus(true);
-    m_manager->GetActiveEditor()->GetScintilla()->SetFocus();
+    m_manager->GetActiveEditor()->GetSTC()->SetSTCFocus(true);
+    m_manager->GetActiveEditor()->GetSTC()->SetFocus();
 }
 
 void svSymbolTree::BuildTree(const wxFileName& fn)

@@ -25,7 +25,7 @@
 #ifndef LITEEDITOR_EDITOR_H
 #define LITEEDITOR_EDITOR_H
 
-#include <wx/wxscintilla.h>
+#include <wx/stc/stc.h>
 #include <stack>
 #include <vector>
 #include <map>
@@ -69,7 +69,7 @@ enum sci_marker_types { smt_bookmark=7, smt_FIRST_BP_TYPE=8, smt_cond_bp_disable
 // These are bitmap masks of the various margin markers.
 // So 256 == 0x100 == 100000000, 2^9, and masks the ninth marker, smt_cond_bp_disabled==8 (as the markers are zero-based)
 // 0x7f00 is binary 111111100000000 and masks all the 7 current breakpoint types. If you add others, change it
-enum marker_mask_type { mmt_folds=wxSCI_MASK_FOLDERS, mmt_bookmarks=128, mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400,
+enum marker_mask_type { mmt_folds=wxSTC_MASK_FOLDERS, mmt_bookmarks=128, mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400,
                         mmt_bp_ignored=0x800,  mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint,  mmt_all_breakpoints=0x7f00,   mmt_indicator=0x8000,
                         mmt_compiler=0x30000 /* masks compiler errors/warnings */
                       };
@@ -89,6 +89,8 @@ typedef struct _BPtoMarker {
 } BPtoMarker;
 
 extern const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR;
+extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
+
 /**
  * \ingroup LiteEditor
  * LEditor CodeLite editing component based on Scintilla
@@ -108,7 +110,7 @@ extern const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR;
  * \author Eran
  *
  */
-class LEditor : public wxScintilla, public IEditor
+class LEditor : public wxStyledTextCtrl, public IEditor
 {
     wxFileName                                  m_fileName;
     wxString                                    m_project;
@@ -541,8 +543,8 @@ public:
      * Implemetation for IEditor interace
      *--------------------------------------------------
      */
-    virtual wxScintilla* GetScintilla() {
-        return static_cast<wxScintilla*>(this);
+    virtual wxStyledTextCtrl* GetSTC() {
+        return static_cast<wxStyledTextCtrl*>(this);
     }
 
     virtual wxString GetEditorText() {
@@ -562,19 +564,19 @@ public:
     }
     virtual wxString GetWordAtCaret() ;
     virtual void AppendText(const wxString &text) {
-        wxScintilla::AppendText(text);
+        wxStyledTextCtrl::AppendText(text);
     }
     virtual void InsertText(int pos, const wxString &text) {
-        wxScintilla::InsertText(pos, text);
+        wxStyledTextCtrl::InsertText(pos, text);
     }
     virtual int GetLength() {
-        return wxScintilla::GetLength();
+        return wxStyledTextCtrl::GetLength();
     }
     virtual bool IsModified() {
-        return wxScintilla::GetModify();
+        return wxStyledTextCtrl::GetModify();
     }
     virtual int GetEOL() {
-        return wxScintilla::GetEOLMode();
+        return wxStyledTextCtrl::GetEOLMode();
     }
     virtual int GetCurrentLine();
     virtual void ReplaceSelection(const wxString &text);
@@ -708,16 +710,17 @@ private:
     wxMenu* DoCreateDebuggerWatchMenu(const wxString &word);
 
     DECLARE_EVENT_TABLE()
+    void OnHighlightWordChecked(wxCommandEvent &e);
     void OnRemoveMatchInidicator(wxCommandEvent &e);
-    void OnSavePoint(wxScintillaEvent &event);
-    void OnCharAdded(wxScintillaEvent& event);
-    void OnMarginClick(wxScintillaEvent& event);
-    void OnChange(wxScintillaEvent& event);
-    void OnDwellStart(wxScintillaEvent& event);
-    void OnDwellEnd(wxScintillaEvent& event);
-    void OnCallTipClick(wxScintillaEvent& event);
-    void OnScnPainted(wxScintillaEvent &event);
-    void OnSciUpdateUI(wxScintillaEvent &event);
+    void OnSavePoint(wxStyledTextEvent &event);
+    void OnCharAdded(wxStyledTextEvent& event);
+    void OnMarginClick(wxStyledTextEvent& event);
+    void OnChange(wxStyledTextEvent& event);
+    void OnDwellStart(wxStyledTextEvent& event);
+    void OnDwellEnd(wxStyledTextEvent& event);
+    void OnCallTipClick(wxStyledTextEvent& event);
+    void OnScnPainted(wxStyledTextEvent &event);
+    void OnSciUpdateUI(wxStyledTextEvent &event);
     void OnFindDialog(wxCommandEvent &event);
     void OnContextMenu(wxContextMenuEvent &event);
     void OnKeyDown(wxKeyEvent &event);
@@ -728,14 +731,14 @@ private:
     void OnLeaveWindow(wxMouseEvent &event);
     void OnFocusLost(wxFocusEvent &event);
     void OnFocus    (wxFocusEvent &event);
-    void OnLeftDClick(wxScintillaEvent &event);
+    void OnLeftDClick(wxStyledTextEvent &event);
     void OnPopupMenuUpdateUI(wxUpdateUIEvent &event);
     void OnDbgAddWatch(wxCommandEvent &event);
     void OnDbgRunToCursor(wxCommandEvent &event);
     void OnDbgJumpToCursor(wxCommandEvent &event);
     void OnDbgCustomWatch(wxCommandEvent &event);
-    void OnDragStart(wxScintillaEvent &e);
-    void OnDragEnd(wxScintillaEvent &e);
+    void OnDragStart(wxStyledTextEvent &e);
+    void OnDragEnd(wxStyledTextEvent &e);
     void DoSetCaretAt(long pos);
     void OnSetActive(wxCommandEvent &e);
 };

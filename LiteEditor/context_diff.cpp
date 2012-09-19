@@ -56,7 +56,7 @@ void ContextDiff::ApplySettings()
 	if (EditorConfigST::Get()->IsOk()) {
 		lexPtr = EditorConfigST::Get()->GetLexer(GetName());
 	}
-	GetCtrl().SetLexer(lexPtr ? lexPtr->GetLexerId() : wxSCI_LEX_NULL);
+	GetCtrl().SetLexer(lexPtr ? lexPtr->GetLexerId() : wxSTC_LEX_NULL);
 	DoApplySettings(lexPtr);
 }
 

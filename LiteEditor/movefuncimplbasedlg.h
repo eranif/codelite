@@ -17,10 +17,7 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include "filepicker.h"
-#include <wx/wxscintilla.h>
-#ifdef __VISUALC__
-#include <wx/link_additions.h>
-#endif //__VISUALC__
+#include <wx/stc/stc.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/button.h>
@@ -40,7 +37,7 @@ class MoveFuncImplBaseDlg : public wxDialog
 		wxStaticText* m_staticText4;
 		FilePicker *m_filePicker;
 		wxStaticText* m_staticText5;
-		wxScintilla* m_preview;
+		wxStyledTextCtrl* m_preview;
 		wxStaticLine* m_staticline2;
 		wxButton* m_buttonOK;
 		wxButton* m_buttoncancel;

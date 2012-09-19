@@ -284,7 +284,8 @@ void WizardsPlugin::DoCreateNewPlugin()
 		wxString dllExt(wxT("so"));
 #endif
 		wxString clpath = fn.GetFullPath();
-
+        fn.Normalize(); // Remove all .. and . from the path
+        
 		content.Replace(wxT("$(CodeLitePath)"), clpath);
 		content.Replace(wxT("$(DllExt)"), dllExt);
 		content.Replace(wxT("$(PluginName)"), data.GetPluginName());

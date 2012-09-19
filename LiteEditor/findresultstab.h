@@ -28,7 +28,7 @@
 #include <vector>
 #include <map>
 #include <list>
-#include "wx/wxscintilla.h"
+#include <wx/stc/stc.h>
 #include "wx/debug.h"
 
 #include "notebook_ex.h"
@@ -44,24 +44,24 @@ typedef std::list<MatchInfo> ListMatchInfos;
 
 class FindResultsTab : public OutputTabWindow
 {
-	SearchData m_searchData;
-	bool       m_searchInProgress;
+    SearchData m_searchData;
+    bool       m_searchInProgress;
 protected:
     static FindInFilesDialog *m_find;
 
     Notebook    *m_book; // for multiple Find Results pages
-    wxScintilla *m_recv; // the page that is receiving results of a search
+    wxStyledTextCtrl *m_recv; // the page that is receiving results of a search
 
-	ListMatchInfos m_matchInfo;
+    ListMatchInfos m_matchInfo;
 
-	MatchInfo& GetMatchInfo(size_t idx = 0);
+    MatchInfo& GetMatchInfo(size_t idx = 0);
 
-	void AppendText(const wxString &line);
-	void Clear();
+    void AppendText(const wxString &line);
+    void Clear();
 
-	virtual void OnPageClosed      (NotebookEvent    &e);
+    virtual void OnPageClosed      (NotebookEvent    &e);
     virtual void OnPageChanged     (NotebookEvent    &e);
-	virtual void OnClosePage       (NotebookEvent    &e);
+    virtual void OnClosePage       (NotebookEvent    &e);
     virtual void OnFindInFiles     (wxCommandEvent   &e);
     virtual void OnSearchStart     (wxCommandEvent   &e);
     virtual void OnSearchMatch     (wxCommandEvent   &e);
@@ -70,33 +70,36 @@ protected:
     virtual void OnClearAll        (wxCommandEvent   &e);
     virtual void OnRepeatOutput    (wxCommandEvent   &e);
 
-	virtual void OnCloseTab        (wxCommandEvent   &e);
-	virtual void OnCloseAllTabs    (wxCommandEvent   &e);
-	virtual void OnCloseOtherTab   (wxCommandEvent   &e);
-	virtual void OnTabMenuUI       (wxUpdateUIEvent  &e);
+    virtual void OnCloseTab        (wxCommandEvent   &e);
+    virtual void OnCloseAllTabs    (wxCommandEvent   &e);
+    virtual void OnCloseOtherTab   (wxCommandEvent   &e);
+    virtual void OnTabMenuUI       (wxUpdateUIEvent  &e);
 
-	virtual void OnClearAllUI      (wxUpdateUIEvent  &e);
-	virtual void OnRepeatOutputUI  (wxUpdateUIEvent  &e);
-	virtual void OnMouseDClick     (wxScintillaEvent &e);
+    virtual void OnClearAllUI      (wxUpdateUIEvent  &e);
+    virtual void OnRepeatOutputUI  (wxUpdateUIEvent  &e);
+    virtual void OnMouseDClick     (wxStyledTextEvent &e);
 
-	virtual void OnStopSearch      (wxCommandEvent   &e);
-	virtual void OnStopSearchUI    (wxUpdateUIEvent  &e);
-	virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-	SearchData*  GetSearchData     (wxScintilla *sci   );
-	void         DoOpenSearchResult(const SearchResult &result, wxScintilla *sci, int markerLine);
+    virtual void OnStopSearch      (wxCommandEvent   &e);
+    virtual void OnStopSearchUI    (wxUpdateUIEvent  &e);
+    virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+    virtual void OnStyleNeeded     (wxStyledTextEvent &e);
+    SearchData*  GetSearchData     (wxStyledTextCtrl *sci   );
+    void         DoOpenSearchResult(const SearchResult &result, wxStyledTextCtrl *sci, int markerLine);
     DECLARE_EVENT_TABLE()
 
 public:
-	FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, bool useBook = false);
-	~FindResultsTab();
+    FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, bool useBook = false);
+    ~FindResultsTab();
 
     void        LoadFindInFilesData();
     void        SaveFindInFilesData();
-	long        GetBookStyle();
-    static void SetStyles(wxScintilla *sci);
-	size_t      GetPageCount() const ;
-	void        NextMatch();
-	void        PrevMatch();
+    long        GetBookStyle();
+    static void SetStyles(wxStyledTextCtrl *sci);
+    static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e);
+    
+    size_t      GetPageCount() const ;
+    void        NextMatch();
+    void        PrevMatch();
 };
 
 class EditorDeltasHolder
@@ -124,38 +127,40 @@ class EditorDeltasHolder
 // That means combining m_changesForCurrentMatches (reversed and with lengths negated) and m_changes. See GetChanges()
 
 public:
-	EditorDeltasHolder(){}
-	~EditorDeltasHolder(){ Clear(); }
+    EditorDeltasHolder() {}
+    ~EditorDeltasHolder() {
+        Clear();
+    }
 
-	void Clear() {
-		m_changes.clear();
-		m_changesAtLastSave.clear();
-		m_changesForCurrentMatches.clear();
-	}
-	void Push(int position, int length) {
-		m_changes.push_back(position);
-		m_changes.push_back(length);
-	}
-	
-	void Pop() {
-		if(m_changes.size() > 1) {
-			m_changes.pop_back();
-			m_changes.pop_back();
-		}
-	}
-	
-	void OnFileSaved() {
-		m_changesAtLastSave = m_changes;
-	}
-	void OnFileInFiles() {
-		m_changesForCurrentMatches = m_changesAtLastSave;
-	}
-	void GetChanges(std::vector<int>& changes);
+    void Clear() {
+        m_changes.clear();
+        m_changesAtLastSave.clear();
+        m_changesForCurrentMatches.clear();
+    }
+    void Push(int position, int length) {
+        m_changes.push_back(position);
+        m_changes.push_back(length);
+    }
+
+    void Pop() {
+        if(m_changes.size() > 1) {
+            m_changes.pop_back();
+            m_changes.pop_back();
+        }
+    }
+
+    void OnFileSaved() {
+        m_changesAtLastSave = m_changes;
+    }
+    void OnFileInFiles() {
+        m_changesForCurrentMatches = m_changesAtLastSave;
+    }
+    void GetChanges(std::vector<int>& changes);
 
 protected:
-	std::vector<int> m_changes;
-	std::vector<int> m_changesAtLastSave;
-	std::vector<int> m_changesForCurrentMatches;
+    std::vector<int> m_changes;
+    std::vector<int> m_changesAtLastSave;
+    std::vector<int> m_changesForCurrentMatches;
 };
 
 

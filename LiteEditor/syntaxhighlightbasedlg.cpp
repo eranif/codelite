@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Jun 30 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -215,7 +215,7 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	
 	m_staticText1 = new wxStaticText( m_panel1, wxID_ANY, _("Edit Lexer Keyword Sets:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	bSizer9->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer9->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
@@ -235,7 +235,7 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_button9 = new wxButton( m_panel1, wxID_ANY, _("Set &4"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	bSizer5->Add( m_button9, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer9->Add( bSizer5, 0, 0, 5 );
+	bSizer9->Add( bSizer5, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	bSizer8->Add( bSizer9, 1, wxEXPAND, 5 );
 	
@@ -259,15 +259,8 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_staticText9->Wrap( -1 );
 	fgSizer3->Add( m_staticText9, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_colourPickerSelTextBgColour = new wxColourPickerCtrl( m_panel3, wxID_ANY, wxColour( 128, 128, 128 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
+	m_colourPickerSelTextBgColour = new wxColourPickerCtrl( m_panel3, wxID_ANY, wxColour( 192, 192, 192 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL|wxCLRP_USE_TEXTCTRL );
 	fgSizer3->Add( m_colourPickerSelTextBgColour, 0, wxALL|wxEXPAND, 5 );
-	
-	m_staticText11 = new wxStaticText( m_panel3, wxID_ANY, _("Selected Text Alpha:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText11->Wrap( -1 );
-	fgSizer3->Add( m_staticText11, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_sliderSelTextAlpha = new wxSlider( m_panel3, wxID_ANY, 50, 0, 256, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
-	fgSizer3->Add( m_sliderSelTextAlpha, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	bSizer7->Add( fgSizer3, 0, wxEXPAND|wxALL, 5 );
 	
@@ -303,15 +296,6 @@ LexerPageBase::LexerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& po
 	m_button8->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton3 ), NULL, this );
 	m_button9->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton4 ), NULL, this );
 	m_colourPickerSelTextBgColour->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_buttonTextSelApplyToAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnTextSelApplyToAll ), NULL, this );
 }
 
@@ -334,15 +318,6 @@ LexerPageBase::~LexerPageBase()
 	m_button8->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton3 ), NULL, this );
 	m_button9->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnEditKeyWordsButton4 ), NULL, this );
 	m_colourPickerSelTextBgColour->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( LexerPageBase::OnSelTextChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
-	m_sliderSelTextAlpha->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( LexerPageBase::OnAlphaChanged ), NULL, this );
 	m_buttonTextSelApplyToAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( LexerPageBase::OnTextSelApplyToAll ), NULL, this );
 	
 }

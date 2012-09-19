@@ -1,3 +1,4 @@
+#include "wx/menu.h"
 #include "svn_select_local_repo_dlg.h"
 #include "windowattrmanager.h"
 #include "subversion2.h"

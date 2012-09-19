@@ -1,5 +1,6 @@
 #include "svn_checkout_dialog.h"
 #include <wx/dirdlg.h>
+#include "wx/msgdlg.h"
 #include "subversion2.h"
 #include "imanager.h"
 #include "windowattrmanager.h"

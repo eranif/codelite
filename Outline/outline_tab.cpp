@@ -3,6 +3,7 @@
 #include "event_notifier.h"
 #include "plugin.h"
 #include <wx/stc/stc.h>
+#include <wx/menu.h>
 
 const wxEventType wxEVT_SV_GOTO_DEFINITION  = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();

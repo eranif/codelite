@@ -1,4 +1,5 @@
 #include "imageexportdialog.h"
+#include <wx/msgdlg.h>
 
 ImageExportDialog::ImageExportDialog(wxWindow *parent) : _ImageExportDialog(parent)
 {

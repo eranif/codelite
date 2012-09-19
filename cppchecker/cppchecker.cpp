@@ -1,3 +1,4 @@
+#include <wx/msgdlg.h>
 #include <wx/app.h>
 #include "processreaderthread.h"
 #include <wx/imaglist.h>

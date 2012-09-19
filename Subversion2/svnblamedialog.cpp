@@ -1,3 +1,4 @@
+#include <wx/sizer.h>
 #include <wx/tokenzr.h>
 #include "svnblameeditor.h"
 #include "drawingutils.h"

@@ -1,4 +1,5 @@
 #include "svnblameeditor.h"
+#include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 #include "drawingutils.h"
 #include <map>

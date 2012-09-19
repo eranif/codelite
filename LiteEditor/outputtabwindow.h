@@ -28,6 +28,9 @@
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
 
+class wxToolBar;
+class wxBoxSizer;
+
 class QuickFindBar;
 class OutputTabWindow : public wxPanel
 {

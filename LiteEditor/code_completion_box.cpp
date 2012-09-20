@@ -25,14 +25,14 @@ CodeCompletionBox& CodeCompletionBox::Get()
 void CodeCompletionBox::Display(LEditor* editor, const TagEntryPtrVector_t& tags, const wxString& word, bool isKeywordList, wxEvtHandler* owner)
 {
     if ( !m_ccBox ) {
-        m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
+        DoCreateBox(editor);
     }
 
     if ( !CodeCompletionManager::Get().GetWordCompletionRefreshNeeded() ) {
         if ( m_ccBox ) {
             Hide();
         }
-        m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
+        DoCreateBox(editor);
     } else {
 
         // turn off the flag
@@ -60,9 +60,7 @@ void CodeCompletionBox::Hide()
 {
     if ( m_ccBox ) {
         // Cancel the calltip as well
-        if( m_ccBox->GetEditor() ) {
-            m_ccBox->GetEditor()->CallTipCancel();
-        }
+        CancelTip();
         m_ccBox->Destroy();
     }
     m_ccBox = NULL;
@@ -128,7 +126,7 @@ void CodeCompletionBox::CancelTip()
 void CodeCompletionBox::ShowTip(const wxString& msg, LEditor* editor)
 {
     CancelTip();
-    
+
     if ( !editor )
         return;
     wxPoint pt = editor->PointFromPosition( editor->GetCurrentPos() );
@@ -136,3 +134,26 @@ void CodeCompletionBox::ShowTip(const wxString& msg, LEditor* editor)
     m_tip = new CCBoxTipWindow(wxTheApp->GetTopWindow(), msg, 1);
     m_tip->PositionAt(displayPt);
 }
+
+void CodeCompletionBox::RegisterImage(const wxString& kind, const wxBitmap& bmp)
+{
+    // sanity
+    if ( bmp.IsOk() == false || kind.IsEmpty() )
+        return;
+    
+    BitmapMap_t::iterator iter = m_bitmaps.find(kind);
+    if ( iter != m_bitmaps.end() ) {
+        m_bitmaps.erase(iter);
+    }
+    m_bitmaps.insert(std::make_pair(kind, bmp));
+}
+
+void CodeCompletionBox::DoCreateBox(LEditor* editor)
+{
+    m_ccBox = new CCBox(editor, false, TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE);
+    BitmapMap_t::const_iterator iter = m_bitmaps.begin();
+    for(; iter != m_bitmaps.end(); ++iter ) {
+        m_ccBox->RegisterImageForKind(iter->first, iter->second);
+    }
+}
+

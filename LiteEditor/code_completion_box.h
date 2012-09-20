@@ -3,19 +3,24 @@
 
 #include "cl_editor.h"
 #include <wx/event.h>
+#include <wx/bitmap.h>
 
 class CCBoxTipWindow;
 class CCBox;
 class CodeCompletionBox : public wxEvtHandler
 {
-    CCBox* m_ccBox;
+    typedef std::map<wxString, wxBitmap> BitmapMap_t;
+    
+    CCBox*          m_ccBox;
     CCBoxTipWindow* m_tip;
+    BitmapMap_t     m_bitmaps;
     
 private:
     CodeCompletionBox();
     
 protected:
     void OnCCBoxDismissed(wxCommandEvent &e);
+    void DoCreateBox(LEditor *editor);
     
 public:
     virtual ~CodeCompletionBox();
@@ -38,6 +43,12 @@ public:
      * @brief dismiss the last calltip shown
      */
     void CancelTip();
+    
+    /**
+     * @brief add an additional image to the code completion box for a given 
+     * "kind"
+     */
+    void RegisterImage(const wxString &kind, const wxBitmap& bmp);
 };
 
 #endif // CODECOMPLETIONBOX_H

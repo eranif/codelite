@@ -146,10 +146,9 @@ class NewBuildTab : public wxPanel
         ScrollToEnd
     };
 
-    typedef std::map<wxString, CmpPatterns>         MapCmpPatterns_t;
-    typedef std::multimap<wxString, BuildLineInfo>  MultimapBuildInfo_t;
-    typedef std::list<BuildLineInfo>                BuildInfoList_t;
-    typedef std::vector<BuildLineInfo>              BuildInfoVect_t;
+    typedef std::map<wxString, CmpPatterns>          MapCmpPatterns_t;
+    typedef std::multimap<wxString, BuildLineInfo*>  MultimapBuildInfo_t;
+    typedef std::list<BuildLineInfo*>                BuildInfoList_t;
 
     wxString                            m_output;
     wxDataViewListCtrl *                m_listctrl;
@@ -170,12 +169,11 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t                     m_errorsAndWarningsList;
     BuildInfoList_t                     m_errorsList;
     BuildInfoList_t::iterator           m_curError;
-    bool                               m_buildInProgress;
-    BuildInfoVect_t                     m_buildLinesInfo;
+    bool                                m_buildInProgress;
     
 protected:
     void DoCacheRegexes();
-    BuildLineInfo DoProcessLine(const wxString &line, bool isSummaryLine);
+    BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);
     void DoProcessOutput(bool compilationEnded, bool isSummaryLine);
     void DoSearchForDirectory(const wxString &line);
     void DoUpdateCurrentCompiler(const wxString &line);

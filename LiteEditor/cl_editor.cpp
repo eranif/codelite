@@ -3352,12 +3352,7 @@ int LEditor::GetStyleAtPos(int pos)
 
 void LEditor::RegisterImageForKind(const wxString& kind, const wxBitmap& bmp)
 {
-    //if ( m_ccBox == NULL ) {
-    //    // create new completion box
-    //    m_ccBox = new CCBox( this );
-    //}
-    //
-    //m_ccBox->RegisterImageForKind(kind, bmp);
+    CodeCompletionBox::Get().RegisterImage(kind, bmp);
 }
 
 int LEditor::WordStartPos(int pos, bool onlyWordCharacters)

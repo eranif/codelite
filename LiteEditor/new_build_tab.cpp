@@ -29,6 +29,8 @@ static const wxChar* SUMMARY_MARKER_WARNING = wxT("@@SUMMARY_WARNING@@");
 static const wxChar* SUMMARY_MARKER_SUCCESS = wxT("@@SUMMARY_SUCCESS@@");
 static const wxChar* SUMMARY_MARKER         = wxT("@@SUMMARY@@");
 
+#define IS_VALID_LINE(lineNumber) (lineNumber >= 0 && lineNumber < m_listctrl->GetItemCount())
+
 // Helper function to post an event to the frame
 void SetActive(LEditor* editor)
 {
@@ -320,21 +322,21 @@ void NewBuildTab::OnBuildAddLine(wxCommandEvent& e)
     DoProcessOutput(false, false);
 }
 
-BuildLineInfo NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLine)
+BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLine)
 {
-    BuildLineInfo buildLineInfo;
+    BuildLineInfo *buildLineInfo = new BuildLineInfo();
 
     if ( isSummaryLine ) {
         // Set the severity
         if( m_errorCount == 0 && m_warnCount == 0 ) {
-            buildLineInfo.SetSeverity(SV_SUCCESS);
+            buildLineInfo->SetSeverity(SV_SUCCESS);
 
         } else if ( m_errorCount ) {
-            buildLineInfo.SetSeverity(SV_ERROR);
+            buildLineInfo->SetSeverity(SV_ERROR);
 
         } else {
 
-            buildLineInfo.SetSeverity(SV_WARNING);
+            buildLineInfo->SetSeverity(SV_WARNING);
         }
 
     } else {
@@ -353,10 +355,10 @@ BuildLineInfo NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLin
             CmpPatternPtr cmpPatterPtr = cmpPatterns.warningPatterns.at(i);
             BuildLineInfo bli;
             if ( cmpPatterPtr->Matches(line, bli) ) {
-                buildLineInfo.SetFilename(bli.GetFilename());
-                buildLineInfo.SetSeverity(bli.GetSeverity());
-                buildLineInfo.SetLineNumber(bli.GetLineNumber());
-                buildLineInfo.NormalizeFilename(m_directories);
+                buildLineInfo->SetFilename(bli.GetFilename());
+                buildLineInfo->SetSeverity(bli.GetSeverity());
+                buildLineInfo->SetLineNumber(bli.GetLineNumber());
+                buildLineInfo->NormalizeFilename(m_directories);
                 
                 // keep this info in the errors+warnings list only
                 m_errorsAndWarningsList.push_back(buildLineInfo);
@@ -371,10 +373,10 @@ BuildLineInfo NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLin
                 BuildLineInfo bli;
                 CmpPatternPtr cmpPatterPtr = cmpPatterns.errorsPatterns.at(i);
                 if ( cmpPatterPtr->Matches(line, bli) ) {
-                    buildLineInfo.SetFilename(bli.GetFilename());
-                    buildLineInfo.SetSeverity(bli.GetSeverity());
-                    buildLineInfo.SetLineNumber(bli.GetLineNumber());
-                    buildLineInfo.NormalizeFilename(m_directories);
+                    buildLineInfo->SetFilename(bli.GetFilename());
+                    buildLineInfo->SetSeverity(bli.GetSeverity());
+                    buildLineInfo->SetLineNumber(bli.GetLineNumber());
+                    buildLineInfo->NormalizeFilename(m_directories);
                     
                     // keep this info in both lists (errors+warnings AND errors)
                     m_errorsAndWarningsList.push_back(buildLineInfo);
@@ -475,8 +477,18 @@ void NewBuildTab::DoClear()
     m_errorsAndWarningsList.clear();
     m_errorsList.clear();
     m_cmpPatterns.clear();
-    m_buildLinesInfo.clear();
     
+    // Delete all the user data
+    int count = m_listctrl->GetItemCount();
+    for(int i=0; i<count; i++) {
+        wxDataViewItem item =  m_listctrl->GetStore()->GetItem(i);
+        if ( item.IsOk() ) {
+            BuildLineInfo* bli =  (BuildLineInfo*)m_listctrl->GetItemData(item);
+            if( bli ) {
+                delete bli;
+            }
+        }
+    }
     m_listctrl->DeleteAllItems();
 
     // Clear all markers from open editors
@@ -507,12 +519,12 @@ void NewBuildTab::MarkEditor(LEditor* editor)
 
     std::pair<MultimapBuildInfo_t::iterator, MultimapBuildInfo_t::iterator> iter = m_buildInfoPerFile.equal_range(editor->GetFileName().GetFullPath());
     for(; iter.first != iter.second; ++iter.first) {
-        BuildLineInfo &bli = iter.first->second;
-        if( bli.GetSeverity() == SV_ERROR ) {
-            editor->SetErrorMarker( bli.GetLineNumber() );
+        BuildLineInfo *bli = iter.first->second;
+        if( bli && bli->GetSeverity() == SV_ERROR ) {
+            editor->SetErrorMarker( bli->GetLineNumber() );
 
-        } else if(bli.GetSeverity() == SV_WARNING ) {
-            editor->SetWarningMarker( bli.GetLineNumber() );
+        } else if(bli && bli->GetSeverity() == SV_WARNING ) {
+            editor->SetWarningMarker( bli->GetLineNumber() );
         }
     }
     editor->Refresh();
@@ -570,21 +582,21 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
         // If this is a line similar to 'Entering directory `'
         // add the path in the directories array
         DoSearchForDirectory(buildLine);
-        BuildLineInfo buildLineInfo = DoProcessLine(buildLine, isSummaryLine);
+        BuildLineInfo *buildLineInfo = DoProcessLine(buildLine, isSummaryLine);
 
         //keep the line info
-        if(buildLineInfo.GetFilename().IsEmpty() == false) {
-            m_buildInfoPerFile.insert(std::make_pair(buildLineInfo.GetFilename(), buildLineInfo));
+        if(buildLineInfo->GetFilename().IsEmpty() == false) {
+            m_buildInfoPerFile.insert(std::make_pair(buildLineInfo->GetFilename(), buildLineInfo));
         }
 
         // Append the line content
         
-        if( buildLineInfo.GetSeverity() == SV_ERROR ) {
+        if( buildLineInfo->GetSeverity() == SV_ERROR ) {
             if ( !isSummaryLine ) {
                 buildLine.Prepend(ERROR_MARKER);
             }
             
-        } else if( buildLineInfo.GetSeverity() == SV_WARNING ) {
+        } else if( buildLineInfo->GetSeverity() == SV_WARNING ) {
             if ( !isSummaryLine ) {
                 buildLine.Prepend(WARNING_MARKER);
             }
@@ -609,10 +621,8 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
         data.push_back( wxVariant(buildLine) );
         
         // Keep the line number in the build tab
-        buildLineInfo.SetLineInBuildTab( m_listctrl->GetItemCount() );
-        m_buildLinesInfo.push_back(buildLineInfo); // keep the items in a vector to make sure that the item data is still valid...
-        BuildLineInfo* bli = &m_buildLinesInfo.back();
-        m_listctrl->AppendItem(data, (wxUIntPtr)bli);
+        buildLineInfo->SetLineInBuildTab( m_listctrl->GetItemCount() );
+        m_listctrl->AppendItem(data, (wxUIntPtr)buildLineInfo);
         
         unsigned int count = m_listctrl->GetStore()->GetItemCount();
         wxDataViewItem lastItem = m_listctrl->GetStore()->GetItem(count-1);
@@ -633,7 +643,7 @@ void NewBuildTab::DoToggleWindow()
             if (m_buildpaneScrollTo != ScrollToEnd) {
                 // The user may have opted to go to the first error, the first item, or /dev/null
                 skipwarnings = (m_errorCount > 0) && (m_buildpaneScrollTo == ScrollToFirstError);
-                BuildLineInfo bli;
+                BuildLineInfo* bli = NULL;
                 if( skipwarnings && !m_errorsList.empty()) {
                     bli = m_errorsList.front();
                     
@@ -642,12 +652,16 @@ void NewBuildTab::DoToggleWindow()
                     
                 }
                 
-                if ( bli.GetLineInBuildTab() != wxNOT_FOUND ) {
-                    // scroll to line of the build tab
-                    wxDataViewItem item = m_listctrl->GetStore()->GetItem(bli.GetLineInBuildTab());
-                    if( item.IsOk() ) {
-                        m_listctrl->EnsureVisible(item);
-                        m_listctrl->Select(item);
+                // Sanity
+                if ( bli ) {
+                    int line = bli->GetLineInBuildTab();
+                    if( IS_VALID_LINE(line) ) {
+                        // scroll to line of the build tab
+                        wxDataViewItem item = m_listctrl->GetStore()->GetItem(line);
+                        if( item.IsOk() ) {
+                            m_listctrl->EnsureVisible(item);
+                            m_listctrl->Select(item);
+                        }
                     }
                 }
             }
@@ -683,12 +697,15 @@ void NewBuildTab::OnNextBuildError(wxCommandEvent& e)
     if ( skipWarnings ) {
         
         do {
-            if ( (*m_curError).GetSeverity() == SV_ERROR ) {
+            if ( (*m_curError)->GetSeverity() == SV_ERROR ) {
                 // get the wxDataViewItem
-                wxDataViewItem item = m_listctrl->GetStore()->GetItem((*m_curError).GetLineInBuildTab());
-                DoSelectAndOpen(item);
-                 ++m_curError;
-                return;
+                int line = (*m_curError)->GetLineInBuildTab();
+                if ( IS_VALID_LINE(line) ) {
+                    wxDataViewItem item = m_listctrl->GetStore()->GetItem(line);
+                    DoSelectAndOpen(item);
+                    ++m_curError;
+                    return;
+                }
                 
             } else {
                 ++m_curError;
@@ -697,9 +714,12 @@ void NewBuildTab::OnNextBuildError(wxCommandEvent& e)
         } while ( m_curError != m_errorsAndWarningsList.end() );
         
     } else {
-        wxDataViewItem item = m_listctrl->GetStore()->GetItem((*m_curError).GetLineInBuildTab());
-        DoSelectAndOpen(item);
-         ++m_curError;
+        int line = (*m_curError)->GetLineInBuildTab();
+        if ( IS_VALID_LINE(line) ) {
+            wxDataViewItem item = m_listctrl->GetStore()->GetItem(line);
+            DoSelectAndOpen(item);
+            ++m_curError;
+        }
     }
 }
 

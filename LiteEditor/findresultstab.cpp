@@ -233,7 +233,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
     sci->MarkerDefine       (7, wxSTC_MARK_ARROW);
     sci->MarkerSetBackground(7, *wxBLACK);
 
-    sci->IndicatorSetForeground(1, wxT("GREEN"));
+    sci->IndicatorSetForeground(1, wxColour(wxT("#6495ED")));
     sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     sci->IndicatorSetUnder(1, true);
     

@@ -1119,7 +1119,7 @@ void FileViewTree::DoRemoveProject( const wxString &name )
 	message << name << wxT( "' " );
 	message << _( " from the workspace, click 'Yes' to proceed or 'No' to abort." );
 	if ( wxMessageBox ( message, _( "Confirm" ), wxYES_NO ) == wxYES ) {
-		ManagerST::Get()->RemoveProject( name );
+		ManagerST::Get()->RemoveProject( name, true );
 		// SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED); -- sent by WorkspaceTab
 	}
 }
@@ -1712,7 +1712,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	// reload the project
 	wxString curr_proj_name ( proj->GetName() );
 	bool     was_active ( ManagerST::Get()->GetActiveProjectName() == curr_proj_name );
-	ManagerST::Get()->RemoveProject( proj->GetName() );
+	ManagerST::Get()->RemoveProject( proj->GetName(), false ); // Don't notify about this action
 	ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
 
 	// restore the active project

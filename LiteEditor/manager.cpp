@@ -557,7 +557,7 @@ void Manager::ImportMSVSSolution ( const wxString &path, const wxString &default
     }
 }
 
-bool Manager::RemoveProject ( const wxString &name )
+bool Manager::RemoveProject ( const wxString &name, bool notify )
 {
     if ( name.IsEmpty() ) {
         return false;
@@ -581,11 +581,13 @@ bool Manager::RemoveProject ( const wxString &name )
         for ( size_t i = 0; i < projectFiles.size(); i++ ) {
             prjfls.Add ( projectFiles[i].GetFullPath() );
         }
-        SendCmdEvent ( wxEVT_PROJ_FILE_REMOVED, ( void* ) &prjfls );
-    } // if(proj)
-
-    SendCmdEvent ( wxEVT_PROJ_REMOVED, ( void* ) &name );
-
+        
+        if ( notify )
+            SendCmdEvent ( wxEVT_PROJ_FILE_REMOVED, ( void* ) &prjfls );
+    }
+    
+    if ( notify )
+        SendCmdEvent ( wxEVT_PROJ_REMOVED, ( void* ) &name );
     return true;
 }
 

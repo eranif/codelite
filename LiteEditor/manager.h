@@ -282,7 +282,7 @@ public:
      * \param name project name to remove
      * \return true on success false otherwise
      */
-    bool RemoveProject(const wxString &name) ;
+    bool RemoveProject(const wxString &name, bool notify) ;
 
     /**
      * Return all project names under this workspace

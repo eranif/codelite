@@ -1769,6 +1769,14 @@ void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes
                 this->m_additionalScopes.push_back( wxString(iter->c_str(), wxConvUTF8) );
             }
         }
+		
+		//"using namespace" may not contains current namespace
+		for (size_t i = 0; i < additionalScopes.size(); i++) {
+			if (!(std::find(this->m_additionalScopes.begin(), this->m_additionalScopes.end(), 
+				additionalScopes.at(i)) != this->m_additionalScopes.end())) {
+				this->m_additionalScopes.push_back(additionalScopes.at(i));
+			}
+		}
     }
 }
 

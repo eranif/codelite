@@ -121,6 +121,16 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, LEditor* focusEdior)
         }
     }
 
+    if ( focusEdior ) {
+        // Check that the tip Y coord is inside the editor
+        // this is to prevent some zombie tips appearing floating in no-man-land
+        wxRect editorRect = focusEdior->GetScreenRect();
+        if ( editorRect.GetTopLeft().y > pt.y ) {
+            m_positionedToRight = true;
+            return;
+        }
+    }
+    
     SetSize(wxRect(pt, GetSize()));
     Show();
 

@@ -178,11 +178,8 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_buildInProgress(false)
 {
     m_curError = m_errorsAndWarningsList.end();
-    wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bs = new wxBoxSizer(wxHORIZONTAL);
     SetSizer(bs);
-    
-    BuildTabTopPanel* toolbox = new BuildTabTopPanel(this);
-    bs->Add(toolbox, 0, wxEXPAND);
     
     // Determine the row height
     wxBitmap tmpBmp(1, 1);
@@ -202,6 +199,15 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     m_listctrl->SetRowHeight(yy);
 
     bs->Add(m_listctrl, 1, wxEXPAND|wxALL);
+    
+    BuildTabTopPanel* toolbox = new BuildTabTopPanel(this);
+    
+#ifdef __WXMAC__    
+    bs->Add(toolbox, 0, wxEXPAND);
+#else
+    bs->Insert(0, toolbox, 0, wxEXPAND);
+#endif
+
     int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
     m_textRenderer = new MyTextRenderer(m_listctrl);
     m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 0, screenWidth, wxALIGN_LEFT));

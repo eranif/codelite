@@ -1577,11 +1577,11 @@
 					"m_events":	[],
 					"m_children":	[{
 							"m_type":	4463,
-							"proportion":	0,
+							"proportion":	1,
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxAUI_TB_DEFAULT_STYLE"],
+							"m_styles":	["wxAUI_TB_DEFAULT_STYLE", "wxAUI_TB_VERTICAL"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",

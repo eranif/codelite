@@ -245,10 +245,10 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer47 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer47);
     
-    m_auibar48 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar48 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_VERTICAL);
     m_auibar48->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer47->Add(m_auibar48, 0, wxEXPAND, 5);
+    boxSizer47->Add(m_auibar48, 1, wxEXPAND, 5);
     
     m_auibar48->AddTool(wxID_SAVEAS, _("Save Buid Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), _("Save Buid Log..."), wxITEM_NORMAL);
     

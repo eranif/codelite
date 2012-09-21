@@ -3604,11 +3604,5 @@ bool Manager::DbgCanInteract()
 
 void Manager::OnBuildEnded(wxCommandEvent& e)
 {
-    // release the process object
     e.Skip();
-    if ( m_shellProcess ) {
-        delete m_shellProcess;
-        m_shellProcess = NULL;
-    }
 }
-

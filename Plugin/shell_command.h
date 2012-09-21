@@ -91,7 +91,6 @@ class WXDLLIMPEXP_SDK ShellCommand : public wxEvtHandler
 {
 protected:
     IProcess*     m_proc;
-    wxArrayString m_lines;
     QueueCommand  m_info;
 
 protected:

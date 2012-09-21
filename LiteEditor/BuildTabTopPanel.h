@@ -20,6 +20,7 @@ protected:
     virtual void OnClearBuildOutputUI(wxUpdateUIEvent& event);
     virtual void OnSaveBuildOutput(wxCommandEvent& event);
     virtual void OnSaveBuildOutputUI(wxUpdateUIEvent& event);
+    virtual void OnToolPinCommandToolClicked(wxCommandEvent& event);
 };
 #endif // CL_USE_NEW_BUILD_TAB
 #endif // BUILDTABTOPPANEL_H

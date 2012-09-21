@@ -250,7 +250,11 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     
     boxSizer47->Add(m_auibar48, 1, wxEXPAND, 5);
     
-    m_auibar48->AddTool(wxID_SAVEAS, _("Save Buid Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), _("Save Buid Log..."), wxITEM_NORMAL);
+    m_auibar48->AddTool(wxID_ANY, _("Keep pane open"), wxXmlResource::Get()->LoadBitmap(wxT("ToolPin")), _("Don't close this pane when an editor gets focus"), wxITEM_CHECK);
+    
+    m_auibar48->AddSeparator();
+    
+    m_auibar48->AddTool(wxID_SAVEAS, _("Save Build Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), _("Save Build Log..."), wxITEM_NORMAL);
     
     m_auibar48->AddTool(wxID_CLEAR, _("Clear Build Output"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), _("Clear Build Output"), wxITEM_NORMAL);
     m_auibar48->Realize();
@@ -262,6 +266,7 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     }
     Centre();
     // Connect events
+    this->Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnToolPinCommandToolClicked), NULL, this);
     this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutput), NULL, this);
     this->Connect(wxID_SAVEAS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutputUI), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnClearBuildOutput), NULL, this);
@@ -271,6 +276,7 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
 
 BuildTabTopPanelBaseClass::~BuildTabTopPanelBaseClass()
 {
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnToolPinCommandToolClicked), NULL, this);
     this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutput), NULL, this);
     this->Disconnect(wxID_SAVEAS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutputUI), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnClearBuildOutput), NULL, this);

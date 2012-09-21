@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	"",
-		"m_objCounter":	51,
+		"m_objCounter":	54,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
 		"m_bitmapsFile":	"",
@@ -1620,6 +1620,84 @@
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Name:",
+											"m_value":	"m_toolPin"
+										}, {
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"wxID_ANY"
+										}, {
+											"type":	"string",
+											"m_label":	"Label:",
+											"m_value":	"Keep pane open"
+										}, {
+											"type":	"string",
+											"m_label":	"Help String:",
+											"m_value":	"Don't close this pane when an editor gets focus"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	"../codelite-icons/output-pane/16/ToolPin.png"
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	1,
+											"m_options":	["normal", "checkable", "radio", "separator"]
+										}],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnToolPinCommandToolClicked(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+										}],
+									"m_children":	[]
+								}, {
+									"m_type":	4462,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbarItem54"
+										}, {
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"wxID_ANY"
+										}, {
+											"type":	"string",
+											"m_label":	"Label:",
+											"m_value":	"Tool Label"
+										}, {
+											"type":	"string",
+											"m_label":	"Help String:",
+											"m_value":	""
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	"../../../../tmp/placeholder16.png"
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	3,
+											"m_options":	["normal", "checkable", "radio", "separator"]
+										}],
+									"m_events":	[],
+									"m_children":	[]
+								}, {
+									"m_type":	4462,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"string",
+											"m_label":	"Name:",
 											"m_value":	"m_toolbarItem50"
 										}, {
 											"type":	"winid",
@@ -1628,11 +1706,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"Save Buid Log..."
+											"m_value":	"Save Build Log..."
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
-											"m_value":	"Save Buid Log..."
+											"m_value":	"Save Build Log..."
 										}, {
 											"type":	"filePicker",
 											"m_label":	"Bitmap File:",

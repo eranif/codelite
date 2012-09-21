@@ -90,6 +90,7 @@ protected:
     wxAuiToolBar* m_auibar48;
 
 protected:
+    virtual void OnToolPinCommandToolClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveBuildOutput(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveBuildOutputUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClearBuildOutput(wxCommandEvent& event) { event.Skip(); }

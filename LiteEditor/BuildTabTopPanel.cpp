@@ -3,6 +3,7 @@
 #if CL_USE_NEW_BUILD_TAB
 
 #include "new_build_tab.h"
+#include "editor_config.h"
 #include <wx/ffile.h>
 #include <wx/filename.h>
 
@@ -15,7 +16,14 @@ BuildTabTopPanel::BuildTabTopPanel(wxWindow* parent)
 BuildTabTopPanel::~BuildTabTopPanel()
 {
 }
-void BuildTabTopPanel::OnClearBuildOutput(wxCommandEvent& event)
+
+void BuildTabTopPanel::OnToolPinCommandToolClicked(wxCommandEvent& event)
+{
+     EditorConfigST::Get()->SetPaneStickiness("Build", event.IsChecked());
+}
+
+
+void BuildTabTopPanel::OnClearBuildOutput(wxCommandEvent& WXUNUSED(event))
 {
     if ( m_buildTab ) {
         m_buildTab->Clear();
@@ -33,7 +41,7 @@ void BuildTabTopPanel::OnClearBuildOutputUI(wxUpdateUIEvent& event)
     }
 }
 
-void BuildTabTopPanel::OnSaveBuildOutput(wxCommandEvent& event)
+void BuildTabTopPanel::OnSaveBuildOutput(wxCommandEvent& WXUNUSED(event))
 {
     wxString filename = ::wxFileSelector(_("Select a file"), wxEmptyString, wxT("BuildLog.txt"), wxEmptyString, wxFileSelectorDefaultWildcardStr, wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
     if(filename.IsEmpty())

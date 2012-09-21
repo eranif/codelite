@@ -129,10 +129,39 @@ void CodeCompletionBox::ShowTip(const wxString& msg, LEditor* editor)
 
     if ( !editor )
         return;
+    
     wxPoint pt = editor->PointFromPosition( editor->GetCurrentPos() );
     wxPoint displayPt = editor->ClientToScreen(pt);
+    
+    // Dont display the tip if it displays outside of the 
+    // editor client area
+    wxRect editorRect = editor->GetScreenRect();
+    if ( editorRect.Contains( displayPt ) == false ) {
+        return;
+    }
+    
     m_tip = new CCBoxTipWindow(wxTheApp->GetTopWindow(), msg, 1, true);
     m_tip->PositionAt(displayPt);
+}
+
+void CodeCompletionBox::ShowTip(const wxString& msg, const wxPoint& pt, LEditor* editor)
+{
+    CancelTip();
+    if ( !editor )
+        return;
+
+    wxPoint p = pt;
+    p.y += 16; // Place it under the cursor
+
+    // Dont display the tip if it displays outside of the 
+    // editor client area
+    wxRect editorRect = editor->GetScreenRect();
+    if ( editorRect.Contains( p ) == false ) {
+        return;
+    }
+    
+    m_tip = new CCBoxTipWindow(wxTheApp->GetTopWindow(), msg, 1, true);
+    m_tip->PositionAt(p);
 }
 
 void CodeCompletionBox::RegisterImage(const wxString& kind, const wxBitmap& bmp)
@@ -155,13 +184,5 @@ void CodeCompletionBox::DoCreateBox(LEditor* editor)
     for(; iter != m_bitmaps.end(); ++iter ) {
         m_ccBox->RegisterImageForKind(iter->first, iter->second);
     }
-}
-void CodeCompletionBox::ShowTip(const wxString& msg, const wxPoint& pt)
-{
-    CancelTip();
-    wxPoint p = pt;
-    p.y += 16; // Place it under the cursor
-    m_tip = new CCBoxTipWindow(wxTheApp->GetTopWindow(), msg, 1, true);
-    m_tip->PositionAt(p);
 }
 

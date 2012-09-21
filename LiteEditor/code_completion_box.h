@@ -44,7 +44,7 @@ public:
      * @brief display a tooltip at a given point
      * 'pt' is in screen coordinates
      */
-    void ShowTip(const wxString &msg, const wxPoint& pt);
+    void ShowTip(const wxString &msg, const wxPoint& pt, LEditor* editor);
     
     /**
      * @brief dismiss the last calltip shown

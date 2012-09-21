@@ -79,6 +79,14 @@ const wxEventType wxEVT_TAGS_DB_UPGRADE_INTER = XRCID("tags_db_upgraded_now");
 //---------------------------------------------------------------------------
 // Misc
 
+static bool isDarkColor(const wxColour& color)
+{
+    int evg = (color.Red() + color.Green() + color.Blue())/3;
+    if (evg < 127)
+        return true;
+    return false;
+}
+
 // Descending sorting function
 struct SDescendingSort {
     bool operator()(const TagEntryPtr &rStart, const TagEntryPtr &rEnd) {
@@ -104,7 +112,7 @@ struct tagParseResult {
 //////////////////////////////////////
 static TagsManager* gs_TagsManager = NULL;
 
-void TagsManagerST::Free()
+                                     void TagsManagerST::Free()
 {
     if(gs_TagsManager) {
         delete gs_TagsManager;
@@ -158,12 +166,12 @@ TagsManager::~TagsManager()
         // Dont kill the indexer process, just terminate the
         // reader-thread (this is done by deleting the indexer object)
         m_canRestartIndexer = false;
-        
+
 #ifndef __WXMSW__
         m_codeliteIndexerProcess->Terminate();
 #endif
         delete m_codeliteIndexerProcess;
-        
+
 #ifndef __WXMSW__
         // Clear the socket file
         std::stringstream s;
@@ -256,13 +264,13 @@ TagTreePtr TagsManager::Load(const wxFileName& fileName, TagEntryPtrVector_t* ta
 {
     TagTreePtr          tree;
     TagEntryPtrVector_t tagsByFile;
-    
+
     if( tags ) {
         tagsByFile.insert(tagsByFile.end(), tags->begin(), tags->end());
-        
+
     } else {
         GetDatabase()->SelectTagsByFile(fileName.GetFullPath(), tagsByFile);
-        
+
     }
 
     // Load the records and build a language tree
@@ -1290,7 +1298,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName> &files, RetagType typ
     if ( cb ) {
         req->_evtHandler = cb; // Callback window
     }
-    
+
     req->setDbFile( GetDatabase()->GetDatabaseFileName().GetFullPath().c_str() );
 
     req->setType( type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES : ParseRequest::PR_PARSE_AND_STORE );
@@ -1494,6 +1502,12 @@ bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr derivedCla
 
 void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxString &word, std::vector<wxString> &tips)
 {
+    bool isDarkBG = isDarkColor(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    wxString retValueColour = "\"BLUE\"";
+    if ( isDarkBG ) {
+        retValueColour = "\"YELLOW\"";
+    }
+    
     for (size_t i=0; i<tags.size(); i++) {
         if (tags.at(i)->GetName() != word)
             continue;
@@ -1531,15 +1545,14 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 
             wxString ret_value = GetFunctionReturnValueFromPattern(t);
             if(ret_value.IsEmpty() == false) {
-                tip << "<b><color=\"BLUE\">" << ret_value << wxT("</color></b> ");
-
+                tip << "<b><color=" << retValueColour << ">" << ret_value << wxT("</color></b> ");
             } else {
                 wxString retValue = t->GetReturnValue();
                 if(retValue.IsEmpty() == false) {
-                    tip << "<b><color=\"BLUE\">" << retValue << wxT("</color></b> ");
+                    tip << "<b><color=" << retValueColour << ">" << retValue << wxT("</color></b> ");
                 }
             }
-            
+
             // add the scope
             if (!t->IsScopeGlobal()) {
                 tip << t->GetScope() << wxT("::");
@@ -2875,10 +2888,10 @@ bool TagsManager::AreTheSame(const TagEntryPtrVector_t& v1, const TagEntryPtrVec
 
 bool TagsManager::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent, int visibility)
 {
-	return GetLanguage()->InsertFunctionDecl(clsname, functionDecl, sourceContent, visibility);
+    return GetLanguage()->InsertFunctionDecl(clsname, functionDecl, sourceContent, visibility);
 }
 
 void TagsManager::InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename, wxString& sourceContent, int& insertedLine)
 {
-	return GetLanguage()->InsertFunctionImpl(clsname, functionImpl, filename, sourceContent, insertedLine);
+    return GetLanguage()->InsertFunctionImpl(clsname, functionImpl, filename, sourceContent, insertedLine);
 }

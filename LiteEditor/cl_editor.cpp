@@ -3514,7 +3514,7 @@ void LEditor::DoShowCalltip(int pos, const wxString& tip)
 {
     CodeCompletionBox::Get().CancelTip();
     if ( pos == wxNOT_FOUND ) {
-        CodeCompletionBox::Get().ShowTip(tip, wxGetMousePosition());
+        CodeCompletionBox::Get().ShowTip(tip, wxGetMousePosition(), this);
         
     } else {
         CodeCompletionBox::Get().ShowTip(tip, this);

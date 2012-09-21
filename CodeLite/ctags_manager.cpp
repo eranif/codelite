@@ -1570,7 +1570,11 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 
         // BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
         tip = WrapLines(tip);
-
+        
+        if ( !tips.empty() ) {
+            tip.Prepend("\n\n<hr>\n"); 
+        }
+        
         // prepend any comment if exists
         tips.push_back(tip);
     }

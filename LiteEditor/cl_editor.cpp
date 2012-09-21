@@ -148,7 +148,6 @@ LEditor::LEditor(wxWindow* parent)
     , m_autoAddMatchedCurlyBrace (false)
     , m_autoAddNormalBraces      (false)
     , m_autoAdjustHScrollbarWidth(true)
-    , m_calltipType              (ct_none)
     , m_reloadingFile            (false)
     , m_functionTip              (NULL)
     , m_lastCharEntered          (0)
@@ -295,7 +294,10 @@ void LEditor::SetProperties()
     SetVirtualSpaceOptions(1);
     OptionsConfigPtr options = GetOptions();
     CallTipUseStyle(1);
-
+    
+    CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    
     m_hightlightMatchedBraces   = options->GetHighlightMatchedBraces();
     m_autoAddMatchedCurlyBrace  = options->GetAutoAddMatchedCurlyBraces();
     m_autoAddNormalBraces       = options->GetAutoAddMatchedNormalBraces();
@@ -1376,11 +1378,9 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         int line = LineFromPosition(position);
         wxString tooltip;
         wxString fname = GetFileName().GetFullPath();
-        calltip_type type(ct_none);
 
         if (MarkerGet(line) & mmt_all_breakpoints) {
             tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
-            type = ct_breakpoint;
 
         }
 
@@ -1388,7 +1388,7 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         tmpTip.Trim().Trim(false);
 
         if (!tmpTip.IsEmpty()) {
-            DoShowCalltip(position, tooltip, type);
+            DoShowCalltip(-1, tooltip);
         }
 
     } else if (ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
@@ -3510,24 +3510,24 @@ void LEditor::DoSetStatusMessage(const wxString& msg, int col, int seconds_to_li
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 
-void LEditor::DoShowCalltip(int pos, const wxString& tip, calltip_type type, int hltPos, int hltLen)
+void LEditor::DoShowCalltip(int pos, const wxString& tip)
 {
-    m_calltipType = type;
-    CallTipShow(pos, tip);
-    if (hltPos >= 0 && hltLen > 0) {
-        CallTipSetHighlight(hltPos, hltLen + hltPos);
+    CodeCompletionBox::Get().CancelTip();
+    if ( pos == wxNOT_FOUND ) {
+        CodeCompletionBox::Get().ShowTip(tip, wxGetMousePosition());
+        
+    } else {
+        CodeCompletionBox::Get().ShowTip(tip, this);
     }
 }
 
 void LEditor::DoCancelCalltip()
 {
-    m_calltipType = ct_none;
+    CodeCompletionBox::Get().CancelTip();
     CallTipCancel();
     GetFunctionTip()->Deactivate();
-    // let the context process this as well
     m_context->OnCalltipCancel();
 }
-
 
 int LEditor::DoGetOpenBracePos()
 {

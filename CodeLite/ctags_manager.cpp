@@ -1531,22 +1531,22 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 
             wxString ret_value = GetFunctionReturnValueFromPattern(t);
             if(ret_value.IsEmpty() == false) {
-                tip << ret_value << wxT(" ");
+                tip << "<b><color=\"BLUE\">" << ret_value << wxT("</color></b> ");
 
             } else {
                 wxString retValue = t->GetReturnValue();
                 if(retValue.IsEmpty() == false) {
-                    tip << retValue << wxT(" ");
+                    tip << "<b><color=\"BLUE\">" << retValue << wxT("</color></b> ");
                 }
-
             }
+            
             // add the scope
             if (!t->IsScopeGlobal()) {
                 tip << t->GetScope() << wxT("::");
             }
 
             // name
-            tip << t->GetName();
+            tip << "<b>" << t->GetName() << "</b>";
 
             // method signature
             tip << NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Name | Normalize_Func_Default_value);

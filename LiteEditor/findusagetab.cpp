@@ -44,8 +44,6 @@ void FindUsageTab::OnMouseDClick(wxStyledTextEvent& e)
 {
     long pos = e.GetPosition();
     int line = m_sci->LineFromPosition(pos);
-    int style = m_sci->GetStyleAt(pos);
-
     UsageResultsMap::const_iterator iter = m_matches.find(line);
     if (iter != m_matches.end()) {
         DoOpenResult( iter->second );

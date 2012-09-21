@@ -74,8 +74,6 @@ enum marker_mask_type { mmt_folds=wxSTC_MASK_FOLDERS, mmt_bookmarks=128, mmt_FIR
                         mmt_compiler=0x30000 /* masks compiler errors/warnings */
                       };
 
-enum calltip_type { ct_function_hover, ct_debugger, ct_function_proto, ct_breakpoint, ct_compiler_msg, ct_none};
-
 /**
 * @class BPtoMarker
 * Holds which marker and mask are associated with each breakpoint type
@@ -136,7 +134,6 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     bool                                        m_autoAddNormalBraces;
     std::map<int, std::vector<BreakpointInfo> > m_breakpointsInfo;
     bool                                        m_autoAdjustHScrollbarWidth;
-    calltip_type                                m_calltipType;
     bool                                        m_reloadingFile;
     bool                                        m_disableSmartIndent;
     bool                                        m_disableSemicolonShift;
@@ -459,13 +456,9 @@ public:
     void SetWarningMarker(int lineno);
     void SetErrorMarker(int lineno);
     void DelAllCompilerMarkers();
-    void DoShowCalltip(int pos, const wxString &tip, calltip_type type, int hltPos = wxNOT_FOUND, int hltLen = wxNOT_FOUND);
+    void DoShowCalltip(int pos, const wxString &tip);
     void DoCancelCalltip();
     int  DoGetOpenBracePos();
-
-    calltip_type GetCalltipType() const {
-        return m_calltipType;
-    }
 
     //----------------------------------
     //File modifications

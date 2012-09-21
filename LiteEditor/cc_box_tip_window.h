@@ -32,7 +32,7 @@ protected:
     wxString DoStripMarkups();
 
 public:
-    CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips);
+    CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips, bool simpleTip = false);
     virtual ~CCBoxTipWindow();
 
     /**

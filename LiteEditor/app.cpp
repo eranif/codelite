@@ -28,6 +28,7 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "evnvarlist.h"
+#include "code_completion_box.h"
 #include "environmentconfig.h"
 #include "conffilelocator.h"
 #include "app.h"
@@ -896,6 +897,7 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
 
 void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
 {
+    CodeCompletionBox::Get().CancelTip();
     if(e.GetActive()) {
 
         if(clMainFrame::Get()) {
@@ -906,5 +908,6 @@ void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
             // Retag the workspace the light way
             ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
         }
+        
     }
 }

@@ -39,6 +39,13 @@ public:
      * @brief display a tooltip at the caret position of the editor
      */
     void ShowTip(const wxString &msg, LEditor* editor);
+    
+    /**
+     * @brief display a tooltip at a given point
+     * 'pt' is in screen coordinates
+     */
+    void ShowTip(const wxString &msg, const wxPoint& pt);
+    
     /**
      * @brief dismiss the last calltip shown
      */

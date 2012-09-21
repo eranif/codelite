@@ -19,7 +19,7 @@ wxBitmap CCBoxTipWindow::m_rightbmp  = wxNullBitmap;
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP   = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
 
-CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips)
+CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips, bool simpleTip)
     : wxPopupWindow(parent)
     , m_tip(tip)
     , m_numOfTips(numOfTips)
@@ -37,7 +37,7 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
     m_tip.Trim().Trim(false);
     m_tip.Replace(wxT("\n<hr>"), wxT("<hr>"));
 
-    if ( m_numOfTips > 1 )
+    if ( !simpleTip && m_numOfTips > 1 )
         m_tip.Prepend(wxT("\n\n")); // Make room for the spinctrl
 
     Hide();
@@ -60,15 +60,22 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
         codePart = strippedTip;
     }
 
-    int commentWidth, codeWidth;
+    int commentWidth  = 0;
+    int codeWidth     = 0;
 
     // Use bold font for measurements
     m_codeFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_commentFont.SetWeight(wxFONTWEIGHT_BOLD);
+    
+    if ( !simpleTip ) {
+        dc.GetMultiLineTextExtent(codePart,    &codeWidth,    NULL, NULL, &m_codeFont);
+        dc.GetMultiLineTextExtent(commentPart, &commentWidth, NULL, NULL, &m_commentFont);
+        
+    } else {
+        dc.GetMultiLineTextExtent(strippedTip, &codeWidth,    NULL, NULL, &m_commentFont);
 
-    dc.GetMultiLineTextExtent(codePart,    &codeWidth,    NULL, NULL, &m_codeFont);
-    dc.GetMultiLineTextExtent(commentPart, &commentWidth, NULL, NULL, &m_commentFont);
-
+    }
+    
     m_codeFont.SetWeight(wxFONTWEIGHT_NORMAL);
     m_commentFont.SetWeight(wxFONTWEIGHT_NORMAL);
 
@@ -76,10 +83,17 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
     commentWidth > codeWidth ? size.x = commentWidth : size.x = codeWidth;
 
     // calculate the height
-    m_lineHeight = 16;
+    
+    if ( !simpleTip)
+        m_lineHeight = 16;
+    else
+        m_lineHeight = 0;
+        
     dc.GetTextExtent(wxT("Tp"), NULL, &m_lineHeight, NULL, NULL, &m_codeFont);
     int nLineCount = ::wxStringTokenize(m_tip, wxT("\r\n"), wxTOKEN_RET_EMPTY_ALL).GetCount();
-    nLineCount++;
+    
+    if ( !simpleTip )
+        nLineCount++;
 
     size.y = nLineCount * m_lineHeight;
     size.x += 40;

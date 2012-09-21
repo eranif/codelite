@@ -107,7 +107,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
     // assign the image list and let the control take owner ship (i.e. delete it)
     m_listCtrl->AssignImageList(il, wxIMAGE_LIST_SMALL);
     m_listCtrl->InsertColumn(0, wxT("Name"));
-    m_listCtrl->SetColumnWidth(0, 345);
+    m_listCtrl->SetColumnWidth(0, m_listCtrl->GetClientSize().x);
     m_constructing = false;
 
     EventNotifier::Get()->Connect(wxEVT_TIP_BTN_CLICKED_DOWN, wxCommandEventHandler(CCBox::OnTipClickedDown), NULL, this);

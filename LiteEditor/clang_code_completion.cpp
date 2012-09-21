@@ -41,6 +41,7 @@ ClangCodeCompletion::ClangCodeCompletion()
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING,         wxCommandEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED,            wxCommandEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,       wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed),   NULL, this);
 }
 
 ClangCodeCompletion::~ClangCodeCompletion()
@@ -51,6 +52,7 @@ ClangCodeCompletion::~ClangCodeCompletion()
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING,         wxCommandEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED,            wxCommandEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,       wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed),   NULL, this);
 }
 
 ClangCodeCompletion* ClangCodeCompletion::Instance()
@@ -252,6 +254,12 @@ wxFileName ClangCodeCompletion::GetCompilationDatabase() const
 {
     wxFileName dbFile(WorkspaceST::Get()->GetWorkspaceFileName().GetPath(), wxT("clang-compilation.db"));
     return dbFile;
+}
+
+void ClangCodeCompletion::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    ClearCache();
 }
 
 #endif // HAS_LIBCLANG

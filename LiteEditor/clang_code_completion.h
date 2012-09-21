@@ -24,67 +24,68 @@ class IManager;
 class ClangCodeCompletion : public wxEvtHandler
 {
 public:
-	typedef std::set<wxString> Set_t;
+    typedef std::set<wxString> Set_t;
 
 protected:
-	static ClangCodeCompletion* ms_instance;
-	ClangDriver                 m_clang;
-	bool                        m_allEditorsAreClosing;
-	
-	friend class ClangDriver;
-public:
-	static ClangCodeCompletion* Instance();
-	static void Release();
+    static ClangCodeCompletion* ms_instance;
+    ClangDriver                 m_clang;
+    bool                        m_allEditorsAreClosing;
 
-	/**
-	 * @brief perform codecompletion in the editor
-	 */
-	void CodeComplete(IEditor *editor);
-	/**
-	 * @brief perform word-completin in the editor
-	 */
-	void WordComplete(IEditor *editor);
-	/**
-	 * @brief provide list of macros and pass them to the editor (this is useful for disabling block of text which is not visible due to #if #endif conditions)
-	 */
-	void ListMacros(IEditor *editor);
-	/**
-	 * @brief go to the definition under the caret
-	 */
-	void GotoDeclaration(IEditor *editor);
-	/**
-	 * @brief go to the definition under the caret
-	 */
-	void GotoImplementation(IEditor *editor);
-	
-	/**
-	 * @brief display calltip for a function
-	 */
-	void Calltip(IEditor *editor);
-	void CancelCodeComplete();
-	void ClearCache();
-	bool IsCacheEmpty();
-    
+    friend class ClangDriver;
+public:
+    static ClangCodeCompletion* Instance();
+    static void Release();
+
     /**
-     * @brief return the clang compilatin database 
+     * @brief perform codecompletion in the editor
+     */
+    void CodeComplete(IEditor *editor);
+    /**
+     * @brief perform word-completin in the editor
+     */
+    void WordComplete(IEditor *editor);
+    /**
+     * @brief provide list of macros and pass them to the editor (this is useful for disabling block of text which is not visible due to #if #endif conditions)
+     */
+    void ListMacros(IEditor *editor);
+    /**
+     * @brief go to the definition under the caret
+     */
+    void GotoDeclaration(IEditor *editor);
+    /**
+     * @brief go to the definition under the caret
+     */
+    void GotoImplementation(IEditor *editor);
+
+    /**
+     * @brief display calltip for a function
+     */
+    void Calltip(IEditor *editor);
+    void CancelCodeComplete();
+    void ClearCache();
+    bool IsCacheEmpty();
+
+    /**
+     * @brief return the clang compilatin database
      */
     wxFileName GetCompilationDatabase() const;
-    
-protected:
-	void DoCleanUp();
-	
-	// Event handling
-	void OnFileLoaded(wxCommandEvent &e);
-	void OnFileSaved(wxCommandEvent &e);
-	void OnAllEditorsClosing(wxCommandEvent &e);
-	void OnAllEditorsClosed(wxCommandEvent &e);
 
-	void OnBuildStarting(wxCommandEvent &e);
-	void OnBuildEnded(wxCommandEvent &e);
-    
+protected:
+    void DoCleanUp();
+
+    // Event handling
+    void OnFileLoaded(wxCommandEvent &e);
+    void OnFileSaved(wxCommandEvent &e);
+    void OnAllEditorsClosing(wxCommandEvent &e);
+    void OnAllEditorsClosed(wxCommandEvent &e);
+
+    void OnBuildStarting(wxCommandEvent &e);
+    void OnBuildEnded(wxCommandEvent &e);
+    void OnWorkspaceClosed(wxCommandEvent &e);
+
 private:
-	ClangCodeCompletion();
-	~ClangCodeCompletion();
+    ClangCodeCompletion();
+    ~ClangCodeCompletion();
 
 };
 

@@ -80,14 +80,14 @@ public:
 	 * \param propName the property name
 	 * \param defaultValue default value to return if no property exist
 	 */
-	static wxString ReadString(wxXmlNode *node, const wxString &propName, const wxString &defaultValue = wxEmptyString);
+	static wxString ReadString(const wxXmlNode *node, const wxString &propName, const wxString &defaultValue = wxEmptyString);
 
 	/**
 	 * Read long property from the given node
 	 * \param propName the property name
 	 * \param defaultValue default value to return if no property exist
 	 */
-	static long ReadLong(wxXmlNode *node, const wxString &propName, long defaultValue = -1);
+	static long ReadLong(const wxXmlNode *node, const wxString &propName, long defaultValue = -1);
 	
 	/**
 	 * Try to read long property from the given node
@@ -96,14 +96,14 @@ public:
 	 * \param answer will contain the result if found
 	 * \return true if answer is valid, false if not found
 	 */
-	static bool ReadLongIfExists(wxXmlNode *node, const wxString &propName, long& answer);
+	static bool ReadLongIfExists(const wxXmlNode *node, const wxString &propName, long& answer);
 
 	/**
 	 * Read a boolean property from the given node
 	 * \param propName the property name
 	 * \param defaultValue default value to return if no property exist
 	 */
-	static bool ReadBool(wxXmlNode *node, const wxString &propName, bool defaultValue = false);
+	static bool ReadBool(const wxXmlNode *node, const wxString &propName, bool defaultValue = false);
 
 	/**
 	 * Try to read a string property from the given node.
@@ -112,7 +112,7 @@ public:
 	 * \param value will contain the result if found
 	 * \return true if answer is valid, false if not found
 	 */
-	static bool ReadStringIfExists(wxXmlNode* node, const wxString& propName, wxString& value);
+	static bool ReadStringIfExists(const wxXmlNode* node, const wxString& propName, wxString& value);
 
 	/**
 	 * Try to read a boolean property from the given node.
@@ -121,7 +121,7 @@ public:
 	 * \param answer will contain the result if found
 	 * \return true if answer is valid, false if not found
 	 */
-	static bool ReadBoolIfExists(wxXmlNode* node, const wxString& propName, bool& answer);
+	static bool ReadBoolIfExists(const wxXmlNode* node, const wxString& propName, bool& answer);
 
 	/**
 	 * Remove all children of xml node

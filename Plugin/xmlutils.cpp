@@ -89,17 +89,17 @@ void XmlUtils::UpdateProperty(wxXmlNode *node, const wxString &name, const wxStr
 	node->AddProperty(name, value);
 }
 
-wxString XmlUtils::ReadString(wxXmlNode *node, const wxString &propName, const wxString &defaultValue)
+wxString XmlUtils::ReadString(const wxXmlNode *node, const wxString &propName, const wxString &defaultValue)
 {
 	return node->GetPropVal(propName, defaultValue);
 }
 
-bool XmlUtils::ReadStringIfExists(wxXmlNode* node, const wxString& propName, wxString& value)
+bool XmlUtils::ReadStringIfExists(const wxXmlNode* node, const wxString& propName, wxString& value)
 {
 	return node->GetPropVal(propName, &value);
 }
 
-long XmlUtils::ReadLong(wxXmlNode *node, const wxString &propName, long defaultValue)
+long XmlUtils::ReadLong(const wxXmlNode *node, const wxString &propName, long defaultValue)
 {
 	wxString val = node->GetPropVal(propName, wxEmptyString);
 	if( val.IsEmpty() ){
@@ -117,7 +117,7 @@ long XmlUtils::ReadLong(wxXmlNode *node, const wxString &propName, long defaultV
 	return retVal;
 }
 
-bool XmlUtils::ReadLongIfExists(wxXmlNode *node, const wxString &propName, long& answer)
+bool XmlUtils::ReadLongIfExists(const wxXmlNode *node, const wxString &propName, long& answer)
 {
 	wxString value;
 	if( ! node->GetPropVal(propName, &value) ) {
@@ -135,7 +135,7 @@ bool XmlUtils::ReadLongIfExists(wxXmlNode *node, const wxString &propName, long&
 	return retVal;
 }
 
-bool XmlUtils::ReadBool(wxXmlNode *node, const wxString &propName, bool defaultValue)
+bool XmlUtils::ReadBool(const wxXmlNode *node, const wxString &propName, bool defaultValue)
 {
 	wxString val = node->GetPropVal(propName, wxEmptyString);
 
@@ -152,7 +152,7 @@ bool XmlUtils::ReadBool(wxXmlNode *node, const wxString &propName, bool defaultV
 	return retVal;
 }
 
-bool XmlUtils::ReadBoolIfExists(wxXmlNode* node, const wxString& propName, bool& answer)
+bool XmlUtils::ReadBoolIfExists(const wxXmlNode* node, const wxString& propName, bool& answer)
 {
 	wxString value;
 	if( ! node->GetPropVal(propName, &value) ) {

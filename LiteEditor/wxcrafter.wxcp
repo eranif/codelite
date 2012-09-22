@@ -675,7 +675,7 @@
 																	"gbSpan":	"1,1",
 																	"gbPosition":	"0,0",
 																	"m_styles":	["wxBU_AUTODRAW"],
-																	"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+																	"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
 																	"m_properties":	[{
 																			"type":	"winid",
 																			"m_label":	"ID:",
@@ -991,11 +991,11 @@
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
-																	"colour":	"wxSYS_COLOUR_BTNFACE"
+																	"colour":	"Tooltip"
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Fg Colour:",
-																	"colour":	"<Default>"
+																	"colour":	"TooltipText"
 																}, {
 																	"type":	"font",
 																	"m_label":	"Font:",

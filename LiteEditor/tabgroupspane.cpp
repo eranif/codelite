@@ -39,6 +39,7 @@
 #include "tabgroupmanager.h"
 #include "tabgroupspane.h"
 #include "globals.h"
+#include <algorithm>
 
 TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption) : wxPanel(parent, wxID_ANY) {
 	m_node = NULL;
@@ -179,8 +180,14 @@ TabgroupsPane::~TabgroupsPane() {
 	delete m_node;
 }
 
+bool sortfunction(const spTabGrp& x, const spTabGrp& y)
+{
+    return x.first.CmpNoCase(y.first) < 0;
+}
+
 void TabgroupsPane::DisplayTabgroups() {
-	const vTabGrps& tabgroups = TabGroupsManager::Get()->GetTabgroups();
+	vTabGrps& tabgroups = TabGroupsManager::Get()->GetTabgroups();
+    std::sort(tabgroups.begin(), tabgroups.end(), sortfunction);
 	vTabGrps::const_iterator iter = tabgroups.begin();
 	for (; iter != tabgroups.end(); ++iter) {
 		AddTreeItem(iter->first, iter->second);

@@ -403,7 +403,7 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
                     ContextBase::AutoIndent(nChar);
 
                     // Indent this line according to the block indentation level
-                    int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) ;
+                    int foldLevel = (rCtrl.GetFoldLevel(prevLine) & wxSTC_FOLDLEVELNUMBERMASK) - wxSTC_FOLDLEVELBASE;
                     if (foldLevel) {
                         rCtrl.SetLineIndentation(prevLine, ((foldLevel-1)*rCtrl.GetIndent()) );
                         rCtrl.ChooseCaretX();

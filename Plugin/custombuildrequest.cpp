@@ -204,7 +204,7 @@ void CustomBuildRequest::Process(IManager *manager)
     // Wrap the build command in the shell, so it will be able
     // to perform 'chain' commands like
     // cd SOMEWHERE && make && ...
-    
+
     // Dont wrap the command if it was altered previously
     if ( !bCommandAltered) {
         WrapInShell(cmd);
@@ -305,7 +305,7 @@ bool CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
     cmd << wxT("\"") << fn << wxT("\"");
 #else
     // *nix
-    cmd << wxT("/bin/sh -f '") << fn << wxT("'");
+    cmd << wxT("/bin/sh -f './") << fn << wxT("'");
 #endif
     return true;
 }

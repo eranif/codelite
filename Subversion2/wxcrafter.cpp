@@ -93,7 +93,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     
     boxSizer1->Add(boxSizer2, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button3 = new wxButton(this, wxID_OK, _("&Commit"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button3 = new wxButton(this, wxID_OK, _("C&ommit"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_button3->SetDefault();
     m_button3->SetToolTip(_("Commit"));
     

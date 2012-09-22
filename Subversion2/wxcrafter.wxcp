@@ -796,7 +796,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"&Commit"
+											"m_value":	"C&ommit"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",

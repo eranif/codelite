@@ -294,10 +294,10 @@ void LEditor::SetProperties()
     SetVirtualSpaceOptions(1);
     OptionsConfigPtr options = GetOptions();
     CallTipUseStyle(1);
-    
+
     CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
-    
+
     m_hightlightMatchedBraces   = options->GetHighlightMatchedBraces();
     m_autoAddMatchedCurlyBrace  = options->GetAutoAddMatchedCurlyBraces();
     m_autoAddNormalBraces       = options->GetAutoAddMatchedNormalBraces();
@@ -328,7 +328,7 @@ void LEditor::SetProperties()
 
     // Fold and comments as well
     SetProperty(wxT("fold.comment"), wxT("1"));
-    SetModEventMask (wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT  | wxSTC_PERFORMED_UNDO  | wxSTC_PERFORMED_REDO | wxSTC_MOD_BEFOREDELETE );
+    SetModEventMask (wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT  | wxSTC_PERFORMED_UNDO  | wxSTC_PERFORMED_REDO | wxSTC_MOD_BEFOREDELETE | wxSTC_MOD_CHANGESTYLE);
 
     int caretSlop = 1;
     int caretZone = 20;
@@ -498,19 +498,19 @@ void LEditor::SetProperties()
     // turning off these two greatly improves performance
     // on Mac
     SetTwoPhaseDraw(true);
-    
+
     // Using BufferedDraw as 'false'
     // improves performance *alot*, however
-    // the downside is that the word hightlight does 
+    // the downside is that the word hightlight does
     // not work...
     // this is why we enable / disable it according to the "highlight word" toggle state
     long highlightWord(1);
 	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
     SetBufferedDraw(highlightWord == 1 ? true : false);
     //wxLogMessage("Buffered draw is set to %d", (int)highlightWord);
-    
+
 #elif defined(__WXGTK__)
-    SetTwoPhaseDraw(true);
+    SetTwoPhaseDraw(false);
     SetBufferedDraw(false);
 
 #else // MSW
@@ -536,7 +536,7 @@ void LEditor::SetProperties()
     UsePopUp(m_rightClickMenu ? false : true);
 
     IndicatorSetUnder(1, true);
-    
+
     IndicatorSetUnder(HYPERLINK_INDICATOR, true);
     IndicatorSetUnder(MATCH_INDICATOR, true);
     IndicatorSetUnder(DEBUGGER_INDICATOR, true);
@@ -550,12 +550,12 @@ void LEditor::SetProperties()
     }
 
     IndicatorSetForeground(1, options->GetBookmarkBgColour());
-    
+
     // Word highlight indicator
     IndicatorSetStyle(MARKER_WORD_HIGHLIGHT, wxSTC_INDIC_ROUNDBOX);
     IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(MARKER_WORD_HIGHLIGHT, col2);
-    
+
     IndicatorSetStyle     (HYPERLINK_INDICATOR, wxSTC_INDIC_PLAIN);
     IndicatorSetStyle     (MATCH_INDICATOR, wxSTC_INDIC_BOX);
     IndicatorSetForeground(MATCH_INDICATOR, wxT("GREY"));
@@ -624,9 +624,9 @@ void LEditor::OnSavePoint(wxStyledTextEvent &event)
 
 void LEditor::OnCharAdded(wxStyledTextEvent& event)
 {
-    // allways cancel the tip 
+    // allways cancel the tip
     CodeCompletionBox::Get().CancelTip();
-    
+
     int pos = GetCurrentPos();
     bool canShowCompletionBox(true);
 
@@ -947,7 +947,6 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent &event)
     }
 
     RecalcHorizontalScrollbar();
-
     //let the context handle this as well
     m_context->OnSciUpdateUI(event);
 }
@@ -2485,9 +2484,9 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
-    // allways cancel the tip 
+    // allways cancel the tip
     CodeCompletionBox::Get().CancelTip();
-    
+
     // Hide tooltip dialog if its ON
     IDebugger *   dbgr                = DebuggerMgr::Get().GetActiveDebugger();
     bool          dbgTipIsShown       = ManagerST::Get()->GetDebuggerTip()->IsShown();
@@ -3105,7 +3104,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
                 ButtonDetails(),
                 CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
     }
-    
+
     CodeCompletionBox::Get().Display(this, tags, word, tags.at(0)->GetKind() == wxT("cpp_keyword"), NULL);
 }
 
@@ -3515,7 +3514,7 @@ void LEditor::DoShowCalltip(int pos, const wxString& tip)
     CodeCompletionBox::Get().CancelTip();
     if ( pos == wxNOT_FOUND ) {
         CodeCompletionBox::Get().ShowTip(tip, wxGetMousePosition(), this);
-        
+
     } else {
         CodeCompletionBox::Get().ShowTip(tip, this);
     }
@@ -3611,6 +3610,13 @@ void LEditor::OnChange(wxStyledTextEvent& event)
                 }
             }
         }
+    }
+
+    if ( event.GetModificationType() & wxSTC_MOD_CHANGESTYLE ) {
+#ifdef __WXGTK__
+        // Contents, styling or markers have been changed
+        Refresh();
+#endif
     }
 
     if (event.GetModificationType() & wxSTC_MOD_INSERTTEXT || event.GetModificationType() & wxSTC_MOD_DELETETEXT) {
@@ -3990,7 +3996,7 @@ void LEditor::OnFindInFiles()
 void LEditor::OnHighlightWordChecked(wxCommandEvent& e)
 {
     e.Skip();
-    // Mainly needed under Mac to toggle the 
+    // Mainly needed under Mac to toggle the
     // buffered drawing on and off
 #ifdef __WXMAC__
     SetBufferedDraw(e.GetInt()  == 1 ? true : false);

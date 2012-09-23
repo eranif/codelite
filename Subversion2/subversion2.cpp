@@ -275,15 +275,12 @@ void Subversion2::UnPlug()
     }
 
 
-    // Remove the tab pined to the workspcae pane
+    // Remove the tab if it's actually docked in the workspace pane
     size_t index(Notebook::npos);
-    SvnSettingsData ssd = GetSettings();
     index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_subversionView);
     if (index != Notebook::npos) {
         m_mgr->GetWorkspacePaneNotebook()->RemovePage(index, false);
     }
-    ssd.SetSvnTabIndex(index);
-    SetSettings(ssd);
 
     m_subversionView->Destroy();
 }
@@ -300,20 +297,7 @@ void Subversion2::DoInitialize()
 
     } else {
         m_subversionView = new SubversionView(book, this);
-        size_t index = GetSettings().GetSvnTabIndex();
-        if(index == Notebook::npos)
-            book->AddPage(m_subversionView, svnCONSOLE_TEXT, false);
-			
-        else {
-			size_t count = book->GetPageCount();
-			if(index >= count) {
-				// Invalid index
-				book->AddPage(m_subversionView, svnCONSOLE_TEXT, false);
-				
-			} else {
-				book->InsertPage(index, m_subversionView, svnCONSOLE_TEXT, false);
-			}
-		}
+        book->AddPage(m_subversionView, svnCONSOLE_TEXT, false);
     }
 
     DoSetSSH();

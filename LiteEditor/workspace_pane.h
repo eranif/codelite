@@ -62,6 +62,8 @@ public:
 	void UpdateProgress(int val);
 	void ClearProgress ();
 	void UpdateTabs();
+	void ApplySavedTabOrder() const;
+    void SaveWorkspaceViewTabOrder() const;
 	bool IsTabVisible(int flag);
 	
 	// Getters
@@ -69,7 +71,7 @@ public:
 	Notebook       *GetNotebook     ()          { return m_book;         }
     WorkspaceTab   *GetWorkspaceTab ()          { return m_workspaceTab; }
 	FileExplorer   *GetFileExplorer ()          { return m_explorer;     }
-	TabgroupsPane  *GetTabgroupsTab()          { return m_TabgroupsPane;}
+	TabgroupsPane  *GetTabgroupsTab()           { return m_TabgroupsPane;}
 };
 
 #endif // WORKSPACE_PANE_H

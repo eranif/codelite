@@ -3255,6 +3255,9 @@ void clMainFrame::CompleteInitialization()
 	//m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(clMainFrame::OnAuiManagerRender),   NULL, this);
 	Layout();
 	SelectBestEnvSet();
+
+    // Now everything is loaded, set the saved tab-order in the workspace pane
+    GetWorkspacePane()->ApplySavedTabOrder();
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
@@ -4269,6 +4272,8 @@ void clMainFrame::SaveLayoutAndSession()
 	if (LEditor::GetFindReplaceDialog()) {
 		EditorConfigST::Get()->WriteObject(wxT("FindAndReplaceData"), &(LEditor::GetFindReplaceDialog()->GetData()));
 	}
+
+    GetWorkspacePane()->SaveWorkspaceViewTabOrder();
 
 	//save the current session before closing
 	wxString sessionName = ManagerST::Get()->IsWorkspaceOpen() ? WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath()

@@ -32,6 +32,7 @@
 
 class WXDLLIMPEXP_SDK DetachedPanesInfo : public SerializedObject
 {
+protected:
 	wxArrayString m_panes;
 public:
 	DetachedPanesInfo(wxArrayString arr);
@@ -43,7 +44,7 @@ public:
 	virtual void Serialize(Archive &arch);
 
 
-//Getters
+    //Getters
 	const wxArrayString& GetPanes() const {
 		return m_panes;
 	}
@@ -53,5 +54,34 @@ public:
 		this->m_panes = panes;
 	}
 
+};
+
+class WXDLLIMPEXP_SDK WorkspaceViewTabOrder
+                        : public DetachedPanesInfo // Though they're not really connected, this allows a bit of code-reuse
+{
+public:
+	WorkspaceViewTabOrder(wxArrayString arr) : DetachedPanesInfo(arr), m_SelectedTab(-1) {}
+	WorkspaceViewTabOrder(){}
+	virtual ~WorkspaceViewTabOrder() {}
+
+	virtual void DeSerialize(Archive &arch) {
+        arch.Read(wxT("TabOrder"), m_panes);
+        arch.Read(wxT("SelectedTab"), m_SelectedTab);
+    }
+	virtual void Serialize(Archive &arch) {
+        arch.Write(wxT("TabOrder"), m_panes);
+        arch.Write(wxT("SelectedTab"), m_SelectedTab);
+    }
+    //Getter
+	int GetLastSelectedTab() const {
+		return m_SelectedTab;
+	}
+	//Setter
+	void SetLastSelectedTab(int index) {
+		m_SelectedTab = index;
+	}
+
+protected:
+    int m_SelectedTab;
 };
 #endif // __detachedpanesinfo__

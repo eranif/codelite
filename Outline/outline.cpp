@@ -101,20 +101,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager *manager)
 
     } else {
         m_view = new OutlineTab(book, m_mgr);
-        int index = os.GetTabIndex();
-        if(index == wxNOT_FOUND)
-            book->AddPage(m_view, wxT("Outline"), false);
-			
-        else {
-			size_t count = book->GetPageCount();
-			if(index >= (int)count) {
-				// Invalid index
-				book->AddPage(m_view, wxT("Outline"), false);
-				
-			} else {
-				book->InsertPage(index, m_view, wxT("Outline"), false);
-			}
-		}
+        book->AddPage(m_view, wxT("Outline"), false);
     }
 }
 
@@ -151,19 +138,12 @@ void SymbolViewPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 
 void SymbolViewPlugin::UnPlug()
 {
-    int index = DoFindTabIndex();
     size_t where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);
     if ( where != Notebook::npos ) {
         // this window might be floating
         m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
     }
-    
-    // Save the real position
-    OutlineSettings os;
-    os.Load();
-    os.SetTabIndex(index);
-    os.Save();
-    
+
     m_view->Destroy();
     m_view = NULL;
 }

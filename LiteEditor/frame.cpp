@@ -2687,6 +2687,8 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 	// For some reason, under Linux we need to force the menu accelerator again
 	// otherwise some shortcuts are getting lose (e.g. Ctrl-/ to comment line)
 	ManagerST::Get()->UpdateMenuAccelerators();
+    
+    wxModule::InitializeModules();
 	event.Skip();
 }
 

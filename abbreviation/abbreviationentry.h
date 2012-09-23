@@ -31,6 +31,7 @@
 class AbbreviationEntry : public SerializedObject
 {
 	std::map<wxString, wxString> m_entries;
+	bool m_autoInsert;
 
 public:
 	AbbreviationEntry();
@@ -40,11 +41,20 @@ public:
 	virtual void DeSerialize(Archive &arch);
 	virtual void Serialize(Archive &arch);
 
+	//Setters
 	void SetEntries(const std::map<wxString, wxString>& entries) {
 		this->m_entries = entries;
 	}
+	void SetAutoInsert(const bool& autoInsert) {
+		this->m_autoInsert = autoInsert;
+	}
+	
+	//Getters
 	const std::map<wxString, wxString>& GetEntries() const {
 		return m_entries;
+	}
+	const bool& GetAutoInsert() const {
+		return m_autoInsert;
 	}
 };
 #endif // __abbreviationentry__

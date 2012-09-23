@@ -40,7 +40,8 @@ class NavMgr;
 
 enum {
     Format_Text_Default          = 0x00000000,
-    Format_Text_Indent_Prev_Line = 0x00000001
+    Format_Text_Indent_Prev_Line = 0x00000001,
+    Format_Text_Save_Empty_Lines = 0x00000002,
 };
 
 //------------------------------------------------------------------

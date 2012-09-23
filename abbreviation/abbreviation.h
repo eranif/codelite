@@ -36,6 +36,7 @@ protected:
 	void OnAbbreviations(wxCommandEvent &e);
 	void OnAbbrevSelected(wxCommandEvent &e);
 	void InitDefaults();
+	void InsertExpansion(const wxString& abbreviation);
 
 public:
 	AbbreviationPlugin(IManager *manager);

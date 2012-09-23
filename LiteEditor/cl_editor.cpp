@@ -505,7 +505,7 @@ void LEditor::SetProperties()
     // not work...
     // this is why we enable / disable it according to the "highlight word" toggle state
     long highlightWord(1);
-	EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
+    EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
     SetBufferedDraw(highlightWord == 1 ? true : false);
     //wxLogMessage("Buffered draw is set to %d", (int)highlightWord);
 
@@ -2390,7 +2390,8 @@ wxString LEditor::FormatTextKeepIndent(const wxString &text, int pos, size_t fla
 
     wxString eol = GetEolString();
     textToInsert.Replace(wxT("\r"), wxT("\n"));
-    wxArrayString lines = wxStringTokenize(textToInsert, wxT("\n"), wxTOKEN_STRTOK);
+    wxStringTokenizerMode tokenizerMode = (flags & Format_Text_Save_Empty_Lines) ? wxTOKEN_RET_EMPTY : wxTOKEN_STRTOK;
+    wxArrayString lines = wxStringTokenize(textToInsert, wxT("\n"), tokenizerMode);
 
     textToInsert.Clear();
     for (size_t i=0; i<lines.GetCount(); i++) {

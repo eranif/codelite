@@ -88,7 +88,7 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     wxMenu *menu = new wxMenu();
     wxMenuItem *item( NULL );
 
-    item = new wxMenuItem(menu, XRCID("abbrev_show"), _( "Show Abbreviations" ), _( "Show Abbreviations" ), wxITEM_NORMAL );
+    item = new wxMenuItem(menu, XRCID("abbrev_insert"), _( "Insert Expansion" ), _( "Insert Expansion" ), wxITEM_NORMAL );
     menu->Append( item );
 
     menu->AppendSeparator();
@@ -99,7 +99,7 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     pluginsMenu->Append(wxID_ANY, wxT("Abbreviation"), menu);
 
     m_topWindow->Connect( XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnSettings ), NULL, this );
-    m_topWindow->Connect( XRCID("abbrev_show"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnAbbreviations), NULL, this );
+    m_topWindow->Connect( XRCID("abbrev_insert"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnAbbreviations), NULL, this );
 }
 
 void AbbreviationPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -112,7 +112,7 @@ void AbbreviationPlugin::UnPlug()
 {
     EventNotifier::Get()->Disconnect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
     m_topWindow->Disconnect( XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnSettings ), NULL, this );
-    m_topWindow->Disconnect( XRCID("abbrev_show"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnAbbreviations), NULL, this );
+    m_topWindow->Disconnect( XRCID("abbrev_insert"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnAbbreviations), NULL, this );
 }
 
 void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
@@ -123,26 +123,35 @@ void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
 
 void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
 {
-    static wxBitmap bmp = LoadBitmapFile(wxT("abbrev.png")) ;
     IEditor *editor = m_mgr->GetActiveEditor();
-    if ( editor && bmp.IsOk() ) {
-        editor->RegisterImageForKind(wxT("Abbreviation"), bmp);
-        std::vector<TagEntryPtr> tags;
+    if (!editor) {
+        return;
+    }
 
-        // prepate list of abbreviations
-        AbbreviationEntry data;
-        m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+    AbbreviationEntry data;
+    m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+    
+    wxString wordAtCaret = editor->GetWordAtCaret();    
+    
+    if (data.GetAutoInsert() && wordAtCaret.IsEmpty() == false) {
+        InsertExpansion(wordAtCaret);
+    } else {
+        static wxBitmap bmp = LoadBitmapFile(wxT("abbrev.png")) ;
+        if (bmp.IsOk()) {
+            editor->RegisterImageForKind(wxT("Abbreviation"), bmp);
+            std::vector<TagEntryPtr> tags;
 
-        // search for the old item
-        std::map<wxString, wxString> entries = data.GetEntries();
-        std::map<wxString, wxString>::iterator iter = entries.begin();
-        for (; iter != entries.end(); iter ++) {
-            TagEntryPtr t(new TagEntry());
-            t->SetName(iter->first);
-            t->SetKind(wxT("Abbreviation"));
-            tags.push_back(t);
+            // search for the old item
+            std::map<wxString, wxString> entries = data.GetEntries();
+            std::map<wxString, wxString>::iterator iter = entries.begin();
+            for (; iter != entries.end(); iter ++) {
+                TagEntryPtr t(new TagEntry());
+                t->SetName(iter->first);
+                t->SetKind(wxT("Abbreviation"));
+                tags.push_back(t);
+            }
+            editor->ShowCompletionBox(tags, editor->GetWordAtCaret(), this);
         }
-        editor->ShowCompletionBox(tags, editor->GetWordAtCaret(), this);
     }
 }
 
@@ -153,17 +162,44 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
         return;
     }
 
+    wxString wordAtCaret = *(wxString*)e.GetClientData();
+    InsertExpansion(wordAtCaret);
+}
+
+void AbbreviationPlugin::InitDefaults()
+{
+    // check to see if there are any abbreviations configured
+    AbbreviationEntry data;
+    m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+
+    // search for the old item
+    if (data.GetEntries().empty()) {
+        // fill some default abbreviations
+        std::map<wxString, wxString> entries;
+        entries[wxT("main")] = wxT("int main(int argc, char **argv)\n{\n\t|\n}\n");
+        entries[wxT("while")] = wxT("while(|)\n{\n\t\n}\n");
+        entries[wxT("dowhile")] = wxT("do\n{\n\t\n}while(|)\n");
+        entries[wxT("tryblock")] = wxT("try\n{\n\t|\n}\ncatch($(ExceptionType) e)\n{\n}\n");
+        entries[wxT("for_size")] = wxT("for(size_t i=0; i<|; i++)\n{\n}\n");
+        entries[wxT("for_int")] = wxT("for(int i=0; i<|; i++)\n{\n}\n");
+        data.SetEntries(entries);
+
+        m_mgr->GetConfigTool()->WriteObject(wxT("AbbreviationsData"), &data);
+    }
+}
+
+void AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
+{
     // get the active editor
     IEditor *editor = m_mgr->GetActiveEditor();
 
-    // Note that we do not delete str!
-    wxString *str = (wxString*)e.GetClientData();
-
-    if (!editor || !str)
+    if (!editor || !abbreviation)
         return;
 
     // hide the completion box
-    editor->HideCompletionBox();
+    if (editor->IsCompletionBoxShown()) {
+        editor->HideCompletionBox();
+    }
 
     // search for abbreviation that matches str
     // prepate list of abbreviations
@@ -172,8 +208,7 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 
     // search for the old item
     std::map<wxString, wxString> entries = data.GetEntries();
-    std::map<wxString, wxString>::iterator iter = entries.find(*str);
-
+    std::map<wxString, wxString>::iterator iter = entries.find(abbreviation);
 
     if (iter != entries.end()) {
 
@@ -181,7 +216,7 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
         int selStart = editor->WordStartPos(editor->GetCurrentPosition(), true);
         int selEnd   = editor->WordEndPos(editor->GetCurrentPosition(), true);
         int curPos   = editor->GetCurrentPosition();
-        int typedWordLen = curPos - selStart;
+        int typedWordLen = curPos - selStart;    
 
         if (typedWordLen < 0) {
             typedWordLen = 0;
@@ -191,9 +226,9 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
         bool appendEol(false);
         if (text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) {
             appendEol = true;
-        }
+        }            
 
-        text = editor->FormatTextKeepIndent(text, selStart);
+        text = editor->FormatTextKeepIndent(text, selStart, Format_Text_Save_Empty_Lines);    
 
         // remove the first line indenation that might have been placed by CL
         text.Trim(false).Trim();
@@ -240,27 +275,5 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
             editor->ReplaceSelection(text);
             editor->SetCaretAt(curPos + where - typedWordLen);
         }
-    }
-}
-
-void AbbreviationPlugin::InitDefaults()
-{
-    // check to see if there are any abbreviations configured
-    AbbreviationEntry data;
-    m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
-
-    // search for the old item
-    if (data.GetEntries().empty()) {
-        // fill some default abbreviations
-        std::map<wxString, wxString> entries;
-        entries[wxT("main")] = wxT("int main(int argc, char **argv)\n{\n\t|\n}\n");
-        entries[wxT("while")] = wxT("while(|)\n{\n\t\n}\n");
-        entries[wxT("dowhile")] = wxT("do\n{\n\t\n}while(|)\n");
-        entries[wxT("tryblock")] = wxT("try\n{\n\t|\n}\ncatch($(ExceptionType) e)\n{\n}\n");
-        entries[wxT("for_size")] = wxT("for(size_t i=0; i<|; i++)\n{\n}\n");
-        entries[wxT("for_int")] = wxT("for(int i=0; i<|; i++)\n{\n}\n");
-        data.SetEntries(entries);
-
-        m_mgr->GetConfigTool()->WriteObject(wxT("AbbreviationsData"), &data);
     }
 }

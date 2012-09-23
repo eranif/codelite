@@ -38,20 +38,19 @@ class IManager;
 class AbbreviationsSettingsDlg : public AbbreviationsSettingsBase
 {
 	IManager *m_mgr;
+	AbbreviationEntry m_data;
 	bool m_dirty;
 	wxString m_activeItemName;
-	int m_currSelection;
+	int m_currSelection;	
 	
 protected:
 	// Handlers for AbbreviationsSettingsBase events.
-	void OnItemSelected( wxCommandEvent& event );
-	void OnButtonOk( wxCommandEvent& event );
-	void OnNew(wxCommandEvent &e);
-	void OnMarkDirty( wxCommandEvent& event );
+	void OnItemSelected( wxCommandEvent& event );	
+	void OnNew(wxCommandEvent &e);	
 	void OnDelete( wxCommandEvent& event );
 	void OnDeleteUI( wxUpdateUIEvent& event );
+	void OnMarkDirty( wxCommandEvent& event );
 	void OnSave( wxCommandEvent& event );
-	void OnSaveUI( wxUpdateUIEvent& event );
 	
 private:	
 	void DoPopulateItems();

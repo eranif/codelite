@@ -25,6 +25,8 @@
 
 #include "abbreviationentry.h"
 AbbreviationEntry::AbbreviationEntry()
+: m_entries()
+, m_autoInsert(false)
 {
 }
 
@@ -35,9 +37,11 @@ AbbreviationEntry::~AbbreviationEntry()
 void AbbreviationEntry::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_entries"), m_entries);
+	arch.Read(wxT("m_autoInsert"), m_autoInsert);
 }
 
 void AbbreviationEntry::Serialize(Archive& arch)
 {
 	arch.Write(wxT("m_entries"), m_entries);
+	arch.Write(wxT("m_autoInsert"), m_autoInsert);
 }

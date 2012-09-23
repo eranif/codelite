@@ -147,11 +147,10 @@ void CCBox::OnItemSelected( wxListEvent& event )
 {
     if(m_selectedItem == event.m_itemIndex)
         return;
+        
     m_selectedItem = event.m_itemIndex;
-    if( m_tipWindow ) {
-        m_tipWindow->Destroy();
-        m_tipWindow = NULL;
-    }
+    m_listCtrl->Refresh();
+    PostSelectItem(m_selectedItem); 
 }
 
 void CCBox::Show(const TagEntryPtrVector_t &tags, const wxString &word, bool isKeywordsList, wxEvtHandler *owner)
@@ -300,21 +299,28 @@ void CCBox::SelectItem(long item)
 {
     if(item == m_listCtrl->GetNextSelected(-1))
         return;
-
+        
+    if (m_listCtrl->GetFirstSelected() != -1) {
+        m_listCtrl->RefreshItem(m_listCtrl->GetFirstSelected());
+    }     
     m_listCtrl->Select(item);
     m_listCtrl->EnsureVisible(item);
+    
+    PostSelectItem(item);
+}
 
+void CCBox::PostSelectItem(long item)
+{
     if( m_tipWindow ) {
         m_tipWindow->Destroy();
         m_tipWindow = NULL;
     }
 
-
     CCItemInfo tag;
     if(m_listCtrl->GetItemTagEntry(item, tag)) {
         DoFormatDescriptionPage( tag );
     }
-}
+}    
 
 void CCBox::Show(const wxString& word)
 {

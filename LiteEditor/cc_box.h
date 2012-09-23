@@ -89,6 +89,7 @@ protected:
     // helper methods
     int GetImageId(TagEntryPtr entry);
     void SelectItem(long item);
+    void PostSelectItem(long item);    
     void Show(const wxString &word);
     void DoInsertSelection(const wxString &word, bool triggerTip = true);
     void DoFormatDescriptionPage(const CCItemInfo& tag);

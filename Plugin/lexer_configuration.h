@@ -31,8 +31,9 @@
 #include "wx/xml/xml.h"
 #include <wx/font.h>
 #include "smart_ptr.h"
+#include "codelite_exports.h"
 
-class LexerConf
+class WXDLLIMPEXP_SDK LexerConf
 {
     StylePropertyList m_properties;
     int               m_lexerId;

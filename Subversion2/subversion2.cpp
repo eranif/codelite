@@ -1001,12 +1001,24 @@ void Subversion2::OnFileRemoved(wxCommandEvent& event)
         if(IsPathUnderSvn( fn.GetPath() )) {
             // Build the message:
             
+            // Limit the message to maximum of 10 files
             wxString filesString;
             wxString msg;
             msg << _("Would you like to remove the following files from SVN?\n\n");
+            size_t fileCount = files->GetCount();
+            
             for(size_t i=0; i<files->GetCount(); i++) {
-                msg << files->Item(i) << wxT("\n");
-                filesString << wxT("\"") << files->Item(i) << wxT("\" ");
+                if ( i < 10 ) {
+                    msg << files->Item(i) << wxT("\n");
+                    filesString << wxT("\"") << files->Item(i) << wxT("\" ");
+                    --fileCount;
+                } else {
+                    break;
+                }
+            }
+            
+            if ( fileCount ) {
+                msg << ".. and " << fileCount << " more files";
             }
             
             if(wxMessageBox(msg,

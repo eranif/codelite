@@ -216,7 +216,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
                 dependProj->SetModified( true );
             }
 
-            text << wxT("\t@echo ") << wxGetTranslation(BUILD_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+            text << wxT("\t@echo \"") << wxGetTranslation(BUILD_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\"\n");
             // make the paths relative, if it's sensible to do so
             wxFileName fn(dependProj->GetFileName());
             MakeRelativeIfSensible(fn, wspfile.GetPath());
@@ -296,7 +296,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
         projectSelConf = confToBuild;
     }
 
-    text << wxT("\t@echo ") << wxGetTranslation(BUILD_PROJECT_PREFIX) << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+    text << wxT("\t@echo \"") << wxGetTranslation(BUILD_PROJECT_PREFIX) << project << wxT(" - ") << projectSelConf << wxT(" ]----------\"\n");
 
     //make the paths relative, if it's sensible to do so
     wxFileName projectPath(proj->GetFileName());
@@ -336,7 +336,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
                 continue;
             }
 
-            text << wxT("\t@echo ") << wxGetTranslation(CLEAN_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+            text << wxT("\t@echo \"") << wxGetTranslation(CLEAN_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\"\n");
 
             //make the paths relative
             wxFileName fn(dependProj->GetFileName());
@@ -407,7 +407,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
         projectSelConf = confToBuild;
     }
 
-    text << wxT("\t@echo ") << wxGetTranslation(CLEAN_PROJECT_PREFIX) << project << wxT(" - ") << projectSelConf << wxT(" ]----------\n");
+    text << wxT("\t@echo \"") << wxGetTranslation(CLEAN_PROJECT_PREFIX) << project << wxT(" - ") << projectSelConf << wxT(" ]----------\"\n");
     if ( isPluginGeneratedMakefile ) {
 
         wxString cmd;

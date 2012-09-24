@@ -20,6 +20,8 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/button.h>
+#include <wx/filepicker.h>
+#include <wx/checkbox.h>
 
 class SvnCommitDialogBaseClass : public wxDialog
 {
@@ -45,6 +47,29 @@ protected:
 public:
     SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SvnCommitDialogBaseClass();
+};
+
+
+class SvnSyncDialogBaseClass : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText31;
+    wxStaticText* m_staticTextSvnInfo;
+    wxStaticText* m_staticText34;
+    wxDirPickerCtrl* m_dirPickerRootDir;
+    wxStaticText* m_staticText40;
+    wxTextCtrl* m_textCtrlExclude;
+    wxCheckBox* m_checkBoxBin;
+    wxButton* m_button28;
+    wxButton* m_button29;
+
+protected:
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    SvnSyncDialogBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Sync Workspace to SVN"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,200), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~SvnSyncDialogBaseClass();
 };
 
 #endif

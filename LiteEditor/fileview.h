@@ -113,7 +113,7 @@ public:
     bool AddFilesToVirtualFolder(wxTreeItemId &item, wxArrayString &paths);
     bool AddFilesToVirtualFolder(const wxString &vdFullPath, wxArrayString &paths);
     bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths);
-
+	void RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files);
     bool CreateVirtualDirectory(const wxString &parentPath, const wxString &vdName);
     
     /**

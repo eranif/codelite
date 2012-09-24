@@ -495,6 +495,8 @@ public:
      * project settings
      */
     wxArrayString GetIncludePaths();
+	void ClearAllVirtDirs();
+
 private:
     void DoDeleteVDFromCache(const wxString &vd);
     wxArrayString DoBacktickToIncludePath(const wxString &backtick);

@@ -214,13 +214,21 @@ public:
      */
     virtual bool AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths) = 0;
 
-    /**
-     * @brief create virtual folder to parentPath
-     * @param parentPath parent virtual directory full path in the form of <project>:vd1:vd2:...:vdN which must exist
-     * @param vdName child VD name
-     * @return true on success, false otherwise
-     */
-    virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName) = 0;
+	/**
+	 * @brief Redefine the files / folders that make up a project
+	 * @param proj Ref to the project to modify
+	 * @param path The root directory of the files to add
+	 * @param files The list of file paths w/o separate folder entries
+	 */
+	virtual void RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files) = 0;
+
+	/**
+	 * @brief create virtual folder to parentPath
+	 * @param parentPath parent virtual directory full path in the form of <project>:vd1:vd2:...:vdN which must exist
+	 * @param vdName child VD name
+	 * @return true on success, false otherwise
+	 */
+	virtual bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName) = 0;
 
     /**
      * @brief return the size of the icons used by CodeLite

@@ -34,6 +34,7 @@
 #include "dynamiclibrary.h"
 #include "plugindata.h"
 #include "keyboardmanager.h"
+#include "project.h"
 #include <set>
 #include <map>
 
@@ -135,6 +136,7 @@ public:
     virtual wxString               GetPageTitle(wxWindow* win) const;
     virtual void                   SetPageTitle(wxWindow* win, const wxString& title);
     virtual ProjectPtr             GetSelectedProject() const;
+    virtual void                   RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files);
     virtual IEditor*               FindEditor(const wxString &filename) const;
 	
     //------------------------------------

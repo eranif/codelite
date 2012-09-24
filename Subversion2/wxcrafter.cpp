@@ -33,6 +33,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     boxSizer1->Add(flexGridSizer5, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_staticText32 = new wxStaticText(this, wxID_ANY, _("Feature Request ID:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
     flexGridSizer5->Add(m_staticText32, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlFrID = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -40,6 +41,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     flexGridSizer5->Add(m_textCtrlFrID, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_staticTextBugID = new wxStaticText(this, wxID_ANY, _("Bug ID:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
     flexGridSizer5->Add(m_staticTextBugID, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlBugID = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -58,6 +60,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     m_panel1->SetSizer(boxSizer15);
     
     m_staticText17 = new wxStaticText(m_panel1, wxID_ANY, _("Modified Paths:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
     boxSizer15->Add(m_staticText17, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
     
     wxArrayString m_checkListFilesArr;
@@ -72,6 +75,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     m_splitterPage14->SetSizer(boxSizer16);
     
     m_staticText19 = new wxStaticText(m_splitterPage14, wxID_ANY, _("Message:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
     boxSizer16->Add(m_staticText19, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_textCtrlMessage = new wxTextCtrl(m_splitterPage14, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
@@ -117,5 +121,97 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
 SvnCommitDialogBaseClass::~SvnCommitDialogBaseClass()
 {
     m_choiceMessages->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
+    
+}
+
+SvnSyncDialogBaseClass::SvnSyncDialogBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC38D8InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer26 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer26);
+    
+    wxBoxSizer* boxSizer32 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer26->Add(boxSizer32, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Root URL:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText31Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText31Font.SetWeight(wxFONTWEIGHT_BOLD);
+    m_staticText31->SetFont(m_staticText31Font);
+    
+    boxSizer32->Add(m_staticText31, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    
+    m_staticTextSvnInfo = new wxStaticText(this, wxID_ANY, _("<none detected>"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer32->Add(m_staticTextSvnInfo, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    wxFlexGridSizer* flexGridSizer37 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer37->SetFlexibleDirection( wxBOTH );
+    flexGridSizer37->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer37->AddGrowableCol(1);
+    
+    boxSizer26->Add(flexGridSizer37, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    
+    m_staticText34 = new wxStaticText(this, wxID_ANY, _("Root Directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer37->Add(m_staticText34, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_dirPickerRootDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE);
+    
+    flexGridSizer37->Add(m_dirPickerRootDir, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    
+    m_staticText40 = new wxStaticText(this, wxID_ANY, _("Exclude these file extensions:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer37->Add(m_staticText40, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlExclude = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2);
+    
+    flexGridSizer37->Add(m_textCtrlExclude, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    
+    flexGridSizer37->AddStretchSpacer(0);
+    
+    m_checkBoxBin = new wxCheckBox(this, wxID_ANY, _("Exclude binary (application/octet-stream) files"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxBin->SetValue(false);
+    
+    flexGridSizer37->Add(m_checkBoxBin, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    
+    boxSizer26->AddStretchSpacer(1);
+    
+    wxBoxSizer* boxSizer27 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer26->Add(boxSizer27, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button28 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button28->SetDefault();
+    
+    boxSizer27->Add(m_button28, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    
+    m_button29 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer27->Add(m_button29, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    
+    
+    SetSizeHints(500,200);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre();
+    // Connect events
+    m_button28->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnSyncDialogBaseClass::OnOkUI), NULL, this);
+    m_button28->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnSyncDialogBaseClass::OnButtonOK), NULL, this);
+    
+}
+
+SvnSyncDialogBaseClass::~SvnSyncDialogBaseClass()
+{
+    m_button28->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SvnSyncDialogBaseClass::OnOkUI), NULL, this);
+    m_button28->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SvnSyncDialogBaseClass::OnButtonOK), NULL, this);
     
 }

@@ -184,3 +184,14 @@ void SvnBlameHandler::Process(const wxString& output)
 	SvnBlameDialog dlg(GetPlugin()->GetManager()->GetTheApp()->GetTopWindow(), output);
 	dlg.ShowModal();
 }
+
+void SvnRepoListHandler::Process(const wxString& output)
+{
+	if(output.StartsWith(wxT("svn:"))) {
+		// error occured
+		GetPlugin()->GetConsole()->AppendText(output);
+		GetPlugin()->GetConsole()->AppendText(wxT("--------\n"));
+		return;
+	}
+	GetPlugin()->FinishSyncProcess(m_proj, m_workDir, m_excludeBin, m_excludeExtensions, output);
+}

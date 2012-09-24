@@ -1299,3 +1299,17 @@ void Project::DoDeleteVDFromCache(const wxString& vd)
     }
     m_vdCache.erase(first, iter);
 }
+
+void Project::ClearAllVirtDirs()
+{
+	// remove all the virtual directories from this project
+	wxXmlNode *vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
+	while (vd) {
+		m_doc.GetRoot()->RemoveChild( vd );
+		delete vd;
+		vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
+	}
+	m_vdCache.clear();
+	SetModified(true);
+	SaveXmlFile();
+}

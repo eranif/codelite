@@ -421,6 +421,11 @@ bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString &vdFullP
     return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(vdFullPath, paths);
 }
 
+void PluginManager::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)
+{
+	return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->RedefineProjFiles(proj, path, files);
+}
+
 int PluginManager::GetToolbarIconSize()
 {
     //for now return 24 by default

@@ -31,6 +31,7 @@
 #include "commitmessagescache.h"
 #include "svncommand.h"
 #include "svnsettingsdata.h"
+#include "project.h"
 
 class SubversionView;
 class SvnConsole;
@@ -43,11 +44,13 @@ private:
 	SubversionView*     m_subversionView;
 	SvnConsole*         m_subversionConsole;
 	wxMenuItem*         m_explorerSepItem;
+	wxMenuItem*          m_projectSepItem;
 	SvnCommand          m_simpleCommand;
 	SvnCommand          m_diffCommand;
 	SvnCommand          m_blameCommand;
 	double              m_svnClientVersion;
 	CommitMessagesCache m_commitMessagesCache;
+	bool                m_skipRemoveFilesDlg;
 
 protected:
 	void OnSettings(wxCommandEvent &event);
@@ -76,6 +79,7 @@ protected:
 	void OnLockFile         (wxCommandEvent &event);
 	void OnUnLockFile       (wxCommandEvent &event);
 	void OnRename           (wxCommandEvent& event);
+	void OnSync             (wxCommandEvent &event);
 
 	///////////////////////////////////////////////////////////
 	// IDE events
@@ -86,6 +90,7 @@ protected:
 
 	wxMenu* CreateFileExplorerPopMenu();
 	bool    IsSubversionViewDetached ();
+	wxMenu* CreateProjectPopMenu();
 	
 public:
 	void    DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString &workingDirectory);
@@ -140,12 +145,22 @@ public:
 	bool GetNonInteractiveMode(wxCommandEvent &event);
 	bool IsPathUnderSvn       (const wxString &path);
 	void ChangeLog            (const wxString &path, const wxString &fullpath, wxCommandEvent &event);
+	void FinishSyncProcess(ProjectPtr& proj, 
+                           const wxString& workDir,
+                           bool excludeBin,
+                           const wxString& excludeExtensions,
+                           const wxString& output);
 
 protected:
 	void DoInitialize();
 	void DoSetSSH();
 	void DoGetSvnVersion();
 	wxArrayString DoGetSvnStatusQuiet(const wxString &wd);
+	bool NormalizeDir(wxString& wd);
+	std::vector<wxString> GetLocalAddsDels(const wxString& wd);
+	std::vector<wxString> GetFilesMarkedBinary(const wxString& wd);
+    std::vector<wxString> RemoveExcludeExts(const std::vector<wxString>& aryInFiles, const wxString& excludeExtensions);
+
 	wxString DoGetFileExplorerItemFullPath();
 	wxString DoGetFileExplorerItemPath();
 	

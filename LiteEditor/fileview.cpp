@@ -1721,6 +1721,66 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
 	}
 }
 
+void FileViewTree::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)
+{
+	wxFileName rootPath(path);
+    
+	// loop over the files and construct for each file a record with
+	// the following information:
+	// -virtual directory (full path, starting from project level)
+	// -display name
+	// -full path of the file
+	proj->BeginTranscation();
+	{
+		// Create a progress dialog
+		clProgressDlg *prgDlg = new clProgressDlg(NULL,
+		        _("Importing files ..."),
+		        wxT(""),
+		        (int)files.size());
+
+		proj->ClearAllVirtDirs();
+        
+		wxString relativePath;
+		for (size_t i=0; i<files.size(); i++) {
+			wxFileName fn(files[i]);
+
+			FileViewItem fvitem;
+			fvitem.fullpath = fn.GetFullPath();
+			fvitem.displayName = fn.GetFullName();
+
+			fn.MakeRelativeTo(path);
+
+			// anchor all files to a base folder
+			relativePath = rootPath.GetName() + wxT(":") + fn.GetPath() + wxT(":");
+			relativePath.Replace(wxT("/"), wxT(":"));
+			relativePath.Replace(wxT("\\"), wxT(":"));
+
+			fvitem.virtualDir = relativePath;
+			DoAddItem(proj, fvitem);
+
+			wxString msg;
+			msg << _("Adding file: ") << fn.GetFullPath();
+			prgDlg->Update((int)i, msg);
+		}
+		m_itemsToSort.clear();
+		prgDlg->Destroy();
+	}
+
+	//save the project file to disk
+	proj->CommitTranscation();
+
+	// reload the project
+	wxString curr_proj_name ( proj->GetName() );
+	bool     was_active ( ManagerST::Get()->GetActiveProjectName() == curr_proj_name );
+	ManagerST::Get()->RemoveProject( proj->GetName(), false );
+	ManagerST::Get()->AddProject(proj->GetFileName().GetFullPath());
+
+	// restore the active project
+	if ( was_active ) {
+		MarkActive( curr_proj_name );
+	}
+}
+
 void FileViewTree::DoAddItem(ProjectPtr proj, const FileViewItem &item)
 {
 	if (!proj) {

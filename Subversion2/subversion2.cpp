@@ -30,6 +30,7 @@
 #include <wx/imaglist.h>
 #include "svn_patch_dlg.h"
 #include <wx/dir.h>
+#include "svn_sync_dialog.h"
 
 static Subversion2* thePlugin = NULL;
 
@@ -117,10 +118,12 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 Subversion2::Subversion2(IManager *manager)
     : IPlugin           (manager)
     , m_explorerSepItem (NULL)
+    , m_projectSepItem(NULL)
     , m_simpleCommand   (this)
     , m_diffCommand     (this)
     , m_blameCommand    (this)
     , m_svnClientVersion(0.0)
+    , m_skipRemoveFilesDlg(false)
 {
     m_longName = _("Subversion plugin for codelite2.0 based on the svn command line tool");
     m_shortName = wxT("Subversion2");
@@ -143,6 +146,7 @@ Subversion2::Subversion2(IManager *manager)
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_unlock"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnUnLockFile),        NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_lock"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnLockFile),          NULL, this);
+    GetManager()->GetTheApp()->Connect(XRCID("svn_workspace_sync"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSync),              NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,    wxCommandEventHandler(Subversion2::OnWorkspaceConfigChanged), NULL, this);
@@ -171,12 +175,29 @@ void Subversion2::CreatePluginMenu(wxMenu *pluginsMenu)
     pluginsMenu->Append(wxID_ANY, wxT("Subversion2"), menu);
 }
 
+wxMenu* Subversion2::CreateProjectPopMenu()
+{
+    wxMenu* menu = new wxMenu();
+    wxMenuItem *item(NULL);
+
+    item = new wxMenuItem(menu, XRCID("svn_workspace_sync"), _("Sync Project Files..."), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+
+    return menu;
+}
+
 void Subversion2::HookPopupMenu(wxMenu *menu, MenuType type)
 {
     if (type == MenuTypeFileExplorer) {
         if (!menu->FindItem(XRCID("SUBVERSION_EXPLORER_POPUP"))) {
             m_explorerSepItem = menu->PrependSeparator();
             menu->Prepend(XRCID("SUBVERSION_EXPLORER_POPUP"), wxT("Subversion"), CreateFileExplorerPopMenu());
+        }
+    }
+    else if (type == MenuTypeFileView_Project) {
+        if (!menu->FindItem(XRCID("SUBVERSION_PROJECT_POPUP"))) {
+            m_projectSepItem = menu->PrependSeparator();
+            menu->Prepend(XRCID("SUBVERSION_PROJECT_POPUP"), wxT("Subversion"), CreateProjectPopMenu());
         }
     }
 }
@@ -261,6 +282,7 @@ void Subversion2::UnPlug()
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_ignore_file"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFile),        NULL, this);
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
+    GetManager()->GetTheApp()->Disconnect(XRCID("svn_workspace_sync"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSync),              NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
 
     m_subversionView->DisconnectEvents();
@@ -967,6 +989,10 @@ void Subversion2::OnWorkspaceConfigChanged(wxCommandEvent& event)
 void Subversion2::OnFileRemoved(wxCommandEvent& event)
 {
     event.Skip();
+    if (m_skipRemoveFilesDlg) {
+        m_skipRemoveFilesDlg = false;
+        return;
+    }
     wxArrayString *files = (wxArrayString*)event.GetClientData();
     if(files && !files->IsEmpty()) {
         
@@ -1135,4 +1161,249 @@ wxArrayString Subversion2::DoGetSvnStatusQuiet(const wxString& wd)
     modFiles.insert(modFiles.end(), deletedFiles.begin(), deletedFiles.end());
     wxLog::EnableLogging(true);
     return modFiles;
+}
+
+bool Subversion2::NormalizeDir(wxString& wd)
+{
+    if (!wxFileName::DirExists(wd)) {
+        return false;
+    }
+    
+    // gets rid of possible trailing slash and fixes mixed-case issues
+    wxFileName fn(wd);
+    fn.Normalize();         // wxPATH_NORM_CASE seems broken
+    wd = fn.GetFullPath();
+    if (wxPATH_DOS == wxFileName::GetFormat()) {
+        wd.LowerCase();
+        
+        // Subversion *always* capitalizes Windows/Dos volume letters
+        wxChar volume = wd.GetChar(0);
+        volume = toupper(volume);
+        wd.SetChar(0, volume);
+    }
+    // get rid of possible trailing slash/backslash
+    if (wd.Last() == wxFileName::GetPathSeparator()) {
+        wd.RemoveLast();
+    }
+    return true;
+}
+
+std::vector<wxString> Subversion2::GetLocalAddsDels(const wxString& wd)
+{
+    wxString command;
+
+    command << GetSvnExeName() << wxT(" status -q ");
+    command << wxT("\"") << wd << wxT("\"");
+
+    wxLog::EnableLogging(false);
+
+    std::vector<wxString> aryFiles;
+    wxArrayString lines;
+
+    ProcUtils::ExecuteCommand(command, lines);
+    
+    wxString fileName;
+    for(size_t i1=0; i1 < lines.GetCount(); i1++) {
+        wxChar stat = lines.Item(i1).GetChar(0);
+        
+        if ('A' == stat || 'D' == stat) {
+            fileName = lines.Item(i1).Mid(8);
+            
+            if (!wxFileName::DirExists(fileName)) {
+                aryFiles.push_back(fileName);
+            }
+        }
+    }
+
+    wxLog::EnableLogging(true);
+    return aryFiles;
+}
+
+std::vector<wxString> Subversion2::GetFilesMarkedBinary(const wxString& wd)
+{
+    wxString command;
+
+    command << GetSvnExeName() << wxT(" propget svn:mime-type -R ");
+    command << wxT("\"") << wd << wxT("\"");
+
+    wxLog::EnableLogging(false);
+
+    std::vector<wxString> aryFiles;
+    wxArrayString lines;
+
+    ProcUtils::ExecuteCommand(command, lines);
+    
+    wxString fileName;
+    for(size_t i1=0; i1 < lines.GetCount(); i1++) {
+        lines.Item(i1).Trim();  // gets rid of \r\n, \n, etc.
+        if (lines.Item(i1).EndsWith(_(" - application/octet-stream"), &fileName)) {
+            aryFiles.push_back(fileName);
+        }
+    }
+
+    wxLog::EnableLogging(true);
+    return aryFiles;
+}
+
+std::vector<wxString> Subversion2::RemoveExcludeExts(const std::vector<wxString>& aryInFiles, const wxString& excludeExtensions)
+{
+    std::vector<wxString> aryOutFiles;
+
+	wxStringTokenizer tok(excludeExtensions, wxT(" ;"));
+	std::set<wxString> specMap;
+	while ( tok.HasMoreTokens() ) {
+		wxString v = tok.GetNextToken();
+
+		if (v == wxT("*.*")) {
+			// Just ignore the request to not add any files
+			continue;
+		}
+		v = v.AfterLast(wxT('*'));
+		v = v.AfterLast(wxT('.')).MakeLower();
+		specMap.insert( v );
+	}
+
+    for(size_t i1=0; i1 < aryInFiles.size(); i1++) {
+		if ( specMap.empty() ) {
+			aryOutFiles.push_back(aryInFiles[i1]);
+            continue;
+		}
+        
+		wxFileName fn(aryInFiles[i1]);
+		if (specMap.find(fn.GetExt().MakeLower()) == specMap.end()) {
+			aryOutFiles.push_back(aryInFiles[i1]);
+        }        
+    }
+
+    return aryOutFiles;
+}
+
+void Subversion2::OnSync(wxCommandEvent& event)
+{   
+    if ( !m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen() ) {
+        return;
+    }
+    
+    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
+    if ( item.m_itemType != ProjectItem::TypeProject) {
+        return; // a project must be selected
+    }
+
+    // retrieve complete list of source files of the workspace
+    wxString project_name (item.m_text);
+    wxString err_msg;
+
+    ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project_name, err_msg);
+    if ( !proj ) {
+        return;
+    }
+
+    wxString rawData = proj->GetPluginData(_("subversion2"));
+    
+    wxArrayString options = wxStringTokenize(rawData, _("\n"));    
+    bool excludeBinary = true;
+    wxString rootDir;
+    wxString excludeExtensions;
+    if (options.GetCount() >=1) {
+        if (options.Item(0) == _("false") ) {
+            excludeBinary = false;
+        }
+    } 
+    if (options.GetCount() >=2) {
+        rootDir = options.Item(1);
+    }    
+    if (options.GetCount() >=3) {
+        excludeExtensions = options.Item(2);
+    } else {
+        excludeExtensions << "*.dll *.so *.o *.obj *.workspace *.project *.exe *.dylib";
+    }
+
+    SvnSyncDialog dlg(GetManager()->GetTheApp()->GetTopWindow(), this, rootDir, excludeBinary, excludeExtensions );
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+    excludeExtensions = dlg.GetExcludeExtensions();
+    excludeBinary = dlg.GetExcludeBin();
+
+    wxLogMessage (_("excludeBinary=%d\n"), excludeBinary);
+    
+    // attempt to update the project files
+    wxString workDir(dlg.GetRootDir());
+    NormalizeDir(workDir);
+    
+    wxString command;
+    command << GetSvnExeName() << wxT(" list -R ");
+    command << wxT("\"") << workDir << wxT("\"");
+    
+    // Calls FinishSyncProcess()
+    // Get password/authentication, if required
+    GetConsole()->Execute(command, workDir, new SvnRepoListHandler(this, 
+                            proj, workDir, excludeBinary, excludeExtensions,
+                            wxNOT_FOUND, NULL));
+}
+
+void Subversion2::FinishSyncProcess(ProjectPtr& proj, 
+                                    const wxString& workDir,
+                                    bool excludeBin,
+                                    const wxString& excludeExtensions,
+                                    const wxString& output)
+{
+    // Convert output of "svn list" into a list of files
+    // Note that svn list always uses '/' as path delimiter
+    std::vector<wxString> aryRepoList;
+    {
+        wxArrayString repoListOutput = wxStringTokenize(output, _("\r\n"));    
+        wxFileName fn;
+        for(size_t i1=0; i1 < repoListOutput.GetCount(); i1++) {
+            if (repoListOutput.Item(i1).Last() != '/') {
+                fn.Assign(workDir + wxFileName::GetPathSeparator() + repoListOutput.Item(i1));
+                aryRepoList.push_back(fn.GetFullPath());
+            }
+        }
+    }
+    std::sort(aryRepoList.begin(), aryRepoList.end());
+    
+    std::vector<wxString> aryNoBins;
+    if (excludeBin) {
+        std::vector<wxString> aryBinaries = GetFilesMarkedBinary(workDir);        
+        std::sort(aryBinaries.begin(), aryBinaries.end());
+
+        std::set_symmetric_difference(aryRepoList.begin(), aryRepoList.end(),
+                                      aryBinaries.begin(), aryBinaries.end(),
+                                      std::back_inserter(aryNoBins));
+    }
+    std::vector<wxString>& aryMaybeNoBins = excludeBin ? aryNoBins : aryRepoList;
+    
+    // get local added or deleted files; then add or del from list
+    std::vector<wxString> aryUnfiltered;
+    {
+        std::vector<wxString> aryAddsDels = GetLocalAddsDels(workDir);
+        std::sort(aryAddsDels.begin(), aryAddsDels.end());
+
+        std::set_symmetric_difference(aryMaybeNoBins.begin(), aryMaybeNoBins.end(),
+                                      aryAddsDels.begin(), aryAddsDels.end(),
+                                      std::back_inserter(aryUnfiltered));
+    }
+    std::vector<wxString> aryFinal = RemoveExcludeExts(aryUnfiltered, excludeExtensions);
+    
+    m_skipRemoveFilesDlg = true;
+    m_mgr->RedefineProjFiles(proj, workDir, aryFinal);
+
+    // refresh project info
+    wxString err_msg;
+    ProjectPtr projRefreshed = m_mgr->GetWorkspace()->FindProjectByName(proj->GetName(), err_msg);
+    
+    if (projRefreshed) {
+        wxChar delim = '\n';
+        wxString excludeBinTF;
+        if (excludeBin) {
+            excludeBinTF = _("true");
+        } else {
+            excludeBinTF = _("false");
+        }
+        wxString rawData = excludeBinTF + delim
+                           + workDir + delim + excludeExtensions;
+        wxLogMessage(_("rawData=%s\n"), rawData.c_str());
+        projRefreshed->SetPluginData(_("subversion2"), rawData);    
+    }
 }

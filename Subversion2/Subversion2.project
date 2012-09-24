@@ -65,6 +65,8 @@
     <File Name="svn_props_dialog.cpp"/>
     <File Name="svn_patch_dlg.cpp"/>
     <File Name="svn_patch_dlg.h"/>
+    <File Name="svn_sync_dialog.cpp"/>
+    <File Name="svn_sync_dialog.h"/>
     <File Name="svn_select_local_repo_dlg.cpp"/>
     <File Name="svn_select_local_repo_dlg.h"/>
     <File Name="SvnCommitDialog.h"/>

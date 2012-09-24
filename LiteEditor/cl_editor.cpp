@@ -510,7 +510,7 @@ void LEditor::SetProperties()
     //wxLogMessage("Buffered draw is set to %d", (int)highlightWord);
 
 #elif defined(__WXGTK__)
-    SetTwoPhaseDraw(false);
+    SetTwoPhaseDraw(true);
     SetBufferedDraw(false);
 
 #else // MSW

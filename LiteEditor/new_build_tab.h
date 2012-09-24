@@ -19,7 +19,6 @@ class wxDataViewListCtrl;
 ///////////////////////////////
 // Holds the information about
 // a specific line
-
 enum LINE_SEVERITY {
     SV_NONE    = 0,
     SV_WARNING = 1,

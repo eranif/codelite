@@ -29,98 +29,105 @@
 #include "wx/filename.h"
 #include "attribute_style.h"
 #include "wx/xml/xml.h"
+#include <wx/font.h>
 #include "smart_ptr.h"
 
 class LexerConf
 {
-	StylePropertyList m_properties;
-	int               m_lexerId;
-	wxString          m_name;
-	wxString          m_extension;
-	wxString          m_keyWords[10];
-	bool              m_styleWithinPreProcessor;
+    StylePropertyList m_properties;
+    int               m_lexerId;
+    wxString          m_name;
+    wxString          m_extension;
+    wxString          m_keyWords[10];
+    bool              m_styleWithinPreProcessor;
 
 
 public:
-	// Return an xml representation from this object
-	wxXmlNode *ToXml() const;
+    // Return an xml representation from this object
+    wxXmlNode *ToXml() const;
 
-	// Parse lexer object from xml node
-	void FromXml(wxXmlNode *node);
+    // Parse lexer object from xml node
+    void FromXml(wxXmlNode *node);
 
 public:
-	LexerConf();
-	virtual ~LexerConf();
+    LexerConf();
+    virtual ~LexerConf();
 
-	/**
-	 * Get the lexer ID, which should be in sync with values of Scintilla
-	 * \return
-	 */
-	int GetLexerId() const {
-		return m_lexerId;
-	}
+    /**
+     * Get the lexer ID, which should be in sync with values of Scintilla
+     * \return
+     */
+    int GetLexerId() const {
+        return m_lexerId;
+    }
 
-	void SetStyleWithinPreProcessor(bool styleWithinPreProcessor) {
-		this->m_styleWithinPreProcessor = styleWithinPreProcessor;
-	}
+    void SetStyleWithinPreProcessor(bool styleWithinPreProcessor) {
+        this->m_styleWithinPreProcessor = styleWithinPreProcessor;
+    }
 
-	bool GetStyleWithinPreProcessor() const {
-		return m_styleWithinPreProcessor;
-	}
+    bool GetStyleWithinPreProcessor() const {
+        return m_styleWithinPreProcessor;
+    }
 
-	/**
-	 * Set the lexer ID
-	 * \param id
-	 */
-	void SetLexerId(int id) {
-		m_lexerId = id;
-	}
+    /**
+     * Set the lexer ID
+     * \param id
+     */
+    void SetLexerId(int id) {
+        m_lexerId = id;
+    }
 
-	/**
-	 * Return the lexer description as described in the XML file
-	 */
-	const wxString &GetName() const {
-		return m_name;
-	}
-	/**
-	 * Return the lexer keywords
-	 * \return
-	 */
-	const wxString &GetKeyWords(int set) const {
-		return m_keyWords[set];
-	}
+    /**
+     * Return the lexer description as described in the XML file
+     */
+    const wxString &GetName() const {
+        return m_name;
+    }
+    /**
+     * Return the lexer keywords
+     * \return
+     */
+    const wxString &GetKeyWords(int set) const {
+        return m_keyWords[set];
+    }
 
-	void SetKeyWords(const wxString &keywords, int set) {
-		m_keyWords[set] = keywords;
-	}
+    void SetKeyWords(const wxString &keywords, int set) {
+        m_keyWords[set] = keywords;
+    }
 
-	/**
-	 * File patterns that this lexer should apply to
-	 */
-	const wxString &GetFileSpec() const {
-		return m_extension;
-	}
-	/**
-	 * Return a list of the lexer properties
-	 * \return
-	 */
-	const StylePropertyList &GetProperties() const {
-		return m_properties;
-	}
-	/**
-	 * Set the lexer properties
-	 * \param &properties
-	 */
-	void SetProperties(StylePropertyList &properties) {
-		m_properties = properties;
-	}
-	/**
-	 * Set file spec for the lexer
-	 * \param &spec
-	 */
-	void SetFileSpec(const wxString &spec) {
-		m_extension = spec;
-	}
+    /**
+     * File patterns that this lexer should apply to
+     */
+    const wxString &GetFileSpec() const {
+        return m_extension;
+    }
+    /**
+     * Return a list of the lexer properties
+     * \return
+     */
+    const StylePropertyList &GetProperties() const {
+        return m_properties;
+    }
+    /**
+     * Set the lexer properties
+     * \param &properties
+     */
+    void SetProperties(StylePropertyList &properties) {
+        m_properties = properties;
+    }
+    /**
+     * Set file spec for the lexer
+     * \param &spec
+     */
+    void SetFileSpec(const wxString &spec) {
+        m_extension = spec;
+    }
+    
+    /**
+     * @brief return the font for a given style id
+     * @return return wxNullFont if error occured or could locate the style
+     */
+    wxFont GetFontForSyle(int styleId) const;
 };
 
 typedef SmartPtr<LexerConf> LexerConfPtr;

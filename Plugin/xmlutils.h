@@ -54,12 +54,28 @@ public:
 	static void UpdateProperty(wxXmlNode *node, const wxString &name, const wxString &value);
 
 	/**
-	 * Find the first child node of parent with a given name. NULL if no childs exist
-	 * \param the parent node whom to be searched
+	 * Find the first child node of parent with a given name. NULL if no children exist
+	 * \param the parent node to be searched
 	 * \param the element's tag name
 	 */
 	static wxXmlNode *FindFirstByTagName(const wxXmlNode *parent, const wxString &tagName);
 
+	/**
+	 * Read all of the child nodes (presumed to be textnodes) of the passed node, optionally with a given tagname
+	 * \param node the node to be searched
+	 * \param tagName the child tag name to find and read their contents. If empty, read all children
+	 * \return a wxArrayString
+	 */
+	static wxArrayString ChildNodesContentToArray(const wxXmlNode* node, const wxString& tagName = wxT(""));
+
+	/**
+	 * Read all of the child nodes (presumed to be textnodes) of the passed node, optionally with a given tagname
+	 * \param node the node to be searched
+	 * \param tagName the child tag name to find and read their contents. If empty, read all children
+	 * \param separator the string to use to separate each child's content, ';' by default
+	 * \return a wxString containing the content of each child, separated by 'separator'
+	 */
+	static wxString ChildNodesContentToString(const wxXmlNode* node, const wxString& tagName = wxT(""),  const wxString& separator = wxT(";"));
 
 	/**
 	 * Set the content of node. This function replaces any existing content of node

@@ -167,6 +167,48 @@ bool XmlUtils::ReadBoolIfExists(const wxXmlNode* node, const wxString& propName,
 	return true;
 }
 
+wxArrayString XmlUtils::ChildNodesContentToArray(const wxXmlNode* node, const wxString& tagName/* = wxT("")*/)
+{
+	wxArrayString arr;
+
+    if(!node){
+		return arr;
+	}
+
+	wxXmlNode* child = node->GetChildren();
+	while (child) {
+		if(tagName.empty() || child->GetName() == tagName){
+			arr.Add(child->GetNodeContent());
+		}
+		child = child->GetNext();
+	}
+
+	return arr;
+}
+
+wxString XmlUtils::ChildNodesContentToString(const wxXmlNode* node, const wxString& tagName/* = wxT("")*/,  const wxString& separator/* = wxT(";")*/)
+{
+	wxString str;
+
+    if(!node){
+		return str;
+	}
+
+	wxXmlNode* child = node->GetChildren();
+	while (child) {
+		if(tagName.empty() || child->GetName() == tagName){
+			str << child->GetNodeContent() << separator;
+		}
+		child = child->GetNext();
+	}
+
+    if (!str.empty()) {
+        str.RemoveLast(separator.Len());
+    }
+
+	return str;
+}
+
 void XmlUtils::SetNodeContent(wxXmlNode *node, const wxString &text)
 {
 	wxXmlNode *n = node->GetChildren();

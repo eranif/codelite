@@ -181,7 +181,8 @@ protected:
     void MarkEditor(LEditor *editor);
     void DoToggleWindow();
     bool DoSelectAndOpen(const wxDataViewItem& item);
-
+    wxFont DoGetFont() const;
+    
 public:
     NewBuildTab(wxWindow* parent);
     virtual ~NewBuildTab();

@@ -186,10 +186,9 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     wxBitmap tmpBmp(1, 1);
     wxMemoryDC memDc;
     memDc.SelectObject(tmpBmp);
-    wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    f.SetFamily(wxFONTFAMILY_TELETYPE);
+    wxFont fnt = DoGetFont();
     int xx, yy;
-    memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &f);
+    memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &fnt);
     int style = wxDV_NO_HEADER|wxDV_SINGLE;
     style |= wxDV_ROW_LINES;
 
@@ -476,17 +475,9 @@ bool NewBuildTab::DoGetCompilerPatterns(const wxString& compilerName, CmpPattern
 
 void NewBuildTab::DoClear()
 {
-    wxFont font = wxNullFont;
-    LexerConfPtr lexerConf = EditorConfigST::Get()->GetLexer("C++");
-    if ( lexerConf ) {
-        font = lexerConf->GetFontForSyle(wxSTC_C_DEFAULT);
-    }
-    
-    if ( font.IsOk() == false ) {
-        font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    }
+    wxFont font = DoGetFont();
     m_textRenderer->SetFont( font );
-    
+
     m_buildInterrupted = false;
     m_directories.Clear();
     m_buildInfoPerFile.clear();
@@ -847,6 +838,21 @@ wxString NewBuildTab::GetBuildContent() const
     }
     return output;
 }
+
+wxFont NewBuildTab::DoGetFont() const
+{
+    wxFont font = wxNullFont;
+    LexerConfPtr lexerConf = EditorConfigST::Get()->GetLexer("C++");
+    if ( lexerConf ) {
+        font = lexerConf->GetFontForSyle(wxSTC_C_DEFAULT);
+    }
+
+    if ( font.IsOk() == false ) {
+        font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    }
+    return font;
+}
+
 
 ////////////////////////////////////////////
 // CmpPatter

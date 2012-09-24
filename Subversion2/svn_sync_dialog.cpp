@@ -1,0 +1,55 @@
+#include "svn_sync_dialog.h"
+#include <wx/dirdlg.h>
+#include "subversion2.h"
+#include "imanager.h"
+#include "windowattrmanager.h"
+
+SvnSyncDialog::SvnSyncDialog( wxWindow* parent, Subversion2 *plugin, const wxString& rootDir, bool excludeBin, const wxString& excludeExtensions )
+    : SvnSyncDialogBaseClass( parent )
+    , m_plugin(plugin)
+    , m_rootDir(rootDir)
+    , m_excludeExtensions(excludeExtensions)
+    , m_excludeBin(excludeBin)
+{
+    m_dirPickerRootDir->SetInitialDirectory(m_rootDir.IsEmpty() ? wxGetCwd() : m_rootDir);
+    m_dirPickerRootDir->SetPath(m_rootDir.IsEmpty() ? wxGetCwd() : m_rootDir);
+    m_textCtrlExclude->SetValue(m_excludeExtensions);
+    m_checkBoxBin->SetValue(m_excludeBin);
+
+    UpdateUrl(m_rootDir);
+
+    WindowAttrManager::Load(this, wxT("SvnSyncDialog"), m_plugin->GetManager()->GetConfigTool());
+}
+
+SvnSyncDialog::~SvnSyncDialog()
+{
+    WindowAttrManager::Save(this, wxT("SvnSyncDialog"), m_plugin->GetManager()->GetConfigTool());
+}
+
+void SvnSyncDialog::UpdateUrl(const wxString& rootDir)
+{
+    SvnInfo svnInfo;
+    m_plugin->DoGetSvnInfoSync(svnInfo, rootDir);
+
+    wxString textLine(_("Root URL:  "));
+    if (svnInfo.m_sourceUrl.IsEmpty()) {
+        textLine += _("<not applicable>");
+    } else {
+        textLine += svnInfo.m_sourceUrl;
+    }
+    m_staticTextSvnInfo->SetLabel(textLine);
+}
+
+void SvnSyncDialog::OnButtonOK( wxCommandEvent& event )
+{
+    wxUnusedVar(event);
+    m_rootDir = m_dirPickerRootDir->GetPath();
+    m_excludeExtensions = m_textCtrlExclude->GetValue();
+    m_excludeBin = m_checkBoxBin->IsChecked();
+    EndModal(wxID_OK);
+}
+
+void SvnSyncDialog::OnOkUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dirPickerRootDir->GetPath().IsEmpty() == false );
+}

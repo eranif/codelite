@@ -176,7 +176,7 @@ wxString BreakptMgr::GetTooltip(const wxString& fileName, const int lineno)
     for (; iter != li.end(); ++iter) {
         
         if (! tooltip.IsEmpty()) {
-            tooltip << wxT("\n\n<hr>\n");
+            tooltip << wxT("<hr>");
         }
         
         int id = (iter->debugger_id > 0 ? iter->debugger_id : iter->internal_id - FIRST_INTERNAL_ID);

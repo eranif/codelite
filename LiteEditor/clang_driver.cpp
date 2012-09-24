@@ -163,7 +163,7 @@ void ClangDriver::CodeCompletion(IEditor* editor)
     if(m_isBusy) {
         if(editor) {
             CodeCompletionBox::Get().CancelTip();
-            CodeCompletionBox::Get().ShowTip( wxT("<b>clang: </b>Code Completion Message:\n\n<hr>n\nA lengthy operation is in progress..."), dynamic_cast<LEditor*>(m_activeEditor));
+            CodeCompletionBox::Get().ShowTip( wxT("<b>clang: </b>Code Completion Message:<hr>A lengthy operation is in progress..."), dynamic_cast<LEditor*>(m_activeEditor));
         }
         return;
     }

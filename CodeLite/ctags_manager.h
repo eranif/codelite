@@ -61,7 +61,7 @@ class IProcess;
 #define USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE 1
 
 // BUG#3082954
-#define MAX_TIP_LINE_SIZE 100
+#define MAX_TIP_LINE_SIZE 200
 
 #define TagsGlobal    0
 

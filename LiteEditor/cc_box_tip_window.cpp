@@ -34,11 +34,8 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
         m_rightbmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/next-tip"));
     }
 
-    m_tip.Trim().Trim(false);
-    m_tip.Replace(wxT("\n<hr>"), wxT("<hr>"));
-
     if ( !simpleTip && m_numOfTips > 1 )
-        m_tip.Prepend(wxT("\n\n")); // Make room for the spinctrl
+        m_tip.Prepend(wxT("\n\n")); // Make room for the arrows
 
     Hide();
 
@@ -46,11 +43,21 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
     wxMemoryDC dc(bmp);
 
     wxSize size;
-    m_commentFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_codeFont    = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_codeFont    = wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    m_commentFont = wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
     wxString codePart, commentPart;
     wxString strippedTip = DoStripMarkups();
+    
+    size_t from = 0;
+    int hr_count = 0;
+    size_t hrPos = strippedTip.find("<hr>");
+    while ( hrPos != wxString::npos ) {
+        ++hr_count;
+        from = hrPos + 4;
+        hrPos = strippedTip.find("<hr>", from);
+    }
+    
     int where= strippedTip.Find("<hr>");
     if ( where != wxNOT_FOUND ) {
         codePart    = strippedTip.Mid(0, where);
@@ -82,20 +89,11 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
     // Set the width
     commentWidth > codeWidth ? size.x = commentWidth : size.x = codeWidth;
 
-    // calculate the height
-    
-    if ( !simpleTip)
-        m_lineHeight = 16;
-    else
-        m_lineHeight = 0;
-        
     dc.GetTextExtent(wxT("Tp"), NULL, &m_lineHeight, NULL, NULL, &m_codeFont);
     int nLineCount = ::wxStringTokenize(m_tip, wxT("\r\n"), wxTOKEN_RET_EMPTY_ALL).GetCount();
     
-    if ( !simpleTip )
-        nLineCount++;
-
     size.y = nLineCount * m_lineHeight;
+    size.y += (hr_count * 10) + 10; // each <hr> uses 10 pixels height
     size.x += 40;
     SetSize(size);
 
@@ -202,8 +200,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     ::setMarkupLexerInput(m_tip);
     wxString curtext;
 
-    size_t i=0;
-    wxPoint pt(5, 0);
+    wxPoint pt(5, 5);
     while ( true ) {
         int type = ::MarkupLex();
 
@@ -231,14 +228,12 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         case CODE_START: {
             // Before we change the font, draw the buffer
             DoPrintText(dc, curtext, pt);
-
             dc.SetFont(m_codeFont);
             break;
         }
         case CODE_END: {
             // Before we change the font, draw the buffer
             DoPrintText(dc, curtext, pt);
-
             dc.SetFont(m_commentFont);
             break;
         }
@@ -246,19 +241,19 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         case NEW_LINE: {
             // New line, print the content
             DoPrintText(dc, curtext, pt);
-            ++i;
+            pt.y += m_lineHeight;
 
             // reset the drawing point to the start of the next line
-            pt = wxPoint(5, i*m_lineHeight);
+            pt.x = 5;
             break;
         }
         case HORIZONTAL_LINE: {
             // Draw the buffer
             curtext.Clear();
-            pt = wxPoint(5, i*m_lineHeight);
+            pt.y += 5;
             dc.DrawLine(wxPoint(0, pt.y), wxPoint(rr.GetWidth(), pt.y));
-
-            pt = wxPoint(5, i*m_lineHeight);
+            pt.y += 5;
+            pt.x = 5;
             break;
         }
         case COLOR_START: {

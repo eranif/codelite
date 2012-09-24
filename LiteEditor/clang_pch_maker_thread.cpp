@@ -172,7 +172,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
         if(!displayTip.IsEmpty() && hasErrors) {
 
             // Send back the error messages
-            reply->errorMessage << wxT("<b>clang: </b><b><color=\"RED\">code completion error</color></b>\n\n<hr>\n") << displayTip;
+            reply->errorMessage << wxT("<b>clang: </b><b><color=\"RED\">code completion error</color></b><hr>") << displayTip;
 
             // Free the results
             clang_disposeCodeCompleteResults(reply->results);

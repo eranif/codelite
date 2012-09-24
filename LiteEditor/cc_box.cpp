@@ -764,7 +764,7 @@ void CCBox::DoShowTagTip()
             tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
             if(prefix.IsEmpty() == false) {
                 prefix.Trim().Trim(false);
-                prefix << wxT("\n\n<hr>\n");
+                prefix << wxT("<hr>");
             }
             prefix << tagComment;
         }

@@ -1572,7 +1572,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
         tip = WrapLines(tip);
         
         if ( !tips.empty() ) {
-            tip.Prepend("<hr>"); 
+            tip.Prepend("\n<hr>\n"); 
         }
         
         // prepend any comment if exists

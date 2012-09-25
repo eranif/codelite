@@ -163,7 +163,7 @@ createVariables()
 	echo "WXCFG=${wxcfg}" >> Makefile
 	echo "DESTDIR=" >> Makefile
 	echo "" >> Makefile
-	echo "CCFLAGS= ${lib_clang_cmp_flags} -Wall `wx-config --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\"\\\"${prefix}/share/codelite\\\"\" -DPLUGINS_DIR=\"\\\"${plugins_dir}\\\"\"" >> Makefile
+	echo "CCFLAGS= ${lib_clang_cmp_flags} -Wall `${wx_config_tool} --cxxflags ${wxcfg}` -fno-strict-aliasing -DASTYLE_LIB -DYY_NEVER_INTERACTIVE=1 -DGTK -DSCI_LEXER -DLINK_LEXERS -D__WX__ -DINSTALL_DIR=\"\\\"${prefix}/share/codelite\\\"\" -DPLUGINS_DIR=\"\\\"${plugins_dir}\\\"\"" >> Makefile
 	echo "LINK_FLAGS =  ${lib_clang_link_flags} -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} -lplugin\$(EXT) -lcodelite\$(EXT) -lwxsqlite3\$(EXT) -lwxshapeframework\$(EXT) ${dbl_links} -L${base_dir}/sdk/sqlite3/lib `${wxconfiglibs} ${wxcfg}`" >> Makefile
 	echo "PLUGIN_LINK_FLAGS =  -L${base_dir}/\$(OUTPUT_DIR) ${rpaths} `${wxconfiglibs} ${wxcfg}` ${additional_links}" >> Makefile
 	echo "INCLUDES := \$(INCLUDES) ${additional_include_path} " >> Makefile
@@ -444,9 +444,9 @@ createCodeLiteClangMakefile()
 		
 		
 		echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-		echo "	\$(CMP) ${lib_clang_cmp_flags} `wx-config --cflags --unicode` -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+		echo "	\$(CMP) ${lib_clang_cmp_flags} `${wx_config_tool} --cflags --unicode` -c ${a_file} -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 		echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-		echo "	\$(CMP) ${lib_clang_cmp_flags} `wx-config --cflags --unicode` -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+		echo "	\$(CMP) ${lib_clang_cmp_flags} `${wx_config_tool} --cflags --unicode` -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 	done
 	
 	echo "-include ${configuration}/*.d" >> Makefile
@@ -457,9 +457,9 @@ createCodeLiteClangMakefile()
 	## On FreeBSD, -ldl is part og libc
 	rpaths="-Wl,-rpath,\"$plugins_dir\""
 	if [ "$os_name" = "FreeBSD" ]; then
-		echo "	\$(CMP) -o codelite-clang ${rpaths} \$(codelite_clang_objects) ${lib_clang_link_flags} -lpthread `wx-config --libs --unicode`" >> Makefile
+		echo "	\$(CMP) -o codelite-clang ${rpaths} \$(codelite_clang_objects) ${lib_clang_link_flags} -lpthread `${wx_config_tool} --libs --unicode`" >> Makefile
 	else
-		echo "	\$(CMP) -o codelite-clang ${rpaths} \$(codelite_clang_objects) ${lib_clang_link_flags} -lpthread -ldl `wx-config --libs --unicode`" >> Makefile
+		echo "	\$(CMP) -o codelite-clang ${rpaths} \$(codelite_clang_objects) ${lib_clang_link_flags} -lpthread -ldl `${wx_config_tool} --libs --unicode`" >> Makefile
 	fi
 
 	echo >> Makefile
@@ -655,9 +655,9 @@ createCodeLiteIndexerMakefile ()
 			echo "	\$(GCC) -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		else
 			echo ${configuration}/${a_file_no_ext}.o: ${a_file} ${configuration}/${a_file_no_ext}.o.d >> Makefile
-			echo "	\$(CMP) `wx-config --cflags --unicode` -c ${a_file} -DHAVE_CONFIG_H -I. -Ilibctags -o ${configuration}/${a_file_no_ext}.o" >> Makefile
+			echo "	\$(CMP) `${wx_config_tool} --cflags --unicode` -c ${a_file} -DHAVE_CONFIG_H -I. -Ilibctags -o ${configuration}/${a_file_no_ext}.o" >> Makefile
 			echo ${configuration}/${a_file_no_ext}.o.d:  >> Makefile
-			echo "	\$(CMP) `wx-config --cflags --unicode` -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
+			echo "	\$(CMP) `${wx_config_tool} --cflags --unicode` -DHAVE_CONFIG_H -I. -Ilibctags  -MT${configuration}/${a_file_no_ext}.o -MF${configuration}/${a_file_no_ext}.o.d  -MM ${a_file}" >> Makefile
 		fi
 
 	done
@@ -669,9 +669,9 @@ createCodeLiteIndexerMakefile ()
 	## On FreeBSD, -ldl is part og libc
 	rpaths="-Wl,-rpath,\"$plugins_dir\""
 	if [ "$os_name" = "FreeBSD" ]; then
-		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) ${rpaths} -lpthread `wx-config --libs --unicode`" >> Makefile
+		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) ${rpaths} -lpthread `${wx_config_tool} --libs --unicode`" >> Makefile
 	else
-		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) ${rpaths} -lpthread -ldl `wx-config --libs --unicode`" >> Makefile
+		echo "	\$(CMP) -o codelite_indexer \$(codelite_indexer_objects) ${rpaths} -lpthread -ldl `${wx_config_tool} --libs --unicode`" >> Makefile
 	fi
 
 	echo >> Makefile
@@ -1046,7 +1046,7 @@ createInstallTarget()
     
     ## Copy wxWidgets 294
 	if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -eq 9 ]; then
-		wxdir=`wx-config --libs | cut -d" " -f1| cut -dL -f2`
+		wxdir=`${wx_config_tool} --libs | cut -d" " -f1| cut -dL -f2`
 		if [ "$wxdir" != "" ] ; then
 			## prepare a temporary folder
 			echo "	@echo packaging wxWidgets ... from directory ${wxdir}" >> Makefile
@@ -1125,6 +1125,13 @@ Show_Help_and_Exit()
 ## main
 # checkCURL
 CONFIGURE_PATH=`pwd`
+wx_config_tool="wx-config"
+
+# if the user provided its own wx_config_tool, override it
+if [ -n "$WXCONFIG" ]; then
+	wx_config_tool="$WXCONFIG"
+fi
+echo "wx-config -> ${wx_config_tool}"
 
 ## Create variables needed by the makefile
 enable_debug="no"
@@ -1139,10 +1146,10 @@ enable_mysql="no"
 enable_postgres="no"
 
 ## Which wx version is being used for this build?
-wxversionnumber=`wx-config --version 2>/dev/null`
+wxversionnumber=`${wx_config_tool} --version 2>/dev/null`
 if [ -z "$wxversionnumber" ]; then
-	# No wx-config, so why continue?
-	echo "No functional wx-config script was found in your PATH"
+	# No ${wx_config_tool}, so why continue?
+	echo "No functional ${wx_config_tool} script was found in your PATH"
 	echo "Is the wxWidgets development package installed?"
 	exit 1
 fi
@@ -1151,18 +1158,18 @@ wxMAJOR_VERSION=`echo $wxversionnumber | awk -F. '{print $1}'`
 wxMINOR_VERSION=`echo $wxversionnumber | awk -F. '{print $2}'`
 wxRELEASE_NUMBER=`echo $wxversionnumber | awk -F. '{print $3}'`
 
-## wx versions 2.9 and greater need an extra 'std,aui' in wx-config --libs
+## wx versions 2.9 and greater need an extra 'std,aui' in ${wx_config_tool} --libs
  # NB this logic will fail for wx versions < 2 ;)
 
 if [ "$os_name" != "Darwin" ]; then
-    wxconfiglibs="wx-config --libs std,aui,stc"
+    wxconfiglibs="${wx_config_tool} --libs std,aui,stc"
     if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
-        wxconfiglibs="wx-config --libs"
+        wxconfiglibs="${wx_config_tool} --libs"
     fi
 else
-    wxconfiglibs="wx-config --libs std"
+    wxconfiglibs="${wx_config_tool} --libs std"
     if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ]; then
-        wxconfiglibs="wx-config --libs"
+        wxconfiglibs="${wx_config_tool} --libs"
     fi
 fi
 

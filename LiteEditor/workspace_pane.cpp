@@ -243,15 +243,24 @@ void WorkspacePane::ApplySavedTabOrder() const
 
 void WorkspacePane::SaveWorkspaceViewTabOrder() const
 {
-	wxArrayString panes;
-    for (size_t n=0; n < m_book->GetPageCount(); ++n) {
-        panes.Add(m_book->GetPageText(n));
+    wxArrayString panes;
+    std::vector<wxWindow*> editors;
+    m_book->GetEditorsInOrder(editors);
+    
+    for (size_t n=0; n < editors.size(); ++n) {
+        // get the page text
+        for(size_t i=0; i<m_book->GetPageCount(); ++i) {
+            if ( m_book->GetPage(i) == editors.at(n) ) {
+                panes.Add( m_book->GetPageText(i));
+                break;
+            }
+        }
     }
 
-	WorkspaceViewTabOrder wso(panes);
+    WorkspaceViewTabOrder wso(panes);
     wso.SetLastSelectedTab(m_book->GetSelection());
 
-	EditorConfigST::Get()->WriteObject(wxT("WorkspaceViewTabOrder"), &wso);
+    EditorConfigST::Get()->WriteObject(wxT("WorkspaceViewTabOrder"), &wso);
 }
 
 void WorkspacePane::DoShowTab(bool show, const wxString& title)

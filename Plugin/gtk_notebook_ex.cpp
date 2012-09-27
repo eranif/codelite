@@ -459,6 +459,13 @@ void Notebook::DoPageChangingEvent(wxBookCtrlBaseEvent& e)
 	e.Skip();
 }
 
+void Notebook::GetEditorsInOrder(std::vector<wxWindow*> &editors)
+{
+    editors.clear();
+    for(size_t i=0; i<GetPageCount(); ++i) {
+        editors.push_back( GetPage(i) );
+    }
+}
 
 void Notebook::AssignImageList(wxImageList* imageList)
 {

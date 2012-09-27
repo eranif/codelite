@@ -203,6 +203,7 @@ public:
 	 */
 	void SetImageList(wxImageList* imageList);
 	
+    void GetEditorsInOrder(std::vector<wxWindow*> &editors);
 protected:
 	// Event handlers
 	void OnNavigationKey      (wxNavigationKeyEvent &e);

@@ -32,6 +32,7 @@
 #include <wx/choicebk.h>
 #include <wx/panel.h>
 #include <map>
+#include <vector>
 
 enum {
 	wxVB_LEFT                   = wxNB_TOP,

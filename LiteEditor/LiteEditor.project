@@ -117,12 +117,6 @@
             <File Name="editoroptionsgeneralsavepanelbase.cpp"/>
             <File Name="editoroptionsgeneralsavepanelbase.h"/>
           </VirtualDirectory>
-          <VirtualDirectory Name="Code Navigation">
-            <File Name="editoroptionsgeneralcodenavpanelbase.cpp"/>
-            <File Name="editoroptionsgeneralcodenavpanelbase.h"/>
-            <File Name="editoroptionsgeneralcodenavpanel.cpp"/>
-            <File Name="editoroptionsgeneralcodenavpanel.h"/>
-          </VirtualDirectory>
         </VirtualDirectory>
         <VirtualDirectory Name="Comments">
           <File Name="editorsettingscomments.cpp"/>

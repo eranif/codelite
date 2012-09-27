@@ -2644,16 +2644,31 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
 
     if ( ManagerST::Get()->GetDebuggerTip()->IsShown() )
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
-
-    long value(0);
-    EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
-
-    if (!value) {
-        DoMarkHyperlink(event, false);
+    
+ //  long value(0);
+ //  EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
+ //
+ //  if (!value) {
+ //      DoMarkHyperlink(event, false);
+ //  }
+    
+    if ( event.CmdDown() ) {
+        
+        // Show the popup
+        ClearSelections();
+        
+        int curpos = PositionFromPoint( event.GetPosition() );
+        SetCaretAt( curpos );
+        
+        wxMenu menu(_("Find Symbol"));
+        menu.Append(XRCID("find_decl"), _("Go to Declaration"));
+        menu.Append(XRCID("find_impl"), _("Go to Implementation"));
+        PopupMenu(&menu);
+        
+    } else {
+        SetActive();
+        event.Skip();
     }
-
-    SetActive();
-    event.Skip();
 }
 
 void LEditor::OnPopupMenuUpdateUI(wxUpdateUIEvent &event)

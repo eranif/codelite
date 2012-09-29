@@ -590,9 +590,12 @@ void BuilderGnuMake::CreateSrcList(ProjectPtr proj, const wxString &confToBuild,
         if (!cmp->GetCmpFileType(files[i].GetExt(), ft))
             continue;
 
-        if (ft.kind == Compiler::CmpFileKindResource && bldConf && !bldConf->IsResCompilerRequired()) {
-            // we are on Windows, the file type is Resource and resource compiler is not required
+        if (ft.kind == Compiler::CmpFileKindResource) {
+#ifndef __WXMSW__            
+            // Resource compiler "windres" is not supported under
+            // *nix OS
             continue;
+#endif
         }
 
         relPath = files.at(i).GetPath(true, wxPATH_UNIX);
@@ -632,9 +635,11 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
         if (!cmp->GetCmpFileType(files[i].GetExt(), ft))
             continue;
 
-        if (ft.kind == Compiler::CmpFileKindResource && bldConf && !bldConf->IsResCompilerRequired()) {
+        if ( ft.kind == Compiler::CmpFileKindResource ) {
             // we are on Windows, the file type is Resource and resource compiler is not required
+#ifndef __WXMSW__            
             continue;
+#endif            
         }
 
         wxString objPrefix = DoGetTargetPrefix(files.at(i), cwd, cmp);
@@ -764,7 +769,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
                     text << wxT("\t") << wxT("@") << compilerMacro << wxT(" ") << cmpOptions << wxT(" $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
                 }
 
-            } else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
+            } else if (ft.kind == Compiler::CmpFileKindResource && OS_WINDOWS ) {
                 // we construct an object name which also includes the full name of the reousrce file and appends a .o to the name (to be more
                 // precised, $(ObjectSuffix))
                 wxString objectName;
@@ -837,7 +842,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
                         text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");
                         text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << preprocessFile << wxT("\n");
 
-                    } else if (ft.kind == Compiler::CmpFileKindResource && bldConf->IsResCompilerRequired()) {
+                    } else if (ft.kind == Compiler::CmpFileKindResource && OS_WINDOWS) {
                         wxString ofile = abs_files[i].GetFullName() + wxT("$(ObjectSuffix)");
                         text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << ofile << wxT("\n");
 

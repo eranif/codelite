@@ -293,8 +293,10 @@ void NewBuildTab::OnBuildStarted(wxCommandEvent& e)
     m_showMe           = (BuildTabSettingsData::ShowBuildPane)m_buildTabSettings.GetShowBuildPane();
     m_skipWarnings     = m_buildTabSettings.GetSkipWarnings();
 
-    DoClear();
-    DoCacheRegexes();
+    if ( e.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
+        DoClear();
+        DoCacheRegexes();
+    }
 
     // Show the tab if needed
     OutputPane *opane = clMainFrame::Get()->GetOutputPane();

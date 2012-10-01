@@ -25,6 +25,10 @@
 					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
+					"m_label":	"Minimum Size:",
+					"m_value":	"-1,-1"
+				}, {
+					"type":	"string",
 					"m_label":	"Name:",
 					"m_value":	"NewProjectDlg"
 				}, {
@@ -55,6 +59,11 @@
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
 					"m_path":	"LiteEditor:Dialogs:ProjectManagement"
+				}, {
+					"type":	"choice",
+					"m_label":	"Centre:",
+					"m_selection":	1,
+					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -91,6 +100,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
 									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
@@ -146,6 +159,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
+											"m_label":	"Minimum Size:",
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
@@ -206,6 +223,10 @@
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"m_staticText34"
 														}, {
@@ -250,6 +271,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
@@ -303,6 +328,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
@@ -369,6 +398,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
+											"m_label":	"Minimum Size:",
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
@@ -467,6 +500,10 @@
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
+																	"m_label":	"Minimum Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
 																	"m_label":	"Name:",
 																	"m_value":	"m_staticText16"
 																}, {
@@ -511,6 +548,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Minimum Size:",
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
@@ -564,6 +605,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Minimum Size:",
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
@@ -633,6 +678,10 @@
 																			"m_value":	"-1,-1"
 																		}, {
 																			"type":	"string",
+																			"m_label":	"Minimum Size:",
+																			"m_value":	"-1,-1"
+																		}, {
+																			"type":	"string",
 																			"m_label":	"Name:",
 																			"m_value":	"m_textCtrlProjectPath"
 																		}, {
@@ -684,6 +733,10 @@
 																			"type":	"string",
 																			"m_label":	"Size:",
 																			"m_value":	"40,-1"
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Minimum Size:",
+																			"m_value":	"-1,-1"
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Name:",
@@ -740,6 +793,10 @@
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
+																	"m_label":	"Minimum Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
 																	"m_label":	"Name:",
 																	"m_value":	"m_staticText21"
 																}, {
@@ -784,6 +841,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Minimum Size:",
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
@@ -858,6 +919,10 @@
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
+																	"m_label":	"Minimum Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
 																	"m_label":	"Name:",
 																	"m_value":	"m_cbSeparateDir"
 																}, {
@@ -908,6 +973,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Minimum Size:",
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
@@ -982,6 +1051,10 @@
 																	"m_value":	"-1,-1"
 																}, {
 																	"type":	"string",
+																	"m_label":	"Minimum Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
 																	"m_label":	"Name:",
 																	"m_value":	"m_txtDescription"
 																}, {
@@ -1052,6 +1125,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_button3"
 										}, {
@@ -1078,6 +1155,14 @@
 											"type":	"bool",
 											"m_label":	"Default Button",
 											"m_value":	true
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Margins:",
+											"m_value":	"2,2"
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
@@ -1111,6 +1196,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_button4"
 										}, {
@@ -1137,6 +1226,14 @@
 											"type":	"bool",
 											"m_label":	"Default Button",
 											"m_value":	false
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Margins:",
+											"m_value":	"2,2"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1158,6 +1255,10 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Size:",
+					"m_value":	"-1,-1"
+				}, {
+					"type":	"string",
+					"m_label":	"Minimum Size:",
 					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
@@ -1191,6 +1292,11 @@
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
 					"m_path":	"LiteEditor:Controls"
+				}, {
+					"type":	"choice",
+					"m_label":	"Centre:",
+					"m_selection":	1,
+					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -1218,8 +1324,8 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
-							"m_sizerFlags":	["wxBOTTOM", "wxEXPAND"],
+							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH", "wxSP_3D"],
+							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
 									"m_label":	"ID:",
@@ -1227,6 +1333,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
 									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
@@ -1285,6 +1395,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPage39"
 										}, {
@@ -1331,7 +1445,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxLEFT", "wxTOP", "wxEXPAND"],
+													"m_sizerFlags":	["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1339,6 +1453,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
@@ -1403,6 +1521,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPage41"
 										}, {
@@ -1449,7 +1571,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxRIGHT", "wxTOP", "wxEXPAND"],
+													"m_sizerFlags":	["wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1457,6 +1579,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
@@ -1524,6 +1650,10 @@
 					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
+					"m_label":	"Minimum Size:",
+					"m_value":	"-1,-1"
+				}, {
+					"type":	"string",
 					"m_label":	"Name:",
 					"m_value":	"BuildTabTopPanel"
 				}, {
@@ -1554,6 +1684,11 @@
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
 					"m_path":	"LiteEditor:Docking Windows:BuildTab"
+				}, {
+					"type":	"choice",
+					"m_label":	"Centre:",
+					"m_selection":	1,
+					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -1618,13 +1753,13 @@
 									"m_styles":	[],
 									"m_sizerFlags":	[],
 									"m_properties":	[{
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_toolPin"
-										}, {
 											"type":	"winid",
 											"m_label":	"ID:",
 											"m_winid":	"wxID_ANY"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolPin"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
@@ -1637,6 +1772,10 @@
 											"type":	"filePicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/output-pane/16/ToolPin.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disaled Bitmap File",
+											"m_path":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Kind:",
@@ -1660,13 +1799,13 @@
 									"m_styles":	[],
 									"m_sizerFlags":	[],
 									"m_properties":	[{
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_toolbarItem54"
-										}, {
 											"type":	"winid",
 											"m_label":	"ID:",
 											"m_winid":	"wxID_ANY"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbarItem54"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
@@ -1679,6 +1818,10 @@
 											"type":	"filePicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../../../../tmp/placeholder16.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disaled Bitmap File",
+											"m_path":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Kind:",
@@ -1696,13 +1839,13 @@
 									"m_styles":	[],
 									"m_sizerFlags":	[],
 									"m_properties":	[{
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_toolbarItem50"
-										}, {
 											"type":	"winid",
 											"m_label":	"ID:",
 											"m_winid":	"wxID_SAVEAS"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbarItem50"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
@@ -1715,6 +1858,10 @@
 											"type":	"filePicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons-fresh-farm/toolbars/16/standard/document-save.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disaled Bitmap File",
+											"m_path":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Kind:",
@@ -1744,13 +1891,13 @@
 									"m_styles":	[],
 									"m_sizerFlags":	[],
 									"m_properties":	[{
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_toolbarItem51"
-										}, {
 											"type":	"winid",
 											"m_label":	"ID:",
 											"m_winid":	"wxID_CLEAR"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbarItem51"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
@@ -1763,6 +1910,10 @@
 											"type":	"filePicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons-fresh-farm/output-pane/16/clear.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disaled Bitmap File",
+											"m_path":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Kind:",

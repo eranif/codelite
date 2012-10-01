@@ -36,7 +36,8 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer10);
     
-    m_staticText34 = new wxStaticText(m_splitterPageRight, wxID_ANY, _("Project category:"), wxDefaultPosition, wxSize(-1,-1), 0);wxFont m_staticText34Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText34 = new wxStaticText(m_splitterPageRight, wxID_ANY, _("Project category:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText34Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText34Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText34->SetFont(m_staticText34Font);
     
@@ -65,7 +66,8 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer11->Add(flexGridSizer15, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    m_staticText16 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1,-1), 0);wxFont m_staticText16Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText16 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText16Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText16Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText16->SetFont(m_staticText16Font);
     
@@ -75,7 +77,8 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     flexGridSizer15->Add(m_txtProjName, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    m_staticText18 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project path:"), wxDefaultPosition, wxSize(-1,-1), 0);wxFont m_staticText18Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText18 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project path:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText18Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText18Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText18->SetFont(m_staticText18Font);
     
@@ -93,7 +96,8 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer30->Add(m_bmpButton33, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_staticText21 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Compiler:"), wxDefaultPosition, wxSize(-1,-1), 0);wxFont m_staticText21Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText21 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Compiler:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText21Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText21Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText21->SetFont(m_staticText21Font);
     
@@ -114,6 +118,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     statixBoxSizer24->Add(m_cbSeparateDir, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    
     statixBoxSizer24->Add(m_stxtFullFileName, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     wxStaticBoxSizer* statixBoxSizer28 = new wxStaticBoxSizer( new wxStaticBox(m_splitterPageLeft, wxID_ANY, _("Description:")), wxVERTICAL);
@@ -144,7 +149,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    Centre(wxBOTH);
     // Connect events
     m_chCategories->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCategorySelected), NULL, this);
     m_listTemplates->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(NewProjectDlgBaseClass::OnTemplateSelected), NULL, this);
@@ -183,11 +188,11 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH|wxSP_3D);
     m_splitter->SetSashGravity(0.000000);
     m_splitter->SetMinimumPaneSize(10);
     
-    boxSizer36->Add(m_splitter, 1, wxBOTTOM|wxEXPAND, 5);
+    boxSizer36->Add(m_splitter, 1, wxEXPAND, 5);
     
     m_splitterPage39 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -197,7 +202,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxArrayString m_scopeArr;
     m_scope = new wxChoice(m_splitterPage39, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_scopeArr, 0);
     
-    boxSizer42->Add(m_scope, 0, wxLEFT|wxTOP|wxEXPAND, 5);
+    boxSizer42->Add(m_scope, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_splitterPage41 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage39, m_splitterPage41, 200);
@@ -208,14 +213,14 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxArrayString m_funcArr;
     m_func = new wxChoice(m_splitterPage41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_funcArr, 0);
     
-    boxSizer43->Add(m_func, 0, wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer43->Add(m_func, 0, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    Centre(wxBOTH);
     // Connect events
     m_scope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL, this);
     m_scope->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnScopeListMouseDown), NULL, this);
@@ -265,7 +270,7 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
-    Centre();
+    Centre(wxBOTH);
     // Connect events
     this->Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnToolPinCommandToolClicked), NULL, this);
     this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutput), NULL, this);

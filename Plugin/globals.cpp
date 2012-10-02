@@ -139,7 +139,13 @@ static bool ReadBOMFile(const char *file_name, wxString &content, BOM& bom)
                 if(encoding != wxFONTENCODING_SYSTEM) {
                     wxCSConv conv(encoding);
                     // Skip the BOM
-                    content = wxString(buffer, conv);
+                    char *ptr = buffer;
+                    ptr += bom.Len();
+                    content = wxString(ptr, conv);
+                    
+                    if ( content.IsEmpty() ) {
+                        content  = wxString::From8BitData(ptr);
+                    }
                 }
             }
             delete [] buffer;

@@ -300,6 +300,9 @@ void CCBox::SelectItem(long item)
     if(item == m_listCtrl->GetNextSelected(-1))
         return;
 
+    if ( item < 0 || item >= m_listCtrl->GetItemCount() )
+        return;
+
     if (m_listCtrl->GetFirstSelected() != -1) {
         m_listCtrl->RefreshItem(m_listCtrl->GetFirstSelected());
     }

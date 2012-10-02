@@ -10,22 +10,21 @@ class CCBox;
 class CodeCompletionBox : public wxEvtHandler
 {
     typedef std::map<wxString, wxBitmap> BitmapMap_t;
-    
+
     CCBox*          m_ccBox;
     CCBoxTipWindow* m_tip;
     BitmapMap_t     m_bitmaps;
-    
+
 private:
     CodeCompletionBox();
-    
+
 protected:
-    void OnCCBoxDismissed(wxCommandEvent &e);
     void DoCreateBox(LEditor *editor);
-    
+
 public:
     virtual ~CodeCompletionBox();
     static CodeCompletionBox& Get();
-    
+
     void Display(LEditor* editor, const TagEntryPtrVector_t& tags, const wxString &word, bool isKeywordList, wxEvtHandler* owner = NULL);
     void Hide();
     bool IsShown() const;
@@ -39,20 +38,20 @@ public:
      * @brief display a tooltip at the caret position of the editor
      */
     void ShowTip(const wxString &msg, LEditor* editor);
-    
+
     /**
      * @brief display a tooltip at a given point
      * 'pt' is in screen coordinates
      */
     void ShowTip(const wxString &msg, const wxPoint& pt, LEditor* editor);
-    
+
     /**
      * @brief dismiss the last calltip shown
      */
     void CancelTip();
-    
+
     /**
-     * @brief add an additional image to the code completion box for a given 
+     * @brief add an additional image to the code completion box for a given
      * "kind"
      */
     void RegisterImage(const wxString &kind, const wxBitmap& bmp);

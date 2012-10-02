@@ -120,7 +120,7 @@ CCBox::~CCBox()
     EventNotifier::Get()->Disconnect(wxEVT_TIP_BTN_CLICKED_DOWN, wxCommandEventHandler(CCBox::OnTipClickedDown), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_TIP_BTN_CLICKED_UP,   wxCommandEventHandler(CCBox::OnTipClickedUp),   NULL, this);
     //EventNotifier::Get()->Disconnect(wxCMD_EVENT_DISMISS_CC_BOX, wxCommandEventHandler(CCBox::OnClose), NULL, this);
-    
+
     delete m_refreshListTimer;
     if ( m_tipWindow ) {
         m_tipWindow->Destroy();
@@ -147,10 +147,10 @@ void CCBox::OnItemSelected( wxListEvent& event )
 {
     if(m_selectedItem == event.m_itemIndex)
         return;
-        
+
     m_selectedItem = event.m_itemIndex;
     m_listCtrl->Refresh();
-    PostSelectItem(m_selectedItem); 
+    PostSelectItem(m_selectedItem);
 }
 
 void CCBox::Show(const TagEntryPtrVector_t &tags, const wxString &word, bool isKeywordsList, wxEvtHandler *owner)
@@ -299,13 +299,13 @@ void CCBox::SelectItem(long item)
 {
     if(item == m_listCtrl->GetNextSelected(-1))
         return;
-        
+
     if (m_listCtrl->GetFirstSelected() != -1) {
         m_listCtrl->RefreshItem(m_listCtrl->GetFirstSelected());
-    }     
+    }
     m_listCtrl->Select(item);
     m_listCtrl->EnsureVisible(item);
-    
+
     PostSelectItem(item);
 }
 
@@ -320,7 +320,7 @@ void CCBox::PostSelectItem(long item)
     if(m_listCtrl->GetItemTagEntry(item, tag)) {
         DoFormatDescriptionPage( tag );
     }
-}    
+}
 
 void CCBox::Show(const wxString& word)
 {
@@ -332,9 +332,9 @@ void CCBox::Show(const wxString& word)
     this->SetCursor( wxCursor(wxCURSOR_ARROW) );
 
     CCItemInfo item;
-    
+
     clWindowUpdateLocker locker(m_listCtrl);
-    
+
     m_listCtrl->DeleteAllItems();
 
     // Get the associated editor
@@ -772,12 +772,12 @@ void CCBox::DoShowTagTip()
 
     // Update all "doxy" comments and surround them with <green> tags
     static wxRegEx reDoxy(wxT("([@\\\\]{1}[a-zA-Z]+ )"));
-    
+
     wxString doxyParamTag = wxT("<b><color=\"GREEN\">\\1</color></b>");
     if ( !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK)) ) {
         doxyParamTag = wxT("<b><color=\"BLUE\">\\1</color></b>");
     }
-    
+
     if ( reDoxy.Matches(prefix) ) {
         reDoxy.ReplaceAll(&prefix, doxyParamTag);
     }

@@ -1,5 +1,4 @@
 #include "code_completion_box.h"
-#include "event_notifier.h"
 #include "cc_box.h"
 #include "ctags_manager.h"
 #include "cc_box_tip_window.h"
@@ -9,7 +8,6 @@ CodeCompletionBox::CodeCompletionBox()
     : m_ccBox(NULL)
     , m_tip(NULL)
 {
-    EventNotifier::Get()->Connect(wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED, wxCommandEventHandler(CodeCompletionBox::OnCCBoxDismissed), NULL, this);
 }
 
 CodeCompletionBox::~CodeCompletionBox()
@@ -46,14 +44,6 @@ void CodeCompletionBox::Display(LEditor* editor, const TagEntryPtrVector_t& tags
     // Show takes into account the return value of 'GetWordCompletionRefreshNeeded'
     // this is why we reset the flag *after* the call to Show(..)
     CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
-}
-
-void CodeCompletionBox::OnCCBoxDismissed(wxCommandEvent& e)
-{
-    e.Skip();
-    if ( e.GetEventObject() == m_ccBox ) {
-        m_ccBox = NULL;
-    }
 }
 
 void CodeCompletionBox::Hide()
@@ -129,17 +119,17 @@ void CodeCompletionBox::ShowTip(const wxString& msg, LEditor* editor)
 
     if ( !editor )
         return;
-    
+
     wxPoint pt = editor->PointFromPosition( editor->GetCurrentPos() );
     wxPoint displayPt = editor->ClientToScreen(pt);
-    
-    // Dont display the tip if it displays outside of the 
+
+    // Dont display the tip if it displays outside of the
     // editor client area
     wxRect editorRect = editor->GetScreenRect();
     if ( editorRect.Contains( displayPt ) == false ) {
         return;
     }
-    
+
     m_tip = new CCBoxTipWindow(wxTheApp->GetTopWindow(), msg, 1, true);
     m_tip->PositionAt(displayPt);
 }
@@ -153,13 +143,13 @@ void CodeCompletionBox::ShowTip(const wxString& msg, const wxPoint& pt, LEditor*
     wxPoint p = pt;
     p.y += 16; // Place it under the cursor
 
-    // Dont display the tip if it displays outside of the 
+    // Dont display the tip if it displays outside of the
     // editor client area
     wxRect editorRect = editor->GetScreenRect();
     if ( editorRect.Contains( p ) == false ) {
         return;
     }
-    
+
     m_tip = new CCBoxTipWindow(wxTheApp->GetTopWindow(), msg, 1, true);
     m_tip->PositionAt(p);
 }
@@ -169,7 +159,7 @@ void CodeCompletionBox::RegisterImage(const wxString& kind, const wxBitmap& bmp)
     // sanity
     if ( bmp.IsOk() == false || kind.IsEmpty() )
         return;
-    
+
     BitmapMap_t::iterator iter = m_bitmaps.find(kind);
     if ( iter != m_bitmaps.end() ) {
         m_bitmaps.erase(iter);

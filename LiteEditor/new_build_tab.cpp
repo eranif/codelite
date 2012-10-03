@@ -1,6 +1,7 @@
 #include "new_build_tab.h"
 #if CL_USE_NEW_BUILD_TAB
 
+#include "environmentconfig.h"
 #include "build_settings_config.h"
 #include <wx/choicdlg.h>
 #include "BuildTabTopPanel.h"
@@ -30,6 +31,11 @@ static const wxChar* SUMMARY_MARKER_SUCCESS = wxT("@@SUMMARY_SUCCESS@@");
 static const wxChar* SUMMARY_MARKER         = wxT("@@SUMMARY@@");
 
 #define IS_VALID_LINE(lineNumber) (lineNumber >= 0 && lineNumber < m_listctrl->GetItemCount())
+#ifdef __WXMSW__
+#    define IS_WINDOWS true
+#else
+#    define IS_WINDOWS false
+#endif
 
 // Helper function to post an event to the frame
 void SetActive(LEditor* editor)
@@ -282,8 +288,21 @@ void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
 void NewBuildTab::OnBuildStarted(wxCommandEvent& e)
 {
     e.Skip();
+    {
+        m_cygwinRoot.Clear();
+        EnvSetter es;
+        wxString cmd;
+        cmd << "cygpath -w /";
+        wxArrayString arrOut;
+        ProcUtils::SafeExecuteCommand(cmd, arrOut);
+        
+        if ( arrOut.IsEmpty() == false ) {
+            m_cygwinRoot = arrOut.Item(0);
+        }
+    }
+    
     m_buildInProgress = true;
-
+    
     // Reload the build settings data
     EditorConfigST::Get()->ReadObject ( wxT ( "build_tab_settings" ), &m_buildTabSettings );
     m_textRenderer->SetErrFgColor(  m_buildTabSettings.GetErrorColour() );
@@ -366,7 +385,7 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
                 buildLineInfo->SetFilename(bli.GetFilename());
                 buildLineInfo->SetSeverity(bli.GetSeverity());
                 buildLineInfo->SetLineNumber(bli.GetLineNumber());
-                buildLineInfo->NormalizeFilename(m_directories);
+                buildLineInfo->NormalizeFilename(m_directories, m_cygwinRoot);
 
                 // keep this info in the errors+warnings list only
                 m_errorsAndWarningsList.push_back(buildLineInfo);
@@ -384,7 +403,7 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
                     buildLineInfo->SetFilename(bli.GetFilename());
                     buildLineInfo->SetSeverity(bli.GetSeverity());
                     buildLineInfo->SetLineNumber(bli.GetLineNumber());
-                    buildLineInfo->NormalizeFilename(m_directories);
+                    buildLineInfo->NormalizeFilename(m_directories, m_cygwinRoot);
 
                     // keep this info in both lists (errors+warnings AND errors)
                     m_errorsAndWarningsList.push_back(buildLineInfo);
@@ -798,6 +817,7 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
         }
 
         if ( fn.IsAbsolute() ) {
+            
             // try to locate the editor first
             LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
             if ( !editor ) {
@@ -885,12 +905,21 @@ bool CmpPattern::Matches(const wxString& line, BuildLineInfo& lineInfo)
     return true;
 }
 
-void BuildLineInfo::NormalizeFilename(const wxArrayString& directories)
+void BuildLineInfo::NormalizeFilename(const wxArrayString& directories, const wxString &cygwinPath)
 {
     wxFileName fn(this->GetFilename());
+
     if(fn.IsAbsolute()) {
         SetFilename( fn.GetFullPath() );
         return;
+        
+    } else if ( fn.IsAbsolute(wxPATH_UNIX) && IS_WINDOWS && !cygwinPath.IsEmpty()) {
+        
+        wxFileName cygfile(fn);
+        wxString path = cygwinPath + cygfile.GetFullPath();
+        SetFilename(wxFileName(path).GetFullPath());
+        return;
+        
     }
 
     if(directories.IsEmpty()) {

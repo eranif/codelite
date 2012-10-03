@@ -41,7 +41,7 @@ public:
     /**
      * @brief try to expand the file name and normalize it into a fullpath
      */
-    void NormalizeFilename(const wxArrayString &directories);
+    void NormalizeFilename(const wxArrayString &directories, const wxString &cygwinPath);
 
     void SetFilename(const wxString& filename) {
         this->m_filename = filename;
@@ -169,6 +169,7 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t                     m_errorsList;
     BuildInfoList_t::iterator           m_curError;
     bool                                m_buildInProgress;
+    wxString                            m_cygwinRoot;
     
 protected:
     void DoCacheRegexes();

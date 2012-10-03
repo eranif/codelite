@@ -155,6 +155,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_isFocused                (true)
     , m_pluginInitializedRMenu   (false)
     , m_positionToEnsureVisible  (wxNOT_FOUND)
+    , m_fullLineCopyCut          (false)
 {
     ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSTC_MARK_SMALLRECT;
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
@@ -4023,4 +4024,26 @@ void LEditor::OnHighlightWordChecked(wxCommandEvent& e)
 #endif
 
 }
+
+void LEditor::PasteLineAbove()
+{
+    // save the current column / line
+    int curpos = GetCurrentPos();
+    int col    = GetColumn(curpos);
+    int line   = GetCurrentLine();
+    
+    int pasteLine = line;
+    if ( pasteLine> 0 ) {
+        ++line;
+    }
+    
+    int pastePos = PositionFromLine(pasteLine);
+    SetCaretAt(pastePos);
+    Paste();
+    
+    // restore caret position
+    int newpos = FindColumn(line, col);
+    SetCaretAt(newpos);
+}
+
 

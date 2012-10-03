@@ -145,6 +145,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     BOM                                         m_fileBom;
     int                                         m_positionToEnsureVisible;
     bool                                        m_preserveSelection;
+    bool                                        m_fullLineCopyCut;
 
 public:
     static bool                                 m_ccShowPrivateMembers;
@@ -169,6 +170,14 @@ public:
 
     bool IsFocused() const;
 
+    void SetFullLineCopyCut(bool fullLineCopyCut) {
+        this->m_fullLineCopyCut = fullLineCopyCut;
+    }
+    
+    bool IsFullLineCopyCut() const {
+        return m_fullLineCopyCut;
+    }
+    
 public:
     /// Construct a LEditor object
     LEditor(wxWindow* parent);
@@ -306,11 +315,11 @@ public:
     // Bookmark API
     //-----------------------------------------
     /**
-     * @brief return true if this editor has at least one compiler 
+     * @brief return true if this editor has at least one compiler
      * marker (warning or error)
      */
     bool HasCompilerMarkers();
-    
+
     // Is there currently a marker at the current line?
     bool LineIsMarked(enum marker_mask_type mask);
     // Toggle marker at the current line
@@ -677,7 +686,11 @@ public:
      */
     void OnFindInFiles();
 
-
+    /**
+     * @brief paste the clipboard content one line above the caret position
+     */
+    void PasteLineAbove();
+    
 private:
     void FillBPtoMarkerArray();
     BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);

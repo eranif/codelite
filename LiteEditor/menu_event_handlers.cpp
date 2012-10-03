@@ -39,26 +39,45 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     editor->HideCompletionBox();
 
     if (event.GetId() == wxID_COPY) {
+        
+        // reset the 'full line' copy/cut flag
+        editor->SetFullLineCopyCut(false);
+        
         // if the selection is empty, copy the line content
         if(editor->GetSelectedText().IsEmpty()) {
             editor->CopyAllowLine();
-
+            editor->SetFullLineCopyCut(true);
+            
         } else {
             editor->Copy();
         }
 
     } else if (event.GetId() == wxID_CUT) {
+        
+        // reset the 'full line' copy/cut flag
+        editor->SetFullLineCopyCut(false);
+        
         if(editor->GetSelectedText().IsEmpty()) {
             // If the selection is empty, copy the line.
             editor->CopyAllowLine();
             editor->LineDelete();
+            editor->SetFullLineCopyCut(true);
+            
         } else {
             // If the text is selected, cut the selected text.
             editor->Cut();
         }
 
     } else if (event.GetId() == wxID_PASTE) {
-        editor->Paste();
+        if ( editor->IsFullLineCopyCut() ) {
+            // paste one line above the caret
+            editor->PasteLineAbove();
+            
+        } else {
+            // paste at caret position
+            editor->Paste();
+            
+        }
 
     } else if (event.GetId() == wxID_UNDO) {
         editor->Undo();

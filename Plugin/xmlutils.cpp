@@ -36,7 +36,7 @@ wxXmlNode *XmlUtils::FindNodeByName(const wxXmlNode *parent, const wxString &tag
 	wxXmlNode *child = parent->GetChildren();
 	while( child ){
 		if( child->GetName() == tagName){
-			if( child->GetPropVal(wxT("Name"), wxEmptyString) == name){
+			if( (child->GetPropVal(wxT("Name"), wxEmptyString) == name) || (child->GetPropVal(wxT("name"), wxEmptyString) == name)) {
 				return child;
 			}
 		}

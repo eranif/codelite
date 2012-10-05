@@ -117,7 +117,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     statixBoxSizer24->Add(m_cbSeparateDir, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, "", wxDefaultPosition, wxSize(-1,-1), 0);
     
     statixBoxSizer24->Add(m_stxtFullFileName, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     

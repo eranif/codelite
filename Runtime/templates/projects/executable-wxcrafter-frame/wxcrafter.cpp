@@ -39,7 +39,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_name8 = new wxMenu();
     m_menuBar->Append(m_name8, _("Help"));
     
-    m_menuItem9 = new wxMenuItem(m_name8, wxID_ABOUT, _("About..."), _(""), wxITEM_NORMAL);
+    m_menuItem9 = new wxMenuItem(m_name8, wxID_ABOUT, _("About..."), wxT(""), wxITEM_NORMAL);
     m_name8->Append(m_menuItem9);
     
     m_mainToolbar = this->CreateToolBar(wxTB_FLAT, wxID_ANY);

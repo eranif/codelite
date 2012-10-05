@@ -5,6 +5,8 @@
 #include <wx/string.h>
 #include <wx/arrstr.h>
 #include <map>
+#include <wx/event.h>
+#include <wx/aui/framemanager.h>
 
 extern wxString DEBUG_LAYOUT ;
 extern wxString NORMAL_LAYOUT;
@@ -12,48 +14,57 @@ extern wxString NORMAL_LAYOUT;
 #define PERSPECTIVE_FIRST_MENU_ID 17000
 #define PERSPECTIVE_LAST_MENU_ID  17020
 
-class PerspectiveManager
+class PerspectiveManager : public wxEvtHandler
 {
 protected:
-	std::map<wxString, int> m_menuIdToName;
-	int                     m_nextId;
-	wxString                m_active;
-
+    std::map<wxString, int> m_menuIdToName;
+    int                     m_nextId;
+    wxString                m_active;
+    wxString                m_buildPerspective;
+    wxAuiManager *          m_aui;
+    
 protected:
-	wxString DoGetPathFromName(const wxString &name);
-	void DoEnsureDebuggerPanesAreVisible();
-	
+    wxString DoGetPathFromName(const wxString &name);
+    void DoEnsureDebuggerPanesAreVisible();
+    
+    // Event handlers
+    void OnPaneClosing(wxAuiManagerEvent &event);
+    
 public:
-	PerspectiveManager();
-	virtual ~PerspectiveManager();
+    PerspectiveManager();
+    virtual ~PerspectiveManager();
+    
+    void ConnectEvents(wxAuiManager* mgr);
+    void DisconnectEvents();
+    
+    void ToggleOutputPane(bool hide);
+    void SetActive(const wxString& active) {
+        this->m_active = active;
+    }
+    const wxString& GetActive() const {
+        return m_active;
+    }
 
-	void SetActive(const wxString& active) {
-		this->m_active = active;
-	}
-	const wxString& GetActive() const {
-		return m_active;
-	}
-	
-	bool          IsDefaultActive() const;
-	void          LoadPerspective(const wxString &name = wxT(""));
-	void          LoadPerspectiveByMenuId(int id);
-	void          SavePerspective(const wxString &name = wxT(""), bool notify = true);
-	void          SavePerspectiveIfNotExists(const wxString &name);
-	
-	wxArrayString GetAllPerspectives();
-	void          DeleteAllPerspectives();
-	void          ClearIds();
-	int           MenuIdFromName(const wxString &name);
-	wxString      NameFromMenuId(int id);
-	void          Rename(const wxString &old, const wxString &new_name);
-	void          Delete(const wxString &name);
+    bool          IsDefaultActive() const;
+    void          LoadPerspective(const wxString &name = wxT(""));
+    void          LoadPerspectiveByMenuId(int id);
+    void          SavePerspective(const wxString &name = wxT(""), bool notify = true);
+    void          SavePerspectiveIfNotExists(const wxString &name);
+    
+    wxArrayString GetAllPerspectives();
+    void          DeleteAllPerspectives();
+    void          ClearIds();
+    int           MenuIdFromName(const wxString &name);
+    wxString      NameFromMenuId(int id);
+    void          Rename(const wxString &old, const wxString &new_name);
+    void          Delete(const wxString &name);
 
-	int FirstMenuId() const {
-		return PERSPECTIVE_FIRST_MENU_ID;
-	}
-	int LastMenuId()  const {
-		return PERSPECTIVE_LAST_MENU_ID;
-	}
+    int FirstMenuId() const {
+        return PERSPECTIVE_FIRST_MENU_ID;
+    }
+    int LastMenuId()  const {
+        return PERSPECTIVE_LAST_MENU_ID;
+    }
 };
 
 #endif // PERSPECTIVEMANAGER_H

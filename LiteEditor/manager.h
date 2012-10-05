@@ -536,12 +536,6 @@ public:
     void ShowDebuggerPane(bool commit = true);
 
     /**
-     * \brief toggle the output pane
-     * \param hide show or hide
-     */
-    void ToggleOutputPane(bool hide);
-
-    /**
      * Show the workspace pane and set focus to focusWin
      * \param focusWin tab name to set the focus
      */

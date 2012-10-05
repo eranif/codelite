@@ -1416,43 +1416,12 @@ bool Manager::DoFindDockInfo(const wxString &saved_perspective, const wxString &
     return false;
 }
 
-void Manager::ToggleOutputPane(bool hide)
-{
-    static wxString build_perspective;
-    wxAuiManager *aui = &clMainFrame::Get()->GetDockingManager();
-    
-    if ( aui ) {
-        wxAuiPaneInfo &pane_info = aui->GetPane(wxT("Output View"));
-        
-        if ( pane_info.IsOk() && pane_info.IsShown() ) {
-            // keep the last perspective where the output view 
-            // was visible
-            build_perspective = aui->SavePerspective();
-        }
-        
-        if ( pane_info.IsOk() && hide && pane_info.IsShown() ) {
-            pane_info.Hide();
-            aui->Update();
-            
-        } else if ( pane_info.IsOk() && !hide && !pane_info.IsShown() ) {
-            if ( !build_perspective.IsEmpty() ) {
-                aui->LoadPerspective(build_perspective, true);
-                
-            } else {
-                // Else just show it
-                pane_info.Show();
-                aui->Update();
-            }
-        }
-    }
-}
-
 bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 {
     //clMainFrame::Get()->ViewPane(wxT("Output View"), true);
 
     // make the output pane visible
-    ToggleOutputPane( false );
+    GetPerspectiveManager().ToggleOutputPane( false );
 
     // set the selection to focus win
     OutputPane *pane = clMainFrame::Get()->GetOutputPane();

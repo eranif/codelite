@@ -1224,7 +1224,9 @@ void TagsManager::OpenType(std::vector<TagEntryPtr> &tags)
 
 void TagsManager::FindSymbol(const wxString& name, std::vector<TagEntryPtr> &tags)
 {
-    GetDatabase()->GetTagsByScopeAndName(wxEmptyString, name, false, tags);
+    // since we dont get a scope, we better user a search that only uses the
+    // name (GetTagsByScopeAndName) is optimized to search the global tags table
+    GetDatabase()->GetTagsByName(name, tags, true);
 }
 
 void TagsManager::DeleteFilesTags(const wxArrayString &files)

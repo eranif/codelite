@@ -1418,54 +1418,38 @@ bool Manager::DoFindDockInfo(const wxString &saved_perspective, const wxString &
 
 void Manager::ToggleOutputPane(bool hide)
 {
-    static wxString saved_dock_info;
+    static wxString build_perspective;
     wxAuiManager *aui = &clMainFrame::Get()->GetDockingManager();
-
+    
     if ( aui ) {
         wxAuiPaneInfo &pane_info = aui->GetPane(wxT("Output View"));
-        wxString dock_info ( wxString::Format(wxT("dock_size(%d,%d,%d)"), pane_info.dock_direction, pane_info.dock_layer, pane_info.dock_row) );
-        if ( hide ) {
-            if ( pane_info.IsShown() ) {
-                clMainFrame::Get()->Freeze();
-
-                DoFindDockInfo(aui->SavePerspective(), dock_info, saved_dock_info);
-                DockablePaneMenuManager::HackHidePane(true,pane_info,aui);
-
-                clMainFrame::Get()->Thaw();
-            }
-
-
-        } else {
-            // Show it
-            if ( pane_info.IsShown() == false ) {
-                clMainFrame::Get()->Freeze();
-
-                if ( saved_dock_info.IsEmpty() ) {
-
-                    DockablePaneMenuManager::HackShowPane(pane_info,aui);
-
-                } else {
-                    wxString auiPerspective = aui->SavePerspective();
-                    if ( auiPerspective.Find(dock_info) == wxNOT_FOUND ) {
-                        // the dock_info does not exist
-                        auiPerspective << saved_dock_info << wxT("|");
-                        aui->LoadPerspective(auiPerspective, false);
-                        DockablePaneMenuManager::HackShowPane(pane_info,aui);
-                    } else {
-                        DockablePaneMenuManager::HackShowPane(pane_info,aui);
-                    }
-                }
-                clMainFrame::Get()->Thaw();
+        
+        if ( pane_info.IsOk() && pane_info.IsShown() ) {
+            // keep the last perspective where the output view 
+            // was visible
+            build_perspective = aui->SavePerspective();
+        }
+        
+        if ( pane_info.IsOk() && hide && pane_info.IsShown() ) {
+            pane_info.Hide();
+            aui->Update();
+            
+        } else if ( pane_info.IsOk() && !hide && !pane_info.IsShown() ) {
+            if ( !build_perspective.IsEmpty() ) {
+                aui->LoadPerspective(build_perspective, true);
+                
+            } else {
+                // Else just show it
+                pane_info.Show();
+                aui->Update();
             }
         }
     }
 }
 
-
-
 bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
 {
-    clMainFrame::Get()->ViewPane(wxT("Output View"), true);
+    //clMainFrame::Get()->ViewPane(wxT("Output View"), true);
 
     // make the output pane visible
     ToggleOutputPane( false );

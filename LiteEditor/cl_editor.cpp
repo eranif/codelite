@@ -3632,7 +3632,7 @@ void LEditor::OnChange(wxStyledTextEvent& event)
     if ( event.GetModificationType() & wxSTC_MOD_CHANGESTYLE ) {
 #ifdef __WXGTK__
         // Contents, styling or markers have been changed
-        Refresh();
+       // Refresh();
 #endif
     }
 

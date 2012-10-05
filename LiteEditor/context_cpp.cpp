@@ -1345,12 +1345,41 @@ int ContextCpp::FindLineToAddInclude()
         maxLineToScan = 100;
     }
 
+    int lineno = wxNOT_FOUND;
+    bool found = false;
+    int i = 0;
+    // Start by skipping any initial copyright block and include-guard
+    int initialblock = 0;
     for (int i=0; i<maxLineToScan; i++) {
-        if (IsIncludeStatement(ctrl.GetLine(i))) {
-            return i;
+        wxString line = ctrl.GetLine(i).Trim().Trim(false);
+        if (!(line.empty() || line.StartsWith("//") || IsComment(ctrl.PositionFromLine(i))
+                           || line.StartsWith("#ifndef") || line.StartsWith("#define"))) {
+            break;
+        }
+        initialblock = i;
+    }
+
+    // Try to find the end of the #include list
+    for (; i<maxLineToScan; i++) {
+        wxString line = ctrl.GetLine(i).Trim().Trim(false);
+        if (line.empty()) {
+            continue;
+        }
+        if (IsIncludeStatement(line)) {
+            lineno = i;
+            found = true;
+        } 
+        else if (found) {
+            // Only return here if we've found at least 1
+            return lineno + 1;
         }
     }
-    return wxNOT_FOUND;
+
+    if (lineno != wxNOT_FOUND) {
+        return lineno + 1;
+    } else {
+        return initialblock ? initialblock + 1 : wxNOT_FOUND;
+    }
 }
 
 void ContextCpp::OnMoveImpl(wxCommandEvent &e)

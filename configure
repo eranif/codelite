@@ -139,6 +139,10 @@ createVariables()
 		debug_flag=" -g "
 		ext=ud
 		optimization=" -DREGEXP_UNICODE "
+        asserts=""
+        if [ "$asserts_specified" = "off" ]; then
+            asserts="-DNDEBUG"
+        fi
 		wxcfg="--unicode=yes --debug=yes"
 	else
 		objects_dir="Release_gcc_unicode"${wx_suffix}
@@ -146,13 +150,19 @@ createVariables()
 		ext=u
 		debug_flag=""
 		optimization=" -O3 -DREGEXP_UNICODE "
+        # In release builds, unless otherwise instructed, tell wx to disable asserts
+        asserts="-DNDEBUG"
+        if [ "$asserts_specified" = "on" ]; then
+            asserts=""
+        fi
 		wxcfg="--unicode=yes --debug=no"
 	fi
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "WXASSERTS=${asserts}" >> Makefile
 	echo "CXX=${compiler_name}" >> Makefile
-	echo "CMP=\$(CXX) ${compiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CMP=\$(CXX) ${compiler_extras} \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "CC=${c_compiler_name}" >> Makefile
 	echo "GCC=\$(CC) ${c_compiler_extras}" >> Makefile
 	echo "EXE_NAME=${exe_name}" >> Makefile
@@ -332,18 +342,28 @@ createCodeLiteCppcheckMakefile ()
 		debug_flag=" -g "
 		configuration="Debug"
 		optimization=" -O0 "
+        asserts=""
+        if [ "$asserts_specified" = "off" ]; then
+            asserts="-DNDEBUG"
+        fi
 	else
 		configuration="Release"
 		debug_flag=""
 		optimization=" -O2 "
+        # In release builds, unless otherwise instructed, tell wx to disable asserts
+        asserts="-DNDEBUG"
+        if [ "$asserts_specified" = "on" ]; then
+            asserts=""
+        fi
 	fi
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "WXASSERTS=${asserts}" >> Makefile
 	echo "CXX=${compiler_name}" >> Makefile
-	echo "CMP=\$(CXX) ${cppchkcompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CMP=\$(CXX) ${cppchkcompiler_extras} \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "CC=${c_compiler_name}" >> Makefile
-	echo "GCC=\$(CC) ${c_cppchkcompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "GCC=\$(CC) ${c_cppchkcompiler_extras} \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_cppcheck" >> Makefile
 
@@ -417,18 +437,28 @@ createCodeLiteClangMakefile()
 		debug_flag=" -g "
 		configuration="Debug"
 		optimization=" -O0 "
+        asserts=""
+        if [ "$asserts_specified" = "off" ]; then
+            asserts="-DNDEBUG"
+        fi
 	else
 		configuration="Release"
 		debug_flag=""
 		optimization=" -O2 "
+        # In release builds, unless otherwise instructed, tell wx to disable asserts
+        asserts="-DNDEBUG"
+        if [ "$asserts_specified" = "on" ]; then
+            asserts=""
+        fi
 	fi
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "WXASSERTS=${asserts}" >> Makefile
 	echo "CXX=${compiler_name}" >> Makefile
-	echo "CMP=\$(CXX) \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CMP=\$(CXX) \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "CC=${c_compiler_name}" >> Makefile
-	echo "GCC=\$(CC) \$(DEBUG) \$(OPT) " >> Makefile
+	echo "GCC=\$(CC) \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_clang" >> Makefile
 
@@ -518,18 +548,28 @@ createCodeLiteGCCMakefile ()
 		debug_flag=" -g "
 		configuration="Debug"
 		optimization=" -O0 "
+        asserts=""
+        if [ "$asserts_specified" = "off" ]; then
+            asserts="-DNDEBUG"
+        fi
 	else
 		configuration="Release"
 		debug_flag=""
 		optimization=" -O2 "
+        # In release builds, unless otherwise instructed, tell wx to disable asserts
+        asserts="-DNDEBUG"
+        if [ "$asserts_specified" = "on" ]; then
+            asserts=""
+        fi
 	fi
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "WXASSERTS=${asserts}" >> Makefile
 	echo "CXX=${compiler_name}" >> Makefile
-	echo "CMP=\$(CXX) ${codelitegcc_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CMP=\$(CXX) ${codelitegcc_extras} \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "CC=${c_compiler_name}" >> Makefile
-	echo "GCC=\$(CC) ${c_codelitegcc_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "GCC=\$(CC) ${c_codelitegcc_extras} \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_gcc" >> Makefile
 
@@ -621,18 +661,28 @@ createCodeLiteIndexerMakefile ()
 		debug_flag=" -g "
 		configuration="Debug"
 		optimization=" -O0 "
+        asserts=""
+        if [ "$asserts_specified" = "off" ]; then
+            asserts="-DNDEBUG"
+        fi
 	else
 		configuration="Release"
 		debug_flag=""
 		optimization=" -O2 "
+        # In release builds, unless otherwise instructed, tell wx to disable asserts
+        asserts="-DNDEBUG"
+        if [ "$asserts_specified" = "on" ]; then
+            asserts=""
+        fi
 	fi
 
 	echo "OPT=${optimization}" >> Makefile
 	echo "DEBUG=${debug_flag}" >> Makefile
+	echo "WXASSERTS=${asserts}" >> Makefile
 	echo "CXX=${compiler_name}" >> Makefile
-	echo "CMP=\$(CXX) ${indexercompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "CMP=\$(CXX) ${indexercompiler_extras} \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "CC=${c_compiler_name}" >> Makefile
-	echo "GCC=\$(CC) ${c_indexercompiler_extras} \$(DEBUG) \$(OPT) " >> Makefile
+	echo "GCC=\$(CC) ${c_indexercompiler_extras} \$(DEBUG) \$(OPT) \$(WXASSERTS) " >> Makefile
 	echo "" >> Makefile
 	echo "all: codelite_indexer" >> Makefile
 
@@ -936,7 +986,7 @@ createPluginTargets()
 	echo "all :  pre_build ${plugin_name} post_build" >> Makefile
 	echo "" >> Makefile
 	echo "pre_build:" >> Makefile
-    echo "	@echo" >> Makefile
+	echo "	@echo" >> Makefile
 	echo "	@echo \"----------Building project:[ ${plugin_name} - ${configuration} ]----------\"" >> Makefile
 	echo "	@echo" >> Makefile
 	echo "	@test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
@@ -1029,7 +1079,7 @@ createInstallTarget()
 	
 	if [ "$add_desktop_icon" = "yes" ] ; then
 	  if test -d $HOME/Desktop/ ; then
-	    echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile
+		echo "	@cp -fpr Runtime/codelite.desktop $HOME/Desktop/" >> Makefile
 		echo "	@chmod +x $HOME/Desktop/codelite.desktop" >> Makefile
 	  fi
 	fi
@@ -1085,10 +1135,10 @@ createUnInstallTarget()
 	fi
 	if [ "$plugins_dir" != "/usr/lib" ] && [ "$plugins_dir" != "/usr/lib/" ] ; then
 	echo "	@\$(RM) -fr  \"\$(DESTDIR)${plugins_dir}/\"" >> Makefile
-    fi
-    # Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
+	fi
+	# Check write permission for /usr/share/applications, in case we're using a 'local' prefix and not doing sudo
 	echo "	@if test -w \"\$(DESTDIR)${prefix}/share/applications\" ; then \\" >> Makefile
-	    echo "	  \$(RM) -fr \"\$(DESTDIR)${prefix}/share/applications/codelite.desktop\"; \\" >> Makefile
+	echo "	  \$(RM) -fr \"\$(DESTDIR)${prefix}/share/applications/codelite.desktop\"; \\" >> Makefile
 	echo "	fi" >> Makefile
 	echo "	@\$(RM) -fr ~/Desktop/codelite.desktop" >> Makefile
 	if [ "$install_translations" = "yes" ] ; then
@@ -1110,6 +1160,8 @@ Show_Help_and_Exit()
 	echo "  --prefix=PREFIX         install files into the filepath PREFIX (the default is /usr)"
 	echo "  --plugins-dir=PLUGINSDIR   install plugins into the filepath PLUGINSDIR (the default is \$PREFIX/lib/codelite)"
 	echo "  --enable-debug          create a debug build (the default is disable)"
+	echo "  --disable-asserts       disallow assert messages, even in debug builds where they are normally allowed"
+	echo "  --enable-asserts        allow assert messages, even in release builds where they are normally prevented"
 	echo "  --enable-mysql          enable MySQL support in DatabaseExplorer plugin (MySQL connector sources must be installed on the system)"
 	echo "  --enable-postgres       enable PostgreSQL support in DatabaseExplorer plugin (PostgreSQL connector sources must be installed on the system)"
 	echo "  --enable-pch            generate Makefiles that use pre-compiled headers to reduce compile time"
@@ -1130,8 +1182,8 @@ wx_config_tool="wx-config"
 # if the user provided its own wx_config_tool, override it
 if [ -n "$WXCONFIG" ]; then
 	wx_config_tool="$WXCONFIG"
+    echo "Using ${wx_config_tool} for wx-config"
 fi
-echo "wx-config -> ${wx_config_tool}"
 
 ## Create variables needed by the makefile
 enable_debug="no"
@@ -1214,6 +1266,12 @@ do
 		
 	elif [ "$1" = "--enable-debug" ]; then
 		enable_debug="yes"
+		
+	elif [ "$1" = "--enable-asserts" ]; then
+		asserts_specified="on"
+		
+	elif [ "$1" = "--disable-asserts" ]; then
+		asserts_specified="off"
 
 	elif [ "$1" = "--enable-mysql" ]; then
 		enable_mysql="yes"
@@ -1254,8 +1312,9 @@ do
 done
 
 ## Now we've Shown_Help_and_Exited, it's safe to check if the wx version is new enough
-if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -lt 9 ] && [ "$wxRELEASE_NUMBER" -lt 8 ]; then
-	echo "I'm afraid your wxWidgets version is too old to build CodeLite"
+if [ "$wxMAJOR_VERSION$wxMINOR_VERSION" -lt 29 ] || [ "$wxMINOR_VERSION$wxRELEASE_NUMBER" -lt 94 ]; then
+	echo "I'm afraid your wxWidgets version is too old"
+	echo "Building CodeLite requires at least wxWidgets-2.9.4"
 	exit 1
 fi
 
@@ -1272,8 +1331,8 @@ rm -fr ./Makefile
 ## Create revision file
 createRevisionFile
 echo "Generating Makefile..."
-createVariables "no"
 
+createVariables "no"
 createPCH
 
 ## Create the various object lists

@@ -23,12 +23,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
+#include "debuggermanager.h"
+#include "debugger.h"
 #include <wx/wfstream.h>
 #include <wx/log.h>
 #include <wx/imaglist.h>
 #include <wx/xrc/xmlres.h>
 #include "event_notifier.h"
 #include "dirtraverser.h"
+#include <wx/regex.h>
 #include "imanager.h"
 #include "environmentconfig.h"
 #include "environmentconfig.h"
@@ -1318,3 +1321,26 @@ unsigned int UCS2FromUTF8(const char *s, unsigned int len, wchar_t *tbuf, unsign
     return ui;
 }
 // [CHANGED] END
+
+wxString DbgPrependCharPtrCastIfNeeded(const wxString &expr, const wxString &exprType)
+{
+    static wxRegEx reConstArr(wxT("(const )?[ ]*(w)?char(_t)? *[\\[0-9\\]]*"));
+    
+    bool arrayAsCharPtr = false;
+    DebuggerInformation info;
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if(dbgr) {
+        DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
+        arrayAsCharPtr = info.charArrAsPtr;
+    }
+    
+    wxString newExpr;
+    if(arrayAsCharPtr && reConstArr.Matches(exprType)) {
+        // array
+        newExpr << wxT("(char*)") << expr;
+        
+    } else {
+        newExpr << expr;
+    }
+    return newExpr;
+}

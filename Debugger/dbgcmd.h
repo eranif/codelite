@@ -34,30 +34,30 @@ class IDebugger;
 class DbgGdb;
 
 #define GDB_NEXT_TOKEN()\
-	{\
-		type = gdb_result_lex();\
-		currentToken = _U(gdb_result_string.c_str());\
-	}
+    {\
+        type = gdb_result_lex();\
+        currentToken = _U(gdb_result_string.c_str());\
+    }
 
 #define GDB_ABORT(ch)\
-	if(type != (int)ch){\
-		break;\
-	}
+    if(type != (int)ch){\
+        break;\
+    }
 
 class DbgCmdHandler
 {
 protected:
-	IDebuggerObserver *m_observer;
+    IDebuggerObserver *m_observer;
 
 public:
-	DbgCmdHandler(IDebuggerObserver *observer) : m_observer(observer) {}
-	virtual ~DbgCmdHandler() {}
+    DbgCmdHandler(IDebuggerObserver *observer) : m_observer(observer) {}
+    virtual ~DbgCmdHandler() {}
 
-	virtual bool WantsErrors() const {
-		return false;
-	}
+    virtual bool WantsErrors() const {
+        return false;
+    }
 
-	virtual bool ProcessOutput(const wxString &line) = 0;
+    virtual bool ProcessOutput(const wxString &line) = 0;
 };
 
 /**
@@ -66,17 +66,17 @@ public:
  */
 class DbgCmdHandlerGetLine : public DbgCmdHandler
 {
-	DbgGdb*  m_gdb;
+    DbgGdb*  m_gdb;
 public:
-	DbgCmdHandlerGetLine(IDebuggerObserver *observe, DbgGdb* gdbr)
-	: DbgCmdHandler(observe)
-	, m_gdb(gdbr)
-	{}
+    DbgCmdHandlerGetLine(IDebuggerObserver *observe, DbgGdb* gdbr)
+        : DbgCmdHandler(observe)
+        , m_gdb(gdbr)
+    {}
 
-	virtual ~DbgCmdHandlerGetLine()
-	{}
+    virtual ~DbgCmdHandlerGetLine()
+    {}
 
-	virtual bool ProcessOutput(const wxString &line);
+    virtual bool ProcessOutput(const wxString &line);
 };
 
 /**
@@ -85,17 +85,17 @@ public:
  */
 class DbgCmdHandlerStackDepth : public DbgCmdHandler
 {
-	DbgGdb*  m_gdb;
+    DbgGdb*  m_gdb;
 public:
-	DbgCmdHandlerStackDepth(IDebuggerObserver *observe, DbgGdb* gdbr)
-	: DbgCmdHandler(observe)
-	, m_gdb(gdbr)
-	{}
+    DbgCmdHandlerStackDepth(IDebuggerObserver *observe, DbgGdb* gdbr)
+        : DbgCmdHandler(observe)
+        , m_gdb(gdbr)
+    {}
 
-	virtual ~DbgCmdHandlerStackDepth()
-	{}
+    virtual ~DbgCmdHandlerStackDepth()
+    {}
 
-	virtual bool ProcessOutput(const wxString &line);
+    virtual bool ProcessOutput(const wxString &line);
 };
 
 /**
@@ -109,196 +109,199 @@ public:
 class DbgCmdHandlerAsyncCmd : public DbgCmdHandler
 {
 protected:
-	DbgGdb*  m_gdb;
+    DbgGdb*  m_gdb;
 
 public:
-	DbgCmdHandlerAsyncCmd(IDebuggerObserver *observer, DbgGdb* gdb)
-	: DbgCmdHandler(observer)
-	, m_gdb(gdb)
-	{}
-	virtual ~DbgCmdHandlerAsyncCmd() {}
+    DbgCmdHandlerAsyncCmd(IDebuggerObserver *observer, DbgGdb* gdb)
+        : DbgCmdHandler(observer)
+        , m_gdb(gdb)
+    {}
+    virtual ~DbgCmdHandlerAsyncCmd() {}
 
-	void UpdateGotControl(DebuggerReasons reason, const wxString &func);
-	virtual bool ProcessOutput(const wxString &line);
+    void UpdateGotControl(DebuggerReasons reason, const wxString &func);
+    virtual bool ProcessOutput(const wxString &line);
 };
 
 class DbgCmdHandlerExecRun : public DbgCmdHandlerAsyncCmd
 {
 public:
-	DbgCmdHandlerExecRun(IDebuggerObserver *observer, DbgGdb* gdb)
-	: DbgCmdHandlerAsyncCmd(observer, gdb)
-	{}
-	
-	virtual ~DbgCmdHandlerExecRun() {}
-	virtual bool ProcessOutput(const wxString &line);
-	virtual bool WantsErrors() const {return true;}
+    DbgCmdHandlerExecRun(IDebuggerObserver *observer, DbgGdb* gdb)
+        : DbgCmdHandlerAsyncCmd(observer, gdb)
+    {}
+
+    virtual ~DbgCmdHandlerExecRun() {}
+    virtual bool ProcessOutput(const wxString &line);
+    virtual bool WantsErrors() const {
+        return true;
+    }
 };
 
 class DbgCmdHandlerRemoteDebugging : public DbgCmdHandler
 {
-	IDebugger *m_debugger;
+    IDebugger *m_debugger;
 
 public:
-	DbgCmdHandlerRemoteDebugging(IDebuggerObserver *observer, IDebugger *debugger) : DbgCmdHandler(observer), m_debugger(debugger) {}
+    DbgCmdHandlerRemoteDebugging(IDebuggerObserver *observer, IDebugger *debugger) : DbgCmdHandler(observer), m_debugger(debugger) {}
 
-	virtual ~DbgCmdHandlerRemoteDebugging() {}
+    virtual ~DbgCmdHandlerRemoteDebugging() {}
 
-	virtual bool ProcessOutput(const wxString &line);
+    virtual bool ProcessOutput(const wxString &line);
 };
 
 class DbgCmdHandlerBp : public DbgCmdHandler
 {
-	const BreakpointInfo           m_bp;
-	std::vector< BreakpointInfo > *m_bplist;
-	int                            m_bpType; // BP_type_break by default
-	DbgGdb*                        m_debugger;
+    const BreakpointInfo           m_bp;
+    std::vector< BreakpointInfo > *m_bplist;
+    int                            m_bpType; // BP_type_break by default
+    DbgGdb*                        m_debugger;
 
 public:
-	DbgCmdHandlerBp(IDebuggerObserver *observer, DbgGdb *debugger, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break)
-			: DbgCmdHandler(observer)
-			, m_bp(bp)
-			, m_bplist(bplist)
-			, m_bpType(bptype)
-			, m_debugger(debugger) {}
+    DbgCmdHandlerBp(IDebuggerObserver *observer, DbgGdb *debugger, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break)
+        : DbgCmdHandler(observer)
+        , m_bp(bp)
+        , m_bplist(bplist)
+        , m_bpType(bptype)
+        , m_debugger(debugger) {}
 
-	virtual ~DbgCmdHandlerBp() {}
-	virtual bool ProcessOutput(const wxString &line);
-	virtual bool WantsErrors() const {
-		return true;
-	}
+    virtual ~DbgCmdHandlerBp() {}
+    virtual bool ProcessOutput(const wxString &line);
+    virtual bool WantsErrors() const {
+        return true;
+    }
 };
 
 class DbgCmdHandlerLocals : public DbgCmdHandler
 {
 public:
-	DbgCmdHandlerLocals(IDebuggerObserver *observer)
-			: DbgCmdHandler(observer) {}
-	virtual ~DbgCmdHandlerLocals() {}
-	virtual bool ProcessOutput(const wxString &line);
+    DbgCmdHandlerLocals(IDebuggerObserver *observer)
+        : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdHandlerLocals() {}
+    virtual bool ProcessOutput(const wxString &line);
 };
 
 class DbgCmdHandlerFuncArgs : public DbgCmdHandler
 {
 public:
-	DbgCmdHandlerFuncArgs(IDebuggerObserver *observer)
-			: DbgCmdHandler(observer) {}
-	virtual ~DbgCmdHandlerFuncArgs() {}
-	virtual bool ProcessOutput(const wxString &line);
+    DbgCmdHandlerFuncArgs(IDebuggerObserver *observer)
+        : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdHandlerFuncArgs() {}
+    virtual bool ProcessOutput(const wxString &line);
 };
 
 // A Void Handler, which is here simply to ignore a reply from the debugger
 class DbgCmdHandlerVarCreator : public DbgCmdHandler
 {
 public:
-	DbgCmdHandlerVarCreator(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdHandlerVarCreator() {}
-	virtual bool ProcessOutput(const wxString & line);
+    DbgCmdHandlerVarCreator(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdHandlerVarCreator() {}
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 class DbgCmdHandlerEvalExpr : public DbgCmdHandler
 {
-	wxString m_expression;
+    wxString m_expression;
 public:
-	DbgCmdHandlerEvalExpr(IDebuggerObserver *observer, const wxString &expression)
-			: DbgCmdHandler(observer)
-			, m_expression(expression) {}
+    DbgCmdHandlerEvalExpr(IDebuggerObserver *observer, const wxString &expression)
+        : DbgCmdHandler(observer)
+        , m_expression(expression) {}
 
-	virtual ~DbgCmdHandlerEvalExpr() {}
-	virtual bool ProcessOutput(const wxString & line);
-	virtual const wxString & GetExpression() const {
-		return m_expression;
-	}
+    virtual ~DbgCmdHandlerEvalExpr() {}
+    virtual bool ProcessOutput(const wxString & line);
+    virtual const wxString & GetExpression() const {
+        return m_expression;
+    }
 };
 
 // handler -list-stack-frames command
 class DbgCmdStackList : public DbgCmdHandler
 {
 public:
-	DbgCmdStackList(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdStackList() {}
-	virtual bool ProcessOutput(const wxString & line);
+    DbgCmdStackList(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdStackList() {}
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 // handler -list-stack-frames command
 class DbgCmdSelectFrame : public DbgCmdHandler
 {
 public:
-	DbgCmdSelectFrame(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdSelectFrame() {}
-	virtual bool ProcessOutput(const wxString & line);
+    DbgCmdSelectFrame(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdSelectFrame() {}
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 // Used for Ignore etc
 class DbgCmdDisplayOutput : public DbgCmdHandler
 {
 public:
-	DbgCmdDisplayOutput(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdDisplayOutput() {}
-	virtual bool ProcessOutput(const wxString & line);
+    DbgCmdDisplayOutput(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdDisplayOutput() {}
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 class DbgCmdResolveTypeHandler : public DbgCmdHandler
 {
-	DbgGdb * m_debugger;
-	wxString m_expression;
-
+    DbgGdb * m_debugger;
+    wxString m_expression;
+    int m_userReason;
+    
 public:
-	DbgCmdResolveTypeHandler(const wxString &expression, DbgGdb *debugger);
+    DbgCmdResolveTypeHandler(const wxString &expression, DbgGdb *debugger, int userReason);
 
-	virtual ~DbgCmdResolveTypeHandler() {}
-	virtual bool ProcessOutput(const wxString & line);
+    virtual ~DbgCmdResolveTypeHandler() {}
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 class DbgCmdCLIHandler : public DbgCmdHandler
 {
-	wxString m_output;
-	wxString m_commandId;
+    wxString m_output;
+    wxString m_commandId;
 
 public:
-	DbgCmdCLIHandler(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+    DbgCmdCLIHandler(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
 
-	virtual ~DbgCmdCLIHandler() {}
-	virtual bool ProcessOutput(const wxString & line);
+    virtual ~DbgCmdCLIHandler() {}
+    virtual bool ProcessOutput(const wxString & line);
 
-	const wxString& GetOutput() const {
-		return m_output;
-	}
+    const wxString& GetOutput() const {
+        return m_output;
+    }
 
-	void SetCommandId(const wxString& commandId) {
-		this->m_commandId = commandId;
-	}
+    void SetCommandId(const wxString& commandId) {
+        this->m_commandId = commandId;
+    }
 
-	const wxString& GetCommandId() const {
-		return m_commandId;
-	}
+    const wxString& GetCommandId() const {
+        return m_commandId;
+    }
 
-	void Append( const wxString &text ) {
-		m_output.Append(text + wxT("\n"));
-	}
+    void Append( const wxString &text ) {
+        m_output.Append(text + wxT("\n"));
+    }
 };
 
 class DbgCmdGetTipHandler : public DbgCmdCLIHandler
 {
 
-	wxString m_expression;
+    wxString m_expression;
 
 public:
-	DbgCmdGetTipHandler(IDebuggerObserver *observer, const wxString &expression) : DbgCmdCLIHandler(observer), m_expression(expression) {}
+    DbgCmdGetTipHandler(IDebuggerObserver *observer, const wxString &expression) : DbgCmdCLIHandler(observer), m_expression(expression) {}
 
-	virtual ~DbgCmdGetTipHandler() {}
-	virtual bool ProcessOutput(const wxString & line);
+    virtual ~DbgCmdGetTipHandler() {}
+    virtual bool ProcessOutput(const wxString & line);
 
 };
 
 // Callback for handling 'set condition' command
 class DbgCmdSetConditionHandler : public DbgCmdHandler
 {
-	BreakpointInfo m_bp;
+    BreakpointInfo m_bp;
 public:
-	DbgCmdSetConditionHandler(IDebuggerObserver *observer, const BreakpointInfo& bp) : DbgCmdHandler(observer), m_bp(bp) {}
-	virtual ~DbgCmdSetConditionHandler() {}
+    DbgCmdSetConditionHandler(IDebuggerObserver *observer, const BreakpointInfo& bp) : DbgCmdHandler(observer), m_bp(bp) {}
+    virtual ~DbgCmdSetConditionHandler() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 // Callback for handling parsing the -break-list output from
@@ -306,10 +309,10 @@ public:
 class DbgCmdBreakList : public DbgCmdHandler
 {
 public:
-	DbgCmdBreakList(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdBreakList() {}
+    DbgCmdBreakList(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdBreakList() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 // Callback for handling threads info
@@ -317,121 +320,122 @@ public:
 class DbgCmdListThreads : public DbgCmdCLIHandler
 {
 public:
-	DbgCmdListThreads(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
-	virtual ~DbgCmdListThreads() {}
+    DbgCmdListThreads(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
+    virtual ~DbgCmdListThreads() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 // Callback for handling the '-data-read-memory' command
 class DbgCmdWatchMemory : public DbgCmdHandler
 {
-	wxString m_address;
-	size_t   m_count;
+    wxString m_address;
+    size_t   m_count;
 
 public:
-	DbgCmdWatchMemory(IDebuggerObserver *observer, const wxString &address, size_t count) : DbgCmdHandler(observer), m_address(address), m_count(count) {}
-	virtual ~DbgCmdWatchMemory() {}
+    DbgCmdWatchMemory(IDebuggerObserver *observer, const wxString &address, size_t count) : DbgCmdHandler(observer), m_address(address), m_count(count) {}
+    virtual ~DbgCmdWatchMemory() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 // Handle the 'CreateVariableObject' call
 class DbgCmdCreateVarObj : public DbgCmdHandler
 {
-	wxString m_expression;
-	int      m_userReason;
-	DbgGdb * m_debugger;
+    wxString m_expression;
+    int      m_userReason;
+    DbgGdb * m_debugger;
 
 public:
-	DbgCmdCreateVarObj(IDebuggerObserver *observer, DbgGdb *gdb, const wxString &expression, int userReason)
-			: DbgCmdHandler(observer)
-			, m_expression(expression)
-			, m_userReason(userReason)
-			, m_debugger(gdb)
-	{
-	}
+    DbgCmdCreateVarObj(IDebuggerObserver *observer, DbgGdb *gdb, const wxString &expression, int userReason)
+        : DbgCmdHandler(observer)
+        , m_expression(expression)
+        , m_userReason(userReason)
+        , m_debugger(gdb) {
+    }
 
-	/**
-	 * @brief we want to handle error ourselves
-	 */
-	virtual bool WantsErrors() const {
-		return true;
-	}
+    /**
+     * @brief we want to handle error ourselves
+     */
+    virtual bool WantsErrors() const {
+        return true;
+    }
 
-	virtual ~DbgCmdCreateVarObj() {}
+    virtual ~DbgCmdCreateVarObj() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 // Handle the 'DbgCmdListChildren' call
 class DbgCmdListChildren : public DbgCmdHandler
 {
-	wxString m_variable;
-	int      m_userReason;
+    wxString m_variable;
+    int      m_userReason;
 public:
-	DbgCmdListChildren(IDebuggerObserver *observer, const wxString &variable, int userReason)
-			: DbgCmdHandler(observer)
-			, m_variable(variable)
-			, m_userReason(userReason) {}
+    DbgCmdListChildren(IDebuggerObserver *observer, const wxString &variable, int userReason)
+        : DbgCmdHandler(observer)
+        , m_variable(variable)
+        , m_userReason(userReason) {}
 
-	virtual ~DbgCmdListChildren() {}
+    virtual ~DbgCmdListChildren() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 class DbgCmdEvalVarObj : public DbgCmdHandler
 {
-	wxString      m_variable;
-	int           m_userReason;
+    wxString      m_variable;
+    int           m_userReason;
 
 public:
-	DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, int userReason)
-			: DbgCmdHandler  (observer)
-			, m_variable     (variable)
-			, m_userReason   ( userReason )
-	{}
+    DbgCmdEvalVarObj(IDebuggerObserver *observer, const wxString &variable, int userReason)
+        : DbgCmdHandler  (observer)
+        , m_variable     (variable)
+        , m_userReason   ( userReason )
+    {}
 
-	virtual ~DbgCmdEvalVarObj() {}
+    virtual ~DbgCmdEvalVarObj() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 class DbgFindMainBreakpointIdHandler : public DbgCmdHandler
 {
-	DbgGdb * m_debugger;
+    DbgGdb * m_debugger;
 
 public:
-	DbgFindMainBreakpointIdHandler(IDebuggerObserver *observer, DbgGdb *debugger)
-			: DbgCmdHandler  (observer)
-			, m_debugger(debugger)
-			{}
+    DbgFindMainBreakpointIdHandler(IDebuggerObserver *observer, DbgGdb *debugger)
+        : DbgCmdHandler  (observer)
+        , m_debugger(debugger)
+    {}
 
-	virtual ~DbgFindMainBreakpointIdHandler()
-	{}
+    virtual ~DbgFindMainBreakpointIdHandler()
+    {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 class DbgVarObjUpdate : public DbgCmdHandler
 {
-	wxString m_variableName;
-	DbgGdb * m_debugger;
-	int      m_userReason;
+    wxString m_variableName;
+    DbgGdb * m_debugger;
+    int      m_userReason;
 
 public:
-	DbgVarObjUpdate(IDebuggerObserver *observer, DbgGdb *debugger, const wxString &name, int userReason)
-			: DbgCmdHandler  (observer)
-			, m_variableName(name)
-			, m_debugger(debugger)
-			, m_userReason(userReason)
-			{}
+    DbgVarObjUpdate(IDebuggerObserver *observer, DbgGdb *debugger, const wxString &name, int userReason)
+        : DbgCmdHandler  (observer)
+        , m_variableName(name)
+        , m_debugger(debugger)
+        , m_userReason(userReason)
+    {}
 
-	virtual ~DbgVarObjUpdate()
-	{}
+    virtual ~DbgVarObjUpdate()
+    {}
 
-	virtual bool ProcessOutput(const wxString & line);
-	virtual bool WantsErrors() { return true; }
+    virtual bool ProcessOutput(const wxString & line);
+    virtual bool WantsErrors() {
+        return true;
+    }
 
 };
 
@@ -440,18 +444,18 @@ public:
 class DbgCmdJumpHandler : public DbgCmdCLIHandler
 {
 public:
-	DbgCmdJumpHandler(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
-	virtual ~DbgCmdJumpHandler() {}
+    DbgCmdJumpHandler(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
+    virtual ~DbgCmdJumpHandler() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 
 class DbgCmdStopHandler : public DbgCmdHandler
 {
 public:
-	DbgCmdStopHandler(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
-	virtual ~DbgCmdStopHandler() {}
+    DbgCmdStopHandler(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
+    virtual ~DbgCmdStopHandler() {}
 
-	virtual bool ProcessOutput(const wxString & line);
+    virtual bool ProcessOutput(const wxString & line);
 };
 #endif //DBGCMD_H

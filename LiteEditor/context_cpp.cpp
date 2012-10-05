@@ -1333,7 +1333,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent & event)
 
         }
     }
-    dbgr->CreateVariableObject( word, false, DBG_USERR_QUICKWACTH );
+    dbgr->ResolveType(word, DBG_USERR_QUICKWACTH);
 }
 
 int ContextCpp::FindLineToAddInclude()

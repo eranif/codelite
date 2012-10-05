@@ -732,7 +732,7 @@ public:
 	 * \param expression expression to evaluate
 	 * \return true on success, false otherwise
 	 */
-	virtual bool ResolveType(const wxString &expression) = 0;
+	virtual bool ResolveType(const wxString &expression, int userReason) = 0;
 
 	//We provide two ways of evulating an expressions:
 	//The short one, which returns a string, and long one

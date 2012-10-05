@@ -3121,7 +3121,18 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
         break;
 
     case DBG_UR_TYPE_RESOLVED:
-        UpdateTypeReolsved( event.m_expression, event.m_evaluated );
+        if ( event.m_userReason == DBG_USERR_WATCHTABLE ) {
+            clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnTypeResolved(event);
+            
+        } else if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
+            wxString expr = ::DbgPrependCharPtrCastIfNeeded(event.m_expression, event.m_evaluated);
+            dbgr->CreateVariableObject(expr, false, DBG_USERR_QUICKWACTH);
+            
+        } else {
+            // Default
+            UpdateTypeReolsved( event.m_expression, event.m_evaluated );
+            
+        }
         break;
 
     case DBG_UR_ASCII_VIEWER:

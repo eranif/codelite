@@ -42,58 +42,62 @@ class IDebugger;
 /** Implementing SimpleTableBase */
 class WatchesTable : public DebuggerTreeListCtrlBase
 {
-	wxMenu *m_rclickMenu;
+    wxMenu *m_rclickMenu;
 protected:
-	// Handlers for SimpleTableBase events.
-	void OnListKeyDown( wxTreeEvent& event );
-	void OnItemRightClick(wxTreeEvent& event);
-	void OnItemExpanding(wxTreeEvent& event);
-	void OnListEditLabelBegin(wxTreeEvent& event);
-	void OnListEditLabelEnd(wxTreeEvent& event);
+    // Handlers for SimpleTableBase events.
+    void OnListKeyDown( wxTreeEvent& event );
+    void OnItemRightClick(wxTreeEvent& event);
+    void OnItemExpanding(wxTreeEvent& event);
+    void OnListEditLabelBegin(wxTreeEvent& event);
+    void OnListEditLabelEnd(wxTreeEvent& event);
 
-	// Menu events
-	void OnNewWatch         (wxCommandEvent &event);
-	void OnNewWatchUI       (wxUpdateUIEvent &event);
-	void OnDeleteAll        (wxCommandEvent &event);
-	void OnDeleteAllUI      (wxUpdateUIEvent &event);
-	void OnDeleteWatch      (wxCommandEvent &event);
-	void OnDeleteWatchUI    (wxUpdateUIEvent &event);
-	void OnMenuEditExpr     (wxCommandEvent &event);
-	void OnMenuEditExprUI   (wxUpdateUIEvent &event);
-	void OnMenuCopyValue    (wxCommandEvent &event);
-	void OnMenuCopyBoth     (wxCommandEvent &event);
-	void OnMenuDisplayFormat(wxCommandEvent &event);
-	void OnNewWatch_Internal(wxCommandEvent &event);
+    // Menu events
+    void OnNewWatch         (wxCommandEvent &event);
+    void OnNewWatchUI       (wxUpdateUIEvent &event);
+    void OnDeleteAll        (wxCommandEvent &event);
+    void OnDeleteAllUI      (wxUpdateUIEvent &event);
+    void OnDeleteWatch      (wxCommandEvent &event);
+    void OnDeleteWatchUI    (wxUpdateUIEvent &event);
+    void OnMenuEditExpr     (wxCommandEvent &event);
+    void OnMenuEditExprUI   (wxUpdateUIEvent &event);
+    void OnMenuCopyValue    (wxCommandEvent &event);
+    void OnMenuCopyBoth     (wxCommandEvent &event);
+    void OnMenuDisplayFormat(wxCommandEvent &event);
+    void OnNewWatch_Internal(wxCommandEvent &event);
 
 protected:
-	void         InitTable();
-	void         DoUpdateExpression(const wxTreeItemId& item, const wxString &newExpr);
-
+    void InitTable();
+    void DoUpdateExpression(const wxTreeItemId& item, const wxString &newExpr);
+    
 public:
-	/**
-	 * @brief a callback called from the global manager when the debugger
-	 * responded for our CreateVariableObject call
-	 * @param event
-	 */
-	void OnCreateVariableObject  (const DebuggerEvent &event);
+    /**
+     * @brief a callback called from the global manager when the debugger
+     * responded for our CreateVariableObject call
+     * @param event
+     */
+    void OnCreateVariableObject  (const DebuggerEvent &event);
 
-	/**
-	 * @brief a callback called from the global manager when the debugger
-	 * responded for our ListChildren call
-	 * @param event
-	 */
-	void OnListChildren( const DebuggerEvent &event );
+    /**
+     * @brief a type resolving is completed, we can now add the watch
+     */
+    void OnTypeResolved(const DebuggerEvent &event);
+    /**
+     * @brief a callback called from the global manager when the debugger
+     * responded for our ListChildren call
+     * @param event
+     */
+    void OnListChildren( const DebuggerEvent &event );
 
-	void OnUpdateVariableObject(const DebuggerEvent &event);
+    void OnUpdateVariableObject(const DebuggerEvent &event);
 public:
-	/** Constructor */
-	WatchesTable( wxWindow* parent );
-	virtual ~WatchesTable();
+    /** Constructor */
+    WatchesTable( wxWindow* parent );
+    virtual ~WatchesTable();
 
-	void AddExpression(const wxString &expr);
-	wxArrayString GetExpressions();
-	void Clear();
-	void RefreshValues(bool repositionEditor = true);
+    void AddExpression(const wxString &expr);
+    wxArrayString GetExpressions();
+    void Clear();
+    void RefreshValues(bool repositionEditor = true);
 };
 
 #endif // __simpletable__

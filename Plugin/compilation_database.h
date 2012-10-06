@@ -9,6 +9,8 @@
 class WXDLLIMPEXP_SDK CompilationDatabase
 {
     wxSQLite3Database* m_db;
+    wxFileName         m_filename;
+    
 protected:
     void DropTables();
     void CreateDatabase();
@@ -16,6 +18,7 @@ protected:
     
 public:
     CompilationDatabase();
+    CompilationDatabase(const wxString &filename);
     virtual ~CompilationDatabase();
     
     void Open(const wxFileName& fn = wxFileName());

@@ -699,6 +699,8 @@
     <File Name="clang_unsaved_files.cpp"/>
     <File Name="code_completion_box.h"/>
     <File Name="code_completion_box.cpp"/>
+    <File Name="clang_compilation_db_thread.h"/>
+    <File Name="clang_compilation_db_thread.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

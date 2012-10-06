@@ -5,6 +5,7 @@
 #include "shell_command.h"
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
+#include "clang_compilation_db_thread.h"
 #include "parse_thread.h"
 #include "event_notifier.h"
 #include "ctags_manager.h"
@@ -194,8 +195,11 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
     ::wxUnsetEnv(wxT("CXX"));
     ::wxUnsetEnv(wxT("CC"));
     
-    CompilationDatabase cdb;
-    cdb.Initialize();
+    // Create a worker thread (detached thread) that 
+    // will initialize the database now that the compilation is ended
+    CompilationDatabase db;
+    ClangCompilationDbThread* thr = new ClangCompilationDbThread( db.GetFileName().GetFullPath() );
+    thr->Start();
     
     // Clear the TU cache
     ClearCache();

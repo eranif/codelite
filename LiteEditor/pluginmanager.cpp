@@ -51,6 +51,7 @@
 #include "fileexplorer.h"
 #include "plugin_version.h"
 #include "workspacetab.h"
+#include "file_logger.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -145,9 +146,9 @@ void PluginManager::Load()
             clDynamicLibrary *dl = new clDynamicLibrary();
             wxString fileName( files.Item( i ) );
             if ( !dl->Load( fileName ) ) {
-                wxLogMessage( wxT( "Failed to load plugin's dll: " ) + fileName );
+                CL_WARNING( wxT( "Failed to load plugin's dll: " ) + fileName );
                 if (!dl->GetError().IsEmpty()) {
-                    wxLogMessage(dl->GetError());
+                    CL_WARNING(dl->GetError());
                 }
 #if wxVERSION_NUMBER < 2900
                 delete dl;
@@ -171,14 +172,14 @@ void PluginManager::Load()
             if ( success ) {
                 interface_version = pfnInterfaceVersion();
             } else {
-                wxLogMessage(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
+                CL_WARNING(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
                 if (!dl->GetError().IsEmpty()) {
-                    wxLogMessage(dl->GetError());
+                    CL_WARNING(dl->GetError());
                 }
             }
 
             if ( interface_version != PLUGIN_INTERFACE_VERSION ) {
-                wxLogMessage(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"),
+                CL_WARNING(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"),
                                               fileName.c_str(),
                                               interface_version,
                                               PLUGIN_INTERFACE_VERSION));
@@ -206,14 +207,14 @@ void PluginManager::Load()
             
             std::map< wxString, PluginInfo>::const_iterator iter = m_pluginsInfo.find(pluginInfo.GetName());
             if (iter == m_pluginsInfo.end()) {
-                wxLogMessage( wxT( "Did not find plugin" ) + pluginInfo.GetName() + wxT(" in configuration") );
+                CL_WARNING( wxT( "Did not find plugin" ) + pluginInfo.GetName() + wxT(" in configuration") );
                 //new plugin?, add it and use the default enabled/disabled for this plugin
                 actualPlugins[pluginInfo.GetName()] = pluginInfo;
                 if (pluginInfo.GetEnabled() == false) {
 #if wxVERSION_NUMBER < 2900
                     delete dl;
 #endif
-                    wxLogMessage( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" is not enabled by default. Plugin will not be loaded") );
+                    CL_WARNING( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" is not enabled by default. Plugin will not be loaded") );
                     continue;
                 }
             } else {
@@ -227,18 +228,18 @@ void PluginManager::Load()
 #if wxVERSION_NUMBER < 2900
                     delete dl;
 #endif      
-                    wxLogMessage( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will NOT be loaded") );
+                    CL_WARNING( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will NOT be loaded") );
                     continue;
                 }
-                wxLogMessage( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will be loaded") );
+                CL_DEBUG( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will be loaded") );
             }
 
             //try and load the plugin
             GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
             if ( !success ) {
-                wxLogMessage(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
+                CL_WARNING(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
                 if (!dl->GetError().IsEmpty()) {
-                    wxLogMessage(dl->GetError());
+                    CL_WARNING(dl->GetError());
                 }
 
                 //mark this plugin as not available
@@ -252,7 +253,7 @@ void PluginManager::Load()
             }
 
             IPlugin *plugin = pfn( ( IManager* )this );
-            wxLogMessage( wxT( "Loaded plugin: " ) + plugin->GetLongName() );
+            CL_DEBUG( wxT( "Loaded plugin: " ) + plugin->GetLongName() );
             m_plugins[plugin->GetShortName()] = plugin;
 
             //load the toolbar

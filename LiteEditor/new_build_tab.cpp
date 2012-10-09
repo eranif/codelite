@@ -288,7 +288,7 @@ void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
 void NewBuildTab::OnBuildStarted(wxCommandEvent& e)
 {
     e.Skip();
-    {
+    if ( IS_WINDOWS ) {
         m_cygwinRoot.Clear();
         EnvSetter es;
         wxString cmd;
@@ -300,7 +300,7 @@ void NewBuildTab::OnBuildStarted(wxCommandEvent& e)
             m_cygwinRoot = arrOut.Item(0);
         }
     }
-    
+
     m_buildInProgress = true;
     
     // Reload the build settings data

@@ -1096,7 +1096,7 @@ createInstallTarget()
     
     ## Copy wxWidgets 294
 	if [ "$wxMAJOR_VERSION" -eq 2 ] && [ "$wxMINOR_VERSION" -eq 9 ]; then
-		wxdir=`${wx_config_tool} --libs | cut -d" " -f1| cut -dL -f2`
+		wxdir=`${wx_config_tool} --libs | grep "\-L" | cut -d" " -f1| cut -dL -f2`
 		if [ "$wxdir" != "" ] ; then
 			## prepare a temporary folder
 			echo "	@echo packaging wxWidgets ... from directory ${wxdir}" >> Makefile

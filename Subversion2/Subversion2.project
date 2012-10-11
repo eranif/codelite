@@ -79,6 +79,19 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="wxcrafter.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="wxcrafter_subversion2_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="wxcrafter.h"/>
+      <File Name="wxcrafter.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -136,7 +149,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -152,7 +166,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options=";$(shell wx-config --debug=no --libs std,stc --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libCodeLiteu.dll"/>
@@ -185,7 +199,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -230,24 +245,12 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="wxcrafter">
-    <File Name="wxcrafter.wxcp"/>
-    <VirtualDirectory Name="resources">
-      <File Name="wxcrafter_subversion2_bitmaps.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="base">
-      <File Name="wxcrafter.h"/>
-      <File Name="wxcrafter.cpp"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

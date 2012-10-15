@@ -2116,8 +2116,14 @@ void Manager::DbgStart ( long attachPid )
     // read the console command
     dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
     dbgr->SetDebuggerInformation ( dinfo );
-
-    if ( attachPid == wxNOT_FOUND ) {
+    
+    if ( !bldConf && attachPid == wxNOT_FOUND ) {
+        wxString errmsg;
+        errmsg << _("Could not find project configuration!\n") << _("Make sure that everything is set properly in your project settings");
+        ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK|wxICON_ERROR);
+        return;
+    
+    } else if ( attachPid == wxNOT_FOUND ) {
         exepath = bldConf->GetCommand();
 
         // Get the debugging arguments.

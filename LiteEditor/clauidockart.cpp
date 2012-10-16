@@ -127,7 +127,8 @@ void CLAuiDockArt::DrawCaption(wxDC& dc, wxWindow* win, const wxString& text, co
 	if(!isMac) {
 		// Check if the rect is empty, which is seems to be while CodeLite is starting
 		// If so, continuing causes a gtk warning (and anyway, there's nowhere to draw)
-		if (rect == wxRect()) {
+        // NB explictly check the wd/ht, not == wxRect(), as since r5918 there will be a 1,1 border
+		if (!rect.height || !rect.width) {
 			return;
 		}
 

@@ -104,6 +104,17 @@ public:
 	}
 #endif
 
+#if wxVERSION_NUMBER >= 2904
+	// Compilation fix again: these new functions are pure virtual in wxAuiTabArt
+    virtual void DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect) {
+		wxUnusedVar(dc); wxUnusedVar(wnd); wxUnusedVar(rect);
+	}
+    virtual int GetBorderWidth(wxWindow* wnd) {
+		wxUnusedVar(wnd);
+        return 1;
+	}
+#endif
+
 protected:
 
 	wxFont m_normal_font;
@@ -203,6 +214,17 @@ public:
 	}
 	virtual void SetActiveColour(const wxColour& colour) {
 		wxUnusedVar(colour);
+	}
+#endif
+
+#if wxVERSION_NUMBER >= 2904
+	// Compilation fix again: these new functions are pure virtual in wxAuiTabArt
+    virtual void DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect) {
+		wxUnusedVar(dc); wxUnusedVar(wnd); wxUnusedVar(rect);
+	}
+    virtual int GetBorderWidth(wxWindow* wnd) {
+		wxUnusedVar(wnd);
+        return 1;
 	}
 #endif
 

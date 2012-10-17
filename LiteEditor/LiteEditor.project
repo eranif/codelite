@@ -1002,8 +1002,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1092,7 +1091,7 @@ resources.cpp: resources.xrc
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
-      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="C:\GDB.745\bin\gdb.exe">
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -1119,7 +1118,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

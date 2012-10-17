@@ -31,6 +31,7 @@
 #include <wx/regex.h>
 #include "gdb_parser_incl.h"
 #include "procutils.h"
+#include "gdbmi_parse_thread_info.h"
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 
@@ -1020,41 +1021,14 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 
 bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 {
-    wxUnusedVar(line);
-    static wxRegEx reCommand(wxT("^([0-9]{8})"));
-    static wxRegEx reTableTitle(wxT("^(Id[[:space:]]+Target Id[[:space:]]+Frame)$"));
-
-    wxString output( GetOutput() );
+    GdbMIThreadInfoParser parser;
+    parser.Parse(line);
     DebuggerEvent e;
-
-    //parse the debugger output
-    wxStringTokenizer tok(output, wxT("\n"), wxTOKEN_STRTOK);
-    while ( tok.HasMoreTokens() ) {
-        ThreadEntry entry;
-        wxString line = tok.NextToken();
-        line.Replace(wxT("\t"), wxT(" "));
-        line = line.Trim().Trim(false);
-
-
-        if ((reCommand.Matches(line)) || (reTableTitle.Matches(line))) {
-            //this is the ack line / the table title. Ignore it
-            continue;
-        }
-
-        wxString tmpline(line);
-        if (tmpline.StartsWith(wxT("*"), &line)) {
-            //active thread
-            entry.active = true;
-        } else {
-            entry.active = false;
-        }
-
-        line = line.Trim().Trim(false);
-        line.ToLong(&entry.dbgid);
-        entry.more = line.AfterFirst(wxT(' '));
-        e.m_threads.push_back( entry );
+    const GdbMIThreadInfoVec_t& threads = parser.GetThreads();
+    for(size_t i=0; i<threads.size(); ++i) {
+        e.m_threads.push_back( threads.at(i).ToThreadEntry() );
     }
-
+    
     // Notify the observer
     e.m_updateReason  = DBG_UR_LISTTHRAEDS;
     m_observer->DebuggerUpdate( e );

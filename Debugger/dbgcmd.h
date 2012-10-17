@@ -317,10 +317,10 @@ public:
 
 // Callback for handling threads info
 // command
-class DbgCmdListThreads : public DbgCmdCLIHandler
+class DbgCmdListThreads : public DbgCmdHandler
 {
 public:
-    DbgCmdListThreads(IDebuggerObserver *observer) : DbgCmdCLIHandler(observer) {}
+    DbgCmdListThreads(IDebuggerObserver *observer) : DbgCmdHandler(observer) {}
     virtual ~DbgCmdListThreads() {}
 
     virtual bool ProcessOutput(const wxString & line);

@@ -905,7 +905,7 @@ bool DbgGdb::SetFrame( int frame )
 
 bool DbgGdb::ListThreads()
 {
-    return ExecCLICommand( wxT( "info threads" ), new DbgCmdListThreads( m_observer ) );
+    return WriteCommand( wxT( "-thread-info" ), new DbgCmdListThreads( m_observer ) );
 }
 
 bool DbgGdb::SelectThread( long threadId )

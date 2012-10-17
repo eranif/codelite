@@ -8,6 +8,8 @@
   <VirtualDirectory Name="Source Files">
     <File Name="debuggergdb.cpp"/>
     <File Name="dbgcmd.cpp"/>
+    <File Name="gdbmi_parse_thread_info.h"/>
+    <File Name="gdbmi_parse_thread_info.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="debuggergdb.h"/>

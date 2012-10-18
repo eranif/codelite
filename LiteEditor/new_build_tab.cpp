@@ -826,19 +826,15 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
                 editor = clMainFrame::Get()->GetMainBook()->OpenFile(bli->GetFilename(), wxT(""), bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
 
             } else {
-                if ( editor->HasCompilerMarkers() ) {
-                    // We already got compiler markers set here, just goto the line
-                    clMainFrame::Get()->GetMainBook()->SelectPage( editor );
-                    editor->GotoLine(bli->GetLineNumber());
-                    editor->EnsureVisible(bli->GetLineNumber());
-                    editor->EnsureCaretVisible();
-                    SetActive(editor);
-                    return true;
-                }
-            }
-
-            if ( editor ) {
-                MarkEditor( editor );
+                if ( !editor->HasCompilerMarkers())
+                    MarkEditor( editor );
+                    
+                // We already got compiler markers set here, just goto the line
+                clMainFrame::Get()->GetMainBook()->SelectPage( editor );
+                editor->GotoLine(bli->GetLineNumber());
+                editor->EnsureVisible(bli->GetLineNumber());
+                editor->EnsureCaretVisible();
+                SetActive(editor);
                 return true;
             }
         }
@@ -928,14 +924,23 @@ void BuildLineInfo::NormalizeFilename(const wxArrayString& directories, const wx
         SetFilename(fn.GetFullName());
         return;
     }
-
+    
     // we got a relative file name
     int dircount = directories.GetCount();
     for(int i=dircount-1; i>=0; --i) {
         wxFileName tmp = fn;
-        if( tmp.MakeAbsolute(directories.Item(i)) && tmp.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG) && tmp.FileExists() ) {
-            SetFilename( tmp.GetFullPath() );
-            return;
+        if( tmp.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG) ) {
+            // Windows sanity
+            if ( IS_WINDOWS && tmp.GetVolume().length() > 1 ) {
+                // Invalid file path
+                SetFilename("");
+                return;
+            }
+            
+            if ( tmp.FileExists() && tmp.MakeAbsolute(directories.Item(i))) {
+                SetFilename( tmp.GetFullPath() );
+                return;
+            }
         }
     }
 

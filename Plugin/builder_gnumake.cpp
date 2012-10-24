@@ -1204,7 +1204,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     }
 
     //only if resource compiler required, evaluate the resource variables
-    if (bldConf->IsResCompilerRequired()) {
+    if ( OS_WINDOWS ) {
         wxString rcBuildOpts = bldConf->GetResCompileOptions();
         rcBuildOpts.Replace(wxT(";"), wxT(" "));
         text << wxT("RcCmpOptions           :=") << rcBuildOpts << wxT("\n");

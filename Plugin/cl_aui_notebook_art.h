@@ -113,6 +113,10 @@ public:
 		wxUnusedVar(wnd);
         return 1;
 	}
+    virtual int GetAdditionalBorderSpace(wxWindow* wnd) {
+		wxUnusedVar(wnd);
+        return 0; // That's what wxAuiGenericTabArt does; wxAuiGtkTabArt returns (2 * GetBorderWidth(wnd))...
+	}
 #endif
 
 protected:
@@ -225,6 +229,10 @@ public:
     virtual int GetBorderWidth(wxWindow* wnd) {
 		wxUnusedVar(wnd);
         return 1;
+	}
+    virtual int GetAdditionalBorderSpace(wxWindow* wnd) {
+		wxUnusedVar(wnd);
+        return 0; // That's what wxAuiGenericTabArt does; wxAuiGtkTabArt returns (2 * GetBorderWidth(wnd))...
 	}
 #endif
 

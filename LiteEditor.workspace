@@ -37,7 +37,7 @@
   <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
   <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
@@ -64,11 +64,12 @@
       <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
+      <Project Name="wxscintilla" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
@@ -95,6 +96,7 @@
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
@@ -102,6 +104,7 @@
     <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="DebugUnicode"/>
+      <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
@@ -132,6 +135,7 @@
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxscintilla" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
@@ -163,6 +167,7 @@
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_wxWidgets_29" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="wxscintilla" ConfigName="Win_wxWidgets_29"/>
       <Project Name="wxFormBuilder" ConfigName="Win_wxWidgets_29"/>
       <Project Name="UnitTestPP" ConfigName="Win_wxWidgets_29"/>
       <Project Name="Outline" ConfigName="Win_wxWidgets_29"/>

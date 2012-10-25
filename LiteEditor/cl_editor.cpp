@@ -1193,7 +1193,15 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
                                       wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), _("CodeLite"), wxOK|wxICON_WARNING);
         return false;
     }
-
+    
+    if ( buf.length() == 0 && !theText.IsEmpty()) {
+        // something went wrong in the conversion process
+        wxString errmsg;
+        errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | Global Editor Prefernces | Misc | Locale");
+        wxMessageBox(errmsg, "CodeLite", wxOK|wxICON_ERROR|wxCENTER, wxTheApp->GetTopWindow());
+        return false;
+    }
+    
     file.Write(buf.data(), strlen(buf.data()));
     file.Close();
 

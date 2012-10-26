@@ -646,8 +646,10 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
         }
     }
 
-    // add complete double qoutes
-    if ( GetOptions()->GetAutoCompleteDoubleQuotes() ) {
+    // add complete quotes; but don't if the next char is alnum,
+    // which is annoying if you're trying to retrofit quotes around a string!
+    int nextChar = SafeGetChar(pos);
+    if (GetOptions()->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar)) {
         if( (event.GetKey() == wxT('"') && GetCharAt( pos ) == wxT('"')) ||
             (event.GetKey() == wxT('\'') && GetCharAt( pos ) == wxT('\''))
           ) {

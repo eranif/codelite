@@ -24,9 +24,9 @@ PrivilegesRequired=none
 Name: "eng"; MessagesFile: "compiler:Default.isl"
 
 [Components]
-Name: "Editor";           Description: "CodeLite IDE (Editor + Plugins)";                               Types: full custom;
+Name: "Editor";           Description: "codelite IDE (Editor + Plugins)";                               Types: full custom;
 Name: "MinGW";            Description: "GCC 4.6.1 (MinGW) full (gcc/g++/gdb/WinAPI)";                   Types: full;
-Name: "wxWidgets";        Description: "wxWidgets 2.9.4 framework (trunk), built as monolithic shared debug/release"; Types: full;
+Name: "wxWidgets";        Description: "wxWidgets 2.9.4 framework (multilibe)"; Types: full;
 Name: "UnitTestPP";       Description: "UnitTest++ 1.3 framework";                                      Types: full;
 
 [Tasks]
@@ -39,17 +39,18 @@ Source: "..\Runtime\codelite-clang.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 
 ;; ---- wxWidgets DLLs 
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxbase294u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxbase294u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxbase294u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxmsw294u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
-Source: "C:\src\wx-sources-294\lib\gcc_dll\wxrc.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxbase294u_gcc_cl.dll";         DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxbase294u_net_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxbase294u_xml_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_adv_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_aui_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_core_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_html_gcc_cl.dll";     DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_xrc_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxmsw294u_stc_gcc_cl.dll";      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "D:\src\wx294\lib\gcc_dll\wxrc.exe";                      DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 
 Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
@@ -84,17 +85,17 @@ Source: "..\Runtime\patch.exe"; DestDir: "{app}"; Flags: ignoreversion ; Compone
 Source: "..\Runtime\*.html"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
-Source: "C:\src\MinGW-4.6.1\*"; Excludes: "*.~*,msys\*,mingw-get\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
+Source: "C:\MinGW-4.6.1\bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\libgcc_s_sjlj-1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\exchndl.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\which.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\rm.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\cscope.exe"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\cygncurses-8.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
+Source: "C:\MinGW-4.6.1\*"; Excludes: "*.~*,msys\*,mingw-get\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "..\Runtime\wxWidgets-2.9.4\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets
 Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
 

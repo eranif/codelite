@@ -76,6 +76,8 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent &event)
 	PluginsData pluginsData;
 	PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
 
+	bool changed = false;
+
 	std::map< wxString, PluginInfo > pluginsInfo = pluginsData.GetInfo();
 
 	for (unsigned int i = 0; i<m_checkListPluginsList->GetCount(); i++) {
@@ -84,6 +86,9 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent &event)
 		if (iter != pluginsInfo.end()) {
 			//update the enable flag of the plugin
 			PluginInfo info = iter->second;
+			if( info.GetEnabled() !=  m_checkListPluginsList->IsChecked(i) ) {
+				changed = true;
+			}
 			info.SetEnabled( m_checkListPluginsList->IsChecked(i) );
 			pluginsInfo[info.GetName()] = info;
 		}
@@ -91,7 +96,12 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent &event)
 	//write back the data to the disk
 	pluginsData.SetInfo( pluginsInfo );
 	PluginConfig::Instance()->WriteObject(wxT("plugins_data"), &pluginsData);
-	EndModal(wxID_OK);
+
+	if (changed) {
+		EndModal(wxID_OK);
+	} else {
+		EndModal(wxID_CANCEL);
+	}
 }
 
 void PluginMgrDlg::CreateInfoPage(unsigned int index)

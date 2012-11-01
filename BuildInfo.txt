@@ -7,8 +7,8 @@ from the trunk/ directory, run:
 
 Pre-requisits:
 
-Mac: wxWidgets 2.8.X or later
-Linux/FreeBSD: wxWidgets 2.8.X or later, GTK devl package
+Mac: wxWidgets 2.9.4 or later
+Linux/FreeBSD: wxWidgets 2.9.4 or later, GTK devl package
 
 Building:
 
@@ -43,7 +43,7 @@ Once build is done, you can copy the files to the target directory by running th
 // MacOSX
 //---------------------------------------------------------
 
-You should have wxWidgets 2.8.X or higher
+You should have wxWidgets 2.9.4 or higher
 To build wx under Mac, download the latest source package and build it as follows:
 
 cd wx-sources/
@@ -55,10 +55,10 @@ sudo make install
 Next, build codelite:
 
 cd codelite-src/
-./configure
+./configure --enable-pch
 make 
 
-At the end of the build, you should have a bundle under /path/to/codelite/sources/Runtime/
+At the end of the build, you should have a bundle under /path/to/codelite-src/Runtime/
 
 To run codelite, type:
 open Runtime/CodeLite.app/

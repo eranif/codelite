@@ -196,7 +196,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     int xx, yy;
     memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &fnt);
     int style = wxDV_NO_HEADER|wxDV_SINGLE;
-    style |= wxDV_ROW_LINES;
+    //style |= wxDV_ROW_LINES;
 
     m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
@@ -214,8 +214,9 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     bs->Insert(0, toolbox, 0, wxEXPAND);
 #endif
 
-    int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+    int screenWidth = 8000;// use a long screen width to allow long lines
     m_textRenderer = new MyTextRenderer(m_listctrl);
+    
     m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 0, screenWidth, wxALIGN_LEFT));
 
     EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );

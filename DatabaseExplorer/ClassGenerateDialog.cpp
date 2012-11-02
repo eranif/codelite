@@ -8,7 +8,7 @@ ClassGenerateDialog::ClassGenerateDialog(wxWindow *parent, IDbAdapter* dbAdapter
 
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
-		m_txVirtualDir->SetValue(VirtualDirectorySelector::DoGetPath( m_mgr->GetTree( TreeFileView ), item.m_item, false ));
+		m_txVirtualDir->SetValue(VirtualDirectorySelectorDlg::DoGetPath( m_mgr->GetTree( TreeFileView ), item.m_item, false ));
 	}
 }
 
@@ -382,7 +382,7 @@ wxString ClassGenerateDialog::GetAddParamFunction(IDbType::UNIVERSAL_TYPE type)
 }
 void ClassGenerateDialog::OnBtnBrowseClick(wxCommandEvent& event)
 {
-	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_txVirtualDir->GetValue());
+	VirtualDirectorySelectorDlg dlg(this, m_mgr->GetWorkspace(), m_txVirtualDir->GetValue());
 	if ( dlg.ShowModal() == wxID_OK ) {
 		m_txVirtualDir->SetValue( dlg.GetVirtualDirectoryPath() );
 	}

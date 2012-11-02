@@ -26,7 +26,7 @@
 #include <wx/app.h>
 #include "project.h"
 #include <wx/msgdlg.h>
-#include "virtualdirectoryselector.h"
+#include "VirtualDirectorySelectorDlg.h"
 #include "imanager.h"
 #include "wxfbitemdlg.h"
 #include "globals.h"
@@ -37,7 +37,7 @@ wxFBItemDlg::wxFBItemDlg( wxWindow* parent, IManager *mgr )
 {
 	TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo( TreeFileView );
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
-		m_textCtrlVD->SetValue(VirtualDirectorySelector::DoGetPath( m_mgr->GetTree( TreeFileView ), item.m_item, false ));
+		m_textCtrlVD->SetValue(VirtualDirectorySelectorDlg::DoGetPath( m_mgr->GetTree( TreeFileView ), item.m_item, false ));
 	}
 	m_textCtrlClassName->SetFocus();
 	GetSizer()->Fit(this);
@@ -75,7 +75,7 @@ void wxFBItemDlg::OnCancel( wxCommandEvent& event )
 
 void wxFBItemDlg::OnBrowseVD(wxCommandEvent& event)
 {
-	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
+	VirtualDirectorySelectorDlg dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
 	if ( dlg.ShowModal() == wxID_OK ) {
 		m_textCtrlVD->SetValue( dlg.GetVirtualDirectoryPath() );
 	}

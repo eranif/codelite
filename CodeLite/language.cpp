@@ -1769,14 +1769,14 @@ void Language::SetAdditionalScopes(const std::vector<wxString>& additionalScopes
                 this->m_additionalScopes.push_back( wxString(iter->c_str(), wxConvUTF8) );
             }
         }
-		
-		//"using namespace" may not contains current namespace
-		for (size_t i = 0; i < additionalScopes.size(); i++) {
-			if (!(std::find(this->m_additionalScopes.begin(), this->m_additionalScopes.end(), 
-				additionalScopes.at(i)) != this->m_additionalScopes.end())) {
-				this->m_additionalScopes.push_back(additionalScopes.at(i));
-			}
-		}
+
+        //"using namespace" may not contains current namespace
+        for (size_t i = 0; i < additionalScopes.size(); i++) {
+            if (!(std::find(this->m_additionalScopes.begin(), this->m_additionalScopes.end(),
+                            additionalScopes.at(i)) != this->m_additionalScopes.end())) {
+                this->m_additionalScopes.push_back(additionalScopes.at(i));
+            }
+        }
     }
 }
 
@@ -2048,10 +2048,10 @@ wxString Language::ApplyCtagsReplacementTokens(const wxString& in)
             replacements.push_back( repl );
         }
     }
-    
+
     if ( replacements.empty() )
         return in;
-        
+
     // Now, apply the replacements
     wxString outputStr;
     wxArrayString lines = ::wxStringTokenize(in, wxT("\r\n"), wxTOKEN_STRTOK);
@@ -2061,264 +2061,293 @@ wxString Language::ApplyCtagsReplacementTokens(const wxString& in)
         for(; iter != replacements.end(); iter++) {
             ::CLReplacePatternA(outStr, *iter, outStr);
         }
-        
+
         outputStr << wxString(outStr.c_str(), wxConvUTF8) << wxT("\n");
     }
     return outputStr;
 }
 
+int Language::DoReadClassName(CppScanner& scanner, wxString &clsname)
+{
+    clsname.clear();
+    int type  = 0;
+    
+    while ( true ) {
+        type =  scanner.yylex();
+        if ( type == 0 ) 
+            return 0;
+        
+        if ( type == IDENTIFIER ) {
+            clsname = scanner.YYText();
+            
+        } else if ( type == '{' || type == ':' ) {
+            return type;
+        }
+    }
+    return 0;
+}
+
 bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent, int visibility)
 {
-	// detemine the visibility requested
-	int typeVisibility = lexPUBLIC;
-	wxString strVisibility = wxT("public:\n");
-	switch(visibility) {
-	default:
-	case 0:
-		typeVisibility = lexPUBLIC;
-		strVisibility = wxT("public:\n");
-		break;
-		
-	case 1:
-		typeVisibility = lexPROTECTED;
-		strVisibility = wxT("protected:\n");
-		break;
-		
-	case 2:
-		typeVisibility = lexPRIVATE;
-		strVisibility = wxT("private:\n");
-		break;
-	}
-		
-	// step 1: locate the class
-	CppScanner scanner;
-	scanner.SetText( sourceContent.mb_str(wxConvUTF8).data() );
-	
-	bool success = false;
-	int type = 0;
-	while ( true ) {
-		type = scanner.yylex();
-		if ( type == 0) {
-			return false; // EOF
-		}
-		
-		if ( type == lexCLASS ) {
-			type = scanner.yylex();
-			if( type == IDENTIFIER ) {
-				wxString name(scanner.YYText(), wxConvUTF8);
-				if( name == clsname) {
-					// We found the lex
-					success = true;
-					break;
-				}
-			}
-		}
-	}
-	
-	if ( !success ) 
-		return false;
-	
-	// scanner is pointing on the class
-	// We now need to find the first opening curly brace
-	success = false;
-	while ( true ) {
-		type = scanner.yylex();
-		if ( type == 0 )
-			return false; // EOF
-		
-		if ( type == '{' ) {
-			success = true;
-			break;
-		}
-	}
+    // detemine the visibility requested
+    int typeVisibility = lexPUBLIC;
+    wxString strVisibility = wxT("public:\n");
+    switch(visibility) {
+    default:
+    case 0:
+        typeVisibility = lexPUBLIC;
+        strVisibility = wxT("public:\n");
+        break;
 
-	if ( !success ) 
-		return false;
-	
-	
-	// search for requested visibility, if we could not locate it
-	// locate the class ending curly brace
-	success = false;
-	int depth                 = 1;
-	int visibilityLine        = wxNOT_FOUND;
-	int closingCurlyBraceLine = wxNOT_FOUND;
-	while ( true ) {
-		type = scanner.yylex();
-		if( type == 0) break;
-		
-		if( type == typeVisibility ) {
-			visibilityLine = scanner.LineNo();
-			break;
-		}
-		
-		if( type == '{' ) {
-			depth ++;
-			
-		} else if ( type == '}' ) {
-			depth --;
-			
-			if( depth == 0 ) {
-				// reached end of class
-				closingCurlyBraceLine = scanner.LineNo();
-				break;
-			}
-		}
-	}
-	
-	wxString strToInsert;
-	int insertLine = visibilityLine;
-	if(visibilityLine == wxNOT_FOUND) { 
-		// could not locate the visibility line
-		insertLine = closingCurlyBraceLine;
-		strToInsert << strVisibility << functionDecl;
-		insertLine--; // Place it one line on top of the curly brace
-		
-	} else {
-		strToInsert << functionDecl;
-	}
-	
-	if ( insertLine == wxNOT_FOUND )
-		// could not find any of the two
-		return false;
-	
-	wxString newContent;
-	wxArrayString lines = ::wxStringTokenize(sourceContent, wxT("\n"), wxTOKEN_RET_DELIMS);
-	for(size_t i=0; i<lines.GetCount(); i++) {
-		if( insertLine == (int)i ) {
-			newContent << strToInsert;
-		}
-		newContent << lines.Item(i);
-	}
-	sourceContent = newContent;
-	return true;
+    case 1:
+        typeVisibility = lexPROTECTED;
+        strVisibility = wxT("protected:\n");
+        break;
+
+    case 2:
+        typeVisibility = lexPRIVATE;
+        strVisibility = wxT("private:\n");
+        break;
+    }
+
+    // step 1: locate the class
+    CppScanner scanner;
+    scanner.SetText( sourceContent.mb_str(wxConvUTF8).data() );
+
+    bool success = false;
+    int type = 0;
+    while ( true ) {
+        type = scanner.yylex();
+        if ( type == 0) {
+            return false; // EOF
+        }
+
+        if ( type == lexCLASS ) {
+            wxString name;
+            type = DoReadClassName(scanner, name);
+            if( type == 0 ) {
+                return false;
+            }
+            
+            if ( name == clsname ) {
+                // We found the lex
+                success = true;
+                break;
+            }
+        }
+    }
+
+    if ( !success )
+        return false;
+
+    // scanner is pointing on the class
+    // We now need to find the first opening curly brace
+    success = false;
+    if ( type == '{' ) {
+        // DoReadClassName already consumed the '{' character
+        // mark this as a success and continue
+        success = true;
+        
+    } else {
+        while ( true ) {
+            type = scanner.yylex();
+            if ( type == 0 )
+                return false; // EOF
+
+            if ( type == '{' ) {
+                success = true;
+                break;
+            }
+        }
+    }
+
+    if ( !success )
+        return false;
+
+
+    // search for requested visibility, if we could not locate it
+    // locate the class ending curly brace
+    success = false;
+    int depth                 = 1;
+    int visibilityLine        = wxNOT_FOUND;
+    int closingCurlyBraceLine = wxNOT_FOUND;
+    while ( true ) {
+        type = scanner.yylex();
+        if( type == 0) break;
+
+        if( type == typeVisibility ) {
+            visibilityLine = scanner.LineNo();
+            break;
+        }
+
+        if( type == '{' ) {
+            depth ++;
+
+        } else if ( type == '}' ) {
+            depth --;
+
+            if( depth == 0 ) {
+                // reached end of class
+                closingCurlyBraceLine = scanner.LineNo();
+                break;
+            }
+        }
+    }
+
+    wxString strToInsert;
+    int insertLine = visibilityLine;
+    if(visibilityLine == wxNOT_FOUND) {
+        // could not locate the visibility line
+        insertLine = closingCurlyBraceLine;
+        strToInsert << strVisibility << functionDecl;
+        insertLine--; // Place it one line on top of the curly brace
+
+    } else {
+        strToInsert << functionDecl;
+    }
+
+    if ( insertLine == wxNOT_FOUND )
+        // could not find any of the two
+        return false;
+
+    wxString newContent;
+    wxArrayString lines = ::wxStringTokenize(sourceContent, wxT("\n"), wxTOKEN_RET_DELIMS);
+    for(size_t i=0; i<lines.GetCount(); i++) {
+        if( insertLine == (int)i ) {
+            newContent << strToInsert;
+        }
+        newContent << lines.Item(i);
+    }
+    sourceContent = newContent;
+    return true;
 }
 
 void Language::InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename, wxString& sourceContent, int &insertedLine)
 {
-	insertedLine = wxNOT_FOUND;
-	if( sourceContent.EndsWith(wxT("\n")) == false )
-		sourceContent << wxT("\n");
-	
-	// What we want to do is to add our function as the last function in the scope
-	ITagsStoragePtr storage = GetTagsManager()->GetDatabase();
-	if( !storage ) {
-		// By default, append the file function to the end of the file
-		sourceContent << functionImpl;
-		return;
-	}
-	
-	wxArrayString kinds;
+    insertedLine = wxNOT_FOUND;
+    if( sourceContent.EndsWith(wxT("\n")) == false )
+        sourceContent << wxT("\n");
+
+    // What we want to do is to add our function as the last function in the scope
+    ITagsStoragePtr storage = GetTagsManager()->GetDatabase();
+    if( !storage ) {
+        // By default, append the file function to the end of the file
+        sourceContent << functionImpl;
+        return;
+    }
+
+    wxArrayString kinds;
     kinds.Add(wxT("function"));
-	storage->SetUseCache(false);
-	TagEntryPtrVector_t tags;
-	storage->GetTagsByKindAndFile(kinds, filename, wxT("line"), ITagsStorage::OrderDesc, tags);
-	storage->SetUseCache(true);
-	
-	if ( tags.empty() ) {
-		// By default, append the file function to the end of the file
-		sourceContent << functionImpl;
-		return;
-	}
-	
-	// Locate first tag from the requested scope
-	TagEntryPtr tag = NULL;
-	for(size_t i=0; i<tags.size(); i++) {	
-		if( tags.at(i)->GetParent() == clsname ) {
-			tag = tags.at(i);
-			break;
-		}
-	}
-	
-	if( !tag ) {
-		sourceContent << functionImpl;
-		return;
-	}
-	
-	int line = tag->GetLine();
-	
-	// Search for the end of this function
-	// and place our function there...
-	CppScanner scanner;
-	scanner.SetText( sourceContent.mb_str(wxConvUTF8).data() );
-	
-	int type = 0;
-	
-	// Fast forward the scanner to the line number
-	while ( true ) {
-		type = scanner.yylex();
-		if( type == 0) {
-			sourceContent << functionImpl;
-			return;
-		}
-		
-		std::string stmp = scanner.YYText();
-		if ( scanner.LineNo() == line )
-			break;
-	}
-	
-	// search for the opening brace
-	int depth = 0;
-	while ( true ) {
-		type = scanner.yylex();
-		if( type == 0) {
-			// EOF? 
-			sourceContent << functionImpl;
-			return;
-		}
-		
-		if ( type == '{' ) {
-			depth ++;
-			break;
-		}
-	}
-	
-	if ( depth != 1 ) {
-		// could locate the open brace
-		sourceContent << functionImpl;
-		return;
-	}
-	
-	
-	// now search for the closing one...
-	int insertAtLine = wxNOT_FOUND;
-	while ( true ) {
-		type = scanner.yylex();
-		if( type == 0) {
-			// EOF? 
-			sourceContent << functionImpl;
-			return;
-		}
-		
-		if ( type == '{' ) {
-			depth ++;
-			
-		} else if ( type == '}' ) {
-			depth --;
-			
-			if( depth == 0 ) {
-				insertAtLine = scanner.lineno();
-				break;
-				
-			}
-		}
-	}
-	
-	insertedLine = insertAtLine;
-	
-	// if we got here, it means we got a match
-	wxString newContent;
-	bool codeInjected = false;
-	wxArrayString lines = ::wxStringTokenize(sourceContent, wxT("\n"), wxTOKEN_RET_DELIMS);
-	for(size_t i=0; i<lines.GetCount(); i++) {
-		if( insertAtLine == (int)i ) {
-			codeInjected = true;
-			newContent << functionImpl;
-		}
-		newContent << lines.Item(i);
-	}
-	
-	if( !codeInjected ) {
-		newContent << functionImpl;
-	}
-	sourceContent = newContent;
+    storage->SetUseCache(false);
+    TagEntryPtrVector_t tags;
+    storage->GetTagsByKindAndFile(kinds, filename, wxT("line"), ITagsStorage::OrderDesc, tags);
+    storage->SetUseCache(true);
+
+    if ( tags.empty() ) {
+        // By default, append the file function to the end of the file
+        sourceContent << functionImpl;
+        return;
+    }
+
+    // Locate first tag from the requested scope
+    TagEntryPtr tag = NULL;
+    for(size_t i=0; i<tags.size(); i++) {
+        if( tags.at(i)->GetParent() == clsname ) {
+            tag = tags.at(i);
+            break;
+        }
+    }
+
+    if( !tag ) {
+        sourceContent << functionImpl;
+        return;
+    }
+
+    int line = tag->GetLine();
+
+    // Search for the end of this function
+    // and place our function there...
+    CppScanner scanner;
+    scanner.SetText( sourceContent.mb_str(wxConvUTF8).data() );
+
+    int type = 0;
+
+    // Fast forward the scanner to the line number
+    while ( true ) {
+        type = scanner.yylex();
+        if( type == 0) {
+            sourceContent << functionImpl;
+            return;
+        }
+
+        std::string stmp = scanner.YYText();
+        if ( scanner.LineNo() == line )
+            break;
+    }
+
+    // search for the opening brace
+    int depth = 0;
+    while ( true ) {
+        type = scanner.yylex();
+        if( type == 0) {
+            // EOF?
+            sourceContent << functionImpl;
+            return;
+        }
+
+        if ( type == '{' ) {
+            depth ++;
+            break;
+        }
+    }
+
+    if ( depth != 1 ) {
+        // could locate the open brace
+        sourceContent << functionImpl;
+        return;
+    }
+
+
+    // now search for the closing one...
+    int insertAtLine = wxNOT_FOUND;
+    while ( true ) {
+        type = scanner.yylex();
+        if( type == 0) {
+            // EOF?
+            sourceContent << functionImpl;
+            return;
+        }
+
+        if ( type == '{' ) {
+            depth ++;
+
+        } else if ( type == '}' ) {
+            depth --;
+
+            if( depth == 0 ) {
+                insertAtLine = scanner.lineno();
+                break;
+
+            }
+        }
+    }
+
+    insertedLine = insertAtLine;
+
+    // if we got here, it means we got a match
+    wxString newContent;
+    bool codeInjected = false;
+    wxArrayString lines = ::wxStringTokenize(sourceContent, wxT("\n"), wxTOKEN_RET_DELIMS);
+    for(size_t i=0; i<lines.GetCount(); i++) {
+        if( insertAtLine == (int)i ) {
+            codeInjected = true;
+            newContent << functionImpl;
+        }
+        newContent << lines.Item(i);
+    }
+
+    if( !codeInjected ) {
+        newContent << functionImpl;
+    }
+    sourceContent = newContent;
 }

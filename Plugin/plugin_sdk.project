@@ -34,6 +34,8 @@
     <File Name="compilation_database.cpp"/>
     <File Name="Markup.cpp"/>
     <File Name="Markup.h"/>
+    <File Name="VirtualDirectorySelectorDlg.h"/>
+    <File Name="VirtualDirectorySelectorDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>
@@ -154,10 +156,6 @@
       <File Name="dirpicker.h"/>
       <File Name="progressctrl.cpp"/>
       <File Name="progressctrl.h"/>
-      <File Name="virtualdirectoryselectorbase.h"/>
-      <File Name="virtualdirectoryselector.cpp"/>
-      <File Name="virtualdirectoryselector.h"/>
-      <File Name="virtualdirectoryselectorbase.cpp"/>
       <File Name="windowstack.h"/>
       <File Name="windowstack.cpp"/>
       <File Name="listctrl_improved.h"/>
@@ -194,6 +192,8 @@
       <File Name="openresourcedialogbase.h"/>
       <File Name="open_resource_dialog.h"/>
       <File Name="open_resource_dialog.cpp"/>
+      <File Name="VirtualDirectorySelector.wxcp"/>
+      <File Name="VirtualDirectorySelectorBase.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>
@@ -471,4 +471,14 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="VirtualDirectorySelector_plugin_bitmaps.cpp"/>
+      <File Name="VirtualDirectorySelectorBase_plugin_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="VirtualDirectorySelectorBase.h"/>
+      <File Name="VirtualDirectorySelectorBase.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

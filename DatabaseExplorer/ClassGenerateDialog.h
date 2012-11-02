@@ -12,7 +12,7 @@
 #include <wx/init.h>
 
 #include "../Interfaces/imanager.h"
-#include "../Plugin/virtualdirectoryselector.h"
+#include "../Plugin/VirtualDirectorySelectorDlg.h"
 #include "../Plugin/project.h"
 #include "../Plugin/workspace.h"
 

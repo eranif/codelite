@@ -28,7 +28,7 @@
 #include "windowattrmanager.h"
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>
-#include "virtualdirectoryselector.h"
+#include "VirtualDirectorySelectorDlg.h"
 #include "wx/xrc/xmlres.h"
 #include <wx/tokenzr.h>
 #include "newinheritancedlg.h"
@@ -66,7 +66,7 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
 	wxString vdPath;
 	TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
 	if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory){
-		wxString path = VirtualDirectorySelector::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false);
+		wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false);
 		if(path.IsEmpty() == false){
 			m_textCtrlVD->ChangeValue(path);
 		}
@@ -366,7 +366,7 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
 {
 	wxUnusedVar(e);
-	VirtualDirectorySelector dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
+	VirtualDirectorySelectorDlg dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
 	if(dlg.ShowModal() == wxID_OK){
 		m_textCtrlVD->ChangeValue(dlg.GetVirtualDirectoryPath());
 		DoUpdateGeneratedPath();

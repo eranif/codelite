@@ -26,7 +26,7 @@
 #include <wx/textbuf.h>
 #include <wx/dirdlg.h>
 #include <wx/textfile.h>
-#include "virtualdirectoryselector.h"
+#include "VirtualDirectorySelectorDlg.h"
 #include <wx/filefn.h>
 #include "editor_config.h"
 #include "project.h"
@@ -78,7 +78,7 @@ void TemplateClassDlg::Initialize()
 	}
 	TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo( TreeFileView );
 	if ( item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory ) {
-		m_virtualFolder = VirtualDirectorySelector::DoGetPath( m_pManager->GetTree( TreeFileView ), item.m_item, false );
+		m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath( m_pManager->GetTree( TreeFileView ), item.m_item, false );
 		m_projectPath =  item.m_fileName.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	}
 	m_textCtrlVD->SetValue( m_virtualFolder );
@@ -106,7 +106,7 @@ void TemplateClassDlg::OnClassNameEntered( wxCommandEvent& event )
 void TemplateClassDlg::OnBrowseVD( wxCommandEvent& event )
 {
 	wxUnusedVar( event );
-	VirtualDirectorySelector dlg( this, m_pManager->GetWorkspace(), m_textCtrlVD->GetValue() );
+	VirtualDirectorySelectorDlg dlg( this, m_pManager->GetWorkspace(), m_textCtrlVD->GetValue() );
 	if ( dlg.ShowModal() == wxID_OK ) {
 		m_textCtrlVD->SetValue( dlg.GetVirtualDirectoryPath() );
 		m_staticProjectTreeFolder->SetForegroundColour(wxColour(0,128,0));

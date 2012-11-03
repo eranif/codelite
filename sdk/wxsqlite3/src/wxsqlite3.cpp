@@ -485,7 +485,7 @@ wxDateTime wxSQLite3ResultSet::GetDate(int columnIndex)
   else
   {
     wxDateTime date;
-    if (date.ParseDate(GetString(columnIndex)) != NULL)
+    if (date.ParseDate(GetString(columnIndex)))
     {
       return date;
     }
@@ -512,7 +512,7 @@ wxDateTime wxSQLite3ResultSet::GetTime(int columnIndex)
   else
   {
     wxDateTime date;
-    if (date.ParseTime(GetString(columnIndex)) != NULL)
+    if (date.ParseTime(GetString(columnIndex)))
     {
       return date;
     }
@@ -538,7 +538,7 @@ wxDateTime wxSQLite3ResultSet::GetDateTime(int columnIndex)
   else
   {
     wxDateTime date;
-    if (date.ParseDateTime(GetString(columnIndex)) != NULL)
+    if (date.ParseDateTime(GetString(columnIndex)))
     {
       date.SetMillisecond(0);
       return date;
@@ -565,7 +565,7 @@ wxDateTime wxSQLite3ResultSet::GetTimestamp(int columnIndex)
   else
   {
     wxDateTime date;
-    if (date.ParseDateTime(GetString(columnIndex)) != NULL)
+    if (date.ParseDateTime(GetString(columnIndex)))
     {
       return date;
     }
@@ -1012,7 +1012,7 @@ wxString wxSQLite3Table::GetString(const wxString& columnName, const wxString& n
 wxDateTime wxSQLite3Table::GetDate(int columnIndex)
 {
   wxDateTime date;
-  if (date.ParseDate(GetString(columnIndex)) != NULL)
+  if (date.ParseDate(GetString(columnIndex)))
   {
     return date;
   }
@@ -1031,7 +1031,7 @@ wxDateTime wxSQLite3Table::GetDate(const wxString& columnName)
 wxDateTime wxSQLite3Table::GetTime(int columnIndex)
 {
   wxDateTime date;
-  if (date.ParseTime(GetString(columnIndex)) != NULL)
+  if (date.ParseTime(GetString(columnIndex)))
   {
     return date;
   }
@@ -1050,7 +1050,7 @@ wxDateTime wxSQLite3Table::GetTime(const wxString& columnName)
 wxDateTime wxSQLite3Table::GetDateTime(int columnIndex)
 {
   wxDateTime date;
-  if (date.ParseDateTime(GetString(columnIndex)) != NULL)
+  if (date.ParseDateTime(GetString(columnIndex)))
   {
     return date;
   }

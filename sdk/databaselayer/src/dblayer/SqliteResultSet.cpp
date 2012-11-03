@@ -126,15 +126,15 @@ wxDateTime SqliteResultSet::GetResultDate(int nField)
   wxString strDate = GetResultString(nField);
   wxDateTime date;
   // First check for the 2-digit year format
-  if (date.ParseFormat(strDate, wxT("%m/%d/%y %H:%M:%S")) != NULL)
+  if (date.ParseFormat(strDate, wxT("%m/%d/%y %H:%M:%S")))
   {
     return date;
   }
-  else if (date.ParseDateTime(strDate) != NULL)
+  else if (date.ParseDateTime(strDate))
   {
     return date;
   }
-  else if (date.ParseDate(strDate) != NULL)
+  else if (date.ParseDate(strDate))
   {
     return date;
   }

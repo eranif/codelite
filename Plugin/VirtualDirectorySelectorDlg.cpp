@@ -9,6 +9,9 @@
 #include <wx/regex.h>
 #include "plugin.h"
 #include "event_notifier.h"
+#include <wx/wupdlock.h>
+#include <wx/textdlg.h>
+#include <wx/msgdlg.h>
 
 VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath)
     : VirtualDirectorySelectorDlgBaseClass( parent )

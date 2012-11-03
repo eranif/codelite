@@ -207,7 +207,7 @@ void SQLCommandPanel::ExecuteSql()
 						value.Replace(wxT("\n"), wxT("\\n"));
 						value.Replace(wxT("\r"), wxT("\\r"));
 						value.Replace(wxT("\t"), wxT("\\t"));
-						m_gridTable->SetCellValue(value ,rows, i-1);
+						m_gridTable->SetCellValue(rows, i-1, value);
 					}
 					rows++;
 				}

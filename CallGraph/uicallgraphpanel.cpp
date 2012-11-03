@@ -104,7 +104,7 @@ void uicallgraphpanel::CreateAndInserDataToTable(int nodethr)
 
 void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 {
-	if( m_grid->GetRows() ) m_grid->DeleteRows(0, m_grid->GetRows());
+	if( m_grid->GetNumberRows() ) m_grid->DeleteRows(0, (m_grid->GetNumberRows() - 1));
 
 	// write to output png file
 	DotWriter dw;

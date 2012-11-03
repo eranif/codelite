@@ -1225,10 +1225,6 @@ else
     fi
 fi
 
-## Replace place holders in the desktop file
-rm -fr Runtime/codelite.desktop
-sed s@%%PREFIX%%@$prefix@g Runtime/codelite.desktop.template >> Runtime/codelite.desktop
-
 ## Determine if we are on 64 bit machine
 ## AMD / Intel will produce x86_64
 ## while itanium produces ia64
@@ -1310,6 +1306,10 @@ do
 		fi
 	shift
 done
+
+## Replace place holders in the desktop file
+rm -fr Runtime/codelite.desktop
+sed s@%%PREFIX%%@$prefix@g Runtime/codelite.desktop.template >> Runtime/codelite.desktop
 
 ## Now we've Shown_Help_and_Exited, it's safe to check if the wx version is new enough
 if [ "$wxMAJOR_VERSION$wxMINOR_VERSION" -lt 29 ] || [ "$wxMINOR_VERSION$wxRELEASE_NUMBER" -lt 94 ]; then

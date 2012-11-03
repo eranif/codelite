@@ -4,6 +4,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "VirtualDirectorySelectorBase.h"
+#include "codelite_exports.h"
 
 
 // Declare the bitmap loading function

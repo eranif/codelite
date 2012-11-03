@@ -1,3 +1,12 @@
+Important:
+===========
+
+- Open include file does not work for uppercase file
+- Code completion of files names is not working for uppercase files (file name is made lower case)
+
+BUGS:
+=====
+
 - clang: make sure we don't attempt to track PP when the file is not a valid C++ file
 - Installer: when installing codelite, make sure we override the 'registry.ini' file with the new file
 - Installer: when un-installing codelite, remove the 'codelite' folder completly

@@ -164,7 +164,7 @@ protected:
     virtual wxTreeItemId ItemByFullPath(const wxString &fullPath);
     virtual void OnLocalWorkspaceSettings(wxCommandEvent &e);
     virtual void OnOpenWithDefaultApplication(wxCommandEvent &event);
-
+    virtual void OnBuildTree(wxCommandEvent &e);
 
     // Tree sorting
     virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);

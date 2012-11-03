@@ -9,9 +9,11 @@ class Workspace;
 /** Implementing VirtualDirectorySelectorBase */
 class WXDLLIMPEXP_SDK VirtualDirectorySelectorDlg : public VirtualDirectorySelectorDlgBaseClass
 {
-    Workspace *m_workspace;
-    wxString m_initialPath;
-
+    Workspace *  m_workspace;
+    wxString     m_initialPath;
+    wxImageList *m_images;
+    bool         m_reloadTreeNeeded;
+    
 public:
     static wxString DoGetPath(wxTreeCtrl* tree, const wxTreeItemId &item, bool validateFolder);
 

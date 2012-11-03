@@ -192,7 +192,6 @@
       <File Name="openresourcedialogbase.h"/>
       <File Name="open_resource_dialog.h"/>
       <File Name="open_resource_dialog.cpp"/>
-      <File Name="VirtualDirectorySelector.wxcp"/>
       <File Name="VirtualDirectorySelectorBase.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">

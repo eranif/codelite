@@ -1,10 +1,10 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"",
+		"m_generatedFilesDir":	"C:\\src\\codelite\\Plugin",
 		"m_objCounter":	1,
-		"m_includeFiles":	[],
+		"m_includeFiles":	["\"codelite_exports.h\""],
 		"m_bitmapFunction":	"wxC168BInitBitmapResources",
-		"m_bitmapsFile":	"",
+		"m_bitmapsFile":	"VirtualDirectorySelectorBase_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1
 	},
 	"windows":	[{
@@ -60,10 +60,6 @@
 					"m_label":	"Title:",
 					"m_value":	"Virtual Directory Selector"
 				}, {
-					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"VirtualDirectorySelectorDlg"
-				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
 					"m_path":	""
@@ -72,6 +68,14 @@
 					"m_label":	"Centre:",
 					"m_selection":	1,
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"VirtualDirectorySelectorDlg"
+				}, {
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}],
 			"m_events":	[],
 			"m_children":	[{

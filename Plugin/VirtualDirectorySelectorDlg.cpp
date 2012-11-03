@@ -6,11 +6,16 @@
 #include "bitmap_loader.h"
 #include "tree_node.h"
 #include <wx/imaglist.h>
+#include <wx/regex.h>
+#include "plugin.h"
+#include "event_notifier.h"
 
 VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath)
     : VirtualDirectorySelectorDlgBaseClass( parent )
     , m_workspace(wsp)
     , m_initialPath(initialPath)
+    , m_images(NULL)
+    , m_reloadTreeNeeded(false)
 {
     m_treeCtrl->SetFocus();
     DoBuildTree();
@@ -25,6 +30,12 @@ void VirtualDirectorySelectorDlg::OnButtonOK( wxCommandEvent& event )
 {
     wxUnusedVar(event);
     EndModal(wxID_OK);
+    
+    if ( m_reloadTreeNeeded ) {
+        m_reloadTreeNeeded = false;
+        wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
+        EventNotifier::Get()->AddPendingEvent(buildTree);
+    }
 }
 
 void VirtualDirectorySelectorDlg::OnButtonCancel(wxCommandEvent& event)
@@ -77,14 +88,18 @@ wxString VirtualDirectorySelectorDlg::DoGetPath(wxTreeCtrl* tree, const wxTreeIt
 
 void VirtualDirectorySelectorDlg::DoBuildTree()
 {
-    wxImageList *images = new wxImageList(16, 16);
-
-    BitmapLoader bmpLoader;
-    images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/workspace" ) ) );//0
-    images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/virtual_folder" ) ) );    //1
-    images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/project" ) ) );  //2
-    m_treeCtrl->AssignImageList(images);
-
+    wxWindowUpdateLocker locker(m_treeCtrl);
+    m_treeCtrl->DeleteAllItems();
+    
+    if ( m_images == NULL ) {
+        m_images = new wxImageList(16, 16);
+        BitmapLoader bmpLoader;
+        m_images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/workspace" ) ) );//0
+        m_images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/virtual_folder" ) ) );    //1
+        m_images->Add( bmpLoader.LoadBitmap( wxT( "workspace/16/project" ) ) );  //2
+        m_treeCtrl->AssignImageList(m_images);
+    }
+    
     if (m_workspace) {
         wxArrayString projects;
         m_workspace->GetProjectList(projects);
@@ -192,10 +207,44 @@ bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
 
 void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
 {
+    static int counter = 0;
+    wxTreeItemId id = m_treeCtrl->GetSelection();
+    if ( id.IsOk() == false )
+        return;
     
+    wxString curpath = DoGetPath(m_treeCtrl, id, false);
+    wxString name;
+    name << "Folder" << ++counter;
+    wxString newname = wxGetTextFromUser(_("New Virtual Folder Name:"), _("New Virtual Folder"), name);
+    newname.Trim().Trim(false);
+    
+    if ( newname.IsEmpty() )
+        return;
+    
+    if ( newname.Contains(":") ) {
+        wxMessageBox(_("':' is not a valid virtual folder character"), "codelite");
+        return;
+    }
+    
+    curpath << ":" << newname;
+    wxString errmsg;
+    if( !WorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true) ) {
+        wxMessageBox(_("Error occured while creating virtual folder:\n") + errmsg, "codelite", wxOK|wxICON_WARNING|wxCENTER);
+        return;
+    }
+    
+    m_initialPath = curpath;
+    m_reloadTreeNeeded = true;
+    DoBuildTree();
 }
 
 void VirtualDirectorySelectorDlg::OnNewVDUI(wxUpdateUIEvent& event)
 {
-    
+    wxTreeItemId id = m_treeCtrl->GetSelection();
+    if ( id.IsOk() == false ) {
+        event.Enable( false );
+        return;
+    }
+    int imgid = m_treeCtrl->GetItemImage(id);
+    event.Enable(imgid == 1 || imgid == 2 ); // project or virtual folder
 }

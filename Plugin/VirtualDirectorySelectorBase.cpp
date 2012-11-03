@@ -31,36 +31,37 @@ VirtualDirectorySelectorDlgBaseClass::VirtualDirectorySelectorDlgBaseClass(wxWin
     m_staticText1Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText1->SetFont(m_staticText1Font);
     
-    bSizer1->Add(m_staticText1, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer1->Add(m_staticText1, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
     
     m_treeCtrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxTR_DEFAULT_STYLE|wxTR_SINGLE);
     
-    bSizer1->Add(m_treeCtrl, 1, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    bSizer1->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 5);
     
     wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("")), wxVERTICAL);
     
-    bSizer1->Add(sbSizer1, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    bSizer1->Add(sbSizer1, 0, wxEXPAND|wxALL, 5);
     
     m_staticTextPreview = new wxStaticText(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    sbSizer1->Add(m_staticTextPreview, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    sbSizer1->Add(m_staticTextPreview, 0, wxEXPAND|wxALL, 5);
     
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer2, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer1->Add(bSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
     
     m_buttonOk = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOk->SetDefault();
     
-    bSizer2->Add(m_buttonOk, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    bSizer2->Add(m_buttonOk, 0, wxALL, 5);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer2->Add(m_buttonCancel, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
     
     m_button1 = new wxButton(this, wxID_NEW, _("New..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button1->SetToolTip(_("Create new virtual folder..."));
     
-    bSizer2->Add(m_button1, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    bSizer2->Add(m_button1, 0, wxALL, 5);
     
     
     SetSizeHints(-1,-1);

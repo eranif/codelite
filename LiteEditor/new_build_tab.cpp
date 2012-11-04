@@ -945,6 +945,25 @@ void BuildLineInfo::NormalizeFilename(const wxArrayString& directories, const wx
         }
     }
 
+    // One more try: the above will fail if the project isn't stored in the cwd that Normalize() assumes
+    // So see if one of 'directories' is the correct path to use
+    for(int i=dircount-1; i>=0; --i) {
+        wxFileName tmp = fn;
+        if( tmp.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG, directories.Item(i)) ) {
+            // Windows sanity
+            if ( IS_WINDOWS && tmp.GetVolume().length() > 1 ) {
+                // Invalid file path
+                SetFilename("");
+                return;
+            }
+
+            if ( tmp.FileExists()) {
+                SetFilename( tmp.GetFullPath() );
+                return;
+            }
+        }
+    }
+
     // failed.. keep it as fullname only
     SetFilename(fn.GetFullName());
 }

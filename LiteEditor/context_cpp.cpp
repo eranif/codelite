@@ -2532,7 +2532,15 @@ void ContextCpp::DoOpenWorkspaceFile()
 #endif
 
     std::vector<wxFileName> files, files2;
+    
+#ifdef __WXMSW__
+    wxString lcNameOnly = fileName.GetFullName();
+    lcNameOnly.MakeLower();
+    TagsManagerST::Get()->GetFiles(lcNameOnly, files);
+#else
     TagsManagerST::Get()->GetFiles(fileName.GetFullName(), files);
+#endif
+
     //filter out the all files that does not have an exact match
     for (size_t i=0; i<files.size(); i++) {
         wxString curFileName = files.at(i).GetFullPath();

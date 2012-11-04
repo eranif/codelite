@@ -402,6 +402,7 @@ void TagsStorageSQLite::GetFiles(const wxString &partialName, std::vector<FileEn
 #ifdef __WXMSW__
             wxString lowerCasePartialName (partialName);
             lowerCasePartialName.MakeLower();
+            match.MakeLower();
 #else
             wxString lowerCasePartialName (partialName);
 #endif

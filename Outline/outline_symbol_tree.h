@@ -68,7 +68,7 @@ public:
 
     static wxImageList* CreateSymbolTreeImages();
     virtual void Clear();
-
+    void ClearCache();
 protected:
     void OnIncludeStatements(wxCommandEvent &e);
     

@@ -359,3 +359,9 @@ void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
     }
 }
 
+void svSymbolTree::ClearCache()
+{
+    m_currentTags.clear();
+}
+
+

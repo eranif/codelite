@@ -89,7 +89,11 @@ void OutlineTab::OnAllEditorsClosed(wxCommandEvent& e)
 void OutlineTab::OnEditorClosed(wxCommandEvent& e)
 {
     e.Skip();
-    m_tree->Clear();
+    IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
+    if (editor && m_tree->GetFilename() == editor->GetFileName()) {
+        m_tree->Clear();
+        m_tree->ClearCache();
+    }
 }
 
 void OutlineTab::OnWorkspaceClosed(wxCommandEvent& e)

@@ -304,9 +304,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
     gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
 
     wxString func;
-    bool foundFunc, foundReason;
+    bool foundReason;
 
-    foundFunc   = false;
     foundReason = false;
     for (size_t i=0; i<children.size(); i++) {
         std::map<std::string, std::string> attr = children.at(i);
@@ -330,7 +329,6 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
     if(where != wxNOT_FOUND) {
         func = line.Mid(where + 6);
         func = func.BeforeFirst(wxT('"'));
-        foundFunc = true;
     }
 
     //Note:
@@ -1411,4 +1409,5 @@ bool DbgCmdStopHandler::ProcessOutput(const wxString& line)
     wxUnusedVar(line);
     wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
     EventNotifier::Get()->AddPendingEvent(event);
+    return true;
 }

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  7 2012)
+// C++ code generated with wxFormBuilder (version Sep 14 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -44,7 +44,7 @@
 #include <wx/listctrl.h>
 #include <wx/listbox.h>
 #include <wx/notebook.h>
-#include <wx/combobox.h>
+#include <wx/choice.h>
 #include <wx/radiobox.h>
 #include <wx/gbsizer.h>
 
@@ -326,24 +326,18 @@ class _TableSettings : public wxDialog
 	private:
 	
 	protected:
-		wxPanel* m_panel7;
-		wxPanel* m_panel8;
 		wxStaticText* m_staticText7;
 		wxTextCtrl* m_txTableName;
-		wxPanel* m_panel9;
-		wxPanel* m_panel13;
 		wxListBox* m_listColumns;
-		wxPanel* m_panel14;
 		wxButton* m_button8;
 		wxButton* m_button15;
 		wxButton* m_button10;
-		wxStaticLine* m_staticline2;
 		wxNotebook* m_notebook3;
 		wxPanel* m_pageType;
 		wxStaticText* m_staticText8;
 		wxTextCtrl* m_txColName;
 		wxStaticText* m_staticText9;
-		wxComboBox* m_comboType;
+		wxChoice* m_comboType;
 		wxStaticText* m_stSize;
 		wxStaticText* m_staticText25;
 		wxTextCtrl* m_txSize;
@@ -356,12 +350,12 @@ class _TableSettings : public wxDialog
 		wxStaticText* m_staticText11;
 		wxTextCtrl* m_txConstraintName;
 		wxStaticText* m_staticText12;
-		wxComboBox* m_comboLocalColumn;
+		wxChoice* m_comboLocalColumn;
 		wxRadioBox* m_radioBox1;
 		wxStaticText* m_staticText13;
-		wxComboBox* m_comboRefTable;
+		wxChoice* m_comboRefTable;
 		wxStaticText* m_staticText14;
-		wxComboBox* m_comboRefColumn;
+		wxChoice* m_comboRefColumn;
 		wxRadioBox* m_radioOnDelete;
 		wxRadioBox* m_radioOnUpdate;
 		wxButton* m_button9;
@@ -410,14 +404,14 @@ class _CreateForeignKey : public wxDialog
 		wxStaticText* m_staticText15;
 		wxTextCtrl* m_txSrcTable;
 		wxStaticText* m_staticText17;
-		wxComboBox* m_cmbSrcCol;
+		wxChoice* m_cmbSrcCol;
 		wxRadioBox* m_radioRelation;
 		wxRadioBox* m_radioOnDelete;
 		wxRadioBox* m_radioOnUpdate;
 		wxStaticText* m_staticText16;
 		wxTextCtrl* m_txDstTable;
 		wxStaticText* m_staticText18;
-		wxComboBox* m_cmbDstCol;
+		wxChoice* m_cmbDstCol;
 		wxButton* m_btnCancel;
 		wxButton* m_btnOK;
 		
@@ -585,7 +579,6 @@ class _CodePreviewDialog : public wxDialog
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnOKClick( wxCommandEvent& event ) { event.Skip(); }
 		
-	
 	public:
 		
 		_CodePreviewDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SQL Preview"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,470 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 

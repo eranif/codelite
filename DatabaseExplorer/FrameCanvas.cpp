@@ -154,17 +154,20 @@ void FrameCanvas::OnRightDown(wxMouseEvent& event) {
 	mnu.Append(XRCID("IDR_POPUP_NEW_VIEW"), _("Add new ERD view"));
 	mnu.AppendSeparator();
 	
+	mnu.Append(XRCID("IDR_POPUP_FULL_SQL"), _("Copy diagram SQL to the clipboard"));
+	
 	m_pSelectedShape = GetShapeUnderCursor();
 	if (m_pSelectedShape) {
 		
 		ErdTable* table = wxDynamicCast(m_pSelectedShape->GetGrandParentShape(), ErdTable);
 		if (table) {
-			mnu.Append(XRCID("IDR_POPUP_MI1"), 	_("Add column"));
 			mnu.AppendSeparator();
-			mnu.Append(XRCID("IDR_POPUP_NEW_KEY"), _("Create foreign key"));
+			mnu.Append(XRCID("IDR_POPUP_MI1"), 	_("Add column to table"));
+			mnu.AppendSeparator();
+			mnu.Append(XRCID("IDR_POPUP_NEW_KEY"), _("Create foreign key for table"));
 			mnu.Append(XRCID("IDR_POPUP_MI3"), _("Create view for table"));			
 			mnu.AppendSeparator();
-			mnu.Append(XRCID("IDR_POPUP_MI2"), 	_("Copy SQL to clippboard"));
+			mnu.Append(XRCID("IDR_POPUP_MI2"), 	_("Copy table SQL to the clipboard"));
 			
 		}
 	}
@@ -190,7 +193,7 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 				SaveCanvasState();
 			}
 		}else if (evt.GetId() == XRCID("IDR_POPUP_MI2")) {
-			bool dropTable = ( wxMessageBox( _("Add drop table statement?"),_("Drop table"),wxYES_NO ) == wxYES );
+			bool dropTable = ( wxMessageBox( _("Add drop table statement?"),_("SQL export"),wxYES_NO ) == wxYES );
 			if (wxTheClipboard->Open()) {
 				ErdTable* table = wxDynamicCast(m_pSelectedShape->GetGrandParentShape(), ErdTable);
 				if (table) {
@@ -198,6 +201,7 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 					wxTheClipboard->SetData(new wxTextDataObject(m_pDbAdapter->GetCreateTableSql(table->GetTable(), dropTable)));
 				}
 				wxTheClipboard->Close();
+				wxMessageBox( _("SQL command has been copied to the clipboard."), _("SQL export"), wxICON_INFORMATION | wxOK );
 			}
 		}else if (evt.GetId() == XRCID("IDR_POPUP_MI3")) {
 			ErdTable* table = wxDynamicCast(m_pSelectedShape->GetGrandParentShape(), ErdTable);
@@ -267,7 +271,12 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 					} else m_srcCol = wxT("");
 					StartInteractiveConnection(CLASSINFO(wxSFOrthoLineShape), m_mousePos);
 				}
-			
+		}else if (evt.GetId() == XRCID("IDR_POPUP_FULL_SQL")) {
+			if (wxTheClipboard->Open()) {
+				wxTheClipboard->SetData(new wxTextDataObject(GetSqlScript()));
+				wxTheClipboard->Close();
+				wxMessageBox( _("SQL command has been copied to the clipboard."), _("SQL export"), wxICON_INFORMATION | wxOK );
+			}
 		}
 }
 

@@ -19,7 +19,7 @@
 #include "PostgreSqlDbAdapter.h"
 #endif
 
-#define DBE_VERSION _("0.2.0 Beta")
+#define DBE_VERSION _("0.3.0 Beta")
 
 static DatabaseExplorer* thePlugin = NULL;
 
@@ -65,7 +65,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager) {
 
 extern "C" EXPORT PluginInfo GetPluginInfo() {
 	PluginInfo info;
-	info.SetAuthor(wxT("Peter JankÅ¯, Michal BliÅ¾ÅÃ¡k, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
+	info.SetAuthor(wxT("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
 	info.SetName(_("DatabaseExplorer"));
 	info.SetDescription(_("DatabaseExplorer for CodeLite"));
 	info.SetVersion(DBE_VERSION);
@@ -163,7 +163,7 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu *pluginsMenu) {
 	// You can use the below code a snippet:
 	wxMenu *menu = new wxMenu();
 	wxMenuItem *item(NULL);
-	item = new wxMenuItem(menu, XRCID("dbe_about"), _("About dialog..."), wxEmptyString, wxITEM_NORMAL);
+	item = new wxMenuItem(menu, XRCID("dbe_about"), _("About..."), wxEmptyString, wxITEM_NORMAL);
 	menu->Append(item);
 	//item = new wxMenuItem(menu, XRCID("new_class"), _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
 	//menu->Append(item);
@@ -245,10 +245,10 @@ void DatabaseExplorer::OnAbout(wxCommandEvent& e) {
 	info.SetName(_("DatabaseExplorer"));
 	info.SetVersion(version);
 	info.SetDescription(desc);
-	info.SetCopyright(_("2011 (C) Tomas Bata University, Zlin, Czech Republic"));
+	info.SetCopyright(_("2011 - 2012 (C) Tomas Bata University, Zlin, Czech Republic"));
 	info.SetWebSite(_("http://www.fai.utb.cz"));
-	info.AddDeveloper(wxT("Peter JankÅ¯"));
-	info.AddDeveloper(wxT("Michal BliÅ¾ÅÃ¡k"));
+	info.AddDeveloper(wxT("Peter Janků"));
+	info.AddDeveloper(wxT("Michal Bližňák"));
 
 	wxAboutBox(info);
 

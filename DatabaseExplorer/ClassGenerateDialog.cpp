@@ -35,18 +35,13 @@ bool ClassGenerateDialog::GenerateClass(DBETable* pTab, const wxString& path)
 	wxTextFile htmpFile(m_mgr->GetInstallDirectory() + wxT("/templates/databaselayer/") + hFileName);
 	wxTextFile ctmpFile(m_mgr->GetInstallDirectory() + wxT("/templates/databaselayer/") + cFileName);
 
+	if (!htmpFile.Open() || !ctmpFile.Open()) return false;
 
-
-
-	if (!htmpFile.Open()) return false;
-	if (!ctmpFile.Open()) return false;
 	wxString classTableName = pTab->GetName();
 	wxString classItemName = m_txPrefix->GetValue() + pTab->GetName() + m_txPostfix->GetValue();
 	wxString classItemDef = pTab->GetName().Upper() + wxT("_H");
 	wxString classColName = m_txPrefix->GetValue() + pTab->GetName() + wxT("Collection")+ m_txPostfix->GetValue();
 	wxString classUtilName = m_txPrefix->GetValue() + pTab->GetName() + wxT("Utils")+ m_txPostfix->GetValue();
-
-
 
 	wxTextFile hFile(path + wxT("/") + classItemName + wxT(".h"));
 	wxTextFile cFile(path + wxT("/") + classItemName + wxT(".cpp"));
@@ -64,7 +59,6 @@ bool ClassGenerateDialog::GenerateClass(DBETable* pTab, const wxString& path)
 	}
 	bool suc = GenerateFile(pTab,htmpFile,hFile, classItemName, classItemDef,classColName,classTableName, classUtilName);
 	suc &= GenerateFile(pTab,ctmpFile,cFile, classItemName, classItemDef,classColName,classTableName, classUtilName);
-
 
 	hFile.Write();
 	hFile.Close();
@@ -98,7 +92,6 @@ void ClassGenerateDialog::OnGenerateClick(wxCommandEvent& event)
 		wxMessageBox( _("Folder name cannot be empty"), _("CodeLite"), wxICON_WARNING | wxOK );
 		m_dirPicker->SetFocus();
 	}
-
 
 	m_textCtrl19->Clear();
 
@@ -362,8 +355,8 @@ wxString ClassGenerateDialog::GetFillData(DBEColumn* pCol, int colIndex)
 	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_TEXT) return wxT("\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%s\"),current->Get")+ pCol->GetName() + wxString::Format(wxT("().c_str()),i,%i);"),colIndex);
 	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME) return wxT("\t\tpGrid->SetCellValue(current->Get")+ pCol->GetName() + wxString::Format(wxT("().Format(),i,%i);"),colIndex);
 	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_INT) return wxT("\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),current->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
-	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT) return wxT("\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%f\"),current->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
-	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL) return wxT("\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%d\"),current->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
+	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT) return wxT("\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),current->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
+	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL) return wxT("\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),current->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
 	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN) return wxT("\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),current->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
 	if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_OTHER) return wxT("\t\tpGrid->SetCellValue(wxT(\"some data\")") + wxString::Format(wxT(",i,%i);"),colIndex);
 	return wxT("");

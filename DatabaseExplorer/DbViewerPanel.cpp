@@ -722,10 +722,11 @@ wxString DbViewerPanel::CreatePanelName(View* v, PanelType type)
 	} else
 		return wxT("ERD [") + v->GetParentName() + wxT(":") + v->GetName() +  wxT("]");
 }
+
 void DbViewerPanel::InitStyledTextCtrl(wxStyledTextCtrl *sci)
 {
 	sci->SetLexer( wxSTC_LEX_SQL );
-	sci->SetKeyWords(0, wxT("select insert into delete update from drop create alter where values order by desc asc show table column tables columns limit as in exists view join left inner set") );
+	sci->SetKeyWords(0, wxT("select insert into delete update from drop create alter where values order by desc asc show table column tables columns limit as in exists view join left right inner on set group") );
 	wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 	font.SetFamily(wxTELETYPE);
 

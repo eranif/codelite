@@ -15,7 +15,7 @@ void ViewSettings::OnOKClick(wxCommandEvent& event)
 {
 	m_pView->SetName(m_txName->GetValue());
 	m_pView->SetSelect(m_scintilla2->GetText());
-	Close();
+	EndModal(wxID_OK);
 }
 void ViewSettings::SetView(View* pView, wxSFDiagramManager* pManager)
 {

@@ -37,68 +37,54 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 
 	SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  col = (DBEColumn*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ) {
+			
+			col = (DBEColumn*) node->GetData();
 
-		if ((col)&&(col->GetName() == name)) {
-			m_pEditedColumn = col;
-			m_txColName->SetValue(col->GetName());
+			if (col->GetName() == name) {
+				m_pEditedColumn = col;
+				m_txColName->SetValue(col->GetName());
 
-			IDbType* type = col->GetPType();
-			if (type) {
-				m_comboType->SetValue(type->GetTypeName());
-				m_txSize->SetValue(wxString::Format(wxT("%li"),type->GetSize()));
-				m_txSize2->SetValue(wxString::Format(wxT("%li"),type->GetSize2()));
-				m_chAutoIncrement->SetValue(type->GetAutoIncrement());
-				m_chNotNull->SetValue(type->GetNotNull());
-			}
-		}
-
-		if( node->GetData()->IsKindOf( CLASSINFO(Constraint)) )  constr = (Constraint*) node->GetData();
-
-		if ((constr)&&(constr->GetName() == name)) {
-			m_comboLocalColumn->Clear();
-			m_pEditedConstraint = constr;
-
-			m_txConstraintName->SetValue(constr->GetName());
-			m_comboLocalColumn->SetValue(constr->GetLocalColumn());
-			if (m_pTable) {
-				SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
-				while( node ) {
-					if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_comboLocalColumn->AppendString(wxString::Format(wxT("%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
-					node = node->GetNext();
+				IDbType* type = col->GetPType();
+				if (type) {
+					m_comboType->SetStringSelection(type->GetTypeName());
+					m_txSize->SetValue(wxString::Format(wxT("%li"),type->GetSize()));
+					m_txSize2->SetValue(wxString::Format(wxT("%li"),type->GetSize2()));
+					m_chAutoIncrement->SetValue(type->GetAutoIncrement());
+					m_chNotNull->SetValue(type->GetNotNull());
 				}
 			}
-			m_radioBox1->Select(constr->GetType());
-			m_comboRefTable->SetValue(constr->GetRefTable());
-			m_comboRefColumn->SetValue(constr->GetRefCol());
-			m_radioOnDelete->Select(constr->GetOnDelete());
-			m_radioOnUpdate->Select(constr->GetOnUpdate());
+		
+		} else if( node->GetData()->IsKindOf( CLASSINFO(Constraint)) ) {
+			
+			constr = (Constraint*) node->GetData();
 
+			if (constr->GetName() == name) {
+				m_comboLocalColumn->Clear();
+				m_pEditedConstraint = constr;
+
+				m_txConstraintName->SetValue(constr->GetName());
+				if (m_pTable) {
+					SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
+					while( node ) {
+						if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_comboLocalColumn->AppendString(wxString::Format(wxT("%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
+						node = node->GetNext();
+					}
+					m_comboLocalColumn->SetStringSelection(constr->GetLocalColumn());
+				}
+				
+				m_comboRefTable->SetStringSelection(constr->GetRefTable());
+				FillRefTableColums( GetRefTable( constr->GetRefTable() ) );
+				m_comboRefColumn->SetStringSelection(constr->GetRefCol());
+				
+				m_radioOnDelete->Select(constr->GetOnDelete());
+				m_radioOnUpdate->Select(constr->GetOnUpdate());
+				m_radioBox1->Select(constr->GetType());
+			}
 		}
 
 		node = node->GetNext();
 	}
-
-	/*
-	Column* col = wxDynamicCast(m_pTable->GetFristColumn(),Column);
-	while(col){
-
-		if ((col)&&(col->getName() == name)) {
-			m_pEditedColumn = col;
-			m_txColName->SetValue(col->getName());
-
-			IDbType* type = col->getPType();
-			if (type) {
-				m_comboType->SetValue(type->GetTypeName());
-				m_txSize->SetValue(wxString::Format(wxT("%li"),type->GetSize()));
-				m_chAutoIncrement->SetValue(type->GetAutoIncrement());
-				m_chNotNull->SetValue(type->GetNotNull());
-				m_chPrimary->SetValue(type->GetPrimaryKey());
-				m_checkBox3->SetValue(type->GetUnique());
-			}
-		}
-		col = wxDynamicCast(col->GetSibbling(CLASSINFO(Column)),Column);
-	}*/
 }
 
 void TableSettings::OnNewColumnClick(wxCommandEvent& event) {
@@ -129,12 +115,12 @@ void TableSettings::OnSaveColumnClick(wxCommandEvent& event) {
 	}
 	if (m_pEditedConstraint) {
 		m_pEditedConstraint->SetName(m_txConstraintName->GetValue());
-		m_pEditedConstraint->SetLocalColumn(m_comboLocalColumn->GetValue());
+		m_pEditedConstraint->SetLocalColumn(m_comboLocalColumn->GetStringSelection());
 		if (m_radioBox1->GetSelection() == 0) m_pEditedConstraint->SetType(Constraint::primaryKey);
 		if (m_radioBox1->GetSelection() == 1)  m_pEditedConstraint->SetType(Constraint::foreignKey);
 		if (m_pEditedConstraint->GetType() == Constraint::foreignKey) {
-			m_pEditedConstraint->SetRefTable(m_comboRefTable->GetValue());
-			m_pEditedConstraint->SetRefCol(m_comboRefColumn->GetValue());
+			m_pEditedConstraint->SetRefTable(m_comboRefTable->GetStringSelection());
+			m_pEditedConstraint->SetRefCol(m_comboRefColumn->GetStringSelection());
 			m_pEditedConstraint->SetOnUpdate((Constraint::constraintAction) m_radioOnUpdate->GetSelection());
 			m_pEditedConstraint->SetOnDelete((Constraint::constraintAction) m_radioOnDelete->GetSelection());
 		}
@@ -143,7 +129,7 @@ void TableSettings::OnSaveColumnClick(wxCommandEvent& event) {
 }
 
 void TableSettings::OnTypeSelect(wxCommandEvent& event) {
-	IDbType* pType = m_pDbAdapter->GetDbTypeByName(m_comboType->GetValue());
+	IDbType* pType = m_pDbAdapter->GetDbTypeByName(m_comboType->GetStringSelection());
 	if (pType) {
 		m_pEditedColumn->SetPType(pType);
 	}
@@ -196,7 +182,7 @@ void TableSettings::UpdateView() {
 	m_txColName->Clear();
 	m_txSize->Clear();
 	m_txSize2->Clear();
-	m_comboType->SetValue(wxT(""));
+	m_comboType->SetSelection(0);
 	m_chAutoIncrement->SetValue(false);
 	m_chNotNull->SetValue(false);
 
@@ -280,50 +266,22 @@ void TableSettings::OnNewConstrainClick(wxCommandEvent& event) {
 }
 
 void TableSettings::OnPageConstraintUI(wxUpdateUIEvent& event) {
-	event.Enable(false);
-	if (m_pEditedConstraint) event.Enable(true);
+	event.Enable(m_pEditedConstraint != NULL);
 }
 
 void TableSettings::OnPageTypeUI(wxUpdateUIEvent& event) {
-	event.Enable(false);
-	if (m_pEditedColumn) event.Enable(true);
+	event.Enable(m_pEditedColumn != NULL);
 }
 
 void TableSettings::OnRefColUI(wxUpdateUIEvent& event) {
-	event.Enable(false);
-	if ((m_pEditedConstraint) && (m_comboRefTable->GetValue().length() > 0 )) event.Enable(true);
+	event.Enable((m_radioBox1->GetSelection() == 1) && 
+				 (m_comboRefTable->GetStringSelection().length() > 0));
 }
 
 void TableSettings::OnRefTabChange(wxCommandEvent& event) {
-	ErdTable* pErdTab = NULL;
-	DBETable* pTab = NULL;
 	m_comboRefColumn->Clear();
-	m_comboRefColumn->SetValue(wxT(""));
-	if (m_pDiagramManager) {
-		ShapeList lstShapes;
-		m_pDiagramManager->GetShapes( CLASSINFO(ErdTable), lstShapes );
-		ShapeList::compatibility_iterator it = lstShapes.GetFirst();
-		while( it ) {
-			pErdTab = wxDynamicCast(it->GetData(),ErdTable);
-			if (pErdTab) {
-				if (pErdTab->GetTable()->GetName() == m_comboRefTable->GetValue()) {
-					pTab = pErdTab->GetTable();
-
-				}
-			}
-			it = it->GetNext();
-		}
-	}
-	if (pTab) {
-		SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
-		while( node ) {
-			DBEColumn* col = wxDynamicCast(node->GetData(),DBEColumn);
-			if (col) {
-				m_comboRefColumn->AppendString(col->GetName());
-			}
-			node = node->GetNext();
-		}
-	}
+	FillRefTableColums( GetRefTable( m_comboRefTable->GetStringSelection() ) );
+	m_comboRefColumn->SetSelection(0);
 }
 
 void TableSettings::OnRefTabUI(wxUpdateUIEvent& event) {
@@ -349,5 +307,37 @@ void TableSettings::OnColSize2UI(wxUpdateUIEvent& event) {
 	event.Enable(false);
 	if (m_pEditedColumn) {
 		if (m_pEditedColumn->GetPType()) event.Enable(m_pEditedColumn->GetPType()->HaveSize2());
+	}
+}
+
+DBETable* TableSettings::GetRefTable(const wxString& name)
+{
+	if (m_pDiagramManager) {
+		ShapeList lstShapes;
+		m_pDiagramManager->GetShapes( CLASSINFO(ErdTable), lstShapes );
+		ShapeList::compatibility_iterator it = lstShapes.GetFirst();
+		while( it ) {
+			ErdTable* pErdTab = wxDynamicCast(it->GetData(),ErdTable);
+			if (pErdTab && pErdTab->GetTable()->GetName() == name) {
+				return pErdTab->GetTable();
+			}
+			it = it->GetNext();
+		}
+	}
+	
+	return NULL;
+}
+
+void TableSettings::FillRefTableColums(DBETable* tab)
+{
+	if (tab) {
+		SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
+		while( node ) {
+			DBEColumn* col = wxDynamicCast(node->GetData(),DBEColumn);
+			if (col) {
+				m_comboRefColumn->AppendString(col->GetName());
+			}
+			node = node->GetNext();
+		}
 	}
 }

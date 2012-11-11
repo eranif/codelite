@@ -7,8 +7,8 @@ CreateForeignKey::CreateForeignKey(wxWindow* parent, ErdTable* pSourceTable, Erd
 	m_srcColName = srcColName;
 	m_dstColName = dstColName;
 	
-	m_cmbDstCol->SetValue(dstColName);
-	m_cmbSrcCol->SetValue(srcColName);
+	m_cmbDstCol->SetStringSelection(dstColName);
+	m_cmbSrcCol->SetStringSelection(srcColName);
 	m_txSrcTable->SetValue(pSourceTable->GetTable()->GetName());
 	m_txDstTable->SetValue(pDestTable->GetTable()->GetName());	
 	SerializableList::compatibility_iterator node = pSourceTable->GetTable()->GetFirstChildNode();
@@ -43,8 +43,8 @@ void CreateForeignKey::OnOKClick(wxCommandEvent& event)
 		DBETable* pTable = m_pSrcTable->GetTable();		
 		Constraint* pConstr = new Constraint();
 		pConstr->SetName(wxString::Format(wxT("FK_%s_%s"), pTable->GetName().c_str(),m_pDstTable->GetTable()->GetName().c_str()));
-		pConstr->SetLocalColumn(m_cmbSrcCol->GetValue());
-		pConstr->SetRefCol(m_cmbDstCol->GetValue());
+		pConstr->SetLocalColumn(m_cmbSrcCol->GetStringSelection());
+		pConstr->SetRefCol(m_cmbDstCol->GetStringSelection());
 		pConstr->SetRefTable(m_txDstTable->GetValue());
 		pConstr->SetType(Constraint::foreignKey);
 		pConstr->SetOnDelete((Constraint::constraintAction) m_radioOnDelete->GetSelection());
@@ -69,7 +69,7 @@ void CreateForeignKey::OnOKClick(wxCommandEvent& event)
 		while( node ) {
 			if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ){
 				DBEColumn* col = wxDynamicCast(node->GetData(), DBEColumn);
-				if (col->GetName() == m_cmbSrcCol->GetValue()) {
+				if (col->GetName() == m_cmbSrcCol->GetStringSelection()) {
 					DBEColumn* colNew = (DBEColumn*) col->Clone();
 					srcColName = col->GetName();
 					srcLocColName = wxString::Format(wxT("%s_%s"), pSrcTable->GetName().c_str(), col->GetName().c_str());
@@ -84,7 +84,7 @@ void CreateForeignKey::OnOKClick(wxCommandEvent& event)
 		while( node ) {
 			if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ){
 				DBEColumn* col = wxDynamicCast(node->GetData(), DBEColumn);
-				if (col->GetName() == m_cmbDstCol->GetValue()) {
+				if (col->GetName() == m_cmbDstCol->GetStringSelection()) {
 					DBEColumn* colNew = (DBEColumn*) col->Clone();
 					dstColName = col->GetName();
 					dstLocColName = wxString::Format(wxT("%s_%s"), pDstTable->GetName().c_str(), col->GetName().c_str());
@@ -131,5 +131,5 @@ void CreateForeignKey::OnOKClick(wxCommandEvent& event)
 void CreateForeignKey::OnOKUI(wxUpdateUIEvent& event)
 {
 	event.Enable(false);
-	if ((!m_cmbSrcCol->GetValue().empty())&&(!m_cmbDstCol->GetValue().empty())) event.Enable(true);
+	if ((!m_cmbSrcCol->GetStringSelection().empty())&&(!m_cmbDstCol->GetStringSelection().empty())) event.Enable(true);
 }

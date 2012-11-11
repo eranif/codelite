@@ -55,7 +55,9 @@ class TableSettings : public _TableSettings {
 		Constraint* m_pEditedConstraint;
 		IDbAdapter* m_pDbAdapter;
 		wxSFDiagramManager* m_pDiagramManager;
-		//wxTextValidator validNum(wxFILTER_NUMERIC, NULL);
+		
+		DBETable *GetRefTable(const wxString& name);
+		void FillRefTableColums(DBETable *tab);
 
 		void UpdateView();
 };

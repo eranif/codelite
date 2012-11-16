@@ -32,8 +32,8 @@
 
 AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *mgr )
 		: AbbreviationsSettingsBase( parent )
-		, m_data()
 		, m_mgr(mgr)
+		, m_data()
 		, m_dirty(false)
 		, m_currSelection(wxNOT_FOUND)
 {

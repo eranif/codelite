@@ -163,7 +163,7 @@ wxDateTime OracleResultSet::GetResultDate(int nField)
         std::string stringDate = ts.toText("mm/dd/yyyy hh24:mi:ss", 0);
         wxString stringDateWx(stringDate.c_str());
         wxPrintf("Converting date: %s\n", stringDateWx.c_str());
-        if (date.ParseFormat(stringDateWx, wxT("%m/%d/%y %H:%M:%S")) == NULL)
+        if (!date.ParseFormat(stringDateWx, wxT("%m/%d/%y %H:%M:%S")))
         {
           // If the first conversion didn't work, try again
           date.ParseDateTime(stringDateWx);

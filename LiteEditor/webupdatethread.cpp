@@ -49,11 +49,15 @@ WebUpdateJob::~WebUpdateJob()
 
 void WebUpdateJob::Process(wxThread* thread)
 {
-#if defined(__WXMAC__)
+#ifndef __WXMSW__
 
     wxFileName fn(wxT("/tmp/codelite-packages.txt"));
     wxString command;
+#ifdef __WXMAC__
     command << wxT("curl http://codelite.org/packages.txt  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+#else
+    command << "wget http://codelite.org/packages.txt --output-file=/dev/null -O " << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+#endif
     {
         wxLogNull noLog;
         ::wxRemoveFile( fn.GetFullPath() );

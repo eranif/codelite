@@ -451,9 +451,9 @@ LEditor *MainBook::NewEditor()
 static bool IsFileExists(const wxFileName &filename)
 {
 #ifdef __WXMSW__
-    wxString drive  = filename.GetVolume();
+/*    wxString drive  = filename.GetVolume();
     if(drive.Length()>1)
-        return false;
+        return false;*/
 
     return filename.FileExists();
 #else
@@ -706,7 +706,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
     for (size_t i = 0; i < editors.size(); i++) {
         time_t diskTime = editors[i]->GetFileLastModifiedTime();
         time_t editTime = editors[i]->GetEditorLastModifiedTime();
-        if (diskTime > editTime) {
+        if (diskTime != editTime) {
             files.push_back(std::make_pair(editors[i]->GetFileName(), !editors[i]->GetModify()));
             // update editor last mod time so that we don't keep bugging the user over the same file,
             // unless it gets changed again

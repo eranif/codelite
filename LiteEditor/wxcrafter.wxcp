@@ -5,7 +5,8 @@
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
 		"m_bitmapsFile":	"",
-		"m_GenerateCodeTypes":	1
+		"m_GenerateCodeTypes":	1,
+		"m_templateClasses":	[]
 	},
 	"windows":	[{
 			"m_type":	4421,
@@ -49,12 +50,16 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Title:",
-					"m_value":	"New Project"
+					"m_label":	"Class Name:",
+					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"newprojectdlg"
+					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Title:",
+					"m_value":	"New Project"
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
@@ -64,6 +69,14 @@
 					"m_label":	"Centre:",
 					"m_selection":	1,
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"newprojectdlg"
+				}, {
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -126,6 +139,14 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Split Mode:",
 									"m_selection":	0,
@@ -183,6 +204,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}],
 									"m_events":	[],
@@ -246,6 +275,14 @@
 															"m_label":	"Font:",
 															"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
 															"type":	"multi-string",
 															"m_label":	"Label:",
 															"m_value":	"Project category:"
@@ -295,6 +332,14 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -352,6 +397,14 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
 															"m_value":	""
 														}],
 													"m_events":	[{
@@ -422,6 +475,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}],
 									"m_events":	[],
@@ -523,6 +584,14 @@
 																	"m_label":	"Font:",
 																	"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Project name:"
@@ -572,6 +641,14 @@
 																}, {
 																	"type":	"font",
 																	"m_label":	"Font:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -630,6 +707,14 @@
 																	"type":	"font",
 																	"m_label":	"Font:",
 																	"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
@@ -702,6 +787,14 @@
 																			"m_value":	""
 																		}, {
 																			"type":	"string",
+																			"m_label":	"Class Name:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Include File:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
 																			"m_label":	"Value:",
 																			"m_value":	""
 																		}, {
@@ -756,6 +849,14 @@
 																		}, {
 																			"type":	"font",
 																			"m_label":	"Font:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Class Name:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Include File:",
 																			"m_value":	""
 																		}, {
 																			"type":	"filePicker",
@@ -816,6 +917,14 @@
 																	"m_label":	"Font:",
 																	"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Compiler:"
@@ -865,6 +974,14 @@
 																}, {
 																	"type":	"font",
 																	"m_label":	"Font:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -943,6 +1060,14 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Label:",
 																	"m_value":	"Create the project under a separate directory"
 																}, {
@@ -997,6 +1122,14 @@
 																}, {
 																	"type":	"font",
 																	"m_label":	"Font:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -1075,6 +1208,14 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -1149,6 +1290,14 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&OK"
 										}, {
@@ -1220,6 +1369,14 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Cancel"
 										}, {
@@ -1282,11 +1439,15 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Title:",
-					"m_value":	"NavBarControl"
+					"m_label":	"Class Name:",
+					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Title:",
 					"m_value":	"NavBarControl"
 				}, {
 					"type":	"virtualFolderPicker",
@@ -1297,6 +1458,14 @@
 					"m_label":	"Centre:",
 					"m_selection":	1,
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"NavBarControl"
+				}, {
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -1359,6 +1528,14 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Split Mode:",
 									"m_selection":	0,
@@ -1416,6 +1593,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}],
 									"m_events":	[],
@@ -1477,6 +1662,14 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -1543,6 +1736,14 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -1603,6 +1804,14 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -1674,12 +1883,16 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Title:",
+					"m_label":	"Class Name:",
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"BuildTabTopPanel"
+					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Title:",
+					"m_value":	""
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
@@ -1689,6 +1902,14 @@
 					"m_label":	"Centre:",
 					"m_selection":	1,
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"BuildTabTopPanel"
+				}, {
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -1765,6 +1986,10 @@
 											"m_label":	"Label:",
 											"m_value":	"Keep pane open"
 										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	""
+										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
 											"m_value":	"Don't close this pane when an editor gets focus"
@@ -1774,7 +1999,7 @@
 											"m_path":	"../codelite-icons/output-pane/16/ToolPin.png"
 										}, {
 											"type":	"filePicker",
-											"m_label":	"Disaled Bitmap File",
+											"m_label":	"Disabled-Bitmap File",
 											"m_path":	""
 										}, {
 											"type":	"choice",
@@ -1811,6 +2036,10 @@
 											"m_label":	"Label:",
 											"m_value":	"Tool Label"
 										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	""
+										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
 											"m_value":	""
@@ -1820,7 +2049,7 @@
 											"m_path":	"../../../../tmp/placeholder16.png"
 										}, {
 											"type":	"filePicker",
-											"m_label":	"Disaled Bitmap File",
+											"m_label":	"Disabled-Bitmap File",
 											"m_path":	""
 										}, {
 											"type":	"choice",
@@ -1851,6 +2080,10 @@
 											"m_label":	"Label:",
 											"m_value":	"Save Build Log..."
 										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	""
+										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
 											"m_value":	"Save Build Log..."
@@ -1860,7 +2093,7 @@
 											"m_path":	"../codelite-icons-fresh-farm/toolbars/16/standard/document-save.png"
 										}, {
 											"type":	"filePicker",
-											"m_label":	"Disaled Bitmap File",
+											"m_label":	"Disabled-Bitmap File",
 											"m_path":	""
 										}, {
 											"type":	"choice",
@@ -1903,6 +2136,10 @@
 											"m_label":	"Label:",
 											"m_value":	"Clear Build Output"
 										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	""
+										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
 											"m_value":	"Clear Build Output"
@@ -1912,7 +2149,7 @@
 											"m_path":	"../codelite-icons-fresh-farm/output-pane/16/clear.png"
 										}, {
 											"type":	"filePicker",
-											"m_label":	"Disaled Bitmap File",
+											"m_label":	"Disabled-Bitmap File",
 											"m_path":	""
 										}, {
 											"type":	"choice",

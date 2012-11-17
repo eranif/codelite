@@ -3,8 +3,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef WXCRAFTER_H
-#define WXCRAFTER_H
+#ifndef WXCRAFTER_BASE_CLASSES_H
+#define WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>

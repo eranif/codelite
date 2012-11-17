@@ -29,7 +29,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     m_splitter5->SetSashGravity(0.000000);
     m_splitter5->SetMinimumPaneSize(10);
     
-    boxSizer1->Add(m_splitter5, 1, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer1->Add(m_splitter5, 1, wxEXPAND|wxALL, 5);
     
     m_splitterPageRight = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -41,16 +41,16 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     m_staticText34Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText34->SetFont(m_staticText34Font);
     
-    boxSizer10->Add(m_staticText34, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer10->Add(m_staticText34, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
     
     wxArrayString m_chCategoriesArr;
     m_chCategories = new wxChoice(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_chCategoriesArr, 0);
     
-    boxSizer10->Add(m_chCategories, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer10->Add(m_chCategories, 0, wxEXPAND|wxALL, 5);
     
     m_listTemplates = new wxListCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_SINGLE_SEL|wxLC_REPORT);
     
-    boxSizer10->Add(m_listTemplates, 1, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer10->Add(m_listTemplates, 1, wxEXPAND|wxALL, 5);
     
     m_listTemplates->InsertColumn(m_listTemplates->GetColumnCount(), _("Template"), wxLIST_FORMAT_LEFT, -1);
     m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
@@ -64,25 +64,25 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     flexGridSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer15->AddGrowableCol(1);
     
-    boxSizer11->Add(flexGridSizer15, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer11->Add(flexGridSizer15, 0, wxEXPAND|wxALL, 5);
     
     m_staticText16 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1,-1), 0);
     wxFont m_staticText16Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText16Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText16->SetFont(m_staticText16Font);
     
-    flexGridSizer15->Add(m_staticText16, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer15->Add(m_staticText16, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
     
     m_txtProjName = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2);
     
-    flexGridSizer15->Add(m_txtProjName, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    flexGridSizer15->Add(m_txtProjName, 0, wxEXPAND|wxALL, 5);
     
     m_staticText18 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project path:"), wxDefaultPosition, wxSize(-1,-1), 0);
     wxFont m_staticText18Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText18Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText18->SetFont(m_staticText18Font);
     
-    flexGridSizer15->Add(m_staticText18, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer15->Add(m_staticText18, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
     
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -90,59 +90,59 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_textCtrlProjectPath = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2);
     
-    boxSizer30->Add(m_textCtrlProjectPath, 1, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer30->Add(m_textCtrlProjectPath, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5);
     
     m_bmpButton33 = new wxBitmapButton(m_splitterPageLeft, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("find-folder")), wxDefaultPosition, wxSize(40,-1), wxBU_AUTODRAW);
     
-    boxSizer30->Add(m_bmpButton33, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer30->Add(m_bmpButton33, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
     
     m_staticText21 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Compiler:"), wxDefaultPosition, wxSize(-1,-1), 0);
     wxFont m_staticText21Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText21Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText21->SetFont(m_staticText21Font);
     
-    flexGridSizer15->Add(m_staticText21, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer15->Add(m_staticText21, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
     
     wxArrayString m_chCompilerArr;
     m_chCompiler = new wxChoice(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_chCompilerArr, 0);
     
-    flexGridSizer15->Add(m_chCompiler, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    flexGridSizer15->Add(m_chCompiler, 0, wxEXPAND|wxALL, 5);
     
     wxStaticBoxSizer* statixBoxSizer24 = new wxStaticBoxSizer( new wxStaticBox(m_splitterPageLeft, wxID_ANY, _("Project file:")), wxVERTICAL);
     
-    boxSizer11->Add(statixBoxSizer24, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer11->Add(statixBoxSizer24, 0, wxEXPAND|wxALL, 5);
     
     m_cbSeparateDir = new wxCheckBox(m_splitterPageLeft, wxID_ANY, _("Create the project under a separate directory"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_cbSeparateDir->SetValue(false);
     
-    statixBoxSizer24->Add(m_cbSeparateDir, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    statixBoxSizer24->Add(m_cbSeparateDir, 0, wxEXPAND|wxALL, 5);
     
-    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, "", wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    statixBoxSizer24->Add(m_stxtFullFileName, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    statixBoxSizer24->Add(m_stxtFullFileName, 0, wxEXPAND|wxALL, 5);
     
     wxStaticBoxSizer* statixBoxSizer28 = new wxStaticBoxSizer( new wxStaticBox(m_splitterPageLeft, wxID_ANY, _("Description:")), wxVERTICAL);
     
-    boxSizer11->Add(statixBoxSizer28, 1, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer11->Add(statixBoxSizer28, 1, wxEXPAND|wxALL, 5);
     
     m_txtDescription = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE);
     m_txtDescription->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     m_txtDescription->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
-    statixBoxSizer28->Add(m_txtDescription, 1, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    statixBoxSizer28->Add(m_txtDescription, 1, wxEXPAND|wxALL, 5);
     
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer1->Add(boxSizer2, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer1->Add(boxSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
     
     m_button3 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_button3->SetDefault();
     
-    boxSizer2->Add(m_button3, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    boxSizer2->Add(m_button3, 0, wxALL, 5);
     
     m_button4 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer2->Add(m_button4, 0, wxLEFT|wxRIGHT|wxTOP|wxBOTTOM, 5);
+    boxSizer2->Add(m_button4, 0, wxALL, 5);
     
     
     SetSizeHints(-1,-1);
@@ -256,13 +256,13 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     
     boxSizer47->Add(m_auibar48, 1, wxEXPAND, 5);
     
-    m_auibar48->AddTool(wxID_ANY, _("Keep pane open"), wxXmlResource::Get()->LoadBitmap(wxT("ToolPin")), _("Don't close this pane when an editor gets focus"), wxITEM_CHECK);
+    m_auibar48->AddTool(wxID_ANY, _("Keep pane open"), wxXmlResource::Get()->LoadBitmap(wxT("ToolPin")), wxNullBitmap, wxITEM_CHECK, wxT(""), _("Don't close this pane when an editor gets focus"), NULL);
     
     m_auibar48->AddSeparator();
     
-    m_auibar48->AddTool(wxID_SAVEAS, _("Save Build Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), _("Save Build Log..."), wxITEM_NORMAL);
+    m_auibar48->AddTool(wxID_SAVEAS, _("Save Build Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Save Build Log..."), NULL);
     
-    m_auibar48->AddTool(wxID_CLEAR, _("Clear Build Output"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), _("Clear Build Output"), wxITEM_NORMAL);
+    m_auibar48->AddTool(wxID_CLEAR, _("Clear Build Output"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Clear Build Output"), NULL);
     m_auibar48->Realize();
     
     

@@ -184,10 +184,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_skipWarnings(false)
     , m_buildpaneScrollTo(ScrollToFirstError)
     , m_buildInProgress(false)
-    , m_findDlg(NULL)
-    , m_findDlgPos(wxDefaultPosition)
 {
-    m_findData.SetFlags( wxFR_DOWN );
     m_curError = m_errorsAndWarningsList.end();
     wxBoxSizer* bs = new wxBoxSizer(wxHORIZONTAL);
     SetSizer(bs);
@@ -238,10 +235,6 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
 
 NewBuildTab::~NewBuildTab()
 {
-    if ( m_findDlg ) {
-        m_findDlg->Destroy();
-        m_findDlg = NULL;
-    }
     m_listctrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxContextMenuEventHandler(NewBuildTab::OnMenu), NULL, this);
     
     EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
@@ -887,16 +880,19 @@ wxFont NewBuildTab::DoGetFont() const
 void NewBuildTab::OnMenu(wxContextMenuEvent& e)
 {
     wxMenu menu;
-    menu.Append(wxID_FIND, _("Search..."));
-    menu.Append(wxID_COPY, _("Copy Build Output"));
+    menu.Append(wxID_COPY, _("Copy Build Output To Clipboard"));
+    menu.Append(wxID_PASTE, _("Paste Build Output into an Empty Editor"));
+    menu.AppendSeparator();
+    menu.Append(wxID_CLEAR, _("Clear"));
     
     // Connect events
     menu.Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopy), NULL, this);
-    menu.Connect(wxID_FIND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnFind), NULL, this);
+    menu.Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnOpenInEditor), NULL, this);
+    menu.Connect(wxID_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnClear), NULL, this);
     
-    m_listctrl->Connect(wxID_FIND, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnFindUI), NULL, this);
     m_listctrl->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopyUI), NULL, this);
-    
+    m_listctrl->Connect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnOpenInEditorUI), NULL, this);
+    m_listctrl->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnClearUI), NULL, this);
     m_listctrl->PopupMenu(&menu);
 }
 
@@ -906,34 +902,33 @@ void NewBuildTab::OnCopy(wxCommandEvent& e)
     ::CopyToClipboard(content);
 }
 
-void NewBuildTab::OnFind(wxCommandEvent& e)
-{
-    if ( m_findDlg ) {
-        return;
-    }
-    
-    m_findDlg = new wxFindReplaceDialog(wxTheApp->GetTopWindow(), &m_findData, _("Find Build Output"), wxCENTRE_ON_SCREEN);
-    m_findDlg->Connect(wxEVT_COMMAND_FIND_CLOSE, wxFindDialogEventHandler(NewBuildTab::OnFindDlgClose), NULL, this);
-    m_findDlg->Show();
-    if ( m_findDlgPos != wxDefaultPosition ) {
-        m_findDlg->Move(m_findDlgPos);
-    }
-}
-
 void NewBuildTab::OnCopyUI(wxUpdateUIEvent& e)
 {
     e.Enable( m_listctrl->GetItemCount() );
 }
 
-void NewBuildTab::OnFindUI(wxUpdateUIEvent& e)
+void NewBuildTab::OnOpenInEditor(wxCommandEvent& e)
+{
+    wxString content = this->GetBuildContent();
+    LEditor *editor = clMainFrame::Get()->GetMainBook()->NewEditor();
+    if ( editor ) {
+        editor->SetText(content);
+    }
+}
+
+void NewBuildTab::OnOpenInEditorUI(wxUpdateUIEvent& e)
 {
     e.Enable( m_listctrl->GetItemCount() );
 }
 
-void NewBuildTab::OnFindDlgClose(wxFindDialogEvent& e)
+void NewBuildTab::OnClear(wxCommandEvent& e)
 {
-    m_findDlgPos = m_findDlg->GetScreenPosition();
-    m_findDlg = NULL;
+    Clear();
+}
+
+void NewBuildTab::OnClearUI(wxUpdateUIEvent& e)
+{
+    e.Enable( !IsEmpty() );
 }
 
 ////////////////////////////////////////////

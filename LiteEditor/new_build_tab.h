@@ -171,9 +171,6 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t::iterator           m_curError;
     bool                                m_buildInProgress;
     wxString                            m_cygwinRoot;
-    wxFindReplaceDialog*                m_findDlg;
-    wxFindReplaceData                   m_findData;
-    wxPoint                             m_findDlgPos;
 protected:
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);
@@ -221,14 +218,12 @@ protected:
     void OnNextBuildError(wxCommandEvent &e);
     void OnNextBuildErrorUI(wxUpdateUIEvent &e);
     void OnMenu(wxContextMenuEvent &e);
-    void OnFind(wxCommandEvent &e);
     void OnCopy(wxCommandEvent &e);
     void OnCopyUI(wxUpdateUIEvent &e);
-    void OnFindUI(wxUpdateUIEvent &e);
-    
-    // Find Dialog
-    void OnFindDlgClose(wxFindDialogEvent &e);
-    
+    void OnOpenInEditorUI(wxUpdateUIEvent &e);
+    void OnOpenInEditor(wxCommandEvent &e);
+    void OnClear(wxCommandEvent &e);
+    void OnClearUI(wxUpdateUIEvent &e);
 };
 
 #endif // NEWBUILDTAB_H

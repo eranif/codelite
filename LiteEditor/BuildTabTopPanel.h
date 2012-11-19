@@ -11,11 +11,15 @@ class BuildTabTopPanel : public BuildTabTopPanelBaseClass
 {
 private:
     NewBuildTab* m_buildTab;
-    
+
 public:
     BuildTabTopPanel(wxWindow* parent);
     virtual ~BuildTabTopPanel();
 protected:
+    virtual void OnPaste(wxCommandEvent& event);
+    virtual void OnPasteUI(wxUpdateUIEvent& event);
+    virtual void OnCopyBuildOutput(wxCommandEvent& event);
+    virtual void OnCopyBuildOutputUI(wxUpdateUIEvent& event);
     virtual void OnClearBuildOutput(wxCommandEvent& event);
     virtual void OnClearBuildOutputUI(wxUpdateUIEvent& event);
     virtual void OnSaveBuildOutput(wxCommandEvent& event);
@@ -24,4 +28,3 @@ protected:
 };
 #endif // CL_USE_NEW_BUILD_TAB
 #endif // BUILDTABTOPPANEL_H
-

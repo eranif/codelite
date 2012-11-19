@@ -95,6 +95,10 @@ protected:
     virtual void OnSaveBuildOutputUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClearBuildOutput(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearBuildOutputUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCopyBuildOutput(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCopyBuildOutputUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnPaste(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPasteUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

@@ -22,6 +22,7 @@
 #include "notebook_ex.h"
 #include "output_pane.h"
 #include "macros.h"
+#include <wx/fdrepdlg.h>
 
 static const wxChar* WARNING_MARKER         = wxT("@@WARNING@@");
 static const wxChar* ERROR_MARKER           = wxT("@@ERROR@@");
@@ -183,7 +184,10 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_skipWarnings(false)
     , m_buildpaneScrollTo(ScrollToFirstError)
     , m_buildInProgress(false)
+    , m_findDlg(NULL)
+    , m_findDlgPos(wxDefaultPosition)
 {
+    m_findData.SetFlags( wxFR_DOWN );
     m_curError = m_errorsAndWarningsList.end();
     wxBoxSizer* bs = new wxBoxSizer(wxHORIZONTAL);
     SetSizer(bs);
@@ -199,7 +203,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     //style |= wxDV_ROW_LINES;
 
     m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-
+    m_listctrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxContextMenuEventHandler(NewBuildTab::OnMenu), NULL, this);
     // Make sure we have enought height for the icon
     yy < 12 ? yy = 12 : yy = yy;
     m_listctrl->SetRowHeight(yy);
@@ -214,7 +218,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     bs->Insert(0, toolbox, 0, wxEXPAND);
 #endif
 
-    int screenWidth = 8000;// use a long screen width to allow long lines
+    int screenWidth = 10000;// use a long screen width to allow long lines
     m_textRenderer = new MyTextRenderer(m_listctrl);
     
     m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 0, screenWidth, wxALIGN_LEFT));
@@ -234,6 +238,12 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
 
 NewBuildTab::~NewBuildTab()
 {
+    if ( m_findDlg ) {
+        m_findDlg->Destroy();
+        m_findDlg = NULL;
+    }
+    m_listctrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxContextMenuEventHandler(NewBuildTab::OnMenu), NULL, this);
+    
     EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
     EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
     EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_ADDLINE,         wxCommandEventHandler ( NewBuildTab::OnBuildAddLine ),    NULL, this );
@@ -874,6 +884,57 @@ wxFont NewBuildTab::DoGetFont() const
     return font;
 }
 
+void NewBuildTab::OnMenu(wxContextMenuEvent& e)
+{
+    wxMenu menu;
+    menu.Append(wxID_FIND, _("Search..."));
+    menu.Append(wxID_COPY, _("Copy Build Output"));
+    
+    // Connect events
+    menu.Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopy), NULL, this);
+    menu.Connect(wxID_FIND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnFind), NULL, this);
+    
+    m_listctrl->Connect(wxID_FIND, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnFindUI), NULL, this);
+    m_listctrl->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopyUI), NULL, this);
+    
+    m_listctrl->PopupMenu(&menu);
+}
+
+void NewBuildTab::OnCopy(wxCommandEvent& e)
+{
+    wxString content = this->GetBuildContent();
+    ::CopyToClipboard(content);
+}
+
+void NewBuildTab::OnFind(wxCommandEvent& e)
+{
+    if ( m_findDlg ) {
+        return;
+    }
+    
+    m_findDlg = new wxFindReplaceDialog(wxTheApp->GetTopWindow(), &m_findData, _("Find Build Output"));
+    m_findDlg->Connect(wxEVT_COMMAND_FIND_CLOSE, wxCommandEventHandler(NewBuildTab::OnFindDlgClose), NULL, this);
+    m_findDlg->Show();
+    if ( m_findDlgPos != wxDefaultPosition ) {
+        m_findDlg->Move(m_findDlgPos);
+    }
+}
+
+void NewBuildTab::OnCopyUI(wxUpdateUIEvent& e)
+{
+    e.Enable( m_listctrl->GetItemCount() );
+}
+
+void NewBuildTab::OnFindUI(wxUpdateUIEvent& e)
+{
+    e.Enable( m_listctrl->GetItemCount() );
+}
+
+void NewBuildTab::OnFindDlgClose(wxCommandEvent& e)
+{
+    m_findDlgPos = m_findDlg->GetScreenPosition();
+    m_findDlg = NULL;
+}
 
 ////////////////////////////////////////////
 // CmpPatter

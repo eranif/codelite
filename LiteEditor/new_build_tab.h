@@ -6,6 +6,7 @@
 #if CL_USE_NEW_BUILD_TAB
 
 #include "precompiled_header.h"
+#include <wx/fdrepdlg.h>
 #include <wx/dataview.h>
 #include <wx/stopwatch.h>
 #include <wx/panel.h> // Base class: wxPanel
@@ -170,7 +171,9 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t::iterator           m_curError;
     bool                                m_buildInProgress;
     wxString                            m_cygwinRoot;
-    
+    wxFindReplaceDialog*                m_findDlg;
+    wxFindReplaceData                   m_findData;
+    wxPoint                             m_findDlgPos;
 protected:
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);
@@ -217,6 +220,15 @@ protected:
     void OnWorkspaceLoaded(wxCommandEvent &e);
     void OnNextBuildError(wxCommandEvent &e);
     void OnNextBuildErrorUI(wxUpdateUIEvent &e);
+    void OnMenu(wxContextMenuEvent &e);
+    void OnFind(wxCommandEvent &e);
+    void OnCopy(wxCommandEvent &e);
+    void OnCopyUI(wxUpdateUIEvent &e);
+    void OnFindUI(wxUpdateUIEvent &e);
+    
+    // Find Dialog
+    void OnFindDlgClose(wxCommandEvent &e);
+    
 };
 
 #endif // NEWBUILDTAB_H

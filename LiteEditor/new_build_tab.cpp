@@ -912,8 +912,8 @@ void NewBuildTab::OnFind(wxCommandEvent& e)
         return;
     }
     
-    m_findDlg = new wxFindReplaceDialog(wxTheApp->GetTopWindow(), &m_findData, _("Find Build Output"));
-    m_findDlg->Connect(wxEVT_COMMAND_FIND_CLOSE, wxCommandEventHandler(NewBuildTab::OnFindDlgClose), NULL, this);
+    m_findDlg = new wxFindReplaceDialog(wxTheApp->GetTopWindow(), &m_findData, _("Find Build Output"), wxCENTRE_ON_SCREEN);
+    m_findDlg->Connect(wxEVT_COMMAND_FIND_CLOSE, wxFindDialogEventHandler(NewBuildTab::OnFindDlgClose), NULL, this);
     m_findDlg->Show();
     if ( m_findDlgPos != wxDefaultPosition ) {
         m_findDlg->Move(m_findDlgPos);
@@ -930,7 +930,7 @@ void NewBuildTab::OnFindUI(wxUpdateUIEvent& e)
     e.Enable( m_listctrl->GetItemCount() );
 }
 
-void NewBuildTab::OnFindDlgClose(wxCommandEvent& e)
+void NewBuildTab::OnFindDlgClose(wxFindDialogEvent& e)
 {
     m_findDlgPos = m_findDlg->GetScreenPosition();
     m_findDlg = NULL;

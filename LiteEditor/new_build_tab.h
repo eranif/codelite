@@ -227,7 +227,7 @@ protected:
     void OnFindUI(wxUpdateUIEvent &e);
     
     // Find Dialog
-    void OnFindDlgClose(wxCommandEvent &e);
+    void OnFindDlgClose(wxFindDialogEvent &e);
     
 };
 

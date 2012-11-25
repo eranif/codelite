@@ -153,6 +153,11 @@ cp ../lib/MacBundler.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/DatabaseExplorer.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/CallGraph.so ./CodeLite.app/Contents/SharedSupport/plugins/
 
+if [ -f ../lib/wxcrafter.so ]; then
+    cp ../lib/wxcrafter.so ./CodeLite.app/Contents/SharedSupport/plugins/
+    cp -pr ../wxcrafter/wxgui.zip ./CodeLite.app/Contents/SharedSupport/
+fi
+
 cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/

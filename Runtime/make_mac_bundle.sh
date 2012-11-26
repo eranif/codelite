@@ -72,6 +72,18 @@ fix_codelite_indexer_deps() {
 	done
 }
 
+fix_wxrc_deps() {
+
+	orig_path=`otool -L ./CodeLite.app/Contents/SharedSupport/wxrc  | grep libwx_* | awk '{print $1;}'`
+
+	## Loop over the files, and update the path of the wx library
+	for path in ${orig_path}
+	do
+		new_path=`echo ${path} | xargs basename`
+		install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./CodeLite.app/Contents/SharedSupport/wxrc
+	done
+}
+
 ## extract the file name from the Makefile
 exe_name=codelite
 
@@ -99,6 +111,12 @@ do
     cp ${wx_file} ./CodeLite.app/Contents/MacOS/
 done
 
+## Copy wxrc tool
+wx_config=`which wx-config`
+wxrc_tool=`dirname ${wx_config}`
+wxrc_tool=${wxrc_tool}/utils/wxrc/wxrc
+
+cp ${wxrc_tool} ./CodeLite.app/Contents/SharedSupport/
 cp ${exe_name} ./CodeLite.app/Contents/MacOS/${exe_name}
 
 ## Fix clang
@@ -181,6 +199,7 @@ for lang in locale/* ; do
 done
 
 fix_codelite_indexer_deps
+fix_wxrc_deps
 fix_codelite_clang_deps
 fix_shared_object_depends libwx_
 fix_non_plugins_depends ./lib/libcodeliteu.so

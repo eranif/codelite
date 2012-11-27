@@ -350,16 +350,18 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
         word      = rCtrl.PreviousWord(curpos, foundPos);
 
         bool isPreLinePreProcessLine(false);
-		bool isSingleConditionLine(false);
-		
+        bool isSingleConditionLine(false);
+
         if (line) {
             wxString lineStr = rCtrl.GetLine( line - 1 );
             lineStr.Trim().Trim(false);
             isPreLinePreProcessLine = lineStr.StartsWith(wxT("#"));
-			
-			lineStr = rCtrl.GetLine( line - 2 );
+            
+            wxString lineAbove = lineStr;
+            
+            lineStr = rCtrl.GetLine( line - 2 );
             lineStr.Trim().Trim(false);
-			isSingleConditionLine = (!lineStr.EndsWith(wxT("{"))) && (lineStr.StartsWith(wxT("if")) || lineStr.StartsWith(wxT("for")) || lineStr.StartsWith(wxT("while")));
+            isSingleConditionLine = (lineAbove != "{") && (lineStr.StartsWith(wxT("if")) || lineStr.StartsWith(wxT("for")) || lineStr.StartsWith(wxT("while")) || lineStr == "else");
         }
 
         // user hit ENTER after 'else'
@@ -419,14 +421,14 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
             }
         }
 
-		//// User typed 'ENTER' immediatly after a signle line condition
-		if ( prevpos != wxNOT_FOUND && isSingleConditionLine){
-			 int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
-			rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-2));
-			rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-			rCtrl.ChooseCaretX();
-			return;
-		}
+        //// User typed 'ENTER' immediatly after a signle line condition
+        if ( prevpos != wxNOT_FOUND && isSingleConditionLine) {
+            int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
+            rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-2));
+            rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
+            rCtrl.ChooseCaretX();
+            return;
+        }
 
         // use the previous line indentation level
         if (prevpos == wxNOT_FOUND || ch != wxT('{') || IsCommentOrString(prevpos)) {
@@ -1368,7 +1370,7 @@ int ContextCpp::FindLineToAddInclude()
     for (int i=0; i<maxLineToScan; i++) {
         wxString line = ctrl.GetLine(i).Trim().Trim(false);
         if (!(line.empty() || line.StartsWith("//") || IsComment(ctrl.PositionFromLine(i))
-                           || line.StartsWith("#ifndef") || line.StartsWith("#define"))) {
+              || line.StartsWith("#ifndef") || line.StartsWith("#define"))) {
             break;
         }
         initialblock = i;
@@ -1383,8 +1385,7 @@ int ContextCpp::FindLineToAddInclude()
         if (IsIncludeStatement(line)) {
             lineno = i;
             found = true;
-        } 
-        else if (found) {
+        } else if (found) {
             // Only return here if we've found at least 1
             return lineno + 1;
         }
@@ -2532,7 +2533,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 #endif
 
     std::vector<wxFileName> files, files2;
-    
+
 #ifdef __WXMSW__
     wxString lcNameOnly = fileName.GetFullName();
     lcNameOnly.MakeLower();

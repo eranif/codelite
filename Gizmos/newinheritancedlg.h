@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __newinheritancedlg__
+#ifndef __newinheritancedlg__
 #define __newinheritancedlg__
 
 /**
@@ -36,21 +36,27 @@ class IManager;
 /** Implementing NewIneritanceBaseDlg */
 class NewIneritanceDlg : public NewIneritanceBaseDlg
 {
-	IManager *m_mgr;
-	wxString m_fileName;
+    IManager *m_mgr;
+    wxString m_fileName;
 
 protected:
-	// Handlers for NewIneritanceBaseDlg events.
-	void OnButtonMore( wxCommandEvent& event );
+    // Handlers for NewIneritanceBaseDlg events.
+    void OnButtonMore( wxCommandEvent& event );
 
 public:
-	/** Constructor */
-	NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxString &parentName = wxEmptyString, const wxString &access = wxEmptyString );
-	virtual ~NewIneritanceDlg();
-	wxString GetParentName() {return m_textCtrlInhertiance->GetValue();}
-	wxString GetAccess() {return m_choiceAccess->GetStringSelection();}
+    /** Constructor */
+    NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxString &parentName = wxEmptyString, const wxString &access = wxEmptyString );
+    virtual ~NewIneritanceDlg();
+    wxString GetParentName() {
+        return m_textCtrlInhertiance->GetValue();
+    }
+    wxString GetAccess() {
+        return m_choiceAccess->GetStringSelection();
+    }
 
-	wxString GetFileName() const { return m_fileName; }
+    wxString GetFileName() const {
+        return m_fileName;
+    }
 };
 
 #endif // __newinheritancedlg__

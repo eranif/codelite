@@ -74,7 +74,20 @@ public:
         Tag_No_Signature_Format  = 0x00000001, // Do not attempt to format the signature. Use the GetSignature() as is
         Tag_No_Return_Value_Eval = 0x00000002  // Do not evaluate the return value. Use GetReturnValue() instead
     };
-
+    
+    static wxString KIND_CLASS;
+    static wxString KIND_ENUM;
+    static wxString KIND_ENUMERATOR;
+    static wxString KIND_FUNCTION;
+    static wxString KIND_PROTOTYPE;
+    static wxString KIND_MEMBER;
+    static wxString KIND_NAMESPACE;
+    static wxString KIND_VARIABLE;
+    static wxString KIND_UNION;
+    static wxString KIND_TYPEDEF;
+    static wxString KIND_MACRO;
+    static wxString KIND_STRUCT;
+    static wxString KIND_FILE;
 public:
     /**
      * Construct a TagEntry from tagEntry struct

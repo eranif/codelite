@@ -32,6 +32,20 @@
 #include "language.h"
 #include "code_completion_api.h"
 
+wxString TagEntry::KIND_CLASS       = "class";
+wxString TagEntry::KIND_ENUM        = "enum";
+wxString TagEntry::KIND_ENUMERATOR  = "enumerator";
+wxString TagEntry::KIND_FUNCTION    = "function";
+wxString TagEntry::KIND_PROTOTYPE   = "prototype";
+wxString TagEntry::KIND_MEMBER      = "member";
+wxString TagEntry::KIND_NAMESPACE   = "namespace";
+wxString TagEntry::KIND_VARIABLE    = "variable";
+wxString TagEntry::KIND_UNION       = "union";
+wxString TagEntry::KIND_TYPEDEF     = "typedef";
+wxString TagEntry::KIND_MACRO       = "macro";
+wxString TagEntry::KIND_STRUCT      = "struct";
+wxString TagEntry::KIND_FILE        = "file";
+
 TagEntry::TagEntry(const tagEntry& entry)
     : m_isClangTag(false)
     , m_userData(NULL)

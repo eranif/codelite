@@ -28,43 +28,47 @@
 #include "imanager.h"
 
 NewIneritanceDlg::NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxString &parentName, const wxString &access )
-: NewIneritanceBaseDlg( parent, wxID_ANY, _("New Inheritance"))
-, m_mgr(mgr)
+    : NewIneritanceBaseDlg( parent, wxID_ANY, _("New Inheritance"))
+    , m_mgr(mgr)
 {
-	// Do this the hard way, rather than letting wxFB localise these particular strings :p
-	const wxString AccessChoices[] = { wxT("public"), wxT("private"), wxT("protected"), wxT("virtual") };
-	wxArrayString choices(4, AccessChoices);
-	m_choiceAccess->Clear();
-	m_choiceAccess->Append(choices);
-	//by default select 0
-	m_choiceAccess->Select(0);
-	if(access.IsEmpty() == false){
-		m_choiceAccess->SetStringSelection(access);
-	}
-	m_textCtrlInhertiance->SetValue(parentName);
-	Centre();
+    // Do this the hard way, rather than letting wxFB localise these particular strings :p
+    const wxString AccessChoices[] = { wxT("public"), wxT("private"), wxT("protected"), wxT("virtual") };
+    wxArrayString choices(4, AccessChoices);
+    m_choiceAccess->Clear();
+    m_choiceAccess->Append(choices);
+    //by default select 0
+    m_choiceAccess->Select(0);
+    if(access.IsEmpty() == false) {
+        m_choiceAccess->SetStringSelection(access);
+    }
+    m_textCtrlInhertiance->SetValue(parentName);
+    Centre();
 
-	WindowAttrManager::Load(this, wxT("NewIneritanceDlg"), m_mgr->GetConfigTool());
+    WindowAttrManager::Load(this, wxT("NewIneritanceDlg"), m_mgr->GetConfigTool());
 }
 
 NewIneritanceDlg::~NewIneritanceDlg()
 {
-	WindowAttrManager::Save(this, wxT("NewIneritanceDlg"), m_mgr->GetConfigTool());
+    WindowAttrManager::Save(this, wxT("NewIneritanceDlg"), m_mgr->GetConfigTool());
 }
 
 void NewIneritanceDlg::OnButtonMore( wxCommandEvent& event )
 {
-	m_textCtrlInhertiance->SetFocus();
-	OpenResourceDialog dlg(this, m_mgr);
-	if(dlg.ShowModal() == wxID_OK){
-		wxString parentName;
-		if( dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>"))
-		{
-			parentName << dlg.GetSelection().m_scope << wxT("::");
-		}
-		parentName << dlg.GetSelection().m_name;
-		m_textCtrlInhertiance->SetValue(parentName);
+    m_textCtrlInhertiance->SetFocus();
+    OpenResourceDialog dlg(this, m_mgr);
 
-		m_fileName = dlg.GetSelection().m_file;
-	}
+    // Open the resource dialog with 'class' and 'struct' only
+    dlg.GetFilters().Add(TagEntry::KIND_CLASS);
+    dlg.GetFilters().Add(TagEntry::KIND_STRUCT);
+
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString parentName;
+        if( dlg.GetSelection().m_scope.IsEmpty() == false && dlg.GetSelection().m_scope != wxT("<global>")) {
+            parentName << dlg.GetSelection().m_scope << wxT("::");
+        }
+        parentName << dlg.GetSelection().m_name;
+        m_textCtrlInhertiance->SetValue(parentName);
+
+        m_fileName = dlg.GetSelection().m_file;
+    }
 }

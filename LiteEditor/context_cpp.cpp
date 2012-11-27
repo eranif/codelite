@@ -350,18 +350,10 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
         word      = rCtrl.PreviousWord(curpos, foundPos);
 
         bool isPreLinePreProcessLine(false);
-        bool isSingleConditionLine(false);
-
         if (line) {
             wxString lineStr = rCtrl.GetLine( line - 1 );
             lineStr.Trim().Trim(false);
             isPreLinePreProcessLine = lineStr.StartsWith(wxT("#"));
-            
-            wxString lineAbove = lineStr;
-            
-            lineStr = rCtrl.GetLine( line - 2 );
-            lineStr.Trim().Trim(false);
-            isSingleConditionLine = (lineAbove != "{") && (lineStr.StartsWith(wxT("if")) || lineStr.StartsWith(wxT("for")) || lineStr.StartsWith(wxT("while")) || lineStr == "else");
         }
 
         // user hit ENTER after 'else'
@@ -419,15 +411,6 @@ void ContextCpp::AutoIndent(const wxChar &nChar)
                     return;
                 }
             }
-        }
-
-        //// User typed 'ENTER' immediatly after a signle line condition
-        if ( prevpos != wxNOT_FOUND && isSingleConditionLine) {
-            int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPos());
-            rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(line-2));
-            rCtrl.SetCaretAt(rCtrl.GetLineIndentPosition(line));
-            rCtrl.ChooseCaretX();
-            return;
         }
 
         // use the previous line indentation level

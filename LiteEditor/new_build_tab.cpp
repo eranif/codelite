@@ -946,6 +946,7 @@ void NewBuildTab::OnCopySelection(wxCommandEvent& e)
         return;
     }
     wxString curline = m_listctrl->GetTextValue(m_listctrl->GetSelectedRow(), 0);
+    curline.Trim();
     StripBuildMarkders(curline);
     ::CopyToClipboard(curline);
 }

@@ -2449,6 +2449,10 @@ wxString TagsManager::GetFunctionReturnValueFromPattern(TagEntryPtr tag)
             return_value << _U(foo.m_returnValue.m_starAmp.c_str());
             return_value << wxT(" ");
         }
+        
+        if ( !foo.m_returnValue.m_rightSideConst.empty() ) {
+            return_value << foo.m_returnValue.m_rightSideConst << " ";
+        }
     }
     return return_value;
 }

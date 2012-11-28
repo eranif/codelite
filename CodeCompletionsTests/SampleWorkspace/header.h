@@ -27,6 +27,7 @@
 #include <Plugin/editor_config.h>
 #include <Plugin/lexer_configuration.h>
 #include <wxcrafter/wx_ordered_map.h>
+#include <Plugin/workspace.h>
 
 struct ST {
 	std::string name;
@@ -73,5 +74,4 @@ public:
 //////////////////////////////////////////////////////////////
 
 void foo_bar(struct wxString *s) {
-    
 }

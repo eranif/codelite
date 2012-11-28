@@ -120,6 +120,11 @@
     <File Name="network/clindexerprotocol.h"/>
     <File Name="network/cl_indexer_macros.h"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug_Unix"/>
+  <Dependencies Name="Debug_Win"/>
+  <Dependencies Name="ReleaseDebug_Win"/>
+  <Dependencies Name="Release_Unix"/>
+  <Dependencies Name="Release_Win"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -162,7 +167,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -201,7 +207,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -241,7 +248,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -281,7 +289,8 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
@@ -321,16 +330,12 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug_Unix"/>
-  <Dependencies Name="Debug_Win"/>
-  <Dependencies Name="ReleaseDebug_Win"/>
-  <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Release_Win"/>
 </CodeLite_Project>

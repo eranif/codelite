@@ -48,6 +48,16 @@ void SetActive(LEditor* editor)
     wxPostEvent(clMainFrame::Get(), event);
 }
 
+static void StripBuildMarkders(wxString &s)
+{
+    s.StartsWith(WARNING_MARKER, &s);
+    s.StartsWith(ERROR_MARKER,   &s);
+    s.StartsWith(SUMMARY_MARKER, &s);
+    s.StartsWith(SUMMARY_MARKER_ERROR, &s);
+    s.StartsWith(SUMMARY_MARKER_SUCCESS, &s);
+    s.StartsWith(SUMMARY_MARKER_WARNING, &s);
+}
+
 // A renderer for drawing the text
 class MyTextRenderer : public wxDataViewCustomRenderer
 {
@@ -851,12 +861,7 @@ wxString NewBuildTab::GetBuildContent() const
     wxString output;
     for(int i=0; i<m_listctrl->GetItemCount(); ++i) {
         wxString curline = m_listctrl->GetTextValue(i, 0);
-        curline.StartsWith(WARNING_MARKER, &curline);
-        curline.StartsWith(ERROR_MARKER,   &curline);
-        curline.StartsWith(SUMMARY_MARKER, &curline);
-        curline.StartsWith(SUMMARY_MARKER_ERROR, &curline);
-        curline.StartsWith(SUMMARY_MARKER_SUCCESS, &curline);
-        curline.StartsWith(SUMMARY_MARKER_WARNING, &curline);
+        StripBuildMarkders(curline);
         curline.Trim();
         output << curline << wxT("\n");
     }
@@ -880,17 +885,20 @@ wxFont NewBuildTab::DoGetFont() const
 void NewBuildTab::OnMenu(wxContextMenuEvent& e)
 {
     wxMenu menu;
-    menu.Append(wxID_COPY, _("Copy Build Output To Clipboard"));
-    menu.Append(wxID_PASTE, _("Paste Build Output into an Empty Editor"));
+    menu.Append(wxID_COPY,         _("Copy Selected Line"));
+    menu.Append(XRCID("copy_all"), _("Copy Entire Build Output To Clipboard"));
+    menu.Append(wxID_PASTE,        _("Open Build Output in an Empty Editor"));
     menu.AppendSeparator();
-    menu.Append(wxID_CLEAR, _("Clear"));
+    menu.Append(wxID_CLEAR,        _("Clear"));
     
     // Connect events
-    menu.Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopy), NULL, this);
+    menu.Connect(XRCID("copy_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopy), NULL, this);
+    menu.Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopySelection), NULL, this);
     menu.Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnOpenInEditor), NULL, this);
     menu.Connect(wxID_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnClear), NULL, this);
     
-    m_listctrl->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopyUI), NULL, this);
+    m_listctrl->Connect(XRCID("copy_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopyUI), NULL, this);
+    m_listctrl->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopySelectionUI), NULL, this);
     m_listctrl->Connect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnOpenInEditorUI), NULL, this);
     m_listctrl->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnClearUI), NULL, this);
     m_listctrl->PopupMenu(&menu);
@@ -929,6 +937,22 @@ void NewBuildTab::OnClear(wxCommandEvent& e)
 void NewBuildTab::OnClearUI(wxUpdateUIEvent& e)
 {
     e.Enable( !IsEmpty() );
+}
+
+void NewBuildTab::OnCopySelection(wxCommandEvent& e)
+{
+    wxDataViewItem item = m_listctrl->GetSelection();
+    if ( item.IsOk() == false ) {
+        return;
+    }
+    wxString curline = m_listctrl->GetTextValue(m_listctrl->GetSelectedRow(), 0);
+    StripBuildMarkders(curline);
+    ::CopyToClipboard(curline);
+}
+
+void NewBuildTab::OnCopySelectionUI(wxUpdateUIEvent& e)
+{
+    e.Enable( m_listctrl->GetSelectedRow() != wxNOT_FOUND );
 }
 
 ////////////////////////////////////////////

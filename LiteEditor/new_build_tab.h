@@ -220,6 +220,8 @@ protected:
     void OnMenu(wxContextMenuEvent &e);
     void OnCopy(wxCommandEvent &e);
     void OnCopyUI(wxUpdateUIEvent &e);
+    void OnCopySelection(wxCommandEvent &e);
+    void OnCopySelectionUI(wxUpdateUIEvent &e);
     void OnOpenInEditorUI(wxUpdateUIEvent &e);
     void OnOpenInEditor(wxCommandEvent &e);
     void OnClear(wxCommandEvent &e);

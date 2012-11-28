@@ -26,9 +26,9 @@ int main()
 
 	//print the scope name
 	//testScopeParser(buf);
-	testVarParser(buf);
+	//testVarParser(buf);
 	//testExprParser(buf);
-	//testFuncParser(buf);
+	testFuncParser(buf);
 	//testTypedefParser(buf);
 	//testIsPrimitive(buf);
 	free(buf);

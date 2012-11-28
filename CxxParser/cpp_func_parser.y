@@ -210,18 +210,20 @@ any_operator:
         ;
 
 /* functions */
-function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec declare_throw opt_pure_virtual func_postfix
+function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec variable_decl const_spec nested_scope_specifier func_name '(' {func_consumeFuncArgList();} const_spec declare_throw opt_pure_virtual func_postfix
 					{
 						//trim down trailing '::' from scope name
 						$6.erase($6.find_last_not_of(":")+1);
 						curr_func.m_isVirtual = $3.find("virtual") != std::string::npos;
-						curr_func.m_isPureVirtual = $12.find("=") != std::string::npos;
-						curr_func.m_isConst = $10.find("const") != std::string::npos;
-						curr_func.m_name = $7;
-						curr_func.m_scope = $6;
+						curr_func.m_isPureVirtual = $13.find("=") != std::string::npos;
+						curr_func.m_isConst = $11.find("const") != std::string::npos;
+						curr_func.m_name = $8;
+						curr_func.m_scope = $7;
 						curr_func.m_retrunValusConst = $4;
 						curr_func.m_lineno = cl_scope_lineno;
-						curr_func.m_throws = $11;
+						curr_func.m_throws = $12;
+                        curr_func.m_returnValue.m_rightSideConst = $6;
+                        curr_func.m_returnValue.m_isConst = !$4.empty();
 						if(g_funcs)
 						{
 							g_funcs->push_back(curr_func);

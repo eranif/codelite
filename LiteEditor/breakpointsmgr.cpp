@@ -122,6 +122,7 @@ void BreakptMgr::AddBreakpoint()
 
 void BreakptMgr::GetBreakpoints(std::vector<BreakpointInfo> &li)
 {
+    DoRemoveDuplicateBreakpoints();
     li = m_bps;
 }
 
@@ -351,6 +352,7 @@ void BreakptMgr::DebuggerStopped()
     m_pendingBreakpointsList.clear();
 
     m_bps = newList;
+    DoRemoveDuplicateBreakpoints();
     UnDisableAllBreakpoints();
 }
 
@@ -1168,3 +1170,32 @@ bool BreakptMgr::IsDuplicate(const BreakpointInfo& bp, const std::vector<Breakpo
     }
     return false;
 }
+
+void BreakptMgr::DoRemoveDuplicateBreakpoints()
+{
+    std::vector<BreakpointInfo> bps;
+    std::map<wxString, BreakpointInfo> uniqueNormalBreakpoints;
+    for(size_t i=0; i<m_bps.size(); ++i) {
+        BreakpointInfo bi = m_bps.at(i);
+        
+        if ( bi.bp_type != BP_type_break ) {
+            bps.push_back( bi );
+            
+        } else {
+            wxString key;
+            key << bi.file << bi.lineno;
+            
+            if ( uniqueNormalBreakpoints.count(key) ) {
+                continue;
+            } else {
+                uniqueNormalBreakpoints.insert(std::make_pair(key, bi));
+            }
+        }
+    }
+    std::map<wxString, BreakpointInfo>::iterator iter = uniqueNormalBreakpoints.begin();
+    for ( ; iter != uniqueNormalBreakpoints.end(); ++iter ) {
+        bps.push_back( iter->second );
+    }
+    m_bps.swap( bps );
+}
+

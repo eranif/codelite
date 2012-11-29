@@ -912,7 +912,7 @@ void NewBuildTab::OnCopy(wxCommandEvent& e)
 
 void NewBuildTab::OnCopyUI(wxUpdateUIEvent& e)
 {
-    e.Enable( m_listctrl->GetItemCount() );
+    e.Enable( !m_buildInProgress && m_listctrl->GetItemCount() );
 }
 
 void NewBuildTab::OnOpenInEditor(wxCommandEvent& e)
@@ -936,7 +936,7 @@ void NewBuildTab::OnClear(wxCommandEvent& e)
 
 void NewBuildTab::OnClearUI(wxUpdateUIEvent& e)
 {
-    e.Enable( !IsEmpty() );
+    e.Enable( !m_buildInProgress && !IsEmpty() );
 }
 
 void NewBuildTab::OnCopySelection(wxCommandEvent& e)
@@ -953,7 +953,7 @@ void NewBuildTab::OnCopySelection(wxCommandEvent& e)
 
 void NewBuildTab::OnCopySelectionUI(wxUpdateUIEvent& e)
 {
-    e.Enable( m_listctrl->GetSelectedRow() != wxNOT_FOUND );
+    e.Enable( !m_buildInProgress && m_listctrl->GetSelectedRow() != wxNOT_FOUND );
 }
 
 ////////////////////////////////////////////

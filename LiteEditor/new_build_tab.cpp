@@ -926,7 +926,7 @@ void NewBuildTab::OnOpenInEditor(wxCommandEvent& e)
 
 void NewBuildTab::OnOpenInEditorUI(wxUpdateUIEvent& e)
 {
-    e.Enable( m_listctrl->GetItemCount() );
+    e.Enable( !m_buildInProgress && m_listctrl->GetItemCount() );
 }
 
 void NewBuildTab::OnClear(wxCommandEvent& e)

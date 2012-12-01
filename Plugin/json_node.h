@@ -61,7 +61,9 @@ public:
     int           arraySize()        const ;
     int           toInt(int defaultVal = -1) const ;
     double        toDouble(double defaultVal = -1.0) const;
-
+    wxSize        toSize() const;
+    wxPoint       toPoint() const;
+    
     // Writers
     ////////////////////////////////////////////////
     /**
@@ -95,6 +97,9 @@ public:
      * @brief add boolean property to a JSON object
      */
     JSONElement& addProperty(const wxString &name, bool value);
+    
+    JSONElement& addProperty(const wxString &name, const wxSize& sz);
+    JSONElement& addProperty(const wxString &name, const wxPoint& pt);
     
     /**
      * @brief add wxArrayString property 

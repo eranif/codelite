@@ -376,3 +376,45 @@ bool JSONElement::hasNamedObject(const wxString& name) const
     return obj != NULL;
 }
 
+JSONElement& JSONElement::addProperty(const wxString& name, const wxPoint& pt)
+{
+    wxString szStr;
+    szStr << pt.x << "," << pt.y;
+    return addProperty(name, szStr);
+}
+
+JSONElement& JSONElement::addProperty(const wxString& name, const wxSize& sz)
+{
+    wxString szStr;
+    szStr << sz.x << "," << sz.y;
+    return addProperty(name, szStr);
+
+}
+
+wxPoint JSONElement::toPoint() const
+{
+    if(!_json) {
+        return wxDefaultPosition;
+    }
+
+    if(_json->type != cJSON_String) {
+        return wxDefaultPosition;
+    }
+
+    wxString str = _json->valuestring;
+    wxString x = str.BeforeFirst(',');
+    wxString y = str.AfterFirst(',');
+    
+    long nX(-1), nY(-1);
+    if ( !x.ToLong(&nX) || !y.ToLong(&nY) )
+        return wxDefaultPosition;
+    
+    return wxPoint(nX, nY);
+}
+
+wxSize JSONElement::toSize() const
+{
+    wxPoint pt = toPoint();
+    return wxSize(pt.x, pt.y);
+}
+

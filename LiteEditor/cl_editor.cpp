@@ -2663,7 +2663,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
  //      DoMarkHyperlink(event, false);
  //  }
     
-    if ( event.CmdDown() ) {
+    if ( event.AltDown() ) {
         
         // Show the popup
         ClearSelections();

@@ -5,6 +5,7 @@
 #include <wx/variant.h>
 #include <wx/filename.h>
 #include <wx/arrstr.h>
+#include <wx/gdicmn.h>
 #include "codelite_exports.h"
 #include "cJSON.h"
 

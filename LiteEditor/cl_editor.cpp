@@ -2663,23 +2663,21 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
  //      DoMarkHyperlink(event, false);
  //  }
     
-    if ( event.AltDown() ) {
+   
         
-        // Show the popup
-        ClearSelections();
-        
-        int curpos = PositionFromPoint( event.GetPosition() );
-        SetCaretAt( curpos );
-        
-        wxMenu menu(_("Find Symbol"));
-        menu.Append(XRCID("find_decl"), _("Go to Declaration"));
-        menu.Append(XRCID("find_impl"), _("Go to Implementation"));
-        PopupMenu(&menu);
-        
-    } else {
-        SetActive();
-        event.Skip();
-    }
+//    // Show the popup
+//    ClearSelections();
+//
+//    int curpos = PositionFromPoint( event.GetPosition() );
+//    SetCaretAt( curpos );
+//
+//    wxMenu menu(_("Find Symbol"));
+//    menu.Append(XRCID("find_decl"), _("Go to Declaration"));
+//    menu.Append(XRCID("find_impl"), _("Go to Implementation"));
+//    PopupMenu(&menu);
+   
+    SetActive();
+    event.Skip();
 }
 
 void LEditor::OnPopupMenuUpdateUI(wxUpdateUIEvent &event)

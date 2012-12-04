@@ -138,6 +138,10 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
     if ( selection.IsOk() ) {
         m_dataviewTemplates->Select(selection);
         m_dataviewTemplates->EnsureVisible(selection);
+        NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>( m_dataviewTemplates_model->GetClientObject(selection) );
+        if ( cd ) {
+            m_projectData.m_srcProject = cd->getProject();
+        }
     }
     
     UpdateProjectPage();

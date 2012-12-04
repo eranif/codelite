@@ -1044,11 +1044,11 @@
 														}, {
 															"type":	"colour",
 															"m_label":	"Bg Colour:",
-															"colour":	"ButtonFace"
+															"colour":	"<Default>"
 														}, {
 															"type":	"colour",
 															"m_label":	"Fg Colour:",
-															"colour":	"TooltipText"
+															"colour":	"<Default>"
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",

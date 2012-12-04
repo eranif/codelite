@@ -100,8 +100,6 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     flexGridSizer15->Add(m_cbSeparateDir, 0, wxALL|wxEXPAND, 5);
     
     m_txtDescription = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE);
-    m_txtDescription->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-    m_txtDescription->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     boxSizer11->Add(m_txtDescription, 1, wxALL|wxEXPAND, 5);
     

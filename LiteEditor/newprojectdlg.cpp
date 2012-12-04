@@ -145,8 +145,8 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
     }
     
     UpdateProjectPage();
-    m_splitter5->SetSashPosition(info.GetSashPosition());
     WindowAttrManager::Load(this, wxT("NewProjectDialog"), NULL);
+    m_splitter5->SetSashPosition(info.GetSashPosition());
 }
 
 NewProjectDlg::~NewProjectDlg()

@@ -36,7 +36,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer10);
     
-    m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SUNKEN);
     
     m_dataviewTemplates_model = new m_dataviewTemplatesModel;
     m_dataviewTemplates_model->SetColCount( 2 );
@@ -44,7 +44,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer10->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, 5);
     
-    m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
+    m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dataviewTemplates->AppendTextColumn(_("Description"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
     m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, -1);
@@ -60,69 +60,54 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     boxSizer11->Add(flexGridSizer15, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
     m_staticText16 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    wxFont m_staticText16Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText16Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText16->SetFont(m_staticText16Font);
     
     flexGridSizer15->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_txtProjName = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2);
+    m_txtProjName = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer15->Add(m_txtProjName, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer15->Add(m_txtProjName, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
     m_staticText18 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project path:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    wxFont m_staticText18Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText18Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText18->SetFont(m_staticText18Font);
     
-    flexGridSizer15->Add(m_staticText18, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    flexGridSizer15->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxHORIZONTAL);
     
     flexGridSizer15->Add(boxSizer30, 0, wxEXPAND, 5);
     
-    m_textCtrlProjectPath = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2);
+    m_textCtrlProjectPath = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer30->Add(m_textCtrlProjectPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_bmpButton33 = new wxBitmapButton(m_splitterPageLeft, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("find-folder")), wxDefaultPosition, wxSize(40,-1), wxBU_AUTODRAW);
     
-    boxSizer30->Add(m_bmpButton33, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer30->Add(m_bmpButton33, 0, wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText21 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Compiler:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    wxFont m_staticText21Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText21Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText21->SetFont(m_staticText21Font);
     
-    flexGridSizer15->Add(m_staticText21, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    flexGridSizer15->Add(m_staticText21, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_chCompilerArr;
     m_chCompiler = new wxChoice(m_splitterPageLeft, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_chCompilerArr, 0);
     
-    flexGridSizer15->Add(m_chCompiler, 0, wxEXPAND|wxALL, 5);
+    flexGridSizer15->Add(m_chCompiler, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    wxStaticBoxSizer* statixBoxSizer24 = new wxStaticBoxSizer( new wxStaticBox(m_splitterPageLeft, wxID_ANY, _("Project file:")), wxVERTICAL);
-    
-    boxSizer11->Add(statixBoxSizer24, 0, wxEXPAND|wxALL, 5);
+    flexGridSizer15->Add(0, 0, 0, wxALL, 5);
     
     m_cbSeparateDir = new wxCheckBox(m_splitterPageLeft, wxID_ANY, _("Create the project under a separate directory"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_cbSeparateDir->SetValue(false);
     
-    statixBoxSizer24->Add(m_cbSeparateDir, 0, wxALL|wxEXPAND, 5);
-    
-    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    statixBoxSizer24->Add(m_stxtFullFileName, 0, wxEXPAND|wxALL, 5);
-    
-    wxStaticBoxSizer* statixBoxSizer28 = new wxStaticBoxSizer( new wxStaticBox(m_splitterPageLeft, wxID_ANY, _("Description:")), wxVERTICAL);
-    
-    boxSizer11->Add(statixBoxSizer28, 1, wxEXPAND|wxALL, 5);
+    flexGridSizer15->Add(m_cbSeparateDir, 0, wxALL|wxEXPAND, 5);
     
     m_txtDescription = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE);
     m_txtDescription->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     m_txtDescription->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
-    statixBoxSizer28->Add(m_txtDescription, 1, wxEXPAND|wxALL, 5);
+    boxSizer11->Add(m_txtDescription, 1, wxALL|wxEXPAND, 5);
+    
+    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), wxBORDER_SUNKEN);
+    
+    boxSizer11->Add(m_stxtFullFileName, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxHORIZONTAL);
     

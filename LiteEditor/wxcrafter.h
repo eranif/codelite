@@ -20,7 +20,6 @@
 #include <wx/bmpbuttn.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/pen.h>
@@ -45,8 +44,8 @@ protected:
     wxStaticText* m_staticText21;
     wxChoice* m_chCompiler;
     wxCheckBox* m_cbSeparateDir;
-    wxStaticText* m_stxtFullFileName;
     wxTextCtrl* m_txtDescription;
+    wxStaticText* m_stxtFullFileName;
     wxButton* m_button3;
     wxButton* m_button4;
 

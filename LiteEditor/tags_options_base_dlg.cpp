@@ -161,7 +161,7 @@ CCColouringBasePage::CCColouringBasePage( wxWindow* parent, wxWindowID id, const
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_staticText72 = new wxStaticText( this, wxID_ANY, _("Maixmum number of *workspace* symbols to colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText72 = new wxStaticText( this, wxID_ANY, _("Maximum number of *workspace* symbols to colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText72->Wrap( -1 );
 	bSizer11->Add( m_staticText72, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	

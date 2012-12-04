@@ -3,30 +3,30 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef __m_dataviewTemplatesModel_GUARD__H__
-#define __m_dataviewTemplatesModel_GUARD__H__
+#ifndef __DVTemplatesModel_GUARD__H__
+#define __DVTemplatesModel_GUARD__H__
 
 #include <wx/variant.h>
 #include <wx/dataview.h>
 #include <algorithm>
 #include <wx/clntdata.h>
 
-class m_dataviewTemplatesModel_Node
+class DVTemplatesModel_Node
 {
 protected:
     wxVector<wxVariant>        m_data;
-    m_dataviewTemplatesModel_Node*           m_parent;
-    wxVector<m_dataviewTemplatesModel_Node*> m_children;
+    DVTemplatesModel_Node*           m_parent;
+    wxVector<DVTemplatesModel_Node*> m_children;
     bool                       m_isContainer;
     wxClientData*              m_clientData;
 
 public:
-    m_dataviewTemplatesModel_Node()
+    DVTemplatesModel_Node()
         : m_parent(NULL)
         , m_isContainer(false)
         , m_clientData(NULL)
     {}
-    virtual ~m_dataviewTemplatesModel_Node() {
+    virtual ~DVTemplatesModel_Node() {
         if ( m_clientData ) {
             delete m_clientData;
             m_clientData = NULL;
@@ -36,7 +36,7 @@ public:
         // Delete our children
         // since the deletion of a child may alter its parent m_children array
         // we use a temporary vector for the loop
-        wxVector<m_dataviewTemplatesModel_Node*> tmpChildren = m_children;
+        wxVector<DVTemplatesModel_Node*> tmpChildren = m_children;
         while ( !tmpChildren.empty() ) {
             delete (*tmpChildren.begin());
             tmpChildren.erase(tmpChildren.begin());
@@ -61,8 +61,8 @@ public:
      * @brief remove a child from this node and free its memory
      * @param child
      */
-    void DeleteChild(m_dataviewTemplatesModel_Node* child) {
-        wxVector<m_dataviewTemplatesModel_Node*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
+    void DeleteChild(DVTemplatesModel_Node* child) {
+        wxVector<DVTemplatesModel_Node*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
         if ( iter != m_children.end() ) {
             delete *iter;
             m_children.erase(iter);
@@ -73,8 +73,8 @@ public:
      * @brief remove child from this node without freeing its memory
      * @param child
      */
-    void RemoveChild(m_dataviewTemplatesModel_Node* child) {
-        wxVector<m_dataviewTemplatesModel_Node*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
+    void RemoveChild(DVTemplatesModel_Node* child) {
+        wxVector<DVTemplatesModel_Node*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
         if ( iter != m_children.end() ) {
             m_children.erase(iter);
         }
@@ -83,7 +83,7 @@ public:
     /**
      * @brief add child to this node
      */
-    void AddChild(m_dataviewTemplatesModel_Node* child) {
+    void AddChild(DVTemplatesModel_Node* child) {
         m_children.push_back(child);
         child->m_parent = this;
     }
@@ -93,19 +93,19 @@ public:
     }
 
     // Setters / Getters
-    void SetChildren(const wxVector<m_dataviewTemplatesModel_Node*>& children) {
+    void SetChildren(const wxVector<DVTemplatesModel_Node*>& children) {
         this->m_children = children;
     }
     void SetData(const wxVector<wxVariant>& data) {
         this->m_data = data;
     }
-    void SetParent(m_dataviewTemplatesModel_Node* parent) {
+    void SetParent(DVTemplatesModel_Node* parent) {
         this->m_parent = parent;
     }
-    const wxVector<m_dataviewTemplatesModel_Node*>& GetChildren() const {
+    const wxVector<DVTemplatesModel_Node*>& GetChildren() const {
         return m_children;
     }
-    wxVector<m_dataviewTemplatesModel_Node*>& GetChildren() {
+    wxVector<DVTemplatesModel_Node*>& GetChildren() {
         return m_children;
     }
     const wxVector<wxVariant>& GetData() const {
@@ -114,7 +114,7 @@ public:
     wxVector<wxVariant>& GetData() {
         return m_data;
     }
-    m_dataviewTemplatesModel_Node* GetParent() {
+    DVTemplatesModel_Node* GetParent() {
         return m_parent;
     }
 
@@ -134,29 +134,29 @@ public:
 // The TreeListCtrl model
 //////////////////////////////////////////////
 
-class m_dataviewTemplatesModel : public wxDataViewModel
+class DVTemplatesModel : public wxDataViewModel
 {
 protected:
-    wxVector<m_dataviewTemplatesModel_Node*> m_data;
+    wxVector<DVTemplatesModel_Node*> m_data;
     unsigned int m_colCount;
 
 public:
-    m_dataviewTemplatesModel();
-    virtual ~m_dataviewTemplatesModel();
+    DVTemplatesModel();
+    virtual ~DVTemplatesModel();
 
     void SetColCount(unsigned int colCount) {
         this->m_colCount = colCount;
     }
-    void SetData(const wxVector<m_dataviewTemplatesModel_Node*> data) {
+    void SetData(const wxVector<DVTemplatesModel_Node*> data) {
         this->m_data = data;
     }
     unsigned int GetColCount() const {
         return m_colCount;
     }
-    const wxVector<m_dataviewTemplatesModel_Node*>& GetData() const {
+    const wxVector<DVTemplatesModel_Node*>& GetData() const {
         return m_data;
     }
-    wxVector<m_dataviewTemplatesModel_Node*>& GetData() {
+    wxVector<DVTemplatesModel_Node*>& GetData() {
         return m_data;
     }
 
@@ -164,13 +164,10 @@ public:
         return false;
     }
 
-protected:
+public:
     // Make the functions below 'virtual' so the user may override them
-    virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
     virtual unsigned int GetColumnCount() const;
     virtual wxString GetColumnType(unsigned int col) const;
-    virtual wxDataViewItem GetParent(const wxDataViewItem& item) const;
-    virtual bool IsContainer(const wxDataViewItem& item) const;
     virtual void GetValue(wxVariant& variant, const wxDataViewItem& item, unsigned int col) const;
     virtual bool SetValue(const wxVariant &variant, const wxDataViewItem &item, unsigned int col);
 
@@ -244,5 +241,26 @@ public:
      * @brief returns the item columsn data
      */
     wxVector<wxVariant> GetItemColumnsData(const wxDataViewItem& item) const;
+	
+		/**
+	 * @brief return true if this node is a container
+	 */
+	virtual bool IsContainer(const wxDataViewItem& item) const;
+	
+	/**
+	 * @brief return true if item has children
+	 */
+	virtual bool HasChildren(const wxDataViewItem& item) const;
+	
+	/**
+	 * @brief return the item parent. Return an invalid item if this item has no parent (item.IsOk() = false)
+	 */
+	virtual wxDataViewItem GetParent(const wxDataViewItem& item) const;
+	
+	/**
+	 * @brief return the item's children as an array. 
+	 * @return children count
+	 */
+	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
 };
-#endif // __m_dataviewTemplatesModel_GUARD__H__
+#endif // __DVTemplatesModel_GUARD__H__

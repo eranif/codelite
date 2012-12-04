@@ -38,9 +38,9 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    m_dataviewTemplates_model = new m_dataviewTemplatesModel;
-    m_dataviewTemplates_model->SetColCount( 1 );
-    m_dataviewTemplates->AssociateModel(m_dataviewTemplates_model.get() );
+    m_dataviewTemplatesModel = new DVTemplatesModel;
+    m_dataviewTemplatesModel->SetColCount( 1 );
+    m_dataviewTemplates->AssociateModel(m_dataviewTemplatesModel.get() );
     
     boxSizer10->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, 5);
     

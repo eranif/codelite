@@ -286,7 +286,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Generated Model Class Name",
-															"m_value":	"m_dataviewTemplatesModel"
+															"m_value":	"DVTemplatesModel"
 														}, {
 															"type":	"bool",
 															"m_label":	"Container Item Has Columns",

@@ -14,7 +14,7 @@
 #include <wx/splitter.h>
 #include <wx/panel.h>
 #include <wx/dataview.h>
-#include "m_dataviewtemplatesmodel.h"
+#include "dvtemplatesmodel.h"
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/bmpbuttn.h>
@@ -34,7 +34,7 @@ class NewProjectDlgBaseClass : public wxDialog
 protected:
     wxSplitterWindow* m_splitter5;
     wxPanel* m_splitterPageRight;
-    wxObjectDataPtr<m_dataviewTemplatesModel> m_dataviewTemplates_model;
+    wxObjectDataPtr<DVTemplatesModel> m_dataviewTemplatesModel;
     wxDataViewCtrl* m_dataviewTemplates;
     wxPanel* m_splitterPageLeft;
     wxStaticText* m_staticText16;

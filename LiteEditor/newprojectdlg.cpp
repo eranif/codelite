@@ -69,7 +69,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
     wxDELETE(lstImages);
     
     // Populate the dataview model
-    m_dataviewTemplates_model->Clear();
+    m_dataviewTemplatesModel->Clear();
     std::list<ProjectPtr>::iterator iter = m_list.begin();
     wxVector<wxVariant> cols;
     std::map<wxString, wxDataViewItem> categoryMap;
@@ -87,7 +87,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
             wxVariant v;
             v << ict;
             cols.push_back( v );
-            categoryMap[internalType] = m_dataviewTemplates_model->AppendContainer(wxDataViewItem(0), cols);
+            categoryMap[internalType] = m_dataviewTemplatesModel->AppendContainer(wxDataViewItem(0), cols);
         }
         
         wxString imgId = (*iter)->GetProjectIconName();
@@ -100,7 +100,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
         v << ict;
         
         cols.push_back( v );
-        wxDataViewItem item = m_dataviewTemplates_model->AppendItem(categoryMap[internalType], cols, new NewProjectClientData((*iter)));
+        wxDataViewItem item = m_dataviewTemplatesModel->AppendItem(categoryMap[internalType], cols, new NewProjectClientData((*iter)));
         if ( (*iter)->GetName() == info.GetLastSelection() ) {
             selection = item;
         }
@@ -132,7 +132,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
     if ( selection.IsOk() ) {
         m_dataviewTemplates->Select(selection);
         m_dataviewTemplates->EnsureVisible(selection);
-        NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>( m_dataviewTemplates_model->GetClientObject(selection) );
+        NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>( m_dataviewTemplatesModel->GetClientObject(selection) );
         if ( cd ) {
             m_projectData.m_srcProject = cd->getProject();
         }
@@ -157,7 +157,7 @@ NewProjectDlg::~NewProjectDlg()
     
     wxDataViewItem sel = m_dataviewTemplates->GetSelection();
     if ( sel.IsOk() ) {
-        NewProjectClientData *cd =  dynamic_cast<NewProjectClientData*>(m_dataviewTemplates_model->GetClientObject(sel));
+        NewProjectClientData *cd =  dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel));
         if ( cd ) {
             info.SetLastSelection( cd->getProject()->GetName() ) ;
         }
@@ -344,7 +344,7 @@ void NewProjectDlg::OnOKUI(wxUpdateUIEvent& event)
 
 void NewProjectDlg::OnItemSelected(wxDataViewEvent& event)
 {
-    NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>(m_dataviewTemplates_model->GetClientObject(event.GetItem()));
+    NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(event.GetItem()));
     if ( cd ) {
         m_projectData.m_srcProject = cd->getProject();
         UpdateProjectPage();

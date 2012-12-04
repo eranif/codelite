@@ -26,35 +26,28 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     this->SetSizer(boxSizer1);
     
     m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
-    m_splitter5->SetSashGravity(0.000000);
+    m_splitter5->SetSashGravity(0.500000);
     m_splitter5->SetMinimumPaneSize(10);
     
-    boxSizer1->Add(m_splitter5, 1, wxEXPAND|wxALL, 5);
+    boxSizer1->Add(m_splitter5, 1, wxALL|wxEXPAND, 5);
     
     m_splitterPageRight = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer10);
     
-    m_staticText34 = new wxStaticText(m_splitterPageRight, wxID_ANY, _("Project category:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    wxFont m_staticText34Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText34Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText34->SetFont(m_staticText34Font);
+    m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer10->Add(m_staticText34, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+    m_dataviewTemplates_model = new m_dataviewTemplatesModel;
+    m_dataviewTemplates_model->SetColCount( 2 );
+    m_dataviewTemplates->AssociateModel(m_dataviewTemplates_model.get() );
     
-    wxArrayString m_chCategoriesArr;
-    m_chCategories = new wxChoice(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_chCategoriesArr, 0);
+    boxSizer10->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer10->Add(m_chCategories, 0, wxEXPAND|wxALL, 5);
-    
-    m_listTemplates = new wxListCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_SINGLE_SEL|wxLC_REPORT);
-    
-    boxSizer10->Add(m_listTemplates, 1, wxEXPAND|wxALL, 5);
-    
-    m_listTemplates->InsertColumn(m_listTemplates->GetColumnCount(), _("Template"), wxLIST_FORMAT_LEFT, -1);
+    m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
+    m_dataviewTemplates->AppendTextColumn(_("Description"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
     m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, 150);
+    m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, -1);
     
     wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer11);
@@ -64,18 +57,18 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     flexGridSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer15->AddGrowableCol(1);
     
-    boxSizer11->Add(flexGridSizer15, 0, wxEXPAND|wxALL, 5);
+    boxSizer11->Add(flexGridSizer15, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
     m_staticText16 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1,-1), 0);
     wxFont m_staticText16Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText16Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText16->SetFont(m_staticText16Font);
     
-    flexGridSizer15->Add(m_staticText16, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    flexGridSizer15->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txtProjName = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2);
     
-    flexGridSizer15->Add(m_txtProjName, 0, wxEXPAND|wxALL, 5);
+    flexGridSizer15->Add(m_txtProjName, 0, wxALL|wxEXPAND, 5);
     
     m_staticText18 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Project path:"), wxDefaultPosition, wxSize(-1,-1), 0);
     wxFont m_staticText18Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -90,11 +83,11 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_textCtrlProjectPath = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2);
     
-    boxSizer30->Add(m_textCtrlProjectPath, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    boxSizer30->Add(m_textCtrlProjectPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_bmpButton33 = new wxBitmapButton(m_splitterPageLeft, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("find-folder")), wxDefaultPosition, wxSize(40,-1), wxBU_AUTODRAW);
     
-    boxSizer30->Add(m_bmpButton33, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    boxSizer30->Add(m_bmpButton33, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText21 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Compiler:"), wxDefaultPosition, wxSize(-1,-1), 0);
     wxFont m_staticText21Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
@@ -115,7 +108,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     m_cbSeparateDir = new wxCheckBox(m_splitterPageLeft, wxID_ANY, _("Create the project under a separate directory"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_cbSeparateDir->SetValue(false);
     
-    statixBoxSizer24->Add(m_cbSeparateDir, 0, wxEXPAND|wxALL, 5);
+    statixBoxSizer24->Add(m_cbSeparateDir, 0, wxALL|wxEXPAND, 5);
     
     m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -133,7 +126,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer1->Add(boxSizer2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+    boxSizer1->Add(boxSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button3 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_button3->SetDefault();
@@ -151,8 +144,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     }
     Centre(wxBOTH);
     // Connect events
-    m_chCategories->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCategorySelected), NULL, this);
-    m_listTemplates->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(NewProjectDlgBaseClass::OnTemplateSelected), NULL, this);
+    m_dataviewTemplates->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NewProjectDlgBaseClass::OnItemSelected), NULL, this);
     m_txtProjName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_textCtrlProjectPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectPathUpdated), NULL, this);
     m_bmpButton33->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
@@ -164,8 +156,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
 
 NewProjectDlgBaseClass::~NewProjectDlgBaseClass()
 {
-    m_chCategories->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCategorySelected), NULL, this);
-    m_listTemplates->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(NewProjectDlgBaseClass::OnTemplateSelected), NULL, this);
+    m_dataviewTemplates->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NewProjectDlgBaseClass::OnItemSelected), NULL, this);
     m_txtProjName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_textCtrlProjectPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectPathUpdated), NULL, this);
     m_bmpButton33->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
@@ -300,4 +291,29 @@ BuildTabTopPanelBaseClass::~BuildTabTopPanelBaseClass()
     this->Disconnect(wxID_PASTE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnPaste), NULL, this);
     this->Disconnect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnPasteUI), NULL, this);
     
+}
+
+NewProjImgList::NewProjImgList()
+    : wxImageList(16, 16, true)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("gear")));
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("qt")));
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("wx")));
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("gtk")));
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("console")));
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("archive")));
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("dll")));
+    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("makefile")));
+    
+}
+
+NewProjImgList::~NewProjImgList()
+{
 }

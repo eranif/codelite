@@ -729,6 +729,8 @@
     <VirtualDirectory Name="base">
       <File Name="wxcrafter.h"/>
       <File Name="wxcrafter.cpp"/>
+      <File Name="m_dataviewtemplatesmodel.cpp"/>
+      <File Name="m_dataviewtemplatesmodel.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>

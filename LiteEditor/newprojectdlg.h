@@ -33,9 +33,11 @@
 
 class NewProjectDlgData : public SerializedObject
 {
-    size_t m_flags;
-    int    m_sashPosition;
-    int    m_category;
+    size_t   m_flags;
+    int      m_sashPosition;
+    int      m_category;
+    wxString m_lastSelection;
+
 public:
     enum {
         NpSeparateDirectory = 0x00000001
@@ -66,6 +68,12 @@ public:
     int GetCategory() const {
         return m_category;
     }
+    void SetLastSelection(const wxString& lastSelection) {
+        this->m_lastSelection = lastSelection;
+    }
+    const wxString& GetLastSelection() const {
+        return m_lastSelection;
+    }
 };
 
 /** Implementing NewProjectBaseDlg */
@@ -76,14 +84,13 @@ class NewProjectDlg : public NewProjectDlgBaseClass
     ProjectData m_projectData;
 
 protected:
+    virtual void OnItemSelected(wxDataViewEvent& event);
     // Handlers for NewProjectBaseDlg events.
     void OnProjectNameChanged( wxCommandEvent& event );
     void OnCreate(wxCommandEvent &event);
-    void OnTemplateSelected( wxListEvent& event );
     void OnCategorySelected( wxCommandEvent& event );
 
     ProjectPtr FindProject(const wxString &name);
-    void FillProjectTemplateListCtrl(const wxString& category);
 
     void UpdateFullFileName();
     void UpdateProjectPage();

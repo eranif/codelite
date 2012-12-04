@@ -305,7 +305,7 @@ bool Project::DeleteVirtualDir(const wxString &vdFullPath)
 
         // remove the entry from the cache
         DoDeleteVDFromCache(vdFullPath);
-        
+
         delete vd;
         SetModified(true);
         return SaveXmlFile();
@@ -455,7 +455,7 @@ wxString Project::GetFiles(bool absPath)
 }
 
 void Project::GetFiles(StringSet_t& files)
-{   
+{
     DirSaver ds;
     FileNameVector_t v;
     ::wxSetWorkingDirectory(m_fileName.GetPath());
@@ -1285,13 +1285,13 @@ void Project::DoDeleteVDFromCache(const wxString& vd)
     NodeMap_t::iterator iter = m_vdCache.lower_bound(vd);
     if ( iter == m_vdCache.end() )
         return;
-    
+
     if ( iter->first.StartsWith(vd) == false )
         return;
-    
+
     NodeMap_t::iterator first = iter;
     ++iter;
-    
+
     // Loop and search for the first iterator that does not start with our prefix
     for(; iter != m_vdCache.end(); ++iter) {
         if ( iter->first.StartsWith(vd) == false )
@@ -1302,14 +1302,23 @@ void Project::DoDeleteVDFromCache(const wxString& vd)
 
 void Project::ClearAllVirtDirs()
 {
-	// remove all the virtual directories from this project
-	wxXmlNode *vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
-	while (vd) {
-		m_doc.GetRoot()->RemoveChild( vd );
-		delete vd;
-		vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
-	}
-	m_vdCache.clear();
-	SetModified(true);
-	SaveXmlFile();
+    // remove all the virtual directories from this project
+    wxXmlNode *vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
+    while (vd) {
+        m_doc.GetRoot()->RemoveChild( vd );
+        delete vd;
+        vd = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("VirtualDirectory"));
+    }
+    m_vdCache.clear();
+    SetModified(true);
+    SaveXmlFile();
+}
+
+int Project::GetProjectIconIndex() const
+{
+    wxString s;
+    s = m_doc.GetRoot()->GetPropVal(wxT("IconIndex"), "-1");
+    long value ( -1 );
+    s.ToLong(&value);
+    return value;
 }

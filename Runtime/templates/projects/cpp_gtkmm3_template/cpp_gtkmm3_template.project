@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="Executable GUI GTKMM 3.0/C++" InternalType="GUI">
+<CodeLite_Project Name="Executable GUI GTKMM 3.0/C++" InternalType="GUI" IconIndex="3">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000

@@ -56,6 +56,8 @@
 #include <wx/fontmap.h>
 #include <wx/zipstrm.h>
 #include <wx/filename.h>
+#include <algorithm>
+#include "project.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -94,6 +96,13 @@ static wxString MacGetInstallPath()
 #include <unistd.h>
 #include <dirent.h>
 #endif
+
+struct ProjListCompartor
+{
+    bool operator() (const ProjectPtr p1, const ProjectPtr p2) const {
+        return p1->GetName() > p2->GetName();
+    }
+};
 
 static bool IsBOMFile(const char* file_name)
 {
@@ -674,7 +683,7 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
     dir.Traverse ( dt );
 
     wxArrayString &files = dt.GetFiles();
-
+    
     if ( files.GetCount() > 0 ) {
 
         // Allocate image list
@@ -718,6 +727,8 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
         list.push_back ( dllProj );
         list.push_back ( exeProj );
     }
+    
+    list.sort(ProjListCompartor());
 }
 
 bool IsCppKeyword(const wxString& word)

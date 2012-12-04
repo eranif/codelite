@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="UnitTest++" InternalType="UnitTest++">
+<CodeLite_Project Name="UnitTest++" InternalType="UnitTest++" IconIndex="4">
   <Description>A UnitTest++ executable</Description>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">

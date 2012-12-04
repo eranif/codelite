@@ -13,27 +13,29 @@
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 #include <wx/panel.h>
+#include <wx/dataview.h>
+#include "m_dataviewtemplatesmodel.h"
 #include <wx/stattext.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/listctrl.h>
 #include <wx/textctrl.h>
 #include <wx/bmpbuttn.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
+#include <wx/imaglist.h>
+#include <wx/bitmap.h>
 
 class NewProjectDlgBaseClass : public wxDialog
 {
 protected:
     wxSplitterWindow* m_splitter5;
     wxPanel* m_splitterPageRight;
-    wxStaticText* m_staticText34;
-    wxChoice* m_chCategories;
-    wxListCtrl* m_listTemplates;
+    wxObjectDataPtr<m_dataviewTemplatesModel> m_dataviewTemplates_model;
+    wxDataViewCtrl* m_dataviewTemplates;
     wxPanel* m_splitterPageLeft;
     wxStaticText* m_staticText16;
     wxTextCtrl* m_txtProjName;
@@ -49,8 +51,7 @@ protected:
     wxButton* m_button4;
 
 protected:
-    virtual void OnCategorySelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnTemplateSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnProjectNameChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnProjectPathUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseProjectPath(wxCommandEvent& event) { event.Skip(); }
@@ -103,6 +104,18 @@ protected:
 public:
     BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~BuildTabTopPanelBaseClass();
+};
+
+
+class NewProjImgList : public wxImageList
+{
+protected:
+
+protected:
+
+public:
+    NewProjImgList();
+    virtual ~NewProjImgList();
 };
 
 #endif

@@ -36,52 +36,85 @@
 #include <wx/imaglist.h>
 #include <set>
 
+class NewProjectClientData : public wxClientData
+{
+    ProjectPtr m_project;
+
+public:
+    NewProjectClientData(ProjectPtr project) {
+        m_project = project;
+    }
+    virtual ~NewProjectClientData() {
+        m_project = NULL;
+    }
+    void setProject(const ProjectPtr& project) {
+        this->m_project = project;
+    }
+    const ProjectPtr& getProject() const {
+        return m_project;
+    }
+};
+
 NewProjectDlg::NewProjectDlg( wxWindow* parent )
     : NewProjectDlgBaseClass( parent )
 {
     NewProjectDlgData info;
     EditorConfigST::Get()->ReadObject(wxT("NewProjectDlgData"), &info);
-
-    //get list of project templates
+    
+    NewProjImgList images;
+    
+    // Get list of project templates
     wxImageList *lstImages (NULL);
     GetProjectTemplateList(PluginManager::Get(), m_list, &m_mapImages, &lstImages);
-
-    // assign image list to the list control which takes ownership of it (it will delete the image list)
-    m_listTemplates->AssignImageList(lstImages, wxIMAGE_LIST_SMALL);
-    MSWSetNativeTheme(m_listTemplates);
-
-    m_chCategories->Clear();
+    wxDELETE(lstImages);
+    
+    // Populate the dataview model
+    m_dataviewTemplates_model->Clear();
     std::list<ProjectPtr>::iterator iter = m_list.begin();
-    std::set<wxString>              categories;
-
-    // Add the 'All' category
-    categories.insert(_("All"));
-    for (; iter != m_list.end(); iter++) {
+    wxVector<wxVariant> cols;
+    std::map<wxString, wxDataViewItem> categoryMap;
+    
+    wxDataViewItem selection;
+    for (; iter != m_list.end(); ++iter) {
         wxString internalType = (*iter)->GetProjectInternalType();
         if (internalType.IsEmpty()) internalType = _("Others");
-        // Use wxGetTranslation() here. Some won't have translations, but it'll catch e.g. "GUI"
-        categories.insert( wxGetTranslation(internalType) );
-    }
 
-    std::set<wxString>::iterator cIter = categories.begin();
-    for (; cIter != categories.end(); cIter++) {
-        m_chCategories->Append((*cIter));
+        if ( categoryMap.count( internalType ) == 0 ) {
+            cols.clear();
+            wxIcon icn;
+            icn.CopyFromBitmap( images.GetBitmap(0) );
+            wxDataViewIconText ict(internalType, icn);
+            wxVariant v;
+            v << ict;
+            cols.push_back( v );
+            cols.push_back( internalType );
+            categoryMap[internalType] = m_dataviewTemplates_model->AppendContainer(wxDataViewItem(0), cols);
+        }
+        
+        int imgId = -1;
+        imgId = (*iter)->GetProjectIconIndex();
+        if ( imgId == -1 ) {
+            imgId = 0;
+        }
+        
+        cols.clear();
+        wxIcon icn;
+        icn.CopyFromBitmap( images.GetBitmap(imgId) );
+        wxDataViewIconText ict((*iter)->GetName(), icn);
+        wxVariant v;
+        v << ict;
+        
+        cols.push_back( v );
+        cols.push_back( "" );
+        wxDataViewItem item = m_dataviewTemplates_model->AppendItem(categoryMap[internalType], cols, new NewProjectClientData((*iter)));
+        if ( (*iter)->GetName() == info.GetLastSelection() ) {
+            selection = item;
+        }
     }
-
-    // Select 'GUI' to be the default category
-    
-    int where = info.GetCategory();
-    if (where == wxNOT_FOUND) {
-        where = m_chCategories->FindString(_("Console") );
-        if ( where == wxNOT_FOUND )
-            where = 0;
-    }
-    
-    m_chCategories->SetSelection(where);
-    FillProjectTemplateListCtrl(m_chCategories->GetStringSelection());
 
     //append list of compilers
     wxArrayString choices;
+
     //get list of compilers from configuration file
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
@@ -100,7 +133,13 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
 
     m_cbSeparateDir->SetValue( info.GetFlags() & NewProjectDlgData::NpSeparateDirectory );
     Centre();
-
+    
+    // Make sure the old selection is restored
+    if ( selection.IsOk() ) {
+        m_dataviewTemplates->Select(selection);
+        m_dataviewTemplates->EnsureVisible(selection);
+    }
+    
     UpdateProjectPage();
     m_splitter5->SetSashPosition(info.GetSashPosition());
     WindowAttrManager::Load(this, wxT("NewProjectDialog"), NULL);
@@ -117,9 +156,16 @@ NewProjectDlg::~NewProjectDlg()
 
     info.SetFlags(flags);
     info.SetSashPosition(m_splitter5->GetSashPosition());
-    info.SetCategory(m_chCategories->GetSelection());
+    
+    wxDataViewItem sel = m_dataviewTemplates->GetSelection();
+    if ( sel.IsOk() ) {
+        NewProjectClientData *cd =  dynamic_cast<NewProjectClientData*>(m_dataviewTemplates_model->GetClientObject(sel));
+        if ( cd ) {
+            info.SetLastSelection( cd->getProject()->GetName() ) ;
+        }
+    }
+    
     EditorConfigST::Get()->WriteObject(wxT("NewProjectDlgData"), &info);
-
     WindowAttrManager::Save(this, wxT("NewProjectDialog"), NULL);
 }
 
@@ -186,20 +232,6 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
     EndModal(wxID_OK);
 }
 
-void NewProjectDlg::OnTemplateSelected( wxListEvent& event )
-{
-    m_projectData.m_srcProject = FindProject( event.GetText() );
-
-    UpdateProjectPage();
-}
-
-void NewProjectDlg::OnCategorySelected(wxCommandEvent& event)
-{
-    FillProjectTemplateListCtrl(event.GetString());
-
-    UpdateProjectPage();
-}
-
 ProjectPtr NewProjectDlg::FindProject(const wxString &name)
 {
     std::list<ProjectPtr>::iterator iter = m_list.begin();
@@ -261,37 +293,6 @@ void NewProjectDlg::UpdateProjectPage()
     }
 }
 
-void NewProjectDlg::FillProjectTemplateListCtrl(const wxString& category)
-{
-    m_listTemplates->DeleteAllItems();
-
-    std::list<ProjectPtr>::iterator iter = m_list.begin();
-    for (; iter != m_list.end(); iter++) {
-        wxString intType = wxGetTranslation( (*iter)->GetProjectInternalType() );
-
-        if ( (category == _("All")) ||
-             (intType == category) ||
-             ( (intType == wxEmptyString) && (category == _("Others")) ) ||
-             ( (m_chCategories->FindString(intType) == wxNOT_FOUND) && (category == _("Others")) ) ) {
-            long item = AppendListCtrlRow(m_listTemplates);
-            std::map<wxString,int>::iterator img_iter = m_mapImages.find((*iter)->GetName());
-            int imgid(0);
-            if (img_iter != m_mapImages.end()) {
-                imgid = img_iter->second;
-            }
-
-            SetColumnText(m_listTemplates, item, 0, (*iter)->GetName(), imgid);
-        }
-    }
-
-    m_listTemplates->SetColumnWidth(0, wxLIST_AUTOSIZE);
-    if ( m_listTemplates->GetItemCount() ) {
-        m_projectData.m_srcProject = FindProject(m_listTemplates->GetItemText(0));
-        m_listTemplates->SetItemState(0, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-        UpdateProjectPage();
-    }
-}
-
 void NewProjectDlg::OnBrowseProjectPath(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -327,6 +328,7 @@ void NewProjectDlgData::DeSerialize(Archive& arch)
     arch.Read(wxT("m_flags"), m_flags);
     arch.Read(wxT("m_sashPosition"), m_sashPosition);
     arch.Read(wxT("m_category"), m_category);
+    arch.Read(wxT("m_lastSelection"), m_lastSelection);
 }
 
 void NewProjectDlgData::Serialize(Archive& arch)
@@ -334,9 +336,19 @@ void NewProjectDlgData::Serialize(Archive& arch)
     arch.Write(wxT("m_flags"), m_flags);
     arch.Write(wxT("m_sashPosition"), m_sashPosition);
     arch.Write(wxT("m_category"), m_category);
+    arch.Write(wxT("m_lastSelection"), m_lastSelection);
 }
 
 void NewProjectDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlProjectPath->IsEmpty() && !m_txtProjName->IsEmpty());
+}
+
+void NewProjectDlg::OnItemSelected(wxDataViewEvent& event)
+{
+    NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>(m_dataviewTemplates_model->GetClientObject(event.GetItem()));
+    if ( cd ) {
+        m_projectData.m_srcProject = cd->getProject();
+        UpdateProjectPage();
+    }
 }

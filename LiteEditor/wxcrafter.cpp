@@ -39,13 +39,12 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SUNKEN);
     
     m_dataviewTemplates_model = new m_dataviewTemplatesModel;
-    m_dataviewTemplates_model->SetColCount( 2 );
+    m_dataviewTemplates_model->SetColCount( 1 );
     m_dataviewTemplates->AssociateModel(m_dataviewTemplates_model.get() );
     
     boxSizer10->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, 5);
     
     m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
-    m_dataviewTemplates->AppendTextColumn(_("Description"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
     m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, -1);
     
@@ -99,13 +98,13 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     flexGridSizer15->Add(m_cbSeparateDir, 0, wxALL|wxEXPAND, 5);
     
+    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer11->Add(m_stxtFullFileName, 0, wxALL|wxEXPAND, 5);
+    
     m_txtDescription = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE);
     
     boxSizer11->Add(m_txtDescription, 1, wxALL|wxEXPAND, 5);
-    
-    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), wxBORDER_SUNKEN);
-    
-    boxSizer11->Add(m_stxtFullFileName, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxHORIZONTAL);
     

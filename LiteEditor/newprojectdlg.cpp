@@ -87,7 +87,6 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
             wxVariant v;
             v << ict;
             cols.push_back( v );
-            cols.push_back( internalType );
             categoryMap[internalType] = m_dataviewTemplates_model->AppendContainer(wxDataViewItem(0), cols);
         }
         
@@ -105,7 +104,6 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
         v << ict;
         
         cols.push_back( v );
-        cols.push_back( "" );
         wxDataViewItem item = m_dataviewTemplates_model->AppendItem(categoryMap[internalType], cols, new NewProjectClientData((*iter)));
         if ( (*iter)->GetName() == info.GetLastSelection() ) {
             selection = item;

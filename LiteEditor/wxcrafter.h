@@ -44,8 +44,8 @@ protected:
     wxStaticText* m_staticText21;
     wxChoice* m_chCompiler;
     wxCheckBox* m_cbSeparateDir;
-    wxTextCtrl* m_txtDescription;
     wxStaticText* m_stxtFullFileName;
+    wxTextCtrl* m_txtDescription;
     wxButton* m_button3;
     wxButton* m_button4;
 

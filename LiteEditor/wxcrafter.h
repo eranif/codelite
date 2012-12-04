@@ -27,6 +27,7 @@
 #include <wx/toolbar.h>
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
+#include <map>
 
 class NewProjectDlgBaseClass : public wxDialog
 {
@@ -109,11 +110,19 @@ public:
 class NewProjImgList : public wxImageList
 {
 protected:
+    // Maintain a map of all bitmaps representd by their name
+    std::map<wxString, wxBitmap> m_bitmaps;
+
 
 protected:
 
 public:
     NewProjImgList();
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
+        return m_bitmaps.find(name)->second;
+    }
     virtual ~NewProjImgList();
 };
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="Static library"  InternalType="Library" IconIndex="5">
+<CodeLite_Project Name="Static library"  InternalType="Library" IconIndex="archive16">
 	<Description>
 		A project that produces a static library (archive). 
 Note that this project is set to work with the GNU toolchain (gdb, g++, ar)

@@ -445,7 +445,7 @@ public:
     /**
      * @brief return the project icon index (used by the NewProjectDialog)
      */
-    int GetProjectIconIndex() const;
+    wxString GetProjectIconName() const;
     /**
      * @brief return the plugins' data. This data is copied when using 'save project as template' functionality
      * @param plugin plugin name

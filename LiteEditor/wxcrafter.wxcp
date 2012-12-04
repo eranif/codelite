@@ -105,7 +105,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
+							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -241,7 +241,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE", "wxBORDER_SUNKEN"],
+													"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -2194,7 +2194,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp62"
+							"m_value":	"gear16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
@@ -2213,7 +2213,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp58"
+							"m_value":	"qt16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
@@ -2232,7 +2232,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp59"
+							"m_value":	"wx16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
@@ -2251,7 +2251,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp60"
+							"m_value":	"gtk16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
@@ -2270,7 +2270,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp61"
+							"m_value":	"console16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
@@ -2289,7 +2289,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp63"
+							"m_value":	"archive16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
@@ -2308,7 +2308,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp64"
+							"m_value":	"dll16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
@@ -2327,7 +2327,7 @@
 					"m_properties":	[{
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_bmp65"
+							"m_value":	"makefile16"
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",

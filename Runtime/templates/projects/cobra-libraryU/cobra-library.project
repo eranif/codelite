@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="cobra-library" InternalType="User templates" IconIndex="5">
+<CodeLite_Project Name="cobra-library" InternalType="User templates" IconIndex="archive16">
   <Description>Build a .Net Library (assembly) from Cobra source.
 Root of source file tree assumed in same directory as project file.
 Debug files are made in the same directory

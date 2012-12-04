@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="cobra-executable" InternalType="User templates" IconIndex="4">
+<CodeLite_Project Name="cobra-executable" InternalType="User templates" IconIndex="console16">
   <Description>Build a .Net executable from Cobra source.
 Assumption is that workspace directory is in (root) directory of source file tree
 Debug files are made in the same directory.

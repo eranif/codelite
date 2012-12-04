@@ -1314,11 +1314,7 @@ void Project::ClearAllVirtDirs()
     SaveXmlFile();
 }
 
-int Project::GetProjectIconIndex() const
+wxString Project::GetProjectIconName() const
 {
-    wxString s;
-    s = m_doc.GetRoot()->GetPropVal(wxT("IconIndex"), "-1");
-    long value ( -1 );
-    s.ToLong(&value);
-    return value;
+    return m_doc.GetRoot()->GetPropVal(wxT("IconIndex"), "gear16");
 }

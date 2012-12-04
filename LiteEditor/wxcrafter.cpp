@@ -25,7 +25,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
-    m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter5->SetSashGravity(0.500000);
     m_splitter5->SetMinimumPaneSize(10);
     
@@ -36,7 +36,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer10);
     
-    m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_SUNKEN);
+    m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewTemplates_model = new m_dataviewTemplatesModel;
     m_dataviewTemplates_model->SetColCount( 1 );
@@ -284,15 +284,40 @@ NewProjImgList::NewProjImgList()
         wxC3F25InitBitmapResources();
         bBitmapLoaded = true;
     }
+    wxBitmap bmp;
     
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("gear")));
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("qt")));
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("wx")));
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("gtk")));
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("console")));
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("archive")));
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("dll")));
-    this->Add(wxXmlResource::Get()->LoadBitmap(wxT("makefile")));
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("gear16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("gear16"), bmp ) );
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("qt16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("qt16"), bmp ) );
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("wx16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("wx16"), bmp ) );
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("gtk16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("gtk16"), bmp ) );
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("console16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("console16"), bmp ) );
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("archive16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("archive16"), bmp ) );
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("dll16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("dll16"), bmp ) );
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("makefile16"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("makefile16"), bmp ) );
+    
     
 }
 

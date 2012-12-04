@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="wxWidgets Executable (wxWidgets + wxCrafter frame)" InternalType="GUI" IconIndex="2">
+<CodeLite_Project Name="wxWidgets Executable (wxWidgets + wxCrafter frame)" InternalType="GUI" IconIndex="wx16">
   <Description>A minimal wxFrame wxWidgets project ( wxCrafter enabled )</Description>
   <Settings Type="Executable">
     <GlobalSettings>

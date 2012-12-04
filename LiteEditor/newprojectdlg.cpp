@@ -82,7 +82,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
         if ( categoryMap.count( internalType ) == 0 ) {
             cols.clear();
             wxIcon icn;
-            icn.CopyFromBitmap( images.GetBitmap(0) );
+            icn.CopyFromBitmap( images.Bitmap("gear16") );
             wxDataViewIconText ict(internalType, icn);
             wxVariant v;
             v << ict;
@@ -90,15 +90,11 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
             categoryMap[internalType] = m_dataviewTemplates_model->AppendContainer(wxDataViewItem(0), cols);
         }
         
-        int imgId = -1;
-        imgId = (*iter)->GetProjectIconIndex();
-        if ( imgId == -1 ) {
-            imgId = 0;
-        }
+        wxString imgId = (*iter)->GetProjectIconName();
         
         cols.clear();
         wxIcon icn;
-        icn.CopyFromBitmap( images.GetBitmap(imgId) );
+        icn.CopyFromBitmap( images.Bitmap(imgId) );
         wxDataViewIconText ict((*iter)->GetName(), icn);
         wxVariant v;
         v << ict;

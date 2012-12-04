@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="Executable (Qt enabled)" InternalType="GUI" IconIndex="1">
+<CodeLite_Project Name="Executable (Qt enabled)" InternalType="GUI" IconIndex="qt16">
   <Description>Minimal GUI application using Qt toolkit.</Description>
   <Settings Type="Executable">
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">

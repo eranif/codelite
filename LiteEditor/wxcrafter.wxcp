@@ -7,11 +7,21 @@
 		"m_bitmapsFile":	"",
 		"m_GenerateCodeTypes":	1,
 		"m_templateClasses":	[{
-				"m_includeFile":	"#include \"events_table_list_view.h\"",
-				"m_allocationLine":	"$name = new EventsTableListView($parent);",
-				"m_className":	"EventsTableListView",
-				"m_xrcPreviewClass":	"wxListBox"
-			}]
+			"m_includeFile":	"#include \"caption_panel.h\"",
+			"m_allocationLine":	"$name = new CaptionPanel($parent, _(\"Video Clips\"), \"music\");",
+			"m_className":	"CaptionPanel",
+			"m_xrcPreviewClass":	"wxStaticText"
+		}, {
+			"m_includeFile":	"#include \"EventsTableListView.h\"",
+			"m_allocationLine":	"$name = new EventsTableListView($parent);",
+			"m_className":	"EventsTableListView",
+			"m_xrcPreviewClass":	"wxListBox"
+		}, {
+			"m_includeFile":	"#include \"playlists_tree_ctrl.h\"",
+			"m_allocationLine":	"$name = new PlaylistsTreeCtrl($parent);",
+			"m_className":	"PlaylistsTreeCtrl",
+			"m_xrcPreviewClass":	"wxStaticText"
+		}]
 	},
 	"windows":	[{
 			"m_type":	4421,

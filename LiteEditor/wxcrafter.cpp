@@ -100,7 +100,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer11->Add(m_stxtFullFileName, 0, wxALL|wxEXPAND, 5);
+    boxSizer11->Add(m_stxtFullFileName, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_txtDescription = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE);
     

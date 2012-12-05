@@ -5,7 +5,8 @@
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC38D8InitBitmapResources",
 		"m_bitmapsFile":	"",
-		"m_GenerateCodeTypes":	1
+		"m_GenerateCodeTypes":	1,
+		"m_templateClasses":	[]
 	},
 	"windows":	[{
 			"m_type":	4421,
@@ -16,13 +17,13 @@
 			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
-					"type":	"winid",
-					"m_label":	"ID:",
-					"m_winid":	"wxID_ANY"
-				}, {
 					"type":	"string",
 					"m_label":	"Size:",
 					"m_value":	"500,300"
+				}, {
+					"type":	"string",
+					"m_label":	"Minimum Size:",
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
@@ -45,16 +46,33 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Class Name:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Svn Commit"
+				}, {
+					"type":	"virtualFolderPicker",
+					"m_label":	"Virtual Folder:",
+					"m_path":	"Subversion2:UI"
+				}, {
+					"type":	"choice",
+					"m_label":	"Centre:",
+					"m_selection":	1,
+					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"SvnCommitDialog"
 				}, {
-					"type":	"virtualFolderPicker",
-					"m_label":	"Virtual Folder:",
-					"m_path":	"Subversion2:UI"
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -83,7 +101,7 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -132,6 +150,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_staticText32"
 										}, {
@@ -149,6 +171,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -179,6 +209,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_textCtrlFrID"
 										}, {
@@ -196,6 +230,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -226,6 +268,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_staticTextBugID"
 										}, {
@@ -243,6 +289,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -273,6 +327,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_textCtrlBugID"
 										}, {
@@ -293,6 +351,14 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -310,7 +376,7 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
-							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
 									"m_label":	"ID:",
@@ -318,6 +384,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
 									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
@@ -340,10 +410,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Split Mode:",
-									"m_selection":	0,
-									"m_options":	["Vertical", "Horizontal"]
+									"m_selection":	1,
+									"m_options":	["wxSPLIT_HORIZONTAL", "wxSPLIT_VERTICAL"]
 								}, {
 									"type":	"string",
 									"m_label":	"Sash Gravity:",
@@ -376,6 +454,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_panel1"
 										}, {
@@ -393,6 +475,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}],
 									"m_events":	[],
@@ -433,6 +523,10 @@
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"m_staticText17"
 														}, {
@@ -450,6 +544,14 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -480,6 +582,10 @@
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"m_checkListFiles"
 														}, {
@@ -497,6 +603,14 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -525,6 +639,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_splitterPage14"
 										}, {
@@ -542,6 +660,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}],
 									"m_events":	[],
@@ -582,6 +708,10 @@
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"m_staticText19"
 														}, {
@@ -599,6 +729,14 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -629,6 +767,10 @@
 															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"m_textCtrlMessage"
 														}, {
@@ -647,6 +789,14 @@
 															"type":	"font",
 															"m_label":	"Font:",
 															"m_value":	"wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Value:",
@@ -702,6 +852,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_choiceMessages"
 										}, {
@@ -719,6 +873,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -775,6 +937,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_button3"
 										}, {
@@ -795,12 +961,28 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"C&ommit"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",
 											"m_value":	true
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Margins:",
+											"m_value":	"2,2"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -819,6 +1001,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
+											"m_label":	"Minimum Size:",
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
@@ -842,12 +1028,28 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Cancel"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",
 											"m_value":	false
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Margins:",
+											"m_value":	"2,2"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -863,13 +1065,13 @@
 			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
-					"type":	"winid",
-					"m_label":	"ID:",
-					"m_winid":	"wxID_ANY"
-				}, {
 					"type":	"string",
 					"m_label":	"Size:",
 					"m_value":	"500,200"
+				}, {
+					"type":	"string",
+					"m_label":	"Minimum Size:",
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
@@ -892,16 +1094,33 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Class Name:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Sync Workspace to SVN"
+				}, {
+					"type":	"virtualFolderPicker",
+					"m_label":	"Virtual Folder:",
+					"m_path":	"Subversion2:UI"
+				}, {
+					"type":	"choice",
+					"m_label":	"Centre:",
+					"m_selection":	1,
+					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"svn_sync_dialog"
 				}, {
-					"type":	"virtualFolderPicker",
-					"m_label":	"Virtual Folder:",
-					"m_path":	"Subversion2:UI"
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -960,6 +1179,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_staticText31"
 										}, {
@@ -978,6 +1201,14 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
@@ -1007,6 +1238,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_staticTextSvnInfo"
 										}, {
@@ -1024,6 +1259,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -1044,7 +1287,7 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -1093,6 +1336,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_staticText34"
 										}, {
@@ -1110,6 +1357,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -1140,6 +1395,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_dirPickerRootDir"
 										}, {
@@ -1157,6 +1416,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -1187,6 +1454,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_staticText40"
 										}, {
@@ -1204,6 +1475,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -1234,6 +1513,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_textCtrlExclude"
 										}, {
@@ -1251,6 +1534,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -1275,6 +1566,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"Spacer"
+										}, {
+											"type":	"string",
+											"m_label":	"Size:",
+											"m_value":	"0,0"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1296,6 +1591,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_checkBoxBin"
 										}, {
@@ -1313,6 +1612,14 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -1338,6 +1645,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"Spacer"
+								}, {
+									"type":	"string",
+									"m_label":	"Size:",
+									"m_value":	"0,0"
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -1378,6 +1689,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_button28"
 										}, {
@@ -1398,12 +1713,28 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&OK"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",
 											"m_value":	true
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Margins:",
+											"m_value":	"2,2"
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
@@ -1437,6 +1768,10 @@
 											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_button29"
 										}, {
@@ -1457,12 +1792,28 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&Cancel"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",
 											"m_value":	false
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Margins:",
+											"m_value":	"2,2"
 										}],
 									"m_events":	[],
 									"m_children":	[]

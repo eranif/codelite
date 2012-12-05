@@ -3,7 +3,10 @@
 		"m_generatedFilesDir":	"",
 		"m_objCounter":	3,
 		"m_includeFiles":	[],
-		"m_bitmapFunction":	"wxC682BInitBitmapResources"
+		"m_bitmapFunction":	"wxC682BInitBitmapResources",
+		"m_bitmapsFile":	"",
+		"m_GenerateCodeTypes":	1,
+		"m_templateClasses":	[]
 	},
 	"windows":	[{
 			"m_type":	4407,
@@ -15,18 +18,18 @@
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
-					"m_label":	"ID:",
-					"m_value":	"wxID_ANY"
+					"m_label":	"Size:",
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
-					"m_label":	"Size:",
+					"m_label":	"Minimum Size:",
 					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
 					"m_value":	"OutlineTab"
 				}, {
-					"type":	"string",
+					"type":	"multi-string",
 					"m_label":	"Tooltip:",
 					"m_value":	""
 				}, {
@@ -43,16 +46,33 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Class Name:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
+				}, {
+					"type":	"virtualFolderPicker",
+					"m_label":	"Virtual Folder:",
+					"m_path":	"Outline:src"
+				}, {
+					"type":	"choice",
+					"m_label":	"Centre:",
+					"m_selection":	1,
+					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"outline_tab"
 				}, {
-					"type":	"virtualFolderPicker",
-					"m_label":	"Virtual Folder:",
-					"m_path":	"SymbolView:src"
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -81,21 +101,25 @@
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	["wxTE_RICH2", "wxTE_PROCESS_ENTER"],
-							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
-									"type":	"string",
+									"type":	"winid",
 									"m_label":	"ID:",
-									"m_value":	"wxID_ANY"
+									"m_winid":	"wxID_ANY"
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
 									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
+									"m_label":	"Minimum Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"m_textCtrlSearch"
 								}, {
-									"type":	"string",
+									"type":	"multi-string",
 									"m_label":	"Tooltip:",
 									"m_value":	"Search a symbol"
 								}, {
@@ -109,6 +133,14 @@
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
 									"m_value":	""
 								}, {
 									"type":	"string",

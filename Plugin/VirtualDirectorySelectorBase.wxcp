@@ -5,7 +5,8 @@
 		"m_includeFiles":	["\"codelite_exports.h\""],
 		"m_bitmapFunction":	"wxC168BInitBitmapResources",
 		"m_bitmapsFile":	"VirtualDirectorySelectorBase_plugin_bitmaps.cpp",
-		"m_GenerateCodeTypes":	1
+		"m_GenerateCodeTypes":	1,
+		"m_templateClasses":	[]
 	},
 	"windows":	[{
 			"m_type":	4421,
@@ -16,10 +17,6 @@
 			"m_styles":	["wxDEFAULT_DIALOG_STYLE"],
 			"m_sizerFlags":	[],
 			"m_properties":	[{
-					"type":	"winid",
-					"m_label":	"ID:",
-					"m_winid":	"wxID_ANY"
-				}, {
 					"type":	"string",
 					"m_label":	"Size:",
 					"m_value":	""

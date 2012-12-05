@@ -29,7 +29,7 @@
       <File Name="wxcrafter.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
-      <File Name="wxcrafter_bitmaps.cpp"/>
+      <File Name="wxcrafter_outline_bitmaps.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">

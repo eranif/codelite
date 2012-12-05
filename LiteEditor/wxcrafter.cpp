@@ -98,9 +98,9 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     flexGridSizer15->Add(m_cbSeparateDir, 0, wxALL|wxEXPAND, 5);
     
-    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stxtFullFileName = new wxStaticText(m_splitterPageLeft, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
     
-    boxSizer11->Add(m_stxtFullFileName, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer11->Add(m_stxtFullFileName, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
     
     m_txtDescription = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_READONLY|wxTE_MULTILINE);
     

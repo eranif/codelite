@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	"",
-		"m_objCounter":	69,
+		"m_objCounter":	80,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
 		"m_bitmapsFile":	"",
@@ -69,6 +69,10 @@
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"newprojectdlg"
+				}, {
+					"type":	"string",
+					"m_label":	"Base Class Suffix",
+					"m_value":	"BaseClass"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -1269,7 +1273,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL"],
+			"m_styles":	["wxWANTS_CHARS", "wxTAB_TRAVERSAL", "wxTRANSPARENT_WINDOW"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -1324,6 +1328,10 @@
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"NavBarControl"
+				}, {
+					"type":	"string",
+					"m_label":	"Base Class Suffix",
+					"m_value":	"BaseClass"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -1764,6 +1772,10 @@
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"BuildTabTopPanel"
+				}, {
+					"type":	"string",
+					"m_label":	"Base Class Suffix",
+					"m_value":	"BaseClass"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -2330,6 +2342,375 @@
 						}],
 					"m_events":	[],
 					"m_children":	[]
+				}]
+		}, {
+			"m_type":	4421,
+			"proportion":	0,
+			"border":	5,
+			"gbSpan":	"1,1",
+			"gbPosition":	"0,0",
+			"m_styles":	["wxDEFAULT_DIALOG_STYLE"],
+			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+			"m_properties":	[{
+					"type":	"string",
+					"m_label":	"Size:",
+					"m_value":	"-1,-1"
+				}, {
+					"type":	"string",
+					"m_label":	"Minimum Size:",
+					"m_value":	"-1,-1"
+				}, {
+					"type":	"string",
+					"m_label":	"Name:",
+					"m_value":	"wxcDownloadDlg"
+				}, {
+					"type":	"multi-string",
+					"m_label":	"Tooltip:",
+					"m_value":	""
+				}, {
+					"type":	"colour",
+					"m_label":	"Bg Colour:",
+					"colour":	"<Default>"
+				}, {
+					"type":	"colour",
+					"m_label":	"Fg Colour:",
+					"colour":	"<Default>"
+				}, {
+					"type":	"font",
+					"m_label":	"Font:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Class Name:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Title:",
+					"m_value":	"Plugin is missing"
+				}, {
+					"type":	"virtualFolderPicker",
+					"m_label":	"Virtual Folder:",
+					"m_path":	"LiteEditor:Dialogs:ProjectManagement"
+				}, {
+					"type":	"choice",
+					"m_label":	"Centre:",
+					"m_selection":	1,
+					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"wxcDownloadDlg"
+				}, {
+					"type":	"string",
+					"m_label":	"Base Class Suffix",
+					"m_value":	"BaseClass"
+				}, {
+					"type":	"string",
+					"m_label":	"Class Decorator",
+					"m_value":	""
+				}],
+			"m_events":	[],
+			"m_children":	[{
+					"m_type":	4401,
+					"proportion":	1,
+					"border":	5,
+					"gbSpan":	"1,1",
+					"gbPosition":	"0,0",
+					"m_styles":	[],
+					"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+					"m_properties":	[{
+							"type":	"string",
+							"m_label":	"Name:",
+							"m_value":	"boxSizer71"
+						}, {
+							"type":	"choice",
+							"m_label":	"Orientation:",
+							"m_selection":	0,
+							"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
+						}],
+					"m_events":	[],
+					"m_children":	[{
+							"m_type":	4471,
+							"proportion":	0,
+							"border":	5,
+							"gbSpan":	"1,1",
+							"gbPosition":	"0,0",
+							"m_styles":	["wxBORDER_SIMPLE"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_properties":	[{
+									"type":	"winid",
+									"m_label":	"ID:",
+									"m_winid":	"wxID_ANY"
+								}, {
+									"type":	"string",
+									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Name:",
+									"m_value":	"m_banner76"
+								}, {
+									"type":	"multi-string",
+									"m_label":	"Tooltip:",
+									"m_value":	""
+								}, {
+									"type":	"colour",
+									"m_label":	"Bg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"colour",
+									"m_label":	"Fg Colour:",
+									"colour":	"(255,255,255)"
+								}, {
+									"type":	"font",
+									"m_label":	"Font:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Title:",
+									"m_value":	"Plugin is not installed"
+								}, {
+									"type":	"string",
+									"m_label":	"Message:",
+									"m_value":	"It seems that the wxCrafter plugin is not installed\\nWhat would you like to do?"
+								}, {
+									"type":	"choice",
+									"m_label":	"Orientation:",
+									"m_selection":	0,
+									"m_options":	["wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT"]
+								}, {
+									"type":	"filePicker",
+									"m_label":	"Bitmap File:",
+									"m_path":	""
+								}, {
+									"type":	"colour",
+									"m_label":	"Gradient Start",
+									"colour":	"(80,80,80)"
+								}, {
+									"type":	"colour",
+									"m_label":	"Gradient End",
+									"colour":	"(80,80,80)"
+								}],
+							"m_events":	[],
+							"m_children":	[]
+						}, {
+							"m_type":	4408,
+							"proportion":	1,
+							"border":	5,
+							"gbSpan":	"1,1",
+							"gbPosition":	"0,0",
+							"m_styles":	["wxTAB_TRAVERSAL"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_properties":	[{
+									"type":	"winid",
+									"m_label":	"ID:",
+									"m_winid":	"wxID_ANY"
+								}, {
+									"type":	"string",
+									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Name:",
+									"m_value":	"m_panel75"
+								}, {
+									"type":	"multi-string",
+									"m_label":	"Tooltip:",
+									"m_value":	""
+								}, {
+									"type":	"colour",
+									"m_label":	"Bg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"colour",
+									"m_label":	"Fg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"font",
+									"m_label":	"Font:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}],
+							"m_events":	[],
+							"m_children":	[{
+									"m_type":	4401,
+									"proportion":	1,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+									"m_properties":	[{
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"boxSizer79"
+										}, {
+											"type":	"choice",
+											"m_label":	"Orientation:",
+											"m_selection":	0,
+											"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
+										}],
+									"m_events":	[],
+									"m_children":	[{
+											"m_type":	4474,
+											"proportion":	0,
+											"border":	5,
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	[],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+											"m_properties":	[{
+													"type":	"winid",
+													"m_label":	"ID:",
+													"m_winid":	"wxID_ANY"
+												}, {
+													"type":	"string",
+													"m_label":	"Size:",
+													"m_value":	"-1,-1"
+												}, {
+													"type":	"string",
+													"m_label":	"Minimum Size:",
+													"m_value":	"-1,-1"
+												}, {
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"m_cmdLnkBtnDownload"
+												}, {
+													"type":	"multi-string",
+													"m_label":	"Tooltip:",
+													"m_value":	""
+												}, {
+													"type":	"colour",
+													"m_label":	"Bg Colour:",
+													"colour":	"<Default>"
+												}, {
+													"type":	"colour",
+													"m_label":	"Fg Colour:",
+													"colour":	"<Default>"
+												}, {
+													"type":	"font",
+													"m_label":	"Font:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Class Name:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Label:",
+													"m_value":	"Download wxCrafter"
+												}, {
+													"type":	"string",
+													"m_label":	"Note",
+													"m_value":	"Download wxCrafter plugin from codelite's website"
+												}],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+													"m_eventClass":	"wxCommandEvent",
+													"m_eventHandler":	"wxCommandEventHandler",
+													"m_functionNameAndSignature":	"OnDownloadWxCrafterPlugin(wxCommandEvent& event)",
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+												}],
+											"m_children":	[]
+										}, {
+											"m_type":	4474,
+											"proportion":	0,
+											"border":	5,
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	[],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+											"m_properties":	[{
+													"type":	"winid",
+													"m_label":	"ID:",
+													"m_winid":	"wxID_ANY"
+												}, {
+													"type":	"string",
+													"m_label":	"Size:",
+													"m_value":	"-1,-1"
+												}, {
+													"type":	"string",
+													"m_label":	"Minimum Size:",
+													"m_value":	"-1,-1"
+												}, {
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"m_cmdLnkBtnContinue"
+												}, {
+													"type":	"multi-string",
+													"m_label":	"Tooltip:",
+													"m_value":	""
+												}, {
+													"type":	"colour",
+													"m_label":	"Bg Colour:",
+													"colour":	"<Default>"
+												}, {
+													"type":	"colour",
+													"m_label":	"Fg Colour:",
+													"colour":	"<Default>"
+												}, {
+													"type":	"font",
+													"m_label":	"Font:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Class Name:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Label:",
+													"m_value":	"Create the project"
+												}, {
+													"type":	"string",
+													"m_label":	"Note",
+													"m_value":	"Ignore the missing plugin and create the project anyway"
+												}],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+													"m_eventClass":	"wxCommandEvent",
+													"m_eventHandler":	"wxCommandEventHandler",
+													"m_functionNameAndSignature":	"OnIgnoreTheError(wxCommandEvent& event)",
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+												}],
+											"m_children":	[]
+										}]
+								}]
+						}]
 				}]
 		}]
 }

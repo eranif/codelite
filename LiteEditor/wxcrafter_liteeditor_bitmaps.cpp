@@ -741,7 +741,7 @@ void wxC3F25InitBitmapResources()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_output-pane_16_ToolPin.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
@@ -759,6 +759,6 @@ void wxC3F25InitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._.._.._.._tmp_placeholder16.png"), xml_res_file_12, xml_res_size_12, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_qt.png"), xml_res_file_13, xml_res_size_13, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_wx.png"), xml_res_file_14, xml_res_size_14, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$._wxcrafter_liteeditor_bitmaps.xrc"), xml_res_file_15, xml_res_size_15, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$._wxcrafter_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$wxcrafter_liteeditor_bitmaps.xrc"), xml_res_file_15, xml_res_size_15, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$wxcrafter_liteeditor_bitmaps.xrc"));
 }

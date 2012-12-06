@@ -35,6 +35,8 @@
 #include "dirtraverser.h"
 #include <wx/imaglist.h>
 #include <set>
+#include "pluginmanager.h"
+#include "wxcDownloadDlg.h"
 
 class NewProjectClientData : public wxClientData
 {
@@ -182,7 +184,7 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
         // dont check the return
         Mkdir(fn.GetPath());
     }
-
+    
     wxString projectName = m_txtProjName->GetValue();
     projectName.Trim().Trim(false);
     if(projectName.find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) != wxString::npos) {
@@ -226,7 +228,20 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
     m_projectData.m_name    = m_txtProjName->GetValue();
     m_projectData.m_path    = fn.GetPath();
     m_projectData.m_cmpType = m_chCompiler->GetStringSelection();
-
+    
+    if ( m_projectData.m_srcProject ) {
+        if ( m_projectData.m_srcProject->GetName().Contains("wxCrafter") ) {
+            // Check that wxCrafter plugin is installed
+            if ( !PluginManager::Get()->GetPlugin("wxCrafter") ) {
+                // wxCrafter plugin is not installed, prompt the user
+                wxcDownloadDlg dlg(wxTheApp->GetTopWindow());
+                dlg.ShowModal(); 
+                
+                // We always continue to project creation
+            }
+        }
+    }
+    
     EndModal(wxID_OK);
 }
 

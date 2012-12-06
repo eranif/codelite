@@ -28,6 +28,8 @@
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
+#include <wx/bannerwindow.h>
+#include <wx/commandlinkbutton.h>
 
 class NewProjectDlgBaseClass : public wxDialog
 {
@@ -80,7 +82,7 @@ protected:
     virtual void OnFuncListMouseDown(wxMouseEvent& event) { event.Skip(); }
 
 public:
-    NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW);
     virtual ~NavBarControlBaseClass();
 };
 
@@ -124,6 +126,24 @@ public:
         return m_bitmaps.find(name)->second;
     }
     virtual ~NewProjImgList();
+};
+
+
+class wxcDownloadDlgBaseClass : public wxDialog
+{
+protected:
+    wxBannerWindow* m_banner76;
+    wxPanel* m_panel75;
+    wxCommandLinkButton* m_cmdLnkBtnDownload;
+    wxCommandLinkButton* m_cmdLnkBtnContinue;
+
+protected:
+    virtual void OnDownloadWxCrafterPlugin(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnIgnoreTheError(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plugin is missing"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~wxcDownloadDlgBaseClass();
 };
 
 #endif

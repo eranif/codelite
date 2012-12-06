@@ -324,3 +324,58 @@ NewProjImgList::NewProjImgList()
 NewProjImgList::~NewProjImgList()
 {
 }
+
+wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer71 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer71);
+    
+    m_banner76 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_SIMPLE);
+    m_banner76->SetBitmap(wxNullBitmap);
+    m_banner76->SetText(_("Plugin is not installed"), _("It seems that the wxCrafter plugin is not installed\nWhat would you like to do?"));
+    m_banner76->SetGradient(wxColour(wxT("rgb(80,80,80)")), wxColour(wxT("rgb(80,80,80)")));
+    m_banner76->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    
+    boxSizer71->Add(m_banner76, 0, wxALL|wxEXPAND, 5);
+    
+    m_panel75 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    boxSizer71->Add(m_panel75, 1, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer79 = new wxBoxSizer(wxVERTICAL);
+    m_panel75->SetSizer(boxSizer79);
+    
+    m_cmdLnkBtnDownload = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Download wxCrafter"), _("Download wxCrafter plugin from codelite's website"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer79->Add(m_cmdLnkBtnDownload, 0, wxALL|wxEXPAND, 5);
+    
+    m_cmdLnkBtnContinue = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Create the project"), _("Ignore the missing plugin and create the project anyway"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer79->Add(m_cmdLnkBtnContinue, 0, wxALL|wxEXPAND, 5);
+    
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_cmdLnkBtnDownload->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(wxcDownloadDlgBaseClass::OnDownloadWxCrafterPlugin), NULL, this);
+    m_cmdLnkBtnContinue->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(wxcDownloadDlgBaseClass::OnIgnoreTheError), NULL, this);
+    
+}
+
+wxcDownloadDlgBaseClass::~wxcDownloadDlgBaseClass()
+{
+    m_cmdLnkBtnDownload->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(wxcDownloadDlgBaseClass::OnDownloadWxCrafterPlugin), NULL, this);
+    m_cmdLnkBtnContinue->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(wxcDownloadDlgBaseClass::OnIgnoreTheError), NULL, this);
+    
+}

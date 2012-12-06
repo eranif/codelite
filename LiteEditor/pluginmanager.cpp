@@ -141,7 +141,10 @@ void PluginManager::Load()
         //get list of dlls
         wxArrayString files;
         wxDir::GetAllFiles( pluginsDir, &files, fileSpec, wxDIR_FILES );
-
+        
+        // Sort the plugins by A-Z
+        std::sort(files.begin(), files.end());
+        
         for ( size_t i=0; i<files.GetCount(); i++ ) {
             clDynamicLibrary *dl = new clDynamicLibrary();
             wxString fileName( files.Item( i ) );

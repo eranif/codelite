@@ -45,7 +45,7 @@ documentation and/or software.
 
 
 
-#include "md5.h"
+#include "md5_header.h"
 
 #include <assert.h>
 #include <strings.h>

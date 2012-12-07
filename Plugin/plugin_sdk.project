@@ -249,7 +249,7 @@
     <File Name="wxmd5.cpp"/>
     <File Name="wxmd5.h"/>
     <File Name="md5.cpp"/>
-    <File Name="md5.h"/>
+    <File Name="md5_header.h"/>
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>

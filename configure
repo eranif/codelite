@@ -1339,7 +1339,7 @@ createPCH
 createObjectList "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects"
 createObjectList "LiteEditor/*.cpp" "LiteEditorObjects"
 createObjectList "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects"
-createObjectList "Plugin/*.cpp Plugin/*.c" "SDKObjects"
+createObjectList "Plugin/*.cpp" "SDKObjects"
 createObjectList "sdk/wxshapeframework/src/*.cpp sdk/wxshapeframework/src/wxxmlserializer/*.cpp" "wxShapeFrameworkObjects"
 createObjectList "sdk/databaselayer/src/dblayer/Database*.cpp sdk/databaselayer/src/dblayer/Sqlite*.cpp sdk/databaselayer/src/dblayer/PreparedStatement.cpp sdk/databaselayer/src/sqlite3/sqlite3.c" "DatabaseLayerSQLiteObjects"
 if [ "$enable_mysql" = "yes" ] ; then
@@ -1354,7 +1354,7 @@ echo >> Makefile
 
 ## Create the rules
 # First the non-plugin .so libs:
-createRules_sharedObject  "Plugin/*.cpp Plugin/*.c" "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lcodelite\$(EXT) -lwxsqlite3\$(EXT)"
+createRules_sharedObject  "Plugin/*.cpp" "SDKObjects" "SDK" "libplugin\$(EXT)" "dont_copy" "-L./lib -lcodelite\$(EXT) -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/codelite_indexer/network/*.cpp CodeLite/*.cpp" "CodeLiteObjects" "CodeLite" "libcodelite\$(EXT)" "dont_copy" "-L./lib -lwxsqlite3\$(EXT)"
 createRules_sharedObject  "sdk/wxsqlite3/src/*.cpp sqlite3/*.c" "wxSqlite3Objects" "SQLite" "libwxsqlite3\$(EXT)" "dont_copy" ""
 createRules_sharedObject  "sdk/wxshapeframework/src/*.cpp sdk/wxshapeframework/src/wxxmlserializer/*.cpp" "wxShapeFrameworkObjects" "ShapeFramework" "libwxshapeframework\$(EXT)" "dont_copy"

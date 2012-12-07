@@ -4636,7 +4636,7 @@ void clMainFrame::SetAUIManagerFlags()
         break;
     }
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || defined(__WXMSW__)
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
 #endif
 

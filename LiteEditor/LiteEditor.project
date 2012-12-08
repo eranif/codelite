@@ -1088,7 +1088,7 @@ resources.cpp: resources.xrc
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
-        <Library Value="clang.dll"/>
+        <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
@@ -1122,7 +1122,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1181,8 +1182,7 @@ svninfo.cpp:
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

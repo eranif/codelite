@@ -1,5 +1,5 @@
 @echo off
-:: set TARGET_DIR=D:\software
+::set TARGET_DIR=D:\software
 set TARGET_DIR=%ProgramFiles(x86)%
 
 xcopy config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
@@ -37,7 +37,7 @@ copy codelite_indexer.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelitegcc.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
-copy ..\sdk\clang\lib\clang.dll "%TARGET_DIR%\CodeLite\" /Y
+copy ..\sdk\clang\lib\liblibclang.dll "%TARGET_DIR%\CodeLite\" /Y
 copy makedir.exe "%TARGET_DIR%\CodeLite\" /Y
 copy le_exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy CodeLite.exe "%TARGET_DIR%\CodeLite\" /Y

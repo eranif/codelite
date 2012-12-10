@@ -1,0 +1,57 @@
+#ifndef %%classItemDef%%
+#define %%classItemDef%%
+
+#include <wx/wx.h>
+#include "DatabaseLayer.h"
+
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+/*! \brief Class for %%classTableName%% table */
+class %%classItemName%% {
+
+public:
+	/*! \brief Constructor for loading from DB */	
+	%%classItemName%%(DatabaseResultSet* pResult);
+	virtual ~%%classItemName%%();
+
+	%%classItemGetters%%	
+
+	%%primaryKeyHeader%%
+
+protected:
+
+	%%classItemVariables%%
+};
+
+// %%classTableName%% collection ///////////////////////////////////////////////
+
+#include <wx/grid.h>
+#include <wx/list.h>
+
+WX_DECLARE_LIST(%%classItemName%%, %%classItemName%%List);
+
+/*! \brief Collection from %%classColName%% table */
+class %%classColName%% {
+
+public:
+
+	/*! \brief Constructor for loading from db */
+	%%classColName%%(DatabaseResultSet* pResult);
+	virtual ~%%classColName%%();
+	
+	/*! \brief Fill wxGrid from collection. */
+	void Fill(wxGrid* pGrid); 
+	
+	/*! \brief Get item list */
+	const %%classItemName%%List& GetCollection() const { return m_list; }
+
+	/*! \brief Get all data from database */
+	static %%classColName%%* Get(DatabaseLayer* pDbLayer);
+	
+	/*! \brief Get data from database with WHERE statement */
+	static %%classColName%%* Get(DatabaseLayer* pDbLayer, const wxString& condition);
+	
+protected:
+	%%classItemName%%List m_list;
+};
+#endif // %%classItemDef%%

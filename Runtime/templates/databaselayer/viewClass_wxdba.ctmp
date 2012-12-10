@@ -1,0 +1,69 @@
+#include "%%classItemName%%.h"
+
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+BEGIN_STORE_TABLE(%%classItemName%%, dba::Storeable, "%%classTableName%%")
+%%classItemBindings%%
+END_STORE_TABLE()
+
+// %%classTableName%% collection ///////////////////////////////////////////////
+
+%%classColName%%::%%classColName%%(wxdba::SQLArchive &ar)
+{
+	if( ar.IsOpen() ) {
+		%%classItemName%% c;
+		wxdba::SQLIStream istream = ar.GetIStream();
+		istream.Open(c);
+		while (istream.GetNext( &c )) {
+			m_collection.push_back( c );
+		}
+		istream.Destroy();
+	}
+}
+
+%%classColName%%::%%classColName%%(wxdba::SQLArchive &ar, const wxString &condition)
+{
+	if( ar.IsOpen() ) {
+		%%classItemName%% c;
+		wxdba::SQLIStream istream = ar.GetIStream();
+		istream.OpenFromQuery( c, wxdba::SQL(wxT("SELECT * FROM %%classTableName%% WHERE ") + condition ));
+		while (istream.GetNext( &c )) {
+			m_collection.push_back( c );
+		}
+		istream.Destroy();
+	}
+}
+
+%%classColName%%::~%%classColName%%()
+{
+	m_collection.clear();
+}
+
+%%classColName%%* %%classColName%%::Get(wxdba::SQLArchive &ar)
+{
+	return new %%classColName%%(ar);
+}
+
+%%classColName%%* %%classColName%%::Get(wxdba::SQLArchive &ar, const wxString &condition)
+{		
+	return new %%classColName%%(ar, condition);
+}
+
+void %%classColName%%::Fill(wxGrid* pGrid)
+{
+	if( pGrid ) {
+		pGrid->DeleteCols(0,pGrid->GetNumberCols());
+		pGrid->DeleteRows(0,pGrid->GetNumberRows());
+
+		%%classColLabelFillGrid%%
+
+		int i = 0;
+		std::vector<%%classItemName%%>::iterator iter;
+		for (iter = m_collection.begin(); iter != m_collection.end(); ++iter, ++i) {
+			%%classItemName%% row = *iter;
+			pGrid->AppendRows();
+			
+			%%classColDataFillGrid%%	
+		}	
+	}
+}

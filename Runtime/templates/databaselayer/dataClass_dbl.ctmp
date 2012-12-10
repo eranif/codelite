@@ -1,0 +1,155 @@
+#include "%%classItemName%%.h"
+
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+%%classItemName%%::%%classItemName%%(DatabaseResultSet* pResult)
+{
+	if (pResult) {
+		%%classItemLoading%%
+	}
+}
+
+%%classItemName%%::~%%classItemName%%()
+{
+}
+
+%%primaryKeyBody%%
+
+// %%classTableName%% collection ///////////////////////////////////////////////
+
+#include <wx/listimpl.cpp>
+
+WX_DEFINE_LIST(%%classItemName%%List);
+
+%%classColName%%::%%classColName%%(DatabaseResultSet* pResult)
+{
+	while(pResult->Next()) {
+		m_list.Append(new %%classItemName%%(pResult));		
+	}
+}    
+
+%%classColName%%::~%%classColName%%()
+{
+	m_list.DeleteContents(true);
+	m_list.Clear();
+}
+
+%%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer)
+{
+	%%classColName%%* pCol = NULL;
+	if (pDbLayer) {
+		if (pDbLayer->IsOpen()) {
+			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%%"));
+			if (pStatement) {
+				pCol = new %%classColName%%(pStatement->RunQueryWithResults());			
+				pStatement->Close();				
+			}			
+		}		
+	}
+	return pCol;
+}
+
+void %%classColName%%::Fill(wxGrid* pGrid)
+{
+	if( pGrid ) {
+		pGrid->DeleteCols(0,pGrid->GetNumberCols());
+		pGrid->DeleteRows(0,pGrid->GetNumberRows());
+
+		%%classColLabelFillGrid%%
+
+		int i = 0;
+		%%classItemName%%List::iterator iter;
+		for (iter = m_list.begin(); iter != m_list.end(); ++iter, ++i) {
+			%%classItemName%%* row = *iter;
+			pGrid->AppendRows();
+			
+			%%classColDataFillGrid%%
+		}	
+	}
+}
+
+%%classColName%%* %%classColName%%::Get(DatabaseLayer* pDbLayer, const wxString& condition)
+{		
+	%%classColName%%* pCol = NULL;
+	if (pDbLayer){
+		if (pDbLayer->IsOpen()) {
+			PreparedStatement* pStatement = pDbLayer->PrepareStatement(wxT("SELECT * FROM %%classTableName%% WHERE ") + condition);
+			if (pStatement) {
+				pCol = new %%classColName%%(pStatement->RunQueryWithResults());	
+				pStatement->Close();
+			}		
+		}		
+	}
+	return pCol;
+}
+
+// %%classTableName%% utilities ////////////////////////////////////////////////
+
+int %%classUtilName%%::Create(DatabaseLayer* pDbLayer
+			)
+{
+	if (pDbLayer && pDbLayer->IsOpen()) {
+		PreparedStatement* pStatement = pDbLayer->PrepareStatement( wxT( 
+			%%classUtilsCreateStatement%%
+			) );
+		if (pStatement) {
+			pStatement->RunQuery();		
+			pStatement->Close();				
+		}	
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int %%classUtilName%%::Add(DatabaseLayer* pDbLayer
+			%%classUtilsAddParameters%%			
+			)
+{
+	if (pDbLayer && pDbLayer->IsOpen()) {
+		%%classUtilsAddStatement%%
+		if (pStatement) {
+			%%classUtilsAddSetParams%%
+			pStatement->RunQuery();		
+			pStatement->Close();				
+		}			
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int %%classUtilName%%::Edit(DatabaseLayer* pDbLayer
+			%%classUtilsAddParameters%%			
+			)
+{
+	if (pDbLayer && pDbLayer->IsOpen()) {
+		%%classUtilsEditStatement%%
+		if (pStatement) {
+			%%classUtilsAddSetParams%%
+			%%classUtilsPKSetParams%%
+			pStatement->RunQuery();			
+			pStatement->Close();				
+		}				
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int %%classUtilName%%::Delete(DatabaseLayer* pDbLayer
+			%%classUtilsDeleteParameters%%			
+			)
+{
+	if (pDbLayer && pDbLayer->IsOpen()) {
+		%%classUtilsDeleteStatement%%
+		if (pStatement) {
+			%%classUtilsAddDelParams%%
+			pStatement->RunQuery();			
+			pStatement->Close();				
+		}				
+		return 0;
+	} else {
+		return -1;
+	}
+}

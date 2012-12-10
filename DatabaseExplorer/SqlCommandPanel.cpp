@@ -66,7 +66,6 @@ SQLCommandPanel::~SQLCommandPanel()
 
 void SQLCommandPanel::OnExecuteClick(wxCommandEvent& event)
 {
-	event.Skip();
 	ExecuteSql();
 }
 
@@ -105,6 +104,11 @@ void SQLCommandPanel::ExecuteSql()
 				}
 				
 				m_gridValues.clear();
+				
+				if( !pResultSet ) {
+					wxMessageBox( _("Unknown SQL error."), _("DB Error"), wxOK | wxICON_ERROR );
+					return;
+				}
 
 				int rows = 0;
 				int cols = pResultSet->GetMetaData()->GetColumnCount();

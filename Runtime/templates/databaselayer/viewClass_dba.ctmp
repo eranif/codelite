@@ -1,0 +1,50 @@
+#include "%%classItemName%%.h"
+
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+BEGIN_STORE_TABLE(%%classItemName%%, dba::Storeable, "%%classTableName%%")
+%%classItemBindings%%
+END_STORE_TABLE()
+
+// %%classTableName%% collection ///////////////////////////////////////////////
+
+%%classColName%%::%%classColName%%(dba::SQLArchive &ar)
+{
+	if( ar.isOpen() ) {
+		%%classItemName%% c;
+		dba::SQLIStream istream = ar.getIStream();
+		istream.open(c);
+		while (istream.getNext( &c )) {
+			m_collection.push_back( c );
+		}
+		istream.destroy();
+	}
+}
+
+%%classColName%%::%%classColName%%(dba::SQLArchive &ar, const std::string &condition)
+{
+	if( ar.isOpen() ) {
+		%%classItemName%% c;
+		dba::SQLIStream istream = ar.getIStream();
+		istream.openFromQuery( c, dba::SQL("SELECT * FROM %%classTableName%% WHERE " + condition ));
+		while (istream.getNext( &c )) {
+			m_collection.push_back( c );
+		}
+		istream.destroy();
+	}
+}
+
+%%classColName%%::~%%classColName%%()
+{
+	m_collection.clear();
+}
+
+%%classColName%%* %%classColName%%::Get(dba::SQLArchive &ar)
+{
+	return new %%classColName%%(ar);
+}
+
+%%classColName%%* %%classColName%%::Get(dba::SQLArchive &ar, const std::string &condition)
+{		
+	return new %%classColName%%(ar, condition);
+}

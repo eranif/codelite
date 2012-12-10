@@ -1,0 +1,54 @@
+#ifndef %%classItemDef%%
+#define %%classItemDef%%
+
+#include <dba/dba.h>
+#include <wx/wx.h>
+#include <wx/grid.h>
+#include <wxdba/sqlarchive.h>
+#include <wxdba/exception.h>
+#include <wxdba/sqlostream.h>
+#include <wxdba/sqlistream.h>
+#include <wxdba/string_filter.h>
+#include <wxdba/datetime_filter.h>
+#include <vector>
+
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+/*! \brief Class for %%classTableName%% table */
+class %%classItemName%% : public dba::Storeable
+{
+	DECLARE_STORE_TABLE();
+public:
+
+	%%classItemVariables%%
+};
+
+// %%classTableName%% collection ///////////////////////////////////////////////
+
+/*! \brief Collection from %%classColName%% table */
+class %%classColName%%
+{
+public:
+	/*! \brief Constructor loading the collection */
+	%%classColName%%(wxdba::SQLArchive &ar);
+	%%classColName%%(wxdba::SQLArchive &ar, const wxString &condition);
+	/*! \brief Destructor clearing the collection */
+	~%%classColName%%();
+	
+	/*! \brief Get item list */
+	const std::vector<%%classItemName%%>& GetCollection() const { return m_collection; }
+
+	/*! \brief Get all data from database */
+	static %%classColName%%* Get(wxdba::SQLArchive &ar);
+	
+	/*! \brief Get data from database with WHERE statement */
+	static %%classColName%%* Get(wxdba::SQLArchive &ar, const wxString &condition);
+	
+	/*! \brief Fill wxGrid from collection. */
+	void Fill(wxGrid* pGrid); 
+	
+protected:
+	std::vector<%%classItemName%%> m_collection;
+};
+
+#endif // %%classItemDef%%

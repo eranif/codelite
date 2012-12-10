@@ -1,0 +1,69 @@
+#ifndef %%classItemDef%%
+#define %%classItemDef%%
+
+#include <dba/dba.h>
+#include <dba/bool_filter.h>
+#include <dba/double_filter.h>
+#include <vector>
+
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+/*! \brief Class for %%classTableName%% table */
+class %%classItemName%% : public dba::Storeable
+{
+	DECLARE_STORE_TABLE();
+public:
+	static %%classItemName%%* GetBy%%pkName%%(dba::SQLArchive &ar, %%pkType%% val);
+
+	%%classItemVariables%%
+};
+
+// %%classTableName%% collection ///////////////////////////////////////////////
+
+/*! \brief Collection from %%classColName%% table */
+class %%classColName%%
+{
+public:
+	/*! \brief Constructor loading the collection */
+	%%classColName%%(dba::SQLArchive &ar);
+	%%classColName%%(dba::SQLArchive &ar, const std::string &condition);
+	/*! \brief Destructor clearing the collection */
+	~%%classColName%%();
+	
+	/*! \brief Get item list */
+	const std::vector<%%classItemName%%>& GetCollection() const { return m_collection; }
+
+	/*! \brief Get all data from database */
+	static %%classColName%%* Get(dba::SQLArchive &ar);
+	
+	/*! \brief Get data from database with WHERE statement */
+	static %%classColName%%* Get(dba::SQLArchive &ar, const std::string &condition);
+	
+protected:
+	std::vector<%%classItemName%%> m_collection;
+};
+
+// %%classTableName%% utilities ////////////////////////////////////////////////
+
+/*! \brief Utils for %%classTableName%% table */
+class %%classUtilName%% {
+
+public:
+	/*! \brief Create new %%classTableName%% table */
+	static int Create(dba::SQLArchive &ar
+			);
+	/*! \brief Add new item into %%classTableName%% table */
+	static int Add(dba::SQLArchive &ar
+			%%classUtilsAddParametersWithoutPK%%			
+			);
+	/*! \brief Edit item in %%classTableName%% table */	
+	static int Edit(dba::SQLArchive &ar
+			%%classUtilsAddParameters%%			
+			);
+	/*! \brief Delete item from %%classTableName%% table */
+	static int Delete(dba::SQLArchive &ar
+			%%classUtilsDeleteParameters%%			
+			);
+};
+
+#endif // %%classItemDef%%

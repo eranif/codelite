@@ -1,0 +1,143 @@
+#include "%%classItemName%%.h"
+
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+BEGIN_STORE_TABLE(%%classItemName%%, dba::Storeable, "%%classTableName%%")
+%%classItemBindings%%
+END_STORE_TABLE()
+
+%%classItemName%%* %%classItemName%%::GetBy%%pkName%%(dba::SQLArchive &ar, %%pkType%% val)
+{
+	if( ar.isOpen() ) {
+		%%classItemName%% *c = new %%classItemName%%();
+		dba::SQLIStream istream = ar.getIStream();
+		istream.openFromQuery( *c, dba::SQL("SELECT * FROM %%classTableName%% WHERE %%pkName%% = (:d)") << val );
+		if( !istream.getNext(c) ) {
+			delete c;
+			c = NULL;
+		}
+		istream.destroy();
+		
+		return c;
+	} else {
+		return NULL;
+	}
+}
+
+// %%classTableName%% collection ///////////////////////////////////////////////
+
+%%classColName%%::%%classColName%%(dba::SQLArchive &ar)
+{
+	if( ar.isOpen() ) {
+		%%classItemName%% c;
+		dba::SQLIStream istream = ar.getIStream();
+		istream.open(c);
+		while (istream.getNext( &c )) {
+			m_collection.push_back( c );
+		}
+		istream.destroy();
+	}
+}
+
+%%classColName%%::%%classColName%%(dba::SQLArchive &ar, const std::string &condition)
+{
+	if( ar.isOpen() ) {
+		%%classItemName%% c;
+		dba::SQLIStream istream = ar.getIStream();
+		istream.openFromQuery( c, dba::SQL("SELECT * FROM %%classTableName%% WHERE " + condition ));
+		while (istream.getNext( &c )) {
+			m_collection.push_back( c );
+		}
+		istream.destroy();
+	}
+}
+
+%%classColName%%::~%%classColName%%()
+{
+	m_collection.clear();
+}
+
+%%classColName%%* %%classColName%%::Get(dba::SQLArchive &ar)
+{
+	return new %%classColName%%(ar);
+}
+
+%%classColName%%* %%classColName%%::Get(dba::SQLArchive &ar, const std::string &condition)
+{		
+	return new %%classColName%%(ar, condition);
+}
+
+// %%classTableName%% utilities ////////////////////////////////////////////////
+
+int %%classUtilName%%::Create(dba::SQLArchive &ar
+			)
+{
+	if( ar.isOpen() ) {
+		dba::SQL %%classTableName%%_create(
+			%%classUtilsCreateStatement%%
+		);
+		
+		ar.getOStream().sendUpdate( %%classTableName%%_create );
+		return 0;
+	} else {
+		return -1;
+	}
+}
+			
+int %%classUtilName%%::Add(dba::SQLArchive &ar
+			%%classUtilsAddParametersWithoutPK%%			
+			)
+{
+	if( ar.isOpen() && (ar.getIdFetcher() != NULL) ) {
+		%%classItemName%% c;
+		%%classUtilsAddSetDebeaParams%%
+		
+		// write object into database
+		dba::SQLOStream ostream = ar.getOStream();
+		ostream.open();
+		if( ostream.isOpen() ) { 
+			ostream.put(&c); // id of object is assigned here
+			ostream.destroy();
+		}
+		
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int %%classUtilName%%::Edit(dba::SQLArchive &ar
+			%%classUtilsAddParameters%%			
+			)
+{
+	if( ar.isOpen() && (ar.getIdFetcher() != NULL) ) {
+		%%classItemName%% *c = %%classItemName%%::GetBy%%pkName%%(ar, %%pkName%%);
+		%%classUtilsEditDebeaStatement%%
+		
+		// update object in database
+		dba::SQLOStream ostream = ar.getOStream();
+		ostream.open();
+		if( ostream.isOpen() ) { 
+			ostream.put(c); 
+			ostream.destroy();
+		}
+		
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+int %%classUtilName%%::Delete(dba::SQLArchive &ar
+			%%classUtilsDeleteParameters%%			
+			)
+{
+	if( ar.isOpen() ) {
+		// delete object from database
+		ar.getOStream().sendUpdate( dba::SQL("DELETE FROM %%classTableName%% WHERE %%pkName%% = (:d)") << %%pkName%% );
+		
+		return 0;
+	} else {
+		return -1;
+	}
+}

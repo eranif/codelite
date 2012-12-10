@@ -10,52 +10,64 @@
 #include <wx/textfile.h>
 #include <wx/stdpaths.h>
 #include <wx/init.h>
+#include <wx/hashmap.h>
 
 #include "../Interfaces/imanager.h"
 #include "../Plugin/VirtualDirectorySelectorDlg.h"
 #include "../Plugin/project.h"
 #include "../Plugin/workspace.h"
 
+WX_DECLARE_STRING_HASH_MAP(wxString, TemplateMap);
+
 /*! \brief Dialog for generating classes which are used for database acces. */
-class ClassGenerateDialog : public _ClassGenerateDialog {
+class ClassGenerateDialog : public _ClassGenerateDialog
+{
 
 public:
-		/*! \brief Defautl constructor.  */
-		ClassGenerateDialog(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pItems, IManager* pMgr);
+	/*! \brief Defautl constructor.  */
+	ClassGenerateDialog(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pItems, IManager* pMgr);
 
-		/*! \brief Return string with type name on UNIVERSAL TYPE base */
-		wxString GetTypeName(IDbType::UNIVERSAL_TYPE type);
-		/*! \brief Return string with type name in result format on UNIVERSAL TYPE base */
-		wxString GetResTypeName(IDbType::UNIVERSAL_TYPE type);
-		/*! \brief Return row for filling table row attribute. */
-		wxString GetFillData(DBEColumn* pCol, int colIndex);
-		/*! \brief Return string with type name on UNIVERSAL TYPE base */
-		wxString GetResultFunction(IDbType::UNIVERSAL_TYPE type);
-		/*! \brief Return string with type name in function parameter format on UNIVERSAL TYPE base */
-		wxString GetParamTypeName(IDbType::UNIVERSAL_TYPE type);
-		/*! \brief Return string with type name in add function format on UNIVERSAL TYPE base */
-		wxString GetAddParamFunction(IDbType::UNIVERSAL_TYPE type);
-
-
-		/*! \brief Function for generating classes for selected table. It call GenerateFile function two times. Fist time for generate .h, second time for generate .cpp file. */
-		bool GenerateClass(DBETable* pTab, const wxString& path);	
-
-		/*! \brief Function for generating file for selected table.  */
-		bool GenerateFile(DBETable* pTab,wxTextFile& htmpFile, wxTextFile& hFile, const wxString& classItemName,const wxString& classItemDef, const wxString& classColName, const wxString& classTableName, const wxString& classUtilName );
-
-		virtual void OnCancelClick(wxCommandEvent& event);
-		
-		/*! \brief Function for generating classes for all tables. It call GenerateClass() function for each table. */
-		virtual void OnGenerateClick(wxCommandEvent& event);
-		virtual void OnBtnBrowseClick(wxCommandEvent& event);
+	/*! \brief Return string with type name on UNIVERSAL TYPE base */
+	wxString GetTypeName(IDbType::UNIVERSAL_TYPE type);
+	/*! \brief Return string with type name in result format on UNIVERSAL TYPE base */
+	wxString GetResTypeName(IDbType::UNIVERSAL_TYPE type);
+	/*! \brief Return string with type name in Debea format on UNIVERSAL TYPE base */
+	wxString GetDebeaBinding(DBEColumn* pCol);
+	/*! \brief Return row for filling table row attribute. */
+	wxString GetFillData(DBEColumn* pCol, int colIndex);
+	/*! \brief Return string with type name on UNIVERSAL TYPE base */
+	wxString GetResultFunction(IDbType::UNIVERSAL_TYPE type);
+	/*! \brief Return string with type name in function parameter format on UNIVERSAL TYPE base */
+	wxString GetParamTypeName(IDbType::UNIVERSAL_TYPE type);
+	/*! \brief Return string with type name in add function format on UNIVERSAL TYPE base */
+	wxString GetAddParamFunction(IDbType::UNIVERSAL_TYPE type);
 
 
-		virtual ~ClassGenerateDialog();
+	/*! \brief Function for generating classes for selected table. It call GenerateFile function two times. Fist time for generate .h, second time for generate .cpp file. */
+	bool GenerateClass(DBETable* pTab, const wxString& path);
+
+	/*! \brief Function for generating file for selected table.  */
+	bool GenerateFile(DBETable* pTab,wxTextFile& htmpFile, wxTextFile& hFile, const wxString& classItemName,const wxString& classItemDef, const wxString& classColName, const wxString& classTableName, const wxString& classUtilName);
+
+	virtual void OnCancelClick(wxCommandEvent& event);
+
+	/*! \brief Function for generating classes for all tables. It call GenerateClass() function for each table. */
+	virtual void OnGenerateClick(wxCommandEvent& event);
+	virtual void OnBtnBrowseClick(wxCommandEvent& event);
+
+	virtual ~ClassGenerateDialog();
 
 protected:
-		IDbAdapter* m_pDbAdapter;
-		xsSerializable* m_pItems;
-		IManager* m_mgr;
+	TemplateMap m_mapTemplateFiles;
+	IDbAdapter* m_pDbAdapter;
+	xsSerializable* m_pItems;
+	IManager* m_mgr;
+	
+	wxString classTableName;
+	wxString classItemName;
+	wxString classItemDef;
+	wxString classColName;
+	wxString classUtilName;
 };
 
 #endif // CLASSGENERATEDIALOG_H

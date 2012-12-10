@@ -20,9 +20,7 @@ protected:
 	bool m_isSaved;	
 	bool m_isView;
 	
-	
 	void initSerializable();
-	
 	
 public:
 	XS_DECLARE_CLONABLE_CLASS(DBETable);	

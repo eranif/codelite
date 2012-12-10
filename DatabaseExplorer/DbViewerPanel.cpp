@@ -497,7 +497,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 			if (data) {
 				DBETable* pTab = (DBETable*) wxDynamicCast(data->GetData(),DBETable);
 				if (pTab) {
-					ClassGenerateDialog dlg(GetParent(), pTab->GetDbAdapter(), (DBETable*) pTab->Clone(), m_mgr);
+					ClassGenerateDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), pTab->GetDbAdapter(), (DBETable*) pTab->Clone(), m_mgr);
 					dlg.ShowModal();
 				}
 			}

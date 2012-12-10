@@ -1,72 +1,45 @@
 #ifndef %%classItemDef%%
 #define %%classItemDef%%
 
-#include <wx/wx.h>
-#include "DatabaseLayer.h"
+#include <vector>
+#include <string>
+
+// %%classTableName%% //////////////////////////////////////////////////////////
 
 /*! \brief Class for %%classTableName%% table */
 class %%classItemName%% {
 
 public:
-	/*! \brief Constructor for loading from DB */	
-	%%classItemName%%(DatabaseResultSet* pResult);
-	virtual ~%%classItemName%%();
-
-	%%classItemGetters%%	
-
-	%%primaryKeyHeader%%
-
-protected:
-
 	%%classItemVariables%%
 };
 
-
-#include <wx/grid.h>
-#include <wx/list.h>
-
-WX_DECLARE_LIST(%%classItemName%%, %%classItemName%%List);
+// %%classTableName%% collection ///////////////////////////////////////////////
 
 /*! \brief Collection from %%classColName%% table */
 class %%classColName%% {
 
 public:
-	/*! \brief Constructor for loading from db */
-	%%classColName%%(DatabaseResultSet* pResult);
-	virtual ~%%classColName%%();
-	
-	/*! \brief Fill wxGrid from collection. */
-	void Fill(wxGrid* pGrid); 
-	
 	/*! \brief Get item list */
-	const %%classItemName%%List& GetCollection() const { return m_list; }
+	const std::vector<%%classItemName%%>& GetCollection() const { return m_collection; }
 
 	/*! \brief Get all data from database */
-	static %%classColName%%* Get(DatabaseLayer* pDbLayer);
+	virtual void Load()=0;
 	
 	/*! \brief Get data from database with WHERE statement */
-	static %%classColName%%* Get(DatabaseLayer* pDbLayer, const wxString& condition);
+	virtual void Load(const std::string &condition)=0;
 	
 protected:
-	%%classItemName%%List m_list;
+	std::vector<%%classItemName%%> m_collection;
 };
+
+// %%classTableName%% utilities ////////////////////////////////////////////////
 
 /*! \brief Utils for %%classTableName%% table */
 class %%classUtilName%% {
 
 public:
-	/*! \brief Add new item into %%classTableName%% table */
-	static int Add( DatabaseLayer* pDbLayer
-			%%classUtilsAddParameters%%			
-			);
-	/*! \brief Edit item in %%classTableName%% table */	
-	static int Edit(DatabaseLayer* pDbLayer
-			%%classUtilsAddParameters%%			
-			);
-	/*! \brief Delete item from %%classTableName%% table */
-	static int Delete(DatabaseLayer* pDbLayer
-			%%classUtilsDeleteParameters%%			
-			);
+	/*! \brief Get CREATE SQL query for %%classTableName%% table */
+	static std::string CreateSql();
 };
 
 #endif // %%classItemDef%%

@@ -388,7 +388,7 @@ class _TableSettings : public wxDialog
 	
 	public:
 		
-		_TableSettings( wxWindow* parent, wxWindowID id = wxID_OK, const wxString& title = _("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		_TableSettings( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~_TableSettings();
 	
 };
@@ -479,6 +479,7 @@ class _ViewSettings : public wxDialog
 ///////////////////////////////////////////////////////////////////////////////
 /// Class _ClassGenerateDialog
 ///////////////////////////////////////////////////////////////////////////////
+
 class _ClassGenerateDialog : public wxDialog 
 {
 	private:
@@ -493,8 +494,10 @@ class _ClassGenerateDialog : public wxDialog
 		wxStaticText* m_staticText34;
 		wxTextCtrl* m_txVirtualDir;
 		wxButton* m_btnBrowseVirtualDir;
+		wxStaticText* m_staticText36;
+		wxChoice* m_choiceTemplates;
 		wxStaticText* m_staticText29;
-		wxTextCtrl* m_textCtrl19;
+		wxTextCtrl* m_textLog;
 		wxButton* m_button25;
 		wxButton* m_button26;
 		

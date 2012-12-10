@@ -668,18 +668,17 @@ _ErdPanel::~_ErdPanel()
 
 _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
 	
-	wxFlexGridSizer* fgSizer9;
-	fgSizer9 = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizer9->AddGrowableRow( 1 );
-	fgSizer9->SetFlexibleDirection( wxBOTH );
-	fgSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxBoxSizer* bSizer33;
+	bSizer33 = new wxBoxSizer( wxVERTICAL );
 	
-	wxFlexGridSizer* fgSizer10;
-	fgSizer10 = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizer10->SetFlexibleDirection( wxBOTH );
-	fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxFlexGridSizer* fgSizer19;
+	fgSizer19 = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgSizer19->AddGrowableCol( 0 );
+	fgSizer19->AddGrowableRow( 1 );
+	fgSizer19->SetFlexibleDirection( wxBOTH );
+	fgSizer19->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	wxBoxSizer* bSizer31;
 	bSizer31 = new wxBoxSizer( wxHORIZONTAL );
@@ -692,19 +691,26 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer31->Add( m_txTableName, 1, wxALL, 5 );
 	
 	
-	fgSizer10->Add( bSizer31, 1, wxEXPAND, 5 );
+	fgSizer19->Add( bSizer31, 1, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Columns") ), wxHORIZONTAL );
 	
-	wxFlexGridSizer* fgSizer11;
-	fgSizer11 = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizer11->AddGrowableRow( 0 );
-	fgSizer11->SetFlexibleDirection( wxBOTH );
-	fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	wxFlexGridSizer* fgSizer18;
+	fgSizer18 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer18->AddGrowableCol( 1 );
+	fgSizer18->AddGrowableRow( 0 );
+	fgSizer18->SetFlexibleDirection( wxBOTH );
+	fgSizer18->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_listColumns = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( 200,-1 ), 0, NULL, 0 ); 
-	fgSizer11->Add( m_listColumns, 1, wxEXPAND, 5 );
+	wxBoxSizer* bSizer35;
+	bSizer35 = new wxBoxSizer( wxVERTICAL );
+	
+	bSizer35->SetMinSize( wxSize( 290,-1 ) ); 
+	m_listColumns = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( 290,-1 ), 0, NULL, 0 ); 
+	m_listColumns->SetMinSize( wxSize( 290,-1 ) );
+	
+	bSizer35->Add( m_listColumns, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
@@ -719,15 +725,15 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer8->Add( m_button10, 0, wxALL, 5 );
 	
 	
-	fgSizer11->Add( bSizer8, 1, wxEXPAND, 5 );
+	bSizer35->Add( bSizer8, 0, wxEXPAND, 5 );
 	
 	
-	sbSizer6->Add( fgSizer11, 1, wxEXPAND, 5 );
+	fgSizer18->Add( bSizer35, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer18;
 	bSizer18 = new wxBoxSizer( wxVERTICAL );
 	
-	m_notebook3 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_notebook3 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	m_pageType = new wxPanel( m_notebook3, wxID_PAGE_TYPE, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
@@ -737,7 +743,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer7->Add( m_staticText8, 0, wxALL, 5 );
 	
 	m_txColName = new wxTextCtrl( m_pageType, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_txColName, 0, wxALL|wxEXPAND, 5 );
+	bSizer7->Add( m_txColName, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	m_staticText9 = new wxStaticText( m_pageType, wxID_ANY, _("Type:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
@@ -746,7 +752,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	wxArrayString m_comboTypeChoices;
 	m_comboType = new wxChoice( m_pageType, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_comboTypeChoices, 0 );
 	m_comboType->SetSelection( 0 );
-	bSizer7->Add( m_comboType, 0, wxALL|wxEXPAND, 5 );
+	bSizer7->Add( m_comboType, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	m_stSize = new wxStaticText( m_pageType, wxID_ANY, _("Size:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stSize->Wrap( -1 );
@@ -783,7 +789,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer7->Add( m_chNotNull, 0, wxALL, 5 );
 	
 	m_chAutoIncrement = new wxCheckBox( m_pageType, wxID_ANY, _("Auto increment"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( m_chAutoIncrement, 0, wxALL, 5 );
+	bSizer7->Add( m_chAutoIncrement, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	
 	m_pageType->SetSizer( bSizer7 );
@@ -799,7 +805,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer11->Add( m_staticText11, 0, wxALL, 5 );
 	
 	m_txConstraintName = new wxTextCtrl( m_pageConstraint, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_txConstraintName, 0, wxALL|wxALIGN_RIGHT|wxEXPAND, 5 );
+	bSizer11->Add( m_txConstraintName, 0, wxALIGN_RIGHT|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	m_staticText12 = new wxStaticText( m_pageConstraint, wxID_ANY, _("Local column name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText12->Wrap( -1 );
@@ -808,7 +814,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	wxArrayString m_comboLocalColumnChoices;
 	m_comboLocalColumn = new wxChoice( m_pageConstraint, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_comboLocalColumnChoices, 0 );
 	m_comboLocalColumn->SetSelection( 0 );
-	bSizer11->Add( m_comboLocalColumn, 0, wxALL|wxALIGN_RIGHT|wxEXPAND, 5 );
+	bSizer11->Add( m_comboLocalColumn, 0, wxALIGN_RIGHT|wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 	
 	wxString m_radioBox1Choices[] = { _("Primary key"), _("Foreign key") };
 	int m_radioBox1NChoices = sizeof( m_radioBox1Choices ) / sizeof( wxString );
@@ -828,7 +834,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	wxArrayString m_comboRefTableChoices;
 	m_comboRefTable = new wxChoice( m_pageConstraint, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_comboRefTableChoices, 0 );
 	m_comboRefTable->SetSelection( 0 );
-	gbSizer2->Add( m_comboRefTable, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer2->Add( m_comboRefTable, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND|wxALL, 5 );
 	
 	m_staticText14 = new wxStaticText( m_pageConstraint, wxID_ANY, _("Reference column:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText14->Wrap( -1 );
@@ -842,7 +848,7 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	wxString m_radioOnDeleteChoices[] = { _("restrict"), _("cascade"), _("set null"), _("no action") };
 	int m_radioOnDeleteNChoices = sizeof( m_radioOnDeleteChoices ) / sizeof( wxString );
 	m_radioOnDelete = new wxRadioBox( m_pageConstraint, wxID_ANY, _("OnDelete"), wxDefaultPosition, wxDefaultSize, m_radioOnDeleteNChoices, m_radioOnDeleteChoices, 1, wxRA_SPECIFY_COLS );
-	m_radioOnDelete->SetSelection( 0 );
+	m_radioOnDelete->SetSelection( 1 );
 	gbSizer2->Add( m_radioOnDelete, wxGBPosition( 0, 1 ), wxGBSpan( 4, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxString m_radioOnUpdateChoices[] = { _("restrict"), _("cascade"), _("set null"), _("no action") };
@@ -851,6 +857,8 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	m_radioOnUpdate->SetSelection( 0 );
 	gbSizer2->Add( m_radioOnUpdate, wxGBPosition( 0, 2 ), wxGBSpan( 4, 1 ), wxALL|wxEXPAND|wxALIGN_RIGHT, 5 );
 	
+	
+	gbSizer2->AddGrowableCol( 0 );
 	
 	bSizer11->Add( gbSizer2, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
@@ -866,13 +874,16 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer18->Add( m_button9, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	
-	sbSizer6->Add( bSizer18, 0, 0, 5 );
+	fgSizer18->Add( bSizer18, 1, wxEXPAND, 5 );
 	
 	
-	fgSizer10->Add( sbSizer6, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	sbSizer6->Add( fgSizer18, 1, wxEXPAND, 5 );
 	
 	
-	fgSizer9->Add( fgSizer10, 1, wxEXPAND, 5 );
+	fgSizer19->Add( sbSizer6, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+	
+	
+	bSizer33->Add( fgSizer19, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer27;
 	bSizer27 = new wxBoxSizer( wxHORIZONTAL );
@@ -885,12 +896,12 @@ _TableSettings::_TableSettings( wxWindow* parent, wxWindowID id, const wxString&
 	bSizer27->Add( m_button28, 0, wxALL, 5 );
 	
 	
-	fgSizer9->Add( bSizer27, 0, wxALIGN_RIGHT, 5 );
+	bSizer33->Add( bSizer27, 0, wxALIGN_RIGHT, 5 );
 	
 	
-	this->SetSizer( fgSizer9 );
+	this->SetSizer( bSizer33 );
 	this->Layout();
-	fgSizer9->Fit( this );
+	bSizer33->Fit( this );
 	
 	this->Centre( wxBOTH );
 	
@@ -1260,18 +1271,28 @@ _ClassGenerateDialog::_ClassGenerateDialog( wxWindow* parent, wxWindowID id, con
 	m_txVirtualDir = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer26->Add( m_txVirtualDir, 0, wxALL|wxEXPAND, 5 );
 	
-	m_btnBrowseVirtualDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_btnBrowseVirtualDir = new wxButton( this, wxID_ANY, _("..."), wxDefaultPosition, wxSize( 40,-1 ), 0 );
 	fgSizer26->Add( m_btnBrowseVirtualDir, 0, wxALL, 5 );
 	
 	
 	fgSizer19->Add( fgSizer26, 1, wxEXPAND, 5 );
 	
+	m_staticText36 = new wxStaticText( this, wxID_ANY, _("Template:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText36->Wrap( -1 );
+	fgSizer19->Add( m_staticText36, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	wxString m_choiceTemplatesChoices[] = { _("DatabaseLayer (wxWidgets)"), _("Debea (STL)"), _("wxDebea (wxWidgets)"), _("Generic classes (STL)") };
+	int m_choiceTemplatesNChoices = sizeof( m_choiceTemplatesChoices ) / sizeof( wxString );
+	m_choiceTemplates = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceTemplatesNChoices, m_choiceTemplatesChoices, 0 );
+	m_choiceTemplates->SetSelection( 0 );
+	fgSizer19->Add( m_choiceTemplates, 0, wxALL|wxEXPAND, 5 );
+	
 	m_staticText29 = new wxStaticText( this, wxID_ANY, _("Log:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText29->Wrap( -1 );
 	fgSizer19->Add( m_staticText29, 0, wxALL, 5 );
 	
-	m_textCtrl19 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 300,300 ), wxTE_MULTILINE|wxTE_READONLY );
-	fgSizer19->Add( m_textCtrl19, 1, wxALL|wxEXPAND, 5 );
+	m_textLog = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 300,250 ), wxTE_MULTILINE|wxTE_READONLY );
+	fgSizer19->Add( m_textLog, 1, wxALL|wxEXPAND, 5 );
 	
 	
 	fgSizer19->Add( 0, 0, 1, wxEXPAND, 5 );

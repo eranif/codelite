@@ -147,11 +147,12 @@ TagsOptionsData::TagsOptionsData()
     , m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
     , m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
 {
-    SetVersion(wxT("3.0.13"));
+    SetVersion(wxT("3.0.14"));
     // Initialize defaults
     m_languages.Add(wxT("C++"));
     m_tokens =
         wxT("EXPORT\n")
+        wxT("_GLIBCXX_NOEXCEPT\n")
         wxT("WXDLLIMPEXP_CORE\n")
         wxT("WXDLLIMPEXP_BASE\n")
         wxT("WXDLLIMPEXP_XML\n")

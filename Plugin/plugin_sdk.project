@@ -237,7 +237,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="renamefilebasedlg.fbp"/>
-    <File Name="openresourcedialogbase.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Terminal">
     <File Name="wxterminalbase.h"/>
@@ -473,10 +472,12 @@
     <VirtualDirectory Name="resources">
       <File Name="VirtualDirectorySelector_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelectorBase_plugin_bitmaps.cpp"/>
+      <File Name="openresourcedialogbase_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
       <File Name="VirtualDirectorySelectorBase.cpp"/>
     </VirtualDirectory>
+    <File Name="openresourcedialogbase.wxcp"/>
   </VirtualDirectory>
 </CodeLite_Project>

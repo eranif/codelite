@@ -774,6 +774,11 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxStyledText
             }
             if (!removed) {
                 editor->SetEnsureCaretIsVisible(position);
+                int lineNumber = editor->LineFromPos(position);
+                if ( lineNumber ) {
+                    lineNumber--;
+                }
+                editor->GetSTC()->GotoLine( lineNumber );
                 editor->SetSelection(position, position + resultLength);
 
 #ifdef __WXGTK__

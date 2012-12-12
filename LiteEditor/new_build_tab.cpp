@@ -835,11 +835,11 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
             // try to locate the editor first
             LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
             if ( !editor ) {
-
                 // Open it
                 editor = clMainFrame::Get()->GetMainBook()->OpenFile(bli->GetFilename(), wxT(""), bli->GetLineNumber(), wxNOT_FOUND, OF_AddJump);
-
-            } else {
+            }
+            
+            if ( editor ) {
                 if ( !editor->HasCompilerMarkers())
                     MarkEditor( editor );
                     

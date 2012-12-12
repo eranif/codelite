@@ -83,60 +83,61 @@ public:
     static const wxString OVERWRITE_GLOBAL_SETTINGS;
     static const wxString APPEND_TO_GLOBAL_SETTINGS;
     static const wxString PREPEND_GLOBAL_SETTINGS;
-
+    typedef std::map<wxString, wxString> StringMap_t;
+    
 private:
-    BuildConfigCommon            m_commonConfig;
-    wxString                     m_name;
-    BuildCommandList             m_preBuildCommands;
-    BuildCommandList             m_postBuildCommands;
-    bool                         m_compilerRequired;
-    bool                         m_linkerRequired;
-    bool                         m_enableCustomBuild;
-    wxString                     m_outputFile;
-    wxString                     m_intermediateDirectory;
-    wxString                     m_command;
-    wxString                     m_commandArguments;
-    wxString                     m_workingDirectory;
-    wxString                     m_compilerType;
-    wxString                     m_projectType;
-    wxString                     m_customBuildCmd;
-    wxString                     m_customCleanCmd;
-    wxString                     m_customRebuildCmd;
-    bool                         m_isResCmpNeeded;
-    wxString                     m_debuggerType;
-    wxString                     m_customPostBuildRule;
-    wxString                     m_customPreBuildRule;
-    wxString                     m_customBuildWorkingDir;
-    bool                         m_pauseWhenExecEnds;
-    wxString                     m_toolName;
-    wxString                     m_makeGenerationCommand;
-    wxString                     m_singleFileBuildCommand;
-    wxString                     m_preprocessFileCommand;
-    wxString                     m_debuggerStartupCmds;
-    wxString                     m_debuggerPostRemoteConnectCmds;
-    bool                         m_isDbgRemoteTarget;
-    wxString                     m_dbgHostName;
-    wxString                     m_dbgHostPort;
-    std::map<wxString, wxString> m_customTargets;
-    wxString                     m_debuggerPath;
-    wxString                     m_buildCmpWithGlobalSettings;
-    wxString                     m_buildLnkWithGlobalSettings;
-    wxString                     m_buildResWithGlobalSettings;
-    wxString                     m_precompiledHeader;
-    wxString                     m_envVarSet;
-    wxString                     m_dbgEnvSet;
-    bool                         m_useSeparateDebugArgs;
-    wxString                     m_debugArgs;
-    wxString                     m_envvars;
-    bool                         m_pchInCommandLine;
-    bool                         m_useSeparatePCHFlags;
-    wxString                     m_pchCompileFlags;
-    wxString                     m_clangPPFlags;   // clang only pre-processors (useful when using a custom makefile)
-    wxString                     m_clangCmpFlags;  // clang only compilation flags C++ (useful when using a custom makefile)
-    wxString                     m_clangCmpFlagsC; // clang only compilation flags C   (useful when using a custom makefile)
-    wxString                     m_ccSearchPaths;
-    wxString                     m_ccPCH;
-    bool                         m_clangC11;
+    BuildConfigCommon m_commonConfig;
+    wxString          m_name;
+    BuildCommandList  m_preBuildCommands;
+    BuildCommandList  m_postBuildCommands;
+    bool              m_compilerRequired;
+    bool              m_linkerRequired;
+    bool              m_enableCustomBuild;
+    wxString          m_outputFile;
+    wxString          m_intermediateDirectory;
+    wxString          m_command;
+    wxString          m_commandArguments;
+    wxString          m_workingDirectory;
+    wxString          m_compilerType;
+    wxString          m_projectType;
+    wxString          m_customBuildCmd;
+    wxString          m_customCleanCmd;
+    wxString          m_customRebuildCmd;
+    bool              m_isResCmpNeeded;
+    wxString          m_debuggerType;
+    wxString          m_customPostBuildRule;
+    wxString          m_customPreBuildRule;
+    wxString          m_customBuildWorkingDir;
+    bool              m_pauseWhenExecEnds;
+    wxString          m_toolName;
+    wxString          m_makeGenerationCommand;
+    wxString          m_singleFileBuildCommand;
+    wxString          m_preprocessFileCommand;
+    wxString          m_debuggerStartupCmds;
+    wxString          m_debuggerPostRemoteConnectCmds;
+    bool              m_isDbgRemoteTarget;
+    wxString          m_dbgHostName;
+    wxString          m_dbgHostPort;
+    StringMap_t       m_customTargets;
+    wxString          m_debuggerPath;
+    wxString          m_buildCmpWithGlobalSettings;
+    wxString          m_buildLnkWithGlobalSettings;
+    wxString          m_buildResWithGlobalSettings;
+    wxString          m_precompiledHeader;
+    wxString          m_envVarSet;
+    wxString          m_dbgEnvSet;
+    bool              m_useSeparateDebugArgs;
+    wxString          m_debugArgs;
+    wxString          m_envvars;
+    bool              m_pchInCommandLine;
+    bool              m_useSeparatePCHFlags;
+    wxString          m_pchCompileFlags;
+    wxString          m_clangPPFlags;   // clang only pre-processors (useful when using a custom makefile)
+    wxString          m_clangCmpFlags;  // clang only compilation flags C++ (useful when using a custom makefile)
+    wxString          m_clangCmpFlagsC; // clang only compilation flags C   (useful when using a custom makefile)
+    wxString          m_ccSearchPaths;
+    wxString          m_ccPCH;
+    bool              m_clangC11;
 
 public:
     BuildConfig(wxXmlNode *node);
@@ -470,10 +471,10 @@ public:
         return m_dbgHostPort;
     }
 
-    void SetCustomTargets(const std::map<wxString, wxString>& customTargets) {
+    void SetCustomTargets(const BuildConfig::StringMap_t& customTargets) {
         this->m_customTargets = customTargets;
     }
-    const std::map<wxString, wxString>& GetCustomTargets() const {
+    const BuildConfig::StringMap_t& GetCustomTargets() const {
         return m_customTargets;
     }
     void SetDebuggerPath(const wxString& debuggerPath) {

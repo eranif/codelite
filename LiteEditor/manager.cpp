@@ -624,6 +624,10 @@ void Manager::SetActiveProject ( const wxString &name )
     WorkspaceST::Get()->SetActiveProject ( WorkspaceST::Get()->GetActiveProjectName(), false );
     WorkspaceST::Get()->SetActiveProject ( name, true );
     clMainFrame::Get()->SelectBestEnvSet();
+    
+    wxCommandEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
+    evt.SetString(name);
+    EventNotifier::Get()->AddPendingEvent( evt );
 }
 
 BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const

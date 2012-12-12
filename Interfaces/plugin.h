@@ -433,7 +433,11 @@ enum {
     
     // Triggers a workspace view tree rebuild (useful when user has modified the workspace / project structure and he want 
     // to reflect the changes in the tree view)
-    wxEVT_REBUILD_WORKSPACE_TREE
+    wxEVT_REBUILD_WORKSPACE_TREE,
+    
+    // Sent when user has changed the active project
+    // call event.GetString() to get the name of the project
+    wxEVT_ACTIVE_PROJECT_CHANGED,
 };
 
 //------------------------------------------------------------------

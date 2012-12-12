@@ -363,6 +363,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("execute_no_debug"),         clMainFrame::OnExecuteNoDebug)
     EVT_MENU(XRCID("stop_executed_program"),    clMainFrame::OnStopExecutedProgram)
     EVT_MENU(XRCID("build_active_project"),     clMainFrame::OnBuildProject)
+    EVT_AUITOOLBAR_TOOL_DROPDOWN(XRCID("build_active_project"), clMainFrame::OnShowAuiBuildMenu)
     EVT_MENU(XRCID("compile_active_file"),      clMainFrame::OnCompileFile)
     EVT_MENU(XRCID("clean_active_project"),     clMainFrame::OnCleanProject)
     EVT_MENU(XRCID("stop_active_project_build"),    clMainFrame::OnStopBuild)
@@ -572,6 +573,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     , m_cppMenu                 (NULL)
     , m_highlightWord           (false)
     , m_workspaceRetagIsRequired(false)
+    , m_buildDropDownMenu       (NULL)
 {
 #if  defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -624,6 +626,9 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveProjectChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnWorkspaceLoaded), NULL, this);
+
 }
 
 clMainFrame::~clMainFrame(void)
@@ -646,14 +651,16 @@ clMainFrame::~clMainFrame(void)
 
     EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveProjectChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnWorkspaceLoaded), NULL, this);
 
     delete m_timer;
     delete m_statusbarTimer;
-    
+
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
     ManagerST::Get()->GetPerspectiveManager().DisconnectEvents();
-    
+
     ManagerST::Free();
     delete m_DPmenuMgr;
 
@@ -1082,6 +1089,8 @@ void clMainFrame::CreateToolbars24()
     }
 
     tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/build")),        _("Build Active Project"));
+    tb->SetToolDropDown(XRCID("build_active_project"), true);
+
     tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/stop")),         _("Stop Current Build"));
     tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/clean")),        _("Clean Active Project"));
     tb->AddSeparator();
@@ -1181,7 +1190,8 @@ void clMainFrame::CreateNativeToolbar16()
     //----------------------------------------------
     //create the build toolbar
     //----------------------------------------------
-    tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")),        _("Build Active Project"));
+    tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")),        _("Build Active Project"), wxITEM_DROPDOWN);
+
     tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/stop")),         _("Stop Current Build"));
     tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/clean")),        _("Clean Active Project"));
     tb->AddSeparator();
@@ -1254,7 +1264,7 @@ void clMainFrame::CreateNativeToolbar24()
     //----------------------------------------------
     //create the build toolbar
     //----------------------------------------------
-    tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/build")),        _("Build Active Project"));
+    tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/build")),        _("Build Active Project"), wxITEM_DROPDOWN);
     tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/stop")),         _("Stop Current Build"));
     tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/24/build/clean")),        _("Clean Active Project"));
     tb->AddSeparator();
@@ -1368,9 +1378,10 @@ void clMainFrame::CreateToolbars16()
         tb->SetToolBitmapSize(wxSize(16, 16));
     }
 
-    tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")),        _("Build Active Project"));
-    tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/stop")),         _("Stop Current Build"));
-    tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/clean")),        _("Clean Active Project"));
+    tb->AddTool(XRCID("build_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/build")), _("Build Active Project"));
+    tb->SetToolDropDown(XRCID("build_active_project"), true);
+    tb->AddTool(XRCID("stop_active_project_build"), wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/stop")),  _("Stop Current Build"));
+    tb->AddTool(XRCID("clean_active_project"),      wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/clean")), _("Clean Active Project"));
     tb->AddSeparator();
     tb->AddTool(XRCID("execute_no_debug"),          wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute")),      _("Run Active Project"));
     tb->AddTool(XRCID("stop_executed_program"),     wxEmptyString, bmpLoader.LoadBitmap(wxT("toolbars/16/build/execute_stop")), _("Stop Running Program"));
@@ -5011,3 +5022,63 @@ void clMainFrame::OnLoadSession(wxCommandEvent& e)
     wxUnusedVar(e);
     LoadSession(SessionManager::Get().GetLastSession());
 }
+
+void clMainFrame::OnShowAuiBuildMenu(wxAuiToolBarEvent& e)
+{
+    if ( e.IsDropDownClicked() ) {
+        wxMenu menu;
+        DoCreateBuildDropDownMenu(&menu);
+    
+        wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(e.GetEventObject());
+        if ( auibar ) {
+            wxRect rect = auibar->GetToolRect(e.GetId());
+            wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
+            pt = ScreenToClient(pt);
+            PopupMenu(&menu, pt);
+        }
+
+    } else {
+        e.Skip();
+    }
+}
+
+void clMainFrame::OnActiveProjectChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    m_buildDropDownMenu = new wxMenu;
+    DoCreateBuildDropDownMenu(m_buildDropDownMenu);
+    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+}
+
+void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)
+{
+    e.Skip();
+    m_buildDropDownMenu = new wxMenu;
+    DoCreateBuildDropDownMenu(m_buildDropDownMenu);
+    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+}
+
+void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
+{
+    menu->Append(XRCID("build_active_project"), _("Build active Project"));
+    menu->Append(XRCID("clean_active_project"), _("Clean active Project"));
+    menu->Append(XRCID("compile_active_file"),  _("Compile current file"));
+
+    // build the menu and show it
+    BuildConfigPtr bldcfg = WorkspaceST::Get()->GetProjBuildConf( WorkspaceST::Get()->GetActiveProjectName(), "" );
+    if ( bldcfg ) {
+        const BuildConfig::StringMap_t& customTargets = bldcfg->GetCustomTargets();
+        if ( !customTargets.empty() ) {
+            menu->AppendSeparator();
+        }
+
+        BuildConfig::StringMap_t::const_iterator iter = customTargets.begin();
+        for( ; iter != customTargets.end(); ++iter ) {
+            menu->Append(wxXmlResource::GetXRCID(iter->first.c_str()), iter->first);
+            menu->Connect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
+        }
+    }
+}
+
+
+

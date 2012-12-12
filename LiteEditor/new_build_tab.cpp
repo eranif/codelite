@@ -842,11 +842,17 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
             if ( editor ) {
                 if ( !editor->HasCompilerMarkers())
                     MarkEditor( editor );
-                    
+                
+                int lineNumber = bli->GetLineNumber();
+                if ( lineNumber > 0 ) {
+                    lineNumber --;
+                }
+            
                 // We already got compiler markers set here, just goto the line
                 clMainFrame::Get()->GetMainBook()->SelectPage( editor );
-                editor->GotoLine(bli->GetLineNumber());
-                editor->EnsureVisible(bli->GetLineNumber());
+                editor->GotoLine( bli->GetLineNumber() );
+                editor->ScrollToLine( bli->GetLineNumber() );
+                editor->EnsureVisible( lineNumber );
                 editor->EnsureCaretVisible();
                 SetActive(editor);
                 return true;

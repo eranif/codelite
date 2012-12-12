@@ -400,7 +400,7 @@ wxString PostgreSqlDbAdapter::GetCreateDatabaseSql(const wxString& dbName) {
 	return wxString::Format(wxT("CREATE DATABASE %s"), dbName.c_str());
 }
 wxString PostgreSqlDbAdapter::GetDropTableSql(DBETable* pTab) {
-	return wxString::Format(wxT("DROP TABLE %s"), pTab->GetName().c_str());
+	return wxString::Format(wxT("DROP TABLE IF EXISTS %s;"), pTab->GetName().c_str());
 }
 wxString PostgreSqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab) {
 	//TODO:SQL:

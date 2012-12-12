@@ -70,14 +70,21 @@ END_STORE_TABLE()
 // %%classTableName%% utilities ////////////////////////////////////////////////
 
 int %%classUtilName%%::Create(dba::SQLArchive &ar
+			, bool drop
 			)
 {
 	if( ar.isOpen() ) {
-		dba::SQL %%classTableName%%_create(
+		std::string query(
 			%%classUtilsCreateStatement%%
-		);
+			);
+			
+		if( drop ) {
+			query = std::string(
+				%%classUtilsDropStatement%%
+				) + query;
+		}
 		
-		ar.getOStream().sendUpdate( %%classTableName%%_create );
+		ar.getOStream().sendUpdate( dba::SQL( query) );
 		return 0;
 	} else {
 		return -1;
@@ -112,20 +119,20 @@ int %%classUtilName%%::Edit(dba::SQLArchive &ar
 {
 	if( ar.isOpen() && (ar.getIdFetcher() != NULL) ) {
 		%%classItemName%% *c = %%classItemName%%::GetBy%%pkName%%(ar, %%pkName%%);
-		%%classUtilsEditDebeaStatement%%
-		
-		// update object in database
-		dba::SQLOStream ostream = ar.getOStream();
-		ostream.open();
-		if( ostream.isOpen() ) { 
-			ostream.put(c); 
-			ostream.destroy();
+		if( c ) {
+			%%classUtilsEditDebeaStatement%%
+			
+			// update object in database
+			dba::SQLOStream ostream = ar.getOStream();
+			ostream.open();
+			if( ostream.isOpen() ) { 
+				ostream.put(c); 
+				ostream.destroy();
+			}
+			return 0;
 		}
-		
-		return 0;
-	} else {
-		return -1;
-	}
+	} 
+	return -1;
 }
 
 int %%classUtilName%%::Delete(dba::SQLArchive &ar

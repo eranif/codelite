@@ -89,14 +89,21 @@ void %%classColName%%::Fill(wxGrid* pGrid)
 // %%classTableName%% utilities ////////////////////////////////////////////////
 
 int %%classUtilName%%::Create(wxdba::SQLArchive &ar
+			, bool drop
 			)
 {
 	if( ar.IsOpen() ) {
-		wxdba::SQL %%classTableName%%_create(wxT(
+		wxString query = wxT(
 			%%classUtilsCreateStatement%%
-		));
+			);
 		
-		ar.GetOStream().SendUpdate( %%classTableName%%_create );
+		if( drop ) {
+			query = wxT(
+				%%classUtilsDropStatement%%
+				) + query;
+		}
+		
+		ar.GetOStream().SendUpdate( wxdba::SQL( query ) );
 		return 0;
 	} else {
 		return -1;
@@ -131,20 +138,21 @@ int %%classUtilName%%::Edit(wxdba::SQLArchive &ar
 {
 	if( ar.IsOpen() && (ar.GetIdFetcher() != NULL) ) {
 		%%classItemName%% *c = %%classItemName%%::GetBy%%pkName%%(ar, %%pkName%%);
-		%%classUtilsEditDebeaStatement%%
-		
-		// update object in database
-		wxdba::SQLOStream ostream = ar.GetOStream();
-		ostream.Open();
-		if( ostream.isOpen() ) { 
-			ostream.Put(c); 
-			ostream.Destroy();
+		if( c ) {
+			%%classUtilsEditDebeaStatement%%
+			
+			// update object in database
+			wxdba::SQLOStream ostream = ar.GetOStream();
+			ostream.Open();
+			if( ostream.isOpen() ) { 
+				ostream.Put(c); 
+				ostream.Destroy();
+			}
+			
+			return 0;
 		}
-		
-		return 0;
-	} else {
-		return -1;
-	}
+	} 
+	return -1;
 }
 
 int %%classUtilName%%::Delete(wxdba::SQLArchive &ar

@@ -1,4 +1,5 @@
 #include "ClassGenerateDialog.h"
+#include "event_notifier.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/tokenzr.h>
 
@@ -49,7 +50,7 @@ bool ClassGenerateDialog::GenerateClass(DBETable* pTab, const wxString& path)
 
 	classTableName = pTab->GetName();
 	classItemName = m_txPrefix->GetValue() + pTab->GetName() + m_txPostfix->GetValue();
-	classItemDef = wxT("__") + pTab->GetName().Upper() + wxT("_H__");
+	classItemDef = wxT("__") + classItemName.Upper() + wxT("_H__");
 	classColName = m_txPrefix->GetValue() + pTab->GetName() + wxT("Collection")+ m_txPostfix->GetValue();
 	classUtilName = m_txPrefix->GetValue() + pTab->GetName() + wxT("Utils")+ m_txPostfix->GetValue();
 
@@ -70,18 +71,29 @@ bool ClassGenerateDialog::GenerateClass(DBETable* pTab, const wxString& path)
 	bool suc = GenerateFile(pTab,htmpFile,hFile, classItemName, classItemDef,classColName,classTableName, classUtilName);
 	suc &= GenerateFile(pTab,ctmpFile,cFile, classItemName, classItemDef,classColName,classTableName, classUtilName);
 
+
+	htmpFile.Close();
+	ctmpFile.Close();
+	
+	// format output files
+	FormatFile( hFile );
+	FormatFile( cFile );
+	
 	hFile.Write();
 	hFile.Close();
 	cFile.Write();
 	cFile.Close();
-	htmpFile.Close();
-	ctmpFile.Close();
 
+	// add files to the workspace
 	wxArrayString arrString;
 	arrString.Add( path + wxT("/") + classItemName + wxT(".h"));
 	arrString.Add( path + wxT("/") + classItemName + wxT(".cpp"));
 
 	m_mgr->AddFilesToVirtualFolder( m_txVirtualDir->GetValue(), arrString );
+	
+	// retag workspace
+	wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
+	EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent( evt );
 
 	return suc;
 }
@@ -204,6 +216,32 @@ bool ClassGenerateDialog::GenerateFile(DBETable* pTab, wxTextFile& htmpFile, wxT
 				DBEColumn* pCol = wxDynamicCast(node->GetData(),DBEColumn);
 				if (pCol) {
 					hFile.AddLine( GetDebeaBinding(pCol) );					
+				}
+				node = node->GetNext();
+			}
+			
+		} else if (str.Contains(wxT("%%classItemAddParameters%%"))) {
+			bool first = true;
+			SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
+			while( node ) {
+				DBEColumn* pCol = wxDynamicCast(node->GetData(),DBEColumn);
+				if (pCol) {
+					if( first ) {
+						hFile.AddLine(wxString::Format(wxT("\t\t\t%s %s"), GetParamTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()));
+						first = false;
+					} else {
+						hFile.AddLine(wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()));
+					}
+				}
+				node = node->GetNext();
+			}
+			
+		} else if (str.Contains(wxT("%%classItemSetParams%%"))) {
+			SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
+			while( node ) {
+				DBEColumn* pCol = wxDynamicCast(node->GetData(),DBEColumn);
+				if (pCol ) {
+					hFile.AddLine( wxT("\tm_") + pCol->GetName() + wxT(" = ") + pCol->GetName() + wxT(";"));
 				}
 				node = node->GetNext();
 			}
@@ -347,7 +385,7 @@ bool ClassGenerateDialog::GenerateFile(DBETable* pTab, wxTextFile& htmpFile, wxT
 			while( node ) {
 				DBEColumn* pCol = wxDynamicCast(node->GetData(),DBEColumn);
 				if (pCol && ( !pPKCol || (pCol->GetName() != pPKCol->GetName()) ) ) {
-					hFile.AddLine( wxT("\t\tc->setMember(c->m_") + pCol->GetName() + wxT(", ") + pCol->GetName() + wxT(");"));
+					hFile.AddLine( wxT("\t\t\tc->setMember(c->m_") + pCol->GetName() + wxT(", ") + pCol->GetName() + wxT(");"));
 				}
 				node = node->GetNext();
 			}
@@ -366,6 +404,13 @@ bool ClassGenerateDialog::GenerateFile(DBETable* pTab, wxTextFile& htmpFile, wxT
 				if( !tknz.HasMoreTokens() ) break; // omit last line
 				hFile.AddLine( wxT("\t\t\t\"") + line + wxT("\" \\") );
 			}
+			
+		} else if (str.Contains(wxT("%%classUtilsDropStatement%%"))) {			
+			wxStringTokenizer tknz( m_pDbAdapter->GetDropTableSql( pTab ), wxT("\n"), wxTOKEN_STRTOK );
+			while( tknz.HasMoreTokens() ) {
+				hFile.AddLine( wxT("\t\t\t\"") + tknz.GetNextToken() + wxT("\" \\") );
+			}
+
 		} else {
 			str.Replace(wxT("%%classItemName%%"),classItemName);
 			str.Replace(wxT("%%classItemDef%%"),classItemDef);
@@ -533,5 +578,29 @@ void ClassGenerateDialog::OnBtnBrowseClick(wxCommandEvent& event)
 	VirtualDirectorySelectorDlg dlg(this, m_mgr->GetWorkspace(), m_txVirtualDir->GetValue());
 	if ( dlg.ShowModal() == wxID_OK ) {
 		m_txVirtualDir->SetValue( dlg.GetVirtualDirectoryPath() );
+	}
+}
+
+void ClassGenerateDialog::FormatFile(wxTextFile& f)
+{
+	if( f.IsOpened() ) {
+		
+		wxString content = f.GetFirstLine() + wxT("\n");
+		while( !f.Eof() ) {
+			content += ( f.GetNextLine() + wxT("\n") );
+		}
+		
+		f.Clear();
+		
+		wxCommandEvent evt(XRCID("wxEVT_CF_FORMAT_STRING"));
+		evt.SetString( content );
+		EventNotifier::Get()->ProcessEvent( evt );
+		content = evt.GetString();
+		
+		wxStringTokenizer tknz( content, wxT("\n"), wxTOKEN_RET_EMPTY_ALL );
+		
+		while( tknz.HasMoreTokens() ) {
+			f.AddLine( tknz.GetNextToken() );
+		}
 	}
 }

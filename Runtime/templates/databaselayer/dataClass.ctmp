@@ -1,10 +1,27 @@
 #include "%%classItemName%%.h"
 
+// %%classTableName%% //////////////////////////////////////////////////////////
+
+%%classItemName%%::%%classItemName%%(
+			%%classItemAddParameters%%
+			)
+{
+	%%classItemSetParams%%
+}
+
 // %%classTableName%% utilities ////////////////////////////////////////////////
 
-std::string %%classUtilName%%::CreateSql()
+std::string %%classUtilName%%::CreateSql(bool drop)
 {
-	return std::string(
-			%%classUtilsCreateStatement%%
-			);
+	std::string query(
+		%%classUtilsCreateStatement%%
+		);
+	
+	if( drop ) {
+		query = std::string(
+			%%classUtilsDropStatement%%
+			) + query;
+	}
+	
+	return query;
 }

@@ -86,12 +86,21 @@ void %%classColName%%::Fill(wxGrid* pGrid)
 // %%classTableName%% utilities ////////////////////////////////////////////////
 
 int %%classUtilName%%::Create(DatabaseLayer* pDbLayer
+			, bool drop
 			)
 {
 	if (pDbLayer && pDbLayer->IsOpen()) {
-		PreparedStatement* pStatement = pDbLayer->PrepareStatement( wxT( 
+		wxString query = wxT(
 			%%classUtilsCreateStatement%%
-			) );
+			);
+			
+		if( drop ) {
+			query = wxT(
+				%%classUtilsDropStatement%%
+				) + query;
+		}
+			
+		PreparedStatement* pStatement = pDbLayer->PrepareStatement( query );
 		if (pStatement) {
 			pStatement->RunQuery();		
 			pStatement->Close();				

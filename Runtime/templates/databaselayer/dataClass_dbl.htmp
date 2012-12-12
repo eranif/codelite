@@ -62,6 +62,7 @@ class %%classUtilName%% {
 public:
 	/*! \brief Create new %%classTableName%% table */
 	static int Create(DatabaseLayer* pDbLayer
+			, bool drop
 			);
 	/*! \brief Add new item into %%classTableName%% table */
 	static int Add(DatabaseLayer* pDbLayer

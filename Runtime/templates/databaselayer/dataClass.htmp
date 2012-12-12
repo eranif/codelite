@@ -1,7 +1,6 @@
 #ifndef %%classItemDef%%
 #define %%classItemDef%%
 
-#include <vector>
 #include <string>
 
 // %%classTableName%% //////////////////////////////////////////////////////////
@@ -10,26 +9,17 @@
 class %%classItemName%% {
 
 public:
-	%%classItemVariables%%
-};
-
-// %%classTableName%% collection ///////////////////////////////////////////////
-
-/*! \brief Collection from %%classColName%% table */
-class %%classColName%% {
-
-public:
-	/*! \brief Get item list */
-	const std::vector<%%classItemName%%>& GetCollection() const { return m_collection; }
-
-	/*! \brief Get all data from database */
-	virtual void Load()=0;
+	/*! \brief Data record constructor */
+	%%classItemName%%(
+				%%classItemAddParameters%%
+				);
 	
-	/*! \brief Get data from database with WHERE statement */
-	virtual void Load(const std::string &condition)=0;
+	/*! \brief Public data accessors */
+	%%classItemGetters%%
 	
 protected:
-	std::vector<%%classItemName%%> m_collection;
+
+	%%classItemVariables%%
 };
 
 // %%classTableName%% utilities ////////////////////////////////////////////////
@@ -39,7 +29,7 @@ class %%classUtilName%% {
 
 public:
 	/*! \brief Get CREATE SQL query for %%classTableName%% table */
-	static std::string CreateSql();
+	static std::string CreateSql(bool drop);
 };
 
 #endif // %%classItemDef%%

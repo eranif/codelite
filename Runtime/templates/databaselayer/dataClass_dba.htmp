@@ -51,6 +51,7 @@ class %%classUtilName%% {
 public:
 	/*! \brief Create new %%classTableName%% table */
 	static int Create(dba::SQLArchive &ar
+			, bool drop
 			);
 	/*! \brief Add new item into %%classTableName%% table */
 	static int Add(dba::SQLArchive &ar

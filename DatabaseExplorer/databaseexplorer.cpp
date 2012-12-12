@@ -19,7 +19,7 @@
 #include "PostgreSqlDbAdapter.h"
 #endif
 
-#define DBE_VERSION _("0.3.0 Beta")
+#define DBE_VERSION _("0.4.0 Beta")
 
 static DatabaseExplorer* thePlugin = NULL;
 

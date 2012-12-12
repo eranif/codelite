@@ -151,16 +151,17 @@ bool SQLiteDbAdapter::GetColumns(DBETable* pTab) {
 	return true;
 }
 wxString SQLiteDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
-	//TODO:SQL:
 	wxString str = wxT("");
-	if (dropTable) str = wxString::Format(wxT("DROP TABLE IF EXISTS '%s'; \n"),tab->GetName().c_str());
-	str.append(wxString::Format(wxT("CREATE TABLE '%s' (\n"),tab->GetName().c_str()));
+	//if (dropTable) str = wxString::Format(wxT("DROP TABLE IF EXISTS '%s'.'%s'; \n"), tab->GetParentName().c_str(), tab->GetName().c_str());
+	//str.append(wxString::Format(wxT("CREATE TABLE '%s'.'%s' (\n"), tab->GetParentName().c_str(), tab->GetName().c_str()));
+	if (dropTable) str = wxString::Format(wxT("DROP TABLE IF EXISTS '%s'; \n"), tab->GetName().c_str());
+	str.append(wxString::Format(wxT("CREATE TABLE '%s' (\n"), tab->GetName().c_str()));
 
 	SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 	while( node ) {
 		DBEColumn* col = NULL;
 		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ) col = (DBEColumn*) node->GetData();
-		if(col)	str.append(wxString::Format(wxT("\t`%s` %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
+		if(col)	str.append(wxString::Format(wxT("\t'%s' %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
 
 		node = node->GetNext();
 		if (node) {
@@ -254,7 +255,8 @@ wxString SQLiteDbAdapter::GetCreateDatabaseSql(const wxString& dbName) {
 	return wxT("");
 }
 wxString SQLiteDbAdapter::GetDropTableSql(DBETable* pTab) {
-	return wxString::Format(wxT("DROP TABLE '%s'.'%s'"), pTab->GetParentName().c_str(), pTab->GetName().c_str());
+	//return wxString::Format(wxT("DROP TABLE IF EXISTS '%s'.'%s';"), pTab->GetParentName().c_str(), pTab->GetName().c_str());
+	return wxString::Format(wxT("DROP TABLE IF EXISTS '%s';"), pTab->GetName().c_str());
 }
 wxString SQLiteDbAdapter::GetAlterTableConstraintSql(DBETable* tab) {
 	return wxT("");
@@ -271,9 +273,9 @@ wxString SQLiteDbAdapter::GetCreateViewSql(View* view, bool dropView) {
 	wxString str = wxT("");
 	if (view) {
 		if (dropView) {
-			str.append(wxString::Format(wxT("DROP VIEW IF EXISTS `%s`;\n"),view->GetName().c_str()));
+			str.append(wxString::Format(wxT("DROP VIEW IF EXISTS '%s';\n"),view->GetName().c_str()));
 		}
-		str.append(wxString::Format(wxT("CREATE VIEW `%s` AS %s ;\n"),view->GetName().c_str(), view->GetSelect().c_str()));
+		str.append(wxString::Format(wxT("CREATE VIEW '%s' AS %s;\n"),view->GetName().c_str(), view->GetSelect().c_str()));
 	}
 	str.append(wxT("-- -------------------------------------------------------------\n"));
 	return str;

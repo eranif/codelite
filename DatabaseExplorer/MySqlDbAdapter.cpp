@@ -310,7 +310,7 @@ wxString MySqlDbAdapter::GetCreateDatabaseSql(const wxString& dbName)
 }
 wxString MySqlDbAdapter::GetDropTableSql(DBETable* pTab)
 {
-	return wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE `%s`.`%s\n;SET FOREIGN_KEY_CHECKS = 1;`"), pTab->GetParentName().c_str(),pTab->GetName().c_str());
+	return wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE IF EXISTS `%s`;\nSET FOREIGN_KEY_CHECKS = 1;"), pTab->GetName().c_str());
 }
 wxString MySqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab)
 {

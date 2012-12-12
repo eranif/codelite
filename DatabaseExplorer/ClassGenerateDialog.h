@@ -48,6 +48,8 @@ public:
 
 	/*! \brief Function for generating file for selected table.  */
 	bool GenerateFile(DBETable* pTab,wxTextFile& htmpFile, wxTextFile& hFile, const wxString& classItemName,const wxString& classItemDef, const wxString& classColName, const wxString& classTableName, const wxString& classUtilName);
+	/*! \brief Format text file */
+	void FormatFile(wxTextFile& f);
 
 	virtual void OnCancelClick(wxCommandEvent& event);
 

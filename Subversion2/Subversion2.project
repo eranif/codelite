@@ -19,6 +19,10 @@
     <File Name="svn_file_explorer_traverser.cpp"/>
     <File Name="svn_overlay_tool.h"/>
     <File Name="svn_overlay_tool.cpp"/>
+    <File Name="SvnLogDialog.h"/>
+    <File Name="SvnLogDialog.cpp"/>
+    <File Name="SvnInfoDialog.h"/>
+    <File Name="SvnInfoDialog.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="subversion2.h"/>
@@ -71,9 +75,7 @@
     <File Name="svn_select_local_repo_dlg.h"/>
     <File Name="SvnCommitDialog.h"/>
     <File Name="SvnCommitDialog.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="formbuilder">
-    <File Name="subversion2.fbp"/>
+    <File Name="subversion2.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
@@ -83,6 +85,7 @@
     <File Name="wxcrafter.wxcp"/>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_subversion2_bitmaps.cpp"/>
+      <File Name="subversion2_subversion2_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="wxcrafter.h"/>

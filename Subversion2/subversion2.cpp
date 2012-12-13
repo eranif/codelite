@@ -31,6 +31,7 @@
 #include "svn_patch_dlg.h"
 #include <wx/dir.h>
 #include "svn_sync_dialog.h"
+#include "SvnLogDialog.h"
 
 static Subversion2* thePlugin = NULL;
 
@@ -606,8 +607,8 @@ void Subversion2::Patch(bool dryRun, const wxString &workingDirectory, wxEvtHand
         wxBusyCursor cursor;
 
         wxString patchFile;
-        patchFile               = dlg.m_filePicker->GetPath();
-        int eolPolicy           = dlg.m_radioBoxEOLPolicy->GetSelection();
+        patchFile               = dlg.GetFilePicker()->GetPath();
+        int eolPolicy           = dlg.GetRadioBoxPolicy()->GetSelection();
         bool removeFileWhenDone = false;
 
         if(eolPolicy != 0) {
@@ -925,9 +926,9 @@ void Subversion2::ChangeLog(const wxString& path, const wxString &fullpath, wxCo
     DoGetSvnInfoSync(info, path);
 
     SvnLogDialog dlg(GetManager()->GetTheApp()->GetTopWindow());
-    dlg.m_to->SetValue(wxT("BASE"));
-    dlg.m_compact->SetValue(true);
-    dlg.m_from->SetFocus();
+    dlg.GetTo()->SetValue(wxT("BASE"));
+    dlg.GetCompact()->SetValue(true);
+    dlg.GetFrom()->SetFocus();
     if(dlg.ShowModal() == wxID_OK) {
         wxString command;
         wxString loginString;
@@ -936,10 +937,10 @@ void Subversion2::ChangeLog(const wxString& path, const wxString &fullpath, wxCo
         }
 
         bool nonInteractive = GetNonInteractiveMode(event);
-        command << GetSvnExeName(nonInteractive) << loginString << wxT(" log -r") << dlg.m_from->GetValue() << wxT(":") << dlg.m_to->GetValue() << wxT(" \"") << fullpath << wxT("\"");
+        command << GetSvnExeName(nonInteractive) << loginString << wxT(" log -r") << dlg.GetFrom()->GetValue() << wxT(":") << dlg.GetTo()->GetValue() << wxT(" \"") << fullpath << wxT("\"");
         GetConsole()->Execute(command,
                               path,
-                              new SvnLogHandler(this, info.m_sourceUrl, dlg.m_compact->IsChecked(), event.GetId(), this),
+                              new SvnLogHandler(this, info.m_sourceUrl, dlg.GetCompact()->IsChecked(), event.GetId(), this),
                               false);
     }
 }

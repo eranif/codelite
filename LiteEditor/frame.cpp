@@ -5047,7 +5047,10 @@ void clMainFrame::OnActiveProjectChanged(wxCommandEvent& e)
     e.Skip();
     m_buildDropDownMenu = new wxMenu;
     DoCreateBuildDropDownMenu(m_buildDropDownMenu);
-    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+    if ( GetToolBar() &&
+        GetToolBar()->FindById(XRCID("build_active_project")) ) {
+	    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+    }
 }
 
 void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)

@@ -5058,9 +5058,8 @@ void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)
     e.Skip();
     m_buildDropDownMenu = new wxMenu;
     DoCreateBuildDropDownMenu(m_buildDropDownMenu);
-    if ( GetToolBar() &&
-        GetToolBar()->FindById(XRCID("build_active_project")) ) {
-	    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+    if ( GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project")) ) {
+        GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
     }
 }
 
@@ -5069,20 +5068,34 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
     menu->Append(XRCID("build_active_project"), _("Build active Project"));
     menu->Append(XRCID("clean_active_project"), _("Clean active Project"));
     menu->Append(XRCID("compile_active_file"),  _("Compile current file"));
-
+    
+    // disconnect old event handlers
+    std::set<int>::iterator iter = m_dynamicEventIds.begin();
+    for(; iter != m_dynamicEventIds.end(); ++iter) {
+        this->Disconnect(*iter, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
+    }
+    m_dynamicEventIds.clear();
+    
     // build the menu and show it
     BuildConfigPtr bldcfg = WorkspaceST::Get()->GetProjBuildConf( WorkspaceST::Get()->GetActiveProjectName(), "" );
     if ( bldcfg ) {
+        
         const BuildConfig::StringMap_t& customTargets = bldcfg->GetCustomTargets();
         if ( !customTargets.empty() ) {
             menu->AppendSeparator();
         }
-
+        
         BuildConfig::StringMap_t::const_iterator iter = customTargets.begin();
         for( ; iter != customTargets.end(); ++iter ) {
-            menu->Append(wxXmlResource::GetXRCID(iter->first.c_str()), iter->first);
-            menu->Connect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
+            int winid = wxXmlResource::GetXRCID(iter->first.c_str());
+            menu->Append(winid, iter->first);
+            this->Connect(winid, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
+            m_dynamicEventIds.insert( winid );
         }
+        
+    } else {
+        wxLogMessage("Could not locate build configuration for project: " + WorkspaceST::Get()->GetActiveProjectName() );
+        
     }
 }
 

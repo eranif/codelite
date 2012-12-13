@@ -43,6 +43,7 @@
 #include "debuggerpane.h"
 #include "notebook_ex.h"
 #include "mainbook.h"
+#include <set>
 
 // forward decls
 class TagEntry;
@@ -114,6 +115,7 @@ class clMainFrame : public wxFrame
     StatusbarTimer*                       m_statusbarTimer;
     MyMenuBar*                            m_myMenuBar;
     wxMenu*                               m_buildDropDownMenu;
+    std::set<int>                         m_dynamicEventIds;
     
 protected:
     bool IsEditorEvent(wxEvent &event);

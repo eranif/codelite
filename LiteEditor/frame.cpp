@@ -38,6 +38,7 @@
 #include "localstable.h"
 #include "console_frame.h"
 #include "clauidockart.h"
+#include "build_custom_targets_menu_manager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -182,6 +183,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(wxID_CLOSE_ALL,                    clMainFrame::OnFileCloseAll)
     EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, clMainFrame::OnRecentFile)
     EVT_MENU_RANGE(RecentWorkspaceSubMenuID, RecentWorkspaceSubMenuID + 10, clMainFrame::OnRecentWorkspace)
+    EVT_MENU_RANGE(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, clMainFrame::OnBuildCustomTarget)
     EVT_MENU(XRCID("load_last_session"),        clMainFrame::OnLoadLastSession)
     EVT_MENU(wxID_EXIT,                         clMainFrame::OnQuit)
 
@@ -626,8 +628,10 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveProjectChanged), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
 
 }
 
@@ -651,8 +655,10 @@ clMainFrame::~clMainFrame(void)
 
     EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveProjectChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
 
     delete m_timer;
     delete m_statusbarTimer;
@@ -926,7 +932,12 @@ void clMainFrame::CreateGUIControls(void)
     } else {
         CreateToolbars24();
     }
-
+    
+    // Connect the custom build target events range
+    if ( GetToolBar() ) {
+        GetToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
+    }
+    
     GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
     GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu( wxT("debugger_view_rmenu") ) );
 
@@ -2390,35 +2401,17 @@ void clMainFrame::OnBuildCustomTarget(wxCommandEvent& event)
     bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
     if (enable) {
 
-        wxString projectName, targetName;
-        // get the project name
-        TreeItemInfo item = GetWorkspaceTab()->GetFileView()->GetSelectedItemInfo();
-        if (item.m_itemType != ProjectItem::TypeProject) {
-            return;
-        }
-
-        // set teh project name
-        projectName = item.m_text;
-
         // get the selected configuration to be built
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-        if (bldConf) {
-            std::map<wxString, wxString> targets = bldConf->GetCustomTargets();
-            std::map<wxString, wxString>::iterator iter = targets.begin();
-            for (; iter != targets.end(); iter++) {
-                if (wxXmlResource::GetXRCID(iter->first.c_str()) == event.GetId()) {
-                    targetName = iter->first;
-                    break;
-                }
-            }
-
-            if (targetName.IsEmpty()) {
+        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(CustomTargetsMgr::Get().GetProjectName(), wxEmptyString);
+        if ( bldConf ) {
+            CustomTargetsMgr::Pair_t target = CustomTargetsMgr::Get().GetTarget( event.GetId() );
+            if ( target.second.IsEmpty() ) {
                 wxLogMessage(wxString::Format(wxT("%s=%d"), _("Failed to find Custom Build Target for event ID"), event.GetId()));
                 return;
             }
 
-            QueueCommand info(projectName, bldConf->GetName(), false, QueueCommand::CustomBuild);
-            info.SetCustomBuildTarget(targetName);
+            QueueCommand info(CustomTargetsMgr::Get().GetProjectName(), bldConf->GetName(), false, QueueCommand::CustomBuild);
+            info.SetCustomBuildTarget(target.first);
 
             ManagerST::Get()->PushQueueCommand(info);
             ManagerST::Get()->ProcessCommandQueue();
@@ -5042,23 +5035,13 @@ void clMainFrame::OnShowAuiBuildMenu(wxAuiToolBarEvent& e)
     }
 }
 
-void clMainFrame::OnActiveProjectChanged(wxCommandEvent& e)
+void clMainFrame::OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e)
 {
     e.Skip();
     m_buildDropDownMenu = new wxMenu;
     DoCreateBuildDropDownMenu(m_buildDropDownMenu);
     if ( GetToolBar() &&
         GetToolBar()->FindById(XRCID("build_active_project")) ) {
-	    GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
-    }
-}
-
-void clMainFrame::OnWorkspaceLoaded(wxCommandEvent& e)
-{
-    e.Skip();
-    m_buildDropDownMenu = new wxMenu;
-    DoCreateBuildDropDownMenu(m_buildDropDownMenu);
-    if ( GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project")) ) {
         GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
     }
 }
@@ -5069,28 +5052,23 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
     menu->Append(XRCID("clean_active_project"), _("Clean active Project"));
     menu->Append(XRCID("compile_active_file"),  _("Compile current file"));
     
-    // disconnect old event handlers
-    std::set<int>::iterator iter = m_dynamicEventIds.begin();
-    for(; iter != m_dynamicEventIds.end(); ++iter) {
-        this->Disconnect(*iter, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
-    }
-    m_dynamicEventIds.clear();
-    
     // build the menu and show it
     BuildConfigPtr bldcfg = WorkspaceST::Get()->GetProjBuildConf( WorkspaceST::Get()->GetActiveProjectName(), "" );
-    if ( bldcfg ) {
+    if ( bldcfg && bldcfg->IsCustomBuild() ) {
         
-        const BuildConfig::StringMap_t& customTargets = bldcfg->GetCustomTargets();
-        if ( !customTargets.empty() ) {
+        // Update teh custom targets
+        CustomTargetsMgr::Get().SetTargets( WorkspaceST::Get()->GetActiveProjectName(), bldcfg->GetCustomTargets() );
+        
+        if ( !CustomTargetsMgr::Get().GetTargets().empty() ) {
             menu->AppendSeparator();
         }
         
-        BuildConfig::StringMap_t::const_iterator iter = customTargets.begin();
-        for( ; iter != customTargets.end(); ++iter ) {
-            int winid = wxXmlResource::GetXRCID(iter->first.c_str());
-            menu->Append(winid, iter->first);
-            this->Connect(winid, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
-            m_dynamicEventIds.insert( winid );
+        const CustomTargetsMgr::Map_t& targets = CustomTargetsMgr::Get().GetTargets();
+        CustomTargetsMgr::Map_t::const_iterator iter = targets.begin();
+        for( ; iter != targets.end(); ++iter ) {
+            int winid = iter->first; // contains the menu ID
+            menu->Append(winid, 
+                         iter->second.first);
         }
         
     } else {
@@ -5099,5 +5077,16 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
     }
 }
 
+void clMainFrame::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    CustomTargetsMgr::Get().Clear();
+    
+    // Reset the menu
+    m_buildDropDownMenu = new wxMenu;
+    if ( GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project")) ) {
+        GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+    }
+}
 
 

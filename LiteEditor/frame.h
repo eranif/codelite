@@ -115,7 +115,6 @@ class clMainFrame : public wxFrame
     StatusbarTimer*                       m_statusbarTimer;
     MyMenuBar*                            m_myMenuBar;
     wxMenu*                               m_buildDropDownMenu;
-    std::set<int>                         m_dynamicEventIds;
     
 protected:
     bool IsEditorEvent(wxEvent &event);
@@ -549,8 +548,8 @@ protected:
 
     // Misc
     void OnActivateEditor (wxCommandEvent &e);
-    void OnActiveProjectChanged(wxCommandEvent &e);
-    void OnWorkspaceLoaded(wxCommandEvent &e);
+    void OnUpdateCustomTargetsDropDownMenu(wxCommandEvent &e);
+    void OnWorkspaceClosed(wxCommandEvent &e);
     DECLARE_EVENT_TABLE()
 };
 

@@ -113,6 +113,9 @@ const wxString TERMINAL_CMD         = wxT("");
 #define PATH_SEP wxT("/")
 #endif
 
+#define ID_MENU_CUSTOM_TARGET_FIRST 15000
+#define ID_MENU_CUSTOM_TARGET_MAX   15100
+
 #define viewAsMenuItemID         23500
 #define viewAsMenuItemMaxID      23500+100
 

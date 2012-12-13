@@ -59,6 +59,7 @@
 #include "fileexplorer.h"
 #include "plugin.h"
 #include "event_notifier.h"
+#include "build_custom_targets_menu_manager.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -363,13 +364,17 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
             targets = bldConf->GetCustomTargets();
             if (targets.empty() == false) {
                 wxMenu *customTargetsMenu = new wxMenu();
-
+                CustomTargetsMgr::Get().SetTargets( projectName, targets );
+                const CustomTargetsMgr::Map_t& targetsMap = CustomTargetsMgr::Get().GetTargets();
                 // get list of custom targets, and create menu entry for each target
-                std::map<wxString, wxString>::iterator iter = targets.begin();
-                for (; iter != targets.end(); iter++) {
-                    item = new wxMenuItem(customTargetsMenu, wxXmlResource::GetXRCID(iter->first.c_str()), iter->first, wxEmptyString, wxITEM_NORMAL);
+                CustomTargetsMgr::Map_t::const_iterator iter = targetsMap.begin();
+                for (; iter != targetsMap.end(); ++iter) {
+                    item = new wxMenuItem(customTargetsMenu, 
+                                          iter->first,         // Menu ID
+                                          iter->second.first,  // Menu Name
+                                          wxEmptyString, 
+                                          wxITEM_NORMAL);
                     customTargetsMenu->Append(item);
-                    clMainFrame::Get()->Connect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget));
                 }
 
                 // iterator over the menu items and search for 'Project Only' target
@@ -415,12 +420,6 @@ void FileViewTree::PopupContextMenu( wxMenu *menu, MenuType type, const wxString
     int customTargetsID = menu->FindItem(gsCustomTargetsMenu);
     if (customTargetsID != wxNOT_FOUND) {
         menu->Destroy(customTargetsID);
-
-        // disconnect events
-        std::map<wxString, wxString>::iterator iter = targets.begin();
-        for (; iter != targets.end(); iter++) {
-            clMainFrame::Get()->Disconnect(wxXmlResource::GetXRCID(iter->first.c_str()), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget));
-        }
     }
 }
 

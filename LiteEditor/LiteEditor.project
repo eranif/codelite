@@ -11,6 +11,8 @@
     <File Name="fileview.cpp"/>
     <File Name="resources.cpp"/>
     <File Name="filehistory.cpp"/>
+    <File Name="build_custom_targets_menu_manager.h"/>
+    <File Name="build_custom_targets_menu_manager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="cpp_symbol_tree.h"/>

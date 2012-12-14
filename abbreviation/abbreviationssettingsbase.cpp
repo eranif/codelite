@@ -22,38 +22,18 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
     
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer3->Add(bSizer7, 0, wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer8 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer7->Add(bSizer8, 0, 0, 5);
-    
-    m_buttonNew = new wxButton(this, wxID_NEW, _("New..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer8->Add(m_buttonNew, 0, wxALL, 5);
-    
-    m_buttonDelete = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer8->Add(m_buttonDelete, 0, wxALL, 5);
-    
     wxArrayString m_listBoxAbbreviationsArr;
     m_listBoxAbbreviations = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listBoxAbbreviationsArr, 0);
     
-    bSizer7->Add(m_listBoxAbbreviations, 1, wxALL|wxEXPAND, 5);
+    bSizer3->Add(m_listBoxAbbreviations, 0, wxALL|wxEXPAND, 5);
     m_listBoxAbbreviations->SetMinSize(wxSize(150,-1));
-    
-    wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer3->Add(bSizer6, 0, 0, 5);
     
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     
@@ -71,18 +51,15 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     
     bSizer5->Add(m_textCtrlName, 1, wxALL|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("")), wxVERTICAL);
+    m_banner4 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_banner4->SetBitmap(wxNullBitmap);
+    m_banner4->SetText(wxT(""), _("You can use | (pipe) character to indicate where the caret should be placed. \nYou can use $(VariableName) to indicate CodeLite to prompt you for suitable replacement"));
+    m_banner4->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK), wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_banner4->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
-    bSizer4->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
+    bSizer4->Add(m_banner4, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("You can use | (pipe) character to indicate where the caret should be placed. \nYou can use $(VariableName) to indicate CodeLite to prompt you for suitable replacement"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText2Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText2Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText2->SetFont(m_staticText2Font);
-    
-    sbSizer1->Add(m_staticText2, 0, wxALL|wxEXPAND, 5);
-    
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
     wxFont m_stcFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_stc->SetFont(m_stcFont);
     // Configure the fold margin
@@ -123,49 +100,79 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     m_checkBoxImmediateInsert = new wxCheckBox(this, wxID_ANY, _("Immediate Insert"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxImmediateInsert->SetValue(false);
     
-    mainSizer->Add(m_checkBoxImmediateInsert, 0, wxALL, 11);
+    bSizer4->Add(m_checkBoxImmediateInsert, 0, wxALL, 11);
     
     m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
     
     mainSizer->Add(m_staticline1, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     
-    mainSizer->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(bSizer2, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_buttonSave = new wxButton(this, wxID_OK, _("&Save"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonSave = new wxButton(this, wxID_SAVE, _("&Save"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonSave->SetDefault();
+    m_buttonSave->SetToolTip(_("Save the current changes"));
     
-    bSizer2->Add(m_buttonSave, 0, wxALL, 5);
+    bSizer2->Add(m_buttonSave, 0, wxALL|wxEXPAND, 5);
+    
+    m_buttonNew = new wxButton(this, wxID_NEW, _("New..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonNew->SetToolTip(_("Create a new abbreviation"));
+    
+    bSizer2->Add(m_buttonNew, 0, wxALL|wxEXPAND, 5);
+    
+    m_buttonDelete = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonDelete->SetToolTip(_("Delete the currently selected abbreviation"));
+    
+    bSizer2->Add(m_buttonDelete, 0, wxALL|wxEXPAND, 5);
+    
+    bSizer2->Add(0, 0, 1, wxALL, 5);
+    
+    m_button5 = new wxButton(this, wxID_ANY, _("Import..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button5->SetToolTip(_("Import abbreviations from the file system..."));
+    
+    bSizer2->Add(m_button5, 0, wxALL, 5);
+    
+    m_button6 = new wxButton(this, wxID_ANY, _("Export..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button6->SetToolTip(_("Export abbreviations to the file system..."));
+    
+    bSizer2->Add(m_button6, 0, wxALL, 5);
+    
+    bSizer2->Add(0, 0, 1, wxALL, 5);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Close"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
+    bSizer2->Add(m_buttonCancel, 0, wxALL|wxEXPAND, 5);
     
     
-    SetSizeHints(679,484);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
     // Connect events
+    m_listBoxAbbreviations->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
+    m_stc->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
+    m_buttonSave->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
+    m_buttonSave->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
     m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnNew), NULL, this);
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete), NULL, this);
     m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI), NULL, this);
-    m_listBoxAbbreviations->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
-    m_stc->Connect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
-    m_buttonSave->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
-    m_buttonSave->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
+    m_button5->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnImport), NULL, this);
+    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnExport), NULL, this);
     
 }
 
 AbbreviationsSettingsBase::~AbbreviationsSettingsBase()
 {
+    m_listBoxAbbreviations->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
+    m_stc->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
+    m_buttonSave->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
+    m_buttonSave->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
     m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnNew), NULL, this);
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete), NULL, this);
     m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI), NULL, this);
-    m_listBoxAbbreviations->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
-    m_stc->Disconnect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
-    m_buttonSave->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
-    m_buttonSave->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
+    m_button5->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnImport), NULL, this);
+    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnExport), NULL, this);
     
 }

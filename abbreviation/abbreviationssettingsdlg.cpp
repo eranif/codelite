@@ -232,3 +232,9 @@ void AbbreviationsSettingsDlg::OnMarkDirty(wxStyledTextEvent& event)
         m_dirty = true;
     }
 }
+void AbbreviationsSettingsDlg::OnExport(wxCommandEvent& event)
+{
+}
+void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
+{
+}

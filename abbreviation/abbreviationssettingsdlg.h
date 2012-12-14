@@ -46,6 +46,8 @@ class AbbreviationsSettingsDlg : public AbbreviationsSettingsBase
     clConfig              m_config;
 
 protected:
+    virtual void OnExport(wxCommandEvent& event);
+    virtual void OnImport(wxCommandEvent& event);
     virtual void OnMarkDirty(wxStyledTextEvent& event);
     virtual void OnSaveUI(wxUpdateUIEvent& event);
     // Handlers for AbbreviationsSettingsBase events.

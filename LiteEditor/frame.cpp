@@ -37,7 +37,6 @@
 #include "includepathlocator.h"
 #include "localstable.h"
 #include "console_frame.h"
-#include "clauidockart.h"
 #include "build_custom_targets_menu_manager.h"
 
 #ifdef __WXGTK20__
@@ -770,34 +769,21 @@ void clMainFrame::CreateGUIControls(void)
 
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(this);
-    m_mgr.SetArtProvider(new CLAuiDockArt());
     SetAUIManagerFlags();
-
-    wxColour frameColor = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-    wxColour frameColor2;
-    if(DrawingUtils::IsDark(frameColor)) {
-        m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR, wxT("WHITE"));
+    
+    wxColour gradientStart, gradientEnd;
+    if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm ) {
+        gradientStart = wxColour(5, 96, 178);
+        gradientEnd   = wxColour(3, 78, 144);
+        
     } else {
-        m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+        gradientStart = wxColour(216, 112, 52);
+        gradientEnd   = wxColour(216, 98, 30);
     }
 
-#ifdef __WXMSW__
-    frameColor2 = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
-#else
-    frameColor2 = DrawingUtils::LightColour(frameColor, 2.0);
-#endif
-
-#ifdef __WXMAC__
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,     *wxWHITE);
-#else
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   frameColor);
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            frameColor2);
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,     wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTIONTEXT));
-#endif
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,   gradientEnd);
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,            gradientStart);
 
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR,                      DrawingUtils::GetPanelBgColour());
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,                DrawingUtils::GetPanelBgColour());
@@ -4639,7 +4625,8 @@ void clMainFrame::SetAUIManagerFlags()
         auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
         break;
     }
-
+    
+    auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
 #if defined(__WXMAC__) || defined(__WXMSW__)
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
 #endif

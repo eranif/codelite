@@ -121,6 +121,7 @@ void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
 {
     AbbreviationsSettingsDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
     dlg.ShowModal();
+    m_config.Reload();
 }
 
 void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
@@ -143,9 +144,12 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
     
     wxString wordAtCaret = editor->GetWordAtCaret();
     
-    if (jsonData.IsAutoInsert() && wordAtCaret.IsEmpty() == false) {
-        InsertExpansion(wordAtCaret);
-    } else {
+    bool autoInsert = (jsonData.IsAutoInsert() && wordAtCaret.IsEmpty() == false);
+    if  ( autoInsert ){
+        autoInsert = InsertExpansion(wordAtCaret);
+    }
+    
+    if ( !autoInsert ) {
         static wxBitmap bmp = LoadBitmapFile(wxT("abbrev.png")) ;
         if (bmp.IsOk()) {
             editor->RegisterImageForKind(wxT("Abbreviation"), bmp);
@@ -206,13 +210,13 @@ void AbbreviationPlugin::InitDefaults()
     }
 }
 
-void AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
+bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 {
     // get the active editor
     IEditor *editor = m_mgr->GetActiveEditor();
 
     if (!editor || !abbreviation)
-        return;
+        return false;
 
     // hide the completion box
     if (editor->IsCompletionBoxShown()) {
@@ -301,5 +305,7 @@ void AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
             editor->ReplaceSelection(text);
             editor->SetCaretAt(curPos + where - typedWordLen);
         }
-    }
+        return true;
+    } else
+        return false;
 }

@@ -85,7 +85,7 @@ void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
         m_currSelection = where;
 
         m_textCtrlName->SetValue(name);
-        m_textCtrlExpansion->Clear();
+        m_stc->Clear();
         m_textCtrlName->SetFocus();
     }
 }
@@ -106,7 +106,7 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
 
     // delete it
     m_listBoxAbbreviations->Delete((unsigned int) m_currSelection);
-    m_textCtrlExpansion->Clear();
+    m_stc->Clear();
     m_textCtrlName->Clear();
 
     // select the previous item in the list
@@ -135,14 +135,6 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
 void AbbreviationsSettingsDlg::OnDeleteUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_currSelection != wxNOT_FOUND && m_activeItemName.IsEmpty() == false);
-}
-
-void AbbreviationsSettingsDlg::OnMarkDirty(wxCommandEvent& event)
-{
-    event.Skip();
-    if(m_activeItemName.IsEmpty() == false) {
-        m_dirty = true;
-    }
 }
 
 void AbbreviationsSettingsDlg::OnSave(wxCommandEvent& event)
@@ -185,7 +177,7 @@ void AbbreviationsSettingsDlg::DoSelectItem(int item)
         std::map<wxString, wxString> entries = m_data.GetEntries();
         std::map<wxString, wxString>::iterator iter = entries.find(name);
         if(iter != entries.end()) {
-            m_textCtrlExpansion->SetValue(iter->second);
+            m_stc->SetText(iter->second);
         }
         m_dirty = false;
     }
@@ -205,7 +197,7 @@ void AbbreviationsSettingsDlg::DoSaveCurrent()
     }
 
     // insert the new item
-    entries[m_textCtrlName->GetValue()] = m_textCtrlExpansion->GetValue();
+    entries[m_textCtrlName->GetValue()] = m_stc->GetText();
     m_data.SetEntries(entries);
 
     m_activeItemName = m_textCtrlName->GetValue();
@@ -231,4 +223,12 @@ void AbbreviationsSettingsDlg::DoDeleteEntry(const wxString &name)
 void AbbreviationsSettingsDlg::OnSaveUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_dirty);
+}
+
+void AbbreviationsSettingsDlg::OnMarkDirty(wxStyledTextEvent& event)
+{
+    event.Skip();
+    if(m_activeItemName.IsEmpty() == false) {
+        m_dirty = true;
+    }
 }

@@ -27,6 +27,14 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="resources">
+    <File Name="abbreviationssettingsbase.wxcp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="abbreviationssettingsbase_abbreviation_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -52,7 +60,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="..//lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
@@ -102,7 +110,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -189,12 +197,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="resources">
-    <File Name="abbreviationssettingsbase.wxcp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="wxcrafter">
-    <VirtualDirectory Name="resources">
-      <File Name="abbreviationssettingsbase_abbreviation_bitmaps.cpp"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
 </CodeLite_Project>

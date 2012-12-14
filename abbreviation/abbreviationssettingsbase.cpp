@@ -82,12 +82,43 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     
     sbSizer1->Add(m_staticText2, 0, wxALL|wxEXPAND, 5);
     
-    m_textCtrlExpansion = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    wxFont m_textCtrlExpansionFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlExpansion->SetFont(m_textCtrlExpansionFont);
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_stcFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_stc->SetFont(m_stcFont);
+    // Configure the fold margin
+    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth    (4, 0);
     
-    bSizer4->Add(m_textCtrlExpansion, 1, wxALL|wxEXPAND, 5);
-    m_textCtrlExpansion->SetMinSize(wxSize(300,300));
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 16);
+    m_stc->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_CPP);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
+        m_stc->StyleSetFont(i, m_stcFont);
+    }
+    m_stc->SetWrapMode(0);
+    m_stc->SetIndentationGuides(0);
+    
+    bSizer4->Add(m_stc, 1, wxALL|wxEXPAND, 5);
     
     m_checkBoxImmediateInsert = new wxCheckBox(this, wxID_ANY, _("Immediate Insert"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxImmediateInsert->SetValue(false);
@@ -121,8 +152,7 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete), NULL, this);
     m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI), NULL, this);
     m_listBoxAbbreviations->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
-    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
-    m_textCtrlExpansion->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
+    m_stc->Connect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
     m_buttonSave->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
     m_buttonSave->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
     
@@ -134,8 +164,7 @@ AbbreviationsSettingsBase::~AbbreviationsSettingsBase()
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnDelete), NULL, this);
     m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnDeleteUI), NULL, this);
     m_listBoxAbbreviations->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(AbbreviationsSettingsBase::OnItemSelected), NULL, this);
-    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
-    m_textCtrlExpansion->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
+    m_stc->Disconnect(wxEVT_STC_CHARADDED, wxStyledTextEventHandler(AbbreviationsSettingsBase::OnMarkDirty), NULL, this);
     m_buttonSave->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AbbreviationsSettingsBase::OnSave), NULL, this);
     m_buttonSave->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AbbreviationsSettingsBase::OnSaveUI), NULL, this);
     

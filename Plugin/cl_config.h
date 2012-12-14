@@ -46,7 +46,10 @@ public:
     clConfig(const wxString& filename = "codelite.conf");
     virtual ~clConfig();
     static clConfig& Get();
-
+    
+    // Re-read the content from the disk
+    void Reload();
+    
     // Workspace tab order
     // -----------------------------
     void SetWorkspaceTabOrder( const wxArrayString& tabs, int selected );

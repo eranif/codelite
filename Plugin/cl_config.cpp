@@ -80,3 +80,12 @@ void clConfig::WriteItem(const clConfigItem* item)
     m_root->save(m_filename);
 }
 
+void clConfig::Reload()
+{
+    if ( m_filename.FileExists() == false )
+        return;
+        
+    delete m_root;
+    m_root = new JSONRoot(m_filename);
+}
+

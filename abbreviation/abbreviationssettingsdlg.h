@@ -46,13 +46,13 @@ class AbbreviationsSettingsDlg : public AbbreviationsSettingsBase
     clConfig              m_config;
 
 protected:
+    virtual void OnMarkDirty(wxStyledTextEvent& event);
     virtual void OnSaveUI(wxUpdateUIEvent& event);
     // Handlers for AbbreviationsSettingsBase events.
     void OnItemSelected( wxCommandEvent& event );
     void OnNew(wxCommandEvent &e);
     void OnDelete( wxCommandEvent& event );
     void OnDeleteUI( wxUpdateUIEvent& event );
-    void OnMarkDirty( wxCommandEvent& event );
     void OnSave( wxCommandEvent& event );
 
 private:

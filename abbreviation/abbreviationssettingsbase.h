@@ -16,6 +16,7 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/statbox.h>
+#include <wx/stc/stc.h>
 #include <wx/checkbox.h>
 #include <wx/statline.h>
 
@@ -28,7 +29,7 @@ protected:
     wxStaticText* m_staticText1;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText2;
-    wxTextCtrl* m_textCtrlExpansion;
+    wxStyledTextCtrl* m_stc;
     wxCheckBox* m_checkBoxImmediateInsert;
     wxStaticLine* m_staticline1;
     wxButton* m_buttonSave;
@@ -39,7 +40,7 @@ protected:
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnMarkDirty(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnMarkDirty(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveUI(wxUpdateUIEvent& event) { event.Skip(); }
 

@@ -508,7 +508,7 @@ public:
      * @param word part of the word
      * @param owner event handler to be notified once a selection is made
      */
-    virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, wxEvtHandler *owner);
+    virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool autoRefreshList, wxEvtHandler *owner);
 
     /**
      * @brief register new user image fot TagEntry kind

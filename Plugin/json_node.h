@@ -7,6 +7,7 @@
 #include <wx/arrstr.h>
 #include <wx/gdicmn.h>
 #include "codelite_exports.h"
+#include <map>
 #include "cJSON.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,10 @@ protected:
 
     // Values
     wxVariant _value;
-
+    
+public:
+    typedef std::map<wxString, wxString> wxStringMap_t;
+    
 public:
     JSONElement(cJSON *json);
     JSONElement(const wxString &name, const wxVariant& val, int type);
@@ -64,6 +68,8 @@ public:
     double        toDouble(double defaultVal = -1.0) const;
     wxSize        toSize() const;
     wxPoint       toPoint() const;
+    JSONElement::wxStringMap_t toStringMap() const;
+    
     
     // Writers
     ////////////////////////////////////////////////
@@ -107,6 +113,7 @@ public:
      */
     JSONElement& addProperty(const wxString &name, const wxArrayString &arr);
     
+    JSONElement& addProperty(const wxString &name, const JSONElement::wxStringMap_t& stringMap);
     /**
      * @brief delete property by name
      */

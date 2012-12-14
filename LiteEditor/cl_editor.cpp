@@ -3074,7 +3074,7 @@ void LEditor::OnDragStart(wxStyledTextEvent& e)
     e.Skip();
 }
 
-void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, wxEvtHandler* owner)
+void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool autoRefreshList, wxEvtHandler* owner)
 {
     if(tags.empty()) {
         return;
@@ -3098,13 +3098,7 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
                 CheckboxDetails(wxT("CodeCompletionTooManyMatches")));
     }
 
-    CodeCompletionBox::Get().Display(this, tags, word, tags.at(0)->GetKind() == wxT("cpp_keyword"), owner);
-    //if(CodeCompletionManager::Get().GetWordCompletionRefreshNeeded()) {
-    //    CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
-    //    CodeCompletionBox::Get().Display(this, tags, word, false, NULL);
-    //
-    //} else {
-    //}
+    CodeCompletionBox::Get().Display(this, tags, word, !autoRefreshList, owner);
 }
 
 void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxString& word, bool showFullDecl, bool autoHide, bool autoInsertSingleChoice)

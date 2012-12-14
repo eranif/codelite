@@ -34,6 +34,7 @@
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/regex.h>
+#include "cl_config.h"
 
 static AbbreviationPlugin* thePlugin = NULL;
 
@@ -64,6 +65,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 AbbreviationPlugin::AbbreviationPlugin(IManager *manager)
     : IPlugin(manager)
     , m_topWindow(NULL)
+    , m_config("abbreviations.conf")
 {
     m_longName = _("Abbreviation plugin");
     m_shortName = wxT("abbreviation");
@@ -128,12 +130,20 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
         return;
     }
 
-    AbbreviationEntry data;
-    m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+    AbbreviationJSONEntry jsonData;
+    if ( !m_config.ReadItem( &jsonData ) ) {
+        // merge the data from the old configuration
+        AbbreviationEntry data;
+        m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
     
-    wxString wordAtCaret = editor->GetWordAtCaret();    
+        jsonData.SetAutoInsert( data.GetAutoInsert() );
+        jsonData.SetEntries( data.GetEntries() );
+        m_config.WriteItem( &jsonData );
+    }
     
-    if (data.GetAutoInsert() && wordAtCaret.IsEmpty() == false) {
+    wxString wordAtCaret = editor->GetWordAtCaret();
+    
+    if (jsonData.IsAutoInsert() && wordAtCaret.IsEmpty() == false) {
         InsertExpansion(wordAtCaret);
     } else {
         static wxBitmap bmp = LoadBitmapFile(wxT("abbrev.png")) ;
@@ -142,15 +152,15 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
             std::vector<TagEntryPtr> tags;
 
             // search for the old item
-            std::map<wxString, wxString> entries = data.GetEntries();
-            std::map<wxString, wxString>::iterator iter = entries.begin();
-            for (; iter != entries.end(); iter ++) {
+            const JSONElement::wxStringMap_t& entries = jsonData.GetEntries();
+            JSONElement::wxStringMap_t::const_iterator iter = entries.begin();
+            for (; iter != entries.end(); ++iter) {
                 TagEntryPtr t(new TagEntry());
                 t->SetName(iter->first);
                 t->SetKind(wxT("Abbreviation"));
                 tags.push_back(t);
             }
-            editor->ShowCompletionBox(tags, editor->GetWordAtCaret(), this);
+            editor->ShowCompletionBox(tags, editor->GetWordAtCaret(), false, this);
         }
     }
 }
@@ -169,22 +179,30 @@ void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
 void AbbreviationPlugin::InitDefaults()
 {
     // check to see if there are any abbreviations configured
-    AbbreviationEntry data;
-    m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+    AbbreviationJSONEntry jsonData;
+    if ( !m_config.ReadItem(&jsonData) ) {
+        // merge the data from the old configuration
+        AbbreviationEntry data;
+        m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+    
+        jsonData.SetAutoInsert( data.GetAutoInsert() );
+        jsonData.SetEntries( data.GetEntries() );
+        m_config.WriteItem( &jsonData );
+    }
 
     // search for the old item
-    if (data.GetEntries().empty()) {
+    if (jsonData.GetEntries().empty()) {
         // fill some default abbreviations
-        std::map<wxString, wxString> entries;
-        entries[wxT("main")] = wxT("int main(int argc, char **argv)\n{\n\t|\n}\n");
-        entries[wxT("while")] = wxT("while(|)\n{\n\t\n}\n");
-        entries[wxT("dowhile")] = wxT("do\n{\n\t\n}while(|)\n");
-        entries[wxT("tryblock")] = wxT("try\n{\n\t|\n}\ncatch($(ExceptionType) e)\n{\n}\n");
-        entries[wxT("for_size")] = wxT("for(size_t i=0; i<|; i++)\n{\n}\n");
-        entries[wxT("for_int")] = wxT("for(int i=0; i<|; i++)\n{\n}\n");
-        data.SetEntries(entries);
+        JSONElement::wxStringMap_t entries;
+        entries[wxT("main")] = wxT("int main(int argc, char **argv) {\n    |\n}\n");
+        entries[wxT("while")] = wxT("while(|) {\n    \n}\n");
+        entries[wxT("dowhile")] = wxT("do {\n    \n}while ( | );\n");
+        entries[wxT("tryblock")] = wxT("try {\n    |\n} catch ( $(ExceptionType) e ) {\n}\n");
+        entries[wxT("for_size")] = wxT("for ( size_t i=0; i<|; ++i ) {\n}\n");
+        entries[wxT("for_int")] = wxT("for( int i=0; i<|; ++i) {\n}\n");
+        jsonData.SetEntries(entries);
 
-        m_mgr->GetConfigTool()->WriteObject(wxT("AbbreviationsData"), &data);
+        m_config.WriteItem( &jsonData );
     }
 }
 
@@ -203,12 +221,20 @@ void AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 
     // search for abbreviation that matches str
     // prepate list of abbreviations
-    AbbreviationEntry data;
-    m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+    AbbreviationJSONEntry jsonData;
+    if ( !m_config.ReadItem(&jsonData) ) {
+        // merge the data from the old configuration
+        AbbreviationEntry data;
+        m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+    
+        jsonData.SetAutoInsert( data.GetAutoInsert() );
+        jsonData.SetEntries( data.GetEntries() );
+        m_config.WriteItem( &jsonData );
+    }
 
     // search for the old item
-    std::map<wxString, wxString> entries = data.GetEntries();
-    std::map<wxString, wxString>::iterator iter = entries.find(abbreviation);
+    const JSONElement::wxStringMap_t& entries = jsonData.GetEntries();
+    JSONElement::wxStringMap_t::const_iterator iter = entries.find(abbreviation);
 
     if (iter != entries.end()) {
 

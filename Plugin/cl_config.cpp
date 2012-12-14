@@ -3,9 +3,9 @@
 #include <wx/filefn.h>
 #include <wx/log.h>
 
-clConfig::clConfig()
+clConfig::clConfig(const wxString& filename)
 {
-    m_filename = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.conf");
+    m_filename = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" + wxFileName::GetPathSeparator() + filename;
     {
         // Make sure that the directory exists
         wxLogNull noLog;
@@ -62,5 +62,21 @@ void clConfig::DoDeleteProperty(const wxString& property)
     if ( m_root->toElement().hasNamedObject(property) ) {
         m_root->toElement().removeProperty(property);
     }
+}
+
+bool clConfig::ReadItem(clConfigItem* item)
+{
+    if ( m_root->toElement().hasNamedObject(item->GetName()) ) {
+        item->FromJSON( m_root->toElement().namedObject(item->GetName()));
+        return true;
+    }
+    return false;
+}
+
+void clConfig::WriteItem(const clConfigItem* item)
+{
+    DoDeleteProperty(item->GetName());
+    m_root->toElement().append(item->ToJSON());
+    m_root->save(m_filename);
 }
 

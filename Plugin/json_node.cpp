@@ -427,3 +427,39 @@ void JSONElement::removeProperty(const wxString& name)
     cJSON_DeleteItemFromObject(_json, name.mb_str(wxConvUTF8).data());
 }
 
+JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement::wxStringMap_t& stringMap)
+{
+    if ( !_json )
+        return *this;
+        
+    JSONElement arr = JSONElement::createArray(name);
+    JSONElement::wxStringMap_t::const_iterator iter = stringMap.begin();
+    for( ; iter != stringMap.end(); ++iter ) {
+        JSONElement obj = JSONElement::createObject();
+        obj.addProperty("key", iter->first);
+        obj.addProperty("value", iter->second);
+        arr.arrayAppend(obj);
+    }
+    append(arr);
+    return *this;
+}
+
+JSONElement::wxStringMap_t JSONElement::toStringMap() const
+{
+    JSONElement::wxStringMap_t res;
+    if(!_json) {
+        return res;
+    }
+
+    if(_json->type != cJSON_Array) {
+        return res;
+    }
+    
+    for(int i=0; i<arraySize(); ++i) {
+        wxString key = arrayItem(i).namedObject("key").toString();
+        wxString val = arrayItem(i).namedObject("value").toString();
+        res.insert(std::make_pair(key, val));
+    }
+    return res;
+}
+

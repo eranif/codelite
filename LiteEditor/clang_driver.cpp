@@ -635,7 +635,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
         m_activeEditor->ShowCalltip(new clCallTip(tips));
 
     } else {
-        m_activeEditor->ShowCompletionBox(tags, filterWord, NULL);
+        m_activeEditor->ShowCompletionBox(tags, filterWord, true, NULL);
 
     }
 }

@@ -228,7 +228,7 @@ public:
     * @param word part of the word
     * @param owner event handler to be notified once a selection is made
     */
-    virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, wxEvtHandler *owner) = 0;
+    virtual void ShowCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool autoRefreshList, wxEvtHandler *owner) = 0;
 
     /**
      * @brief display codelite calltip at the current position

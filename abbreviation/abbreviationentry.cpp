@@ -25,8 +25,8 @@
 
 #include "abbreviationentry.h"
 AbbreviationEntry::AbbreviationEntry()
-: m_entries()
-, m_autoInsert(false)
+    : m_entries()
+    , m_autoInsert(false)
 {
 }
 
@@ -36,12 +36,30 @@ AbbreviationEntry::~AbbreviationEntry()
 
 void AbbreviationEntry::DeSerialize(Archive& arch)
 {
-	arch.Read(wxT("m_entries"), m_entries);
-	arch.Read(wxT("m_autoInsert"), m_autoInsert);
+    arch.Read(wxT("m_entries"), m_entries);
+    arch.Read(wxT("m_autoInsert"), m_autoInsert);
 }
 
 void AbbreviationEntry::Serialize(Archive& arch)
 {
-	arch.Write(wxT("m_entries"), m_entries);
-	arch.Write(wxT("m_autoInsert"), m_autoInsert);
+    arch.Write(wxT("m_entries"), m_entries);
+    arch.Write(wxT("m_autoInsert"), m_autoInsert);
+}
+
+////////////////////////////////////////////////////////////////
+// JSON
+////////////////////////////////////////////////////////////////
+
+void AbbreviationJSONEntry::FromJSON(const JSONElement& json)
+{
+    m_entries = json.namedObject("entries").toStringMap();
+    m_autoInsert = json.namedObject("autoInsert").toBool();
+}
+
+JSONElement AbbreviationJSONEntry::ToJSON() const
+{
+    JSONElement ele = JSONElement::createObject(GetName());
+    ele.addProperty("entries", m_entries);
+    ele.addProperty("autoInsert", m_autoInsert);
+    return ele;
 }

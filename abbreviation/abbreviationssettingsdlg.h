@@ -44,8 +44,9 @@ class AbbreviationsSettingsDlg : public AbbreviationsSettingsBase
     wxString              m_activeItemName;
     int                   m_currSelection;
     clConfig              m_config;
-    
+
 protected:
+    virtual void OnSaveUI(wxUpdateUIEvent& event);
     // Handlers for AbbreviationsSettingsBase events.
     void OnItemSelected( wxCommandEvent& event );
     void OnNew(wxCommandEvent &e);

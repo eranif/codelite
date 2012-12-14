@@ -20,9 +20,6 @@
     <File Name="abbreviationssettingsdlg.h"/>
     <File Name="abbreviationssettingsdlg.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="formbuilder">
-    <File Name="abbreviationssettingsbase.fbp"/>
-  </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
@@ -192,4 +189,12 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="resources">
+    <File Name="abbreviationssettingsbase.wxcp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="abbreviationssettingsbase_abbreviation_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

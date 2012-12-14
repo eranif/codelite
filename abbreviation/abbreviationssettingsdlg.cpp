@@ -44,7 +44,7 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
-    
+
         m_data.SetAutoInsert( data.GetAutoInsert() );
         m_data.SetEntries( data.GetEntries() );
         m_config.WriteItem( &m_data );
@@ -172,7 +172,7 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
 
     m_checkBoxImmediateInsert->SetValue(m_data.IsAutoInsert());
     m_dirty = false;
-    
+
 }
 
 void AbbreviationsSettingsDlg::DoSelectItem(int item)
@@ -228,4 +228,8 @@ void AbbreviationsSettingsDlg::DoDeleteEntry(const wxString &name)
         entries.erase( iter );
     }
     m_data.SetEntries(entries);
+}
+
+void AbbreviationsSettingsDlg::OnSaveUI(wxUpdateUIEvent& event)
+{
 }

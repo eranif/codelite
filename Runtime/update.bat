@@ -1,6 +1,7 @@
 @echo off
-::set TARGET_DIR=D:\software
+
 set TARGET_DIR=%ProgramFiles(x86)%
+IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
 
 xcopy config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\build_settings.xml.default.win "%TARGET_DIR%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
@@ -49,3 +50,5 @@ copy pthreadGC2.dll "%TARGET_DIR%\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 
 :END
+
+echo codelite was updated into %TARGET_DIR%\CodeLite

@@ -6,6 +6,7 @@
 		"m_bitmapFunction":	"wxC168BInitBitmapResources",
 		"m_bitmapsFile":	"VirtualDirectorySelectorBase_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
+		"m_outputFileName":	"",
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -27,7 +28,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"VirtualDirectorySelectorDlg"
+					"m_value":	"VirtualDirectorySelectorDlgBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -68,6 +69,10 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
+					"m_value":	"VirtualDirectorySelectorDlg"
+				}, {
+					"type":	"string",
+					"m_label":	"Inherited Class",
 					"m_value":	"VirtualDirectorySelectorDlg"
 				}, {
 					"type":	"string",

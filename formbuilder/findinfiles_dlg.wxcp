@@ -74,11 +74,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	""
+					"m_value":	"findinfilesdlg"
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
-					"m_value":	""
+					"m_label":	"Inherited Class",
+					"m_value":	"FindInFilesDialog"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",

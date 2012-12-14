@@ -77,7 +77,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -232,7 +232,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -973,7 +973,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -1117,7 +1117,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -1689,7 +1689,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -3875,7 +3875,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"SvnInfoDialog"
+					"m_value":	"SvnInfoDialogBase"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -3919,8 +3919,8 @@
 					"m_value":	"SvnInfoDialog"
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
-					"m_value":	"Base"
+					"m_label":	"Inherited Class",
+					"m_value":	"SvnInfoDialog"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -4751,7 +4751,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -5385,7 +5385,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"SvnLogDialog"
+					"m_value":	"SvnLogDialogBase"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -5429,8 +5429,8 @@
 					"m_value":	"SvnLogDialog"
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
-					"m_value":	"Base"
+					"m_label":	"Inherited Class",
+					"m_value":	"SvnLogDialog"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -6060,7 +6060,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -6651,7 +6651,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -6808,7 +6808,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -7694,7 +7694,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -8160,7 +8160,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",

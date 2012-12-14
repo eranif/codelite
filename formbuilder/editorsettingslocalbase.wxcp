@@ -72,7 +72,7 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",

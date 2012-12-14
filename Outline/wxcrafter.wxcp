@@ -6,6 +6,7 @@
 		"m_bitmapFunction":	"wxC682BInitBitmapResources",
 		"m_bitmapsFile":	"",
 		"m_GenerateCodeTypes":	1,
+		"m_outputFileName":	"",
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -27,7 +28,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"OutlineTab"
+					"m_value":	"OutlineTabBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -69,6 +70,10 @@
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"outline_tab"
+				}, {
+					"type":	"string",
+					"m_label":	"Inherited Class",
+					"m_value":	"OutlineTab"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",

@@ -28,7 +28,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"NewProjectDlg"
+					"m_value":	"NewProjectDlgBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -72,8 +72,8 @@
 					"m_value":	"newprojectdlg"
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
-					"m_value":	"BaseClass"
+					"m_label":	"Inherited Class",
+					"m_value":	"NewProjectDlg"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -1287,7 +1287,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"NavBarControl"
+					"m_value":	"NavBarControlBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -1331,8 +1331,8 @@
 					"m_value":	"NavBarControl"
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
-					"m_value":	"BaseClass"
+					"m_label":	"Inherited Class",
+					"m_value":	"NavBarControl"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -1731,7 +1731,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"BuildTabTopPanel"
+					"m_value":	"BuildTabTopPanelBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -1775,8 +1775,8 @@
 					"m_value":	"BuildTabTopPanel"
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
-					"m_value":	"BaseClass"
+					"m_label":	"Inherited Class",
+					"m_value":	"BuildTabTopPanel"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -2363,7 +2363,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"wxcDownloadDlg"
+					"m_value":	"wxcDownloadDlgBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -2407,8 +2407,8 @@
 					"m_value":	"wxcDownloadDlg"
 				}, {
 					"type":	"string",
-					"m_label":	"Base Class Suffix",
-					"m_value":	"BaseClass"
+					"m_label":	"Inherited Class",
+					"m_value":	"wxcDownloadDlg"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",

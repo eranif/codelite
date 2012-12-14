@@ -6,6 +6,7 @@
 		"m_bitmapFunction":	"wxC38D8InitBitmapResources",
 		"m_bitmapsFile":	"",
 		"m_GenerateCodeTypes":	1,
+		"m_outputFileName":	"",
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -27,7 +28,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"SvnCommitDialog"
+					"m_value":	"SvnCommitDialogBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -68,6 +69,10 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
+					"m_value":	"SvnCommitDialog"
+				}, {
+					"type":	"string",
+					"m_label":	"Inherited Class",
 					"m_value":	"SvnCommitDialog"
 				}, {
 					"type":	"string",
@@ -1075,7 +1080,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"SvnSyncDialog"
+					"m_value":	"SvnSyncDialogBaseClass"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -1117,6 +1122,10 @@
 					"type":	"string",
 					"m_label":	"File:",
 					"m_value":	"svn_sync_dialog"
+				}, {
+					"type":	"string",
+					"m_label":	"Inherited Class",
+					"m_value":	"SvnSyncDialog"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",

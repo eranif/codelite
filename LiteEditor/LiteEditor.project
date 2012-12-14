@@ -738,7 +738,9 @@
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
+      <File Name="editorsettingslocalbase_formbuilder_bitmaps.cpp"/>
     </VirtualDirectory>
+    <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

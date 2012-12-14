@@ -1,6 +1,6 @@
 @echo off
-set TARGET_DIR=D:\software
-::set TARGET_DIR=%ProgramFiles(x86)%
+::set TARGET_DIR=D:\software
+set TARGET_DIR=%ProgramFiles(x86)%
 
 xcopy config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\build_settings.xml.default.win "%TARGET_DIR%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes

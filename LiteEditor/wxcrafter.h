@@ -36,8 +36,9 @@ class NewProjectDlgBaseClass : public wxDialog
 protected:
     wxSplitterWindow* m_splitter5;
     wxPanel* m_splitterPageRight;
-    wxObjectDataPtr<DVTemplatesModel> m_dataviewTemplatesModel;
     wxDataViewCtrl* m_dataviewTemplates;
+    wxObjectDataPtr<DVTemplatesModel> m_dataviewTemplatesModel;
+
     wxPanel* m_splitterPageLeft;
     wxStaticText* m_staticText16;
     wxTextCtrl* m_txtProjName;
@@ -132,6 +133,7 @@ public:
 class wxcDownloadDlgBaseClass : public wxDialog
 {
 protected:
+    wxPanel* m_panel81;
     wxBannerWindow* m_banner76;
     wxPanel* m_panel75;
     wxCommandLinkButton* m_cmdLnkBtnDownload;

@@ -11,22 +11,35 @@
 #include <algorithm>
 #include <wx/clntdata.h>
 
-class DVTemplatesModel_Node
+/**
+ * @brief each item in the wxDataViewCtrl is represented in the model by this class.
+ * m_data - contains the data (columns values) as passed when adding an item to the wxDataViewCtrl model class 
+ * m_clientData - is the user client data (owned by the model) 
+ * To convert between a wxDataViewItem to a DVTemplatesModel_Item class, simply use:
+ * @code
+ * DVTemplatesModel_Item* itemData = reinterpret_cast<DVTemplatesModel_Item*>( item.GetID() );
+ * if ( itemData ) {
+ *      // you can now traverese the tree or have a direct access to the model internal data
+ *      // note that you must not delete itemData as it is owned by the model and 
+ * }
+ * @endcode
+ */
+class DVTemplatesModel_Item
 {
 protected:
     wxVector<wxVariant>        m_data;
-    DVTemplatesModel_Node*           m_parent;
-    wxVector<DVTemplatesModel_Node*> m_children;
+    DVTemplatesModel_Item*           m_parent;
+    wxVector<DVTemplatesModel_Item*> m_children;
     bool                       m_isContainer;
     wxClientData*              m_clientData;
 
 public:
-    DVTemplatesModel_Node()
+    DVTemplatesModel_Item()
         : m_parent(NULL)
         , m_isContainer(false)
         , m_clientData(NULL)
     {}
-    virtual ~DVTemplatesModel_Node() {
+    virtual ~DVTemplatesModel_Item() {
         if ( m_clientData ) {
             delete m_clientData;
             m_clientData = NULL;
@@ -36,7 +49,7 @@ public:
         // Delete our children
         // since the deletion of a child may alter its parent m_children array
         // we use a temporary vector for the loop
-        wxVector<DVTemplatesModel_Node*> tmpChildren = m_children;
+        wxVector<DVTemplatesModel_Item*> tmpChildren = m_children;
         while ( !tmpChildren.empty() ) {
             delete (*tmpChildren.begin());
             tmpChildren.erase(tmpChildren.begin());
@@ -61,8 +74,8 @@ public:
      * @brief remove a child from this node and free its memory
      * @param child
      */
-    void DeleteChild(DVTemplatesModel_Node* child) {
-        wxVector<DVTemplatesModel_Node*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
+    void DeleteChild(DVTemplatesModel_Item* child) {
+        wxVector<DVTemplatesModel_Item*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
         if ( iter != m_children.end() ) {
             delete *iter;
             m_children.erase(iter);
@@ -73,8 +86,8 @@ public:
      * @brief remove child from this node without freeing its memory
      * @param child
      */
-    void RemoveChild(DVTemplatesModel_Node* child) {
-        wxVector<DVTemplatesModel_Node*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
+    void RemoveChild(DVTemplatesModel_Item* child) {
+        wxVector<DVTemplatesModel_Item*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
         if ( iter != m_children.end() ) {
             m_children.erase(iter);
         }
@@ -83,7 +96,7 @@ public:
     /**
      * @brief add child to this node
      */
-    void AddChild(DVTemplatesModel_Node* child) {
+    void AddChild(DVTemplatesModel_Item* child) {
         m_children.push_back(child);
         child->m_parent = this;
     }
@@ -93,19 +106,19 @@ public:
     }
 
     // Setters / Getters
-    void SetChildren(const wxVector<DVTemplatesModel_Node*>& children) {
+    void SetChildren(const wxVector<DVTemplatesModel_Item*>& children) {
         this->m_children = children;
     }
     void SetData(const wxVector<wxVariant>& data) {
         this->m_data = data;
     }
-    void SetParent(DVTemplatesModel_Node* parent) {
+    void SetParent(DVTemplatesModel_Item* parent) {
         this->m_parent = parent;
     }
-    const wxVector<DVTemplatesModel_Node*>& GetChildren() const {
+    const wxVector<DVTemplatesModel_Item*>& GetChildren() const {
         return m_children;
     }
-    wxVector<DVTemplatesModel_Node*>& GetChildren() {
+    wxVector<DVTemplatesModel_Item*>& GetChildren() {
         return m_children;
     }
     const wxVector<wxVariant>& GetData() const {
@@ -114,7 +127,7 @@ public:
     wxVector<wxVariant>& GetData() {
         return m_data;
     }
-    DVTemplatesModel_Node* GetParent() {
+    DVTemplatesModel_Item* GetParent() {
         return m_parent;
     }
 
@@ -137,7 +150,7 @@ public:
 class DVTemplatesModel : public wxDataViewModel
 {
 protected:
-    wxVector<DVTemplatesModel_Node*> m_data;
+    wxVector<DVTemplatesModel_Item*> m_data;
     unsigned int m_colCount;
 
 public:
@@ -147,21 +160,21 @@ public:
     void SetColCount(unsigned int colCount) {
         this->m_colCount = colCount;
     }
-    void SetData(const wxVector<DVTemplatesModel_Node*> data) {
+    void SetData(const wxVector<DVTemplatesModel_Item*> data) {
         this->m_data = data;
     }
     unsigned int GetColCount() const {
         return m_colCount;
     }
-    const wxVector<DVTemplatesModel_Node*>& GetData() const {
+    const wxVector<DVTemplatesModel_Item*>& GetData() const {
         return m_data;
     }
-    wxVector<DVTemplatesModel_Node*>& GetData() {
+    wxVector<DVTemplatesModel_Item*>& GetData() {
         return m_data;
     }
 
     virtual bool HasContainerColumns (const wxDataViewItem& item) const {
-        return false;
+        return true;
     }
 
 public:
@@ -175,18 +188,14 @@ protected:
     // Helpers
     wxDataViewItem DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData = NULL);
     wxDataViewItem DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData);
+    void DoChangeItemType(const wxDataViewItem& item, bool changeToContainer);
+    
 public:
     /**
      * @brief Append a line to the model
      * clientData will be owned by the model once added (i.e. the clientData must be allocated on the heap and it will be freed by the model)
      */
     virtual wxDataViewItem AppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, wxClientData *clientData = NULL);
-
-    /**
-     * @brief Append a line to the model
-     * clientData will be owned by the model once added (i.e. the clientData must be allocated on the heap and it will be freed by the model)
-     */
-    virtual wxDataViewItem AppendContainer(const wxDataViewItem& parent, const wxVector<wxVariant>& data, wxClientData *clientData = NULL);
 
     /**
      * @brief Append a lines to the model
@@ -204,63 +213,58 @@ public:
      * @param parent
      */
     virtual void DeleteItems(const wxDataViewItem& parent, const wxDataViewItemArray& items);
-    
+
     /**
      * @brief update an item data + client-data
      */
     virtual void UpdateItem(const wxDataViewItem& item, const wxVector<wxVariant>& data);
-    
+
     /**
      * @brief insert an item into the model before 'insertBeforeMe' item. Return the newly inserted item on success
      */
     virtual wxDataViewItem InsertItem     (const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData = NULL);
-    
-    /**
-     * @brief insert a container (item with children) into the model before 'insertBeforeMe' item. Return the newly inserted item on success
-     */
-    virtual wxDataViewItem InsertContainer(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData = NULL);
-    
+
     /**
      * @brief clear the control and delete all its content
      */
     virtual void Clear();
 
     virtual bool IsEmpty() const;
-    
+
     /**
      * @brief returns the client data associated with this item
      **/
     wxClientData* GetClientObject(const wxDataViewItem& item) const;
-    
+
     /**
      * @brief set the client data for an item. The item data will be freed by the model
      */
     void SetClientObject(const wxDataViewItem& item, wxClientData *data);
-    
+
     /**
-     * @brief returns the item columsn data
+     * @brief returns the item columns data (as passed to AppendItem(..) / InsertItem(...))
      */
     wxVector<wxVariant> GetItemColumnsData(const wxDataViewItem& item) const;
-	
-		/**
-	 * @brief return true if this node is a container
-	 */
-	virtual bool IsContainer(const wxDataViewItem& item) const;
-	
-	/**
-	 * @brief return true if item has children
-	 */
-	virtual bool HasChildren(const wxDataViewItem& item) const;
-	
-	/**
-	 * @brief return the item parent. Return an invalid item if this item has no parent (item.IsOk() = false)
-	 */
-	virtual wxDataViewItem GetParent(const wxDataViewItem& item) const;
-	
-	/**
-	 * @brief return the item's children as an array. 
-	 * @return children count
-	 */
-	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
+
+    /**
+    * @brief return true if this node is a container (i.e. has children)
+    */
+    virtual bool IsContainer(const wxDataViewItem& item) const;
+
+    /**
+     * @brief return true if item has children
+     */
+    virtual bool HasChildren(const wxDataViewItem& item) const;
+
+    /**
+     * @brief return the item parent. Return an invalid item if this item has no parent (item.IsOk() = false)
+     */
+    virtual wxDataViewItem GetParent(const wxDataViewItem& item) const;
+
+    /**
+     * @brief return the item's children as an array.
+     * @return children count
+     */
+    virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
 };
 #endif // __DVTemplatesModel_GUARD__H__

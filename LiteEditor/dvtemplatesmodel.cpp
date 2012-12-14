@@ -33,7 +33,7 @@ unsigned int DVTemplatesModel::GetChildren(const wxDataViewItem& item, wxDataVie
     }
 
     children.Clear();
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.m_pItem);
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.m_pItem);
     if ( node ) {
         for(size_t i=0; i<node->GetChildren().size(); ++i) {
             children.Add( wxDataViewItem( node->GetChildren().at(i) ) );
@@ -57,7 +57,7 @@ wxString DVTemplatesModel::GetColumnType(unsigned int col) const
 
 wxDataViewItem DVTemplatesModel::GetParent(const wxDataViewItem& item) const
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.m_pItem);
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.m_pItem);
     if ( node ) {
         return wxDataViewItem(node->GetParent());
     }
@@ -66,7 +66,7 @@ wxDataViewItem DVTemplatesModel::GetParent(const wxDataViewItem& item) const
 
 bool DVTemplatesModel::IsContainer(const wxDataViewItem& item) const
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.m_pItem);
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.m_pItem);
     if ( node ) {
         return node->IsContainer();
     }
@@ -75,15 +75,17 @@ bool DVTemplatesModel::IsContainer(const wxDataViewItem& item) const
 
 void DVTemplatesModel::GetValue(wxVariant& variant, const wxDataViewItem& item, unsigned int col) const
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.m_pItem);
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.m_pItem);
     if ( node && node->GetData().size() > col ) {
         variant = node->GetData().at(col);
     }
 }
 wxDataViewItem DVTemplatesModel::DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
 {
-    DVTemplatesModel_Node* parentNode = reinterpret_cast<DVTemplatesModel_Node*>(parent.m_pItem);
-    DVTemplatesModel_Node* child = new DVTemplatesModel_Node();
+    DVTemplatesModel_Item* parentNode = reinterpret_cast<DVTemplatesModel_Item*>(parent.m_pItem);
+    DoChangeItemType(parent, true);
+    
+    DVTemplatesModel_Item* child = new DVTemplatesModel_Item();
     child->SetIsContainer(isContainer);
     child->SetClientObject( clientData );
     child->SetData( data );
@@ -99,35 +101,35 @@ wxDataViewItem DVTemplatesModel::DoAppendItem(const wxDataViewItem& parent, cons
 
 wxDataViewItem DVTemplatesModel::DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
 {
-    DVTemplatesModel_Node* child = new DVTemplatesModel_Node();
+    DVTemplatesModel_Item* child = new DVTemplatesModel_Item();
     child->SetIsContainer(isContainer);
     child->SetClientObject( clientData );
     child->SetData( data );
-    
+
     // find the location where to insert the new item
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(insertBeforeMe.m_pItem);
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(insertBeforeMe.m_pItem);
     if ( !node )
         return wxDataViewItem();
-        
-    wxVector<DVTemplatesModel_Node*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
-    
+
+    wxVector<DVTemplatesModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
+
     if ( where !=  m_data.end() ) {
         // top level item
         m_data.insert( where, child );
 
     } else {
-        
+
         if ( !node->GetParent() )
             return wxDataViewItem();
-        
+
         child->SetParent(node->GetParent());
         where = std::find(node->GetParent()->GetChildren().begin(), node->GetParent()->GetChildren().end(), node);
         if ( where == node->GetParent()->GetChildren().end() ) {
             node->GetParent()->GetChildren().push_back( child );
-            
+
         } else {
             node->GetParent()->GetChildren().insert(where, child);
-            
+
         }
     }
 
@@ -137,13 +139,6 @@ wxDataViewItem DVTemplatesModel::DoInsertItem(const wxDataViewItem& insertBefore
 wxDataViewItem DVTemplatesModel::AppendItem(const wxDataViewItem &parent, const wxVector<wxVariant>& data, wxClientData *clientData)
 {
     wxDataViewItem ch = DoAppendItem(parent, data, false, clientData);
-    ItemAdded(parent, ch);
-    return ch;
-}
-
-wxDataViewItem DVTemplatesModel::AppendContainer(const wxDataViewItem &parent, const wxVector<wxVariant>& data, wxClientData *clientData)
-{
-    wxDataViewItem ch = DoAppendItem(parent, data, true, clientData);
     ItemAdded(parent, ch);
     return ch;
 }
@@ -160,7 +155,7 @@ wxDataViewItemArray DVTemplatesModel::AppendItems(const wxDataViewItem &parent, 
 
 bool DVTemplatesModel::SetValue(const wxVariant& variant, const wxDataViewItem& item, unsigned int col)
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.m_pItem);
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.m_pItem);
     if ( node && node->GetData().size() > col ) {
         node->GetData().at(col) = variant;
     }
@@ -169,28 +164,38 @@ bool DVTemplatesModel::SetValue(const wxVariant& variant, const wxDataViewItem& 
 
 void DVTemplatesModel::DeleteItem(const wxDataViewItem& item)
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.m_pItem);
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.m_pItem);
     if ( node ) {
-        wxDataViewItem parentItem(node->GetParent());
+        
+        DVTemplatesModel_Item* parent = node->GetParent();
+        wxDataViewItem parentItem(parent);
         ItemDeleted(parentItem, item);
-
+        
         // this will also remove it from its model parent children list
-        if ( node->GetParent() == NULL ) {
+        if ( parent == NULL ) {
             // root item, remove it from the roots array
-            wxVector<DVTemplatesModel_Node*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
+            wxVector<DVTemplatesModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
             if ( where != m_data.end() ) {
                 m_data.erase(where);
             }
         }
+        
+        // If there are no more children, change the item back to 'normal'
+        if ( parent && parent->GetChildren().empty() )
+            DoChangeItemType(parentItem, false);
+            
         delete node;
     }
+    
+    if ( IsEmpty() )
+        Cleared();
 }
 
 void DVTemplatesModel::DeleteItems(const wxDataViewItem& parent, const wxDataViewItemArray& items)
 {
     // sanity
     for(size_t i=0; i<items.GetCount(); ++i) {
-        DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(items.Item(i).m_pItem);
+        DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(items.Item(i).m_pItem);
         wxUnusedVar(node);
         wxASSERT(node && node->GetParent() != parent.m_pItem);
         DeleteItem(items.Item(i));
@@ -199,8 +204,8 @@ void DVTemplatesModel::DeleteItems(const wxDataViewItem& parent, const wxDataVie
 
 void DVTemplatesModel::Clear()
 {
-    wxVector<DVTemplatesModel_Node*> roots = m_data;
-    wxVector<DVTemplatesModel_Node*>::iterator iter = roots.begin();
+    wxVector<DVTemplatesModel_Item*> roots = m_data;
+    wxVector<DVTemplatesModel_Item*>::iterator iter = roots.begin();
     for(; iter != roots.end(); ++iter) {
         DeleteItem( wxDataViewItem(*iter) );
     }
@@ -214,7 +219,7 @@ bool DVTemplatesModel::IsEmpty() const
 
 wxClientData* DVTemplatesModel::GetClientObject(const wxDataViewItem& item) const
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.GetID());
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.GetID());
     if ( node ) {
         return node->GetClientObject();
     }
@@ -223,7 +228,7 @@ wxClientData* DVTemplatesModel::GetClientObject(const wxDataViewItem& item) cons
 
 void DVTemplatesModel::SetClientObject(const wxDataViewItem& item, wxClientData *data)
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.GetID());
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.GetID());
     if ( node ) {
         node->SetClientObject(data);
     }
@@ -231,7 +236,7 @@ void DVTemplatesModel::SetClientObject(const wxDataViewItem& item, wxClientData 
 
 void DVTemplatesModel::UpdateItem(const wxDataViewItem& item, const wxVector<wxVariant>& data)
 {
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.GetID());
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.GetID());
     if ( node ) {
         node->SetData( data );
         ItemChanged( item );
@@ -242,17 +247,7 @@ wxDataViewItem DVTemplatesModel::InsertItem(const wxDataViewItem& insertBeforeMe
 {
     wxDataViewItem ch = DoInsertItem(insertBeforeMe, data, false, clientData);
     if ( ch.IsOk() ) {
-        DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(ch.GetID());
-        ItemAdded(wxDataViewItem(node->GetParent()), ch);
-    }
-    return ch;
-}
-
-wxDataViewItem DVTemplatesModel::InsertContainer(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData)
-{
-    wxDataViewItem ch = DoInsertItem(insertBeforeMe, data, true, clientData);
-    if ( ch.IsOk() ) {
-        DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(ch.GetID());
+        DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(ch.GetID());
         ItemAdded(wxDataViewItem(node->GetParent()), ch);
     }
     return ch;
@@ -260,10 +255,10 @@ wxDataViewItem DVTemplatesModel::InsertContainer(const wxDataViewItem& insertBef
 
 wxVector<wxVariant> DVTemplatesModel::GetItemColumnsData(const wxDataViewItem& item) const
 {
-    if ( !item.IsOk() ) 
+    if ( !item.IsOk() )
         return wxVector<wxVariant>();
-        
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.GetID());
+
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.GetID());
     if ( !node ) {
         return wxVector<wxVariant>();
     }
@@ -272,12 +267,34 @@ wxVector<wxVariant> DVTemplatesModel::GetItemColumnsData(const wxDataViewItem& i
 
 bool DVTemplatesModel::HasChildren(const wxDataViewItem& item) const
 {
-	if ( !item.IsOk() ) 
+    if ( !item.IsOk() )
         return false;
-        
-    DVTemplatesModel_Node* node = reinterpret_cast<DVTemplatesModel_Node*>(item.GetID());
+
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.GetID());
     if ( !node ) {
         return false;
     }
     return !node->GetChildren().empty();
+}
+
+void DVTemplatesModel::DoChangeItemType(const wxDataViewItem& item, bool changeToContainer)
+{
+    DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.GetID());
+    if ( !node )
+        return;
+    
+    if ( ( changeToContainer && !node->IsContainer())  || // change an item from non-container to container type
+         ( !changeToContainer && node->IsContainer()) ) { // change an item from container to non-container type
+#if defined(__WXGTK__) || defined(__WXMAC__)
+        // change the item to container type:
+        // 1st we need to delete it
+        ItemDeleted(wxDataViewItem(node->GetParent()), item);
+        
+        // update the node type
+        node->SetIsContainer(changeToContainer);
+        ItemAdded(wxDataViewItem(node->GetParent()), item);
+#else
+        node->SetIsContainer(changeToContainer);
+#endif
+    }
 }

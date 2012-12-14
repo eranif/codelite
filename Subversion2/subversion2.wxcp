@@ -4072,7 +4072,7 @@
 											"border":	5,
 											"gbSpan":	",",
 											"gbPosition":	",",
-											"m_styles":	["wxTE_RICH2", "wxTE_READONLY"],
+											"m_styles":	["wxTE_READONLY"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -4190,7 +4190,7 @@
 											"border":	5,
 											"gbSpan":	",",
 											"gbPosition":	",",
-											"m_styles":	["wxTE_RICH2", "wxTE_READONLY"],
+											"m_styles":	["wxTE_READONLY"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -4308,7 +4308,7 @@
 											"border":	5,
 											"gbSpan":	",",
 											"gbPosition":	",",
-											"m_styles":	["wxTE_RICH2", "wxTE_READONLY"],
+											"m_styles":	["wxTE_READONLY"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -4426,7 +4426,7 @@
 											"border":	5,
 											"gbSpan":	",",
 											"gbPosition":	",",
-											"m_styles":	["wxTE_RICH2", "wxTE_READONLY"],
+											"m_styles":	["wxTE_READONLY"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -4544,7 +4544,7 @@
 											"border":	5,
 											"gbSpan":	",",
 											"gbPosition":	",",
-											"m_styles":	["wxTE_RICH2", "wxTE_READONLY"],
+											"m_styles":	["wxTE_READONLY"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",

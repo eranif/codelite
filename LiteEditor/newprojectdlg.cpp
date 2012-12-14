@@ -89,7 +89,7 @@ NewProjectDlg::NewProjectDlg( wxWindow* parent )
             wxVariant v;
             v << ict;
             cols.push_back( v );
-            categoryMap[internalType] = m_dataviewTemplatesModel->AppendContainer(wxDataViewItem(0), cols);
+            categoryMap[internalType] = m_dataviewTemplatesModel->AppendItem(wxDataViewItem(0), cols);
         }
         
         wxString imgId = (*iter)->GetProjectIconName();

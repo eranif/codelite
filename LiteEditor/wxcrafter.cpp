@@ -338,22 +338,31 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     wxBoxSizer* boxSizer71 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer71);
     
-    m_banner76 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_SIMPLE);
+    m_panel81 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel81->SetBackgroundColour(wxColour(wxT("rgb(255,255,255)")));
+    
+    boxSizer71->Add(m_panel81, 1, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer82 = new wxBoxSizer(wxVERTICAL);
+    m_panel81->SetSizer(boxSizer82);
+    
+    m_banner76 = new wxBannerWindow(m_panel81, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner76->SetBitmap(wxNullBitmap);
     m_banner76->SetText(_("Plugin is not installed"), _("It seems that the wxCrafter plugin is not installed\nWhat would you like to do?"));
-    m_banner76->SetGradient(wxColour(wxT("rgb(80,80,80)")), wxColour(wxT("rgb(80,80,80)")));
+    m_banner76->SetGradient(wxColour(wxT("rgb(0,128,255)")), wxColour(wxT("rgb(0,128,255)")));
     m_banner76->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
-    boxSizer71->Add(m_banner76, 0, wxALL|wxEXPAND, 5);
+    boxSizer82->Add(m_banner76, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10);
     
-    m_panel75 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel75 = new wxPanel(m_panel81, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer71->Add(m_panel75, 1, wxALL|wxEXPAND, 5);
+    boxSizer82->Add(m_panel75, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer79 = new wxBoxSizer(wxVERTICAL);
     m_panel75->SetSizer(boxSizer79);
     
     m_cmdLnkBtnDownload = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Download wxCrafter"), _("Download wxCrafter plugin from codelite's website"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtnDownload->SetDefault();
     
     boxSizer79->Add(m_cmdLnkBtnDownload, 0, wxALL|wxEXPAND, 5);
     
@@ -362,6 +371,7 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     boxSizer79->Add(m_cmdLnkBtnContinue, 0, wxALL|wxEXPAND, 5);
     
     
+    SetBackgroundColour(wxColour(wxT("rgb(255,255,255)")));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);

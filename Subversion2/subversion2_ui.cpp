@@ -491,7 +491,7 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer7->Add(m_staticText19, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_textCtrlRootURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(500,-1), wxTE_RICH2|wxTE_READONLY);
+    m_textCtrlRootURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(500,-1), wxTE_READONLY);
     
     fgSizer7->Add(m_textCtrlRootURL, 0, wxALL|wxEXPAND, 5);
     
@@ -502,7 +502,7 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer7->Add(m_staticText21, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_textCtrlURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_READONLY);
+    m_textCtrlURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_READONLY);
     
     fgSizer7->Add(m_textCtrlURL, 0, wxALL|wxEXPAND, 5);
     
@@ -513,7 +513,7 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer7->Add(m_staticText23, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_textCtrlRevision = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_READONLY);
+    m_textCtrlRevision = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_READONLY);
     
     fgSizer7->Add(m_textCtrlRevision, 0, wxALL|wxEXPAND, 5);
     
@@ -524,7 +524,7 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer7->Add(m_staticText25, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_textCtrlAuthor = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_READONLY);
+    m_textCtrlAuthor = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_READONLY);
     
     fgSizer7->Add(m_textCtrlAuthor, 0, wxALL|wxEXPAND, 5);
     
@@ -535,7 +535,7 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer7->Add(m_staticText27, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_textCtrlDate = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_READONLY);
+    m_textCtrlDate = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_READONLY);
     
     fgSizer7->Add(m_textCtrlDate, 0, wxALL|wxEXPAND, 5);
     

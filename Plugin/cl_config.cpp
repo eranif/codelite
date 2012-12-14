@@ -46,19 +46,21 @@ bool clConfig::GetWorkspaceTabOrder(wxArrayString& tabs, int& selected)
 
 void clConfig::SetWorkspaceTabOrder(const wxArrayString& tabs, int selected)
 {
-    if ( m_root->toElement().hasNamedObject("workspaceTabOrder") ) {
-        JSONElement element = m_root->toElement().namedObject("workspaceTabOrder");
-        element.namedObject("tabs").setValue( tabs );
-        element.namedObject("selected").setValue( selected );
-        
-    } else {
-        // first time
-        JSONElement e = JSONElement::createObject("workspaceTabOrder");
-        e.addProperty("tabs", tabs);
-        e.addProperty("selected", selected);
-        m_root->toElement().append( e );
-        
-    }
+    DoDeleteProperty("workspaceTabOrder");
+    
+    // first time
+    JSONElement e = JSONElement::createObject("workspaceTabOrder");
+    e.addProperty("tabs", tabs);
+    e.addProperty("selected", selected);
+    m_root->toElement().append( e );
+    
     m_root->save(m_filename);
+}
+
+void clConfig::DoDeleteProperty(const wxString& property)
+{
+    if ( m_root->toElement().hasNamedObject(property) ) {
+        m_root->toElement().removeProperty(property);
+    }
 }
 

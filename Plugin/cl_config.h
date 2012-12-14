@@ -10,6 +10,9 @@ protected:
     wxFileName m_filename;
     JSONRoot* m_root;
     
+protected:
+    void DoDeleteProperty(const wxString &property);
+    
 public:
     clConfig();
     static clConfig& Get();

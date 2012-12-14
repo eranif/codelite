@@ -418,3 +418,12 @@ wxSize JSONElement::toSize() const
     return wxSize(pt.x, pt.y);
 }
 
+void JSONElement::removeProperty(const wxString& name)
+{
+    // delete child property
+    if(!_json) {
+        return;
+    }
+    cJSON_DeleteItemFromObject(_json, name.mb_str(wxConvUTF8).data());
+}
+

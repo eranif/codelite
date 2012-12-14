@@ -51,7 +51,7 @@ public:
     // Readers
     ////////////////////////////////////////////////
     JSONElement   namedObject(const wxString& name) const ;
-	bool          hasNamedObject(const wxString &name) const;
+    bool          hasNamedObject(const wxString &name) const;
     bool          toBool()           const ;
     wxString      toString()         const ;
     wxArrayString toArrayString()    const ;
@@ -106,6 +106,11 @@ public:
      * @brief add wxArrayString property 
      */
     JSONElement& addProperty(const wxString &name, const wxArrayString &arr);
+    
+    /**
+     * @brief delete property by name
+     */
+    void removeProperty(const wxString &name);
     
     //////////////////////////////////////////////////
     // Array operations

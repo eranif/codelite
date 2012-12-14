@@ -659,4 +659,13 @@ std::set<wxAuiTabCtrl*> Notebook::GetAllTabControls()
     return ctrls;
 }
 
+wxArrayString Notebook::GetPagesTextInOrder() const
+{
+    wxArrayString labels;
+    for(size_t i=0; i<GetPageCount(); ++i) {
+        labels.Add( GetPageText(i) );
+    }
+    return labels;
+}
+
 #endif // __WXGTK__

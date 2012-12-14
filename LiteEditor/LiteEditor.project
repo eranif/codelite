@@ -173,8 +173,6 @@
           <File Name="editorsettingsdockingwidows.cpp"/>
         </VirtualDirectory>
       </VirtualDirectory>
-      <File Name="findinfilesdlgbase.h"/>
-      <File Name="findinfilesdlgbase.cpp"/>
       <File Name="yestoalldlg.h"/>
       <File Name="yestoallbasedlg.cpp"/>
       <File Name="yestoallbasedlg.h"/>
@@ -733,12 +731,16 @@
       <File Name="wxcrafter.cpp"/>
       <File Name="dvtemplatesmodel.cpp"/>
       <File Name="dvtemplatesmodel.h"/>
+      <File Name="findinfiles_dlg.h"/>
+      <File Name="findinfiles_dlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
       <File Name="editorsettingslocalbase_formbuilder_bitmaps.cpp"/>
+      <File Name="findinfiles_dlg_formbuilder_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
+    <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

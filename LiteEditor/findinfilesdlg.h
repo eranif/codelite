@@ -25,7 +25,7 @@
 #ifndef FIND_IN_FILES_DLG_H
 #define FIND_IN_FILES_DLG_H
 
-#include "findinfilesdlgbase.h"
+#include "findinfiles_dlg.h"
 #include "findreplacedlg.h"
 #include "search_thread.h"
 

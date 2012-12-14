@@ -3042,6 +3042,11 @@ static void tagCheck (statementInfo *const st)
                 st->blockName->keyword = KEYWORD_NONE;
             }
             qualifyBlockTag (st, prev);
+        } else if ( isType(prev, TOKEN_NAME) && isType(prev2, TOKEN_NAME) ) {
+            // C++11 variable
+            // <type> <name> { ... }
+            qualifyVariableTag (st, prev);
+
         } else if (isLanguage (Lang_csharp))
             makeTag (prev, st, FALSE, TAG_PROPERTY);
         break;

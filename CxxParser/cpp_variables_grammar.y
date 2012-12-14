@@ -5,7 +5,7 @@
 %{
 /*************** Includes and Defines *****************************/
 #include "string"
-#include "vector"
+#include "vector" 
 #include "stdio.h"
 #include "map"
 #include "variable.h"
@@ -69,8 +69,8 @@ extern void cl_scope_lex_clean();
 %token  LE_PUBLIC          LE_PROTECTED       LE_PRIVATE
 %token  LE_VIRTUAL         LE_FRIEND
 %token  LE_INLINE          LE_OVERLOAD
-%token  LE_TEMPLATE		   LE_TYPENAME
-%token  LE_THROW		  	LE_CATCH
+%token  LE_TEMPLATE           LE_TYPENAME
+%token  LE_THROW              LE_CATCH
 /* ANSI C Grammar suggestions */
 %token  LE_IDENTIFIER              LE_STRINGliteral
 %token  LE_FLOATINGconstant        LE_INTEGERconstant        LE_CHARACTERconstant
@@ -81,21 +81,21 @@ extern void cl_scope_lex_clean();
 %token  LE_TYPEDEFname
 
 /* Multi-Character operators */
-%token   LE_ARROW            											/*    ->                              */
-%token   LE_ICR LE_DECR         										/*    ++      --                      */
-%token   LE_LS LE_RS            										/*    <<      >>                      */
-%token   LE_LE LE_GE LE_EQ LE_NE      								/*    <=      >=      ==      !=      */
-%token   LE_ANDAND LE_OROR      										/*    &&      ||                      */
-%token   LE_ELLIPSIS         											/*    ...                             */
-			/* Following are used in C++, not ANSI C        */
-%token   LE_CLCL             											/*    ::                              */
-%token   LE_DOTstar LE_ARROWstar										/*    .*       ->*                    */
+%token   LE_ARROW                                                        /*    ->                              */
+%token   LE_ICR LE_DECR                                                 /*    ++      --                      */
+%token   LE_LS LE_RS                                                    /*    <<      >>                      */
+%token   LE_LE LE_GE LE_EQ LE_NE                                      /*    <=      >=      ==      !=      */
+%token   LE_ANDAND LE_OROR                                              /*    &&      ||                      */
+%token   LE_ELLIPSIS                                                     /*    ...                             */
+            /* Following are used in C++, not ANSI C        */
+%token   LE_CLCL                                                         /*    ::                              */
+%token   LE_DOTstar LE_ARROWstar                                        /*    .*       ->*                    */
 
 /* modifying assignment operators */
-%token  LE_MULTassign  LE_DIVassign    LE_MODassign   	/*   *=      /=      %=      */
-%token  LE_PLUSassign  LE_MINUSassign              		/*   +=      -=              */
-%token  LE_LSassign    LE_RSassign                 		/*   <<=     >>=             */
-%token  LE_ANDassign   LE_ERassign     LE_ORassign    	/*   &=      ^=      |=      */
+%token  LE_MULTassign  LE_DIVassign    LE_MODassign       /*   *=      /=      %=      */
+%token  LE_PLUSassign  LE_MINUSassign                      /*   +=      -=              */
+%token  LE_LSassign    LE_RSassign                         /*   <<=     >>=             */
+%token  LE_ANDassign   LE_ERassign     LE_ORassign        /*   &=      ^=      |=      */
 %token  LE_MACRO
 %token  LE_DYNAMIC_CAST
 %token  LE_STATIC_CAST
@@ -118,31 +118,31 @@ basic_type_name_inter:    LE_INT          { $$ = $1; }
                 |         LE_UNSIGNED     { $$ = $1; }
                 |         LE_VOID         { $$ = $1; }
                 |         LE_BOOL         { $$ = $1; }
-				|         LE_LONG LE_LONG { $$ = $1 + " " + $2; }
-				|         LE_INT LE_LONG  { $$ = $1 + " " + $2; }
-				|         LE_TIME_T       { $$ = $1; }
-				|         LE_SIZE_T       { $$ = $1; }
+                |         LE_LONG LE_LONG { $$ = $1 + " " + $2; }
+                |         LE_INT LE_LONG  { $$ = $1 + " " + $2; }
+                |         LE_TIME_T       { $$ = $1; }
+                |         LE_SIZE_T       { $$ = $1; }
                 ;
 
-basic_type_name:	LE_UNSIGNED basic_type_name_inter   { $$ = $1 + " " + $2; }
-                |	LE_SIGNED basic_type_name_inter     { $$ = $1 + " " + $2; }
-                |	LE_SHORT basic_type_name_inter      { $$ = $1 + " " + $2; }
-                |	basic_type_name_inter               { $$ = $1; }
+basic_type_name:    LE_UNSIGNED basic_type_name_inter   { $$ = $1 + " " + $2; }
+                |    LE_SIGNED basic_type_name_inter     { $$ = $1 + " " + $2; }
+                |    LE_SHORT basic_type_name_inter      { $$ = $1 + " " + $2; }
+                |    basic_type_name_inter               { $$ = $1; }
                 ;
 
 /* ========================================================================*/
-/* find declarations	                                                   */
+/* find declarations                                                       */
 /* ========================================================================*/
 
-translation_unit	:        /*empty*/
+translation_unit    :        /*empty*/
                         | translation_unit external_decl
                         ;
 
-external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); s_templateInitList.clear();} variables
-						| '$' basic_type_name ';' /* dummy '@' to avoid conflicts .. */
-						{
-							isBasicType = true;
-						}
+external_decl        :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear(); s_templateInitList.clear();} variables
+                        | '$' basic_type_name ';' /* dummy '@' to avoid conflicts .. */
+                        {
+                            isBasicType = true;
+                        }
                         | error {
                             yyclearin;    //clear lookahead token
                             yyerrok;
@@ -150,20 +150,20 @@ external_decl	    :    {curr_var.Reset(); gs_names.clear(); s_tmpString.clear();
                             }
                         ;
 /* the following rules are for template parameters no declarations! */
-parameter_list	: /* empty */        {$$ = "";}
-                            | template_parameter	{$$ = $1;}
+parameter_list    : /* empty */        {$$ = "";}
+                            | template_parameter    {$$ = $1;}
                             | parameter_list ',' template_parameter {$$ = $1 + $2 + " " + $3;}
                             ;
 
-template_parameter	:	const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
+template_parameter    :    const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER special_star_amp
                         {
                             $$ = $1 +  $2 + $3 +$4;
                         }
-                    |  	const_or_volatile_spec nested_scope_specifier basic_type_name special_star_amp
+                    |      const_or_volatile_spec nested_scope_specifier basic_type_name special_star_amp
                         {
                             $$ = $1 +  $2 + $3 +$4;
                         }
-                    |  	const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
+                    |      const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp
                         {
                             $$ = $1 + $2 + $3 +$4 + $5 + $6 + $7 + " " ;
                         }
@@ -173,41 +173,76 @@ template_parameter	:	const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER
 //in the code. if this rule succeeded, the variables
 //is added to the gs_vars vriable
 variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumBracketsContent('{');} typedef_name_list ';'
-					{
-					}
-					| stmnt_starter variable_decl special_star_amp const_or_volatile_spec variable_name_list postfix
-                        {
-                        	if(gs_vars)
+                    {
+                    }
+                    | stmnt_starter variable_decl special_star_amp const_or_volatile_spec variable_name_list '{'{var_consumBracketsContent('{');} ';'
+                    {
+                        if(gs_vars)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp = $3;
-                            	curr_var.m_lineno = cl_scope_lineno;
-								curr_var.m_rightSideConst = $4;
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+                                curr_var.m_starAmp = $3;
+                                curr_var.m_lineno = cl_scope_lineno;
+                                curr_var.m_rightSideConst = $4;
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();
 
-                            	for(size_t i=0; i< gs_names.size(); i++)
+                                for(size_t i=0; i< gs_names.size(); i++)
                                 {
                                     //create new variable for every variable name found
-                                	var = curr_var;
-                                	var.m_pattern      = $2 + " " + $3 + " " + $4 ;
-									if(var.m_completeType.empty()) {
-										var.m_completeType = $2 + " " + $3 + " " + $4 ;
-									}
-                                	var.m_name         = gs_names.at(i).m_name;
-									var.m_defaultValue = gs_names.at(i).m_defaultValue;
+                                    var = curr_var;
+                                    var.m_pattern      = $2 + " " + $3 + " " + $4 ;
+                                    if(var.m_completeType.empty()) {
+                                        var.m_completeType = $2 + " " + $3 + " " + $4 ;
+                                    }
+                                    var.m_name         = gs_names.at(i).m_name;
+                                    var.m_defaultValue = gs_names.at(i).m_defaultValue;
 
-									if(i != 0) {
-										var.m_isPtr        = gs_names.at(i).m_isPtr;
-										var.m_starAmp      = gs_names.at(i).m_starAmp;
-									}
-                                	gs_vars->push_back(var);
+                                    if(i != 0) {
+                                        var.m_isPtr        = gs_names.at(i).m_isPtr;
+                                        var.m_starAmp      = gs_names.at(i).m_starAmp;
+                                    }
+                                    gs_vars->push_back(var);
                                 }
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                curr_var.Reset();
+                                gs_names.clear();
+                            }
+                    }
+                    | stmnt_starter variable_decl special_star_amp const_or_volatile_spec variable_name_list postfix
+                        {
+                            if(gs_vars)
+                            {
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+                                curr_var.m_starAmp = $3;
+                                curr_var.m_lineno = cl_scope_lineno;
+                                curr_var.m_rightSideConst = $4;
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();
+
+                                for(size_t i=0; i< gs_names.size(); i++)
+                                {
+                                    //create new variable for every variable name found
+                                    var = curr_var;
+                                    var.m_pattern      = $2 + " " + $3 + " " + $4 ;
+                                    if(var.m_completeType.empty()) {
+                                        var.m_completeType = $2 + " " + $3 + " " + $4 ;
+                                    }
+                                    var.m_name         = gs_names.at(i).m_name;
+                                    var.m_defaultValue = gs_names.at(i).m_defaultValue;
+
+                                    if(i != 0) {
+                                        var.m_isPtr        = gs_names.at(i).m_isPtr;
+                                        var.m_starAmp      = gs_names.at(i).m_starAmp;
+                                    }
+                                    gs_vars->push_back(var);
+                                }
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
                         }
                         //
@@ -215,149 +250,149 @@ variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumB
                         //
                         | '(' variable_decl special_star_amp const_or_volatile_spec LE_IDENTIFIER postfix2
                         {
-                        	if(gs_vars)
+                            if(gs_vars)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern       = $2 + " " + $3 + " " + $4 + " " + $5;
-								curr_var.m_completeType  = $2 + " " + $3 + " " + $4 ;
-                            	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp       = $3;
-                            	curr_var.m_arrayBrackets = $6;
-								curr_var.m_rightSideConst= $4;
-                            	curr_var.m_lineno        = cl_scope_lineno;
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
-								//create new variable for every variable name found
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern       = $2 + " " + $3 + " " + $4 + " " + $5;
+                                curr_var.m_completeType  = $2 + " " + $3 + " " + $4 ;
+                                curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
+                                curr_var.m_starAmp       = $3;
+                                curr_var.m_arrayBrackets = $6;
+                                curr_var.m_rightSideConst= $4;
+                                curr_var.m_lineno        = cl_scope_lineno;
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
+                                //create new variable for every variable name found
                                 var = curr_var;
-                            	var.m_name               = $5;
-                            	gs_vars->push_back(var);
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                var.m_name               = $5;
+                                gs_vars->push_back(var);
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
                         }
                         | ',' variable_decl special_star_amp const_or_volatile_spec LE_IDENTIFIER postfix2
                         {
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars && g_isUsedWithinFunc)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern         = $2 + " " + $3 + " " + $4 + " " + $5;
-                            	curr_var.m_completeType    = $2 + " " + $3 + " " + $4 ;
-                            	curr_var.m_isPtr           = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp         = $3;
-                            	curr_var.m_arrayBrackets   = $6;
-								curr_var.m_rightSideConst  = $4;
-                            	curr_var.m_lineno          = cl_scope_lineno;
-								
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern         = $2 + " " + $3 + " " + $4 + " " + $5;
+                                curr_var.m_completeType    = $2 + " " + $3 + " " + $4 ;
+                                curr_var.m_isPtr           = ($3.find("*") != (size_t)-1);
+                                curr_var.m_starAmp         = $3;
+                                curr_var.m_arrayBrackets   = $6;
+                                curr_var.m_rightSideConst  = $4;
+                                curr_var.m_lineno          = cl_scope_lineno;
+                                
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
                                 //create new variable for every variable name found
-                            	var = curr_var;
-                            	var.m_name = $5;
-                            	gs_vars->push_back(var);
+                                var = curr_var;
+                                var.m_name = $5;
+                                gs_vars->push_back(var);
 
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
                         }
-						// Function arguments without identifier
+                        // Function arguments without identifier
                         | '(' variable_decl special_star_amp const_or_volatile_spec postfix3
                         {
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars && g_isUsedWithinFunc)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern       = $2 + " " + $3 + " " + $4;
-                            	curr_var.m_completeType  = $2 + " " + $3 + " " + $4;
-                            	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp       = $3;
-								curr_var.m_rightSideConst= $4;
-                            	curr_var.m_lineno        = cl_scope_lineno;
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern       = $2 + " " + $3 + " " + $4;
+                                curr_var.m_completeType  = $2 + " " + $3 + " " + $4;
+                                curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
+                                curr_var.m_starAmp       = $3;
+                                curr_var.m_rightSideConst= $4;
+                                curr_var.m_lineno        = cl_scope_lineno;
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
                                 //create new variable for every variable name found
-                            	var = curr_var;
-                            	var.m_name = "";
-                            	gs_vars->push_back(var);
+                                var = curr_var;
+                                var.m_name = "";
+                                gs_vars->push_back(var);
 
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
-                        	if($5 == ",") {
-                            	cl_scope_less(0);
+                            if($5 == ",") {
+                                cl_scope_less(0);
                             }
                         }
                         | ',' variable_decl special_star_amp const_or_volatile_spec postfix3
                         {
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars && g_isUsedWithinFunc)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern       = $2 + " " + $3 + " " + $4;
-                            	curr_var.m_completeType  = $2 + " " + $3 + " " + $4;
-                            	curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
-                            	curr_var.m_starAmp       = $3;
-                            	curr_var.m_lineno        = cl_scope_lineno;
-								curr_var.m_rightSideConst= $4;
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern       = $2 + " " + $3 + " " + $4;
+                                curr_var.m_completeType  = $2 + " " + $3 + " " + $4;
+                                curr_var.m_isPtr         = ($3.find("*") != (size_t)-1);
+                                curr_var.m_starAmp       = $3;
+                                curr_var.m_lineno        = cl_scope_lineno;
+                                curr_var.m_rightSideConst= $4;
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
                                 //create new variable for every variable name found
-                            	var = curr_var;
-                            	var.m_name = "";
-                            	gs_vars->push_back(var);
+                                var = curr_var;
+                                var.m_name = "";
+                                gs_vars->push_back(var);
 
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
-                        	if($5 == ",") {
-                            	cl_scope_less(0);
+                            if($5 == ",") {
+                                cl_scope_less(0);
                             }
                         }
                         | ellipsis_prefix LE_ELLIPSIS ')'
                         {
                             /* special type of argument: Ellipsis, can only be at the end of function argument */
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars && g_isUsedWithinFunc)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern      = $1 + " " + $2 + " " + $3;
-                            	curr_var.m_completeType = $2;
-                            	curr_var.m_isPtr        = false;
-                            	curr_var.m_starAmp      = "";
-                            	curr_var.m_lineno       = cl_scope_lineno;
-                            	curr_var.m_isEllipsis   = true;
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern      = $1 + " " + $2 + " " + $3;
+                                curr_var.m_completeType = $2;
+                                curr_var.m_isPtr        = false;
+                                curr_var.m_starAmp      = "";
+                                curr_var.m_lineno       = cl_scope_lineno;
+                                curr_var.m_isEllipsis   = true;
 
-                            	var = curr_var;
-                            	gs_vars->push_back(var);
+                                var = curr_var;
+                                gs_vars->push_back(var);
 
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
                         }
                         ;
 
 optional_struct_name     : /* empty */
-						| LE_IDENTIFIER
-						| '*'  LE_IDENTIFIER
-						| '**' LE_IDENTIFIER
-						;
-						
+                        | LE_IDENTIFIER
+                        | '*'  LE_IDENTIFIER
+                        | '**' LE_IDENTIFIER
+                        ;
+                        
 fully_qualified_identifier_name: LE_IDENTIFIER {$$ = $1;}
-								| scope_specifier LE_IDENTIFIER {$$ = $2;}
-								;
-								
+                                | scope_specifier LE_IDENTIFIER {$$ = $2;}
+                                ;
+                                
 typedef_name_list: optional_struct_name
-				 | typedef_name_list ',' optional_struct_name
-				 ;
+                 | typedef_name_list ',' optional_struct_name
+                 ;
 
 ellipsis_prefix: '(' {$$ = $1;}
                 |',' {$$ = $1;}
@@ -366,15 +401,15 @@ ellipsis_prefix: '(' {$$ = $1;}
 variable_name_list: fully_qualified_identifier_name {var_consumeDefaultValueIfNeeded();}
                     {
                         curr_var.m_name = $1;
-                    	gs_names.push_back(curr_var);
+                        gs_names.push_back(curr_var);
                     }
                     | variable_name_list ','  special_star_amp fully_qualified_identifier_name {var_consumeDefaultValueIfNeeded();}
                     {
                         //collect all the names
-						curr_var.m_name = $4;
-                       	curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
-						curr_var.m_starAmp = $3;
-						gs_names.push_back(curr_var);
+                        curr_var.m_name = $4;
+                           curr_var.m_isPtr = ($3.find("*") != (size_t)-1);
+                        curr_var.m_starAmp = $3;
+                        gs_names.push_back(curr_var);
                         $$ = $1 + $2 + " " + $3 + $4;
                     }
                     ;
@@ -399,17 +434,17 @@ postfix: ';'
 applicable for C++, for cases where a function is declared as
 void scope::foo(){ ... }
 */
-scope_specifier	: LE_IDENTIFIER LE_CLCL 
-				{
-					$$ = $1+ $2; 
-				}
+scope_specifier    : LE_IDENTIFIER LE_CLCL 
+                {
+                    $$ = $1+ $2; 
+                }
                 | LE_IDENTIFIER  '<' parameter_list '>' LE_CLCL
-				{
-					$$ = $1 + $2 + $3 + $4 + $5; 
-					s_templateInitList = $2 + $3 + $4;
-				}
+                {
+                    $$ = $1 + $2 + $3 + $4 + $5; 
+                    s_templateInitList = $2 + $3 + $4;
+                }
                 ;
-				
+                
 nested_scope_specifier: /*empty*/ {$$ = "";}
                     | nested_scope_specifier scope_specifier {    $$ = $1 + $2;}
                     ;
@@ -422,7 +457,7 @@ const_or_volatile_spec: /* empty */    { $$ = "";           }
                     | LE_CONST volatile_qualifier { $$ = $1;           }
                     | LE_CONST '*'     { $$ = $1 + $2; curr_var.m_rightSideConst = $$;     }
                     | LE_CONST '&'     { $$ = $1 + $2; curr_var.m_rightSideConst = $$;     }
-					| LE_CONST '*' '*' { $$ = $1 + $2 + $3; curr_var.m_rightSideConst = $$;}
+                    | LE_CONST '*' '*' { $$ = $1 + $2 + $3; curr_var.m_rightSideConst = $$;}
                     | LE_VOLATILE { $$ = $1; curr_var.m_isVolatile = true; }
                     ;
 
@@ -453,50 +488,50 @@ variable_decl       :   const_or_volatile_spec basic_type_name
                         {
                             $$ = $1 + " " + $2;
                             $2.erase($2.find_last_not_of(":")+1);
-                        	curr_var.m_type = $2;
-							curr_var.m_isBasicType = true;
-                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
+                            curr_var.m_type = $2;
+                            curr_var.m_isBasicType = true;
+                            curr_var.m_isConst = ($1.find("const") != std::string::npos);
                         }
                         |   const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER
                         {
-							$$ = $1 + " " + $2 + $3;
+                            $$ = $1 + " " + $2 + $3;
                             $2.erase($2.find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = $2;
-                        	curr_var.m_type = $3;
-                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
-                        	s_tmpString.clear();
+                            curr_var.m_typeScope = $2;
+                            curr_var.m_type = $3;
+                            curr_var.m_isConst = ($1.find("const") != std::string::npos);
+                            s_tmpString.clear();
                         }
                         |   const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'
                         {
                             $$ = $1 + " " + $2 + $3 + " " + $4 + $5 + $6;
                             $2.erase($2.find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = $2;
-                        	curr_var.m_type = $3;
-                        	curr_var.m_isTemplate = true;
-                        	curr_var.m_templateDecl = $4 +$5 +$6;
-                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
-                        	s_tmpString.clear();
+                            curr_var.m_typeScope = $2;
+                            curr_var.m_type = $3;
+                            curr_var.m_isTemplate = true;
+                            curr_var.m_templateDecl = $4 +$5 +$6;
+                            curr_var.m_isConst = ($1.find("const") != std::string::npos);
+                            s_tmpString.clear();
                         }
                         | const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER  '{' {s_tmpString = var_consumBracketsContent('{');}
                         {
                             $$ = $1 + " " + $2 + " " + $3 + " " + $4 + $5 + $6 + s_tmpString;
                             $3.erase($3.find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = $3;
-                        	curr_var.m_type = $4;
-							curr_var.m_completeType = $3 + $4;
-                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
-                        	s_tmpString.clear();
+                            curr_var.m_typeScope = $3;
+                            curr_var.m_type = $4;
+                            curr_var.m_completeType = $3 + $4;
+                            curr_var.m_isConst = ($1.find("const") != std::string::npos);
+                            s_tmpString.clear();
                         }
                         | const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER
                         {
                             $$ = $1 + " " + $2 + " " + $3 + " " + $4;
                             $3.erase($3.find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = $3;
-                        	curr_var.m_type = $4;
-                        	curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
-							curr_var.m_completeType = $3 + $4;
-                        	curr_var.m_isConst = ($1.find("const") != std::string::npos);
-                        	s_tmpString.clear();
+                            curr_var.m_typeScope = $3;
+                            curr_var.m_type = $4;
+                            curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
+                            curr_var.m_completeType = $3 + $4;
+                            curr_var.m_isConst = ($1.find("const") != std::string::npos);
+                            s_tmpString.clear();
                         }
                         ;
 
@@ -505,144 +540,144 @@ void yyerror(char *s) {}
 
 std::string var_consumBracketsContent(char openBrace)
 {
-	char closeBrace;
+    char closeBrace;
 
-	switch(openBrace) {
-	case '(': closeBrace = ')'; break;
-	case '[': closeBrace = ']'; break;
-	case '<': closeBrace = '>'; break;
-	case '{': closeBrace = '}'; break;
-	default:
-    	openBrace = '(';
-    	closeBrace = ')';
-    	break;
+    switch(openBrace) {
+    case '(': closeBrace = ')'; break;
+    case '[': closeBrace = ']'; break;
+    case '<': closeBrace = '>'; break;
+    case '{': closeBrace = '}'; break;
+    default:
+        openBrace = '(';
+        closeBrace = ')';
+        break;
     }
 
-	std::string consumedData;
-	int depth = 1;
-	while(depth > 0)
+    std::string consumedData;
+    int depth = 1;
+    while(depth > 0)
     {
-    	int ch = cl_scope_lex();
-    	if(ch == 0){
-        	break;
+        int ch = cl_scope_lex();
+        if(ch == 0){
+            break;
         }
 
 
-    	if(ch == closeBrace)
+        if(ch == closeBrace)
         {
-        	consumedData.erase(0, consumedData.find_first_not_of(" "));
-        	consumedData.erase(consumedData.find_last_not_of(" ")+1);
-        	consumedData += cl_scope_text;
+            consumedData.erase(0, consumedData.find_first_not_of(" "));
+            consumedData.erase(consumedData.find_last_not_of(" ")+1);
+            consumedData += cl_scope_text;
 
-        	depth--;
-        	continue;
+            depth--;
+            continue;
         }
-    	else if(ch == openBrace)
+        else if(ch == openBrace)
         {
-        	consumedData.erase(0, consumedData.find_first_not_of(" "));
-        	consumedData.erase(consumedData.find_last_not_of(" ")+1);
-        	consumedData += cl_scope_text;
+            consumedData.erase(0, consumedData.find_first_not_of(" "));
+            consumedData.erase(consumedData.find_last_not_of(" ")+1);
+            consumedData += cl_scope_text;
 
-        	depth ++ ;
-        	continue;
+            depth ++ ;
+            continue;
         }
 
-    	consumedData += cl_scope_text;
-    	consumedData += " ";
+        consumedData += cl_scope_text;
+        consumedData += " ";
     }
 
-	return consumedData;
+    return consumedData;
 }
 
 void var_consumeDefaultValueIfNeeded()
 {
-	int ch = cl_scope_lex();
-	if(ch != '=') {
-		cl_scope_less(0);
-		return;
-	}
-	var_consumeDefaultValue(';', ',');
+    int ch = cl_scope_lex();
+    if(ch != '=') {
+        cl_scope_less(0);
+        return;
+    }
+    var_consumeDefaultValue(';', ',');
 }
  
 void var_consumeDefaultValue(char c1, char c2)
 {
-	int depth = 0;
-	bool cont(true);
+    int depth = 0;
+    bool cont(true);
 
-	curr_var.m_defaultValue.clear();
-	while (depth >= 0) {
-    	int ch = cl_scope_lex();
-    	if(ch == 0) { break;}
+    curr_var.m_defaultValue.clear();
+    while (depth >= 0) {
+        int ch = cl_scope_lex();
+        if(ch == 0) { break;}
 
-    	if(ch == c1 && depth == 0) {
-        	cl_scope_less(0);
-        	break;
+        if(ch == c1 && depth == 0) {
+            cl_scope_less(0);
+            break;
         }
 
-    	if(ch == c2 && depth == 0) {
-        	cl_scope_less(0);
-        	break;
+        if(ch == c2 && depth == 0) {
+            cl_scope_less(0);
+            break;
         }
 
-    	curr_var.m_defaultValue += cl_scope_text;
-    	if(ch == ')' || ch == '}'){
-        	depth--;
-        	continue;
+        curr_var.m_defaultValue += cl_scope_text;
+        if(ch == ')' || ch == '}'){
+            depth--;
+            continue;
         } else if(ch == '(' || ch == '{') {
-        	depth ++ ;
-        	continue;
+            depth ++ ;
+            continue;
         }
     }
 }
 
 void clean_up()
 {
-	gs_vars = NULL;
+    gs_vars = NULL;
 
     // restore settings
-	setUseIgnoreMacros(true);
-	g_isUsedWithinFunc = false;
-	isBasicType = false;
-	
+    setUseIgnoreMacros(true);
+    g_isUsedWithinFunc = false;
+    isBasicType = false;
+    
     //do the lexer cleanup
-	cl_scope_lex_clean();
+    cl_scope_lex_clean();
 }
 
 // return the scope name at the end of the input string
 void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc)
 {
     //provide the lexer with new input
-	if( !setLexerInput(in, ignoreMap) ){
-    	return;
+    if( !setLexerInput(in, ignoreMap) ){
+        return;
     }
 
     //set the parser local output to our variable list
-	gs_vars = &li;
-	setUseIgnoreMacros(false);
+    gs_vars = &li;
+    setUseIgnoreMacros(false);
 
     // the 'g_isUsedWithinFunc' allows us to parse variabels without name
     // this is typical when used as function declaration (e.g. void setValue(bool);)
-	g_isUsedWithinFunc = isUsedWithinFunc;
+    g_isUsedWithinFunc = isUsedWithinFunc;
 
     //call tghe main parsing routine
-	cl_var_parse();
-	clean_up();
+    cl_var_parse();
+    clean_up();
 }
 
 bool is_primitive_type(const std::string &in)
 {
-	std::string input = "@"; // Hack the input string...
-	input += in;
-	input += ";";
-	
-	const std::map<std::string, std::string> ignoreMap;
-	if(!setLexerInput(input, ignoreMap)) {
-		return false;
-	}
+    std::string input = "@"; // Hack the input string...
+    input += in;
+    input += ";";
+    
+    const std::map<std::string, std::string> ignoreMap;
+    if(!setLexerInput(input, ignoreMap)) {
+        return false;
+    }
 
-	isBasicType = false;
-	cl_var_parse();
-	bool res = isBasicType;
-	clean_up();
-	return res;
+    isBasicType = false;
+    cl_var_parse();
+    bool res = isBasicType;
+    clean_up();
+    return res;
 }

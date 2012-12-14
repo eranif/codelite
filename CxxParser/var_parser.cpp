@@ -35,7 +35,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 /* Copyright Eran Ifrah(c)*/
 /*************** Includes and Defines *****************************/
 #include "string"
-#include "vector"
+#include "vector" 
 #include "stdio.h"
 #include "map"
 #include "variable.h"
@@ -176,183 +176,185 @@ short cl_var_lhs[] = {                                        -1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    2,    2,    2,    2,    0,    0,
     5,    3,    3,    3,    6,    6,    6,    7,    7,    7,
-   13,    4,    4,    4,    4,    4,    4,    4,   11,   11,
-   11,   11,   21,   21,   12,   12,   20,   20,   23,   16,
-   24,   16,   19,   19,   18,   18,   18,   18,   17,   17,
-   17,   17,   17,   22,   22,    9,    9,   25,   25,    8,
-    8,    8,    8,    8,    8,   26,   26,   27,   27,   28,
-   28,   10,   14,   14,   14,   14,   14,   15,   15,   15,
-   29,   15,   15,
+   13,    4,   17,    4,    4,    4,    4,    4,    4,    4,
+   11,   11,   11,   11,   22,   22,   12,   12,   21,   21,
+   24,   16,   25,   16,   20,   20,   19,   19,   19,   19,
+   18,   18,   18,   18,   18,   23,   23,    9,    9,   26,
+   26,    8,    8,    8,    8,    8,    8,   27,   27,   28,
+   28,   29,   29,   10,   14,   14,   14,   14,   14,   15,
+   15,   15,   30,   15,   15,
 };
 short cl_var_len[] = {                                         2,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     2,    2,    1,    1,    2,    2,    2,    1,    0,    2,
     0,    2,    3,    1,    0,    1,    3,    4,    4,    7,
-    0,    7,    6,    6,    6,    5,    5,    3,    0,    1,
-    2,    2,    1,    2,    1,    3,    1,    1,    0,    2,
-    0,    5,    1,    1,    0,    1,    1,    1,    1,    1,
-    1,    1,    1,    2,    5,    0,    2,    0,    1,    0,
-    2,    2,    2,    3,    1,    0,    1,    0,    1,    0,
-    2,    3,    0,    1,    1,    1,    1,    2,    3,    6,
-    0,    6,    4,
+    0,    7,    0,    8,    6,    6,    6,    5,    5,    3,
+    0,    1,    2,    2,    1,    2,    1,    3,    1,    1,
+    0,    2,    0,    5,    1,    1,    0,    1,    1,    1,
+    1,    1,    1,    1,    1,    2,    5,    0,    2,    0,
+    1,    0,    2,    2,    2,    3,    1,    0,    1,    0,
+    1,    0,    2,    3,    0,    1,    1,    1,    1,    2,
+    3,    6,    0,    6,    4,
 };
 short cl_var_defred[] = {                                     19,
     0,   24,    0,   20,    0,    6,    0,    0,    2,    5,
     0,    0,   10,    0,    9,   14,   13,   18,    0,    0,
-   84,    0,   85,    0,   86,   87,   22,    0,    0,   12,
+   86,    0,   87,    0,   88,   89,   22,    0,    0,   12,
    11,    3,    8,    7,   17,   15,   16,   23,    0,    0,
-   75,    0,   80,   80,   80,    0,   40,    0,    0,    0,
-   69,    0,   73,   71,   66,   88,    0,    0,    0,    0,
-    0,   38,   41,   42,   31,   74,    0,    0,   67,    0,
-   81,   77,    0,    0,    0,    0,    0,   64,    0,    0,
-   53,   54,   37,   79,   82,    0,   36,    0,    0,   49,
-    0,   45,    0,    0,   91,    0,   26,   66,   57,   56,
-   58,   35,   34,   59,   80,   62,   61,   60,   63,   33,
-   50,   44,   32,    0,    0,   92,    0,    0,    0,    0,
-   46,    0,   27,   65,    0,   80,   51,    0,   28,   29,
-   52,    0,    0,   30,
+   77,    0,   82,   82,   82,    0,   42,    0,    0,    0,
+   71,    0,   75,   73,   68,   90,    0,    0,    0,    0,
+    0,   40,   43,   44,   31,   76,    0,    0,   69,    0,
+   83,   79,    0,    0,    0,    0,    0,   66,    0,    0,
+   55,   56,   39,   81,   84,    0,   38,    0,    0,   51,
+    0,   47,    0,    0,   93,    0,   26,   68,   59,   58,
+   60,   37,   36,   61,   82,   33,   64,   63,   62,   65,
+   35,   52,   46,   32,    0,    0,   94,    0,    0,    0,
+    0,    0,   48,    0,   27,   67,    0,   82,   53,   34,
+    0,   28,   29,   54,    0,    0,   30,
 };
 short cl_var_dgoto[] = {                                       1,
    18,   19,    4,   27,    5,   96,   97,   98,   57,   58,
-   50,   93,   76,   28,   43,   89,  110,  102,   83,   29,
-   90,   69,  111,  131,   54,   73,   85,   59,  116,
+   50,   93,   76,   28,   43,   89,  122,  111,  102,   83,
+   29,   90,   69,  112,  134,   54,   73,   85,   59,  117,
 };
 short cl_var_sindex[] = {                                      0,
-  -26,    0,  239,    0,   28,    0, -237, -214,    0,    0,
-  347,  347,    0,  347,    0,    0,    0,    0,    2, -203,
-    0, -230,    0, -230,    0,    0,    0, -230, -266,    0,
+  -26,    0,  239,    0,   28,    0, -240, -229,    0,    0,
+  347,  347,    0,  347,    0,    0,    0,    0,  -23, -221,
+    0, -218,    0, -218,    0,    0,    0, -218, -288,    0,
     0,    0,    0,    0,    0,    0,    0,    0,  -34,  -31,
-    0,  287,    0,    0,    0,   26,    0, -236, -235,  -49,
-    0,   33,    0,    0,    0,    0, -222, -230,   -2, -230,
- -230,    0,    0,    0,    0,    0, -218,  -51,    0,  -38,
-    0,    0,   32,  -17, -216,  -34,  -58,    0, -230,  -29,
-    0,    0,    0,    0,    0,  -29,    0,  -44,  134,    0,
- -208,    0,  -21, -230,    0,  -15,    0,    0,    0,    0,
+    0,  287,    0,    0,    0,    3,    0, -253, -244,  -59,
+    0,   38,    0,    0,    0,    0, -236, -218,   33, -218,
+ -218,    0,    0,    0,    0,    0, -225,  -51,    0,  -38,
+    0,    0,   20,  -17, -215,  -34,  -58,    0, -218,  -28,
+    0,    0,    0,    0,    0,  -28,    0,  -44,  534,    0,
+ -210,    0,   -1, -218,    0,  -22,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,  -34,  -11,    0, -230, -231,  296, -216,
-    0, -231,    0,    0,  -39,    0,    0, -230,    0,    0,
-    0,  -10, -231,    0,
+    0,    0,    0,    0,  -34,  -15,    0, -218, -243,  296,
+ -215,   39,    0, -243,    0,    0,  -39,    0,    0,    0,
+ -218,    0,    0,    0,   -6, -243,    0,
 };
 short cl_var_rindex[] = {                                      0,
   -40,    0,    0,    0,  179,    0,   51,   79,    0,    0,
    95,  108,    0,  122,    0,    0,    0,    0,    0,    0,
     0,  203,    0,  230,    0,    0,    0,  263,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   -9,   25,
-    0, -204,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,  -21,   25,
+    0, -236,    0,    0,    0,    0,    0,    0,    0,    0,
     0,   53,    0,    0,    0,    0,    0,  -16,  144,  -16,
- -198,    0,    0,    0,    0,    0,    0,   35,    0,    0,
-    0,    0,  -27,    0,    0,   -5,  127,    0,   86,    1,
-    0,    0,    0,    0,    0,    1,    0,  156,    0,    0,
+ -202,    0,    0,    0,    0,    0,    0,   35,    0,    0,
+    0,    0,  -27,    0,    0,    2,  127,    0,   86,    1,
+    0,    0,    0,    0,    0,    1,    0,  590,    0,    0,
     0,    0,    0,   86,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,   -5,    0,    0,  323,  135,    0,    0,
-    0,    0,    0,    0,   63,    0,    0,   86,    0,    0,
-    0,    0,   63,    0,
+    0,    0,    0,    0,    2,    0,    0,  323,  135,    0,
+    0,    0,    0,    0,    0,    0,  -12,    0,    0,    0,
+   86,    0,    0,    0,    0,  -12,    0,
 };
 short cl_var_gindex[] = {                                      0,
-   92,  -37,    0,    0,    0,  -72,   -8,   20,  -35,  -14,
-  -61,    0,    0,    0,   22,    0,    0,   30,   44,    0,
-    8,  -62,    0,    0,    0,    0,    0,    0,    0,
+   89,  -30,    0,    0,    0,  -74,  -13,   84,  -24,    4,
+  -61,    0,    0,    0,   54,    0,    0,    0,   21,   37,
+    0,   -7,  -70,    0,    0,    0,    0,    0,    0,    0,
 };
-#define YYTABLESIZE 697
+#define YYTABLESIZE 713
 short cl_var_table[] = {                                      21,
-   55,   94,   82,   21,   56,   81,   53,   48,   79,    3,
-   52,   99,   91,   78,   92,   94,   78,   21,   21,   67,
-  128,  115,  114,   82,   70,   30,   81,   70,  117,   60,
-   61,  100,  117,  117,   78,   72,   55,  113,   39,   71,
-   55,   42,   40,   42,   55,   44,  118,   42,   31,   45,
-  122,  133,  121,   39,   41,  132,   39,   91,   55,   55,
-   38,  101,  119,   46,   95,   68,   62,   24,   68,   63,
-   64,   22,   89,   65,   66,   89,   89,   70,   89,   74,
-   75,  126,   21,   68,   21,   26,   21,   77,    1,   88,
-  120,    1,    1,   72,    1,   84,   72,  112,   89,  124,
-   80,   66,   35,   36,   80,   37,   80,   70,  123,    1,
-  129,  130,    1,   39,    1,  103,    4,   87,  134,    4,
-    4,    0,    4,   55,   80,   55,   80,  127,    0,   25,
-    0,    0,    3,    0,    0,    3,    3,    4,    3,    0,
-    4,    0,    4,    0,    0,    8,    0,   25,    8,    8,
+   57,   94,   82,   21,   91,   81,   53,   48,   79,    3,
+   52,   56,   99,   80,   92,   94,   80,   21,   21,  116,
+  131,  118,   30,   82,   72,   82,   81,   72,  118,   82,
+   67,   82,  100,   31,   80,   38,   57,  118,   39,  119,
+   57,   46,  115,   62,   57,   41,  124,   60,   61,   82,
+   91,   82,   63,  123,   40,  136,  135,  114,   57,   57,
+   41,   64,  101,   65,   95,   70,   41,   24,   70,   68,
+   72,   22,   91,  120,   71,   91,   91,   44,   91,   66,
+   77,   45,   21,   84,   21,   26,   21,  126,    1,  128,
+   88,    1,    1,   74,    1,  113,   74,  130,   91,   35,
+   36,   41,   37,   72,  125,   42,  103,   42,  121,    1,
+   87,   42,    1,  129,    1,    0,    4,    0,    0,    4,
+    4,    0,    4,   57,    0,   57,    0,    0,    0,   25,
+  132,  133,    3,    0,    0,    3,    3,    4,    3,  137,
+    4,   70,    4,   74,   75,    8,    0,   25,    8,    8,
    23,    8,   25,    3,    0,    0,    3,    0,    3,    7,
-    0,    0,    7,    7,   93,    7,    8,   93,   93,    8,
-   93,    8,   90,  106,  107,   90,   90,  105,   90,    0,
-    7,    0,    0,    7,   76,    7,    0,   76,    0,    0,
-   93,    0,  104,    0,  108,   43,   43,    0,   90,   43,
-    0,    0,    0,    0,    0,   76,    0,   76,    0,    0,
-    0,    0,    0,    0,   43,    0,   43,   21,   21,   21,
-    0,    0,   21,    0,  109,    0,    0,   21,   21,    2,
+    0,    0,    7,    7,   95,    7,    8,   95,   95,    8,
+   95,    8,   92,    0,    0,   92,   92,    0,   92,    0,
+    7,    0,    0,    7,   78,    7,    0,   78,    0,    0,
+   95,    0,    0,    0,    0,    0,    0,    0,   92,    0,
+    0,    0,    0,    0,    0,   78,    0,   78,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,   21,   21,   21,
+    0,    0,   21,    0,    0,    0,    0,   21,   21,    2,
     0,    0,   21,   21,   21,   21,   21,    0,    0,   21,
-   21,    0,    0,    0,   21,   78,   43,    0,    0,    0,
-    0,    0,    0,   51,    0,    0,   55,   78,   55,   55,
-   55,    0,    0,   55,    0,   21,    0,   80,   55,   55,
-    0,   47,   78,   55,   55,   55,   55,   55,   78,   78,
-   55,   55,   68,   68,   68,   55,   78,   68,   86,   70,
-    0,   78,    0,   68,    0,   20,    0,    0,   68,   68,
-   68,   68,    0,    0,   68,   68,   55,   89,   21,   21,
-   72,   72,   72,    0,    0,   72,   49,    0,    0,   89,
-    0,   72,    0,    1,    0,    0,   72,   72,   72,   72,
-   68,    0,   72,   72,    0,    1,    0,    0,    0,    0,
-   89,    0,    0,   70,   70,    0,    0,    0,   70,   55,
-   55,    4,    0,    0,   70,    0,    1,    0,   72,   70,
-   70,   70,   70,    4,    0,   70,   70,    3,    0,    0,
-    0,    0,    0,   68,   68,    0,    0,    0,    0,    3,
+   21,    0,    0,    0,   21,   80,    0,    0,    0,    0,
+    0,    0,    0,   51,    0,    0,   57,   80,   57,   57,
+   57,    0,    0,   57,    0,   21,    0,   80,   57,   57,
+    0,   47,   78,   57,   57,   57,   57,   57,   80,   78,
+   57,   57,   70,   70,   70,   57,   78,   70,   86,   72,
+    0,   78,    0,   70,    0,   20,    0,    0,   70,   70,
+   70,   70,    0,    0,   70,   70,   57,   91,   21,   21,
+   74,   74,   74,    0,    0,   74,   49,    0,    0,   91,
+    0,   74,    0,    1,    0,    0,   74,   74,   74,   74,
+   70,    0,   74,   74,    0,    1,    0,    0,    0,    0,
+   91,    0,    0,   72,   72,    0,    0,    0,   72,   57,
+   57,    4,    0,    0,   72,    0,    1,    0,   74,   72,
+   72,   72,   72,    4,    0,   72,   72,    3,    0,    0,
+    0,    0,    0,   70,   70,    0,    0,    0,    0,    3,
     8,    0,    0,    0,    4,    0,    0,    0,    0,    0,
-    0,   70,    8,    0,    7,    0,    0,    0,    0,   93,
-    3,   72,   72,    0,    0,    0,    7,   90,    0,    0,
-    0,   93,    0,    8,    0,    0,   76,    0,    0,   90,
-    0,    0,    0,    0,    0,    0,    0,    7,   76,    0,
-    0,    0,   93,    0,   70,   70,   83,   83,   83,    0,
-   90,   83,    0,    0,    0,    0,    0,   83,    0,   76,
-    0,   83,   83,   83,   83,   83,    0,    0,   83,   83,
-   70,   70,   70,   83,    0,   70,    0,    0,    0,    0,
-    0,   70,    0,    0,    0,    0,   70,   70,   70,   70,
-    0,    0,   70,   70,   83,    0,    0,   70,   70,   70,
-    0,    0,   70,    0,    0,    0,    6,    7,   70,    0,
-    0,    8,    0,   70,   70,   70,   70,    9,   70,   70,
-   70,    0,   10,   11,   12,   13,    0,    0,   14,   15,
-   70,   70,   70,    0,    0,   70,    0,   83,   83,    0,
-    0,   70,   48,    0,    0,   70,   70,   70,   70,   70,
-    0,    0,   70,   70,    6,    7,   55,    0,    0,    8,
-    0,   70,   70,    6,    7,    9,    0,    0,    8,   47,
-   10,   11,   12,   13,    9,    0,   14,   15,   70,   10,
-   11,   12,   13,    0,    0,   14,   15,    0,   70,   70,
-   70,   70,    0,    0,    0,   70,    0,   16,   17,    0,
-    0,   70,    0,    0,    0,    0,   70,   70,   70,   70,
-    0,  125,   70,   70,    6,    7,    0,    0,    0,    8,
-    0,   70,   70,    0,    0,    9,    0,    0,    0,    0,
-   10,   32,   33,   13,    0,    0,   34,   15,   70,    0,
+    0,   72,    8,    0,    7,    0,    0,    0,    0,   95,
+    3,   74,   74,    0,    0,    0,    7,   92,    0,    0,
+    0,   95,    0,    8,    0,    0,   78,    0,    0,   92,
+    0,    0,    0,    0,    0,    0,    0,    7,   78,    0,
+    0,    0,   95,    0,   72,   72,   85,   85,   85,    0,
+   92,   85,    0,    0,    0,    0,    0,   85,    0,   78,
+    0,   85,   85,   85,   85,   85,    0,    0,   85,   85,
+   72,   72,   72,   85,    0,   72,    0,    0,    0,    0,
+    0,   72,    0,    0,    0,    0,   72,   72,   72,   72,
+    0,    0,   72,   72,   85,    0,    0,   72,   72,   72,
+    0,    0,   72,    0,    0,    0,    6,    7,   72,    0,
+    0,    8,    0,   72,   72,   72,   72,    9,   72,   72,
+   72,    0,   10,   11,   12,   13,    0,    0,   14,   15,
+   72,   72,   72,    0,    0,   72,    0,   85,   85,    0,
+    0,   72,   50,    0,    0,   72,   72,   72,   72,   72,
+    0,    0,   72,   72,    6,    7,   55,    0,    0,    8,
+    0,   72,   72,    6,    7,    9,    0,    0,    8,   49,
+   10,   11,   12,   13,    9,    0,   14,   15,   72,   10,
+   11,   12,   13,  107,  108,   14,   15,  105,   72,   72,
+   72,   72,    0,    0,    0,   72,    0,   16,   17,    0,
+    0,   72,  104,    0,  109,    0,   72,   72,   72,   72,
+    0,  127,   72,   72,    6,    7,    0,    0,    0,    8,
+    0,   72,   72,    0,    0,    9,    0,    0,    0,    0,
+   10,   32,   33,   13,  110,    0,   34,   15,   72,   45,
+   45,    0,    0,   45,    0,   16,   17,    0,    0,    0,
+    0,    0,    0,    0,   16,   17,    0,    0,   45,    0,
+   45,    0,    0,    0,    0,    0,  106,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,   72,   72,    0,    0,    0,    0,    0,    0,    0,
+   45,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,   16,   17,    0,    0,    0,
-    0,    0,    0,    0,   16,   17,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,   70,   70,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,   16,   17,
+    0,    0,   45,
 };
 short cl_var_check[] = {                                      40,
-    0,   60,   41,   44,   42,   44,   38,   42,   60,   36,
-   42,   41,   75,   41,   76,   60,   44,   58,   59,   55,
-   60,   94,   44,   41,   41,  263,   44,   44,   44,   44,
-   45,   61,   44,   44,   62,   38,   36,   59,   44,   42,
-   40,   22,  273,   24,   44,   24,   62,   28,  263,   28,
-   62,   62,  114,   59,  285,  128,  260,  120,   58,   59,
-   59,   91,   98,  330,  123,   41,   41,   40,   44,  306,
-  306,   44,   38,  123,   42,   41,   42,   58,   44,   60,
-   61,  119,  123,  306,  125,   58,   59,  306,   38,  306,
-  105,   41,   42,   41,   44,   64,   44,  306,   64,  331,
-   38,  306,   11,   12,   42,   14,   44,  306,  117,   59,
-  125,  126,   62,  123,   64,   86,   38,   74,  133,   41,
-   42,   -1,   44,  123,   62,  125,   64,  120,   -1,   44,
-   -1,   -1,   38,   -1,   -1,   41,   42,   59,   44,   -1,
-   62,   -1,   64,   -1,   -1,   38,   -1,   62,   41,   42,
+    0,   60,   41,   44,   75,   44,   38,   42,   60,   36,
+   42,   42,   41,   41,   76,   60,   44,   58,   59,   94,
+   60,   44,  263,   41,   41,   38,   44,   44,   44,   42,
+   55,   44,   61,  263,   62,   59,   36,   44,  260,   62,
+   40,  330,   44,   41,   44,   44,   62,   44,   45,   62,
+  121,   64,  306,  115,  273,   62,  131,   59,   58,   59,
+   59,  306,   91,  123,  123,   41,  285,   40,   44,  306,
+   38,   44,   38,   98,   42,   41,   42,   24,   44,   42,
+  306,   28,  123,   64,  125,   58,   59,  331,   38,  120,
+  306,   41,   42,   41,   44,  306,   44,   59,   64,   11,
+   12,  123,   14,  306,  118,   22,   86,   24,  105,   59,
+   74,   28,   62,  121,   64,   -1,   38,   -1,   -1,   41,
+   42,   -1,   44,  123,   -1,  125,   -1,   -1,   -1,   44,
+  127,  128,   38,   -1,   -1,   41,   42,   59,   44,  136,
+   62,   58,   64,   60,   61,   38,   -1,   62,   41,   42,
   123,   44,  125,   59,   -1,   -1,   62,   -1,   64,   38,
    -1,   -1,   41,   42,   38,   44,   59,   41,   42,   62,
-   44,   64,   38,   40,   41,   41,   42,   44,   44,   -1,
+   44,   64,   38,   -1,   -1,   41,   42,   -1,   44,   -1,
    59,   -1,   -1,   62,   41,   64,   -1,   44,   -1,   -1,
-   64,   -1,   59,   -1,   61,   40,   41,   -1,   64,   44,
+   64,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   64,   -1,
    -1,   -1,   -1,   -1,   -1,   62,   -1,   64,   -1,   -1,
-   -1,   -1,   -1,   -1,   59,   -1,   61,  258,  259,  260,
-   -1,   -1,  263,   -1,   91,   -1,   -1,  268,  269,  256,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,  258,  259,  260,
+   -1,   -1,  263,   -1,   -1,   -1,   -1,  268,  269,  256,
    -1,   -1,  273,  274,  275,  276,  277,   -1,   -1,  280,
-  281,   -1,   -1,   -1,  285,  273,   91,   -1,   -1,   -1,
+  281,   -1,   -1,   -1,  285,  273,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,  285,   -1,   -1,  256,  285,  258,  259,
   260,   -1,   -1,  263,   -1,  306,   -1,  306,  268,  269,
    -1,  306,  331,  273,  274,  275,  276,  277,  306,  331,
@@ -385,19 +387,21 @@ short cl_var_check[] = {                                      40,
    -1,   -1,  280,  281,  258,  259,  260,   -1,   -1,  263,
    -1,  349,  350,  258,  259,  269,   -1,   -1,  263,  330,
   274,  275,  276,  277,  269,   -1,  280,  281,  306,  274,
-  275,  276,  277,   -1,   -1,  280,  281,   -1,  349,  350,
+  275,  276,  277,   40,   41,  280,  281,   44,  349,  350,
   258,  259,   -1,   -1,   -1,  263,   -1,  349,  350,   -1,
-   -1,  269,   -1,   -1,   -1,   -1,  274,  275,  276,  277,
+   -1,  269,   59,   -1,   61,   -1,  274,  275,  276,  277,
    -1,  306,  280,  281,  258,  259,   -1,   -1,   -1,  263,
    -1,  349,  350,   -1,   -1,  269,   -1,   -1,   -1,   -1,
-  274,  275,  276,  277,   -1,   -1,  280,  281,  306,   -1,
-   -1,   -1,   -1,   -1,   -1,  349,  350,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,  349,  350,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+  274,  275,  276,  277,   91,   -1,  280,  281,  306,   40,
+   41,   -1,   -1,   44,   -1,  349,  350,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,  349,  350,   -1,   -1,   59,   -1,
+   61,   -1,   -1,   -1,   -1,   -1,  123,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,  349,  350,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   91,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,  349,  350,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,  349,  350,
+   -1,   -1,  123,
 };
 #define YYFINAL 1
 #ifndef YYDEBUG
@@ -465,6 +469,8 @@ char *cl_var_rule[] = {
 "template_parameter : const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>' special_star_amp",
 "$$2 :",
 "variables : LE_TYPEDEF LE_STRUCT optional_struct_name '{' $$2 typedef_name_list ';'",
+"$$3 :",
+"variables : stmnt_starter variable_decl special_star_amp const_or_volatile_spec variable_name_list '{' $$3 ';'",
 "variables : stmnt_starter variable_decl special_star_amp const_or_volatile_spec variable_name_list postfix",
 "variables : '(' variable_decl special_star_amp const_or_volatile_spec LE_IDENTIFIER postfix2",
 "variables : ',' variable_decl special_star_amp const_or_volatile_spec LE_IDENTIFIER postfix2",
@@ -481,10 +487,10 @@ char *cl_var_rule[] = {
 "typedef_name_list : typedef_name_list ',' optional_struct_name",
 "ellipsis_prefix : '('",
 "ellipsis_prefix : ','",
-"$$3 :",
-"variable_name_list : fully_qualified_identifier_name $$3",
 "$$4 :",
-"variable_name_list : variable_name_list ',' special_star_amp fully_qualified_identifier_name $$4",
+"variable_name_list : fully_qualified_identifier_name $$4",
+"$$5 :",
+"variable_name_list : variable_name_list ',' special_star_amp fully_qualified_identifier_name $$5",
 "postfix3 : ','",
 "postfix3 : ')'",
 "postfix2 :",
@@ -523,8 +529,8 @@ char *cl_var_rule[] = {
 "variable_decl : const_or_volatile_spec basic_type_name",
 "variable_decl : const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER",
 "variable_decl : const_or_volatile_spec nested_scope_specifier LE_IDENTIFIER '<' parameter_list '>'",
-"$$5 :",
-"variable_decl : const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER '{' $$5",
+"$$6 :",
+"variable_decl : const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER '{' $$6",
 "variable_decl : const_or_volatile_spec LE_STRUCT nested_scope_specifier LE_IDENTIFIER",
 };
 #endif
@@ -557,146 +563,146 @@ void yyerror(char *s) {}
 
 std::string var_consumBracketsContent(char openBrace)
 {
-	char closeBrace;
+    char closeBrace;
 
-	switch(openBrace) {
-	case '(': closeBrace = ')'; break;
-	case '[': closeBrace = ']'; break;
-	case '<': closeBrace = '>'; break;
-	case '{': closeBrace = '}'; break;
-	default:
-    	openBrace = '(';
-    	closeBrace = ')';
-    	break;
+    switch(openBrace) {
+    case '(': closeBrace = ')'; break;
+    case '[': closeBrace = ']'; break;
+    case '<': closeBrace = '>'; break;
+    case '{': closeBrace = '}'; break;
+    default:
+        openBrace = '(';
+        closeBrace = ')';
+        break;
     }
 
-	std::string consumedData;
-	int depth = 1;
-	while(depth > 0)
+    std::string consumedData;
+    int depth = 1;
+    while(depth > 0)
     {
-    	int ch = cl_scope_lex();
-    	if(ch == 0){
-        	break;
+        int ch = cl_scope_lex();
+        if(ch == 0){
+            break;
         }
 
 
-    	if(ch == closeBrace)
+        if(ch == closeBrace)
         {
-        	consumedData.erase(0, consumedData.find_first_not_of(" "));
-        	consumedData.erase(consumedData.find_last_not_of(" ")+1);
-        	consumedData += cl_scope_text;
+            consumedData.erase(0, consumedData.find_first_not_of(" "));
+            consumedData.erase(consumedData.find_last_not_of(" ")+1);
+            consumedData += cl_scope_text;
 
-        	depth--;
-        	continue;
+            depth--;
+            continue;
         }
-    	else if(ch == openBrace)
+        else if(ch == openBrace)
         {
-        	consumedData.erase(0, consumedData.find_first_not_of(" "));
-        	consumedData.erase(consumedData.find_last_not_of(" ")+1);
-        	consumedData += cl_scope_text;
+            consumedData.erase(0, consumedData.find_first_not_of(" "));
+            consumedData.erase(consumedData.find_last_not_of(" ")+1);
+            consumedData += cl_scope_text;
 
-        	depth ++ ;
-        	continue;
+            depth ++ ;
+            continue;
         }
 
-    	consumedData += cl_scope_text;
-    	consumedData += " ";
+        consumedData += cl_scope_text;
+        consumedData += " ";
     }
 
-	return consumedData;
+    return consumedData;
 }
 
 void var_consumeDefaultValueIfNeeded()
 {
-	int ch = cl_scope_lex();
-	if(ch != '=') {
-		cl_scope_less(0);
-		return;
-	}
-	var_consumeDefaultValue(';', ',');
+    int ch = cl_scope_lex();
+    if(ch != '=') {
+        cl_scope_less(0);
+        return;
+    }
+    var_consumeDefaultValue(';', ',');
 }
  
 void var_consumeDefaultValue(char c1, char c2)
 {
-	int depth = 0;
-	bool cont(true);
+    int depth = 0;
+    bool cont(true);
 
-	curr_var.m_defaultValue.clear();
-	while (depth >= 0) {
-    	int ch = cl_scope_lex();
-    	if(ch == 0) { break;}
+    curr_var.m_defaultValue.clear();
+    while (depth >= 0) {
+        int ch = cl_scope_lex();
+        if(ch == 0) { break;}
 
-    	if(ch == c1 && depth == 0) {
-        	cl_scope_less(0);
-        	break;
+        if(ch == c1 && depth == 0) {
+            cl_scope_less(0);
+            break;
         }
 
-    	if(ch == c2 && depth == 0) {
-        	cl_scope_less(0);
-        	break;
+        if(ch == c2 && depth == 0) {
+            cl_scope_less(0);
+            break;
         }
 
-    	curr_var.m_defaultValue += cl_scope_text;
-    	if(ch == ')' || ch == '}'){
-        	depth--;
-        	continue;
+        curr_var.m_defaultValue += cl_scope_text;
+        if(ch == ')' || ch == '}'){
+            depth--;
+            continue;
         } else if(ch == '(' || ch == '{') {
-        	depth ++ ;
-        	continue;
+            depth ++ ;
+            continue;
         }
     }
 }
 
 void clean_up()
 {
-	gs_vars = NULL;
+    gs_vars = NULL;
 
     // restore settings
-	setUseIgnoreMacros(true);
-	g_isUsedWithinFunc = false;
-	isBasicType = false;
-	
+    setUseIgnoreMacros(true);
+    g_isUsedWithinFunc = false;
+    isBasicType = false;
+    
     //do the lexer cleanup
-	cl_scope_lex_clean();
+    cl_scope_lex_clean();
 }
 
 // return the scope name at the end of the input string
 void get_variables(const std::string &in, VariableList &li, const std::map<std::string, std::string> &ignoreMap, bool isUsedWithinFunc)
 {
     //provide the lexer with new input
-	if( !setLexerInput(in, ignoreMap) ){
-    	return;
+    if( !setLexerInput(in, ignoreMap) ){
+        return;
     }
 
     //set the parser local output to our variable list
-	gs_vars = &li;
-	setUseIgnoreMacros(false);
+    gs_vars = &li;
+    setUseIgnoreMacros(false);
 
     // the 'g_isUsedWithinFunc' allows us to parse variabels without name
     // this is typical when used as function declaration (e.g. void setValue(bool);)
-	g_isUsedWithinFunc = isUsedWithinFunc;
+    g_isUsedWithinFunc = isUsedWithinFunc;
 
     //call tghe main parsing routine
-	cl_var_parse();
-	clean_up();
+    cl_var_parse();
+    clean_up();
 }
 
 bool is_primitive_type(const std::string &in)
 {
-	std::string input = "@"; // Hack the input string...
-	input += in;
-	input += ";";
-	
-	const std::map<std::string, std::string> ignoreMap;
-	if(!setLexerInput(input, ignoreMap)) {
-		return false;
-	}
+    std::string input = "@"; // Hack the input string...
+    input += in;
+    input += ";";
+    
+    const std::map<std::string, std::string> ignoreMap;
+    if(!setLexerInput(input, ignoreMap)) {
+        return false;
+    }
 
-	isBasicType = false;
-	cl_var_parse();
-	bool res = isBasicType;
-	clean_up();
-	return res;
+    isBasicType = false;
+    cl_var_parse();
+    bool res = isBasicType;
+    clean_up();
+    return res;
 }
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
@@ -897,8 +903,8 @@ case 21:
 break;
 case 23:
 {
-							isBasicType = true;
-						}
+                            isBasicType = true;
+                        }
 break;
 case 24:
 {
@@ -936,362 +942,401 @@ case 31:
 break;
 case 32:
 {
-					}
+                    }
 break;
 case 33:
-{
-                        	if(gs_vars)
-                            {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_isPtr = (yyvsp[-3].find("*") != (size_t)-1);
-                            	curr_var.m_starAmp = yyvsp[-3];
-                            	curr_var.m_lineno = cl_scope_lineno;
-								curr_var.m_rightSideConst = yyvsp[-2];
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();
-
-                            	for(size_t i=0; i< gs_names.size(); i++)
-                                {
-                                    /*create new variable for every variable name found*/
-                                	var = curr_var;
-                                	var.m_pattern      = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
-									if(var.m_completeType.empty()) {
-										var.m_completeType = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
-									}
-                                	var.m_name         = gs_names.at(i).m_name;
-									var.m_defaultValue = gs_names.at(i).m_defaultValue;
-
-									if(i != 0) {
-										var.m_isPtr        = gs_names.at(i).m_isPtr;
-										var.m_starAmp      = gs_names.at(i).m_starAmp;
-									}
-                                	gs_vars->push_back(var);
-                                }
-                            	curr_var.Reset();
-                            	gs_names.clear();
-                            }
-                        }
+{var_consumBracketsContent('{');}
 break;
 case 34:
 {
-                        	if(gs_vars)
+                        if(gs_vars)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern       = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
-								curr_var.m_completeType  = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
-                            	curr_var.m_isPtr         = (yyvsp[-3].find("*") != (size_t)-1);
-                            	curr_var.m_starAmp       = yyvsp[-3];
-                            	curr_var.m_arrayBrackets = yyvsp[0];
-								curr_var.m_rightSideConst= yyvsp[-2];
-                            	curr_var.m_lineno        = cl_scope_lineno;
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
-								/*create new variable for every variable name found*/
-                                var = curr_var;
-                            	var.m_name               = yyvsp[-1];
-                            	gs_vars->push_back(var);
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_isPtr = (yyvsp[-5].find("*") != (size_t)-1);
+                                curr_var.m_starAmp = yyvsp[-5];
+                                curr_var.m_lineno = cl_scope_lineno;
+                                curr_var.m_rightSideConst = yyvsp[-4];
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();
+
+                                for(size_t i=0; i< gs_names.size(); i++)
+                                {
+                                    /*create new variable for every variable name found*/
+                                    var = curr_var;
+                                    var.m_pattern      = yyvsp[-6] + " " + yyvsp[-5] + " " + yyvsp[-4] ;
+                                    if(var.m_completeType.empty()) {
+                                        var.m_completeType = yyvsp[-6] + " " + yyvsp[-5] + " " + yyvsp[-4] ;
+                                    }
+                                    var.m_name         = gs_names.at(i).m_name;
+                                    var.m_defaultValue = gs_names.at(i).m_defaultValue;
+
+                                    if(i != 0) {
+                                        var.m_isPtr        = gs_names.at(i).m_isPtr;
+                                        var.m_starAmp      = gs_names.at(i).m_starAmp;
+                                    }
+                                    gs_vars->push_back(var);
+                                }
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
-                        }
+                    }
 break;
 case 35:
 {
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern         = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
-                            	curr_var.m_completeType    = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
-                            	curr_var.m_isPtr           = (yyvsp[-3].find("*") != (size_t)-1);
-                            	curr_var.m_starAmp         = yyvsp[-3];
-                            	curr_var.m_arrayBrackets   = yyvsp[0];
-								curr_var.m_rightSideConst  = yyvsp[-2];
-                            	curr_var.m_lineno          = cl_scope_lineno;
-								
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
-                                /*create new variable for every variable name found*/
-                            	var = curr_var;
-                            	var.m_name = yyvsp[-1];
-                            	gs_vars->push_back(var);
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_isPtr = (yyvsp[-3].find("*") != (size_t)-1);
+                                curr_var.m_starAmp = yyvsp[-3];
+                                curr_var.m_lineno = cl_scope_lineno;
+                                curr_var.m_rightSideConst = yyvsp[-2];
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();
 
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                for(size_t i=0; i< gs_names.size(); i++)
+                                {
+                                    /*create new variable for every variable name found*/
+                                    var = curr_var;
+                                    var.m_pattern      = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
+                                    if(var.m_completeType.empty()) {
+                                        var.m_completeType = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
+                                    }
+                                    var.m_name         = gs_names.at(i).m_name;
+                                    var.m_defaultValue = gs_names.at(i).m_defaultValue;
+
+                                    if(i != 0) {
+                                        var.m_isPtr        = gs_names.at(i).m_isPtr;
+                                        var.m_starAmp      = gs_names.at(i).m_starAmp;
+                                    }
+                                    gs_vars->push_back(var);
+                                }
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
                         }
 break;
 case 36:
 {
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern       = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
-                            	curr_var.m_completeType  = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
-                            	curr_var.m_isPtr         = (yyvsp[-2].find("*") != (size_t)-1);
-                            	curr_var.m_starAmp       = yyvsp[-2];
-								curr_var.m_rightSideConst= yyvsp[-1];
-                            	curr_var.m_lineno        = cl_scope_lineno;
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern       = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                                curr_var.m_completeType  = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
+                                curr_var.m_isPtr         = (yyvsp[-3].find("*") != (size_t)-1);
+                                curr_var.m_starAmp       = yyvsp[-3];
+                                curr_var.m_arrayBrackets = yyvsp[0];
+                                curr_var.m_rightSideConst= yyvsp[-2];
+                                curr_var.m_lineno        = cl_scope_lineno;
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
                                 /*create new variable for every variable name found*/
-                            	var = curr_var;
-                            	var.m_name = "";
-                            	gs_vars->push_back(var);
-
-                            	curr_var.Reset();
-                            	gs_names.clear();
-                            }
-                        	if(yyvsp[0] == ",") {
-                            	cl_scope_less(0);
+                                var = curr_var;
+                                var.m_name               = yyvsp[-1];
+                                gs_vars->push_back(var);
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
                         }
 break;
 case 37:
 {
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars && g_isUsedWithinFunc)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern       = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
-                            	curr_var.m_completeType  = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
-                            	curr_var.m_isPtr         = (yyvsp[-2].find("*") != (size_t)-1);
-                            	curr_var.m_starAmp       = yyvsp[-2];
-                            	curr_var.m_lineno        = cl_scope_lineno;
-								curr_var.m_rightSideConst= yyvsp[-1];
-								if(curr_var.m_templateDecl.empty())
-									curr_var.m_templateDecl = s_templateInitList;
-								s_templateInitList.clear();	
-								
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern         = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                                curr_var.m_completeType    = yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] ;
+                                curr_var.m_isPtr           = (yyvsp[-3].find("*") != (size_t)-1);
+                                curr_var.m_starAmp         = yyvsp[-3];
+                                curr_var.m_arrayBrackets   = yyvsp[0];
+                                curr_var.m_rightSideConst  = yyvsp[-2];
+                                curr_var.m_lineno          = cl_scope_lineno;
+                                
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
                                 /*create new variable for every variable name found*/
-                            	var = curr_var;
-                            	var.m_name = "";
-                            	gs_vars->push_back(var);
+                                var = curr_var;
+                                var.m_name = yyvsp[-1];
+                                gs_vars->push_back(var);
 
-                            	curr_var.Reset();
-                            	gs_names.clear();
-                            }
-                        	if(yyvsp[0] == ",") {
-                            	cl_scope_less(0);
+                                curr_var.Reset();
+                                gs_names.clear();
                             }
                         }
 break;
 case 38:
 {
-                            /* special type of argument: Ellipsis, can only be at the end of function argument */
-                        	if(gs_vars && g_isUsedWithinFunc)
+                            if(gs_vars && g_isUsedWithinFunc)
                             {
-                            	Variable var;
-                            	std::string pattern;
-                            	curr_var.m_pattern      = yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0];
-                            	curr_var.m_completeType = yyvsp[-1];
-                            	curr_var.m_isPtr        = false;
-                            	curr_var.m_starAmp      = "";
-                            	curr_var.m_lineno       = cl_scope_lineno;
-                            	curr_var.m_isEllipsis   = true;
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern       = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                                curr_var.m_completeType  = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                                curr_var.m_isPtr         = (yyvsp[-2].find("*") != (size_t)-1);
+                                curr_var.m_starAmp       = yyvsp[-2];
+                                curr_var.m_rightSideConst= yyvsp[-1];
+                                curr_var.m_lineno        = cl_scope_lineno;
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
+                                /*create new variable for every variable name found*/
+                                var = curr_var;
+                                var.m_name = "";
+                                gs_vars->push_back(var);
 
-                            	var = curr_var;
-                            	gs_vars->push_back(var);
-
-                            	curr_var.Reset();
-                            	gs_names.clear();
+                                curr_var.Reset();
+                                gs_names.clear();
+                            }
+                            if(yyvsp[0] == ",") {
+                                cl_scope_less(0);
                             }
                         }
 break;
-case 43:
+case 39:
+{
+                            if(gs_vars && g_isUsedWithinFunc)
+                            {
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern       = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                                curr_var.m_completeType  = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1];
+                                curr_var.m_isPtr         = (yyvsp[-2].find("*") != (size_t)-1);
+                                curr_var.m_starAmp       = yyvsp[-2];
+                                curr_var.m_lineno        = cl_scope_lineno;
+                                curr_var.m_rightSideConst= yyvsp[-1];
+                                if(curr_var.m_templateDecl.empty())
+                                    curr_var.m_templateDecl = s_templateInitList;
+                                s_templateInitList.clear();    
+                                
+                                /*create new variable for every variable name found*/
+                                var = curr_var;
+                                var.m_name = "";
+                                gs_vars->push_back(var);
+
+                                curr_var.Reset();
+                                gs_names.clear();
+                            }
+                            if(yyvsp[0] == ",") {
+                                cl_scope_less(0);
+                            }
+                        }
+break;
+case 40:
+{
+                            /* special type of argument: Ellipsis, can only be at the end of function argument */
+                            if(gs_vars && g_isUsedWithinFunc)
+                            {
+                                Variable var;
+                                std::string pattern;
+                                curr_var.m_pattern      = yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0];
+                                curr_var.m_completeType = yyvsp[-1];
+                                curr_var.m_isPtr        = false;
+                                curr_var.m_starAmp      = "";
+                                curr_var.m_lineno       = cl_scope_lineno;
+                                curr_var.m_isEllipsis   = true;
+
+                                var = curr_var;
+                                gs_vars->push_back(var);
+
+                                curr_var.Reset();
+                                gs_names.clear();
+                            }
+                        }
+break;
+case 45:
 {yyval = yyvsp[0];}
 break;
-case 44:
-{yyval = yyvsp[0];}
-break;
-case 47:
-{yyval = yyvsp[0];}
-break;
-case 48:
+case 46:
 {yyval = yyvsp[0];}
 break;
 case 49:
-{var_consumeDefaultValueIfNeeded();}
+{yyval = yyvsp[0];}
 break;
 case 50:
-{
-                        curr_var.m_name = yyvsp[-1];
-                    	gs_names.push_back(curr_var);
-                    }
+{yyval = yyvsp[0];}
 break;
 case 51:
 {var_consumeDefaultValueIfNeeded();}
 break;
 case 52:
 {
+                        curr_var.m_name = yyvsp[-1];
+                        gs_names.push_back(curr_var);
+                    }
+break;
+case 53:
+{var_consumeDefaultValueIfNeeded();}
+break;
+case 54:
+{
                         /*collect all the names*/
-						curr_var.m_name = yyvsp[-1];
-                       	curr_var.m_isPtr = (yyvsp[-2].find("*") != (size_t)-1);
-						curr_var.m_starAmp = yyvsp[-2];
-						gs_names.push_back(curr_var);
+                        curr_var.m_name = yyvsp[-1];
+                           curr_var.m_isPtr = (yyvsp[-2].find("*") != (size_t)-1);
+                        curr_var.m_starAmp = yyvsp[-2];
+                        gs_names.push_back(curr_var);
                         yyval = yyvsp[-4] + yyvsp[-3] + " " + yyvsp[-2] + yyvsp[-1];
                     }
 break;
-case 55:
+case 57:
 {yyval = "";}
 break;
-case 56:
+case 58:
 {var_consumeDefaultValue(',', ')'); yyval = ""; }
 break;
-case 57:
+case 59:
 { yyval = ""; }
 break;
-case 58:
-{ yyval = yyvsp[0] + var_consumBracketsContent('[');}
-break;
-case 62:
-{ yyval = yyvsp[0] + var_consumBracketsContent('(');}
-break;
-case 63:
+case 60:
 { yyval = yyvsp[0] + var_consumBracketsContent('[');}
 break;
 case 64:
-{
-					yyval = yyvsp[-1]+ yyvsp[0]; 
-				}
+{ yyval = yyvsp[0] + var_consumBracketsContent('(');}
 break;
 case 65:
-{
-					yyval = yyvsp[-4] + yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0]; 
-					s_templateInitList = yyvsp[-3] + yyvsp[-2] + yyvsp[-1];
-				}
+{ yyval = yyvsp[0] + var_consumBracketsContent('[');}
 break;
 case 66:
-{yyval = "";}
+{
+                    yyval = yyvsp[-1]+ yyvsp[0]; 
+                }
 break;
 case 67:
-{    yyval = yyvsp[-1] + yyvsp[0];}
+{
+                    yyval = yyvsp[-4] + yyvsp[-3] + yyvsp[-2] + yyvsp[-1] + yyvsp[0]; 
+                    s_templateInitList = yyvsp[-3] + yyvsp[-2] + yyvsp[-1];
+                }
 break;
 case 68:
-{ yyval = "";           }
+{yyval = "";}
 break;
 case 69:
-{ yyval = yyvsp[0]; curr_var.m_isVolatile = true; }
+{    yyval = yyvsp[-1] + yyvsp[0];}
 break;
 case 70:
 { yyval = "";           }
 break;
 case 71:
-{ yyval = yyvsp[-1];           }
-break;
-case 72:
-{ yyval = yyvsp[-1] + yyvsp[0]; curr_var.m_rightSideConst = yyval;     }
-break;
-case 73:
-{ yyval = yyvsp[-1] + yyvsp[0]; curr_var.m_rightSideConst = yyval;     }
-break;
-case 74:
-{ yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0]; curr_var.m_rightSideConst = yyval;}
-break;
-case 75:
 { yyval = yyvsp[0]; curr_var.m_isVolatile = true; }
 break;
+case 72:
+{ yyval = "";           }
+break;
+case 73:
+{ yyval = yyvsp[-1];           }
+break;
+case 74:
+{ yyval = yyvsp[-1] + yyvsp[0]; curr_var.m_rightSideConst = yyval;     }
+break;
+case 75:
+{ yyval = yyvsp[-1] + yyvsp[0]; curr_var.m_rightSideConst = yyval;     }
+break;
 case 76:
-{yyval = ""; }
+{ yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0]; curr_var.m_rightSideConst = yyval;}
 break;
 case 77:
-{ yyval = yyvsp[0]; }
+{ yyval = yyvsp[0]; curr_var.m_isVolatile = true; }
 break;
 case 78:
-{yyval = "";}
-break;
-case 79:
-{yyval = "*";}
-break;
-case 80:
 {yyval = ""; }
 break;
-case 81:
-{yyval = yyvsp[-1] + yyvsp[0];}
+case 79:
+{ yyval = yyvsp[0]; }
 break;
-case 82:
-{ yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0]; }
-break;
-case 83:
+case 80:
 {yyval = "";}
 break;
+case 81:
+{yyval = "*";}
+break;
+case 82:
+{yyval = ""; }
+break;
+case 83:
+{yyval = yyvsp[-1] + yyvsp[0];}
+break;
 case 84:
-{ yyval = ";";}
+{ yyval = yyvsp[-2] + yyvsp[-1] + yyvsp[0]; }
 break;
 case 85:
-{ yyval = "{";}
+{yyval = "";}
 break;
 case 86:
-{ yyval = "}";}
+{ yyval = ";";}
 break;
 case 87:
-{ yyval = ":";}
+{ yyval = "{";}
 break;
 case 88:
-{
-                            yyval = yyvsp[-1] + " " + yyvsp[0];
-                            yyvsp[0].erase(yyvsp[0].find_last_not_of(":")+1);
-                        	curr_var.m_type = yyvsp[0];
-							curr_var.m_isBasicType = true;
-                        	curr_var.m_isConst = (yyvsp[-1].find("const") != std::string::npos);
-                        }
+{ yyval = "}";}
 break;
 case 89:
-{
-							yyval = yyvsp[-2] + " " + yyvsp[-1] + yyvsp[0];
-                            yyvsp[-1].erase(yyvsp[-1].find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = yyvsp[-1];
-                        	curr_var.m_type = yyvsp[0];
-                        	curr_var.m_isConst = (yyvsp[-2].find("const") != std::string::npos);
-                        	s_tmpString.clear();
-                        }
+{ yyval = ":";}
 break;
 case 90:
 {
-                            yyval = yyvsp[-5] + " " + yyvsp[-4] + yyvsp[-3] + " " + yyvsp[-2] + yyvsp[-1] + yyvsp[0];
-                            yyvsp[-4].erase(yyvsp[-4].find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = yyvsp[-4];
-                        	curr_var.m_type = yyvsp[-3];
-                        	curr_var.m_isTemplate = true;
-                        	curr_var.m_templateDecl = yyvsp[-2] +yyvsp[-1] +yyvsp[0];
-                        	curr_var.m_isConst = (yyvsp[-5].find("const") != std::string::npos);
-                        	s_tmpString.clear();
+                            yyval = yyvsp[-1] + " " + yyvsp[0];
+                            yyvsp[0].erase(yyvsp[0].find_last_not_of(":")+1);
+                            curr_var.m_type = yyvsp[0];
+                            curr_var.m_isBasicType = true;
+                            curr_var.m_isConst = (yyvsp[-1].find("const") != std::string::npos);
                         }
 break;
 case 91:
-{s_tmpString = var_consumBracketsContent('{');}
+{
+                            yyval = yyvsp[-2] + " " + yyvsp[-1] + yyvsp[0];
+                            yyvsp[-1].erase(yyvsp[-1].find_last_not_of(":")+1);
+                            curr_var.m_typeScope = yyvsp[-1];
+                            curr_var.m_type = yyvsp[0];
+                            curr_var.m_isConst = (yyvsp[-2].find("const") != std::string::npos);
+                            s_tmpString.clear();
+                        }
 break;
 case 92:
 {
-                            yyval = yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + yyvsp[-1] + yyvsp[0] + s_tmpString;
-                            yyvsp[-3].erase(yyvsp[-3].find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = yyvsp[-3];
-                        	curr_var.m_type = yyvsp[-2];
-							curr_var.m_completeType = yyvsp[-3] + yyvsp[-2];
-                        	curr_var.m_isConst = (yyvsp[-5].find("const") != std::string::npos);
-                        	s_tmpString.clear();
+                            yyval = yyvsp[-5] + " " + yyvsp[-4] + yyvsp[-3] + " " + yyvsp[-2] + yyvsp[-1] + yyvsp[0];
+                            yyvsp[-4].erase(yyvsp[-4].find_last_not_of(":")+1);
+                            curr_var.m_typeScope = yyvsp[-4];
+                            curr_var.m_type = yyvsp[-3];
+                            curr_var.m_isTemplate = true;
+                            curr_var.m_templateDecl = yyvsp[-2] +yyvsp[-1] +yyvsp[0];
+                            curr_var.m_isConst = (yyvsp[-5].find("const") != std::string::npos);
+                            s_tmpString.clear();
                         }
 break;
 case 93:
+{s_tmpString = var_consumBracketsContent('{');}
+break;
+case 94:
+{
+                            yyval = yyvsp[-5] + " " + yyvsp[-4] + " " + yyvsp[-3] + " " + yyvsp[-2] + yyvsp[-1] + yyvsp[0] + s_tmpString;
+                            yyvsp[-3].erase(yyvsp[-3].find_last_not_of(":")+1);
+                            curr_var.m_typeScope = yyvsp[-3];
+                            curr_var.m_type = yyvsp[-2];
+                            curr_var.m_completeType = yyvsp[-3] + yyvsp[-2];
+                            curr_var.m_isConst = (yyvsp[-5].find("const") != std::string::npos);
+                            s_tmpString.clear();
+                        }
+break;
+case 95:
 {
                             yyval = yyvsp[-3] + " " + yyvsp[-2] + " " + yyvsp[-1] + " " + yyvsp[0];
                             yyvsp[-1].erase(yyvsp[-1].find_last_not_of(":")+1);
-                        	curr_var.m_typeScope = yyvsp[-1];
-                        	curr_var.m_type = yyvsp[0];
-                        	curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
-							curr_var.m_completeType = yyvsp[-1] + yyvsp[0];
-                        	curr_var.m_isConst = (yyvsp[-3].find("const") != std::string::npos);
-                        	s_tmpString.clear();
+                            curr_var.m_typeScope = yyvsp[-1];
+                            curr_var.m_type = yyvsp[0];
+                            curr_var.m_isTemplate = !curr_var.m_templateDecl.empty();
+                            curr_var.m_completeType = yyvsp[-1] + yyvsp[0];
+                            curr_var.m_isConst = (yyvsp[-3].find("const") != std::string::npos);
+                            s_tmpString.clear();
                         }
 break;
     }

@@ -65,7 +65,6 @@ void AbbreviationsSettingsDlg::OnItemSelected( wxCommandEvent& event )
     DoSelectItem(event.GetSelection());
 }
 
-
 void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
 {
     if(m_dirty) {
@@ -140,7 +139,7 @@ void AbbreviationsSettingsDlg::OnDeleteUI(wxUpdateUIEvent& event)
 
 void AbbreviationsSettingsDlg::OnMarkDirty(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
+    event.Skip();
     if(m_activeItemName.IsEmpty() == false) {
         m_dirty = true;
     }
@@ -154,7 +153,6 @@ void AbbreviationsSettingsDlg::OnSave(wxCommandEvent& event)
     }
     m_data.SetAutoInsert(m_checkBoxImmediateInsert->IsChecked());
     m_config.WriteItem( &m_data );
-    EndModal(wxID_OK);
 }
 
 void AbbreviationsSettingsDlg::DoPopulateItems()
@@ -232,4 +230,5 @@ void AbbreviationsSettingsDlg::DoDeleteEntry(const wxString &name)
 
 void AbbreviationsSettingsDlg::OnSaveUI(wxUpdateUIEvent& event)
 {
+    event.Enable(m_dirty);
 }

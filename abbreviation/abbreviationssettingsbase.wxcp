@@ -647,7 +647,7 @@
 											"border":	5,
 											"gbSpan":	",",
 											"gbPosition":	",",
-											"m_styles":	["wxTE_RICH2", "wxTE_PROCESS_TAB", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE"],
+											"m_styles":	["wxTE_RICH", "wxTE_PROCESS_TAB", "wxTE_PROCESS_ENTER", "wxTE_MULTILINE"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -680,7 +680,7 @@
 												}, {
 													"type":	"font",
 													"m_label":	"Font:",
-													"m_value":	"12,normal, normal, swiss, 0, Arial"
+													"m_value":	"wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -967,7 +967,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"&Cancel"
+											"m_value":	"&Close"
 										}, {
 											"type":	"bool",
 											"m_label":	"Default Button",

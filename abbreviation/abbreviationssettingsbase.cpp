@@ -82,8 +82,8 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     
     sbSizer1->Add(m_staticText2, 0, wxALL|wxEXPAND, 5);
     
-    m_textCtrlExpansion = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    wxFont m_textCtrlExpansionFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
+    m_textCtrlExpansion = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    wxFont m_textCtrlExpansionFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlExpansion->SetFont(m_textCtrlExpansionFont);
     
     bSizer4->Add(m_textCtrlExpansion, 1, wxALL|wxEXPAND, 5);
@@ -106,7 +106,7 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     
     bSizer2->Add(m_buttonSave, 0, wxALL, 5);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Close"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
     

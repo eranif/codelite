@@ -1,6 +1,7 @@
 #include "cl_config.h"
 #include <wx/stdpaths.h>
 #include <wx/filefn.h>
+#include <wx/log.h>
 
 clConfig::clConfig()
 {

@@ -44,6 +44,7 @@
 #include "workspacetab.h"
 #include "tabgroupspane.h"
 #include "workspace_pane.h"
+#include "cl_config.h"
 
 #ifdef __WXGTK20__
 	// We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -196,18 +197,18 @@ void WorkspacePane::UpdateTabs()
 void WorkspacePane::ApplySavedTabOrder() const
 {
     typedef std::pair<wxString, wxWindow*> spTab;
-    WorkspaceViewTabOrder wso;
-    EditorConfigST::Get()->ReadObject(wxT("WorkspaceViewTabOrder"), &wso);
-    if (wso.GetPanes().GetCount() == 0) {
-        return; // None were saved, so don't ruin the default order
-    }
-
+    
+    wxArrayString tabs;
+    int index = -1;
+    if ( !clConfig::Get().GetWorkspaceTabOrder(tabs, index) )
+        return;
+    
     // There are (currently) 4 'standard' panes and a variable number of plugin ones
     // NB Since we're only dealing with panes currently in the notebook, this shouldn't
     // be broken by floating panes or non-loaded plugins
     std::vector<spTab> vTempstore;
-    for (size_t t=0; t < wso.GetPanes().GetCount(); ++t) {
-        wxString title = wso.GetPanes().Item(t);
+    for (size_t t=0; t < tabs.GetCount(); ++t) {
+        wxString title = tabs.Item(t);
         if (title.empty()) {
             continue;
         }
@@ -233,12 +234,11 @@ void WorkspacePane::ApplySavedTabOrder() const
     // Restore any saved last selection
     // NB: this doesn't actually work atm: the selection is set correctly, but presumably something else changes is later
     // I've left the code in case anyone ever has time/inclination to fix it
-    int index = wso.GetLastSelectedTab();
     if ((index >= 0) && (index < (int)m_book->GetPageCount())) {
         m_book->SetSelection(index);
     }
 
-	m_mgr->Update();
+    m_mgr->Update();
 }
 
 void WorkspacePane::SaveWorkspaceViewTabOrder() const
@@ -247,20 +247,20 @@ void WorkspacePane::SaveWorkspaceViewTabOrder() const
     std::vector<wxWindow*> editors;
     m_book->GetEditorsInOrder(editors);
     
+    
     for (size_t n=0; n < editors.size(); ++n) {
+
         // get the page text
         for(size_t i=0; i<m_book->GetPageCount(); ++i) {
             if ( m_book->GetPage(i) == editors.at(n) ) {
-                panes.Add( m_book->GetPageText(i));
+                
+                wxString pagetext = m_book->GetPageText(i);
+                panes.Add( pagetext );
                 break;
             }
         }
     }
-
-    WorkspaceViewTabOrder wso(panes);
-    wso.SetLastSelectedTab(m_book->GetSelection());
-
-    EditorConfigST::Get()->WriteObject(wxT("WorkspaceViewTabOrder"), &wso);
+    clConfig::Get().SetWorkspaceTabOrder( panes, m_book->GetSelection() );
 }
 
 void WorkspacePane::DoShowTab(bool show, const wxString& title)

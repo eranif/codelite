@@ -2,10 +2,16 @@
 #include <wx/stdpaths.h>
 #include <wx/filefn.h>
 #include <wx/log.h>
+#include <algorithm>
 
 clConfig::clConfig(const wxString& filename)
 {
-    m_filename = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" + wxFileName::GetPathSeparator() + filename;
+    if ( wxFileName(filename).IsAbsolute() ) {
+        m_filename = filename;
+    } else {
+        m_filename = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" + wxFileName::GetPathSeparator() + filename;
+    }
+    
     {
         // Make sure that the directory exists
         wxLogNull noLog;
@@ -87,5 +93,40 @@ void clConfig::Reload()
         
     delete m_root;
     m_root = new JSONRoot(m_filename);
+}
+
+wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const
+{
+    wxArrayString sArr1, sArr2;
+    sArr1.insert(sArr1.end(), arr1.begin(), arr1.end());
+    sArr2.insert(sArr2.end(), arr2.begin(), arr2.end());
+    
+    // Sort the arrays
+    std::sort(sArr1.begin(), sArr2.end());
+    std::sort(sArr2.begin(), sArr2.end());
+    
+    wxArrayString output;
+    std::set_union(sArr1.begin(), sArr1.end(), sArr2.begin(), sArr2.end(), std::back_inserter(output));
+    return output;
+}
+
+JSONElement::wxStringMap_t clConfig::MergeStringMaps(const JSONElement::wxStringMap_t& map1, const JSONElement::wxStringMap_t& map2) const
+{
+    JSONElement::wxStringMap_t output;
+    output.insert(map1.begin(), map1.end());
+    output.insert(map2.begin(), map2.end());
+    return output;
+}
+
+void clConfig::Save()
+{
+    if ( m_root )
+        m_root->save(m_filename);
+}
+
+void clConfig::Save(const wxFileName& fn)
+{
+    if ( m_root )
+        m_root->save(fn);
 }
 

@@ -49,9 +49,20 @@ public:
     
     // Re-read the content from the disk
     void Reload();
+    // Save the content to a give file name
+    void Save(const wxFileName& fn);
+    // Save the content the file passed on the construction
+    void Save();
+    
+    // Utility functions
+    //------------------------------
+    
+    // Merge 2 arrays of strings into a single array with all duplicate entries removed
+    wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString &arr2) const;
+    JSONElement::wxStringMap_t MergeStringMaps(const JSONElement::wxStringMap_t& map1, const JSONElement::wxStringMap_t &map2) const;
     
     // Workspace tab order
-    // -----------------------------
+    //------------------------------
     void SetWorkspaceTabOrder( const wxArrayString& tabs, int selected );
     bool GetWorkspaceTabOrder( wxArrayString& tabs, int &selected );
     

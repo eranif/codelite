@@ -51,7 +51,7 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     
     bSizer5->Add(m_textCtrlName, 1, wxALL|wxEXPAND, 5);
     
-    m_banner4 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_banner4 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner4->SetBitmap(wxNullBitmap);
     m_banner4->SetText(wxT(""), _("You can use | (pipe) character to indicate where the caret should be placed. \nYou can use $(VariableName) to indicate CodeLite to prompt you for suitable replacement"));
     m_banner4->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK), wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
@@ -59,7 +59,7 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     
     bSizer4->Add(m_banner4, 0, wxALL|wxEXPAND, 5);
     
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     wxFont m_stcFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_stc->SetFont(m_stcFont);
     // Configure the fold margin
@@ -100,7 +100,7 @@ AbbreviationsSettingsBase::AbbreviationsSettingsBase(wxWindow* parent, wxWindowI
     m_checkBoxImmediateInsert = new wxCheckBox(this, wxID_ANY, _("Immediate Insert"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxImmediateInsert->SetValue(false);
     
-    bSizer4->Add(m_checkBoxImmediateInsert, 0, wxALL, 11);
+    bSizer4->Add(m_checkBoxImmediateInsert, 0, wxLEFT|wxRIGHT|wxBOTTOM, 5);
     
     m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
     

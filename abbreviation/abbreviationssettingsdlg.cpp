@@ -30,6 +30,7 @@
 #include "windowattrmanager.h"
 #include "abbreviationssettingsdlg.h"
 #include "cl_config.h"
+#include <wx/filedlg.h>
 
 AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *mgr )
     : AbbreviationsSettingsBase( parent )
@@ -103,7 +104,7 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
 
     // delete the entry from the configuration file
     DoDeleteEntry(m_activeItemName);
-
+    
     // delete it
     m_listBoxAbbreviations->Delete((unsigned int) m_currSelection);
     m_stc->Clear();
@@ -130,6 +131,7 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
         m_listBoxAbbreviations->SetSelection(m_currSelection);
         DoSelectItem(m_currSelection);
     }
+    m_dirty = true;
 }
 
 void AbbreviationsSettingsDlg::OnDeleteUI(wxUpdateUIEvent& event)
@@ -149,6 +151,8 @@ void AbbreviationsSettingsDlg::OnSave(wxCommandEvent& event)
 
 void AbbreviationsSettingsDlg::DoPopulateItems()
 {
+    m_listBoxAbbreviations->Clear();
+    m_stc->ClearAll();
     std::map<wxString, wxString> entries = m_data.GetEntries();
     std::map<wxString, wxString>::iterator iter = entries.begin();
     for(; iter != entries.end(); iter ++) {
@@ -232,9 +236,47 @@ void AbbreviationsSettingsDlg::OnMarkDirty(wxStyledTextEvent& event)
         m_dirty = true;
     }
 }
+
 void AbbreviationsSettingsDlg::OnExport(wxCommandEvent& event)
 {
+    wxString path = ::wxDirSelector();
+    if ( path.IsEmpty() )
+        return;
+    
+    // Construct the output file name
+    wxFileName fn(path, "abbreviations.conf");
+    if ( fn.FileExists() ) {
+        if ( ::wxMessageBox(_("This folder already contains a file named 'abbreviations.conf' - would you like to overrite it?"), "wxCrafter", wxYES_NO|wxCANCEL|wxCENTER|wxICON_QUESTION) != wxYES )
+            return;
+    }
+    m_config.Save( fn );
+    ::wxMessageBox(_("Abbreviations were exported to '") + fn.GetFullPath() + _("'"), "wxCrafter", wxICON_INFORMATION|wxOK);
 }
+
 void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
 {
+    wxString path = ::wxFileSelector();
+    if ( path.IsEmpty() )
+        return;
+    
+    // load the imported configuration
+    clConfig cfg(path);
+    AbbreviationJSONEntry data, curData;
+    if ( !cfg.ReadItem( &data ) ) {
+        ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"), "wxCrafter", wxOK|wxICON_WARNING|wxCENTER);
+        return;
+    }
+    const JSONElement::wxStringMap_t &newEntries = data.GetEntries();
+    const JSONElement::wxStringMap_t &curEntries = m_data.GetEntries();
+    
+    JSONElement::wxStringMap_t merged = m_config.MergeStringMaps(newEntries, curEntries);
+    m_data.SetEntries( merged );
+    m_config.WriteItem( &m_data );
+    m_dirty = false;
+    
+    // Repopulate the abbreviations
+    DoPopulateItems();
+    
+    ::wxMessageBox(_("Abbreviations imported successfully!"));
+    
 }

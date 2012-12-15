@@ -31,6 +31,7 @@
 #include "abbreviationssettingsdlg.h"
 #include "cl_config.h"
 #include <wx/filedlg.h>
+#include <wx/dirdlg.h>
 
 AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *mgr )
     : AbbreviationsSettingsBase( parent )

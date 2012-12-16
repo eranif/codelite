@@ -628,6 +628,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
@@ -658,7 +659,8 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
-
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    
     delete m_timer;
     delete m_statusbarTimer;
 

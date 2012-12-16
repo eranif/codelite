@@ -638,12 +638,14 @@ BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const
 void Manager::SetWorkspaceBuildMatrix ( BuildMatrixPtr matrix )
 {
     WorkspaceST::Get()->SetBuildMatrix ( matrix );
-    SendCmdEvent(wxEVT_WORKSPACE_CONFIG_CHANGED);
+    
+    // Notify about the configuration change to the plugins
+    wxCommandEvent e(wxEVT_WORKSPACE_CONFIG_CHANGED);
+    e.SetString( matrix->GetSelectedConfigurationName() );
+    EventNotifier::Get()->ProcessEvent( e );
 }
 
-
 //--------------------------- Workspace Files Mgmt -----------------------------
-
 void Manager::GetWorkspaceFiles ( wxArrayString &files )
 {
     // Send an event to the plugins to get a list of the workspace files.

@@ -80,8 +80,11 @@ enum {
 
     //clientData is NULL
     wxEVT_WORKSPACE_LOADED,
-    //clientData is NULL
+    
+    // The build configuration was changed
+    // use event.GetString() to get the selected configuration name
     wxEVT_WORKSPACE_CONFIG_CHANGED,
+    
     //clientData is NULL
     wxEVT_WORKSPACE_CLOSED,
 

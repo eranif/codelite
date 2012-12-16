@@ -950,6 +950,9 @@ bool MainBook::DoSelectPage(wxWindow* win)
     if ( editor ) {
         editor->SetActive();
         m_quickFindBar->SetEditor( editor );
+        
+    } else {
+        m_quickFindBar->ShowForPlugins();
     }
 
     // Remove context menu if needed

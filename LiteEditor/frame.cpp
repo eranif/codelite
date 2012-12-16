@@ -307,13 +307,13 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("grep_current_file"),            clMainFrame::OnGrepWord            )
     EVT_MENU(XRCID("grep_current_workspace"),       clMainFrame::OnGrepWord            )
 
-    EVT_UPDATE_UI(wxID_FIND,                        clMainFrame::OnFileExistUpdateUI   )
+    EVT_UPDATE_UI(wxID_FIND,                        clMainFrame::OnIncrementalSearchUI )
     EVT_UPDATE_UI(wxID_REPLACE,                     clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_next"),               clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_previous"),           clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_next_at_caret"),      clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_previous_at_caret"),  clMainFrame::OnFileExistUpdateUI   )
-    EVT_UPDATE_UI(XRCID("incremental_search"),      clMainFrame::OnFileExistUpdateUI   )
+    EVT_UPDATE_UI(XRCID("incremental_search"),      clMainFrame::OnIncrementalSearchUI )
     EVT_UPDATE_UI(XRCID("find_resource"),           clMainFrame::OnWorkspaceOpen       )
     EVT_UPDATE_UI(XRCID("find_type"),               clMainFrame::OnWorkspaceOpen       )
     EVT_UPDATE_UI(XRCID("find_function"),           clMainFrame::OnWorkspaceOpen       )
@@ -1569,7 +1569,7 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent &event)
 
     // Do the default and pass this event to the Editor
     LEditor* editor = GetMainBook()->GetActiveEditor();
-    if ( !editor ) {
+    if ( !editor && event.GetId() != wxID_FIND ) {
         return;
     }
 
@@ -5077,5 +5077,12 @@ void clMainFrame::OnWorkspaceClosed(wxCommandEvent& e)
         GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
     }
 }
+
+void clMainFrame::OnIncrementalSearchUI(wxUpdateUIEvent& event)
+{
+    CHECK_SHUTDOWN();
+    event.Enable( m_mainBook->GetCurrentPage() != NULL );
+}
+
 
 

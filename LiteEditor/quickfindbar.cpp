@@ -33,6 +33,8 @@
 #include <wx/stc/stc.h>
 #include "stringsearcher.h"
 #include "quickfindbar.h"
+#include "event_notifier.h"
+#include "plugin.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -81,12 +83,16 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     wxTheApp->Connect(XRCID("find_previous"),          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPrevious),      NULL, this);
     wxTheApp->Connect(XRCID("find_next_at_caret"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNextCaret),     NULL, this);
     wxTheApp->Connect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
+    
+    EventNotifier::Get()->Connect(wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
     Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(QuickFindBar::OnQuickFindCommandEvent), NULL, this);
 }
 
 bool QuickFindBar::Show(bool show)
 {
-    if (!m_sci && show) return false;
+    if (!m_sci && show) {
+        return false;
+    }
     return DoShow(show, wxEmptyString);
 }
 
@@ -369,6 +375,10 @@ void QuickFindBar::ShowReplaceControls(bool show)
 void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
 {
     m_sci = sci;
+    if ( !m_sci ) {
+        DoShow(false, "");
+        return;
+    }
     DoShowControls();
 }
 
@@ -424,6 +434,9 @@ void QuickFindBar::DoShowControls()
 bool QuickFindBar::Show(const wxString& findWhat)
 {
     // Same as Show() but set the 'findWhat' field with findWhat
+    if ( !m_sci )
+        return false;
+        
     return DoShow(true, findWhat);
 }
 
@@ -679,4 +692,38 @@ QuickFindBar::~QuickFindBar()
     wxTheApp->Disconnect(XRCID("find_previous"),          wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPrevious),      NULL, this);
     wxTheApp->Disconnect(XRCID("find_next_at_caret"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindNextCaret),     NULL, this);
     wxTheApp->Disconnect(XRCID("find_previous_at_caret"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QuickFindBar::OnFindPreviousCaret), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FINDBAR_RELEASE_EDITOR, wxCommandEventHandler(QuickFindBar::OnReleaseEditor), NULL, this);
 }
+
+void QuickFindBar::OnReleaseEditor(wxCommandEvent& e)
+{
+    wxStyledTextCtrl *win = reinterpret_cast<wxStyledTextCtrl*>(e.GetClientData());
+    if ( win && win == m_sci ) {
+        m_sci = NULL;
+        Show(false);
+    }
+}
+
+wxStyledTextCtrl* QuickFindBar::DoCheckPlugins()
+{
+    // Let the plugins a chance to provide their own window
+    wxCommandEvent evt(wxEVT_FINDBAR_ABOUT_TO_SHOW);
+    evt.SetClientData(NULL);
+    EventNotifier::Get()->ProcessEvent( evt );
+    
+    wxStyledTextCtrl* win = reinterpret_cast<wxStyledTextCtrl*>( evt.GetClientData() );
+    return win;
+}
+
+bool QuickFindBar::ShowForPlugins()
+{
+    m_sci = DoCheckPlugins();
+    if ( !m_sci ) {
+        return DoShow(false, "");
+    } else {
+        return DoShow(true, "");
+    }
+}
+
+
+    

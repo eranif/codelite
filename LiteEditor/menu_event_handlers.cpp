@@ -209,16 +209,17 @@ void BraceMatchHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &e
 void FindReplaceHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 {
     LEditor *editor = dynamic_cast<LEditor*>(owner);
-    if ( !editor ) {
-        return;
-    }
+    if ( editor ) {
+        if ( event.GetId() == wxID_FIND ) {
+            clMainFrame::Get()->GetMainBook()->ShowQuickBar( editor ? editor->GetSelectedText() : "" );
 
-    if ( event.GetId() == wxID_FIND ) {
-        clMainFrame::Get()->GetMainBook()->ShowQuickBar( editor->GetSelectedText() );
+        } else if ( event.GetId() == wxID_REPLACE ) {
+            editor->DoFindAndReplace(true);
 
-    } else if ( event.GetId() == wxID_REPLACE ) {
-        editor->DoFindAndReplace(true);
+        }
 
+    } else if ( event.GetId() == wxID_FIND ) {
+        clMainFrame::Get()->GetMainBook()->ShowQuickBarForPlugins();
     }
 }
 

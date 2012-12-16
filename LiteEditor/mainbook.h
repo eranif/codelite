@@ -79,7 +79,11 @@ public:
     FileHistory &GetRecentlyOpenedFilesClass() {
         return m_recentFiles;
     }
-
+    
+    void ShowQuickBarForPlugins() {
+        m_quickFindBar->ShowForPlugins();
+    }
+    
     void ShowQuickBar (bool s = true)           {
         m_quickFindBar->Show(s);
     }

@@ -441,6 +441,20 @@ enum {
     // Sent when user has changed the active project
     // call event.GetString() to get the name of the project
     wxEVT_ACTIVE_PROJECT_CHANGED,
+    
+    // This event is fired by codelite when the find-bar is requested to be shown
+    // the default for the find bar is not to be shown if it has no window associated with it
+    // The Window is passed using the event.GetClientData()
+    // The Window *MUST* be of type wxStyledTextCtrl
+    wxEVT_FINDBAR_ABOUT_TO_SHOW,
+    
+    // A plugin *must* send this event to ask the find bar to release any window associated with it
+    // This event should be used with  'wxEVT_FINDBAR_ABOUT_TO_SHOW'. If this event is not sent when the window
+    // is destroyed - it might result in a crash
+    // The window pointer is passed using event.GetClientData()
+    // If the editor managed by the find-bar is the same as event.GetClientData() -> the find-bar will un-refernce it 
+    // but *IT DOES NOT FREE ITS MEMORY*
+    wxEVT_FINDBAR_RELEASE_EDITOR,
 };
 
 //------------------------------------------------------------------

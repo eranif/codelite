@@ -72,7 +72,7 @@ protected:
     void OnHighlightMatchesUI(wxUpdateUIEvent& event);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);
-
+    void OnReleaseEditor(wxCommandEvent &e);
 
     void OnFindNext         (wxCommandEvent &e);
     void OnFindPrevious     (wxCommandEvent &e);
@@ -81,11 +81,13 @@ protected:
 
 protected:
     bool DoShow(bool s, const wxString &findWhat);
-
+    wxStyledTextCtrl *DoCheckPlugins();
+    
 public:
     QuickFindBar(wxWindow *parent, wxWindowID id = wxID_ANY);
     virtual ~QuickFindBar();
     int GetCloseButtonId();
+    bool ShowForPlugins();
     bool Show(bool s = true);
     bool Show(const wxString &findWhat);
     wxStyledTextCtrl *GetEditor() {

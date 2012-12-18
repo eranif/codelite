@@ -1502,9 +1502,12 @@ void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 bool clMainFrame::IsEditorEvent(wxEvent &event)
 {
 #ifdef __WXGTK__
-    MainBook *mainBook   = GetMainBook();
+    MainBook *mainBook = GetMainBook();
     if(!mainBook || !mainBook->GetActiveEditor()) {
-        return false;
+        if ( event.GetId() == wxID_FIND )
+            return true;
+        else
+            return false;
     }
 
     switch (event.GetId()) {

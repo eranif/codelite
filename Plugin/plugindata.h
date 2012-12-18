@@ -74,6 +74,9 @@ public:
     const wxString& GetVersion() const {
         return version;
     }
+
+    JSONElement ToJSON() const;
+    void FromJSON(const JSONElement& json);
 };
 
 class WXDLLIMPEXP_SDK PluginInfoArray : public clConfigItem
@@ -96,6 +99,9 @@ public:
     bool CanLoad(const wxString &plugin) const;
     void DisablePugins(const wxArrayString& plugins);
     void DisablePlugin(const wxString& plugin);
+    const wxArrayString& GetDisabledPlugins() const {
+        return m_disabledPlugins;
+    }
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 };

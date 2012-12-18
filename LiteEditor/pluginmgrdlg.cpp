@@ -25,6 +25,8 @@
 #include "pluginmgrdlg.h"
 #include "windowattrmanager.h"
 #include "manager.h"
+#include "cl_config.h"
+#include <algorithm>
 
 PluginMgrDlg::PluginMgrDlg( wxWindow* parent )
     : PluginMgrDlgBase( parent )
@@ -40,20 +42,25 @@ PluginMgrDlg::~PluginMgrDlg()
 
 void PluginMgrDlg::Initialize()
 {
-    /*
-    PluginsData pluginsData;
-    PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
-
+    clConfig conf("plugins.conf");
+    PluginInfoArray plugins;
+    conf.ReadItem(&plugins);
+    
+    m_initialDisabledPlugins = plugins.GetDisabledPlugins();
+    std::sort(m_initialDisabledPlugins.begin(), m_initialDisabledPlugins.end());
+    
+    const PluginInfo::PluginMap_t& pluginsMap = plugins.GetPlugins();
+    
     //Clear the list
     m_checkListPluginsList->Clear();
-
-    std::map<wxString, PluginInfo>::const_iterator iter = pluginsData.GetInfo().begin();
-    for (; iter != pluginsData.GetInfo().end(); iter++) {
+    
+    PluginInfo::PluginMap_t::const_iterator iter = pluginsMap.begin();
+    for ( ; iter != pluginsMap.end(); ++iter ) {
         PluginInfo info = iter->second;
 
         int item = m_checkListPluginsList->Append(info.GetName());
         if (item != wxNOT_FOUND) {
-            m_checkListPluginsList->Check((unsigned int)item, info.GetEnabled());
+            m_checkListPluginsList->Check((unsigned int)item, plugins.CanLoad(info.GetName()));
         }
     }
 
@@ -62,7 +69,6 @@ void PluginMgrDlg::Initialize()
         CreateInfoPage(0);
     }
     m_checkListPluginsList->SetFocus();
-     */
 }
 
 void PluginMgrDlg::OnItemSelected(wxCommandEvent &event)
@@ -73,49 +79,34 @@ void PluginMgrDlg::OnItemSelected(wxCommandEvent &event)
 
 void PluginMgrDlg::OnButtonOK(wxCommandEvent &event)
 {
-    /*
-    PluginsData pluginsData;
-    PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
-
-    bool changed = false;
-
-    std::map< wxString, PluginInfo > pluginsInfo = pluginsData.GetInfo();
-
+    clConfig conf("plugins.conf");
+    PluginInfoArray plugins;
+    conf.ReadItem(&plugins);
+    
+    wxArrayString disabledPlugins;
     for (unsigned int i = 0; i<m_checkListPluginsList->GetCount(); i++) {
-        wxString name = m_checkListPluginsList->GetString(i);
-        std::map< wxString, PluginInfo >::iterator iter = pluginsInfo.find(name);
-        if (iter != pluginsInfo.end()) {
-            //update the enable flag of the plugin
-            PluginInfo info = iter->second;
-            if( info.GetEnabled() !=  m_checkListPluginsList->IsChecked(i) ) {
-                changed = true;
-            }
-            info.SetEnabled( m_checkListPluginsList->IsChecked(i) );
-            pluginsInfo[info.GetName()] = info;
+        if ( m_checkListPluginsList->IsChecked(i) == false ) {
+            disabledPlugins.Add( m_checkListPluginsList->GetString(i) );
         }
     }
-    //write back the data to the disk
-    pluginsData.SetInfo( pluginsInfo );
-    PluginConfig::Instance()->WriteObject(wxT("plugins_data"), &pluginsData);
-
-    if (changed) {
-        EndModal(wxID_OK);
-    } else {
-        EndModal(wxID_CANCEL);
-    }
-     */
+    
+    std::sort(disabledPlugins.begin(), disabledPlugins.end());
+    plugins.DisablePugins( disabledPlugins );
+    conf.WriteItem( &plugins );
+    
+    EndModal( disabledPlugins == m_initialDisabledPlugins ? wxID_CANCEL : wxID_OK );
 }
 
 void PluginMgrDlg::CreateInfoPage(unsigned int index)
 {
-    /*
-    PluginsData pluginsData;
-    PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
-
+    clConfig conf("plugins.conf");
+    PluginInfoArray plugins;
+    conf.ReadItem(&plugins);
+    
     //get the plugin name
     wxString pluginName = m_checkListPluginsList->GetString(index);
-    std::map<wxString, PluginInfo>::const_iterator iter = pluginsData.GetInfo().find(pluginName);
-    if (iter != pluginsData.GetInfo().end()) {
+    PluginInfo::PluginMap_t::const_iterator iter = plugins.GetPlugins().find(pluginName);
+    if (iter != plugins.GetPlugins().end()) {
         PluginInfo info = iter->second;
 
         wxString content;
@@ -156,7 +147,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
         content.Replace(wxT("$(Status)"), _("Status:"));
 
         wxString status;
-        if (info.GetEnabled()) {
+        if ( plugins.CanLoad(info.GetName()) ) {
             status = wxT("<img src=\"$(InstallPath)/images/plugin_ok.png\" ></img>");
         } else {
             status = wxT("<img src=\"$(InstallPath)/images/plugin_not_ok.png\" > </img>");
@@ -170,5 +161,4 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 
         m_htmlWinDesc->SetPage(content);
     }
-     */
 }

@@ -32,11 +32,30 @@ PluginInfo::~PluginInfo()
 {
 }
 
+void PluginInfo::FromJSON(const JSONElement& json)
+{
+    name = json.namedObject("name").toString();
+    author = json.namedObject("author").toString();
+    description = json.namedObject("description").toString();
+    version = json.namedObject("version").toString();
+}
+
+JSONElement PluginInfo::ToJSON() const
+{
+    JSONElement e = JSONElement::createObject();
+    e.addProperty("name", name);
+    e.addProperty("author", author);
+    e.addProperty("description", description);
+    e.addProperty("version", version);
+    return e;
+}
+
+
 //-------------------------------------------
 // PluginConfig
 //-------------------------------------------
 PluginInfoArray::PluginInfoArray()
-    : clConfigItem("Plugins")
+    : clConfigItem("codelite-plugins")
 {
 }
 
@@ -57,12 +76,26 @@ bool PluginInfoArray::CanLoad(const wxString &plugin) const
 void PluginInfoArray::FromJSON(const JSONElement& json)
 {
     m_disabledPlugins = json.namedObject("disabledPlugins").toArrayString();
+    m_plugins.clear();
+    JSONElement arr = json.namedObject("installed-plugins");
+    for(int i=0; i<arr.arraySize(); ++i) {
+        PluginInfo pi;
+        pi.FromJSON( arr.arrayItem(i) );
+        m_plugins.insert(std::make_pair(pi.GetName(), pi));
+    }
 }
 
 JSONElement PluginInfoArray::ToJSON() const
 {
-    JSONElement el = JSONElement::createObject();
+    JSONElement el = JSONElement::createObject(GetName());
     el.addProperty("disabledPlugins", m_disabledPlugins);
+    
+    JSONElement arr = JSONElement::createArray("installed-plugins");
+    PluginInfo::PluginMap_t::const_iterator iter = m_plugins.begin();
+    for( ; iter != m_plugins.end(); ++iter ) {
+        arr.arrayAppend( iter->second.ToJSON() );
+    }
+    el.append(arr);
     return el;
 }
 
@@ -79,4 +112,3 @@ void PluginInfoArray::DisablePlugin(const wxString& plugin)
     if ( m_disabledPlugins.Index(plugin) == wxNOT_FOUND )
         m_disabledPlugins.Add( plugin );
 }
-

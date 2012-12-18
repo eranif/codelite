@@ -67,9 +67,6 @@ extern "C" EXPORT PluginInfo GetPluginInfo()
     info.SetName(wxT("Outline"));
     info.SetDescription(_("Show Current the Layout of the current file"));
     info.SetVersion(wxT("v1.0"));
-
-    // this plugin starts as disabled by default
-    info.SetEnabled(true);
     return info;
 }
 

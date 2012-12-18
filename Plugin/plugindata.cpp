@@ -25,7 +25,6 @@
 #include "plugindata.h"
 
 PluginInfo::PluginInfo()
-		: enabled(true)
 {
 }
 
@@ -33,19 +32,51 @@ PluginInfo::~PluginInfo()
 {
 }
 
-void PluginInfo::DeSerialize(Archive &arch)
+//-------------------------------------------
+// PluginConfig
+//-------------------------------------------
+PluginInfoArray::PluginInfoArray()
+    : clConfigItem("Plugins")
 {
-	arch.Read(wxT("enabled"), enabled);
-	arch.Read(wxT("name"), name);
-	arch.Read(wxT("author"), author);
-	arch.Read(wxT("description"), description);
-	arch.Read(wxT("version"), version);
 }
-void PluginInfo::Serialize(Archive &arch)
+
+PluginInfoArray::~PluginInfoArray()
 {
-	arch.Write(wxT("enabled"), enabled);
-	arch.Write(wxT("name"), name);
-	arch.Write(wxT("author"), author);
-	arch.Write(wxT("description"), description);
-	arch.Write(wxT("version"), version);
 }
+
+void PluginInfoArray::DisablePugins(const wxArrayString& plugins)
+{
+    m_disabledPlugins = plugins;
+}
+
+bool PluginInfoArray::CanLoad(const wxString &plugin) const
+{
+    return m_disabledPlugins.Index(plugin) == wxNOT_FOUND;
+}
+
+void PluginInfoArray::FromJSON(const JSONElement& json)
+{
+    m_disabledPlugins = json.namedObject("disabledPlugins").toArrayString();
+}
+
+JSONElement PluginInfoArray::ToJSON() const
+{
+    JSONElement el = JSONElement::createObject();
+    el.addProperty("disabledPlugins", m_disabledPlugins);
+    return el;
+}
+
+void PluginInfoArray::AddPlugin(const PluginInfo& plugin)
+{
+    if ( m_plugins.count(plugin.GetName()) )
+        m_plugins.erase(plugin.GetName());
+        
+    m_plugins.insert(std::make_pair(plugin.GetName(), plugin));
+}
+
+void PluginInfoArray::DisablePlugin(const wxString& plugin)
+{
+    if ( m_disabledPlugins.Index(plugin) == wxNOT_FOUND )
+        m_disabledPlugins.Add( plugin );
+}
+

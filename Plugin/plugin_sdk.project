@@ -120,10 +120,6 @@
     <File Name="environmentconfig.h"/>
     <File Name="evnvarlist.cpp"/>
     <File Name="evnvarlist.h"/>
-    <File Name="pluginconfig.cpp"/>
-    <File Name="pluginconfig.h"/>
-    <File Name="pluginsdata.cpp"/>
-    <File Name="pluginsdata.h"/>
     <File Name="plugindata.cpp"/>
     <File Name="plugindata.h"/>
     <File Name="commentconfigdata.cpp"/>

@@ -32,8 +32,6 @@
 #include "pluginmanager.h"
 #include "bitmap_loader.h"
 #include <wx/tokenzr.h>
-#include "pluginsdata.h"
-#include "pluginconfig.h"
 #include "optionsconfig.h"
 #include "language.h"
 #include "manager.h"
@@ -52,6 +50,7 @@
 #include "plugin_version.h"
 #include "workspacetab.h"
 #include "file_logger.h"
+#include "cl_config.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -78,7 +77,6 @@ void PluginManager::UnLoad()
 
     m_dl.clear();
     m_plugins.clear();
-    PluginConfig::Instance()->Release();
 }
 
 PluginManager::~PluginManager()
@@ -106,14 +104,9 @@ void PluginManager::Load()
 #endif
 
     wxString fileSpec( wxT( "*." ) + ext );
-    PluginConfig::Instance()->Load(wxT("config/plugins.xml"), wxT("2.0.1"));
-
-    PluginsData pluginsData;
-    PluginConfig::Instance()->ReadObject(wxT("plugins_data"), &pluginsData);
-
-    //get the map of all available plugins
-    m_pluginsInfo = pluginsData.GetInfo();
-    std::map<wxString, PluginInfo> actualPlugins;
+    clConfig conf("plugins.conf");
+    
+    conf.ReadItem( &m_pluginsData );
 
     //set the managers
     //this code assures us that the shared objects will see the same instances as the application
@@ -138,6 +131,7 @@ void PluginManager::Load()
 #endif
 
     if ( wxDir::Exists(pluginsDir) ) {
+        
         //get list of dlls
         wxArrayString files;
         wxDir::GetAllFiles( pluginsDir, &files, fileSpec, wxDIR_FILES );
@@ -153,18 +147,12 @@ void PluginManager::Load()
                 if (!dl->GetError().IsEmpty()) {
                     CL_WARNING(dl->GetError());
                 }
-#if wxVERSION_NUMBER < 2900
-                delete dl;
-#endif
                 continue;
             }
 
             bool success( false );
             GET_PLUGIN_INFO_FUNC pfnGetPluginInfo = ( GET_PLUGIN_INFO_FUNC )dl->GetSymbol( wxT( "GetPluginInfo" ), &success );
             if ( !success ) {
-#if wxVERSION_NUMBER < 2900
-                delete dl;
-#endif
                 continue;
             }
             
@@ -186,9 +174,6 @@ void PluginManager::Load()
                                               fileName.c_str(),
                                               interface_version,
                                               PLUGIN_INTERFACE_VERSION));
-#if wxVERSION_NUMBER < 2900
-                delete dl;
-#endif
                 continue;
             }
 
@@ -202,42 +187,19 @@ void PluginManager::Load()
             if(pp == CodeLiteApp::PP_FromList && allowedPlugins.Index(pname) == wxNOT_FOUND) {
                 // Policy is set to 'from list' and this plugin does not match any plugins from
                 // the list, don't allow it to be loaded
-#if wxVERSION_NUMBER < 2900
-                delete dl;
-#endif          
                 continue;
             }
             
-            std::map< wxString, PluginInfo>::const_iterator iter = m_pluginsInfo.find(pluginInfo.GetName());
-            if (iter == m_pluginsInfo.end()) {
-                CL_WARNING( wxT( "Did not find plugin" ) + pluginInfo.GetName() + wxT(" in configuration") );
-                //new plugin?, add it and use the default enabled/disabled for this plugin
-                actualPlugins[pluginInfo.GetName()] = pluginInfo;
-                if (pluginInfo.GetEnabled() == false) {
-#if wxVERSION_NUMBER < 2900
-                    delete dl;
-#endif
-                    CL_WARNING( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" is not enabled by default. Plugin will not be loaded") );
-                    continue;
-                }
-            } else {
-                // we have a match!
-                // it means that this plugin was already found in the plugins configuration file,
-                // use the value set in it to determine whether this plugin should be enabled or disabled
-                PluginInfo pi = iter->second;
-                pluginInfo.SetEnabled(pi.GetEnabled());
-                actualPlugins[pluginInfo.GetName()] = pluginInfo;
-                if (pluginInfo.GetEnabled() == false) {
-#if wxVERSION_NUMBER < 2900
-                    delete dl;
-#endif      
-                    CL_WARNING( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will NOT be loaded") );
-                    continue;
-                }
-                CL_DEBUG( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" was found in configuration and it will be loaded") );
+            // Add the plugin information
+            m_pluginsData.AddPlugin( pluginInfo );
+            
+            // Can we load it?
+            if ( !m_pluginsData.CanLoad( pluginInfo.GetName()) ) {
+                CL_WARNING( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" is not enabled") );
+                continue;
             }
 
-            //try and load the plugin
+            // try and load the plugin
             GET_PLUGIN_CREATE_FUNC pfn = ( GET_PLUGIN_CREATE_FUNC )dl->GetSymbol( wxT( "CreatePlugin" ), &success );
             if ( !success ) {
                 CL_WARNING(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
@@ -245,21 +207,16 @@ void PluginManager::Load()
                     CL_WARNING(dl->GetError());
                 }
 
-                //mark this plugin as not available
-                pluginInfo.SetEnabled(false);
-                actualPlugins[pluginInfo.GetName()] = pluginInfo;
-
-#if wxVERSION_NUMBER < 2900
-                delete dl;
-#endif
+                m_pluginsData.DisablePlugin( pluginInfo.GetName() );
                 continue;
             }
-
+            
+            // Construct the plugin
             IPlugin *plugin = pfn( ( IManager* )this );
             CL_DEBUG( wxT( "Loaded plugin: " ) + plugin->GetLongName() );
             m_plugins[plugin->GetShortName()] = plugin;
 
-            //load the toolbar
+            // Load the toolbar
             clToolBar *tb = plugin->CreateToolBar( (wxWindow*)clMainFrame::Get() );
             if ( tb ) {
 #if USE_AUI_TOOLBAR
@@ -284,23 +241,21 @@ void PluginManager::Load()
                 }
             }
 
-            //let the plugin plug its menu in the 'Plugins' menu at the menu bar
-            //the create menu will be placed as a sub menu of the 'Plugin' menu
+            // Let the plugin plug its menu in the 'Plugins' menu at the menu bar
+            // the create menu will be placed as a sub menu of the 'Plugin' menu
             wxMenu* pluginsMenu = NULL;
             wxMenuItem* menuitem = clMainFrame::Get()->GetMenuBar()->FindItem( XRCID("manage_plugins"), &pluginsMenu );
             if ( menuitem && pluginsMenu ) {
                 plugin->CreatePluginMenu( pluginsMenu );
             }
 
-            //keep the dynamic load library
+            // Keep the dynamic load library
             m_dl.push_back( dl );
         }
         clMainFrame::Get()->GetDockingManager().Update();
 
         //save the plugins data
-        PluginsData pluginsData;
-        pluginsData.SetInfo(actualPlugins);
-        PluginConfig::Instance()->WriteObject(wxT("plugins_data"), &pluginsData);
+        conf.WriteItem( &m_pluginsData );
     }
 }
 

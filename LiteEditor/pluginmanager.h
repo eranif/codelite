@@ -37,6 +37,7 @@
 #include "project.h"
 #include <set>
 #include <map>
+#include "plugindata.h"
 
 class wxBookCtrlBase;
 class EnvironmentConfig;
@@ -49,7 +50,7 @@ class PluginManager : public IManager
 {
     std::map<wxString, IPlugin*>   m_plugins;
     std::list< clDynamicLibrary* > m_dl;
-    std::map<wxString, PluginInfo> m_pluginsInfo;
+    PluginInfoArray                m_pluginsData;
     KeyboardManager                m_keyboardMgr;
     BitmapLoader    *              m_bmpLoader;
     std::set<MenuType>             m_menusToBeHooked;
@@ -70,8 +71,8 @@ public:
     /**
      * \brief return a map of all loaded plugins
      */
-    const std::map<wxString, PluginInfo>& GetPluginsInfo() const {
-        return m_pluginsInfo;
+    const PluginInfoArray& GetPluginsInfo() const {
+        return m_pluginsData;
     }
 
     //------------------------------------

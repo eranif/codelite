@@ -25,7 +25,7 @@ protected:
     
 public:
     typedef std::map<wxString, wxString> wxStringMap_t;
-    
+
 public:
     JSONElement(cJSON *json);
     JSONElement(const wxString &name, const wxVariant& val, int type);

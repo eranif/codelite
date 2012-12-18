@@ -24,60 +24,80 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef __plugindata__
 #define __plugindata__
-#include "serialized_object.h"
+
 #include "codelite_exports.h"
 #include "plugin_version.h"
+#include "json_node.h"
+#include "cl_config.h"
+#include <map>
+#include <set>
 
-class WXDLLIMPEXP_SDK PluginInfo : public SerializedObject
+class WXDLLIMPEXP_SDK PluginInfo
 {
-
-	bool enabled;
-	wxString name;
-	wxString author;
-	wxString description;
-	wxString version;
+    wxString name;
+    wxString author;
+    wxString description;
+    wxString version;
 
 public:
-	PluginInfo();
-	virtual ~PluginInfo();
+    typedef std::map<wxString, PluginInfo> PluginMap_t;
 
 public:
-	virtual void DeSerialize(Archive &arch);
-	virtual void Serialize(Archive &arch);
+    PluginInfo();
+    virtual ~PluginInfo();
 
-	//Setters
-	void SetAuthor(const wxString& author) {
-		this->author = author;
-	}
-	void SetDescription(const wxString& description) {
-		this->description = description;
-	}
-	void SetEnabled(const bool& enabled) {
-		this->enabled = enabled;
-	}
-	void SetName(const wxString& name) {
-		this->name = name;
-	}
-	void SetVersion(const wxString& version) {
-		this->version = version;
-	}
+public:
+    //Setters
+    void SetAuthor(const wxString& author) {
+        this->author = author;
+    }
+    void SetDescription(const wxString& description) {
+        this->description = description;
+    }
+    void SetName(const wxString& name) {
+        this->name = name;
+    }
+    void SetVersion(const wxString& version) {
+        this->version = version;
+    }
 
-	//Getters
-	const wxString& GetAuthor() const {
-		return author;
-	}
-	const wxString& GetDescription() const {
-		return description;
-	}
-	const bool& GetEnabled() const {
-		return enabled;
-	}
-	const wxString& GetName() const {
-		return name;
-	}
-	const wxString& GetVersion() const {
-		return version;
-	}
+    //Getters
+    const wxString& GetAuthor() const {
+        return author;
+    }
+    const wxString& GetDescription() const {
+        return description;
+    }
+    const wxString& GetName() const {
+        return name;
+    }
+    const wxString& GetVersion() const {
+        return version;
+    }
+};
+
+class WXDLLIMPEXP_SDK PluginInfoArray : public clConfigItem
+{
+    PluginInfo::PluginMap_t  m_plugins;
+    wxArrayString m_disabledPlugins;
+
+public:
+    PluginInfoArray();
+    virtual ~PluginInfoArray();
+
+public:
+    void SetPlugins(const PluginInfo::PluginMap_t& plugins) {
+        this->m_plugins = plugins;
+    }
+    const PluginInfo::PluginMap_t& GetPlugins() const {
+        return m_plugins;
+    }
+    void AddPlugin(const PluginInfo& plugin);
+    bool CanLoad(const wxString &plugin) const;
+    void DisablePugins(const wxArrayString& plugins);
+    void DisablePlugin(const wxString& plugin);
+    virtual void FromJSON(const JSONElement& json);
+    virtual JSONElement ToJSON() const;
 };
 
 #endif // __plugindata__

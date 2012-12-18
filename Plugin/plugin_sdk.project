@@ -135,8 +135,6 @@
     <File Name="includepathlocator.h"/>
     <File Name="cl_registry.h"/>
     <File Name="cl_registry.cpp"/>
-    <File Name="cl_config.h"/>
-    <File Name="cl_config.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ProcessControl">
     <File Name="pipedprocess.h"/>
@@ -456,12 +454,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="JSON">
-    <File Name="cJSON.cpp"/>
-    <File Name="cJSON.h"/>
-    <File Name="json_node.cpp"/>
-    <File Name="json_node.h"/>
-  </VirtualDirectory>
   <Dependencies Name="Custom"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>

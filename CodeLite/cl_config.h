@@ -6,7 +6,7 @@
 
 ////////////////////////////////////////////////////////
 
-class WXDLLIMPEXP_SDK clConfigItem
+class WXDLLIMPEXP_CL clConfigItem
 {
 protected:
     wxString m_name;
@@ -31,7 +31,7 @@ public:
 
 ////////////////////////////////////////////////////////
 
-class WXDLLIMPEXP_SDK clConfig
+class WXDLLIMPEXP_CL clConfig
 {
 protected:
     wxFileName m_filename;

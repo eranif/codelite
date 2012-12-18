@@ -324,4 +324,12 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="configuration">
+    <File Name="json_node.cpp"/>
+    <File Name="json_node.h"/>
+    <File Name="cJSON.cpp"/>
+    <File Name="cJSON.h"/>
+    <File Name="cl_config.cpp"/>
+    <File Name="cl_config.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

@@ -109,6 +109,7 @@
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>

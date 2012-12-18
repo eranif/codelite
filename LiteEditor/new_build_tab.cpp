@@ -1,4 +1,5 @@
 #include "new_build_tab.h"
+#include "file_logger.h"
 #if CL_USE_NEW_BUILD_TAB
 
 #include "environmentconfig.h"
@@ -258,6 +259,7 @@ NewBuildTab::~NewBuildTab()
 void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
 {
     e.Skip();
+    CL_DEBUG("Build Ended!");
     m_buildInProgress = false;
 
     DoProcessOutput(true, false);
@@ -294,7 +296,8 @@ void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
 
     // make it invalid
     m_curError = m_errorsAndWarningsList.begin();
-
+    
+    CL_DEBUG("Posting wxEVT_BUILD_ENDED event");
     // notify the plugins that the build had started
     PostCmdEvent(wxEVT_BUILD_ENDED);
 }

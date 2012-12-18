@@ -339,46 +339,9 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
     return cmpArgs;
 }
 
-wxArrayString ClangDriver::DoExpandBacktick(const wxString& backtick, const wxString &projectName)
-{
-    wxString tmp;
-    wxString cmpOption = backtick;
-    // Expand backticks / $(shell ...) syntax supported by codelite
-    if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
-        cmpOption = tmp;
-        tmp.Clear();
-        if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
-            cmpOption = tmp;
-        }
-
-        if(m_backticks.find(cmpOption) == m_backticks.end()) {
-
-            CL_DEBUG(wxT("DoExpandBacktick(): executing: '%s'"), cmpOption.c_str());
-            // Expand the backticks into their value
-            wxString expandedValue = wxShellExec(cmpOption, projectName);
-            m_backticks[cmpOption] = expandedValue;
-            cmpOption = expandedValue;
-            CL_DEBUG(wxT("DoExpandBacktick(): result: '%s'"), expandedValue.c_str());
-
-        } else {
-            cmpOption = m_backticks.find(cmpOption)->second;
-        }
-    }
-
-    CompilerCommandLineParser p(cmpOption);
-    wxArrayString opts;
-    opts.insert(opts.end(), p.GetIncludesWithPrefix().begin(), p.GetIncludesWithPrefix().end());
-    opts.insert(opts.end(), p.GetMacrosWithPrefix().begin(),   p.GetMacrosWithPrefix().end());
-
-    if( p.GetStandardWithPrefix().IsEmpty() == false )
-        opts.Add(p.GetStandardWithPrefix());
-    return opts;
-}
-
 void ClangDriver::ClearCache()
 {
     m_pchMakerThread.ClearCache();
-    m_backticks.clear();
 }
 
 bool ClangDriver::IsCacheEmpty()
@@ -668,12 +631,14 @@ void ClangDriver::ReparseFile(const wxString& filename)
 void ClangDriver::OnCacheCleared(wxCommandEvent& e)
 {
     e.Skip();
-
+    
+    /*
     CHECK_CLANG_ENABLED();
-
+    
     // Reparse the current file
     IEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor) {
+        CL_DEBUG( "Preparing clang thread request..." );
         wxString outputProjectPath, pchFile;
         ClangThreadRequest *req = new ClangThreadRequest(m_index,
                 editor->GetFileName().GetFullPath(),
@@ -684,8 +649,10 @@ void ClangDriver::OnCacheCleared(wxCommandEvent& e)
 
         req->SetPchFile(pchFile);
         m_pchMakerThread.Add( req );
+        CL_DEBUG( "Preparing clang thread request... done" );
         CL_DEBUG(wxT("OnCacheCleared:: Queued request to build TU for file: %s"), editor->GetFileName().GetFullPath().c_str());
     }
+    */
 }
 
 void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)

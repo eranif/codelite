@@ -102,7 +102,7 @@ wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayStri
     sArr2.insert(sArr2.end(), arr2.begin(), arr2.end());
     
     // Sort the arrays
-    std::sort(sArr1.begin(), sArr2.end());
+    std::sort(sArr1.begin(), sArr1.end());
     std::sort(sArr2.begin(), sArr2.end());
     
     wxArrayString output;

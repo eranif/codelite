@@ -38,6 +38,7 @@
 #include "localstable.h"
 #include "console_frame.h"
 #include "build_custom_targets_menu_manager.h"
+#include "cl_config.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -660,7 +661,7 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
-    
+
     delete m_timer;
     delete m_statusbarTimer;
 
@@ -772,12 +773,12 @@ void clMainFrame::CreateGUIControls(void)
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(this);
     SetAUIManagerFlags();
-    
+
     wxColour gradientStart, gradientEnd;
     if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm ) {
         gradientStart = wxColour(5, 96, 178);
         gradientEnd   = wxColour(3, 78, 144);
-        
+
     } else {
         gradientStart = wxColour(216, 112, 52);
         gradientEnd   = wxColour(216, 98, 30);
@@ -855,7 +856,9 @@ void clMainFrame::CreateGUIControls(void)
 
     //load dialog properties
     EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
-    EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
+
+    clConfig ccConfig("code-completion.conf");
+    ccConfig.ReadItem( &m_tagsOptionsData );
 
     TagsManager *tagsManager = TagsManagerST::Get();
 
@@ -920,12 +923,12 @@ void clMainFrame::CreateGUIControls(void)
     } else {
         CreateToolbars24();
     }
-    
+
     // Connect the custom build target events range
     if ( GetToolBar() ) {
         GetToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
     }
-    
+
     GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
     GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu( wxT("debugger_view_rmenu") ) );
 
@@ -2109,7 +2112,8 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent &event)
         TagsManagerST::Get()->SetCtagsOptions( m_tagsOptionsData );
         TagsManagerST::Get()->GetDatabase()->SetEnableCaseInsensitive(!caseSensitive);
 
-        EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
+        clConfig ccConfig("code-completion.conf");
+        ccConfig.WriteItem( &m_tagsOptionsData );
 
         // We use this method 'UpdateParserPaths' since it will also update the parser
         // thread with any workspace search/exclude paths related
@@ -2576,85 +2580,49 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
                                            CheckboxDetails(wxT("AdjustCPUNumber")));
             }
         }
+    }
 
-        // enable/disable plugins toolbar functionality
-        PluginManager::Get()->EnableToolbars();
+    // enable/disable plugins toolbar functionality
+    PluginManager::Get()->EnableToolbars();
 
-        // Check that the user has some paths set in the parser
-        EditorConfigST::Get()->ReadObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
-
-        /////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////
-
-        // There are 2 conditions that we check here:
-        // 1) if there are no search paths set
-        // 2) there are search paths, but some or all of them are no longer exist on the system
-
-        bool isUpdatePathRequired (false);
-        bool allPathsExists       (true);
-        bool hasSearchPath        (true);
-
-        hasSearchPath = m_tagsOptionsData.GetParserSearchPaths().IsEmpty() == false;
-
-        for (size_t i=0; i<m_tagsOptionsData.GetParserSearchPaths().GetCount(); i++) {
-            if (wxFileName::DirExists(m_tagsOptionsData.GetParserSearchPaths().Item(i)) == false) {
-                allPathsExists = false;
-                break;
-            }
-        }
-        isUpdatePathRequired = (!allPathsExists || !hasSearchPath);
-
-        if ( isUpdatePathRequired ) {
-            // Try to locate the paths automatically
-            wxArrayString paths;
-            wxArrayString excudePaths;
-            IncludePathLocator locator(PluginManager::Get());
-            locator.Locate( paths, excudePaths );
-
-            if ( !hasSearchPath && paths.IsEmpty() && updatePaths) {
-                GetMainBook()->ShowMessage(
-                    wxString(_("CodeLite could not find any search paths set for the code completion parser\n")) +
-                    wxString(_("This means that CodeLite will *NOT* be able to offer any code completion for non-workspace files (e.g. string.h).\n")) +
-                    wxString(_("To fix this, please set search paths for the parser\n")) +
-                    wxString(_("This can be done from the main menu: Settings > Tags Settings > Include Files")));
-
-            } else {
-                if (updatePaths) {
-
-                    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("update_parser_paths"));
-                    this->ProcessEvent(evt);
-                    GetMainBook()->ShowMessage( _("Code Completion search paths have been updated") );
-
-                }
-            }
-        }
-
-        ///////////////////////////////////////////////////////////////////////
-        // Incase CLANG search paths is empty, auto-populate it with
-        // system defaults
-
-        wxString clangSearchPaths = m_tagsOptionsData.GetClangSearchPaths();
-        clangSearchPaths.Trim().Trim(false);
-        if(clangSearchPaths.IsEmpty()) {
-
-            IncludePathLocator locator(PluginManager::Get());
-            wxArrayString paths, excludes;
-            locator.Locate(paths, excludes, false);
-
-            if(paths.IsEmpty() == false) {
-                CL_DEBUG(wxT("Settings clang default search paths to:"));
-                for(size_t i=0; i<paths.GetCount(); i++) {
-                    CL_DEBUG(wxT("%s"), paths.Item(i).c_str());
-                    clangSearchPaths << paths.Item(i) << wxT("\n");
-                }
-
-                if(!clangSearchPaths.IsEmpty())
-                    clangSearchPaths.RemoveLast();
+    // Check that the user has some paths set in the parser
+    clConfig ccConfig("code-completion.conf");
+    ccConfig.ReadItem( &m_tagsOptionsData );
 
 
-                m_tagsOptionsData.SetClangSearchPaths(clangSearchPaths);
-            }
-        }
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    bool isUpdatePathRequired = (m_tagsOptionsData.GetVersion() != TagsOptionsData::CURRENT_VERSION);
+    if ( isUpdatePathRequired ) {
+        // Try to locate the paths automatically
+        wxArrayString paths;
+        wxArrayString excludePaths;
+        IncludePathLocator locator(PluginManager::Get());
+        locator.Locate( paths, excludePaths );
+
+        wxArrayString curExcludePaths = m_tagsOptionsData.GetParserExcludePaths();
+        wxArrayString curIncluePaths  = m_tagsOptionsData.GetParserSearchPaths();
+
+        excludePaths = ccConfig.MergeArrays(curExcludePaths, excludePaths);
+        paths = ccConfig.MergeArrays(curIncluePaths, paths);
+        m_tagsOptionsData.SetParserExcludePaths( excludePaths );
+        m_tagsOptionsData.SetParserSearchPaths( paths );
+        m_tagsOptionsData.SetVersion( TagsOptionsData::CURRENT_VERSION );
+
+        //-----------------------
+        // clang
+        //-----------------------
+
+        wxArrayString clangSearchPaths = m_tagsOptionsData.GetClangSearchPathsArray();
+        IncludePathLocator clangLocator(PluginManager::Get());
+
+        wxArrayString clang_paths, clang_excludes;
+        clangLocator.Locate(clang_paths, clang_excludes, false);
+
+        clang_paths = ccConfig.MergeArrays(clang_paths, clangSearchPaths);
+        m_tagsOptionsData.SetClangSearchPathsArray( clang_paths );
+
+        ccConfig.WriteItem( &m_tagsOptionsData );
 
         /////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -4069,7 +4037,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
     dlg->Destroy();
 }
 
-void clMainFrame::OnQuickDebugUI(wxUpdateUIEvent& e) // (Also used by DebugCoreDump)
+void clMainFrame::OnQuickDebugUI(wxUpdateUIEvent& e)   // (Also used by DebugCoreDump)
 {
     CHECK_SHUTDOWN();
     IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
@@ -4376,7 +4344,10 @@ void clMainFrame::UpdateTagsOptions(const TagsOptionsData& tod)
 {
     m_tagsOptionsData = tod;
     TagsManagerST::Get()->SetCtagsOptions( m_tagsOptionsData );
-    EditorConfigST::Get()->WriteObject(wxT("m_tagsOptionsData"), &m_tagsOptionsData);
+
+    clConfig ccConfig("code-completion.conf");
+    ccConfig.WriteItem( &m_tagsOptionsData );
+
     ParseThreadST::Get()->SetSearchPaths( tod.GetParserSearchPaths(), tod.GetParserExcludePaths() );
 }
 
@@ -4545,7 +4516,8 @@ void clMainFrame::OnUpdateParserPath(wxCommandEvent& e)
 
     // Update the parser thread
     ParseThreadST::Get()->SetSearchPaths( paths, excudePaths );
-    EditorConfigST::Get()->WriteObject( wxT("m_tagsOptionsData"), &m_tagsOptionsData );
+    clConfig ccConfig("code-completion.conf");
+    ccConfig.WriteItem( &m_tagsOptionsData );
 }
 
 void clMainFrame::OnNeverUpdateParserPath(wxCommandEvent& e)
@@ -4630,7 +4602,7 @@ void clMainFrame::SetAUIManagerFlags()
         auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
         break;
     }
-    
+
     auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
 #if defined(__WXMAC__) || defined(__WXMSW__)
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
@@ -5013,7 +4985,7 @@ void clMainFrame::OnShowAuiBuildMenu(wxAuiToolBarEvent& e)
     if ( e.IsDropDownClicked() ) {
         wxMenu menu;
         DoCreateBuildDropDownMenu(&menu);
-    
+
         wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(e.GetEventObject());
         if ( auibar ) {
             wxRect rect = auibar->GetToolRect(e.GetId());
@@ -5033,7 +5005,7 @@ void clMainFrame::OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e)
     m_buildDropDownMenu = new wxMenu;
     DoCreateBuildDropDownMenu(m_buildDropDownMenu);
     if ( GetToolBar() &&
-        GetToolBar()->FindById(XRCID("build_active_project")) ) {
+         GetToolBar()->FindById(XRCID("build_active_project")) ) {
         GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
     }
 }
@@ -5043,29 +5015,29 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
     menu->Append(XRCID("build_active_project"), _("Build active Project"));
     menu->Append(XRCID("clean_active_project"), _("Clean active Project"));
     menu->Append(XRCID("compile_active_file"),  _("Compile current file"));
-    
+
     // build the menu and show it
     BuildConfigPtr bldcfg = WorkspaceST::Get()->GetProjBuildConf( WorkspaceST::Get()->GetActiveProjectName(), "" );
     if ( bldcfg && bldcfg->IsCustomBuild() ) {
-        
+
         // Update teh custom targets
         CustomTargetsMgr::Get().SetTargets( WorkspaceST::Get()->GetActiveProjectName(), bldcfg->GetCustomTargets() );
-        
+
         if ( !CustomTargetsMgr::Get().GetTargets().empty() ) {
             menu->AppendSeparator();
         }
-        
+
         const CustomTargetsMgr::Map_t& targets = CustomTargetsMgr::Get().GetTargets();
         CustomTargetsMgr::Map_t::const_iterator iter = targets.begin();
         for( ; iter != targets.end(); ++iter ) {
             int winid = iter->first; // contains the menu ID
-            menu->Append(winid, 
+            menu->Append(winid,
                          iter->second.first);
         }
-        
+
     } else {
         wxLogMessage("Could not locate build configuration for project: " + WorkspaceST::Get()->GetActiveProjectName() );
-        
+
     }
 }
 
@@ -5073,7 +5045,7 @@ void clMainFrame::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     CustomTargetsMgr::Get().Clear();
-    
+
     // Reset the menu
     m_buildDropDownMenu = new wxMenu;
     if ( GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project")) ) {
@@ -5086,6 +5058,3 @@ void clMainFrame::OnIncrementalSearchUI(wxUpdateUIEvent& event)
     CHECK_SHUTDOWN();
     event.Enable( m_mainBook->GetCurrentPage() != NULL );
 }
-
-
-

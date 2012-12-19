@@ -29,8 +29,9 @@
 #include "tags_options_data.h"
 #include <set>
 
-wxString TagsOptionsData::CLANG_CACHE_LAZY         = wxT("Lazy");
-wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = wxT("On File Load");
+wxString TagsOptionsData::CLANG_CACHE_LAZY         = "Lazy";
+wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
+size_t   TagsOptionsData::CURRENT_VERSION = 100;
 
 static bool _IsValidCppIndetifier(const wxString &id)
 {
@@ -128,7 +129,7 @@ static bool _IsCppKeyword(const wxString &word)
 //---------------------------------------------------------
 
 TagsOptionsData::TagsOptionsData()
-    : SerializedObject()
+    : clConfigItem("code-completion")
     , m_ccFlags       (CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_VARS | CC_ACCURATE_SCOPE_RESOLVING | CC_PARSE_EXT_LESS_FILES)
     , m_ccColourFlags (CC_COLOUR_DEFAULT)
     , m_fileSpec(wxT  ("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc"))
@@ -146,175 +147,123 @@ TagsOptionsData::TagsOptionsData()
     , m_clangBinary(wxT(""))
     , m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
     , m_ccNumberOfDisplayItems(MAX_SEARCH_LIMIT)
+    , m_version(0)
 {
-    SetVersion(wxT("3.0.14"));
     // Initialize defaults
     m_languages.Add(wxT("C++"));
-    m_tokens =
-        wxT("EXPORT\n")
-        wxT("_GLIBCXX_NOEXCEPT\n")
-        wxT("WXDLLIMPEXP_CORE\n")
-        wxT("WXDLLIMPEXP_BASE\n")
-        wxT("WXDLLIMPEXP_XML\n")
-        wxT("WXDLLIMPEXP_XRC\n")
-        wxT("WXDLLIMPEXP_ADV\n")
-        wxT("WXDLLIMPEXP_AUI\n")
-        wxT("WXDLLIMPEXP_FWD_ADV\n")
-        wxT("WXDLLIMPEXP_CL\n")
-        wxT("WXDLLIMPEXP_LE_SDK\n")
-        wxT("WXDLLIMPEXP_SQLITE3\n")
-        wxT("WXDLLIMPEXP_SCI\n")
-        wxT("WXDLLIMPEXP_FWD_AUI\n")
-        wxT("WXDLLIMPEXP_FWD_PROPGRID")
-        wxT("WXDLLIMPEXP_FWD_XML")
-        wxT("WXMAKINGDLL\n")
-        wxT("WXUSINGDLL\n")
-        wxT("_CRTIMP\n")
-        wxT("__CRT_INLINE\n")
-        wxT("__cdecl\n")
-        wxT("__stdcall\n")
-        wxT("WXDLLEXPORT\n")
-        wxT("WXDLLIMPORT\n")
-        wxT("__MINGW_ATTRIB_PURE\n")
-        wxT("__MINGW_ATTRIB_MALLOC\n")
-        wxT("__GOMP_NOTHROW\n")
-        wxT("wxT\n")
-        wxT("SCI_SCOPE(%0)=%0\n")
-        wxT("WINBASEAPI\n")
-        wxT("WINAPI\n")
-        wxT("__nonnull\n")
-#if defined (__WXGTK__)
-        wxT("wxTopLevelWindowNative=wxTopLevelWindowGTK\n")
-        wxT("wxWindow=wxWindowGTK\n")
-#elif defined(__WXMSW__)
-        wxT("wxTopLevelWindowNative=wxTopLevelWindowMSW\n")
-        wxT("wxWindow=wxWindowMSW\n")
-#else
-        wxT("wxTopLevelWindowNative=wxTopLevelWindowMac\n")
-        wxT("wxWindow=wxWindowMac\n")
-#endif
-        wxT("wxWindowNative=wxWindowBase\n")
-        wxT("wxStatusBar=wxStatusBarBase\n")
-        wxT("BEGIN_DECLARE_EVENT_TYPES()=enum {\n")
-        wxT("END_DECLARE_EVENT_TYPES()=};\n")
-        wxT("DECLARE_EVENT_TYPE\n")
-        wxT("DECLARE_EXPORTED_EVENT_TYPE\n")
-        wxT("WXUNUSED(%0)=%0\n")
-        wxT("wxDEPRECATED(%0)=%0\n")
-        wxT("_T\n")
-        wxT("ATTRIBUTE_PRINTF_1\n")
-        wxT("ATTRIBUTE_PRINTF_2\n")
-        wxT("WXDLLIMPEXP_FWD_BASE\n")
-        wxT("WXDLLIMPEXP_FWD_CORE\n")
-        wxT("DLLIMPORT\n")
-        wxT("DECLARE_INSTANCE_TYPE\n")
-        wxT("emit\n")
-        wxT("Q_OBJECT\n")
-        wxT("Q_PACKED\n")
-        wxT("Q_GADGET\n")
-        wxT("QT_BEGIN_HEADER\n")
-        wxT("QT_END_HEADER\n")
-        wxT("Q_REQUIRED_RESULT\n")
-        wxT("Q_INLINE_TEMPLATE\n")
-        wxT("Q_OUTOFLINE_TEMPLATE\n")
-        wxT("_GLIBCXX_BEGIN_NAMESPACE(%0)=namespace %0{\n")
-        wxT("_GLIBCXX_END_NAMESPACE=}\n")
-        wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{\n")
-        wxT("wxDECLARE_EXPORTED_EVENT(%0,%1,%2)=int %1;\n")
-        wxT("BOOST_FOREACH(%0, %1)=%0;\n")
-        wxT("DECLARE_EVENT_TYPE(%0,%1)=int %0;\n")
-        wxT("_GLIBCXX_END_NESTED_NAMESPACE=}\n")
-        wxT("_GLIBCXX_VISIBILITY(%0)\n")
-        wxT("_GLIBCXX_BEGIN_NAMESPACE_TR1=namespace tr1{\n")
-        wxT("_GLIBCXX_END_NAMESPACE_TR1=}\n")
-        wxT("_GLIBCXX_STD=std\n")
-        wxT("_GLIBCXX_BEGIN_NAMESPACE_CONTAINER\n")
-        wxT("__const=const\n")
-        wxT("__restrict\n")
-        wxT("__THROW\n")
-        wxT("__wur\n")
-        wxT("_STD_BEGIN=namespace std{\n")
-        wxT("_STD_END=}\n")
-        wxT("__CLRCALL_OR_CDECL\n")
-        wxT("_CRTIMP2_PURE");
+    m_tokens.Add(wxT("EXPORT\n"));
+    m_tokens.Add(wxT("_GLIBCXX_NOEXCEPT\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_CORE\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_BASE\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_XML\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_XRC\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_ADV\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_AUI\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_ADV\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_CL\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_LE_SDK\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_SQLITE3\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_SCI\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_AUI\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_PROPGRID"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_XML"));
+    m_tokens.Add(wxT("WXMAKINGDLL\n"));
+    m_tokens.Add(wxT("WXUSINGDLL\n"));
+    m_tokens.Add(wxT("_CRTIMP\n"));
+    m_tokens.Add(wxT("__CRT_INLINE\n"));
+    m_tokens.Add(wxT("__cdecl\n"));
+    m_tokens.Add(wxT("__stdcall\n"));
+    m_tokens.Add(wxT("WXDLLEXPORT\n"));
+    m_tokens.Add(wxT("WXDLLIMPORT\n"));
+    m_tokens.Add(wxT("__MINGW_ATTRIB_PURE\n"));
+    m_tokens.Add(wxT("__MINGW_ATTRIB_MALLOC\n"));
+    m_tokens.Add(wxT("__GOMP_NOTHROW\n"));
+    m_tokens.Add(wxT("wxT\n"));
+    m_tokens.Add(wxT("SCI_SCOPE(%0)=%0\n"));
+    m_tokens.Add(wxT("WINBASEAPI\n"));
+    m_tokens.Add(wxT("WINAPI\n"));
+    m_tokens.Add(wxT("__nonnull\n"));
 
-    m_types =
-        wxT("std::vector::reference=_Tp\n")
-        wxT("std::vector::const_reference=_Tp\n")
-        wxT("std::vector::iterator=_Tp\n")
-        wxT("std::vector::const_iterator=_Tp\n")
-        wxT("std::queue::reference=_Tp\n")
-        wxT("std::queue::const_reference=_Tp\n")
-        wxT("std::set::const_iterator=_Key\n")
-        wxT("std::set::iterator=_Key\n")
-        wxT("std::deque::reference=_Tp\n")
-        wxT("std::deque::const_reference=_Tp\n")
-        wxT("std::map::iterator=std::pair<_Key, _Tp>\n")
-        wxT("std::map::const_iterator=std::pair<_Key,_Tp>\n")
-        wxT("std::multimap::iterator=std::pair<_Key,_Tp>\n")
-        wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>\n")
-        wxT("wxOrderedMap::iterator=std::pair<Key,Value>\n")
-        wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>\n");
+#if defined (__WXGTK__)
+    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowGTK\n"));
+    m_tokens.Add(wxT("wxWindow=wxWindowGTK\n"));
+
+#elif defined(__WXMSW__)
+    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowMSW\n"));
+    m_tokens.Add(wxT("wxWindow=wxWindowMSW\n"));
+#else
+    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowMac\n"));
+    m_tokens.Add(wxT("wxWindow=wxWindowMac\n"));
+#endif
+    m_tokens.Add(wxT("wxWindowNative=wxWindowBase\n"));
+    m_tokens.Add(wxT("wxStatusBar=wxStatusBarBase\n"));
+    m_tokens.Add(wxT("BEGIN_DECLARE_EVENT_TYPES()=enum {\n"));
+    m_tokens.Add(wxT("END_DECLARE_EVENT_TYPES()=};\n"));
+    m_tokens.Add(wxT("DECLARE_EVENT_TYPE\n"));
+    m_tokens.Add(wxT("DECLARE_EXPORTED_EVENT_TYPE\n"));
+    m_tokens.Add(wxT("WXUNUSED(%0)=%0\n"));
+    m_tokens.Add(wxT("wxDEPRECATED(%0)=%0\n"));
+    m_tokens.Add(wxT("_T\n"));
+    m_tokens.Add(wxT("ATTRIBUTE_PRINTF_1\n"));
+    m_tokens.Add(wxT("ATTRIBUTE_PRINTF_2\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_BASE\n"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_CORE\n"));
+    m_tokens.Add(wxT("DLLIMPORT\n"));
+    m_tokens.Add(wxT("DECLARE_INSTANCE_TYPE\n"));
+    m_tokens.Add(wxT("emit\n"));
+    m_tokens.Add(wxT("Q_OBJECT\n"));
+    m_tokens.Add(wxT("Q_PACKED\n"));
+    m_tokens.Add(wxT("Q_GADGET\n"));
+    m_tokens.Add(wxT("QT_BEGIN_HEADER\n"));
+    m_tokens.Add(wxT("QT_END_HEADER\n"));
+    m_tokens.Add(wxT("Q_REQUIRED_RESULT\n"));
+    m_tokens.Add(wxT("Q_INLINE_TEMPLATE\n"));
+    m_tokens.Add(wxT("Q_OUTOFLINE_TEMPLATE\n"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE(%0)=namespace %0{\n"));
+    m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE=}\n"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{\n"));
+    m_tokens.Add(wxT("wxDECLARE_EXPORTED_EVENT(%0,%1,%2)=int %1;\n"));
+    m_tokens.Add(wxT("BOOST_FOREACH(%0, %1)=%0;\n"));
+    m_tokens.Add(wxT("DECLARE_EVENT_TYPE(%0,%1)=int %0;\n"));
+    m_tokens.Add(wxT("_GLIBCXX_END_NESTED_NAMESPACE=}\n"));
+    m_tokens.Add(wxT("_GLIBCXX_VISIBILITY(%0)\n"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE_TR1=namespace tr1{\n"));
+    m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE_TR1=}\n"));
+    m_tokens.Add(wxT("_GLIBCXX_STD=std\n"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE_CONTAINER\n"));
+    m_tokens.Add(wxT("__const=const\n"));
+    m_tokens.Add(wxT("__restrict\n"));
+    m_tokens.Add(wxT("__THROW\n"));
+    m_tokens.Add(wxT("__wur\n"));
+    m_tokens.Add(wxT("_STD_BEGIN=namespace std{\n"));
+    m_tokens.Add(wxT("_STD_END=}\n"));
+    m_tokens.Add(wxT("__CLRCALL_OR_CDECL\n"));
+    m_tokens.Add(wxT("_CRTIMP2_PURE"));;
+
+
+    m_types.Add(wxT("std::vector::reference=_Tp\n"));
+    m_types.Add(wxT("std::vector::const_reference=_Tp\n"));
+    m_types.Add(wxT("std::vector::iterator=_Tp\n"));
+    m_types.Add(wxT("std::vector::const_iterator=_Tp\n"));
+    m_types.Add(wxT("std::queue::reference=_Tp\n"));
+    m_types.Add(wxT("std::queue::const_reference=_Tp\n"));
+    m_types.Add(wxT("std::set::const_iterator=_Key\n"));
+    m_types.Add(wxT("std::set::iterator=_Key\n"));
+    m_types.Add(wxT("std::deque::reference=_Tp\n"));
+    m_types.Add(wxT("std::deque::const_reference=_Tp\n"));
+    m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>\n"));
+    m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>\n"));
+    m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>\n"));
+    m_types.Add(wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>\n"));
+    m_types.Add(wxT("wxOrderedMap::iterator=std::pair<Key,Value>\n"));
+    m_types.Add(wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>\n"));
+
     DoUpdateTokensWxMap();
     DoUpdateTokensWxMapReversed();
 }
 
 TagsOptionsData::~TagsOptionsData()
 {
-}
-
-void TagsOptionsData::Serialize(Archive &arch)
-{
-    // since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
-    m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
-
-    arch.Write     (wxT("m_ccFlags"),                m_ccFlags);
-    arch.Write     (wxT("m_ccColourFlags"),          m_ccColourFlags);
-    arch.WriteCData(wxT("m_tokens"),                 m_tokens);
-    arch.WriteCData(wxT("m_types"),                  m_types);
-    arch.Write     (wxT("m_fileSpec"),               m_fileSpec);
-    arch.Write     (wxT("m_languages"),              m_languages);
-    arch.Write     (wxT("m_minWordLen"),             m_minWordLen);
-    arch.Write     (wxT("m_parserSearchPaths"),      m_parserSearchPaths);
-    arch.Write     (wxT("m_parserEnabled"),          m_parserEnabled);
-    arch.Write     (wxT("m_parserExcludePaths"),     m_parserExcludePaths);
-    arch.Write     (wxT("m_maxItemToColour"),        m_maxItemToColour);
-    arch.Write     (wxT("m_macrosFiles"),            m_macrosFiles);
-    arch.Write     (wxT("m_clangOptions"),           m_clangOptions);
-    arch.Write     (wxT("m_clangBinary"),            m_clangBinary);
-    arch.WriteCData(wxT("m_clangCmpOptions"),        m_clangCmpOptions);
-    arch.WriteCData(wxT("m_clangSearchPaths"),       m_clangSearchPaths);
-    arch.WriteCData(wxT("m_clangMacros"),            m_clangMacros);
-    arch.Write     (wxT("m_clangCachePolicy"),       m_clangCachePolicy);
-    arch.Write     (wxT("m_ccNumberOfDisplayItems"), m_ccNumberOfDisplayItems);
-}
-
-void TagsOptionsData::DeSerialize(Archive &arch)
-{
-    arch.Read     (wxT("m_ccFlags"),                m_ccFlags);
-    arch.Read     (wxT("m_ccColourFlags"),          m_ccColourFlags);
-    arch.ReadCData(wxT("m_tokens"),                 m_tokens);
-    arch.ReadCData(wxT("m_types"),                  m_types);
-    arch.Read     (wxT("m_fileSpec"),               m_fileSpec);
-    arch.Read     (wxT("m_languages"),              m_languages);
-    arch.Read     (wxT("m_minWordLen"),             m_minWordLen);
-    arch.Read     (wxT("m_parserSearchPaths"),      m_parserSearchPaths);
-    arch.Read     (wxT("m_parserEnabled"),          m_parserEnabled);
-    arch.Read     (wxT("m_parserExcludePaths"),     m_parserExcludePaths);
-    arch.Read     (wxT("m_maxItemToColour"),        m_maxItemToColour);
-    arch.Read     (wxT("m_macrosFiles"),            m_macrosFiles);
-    arch.Read     (wxT("m_clangOptions"),           m_clangOptions);
-    arch.Read     (wxT("m_clangBinary"),            m_clangBinary);
-    arch.ReadCData(wxT("m_clangCmpOptions"),        m_clangCmpOptions);
-    arch.ReadCData(wxT("m_clangSearchPaths"),       m_clangSearchPaths);
-    arch.ReadCData(wxT("m_clangMacros"),            m_clangMacros);
-    arch.Read     (wxT("m_clangCachePolicy"),       m_clangCachePolicy);
-    arch.Read     (wxT("m_ccNumberOfDisplayItems"), m_ccNumberOfDisplayItems);
-    // since of build 3749, we *always* set CC_ACCURATE_SCOPE_RESOLVING to true
-    DoUpdateTokensWxMapReversed();
-    DoUpdateTokensWxMap();
-
-    m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
 }
 
 wxString TagsOptionsData::ToString()
@@ -336,7 +285,7 @@ wxString TagsOptionsData::ToString()
     std::map<wxString, wxString>::iterator iter = tokensMap.begin();
 
     if(tokensMap.empty() == false) {
-        for(; iter != tokensMap.end(); iter++) {
+        for(; iter != tokensMap.end(); ++iter) {
             if(!iter->second.IsEmpty() || (iter->second.IsEmpty() && iter->first.Find(wxT("%0")) != wxNOT_FOUND)) {
                 // Key = Value pair. Place this one in the output file
                 file_content << iter->first << wxT("=") << iter->second << wxT("\n");
@@ -385,10 +334,10 @@ void TagsOptionsData::SetLanguageSelection(const wxString &lang)
 std::map<std::string,std::string> TagsOptionsData::GetTokensMap() const
 {
     std::map<std::string,std::string> tokens;
-    wxArrayString tokensArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
-    for (size_t i=0; i<tokensArr.GetCount(); i++) {
+    for (size_t i=0; i<m_tokens.GetCount(); i++) {
         //const wxCharBuffer bufKey = _C(
-        wxString item = tokensArr.Item(i).Trim().Trim(false);
+        wxString item = m_tokens.Item(i);
+        item.Trim().Trim(false);
         wxString k = item.BeforeFirst(wxT('='));
         wxString v = item.AfterFirst(wxT('='));
 
@@ -412,9 +361,9 @@ const std::map<wxString, wxString>& TagsOptionsData::GetTokensWxMap() const
 std::map<wxString,wxString> TagsOptionsData::GetTypesMap() const
 {
     std::map<wxString, wxString> tokens;
-    wxArrayString typesArr = wxStringTokenize(m_types, wxT("\r\n"), wxTOKEN_STRTOK);
-    for (size_t i=0; i<typesArr.GetCount(); i++) {
-        wxString item = typesArr.Item(i).Trim().Trim(false);
+    for (size_t i=0; i<m_types.GetCount(); i++) {
+        wxString item = m_types.Item(i);
+        item.Trim().Trim(false);
         wxString k = item.BeforeFirst(wxT('='));
         wxString v = item.AfterFirst(wxT('='));
         tokens[k] = v;
@@ -425,9 +374,9 @@ std::map<wxString,wxString> TagsOptionsData::GetTypesMap() const
 std::map<std::string, std::string> TagsOptionsData::GetTokensReversedMap() const
 {
     std::map<std::string, std::string> tokens;
-    wxArrayString typesArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
-    for (size_t i=0; i<typesArr.GetCount(); i++) {
-        wxString item = typesArr.Item(i).Trim().Trim(false);
+    for (size_t i=0; i<m_tokens.GetCount(); i++) {
+        wxString item = m_tokens.Item(i);
+        item.Trim().Trim(false);
         wxString k = item.AfterFirst(wxT('='));
         wxString v = item.BeforeFirst(wxT('='));
 
@@ -443,15 +392,14 @@ void TagsOptionsData::SetTokens(const wxString& tokens)
     DoUpdateTokensWxMapReversed();
     DoUpdateTokensWxMap();
 
-    this->m_tokens = tokens;
+    this->m_tokens = ::wxStringTokenize(tokens, "\r\n", wxTOKEN_STRTOK);
 }
 
 void TagsOptionsData::DoUpdateTokensWxMap()
 {
     m_tokensWxMap.clear();
-    wxArrayString tokensArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
-    for (size_t i=0; i<tokensArr.GetCount(); i++) {
-        wxString item = tokensArr.Item(i).Trim().Trim(false);
+    for (size_t i=0; i<m_tokens.GetCount(); i++) {
+        wxString item = m_tokens.Item(i).Trim().Trim(false);
         wxString k = item.BeforeFirst(wxT('='));
         wxString v = item.AfterFirst(wxT('='));
         m_tokensWxMap[k] = v;
@@ -461,9 +409,8 @@ void TagsOptionsData::DoUpdateTokensWxMap()
 void TagsOptionsData::DoUpdateTokensWxMapReversed()
 {
     m_tokensWxMapReversed.clear();
-    wxArrayString typesArr = wxStringTokenize(m_tokens, wxT("\r\n"), wxTOKEN_STRTOK);
-    for (size_t i=0; i<typesArr.GetCount(); i++) {
-        wxString item = typesArr.Item(i).Trim().Trim(false);
+    for (size_t i=0; i<m_tokens.GetCount(); i++) {
+        wxString item = m_tokens.Item(i).Trim().Trim(false);
         wxString k = item.AfterFirst(wxT('='));
         wxString v = item.BeforeFirst(wxT('='));
         if(_IsValidCppIndetifier(k) && !_IsCppKeyword(k)) {
@@ -471,7 +418,75 @@ void TagsOptionsData::DoUpdateTokensWxMapReversed()
         }
     }
 }
+
 const std::map<wxString,wxString>& TagsOptionsData::GetTokensReversedWxMap() const
 {
     return m_tokensWxMapReversed;
 }
+
+void TagsOptionsData::FromJSON(const JSONElement& json)
+{
+    m_version                = json.namedObject("version").toSize_t();
+    m_ccFlags                = json.namedObject(wxT("m_ccFlags")).toSize_t();
+    m_ccColourFlags          = json.namedObject(wxT("m_ccColourFlags")).toSize_t();
+    m_tokens                 = json.namedObject(wxT("m_tokens")).toArrayString();
+    m_types                  = json.namedObject(wxT("m_types")).toArrayString();
+    m_fileSpec               = json.namedObject(wxT("m_fileSpec")).toString();
+    m_languages              = json.namedObject(wxT("m_languages")).toArrayString();
+    m_minWordLen             = json.namedObject(wxT("m_minWordLen")).toInt();
+    m_parserSearchPaths      = json.namedObject(wxT("m_parserSearchPaths")).toArrayString();
+    m_parserEnabled          = json.namedObject(wxT("m_parserEnabled")).toBool();
+    m_parserExcludePaths     = json.namedObject(wxT("m_parserExcludePaths")).toArrayString();
+    m_maxItemToColour        = json.namedObject(wxT("m_maxItemToColour")).toInt();
+    m_macrosFiles            = json.namedObject(wxT("m_macrosFiles")).toString();
+    m_clangOptions           = json.namedObject(wxT("m_clangOptions")).toSize_t();
+    m_clangBinary            = json.namedObject(wxT("m_clangBinary")).toString();
+    m_clangCmpOptions        = json.namedObject(wxT("m_clangCmpOptions")).toString();
+    m_clangSearchPaths       = json.namedObject(wxT("m_clangSearchPaths")).toArrayString();
+    m_clangMacros            = json.namedObject(wxT("m_clangMacros")).toString();
+    m_clangCachePolicy       = json.namedObject(wxT("m_clangCachePolicy")).toString();
+    m_ccNumberOfDisplayItems = json.namedObject(wxT("m_ccNumberOfDisplayItems")).toSize_t();
+
+    DoUpdateTokensWxMapReversed();
+    DoUpdateTokensWxMap();
+    m_ccFlags |= CC_ACCURATE_SCOPE_RESOLVING;
+}
+
+JSONElement TagsOptionsData::ToJSON() const
+{
+    JSONElement json = JSONElement::createObject(GetName());
+    json.addProperty("version",                  m_version);
+    json.addProperty("m_ccFlags",                m_ccFlags);
+    json.addProperty("m_ccColourFlags",          m_ccColourFlags);
+    json.addProperty("m_tokens",                 m_tokens);
+    json.addProperty("m_types",                  m_types);
+    json.addProperty("m_fileSpec",               m_fileSpec);
+    json.addProperty("m_languages",              m_languages);
+    json.addProperty("m_minWordLen",             m_minWordLen);
+    json.addProperty("m_parserSearchPaths",      m_parserSearchPaths);
+    json.addProperty("m_parserEnabled",          m_parserEnabled);
+    json.addProperty("m_parserExcludePaths",     m_parserExcludePaths);
+    json.addProperty("m_maxItemToColour",        m_maxItemToColour);
+    json.addProperty("m_macrosFiles",            m_macrosFiles);
+    json.addProperty("m_clangOptions",           m_clangOptions);
+    json.addProperty("m_clangBinary",            m_clangBinary);
+    json.addProperty("m_clangCmpOptions",        m_clangCmpOptions);
+    json.addProperty("m_clangSearchPaths",       m_clangSearchPaths);
+    json.addProperty("m_clangMacros",            m_clangMacros);
+    json.addProperty("m_clangCachePolicy",       m_clangCachePolicy);
+    json.addProperty("m_ccNumberOfDisplayItems", m_ccNumberOfDisplayItems);
+    return json;
+}
+
+wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const
+{
+    wxString s;
+    for(size_t i=0; i<arr.GetCount(); ++i)
+        s << arr.Item(i) << "\n";
+    
+    if ( s.IsEmpty() == false )
+        s.RemoveLast();
+        
+    return s;
+}
+

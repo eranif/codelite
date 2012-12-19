@@ -65,6 +65,7 @@ public:
     wxString      format()           const ;
     int           arraySize()        const ;
     int           toInt(int defaultVal = -1) const ;
+    size_t        toSize_t(size_t defaultVal = -1) const ;
     double        toDouble(double defaultVal = -1.0) const;
     wxSize        toSize() const;
     wxPoint       toPoint() const;
@@ -99,6 +100,7 @@ public:
      * @brief add int property to a JSON object
      */
     JSONElement& addProperty(const wxString &name, int value);
+    JSONElement& addProperty(const wxString &name, size_t value);
 
     /**
      * @brief add boolean property to a JSON object

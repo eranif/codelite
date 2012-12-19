@@ -280,6 +280,19 @@ int JSONElement::toInt(int defaultVal) const
     return _json->valueint;
 }
 
+size_t JSONElement::toSize_t(size_t defaultVal) const
+{
+    if(!_json) {
+        return defaultVal;
+    }
+
+    if(_json->type != cJSON_Number) {
+        return defaultVal;
+    }
+
+    return (size_t)_json->valueint;
+}
+
 double JSONElement::toDouble(double defaultVal) const
 {
     if(!_json) {
@@ -461,5 +474,10 @@ JSONElement::wxStringMap_t JSONElement::toStringMap() const
         res.insert(std::make_pair(key, val));
     }
     return res;
+}
+
+JSONElement& JSONElement::addProperty(const wxString& name, size_t value)
+{
+    return addProperty(name, (int)value);
 }
 

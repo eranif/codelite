@@ -120,7 +120,8 @@ public:
 public:
     TagsOptionsData();
     virtual ~TagsOptionsData();
-
+    
+    void Merge( const TagsOptionsData& tod );
     void SetVersion(size_t version) {
         this->m_version = version;
     }

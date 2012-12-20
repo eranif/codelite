@@ -28,10 +28,11 @@
 #include <wx/ffile.h>
 #include "tags_options_data.h"
 #include <set>
+#include "cl_config.h"
 
 wxString TagsOptionsData::CLANG_CACHE_LAZY         = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
-size_t   TagsOptionsData::CURRENT_VERSION = 100;
+size_t   TagsOptionsData::CURRENT_VERSION = 101;
 
 static bool _IsValidCppIndetifier(const wxString &id)
 {
@@ -151,94 +152,101 @@ TagsOptionsData::TagsOptionsData()
 {
     // Initialize defaults
     m_languages.Add(wxT("C++"));
-    m_tokens.Add(wxT("EXPORT\n"));
-    m_tokens.Add(wxT("_GLIBCXX_NOEXCEPT\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_CORE\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_BASE\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_XML\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_XRC\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_ADV\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_AUI\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_ADV\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_CL\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_LE_SDK\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_SQLITE3\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_SCI\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_AUI\n"));
+    m_tokens.Add(wxT("EXPORT"));
+    m_tokens.Add(wxT("_GLIBCXX_NOEXCEPT"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_CORE"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_BASE"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_XML"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_XRC"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_ADV"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_AUI"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_ADV"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_CL"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_LE_SDK"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_SQLITE3"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_SCI"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_AUI"));
     m_tokens.Add(wxT("WXDLLIMPEXP_FWD_PROPGRID"));
     m_tokens.Add(wxT("WXDLLIMPEXP_FWD_XML"));
-    m_tokens.Add(wxT("WXMAKINGDLL\n"));
-    m_tokens.Add(wxT("WXUSINGDLL\n"));
-    m_tokens.Add(wxT("_CRTIMP\n"));
-    m_tokens.Add(wxT("__CRT_INLINE\n"));
-    m_tokens.Add(wxT("__cdecl\n"));
-    m_tokens.Add(wxT("__stdcall\n"));
-    m_tokens.Add(wxT("WXDLLEXPORT\n"));
-    m_tokens.Add(wxT("WXDLLIMPORT\n"));
-    m_tokens.Add(wxT("__MINGW_ATTRIB_PURE\n"));
-    m_tokens.Add(wxT("__MINGW_ATTRIB_MALLOC\n"));
-    m_tokens.Add(wxT("__GOMP_NOTHROW\n"));
-    m_tokens.Add(wxT("wxT\n"));
-    m_tokens.Add(wxT("SCI_SCOPE(%0)=%0\n"));
-    m_tokens.Add(wxT("WINBASEAPI\n"));
-    m_tokens.Add(wxT("WINAPI\n"));
-    m_tokens.Add(wxT("__nonnull\n"));
+    m_tokens.Add(wxT("WXMAKINGDLL"));
+    m_tokens.Add(wxT("WXUSINGDLL"));
+    m_tokens.Add(wxT("_CRTIMP"));
+    m_tokens.Add(wxT("__CRT_INLINE"));
+    m_tokens.Add(wxT("__cdecl"));
+    m_tokens.Add(wxT("__stdcall"));
+    m_tokens.Add(wxT("WXDLLEXPORT"));
+    m_tokens.Add(wxT("WXDLLIMPORT"));
+    m_tokens.Add(wxT("__MINGW_ATTRIB_PURE"));
+    m_tokens.Add(wxT("__MINGW_ATTRIB_MALLOC"));
+    m_tokens.Add(wxT("__GOMP_NOTHROW"));
+    m_tokens.Add(wxT("wxT"));
+    m_tokens.Add(wxT("SCI_SCOPE(%0)=%0"));
+    m_tokens.Add(wxT("WINBASEAPI"));
+    m_tokens.Add(wxT("WINAPI"));
+    m_tokens.Add(wxT("__nonnull"));
 
 #if defined (__WXGTK__)
-    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowGTK\n"));
-    m_tokens.Add(wxT("wxWindow=wxWindowGTK\n"));
+    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowGTK"));
+    m_tokens.Add(wxT("wxWindow=wxWindowGTK"));
 
 #elif defined(__WXMSW__)
-    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowMSW\n"));
-    m_tokens.Add(wxT("wxWindow=wxWindowMSW\n"));
+    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowMSW"));
+    m_tokens.Add(wxT("wxWindow=wxWindowMSW"));
 #else
-    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowMac\n"));
-    m_tokens.Add(wxT("wxWindow=wxWindowMac\n"));
+    m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowMac"));
+    m_tokens.Add(wxT("wxWindow=wxWindowMac"));
 #endif
-    m_tokens.Add(wxT("wxWindowNative=wxWindowBase\n"));
-    m_tokens.Add(wxT("wxStatusBar=wxStatusBarBase\n"));
-    m_tokens.Add(wxT("BEGIN_DECLARE_EVENT_TYPES()=enum {\n"));
-    m_tokens.Add(wxT("END_DECLARE_EVENT_TYPES()=};\n"));
-    m_tokens.Add(wxT("DECLARE_EVENT_TYPE\n"));
-    m_tokens.Add(wxT("DECLARE_EXPORTED_EVENT_TYPE\n"));
-    m_tokens.Add(wxT("WXUNUSED(%0)=%0\n"));
-    m_tokens.Add(wxT("wxDEPRECATED(%0)=%0\n"));
-    m_tokens.Add(wxT("_T\n"));
-    m_tokens.Add(wxT("ATTRIBUTE_PRINTF_1\n"));
-    m_tokens.Add(wxT("ATTRIBUTE_PRINTF_2\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_BASE\n"));
-    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_CORE\n"));
-    m_tokens.Add(wxT("DLLIMPORT\n"));
-    m_tokens.Add(wxT("DECLARE_INSTANCE_TYPE\n"));
-    m_tokens.Add(wxT("emit\n"));
-    m_tokens.Add(wxT("Q_OBJECT\n"));
-    m_tokens.Add(wxT("Q_PACKED\n"));
-    m_tokens.Add(wxT("Q_GADGET\n"));
-    m_tokens.Add(wxT("QT_BEGIN_HEADER\n"));
-    m_tokens.Add(wxT("QT_END_HEADER\n"));
-    m_tokens.Add(wxT("Q_REQUIRED_RESULT\n"));
-    m_tokens.Add(wxT("Q_INLINE_TEMPLATE\n"));
-    m_tokens.Add(wxT("Q_OUTOFLINE_TEMPLATE\n"));
-    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE(%0)=namespace %0{\n"));
-    m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE=}\n"));
-    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{\n"));
-    m_tokens.Add(wxT("wxDECLARE_EXPORTED_EVENT(%0,%1,%2)=int %1;\n"));
-    m_tokens.Add(wxT("BOOST_FOREACH(%0, %1)=%0;\n"));
-    m_tokens.Add(wxT("DECLARE_EVENT_TYPE(%0,%1)=int %0;\n"));
-    m_tokens.Add(wxT("_GLIBCXX_END_NESTED_NAMESPACE=}\n"));
-    m_tokens.Add(wxT("_GLIBCXX_VISIBILITY(%0)\n"));
-    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE_TR1=namespace tr1{\n"));
-    m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE_TR1=}\n"));
-    m_tokens.Add(wxT("_GLIBCXX_STD=std\n"));
-    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE_CONTAINER\n"));
-    m_tokens.Add(wxT("__const=const\n"));
-    m_tokens.Add(wxT("__restrict\n"));
-    m_tokens.Add(wxT("__THROW\n"));
-    m_tokens.Add(wxT("__wur\n"));
-    m_tokens.Add(wxT("_STD_BEGIN=namespace std{\n"));
-    m_tokens.Add(wxT("_STD_END=}\n"));
-    m_tokens.Add(wxT("__CLRCALL_OR_CDECL\n"));
+    m_tokens.Add(wxT("wxWindowNative=wxWindowBase"));
+    m_tokens.Add(wxT("wxStatusBar=wxStatusBarBase"));
+    m_tokens.Add(wxT("BEGIN_DECLARE_EVENT_TYPES()=enum {"));
+    m_tokens.Add(wxT("END_DECLARE_EVENT_TYPES()=};"));
+    m_tokens.Add(wxT("DECLARE_EVENT_TYPE"));
+    m_tokens.Add(wxT("DECLARE_EXPORTED_EVENT_TYPE"));
+    m_tokens.Add(wxT("WXUNUSED(%0)=%0"));
+    m_tokens.Add(wxT("wxDEPRECATED(%0)=%0"));
+    m_tokens.Add(wxT("_T"));
+    m_tokens.Add(wxT("ATTRIBUTE_PRINTF_1"));
+    m_tokens.Add(wxT("ATTRIBUTE_PRINTF_2"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_BASE"));
+    m_tokens.Add(wxT("WXDLLIMPEXP_FWD_CORE"));
+    m_tokens.Add(wxT("DLLIMPORT"));
+    m_tokens.Add(wxT("DECLARE_INSTANCE_TYPE"));
+    m_tokens.Add(wxT("emit"));
+    m_tokens.Add(wxT("Q_OBJECT"));
+    m_tokens.Add(wxT("Q_PACKED"));
+    m_tokens.Add(wxT("Q_GADGET"));
+    m_tokens.Add(wxT("QT_BEGIN_HEADER"));
+    m_tokens.Add(wxT("QT_END_HEADER"));
+    m_tokens.Add(wxT("Q_REQUIRED_RESULT"));
+    m_tokens.Add(wxT("Q_INLINE_TEMPLATE"));
+    m_tokens.Add(wxT("Q_OUTOFLINE_TEMPLATE"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE(%0)=namespace %0{"));
+    m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE=}"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NESTED_NAMESPACE(%0, %1)=namespace %0{"));
+    m_tokens.Add(wxT("wxDECLARE_EXPORTED_EVENT(%0,%1,%2)=int %1;"));
+    m_tokens.Add(wxT("BOOST_FOREACH(%0, %1)=%0;"));
+    m_tokens.Add(wxT("DECLARE_EVENT_TYPE(%0,%1)=int %0;"));
+    m_tokens.Add(wxT("_GLIBCXX_END_NESTED_NAMESPACE=}"));
+    m_tokens.Add(wxT("_GLIBCXX_VISIBILITY(%0)"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE_TR1=namespace tr1{"));
+    m_tokens.Add(wxT("_GLIBCXX_END_NAMESPACE_TR1=}"));
+    m_tokens.Add(wxT("_GLIBCXX_STD=std"));
+    m_tokens.Add(wxT("_GLIBCXX_BEGIN_NAMESPACE_CONTAINER"));
+    m_tokens.Add(wxT("__const=const"));
+    m_tokens.Add(wxT("__restrict"));
+    m_tokens.Add(wxT("__THROW"));
+    m_tokens.Add(wxT("__wur"));
+    m_tokens.Add(wxT("_STD_BEGIN=namespace std{"));
+    m_tokens.Add(wxT("_STD_END=}"));
+    m_tokens.Add(wxT("__CLRCALL_OR_CDECL"));
     m_tokens.Add(wxT("_CRTIMP2_PURE"));;
+    m_tokens.Add(wxT("_GLIBCXX_CONST"));
+    m_tokens.Add(wxT("_GLIBCXX_CONSTEXPR"));
+    m_tokens.Add(wxT("_GLIBCXX_NORETURN"));
+    m_tokens.Add(wxT("_GLIBCXX_NOTHROW"));
+    m_tokens.Add(wxT("_GLIBCXX_PURE"));
+    m_tokens.Add(wxT("_GLIBCXX_THROW(%0)"));
+    m_tokens.Add(wxT("_GLIBCXX_DEPRECATED"));
 
 
     m_types.Add(wxT("std::vector::reference=_Tp\n"));
@@ -389,10 +397,9 @@ std::map<std::string, std::string> TagsOptionsData::GetTokensReversedMap() const
 
 void TagsOptionsData::SetTokens(const wxString& tokens)
 {
+    this->m_tokens = ::wxStringTokenize(tokens, "\r\n", wxTOKEN_STRTOK);
     DoUpdateTokensWxMapReversed();
     DoUpdateTokensWxMap();
-
-    this->m_tokens = ::wxStringTokenize(tokens, "\r\n", wxTOKEN_STRTOK);
 }
 
 void TagsOptionsData::DoUpdateTokensWxMap()
@@ -490,3 +497,11 @@ wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const
     return s;
 }
 
+void TagsOptionsData::Merge(const TagsOptionsData& tod)
+{
+    clConfig conf;
+    m_tokens = conf.MergeArrays(m_tokens, tod.m_tokens);
+    m_types  = conf.MergeArrays(m_types,  tod.m_types);
+    DoUpdateTokensWxMapReversed();
+    DoUpdateTokensWxMap();
+}

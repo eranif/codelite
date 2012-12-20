@@ -733,14 +733,20 @@
       <File Name="dvtemplatesmodel.h"/>
       <File Name="findinfiles_dlg.h"/>
       <File Name="findinfiles_dlg.cpp"/>
+      <File Name="foldermodel.cpp"/>
+      <File Name="foldermodel.h"/>
+      <File Name="importfilesdialog_new.h"/>
+      <File Name="importfilesdialog_new.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
       <File Name="editorsettingslocalbase_formbuilder_bitmaps.cpp"/>
       <File Name="findinfiles_dlg_formbuilder_bitmaps.cpp"/>
+      <File Name="importfilesdialog_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
+    <File Name="importfilesdialog.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>
@@ -1251,4 +1257,8 @@ svninfo.cpp:
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="src">
+    <File Name="ImportFilesDialogNew.h"/>
+    <File Name="ImportFilesDialogNew.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

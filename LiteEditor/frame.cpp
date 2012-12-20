@@ -2592,8 +2592,14 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 
     /////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////
-    bool isUpdatePathRequired = (m_tagsOptionsData.GetVersion() != TagsOptionsData::CURRENT_VERSION);
-    if ( isUpdatePathRequired ) {
+    bool isUpdateRequired = (m_tagsOptionsData.GetVersion() != TagsOptionsData::CURRENT_VERSION);
+    if ( isUpdateRequired ) {
+        
+        // Since the version numbers aren't the same
+        // we should merge the new settings with the old ones
+        TagsOptionsData tmp;
+        m_tagsOptionsData.Merge( tmp );
+        
         // Try to locate the paths automatically
         wxArrayString paths;
         wxArrayString excludePaths;
@@ -2608,7 +2614,7 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
         m_tagsOptionsData.SetParserExcludePaths( excludePaths );
         m_tagsOptionsData.SetParserSearchPaths( paths );
         m_tagsOptionsData.SetVersion( TagsOptionsData::CURRENT_VERSION );
-
+        
         //-----------------------
         // clang
         //-----------------------

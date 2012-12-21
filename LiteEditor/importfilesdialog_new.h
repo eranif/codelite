@@ -12,10 +12,10 @@
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <wx/bannerwindow.h>
-#include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/dataview.h>
 #include "foldermodel.h"
+#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/statline.h>
@@ -25,7 +25,6 @@ class ImportFilesDialogNewBase : public wxDialog
 {
 protected:
     wxBannerWindow* m_banner1;
-    wxStaticText* m_staticText2;
     wxDirPickerCtrl* m_dirPicker;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<FolderModel> m_dataviewModel;

@@ -25,23 +25,21 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_banner1 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_banner1 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner1->SetBitmap(wxNullBitmap);
-    m_banner1->SetText(_("Import Files"), _("Select the directories to import"));
+    m_banner1->SetText(_("Import Files"), _("Select the directories to import from"));
     m_banner1->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_banner1->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     
     mainSizer->Add(m_banner1, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Select a different base directory"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    mainSizer->Add(m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
     m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE);
+    m_dirPicker->SetToolTip(_("Select the base folder for importing"));
     
     mainSizer->Add(m_dirPicker, 0, wxALL|wxEXPAND, 5);
     
     m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview->SetToolTip(_("Check the folders you wish to import\nfiles from"));
     
     m_dataviewModel = new FolderModel;
     m_dataviewModel->SetColCount( 2 );
@@ -61,8 +59,9 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     
     m_checkBoxFilesWOExt = new wxCheckBox(this, wxID_ANY, _("Import files without extensions"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxFilesWOExt->SetValue(false);
+    m_checkBoxFilesWOExt->SetToolTip(_("If you wish to import files without extensions, tick this option"));
     
-    mainSizer->Add(m_checkBoxFilesWOExt, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_checkBoxFilesWOExt, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
     

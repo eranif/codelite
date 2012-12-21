@@ -152,6 +152,9 @@ void ImportFilesDialogNew::OnValueChanged(wxDataViewEvent& event)
             cd->SetIsChecked( isChecked );
             DoCheckChildren( event.GetItem(), isChecked );
         }
+#ifdef __WXGTK__
+        Refresh();
+#endif
     }
 }
 

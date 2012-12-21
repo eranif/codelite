@@ -356,7 +356,19 @@
 									"m_label":	"Container Item Has Columns",
 									"m_value":	true
 								}],
-							"m_events":	[],
+							"m_events":	[{
+									"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED",
+									"m_eventClass":	"wxDataViewEvent",
+									"m_eventHandler":	"wxDataViewEventHandler",
+									"m_functionNameAndSignature":	"OnValueChanged(wxDataViewEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED event"
+								}, {
+									"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING",
+									"m_eventClass":	"wxDataViewEvent",
+									"m_eventHandler":	"wxDataViewEventHandler",
+									"m_functionNameAndSignature":	"OnItemExpanding(wxDataViewEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING event"
+								}],
 							"m_children":	[{
 									"m_type":	4472,
 									"proportion":	0,
@@ -376,7 +388,7 @@
 										}, {
 											"type":	"choice",
 											"m_label":	"Column Type",
-											"m_selection":	2,
+											"m_selection":	3,
 											"m_options":	["bitmap", "check", "text", "icontext", "progress"]
 										}, {
 											"type":	"choice",

@@ -30,7 +30,6 @@
 #include "pluginmanager.h"
 #include "workspacesettingsdlg.h"
 #include "progress_dialog.h"
-#include "importfilesdialog.h"
 #include "bitmap_loader.h"
 #include "fileview.h"
 #include "frame.h"
@@ -60,6 +59,7 @@
 #include "plugin.h"
 #include "event_notifier.h"
 #include "build_custom_targets_menu_manager.h"
+#include "ImportFilesDialogNew.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -1570,12 +1570,12 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
     wxArrayString     files;
     wxArrayString     all_files;
     wxString          filespec;
-    ImportFilesDialog dlg(clMainFrame::Get());
-
-    if(dlg.ShowModal() != wxID_OK) {
+    
+    
+    ImportFilesDialogNew dlg(clMainFrame::Get());
+    if ( dlg.ShowModal() != wxID_OK )
         return;
-    }
-
+    
     extlessFiles = dlg.ExtlessFiles();
     dlg.GetDirectories( dirs );
     filespec = dlg.GetFileMask();

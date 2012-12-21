@@ -317,8 +317,6 @@
       <File Name="newprojectdlg.cpp"/>
       <File Name="new_item_base_dlg.h"/>
       <File Name="new_item_base_dlg.cpp"/>
-      <File Name="importfilesdialog.cpp"/>
-      <File Name="importfilesdialog.h"/>
       <File Name="workspacesettingsbase.cpp"/>
       <File Name="workspacesettingsbase.h"/>
       <File Name="workspacesettingsdlg.h"/>
@@ -592,7 +590,6 @@
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
     <File Name="newquickwatch.fbp"/>
-    <File Name="importfilesdialog.fbp"/>
     <File Name="workspacesettingsbase.fbp"/>
     <File Name="implementparentvirtualfunctionsbase.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>

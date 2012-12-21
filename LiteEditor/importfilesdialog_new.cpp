@@ -49,7 +49,7 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     
     mainSizer->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
-    m_dataview->AppendTextColumn(_("Folder"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
+    m_dataview->AppendIconTextColumn(_("Folder"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dataview->AppendToggleColumn(_("Import?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 80, wxALIGN_LEFT);
     m_staticText1 = new wxStaticText(this, wxID_ANY, _("Files extension to import:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -89,11 +89,15 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     Centre(wxBOTH);
     // Connect events
     m_dirPicker->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(ImportFilesDialogNewBase::OnDirChanged), NULL, this);
+    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(ImportFilesDialogNewBase::OnValueChanged), NULL, this);
+    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(ImportFilesDialogNewBase::OnItemExpanding), NULL, this);
     
 }
 
 ImportFilesDialogNewBase::~ImportFilesDialogNewBase()
 {
     m_dirPicker->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(ImportFilesDialogNewBase::OnDirChanged), NULL, this);
+    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(ImportFilesDialogNewBase::OnValueChanged), NULL, this);
+    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(ImportFilesDialogNewBase::OnItemExpanding), NULL, this);
     
 }

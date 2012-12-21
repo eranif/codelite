@@ -39,6 +39,8 @@ protected:
 
 protected:
     virtual void OnDirChanged(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnValueChanged(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnItemExpanding(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     ImportFilesDialogNewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Import Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

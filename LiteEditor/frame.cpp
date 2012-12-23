@@ -39,6 +39,7 @@
 #include "console_frame.h"
 #include "build_custom_targets_menu_manager.h"
 #include "cl_config.h"
+#include "cl_aui_dock_art.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -772,6 +773,7 @@ void clMainFrame::CreateGUIControls(void)
 
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(this);
+    m_mgr.SetArtProvider( new clAuiDockArt(PluginManager::Get()) );
     SetAUIManagerFlags();
 
     wxColour gradientStart, gradientEnd;

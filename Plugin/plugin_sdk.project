@@ -212,6 +212,10 @@
       <File Name="gtk_notebook_ex.cpp"/>
       <File Name="gtk_notebook_ex.h"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="wxAUI">
+      <File Name="cl_aui_dock_art.h"/>
+      <File Name="cl_aui_dock_art.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

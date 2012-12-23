@@ -32,7 +32,8 @@
 
 wxString TagsOptionsData::CLANG_CACHE_LAZY         = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
-size_t   TagsOptionsData::CURRENT_VERSION = 101;
+
+size_t   TagsOptionsData::CURRENT_VERSION = 102;
 
 static bool _IsValidCppIndetifier(const wxString &id)
 {
@@ -249,22 +250,22 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("_GLIBCXX_DEPRECATED"));
 
 
-    m_types.Add(wxT("std::vector::reference=_Tp\n"));
-    m_types.Add(wxT("std::vector::const_reference=_Tp\n"));
-    m_types.Add(wxT("std::vector::iterator=_Tp\n"));
-    m_types.Add(wxT("std::vector::const_iterator=_Tp\n"));
-    m_types.Add(wxT("std::queue::reference=_Tp\n"));
-    m_types.Add(wxT("std::queue::const_reference=_Tp\n"));
-    m_types.Add(wxT("std::set::const_iterator=_Key\n"));
-    m_types.Add(wxT("std::set::iterator=_Key\n"));
-    m_types.Add(wxT("std::deque::reference=_Tp\n"));
-    m_types.Add(wxT("std::deque::const_reference=_Tp\n"));
-    m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>\n"));
-    m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>\n"));
-    m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>\n"));
-    m_types.Add(wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>\n"));
-    m_types.Add(wxT("wxOrderedMap::iterator=std::pair<Key,Value>\n"));
-    m_types.Add(wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>\n"));
+    m_types.Add(wxT("std::vector::reference=_Tp"));
+    m_types.Add(wxT("std::vector::const_reference=_Tp"));
+    m_types.Add(wxT("std::vector::iterator=_Tp"));
+    m_types.Add(wxT("std::vector::const_iterator=_Tp"));
+    m_types.Add(wxT("std::queue::reference=_Tp"));
+    m_types.Add(wxT("std::queue::const_reference=_Tp"));
+    m_types.Add(wxT("std::set::const_iterator=_Key"));
+    m_types.Add(wxT("std::set::iterator=_Key"));
+    m_types.Add(wxT("std::deque::reference=_Tp"));
+    m_types.Add(wxT("std::deque::const_reference=_Tp"));
+    m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>"));
+    m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>"));
+    m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>"));
+    m_types.Add(wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>"));
+    m_types.Add(wxT("wxOrderedMap::iterator=std::pair<Key,Value>"));
+    m_types.Add(wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>"));
 
     DoUpdateTokensWxMap();
     DoUpdateTokensWxMapReversed();

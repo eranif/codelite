@@ -60,6 +60,7 @@
 #include "event_notifier.h"
 #include "build_custom_targets_menu_manager.h"
 #include "ImportFilesDialogNew.h"
+#include "project.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -1579,11 +1580,15 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
     extlessFiles = dlg.ExtlessFiles();
     dlg.GetDirectories( dirs );
     filespec = dlg.GetFileMask();
-
-    wxDir::GetAllFiles(dlg.GetBaseDir(), &all_files);
+    std::sort(dirs.begin(), dirs.end());
+    
+    // get list of all files based on the checked directories
+    for(size_t i=0; i<dirs.GetCount(); ++i) {
+        wxDir::GetAllFiles(dirs.Item(i), &all_files, "", wxDIR_FILES);
+    }
 
     wxStringTokenizer tok(filespec, wxT(";"));
-    std::set<wxString> specMap;
+    StringSet_t specMap;
     while ( tok.HasMoreTokens() ) {
         wxString v = tok.GetNextToken();
         // Cater for *.*, and also for idiots asking for *.foo;*.*

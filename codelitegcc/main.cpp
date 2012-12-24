@@ -30,20 +30,20 @@ int main(int argc, char **argv)
     if ( argc < 2 ) {
         return -1;
     }
-	
-	const char *pdb = getenv("CL_COMPILATION_DB");
+
+    const char *pdb = getenv("CL_COMPILATION_DB");
     std::string commandline;
     for ( int i=1; i<argc; ++i ) {
         // Wrap all arguments with spaces with double quotes
         std::string arg = argv[i];
-        
+
         // re-escape double quotes if needed
         size_t pos = arg.find('"');
         while ( pos != std::string::npos ) {
             arg.replace(pos, 1, "\\\""); // replace it with escapted slash
             pos = arg.find('"', pos + 2);
         }
-        
+
         if ( arg.find(' ') != std::string::npos ) {
             std::string a = "\"";
             a += arg;
@@ -56,9 +56,14 @@ int main(int argc, char **argv)
     if ( pdb ) {
         std::string file_name = extract_file_name(commandline);
         if(file_name.empty() == false) {
+
+#if __DEBUG
+            printf("filename: %s\n", file_name.c_str());
+#endif
+
             std::string logfile = pdb;
             logfile += ".txt";
-            
+
             WriteContent(logfile, file_name, commandline);
         }
     }
@@ -73,6 +78,27 @@ int main(int argc, char **argv)
     return exitCode;
 }
 
+size_t search_file_extension(const std::string &line, const std::string& ext)
+{
+    // note about searching the extension:
+    // the 'line' passed to this function will *always* have a trailing space (see the 'main' function)
+    // this fact makes the search easier for us:
+    // always search for '{ext} ' or '{ext}"' this will avoid false matching like:
+    // {source-name}.cpp.o
+    
+    std::vector<std::string> opts;
+    opts.push_back(ext + " ");
+    opts.push_back(ext + '"');
+    
+    for(size_t i=0; i<opts.size(); ++i) {
+        size_t where = line.find(opts.at(i));
+        if ( where != std::string::npos ) {
+            return where;
+        }
+    }
+    return std::string::npos;
+}
+
 std::string extract_file_name(const std::string& line)
 {
     std::vector<std::string> extensions;
@@ -85,18 +111,14 @@ std::string extract_file_name(const std::string& line)
     size_t where = std::string::npos;
 
     std::string ext;
-    for(size_t i=0; i<extensions.size(); i++) {
-        where = line.find( extensions.at(i) );
-        if( where != std::string::npos ) {
-            ext = extensions.at(i);
+    for(size_t i=0; i<extensions.size(); ++i) {
+        ext = extensions.at(i);
+        where = search_file_extension(line, ext);
+        if ( where != std::string::npos )
             break;
-        }
     }
 
-    if ( ext.empty() )
-        return "";
-
-    if ( (where + ext.length() < line.length()) && line.at(where + ext.length()) != ' ' && line.at(where + ext.length()) != '"' )
+    if ( where == std::string::npos )
         return "";
 
     std::string filename;
@@ -115,24 +137,24 @@ std::string extract_file_name(const std::string& line)
             start = 0;
         filename = line.substr(start + 1, where + ext.length() - start);
     }
-    
+
     std::replace(filename.begin(), filename.end(), '\\', '/');
     char* ret = normalize_path( filename.c_str(), filename.length() );
     filename = ret;
     free(ret);
-    
+
 #ifdef _WIN32
     std::replace(filename.begin(), filename.end(), '/', '\\');
 #endif
-    
+
     // trim whitespaces
-    
+
     // rtrim
-    filename.erase(0, filename.find_first_not_of("\t\r\v\n "));
-    
+    filename.erase(0, filename.find_first_not_of("\t\r\v\n\" "));
+
     // ltrim
-    filename.erase(filename.find_last_not_of("\t\r\v\n ")+1);
-    
+    filename.erase(filename.find_last_not_of("\t\r\v\n\" ")+1);
+
     return filename;
 }
 
@@ -141,7 +163,7 @@ char * normalize_path(const char * src, size_t src_len)
     std::string strpath = src;
     size_t where = strpath.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
     bool has_drive = (where == 0 && strpath.length() > 1 && strpath.at(1) == ':');
-    
+
     char * res;
     size_t res_len;
 
@@ -159,10 +181,10 @@ char * normalize_path(const char * src, size_t src_len)
         if (getcwd(pwd, sizeof(pwd)) == NULL) {
             return NULL;
         }
-        
+
         pwd_len = strlen(pwd);
         std::replace(pwd, pwd + pwd_len, '\\', '/');
-        
+
         res = (char*)malloc(pwd_len + 1 + src_len + 1);
         memcpy(res, pwd, pwd_len);
         res_len = pwd_len;
@@ -197,12 +219,12 @@ char * normalize_path(const char * src, size_t src_len)
         case 0:
             continue;
         }
-        
-        if ( res_len == 0 && !has_drive ) 
+
+        if ( res_len == 0 && !has_drive )
             res[res_len++] = '/';
         else if ( res_len )
             res[res_len++] = '/';
-            
+
         memcpy(&res[res_len], ptr, len);
         res_len += len;
     }

@@ -1,6 +1,9 @@
 #ifndef CLAUIDOCKART_H
 #define CLAUIDOCKART_H
 
+#include <wx/window.h>
+#include <wx/dc.h>
+#include <wx/gdicmn.h>
 #include <wx/aui/dockart.h>
 #include "imanager.h"
 #include "codelite_exports.h"

@@ -22,25 +22,10 @@
     <File Name="gitSettingsDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="icons">
-    <File Name="icons/giggle.xpm"/>
     <File Name="icons/icon_git.xpm"/>
-    <File Name="icons/menuadd.xpm"/>
-    <File Name="icons/menubranch.xpm"/>
-    <File Name="icons/menucheckout.xpm"/>
-    <File Name="icons/menucleanup.xpm"/>
-    <File Name="icons/menucommit.xpm"/>
-    <File Name="icons/menudelete.xpm"/>
-    <File Name="icons/menudiff.xpm"/>
-    <File Name="icons/menuexport.xpm"/>
-    <File Name="icons/menuimport.xpm"/>
-    <File Name="icons/menulog.xpm"/>
-    <File Name="icons/menuswitch.xpm"/>
-    <File Name="menu_diff_commit.xpm"/>
-    <File Name="menu_start_bisect.xpm"/>
-    <File Name="refresh.xpm"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="formbuilder">
-    <File Name="gitui.fbp"/>
+  <VirtualDirectory Name="wxcrafter_forms">
+    <File Name="gitui.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
     <File Name="gitui.cpp"/>
@@ -259,4 +244,9 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="gitui_git_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

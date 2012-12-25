@@ -23,23 +23,11 @@
 #include "gitSettingsDlg.h"
 #include "git.h"
 
-#include "icons/menuadd.xpm"
-#include "icons/giggle.xpm"
-#include "icons/menubranch.xpm"
-#include "icons/menucheckout.xpm"
-#include "icons/menucleanup.xpm"
-#include "icons/menucommit.xpm"
-#include "icons/menudelete.xpm"
-#include "icons/menuexport.xpm"
-#include "icons/menuimport.xpm"
-#include "icons/menulog.xpm"
-#include "icons/menuswitch.xpm"
 #include "icons/icon_git.xpm"
-#include "icons/refresh.xpm"
-#include "icons/menu_diff_commit.xpm"
-#if 0
-#include "icons/menu_start_bisect.xpm"
-#endif
+
+//#if 0
+//#include "icons/menu_start_bisect.xpm"
+//#endif
 
 static GitPlugin* thePlugin = NULL;
 
@@ -120,37 +108,36 @@ GitPlugin::~GitPlugin()
 clToolBar *GitPlugin::CreateToolBar(wxWindow *parent)
 {
     wxUnusedVar(parent);
-
     if(m_mgr->AllowToolbar()) {
         int size = m_mgr->GetToolbarIconSize();
         m_pluginToolbar = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE);
-        m_pluginToolbar->SetToolBitmapSize(wxSize(size,size));
-        m_pluginToolbar->AddTool(XRCID("git_pull"), wxT("Pull"), XPM_BITMAP(menucheckout), wxT("Pull remote changes"));
+        m_pluginToolbar->SetToolBitmapSize(wxSize(size, size));
+        m_pluginToolbar->AddTool(XRCID("git_pull"), wxT("Pull"), m_images.Bitmap("gitPull"), wxT("Pull remote changes"));
         m_pluginToolbar->AddSeparator();
-        m_pluginToolbar->AddTool(XRCID("git_commit"), wxT("Commit"), XPM_BITMAP(menucommit), wxT("Commit local changes"));
-        m_pluginToolbar->AddTool(XRCID("git_push"), wxT("Push"), XPM_BITMAP(menuimport), wxT("Push local changes"));
+        m_pluginToolbar->AddTool(XRCID("git_commit"), wxT("Commit"), m_images.Bitmap("gitCommitLocal"), wxT("Commit local changes"));
+        m_pluginToolbar->AddTool(XRCID("git_push"), wxT("Push"), m_images.Bitmap("gitPush"), wxT("Push local changes"));
         m_pluginToolbar->AddSeparator();
-        m_pluginToolbar->AddTool(XRCID("git_refresh"), wxT("Refresh"), XPM_BITMAP(refresh), wxT("Refresh tracked file list"));
-        m_pluginToolbar->AddTool(XRCID("git_reset_repository"), wxT("Reset"), XPM_BITMAP(menucleanup), wxT("Reset repository"));
+        m_pluginToolbar->AddTool(XRCID("git_refresh"), wxT("Refresh"), m_images.Bitmap("gitRefresh"), wxT("Refresh tracked file list"));
+        m_pluginToolbar->AddTool(XRCID("git_reset_repository"), wxT("Reset"), m_images.Bitmap("gitReset"), wxT("Reset repository"));
         m_pluginToolbar->AddSeparator();
-        m_pluginToolbar->AddTool(XRCID("git_create_branch"), wxT("Create branch"), XPM_BITMAP(menubranch), wxT("Create local branch"));
-        m_pluginToolbar->AddTool(XRCID("git_switch_branch"), wxT("Local branch"), XPM_BITMAP(menuswitch), wxT("Switch to local branch"));
-        m_pluginToolbar->AddTool(XRCID("git_switch_to_remote_branch"), wxT("Remote branch"), XPM_BITMAP(menuexport), wxT("Init and switch to remote branch"));
+        m_pluginToolbar->AddTool(XRCID("git_create_branch"), wxT("Create branch"), m_images.Bitmap("gitNewBranch"), wxT("Create local branch"));
+        m_pluginToolbar->AddTool(XRCID("git_switch_branch"), wxT("Local branch"), m_images.Bitmap("gitSwitchLocalBranch"), wxT("Switch to local branch"));
+        //m_pluginToolbar->AddTool(XRCID("git_switch_to_remote_branch"), wxT("Remote branch"), XPM_BITMAP(menuexport), wxT("Init and switch to remote branch"));
         m_pluginToolbar->AddSeparator();
 #if 0
-        m_pluginToolbar->AddTool(XRCID("git_bisect_start"), wxT("Bisect"), XPM_BITMAP(menu_start_bisect), wxT("Start bisect"));
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),false);
-        m_pluginToolbar->AddTool(XRCID("git_bisect_good"), wxT("Good commit"), wxArtProvider::GetIcon(wxART_TICK_MARK), wxT("Mark commit as good"));
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);
-        m_pluginToolbar->AddTool(XRCID("git_bisect_bad"), wxT("Bad commit"), wxArtProvider::GetIcon(wxART_ERROR), wxT("Mark commit as bad"));
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
-        m_pluginToolbar->AddTool(XRCID("git_bisect_reset"), wxT("End bisect"), wxArtProvider::GetIcon(wxART_QUIT), wxT("Quit bisect"));
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
-        m_pluginToolbar->AddSeparator();
+        //m_pluginToolbar->AddTool(XRCID("git_bisect_start"), wxT("Bisect"), XPM_BITMAP(menu_start_bisect), wxT("Start bisect"));
+        //m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),false);
+        //m_pluginToolbar->AddTool(XRCID("git_bisect_good"), wxT("Good commit"), wxArtProvider::GetIcon(wxART_TICK_MARK), wxT("Mark commit as good"));
+        //m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);
+        //m_pluginToolbar->AddTool(XRCID("git_bisect_bad"), wxT("Bad commit"), wxArtProvider::GetIcon(wxART_ERROR), wxT("Mark commit as bad"));
+        //m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
+        //m_pluginToolbar->AddTool(XRCID("git_bisect_reset"), wxT("End bisect"), wxArtProvider::GetIcon(wxART_QUIT), wxT("Quit bisect"));
+        //m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
+        //m_pluginToolbar->AddSeparator();
 #endif
-        m_pluginToolbar->AddTool(XRCID("git_commit_diff"), wxT("Diffs"), XPM_BITMAP(menu_diff_commit), wxT("Show current diffs"));
-        m_pluginToolbar->AddTool(XRCID("git_browse_commit_list"), wxT("Log"), XPM_BITMAP(menulog), wxT("Browse commit history"));
-        m_pluginToolbar->AddTool(XRCID("git_start_gitk"), wxT("gitk"), XPM_BITMAP(giggle), wxT("Start gitk"));
+        m_pluginToolbar->AddTool(XRCID("git_commit_diff"), wxT("Diffs"), m_images.Bitmap("gitDiffs"), wxT("Show current diffs"));
+        m_pluginToolbar->AddTool(XRCID("git_browse_commit_list"), wxT("Log"), m_images.Bitmap("gitCommitedFiles"), wxT("Browse commit history"));
+        m_pluginToolbar->AddTool(XRCID("git_start_gitk"), wxT("gitk"), m_images.Bitmap("gitStart"), wxT("Start gitk"));
         m_pluginToolbar->Realize();
         return m_pluginToolbar;
     }
@@ -162,62 +149,62 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
     m_pluginMenu = new wxMenu();
     wxMenuItem *item( NULL );
-
+    
     item = new wxMenuItem( m_pluginMenu, XRCID("git_pull"), wxT( "Pull remote changes"));
-    item->SetBitmap(XPM_BITMAP(menucheckout));
+    item->SetBitmap(m_images.Bitmap("gitPull"));
     m_pluginMenu->Append( item );
     m_pluginMenu->AppendSeparator();
 
     item = new wxMenuItem( m_pluginMenu, XRCID("git_commit"), wxT( "Commit local changes"));
-    item->SetBitmap(XPM_BITMAP(menucommit));
+    item->SetBitmap(m_images.Bitmap("gitCommitLocal"));
     m_pluginMenu->Append( item );
     item = new wxMenuItem( m_pluginMenu, XRCID("git_push"), wxT( "Push local commits"));
-    item->SetBitmap(XPM_BITMAP(menuimport));
+    item->SetBitmap(m_images.Bitmap("gitPush"));
     m_pluginMenu->Append( item );
     m_pluginMenu->AppendSeparator();
 
     item = new wxMenuItem( m_pluginMenu, XRCID("git_reset_repository"), wxT( "Reset current repository" ));
-    item->SetBitmap(XPM_BITMAP(menucleanup));
+    item->SetBitmap(m_images.Bitmap("gitReset"));
     m_pluginMenu->Append( item );
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem( m_pluginMenu, XRCID("git_create_branch"), wxT( "Create local branch" ) );
-    item->SetBitmap(XPM_BITMAP(menubranch));
+    item->SetBitmap(m_images.Bitmap("gitNewBranch"));
     m_pluginMenu->Append( item );
     item = new wxMenuItem( m_pluginMenu, XRCID("git_switch_branch"), wxT( "Switch local branch" ), wxT( "Switch local branch" ), wxITEM_NORMAL );
-    item->SetBitmap(XPM_BITMAP(menuswitch));
+    item->SetBitmap(m_images.Bitmap("gitSwitchLocalBranch"));
     m_pluginMenu->Append( item );
 
     item = new wxMenuItem( m_pluginMenu, XRCID("git_switch_to_remote_branch"), wxT( "Switch remote branch" ), wxT( "Switch remote branch" ), wxITEM_NORMAL );
-    item->SetBitmap(XPM_BITMAP(menuexport));
     m_pluginMenu->Append( item );
 
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem( m_pluginMenu, XRCID("git_browse_commit_list"), wxT( "List commits" ), wxT( "List commits" ), wxITEM_NORMAL );
-    item->SetBitmap(XPM_BITMAP(menulog));
+    item->SetBitmap(m_images.Bitmap("gitCommitedFiles"));
     m_pluginMenu->Append( item );
     item = new wxMenuItem( m_pluginMenu, XRCID("git_commit_diff"), wxT( "Show current diffs" ), wxT( "Show diffs" ), wxITEM_NORMAL );
-    item->SetBitmap(XPM_BITMAP(menu_diff_commit));
+    item->SetBitmap(m_images.Bitmap("gitDiffs"));
     m_pluginMenu->Append( item );
 
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem( m_pluginMenu, XRCID("git_list_modified"), wxT( "List modified files" ), wxT( "List modified files" ), wxITEM_NORMAL );
+    item->SetBitmap(m_images.Bitmap("gitModifiedFiles"));
     m_pluginMenu->Append( item );
+    
     item = new wxMenuItem( m_pluginMenu, XRCID("git_start_gitk"), wxT( "Start gitk" ), wxT( "Start gitk" ), wxITEM_NORMAL );
-    item->SetBitmap(XPM_BITMAP(giggle));
     m_pluginMenu->Append( item );
 
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem( m_pluginMenu, XRCID("git_garbage_collection"), wxT( "Clean git database (garbage collection)" ));
+    item->SetBitmap(m_images.Bitmap("gitTrash"));
     m_pluginMenu->Append( item );
+    
     item = new wxMenuItem( m_pluginMenu, XRCID("git_refresh"), wxT( "Refresh git file list" ), wxT( "Refresh file lists" ), wxITEM_NORMAL );
-    item->SetBitmap(XPM_BITMAP(refresh));
+    item->SetBitmap(m_images.Bitmap("gitRefresh"));
     m_pluginMenu->Append( item );
     m_pluginMenu->AppendSeparator();
     item = new wxMenuItem( m_pluginMenu, XRCID("git_settings"), wxT( "GIT plugin settings" ), wxT( "Set GIT executable path" ), wxITEM_NORMAL );
     m_pluginMenu->Append( item );
     item = new wxMenuItem( m_pluginMenu, XRCID("git_set_repository"), wxT( "Set GIT repository path" ), wxT( "Set GIT repository path" ), wxITEM_NORMAL );
-    item->SetBitmap(XPM_BITMAP(menulog));
-
     m_pluginMenu->Append( item );
 
     item = new wxMenuItem(pluginsMenu, wxID_ANY, wxT("Git"));
@@ -269,22 +256,17 @@ void GitPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
     if(type == MenuTypeFileView_File) {
         menu->AppendSeparator();
         wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"),wxT("Git: Add file"));
-        item->SetBitmap(XPM_BITMAP(menuadd));
+        item->SetBitmap(m_images.Bitmap("gitFileAdd"));
         menu->Append(item);
         m_eventHandler->Connect( XRCID("git_add_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileAddSelected), NULL, this );
 
-        //item = new wxMenuItem(menu, ID_DELETE_FILE,wxT("Git: Delete file"));
-        //item->SetBitmap(XPM_BITMAP(menudelete));
-        //menu->Append(item);
-        //m_eventHandler->Connect( ID_DELETE_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDeleteSelected), NULL, this );
-
         item = new wxMenuItem(menu, XRCID("git_reset_file"),wxT("Git: Reset file"));
-        item->SetBitmap(XPM_BITMAP(menudelete));
+        item->SetBitmap(m_images.Bitmap("gitReset"));
         menu->Append(item);
         m_eventHandler->Connect( XRCID("git_reset_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileResetSelected), NULL, this );
 
         item = new wxMenuItem(menu, XRCID("git_diff_file"),wxT("Git: Show file diff"));
-        item->SetBitmap(XPM_BITMAP(menu_diff_commit));
+        item->SetBitmap(m_images.Bitmap("gitDiffs"));
         menu->Append(item);
         m_eventHandler->Connect( XRCID("git_diff_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDiffSelected), NULL, this );
 

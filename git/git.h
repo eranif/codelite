@@ -82,7 +82,8 @@ class GitPlugin : public IPlugin
 
     clToolBar* m_pluginToolbar;
     wxMenu* m_pluginMenu;
-
+    GitImages m_images;
+    
 private:
     void InitDefaults();
     void AddDefaultActions();

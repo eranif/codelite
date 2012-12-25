@@ -1308,6 +1308,13 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
                 m_process->WriteToConsole( pass );
                 
             }
+        } else if ( tmpOutput.Contains("The authenticity of host") && tmpOutput.Contains("can't be established")) {
+            if ( ::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES ) {
+                m_process->WriteToConsole("yes");
+                
+            } else {
+                m_process->Terminate();
+            }
         }
         
         if(m_progressDialog && m_progressDialog->IsShown()) {

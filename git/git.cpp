@@ -191,6 +191,7 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     m_pluginMenu->Append( item );
     
     item = new wxMenuItem( m_pluginMenu, XRCID("git_start_gitk"), wxT( "Start gitk" ), wxT( "Start gitk" ), wxITEM_NORMAL );
+    item->SetBitmap(m_images.Bitmap("gitStart"));
     m_pluginMenu->Append( item );
 
     m_pluginMenu->AppendSeparator();

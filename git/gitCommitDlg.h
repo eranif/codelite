@@ -13,20 +13,22 @@
 
 class GitCommitDlg : public GitCommitDlgBase
 {
-	std::map<wxString, wxString> m_diffMap;
-	wxString m_workingDir;
+    std::map<wxString, wxString> m_diffMap;
+    wxString m_workingDir;
 
 public:
-	GitCommitDlg(wxWindow* parent, const wxString& repoDir);
-	~GitCommitDlg();
+    GitCommitDlg(wxWindow* parent, const wxString& repoDir);
+    ~GitCommitDlg();
 
-	void AppendDiff(const wxString& diff);
+    void AppendDiff(const wxString& diff);
 
-	wxArrayString GetSelectedFiles();
-	wxString GetCommitMessage();
+    wxArrayString GetSelectedFiles();
+    wxString GetCommitMessage();
 
 private:
-	void OnChangeFile(wxCommandEvent& e);
+    void OnChangeFile(wxCommandEvent& e);
+protected:
+    virtual void OnCommitOK(wxCommandEvent& event);
 };
 
 #endif

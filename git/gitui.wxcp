@@ -901,11 +901,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	""
+					"m_value":	"gitCommitDlg"
 				}, {
 					"type":	"string",
 					"m_label":	"Inherited Class",
-					"m_value":	""
+					"m_value":	"GitCommitDlg"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -1315,7 +1315,13 @@
 																					"m_label":	"Choices:",
 																					"m_value":	""
 																				}],
-																			"m_events":	[],
+																			"m_events":	[{
+																					"m_eventName":	"wxEVT_COMMAND_LISTBOX_SELECTED",
+																					"m_eventClass":	"wxCommandEvent",
+																					"m_eventHandler":	"wxCommandEventHandler",
+																					"m_functionNameAndSignature":	"OnChangeFile(wxCommandEvent& event)",
+																					"m_description":	"Process a wxEVT_COMMAND_LISTBOX_SELECTED event\nwhen an item on the list is selected or the selection changes."
+																				}],
 																			"m_children":	[]
 																		}]
 																}]
@@ -1778,7 +1784,13 @@
 											"m_label":	"Margins:",
 											"m_value":	"2,2"
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnCommitOK(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+										}],
 									"m_children":	[]
 								}, {
 									"m_type":	4400,

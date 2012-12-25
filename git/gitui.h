@@ -70,6 +70,8 @@ protected:
     wxButton* m_button6;
 
 protected:
+    virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     GitCommitDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git commit..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

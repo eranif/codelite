@@ -16,6 +16,7 @@
 #include <queue>
 #include <set>
 #include <wx/progdlg.h>
+#include "project.h" // StringSet_t
 
 typedef struct gitAction {
     int action;
@@ -58,8 +59,8 @@ class GitPlugin : public IPlugin
 
     wxArrayString m_localBranchList;
     wxArrayString m_remoteBranchList;
-    wxArrayString m_trackedFiles;
-    wxArrayString m_modifiedFiles;
+    StringSet_t  m_trackedFiles;
+    StringSet_t  m_modifiedFiles;
     bool m_addedFiles;
     wxArrayString m_remotes;
 
@@ -88,7 +89,7 @@ private:
     void InitDefaults();
     void AddDefaultActions();
     void ProcessGitActionQueue();
-    void ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files, const wxColour& colour) const;
+    void ColourFileTree(wxTreeCtrl *tree, const StringSet_t& files, const wxColour& colour) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
 
     void FinishGitListAction(const gitAction& ga);

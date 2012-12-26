@@ -36,7 +36,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer1->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_colourTrackedFile = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
+    m_colourTrackedFile = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(240,27,27)")), wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
     
     fgSizer1->Add(m_colourTrackedFile, 0, wxALL|wxEXPAND, 5);
     
@@ -44,7 +44,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer1->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_colourDiffFile = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
+    m_colourDiffFile = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(33,151,56)")), wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
     
     fgSizer1->Add(m_colourDiffFile, 0, wxALL|wxEXPAND, 5);
     

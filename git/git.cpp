@@ -400,7 +400,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent &e)
     wxUnusedVar(e);
     TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
     wxString path = info.m_fileName.GetFullPath();
-    if(m_trackedFiles.Index(path) != wxNOT_FOUND) {
+    if( m_trackedFiles.count(path) ) {
         wxMessageBox(wxT("File is already part of the index..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
@@ -438,13 +438,15 @@ void GitPlugin::OnFileDeleteSelected(wxCommandEvent &e)
 /*******************************************************************************/
 void GitPlugin::OnFileDiffSelected(wxCommandEvent &e)
 {
+    // TODO:: there can be multiple selections
     wxUnusedVar(e);
     TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
     wxString path = info.m_fileName.GetFullPath();
-    if(m_modifiedFiles.Index(path) == wxNOT_FOUND) {
-        wxMessageBox(wxT("File is not modified, there is no diff..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+    if( m_modifiedFiles.count(path) == 0 ) {
+        wxMessageBox(wxT("File is not modified, there is no diff..."), wxT("CodeLite"), wxICON_WARNING | wxOK, m_topWindow);
         return;
     }
+    
     path.Replace(m_repositoryDirectory,wxT(""));
     if(path.StartsWith(wxT("/")))
         path.Remove(0,1);
@@ -471,7 +473,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent &e)
 void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    if(m_modifiedFiles.GetCount() != 0) {
+    if( !m_modifiedFiles.empty() ) {
         wxMessageBox(wxT("Modified files found! Commit them first before switching branches..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
@@ -499,7 +501,7 @@ void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
 void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    if(m_modifiedFiles.GetCount() != 0) {
+    if( !m_modifiedFiles.empty() ) {
         wxMessageBox(wxT("Modified files found! Commit them first before switching branches..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
@@ -557,11 +559,11 @@ void GitPlugin::OnCreateBranch(wxCommandEvent &e)
 void GitPlugin::OnCommit(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    if(m_modifiedFiles.GetCount() == 0
-       && !m_addedFiles) {
+    if( m_modifiedFiles.empty() && !m_addedFiles ) {
         wxMessageBox(wxT("No modified files found, nothing to commit..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
+    
     gitAction ga = {gitDiffRepoCommit,wxT("")};
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
@@ -580,8 +582,7 @@ void GitPlugin::OnCommitList(wxCommandEvent &e)
 void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(m_modifiedFiles.GetCount() == 0
-       && !m_addedFiles) {
+    if( m_modifiedFiles.empty() && !m_addedFiles) {
         wxMessageBox(wxT("No modified files found."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
         return;
     }
@@ -916,17 +917,24 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
     if(!m_mgr->GetWorkspace())
         return;
-    wxArrayString gitFileList = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
-
-    for (unsigned i=0; i < gitFileList.GetCount(); ++i) {
-        wxFileName fname(gitFileList[i]);
+    
+    wxArrayString tmpArray = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
+    
+    // Convert path to absolute
+    for (unsigned i=0; i < tmpArray.GetCount(); ++i) {
+        wxFileName fname(tmpArray[i]);
         fname.MakeAbsolute(m_repositoryDirectory);
-        gitFileList[i] = fname.GetFullPath();
+        tmpArray[i] = fname.GetFullPath();
     }
-
+    
+    // convert the array to set for performance
+    StringSet_t gitFileSet;
+    gitFileSet.insert(tmpArray.begin(), tmpArray.end());
+    
     if (ga.action == gitListAll) {
-        ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileList, m_colourTrackedFile);
-        m_trackedFiles = gitFileList;
+        ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, m_colourTrackedFile);
+        m_trackedFiles.swap(gitFileSet);
+        
     } else if (ga.action == gitListModified) {
 
         // First get an up to date map of the filepaths/treeitemids
@@ -935,21 +943,27 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         CreateFilesTreeIDsMap(IDs);
 
         // Now filter using the list of modified files, gitFileList, to find which IDs to colour differently
-        wxArrayString toColour;
-        for (unsigned i=0; i < gitFileList.GetCount(); ++i) {
-            wxTreeItemId id = IDs[gitFileList[i]];
+        StringSet_t toColour;
+        StringSet_t::const_iterator iter = gitFileSet.begin();
+        for (; iter != gitFileSet.end(); ++iter) {
+            wxTreeItemId id = IDs[ (*iter) ];
             if (id.IsOk()) {
                 m_mgr->GetTree(TreeFileView)->SetItemTextColour(id, m_colourDiffFile);
+                
             } else {
-                toColour.Add(gitFileList[i]);
+                toColour.insert( *iter );
             }
         }
-        if (toColour.GetCount() != 0)
+        
+        if ( !toColour.empty() ) {
             ColourFileTree(m_mgr->GetTree(TreeFileView), toColour, m_colourDiffFile);
+        }
+        
         // Finally, cache the modified-files list: it's used in other functions
-        m_modifiedFiles = gitFileList;
+        m_modifiedFiles.swap(gitFileSet);
     }
 }
+
 /*******************************************************************************/
 void GitPlugin::ListBranchAction(const gitAction& ga)
 {
@@ -1379,7 +1393,7 @@ void GitPlugin::AddDefaultActions()
 }
 
 /*******************************************************************************/
-void GitPlugin::ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files, const wxColour& colour) const
+void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const StringSet_t& files, const wxColour& colour) const
 {
     std::stack<wxTreeItemId> items;
     if (tree->GetRootItem().IsOk())
@@ -1392,7 +1406,7 @@ void GitPlugin::ColourFileTree(wxTreeCtrl *tree, const wxArrayString& files, con
         if (next != tree->GetRootItem()) {
             FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( tree->GetItemData( next ) );
             const wxString& path = data->GetData().GetFile();
-            if (!path.IsEmpty() && files.Index(path) != wxNOT_FOUND) {
+            if (!path.IsEmpty() && files.count(path)) {
                 tree->SetItemTextColour(next, colour);
             }
         }
@@ -1430,7 +1444,7 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
             const wxString& path = data->GetData().GetFile();
             if (!path.IsEmpty()) {
                 // If m_modifiedFiles has already been filled, only include files listed there
-                if (!ifmodified || m_modifiedFiles.Index(path) != wxNOT_FOUND) {
+                if (!ifmodified || m_modifiedFiles.count(path)) {
                     IDs[path] = next;
                 }
             }
@@ -1520,8 +1534,8 @@ void GitPlugin::DoCleanup()
     m_remotes.Clear();
     m_localBranchList.Clear();
     m_remoteBranchList.Clear();
-    m_trackedFiles.Clear();
-    m_modifiedFiles.Clear();
+    m_trackedFiles.clear();
+    m_modifiedFiles.clear();
     m_addedFiles = false;
     m_progressMessage.Clear();
     m_commandOutput.Clear();

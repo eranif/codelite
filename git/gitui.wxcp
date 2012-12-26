@@ -252,7 +252,7 @@
 										}, {
 											"type":	"colour",
 											"m_label":	"Value:",
-											"colour":	"0,128,0"
+											"colour":	"(240,27,27)"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -366,7 +366,7 @@
 										}, {
 											"type":	"colour",
 											"m_label":	"Value:",
-											"colour":	"255,0,0"
+											"colour":	"(33,151,56)"
 										}],
 									"m_events":	[],
 									"m_children":	[]

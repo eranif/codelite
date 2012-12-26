@@ -24,6 +24,7 @@
 #include "git.h"
 
 #include "icons/icon_git.xpm"
+#include "overlaytool.h"
 
 //#if 0
 //#include "icons/menu_start_bisect.xpm"
@@ -747,13 +748,14 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
             m_gitActionQueue.push(ga);
             break;
         }
-        m_mgr->GetTree(TreeFileView)->SetItemTextColour(it->second,m_colourTrackedFile);
+        DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), it->second, OverlayTool::Bmp_Modified);
     }
 
     gitAction ga = {gitListModified,wxT("")};
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
 }
+
 /*******************************************************************************/
 void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 {
@@ -932,7 +934,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     gitFileSet.insert(tmpArray.begin(), tmpArray.end());
     
     if (ga.action == gitListAll) {
-        ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, m_colourTrackedFile);
+        ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, OverlayTool::Bmp_OK);
         m_trackedFiles.swap(gitFileSet);
         
     } else if (ga.action == gitListModified) {
@@ -948,7 +950,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         for (; iter != gitFileSet.end(); ++iter) {
             wxTreeItemId id = IDs[ (*iter) ];
             if (id.IsOk()) {
-                m_mgr->GetTree(TreeFileView)->SetItemTextColour(id, m_colourDiffFile);
+                DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), id, OverlayTool::Bmp_Modified);
                 
             } else {
                 toColour.insert( *iter );
@@ -956,7 +958,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         }
         
         if ( !toColour.empty() ) {
-            ColourFileTree(m_mgr->GetTree(TreeFileView), toColour, m_colourDiffFile);
+            ColourFileTree(m_mgr->GetTree(TreeFileView), toColour, OverlayTool::Bmp_Modified);
         }
         
         // Finally, cache the modified-files list: it's used in other functions
@@ -1336,7 +1338,8 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
 void GitPlugin::InitDefaults()
 {
     wxString workspaceName = m_mgr->GetWorkspace()->GetName();
-
+    DoCreateTreeImages();
+    
     GitEntry data;
     m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
 
@@ -1393,7 +1396,7 @@ void GitPlugin::AddDefaultActions()
 }
 
 /*******************************************************************************/
-void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const StringSet_t& files, const wxColour& colour) const
+void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const StringSet_t& files, OverlayTool::BmpType bmpType) const
 {
     std::stack<wxTreeItemId> items;
     if (tree->GetRootItem().IsOk())
@@ -1407,7 +1410,7 @@ void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const StringSet_t& files, const
             FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( tree->GetItemData( next ) );
             const wxString& path = data->GetData().GetFile();
             if (!path.IsEmpty() && files.count(path)) {
-                tree->SetItemTextColour(next, colour);
+                DoSetTreeItemImage(tree, next, bmpType);
             }
         }
 
@@ -1547,3 +1550,50 @@ void GitPlugin::DoCleanup()
     m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).Caption( wxT("Workspace View"));
     m_mgr->GetDockingManager()->Update();
 }
+
+void GitPlugin::DoCreateTreeImages()
+{
+    // We update the tree view with new icons:
+    // each icon will get an additional of 2 icons:
+    // modified / OK
+    // the index will be: m_baseImageCount + img-base + 1 => OK
+    //                    m_baseImageCount + img-base + 2 => Modified
+    
+    if (m_treeImageMapping.empty()) {
+        wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+        
+        // Create 2 sets: modified & normal
+        wxImageList *il = tree->GetImageList();
+        m_baseImageCount = il->GetImageCount();
+        
+        for(int i=0; i<m_baseImageCount; ++i) {
+            // we also keep a mapping of the new image to its base image
+            // The ordeer of adding the images is important since we will use this enumerators (OverlayTool::Bmp_OK etc) to choose the correct
+            // image when colouring the tree
+            m_treeImageMapping.insert(std::make_pair(il->Add( OverlayTool::Get().CreateBitmap(il->GetBitmap(i), OverlayTool::Bmp_OK)), i));
+            m_treeImageMapping.insert(std::make_pair(il->Add( OverlayTool::Get().CreateBitmap(il->GetBitmap(i), OverlayTool::Bmp_Modified)), i));
+            m_treeImageMapping.insert(std::make_pair(i, i));
+        }
+    }
+}
+
+void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
+{
+    // get the base image first
+    int curImgIdx = ctrl->GetItemImage(item);
+    if ( m_treeImageMapping.count( curImgIdx ) ) {
+        int baseImg = m_treeImageMapping.find(curImgIdx)->second;
+        
+        // now get the new image index based on the following:
+        // baseCount + (imgIdx * bitmapCount) + BmpType
+        int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
+        
+        // the below condition should never met, but I am paranoid..
+        if ( ctrl->GetImageList()->GetImageCount() > newImg ) {
+            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Selected );
+            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Normal);
+            
+        }
+    }
+}
+

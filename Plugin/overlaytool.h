@@ -1,7 +1,6 @@
 #ifndef __overlaytool__
 #define __overlaytool__
 
-#if 0
 #include <wx/bitmap.h>
 #include "codelite_exports.h"
 
@@ -9,26 +8,33 @@
  * @class OverlayTool a simple tool which allows creating new images with overlay icons
  * @author eran
  * @date 08/31/09
- * @file overlaytool.h
  * @brief
  */
-class WXDLLIMPEXP_SDK OverlayTool {
+class WXDLLIMPEXP_SDK OverlayTool
+{
 
-	static wxBitmap ms_bmpOK;
-	static wxBitmap ms_bmpConflict;
-	static wxBitmap ms_bmpModified;
-
-private:
-	OverlayTool();
-	virtual ~OverlayTool();
-
+    static wxBitmap ms_bmpOK;
+    static wxBitmap ms_bmpConflict;
+    static wxBitmap ms_bmpModified;
+    
 public:
-	static OverlayTool& Get();
-
-	wxBitmap AddOKIcon      (wxBitmap& bmp);
-	wxBitmap AddConflictIcon(wxBitmap& bmp);
-	wxBitmap AddModifiedIcon(wxBitmap& bmp);
+    enum BmpType {
+        Bmp_NoChange = -1,
+        Bmp_OK       =  0, 
+        Bmp_Modified =  1, 
+        Bmp_Conflict =  2, 
+    };
+    
+private:
+    OverlayTool();
+    virtual ~OverlayTool();
+    
+    wxBitmap DoAddBitmap(const wxBitmap& bmp, const wxBitmap& overlayBmp) const;
+    
+public:
+    static OverlayTool& Get();
+    
+    wxBitmap CreateBitmap(const wxBitmap& orig, OverlayTool::BmpType type) const;
 };
-#endif
 
 #endif // __overlaytool__

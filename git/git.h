@@ -17,6 +17,8 @@
 #include <set>
 #include <wx/progdlg.h>
 #include "project.h" // StringSet_t
+#include <map>
+#include "overlaytool.h"
 
 typedef struct gitAction {
     int action;
@@ -25,6 +27,8 @@ typedef struct gitAction {
 
 class GitPlugin : public IPlugin
 {
+    typedef std::map<int, int> IntMap_t;
+    
     enum {
         gitNone = 0,
         gitListAll,
@@ -84,12 +88,16 @@ class GitPlugin : public IPlugin
     clToolBar* m_pluginToolbar;
     wxMenu* m_pluginMenu;
     GitImages m_images;
+    IntMap_t m_treeImageMapping;
+    int      m_baseImageCount;
     
 private:
+    void DoCreateTreeImages();
+    void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType ) const;
     void InitDefaults();
     void AddDefaultActions();
     void ProcessGitActionQueue();
-    void ColourFileTree(wxTreeCtrl *tree, const StringSet_t& files, const wxColour& colour) const;
+    void ColourFileTree(wxTreeCtrl *tree, const StringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
 
     void FinishGitListAction(const gitAction& ga);

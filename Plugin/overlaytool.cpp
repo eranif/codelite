@@ -1,8 +1,8 @@
-#if 0
 #include <wx/dcmemory.h>
 #include "overlaytool.h"
 #include <wx/xrc/xmlres.h>
 #include <wx/settings.h>
+#include "bitmap_loader.h"
 
 wxBitmap OverlayTool::ms_bmpOK;
 wxBitmap OverlayTool::ms_bmpConflict;
@@ -10,88 +10,51 @@ wxBitmap OverlayTool::ms_bmpModified;
 
 OverlayTool::OverlayTool()
 {
-	ms_bmpOK       = wxXmlResource::Get()->LoadBitmap(wxT("overlay_ok"));
-	ms_bmpModified = wxXmlResource::Get()->LoadBitmap(wxT("overlay_modified"));
-	ms_bmpConflict = wxXmlResource::Get()->LoadBitmap(wxT("overlay_conflict"));
-}
+    BitmapLoader bl;
+    ms_bmpOK       = bl.LoadBitmap("overlay/16/ok");
+    ms_bmpModified = bl.LoadBitmap("overlay/16/modified");
+    ms_bmpConflict = bl.LoadBitmap("overlay/16/conflicted");
+} 
 
 OverlayTool::~OverlayTool()
 {
 }
 
-wxBitmap OverlayTool::AddConflictIcon(wxBitmap& bmp)
+wxBitmap OverlayTool::DoAddBitmap(const wxBitmap& bmp, const wxBitmap& overlayBmp) const
 {
-	wxMemoryDC dcMem;
+    wxMemoryDC dcMem;
 
-#if defined(__WXGTK__)|| defined(__WXMAC__)
-	wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-	wxBitmap bitmap(16, 16);
-	dcMem.SelectObject(bitmap);
-	dcMem.SetPen( wxPen(col) );
-	dcMem.SetBrush( wxBrush(col) );
-	dcMem.DrawRectangle(wxPoint(0, 0), wxSize(16, 16));
-	dcMem.DrawBitmap(bmp, wxPoint(0, 0), true);
-#else
-	wxBitmap bitmap(bmp);
-	dcMem.SelectObject(bitmap);
-#endif
+    wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    wxBitmap bitmap(16, 16);
+    dcMem.SelectObject(bitmap);
+    dcMem.SetPen( wxPen(col) );
+    dcMem.SetBrush( wxBrush(col) );
+    dcMem.DrawRectangle(wxPoint(0, 0), wxSize(16, 16));
+    dcMem.DrawBitmap(bmp, wxPoint(0, 0));
 
-	dcMem.DrawBitmap(ms_bmpConflict, wxPoint(0, 0), true);
-	dcMem.SelectObject(wxNullBitmap);
+    dcMem.DrawBitmap(overlayBmp, wxPoint(0, 0));
+    dcMem.SelectObject(wxNullBitmap);
 
-	return bitmap;
-}
-
-wxBitmap OverlayTool::AddModifiedIcon(wxBitmap& bmp)
-{
-	wxMemoryDC dcMem;
-
-#if defined(__WXGTK__)|| defined(__WXMAC__)
-	wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-	wxBitmap bitmap(16, 16);
-	dcMem.SelectObject(bitmap);
-	dcMem.SetPen( wxPen(col) );
-	dcMem.SetBrush( wxBrush(col) );
-	dcMem.DrawRectangle(wxPoint(0, 0), wxSize(16, 16));
-	dcMem.DrawBitmap(bmp, wxPoint(0, 0), true);
-#else
-	wxBitmap bitmap(bmp);
-	dcMem.SelectObject(bitmap);
-#endif
-
-	dcMem.DrawBitmap(ms_bmpModified, wxPoint(0, 0), true);
-	dcMem.SelectObject(wxNullBitmap);
-
-	return bitmap;
-}
-
-wxBitmap OverlayTool::AddOKIcon(wxBitmap& bmp)
-{
-	wxMemoryDC dcMem;
-
-#if defined(__WXGTK__)|| defined(__WXMAC__)
-	wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-	wxBitmap bitmap(16, 16);
-	dcMem.SelectObject(bitmap);
-	dcMem.SetPen( wxPen(col) );
-	dcMem.SetBrush( wxBrush(col) );
-	dcMem.DrawRectangle(wxPoint(0, 0), wxSize(16, 16));
-	dcMem.DrawBitmap(bmp, wxPoint(0, 0), true);
-#else
-	wxBitmap bitmap(bmp);
-	dcMem.SelectObject(bitmap);
-#endif
-
-	dcMem.DrawBitmap(ms_bmpOK, wxPoint(0, 0), true);
-	dcMem.SelectObject(wxNullBitmap);
-
-	return bitmap;
+    return bitmap;
 }
 
 OverlayTool& OverlayTool::Get()
 {
-	static OverlayTool theTool;
-	return theTool;
+    static OverlayTool theTool;
+    return theTool;
 }
 
-#endif
+wxBitmap OverlayTool::CreateBitmap(const wxBitmap& orig, OverlayTool::BmpType type) const
+{
+    switch( type ) {
+    case Bmp_Conflict:
+        return DoAddBitmap(orig, ms_bmpConflict);
+    case Bmp_OK:
+        return DoAddBitmap(orig, ms_bmpOK);
+    case Bmp_Modified:
+        return DoAddBitmap(orig, ms_bmpModified);
+    default:
+        return orig;
+    }
+}
+

@@ -109,6 +109,10 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow *WXUNUSED(window),
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
 {
     wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
+    
+    if ( tmpRect.GetSize() == wxSize(0, 0) )
+        tmpRect.SetSize(wxSize(1, 1)); // or it will assert on linux
+    
     wxBitmap bmp(tmpRect.GetSize());
     wxMemoryDC memDc;
     memDc.SelectObject(bmp);

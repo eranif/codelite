@@ -1,5 +1,6 @@
 #include "cl_aui_dock_art.h"
 #include "imanager.h"
+#include <wx/dcmemory.h>
 
 // --------------------------------------------
 

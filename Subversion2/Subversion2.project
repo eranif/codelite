@@ -75,7 +75,6 @@
     <File Name="svn_select_local_repo_dlg.h"/>
     <File Name="SvnCommitDialog.h"/>
     <File Name="SvnCommitDialog.cpp"/>
-    <File Name="subversion2.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
@@ -91,6 +90,7 @@
       <File Name="wxcrafter.h"/>
       <File Name="wxcrafter.cpp"/>
     </VirtualDirectory>
+    <File Name="subversion2.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>

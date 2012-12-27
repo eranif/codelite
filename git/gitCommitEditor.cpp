@@ -64,14 +64,16 @@ GitCommitEditor::GitCommitEditor(wxWindow* parent)
     StyleSetForeground(5, fg);
 //  StyleSetBackground(5, bg);
     StyleSetBackground(5,  DrawingUtils::LightColour(wxT("RED"), 9.5));
-
+    StyleSetEOLFilled(5, true);
+    
     //Line added
     fg.Set(wxT("#008000"));
     bg.Set(wxT("white"));
     StyleSetForeground(6, fg);
 //  StyleSetBackground(6, bg);
     StyleSetBackground(6,  DrawingUtils::LightColour(wxT("GREEN"), 9.5));
-
+    StyleSetEOLFilled(6, true);
+    
     //Brace match
     fg.Set(wxT("black"));
     bg.Set(wxT("white"));

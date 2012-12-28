@@ -175,7 +175,10 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
                                          imgId,					// item image index
                                          imgId					// selected item image
                                      );
+            m_treeCtrl->SortChildren(parentHti);
         }
+
+
 #if !defined(__WXMSW__)
         // For a single project, hide the workspace node. This doesn't work on wxMSW
         if (!m_projectName.empty()) {

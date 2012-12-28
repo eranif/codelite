@@ -131,14 +131,14 @@ protected:
     virtual void OnRemoveRegex(wxCommandEvent& event);
     virtual void OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event);
     virtual void OnRemoveRegexUpdateUI(wxUpdateUIEvent& event);
-    
+
     const wxString m_projname;
 };
 
 class ReconcileByRegexDlg : public ReconcileByRegexDlgBaseClass
 {
 public:
-    ReconcileByRegexDlg(wxWindow* parent);
+    ReconcileByRegexDlg(wxWindow* parent, const wxString& projname);
     virtual ~ReconcileByRegexDlg();
     
     wxString GetRegex() { return m_textCtrlVirtualFolder->GetValue() + '|' + m_textCtrlRegex->GetValue(); }
@@ -148,6 +148,7 @@ protected:
     virtual void OnVDBrowse(wxCommandEvent& event);
     virtual void OnRegexOKCancelUpdateUI(wxUpdateUIEvent& event);
 
+    const wxString m_projname;
 };
 
 #endif

@@ -465,6 +465,18 @@ void Project::GetFiles(StringSet_t& files)
     }
 }
 
+void Project::GetFiles(StringSet_t& files, const wxString& relativePath)
+{
+    DirSaver ds;
+    FileNameVector_t v;
+    ::wxSetWorkingDirectory(relativePath);
+    GetFiles(m_doc.GetRoot(), v, false);
+    for(size_t i=0; i<v.size(); i++) {
+        v.at(i).MakeRelativeTo(relativePath);
+        files.insert(v.at(i).GetFullPath());
+    }
+}
+
 void Project::GetFiles(std::vector<wxFileName> &files, bool absPath)
 {
     if (absPath) {
@@ -1317,4 +1329,89 @@ void Project::ClearAllVirtDirs()
 wxString Project::GetProjectIconName() const
 {
     return m_doc.GetRoot()->GetPropVal(wxT("IconIndex"), "gear16");
+}
+
+void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& excludePaths, wxArrayString& regexes)
+{
+    if (!m_doc.IsOk()) {
+        return;
+    }
+
+    // locate the 'Reconciliation' node
+    wxXmlNode* reconciliation = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Reconciliation"));
+    if( !reconciliation ) {
+        return;
+    }
+
+    wxXmlNode* dirnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Topleveldir"));
+    if (dirnode) {
+        toplevelDir = dirnode->GetNodeContent().Trim().Trim(false);
+    }
+
+    wxXmlNode* extnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Extensions"));
+    if (extnode) {
+        extensions = extnode->GetNodeContent().Trim().Trim(false);
+    }
+
+    wxXmlNode* excludesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Excludepaths"));
+    if (excludesnode) {
+        excludePaths = XmlUtils::ChildNodesContentToArray(excludesnode, "Path");
+    }
+
+    wxXmlNode* regexnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Regexes"));
+    if (regexnode) {
+        regexes = XmlUtils::ChildNodesContentToArray(regexnode, "Regex");
+    }
+}
+
+void Project::SetReconciliationData(const wxString& toplevelDir, const wxString& extensions, const wxArrayString& excludePaths, wxArrayString& regexes)
+{
+    if (!m_doc.IsOk()) {
+        return;
+    }
+
+    wxXmlNode* reconciliation = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Reconciliation"));
+    if (!reconciliation) {
+        reconciliation = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("Reconciliation"));
+    }
+
+    wxXmlNode* dirnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Topleveldir"));
+    if (!dirnode) {
+        dirnode = new wxXmlNode(reconciliation, wxXML_ELEMENT_NODE, wxT("Topleveldir"));
+    }
+    XmlUtils::SetNodeContent(dirnode, toplevelDir);
+
+    wxXmlNode* extsnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Extensions"));
+    if (!extsnode) {
+        extsnode = new wxXmlNode(reconciliation, wxXML_ELEMENT_NODE, wxT("Extensions"));
+    }
+    wxString tmpData(extensions);
+    tmpData.Trim().Trim(false);
+    XmlUtils::SetCDATANodeContent(extsnode, tmpData);
+
+    wxXmlNode* excludesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Excludepaths"));
+    if (!excludesnode) {
+        excludesnode = new wxXmlNode(reconciliation, wxXML_ELEMENT_NODE, wxT("Excludepaths"));
+    } else {
+        XmlUtils::RemoveChildren(excludesnode);
+    }
+        
+    for (size_t n = 0; n < excludePaths.GetCount(); ++n) {
+        wxXmlNode* pathnode = new wxXmlNode(excludesnode, wxXML_ELEMENT_NODE, "Path");
+        XmlUtils::SetNodeContent(pathnode, excludePaths.Item(n));
+    }
+
+    wxXmlNode* regexnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Regexes"));
+    if (!regexnode) {
+        regexnode = new wxXmlNode(reconciliation, wxXML_ELEMENT_NODE, wxT("Regexes"));
+    } else {
+        XmlUtils::RemoveChildren(regexnode);
+    }
+        
+    for (size_t n = 0; n < regexes.GetCount(); ++n) {
+        wxXmlNode* itemnode = new wxXmlNode(regexnode, wxXML_ELEMENT_NODE, "Regex");
+        XmlUtils::SetNodeContent(itemnode, regexes.Item(n));
+    }
+    
+    SaveXmlFile();
 }

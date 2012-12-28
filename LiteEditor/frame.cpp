@@ -347,6 +347,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("import_from_msvs"),         clMainFrame::OnImportMSVS)
     EVT_MENU(XRCID("new_project"),              clMainFrame::OnProjectNewProject)
     EVT_MENU(XRCID("add_project"),              clMainFrame::OnProjectAddProject)
+    EVT_MENU(XRCID("reconcile_project"),        clMainFrame::OnReconcileProject)
     EVT_MENU(XRCID("retag_workspace"),          clMainFrame::OnRetagWorkspace)
     EVT_MENU(XRCID("full_retag_workspace"),     clMainFrame::OnRetagWorkspace)
     EVT_MENU(XRCID("project_properties"),       clMainFrame::OnShowActiveProjectSettings)
@@ -356,6 +357,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("close_workspace"),          clMainFrame::OnWorkspaceOpen)
     EVT_UPDATE_UI(XRCID("reload_workspace"),         clMainFrame::OnReloadWorkspaceUI)
     EVT_UPDATE_UI(XRCID("add_project"),              clMainFrame::OnWorkspaceMenuUI)
+    EVT_UPDATE_UI(XRCID("reconcile_project"),        clMainFrame::OnShowActiveProjectSettingsUI)
     EVT_UPDATE_UI(XRCID("retag_workspace"),          clMainFrame::OnRetagWorkspaceUI)
     EVT_UPDATE_UI(XRCID("full_retag_workspace"),     clMainFrame::OnRetagWorkspaceUI)
     EVT_UPDATE_UI(XRCID("project_properties"),       clMainFrame::OnShowActiveProjectSettingsUI)
@@ -2049,6 +2051,12 @@ void clMainFrame::OnProjectAddProject(wxCommandEvent &event)
         ManagerST::Get()->AddProject(dlg->GetPath());
     }
     dlg->Destroy();
+}
+
+void clMainFrame::OnReconcileProject(wxCommandEvent &event)
+{
+    wxUnusedVar(event);
+    ManagerST::Get()->ReconcileProject();
 }
 
 void clMainFrame::OnCtagsOptions(wxCommandEvent &event)

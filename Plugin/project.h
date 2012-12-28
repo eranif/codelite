@@ -338,6 +338,13 @@ public:
     void GetFiles(StringSet_t& files);
     
     /**
+     * @brief return a relative filename set of all the project files
+     * \param files the set in which to return the paths
+     * \param relativePath the path to which to make-relative
+     */
+    void GetFiles(StringSet_t& files, const wxString& relativePath);
+    
+    /**
      * Return a node pointing to any project-wide editor preferences
      */
     wxXmlNode* GetProjectEditorOptions() const;
@@ -362,6 +369,15 @@ public:
      */
     void SetGlobalSettings(BuildConfigCommonPtr settings);
 
+    /**
+     * Get the project's file toplevel directory, extensions, exclude paths and regexes for use when reconciling with filesystem reality
+     */
+    void GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& excludePaths, wxArrayString& regexes);
+
+    /**
+     * Set the project's file toplevel directory, extensions, exclude paths and regexes for use when reconciling with filesystem reality
+     */
+    void SetReconciliationData(const wxString& toplevelDir, const wxString& extensions, const wxArrayString& excludePaths, wxArrayString& regexes);
     //-----------------------------------
     // visual operations
     //-----------------------------------

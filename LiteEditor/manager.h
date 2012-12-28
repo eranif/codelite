@@ -272,6 +272,12 @@ public:
     void AddProject(const wxString &path);
 
     /**
+     * Checks the active project for file entries that no longer exist on the filesystem,
+     * and for existing files that are missing from the project
+     */
+    void ReconcileProject();
+
+    /**
      * Import a MS Solution file and open it in the editor
      * \param path path to the .sln file
      */

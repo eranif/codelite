@@ -87,6 +87,7 @@
 #include "new_build_tab.h"
 #include "tabgroupmanager.h"
 #include "manager.h"
+#include "reconcileproject.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -531,6 +532,19 @@ void Manager::AddProject ( const wxString & path )
     wxString projectName ( fn.GetName() );
     RetagProject ( projectName, true );
     SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
+}
+
+void Manager::ReconcileProject()
+{
+    wxCHECK_RET(IsWorkspaceOpen(), wxT("Trying to reconcile a project with no open workspace"));
+
+    wxString projname = GetActiveProjectName();
+    wxCHECK_RET(!projname.empty(), wxT("Failed to find the active project"));
+
+    ReconcileProjectDlg dlg(clMainFrame::Get(), projname.c_str()); // In theory the deep copy is unnecessary, but I got segs in the dtor...
+    if (dlg.LoadData()) {
+        dlg.ShowModal();
+    }
 }
 
 void Manager::ImportMSVSSolution ( const wxString &path, const wxString &defaultCompiler )

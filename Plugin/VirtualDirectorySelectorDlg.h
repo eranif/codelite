@@ -33,6 +33,7 @@ protected:
 public:
     /** Constructor */
     VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath = wxEmptyString, const wxString& projectname = wxEmptyString );
+    ~VirtualDirectorySelectorDlg();
     wxString GetVirtualDirectoryPath() const {
         return m_staticTextPreview->GetLabel();
     }

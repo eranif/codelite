@@ -9,6 +9,7 @@
 #include <wx/regex.h>
 #include "plugin.h"
 #include "event_notifier.h"
+#include "windowattrmanager.h"
 #include <wx/wupdlock.h>
 #include <wx/textdlg.h>
 #include <wx/msgdlg.h>
@@ -23,6 +24,13 @@ VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg( wxWindow* parent, Work
 {
     m_treeCtrl->SetFocus();
     DoBuildTree();
+
+    WindowAttrManager::Load(this, wxT("VirtualDirectorySelectorDlg"), NULL);
+}
+
+VirtualDirectorySelectorDlg::~VirtualDirectorySelectorDlg()
+{
+    WindowAttrManager::Save(this, wxT("VirtualDirectorySelectorDlg"), NULL);
 }
 
 void VirtualDirectorySelectorDlg::OnItemSelected( wxTreeEvent& event )

@@ -342,6 +342,12 @@ void ReconcileProjectDlg::DistributeFilesByRegex(ReconcileProjectPanel* rootpane
     }
 }
 
+void ReconcileProjectDlg::IsReconciliationComplete()
+{
+    if (m_rootPanel && !m_rootPanel->GetStaleFilesCount() && m_actualFiles.IsEmpty()) {
+        EndModal(wxID_OK);
+    }
+}
 
 
 ReconcileProjectPanel::ReconcileProjectPanel(wxWindow* parent, const wxString& displayname, const wxString& vdPath)
@@ -597,6 +603,9 @@ void ReconcileProjectPanel::OnProcessButtonClicked(wxCommandEvent& WXUNUSED(even
         wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
         EventNotifier::Get()->AddPendingEvent(buildTree);
     }
+    
+    // Ask ReconcileProjectDlg if we're nearly there yet. If so it'll close the dialog
+    wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->IsReconciliationComplete();
 }
 
 void ReconcileProjectPanel::OnRemoveStaleButtonClicked(wxCommandEvent& WXUNUSED(event))
@@ -625,6 +634,9 @@ void ReconcileProjectPanel::OnRemoveStaleButtonClicked(wxCommandEvent& WXUNUSED(
         wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
         EventNotifier::Get()->AddPendingEvent(buildTree);
     }
+    
+    // Ask ReconcileProjectDlg if we're nearly there yet. If so it'll close the dialog
+    wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->IsReconciliationComplete();
 }
 
 void ReconcileProjectPanel::OnProcessButtonUpdateUI(wxUpdateUIEvent& event)

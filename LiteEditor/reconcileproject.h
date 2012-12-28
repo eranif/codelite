@@ -22,6 +22,7 @@ public:
      */
     bool LoadData();
     void DistributeFiles();
+    void IsReconciliationComplete();
     wxArrayString& GetAllNewFiles() { return m_actualFiles; }
     const wxArrayString& GetUnallocatedFiles() { return m_unallocatedFiles; }
     ReconcileProjectPanel* GetRootPanel() const { return m_rootPanel; }

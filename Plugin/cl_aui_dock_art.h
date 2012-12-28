@@ -2,6 +2,7 @@
 #define CLAUIDOCKART_H
 
 #include <wx/window.h>
+#include <wx/aui/framemanager.h>
 #include <wx/dc.h>
 #include <wx/gdicmn.h>
 #include <wx/aui/dockart.h>

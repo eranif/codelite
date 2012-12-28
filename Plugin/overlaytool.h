@@ -29,7 +29,7 @@ private:
     OverlayTool();
     virtual ~OverlayTool();
     
-    wxBitmap DoAddBitmap(const wxBitmap& bmp, const wxBitmap& overlayBmp) const;
+    wxBitmap DoAddBitmap(const wxBitmap& bmp, const wxColour& colour) const;
     
 public:
     static OverlayTool& Get();

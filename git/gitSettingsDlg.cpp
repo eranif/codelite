@@ -4,35 +4,23 @@
 GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxColour& tracked,
                                const wxColour& diff, const wxString& pathGIT,
                                const wxString& pathGITK)
-	:GitSettingsDlgBase(parent)
+    :GitSettingsDlgBase(parent)
 {
-	m_pathGIT->SetPath(pathGIT);
-	m_pathGITK->SetPath(pathGITK);
-	m_colourDiffFile->SetColour(diff);
-	m_colourTrackedFile->SetColour(tracked);
-	WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
+    m_pathGIT->SetPath(pathGIT);
+    m_pathGITK->SetPath(pathGITK);
+    WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
 }
 
 GitSettingsDlg::~GitSettingsDlg()
 {
-	WindowAttrManager::Save(this, wxT("GitSettingsDlg"), NULL);
+    WindowAttrManager::Save(this, wxT("GitSettingsDlg"), NULL);
 }
 
-const wxColour GitSettingsDlg::GetTrackedFileColour()
-{
-	return m_colourTrackedFile->GetColour();
-}
-const wxColour GitSettingsDlg::GetDiffFileColour()
-{
-	return m_colourDiffFile->GetColour();
-}
 const wxString GitSettingsDlg::GetGITExecutablePath()
 {
-	return m_pathGIT->GetPath();
+    return m_pathGIT->GetPath();
 }
 const wxString GitSettingsDlg::GetGITKExecutablePath()
 {
-	return m_pathGITK->GetPath();
+    return m_pathGITK->GetPath();
 }
-
-

@@ -20,15 +20,23 @@
 #include <map>
 #include "overlaytool.h"
 
-typedef struct gitAction {
+class gitAction
+{
+public:
     int action;
     wxString arguments;
-} gitAction;
+    wxString workingDirectory;
 
+public:
+    gitAction() : action(0), arguments(""), workingDirectory("") {}
+    gitAction(int act, const wxString &args) : action(act), arguments(args) {}
+    ~gitAction() {}
+};
+class GitConsole;
 class GitPlugin : public IPlugin
 {
     typedef std::map<int, int> IntMap_t;
-    
+
     enum {
         gitNone = 0,
         gitListAll,
@@ -53,6 +61,7 @@ class GitPlugin : public IPlugin
         gitCommitList,
         gitRebase,
         gitGarbageCollection,
+        gitClone,
 #if 0
         gitBisectStart,
         gitBisectGood,
@@ -90,7 +99,8 @@ class GitPlugin : public IPlugin
     GitImages m_images;
     IntMap_t m_treeImageMapping;
     int      m_baseImageCount;
-    
+    GitConsole *m_console;
+
 private:
     void DoCreateTreeImages();
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType ) const;
@@ -146,11 +156,20 @@ private:
     void OnBisectReset(wxCommandEvent& e);
 #endif
     void OnEnableGitRepoExists(wxUpdateUIEvent &e);
-    
+    void OnClone(wxCommandEvent &e);
+
 public:
     GitPlugin(IManager *manager);
     ~GitPlugin();
 
+    IProcess* GetProcess() {
+        return m_process;
+    }
+    
+    IManager* GetManager() {
+        return m_mgr;
+    }
+    
     //--------------------------------------------
     //Abstract methods
     //--------------------------------------------

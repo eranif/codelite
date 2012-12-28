@@ -81,7 +81,7 @@ ReconcileProjectPanelBaseClass::ReconcileProjectPanelBaseClass(wxWindow* parent,
     
     wxBoxSizer* boxSizer163 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer90->Add(boxSizer163, 0, 0, 0);
+    boxSizer90->Add(boxSizer163, 0, wxALIGN_CENTER_HORIZONTAL, 0);
     
     m_radioShowAll = new wxRadioButton(m_panel89, wxID_ANY, _("Show all new files"), wxDefaultPosition, wxSize(-1,-1), wxRB_GROUP);
     m_radioShowAll->SetValue(1);
@@ -101,7 +101,7 @@ ReconcileProjectPanelBaseClass::ReconcileProjectPanelBaseClass(wxWindow* parent,
     
     wxBoxSizer* boxSizer89 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer90->Add(boxSizer89, 0, wxEXPAND, 0);
+    boxSizer90->Add(boxSizer89, 0, wxEXPAND|wxALIGN_TOP, 0);
     
     m_buttonProcessSelectedFiles = new wxButton(m_panel89, wxID_ANY, _("Add selected files"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_buttonProcessSelectedFiles->SetDefault();
@@ -240,12 +240,13 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     
     boxSizer16016->Add(m_textExtensions, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer11517 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer11517 = new wxFlexGridSizer(  2, 2, 0, 0);
     flexGridSizer11517->SetFlexibleDirection( wxBOTH );
     flexGridSizer11517->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer11517->AddGrowableCol(0);
+    flexGridSizer11517->AddGrowableRow(1);
     
-    boxSizer114->Add(flexGridSizer11517, 0, wxALL|wxEXPAND, 5);
+    boxSizer114->Add(flexGridSizer11517, 1, wxALL|wxEXPAND, 5);
     
     m_staticText11618 = new wxStaticText(this, wxID_ANY, _("Paths to ignore:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -257,24 +258,25 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     m_listExclude = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listExcludeArr, wxLB_SINGLE);
     m_listExclude->SetToolTip(_("The filepaths of any folders that shouldn't be searched for missing files"));
     
-    flexGridSizer11517->Add(m_listExclude, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer11517->Add(m_listExclude, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
     
-    flexGridSizer11517->Add(boxSizer124, 1, wxALL|wxEXPAND, 5);
+    flexGridSizer11517->Add(boxSizer124, 1, wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
     m_button11921 = new wxButton(this, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer124->Add(m_button11921, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer124->Add(m_button11921, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_button125 = new wxButton(this, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer124->Add(m_button125, 0, wxALL, 5);
+    boxSizer124->Add(m_button125, 0, wxALL|wxEXPAND, 5);
     
     wxFlexGridSizer* flexGridSizer115171 = new wxFlexGridSizer(  0, 2, 0, 0);
     flexGridSizer115171->SetFlexibleDirection( wxBOTH );
     flexGridSizer115171->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer115171->AddGrowableCol(0);
+    flexGridSizer115171->AddGrowableRow(1);
     
     boxSizer114->Add(flexGridSizer115171, 1, wxALL|wxEXPAND, 5);
     
@@ -287,23 +289,23 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     m_listCtrlRegexes = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_SINGLE_SEL|wxLC_REPORT);
     m_listCtrlRegexes->SetToolTip(_("Most of the time you should find that files automatically get added to the most appropriate virtual directory. If yours don't, here you can add one or more regular expressions suitable for your situation. They'll be remembered for this project."));
     
-    flexGridSizer115171->Add(m_listCtrlRegexes, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer115171->Add(m_listCtrlRegexes, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer1245 = new wxBoxSizer(wxVERTICAL);
     
-    flexGridSizer115171->Add(boxSizer1245, 1, wxALL|wxEXPAND, 5);
+    flexGridSizer115171->Add(boxSizer1245, 1, wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
     m_button119216 = new wxButton(this, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer1245->Add(m_button119216, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer1245->Add(m_button119216, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_button1257 = new wxButton(this, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer1245->Add(m_button1257, 0, wxALL, 5);
+    boxSizer1245->Add(m_button1257, 0, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer120 = new wxStdDialogButtonSizer();
     
-    boxSizer114->Add(m_stdBtnSizer120, 0, wxALL|wxEXPAND, 5);
+    boxSizer114->Add(m_stdBtnSizer120, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button121 = new wxButton(this, wxID_CANCEL, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer120->AddButton(m_button121);
@@ -396,7 +398,7 @@ ReconcileByRegexDlgBaseClass::ReconcileByRegexDlgBaseClass(wxWindow* parent, wxW
     
     m_stdBtnSizer12011 = new wxStdDialogButtonSizer();
     
-    boxSizer141->Add(m_stdBtnSizer12011, 0, wxALL|wxEXPAND, 5);
+    boxSizer141->Add(m_stdBtnSizer12011, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button12112 = new wxButton(this, wxID_CANCEL, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer12011->AddButton(m_button12112);

@@ -30,6 +30,10 @@
   <VirtualDirectory Name="UI">
     <File Name="gitui.cpp"/>
     <File Name="gitui.h"/>
+    <File Name="gitCloneDlg.h"/>
+    <File Name="gitCloneDlg.cpp"/>
+    <File Name="GitConsole.h"/>
+    <File Name="GitConsole.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

@@ -23,7 +23,10 @@ OverlayTool::~OverlayTool()
 wxBitmap OverlayTool::DoAddBitmap(const wxBitmap& bmp, const wxBitmap& overlayBmp) const
 {
     wxMemoryDC dcMem;
-
+#ifdef __WXMSW__
+    wxBitmap bitmap = bmp;
+    dcMem.SelectObject(bitmap);
+#else
     wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     wxBitmap bitmap(16, 16);
     dcMem.SelectObject(bitmap);
@@ -31,8 +34,8 @@ wxBitmap OverlayTool::DoAddBitmap(const wxBitmap& bmp, const wxBitmap& overlayBm
     dcMem.SetBrush( wxBrush(col) );
     dcMem.DrawRectangle(wxPoint(0, 0), wxSize(16, 16));
     dcMem.DrawBitmap(bmp, wxPoint(0, 0));
-
-    dcMem.DrawBitmap(overlayBmp, wxPoint(0, 0));
+#endif
+    dcMem.DrawBitmap(overlayBmp, wxPoint(0, 0), true);
     dcMem.SelectObject(wxNullBitmap);
 
     return bitmap;

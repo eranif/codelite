@@ -12,7 +12,6 @@
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
-#include <wx/clrpicker.h>
 #include <wx/filepicker.h>
 #include <wx/statline.h>
 #include <wx/button.h>
@@ -27,14 +26,15 @@
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
+#include <wx/checkbox.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <wx/toolbar.h>
+#include <wx/stc/stc.h>
 
 class GitSettingsDlgBase : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText1;
-    wxColourPickerCtrl* m_colourTrackedFile;
-    wxStaticText* m_staticText2;
-    wxColourPickerCtrl* m_colourDiffFile;
     wxStaticText* m_staticText4;
     wxFilePickerCtrl* m_pathGIT;
     wxStaticText* m_staticText5;
@@ -105,7 +105,6 @@ class GitDiffDlgBase : public wxDialog
 protected:
     wxListBox* m_fileListBox;
     GitCommitEditor* m_editor;
-    wxStaticLine* m_staticline4;
     wxStdDialogButtonSizer* m_sdbSizer1;
     wxButton* m_button145;
 
@@ -135,6 +134,49 @@ public:
         return m_bitmaps.find(name)->second;
     }
     virtual ~GitImages();
+};
+
+
+class gitCloneDlgBaseClass : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText22;
+    wxTextCtrl* m_textCtrlURL;
+    wxStaticText* m_staticText24;
+    wxDirPickerCtrl* m_dirPickerTargetDir;
+    wxCheckBox* m_checkBoxUseLogin;
+    wxStaticText* m_staticText28;
+    wxTextCtrl* m_textCtrlUsername;
+    wxStaticText* m_staticText30;
+    wxTextCtrl* m_textCtrlPassword;
+    wxButton* m_buttonOK;
+    wxButton* m_button20;
+
+protected:
+    virtual void OnUseCredentialsUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("git clone.."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~gitCloneDlgBaseClass();
+};
+
+
+class GitConsoleBase : public wxPanel
+{
+protected:
+    wxAuiToolBar* m_auibar;
+    wxStyledTextCtrl* m_stc;
+
+protected:
+    virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~GitConsoleBase();
 };
 
 #endif

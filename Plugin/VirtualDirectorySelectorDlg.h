@@ -10,6 +10,7 @@ class Workspace;
 class WXDLLIMPEXP_SDK VirtualDirectorySelectorDlg : public VirtualDirectorySelectorDlgBaseClass
 {
     Workspace *  m_workspace;
+    wxString     m_projectName;
     wxString     m_initialPath;
     wxImageList *m_images;
     bool         m_reloadTreeNeeded;
@@ -31,11 +32,12 @@ protected:
 
 public:
     /** Constructor */
-    VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath = wxEmptyString );
+    VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath = wxEmptyString, const wxString& projectname = wxEmptyString );
     wxString GetVirtualDirectoryPath() const {
         return m_staticTextPreview->GetLabel();
     }
     bool SelectPath(const wxString &path);
+    void SetText(const wxString& text);
 };
 
 #endif // VIRTUALDIRECTORYSELECTORDLG_H

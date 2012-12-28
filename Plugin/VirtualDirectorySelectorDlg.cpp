@@ -13,9 +13,10 @@
 #include <wx/textdlg.h>
 #include <wx/msgdlg.h>
 
-VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath)
+VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg( wxWindow* parent, Workspace *wsp, const wxString &initialPath, const wxString& projectname)
     : VirtualDirectorySelectorDlgBaseClass( parent )
     , m_workspace(wsp)
+    , m_projectName(projectname)
     , m_initialPath(initialPath)
     , m_images(NULL)
     , m_reloadTreeNeeded(false)
@@ -114,6 +115,11 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
         TreeNode<wxString, VisualWorkspaceNode> *tree = new TreeNode<wxString, VisualWorkspaceNode>(m_workspace->GetName(), nodeData);
 
         for (size_t i=0; i<projects.GetCount(); i++) {
+            if (!m_projectName.empty() && projects.Item(i) != m_projectName) {
+                // If we were passed a specific project, display only that one
+                continue;
+            }
+            
             wxString err;
             ProjectPtr p = m_workspace->FindProjectByName(projects.Item(i), err);
             if (p) {
@@ -162,7 +168,18 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
                                          imgId					// selected item image
                                      );
         }
-
+#if !defined(__WXMSW__)
+        // For a single project, hide the workspace node. This doesn't work on wxMSW
+        if (!m_projectName.empty()) {
+            m_treeCtrl->SetWindowStyle(m_treeCtrl->GetWindowStyle() | wxTR_HIDE_ROOT);
+            wxTreeItemIdValue cookie;
+            wxTreeItemId projitem = m_treeCtrl->GetFirstChild(root, cookie);
+            if (projitem.IsOk() && m_treeCtrl->HasChildren(projitem)) {
+                m_treeCtrl->Expand(projitem);
+            }
+        }
+          else
+#endif
         if (root.IsOk() && m_treeCtrl->HasChildren(root)) {
             m_treeCtrl->Expand(root);
         }
@@ -206,6 +223,11 @@ bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
         return true;
     }
     return false;
+}
+
+void VirtualDirectorySelectorDlg::SetText(const wxString& text)
+{
+    m_staticText1->SetLabel(text);
 }
 
 void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)

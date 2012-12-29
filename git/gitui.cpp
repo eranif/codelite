@@ -550,7 +550,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     boxSizer45->Add(m_dvListCtrl, 1, wxEXPAND, 1);
     
     m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, -1, wxALIGN_RIGHT);
-    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, 800, wxALIGN_LEFT);
     wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer36->Add(boxSizer49, 0, wxALL|wxEXPAND, 2);

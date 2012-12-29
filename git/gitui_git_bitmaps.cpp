@@ -1026,7 +1026,7 @@ void wxCrafterpca4kKInitBitmapResources()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_clear.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
@@ -1049,6 +1049,6 @@ void wxCrafterpca4kKInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-branch.png"), xml_res_file_17, xml_res_size_17, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-trash.png"), xml_res_file_18, xml_res_size_18, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_subversion_16_stop.png"), xml_res_file_19, xml_res_size_19, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$._gitui_git_bitmaps.xrc"), xml_res_file_20, xml_res_size_20, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$._gitui_git_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$gitui_git_bitmaps.xrc"), xml_res_file_20, xml_res_size_20, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$gitui_git_bitmaps.xrc"));
 }

@@ -30,7 +30,7 @@
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
-#include <wx/stc/stc.h>
+#include <wx/dataview.h>
 
 class GitSettingsDlgBase : public wxDialog
 {
@@ -167,7 +167,7 @@ class GitConsoleBase : public wxPanel
 {
 protected:
     wxAuiToolBar* m_auibar;
-    wxStyledTextCtrl* m_stc;
+    wxDataViewListCtrl* m_dvListCtrl;
     wxCheckBox* m_checkBoxVerbose;
     wxCheckBox* m_checkBoxShowTerminal;
 

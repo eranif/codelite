@@ -223,17 +223,17 @@ void GitPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
     if(type == MenuTypeFileView_File) {
         menu->AppendSeparator();
-        wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"),wxT("Git: Add file"));
+        wxMenuItem* item = new wxMenuItem(menu, XRCID("git_add_file"),wxT("Add file"));
         item->SetBitmap(m_images.Bitmap("gitFileAdd"));
         menu->Append(item);
         m_eventHandler->Connect( XRCID("git_add_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileAddSelected), NULL, this );
 
-        item = new wxMenuItem(menu, XRCID("git_reset_file"),wxT("Git: Reset file"));
+        item = new wxMenuItem(menu, XRCID("git_reset_file"),wxT("Reset file"));
         item->SetBitmap(m_images.Bitmap("gitReset"));
         menu->Append(item);
         m_eventHandler->Connect( XRCID("git_reset_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileResetSelected), NULL, this );
 
-        item = new wxMenuItem(menu, XRCID("git_diff_file"),wxT("Git: Show file diff"));
+        item = new wxMenuItem(menu, XRCID("git_diff_file"),wxT("Show file diff"));
         item->SetBitmap(m_images.Bitmap("gitDiffs"));
         menu->Append(item);
         m_eventHandler->Connect( XRCID("git_diff_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDiffSelected), NULL, this );
@@ -706,7 +706,7 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
 
     for (it = modifiedIDs.begin(); it != modifiedIDs.end(); ++it) {
         if (!it->second.IsOk()) {
-            GIT_MESSAGE(wxT("GIT: Stored item not found in tree, rebuilding item IDs"));
+            GIT_MESSAGE(wxT("Stored item not found in tree, rebuilding item IDs"));
             gitAction ga(gitListAll,wxT(""));
             m_gitActionQueue.push(ga);
             break;
@@ -724,7 +724,7 @@ void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 {
     e.Skip();
     wxUnusedVar(e);
-    GIT_MESSAGE(wxT("GIT: Files added to project, updating file list"));
+    GIT_MESSAGE(wxT("Files added to project, updating file list"));
     gitAction ga(gitListAll,wxT(""));
     m_gitActionQueue.push(ga);
     ga.action = gitListModified;
@@ -760,7 +760,7 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     if(m_process) {
-        GIT_MESSAGE(wxT("GIT: Process already running"));
+        GIT_MESSAGE(wxT("Process already running"));
         return;
     }
     
@@ -768,94 +768,94 @@ void GitPlugin::ProcessGitActionQueue()
     switch(ga.action) {
     case gitClone:
         command << wxT(" --no-pager clone ") << ga.arguments;
-        GIT_MESSAGE("GIT: %s", command.c_str());
+        GIT_MESSAGE("%s", command.c_str());
         break;
         
     case gitListAll:
-        GIT_MESSAGE(wxT("GIT: Listing files in git repository"));
+        GIT_MESSAGE(wxT("Listing files in git repository"));
         command << wxT(" --no-pager ls-files");
         //ShowProgress(wxT("Listing files in git repository"));
         break;
     case gitListModified:
-        GIT_MESSAGE(wxT("GIT: Listing modified files in git repository"));
+        GIT_MESSAGE(wxT("Listing modified files in git repository"));
         command << wxT(" --no-pager ls-files -m");
         //ShowProgress(wxT("Listing modified files in git repository"));
         break;
     case gitListRemotes:
-        GIT_MESSAGE(wxT("GIT: Listing remotes"));
+        GIT_MESSAGE(wxT("Listing remotes"));
         command << wxT(" --no-pager remote");
         ///ShowProgress(wxT("Listing remotes"));
         break;
     case gitAddFile:
-        GIT_MESSAGE(wxT("GIT: Add file ") + ga.arguments);
+        GIT_MESSAGE(wxT("Add file ") + ga.arguments);
         command << wxT(" --no-pager add ") << ga.arguments;
         break;
     case gitDeleteFile:
-        GIT_MESSAGE(wxT("GIT: Delete file ") + ga.arguments);
+        GIT_MESSAGE(wxT("Delete file ") + ga.arguments);
         command << wxT(" --no-pager update-index --remove --force-remove ") << ga.arguments;
         break;
     case gitDiffFile:
-        GIT_MESSAGE(wxT("GIT: Diff file ") + ga.arguments);
+        GIT_MESSAGE(wxT("Diff file ") + ga.arguments);
         command << wxT(" --no-pager diff --no-color ") << ga.arguments;
         break;
     case gitDiffRepoCommit:
         command << wxT(" --no-pager diff --no-color HEAD");
-        GIT_MESSAGE(wxT("GIT: %s"), command.c_str());
+        GIT_MESSAGE(wxT("%s"), command.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
         break;
     case gitDiffRepoShow:
         command << wxT(" --no-pager diff --no-color HEAD");
-        GIT_MESSAGE(wxT("GIT: %s"), command.c_str());
+        GIT_MESSAGE(wxT("%s"), command.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
         break;
     case gitResetFile:
-        GIT_MESSAGE(wxT("GIT: Reset file ") + ga.arguments);
+        GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command << wxT(" --no-pager checkout ") << ga.arguments;
         break;
     case gitPull:
-        GIT_MESSAGE(wxT("GIT: Pull remote changes"));
+        GIT_MESSAGE(wxT("Pull remote changes"));
         ShowProgress(wxT("Obtaining remote changes"), false);
         command << wxT(" --no-pager pull --log");
         break;
     case gitPush:
-        GIT_MESSAGE(wxT("GIT: Push local changes (")+ ga.arguments+wxT(")"));
+        GIT_MESSAGE(wxT("Push local changes (")+ ga.arguments+wxT(")"));
         command << wxT(" --no-pager push ") << ga.arguments;
         ShowProgress(wxT("Pushing local changes..."), false);
         break;
     case gitCommit:
-        GIT_MESSAGE(wxT("GIT: Commit local changes (")+ ga.arguments+wxT(")"));
+        GIT_MESSAGE(wxT("Commit local changes (")+ ga.arguments+wxT(")"));
         command << wxT(" --no-pager commit ") << ga.arguments;
         ShowProgress(wxT("Commiting local changes..."));
         break;
     case gitResetRepo:
-        GIT_MESSAGE(wxT("GIT: Reset repository"));
+        GIT_MESSAGE(wxT("Reset repository"));
         command << wxT(" --no-pager reset --hard");
         ShowProgress(wxT("Resetting local repository..."));
         break;
     case gitBranchCreate:
-        GIT_MESSAGE(wxT("GIT: Create local branch ")+ ga.arguments);
+        GIT_MESSAGE(wxT("Create local branch ")+ ga.arguments);
         command << wxT(" --no-pager branch ") << ga.arguments;
         ShowProgress(wxT("Creating local branch..."));
         break;
     case gitBranchCurrent:
-        GIT_MESSAGE(wxT("GIT: Get current branch"));
+        GIT_MESSAGE(wxT("Get current branch"));
         command << wxT(" --no-pager branch --no-color");
         break;
     case gitBranchList:
-        GIT_MESSAGE(wxT("GIT: List local branches"));
+        GIT_MESSAGE(wxT("List local branches"));
         command << wxT(" --no-pager branch --no-color");
         break;
     case gitBranchListRemote:
-        GIT_MESSAGE(wxT("GIT: List remote branches"));
+        GIT_MESSAGE(wxT("List remote branches"));
         command << wxT(" --no-pager branch -r --no-color");
         break;
     case gitBranchSwitch:
-        GIT_MESSAGE(wxT("GIT: Switch to local branch ")+ ga.arguments);
+        GIT_MESSAGE(wxT("Switch to local branch ")+ ga.arguments);
         ShowProgress(wxT("Switching to local branch ")+ ga.arguments, false);
         command << wxT(" --no-pager checkout ") << ga.arguments;
         break;
     case gitBranchSwitchRemote:
-        GIT_MESSAGE(wxT("GIT: Switch to remote branch ")+ ga.arguments);
+        GIT_MESSAGE(wxT("Switch to remote branch ")+ ga.arguments);
         ShowProgress(wxT("Switching to remote branch ")+ ga.arguments, false);
         command << wxT(" --no-pager checkout -b ") << ga.arguments;
         break;
@@ -865,12 +865,12 @@ void GitPlugin::ProcessGitActionQueue()
         command << wxT(" --no-pager log --pretty=\"%h|%s|%an|%ci\"");
         break;
     case gitRebase:
-        GIT_MESSAGE(wxT("GIT: Rebasing.."));
+        GIT_MESSAGE(wxT("Rebasing.."));
         ShowProgress(wxT("Rebase with ")+ga.arguments+wxT(".."));
         command << wxT(" --no-pager rebase ") << ga.arguments;
         break;
     case gitGarbageCollection:
-        GIT_MESSAGE(wxT("GIT: Clean database.."));
+        GIT_MESSAGE(wxT("Clean database.."));
         ShowProgress(wxT("Cleaning git database. This may take some time..."),false);
         command << wxT(" --no-pager gc");
         break;
@@ -878,7 +878,7 @@ void GitPlugin::ProcessGitActionQueue()
         GIT_MESSAGE(wxT("Unknown git action"));
         return;
     }
-    GIT_MESSAGE(wxT("Git: %s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+    GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
     
     IProcessCreateFlags createFlags;
     clConfig conf("git.conf");
@@ -902,7 +902,6 @@ void GitPlugin::ProcessGitActionQueue()
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
     }
-    m_console->EnsureVisible();
 }
 
 /*******************************************************************************/
@@ -997,7 +996,7 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
     }
 
     if(!m_currentBranch.IsEmpty()) {
-        GIT_MESSAGE(wxT("GIT: Current branch ")+m_currentBranch);
+        GIT_MESSAGE(wxT("Current branch ")+m_currentBranch);
         m_mgr->GetDockingManager()->GetPane( wxT("Workspace View") ).Caption( wxT("Workspace View [")+m_currentBranch+wxT("]"));
         m_mgr->GetDockingManager()->Update();
     }
@@ -1132,7 +1131,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 
     ProcessEventData *ped = (ProcessEventData*) event.GetClientData();
     m_console->AddRawText( ped->GetData() );
-    GIT_MESSAGE("GIT: done");
+    GIT_MESSAGE("done");
     m_commandOutput.append(ped->GetData());
 
     delete ped;
@@ -1362,7 +1361,7 @@ void GitPlugin::InitDefaults()
     }
 
     if(!m_repositoryDirectory.IsEmpty()) {
-        GIT_MESSAGE(wxT("GIT: intializing git on %s"), m_repositoryDirectory.c_str());
+        GIT_MESSAGE(wxT("intializing git on %s"), m_repositoryDirectory.c_str());
 #if 0
         m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),true);
         m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);

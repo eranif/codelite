@@ -2,6 +2,7 @@
 #include "git.h"
 #include "cl_config.h"
 #include "gitentry.h"
+#include <wx/datetime.h>
 
 GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     : GitConsoleBase(parent)
@@ -12,8 +13,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     conf.ReadItem(&data);
     m_checkBoxShowTerminal->SetValue( data.GetFlags() & GitEntry::Git_Show_Terminal );
     m_checkBoxVerbose->SetValue( data.GetFlags() & GitEntry::Git_Verbose_Log );
-    
-    m_stc->SetReadOnly(true);
+
     GitImages m_images;
     m_auibar->AddTool(XRCID("git_settings"), wxT("GIT plugin settings"), m_images.Bitmap("gitSettings"), wxT("GIT plugin settings"));
     m_auibar->AddSeparator();
@@ -54,9 +54,7 @@ GitConsole::~GitConsole()
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
 {
-    m_stc->SetReadOnly(false);
-    m_stc->ClearAll();
-    m_stc->SetReadOnly(true);
+    m_dvListCtrl->DeleteAllItems();
 }
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
@@ -73,49 +71,56 @@ void GitConsole::OnStopGitProcessUI(wxUpdateUIEvent& event)
 
 void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_stc->IsEmpty());
+    event.Enable( m_dvListCtrl->GetItemCount() );
 }
 
 void GitConsole::AddText(const wxString& text)
 {
-    m_stc->SetReadOnly(false);
-    m_stc->AppendText(text + "\n");
-    m_stc->SetReadOnly(true);
-
-    m_stc->SetSelectionEnd(m_stc->GetLength());
-    m_stc->SetSelectionStart(m_stc->GetLength());
-    m_stc->SetCurrentPos(m_stc->GetLength());
-
-    m_stc->EnsureCaretVisible();
+    wxString tmp = text;
+    tmp.Trim().Trim(false);
+    
+    if ( tmp.IsEmpty() )
+        return;
+        
+    wxVector<wxVariant> cols;
+    cols.push_back(wxDateTime::Now().FormatISOTime());
+    cols.push_back(tmp);
+    m_dvListCtrl->AppendItem(cols, (wxUIntPtr)NULL);
+    wxDataViewItem item = m_dvListCtrl->GetStore()->GetItem(m_dvListCtrl->GetItemCount() - 1);
+    if ( item.IsOk() ) {
+        m_dvListCtrl->EnsureVisible( item );
+    }
+    
 }
 
 void GitConsole::AddRawText(const wxString& text)
 {
-    m_stc->SetReadOnly(false);
-    m_stc->AppendText(text);
-    m_stc->SetReadOnly(true);
-    m_stc->SetSelectionEnd(m_stc->GetLength());
-    m_stc->SetSelectionStart(m_stc->GetLength());
-    m_stc->SetCurrentPos(m_stc->GetLength());
-
-    m_stc->EnsureCaretVisible();
-}
-
-void GitConsole::EnsureVisible()
-{
-    Notebook* book = m_git->GetManager()->GetOutputPaneNotebook();
-    for(size_t i=0; i<book->GetPageCount(); i++) {
-        if(this == book->GetPage(i)) {
-            book->SetSelection(i);
-            break;
-        }
+    wxString tmp = text;
+    tmp.Trim().Trim(false);
+    
+    if ( tmp.IsEmpty() )
+        return;
+    
+    wxArrayString lines = ::wxStringTokenize(tmp, "\n\r", wxTOKEN_STRTOK);
+    for(size_t i=0; i<lines.GetCount(); ++i) {
+        wxVector<wxVariant> cols;
+        cols.push_back(i == 0 ? wxDateTime::Now().FormatISOTime() : "...");
+        cols.push_back(lines.Item(i));
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)NULL);
+    }
+    
+    wxDataViewItem item = m_dvListCtrl->GetStore()->GetItem(m_dvListCtrl->GetItemCount() - 1);
+    if ( item.IsOk() ) {
+        m_dvListCtrl->EnsureVisible( item );
     }
 }
+
 
 bool GitConsole::IsVerbose() const
 {
     return m_checkBoxVerbose->IsChecked();
 }
+
 void GitConsole::OnGitVerbose(wxCommandEvent& event)
 {
     clConfig conf("git.conf");
@@ -133,3 +138,4 @@ void GitConsole::OnShowTerminalWindow(wxCommandEvent& event)
     data.EnableFlag( GitEntry::Git_Show_Terminal, event.IsChecked() );
     conf.WriteItem(&data);
 }
+

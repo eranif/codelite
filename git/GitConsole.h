@@ -12,8 +12,8 @@ public:
     virtual ~GitConsole();
     void AddText(const wxString &text);
     void AddRawText(const wxString &text);
-    void EnsureVisible();
     bool IsVerbose() const;
+    
 protected:
     virtual void OnGitVerbose(wxCommandEvent& event);
     virtual void OnShowTerminalWindow(wxCommandEvent& event);

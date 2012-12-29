@@ -543,54 +543,17 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     wxBoxSizer* boxSizer45 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer36->Add(boxSizer45, 1, wxALL|wxEXPAND, 5);
+    boxSizer36->Add(boxSizer45, 1, wxALL|wxEXPAND, 2);
     
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
-    wxFont m_stcFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_stc->SetFont(m_stcFont);
-    // Configure the fold margin
-    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
-    m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth    (4, 0);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    // Configure the tracker margin
-    m_stc->SetMarginWidth(1, 0);
+    boxSizer45->Add(m_dvListCtrl, 1, wxEXPAND, 1);
     
-    // Configure the symbol margin
-    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stc->SetMarginWidth(2, 0);
-    m_stc->SetMarginSensitive(2, true);
-    
-    // Configure the line numbers margin
-    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0,0);
-    
-    // Configure the line symbol margin
-    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3,0);
-    // Select the lexer
-    m_stc->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_stc->StyleClearAll();
-    for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
-        m_stc->StyleSetFont(i, m_stcFont);
-    }
-    m_stc->SetWrapMode(0);
-    m_stc->SetIndentationGuides(0);
-    m_stc->SetKeyWords(0, wxT(""));
-    m_stc->SetKeyWords(1, wxT(""));
-    m_stc->SetKeyWords(2, wxT(""));
-    m_stc->SetKeyWords(3, wxT(""));
-    m_stc->SetKeyWords(4, wxT(""));
-    
-    boxSizer45->Add(m_stc, 1, wxEXPAND, 5);
-    
+    m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, -1, wxALIGN_RIGHT);
+    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
     wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer36->Add(boxSizer49, 0, wxALL|wxEXPAND, 5);
+    boxSizer36->Add(boxSizer49, 0, wxALL|wxEXPAND, 2);
     
     m_checkBoxVerbose = new wxCheckBox(this, wxID_ANY, _("Verbose logging"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxVerbose->SetValue(false);

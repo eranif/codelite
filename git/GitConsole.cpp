@@ -38,7 +38,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_browse_commit_list"), wxT("Log"), m_images.Bitmap("gitCommitedFiles"), wxT("Browse commit history"));
     m_auibar->AddTool(XRCID("git_start_gitk"), wxT("gitk"), m_images.Bitmap("gitStart"), wxT("Start gitk"));
     m_auibar->Realize();
-
 }
 
 GitConsole::~GitConsole()
@@ -74,6 +73,12 @@ void GitConsole::AddText(const wxString& text)
     m_stc->SetReadOnly(false);
     m_stc->AppendText(text + "\n");
     m_stc->SetReadOnly(true);
+    
+    m_stc->SetSelectionEnd(m_stc->GetLength());
+    m_stc->SetSelectionStart(m_stc->GetLength());
+    m_stc->SetCurrentPos(m_stc->GetLength());
+
+    m_stc->EnsureCaretVisible();
 }
 
 void GitConsole::AddRawText(const wxString& text)
@@ -81,6 +86,11 @@ void GitConsole::AddRawText(const wxString& text)
     m_stc->SetReadOnly(false);
     m_stc->AppendText(text);
     m_stc->SetReadOnly(true);
+    m_stc->SetSelectionEnd(m_stc->GetLength());
+    m_stc->SetSelectionStart(m_stc->GetLength());
+    m_stc->SetCurrentPos(m_stc->GetLength());
+
+    m_stc->EnsureCaretVisible();
 }
 
 void GitConsole::EnsureVisible()
@@ -92,4 +102,9 @@ void GitConsole::EnsureVisible()
             break;
         }
     }
+}
+
+bool GitConsole::IsVerbose() const
+{
+    return m_checkBoxVerbose->IsChecked();
 }

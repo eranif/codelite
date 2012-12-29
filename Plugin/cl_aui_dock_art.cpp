@@ -104,7 +104,8 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow *WXUNUSED(window),
 
 
     // draw the button itself
-    dc.DrawBitmap(bmp, rect.x, rect.y, true);
+    if ( bmp.IsOk() )
+        dc.DrawBitmap(bmp, rect.x, rect.y, true);
 }
 
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)

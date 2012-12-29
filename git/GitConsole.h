@@ -13,7 +13,7 @@ public:
     void AddText(const wxString &text);
     void AddRawText(const wxString &text);
     void EnsureVisible();
-    
+    bool IsVerbose() const;
 protected:
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);

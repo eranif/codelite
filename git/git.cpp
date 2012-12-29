@@ -29,6 +29,7 @@
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));
+#define GIT_MESSAGE1(...)  if ( m_console->IsVerbose() ) {m_console->AddText(wxString::Format(__VA_ARGS__));}
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -615,9 +616,9 @@ void GitPlugin::OnStartGitk(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     wxString oldCWD = wxGetCwd();
-    wxSetWorkingDirectory(m_repositoryDirectory);
-    wxExecute(m_pathGITKExecutable);
-    wxSetWorkingDirectory(oldCWD);
+    //wxSetWorkingDirectory(m_repositoryDirectory);
+    //wxExecute(m_pathGITKExecutable);
+    //wxSetWorkingDirectory(oldCWD);
 }
 /*******************************************************************************/
 void GitPlugin::OnListModified(wxCommandEvent& e)
@@ -885,9 +886,17 @@ void GitPlugin::ProcessGitActionQueue()
         return;
     }
     GIT_MESSAGE(wxT("Git: %s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+    
+    IProcessCreateFlags createFlags;
+#ifdef __WXMSW__
+    createFlags = ga.action == gitClone ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
+#else
+    createFlags = IProcessCreateDefault;
+#endif
+
     m_process = ::CreateAsyncProcess(this, 
                                      command, 
-                                     IProcessCreateWithHiddenConsole, 
+                                     createFlags, 
                                      ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory);
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
@@ -1270,7 +1279,8 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
     ProcessEventData *ped = (ProcessEventData*)event.GetClientData();
     if( ped ) {
         wxString output = ped->GetData();
-        m_console->AddRawText(output);
+        if ( m_console->IsVerbose())
+            m_console->AddRawText(output);
         m_commandOutput.Append(output);
         
         // Handle password required

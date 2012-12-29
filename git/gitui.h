@@ -167,6 +167,7 @@ class GitConsoleBase : public wxPanel
 protected:
     wxAuiToolBar* m_auibar;
     wxStyledTextCtrl* m_stc;
+    wxCheckBox* m_checkBoxVerbose;
 
 protected:
     virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }

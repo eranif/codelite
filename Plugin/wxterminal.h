@@ -14,63 +14,71 @@ class IProcess;
 
 class wxTerminalHistory
 {
-	wxArrayString m_history;
-	size_t        m_historyCursor;
+    wxArrayString m_history;
+    size_t        m_historyCursor;
 
 public:
-	wxTerminalHistory();
-	~wxTerminalHistory();
+    wxTerminalHistory();
+    ~wxTerminalHistory();
 
-	void     AddCommand( const wxString &command );
-	wxString ArrowUp   ();
-	wxString ArrowDown ();
+    void     AddCommand( const wxString &command );
+    wxString ArrowUp   ();
+    wxString ArrowDown ();
 };
 
 /** Implementing wxTerminalBase */
 class WXDLLIMPEXP_SDK wxTerminal : public wxTerminalBase
 {
 protected:
-	IProcess*           m_process;
-	wxString            m_workingDir;
-	wxTextAttr          m_defaultStyle;
-	wxTextAttr          m_promptStyle;
-	bool                m_exitWhenProcessDies;
-	bool                m_exitOnKey;
-	long                m_inferiorEnd;
-
+    IProcess*           m_process;
+    wxString            m_workingDir;
+    wxTextAttr          m_defaultStyle;
+    wxTextAttr          m_promptStyle;
+    bool                m_exitWhenProcessDies;
+    bool                m_exitOnKey;
+    long                m_inferiorEnd;
 #if defined(__WXGTK__)||defined(__WXMAC__)
-	wxString             m_tty;
-	IProcess *           m_dummyProcess;
-	int                  m_slave;
+    wxString            m_tty;
+    IProcess *          m_dummyProcess;
+    int                 m_slave;
 #endif
+    bool                m_interactive;
 
 protected:
-	void     DoProcessCommand(const wxString &command);
-	void     DoCtrlC();
+    void     DoProcessCommand(const wxString &command);
+    void     DoCtrlC();
 
 protected:
-	// Handlers for wxTerminalBase events.
-	DECLARE_EVENT_TABLE()
-	virtual void OnText             ( wxCommandEvent& event );
-	virtual void OnEnter            ( wxCommandEvent& event );
-	virtual void OnURL              ( wxTextUrlEvent& event );
-	virtual void OnKey              ( wxKeyEvent    & event );
-	virtual void OnReadProcessOutput(wxCommandEvent & event );
-	virtual void OnProcessEnd       (wxCommandEvent & event );
+    // Handlers for wxTerminalBase events.
+    DECLARE_EVENT_TABLE()
+    virtual void OnText             ( wxCommandEvent& event );
+    virtual void OnEnter            ( wxCommandEvent& event );
+    virtual void OnURL              ( wxTextUrlEvent& event );
+    virtual void OnKey              ( wxKeyEvent    & event );
+    virtual void OnReadProcessOutput(wxCommandEvent & event );
+    virtual void OnProcessEnd       (wxCommandEvent & event );
 
 public:
-	/** Constructor */
-	wxTerminal( wxWindow* parent );
-	virtual ~wxTerminal();
+    /** Constructor */
+    wxTerminal( wxWindow* parent );
+    virtual ~wxTerminal();
 
-	void      Execute     (const wxString &command, bool exitWhenDone = false, const wxString &workingDir = wxT(""));
-	void      KillInferior();
-	bool      IsRunning   ();
-	void      Clear();
+    void SetInteractive(bool interactive) {
+        this->m_interactive = interactive;
+    }
+    bool IsInteractive() const {
+        return m_interactive;
+    }
+    void      Execute     (const wxString &command, bool exitWhenDone = false, const wxString &workingDir = wxT(""));
+    void      KillInferior();
+    bool      IsRunning   ();
+    void      Clear();
 #if defined(__WXGTK__)||defined(__WXMAC__)
-	wxString  StartTTY();
-	wxString  GetTTY() const { return m_tty; }
-	void      StopTTY();
+    wxString  StartTTY();
+    wxString  GetTTY() const {
+        return m_tty;
+    }
+    void      StopTTY();
 #endif
 };
 

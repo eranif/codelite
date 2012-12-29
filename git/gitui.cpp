@@ -536,6 +536,10 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_auibar->AddTool(wxID_ABORT, _("m_toolKill"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Terminate git process"), _("Terminate git process"), NULL);
     m_auibar->Realize();
     
+    wxBoxSizer* boxSizer45 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer36->Add(boxSizer45, 1, wxALL|wxEXPAND, 5);
+    
     m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     wxFont m_stcFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_stc->SetFont(m_stcFont);
@@ -577,7 +581,12 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
     
-    boxSizer36->Add(m_stc, 1, wxEXPAND, 5);
+    boxSizer45->Add(m_stc, 1, wxEXPAND, 5);
+    
+    m_checkBoxVerbose = new wxCheckBox(this, wxID_ANY, _("Verbose logging"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxVerbose->SetValue(false);
+    
+    boxSizer36->Add(m_checkBoxVerbose, 0, wxALL, 5);
     
     
     SetSizeHints(500,300);

@@ -33,9 +33,9 @@ const wxEventType wxEVT_PROC_TERMINATED  = 10951;
 #endif
 
 ProcessReaderThread::ProcessReaderThread()
-		: wxThread(wxTHREAD_JOINABLE)
-		, m_notifiedWindow( NULL )
-		, m_process       ( NULL )
+    : wxThread(wxTHREAD_JOINABLE)
+    , m_notifiedWindow( NULL )
+    , m_process       ( NULL )
 {
 }
 
@@ -46,67 +46,67 @@ ProcessReaderThread::~ProcessReaderThread()
 
 void* ProcessReaderThread::Entry()
 {
-	while ( true ) {
-		// Did we get a request to terminate?
-		if (TestDestroy()) {
-			break;
+    while ( true ) {
+        // Did we get a request to terminate?
+        if (TestDestroy()) {
+            break;
         }
 
-		if ( m_process ) {
-			wxString buff;
-			if(m_process->Read( buff )) {
-				if( buff.IsEmpty() == false ) {
-					// we got some data, send event to parent
-					wxCommandEvent e(wxEVT_PROC_DATA_READ);
-					ProcessEventData *ed = new ProcessEventData();
-					ed->SetData(buff);
-					ed->SetProcess( m_process );
+        if ( m_process ) {
+            wxString buff;
+            if(m_process->Read( buff )) {
+                if( buff.IsEmpty() == false ) {
+                    // we got some data, send event to parent
+                    wxCommandEvent e(wxEVT_PROC_DATA_READ);
+                    ProcessEventData *ed = new ProcessEventData();
+                    ed->SetData(buff);
+                    ed->SetProcess( m_process );
 
-					e.SetClientData( ed );
-					if ( m_notifiedWindow ) {
-						m_notifiedWindow->AddPendingEvent( e );
-					} else {
-						delete ed;
-					}
-				}
-			} else {
-				// Process terminated??, exit
-				wxCommandEvent e(wxEVT_PROC_TERMINATED);
-				ProcessEventData *ed = new ProcessEventData();
-				ed->SetProcess( m_process );
-				e.SetClientData( ed );
-				
-				if ( m_notifiedWindow ) {
-					m_notifiedWindow->AddPendingEvent( e );
-				} else {
-					delete ed;
-				}
-				break;
-			}
-		}
-	}
-    
+                    e.SetClientData( ed );
+                    if ( m_notifiedWindow ) {
+                        m_notifiedWindow->AddPendingEvent( e );
+                    } else {
+                        delete ed;
+                    }
+                }
+            } else {
+                // Process terminated??, exit
+                wxCommandEvent e(wxEVT_PROC_TERMINATED);
+                ProcessEventData *ed = new ProcessEventData();
+                ed->SetProcess( m_process );
+                e.SetClientData( ed );
+
+                if ( m_notifiedWindow ) {
+                    m_notifiedWindow->AddPendingEvent( e );
+                } else {
+                    delete ed;
+                }
+                break;
+            }
+        }
+    }
+
     m_process = NULL;
-	return NULL;
+    return NULL;
 }
 
 void ProcessReaderThread::Stop()
 {
-    
+
 #if wxVERSION_NUMBER < 2904
     if(IsAlive()) {
         Delete();
     }
     Wait();
-#else    
-    // Notify the thread to exit and 
+#else
+    // Notify the thread to exit and
     // wait for it
     if ( IsAlive() ) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
-        
+
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
-        
+
     }
 #endif
 
@@ -114,7 +114,7 @@ void ProcessReaderThread::Stop()
 
 void ProcessReaderThread::Start(int priority)
 {
-	Create();
-	SetPriority(priority);
-	Run();
+    Create();
+    SetPriority(priority);
+    Run();
 }

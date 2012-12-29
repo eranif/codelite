@@ -1,10 +1,18 @@
 #include "GitConsole.h"
 #include "git.h"
+#include "cl_config.h"
+#include "gitentry.h"
 
 GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     : GitConsoleBase(parent)
     , m_git(git)
 {
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    m_checkBoxShowTerminal->SetValue( data.GetFlags() & GitEntry::Git_Show_Terminal );
+    m_checkBoxVerbose->SetValue( data.GetFlags() & GitEntry::Git_Verbose_Log );
+    
     m_stc->SetReadOnly(true);
     GitImages m_images;
     m_auibar->AddTool(XRCID("git_settings"), wxT("GIT plugin settings"), m_images.Bitmap("gitSettings"), wxT("GIT plugin settings"));
@@ -73,7 +81,7 @@ void GitConsole::AddText(const wxString& text)
     m_stc->SetReadOnly(false);
     m_stc->AppendText(text + "\n");
     m_stc->SetReadOnly(true);
-    
+
     m_stc->SetSelectionEnd(m_stc->GetLength());
     m_stc->SetSelectionStart(m_stc->GetLength());
     m_stc->SetCurrentPos(m_stc->GetLength());
@@ -107,4 +115,21 @@ void GitConsole::EnsureVisible()
 bool GitConsole::IsVerbose() const
 {
     return m_checkBoxVerbose->IsChecked();
+}
+void GitConsole::OnGitVerbose(wxCommandEvent& event)
+{
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    data.EnableFlag( GitEntry::Git_Verbose_Log, event.IsChecked() );
+    conf.WriteItem(&data);
+}
+
+void GitConsole::OnShowTerminalWindow(wxCommandEvent& event)
+{
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    data.EnableFlag( GitEntry::Git_Show_Terminal, event.IsChecked() );
+    conf.WriteItem(&data);
 }

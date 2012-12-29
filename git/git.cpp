@@ -316,10 +316,11 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
         if (m_repositoryDirectory != dir ) {
             m_repositoryDirectory = dir;
 
+            clConfig conf("git.conf");
             GitEntry data;
-            m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
+            conf.ReadItem(&data);
             data.SetEntry(workspaceName, dir);
-            m_mgr->GetConfigTool()->WriteObject(wxT("GitData"), &data);
+            conf.WriteItem(&data);
 
             if(!dir.IsEmpty()) {
 #if 0
@@ -350,22 +351,13 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnSettings(wxCommandEvent &e)
 {
-    GitSettingsDlg dlg(m_topWindow,
-                       m_colourTrackedFile, m_colourDiffFile,
-                       m_pathGITExecutable, m_pathGITKExecutable);
-    if(dlg.ShowModal() == wxID_OK) {
-        GitEntry data;
-        m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
-        data.SetGITExecutablePath(dlg.GetGITExecutablePath());
-        data.SetGITKExecutablePath(dlg.GetGITKExecutablePath());
-        m_mgr->GetConfigTool()->WriteObject(wxT("GitData"), &data);
-        m_pathGITExecutable = dlg.GetGITExecutablePath();
-        m_pathGITKExecutable = dlg.GetGITKExecutablePath();
-
+    GitSettingsDlg dlg(m_topWindow);
+    if ( dlg.ShowModal() == wxID_OK ) {
         AddDefaultActions();
         ProcessGitActionQueue();
     }
 }
+
 /*******************************************************************************/
 void GitPlugin::OnFileAddSelected(wxCommandEvent &e)
 {
@@ -889,12 +881,20 @@ void GitPlugin::ProcessGitActionQueue()
     GIT_MESSAGE(wxT("Git: %s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
     
     IProcessCreateFlags createFlags;
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    
 #ifdef __WXMSW__
-    createFlags = ga.action == gitClone ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
+    if ( ga.action == gitClone || ga.action == gitPush || ga.action == gitPull ) {
+        createFlags = data.GetFlags() & GitEntry::Git_Show_Terminal ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
+        
+    } else {
+        createFlags = IProcessCreateWithHiddenConsole;
+    }
 #else
-    createFlags = IProcessCreateDefault;
+    createFlags = IProcessCreateWithHiddenConsole;
 #endif
-
     m_process = ::CreateAsyncProcess(this, 
                                      command, 
                                      createFlags, 
@@ -1335,9 +1335,10 @@ void GitPlugin::InitDefaults()
     wxString workspaceName = m_mgr->GetWorkspace()->GetName();
     DoCreateTreeImages();
     
+    clConfig conf("git.conf");
     GitEntry data;
-    m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
-
+    conf.ReadItem(&data);
+    
     if(data.GetTrackedFileColour().IsOk()) {
         m_colourTrackedFile = data.GetTrackedFileColour();
     }
@@ -1519,10 +1520,12 @@ void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 #endif
     // store the GIT entry data
     if(m_mgr->GetWorkspace() && m_mgr->GetWorkspace()->GetName().IsEmpty() == false) {
+        
+        clConfig conf("git.conf");
         GitEntry data;
-        m_mgr->GetConfigTool()->ReadObject(wxT("GitData"), &data);
+        conf.ReadItem(&data);
         data.SetEntry(m_mgr->GetWorkspace()->GetName(), m_repositoryDirectory);
-        m_mgr->GetConfigTool()->WriteObject(wxT("GitData"), &data);
+        conf.WriteItem(&data);
     }
 
     // Clearn any saved data from the current workspace

@@ -44,6 +44,7 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
@@ -168,12 +169,15 @@ protected:
     wxAuiToolBar* m_auibar;
     wxStyledTextCtrl* m_stc;
     wxCheckBox* m_checkBoxVerbose;
+    wxCheckBox* m_checkBoxShowTerminal;
 
 protected:
     virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnGitVerbose(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnShowTerminalWindow(wxCommandEvent& event) { event.Skip(); }
 
 public:
     GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);

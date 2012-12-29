@@ -13,11 +13,11 @@
 class GitSettingsDlg : public GitSettingsDlgBase
 {
 public:
-    GitSettingsDlg(wxWindow* parent,const wxColour& tracked, const wxColour& diff, const wxString& pathGIT, const wxString& pathGITK);
+    GitSettingsDlg(wxWindow* parent);
     virtual ~GitSettingsDlg();
 
-    const wxString GetGITExecutablePath();
-    const wxString GetGITKExecutablePath();
+protected:
+    virtual void OnOK(wxCommandEvent& event);
 };
 
 #endif //__gitSettingsDlg__

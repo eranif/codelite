@@ -73,10 +73,15 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitSettingsDlgBase::OnOK), NULL, this);
+    
 }
 
 GitSettingsDlgBase::~GitSettingsDlgBase()
 {
+    m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitSettingsDlgBase::OnOK), NULL, this);
+    
 }
 
 GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
@@ -583,10 +588,21 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     boxSizer45->Add(m_stc, 1, wxEXPAND, 5);
     
+    wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer36->Add(boxSizer49, 0, wxALL|wxEXPAND, 5);
+    
     m_checkBoxVerbose = new wxCheckBox(this, wxID_ANY, _("Verbose logging"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxVerbose->SetValue(false);
+    m_checkBoxVerbose->SetToolTip(_("Tick this option to enable a verbose logging of git"));
     
-    boxSizer36->Add(m_checkBoxVerbose, 0, wxALL, 5);
+    boxSizer49->Add(m_checkBoxVerbose, 0, wxALL, 5);
+    
+    m_checkBoxShowTerminal = new wxCheckBox(this, wxID_ANY, _("Show terminal window"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxShowTerminal->SetValue(false);
+    m_checkBoxShowTerminal->SetToolTip(_("Mainly useful for Windows when the password\nprompt is not accessible via the UI"));
+    
+    boxSizer49->Add(m_checkBoxShowTerminal, 0, wxALL, 5);
     
     
     SetSizeHints(500,300);
@@ -599,6 +615,8 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
+    m_checkBoxVerbose->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnGitVerbose), NULL, this);
+    m_checkBoxShowTerminal->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnShowTerminalWindow), NULL, this);
     
 }
 
@@ -608,5 +626,7 @@ GitConsoleBase::~GitConsoleBase()
     this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
+    m_checkBoxVerbose->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnGitVerbose), NULL, this);
+    m_checkBoxShowTerminal->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnShowTerminalWindow), NULL, this);
     
 }

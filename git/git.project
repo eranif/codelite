@@ -253,4 +253,5 @@
       <File Name="gitui_git_bitmaps.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <VirtualDirectory Name="src"/>
 </CodeLite_Project>

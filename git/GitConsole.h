@@ -15,10 +15,12 @@ public:
     void EnsureVisible();
     bool IsVerbose() const;
 protected:
+    virtual void OnGitVerbose(wxCommandEvent& event);
+    virtual void OnShowTerminalWindow(wxCommandEvent& event);
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
-    
+
 };
 #endif // GITCONSOLE_H

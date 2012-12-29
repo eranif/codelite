@@ -1,13 +1,17 @@
 #include "gitSettingsDlg.h"
 #include "windowattrmanager.h"
+#include "cl_config.h"
+#include "gitentry.h"
 
-GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxColour& tracked,
-                               const wxColour& diff, const wxString& pathGIT,
-                               const wxString& pathGITK)
+GitSettingsDlg::GitSettingsDlg(wxWindow* parent)
     :GitSettingsDlgBase(parent)
 {
-    m_pathGIT->SetPath(pathGIT);
-    m_pathGITK->SetPath(pathGITK);
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+
+    m_pathGIT->SetPath(data.GetGITExecutablePath());
+    m_pathGITK->SetPath(data.GetGITKExecutablePath());
     WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
 }
 
@@ -16,11 +20,13 @@ GitSettingsDlg::~GitSettingsDlg()
     WindowAttrManager::Save(this, wxT("GitSettingsDlg"), NULL);
 }
 
-const wxString GitSettingsDlg::GetGITExecutablePath()
+void GitSettingsDlg::OnOK(wxCommandEvent& event)
 {
-    return m_pathGIT->GetPath();
-}
-const wxString GitSettingsDlg::GetGITKExecutablePath()
-{
-    return m_pathGITK->GetPath();
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    data.SetGITExecutablePath( m_pathGIT->GetPath() );
+    data.SetGITKExecutablePath( m_pathGITK->GetPath() );
+    conf.WriteItem(&data);
+    EndModal(wxID_OK);
 }

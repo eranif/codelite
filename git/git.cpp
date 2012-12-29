@@ -26,6 +26,7 @@
 #include "overlaytool.h"
 #include "gitCloneDlg.h"
 #include "GitConsole.h"
+#include "icons/icon_git.xpm"
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));

@@ -1,12 +1,12 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"",
+		"m_generatedFilesDir":	".",
 		"m_objCounter":	113,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
-		"m_bitmapsFile":	"",
+		"m_bitmapsFile":	"wxcrafter_liteeditor_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"wxcrafter",
 		"m_templateClasses":	[]
 	},
 	"windows":	[{

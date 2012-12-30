@@ -6,6 +6,7 @@
 GitEntry::GitEntry()
     : clConfigItem("git-settings")
     , m_flags(0)
+    , m_gitDiffDlgSashPos(wxNOT_FOUND)
 {
 }
 
@@ -21,6 +22,7 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_pathGIT           = json.namedObject("m_pathGIT").toString();
     m_pathGITK          = json.namedObject("m_pathGITK").toString();
     m_flags             = json.namedObject("m_flags").toSize_t(0);
+    m_gitDiffDlgSashPos = json.namedObject("m_gitDiffDlgSashPos").toInt(wxNOT_FOUND);
 }
 
 JSONElement GitEntry::ToJSON() const
@@ -32,5 +34,6 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_pathGIT",           m_pathGIT);
     json.addProperty("m_pathGITK",          m_pathGITK);
     json.addProperty("m_flags",             m_flags);
+    json.addProperty("m_gitDiffDlgSashPos", m_gitDiffDlgSashPos);
     return json;
 }

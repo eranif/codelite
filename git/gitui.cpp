@@ -283,25 +283,38 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
     
-    wxBoxSizer* bSizer18 = new wxBoxSizer(wxHORIZONTAL);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter->SetSashGravity(0.500000);
+    m_splitter->SetMinimumPaneSize(10);
     
-    bSizer17->Add(bSizer18, 2, wxALL|wxEXPAND, 5);
+    bSizer17->Add(m_splitter, 1, wxALL|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Modified files")), wxVERTICAL);
+    m_splitterPageFiles = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    bSizer18->Add(sbSizer3, 1, wxRIGHT|wxEXPAND, 5);
+    wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageFiles->SetSizer(boxSizer62);
+    
+    m_staticText68 = new wxStaticText(m_splitterPageFiles, wxID_ANY, _("Modified files:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer62->Add(m_staticText68, 0, wxALL|wxALIGN_BOTTOM, 5);
     
     wxArrayString m_fileListBoxArr;
-    m_fileListBox = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
+    m_fileListBox = new wxListBox(m_splitterPageFiles, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
     
-    sbSizer3->Add(m_fileListBox, 1, wxALL|wxEXPAND, 5);
+    boxSizer62->Add(m_fileListBox, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer5 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Diff")), wxVERTICAL);
+    m_splitterPageDiff = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter->SplitVertically(m_splitterPageFiles, m_splitterPageDiff, 0);
     
-    bSizer18->Add(sbSizer5, 2, wxEXPAND, 5);
+    wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageDiff->SetSizer(boxSizer64);
     
-    m_editor = new GitCommitEditor( this );
-    sbSizer5->Add(m_editor, 1, wxALL|wxEXPAND, 5);
+    m_staticText66 = new wxStaticText(m_splitterPageDiff, wxID_ANY, _("Diff:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer64->Add(m_staticText66, 0, wxALL|wxALIGN_BOTTOM, 5);
+    
+    m_editor = new GitCommitEditor( m_splitterPageDiff );
+    boxSizer64->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
     m_sdbSizer1 = new wxStdDialogButtonSizer();
     

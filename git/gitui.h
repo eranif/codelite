@@ -104,7 +104,12 @@ public:
 class GitDiffDlgBase : public wxDialog
 {
 protected:
+    wxSplitterWindow* m_splitter;
+    wxPanel* m_splitterPageFiles;
+    wxStaticText* m_staticText68;
     wxListBox* m_fileListBox;
+    wxPanel* m_splitterPageDiff;
+    wxStaticText* m_staticText66;
     GitCommitEditor* m_editor;
     wxStdDialogButtonSizer* m_sdbSizer1;
     wxButton* m_button145;

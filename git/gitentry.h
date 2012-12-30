@@ -19,6 +19,7 @@ class GitEntry : public clConfigItem
     wxString                   m_pathGITK;
     JSONElement::wxStringMap_t m_entries;
     size_t                     m_flags;
+    int                        m_gitDiffDlgSashPos;
 
 public:
     enum {
@@ -30,7 +31,7 @@ public:
     GitEntry();
     virtual ~GitEntry();
 public:
-    
+
     void EnableFlag( size_t flag, bool b ) {
         if ( b ) {
             m_flags |= flag;
@@ -38,7 +39,13 @@ public:
             m_flags &= ~flag;
         }
     }
-    
+
+    void SetGitDiffDlgSashPos(int gitDiffDlgSashPos) {
+        this->m_gitDiffDlgSashPos = gitDiffDlgSashPos;
+    }
+    int GetGitDiffDlgSashPos() const {
+        return m_gitDiffDlgSashPos;
+    }
     void SetEntries(const JSONElement::wxStringMap_t& entries) {
         this->m_entries = entries;
     }

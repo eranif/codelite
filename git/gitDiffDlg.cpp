@@ -25,13 +25,18 @@ GitDiffDlg::GitDiffDlg(wxWindow* parent, const wxString& workingDir)
     m_gitPath = data.GetGITExecutablePath();
 
     WindowAttrManager::Load(this, wxT("GitDiffDlg"), NULL);
-
+    m_splitter->SetSashPosition( data.GetGitDiffDlgSashPos() );
 }
 
 /*******************************************************************************/
 GitDiffDlg::~GitDiffDlg()
 {
     WindowAttrManager::Save(this, wxT("GitDiffDlg"), NULL);
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    data.SetGitDiffDlgSashPos( m_splitter->GetSashPosition() );
+    conf.WriteItem(&data);
 }
 
 /*******************************************************************************/

@@ -498,8 +498,9 @@ void LEditor::SetProperties()
 #if defined(__WXMAC__)
     // turning off these two greatly improves performance
     // on Mac
-    SetTwoPhaseDraw(true);
-
+    SetTwoPhaseDraw(false);
+    SetBufferedDraw(false);
+    
     // Using BufferedDraw as 'false'
     // improves performance *alot*, however
     // the downside is that the word hightlight does

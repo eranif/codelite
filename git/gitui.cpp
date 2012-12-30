@@ -545,14 +545,14 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     boxSizer36->Add(boxSizer45, 1, wxALL|wxEXPAND, 2);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     wxFont m_dvListCtrlFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_dvListCtrl->SetFont(m_dvListCtrlFont);
     
     boxSizer45->Add(m_dvListCtrl, 1, wxEXPAND, 1);
     
     m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_RIGHT);
-    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, 800, wxALIGN_LEFT);
     wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer36->Add(boxSizer49, 0, wxALL|wxEXPAND, 2);

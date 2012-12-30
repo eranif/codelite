@@ -170,6 +170,7 @@ cp ../lib/CppCheck.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/MacBundler.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/DatabaseExplorer.so ./CodeLite.app/Contents/SharedSupport/plugins/
 cp ../lib/CallGraph.so ./CodeLite.app/Contents/SharedSupport/plugins/
+cp ../lib/git.so ./CodeLite.app/Contents/SharedSupport/plugins/
 
 if [ -f ../lib/wxcrafter.so ]; then
     cp ../lib/wxcrafter.so ./CodeLite.app/Contents/SharedSupport/plugins/

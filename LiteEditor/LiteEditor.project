@@ -889,6 +889,15 @@
     <File Name="ImportFilesDialogNew.h"/>
     <File Name="ImportFilesDialogNew.cpp"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="ReconcileProject">
+    <File Name="reconcileproject.cpp"/>
+    <File Name="reconcileproject.h"/>
+    <File Name="reconcileproject.wxcp"/>
+    <File Name="reconcileproject_liteeditor_bitmaps.cpp"/>
+    <File Name="reconcileproject_liteeditor_bitmaps.xrc"/>
+    <File Name="reconcileprojectbase.cpp"/>
+    <File Name="reconcileprojectbase.h"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -998,6 +1007,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
+        <Target Name="wxcrafter release">wxcrafter/configure --enable-pch</Target>
+        <Target Name="wxcrafter debug">wxcrafter/configure --enable-debug --enable-pch --prefix=/home/eran/root</Target>
         <Target Name="configure --enable-debug --prefix=/home/eran/root">./configure --enable-debug --enable-pch --prefix=/home/eran/root</Target>
         <Target Name="configure">./configure --enable-pch</Target>
         <Target Name="&lt;RELEASE&gt; install">sudo -A make install</Target>
@@ -1017,7 +1028,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1133,8 +1145,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1258,13 +1269,4 @@ svninfo.cpp:
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="ReconcileProject">
-    <File Name="reconcileproject.cpp"/>
-    <File Name="reconcileproject.h"/>
-    <File Name="reconcileproject.wxcp"/>
-    <File Name="reconcileproject_liteeditor_bitmaps.cpp"/>
-    <File Name="reconcileproject_liteeditor_bitmaps.xrc"/>
-    <File Name="reconcileprojectbase.cpp"/>
-    <File Name="reconcileprojectbase.h"/>
-  </VirtualDirectory>
 </CodeLite_Project>

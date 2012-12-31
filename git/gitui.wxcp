@@ -2487,7 +2487,7 @@
 								}, {
 									"type":	"choice",
 									"m_label":	"Split Mode:",
-									"m_selection":	0,
+									"m_selection":	1,
 									"m_options":	["wxSPLIT_HORIZONTAL", "wxSPLIT_VERTICAL"]
 								}, {
 									"type":	"string",

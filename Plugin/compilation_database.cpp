@@ -6,6 +6,8 @@
 #include <wx/ffile.h>
 #include "fileextmanager.h"
 
+const wxString DB_VERSION = "2.0";
+
 CompilationDatabase::CompilationDatabase()
     : m_db(NULL)
 {
@@ -180,7 +182,7 @@ void CompilationDatabase::CreateDatabase()
 
     try {
 
-        if ( GetDbVersion() != wxT("2.0") )
+        if ( GetDbVersion() != DB_VERSION )
             DropTables();
 
         // Create the schema
@@ -189,7 +191,10 @@ void CompilationDatabase::CreateDatabase()
         m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX1 ON COMPILATION_TABLE(FILE_NAME)");
         m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS SCHEMA_VERSION_IDX1 ON SCHEMA_VERSION(VERSION)");
         m_db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX2 ON COMPILATION_TABLE(FILE_PATH)");
-        m_db->ExecuteUpdate("INSERT OR IGNORE INTO SCHEMA_VERSION (PROPERTY, VERSION) VALUES ('Db Version', '2.0')");
+        
+        wxString versionSql;
+        versionSql << "INSERT OR IGNORE INTO SCHEMA_VERSION (PROPERTY, VERSION) VALUES ('Db Version', '" << DB_VERSION << "')";
+        m_db->ExecuteUpdate(versionSql);
 
     } catch (wxSQLite3Exception &e) {
         wxUnusedVar(e);
@@ -235,4 +240,25 @@ wxString CompilationDatabase::GetDbVersion()
         wxUnusedVar(e);
     }
     return wxT("");
+}
+
+bool CompilationDatabase::IsDbVersionUpToDate(const wxFileName& fn)
+{
+    try {
+        wxString sql;
+        wxSQLite3Database db;
+        db.Open(fn.GetFullPath());    
+        sql = "SELECT VERSION FROM SCHEMA_VERSION WHERE PROPERTY = 'Db Version' ";
+        wxSQLite3Statement st = db.PrepareStatement(sql);
+        wxSQLite3ResultSet rs = st.ExecuteQuery();
+
+        if ( rs.NextRow() ) {
+            return rs.GetString(0) == DB_VERSION;
+        }
+        return false;
+        
+    } catch (wxSQLite3Exception &e) {
+        wxUnusedVar(e);
+    }
+    return false;
 }

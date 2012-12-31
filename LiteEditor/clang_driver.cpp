@@ -224,11 +224,11 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
 
     CompilationDatabase cdb;
     static bool once = false;
-    if ( !wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) && !once ) {
+    if ( (!wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) || CompilationDatabase::IsDbVersionUpToDate(cdb.GetFileName())) && !once ) {
         once = true;
 
         wxString msg;
-        msg << _("Could not locate compilation database: ")
+        msg << _("Could not locate compilation database or database version is not up-to-date: ")
             << cdb.GetFileName().GetFullPath() << wxT("\n\n")
             << _("This file should be created automatically for you.\nIf you don't have it, please run a full rebuild of your workspace\n\n")
             << _("If this is a custom build project (i.e. project that uses a custom makefile),\nplease set the CXX and CC environment variables like this:\n")

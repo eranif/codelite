@@ -21,6 +21,7 @@ public:
     CompilationDatabase(const wxString &filename);
     virtual ~CompilationDatabase();
     
+    static bool IsDbVersionUpToDate(const wxFileName &fn);
     void Open(const wxFileName& fn = wxFileName());
     void Close();
     

@@ -62,6 +62,8 @@ class GitPlugin : public IPlugin
         gitRebase,
         gitGarbageCollection,
         gitClone,
+        gitStatus,
+        gitUndoAdd,
 #if 0
         gitBisectStart,
         gitBisectGood,
@@ -118,7 +120,9 @@ private:
     void ShowProgress(const wxString& message, bool pulse = true);
     void HideProgress();
     void DoCleanup();
-
+    void DoAddFiles(const wxArrayString &files);
+    void DoResetFiles(const wxArrayString &files);
+    
     DECLARE_EVENT_TABLE();
     // Event handlers
     void OnInitDone(wxCommandEvent& e);
@@ -169,6 +173,18 @@ public:
     IManager* GetManager() {
         return m_mgr;
     }
+    
+    void AddFiles(const wxArrayString &files) {
+        DoAddFiles(files);
+    }
+    
+    void ResetFiles(const wxArrayString &files) {
+        DoResetFiles(files);
+    }
+    
+    void UndoAddFiles(const wxArrayString& files);
+    
+    void RefreshFileListView();
     
     //--------------------------------------------
     //Abstract methods

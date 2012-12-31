@@ -252,6 +252,10 @@
     <VirtualDirectory Name="resources">
       <File Name="gitui_git_bitmaps.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="dataviewfilesmodel.cpp"/>
+      <File Name="dataviewfilesmodel.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src"/>
 </CodeLite_Project>

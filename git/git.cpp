@@ -368,18 +368,17 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent &e)
         wxMessageBox(wxT("File is already part of the index..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
-    m_addedFiles = true;
-    path.Replace(m_repositoryDirectory,wxT(""));
-    if(path.StartsWith(wxT("/")))
-        path.Remove(0,1);
-    gitAction ga(gitAddFile, path);
-    m_gitActionQueue.push(ga);
-    AddDefaultActions();
-    ProcessGitActionQueue();
+    
+    wxArrayString files;
+    files.Add(path);
+    
+    DoAddFiles(files);
 }
+
 /*******************************************************************************/
 void GitPlugin::OnFileDeleteSelected(wxCommandEvent &e)
 {
+    RefreshFileListView();
     //Experimental
     /*
     wxUnusedVar(e);
@@ -432,6 +431,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent &e)
     gitAction ga(gitResetFile, info.m_fileName.GetFullPath());
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
+    RefreshFileListView();
 }
 /*******************************************************************************/
 void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
@@ -717,6 +717,8 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
     gitAction ga(gitListModified,wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
+    
+    RefreshFileListView();
 }
 
 /*******************************************************************************/
@@ -730,12 +732,16 @@ void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
     ga.action = gitListModified;
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
+    
+    RefreshFileListView();
 }
+
 /*******************************************************************************/
 void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     DoCleanup();
     InitDefaults();
+    RefreshFileListView();
     e.Skip();
 }
 /*******************************************************************************/
@@ -771,13 +777,18 @@ void GitPlugin::ProcessGitActionQueue()
         GIT_MESSAGE("%s", command.c_str());
         break;
         
+    case gitStatus:
+        command << " --no-pager status -s";
+        GIT_MESSAGE("%s", command.c_str());
+        break;
+        
     case gitListAll:
-        GIT_MESSAGE(wxT("Listing files in git repository"));
+        GIT_MESSAGE1(wxT("Listing files in git repository"));
         command << wxT(" --no-pager ls-files");
         //ShowProgress(wxT("Listing files in git repository"));
         break;
     case gitListModified:
-        GIT_MESSAGE(wxT("Listing modified files in git repository"));
+        GIT_MESSAGE1(wxT("Listing modified files in git repository"));
         command << wxT(" --no-pager ls-files -m");
         //ShowProgress(wxT("Listing modified files in git repository"));
         break;
@@ -795,7 +806,7 @@ void GitPlugin::ProcessGitActionQueue()
         command << wxT(" --no-pager update-index --remove --force-remove ") << ga.arguments;
         break;
     case gitDiffFile:
-        GIT_MESSAGE(wxT("Diff file ") + ga.arguments);
+        GIT_MESSAGE1(wxT("Diff file ") + ga.arguments);
         command << wxT(" --no-pager diff --no-color ") << ga.arguments;
         break;
     case gitDiffRepoCommit:
@@ -811,6 +822,10 @@ void GitPlugin::ProcessGitActionQueue()
     case gitResetFile:
         GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command << wxT(" --no-pager checkout ") << ga.arguments;
+        break;
+    case gitUndoAdd:
+        GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
+        command << wxT(" --no-pager reset ") << ga.arguments;
         break;
     case gitPull:
         GIT_MESSAGE(wxT("Pull remote changes"));
@@ -842,11 +857,11 @@ void GitPlugin::ProcessGitActionQueue()
         command << wxT(" --no-pager branch --no-color");
         break;
     case gitBranchList:
-        GIT_MESSAGE(wxT("List local branches"));
+        GIT_MESSAGE1(wxT("List local branches"));
         command << wxT(" --no-pager branch --no-color");
         break;
     case gitBranchListRemote:
-        GIT_MESSAGE(wxT("List remote branches"));
+        GIT_MESSAGE1(wxT("List remote branches"));
         command << wxT(" --no-pager branch -r --no-color");
         break;
     case gitBranchSwitch:
@@ -1156,15 +1171,17 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
     }
 
     gitAction ga = m_gitActionQueue.front();
-    if(ga.action == gitListAll
-       || ga.action == gitListModified) {
-        if(ga.action == gitListAll
-           && m_bActionRequiresTreUpdate) {
+    if(ga.action == gitListAll || ga.action == gitListModified || ga.action == gitResetRepo ) {
+        if(ga.action == gitListAll && m_bActionRequiresTreUpdate) {
             if(m_commandOutput.Lower().Contains(_("created")))
                 UpdateFileTree();
         }
         m_bActionRequiresTreUpdate = false;
         FinishGitListAction(ga);
+        
+    } else if(ga.action == gitStatus) {
+        m_console->UpdateTreeView(m_commandOutput);
+        
     } else if(ga.action == gitListRemotes ) {
         wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
         m_remotes = gitList;
@@ -1376,7 +1393,7 @@ void GitPlugin::InitDefaults()
 /*******************************************************************************/
 void GitPlugin::AddDefaultActions()
 {
-    gitAction ga(gitBranchCurrent,wxT(""));
+    gitAction ga(gitBranchCurrent, wxT(""));
     m_gitActionQueue.push(ga);
     
     ga.action = gitListAll;
@@ -1392,6 +1409,9 @@ void GitPlugin::AddDefaultActions()
     m_gitActionQueue.push(ga);
     
     ga.action = gitListRemotes;
+    m_gitActionQueue.push(ga);
+    
+    ga.action = gitStatus;
     m_gitActionQueue.push(ga);
 }
 
@@ -1609,6 +1629,68 @@ void GitPlugin::OnClone(wxCommandEvent& e)
         ga.workingDirectory = dlg.GetTargetDirectory();
         m_gitActionQueue.push(ga);
         ProcessGitActionQueue();
+        RefreshFileListView();
     }
+}
+
+void GitPlugin::DoAddFiles(const wxArrayString& files)
+{
+    m_addedFiles = true;
+    
+    wxString filesToAdd;
+    for(size_t i=0; i<files.GetCount(); ++i) {
+        wxFileName fn(files.Item(i));
+        if ( fn.IsAbsolute() )
+            fn.MakeRelativeTo(m_repositoryDirectory);
+        filesToAdd << "\"" << fn.GetFullPath() << "\" ";
+    }
+
+    gitAction ga(gitAddFile, filesToAdd);
+    m_gitActionQueue.push( ga );
+
+    AddDefaultActions();
+    ProcessGitActionQueue();
+}
+
+void GitPlugin::DoResetFiles(const wxArrayString& files)
+{
+    wxString filesToDelete;
+    for(size_t i=0; i<files.GetCount(); ++i) {
+        wxFileName fn(files.Item(i));
+        if ( fn.IsAbsolute() )
+            fn.MakeAbsolute(m_repositoryDirectory);
+        filesToDelete << "\"" << fn.GetFullPath() << "\" ";
+    }
+    
+    gitAction ga(gitResetFile, filesToDelete);
+    m_gitActionQueue.push(ga);
+    ProcessGitActionQueue();
+    
+    RefreshFileListView();
+}
+
+void GitPlugin::UndoAddFiles(const wxArrayString& files)
+{
+    wxString filesToDelete;
+    for(size_t i=0; i<files.GetCount(); ++i) {
+        wxFileName fn(files.Item(i));
+        if ( fn.IsAbsolute() )
+            fn.MakeAbsolute(m_repositoryDirectory);
+        filesToDelete << "\"" << fn.GetFullPath() << "\" ";
+    }
+    
+    gitAction ga(gitUndoAdd, filesToDelete);
+    m_gitActionQueue.push(ga);
+    ProcessGitActionQueue();
+    
+    RefreshFileListView();
+}
+
+void GitPlugin::RefreshFileListView()
+{
+    gitAction ga;
+    ga.action = gitStatus;
+    m_gitActionQueue.push(ga);
+    ProcessGitActionQueue();
 }
 

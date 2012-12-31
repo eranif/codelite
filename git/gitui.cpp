@@ -413,6 +413,10 @@ GitImages::GitImages()
     this->Add( bmp );
     m_bitmaps.insert( std::make_pair(wxT("gitReset"), bmp ) );
     
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitResetRepo"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("gitResetRepo"), bmp ) );
+    
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitTrash"));
     this->Add( bmp );
     m_bitmaps.insert( std::make_pair(wxT("gitTrash"), bmp ) );
@@ -564,28 +568,56 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3D);
+    m_splitter->SetSashGravity(0.500000);
+    m_splitter->SetMinimumPaneSize(10);
+    
+    boxSizer36->Add(m_splitter, 1, wxALL|wxEXPAND, 5);
+    
+    m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    wxBoxSizer* boxSizer92 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage96->SetSizer(boxSizer92);
+    
+    m_auibar = new wxAuiToolBar(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer36->Add(m_auibar, 0, wxEXPAND, 5);
+    boxSizer92->Add(m_auibar, 0, wxEXPAND, 5);
     
     m_auibar->AddTool(wxID_CLEAR, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
     
     m_auibar->AddTool(wxID_ABORT, _("m_toolKill"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Terminate git process"), _("Terminate git process"), NULL);
     m_auibar->Realize();
     
-    wxBoxSizer* boxSizer45 = new wxBoxSizer(wxHORIZONTAL);
+    m_dvListCtrl = new wxDataViewListCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer36->Add(boxSizer45, 1, wxALL|wxEXPAND, 2);
+    boxSizer92->Add(m_dvListCtrl, 1, wxEXPAND, 2);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
-    wxFont m_dvListCtrlFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_dvListCtrl->SetFont(m_dvListCtrlFont);
+    m_splitterPage100 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter->SplitVertically(m_splitterPage96, m_splitterPage100, 0);
     
-    boxSizer45->Add(m_dvListCtrl, 1, wxEXPAND, 1);
+    wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage100->SetSizer(boxSizer94);
     
-    m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_RIGHT);
-    m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, 800, wxALIGN_LEFT);
+    m_auibar100 = new wxAuiToolBar(m_splitterPage100, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar100->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer94->Add(m_auibar100, 0, wxEXPAND, 5);
+    
+    m_auibar100->AddTool(XRCID("git_console_add_file"), _("Add file"), wxXmlResource::Get()->LoadBitmap(wxT("git-add-file")), wxNullBitmap, wxITEM_NORMAL, _("Add file"), _("Add file"), NULL);
+    
+    m_auibar100->AddTool(XRCID("git_console_reset_file"), _("Reset File"), wxXmlResource::Get()->LoadBitmap(wxT("git-reset")), wxNullBitmap, wxITEM_NORMAL, _("Reset File"), _("Reset File"), NULL);
+    m_auibar100->Realize();
+    
+    m_dvFiles = new wxDataViewCtrl(m_splitterPage100, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
+    
+    m_dvFilesModel = new DataViewFilesModel;
+    m_dvFilesModel->SetColCount( 1 );
+    m_dvFiles->AssociateModel(m_dvFilesModel.get() );
+    
+    boxSizer94->Add(m_dvFiles, 1, wxEXPAND, 5);
+    
+    m_dvFiles->AppendIconTextColumn(_("File List"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 1000, wxALIGN_LEFT);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -597,6 +629,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
+    this->Connect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
+    this->Connect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
+    m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
     
 }
 
@@ -606,5 +641,8 @@ GitConsoleBase::~GitConsoleBase()
     this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
+    this->Disconnect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
+    this->Disconnect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
+    m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
     
 }

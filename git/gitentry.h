@@ -21,6 +21,7 @@ class GitEntry : public clConfigItem
     JSONElement::wxStringMap_t m_entries;
     size_t                     m_flags;
     int                        m_gitDiffDlgSashPos;
+    int                        m_gitConsoleSashPos;
 
 public:
     enum {
@@ -88,6 +89,12 @@ public:
     }
     const wxString& GetGITKExecutablePath() {
         return this->m_pathGITK;
+    }
+    void SetGitConsoleSashPos(int gitConsoleSashPos) {
+        this->m_gitConsoleSashPos = gitConsoleSashPos;
+    }
+    int GetGitConsoleSashPos() const {
+        return m_gitConsoleSashPos;
     }
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;

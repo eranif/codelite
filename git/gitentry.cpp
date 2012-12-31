@@ -11,7 +11,8 @@ GitEntry::GitEntry()
 #else
     , m_flags(0)
 #endif    
-    , m_gitDiffDlgSashPos(wxNOT_FOUND)
+    , m_gitDiffDlgSashPos(0)
+    , m_gitConsoleSashPos(0)
 {
 }
 
@@ -28,6 +29,7 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_pathGITK          = json.namedObject("m_pathGITK").toString();
     m_flags             = json.namedObject("m_flags").toSize_t(m_flags);
     m_gitDiffDlgSashPos = json.namedObject("m_gitDiffDlgSashPos").toInt(m_gitDiffDlgSashPos);
+    m_gitConsoleSashPos = json.namedObject("m_gitConsoleSashPos").toInt(m_gitConsoleSashPos);
 }
 
 JSONElement GitEntry::ToJSON() const
@@ -40,5 +42,6 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_pathGITK",          m_pathGITK);
     json.addProperty("m_flags",             m_flags);
     json.addProperty("m_gitDiffDlgSashPos", m_gitDiffDlgSashPos);
+    json.addProperty("m_gitConsoleSashPos", m_gitConsoleSashPos);
     return json;
 }

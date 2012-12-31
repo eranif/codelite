@@ -224,7 +224,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
 
     CompilationDatabase cdb;
     static bool once = false;
-    if ( (!wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) || CompilationDatabase::IsDbVersionUpToDate(cdb.GetFileName())) && !once ) {
+    if ( (!wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) || !CompilationDatabase::IsDbVersionUpToDate(cdb.GetFileName())) && !once ) {
         once = true;
 
         wxString msg;

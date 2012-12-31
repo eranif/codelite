@@ -764,11 +764,13 @@ void clMainFrame::Initialize(bool loadLastSession)
         if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
             wxString mainTitle = CODELITE_VERSION_STR;
             wxBitmap splashBmp = clDrawSplashBitmap(bitmap, mainTitle);
+            if ( splashBmp.IsOk() ) {
             wxSplashScreen* splash = new wxSplashScreen(splashBmp,
                                           wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
                                           4000, m_theFrame, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                           wxSIMPLE_BORDER|wxSTAY_ON_TOP);
             wxUnusedVar(splash);
+            }
         }
     }
     m_theFrame->m_frameGeneralInfo = inf;

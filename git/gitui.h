@@ -11,22 +11,22 @@
 #include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
+#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
-#include <wx/statline.h>
+#include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/splitter.h>
 #include <wx/panel.h>
 #include <wx/checklst.h>
 #include "gitCommitEditor.h"
 #include <wx/textctrl.h>
-#include <wx/statbox.h>
 #include <wx/listctrl.h>
 #include <wx/listbox.h>
+#include <wx/statline.h>
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
-#include <wx/checkbox.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
@@ -35,11 +35,12 @@
 class GitSettingsDlgBase : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText4;
+    wxStaticText* m_staticText42;
     wxFilePickerCtrl* m_pathGIT;
-    wxStaticText* m_staticText5;
+    wxStaticText* m_staticText54;
     wxFilePickerCtrl* m_pathGITK;
-    wxStaticLine* m_staticline1;
+    wxCheckBox* m_checkBoxTerminal;
+    wxCheckBox* m_checkBoxLog;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 
@@ -173,16 +174,12 @@ class GitConsoleBase : public wxPanel
 protected:
     wxAuiToolBar* m_auibar;
     wxDataViewListCtrl* m_dvListCtrl;
-    wxCheckBox* m_checkBoxVerbose;
-    wxCheckBox* m_checkBoxShowTerminal;
 
 protected:
     virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnGitVerbose(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnShowTerminalWindow(wxCommandEvent& event) { event.Skip(); }
 
 public:
     GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);

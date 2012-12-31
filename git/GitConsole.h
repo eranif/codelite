@@ -6,7 +6,8 @@ class GitPlugin;
 class GitConsole : public GitConsoleBase
 {
     GitPlugin* m_git;
-
+    bool       m_isVerbose;
+    
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);
     virtual ~GitConsole();
@@ -15,12 +16,11 @@ public:
     bool IsVerbose() const;
     
 protected:
-    virtual void OnGitVerbose(wxCommandEvent& event);
-    virtual void OnShowTerminalWindow(wxCommandEvent& event);
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
+    void OnConfigurationChanged(wxCommandEvent &e);
 
 };
 #endif // GITCONSOLE_H

@@ -3,16 +3,17 @@
 #include "cl_config.h"
 #include "gitentry.h"
 #include <wx/datetime.h>
+#include "event_notifier.h"
 
 GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     : GitConsoleBase(parent)
     , m_git(git)
 {
+    EventNotifier::Get()->Connect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    m_checkBoxShowTerminal->SetValue( data.GetFlags() & GitEntry::Git_Show_Terminal );
-    m_checkBoxVerbose->SetValue( data.GetFlags() & GitEntry::Git_Verbose_Log );
+    m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 
     GitImages m_images;
     m_auibar->AddTool(XRCID("git_settings"), wxT("GIT plugin settings"), m_images.Bitmap("gitSettings"), wxT("GIT plugin settings"));
@@ -50,6 +51,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
 GitConsole::~GitConsole()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
@@ -118,24 +120,15 @@ void GitConsole::AddRawText(const wxString& text)
 
 bool GitConsole::IsVerbose() const
 {
-    return m_checkBoxVerbose->IsChecked();
+    return m_isVerbose;
 }
 
-void GitConsole::OnGitVerbose(wxCommandEvent& event)
+void GitConsole::OnConfigurationChanged(wxCommandEvent& e)
 {
+    e.Skip();
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    data.EnableFlag( GitEntry::Git_Verbose_Log, event.IsChecked() );
-    conf.WriteItem(&data);
-}
-
-void GitConsole::OnShowTerminalWindow(wxCommandEvent& event)
-{
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-    data.EnableFlag( GitEntry::Git_Show_Terminal, event.IsChecked() );
-    conf.WriteItem(&data);
+    m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 }
 

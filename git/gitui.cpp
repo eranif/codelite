@@ -25,34 +25,54 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(  0, 2, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer1->AddGrowableCol(1);
+    wxStaticBoxSizer* staticBoxSizer78 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Files:")), wxVERTICAL);
     
-    mainSizer->Add(fgSizer1, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(staticBoxSizer78, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Path to git executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    wxFlexGridSizer* fgSizer11 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer11->SetFlexibleDirection( wxBOTH );
+    fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer11->AddGrowableCol(1);
     
-    fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    staticBoxSizer78->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText42 = new wxStaticText(this, wxID_ANY, _("Path to git executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    fgSizer11->Add(m_staticText42, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_pathGIT = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
     
-    fgSizer1->Add(m_pathGIT, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_pathGIT, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Path to gitk executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText54 = new wxStaticText(this, wxID_ANY, _("Path to gitk executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer1->Add(m_staticText5, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_staticText54, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_pathGITK = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
     
-    fgSizer1->Add(m_pathGITK, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer11->Add(m_pathGITK, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    mainSizer->Add(0, 0, 1, wxEXPAND, 5);
+    wxStaticBoxSizer* staticBoxSizer85 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Options")), wxVERTICAL);
     
-    m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
+    mainSizer->Add(staticBoxSizer85, 0, wxALL|wxEXPAND, 5);
     
-    mainSizer->Add(m_staticline1, 0, wxALL|wxEXPAND, 5);
+    wxBoxSizer* boxSizer766 = new wxBoxSizer(wxVERTICAL);
+    
+    staticBoxSizer85->Add(boxSizer766, 0, wxALL, 5);
+    
+    m_checkBoxTerminal = new wxCheckBox(this, wxID_ANY, _("Show Terminal"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxTerminal->SetValue(false);
+    m_checkBoxTerminal->SetToolTip(_("Mainly useful for Windows when the password\nprompt is not accessible via the UI"));
+    
+    boxSizer766->Add(m_checkBoxTerminal, 0, wxALL, 5);
+    
+    m_checkBoxLog = new wxCheckBox(this, wxID_ANY, _("Verbose Logging"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxLog->SetValue(false);
+    m_checkBoxLog->SetToolTip(_("Tick this option to enable a verbose logging of git"));
+    
+    boxSizer766->Add(m_checkBoxLog, 0, wxALL, 5);
+    
+    mainSizer->Add(0, 0, 1, wxALL, 5);
     
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -304,7 +324,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     boxSizer62->Add(m_fileListBox, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
     m_splitterPageDiff = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPageFiles, m_splitterPageDiff, 0);
+    m_splitter->SplitHorizontally(m_splitterPageFiles, m_splitterPageDiff, 0);
     
     wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageDiff->SetSizer(boxSizer64);
@@ -566,22 +586,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     m_dvListCtrl->AppendTextColumn(_("Time"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_RIGHT);
     m_dvListCtrl->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, 800, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer36->Add(boxSizer49, 0, wxALL|wxEXPAND, 2);
-    
-    m_checkBoxVerbose = new wxCheckBox(this, wxID_ANY, _("Verbose logging"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxVerbose->SetValue(false);
-    m_checkBoxVerbose->SetToolTip(_("Tick this option to enable a verbose logging of git"));
-    
-    boxSizer49->Add(m_checkBoxVerbose, 0, wxALL, 5);
-    
-    m_checkBoxShowTerminal = new wxCheckBox(this, wxID_ANY, _("Show terminal window"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxShowTerminal->SetValue(false);
-    m_checkBoxShowTerminal->SetToolTip(_("Mainly useful for Windows when the password\nprompt is not accessible via the UI"));
-    
-    boxSizer49->Add(m_checkBoxShowTerminal, 0, wxALL, 5);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -593,8 +597,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
-    m_checkBoxVerbose->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnGitVerbose), NULL, this);
-    m_checkBoxShowTerminal->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnShowTerminalWindow), NULL, this);
     
 }
 
@@ -604,7 +606,5 @@ GitConsoleBase::~GitConsoleBase()
     this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
-    m_checkBoxVerbose->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnGitVerbose), NULL, this);
-    m_checkBoxShowTerminal->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitConsoleBase::OnShowTerminalWindow), NULL, this);
     
 }

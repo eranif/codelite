@@ -11,6 +11,7 @@
 #include <wx/colour.h>
 #include "cl_config.h"
 
+extern const wxEventType wxEVT_GIT_CONFIG_CHANGED;
 class GitEntry : public clConfigItem
 {
     wxColour                   m_colourTrackedFile;

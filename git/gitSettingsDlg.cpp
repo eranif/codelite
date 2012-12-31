@@ -2,6 +2,7 @@
 #include "windowattrmanager.h"
 #include "cl_config.h"
 #include "gitentry.h"
+#include "event_notifier.h"
 
 GitSettingsDlg::GitSettingsDlg(wxWindow* parent)
     :GitSettingsDlgBase(parent)
@@ -12,6 +13,8 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent)
 
     m_pathGIT->SetPath(data.GetGITExecutablePath());
     m_pathGITK->SetPath(data.GetGITKExecutablePath());
+    m_checkBoxLog->SetValue( data.GetFlags() & GitEntry::Git_Verbose_Log );
+    m_checkBoxTerminal->SetValue( data.GetFlags() & GitEntry::Git_Show_Terminal );
     WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
 }
 
@@ -27,6 +30,18 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     conf.ReadItem(&data);
     data.SetGITExecutablePath( m_pathGIT->GetPath() );
     data.SetGITKExecutablePath( m_pathGITK->GetPath() );
+    
+    size_t flags = 0;
+    if ( m_checkBoxLog->IsChecked() )
+        flags |= GitEntry::Git_Verbose_Log;
+    if ( m_checkBoxTerminal->IsChecked() )
+        flags |= GitEntry::Git_Show_Terminal;
+    data.SetFlags( flags );
     conf.WriteItem(&data);
+    
+    // Notify about configuration changed
+    wxCommandEvent evt(wxEVT_GIT_CONFIG_CHANGED);
+    EventNotifier::Get()->AddPendingEvent( evt );
+    
     EndModal(wxID_OK);
 }

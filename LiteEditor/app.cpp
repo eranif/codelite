@@ -141,61 +141,61 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
 // Splashscreen
 //-----------------------------------------------------
 
-class clSplashScreen : public wxSplashScreen
-{
-    wxBitmap m_bmp;
-    wxBitmap m_bgBmp;
-
-public:
-    clSplashScreen(const wxBitmap& bmp);
-    virtual ~clSplashScreen();
-    DECLARE_EVENT_TABLE()
-    void OnPaint(wxPaintEvent &e);
-    void OnEraseBackground(wxEraseEvent &e);
-};
-
-BEGIN_EVENT_TABLE(clSplashScreen, wxSplashScreen)
-    EVT_PAINT(clSplashScreen::OnPaint)
-    EVT_ERASE_BACKGROUND(clSplashScreen::OnEraseBackground)
-END_EVENT_TABLE()
-
-clSplashScreen::clSplashScreen(const wxBitmap& bmp)
-#ifdef __WXMSW__
-    : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER | wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
-#else
-    : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
-#endif
-    , m_bmp(bmp)
-{
-	
-#ifdef __WXGTK__
-    SetSize(wxSize(m_bmp.GetWidth() + 2, m_bmp.GetHeight() + 3) );
-#else
-	SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()) );
-#endif
-
-    Show(true);
-    SetThemeEnabled(true);
-    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-}
-
-clSplashScreen::~clSplashScreen()
-{
-}
-
-void clSplashScreen::OnEraseBackground(wxEraseEvent& e)
-{
-}
-
-void clSplashScreen::OnPaint(wxPaintEvent& e)
-{
-    wxPaintDC dc(this);
-	wxRect rr = GetClientSize();
-	
-	int xx = (rr.GetWidth() -  m_bmp.GetWidth())/2;
-	int yy = (rr.GetHeight() - m_bmp.GetHeight())/2;
-	dc.DrawBitmap(m_bmp, xx, yy, false);
-}
+//class clSplashScreen : public wxSplashScreen
+//{
+//    wxBitmap m_bmp;
+//    wxBitmap m_bgBmp;
+//
+//public:
+//    clSplashScreen(const wxBitmap& bmp);
+//    virtual ~clSplashScreen();
+//    DECLARE_EVENT_TABLE()
+//    void OnPaint(wxPaintEvent &e);
+//    void OnEraseBackground(wxEraseEvent &e);
+//};
+//
+//BEGIN_EVENT_TABLE(clSplashScreen, wxSplashScreen)
+//    EVT_PAINT(clSplashScreen::OnPaint)
+//    EVT_ERASE_BACKGROUND(clSplashScreen::OnEraseBackground)
+//END_EVENT_TABLE()
+//
+//clSplashScreen::clSplashScreen(const wxBitmap& bmp)
+//#ifdef __WXMSW__
+//    : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER | wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
+//#else
+//    : wxSplashScreen(bmp, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT, 5000, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxFRAME_NO_TASKBAR| wxSTAY_ON_TOP)
+//#endif
+//    , m_bmp(bmp)
+//{
+//
+//#ifdef __WXGTK__
+//    SetSize(wxSize(m_bmp.GetWidth() + 2, m_bmp.GetHeight() + 3) );
+//#else
+//	SetSize(wxSize(m_bmp.GetWidth(), m_bmp.GetHeight()) );
+//#endif
+//
+//    Show(true);
+//    SetThemeEnabled(true);
+//    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+//}
+//
+//clSplashScreen::~clSplashScreen()
+//{
+//}
+//
+//void clSplashScreen::OnEraseBackground(wxEraseEvent& e)
+//{
+//}
+//
+//void clSplashScreen::OnPaint(wxPaintEvent& e)
+//{
+//    wxPaintDC dc(this);
+//	wxRect rr = GetClientSize();
+//
+//	int xx = (rr.GetWidth() -  m_bmp.GetWidth())/2;
+//	int yy = (rr.GetHeight() - m_bmp.GetHeight())/2;
+//	dc.DrawBitmap(m_bmp, xx, yy, false);
+//}
 
 ///////////////////////////////////////////////////////////////////
 
@@ -292,7 +292,7 @@ static void ChildTerminatedSingalHandler(int signo)
             // waitpid succeeded
             IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
             //::wxPrintf(wxT("Child terminatd %d\n"), pid);
-            
+
         } else {
             break;
 
@@ -352,7 +352,7 @@ bool CodeLiteApp::OnInit()
     sa.sa_handler = ChildTerminatedSingalHandler;
     sa.sa_flags = 0;
     sigaction(SIGCHLD, &sa, NULL);
-    
+
 #ifdef __WXGTK__
     // Insall signal handlers
     signal(SIGSEGV, WaitForDebugger);
@@ -409,7 +409,7 @@ bool CodeLiteApp::OnInit()
         // Load codelite without plugins
         SetPluginLoadPolicy(PP_None);
     }
-    
+
     wxString plugins;
     if (parser.Found(wxT("p"), &plugins)) {
         wxArrayString pluginsArr = ::wxStringTokenize(plugins, wxT(","));
@@ -417,12 +417,12 @@ bool CodeLiteApp::OnInit()
         for(size_t i=0; i<pluginsArr.GetCount(); i++) {
             pluginsArr.Item(i).Trim().Trim(false).MakeLower();
         }
-        
+
         // Load codelite without plugins
         SetAllowedPlugins(pluginsArr);
         SetPluginLoadPolicy(PP_FromList);
     }
-    
+
     wxString newBaseDir(wxEmptyString);
     if (parser.Found(wxT("b"), &newBaseDir)) {
         homeDir = newBaseDir;
@@ -623,40 +623,23 @@ bool CodeLiteApp::OnInit()
         }
     }
 
-	// Append the binary's dir to $PATH. This makes codelitegcc available even for a --prefix= installation
+    // Append the binary's dir to $PATH. This makes codelitegcc available even for a --prefix= installation
 #if defined(__WXMSW__)
-	wxChar pathsep(wxT(';'));
+    wxChar pathsep(wxT(';'));
 #else
-	wxChar pathsep(wxT(':'));
+    wxChar pathsep(wxT(':'));
 #endif
-	wxString oldpath; wxGetEnv(wxT("PATH"), &oldpath);
-	wxFileName execfpath(wxStandardPaths::Get().GetExecutablePath());
-	wxSetEnv(wxT("PATH"), oldpath + pathsep + execfpath.GetPath());
-wxString newpath;  wxGetEnv(wxT("PATH"), &newpath);
-    // show splashscreen here
-    bool showSplash;
-
-#if wxDEBUG_LEVEL == 0
-    showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
-#else
-    showSplash = false;
-#endif
+    wxString oldpath;
+    wxGetEnv(wxT("PATH"), &oldpath);
+    wxFileName execfpath(wxStandardPaths::Get().GetExecutablePath());
+    wxSetEnv(wxT("PATH"), oldpath + pathsep + execfpath.GetPath());
+    wxString newpath;
+    wxGetEnv(wxT("PATH"), &newpath);
 
     // Don't show the splash screen when opening codelite to view
     // a file, this is done to reduce the load time
-    if(parser.GetParamCount() > 0)
-        showSplash = false;
-
-    m_splash = NULL;
-    if (showSplash) {
-        wxBitmap bitmap;
-        wxString splashName(mgr->GetStarupDirectory() + wxT("/images/splashscreen.png"));
-        if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-            wxString mainTitle = CODELITE_VERSION_STR;
-            wxBitmap splash = clDrawSplashBitmap(bitmap, mainTitle);
-            m_splash = new clSplashScreen(splash);
-        }
-    }
+//    if(parser.GetParamCount() > 0)
+//        showSplash = false;
 
     // Create the main application window
     clMainFrame::Initialize( parser.GetParamCount() == 0 );
@@ -671,8 +654,8 @@ wxString newpath;  wxGetEnv(wxT("PATH"), &newpath);
     } else {
         lineNumber = 0;
     }
-	
-	for (size_t i=0; i< parser.GetParamCount(); i++) {
+
+    for (size_t i=0; i< parser.GetParamCount(); i++) {
         wxString argument = parser.GetParam(i);
 
         //convert to full path and open it
@@ -733,7 +716,7 @@ void CodeLiteApp::OnFatalException()
 #if wxUSE_STACKWALKER
     wxString startdir;
     startdir << wxStandardPaths::Get().GetUserDataDir() << wxT("/crash.log");
-    
+
     wxFileOutputStream outfile(startdir);
     wxTextOutputStream out(outfile);
     out.WriteString(wxDateTime::Now().FormatDate() + wxT(" - ") + wxDateTime::Now().FormatTime() + wxT("\n"));
@@ -814,11 +797,11 @@ void CodeLiteApp::MSWReadRegistry()
     // MinGW default installation (if exists)
     wxString pathEnv;
     wxGetEnv(wxT("PATH"), &pathEnv);
-    
+
     wxString codeliteInstallDir;
     codeliteInstallDir << ManagerST::Get()->GetInstallDir() << wxT(";");
     pathEnv.Prepend(codeliteInstallDir);
-    
+
     // Load the registry file
     wxString iniFile;
     iniFile << ManagerST::Get()->GetInstallDir() << wxFileName::GetPathSeparator() << wxT("registry.ini");
@@ -864,7 +847,7 @@ void CodeLiteApp::MSWReadRegistry()
 
         // Support for MinGW
         if (strMingw.IsEmpty() == false) {
-            // Make sure that codelite's MinGW comes first before any other 
+            // Make sure that codelite's MinGW comes first before any other
             // MinGW installation that might exist on the machine
             strMingw << wxFileName::GetPathSeparator() <<  wxT("bin;");
             pathEnv.Prepend(strMingw);
@@ -908,6 +891,6 @@ void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
             // Retag the workspace the light way
             ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
         }
-        
+
     }
 }

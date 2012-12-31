@@ -40,6 +40,7 @@
 #include "build_custom_targets_menu_manager.h"
 #include "cl_config.h"
 #include "cl_aui_dock_art.h"
+#include <wx/splash.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -120,6 +121,35 @@
 #include "tabgroupspane.h"
 #include "clang_code_completion.h"
 #include "cl_defs.h"
+
+//////////////////////////////////////////////////
+static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainTitle)
+{
+    wxBitmap bmp ( bitmap.GetWidth(), bitmap.GetHeight()  );
+    wxMemoryDC dcMem;
+
+    dcMem.SelectObject( bmp );
+    dcMem.DrawBitmap  ( bitmap, 0, 0, true);
+
+    //write the main title & subtitle
+    wxCoord w, h;
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont smallfont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    font.SetPointSize(12);
+    smallfont.SetPointSize(10);
+    dcMem.SetFont(font);
+    dcMem.GetMultiLineTextExtent(mainTitle, &w, &h);
+    wxCoord bmpW = bitmap.GetWidth();
+
+    //draw shadow
+    dcMem.SetTextForeground(wxT("WHITE"));
+
+    wxCoord textX = (bmpW - w)/2;
+    dcMem.DrawText(mainTitle, textX, 11);
+    dcMem.SelectObject(wxNullBitmap);
+    return bmp;
+}
+//////////////////////////////////////////////////
 
 // from auto-generated file svninfo.cpp:
 extern wxString CODELITE_VERSION_STR;
@@ -720,7 +750,27 @@ void clMainFrame::Initialize(bool loadLastSession)
                                   inf.GetFramePosition(),
                                   inf.GetFrameSize(),
                                   wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
-
+    
+    bool showSplash;
+#ifdef NDEBUG
+    showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
+#else
+    showSplash = false;
+#endif
+    
+    if ( showSplash ) {
+        wxBitmap bitmap;
+        wxString splashName(ManagerST::Get()->GetStarupDirectory() + wxT("/images/splashscreen.png"));
+        if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
+            wxString mainTitle = CODELITE_VERSION_STR;
+            wxBitmap splashBmp = clDrawSplashBitmap(bitmap, mainTitle);
+            wxSplashScreen* splash = new wxSplashScreen(splashBmp,
+                                          wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
+                                          4000, m_theFrame, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                          wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+            wxUnusedVar(splash);
+        }
+    }
     m_theFrame->m_frameGeneralInfo = inf;
     m_theFrame->m_loadLastSession = loadLastSession;
 

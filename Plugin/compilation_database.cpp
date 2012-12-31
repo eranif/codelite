@@ -83,6 +83,18 @@ void CompilationDatabase::CompilationLine(const wxString& filename, wxString &co
             compliationLine = rs.GetString(0);
             cwd             = rs.GetString(1);
             return;
+            
+        } else {
+            // Could not find the cpp file for this file, try to locate *any* file from this directory
+            sql = "SELECT COMPILE_FLAGS,CWD FROM COMPILATION_TABLE WHERE FILE_PATH=?";
+            wxSQLite3Statement st2 = m_db->PrepareStatement(sql);
+            st2.Bind(1, file.GetPath());
+            wxSQLite3ResultSet rs2 = st2.ExecuteQuery();
+            if ( rs2.NextRow() ) {
+                compliationLine = rs2.GetString(0);
+                cwd             = rs2.GetString(1);
+                return;
+            }
         }
 
     } catch (wxSQLite3Exception &e) {
@@ -126,7 +138,7 @@ void CompilationDatabase::Initialize()
         try {
 
             wxString sql;
-            sql = wxT("REPLACE INTO COMPILATION_TABLE (FILE_NAME, CWD, COMPILE_FLAGS) VALUES(?, ?, ?)");
+            sql = wxT("REPLACE INTO COMPILATION_TABLE (FILE_NAME, FILE_PATH, CWD, COMPILE_FLAGS) VALUES(?, ?, ?, ?)");
             wxSQLite3Statement st = m_db->PrepareStatement(sql);
 
             m_db->ExecuteUpdate("BEGIN");
@@ -136,12 +148,14 @@ void CompilationDatabase::Initialize()
                     continue;
 
                 wxString file_name = parts.Item(0).Trim().Trim(false);
+                wxString path      = wxFileName(file_name).GetPath();
                 wxString cwd       = parts.Item(1).Trim().Trim(false);
                 wxString cmp_flags = parts.Item(2).Trim().Trim(false);;
 
                 st.Bind(1, file_name);
-                st.Bind(2, cwd);
-                st.Bind(3, cmp_flags);
+                st.Bind(2, path);
+                st.Bind(3, cwd);
+                st.Bind(4, cmp_flags);
 
                 st.ExecuteUpdate();
             }
@@ -166,15 +180,16 @@ void CompilationDatabase::CreateDatabase()
 
     try {
 
-        if ( GetDbVersion() != wxT("1.0") )
+        if ( GetDbVersion() != wxT("2.0") )
             DropTables();
 
         // Create the schema
-        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, CWD TEXT, COMPILE_FLAGS TEXT)");
+        m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, FILE_PATH TEXT, CWD TEXT, COMPILE_FLAGS TEXT)");
         m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS SCHEMA_VERSION (PROPERTY TEXT, VERSION TEXT)");
         m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX1 ON COMPILATION_TABLE(FILE_NAME)");
         m_db->ExecuteUpdate("CREATE UNIQUE INDEX IF NOT EXISTS SCHEMA_VERSION_IDX1 ON SCHEMA_VERSION(VERSION)");
-        m_db->ExecuteUpdate("INSERT OR IGNORE INTO SCHEMA_VERSION (PROPERTY, VERSION) VALUES ('Db Version', '1.0')");
+        m_db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS COMPILATION_TABLE_IDX2 ON COMPILATION_TABLE(FILE_PATH)");
+        m_db->ExecuteUpdate("INSERT OR IGNORE INTO SCHEMA_VERSION (PROPERTY, VERSION) VALUES ('Db Version', '2.0')");
 
     } catch (wxSQLite3Exception &e) {
         wxUnusedVar(e);

@@ -100,6 +100,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_newBmp    = m_images.Bitmap("gitFileAdd");
 
     EventNotifier::Get()->Connect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
+    
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
@@ -153,6 +155,7 @@ GitConsole::~GitConsole()
     
     wxDELETE(m_bitmapLoader);
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
@@ -363,3 +366,9 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
         m_git->UndoAddFiles( filesToRemove );
     }
 }
+void GitConsole::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    m_dvFilesModel->Clear();
+}
+

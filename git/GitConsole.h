@@ -34,6 +34,7 @@ protected:
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
+    void OnWorkspaceClosed(wxCommandEvent &e);
     void OnConfigurationChanged(wxCommandEvent &e);
 
 };

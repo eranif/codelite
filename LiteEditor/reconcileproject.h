@@ -45,7 +45,7 @@ protected:
      * \brief Remove from m_actualFiles all those which are already in the project
      * \param toplevelDir to make-relative to
      */
-    void PruneExistingItems(const wxString& toplevelDir);
+    void PruneExistingItems(StringSet_t &allfiles);
     void DisplayVirtualDirectories();
     void DistributeFilesByRegex(ReconcileProjectPanel* rootpanel, const wxArrayString& regexes, wxArrayString& files) const;
     void FindStaleFiles();

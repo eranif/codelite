@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="LiteEditor">
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>/home/eran/devl/codelite/LiteEditor</Topleveldir>
+  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00080001N0004Unix0000000000000001N0011Unix_Make_J0000000000000001N0010Unix_Wx_290000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0016Win_wxWidgets_29000000000000]]>

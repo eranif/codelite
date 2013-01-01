@@ -101,14 +101,14 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     EventNotifier::Get()->Connect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
-    
+
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
-    
+
     m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
-    
+
     int screenWidth = 1000;// use a long screen width to allow long lines
     m_dvListCtrl->AppendColumn(new wxDataViewColumn(_("Message"), new GitMyTextRenderer(m_dvListCtrl), 0, screenWidth, wxALIGN_LEFT));
 
@@ -152,7 +152,7 @@ GitConsole::~GitConsole()
     conf.ReadItem(&data);
     data.SetGitConsoleSashPos(m_splitter->GetSashPosition());
     conf.WriteItem(&data);
-    
+
     wxDELETE(m_bitmapLoader);
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
@@ -252,7 +252,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
     cols.clear();
     cols.push_back(MakeIconText(_("Modified"), m_modifiedBmp));
     m_itemModified  = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("Modified"));
-    
+
     cols.clear();
     cols.push_back(MakeIconText(_("New Files"), m_newBmp));
     m_itemNew  = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("New Files"));
@@ -290,15 +290,15 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
         if ( (prefix == "M") ) {
             m_dvFilesModel->AppendItem(m_itemModified, cols, new GitClientData(filename));
-            
+
         } else if ( prefix == "A" ) {
             m_dvFilesModel->AppendItem(m_itemNew, cols, new GitClientData(filename));
-        
+
         } else {
             m_dvFilesModel->AppendItem(m_itemUntracked, cols, new GitClientData(filename));
         }
     }
-    
+
     if ( !m_dvFilesModel->HasChildren(m_itemModified) )
         m_dvFilesModel->DeleteItem(m_itemModified);
 
@@ -328,7 +328,7 @@ void GitConsole::OnAddFile(wxCommandEvent& event)
             files.push_back( gcd->GetPath() );
         }
     }
-    
+
     if ( !files.IsEmpty() ) {
         m_git->AddFiles( files );
     }
@@ -346,22 +346,22 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
             wxStringClientData* gcd = dynamic_cast<wxStringClientData*>(m_dvFilesModel->GetClientObject(parent ));
             parentNodeName = gcd->GetData();
         }
-        
+
         GitClientData* gcd = dynamic_cast<GitClientData*>(m_dvFilesModel->GetClientObject( items.Item(i) ));
         if ( gcd ) {
             if ( parentNodeName == "New Files" ) {
-                filesToRemove.push_back( gcd->GetPath() ); 
-                
+                filesToRemove.push_back( gcd->GetPath() );
+
             } else if ( parentNodeName == "Modified" ) {
-                filesToRevert.push_back( gcd->GetPath() ); 
+                filesToRevert.push_back( gcd->GetPath() );
             }
         }
     }
-    
+
     if ( !filesToRevert.IsEmpty() ) {
         m_git->ResetFiles( filesToRevert );
     }
-    
+
     if ( !filesToRemove.IsEmpty() ) {
         m_git->UndoAddFiles( filesToRemove );
     }
@@ -371,4 +371,7 @@ void GitConsole::OnWorkspaceClosed(wxCommandEvent& e)
     e.Skip();
     m_dvFilesModel->Clear();
 }
-
+void GitConsole::OnItemSelectedUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dvFiles->GetSelectedItemsCount() );
+}

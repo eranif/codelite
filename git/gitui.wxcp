@@ -4800,6 +4800,12 @@
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnAddFile(wxCommandEvent& event)",
 																	"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+																}, {
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"OnItemSelectedUI(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event"
 																}],
 															"m_children":	[]
 														}, {
@@ -4850,6 +4856,12 @@
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnResetFile(wxCommandEvent& event)",
 																	"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+																}, {
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"OnItemSelectedUI(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event"
 																}],
 															"m_children":	[]
 														}]
@@ -4859,7 +4871,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxDV_ROW_LINES", "wxDV_MULTIPLE"],
+													"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",

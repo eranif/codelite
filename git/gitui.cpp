@@ -609,7 +609,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_auibar100->AddTool(XRCID("git_console_reset_file"), _("Reset File"), wxXmlResource::Get()->LoadBitmap(wxT("git-reset")), wxNullBitmap, wxITEM_NORMAL, _("Reset File"), _("Reset File"), NULL);
     m_auibar100->Realize();
     
-    m_dvFiles = new wxDataViewCtrl(m_splitterPage100, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
+    m_dvFiles = new wxDataViewCtrl(m_splitterPage100, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
     
     m_dvFilesModel = new DataViewFilesModel;
     m_dvFilesModel->SetColCount( 1 );
@@ -630,7 +630,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     this->Connect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
     this->Connect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
+    this->Connect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     this->Connect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
+    this->Connect(XRCID("git_console_reset_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
     
 }
@@ -642,7 +644,9 @@ GitConsoleBase::~GitConsoleBase()
     this->Disconnect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
     this->Disconnect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
+    this->Disconnect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     this->Disconnect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
+    this->Disconnect(XRCID("git_console_reset_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
     
 }

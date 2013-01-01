@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "fileextmanager.h"
 #include <wx/icon.h>
+#include <wx/tokenzr.h>
 
 static int idxMOD_ICON       = -1;
 static int idxUNTRACKED_ICON = -1;

@@ -9,6 +9,7 @@
 #define __gitentry__
 
 #include <wx/colour.h>
+#include <wx/event.h>
 #include "cl_config.h"
 
 extern const wxEventType wxEVT_GIT_CONFIG_CHANGED;

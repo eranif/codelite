@@ -207,7 +207,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     wxFont fnt = DoGetFont();
     int xx, yy;
     memDc.GetTextExtent(wxT("Tp"), &xx, &yy, NULL, NULL, &fnt);
-    int style = wxDV_NO_HEADER|wxDV_SINGLE;
+    int style = wxDV_NO_HEADER|wxDV_MULTIPLE;
     //style |= wxDV_ROW_LINES;
 
     m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -950,19 +950,27 @@ void NewBuildTab::OnClearUI(wxUpdateUIEvent& e)
 
 void NewBuildTab::OnCopySelection(wxCommandEvent& e)
 {
-    wxDataViewItem item = m_listctrl->GetSelection();
-    if ( item.IsOk() == false ) {
+    wxDataViewItemArray items;
+    m_listctrl->GetSelections(items);
+    if( items.IsEmpty() )
         return;
+    wxString text;
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        wxString line;
+        line << m_listctrl->GetTextValue( m_listctrl->GetStore()->GetRow(items.Item(i)), 0).Trim().Trim(false);
+        StripBuildMarkders(line);
+        text << line << "\n";
     }
-    wxString curline = m_listctrl->GetTextValue(m_listctrl->GetSelectedRow(), 0);
-    curline.Trim();
-    StripBuildMarkders(curline);
-    ::CopyToClipboard(curline);
+    
+    text.Trim();
+    ::CopyToClipboard(text);
 }
 
 void NewBuildTab::OnCopySelectionUI(wxUpdateUIEvent& e)
 {
-    e.Enable( !m_buildInProgress && m_listctrl->GetSelectedRow() != wxNOT_FOUND );
+    wxDataViewItemArray items;
+    m_listctrl->GetSelections(items);
+    e.Enable( !m_buildInProgress && !items.IsEmpty() );
 }
 
 ////////////////////////////////////////////

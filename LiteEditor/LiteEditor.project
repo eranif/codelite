@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="LiteEditor">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00080001N0004Unix0000000000000001N0011Unix_Make_J0000000000000001N0010Unix_Wx_290000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0016Win_wxWidgets_29000000000000]]>
+    </Plugin>
+  </Plugins>
   <Reconciliation>
     <Regexes/>
     <Excludepaths/>
@@ -8,11 +13,6 @@
     </Extensions>
     <Topleveldir>/home/eran/devl/codelite/LiteEditor</Topleveldir>
   </Reconciliation>
-  <Plugins>
-    <Plugin Name="qmake">
-      <![CDATA[00080001N0004Unix0000000000000001N0011Unix_Make_J0000000000000001N0010Unix_Wx_290000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0016Win_wxWidgets_29000000000000]]>
-    </Plugin>
-  </Plugins>
   <VirtualDirectory Name="Source Files">
     <File Name="cpp_symbol_tree.cpp"/>
     <File Name="filedroptarget.cpp"/>
@@ -742,6 +742,8 @@
       <File Name="foldermodel.h"/>
       <File Name="importfilesdialog_new.h"/>
       <File Name="importfilesdialog_new.cpp"/>
+      <File Name="assignedfilesmodel.cpp"/>
+      <File Name="assignedfilesmodel.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>

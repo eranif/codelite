@@ -32,6 +32,8 @@
 #include "codelite_exports.h"
 #include "window_locker.h"
 #include "workspace.h"
+#include <wx/variant.h>
+#include <wx/bitmap.h>
 
 class wxListCtrl;
 class IEditor;
@@ -361,4 +363,9 @@ WXDLLIMPEXP_SDK wxString wxIntToString(int val);
 WXDLLIMPEXP_SDK unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen);
 
 WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString &expr, const wxString &exprType);
+
+/**
+ * @brief create wxVariant from wxString + wxBitmap
+ */
+WXDLLIMPEXP_SDK wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp);
 #endif //GLOBALS_H

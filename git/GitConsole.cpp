@@ -10,10 +10,6 @@
 #include <wx/icon.h>
 #include <wx/tokenzr.h>
 
-static int idxMOD_ICON       = -1;
-static int idxUNTRACKED_ICON = -1;
-static int idxFOLDER_ICON    = -1;
-
 class GitClientData : public wxClientData
 {
     wxString m_path;
@@ -79,7 +75,6 @@ public:
         str.Trim();
         wxPoint pt = cell.GetTopLeft();
         wxFont f = m_font;
-        bool isSelected = state & wxDATAVIEW_CELL_SELECTED;
         dc->SetFont(f);
         dc->DrawText(str, pt);
         return true;
@@ -274,8 +269,6 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
         prefix.Trim().Trim(false);
         filename.Trim().Trim(false);
-
-        bool isModified = (prefix == "M");
 
         wxBitmap bmp;
         if ( filename.EndsWith("/") ) {

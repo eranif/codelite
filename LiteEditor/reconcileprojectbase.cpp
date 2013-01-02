@@ -25,180 +25,128 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     wxBoxSizer* boxSizer83 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer83);
     
-    m_treebook84 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_LEFT|wxBK_DEFAULT);
+    m_notebook214 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     
-    boxSizer83->Add(m_treebook84, 1, wxALL|wxEXPAND, 5);
+    boxSizer83->Add(m_notebook214, 1, wxALL|wxEXPAND, 5);
     
-    m_stdBtnSizer85 = new wxStdDialogButtonSizer();
+    m_panel220 = new wxPanel(m_notebook214, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook214->AddPage(m_panel220, _("New Files"), true);
     
-    boxSizer83->Add(m_stdBtnSizer85, 0, wxALL|wxEXPAND, 5);
+    wxBoxSizer* boxSizer224 = new wxBoxSizer(wxHORIZONTAL);
+    m_panel220->SetSizer(boxSizer224);
     
-    m_buttonDone = new wxButton(this, wxID_OK, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonDone->SetDefault();
-    m_stdBtnSizer85->AddButton(m_buttonDone);
-    m_stdBtnSizer85->Realize();
+    m_splitter = new wxSplitterWindow(m_panel220, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3D);
+    m_splitter->SetSashGravity(0.500000);
+    m_splitter->SetMinimumPaneSize(10);
     
+    boxSizer224->Add(m_splitter, 1, wxALL|wxEXPAND, 5);
     
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    Centre(wxBOTH);
-}
-
-ReconcileProjectDlgBaseClass::~ReconcileProjectDlgBaseClass()
-{
-}
-
-ReconcileProjectPanelBaseClass::ReconcileProjectPanelBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterjdrz3kInitBitmapResources();
-        bBitmapLoaded = true;
-    }
+    m_splitterPage1 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* boxSizer84 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer84);
+    wxBoxSizer* boxSizer248 = new wxBoxSizer(wxHORIZONTAL);
+    m_splitterPage1->SetSizer(boxSizer248);
     
-    m_notebook88 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    wxBoxSizer* boxSizer179 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer84->Add(m_notebook88, 1, wxALL|wxEXPAND, 5);
+    boxSizer248->Add(boxSizer179, 1, wxALL|wxEXPAND, 5);
     
-    m_panel89 = new wxPanel(m_notebook88, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook88->AddPage(m_panel89, _("Additional files"), false);
+    wxBoxSizer* boxSizer183 = new wxBoxSizer(wxHORIZONTAL);
     
-    wxBoxSizer* boxSizer90 = new wxBoxSizer(wxVERTICAL);
-    m_panel89->SetSizer(boxSizer90);
+    boxSizer179->Add(boxSizer183, 1, wxEXPAND, 5);
     
-    wxArrayString m_checkListBoxMissingArr;
-    m_checkListBoxMissing = new wxCheckListBox(m_panel89, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_checkListBoxMissingArr, wxLB_SINGLE);
-    m_checkListBoxMissing->SetToolTip(_("These files exist on the filesystem but are missing from the project. Select any that you wish to add."));
+    m_dvListCtrl1Unassigned = new wxDataViewListCtrl(m_splitterPage1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
     
-    boxSizer90->Add(m_checkListBoxMissing, 1, wxALL|wxEXPAND, 5);
+    boxSizer183->Add(m_dvListCtrl1Unassigned, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer163 = new wxBoxSizer(wxHORIZONTAL);
+    m_dvListCtrl1Unassigned->AppendIconTextColumn(_("Unassgined files:"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer192 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer90->Add(boxSizer163, 0, wxALIGN_CENTER_HORIZONTAL, 0);
+    boxSizer183->Add(boxSizer192, 0, wxEXPAND, 5);
     
-    m_radioShowAll = new wxRadioButton(m_panel89, wxID_ANY, _("Show all new files"), wxDefaultPosition, wxSize(-1,-1), wxRB_GROUP);
-    m_radioShowAll->SetValue(1);
+    wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer163->Add(m_radioShowAll, 0, wxLEFT|wxRIGHT, 5);
+    boxSizer248->Add(boxSizer194, 0, wxEXPAND, 5);
     
-    m_radioOnlyUnallocd = new wxRadioButton(m_panel89, wxID_ANY, _("Show only unallocated files"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_radioOnlyUnallocd->SetValue(1);
+    boxSizer194->Add(0, 0, 1, wxALL, 5);
     
-    boxSizer163->Add(m_radioOnlyUnallocd, 0, wxLEFT, 5);
+    m_bmpButtonAdd = new wxBitmapButton(m_splitterPage1, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("forward")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButtonAdd->SetToolTip(_("Add selected files"));
     
-    m_checkBoxShowAllVDs = new wxCheckBox(m_panel89, wxID_ANY, _("Show all virtual directories"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxShowAllVDs->SetValue(false);
-    m_checkBoxShowAllVDs->SetToolTip(_("Normally only virtual directories containing new files (or whose parents do) are shown. If ticked, show them all."));
+    boxSizer194->Add(m_bmpButtonAdd, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer90->Add(m_checkBoxShowAllVDs, 0, wxLEFT|wxTOP, 5);
+    m_bmpButtonRemove = new wxBitmapButton(m_splitterPage1, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("back")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButtonRemove->SetToolTip(_("Remove selected files"));
     
-    wxBoxSizer* boxSizer89 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer194->Add(m_bmpButtonRemove, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer90->Add(boxSizer89, 0, wxEXPAND|wxALIGN_TOP, 0);
+    m_bmpButtonAutoAdd = new wxBitmapButton(m_splitterPage1, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("wand")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButtonAutoAdd->SetToolTip(_("Automatically add files"));
     
-    m_buttonProcessSelectedFiles = new wxButton(m_panel89, wxID_ANY, _("Add selected files"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_buttonProcessSelectedFiles->SetDefault();
+    boxSizer194->Add(m_bmpButtonAutoAdd, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer89->Add(m_buttonProcessSelectedFiles, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer194->Add(0, 0, 1, wxALL, 5);
     
-    wxFlexGridSizer* flexGridSizer90 = new wxFlexGridSizer(  0, 1, 0, 0);
-    flexGridSizer90->SetFlexibleDirection( wxBOTH );
-    flexGridSizer90->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    m_splitterPage2 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter->SplitVertically(m_splitterPage1, m_splitterPage2, 0);
     
-    boxSizer89->Add(flexGridSizer90, 0, wxALL|wxEXPAND, 5);
+    wxBoxSizer* boxSizer250 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage2->SetSizer(boxSizer250);
     
-    m_button91 = new wxButton(m_panel89, wxID_ANY, _("Select all"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxBoxSizer* boxSizer181 = new wxBoxSizer(wxHORIZONTAL);
     
-    flexGridSizer90->Add(m_button91, 0, wxALL, 5);
+    boxSizer250->Add(boxSizer181, 1, wxEXPAND, 5);
     
-    m_button92 = new wxButton(m_panel89, wxID_ANY, _("Unselect all"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_dataviewAssigned = new wxDataViewCtrl(m_splitterPage2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
     
-    flexGridSizer90->Add(m_button92, 0, wxALL, 5);
+    m_dataviewAssignedModel = new AssignedFilesModel;
+    m_dataviewAssignedModel->SetColCount( 2 );
+    m_dataviewAssigned->AssociateModel(m_dataviewAssignedModel.get() );
     
-    m_panelStale = new wxPanel(m_notebook88, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook88->AddPage(m_panelStale, _("Stale files"), false);
+    boxSizer181->Add(m_dataviewAssigned, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer909 = new wxBoxSizer(wxVERTICAL);
-    m_panelStale->SetSizer(boxSizer909);
+    m_dataviewAssigned->AppendIconTextColumn(_("File"), m_dataviewAssigned->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
+    m_dataviewAssigned->AppendTextColumn(_("Virtual Folder"), m_dataviewAssigned->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_panel222 = new wxPanel(m_notebook214, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook214->AddPage(m_panel222, _("Stale Files"), false);
     
-    wxArrayString m_checkListBoxStaleArr;
-    m_checkListBoxStale = new wxCheckListBox(m_panelStale, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_checkListBoxStaleArr, wxLB_SINGLE);
-    m_checkListBoxStale->SetToolTip(_("These files no longer exist on the filesystem. Select all those to remove from the project."));
+    wxBoxSizer* boxSizer226 = new wxBoxSizer(wxVERTICAL);
+    m_panel222->SetSizer(boxSizer226);
     
-    boxSizer909->Add(m_checkListBoxStale, 1, wxALL|wxEXPAND, 5);
+    wxBoxSizer* boxSizer252 = new wxBoxSizer(wxVERTICAL);
     
-    wxBoxSizer* boxSizer8911 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer83->Add(boxSizer252, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    boxSizer909->Add(boxSizer8911, 0, wxEXPAND, 0);
+    m_button258 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button258->SetDefault();
     
-    m_button9312 = new wxButton(m_panelStale, wxID_ANY, _("Remove selected files"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button9312->SetDefault();
-    
-    boxSizer8911->Add(m_button9312, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxFlexGridSizer* flexGridSizer9014 = new wxFlexGridSizer(  0, 1, 0, 0);
-    flexGridSizer9014->SetFlexibleDirection( wxBOTH );
-    flexGridSizer9014->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    
-    boxSizer8911->Add(flexGridSizer9014, 0, wxALL|wxEXPAND, 5);
-    
-    m_button9115 = new wxButton(m_panelStale, wxID_ANY, _("Select all"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer9014->Add(m_button9115, 0, wxALL, 5);
-    
-    m_button9216 = new wxButton(m_panelStale, wxID_ANY, _("Unselect all"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer9014->Add(m_button9216, 0, wxALL, 5);
+    boxSizer252->Add(m_button258, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     
-    SetSizeHints(500,300);
+    SetSizeHints(600,400);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
     // Connect events
-    m_radioShowAll->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnShowAllInRoot), NULL, this);
-    m_radioOnlyUnallocd->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnShowUnallocdInRoot), NULL, this);
-    m_checkBoxShowAllVDs->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnShowVDsClicked), NULL, this);
-    m_buttonProcessSelectedFiles->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnProcessButtonClicked), NULL, this);
-    m_buttonProcessSelectedFiles->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnProcessButtonUpdateUI), NULL, this);
-    m_button91->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnSelectAll), NULL, this);
-    m_button91->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnSelectAllUpdateUI), NULL, this);
-    m_button92->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAll), NULL, this);
-    m_button92->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAllUpdateUI), NULL, this);
-    m_button9312->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnRemoveStaleButtonClicked), NULL, this);
-    m_button9312->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnProcessButtonUpdateUI), NULL, this);
-    m_button9115->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnSelectAll), NULL, this);
-    m_button9115->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnSelectAllUpdateUI), NULL, this);
-    m_button9216->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAll), NULL, this);
-    m_button9216->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAllUpdateUI), NULL, this);
+    m_bmpButtonAdd->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnAddFile), NULL, this);
+    m_bmpButtonAdd->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAddFileUI), NULL, this);
+    m_bmpButtonRemove->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnUndoSelectedFiles), NULL, this);
+    m_bmpButtonRemove->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnUndoSelectedFilesUI), NULL, this);
+    m_bmpButtonAutoAdd->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnAutoSuggest), NULL, this);
+    m_bmpButtonAutoAdd->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAutoAssignUI), NULL, this);
+    m_button258->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDone), NULL, this);
     
 }
 
-ReconcileProjectPanelBaseClass::~ReconcileProjectPanelBaseClass()
+ReconcileProjectDlgBaseClass::~ReconcileProjectDlgBaseClass()
 {
-    m_radioShowAll->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnShowAllInRoot), NULL, this);
-    m_radioOnlyUnallocd->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnShowUnallocdInRoot), NULL, this);
-    m_checkBoxShowAllVDs->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnShowVDsClicked), NULL, this);
-    m_buttonProcessSelectedFiles->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnProcessButtonClicked), NULL, this);
-    m_buttonProcessSelectedFiles->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnProcessButtonUpdateUI), NULL, this);
-    m_button91->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnSelectAll), NULL, this);
-    m_button91->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnSelectAllUpdateUI), NULL, this);
-    m_button92->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAll), NULL, this);
-    m_button92->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAllUpdateUI), NULL, this);
-    m_button9312->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnRemoveStaleButtonClicked), NULL, this);
-    m_button9312->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnProcessButtonUpdateUI), NULL, this);
-    m_button9115->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnSelectAll), NULL, this);
-    m_button9115->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnSelectAllUpdateUI), NULL, this);
-    m_button9216->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAll), NULL, this);
-    m_button9216->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectPanelBaseClass::OnUnselectAllUpdateUI), NULL, this);
+    m_bmpButtonAdd->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnAddFile), NULL, this);
+    m_bmpButtonAdd->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAddFileUI), NULL, this);
+    m_bmpButtonRemove->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnUndoSelectedFiles), NULL, this);
+    m_bmpButtonRemove->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnUndoSelectedFilesUI), NULL, this);
+    m_bmpButtonAutoAdd->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnAutoSuggest), NULL, this);
+    m_bmpButtonAutoAdd->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAutoAssignUI), NULL, this);
+    m_button258->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDone), NULL, this);
     
 }
 

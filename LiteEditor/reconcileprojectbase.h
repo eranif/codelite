@@ -11,69 +11,50 @@
 #include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
-#include <wx/treebook.h>
-#include <wx/button.h>
-#include <wx/panel.h>
 #include <wx/notebook.h>
+#include <wx/panel.h>
 #include <wx/imaglist.h>
-#include <wx/checklst.h>
-#include <wx/radiobut.h>
-#include <wx/checkbox.h>
+#include <wx/splitter.h>
+#include <wx/dataview.h>
+#include <wx/bmpbuttn.h>
+#include "assignedfilesmodel.h"
+#include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/textctrl.h>
 #include <wx/listbox.h>
 #include <wx/listctrl.h>
-#include <wx/bmpbuttn.h>
 
 class ReconcileProjectDlgBaseClass : public wxDialog
 {
 protected:
-    wxTreebook* m_treebook84;
-    wxStdDialogButtonSizer* m_stdBtnSizer85;
-    wxButton* m_buttonDone;
+    wxNotebook* m_notebook214;
+    wxPanel* m_panel220;
+    wxSplitterWindow* m_splitter;
+    wxPanel* m_splitterPage1;
+    wxDataViewListCtrl* m_dvListCtrl1Unassigned;
+    wxBitmapButton* m_bmpButtonAdd;
+    wxBitmapButton* m_bmpButtonRemove;
+    wxBitmapButton* m_bmpButtonAutoAdd;
+    wxPanel* m_splitterPage2;
+    wxDataViewCtrl* m_dataviewAssigned;
+    wxObjectDataPtr<AssignedFilesModel> m_dataviewAssignedModel;
+
+    wxPanel* m_panel222;
+    wxButton* m_button258;
 
 protected:
+    virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAddFileUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUndoSelectedFiles(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUndoSelectedFilesUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnAutoSuggest(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAutoAssignUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDone(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    ReconcileProjectDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Reconcile Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    ReconcileProjectDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Reconcile Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~ReconcileProjectDlgBaseClass();
-};
-
-
-class ReconcileProjectPanelBaseClass : public wxPanel
-{
-protected:
-    wxNotebook* m_notebook88;
-    wxPanel* m_panel89;
-    wxCheckListBox* m_checkListBoxMissing;
-    wxRadioButton* m_radioShowAll;
-    wxRadioButton* m_radioOnlyUnallocd;
-    wxCheckBox* m_checkBoxShowAllVDs;
-    wxButton* m_buttonProcessSelectedFiles;
-    wxButton* m_button91;
-    wxButton* m_button92;
-    wxPanel* m_panelStale;
-    wxCheckListBox* m_checkListBoxStale;
-    wxButton* m_button9312;
-    wxButton* m_button9115;
-    wxButton* m_button9216;
-
-protected:
-    virtual void OnShowAllInRoot(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnShowUnallocdInRoot(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnShowVDsClicked(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnProcessButtonClicked(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnProcessButtonUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSelectAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSelectAllUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnUnselectAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUnselectAllUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnRemoveStaleButtonClicked(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    ReconcileProjectPanelBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
-    virtual ~ReconcileProjectPanelBaseClass();
 };
 
 

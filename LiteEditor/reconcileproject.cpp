@@ -15,13 +15,32 @@
 #include <wx/busyinfo.h>
 #include <algorithm>
 
-wxString VDpathToFilepath(const wxString& vdpath)
+// ---------------------------------------------------------
+
+class ReconcileFileItemData : public wxClientData
 {
-    // We want to translate projectname:foo:bar to e.g. foo/bar, using the native separator
-    wxString fp = vdpath.AfterFirst(':');
-    fp.Replace(":", wxString(wxFILE_SEP_PATH));
-    return fp;
-}
+    wxString m_filename;
+    wxString m_virtualFolder;
+
+public:
+    ReconcileFileItemData() {}
+    ReconcileFileItemData(const wxString &filename, const wxString &vd) : m_filename(filename), m_virtualFolder(vd) {}
+    virtual ~ReconcileFileItemData() {}
+    void SetFilename(const wxString& filename) {
+        this->m_filename = filename;
+    }
+    void SetVirtualFolder(const wxString& virtualFolder) {
+        this->m_virtualFolder = virtualFolder;
+    }
+    const wxString& GetFilename() const {
+        return m_filename;
+    }
+    const wxString& GetVirtualFolder() const {
+        return m_virtualFolder;
+    }
+};
+
+// ---------------------------------------------------------
 
 class FindFilesTraverser : public wxDirTraverser
 {
@@ -66,20 +85,19 @@ private:
     const wxString m_projFP;
 };
 
+// ---------------------------------------------------------
+
 ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projname)
-    : ReconcileProjectDlgBaseClass(parent), m_rootPanel(NULL), m_projname(projname)
+    : ReconcileProjectDlgBaseClass(parent)
+    , m_projname(projname)
 {
-    m_staleFiles = new std::vector< std::pair<wxString, wxArrayString> >;
-
-    m_buttonDone->SetLabel("Done");
-
+    BitmapLoader bl;
+    m_bitmaps = bl.MakeStandardMimeMap();
     WindowAttrManager::Load(this, wxT("ReconcileProjectDlg"), NULL);
 }
 
 ReconcileProjectDlg::~ReconcileProjectDlg()
 {
-    delete m_staleFiles;
-
     WindowAttrManager::Save(this, wxT("ReconcileProjectDlg"), NULL);
 }
 
@@ -99,176 +117,56 @@ bool ReconcileProjectDlg::LoadData()
     if (!dir.IsOpened()) {
         return false;
     }
-    
-    StringSet_t allFiles;
+
+    m_toplevelDir = toplevelDir;
+
+    m_allfiles.clear();
     {
         wxBusyInfo wait("Searching for files...", this);
         wxSafeYield();
 
         FindFilesTraverser traverser(types, excludes, toplevelDir);
         dir.Traverse(traverser);
-        allFiles.insert(traverser.GetResults().begin(), traverser.GetResults().end());
-        
-        // We now have all the existing files in the project dirs that match the passed filetypes
-        // Prune those that are already known
-        PruneExistingItems( allFiles );
-        m_actualFiles.Sort();
+        m_allfiles.insert(traverser.GetResults().begin(), traverser.GetResults().end());
+        DoFindFiles();
     }
-
-    m_rootPanel = new ReconcileProjectPanel(GetTreebook(), "", "");
 
     // Now get root to recursively and intelligently fill each VD's panel with appropriate files
     DistributeFiles();
-    Layout();
-
-    // Finally ask the project about any files that no longer exist
-    FindStaleFiles();
-
-    size_t stalecount = m_rootPanel->GetStaleFilesCount();
-    if (!m_actualFiles.GetCount() && !stalecount) {
-        wxMessageBox(_("No new or stale files found. The project is up-to-date"), _("CodeLite"), wxICON_INFORMATION|wxOK, this);
-        return false;
-    }
-
-    clMainFrame::Get()->SetStatusMessage(
-        wxString::Format(_("Found %i new files and %i stale ones"), (int)m_actualFiles.GetCount(), (int)stalecount), 0);
     return true;
 }
 
 void ReconcileProjectDlg::DistributeFiles()
 {
-    wxCHECK_RET(m_rootPanel, "No root panel");
-
-    // In case this is a redisplay, delete all non-root pages
-    for (size_t n = GetTreebook()->GetPageCount(); n > 1; --n) {
-        int parentpos = GetTreebook()->GetPageParent(n-1);
-        if (parentpos != wxNOT_FOUND) {
-            wxStaticCast(GetTreebook()->GetPage(parentpos), ReconcileProjectPanel)->UnstoreChild(GetTreebook()->GetPage(n-1));
-        }
-
-        GetTreebook()->DeletePage(n-1);
-    }
-
-    // Add the child pages, one for each VD
-    DisplayVirtualDirectories();
-
-    wxArrayString remainingFiles = m_actualFiles;
-
     // Before processing the individual VDs, try using any regex as that'll be most likely to reflect the user's choice
-    DistributeFilesByRegex(m_rootPanel, m_regexes, remainingFiles);
+    m_dataviewAssignedModel->Clear();
+    m_dvListCtrl1Unassigned->DeleteAllItems();
 
-    m_rootPanel->SetFiles(remainingFiles);
-    // Cache any that couldn't be found homes
-    m_unallocatedFiles = remainingFiles;
+    StringSet_t::const_iterator iter = m_newfiles.begin();
+    for (; iter != m_newfiles.end(); ++iter) {
+        wxString filename = *iter;
+        wxFileName fn(filename);
+        fn.MakeRelativeTo(m_toplevelDir);
 
-    // Especially if there are lots of VDs, the user will probably want to see only those with files. Unfortunately treebook has no API for just hiding
-    if (m_rootPanel->GetHideEmpties()) {
-        for (size_t n = GetTreebook()->GetPageCount(); n > 1; --n) { // >1 as we never want to delete root
-            if (!wxStaticCast(GetTreebook()->GetPage(n-1), ReconcileProjectPanel)->GetHasFiles()) {
-                int parentpos = GetTreebook()->GetPageParent(n-1);
-                if (parentpos != wxNOT_FOUND) {
-                    wxStaticCast(GetTreebook()->GetPage(parentpos), ReconcileProjectPanel)->UnstoreChild(GetTreebook()->GetPage(n-1));
-                }
-                GetTreebook()->DeletePage(n-1);
-            }
-        }
-    }
-}
-
-void ReconcileProjectDlg::DisplayVirtualDirectories()
-{
-    ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
-    wxCHECK_RET(proj, "Can't find a Project with the supplied name");
-
-    ProjectTreePtr tree = proj->AsTree();
-    TreeWalker<wxString, ProjectItem> walker(tree->GetRoot());
-
-    // For adding subpages correctly, we need a way to work out the last-added page with a depth of 'n'
-    std::map<int, int> depthCache;
-
-    for ( ; !walker.End(); walker++ ) {
-        ProjectTreeNode* node = walker.GetNode();
-        wxString displayname(node->GetData().GetDisplayName());
-        if (node->IsRoot()) {
-            wxCHECK_RET(node->GetData().GetKind() == ProjectItem::TypeProject, "Project root node not a project");
-            // Create a 'root' page that shows all files
-            if (!GetTreebook()->GetPageCount()) { // If this is a redisplay, root will already be there
-                GetTreebook()->AddPage(m_rootPanel, displayname);
-            }
-        } else if (node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) {
-            // Should this be a top-level VD or a subdir, or...?
-            // and while we're working it out, grab the chance to deduce its internal path
-            size_t count = 0;
-            wxString vdPath = displayname;
-            ProjectTreeNode* tempnode = node->GetParent();
-            while (tempnode) {
-                ++count;
-                vdPath = tempnode->GetData().GetDisplayName() + ':' + vdPath;
-                tempnode = tempnode->GetParent();
-            }
-
-            ReconcileProjectPanel* panel = new ReconcileProjectPanel(GetTreebook(), node->GetData().GetDisplayName(), vdPath);
-            // Save vdPath too; it's needed for FindStaleFiles()
-            wxArrayString files;
-            m_staleFiles->push_back(std::make_pair(vdPath, files));
-
-            if (!count) {
-                GetTreebook()->AddSubPage(panel, displayname);
-                depthCache[count] = GetTreebook()->GetPageCount() - 1;
-            } else {
-                GetTreebook()->InsertSubPage(depthCache[count-1], panel, displayname);
-                depthCache[count] = GetTreebook()->GetPageCount() - 1;
-            }
-
-            // Tell our parent that we exist; it'll be responsible for call our SetFiles()
-            int parentPos = GetTreebook()->GetPageParent(GetTreebook()->GetPageCount() - 1);
-            wxCHECK_RET(parentPos != wxNOT_FOUND, "Added a non-root page without a valid parent");
-            ReconcileProjectPanel* parentPanel = wxStaticCast(GetTreebook()->GetPage(parentPos), ReconcileProjectPanel);
-            parentPanel->StoreChild(panel);
-        }
-    }
-
-    GetTreebook()->ExpandNode(0); // Expand the root node, otherwise the tree section may be given far too small a size, esp. if the project name is short e.g. 'CL'!
-}
-
-void ReconcileProjectDlg::PruneExistingItems(StringSet_t &allfiles)
-{
-    ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
-    wxCHECK_RET(proj, "Can't find a Project with the supplied name");
-
-    StringSet_t knownfiles;
-    proj->GetFiles(knownfiles);
-    
-    // all paths are in abs paths
-    m_actualFiles.clear();
-    std::set_difference(allfiles.begin(), allfiles.end(), knownfiles.begin(), knownfiles.end(), std::back_inserter(m_actualFiles));
-}
-
-void ReconcileProjectDlg::FindStaleFiles()
-{
-    ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
-    wxCHECK_RET(proj, "Can't find a Project with the supplied name");
-
-    for (size_t n = 0; n < m_staleFiles->size(); ++n) {
-        wxArrayString vdStaleFiles;
-        wxString vdPath = m_staleFiles->at(n).first.AfterFirst(':'); // We don't want the projectname here
-        wxArrayString& vdFiles = m_staleFiles->at(n).second;
-        // Get an array of all the files in this VD, and check each against reality
-        proj->GetFilesByVirtualDir(vdPath, vdFiles);
-        for (size_t n = 0; n < vdFiles.GetCount(); ++n) {
-            if (!wxFileName::Exists(vdFiles[n])) {
-                // We've found a stale file
-                vdStaleFiles.Add(vdFiles[n]);
+        bool bFileMatchedRegex = false;
+        for (size_t i = 0; i < m_regexes.GetCount() ; ++i) {
+            wxString virtualFolder(m_regexes.Item(i).BeforeFirst('|'));
+            wxRegEx regex         (m_regexes.Item(i).AfterFirst('|'));
+            if ( regex.IsValid() && regex.Matches( filename ) ) {
+                wxVector<wxVariant> cols;
+                cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename) ) );
+                cols.push_back( virtualFolder );
+                ReconcileFileItemData *data = new ReconcileFileItemData(filename, virtualFolder );
+                m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
+                bFileMatchedRegex = true;
+                break;
             }
         }
 
-        if (!vdStaleFiles.IsEmpty()) {
-            vdStaleFiles.Sort();
-            // Add each file to the stale-files checklistbox
-            for (size_t n = 0; n < vdStaleFiles.GetCount(); ++n) {
-                wxString entry(vdPath + ": " + vdStaleFiles[n]);
-                m_rootPanel->SetStaleFiles(entry);
-            }
+        if ( !bFileMatchedRegex ) {
+            wxVector<wxVariant> cols;
+            cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename) ) );
+            m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
         }
     }
 }
@@ -325,384 +223,164 @@ wxArrayString ReconcileProjectDlg::AddMissingFiles(const wxArrayString& files, c
     return additions;
 }
 
-void ReconcileProjectDlg::DistributeFilesByRegex(ReconcileProjectPanel* rootpanel, const wxArrayString& regexes, wxArrayString& files) const
+void ReconcileProjectDlg::DoFindFiles()
 {
-    for (size_t n = 0; n < regexes.GetCount() ; ++n) {
-        wxString VD(regexes[n].BeforeFirst('|'));
-        wxRegEx regex(regexes[n].AfterFirst('|'));
-        for (size_t f = files.GetCount(); f > 0; --f) {
-            if (regex.Matches(files[f-1]) && rootpanel->AllocateFileByVD(files[f-1], VD)) {
-                files.RemoveAt(f-1);
+    m_stalefiles.clear();
+    m_newfiles.clear();
+
+    ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
+    wxCHECK_RET(proj, "Can't find a Project with the supplied name");
+
+    // get list of files from the project
+    StringSet_t projectfiles;
+    proj->GetFiles(projectfiles);
+
+    std::vector<wxString> result;
+    std::set_difference(m_allfiles.begin(), m_allfiles.end(), projectfiles.begin(), projectfiles.end(), std::back_inserter(result));
+    m_newfiles.insert(result.begin(), result.end());
+
+    // now run the diff reverse to get list of stale files
+    result.clear();
+    std::set_difference(projectfiles.begin(), projectfiles.end(), m_allfiles.begin(), m_allfiles.end(), std::back_inserter(result));
+    m_stalefiles.insert(result.begin(), result.end());
+}
+
+wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const
+{
+    FileExtManager::FileType type = FileExtManager::GetType(filename);
+    if ( !m_bitmaps.count( type ) )
+        return m_bitmaps.find(FileExtManager::TypeText)->second;;
+    return m_bitmaps.find(type)->second;
+}
+
+void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
+{
+    VirtualDirectorySelectorDlg selector(this, WorkspaceST::Get(), "", m_projname);
+    if ( selector.ShowModal()  == wxID_OK ) {
+        wxString vd = selector.GetVirtualDirectoryPath();
+        wxDataViewItemArray items;
+        m_dvListCtrl1Unassigned->GetSelections(items);
+
+        for(size_t i=0; i<items.GetCount(); ++i) {
+            wxVariant v;
+            m_dvListCtrl1Unassigned->GetValue( v, m_dvListCtrl1Unassigned->GetStore()->GetRow(items.Item(i)), 0 );
+
+            wxString path;
+            wxDataViewIconText iv;
+            if ( !v.IsNull() ) {
+                iv << v;
+                path = iv.GetText();
             }
+
+
+            wxFileName fn(path);
+            fn.MakeAbsolute(m_toplevelDir);
+
+            wxVector<wxVariant> cols;
+            cols.push_back( ::MakeIconText(path, GetBitmap(path) ) );
+            cols.push_back( vd );
+            m_dataviewAssignedModel->AppendItem( wxDataViewItem(0), cols, new ReconcileFileItemData(fn.GetFullPath(), vd) );
+            m_dvListCtrl1Unassigned->DeleteItem(  m_dvListCtrl1Unassigned->GetStore()->GetRow(items.Item(i)) );
         }
     }
 }
 
-void ReconcileProjectDlg::IsReconciliationComplete()
+void ReconcileProjectDlg::OnAddFileUI(wxUpdateUIEvent& event)
 {
-    if (m_rootPanel && !m_rootPanel->GetStaleFilesCount() && m_actualFiles.IsEmpty()) {
-        EndModal(wxID_OK);
-    }
+    event.Enable(m_dvListCtrl1Unassigned->GetSelectedItemsCount());
 }
 
-
-ReconcileProjectPanel::ReconcileProjectPanel(wxWindow* parent, const wxString& displayname, const wxString& vdPath)
-    : ReconcileProjectPanelBaseClass(parent), m_displayname(displayname), m_vdPath(vdPath), m_hasItems(false)
+void ReconcileProjectDlg::OnAutoAssignUI(wxUpdateUIEvent& event)
 {
-    if (!VDpathToFilepath(m_vdPath).empty()) {
-        // We're not the 'root' panel, so hide the 'stale' subpanel
-        m_panelStale->Hide();
-        // and the Show All/Show Unallocated radiobuttons and Hide empties checkbox
-        wxSizer* radiosizer = m_radioShowAll->GetContainingSizer();
-        if (radiosizer) {
-            radiosizer->ShowItems(false);
-        }
-        m_checkBoxShowAllVDs->Hide();
-    }
+    event.Enable(m_dvListCtrl1Unassigned->GetItemCount());
 }
 
-void ReconcileProjectPanel::StoreChild(ReconcileProjectPanel* childpanel)
+void ReconcileProjectDlg::OnAutoSuggest(wxCommandEvent& event)
 {
-    wxString childname = childpanel->GetVDDisplayName();
-    if (IsSourceVD(childname.Lower()) || IsHeaderVD(childname.Lower()) || IsResourceVD(childname.Lower())) {
-        m_children.push_back(childpanel); // We want these processed last, so push_back
-    } else {
-        m_children.push_front(childpanel);
-    }
+    wxMessageBox("Not implemented yet!");
 }
 
-void ReconcileProjectPanel::UnstoreChild(wxWindow* childpanel)
+void ReconcileProjectDlg::OnUndoSelectedFiles(wxCommandEvent& event)
 {
-    std::deque<ReconcileProjectPanel*>::iterator iter = m_children.begin();
-    for ( ; iter != m_children.end(); ++iter) {
-        if (*iter == childpanel) {
-            m_children.erase(iter);
-            return;
-        }
-    }
-    wxASSERT("Failed to find the childpanel to be unstored");
-}
+    wxDataViewItemArray items;
+    m_dataviewAssigned->GetSelections(items);
 
-bool ReconcileProjectPanel::GetHasItems() // Does this panel have children or grandchildren? Caches the result internally
-{
-    for (size_t n = 0; n < m_children.size(); ++n) {
-        if (m_children[n]->GetHasItems()) {
-            m_hasItems = true; // Don't return here: all children need to be processed
-        }
-    }
-    if (m_hasItems) {
-        return true;
-    }
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        wxVariant v;
+        ReconcileFileItemData* data = dynamic_cast<ReconcileFileItemData*>(m_dataviewAssignedModel->GetClientObject( items.Item(i) ));
+        if ( data ) {
+            wxFileName fn(data->GetFilename());
+            fn.MakeRelativeTo(m_toplevelDir);
 
-    if (m_checkListBoxMissing->GetCount()) {
-        m_hasItems = true;
-        return true;
-    }
+            wxVector<wxVariant> cols;
+            cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(fn.GetFullName())));
+            m_dvListCtrl1Unassigned->AppendItem( cols, (wxUIntPtr)NULL );
 
-    m_hasItems = false;
-    return false;
-}
-
-void ReconcileProjectPanel::SetFiles(wxArrayString& files)
-{
-    // Process any children first
-    for (size_t n = 0; n < m_children.size(); ++n) {
-        m_children[n]->SetFiles(files);
-    }
-
-    if (VDpathToFilepath(m_vdPath).empty()) {
-        m_checkListBoxMissing->Append(files);   // This is the project root panel, so display all unallocated files
-        if (!m_checkBoxShowAllVDs->IsChecked()) {
-            // Mark for removal all panels without either files or children with files
-            for (size_t n = 0; n < m_children.size(); ++n) {
-                m_children[n]->GetHasItems();
-            }
-        }
-    } else {
-        // Put files in their best-guess virtual dir
-        DistributeFilesToScrInclude(files);     // If there are VDs called 'src', 'include' or similar, put things there
-        DistributeFilesToExactMatches(files);   // Otherwise try to match the file's path with this panel's VD
-    }
-}
-
-void ReconcileProjectPanel::SetStaleFiles(wxString& file)
-{
-    m_checkListBoxStale->Append(file);
-}
-
-void ReconcileProjectPanel::DistributeFilesToScrInclude(wxArrayString& files)
-{
-    if (!VDpathToFilepath(m_vdPath)) {
-        return;
-    }
-
-    wxString vdName = GetVDDisplayName();
-    wxFileName vdFn(VDpathToFilepath(m_vdPath).Lower());
-
-    if (IsSourceVD(vdName.Lower())) {
-        for (size_t n = files.GetCount(); n > 0; --n) {
-            wxFileName fn(files[n-1].Lower());
-            if (fn.GetExt() == "cpp" || fn.GetExt() == "c" || fn.GetExt() == "cc") {
-                // If the paths match, or if the file is from a subdir of the parent, insert into this VD.
-                // NB subdirs will already have been processed once and any absolute matches allocated, so we'll only get not-yet-matched files here
-                // i.e. if there's a VD foo/src, then add cpp files from foo/ and also any still-unallocated ones from foo/bar/
-                // Check for an exact match too, just in case someone has a real dir called src/
-                if (fn.GetPath().StartsWith(vdFn.GetPath()) || (fn.GetPath() == vdFn.GetFullPath())) {
-                    m_checkListBoxMissing->Append(files[n-1]);
-                    files.RemoveAt(n-1);
-                }
-            }
         }
     }
 
-    if (IsHeaderVD(vdName.Lower())) {
-        for (size_t n = files.GetCount(); n > 0 ; --n) {
-            wxFileName fn(files[n-1].Lower());
-            if (fn.GetExt() == "h" || fn.GetExt() == "hpp" || fn.GetExt() == "hh") {
-                if (fn.GetPath().StartsWith(vdFn.GetPath()) || (fn.GetPath() == vdFn.GetFullPath())) {
-                    m_checkListBoxMissing->Append(files[n-1]);
-                    files.RemoveAt(n-1);
-                }
-            }
+    // get the list of items
+    wxArrayString allfiles;
+    for(int i=0 ; i<m_dvListCtrl1Unassigned->GetItemCount(); ++i) {
+        wxVariant v;
+        m_dvListCtrl1Unassigned->GetValue(v, i, 0);
+        wxDataViewIconText it;
+        it << v;
+        allfiles.Add(it.GetText());
+    }
+
+    m_dataviewAssignedModel->DeleteItems(wxDataViewItem(0), items);
+
+    // Could not find a nicer way of doing this, but
+    // we want the files to be sorted again
+    m_dvListCtrl1Unassigned->DeleteAllItems();
+
+    std::sort(allfiles.begin(), allfiles.end());
+    for(size_t i=0; i<allfiles.GetCount(); ++i) {
+        wxVector<wxVariant> cols;
+        cols.push_back( ::MakeIconText(allfiles.Item(i), GetBitmap(allfiles.Item(i)) ) );
+        m_dvListCtrl1Unassigned->AppendItem( cols, (wxUIntPtr)NULL);
+    }
+}
+
+void ReconcileProjectDlg::OnUndoSelectedFilesUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dataviewAssigned->GetSelectedItemsCount());
+}
+
+void ReconcileProjectDlg::OnDone(wxCommandEvent& event)
+{
+    // get the list of files to add to the project
+    wxDataViewItemArray items;
+    m_dataviewAssignedModel->GetChildren(wxDataViewItem(0), items);
+    
+    // virtual folder to file name
+    StringSet_t vds;
+    StringMultimap_t filesToAdd;
+    for(size_t i=0; i<items.GetCount(); ++i) {
+         ReconcileFileItemData* data =  dynamic_cast<ReconcileFileItemData*>(m_dataviewAssignedModel->GetClientObject(items.Item(i)));
+         if ( data ) {
+             filesToAdd.insert(std::make_pair(data->GetVirtualFolder(), data->GetFilename()));
+             vds.insert( data->GetVirtualFolder() );
+         }
+    }
+    
+    StringSet_t::const_iterator iter = vds.begin();
+    for(; iter != vds.end(); ++iter) {
+        std::pair<StringMultimap_t::iterator, StringMultimap_t::iterator> range = filesToAdd.equal_range( *iter );
+        StringMultimap_t::iterator from = range.first;
+        wxArrayString vdFiles;
+        for( ; from != range.second; ++from ) {
+            vdFiles.Add( from->second );
         }
+        AddMissingFiles(vdFiles, *iter);
     }
-
-    if (IsResourceVD(vdName.Lower())) {
-        for (size_t n = files.GetCount(); n > 0 ; --n) {
-            wxFileName fn(files[n-1].Lower());
-            if (fn.GetExt() == "rc") {
-                if ((fn.GetPath() == vdFn.GetPath()) || fn.GetPath().StartsWith(vdFn.GetPath())) {
-                    m_checkListBoxMissing->Append(files[n-1]);
-                    files.RemoveAt(n-1);
-                }
-            }
-        }
-    }
+    EndModal(wxID_OK);
 }
-
-void ReconcileProjectPanel::DistributeFilesToExactMatches(wxArrayString& files)
-{
-    if (!VDpathToFilepath(m_vdPath)) {
-        return;
-    }
-
-    wxFileName vdFn(VDpathToFilepath(m_vdPath).Lower());
-
-    for (size_t n = files.GetCount(); n > 0 ; --n) {
-        wxFileName fn(files[n-1].Lower());
-        // See if we have a file called foo/bar/baz.cpp and a VD called foo/bar/
-        if (fn.GetPath() == vdFn.GetFullPath()) {
-            m_checkListBoxMissing->Append(files[n-1]);
-            files.RemoveAt(n-1);
-        }
-    }
-}
-
-bool ReconcileProjectPanel::AllocateFileByVD(const wxString& file, const wxString& VD)
-{
-    if (VD == m_vdPath) {
-        m_checkListBoxMissing->Append(file);
-        return true;
-    }
-
-    // Otherwise try any children
-    for (size_t n = 0; n < m_children.size(); ++n) {
-        if (m_children[n]->AllocateFileByVD(file, VD)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-size_t ReconcileProjectPanel::GetStaleFiles(wxArrayString& files) const
-{
-    wxCHECK_MSG(m_checkListBoxStale && m_checkListBoxStale->IsShown(), 0, "Calling GetStaleFiles() on non-root panel");
-    for (size_t n = 0; n < m_checkListBoxStale->GetCount(); ++n) {
-        if (m_checkListBoxStale->IsChecked(n)) {
-            files.Add(m_checkListBoxStale->GetString(n));
-        }
-    }
-
-    return files.GetCount();
-}
-
-size_t ReconcileProjectPanel::GetStaleFilesCount() const
-{
-    wxCHECK_MSG(m_checkListBoxStale && m_checkListBoxStale->IsShown(), 0, "Calling GetStaleFilesCount() on non-root panel");
-
-    return m_checkListBoxStale->GetCount();
-}
-
-void ReconcileProjectPanel::DoShowAllInRoot()
-{
-    wxArrayString files = wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->GetAllNewFiles();
-    m_checkListBoxMissing->Clear();
-    m_checkListBoxMissing->Append(files);
-}
-
-void ReconcileProjectPanel::OnShowUnallocdInRoot(wxCommandEvent& WXUNUSED(event))
-{
-    wxArrayString files = wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->GetUnallocatedFiles();
-    m_checkListBoxMissing->Clear();
-    m_checkListBoxMissing->Append(files);
-}
-
-void ReconcileProjectPanel::OnShowVDsClicked(wxCommandEvent& WXUNUSED(event))
-{
-    wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->DistributeFiles();
-}
-
-void ReconcileProjectPanel::OnProcessButtonClicked(wxCommandEvent& WXUNUSED(event))
-{
-    wxArrayString NewFiles;
-    for (size_t n = 0; n < m_checkListBoxMissing->GetCount(); ++n) {
-        if (m_checkListBoxMissing->IsChecked(n)) {
-            NewFiles.Add(m_checkListBoxMissing->GetString(n));
-        }
-    }
-
-    wxArrayString additions = wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->AddMissingFiles(NewFiles, m_vdPath);
-
-    // Update our display, and also the new-files list in the parent dialog
-    wxArrayString& allnew = wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->GetAllNewFiles();
-    for (size_t n = 0; n < additions.GetCount(); ++n) {
-        int index = m_checkListBoxMissing->FindString(additions[n]);
-        if (index != wxNOT_FOUND) {
-            m_checkListBoxMissing->Delete(index);
-        }
-
-        index = allnew.Index(additions[n]);
-        if (index != wxNOT_FOUND) {
-            allnew.RemoveAt(index);
-        }
-    }
-
-    // If we're not it, tell the root panel about the change if it's in ShowAll mode
-    if (!m_radioShowAll->IsShown()) {
-        ReconcileProjectPanel* rootpanel = wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->GetRootPanel();
-        if (rootpanel && rootpanel->GetIsShowingAll()) {
-            rootpanel->DoShowAllInRoot();
-        }
-    }
-
-    int failures = NewFiles.GetCount() - additions.GetCount();
-    if (additions.IsEmpty()) {
-        clMainFrame::Get()->SetStatusMessage(_("Failed to add files to project"), 0);
-    } else if (!failures) {
-        clMainFrame::Get()->SetStatusMessage(wxString::Format(_("%i files successfully added to project"), (int)additions.GetCount()), 0);
-    } else {
-        clMainFrame::Get()->SetStatusMessage(wxString::Format(_("%i of %i files added to project"), (int)additions.GetCount(), (int)NewFiles.GetCount()), 0);
-    }
-
-    if (additions.GetCount()) {
-        wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
-        EventNotifier::Get()->AddPendingEvent(buildTree);
-    }
-
-    // Ask ReconcileProjectDlg if we're nearly there yet. If so it'll close the dialog
-    wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->IsReconciliationComplete();
-}
-
-void ReconcileProjectPanel::OnRemoveStaleButtonClicked(wxCommandEvent& WXUNUSED(event))
-{
-    wxArrayString StaleFiles;
-    GetStaleFiles(StaleFiles);
-
-    wxArrayString removals = wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->RemoveStaleFiles(StaleFiles);
-    for (size_t n = 0; n < removals.GetCount(); ++n) {
-        int index = m_checkListBoxStale->FindString(removals[n]);
-        if (index != wxNOT_FOUND) {
-            m_checkListBoxStale->Delete(index);
-        }
-    }
-
-    int failures = StaleFiles.GetCount() - removals.GetCount();
-    if (removals.IsEmpty()) {
-        clMainFrame::Get()->SetStatusMessage(_("Failed to add files to project"), 0);
-    } else if (!failures) {
-        clMainFrame::Get()->SetStatusMessage(wxString::Format(_("%i files successfully added to project"), (int)removals.GetCount()), 0);
-    } else {
-        clMainFrame::Get()->SetStatusMessage(wxString::Format(_("%i of %i files added to project"), (int)removals.GetCount(), (int)StaleFiles.GetCount()), 0);
-    }
-
-    if (removals.GetCount()) {
-        wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
-        EventNotifier::Get()->AddPendingEvent(buildTree);
-    }
-
-    // Ask ReconcileProjectDlg if we're nearly there yet. If so it'll close the dialog
-    wxStaticCast(GetGrandParent(), ReconcileProjectDlg)->IsReconciliationComplete();
-}
-
-void ReconcileProjectPanel::OnProcessButtonUpdateUI(wxUpdateUIEvent& event)
-{
-    for (size_t n = 0; n < GetActiveChkListBox()->GetCount(); ++n) {
-        if (GetActiveChkListBox()->IsChecked(n)) {
-            return event.Enable(true);
-        }
-    }
-    event.Enable(false) ;
-}
-
-void ReconcileProjectPanel::OnSelectAll(wxCommandEvent& event)
-{
-    for (size_t n = 0; n < GetActiveChkListBox()->GetCount(); ++n) {
-        GetActiveChkListBox()->Check(n, true);
-    }
-}
-
-void ReconcileProjectPanel::OnSelectAllUpdateUI(wxUpdateUIEvent& event)
-{
-    for (size_t n = 0; n < GetActiveChkListBox()->GetCount(); ++n) {
-        if (!GetActiveChkListBox()->IsChecked(n)) {
-            return event.Enable(true);
-        }
-    }
-    event.Enable(false) ;
-}
-
-void ReconcileProjectPanel::OnUnselectAll(wxCommandEvent& event)
-{
-    for (size_t n = 0; n < GetActiveChkListBox()->GetCount(); ++n) {
-        GetActiveChkListBox()->Check(n, false);
-    }
-}
-
-void ReconcileProjectPanel::OnUnselectAllUpdateUI(wxUpdateUIEvent& event)
-{
-    for (size_t n = 0; n < GetActiveChkListBox()->GetCount(); ++n) {
-        if (GetActiveChkListBox()->IsChecked(n)) {
-            return event.Enable(true);
-        }
-    }
-    event.Enable(false) ;
-}
-
-bool ReconcileProjectPanel::IsSourceVD(const wxString& name) const
-{
-    return (name == "src" || name == "source" || name == "cpp" || name == "c" || name == "cc");
-}
-
-bool ReconcileProjectPanel::IsHeaderVD(const wxString& name) const
-{
-    return (name == "include" || name == "includes" || name == "header" || name == "headers" || name == "hpp" || name == "h");
-}
-
-bool ReconcileProjectPanel::IsResourceVD(const wxString& name) const
-{
-    return (name == "rc" || name == "resource" || name == "resources");
-}
-
-wxCheckListBox* ReconcileProjectPanel::GetActiveChkListBox() const
-{
-    return (m_notebook88->GetSelection() == 1) ? m_checkListBoxStale : m_checkListBoxMissing;
-}
-
-
 
 ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, const wxString& projname)
-    : ReconcileProjectFiletypesDlgBaseClass(parent), m_projname(projname)
+    : ReconcileProjectFiletypesDlgBaseClass(parent)
+    , m_projname(projname)
 {
     m_listCtrlRegexes->AppendColumn("Regex");
     m_listCtrlRegexes->AppendColumn("Virtual Directory");
@@ -839,7 +517,9 @@ void ReconcileProjectFiletypesDlg::OnRemoveRegexUpdateUI(wxUpdateUIEvent& event)
 
 
 
-ReconcileByRegexDlg::ReconcileByRegexDlg(wxWindow* parent, const wxString& projname) : ReconcileByRegexDlgBaseClass(parent), m_projname(projname)
+ReconcileByRegexDlg::ReconcileByRegexDlg(wxWindow* parent, const wxString& projname)
+    : ReconcileByRegexDlgBaseClass(parent)
+    , m_projname(projname)
 {
     WindowAttrManager::Load(this, wxT("ReconcileByRegexDlg"), NULL);
 }

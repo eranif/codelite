@@ -58,6 +58,8 @@
 #include <wx/filename.h>
 #include <algorithm>
 #include "project.h"
+#include <wx/icon.h>
+#include <wx/dataview.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1354,4 +1356,14 @@ wxString DbgPrependCharPtrCastIfNeeded(const wxString &expr, const wxString &exp
         newExpr << expr;
     }
     return newExpr;
+}
+
+wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
+{
+    wxIcon icn;
+    icn.CopyFromBitmap( bmp);
+    wxDataViewIconText ict(text, icn);
+    wxVariant v;
+    v << ict;
+    return v;
 }

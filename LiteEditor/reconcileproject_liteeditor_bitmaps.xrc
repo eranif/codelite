@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
-  <object class="wxBitmap" name="wxdirpickerctrl">..\..\wxcrafter\resources\wxdirpickerctrl.png</object>
+  <object class="wxBitmap" name="back">../codelite-icons/toolbars/16/standard/back.png</object>
+  <object class="wxBitmap" name="forward">../codelite-icons/toolbars/16/standard/forward.png</object>
+  <object class="wxBitmap" name="wand">../icons/wand.png</object>
+  <object class="wxBitmap" name="wxdirpickerctrl">../../wxcrafter/resources/wxdirpickerctrl.png</object>
 </resource>

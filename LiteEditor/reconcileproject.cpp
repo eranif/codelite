@@ -90,6 +90,7 @@ private:
 ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projname)
     : ReconcileProjectDlgBaseClass(parent)
     , m_projname(projname)
+    , m_projectModified(false)
 {
     BitmapLoader bl;
     m_bitmaps = bl.MakeStandardMimeMap();
@@ -131,13 +132,16 @@ bool ReconcileProjectDlg::LoadData()
         DoFindFiles();
     }
 
-    // Now get root to recursively and intelligently fill each VD's panel with appropriate files
     DistributeFiles();
     return true;
 }
 
 void ReconcileProjectDlg::DistributeFiles()
 {
+    //---------------------------------------------------------
+    // populate the 'new files' tab
+    //---------------------------------------------------------
+
     // Before processing the individual VDs, try using any regex as that'll be most likely to reflect the user's choice
     m_dataviewAssignedModel->Clear();
     m_dvListCtrl1Unassigned->DeleteAllItems();
@@ -168,6 +172,18 @@ void ReconcileProjectDlg::DistributeFiles()
             cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename) ) );
             m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
         }
+    }
+
+    //---------------------------------------------------------
+    // populate the 'stale files' tab
+    //---------------------------------------------------------
+    m_dataviewStaleFilesModel->Clear();
+    Project::FileInfoList_t::const_iterator staleIter = m_stalefiles.begin();
+    for(; staleIter != m_stalefiles.end(); ++staleIter) {
+
+        wxVector<wxVariant> cols;
+        cols.push_back( ::MakeIconText(staleIter->GetFilename(), GetBitmap( staleIter->GetFilename() ) ) );
+        m_dataviewStaleFilesModel->AppendItem( wxDataViewItem(0), cols, new ReconcileFileItemData(staleIter->GetFilename(), staleIter->GetVirtualFolder() ) );
     }
 }
 
@@ -232,17 +248,27 @@ void ReconcileProjectDlg::DoFindFiles()
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
 
     // get list of files from the project
-    StringSet_t projectfiles;
-    proj->GetFiles(projectfiles);
-
+    Project::FileInfoList_t projectfiles;
+    proj->GetFilesMetadata(projectfiles);
+    StringSet_t projectfilesSet;
+    
+    Project::FileInfoList_t::const_iterator it = projectfiles.begin();
+    for( ; it != projectfiles.end(); ++it ) {
+        projectfilesSet.insert( it->GetFilename() );
+    }
+    
     std::vector<wxString> result;
-    std::set_difference(m_allfiles.begin(), m_allfiles.end(), projectfiles.begin(), projectfiles.end(), std::back_inserter(result));
+    std::set_difference(m_allfiles.begin(), m_allfiles.end(), projectfilesSet.begin(), projectfilesSet.end(), std::back_inserter(result));
     m_newfiles.insert(result.begin(), result.end());
 
     // now run the diff reverse to get list of stale files
-    result.clear();
-    std::set_difference(projectfiles.begin(), projectfiles.end(), m_allfiles.begin(), m_allfiles.end(), std::back_inserter(result));
-    m_stalefiles.insert(result.begin(), result.end());
+    m_stalefiles.clear();
+    Project::FileInfoList_t::const_iterator iter = projectfiles.begin();
+    for(; iter != projectfiles.end(); ++iter ) {
+        if ( !wxFileName::FileExists( iter->GetFilename() ) ) {
+            m_stalefiles.push_back( *iter );
+        }
+    }
 }
 
 wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const
@@ -348,23 +374,59 @@ void ReconcileProjectDlg::OnUndoSelectedFilesUI(wxUpdateUIEvent& event)
     event.Enable(m_dataviewAssigned->GetSelectedItemsCount());
 }
 
-void ReconcileProjectDlg::OnDone(wxCommandEvent& event)
+void ReconcileProjectDlg::OnDeleteStaleFiles(wxCommandEvent& event)
+{
+    ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
+    wxCHECK_RET(proj, "Can't find a Project with the supplied name");
+
+    wxDataViewItemArray items;
+    m_dataviewStaleFiles->GetSelections( items );
+    
+    proj->BeginTranscation();
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        ReconcileFileItemData* data =  dynamic_cast<ReconcileFileItemData*>(m_dataviewStaleFilesModel->GetClientObject(items.Item(i)));
+        if ( data ) {
+            proj->RemoveFile( data->GetFilename(), data->GetVirtualFolder() );
+        }
+        m_projectModified = true;
+    }
+    proj->CommitTranscation();
+    m_dataviewStaleFilesModel->DeleteItems(wxDataViewItem(0), items);
+}
+
+void ReconcileProjectDlg::OnDeleteStaleFilesUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dataviewStaleFiles->GetSelectedItemsCount() );
+}
+
+void ReconcileProjectDlg::OnClose(wxCommandEvent& event)
+{
+    // reload the workspace
+    if ( m_projectModified ) {
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
+        evt.SetEventObject( clMainFrame::Get() );
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent( evt );
+    }
+    EndModal(wxID_CLOSE);
+}
+
+void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
 {
     // get the list of files to add to the project
     wxDataViewItemArray items;
     m_dataviewAssignedModel->GetChildren(wxDataViewItem(0), items);
-    
+
     // virtual folder to file name
     StringSet_t vds;
     StringMultimap_t filesToAdd;
     for(size_t i=0; i<items.GetCount(); ++i) {
-         ReconcileFileItemData* data =  dynamic_cast<ReconcileFileItemData*>(m_dataviewAssignedModel->GetClientObject(items.Item(i)));
-         if ( data ) {
-             filesToAdd.insert(std::make_pair(data->GetVirtualFolder(), data->GetFilename()));
-             vds.insert( data->GetVirtualFolder() );
-         }
+        ReconcileFileItemData* data =  dynamic_cast<ReconcileFileItemData*>(m_dataviewAssignedModel->GetClientObject(items.Item(i)));
+        if ( data ) {
+            filesToAdd.insert(std::make_pair(data->GetVirtualFolder(), data->GetFilename()));
+            vds.insert( data->GetVirtualFolder() );
+        }
     }
-    
+
     StringSet_t::const_iterator iter = vds.begin();
     for(; iter != vds.end(); ++iter) {
         std::pair<StringMultimap_t::iterator, StringMultimap_t::iterator> range = filesToAdd.equal_range( *iter );
@@ -374,8 +436,14 @@ void ReconcileProjectDlg::OnDone(wxCommandEvent& event)
             vdFiles.Add( from->second );
         }
         AddMissingFiles(vdFiles, *iter);
+        m_projectModified = true;
     }
-    EndModal(wxID_OK);
+    m_dataviewAssignedModel->DeleteItems( wxDataViewItem(0), items );
+}
+
+void ReconcileProjectDlg::OnApplyUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dataviewAssigned->GetSelectedItemsCount() );
 }
 
 ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, const wxString& projname)

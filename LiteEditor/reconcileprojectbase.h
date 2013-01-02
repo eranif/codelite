@@ -14,11 +14,13 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
+#include <wx/bannerwindow.h>
 #include <wx/splitter.h>
 #include <wx/dataview.h>
 #include <wx/bmpbuttn.h>
 #include "assignedfilesmodel.h"
 #include <wx/button.h>
+#include "stalefilesmodel.h"
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/textctrl.h>
@@ -30,6 +32,7 @@ class ReconcileProjectDlgBaseClass : public wxDialog
 protected:
     wxNotebook* m_notebook214;
     wxPanel* m_panel220;
+    wxBannerWindow* m_banner270;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage1;
     wxDataViewListCtrl* m_dvListCtrl1Unassigned;
@@ -40,7 +43,13 @@ protected:
     wxDataViewCtrl* m_dataviewAssigned;
     wxObjectDataPtr<AssignedFilesModel> m_dataviewAssignedModel;
 
+    wxButton* m_button274;
     wxPanel* m_panel222;
+    wxBannerWindow* m_banner272;
+    wxDataViewCtrl* m_dataviewStaleFiles;
+    wxObjectDataPtr<StaleFilesModel> m_dataviewStaleFilesModel;
+
+    wxButton* m_button266;
     wxButton* m_button258;
 
 protected:
@@ -50,7 +59,11 @@ protected:
     virtual void OnUndoSelectedFilesUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnAutoSuggest(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAutoAssignUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDone(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDeleteStaleFiles(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteStaleFilesUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
     ReconcileProjectDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Reconcile Project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

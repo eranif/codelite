@@ -40,6 +40,7 @@
 #include "localworkspace.h"
 #include <set>
 #include <vector>
+#include <queue>
 
 struct VisualWorkspaceNode {
     wxString name;
@@ -172,11 +173,11 @@ public:
     static const wxString STATIC_LIBRARY;
     static const wxString DYNAMIC_LIBRARY;
     static const wxString EXECUTABLE;
-    
+
     typedef std::map<wxString, wxXmlNode*> NodeMap_t;
-    
+
     friend class Workspace;
-    
+
 private:
     wxXmlDocument m_doc;
     wxFileName    m_fileName;
@@ -184,7 +185,36 @@ private:
     bool          m_isModified;
     NodeMap_t     m_vdCache;
     time_t        m_modifyTime;
-    
+
+public:
+    // -----------------------------------------
+    // File meta data
+    // -----------------------------------------
+    class FileInfo
+    {
+
+        wxString m_filename;
+        wxString m_virtualFolder;
+
+    public:
+        FileInfo() {}
+        ~FileInfo() {}
+
+        void SetFilename(const wxString& filename) {
+            this->m_filename = filename;
+        }
+        void SetVirtualFolder(const wxString& virtualFolder) {
+            this->m_virtualFolder = virtualFolder;
+        }
+        const wxString& GetFilename() const {
+            return m_filename;
+        }
+        const wxString& GetVirtualFolder() const {
+            return m_virtualFolder;
+        }
+    };
+    typedef std::list<FileInfo> FileInfoList_t;
+
 public:
     const wxFileName &GetFileName() const {
         return m_fileName;
@@ -325,25 +355,32 @@ public:
      */
     wxString GetFiles(bool absPath = false);
 
+    
+    /**
+     * @brief return the file meta data. The file names on the list
+     * are in fullpath
+     */
+    void GetFilesMetadata(Project::FileInfoList_t &files);
+
     /**
      * Return list of files in this project - in both absolute and relative path
      * \param files relative paths
      * \param absFiles absolute paths
      */
     void GetFiles(std::vector<wxFileName> &files, std::vector<wxFileName> &absFiles);
-    
+
     /**
      * @brief return a filename set of all the project files (in absolute paths)
      */
     void GetFiles(StringSet_t& files);
-    
+
     /**
      * @brief return a relative filename set of all the project files
      * \param files the set in which to return the paths
      * \param relativePath the path to which to make-relative
      */
     void GetFiles(StringSet_t& files, const wxString& relativePath);
-    
+
     /**
      * Return a node pointing to any project-wide editor preferences
      */
@@ -457,7 +494,7 @@ public:
      * @return
      */
     wxString GetProjectInternalType() const;
-    
+
     /**
      * @brief return the project icon index (used by the NewProjectDialog)
      */
@@ -515,9 +552,11 @@ public:
      * project settings
      */
     wxArrayString GetIncludePaths();
-	void ClearAllVirtDirs();
+    void ClearAllVirtDirs();
 
 private:
+    wxString DoFormatVirtualFolderName(const wxXmlNode* node) const;
+    
     void DoDeleteVDFromCache(const wxString &vd);
     wxArrayString DoBacktickToIncludePath(const wxString &backtick);
     void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);

@@ -32,14 +32,26 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     m_panel220 = new wxPanel(m_notebook214, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook214->AddPage(m_panel220, _("New Files"), true);
     
-    wxBoxSizer* boxSizer224 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer224 = new wxBoxSizer(wxVERTICAL);
     m_panel220->SetSizer(boxSizer224);
+    
+    m_banner270 = new wxBannerWindow(m_panel220, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_banner270->SetBitmap(wxNullBitmap);
+    m_banner270->SetText(_("New Files"), _("Select files from the left pane and add them to the project by clicking on the right arrow button"));
+    m_banner270->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner270->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+    
+    boxSizer224->Add(m_banner270, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer276 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer224->Add(boxSizer276, 1, wxEXPAND, 5);
     
     m_splitter = new wxSplitterWindow(m_panel220, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3D);
     m_splitter->SetSashGravity(0.500000);
     m_splitter->SetMinimumPaneSize(10);
     
-    boxSizer224->Add(m_splitter, 1, wxALL|wxEXPAND, 5);
+    boxSizer276->Add(m_splitter, 1, wxALL|wxEXPAND, 5);
     
     m_splitterPage1 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -48,7 +60,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     wxBoxSizer* boxSizer179 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer248->Add(boxSizer179, 1, wxALL|wxEXPAND, 5);
+    boxSizer248->Add(boxSizer179, 1, wxEXPAND, 5);
     
     wxBoxSizer* boxSizer183 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -56,9 +68,9 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     m_dvListCtrl1Unassigned = new wxDataViewListCtrl(m_splitterPage1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
     
-    boxSizer183->Add(m_dvListCtrl1Unassigned, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer183->Add(m_dvListCtrl1Unassigned, 1, wxEXPAND, 5);
     
-    m_dvListCtrl1Unassigned->AppendIconTextColumn(_("Unassgined files:"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrl1Unassigned->AppendIconTextColumn(_("Unassgined files:"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     wxBoxSizer* boxSizer192 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer183->Add(boxSizer192, 0, wxEXPAND, 5);
@@ -102,21 +114,58 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     m_dataviewAssignedModel->SetColCount( 2 );
     m_dataviewAssigned->AssociateModel(m_dataviewAssignedModel.get() );
     
-    boxSizer181->Add(m_dataviewAssigned, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer181->Add(m_dataviewAssigned, 1, wxEXPAND, 5);
     
     m_dataviewAssigned->AppendIconTextColumn(_("File"), m_dataviewAssigned->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dataviewAssigned->AppendTextColumn(_("Virtual Folder"), m_dataviewAssigned->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer278 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer276->Add(boxSizer278, 0, wxEXPAND, 5);
+    
+    m_button274 = new wxButton(m_panel220, wxID_APPLY, _("&Apply"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer278->Add(m_button274, 0, wxALL|wxEXPAND, 5);
+    
     m_panel222 = new wxPanel(m_notebook214, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook214->AddPage(m_panel222, _("Stale Files"), false);
     
     wxBoxSizer* boxSizer226 = new wxBoxSizer(wxVERTICAL);
     m_panel222->SetSizer(boxSizer226);
     
-    wxBoxSizer* boxSizer252 = new wxBoxSizer(wxVERTICAL);
+    m_banner272 = new wxBannerWindow(m_panel222, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_banner272->SetBitmap(wxNullBitmap);
+    m_banner272->SetText(_("Stale Files"), _("The below list contains files that exist on the project but not on the file system"));
+    m_banner272->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner272->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+    
+    boxSizer226->Add(m_banner272, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer262 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer226->Add(boxSizer262, 1, wxEXPAND, 5);
+    
+    m_dataviewStaleFiles = new wxDataViewCtrl(m_panel222, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
+    
+    m_dataviewStaleFilesModel = new StaleFilesModel;
+    m_dataviewStaleFilesModel->SetColCount( 1 );
+    m_dataviewStaleFiles->AssociateModel(m_dataviewStaleFilesModel.get() );
+    
+    boxSizer262->Add(m_dataviewStaleFiles, 1, wxALL|wxEXPAND, 5);
+    
+    m_dataviewStaleFiles->AppendIconTextColumn(_("File path"), m_dataviewStaleFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 600, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer264 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer262->Add(boxSizer264, 0, wxALL|wxEXPAND, 5);
+    
+    m_button266 = new wxButton(m_panel222, wxID_DELETE, _("&Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer264->Add(m_button266, 0, wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer252 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer83->Add(boxSizer252, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button258 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button258 = new wxButton(this, wxID_CLOSE, _("&Close"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_button258->SetDefault();
     
     boxSizer252->Add(m_button258, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -134,7 +183,11 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     m_bmpButtonRemove->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnUndoSelectedFilesUI), NULL, this);
     m_bmpButtonAutoAdd->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnAutoSuggest), NULL, this);
     m_bmpButtonAutoAdd->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAutoAssignUI), NULL, this);
-    m_button258->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDone), NULL, this);
+    m_button274->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnApply), NULL, this);
+    m_button274->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnApplyUI), NULL, this);
+    m_button266->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFiles), NULL, this);
+    m_button266->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFilesUI), NULL, this);
+    m_button258->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnClose), NULL, this);
     
 }
 
@@ -146,7 +199,11 @@ ReconcileProjectDlgBaseClass::~ReconcileProjectDlgBaseClass()
     m_bmpButtonRemove->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnUndoSelectedFilesUI), NULL, this);
     m_bmpButtonAutoAdd->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnAutoSuggest), NULL, this);
     m_bmpButtonAutoAdd->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAutoAssignUI), NULL, this);
-    m_button258->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDone), NULL, this);
+    m_button274->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnApply), NULL, this);
+    m_button274->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnApplyUI), NULL, this);
+    m_button266->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFiles), NULL, this);
+    m_button266->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFilesUI), NULL, this);
+    m_button258->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnClose), NULL, this);
     
 }
 

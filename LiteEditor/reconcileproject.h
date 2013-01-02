@@ -10,7 +10,11 @@
 class ReconcileProjectDlg : public ReconcileProjectDlgBaseClass
 {
 protected:
-    virtual void OnDone(wxCommandEvent& event);
+    virtual void OnApply(wxCommandEvent& event);
+    virtual void OnApplyUI(wxUpdateUIEvent& event);
+    virtual void OnClose(wxCommandEvent& event);
+    virtual void OnDeleteStaleFiles(wxCommandEvent& event);
+    virtual void OnDeleteStaleFilesUI(wxUpdateUIEvent& event);
     virtual void OnAddFile(wxCommandEvent& event);
     virtual void OnAddFileUI(wxUpdateUIEvent& event);
     virtual void OnAutoAssignUI(wxUpdateUIEvent& event);
@@ -21,13 +25,14 @@ protected:
     wxString      m_projname;
     wxArrayString m_regexes;
     StringSet_t   m_newfiles;
-    StringSet_t   m_stalefiles;
+    Project::FileInfoList_t m_stalefiles;
     StringSet_t   m_allfiles;
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxString      m_toplevelDir;
-    
+    bool          m_projectModified;
+
     typedef std::multimap<wxString, wxString> StringMultimap_t;
-    
+
 protected:
     void DoFindFiles();
     wxBitmap GetBitmap(const wxString &filename) const;

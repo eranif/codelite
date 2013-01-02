@@ -9,9 +9,9 @@
     <Regexes/>
     <Excludepaths/>
     <Extensions>
-      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp;iss;sh]]>
     </Extensions>
-    <Topleveldir>/home/eran/devl/codelite/LiteEditor</Topleveldir>
+    <Topleveldir>C:\src\codelite\LiteEditor</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="Source Files">
     <File Name="cpp_symbol_tree.cpp"/>
@@ -585,15 +585,12 @@
     <File Name="../Runtime/build_update.bat"/>
     <File Name="../Runtime/update.bat"/>
     <File Name="../Runtime/make_mac_bundle.sh"/>
-    <File Name="../Runtime/le_killproc.sh"/>
-    <File Name="../Runtime/le_exec.sh"/>
     <File Name="../make_src_targz.sh"/>
     <File Name="../make_deb.sh"/>
     <File Name="../make_repo.sh"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="newversionbasedlg.fbp"/>
-    <File Name="tagsmanagementbasedlg.fbp"/>
     <File Name="optionsdialogbase2.fbp"/>
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
@@ -744,6 +741,8 @@
       <File Name="importfilesdialog_new.cpp"/>
       <File Name="assignedfilesmodel.cpp"/>
       <File Name="assignedfilesmodel.h"/>
+      <File Name="stalefilesmodel.cpp"/>
+      <File Name="stalefilesmodel.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>

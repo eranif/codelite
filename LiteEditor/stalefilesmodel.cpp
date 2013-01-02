@@ -3,7 +3,7 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#include "assignedfilesmodel.h"
+#include "stalefilesmodel.h"
 #include <wx/dvrenderers.h>
 #include <wx/variant.h>
 
@@ -14,7 +14,7 @@
 // -------------------------------------------------
 // Help method
 // -------------------------------------------------
-wxVariant AssignedFilesModel::CreateIconTextVariant(const wxString &text, const wxBitmap& bmp)
+wxVariant StaleFilesModel::CreateIconTextVariant(const wxString &text, const wxBitmap& bmp)
 {
     wxIcon icn;
     icn.CopyFromBitmap( bmp);
@@ -28,12 +28,12 @@ wxVariant AssignedFilesModel::CreateIconTextVariant(const wxString &text, const 
 // The model class
 // -------------------------------------------------
 
-AssignedFilesModel::AssignedFilesModel()
+StaleFilesModel::StaleFilesModel()
     : m_colCount(0)
 {
 }
 
-AssignedFilesModel::~AssignedFilesModel()
+StaleFilesModel::~StaleFilesModel()
 {
     for(size_t i=0; i<m_data.size(); ++i) {
         delete m_data.at(i);
@@ -41,7 +41,7 @@ AssignedFilesModel::~AssignedFilesModel()
     m_data.clear();
 }
 
-unsigned int AssignedFilesModel::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
+unsigned int StaleFilesModel::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 {
     if(item.GetID() == NULL) {
         // Root
@@ -52,7 +52,7 @@ unsigned int AssignedFilesModel::GetChildren(const wxDataViewItem& item, wxDataV
     }
 
     children.Clear();
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.m_pItem);
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.m_pItem);
     if ( node ) {
         for(size_t i=0; i<node->GetChildren().size(); ++i) {
             children.Add( wxDataViewItem( node->GetChildren().at(i) ) );
@@ -61,12 +61,12 @@ unsigned int AssignedFilesModel::GetChildren(const wxDataViewItem& item, wxDataV
     return children.GetCount();
 }
 
-unsigned int AssignedFilesModel::GetColumnCount() const
+unsigned int StaleFilesModel::GetColumnCount() const
 {
     return m_colCount;
 }
 
-wxString AssignedFilesModel::GetColumnType(unsigned int col) const
+wxString StaleFilesModel::GetColumnType(unsigned int col) const
 {
     if ( !m_data.empty() && m_data.at(0)->GetData().size() > col ) {
         return m_data.at(0)->GetData().at(col).GetType();
@@ -74,37 +74,37 @@ wxString AssignedFilesModel::GetColumnType(unsigned int col) const
     return "string";
 }
 
-wxDataViewItem AssignedFilesModel::GetParent(const wxDataViewItem& item) const
+wxDataViewItem StaleFilesModel::GetParent(const wxDataViewItem& item) const
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.m_pItem);
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.m_pItem);
     if ( node ) {
         return wxDataViewItem(node->GetParent());
     }
     return wxDataViewItem(NULL);
 }
 
-bool AssignedFilesModel::IsContainer(const wxDataViewItem& item) const
+bool StaleFilesModel::IsContainer(const wxDataViewItem& item) const
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.m_pItem);
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.m_pItem);
     if ( node ) {
         return node->IsContainer();
     }
     return false;
 }
 
-void AssignedFilesModel::GetValue(wxVariant& variant, const wxDataViewItem& item, unsigned int col) const
+void StaleFilesModel::GetValue(wxVariant& variant, const wxDataViewItem& item, unsigned int col) const
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.m_pItem);
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.m_pItem);
     if ( node && node->GetData().size() > col ) {
         variant = node->GetData().at(col);
     }
 }
-wxDataViewItem AssignedFilesModel::DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
+wxDataViewItem StaleFilesModel::DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
 {
-    AssignedFilesModel_Item* parentNode = reinterpret_cast<AssignedFilesModel_Item*>(parent.m_pItem);
+    StaleFilesModel_Item* parentNode = reinterpret_cast<StaleFilesModel_Item*>(parent.m_pItem);
     DoChangeItemType(parent, true);
     
-    AssignedFilesModel_Item* child = new AssignedFilesModel_Item();
+    StaleFilesModel_Item* child = new StaleFilesModel_Item();
     child->SetIsContainer(isContainer);
     child->SetClientObject( clientData );
     child->SetData( data );
@@ -118,19 +118,19 @@ wxDataViewItem AssignedFilesModel::DoAppendItem(const wxDataViewItem& parent, co
     return wxDataViewItem(child);
 }
 
-wxDataViewItem AssignedFilesModel::DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
+wxDataViewItem StaleFilesModel::DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
 {
-    AssignedFilesModel_Item* child = new AssignedFilesModel_Item();
+    StaleFilesModel_Item* child = new StaleFilesModel_Item();
     child->SetIsContainer(isContainer);
     child->SetClientObject( clientData );
     child->SetData( data );
 
     // find the location where to insert the new item
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(insertBeforeMe.m_pItem);
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(insertBeforeMe.m_pItem);
     if ( !node )
         return wxDataViewItem();
 
-    wxVector<AssignedFilesModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
+    wxVector<StaleFilesModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
 
     if ( where !=  m_data.end() ) {
         // top level item
@@ -155,14 +155,14 @@ wxDataViewItem AssignedFilesModel::DoInsertItem(const wxDataViewItem& insertBefo
     return wxDataViewItem(child);
 }
 
-wxDataViewItem AssignedFilesModel::AppendItem(const wxDataViewItem &parent, const wxVector<wxVariant>& data, wxClientData *clientData)
+wxDataViewItem StaleFilesModel::AppendItem(const wxDataViewItem &parent, const wxVector<wxVariant>& data, wxClientData *clientData)
 {
     wxDataViewItem ch = DoAppendItem(parent, data, false, clientData);
     ItemAdded(parent, ch);
     return ch;
 }
 
-wxDataViewItemArray AssignedFilesModel::AppendItems(const wxDataViewItem &parent, const wxVector<wxVector<wxVariant> >& data)
+wxDataViewItemArray StaleFilesModel::AppendItems(const wxDataViewItem &parent, const wxVector<wxVector<wxVariant> >& data)
 {
     wxDataViewItemArray items;
     for(size_t i=0; i<data.size(); ++i) {
@@ -172,28 +172,28 @@ wxDataViewItemArray AssignedFilesModel::AppendItems(const wxDataViewItem &parent
     return items;
 }
 
-bool AssignedFilesModel::SetValue(const wxVariant& variant, const wxDataViewItem& item, unsigned int col)
+bool StaleFilesModel::SetValue(const wxVariant& variant, const wxDataViewItem& item, unsigned int col)
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.m_pItem);
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.m_pItem);
     if ( node && node->GetData().size() > col ) {
         node->GetData().at(col) = variant;
     }
     return true;
 }
 
-void AssignedFilesModel::DeleteItem(const wxDataViewItem& item)
+void StaleFilesModel::DeleteItem(const wxDataViewItem& item)
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.m_pItem);
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.m_pItem);
     if ( node ) {
         
-        AssignedFilesModel_Item* parent = node->GetParent();
+        StaleFilesModel_Item* parent = node->GetParent();
         wxDataViewItem parentItem(parent);
         ItemDeleted(parentItem, item);
         
         // this will also remove it from its model parent children list
         if ( parent == NULL ) {
             // root item, remove it from the roots array
-            wxVector<AssignedFilesModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
+            wxVector<StaleFilesModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
             if ( where != m_data.end() ) {
                 m_data.erase(where);
             }
@@ -210,95 +210,95 @@ void AssignedFilesModel::DeleteItem(const wxDataViewItem& item)
         Cleared();
 }
 
-void AssignedFilesModel::DeleteItems(const wxDataViewItem& parent, const wxDataViewItemArray& items)
+void StaleFilesModel::DeleteItems(const wxDataViewItem& parent, const wxDataViewItemArray& items)
 {
     // sanity
     for(size_t i=0; i<items.GetCount(); ++i) {
-        AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(items.Item(i).m_pItem);
+        StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(items.Item(i).m_pItem);
         wxUnusedVar(node);
         wxASSERT(node && node->GetParent() == parent.m_pItem);
         DeleteItem(items.Item(i));
     }
 }
 
-void AssignedFilesModel::Clear()
+void StaleFilesModel::Clear()
 {
-    wxVector<AssignedFilesModel_Item*> roots = m_data;
-    wxVector<AssignedFilesModel_Item*>::iterator iter = roots.begin();
+    wxVector<StaleFilesModel_Item*> roots = m_data;
+    wxVector<StaleFilesModel_Item*>::iterator iter = roots.begin();
     for(; iter != roots.end(); ++iter) {
         DeleteItem( wxDataViewItem(*iter) );
     }
     Cleared();
 }
 
-bool AssignedFilesModel::IsEmpty() const
+bool StaleFilesModel::IsEmpty() const
 {
     return m_data.empty();
 }
 
-wxClientData* AssignedFilesModel::GetClientObject(const wxDataViewItem& item) const
+wxClientData* StaleFilesModel::GetClientObject(const wxDataViewItem& item) const
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.GetID());
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.GetID());
     if ( node ) {
         return node->GetClientObject();
     }
     return NULL;
 }
 
-void AssignedFilesModel::SetClientObject(const wxDataViewItem& item, wxClientData *data)
+void StaleFilesModel::SetClientObject(const wxDataViewItem& item, wxClientData *data)
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.GetID());
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.GetID());
     if ( node ) {
         node->SetClientObject(data);
     }
 }
 
-void AssignedFilesModel::UpdateItem(const wxDataViewItem& item, const wxVector<wxVariant>& data)
+void StaleFilesModel::UpdateItem(const wxDataViewItem& item, const wxVector<wxVariant>& data)
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.GetID());
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.GetID());
     if ( node ) {
         node->SetData( data );
         ItemChanged( item );
     }
 }
 
-wxDataViewItem AssignedFilesModel::InsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData)
+wxDataViewItem StaleFilesModel::InsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData)
 {
     wxDataViewItem ch = DoInsertItem(insertBeforeMe, data, false, clientData);
     if ( ch.IsOk() ) {
-        AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(ch.GetID());
+        StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(ch.GetID());
         ItemAdded(wxDataViewItem(node->GetParent()), ch);
     }
     return ch;
 }
 
-wxVector<wxVariant> AssignedFilesModel::GetItemColumnsData(const wxDataViewItem& item) const
+wxVector<wxVariant> StaleFilesModel::GetItemColumnsData(const wxDataViewItem& item) const
 {
     if ( !item.IsOk() )
         return wxVector<wxVariant>();
 
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.GetID());
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.GetID());
     if ( !node ) {
         return wxVector<wxVariant>();
     }
     return node->GetData();
 }
 
-bool AssignedFilesModel::HasChildren(const wxDataViewItem& item) const
+bool StaleFilesModel::HasChildren(const wxDataViewItem& item) const
 {
     if ( !item.IsOk() )
         return false;
 
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.GetID());
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.GetID());
     if ( !node ) {
         return false;
     }
     return !node->GetChildren().empty();
 }
 
-void AssignedFilesModel::DoChangeItemType(const wxDataViewItem& item, bool changeToContainer)
+void StaleFilesModel::DoChangeItemType(const wxDataViewItem& item, bool changeToContainer)
 {
-    AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(item.GetID());
+    StaleFilesModel_Item* node = reinterpret_cast<StaleFilesModel_Item*>(item.GetID());
     if ( !node )
         return;
     

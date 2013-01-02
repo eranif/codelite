@@ -336,7 +336,11 @@ bool Project::RemoveFile(const wxString &fileName, const wxString &virtualDir)
         wxLogMessage(wxT("Failed to remove file %s from project"), tmp.GetFullPath(wxPATH_UNIX).c_str());
     }
     SetModified(true);
-    return SaveXmlFile();
+    
+    if ( InTransaction() )
+        return true;
+    else
+        return SaveXmlFile();
 }
 
 wxString Project::GetName() const
@@ -753,7 +757,11 @@ bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, co
     }
 
     SetModified(true);
-    return SaveXmlFile();
+    
+    if ( InTransaction() )
+        return true;
+    else
+        return SaveXmlFile();
 }
 
 wxString Project::GetVDByFileName(const wxString& file)
@@ -1415,3 +1423,54 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
     
     SaveXmlFile();
 }
+
+void Project::GetFilesMetadata(Project::FileInfoList_t& files)
+{
+    std::queue<wxXmlNode*> elements;
+    if ( !m_doc.IsOk() || !m_doc.GetRoot())
+        return;
+        
+    elements.push( m_doc.GetRoot() );
+    while ( !elements.empty() ) {
+        wxXmlNode *element = elements.front();
+        elements.pop();
+        
+        while ( element ) {
+            if ( element->GetName() == wxT("File") ) {
+
+                // files are kept relative to the project file
+                wxString fileName = element->GetPropVal(wxT("Name"), wxEmptyString);
+                wxFileName tmp(fileName);
+                tmp.MakeAbsolute(m_fileName.GetPath());
+                FileInfo fi;
+                fi.SetFilename( tmp.GetFullPath() );
+                fi.SetVirtualFolder( DoFormatVirtualFolderName(element) );
+                files.push_back( fi );
+                
+            } else if ( element->GetChildren() ) {
+                elements.push( element->GetChildren() );
+            }
+            element = element->GetNext();
+        }
+    }
+}
+
+wxString Project::DoFormatVirtualFolderName(const wxXmlNode* node) const
+{
+    // we assume that 'node' is a 'File' element
+    wxString name;
+    wxXmlNode *p = node->GetParent();
+    while ( p ) {
+        if ( p->GetName() == "VirtualDirectory" )
+            name << p->GetPropVal("Name", "") << ":";
+        else
+            break;
+        p = p->GetParent();
+    }
+    
+    if ( !name.IsEmpty() )
+        name.RemoveLast();
+    return name;
+}
+
+

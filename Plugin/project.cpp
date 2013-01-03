@@ -171,22 +171,26 @@ bool Project::Load(const wxString &path)
 
 wxXmlNode *Project::GetVirtualDir(const wxString &vdFullPath)
 {
-    wxStringTokenizer tkz(vdFullPath, wxT(":"));
-
+    wxArrayString paths = wxStringTokenize( vdFullPath, ":", wxTOKEN_STRTOK );
+    
     // test the cache
     std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
     if(iter != m_vdCache.end()) {
         return iter->second;
     }
-
+    
+    wxString filename = m_fileName.GetFullPath();
+    
     wxXmlNode *parent = m_doc.GetRoot();
-    while ( tkz.HasMoreTokens() ) {
-        parent = XmlUtils::FindNodeByName(parent, wxT("VirtualDirectory"), tkz.GetNextToken());
+    for(size_t i=0; i<paths.GetCount(); ++i) {
+        wxString curpath = paths.Item(i);
+        parent = XmlUtils::FindNodeByName(parent, wxT("VirtualDirectory"), curpath);
         if ( !parent ) {
             m_vdCache[vdFullPath] = NULL;
             return NULL;
         }
     }
+    
     // cache the result
     m_vdCache[vdFullPath] = parent;
     return parent;
@@ -1444,6 +1448,7 @@ void Project::GetFilesMetadata(Project::FileInfoList_t& files)
                 tmp.MakeAbsolute(m_fileName.GetPath());
                 FileInfo fi;
                 fi.SetFilename( tmp.GetFullPath() );
+                
                 fi.SetVirtualFolder( DoFormatVirtualFolderName(element) );
                 files.push_back( fi );
                 
@@ -1460,15 +1465,21 @@ wxString Project::DoFormatVirtualFolderName(const wxXmlNode* node) const
     // we assume that 'node' is a 'File' element
     wxString name;
     wxXmlNode *p = node->GetParent();
+    std::list<wxString> q;
     while ( p ) {
         if ( p->GetName() == "VirtualDirectory" )
-            name << p->GetPropVal("Name", "") << ":";
+            q.push_front( p->GetPropVal("Name", "") );
         else
             break;
         p = p->GetParent();
     }
     
-    if ( !name.IsEmpty() )
+    while ( !q.empty() ) {
+        name << q.front() << ":";
+        q.pop_front();
+    }
+    
+    if ( name.IsEmpty() == false )
         name.RemoveLast();
     return name;
 }

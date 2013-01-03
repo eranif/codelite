@@ -757,16 +757,39 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
                 if(isCFile) {
                     cmpOptions = wxT("$(CFLAGS)");
                 }
-
+                
+                // set the source file we want to compile
+                wxString source_file_to_compile = rel_paths.at(i).GetFullPath(wxPATH_UNIX);
+                
                 wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
                 if (generateDependenciesFiles) {
                     text << dependFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-                    text << wxT("\t") << wxT("@") << compilerMacro << wxT(" ") << cmpOptions << wxT(" $(IncludePath) -MG -MP -MT") << objectName <<wxT(" -MF") << dependFile << wxT(" -MM \"") << absFileName << wxT("\"\n\n");
+                    text << wxT("\t") 
+                         << wxT("@") 
+                         << compilerMacro 
+                         << wxT(" ") 
+                         << cmpOptions 
+                         << wxT(" $(IncludePath) -MG -MP -MT") 
+                         << objectName 
+                         << wxT(" -MF") 
+                         << dependFile 
+                         << wxT(" -MM \"") 
+                         << source_file_to_compile 
+                         << wxT("\"\n\n");
                 }
 
                 if (supportPreprocessOnlyFiles) {
                     text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-                    text << wxT("\t") << wxT("@") << compilerMacro << wxT(" ") << cmpOptions << wxT(" $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile << wxT(" \"") << absFileName << wxT("\"\n\n");
+                    text << wxT("\t") 
+                         << wxT("@") 
+                         << compilerMacro 
+                         << wxT(" ") 
+                         << cmpOptions 
+                         << wxT(" $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") 
+                         << preprocessedFile 
+                         << wxT(" \"") 
+                         << source_file_to_compile 
+                         << wxT("\"\n\n");
                 }
 
             } else if (ft.kind == Compiler::CmpFileKindResource && OS_WINDOWS ) {
@@ -865,7 +888,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 
         text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << wxT("\n");
         text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)") << exeExt << wxT("\n");
-        text << wxT("\t") << wxT("$(RM) ") << DoGetMarkerFileDir(proj->GetName()) << wxT("\n");
+        text << wxT("\t") << wxT("$(RM) ") << DoGetMarkerFileDir(proj->GetName(), proj->GetFileName().GetPath()) << wxT("\n");
 
         // Remove the pre-compiled header
         wxString pchFile = bldConf->GetPrecompiledHeader();
@@ -906,7 +929,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 
         //delete the output file as well
         text << wxT("\t") << wxT("$(RM) ") << wxT("$(OutputFile)\n");
-        text << wxT("\t") << wxT("$(RM) ") << DoGetMarkerFileDir(proj->GetName()) << wxT("\n");
+        text << wxT("\t") << wxT("$(RM) ") << DoGetMarkerFileDir(proj->GetName(), proj->GetFileName().GetPath()) << wxT("\n");
 
         // Remove the pre-compiled header
         wxString pchFile = bldConf->GetPrecompiledHeader();
@@ -1178,7 +1201,11 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << wxT("ObjectSwitch           :=") << cmp->GetSwitch(wxT("Object")) << wxT("\n");
     text << wxT("ArchiveOutputSwitch    :=") << cmp->GetSwitch(wxT("ArchiveOutput")) << wxT("\n");
     text << wxT("PreprocessOnlySwitch   :=") << cmp->GetSwitch(wxT("PreprocessOnly")) << wxT("\n");
-    text << wxT("ObjectsFileList        :=\"") << objectsFileName << wxT("\"\n");
+    
+    wxFileName fnObjectsFileName( objectsFileName );
+    fnObjectsFileName.MakeRelativeTo(proj->GetFileName().GetPath());
+    
+    text << wxT("ObjectsFileList        :=\"") << fnObjectsFileName.GetFullPath() << wxT("\"\n");
     text << wxT("PCHCompileFlags        :=") << bldConf->GetPchCompileFlags() << wxT("\n");
 
     if (OS_WINDOWS) {
@@ -1762,7 +1789,7 @@ wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxS
     return lastDir;
 }
 
-wxString BuilderGnuMake::DoGetMarkerFileDir(const wxString& projname)
+wxString BuilderGnuMake::DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath)
 {
     BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
@@ -1773,21 +1800,29 @@ wxString BuilderGnuMake::DoGetMarkerFileDir(const wxString& projname)
     wxString path;
     if(projname.IsEmpty()) {
         path << WorkspaceST::Get()->GetWorkspaceFileName().GetPath()
-             << wxFileName::GetPathSeparator()
+             << wxFILE_SEP_PATH
              << wxT(".build-")
              << workspaceSelConf;
 
     } else {
-        path << wxT("\"")
-             << WorkspaceST::Get()->GetWorkspaceFileName().GetPath()
-             << wxFileName::GetPathSeparator()
+        path << WorkspaceST::Get()->GetWorkspaceFileName().GetPath()
+             << wxFILE_SEP_PATH
              << wxT(".build-")
              << workspaceSelConf
-             << wxFileName::GetPathSeparator()
-             << projname
-             << wxT("\"");
+             << wxFILE_SEP_PATH
+             << projname;
     }
-    return path;
+    
+    if ( projectPath.IsEmpty() == false ) {
+        wxFileName fn(path, "");
+        fn.MakeRelativeTo(projectPath);
+        path = fn.GetFullPath();
+    }
+    
+    if ( !projname.IsEmpty() )
+        return "\"" + path + "\""; 
+    else
+        return path;
 }
 
 bool BuilderGnuMake::HasPostbuildCommands(BuildConfigPtr bldConf) const

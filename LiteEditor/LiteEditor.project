@@ -11,7 +11,7 @@
     <Extensions>
       <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp;iss;sh]]>
     </Extensions>
-    <Topleveldir>C:\src\codelite\LiteEditor</Topleveldir>
+    <Topleveldir>/home/eran/devl/codelite</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="Source Files">
     <File Name="cpp_symbol_tree.cpp"/>
@@ -903,7 +903,6 @@
     <File Name="reconcileproject.h"/>
     <File Name="reconcileproject.wxcp"/>
     <File Name="reconcileproject_liteeditor_bitmaps.cpp"/>
-    <File Name="reconcileproject_liteeditor_bitmaps.xrc"/>
     <File Name="reconcileprojectbase.cpp"/>
     <File Name="reconcileprojectbase.h"/>
   </VirtualDirectory>

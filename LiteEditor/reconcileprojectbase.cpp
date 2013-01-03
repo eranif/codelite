@@ -35,7 +35,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     wxBoxSizer* boxSizer224 = new wxBoxSizer(wxVERTICAL);
     m_panel220->SetSizer(boxSizer224);
     
-    m_banner270 = new wxBannerWindow(m_panel220, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_banner270 = new wxBannerWindow(m_panel220, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner270->SetBitmap(wxNullBitmap);
     m_banner270->SetText(_("New Files"), _("Select files from the left pane and add them to the project by clicking on the right arrow button"));
     m_banner270->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
@@ -132,7 +132,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     wxBoxSizer* boxSizer226 = new wxBoxSizer(wxVERTICAL);
     m_panel222->SetSizer(boxSizer226);
     
-    m_banner272 = new wxBannerWindow(m_panel222, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_STATIC);
+    m_banner272 = new wxBannerWindow(m_panel222, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner272->SetBitmap(wxNullBitmap);
     m_banner272->SetText(_("Stale Files"), _("The below list contains files that exist on the project but not on the file system"));
     m_banner272->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));

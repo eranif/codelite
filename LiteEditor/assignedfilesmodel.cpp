@@ -216,7 +216,7 @@ void AssignedFilesModel::DeleteItems(const wxDataViewItem& parent, const wxDataV
     for(size_t i=0; i<items.GetCount(); ++i) {
         AssignedFilesModel_Item* node = reinterpret_cast<AssignedFilesModel_Item*>(items.Item(i).m_pItem);
         wxUnusedVar(node);
-        wxASSERT(node && node->GetParent() == parent.m_pItem);
+        wxASSERT(node && node->GetParent() != parent.m_pItem);
         DeleteItem(items.Item(i));
     }
 }

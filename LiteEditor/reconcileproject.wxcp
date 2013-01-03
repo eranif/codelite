@@ -236,7 +236,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxBORDER_STATIC"],
+													"m_styles":	["wxBORDER_THEME"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -1287,7 +1287,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxBORDER_STATIC"],
+													"m_styles":	["wxBORDER_THEME"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",

@@ -11,7 +11,7 @@
     <Extensions>
       <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp;iss;sh]]>
     </Extensions>
-    <Topleveldir>/home/eran/devl/codelite</Topleveldir>
+    <Topleveldir>../LiteEditor</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="Source Files">
     <File Name="cpp_symbol_tree.cpp"/>

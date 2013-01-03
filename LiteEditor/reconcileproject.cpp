@@ -473,7 +473,11 @@ void ReconcileProjectFiletypesDlg::SetData()
     if (topleveldir.empty()) {
         topleveldir = proj->GetFileName().GetPath();
     }
-    m_dirPickerToplevel->SetPath(topleveldir);
+    wxFileName tld(topleveldir);
+    if ( tld.IsRelative() ) {
+        tld.MakeAbsolute( proj->GetFileName().GetPath() );
+    }
+    m_dirPickerToplevel->SetPath(tld.GetFullPath());
 
     if (types.empty()) {
         types << "cpp;c;h;hpp;xrc;wxcp;fbp";
@@ -539,7 +543,12 @@ void ReconcileProjectFiletypesDlg::OnIgnoreBrowse(wxCommandEvent& WXUNUSED(event
     if (topleveldir.empty()) {
         topleveldir = proj->GetFileName().GetPath();
     }
-    wxString new_exclude = wxDirSelector(_("Select a directory to ignore:"), topleveldir, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+    
+    wxFileName tld(topleveldir);
+    if ( tld.IsRelative() ) {
+        tld.MakeAbsolute( proj->GetFileName().GetPath() );
+    }
+    wxString new_exclude = wxDirSelector(_("Select a directory to ignore:"), tld.GetFullPath(), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
 
     if (!new_exclude.empty()) {
         wxFileName fn = wxFileName::DirName(new_exclude);

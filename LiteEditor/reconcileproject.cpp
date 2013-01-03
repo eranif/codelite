@@ -499,7 +499,13 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
     // While we're here, save the current data
     ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
-    proj->SetReconciliationData(toplevelDir, types, excludePaths, regexes);
+    
+    wxFileName relTopLevelDir(toplevelDir);
+    if( relTopLevelDir.IsAbsolute() ) {
+        relTopLevelDir.MakeRelativeTo( proj->GetFileName().GetPath() );
+    }
+    
+    proj->SetReconciliationData(relTopLevelDir.GetFullPath(wxPATH_UNIX), types, excludePaths, regexes);
 }
 
 void ReconcileProjectFiletypesDlg::SetRegex(const wxString& regex)

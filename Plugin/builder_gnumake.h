@@ -36,6 +36,7 @@
  */
 class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
 {
+    size_t m_objectChunks;
 public:
     BuilderGnuMake();
     BuilderGnuMake(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions);

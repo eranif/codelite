@@ -1589,20 +1589,46 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
     }
 
     ImplementParentVirtualFunctionsDialog dlg(wxTheApp->GetTopWindow(), scopeName, protos, keyPrefix, this);
-    dlg.m_textCtrlImplFile->SetValue(targetFile);
+    dlg.SetTargetFile(targetFile);
     if (dlg.ShowModal() == wxID_OK) {
-        wxString implFile = dlg.m_textCtrlImplFile->GetValue();
+        wxString implFile = dlg.GetTargetFile();
         wxString impl     = dlg.GetImpl();
-        wxString decl     = dlg.GetDecl();
+        wxString decl;
 
         int oldLine = rCtrl.LineFromPos( rCtrl.GetCurrentPos() );
-        wxString headerContent = GetCtrl().GetText();
-        if ( TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 1) ) // By default make the functions protected
-            rCtrl.SetText( headerContent );
-        else
-            rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
-
-        if (dlg.m_checkBoxFormat->IsChecked())
+        wxString headerContent;
+        
+        // add the declarations (public, protected, private)
+        headerContent = GetCtrl().GetText();
+        decl = dlg.GetDecl("public");
+        if ( !decl.IsEmpty() ) {
+            if ( TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 0) )
+                rCtrl.SetText( headerContent );
+            else
+                rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
+        }
+        
+        // protected
+        headerContent = GetCtrl().GetText();
+        decl = dlg.GetDecl("protected");
+        if ( !decl.IsEmpty() ) {
+            if ( TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 1) )
+                rCtrl.SetText( headerContent );
+            else
+                rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
+        }
+        
+        // private
+        headerContent = GetCtrl().GetText();
+        decl = dlg.GetDecl("private");
+        if ( !decl.IsEmpty() ) {        
+            if ( TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 2) )
+                rCtrl.SetText( headerContent );
+            else
+                rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
+        }
+        
+        if (dlg.IsFormatAfterInsert())
             DoFormatEditor( &GetCtrl() );
 
         rCtrl.GotoLine( rCtrl.GetLineCount() > oldLine ? oldLine : rCtrl.GetLineCount() );
@@ -1614,7 +1640,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
             wxString sourceContent = implEditor->GetText();
             TagsManagerST::Get()->InsertFunctionImpl(scopeName, impl, implFile, sourceContent, insertedLine);
             implEditor->SetText(sourceContent);
-            if ( dlg.m_checkBoxFormat->IsChecked() )
+            if ( dlg.IsFormatAfterInsert() )
                 DoFormatEditor( implEditor );
         }
     }

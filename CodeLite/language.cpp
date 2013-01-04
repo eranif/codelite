@@ -2082,6 +2082,11 @@ int Language::DoReadClassName(CppScanner& scanner, wxString &clsname)
             
         } else if ( type == '{' || type == ':' ) {
             return type;
+            
+        } else if ( type == ';' ) {
+            // we probably encountered a forward declaration or 'friend' statement
+            clsname.Clear();
+            return (int)';';
         }
     }
     return 0;

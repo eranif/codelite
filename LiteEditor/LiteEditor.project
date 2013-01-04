@@ -395,8 +395,6 @@
     <File Name="generalinfo.cpp"/>
     <File Name="generalinfo.h"/>
     <File Name="frame.cpp"/>
-    <File Name="customstatusbar.cpp"/>
-    <File Name="customstatusbar.h"/>
     <File Name="singleinstancethreadjob.cpp"/>
     <File Name="singleinstancethreadjob.h"/>
     <File Name="webupdatethread.cpp"/>
@@ -596,7 +594,6 @@
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
     <File Name="newquickwatch.fbp"/>
     <File Name="workspacesettingsbase.fbp"/>
-    <File Name="implementparentvirtualfunctionsbase.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
     <File Name="quickfindbarbase.fbp"/>
     <File Name="messagepane.fbp"/>
@@ -743,16 +740,20 @@
       <File Name="assignedfilesmodel.h"/>
       <File Name="stalefilesmodel.cpp"/>
       <File Name="stalefilesmodel.h"/>
+      <File Name="functionsmodel.cpp"/>
+      <File Name="functionsmodel.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
       <File Name="editorsettingslocalbase_formbuilder_bitmaps.cpp"/>
       <File Name="findinfiles_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="importfilesdialog_liteeditor_bitmaps.cpp"/>
+      <File Name="implfuncs_dlg_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
     <File Name="importfilesdialog.wxcp"/>
+    <File Name="implementparentvirtualfunctionsbase.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

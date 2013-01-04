@@ -64,7 +64,6 @@
 #include "buildtabsettingsdata.h"
 #include "singleinstancethreadjob.h"
 #include "refactorindexbuildjob.h"
-#include "customstatusbar.h"
 #include "jobqueue.h"
 #include "threebuttondlg.h"
 #include "acceltabledlg.h"

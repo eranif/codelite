@@ -90,6 +90,7 @@ static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString &relPath = 
 
 BuilderGnuMake::BuilderGnuMake()
     : Builder(wxT("GNU makefile for g++/gcc"), wxT("make"), wxT("-f"))
+    , m_objectChunks(1)
 {
 }
 
@@ -614,10 +615,10 @@ void BuilderGnuMake::CreateSrcList(ProjectPtr proj, const wxString &confToBuild,
 
 void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBuild, wxString &text)
 {
+    m_objectChunks = 1;
     std::vector<wxFileName> files;
     proj->GetFiles(files, true);
-    text << wxT("Objects=");
-
+    
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
 
@@ -629,21 +630,24 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
     wxString cwd = ::wxGetCwd();
 
     wxString objectsList;
-    for (size_t i=0; i<files.size(); i++) {
+    size_t objCounter = 0;
+    text << "Objects" << objCounter++ << "=";
+    for (size_t i=0; i<files.size(); ++i) {
+
+        if ( i && ((i % 100) == 0) ) {
+            text << "\n\n";
+            text << "Objects" << objCounter++ << "=";
+        }
 
         // is this a valid file?
-        if (!cmp->GetCmpFileType(files[i].GetExt(), ft))
+        if ( !cmp->GetCmpFileType(files[i].GetExt(), ft) )
             continue;
 
-        if ( ft.kind == Compiler::CmpFileKindResource ) {
-            // we are on Windows, the file type is Resource and resource compiler is not required
-#ifndef __WXMSW__            
+        if ( ft.kind == Compiler::CmpFileKindResource && !OS_WINDOWS) {
             continue;
-#endif            
         }
 
         wxString objPrefix = DoGetTargetPrefix(files.at(i), cwd, cmp);
-
         if (ft.kind == Compiler::CmpFileKindResource) {
             // resource files are handled differently
             text << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
@@ -656,7 +660,13 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
         }
         counter++;
     }
+    
+    text << "\n\nObjects=";
+    for(size_t i=0; i<objCounter; ++i) 
+        text << "$(Objects" << i << ") ";
+
     text << wxT("\n\n");
+    m_objectChunks = objCounter;
 }
 
 void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text)
@@ -972,9 +982,9 @@ void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldC
         wxFileName fn(depsProj.Item(i));
         CL_DEBUG(wxT("making %s relative to %s"), fn.GetFullPath().c_str(), proj->GetFileName().GetPath().c_str());
         fn.MakeRelativeTo(proj->GetFileName().GetPath());
-        extraDeps << fn.GetFullPath() << wxT(" ");
+        extraDeps << "\"" << fn.GetFullPath() << wxT("\" ");
 
-        depsRules << fn.GetFullPath() << wxT(":\n");
+        depsRules << "\"" << fn.GetFullPath() << wxT("\":\n");
         depsRules << wxT("\t@echo stam > ") << wxT("\"") << fn.GetFullPath() << wxT("\"\n");
         depsRules << wxT("\n\n");
     }
@@ -1017,7 +1027,12 @@ void BuilderGnuMake::CreateTargets(const wxString &type, BuildConfigPtr bldConf,
 
     // this is a special target that creates a file with the content of the
     // $(Objects) variable (to be used with the @<file-name> option of the LD
-    text << wxT("\t@echo $(Objects) > $(ObjectsFileList)\n");
+    for(size_t i=0; i<m_objectChunks; ++i) {
+        wxString oper = ">>";
+        if ( i == 0 ) oper = " >";
+        
+        text << "\t@echo $(Objects" << i << ") " << oper << " $(ObjectsFileList)\n";
+    }
 
     if (type == Project::STATIC_LIBRARY) {
         //create a static library
@@ -1800,23 +1815,23 @@ wxString BuilderGnuMake::DoGetMarkerFileDir(const wxString& projname, const wxSt
     wxString path;
     if(projname.IsEmpty()) {
         path << WorkspaceST::Get()->GetWorkspaceFileName().GetPath()
-             << wxFILE_SEP_PATH
+             << "/"
              << wxT(".build-")
              << workspaceSelConf;
 
     } else {
         path << WorkspaceST::Get()->GetWorkspaceFileName().GetPath()
-             << wxFILE_SEP_PATH
+             << "/"
              << wxT(".build-")
              << workspaceSelConf
-             << wxFILE_SEP_PATH
+             << "/"
              << projname;
     }
     
     if ( projectPath.IsEmpty() == false ) {
-        wxFileName fn(path, "");
+        wxFileName fn(path);
         fn.MakeRelativeTo(projectPath);
-        path = fn.GetFullPath();
+        path = fn.GetFullPath(wxPATH_UNIX);
     }
     
     if ( !projname.IsEmpty() )

@@ -128,7 +128,7 @@ public:
         wxVariant v;
         GetValue(v);
         wxString str = v.GetString();
-        str.Trim();
+        str.Trim().Trim(false);
         wxPoint pt = cell.GetTopLeft();
         wxFont f = m_font;
         bool isSelected = state & wxDATAVIEW_CELL_SELECTED;
@@ -175,6 +175,7 @@ public:
         }
 
         dc->SetFont(f);
+        str.Trim().Trim(false);
         dc->DrawText(str, pt);
         return true;
     }

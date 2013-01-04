@@ -6,6 +6,35 @@
 #include "cpp_comment_creator.h"
 #include "windowattrmanager.h"
 #include "context_cpp.h"
+#include <wx/settings.h>
+
+class ImplFuncModel : public FunctionsModel
+{
+public:
+    ImplFuncModel() {}
+    virtual ~ImplFuncModel() {}
+
+
+    virtual bool GetAttr(const wxDataViewItem &item,
+                         unsigned int col,
+                         wxDataViewItemAttr & attr) const
+    {
+        if ( col == 1 ) {
+            clFunctionImplDetails *cd = dynamic_cast<clFunctionImplDetails*>( GetClientObject(item));
+            if ( !cd->IsSelected() ) {
+                attr.SetColour( wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT ) );
+                attr.SetBold(false);
+
+            } else {
+                attr.SetBold(true);
+
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+};
 
 ImplementParentVirtualFunctionsDialog::ImplementParentVirtualFunctionsDialog( wxWindow* parent, const wxString &scopeName, const std::vector<TagEntryPtr> &tags, wxChar doxyPrefix, ContextCpp *contextCpp )
     : ImplementParentVirtualFunctionsBase(parent    )
@@ -14,6 +43,9 @@ ImplementParentVirtualFunctionsDialog::ImplementParentVirtualFunctionsDialog( wx
     , m_contextCpp                       (contextCpp)
     , m_scope                            (scopeName )
 {
+    m_dataviewModel = new ImplFuncModel();
+    m_dataview->AssociateModel( m_dataviewModel.get() );
+
     WindowAttrManager::Load(this, wxT("ImplementParentVirtualFunctionsDialog"), NULL);
     ImplParentVirtualFunctionsData data;
     EditorConfigST::Get()->ReadObject(wxT("ImplParentVirtualFunctionsData"), &data);
@@ -49,7 +81,7 @@ void ImplementParentVirtualFunctionsDialog::DoInitialize(bool updateDoxyOnly)
         cols.push_back(true);                    // generate it
         cols.push_back(m_tags.at(i)->GetDisplayName()); // function name
         cols.push_back("public");                // visibility
-        cols.push_back(false);                   // virtual
+        cols.push_back(true);                   // virtual
         cols.push_back(false);                   // doxy
 
         clFunctionImplDetails *cd = new clFunctionImplDetails();

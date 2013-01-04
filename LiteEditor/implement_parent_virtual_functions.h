@@ -21,8 +21,10 @@ protected:
     friend class ImplementParentVirtualFunctionsDialog;
 
 protected:
-    clFunctionImplDetails() : m_visibility("public"), m_prependVirtualKeyword(false), m_selected(true), m_doxygen(false) {}
+    clFunctionImplDetails() : m_visibility("public"), m_prependVirtualKeyword(true), m_selected(true), m_doxygen(false) {}
     virtual ~clFunctionImplDetails() {}
+    
+public:
     void SetTag(TagEntryPtr tag) {
         m_tag = tag;
     }

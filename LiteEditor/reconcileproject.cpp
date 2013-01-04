@@ -149,6 +149,11 @@ bool ReconcileProjectDlg::LoadData()
         DoFindFiles();
     }
 
+    if (m_newfiles.empty() && m_stalefiles.empty()) {
+        wxMessageBox(_("No new or stale files found. The project is up-to-date"), _("CodeLite"), wxICON_INFORMATION|wxOK, this);
+        return false;
+    }
+
     DistributeFiles(false);
     return true;
 }

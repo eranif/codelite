@@ -7,6 +7,8 @@
 #include <vector>
 #include "bitmap_loader.h"
 
+class VirtualDirectoryTree;
+
 class ReconcileProjectDlg : public ReconcileProjectDlgBaseClass
 {
 protected:
@@ -46,7 +48,7 @@ public:
      * \return success
      */
     bool LoadData();
-    void DistributeFiles();
+    void DistributeFiles(bool usingAutoallocate);
 
     /*!
      * \brief Removes StaleFiles from project
@@ -101,6 +103,28 @@ protected:
     virtual void OnRegexOKCancelUpdateUI(wxUpdateUIEvent& event);
 
     const wxString m_projname;
+};
+
+class VirtualDirectoryTree
+{
+    typedef std::deque<VirtualDirectoryTree*> dBranches;
+public:  
+    VirtualDirectoryTree() : m_parent(NULL) {}
+    VirtualDirectoryTree(const VirtualDirectoryTree* parent, const wxString& displayname, const wxString& vdPath)
+                                    : m_parent(parent), m_displayName(displayname), m_vdPath(vdPath){}
+    void BuildTree(const wxString& projName);
+    wxString FindBestMatchVDir(const wxString& path, const wxString& ext) const;
+    wxString GetDisplayname() const { return m_displayName; }
+    wxString GetVPath() const { return m_vdPath; }
+    
+protected:
+    VirtualDirectoryTree* FindParent(const wxString& vdChildPath); // Used by root in the initial construction of the tree
+    void StoreChild(const wxString& displayname, const wxString& vdPath);
+
+    dBranches m_children;
+    const VirtualDirectoryTree* m_parent;
+    wxString m_displayName;
+    wxString m_vdPath;
 };
 
 #endif

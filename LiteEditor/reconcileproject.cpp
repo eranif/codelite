@@ -17,6 +17,23 @@
 
 // ---------------------------------------------------------
 
+bool IsSourceVD(const wxString& name)
+{
+    return (name == "src" || name == "source" || name == "cpp" || name == "c" || name == "cc");
+}
+
+bool IsHeaderVD(const wxString& name)
+{
+    return (name == "include" || name == "includes" || name == "header" || name == "headers" || name == "hpp" || name == "h");
+}
+
+bool IsResourceVD(const wxString& name)
+{
+    return (name == "rc" || name == "resource" || name == "resources");
+}
+
+// ---------------------------------------------------------
+
 class ReconcileFileItemData : public wxClientData
 {
     wxString m_filename;
@@ -132,17 +149,21 @@ bool ReconcileProjectDlg::LoadData()
         DoFindFiles();
     }
 
-    DistributeFiles();
+    DistributeFiles(true);
     return true;
 }
 
-void ReconcileProjectDlg::DistributeFiles()
+void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
 {
+    VirtualDirectoryTree vdTree;
+    if (usingAutoallocate) {
+        vdTree.BuildTree(m_projname);
+    }
+    
     //---------------------------------------------------------
     // populate the 'new files' tab
     //---------------------------------------------------------
 
-    // Before processing the individual VDs, try using any regex as that'll be most likely to reflect the user's choice
     m_dataviewAssignedModel->Clear();
     m_dvListCtrl1Unassigned->DeleteAllItems();
 
@@ -152,22 +173,35 @@ void ReconcileProjectDlg::DistributeFiles()
         wxFileName fn(filename);
         fn.MakeRelativeTo(m_toplevelDir);
 
-        bool bFileMatchedRegex = false;
+        // Even without auto-allocation, apply any regex as that'll be most likely to reflect the user's choice
+        bool bFileAllocated = false;
         for (size_t i = 0; i < m_regexes.GetCount() ; ++i) {
             wxString virtualFolder(m_regexes.Item(i).BeforeFirst('|'));
             wxRegEx regex         (m_regexes.Item(i).AfterFirst('|'));
             if ( regex.IsValid() && regex.Matches( filename ) ) {
                 wxVector<wxVariant> cols;
-                cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename) ) );
+                cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename)) );
                 cols.push_back( virtualFolder );
-                ReconcileFileItemData *data = new ReconcileFileItemData(filename, virtualFolder );
+                ReconcileFileItemData *data = new ReconcileFileItemData(filename, virtualFolder);
                 m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
-                bFileMatchedRegex = true;
+                bFileAllocated = true;
                 break;
             }
         }
 
-        if ( !bFileMatchedRegex ) {
+        if (usingAutoallocate) {
+            wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+            if (!virtualFolder.empty()) {
+                wxVector<wxVariant> cols;
+                cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename)) );
+                cols.push_back( virtualFolder );
+                ReconcileFileItemData* data = new ReconcileFileItemData(filename, virtualFolder);
+                m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
+                bFileAllocated = true;
+            }
+        }
+
+        if ( !bFileAllocated ) {
             wxVector<wxVariant> cols;
             cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename) ) );
             m_dvListCtrl1Unassigned->AppendItem(cols, (wxUIntPtr)NULL);
@@ -182,7 +216,7 @@ void ReconcileProjectDlg::DistributeFiles()
     for(; staleIter != m_stalefiles.end(); ++staleIter) {
 
         wxVector<wxVariant> cols;
-        cols.push_back( ::MakeIconText(staleIter->GetFilename(), GetBitmap( staleIter->GetFilename() ) ) );
+        cols.push_back( ::MakeIconText(staleIter->GetFilename(), GetBitmap( staleIter->GetFilename() )) );
         m_dataviewStaleFilesModel->AppendItem( wxDataViewItem(0), cols, new ReconcileFileItemData(staleIter->GetFilename(), staleIter->GetVirtualFolder() ) );
     }
 }
@@ -630,4 +664,105 @@ void ReconcileByRegexDlg::OnVDBrowse(wxCommandEvent& WXUNUSED(event))
 void ReconcileByRegexDlg::OnRegexOKCancelUpdateUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlRegex->IsEmpty() && !m_textCtrlVirtualFolder->IsEmpty());
+}
+
+
+void VirtualDirectoryTree::BuildTree(const wxString& projName)
+{
+    ProjectPtr proj = ManagerST::Get()->GetProject(projName);
+    wxCHECK_RET(proj, "Can't find a Project with the supplied name");
+
+    ProjectTreePtr tree = proj->AsTree();
+    TreeWalker<wxString, ProjectItem> walker(tree->GetRoot());
+
+    for ( ; !walker.End(); walker++ ) {
+        ProjectTreeNode* node = walker.GetNode();
+        wxString displayname(node->GetData().GetDisplayName());
+        if (node->GetData().GetKind() == ProjectItem::TypeVirtualDirectory) {
+            wxString vdPath = displayname;
+            ProjectTreeNode* tempnode = node->GetParent();
+            while (tempnode) {
+                vdPath = tempnode->GetData().GetDisplayName() + ':' + vdPath;
+                tempnode = tempnode->GetParent();
+            }
+
+            VirtualDirectoryTree* parent = FindParent(vdPath.BeforeLast(':'));
+            if (parent) {
+                parent->StoreChild(displayname, vdPath);
+            } else {
+                // Any orphans must be root's top-level children, and we're root
+                StoreChild(displayname, vdPath);
+            }
+        }
+    }
+}
+
+VirtualDirectoryTree* VirtualDirectoryTree::FindParent(const wxString& vdChildPath)
+{
+    if (!vdChildPath.empty()) {
+        if (m_vdPath == vdChildPath) {
+            return this;
+        }
+        for (size_t n = 0; n < m_children.size(); ++n) {
+            VirtualDirectoryTree* item = m_children[n]->FindParent(vdChildPath);
+            if (item) {
+                return item;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+void VirtualDirectoryTree::StoreChild(const wxString& displayname, const wxString& vdPath)
+{
+    VirtualDirectoryTree* child = new VirtualDirectoryTree(this, displayname, vdPath);
+    if (IsSourceVD(displayname.Lower()) || IsHeaderVD(displayname.Lower()) || IsResourceVD(displayname.Lower())) {
+        m_children.push_back(child); // We want these processed last, so push_back
+    } else {
+        m_children.push_front(child);
+    }
+}
+
+wxString VirtualDirectoryTree::FindBestMatchVDir(const wxString& path, const wxString& ext) const
+{
+    // Try all children first
+    for (size_t n = 0; n < m_children.size(); ++n) {
+        wxString vdir = m_children[n]->FindBestMatchVDir(path, ext);
+        if (!vdir.empty()) {
+            return vdir;
+        }
+    }
+
+    // Now try here. If there's an exact match, we're the correct one _unless_ there's a src/header/resource immediate child
+    wxString vdpath(m_vdPath.AfterFirst(':')); // We need to compare without the projectname
+    vdpath.Replace(":", wxString(wxFILE_SEP_PATH));
+    if (vdpath == path) {
+        // Try for a src/header/etc immediate child. If there is one, it's presumably where files with a matching ext should go
+        for (size_t c = 0; c < m_children.size(); ++c) {
+            wxString childname = m_children[c]->GetDisplayname();
+            if (IsSourceVD(childname.Lower())) {
+                if (ext == "cpp" || ext == "c" || ext == "cc") {
+                    return m_children[c]->GetVPath();
+                }
+            }
+
+            if (IsHeaderVD(childname.Lower())) {
+                if (ext == "h" || ext == "hpp" || ext == "hh") {
+                    return m_children[c]->GetVPath();
+                }
+            }
+
+            if (IsResourceVD(childname.Lower())) {
+                if (ext == "rc") {
+                    return m_children[c]->GetVPath();
+                }
+            }
+        }
+
+        // None found so return us
+        return m_vdPath;
+    }
+    
+    return "";
 }

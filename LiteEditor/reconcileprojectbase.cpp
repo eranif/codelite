@@ -92,7 +92,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     boxSizer194->Add(m_bmpButtonRemove, 0, wxALL|wxEXPAND, 5);
     
     m_bmpButtonAutoAdd = new wxBitmapButton(m_splitterPage1, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("wand")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
-    m_bmpButtonAutoAdd->SetToolTip(_("Automatically add files"));
+    m_bmpButtonAutoAdd->SetToolTip(_("Wherever possible, automatically allocate files to the appropriate virtual directory"));
     
     boxSizer194->Add(m_bmpButtonAutoAdd, 0, wxALL|wxEXPAND, 5);
     
@@ -134,7 +134,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     m_banner272 = new wxBannerWindow(m_panel222, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner272->SetBitmap(wxNullBitmap);
-    m_banner272->SetText(_("Stale Files"), _("The below list contains files that exist on the project but not on the file system"));
+    m_banner272->SetText(_("Stale Files"), _("The list below contains files that exist on the project but not on the file system"));
     m_banner272->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_banner272->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     

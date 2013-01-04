@@ -813,7 +813,7 @@
 																								}, {
 																									"type":	"multi-string",
 																									"m_label":	"Tooltip:",
-																									"m_value":	"Automatically add files"
+																									"m_value":	"Wherever possible, automatically allocate files to the appropriate virtual directory"
 																								}, {
 																									"type":	"colour",
 																									"m_label":	"Bg Colour:",
@@ -1336,7 +1336,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Message:",
-															"m_value":	"The below list contains files that exist on the project but not on the file system"
+															"m_value":	"The list below contains files that exist on the project but not on the file system"
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",

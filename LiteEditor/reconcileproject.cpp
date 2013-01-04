@@ -149,7 +149,7 @@ bool ReconcileProjectDlg::LoadData()
         DoFindFiles();
     }
 
-    DistributeFiles(true);
+    DistributeFiles(false);
     return true;
 }
 
@@ -357,7 +357,7 @@ void ReconcileProjectDlg::OnAutoAssignUI(wxUpdateUIEvent& event)
 
 void ReconcileProjectDlg::OnAutoSuggest(wxCommandEvent& event)
 {
-    wxMessageBox("Not implemented yet!");
+    DistributeFiles(true);
 }
 
 void ReconcileProjectDlg::OnUndoSelectedFiles(wxCommandEvent& event)

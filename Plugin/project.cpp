@@ -1343,7 +1343,7 @@ wxString Project::GetProjectIconName() const
     return m_doc.GetRoot()->GetPropVal(wxT("IconIndex"), "gear16");
 }
 
-void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& excludePaths, wxArrayString& regexes)
+void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles, wxArrayString& excludePaths, wxArrayString& regexes)
 {
     if (!m_doc.IsOk()) {
         return;
@@ -1365,6 +1365,11 @@ void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions,
         extensions = extnode->GetNodeContent().Trim().Trim(false);
     }
 
+    wxXmlNode* ignorefilesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Ignorefiles"));
+    if (ignorefilesnode) {
+        ignoreFiles = XmlUtils::ChildNodesContentToArray(ignorefilesnode, "File");
+    }
+
     wxXmlNode* excludesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Excludepaths"));
     if (excludesnode) {
         excludePaths = XmlUtils::ChildNodesContentToArray(excludesnode, "Path");
@@ -1376,7 +1381,7 @@ void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions,
     }
 }
 
-void Project::SetReconciliationData(const wxString& toplevelDir, const wxString& extensions, const wxArrayString& excludePaths, wxArrayString& regexes)
+void Project::SetReconciliationData(const wxString& toplevelDir, const wxString& extensions, const wxArrayString& ignoreFiles, const wxArrayString& excludePaths, wxArrayString& regexes)
 {
     if (!m_doc.IsOk()) {
         return;
@@ -1401,13 +1406,25 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
     tmpData.Trim().Trim(false);
     XmlUtils::SetCDATANodeContent(extsnode, tmpData);
 
+    wxXmlNode* ignorefilesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Ignorefiles"));
+    if (!ignorefilesnode) {
+        ignorefilesnode = new wxXmlNode(reconciliation, wxXML_ELEMENT_NODE, wxT("Ignorefiles"));
+    } else {
+        XmlUtils::RemoveChildren(ignorefilesnode);
+    }
+
+    for (size_t n = 0; n < ignoreFiles.GetCount(); ++n) {
+        wxXmlNode* pathnode = new wxXmlNode(ignorefilesnode, wxXML_ELEMENT_NODE, "File");
+        XmlUtils::SetNodeContent(pathnode, ignoreFiles.Item(n));
+    }
+
     wxXmlNode* excludesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Excludepaths"));
     if (!excludesnode) {
         excludesnode = new wxXmlNode(reconciliation, wxXML_ELEMENT_NODE, wxT("Excludepaths"));
     } else {
         XmlUtils::RemoveChildren(excludesnode);
     }
-        
+
     for (size_t n = 0; n < excludePaths.GetCount(); ++n) {
         wxXmlNode* pathnode = new wxXmlNode(excludesnode, wxXML_ELEMENT_NODE, "Path");
         XmlUtils::SetNodeContent(pathnode, excludePaths.Item(n));

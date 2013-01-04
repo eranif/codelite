@@ -261,6 +261,38 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     
     boxSizer16016->Add(m_textExtensions, 0, wxALL|wxEXPAND, 5);
     
+    wxFlexGridSizer* flexGridSizer11517115 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer11517115->SetFlexibleDirection( wxBOTH );
+    flexGridSizer11517115->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer11517115->AddGrowableCol(0);
+    flexGridSizer11517115->AddGrowableRow(1);
+    
+    boxSizer114->Add(flexGridSizer11517115, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText11618216 = new wxStaticText(this, wxID_ANY, _("Files to ignore:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer11517115->Add(m_staticText11618216, 0, wxALL, 5);
+    
+    flexGridSizer11517115->Add(0, 0, 0, wxALL, 5);
+    
+    wxArrayString m_listIgnoreFilesArr;
+    m_listIgnoreFiles = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listIgnoreFilesArr, wxLB_SINGLE);
+    m_listIgnoreFiles->SetToolTip(_("Here you can add the names of any files that you want to ignore. Standard wildcards will work e.g. moc_*"));
+    
+    flexGridSizer11517115->Add(m_listIgnoreFiles, 1, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer124519 = new wxBoxSizer(wxVERTICAL);
+    
+    flexGridSizer11517115->Add(boxSizer124519, 1, wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    
+    m_button11921620 = new wxButton(this, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer124519->Add(m_button11921620, 0, wxALL|wxEXPAND, 5);
+    
+    m_button125721 = new wxButton(this, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer124519->Add(m_button125721, 0, wxALL|wxEXPAND, 5);
+    
     wxFlexGridSizer* flexGridSizer11517 = new wxFlexGridSizer(  2, 2, 0, 0);
     flexGridSizer11517->SetFlexibleDirection( wxBOTH );
     flexGridSizer11517->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -287,7 +319,7 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     
     m_button11921 = new wxButton(this, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer124->Add(m_button11921, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer124->Add(m_button11921, 0, wxALL|wxEXPAND, 5);
     
     m_button125 = new wxButton(this, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -318,7 +350,7 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     
     m_button119216 = new wxButton(this, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer1245->Add(m_button119216, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer1245->Add(m_button119216, 0, wxALL|wxEXPAND, 5);
     
     m_button1257 = new wxButton(this, wxID_ANY, _("Remove"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -343,6 +375,9 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     }
     Centre(wxBOTH);
     // Connect events
+    m_button11921620->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreFileBrowse), NULL, this);
+    m_button125721->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreFileRemove), NULL, this);
+    m_button125721->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreFileRemoveUpdateUI), NULL, this);
     m_button11921->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreBrowse), NULL, this);
     m_button125->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreRemove), NULL, this);
     m_button125->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreRemoveUpdateUI), NULL, this);
@@ -354,6 +389,9 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
 
 ReconcileProjectFiletypesDlgBaseClass::~ReconcileProjectFiletypesDlgBaseClass()
 {
+    m_button11921620->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreFileBrowse), NULL, this);
+    m_button125721->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreFileRemove), NULL, this);
+    m_button125721->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreFileRemoveUpdateUI), NULL, this);
     m_button11921->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreBrowse), NULL, this);
     m_button125->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreRemove), NULL, this);
     m_button125->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectFiletypesDlgBaseClass::OnIgnoreRemoveUpdateUI), NULL, this);

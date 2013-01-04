@@ -74,16 +74,19 @@ public:
     virtual ~ReconcileProjectFiletypesDlg();
 
     void SetData();
-    void GetData(wxString& toplevelDir, wxString& types, wxArrayString& excludePaths, wxArrayString& regexes) const;
+    void GetData(wxString& toplevelDir, wxString& types, wxArrayString& ignoreFiles, wxArrayString& excludePaths, wxArrayString& regexes) const;
 
 protected:
     void SetRegex(const wxString& regex);   // Takes a VD|regex string, splits and inserts into listctrl cols
     wxArrayString GetRegexes() const;       // Extracts the regex and VD data from listctrl, joins each to VD|regex string, and puts in arraystring
     virtual void OnIgnoreBrowse(wxCommandEvent& event);
     virtual void OnIgnoreRemove(wxCommandEvent& event);
+    virtual void OnIgnoreFileBrowse(wxCommandEvent& event);
+    virtual void OnIgnoreFileRemove(wxCommandEvent& event);
     virtual void OnAddRegex(wxCommandEvent& event);
     virtual void OnRemoveRegex(wxCommandEvent& event);
     virtual void OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnIgnoreFileRemoveUpdateUI(wxUpdateUIEvent& event);
     virtual void OnRemoveRegexUpdateUI(wxUpdateUIEvent& event);
 
     const wxString m_projname;

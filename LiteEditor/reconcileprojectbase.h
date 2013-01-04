@@ -82,6 +82,10 @@ protected:
     wxDirPickerCtrl* m_dirPickerToplevel;
     wxStaticText* m_staticText11617;
     wxTextCtrl* m_textExtensions;
+    wxStaticText* m_staticText11618216;
+    wxListBox* m_listIgnoreFiles;
+    wxButton* m_button11921620;
+    wxButton* m_button125721;
     wxStaticText* m_staticText11618;
     wxListBox* m_listExclude;
     wxButton* m_button11921;
@@ -95,6 +99,9 @@ protected:
     wxButton* m_button122;
 
 protected:
+    virtual void OnIgnoreFileBrowse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnIgnoreFileRemove(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnIgnoreFileRemoveUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnIgnoreBrowse(wxCommandEvent& event) { event.Skip(); }
     virtual void OnIgnoreRemove(wxCommandEvent& event) { event.Skip(); }
     virtual void OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }

@@ -62,15 +62,24 @@ public:
 class FindFilesTraverser : public wxDirTraverser
 {
 public:
-    FindFilesTraverser(const wxString types, const wxArrayString& excludes, const wxString& projFP) : m_excludes(excludes), m_projFP(projFP) {
+    FindFilesTraverser(const wxString types, const wxArrayString& ignorefiles, const wxArrayString& excludes, const wxString& projFP)
+                                        : m_ignorefiles(ignorefiles), m_excludes(excludes), m_projFP(projFP) {
         m_types = wxStringTokenize(types, ";,|"); // The tooltip says use ';' but cover all bases
     }
 
     virtual wxDirTraverseResult OnFile(const wxString& filename) {
+        wxFileName fn(filename);
+
+        // First check for a matching file-ignore
+        for (size_t n = 0; n < m_ignorefiles.GetCount(); ++n){
+            if (wxMatchWild(m_ignorefiles.Item(n), fn.GetFullName())) {
+                return wxDIR_CONTINUE;
+            }
+        }
+
         if (m_types.empty()) {
             m_results.Add(filename); // No types presumably means everything
         } else {
-            wxFileName fn(filename);
             for (size_t n = 0; n < m_types.GetCount(); ++n) {
                 if (m_types.Item(n) == fn.GetExt() || m_types.Item(n) == "*" || m_types.Item(n) == "*.*") { // Other ways to say "Be greedy"
                     m_results.Add(fn.GetFullPath());
@@ -98,6 +107,7 @@ public:
 private:
     wxArrayString m_types;
     wxArrayString m_results;
+    const wxArrayString m_ignorefiles;
     const wxArrayString m_excludes;
     const wxString m_projFP;
 };
@@ -127,8 +137,8 @@ bool ReconcileProjectDlg::LoadData()
         return false;
     }
     wxString toplevelDir, types;
-    wxArrayString excludes, regexes;
-    dlg.GetData(toplevelDir, types, excludes, regexes);
+    wxArrayString ignorefiles, excludes, regexes;
+    dlg.GetData(toplevelDir, types, ignorefiles, excludes, regexes);
     m_regexes = regexes;
 
     wxDir dir(toplevelDir);
@@ -143,7 +153,7 @@ bool ReconcileProjectDlg::LoadData()
         wxBusyInfo wait("Searching for files...", this);
         wxSafeYield();
 
-        FindFilesTraverser traverser(types, excludes, toplevelDir);
+        FindFilesTraverser traverser(types, ignorefiles, excludes, toplevelDir);
         dir.Traverse(traverser);
         m_allfiles.insert(traverser.GetResults().begin(), traverser.GetResults().end());
         DoFindFiles();
@@ -526,8 +536,8 @@ void ReconcileProjectFiletypesDlg::SetData()
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
 
     wxString topleveldir, types;
-    wxArrayString excludes, regexes;
-    proj->GetReconciliationData(topleveldir, types, excludes, regexes);
+    wxArrayString ignorefiles, excludes, regexes;
+    proj->GetReconciliationData(topleveldir, types, ignorefiles, excludes, regexes);
 
     if (topleveldir.empty()) {
         topleveldir = proj->GetFileName().GetPath();
@@ -543,6 +553,9 @@ void ReconcileProjectFiletypesDlg::SetData()
     }
     m_textExtensions->ChangeValue(types);
 
+    m_listIgnoreFiles->Clear();
+    m_listIgnoreFiles->Append(ignorefiles);
+
     m_listExclude->Clear();
     m_listExclude->Append(excludes);
 
@@ -552,10 +565,11 @@ void ReconcileProjectFiletypesDlg::SetData()
     }
 }
 
-void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& types, wxArrayString& excludePaths, wxArrayString& regexes) const
+void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& types, wxArrayString& ignoreFiles, wxArrayString& excludePaths, wxArrayString& regexes) const
 {
     toplevelDir = m_dirPickerToplevel->GetPath();
     types = m_textExtensions->GetValue();
+    ignoreFiles = m_listIgnoreFiles->GetStrings();
     excludePaths = m_listExclude->GetStrings();
     regexes = GetRegexes();
 
@@ -568,7 +582,7 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
         relTopLevelDir.MakeRelativeTo( proj->GetFileName().GetPath() );
     }
     
-    proj->SetReconciliationData(relTopLevelDir.GetFullPath(wxPATH_UNIX), types, excludePaths, regexes);
+    proj->SetReconciliationData(relTopLevelDir.GetFullPath(wxPATH_UNIX), types, ignoreFiles, excludePaths, regexes);
 }
 
 void ReconcileProjectFiletypesDlg::SetRegex(const wxString& regex)
@@ -596,8 +610,8 @@ void ReconcileProjectFiletypesDlg::OnIgnoreBrowse(wxCommandEvent& WXUNUSED(event
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
 
     wxString topleveldir, types;
-    wxArrayString excludes, regexes;
-    proj->GetReconciliationData(topleveldir, types, excludes, regexes);
+    wxArrayString ignorefiles, excludes, regexes;
+    proj->GetReconciliationData(topleveldir, types, ignorefiles, excludes, regexes);
 
     if (topleveldir.empty()) {
         topleveldir = proj->GetFileName().GetPath();
@@ -631,6 +645,29 @@ void ReconcileProjectFiletypesDlg::OnIgnoreRemove(wxCommandEvent& WXUNUSED(event
 void ReconcileProjectFiletypesDlg::OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_listExclude->GetSelection() != wxNOT_FOUND);
+}
+
+void ReconcileProjectFiletypesDlg::OnIgnoreFileBrowse(wxCommandEvent& WXUNUSED(event))
+{
+    wxString name = wxGetTextFromUser("Enter the filename to ignore e.g. foo*.cpp", _("CodeLite"), "", this);
+    if (!name.empty()) {
+        if (m_listIgnoreFiles->FindString(name) == wxNOT_FOUND) {
+            m_listIgnoreFiles->Append(name);
+        }
+    }
+}
+
+void ReconcileProjectFiletypesDlg::OnIgnoreFileRemove(wxCommandEvent& WXUNUSED(event))
+{
+    int sel = m_listIgnoreFiles->GetSelection();
+    if (sel != wxNOT_FOUND) {
+        m_listIgnoreFiles->Delete(sel);
+    }
+}
+
+void ReconcileProjectFiletypesDlg::OnIgnoreFileRemoveUpdateUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_listIgnoreFiles->GetSelection() != wxNOT_FOUND);
 }
 
 void ReconcileProjectFiletypesDlg::OnAddRegex(wxCommandEvent& event)

@@ -407,14 +407,14 @@ public:
     void SetGlobalSettings(BuildConfigCommonPtr settings);
 
     /**
-     * Get the project's file toplevel directory, extensions, exclude paths and regexes for use when reconciling with filesystem reality
+     * Get the project's file toplevel directory, extensions, ignorefiles, exclude paths and regexes for use when reconciling with filesystem reality
      */
-    void GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& excludePaths, wxArrayString& regexes);
+    void GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles, wxArrayString& excludePaths, wxArrayString& regexes);
 
     /**
-     * Set the project's file toplevel directory, extensions, exclude paths and regexes for use when reconciling with filesystem reality
+     * Set the project's file toplevel directory, extensions, ignorefiles, exclude paths and regexes for use when reconciling with filesystem reality
      */
-    void SetReconciliationData(const wxString& toplevelDir, const wxString& extensions, const wxArrayString& excludePaths, wxArrayString& regexes);
+    void SetReconciliationData(const wxString& toplevelDir, const wxString& extensions, const wxArrayString& ignoreFiles, const wxArrayString& excludePaths, wxArrayString& regexes);
     //-----------------------------------
     // visual operations
     //-----------------------------------

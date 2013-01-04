@@ -44,12 +44,14 @@ protected:
     wxObjectDataPtr<AssignedFilesModel> m_dataviewAssignedModel;
 
     wxButton* m_button274;
+    wxButton* m_button280;
     wxPanel* m_panel222;
     wxBannerWindow* m_banner272;
     wxDataViewCtrl* m_dataviewStaleFiles;
     wxObjectDataPtr<StaleFilesModel> m_dataviewStaleFilesModel;
 
     wxButton* m_button266;
+    wxButton* m_button282;
     wxButton* m_button258;
 
 protected:
@@ -61,8 +63,10 @@ protected:
     virtual void OnAutoAssignUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
     virtual void OnApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnApplyAllUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDeleteStaleFiles(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteStaleFilesUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDeleteAllStaleFilesUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
 
 public:

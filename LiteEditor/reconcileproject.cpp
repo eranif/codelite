@@ -419,7 +419,11 @@ void ReconcileProjectDlg::OnDeleteStaleFiles(wxCommandEvent& event)
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
 
     wxDataViewItemArray items;
-    m_dataviewStaleFiles->GetSelections( items );
+    if (event.GetId() == wxID_DELETE) {
+        m_dataviewStaleFiles->GetSelections( items );
+    } else {
+        m_dataviewStaleFilesModel->GetChildren(wxDataViewItem(0), items);
+    }
     
     proj->BeginTranscation();
     for(size_t i=0; i<items.GetCount(); ++i) {
@@ -438,6 +442,12 @@ void ReconcileProjectDlg::OnDeleteStaleFilesUI(wxUpdateUIEvent& event)
     event.Enable( m_dataviewStaleFiles->GetSelectedItemsCount() );
 }
 
+void ReconcileProjectDlg::OnDeleteAllStaleFilesUI(wxUpdateUIEvent& event)
+{
+    wxDataViewItemArray items;
+    event.Enable( m_dataviewStaleFilesModel->GetChildren(wxDataViewItem(0), items) > 0 );
+}
+
 void ReconcileProjectDlg::OnClose(wxCommandEvent& event)
 {
     // reload the workspace
@@ -453,7 +463,11 @@ void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
 {
     // get the list of files to add to the project
     wxDataViewItemArray items;
-    m_dataviewAssignedModel->GetChildren(wxDataViewItem(0), items);
+    if (event.GetId() == wxID_APPLY) {
+        m_dataviewAssigned->GetSelections( items );
+    } else {
+        m_dataviewAssignedModel->GetChildren(wxDataViewItem(0), items);
+    }
 
     // virtual folder to file name
     wxStringSet_t vds;
@@ -483,6 +497,12 @@ void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
 void ReconcileProjectDlg::OnApplyUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_dataviewAssigned->GetSelectedItemsCount() );
+}
+
+void ReconcileProjectDlg::OnApplyAllUI(wxUpdateUIEvent& event)
+{
+    wxDataViewItemArray items;
+    event.Enable( m_dataviewAssignedModel->GetChildren(wxDataViewItem(0), items) > 0 );
 }
 
 ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, const wxString& projname)

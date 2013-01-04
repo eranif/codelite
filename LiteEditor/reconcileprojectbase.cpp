@@ -126,6 +126,10 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     boxSizer278->Add(m_button274, 0, wxALL|wxEXPAND, 5);
     
+    m_button280 = new wxButton(m_panel220, wxID_ANY, _("A&pply All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer278->Add(m_button280, 0, wxALL|wxEXPAND, 5);
+    
     m_panel222 = new wxPanel(m_notebook214, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook214->AddPage(m_panel222, _("Stale Files"), false);
     
@@ -159,7 +163,11 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     m_button266 = new wxButton(m_panel222, wxID_DELETE, _("&Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer264->Add(m_button266, 0, wxEXPAND, 5);
+    boxSizer264->Add(m_button266, 0, wxALL|wxEXPAND, 5);
+    
+    m_button282 = new wxButton(m_panel222, wxID_ANY, _("Delete &All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer264->Add(m_button282, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer252 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -185,8 +193,12 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     m_bmpButtonAutoAdd->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAutoAssignUI), NULL, this);
     m_button274->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnApply), NULL, this);
     m_button274->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnApplyUI), NULL, this);
+    m_button280->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnApply), NULL, this);
+    m_button280->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnApplyAllUI), NULL, this);
     m_button266->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFiles), NULL, this);
     m_button266->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFilesUI), NULL, this);
+    m_button282->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFiles), NULL, this);
+    m_button282->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnDeleteAllStaleFilesUI), NULL, this);
     m_button258->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnClose), NULL, this);
     
 }
@@ -201,8 +213,12 @@ ReconcileProjectDlgBaseClass::~ReconcileProjectDlgBaseClass()
     m_bmpButtonAutoAdd->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnAutoAssignUI), NULL, this);
     m_button274->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnApply), NULL, this);
     m_button274->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnApplyUI), NULL, this);
+    m_button280->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnApply), NULL, this);
+    m_button280->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnApplyAllUI), NULL, this);
     m_button266->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFiles), NULL, this);
     m_button266->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFilesUI), NULL, this);
+    m_button282->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnDeleteStaleFiles), NULL, this);
+    m_button282->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ReconcileProjectDlgBaseClass::OnDeleteAllStaleFilesUI), NULL, this);
     m_button258->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ReconcileProjectDlgBaseClass::OnClose), NULL, this);
     
 }

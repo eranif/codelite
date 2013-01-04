@@ -14,9 +14,11 @@ class ReconcileProjectDlg : public ReconcileProjectDlgBaseClass
 protected:
     virtual void OnApply(wxCommandEvent& event);
     virtual void OnApplyUI(wxUpdateUIEvent& event);
+    virtual void OnApplyAllUI(wxUpdateUIEvent& event);
     virtual void OnClose(wxCommandEvent& event);
     virtual void OnDeleteStaleFiles(wxCommandEvent& event);
     virtual void OnDeleteStaleFilesUI(wxUpdateUIEvent& event);
+    virtual void OnDeleteAllStaleFilesUI(wxUpdateUIEvent& event);
     virtual void OnAddFile(wxCommandEvent& event);
     virtual void OnAddFileUI(wxUpdateUIEvent& event);
     virtual void OnAutoAssignUI(wxUpdateUIEvent& event);

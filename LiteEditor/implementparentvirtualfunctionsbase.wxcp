@@ -1,6 +1,6 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"C:\\src\\codelite\\LiteEditor",
+		"m_generatedFilesDir":	".",
 		"m_objCounter":	2,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCA6AAInitBitmapResources",
@@ -264,7 +264,7 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
-									"m_value":	"Select which function to generate by ticking the '?' column\\nAll fields on this table are ediable\\n"
+									"m_value":	"Select which function to generate by ticking the '?' column\\nAll fields on this table are editable"
 								}, {
 									"type":	"colour",
 									"m_label":	"Bg Colour:",
@@ -464,7 +464,7 @@
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"Doxygen"
+											"m_value":	"Generate doxygen comment?"
 										}, {
 											"type":	"string",
 											"m_label":	"Width:",

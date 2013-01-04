@@ -38,7 +38,7 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase(wxWindo
     bSizer4->Add(m_textCtrlImplFile, 1, wxALL|wxEXPAND, 5);
     
     m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_HORIZ_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
-    m_dataview->SetToolTip(_("Select which function to generate by ticking the '?' column\nAll fields on this table are ediable\n"));
+    m_dataview->SetToolTip(_("Select which function to generate by ticking the '?' column\nAll fields on this table are editable"));
     
     m_dataviewModel = new FunctionsModel;
     m_dataviewModel->SetColCount( 5 );
@@ -57,7 +57,7 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase(wxWindo
     }
     
     m_dataview->AppendToggleColumn(_("Virtual"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
-    m_dataview->AppendToggleColumn(_("Doxygen"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
+    m_dataview->AppendToggleColumn(_("Generate doxygen comment?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
     wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Options:")), wxVERTICAL);
     
     mainSizer->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);

@@ -40,9 +40,9 @@ void wxCA6AAInitBitmapResources()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/implfuncs_dlg_bitmaps.cpp$._implfuncs_dlg_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/implfuncs_dlg_bitmaps.cpp$._implfuncs_dlg_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/implfuncs_dlg_bitmaps.cpp$implfuncs_dlg_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/implfuncs_dlg_bitmaps.cpp$implfuncs_dlg_bitmaps.xrc"));
 }

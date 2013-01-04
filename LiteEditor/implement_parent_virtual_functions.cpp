@@ -47,7 +47,7 @@ void ImplementParentVirtualFunctionsDialog::DoInitialize(bool updateDoxyOnly)
     for (size_t i=0; i<m_tags.size(); ++i) {
         cols.clear();
         cols.push_back(true);                    // generate it
-        cols.push_back(m_tags.at(i)->GetName()); // function name
+        cols.push_back(m_tags.at(i)->GetDisplayName()); // function name
         cols.push_back("public");                // visibility
         cols.push_back(false);                   // virtual
         cols.push_back(false);                   // doxy

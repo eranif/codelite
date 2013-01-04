@@ -166,13 +166,13 @@ void wxCrafterjdrz3kInitBitmapResources()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_back.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_forward.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$.._icons_wand.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$.._.._wxcrafter_resources_wxdirpickerctrl.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$reconcileproject_liteeditor_bitmaps.xrc"), xml_res_file_4, xml_res_size_4, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$reconcileproject_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$._reconcileproject_liteeditor_bitmaps.xrc"), xml_res_file_4, xml_res_size_4, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/reconcileproject_liteeditor_bitmaps.cpp$._reconcileproject_liteeditor_bitmaps.xrc"));
 }

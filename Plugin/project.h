@@ -41,6 +41,7 @@
 #include <set>
 #include <vector>
 #include <queue>
+#include "macros.h"
 
 struct VisualWorkspaceNode {
     wxString name;
@@ -145,7 +146,6 @@ class Workspace;
 typedef SmartPtr<Project>       ProjectPtr;
 typedef std::set<wxFileName>    FileNameSet_t;
 typedef std::vector<wxFileName> FileNameVector_t;
-typedef std::set<wxString>      StringSet_t;
 
 /**
  * \ingroup LiteEditor
@@ -372,14 +372,14 @@ public:
     /**
      * @brief return a filename set of all the project files (in absolute paths)
      */
-    void GetFiles(StringSet_t& files);
+    void GetFiles(wxStringSet_t& files);
 
     /**
      * @brief return a relative filename set of all the project files
      * \param files the set in which to return the paths
      * \param relativePath the path to which to make-relative
      */
-    void GetFiles(StringSet_t& files, const wxString& relativePath);
+    void GetFiles(wxStringSet_t& files, const wxString& relativePath);
 
     /**
      * Return a node pointing to any project-wide editor preferences

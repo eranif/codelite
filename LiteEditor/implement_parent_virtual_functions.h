@@ -14,24 +14,24 @@ class ContextCpp;
 /** Implementing ImplementParentVirtualFunctionsBase */
 class ImplementParentVirtualFunctionsDialog : public ImplementParentVirtualFunctionsBase
 {
-	std::vector<TagEntryPtr> m_tags;
-	wxChar                   m_doxyPrefix;
-	ContextCpp*              m_contextCpp;
-	wxString                 m_scope;
+    std::vector<TagEntryPtr> m_tags;
+    wxChar                   m_doxyPrefix;
+    ContextCpp*              m_contextCpp;
+    wxString                 m_scope;
 protected:
-	void OnAddDoxy  (wxCommandEvent &event);
-	void OnAddVirtual( wxCommandEvent& event );
+    void OnAddDoxy  (wxCommandEvent &event);
+    void OnAddVirtual( wxCommandEvent& event );
 
 
 protected:
-	void DoInitialize(bool updateDoxyOnly);
+    void DoInitialize(bool updateDoxyOnly);
 public:
-	/** Constructor */
-	ImplementParentVirtualFunctionsDialog(wxWindow* parent, const wxString &scopeName, const std::vector<TagEntryPtr> &tags, wxChar doxyPrefix /* @ or \\ */, ContextCpp *contextCpp);
-	virtual ~ImplementParentVirtualFunctionsDialog();
+    /** Constructor */
+    ImplementParentVirtualFunctionsDialog(wxWindow* parent, const wxString &scopeName, const std::vector<TagEntryPtr> &tags, wxChar doxyPrefix /* @ or \\ */, ContextCpp *contextCpp);
+    virtual ~ImplementParentVirtualFunctionsDialog();
 
-	wxString GetDecl();
-	wxString GetImpl();
+    wxString GetDecl();
+    wxString GetImpl();
 };
 
 #endif // __implement_parent_virtual_functions__

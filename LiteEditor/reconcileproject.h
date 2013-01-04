@@ -26,9 +26,9 @@ protected:
 
     wxString      m_projname;
     wxArrayString m_regexes;
-    StringSet_t   m_newfiles;
+    wxStringSet_t   m_newfiles;
     Project::FileInfoList_t m_stalefiles;
-    StringSet_t   m_allfiles;
+    wxStringSet_t   m_allfiles;
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxString      m_toplevelDir;
     bool          m_projectModified;

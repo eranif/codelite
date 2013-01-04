@@ -61,6 +61,7 @@
 #include "build_custom_targets_menu_manager.h"
 #include "ImportFilesDialogNew.h"
 #include "project.h"
+#include "macros.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -1567,7 +1568,7 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
     ProjectPtr proj = ManagerST::Get()->GetProject( project );
 
     bool              extlessFiles(false);
-    wxArrayString     dirs;
+    wxStringBoolMap_t dirs;
     wxArrayString     files;
     wxArrayString     all_files;
     wxString          filespec;
@@ -1580,15 +1581,16 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
     extlessFiles = dlg.ExtlessFiles();
     dlg.GetDirectories( dirs );
     filespec = dlg.GetFileMask();
-    std::sort(dirs.begin(), dirs.end());
     
     // get list of all files based on the checked directories
-    for(size_t i=0; i<dirs.GetCount(); ++i) {
-        wxDir::GetAllFiles(dirs.Item(i), &all_files, "", wxDIR_FILES);
+    wxStringBoolMap_t::const_iterator iter = dirs.begin();
+    for(; iter != dirs.end(); ++iter) {
+        int flags = iter->second ? (wxDIR_FILES | wxDIR_DIRS) : (wxDIR_FILES);
+        wxDir::GetAllFiles(iter->first, &all_files, "", flags);
     }
 
     wxStringTokenizer tok(filespec, wxT(";"));
-    StringSet_t specMap;
+    wxStringSet_t specMap;
     while ( tok.HasMoreTokens() ) {
         wxString v = tok.GetNextToken();
         // Cater for *.*, and also for idiots asking for *.foo;*.*
@@ -1602,14 +1604,10 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
         specMap.insert( v );
     }
 
-    //filter non interesting files
+    // filter non interesting files
     for (size_t i=0; i<all_files.GetCount(); i++) {
         wxFileName fn(all_files.Item(i));
-
-        if (dirs.Index(fn.GetPath()) == wxNOT_FOUND) {
-            continue;
-        }
-
+        
         /* always excluded by default */
         const wxArrayString &dirs = fn.GetDirs();
         bool cont = true;

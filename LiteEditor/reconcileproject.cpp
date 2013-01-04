@@ -167,7 +167,7 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
     m_dataviewAssignedModel->Clear();
     m_dvListCtrl1Unassigned->DeleteAllItems();
 
-    StringSet_t::const_iterator iter = m_newfiles.begin();
+    wxStringSet_t::const_iterator iter = m_newfiles.begin();
     for (; iter != m_newfiles.end(); ++iter) {
         wxString filename = *iter;
         wxFileName fn(filename);
@@ -284,7 +284,7 @@ void ReconcileProjectDlg::DoFindFiles()
     // get list of files from the project
     Project::FileInfoList_t projectfiles;
     proj->GetFilesMetadata(projectfiles);
-    StringSet_t projectfilesSet;
+    wxStringSet_t projectfilesSet;
     
     Project::FileInfoList_t::const_iterator it = projectfiles.begin();
     for( ; it != projectfiles.end(); ++it ) {
@@ -451,7 +451,7 @@ void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
     m_dataviewAssignedModel->GetChildren(wxDataViewItem(0), items);
 
     // virtual folder to file name
-    StringSet_t vds;
+    wxStringSet_t vds;
     StringMultimap_t filesToAdd;
     for(size_t i=0; i<items.GetCount(); ++i) {
         ReconcileFileItemData* data =  dynamic_cast<ReconcileFileItemData*>(m_dataviewAssignedModel->GetClientObject(items.Item(i)));
@@ -461,7 +461,7 @@ void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
         }
     }
 
-    StringSet_t::const_iterator iter = vds.begin();
+    wxStringSet_t::const_iterator iter = vds.begin();
     for(; iter != vds.end(); ++iter) {
         std::pair<StringMultimap_t::iterator, StringMultimap_t::iterator> range = filesToAdd.equal_range( *iter );
         StringMultimap_t::iterator from = range.first;

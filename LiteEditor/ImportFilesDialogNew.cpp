@@ -180,7 +180,7 @@ void ImportFilesDialogNew::DoCheckChildren(const wxDataViewItem& parent, bool ch
             m_dataviewModel->SetValue(wxVariant( check ), item, 1);
 
             // Update the client data
-            ImportFilesDlgData *cd = reinterpret_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(item));
+            ImportFilesDlgData *cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(item));
             if ( cd ) {
                 cd->SetIsChecked( check );
             }
@@ -200,9 +200,9 @@ void ImportFilesDialogNew::OnItemExpanding(wxDataViewEvent& event)
     wxDataViewItemArray children;
     if ( m_dataviewModel->GetChildren(event.GetItem(), children) ) {
         wxDataViewItem child = children.Item(0);
-        ImportFilesDlgData *cd = reinterpret_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
+        ImportFilesDlgData *cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
         if ( cd && cd->IsDummy() ) {
-            cd = reinterpret_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(event.GetItem()));
+            cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(event.GetItem()));
             m_dataviewModel->DeleteItem( child );
             wxDir dir ( cd->GetPath() );
             DoBuildTree( event.GetItem(), dir, cd->IsChecked() );
@@ -210,31 +210,44 @@ void ImportFilesDialogNew::OnItemExpanding(wxDataViewEvent& event)
     }
 }
 
-void ImportFilesDialogNew::GetDirectories(wxArrayString& dirs)
+void ImportFilesDialogNew::GetDirectories(wxStringBoolMap_t& dirs)
 {
     DoGetCheckedDirs(m_root, dirs);
 }
 
-void ImportFilesDialogNew::DoGetCheckedDirs(const wxDataViewItem& parent, wxArrayString& dirs)
+void ImportFilesDialogNew::DoGetCheckedDirs(const wxDataViewItem& parent, wxStringBoolMap_t& dirs)
 {
-    ImportFilesDlgData *cd = reinterpret_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(parent));
+    wxDataViewItemArray children;
+    bool itemExpanded = false;
+    ImportFilesDlgData *cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(parent));
     if ( cd && cd->IsChecked() ) {
-        dirs.Add(cd->GetPath());
-    }
-
-    if ( m_dataviewModel->HasChildren(parent) ) {
-        wxDataViewItemArray children;
-        if ( m_dataviewModel->GetChildren(parent, children)) {
-
-            wxDataViewItem child = children.Item(0);
-            cd = reinterpret_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
-            // dummy children?
-            if ( cd && cd->IsDummy())
-                return;
-
-            for(size_t i=0; i<children.GetCount(); ++i) {
-                DoGetCheckedDirs(children.Item(i), dirs);
+        
+        wxString dirname = cd->GetPath();
+        bool     recurse = false;
+        // check if this item was expanded before
+        if ( m_dataviewModel->HasChildren(parent) ) {
+            if ( m_dataviewModel->GetChildren(parent, children)) {
+                wxDataViewItem child = children.Item(0);
+                cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
+                
+                // If the directory is checked and it was never expanded
+                // we should recurse into it
+                if ( cd && cd->IsDummy()) {
+                    recurse = true;
+                    
+                } else if ( cd ) {
+                    itemExpanded = true;
+                }
             }
+        }
+        
+        dirs.insert(std::make_pair(dirname, recurse));
+    }
+    
+    // if the parent has children and it was expanded by the user, keep on recursing
+    if ( !children.IsEmpty() && itemExpanded ) {
+        for(size_t i=0; i<children.GetCount(); ++i) {
+            DoGetCheckedDirs(children.Item(i), dirs);
         }
     }
 }

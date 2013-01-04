@@ -935,7 +935,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     }
     
     // convert the array to set for performance
-    StringSet_t gitFileSet;
+    wxStringSet_t gitFileSet;
     gitFileSet.insert(tmpArray.begin(), tmpArray.end());
     
     if (ga.action == gitListAll) {
@@ -950,8 +950,8 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         CreateFilesTreeIDsMap(IDs);
 
         // Now filter using the list of modified files, gitFileList, to find which IDs to colour differently
-        StringSet_t toColour;
-        StringSet_t::const_iterator iter = gitFileSet.begin();
+        wxStringSet_t toColour;
+        wxStringSet_t::const_iterator iter = gitFileSet.begin();
         for (; iter != gitFileSet.end(); ++iter) {
             wxTreeItemId id = IDs[ (*iter) ];
             if (id.IsOk()) {
@@ -1416,7 +1416,7 @@ void GitPlugin::AddDefaultActions()
 }
 
 /*******************************************************************************/
-void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const StringSet_t& files, OverlayTool::BmpType bmpType) const
+void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
 {
     std::stack<wxTreeItemId> items;
     if (tree->GetRootItem().IsOk())

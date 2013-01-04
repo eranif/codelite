@@ -462,7 +462,7 @@ wxString Project::GetFiles(bool absPath)
     return temp;
 }
 
-void Project::GetFiles(StringSet_t& files)
+void Project::GetFiles(wxStringSet_t& files)
 {
     DirSaver ds;
     FileNameVector_t v;
@@ -473,7 +473,7 @@ void Project::GetFiles(StringSet_t& files)
     }
 }
 
-void Project::GetFiles(StringSet_t& files, const wxString& relativePath)
+void Project::GetFiles(wxStringSet_t& files, const wxString& relativePath)
 {
     DirSaver ds;
     FileNameVector_t v;

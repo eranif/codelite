@@ -587,6 +587,11 @@ void NewBuildTab::MarkEditor(LEditor* editor)
     }
 
     std::pair<MultimapBuildInfo_t::iterator, MultimapBuildInfo_t::iterator> iter = m_buildInfoPerFile.equal_range(editor->GetFileName().GetFullPath());
+    if ( iter.first == iter.second ) {
+        // could not find any, try the fullname
+        iter = m_buildInfoPerFile.equal_range(editor->GetFileName().GetFullName());
+    }
+    
     for(; iter.first != iter.second; ++iter.first) {
         BuildLineInfo *bli = iter.first->second;
         if( bli && bli->GetSeverity() == SV_ERROR ) {

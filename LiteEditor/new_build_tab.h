@@ -169,6 +169,7 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t::iterator           m_curError;
     bool                                m_buildInProgress;
     wxString                            m_cygwinRoot;
+    
 protected:
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);

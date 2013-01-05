@@ -1,7 +1,5 @@
 #include "new_build_tab.h"
 #include "file_logger.h"
-#if CL_USE_NEW_BUILD_TAB
-
 #include "environmentconfig.h"
 #include "build_settings_config.h"
 #include <wx/choicdlg.h>
@@ -24,6 +22,9 @@
 #include "output_pane.h"
 #include "macros.h"
 #include <wx/fdrepdlg.h>
+#include "buildtabsettingsdata.h"
+
+static size_t BUILD_PANE_WIDTH = 10000;
 
 static const wxChar* WARNING_MARKER         = wxT("@@WARNING@@");
 static const wxChar* ERROR_MARKER           = wxT("@@ERROR@@");
@@ -32,7 +33,7 @@ static const wxChar* SUMMARY_MARKER_WARNING = wxT("@@SUMMARY_WARNING@@");
 static const wxChar* SUMMARY_MARKER_SUCCESS = wxT("@@SUMMARY_SUCCESS@@");
 static const wxChar* SUMMARY_MARKER         = wxT("@@SUMMARY@@");
 
-#define IS_VALID_LINE(lineNumber) (lineNumber >= 0 && lineNumber < m_listctrl->GetItemCount())
+#define IS_VALID_LINE(lineNumber) ((lineNumber >= 0 && lineNumber < m_listctrl->GetItemCount()))
 #ifdef __WXMSW__
 #    define IS_WINDOWS true
 #else
@@ -71,9 +72,13 @@ class MyTextRenderer : public wxDataViewCustomRenderer
     wxBitmap            m_errorBmp;
     wxBitmap            m_warningBmp;
     wxBitmap            m_successBmp;
-
+    int                 m_charWidth;
+    
 public:
-    MyTextRenderer(wxDataViewListCtrl *listctrl) : m_listctrl(listctrl) {
+    MyTextRenderer(wxDataViewListCtrl *listctrl) 
+        : m_listctrl(listctrl)
+        , m_charWidth(12) 
+    {
         m_errorBmp   = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/error-message"));
         m_warningBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/warning-message"));
         m_successBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("status/16/success-message"));
@@ -83,6 +88,7 @@ public:
 #else
         m_greyColor = wxColour(wxT("LIGHT GREY"));
 #endif
+        EnableEllipsize();
     }
 
     virtual ~MyTextRenderer() {}
@@ -173,14 +179,29 @@ public:
             pt.x += m_successBmp.GetWidth() + 2;
             str.Prepend(wxT(": "));
         }
-
+        
         dc->SetFont(f);
         str.Trim().Trim(false);
+        
+        if ( (str.length() * m_charWidth) > BUILD_PANE_WIDTH ) {
+            size_t newWidth = (BUILD_PANE_WIDTH / m_charWidth) - 1;
+            str = str.Mid(0, newWidth);
+        }
+        
         dc->DrawText(str, pt);
         return true;
     }
     void SetFont(const wxFont& font) {
+        
         this->m_font = font;
+        
+        // Calculate a single character width
+        wxMemoryDC memDc;
+        wxBitmap bmp(1, 1);
+        memDc.SelectObject(bmp);
+        memDc.SetFont( m_font );
+        wxSize sz = memDc.GetTextExtent("X");
+        m_charWidth = sz.x;
     }
 };
 
@@ -227,7 +248,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     bs->Insert(0, toolbox, 0, wxEXPAND);
 #endif
 
-    int screenWidth = 10000;// use a long screen width to allow long lines
+    int screenWidth = BUILD_PANE_WIDTH;// use a long screen width to allow long lines
     m_textRenderer = new MyTextRenderer(m_listctrl);
     
     m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 0, screenWidth, wxALIGN_LEFT));
@@ -1066,5 +1087,3 @@ void BuildLineInfo::NormalizeFilename(const wxArrayString& directories, const wx
     // failed.. keep it as fullname only
     SetFilename(fn.GetFullName());
 }
-
-#endif // CL_USE_NEW_BUILD_TAB

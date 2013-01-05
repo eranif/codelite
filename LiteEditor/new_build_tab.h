@@ -3,8 +3,6 @@
 
 #include "cl_defs.h"
 
-#if CL_USE_NEW_BUILD_TAB
-
 #include "precompiled_header.h"
 #include <wx/fdrepdlg.h>
 #include <wx/dataview.h>
@@ -229,4 +227,3 @@ protected:
 };
 
 #endif // NEWBUILDTAB_H
-#endif //CL_USE_NEW_BUILD_TAB

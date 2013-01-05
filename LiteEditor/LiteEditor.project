@@ -360,9 +360,8 @@
     <VirtualDirectory Name="About">
       <File Name="aboutdlg.cpp"/>
       <File Name="aboutdlg.h"/>
-      <File Name="aboutdlgbase.h"/>
-      <File Name="aboutdlgbase.cpp"/>
       <File Name="contributers.h"/>
+      <File Name="AboutDlg.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Sessions">
       <File Name="tabgroupdlg.h"/>
@@ -743,6 +742,8 @@
       <File Name="stalefilesmodel.h"/>
       <File Name="functionsmodel.cpp"/>
       <File Name="functionsmodel.h"/>
+      <File Name="wxcAboutDlg.h"/>
+      <File Name="wxcAboutDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -750,6 +751,7 @@
       <File Name="findinfiles_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="importfilesdialog_liteeditor_bitmaps.cpp"/>
       <File Name="implfuncs_dlg_bitmaps.cpp"/>
+      <File Name="AboutDlg_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -1123,7 +1125,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

@@ -133,9 +133,10 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
     //write the main title & subtitle
     wxCoord w, h;
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxFont smallfont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    
     font.SetPointSize(12);
-    smallfont.SetPointSize(10);
+    font.SetWeight(wxFONTWEIGHT_BOLD);
+    
     dcMem.SetFont(font);
     dcMem.GetMultiLineTextExtent(mainTitle, &w, &h);
     wxCoord bmpW = bitmap.GetWidth();
@@ -143,7 +144,7 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
     //draw shadow
     dcMem.SetTextForeground(wxT("WHITE"));
 
-    wxCoord textX = (bmpW - w)/2;
+    wxCoord textX = (bmpW - w - 10);
     dcMem.DrawText(mainTitle, textX, 11);
     dcMem.SelectObject(wxNullBitmap);
     return bmp;

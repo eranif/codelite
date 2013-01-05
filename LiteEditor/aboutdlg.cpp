@@ -34,46 +34,31 @@
 #include "manager.h"
 
 AboutDlg::AboutDlg( wxWindow* parent, const wxString &mainTitle )
-		: AboutDlgBase( parent )
+    : AboutDlgBase( parent )
 {
-	wxFileName splashscreen(ManagerST::Get()->GetStarupDirectory() +
-							wxFileName::GetPathSeparator() + 
-							wxT("images") + 
-							wxFileName::GetPathSeparator() + 
-							wxT("splashscreen.png"));
+    // set the page content
+    m_htmlWin3->SetPage(wxString::FromUTF8(about_hex));
+    m_buttonOk->SetFocus();
+    wxFileName license(ManagerST::Get()->GetInstallDir() + wxFileName::GetPathSeparator() + wxT("LICENSE"));
+    wxString licenseFullname = license.GetFullPath();
 
-	m_bmp.LoadFile(splashscreen.GetFullPath(), wxBITMAP_TYPE_PNG);
-	m_bitmap->SetBitmap(m_bmp);
-	GetSizer()->Fit(this);
-	
-	BitmapLoader bmpLoader;
-	m_bitmapPayPal->SetBitmap(bmpLoader.LoadBitmap(wxT("about/32/paypal")));
-	
-	// set the page content
-	m_htmlWin3->SetPage(wxString::FromUTF8(about_hex));
-	m_buttonOk->SetFocus();
-	
-	wxFileName license(ManagerST::Get()->GetInstallDir() + wxFileName::GetPathSeparator() + wxT("LICENSE"));
-	
-	wxString licenseFullname = license.GetFullPath();
-	
-	if(license.FileExists()) {
-		wxFFile fp(licenseFullname);
-		if(fp.IsOpened()) {
-			wxString content;
-			fp.ReadAll(&content, wxConvUTF8);
-			fp.Close();
-			
-			m_textCtrlLicense->SetEditable(true);
-			wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-			font.SetFamily(wxFONTFAMILY_TELETYPE);
-			m_textCtrlLicense->SetFont(font);
-			
-			m_textCtrlLicense->ChangeValue(content);
-			m_textCtrlLicense->SetEditable(false);
-		}
-	}
-	CentreOnScreen();
+    if(license.FileExists()) {
+        wxFFile fp(licenseFullname);
+        if(fp.IsOpened()) {
+            wxString content;
+            fp.ReadAll(&content, wxConvUTF8);
+            fp.Close();
+
+            m_textCtrlLicense->SetEditable(true);
+            wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            font.SetFamily(wxFONTFAMILY_TELETYPE);
+            m_textCtrlLicense->SetFont(font);
+
+            m_textCtrlLicense->ChangeValue(content);
+            m_textCtrlLicense->SetEditable(false);
+        }
+    }
+    CentreOnScreen();
 }
 
 AboutDlg::~AboutDlg()
@@ -82,10 +67,15 @@ AboutDlg::~AboutDlg()
 
 void AboutDlg::SetInfo(const wxString& info)
 {
-	m_staticTextInformation->SetLabel(info);
+    m_staticTextInformation->SetLabel(info);
 }
 
 wxString AboutDlg::GetInfo() const
 {
-	return m_staticTextInformation->GetLabelText();
+    return m_staticTextInformation->GetLabelText();
+}
+
+void AboutDlg::OnOK(wxCommandEvent& event)
+{
+    EndModal(wxID_OK);
 }

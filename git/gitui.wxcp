@@ -4377,279 +4377,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Sash Position:",
-									"m_value":	"0"
+									"m_value":	"150"
 								}],
 							"m_events":	[],
 							"m_children":	[{
-									"m_type":	4448,
-									"proportion":	0,
-									"border":	5,
-									"gbSpan":	"1,1",
-									"gbPosition":	"0,0",
-									"m_styles":	["wxTAB_TRAVERSAL"],
-									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-									"m_properties":	[{
-											"type":	"winid",
-											"m_label":	"ID:",
-											"m_winid":	"wxID_ANY"
-										}, {
-											"type":	"string",
-											"m_label":	"Size:",
-											"m_value":	"-1,-1"
-										}, {
-											"type":	"string",
-											"m_label":	"Minimum Size:",
-											"m_value":	"-1,-1"
-										}, {
-											"type":	"string",
-											"m_label":	"Name:",
-											"m_value":	"m_splitterPage96"
-										}, {
-											"type":	"multi-string",
-											"m_label":	"Tooltip:",
-											"m_value":	""
-										}, {
-											"type":	"colour",
-											"m_label":	"Bg Colour:",
-											"colour":	"<Default>"
-										}, {
-											"type":	"colour",
-											"m_label":	"Fg Colour:",
-											"colour":	"<Default>"
-										}, {
-											"type":	"font",
-											"m_label":	"Font:",
-											"m_value":	""
-										}, {
-											"type":	"string",
-											"m_label":	"Class Name:",
-											"m_value":	""
-										}, {
-											"type":	"string",
-											"m_label":	"Include File:",
-											"m_value":	""
-										}],
-									"m_events":	[],
-									"m_children":	[{
-											"m_type":	4401,
-											"proportion":	1,
-											"border":	5,
-											"gbSpan":	"1,1",
-											"gbPosition":	"0,0",
-											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-											"m_properties":	[{
-													"type":	"string",
-													"m_label":	"Name:",
-													"m_value":	"boxSizer92"
-												}, {
-													"type":	"choice",
-													"m_label":	"Orientation:",
-													"m_selection":	0,
-													"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
-												}],
-											"m_events":	[],
-											"m_children":	[{
-													"m_type":	4463,
-													"proportion":	0,
-													"border":	5,
-													"gbSpan":	"1,1",
-													"gbPosition":	"0,0",
-													"m_styles":	["wxAUI_TB_DEFAULT_STYLE"],
-													"m_sizerFlags":	["wxEXPAND"],
-													"m_properties":	[{
-															"type":	"winid",
-															"m_label":	"ID:",
-															"m_winid":	"wxID_ANY"
-														}, {
-															"type":	"string",
-															"m_label":	"Size:",
-															"m_value":	"-1,-1"
-														}, {
-															"type":	"string",
-															"m_label":	"Name:",
-															"m_value":	"m_auibar"
-														}, {
-															"type":	"string",
-															"m_label":	"Tooltip:",
-															"m_value":	""
-														}, {
-															"type":	"string",
-															"m_label":	"Bitmap Size:",
-															"m_value":	"16,16"
-														}, {
-															"type":	"string",
-															"m_label":	"Margins:",
-															"m_value":	"-1,-1"
-														}],
-													"m_events":	[],
-													"m_children":	[{
-															"m_type":	4462,
-															"proportion":	0,
-															"border":	5,
-															"gbSpan":	"1,1",
-															"gbPosition":	"0,0",
-															"m_styles":	[],
-															"m_sizerFlags":	[],
-															"m_properties":	[{
-																	"type":	"winid",
-																	"m_label":	"ID:",
-																	"m_winid":	"wxID_CLEAR"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Name:",
-																	"m_value":	"m_toolbarItemClearLog"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Label:",
-																	"m_value":	"Clear Log"
-																}, {
-																	"type":	"multi-string",
-																	"m_label":	"Tooltip:",
-																	"m_value":	"Clear Log"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Help String:",
-																	"m_value":	"Clear Log"
-																}, {
-																	"type":	"filePicker",
-																	"m_label":	"Bitmap File:",
-																	"m_path":	"../codelite-icons-fresh-farm/output-pane/16/clear.png"
-																}, {
-																	"type":	"filePicker",
-																	"m_label":	"Disabled-Bitmap File",
-																	"m_path":	""
-																}, {
-																	"type":	"choice",
-																	"m_label":	"Kind:",
-																	"m_selection":	0,
-																	"m_options":	["normal", "checkable", "radio", "separator"]
-																}],
-															"m_events":	[{
-																	"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
-																	"m_eventClass":	"wxCommandEvent",
-																	"m_eventHandler":	"wxCommandEventHandler",
-																	"m_functionNameAndSignature":	"OnClearGitLog(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
-																}, {
-																	"m_eventName":	"wxEVT_UPDATE_UI",
-																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
-																	"m_functionNameAndSignature":	"OnClearGitLogUI(wxUpdateUIEvent& event)",
-																	"m_description":	"Process a wxEVT_UPDATE_UI event"
-																}],
-															"m_children":	[]
-														}, {
-															"m_type":	4462,
-															"proportion":	0,
-															"border":	5,
-															"gbSpan":	"1,1",
-															"gbPosition":	"0,0",
-															"m_styles":	[],
-															"m_sizerFlags":	[],
-															"m_properties":	[{
-																	"type":	"winid",
-																	"m_label":	"ID:",
-																	"m_winid":	"wxID_ABORT"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Name:",
-																	"m_value":	"m_toolbarItem40"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Label:",
-																	"m_value":	"m_toolKill"
-																}, {
-																	"type":	"multi-string",
-																	"m_label":	"Tooltip:",
-																	"m_value":	"Terminate git process"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Help String:",
-																	"m_value":	"Terminate git process"
-																}, {
-																	"type":	"filePicker",
-																	"m_label":	"Bitmap File:",
-																	"m_path":	"../codelite-icons-fresh-farm/subversion/16/stop.png"
-																}, {
-																	"type":	"filePicker",
-																	"m_label":	"Disabled-Bitmap File",
-																	"m_path":	""
-																}, {
-																	"type":	"choice",
-																	"m_label":	"Kind:",
-																	"m_selection":	0,
-																	"m_options":	["normal", "checkable", "radio", "separator"]
-																}],
-															"m_events":	[{
-																	"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
-																	"m_eventClass":	"wxCommandEvent",
-																	"m_eventHandler":	"wxCommandEventHandler",
-																	"m_functionNameAndSignature":	"OnStopGitProcess(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
-																}, {
-																	"m_eventName":	"wxEVT_UPDATE_UI",
-																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
-																	"m_functionNameAndSignature":	"OnStopGitProcessUI(wxUpdateUIEvent& event)",
-																	"m_description":	"Process a wxEVT_UPDATE_UI event"
-																}],
-															"m_children":	[]
-														}]
-												}, {
-													"m_type":	4469,
-													"proportion":	1,
-													"border":	2,
-													"gbSpan":	"1,1",
-													"gbPosition":	"0,0",
-													"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE"],
-													"m_sizerFlags":	["wxEXPAND"],
-													"m_properties":	[{
-															"type":	"winid",
-															"m_label":	"ID:",
-															"m_winid":	"wxID_ANY"
-														}, {
-															"type":	"string",
-															"m_label":	"Size:",
-															"m_value":	"-1,-1"
-														}, {
-															"type":	"string",
-															"m_label":	"Minimum Size:",
-															"m_value":	"-1,-1"
-														}, {
-															"type":	"string",
-															"m_label":	"Name:",
-															"m_value":	"m_dvListCtrl"
-														}, {
-															"type":	"multi-string",
-															"m_label":	"Tooltip:",
-															"m_value":	""
-														}, {
-															"type":	"colour",
-															"m_label":	"Bg Colour:",
-															"colour":	"<Default>"
-														}, {
-															"type":	"colour",
-															"m_label":	"Fg Colour:",
-															"colour":	"<Default>"
-														}, {
-															"type":	"font",
-															"m_label":	"Font:",
-															"m_value":	""
-														}, {
-															"type":	"string",
-															"m_label":	"Class Name:",
-															"m_value":	""
-														}, {
-															"type":	"string",
-															"m_label":	"Include File:",
-															"m_value":	""
-														}],
-													"m_events":	[],
-													"m_children":	[]
-												}]
-										}]
-								}, {
 									"m_type":	4448,
 									"proportion":	0,
 									"border":	5,
@@ -4951,6 +4682,10 @@
 																	"m_selection":	3,
 																	"m_options":	["bitmap", "check", "text", "icontext", "progress"]
 																}, {
+																	"type":	"multi-string",
+																	"m_label":	"Choices:",
+																	"m_value":	""
+																}, {
 																	"type":	"choice",
 																	"m_label":	"Alignment",
 																	"m_selection":	0,
@@ -4964,6 +4699,275 @@
 															"m_events":	[],
 															"m_children":	[]
 														}]
+												}]
+										}]
+								}, {
+									"m_type":	4448,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	["wxTAB_TRAVERSAL"],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+									"m_properties":	[{
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"wxID_ANY"
+										}, {
+											"type":	"string",
+											"m_label":	"Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
+											"m_label":	"Minimum Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_splitterPage96"
+										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	""
+										}, {
+											"type":	"colour",
+											"m_label":	"Bg Colour:",
+											"colour":	"<Default>"
+										}, {
+											"type":	"colour",
+											"m_label":	"Fg Colour:",
+											"colour":	"<Default>"
+										}, {
+											"type":	"font",
+											"m_label":	"Font:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Class Name:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Include File:",
+											"m_value":	""
+										}],
+									"m_events":	[],
+									"m_children":	[{
+											"m_type":	4401,
+											"proportion":	1,
+											"border":	5,
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	[],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+											"m_properties":	[{
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"boxSizer92"
+												}, {
+													"type":	"choice",
+													"m_label":	"Orientation:",
+													"m_selection":	0,
+													"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
+												}],
+											"m_events":	[],
+											"m_children":	[{
+													"m_type":	4463,
+													"proportion":	0,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	["wxAUI_TB_DEFAULT_STYLE"],
+													"m_sizerFlags":	["wxEXPAND"],
+													"m_properties":	[{
+															"type":	"winid",
+															"m_label":	"ID:",
+															"m_winid":	"wxID_ANY"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"m_auibar"
+														}, {
+															"type":	"string",
+															"m_label":	"Tooltip:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Bitmap Size:",
+															"m_value":	"16,16"
+														}, {
+															"type":	"string",
+															"m_label":	"Margins:",
+															"m_value":	"-1,-1"
+														}],
+													"m_events":	[],
+													"m_children":	[{
+															"m_type":	4462,
+															"proportion":	0,
+															"border":	5,
+															"gbSpan":	"1,1",
+															"gbPosition":	"0,0",
+															"m_styles":	[],
+															"m_sizerFlags":	[],
+															"m_properties":	[{
+																	"type":	"winid",
+																	"m_label":	"ID:",
+																	"m_winid":	"wxID_CLEAR"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Name:",
+																	"m_value":	"m_toolbarItemClearLog"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Label:",
+																	"m_value":	"Clear Log"
+																}, {
+																	"type":	"multi-string",
+																	"m_label":	"Tooltip:",
+																	"m_value":	"Clear Log"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Help String:",
+																	"m_value":	"Clear Log"
+																}, {
+																	"type":	"filePicker",
+																	"m_label":	"Bitmap File:",
+																	"m_path":	"../codelite-icons-fresh-farm/output-pane/16/clear.png"
+																}, {
+																	"type":	"filePicker",
+																	"m_label":	"Disabled-Bitmap File",
+																	"m_path":	""
+																}, {
+																	"type":	"choice",
+																	"m_label":	"Kind:",
+																	"m_selection":	0,
+																	"m_options":	["normal", "checkable", "radio", "separator"]
+																}],
+															"m_events":	[{
+																	"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+																	"m_eventClass":	"wxCommandEvent",
+																	"m_eventHandler":	"wxCommandEventHandler",
+																	"m_functionNameAndSignature":	"OnClearGitLog(wxCommandEvent& event)",
+																	"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+																}, {
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"OnClearGitLogUI(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event"
+																}],
+															"m_children":	[]
+														}, {
+															"m_type":	4462,
+															"proportion":	0,
+															"border":	5,
+															"gbSpan":	"1,1",
+															"gbPosition":	"0,0",
+															"m_styles":	[],
+															"m_sizerFlags":	[],
+															"m_properties":	[{
+																	"type":	"winid",
+																	"m_label":	"ID:",
+																	"m_winid":	"wxID_ABORT"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Name:",
+																	"m_value":	"m_toolbarItem40"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Label:",
+																	"m_value":	"m_toolKill"
+																}, {
+																	"type":	"multi-string",
+																	"m_label":	"Tooltip:",
+																	"m_value":	"Terminate git process"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Help String:",
+																	"m_value":	"Terminate git process"
+																}, {
+																	"type":	"filePicker",
+																	"m_label":	"Bitmap File:",
+																	"m_path":	"../codelite-icons-fresh-farm/subversion/16/stop.png"
+																}, {
+																	"type":	"filePicker",
+																	"m_label":	"Disabled-Bitmap File",
+																	"m_path":	""
+																}, {
+																	"type":	"choice",
+																	"m_label":	"Kind:",
+																	"m_selection":	0,
+																	"m_options":	["normal", "checkable", "radio", "separator"]
+																}],
+															"m_events":	[{
+																	"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+																	"m_eventClass":	"wxCommandEvent",
+																	"m_eventHandler":	"wxCommandEventHandler",
+																	"m_functionNameAndSignature":	"OnStopGitProcess(wxCommandEvent& event)",
+																	"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+																}, {
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"OnStopGitProcessUI(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event"
+																}],
+															"m_children":	[]
+														}]
+												}, {
+													"m_type":	4469,
+													"proportion":	1,
+													"border":	2,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+													"m_sizerFlags":	["wxEXPAND"],
+													"m_properties":	[{
+															"type":	"winid",
+															"m_label":	"ID:",
+															"m_winid":	"wxID_ANY"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"m_dvListCtrl"
+														}, {
+															"type":	"multi-string",
+															"m_label":	"Tooltip:",
+															"m_value":	""
+														}, {
+															"type":	"colour",
+															"m_label":	"Bg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"colour",
+															"m_label":	"Fg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"font",
+															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
+															"m_value":	""
+														}],
+													"m_events":	[],
+													"m_children":	[]
 												}]
 										}]
 								}]

@@ -295,12 +295,16 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
     if ( !m_dvFilesModel->HasChildren(m_itemModified) )
         m_dvFilesModel->DeleteItem(m_itemModified);
-
+    else
+        m_dvFiles->Expand(m_itemModified);
+        
     if ( !m_dvFilesModel->HasChildren(m_itemUntracked) )
         m_dvFilesModel->DeleteItem(m_itemUntracked);
 
     if ( !m_dvFilesModel->HasChildren(m_itemNew) )
         m_dvFilesModel->DeleteItem(m_itemNew);
+    else
+        m_dvFiles->Expand(m_itemNew);
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)

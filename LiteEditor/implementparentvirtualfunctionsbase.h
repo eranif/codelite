@@ -11,31 +11,37 @@
 #include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
+#include <wx/bannerwindow.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/dataview.h>
 #include "functionsmodel.h"
+#include <wx/button.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
-#include <wx/button.h>
 
 class ImplementParentVirtualFunctionsBase : public wxDialog
 {
 protected:
+    wxBannerWindow* m_banner4;
     wxStaticText* m_staticText2;
     wxTextCtrl* m_textCtrlImplFile;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<FunctionsModel> m_dataviewModel;
 
+    wxButton* m_button10;
+    wxButton* m_button12;
     wxCheckBox* m_checkBoxFormat;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 
 protected:
     virtual void OnValueChanged(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnCheckAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUnCheckAll(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    ImplementParentVirtualFunctionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Implement Parent Virtual Functions"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    ImplementParentVirtualFunctionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Implement Parent Virtual Functions"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~ImplementParentVirtualFunctionsBase();
 };
 

@@ -17,8 +17,7 @@ public:
 
     virtual bool GetAttr(const wxDataViewItem &item,
                          unsigned int col,
-                         wxDataViewItemAttr & attr) const
-    {
+                         wxDataViewItemAttr & attr) const {
         if ( col == 1 ) {
             clFunctionImplDetails *cd = dynamic_cast<clFunctionImplDetails*>( GetClientObject(item));
             if ( !cd->IsSelected() ) {
@@ -152,6 +151,30 @@ void ImplementParentVirtualFunctionsDialog::OnValueChanged(wxDataViewEvent& even
     cd->SetPrependVirtualKeyword( cols.at(3).GetBool() );
     cd->SetSelected( cols.at(0).GetBool() );
     cd->SetDoxygen( cols.at(4).GetBool() );
+}
+
+void ImplementParentVirtualFunctionsDialog::OnCheckAll(wxCommandEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dataviewModel->GetChildren(wxDataViewItem(0), items);
+    
+    for( size_t i=0; i<items.GetCount(); ++i ) {
+        wxVector<wxVariant> cols = m_dataviewModel->GetItemColumnsData(items.Item(i));
+        cols.at(0) = true;
+        m_dataviewModel->UpdateItem(items.Item(i), cols);
+    }
+}
+
+void ImplementParentVirtualFunctionsDialog::OnUnCheckAll(wxCommandEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dataviewModel->GetChildren(wxDataViewItem(0), items);
+    
+    for( size_t i=0; i<items.GetCount(); ++i ) {
+        wxVector<wxVariant> cols = m_dataviewModel->GetItemColumnsData(items.Item(i));
+        cols.at(0) = false;
+        m_dataviewModel->UpdateItem(items.Item(i), cols);
+    }
 }
 
 // -----------------------------------------------------------------------------------------

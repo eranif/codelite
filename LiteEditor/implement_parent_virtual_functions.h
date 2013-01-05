@@ -23,7 +23,7 @@ protected:
 protected:
     clFunctionImplDetails() : m_visibility("public"), m_prependVirtualKeyword(true), m_selected(true), m_doxygen(false) {}
     virtual ~clFunctionImplDetails() {}
-    
+
 public:
     void SetTag(TagEntryPtr tag) {
         m_tag = tag;
@@ -68,6 +68,8 @@ class ImplementParentVirtualFunctionsDialog : public ImplementParentVirtualFunct
     friend class clFunctionImplDetails;
 
 protected:
+    virtual void OnCheckAll(wxCommandEvent& event);
+    virtual void OnUnCheckAll(wxCommandEvent& event);
     virtual void OnValueChanged(wxDataViewEvent& event);
     void DoInitialize(bool updateDoxyOnly);
     wxString DoMakeCommentForTag(TagEntryPtr tag) const;

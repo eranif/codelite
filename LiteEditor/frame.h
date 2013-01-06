@@ -56,6 +56,7 @@ class FileExplorer;
 class OutputTabWindow;
 class DockablePaneMenuManager;
 class MyMenuBar;
+class clSplashScreen;
 
 //--------------------------------
 // Helper class
@@ -115,6 +116,7 @@ class clMainFrame : public wxFrame
     StatusbarTimer*                       m_statusbarTimer;
     MyMenuBar*                            m_myMenuBar;
     wxMenu*                               m_buildDropDownMenu;
+    static clSplashScreen*                m_splashScreen;
     
 protected:
     bool IsEditorEvent(wxEvent &event);

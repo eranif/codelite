@@ -405,6 +405,8 @@
     <File Name="newversionbasedlg.h"/>
     <File Name="newversiondlg.h"/>
     <File Name="newversiondlg.cpp"/>
+    <File Name="clsplashscreen.h"/>
+    <File Name="clsplashscreen.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>

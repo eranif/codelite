@@ -41,6 +41,7 @@
 #include "cl_config.h"
 #include "cl_aui_dock_art.h"
 #include <wx/splash.h>
+#include "clsplashscreen.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -128,6 +129,7 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
     wxMemoryDC dcMem;
 
     dcMem.SelectObject( bmp );
+    dcMem.Clear();
     dcMem.DrawBitmap  ( bitmap, 0, 0, true);
 
     //write the main title & subtitle
@@ -149,6 +151,8 @@ static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainT
     dcMem.SelectObject(wxNullBitmap);
     return bmp;
 }
+clSplashScreen* clMainFrame::m_splashScreen = NULL;
+
 //////////////////////////////////////////////////
 
 // from auto-generated file svninfo.cpp:
@@ -677,7 +681,12 @@ clMainFrame::~clMainFrame(void)
 #if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
     delete m_myMenuBar;
 #endif
-
+    
+    if ( m_splashScreen ) {
+        m_splashScreen->Destroy();
+        m_splashScreen = NULL;
+    }
+    
     wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
     wxTheApp->Disconnect(wxID_PASTE,     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
     wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
@@ -743,39 +752,23 @@ void clMainFrame::Initialize(bool loadLastSession)
     }
 
     inf.SetFrameSize( frameSize );
-
+    
+    wxBitmap bitmap;
+    wxString splashName(ManagerST::Get()->GetStarupDirectory() + wxT("/images/splashscreen.png"));
+    if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
+        wxString mainTitle = CODELITE_VERSION_STR;
+        wxBitmap splashBmp = clDrawSplashBitmap(bitmap, mainTitle);
+        clMainFrame::m_splashScreen = new clSplashScreen(NULL, bitmap);
+    }
+    
     m_theFrame = new clMainFrame( NULL,
                                   wxID_ANY,
                                   title,
                                   inf.GetFramePosition(),
                                   inf.GetFrameSize(),
                                   wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
-    
-    bool showSplash;
-#ifdef NDEBUG
-    showSplash = inf.GetFlags() & CL_SHOW_SPLASH ? true : false;
-#else
-    showSplash = false;
-#endif
-    
-    if ( showSplash ) {
-        wxBitmap bitmap;
-        wxString splashName(ManagerST::Get()->GetStarupDirectory() + wxT("/images/splashscreen.png"));
-        if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-            wxString mainTitle = CODELITE_VERSION_STR;
-            wxBitmap splashBmp = clDrawSplashBitmap(bitmap, mainTitle);
-            if ( splashBmp.IsOk() ) {
-            wxSplashScreen* splash = new wxSplashScreen(splashBmp,
-                                          wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-                                          4000, m_theFrame, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                          wxSIMPLE_BORDER|wxSTAY_ON_TOP);
-            wxUnusedVar(splash);
-            }
-        }
-    }
     m_theFrame->m_frameGeneralInfo = inf;
     m_theFrame->m_loadLastSession = loadLastSession;
-
     m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME ? true : false);
 
     //add the welcome page

@@ -148,4 +148,22 @@ public:
     virtual ~wxcDownloadDlgBaseClass();
 };
 
+
+class AddFunctionsImplBaseDlg : public wxDialog
+{
+protected:
+    wxBannerWindow* m_banner125;
+    wxDataViewListCtrl* m_dvListCtrlFunctions;
+    wxButton* m_button133;
+    wxButton* m_button135;
+    wxButton* m_button121;
+    wxButton* m_button123;
+
+protected:
+
+public:
+    AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add function implementation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~AddFunctionsImplBaseDlg();
+};
+
 #endif

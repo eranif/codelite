@@ -389,3 +389,71 @@ wxcDownloadDlgBaseClass::~wxcDownloadDlgBaseClass()
     m_cmdLnkBtnContinue->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(wxcDownloadDlgBaseClass::OnIgnoreTheError), NULL, this);
     
 }
+
+AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer117 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer117);
+    
+    m_banner125 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_banner125->SetBitmap(wxNullBitmap);
+    m_banner125->SetText(_("Implement functions"), _("Select the functions you want to implement"));
+    m_banner125->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner125->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+    
+    boxSizer117->Add(m_banner125, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer117->Add(boxSizer129, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer129->Add(m_dvListCtrlFunctions, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlFunctions->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer129->Add(boxSizer131, 0, wxEXPAND, 5);
+    
+    m_button133 = new wxButton(this, wxID_ANY, _("Check all"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer131->Add(m_button133, 0, wxALL|wxEXPAND, 5);
+    
+    m_button135 = new wxButton(this, wxID_ANY, _("Uncheck all"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer131->Add(m_button135, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer117->Add(boxSizer119, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button121 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button121->SetDefault();
+    
+    boxSizer119->Add(m_button121, 0, wxALL, 5);
+    
+    m_button123 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer119->Add(m_button123, 0, wxALL, 5);
+    
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+AddFunctionsImplBaseDlg::~AddFunctionsImplBaseDlg()
+{
+}

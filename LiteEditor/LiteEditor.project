@@ -232,6 +232,8 @@
       <File Name="cc_advance_page.h"/>
       <File Name="cc_clang_page.h"/>
       <File Name="cc_clang_page.cpp"/>
+      <File Name="AddFunctionsImpDlg.cpp"/>
+      <File Name="AddFunctionsImpDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>

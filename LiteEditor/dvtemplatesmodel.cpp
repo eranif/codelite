@@ -4,10 +4,29 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dvtemplatesmodel.h"
+#include <wx/dvrenderers.h>
+#include <wx/variant.h>
 
 //////////////////////////////////////////
 // Implementation
 //////////////////////////////////////////
+
+// -------------------------------------------------
+// Help method
+// -------------------------------------------------
+wxVariant DVTemplatesModel::CreateIconTextVariant(const wxString &text, const wxBitmap& bmp)
+{
+    wxIcon icn;
+    icn.CopyFromBitmap( bmp);
+    wxDataViewIconText ict(text, icn);
+    wxVariant v;
+    v << ict;
+    return v;
+}
+
+// -------------------------------------------------
+// The model class
+// -------------------------------------------------
 
 DVTemplatesModel::DVTemplatesModel()
     : m_colCount(0)
@@ -197,7 +216,7 @@ void DVTemplatesModel::DeleteItems(const wxDataViewItem& parent, const wxDataVie
     for(size_t i=0; i<items.GetCount(); ++i) {
         DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(items.Item(i).m_pItem);
         wxUnusedVar(node);
-        wxASSERT(node && node->GetParent() != parent.m_pItem);
+        wxASSERT(node && node->GetParent() == parent.m_pItem);
         DeleteItem(items.Item(i));
     }
 }

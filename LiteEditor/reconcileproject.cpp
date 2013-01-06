@@ -121,6 +121,9 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
 {
     BitmapLoader bl;
     m_bitmaps = bl.MakeStandardMimeMap();
+    
+    m_dvListCtrl1Unassigned->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
+    
     WindowAttrManager::Load(this, wxT("ReconcileProjectDlg"), NULL);
 }
 
@@ -514,6 +517,58 @@ void ReconcileProjectDlg::OnApplyAllUI(wxUpdateUIEvent& event)
     wxDataViewItemArray items;
     event.Enable( m_dataviewAssignedModel->GetChildren(wxDataViewItem(0), items) > 0 );
 }
+
+void ReconcileProjectDlg::OnDVLCContextMenu(wxDataViewEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dvListCtrl1Unassigned->GetSelections(items);
+
+    size_t count = items.GetCount();
+    if (!count) {
+        wxDataViewItem item = event.GetItem();
+        if (item.IsOk()) {
+            m_dvListCtrl1Unassigned->Select(item);
+            items.Add(item);
+            count = 1;
+        } else {
+            return;
+        }
+    }
+
+    wxString msg;
+    if (count > 1) {
+        msg = wxString::Format(_("Delete the %i selected files from the filesystem?"), (int)count);
+    } else {
+        msg = wxString::Format(_("Delete the selected file from the filesystem?"));
+    }
+    if (wxMessageBox(msg, _("CodeLite"), wxICON_WARNING|wxYES_NO, this) != wxYES) {
+        return;
+    }
+
+    int successes(0);
+    for (size_t n = 0; n < count; ++n) {
+        wxVariant v;
+        int row = m_dvListCtrl1Unassigned->GetStore()->GetRow(items.Item(n));
+        m_dvListCtrl1Unassigned->GetValue(v, row, 0);
+        if (v.IsNull()) {
+            continue;
+        }
+        wxDataViewIconText iv;
+        iv << v;
+        wxFileName fn(iv.GetText());
+        fn.MakeAbsolute(m_toplevelDir);
+
+        wxLogNull NoAnnoyingFileSystemMessages;
+        if (wxRemoveFile(fn.GetFullPath())) {
+            m_dvListCtrl1Unassigned->DeleteItem(row);
+            ++successes;
+        }
+    }
+
+    clMainFrame::Get()->SetStatusMessage(wxString::Format(_("%i file(s) successfully deleted"), successes), 0);
+}
+
+
 
 ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, const wxString& projname)
     : ReconcileProjectFiletypesDlgBaseClass(parent)

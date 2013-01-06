@@ -26,6 +26,8 @@ protected:
     virtual void OnUndoSelectedFiles(wxCommandEvent& event);
     virtual void OnUndoSelectedFilesUI(wxUpdateUIEvent& event);
 
+    void OnDVLCContextMenu(wxDataViewEvent& event);
+
     wxString      m_projname;
     wxArrayString m_regexes;
     wxStringSet_t   m_newfiles;

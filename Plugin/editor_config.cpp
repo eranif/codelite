@@ -576,8 +576,6 @@ bool EditorConfig::GetPaneStickiness(const wxString& caption)
 {
 	if (caption == _("Build")) {
 		return GetOptions()->GetHideOutputPaneNotIfBuild();
-	} else if (caption == _("Errors")) {
-		return GetOptions()->GetHideOutputPaneNotIfErrors();
 	} else if (caption == _("Search")) {
 		return GetOptions()->GetHideOutputPaneNotIfSearch();
 	} else if (caption == _("Replace")) {
@@ -592,8 +590,16 @@ bool EditorConfig::GetPaneStickiness(const wxString& caption)
 		return GetOptions()->GetHideOutputPaneNotIfTrace();
 	} else if (caption == _("Tasks")) {
 		return GetOptions()->GetHideOutputPaneNotIfTasks();
+	} else if (caption == _("BuildQ")) {
+		return GetOptions()->GetHideOutputPaneNotIfBuildQ();
+	} else if (caption == _("CppCheck")) {
+		return GetOptions()->GetHideOutputPaneNotIfCppCheck();
+	} else if (caption == _("Subversion")) {
+		return GetOptions()->GetHideOutputPaneNotIfSvn();
 	} else if (caption == _("CScope")) {
 		return GetOptions()->GetHideOutputPaneNotIfCscope();
+	} else if (caption == _("git")) {
+		return GetOptions()->GetHideOutputPaneNotIfGit();
 	} 
 	
 	// How did we get here?
@@ -605,8 +611,6 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
 	OptionsConfigPtr options = GetOptions();
 	if (caption == _("Build")) {
 		options->SetHideOutputPaneNotIfBuild(stickiness);
-	} else if (caption == _("Errors")) {
-		options->SetHideOutputPaneNotIfErrors(stickiness);
 	} else if (caption == _("Search")) {
 		options->SetHideOutputPaneNotIfSearch(stickiness);
 	} else if (caption == _("Replace")) {
@@ -621,8 +625,16 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
 		options->SetHideOutputPaneNotIfTrace(stickiness);
 	} else if (caption == _("Tasks")) {
 		options->SetHideOutputPaneNotIfTasks(stickiness);
+	} else if (caption == _("BuildQ")) {
+		options->SetHideOutputPaneNotIfBuildQ(stickiness);
+	} else if (caption == _("CppCheck")) {
+		options->SetHideOutputPaneNotIfCppCheck(stickiness);
+	} else if (caption == _("Subversion")) {
+		options->SetHideOutputPaneNotIfSvn(stickiness);
 	} else if (caption == _("Cscope")) {
 		options->SetHideOutputPaneNotIfCscope(stickiness);
+	} else if (caption == _("git")) {
+		options->SetHideOutputPaneNotIfGit(stickiness);
 	} else {
 		return;
 	}

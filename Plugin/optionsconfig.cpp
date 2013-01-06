@@ -72,15 +72,18 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         , m_hideChangeMarkerMargin(false)
         , m_hideOutpuPaneOnUserClick(false)
         , m_hideOutputPaneNotIfBuild(false)
-        , m_hideOutputPaneNotIfErrors(true)
         , m_hideOutputPaneNotIfSearch(true)
         , m_hideOutputPaneNotIfReplace(false)
         , m_hideOutputPaneNotIfReferences(false)
         , m_hideOutputPaneNotIfOutput(false)
-        , m_hideOutputPaneNotIfDebug(true)
         , m_hideOutputPaneNotIfTrace(false)
         , m_hideOutputPaneNotIfTasks(false)
+        , m_hideOutputPaneNotIfBuildQ(true)
+        , m_hideOutputPaneNotIfCppCheck(true)
+        , m_hideOutputPaneNotIfSvn(true)
         , m_hideOutputPaneNotIfCscope(false)
+        , m_hideOutputPaneNotIfGit(true)
+        , m_hideOutputPaneNotIfDebug(true)
         , m_findBarAtBottom(true)
         , m_TrimLine(true)
         , m_AppendLF(true)
@@ -145,15 +148,18 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     	m_scrollBeyondLastLine          = XmlUtils::ReadBool  (node, wxT("ScrollBeyondLastLine"));
     	m_hideOutpuPaneOnUserClick      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneOnUserClick"));
     	m_hideOutputPaneNotIfBuild      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfBuild"));
-    	m_hideOutputPaneNotIfErrors     = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfErrors"));
     	m_hideOutputPaneNotIfSearch     = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfSearch"));
     	m_hideOutputPaneNotIfReplace    = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfReplace"));
     	m_hideOutputPaneNotIfReferences = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfReferences"));
     	m_hideOutputPaneNotIfOutput     = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfOutput"));
-    	m_hideOutputPaneNotIfDebug      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfDebug"));
     	m_hideOutputPaneNotIfTrace      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfTrace"));
     	m_hideOutputPaneNotIfTasks      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfTasks"));
+    	m_hideOutputPaneNotIfBuildQ     = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfBuildQ"));
+    	m_hideOutputPaneNotIfCppCheck   = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfCppCheck"));
+    	m_hideOutputPaneNotIfSvn        = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfSvn"));
     	m_hideOutputPaneNotIfCscope     = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfCscope"));
+    	m_hideOutputPaneNotIfGit        = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfGit"));
+    	m_hideOutputPaneNotIfDebug      = XmlUtils::ReadBool  (node, wxT("HideOutputPaneNotIfDebug"));
     	m_findBarAtBottom               = XmlUtils::ReadBool  (node, wxT("FindBarAtBottom"),           m_findBarAtBottom);
     	m_disableSmartIndent            = XmlUtils::ReadBool  (node, wxT("DisableSmartIndent"),        m_disableSmartIndent);
     	m_disableSemicolonShift         = XmlUtils::ReadBool  (node, wxT("DisableSemicolonShift"),     m_disableSemicolonShift);
@@ -218,15 +224,18 @@ wxXmlNode *OptionsConfig::ToXml() const
 	n->AddProperty(wxT("ScrollBeyondLastLine"),          BoolToString(m_scrollBeyondLastLine));
 	n->AddProperty(wxT("HideOutputPaneOnUserClick"),     BoolToString(m_hideOutpuPaneOnUserClick));
 	n->AddProperty(wxT("HideOutputPaneNotIfBuild"),      BoolToString(m_hideOutputPaneNotIfBuild));
-	n->AddProperty(wxT("HideOutputPaneNotIfErrors"),     BoolToString(m_hideOutputPaneNotIfErrors));
 	n->AddProperty(wxT("HideOutputPaneNotIfSearch"),     BoolToString(m_hideOutputPaneNotIfSearch));
 	n->AddProperty(wxT("HideOutputPaneNotIfReplace"),    BoolToString(m_hideOutputPaneNotIfReplace));
 	n->AddProperty(wxT("HideOutputPaneNotIfReferences"), BoolToString(m_hideOutputPaneNotIfReferences));
 	n->AddProperty(wxT("HideOutputPaneNotIfOutput"),     BoolToString(m_hideOutputPaneNotIfOutput));
-	n->AddProperty(wxT("HideOutputPaneNotIfDebug"),      BoolToString(m_hideOutputPaneNotIfDebug));
 	n->AddProperty(wxT("HideOutputPaneNotIfTrace"),      BoolToString(m_hideOutputPaneNotIfTrace));
 	n->AddProperty(wxT("HideOutputPaneNotIfTasks"),      BoolToString(m_hideOutputPaneNotIfTasks));
+	n->AddProperty(wxT("HideOutputPaneNotIfBuildQ"),     BoolToString(m_hideOutputPaneNotIfBuildQ));
+	n->AddProperty(wxT("HideOutputPaneNotIfCppCheck"),   BoolToString(m_hideOutputPaneNotIfCppCheck));
+	n->AddProperty(wxT("HideOutputPaneNotIfSvn"),        BoolToString(m_hideOutputPaneNotIfSvn));
 	n->AddProperty(wxT("HideOutputPaneNotIfCscope"),     BoolToString(m_hideOutputPaneNotIfCscope));
+	n->AddProperty(wxT("HideOutputPaneNotIfGit"),        BoolToString(m_hideOutputPaneNotIfGit));
+	n->AddProperty(wxT("HideOutputPaneNotIfDebug"),      BoolToString(m_hideOutputPaneNotIfDebug));
 	n->AddProperty(wxT("FindBarAtBottom"),               BoolToString(m_findBarAtBottom));
 	n->AddProperty(wxT("DisableSmartIndent"),            BoolToString(m_disableSmartIndent));
 	n->AddProperty(wxT("DisableSemicolonShift"),         BoolToString(m_disableSemicolonShift));

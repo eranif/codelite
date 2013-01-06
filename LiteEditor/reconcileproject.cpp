@@ -317,7 +317,7 @@ void ReconcileProjectDlg::DoFindFiles()
     m_stalefiles.clear();
     Project::FileInfoList_t::const_iterator iter = projectfiles.begin();
     for(; iter != projectfiles.end(); ++iter ) {
-        if ( !wxFileName::FileExists( iter->GetFilename() ) ) {
+        if ( !wxFileName::Exists( iter->GetFilename() ) ) {
             m_stalefiles.push_back( *iter );
         }
     }

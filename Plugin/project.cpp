@@ -1367,7 +1367,7 @@ void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions,
 
     wxXmlNode* ignorefilesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Ignorefiles"));
     if (ignorefilesnode) {
-        ignoreFiles = XmlUtils::ChildNodesContentToArray(ignorefilesnode, "File");
+        ignoreFiles = XmlUtils::ChildNodesContentToArray(ignorefilesnode, "Ignore");
     }
 
     wxXmlNode* excludesnode = XmlUtils::FindFirstByTagName(reconciliation, wxT("Excludepaths"));
@@ -1414,7 +1414,7 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
     }
 
     for (size_t n = 0; n < ignoreFiles.GetCount(); ++n) {
-        wxXmlNode* pathnode = new wxXmlNode(ignorefilesnode, wxXML_ELEMENT_NODE, "File");
+        wxXmlNode* pathnode = new wxXmlNode(ignorefilesnode, wxXML_ELEMENT_NODE, "Ignore");
         XmlUtils::SetNodeContent(pathnode, ignoreFiles.Item(n));
     }
 

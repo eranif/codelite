@@ -122,35 +122,6 @@
 #include "clang_code_completion.h"
 #include "cl_defs.h"
 
-//////////////////////////////////////////////////
-static wxBitmap clDrawSplashBitmap(const wxBitmap& bitmap, const wxString &mainTitle)
-{
-    wxBitmap bmp ( bitmap.GetWidth(), bitmap.GetHeight()  );
-    wxMemoryDC dcMem;
-
-    dcMem.SelectObject( bmp );
-    dcMem.Clear();
-    dcMem.DrawBitmap  ( bitmap, 0, 0, true);
-
-    //write the main title & subtitle
-    wxCoord w, h;
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    
-    font.SetPointSize(12);
-    font.SetWeight(wxFONTWEIGHT_BOLD);
-    
-    dcMem.SetFont(font);
-    dcMem.GetMultiLineTextExtent(mainTitle, &w, &h);
-    wxCoord bmpW = bitmap.GetWidth();
-
-    //draw shadow
-    dcMem.SetTextForeground(wxT("WHITE"));
-
-    wxCoord textX = (bmpW - w - 10);
-    dcMem.DrawText(mainTitle, textX, 11);
-    dcMem.SelectObject(wxNullBitmap);
-    return bmp;
-}
 clSplashScreen* clMainFrame::m_splashScreen = NULL;
 
 //////////////////////////////////////////////////
@@ -757,7 +728,6 @@ void clMainFrame::Initialize(bool loadLastSession)
     wxString splashName(ManagerST::Get()->GetStarupDirectory() + wxT("/images/splashscreen.png"));
     if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
         wxString mainTitle = CODELITE_VERSION_STR;
-        wxBitmap splashBmp = clDrawSplashBitmap(bitmap, mainTitle);
         clMainFrame::m_splashScreen = new clSplashScreen(NULL, bitmap);
     }
     

@@ -1,11 +1,14 @@
 #include "clsplashscreen.h"
 #include <wx/dcscreen.h>
 #include <wx/dcbuffer.h>
+#include <wx/settings.h>
 
 BEGIN_EVENT_TABLE(clSplashScreen, wxFrame)
     EVT_PAINT(clSplashScreen::OnPaint)
     EVT_ERASE_BACKGROUND(clSplashScreen::OnEraseBg)
 END_EVENT_TABLE()
+
+extern wxString CODELITE_VERSION_STR;
 
 clSplashScreen::clSplashScreen(wxWindow* parent, const wxBitmap& bmp)
     : wxFrame(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxFRAME_NO_TASKBAR)
@@ -37,6 +40,23 @@ clSplashScreen::clSplashScreen(wxWindow* parent, const wxBitmap& bmp)
     label_dc.Clear();
 #endif
     label_dc.DrawBitmap(bmp, 0, 0, true);
+    
+    wxCoord ww, hh;
+    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    font.SetPointSize(12);
+    font.SetWeight(wxFONTWEIGHT_BOLD);
+    
+    label_dc.SetFont(font);
+    label_dc.GetMultiLineTextExtent(CODELITE_VERSION_STR, &ww, &hh);
+    wxCoord bmpW = bmp.GetWidth();
+    label_dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+    wxCoord textX = (bmpW - ww)/2;
+    label_dc.DrawText(CODELITE_VERSION_STR, textX, 31);
+    
+    
+    label_dc.SetTextForeground(*wxWHITE);
+    label_dc.DrawText(CODELITE_VERSION_STR, textX, 30);
+
     label_dc.SelectObject(wxNullBitmap);
     Show(true);
     SetThemeEnabled(false);

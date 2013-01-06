@@ -108,18 +108,15 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     int screenWidth = 1000;// use a long screen width to allow long lines
     m_dvListCtrl->AppendColumn(new wxDataViewColumn(_("Message"), new GitMyTextRenderer(m_dvListCtrl), 0, screenWidth, wxALIGN_LEFT));
 
-    m_auibar->AddTool(XRCID("git_settings"), wxT("GIT plugin settings"), m_images.Bitmap("gitSettings"), wxT("GIT plugin settings"));
+    m_auibar->AddTool(XRCID("git_refresh"), wxT("Refresh"), m_images.Bitmap("gitRefresh"), wxT("Refresh tracked file list"));
+    m_auibar->AddTool(XRCID("git_reset_repository"), wxT("Reset"), m_images.Bitmap("gitResetRepo"), wxT("Reset repository"));
     m_auibar->AddSeparator();
-    m_auibar->AddTool(XRCID("git_set_repository"), wxT("Set GIT repository path"), m_images.Bitmap("gitPath"), wxT("Set GIT repository path"));
-    m_auibar->AddTool(XRCID("git_clone"), wxT("Clone"), m_images.Bitmap("gitClone"), wxT("Clone git URL"));
-    m_auibar->AddSeparator();
+
     m_auibar->AddTool(XRCID("git_pull"), wxT("Pull"), m_images.Bitmap("gitPull"), wxT("Pull remote changes"));
     m_auibar->AddTool(XRCID("git_commit"), wxT("Commit"), m_images.Bitmap("gitCommitLocal"), wxT("Commit local changes"));
     m_auibar->AddTool(XRCID("git_push"), wxT("Push"), m_images.Bitmap("gitPush"), wxT("Push local changes"));
     m_auibar->AddSeparator();
-    m_auibar->AddTool(XRCID("git_refresh"), wxT("Refresh"), m_images.Bitmap("gitRefresh"), wxT("Refresh tracked file list"));
-    m_auibar->AddTool(XRCID("git_reset_repository"), wxT("Reset"), m_images.Bitmap("gitResetRepo"), wxT("Reset repository"));
-    m_auibar->AddSeparator();
+    
     m_auibar->AddTool(XRCID("git_create_branch"), wxT("Create branch"), m_images.Bitmap("gitNewBranch"), wxT("Create local branch"));
     m_auibar->AddTool(XRCID("git_switch_branch"), wxT("Local branch"), m_images.Bitmap("gitSwitchLocalBranch"), wxT("Switch to local branch"));
     //m_auibar->AddTool(XRCID("git_switch_to_remote_branch"), wxT("Remote branch"), XPM_BITMAP(menuexport), wxT("Init and switch to remote branch"));

@@ -173,25 +173,24 @@ public:
 class GitConsoleBase : public wxPanel
 {
 protected:
+    wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage100;
-    wxAuiToolBar* m_auibar100;
     wxDataViewCtrl* m_dvFiles;
     wxObjectDataPtr<DataViewFilesModel> m_dvFilesModel;
 
     wxPanel* m_splitterPage96;
-    wxAuiToolBar* m_auibar;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
-    virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnItemSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnItemSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);

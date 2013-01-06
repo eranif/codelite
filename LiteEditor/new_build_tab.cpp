@@ -134,7 +134,7 @@ public:
         wxVariant v;
         GetValue(v);
         wxString str = v.GetString();
-        str.Trim().Trim(false);
+        str.Trim();
         wxPoint pt = cell.GetTopLeft();
         wxFont f = m_font;
         bool isSelected = state & wxDATAVIEW_CELL_SELECTED;
@@ -181,7 +181,6 @@ public:
         }
         
         dc->SetFont(f);
-        str.Trim().Trim(false);
         
         if ( (str.length() * m_charWidth) > BUILD_PANE_WIDTH ) {
             size_t newWidth = (BUILD_PANE_WIDTH / m_charWidth) - 1;

@@ -562,6 +562,8 @@
       <File Name="BuildTabTopPanel.h"/>
       <File Name="BuildTabTopPanel.cpp"/>
     </VirtualDirectory>
+    <File Name="editor_options_docking_windows.wxcp"/>
+    <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugins">
     <File Name="pluginmanager.h"/>

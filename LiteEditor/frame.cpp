@@ -724,13 +724,18 @@ void clMainFrame::Initialize(bool loadLastSession)
 
     inf.SetFrameSize( frameSize );
     
-    wxBitmap bitmap;
-    wxString splashName(ManagerST::Get()->GetStarupDirectory() + wxT("/images/splashscreen.png"));
-    if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-        wxString mainTitle = CODELITE_VERSION_STR;
-        clMainFrame::m_splashScreen = new clSplashScreen(NULL, bitmap);
+#ifdef NDEBUG
+    // we show splash only when using Release builds of codelite
+    if ( inf.GetFlags() & CL_SHOW_SPLASH ) {
+        wxBitmap bitmap;
+        wxString splashName(ManagerST::Get()->GetStarupDirectory() + wxT("/images/splashscreen.png"));
+        if (bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
+            wxString mainTitle = CODELITE_VERSION_STR;
+            clMainFrame::m_splashScreen = new clSplashScreen(NULL, bitmap);
+        }
     }
-    
+#endif
+
     m_theFrame = new clMainFrame( NULL,
                                   wxID_ANY,
                                   title,

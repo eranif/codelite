@@ -411,16 +411,25 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer117->Add(m_banner125, 0, wxALL|wxEXPAND, 5);
     
+    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE);
+    m_filePicker->SetToolTip(_("The functions will be placed into this file"));
+    
+    boxSizer117->Add(m_filePicker, 0, wxALL|wxEXPAND, 5);
+    
     wxBoxSizer* boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer117->Add(boxSizer129, 1, wxALL|wxEXPAND, 5);
+    boxSizer117->Add(boxSizer129, 1, wxEXPAND, 5);
     
-    m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer129->Add(m_dvListCtrlFunctions, 1, wxALL|wxEXPAND, 5);
+    m_dataviewModel = new AddFunctionsModel;
+    m_dataviewModel->SetColCount( 2 );
+    m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlFunctions->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
+    boxSizer129->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
+    
+    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer129->Add(boxSizer131, 0, wxEXPAND, 5);
@@ -452,8 +461,17 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_button133->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnCheckAll), NULL, this);
+    m_button135->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnUncheckAll), NULL, this);
+    m_button121->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddFunctionsImplBaseDlg::OnOKUI), NULL, this);
+    
 }
 
 AddFunctionsImplBaseDlg::~AddFunctionsImplBaseDlg()
 {
+    m_button133->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnCheckAll), NULL, this);
+    m_button135->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnUncheckAll), NULL, this);
+    m_button121->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddFunctionsImplBaseDlg::OnOKUI), NULL, this);
+    
 }

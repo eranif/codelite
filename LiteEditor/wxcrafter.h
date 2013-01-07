@@ -30,6 +30,8 @@
 #include <map>
 #include <wx/bannerwindow.h>
 #include <wx/commandlinkbutton.h>
+#include <wx/filepicker.h>
+#include "addfunctionsmodel.h"
 
 class NewProjectDlgBaseClass : public wxDialog
 {
@@ -153,13 +155,19 @@ class AddFunctionsImplBaseDlg : public wxDialog
 {
 protected:
     wxBannerWindow* m_banner125;
-    wxDataViewListCtrl* m_dvListCtrlFunctions;
+    wxFilePickerCtrl* m_filePicker;
+    wxDataViewCtrl* m_dataview;
+    wxObjectDataPtr<AddFunctionsModel> m_dataviewModel;
+
     wxButton* m_button133;
     wxButton* m_button135;
     wxButton* m_button121;
     wxButton* m_button123;
 
 protected:
+    virtual void OnCheckAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUncheckAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add function implementation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

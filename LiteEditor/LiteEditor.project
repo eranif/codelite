@@ -750,6 +750,8 @@
       <File Name="functionsmodel.h"/>
       <File Name="wxcAboutDlg.h"/>
       <File Name="wxcAboutDlg.cpp"/>
+      <File Name="addfunctionsmodel.cpp"/>
+      <File Name="addfunctionsmodel.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>

@@ -72,6 +72,7 @@
 #include "refactorindexbuildjob.h"
 #include "new_quick_watch_dlg.h"
 #include "code_completion_api.h"
+#include "AddFunctionsImpDlg.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -1668,44 +1669,34 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
     // get map of all unimlpemented methods
     std::map<wxString, TagEntryPtr> protos;
     TagsManagerST::Get()->GetUnImplementedFunctions( scopeName, protos );
-
-    // the map now consist only with functions without implementation
-    // create body for all of those functions
-    //create the functions body
-    wxString body;
-    std::map<wxString, TagEntryPtr>::iterator iter = protos.begin();
-
-    for (; iter != protos.end(); iter ++ ) {
-        TagEntryPtr tag = iter->second;
-        //use normalize function signature rather than the default one
-        //this will ensure that default values are removed
-        tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig( tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro ));
-        body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
-        body << wxT("\n");
+    
+    if ( protos.empty() ) {
+        ::wxMessageBox(_("All your functions seems to have an implementation!"));
+        return;
     }
-
+    
+    TagEntryPtrVector_t tags;
+    std::map<wxString, TagEntryPtr>::const_iterator iter = protos.begin();
+    for(; iter != protos.end(); ++iter) {
+        tags.push_back(iter->second);
+    }
+    
     wxString targetFile;
     FindSwappedFile(rCtrl.GetFileName(), targetFile);
 
-    //if no swapped file is found, use the current file
-    if (targetFile.IsEmpty()) {
-        targetFile = rCtrl.GetFileName().GetFullPath();
-    }
-
-    MoveFuncImplDlg dlg(NULL, body, targetFile);
-    dlg.SetTitle(_("Implement All Un-Implemented Functions"));
+    AddFunctionsImpDlg dlg(wxTheApp->GetTopWindow(), tags, targetFile);
     if (dlg.ShowModal() == wxID_OK) {
         //get the updated data
         targetFile = dlg.GetFileName();
-        body = dlg.GetText();
+        wxString body = dlg.GetText();
         int insertedLine = wxNOT_FOUND;
-
+        
         // Open the C++ file
         LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
         if ( !editor ) {
             return;
         }
-
+        
         // Inser the new functions at the proper location
         wxString sourceContent = editor->GetText();
         TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);

@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	137,
+		"m_objCounter":	141,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_liteeditor_bitmaps.cpp",
@@ -2963,13 +2963,76 @@
 							"m_events":	[],
 							"m_children":	[]
 						}, {
+							"m_type":	4431,
+							"proportion":	0,
+							"border":	5,
+							"gbSpan":	"1,1",
+							"gbPosition":	"0,0",
+							"m_styles":	["wxFLP_DEFAULT_STYLE"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_properties":	[{
+									"type":	"winid",
+									"m_label":	"ID:",
+									"m_winid":	"wxID_ANY"
+								}, {
+									"type":	"string",
+									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Name:",
+									"m_value":	"m_filePicker"
+								}, {
+									"type":	"multi-string",
+									"m_label":	"Tooltip:",
+									"m_value":	"The functions will be placed into this file"
+								}, {
+									"type":	"colour",
+									"m_label":	"Bg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"colour",
+									"m_label":	"Fg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"font",
+									"m_label":	"Font:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Value:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Message:",
+									"m_value":	"Select a file"
+								}, {
+									"type":	"string",
+									"m_label":	"Wildcard:",
+									"m_value":	"*"
+								}],
+							"m_events":	[],
+							"m_children":	[]
+						}, {
 							"m_type":	4401,
 							"proportion":	1,
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -3004,7 +3067,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_dataview137"
+											"m_value":	"m_dataview"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -3032,14 +3095,90 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Generated Model Class Name",
-											"m_value":	"m_dataview137Model"
+											"m_value":	"AddFunctionsModel"
 										}, {
 											"type":	"bool",
 											"m_label":	"Container Item Has Columns",
 											"m_value":	true
 										}],
 									"m_events":	[],
-									"m_children":	[]
+									"m_children":	[{
+											"m_type":	4472,
+											"proportion":	0,
+											"border":	5,
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	[],
+											"m_sizerFlags":	[],
+											"m_properties":	[{
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"?"
+												}, {
+													"type":	"string",
+													"m_label":	"Width:",
+													"m_value":	"-2"
+												}, {
+													"type":	"choice",
+													"m_label":	"Column Type",
+													"m_selection":	1,
+													"m_options":	["bitmap", "check", "text", "icontext", "progress", "choice"]
+												}, {
+													"type":	"multi-string",
+													"m_label":	"Choices:",
+													"m_value":	""
+												}, {
+													"type":	"choice",
+													"m_label":	"Alignment",
+													"m_selection":	0,
+													"m_options":	["wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"]
+												}, {
+													"type":	"choice",
+													"m_label":	"Cell Mode",
+													"m_selection":	1,
+													"m_options":	["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+												}],
+											"m_events":	[],
+											"m_children":	[]
+										}, {
+											"m_type":	4472,
+											"proportion":	0,
+											"border":	5,
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	[],
+											"m_sizerFlags":	[],
+											"m_properties":	[{
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"Function"
+												}, {
+													"type":	"string",
+													"m_label":	"Width:",
+													"m_value":	"300"
+												}, {
+													"type":	"choice",
+													"m_label":	"Column Type",
+													"m_selection":	2,
+													"m_options":	["bitmap", "check", "text", "icontext", "progress", "choice"]
+												}, {
+													"type":	"multi-string",
+													"m_label":	"Choices:",
+													"m_value":	""
+												}, {
+													"type":	"choice",
+													"m_label":	"Alignment",
+													"m_selection":	0,
+													"m_options":	["wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"]
+												}, {
+													"type":	"choice",
+													"m_label":	"Cell Mode",
+													"m_selection":	0,
+													"m_options":	["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+												}],
+											"m_events":	[],
+											"m_children":	[]
+										}]
 								}, {
 									"m_type":	4401,
 									"proportion":	0,
@@ -3124,7 +3263,13 @@
 													"m_label":	"Margins:",
 													"m_value":	"2,2"
 												}],
-											"m_events":	[],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+													"m_eventClass":	"wxCommandEvent",
+													"m_eventHandler":	"wxCommandEventHandler",
+													"m_functionNameAndSignature":	"OnCheckAll(wxCommandEvent& event)",
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+												}],
 											"m_children":	[]
 										}, {
 											"m_type":	4400,
@@ -3191,7 +3336,13 @@
 													"m_label":	"Margins:",
 													"m_value":	"2,2"
 												}],
-											"m_events":	[],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+													"m_eventClass":	"wxCommandEvent",
+													"m_eventHandler":	"wxCommandEventHandler",
+													"m_functionNameAndSignature":	"OnUncheckAll(wxCommandEvent& event)",
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+												}],
 											"m_children":	[]
 										}]
 								}]
@@ -3279,7 +3430,13 @@
 											"m_label":	"Margins:",
 											"m_value":	"2,2"
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_eventHandler":	"wxUpdateUIEventHandler",
+											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event"
+										}],
 									"m_children":	[]
 								}, {
 									"m_type":	4400,

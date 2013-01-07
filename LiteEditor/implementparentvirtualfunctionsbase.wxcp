@@ -148,11 +148,11 @@
 									"m_label":	"Include File:",
 									"m_value":	""
 								}, {
-									"type":	"string",
+									"type":	"multi-string",
 									"m_label":	"Title:",
-									"m_value":	"Implmenet inherited virtual functions"
+									"m_value":	"Implement inherited virtual functions"
 								}, {
-									"type":	"string",
+									"type":	"multi-string",
 									"m_label":	"Message:",
 									"m_value":	"Select from the list below the functions that you want to override in your class"
 								}, {

@@ -27,7 +27,7 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase(wxWindo
     
     m_banner4 = new wxBannerWindow(this, wxID_ANY, wxBOTTOM, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner4->SetBitmap(wxNullBitmap);
-    m_banner4->SetText(_("Implmenet inherited virtual functions"), _("Select from the list below the functions that you want to override in your class"));
+    m_banner4->SetText(_("Implement inherited virtual functions"), _("Select from the list below the functions that you want to override in your class"));
     m_banner4->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_banner4->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     

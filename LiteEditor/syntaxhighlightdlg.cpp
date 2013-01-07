@@ -101,7 +101,7 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 	m_lexersBook->GetTreeCtrl()->SetSizeHints(150, -1);
 	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
 	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	m_lexersBook->Connect(ID_buttonTextSelApplyToAll, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightDlg::OnTextSelApplyToAll), NULL, this );
+	m_lexersBook->Connect(XRCID("ID_buttonTextSelApplyToAll"), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightDlg::OnTextSelApplyToAll), NULL, this );
 	
 	LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
 

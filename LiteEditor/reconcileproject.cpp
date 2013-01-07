@@ -520,54 +520,52 @@ void ReconcileProjectDlg::OnApplyAllUI(wxUpdateUIEvent& event)
 
 void ReconcileProjectDlg::OnDVLCContextMenu(wxDataViewEvent& event)
 {
+    wxMenu menu;
+    menu.Append(wxID_DELETE);
+    menu.Connect(wxID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ReconcileProjectDlg::OnDeleteSelectedNewFiles), NULL, this);
+    m_dvListCtrl1Unassigned->PopupMenu( &menu );
+}
+
+void ReconcileProjectDlg::OnDeleteSelectedNewFiles(wxCommandEvent& e)
+{
     wxDataViewItemArray items;
     m_dvListCtrl1Unassigned->GetSelections(items);
-
-    size_t count = items.GetCount();
-    if (!count) {
-        wxDataViewItem item = event.GetItem();
-        if (item.IsOk()) {
-            m_dvListCtrl1Unassigned->Select(item);
-            items.Add(item);
-            count = 1;
-        } else {
-            return;
-        }
-    }
+    if ( items.IsEmpty() )
+        return;
 
     wxString msg;
-    if (count > 1) {
-        msg = wxString::Format(_("Delete the %i selected files from the filesystem?"), (int)count);
+    if (items.GetCount() >  1) {
+        msg = wxString::Format(_("Delete the %i selected files from the filesystem?"), (int)items.GetCount());
     } else {
         msg = wxString::Format(_("Delete the selected file from the filesystem?"));
     }
-    if (wxMessageBox(msg, _("CodeLite"), wxICON_WARNING|wxYES_NO, this) != wxYES) {
+    
+    if ( ::wxMessageBox(msg, "CodeLite", wxICON_WARNING|wxYES_NO, this) != wxYES ) {
         return;
     }
 
     int successes(0);
-    for (size_t n = 0; n < count; ++n) {
+    for (size_t n = 0; n < items.GetCount(); ++n) {
         wxVariant v;
-        int row = m_dvListCtrl1Unassigned->GetStore()->GetRow(items.Item(n));
+        int row = m_dvListCtrl1Unassigned->GetStore()->GetRow( items.Item(n) );
         m_dvListCtrl1Unassigned->GetValue(v, row, 0);
         if (v.IsNull()) {
             continue;
         }
+        
         wxDataViewIconText iv;
         iv << v;
         wxFileName fn(iv.GetText());
         fn.MakeAbsolute(m_toplevelDir);
 
         wxLogNull NoAnnoyingFileSystemMessages;
-        if (wxRemoveFile(fn.GetFullPath())) {
+        if ( ::wxRemoveFile(fn.GetFullPath()) ) {
             m_dvListCtrl1Unassigned->DeleteItem(row);
             ++successes;
         }
     }
-
     clMainFrame::Get()->SetStatusMessage(wxString::Format(_("%i file(s) successfully deleted"), successes), 0);
 }
-
 
 
 ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, const wxString& projname)

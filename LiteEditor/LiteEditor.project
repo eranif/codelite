@@ -12,7 +12,7 @@
     <Extensions>
       <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp;iss;sh]]>
     </Extensions>
-    <Topleveldir>../LiteEditor</Topleveldir>
+    <Topleveldir>../formbuilder</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="Source Files">
     <File Name="cpp_symbol_tree.cpp"/>
@@ -188,6 +188,10 @@
       <File Name="yestoalldlg.cpp"/>
       <File Name="env_var_dlg_base.h"/>
       <File Name="env_var_dlg_base.cpp"/>
+      <File Name="SyntaxHighlightBaseDlg.wxcp"/>
+      <File Name="editor_options_bookmarks.wxcp"/>
+      <File Name="editor_options_bookmarks_liteeditor_bitmaps.cpp"/>
+      <File Name="syntaxhighlightbasedlg_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>
@@ -1133,7 +1137,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

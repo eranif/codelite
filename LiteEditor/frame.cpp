@@ -1095,7 +1095,7 @@ void clMainFrame::CreateToolbars24()
     tb->AddSeparator();
     tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    _("Find Resource In Workspace"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
+    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Matching Words"), wxITEM_CHECK);
     tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     tb->AddSeparator();
 
@@ -1208,7 +1208,7 @@ void clMainFrame::CreateNativeToolbar16()
     tb->AddSeparator();
     tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    _("Find Resource In Workspace"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
+    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Matching Words"), wxITEM_CHECK);
     tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     tb->AddSeparator();
 
@@ -1283,7 +1283,7 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddSeparator();
     tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/24/search/open_resource")),    _("Find Resource In Workspace"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
+    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/24/search/mark_word")),        _("Highlight Matching Words"), wxITEM_CHECK);
     tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     tb->AddSeparator();
 
@@ -1385,7 +1385,7 @@ void clMainFrame::CreateToolbars16()
     tb->AddSeparator();
     tb->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"), bmpLoader.LoadBitmap(wxT("toolbars/16/search/open_resource")),    _("Find Resource In Workspace"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Word"), wxITEM_CHECK);
+    tb->AddTool(XRCID("highlight_word"), _("Highlight Word"),            bmpLoader.LoadBitmap(wxT("toolbars/16/search/mark_word")),        _("Highlight Matching Words"), wxITEM_CHECK);
     tb->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     tb->AddSeparator();
 

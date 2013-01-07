@@ -49,6 +49,11 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
 	if (val1.IsEmpty() == false) {
 		m_highlightColor->SetColour(val1);
 	}
+
+	long alpha(1);
+	if (EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
+		m_spinCtrlHighlightAlpha->SetValue(alpha);
+	}
 }
 
 
@@ -66,4 +71,5 @@ void EditorSettingsBookmarksPanel::Save(OptionsConfigPtr options)
 	options->SetBookmarkBgColour( m_backgroundColor->GetColour() );
 	options->SetBookmarkFgColour( m_foregroundColor->GetColour() );
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_highlightColor->GetColour().GetAsString());
+	EditorConfigST::Get()->SaveLongValue(wxT("WordHighlightAlpha"), (long)m_spinCtrlHighlightAlpha->GetValue());
 }

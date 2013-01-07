@@ -557,6 +557,10 @@ void LEditor::SetProperties()
     IndicatorSetStyle(MARKER_WORD_HIGHLIGHT, wxSTC_INDIC_ROUNDBOX);
     IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(MARKER_WORD_HIGHLIGHT, col2);
+    long alpha(1);
+	if (EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
+		IndicatorSetAlpha(MARKER_WORD_HIGHLIGHT, alpha);
+	}
 
     IndicatorSetStyle     (HYPERLINK_INDICATOR, wxSTC_INDIC_PLAIN);
     IndicatorSetStyle     (MATCH_INDICATOR, wxSTC_INDIC_BOX);

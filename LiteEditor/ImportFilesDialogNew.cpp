@@ -50,8 +50,6 @@ public:
 ImportFilesDialogNew::ImportFilesDialogNew(wxWindow* parent)
     : ImportFilesDialogNewBase(parent)
 {
-    DoBuildTree();
-
     ImportFilesSettings options;
     if(!EditorConfigST::Get()->ReadObject(wxT("import_dir_options"), &options)) {
         //first time, read the settings from the ctags options
@@ -73,6 +71,8 @@ ImportFilesDialogNew::ImportFilesDialogNew(wxWindow* parent)
     m_textCtrSpec->SetValue( options.GetFileMask() );
     m_checkBoxFilesWOExt->SetValue(options.GetFlags() & IFS_INCLUDE_FILES_WO_EXT );
     WindowAttrManager::Load(this, wxT("ImportFilesDialog"), NULL);
+    
+    DoBuildTree();
 }
 
 ImportFilesDialogNew::~ImportFilesDialogNew()

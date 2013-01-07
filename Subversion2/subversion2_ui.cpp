@@ -72,7 +72,7 @@ SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlSourceURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2);
+    m_textCtrlSourceURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_textCtrlSourceURL, 1, wxALL|wxEXPAND, 5);
     
@@ -80,27 +80,19 @@ SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlTargetURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2);
+    m_textCtrlTargetURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_textCtrlTargetURL, 1, wxALL|wxEXPAND, 5);
     
-    m_staticline3 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer7->Add(m_staticline3, 0, wxALL|wxEXPAND, 5);
-    
     m_staticText5 = new wxStaticText(this, wxID_ANY, _("Comment:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer7->Add(m_staticText5, 0, wxALL, 5);
+    bSizer7->Add(m_staticText5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_textCtrlComment = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
     wxFont m_textCtrlCommentFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
     m_textCtrlComment->SetFont(m_textCtrlCommentFont);
     
     bSizer7->Add(m_textCtrlComment, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticline2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer7->Add(m_staticline2, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* bSizer8 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -184,7 +176,7 @@ SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer2->Add(m_staticText6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlUsername = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2);
+    m_textCtrlUsername = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer2->Add(m_textCtrlUsername, 0, wxALL|wxEXPAND, 5);
     m_textCtrlUsername->SetMinSize(wxSize(300,-1));
@@ -193,13 +185,9 @@ SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer2->Add(m_staticText7, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlPassword = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PASSWORD);
+    m_textCtrlPassword = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PASSWORD);
     
     fgSizer2->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticline4 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer10->Add(m_staticline4, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -759,7 +747,7 @@ DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     wxBoxSizer* bSizer26 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer25->Add(bSizer26, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer25->Add(bSizer26, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button20 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button20->SetDefault();

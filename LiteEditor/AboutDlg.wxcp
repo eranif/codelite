@@ -281,7 +281,7 @@
 														}, {
 															"type":	"filePicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"../Runtime/images/about.png"
+															"m_path":	"../Runtime/images/splashscreen.png"
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -1146,7 +1146,7 @@
 							"gbSpan":	",",
 							"gbPosition":	",",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxALIGN_CENTER_HORIZONTAL"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",

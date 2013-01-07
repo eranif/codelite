@@ -289,7 +289,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
             m_dvFilesModel->AppendItem(m_itemUntracked, cols, new GitClientData(filename));
         }
     }
-
+#ifndef __WXMAC__
     if ( !m_dvFilesModel->HasChildren(m_itemModified) )
         m_dvFilesModel->DeleteItem(m_itemModified);
     else
@@ -302,6 +302,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
         m_dvFilesModel->DeleteItem(m_itemNew);
     else
         m_dvFiles->Expand(m_itemNew);
+#endif        
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)

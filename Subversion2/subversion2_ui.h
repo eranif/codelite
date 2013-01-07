@@ -15,7 +15,6 @@
 #include <wx/dialog.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/stc/stc.h>
 #include <wx/treebook.h>
@@ -24,6 +23,7 @@
 #include <wx/checkbox.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
+#include <wx/statline.h>
 #include <wx/filepicker.h>
 #include <wx/radiobox.h>
 #include <wx/listbox.h>
@@ -50,10 +50,8 @@ protected:
     wxTextCtrl* m_textCtrlSourceURL;
     wxStaticText* m_staticText4;
     wxTextCtrl* m_textCtrlTargetURL;
-    wxStaticLine* m_staticline3;
     wxStaticText* m_staticText5;
     wxTextCtrl* m_textCtrlComment;
-    wxStaticLine* m_staticline2;
     wxButton* m_button4;
     wxButton* m_button5;
 
@@ -85,7 +83,6 @@ protected:
     wxTextCtrl* m_textCtrlUsername;
     wxStaticText* m_staticText7;
     wxTextCtrl* m_textCtrlPassword;
-    wxStaticLine* m_staticline4;
     wxButton* m_button6;
     wxButton* m_button7;
 

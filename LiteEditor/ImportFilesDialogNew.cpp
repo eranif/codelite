@@ -220,28 +220,28 @@ void ImportFilesDialogNew::DoGetCheckedDirs(const wxDataViewItem& parent, wxStri
     wxDataViewItemArray children;
     bool itemExpanded = false;
     ImportFilesDlgData *cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(parent));
-    if ( cd && cd->IsChecked() ) {
-        
+    if ( cd ) {
+        bool     bParentFolderChecked = cd->IsChecked();
         wxString dirname = cd->GetPath();
         bool     recurse = false;
         // check if this item was expanded before
-        if ( m_dataviewModel->HasChildren(parent) ) {
-            if ( m_dataviewModel->GetChildren(parent, children)) {
-                wxDataViewItem child = children.Item(0);
-                cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
+        if ( m_dataviewModel->HasChildren(parent) && m_dataviewModel->GetChildren(parent, children)) {
+            wxDataViewItem child = children.Item(0);
+            cd = dynamic_cast<ImportFilesDlgData*>(m_dataviewModel->GetClientObject(child));
+            
+            // If the directory is checked and it was never expanded
+            // we should recurse into it
+            if ( cd && cd->IsDummy()) {
+                recurse = true;
                 
-                // If the directory is checked and it was never expanded
-                // we should recurse into it
-                if ( cd && cd->IsDummy()) {
-                    recurse = true;
-                    
-                } else if ( cd ) {
-                    itemExpanded = true;
-                }
+            } else if ( cd ) {
+                itemExpanded = true;
             }
         }
         
-        dirs.insert(std::make_pair(dirname, recurse));
+        if ( bParentFolderChecked ) {
+            dirs.insert(std::make_pair(dirname, recurse));
+        }
     }
     
     // if the parent has children and it was expanded by the user, keep on recursing

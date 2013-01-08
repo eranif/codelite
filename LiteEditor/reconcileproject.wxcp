@@ -526,7 +526,7 @@
 																										}, {
 																											"type":	"multi-string",
 																											"m_label":	"Tooltip:",
-																											"m_value":	""
+																											"m_value":	"These files have not yet been assigned a Virtual Directory. You can do this yourself by selecting one or more files and clicking the 'Forward' arrow button. A Virtual Directory selector will then appear. After your choice the selection(s) will be moved to the right-hand pane.\\nAlternatively click the 'Wizard' button for best-guess auto-allocation."
 																										}, {
 																											"type":	"colour",
 																											"m_label":	"Bg Colour:",
@@ -560,7 +560,7 @@
 																											"m_properties":	[{
 																													"type":	"string",
 																													"m_label":	"Name:",
-																													"m_value":	"Unassgined files:"
+																													"m_value":	"Unassigned files:"
 																												}, {
 																													"type":	"string",
 																													"m_label":	"Width:",
@@ -998,7 +998,7 @@
 																								}, {
 																									"type":	"multi-string",
 																									"m_label":	"Tooltip:",
-																									"m_value":	""
+																									"m_value":	"Each file here has been assigned a Virtual Directory. If you're happy with the choice, select the file and click 'Apply'. Otherwise select the file and use the 'back' button to return it to the Unassigned Files section."
 																								}, {
 																									"type":	"colour",
 																									"m_label":	"Bg Colour:",
@@ -1040,7 +1040,7 @@
 																									"m_properties":	[{
 																											"type":	"string",
 																											"m_label":	"Name:",
-																											"m_value":	"File"
+																											"m_value":	"Assigned files:"
 																										}, {
 																											"type":	"string",
 																											"m_label":	"Width:",
@@ -1494,7 +1494,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	""
+																	"m_value":	"The files listed below are contained in the project, but no longer exist in reality. You can select individual items and delete them from the project, or use the Delete All button."
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",

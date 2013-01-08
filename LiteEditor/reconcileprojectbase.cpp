@@ -67,10 +67,11 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     boxSizer179->Add(boxSizer183, 1, wxEXPAND, 5);
     
     m_dvListCtrl1Unassigned = new wxDataViewListCtrl(m_splitterPage1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
+    m_dvListCtrl1Unassigned->SetToolTip(_("These files have not yet been assigned a Virtual Directory. You can do this yourself by selecting one or more files and clicking the 'Forward' arrow button. A Virtual Directory selector will then appear. After your choice the selection(s) will be moved to the right-hand pane.\nAlternatively click the 'Wizard' button for best-guess auto-allocation."));
     
     boxSizer183->Add(m_dvListCtrl1Unassigned, 1, wxEXPAND, 5);
     
-    m_dvListCtrl1Unassigned->AppendIconTextColumn(_("Unassgined files:"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
+    m_dvListCtrl1Unassigned->AppendIconTextColumn(_("Unassigned files:"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     wxBoxSizer* boxSizer192 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer183->Add(boxSizer192, 0, wxEXPAND, 5);
@@ -109,6 +110,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     boxSizer250->Add(boxSizer181, 1, wxEXPAND, 5);
     
     m_dataviewAssigned = new wxDataViewCtrl(m_splitterPage2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
+    m_dataviewAssigned->SetToolTip(_("Each file here has been assigned a Virtual Directory. If you're happy with the choice, select the file and click 'Apply'. Otherwise select the file and use the 'back' button to return it to the Unassigned Files section."));
     
     m_dataviewAssignedModel = new AssignedFilesModel;
     m_dataviewAssignedModel->SetColCount( 2 );
@@ -116,7 +118,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     boxSizer181->Add(m_dataviewAssigned, 1, wxEXPAND, 5);
     
-    m_dataviewAssigned->AppendIconTextColumn(_("File"), m_dataviewAssigned->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
+    m_dataviewAssigned->AppendIconTextColumn(_("Assigned files:"), m_dataviewAssigned->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dataviewAssigned->AppendTextColumn(_("Virtual Folder"), m_dataviewAssigned->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     wxBoxSizer* boxSizer278 = new wxBoxSizer(wxVERTICAL);
     
@@ -149,6 +151,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     boxSizer226->Add(boxSizer262, 1, wxEXPAND, 5);
     
     m_dataviewStaleFiles = new wxDataViewCtrl(m_panel222, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE);
+    m_dataviewStaleFiles->SetToolTip(_("The files listed below are contained in the project, but no longer exist in reality. You can select individual items and delete them from the project, or use the Delete All button."));
     
     m_dataviewStaleFilesModel = new StaleFilesModel;
     m_dataviewStaleFilesModel->SetColCount( 1 );

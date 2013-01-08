@@ -373,9 +373,11 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("execute_no_debug"),         clMainFrame::OnExecuteNoDebug)
     EVT_MENU(XRCID("stop_executed_program"),    clMainFrame::OnStopExecutedProgram)
     EVT_MENU(XRCID("build_active_project"),     clMainFrame::OnBuildProject)
+    EVT_MENU(XRCID("build_active_project_only"),     clMainFrame::OnBuildProjectOnly)
     EVT_AUITOOLBAR_TOOL_DROPDOWN(XRCID("build_active_project"), clMainFrame::OnShowAuiBuildMenu)
     EVT_MENU(XRCID("compile_active_file"),      clMainFrame::OnCompileFile)
     EVT_MENU(XRCID("clean_active_project"),     clMainFrame::OnCleanProject)
+    EVT_MENU(XRCID("clean_active_project_only"),     clMainFrame::OnCleanProjectOnly)
     EVT_MENU(XRCID("stop_active_project_build"),    clMainFrame::OnStopBuild)
     EVT_MENU(XRCID("rebuild_active_project"),   clMainFrame::OnRebuildProject)
     EVT_MENU(XRCID("build_n_run_active_project"),   clMainFrame::OnBuildAndRunProject)
@@ -5048,9 +5050,8 @@ void clMainFrame::OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e)
 
 void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
 {
-    menu->Append(XRCID("build_active_project"), _("Build active Project"));
-    menu->Append(XRCID("clean_active_project"), _("Clean active Project"));
-    menu->Append(XRCID("compile_active_file"),  _("Compile current file"));
+    menu->Append(XRCID("build_active_project_only"), wxT("Project Only » Build"));
+    menu->Append(XRCID("clean_active_project_only"), wxT("Project Only » Clean"));
 
     // build the menu and show it
     BuildConfigPtr bldcfg = WorkspaceST::Get()->GetProjBuildConf( WorkspaceST::Get()->GetActiveProjectName(), "" );
@@ -5093,4 +5094,16 @@ void clMainFrame::OnIncrementalSearchUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
     event.Enable( m_mainBook->GetCurrentPage() != NULL );
+}
+
+void clMainFrame::OnBuildProjectOnly(wxCommandEvent& event)
+{
+    wxCommandEvent e(wxEVT_CMD_BUILD_PROJECT_ONLY);
+    EventNotifier::Get()->AddPendingEvent( e );
+}
+
+void clMainFrame::OnCleanProjectOnly(wxCommandEvent& event)
+{
+    wxCommandEvent e(wxEVT_CMD_CLEAN_PROJECT_ONLY);
+    EventNotifier::Get()->AddPendingEvent( e );
 }

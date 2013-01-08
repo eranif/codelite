@@ -26,7 +26,7 @@
 #ifndef PLUGIN_VERSION_H
 #define PLUGIN_VERSION_H
 
-// Increment this number whenever any of the files in the interface project is modified
-#define PLUGIN_INTERFACE_VERSION 600
+// Interface version is calcualted as follows: MAJOR * 1000 + MINOR * 100, e.g. codelite 4.1 => 4100, codelite 5.0 => 5000
+#define PLUGIN_INTERFACE_VERSION 5000 
 
 #endif // PLUGIN_VERSION_H

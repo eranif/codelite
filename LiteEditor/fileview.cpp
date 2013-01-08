@@ -167,16 +167,21 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
     Connect( GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileViewTree::OnMouseDblClick ) );
     Connect( GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler( FileViewTree::OnItemActivated ) );
     EventNotifier::Get()->Connect(wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
 }
 
 FileViewTree::~FileViewTree()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
+    
     delete m_folderMenu;
     delete m_projectMenu;
     delete m_fileMenu;
     delete m_workspaceMenu;
     delete m_emptyTreeMenu;
-    EventNotifier::Get()->Disconnect(wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), NULL, this);
 }
 
 void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
@@ -1429,23 +1434,12 @@ void FileViewTree::OnBuildProjectOnly( wxCommandEvent &event )
 {
     wxUnusedVar( event );
     wxTreeItemId item = GetSingleSelection();
+    
     if ( item.IsOk() ) {
         wxString projectName = GetItemText( item );
-
-        wxString conf;
-        // get the selected configuration to be built
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-        if (bldConf) {
-            conf = bldConf->GetName();
-        }
-
-        QueueCommand info(projectName, conf, true, QueueCommand::Build);
-        if (bldConf && bldConf->IsCustomBuild()) {
-            info.SetKind(QueueCommand::CustomBuild);
-            info.SetCustomBuildTarget(wxT("Build"));
-        }
-        ManagerST::Get()->PushQueueCommand( info );
-        ManagerST::Get()->ProcessCommandQueue();
+        wxCommandEvent e(wxEVT_CMD_BUILD_PROJECT_ONLY);
+        e.SetString( projectName );
+        EventNotifier::Get()->AddPendingEvent( e );
     }
 }
 
@@ -1453,24 +1447,12 @@ void FileViewTree::OnCleanProjectOnly( wxCommandEvent &event )
 {
     wxUnusedVar( event );
     wxTreeItemId item = GetSingleSelection();
+    
     if ( item.IsOk() ) {
         wxString projectName = GetItemText( item );
-
-        wxString conf;
-        // get the selected configuration to be built
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-        if (bldConf) {
-            conf = bldConf->GetName();
-        }
-
-        QueueCommand info(projectName, conf, true, QueueCommand::Clean);
-        if (bldConf && bldConf->IsCustomBuild()) {
-            info.SetKind(QueueCommand::CustomBuild);
-            info.SetCustomBuildTarget(wxT("Clean"));
-        }
-
-        ManagerST::Get()->PushQueueCommand(info);
-        ManagerST::Get()->ProcessCommandQueue();
+        wxCommandEvent e(wxEVT_CMD_CLEAN_PROJECT_ONLY);
+        e.SetString( projectName );
+        EventNotifier::Get()->AddPendingEvent( e );
     }
 }
 
@@ -2147,3 +2129,51 @@ void FileViewTree::OnBuildTree(wxCommandEvent& e)
     BuildTree();
 }
 
+void FileViewTree::OnBuildProjectOnlyInternal(wxCommandEvent& e)
+{
+    e.Skip();
+    wxString projectName = e.GetString();
+    if ( projectName.IsEmpty() ) {
+        projectName = ManagerST::Get()->GetActiveProjectName();
+    }
+    
+    wxString conf;
+    // get the selected configuration to be built
+    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+    if (bldConf) {
+        conf = bldConf->GetName();
+    }
+
+    QueueCommand info(projectName, conf, true, QueueCommand::Build);
+    if (bldConf && bldConf->IsCustomBuild()) {
+        info.SetKind(QueueCommand::CustomBuild);
+        info.SetCustomBuildTarget(wxT("Build"));
+    }
+    ManagerST::Get()->PushQueueCommand( info );
+    ManagerST::Get()->ProcessCommandQueue();
+}
+
+void FileViewTree::OnCleanProjectOnlyInternal(wxCommandEvent& e)
+{
+    e.Skip();
+    wxString projectName = e.GetString();
+    if ( projectName.IsEmpty() ) {
+        projectName = ManagerST::Get()->GetActiveProjectName();
+    }
+    
+    wxString conf;
+    // get the selected configuration to be built
+    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+    if (bldConf) {
+        conf = bldConf->GetName();
+    }
+
+    QueueCommand info(projectName, conf, true, QueueCommand::Clean);
+    if (bldConf && bldConf->IsCustomBuild()) {
+        info.SetKind(QueueCommand::CustomBuild);
+        info.SetCustomBuildTarget(wxT("Clean"));
+    }
+
+    ManagerST::Get()->PushQueueCommand(info);
+    ManagerST::Get()->ProcessCommandQueue();
+}

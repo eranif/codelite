@@ -455,6 +455,13 @@ enum {
     // If the editor managed by the find-bar is the same as event.GetClientData() -> the find-bar will un-refernce it 
     // but *IT DOES NOT FREE ITS MEMORY*
     wxEVT_FINDBAR_RELEASE_EDITOR,
+    
+    // Instruct codelite to build a project only ( no deps )
+    // the project name is passed in the wxCommandEvent::GetString
+    wxEVT_CMD_BUILD_PROJECT_ONLY,
+    // Instruct codelite to clean a project only ( no deps )
+    // the project name is passed in the wxCommandEvent::GetString
+    wxEVT_CMD_CLEAN_PROJECT_ONLY,
 };
 
 //------------------------------------------------------------------

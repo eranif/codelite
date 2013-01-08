@@ -171,6 +171,10 @@ protected:
     int OnCompareItems(const FilewViewTreeItemData *a, const FilewViewTreeItemData *b);
 
     void PopupContextMenu(wxMenu *menu, MenuType type, const wxString &projectName = wxEmptyString);
+    
+    // internal
+    void OnBuildProjectOnlyInternal(wxCommandEvent &e);
+    void OnCleanProjectOnlyInternal(wxCommandEvent &e);
 
 private:
     // Build project node

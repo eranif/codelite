@@ -416,6 +416,7 @@ protected:
     void OnAdvanceSettings(wxCommandEvent &event);
     void OnCtagsOptions(wxCommandEvent &event);
     void OnBuildProject(wxCommandEvent &event);
+    void OnBuildProjectOnly(wxCommandEvent &event);
     void OnShowAuiBuildMenu(wxAuiToolBarEvent &e);
     void OnBuildAndRunProject(wxCommandEvent &event);
     void OnRebuildProject(wxCommandEvent &event);
@@ -426,6 +427,7 @@ protected:
     void OnStopExecutedProgram(wxCommandEvent &event);
     void OnStopExecutedProgramUI(wxUpdateUIEvent &event);
     void OnCleanProject(wxCommandEvent &event);
+    void OnCleanProjectOnly(wxCommandEvent &event);
     void OnCleanProjectUI(wxUpdateUIEvent &event);
     void OnExecuteNoDebug(wxCommandEvent &event);
     void OnExecuteNoDebugUI(wxUpdateUIEvent &event);

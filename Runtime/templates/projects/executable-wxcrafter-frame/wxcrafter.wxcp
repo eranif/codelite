@@ -25,7 +25,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"MainFrame"
+					"m_value":	"MainFrameBaseClass"
 				}, {
 					"type":	"string",
 					"m_label":	"Tooltip:",
@@ -54,6 +54,10 @@
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
 					"m_path":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Inherited Class",
+					"m_value":	"MainFrame"
 				}],
 			"m_events":	[],
 			"m_children":	[{

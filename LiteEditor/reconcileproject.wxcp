@@ -20,7 +20,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"600,400"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -1427,7 +1427,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Message:",
-															"m_value":	"The list below contains files that exist on the project but not on the file system"
+															"m_value":	"The list below contains files that exist in the project but not on the file system"
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",

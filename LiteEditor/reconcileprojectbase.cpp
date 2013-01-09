@@ -140,7 +140,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     m_banner272 = new wxBannerWindow(m_panel222, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner272->SetBitmap(wxNullBitmap);
-    m_banner272->SetText(_("Stale Files"), _("The list below contains files that exist on the project but not on the file system"));
+    m_banner272->SetText(_("Stale Files"), _("The list below contains files that exist in the project but not on the file system"));
     m_banner272->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_banner272->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     
@@ -182,7 +182,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     boxSizer252->Add(m_button258, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     
-    SetSizeHints(600,400);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

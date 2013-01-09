@@ -318,6 +318,10 @@ NewProjImgList::NewProjImgList()
     this->Add( bmp );
     m_bitmaps.insert( std::make_pair(wxT("makefile16"), bmp ) );
     
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("wxc"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("wxc"), bmp ) );
+    
     
 }
 

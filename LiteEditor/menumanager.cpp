@@ -63,6 +63,7 @@ MenuManager::MenuManager(void)
 	PushHandler(new ViewAsHandler(viewAsMenuItemID));
 	PushHandler(new WordWrapHandler(XRCID("word_wrap")));
 	PushHandler(new FoldHandler(XRCID("toggle_fold")));
+	PushHandler(new FoldHandler(XRCID("fold_all_in_selection")));
 	PushHandler(new FoldHandler(XRCID("fold_all")));
 	PushHandler(new DebuggerMenuHandler(XRCID("add_breakpoint")));
 	PushHandler(new DebuggerMenuHandler(XRCID("insert_breakpoint"))); // This actually does 'toggle'

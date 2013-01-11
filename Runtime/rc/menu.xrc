@@ -166,6 +166,9 @@
 			<object class="wxMenuItem" name="fold_all">
 				<label>Toggle &amp;All Folds</label>
 			</object>
+			<object class="wxMenuItem" name="fold_all_in_selection">
+				<label>Toggle &amp;Every Fold in Selection</label>
+			</object>
 			<object class="wxMenuItem" name="display_eol">
 				<label>&amp;Display EOL</label>
 				<checkable>1</checkable>

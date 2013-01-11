@@ -35,6 +35,7 @@ trim_trailing|Edit|Trim Trailing Spaces|
 word_wrap|View|Word Wrap|
 toggle_fold|View|Toggle Current Fold|Alt-RIGHT
 fold_all|View|Toggle All Folds|Ctrl-Alt-RIGHT
+fold_all_in_selection|View|Toggle Every Fold in Selection|
 display_eol|View|Display EOL|
 whitepsace_invisible|View::Show Whitespace|Invisible|Alt-F1
 whitepsace_always|View::Show Whitespace|Show Always|Alt-F2

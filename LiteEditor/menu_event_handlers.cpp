@@ -413,13 +413,24 @@ void FoldHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     }
 
     if (event.GetId() == XRCID("toggle_fold")) editor->ToggleCurrentFold();
-    else editor->FoldAll();
+     else if (event.GetId() == XRCID("fold_all_in_selection")) editor->ToggleAllFoldsInSelection();
+     else editor->FoldAll();
 }
 
-void FoldHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)
+void FoldHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event) // Used for ToggleAllFoldsInSelection()
 {
-    wxUnusedVar(owner);
-    wxUnusedVar(event);
+    LEditor *editor = dynamic_cast<LEditor*>(owner);
+    if ( !editor ) {
+        event.Enable(false);
+        return;
+    }
+
+    bool hasSelection = !editor->GetSelection().empty();
+    if (hasSelection) {
+        // Even if there is a selection, check it's not a trivial amount i.e. spans at least 2 lines
+        hasSelection = editor->LineFromPos(editor->GetSelectionStart()) != editor->LineFromPos(editor->GetSelectionEnd());
+    }
+    event.Enable(hasSelection);
 }
 
 void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)

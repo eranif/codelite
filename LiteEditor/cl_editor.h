@@ -337,8 +337,16 @@ public:
     // mark all occurances
     bool MarkAll();
 
+    // Folding API
+    //-----------------------------------------
     void ToggleCurrentFold();
     void FoldAll();
+    /**
+     * Toggles *all* folds within the selection, not just the outer one of each function
+     */
+    void ToggleAllFoldsInSelection();
+    void DoRecursivelyExpandFolds(bool expand, int startline, int endline);
+
 
     static FindReplaceDialog* GetFindReplaceDialog() {
         return m_findReplaceDlg;

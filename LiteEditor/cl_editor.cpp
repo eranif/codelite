@@ -1995,6 +1995,81 @@ void LEditor::ToggleCurrentFold()
     }
 }
 
+void LEditor::DoRecursivelyExpandFolds(bool expand, int startline, int endline)
+{
+    for (int line = startline; line < endline; ++line) {
+        if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
+            int BottomOfFold = GetLastChild(line, -1);
+            
+            if (expand) {
+                // Expand this fold
+                SetFoldExpanded(line, true);
+                ShowLines(line+1, BottomOfFold);
+                // Recursively do any contained child folds
+                DoRecursivelyExpandFolds(expand, line+1, BottomOfFold);
+            } else {
+                DoRecursivelyExpandFolds(expand, line+1, BottomOfFold);
+                // Hide this fold
+                SetFoldExpanded(line, false);
+                HideLines(line+1, BottomOfFold);
+            }
+            
+
+            line = BottomOfFold; // Now skip over the fold we've just dealt with, ready for any later siblings
+        }
+    }
+}
+
+void LEditor::ToggleAllFoldsInSelection()
+{
+    int selStart = GetSelectionStart();
+    int selEnd = GetSelectionEnd();
+    if (selStart == selEnd) {
+        return; // No selection. UpdateUI prevents this from the menu, but not from an accelerator
+    }
+
+    int startline = LineFromPos(selStart);
+    int endline = LineFromPos(selEnd);
+    if (startline == endline) {
+        ToggleFold(startline); // For a single-line selection just toggle
+        return;
+    }
+    if ( startline > endline) {
+        wxSwap(startline, endline);
+    }
+
+    // First see if there are any folded lines in the selection. If there are, we'll be in 'unfold' mode
+    bool expanding(false);
+    for (int line = startline; line < endline; ++line) { // not <=. If only the last line of the sel is folded it's unlikely that the user meant it
+        if (!GetLineVisible(line)) {
+            expanding = true;
+            break;
+        }
+    }
+
+    for (int line = startline; line < endline; ++line) {
+        if (!(GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG)) {
+            continue;
+        }
+        int BottomOfFold = GetLastChild(line, -1);
+        if (BottomOfFold > (endline+1)) { // GetLastChild() seems to be 1-based, not zero-based. Without the +1, a } at endline will be considered outside the selection
+            continue; // This fold continues past the end of the selection
+        }
+        DoRecursivelyExpandFolds(expanding, line, BottomOfFold);
+        line = BottomOfFold;
+    }
+
+    if (!expanding) {
+        // The caret will (surely) be inside the selection, and unless it was on the first line or an unfolded one, it'll now be hidden
+        // If so place it at the top, which will be visible. Unfortunately SetCaretAt() destroys the selection, 
+        // and I can't find a way to preserve/reinstate it while still setting the caret. DoEnsureCaretIsVisible() also fails :(
+        int caretline = LineFromPos(GetCurrentPos());
+        if (!GetLineVisible(caretline)) { 
+           SetCaretAt(selStart);
+        }
+    }
+}
+
 // If the cursor is on/in/below an open fold, collapse all. Otherwise expand all
 void LEditor::FoldAll()
 {

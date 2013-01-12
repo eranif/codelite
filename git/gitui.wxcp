@@ -4842,7 +4842,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3D"],
+							"m_styles":	["wxSP_LIVE_UPDATE"],
 							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -5047,7 +5047,7 @@
 															"m_properties":	[{
 																	"type":	"string",
 																	"m_label":	"Name:",
-																	"m_value":	"File List"
+																	"m_value":	"File View"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Width:",

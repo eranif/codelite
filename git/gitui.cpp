@@ -594,7 +594,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_auibar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), wxXmlResource::Get()->LoadBitmap(wxT("git-reset")), wxNullBitmap, wxITEM_NORMAL, _("Reset File"), _("Reset File"), NULL);
     m_auibar->Realize();
     
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3D);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
     m_splitter->SetSashGravity(0.500000);
     m_splitter->SetMinimumPaneSize(10);
     
@@ -613,7 +613,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     boxSizer94->Add(m_dvFiles, 1, wxEXPAND, 5);
     
-    m_dvFiles->AppendIconTextColumn(_("File List"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
+    m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage100, m_splitterPage96, 150);
     

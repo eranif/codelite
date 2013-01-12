@@ -1,6 +1,7 @@
 #include "wxterminal.h"
 #include "asyncprocess.h"
 #include <wx/filename.h>
+#include <wx/app.h>
 #include "processreaderthread.h"
 #include "drawingutils.h"
 
@@ -57,8 +58,13 @@ wxTerminal::wxTerminal( wxWindow* parent )
     m_defaultStyle.SetTextColour      ( DrawingUtils::GetOutputPaneFgColour() );
     m_defaultStyle.SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour());
 
-    m_textCtrl->SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour() );
+    m_textCtrl->SetForegroundColour   ( DrawingUtils::GetOutputPaneFgColour() );
+    m_textCtrl->SetBackgroundColour   ( DrawingUtils::GetOutputPaneBgColour() );
     m_textCtrl->SetDefaultStyle       ( m_defaultStyle );
+    
+    wxTheApp->Connect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
+    wxTheApp->Connect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
+    wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
 }
 
 wxTerminal::~wxTerminal()
@@ -66,6 +72,10 @@ wxTerminal::~wxTerminal()
 #if defined(__WXMAC__) || defined(__WXGTK__)
     StopTTY();
 #endif
+
+    wxTheApp->Disconnect(wxID_CUT,       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
+    wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
+    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
 }
 
 void wxTerminal::OnText( wxCommandEvent& event )
@@ -90,6 +100,12 @@ void wxTerminal::OnURL( wxTextUrlEvent& event )
 
 void wxTerminal::OnKey(wxKeyEvent& event)
 {
+    // We don't want to allow much editing in the textctrl, but it's nice to let the DEL key delete the selection
+    if ((event.GetKeyCode() == WXK_DELETE) && (m_textCtrl->HasSelection())) {
+            m_textCtrl->Cut(); // which is close enough for our purposes
+            return;
+    }
+
     long curPos = m_textCtrl->GetInsertionPoint();
     if(curPos < m_inferiorEnd) {
         int keyCode = event.GetKeyCode();
@@ -118,6 +134,7 @@ void wxTerminal::OnKey(wxKeyEvent& event)
         return;
     }
 
+
 #ifndef __WXMSW__
     if(m_dummyProcess) {
         switch(event.GetKeyCode()) {
@@ -133,6 +150,28 @@ void wxTerminal::OnKey(wxKeyEvent& event)
     }
 #endif
     event.Skip();
+}
+
+void wxTerminal::OnEdit(wxCommandEvent& event)
+{
+    if (wxWindow::FindFocus() != m_textCtrl) {
+        event.Skip();
+        return;
+    }
+
+    switch (event.GetId()) {
+        case wxID_COPY:
+            m_textCtrl->Copy();
+            break;
+        case wxID_CUT:
+            m_textCtrl->Cut();
+            break;
+        case wxID_SELECTALL:
+            m_textCtrl->SelectAll();
+            break;
+        default:
+            event.Skip();
+    }
 }
 
 void wxTerminal::OnProcessEnd(wxCommandEvent& event)

@@ -51,12 +51,13 @@ protected:
 protected:
     // Handlers for wxTerminalBase events.
     DECLARE_EVENT_TABLE()
-    virtual void OnText             ( wxCommandEvent& event );
-    virtual void OnEnter            ( wxCommandEvent& event );
-    virtual void OnURL              ( wxTextUrlEvent& event );
-    virtual void OnKey              ( wxKeyEvent    & event );
-    virtual void OnReadProcessOutput(wxCommandEvent & event );
-    virtual void OnProcessEnd       (wxCommandEvent & event );
+    virtual void OnText             (wxCommandEvent& event);
+    virtual void OnEnter            (wxCommandEvent& event);
+    virtual void OnURL              (wxTextUrlEvent& event);
+    virtual void OnKey              (wxKeyEvent    & event);
+    virtual void OnReadProcessOutput(wxCommandEvent& event);
+    virtual void OnProcessEnd       (wxCommandEvent& event);
+    void OnEdit                     (wxCommandEvent& event);
 
 public:
     /** Constructor */

@@ -124,6 +124,7 @@ private:
     void DoAddFiles(const wxArrayString &files);
     void DoResetFiles(const wxArrayString &files);
     void DoGetFileViewSelectedFiles( wxArrayString &files, bool relativeToRepo );
+    void DoShowDiffsForFiles(const wxArrayString &files);
     
     DECLARE_EVENT_TABLE();
     // Event handlers
@@ -169,26 +170,33 @@ public:
     GitPlugin(IManager *manager);
     ~GitPlugin();
 
+    const wxString& GetRepositoryDirectory() const {
+        return m_repositoryDirectory;
+    }
     IProcess* GetProcess() {
         return m_process;
     }
-    
+
     IManager* GetManager() {
         return m_mgr;
+    }
+    
+    void ShowDiff(const wxArrayString &files) {
+        DoShowDiffsForFiles(files);
     }
     
     void AddFiles(const wxArrayString &files) {
         DoAddFiles(files);
     }
-    
+
     void ResetFiles(const wxArrayString &files) {
         DoResetFiles(files);
     }
-    
+
     void UndoAddFiles(const wxArrayString& files);
-    
+
     void RefreshFileListView();
-    
+
     //--------------------------------------------
     //Abstract methods
     //--------------------------------------------

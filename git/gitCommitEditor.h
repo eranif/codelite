@@ -14,7 +14,8 @@
 class GitCommitEditor : public wxStyledTextCtrl
 {
 public:
-    GitCommitEditor(wxWindow* parent);
+    GitCommitEditor(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint &position = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+    void InitStyles();
 };
 
 #endif //__gitCommitEditor__

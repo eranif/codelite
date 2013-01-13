@@ -640,6 +640,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     this->Connect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
     this->Connect(XRCID("git_console_reset_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
+    m_dvFiles->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
     
 }
 
@@ -654,5 +655,91 @@ GitConsoleBase::~GitConsoleBase()
     this->Disconnect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
     this->Disconnect(XRCID("git_console_reset_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
+    m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
+    
+}
+
+GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer124);
+    
+    m_auibar132 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar132->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer124->Add(m_auibar132, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    
+    m_auibar132->AddTool(wxID_SAVEAS, _("Save as patch"), wxXmlResource::Get()->LoadBitmap(wxT("save")), wxNullBitmap, wxITEM_NORMAL, _("Save as patch"), _("Save as patch"), NULL);
+    m_auibar132->Realize();
+    
+    m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_editor->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_editor->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_editor->SetMarginSensitive(4, true);
+    m_editor->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_editor->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_editor->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_editor->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_editor->SetMarginWidth(2, 0);
+    m_editor->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_editor->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_editor->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_editor->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_editor->SetMarginMask(3, 0);
+    m_editor->SetMarginWidth(3,0);
+    // Select the lexer
+    m_editor->SetLexer(wxSTC_LEX_DIFF);
+    // Set default font / styles
+    m_editor->StyleClearAll();
+    m_editor->SetWrapMode(0);
+    m_editor->SetIndentationGuides(0);
+    m_editor->SetKeyWords(0, wxT(""));
+    m_editor->SetKeyWords(1, wxT(""));
+    m_editor->SetKeyWords(2, wxT(""));
+    m_editor->SetKeyWords(3, wxT(""));
+    m_editor->SetKeyWords(4, wxT(""));
+    
+    boxSizer124->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer126 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer124->Add(boxSizer126, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button128 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button128->SetDefault();
+    
+    boxSizer126->Add(m_button128, 0, wxALL, 5);
+    
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
+    
+}
+
+GitFileDiffDlgBase::~GitFileDiffDlgBase()
+{
+    this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
     
 }

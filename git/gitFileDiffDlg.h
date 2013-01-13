@@ -8,18 +8,16 @@
 #ifndef __GitFileDiffDlg__
 #define __GitFileDiffDlg__
 
-#include <wx/wx.h>
+#include "gitui.h"
 
-class GitCommitEditor;
-
-class GitFileDiffDlg : public wxDialog
+class GitFileDiffDlg : public GitFileDiffDlgBase
 {
-  GitCommitEditor* m_editor;
-  public:
+public:
     GitFileDiffDlg(wxWindow* parent);
-	~GitFileDiffDlg();
+    ~GitFileDiffDlg();
     void SetDiff(const wxString& diff);
+protected:
+    virtual void OnSaveAsPatch(wxCommandEvent& event);
 };
 
 #endif //__GitFileDiffDlg__
-

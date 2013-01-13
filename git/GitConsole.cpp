@@ -116,7 +116,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_commit"), wxT("Commit"), m_images.Bitmap("gitCommitLocal"), wxT("Commit local changes"));
     m_auibar->AddTool(XRCID("git_push"), wxT("Push"), m_images.Bitmap("gitPush"), wxT("Push local changes"));
     m_auibar->AddSeparator();
-    
+
     m_auibar->AddTool(XRCID("git_create_branch"), wxT("Create branch"), m_images.Bitmap("gitNewBranch"), wxT("Create local branch"));
     m_auibar->AddTool(XRCID("git_switch_branch"), wxT("Local branch"), m_images.Bitmap("gitSwitchLocalBranch"), wxT("Switch to local branch"));
     //m_auibar->AddTool(XRCID("git_switch_to_remote_branch"), wxT("Remote branch"), XPM_BITMAP(menuexport), wxT("Init and switch to remote branch"));
@@ -294,7 +294,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
         m_dvFilesModel->DeleteItem(m_itemModified);
     else
         m_dvFiles->Expand(m_itemModified);
-        
+
     if ( !m_dvFilesModel->HasChildren(m_itemUntracked) )
         m_dvFilesModel->DeleteItem(m_itemUntracked);
 
@@ -302,7 +302,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
         m_dvFilesModel->DeleteItem(m_itemNew);
     else
         m_dvFiles->Expand(m_itemNew);
-#endif        
+#endif
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
@@ -310,6 +310,9 @@ void GitConsole::OnContextMenu(wxDataViewEvent& event)
     wxMenu menu;
     menu.Append(XRCID("git_console_add_file"), _("Add file"));
     menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("git_console_diff_file"),  _("Show Diff"));
+    menu.Connect(XRCID("git_console_diff_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnShowFileDiff), NULL, this);
     m_dvFiles->PopupMenu( &menu );
 }
 
@@ -370,4 +373,46 @@ void GitConsole::OnWorkspaceClosed(wxCommandEvent& e)
 void GitConsole::OnItemSelectedUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_dvFiles->GetSelectedItemsCount() );
+}
+
+void GitConsole::OnFileActivated(wxDataViewEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dvFiles->GetSelections(items);
+    wxArrayString files;
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        GitClientData* gcd = dynamic_cast<GitClientData*>(m_dvFilesModel->GetClientObject( items.Item(i) ));
+        if ( gcd ) {
+            files.push_back( gcd->GetPath() );
+        }
+    }
+    
+    if ( files.IsEmpty() ) {
+        event.Skip();
+        return;
+    }
+    
+    // open the files
+    for(size_t i=0; i<files.GetCount(); ++i) {
+        m_git->GetManager()->OpenFile(files.Item(i));
+    }
+}
+
+void GitConsole::OnShowFileDiff(wxCommandEvent& e)
+{
+    wxDataViewItemArray items;
+    m_dvFiles->GetSelections(items);
+    wxArrayString files;
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        GitClientData* gcd = dynamic_cast<GitClientData*>(m_dvFilesModel->GetClientObject( items.Item(i) ));
+        if ( gcd ) {
+            wxFileName fn( gcd->GetPath() );
+            fn.MakeRelativeTo( m_git->GetRepositoryDirectory() );
+            files.push_back( fn.GetFullPath() );
+        }
+    }
+    
+    if ( !files.IsEmpty() ) {
+        m_git->ShowDiff( files );
+    }
 }

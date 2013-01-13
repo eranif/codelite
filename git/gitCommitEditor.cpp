@@ -2,10 +2,15 @@
 
 #include "drawingutils.h"
 
-GitCommitEditor::GitCommitEditor(wxWindow* parent)
-    : wxStyledTextCtrl(parent)
+GitCommitEditor::GitCommitEditor(wxWindow* parent, wxWindowID id, const wxPoint &position, const wxSize& size, long style)
+    : wxStyledTextCtrl(parent, id, position, size, style)
 {
-    // Initialize some styles
+    InitStyles();
+}
+
+void GitCommitEditor::InitStyles()
+{
+// Initialize some styles
     StyleClearAll();
     SetLexer(wxSTC_LEX_DIFF);
 
@@ -94,5 +99,4 @@ GitCommitEditor::GitCommitEditor(wxWindow* parent)
 
     StyleSetBackground(10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     StyleSetForeground(10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-
 }

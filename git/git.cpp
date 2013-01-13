@@ -404,17 +404,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent &e)
     // fetch the list of files
     wxArrayString files;
     DoGetFileViewSelectedFiles( files, true );
-    
-    // prepare a space delimited list
-    wxString filelist;
-    for(size_t i=0; i<files.GetCount(); ++i) {
-        filelist << files.Item(i) << " ";
-    }
-    
-    // and finally, perform the action
-    gitAction ga(gitDiffFile, filelist);
-    m_gitActionQueue.push(ga);
-    ProcessGitActionQueue();
+    DoShowDiffsForFiles( files );
 }
 
 /*******************************************************************************/
@@ -1811,4 +1801,18 @@ void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeTo
             files.Add( filename );
         }
     }
+}
+
+void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files)
+{
+    // prepare a space delimited list
+    wxString filelist;
+    for(size_t i=0; i<files.GetCount(); ++i) {
+        filelist << files.Item(i) << " ";
+    }
+    
+    // and finally, perform the action
+    gitAction ga(gitDiffFile, filelist);
+    m_gitActionQueue.push(ga);
+    ProcessGitActionQueue();
 }

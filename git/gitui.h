@@ -32,6 +32,7 @@
 #include <wx/toolbar.h>
 #include <wx/dataview.h>
 #include "dataviewfilesmodel.h"
+#include <wx/stc/stc.h>
 
 class GitSettingsDlgBase : public wxDialog
 {
@@ -191,10 +192,27 @@ protected:
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnFileActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~GitConsoleBase();
+};
+
+
+class GitFileDiffDlgBase : public wxDialog
+{
+protected:
+    wxAuiToolBar* m_auibar132;
+    GitCommitEditor* m_editor;
+    wxButton* m_button128;
+
+protected:
+    virtual void OnSaveAsPatch(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~GitFileDiffDlgBase();
 };
 
 #endif

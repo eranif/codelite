@@ -27,6 +27,7 @@ public:
     bool IsVerbose() const;
     void UpdateTreeView(const wxString &output);
 protected:
+    virtual void OnFileActivated(wxDataViewEvent& event);
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event);
     virtual void OnAddFile(wxCommandEvent& event);
     virtual void OnResetFile(wxCommandEvent& event);
@@ -35,6 +36,7 @@ protected:
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnStopGitProcess(wxCommandEvent& event);
+    void OnShowFileDiff(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnConfigurationChanged(wxCommandEvent &e);
 

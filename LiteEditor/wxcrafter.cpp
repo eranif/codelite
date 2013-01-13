@@ -161,7 +161,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH|wxSP_3D);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
     m_splitter->SetSashGravity(0.000000);
     m_splitter->SetMinimumPaneSize(10);
     
@@ -175,7 +175,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxArrayString m_scopeArr;
     m_scope = new wxChoice(m_splitterPage39, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_scopeArr, 0);
     
-    boxSizer42->Add(m_scope, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer42->Add(m_scope, 0, wxALL|wxEXPAND, 5);
     
     m_splitterPage41 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage39, m_splitterPage41, 200);
@@ -186,7 +186,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     wxArrayString m_funcArr;
     m_func = new wxChoice(m_splitterPage41, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_funcArr, 0);
     
-    boxSizer43->Add(m_func, 0, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer43->Add(m_func, 0, wxALL|wxEXPAND, 5);
     
     
     SetSizeHints(-1,-1);
@@ -350,11 +350,11 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     wxBoxSizer* boxSizer82 = new wxBoxSizer(wxVERTICAL);
     m_panel81->SetSizer(boxSizer82);
     
-    m_banner76 = new wxBannerWindow(m_panel81, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_banner76 = new wxBannerWindow(m_panel81, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner76->SetBitmap(wxNullBitmap);
     m_banner76->SetText(_("Plugin is not installed"), _("It seems that the wxCrafter plugin is not installed\nWhat would you like to do?"));
-    m_banner76->SetGradient(wxColour(wxT("rgb(0,128,255)")), wxColour(wxT("rgb(0,128,255)")));
-    m_banner76->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_banner76->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner76->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     
     boxSizer82->Add(m_banner76, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10);
     

@@ -1368,7 +1368,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH", "wxSP_3D"],
+							"m_styles":	["wxSP_LIVE_UPDATE"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -1505,7 +1505,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxLEFT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1647,7 +1647,7 @@
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -2532,7 +2532,7 @@
 											"border":	10,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
-											"m_styles":	["wxBORDER_THEME"],
+											"m_styles":	[],
 											"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -2561,7 +2561,7 @@
 												}, {
 													"type":	"colour",
 													"m_label":	"Fg Colour:",
-													"colour":	"(255,255,255)"
+													"colour":	"CaptionText"
 												}, {
 													"type":	"font",
 													"m_label":	"Font:",
@@ -2594,11 +2594,11 @@
 												}, {
 													"type":	"colour",
 													"m_label":	"Gradient Start",
-													"colour":	"(0,128,255)"
+													"colour":	"ActiveCaption"
 												}, {
 													"type":	"colour",
 													"m_label":	"Gradient End",
-													"colour":	"(0,128,255)"
+													"colour":	"ActiveCaption"
 												}],
 											"m_events":	[],
 											"m_children":	[]

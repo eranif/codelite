@@ -23,7 +23,12 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir)
     GitEntry data;
     conf.ReadItem(&data);
     m_gitPath = data.GetGITExecutablePath();
-
+    m_gitPath.Trim().Trim(false);
+    
+    if ( m_gitPath.IsEmpty() ) {
+        m_gitPath = "git";
+    }
+    
     m_commitListBox->InsertColumn(0, wxT("Commit"));
     m_commitListBox->InsertColumn(1, wxT("Subject"));
     m_commitListBox->InsertColumn(2, wxT("Author"));

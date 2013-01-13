@@ -27,6 +27,7 @@
 #include "gitCloneDlg.h"
 #include "GitConsole.h"
 #include "icons/icon_git.xpm"
+#include "project.h"
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -91,11 +92,11 @@ GitPlugin::GitPlugin(IManager *manager)
     EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
-    
+
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, wxT("git"), false, m_images.Bitmap("git"));
-    
+
     m_progressTimer.SetOwner(this);
 }
 /*******************************************************************************/
@@ -116,7 +117,7 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
     m_pluginMenu = new wxMenu();
     wxMenuItem *item( NULL );
-    
+
     item = new wxMenuItem( m_pluginMenu, XRCID("git_pull"), wxT( "Pull remote changes"));
     item->SetBitmap(m_images.Bitmap("gitPull"));
     m_pluginMenu->Append( item );
@@ -156,7 +157,7 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     item = new wxMenuItem( m_pluginMenu, XRCID("git_list_modified"), wxT( "List modified files" ), wxT( "List modified files" ), wxITEM_NORMAL );
     item->SetBitmap(m_images.Bitmap("gitModifiedFiles"));
     m_pluginMenu->Append( item );
-    
+
     item = new wxMenuItem( m_pluginMenu, XRCID("git_start_gitk"), wxT( "Start gitk" ), wxT( "Start gitk" ), wxITEM_NORMAL );
     item->SetBitmap(m_images.Bitmap("gitStart"));
     m_pluginMenu->Append( item );
@@ -165,7 +166,7 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     item = new wxMenuItem( m_pluginMenu, XRCID("git_garbage_collection"), wxT( "Clean git database (garbage collection)" ));
     item->SetBitmap(m_images.Bitmap("gitTrash"));
     m_pluginMenu->Append( item );
-    
+
     item = new wxMenuItem( m_pluginMenu, XRCID("git_refresh"), wxT( "Refresh git file list" ), wxT( "Refresh file lists" ), wxITEM_NORMAL );
     item->SetBitmap(m_images.Bitmap("gitRefresh"));
     m_pluginMenu->Append( item );
@@ -252,7 +253,7 @@ void GitPlugin::UnPlug()
             break;
         }
     }
-    
+
     /*MENU*/
     m_eventHandler->Disconnect( XRCID("git_set_repository"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSetGitRepoPath ), NULL, this );
     m_eventHandler->Disconnect( XRCID("git_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnSettings ), NULL, this );
@@ -363,17 +364,13 @@ void GitPlugin::OnSettings(wxCommandEvent &e)
 void GitPlugin::OnFileAddSelected(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    wxString path = info.m_fileName.GetFullPath();
-    if( m_trackedFiles.count(path) ) {
-        wxMessageBox(wxT("File is already part of the index..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
-        return;
-    }
     
     wxArrayString files;
-    files.Add(path);
-    
-    DoAddFiles(files);
+    DoGetFileViewSelectedFiles( files, true );
+
+    if ( !files.IsEmpty() ) {
+        DoAddFiles(files);
+    }
 }
 
 /*******************************************************************************/
@@ -402,35 +399,41 @@ void GitPlugin::OnFileDeleteSelected(wxCommandEvent &e)
 /*******************************************************************************/
 void GitPlugin::OnFileDiffSelected(wxCommandEvent &e)
 {
-    // TODO:: there can be multiple selections
     wxUnusedVar(e);
-    TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    wxString path = info.m_fileName.GetFullPath();
-    if( m_modifiedFiles.count(path) == 0 ) {
-        wxMessageBox(wxT("File is not modified, there is no diff..."), wxT("CodeLite"), wxICON_WARNING | wxOK, m_topWindow);
-        return;
+    
+    // fetch the list of files
+    wxArrayString files;
+    DoGetFileViewSelectedFiles( files, true );
+    
+    // prepare a space delimited list
+    wxString filelist;
+    for(size_t i=0; i<files.GetCount(); ++i) {
+        filelist << files.Item(i) << " ";
     }
     
-    path.Replace(m_repositoryDirectory,wxT(""));
-    if(path.StartsWith(wxT("/")))
-        path.Remove(0,1);
-    gitAction ga(gitDiffFile, path);
+    // and finally, perform the action
+    gitAction ga(gitDiffFile, filelist);
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
 }
+
 /*******************************************************************************/
 void GitPlugin::OnFileResetSelected(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-
-    if(wxMessageBox(wxT("Really reset file ")+info.m_text
-                    +wxT("?\nAll changes to the file will be lost!"),
-                    wxT("Confirm reset"), wxYES_NO, m_topWindow) == wxNO) {
-        return;
+    // fetch the list of files
+    wxArrayString files;
+    DoGetFileViewSelectedFiles( files, true );
+    
+    // prepare a space delimited list
+    wxString filelist;
+    for(size_t i=0; i<files.GetCount(); ++i) {
+        filelist << files.Item(i) << " ";
     }
-    gitAction ga(gitResetFile, info.m_fileName.GetFullPath());
+    
+    gitAction ga(gitResetFile, filelist);
     m_gitActionQueue.push(ga);
+    
     ProcessGitActionQueue();
     RefreshFileListView();
 }
@@ -528,7 +531,7 @@ void GitPlugin::OnCommit(wxCommandEvent &e)
         wxMessageBox(wxT("No modified files found, nothing to commit..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
-    
+
     gitAction ga (gitDiffRepoCommit,wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
@@ -718,7 +721,7 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
     gitAction ga(gitListModified,wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
-    
+
     RefreshFileListView();
 }
 
@@ -726,7 +729,7 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
 void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 {
     e.Skip();
-    
+
     GIT_MESSAGE(wxT("Files added to project, updating file list"));
     wxArrayString *files = (wxArrayString*) e.GetClientData();
     if(files && !m_repositoryDirectory.IsEmpty()) {
@@ -742,13 +745,13 @@ void GitPlugin::OnFilesRemovedFromProject(wxCommandEvent& e)
     wxArrayString *files = (wxArrayString*)e.GetClientData();
     if(files && !files->IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
         // Build the message:
-        
+
         // Limit the message to maximum of 10 files
         wxString filesString;
         wxString msg;
         msg << _("Would you like to remove the following files from git?\n\n");
         size_t fileCount = files->GetCount();
-        
+
         for(size_t i=0; i<files->GetCount(); i++) {
             if ( i < 10 ) {
                 msg << files->Item(i) << wxT("\n");
@@ -758,11 +761,11 @@ void GitPlugin::OnFilesRemovedFromProject(wxCommandEvent& e)
                 break;
             }
         }
-        
+
         if ( fileCount ) {
             msg << ".. and " << fileCount << " more files";
         }
-        
+
         if(wxMessageBox(msg,
                         wxT("Git"),
                         wxYES_NO|wxCANCEL|wxCENTER,
@@ -796,7 +799,7 @@ void GitPlugin::ProcessGitActionQueue()
 {
     if(m_gitActionQueue.size() == 0)
         return;
-    
+
     // Sanity:
     // if there is no repo and the command is not 'clone'
     // return
@@ -810,199 +813,199 @@ void GitPlugin::ProcessGitActionQueue()
         GIT_MESSAGE(wxT("Process already running"));
         return;
     }
-    
+
     wxString command = m_pathGITExecutable;
     switch(ga.action) {
     case gitRmFiles:
         command << " --no-pager rm --force " << ga.arguments;
         GIT_MESSAGE("%s", command.c_str());
         break;
-        
+
     case gitClone:
         command << wxT(" --no-pager clone ") << ga.arguments;
         GIT_MESSAGE("%s", command.c_str());
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitStatus:
         command << " --no-pager status -s";
         GIT_MESSAGE1("%s", command.c_str());
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitListAll:
         GIT_MESSAGE1(wxT("Listing files in git repository"));
         command << wxT(" --no-pager ls-files");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitListModified:
         GIT_MESSAGE1(wxT("Listing modified files in git repository"));
         command << wxT(" --no-pager ls-files -m");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitListRemotes:
         GIT_MESSAGE1(wxT("Listing remotes"));
         command << wxT(" --no-pager remote");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitAddFile:
         GIT_MESSAGE(wxT("Add file ") + ga.arguments);
         command << wxT(" --no-pager add ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitDeleteFile:
         GIT_MESSAGE(wxT("Delete file ") + ga.arguments);
         command << wxT(" --no-pager update-index --remove --force-remove ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitDiffFile:
         GIT_MESSAGE1(wxT("Diff file ") + ga.arguments);
         command << wxT(" --no-pager diff --no-color ") << ga.arguments;
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitDiffRepoCommit:
         command << wxT(" --no-pager diff --no-color HEAD");
         GIT_MESSAGE(wxT("%s"), command.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitDiffRepoShow:
         command << wxT(" --no-pager diff --no-color HEAD");
         GIT_MESSAGE(wxT("%s"), command.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitResetFile:
         GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command << wxT(" --no-pager checkout ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitUndoAdd:
         GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command << wxT(" --no-pager reset ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitPull:
         GIT_MESSAGE(wxT("Pull remote changes"));
         ShowProgress(wxT("Obtaining remote changes"), false);
         command << wxT(" --no-pager pull --log");
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitPush:
         GIT_MESSAGE1(wxT("Push local changes (")+ ga.arguments+wxT(")"));
         command << wxT(" --no-pager push ") << ga.arguments;
         ShowProgress(wxT("Pushing local changes..."), false);
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitCommit:
         GIT_MESSAGE(wxT("Commit local changes (")+ ga.arguments+wxT(")"));
         command << wxT(" --no-pager commit ") << ga.arguments;
         ShowProgress(wxT("Commiting local changes..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitResetRepo:
         GIT_MESSAGE(wxT("Reset repository"));
         command << wxT(" --no-pager reset --hard");
         ShowProgress(wxT("Resetting local repository..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitBranchCreate:
         GIT_MESSAGE(wxT("Create local branch ")+ ga.arguments);
         command << wxT(" --no-pager branch ") << ga.arguments;
         ShowProgress(wxT("Creating local branch..."));
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitBranchCurrent:
         GIT_MESSAGE(wxT("Get current branch"));
         command << wxT(" --no-pager branch --no-color");
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitBranchList:
         GIT_MESSAGE1(wxT("List local branches"));
         command << wxT(" --no-pager branch --no-color");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitBranchListRemote:
         GIT_MESSAGE1(wxT("List remote branches"));
         command << wxT(" --no-pager branch -r --no-color");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitBranchSwitch:
         GIT_MESSAGE(wxT("Switch to local branch ")+ ga.arguments);
         ShowProgress(wxT("Switching to local branch ")+ ga.arguments, false);
         command << wxT(" --no-pager checkout ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitBranchSwitchRemote:
         GIT_MESSAGE(wxT("Switch to remote branch ")+ ga.arguments);
         ShowProgress(wxT("Switching to remote branch ")+ ga.arguments, false);
         command << wxT(" --no-pager checkout -b ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitCommitList:
         GIT_MESSAGE1(wxT("Listing commits.."));
         ShowProgress(wxT("Fetching commit list"));
         command << wxT(" --no-pager log --pretty=\"%h|%s|%an|%ci\"");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitRebase:
         GIT_MESSAGE(wxT("Rebasing.."));
         ShowProgress(wxT("Rebase with ")+ga.arguments+wxT(".."));
         command << wxT(" --no-pager rebase ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     case gitGarbageCollection:
         GIT_MESSAGE(wxT("Clean database.."));
         ShowProgress(wxT("Cleaning git database. This may take some time..."),false);
         command << wxT(" --no-pager gc");
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-        
+
     default:
         GIT_MESSAGE(wxT("Unknown git action"));
         return;
     }
-    
+
     IProcessCreateFlags createFlags;
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    
+
 #ifdef __WXMSW__
     if ( ga.action == gitClone || ga.action == gitPush || ga.action == gitPull ) {
         createFlags = data.GetFlags() & GitEntry::Git_Show_Terminal ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
-        
+
     } else {
         createFlags = IProcessCreateWithHiddenConsole;
     }
 #else
     createFlags = IProcessCreateWithHiddenConsole;
 #endif
-    m_process = ::CreateAsyncProcess(this, 
-                                     command, 
-                                     createFlags, 
+    m_process = ::CreateAsyncProcess(this,
+                                     command,
+                                     createFlags,
                                      ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory);
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
@@ -1014,24 +1017,24 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
     if(!m_mgr->GetWorkspace())
         return;
-    
+
     wxArrayString tmpArray = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
-    
+
     // Convert path to absolute
     for (unsigned i=0; i < tmpArray.GetCount(); ++i) {
         wxFileName fname(tmpArray[i]);
         fname.MakeAbsolute(m_repositoryDirectory);
         tmpArray[i] = fname.GetFullPath();
     }
-    
+
     // convert the array to set for performance
     wxStringSet_t gitFileSet;
     gitFileSet.insert(tmpArray.begin(), tmpArray.end());
-    
+
     if (ga.action == gitListAll) {
         ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, OverlayTool::Bmp_OK);
         m_trackedFiles.swap(gitFileSet);
-        
+
     } else if (ga.action == gitListModified) {
 
         // First get an up to date map of the filepaths/treeitemids
@@ -1046,16 +1049,16 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
             wxTreeItemId id = IDs[ (*iter) ];
             if (id.IsOk()) {
                 DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), id, OverlayTool::Bmp_Modified);
-                
+
             } else {
                 toColour.insert( *iter );
             }
         }
-        
+
         if ( !toColour.empty() ) {
             ColourFileTree(m_mgr->GetTree(TreeFileView), toColour, OverlayTool::Bmp_Modified);
         }
-        
+
         // Finally, cache the modified-files list: it's used in other functions
         m_modifiedFiles.swap(gitFileSet);
     }
@@ -1267,10 +1270,10 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         }
         m_bActionRequiresTreUpdate = false;
         FinishGitListAction(ga);
-        
+
     } else if(ga.action == gitStatus) {
         m_console->UpdateTreeView(m_commandOutput);
-        
+
     } else if(ga.action == gitListRemotes ) {
         wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
         m_remotes = gitList;
@@ -1367,8 +1370,8 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         GitCommitListDlg dlg(m_topWindow, m_repositoryDirectory);
         dlg.SetCommitList(m_commandOutput);
         dlg.ShowModal();
-        
-    } 
+
+    }
 
     if (m_process) {
         delete m_process;
@@ -1387,34 +1390,34 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
         if ( m_console->IsVerbose())
             m_console->AddRawText(output);
         m_commandOutput.Append(output);
-        
+
         // Handle password required
         wxString tmpOutput = output;
         tmpOutput.Trim().Trim(false);
         if ( tmpOutput.EndsWith("password:") || tmpOutput.Contains("Password for") ) {
-            
+
             // Password is required
             wxString pass = ::wxGetPasswordFromUser(output);
             if ( pass.IsEmpty() ) {
-                
+
                 // No point on continuing
                 m_process->Terminate();
-                
+
             } else {
-                
+
                 // write the password
                 m_process->WriteToConsole( pass );
-                
+
             }
         } else if (( tmpOutput.Contains("The authenticity of host") && tmpOutput.Contains("can't be established")) || tmpOutput.Contains("key fingerprint")) {
             if ( ::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES ) {
                 m_process->WriteToConsole("yes");
-                
+
             } else {
                 m_process->Terminate();
             }
         }
-        
+
         if(m_progressDialog && m_progressDialog->IsShown()) {
             wxString message = output.Left(output.Find(':'));
             int percent = output.Find('%',true);
@@ -1438,11 +1441,11 @@ void GitPlugin::InitDefaults()
 {
     wxString workspaceName = m_mgr->GetWorkspace()->GetName();
     DoCreateTreeImages();
-    
+
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    
+
     if(data.GetTrackedFileColour().IsOk()) {
         m_colourTrackedFile = data.GetTrackedFileColour();
     }
@@ -1483,22 +1486,22 @@ void GitPlugin::AddDefaultActions()
 {
     gitAction ga(gitBranchCurrent, wxT(""));
     m_gitActionQueue.push(ga);
-    
+
     ga.action = gitListAll;
     m_gitActionQueue.push(ga);
-    
+
     ga.action = gitListModified;
     m_gitActionQueue.push(ga);
-    
+
     ga.action = gitBranchList;
     m_gitActionQueue.push(ga);
-    
+
     ga.action = gitBranchListRemote;
     m_gitActionQueue.push(ga);
-    
+
     ga.action = gitListRemotes;
     m_gitActionQueue.push(ga);
-    
+
     ga.action = gitStatus;
     m_gitActionQueue.push(ga);
 }
@@ -1627,7 +1630,7 @@ void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 #endif
     // store the GIT entry data
     if(m_mgr->GetWorkspace() && m_mgr->GetWorkspace()->GetName().IsEmpty() == false) {
-        
+
         clConfig conf("git.conf");
         GitEntry data;
         conf.ReadItem(&data);
@@ -1668,14 +1671,14 @@ void GitPlugin::DoCreateTreeImages()
     // modified / OK
     // the index will be: m_baseImageCount + img-base + 1 => OK
     //                    m_baseImageCount + img-base + 2 => Modified
-    
+
     if (m_treeImageMapping.empty()) {
         wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
-        
+
         // Create 2 sets: modified & normal
         wxImageList *il = tree->GetImageList();
         m_baseImageCount = il->GetImageCount();
-        
+
         for(int i=0; i<m_baseImageCount; ++i) {
             // we also keep a mapping of the new image to its base image
             // The ordeer of adding the images is important since we will use this enumerators (OverlayTool::Bmp_OK etc) to choose the correct
@@ -1693,16 +1696,16 @@ void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, O
     int curImgIdx = ctrl->GetItemImage(item);
     if ( m_treeImageMapping.count( curImgIdx ) ) {
         int baseImg = m_treeImageMapping.find(curImgIdx)->second;
-        
+
         // now get the new image index based on the following:
         // baseCount + (imgIdx * bitmapCount) + BmpType
         int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
-        
+
         // the below condition should never met, but I am paranoid..
         if ( ctrl->GetImageList()->GetImageCount() > newImg ) {
             ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Selected );
             ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Normal);
-            
+
         }
     }
 }
@@ -1724,7 +1727,7 @@ void GitPlugin::OnClone(wxCommandEvent& e)
 void GitPlugin::DoAddFiles(const wxArrayString& files)
 {
     m_addedFiles = true;
-    
+
     wxString filesToAdd;
     for(size_t i=0; i<files.GetCount(); ++i) {
         wxFileName fn(files.Item(i));
@@ -1749,11 +1752,11 @@ void GitPlugin::DoResetFiles(const wxArrayString& files)
             fn.MakeAbsolute(m_repositoryDirectory);
         filesToDelete << "\"" << fn.GetFullPath() << "\" ";
     }
-    
+
     gitAction ga(gitResetFile, filesToDelete);
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
-    
+
     RefreshFileListView();
 }
 
@@ -1766,11 +1769,11 @@ void GitPlugin::UndoAddFiles(const wxArrayString& files)
             fn.MakeAbsolute(m_repositoryDirectory);
         filesToDelete << "\"" << fn.GetFullPath() << "\" ";
     }
-    
+
     gitAction ga(gitUndoAdd, filesToDelete);
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
-    
+
     RefreshFileListView();
 }
 
@@ -1782,3 +1785,30 @@ void GitPlugin::RefreshFileListView()
     ProcessGitActionQueue();
 }
 
+void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo)
+{
+    files.Clear();
+    wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+    if ( !tree )
+        return;
+
+    wxArrayTreeItemIds items;
+    tree->GetSelections(items);
+
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        FilewViewTreeItemData* itemData =  dynamic_cast<FilewViewTreeItemData*>(tree->GetItemData(items.Item(i)));
+        if ( itemData && itemData->GetData().GetKind() == ProjectItem::TypeFile ) {
+            // we got a file
+            wxFileName fn ( itemData->GetData().GetFile() );
+            if ( relativeToRepo && fn.IsAbsolute()) {
+                fn.MakeRelativeTo( m_repositoryDirectory );
+            }
+            
+            wxString filename = fn.GetFullPath();
+            if ( filename.Contains(" ") ) {
+                filename.Prepend("\"").Append("\"");
+            }
+            files.Add( filename );
+        }
+    }
+}

@@ -123,6 +123,7 @@ private:
     void DoCleanup();
     void DoAddFiles(const wxArrayString &files);
     void DoResetFiles(const wxArrayString &files);
+    void DoGetFileViewSelectedFiles( wxArrayString &files, bool relativeToRepo );
     
     DECLARE_EVENT_TABLE();
     // Event handlers

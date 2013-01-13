@@ -771,7 +771,8 @@ void GitPlugin::OnFilesRemovedFromProject(wxCommandEvent& e)
             // Remove the files
             gitAction ga(gitRmFiles, filesString);
             m_gitActionQueue.push( ga );
-            
+            ProcessGitActionQueue();
+            RefreshFileListView();
         }
     }
 }

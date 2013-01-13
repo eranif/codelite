@@ -90,6 +90,7 @@ GitPlugin::GitPlugin(IManager *manager)
     EventNotifier::Get()->Connect( wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+    EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
     
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
@@ -725,15 +726,54 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
 void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 {
     e.Skip();
-    wxUnusedVar(e);
-    GIT_MESSAGE(wxT("Files added to project, updating file list"));
-    gitAction ga(gitListAll,wxT(""));
-    m_gitActionQueue.push(ga);
-    ga.action = gitListModified;
-    m_gitActionQueue.push(ga);
-    ProcessGitActionQueue();
     
-    RefreshFileListView();
+    GIT_MESSAGE(wxT("Files added to project, updating file list"));
+    wxArrayString *files = (wxArrayString*) e.GetClientData();
+    if(files && !m_repositoryDirectory.IsEmpty()) {
+        DoAddFiles(*files);
+        RefreshFileListView();
+    }
+}
+
+/*******************************************************************************/
+void GitPlugin::OnFilesRemovedFromProject(wxCommandEvent& e)
+{
+    e.Skip();
+    wxArrayString *files = (wxArrayString*)e.GetClientData();
+    if(files && !files->IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
+        // Build the message:
+        
+        // Limit the message to maximum of 10 files
+        wxString filesString;
+        wxString msg;
+        msg << _("Would you like to remove the following files from git?\n\n");
+        size_t fileCount = files->GetCount();
+        
+        for(size_t i=0; i<files->GetCount(); i++) {
+            if ( i < 10 ) {
+                msg << files->Item(i) << wxT("\n");
+                filesString << wxT("\"") << files->Item(i) << wxT("\" ");
+                --fileCount;
+            } else {
+                break;
+            }
+        }
+        
+        if ( fileCount ) {
+            msg << ".. and " << fileCount << " more files";
+        }
+        
+        if(wxMessageBox(msg,
+                        wxT("Git"),
+                        wxYES_NO|wxCANCEL|wxCENTER,
+                        GetManager()->GetTheApp()->GetTopWindow()) == wxYES) {
+
+            // Remove the files
+            gitAction ga(gitRmFiles, filesString);
+            m_gitActionQueue.push( ga );
+            
+        }
+    }
 }
 
 /*******************************************************************************/
@@ -756,7 +796,7 @@ void GitPlugin::ProcessGitActionQueue()
     if(m_gitActionQueue.size() == 0)
         return;
     
-    // sanity:
+    // Sanity:
     // if there is no repo and the command is not 'clone'
     // return
     gitAction ga = m_gitActionQueue.front();
@@ -772,128 +812,177 @@ void GitPlugin::ProcessGitActionQueue()
     
     wxString command = m_pathGITExecutable;
     switch(ga.action) {
+    case gitRmFiles:
+        command << " --no-pager rm --force " << ga.arguments;
+        GIT_MESSAGE("%s", command.c_str());
+        break;
+        
     case gitClone:
         command << wxT(" --no-pager clone ") << ga.arguments;
         GIT_MESSAGE("%s", command.c_str());
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
         
     case gitStatus:
         command << " --no-pager status -s";
-        GIT_MESSAGE("%s", command.c_str());
+        GIT_MESSAGE1("%s", command.c_str());
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
         
     case gitListAll:
         GIT_MESSAGE1(wxT("Listing files in git repository"));
         command << wxT(" --no-pager ls-files");
-        //ShowProgress(wxT("Listing files in git repository"));
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitListModified:
         GIT_MESSAGE1(wxT("Listing modified files in git repository"));
         command << wxT(" --no-pager ls-files -m");
-        //ShowProgress(wxT("Listing modified files in git repository"));
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitListRemotes:
-        GIT_MESSAGE(wxT("Listing remotes"));
+        GIT_MESSAGE1(wxT("Listing remotes"));
         command << wxT(" --no-pager remote");
-        ///ShowProgress(wxT("Listing remotes"));
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitAddFile:
         GIT_MESSAGE(wxT("Add file ") + ga.arguments);
         command << wxT(" --no-pager add ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitDeleteFile:
         GIT_MESSAGE(wxT("Delete file ") + ga.arguments);
         command << wxT(" --no-pager update-index --remove --force-remove ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitDiffFile:
         GIT_MESSAGE1(wxT("Diff file ") + ga.arguments);
         command << wxT(" --no-pager diff --no-color ") << ga.arguments;
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitDiffRepoCommit:
         command << wxT(" --no-pager diff --no-color HEAD");
         GIT_MESSAGE(wxT("%s"), command.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitDiffRepoShow:
         command << wxT(" --no-pager diff --no-color HEAD");
         GIT_MESSAGE(wxT("%s"), command.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitResetFile:
         GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command << wxT(" --no-pager checkout ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitUndoAdd:
         GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command << wxT(" --no-pager reset ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitPull:
         GIT_MESSAGE(wxT("Pull remote changes"));
         ShowProgress(wxT("Obtaining remote changes"), false);
         command << wxT(" --no-pager pull --log");
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitPush:
-        GIT_MESSAGE(wxT("Push local changes (")+ ga.arguments+wxT(")"));
+        GIT_MESSAGE1(wxT("Push local changes (")+ ga.arguments+wxT(")"));
         command << wxT(" --no-pager push ") << ga.arguments;
         ShowProgress(wxT("Pushing local changes..."), false);
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitCommit:
         GIT_MESSAGE(wxT("Commit local changes (")+ ga.arguments+wxT(")"));
         command << wxT(" --no-pager commit ") << ga.arguments;
         ShowProgress(wxT("Commiting local changes..."));
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitResetRepo:
         GIT_MESSAGE(wxT("Reset repository"));
         command << wxT(" --no-pager reset --hard");
         ShowProgress(wxT("Resetting local repository..."));
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitBranchCreate:
         GIT_MESSAGE(wxT("Create local branch ")+ ga.arguments);
         command << wxT(" --no-pager branch ") << ga.arguments;
         ShowProgress(wxT("Creating local branch..."));
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitBranchCurrent:
         GIT_MESSAGE(wxT("Get current branch"));
         command << wxT(" --no-pager branch --no-color");
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitBranchList:
         GIT_MESSAGE1(wxT("List local branches"));
         command << wxT(" --no-pager branch --no-color");
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitBranchListRemote:
         GIT_MESSAGE1(wxT("List remote branches"));
         command << wxT(" --no-pager branch -r --no-color");
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitBranchSwitch:
         GIT_MESSAGE(wxT("Switch to local branch ")+ ga.arguments);
         ShowProgress(wxT("Switching to local branch ")+ ga.arguments, false);
         command << wxT(" --no-pager checkout ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitBranchSwitchRemote:
         GIT_MESSAGE(wxT("Switch to remote branch ")+ ga.arguments);
         ShowProgress(wxT("Switching to remote branch ")+ ga.arguments, false);
         command << wxT(" --no-pager checkout -b ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitCommitList:
-        GIT_MESSAGE(wxT("Listing commits.."));
+        GIT_MESSAGE1(wxT("Listing commits.."));
         ShowProgress(wxT("Fetching commit list"));
         command << wxT(" --no-pager log --pretty=\"%h|%s|%an|%ci\"");
+        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitRebase:
         GIT_MESSAGE(wxT("Rebasing.."));
         ShowProgress(wxT("Rebase with ")+ga.arguments+wxT(".."));
         command << wxT(" --no-pager rebase ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     case gitGarbageCollection:
         GIT_MESSAGE(wxT("Clean database.."));
         ShowProgress(wxT("Cleaning git database. This may take some time..."),false);
         command << wxT(" --no-pager gc");
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
     default:
         GIT_MESSAGE(wxT("Unknown git action"));
         return;
     }
-    GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
     
     IProcessCreateFlags createFlags;
     clConfig conf("git.conf");
@@ -1146,7 +1235,6 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 
     ProcessEventData *ped = (ProcessEventData*) event.GetClientData();
     m_console->AddRawText( ped->GetData() );
-    GIT_MESSAGE("done");
     m_commandOutput.append(ped->GetData());
 
     delete ped;
@@ -1278,9 +1366,8 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         GitCommitListDlg dlg(m_topWindow, m_repositoryDirectory);
         dlg.SetCommitList(m_commandOutput);
         dlg.ShowModal();
-    } else if(ga.action == gitCommitList) {
-        m_addedFiles = false;
-    }
+        
+    } 
 
     if (m_process) {
         delete m_process;

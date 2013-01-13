@@ -64,6 +64,7 @@ class GitPlugin : public IPlugin
         gitClone,
         gitStatus,
         gitUndoAdd,
+        gitRmFiles,
 #if 0
         gitBisectStart,
         gitBisectGood,
@@ -132,6 +133,7 @@ private:
 
     void OnFileSaved(wxCommandEvent& e);
     void OnFilesAddedToProject(wxCommandEvent& e);
+    void OnFilesRemovedFromProject(wxCommandEvent& e);
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnSetGitRepoPath(wxCommandEvent &e);

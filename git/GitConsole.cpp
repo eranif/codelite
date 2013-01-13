@@ -106,7 +106,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
 
     int screenWidth = 1000;// use a long screen width to allow long lines
-    m_dvListCtrl->AppendColumn(new wxDataViewColumn(_("Message"), new GitMyTextRenderer(m_dvListCtrl), 0, screenWidth, wxALIGN_LEFT));
+    m_dvListCtrl->AppendColumn(new wxDataViewColumn(_("Git Log"), new GitMyTextRenderer(m_dvListCtrl), 0, screenWidth, wxALIGN_LEFT));
 
     m_auibar->AddTool(XRCID("git_refresh"), wxT("Refresh"), m_images.Bitmap("gitRefresh"), wxT("Refresh tracked file list"));
     m_auibar->AddTool(XRCID("git_reset_repository"), wxT("Reset"), m_images.Bitmap("gitResetRepo"), wxT("Reset repository"));

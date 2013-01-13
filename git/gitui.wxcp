@@ -4614,7 +4614,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"Set git repository path"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
@@ -4658,7 +4658,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"git clone"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",

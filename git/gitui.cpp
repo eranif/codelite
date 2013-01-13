@@ -583,9 +583,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     m_auibar->AddSeparator();
     
-    m_auibar->AddTool(XRCID("git_set_repository"), _("Set git repository path"), wxXmlResource::Get()->LoadBitmap(wxT("document-open")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Set git repository path"), NULL);
+    m_auibar->AddTool(XRCID("git_set_repository"), _("Set git repository path"), wxXmlResource::Get()->LoadBitmap(wxT("document-open")), wxNullBitmap, wxITEM_NORMAL, _("Set git repository path"), _("Set git repository path"), NULL);
     
-    m_auibar->AddTool(XRCID("git_clone"), _("git clone"), wxXmlResource::Get()->LoadBitmap(wxT("git-clone")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("git clone"), NULL);
+    m_auibar->AddTool(XRCID("git_clone"), _("git clone"), wxXmlResource::Get()->LoadBitmap(wxT("git-clone")), wxNullBitmap, wxITEM_NORMAL, _("git clone"), _("git clone"), NULL);
     
     m_auibar->AddSeparator();
     

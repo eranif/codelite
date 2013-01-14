@@ -738,9 +738,11 @@ private:
     void OnFindDialog(wxCommandEvent &event);
     void OnContextMenu(wxContextMenuEvent &event);
     void OnKeyDown(wxKeyEvent &event);
+    void OnKeyUp(wxKeyEvent &event);
     void OnLeftDown(wxMouseEvent &event);
-    void OnMiddleDown(wxMouseEvent &event);
-    void OnMiddleUp(wxMouseEvent &event);
+    void OnRightDown(wxMouseEvent &event);
+    void OnRightUp(wxMouseEvent &event);
+    void OnMotion(wxMouseEvent &event);
     void OnLeftUp(wxMouseEvent &event);
     void OnLeaveWindow(wxMouseEvent &event);
     void OnFocusLost(wxFocusEvent &event);

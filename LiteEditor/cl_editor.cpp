@@ -109,9 +109,11 @@ BEGIN_EVENT_TABLE(LEditor, wxStyledTextCtrl)
     EVT_STC_MODIFIED               (wxID_ANY, LEditor::OnChange)
     EVT_CONTEXT_MENU               (LEditor::OnContextMenu)
     EVT_KEY_DOWN                   (LEditor::OnKeyDown)
+    EVT_KEY_UP                     (LEditor::OnKeyUp)
     EVT_LEFT_DOWN                  (LEditor::OnLeftDown)
-    EVT_MIDDLE_DOWN                (LEditor::OnMiddleDown)
-    EVT_MIDDLE_UP                  (LEditor::OnMiddleUp)
+    EVT_RIGHT_DOWN                 (LEditor::OnRightDown)
+    EVT_RIGHT_UP                   (LEditor::OnRightUp)
+    EVT_MOTION                     (LEditor::OnMotion)
     EVT_LEFT_UP                    (LEditor::OnLeftUp)
     EVT_LEAVE_WINDOW               (LEditor::OnLeaveWindow)
     EVT_KILL_FOCUS                 (LEditor::OnFocusLost)
@@ -976,16 +978,22 @@ void LEditor::OnMarginClick(wxStyledTextEvent& event)
             wxBitmap bm;
             if (markers & mmt_bp_disabled) {
                 bm = wxBitmap(wxImage(BreakptDisabled));
+                
             } else if (markers & mmt_bp_cmdlist) {
                 bm = wxBitmap(wxImage(BreakptCommandList));
+                
             } else if (markers & mmt_bp_cmdlist_disabled) {
                 bm = wxBitmap(wxImage(BreakptCommandListDisabled));
+                
             } else if (markers & mmt_bp_ignored) {
                 bm = wxBitmap(wxImage(BreakptIgnore));
+                
             } else if (markers & mmt_cond_bp) {
                 bm = wxBitmap(wxImage(ConditionalBreakpt));
+                
             } else if (markers & mmt_cond_bp_disabled) {
                 bm = wxBitmap(wxImage(ConditionalBreakptDisabled));
+                
             } else {
                 // Make the standard bp bitmap the default
                 bm = wxBitmap(wxImage(stop_xpm));
@@ -2670,7 +2678,7 @@ void LEditor::OnLeftUp(wxMouseEvent& event)
     long value(0);
     EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 
-    if (!value) {
+    if ( !value ) {
         DoQuickJump(event, false);
     }
 
@@ -2696,30 +2704,48 @@ void LEditor::OnFocusLost(wxFocusEvent &event)
     event.Skip();
 }
 
-void LEditor::OnMiddleUp(wxMouseEvent& event)
+void LEditor::OnRightUp(wxMouseEvent& event)
 {
-    long value(0);
-    EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
-
-    if (value) {
+    if ( event.GetModifiers() == wxMOD_SHIFT ) {
+        
+        ClearSelections();
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
         if (pos != wxNOT_FOUND) {
             DoSetCaretAt(pos);
         }
-        DoQuickJump(event, true);
+        
+        wxMenu menu(_("Find Symbol"));
+        menu.Append(XRCID("find_decl"), _("Go to Declaration"));
+        menu.Append(XRCID("find_impl"), _("Go to Implementation"));
+        PopupMenu(&menu);
+        
+    } else {
+        event.Skip();
+        
     }
+}
+
+void LEditor::OnRightDown(wxMouseEvent& event)
+{
     event.Skip();
 }
 
-void LEditor::OnMiddleDown(wxMouseEvent& event)
+void LEditor::OnMotion(wxMouseEvent& event)
 {
-    long value(0);
-    EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
-    if (value) {
+    if ( event.GetModifiers() == wxMOD_SHIFT ) {
+    
+        m_hyperLinkIndicatroStart = wxNOT_FOUND;
+        m_hyperLinkIndicatroEnd = wxNOT_FOUND;
+        m_hyperLinkType = wxID_NONE;
+
+        SetIndicatorCurrent(HYPERLINK_INDICATOR);
+        IndicatorClearRange(0, GetLength());
         DoMarkHyperlink(event, true);
-        return;
+
+    } else {
+        event.Skip();
+        
     }
-    event.Skip();
 }
 
 void LEditor::OnLeftDown(wxMouseEvent &event)
@@ -2733,29 +2759,14 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
     CodeCompletionBox::Get().CancelTip();
     GetFunctionTip()->Deactivate();
 
-    if ( ManagerST::Get()->GetDebuggerTip()->IsShown() )
+    if ( ManagerST::Get()->GetDebuggerTip()->IsShown() ) {
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
+    }
     
- //  long value(0);
- //  EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
- //
- //  if (!value) {
- //      DoMarkHyperlink(event, false);
- //  }
-    
-   
-        
-//    // Show the popup
-//    ClearSelections();
-//
-//    int curpos = PositionFromPoint( event.GetPosition() );
-//    SetCaretAt( curpos );
-//
-//    wxMenu menu(_("Find Symbol"));
-//    menu.Append(XRCID("find_decl"), _("Go to Declaration"));
-//    menu.Append(XRCID("find_impl"), _("Go to Implementation"));
-//    PopupMenu(&menu);
-   
+    if ( event.GetModifiers() == wxMOD_SHIFT ) {
+        ClearSelections();
+        SetCaretAt( PositionFromPointClose(event.GetX(), event.GetY()) );
+    }
     SetActive();
     event.Skip();
 }
@@ -4126,6 +4137,16 @@ void LEditor::PasteLineAbove()
     // restore caret position
     int newpos = FindColumn(line, col);
     SetCaretAt(newpos);
+}
+
+void LEditor::OnKeyUp(wxKeyEvent& event)
+{
+    event.Skip();
+    if ( event.GetKeyCode() == WXK_SHIFT ) {
+        // Clear hyperlink markers
+        SetIndicatorCurrent(HYPERLINK_INDICATOR);
+        IndicatorClearRange(0, GetLength());
+    }
 }
 
 

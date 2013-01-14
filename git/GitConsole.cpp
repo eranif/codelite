@@ -10,6 +10,9 @@
 #include <wx/icon.h>
 #include <wx/tokenzr.h>
 
+#define GIT_MESSAGE(...)  AddText(wxString::Format(__VA_ARGS__));
+#define GIT_MESSAGE1(...)  if ( IsVerbose() ) { AddText(wxString::Format(__VA_ARGS__)); }
+
 class GitClientData : public wxClientData
 {
     wxString m_path;
@@ -258,15 +261,25 @@ void GitConsole::UpdateTreeView(const wxString& output)
     std::sort(files.begin(), files.end());
 
     for(size_t i=0; i<files.GetCount(); ++i) {
+        
         wxString filename = files.Item(i);
         filename.Trim().Trim(false);
         filename.Replace("\t", " ");
         wxString prefix = filename.BeforeFirst(' ');
         filename = filename.AfterFirst(' ');
+        wxString filenameFullpath = filename;
 
         prefix.Trim().Trim(false);
         filename.Trim().Trim(false);
-
+        
+        wxFileName fn(filename);
+        if ( fn.IsRelative() ) {
+            fn.MakeAbsolute( m_git->GetRepositoryDirectory() );
+            if ( fn.FileExists() ) {
+                filenameFullpath = fn.GetFullPath();
+            }
+        }
+        
         wxBitmap bmp;
         if ( filename.EndsWith("/") ) {
             bmp = m_folderBmp;
@@ -280,13 +293,13 @@ void GitConsole::UpdateTreeView(const wxString& output)
         cols.push_back(MakeIconText(filename, bmp));
 
         if ( (prefix == "M") ) {
-            m_dvFilesModel->AppendItem(m_itemModified, cols, new GitClientData(filename));
+            m_dvFilesModel->AppendItem(m_itemModified, cols, new GitClientData( filenameFullpath ));
 
         } else if ( prefix == "A" ) {
-            m_dvFilesModel->AppendItem(m_itemNew, cols, new GitClientData(filename));
+            m_dvFilesModel->AppendItem(m_itemNew, cols, new GitClientData( filenameFullpath ));
 
         } else {
-            m_dvFilesModel->AppendItem(m_itemUntracked, cols, new GitClientData(filename));
+            m_dvFilesModel->AppendItem(m_itemUntracked, cols, new GitClientData( filenameFullpath ));
         }
     }
 #ifndef __WXMAC__
@@ -394,6 +407,7 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
     
     // open the files
     for(size_t i=0; i<files.GetCount(); ++i) {
+        GIT_MESSAGE("Opening file: %s", files.Item(i).c_str());
         m_git->GetManager()->OpenFile(files.Item(i));
     }
 }
@@ -406,9 +420,8 @@ void GitConsole::OnShowFileDiff(wxCommandEvent& e)
     for(size_t i=0; i<items.GetCount(); ++i) {
         GitClientData* gcd = dynamic_cast<GitClientData*>(m_dvFilesModel->GetClientObject( items.Item(i) ));
         if ( gcd ) {
-            wxFileName fn( gcd->GetPath() );
-            fn.MakeRelativeTo( m_git->GetRepositoryDirectory() );
-            files.push_back( fn.GetFullPath() );
+            GIT_MESSAGE("Showing diff for: %s", gcd->GetPath().c_str());
+            files.push_back( gcd->GetPath() );
         }
     }
     

@@ -1746,7 +1746,7 @@ void GitPlugin::DoResetFiles(const wxArrayString& files)
     gitAction ga(gitResetFile, filesToDelete);
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
-
+    AddDefaultActions();
     RefreshFileListView();
 }
 

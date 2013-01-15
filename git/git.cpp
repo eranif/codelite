@@ -28,6 +28,7 @@
 #include "GitConsole.h"
 #include "icons/icon_git.xpm"
 #include "project.h"
+#include "environmentconfig.h"
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -993,6 +994,13 @@ void GitPlugin::ProcessGitActionQueue()
 #else
     createFlags = IProcessCreateWithHiddenConsole;
 #endif
+    
+    // Set locale to english
+    StringMap om;
+    om["LC_ALL"]             = "C";
+    om["GIT_MERGE_AUTOEDIT"] = "no";
+    EnvSetter es( &om );
+    
     m_process = ::CreateAsyncProcess(this,
                                      command,
                                      createFlags,

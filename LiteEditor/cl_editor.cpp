@@ -2706,6 +2706,11 @@ void LEditor::OnFocusLost(wxFocusEvent &event)
 
 void LEditor::OnRightUp(wxMouseEvent& event)
 {
+    event.Skip();
+}
+
+void LEditor::OnRightDown(wxMouseEvent& event)
+{
     if ( event.GetModifiers() == wxMOD_SHIFT ) {
         
         ClearSelections();
@@ -2723,11 +2728,6 @@ void LEditor::OnRightUp(wxMouseEvent& event)
         event.Skip();
         
     }
-}
-
-void LEditor::OnRightDown(wxMouseEvent& event)
-{
-    event.Skip();
 }
 
 void LEditor::OnMotion(wxMouseEvent& event)

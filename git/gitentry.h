@@ -85,12 +85,8 @@ public:
     const wxColour& GetDiffFileColour() {
         return this->m_colourDiffFile;
     }
-    const wxString& GetGITExecutablePath() {
-        return this->m_pathGIT;
-    }
-    const wxString& GetGITKExecutablePath() {
-        return this->m_pathGITK;
-    }
+    wxString GetGITExecutablePath() const ;
+    wxString GetGITKExecutablePath() const;
     void SetGitConsoleSashPos(int gitConsoleSashPos) {
         this->m_gitConsoleSashPos = gitConsoleSashPos;
     }

@@ -154,6 +154,7 @@ private:
     void OnPull(wxCommandEvent &e);
     void OnResetRepository(wxCommandEvent &e);
     void OnStartGitk(wxCommandEvent& e);
+    void OnStartGitkUI(wxUpdateUIEvent& e);
     void OnListModified(wxCommandEvent& e);
     void OnRefresh(wxCommandEvent& e);
     void OnGarbageColletion(wxCommandEvent& e);

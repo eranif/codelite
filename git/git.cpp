@@ -29,6 +29,7 @@
 #include "icons/icon_git.xpm"
 #include "project.h"
 #include "environmentconfig.h"
+#include "dirsaver.h"
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -214,7 +215,7 @@ void GitPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     m_eventHandler->Connect( XRCID("git_commit_diff"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
     m_eventHandler->Connect( XRCID("git_push"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
     m_eventHandler->Connect( XRCID("git_reset_repository"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
-    m_eventHandler->Connect( XRCID("git_start_gitk"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
+    m_eventHandler->Connect( XRCID("git_start_gitk"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnStartGitkUI ), NULL, this );
     m_eventHandler->Connect( XRCID("git_list_modified"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
     m_eventHandler->Connect( XRCID("git_refresh"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
     m_eventHandler->Connect( XRCID("git_garbage_collection"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler( GitPlugin::OnEnableGitRepoExists ), NULL, this );
@@ -356,6 +357,17 @@ void GitPlugin::OnSettings(wxCommandEvent &e)
 {
     GitSettingsDlg dlg(m_topWindow);
     if ( dlg.ShowModal() == wxID_OK ) {
+        
+        // update the paths
+        clConfig conf("git.conf");
+        GitEntry data;
+        conf.ReadItem( &data );
+        
+        m_pathGITExecutable = data.GetGITExecutablePath();
+        m_pathGITKExecutable = data.GetGITKExecutablePath();
+        
+        GIT_MESSAGE("git executable is now set to: %s", m_pathGITExecutable.c_str());
+        GIT_MESSAGE("gitk executable is now set to: %s", m_pathGITKExecutable.c_str());
         AddDefaultActions();
         ProcessGitActionQueue();
     }
@@ -603,11 +615,12 @@ void GitPlugin::OnResetRepository(wxCommandEvent &e)
 void GitPlugin::OnStartGitk(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    wxString oldCWD = wxGetCwd();
-    //wxSetWorkingDirectory(m_repositoryDirectory);
-    //wxExecute(m_pathGITKExecutable);
-    //wxSetWorkingDirectory(oldCWD);
+    DirSaver ds;
+    
+    ::wxSetWorkingDirectory(m_repositoryDirectory);
+    ::wxExecute(m_pathGITKExecutable);
 }
+
 /*******************************************************************************/
 void GitPlugin::OnListModified(wxCommandEvent& e)
 {
@@ -1823,4 +1836,9 @@ void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files)
     gitAction ga(gitDiffFile, filelist);
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
+}
+
+void GitPlugin::OnStartGitkUI(wxUpdateUIEvent& e)
+{
+    e.Enable( !m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty() );
 }

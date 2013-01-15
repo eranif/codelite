@@ -4,13 +4,21 @@
 #include "gitentry.h"
 const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 
+#ifdef __WXMSW__
+#    define GIT_EXE "git"
+#    define GITK_EXE "gitk"
+#else
+#    define GIT_EXE "/usr/bin/git"
+#    define GITK_EXE "/usr/bin/gitk"
+#endif
+
 GitEntry::GitEntry()
     : clConfigItem("git-settings")
-#ifdef __WXMSW__    
+#ifdef __WXMSW__
     , m_flags(Git_Show_Terminal)
 #else
     , m_flags(0)
-#endif    
+#endif
     , m_gitDiffDlgSashPos(0)
     , m_gitConsoleSashPos(0)
 {
@@ -44,4 +52,24 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_gitDiffDlgSashPos", m_gitDiffDlgSashPos);
     json.addProperty("m_gitConsoleSashPos", m_gitConsoleSashPos);
     return json;
+}
+
+wxString GitEntry::GetGITExecutablePath() const
+{
+    if ( m_pathGIT.IsEmpty() ) {
+        return GIT_EXE;
+        
+    } else {
+        return m_pathGIT;
+    }
+}
+
+wxString GitEntry::GetGITKExecutablePath() const
+{
+    if ( m_pathGITK.IsEmpty() ) {
+        return GITK_EXE;
+        
+    } else {
+        return m_pathGITK;
+    }
 }

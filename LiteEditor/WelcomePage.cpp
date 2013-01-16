@@ -112,10 +112,7 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
     // get the best position to show the menu
     wxPoint pos = btn->GetPosition();
     pos.y += btn->GetSize().y;
-#ifdef __WXMSW__
     pos.y += 5;
     pos.x += 5;
-#endif
-
     return GetPopupMenuSelectionFromUser(menu, pos);
 }

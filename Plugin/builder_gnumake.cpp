@@ -129,7 +129,13 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
         }
         bld_conf_name = bldConf->GetName();
     }
-
+    
+    //BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, bld_conf_name);
+    //if ( !bldConf ) {
+    //    errMsg << _("Cant find build configuration for project '") << project << wxT("'");
+    //    return false;
+    //}
+    
     PRINT_TIMESTAMP(_("Reading project dependencies...\n"));
     wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
     PRINT_TIMESTAMP(_("Reading project dependencies...done\n"));

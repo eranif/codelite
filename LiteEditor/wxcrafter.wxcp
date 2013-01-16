@@ -3533,7 +3533,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL"],
+			"m_styles":	["wxTAB_TRAVERSAL", "wxBORDER_THEME"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -3654,7 +3654,7 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Bg Colour:",
-									"colour":	"<Default>"
+									"colour":	"(229,229,229)"
 								}, {
 									"type":	"colour",
 									"m_label":	"Fg Colour:",
@@ -3743,7 +3743,7 @@
 												}, {
 													"type":	"filePicker",
 													"m_label":	"Bitmap File:",
-													"m_path":	"../Runtime/images/about.png"
+													"m_path":	"../Runtime/images/splashscreen.png"
 												}],
 											"m_events":	[],
 											"m_children":	[]

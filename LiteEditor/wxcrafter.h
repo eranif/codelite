@@ -32,6 +32,7 @@
 #include <wx/commandlinkbutton.h>
 #include <wx/filepicker.h>
 #include "addfunctionsmodel.h"
+#include <wx/statbmp.h>
 
 class NewProjectDlgBaseClass : public wxDialog
 {
@@ -172,6 +173,33 @@ protected:
 public:
     AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add function implementation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddFunctionsImplBaseDlg();
+};
+
+
+class WelcomePageBase : public wxPanel
+{
+protected:
+    wxPanel* m_panel191;
+    wxStaticBitmap* m_staticBitmap161;
+    wxCommandLinkButton* m_cmdLnkBtnWorkspaces;
+    wxCommandLinkButton* m_cmdLnkBtnFilesMenu;
+    wxCommandLinkButton* m_cmdLnkBtn157;
+    wxCommandLinkButton* m_cmdLnkBtn231;
+    wxCommandLinkButton* m_cmdLnkBtn155;
+    wxCommandLinkButton* m_cmdLnkBtn151;
+
+protected:
+    virtual void OnSize(wxSizeEvent& event) { event.Skip(); }
+    virtual void OnShowWorkspaceMenu(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnShowFileseMenu(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNewProject(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOpenWorkspace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOpenForums(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOpenWiki(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    virtual ~WelcomePageBase();
 };
 
 #endif

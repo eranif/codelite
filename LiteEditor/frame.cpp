@@ -42,6 +42,7 @@
 #include "cl_aui_dock_art.h"
 #include <wx/splash.h>
 #include "clsplashscreen.h"
+#include "WelcomePage.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2935,6 +2936,7 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent &event)
 
 void clMainFrame::CreateWelcomePage()
 {
+    /*
     Manager *mgr = ManagerST::Get();
     //load the template
     wxFileName fn(mgr->GetStarupDirectory(), wxT("index.html"));
@@ -2975,8 +2977,15 @@ void clMainFrame::CreateWelcomePage()
     content.Replace(wxT("$(RecentWorkspaces)"), _("Recently opened workspaces:"));
     content.Replace(wxT("$(RecentFiles)"), _("Recently opened files:"));
 
-    welcomePage->SetPage(content);
+    welcomePage->SetPage(content);*/
+    WelcomePage* welcomePage = new WelcomePage(GetMainBook()); 
     GetMainBook()->AddPage(welcomePage, _("Welcome!"), wxNullBitmap, true);
+    
+    GetMainBook()->Layout();
+    // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
+    SendSizeEvent(wxSEND_EVENT_POST);
+    // Ditto the workspace pane auinotebook
+    GetWorkspacePane()->SendSizeEvent(wxSEND_EVENT_POST);
 }
 
 void clMainFrame::OnImportMSVS(wxCommandEvent &e)

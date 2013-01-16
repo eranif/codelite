@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	0,
+		"m_objCounter":	1,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3415InitBitmapResources",
 		"m_bitmapsFile":	"AboutDlg_bitmaps.cpp",

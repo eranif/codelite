@@ -82,8 +82,12 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
         wxString filename = m_idToName[id];
         filename = filename.AfterFirst('-');
         filename.Trim().Trim(false);
-        clWindowUpdateLocker locker(clMainFrame::Get());
-        ManagerST::Get()->OpenWorkspace( filename );
+        
+        // post an event to the main frame requesting a workspace open
+        wxCommandEvent evtOpenworkspace(wxEVT_COMMAND_MENU_SELECTED, XRCID("switch_to_workspace"));
+        evtOpenworkspace.SetString( filename );
+        evtOpenworkspace.SetEventObject( clMainFrame::Get() );
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent( evtOpenworkspace );
     }
 }
 
@@ -112,7 +116,12 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
     // get the best position to show the menu
     wxPoint pos = btn->GetPosition();
     pos.y += btn->GetSize().y;
+#ifndef __WXMAC__    
     pos.y += 5;
     pos.x += 5;
+#else
+    pos.y += 15;
+    pos.x += 15;
+#endif    
     return GetPopupMenuSelectionFromUser(menu, pos);
 }

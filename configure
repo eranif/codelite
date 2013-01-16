@@ -281,7 +281,11 @@ createMainTargets()
 	if [ "$os_name" = "Darwin" ]; then
 		echo "mac_bundle: " >> Makefile
 		echo "	@echo Creating Mac bundle..." >> Makefile
-		echo "	@cd Runtime && ./make_mac_bundle.sh" >> Makefile
+		if [ "$enable_debug" = "yes" ]; then
+			echo "	@cd Runtime && ./make_mac_bundle.sh debug" >> Makefile
+		else
+			echo "	@cd Runtime && ./make_mac_bundle.sh" >> Makefile
+		fi
 		echo "	@echo done" >> Makefile
 		echo "" >> Makefile
 	fi

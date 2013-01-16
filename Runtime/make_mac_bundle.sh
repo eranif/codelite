@@ -1,4 +1,9 @@
 #!/bin/sh
+enable_debug=$1
+ext="u"
+if [ "${enable_debug}" = "debug" ]; then
+	ext="ud"
+fi
 
 fix_shared_object_depends() {
 	search_string=$1
@@ -177,11 +182,11 @@ if [ -f ../lib/wxcrafter.so ]; then
     cp -pr ../wxcrafter/wxgui.zip ./CodeLite.app/Contents/SharedSupport/
 fi
 
-cp ../lib/libpluginu.so ./CodeLite.app/Contents/MacOS/
-cp ../lib/libcodeliteu.so ./CodeLite.app/Contents/MacOS/
-cp ../lib/libwxsqlite3u.so ./CodeLite.app/Contents/MacOS/
-cp ../lib/libdblayersqliteu.so ./CodeLite.app/Contents/MacOS/
-cp ../lib/libwxshapeframeworku.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libplugin${ext}.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libcodelite${ext}.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libwxsqlite3${ext}.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libdblayersqlite${ext}.so ./CodeLite.app/Contents/MacOS/
+cp ../lib/libwxshapeframework${ext}.so ./CodeLite.app/Contents/MacOS/
 
 cp ./codelite_indexer  ./CodeLite.app/Contents/SharedSupport/
 cp ../codelite_clang/codelite-clang  ./CodeLite.app/Contents/SharedSupport/
@@ -203,9 +208,9 @@ fix_codelite_indexer_deps
 fix_wxrc_deps
 fix_codelite_clang_deps
 fix_shared_object_depends libwx_
-fix_non_plugins_depends ./lib/libcodeliteu.so
-fix_non_plugins_depends ./lib/libpluginu.so
-fix_non_plugins_depends ./lib/libwxsqlite3u.so
-fix_non_plugins_depends ./lib/libwxshapeframeworku.so
-fix_non_plugins_depends ./lib/libdblayersqliteu.so
+fix_non_plugins_depends ./lib/libcodelite${ext}.so
+fix_non_plugins_depends ./lib/libplugin${ext}.so
+fix_non_plugins_depends ./lib/libwxsqlite3${ext}.so
+fix_non_plugins_depends ./lib/libwxshapeframework${ext}.so
+fix_non_plugins_depends ./lib/libdblayersqlite${ext}.so
 

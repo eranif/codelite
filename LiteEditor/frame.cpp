@@ -1844,6 +1844,9 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
         promptUser = false;
         wspFile = e.GetString();
 
+    } else if ( !event.GetString().IsEmpty() ) {
+        promptUser = false;
+        wspFile = event.GetString();
     }
 
     if(promptUser) {

@@ -198,7 +198,7 @@ protected:
     virtual void OnOpenWiki(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxBORDER_THEME);
     virtual ~WelcomePageBase();
 };
 

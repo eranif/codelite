@@ -75,40 +75,31 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     m_btnRemovelPath = new wxButton(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
-    m_btnRemovelPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("delete-line")));
+    m_btnRemovelPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("clear-all")));
     m_btnRemovelPath->SetBitmapMargins(2,2);
     #endif
     m_btnRemovelPath->SetToolTip(_("Remove the selected search path"));
     
-    boxSizer1->Add(m_btnRemovelPath, 0, wxTOP|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer1->Add(m_btnRemovelPath, 0, wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_btnClearPaths = new wxButton(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
-    m_btnClearPaths->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("clear-all")));
+    m_btnClearPaths->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("delete-line")));
     m_btnClearPaths->SetBitmapMargins(2,2);
     #endif
     m_btnClearPaths->SetToolTip(_("Clear the search path list"));
     
-    boxSizer1->Add(m_btnClearPaths, 0, wxBOTTOM|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer1->Add(m_btnClearPaths, 0, wxTOP|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_staticText3 = new wxStaticText(this, wxID_ANY, _("File Mask:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer41->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_fileTypesArr;
-    m_fileTypesArr.Add(wxT("*.c"));
-    m_fileTypesArr.Add(wxT("*.cpp"));
-    m_fileTypesArr.Add(wxT("*.cxx"));
-    m_fileTypesArr.Add(wxT("*.cc"));
-    m_fileTypesArr.Add(wxT("*.h"));
-    m_fileTypesArr.Add(wxT("*.hpp"));
-    m_fileTypesArr.Add(wxT("*.inc"));
-    m_fileTypesArr.Add(wxT("*.mm"));
-    m_fileTypesArr.Add(wxT("*.m"));
-    m_fileTypesArr.Add(wxT("*.xrc"));
-    m_fileTypesArr.Add(wxT("*.*"));
+    m_fileTypesArr.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"));
     m_fileTypes = new wxComboBox(this, wxID_ANY, wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"), wxDefaultPosition, wxSize(-1, -1), m_fileTypesArr, 0);
     m_fileTypes->SetToolTip(_("Search these file types"));
+    m_fileTypes->SetSelection(0);
     
     fgSizer41->Add(m_fileTypes, 1, wxALL|wxEXPAND, 5);
     

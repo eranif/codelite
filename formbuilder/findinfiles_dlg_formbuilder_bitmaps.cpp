@@ -129,6 +129,6 @@ void wxCABC4InitBitmapResources()
 
     XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$.._icons_clear-all.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$.._icons_delete-line.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$findinfiles_dlg_formbuilder_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$findinfiles_dlg_formbuilder_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$._findinfiles_dlg_formbuilder_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$._findinfiles_dlg_formbuilder_bitmaps.xrc"));
 }

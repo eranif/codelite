@@ -290,6 +290,7 @@ bool CodeLiteApp::OnInit()
 
     // Init resources and add the PNG handler
     wxSystemOptions::SetOption(_T("msw.remap"), 0);
+    wxSystemOptions::SetOption("msw.notebook.themed-background", 0);
     wxXmlResource::Get()->InitAllHandlers();
     wxImage::AddHandler( new wxPNGHandler );
     wxImage::AddHandler( new wxCURHandler );

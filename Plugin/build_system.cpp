@@ -26,6 +26,7 @@
 #include "build_system.h"
 #include "xmlutils.h"
 #include "wx_xml_compatibility.h"
+#include <wx/thread.h>
 
 BuilderConfig::BuilderConfig(wxXmlNode *node)
     : m_isActive(false)
@@ -34,7 +35,7 @@ BuilderConfig::BuilderConfig(wxXmlNode *node)
         m_name        = XmlUtils::ReadString(node, wxT("Name"));
         m_toolPath    = XmlUtils::ReadString(node, wxT("ToolPath"));
         m_toolOptions = XmlUtils::ReadString(node, wxT("Options"));
-        m_toolJobs    = XmlUtils::ReadString(node, wxT("Jobs"), wxT("1"));
+        m_toolJobs    = wxString() << wxThread::GetCPUCount();
         m_isActive    = XmlUtils::ReadBool  (node, wxT("Active"), m_isActive);
     }
 }

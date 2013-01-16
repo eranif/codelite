@@ -257,7 +257,7 @@
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
-											"m_label":	"Choices:",
+											"m_label":	"ComboBox Choices:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -597,7 +597,7 @@
 													"gbSpan":	",",
 													"gbPosition":	",",
 													"m_styles":	["wxBU_EXACTFIT"],
-													"m_sizerFlags":	["wxTOP", "wxEXPAND", "wxALIGN_CENTER_HORIZONTAL"],
+													"m_sizerFlags":	["wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_HORIZONTAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -649,7 +649,7 @@
 														}, {
 															"type":	"filePicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"../icons/delete-line.png"
+															"m_path":	"../icons/clear-all.png"
 														}, {
 															"type":	"string",
 															"m_label":	"Margins:",
@@ -676,7 +676,7 @@
 													"gbSpan":	",",
 													"gbPosition":	",",
 													"m_styles":	["wxBU_EXACTFIT"],
-													"m_sizerFlags":	["wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_HORIZONTAL"],
+													"m_sizerFlags":	["wxTOP", "wxEXPAND", "wxALIGN_CENTER_HORIZONTAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -728,7 +728,7 @@
 														}, {
 															"type":	"filePicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"../icons/clear-all.png"
+															"m_path":	"../icons/delete-line.png"
 														}, {
 															"type":	"string",
 															"m_label":	"Margins:",
@@ -859,12 +859,12 @@
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
-											"m_label":	"Choices:",
-											"m_value":	"*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.*"
+											"m_label":	"ComboBox Choices:",
+											"m_value":	"*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"
 										}, {
 											"type":	"string",
 											"m_label":	"Selection:",
-											"m_value":	"-1"
+											"m_value":	"0"
 										}, {
 											"type":	"string",
 											"m_label":	"Value:",

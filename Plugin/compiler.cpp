@@ -197,7 +197,7 @@ Compiler::Compiler(wxXmlNode *node)
         SetTool("AR",                     "ar rcu");
         SetTool("ResourceCompiler",       "windres");
 
-#ifdef __WXMSW__        
+#ifdef __WXMSW__
         SetTool("MAKE",                   "mingw32-make");
 #else
         SetTool("MAKE",                   "make");

@@ -130,11 +130,15 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
         bld_conf_name = bldConf->GetName();
     }
     
-    //BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, bld_conf_name);
-    //if ( !bldConf ) {
-    //    errMsg << _("Cant find build configuration for project '") << project << wxT("'");
-    //    return false;
-    //}
+    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, bld_conf_name);
+    if ( !bldConf ) {
+        errMsg << _("Cant find build configuration for project '") << project << wxT("'");
+        return false;
+    }
+    if ( !bldConf->GetCompiler() ) {
+        errMsg << _("Cant find proper compiler for project '") << project << wxT("'");
+        return false;
+    }
     
     PRINT_TIMESTAMP(_("Reading project dependencies...\n"));
     wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
@@ -193,7 +197,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
     text << wxT("All:\n");
 
     //iterate over the dependencies projects and generate makefile
-    wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, false);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
     // fix: replace all Windows like slashes to POSIX
@@ -1410,14 +1414,11 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, const wxString
     //generate the makefile
     Export(project, confToBuild, false, false, errMsg);
 
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-    wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, true);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
     // fix: replace all Windows like slashes to POSIX
     buildTool.Replace(wxT("\\"), wxT("/"));
-
-    wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
     cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\"");
     return cmd;
 }
@@ -1433,7 +1434,7 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project, const wxString
     //generate the makefile
     Export(project, confToBuild, false, false, errMsg);
 
-    wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, true);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
 
     // fix: replace all Windows like slashes to POSIX
@@ -1525,7 +1526,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString &project, const wxS
     Export(project, confToBuild, true, false, errMsg);
 
     BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
-    wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
+    wxString buildTool = GetBuildToolCommand(project, confToBuild, true);
     wxString type = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), project);
 
     // fix: replace all Windows like slashes to POSIX
@@ -1618,7 +1619,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile, const 
     wxString makeCommand;
     wxString basicMakeCommand;
 
-    wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(false);
+    wxString buildTool = GetBuildToolCommand(proj->GetName(), confToBuild, false);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
     basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\"");
 
@@ -1664,7 +1665,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
     wxString makeCommand;
     wxString basicMakeCommand;
 
-    wxString buildTool = BuildManagerST::Get()->GetSelectedBuilder()->GetBuildToolCommand(true);
+    wxString buildTool = GetBuildToolCommand(proj->GetName(), confToBuild, true);
     buildTool = EnvironmentConfig::Instance()->ExpandVariables(buildTool, true);
     basicMakeCommand << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" ");
 
@@ -1734,31 +1735,32 @@ wxString BuilderGnuMake::GetPORebuildCommand(const wxString& project, const wxSt
     return cmd;
 }
 
-wxString BuilderGnuMake::GetBuildToolCommand(bool isCommandlineCommand) const
+wxString BuilderGnuMake::GetBuildToolCommand(const wxString& project, const wxString& confToBuild, bool isCommandlineCommand) const
 {
     wxString jobsCmd;
     wxString buildTool;
-
-    if (isCommandlineCommand) {
-        wxString jobs = GetBuildToolJobs();
-        if (jobs == wxT("unlimited"))
-            jobsCmd = wxT(" -j ");
-        else
-            jobsCmd = wxT(" -j ") + jobs + wxT(" ");
-
-        buildTool = GetBuildToolName(); // allow environment variable to take precendence over the local variables
+    
+    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
+    if ( !bldConf )
+        return wxEmptyString;
+    
+    CompilerPtr compiler = bldConf->GetCompiler();
+    if ( !compiler )
+        return wxEmptyString;
+    
+    if ( isCommandlineCommand ) {
+        buildTool = compiler->GetTool("MAKE");
+        
     } else {
         jobsCmd = wxEmptyString;
         buildTool = wxT("$(MAKE)");
     }
 
-    //enclose the tool path in quatation marks
     if ( isCommandlineCommand ) {
-        return wxT("\"") + buildTool + wxT("\" -e ") + jobsCmd + GetBuildToolOptions() ;
+        return buildTool + " -e -f ";
         
     } else {
-        return wxT("\"") + buildTool + wxT("\" ") + jobsCmd + GetBuildToolOptions() ;
-        
+        return buildTool + " -f ";
     }
 }
 

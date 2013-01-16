@@ -30,21 +30,16 @@
 #include "macros.h"
 
 Builder::Builder(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions)
-: m_name(name)
-, m_buildTool(buildTool)
-, m_buildToolOptions(buildToolOptions)
-, m_isActive(false)
+    : m_name(name)
+    , m_isActive(false)
 {
-	//override values from configuration file
-	BuilderConfigPtr config = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
-	if(config) {
-		m_buildTool        = config->GetToolPath();
-		m_buildToolOptions = config->GetToolOptions();
-		m_isActive         = config->GetIsActive();
-		m_buildToolJobs    = config->GetToolJobs();
-	} else {
-		m_isActive = (m_name == wxT("GNU makefile for g++/gcc"));
-	}
+    //override values from configuration file
+    BuilderConfigPtr config = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
+    if(config) {
+        m_isActive         = config->GetIsActive();
+    } else {
+        m_isActive = (m_name == wxT("GNU makefile for g++/gcc"));
+    }
 }
 
 Builder::~Builder()
@@ -53,26 +48,26 @@ Builder::~Builder()
 
 wxString Builder::NormalizeConfigName(const wxString &confgName)
 {
-	wxString normalized(confgName);
-	TrimString(normalized);
-	normalized.Replace(wxT(" "), wxT("_"));
-	return normalized;
+    wxString normalized(confgName);
+    TrimString(normalized);
+    normalized.Replace(wxT(" "), wxT("_"));
+    return normalized;
 }
 
 void Builder::SetActive()
 {
-	std::list<wxString> builders;
-	BuildManagerST::Get()->GetBuilders(builders);
-	std::list<wxString>::iterator iter = builders.begin();
-	for(; iter != builders.end(); iter++) {
-		
-		wxString builderName = *iter;
-		BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
-		
-		if(builder && builder->m_name == m_name)
-			builder->m_isActive = true;
-		
-		else if(builder)
-			builder->m_isActive = false;
-	}
+    std::list<wxString> builders;
+    BuildManagerST::Get()->GetBuilders(builders);
+    std::list<wxString>::iterator iter = builders.begin();
+    for(; iter != builders.end(); iter++) {
+
+        wxString builderName = *iter;
+        BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
+
+        if(builder && builder->m_name == m_name)
+            builder->m_isActive = true;
+
+        else if(builder)
+            builder->m_isActive = false;
+    }
 }

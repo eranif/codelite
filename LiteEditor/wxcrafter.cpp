@@ -343,20 +343,19 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     this->SetSizer(boxSizer71);
     
     m_panel81 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_panel81->SetBackgroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer71->Add(m_panel81, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer82 = new wxBoxSizer(wxVERTICAL);
     m_panel81->SetSizer(boxSizer82);
     
-    m_banner76 = new wxBannerWindow(m_panel81, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_banner76 = new wxBannerWindow(m_panel81, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner76->SetBitmap(wxNullBitmap);
     m_banner76->SetText(_("Plugin is not installed"), _("It seems that the wxCrafter plugin is not installed\nWhat would you like to do?"));
-    m_banner76->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner76->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+    m_banner76->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK), wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_banner76->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
-    boxSizer82->Add(m_banner76, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10);
+    boxSizer82->Add(m_banner76, 0, wxALL|wxEXPAND, 10);
     
     m_panel75 = new wxPanel(m_panel81, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -375,7 +374,6 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     boxSizer79->Add(m_cmdLnkBtnContinue, 0, wxALL|wxEXPAND, 5);
     
     
-    SetBackgroundColour(wxColour(wxT("rgb(255,255,255)")));
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -494,7 +492,6 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     this->SetSizer(boxSizer149);
     
     m_panel191 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_panel191->SetBackgroundColour(wxColour(wxT("rgb(229,229,229)")));
     
     boxSizer149->Add(m_panel191, 1, wxALL|wxEXPAND, 5);
     
@@ -517,11 +514,11 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     gridSizer235->Add(m_cmdLnkBtnFilesMenu, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn157 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New project"), _("Start a new project"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtn157 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New"), _("Start a new project"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     gridSizer235->Add(m_cmdLnkBtn157, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn231 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Open workspace"), _("Open a workspace"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtn231 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Open"), _("Open a workspace"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     gridSizer235->Add(m_cmdLnkBtn231, 0, wxALL|wxEXPAND, 5);
     

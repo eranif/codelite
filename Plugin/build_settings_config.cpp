@@ -169,7 +169,7 @@ void BuildSettingsConfig::SetBuildSystem(BuilderConfigPtr bs)
 
 BuilderConfigPtr BuildSettingsConfig::GetBuilderConfig(const wxString &name)
 {
-    wxXmlNode *node = XmlUtils::FindNodeByName(m_doc->GetRoot(), wxT("BuildSystem"), name);
+    wxXmlNode *node = XmlUtils::FindNodeByName(m_doc->GetRoot(), wxT("BuildSystem"), name.IsEmpty() ? GetSelectedBuildSystem() : name);
     if(node) {
         return new BuilderConfig(node);
     }
@@ -181,10 +181,7 @@ void BuildSettingsConfig::SaveBuilderConfig(BuilderPtr builder)
     //update configuration file
     BuilderConfigPtr bsptr(new BuilderConfig(NULL));
     bsptr->SetName(builder->GetName());
-    bsptr->SetToolPath(builder->GetBuildToolName());
-    bsptr->SetToolOptions(builder->GetBuildToolOptions());
-    bsptr->SetToolJobs(builder->GetBuildToolJobs());
-    bsptr->SetIsActive(builder->IsActive());
+   bsptr->SetIsActive(builder->IsActive());
     SetBuildSystem(bsptr);
 }
 

@@ -27,6 +27,8 @@
 #include <wx/log.h>
 #include "macros.h"
 #include "wx_xml_compatibility.h"
+#include "build_system.h"
+#include "build_settings_config.h"
 
 Compiler::Compiler(wxXmlNode *node)
     : m_objectNameIdenticalToFileName(false)
@@ -152,6 +154,14 @@ Compiler::Compiler(wxXmlNode *node)
 
             child = child->GetNext();
         }
+        
+        if ( GetTool("MAKE").IsEmpty() ) {
+            BuilderConfigPtr bldr = BuildSettingsConfigST::Get()->GetBuilderConfig("");
+            if ( bldr ) {
+                SetTool("MAKE", wxString() << bldr->GetToolPath() << " -j " << bldr->GetToolJobs());
+            }
+        }
+        
     } else {
         // Create a default compiler: g++
         m_name = "gnu g++";

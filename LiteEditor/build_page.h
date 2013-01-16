@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version May  5 2007)
 // http://www.wxformbuilder.org/
 //
@@ -49,33 +49,32 @@ class BuildPage : public wxPanel
 private:
 
 protected:
-	wxStaticText* m_staticText;
-	wxChoicebook* m_bookBuildSystems;
-	wxCheckBox *m_fixOnStartup;
-	wxCheckBox *m_generateAsteriskCleanTarget;
+    wxStaticText* m_staticText;
+    wxChoicebook* m_bookBuildSystems;
+    wxCheckBox *m_fixOnStartup;
+    wxCheckBox *m_generateAsteriskCleanTarget;
 
-	void CustomInit();
-	wxPanel *CreateBuildSystemPage(const wxString &name);
+    void CustomInit();
+    wxPanel *CreateBuildSystemPage(const wxString &name);
 
 public:
-	BuildPage( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 500,300 ), int style = wxTAB_TRAVERSAL );
-	void Save();
+    BuildPage( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 500,300 ), int style = wxTAB_TRAVERSAL );
+    void Save();
 };
 
-class BuildSystemPage : public wxPanel {
-	wxStaticText* m_staticText17;
-	FilePicker* m_filePicker;
-	wxStaticText* m_staticText18;
-	wxTextCtrl* m_textBuildToolOptions;
-	wxString m_name;
-	wxStaticText* m_staticText19;
-	wxComboBox* m_choiceJobs;
+class BuildSystemPage : public wxPanel
+{
+    wxStaticText* m_staticText17;
+    FilePicker* m_filePicker;
+    wxStaticText* m_staticText18;
+    wxString m_name;
+    wxStaticText* m_staticText19;
 
 public:
-	BuildSystemPage(wxWindow *parent, wxString name);
-	virtual ~BuildSystemPage(){}
+    BuildSystemPage(wxWindow *parent, wxString name);
+    virtual ~BuildSystemPage() {}
 
-	void Save();
-	void SetSelected();
+    void Save();
+    void SetSelected();
 };
 #endif //__build_page__

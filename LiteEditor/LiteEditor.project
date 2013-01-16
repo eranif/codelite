@@ -247,8 +247,6 @@
       <File Name="editcmpfileinfobase.h"/>
       <File Name="editcmpfileinfodlg.cpp"/>
       <File Name="compilertoolspage.h"/>
-      <File Name="compiler_pages.cpp"/>
-      <File Name="compiler_pages.h"/>
       <File Name="compileradvancepage.cpp"/>
       <File Name="compileradvancepage.h"/>
       <File Name="compilerfiletypespage.cpp"/>
@@ -1139,7 +1137,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="wxWidgets-29">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

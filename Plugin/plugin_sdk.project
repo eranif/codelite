@@ -87,6 +87,7 @@
     <File Name="builder_gnumake.cpp"/>
     <File Name="builder_gnumake_onestep.h"/>
     <File Name="builder_gnumake_onestep.cpp"/>
+    <File Name="compiler_page.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="importer">
     <File Name="vcimporter.h"/>
@@ -467,10 +468,13 @@
       <File Name="VirtualDirectorySelector_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelectorBase_plugin_bitmaps.cpp"/>
       <File Name="openresourcedialogbase_plugin_bitmaps.cpp"/>
+      <File Name="compiler_page_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
       <File Name="VirtualDirectorySelectorBase.cpp"/>
+      <File Name="compiler_pages.h"/>
+      <File Name="compiler_pages.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
   </VirtualDirectory>

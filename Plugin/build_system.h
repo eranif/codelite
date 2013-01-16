@@ -33,47 +33,47 @@
 
 class WXDLLIMPEXP_SDK  BuilderConfig
 {
-	wxString m_name;
-	wxString m_toolPath;
-	wxString m_toolOptions;
-	wxString m_toolJobs;
-	bool     m_isActive;
+    wxString m_name;
+    wxString m_toolPath;
+    wxString m_toolOptions;
+    wxString m_toolJobs;
+    bool     m_isActive;
 
 public:
-	BuilderConfig(wxXmlNode *node);
-	virtual ~BuilderConfig();
-	wxXmlNode *ToXml() const;
+    BuilderConfig(wxXmlNode *node);
+    virtual ~BuilderConfig();
+    wxXmlNode *ToXml() const;
 
-	void SetIsActive(bool isActive) {
-		this->m_isActive = isActive;
-	}
-	bool GetIsActive() const {
-		return m_isActive;
-	}
-	const wxString &GetName() const {
-		return m_name;
-	}
-	const wxString &GetToolPath() const {
-		return m_toolPath;
-	}
-	const wxString &GetToolOptions() const {
-		return m_toolOptions;
-	}
-	const wxString &GetToolJobs() const {
-		return m_toolJobs;
-	}
-	void SetName(const wxString &name) {
-		m_name = name;
-	}
-	void SetToolPath(const wxString &path) {
-		m_toolPath = path;
-	}
-	void SetToolOptions(const wxString &options) {
-		m_toolOptions = options;
-	}
-	void SetToolJobs(const wxString &jobs) {
-		m_toolJobs = jobs;
-	}
+    void SetIsActive(bool isActive) {
+        this->m_isActive = isActive;
+    }
+    bool GetIsActive() const {
+        return m_isActive;
+    }
+    const wxString &GetName() const {
+        return m_name;
+    }
+    const wxString &GetToolPath() const {
+        return m_toolPath;
+    }
+    const wxString &GetToolOptions() const {
+        return m_toolOptions;
+    }
+    const wxString &GetToolJobs() const {
+        return m_toolJobs;
+    }
+    void SetName(const wxString &name) {
+        m_name = name;
+    }
+    void SetToolPath(const wxString &path) {
+        m_toolPath = path;
+    }
+    void SetToolOptions(const wxString &options) {
+        m_toolOptions = options;
+    }
+    void SetToolJobs(const wxString &jobs) {
+        m_toolJobs = jobs;
+    }
 };
 
 typedef SmartPtr<BuilderConfig>     BuilderConfigPtr;

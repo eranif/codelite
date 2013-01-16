@@ -1464,7 +1464,7 @@ void clMainFrame::CreateToolbars16()
 
 void clMainFrame::UpdateBuildTools()
 {
-    BuilderPtr builder = BuildManagerST::Get()->GetBuilder ( wxT ( "GNU makefile for g++/gcc" ) );
+/*    BuilderPtr builder = BuildManagerST::Get()->GetBuilder ( wxT ( "GNU makefile for g++/gcc" ) );
     wxString tool = builder->GetBuildToolName();
     wxString origTool ( tool );
 
@@ -1521,6 +1521,7 @@ void clMainFrame::UpdateBuildTools()
 
     bsptr->SetToolPath ( tool );
     BuildSettingsConfigST::Get()->SetBuildSystem ( bsptr );
+     */
 }
 
 void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -2591,34 +2592,34 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     }
 
     //update the build system to contain the number of CPUs
-    int cpus = wxThread::GetCPUCount();
-    if (cpus != wxNOT_FOUND) {
-        //update the build system
-        BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
-        if ( bs ) {
-            wxString jobs;
-            jobs << cpus;
-
-            long dontPromptForCPUFix(0);
-            EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), dontPromptForCPUFix);
-
-            if ( bs->GetToolJobs() != jobs && !dontPromptForCPUFix) {
-
-                ButtonDetails btn1;
-                btn1.buttonLabel = _("Update Number of Build Processes");
-                btn1.commandId   = XRCID("update_num_builders_count");
-                btn1.window      = this;
-
-                GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"),
-                                           true,
-                                           PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")),
-                                           btn1,
-                                           ButtonDetails(),
-                                           ButtonDetails(),
-                                           CheckboxDetails(wxT("AdjustCPUNumber")));
-            }
-        }
-    }
+//    int cpus = wxThread::GetCPUCount();
+//    if (cpus != wxNOT_FOUND) {
+//        //update the build system
+//        BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
+//        if ( bs ) {
+//            wxString jobs;
+//            jobs << cpus;
+//
+//            long dontPromptForCPUFix(0);
+//            EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), dontPromptForCPUFix);
+//
+//            if ( bs->GetToolJobs() != jobs && !dontPromptForCPUFix) {
+//
+//                ButtonDetails btn1;
+//                btn1.buttonLabel = _("Update Number of Build Processes");
+//                btn1.commandId   = XRCID("update_num_builders_count");
+//                btn1.window      = this;
+//
+//                GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"),
+//                                           true,
+//                                           PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")),
+//                                           btn1,
+//                                           ButtonDetails(),
+//                                           ButtonDetails(),
+//                                           CheckboxDetails(wxT("AdjustCPUNumber")));
+//            }
+//        }
+//    }
 
     // enable/disable plugins toolbar functionality
     PluginManager::Get()->EnableToolbars();

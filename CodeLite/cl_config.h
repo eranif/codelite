@@ -39,7 +39,8 @@ protected:
 
 protected:
     void DoDeleteProperty(const wxString &property);
-
+    JSONElement GetGeneralSetting();
+    
 public:
     // We provide a global configuration
     // and the ability to allocate a private copy with a different file
@@ -71,6 +72,8 @@ public:
     bool ReadItem(clConfigItem* item);
     void WriteItem(const clConfigItem* item);
     
+    void WriteInt(const wxString &name, int value);
+    int  GetInt(const wxString &name, int defaultValue = wxNOT_FOUND);
 };
 
 

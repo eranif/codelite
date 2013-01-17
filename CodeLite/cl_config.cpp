@@ -130,3 +130,24 @@ void clConfig::Save(const wxFileName& fn)
         m_root->save(fn);
 }
 
+void clConfig::WriteInt(const wxString& name, int value)
+{
+    JSONElement general = GetGeneralSetting();
+    general.addProperty(name, value);
+    Save();
+}
+
+JSONElement clConfig::GetGeneralSetting()
+{
+    if ( m_root->toElement().hasNamedObject("General") ) {
+        JSONElement general = JSONElement::createObject("General");
+        m_root->toElement().append(general);
+    }
+    return m_root->toElement().namedObject("General");
+}
+
+int clConfig::GetInt(const wxString& name, int defaultValue)
+{
+    JSONElement general = GetGeneralSetting();
+    return general.namedObject(name).toInt(defaultValue);
+}

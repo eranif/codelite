@@ -336,8 +336,7 @@ void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
     LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     DoSelectItem(editor);
 
-    clConfig cfg;
-    cfg.Write("TabsPaneSortAlphabetically", event.IsChecked());
+    clConfig::Get().Write("TabsPaneSortAlphabetically", event.IsChecked());
 }
 
 void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event)

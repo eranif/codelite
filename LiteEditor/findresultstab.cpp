@@ -186,7 +186,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
 
     LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
     if(cppLexer) {
-        std::list<StyleProperty> styles = cppLexer->GetProperties();
+        std::list<StyleProperty> styles = cppLexer->GetLexerProperties();
         std::list<StyleProperty>::iterator iter = styles.begin();
         for (; iter != styles.end(); iter++) {
             if(iter->GetId() == wxSTC_C_COMMENTLINE) {

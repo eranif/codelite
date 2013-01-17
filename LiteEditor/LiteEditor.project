@@ -12,7 +12,7 @@
     <Extensions>
       <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp;iss;sh]]>
     </Extensions>
-    <Topleveldir>../formbuilder</Topleveldir>
+    <Topleveldir>../LiteEditor</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="Source Files">
     <File Name="cpp_symbol_tree.cpp"/>
@@ -764,6 +764,8 @@
       <File Name="importfilesdialog_liteeditor_bitmaps.cpp"/>
       <File Name="implfuncs_dlg_bitmaps.cpp"/>
       <File Name="AboutDlg_bitmaps.cpp"/>
+      <File Name="OpenWindowsPanelBase.wxcp"/>
+      <File Name="OpenWindowsPanelBase_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

@@ -54,7 +54,7 @@ class SvnSettingsData : public SerializedObject
     std::map<wxString, wxString> m_workspaceRepoPath;
     wxArrayString                m_repos;
     int                          m_commitDlgSashPos;
-
+    int                          m_commitDlgHSashPos;
 public:
     SvnSettingsData()
         : m_executable(wxT("svn"))
@@ -65,7 +65,9 @@ public:
         , m_flags(SvnAddFileToSvn|SvnRetagWorkspace|SvnUsePosixLocale)
         , m_revisionMacroName(wxT("SVN_REVISION"))
         , m_svnTabIndex(Notebook::npos)
-        , m_commitDlgSashPos(wxNOT_FOUND) {
+        , m_commitDlgSashPos(wxNOT_FOUND)
+        , m_commitDlgHSashPos(wxNOT_FOUND)
+    {
     }
 
     virtual ~SvnSettingsData() {
@@ -85,6 +87,7 @@ public:
         arch.Read(wxT("m_workspaceRepoPath"),         m_workspaceRepoPath);
         arch.Read(wxT("m_repos"),                     m_repos);
         arch.Read(wxT("m_commitDlgSashPos"),          m_commitDlgSashPos);
+        arch.Read(wxT("m_commitDlgHSashPos"),         m_commitDlgHSashPos);
     }
 
     virtual void Serialize(Archive &arch) {
@@ -100,8 +103,15 @@ public:
         arch.Write(wxT("m_workspaceRepoPath"),         m_workspaceRepoPath);
         arch.Write(wxT("m_repos"),                     m_repos);
         arch.Write(wxT("m_commitDlgSashPos"),          m_commitDlgSashPos);
+        arch.Write(wxT("m_commitDlgHSashPos"),         m_commitDlgHSashPos);
     }
 
+    void SetCommitDlgHSashPos(int commitDlgHSashPos) {
+        this->m_commitDlgHSashPos = commitDlgHSashPos;
+    }
+    int GetCommitDlgHSashPos() const {
+        return m_commitDlgHSashPos;
+    }
     void SetCommitDlgSashPos(int commitDlgSashPos) {
         this->m_commitDlgSashPos = commitDlgSashPos;
     }

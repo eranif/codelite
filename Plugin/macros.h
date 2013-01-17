@@ -128,7 +128,7 @@ const wxString TERMINAL_CMD         = wxT("");
 
 
 // ----------------------------- usefule typedefs -------------------------------
-typedef std::map<wxString, bool> wxStringBoolMap_t;
-typedef std::set<wxString>       wxStringSet_t;
-
+typedef std::map<wxString, bool>     wxStringBoolMap_t;
+typedef std::set<wxString>           wxStringSet_t;
+typedef std::map<wxString, wxString> wxStringMap_t;
 #endif // MACROS_H

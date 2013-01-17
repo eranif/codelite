@@ -38,7 +38,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     
     m_textCtrlFrID = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer5->Add(m_textCtrlFrID, 0, wxEXPAND|wxALL, 5);
+    flexGridSizer5->Add(m_textCtrlFrID, 0, wxALL|wxEXPAND, 5);
     
     m_staticTextBugID = new wxStaticText(this, wxID_ANY, _("Bug ID:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -46,43 +46,103 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     
     m_textCtrlBugID = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer5->Add(m_textCtrlBugID, 0, wxEXPAND|wxALL, 5);
+    flexGridSizer5->Add(m_textCtrlBugID, 0, wxALL|wxEXPAND, 5);
     
-    m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
-    m_splitter1->SetSashGravity(0.500000);
-    m_splitter1->SetMinimumPaneSize(10);
+    m_splitterV = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitterV->SetSashGravity(0.500000);
+    m_splitterV->SetMinimumPaneSize(10);
     
-    boxSizer1->Add(m_splitter1, 1, wxALL|wxEXPAND, 5);
+    boxSizer1->Add(m_splitterV, 1, wxALL|wxEXPAND, 5);
     
-    m_panel1 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage52 = new wxPanel(m_splitterV, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage52->SetSizer(boxSizer58);
+    
+    m_splitterH = new wxSplitterWindow(m_splitterPage52, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitterH->SetSashGravity(0.500000);
+    m_splitterH->SetMinimumPaneSize(10);
+    
+    boxSizer58->Add(m_splitterH, 1, wxALL|wxEXPAND, 5);
+    
+    m_panel1 = new wxPanel(m_splitterH, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer15 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(boxSizer15);
     
     m_staticText17 = new wxStaticText(m_panel1, wxID_ANY, _("Modified Paths:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer15->Add(m_staticText17, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+    boxSizer15->Add(m_staticText17, 0, wxALL|wxALIGN_LEFT, 5);
     
     wxArrayString m_checkListFilesArr;
     m_checkListFiles = new wxCheckListBox(m_panel1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_checkListFilesArr, wxLB_SINGLE);
     
-    boxSizer15->Add(m_checkListFiles, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer15->Add(m_checkListFiles, 1, wxEXPAND, 5);
     
-    m_splitterPage14 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter1->SplitVertically(m_panel1, m_splitterPage14, 0);
+    m_splitterPage14 = new wxPanel(m_splitterH, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterH->SplitVertically(m_panel1, m_splitterPage14, 0);
     
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage14->SetSizer(boxSizer16);
     
-    m_staticText19 = new wxStaticText(m_splitterPage14, wxID_ANY, _("Message:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText19 = new wxStaticText(m_splitterPage14, wxID_ANY, _("Diff:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer16->Add(m_staticText19, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+    boxSizer16->Add(m_staticText19, 0, wxALL|wxALIGN_LEFT, 5);
     
-    m_textCtrlMessage = new wxTextCtrl(m_splitterPage14, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_stcDiff = new wxStyledTextCtrl(m_splitterPage14, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcDiff->SetMarginSensitive(4, true);
+    m_stcDiff->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcDiff->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcDiff->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcDiff->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcDiff->SetMarginWidth(2, 0);
+    m_stcDiff->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    int m_stcDiff_PixelWidth = 4 + 5 *m_stcDiff->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
+    m_stcDiff->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcDiff->SetMarginWidth(0,m_stcDiff_PixelWidth);
+    
+    // Configure the line symbol margin
+    m_stcDiff->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcDiff->SetMarginMask(3, 0);
+    m_stcDiff->SetMarginWidth(3,1);
+    // Select the lexer
+    m_stcDiff->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcDiff->StyleClearAll();
+    m_stcDiff->SetWrapMode(0);
+    m_stcDiff->SetIndentationGuides(0);
+    m_stcDiff->SetKeyWords(0, wxT(""));
+    m_stcDiff->SetKeyWords(1, wxT(""));
+    m_stcDiff->SetKeyWords(2, wxT(""));
+    m_stcDiff->SetKeyWords(3, wxT(""));
+    m_stcDiff->SetKeyWords(4, wxT(""));
+    
+    boxSizer16->Add(m_stcDiff, 1, wxEXPAND, 5);
+    
+    m_splitterPage56 = new wxPanel(m_splitterV, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterV->SplitHorizontally(m_splitterPage52, m_splitterPage56, 0);
+    
+    wxBoxSizer* boxSizer60 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage56->SetSizer(boxSizer60);
+    
+    m_staticText62 = new wxStaticText(m_splitterPage56, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer60->Add(m_staticText62, 0, wxALL, 5);
+    
+    m_textCtrlMessage = new wxTextCtrl(m_splitterPage56, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
     wxFont m_textCtrlMessageFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlMessage->SetFont(m_textCtrlMessageFont);
     
-    boxSizer16->Add(m_textCtrlMessage, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
+    boxSizer60->Add(m_textCtrlMessage, 1, wxALL|wxEXPAND, 5);
     
     wxStaticBoxSizer* statixBoxSizer24 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Recent commit messages:")), wxVERTICAL);
     
@@ -108,18 +168,20 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     boxSizer2->Add(m_button4, 0, wxALL, 5);
     
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
     // Connect events
+    m_checkListFiles->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnFileSelected), NULL, this);
     m_choiceMessages->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
     
 }
 
 SvnCommitDialogBaseClass::~SvnCommitDialogBaseClass()
 {
+    m_checkListFiles->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnFileSelected), NULL, this);
     m_choiceMessages->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SvnCommitDialogBaseClass::OnChoiceMessage), NULL, this);
     
 }

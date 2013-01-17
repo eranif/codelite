@@ -28,6 +28,7 @@
 #include "xmlutils.h"
 #include "macros.h"
 #include "wx_xml_compatibility.h"
+#include "drawingutils.h"
 
 static bool StringTolBool(const wxString &s)
 {
@@ -218,4 +219,158 @@ wxFont LexerConf::GetFontForSyle(int styleId) const
         }
     }
     return wxNullFont;
+}
+
+static wxColor GetInactiveColor(const wxColor& col)
+{
+    wxUnusedVar(col);
+#ifdef __WXGTK__
+    return wxColor(wxT("GREY"));
+#else
+    return wxColor(wxT("LIGHT GREY"));
+#endif
+}
+
+void LexerConf::Apply(wxStyledTextCtrl* ctrl)
+{
+    ctrl->StyleClearAll();
+    ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
+
+    // by default indicators are set to be opaque rounded box
+    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
+    ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
+
+    //ctrl->IndicatorSetAlpha(1, 80);
+    //ctrl->IndicatorSetAlpha(2, 80);
+
+    bool tooltip(false);
+
+    std::list<StyleProperty> styles;
+    styles = GetLexerProperties();
+    ctrl->SetProperty(wxT("styling.within.preprocessor"), this->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
+
+    // Find the default style
+    wxFont defaultFont;
+    bool foundDefaultStyle = false;
+    std::list<StyleProperty>::iterator iter = styles.begin();
+    for (; iter != styles.end(); iter++) {
+        if(iter->GetId() == 0) {
+            defaultFont = wxFont(iter->GetFontSize(),
+                                 wxFONTFAMILY_TELETYPE,
+                                 iter->GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+                                 iter->IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
+                                 iter->GetUnderlined(),
+                                 iter->GetFaceName());
+            foundDefaultStyle = true;
+            break;
+        }
+    }
+
+    if (foundDefaultStyle) {
+        for(int i=0; i<256; i++) {
+            ctrl->StyleSetFont(i, defaultFont);
+        }
+    }
+
+    iter = styles.begin();
+    for (; iter != styles.end(); iter++) {
+
+        StyleProperty sp        = (*iter);
+        int           size      = sp.GetFontSize();
+        wxString      face      = sp.GetFaceName();
+        bool          bold      = sp.IsBold();
+        bool          italic    = sp.GetItalic();
+        bool          underline = sp.GetUnderlined();
+        //int           alpha     = sp.GetAlpha();
+
+        // handle special cases
+        if ( sp.GetId() == FOLD_MARGIN_ATTR_ID ) {
+
+            // fold margin foreground colour
+            ctrl->SetFoldMarginColour(true, sp.GetBgColour());
+            ctrl->SetFoldMarginHiColour(true, sp.GetFgColour());
+
+        } else if ( sp.GetId() == SEL_TEXT_ATTR_ID ) {
+
+            // selection colour
+            if(wxColour(sp.GetBgColour()).IsOk()) {
+                ctrl->SetSelBackground(true, sp.GetBgColour());
+            }
+
+        } else if ( sp.GetId() == CARET_ATTR_ID ) {
+
+            // caret colour
+            if(wxColour(sp.GetFgColour()).IsOk()) {
+                ctrl->SetCaretForeground(sp.GetFgColour());
+            }
+
+        } else {
+            int fontSize( size );
+
+            wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
+            if (sp.GetId() == 0) { //default
+                ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+                ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT, size);
+                ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT, (*iter).GetFgColour());
+
+                // Inactive state is greater by 64 from its counterpart
+                wxColor inactiveColor = GetInactiveColor((*iter).GetFgColour());
+                ctrl->StyleSetForeground(wxSTC_STYLE_DEFAULT + 64, inactiveColor);
+                ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT + 64,       font);
+                ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT + 64,       size);
+
+                ctrl->StyleSetBackground(wxSTC_STYLE_DEFAULT, (*iter).GetBgColour());
+                ctrl->StyleSetSize(wxSTC_STYLE_LINENUMBER, size);
+                ctrl->SetFoldMarginColour(true, (*iter).GetBgColour());
+                ctrl->SetFoldMarginHiColour(true, (*iter).GetBgColour());
+
+                // test the background colour of the editor, if it is considered "dark"
+                // set the indicator to be hollow rectanlgle
+                StyleProperty sp = (*iter);
+                if ( DrawingUtils::IsDark(sp.GetBgColour()) ) {
+                    ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
+                    ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
+                }
+            } else if(sp.GetId() == wxSTC_STYLE_CALLTIP) {
+                tooltip = true;
+                if(sp.GetFaceName().IsEmpty()) {
+                    font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+                    fontSize = font.GetPointSize();
+                }
+            }
+
+            ctrl->StyleSetFont(sp.GetId(), font);
+            ctrl->StyleSetSize(sp.GetId(), fontSize);
+            ctrl->StyleSetEOLFilled(sp.GetId(), iter->GetEolFilled());
+
+            if(iter->GetId() == LINE_NUMBERS_ATTR_ID) {
+                // Set the line number colours only if requested
+                // otherwise, use default colours provided by scintilla
+                if(sp.GetBgColour().IsEmpty() == false)
+                    ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
+
+                if(sp.GetFgColour().IsEmpty() == false)
+                    ctrl->StyleSetForeground(sp.GetId(), sp.GetFgColour());
+                else
+                    ctrl->StyleSetForeground(sp.GetId(), wxT("BLACK"));
+
+            } else {
+                ctrl->StyleSetForeground(sp.GetId(), sp.GetFgColour());
+
+                // Inactive state is greater by 64 from its counterpart
+                wxColor inactiveColor = GetInactiveColor(iter->GetFgColour());
+                ctrl->StyleSetForeground(sp.GetId() + 64, inactiveColor);
+                ctrl->StyleSetFont(sp.GetId() + 64,       font);
+                ctrl->StyleSetSize(sp.GetId() + 64,       size);
+
+                ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
+            }
+        }
+    }
+
+    // set the calltip font
+    if( !tooltip ) {
+        wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        ctrl->StyleSetFont(wxSTC_STYLE_CALLTIP, font);
+    }
 }

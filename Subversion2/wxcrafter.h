@@ -16,6 +16,7 @@
 #include <wx/splitter.h>
 #include <wx/panel.h>
 #include <wx/checklst.h>
+#include <wx/stc/stc.h>
 #include <wx/statbox.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
@@ -30,22 +31,28 @@ protected:
     wxTextCtrl* m_textCtrlFrID;
     wxStaticText* m_staticTextBugID;
     wxTextCtrl* m_textCtrlBugID;
-    wxSplitterWindow* m_splitter1;
+    wxSplitterWindow* m_splitterV;
+    wxPanel* m_splitterPage52;
+    wxSplitterWindow* m_splitterH;
     wxPanel* m_panel1;
     wxStaticText* m_staticText17;
     wxCheckListBox* m_checkListFiles;
     wxPanel* m_splitterPage14;
     wxStaticText* m_staticText19;
+    wxStyledTextCtrl* m_stcDiff;
+    wxPanel* m_splitterPage56;
+    wxStaticText* m_staticText62;
     wxTextCtrl* m_textCtrlMessage;
     wxChoice* m_choiceMessages;
     wxButton* m_button3;
     wxButton* m_button4;
 
 protected:
+    virtual void OnFileSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoiceMessage(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Svn Commit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SvnCommitDialogBaseClass();
 };
 

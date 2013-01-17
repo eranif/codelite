@@ -113,7 +113,7 @@ void CodeFormatterDlg::InitDialog()
 	LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
 	wxFont font;
 	if(cppLexer) {
-		std::list<StyleProperty> styles = cppLexer->GetProperties();
+		std::list<StyleProperty> styles = cppLexer->GetLexerProperties();
 		std::list<StyleProperty>::iterator iter = styles.begin();
 		for (; iter != styles.end(); iter++) {
 

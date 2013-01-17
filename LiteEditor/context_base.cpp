@@ -94,7 +94,7 @@ void ContextBase::DoApplySettings(LexerConfPtr lexPtr)
 
     std::list<StyleProperty> styles;
     if (lexPtr) {
-        styles = lexPtr->GetProperties();
+        styles = lexPtr->GetLexerProperties();
         rCtrl.SetProperty(wxT("styling.within.preprocessor"), lexPtr->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
     }
 

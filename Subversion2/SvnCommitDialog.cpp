@@ -5,6 +5,10 @@
 #include "subversion2.h"
 #include "svnsettingsdata.h"
 #include "svn_local_properties.h"
+#include "processreaderthread.h"
+#include "asyncprocess.h"
+#include "lexer_configuration.h"
+#include "editor_config.h"
 
 class CommitMessageStringData : public wxClientData
 {
@@ -18,6 +22,10 @@ public:
     }
 };
 
+BEGIN_EVENT_TABLE(SvnCommitDialog, SvnCommitDialogBaseClass)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, SvnCommitDialog::OnProcessTerminatd)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommitDialog::OnProcessOutput)
+END_EVENT_TABLE()
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
@@ -46,14 +54,16 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
 
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if ( sashPos != wxNOT_FOUND )
-        m_splitter1->SetSashPosition(sashPos);
+    if ( sashPos != wxNOT_FOUND ) {
+        m_splitterH->SetSashPosition(sashPos);
+    }
 }
 
-SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin)
+SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, const wxString &url, Subversion2 *plugin, const wxString &repoPath)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_url(url)
+    , m_repoPath(repoPath)
 {
     wxString title = GetTitle();
     title << wxT(" - ") << url;
@@ -70,25 +80,44 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, c
     for(size_t i=0; i<previews.GetCount(); i++) {
         m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
     }
-
+    
+    if ( !paths.IsEmpty() ) {
+        m_checkListFiles->Select(0);
+        DoShowDiff(0);
+    }
+    
     m_textCtrlMessage->SetFocus();
     WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if ( sashPos != wxNOT_FOUND )
-        m_splitter1->SetSashPosition(sashPos);
+    if ( sashPos != wxNOT_FOUND ) {
+        m_splitterH->SetSashPosition(sashPos);
+    }
+    
+    int sashHPos = m_plugin->GetSettings().GetCommitDlgHSashPos();
+    if ( sashHPos != wxNOT_FOUND ) {
+        m_splitterV->SetSashPosition(sashHPos);
+    }
+    
+    LexerConfPtr diffLexer = EditorConfigST::Get()->GetLexer("Diff");
+    if ( diffLexer ) {
+        m_stcDiff->SetLexer(wxSTC_LEX_DIFF);
+        diffLexer->Apply( m_stcDiff );
+    }
 }
 
 SvnCommitDialog::~SvnCommitDialog()
 {
+    wxDELETE( m_process );
+
     wxString message = m_textCtrlMessage->GetValue();
     m_plugin->GetCommitMessagesCache().AddMessage(message);
 
-    int sashPos = m_splitter1->GetSashPosition();
+    int sashPos = m_splitterH->GetSashPosition();
+    int sashPosH = m_splitterV->GetSashPosition();
     SvnSettingsData ssd = m_plugin->GetSettings();
     ssd.SetCommitDlgSashPos(sashPos);
+    ssd.SetCommitDlgHSashPos(sashPosH);
     m_plugin->SetSettings( ssd );
-
-
     WindowAttrManager::Save(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
 }
 
@@ -199,4 +228,59 @@ void SvnCommitDialog::OnChoiceMessage(wxCommandEvent& e)
     if(data) {
         m_textCtrlMessage->SetValue(data->GetData());
     }
+}
+
+void SvnCommitDialog::OnFileSelected(wxCommandEvent& event)
+{
+    DoShowDiff( event.GetSelection() );
+}
+
+void SvnCommitDialog::OnProcessOutput(wxCommandEvent& e)
+{
+    ProcessEventData* ped = (ProcessEventData*) e.GetClientData();
+    m_output << ped->GetData();
+    delete ped;
+}
+
+void SvnCommitDialog::OnProcessTerminatd(wxCommandEvent& e)
+{
+    ProcessEventData* ped = (ProcessEventData*) e.GetClientData();
+    m_output << ped->GetData();
+    delete ped;
+    
+    m_cache.insert(std::make_pair(m_currentFile, m_output));
+    
+    m_stcDiff->SetReadOnly(false);
+    m_stcDiff->SetText( m_output );
+    m_stcDiff->SetReadOnly(true);
+
+    m_checkListFiles->Enable(true);
+    m_currentFile.Clear();
+    wxDELETE( m_process );
+}
+
+void SvnCommitDialog::DoShowDiff(int selection)
+{
+    if ( m_repoPath.IsEmpty() )
+        return;
+
+    wxString filename = m_checkListFiles->GetString(selection);
+
+    if ( filename.Contains(" ") ) {
+        filename.Prepend("\"").Append("\"");
+    }
+    
+    if ( m_cache.count(filename) ) {
+        m_stcDiff->SetReadOnly(false);
+        m_stcDiff->SetText(m_cache[filename]);
+        m_stcDiff->SetReadOnly(true);
+        return;
+    }
+    
+    m_checkListFiles->Enable(false); // disable user interaction with this control until the diff process will terminate
+    wxString cmd;
+    cmd << "svn diff " << filename;
+    m_currentFile = filename;
+    m_output.Clear();
+    m_process = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_repoPath);
 }

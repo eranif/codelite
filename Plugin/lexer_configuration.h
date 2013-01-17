@@ -32,6 +32,7 @@
 #include <wx/font.h>
 #include "smart_ptr.h"
 #include "codelite_exports.h"
+#include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK LexerConf
 {
@@ -53,7 +54,13 @@ public:
 public:
     LexerConf();
     virtual ~LexerConf();
-
+    
+    /**
+     * @brief apply the current lexer configuration on an input
+     * wxStyledTextCtrl
+     */
+    void Apply(wxStyledTextCtrl* ctrl);
+    
     /**
      * Get the lexer ID, which should be in sync with values of Scintilla
      * \return
@@ -106,7 +113,7 @@ public:
      * Return a list of the lexer properties
      * \return
      */
-    const StylePropertyList &GetProperties() const {
+    const StylePropertyList &GetLexerProperties() const {
         return m_properties;
     }
     /**

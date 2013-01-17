@@ -39,7 +39,7 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
     , m_isModified(false)
 {
     m_properties->SetSizeHints(200, -1);
-    m_propertyList = m_lexer->GetProperties();
+    m_propertyList = m_lexer->GetLexerProperties();
     std::list<StyleProperty>::iterator it = m_propertyList.begin();
     StyleProperty selTextProperties;
 

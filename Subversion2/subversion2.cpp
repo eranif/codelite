@@ -1087,7 +1087,7 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
     bool nonInteractive = GetNonInteractiveMode(event);
     command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
 
-    SvnCommitDialog dlg(EventNotifier::Get()->TopFrame(), files, svnInfo.m_sourceUrl, this);
+    SvnCommitDialog dlg(EventNotifier::Get()->TopFrame(), files, svnInfo.m_sourceUrl, this, workingDirectory);
     if(dlg.ShowModal() == wxID_OK) {
 
 

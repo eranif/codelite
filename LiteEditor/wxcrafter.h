@@ -32,6 +32,7 @@
 #include <wx/commandlinkbutton.h>
 #include <wx/filepicker.h>
 #include "addfunctionsmodel.h"
+#include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 
 class NewProjectDlgBaseClass : public wxDialog
@@ -179,6 +180,7 @@ public:
 class WelcomePageBase : public wxPanel
 {
 protected:
+    wxScrolledWindow* m_scrollWin247;
     wxPanel* m_panel191;
     wxStaticBitmap* m_staticBitmap161;
     wxCommandLinkButton* m_cmdLnkBtnWorkspaces;

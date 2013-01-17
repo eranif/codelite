@@ -491,9 +491,17 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer149 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer149);
     
-    m_panel191 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_scrollWin247 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(500,500), wxHSCROLL|wxVSCROLL);
+    m_scrollWin247->SetScrollRate(5, 5);
     
-    boxSizer149->Add(m_panel191, 1, wxALL|wxEXPAND, 5);
+    boxSizer149->Add(m_scrollWin247, 1, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
+    m_scrollWin247->SetSizer(boxSizer249);
+    
+    m_panel191 = new wxPanel(m_scrollWin247, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    boxSizer249->Add(m_panel191, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);

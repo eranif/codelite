@@ -29,6 +29,7 @@ END_EVENT_TABLE()
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
+    , m_process(NULL)
 {
     m_checkListFiles->Clear();
 
@@ -64,6 +65,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
     , m_plugin(plugin)
     , m_url(url)
     , m_repoPath(repoPath)
+    , m_process(NULL)
 {
     wxString title = GetTitle();
     title << wxT(" - ") << url;

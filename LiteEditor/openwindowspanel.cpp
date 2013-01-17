@@ -29,7 +29,6 @@
 #include "event_notifier.h"
 #include "manager.h"
 #include "openwindowspanel.h"
-#include "string_client_data.h"
 
 BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
 EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
@@ -168,9 +167,13 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 	}
 
     if (i == wxNOT_FOUND) {
-        wxString txt = editor->GetFileName().GetFullName();
-        MyStringClientData *data = new MyStringClientData(editor->GetFileName().GetFullPath());
-        i = m_fileList->Append(txt, data);
+        wxToolBarToolBase* sorttool = m_toolbarTabs->FindById(XRCID("TabsSortTool"));
+        if (sorttool && sorttool->IsToggled()) {
+            SortAlphabetically();
+        } else {
+            SortByEditorOrder();
+        }
+        i = EditorItem(editor);
     }
 	DoSelectItem(i);
 }
@@ -270,4 +273,55 @@ int OpenWindowsPanel::DoGetSingleSelection()
 		return wxNOT_FOUND;
 	
 	return sels.Item(0);
+}
+
+void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
+{
+    if (event.IsChecked()) {
+        SortAlphabetically();
+    } else {
+        SortByEditorOrder();
+    }
+}
+
+void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_fileList->GetCount() > 0);
+}
+
+void OpenWindowsPanel::SortAlphabetically()
+{
+    m_fileList->Clear();
+    std::vector<LEditor*> editors;
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, true);
+    for (size_t n = 0; n < editors.size(); ++n) {
+        LEditor* editor = editors.at(n);
+        wxString name = editor->GetFileName().GetFullName();
+        MyStringClientData* data = new MyStringClientData(editor->GetFileName().GetFullPath());
+        bool inserted(false);
+        for (size_t i = 0; i < m_fileList->GetCount(); ++i) {
+            if (name.Cmp(m_fileList->GetString(i)) < 0) {
+                m_fileList->Insert(name, i, data);
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted) {
+            m_fileList->Append(name, data);
+        }
+    }
+}
+
+void OpenWindowsPanel::SortByEditorOrder()
+{
+    std::vector<LEditor*> editors;
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, true);
+    
+    m_fileList->Clear();
+    for (size_t n = 0; n < editors.size(); ++n) {
+        LEditor* editor = editors.at(n);
+        wxString name = editor->GetFileName().GetFullName();
+        MyStringClientData* data = new MyStringClientData(editor->GetFileName().GetFullPath());
+        m_fileList->Append(name, data);
+    }
 }

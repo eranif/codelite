@@ -37,6 +37,7 @@
     <File Name="file_logger.cpp"/>
     <File Name="compiler_command_line_parser.cpp"/>
     <File Name="compiler_command_line_parser.h"/>
+    <File Name="wx_ordered_map.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

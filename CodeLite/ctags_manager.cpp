@@ -563,7 +563,14 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
     wxString oper;
     wxString tmpExp(expression);
     tmpExp.Trim().Trim(false);
-
+    
+    // Keep 3 vectors of the results
+    // we keep 3 vectors so the end user will see the matches
+    // by their importance order: locals -> scoped -> globals
+    TagEntryPtrVector_t locals;
+    TagEntryPtrVector_t scoped;
+    TagEntryPtrVector_t globals;
+    
     if ( tmpExp.IsEmpty() ) {
         // Collect all the tags from the current scope, and
         // from the global scope
@@ -575,22 +582,34 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
         std::vector<TagEntryPtr> tmpCandidates;
 
         // First get the scoped tags
-        TagsByScopeAndName(scopeName, word, tmpCandidates);
+        TagsByScopeAndName(scopeName, word, scoped);
         if(scopeName != wxT("<global>")) {
             // No need to call it twice...
-            GetGlobalTags(word, tmpCandidates);
+            GetGlobalTags(word, globals);
         }
         // Allways collect the local and the function argument tags
-        GetLocalTags(word, scope,   tmpCandidates, PartialMatch | IgnoreCaseSensitive | ReplaceTokens );
-        GetLocalTags(word, funcSig, tmpCandidates, PartialMatch | IgnoreCaseSensitive);
+        GetLocalTags(word, scope,   locals, PartialMatch | IgnoreCaseSensitive | ReplaceTokens );
+        GetLocalTags(word, funcSig, locals, PartialMatch | IgnoreCaseSensitive);
 
         for (size_t i=0; i<additionlScopes.size(); i++) {
-            TagsByScopeAndName(additionlScopes.at(i), word, tmpCandidates);
+            TagsByScopeAndName(additionlScopes.at(i), word, scoped);
         }
+        
+        // for every vector filter the results
+        DoFilterDuplicatesByTagID    (locals, locals);
+        DoFilterDuplicatesBySignature(locals, locals);
+        
+        DoFilterDuplicatesByTagID    (scoped, scoped);
+        DoFilterDuplicatesBySignature(scoped, scoped);
 
-        DoFilterDuplicatesByTagID  (tmpCandidates, candidates);
-        DoFilterDuplicatesBySignature(candidates, candidates);
-
+        DoFilterDuplicatesByTagID    (globals, globals);
+        DoFilterDuplicatesBySignature(globals, globals);
+        
+        // unified the results into a single match
+        candidates.insert(candidates.end(), locals.begin(), locals.end());
+        candidates.insert(candidates.end(), scoped.begin(), scoped.end());
+        candidates.insert(candidates.end(), globals.begin(), globals.end());
+        
     } else if( tmpExp == wxT("::") ) {
         // Global scope only
         // e.g.: ::My <CTRL>+<SPACE>

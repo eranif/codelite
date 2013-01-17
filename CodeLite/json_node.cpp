@@ -171,6 +171,15 @@ bool JSONElement::isBool() const
     return _json->type == cJSON_True || _json->type == cJSON_False;
 }
 
+bool JSONElement::isString() const 
+{
+    if(!_json) {
+        return false;
+    }
+
+    return _json->type == cJSON_String;
+}
+
 void JSONElement::append(const JSONElement& element) 
 {
     if(!_json) {

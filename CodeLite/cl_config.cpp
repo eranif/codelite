@@ -130,24 +130,70 @@ void clConfig::Save(const wxFileName& fn)
         m_root->save(fn);
 }
 
-void clConfig::WriteInt(const wxString& name, int value)
-{
-    JSONElement general = GetGeneralSetting();
-    general.addProperty(name, value);
-    Save();
-}
-
 JSONElement clConfig::GetGeneralSetting()
 {
-    if ( m_root->toElement().hasNamedObject("General") ) {
+    if ( !m_root->toElement().hasNamedObject("General") ) {
         JSONElement general = JSONElement::createObject("General");
         m_root->toElement().append(general);
     }
     return m_root->toElement().namedObject("General");
 }
 
-int clConfig::GetInt(const wxString& name, int defaultValue)
+void clConfig::Write(const wxString& name, bool value)
+{
+    JSONElement general = GetGeneralSetting();
+    if (general.hasNamedObject(name)) {
+        general.removeProperty(name);
+    }
+
+    general.addProperty(name, value);
+    Save();
+}
+
+bool clConfig::Read(const wxString& name, bool defaultValue)
+{
+    JSONElement general = GetGeneralSetting();
+    if (general.namedObject(name).isBool()) {
+        return general.namedObject(name).toBool();
+    }
+
+    return defaultValue;
+}
+
+void clConfig::Write(const wxString& name, int value)
+{
+    JSONElement general = GetGeneralSetting();
+    if (general.hasNamedObject(name)) {
+        general.removeProperty(name);
+    }
+
+    general.addProperty(name, value);
+    Save();
+}
+
+int clConfig::Read(const wxString& name, int defaultValue)
 {
     JSONElement general = GetGeneralSetting();
     return general.namedObject(name).toInt(defaultValue);
+}
+
+void clConfig::Write(const wxString& name, const wxString& value)
+{
+    JSONElement general = GetGeneralSetting();
+    if (general.hasNamedObject(name)) {
+        general.removeProperty(name);
+    }
+
+    general.addProperty(name, value);
+    Save();
+}
+
+wxString clConfig::Read(const wxString& name, const wxString& defaultValue)
+{
+    JSONElement general = GetGeneralSetting();
+    if (general.namedObject(name).isString()) {
+        return general.namedObject(name).toString();
+    }
+
+    return defaultValue;
 }

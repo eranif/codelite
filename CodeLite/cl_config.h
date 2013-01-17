@@ -71,9 +71,15 @@ public:
     // -----------------------------
     bool ReadItem(clConfigItem* item);
     void WriteItem(const clConfigItem* item);
-    
-    void WriteInt(const wxString &name, int value);
-    int  GetInt(const wxString &name, int defaultValue = wxNOT_FOUND);
+    // bool
+    bool Read (const wxString& name, bool defaultValue);
+    void Write(const wxString& name, bool value);
+    // int
+    int  Read (const wxString& name, int defaultValue);
+    void Write(const wxString& name, int value);
+    // wxString
+    wxString Read (const wxString& name, const wxString& defaultValue);
+    void Write(const wxString& name, const wxString& value);
 };
 
 

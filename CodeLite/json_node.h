@@ -62,6 +62,7 @@ public:
     JSONElement   arrayItem(int pos) const ;
     bool          isNull()           const ;
     bool          isBool()           const ;
+    bool          isString()         const ;
     wxString      format()           const ;
     int           arraySize()        const ;
     int           toInt(int defaultVal = -1) const ;
@@ -129,7 +130,7 @@ public:
      * @brief append new number
      * @return the newly added property
      */
-    void arrayAppend(const JSONElement& element) ;;
+    void arrayAppend(const JSONElement& element);
     void arrayAppend(const wxString &value);
 
     bool isOk() const {
@@ -157,7 +158,7 @@ public:
         return _json != NULL;
     }
 
-    JSONElement toElement() const ;;
+    JSONElement toElement() const;
 
     void clear();
 

@@ -31,6 +31,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     , m_plugin(plugin)
     , m_process(NULL)
 {
+    m_stcDiff->SetReadOnly(true);
     m_checkListFiles->Clear();
 
     // Hide the bug tracker ID
@@ -67,6 +68,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
     , m_repoPath(repoPath)
     , m_process(NULL)
 {
+    m_stcDiff->SetReadOnly(true);
     wxString title = GetTitle();
     title << wxT(" - ") << url;
     SetTitle(title);

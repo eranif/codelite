@@ -29,6 +29,7 @@
 #include "event_notifier.h"
 #include "manager.h"
 #include "openwindowspanel.h"
+#include "cl_config.h"
 
 BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
 EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
@@ -42,7 +43,10 @@ OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent, const wxString &caption )
     , m_mutliMenu(wxXmlResource::Get()->LoadMenu(wxT("tabs_multi_sels_menu")))
 {
 	MSWSetNativeTheme(m_fileList);
-	
+    
+    clConfig cfg;
+    m_toolbarTabs->ToggleTool(XRCID("TabsSortTool"), cfg.Read("TabsPaneSortAlphabetically", true));
+
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
@@ -331,6 +335,9 @@ void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
 
     LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     DoSelectItem(editor);
+
+    clConfig cfg;
+    cfg.Write("TabsPaneSortAlphabetically", event.IsChecked());
 }
 
 void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event)

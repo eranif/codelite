@@ -46,6 +46,7 @@ OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent, const wxString &caption )
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
+    wxTheApp->Connect(wxEVT_COMMAND_AUINOTEBOOK_END_DRAG, wxAuiNotebookEventHandler(OpenWindowsPanel::OnDragEnded), NULL, this);
 }
 
 OpenWindowsPanel::~OpenWindowsPanel()
@@ -66,9 +67,10 @@ OpenWindowsPanel::~OpenWindowsPanel()
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OpenWindowsPanel::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
+    wxTheApp->Disconnect(wxEVT_COMMAND_AUINOTEBOOK_END_DRAG, wxAuiNotebookEventHandler(OpenWindowsPanel::OnDragEnded), NULL, this);
 }
 
-int OpenWindowsPanel::EditorItem(LEditor *editor)
+int OpenWindowsPanel::EditorItem(const LEditor *editor)
 {
     if (editor) {
         wxString path = editor->GetFileName().GetFullPath();
@@ -159,10 +161,8 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 		return;
 
     int i = EditorItem(editor);
-	DoClearSelections();
-	
     if (i != wxNOT_FOUND) {
-		DoSelectItem(i);
+		DoSelectItem(editor);
         return;
 	}
 
@@ -173,9 +173,8 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
         } else {
             SortByEditorOrder();
         }
-        i = EditorItem(editor);
     }
-	DoSelectItem(i);
+	DoSelectItem(editor);
 }
 
 void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
@@ -265,6 +264,29 @@ void OpenWindowsPanel::DoSelectItem(int item)
 	m_fileList->EnsureVisible(item);
 }
 
+void OpenWindowsPanel::DoSelectItem(const LEditor* editor)
+{
+    DoClearSelections();
+    wxToolBarToolBase* sorttool = m_toolbarTabs->FindById(XRCID("TabsSortTool"));
+    if (sorttool && !sorttool->IsToggled()) {
+        // If we're sorting-by-editor-order, in wxAuiNotebook we can't rely on m_fileList's order
+        std::vector<LEditor*> editors;
+        clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, true);
+        for (size_t n = 0; n < editors.size(); ++n) {
+            if (editors.at(n)->GetFileName().GetFullPath() == editor->GetFileName().GetFullPath()) {
+                DoSelectItem(n);
+                return;
+            }
+            wxASSERT("Passed an editor which doesn't exist");
+        }
+    } else {
+        int i = EditorItem(editor);
+        if (i != wxNOT_FOUND) {
+            DoSelectItem(i);
+        }
+    }
+}
+
 int OpenWindowsPanel::DoGetSingleSelection()
 {
 	wxArrayInt sels;
@@ -275,6 +297,30 @@ int OpenWindowsPanel::DoGetSingleSelection()
 	return sels.Item(0);
 }
 
+void OpenWindowsPanel::OnDragEnded(wxAuiNotebookEvent& event)
+{
+    // We only care about editor re-ordering if we sort by editor order
+    wxToolBarToolBase* sorttool = m_toolbarTabs->FindById(XRCID("TabsSortTool"));
+    if (sorttool && !sorttool->IsToggled()) {
+        // First find which editor is being dragged. We'll need it to identify which tab to select afterwards
+        // and there's no point asking wxAuiNotebook or GetActiveEditor(), which return the wrong one.
+        LEditor* editor = NULL;
+        int sel = DoGetSingleSelection();
+        if (sel != wxNOT_FOUND) {
+            MyStringClientData* data = dynamic_cast<MyStringClientData *>(m_fileList->GetClientObject(sel));
+            if(data) {
+                editor = clMainFrame::Get()->GetMainBook()->FindEditor(data->GetData());
+            }
+        }
+
+        SortByEditorOrder();
+
+        if (editor) {
+            DoSelectItem(editor);
+        }
+    }
+}
+
 void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
 {
     if (event.IsChecked()) {
@@ -282,6 +328,9 @@ void OpenWindowsPanel::OnSortItems(wxCommandEvent& event)
     } else {
         SortByEditorOrder();
     }
+
+    LEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    DoSelectItem(editor);
 }
 
 void OpenWindowsPanel::OnSortItemsUpdateUI(wxUpdateUIEvent& event)

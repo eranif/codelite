@@ -12,6 +12,7 @@
 #include <wx/debug.h>
 #include <wx/log.h>
 #include <wx/wupdlock.h>
+#include <wx/aui/auibook.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -662,6 +663,11 @@ void Notebook::GTKOnPageReordered(GtkWidget* page, int new_pos)
     wxGtkNotebookPage* data = m_pagesData.Item(old_pos)->GetData();
     m_pagesData.DeleteObject(data);
     m_pagesData.Insert(new_pos, data);
+
+    // In case the Workspace View 'Tabs' pane is being sorted by editor order, fire an event
+    // and make it the Aui equivalent, since that's being Connected() to already
+    wxAuiNotebookEvent event(wxEVT_COMMAND_AUINOTEBOOK_END_DRAG, GetId());
+    wxPostEvent(this, event);
 }
 
 wxBitmap Notebook::GetPageBitmap(size_t page) const

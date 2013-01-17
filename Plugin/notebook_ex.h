@@ -205,6 +205,7 @@ protected:
     void OnInternalPageClosing (wxAuiNotebookEvent &e);
     void OnInternalPageClosed  (wxAuiNotebookEvent &e);
     void OnBgDclick            (wxAuiNotebookEvent &e);
+    void OnEndDrag             (wxAuiNotebookEvent &e);
 
     void OnInternalMenu        (wxCommandEvent  &e);
 

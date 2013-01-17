@@ -42,13 +42,14 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     wxMenu *m_rclickMenu;
     wxMenu *m_mutliMenu;
     
-    int  EditorItem(LEditor *editor);
+    int  EditorItem(const LEditor *editor);
 	void DoOpenSelectedItem(int item);
     void DoCloseSelectedItem(int item);
     void DoSaveItem(int item);
     void DoCloseItem(const wxString &filename);
     void DoClearSelections();
 	void DoSelectItem(int item);
+	void DoSelectItem(const LEditor* editor);
 	int  DoGetSingleSelection();
     void SortAlphabetically();
     void SortByEditorOrder();
@@ -66,6 +67,7 @@ protected:
     void OnActiveEditorChanged(wxCommandEvent &e);
     void OnEditorClosing(wxCommandEvent &e);
     void OnAllEditorsClosed(wxCommandEvent &e);
+    void OnDragEnded(wxAuiNotebookEvent& e);
     
 	void OnCloseSelectedFiles(wxCommandEvent &e);
 	void OnSaveSelectedFiles(wxCommandEvent &e);

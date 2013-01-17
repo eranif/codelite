@@ -68,6 +68,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
     Connect(wxEVT_COMMAND_AUINOTEBOOK_BUTTON,             wxAuiNotebookEventHandler(Notebook::OnTabButton),            NULL, this);
     Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP,       wxAuiNotebookEventHandler(Notebook::OnTabRightUp),           NULL, this);
     Connect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,          wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
+    Connect(wxEVT_COMMAND_AUINOTEBOOK_END_DRAG,           wxAuiNotebookEventHandler(Notebook::OnEndDrag),              NULL, this);
 
 #ifdef __WXMSW__
     Connect(wxEVT_SET_FOCUS,                              wxFocusEventHandler(Notebook::OnFocus),                      NULL, this);
@@ -108,6 +109,7 @@ Notebook::~Notebook()
     Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN,  wxAuiNotebookEventHandler(Notebook::OnTabRightDown),         NULL, this);
     Disconnect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK,       wxAuiNotebookEventHandler(Notebook::OnBgDclick),             NULL, this);
     Disconnect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP,    wxAuiNotebookEventHandler(Notebook::OnTabRightUp),           NULL, this);
+    Disconnect(wxEVT_COMMAND_AUINOTEBOOK_END_DRAG,        wxAuiNotebookEventHandler(Notebook::OnEndDrag),              NULL, this);
 
     Disconnect(wxEVT_NAVIGATION_KEY,                 wxNavigationKeyEventHandler(Notebook::OnNavigationKey),  NULL, this);
 #ifdef __WXMSW__
@@ -668,4 +670,9 @@ wxArrayString Notebook::GetPagesTextInOrder() const
     return labels;
 }
 
-#endif // __WXGTK__
+void Notebook::OnEndDrag(wxAuiNotebookEvent& event)
+{
+    wxPostEvent(wxTheApp, event); // The Workspace View 'Tabs' pane grabs it from wxTheApp
+}
+
+#endif // !CL_USE_NATIVEBOOK

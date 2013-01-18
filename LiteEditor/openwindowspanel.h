@@ -69,6 +69,7 @@ protected:
     void OnAllEditorsClosed(wxCommandEvent &e);
     void OnDragEnded(wxAuiNotebookEvent& e);
     
+    void OnListBoxIsDirty(wxCommandEvent &e);
 	void OnCloseSelectedFiles(wxCommandEvent &e);
 	void OnSaveSelectedFiles(wxCommandEvent &e);
 	DECLARE_EVENT_TABLE()

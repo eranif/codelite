@@ -31,6 +31,9 @@
 #include "openwindowspanel.h"
 #include "cl_config.h"
 
+wxDECLARE_EVENT(wxEVT_TAB_LISTBOX_ISDIRTY, wxNotifyEvent);
+wxDEFINE_EVENT(wxEVT_TAB_LISTBOX_ISDIRTY, wxNotifyEvent);
+
 BEGIN_EVENT_TABLE(OpenWindowsPanel, OpenWindowsPanelBase)
 EVT_MENU(XRCID("wxID_CLOSE_SELECTED"), OpenWindowsPanel::OnCloseSelectedFiles)
 EVT_MENU(XRCID("wxID_SAVE_SELECTED"), OpenWindowsPanel::OnSaveSelectedFiles)
@@ -51,6 +54,7 @@ OpenWindowsPanel::OpenWindowsPanel( wxWindow* parent, const wxString &caption )
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
     wxTheApp->Connect(wxEVT_COMMAND_AUINOTEBOOK_END_DRAG, wxAuiNotebookEventHandler(OpenWindowsPanel::OnDragEnded), NULL, this);
+    Connect(wxEVT_TAB_LISTBOX_ISDIRTY, wxCommandEventHandler(OpenWindowsPanel::OnListBoxIsDirty), NULL, this);
 }
 
 OpenWindowsPanel::~OpenWindowsPanel()
@@ -72,6 +76,7 @@ OpenWindowsPanel::~OpenWindowsPanel()
     EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OpenWindowsPanel::OnEditorClosing), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OpenWindowsPanel::OnAllEditorsClosed), NULL, this);
     wxTheApp->Disconnect(wxEVT_COMMAND_AUINOTEBOOK_END_DRAG, wxAuiNotebookEventHandler(OpenWindowsPanel::OnDragEnded), NULL, this);
+    Disconnect(wxEVT_TAB_LISTBOX_ISDIRTY, wxCommandEventHandler(OpenWindowsPanel::OnListBoxIsDirty), NULL, this);
 }
 
 int OpenWindowsPanel::EditorItem(const LEditor *editor)
@@ -160,6 +165,15 @@ void OpenWindowsPanel::OnChar(wxKeyEvent& event)
 void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
+
+    // We may get here when an editor has just been closed (and so a different one become active).
+    // So do nothing immediately, otherwise GetMainBook()->GetAllEditors() may still return the stale value
+    wxNotifyEvent event(wxEVT_TAB_LISTBOX_ISDIRTY);
+    wxPostEvent(this, event);
+}
+ 
+void OpenWindowsPanel::OnListBoxIsDirty(wxCommandEvent& e) // Called from OnActiveEditorChanged(), after a delay
+{
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
 	if(!editor)
 		return;

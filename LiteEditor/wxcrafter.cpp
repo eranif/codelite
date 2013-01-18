@@ -430,7 +430,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer129->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
-    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
+    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 40, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
     

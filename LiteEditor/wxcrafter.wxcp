@@ -3136,7 +3136,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Width:",
-													"m_value":	"-2"
+													"m_value":	"40"
 												}, {
 													"type":	"choice",
 													"m_label":	"Column Type",

@@ -2378,7 +2378,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"-1,-1"
+					"m_value":	"500,300"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -2673,7 +2673,7 @@
 													"m_events":	[],
 													"m_children":	[{
 															"m_type":	4474,
-															"proportion":	0,
+															"proportion":	1,
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
@@ -2722,7 +2722,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Download wxCrafter"
+																	"m_value":	"Install"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Note",
@@ -2742,7 +2742,7 @@
 															"m_children":	[]
 														}, {
 															"m_type":	4474,
-															"proportion":	0,
+															"proportion":	1,
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
@@ -2791,7 +2791,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Create the project"
+																	"m_value":	"Continue"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Note",

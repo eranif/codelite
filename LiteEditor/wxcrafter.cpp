@@ -364,17 +364,17 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     wxBoxSizer* boxSizer79 = new wxBoxSizer(wxVERTICAL);
     m_panel75->SetSizer(boxSizer79);
     
-    m_cmdLnkBtnDownload = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Download wxCrafter"), _("Download wxCrafter plugin from codelite's website"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtnDownload = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Install"), _("Download wxCrafter plugin from codelite's website"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_cmdLnkBtnDownload->SetDefault();
     
-    boxSizer79->Add(m_cmdLnkBtnDownload, 0, wxALL|wxEXPAND, 5);
+    boxSizer79->Add(m_cmdLnkBtnDownload, 1, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtnContinue = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Create the project"), _("Ignore the missing plugin and create the project anyway"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtnContinue = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Continue"), _("Ignore the missing plugin and create the project anyway"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer79->Add(m_cmdLnkBtnContinue, 0, wxALL|wxEXPAND, 5);
+    boxSizer79->Add(m_cmdLnkBtnContinue, 1, wxALL|wxEXPAND, 5);
     
     
-    SetSizeHints(-1,-1);
+    SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

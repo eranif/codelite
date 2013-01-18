@@ -36,7 +36,9 @@ public:
 AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t &tags, const wxString &targetFile)
     : AddFunctionsImplBaseDlg(parent)
 {
+    unsigned int colCount = m_dataviewModel->GetColCount();
     m_dataviewModel = new MyAddFunctionsModel();
+    m_dataviewModel->SetColCount( colCount );
     m_dataview->AssociateModel( m_dataviewModel.get() );
 
     m_tags.insert(m_tags.end(), tags.begin(), tags.end());

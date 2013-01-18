@@ -42,7 +42,9 @@ ImplementParentVirtualFunctionsDialog::ImplementParentVirtualFunctionsDialog( wx
     , m_contextCpp                       (contextCpp)
     , m_scope                            (scopeName )
 {
+    unsigned int colCount = m_dataviewModel->GetColumnCount();
     m_dataviewModel = new ImplFuncModel();
+    m_dataviewModel->SetColCount(colCount);
     m_dataview->AssociateModel( m_dataviewModel.get() );
 
     WindowAttrManager::Load(this, wxT("ImplementParentVirtualFunctionsDialog"), NULL);

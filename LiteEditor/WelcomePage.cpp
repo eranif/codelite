@@ -119,9 +119,9 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
     
     pos.y += btn->GetSize().y;
 #ifdef __WXGTK__
-    pos.y += 5;
-    pos.x += 5;
-#elif defined(__WXGTK__)
+    pos.y += 10;
+    pos.x += 10;
+#elif defined(__WXMAC__)
     pos.y += 15;
     pos.x += 15;
 #else // MSW

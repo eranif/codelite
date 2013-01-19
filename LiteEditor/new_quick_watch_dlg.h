@@ -44,6 +44,8 @@ protected:
     wxString DoGetItemPath(const wxTreeItemId &item);
     void     DoAdjustPosition();
     void     DoEditItem(const wxTreeItemId &item);
+    void     DoUpdateSize(bool performClean);
+    
 protected:
     // Handlers for NewQuickWatch events.
     void OnExpandItem  ( wxTreeEvent& event );

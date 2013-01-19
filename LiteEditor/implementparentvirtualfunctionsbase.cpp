@@ -59,7 +59,7 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase(wxWindo
     
     boxSizer6->Add(m_dataview, 1, wxEXPAND, 5);
     
-    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 40, wxALIGN_CENTER);
+    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 50, wxALIGN_CENTER);
     m_dataview->AppendTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     {
         wxArrayString choices;

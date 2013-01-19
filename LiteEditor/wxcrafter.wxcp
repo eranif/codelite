@@ -3136,7 +3136,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Width:",
-													"m_value":	"40"
+													"m_value":	"50"
 												}, {
 													"type":	"choice",
 													"m_label":	"Column Type",
@@ -3149,7 +3149,7 @@
 												}, {
 													"type":	"choice",
 													"m_label":	"Alignment",
-													"m_selection":	0,
+													"m_selection":	2,
 													"m_options":	["wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"]
 												}, {
 													"type":	"choice",

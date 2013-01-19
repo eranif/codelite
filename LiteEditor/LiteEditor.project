@@ -62,6 +62,8 @@
       <File Name="debugger_predefined_types_page.cpp"/>
       <File Name="console_frame.cpp"/>
       <File Name="console_frame.h"/>
+      <File Name="clDebuggerEditItemDlg.h"/>
+      <File Name="clDebuggerEditItemDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Misc">
       <File Name="simpletable.cpp"/>
@@ -602,7 +604,6 @@
     <File Name="optionsdialogbase2.fbp"/>
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
-    <File Name="newquickwatch.fbp"/>
     <File Name="workspacesettingsbase.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
     <File Name="quickfindbarbase.fbp"/>
@@ -766,11 +767,13 @@
       <File Name="AboutDlg_bitmaps.cpp"/>
       <File Name="OpenWindowsPanelBase.wxcp"/>
       <File Name="OpenWindowsPanelBase_liteeditor_bitmaps.cpp"/>
+      <File Name="newquickwatch_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
     <File Name="importfilesdialog.wxcp"/>
     <File Name="implementparentvirtualfunctionsbase.wxcp"/>
+    <File Name="newquickwatch.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

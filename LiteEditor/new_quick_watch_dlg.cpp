@@ -10,6 +10,7 @@
 #include <wx/log.h>
 #include "globals.h"
 #include <wx/cursor.h>
+#include "clDebuggerEditItemDlg.h"
 
 static wxRect s_Rect;
 
@@ -23,25 +24,28 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-    : NewQuickWatch( parent, wxID_ANY, _("Display Variable"), wxDefaultPosition, wxSize(400, 200), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+    : clDebuggerTipWindowBase( parent, wxBORDER_SIMPLE|wxRESIZE_BORDER )
     , m_debugger(NULL)
     , m_keepCurrentPosition(false)
+    , m_dragging(false)
 {
     Hide();
     Centre();
     MSWSetNativeTheme(m_treeCtrl);
-    WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
-
+    //WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
+    SetSize(400, 300);
     m_timer2 = new wxTimer(this);
     m_mousePosTimer = new wxTimer(this);
 
     Connect(m_timer2->GetId(),        wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
     Connect(m_mousePosTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnCheckMousePosTimer), NULL, this);
+    m_panelStatusBar->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(DisplayVariableDlg::OnCaptureLost), NULL, this);
 }
 
 DisplayVariableDlg::~DisplayVariableDlg()
 {
     Disconnect(m_timer2->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
+    m_panelStatusBar->Disconnect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(DisplayVariableDlg::OnCaptureLost), NULL, this);
 
     m_timer2->Stop();
     m_mousePosTimer->Stop();
@@ -49,7 +53,7 @@ DisplayVariableDlg::~DisplayVariableDlg()
     wxDELETE(m_timer2);
     wxDELETE(m_mousePosTimer);
 
-    WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
+    //WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
 }
 
 void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
@@ -204,13 +208,18 @@ void DisplayVariableDlg::DoCleanUp()
     m_variableName = wxT("");
     m_expression = wxT("");
     m_itemOldValue.Clear();
+    m_dragging = false;
+    if ( m_panelStatusBar->HasCapture() ) {
+        m_panelStatusBar->ReleaseMouse();
+    }
+    wxSetCursor( wxNullCursor );
 }
 
 void DisplayVariableDlg::HideDialog()
 {
     DoCleanUp();
     //asm("int3");
-    wxDialog::Show(false);
+    wxPopupWindow::Hide();
     m_mousePosTimer->Stop();
 }
 
@@ -235,12 +244,12 @@ void DisplayVariableDlg::ShowDialog(bool center)
 {
     // Pass the focus back to the main editor
     if ( !center ) {
-        wxDialog::Show();
+        wxPopupWindow::Show();
         DoAdjustPosition();
 
     } else {
         Centre();
-        wxDialog::Show();
+        wxPopupWindow::Show();
     }
 
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
@@ -474,7 +483,11 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
     oldText = oldText.BeforeFirst(wxT('='));
     oldText.Trim().Trim(false);
 
-    wxString newText = wxGetTextFromUser(_("Edit Expression"), _("Edit Expression"), oldText, this);
+    clDebuggerEditItemDlg dlg(clMainFrame::Get());
+    if ( !(dlg.ShowModal() == wxID_OK) ) {
+        return;
+    }
+    wxString newText = dlg.GetValue();
     if(newText.IsEmpty())
         return;
 
@@ -513,4 +526,66 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
     // Incase an error will take place, the flag will be reset
     m_keepCurrentPosition = true;
     m_debugger->CreateVariableObject( newExpr, false, DBG_USERR_QUICKWACTH);
+}
+
+void DisplayVariableDlg::OnTipLeftDown(wxMouseEvent& event)
+{
+    m_dragging = true;
+    wxSetCursor( wxCURSOR_SIZENWSE );
+    m_panelStatusBar->CaptureMouse();
+    m_ptOrigin = ::wxGetMousePosition();
+}
+
+void DisplayVariableDlg::OnCaptureLost(wxMouseCaptureLostEvent& e)
+{
+    e.Skip();
+    if ( m_panelStatusBar->HasCapture() ) {
+        m_panelStatusBar->ReleaseMouse();
+        m_dragging = true;
+    }
+}
+
+void DisplayVariableDlg::OnStatuMotion(wxMouseEvent& event)
+{
+    event.Skip();
+}
+
+void DisplayVariableDlg::OnStatusLeftUp(wxMouseEvent& event)
+{
+    event.Skip();
+    
+    if ( m_dragging ) {
+        wxRect curect = GetScreenRect();
+        curect.SetBottomRight( ::wxGetMousePosition() );
+        if ( curect.GetHeight() <= 10 || curect.GetWidth() <= 10 ) {
+            m_dragging = false;
+            if ( m_panelStatusBar->HasCapture() ) {
+                m_panelStatusBar->ReleaseMouse();
+            }
+            wxSetCursor( wxNullCursor );
+            return;
+        }
+        
+    #ifdef __WXMSW__
+        wxWindowUpdateLocker locker(clMainFrame::Get());
+    #endif    
+
+        SetSize( curect );
+        m_dragging = false;
+        if ( m_panelStatusBar->HasCapture() ) {
+            m_panelStatusBar->ReleaseMouse();
+        }
+        wxSetCursor( wxNullCursor );
+        
+    }
+}
+
+void DisplayVariableDlg::OnEnterBmp(wxMouseEvent& event)
+{
+    event.Skip();
+}
+
+void DisplayVariableDlg::OnLeaveBmp(wxMouseEvent& event)
+{
+    event.Skip();
 }

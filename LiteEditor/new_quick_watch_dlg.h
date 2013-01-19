@@ -32,8 +32,8 @@ public:
     wxString                         m_itemOldValue;
     bool                             m_keepCurrentPosition;
     bool                             m_dragging;
-    wxPoint                          m_ptOrigin;
-
+    bool                             m_editDlgIsUp;
+    
 protected:
     virtual void OnEnterBmp(wxMouseEvent& event);
     virtual void OnLeaveBmp(wxMouseEvent& event);

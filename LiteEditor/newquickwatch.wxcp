@@ -1,12 +1,12 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"",
+		"m_generatedFilesDir":	".",
 		"m_objCounter":	44,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCB786InitBitmapResources",
-		"m_bitmapsFile":	"",
+		"m_bitmapsFile":	"newquickwatch_liteeditor_bitmaps.cpp",
 		"m_GenerateCodeTypes":	5,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"newquickwatch",
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -15,12 +15,12 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxBORDER_SIMPLE"],
+			"m_styles":	[],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"400,300"
+					"m_value":	"200,100"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -102,11 +102,11 @@
 					"m_children":	[{
 							"m_type":	4440,
 							"proportion":	1,
-							"border":	5,
+							"border":	2,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxHSCROLL", "wxVSCROLL"],
-							"m_sizerFlags":	["wxEXPAND"],
+							"m_styles":	["wxBORDER_THEME", "wxHSCROLL", "wxVSCROLL"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
 									"m_label":	"ID:",
@@ -405,18 +405,6 @@
 													"m_eventHandler":	"wxMouseEventHandler",
 													"m_functionNameAndSignature":	"OnTipLeftDown(wxMouseEvent& event)",
 													"m_description":	"Process a wxEVT_LEFT_DOWN event. The handler of this event should normally call event.Skip() to allow the default processing to take place as otherwise the window under mouse wouldn't get the focus."
-												}, {
-													"m_eventName":	"wxEVT_ENTER_WINDOW",
-													"m_eventClass":	"wxMouseEvent",
-													"m_eventHandler":	"wxMouseEventHandler",
-													"m_functionNameAndSignature":	"OnEnterBmp(wxMouseEvent& event)",
-													"m_description":	"Process a wxEVT_ENTER_WINDOW event"
-												}, {
-													"m_eventName":	"wxEVT_LEAVE_WINDOW",
-													"m_eventClass":	"wxMouseEvent",
-													"m_eventHandler":	"wxMouseEventHandler",
-													"m_functionNameAndSignature":	"OnLeaveBmp(wxMouseEvent& event)",
-													"m_description":	"Process a wxEVT_LEAVE_WINDOW event."
 												}],
 											"m_children":	[]
 										}]

@@ -75,10 +75,10 @@ void wxCB786InitBitmapResources()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$.._icons_resize.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$._newquickwatch_liteeditor_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$._newquickwatch_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$newquickwatch_liteeditor_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/newquickwatch_liteeditor_bitmaps.cpp$newquickwatch_liteeditor_bitmaps.xrc"));
 }

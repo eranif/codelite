@@ -24,16 +24,16 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-    : clDebuggerTipWindowBase( parent, wxBORDER_SIMPLE|wxRESIZE_BORDER )
+    : clDebuggerTipWindowBase( parent, wxBORDER_SIMPLE )
     , m_debugger(NULL)
     , m_keepCurrentPosition(false)
     , m_dragging(false)
+    , m_editDlgIsUp(false)
 {
     Hide();
     Centre();
     MSWSetNativeTheme(m_treeCtrl);
-    //WindowAttrManager::Load(this, wxT("NewQuickWatchDlg"), NULL);
-    SetSize(400, 300);
+    WindowAttrManager::Load(this, wxT("DebuggerTip"), NULL);
     m_timer2 = new wxTimer(this);
     m_mousePosTimer = new wxTimer(this);
 
@@ -53,7 +53,7 @@ DisplayVariableDlg::~DisplayVariableDlg()
     wxDELETE(m_timer2);
     wxDELETE(m_mousePosTimer);
 
-    //WindowAttrManager::Save(this, wxT("NewQuickWatchDlg"), NULL);
+    WindowAttrManager::Save(this, wxT("DebuggerTip"), NULL);
 }
 
 void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
@@ -209,6 +209,7 @@ void DisplayVariableDlg::DoCleanUp()
     m_expression = wxT("");
     m_itemOldValue.Clear();
     m_dragging = false;
+    m_editDlgIsUp = false;
     if ( m_panelStatusBar->HasCapture() ) {
         m_panelStatusBar->ReleaseMouse();
     }
@@ -451,6 +452,10 @@ void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEvent& event)
 
 void DisplayVariableDlg::OnCheckMousePosTimer(wxTimerEvent& e)
 {
+    if ( m_editDlgIsUp ) {
+        return;
+    }
+    
     wxRect rect = GetScreenRect().Inflate(20, 30);
 
     wxPoint pt = ::wxGetMousePosition();
@@ -461,11 +466,7 @@ void DisplayVariableDlg::OnCheckMousePosTimer(wxTimerEvent& e)
         // This is to fix a 'MouseCapture' bug on Linux while leaving the mouse Window
         // and mouse button is clicked and scrolling the scrollbar (H or Vertical)
         // The UI hangs
-#if wxVERSION_NUMBER < 2900
-        if (state.LeftDown()) {
-#else
         if (state.LeftIsDown()) {
-#endif
             // Don't Hide, just restart the timer
             return;
         }
@@ -483,10 +484,24 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
     oldText = oldText.BeforeFirst(wxT('='));
     oldText.Trim().Trim(false);
 
-    clDebuggerEditItemDlg dlg(clMainFrame::Get());
-    if ( !(dlg.ShowModal() == wxID_OK) ) {
+#ifdef __WXGTK__
+    wxPoint oldPos = ::wxGetMousePosition();
+    oldPos = ScreenToClient( oldPos );
+#endif
+
+    m_editDlgIsUp = true;
+    clDebuggerEditItemDlg dlg( clMainFrame::Get() );
+    int res = dlg.ShowModal();
+    m_editDlgIsUp = false;
+
+#ifdef __WXGTK__    
+    wxWindow::WarpPointer(oldPos.x, oldPos.y);
+#endif
+
+    if ( res != wxID_OK ) {
         return;
     }
+    
     wxString newText = dlg.GetValue();
     if(newText.IsEmpty())
         return;
@@ -533,7 +548,6 @@ void DisplayVariableDlg::OnTipLeftDown(wxMouseEvent& event)
     m_dragging = true;
     wxSetCursor( wxCURSOR_SIZENWSE );
     m_panelStatusBar->CaptureMouse();
-    m_ptOrigin = ::wxGetMousePosition();
 }
 
 void DisplayVariableDlg::OnCaptureLost(wxMouseCaptureLostEvent& e)

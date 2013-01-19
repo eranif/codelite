@@ -25,10 +25,10 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
     
-    m_scrollWin6 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxHSCROLL|wxVSCROLL);
+    m_scrollWin6 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME|wxHSCROLL|wxVSCROLL);
     m_scrollWin6->SetScrollRate(5, 5);
     
-    boxSizer4->Add(m_scrollWin6, 1, wxEXPAND, 5);
+    boxSizer4->Add(m_scrollWin6, 1, wxALL|wxEXPAND, 2);
     
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin6->SetSizer(bSizer5);
@@ -51,7 +51,7 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     boxSizer42->Add(m_staticBitmap44, 0, wxALL|wxALIGN_RIGHT|wxALIGN_BOTTOM, 5);
     
     
-    SetSizeHints(400,300);
+    SetSizeHints(200,100);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -66,8 +66,6 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     m_panelStatusBar->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatusLeftUp), NULL, this);
     m_panelStatusBar->Connect(wxEVT_MOTION, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatuMotion), NULL, this);
     m_staticBitmap44->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clDebuggerTipWindowBase::OnTipLeftDown), NULL, this);
-    m_staticBitmap44->Connect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(clDebuggerTipWindowBase::OnEnterBmp), NULL, this);
-    m_staticBitmap44->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(clDebuggerTipWindowBase::OnLeaveBmp), NULL, this);
     
 }
 
@@ -82,8 +80,6 @@ clDebuggerTipWindowBase::~clDebuggerTipWindowBase()
     m_panelStatusBar->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatusLeftUp), NULL, this);
     m_panelStatusBar->Disconnect(wxEVT_MOTION, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatuMotion), NULL, this);
     m_staticBitmap44->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clDebuggerTipWindowBase::OnTipLeftDown), NULL, this);
-    m_staticBitmap44->Disconnect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(clDebuggerTipWindowBase::OnEnterBmp), NULL, this);
-    m_staticBitmap44->Disconnect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(clDebuggerTipWindowBase::OnLeaveBmp), NULL, this);
     
 }
 

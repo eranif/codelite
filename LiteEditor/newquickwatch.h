@@ -38,11 +38,9 @@ protected:
     virtual void OnStatusLeftUp(wxMouseEvent& event) { event.Skip(); }
     virtual void OnStatuMotion(wxMouseEvent& event) { event.Skip(); }
     virtual void OnTipLeftDown(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnEnterBmp(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnLeaveBmp(wxMouseEvent& event) { event.Skip(); }
 
 public:
-    clDebuggerTipWindowBase(wxWindow* parent, long style = wxBORDER_SIMPLE);
+    clDebuggerTipWindowBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~clDebuggerTipWindowBase();
 };
 

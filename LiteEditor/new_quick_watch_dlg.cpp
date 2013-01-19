@@ -24,7 +24,7 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
-    : clDebuggerTipWindowBase( parent, wxBORDER_SIMPLE )
+    : clDebuggerTipWindowBase( parent )
     , m_debugger(NULL)
     , m_keepCurrentPosition(false)
     , m_dragging(false)

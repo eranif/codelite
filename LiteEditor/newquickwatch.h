@@ -11,9 +11,9 @@
 #include <wx/xrc/xh_bmp.h>
 #include <wx/popupwin.h>
 #include <wx/sizer.h>
+#include <wx/panel.h>
 #include <wx/scrolwin.h>
 #include <wx/treectrl.h>
-#include <wx/panel.h>
 #include <wx/statbmp.h>
 #include <wx/dialog.h>
 #include <wx/stattext.h>
@@ -23,6 +23,7 @@
 class clDebuggerTipWindowBase : public wxPopupWindow
 {
 protected:
+    wxPanel* m_panel46;
     wxScrolledWindow* m_scrollWin6;
     wxTreeCtrl* m_treeCtrl;
     wxPanel* m_panelStatusBar;

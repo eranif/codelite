@@ -25,10 +25,17 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
     
-    m_scrollWin6 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME|wxHSCROLL|wxVSCROLL);
+    m_panel46 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
+    
+    boxSizer4->Add(m_panel46, 1, wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer48 = new wxBoxSizer(wxVERTICAL);
+    m_panel46->SetSizer(boxSizer48);
+    
+    m_scrollWin6 = new wxScrolledWindow(m_panel46, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_NONE|wxHSCROLL|wxVSCROLL);
     m_scrollWin6->SetScrollRate(5, 5);
     
-    boxSizer4->Add(m_scrollWin6, 1, wxALL|wxEXPAND, 2);
+    boxSizer48->Add(m_scrollWin6, 1, wxEXPAND, 2);
     
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin6->SetSizer(bSizer5);
@@ -39,9 +46,9 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     
     bSizer5->Add(m_treeCtrl, 1, wxEXPAND, 0);
     
-    m_panelStatusBar = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,22), wxTAB_TRAVERSAL);
+    m_panelStatusBar = new wxPanel(m_panel46, wxID_ANY, wxDefaultPosition, wxSize(-1,22), wxTAB_TRAVERSAL);
     
-    boxSizer4->Add(m_panelStatusBar, 0, wxEXPAND, 2);
+    boxSizer48->Add(m_panelStatusBar, 0, wxEXPAND, 2);
     
     wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_panelStatusBar->SetSizer(boxSizer42);

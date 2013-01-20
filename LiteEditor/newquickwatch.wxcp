@@ -365,7 +365,7 @@
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",
-													"colour":	"<Default>"
+													"colour":	"Tooltip"
 												}, {
 													"type":	"colour",
 													"m_label":	"Fg Colour:",

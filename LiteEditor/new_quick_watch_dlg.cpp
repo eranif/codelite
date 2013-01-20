@@ -491,7 +491,7 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 #endif
 
     m_editDlgIsUp = true;
-    clDebuggerEditItemDlg dlg( clMainFrame::Get() );
+    clDebuggerEditItemDlg dlg( clMainFrame::Get(), oldText );
     int res = dlg.ShowModal();
     m_editDlgIsUp = false;
 
@@ -570,7 +570,7 @@ void DisplayVariableDlg::OnStatuMotion(wxMouseEvent& event)
         int xDiff = curect.GetBottomRight().x - curpos.x;
         int yDiff = curect.GetBottomRight().y - curpos.y;
 
-        if ( (abs(xDiff) > 5) || (abs(yDiff) > 5) ) {
+        if ( (abs(xDiff) > 3) || (abs(yDiff) > 3) ) {
             DoUpdateSize(false);
         }
     }

@@ -47,6 +47,7 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     bSizer5->Add(m_treeCtrl, 1, wxEXPAND, 0);
     
     m_panelStatusBar = new wxPanel(m_panel46, wxID_ANY, wxDefaultPosition, wxSize(-1,22), wxTAB_TRAVERSAL);
+    m_panelStatusBar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     
     boxSizer48->Add(m_panelStatusBar, 0, wxEXPAND, 2);
     

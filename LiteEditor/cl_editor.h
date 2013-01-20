@@ -711,7 +711,7 @@ private:
     void DoSetStatusMessage(const wxString &msg, int col, int seconds_to_live = wxID_ANY);
     bool IsOpenBrace (int position);
     bool IsCloseBrace(int position);
-
+    wxKeyModifier GetCodeNavModifier();
     // Conevert FindReplaceDialog flags to wxSD flags
     size_t SearchFlags(const FindReplaceData &data);
 

@@ -36,523 +36,526 @@
 class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
 public:
-	enum {
-		TabClassic                   = 0x00000001,
-		TabGlossy                    = 0x00000002,
-		TabCurved                    = 0x00000004,
-		TabAll                       = TabClassic | TabGlossy | TabCurved,
-		Opt_AutoCompleteCurlyBraces  = 0x00000008,
-		Opt_AutoCompleteNormalBraces = 0x00000010,
-		Opt_SmartAddFiles            = 0x00000020,
-		Opt_IconSet_FreshFarm        = 0x00000040,
-		Opt_IconSet_Classic          = 0x00000100,
+    enum {
+        TabClassic                   = 0x00000001,
+        TabGlossy                    = 0x00000002,
+        TabCurved                    = 0x00000004,
+        TabAll                       = TabClassic | TabGlossy | TabCurved,
+        Opt_AutoCompleteCurlyBraces  = 0x00000008,
+        Opt_AutoCompleteNormalBraces = 0x00000010,
+        Opt_SmartAddFiles            = 0x00000020,
+        Opt_IconSet_FreshFarm        = 0x00000040,
+        Opt_IconSet_Classic          = 0x00000100,
         Opt_AutoCompleteDoubleQuotes = 0x00000200,
-	};
+        Opt_NavKey_Shift             = 0x00000400,
+        Opt_NavKey_Alt               = 0x00000800,
+        Opt_NavKey_Control           = 0x00001000,
+    };
 
 protected:
-	bool           m_displayFoldMargin;
-	bool           m_underlineFoldLine;
-	bool           m_scrollBeyondLastLine;
-	wxString       m_foldStyle;
-	bool           m_displayBookmarkMargin;
-	wxString       m_bookmarkShape;
-	wxColour       m_bookmarkBgColour;
-	wxColour       m_bookmarkFgColour;
-	bool           m_highlightCaretLine;
-	bool           m_displayLineNumbers;
-	bool           m_showIndentationGuidelines;
-	wxColour       m_caretLineColour;
-	bool           m_indentUsesTabs;
-	int            m_indentWidth;
-	int            m_tabWidth;
-	int            m_iconsSize;
-	wxFontEncoding m_fileFontEncoding;
-	int            m_showWhitspaces;
-	bool           m_foldCompact;
-	bool           m_foldAtElse;
-	bool           m_foldPreprocessor;
-	int            m_edgeMode;
-	int            m_edgeColumn;
-	wxColour       m_edgeColour;
-	bool           m_highlightMatchedBraces;
-	wxColour       m_foldBgColour;
-	bool           m_autoAdjustHScrollBarWidth;
-	int            m_caretWidth;
-	int            m_caretBlinkPeriod;
-	wxString       m_programConsoleCommand;
-	wxString       m_eolMode;
-	bool           m_hideChangeMarkerMargin;
-	bool           m_hideOutpuPaneOnUserClick;
-	bool           m_hideOutputPaneNotIfBuild;
-	bool           m_hideOutputPaneNotIfSearch;
-	bool           m_hideOutputPaneNotIfReplace;
-	bool           m_hideOutputPaneNotIfReferences;
-	bool           m_hideOutputPaneNotIfOutput;
-	bool           m_hideOutputPaneNotIfTrace;
-	bool           m_hideOutputPaneNotIfTasks;
-	bool           m_hideOutputPaneNotIfBuildQ;
-	bool           m_hideOutputPaneNotIfCppCheck;
-	bool           m_hideOutputPaneNotIfSvn;
-	bool           m_hideOutputPaneNotIfCscope;
-	bool           m_hideOutputPaneNotIfGit;
-	bool           m_hideOutputPaneNotIfDebug;
-	bool           m_findBarAtBottom;
-	bool           m_TrimLine;
-	bool           m_AppendLF;
-	bool           m_disableSmartIndent;
-	bool           m_disableSemicolonShift;
-	int            m_caretLineAlpha;
-	bool           m_dontAutoFoldResults;
-	bool           m_showDebugOnRun;
-	bool           m_caretUseCamelCase;
-	bool           m_dontTrimCaretLine;
-	bool           m_wordWrap;
-	int            m_dockingStyle;
-	bool           m_mswTheme;
-	wxString       m_preferredLocale;
-	bool           m_useLocale;
-	bool           m_trimOnlyModifiedLines;
-	size_t         m_options;
-	
+    bool           m_displayFoldMargin;
+    bool           m_underlineFoldLine;
+    bool           m_scrollBeyondLastLine;
+    wxString       m_foldStyle;
+    bool           m_displayBookmarkMargin;
+    wxString       m_bookmarkShape;
+    wxColour       m_bookmarkBgColour;
+    wxColour       m_bookmarkFgColour;
+    bool           m_highlightCaretLine;
+    bool           m_displayLineNumbers;
+    bool           m_showIndentationGuidelines;
+    wxColour       m_caretLineColour;
+    bool           m_indentUsesTabs;
+    int            m_indentWidth;
+    int            m_tabWidth;
+    int            m_iconsSize;
+    wxFontEncoding m_fileFontEncoding;
+    int            m_showWhitspaces;
+    bool           m_foldCompact;
+    bool           m_foldAtElse;
+    bool           m_foldPreprocessor;
+    int            m_edgeMode;
+    int            m_edgeColumn;
+    wxColour       m_edgeColour;
+    bool           m_highlightMatchedBraces;
+    wxColour       m_foldBgColour;
+    bool           m_autoAdjustHScrollBarWidth;
+    int            m_caretWidth;
+    int            m_caretBlinkPeriod;
+    wxString       m_programConsoleCommand;
+    wxString       m_eolMode;
+    bool           m_hideChangeMarkerMargin;
+    bool           m_hideOutpuPaneOnUserClick;
+    bool           m_hideOutputPaneNotIfBuild;
+    bool           m_hideOutputPaneNotIfSearch;
+    bool           m_hideOutputPaneNotIfReplace;
+    bool           m_hideOutputPaneNotIfReferences;
+    bool           m_hideOutputPaneNotIfOutput;
+    bool           m_hideOutputPaneNotIfTrace;
+    bool           m_hideOutputPaneNotIfTasks;
+    bool           m_hideOutputPaneNotIfBuildQ;
+    bool           m_hideOutputPaneNotIfCppCheck;
+    bool           m_hideOutputPaneNotIfSvn;
+    bool           m_hideOutputPaneNotIfCscope;
+    bool           m_hideOutputPaneNotIfGit;
+    bool           m_hideOutputPaneNotIfDebug;
+    bool           m_findBarAtBottom;
+    bool           m_TrimLine;
+    bool           m_AppendLF;
+    bool           m_disableSmartIndent;
+    bool           m_disableSemicolonShift;
+    int            m_caretLineAlpha;
+    bool           m_dontAutoFoldResults;
+    bool           m_showDebugOnRun;
+    bool           m_caretUseCamelCase;
+    bool           m_dontTrimCaretLine;
+    bool           m_wordWrap;
+    int            m_dockingStyle;
+    bool           m_mswTheme;
+    wxString       m_preferredLocale;
+    bool           m_useLocale;
+    bool           m_trimOnlyModifiedLines;
+    size_t         m_options;
+
 protected:
-	// Helpers
-	void EnableOption(size_t flag, bool b) {
-		if(b) {
-			m_options |= flag;
-		} else {
-			m_options &= ~flag;
-		}
-	}
-	
-	bool HasOption(size_t flag) const {
-		return m_options & flag;
-	}
-	
+    // Helpers
+    void EnableOption(size_t flag, bool b) {
+        if(b) {
+            m_options |= flag;
+        } else {
+            m_options &= ~flag;
+        }
+    }
+
+    bool HasOption(size_t flag) const {
+        return m_options & flag;
+    }
+
 public:
-	OptionsConfig() {}
-	OptionsConfig(wxXmlNode *node);
-	virtual ~OptionsConfig(void);
+    OptionsConfig() {}
+    OptionsConfig(wxXmlNode *node);
+    virtual ~OptionsConfig(void);
 
-	//-------------------------------------
-	// Setters/Getters
-	//-------------------------------------
+    //-------------------------------------
+    // Setters/Getters
+    //-------------------------------------
 
-	void SetOptions(size_t options) {
-		this->m_options = options;
-	}
-	size_t GetOptions() const {
-		return m_options;
-	}
-	void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) {
-		this->m_trimOnlyModifiedLines = trimOnlyModifiedLines;
-	}
-	bool GetTrimOnlyModifiedLines() const {
-		return m_trimOnlyModifiedLines;
-	}
-	void SetPreferredLocale(const wxString& preferredLocale) {
-		this->m_preferredLocale = preferredLocale;
-	}
-	wxString GetPreferredLocale() const {
-		return m_preferredLocale;
-	}
-	void SetUseLocale(bool useLocale) {
-		this->m_useLocale = useLocale;
-	}
-	bool GetUseLocale() const {
-		return m_useLocale;
-	}
-	void SetMswTheme(bool mswTheme) {
-		this->m_mswTheme = mswTheme;
-	}
-	bool GetMswTheme() const {
-		return m_mswTheme;
-	}
-	void SetDockingStyle(int dockingStyle) {
-		this->m_dockingStyle = dockingStyle;
-	}
-	int GetDockingStyle() const {
-		return m_dockingStyle;
-	}
-	void SetCaretUseCamelCase(bool caretUseCamelCase) {
-		this->m_caretUseCamelCase = caretUseCamelCase;
-	}
-	bool GetCaretUseCamelCase() const {
-		return m_caretUseCamelCase;
-	}
-	void SetDontAutoFoldResults(bool dontAutoFoldResults) {
-		this->m_dontAutoFoldResults = dontAutoFoldResults;
-	}
-	bool GetDontAutoFoldResults() const {
-		return m_dontAutoFoldResults;
-	}
-	void SetShowDebugOnRun(bool showDebugOnRun) {
-		this->m_showDebugOnRun = showDebugOnRun;
-	}
-	bool GetShowDebugOnRun() const {
-		return m_showDebugOnRun;
-	}
-	bool GetDisableSemicolonShift() const {
-		return m_disableSemicolonShift;
-	}
-	void SetDisableSemicolonShift(bool disableSemicolonShift) {
-		this->m_disableSemicolonShift = disableSemicolonShift;
-	}
-	void SetDisableSmartIndent(bool disableSmartIndent) {
-		this->m_disableSmartIndent = disableSmartIndent;
-	}
-	bool GetDisableSmartIndent() const {
-		return m_disableSmartIndent;
-	}
-	void SetTrimLine(const bool& trimLine) {
-		this->m_TrimLine = trimLine;
-	}
-	const bool& GetTrimLine() const {
-		return m_TrimLine;
-	}
-	void SetAppendLF(const bool& appendLF) {
-		this->m_AppendLF = appendLF;
-	}
-	const bool& GetAppendLF() const {
-		return m_AppendLF;
-	}
-	void SetFindBarAtBottom(const bool& findBarAtBottom) {
-		this->m_findBarAtBottom = findBarAtBottom;
-	}
-	const bool& GetFindBarAtBottom() const {
-		return m_findBarAtBottom;
-	}
-	void SetHideOutpuPaneOnUserClick(const bool& hideOutpuPaneOnUserClick) {
-		this->m_hideOutpuPaneOnUserClick = hideOutpuPaneOnUserClick;
-	}
-	const bool& GetHideOutpuPaneOnUserClick() const {
-		return m_hideOutpuPaneOnUserClick;
-	}
-	void SetHideOutputPaneNotIfBuild(const bool& HideOutpuPaneNotIfBuild) {
-		this->m_hideOutputPaneNotIfBuild = HideOutpuPaneNotIfBuild;
-	}
-	const bool& GetHideOutputPaneNotIfBuild() const {
-		return m_hideOutputPaneNotIfBuild;
-	}
-	void SetHideOutputPaneNotIfSearch(const bool& HideOutpuPaneNotIfSearch) {
-		this->m_hideOutputPaneNotIfSearch = HideOutpuPaneNotIfSearch;
-	}
-	const bool& GetHideOutputPaneNotIfSearch() const {
-		return m_hideOutputPaneNotIfSearch;
-	}
-	void SetHideOutputPaneNotIfReplace(const bool& HideOutpuPaneNotIfReplace) {
-		this->m_hideOutputPaneNotIfReplace = HideOutpuPaneNotIfReplace;
-	}
-	const bool& GetHideOutputPaneNotIfReplace() const {
-		return m_hideOutputPaneNotIfReplace;
-	}
-	void SetHideOutputPaneNotIfReferences(const bool& HideOutpuPaneNotIfReferences) {
-		this->m_hideOutputPaneNotIfReferences = HideOutpuPaneNotIfReferences;
-	}
-	const bool& GetHideOutputPaneNotIfReferences() const {
-		return m_hideOutputPaneNotIfReferences;
-	}
-	void SetHideOutputPaneNotIfOutput(const bool& HideOutpuPaneNotIfOutput) {
-		this->m_hideOutputPaneNotIfOutput = HideOutpuPaneNotIfOutput;
-	}
-	const bool& GetHideOutputPaneNotIfOutput() const {
-		return m_hideOutputPaneNotIfOutput;
-	}
-	void SetHideOutputPaneNotIfTrace(const bool& HideOutpuPaneNotIfTrace) {
-		this->m_hideOutputPaneNotIfTrace = HideOutpuPaneNotIfTrace;
-	}
-	const bool& GetHideOutputPaneNotIfTrace() const {
-		return m_hideOutputPaneNotIfTrace;
-	}
-	void SetHideOutputPaneNotIfTasks(const bool& HideOutpuPaneNotIfTasks) {
-		this->m_hideOutputPaneNotIfTasks = HideOutpuPaneNotIfTasks;
-	}
-	const bool& GetHideOutputPaneNotIfTasks() const {
-		return m_hideOutputPaneNotIfTasks;
-	}
-	void SetHideOutputPaneNotIfBuildQ(const bool& HideOutpuPaneNotIfBuildQ) {
-		this->m_hideOutputPaneNotIfBuildQ = HideOutpuPaneNotIfBuildQ;
-	}
-	const bool& GetHideOutputPaneNotIfBuildQ() const {
-		return m_hideOutputPaneNotIfBuildQ;
-	}
-	void SetHideOutputPaneNotIfCppCheck(const bool& HideOutpuPaneNotIfCppCheck) {
-		this->m_hideOutputPaneNotIfCppCheck = HideOutpuPaneNotIfCppCheck;
-	}
-	const bool& GetHideOutputPaneNotIfCppCheck() const {
-		return m_hideOutputPaneNotIfCppCheck;
-	}
-	void SetHideOutputPaneNotIfSvn(const bool& HideOutpuPaneNotIfSvn) {
-		this->m_hideOutputPaneNotIfSvn = HideOutpuPaneNotIfSvn;
-	}
-	const bool& GetHideOutputPaneNotIfSvn() const {
-		return m_hideOutputPaneNotIfSvn;
-	}
-	void SetHideOutputPaneNotIfCscope(const bool& HideOutpuPaneNotIfCscope) {
-		this->m_hideOutputPaneNotIfCscope = HideOutpuPaneNotIfCscope;
-	}
-	const bool& GetHideOutputPaneNotIfCscope() const {
-		return m_hideOutputPaneNotIfCscope;
-	}
-	void SetHideOutputPaneNotIfGit(const bool& HideOutpuPaneNotIfGit) {
-		this->m_hideOutputPaneNotIfGit = HideOutpuPaneNotIfGit;
-	}
-	const bool& GetHideOutputPaneNotIfGit() const {
-		return m_hideOutputPaneNotIfGit;
-	}
-	void SetHideOutputPaneNotIfDebug(const bool& HideOutpuPaneNotIfDebug) {
-		this->m_hideOutputPaneNotIfDebug = HideOutpuPaneNotIfDebug;
-	}
-	const bool& GetHideOutputPaneNotIfDebug() const {
-		return m_hideOutputPaneNotIfDebug;
-	}
-	void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
-		this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;
-	}
+    void SetOptions(size_t options) {
+        this->m_options = options;
+    }
+    size_t GetOptions() const {
+        return m_options;
+    }
+    void SetTrimOnlyModifiedLines(bool trimOnlyModifiedLines) {
+        this->m_trimOnlyModifiedLines = trimOnlyModifiedLines;
+    }
+    bool GetTrimOnlyModifiedLines() const {
+        return m_trimOnlyModifiedLines;
+    }
+    void SetPreferredLocale(const wxString& preferredLocale) {
+        this->m_preferredLocale = preferredLocale;
+    }
+    wxString GetPreferredLocale() const {
+        return m_preferredLocale;
+    }
+    void SetUseLocale(bool useLocale) {
+        this->m_useLocale = useLocale;
+    }
+    bool GetUseLocale() const {
+        return m_useLocale;
+    }
+    void SetMswTheme(bool mswTheme) {
+        this->m_mswTheme = mswTheme;
+    }
+    bool GetMswTheme() const {
+        return m_mswTheme;
+    }
+    void SetDockingStyle(int dockingStyle) {
+        this->m_dockingStyle = dockingStyle;
+    }
+    int GetDockingStyle() const {
+        return m_dockingStyle;
+    }
+    void SetCaretUseCamelCase(bool caretUseCamelCase) {
+        this->m_caretUseCamelCase = caretUseCamelCase;
+    }
+    bool GetCaretUseCamelCase() const {
+        return m_caretUseCamelCase;
+    }
+    void SetDontAutoFoldResults(bool dontAutoFoldResults) {
+        this->m_dontAutoFoldResults = dontAutoFoldResults;
+    }
+    bool GetDontAutoFoldResults() const {
+        return m_dontAutoFoldResults;
+    }
+    void SetShowDebugOnRun(bool showDebugOnRun) {
+        this->m_showDebugOnRun = showDebugOnRun;
+    }
+    bool GetShowDebugOnRun() const {
+        return m_showDebugOnRun;
+    }
+    bool GetDisableSemicolonShift() const {
+        return m_disableSemicolonShift;
+    }
+    void SetDisableSemicolonShift(bool disableSemicolonShift) {
+        this->m_disableSemicolonShift = disableSemicolonShift;
+    }
+    void SetDisableSmartIndent(bool disableSmartIndent) {
+        this->m_disableSmartIndent = disableSmartIndent;
+    }
+    bool GetDisableSmartIndent() const {
+        return m_disableSmartIndent;
+    }
+    void SetTrimLine(const bool& trimLine) {
+        this->m_TrimLine = trimLine;
+    }
+    const bool& GetTrimLine() const {
+        return m_TrimLine;
+    }
+    void SetAppendLF(const bool& appendLF) {
+        this->m_AppendLF = appendLF;
+    }
+    const bool& GetAppendLF() const {
+        return m_AppendLF;
+    }
+    void SetFindBarAtBottom(const bool& findBarAtBottom) {
+        this->m_findBarAtBottom = findBarAtBottom;
+    }
+    const bool& GetFindBarAtBottom() const {
+        return m_findBarAtBottom;
+    }
+    void SetHideOutpuPaneOnUserClick(const bool& hideOutpuPaneOnUserClick) {
+        this->m_hideOutpuPaneOnUserClick = hideOutpuPaneOnUserClick;
+    }
+    const bool& GetHideOutpuPaneOnUserClick() const {
+        return m_hideOutpuPaneOnUserClick;
+    }
+    void SetHideOutputPaneNotIfBuild(const bool& HideOutpuPaneNotIfBuild) {
+        this->m_hideOutputPaneNotIfBuild = HideOutpuPaneNotIfBuild;
+    }
+    const bool& GetHideOutputPaneNotIfBuild() const {
+        return m_hideOutputPaneNotIfBuild;
+    }
+    void SetHideOutputPaneNotIfSearch(const bool& HideOutpuPaneNotIfSearch) {
+        this->m_hideOutputPaneNotIfSearch = HideOutpuPaneNotIfSearch;
+    }
+    const bool& GetHideOutputPaneNotIfSearch() const {
+        return m_hideOutputPaneNotIfSearch;
+    }
+    void SetHideOutputPaneNotIfReplace(const bool& HideOutpuPaneNotIfReplace) {
+        this->m_hideOutputPaneNotIfReplace = HideOutpuPaneNotIfReplace;
+    }
+    const bool& GetHideOutputPaneNotIfReplace() const {
+        return m_hideOutputPaneNotIfReplace;
+    }
+    void SetHideOutputPaneNotIfReferences(const bool& HideOutpuPaneNotIfReferences) {
+        this->m_hideOutputPaneNotIfReferences = HideOutpuPaneNotIfReferences;
+    }
+    const bool& GetHideOutputPaneNotIfReferences() const {
+        return m_hideOutputPaneNotIfReferences;
+    }
+    void SetHideOutputPaneNotIfOutput(const bool& HideOutpuPaneNotIfOutput) {
+        this->m_hideOutputPaneNotIfOutput = HideOutpuPaneNotIfOutput;
+    }
+    const bool& GetHideOutputPaneNotIfOutput() const {
+        return m_hideOutputPaneNotIfOutput;
+    }
+    void SetHideOutputPaneNotIfTrace(const bool& HideOutpuPaneNotIfTrace) {
+        this->m_hideOutputPaneNotIfTrace = HideOutpuPaneNotIfTrace;
+    }
+    const bool& GetHideOutputPaneNotIfTrace() const {
+        return m_hideOutputPaneNotIfTrace;
+    }
+    void SetHideOutputPaneNotIfTasks(const bool& HideOutpuPaneNotIfTasks) {
+        this->m_hideOutputPaneNotIfTasks = HideOutpuPaneNotIfTasks;
+    }
+    const bool& GetHideOutputPaneNotIfTasks() const {
+        return m_hideOutputPaneNotIfTasks;
+    }
+    void SetHideOutputPaneNotIfBuildQ(const bool& HideOutpuPaneNotIfBuildQ) {
+        this->m_hideOutputPaneNotIfBuildQ = HideOutpuPaneNotIfBuildQ;
+    }
+    const bool& GetHideOutputPaneNotIfBuildQ() const {
+        return m_hideOutputPaneNotIfBuildQ;
+    }
+    void SetHideOutputPaneNotIfCppCheck(const bool& HideOutpuPaneNotIfCppCheck) {
+        this->m_hideOutputPaneNotIfCppCheck = HideOutpuPaneNotIfCppCheck;
+    }
+    const bool& GetHideOutputPaneNotIfCppCheck() const {
+        return m_hideOutputPaneNotIfCppCheck;
+    }
+    void SetHideOutputPaneNotIfSvn(const bool& HideOutpuPaneNotIfSvn) {
+        this->m_hideOutputPaneNotIfSvn = HideOutpuPaneNotIfSvn;
+    }
+    const bool& GetHideOutputPaneNotIfSvn() const {
+        return m_hideOutputPaneNotIfSvn;
+    }
+    void SetHideOutputPaneNotIfCscope(const bool& HideOutpuPaneNotIfCscope) {
+        this->m_hideOutputPaneNotIfCscope = HideOutpuPaneNotIfCscope;
+    }
+    const bool& GetHideOutputPaneNotIfCscope() const {
+        return m_hideOutputPaneNotIfCscope;
+    }
+    void SetHideOutputPaneNotIfGit(const bool& HideOutpuPaneNotIfGit) {
+        this->m_hideOutputPaneNotIfGit = HideOutpuPaneNotIfGit;
+    }
+    const bool& GetHideOutputPaneNotIfGit() const {
+        return m_hideOutputPaneNotIfGit;
+    }
+    void SetHideOutputPaneNotIfDebug(const bool& HideOutpuPaneNotIfDebug) {
+        this->m_hideOutputPaneNotIfDebug = HideOutpuPaneNotIfDebug;
+    }
+    const bool& GetHideOutputPaneNotIfDebug() const {
+        return m_hideOutputPaneNotIfDebug;
+    }
+    void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin) {
+        this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;
+    }
 
-	bool GetHideChangeMarkerMargin() const {
-		return m_hideChangeMarkerMargin;
-	}
+    bool GetHideChangeMarkerMargin() const {
+        return m_hideChangeMarkerMargin;
+    }
 
-	bool GetDisplayFoldMargin() const {
-		return m_displayFoldMargin;
-	}
-	bool GetUnderlineFoldLine() const {
-		return m_underlineFoldLine;
-	}
-	bool GetScrollBeyondLastLine() const {
-		return m_scrollBeyondLastLine;
-	}
-	wxString GetFoldStyle() const {
-		return m_foldStyle;
-	}
-	bool GetDisplayBookmarkMargin() const {
-		return m_displayBookmarkMargin;
-	}
-	wxString GetBookmarkShape() const {
-		return m_bookmarkShape;
-	}
-	wxColour GetBookmarkFgColour() const {
-		return m_bookmarkFgColour;
-	}
-	wxColour GetBookmarkBgColour() const {
-		return m_bookmarkBgColour;
-	}
-	bool GetHighlightCaretLine() const {
-		return m_highlightCaretLine;
-	}
-	bool GetDisplayLineNumbers() const {
-		return m_displayLineNumbers;
-	}
-	bool GetShowIndentationGuidelines() const {
-		return m_showIndentationGuidelines;
-	}
-	wxColour GetCaretLineColour() const {
-		return m_caretLineColour;
-	}
+    bool GetDisplayFoldMargin() const {
+        return m_displayFoldMargin;
+    }
+    bool GetUnderlineFoldLine() const {
+        return m_underlineFoldLine;
+    }
+    bool GetScrollBeyondLastLine() const {
+        return m_scrollBeyondLastLine;
+    }
+    wxString GetFoldStyle() const {
+        return m_foldStyle;
+    }
+    bool GetDisplayBookmarkMargin() const {
+        return m_displayBookmarkMargin;
+    }
+    wxString GetBookmarkShape() const {
+        return m_bookmarkShape;
+    }
+    wxColour GetBookmarkFgColour() const {
+        return m_bookmarkFgColour;
+    }
+    wxColour GetBookmarkBgColour() const {
+        return m_bookmarkBgColour;
+    }
+    bool GetHighlightCaretLine() const {
+        return m_highlightCaretLine;
+    }
+    bool GetDisplayLineNumbers() const {
+        return m_displayLineNumbers;
+    }
+    bool GetShowIndentationGuidelines() const {
+        return m_showIndentationGuidelines;
+    }
+    wxColour GetCaretLineColour() const {
+        return m_caretLineColour;
+    }
 
 
-	void SetDisplayFoldMargin(bool b) {
-		m_displayFoldMargin = b;
-	}
-	void SetUnderlineFoldLine(bool b) {
-		m_underlineFoldLine = b;
-	}
-	void SetScrollBeyondLastLine(bool b) {
-		m_scrollBeyondLastLine = b;
-	}
-	void SetFoldStyle(wxString s) {
-		m_foldStyle = s;
-	}
-	void SetDisplayBookmarkMargin(bool b) {
-		m_displayBookmarkMargin = b;
-	}
-	void SetBookmarkShape(wxString s) {
-		m_bookmarkShape = s;
-	}
-	void SetBookmarkFgColour(wxColour c) {
-		m_bookmarkFgColour = c;
-	}
-	void SetBookmarkBgColour(wxColour c) {
-		m_bookmarkBgColour = c;
-	}
-	void SetHighlightCaretLine(bool b) {
-		m_highlightCaretLine = b;
-	}
-	void SetDisplayLineNumbers(bool b) {
-		m_displayLineNumbers = b;
-	}
-	void SetShowIndentationGuidelines(bool b) {
-		m_showIndentationGuidelines = b;
-	}
-	void SetCaretLineColour(wxColour c) {
-		m_caretLineColour = c;
-	}
+    void SetDisplayFoldMargin(bool b) {
+        m_displayFoldMargin = b;
+    }
+    void SetUnderlineFoldLine(bool b) {
+        m_underlineFoldLine = b;
+    }
+    void SetScrollBeyondLastLine(bool b) {
+        m_scrollBeyondLastLine = b;
+    }
+    void SetFoldStyle(wxString s) {
+        m_foldStyle = s;
+    }
+    void SetDisplayBookmarkMargin(bool b) {
+        m_displayBookmarkMargin = b;
+    }
+    void SetBookmarkShape(wxString s) {
+        m_bookmarkShape = s;
+    }
+    void SetBookmarkFgColour(wxColour c) {
+        m_bookmarkFgColour = c;
+    }
+    void SetBookmarkBgColour(wxColour c) {
+        m_bookmarkBgColour = c;
+    }
+    void SetHighlightCaretLine(bool b) {
+        m_highlightCaretLine = b;
+    }
+    void SetDisplayLineNumbers(bool b) {
+        m_displayLineNumbers = b;
+    }
+    void SetShowIndentationGuidelines(bool b) {
+        m_showIndentationGuidelines = b;
+    }
+    void SetCaretLineColour(wxColour c) {
+        m_caretLineColour = c;
+    }
 
-	void SetIndentUsesTabs(const bool& indentUsesTabs) {
-		this->m_indentUsesTabs = indentUsesTabs;
-	}
-	const bool& GetIndentUsesTabs() const {
-		return m_indentUsesTabs;
-	}
-	void SetIndentWidth(const int& indentWidth) {
-		this->m_indentWidth = indentWidth;
-	}
-	const int& GetIndentWidth() const {
-		return m_indentWidth;
-	}
-	void SetTabWidth(const int& tabWidth) {
-		this->m_tabWidth = tabWidth;
-	}
-	const int& GetTabWidth() const {
-		return m_tabWidth;
-	}
+    void SetIndentUsesTabs(const bool& indentUsesTabs) {
+        this->m_indentUsesTabs = indentUsesTabs;
+    }
+    const bool& GetIndentUsesTabs() const {
+        return m_indentUsesTabs;
+    }
+    void SetIndentWidth(const int& indentWidth) {
+        this->m_indentWidth = indentWidth;
+    }
+    const int& GetIndentWidth() const {
+        return m_indentWidth;
+    }
+    void SetTabWidth(const int& tabWidth) {
+        this->m_tabWidth = tabWidth;
+    }
+    const int& GetTabWidth() const {
+        return m_tabWidth;
+    }
 
-	void SetIconsSize(const int& iconsSize) {
-		this->m_iconsSize = iconsSize;
-	}
-	const int& GetIconsSize() const {
-		return m_iconsSize;
-	}
+    void SetIconsSize(const int& iconsSize) {
+        this->m_iconsSize = iconsSize;
+    }
+    const int& GetIconsSize() const {
+        return m_iconsSize;
+    }
 
-	void SetFileFontEncoding(const wxString& strFileFontEncoding);
-	wxFontEncoding GetFileFontEncoding() const {
-		return m_fileFontEncoding;
-	}
+    void SetFileFontEncoding(const wxString& strFileFontEncoding);
+    wxFontEncoding GetFileFontEncoding() const {
+        return m_fileFontEncoding;
+    }
 
-	void SetShowWhitspaces(const int& showWhitspaces) {
-		this->m_showWhitspaces = showWhitspaces;
-	}
-	const int& GetShowWhitspaces() const {
-		return m_showWhitspaces;
-	}
+    void SetShowWhitspaces(const int& showWhitspaces) {
+        this->m_showWhitspaces = showWhitspaces;
+    }
+    const int& GetShowWhitspaces() const {
+        return m_showWhitspaces;
+    }
 
-	void SetFoldAtElse(const bool& foldAtElse) {
-		this->m_foldAtElse = foldAtElse;
-	}
-	void SetFoldCompact(const bool& foldCompact) {
-		this->m_foldCompact = foldCompact;
-	}
-	const bool& GetFoldAtElse() const {
-		return m_foldAtElse;
-	}
-	const bool& GetFoldCompact() const {
-		return m_foldCompact;
-	}
-	void SetFoldPreprocessor(const bool& foldPreprocessor) {
-		this->m_foldPreprocessor = foldPreprocessor;
-	}
-	const bool& GetFoldPreprocessor() const {
-		return m_foldPreprocessor;
-	}
+    void SetFoldAtElse(const bool& foldAtElse) {
+        this->m_foldAtElse = foldAtElse;
+    }
+    void SetFoldCompact(const bool& foldCompact) {
+        this->m_foldCompact = foldCompact;
+    }
+    const bool& GetFoldAtElse() const {
+        return m_foldAtElse;
+    }
+    const bool& GetFoldCompact() const {
+        return m_foldCompact;
+    }
+    void SetFoldPreprocessor(const bool& foldPreprocessor) {
+        this->m_foldPreprocessor = foldPreprocessor;
+    }
+    const bool& GetFoldPreprocessor() const {
+        return m_foldPreprocessor;
+    }
 
-	void SetEdgeColour(const wxColour& edgeColour) {
-		this->m_edgeColour = edgeColour;
-	}
-	void SetEdgeColumn(int edgeColumn) {
-		this->m_edgeColumn = edgeColumn;
-	}
-	void SetEdgeMode(int edgeMode) {
-		this->m_edgeMode = edgeMode;
-	}
+    void SetEdgeColour(const wxColour& edgeColour) {
+        this->m_edgeColour = edgeColour;
+    }
+    void SetEdgeColumn(int edgeColumn) {
+        this->m_edgeColumn = edgeColumn;
+    }
+    void SetEdgeMode(int edgeMode) {
+        this->m_edgeMode = edgeMode;
+    }
 
-	const wxColour& GetEdgeColour() const {
-		return m_edgeColour;
-	}
-	int GetEdgeColumn() const {
-		return m_edgeColumn;
-	}
-	int GetEdgeMode() const {
-		return m_edgeMode;
-	}
+    const wxColour& GetEdgeColour() const {
+        return m_edgeColour;
+    }
+    int GetEdgeColumn() const {
+        return m_edgeColumn;
+    }
+    int GetEdgeMode() const {
+        return m_edgeMode;
+    }
 
-	void SetHighlightMatchedBraces(const bool& highlightMatchedBraces) {
-		this->m_highlightMatchedBraces = highlightMatchedBraces;
-	}
-	const bool& GetHighlightMatchedBraces() const {
-		return m_highlightMatchedBraces;
-	}
-	
-	void SetAutoAddMatchedCurlyBraces(bool autoAddMatchedBraces) {
-		EnableOption(Opt_AutoCompleteCurlyBraces, autoAddMatchedBraces);
-	}
-	
-	bool GetAutoAddMatchedCurlyBraces() const {
-		return HasOption(Opt_AutoCompleteCurlyBraces);
-	}
-	
-	void SetAutoAddMatchedNormalBraces(bool b) {
-		EnableOption(Opt_AutoCompleteNormalBraces, b);
-	}
-	
-	bool GetAutoAddMatchedNormalBraces() const {
-		return HasOption(Opt_AutoCompleteNormalBraces);
-	}
-	bool GetAutoCompleteDoubleQuotes() const {
+    void SetHighlightMatchedBraces(const bool& highlightMatchedBraces) {
+        this->m_highlightMatchedBraces = highlightMatchedBraces;
+    }
+    const bool& GetHighlightMatchedBraces() const {
+        return m_highlightMatchedBraces;
+    }
+
+    void SetAutoAddMatchedCurlyBraces(bool autoAddMatchedBraces) {
+        EnableOption(Opt_AutoCompleteCurlyBraces, autoAddMatchedBraces);
+    }
+
+    bool GetAutoAddMatchedCurlyBraces() const {
+        return HasOption(Opt_AutoCompleteCurlyBraces);
+    }
+
+    void SetAutoAddMatchedNormalBraces(bool b) {
+        EnableOption(Opt_AutoCompleteNormalBraces, b);
+    }
+
+    bool GetAutoAddMatchedNormalBraces() const {
+        return HasOption(Opt_AutoCompleteNormalBraces);
+    }
+    bool GetAutoCompleteDoubleQuotes() const {
         return HasOption(Opt_AutoCompleteDoubleQuotes);
     }
     void SetAutoCompleteDoubleQuotes(bool b) {
         return EnableOption(Opt_AutoCompleteDoubleQuotes, b);
     }
-	void SetFoldBgColour(const wxColour& foldBgColour) {
-		this->m_foldBgColour = foldBgColour;
-	}
-	const wxColour& GetFoldBgColour() const {
-		return m_foldBgColour;
-	}
-	void SetAutoAdjustHScrollBarWidth(const bool& autoAdjustHScrollBarWidth) {
-		this->m_autoAdjustHScrollBarWidth = autoAdjustHScrollBarWidth;
-	}
-	const bool& GetAutoAdjustHScrollBarWidth() const {
-		return m_autoAdjustHScrollBarWidth;
-	}
-	void SetCaretBlinkPeriod(const int& caretBlinkPeriod) {
-		this->m_caretBlinkPeriod = caretBlinkPeriod;
-	}
-	void SetCaretWidth(const int& caretWidth) {
-		this->m_caretWidth = caretWidth;
-	}
-	const int& GetCaretBlinkPeriod() const {
-		return m_caretBlinkPeriod;
-	}
-	const int& GetCaretWidth() const {
-		return m_caretWidth;
-	}
+    void SetFoldBgColour(const wxColour& foldBgColour) {
+        this->m_foldBgColour = foldBgColour;
+    }
+    const wxColour& GetFoldBgColour() const {
+        return m_foldBgColour;
+    }
+    void SetAutoAdjustHScrollBarWidth(const bool& autoAdjustHScrollBarWidth) {
+        this->m_autoAdjustHScrollBarWidth = autoAdjustHScrollBarWidth;
+    }
+    const bool& GetAutoAdjustHScrollBarWidth() const {
+        return m_autoAdjustHScrollBarWidth;
+    }
+    void SetCaretBlinkPeriod(const int& caretBlinkPeriod) {
+        this->m_caretBlinkPeriod = caretBlinkPeriod;
+    }
+    void SetCaretWidth(const int& caretWidth) {
+        this->m_caretWidth = caretWidth;
+    }
+    const int& GetCaretBlinkPeriod() const {
+        return m_caretBlinkPeriod;
+    }
+    const int& GetCaretWidth() const {
+        return m_caretWidth;
+    }
 
-	void SetProgramConsoleCommand(const wxString& programConsoleCommand) {
-		this->m_programConsoleCommand = programConsoleCommand;
-	}
+    void SetProgramConsoleCommand(const wxString& programConsoleCommand) {
+        this->m_programConsoleCommand = programConsoleCommand;
+    }
 
-	const wxString& GetProgramConsoleCommand() const {
-		return m_programConsoleCommand;
-	}
+    const wxString& GetProgramConsoleCommand() const {
+        return m_programConsoleCommand;
+    }
 
-	void SetEolMode(const wxString& eolMode) {
-		this->m_eolMode = eolMode;
-	}
-	const wxString& GetEolMode() const {
-		return m_eolMode;
-	}
-	void SetCaretLineAlpha(int caretLineAlpha) {
-		this->m_caretLineAlpha = caretLineAlpha;
-	}
-	int GetCaretLineAlpha() const {
-		return m_caretLineAlpha;
-	}
-	bool GetDontTrimCaretLine() const {
-		return m_dontTrimCaretLine;
-	}
+    void SetEolMode(const wxString& eolMode) {
+        this->m_eolMode = eolMode;
+    }
+    const wxString& GetEolMode() const {
+        return m_eolMode;
+    }
+    void SetCaretLineAlpha(int caretLineAlpha) {
+        this->m_caretLineAlpha = caretLineAlpha;
+    }
+    int GetCaretLineAlpha() const {
+        return m_caretLineAlpha;
+    }
+    bool GetDontTrimCaretLine() const {
+        return m_dontTrimCaretLine;
+    }
 
-	bool GetWordWrap() const {
-		return m_wordWrap;
-	}
-	void SetWordWrap(bool wordWrap) {
-		this->m_wordWrap = wordWrap;
-	}
-	/**
-	 * Return an XML representation of this object
-	 * \return XML node
-	 */
-	wxXmlNode *ToXml() const;
+    bool GetWordWrap() const {
+        return m_wordWrap;
+    }
+    void SetWordWrap(bool wordWrap) {
+        this->m_wordWrap = wordWrap;
+    }
+    /**
+     * Return an XML representation of this object
+     * \return XML node
+     */
+    wxXmlNode *ToXml() const;
 };
 
 typedef SmartPtr<OptionsConfig> OptionsConfigPtr;

@@ -2711,7 +2711,9 @@ void LEditor::OnRightUp(wxMouseEvent& event)
 
 void LEditor::OnRightDown(wxMouseEvent& event)
 {
-    if ( event.GetModifiers() == wxMOD_SHIFT ) {
+    wxKeyModifier mod = GetCodeNavModifier();
+    
+    if ( event.GetModifiers() == mod ) {
         
         ClearSelections();
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
@@ -2732,7 +2734,14 @@ void LEditor::OnRightDown(wxMouseEvent& event)
 
 void LEditor::OnMotion(wxMouseEvent& event)
 {
-    if ( event.GetModifiers() == wxMOD_SHIFT ) {
+    wxKeyModifier mod = GetCodeNavModifier();
+    if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt ) {
+        mod = wxMOD_ALL;
+    } else if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control ) {
+        mod = wxMOD_CONTROL;
+    }
+    
+    if ( event.GetModifiers() == mod ) {
     
         m_hyperLinkIndicatroStart = wxNOT_FOUND;
         m_hyperLinkIndicatroEnd = wxNOT_FOUND;
@@ -2763,7 +2772,8 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
     }
     
-    if ( event.GetModifiers() == wxMOD_SHIFT ) {
+    wxKeyModifier mod = GetCodeNavModifier();
+    if ( event.GetModifiers() == mod ) {
         ClearSelections();
         SetCaretAt( PositionFromPointClose(event.GetX(), event.GetY()) );
     }
@@ -4147,6 +4157,17 @@ void LEditor::OnKeyUp(wxKeyEvent& event)
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         IndicatorClearRange(0, GetLength());
     }
+}
+
+wxKeyModifier LEditor::GetCodeNavModifier()
+{
+    wxKeyModifier mod = wxMOD_SHIFT;
+    if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt ) {
+        mod = wxMOD_ALT;
+    } else if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control ) {
+        mod = wxMOD_CONTROL;
+    }
+    return mod;
 }
 
 

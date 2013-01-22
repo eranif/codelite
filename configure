@@ -1104,7 +1104,8 @@ createInstallTarget()
 		if [ "$wxdir" != "" ] ; then
 			## prepare a temporary folder
 			echo "	@echo packaging wxWidgets ... from directory ${wxdir}" >> Makefile
-			echo "	@cd ${wxdir} && tar cf /tmp/clwx294.tar libwx*.so* && tar xf /tmp/clwx294.tar -C \"\$(DESTDIR)${plugins_dir}/\"" >> Makefile
+            Get_Wx_Libs_To_Pack # Get the list of files to package
+			echo "	@cd ${wxdir} && tar cf /tmp/clwx294.tar ${Wx_Libs} && tar xf /tmp/clwx294.tar -C \"\$(DESTDIR)${plugins_dir}/\"" >> Makefile
 			echo "	@rm -f /tmp/clwx294.tar" >> Makefile
 		fi
 	fi
@@ -1178,8 +1179,29 @@ Show_Help_and_Exit()
 	exit 0
 }
 
+
+Get_Wx_Libs_To_Pack()
+{
+    > /tmp/cl-sed001.tmp
+    libs=`./wx-config --libs all`
+    for lib_name in $libs
+    do
+    case "$lib_name" in
+      -l*_all*) ;;
+      -l*) echo ${lib_name} | sed 's@-l@lib@g' >> /tmp/cl-sed001.tmp;;
+    esac
+    done
+
+    Tmp_Wx_Libs=`cat /tmp/cl-sed001.tmp`
+    for Tmp_Lib in $Tmp_Wx_Libs
+    do
+        Wx_Libs=${Wx_Libs}" "${Tmp_Lib}*
+    done
+}
+
 ## main
 # checkCURL
+Wx_Libs=""
 CONFIGURE_PATH=`pwd`
 wx_config_tool="wx-config"
 

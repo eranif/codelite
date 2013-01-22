@@ -1183,7 +1183,7 @@ Show_Help_and_Exit()
 Get_Wx_Libs_To_Pack()
 {
     > /tmp/cl-sed001.tmp
-    libs=`./wx-config --libs all`
+    libs=`${wx_config_tool} --libs all`
     for lib_name in $libs
     do
     case "$lib_name" in

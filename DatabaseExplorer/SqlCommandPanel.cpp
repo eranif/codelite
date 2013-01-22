@@ -86,12 +86,17 @@ void SQLCommandPanel::ExecuteSql()
 	std::set<int> blobCols;
 	DatabaseLayerPtr m_pDbLayer = m_pDbAdapter->GetDatabaseLayer(m_dbName);
 	if (m_pDbLayer->IsOpen()) {
-		// test for empty string
-		if (this->m_scintillaSQL->GetText() != wxT("")) {
+		// test for empty command string
+		wxArrayString arrCmdLines = wxStringTokenize( m_scintillaSQL->GetText(), wxT("\n"), wxTOKEN_STRTOK );
+		int cmdLines = 0;
+		for( size_t i = 0; i < arrCmdLines.GetCount(); i++) {
+			if( ! arrCmdLines[i].Trim(false).StartsWith( wxT("--") ) ) cmdLines++;
+		}
+		if ( cmdLines > 0 ) {
 			try {
 				if (!m_pDbAdapter->GetUseDb(m_dbName).IsEmpty()) m_pDbLayer->RunQuery(m_pDbAdapter->GetUseDb(m_dbName));
 				// run query
-				DatabaseResultSet* pResultSet = m_pDbLayer->RunQueryWithResults(this->m_scintillaSQL->GetText());
+				DatabaseResultSet* pResultSet = m_pDbLayer->RunQueryWithResults(m_scintillaSQL->GetText());
 
 				// clear variables
 				if(m_gridTable->GetNumberCols()) {

@@ -39,6 +39,7 @@ class GitPlugin : public IPlugin
 
     enum {
         gitNone = 0,
+        gitUpdateRemotes,
         gitListAll,
         gitListModified,
         gitListRemotes,

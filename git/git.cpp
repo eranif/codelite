@@ -848,6 +848,11 @@ void GitPlugin::ProcessGitActionQueue()
         command << wxT(" --no-pager ls-files -m");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
+        
+    case gitUpdateRemotes:
+        GIT_MESSAGE1(wxT("Updating remotes"));
+        command << wxT(" --no-pager remote update");
+        break;
 
     case gitListRemotes:
         GIT_MESSAGE1(wxT("Listing remotes"));
@@ -1502,6 +1507,9 @@ void GitPlugin::AddDefaultActions()
     m_gitActionQueue.push(ga);
 
     ga.action = gitListModified;
+    m_gitActionQueue.push(ga);
+    
+    ga.action = gitUpdateRemotes;
     m_gitActionQueue.push(ga);
 
     ga.action = gitBranchList;

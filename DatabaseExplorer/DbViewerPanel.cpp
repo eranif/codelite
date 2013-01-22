@@ -326,19 +326,18 @@ void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 		Database* db = wxDynamicCast(item->GetData(),Database);
 		if (db) {
 			// menu.Append(XRCID("IDR_DBVIEWER_ADD_TABLE"),_("Add table"),_("Run SQL command for creating Table"));
-			menu.Append(XRCID("IDR_DBVIEWER_DROP_DATABASE"), _("Drop database"), _("Run SQL command for deleting Database"));
-			c++;
-			c++;
+			menu.Append(XRCID("IDR_DBVIEWER_SQL_DATABASE"), _("Open SQL panel"), _("Open SQL command panel for the database"));
 			menu.AppendSeparator();
-			menu.Append(XRCID("IDR_DBVIEWER_ERD_DB"), _("Create ERD from DB"),_("Create ERD diagram from database"));
-			menu.Append(XRCID("IDR_DBVIEWER_CLASS_DB"), _("Create classes from DB"), _("Create c++ classes for selected database"));
-			c++;
-			c++;
+			
+			menu.Append(XRCID("IDR_DBVIEWER_DROP_DATABASE"), _("Drop database"), _("Run SQL command for deleting Database"));
+
+			menu.AppendSeparator();
+			menu.Append(XRCID("IDR_DBVIEWER_ERD_DB"), _("Create ERD from DB"),_("Create ERD diagram from the database"));
+			menu.Append(XRCID("IDR_DBVIEWER_CLASS_DB"), _("Create classes from DB"), _("Create C++ classes for the database"));
+
 			menu.AppendSeparator();
 			menu.Append(XRCID("IDR_DBVIEWER_IMPORT_DATABASE"), _("Import database from file"), _("Run SQL commands stored in *.sql file"));
 			menu.Append(XRCID("IDR_DBVIEWER_EXPORT_DATABASE"), _("Export database to file"), _("Export database CREATE SQL statements into *.sql file"));
-			c++;
-			c++;
 
 			menu.AppendSeparator();
 			menu.Append(XRCID("IDR_DBVIEWER_DUMP_DATABASE"), _("Dump data to file"), _("Dump data from database into .sql file"));
@@ -348,12 +347,14 @@ void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 		}
 		DBETable* tab = wxDynamicCast(item->GetData(), DBETable);
 		if (tab) {
-			menu.Append(XRCID("IDR_DBVIEWER_DROP_TABLE"),_("Drop table"),_("Run SQL command for deleting Table"));
-			c++;
+			menu.Append(XRCID("IDR_DBVIEWER_SQL_TABLE"),_("Open SQL panel"),_("Open SQL command panel for the table"));
 			menu.AppendSeparator();
-			menu.Append(XRCID("IDR_DBVIEWER_ERD_TABLE"), _("Create ERD from Table"),_("Create ERD diagram from table"));
-			menu.Append(XRCID("IDR_DBVIEWER_CLASS_TABLE"), _("Create classes from Table"), _("Create c++ classes for selected table"));
-			c++;
+			
+			menu.Append(XRCID("IDR_DBVIEWER_DROP_TABLE"),_("Drop table"),_("Run SQL command for deleting Table"));
+			menu.AppendSeparator();
+			
+			menu.Append(XRCID("IDR_DBVIEWER_ERD_TABLE"), _("Create ERD from Table"),_("Create ERD diagram from the table"));
+			menu.Append(XRCID("IDR_DBVIEWER_CLASS_TABLE"), _("Create classes from Table"), _("Create C++ classes for the table"));
 			c++;
 		}
 	}
@@ -516,6 +517,36 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 						//TODO:LANG:
 						wxMessageBox(_("Table dropped successfully"));
 						RefreshDbView();
+					}
+				}
+			}
+		} else if (evt.GetId() == XRCID("IDR_DBVIEWER_SQL_TABLE")) {
+			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
+			if (data) {
+				DBETable* pTab = (DBETable*) wxDynamicCast(data->GetData(),DBETable);
+				if (pTab) {
+#ifdef __WXMSW__
+					clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
+#endif
+					wxString pagename = CreatePanelName(pTab, DbViewerPanel::Sql);
+					if(!DoSelectPage(pagename)) {
+						SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook, pTab->GetDbAdapter()->Clone(), pTab->GetParentName(), pTab->GetName());
+						AddEditorPage(sqlpage, pagename);
+					}
+				}
+			}
+		} else if (evt.GetId() == XRCID("IDR_DBVIEWER_SQL_DATABASE")) {
+			DbItem* data = (DbItem*) m_treeDatabases->GetItemData(m_selectedID);
+			if (data) {
+				Database* pDb = (Database*) wxDynamicCast(data->GetData(),Database);
+				if (pDb) {
+					wxString pagename = CreatePanelName(pDb, DbViewerPanel::Sql);
+					if(!DoSelectPage(pagename)) {
+						SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook, pDb->GetDbAdapter()->Clone(), pDb->GetName(), wxT(""));
+#ifndef __WXMSW__
+						sqlpage->Show();
+#endif
+						AddEditorPage(sqlpage, pagename);
 					}
 				}
 			}

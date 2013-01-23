@@ -8,6 +8,10 @@
   <VirtualDirectory Name="src">
     <File Name="zoomnavigator.cpp"/>
     <File Name="zoomtext.cpp"/>
+    <File Name="znSettingsDlg.h"/>
+    <File Name="znSettingsDlg.cpp"/>
+    <File Name="zn_config_item.h"/>
+    <File Name="zn_config_item.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="zoomnavigator.h"/>
@@ -17,6 +21,17 @@
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="zoom_navigator.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="zoom_navigator_zoomnavigator_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="zoom_navigator.h"/>
+      <File Name="zoom_navigator.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -153,7 +168,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/ZoomNavigator.so" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/ZoomNavigator.dll" IntermediateDirectory="./WinDebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -238,5 +253,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

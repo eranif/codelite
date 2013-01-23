@@ -11,20 +11,40 @@
 #include "fileextmanager.h"
 #include "lexer_configuration.h"
 #include "editor_config.h"
+#include "zn_config_item.h"
+#include "cl_config.h"
+#include "znSettingsDlg.h"
+#include "event_notifier.h"
 
 ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
- : wxStyledTextCtrl( parent, id, pos, size, style, name )
-{ 
+    : wxStyledTextCtrl( parent, id, pos, size, style, name )
+    , m_enabeld(true)
+
+{
     SetZoom( -8 );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
     SetUseVerticalScrollBar( false );
-    MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor("#F0F8FF"), wxColor("#F0F8FF") );
     HideSelection( true );
+    
+    SetMarginWidth(1, 0);
+    SetMarginWidth(2, 0);
+    SetMarginWidth(3, 0);
+    
+    znConfigItem data;
+    clConfig conf("zoom-navigator.conf");
+    if ( conf.ReadItem( &data ) ) {
+        m_enabeld = data.IsEnabled();
+    }
+    MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor(data.GetHighlightColour()), wxColor(data.GetHighlightColour()) );
+    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
 }
 
 void ZoomText::UpdateLexer(const wxString& filename)
 {
+    if ( !m_enabeld )
+        return;
+    
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     switch ( type ) {
     case FileExtManager::TypeHeader:
@@ -42,11 +62,36 @@ void ZoomText::UpdateLexer(const wxString& filename)
         break;
     }
     }
-    
+
     SetZoom( -8 );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
     SetUseVerticalScrollBar( false );
-    MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor("#F0F8FF"), wxColor("#F0F8FF") );
     HideSelection( true );
+}
+
+void ZoomText::OnSettingsChanged(wxCommandEvent &e)
+{
+    e.Skip();
+    znConfigItem data;
+    clConfig conf("zoom-navigator.conf");
+    if ( conf.ReadItem( &data ) ) {
+        MarkerSetBackground(1, wxColour(data.GetHighlightColour()));
+        Colourise(0, wxSTC_INVALID_POSITION);
+    }
+}
+
+void ZoomText::UpdateText(IEditor* editor)
+{
+    if ( !editor || !m_enabeld ) {
+        SetReadOnly( false );
+        SetText( "" );
+        SetReadOnly( true );
+
+    } else {
+        SetReadOnly( false );
+        SetText( editor->GetEditorText() );
+        SetReadOnly( true );
+        SetCurrentPos( editor->GetCurrentPosition() );
+    }
 }

@@ -9,14 +9,18 @@
 #define ZOOM_NAV_TEXT
 
 #include <wx/stc/stc.h>
+#include "ieditor.h"
 
 class ZoomText : public wxStyledTextCtrl {
+    bool m_enabeld;
 public:
     ZoomText(wxWindow *parent, wxWindowID id=wxID_ANY,
                      const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize, long style = 0,
                      const wxString& name = wxSTCNameStr);
     void UpdateLexer(const wxString &filename);
+    void OnSettingsChanged(wxCommandEvent &e);
+    void UpdateText(IEditor* editort);
 };
 
 #endif // ZOOM_NAV_TEXT

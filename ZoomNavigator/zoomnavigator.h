@@ -26,7 +26,9 @@ class ZoomNavigator : public IPlugin
     IEditor*         m_editor;
     int              m_markerFirstLine;
     int              m_markerLastLine;
-
+    bool             m_enabled;
+    clConfig         *m_config;
+    
 protected:
     void DoInitialize();
     bool IsZoomPaneDetached();
@@ -54,6 +56,8 @@ public:
     void OnEditorClosing(wxCommandEvent &e);
     void OnAllEditorsClosing(wxCommandEvent &e);
     void OnPreviewClicked(wxMouseEvent &e);
+    void OnSettings(wxCommandEvent &e);
+    void OnSettingsChanged(wxCommandEvent &e);
     
 };
 

@@ -672,6 +672,7 @@ wxArrayString Notebook::GetPagesTextInOrder() const
 
 void Notebook::OnEndDrag(wxAuiNotebookEvent& event)
 {
+    event.Skip();
     wxPostEvent(wxTheApp, event); // The Workspace View 'Tabs' pane grabs it from wxTheApp
 }
 

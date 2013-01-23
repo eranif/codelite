@@ -19,7 +19,7 @@ ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
     SetUseVerticalScrollBar( false );
-    MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor(wxT("LIGHT GREEN")), wxColor(wxT("LIGHT GREEN")) );
+    MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor("#F0F8FF"), wxColor("#F0F8FF") );
     HideSelection( true );
 }
 
@@ -42,4 +42,11 @@ void ZoomText::UpdateLexer(const wxString& filename)
         break;
     }
     }
+    
+    SetZoom( -8 );
+    SetEditable( false );
+    SetUseHorizontalScrollBar( false );
+    SetUseVerticalScrollBar( false );
+    MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor("#F0F8FF"), wxColor("#F0F8FF") );
+    HideSelection( true );
 }

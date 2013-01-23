@@ -58,6 +58,7 @@ public:
     void OnPreviewClicked(wxMouseEvent &e);
     void OnSettings(wxCommandEvent &e);
     void OnSettingsChanged(wxCommandEvent &e);
+    void OnFileSaved(wxCommandEvent& e);
     
 };
 

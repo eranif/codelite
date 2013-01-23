@@ -15,6 +15,7 @@
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
 #include <wx/msgdlg.h>
+#include <wx/wupdlock.h>
 
 static ZoomNavigator* thePlugin = NULL;
 
@@ -67,6 +68,7 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING,        wxCommandEventHandler(ZoomNavigator::OnEditorClosing), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING,   wxCommandEventHandler(ZoomNavigator::OnAllEditorsClosing), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED,   wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
     
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     DoInitialize();
@@ -153,7 +155,8 @@ void ZoomNavigator::DoUpdate()
     if ( !stc ) {
         return;
     }
-
+    
+    wxWindowUpdateLocker locker(stc);
     int first = stc->GetFirstVisibleLine();
     int last = stc->LinesOnScreen()+first;
 
@@ -277,18 +280,18 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
     int last  = nLinesOnScreen + first;
 
     PatchUpHighlights( first, last );
-    m_editor->GetSTC()->GotoLine( first );
-    m_editor->GetSTC()->EnsureVisible( first );
-
+    m_editor->GetSTC()->SetFirstVisibleLine( first );
+    m_editor->SetCaretAt( m_editor->PosFromLine( first + (nLinesOnScreen / 2) ) ) ;
     // if the last marker line goes out of the preview pane
     // center the marker on screen
-    int previewFirstLine = m_text->GetFirstVisibleLine();
-    if ( last > (previewFirstLine + m_text->LinesOnScreen()) ) {
-        SetZoomTextScrollPosToMiddle( m_editor->GetSTC() );
-
-    } else if ( (first - previewFirstLine) < 10 ) {
-        SetZoomTextScrollPosToMiddle( m_editor->GetSTC() );
-    }
+    //int previewFirstLine = m_text->GetFirstVisibleLine();
+    //if ( last > (previewFirstLine + m_text->LinesOnScreen()) ) {
+    //    // make the last line visible
+    //    SetZoomTextScrollPosToMiddle( m_editor->GetSTC() );
+    //
+    //} else if ( (first - previewFirstLine) < 4 ) {
+    //    SetZoomTextScrollPosToMiddle( m_editor->GetSTC() );
+    //}
 
     // reset the from/last members to avoid unwanted movements in the 'OnTimer' function
     m_markerFirstLine = m_editor->GetSTC()->GetFirstVisibleLine();
@@ -333,4 +336,9 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
             
         }
     }
+}
+
+void ZoomNavigator::OnFileSaved(wxCommandEvent& e)
+{
+    e.Skip();
 }

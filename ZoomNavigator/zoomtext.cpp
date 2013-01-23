@@ -16,21 +16,26 @@
 #include "znSettingsDlg.h"
 #include "event_notifier.h"
 
+BEGIN_EVENT_TABLE(ZoomText, wxStyledTextCtrl)
+    EVT_ENTER_WINDOW(ZoomText::OnEnterWindow)
+    EVT_LEAVE_WINDOW(ZoomText::OnLeaveWindow)
+END_EVENT_TABLE()
+
 ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-    : wxStyledTextCtrl( parent, id, pos, size, style, name )
+    : wxStyledTextCtrl( parent, id, pos, size, style |wxNO_BORDER, name )
     , m_enabeld(true)
 
 {
-    SetZoom( -8 );
+    SetZoom( -10 );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
-    SetUseVerticalScrollBar( false );
+    SetUseVerticalScrollBar( true );
     HideSelection( true );
-    
+
     SetMarginWidth(1, 0);
     SetMarginWidth(2, 0);
     SetMarginWidth(3, 0);
-    
+
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
     if ( conf.ReadItem( &data ) ) {
@@ -44,7 +49,7 @@ void ZoomText::UpdateLexer(const wxString& filename)
 {
     if ( !m_enabeld )
         return;
-    
+
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     switch ( type ) {
     case FileExtManager::TypeHeader:
@@ -66,7 +71,7 @@ void ZoomText::UpdateLexer(const wxString& filename)
     SetZoom( -8 );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
-    SetUseVerticalScrollBar( false );
+    SetUseVerticalScrollBar( true );
     HideSelection( true );
 }
 
@@ -94,4 +99,14 @@ void ZoomText::UpdateText(IEditor* editor)
         SetReadOnly( true );
         SetCurrentPos( editor->GetCurrentPosition() );
     }
+}
+
+void ZoomText::OnEnterWindow(wxMouseEvent& e)
+{
+    e.Skip();
+}
+
+void ZoomText::OnLeaveWindow(wxMouseEvent& e)
+{
+    e.Skip();
 }

@@ -21,6 +21,10 @@ public:
     void UpdateLexer(const wxString &filename);
     void OnSettingsChanged(wxCommandEvent &e);
     void UpdateText(IEditor* editort);
+    
+    DECLARE_EVENT_TABLE()
+    void OnEnterWindow(wxMouseEvent &e);
+    void OnLeaveWindow(wxMouseEvent &e);
 };
 
 #endif // ZOOM_NAV_TEXT

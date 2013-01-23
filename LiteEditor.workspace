@@ -36,70 +36,71 @@
   <Environment/>
   <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
   <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
+  <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
-      <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
-      <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CppChecker" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
-      <Project Name="DatabaseExplorer" ConfigName="WinReleaseUnicode"/>
-      <Project Name="databaselayer_sqlite" ConfigName="WinReleaseUnicode"/>
-      <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
-      <Project Name="ExternalTools" ConfigName="WinReleaseUnicode"/>
-      <Project Name="git" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
-      <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
-      <Project Name="PCH" ConfigName="Release"/>
-      <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
-      <Project Name="QMakePlugin" ConfigName="WinReleaseUnicode"/>
-      <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="Subversion2" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
-      <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+      <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
+      <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Subversion2" ConfigName="WinReleaseUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
+      <Project Name="QMakePlugin" ConfigName="WinReleaseUnicode"/>
+      <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
+      <Project Name="PCH" ConfigName="Release"/>
+      <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
+      <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
+      <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
+      <Project Name="git" ConfigName="WinReleaseUnicode"/>
+      <Project Name="ExternalTools" ConfigName="WinReleaseUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
+      <Project Name="databaselayer_sqlite" ConfigName="WinReleaseUnicode"/>
+      <Project Name="DatabaseExplorer" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CppChecker" ConfigName="WinReleaseUnicode"/>
+      <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
+      <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
+      <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
-      <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
-      <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
-      <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
-      <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
-      <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
-      <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
-      <Project Name="DatabaseExplorer" ConfigName="WinDebugUnicode"/>
-      <Project Name="databaselayer_sqlite" ConfigName="WinDebugUnicode"/>
-      <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
-      <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
-      <Project Name="git" ConfigName="WinDebugUnicode"/>
-      <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
-      <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
-      <Project Name="PCH" ConfigName="Debug"/>
-      <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
-      <Project Name="QMakePlugin" ConfigName="WinDebugUnicode"/>
-      <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="Subversion2" ConfigName="WinDebugUnicode"/>
-      <Project Name="Outline" ConfigName="WinDebugUnicode"/>
-      <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
-      <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
-      <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
+      <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
+      <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
+      <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
+      <Project Name="Subversion2" ConfigName="WinDebugUnicode"/>
+      <Project Name="sqlite3" ConfigName="Common"/>
+      <Project Name="snipwiz" ConfigName="WinDebugUnicode"/>
+      <Project Name="QMakePlugin" ConfigName="WinDebugUnicode"/>
+      <Project Name="plugin_sdk" ConfigName="WinDebugUnicode"/>
+      <Project Name="PCH" ConfigName="Debug"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
+      <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
+      <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
+      <Project Name="Interfaces" ConfigName="Common"/>
+      <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
+      <Project Name="git" ConfigName="WinDebugUnicode"/>
+      <Project Name="ExternalTools" ConfigName="WinDebugUnicode"/>
+      <Project Name="DebuggerGDB" ConfigName="WinDebugUnicode"/>
+      <Project Name="databaselayer_sqlite" ConfigName="WinDebugUnicode"/>
+      <Project Name="DatabaseExplorer" ConfigName="WinDebugUnicode"/>
+      <Project Name="Cscope" ConfigName="WinDebugUnicode"/>
+      <Project Name="CppChecker" ConfigName="WinDebugUnicode"/>
+      <Project Name="Copyright" ConfigName="WinDebugUnicode"/>
+      <Project Name="ContinuousBuild" ConfigName="WinDebugUnicode"/>
+      <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
+      <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
+      <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
+      <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxshapeframework" ConfigName="DebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
@@ -129,8 +130,9 @@
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
+      <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="no">
+    <WorkspaceConfiguration Name="Mac_Custom_Makefile" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="wxFormBuilder" ConfigName="WinDebugUnicode"/>
       <Project Name="UnitTestPP" ConfigName="WinDebugUnicode"/>
@@ -160,6 +162,7 @@
       <Project Name="PCH" ConfigName="Debug"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
+      <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_wxWidgets_29" Selected="yes">
       <Project Name="wxsqlite3" ConfigName="Win_wxWidgets_29"/>
@@ -191,6 +194,7 @@
       <Project Name="PCH" ConfigName="Debug"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
       <Project Name="Outline" ConfigName="Win_wxWidgets_29"/>
+      <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

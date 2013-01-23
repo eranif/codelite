@@ -68,7 +68,7 @@ void ZoomText::UpdateLexer(const wxString& filename)
     }
     }
 
-    SetZoom( -8 );
+    SetZoom( -10 );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
     SetUseVerticalScrollBar( true );

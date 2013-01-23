@@ -1509,8 +1509,8 @@ void GitPlugin::AddDefaultActions()
     ga.action = gitListModified;
     m_gitActionQueue.push(ga);
     
-    ga.action = gitUpdateRemotes;
-    m_gitActionQueue.push(ga);
+    //ga.action = gitUpdateRemotes;
+    //m_gitActionQueue.push(ga);
 
     ga.action = gitBranchList;
     m_gitActionQueue.push(ga);

@@ -117,6 +117,7 @@ void ZoomNavigator::DoInitialize()
 
     m_text = new ZoomText( zoompane );
     m_text->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(ZoomNavigator::OnPreviewClicked), NULL, this);
+    m_text->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(ZoomNavigator::OnPreviewClicked), NULL, this);
     m_text->SetCursor(wxCURSOR_POINT_LEFT);
 
     wxBoxSizer* bs = new wxBoxSizer( wxVERTICAL );
@@ -268,9 +269,12 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
         return;
     }
     int first = m_text->LineFromPosition( pos );
-
+    int nLinesOnScreen = m_editor->GetSTC()->LinesOnScreen();
+    first -= (nLinesOnScreen/2);
+    if ( first < 0 ) first = 0;
+    
     // however, the last line is set according to the actual editor
-    int last  = m_editor->GetSTC()->LinesOnScreen() + first;
+    int last  = nLinesOnScreen + first;
 
     PatchUpHighlights( first, last );
     m_editor->GetSTC()->GotoLine( first );

@@ -123,7 +123,11 @@ void ZoomNavigator::DoInitialize()
 
     wxBoxSizer* bs = new wxBoxSizer( wxVERTICAL );
     bs->Add( m_text, 1, wxEXPAND, 0 );
-
+    wxCheckBox* cbEnablePlugin = new wxCheckBox(zoompane, wxID_ANY, _("Enable plugin"));
+    cbEnablePlugin->SetValue( data.IsEnabled() );
+    bs->Add( cbEnablePlugin, 0, wxEXPAND);
+    
+    cbEnablePlugin->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ZoomNavigator::OnEnablePlugin), NULL, this);
     zoompane->SetSizer( bs );
 }
 
@@ -146,7 +150,6 @@ void ZoomNavigator::DoUpdate()
     wxStyledTextCtrl* stc = m_editor->GetSTC();
     CHECK_CONDITION( stc );
     
-    wxWindowUpdateLocker locker(stc);
     int first = stc->GetFirstVisibleLine();
     int last = stc->LinesOnScreen()+first;
 
@@ -230,14 +233,13 @@ void ZoomNavigator::OnEditorChanged(wxCommandEvent& e)
         DoSetEditor( reinterpret_cast<IEditor*>( e.GetClientData() ) );
         if ( m_editor ) {
             m_text->UpdateLexer( m_editor->GetFileName().GetFullName() );
-            m_editor->GetSTC()->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(ZoomNavigator::OnEditorScrolled), NULL, this);
         }
-        
+        SetEditorText( m_editor );
+
     } else {
         DoSetEditor(NULL);
+        SetEditorText( NULL );
     }
-    
-    SetEditorText( m_editor );
     DoUpdate();
 }
 
@@ -350,9 +352,28 @@ void ZoomNavigator::OnEditorScrolled(wxStyledTextEvent& e)
 
 void ZoomNavigator::DoSetEditor(IEditor* editor)
 {
+    if ( m_editor && editor != m_editor) {
+        // changing editor
+        m_editor->GetSTC()->Disconnect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(ZoomNavigator::OnEditorScrolled), NULL, this);
+    }
+
     m_editor = editor;
     m_lastLine = wxNOT_FOUND;
     if ( m_editor ) {
         m_lastLine = m_editor->GetSTC()->GetFirstVisibleLine();
+        m_editor->GetSTC()->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(ZoomNavigator::OnEditorScrolled), NULL, this);
     }
+}
+
+void ZoomNavigator::OnEnablePlugin(wxCommandEvent& e)
+{
+    znConfigItem data;
+    m_config->Reload();
+    m_config->ReadItem( &data );
+    data.SetEnabled( e.IsChecked() );
+    m_config->WriteItem( &data );
+    
+    // Notify about the settings changed
+    wxCommandEvent evt(wxEVT_ZN_SETTINGS_UPDATED);
+    EventNotifier::Get()->AddPendingEvent( evt );
 }

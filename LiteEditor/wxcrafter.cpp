@@ -514,7 +514,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer195->Add(gridSizer235, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_cmdLnkBtnWorkspaces = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"), wxDefaultPosition, wxSize(250,100), 0);
+    m_cmdLnkBtnWorkspaces = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"), wxDefaultPosition, wxSize(-1,100), 0);
     
     gridSizer235->Add(m_cmdLnkBtnWorkspaces, 0, wxALL|wxEXPAND, 5);
     

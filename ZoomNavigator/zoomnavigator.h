@@ -63,6 +63,7 @@ public:
     void OnFileSaved(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnEditorScrolled(wxStyledTextEvent &e);
+    void OnEnablePlugin(wxCommandEvent &e);
 };
 
 #endif //ZoomNavigator

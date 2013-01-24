@@ -18,6 +18,7 @@
 #include <wx/wupdlock.h>
 
 static ZoomNavigator* thePlugin = NULL;
+#define CHECK_CONDITION( cond ) if ( !cond ) return;
 
 const char* ZOOM_PANE_TITLE = "Zoom Navigator";
 
@@ -64,11 +65,12 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     m_longName = wxT("Zoom Navigator");
     m_shortName = wxT("ZoomNavigator");
     m_topWindow = m_mgr->GetTheApp();
-    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ZoomNavigator::OnEditorChanged), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING,        wxCommandEventHandler(ZoomNavigator::OnEditorClosing), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING,   wxCommandEventHandler(ZoomNavigator::OnAllEditorsClosing), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED,   wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ZoomNavigator::OnEditorChanged),    NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_PAGE_CHANGED,      wxCommandEventHandler(ZoomNavigator::OnEditorChanged),    NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED,   wxCommandEventHandler(ZoomNavigator::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED,   wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),  NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ZoomNavigator::OnFileSaved),        NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(ZoomNavigator::OnWorkspaceClosed),  NULL, this);
     
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     DoInitialize();
@@ -140,21 +142,14 @@ bool ZoomNavigator::IsZoomPaneDetached()
 
 void ZoomNavigator::DoUpdate()
 {
-    // sanity
-    if ( !m_enabled )
-        return;
-
-    if ( m_mgr->IsShutdownInProgress() ) {
-        return;
-    }
-
-    if ( !m_editor )
-        return;
+    // sanity tests
+    CHECK_CONDITION( m_enabled );
+    CHECK_CONDITION( !m_mgr->IsShutdownInProgress() );
+    CHECK_CONDITION( m_editor );
+    CHECK_CONDITION( (m_editor == m_mgr->GetActiveEditor()) );
 
     wxStyledTextCtrl* stc = m_editor->GetSTC();
-    if ( !stc ) {
-        return;
-    }
+    CHECK_CONDITION( stc );
     
     wxWindowUpdateLocker locker(stc);
     int first = stc->GetFirstVisibleLine();
@@ -210,9 +205,12 @@ void ZoomNavigator::UnHookPopupMenu(wxMenu *menu, MenuType type)
 void ZoomNavigator::UnPlug()
 {
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(ZoomNavigator::OnEditorChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING,        wxCommandEventHandler(ZoomNavigator::OnEditorClosing), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING,   wxCommandEventHandler(ZoomNavigator::OnAllEditorsClosing), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_PAGE_CHANGED,      wxCommandEventHandler(ZoomNavigator::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED,   wxCommandEventHandler(ZoomNavigator::OnAllEditorsClosing), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED,   wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(ZoomNavigator::OnWorkspaceClosed), NULL, this);
+    
     Disconnect(m_timer->GetId(), wxEVT_TIMER, wxTimerEventHandler(ZoomNavigator::OnTimer), NULL, this);
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     
@@ -236,13 +234,13 @@ void ZoomNavigator::OnTimer(wxTimerEvent& e)
 void ZoomNavigator::OnEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    if ( m_editor != e.GetClientData() ) {
-        DoCleanup();
-        // new editor
-        m_editor = reinterpret_cast<IEditor*>( e.GetClientData() );
+    DoCleanup();
+    
+    m_editor = reinterpret_cast<IEditor*>( e.GetClientData() );
+    if ( m_editor ) {
         m_text->UpdateLexer( m_editor->GetFileName().GetFullName() );
-        SetEditorText( m_editor );
     }
+    SetEditorText( m_editor );
     DoUpdate();
 }
 
@@ -341,4 +339,10 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
 void ZoomNavigator::OnFileSaved(wxCommandEvent& e)
 {
     e.Skip();
+}
+
+void ZoomNavigator::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    DoCleanup();
 }

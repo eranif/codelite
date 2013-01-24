@@ -2,6 +2,8 @@
 
 znConfigItem::znConfigItem()
     : clConfigItem("ZoomNavigator")
+    , m_highlightColour("LIGHT GREY")
+    , m_enabled(true)
 {
 }
 

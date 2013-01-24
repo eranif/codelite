@@ -38,6 +38,11 @@ ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
     SetZoom( m_zoomFactor );
     EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
     MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour );
+    
+    SetTwoPhaseDraw(false);
+    SetBufferedDraw(false);
+    SetLayoutCache(wxSTC_CACHE_DOCUMENT);
+    
 #ifdef __WXMSW__    
     MarkerSetAlpha(1, 50);
 #endif    

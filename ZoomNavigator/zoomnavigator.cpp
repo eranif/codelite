@@ -54,7 +54,7 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     , m_text( NULL )
     , m_markerFirstLine(wxNOT_FOUND)
     , m_markerLastLine(wxNOT_FOUND)
-    , m_enabled(true)
+    , m_enabled(false)
     , m_lastLine(wxNOT_FOUND)
     , m_startupCompleted(false)
 {
@@ -65,6 +65,7 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     
     m_topWindow->Connect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     DoInitialize();
@@ -78,6 +79,7 @@ void ZoomNavigator::UnPlug()
 {
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
     
     m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
@@ -167,16 +169,7 @@ void ZoomNavigator::DoUpdate()
     wxStyledTextCtrl* stc = curEditor->GetSTC();
     CHECK_CONDITION( stc );
     
-    if ( curEditor->GetFileName().GetFullPath() == m_curfile ) {
-        // same file, check if the editor is modified
-        if ( curEditor->IsModified() ) {
-            wxString editorContent = stc->GetText();
-            wxString curText       = m_text->GetText();
-            if ( curText != editorContent ) {
-                SetEditorText( curEditor );
-            }
-        }
-    } else {
+    if ( curEditor->GetFileName().GetFullPath() != m_curfile ) {
         SetEditorText( curEditor );
     }
     
@@ -297,6 +290,15 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
 void ZoomNavigator::OnFileSaved(wxCommandEvent& e)
 {
     e.Skip();
+    wxString *filename = (wxString *)e.GetClientData();
+    if ( filename ) {
+        if ( *filename == m_curfile ) {
+            // Update the file content
+            m_curfile.Clear();
+            DoUpdate();
+        }
+    }
+    
 }
 
 void ZoomNavigator::OnWorkspaceClosed(wxCommandEvent& e)

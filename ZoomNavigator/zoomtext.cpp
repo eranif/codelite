@@ -23,10 +23,7 @@ END_EVENT_TABLE()
 
 ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxStyledTextCtrl( parent, id, pos, size, style |wxNO_BORDER, name )
-    , m_enabeld(true)
-
 {
-    SetZoom( -10 );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
     SetUseVerticalScrollBar( true );
@@ -38,18 +35,16 @@ ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
 
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    if ( conf.ReadItem( &data ) ) {
-        m_enabeld = data.IsEnabled();
-    }
+    conf.ReadItem( &data );
+    
+    m_zoomFactor = data.GetZoomFactor();
+    SetZoom( m_zoomFactor );
     MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor(data.GetHighlightColour()), wxColor(data.GetHighlightColour()) );
     EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
 }
 
 void ZoomText::UpdateLexer(const wxString& filename)
 {
-    if ( !m_enabeld )
-        return;
-
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     switch ( type ) {
     case FileExtManager::TypeHeader:
@@ -68,7 +63,7 @@ void ZoomText::UpdateLexer(const wxString& filename)
     }
     }
 
-    SetZoom( -10 );
+    SetZoom( m_zoomFactor );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );
     SetUseVerticalScrollBar( true );
@@ -81,6 +76,8 @@ void ZoomText::OnSettingsChanged(wxCommandEvent &e)
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
     if ( conf.ReadItem( &data ) ) {
+        m_zoomFactor = data.GetZoomFactor();
+        SetZoom(m_zoomFactor);
         MarkerSetBackground(1, wxColour(data.GetHighlightColour()));
         Colourise(0, wxSTC_INVALID_POSITION);
     }
@@ -88,7 +85,7 @@ void ZoomText::OnSettingsChanged(wxCommandEvent &e)
 
 void ZoomText::UpdateText(IEditor* editor)
 {
-    if ( !editor || !m_enabeld ) {
+    if ( !editor ) {
         SetReadOnly( false );
         SetText( "" );
         SetReadOnly( true );

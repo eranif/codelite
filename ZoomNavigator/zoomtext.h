@@ -12,7 +12,8 @@
 #include "ieditor.h"
 
 class ZoomText : public wxStyledTextCtrl {
-    bool m_enabeld;
+    int m_zoomFactor;
+    
 public:
     ZoomText(wxWindow *parent, wxWindowID id=wxID_ANY,
                      const wxPoint& pos = wxDefaultPosition,

@@ -45,6 +45,17 @@ znSettingsDlgBase::znSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     
     flexGridSizer12->Add(m_colourPickerHighlightColour, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText22 = new wxStaticText(this, wxID_ANY, _("Zoom factor:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText22->SetToolTip(_("Sets the preview pane zoom factor.\nValid values should be in the range of -10 and 20"));
+    
+    flexGridSizer12->Add(m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_spinCtrlZoomFactor = new wxSpinCtrl(this, wxID_ANY, wxT("-10"), wxDefaultPosition, wxSize(-1,-1), wxSP_ARROW_KEYS);
+    m_spinCtrlZoomFactor->SetToolTip(_("Sets the preview pane zoom factor.\nValid values should be in the range of -10 and 20"));
+    m_spinCtrlZoomFactor->SetRange(-10, 20);
+    
+    flexGridSizer12->Add(m_spinCtrlZoomFactor, 0, wxALL|wxEXPAND, 5);
+    
     boxSizer2->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);

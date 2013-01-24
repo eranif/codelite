@@ -236,9 +236,14 @@ void ZoomNavigator::OnEditorChanged(wxCommandEvent& e)
     e.Skip();
     DoCleanup();
     
-    m_editor = reinterpret_cast<IEditor*>( e.GetClientData() );
-    if ( m_editor ) {
-        m_text->UpdateLexer( m_editor->GetFileName().GetFullName() );
+    if ( m_enabled ) {
+        m_editor = reinterpret_cast<IEditor*>( e.GetClientData() );
+        if ( m_editor ) {
+            m_text->UpdateLexer( m_editor->GetFileName().GetFullName() );
+        }
+        
+    } else {
+        m_editor = NULL;
     }
     SetEditorText( m_editor );
     DoUpdate();
@@ -261,9 +266,9 @@ void ZoomNavigator::OnAllEditorsClosing(wxCommandEvent& e)
 void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 {
     // user clicked on the preview
-    if ( !m_editor )
-        return;
-
+    CHECK_CONDITION(m_editor);
+    CHECK_CONDITION(m_enabled);
+    
     // the first line is taken from the preview
     int pos = m_text->PositionFromPoint(e.GetPosition());
     if ( pos == wxSTC_INVALID_POSITION ) {
@@ -280,16 +285,6 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
     PatchUpHighlights( first, last );
     m_editor->GetSTC()->SetFirstVisibleLine( first );
     m_editor->SetCaretAt( m_editor->PosFromLine( first + (nLinesOnScreen / 2) ) ) ;
-    // if the last marker line goes out of the preview pane
-    // center the marker on screen
-    //int previewFirstLine = m_text->GetFirstVisibleLine();
-    //if ( last > (previewFirstLine + m_text->LinesOnScreen()) ) {
-    //    // make the last line visible
-    //    SetZoomTextScrollPosToMiddle( m_editor->GetSTC() );
-    //
-    //} else if ( (first - previewFirstLine) < 4 ) {
-    //    SetZoomTextScrollPosToMiddle( m_editor->GetSTC() );
-    //}
 
     // reset the from/last members to avoid unwanted movements in the 'OnTimer' function
     m_markerFirstLine = m_editor->GetSTC()->GetFirstVisibleLine();

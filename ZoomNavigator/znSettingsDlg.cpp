@@ -15,7 +15,7 @@ znSettingsDlg::znSettingsDlg(wxWindow* parent)
         m_checkBoxEnableZN->SetValue(data.IsEnabled());
         m_colourPickerHighlightColour->SetColour( wxColour( data.GetHighlightColour() ));
     }
-
+    m_spinCtrlZoomFactor->SetValue(data.GetZoomFactor());
     WindowAttrManager::Load(this, "znSettingsDlg", NULL);
 }
 
@@ -30,6 +30,8 @@ void znSettingsDlg::OnOK(wxCommandEvent& event)
     clConfig conf("zoom-navigator.conf");
     data.SetEnabled( m_checkBoxEnableZN->IsChecked() );
     data.SetHighlightColour( m_colourPickerHighlightColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX) );
+    
+    data.SetZoomFactor( m_spinCtrlZoomFactor->GetValue() );
     conf.WriteItem( &data );
     
     // notify thet the settings were changed

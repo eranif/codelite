@@ -7,6 +7,7 @@ class znConfigItem : public clConfigItem
 {
     wxString m_highlightColour;
     bool     m_enabled;
+    int      m_zoomFactor;
 
 public:
     znConfigItem();
@@ -15,7 +16,7 @@ public:
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
-    
+
     void SetEnabled(bool enabled) {
         this->m_enabled = enabled;
     }
@@ -27,6 +28,12 @@ public:
     }
     const wxString& GetHighlightColour() const {
         return m_highlightColour;
+    }
+    void SetZoomFactor(int zoomFactor) {
+        this->m_zoomFactor = zoomFactor;
+    }
+    int GetZoomFactor() const {
+        return m_zoomFactor;
     }
 };
 

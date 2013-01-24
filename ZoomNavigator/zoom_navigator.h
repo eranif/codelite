@@ -14,6 +14,7 @@
 #include <wx/checkbox.h>
 #include <wx/stattext.h>
 #include <wx/clrpicker.h>
+#include <wx/spinctrl.h>
 #include <wx/button.h>
 
 class znSettingsDlgBase : public wxDialog
@@ -22,6 +23,8 @@ protected:
     wxCheckBox* m_checkBoxEnableZN;
     wxStaticText* m_staticText14;
     wxColourPickerCtrl* m_colourPickerHighlightColour;
+    wxStaticText* m_staticText22;
+    wxSpinCtrl* m_spinCtrlZoomFactor;
     wxButton* m_button6;
     wxButton* m_button8;
 

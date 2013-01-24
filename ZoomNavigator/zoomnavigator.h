@@ -28,6 +28,7 @@ class ZoomNavigator : public IPlugin
     bool             m_enabled;
     clConfig         *m_config;
     int              m_lastLine;
+    bool             m_startupCompleted;
     
 protected:
     void DoInitialize();
@@ -64,6 +65,7 @@ public:
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnEditorScrolled(wxStyledTextEvent &e);
     void OnEnablePlugin(wxCommandEvent &e);
+    void OnInitDone(wxCommandEvent &e);
 };
 
 #endif //ZoomNavigator

@@ -57,6 +57,7 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     , m_markerLastLine(wxNOT_FOUND)
     , m_enabled(true)
     , m_lastLine(wxNOT_FOUND)
+    , m_startupCompleted(false)
 {
     m_config = new clConfig("zoom-navigator.conf");
     m_longName = wxT("Zoom Navigator");
@@ -68,7 +69,7 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED,   wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),  NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ZoomNavigator::OnFileSaved),        NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(ZoomNavigator::OnWorkspaceClosed),  NULL, this);
-    
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE,             wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
     m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     DoInitialize();
 }
@@ -208,6 +209,8 @@ void ZoomNavigator::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED,   wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(ZoomNavigator::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE,             wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
+    
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     
     // Remove the tab if it's actually docked in the workspace pane
@@ -227,6 +230,8 @@ void ZoomNavigator::OnTimer(wxTimerEvent& e)
 void ZoomNavigator::OnEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
+    CHECK_CONDITION(m_startupCompleted);
+    
     DoCleanup();
     
     if ( m_enabled ) {
@@ -246,6 +251,7 @@ void ZoomNavigator::OnEditorChanged(wxCommandEvent& e)
 void ZoomNavigator::OnEditorClosing(wxCommandEvent& e)
 {
     e.Skip();
+    CHECK_CONDITION(m_startupCompleted);
     if ( e.GetClientData() == m_editor && m_editor ) {
         DoCleanup();
     }
@@ -254,12 +260,14 @@ void ZoomNavigator::OnEditorClosing(wxCommandEvent& e)
 void ZoomNavigator::OnAllEditorsClosing(wxCommandEvent& e)
 {
     e.Skip();
+    CHECK_CONDITION(m_startupCompleted);
     DoCleanup();
 }
 
 void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 {
     // user clicked on the preview
+    CHECK_CONDITION(m_startupCompleted);
     CHECK_CONDITION(m_editor);
     CHECK_CONDITION(m_enabled);
     
@@ -376,4 +384,10 @@ void ZoomNavigator::OnEnablePlugin(wxCommandEvent& e)
     // Notify about the settings changed
     wxCommandEvent evt(wxEVT_ZN_SETTINGS_UPDATED);
     EventNotifier::Get()->AddPendingEvent( evt );
+}
+
+void ZoomNavigator::OnInitDone(wxCommandEvent& e)
+{
+    e.Skip();
+    m_startupCompleted = true;
 }

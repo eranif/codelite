@@ -6,9 +6,9 @@
     <Option Name="FileSpec">*.cpp;*.c;*.cxx;*.cc;*.h;*.hpp</Option>
     <Option Name="ParseComments">yes</Option>
   </Ctags>
-  <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="Yes"/>
+  <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   <Project Name="plugin_sdk" Path="Plugin/plugin_sdk.project" Active="No"/>
-  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="No"/>
+  <Project Name="LiteEditor" Path="LiteEditor/LiteEditor.project" Active="Yes"/>
   <Project Name="sqlite3" Path="sqlite3/sqlite3.project"/>
   <Project Name="CodeLite" Path="CodeLite/CodeLite.project" Active="No"/>
   <Project Name="DebuggerGDB" Path="Debugger/DebuggerGDB.project" Active="No"/>

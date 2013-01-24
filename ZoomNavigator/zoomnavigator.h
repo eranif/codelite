@@ -22,12 +22,12 @@ class ZoomNavigator : public IPlugin
     wxPanel*         zoompane;
     wxEvtHandler*    m_topWindow;
     ZoomText*        m_text;
-    wxTimer*         m_timer;
     IEditor*         m_editor;
     int              m_markerFirstLine;
     int              m_markerLastLine;
     bool             m_enabled;
     clConfig         *m_config;
+    int              m_lastLine;
     
 protected:
     void DoInitialize();
@@ -37,6 +37,8 @@ protected:
     void SetZoomTextScrollPosToMiddle( wxStyledTextCtrl* stc );
     void DoUpdate();
     void DoCleanup();
+    void DoSetEditor( IEditor *editor );
+    
 public:
     ZoomNavigator(IManager *manager);
     ~ZoomNavigator();
@@ -60,8 +62,7 @@ public:
     void OnSettingsChanged(wxCommandEvent &e);
     void OnFileSaved(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent &e);
-    
-    
+    void OnEditorScrolled(wxStyledTextEvent &e);
 };
 
 #endif //ZoomNavigator

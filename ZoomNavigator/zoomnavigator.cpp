@@ -52,16 +52,13 @@ ZoomNavigator::ZoomNavigator(IManager *manager)
     , zoompane( NULL )
     , m_topWindow(NULL)
     , m_text( NULL )
-    , m_timer( NULL )
     , m_editor( NULL )
     , m_markerFirstLine(wxNOT_FOUND)
     , m_markerLastLine(wxNOT_FOUND)
     , m_enabled(true)
+    , m_lastLine(wxNOT_FOUND)
 {
     m_config = new clConfig("zoom-navigator.conf");
-    
-    m_timer = new wxTimer(this);
-    Connect(m_timer->GetId(), wxEVT_TIMER, wxTimerEventHandler(ZoomNavigator::OnTimer), NULL, this);
     m_longName = wxT("Zoom Navigator");
     m_shortName = wxT("ZoomNavigator");
     m_topWindow = m_mgr->GetTheApp();
@@ -128,8 +125,6 @@ void ZoomNavigator::DoInitialize()
     bs->Add( m_text, 1, wxEXPAND, 0 );
 
     zoompane->SetSizer( bs );
-
-    m_timer->Start( 300 ); // 1/4 of a second between scroll updates
 }
 
 bool ZoomNavigator::IsZoomPaneDetached()
@@ -210,13 +205,8 @@ void ZoomNavigator::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED,   wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,            wxCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,      wxCommandEventHandler(ZoomNavigator::OnWorkspaceClosed), NULL, this);
-    
-    Disconnect(m_timer->GetId(), wxEVT_TIMER, wxTimerEventHandler(ZoomNavigator::OnTimer), NULL, this);
     m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     
-    m_timer->Stop();
-    wxDELETE(m_timer);
-
     // Remove the tab if it's actually docked in the workspace pane
     size_t index(Notebook::npos);
     index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(zoompane);
@@ -237,14 +227,16 @@ void ZoomNavigator::OnEditorChanged(wxCommandEvent& e)
     DoCleanup();
     
     if ( m_enabled ) {
-        m_editor = reinterpret_cast<IEditor*>( e.GetClientData() );
+        DoSetEditor( reinterpret_cast<IEditor*>( e.GetClientData() ) );
         if ( m_editor ) {
             m_text->UpdateLexer( m_editor->GetFileName().GetFullName() );
+            m_editor->GetSTC()->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(ZoomNavigator::OnEditorScrolled), NULL, this);
         }
         
     } else {
-        m_editor = NULL;
+        DoSetEditor(NULL);
     }
+    
     SetEditorText( m_editor );
     DoUpdate();
 }
@@ -294,7 +286,7 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 void ZoomNavigator::DoCleanup()
 {
     SetEditorText(NULL);
-    m_editor = NULL;
+    DoSetEditor(NULL);
     m_markerFirstLine = wxNOT_FOUND;
     m_markerLastLine  = wxNOT_FOUND;
     m_text->UpdateLexer("");
@@ -319,7 +311,7 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
             m_text->UpdateText(NULL);
             
         } else {
-            m_editor = m_mgr->GetActiveEditor();
+            DoSetEditor(m_mgr->GetActiveEditor());
             if ( m_editor ) {
                 m_text->UpdateLexer(m_editor->GetFileName().GetFullName());
             }
@@ -340,4 +332,27 @@ void ZoomNavigator::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     DoCleanup();
+}
+
+void ZoomNavigator::OnEditorScrolled(wxStyledTextEvent& e)
+{
+    e.Skip();
+    CHECK_CONDITION( m_enabled );
+    
+    wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(e.GetEventObject());
+    if ( ctrl && m_editor ) {
+        int curline = ctrl->GetFirstVisibleLine();
+        if ( m_lastLine != curline ) {
+            DoUpdate();
+        }
+    }
+}
+
+void ZoomNavigator::DoSetEditor(IEditor* editor)
+{
+    m_editor = editor;
+    m_lastLine = wxNOT_FOUND;
+    if ( m_editor ) {
+        m_lastLine = m_editor->GetSTC()->GetFirstVisibleLine();
+    }
 }

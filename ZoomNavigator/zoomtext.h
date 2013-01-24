@@ -11,21 +11,20 @@
 #include <wx/stc/stc.h>
 #include "ieditor.h"
 
-class ZoomText : public wxStyledTextCtrl {
-    int m_zoomFactor;
+class ZoomText : public wxStyledTextCtrl
+{
+    int      m_zoomFactor;
+    wxColour m_colour;
     
 public:
     ZoomText(wxWindow *parent, wxWindowID id=wxID_ANY,
-                     const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxDefaultSize, long style = 0,
-                     const wxString& name = wxSTCNameStr);
+             const wxPoint& pos = wxDefaultPosition,
+             const wxSize& size = wxDefaultSize, long style = 0,
+             const wxString& name = wxSTCNameStr);
     void UpdateLexer(const wxString &filename);
     void OnSettingsChanged(wxCommandEvent &e);
     void UpdateText(IEditor* editort);
-    
-    DECLARE_EVENT_TABLE()
-    void OnEnterWindow(wxMouseEvent &e);
-    void OnLeaveWindow(wxMouseEvent &e);
+    void HighlightLines(int start, int end);
 };
 
 #endif // ZOOM_NAV_TEXT

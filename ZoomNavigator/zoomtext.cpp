@@ -16,11 +16,6 @@
 #include "znSettingsDlg.h"
 #include "event_notifier.h"
 
-BEGIN_EVENT_TABLE(ZoomText, wxStyledTextCtrl)
-    EVT_ENTER_WINDOW(ZoomText::OnEnterWindow)
-    EVT_LEAVE_WINDOW(ZoomText::OnLeaveWindow)
-END_EVENT_TABLE()
-
 ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxStyledTextCtrl( parent, id, pos, size, style |wxNO_BORDER, name )
 {
@@ -38,9 +33,14 @@ ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
     conf.ReadItem( &data );
     
     m_zoomFactor = data.GetZoomFactor();
+    m_colour = data.GetHighlightColour();
+    MarkerSetBackground(1, m_colour);
     SetZoom( m_zoomFactor );
-    MarkerDefine(1, wxSTC_MARK_BACKGROUND, wxColor(data.GetHighlightColour()), wxColor(data.GetHighlightColour()) );
     EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
+    MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour );
+#ifdef __WXMSW__    
+    MarkerSetAlpha(1, 50);
+#endif    
 }
 
 void ZoomText::UpdateLexer(const wxString& filename)
@@ -68,6 +68,7 @@ void ZoomText::UpdateLexer(const wxString& filename)
     SetUseHorizontalScrollBar( false );
     SetUseVerticalScrollBar( true );
     HideSelection( true );
+    MarkerSetBackground(1, m_colour);
 }
 
 void ZoomText::OnSettingsChanged(wxCommandEvent &e)
@@ -77,8 +78,9 @@ void ZoomText::OnSettingsChanged(wxCommandEvent &e)
     clConfig conf("zoom-navigator.conf");
     if ( conf.ReadItem( &data ) ) {
         m_zoomFactor = data.GetZoomFactor();
+        m_colour = data.GetHighlightColour();
+        MarkerSetBackground(1, m_colour);
         SetZoom(m_zoomFactor);
-        MarkerSetBackground(1, wxColour(data.GetHighlightColour()));
         Colourise(0, wxSTC_INVALID_POSITION);
     }
 }
@@ -98,12 +100,19 @@ void ZoomText::UpdateText(IEditor* editor)
     }
 }
 
-void ZoomText::OnEnterWindow(wxMouseEvent& e)
+void ZoomText::HighlightLines(int start, int end)
 {
-    e.Skip();
-}
-
-void ZoomText::OnLeaveWindow(wxMouseEvent& e)
-{
-    e.Skip();
+    int nLineCount = end - start;
+    int lastLine = LineFromPosition(GetLength());
+    if ( lastLine < end ) {
+        end = lastLine;
+        start = end - nLineCount;
+        if ( start < 0 )
+            start = 0;
+    }
+        
+    MarkerDeleteAll(1);
+    for(int i=start; i<=end; ++i) {
+        MarkerAdd(i, 1);
+    }
 }

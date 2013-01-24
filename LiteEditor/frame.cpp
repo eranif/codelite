@@ -2669,13 +2669,10 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 
         ccConfig.WriteItem( &m_tagsOptionsData );
 
-        /////////////////////////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////////////////////////
+    
 
-        //send initialization end event
-        SendCmdEvent(wxEVT_INIT_DONE);
     }
-
+    
     //clear navigation queue
     if (GetMainBook()->GetCurrentPage() == 0) {
         NavMgr::Get()->Clear();
@@ -2702,6 +2699,10 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     ManagerST::Get()->UpdateMenuAccelerators();
 
     wxModule::InitializeModules();
+    
+    // Send initialization end event
+    SendCmdEvent(wxEVT_INIT_DONE);
+    
     event.Skip();
 }
 

@@ -111,6 +111,10 @@ Filename: "{app}\registry.ini"; Section: "environment"; Key: "wx"; String: "{cod
 Filename: "{app}\registry.ini"; Section: "environment"; Key: "mingw"; String: "{code:GetMinGWInstallDir}";
 Filename: "{app}\registry.ini"; Section: "environment"; Key: "unittestpp"; String: "{code:GetUnitTestPPInstallDir}";
 
+[Registry]
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\plugins"
+
 [Code]
 var
   MinGW_Page:      TInputDirWizardPage;

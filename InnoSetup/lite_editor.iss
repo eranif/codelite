@@ -101,10 +101,9 @@ Name: "{group}\{cm:UninstallProgram, CodeLite}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite "; WorkingDir: "{app}"; Filename: "{app}\CodeLite.exe"; Tasks: quicklaunchicon
 
-[INI]
-;Filename: "{app}\registry.ini"; Section: "environment"; Key: "wx"; String: "";
-;Filename: "{app}\registry.ini"; Section: "environment"; Key: "mingw"; String: "";
-;Filename: "{app}\registry.ini"; Section: "environment"; Key: "unittestpp"; String: "";
+[Registry]
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\plugins"
 
 [Code]
 // Uninstall

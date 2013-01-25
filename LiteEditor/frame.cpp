@@ -729,7 +729,7 @@ void clMainFrame::Initialize(bool loadLastSession)
 
     inf.SetFrameSize( frameSize );
     
-#ifdef NDEBUG
+#if defined(NDEBUG) && !defined(__WXMAC__)
     // we show splash only when using Release builds of codelite
     if ( inf.GetFlags() & CL_SHOW_SPLASH ) {
         wxBitmap bitmap;

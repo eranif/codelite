@@ -80,7 +80,7 @@ void WebUpdateJob::Process(wxThread* thread)
     }
     
 #else
-	wxURL url(wxT("http://codeliteorg.ipage.com/packages.txt"));
+	wxURL url(wxT("http://codelite.org/packages.txt"));
 	if (url.GetError() == wxURL_NOERR) {
 
 		wxInputStream *in_stream = url.GetInputStream();

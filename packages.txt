@@ -1,7 +1,7 @@
 # Simple CodeLite packages available for download
 # Package name | Revision | Download URL | Release notes URL
 
-GTK    | 6207 | http://codelite.org/LiteEditor/Repositories | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/README/download
-MSW    | 6207 | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/codelite-5.0.6027.exe/download | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/README/download
-GTK_64 | 6207 | http://codelite.org/LiteEditor/Repositories | http://sourceforge.net/projects/codelite/files/Releases/codelite-2.10/README/download
-MAC    | 6207 | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/codelite-mac-intel-5.0.6027.app.zip/download | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/README/download
+GTK    | 6213 | http://codelite.org/LiteEditor/Repositories | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/README/download
+MSW    | 6213 | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/codelite-5.0.6213.exe/download | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/README/download
+GTK_64 | 6213 | http://codelite.org/LiteEditor/Repositories | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/README/download
+MAC    | 6213 | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/codelite-mac-intel-5.0.6213.app.zip/download | http://sourceforge.net/projects/codelite/files/Releases/codelite-5.0/README/download

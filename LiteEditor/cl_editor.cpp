@@ -2711,9 +2711,8 @@ void LEditor::OnRightUp(wxMouseEvent& event)
 
 void LEditor::OnRightDown(wxMouseEvent& event)
 {
-    wxKeyModifier mod = GetCodeNavModifier();
-    
-    if ( event.GetModifiers() == mod ) {
+    size_t mod = GetCodeNavModifier();
+    if ( event.GetModifiers() == mod && mod != wxMOD_NONE) {
         
         ClearSelections();
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
@@ -2734,14 +2733,8 @@ void LEditor::OnRightDown(wxMouseEvent& event)
 
 void LEditor::OnMotion(wxMouseEvent& event)
 {
-    wxKeyModifier mod = GetCodeNavModifier();
-    if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt ) {
-        mod = wxMOD_ALL;
-    } else if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control ) {
-        mod = wxMOD_CONTROL;
-    }
-    
-    if ( event.GetModifiers() == mod ) {
+    size_t mod = GetCodeNavModifier();
+    if ( event.GetModifiers() == mod && mod != wxMOD_NONE) {
     
         m_hyperLinkIndicatroStart = wxNOT_FOUND;
         m_hyperLinkIndicatroEnd = wxNOT_FOUND;
@@ -2750,10 +2743,8 @@ void LEditor::OnMotion(wxMouseEvent& event)
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         IndicatorClearRange(0, GetLength());
         DoMarkHyperlink(event, true);
-
     } else {
         event.Skip();
-        
     }
 }
 
@@ -2772,8 +2763,8 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
     }
     
-    wxKeyModifier mod = GetCodeNavModifier();
-    if ( event.GetModifiers() == mod ) {
+    size_t mod = GetCodeNavModifier();
+    if ( event.GetModifiers() == mod && mod != wxMOD_NONE ) {
         ClearSelections();
         SetCaretAt( PositionFromPointClose(event.GetX(), event.GetY()) );
     }
@@ -4159,14 +4150,17 @@ void LEditor::OnKeyUp(wxKeyEvent& event)
     }
 }
 
-wxKeyModifier LEditor::GetCodeNavModifier()
+size_t LEditor::GetCodeNavModifier()
 {
-    wxKeyModifier mod = wxMOD_SHIFT;
-    if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt ) {
-        mod = wxMOD_ALT;
-    } else if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control ) {
-        mod = wxMOD_CONTROL;
-    }
+    size_t mod = wxMOD_NONE;
+    if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt )
+        mod |= wxMOD_ALT;
+    
+    if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control )
+        mod |= wxMOD_CONTROL;
+    
+    if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Shift )
+        mod |= wxMOD_SHIFT;
     return mod;
 }
 

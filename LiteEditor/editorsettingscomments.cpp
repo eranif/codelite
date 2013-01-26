@@ -37,17 +37,18 @@ EditorSettingsComments::EditorSettingsComments( wxWindow* parent )
     m_checkBoxContinueCppComment->SetValue( data.GetContinueCppComment() );
     m_checkBoxSmartAddFiles->SetValue( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles );
     
-    int sel = 0;
     if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt ) {
-        sel = 2;
-        
-    } else if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control ) {
-        sel = 1;
+        m_checkBoxAlt->SetValue( true );
+    }
+
+    if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control ) {
+        m_checkBoxCtrl->SetValue( true );
     }
     
-    m_choiceNavKey->SetSelection( sel );
+    if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Shift ) {
+        m_checkBoxShift->SetValue( true );
+    }
 }
-
 
 void EditorSettingsComments::Save(OptionsConfigPtr options)
 {
@@ -66,14 +67,15 @@ void EditorSettingsComments::Save(OptionsConfigPtr options)
     
     // clear the navigation key code
     flags &= ~(OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control|OptionsConfig::Opt_NavKey_Shift);
-    int sel = m_choiceNavKey->GetSelection();
     
-    if ( sel == 2 ) {
-        flags |= OptionsConfig::Opt_NavKey_Alt;
-    } else if ( sel == 1 ) {
-        flags |= OptionsConfig::Opt_NavKey_Control;
-    } else {
+    if( m_checkBoxShift->IsChecked() )
         flags |= OptionsConfig::Opt_NavKey_Shift;
-    }
+    
+    if( m_checkBoxCtrl->IsChecked() )
+        flags |= OptionsConfig::Opt_NavKey_Control;
+        
+    if( m_checkBoxAlt->IsChecked() )
+        flags |= OptionsConfig::Opt_NavKey_Alt;
+        
     options->SetOptions(flags);
 }

@@ -18,7 +18,6 @@
 #include <wx/settings.h>
 #include <wx/statline.h>
 #include <wx/stattext.h>
-#include <wx/choice.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
@@ -39,7 +38,10 @@ class EditorSettingsCommentsBase : public wxPanel
 		wxCheckBox* m_checkBoxContinueCppComment;
 		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticText1;
-		wxChoice* m_choiceNavKey;
+		wxStaticText* m_staticText2;
+		wxCheckBox* m_checkBoxShift;
+		wxCheckBox* m_checkBoxCtrl;
+		wxCheckBox* m_checkBoxAlt;
 	
 	public:
 		

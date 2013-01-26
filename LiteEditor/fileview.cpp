@@ -1716,14 +1716,11 @@ void FileViewTree::OnReconcileProject(wxCommandEvent &e)
     // Allow the selected project to be reconciled, even if it's inactive
     wxTreeItemId item = GetSingleSelection();
     if (item.IsOk()) {
-        wxString vdPath = GetItemPath(item);
-        wxString projname = vdPath.BeforeFirst(wxT(':'));
-        if (ManagerST::Get()->GetProject(projname) != NULL) {
-            projectName = projname;
+        FilewViewTreeItemData* fvid = dynamic_cast<FilewViewTreeItemData*>( GetItemData(item) );
+        if ( fvid && fvid->GetData().GetKind() == ProjectItem::TypeProject ) {
+            ManagerST::Get()->ReconcileProject( fvid->GetData().GetDisplayName() );
         }
     }
-
-    ManagerST::Get()->ReconcileProject(projectName);
 }
 
 void FileViewTree::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)

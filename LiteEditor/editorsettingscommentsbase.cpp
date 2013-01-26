@@ -38,17 +38,25 @@ EditorSettingsCommentsBase::EditorSettingsCommentsBase( wxWindow* parent, wxWind
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Code navigation key:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
+	m_staticText1->SetToolTip( _("When using quick code navigation use this key in combination with mouse click\nTo quickly go to implementation / declaration") );
+	
 	bSizer3->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_choiceNavKeyChoices[] = { _("Shift"), _("Control"), _("Alt") };
-	int m_choiceNavKeyNChoices = sizeof( m_choiceNavKeyChoices ) / sizeof( wxString );
-	m_choiceNavKey = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choiceNavKeyNChoices, m_choiceNavKeyChoices, 0 );
-	m_choiceNavKey->SetSelection( 0 );
-	m_choiceNavKey->SetToolTip( _("When using quick code navigation use this key in combination with mouse click\nTo quickly go to implementation / declaration") );
+	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Mouse Left Click +"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2->Wrap( -1 );
+	bSizer3->Add( m_staticText2, 0, wxALL, 5 );
 	
-	bSizer3->Add( m_choiceNavKey, 1, wxALL, 5 );
+	m_checkBoxShift = new wxCheckBox( this, wxID_ANY, _("Shift"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkBoxShift->SetValue(true); 
+	bSizer3->Add( m_checkBoxShift, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer2->Add( bSizer3, 0, wxEXPAND, 5 );
+	m_checkBoxCtrl = new wxCheckBox( this, wxID_ANY, _("Ctrl"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_checkBoxCtrl, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	m_checkBoxAlt = new wxCheckBox( this, wxID_ANY, _("Alt"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( m_checkBoxAlt, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	bSizer2->Add( bSizer3, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 	
 	mainSizer->Add( bSizer2, 0, wxEXPAND|wxALL, 5 );
 	

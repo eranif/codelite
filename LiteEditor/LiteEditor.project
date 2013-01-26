@@ -618,7 +618,6 @@
     <File Name="editor_options_comments_doxygen.fbp"/>
     <File Name="editor_options_indetation.fbp"/>
     <File Name="editor_options_dialogs.fbp"/>
-    <File Name="editor_options_docking_windows.fbp"/>
     <File Name="editor_options_folding.fbp"/>
     <File Name="editor_options_misc.fbp"/>
     <File Name="editor_options_terminal.fbp"/>

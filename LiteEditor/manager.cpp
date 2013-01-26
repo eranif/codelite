@@ -534,12 +534,15 @@ void Manager::AddProject ( const wxString & path )
     SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
 }
 
-void Manager::ReconcileProject()
+void Manager::ReconcileProject(const wxString& projectName)
 {
     wxCHECK_RET(IsWorkspaceOpen(), wxT("Trying to reconcile a project with no open workspace"));
 
-    wxString projname = GetActiveProjectName();
-    wxCHECK_RET(!projname.empty(), wxT("Failed to find the active project"));
+    wxString projname = projectName;
+    if (projname.empty()) {
+        projname = GetActiveProjectName();
+        wxCHECK_RET(!projname.empty(), wxT("Failed to find the active project"));
+    }
 
     ReconcileProjectDlg dlg(clMainFrame::Get(), projname.c_str()); // In theory the deep copy is unnecessary, but I got segs in the dtor...
     if (dlg.LoadData()) {

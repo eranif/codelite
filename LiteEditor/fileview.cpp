@@ -97,6 +97,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
     EVT_MENU( XRCID( "clean_project_only" ),           FileViewTree::OnCleanProjectOnly )
     EVT_MENU( XRCID( "rebuild_project_only" ),         FileViewTree::OnRebuildProjectOnly)
     EVT_MENU( XRCID( "import_directory" ),             FileViewTree::OnImportDirectory )
+    EVT_MENU( XRCID( "reconcile_project" ),            FileViewTree::OnReconcileProject )
     EVT_MENU( XRCID( "open_in_editor" ),               FileViewTree::OnOpenInEditor )
     EVT_MENU( XRCID( "compile_item" ),                 FileViewTree::OnCompileItem )
     EVT_MENU( XRCID( "preprocess_item" ),              FileViewTree::OnPreprocessItem )
@@ -125,6 +126,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
     EVT_UPDATE_UI( XRCID( "clean_project_only" ),      FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "rebuild_project_only" ),    FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "import_directory" ),        FileViewTree::OnBuildInProgress)
+    EVT_UPDATE_UI( XRCID( "reconcile_project" ),       FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "compile_item" ),            FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "preprocess_item" ),         FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "rename_item" ),             FileViewTree::OnBuildInProgress)
@@ -1704,6 +1706,24 @@ void FileViewTree::OnImportDirectory(wxCommandEvent &e)
     if ( was_active ) {
         MarkActive( curr_proj_name );
     }
+}
+
+void FileViewTree::OnReconcileProject(wxCommandEvent &e)
+{
+    wxUnusedVar(e);
+    wxString projectName;
+
+    // Allow the selected project to be reconciled, even if it's inactive
+    wxTreeItemId item = GetSingleSelection();
+    if (item.IsOk()) {
+        wxString vdPath = GetItemPath(item);
+        wxString projname = vdPath.BeforeFirst(wxT(':'));
+        if (ManagerST::Get()->GetProject(projname) != NULL) {
+            projectName = projname;
+        }
+    }
+
+    ManagerST::Get()->ReconcileProject(projectName);
 }
 
 void FileViewTree::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)

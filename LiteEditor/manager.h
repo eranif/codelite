@@ -274,8 +274,9 @@ public:
     /**
      * Checks the active project for file entries that no longer exist on the filesystem,
      * and for existing files that are missing from the project
+     * \param projectName the name of the project to reconcile. If "" do the currently-active project
      */
-    void ReconcileProject();
+    void ReconcileProject(const wxString& projectName = "");
 
     /**
      * Import a MS Solution file and open it in the editor

@@ -36,7 +36,7 @@
                              DECL_NONE : (st)->parent->declaration)
 #define isType(token,t)     (boolean) ((token)->type == (t))
 #define insideEnumBody(st)  ((st)->parent == NULL ? FALSE : \
-                             (boolean) ((st)->parent->declaration == DECL_ENUM))
+                             (boolean) ((st)->parent->declaration == DECL_ENUM || (st)->parent->declaration == DECL_STRONG_ENUM))
 #define isExternCDecl(st,c) (boolean) ((c) == STRING_SYMBOL  && \
                                        ! (st)->haveQualifyingName  && (st)->scope == SCOPE_EXTERN)
 

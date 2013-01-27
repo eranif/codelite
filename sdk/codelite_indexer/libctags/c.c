@@ -149,7 +149,8 @@ typedef enum eDeclaration {
     DECL_STRUCT,
     DECL_TASK,           /* Vera task */
     DECL_UNION,
-    DECL_COUNT
+    DECL_COUNT,
+    DECL_STRONG_ENUM,
 } declType;
 
 typedef enum eVisibilityType {
@@ -697,6 +698,7 @@ static boolean isContextualStatement (const statementInfo *const st)
     if (st != NULL) switch (st->declaration) {
         case DECL_CLASS:
         case DECL_ENUM:
+        case DECL_STRONG_ENUM:
         case DECL_INTERFACE:
         case DECL_NAMESPACE:
         case DECL_STRUCT:
@@ -728,6 +730,7 @@ static void initMemberInfo (statementInfo *const st)
 
     if (st->parent != NULL) switch (st->parent->declaration) {
         case DECL_ENUM:
+        case DECL_STRONG_ENUM:
             accessDefault = (isLanguage (Lang_java) ? ACCESS_PUBLIC : ACCESS_UNDEFINED);
             break;
         case DECL_NAMESPACE:
@@ -1048,6 +1051,7 @@ static tagType declToTagType (const declType declaration)
         type = TAG_CLASS;
         break;
     case DECL_ENUM:
+    case DECL_STRONG_ENUM:
         type = TAG_ENUM;
         break;
     case DECL_EVENT:
@@ -1340,6 +1344,7 @@ static boolean isValidTypeSpecifier (const declType declaration)
     case DECL_BASE:
     case DECL_CLASS:
     case DECL_ENUM:
+    case DECL_STRONG_ENUM:
     case DECL_EVENT:
     case DECL_STRUCT:
     case DECL_UNION:
@@ -1412,6 +1417,7 @@ static void qualifyBlockTag (statementInfo *const st,
     switch (st->declaration) {
     case DECL_CLASS:
     case DECL_ENUM:
+    case DECL_STRONG_ENUM:
     case DECL_INTERFACE:
     case DECL_NAMESPACE:
     case DECL_PROGRAM:
@@ -1879,6 +1885,10 @@ static void processInterface (statementInfo *const st)
 
 static void processToken (tokenInfo *const token, statementInfo *const st)
 {
+    tokenInfo * preToken = NULL;
+    if ( st->tokenIndex ) {
+        preToken = prevToken(st, 1);
+    }
     switch (token->keyword) {      /* is it a reserved word? */
     default:
         break;
@@ -1906,9 +1916,16 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
     case KEYWORD_CHAR:
         st->declaration = DECL_BASE;
         break;
-    case KEYWORD_CLASS:
-        st->declaration = DECL_CLASS;
+    case KEYWORD_CLASS: {
+        if ( preToken && preToken->keyword == KEYWORD_ENUM ) {
+            // C++11 'enum class
+            st->declaration = DECL_STRONG_ENUM;
+        } else {
+            st->declaration = DECL_CLASS;
+        }
         break;
+        
+    }
     case KEYWORD_CONST:
         st->declaration = DECL_BASE;
         break;
@@ -2553,7 +2570,11 @@ static boolean inheritingDeclaration (declType decl)
     /* C# supports inheritance for enums. C++0x will too, but not yet. */
     if (decl == DECL_ENUM) {
         return (boolean) (isLanguage (Lang_csharp));
+
+    } else if ( decl == DECL_STRONG_ENUM ) {
+        return (boolean) (isLanguage (Lang_cpp));
     }
+
     return (boolean) (
                decl == DECL_CLASS ||
                decl == DECL_STRUCT ||
@@ -2977,6 +2998,7 @@ static void nest (statementInfo *const st, const unsigned int nestLevel)
     switch (st->declaration) {
     case DECL_CLASS:
     case DECL_ENUM:
+    case DECL_STRONG_ENUM:
     case DECL_INTERFACE:
     case DECL_NAMESPACE:
     case DECL_NOMANGLE:

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -38,13 +38,13 @@ EditorSettingsCommentsBase::EditorSettingsCommentsBase( wxWindow* parent, wxWind
 	
 	m_staticText1 = new wxStaticText( this, wxID_ANY, _("Code navigation key:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1->Wrap( -1 );
-	m_staticText1->SetToolTip( _("When using quick code navigation use this key in combination with mouse click\nTo quickly go to implementation / declaration") );
+	m_staticText1->SetToolTip( _("When using quick code navigation use this keys in combination with mouse click\nTo quickly go to implementation / declaration") );
 	
 	bSizer3->Add( m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticText2 = new wxStaticText( this, wxID_ANY, _("Mouse Left Click +"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
-	bSizer3->Add( m_staticText2, 0, wxALL, 5 );
+	bSizer3->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_checkBoxShift = new wxCheckBox( this, wxID_ANY, _("Shift"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkBoxShift->SetValue(true); 

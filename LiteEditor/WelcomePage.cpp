@@ -57,8 +57,8 @@ void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)
     wxArrayString recentFiles;
     clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles(recentFiles);
     recentFiles.Sort();
-    
-    int id = DoGetPopupMenuSelection(m_cmdLnkBtnFilesMenu, recentFiles, _("Open file"));
+
+    int id = DoGetPopupMenuSelection(m_cmdLnkBtnFilesMenu, recentFiles, _("Select file to open"));
     if ( id != wxID_NONE ) {
         wxString filename = m_idToName[id];
         clMainFrame::Get()->GetMainBook()->OpenFile( filename );
@@ -70,7 +70,7 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
     wxArrayString files;
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
     files.Sort();
-    
+
     wxArrayString recentWorkspaces;
     for(size_t i=0; i<files.GetCount(); i++) {
         wxFileName fn(files.Item(i));
@@ -82,7 +82,7 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
         wxString filename = m_idToName[id];
         filename = filename.AfterFirst('-');
         filename.Trim().Trim(false);
-        
+
         // post an event to the main frame requesting a workspace open
         wxCommandEvent evtOpenworkspace(wxEVT_COMMAND_MENU_SELECTED, XRCID("switch_to_workspace"));
         evtOpenworkspace.SetString( filename );
@@ -95,12 +95,13 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
 {
     BitmapLoader bl;
     BitmapLoader::BitmapMap_t bmps = bl.MakeStandardMimeMap();
-    
+
     m_idToName.clear();
-    wxMenu menu( menuTitle );
-    
+    wxUnusedVar( menuTitle );
+    wxMenu menu;
+
     for(size_t i=0; i<strings.GetCount(); i++) {
-        
+
         wxBitmap bmp = bmps[FileExtManager::TypeText];
         FileExtManager::FileType type = FileExtManager::GetType( strings.Item(i) );
         if( bmps.count(type) ) {
@@ -112,11 +113,11 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
         m_idToName.insert(std::make_pair(item->GetId(), strings.Item(i)));
         menu.Append(item);
     }
-    
+
     // get the best position to show the menu
     wxPoint pos = btn->GetPosition();
     pos = m_scrollWin247->CalcScrolledPosition(pos);
-    
+
     pos.y += btn->GetSize().y;
 #ifdef __WXGTK__
     pos.y += 10;
@@ -129,4 +130,18 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
     pos.x += 10;
 #endif
     return GetPopupMenuSelectionFromUser(menu, pos);
+}
+
+void WelcomePage::OnRecentFileUI(wxUpdateUIEvent& event)
+{
+    wxArrayString files;
+    clMainFrame::Get()->GetMainBook()->GetRecentlyOpenedFiles( files );
+    event.Enable( !files.IsEmpty() );
+}
+
+void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
+{
+    wxArrayString files;
+    ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
+    event.Enable( !files.IsEmpty() );
 }

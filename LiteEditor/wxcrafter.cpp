@@ -550,7 +550,9 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     // Connect events
     this->Connect(wxEVT_SIZE, wxSizeEventHandler(WelcomePageBase::OnSize), NULL, this);
     m_cmdLnkBtnWorkspaces->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowWorkspaceMenu), NULL, this);
+    m_cmdLnkBtnWorkspaces->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentProjectUI), NULL, this);
     m_cmdLnkBtnFilesMenu->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowFileseMenu), NULL, this);
+    m_cmdLnkBtnFilesMenu->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentFileUI), NULL, this);
     m_cmdLnkBtn157->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewProject), NULL, this);
     m_cmdLnkBtn231->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWorkspace), NULL, this);
     m_cmdLnkBtn155->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenForums), NULL, this);
@@ -562,7 +564,9 @@ WelcomePageBase::~WelcomePageBase()
 {
     this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(WelcomePageBase::OnSize), NULL, this);
     m_cmdLnkBtnWorkspaces->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowWorkspaceMenu), NULL, this);
+    m_cmdLnkBtnWorkspaces->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentProjectUI), NULL, this);
     m_cmdLnkBtnFilesMenu->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnShowFileseMenu), NULL, this);
+    m_cmdLnkBtnFilesMenu->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WelcomePageBase::OnRecentFileUI), NULL, this);
     m_cmdLnkBtn157->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnNewProject), NULL, this);
     m_cmdLnkBtn231->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWorkspace), NULL, this);
     m_cmdLnkBtn155->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenForums), NULL, this);

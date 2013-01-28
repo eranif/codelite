@@ -354,7 +354,7 @@ void NewProjectDlgData::Serialize(Archive& arch)
 
 void NewProjectDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_textCtrlProjectPath->IsEmpty() && !m_txtProjName->IsEmpty());
+    event.Enable(!m_textCtrlProjectPath->IsEmpty() && !m_txtProjName->IsEmpty() && m_dataviewTemplates->GetSelection().IsOk());
 }
 
 void NewProjectDlg::OnItemSelected(wxDataViewEvent& event)

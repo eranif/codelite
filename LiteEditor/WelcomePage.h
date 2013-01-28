@@ -7,10 +7,12 @@ class WelcomePage : public WelcomePageBase
 {
     typedef std::map<int, wxString> IntStringMap_t;
     IntStringMap_t m_idToName;
-    
+
 protected:
+    virtual void OnRecentFileUI(wxUpdateUIEvent& event);
+    virtual void OnRecentProjectUI(wxUpdateUIEvent& event);
     int DoGetPopupMenuSelection( wxCommandLinkButton* btn, const wxArrayString& strings, const wxString &menuTitle);
-    
+
 public:
     WelcomePage(wxWindow* parent);
     virtual ~WelcomePage();

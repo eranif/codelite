@@ -193,7 +193,9 @@ protected:
 protected:
     virtual void OnSize(wxSizeEvent& event) { event.Skip(); }
     virtual void OnShowWorkspaceMenu(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRecentProjectUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnShowFileseMenu(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRecentFileUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnNewProject(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOpenWorkspace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOpenForums(wxCommandEvent& event) { event.Skip(); }

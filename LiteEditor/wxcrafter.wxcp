@@ -3921,6 +3921,12 @@
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnShowWorkspaceMenu(wxCommandEvent& event)",
 																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																		}, {
+																			"m_eventName":	"wxEVT_UPDATE_UI",
+																			"m_eventClass":	"wxUpdateUIEvent",
+																			"m_eventHandler":	"wxUpdateUIEventHandler",
+																			"m_functionNameAndSignature":	"OnRecentProjectUI(wxUpdateUIEvent& event)",
+																			"m_description":	"Process a wxEVT_UPDATE_UI event"
 																		}],
 																	"m_children":	[]
 																}, {
@@ -3990,6 +3996,12 @@
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnShowFileseMenu(wxCommandEvent& event)",
 																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																		}, {
+																			"m_eventName":	"wxEVT_UPDATE_UI",
+																			"m_eventClass":	"wxUpdateUIEvent",
+																			"m_eventHandler":	"wxUpdateUIEventHandler",
+																			"m_functionNameAndSignature":	"OnRecentFileUI(wxUpdateUIEvent& event)",
+																			"m_description":	"Process a wxEVT_UPDATE_UI event"
 																		}],
 																	"m_children":	[]
 																}, {

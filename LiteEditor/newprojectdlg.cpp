@@ -354,7 +354,14 @@ void NewProjectDlgData::Serialize(Archive& arch)
 
 void NewProjectDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_textCtrlProjectPath->IsEmpty() && !m_txtProjName->IsEmpty() && m_dataviewTemplates->GetSelection().IsOk());
+    wxDataViewItem item = m_dataviewTemplates->GetSelection();
+    bool hasSelection = false;
+    if ( item.IsOk() ) {
+        NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(item));
+        hasSelection = (cd != NULL);
+    }
+    
+    event.Enable(!m_textCtrlProjectPath->IsEmpty() && !m_txtProjName->IsEmpty() && hasSelection);
 }
 
 void NewProjectDlg::OnItemSelected(wxDataViewEvent& event)

@@ -1107,8 +1107,8 @@ createInstallTarget()
 		fi
         ## prepare a temporary folder
         echo "	@echo packaging wxWidgets ... from directory ${wxdir}" >> Makefile
-        Get_Wx_Libs_To_Pack # Get the list of files to package
-        echo "	@cd ${wxdir} && tar cf /tmp/clwx294.tar ${Wx_Libs} && tar xf /tmp/clwx294.tar -C \"\$(DESTDIR)${plugins_dir}/\"" >> Makefile
+        Get_Wx_Libs_To_Pack # Get the list of files to package. Use --exclude=*.a to filter out the static libs: the wx2.9 rpms contain both .so and .a
+        echo "	@cd ${wxdir} && tar cf /tmp/clwx294.tar ${Wx_Libs} --exclude="*.a" && tar xf /tmp/clwx294.tar -C \"\$(DESTDIR)${plugins_dir}/\"" >> Makefile
         echo "	@rm -f /tmp/clwx294.tar" >> Makefile
 	fi
     echo "" >> Makefile

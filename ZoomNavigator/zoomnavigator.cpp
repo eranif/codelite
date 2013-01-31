@@ -161,7 +161,7 @@ void ZoomNavigator::DoUpdate()
     CHECK_CONDITION( !m_mgr->IsShutdownInProgress() );
     
     IEditor* curEditor = m_mgr->GetActiveEditor();
-    if ( !curEditor ) {
+    if ( !curEditor && !m_text->IsEmpty()) {
         DoCleanup();
     }
     CHECK_CONDITION(curEditor);

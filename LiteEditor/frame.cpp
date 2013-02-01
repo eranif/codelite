@@ -2588,7 +2588,7 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"),   check);
     EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
     if ( check ) {
-        JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
+        //JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
     }
 
     //update the build system to contain the number of CPUs

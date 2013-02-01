@@ -1017,6 +1017,12 @@ void GitPlugin::ProcessGitActionQueue()
     StringMap om;
     om["LC_ALL"]             = "C";
     om["GIT_MERGE_AUTOEDIT"] = "no";
+#ifdef __WXMSW__ 
+    wxString homeDir;
+    if ( wxGetEnv("USERPROFILE", &homeDir) ) {
+        om["HOME"] = homeDir;
+    }
+#endif
     EnvSetter es( &om );
     
     m_process = ::CreateAsyncProcess(this,

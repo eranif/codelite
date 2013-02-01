@@ -258,7 +258,7 @@ createMainTargets()
 	echo "" >> Makefile
 
 	echo "pre_build:" >> Makefile
-	echo "	./le_makerevision.sh" >> Makefile
+	echo "	./git-revision.sh" >> Makefile
 	echo "	@test -d  \$(OBJ_DIR) || mkdir \$(OBJ_DIR)" >> Makefile
 	echo "	@test -d  \$(OUTPUT_DIR) || mkdir \$(OUTPUT_DIR)" >> Makefile
 	echo "" >> Makefile

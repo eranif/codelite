@@ -17,6 +17,15 @@
 #    include <signal.h>
 #endif
 
+#ifdef __FreeBSD__
+#include <fcntl.h>
+#include <paths.h>
+#include <kvm.h>
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/user.h>
+#endif
+
 /**
  * helper string methods
  */

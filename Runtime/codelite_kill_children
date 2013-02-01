@@ -4,8 +4,13 @@
 ## for "hard kills"
 
 sig_options=$2
+osname=$(uname -o)
 
-procs=`ps --ppid $1 | grep -v PID | awk '{print $1;}'`
+if [ "$osname" = "FreeBSD" ]; then
+    procs=`ps -A -o ppid,pid | sed -e '1d' | awk '{print $1" "$2}' | grep "^$1 " | awk '{print $2}' | xargs`
+else
+    procs=`ps --ppid $1 | grep -v PID | awk '{print $1;}'`
+fi
 for p in $procs
 do
 	kill $sig_options $p 2> /dev/null

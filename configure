@@ -84,6 +84,15 @@ createVariables()
                         with_clang="yes"
 
 		fi
+	elif [ "$os_name" = "FreeBSD" ]; then
+		arch=$(uname -m)
+		if [ $arch = "amd64" -o $arch = "sparc64" ]; then
+			compiler_extras="-m64 -DON_64_BIT "
+			c_compiler_extras="-m64 -DON_64_BIT "
+		else
+			compiler_extras="-m32 "
+			c_compiler_extras="-m32 "
+		fi
 	else # Not darwin
 		if [ "$is_64bit" = "yes" ]; then
 			

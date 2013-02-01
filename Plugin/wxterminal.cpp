@@ -23,7 +23,13 @@
 #endif
 
 #if defined(__WXGTK__)
+#ifdef __FreeBSD__
+#    include <sys/ioctl.h>
+#    include <termios.h>
+#    include <libutil.h>
+#else
 #    include <pty.h>
+#endif
 #    include "unixprocess_impl.h"
 #elif defined(__WXMAC__)
 #    include <util.h>

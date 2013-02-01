@@ -130,7 +130,11 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                                               task->GetColumn(),
                                               usf.GetUnsavedFiles(),
                                               usf.GetCount(),
-                                              clang_defaultCodeCompleteOptions() | CXCodeComplete_IncludeBriefComments);
+                                              clang_defaultCodeCompleteOptions()
+#ifndef __FreeBSD__
+                                              | CXCodeComplete_IncludeBriefComments
+#endif
+                                              );
 
         cacheEntry.lastReparse = time(NULL);
 

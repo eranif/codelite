@@ -129,7 +129,7 @@ clSplashScreen* clMainFrame::m_splashScreen = NULL;
 
 // from auto-generated file svninfo.cpp:
 extern wxString CODELITE_VERSION_STR;
-extern const wxChar *SvnRevision;
+extern const wxChar *clGitRevision;
 
 static wxStopWatch gStopWatch;
 
@@ -698,7 +698,7 @@ void clMainFrame::Initialize(bool loadLastSession)
 {
     //set the revision number in the frame title
     wxString title(_("CodeLite - Revision: "));
-    title << SvnRevision;
+    title << clGitRevision;
 
     //initialize the environment variable configuration manager
     EnvironmentConfig::Instance()->Load();
@@ -3824,7 +3824,7 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     }
 
     title << _("CodeLite - Revision: ");
-    title << SvnRevision;
+    title << clGitRevision;
     SetTitle(title);
 }
 

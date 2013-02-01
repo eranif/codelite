@@ -42,8 +42,8 @@ createPCH()
 
 createRevisionFile()
 {
-	chmod +x ./le_makerevision.sh
-	./le_makerevision.sh
+	chmod +x ./git-revision.sh
+	./git-revision.sh
 }
 
 createVariables()

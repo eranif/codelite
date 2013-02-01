@@ -30,7 +30,7 @@
 #include "procutils.h"
 //#include <curl/curl.h>
 
-extern const wxChar *SvnRevision;
+extern const wxChar *clGitRevision;
 
 const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE = wxNewEventType();
 const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
@@ -170,7 +170,7 @@ void WebUpdateJob::ParseFile()
 				long webrev(0);
 
 				// convert strings to long
-				wxString sCurRev(SvnRevision);
+				wxString sCurRev(clGitRevision);
 				sCurRev.ToLong(&currev);
 
 				wxString sUrlRev(rev);

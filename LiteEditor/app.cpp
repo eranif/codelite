@@ -52,8 +52,8 @@
 //////////////////////////////////////////////
 // Define the version string for this codelite
 //////////////////////////////////////////////
-extern wxChar *SvnRevision;
-wxString CODELITE_VERSION_STR = wxString::Format(wxT("v5.0.%s"), SvnRevision);
+extern wxChar *clGitRevision;
+wxString CODELITE_VERSION_STR = wxString::Format(wxT("v5.0.%s"), clGitRevision);
 
 #if defined(__WXMAC__)||defined(__WXGTK__)
 #include <sys/wait.h>
@@ -410,7 +410,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
     // Update codelite revision and Version
-    EditorConfigST::Get()->Init(SvnRevision, wxT("2.0.2") );
+    EditorConfigST::Get()->Init(clGitRevision, wxT("2.0.2") );
 
     ManagerST::Get()->SetOriginalCwd(wxGetCwd());
     ::wxSetWorkingDirectory(homeDir);

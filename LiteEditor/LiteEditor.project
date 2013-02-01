@@ -413,6 +413,7 @@
     <File Name="clsplashscreen.cpp"/>
     <File Name="WelcomePage.cpp"/>
     <File Name="WelcomePage.h"/>
+    <File Name="autoversion.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>
@@ -508,7 +509,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>
-    <File Name="svninfo.cpp"/>
     <File Name="../Runtime/rc/menu.xrc"/>
     <File Name="resources.xrc"/>
     <File Name="../Runtime/config/accelerators.conf.default"/>
@@ -598,6 +598,9 @@
     <File Name="../make_src_targz.sh"/>
     <File Name="../make_deb.sh"/>
     <File Name="../make_repo.sh"/>
+    <File Name="../git-revision.bat"/>
+    <File Name="../git-revision.sh"/>
+    <File Name="../configure"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="newversionbasedlg.fbp"/>
@@ -1175,8 +1178,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1216,7 +1218,7 @@ svninfo.cpp:
         <StartupCommands/>
       </Debugger>
       <PreBuild>
-        <Command Enabled="yes">autorev .</Command>
+        <Command Enabled="yes">..\git-revision.bat</Command>
       </PreBuild>
       <PostBuild>
         <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite.exe" ..\Runtime</Command>
@@ -1235,7 +1237,8 @@ svninfo.cpp:
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

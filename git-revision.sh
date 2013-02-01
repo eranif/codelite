@@ -9,7 +9,7 @@ fi
 echo "#ifndef CL_GIT_REVISION" > autoversion.cpp
 echo "#define CL_GIT_REVISION" >> autoversion.cpp
 echo "" >> autoversion.cpp
-echo "const char* clGitRevision = \"${GIT_VERSION}\";" >> autoversion.cpp
+echo "const char* clGitRevision = wxT(\"${GIT_VERSION}\");" >> autoversion.cpp
 echo "#endif" >> autoversion.cpp
 echo "" >> autoversion.cpp
 

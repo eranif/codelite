@@ -9,7 +9,10 @@ fi
 echo "#ifndef CL_GIT_REVISION" > LiteEditor/autoversion.cpp
 echo "#define CL_GIT_REVISION" >> LiteEditor/autoversion.cpp
 echo "" >> LiteEditor/autoversion.cpp
-echo "const wxChar* clGitRevision = wxT(\"${GIT_VERSION}\");" >> LiteEditor/autoversion.cpp
+
+#echo "#include \"wx/chartype.h\"" >> LiteEditor/autoversion.cpp
+
+echo "const char* clGitRevision = \"${GIT_VERSION}\";" >> LiteEditor/autoversion.cpp
 echo "#endif" >> LiteEditor/autoversion.cpp
 echo "" >> LiteEditor/autoversion.cpp
 

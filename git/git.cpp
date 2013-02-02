@@ -912,10 +912,10 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitPush:
-        GIT_MESSAGE1(wxT("Push local changes (")+ ga.arguments+wxT(")"));
+        GIT_MESSAGE(wxT("Push local changes (")+ ga.arguments+wxT(")"));
         command << wxT(" --no-pager push ") << ga.arguments;
         ShowProgress(wxT("Pushing local changes..."), false);
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitCommit:
@@ -1299,10 +1299,12 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
     } else if(ga.action == gitListRemotes ) {
         wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
         m_remotes = gitList;
+        
     } else if(ga.action == gitDiffFile ) {
         GitFileDiffDlg dlg(m_topWindow);
         dlg.SetDiff(m_commandOutput);
         dlg.ShowModal();
+        
     } else if(ga.action == gitDiffRepoCommit ) {
         GitCommitDlg dlg(m_topWindow, m_repositoryDirectory);
         dlg.AppendDiff(m_commandOutput);
@@ -1320,14 +1322,17 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
                 gitAction ga(gitCommit,arg);
                 m_gitActionQueue.push(ga);
                 AddDefaultActions();
+                
             } else {
                 wxMessageBox(wxT("No commit message given, aborting..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
             }
         }
+        
     } else if(ga.action == gitDiffRepoShow ) {
         GitDiffDlg dlg(m_topWindow, m_repositoryDirectory);
         dlg.SetDiff(m_commandOutput);
         dlg.ShowModal();
+        
     } else if(ga.action == gitResetFile ) {
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
@@ -1336,10 +1341,13 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         m_gitActionQueue.push(ga);
         ga.action = gitListModified;
         m_gitActionQueue.push(ga);
+        
     } else if(ga.action == gitBranchCurrent ) {
         GetCurrentBranchAction(ga);
+        
     } else if(ga.action == gitBranchList || ga.action == gitBranchListRemote ) {
         ListBranchAction(ga);
+        
     } else if(ga.action == gitBranchSwitch
               || ga.action == gitBranchSwitchRemote
               || ga.action == gitPull
@@ -1387,6 +1395,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
             m_gitActionQueue.push(ga);
             ga.action = gitListModified;
             m_gitActionQueue.push(ga);
+            
         }
     } else if(ga.action == gitCommitList) {
         GitCommitListDlg dlg(m_topWindow, m_repositoryDirectory);

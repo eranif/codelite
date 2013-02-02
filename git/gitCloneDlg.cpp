@@ -29,8 +29,20 @@ wxString gitCloneDlg::GetCloneURL() const
     wxString urlString = m_textCtrlURL->GetValue();
     wxURI uri( urlString.Trim().Trim(false) );
     wxString credentials;
+    
+    wxString username = m_textCtrlUsername->GetValue().Trim();
+    wxString password = m_textCtrlPassword->GetValue().Trim();
+    
     if ( m_checkBoxUseLogin->IsChecked() ) {
-        credentials << m_textCtrlUsername->GetValue().Trim() << ":" << m_textCtrlPassword->GetValue().Trim() << "@";
+        if ( !username.IsEmpty() ) {
+            credentials << username;
+            
+            // check for password only if we got username
+            if ( !password.IsEmpty() ) {
+                credentials << ":" << password;
+            }
+            credentials << "@";
+        }
     }
     
     wxString cloneURL;

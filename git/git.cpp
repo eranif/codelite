@@ -814,7 +814,6 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     if(m_process) {
-        GIT_MESSAGE(wxT("Process already running"));
         return;
     }
 
@@ -1417,8 +1416,14 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
 {
     ProcessEventData *ped = (ProcessEventData*)event.GetClientData();
     if( ped ) {
+        
+        gitAction ga;
+        if ( !m_gitActionQueue.empty() ) {
+            ga = m_gitActionQueue.front();
+        }
+
         wxString output = ped->GetData();
-        if ( m_console->IsVerbose())
+        if ( m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull )
             m_console->AddRawText(output);
         m_commandOutput.Append(output);
 

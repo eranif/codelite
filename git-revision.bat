@@ -1,7 +1,7 @@
 @ECHO OFF
 
 :: get the revision and set it into variable
-call git rev-parse --short HEAD  > tmp.text
+call git describe --tags  > tmp.text
 set /p GIT_VERSION= < tmp.text 
 del tmp.text 
 

@@ -47,15 +47,19 @@ clSplashScreen::clSplashScreen(wxWindow* parent, const wxBitmap& bmp)
     font.SetWeight(wxFONTWEIGHT_BOLD);
     
     label_dc.SetFont(font);
-    label_dc.GetMultiLineTextExtent(CODELITE_VERSION_STR, &ww, &hh);
+    
+    wxString versionString = CODELITE_VERSION_STR;
+    versionString = versionString.BeforeLast('-');
+    
+    label_dc.GetMultiLineTextExtent(versionString, &ww, &hh);
     wxCoord bmpW = bmp.GetWidth();
-    label_dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+    label_dc.SetTextForeground( *wxWHITE );
     wxCoord textX = (bmpW - ww)/2;
-    label_dc.DrawText(CODELITE_VERSION_STR, textX, 31);
+    label_dc.DrawText(versionString, textX, 31);
     
     
-    label_dc.SetTextForeground(*wxWHITE);
-    label_dc.DrawText(CODELITE_VERSION_STR, textX, 30);
+    label_dc.SetTextForeground( wxColour("#003D00") );
+    label_dc.DrawText(versionString, textX, 30);
 
     label_dc.SelectObject(wxNullBitmap);
     Show(true);

@@ -53,7 +53,7 @@
 // Define the version string for this codelite
 //////////////////////////////////////////////
 extern wxChar *clGitRevision;
-wxString CODELITE_VERSION_STR = wxString::Format(wxT("v5.0.%s"), clGitRevision);
+wxString CODELITE_VERSION_STR = clGitRevision;
 
 #if defined(__WXMAC__)||defined(__WXGTK__)
 #include <sys/wait.h>

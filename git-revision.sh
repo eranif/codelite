@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GIT_VERSION=`git rev-parse --short HEAD`
+GIT_VERSION=`git describe --tags`
 
 if test -f LiteEditor/autoversion.cpp ; then 
     rm LiteEditor/autoversion.cpp

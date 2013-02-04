@@ -4,11 +4,11 @@
 #include <wx/string.h>
 #include <wx/fileconf.h>
 
-class QmakeConf : public wxFileConfig {
+class QmakeConf : public wxFileConfig
+{
 public:
-	QmakeConf(const wxString &confPath);
-	virtual ~QmakeConf();
-
-	wxArrayString GetAllConfigurations();
+    QmakeConf(const wxString &confPath);
+    virtual ~QmakeConf();
+    wxArrayString GetAllConfigurations() const;
 };
 #endif // __qmakeconf__

@@ -12,23 +12,23 @@ class QmakeConf;
 /** Implementing QmakeSettingsTabBase */
 class QmakeSettingsTab : public QmakeSettingsTabBase
 {
-	wxString       m_name;
-	wxArrayString  GetSpecList(const wxString &qmakePath);
+    wxString       m_name;
+    wxArrayString  GetSpecList(const wxString &qmakePath);
 
 public:
-	/** Constructor */
-	QmakeSettingsTab( wxWindow* parent, const wxString &name );
+    /** Constructor */
+    QmakeSettingsTab(wxWindow* parent, const wxString &name, QmakeConf* conf);
 
-	void Load(QmakeConf *conf);
-	void Save(QmakeConf *conf);
-	void OnFileSelected(wxFileDirPickerEvent &event);
+    void Load(QmakeConf *conf);
+    void Save(QmakeConf *conf);
+    void OnFileSelected(wxFileDirPickerEvent &event);
 
-	void SetTabName(const wxString& name) {
-		this->m_name = name;
-	}
-	const wxString& GetTabName() const {
-		return m_name;
-	}
+    void SetTabName(const wxString& name) {
+        this->m_name = name;
+    }
+    const wxString& GetTabName() const {
+        return m_name;
+    }
 };
 
 #endif // __qmakesettingstab__

@@ -13,23 +13,23 @@ class IManager;
 /** Implementing QMakeSettingsBaseDlg */
 class QMakeSettingsDlg : public QMakeSettingsBaseDlg
 {
-	IManager*  m_manager;
-	QmakeConf* m_conf;
-	long       m_rightClickTabIdx;
+    IManager*  m_manager;
+    QmakeConf* m_conf;
+    long       m_rightClickTabIdx;
 
 protected:
-	// Handlers for QMakeSettingsBaseDlg events.
-	void OnNewQmakeSettings( wxCommandEvent& event );
-	void OnOK              ( wxCommandEvent &event );
-	void OnRightDown       ( wxMouseEvent &event   );
-	void OnRename          ( wxCommandEvent &event );
-	void OnDelete          ( wxCommandEvent &event );
+    // Handlers for QMakeSettingsBaseDlg events.
+    void OnNewQmakeSettings( wxCommandEvent& event );
+    void OnOK              ( wxCommandEvent &event );
+    void OnRightDown       ( wxMouseEvent &event   );
+    void OnRename          ( wxCommandEvent &event );
+    void OnDelete          ( wxCommandEvent &event );
 
-	void Initialize();
+    void Initialize();
 public:
-	/** Constructor */
-	QMakeSettingsDlg( wxWindow* parent, IManager *manager, QmakeConf *conf );
-	virtual ~QMakeSettingsDlg();
+    /** Constructor */
+    QMakeSettingsDlg( wxWindow* parent, IManager *manager, QmakeConf *conf );
+    virtual ~QMakeSettingsDlg();
 };
 
 #endif // __qmakesettingsdlg__

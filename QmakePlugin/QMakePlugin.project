@@ -5,13 +5,21 @@
       <![CDATA[00030001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>../QmakePlugin</Topleveldir>
+  </Reconciliation>
   <VirtualDirectory Name="src">
     <File Name="qmakeplugin.cpp"/>
     <File Name="qmakeconf.cpp"/>
     <File Name="qmakeconf.h"/>
     <File Name="qmakeplugindata.cpp"/>
     <File Name="qmakeplugindata.h"/>
-    <File Name="MD5.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="qmakeplugin.h"/>
@@ -28,15 +36,11 @@
     <File Name="qmakesettingsdlg.cpp"/>
     <File Name="qmakesettingsdlg.h"/>
     <File Name="qmakesettingstab.cpp"/>
-    <File Name="newqtprojectbasedlg.h"/>
-    <File Name="newqtprojectbasedlg.cpp"/>
     <File Name="newqtprojdlg.h"/>
     <File Name="newqtprojdlg.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="formbuilder">
-    <File Name="qmaketabbase.fbp"/>
-    <File Name="qmakesettingsbasedlg.fbp"/>
-    <File Name="../formbuilder/NewQtProj.fbp"/>
+    <File Name="NewQtProj.wxcp"/>
+    <File Name="qmakesettingsbasedlg.wxcp"/>
+    <File Name="qmaketabbase.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="qmake">
     <File Name="qmakegenerator.cpp"/>
@@ -193,4 +197,15 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="NewQtProj_qmakeplugin_bitmaps.cpp"/>
+      <File Name="qmakesettingsbasedlg_qmakeplugin_bitmaps.cpp"/>
+      <File Name="qmaketabbase_qmakeplugin_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="NewQtProj.h"/>
+      <File Name="NewQtProj.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

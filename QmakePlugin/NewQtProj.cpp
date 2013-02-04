@@ -107,11 +107,13 @@ NewQtProjBaseDlg::NewQtProjBaseDlg(wxWindow* parent, wxWindowID id, const wxStri
     Centre();
     // Connect events
     m_buttonSelectConfig->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewQtProjBaseDlg::OnNewQmakeSettings), NULL, this);
+    m_buttonOk->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewQtProjBaseDlg::OnOKUI), NULL, this);
     
 }
 
 NewQtProjBaseDlg::~NewQtProjBaseDlg()
 {
     m_buttonSelectConfig->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewQtProjBaseDlg::OnNewQmakeSettings), NULL, this);
+    m_buttonOk->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewQtProjBaseDlg::OnOKUI), NULL, this);
     
 }

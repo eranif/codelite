@@ -69,3 +69,10 @@ wxString NewQtProjDlg::GetQmake() const
 {
     return m_choiceQmake->GetStringSelection();
 }
+
+void NewQtProjDlg::OnOKUI(wxUpdateUIEvent& event)
+{
+    wxString projectName = m_textCtrlProjName->GetValue().Trim();
+    wxFileName projectPath ( m_dirPicker4->GetPath(), "" );
+    event.Enable( !projectName.IsEmpty() && projectPath.Exists() );
+}

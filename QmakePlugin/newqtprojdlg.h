@@ -18,6 +18,7 @@ class NewQtProjDlg : public NewQtProjBaseDlg
     IManager  *m_mgr;
 
 protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event);
     // Handlers for NewQtProjBaseDlg events.
     void OnNewQmakeSettings( wxCommandEvent& event );
 

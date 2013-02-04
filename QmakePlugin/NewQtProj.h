@@ -38,6 +38,7 @@ protected:
 
 protected:
     virtual void OnNewQmakeSettings(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     NewQtProjBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Qmake project"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

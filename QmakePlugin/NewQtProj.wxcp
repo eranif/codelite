@@ -46,6 +46,14 @@
 					"m_label":	"Font:",
 					"m_value":	""
 				}, {
+					"type":	"bool",
+					"m_label":	"Hide control",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disable control",
+					"m_value":	false
+				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
 					"m_value":	""
@@ -69,11 +77,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	""
+					"m_value":	"newqtprojdlg.cpp"
 				}, {
 					"type":	"string",
 					"m_label":	"Inherited Class",
-					"m_value":	""
+					"m_value":	"NewQtProjDlg"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -93,6 +101,14 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer5"
 						}, {
+							"type":	"bool",
+							"m_label":	"Hide control",
+							"m_value":	false
+						}, {
+							"type":	"bool",
+							"m_label":	"Disable control",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -111,6 +127,14 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer2"
+								}, {
+									"type":	"bool",
+									"m_label":	"Hide control",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disable control",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -178,6 +202,14 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -236,6 +268,14 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -296,6 +336,14 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -354,6 +402,14 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -414,6 +470,14 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -472,6 +536,14 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -532,6 +604,14 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -562,6 +642,14 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"boxSizer6"
+										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -609,6 +697,14 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hide control",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disable control",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -669,6 +765,14 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hide control",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disable control",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -715,6 +819,14 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer1"
+								}, {
+									"type":	"bool",
+									"m_label":	"Hide control",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disable control",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -767,6 +879,14 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -818,6 +938,14 @@
 									"m_label":	"Name:",
 									"m_value":	"bSizer6"
 								}, {
+									"type":	"bool",
+									"m_label":	"Hide control",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disable control",
+									"m_value":	false
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	1,
@@ -864,6 +992,14 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -932,6 +1068,14 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hide control",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disable control",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -956,7 +1100,13 @@
 											"m_label":	"Margins:",
 											"m_value":	"2,2"
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_eventHandler":	"wxUpdateUIEventHandler",
+											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event"
+										}],
 									"m_children":	[]
 								}]
 						}]

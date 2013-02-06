@@ -14,4 +14,5 @@ add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
+add_subdirectory(abbreviation)
 

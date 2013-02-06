@@ -450,7 +450,7 @@ void GitPlugin::OnSwitchLocalBranch(wxCommandEvent &e)
     }
 
     if(m_localBranchList.GetCount() == 0) {
-        wxMessageBox(wxT("No other local branches found!"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+        wxMessageBox(wxT("No other local branches found."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
         return;
     }
 
@@ -477,7 +477,7 @@ void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent &e)
         return;
     }
     if(m_remoteBranchList.GetCount() == 0) {
-        wxMessageBox(wxT("No remote branches found!"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+        wxMessageBox(wxT("No remote branches found."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
         return;
     }
     wxString message = wxT("Select remote branch (current is ");
@@ -531,7 +531,7 @@ void GitPlugin::OnCommit(wxCommandEvent &e)
 {
     wxUnusedVar(e);
     if( m_modifiedFiles.empty() && !m_addedFiles ) {
-        wxMessageBox(wxT("No modified files found, nothing to commit..."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+        wxMessageBox(wxT("No modified files found, nothing to commit..."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
         return;
     }
 
@@ -1353,12 +1353,14 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
               || ga.action == gitResetRepo) {
         if(ga.action == gitPull) {
             if(m_commandOutput.Contains(wxT("Already"))) {
-                wxMessageBox(wxT("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+                wxMessageBox(wxT("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
             } else {
-                wxString log =  m_commandOutput.Mid(m_commandOutput.Find(wxT("From ")));
-                GitLogDlg dlg(m_topWindow, wxT("Pull log"));
-                dlg.SetLog(log);
-                dlg.ShowModal();
+                wxString log =  m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
+                if(!log.IsEmpty()){
+                    GitLogDlg dlg(m_topWindow, wxT("Pull log"));
+                    dlg.SetLog(log);
+                    dlg.ShowModal();
+                }
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
                     if(wxMessageBox(wxT("Merged after pull. Rebase?"),wxT("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
                         wxString selection;
@@ -1379,8 +1381,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
                 } else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
                     wxMessageBox(wxT("There was a conflict during merge.\n"
                                      "Please resolve conflicts and commit by hand.\n"
-                                     "After resolving conflicts, be sure to reload the current project.\n\n"
-                                     "Would you like to start \'git mergetool\'?"),
+                                     "After resolving conflicts, be sure to reload the current project."),
                                  wxT("Conflict found during merge"),
                                  wxOK, m_topWindow);
                 }

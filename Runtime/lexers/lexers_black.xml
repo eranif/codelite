@@ -34,6 +34,39 @@
     <Property Id="38" Name="Calltip" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" Size="9"/>
   </Properties>
 </Lexer>
+  <Lexer Name="CMake" StylingWithinPreProcessor="yes" Id="80">
+    <KeyWords0>ADD_CUSTOM_COMMAND ADD_CUSTOM_TARGET ADD_DEFINITIONS ADD_DEPENDENCIES ADD_EXECUTABLE ADD_LIBRARY ADD_SUBDIRECTORY ADD_TEST AUX_SOURCE_DIRECTORY BUILD_COMMAND BUILD_NAME CMAKE_MINIMUM_REQUIRED CONFIGURE_FILE CREATE_TEST_SOURCELIST ELSE ELSEIF ENABLE_LANGUAGE ENABLE_TESTING ENDFOREACH ENDFUNCTION ENDIF ENDMACRO ENDWHILE EXEC_PROGRAM EXECUTE_PROCESS EXPORT_LIBRARY_DEPENDENCIES FILE FIND_FILE FIND_LIBRARY FIND_PACKAGE FIND_PATH FIND_PROGRAM FLTK_WRAP_UI FOREACH FUNCTION GET_CMAKE_PROPERTY GET_DIRECTORY_PROPERTY GET_FILENAME_COMPONENT GET_SOURCE_FILE_PROPERTY GET_TARGET_PROPERTY GET_TEST_PROPERTY IF INCLUDE INCLUDE_DIRECTORIES INCLUDE_EXTERNAL_MSPROJECT INCLUDE_REGULAR_EXPRESSION INSTALL INSTALL_FILES INSTALL_PROGRAMS INSTALL_TARGETS LINK_DIRECTORIES LINK_LIBRARIES LIST LOAD_CACHE LOAD_COMMAND MACRO MAKE_DIRECTORY MARK_AS_ADVANCED MATH MESSAGE OPTION OUTPUT_REQUIRED_FILES PROJECT QT_WRAP_CPP QT_WRAP_UI REMOVE REMOVE_DEFINITIONS SEPARATE_ARGUMENTS SET SET_DIRECTORY_PROPERTIES SET_SOURCE_FILES_PROPERTIES SET_TARGET_PROPERTIES SET_TESTS_PROPERTIES SITE_NAME SOURCE_GROUP STRING SUBDIR_DEPENDS SUBDIRS TARGET_LINK_LIBRARIES TRY_COMPILE TRY_RUN UNSET USE_MANGLED_MESA UTILITY_SOURCE VARIABLE_REQUIRES VTK_MAKE_INSTANTIATOR VTK_WRAP_JAVA VTK_WRAP_PYTHON VTK_WRAP_TCL WHILE WRITE_FILE</KeyWords0>
+    <KeyWords1/>
+    <KeyWords2/>
+    <KeyWords3/>
+    <KeyWords4/>
+    <Extensions>*.cmake;*.CMAKE</Extensions>
+    <Properties>
+      <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="1" Name="Comment" Bold="no" Face="" Colour="#808080" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="2" Name="String DQ" Bold="no" Face="" Colour="#804040" BgColour="gold" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="3" Name="String LQ" Bold="no" Face="" Colour="#0000A0" BgColour="gold" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="4" Name="String RQ" Bold="no" Face="" Colour="#0000A0" BgColour="gold" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="5" Name="Commands" Bold="no" Face="" Colour="blue" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="6" Name="Parameters" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="7" Name="Variables" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="8" Name="UserDefined" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="9" Name="While Def" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="10" Name="Foreach Def" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="11" Name="If Defined Def" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="12" Name="Macro Def" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="13" Name="String Var" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="14" Name="Number" Bold="no" Face="" Colour="#006400" BgColour="#D0F4D0" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="10"/>
+      <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
+      <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
+      <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+    </Properties>
+  </Lexer>
+
 <Lexer Name="Batch" Id="12">
   <KeyWords0>rem set if exist errorlevel for in do break call chcp cd chdir choice cls country ctty date del erase dir echo exit goto loadfix loadhigh mkdir md move path pause prompt rename ren rmdir rd shift time type ver verify vol com con lpt nul color copy defined else not start off</KeyWords0>
   <KeyWords1></KeyWords1>

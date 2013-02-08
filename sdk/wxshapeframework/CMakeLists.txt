@@ -28,3 +28,4 @@ FILE(GLOB SRCS "src/*.cpp")
 # Define the output
 add_library(wxshapeframework SHARED ${SRCS})
 target_link_libraries(wxshapeframework ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+install(TARGETS wxshapeframework DESTINATION ${PLUGINS_DIR})

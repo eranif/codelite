@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 2.6.2)
  
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles. 
-project(codelite)
-
+project(libcodelite)
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_ROOT}/lib" )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -29,5 +28,7 @@ set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" )
 
 # Define the output
-add_library(codelite SHARED ${SRCS})
-target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3)
+add_library(libcodelite SHARED ${SRCS})
+target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lsqlite3 -lwxsqlite3 )
+install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
+

@@ -5,11 +5,13 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(sqlite3)
 
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_ROOT}/lib" )
+set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CL_ROOT}/lib" )
  
 # For convenience we define the sources as a variable. You can add 
 # header files and cpp/c files and CMake will sort them out
 FILE(GLOB SRCS "*.c")
  
 # Define the output
-add_library(sqlite3 SHARED ${SRCS})
+add_library(sqlite3 STATIC  ${SRCS})
+
+#install(TARGETS sqlite3 DESTINATION ${PLUGINS_DIR})

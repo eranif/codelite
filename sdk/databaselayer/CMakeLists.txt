@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # Our project is called 'databaselayersqlite' this is how it will be called in
 # visual studio, and in our makefiles. 
 project(databaselayersqlite)
-
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ../../../lib )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -29,3 +28,4 @@ FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblaye
 # Define the output
 add_library(databaselayersqlite SHARED ${SRCS})
 target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+install(TARGETS databaselayersqlite DESTINATION ${PLUGINS_DIR})

@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.6.2)
 
 # set the plugin name here
-set( PLUGIN_NAME "abbreviation")
+set( PLUGIN_NAME "DatabaseExplorer")
 
 # Our project is called 'plugin' this is how it will be called in
 # visual studio, and in our makefiles. 
@@ -16,8 +16,26 @@ find_package(wxWidgets COMPONENTS std aui propgrid stc REQUIRED)
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
+## On UNIX we require GTK
+if (UNIX AND NOT APPLE)
+
+    find_package(GTK2)
+    if (GTK2_FOUND)
+        message("GTK2 Found... yes")
+        include_directories("${GTK2_INCLUDE_DIRS}")
+    else (GTK2_FOUND)
+        message(FATAL_ERROR "Could not locate GTK.")
+    endif (GTK2_FOUND)
+
+endif (UNIX AND NOT APPLE)
+
 # Include paths
-include_directories("${CL_ROOT}/Plugin" "${CL_ROOT}/sdk/wxsqlite3/include" "${CL_ROOT}/CodeLite" "${CL_ROOT}/PCH" "${CL_ROOT}/Interfaces")
+include_directories("${CL_ROOT}/Plugin" 
+		    "${CL_ROOT}/sdk/wxsqlite3/include" 
+		    "${CL_ROOT}/CodeLite" "${CL_ROOT}/PCH" 
+                    "${CL_ROOT}/Interfaces" 
+		    "${CL_ROOT}/sdk/wxshapeframework/include"
+		    "${CL_ROOT}/sdk/databaselayer/include" )
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -33,7 +51,7 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -ldatabaselayersqlite)
 # Make sure that the plugin will not start build before 'plugin.so' is ready
 add_dependencies(${PLUGIN_NAME} plugin)
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

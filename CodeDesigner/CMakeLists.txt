@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.6.2)
 
 # set the plugin name here
-set( PLUGIN_NAME "abbreviation")
+set( PLUGIN_NAME "CodeDesigner")
 
 # Our project is called 'plugin' this is how it will be called in
 # visual studio, and in our makefiles. 
@@ -34,6 +34,3 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin)
-# Make sure that the plugin will not start build before 'plugin.so' is ready
-add_dependencies(${PLUGIN_NAME} plugin)
-install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

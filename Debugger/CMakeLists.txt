@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.6.2)
 
 # set the plugin name here
-set( PLUGIN_NAME "abbreviation")
+set( PLUGIN_NAME "DebuggerGDB")
 
 # Our project is called 'plugin' this is how it will be called in
 # visual studio, and in our makefiles. 

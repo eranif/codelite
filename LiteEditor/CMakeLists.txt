@@ -4,8 +4,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles. 
 project(codelite)
-
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_ROOT}/lib" )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_ROOT}/bin" )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS std aui propgrid stc REQUIRED)
@@ -33,6 +32,11 @@ add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 
+if ( USE_CLANG )
+  add_definitions(-DHAS_LIBCLANG)
+  include_directories(${CLANG_INCLUDE})
+endif( USE_CLANG )
+
 # Add RPATH
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 
@@ -41,9 +45,9 @@ FILE(GLOB SRCS "*.cpp")
 # Define the output
 add_executable(codelite ${SRCS})
 if(GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -lutil)
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -lutil)
 else (GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -lutil)
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -lutil)
 endif(GTK2_FOUND)
 
 install(TARGETS codelite DESTINATION ${PREFIX}/bin)

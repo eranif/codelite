@@ -19,7 +19,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DWX_CONFIG=<path-to-my-wx-config-tool>
 ##
 ###############################################################
-
 #############################################
 ## Defaults
 #############################################
@@ -120,6 +119,7 @@ endif(USE_CLANG)
 SET(CMAKE_INSTALL_RPATH ${PLUGINS_DIR})
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 
 ###########################################
 ## Add the folders, the order matters here

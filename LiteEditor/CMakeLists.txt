@@ -4,6 +4,13 @@ cmake_minimum_required(VERSION 2.6.2)
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles. 
 project(codelite)
+
+###########################################
+## Generate autoversion.cpp file
+###########################################
+ADD_CUSTOM_TARGET(GIT_REVISION COMMAND "${CL_SRC_ROOT}/git-revision.sh" WORKING_DIRECTORY "${CL_SRC_ROOT}"
+                   COMMENT Generating LiteEditor/autoversion.cpp file)
+
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/bin" )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -42,7 +49,8 @@ set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 FILE(GLOB SRCS "*.cpp")
 
 # Define the output
-add_executable(codelite ${SRCS})
+add_executable(codelite ${SRCS} "${CL_SRC_ROOT}/LiteEditor/autoversion.cpp")
+
 if(GTK2_FOUND)
     target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -lutil)
 else (GTK2_FOUND)
@@ -95,3 +103,4 @@ if ( USE_CLANG )
   install(FILES ${CLANG_BINARY} DESTINATION ${PLUGINS_DIR})
 endif( USE_CLANG )
 
+add_dependencies(codelite GIT_REVISION)

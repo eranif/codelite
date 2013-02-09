@@ -18,12 +18,12 @@ if(WIN32)
     add_definitions(-DWXMAKINGDLL_WXSF)
 endif(WIN32)
 
-include_directories(./include)
+include_directories("${CL_SRC_ROOT}/sdk/wxshapeframework/include" "${CL_SRC_ROOT}/sdk/wxshapeframework/src")
 
 # Add RPATH
 SET (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 
-FILE(GLOB SRCS "src/*.cpp")
+FILE(GLOB SRCS "src/*.cpp" "src/wxxmlserializer/*.cpp")
 
 # Define the output
 add_library(wxshapeframework SHARED ${SRCS})

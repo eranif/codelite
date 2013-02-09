@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelite-clang)
 
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_ROOT}/bin" )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/bin" )
 find_package(wxWidgets COMPONENTS base REQUIRED)
 
 # wxWidgets include (this will do all the magic to configure everything)
@@ -23,5 +23,5 @@ FILE(GLOB SRCS "*.cpp")
 add_executable(codelite-clang ${SRCS})
 target_link_libraries(codelite-clang ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY})
 
-install(TARGETS codelite-clang DESTINATION ${PREFIX}/bin)
+install(TARGETS codelite-clang DESTINATION ${CL_PREFIX}/bin)
 

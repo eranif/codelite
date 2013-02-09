@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelitegcc)
 
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_ROOT}/bin" )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/bin" )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 #find_package(wxWidgets COMPONENTS std aui propgrid stc REQUIRED)
@@ -14,7 +14,7 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_ROOT}/bin" )
 #include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_ROOT}/sdk/codelite_cppcheck/lib" "${CL_ROOT}/sdk/codelite_cppcheck/cli")
+include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/lib" "${CL_SRC_ROOT}/sdk/codelite_cppcheck/cli")
 
 # Add RPATH
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
@@ -25,5 +25,5 @@ FILE(GLOB SRCS "cli/*.cpp" "lib/*.cpp")
 add_executable(codelite_cppcheck ${SRCS})
 target_link_libraries(codelite_cppcheck ${LINKER_OPTIONS})
 
-install(TARGETS codelite_cppcheck DESTINATION ${PREFIX}/bin)
+install(TARGETS codelite_cppcheck DESTINATION ${CL_PREFIX}/bin)
 

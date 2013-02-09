@@ -8,7 +8,7 @@ set( PLUGIN_NAME "abbreviation")
 # visual studio, and in our makefiles. 
 project( ${PLUGIN_NAME} )
 
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_ROOT}/lib" )
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/lib" )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS std aui propgrid stc REQUIRED)
@@ -17,7 +17,7 @@ find_package(wxWidgets COMPONENTS std aui propgrid stc REQUIRED)
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_ROOT}/Plugin" "${CL_ROOT}/sdk/wxsqlite3/include" "${CL_ROOT}/CodeLite" "${CL_ROOT}/PCH" "${CL_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -33,7 +33,7 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin)
 # Make sure that the plugin will not start build before 'plugin.so' is ready
 add_dependencies(${PLUGIN_NAME} plugin)
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

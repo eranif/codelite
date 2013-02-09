@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(plugin)
 
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_ROOT}/lib" )
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/lib" )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS std aui REQUIRED)
@@ -14,7 +14,7 @@ find_package(wxWidgets COMPONENTS std aui REQUIRED)
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_ROOT}/Plugin" "${CL_ROOT}/sdk/wxsqlite3/include" "${CL_ROOT}/CodeLite" "${CL_ROOT}/PCH" "${CL_ROOT}/Interfaces")
+include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
 
 ## Macros
 if(WIN32)
@@ -26,7 +26,6 @@ if (UNIX AND NOT APPLE)
 
     find_package(GTK2)
     if (GTK2_FOUND)
-        message("GTK2 Found... yes")
         include_directories("${GTK2_INCLUDE_DIRS}")
     else (GTK2_FOUND)
         message(FATAL_ERROR "Could not locate GTK.")
@@ -45,9 +44,9 @@ FILE(GLOB SRCS "*.cpp")
 # Define the output
 add_library(plugin SHARED ${SRCS})
 if(GTK2_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite)
 else (GTK2_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite)
 endif(GTK2_FOUND)
 
 install(TARGETS plugin DESTINATION ${PLUGINS_DIR})

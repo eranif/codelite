@@ -356,5 +356,8 @@ and the plugin is NOT one of the official plugins (see list below):
 - Subversion
 - UnitTestPP
 - wxFormBuilder plugin
+- ZoomNavigator
+- git
+- Outline
 
 Can be distributed under a license other than the GPL

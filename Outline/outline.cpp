@@ -28,7 +28,7 @@
 #include <wx/wupdlock.h>
 #include "event_notifier.h"
 #include <wx/settings.h>
-#include <outline_settings.h>
+#include "outline_settings.h"
 #include "iconfigtool.h"
 #include "detachedpanesinfo.h"
 #include <wx/menu.h>

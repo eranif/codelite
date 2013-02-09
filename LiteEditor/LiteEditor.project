@@ -1047,9 +1047,9 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <Target Name="build-debug">cd build-debug &amp;&amp; make -j8</Target>
         <Target Name="INSTALL RELEASE">cd build-release &amp;&amp; sudo -A make install</Target>
         <Target Name="INSTALL DEBUG">cd build-debug &amp;&amp; make install</Target>
-        <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
-        <CleanCommand>make clean</CleanCommand>
-        <BuildCommand>make -e -j 8</BuildCommand>
+        <RebuildCommand>cd build-release &amp;&amp; make clean &amp;&amp; make -j8</RebuildCommand>
+        <CleanCommand>cd build-release &amp;&amp; make clean</CleanCommand>
+        <BuildCommand>cd build-release &amp;&amp; make -e -j 8</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand>./configure</MakefileGenerationCommand>

@@ -129,10 +129,11 @@ endif(USE_CLANG)
 ## RPATH settings
 ###########################################
 
+if (UNIX AND NOT APPLE)
 SET(CMAKE_INSTALL_RPATH ${PLUGINS_DIR})
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
+endif(UNIX AND NOT APPLE)
 
 ###########################################
 ## Add the folders, the order matters here

@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelite_indexer)
 
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/bin" )
-
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS core base REQUIRED)
 

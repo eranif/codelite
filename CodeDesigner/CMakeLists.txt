@@ -8,8 +8,6 @@ set( PLUGIN_NAME "CodeDesigner")
 # visual studio, and in our makefiles. 
 project( ${PLUGIN_NAME} )
 
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/lib" )
-
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 
@@ -33,4 +31,4 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin)

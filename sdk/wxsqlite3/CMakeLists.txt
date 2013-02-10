@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(wxsqlite3)
 
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/lib" )
-
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS core base REQUIRED)
 
@@ -29,5 +27,5 @@ set(SRCS src/wxsqlite3.cpp)
 
 # Define the output
 add_library(wxsqlite3 SHARED ${SRCS})
-target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_SRC_ROOT}/lib" -lsqlite3)
+target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3)
 install(TARGETS wxsqlite3 DESTINATION ${PLUGINS_DIR})

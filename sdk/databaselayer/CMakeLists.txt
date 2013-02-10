@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # Our project is called 'databaselayersqlite' this is how it will be called in
 # visual studio, and in our makefiles. 
 project(databaselayersqlite)
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ../../../lib )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS std REQUIRED)

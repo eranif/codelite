@@ -19,6 +19,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DWX_CONFIG=<path-to-my-wx-config-tool>
 ##
 ###############################################################
+
 #############################################
 ## Defaults
 #############################################
@@ -66,8 +67,21 @@ add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 ## Global optimizations
 #############################################
 
-if(CMAKE_BUILD_TYPE MATCHES Release) 
+if(CMAKE_BUILD_TYPE MATCHES Release)
     message("-- Building in Release mode")
+    
+    ## Set the libraries outout directory
+    set( CL_BIN_DIR bin)
+    set( CL_LIB_DIR lib)
+
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_BIN_DIR}" )
+    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
+    set( CL_LIBPATH                     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
+
+    message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
         set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
@@ -76,6 +90,18 @@ if(CMAKE_BUILD_TYPE MATCHES Release)
 
 else ()
     message("-- Building in Debug mode")
+    ## Set the libraries outout directory
+    set( CL_BIN_DIR bin_debug)
+    set( CL_LIB_DIR lib_debug)
+
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_BIN_DIR}" )
+    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
+    set( CL_LIBPATH                     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
+
+    message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_CXX_FLAGS "-g -O0")        ## No optimization, debug info
     endif(CMAKE_COMPILER_IS_GNUCXX)
@@ -130,9 +156,9 @@ endif(USE_CLANG)
 ###########################################
 
 if (UNIX AND NOT APPLE)
-SET(CMAKE_INSTALL_RPATH ${PLUGINS_DIR})
-SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    SET(CMAKE_INSTALL_RPATH ${PLUGINS_DIR})
+    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif(UNIX AND NOT APPLE)
 
 ###########################################

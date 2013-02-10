@@ -11,8 +11,6 @@ project(codelite)
 ADD_CUSTOM_TARGET(GIT_REVISION COMMAND "${CL_SRC_ROOT}/git-revision.sh" WORKING_DIRECTORY "${CL_SRC_ROOT}"
                    COMMENT Generating LiteEditor/autoversion.cpp file)
 
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/bin" )
-
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 
@@ -66,9 +64,9 @@ else (UNIX)
 endif (UNIX)
 
 if(GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
 else (GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
 endif(GTK2_FOUND)
 
 ##################################################################

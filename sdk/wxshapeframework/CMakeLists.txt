@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(wxshapeframework)
 
-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ../../../lib )
-
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS std REQUIRED)
 

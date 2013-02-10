@@ -518,8 +518,11 @@ public:
 		return m_pOrig->DoGetAsBitmap( subrect );
 	}
 
-    virtual void DoDrawLines(int n, wxPoint points[],
-                             wxCoord xoffset, wxCoord yoffset )
+#if wxVERSION_NUMBER > 2904
+    virtual void DoDrawLines(int n, const wxPoint points[], wxCoord xoffset, wxCoord yoffset )
+#else
+    virtual void DoDrawLines(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset )
+#endif
 	{
         wxPoint *updPoints = new wxPoint[n];
 
@@ -553,9 +556,12 @@ public:
 		delete [] pts;
 	}
 
-    virtual void DoDrawPolygon(int n, wxPoint points[],
-                           wxCoord xoffset, wxCoord yoffset,
-                           wxPolygonFillMode fillStyle = wxODDEVEN_RULE)
+
+#if wxVERSION_NUMBER > 2904
+    virtual void DoDrawPolygon(int n, const wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle = wxODDEVEN_RULE)
+#else
+    virtual void DoDrawPolygon(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle = wxODDEVEN_RULE)
+#endif
 	{
         wxPoint *updPoints = new wxPoint[n];
 

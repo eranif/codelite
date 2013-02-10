@@ -14,7 +14,7 @@ ADD_CUSTOM_TARGET(GIT_REVISION COMMAND "${CL_SRC_ROOT}/git-revision.sh" WORKING_
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/bin" )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS std aui propgrid stc REQUIRED)
+find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )

@@ -29,5 +29,5 @@ set(SRCS src/wxsqlite3.cpp)
 
 # Define the output
 add_library(wxsqlite3 SHARED ${SRCS})
-target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+target_link_libraries(wxsqlite3 ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_SRC_ROOT}/lib" -lsqlite3)
 install(TARGETS wxsqlite3 DESTINATION ${PLUGINS_DIR})

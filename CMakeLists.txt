@@ -27,6 +27,13 @@ set( CL_PREFIX "/usr" )
 set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set( CL_WX_CONFIG wx-config )
 set( USE_CLANG 1 )
+set( IS_FREEBSD 0 )
+
+set (OS_NAME "WIN")
+if (UNIX)
+  execute_process(COMMAND uname -s OUTPUT_VARIABLE OS_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
+message("-- OS name ${OS_NAME}")
 
 ########################################
 ## Override defaults with user input
@@ -54,18 +61,18 @@ add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 #############################################
 
 if(CMAKE_BUILD_TYPE MATCHES Release) 
-	message("-- Building in Release mode")
-	if(CMAKE_COMPILER_IS_GNUCXX)
-		set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
-		set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
-	endif(CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions(-DNDEBUG)
+    message("-- Building in Release mode")
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
+        set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
+    endif(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-DNDEBUG)
 
 else ()
-	message("-- Building in Debug mode")
-	if(CMAKE_COMPILER_IS_GNUCXX)
-		set(CMAKE_CXX_FLAGS "-g -O0")        ## No optimization, debug info
-	endif(CMAKE_COMPILER_IS_GNUCXX)
+    message("-- Building in Debug mode")
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "-g -O0")        ## No optimization, debug info
+    endif(CMAKE_COMPILER_IS_GNUCXX)
 
 endif()
 

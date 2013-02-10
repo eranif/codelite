@@ -51,10 +51,22 @@ FILE(GLOB SRCS "*.cpp")
 # Define the output
 add_executable(codelite ${SRCS} "${CL_SRC_ROOT}/LiteEditor/autoversion.cpp")
 
+set( ADDITIONAL_LIBRARIES "" )
+
+if (UNIX)
+    if ( IS_FREEBSD )
+        set(ADDITIONAL_LIBRARIES "-lkvm")
+    else ( IS_FREEBSD  )
+        set(ADDITIONAL_LIBRARIES "-ldl -lutil")
+    endif ( IS_FREEBSD )
+else (UNIX)
+    ## Windows??
+endif (UNIX)
+
 if(GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -lutil)
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
 else (GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin -lutil)
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L${CL_SRC_ROOT}/lib -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
 endif(GTK2_FOUND)
 
 ##################################################################

@@ -97,8 +97,12 @@ PluginManager::PluginManager()
 void PluginManager::Load()
 {
     wxString ext;
-#if defined (__WXGTK__) || defined (__WXMAC__)
+#if defined (__WXGTK__) 
     ext = wxT("so");
+    
+#elif defined(__WXMAC__)
+    ext = wxT("dylib");
+    
 #else
     ext = wxT("dll");
 #endif

@@ -67,11 +67,18 @@ void DebuggerMgr::Free()
 bool DebuggerMgr::LoadDebuggers()
 {
 	wxString ext;
+    
 #if defined (__WXMSW__)
 	ext = wxT("dll");
+    
+#elif defined(__WXMAC__)
+	ext = wxT("dylib");
+
 #else
 	ext = wxT("so");
+    
 #endif
+
 	wxString fileSpec(wxT("*.")+ext);
 
 	//get list of dlls

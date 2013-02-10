@@ -10,19 +10,19 @@ fix_shared_object_depends() {
 
     ## Get list of files to work on
     dylibs=`ls ./codelite.app/Contents/MacOS/*.dylib`
-    sos=`ls ./codelite.app/Contents/MacOS/*.dylib`
     sos2=`ls ./codelite.app/Contents/SharedSupport/plugins/*.dylib`
     sos3=`ls ./codelite.app/Contents/SharedSupport/debuggers/*.dylib`
-    file_list="${dylibs} ${sos} ${sos2} ${sos3} ./codelite.app/Contents/MacOS/codelite "
+    file_list="${dylibs} ${sos2} ${sos3} ./codelite.app/Contents/MacOS/codelite "
 
     ## Since the plugins must use the same wx configuration as the
     ## executable, we can run the following command only once and
     ## use the results to manipulate the plugins as well
-    orig_path=`otool -L codelite  | grep ${search_string} | awk '{print $1;}'`
+    orig_path=`otool -L ../bin/codelite  | grep ${search_string} | awk '{print $1;}'`
 
     ## Loop over the files, and update the path of the wx library
     for file in ${file_list}
     do
+	    echo "Fixing file $file..."
             for path in ${orig_path}
             do
                     new_path=`echo ${path} | xargs basename`
@@ -33,22 +33,23 @@ fix_shared_object_depends() {
 
 fix_non_plugins_depends() {
     search_string=$1
-
     ## Get list of files to work on
     dylibs=`ls ./codelite.app/Contents/MacOS/*.dylib`
-    sos=`ls ./codelite.app/Contents/MacOS/*.dylib`
     sos2=`ls ./codelite.app/Contents/SharedSupport/plugins/*.dylib`
     sos3=`ls ./codelite.app/Contents/SharedSupport/debuggers/*.dylib`
-    file_list="${dylibs} ${sos} ${sos2} ${sos3} ./codelite.app/Contents/MacOS/codelite "
-    
-    orig_path=`otool -L codelite  | grep ${search_string} | awk '{print $1;}'`
-    
+    file_list="${dylibs} ${sos2} ${sos3} ./codelite.app/Contents/MacOS/codelite "
+ 
+    for SO in ${file_list}
+    do   
+    orig_path=`otool -L ${SO}  | grep ${search_string} | awk '{print $1;}'`
+    if [ ! -z ${orig_path} ]; then
     ## Loop over the files, and update the path of the wx library
     for file in ${file_list}
     do
         new_path=`echo ${orig_path} | xargs basename`
         install_name_tool -change ${orig_path} @executable_path/../MacOS/${new_path} ${file}
-        echo install_name_tool -change ${orig_path} @executable_path/../MacOS/${new_path} ${file}
+    done
+    fi
     done
 }
 
@@ -101,7 +102,7 @@ mkdir -p ./codelite.app/Contents/SharedSupport/plugins/resources/
 mkdir -p ./codelite.app/Contents/SharedSupport/debuggers
 mkdir -p ./codelite.app/Contents/SharedSupport/config
 
-wx_file_list=`otool -L codelite  | grep libwx_* | awk '{print $1;}'`
+wx_file_list=`otool -L ../bin/codelite  | grep libwx_* | awk '{print $1;}'`
 
 # fix the script
 echo "Running install_name_tool..."
@@ -158,20 +159,20 @@ cp config/debuggers.xml.default ./codelite.app/Contents/SharedSupport/config
 
 ## Copy plugins...
 cp ../lib/CodeFormatter.dylib ./codelite.app/Contents/SharedSupport/plugins/
-cp ../lib/Debugger.dylib ./codelite.app/Contents/SharedSupport/debuggers/
-cp ../lib/Gizmos.dylib ./codelite.app/Contents/SharedSupport/plugins/
-cp ../lib/Subversion2.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/DebuggerGDB.dylib ./codelite.app/Contents/SharedSupport/debuggers/
+cp ../lib/Wizards.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/Subversion.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/cscope.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/Copyright.dylib ./codelite.app/Contents/SharedSupport/plugins/
-cp ../lib/UnitTestCPP.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/UnitTestsPP.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/ExternalTools.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/Outline.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/ContinuousBuild.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/SnipWiz.dylib ./codelite.app/Contents/SharedSupport/plugins/
-cp ../lib/wxformbuilder.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/wxFormBuilder.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/abbreviation.dylib ./codelite.app/Contents/SharedSupport/plugins/
-cp ../lib/QmakePlugin.dylib ./codelite.app/Contents/SharedSupport/plugins/
-cp ../lib/CppCheck.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/QMakePlugin.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/cppchecker.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/MacBundler.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/DatabaseExplorer.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/CallGraph.dylib ./codelite.app/Contents/SharedSupport/plugins/
@@ -184,15 +185,15 @@ if [ -f ../lib/wxcrafter.dylib ]; then
 fi
 
 cp ../lib/libplugin.dylib ./codelite.app/Contents/MacOS/
-cp ../lib/libcodelite.dylib ./codelite.app/Contents/MacOS/
+cp ../lib/liblibcodelite.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/libwxsqlite3.dylib ./codelite.app/Contents/MacOS/
-cp ../lib/libdblayersqlite.dylib ./codelite.app/Contents/MacOS/
+cp ../lib/libdatabaselayersqlite.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/libwxshapeframework.dylib ./codelite.app/Contents/MacOS/
 
 cp ../bin/codelite_indexer  ./codelite.app/Contents/SharedSupport/
-cp ../bin/codelite_clang/codelite-clang  ./codelite.app/Contents/SharedSupport/
-cp ../bin/codelitegcc/codelitegcc  ./codelite.app/Contents/MacOS/
-cp ../bin/codelite_cppcheck/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
+cp ../bin/codelite-clang  ./codelite.app/Contents/SharedSupport/
+cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
+cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
 cp ./OpenTerm   ./codelite.app/Contents/SharedSupport/
 cp plugins/resources/*.*  ./codelite.app/Contents/SharedSupport/plugins/resources/
 
@@ -209,9 +210,9 @@ fix_codelite_indexer_deps
 fix_wxrc_deps
 fix_codelite_clang_deps
 fix_shared_object_depends libwx_
-fix_non_plugins_depends ./lib/libcodelite.dylib
-fix_non_plugins_depends ./lib/libplugin.dylib
-fix_non_plugins_depends ./lib/libwxsqlite3.dylib
-fix_non_plugins_depends ./lib/libwxshapeframework.dylib
-fix_non_plugins_depends ./lib/libdblayersqlite.dylib
+fix_non_plugins_depends lib/liblibcodelite.dylib
+fix_non_plugins_depends lib/libplugin.dylib
+fix_non_plugins_depends lib/libwxsqlite3.dylib
+fix_non_plugins_depends lib/libwxshapeframework.dylib
+fix_non_plugins_depends lib/libdatabaselayersqlite.dylib
 

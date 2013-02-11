@@ -119,8 +119,33 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(ARCH 64)
   set(ARCH_NAME x86_64)
 endif()
+
 message("-- ARCH ${ARCH}")
 message("-- ARCH_NAME ${ARCH_NAME}")
+
+##############################################
+## CPack
+##############################################
+if ( MAKE_DEB )
+    message("-- Generating deb target")
+    if( ${ARCH} EQUAL 32 )
+        message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386")
+        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "i386")
+    else ()
+        message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
+        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+    endif ()
+    
+    set(CPACK_GENERATOR                   "DEB")
+    set(CPACK_PACKAGE_NAME                "codelite")
+    set(CPACK_PACKAGE_VERSION             "5.1")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>") #required
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "codelite IDE for C/C++")
+    set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
+    set(CPACK_DEBIAN_PACKAGE_PRIORITY     "optional")
+    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential")
+    INCLUDE(CPack)
+endif( MAKE_DEB )
 
 ############################################
 ## Clang support

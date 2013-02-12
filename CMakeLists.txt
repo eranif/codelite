@@ -1,24 +1,25 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-###############################################################
-##
-## codelite IDE cmake file
-## Typical usage will be (build in release mode):
-##
-## > mkdir build
-## > cd build
-## > cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-## > make -jN
-## > sudo make install
-##
-## Optional command line arguments:
-##    
-##      -DCMAKE_BUILD_TYPE=Relase|Debug
-##      -DPREFIX="<some-prefix>"
-##      -DENABLE_CLANG=1|0
-##      -DWX_CONFIG=<path-to-my-wx-config-tool>
-##
-###############################################################
+#######################################################################################################################################################################
+##                                                                                                                                                                    #
+## codelite IDE cmake file                                                                                                                                            #
+## Typical usage will be (build in release mode):                                                                                                                     #
+##                                                                                                                                                                    #
+## > mkdir build                                                                                                                                                      #
+## > cd build                                                                                                                                                         #
+## > cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..                                                                                                          #
+## > make -jN                                                                                                                                                         #
+## > sudo make install                                                                                                                                                #
+##                                                                                                                                                                    #
+## Optional command line arguments:                                                                                                                                   #
+##                                                                                                                                                                    #
+##      -DCMAKE_BUILD_TYPE=Relase|Debug          // Build Debug Or Release                                                                                            #
+##      -DPREFIX="<some-prefix>"                 // Installation prefix, default is set to /usr                                                                       #
+##      -DENABLE_CLANG=1|0                       // Build codelite with clang code completion support?, default is 1 (with clang)                                     #
+##      -DWX_CONFIG=<path-to-my-wx-config-tool>  // By default codelite uses the wx-config that is in the path, however, you can force it to use a different one      #
+##      -DWITH_WXC=1|0                           // Build wxCrafter (sources are not part of codelite distribution) default is 0                                      #
+##                                                                                                                                                                    #
+#######################################################################################################################################################################
 
 #############################################
 ## Defaults
@@ -29,6 +30,7 @@ set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set( CL_WX_CONFIG wx-config )
 set( USE_CLANG 1 )
 set( IS_FREEBSD 0 )
+set( BUILD_WXC 0 )
 
 set (OS_NAME "WIN")
 if (UNIX)
@@ -50,13 +52,20 @@ if ( PREFIX )
   set ( CL_PREFIX ${PREFIX} )
 endif(PREFIX)
 
+## enable clang support?
 if(ENABLE_CLANG MATCHES 0)
   set( USE_CLANG 0 )
 endif (ENABLE_CLANG MATCHES 0)
 
+## use different wx-config?
 if ( WX_CONFIG )
   set ( CL_WX_CONFIG ${WX_CONFIG} )
 endif(WX_CONFIG)
+
+## build wxCrafter?
+if ( WITH_WXC )
+  set(BUILD_WXC 1)
+endif (WITH_WXC) 
 
 set( PLUGINS_DIR "${CL_PREFIX}/lib/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
@@ -215,6 +224,10 @@ add_subdirectory(cppchecker)
 add_subdirectory(git)
 add_subdirectory(cscope)
 add_subdirectory(wxformbuilder)
+
+if ( BUILD_WXC )
+    add_subdirectory(wxcrafter)
+endif( BUILD_WXC )
 
 ## Executables
 add_subdirectory(LiteEditor)

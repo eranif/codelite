@@ -147,9 +147,9 @@ void PluginManager::Load()
             clDynamicLibrary *dl = new clDynamicLibrary();
             wxString fileName( files.Item( i ) );
             if ( !dl->Load( fileName ) ) {
-                CL_WARNING( wxT( "Failed to load plugin's dll: " ) + fileName );
+                CL_ERROR( wxT( "Failed to load plugin's dll: " ) + fileName );
                 if (!dl->GetError().IsEmpty()) {
-                    CL_WARNING(dl->GetError());
+                    CL_ERROR(dl->GetError());
                 }
                 continue;
             }

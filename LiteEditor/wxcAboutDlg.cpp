@@ -60,7 +60,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     
     bSizer5->Add(m_textCtrlLicense, 1, wxALL|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
     mainSizer->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
     
@@ -90,7 +90,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     
     fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_staticTextInformation = new wxStaticText(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticTextInformation = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_staticTextInformation, 0, wxALL, 5);
     

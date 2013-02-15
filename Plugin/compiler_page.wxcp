@@ -46,6 +46,18 @@
 					"m_label":	"Font:",
 					"m_value":	""
 				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
+				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
 					"m_value":	""
@@ -159,6 +171,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -237,6 +261,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -313,6 +349,18 @@
 															"m_label":	"Font:",
 															"m_value":	""
 														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
+														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
 															"m_value":	""
@@ -385,6 +433,18 @@
 															"type":	"font",
 															"m_label":	"Font:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
@@ -464,6 +524,18 @@
 															"type":	"font",
 															"m_label":	"Font:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
@@ -547,6 +619,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -616,6 +700,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -695,6 +791,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -771,6 +879,18 @@
 															"m_label":	"Font:",
 															"m_value":	""
 														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
+														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
 															"m_value":	""
@@ -843,6 +963,18 @@
 															"type":	"font",
 															"m_label":	"Font:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
@@ -923,6 +1055,18 @@
 															"m_label":	"Font:",
 															"m_value":	""
 														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
+														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
 															"m_value":	""
@@ -1002,6 +1146,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -1135,6 +1291,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -1193,6 +1361,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1253,6 +1433,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -1311,6 +1503,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1371,6 +1575,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -1429,6 +1645,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1489,6 +1717,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -1547,6 +1787,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1607,6 +1859,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -1665,6 +1929,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1725,6 +2001,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -1783,6 +2071,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1843,6 +2143,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -1901,6 +2213,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1961,6 +2285,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -2020,6 +2356,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -2077,6 +2425,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -2172,6 +2532,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -2230,6 +2602,18 @@
 									"type":	"font",
 									"m_label":	"Font:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
@@ -2291,6 +2675,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -2386,6 +2782,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -2463,6 +2871,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -2552,6 +2972,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -2625,6 +3057,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -2697,6 +3141,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -2868,6 +3324,18 @@
 													"m_label":	"Font:",
 													"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -2926,6 +3394,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -2986,6 +3466,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3045,6 +3537,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3103,6 +3607,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -3182,6 +3698,18 @@
 													"m_label":	"Font:",
 													"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3240,6 +3768,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -3300,6 +3840,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3358,6 +3910,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -3418,6 +3982,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3477,6 +4053,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3535,6 +4123,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -3614,6 +4214,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3691,6 +4303,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -3770,6 +4394,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -3828,6 +4464,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -3923,6 +4571,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -4000,6 +4660,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -4089,6 +4761,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -4162,6 +4846,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -4234,6 +4930,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -4329,6 +5037,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -4406,6 +5126,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -4495,6 +5227,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -4568,6 +5312,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -4640,6 +5396,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -4773,6 +5541,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -4831,6 +5611,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -4891,6 +5683,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -4949,6 +5753,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -5029,6 +5845,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -5099,6 +5927,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -5166,6 +6006,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -5231,6 +6083,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -5364,6 +6228,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -5422,6 +6298,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -5482,6 +6370,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -5540,6 +6440,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -5600,6 +6512,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -5658,6 +6582,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -5738,6 +6674,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -5807,6 +6755,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -5880,6 +6840,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",

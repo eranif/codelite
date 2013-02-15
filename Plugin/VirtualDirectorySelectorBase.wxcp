@@ -1,12 +1,12 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"C:\\src\\codelite\\Plugin",
+		"m_generatedFilesDir":	".",
 		"m_objCounter":	1,
 		"m_includeFiles":	["\"codelite_exports.h\""],
 		"m_bitmapFunction":	"wxC168BInitBitmapResources",
 		"m_bitmapsFile":	"VirtualDirectorySelectorBase_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"VirtualDirectorySelectorBase",
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -45,6 +45,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -140,6 +152,18 @@
 									"m_label":	"Font:",
 									"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -198,6 +222,18 @@
 									"type":	"font",
 									"m_label":	"Font:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
@@ -279,6 +315,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -357,6 +405,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -437,6 +497,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -509,6 +581,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",

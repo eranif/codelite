@@ -1365,7 +1365,7 @@ void Subversion2::FinishSyncProcess(ProjectPtr& proj,
     // Note that svn list always uses '/' as path delimiter
     std::vector<wxString> aryRepoList;
     {
-        wxArrayString repoListOutput = wxStringTokenize(output, _("\r\n"));    
+        wxArrayString repoListOutput = wxStringTokenize(output, wxT("\r\n"));    
         wxFileName fn;
         for(size_t i1=0; i1 < repoListOutput.GetCount(); i1++) {
             if (repoListOutput.Item(i1).Last() != '/') {

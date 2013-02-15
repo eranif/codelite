@@ -363,10 +363,10 @@ ReconcileProjectFiletypesDlgBaseClass::ReconcileProjectFiletypesDlgBaseClass(wxW
     
     boxSizer114->Add(m_stdBtnSizer120, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button121 = new wxButton(this, wxID_CANCEL, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button121 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer120->AddButton(m_button121);
     
-    m_button122 = new wxButton(this, wxID_OK, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button122 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button122->SetDefault();
     m_stdBtnSizer120->AddButton(m_button122);
     m_stdBtnSizer120->Realize();
@@ -462,10 +462,10 @@ ReconcileByRegexDlgBaseClass::ReconcileByRegexDlgBaseClass(wxWindow* parent, wxW
     
     boxSizer141->Add(m_stdBtnSizer12011, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button12112 = new wxButton(this, wxID_CANCEL, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button12112 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer12011->AddButton(m_button12112);
     
-    m_buttonOK = new wxButton(this, wxID_OK, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer12011->AddButton(m_buttonOK);
     m_stdBtnSizer12011->Realize();

@@ -73,7 +73,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     bSizer9->Add(boxSizer1, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    m_btnRemovelPath = new wxButton(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
+    m_btnRemovelPath = new wxButton(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
     m_btnRemovelPath->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("clear-all")));
     m_btnRemovelPath->SetBitmapMargins(2,2);
@@ -82,7 +82,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer1->Add(m_btnRemovelPath, 0, wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_btnClearPaths = new wxButton(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
+    m_btnClearPaths = new wxButton(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     #if wxVERSION_NUMBER >= 2904
     m_btnClearPaths->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("delete-line")));
     m_btnClearPaths->SetBitmapMargins(2,2);

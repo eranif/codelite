@@ -266,7 +266,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer17->Add(m_sdbSizer1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button136 = new wxButton(this, wxID_OK, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button136 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button136->SetDefault();
     m_sdbSizer1->AddButton(m_button136);
     m_sdbSizer1->Realize();
@@ -340,7 +340,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     bSizer17->Add(m_sdbSizer1, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button145 = new wxButton(this, wxID_OK, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button145 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button145->SetDefault();
     m_sdbSizer1->AddButton(m_button145);
     m_sdbSizer1->Realize();

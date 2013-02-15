@@ -12,6 +12,11 @@ else(UNIX)
   execute_process(COMMAND "${CL_SRC_ROOT}/git-revision.bat" WORKING_DIRECTORY "${CL_SRC_ROOT}")
 endif(UNIX)
 
+if ( UNIX AND NOT APPLE )
+    execute_process(COMMAND sed s@%%PREFIX%%@$prefix@g Runtime/codelite.desktop.template WORKING_DIRECTORY "${CL_SRC_ROOT}" OUTPUT_FILE Runtime/codelite.desktop)
+    message("-- Generating desktop file...")
+endif (  UNIX AND NOT APPLE )
+
 ###########################################
 ## Generate autoversion.cpp file
 ###########################################

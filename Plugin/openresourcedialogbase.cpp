@@ -45,11 +45,11 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     m_listOptions = new wxListView( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
     mainSizer->Add(m_listOptions, 1, wxALL|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
     mainSizer->Add(sbSizer1, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
-    m_fullText = new wxStaticText(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_fullText = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
     sbSizer1->Add(m_fullText, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     

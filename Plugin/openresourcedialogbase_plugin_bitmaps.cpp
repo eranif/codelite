@@ -43,6 +43,6 @@ void wxCFB13InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/openresourcedialogbase_plugin_bitmaps.cpp$._openresourcedialogbase_plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/openresourcedialogbase_plugin_bitmaps.cpp$._openresourcedialogbase_plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/openresourcedialogbase_plugin_bitmaps.cpp$openresourcedialogbase_plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/openresourcedialogbase_plugin_bitmaps.cpp$openresourcedialogbase_plugin_bitmaps.xrc"));
 }

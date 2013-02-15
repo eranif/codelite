@@ -137,7 +137,7 @@ SvnShellBase::SvnShellBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
     #else
     	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
-    #endif;
+    #endif
     bSizer9->Add(m_sci, 1, wxEXPAND, 5);
     
     
@@ -268,7 +268,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     
     bSizer15->Add(m_textCtrlIgnorePattern, 1, wxALL|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(m_panel3, wxID_ANY, _("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(m_panel3, wxID_ANY, wxT("")), wxVERTICAL);
     
     bSizer15->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
     
@@ -360,7 +360,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     
     fgSizer6->Add(m_textCtrlSshClientArgs, 0, wxALL|wxEXPAND, 5);
     
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_panel5, wxID_ANY, _("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_panel5, wxID_ANY, wxT("")), wxVERTICAL);
     
     bSizer161->Add(sbSizer2, 1, wxALL|wxEXPAND, 5);
     
@@ -461,7 +461,7 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
     
-    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
     bSizer17->Add(sbSizer3, 0, wxALL|wxEXPAND, 5);
     
@@ -561,7 +561,7 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer19);
     
-    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
     bSizer19->Add(sbSizer4, 0, wxALL|wxEXPAND, 5);
     

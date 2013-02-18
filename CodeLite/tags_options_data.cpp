@@ -33,7 +33,7 @@
 wxString TagsOptionsData::CLANG_CACHE_LAZY         = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
-size_t   TagsOptionsData::CURRENT_VERSION = 102;
+size_t TagsOptionsData::CURRENT_VERSION = 103;
 
 static bool _IsValidCppIndetifier(const wxString &id)
 {
@@ -185,7 +185,8 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("WINBASEAPI"));
     m_tokens.Add(wxT("WINAPI"));
     m_tokens.Add(wxT("__nonnull"));
-
+    m_tokens.Add(wxT("noexcept"));
+    
 #if defined (__WXGTK__)
     m_tokens.Add(wxT("wxTopLevelWindowNative=wxTopLevelWindowGTK"));
     m_tokens.Add(wxT("wxWindow=wxWindowGTK"));

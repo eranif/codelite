@@ -740,6 +740,8 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
     }
 
     PERF_END();
+    
+    DoSortByVisibility( candidates );
     return candidates.empty() == false;
 }
 
@@ -2923,4 +2925,37 @@ bool TagsManager::InsertFunctionDecl(const wxString& clsname, const wxString& fu
 void TagsManager::InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename, wxString& sourceContent, int& insertedLine)
 {
     return GetLanguage()->InsertFunctionImpl(clsname, functionImpl, filename, sourceContent, insertedLine);
+}
+
+void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
+{
+    TagEntryPtrVector_t publicTags, privateTags, protectedTags;
+    for(size_t i=0; i<tags.size(); ++i) {
+        
+        TagEntryPtr tag = tags.at(i);
+        wxString access = tag->GetAccess();
+        
+        if( access == "private" ) {
+            privateTags.push_back( tag );
+            
+        } else if ( access == "protected" ) {
+            protectedTags.push_back( tag );
+            
+        } else if ( access == "public" ) {
+            publicTags.push_back( tag );
+            
+        } else {
+            // assume private
+            privateTags.push_back( tag );
+        }
+        
+    }
+    
+    std::sort(privateTags.begin(),   privateTags.end(), SAscendingSort());
+    std::sort(publicTags.begin(),    publicTags.end(), SAscendingSort());
+    std::sort(protectedTags.begin(), protectedTags.end(), SAscendingSort());
+    tags.clear();
+    tags.insert(tags.end(), publicTags.begin(),    publicTags.end());
+    tags.insert(tags.end(), protectedTags.begin(), protectedTags.end());
+    tags.insert(tags.end(), privateTags.begin(),   privateTags.end());
 }

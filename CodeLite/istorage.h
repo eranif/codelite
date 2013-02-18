@@ -32,7 +32,7 @@
 #include "fileentry.h"
 #include "entry.h"
 
-#define MAX_SEARCH_LIMIT 50
+#define MAX_SEARCH_LIMIT 250
 
 /**
  * @class ITagsStorage defined the tags storage API used by codelite

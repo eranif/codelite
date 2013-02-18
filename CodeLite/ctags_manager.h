@@ -825,6 +825,7 @@ protected:
     void           TryReducingScopes(const wxString &scope, const wxString &word, bool imp, std::vector<TagEntryPtr> &tags);
     wxArrayString  BreakToOuterScopes(const wxString &scope);
     wxString       DoReplaceMacrosFromDatabase(const wxString &name);
+    void           DoSortByVisibility(TagEntryPtrVector_t& tags);
 };
 
 /// create the singleton typedef

@@ -654,6 +654,8 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
             DoFilterDuplicatesByTagID(tmpCandidates, candidates);
             DoFilterDuplicatesBySignature(candidates, candidates);
         }
+        
+        DoSortByVisibility( candidates );
     }
 
     PERF_END();

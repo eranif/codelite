@@ -80,7 +80,6 @@ protected:
     void OnItemSelected( wxListEvent& event );
     void OnClose(wxCommandEvent &e);
 
-    void OnKeyDown(wxListEvent& event);
     void OnDisplayTooltip(wxTimerEvent &event);
     void OnRefreshList(wxTimerEvent &event);
     void Display(LEditor *editor);

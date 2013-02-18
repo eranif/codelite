@@ -352,28 +352,37 @@ void CCBox::Show(const wxString& word)
                 tag->SetFlags(tag->GetFlags() | TagEntry::Tag_No_Signature_Format);
             }
 
-            if(collectIt) {
+//            if(collectIt) {
+                
+                // start a new group
+                item.Reset();
 
-                if (item.displayName != tag->GetName()) {// Starting a new group or it is first time
-                    if( item.IsOk() ) {
-                        // we got a group of tags stored in 'item' add it
-                        // to the _tags before we continue
-                        DoFilterCompletionEntries(item);
-                        _tags.push_back(item);
-                    }
-
-                    // start a new group
-                    item.Reset();
-
-                    item.displayName =  tag->GetName();
-                    item.imgId       = GetImageId(tag);
-                    item.tag         = *tag;
-                    item.listOfTags.push_back( *tag );
-
-                } else {
-                    item.listOfTags.push_back( *tag );
-                }
-            }
+                item.displayName =  tag->GetDisplayName();
+                item.imgId       = GetImageId(tag);
+                item.tag         = *tag;
+                item.listOfTags.push_back( *tag );
+                DoFilterCompletionEntries(item);
+                _tags.push_back(item);
+//                if (item.displayName != tag->GetName()) {// Starting a new group or it is first time
+//                    if( item.IsOk() ) {
+//                        // we got a group of tags stored in 'item' add it
+//                        // to the _tags before we continue
+//                        DoFilterCompletionEntries(item);
+//                        _tags.push_back(item);
+//                    }
+//
+//                    // start a new group
+//                    item.Reset();
+//
+//                    item.displayName =  tag->GetName();
+//                    item.imgId       = GetImageId(tag);
+//                    item.tag         = *tag;
+//                    item.listOfTags.push_back( *tag );
+//
+//                } else {
+//                    item.listOfTags.push_back( *tag );
+//                }
+//            }
         }
     }
 
@@ -868,12 +877,6 @@ void CCBox::DoFilterCompletionEntries(CCItemInfo& item)
         item.listOfTags.push_back( iter->second );
     }
 }
-
-void CCBox::OnKeyDown(wxListEvent& event)
-{
-    event.Skip();
-}
-
 void CCBox::OnDisplayTooltip(wxTimerEvent& event)
 {
     if(IsShown() == false)

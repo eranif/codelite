@@ -341,6 +341,7 @@ void CCBox::Show(const wxString& word)
     m_listCtrl->DeleteAllItems();
 
     // Get the associated editor
+    wxStringSet_t uniqueTags;
     if (m_tags.empty() == false) {
         _tags.reserve(m_tags.size());
         for (; i<m_tags.size(); i++) {
@@ -352,48 +353,27 @@ void CCBox::Show(const wxString& word)
                 tag->SetFlags(tag->GetFlags() | TagEntry::Tag_No_Signature_Format);
             }
 
-//            if(collectIt) {
-                
-                // start a new group
-                item.Reset();
-
-                item.displayName =  tag->GetDisplayName();
-                item.imgId       = GetImageId(tag);
-                item.tag         = *tag;
-                item.listOfTags.push_back( *tag );
-                DoFilterCompletionEntries(item);
-                _tags.push_back(item);
-//                if (item.displayName != tag->GetName()) {// Starting a new group or it is first time
-//                    if( item.IsOk() ) {
-//                        // we got a group of tags stored in 'item' add it
-//                        // to the _tags before we continue
-//                        DoFilterCompletionEntries(item);
-//                        _tags.push_back(item);
-//                    }
-//
-//                    // start a new group
-//                    item.Reset();
-//
-//                    item.displayName =  tag->GetName();
-//                    item.imgId       = GetImageId(tag);
-//                    item.tag         = *tag;
-//                    item.listOfTags.push_back( *tag );
-//
-//                } else {
-//                    item.listOfTags.push_back( *tag );
-//                }
-//            }
+            // start a new group
+            
+            wxString displayName = tag->GetDisplayName().Trim().Trim(false);
+            if ( uniqueTags.count( displayName ) ) {
+                continue;
+            }
+            
+            uniqueTags.insert( displayName );
+            
+            item.Reset();
+            item.displayName = displayName;
+            item.imgId       = GetImageId(tag);
+            item.tag         = *tag;
+            item.listOfTags.push_back( *tag );
+            _tags.push_back(item);
         }
-    }
-
-    if(item.IsOk()) {
-        DoFilterCompletionEntries(item);
-        _tags.push_back(item);
     }
 
     if (_tags.size() == 1 && m_insertSingleChoice) {
         m_selectedItem = 0;
-        DoInsertSelection(_tags.at(0).displayName, false);
+        DoInsertSelection(_tags.at(0).tag.GetName(), false);
 
         // return without calling to wxWindow::Show()
         // also, make sure we are hidden
@@ -508,7 +488,7 @@ void CCBox::InsertSelection()
 
     // get the selected word
     wxString word = GetColumnText(m_listCtrl, m_selectedItem, 0);
-    DoInsertSelection(word);
+    DoInsertSelection(word.BeforeFirst('('));
 }
 
 int CCBox::GetImageId(TagEntryPtr entry)

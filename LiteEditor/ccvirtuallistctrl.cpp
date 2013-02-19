@@ -24,9 +24,30 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "ccvirtuallistctrl.h"
 #include <wx/settings.h>
+#include "editor_config.h"
+#include "drawingutils.h"
+
 CCVirtualListCtrl::CCVirtualListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxListView(parent, id, pos, size, style)
 {
+    // set the colors based on the C++ lexer using the "Default" style
+    LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("C++");
+    if ( lexer ) {
+        const StylePropertyList& props = lexer->GetLexerProperties();
+        if ( !props.empty() ) {
+            StyleProperty sp = *(props.begin());
+            SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+            
+            wxColour bgColour (sp.GetBgColour());
+            wxColour fgColour ( *wxBLACK );
+            if ( DrawingUtils::IsDark( bgColour) ) {
+                fgColour = *wxWHITE;
+            }
+            
+            SetBackgroundColour( bgColour );
+            SetForegroundColour( fgColour );
+        }
+    }
 }
 
 CCVirtualListCtrl::~CCVirtualListCtrl()

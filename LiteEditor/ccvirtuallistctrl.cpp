@@ -36,8 +36,9 @@ CCVirtualListCtrl::CCVirtualListCtrl(wxWindow* parent, wxWindowID id, const wxPo
         const StylePropertyList& props = lexer->GetLexerProperties();
         if ( !props.empty() ) {
             StyleProperty sp = *(props.begin());
+#ifdef __WXGTK__            
             SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-            
+#endif
             wxColour bgColour (sp.GetBgColour());
             wxColour fgColour ( *wxBLACK );
             if ( DrawingUtils::IsDark( bgColour) ) {

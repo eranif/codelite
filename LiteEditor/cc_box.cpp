@@ -68,7 +68,7 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 {
     Hide();
     m_constructing = true;
-    MSWSetNativeTheme(m_listCtrl);
+    //MSWSetNativeTheme(m_listCtrl);
 
     m_refreshListTimer = new wxTimer(this);
     Connect(m_refreshListTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(CCBox::OnRefreshList),    NULL, this);

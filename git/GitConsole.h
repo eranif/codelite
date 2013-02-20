@@ -12,12 +12,14 @@ class GitConsole : public GitConsoleBase
     wxDataViewItem m_itemModified;
     wxDataViewItem m_itemUntracked;
     wxDataViewItem m_itemNew;
+    wxDataViewItem m_itemDeleted;
     BitmapLoader   *m_bitmapLoader;
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxBitmap m_modifiedBmp;
     wxBitmap m_untrackedBmp;
     wxBitmap m_folderBmp;
     wxBitmap m_newBmp;
+    wxBitmap m_deleteBmp;
 
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);

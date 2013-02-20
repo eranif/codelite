@@ -97,6 +97,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("subversion/16/unversioned");
     m_folderBmp    = m_bitmapLoader->LoadBitmap("mime/16/folder");
     m_newBmp    = m_images.Bitmap("gitFileAdd");
+    m_deleteBmp = m_bitmapLoader->LoadBitmap("subversion/16/deleted");
 
     EventNotifier::Get()->Connect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
@@ -252,7 +253,11 @@ void GitConsole::UpdateTreeView(const wxString& output)
     cols.clear();
     cols.push_back(MakeIconText(_("New Files"), m_newBmp));
     m_itemNew  = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("New Files"));
-
+    
+    cols.clear();
+    cols.push_back(MakeIconText(_("Deleted Files"), m_deleteBmp));
+    m_itemDeleted  = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("Deleted Files"));
+    
     cols.clear();
     cols.push_back(MakeIconText(_("Untracked"), m_untrackedBmp));
     m_itemUntracked = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("Untracked"));
@@ -269,7 +274,6 @@ void GitConsole::UpdateTreeView(const wxString& output)
         filename = filename.AfterFirst(' ');
         wxString filenameFullpath = filename;
 
-        prefix.Trim().Trim(false);
         filename.Trim().Trim(false);
         
         wxFileName fn(filename);
@@ -291,17 +295,31 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
         cols.clear();
         cols.push_back(MakeIconText(filename, bmp));
-
-        if ( (prefix == "M") ) {
+        
+        wxChar chX = prefix[0];
+        wxChar chY = 0;
+        if ( prefix.length() > 1 ) {
+            chY = prefix[1];
+        }
+        
+        if ( chX == 'M' ) {
             m_dvFilesModel->AppendItem(m_itemModified, cols, new GitClientData( filenameFullpath ));
 
-        } else if ( prefix == "A" ) {
+        } else if ( chX == 'A' ) {
             m_dvFilesModel->AppendItem(m_itemNew, cols, new GitClientData( filenameFullpath ));
-
+            
+        } else if ( chX == 'D' ) {
+            // Delete from index
+            m_dvFilesModel->AppendItem(m_itemDeleted, cols, new GitClientData( filenameFullpath ));
+            
+        } else if ( chX == 'R' ) {
+            // Renamed in index
+            
         } else {
             m_dvFilesModel->AppendItem(m_itemUntracked, cols, new GitClientData( filenameFullpath ));
         }
     }
+    
 #ifndef __WXMAC__
     if ( !m_dvFilesModel->HasChildren(m_itemModified) )
         m_dvFilesModel->DeleteItem(m_itemModified);
@@ -315,6 +333,11 @@ void GitConsole::UpdateTreeView(const wxString& output)
         m_dvFilesModel->DeleteItem(m_itemNew);
     else
         m_dvFiles->Expand(m_itemNew);
+        
+    if ( !m_dvFilesModel->HasChildren(m_itemDeleted) )
+        m_dvFilesModel->DeleteItem(m_itemDeleted);
+    else
+        m_dvFiles->Expand(m_itemDeleted);
 #endif
 }
 

@@ -240,8 +240,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl)
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 
     // Define the styles for the editing margin
-    ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("FOREST GREEN")));
-    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("ORANGE")));
+    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("FOREST GREEN")));
+    ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));
     
     // by default indicators are set to be opaque rounded box
     ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);

@@ -3,7 +3,7 @@
 GIT_VERSION=`git describe --tags`
 
 if test -f LiteEditor/autoversion.cpp ; then 
-    rm LiteEditor/autoversion.cpp
+    rm -f LiteEditor/autoversion.cpp
 fi
 
 echo "#ifndef CL_GIT_REVISION" > LiteEditor/autoversion.cpp

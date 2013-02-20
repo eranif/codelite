@@ -38,7 +38,7 @@
   <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
   <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -100,7 +100,7 @@
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="yes">
+    <WorkspaceConfiguration Name="Unix_Custom_Makefile" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>

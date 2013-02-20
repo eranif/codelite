@@ -64,8 +64,11 @@ endif(WX_CONFIG)
 
 ## build wxCrafter?
 if ( WITH_WXC )
-  set(BUILD_WXC 1)
-endif (WITH_WXC) 
+    set(BUILD_WXC 1)
+    if ( UNIX AND NOT APPLE )
+        set(WX_COMPONENTS "std aui propgrid stc richtext")
+    endif (UNIX AND NOT APPLE )
+endif ( WITH_WXC )
 
 set( PLUGINS_DIR "${CL_PREFIX}/lib/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)

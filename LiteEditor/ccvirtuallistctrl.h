@@ -49,6 +49,8 @@ public:
 
 class CCVirtualListCtrl : public wxListView {
 	std::vector<CCItemInfo> m_tags;
+    wxFont m_styleFont;
+    
 public:
 	CCVirtualListCtrl( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxTAB_TRAVERSAL );
 	~CCVirtualListCtrl();

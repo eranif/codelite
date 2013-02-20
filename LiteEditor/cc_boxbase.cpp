@@ -33,10 +33,13 @@ CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
     m_listCtrl = new CCVirtualListCtrl( m_mainPanel,
                                         wxID_ANY,
                                         wxDefaultPosition,
-                                        wxSize(BOX_WIDTH - 5, BOX_HEIGHT - 2),
+                                        wxSize(BOX_WIDTH, BOX_HEIGHT),
                                         wxLC_NO_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL);
-
-    topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 5 );
+#ifdef __WXMSW__
+    topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 1 );
+#else
+    topSizer->Add( m_listCtrl, 1, wxEXPAND|wxALL, 1);
+#endif    
     m_mainPanel->SetAutoLayout( true );
     GetSizer()->Fit(this);
 

@@ -414,6 +414,8 @@
     <File Name="WelcomePage.cpp"/>
     <File Name="WelcomePage.h"/>
     <File Name="autoversion.cpp"/>
+    <File Name="theme_handler.h"/>
+    <File Name="theme_handler.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>

@@ -47,6 +47,7 @@ CCVirtualListCtrl::CCVirtualListCtrl(wxWindow* parent, wxWindowID id, const wxPo
             
             SetBackgroundColour( bgColour );
             SetForegroundColour( fgColour );
+            m_styleFont = lexer->GetFontForSyle(38);
         }
     }
 }
@@ -57,26 +58,13 @@ CCVirtualListCtrl::~CCVirtualListCtrl()
 
 wxListItemAttr* CCVirtualListCtrl::OnGetItemAttr(long item) const
 {
-//#if defined(__WXMSW__)
-//	static wxListItemAttr attr;
-//	static bool           first(true);
-//
-//	if(first) {
-//		first = false;
-//		wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-//		fnt.SetWeight(wxBOLD);
-//		attr.SetFont(fnt);
-//	}
-//
-//	if (GetFirstSelected() == item) {
-//		return &attr;
-//
-//	} else
-//		return NULL;
-//#else // Mac
-//	return NULL;
-//#endif
-    return NULL;
+    if ( m_styleFont.IsOk()  ) {
+        static wxListItemAttr attr;
+        attr.SetFont( m_styleFont );
+        return &attr;
+    } else {
+        return NULL;
+    }
 }
 
 int CCVirtualListCtrl::OnGetItemColumnImage(long item, long column) const

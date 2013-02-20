@@ -232,11 +232,17 @@ static wxColor GetInactiveColor(const wxColor& col)
 #endif
 }
 
+#define CL_LINE_MODIFIED_STYLE      200
+#define CL_LINE_SAVED_STYLE         201
 void LexerConf::Apply(wxStyledTextCtrl* ctrl)
 {
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 
+    // Define the styles for the editing margin
+    ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("FOREST GREEN")));
+    ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("ORANGE")));
+    
     // by default indicators are set to be opaque rounded box
     ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
@@ -301,9 +307,11 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl)
         } else if ( sp.GetId() == CARET_ATTR_ID ) {
 
             // caret colour
-            if(wxColour(sp.GetFgColour()).IsOk()) {
-                ctrl->SetCaretForeground(sp.GetFgColour());
+            wxColour caretColour = sp.GetFgColour();
+            if ( !caretColour.IsOk() ) {
+                caretColour = *wxBLACK;
             }
+            ctrl->SetCaretForeground( caretColour );
 
         } else {
             int fontSize( size );

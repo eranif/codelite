@@ -347,7 +347,6 @@ void CCBox::Show(const wxString& word)
         for (; i<m_tags.size(); i++) {
             TagEntryPtr tag = m_tags.at(i);
             wxString access = tag->GetAccess();
-            bool        collectIt = true;
 
             if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED) {
                 tag->SetFlags(tag->GetFlags() | TagEntry::Tag_No_Signature_Format);
@@ -461,7 +460,15 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
                 CCItemInfo itemInfo;
                 if ( m_listCtrl->GetItemTagEntry(m_selectedItem, itemInfo) ) {
                     TagEntryPtr tt (new TagEntry(itemInfo.tag));
-                    m_editor->GetFunctionTip()->GetTip()->SelectTag( tt );
+                    TagEntryPtrVector_t tags;
+                    tags.push_back( tt );
+                    std::vector<clTipInfo> tips;
+                    clCallTip::FormatTagsToTips(tags, tips);
+                    
+                    // post an event to select the proper signature
+                    if ( !tips.empty() ) {
+                        m_editor->GetFunctionTip()->SelectSignature(tips.at(0).str);
+                    }
                 }
                 
                 wxString tipContent = m_editor->GetContext()->CallTipContent();

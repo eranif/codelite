@@ -47,14 +47,17 @@ struct clTipInfo {
  */
 class WXDLLIMPEXP_CL clCallTip
 {
-
     std::vector<clTipInfo> m_tips;
     int m_curr;
-
     void Initialize(const std::vector<TagEntryPtr> &tags);
-    void FormatTagsToTips( const TagEntryPtrVector_t &tags,  std::vector<clTipInfo>& tips);
-    
+
 public:
+    
+    /**
+     * @brief format list of tags into calltips
+     */
+    static void FormatTagsToTips( const TagEntryPtrVector_t &tags,  std::vector<clTipInfo>& tips);
+    
     /**
      * Constructor
      * \param tips input tips
@@ -133,7 +136,7 @@ public:
     /**
      * @brief set the tip to a specific tag
      */
-    void SelectTag( TagEntryPtr tag );
+    void SelectSiganture( const wxString &signature );
     
 private:
     wxString TipAt(int at);

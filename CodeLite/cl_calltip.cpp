@@ -152,18 +152,8 @@ wxString clCallTip::Current()
     return TipAt(m_curr);
 }
 
-void clCallTip::SelectTag(TagEntryPtr tag)
+void clCallTip::SelectSiganture(const wxString& signature)
 {
-    TagEntryPtrVector_t tags;
-    std::vector<clTipInfo> mytips;
-    
-    tags.push_back( tag );
-    FormatTagsToTips(tags, mytips);
-    if ( mytips.empty() ) {
-        return;
-    }
-    
-    wxString signature = mytips.at(0).str;
     // search for a match 
     for(size_t i=0; i<m_tips.size(); ++i) {
         if ( m_tips.at(i).str == signature ) {

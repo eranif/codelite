@@ -4070,7 +4070,7 @@ bool LEditor::IsFocused() const
 
 void LEditor::ShowCalltip(clCallTipPtr tip)
 {
-    GetFunctionTip()->Add( tip );
+    GetFunctionTip()->AddCallTip( tip );
     GetFunctionTip()->Highlight(m_context->DoGetCalltipParamterIndex());
 
     // In an ideal world, we would like our tooltip to be placed

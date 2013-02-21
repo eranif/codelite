@@ -456,7 +456,14 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
                 m_editor->IndicatorFillRange(pos, 1);
                 // trigger function tip
                 m_editor->CodeComplete();
-
+                
+                // select the tag to display to match the current one
+                CCItemInfo itemInfo;
+                if ( m_listCtrl->GetItemTagEntry(m_selectedItem, itemInfo) ) {
+                    TagEntryPtr tt (new TagEntry(itemInfo.tag));
+                    m_editor->GetFunctionTip()->GetTip()->SelectTag( tt );
+                }
+                
                 wxString tipContent = m_editor->GetContext()->CallTipContent();
                 int where = tipContent.Find(wxT(" : "));
                 if (where != wxNOT_FOUND) {

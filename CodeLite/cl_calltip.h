@@ -31,8 +31,8 @@
 #include "codelite_exports.h"
 
 struct clTipInfo {
-	wxString str;
-	std::vector<std::pair<int, int> > paramLen;
+    wxString str;
+    std::vector<std::pair<int, int> > paramLen;
 };
 
 /**
@@ -48,88 +48,95 @@ struct clTipInfo {
 class WXDLLIMPEXP_CL clCallTip
 {
 
-	std::vector<clTipInfo> m_tips;
-	int m_curr;
+    std::vector<clTipInfo> m_tips;
+    int m_curr;
 
-	void Initialize(const std::vector<TagEntryPtr> &tips);
+    void Initialize(const std::vector<TagEntryPtr> &tags);
+    void FormatTagsToTips( const TagEntryPtrVector_t &tags,  std::vector<clTipInfo>& tips);
+    
 public:
-	/**
-	 * Constructor
-	 * \param tips input tips
-	 */
-	clCallTip(const std::vector<TagEntryPtr> & tips );
+    /**
+     * Constructor
+     * \param tips input tips
+     */
+    clCallTip(const std::vector<TagEntryPtr> & tips );
 
-	/**
-	 * default constructor
-	 */
-	clCallTip() {}
+    /**
+     * default constructor
+     */
+    clCallTip() {}
 
-	/**
-	 * Copy constructor
-	 */
-	clCallTip(const clCallTip& rhs);
+    /**
+     * Copy constructor
+     */
+    clCallTip(const clCallTip& rhs);
 
-	/**
-	 * Assignment operator
-	 * \param rhs right hand side
-	 * \return this
-	 */
-	clCallTip& operator=(const clCallTip& rhs);
+    /**
+     * Assignment operator
+     * \param rhs right hand side
+     * \return this
+     */
+    clCallTip& operator=(const clCallTip& rhs);
 
-	/**
-	 * Destructor
-	 * \return
-	 */
-	virtual ~clCallTip() {}
+    /**
+     * Destructor
+     * \return
+     */
+    virtual ~clCallTip() {}
 
-	/**
-	 * Show next tip, if we are at last tip, return the first tip or empty string if no tips exists
-	 * \return next tip
-	 */
-	wxString Next() ;
+    /**
+     * Show next tip, if we are at last tip, return the first tip or empty string if no tips exists
+     * \return next tip
+     */
+    wxString Next() ;
 
-	/**
-	 * Show previous tip, if we are at first tip, return the last tip or empty string if no tips exists
-	 * \return previous tip
-	 */
-	wxString Prev() ;
+    /**
+     * Show previous tip, if we are at first tip, return the last tip or empty string if no tips exists
+     * \return previous tip
+     */
+    wxString Prev() ;
 
-	/**
-	 * return the first tip
-	 */
-	wxString First();
+    /**
+     * return the first tip
+     */
+    wxString First();
 
-	/**
-	 * @brief return the current tip
-	 * @return return the current tip
-	 */
-	wxString Current();
+    /**
+     * @brief return the current tip
+     * @return return the current tip
+     */
+    wxString Current();
 
-	/**
-	 * Return number of tips stored in this object
-	 * \return number of tips
-	 */
-	int Count() const;
+    /**
+     * Return number of tips stored in this object
+     * \return number of tips
+     */
+    int Count() const;
 
-	/**
-	 * \brief return all tips as a single string
-	 */
-	wxString All();
+    /**
+     * \brief return all tips as a single string
+     */
+    wxString All();
 
-	/**
-	 * @brief get the highlight offset & width for the current tip
-	 * @param index paramter index
-	 * @param start [output]
-	 * @param len [output]
-	 */
-	void GetHighlightPos(int index, int &start, int &len);
+    /**
+     * @brief get the highlight offset & width for the current tip
+     * @param index paramter index
+     * @param start [output]
+     * @param len [output]
+     */
+    void GetHighlightPos(int index, int &start, int &len);
 
-	int GetCurr() const {
-		return m_curr;
-	}
-	
+    int GetCurr() const {
+        return m_curr;
+    }
+    
+    /**
+     * @brief set the tip to a specific tag
+     */
+    void SelectTag( TagEntryPtr tag );
+    
 private:
-	wxString TipAt(int at);
+    wxString TipAt(int at);
 };
 
 typedef SmartPtr<clCallTip> clCallTipPtr;

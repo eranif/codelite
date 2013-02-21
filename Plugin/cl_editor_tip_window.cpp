@@ -285,4 +285,8 @@ void clEditorTipWindow::DoLayoutTip()
 void clEditorTipWindow::SelectSignature(const wxString& signature)
 {
     m_selectedSignature = signature;
+    if ( GetTip() ) {
+        GetTip()->SelectSiganture( m_selectedSignature );
+        m_selectedSignature.clear();
+    }
 }

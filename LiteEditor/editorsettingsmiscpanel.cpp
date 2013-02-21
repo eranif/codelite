@@ -54,6 +54,10 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 
     if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
         m_choiceIconSet->SetSelection(1);
+        
+    else if( options->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
+        m_choiceIconSet->SetSelection(2);
+        
     else
         m_choiceIconSet->SetSelection(0); // Default
 
@@ -203,21 +207,29 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     if(oldFlags & OptionsConfig::Opt_IconSet_FreshFarm)
         oldIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
 
+    if(oldFlags & OptionsConfig::Opt_IconSet_Classic_Dark)
+        oldIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
+
     if(oldIconFlags == 0)
         oldIconFlags = OptionsConfig::Opt_IconSet_Classic;
 
     // Clear old settings
     flags &= ~(OptionsConfig::Opt_IconSet_Classic  );
     flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
+    flags &= ~(OptionsConfig::Opt_IconSet_Classic_Dark);
 
     if(m_choiceIconSet->GetSelection() == 0) {
         newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
         flags |= OptionsConfig::Opt_IconSet_Classic;
 
-    } else {
+    } else if ( m_choiceIconSet->GetSelection() == 2 ) {
+        newIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
+        flags |= OptionsConfig::Opt_IconSet_Classic_Dark;
+
+    } else { // 1
         newIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
         flags |= OptionsConfig::Opt_IconSet_FreshFarm;
-
+    
     }
 
     options->SetOptions(flags);

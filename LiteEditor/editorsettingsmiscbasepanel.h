@@ -1,16 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __EDITORSETTINGSMISCBASEPANEL_H__
-#define __EDITORSETTINGSMISCBASEPANEL_H__
+#ifndef __editorsettingsmiscbasepanel__
+#define __editorsettingsmiscbasepanel__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -57,6 +56,7 @@ class EditorSettingsMiscBasePanel : public wxPanel
 		wxStaticText* m_staticText1;
 		wxChoice* m_fileEncoding;
 		wxCheckBox* m_SetLocale;
+		
 		wxStaticText* m_staticTextLocale;
 		wxChoice* m_AvailableLocales;
 		wxPanel* m_panel3;
@@ -84,9 +84,9 @@ class EditorSettingsMiscBasePanel : public wxPanel
 	
 	public:
 		
-		EditorSettingsMiscBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 449,382 ), long style = wxTAB_TRAVERSAL ); 
+		EditorSettingsMiscBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 449,382 ), long style = wxTAB_TRAVERSAL );
 		~EditorSettingsMiscBasePanel();
 	
 };
 
-#endif //__EDITORSETTINGSMISCBASEPANEL_H__
+#endif //__editorsettingsmiscbasepanel__

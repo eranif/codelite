@@ -50,6 +50,7 @@ public:
         Opt_NavKey_Shift             = 0x00000400,
         Opt_NavKey_Alt               = 0x00000800,
         Opt_NavKey_Control           = 0x00001000,
+        Opt_IconSet_Classic_Dark     = 0x00002000,
     };
 
 protected:

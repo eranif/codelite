@@ -21,6 +21,7 @@ xcopy templates\databaselayer\* "%TARGET_DIR%\CodeLite\templates\databaselayer\"
 xcopy templates\qmake\* "%TARGET_DIR%\CodeLite\templates\qmake\" /E /I /H /Y /EXCLUDE:excludes
 xcopy *.html "%TARGET_DIR%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy codelite-icons.zip "%TARGET_DIR%\CodeLite\" /H /Y /EXCLUDE:excludes
+xcopy codelite-icons-dark.zip "%TARGET_DIR%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy codelite-icons-fresh-farm.zip "%TARGET_DIR%\CodeLite\" /H /Y /EXCLUDE:excludes
 xcopy locale\* "%TARGET_DIR%\CodeLite\locale\" /E /I /H /Y /EXCLUDE:excludes
 xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes

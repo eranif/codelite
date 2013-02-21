@@ -141,6 +141,7 @@ cp svnreport.html ./codelite.app/Contents/SharedSupport/
 cp *.icns ./codelite.app/Contents/Resources/
 cp -pr src/*.gz ./codelite.app/Contents/Resources/
 cp -pr codelite-icons.zip ./codelite.app/Contents/SharedSupport/
+cp -pr codelite-icons-dark.zip ./codelite.app/Contents/SharedSupport/
 cp -pr codelite-icons-fresh-farm.zip ./codelite.app/Contents/SharedSupport/
 
 ## copy empty layout file

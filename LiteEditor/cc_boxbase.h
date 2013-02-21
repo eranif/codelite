@@ -53,7 +53,7 @@ protected:
     }
 
 public:
-    CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxRAISED_BORDER|wxTAB_TRAVERSAL );
+    CCBoxBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 486,300 ), long style = wxBORDER_NONE|wxTAB_TRAVERSAL );
     ~CCBoxBase();
 };
 

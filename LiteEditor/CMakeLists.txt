@@ -13,7 +13,7 @@ else(UNIX)
 endif(UNIX)
 
 if ( UNIX AND NOT APPLE )
-    execute_process(COMMAND sed s@%%PREFIX%%@$prefix@g Runtime/codelite.desktop.template WORKING_DIRECTORY "${CL_SRC_ROOT}" OUTPUT_FILE Runtime/codelite.desktop)
+    execute_process(COMMAND sed s@%%PREFIX%%@${CL_PREFIX}@g Runtime/codelite.desktop.template WORKING_DIRECTORY "${CL_SRC_ROOT}" OUTPUT_FILE Runtime/codelite.desktop)
     message("-- Generating desktop file...")
 endif (  UNIX AND NOT APPLE )
 

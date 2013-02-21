@@ -15,7 +15,7 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
 #ifdef __WXMAC__
 #   include <wx/osx/private.h>
-#   define TAB_HEIGHT_SPACER 8
+#   define TAB_HEIGHT_SPACER 10
 #elif defined(__WXMSW__)
 #   define TAB_HEIGHT_SPACER 8
 #else // GTK/FreeBSD

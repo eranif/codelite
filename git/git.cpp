@@ -1549,6 +1549,13 @@ void GitPlugin::AddDefaultActions()
 /*******************************************************************************/
 void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
 {
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);    
+    
+    if ( !(data.GetFlags() & GitEntry::Git_Colour_Tree_View) ) 
+        return;
+    
     std::stack<wxTreeItemId> items;
     if (tree->GetRootItem().IsOk())
         items.push(tree->GetRootItem());
@@ -1732,6 +1739,13 @@ void GitPlugin::DoCreateTreeImages()
 
 void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
 {
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    
+    if ( !(data.GetFlags() & GitEntry::Git_Colour_Tree_View) ) 
+        return;
+        
     // get the base image first
     int curImgIdx = ctrl->GetItemImage(item);
     if ( m_treeImageMapping.count( curImgIdx ) ) {

@@ -72,6 +72,12 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer766->Add(m_checkBoxLog, 0, wxALL, 5);
     
+    m_checkBoxTrackTree = new wxCheckBox(this, wxID_ANY, _("Colour modified items in the workspace view"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxTrackTree->SetValue(false);
+    m_checkBoxTrackTree->SetToolTip(_("Colour modified items in the workspace view tree"));
+    
+    boxSizer766->Add(m_checkBoxTrackTree, 0, wxALL, 5);
+    
     mainSizer->Add(0, 0, 1, wxALL, 5);
     
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);

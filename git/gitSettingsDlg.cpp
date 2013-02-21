@@ -15,6 +15,8 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent)
     m_pathGITK->SetPath(data.GetGITKExecutablePath());
     m_checkBoxLog->SetValue( data.GetFlags() & GitEntry::Git_Verbose_Log );
     m_checkBoxTerminal->SetValue( data.GetFlags() & GitEntry::Git_Show_Terminal );
+    m_checkBoxTrackTree->SetValue( data.GetFlags() & GitEntry::Git_Colour_Tree_View );
+    
     WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
 }
 
@@ -34,8 +36,13 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     size_t flags = 0;
     if ( m_checkBoxLog->IsChecked() )
         flags |= GitEntry::Git_Verbose_Log;
+        
     if ( m_checkBoxTerminal->IsChecked() )
         flags |= GitEntry::Git_Show_Terminal;
+        
+    if ( m_checkBoxTrackTree->IsChecked()) 
+        flags |= GitEntry::Git_Colour_Tree_View;
+        
     data.SetFlags( flags );
     conf.WriteItem(&data);
     

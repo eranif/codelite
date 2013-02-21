@@ -842,8 +842,10 @@ bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const
 
 void MSWSetNativeTheme(wxWindow* win, const wxString &theme)
 {
+#if 0
 #ifdef __WXMSW__
     SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), NULL);
+#endif
 #endif
 }
 

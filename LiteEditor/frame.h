@@ -44,6 +44,7 @@
 #include "notebook_ex.h"
 #include "mainbook.h"
 #include <set>
+#include "theme_handler.h"
 
 // forward decls
 class TagEntry;
@@ -116,6 +117,7 @@ class clMainFrame : public wxFrame
     StatusbarTimer*                       m_statusbarTimer;
     MyMenuBar*                            m_myMenuBar;
     wxMenu*                               m_buildDropDownMenu;
+    ThemeHandler                          m_themeHandler;
     static clSplashScreen*                m_splashScreen;
     
 protected:

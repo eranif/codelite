@@ -36,6 +36,7 @@
 #include "editor_config.h"
 #include "mainbook.h"
 #include "message_pane.h"
+#include "theme_handler.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -855,7 +856,10 @@ void MainBook::ApplySettingsChanges()
     }
 
     clMainFrame::Get()->UpdateAUI();
-
+    
+    wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
+    EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
+    
     // Last: reposition the findBar
     DoPositionFindBar(2);
 }

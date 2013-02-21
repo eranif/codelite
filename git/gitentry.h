@@ -26,8 +26,9 @@ class GitEntry : public clConfigItem
 
 public:
     enum {
-        Git_Verbose_Log  = 0x00000001,
-        Git_Show_Terminal= 0x00000002
+        Git_Verbose_Log      = 0x00000001,
+        Git_Show_Terminal    = 0x00000002,
+        Git_Colour_Tree_View = 0x00000004
     };
 
 public:

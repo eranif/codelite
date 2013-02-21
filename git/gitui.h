@@ -43,6 +43,7 @@ protected:
     wxFilePickerCtrl* m_pathGITK;
     wxCheckBox* m_checkBoxTerminal;
     wxCheckBox* m_checkBoxLog;
+    wxCheckBox* m_checkBoxTrackTree;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 

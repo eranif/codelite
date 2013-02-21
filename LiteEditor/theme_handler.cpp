@@ -1,13 +1,51 @@
 #include "theme_handler.h"
+#include "editor_config.h"
+#include "frame.h"
+#include "workspace_pane.h"
+#include "event_notifier.h"
+
+const wxEventType wxEVT_CL_THEME_CHANGED = ::wxNewEventType();
 
 ThemeHandler::ThemeHandler()
 {
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandler::OnEditorThemeChanged), NULL, this);
 }
 
 ThemeHandler::~ThemeHandler()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandler::OnEditorThemeChanged), NULL, this);
 }
 
 void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
 {
+    e.Skip();
+#if defined(__WXMSW__) || defined(__WXGTK__)
+    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    
+    if ( !bgColour.IsOk() || !fgColour.IsOk() ) {
+        return;
+    }
+    
+    size_t pageCount = clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->GetPageCount();
+    for(size_t i=0; i<pageCount; ++i) {
+        wxWindow * page = clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->GetPage(i);
+        if ( page ) {
+            DoUpdateColours(page, bgColour, fgColour);
+        }
+    }
+#endif
+}
+
+void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
+{
+    win->SetBackgroundColour( bg );
+    win->SetForegroundColour( fg );
+ 
+    wxWindowListNode* pclNode = win->GetChildren().GetFirst();
+    while(pclNode) {
+        wxWindow* pclChild = pclNode->GetData();
+        this->DoUpdateColours(pclChild, bg, fg);
+        pclNode = pclNode->GetNext();
+    }
 }

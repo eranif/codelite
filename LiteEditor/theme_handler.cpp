@@ -4,6 +4,7 @@
 #include "workspace_pane.h"
 #include "event_notifier.h"
 #include "drawingutils.h"
+#include <wx/listbox.h>
 
 const wxEventType wxEVT_CL_THEME_CHANGED = ::wxNewEventType();
 

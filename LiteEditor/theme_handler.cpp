@@ -3,6 +3,7 @@
 #include "frame.h"
 #include "workspace_pane.h"
 #include "event_notifier.h"
+#include "drawingutils.h"
 
 const wxEventType wxEVT_CL_THEME_CHANGED = ::wxNewEventType();
 
@@ -27,9 +28,23 @@ void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
         return;
     }
     
+    bool newColourIsDark = DrawingUtils::IsDark( bgColour );
     size_t pageCount = clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->GetPageCount();
     for(size_t i=0; i<pageCount; ++i) {
+        
         wxWindow * page = clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->GetPage(i);
+        //bool oldColourIsDark = DrawingUtils::IsDark(page->GetBackgroundColour());
+        //if ( !newColourIsDark && oldColourIsDark ) {
+        //    // switching back to normal colour
+        //    // suggest restart and break
+        //    clMainFrame::Get()->DoSuggestRestart();
+        //    return;
+        //    
+        //} else if ( !newColourIsDark ) {
+        //    // do nothing
+        //    return;
+        //}
+        
         if ( page ) {
             DoUpdateColours(page, bgColour, fgColour);
         }
@@ -39,9 +54,11 @@ void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
 
 void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
 {
-    win->SetBackgroundColour( bg );
-    win->SetForegroundColour( fg );
- 
+    if ( dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) ) {
+        win->SetBackgroundColour( bg );
+        win->SetForegroundColour( fg );
+    }
+    
     wxWindowListNode* pclNode = win->GetChildren().GetFirst();
     while(pclNode) {
         wxWindow* pclChild = pclNode->GetData();

@@ -309,6 +309,7 @@ public:
      * @brief create the recently-opened-workspaces menu
      */
     void CreateRecentlyOpenedWorkspacesMenu();
+    void DoSuggestRestart();
 
 private:
     // make our frame's constructor private
@@ -348,7 +349,6 @@ private:
     void CreateRecentlyOpenedFilesMenu();
     void CreateWelcomePage();
     void ReloadExternallyModifiedProjectFiles();
-    void DoSuggestRestart();
     void DoEnableWorkspaceViewFlag(bool enable, int flag);
     void DoUpdatePerspectiveMenu();
     bool IsWorkspaceViewFlagEnabled(int flag);

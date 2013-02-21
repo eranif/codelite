@@ -3281,6 +3281,9 @@ void clMainFrame::CompleteInitialization()
     // Now everything is loaded, set the saved tab-order in the workspace pane
     GetWorkspacePane()->ApplySavedTabOrder();
     ManagerST::Get()->GetPerspectiveManager().ConnectEvents( &m_mgr );
+    
+    wxCommandEvent evt(wxEVT_CL_THEME_CHANGED);
+    EventNotifier::Get()->AddPendingEvent( evt );
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)

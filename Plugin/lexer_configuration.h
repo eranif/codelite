@@ -59,7 +59,7 @@ public:
      * @brief apply the current lexer configuration on an input
      * wxStyledTextCtrl
      */
-    void Apply(wxStyledTextCtrl* ctrl);
+    void Apply(wxStyledTextCtrl* ctrl, bool applyKeywords = false);
     
     /**
      * Get the lexer ID, which should be in sync with values of Scintilla

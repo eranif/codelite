@@ -234,7 +234,7 @@ static wxColor GetInactiveColor(const wxColor& col)
 
 #define CL_LINE_MODIFIED_STYLE      200
 #define CL_LINE_SAVED_STYLE         201
-void LexerConf::Apply(wxStyledTextCtrl* ctrl)
+void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
@@ -381,5 +381,13 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl)
     if( !tooltip ) {
         wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
         ctrl->StyleSetFont(wxSTC_STYLE_CALLTIP, font);
+    }
+    
+    if ( applyKeywords ) {
+        ctrl->SetKeyWords(0, GetKeyWords(0));
+        ctrl->SetKeyWords(1, GetKeyWords(1));
+        ctrl->SetKeyWords(2, GetKeyWords(2));
+        ctrl->SetKeyWords(3, GetKeyWords(3));
+        ctrl->SetKeyWords(4, GetKeyWords(4));
     }
 }

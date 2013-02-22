@@ -34,18 +34,6 @@ void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
     for(size_t i=0; i<pageCount; ++i) {
         
         wxWindow * page = clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->GetPage(i);
-        //bool oldColourIsDark = DrawingUtils::IsDark(page->GetBackgroundColour());
-        //if ( !newColourIsDark && oldColourIsDark ) {
-        //    // switching back to normal colour
-        //    // suggest restart and break
-        //    clMainFrame::Get()->DoSuggestRestart();
-        //    return;
-        //    
-        //} else if ( !newColourIsDark ) {
-        //    // do nothing
-        //    return;
-        //}
-        
         if ( page ) {
             DoUpdateColours(page, bgColour, fgColour);
         }
@@ -60,7 +48,7 @@ void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxCo
         win->SetForegroundColour( fg );
     }
     
-    wxWindowListNode* pclNode = win->GetChildren().GetFirst();
+    wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
     while(pclNode) {
         wxWindow* pclChild = pclNode->GetData();
         this->DoUpdateColours(pclChild, bg, fg);

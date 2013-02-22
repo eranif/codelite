@@ -7,6 +7,8 @@
 #include "cl_editor.h"
 #include "frame.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "plugin.h"
 
 FindUsageTab::FindUsageTab(wxWindow* parent, const wxString &name)
     : OutputTabWindow(parent, wxID_ANY, name)
@@ -15,10 +17,12 @@ FindUsageTab::FindUsageTab(wxWindow* parent, const wxString &name)
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindUsageTab::OnStyleNeeded), NULL, this);
     m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
     m_tb->Realize();
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindUsageTab::OnThemeChanged), NULL, this);
 }
 
 FindUsageTab::~FindUsageTab()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindUsageTab::OnThemeChanged), NULL, this);
 }
 
 void FindUsageTab::OnStyleNeeded(wxStyledTextEvent& e)
@@ -146,4 +150,10 @@ void FindUsageTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
         e.Enable(false);
         e.Check(false);
     }
+}
+
+void FindUsageTab::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    FindResultsTab::SetStyles(m_sci);
 }

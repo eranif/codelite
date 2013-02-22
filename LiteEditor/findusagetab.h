@@ -23,7 +23,7 @@ public:
     virtual void OnMouseDClick(wxStyledTextEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
     virtual void OnStyleNeeded(wxStyledTextEvent& e);
-    
+    virtual void OnThemeChanged(wxCommandEvent &e);
 public:
     void ShowUsage(const std::list<CppToken> &matches, const wxString &searchWhat);
 

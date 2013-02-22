@@ -23,6 +23,8 @@
 #define CODE_END        275
 #define COLOR_START     276
 #define COLOR_END       277
+#define ITALIC_START    278
+#define ITALIC_END      279
 
 extern WXDLLIMPEXP_SDK bool setMarkupLexerInput(const wxString &in);
 extern WXDLLIMPEXP_SDK int MarkupLex();

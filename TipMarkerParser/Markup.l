@@ -23,6 +23,8 @@ color_name ['"]{word}+['"]
 "<hr>"                   {RETURN_VAL(HORIZONTAL_LINE);}
 "<b>"                    {RETURN_VAL(BOLD_START);}
 "</b>"                   {RETURN_VAL(BOLD_END);}
+"<i>"                    {RETURN_VAL(ITALIC_START);}
+"</i>"                   {RETURN_VAL(ITALIC_END);}
 "<code>"                 {RETURN_VAL(CODE_START);}
 "</code>"                {RETURN_VAL(CODE_END);}
 "<color="{color_name}">" {RETURN_VAL(COLOR_START);}

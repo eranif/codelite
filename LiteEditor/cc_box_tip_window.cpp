@@ -12,6 +12,7 @@
 #include "Markup.h"
 #include "cc_box.h"
 #include "event_notifier.h"
+#include "editor_config.h"
 
 wxBitmap CCBoxTipWindow::m_leftbmp = wxNullBitmap;
 wxBitmap CCBoxTipWindow::m_rightbmp  = wxNullBitmap;
@@ -43,8 +44,18 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
     wxMemoryDC dc(bmp);
 
     wxSize size;
-    m_codeFont    = wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    m_commentFont = wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    
+    LexerConfPtr cppLex = EditorConfigST::Get()->GetLexer("C++");
+    if ( cppLex ) {
+        // use the lexer default font
+        m_codeFont = cppLex->GetFontForSyle(0);
+        
+    } else {
+        m_codeFont    = wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+        
+    }
+    
+    m_commentFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 
     wxString codePart, commentPart;
     wxString strippedTip = DoStripMarkups();
@@ -225,6 +236,23 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             dc.SetFont(f);
             break;
         }
+        case ITALIC_START: {
+            // Before we change the font, draw the buffer
+            DoPrintText(dc, curtext, pt);
+            wxFont f = dc.GetFont();
+            f.SetStyle(wxFONTSTYLE_ITALIC);
+            dc.SetFont(f);
+            break;
+        }
+        case ITALIC_END: {
+            // Before we change the font, draw the buffer
+            DoPrintText(dc, curtext, pt);
+
+            wxFont f = dc.GetFont();
+            f.SetStyle(wxFONTSTYLE_NORMAL);
+            dc.SetFont(f);
+            break;
+        }
         case CODE_START: {
             // Before we change the font, draw the buffer
             DoPrintText(dc, curtext, pt);
@@ -270,6 +298,26 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             dc.SetTextForeground(penColour);
             break;
         }
+        //case PARAM_ARG: {
+        //    // print what we got so far and move on to the next line
+        //    DoPrintText(dc, curtext, pt);
+        //    pt.y += m_lineHeight;
+        //    pt.x = 5;
+        //    
+        //    // Now print: Parameter
+        //    wxFont f = dc.GetFont();
+        //    wxFontWeight curweight = f.GetWeight();
+        //    f.SetWeight(wxFONTWEIGHT_BOLD);
+        //    dc.SetFont(f);
+        //    wxString tmp = "Parameter";
+        //    DoPrintText(dc, tmp, pt);
+        //    // restore the font's weight
+        //    f.SetWeight(curweight);
+        //    dc.SetFont(f);
+        //    pt.y += m_lineHeight;
+        //    pt.x = 5;
+        //    break;
+        //}
         default:
             curtext << ::MarkupText();
             break;

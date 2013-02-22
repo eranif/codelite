@@ -777,17 +777,27 @@ void CCBox::DoShowTagTip()
     } // gotAComment = true
 
     // Update all "doxy" comments and surround them with <green> tags
-    static wxRegEx reDoxy(wxT("([@\\\\]{1}[a-zA-Z]+ )"));
-
-    wxString doxyParamTag = wxT("<b><color=\"GREEN\">\\1</color></b>");
-    if ( !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK)) ) {
-        doxyParamTag = wxT("<b><color=\"BLUE\">\\1</color></b>");
+    static wxRegEx reDoxyParam ("([@\\\\]{1}param)[ \\t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyBrief ("([@\\\\]{1}brief)[ \\t]*",                    wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyThrow ("([@\\\\]{1}throw)[ \\t]*",                    wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyReturn("([@\\\\]{1}return)[ \\t]*",                   wxRE_DEFAULT|wxRE_ICASE);
+        
+    if ( reDoxyParam.IsValid() && reDoxyParam.Matches(prefix) ) {
+        reDoxyParam.ReplaceAll(&prefix, "\n<b>Parameter</b>\n<i>\\2</i>");
     }
-
-    if ( reDoxy.Matches(prefix) ) {
-        reDoxy.ReplaceAll(&prefix, doxyParamTag);
+    
+    if ( reDoxyBrief.IsValid() && reDoxyBrief.Matches(prefix) ) {
+        reDoxyBrief.ReplaceAll(&prefix, "");
     }
-
+    
+    if ( reDoxyThrow.IsValid() && reDoxyThrow.Matches(prefix) ) {
+        reDoxyThrow.ReplaceAll(&prefix, "\n<b>Throws</b>\n");
+    }
+    
+    if ( reDoxyReturn.IsValid() && reDoxyReturn.Matches(prefix) ) {
+        reDoxyReturn.ReplaceAll(&prefix, "\n<b>Returns</b>\n");
+    }
+    
     if( m_tipWindow ) {
         m_tipWindow->Destroy();
         m_tipWindow = NULL;

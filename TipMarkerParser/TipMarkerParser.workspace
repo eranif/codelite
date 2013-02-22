@@ -2,10 +2,10 @@
 <CodeLite_Workspace Name="TipMarkerParser" Database="./TipMarkerParser.tags">
   <Project Name="TipMarkerParser" Path="TipMarkerParser.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="TipMarkerParser" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Linux" Selected="yes">
+    <WorkspaceConfiguration Name="Linux" Selected="no">
       <Project Name="TipMarkerParser" ConfigName="Linux"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

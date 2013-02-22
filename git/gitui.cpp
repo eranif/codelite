@@ -611,7 +611,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage100->SetSizer(boxSizer94);
     
-    m_dvFiles = new wxDataViewCtrl(m_splitterPage100, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE);
+    m_dvFiles = new wxDataViewCtrl(m_splitterPage100, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_MULTIPLE);
     
     m_dvFilesModel = new DataViewFilesModel;
     m_dvFilesModel->SetColCount( 1 );
@@ -626,7 +626,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer92 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage96->SetSizer(boxSizer92);
     
-    m_dvListCtrl = new wxDataViewListCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_SINGLE);
     
     boxSizer92->Add(m_dvListCtrl, 1, wxEXPAND, 2);
     

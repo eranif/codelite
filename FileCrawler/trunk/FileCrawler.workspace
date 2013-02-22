@@ -2,10 +2,10 @@
 <CodeLite_Workspace Name="FileCrawler" Database="./FileCrawler.tags">
   <Project Name="fileCrawler" Path="fileCrawler/fileCrawler.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="fileCrawler" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="fileCrawler" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

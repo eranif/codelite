@@ -65,7 +65,7 @@ class AbbreviationJSONEntry : public clConfigItem
     JSONElement::wxStringMap_t m_entries;
     bool                       m_autoInsert;
 public:
-    AbbreviationJSONEntry() : clConfigItem("Abbreviations")
+    AbbreviationJSONEntry() : clConfigItem("Abbreviations"), m_autoInsert(false)
     {}
 
     virtual ~AbbreviationJSONEntry()

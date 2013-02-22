@@ -26,32 +26,34 @@
 #define __workspacetab__
 
 #include <wx/panel.h>
+#include "theme_handler_helper.h"
 
 class FileViewTree;
 
 class WorkspaceTab : public wxPanel
 {
-	FileViewTree *m_fileView;
-    wxString      m_caption;
-    bool          m_isLinkedToEditor;
-	wxChoice*     m_workspaceConfig;
-	
+    FileViewTree *      m_fileView;
+    wxString            m_caption;
+    bool                m_isLinkedToEditor;
+    wxChoice*           m_workspaceConfig;
+    ThemeHandlerHelper* m_themeHelper;
+    
 protected:
-	void CreateGUIControls();
+    void CreateGUIControls();
     void ConnectEvents();
-	void DoWorkspaceConfig();
-	
-	void OnLinkEditor                (wxCommandEvent &e);
-	void OnCollapseAll               (wxCommandEvent &e);
-	void OnCollapseAllUI             (wxUpdateUIEvent&e);
-	void OnGoHome                    (wxCommandEvent &e);
-	void OnGoHomeUI                  (wxUpdateUIEvent&e);
-	void OnProjectSettingsUI         (wxUpdateUIEvent&e);
-	void OnProjectSettings           (wxCommandEvent &e);
+    void DoWorkspaceConfig();
+
+    void OnLinkEditor                (wxCommandEvent &e);
+    void OnCollapseAll               (wxCommandEvent &e);
+    void OnCollapseAllUI             (wxUpdateUIEvent&e);
+    void OnGoHome                    (wxCommandEvent &e);
+    void OnGoHomeUI                  (wxUpdateUIEvent&e);
+    void OnProjectSettingsUI         (wxUpdateUIEvent&e);
+    void OnProjectSettings           (wxCommandEvent &e);
     void OnShowFile                  (wxCommandEvent &e);
     void OnShowFileUI                (wxUpdateUIEvent&e);
-	void OnShowProjectListPopup      (wxCommandEvent &e);
-	void OnMenuSelection             (wxCommandEvent &e);
+    void OnShowProjectListPopup      (wxCommandEvent &e);
+    void OnMenuSelection             (wxCommandEvent &e);
 
     void OnWorkspaceLoaded           (wxCommandEvent &e);
     void OnWorkspaceClosed           (wxCommandEvent &e);
@@ -61,16 +63,20 @@ protected:
     void OnProjectFileRemoved        (wxCommandEvent &e);
     void OnActiveEditorChanged       (wxCommandEvent &e);
     void OnEditorClosing             (wxCommandEvent &e);
-	void OnWorkspaceConfig           (wxCommandEvent &e);
-	void OnConfigurationManagerChoice(wxCommandEvent &e);
-	void OnConfigurationManager      (wxCommandEvent& e);
-	
-public:
-	WorkspaceTab(wxWindow *parent, const wxString &caption);
-	~WorkspaceTab();
+    void OnWorkspaceConfig           (wxCommandEvent &e);
+    void OnConfigurationManagerChoice(wxCommandEvent &e);
+    void OnConfigurationManager      (wxCommandEvent& e);
 
-	FileViewTree   *GetFileView()       { return m_fileView; }
-    const wxString &GetCaption () const { return m_caption;  }
+public:
+    WorkspaceTab(wxWindow *parent, const wxString &caption);
+    ~WorkspaceTab();
+
+    FileViewTree   *GetFileView()       {
+        return m_fileView;
+    }
+    const wxString &GetCaption () const {
+        return m_caption;
+    }
     void FreezeThaw(bool freeze = true);
 };
 #endif // __workspacetab__

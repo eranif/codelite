@@ -54,10 +54,12 @@ WorkspaceTab::WorkspaceTab(wxWindow *parent, const wxString &caption)
 
     CreateGUIControls();
     ConnectEvents();
+    m_themeHelper = new ThemeHandlerHelper(this);
 }
 
 WorkspaceTab::~WorkspaceTab()
 {
+    wxDELETE(m_themeHelper);
     Disconnect( XRCID("link_editor"),        wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnLinkEditor));
     Disconnect( XRCID("collapse_all"),       wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnCollapseAll));
     Disconnect( XRCID("collapse_all"),       wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnCollapseAllUI));

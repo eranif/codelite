@@ -4,6 +4,7 @@
 #include "plugin.h"
 #include <wx/regex.h>
 #include <wx/log.h>
+#include "event_notifier.h"
 
 static size_t sErrorCount (0);
 
@@ -12,31 +13,16 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
     , m_mgr(mgr)
     , m_plugin(plugin)
 {
-    m_outputText->SetReadOnly(true);
-
-    // Initialize the output text style
-    m_outputText->SetLexer(wxSTC_LEX_NULL);
-    m_outputText->StyleClearAll();
-    
-    
-    // Use font
-
-    for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
-        wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        defFont.SetFamily(wxFONTFAMILY_TELETYPE);
-        
-        m_outputText->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
-        m_outputText->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
-        m_outputText->StyleSetFont(i, defFont);
-    }
-
+    DoInitStyle();
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged), NULL, this);
     // Connect events
-    m_outputText->Connect(wxEVT_STC_HOTSPOT_CLICK, wxStyledTextEventHandler(CppCheckReportPage::OnOpenFile), NULL, this);
+    m_outputText->Connect(wxEVT_STC_DOUBLECLICK, wxStyledTextEventHandler(CppCheckReportPage::OnOpenFile), NULL, this);
 }
 
 CppCheckReportPage::~CppCheckReportPage()
 {
-    m_outputText->Disconnect(wxEVT_STC_HOTSPOT_CLICK, wxStyledTextEventHandler(CppCheckReportPage::OnOpenFile), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged), NULL, this);
+    m_outputText->Disconnect(wxEVT_STC_DOUBLECLICK, wxStyledTextEventHandler(CppCheckReportPage::OnOpenFile), NULL, this);
 }
 
 void CppCheckReportPage::OnClearReportUI(wxUpdateUIEvent& event)
@@ -167,7 +153,14 @@ void CppCheckReportPage::OnOpenFile(wxStyledTextEvent& e)
             // Zero based line number
             if(n) n--;
 
-            m_mgr->OpenFile(file, wxEmptyString, n);
+            if ( m_mgr->OpenFile(file, wxEmptyString, n) ) {
+                IEditor * editor = m_mgr->GetActiveEditor();
+                if ( editor ) {
+                    int posStart = editor->GetSTC()->PositionFromLine(n);
+                    int lineLen  = editor->GetSTC()->LineLength(n);
+                    editor->SelectText( posStart, lineLen );
+                }
+            }
         }
     }
 }
@@ -198,4 +191,29 @@ void CppCheckReportPage::SetGaugeRange(int range)
 void CppCheckReportPage::SetMessage(const wxString& msg)
 {
     m_staticTextFile->SetLabel(msg);
+}
+
+void CppCheckReportPage::DoInitStyle()
+{
+    m_outputText->SetReadOnly(true);
+    // Initialize the output text style
+    m_outputText->SetLexer(wxSTC_LEX_NULL);
+    m_outputText->StyleClearAll();
+    
+    m_outputText->HideSelection(true);
+    
+    // Use font
+    for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
+        wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        defFont.SetFamily(wxFONTFAMILY_TELETYPE);
+        m_outputText->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
+        m_outputText->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
+        m_outputText->StyleSetFont(i, defFont);
+    }
+}
+
+void CppCheckReportPage::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    DoInitStyle();
 }

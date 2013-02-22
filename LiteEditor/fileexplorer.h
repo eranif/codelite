@@ -28,6 +28,7 @@
 #include "wx/panel.h"
 #include "wx/choice.h"
 #include "volumelocatorthread.h"
+#include "theme_handler_helper.h"
 
 class FileExplorerTree;
 
@@ -37,7 +38,8 @@ private:
 	FileExplorerTree *m_fileTree;
 	wxString m_caption;
 	bool m_isLinkedToEditor;
-
+    ThemeHandlerHelper *m_themeHelper;
+    
 	void CreateGUIControls();
  	
     void OnLinkEditor(wxCommandEvent &e);

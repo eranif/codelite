@@ -156,7 +156,7 @@ void AbbreviationsSettingsDlg::DoPopulateItems()
     m_stc->ClearAll();
     std::map<wxString, wxString> entries = m_data.GetEntries();
     std::map<wxString, wxString>::iterator iter = entries.begin();
-    for(; iter != entries.end(); iter ++) {
+    for(; iter != entries.end(); ++iter) {
         m_listBoxAbbreviations->Append(iter->first);
     }
 

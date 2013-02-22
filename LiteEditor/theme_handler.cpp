@@ -6,6 +6,7 @@
 #include "drawingutils.h"
 #include <wx/listbox.h>
 #include "wxcl_log_text_ctrl.h"
+#include <wx/listctrl.h>
 
 #define CHECK_POINTER(p) if ( !p ) return;
 
@@ -55,7 +56,7 @@ void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
 
 void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
 {
-    if ( dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) || dynamic_cast<wxTextCtrl*>(win)) {
+    if ( dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) || dynamic_cast<wxTextCtrl*>(win) || dynamic_cast<wxListCtrl*>(win)) {
         win->SetBackgroundColour( bg );
         win->SetForegroundColour( fg );
         win->Refresh();

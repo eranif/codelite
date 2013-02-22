@@ -2,6 +2,7 @@
 #define SYMBOLVIEWTABPANEL_H
 
 #include "wxcrafter.h"
+#include "theme_handler_helper.h"
 
 class IManager;
 class svSymbolTree;
@@ -11,7 +12,7 @@ class OutlineTab : public OutlineTabBaseClass
 protected:
     IManager* m_mgr;
     svSymbolTree* m_tree;
-    
+    ThemeHandlerHelper* m_themeHelper;
     bool IsIncludeFileNode();
     
 public:

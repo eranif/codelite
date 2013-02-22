@@ -15,12 +15,17 @@ class ZoomText : public wxStyledTextCtrl
 {
     int      m_zoomFactor;
     wxColour m_colour;
+    wxString m_filename;
+    
+protected:
+    void OnThemeChanged(wxCommandEvent &e);
     
 public:
     ZoomText(wxWindow *parent, wxWindowID id=wxID_ANY,
              const wxPoint& pos = wxDefaultPosition,
              const wxSize& size = wxDefaultSize, long style = 0,
              const wxString& name = wxSTCNameStr);
+    virtual ~ZoomText();
     void UpdateLexer(const wxString &filename);
     void OnSettingsChanged(wxCommandEvent &e);
     void UpdateText(IEditor* editort);

@@ -46,10 +46,12 @@ FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
     EditorConfigST::Get()->GetLongValue(wxT("LinkFileExplorerToEditor"), link);
     m_isLinkedToEditor = link ? true : false;
     CreateGUIControls();
+    m_themeHelper = new ThemeHandlerHelper(this);
 }
 
 FileExplorer::~FileExplorer()
 {
+    wxDELETE(m_themeHelper);
     wxTheApp->Disconnect(XRCID("show_in_explorer"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FileExplorer::OnShowFile), NULL, this);
     wxTheApp->Disconnect(XRCID("show_in_explorer"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileExplorer::OnShowFileUI), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(FileExplorer::OnWorkspaceLoaded), NULL, this);

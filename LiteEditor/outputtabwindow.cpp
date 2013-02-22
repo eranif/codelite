@@ -32,6 +32,7 @@
 #include "output_pane.h"
 #include "pluginmanager.h"
 #include "quickfindbar.h"
+#include "event_notifier.h"
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
     EVT_MENU(XRCID("scroll_on_output"),      OutputTabWindow::OnOutputScrolls)
@@ -69,10 +70,14 @@ OutputTabWindow::OutputTabWindow(wxWindow *parent, wxWindowID id, const wxString
     wxTheApp->Connect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
     wxTheApp->Connect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
     wxTheApp->Connect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
+    m_themeHelper = new ThemeHandlerHelper(this);
 }
 
 OutputTabWindow::~OutputTabWindow()
 {
+    wxDELETE(m_themeHelper);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged), NULL, this);
     wxTheApp->Disconnect(wxID_COPY,      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
     wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit),   NULL, this);
     wxTheApp->Disconnect(wxID_COPY,      wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutputTabWindow::OnEditUI), NULL, this);
@@ -449,4 +454,12 @@ void OutputTabWindow::OnHideSearchBar(wxCommandEvent& e)
 {
     m_findBar->Hide();
     GetSizer()->Layout();
+}
+
+void OutputTabWindow::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    if ( m_sci ) {
+        InitStyle( m_sci, m_sci->GetLexer(), m_sci->GetMarginWidth(4) == 6);
+    }
 }

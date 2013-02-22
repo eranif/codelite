@@ -27,6 +27,7 @@
 
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
+#include "theme_handler_helper.h"
 
 class wxToolBar;
 class wxBoxSizer;
@@ -44,7 +45,8 @@ protected:
     bool          m_errorsFirstLine;
     QuickFindBar *m_findBar;
     wxBoxSizer *  m_hSizer;
-
+    ThemeHandlerHelper* m_themeHelper;
+    
     static void DefineMarker(wxStyledTextCtrl *sci, int marker, int markerType, wxColor fore, wxColor back);
     static void InitStyle   (wxStyledTextCtrl *sci, int lexer, bool folding);
 
@@ -77,6 +79,8 @@ protected:
     virtual void OnMarginClick    (wxStyledTextEvent &e);
     virtual void OnEditUI         (wxUpdateUIEvent  &e);
     virtual void OnHideSearchBar  (wxCommandEvent   &e);
+    virtual void OnThemeChanged   (wxCommandEvent   &e);
+    
     DECLARE_EVENT_TABLE()
 
 public:

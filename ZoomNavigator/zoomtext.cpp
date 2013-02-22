@@ -15,6 +15,7 @@
 #include "cl_config.h"
 #include "znSettingsDlg.h"
 #include "event_notifier.h"
+#include "plugin.h"
 
 ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxStyledTextCtrl( parent, id, pos, size, style |wxNO_BORDER, name )
@@ -37,6 +38,7 @@ ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
     MarkerSetBackground(1, m_colour);
     SetZoom( m_zoomFactor );
     EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
     MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour );
 
 #ifndef __WXMSW__    
@@ -50,16 +52,23 @@ ZoomText::ZoomText(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wx
 #endif    
 }
 
+ZoomText::~ZoomText()
+{
+    EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
+}
+
 void ZoomText::UpdateLexer(const wxString& filename)
 {
+    m_filename = filename;
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     switch ( type ) {
     case FileExtManager::TypeHeader:
     case FileExtManager::TypeSourceC:
     case FileExtManager::TypeSourceCpp: {
         LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("C++");
-        lexer->Apply( this );
         SetLexer(wxSTC_LEX_CPP);
+        lexer->Apply( this );
         break;
     }
     default: {
@@ -122,4 +131,10 @@ void ZoomText::HighlightLines(int start, int end)
     for(int i=start; i<=end; ++i) {
         MarkerAdd(i, 1);
     }
+}
+
+void ZoomText::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    UpdateLexer(m_filename);
 }

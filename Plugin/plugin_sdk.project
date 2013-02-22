@@ -79,6 +79,8 @@
     <File Name="wx_tree_traverser.cpp"/>
     <File Name="macromanager.cpp"/>
     <File Name="macromanager.h"/>
+    <File Name="theme_handler_helper.h"/>
+    <File Name="theme_handler_helper.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
     <File Name="builder.h"/>

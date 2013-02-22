@@ -62,6 +62,7 @@
 #include "ImportFilesDialogNew.h"
 #include "project.h"
 #include "macros.h"
+#include <wx/treectrl.h>
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 

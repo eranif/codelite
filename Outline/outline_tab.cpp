@@ -33,11 +33,13 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     Connect(wxEVT_SV_GOTO_DECLARATION, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     Connect(wxEVT_SV_FIND_REFERENCES,  wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     Connect(wxEVT_SV_RENAME_SYMBOL,    wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
+    m_themeHelper = new ThemeHandlerHelper(this);
     
 }
 
 OutlineTab::~OutlineTab()
 {
+    wxDELETE(m_themeHelper);
     m_tree->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
     
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(OutlineTab::OnWorkspaceLoaded), NULL, this);

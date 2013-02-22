@@ -87,6 +87,7 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
     , m_fileExplorerLastBaseImgIdx (-1)
 {
     CreatGUIControls();
+    m_themeHelper = new ThemeHandlerHelper(this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,            wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),           NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,            wxCommandEventHandler(SubversionView::OnWorkspaceClosed),           NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,                  wxCommandEventHandler(SubversionView::OnRefreshView),               NULL, this);
@@ -99,6 +100,7 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
 
 SubversionView::~SubversionView()
 {
+    wxDELETE(m_themeHelper);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,            wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),           NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,            wxCommandEventHandler(SubversionView::OnWorkspaceClosed),           NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,                  wxCommandEventHandler(SubversionView::OnRefreshView),               NULL, this);

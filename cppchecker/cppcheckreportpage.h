@@ -28,14 +28,16 @@ protected:
 protected:
     // Handlers for CppCheckReportBasePage events.
 
-    void OnClearReport          ( wxCommandEvent& event );
-    void OnStopChecking         ( wxCommandEvent& event );
-    void OnStopCheckingUI       (wxUpdateUIEvent &event);
-    void OnClearReportUI        (wxUpdateUIEvent &event);
-
+    void OnClearReport   ( wxCommandEvent& event );
+    void OnStopChecking  ( wxCommandEvent& event );
+    void OnStopCheckingUI(wxUpdateUIEvent &event);
+    void OnClearReportUI (wxUpdateUIEvent &event);
+    void OnThemeChanged  (wxCommandEvent &e);
+    
     // Scintilla events
     void OnOpenFile             (wxStyledTextEvent& e);
-
+    void DoInitStyle();
+    
 public:
     /** Constructor */
     CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheckPlugin* plugin);

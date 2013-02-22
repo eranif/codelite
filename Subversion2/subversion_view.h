@@ -144,9 +144,10 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 
-	void OnStopUI         (wxUpdateUIEvent &event);
-	void OnClearOuptutUI  (wxUpdateUIEvent &event);
+	void OnStopUI                   (wxUpdateUIEvent &event);
+	void OnClearOuptutUI            (wxUpdateUIEvent &event);
 	void OnFileExplorerItemExpanding(wxCommandEvent &e);
+    
 	
 public:
 	/** Constructor */

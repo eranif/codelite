@@ -857,9 +857,6 @@ void MainBook::ApplySettingsChanges()
 
     clMainFrame::Get()->UpdateAUI();
     
-    wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
-    EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
-    
     // Last: reposition the findBar
     DoPositionFindBar(2);
 }

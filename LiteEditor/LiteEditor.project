@@ -416,6 +416,8 @@
     <File Name="autoversion.cpp"/>
     <File Name="theme_handler.h"/>
     <File Name="theme_handler.cpp"/>
+    <File Name="wxcl_log_text_ctrl.h"/>
+    <File Name="wxcl_log_text_ctrl.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
     <File Name="checktreectrl.cpp"/>

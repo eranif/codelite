@@ -39,6 +39,8 @@
 #include "globals.h"
 #include "findresultstab.h"
 #include "search_thread.h"
+#include "event_notifier.h"
+#include "theme_handler.h"
 
 // Custom styles
 #define LEX_FIF_DEFAULT        0
@@ -119,11 +121,14 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
     Connect( XRCID ( "stop_search" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( FindResultsTab::OnStopSearch  ), NULL, this );
     Connect( XRCID ( "stop_search" ), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler( FindResultsTab::OnStopSearchUI), NULL, this );
     m_tb->Realize();
+    
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
 
 }
 
 FindResultsTab::~FindResultsTab()
 {
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
     if (m_find) {
         delete m_find;
         m_find = NULL;
@@ -162,6 +167,12 @@ void FindResultsTab::SaveFindInFilesData()
 void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
 {
     sci->ClearDocumentStyle();
+    sci->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
+    for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
+        sci->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
+        sci->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
+    }
+    
     sci->StyleSetForeground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneFgColour());
     sci->StyleSetBackground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneBgColour());
 
@@ -243,6 +254,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
     sci->SetMarginWidth(3, 0);
     sci->SetMarginWidth(4, 0);
     sci->SetMarginSensitive(1, true);
+    sci->Refresh();
 }
 
 size_t FindResultsTab::GetPageCount() const
@@ -901,6 +913,21 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
     }
 }
 
+void FindResultsTab::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    if ( m_sci ) {
+        SetStyles( m_sci );
+    } else if ( m_book ) {
+        size_t pageCount = m_book->GetPageCount();
+        for(size_t i=0; i<pageCount; ++i) {
+            wxStyledTextCtrl *stc = dynamic_cast<wxStyledTextCtrl*>(m_book->GetPage(pageCount));
+            if ( stc ) {
+                SetStyles( stc );
+            }
+        }
+    }
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 

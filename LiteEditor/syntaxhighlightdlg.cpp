@@ -34,226 +34,232 @@
 #include <wx/dir.h>
 #include "syntaxhighlightdlg.h"
 #include "manager.h"
+#include "theme_handler.h"
+#include "event_notifier.h"
 
 SyntaxHighlightDlg::SyntaxHighlightDlg( wxWindow* parent )
-	: SyntaxHighlightBaseDlg( parent ), restartRequired(false)
+    : SyntaxHighlightBaseDlg( parent ), restartRequired(false)
 {
-	GetSizer()->Insert(0, CreateSyntaxHighlightPage(), 1, wxALL|wxEXPAND, 5);
-	GetSizer()->Layout();
-	GetSizer()->Fit(this);
-	m_buttonOk->SetFocus();
-	WindowAttrManager::Load(this, wxT("SyntaxHighlightDlgAttr"), NULL);
+    GetSizer()->Insert(0, CreateSyntaxHighlightPage(), 1, wxALL|wxEXPAND, 5);
+    GetSizer()->Layout();
+    GetSizer()->Fit(this);
+    m_buttonOk->SetFocus();
+    WindowAttrManager::Load(this, wxT("SyntaxHighlightDlgAttr"), NULL);
 }
 
 void SyntaxHighlightDlg::OnButtonOK( wxCommandEvent& event )
 {
-	wxUnusedVar(event);
-	SaveChanges();
-	clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
-	// and close the dialog
-	EndModal(wxID_OK);
+    wxUnusedVar(event);
+    SaveChanges();
+    clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
+    // and close the dialog
+    EndModal(wxID_OK);
 }
 
 void SyntaxHighlightDlg::OnButtonCancel( wxCommandEvent& event )
 {
-	wxUnusedVar(event);
-	wxString curSelTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
-	if (curSelTheme != m_startingTheme) {
-		//restore the starting theme
-		EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), m_startingTheme);
-		EditorConfigST::Get()->LoadLexers(false);
-	}
+    wxUnusedVar(event);
+    wxString curSelTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
+    if (curSelTheme != m_startingTheme) {
+        //restore the starting theme
+        EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), m_startingTheme);
+        EditorConfigST::Get()->LoadLexers(false);
+    }
 
-	EndModal(wxID_CANCEL);
+    EndModal(wxID_CANCEL);
 }
 
 void SyntaxHighlightDlg::OnButtonApply( wxCommandEvent& event )
 {
-	SaveChanges();
-	clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
+    SaveChanges();
+    clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 
-	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
-	wxUnusedVar(event);
+    m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
+    wxUnusedVar(event);
 }
 
 wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 {
-	wxPanel *page = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
-	page->SetSizer(sz);
+    wxPanel *page = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+    wxBoxSizer *sz = new wxBoxSizer(wxVERTICAL);
+    page->SetSizer(sz);
 
-	wxStaticText *txt = new wxStaticText(page, wxID_ANY, _("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
-	sz->Add(txt, 0, wxEXPAND|wxALL, 5);
+    wxStaticText *txt = new wxStaticText(page, wxID_ANY, _("Colouring scheme:"), wxDefaultPosition, wxDefaultSize, 0);
+    sz->Add(txt, 0, wxEXPAND|wxALL, 5);
 
-	m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, EditorConfigST::Get()->GetLexersThemes(), 0 );
-	sz->Add(m_themes, 0, wxEXPAND|wxALL, 5);
+    m_themes = new wxChoice(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, EditorConfigST::Get()->GetLexersThemes(), 0 );
+    sz->Add(m_themes, 0, wxEXPAND|wxALL, 5);
 
-	if (m_themes->IsEmpty() == false) {
-		int where = m_themes->FindString(EditorConfigST::Get()->GetStringValue( wxT("LexerTheme") ));
-		if ( where != wxNOT_FOUND) {
-			m_themes->SetSelection( where );
-		}
-	}
+    if (m_themes->IsEmpty() == false) {
+        int where = m_themes->FindString(EditorConfigST::Get()->GetStringValue( wxT("LexerTheme") ));
+        if ( where != wxNOT_FOUND) {
+            m_themes->SetSelection( where );
+        }
+    }
 
-	long style = wxNB_DEFAULT;
-	m_lexersBook = new wxTreebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-	MSWSetNativeTheme(m_lexersBook->GetTreeCtrl());
-	m_lexersBook->GetTreeCtrl()->SetSizeHints(150, -1);
-	sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
-	m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-	m_lexersBook->Connect(XRCID("ID_buttonTextSelApplyToAll"), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightDlg::OnTextSelApplyToAll), NULL, this );
-	
-	LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
+    long style = wxNB_DEFAULT;
+    m_lexersBook = new wxTreebook(page, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    MSWSetNativeTheme(m_lexersBook->GetTreeCtrl());
+    m_lexersBook->GetTreeCtrl()->SetSizeHints(150, -1);
+    sz->Add(m_lexersBook, 1, wxEXPAND | wxALL, 5);
+    m_lexersBook->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    m_lexersBook->Connect(XRCID("ID_buttonTextSelApplyToAll"), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightDlg::OnTextSelApplyToAll), NULL, this );
 
-	m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
-	ConnectChoice(m_themes, SyntaxHighlightDlg::OnThemeChanged);
-	return page;
+    LoadLexers(m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection());
+
+    m_startingTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
+    ConnectChoice(m_themes, SyntaxHighlightDlg::OnThemeChanged);
+    return page;
 }
 
 void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 {
-	Freeze();
-	
-	// get the current open editor's lexer name
-	wxString currentLexer;
-	LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-	if(editor) {
-		currentLexer = editor->GetContext()->GetName();
-	}
-	
-	//remove old lexers
-	if (m_lexersBook->GetPageCount() > 0) {
-		m_lexersBook->DeleteAllPages();
-	}
+    Freeze();
 
-	//update the theme name
-	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), theme);
+    // get the current open editor's lexer name
+    wxString currentLexer;
+    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    if(editor) {
+        currentLexer = editor->GetContext()->GetName();
+    }
 
-	//load all lexers
-	EditorConfigST::Get()->LoadLexers(false);
+    //remove old lexers
+    if (m_lexersBook->GetPageCount() > 0) {
+        m_lexersBook->DeleteAllPages();
+    }
 
-	std::map<wxString, LexerConfPtr>::const_iterator iter = EditorConfigST::Get()->LexerBegin();
-	for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
-		LexerConfPtr lexer = iter->second;
+    //update the theme name
+    EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), theme);
 
-		wxString lexName = lexer->GetName();
-		lexName.Trim().Trim(false);
-		if(lexName.IsEmpty())
-			continue;
-		
-		// get the parent node for this lexer
-		wxString firstChar = lexName.Mid(0, 1).MakeUpper();
-		size_t parentIndex(wxString::npos);
-		for(size_t i=0; i<m_lexersBook->GetPageCount(); i++) {
-			wxString pageText = m_lexersBook->GetPageText(i);
-			pageText.MakeUpper();
-			if( pageText.StartsWith(firstChar) ) {
-				parentIndex = i;
-				break;
-			}
-		}
-		
-		if(parentIndex == wxString::npos) {
-			// add parent node
-			m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), currentLexer == iter->second->GetName());
-			
-		} else {
-			m_lexersBook->InsertPage(parentIndex, CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), currentLexer == iter->second->GetName());
-		}
-	}
-	Thaw();
-	
-	// The outputview colours are global to all a theme's lexors, so are dealt with separately
-	m_colourPickerOutputPanesFgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewFgColour()));
-	m_colourPickerOutputPanesBgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour()));
+    //load all lexers
+    EditorConfigST::Get()->LoadLexers(false);
+
+    std::map<wxString, LexerConfPtr>::const_iterator iter = EditorConfigST::Get()->LexerBegin();
+    for (; iter != EditorConfigST::Get()->LexerEnd(); iter++) {
+        LexerConfPtr lexer = iter->second;
+
+        wxString lexName = lexer->GetName();
+        lexName.Trim().Trim(false);
+        if(lexName.IsEmpty())
+            continue;
+
+        // get the parent node for this lexer
+        wxString firstChar = lexName.Mid(0, 1).MakeUpper();
+        size_t parentIndex(wxString::npos);
+        for(size_t i=0; i<m_lexersBook->GetPageCount(); i++) {
+            wxString pageText = m_lexersBook->GetPageText(i);
+            pageText.MakeUpper();
+            if( pageText.StartsWith(firstChar) ) {
+                parentIndex = i;
+                break;
+            }
+        }
+
+        if(parentIndex == wxString::npos) {
+            // add parent node
+            m_lexersBook->AddPage(CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), currentLexer == iter->second->GetName());
+
+        } else {
+            m_lexersBook->InsertPage(parentIndex, CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), currentLexer == iter->second->GetName());
+        }
+    }
+    Thaw();
+
+    // The outputview colours are global to all a theme's lexors, so are dealt with separately
+    m_colourPickerOutputPanesFgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewFgColour()));
+    m_colourPickerOutputPanesBgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour()));
 }
 
 void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
 {
-	int sel = event.GetSelection();
-	wxString themeName = m_themes->GetString((unsigned int)sel);
+    int sel = event.GetSelection();
+    wxString themeName = m_themes->GetString((unsigned int)sel);
 
-	//update the configuration with the new lexer's theme
-	EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), themeName);
+    //update the configuration with the new lexer's theme
+    EditorConfigST::Get()->SaveStringValue(wxT("LexerTheme"), themeName);
 
-	LoadLexers( themeName );
-	Layout();
+    LoadLexers( themeName );
+    Layout();
 }
 
 void SyntaxHighlightDlg::OnTextSelApplyToAll(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
+    wxUnusedVar(event);
 
-	LexerPage* page;
-	wxWindow* win = m_lexersBook->GetCurrentPage();
-	if (!win || (page = dynamic_cast<LexerPage*>(win)) == NULL) {
-		return;
-	}
+    LexerPage* page;
+    wxWindow* win = m_lexersBook->GetCurrentPage();
+    if (!win || (page = dynamic_cast<LexerPage*>(win)) == NULL) {
+        return;
+    }
 
-	// Get the text-selection values for the current page, then apply them to all pages
-	wxString colourstring; int alpha;
-	page->GetTextSelectionValues(colourstring, alpha);
+    // Get the text-selection values for the current page, then apply them to all pages
+    wxString colourstring;
+    int alpha;
+    page->GetTextSelectionValues(colourstring, alpha);
 
-	for (size_t i=0; i < m_lexersBook->GetPageCount(); ++i) {
-		wxWindow* win = m_lexersBook->GetPage(i);
-		LexerPage* page = dynamic_cast<LexerPage*>(win);
-		if (page) {
-			page->SetTextSelectionValues(colourstring, alpha);
-			page->SetModified();
-		}
-	}
+    for (size_t i=0; i < m_lexersBook->GetPageCount(); ++i) {
+        wxWindow* win = m_lexersBook->GetPage(i);
+        LexerPage* page = dynamic_cast<LexerPage*>(win);
+        if (page) {
+            page->SetTextSelectionValues(colourstring, alpha);
+            page->SetModified();
+        }
+    }
 }
 
 wxPanel *SyntaxHighlightDlg::CreateLexerPage(wxWindow *parent, LexerConfPtr lexer)
 {
-	return new LexerPage(parent, lexer);
+    return new LexerPage(parent, lexer);
 }
 
 void SyntaxHighlightDlg::SaveChanges()
 {
-	int max = m_lexersBook->GetPageCount();
-	for (int i=0; i<max; i++) {
-		wxWindow *win = m_lexersBook->GetPage((size_t)i);
-		LexerPage *page = dynamic_cast<LexerPage*>( win );
-		if ( page ) {
-			page->SaveSettings();
-		}
-	}
+    int max = m_lexersBook->GetPageCount();
+    for (int i=0; i<max; i++) {
+        wxWindow *win = m_lexersBook->GetPage((size_t)i);
+        LexerPage *page = dynamic_cast<LexerPage*>( win );
+        if ( page ) {
+            page->SaveSettings();
+        }
+    }
 
-	// Save all lexers once
-	EditorConfigST::Get()->SaveLexers();
+    // Save all lexers once
+    EditorConfigST::Get()->SaveLexers();
 
-	// The outputview colours are global to all a theme's lexors, so are dealt with separately
-	wxString oldcolourstr = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-	wxString colourstr = m_colourPickerOutputPanesFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
-	if (colourstr != oldcolourstr) {
-		restartRequired = true;
-	}
-	EditorConfigST::Get()->SetCurrentOutputviewFgColour(colourstr);
-	oldcolourstr = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-	colourstr = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
-	if (colourstr != oldcolourstr) {
-		restartRequired = true;
-	}
-	EditorConfigST::Get()->SetCurrentOutputviewBgColour(colourstr);
+    wxString oldFg = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    wxString oldBg = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    
+    wxString newFg = m_colourPickerOutputPanesFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
+    EditorConfigST::Get()->SetCurrentOutputviewFgColour(newFg);
+    
+    wxString newBg = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
+    EditorConfigST::Get()->SetCurrentOutputviewBgColour(newBg);
+    
+    // Check for conditions for sending the THEME_CHANGED event
+    wxString curSelTheme = m_themes->GetStringSelection().IsEmpty() ? wxT("Default") : m_themes->GetStringSelection();
+    
+    if ( (oldBg != newBg) || (oldFg != newFg) || (m_startingTheme != curSelTheme) ) {
+        wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
+        EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
+    }
 }
 
 SyntaxHighlightDlg::~SyntaxHighlightDlg()
 {
-	WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL);
+    WindowAttrManager::Save(this, wxT("SyntaxHighlightDlgAttr"), NULL);
 }
 
 void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
 {
-	if(wxMessageBox(_("Are you sure you want to load all default syntax highlight settings and lose all your changes?"), _("CodeLite"), wxYES_NO|wxCANCEL|wxICON_QUESTION|wxCENTER, this) != wxYES){
-		return;
-	}
+    if(wxMessageBox(_("Are you sure you want to load all default syntax highlight settings and lose all your changes?"), _("CodeLite"), wxYES_NO|wxCANCEL|wxICON_QUESTION|wxCENTER, this) != wxYES) {
+        return;
+    }
 
-	// restore the default lexers
-	EditorConfigST::Get()->LoadLexers(true);
-	clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
+    // restore the default lexers
+    EditorConfigST::Get()->LoadLexers(true);
+    clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
 
-	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-	clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-	EndModal(wxID_OK);
+    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+    EndModal(wxID_OK);
 }

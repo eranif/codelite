@@ -12,6 +12,7 @@
 #include "subversion2.h"
 #include "lexer_configuration.h"
 #include "notebook_ex.h"
+#include "event_notifier.h"
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
@@ -32,10 +33,13 @@ SvnConsole::SvnConsole(wxWindow *parent, Subversion2* plugin)
     m_sci->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SvnConsole::OnKeyDown), NULL, this);
     m_sci->SetUndoCollection(false); // dont allow undo/redo
     DoInitializeFontsAndColours();
+    
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(SvnConsole::OnThemeChanged), NULL, this);
 }
 
 SvnConsole::~SvnConsole()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(SvnConsole::OnThemeChanged), NULL, this);
 }
 
 void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
@@ -255,4 +259,10 @@ void SvnConsole::DoInitializeFontsAndColours()
         m_sci->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
         m_sci->StyleSetFont(i, defFont);
     }
+}
+
+void SvnConsole::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    DoInitializeFontsAndColours();
 }

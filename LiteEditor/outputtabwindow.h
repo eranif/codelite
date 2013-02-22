@@ -88,5 +88,8 @@ public:
     const wxString &GetCaption() const {
         return m_name;
     }
+    wxStyledTextCtrl* GetSci() {
+        return m_sci;
+    }
 };
 #endif // __outputtabwindow__

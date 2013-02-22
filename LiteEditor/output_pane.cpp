@@ -37,6 +37,7 @@
 #include "new_build_tab.h"
 #include "shelltab.h"
 #include "taskpanel.h"
+#include "wxcl_log_text_ctrl.h"
 
 const wxString OutputPane::FIND_IN_FILES_WIN = _("Search");
 const wxString OutputPane::BUILD_WIN         = _("Build");
@@ -48,116 +49,106 @@ const wxString OutputPane::TRACE_TAB         = _("Trace");
 const wxString OutputPane::SHOW_USAGE        = _("References");
 
 OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
-		: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
-		, m_caption(caption)
-		, m_logTargetOld(NULL)
-		, m_buildInProgress(false)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
+    , m_caption(caption)
+    , m_logTargetOld(NULL)
+    , m_buildInProgress(false)
 {
-	CreateGUIControls();
-	EventNotifier::Get()->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
-	EventNotifier::Get()->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
-	EventNotifier::Get()->Connect ( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
-	SetSize(-1, 250);
+    CreateGUIControls();
+    EventNotifier::Get()->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
+    SetSize(-1, 250);
 }
 
 OutputPane::~OutputPane()
 {
-	delete wxLog::SetActiveTarget(m_logTargetOld);
-	EventNotifier::Get()->Disconnect( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
-	EventNotifier::Get()->Disconnect( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
-	EventNotifier::Get()->Disconnect( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
+    delete wxLog::SetActiveTarget(m_logTargetOld);
+    EventNotifier::Get()->Disconnect( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
 }
 
 void OutputPane::CreateGUIControls()
 {
-	wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
-	SetSizer(mainSizer);
+    wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
+    SetSizer(mainSizer);
 
-	m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
 
-	BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
+    BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
 
-	// Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
-	int xx, yy;
-	wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	wxWindow::GetTextExtent(wxGetTranslation(REPLACE_IN_FILES), &xx, &yy, NULL, NULL, &fnt);
+    // Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
+    int xx, yy;
+    wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxWindow::GetTextExtent(wxGetTranslation(REPLACE_IN_FILES), &xx, &yy, NULL, NULL, &fnt);
 
-	mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
+    mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
 
-#if CL_USE_NEW_BUILD_TAB	
-	m_buildWin = new NewBuildTab(m_book);
-#else	
-	m_buildWin = new BuildTab(m_book, wxID_ANY, wxGetTranslation(BUILD_WIN));
-#endif	
-	m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, bmpLoader->LoadBitmap(wxT("toolbars/16/build/build")));
+#if CL_USE_NEW_BUILD_TAB
+    m_buildWin = new NewBuildTab(m_book);
+#else
+    m_buildWin = new BuildTab(m_book, wxID_ANY, wxGetTranslation(BUILD_WIN));
+#endif
+    m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, bmpLoader->LoadBitmap(wxT("toolbars/16/build/build")));
 
-	m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN), true);
-	m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
+    m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN), true);
+    m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
 
-	m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, wxGetTranslation(REPLACE_IN_FILES));
-	m_book->AddPage(m_replaceResultsTab, wxGetTranslation(REPLACE_IN_FILES), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
+    m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, wxGetTranslation(REPLACE_IN_FILES));
+    m_book->AddPage(m_replaceResultsTab, wxGetTranslation(REPLACE_IN_FILES), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find_and_replace")) );
 
-	m_showUsageTab = new FindUsageTab(m_book, wxGetTranslation(SHOW_USAGE));
-	m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")) );
+    m_showUsageTab = new FindUsageTab(m_book, wxGetTranslation(SHOW_USAGE));
+    m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")) );
 
-	m_outputWind = new ShellTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
-	m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
+    m_outputWind = new ShellTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
+    m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("output-pane/16/terminal")));
 
-	wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
-	
-	/////////////////////////////////////
-	// Set the trace's font & colors
-	/////////////////////////////////////
-	wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	f.SetFamily(wxFONTFAMILY_TELETYPE);
-	text->SetFont(f);
-	text->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
-	wxTextAttr defaultStyle;
-	defaultStyle.SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
-	defaultStyle.SetTextColour(DrawingUtils::GetOutputPaneFgColour());
-	defaultStyle.SetFont(f);
-	text->SetDefaultStyle(defaultStyle);
-	
-	m_book->AddPage(text, wxGetTranslation(TRACE_TAB), false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
-	m_logTargetOld = wxLog::SetActiveTarget( new wxLogTextCtrl(text) );
-	
-	// Now that we set up our own log target, re-enable the logging
-	wxLog::EnableLogging(true);
-	
-	m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
-	m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
-	mainSizer->Layout();
+    wxTextCtrl *text = new wxTextCtrl(m_book, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY| wxHSCROLL);
+
+    /////////////////////////////////////
+    // Set the trace's font & colors
+    /////////////////////////////////////
+
+    m_book->AddPage(text, wxGetTranslation(TRACE_TAB), false, wxXmlResource::Get()->LoadBitmap(wxT("debug_window")));
+    m_logTargetOld = wxLog::SetActiveTarget( new wxclTextCtrl(text) );
+
+    // Now that we set up our own log target, re-enable the logging
+    wxLog::EnableLogging(true);
+
+    m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
+    m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
+    mainSizer->Layout();
 }
 
 void OutputPane::OnEditorFocus(wxCommandEvent& e)
 {
-	e.Skip();
-	if (EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
+    e.Skip();
+    if (EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
 
-		// Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
-		size_t cursel(m_book->GetSelection());
-		if (cursel != Notebook::npos  
-				&& EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
-				return;
-		}
-		
-		if(m_buildInProgress)
-			return;
-		
-		wxAuiPaneInfo &info = PluginManager::Get()->GetDockingManager()->GetPane(wxT("Output View"));
-		DockablePaneMenuManager::HackHidePane(true, info, PluginManager::Get()->GetDockingManager());
-	}
+        // Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
+        size_t cursel(m_book->GetSelection());
+        if (cursel != Notebook::npos
+            && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
+            return;
+        }
+
+        if(m_buildInProgress)
+            return;
+
+        wxAuiPaneInfo &info = PluginManager::Get()->GetDockingManager()->GetPane(wxT("Output View"));
+        DockablePaneMenuManager::HackHidePane(true, info, PluginManager::Get()->GetDockingManager());
+    }
 }
 
 void OutputPane::OnBuildStarted(wxCommandEvent& e)
 {
-	e.Skip();
-	m_buildInProgress = true;
+    e.Skip();
+    m_buildInProgress = true;
 }
 
 void OutputPane::OnBuildEnded(wxCommandEvent& e)
 {
-	e.Skip();
-	m_buildInProgress = false;
+    e.Skip();
+    m_buildInProgress = false;
 }
-

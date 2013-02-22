@@ -462,6 +462,9 @@ enum {
     // Instruct codelite to clean a project only ( no deps )
     // the project name is passed in the wxCommandEvent::GetString
     wxEVT_CMD_CLEAN_PROJECT_ONLY,
+    
+    // User changed the default theme color of codelite
+    wxEVT_CL_THEME_CHANGED,
 };
 
 //------------------------------------------------------------------

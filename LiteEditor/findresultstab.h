@@ -85,6 +85,7 @@ protected:
     virtual void OnStyleNeeded     (wxStyledTextEvent &e);
     SearchData*  GetSearchData     (wxStyledTextCtrl *sci   );
     void         DoOpenSearchResult(const SearchResult &result, wxStyledTextCtrl *sci, int markerLine);
+    void         OnThemeChanged    (wxCommandEvent &e);
     DECLARE_EVENT_TABLE()
 
 public:

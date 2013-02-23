@@ -37,17 +37,15 @@ EditorSettingsComments::EditorSettingsComments( wxWindow* parent )
     m_checkBoxContinueCppComment->SetValue( data.GetContinueCppComment() );
     m_checkBoxSmartAddFiles->SetValue( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles );
     
-    if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt ) {
-        m_checkBoxAlt->SetValue( true );
-    }
-
-    if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control ) {
-        m_checkBoxCtrl->SetValue( true );
+    size_t flags = EditorConfigST::Get()->GetOptions()->GetOptions();
+    
+    if ( !(flags & (OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control|OptionsConfig::Opt_NavKey_Shift)) ) {
+        flags = OptionsConfig::Opt_NavKey_Shift; // force at least one meta key
     }
     
-    if ( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Shift ) {
-        m_checkBoxShift->SetValue( true );
-    }
+    m_checkBoxAlt->SetValue( flags & OptionsConfig::Opt_NavKey_Alt );
+    m_checkBoxCtrl->SetValue( flags & OptionsConfig::Opt_NavKey_Control );
+    m_checkBoxShift->SetValue( flags & OptionsConfig::Opt_NavKey_Shift );
 }
 
 void EditorSettingsComments::Save(OptionsConfigPtr options)
@@ -76,6 +74,10 @@ void EditorSettingsComments::Save(OptionsConfigPtr options)
         
     if( m_checkBoxAlt->IsChecked() )
         flags |= OptionsConfig::Opt_NavKey_Alt;
-        
+    
+    if ( !(flags & (OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control|OptionsConfig::Opt_NavKey_Shift)) ) {
+        flags |= OptionsConfig::Opt_NavKey_Shift; // force at least one meta key
+    }
+    
     options->SetOptions(flags);
 }

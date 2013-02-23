@@ -4143,10 +4143,16 @@ void LEditor::PasteLineAbove()
 void LEditor::OnKeyUp(wxKeyEvent& event)
 {
     event.Skip();
-    if ( event.GetKeyCode() == WXK_SHIFT ) {
+    if ( event.GetKeyCode() == WXK_SHIFT || event.GetKeyCode() == WXK_CONTROL || event.GetKeyCode() == WXK_ALT ) {
+        
         // Clear hyperlink markers
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         IndicatorClearRange(0, GetLength());
+        
+        // Clear debugger marker
+        SetIndicatorCurrent(DEBUGGER_INDICATOR);
+        IndicatorClearRange(0, GetLength());
+        
     }
 }
 

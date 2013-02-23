@@ -1,7 +1,7 @@
 {
 	"metadata":	{
-		"m_generatedFilesDir":	"/common/git/CL/LiteEditor",
-		"m_objCounter":	0,
+		"m_generatedFilesDir":	".",
+		"m_objCounter":	8,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterqEa5vvInitBitmapResources",
 		"m_bitmapsFile":	"syntaxhighlightbasedlg_liteeditor_bitmaps.cpp",
@@ -20,7 +20,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"557,373"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -45,6 +45,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -119,7 +131,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Label:",
-									"m_value":	"Output Panes and Terminals Global Settings:"
+									"m_value":	"Global Windows Colours:"
 								}],
 							"m_events":	[],
 							"m_children":	[{
@@ -167,7 +179,7 @@
 											"gbSpan":	",",
 											"gbPosition":	",",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -200,6 +212,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -260,6 +284,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -287,7 +323,7 @@
 											"gbSpan":	",",
 											"gbPosition":	",",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -320,6 +356,18 @@
 													"type":	"font",
 													"m_label":	"Font:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
@@ -380,6 +428,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -409,7 +469,7 @@
 							"gbSpan":	",",
 							"gbPosition":	",",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxALIGN_CENTER_HORIZONTAL"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -461,6 +521,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -535,6 +607,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -607,6 +691,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -681,6 +777,18 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
@@ -727,7 +835,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"500,272"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -752,6 +860,18 @@
 					"type":	"font",
 					"m_label":	"Font:",
 					"m_value":	""
+				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
@@ -807,12 +927,12 @@
 						}],
 					"m_events":	[],
 					"m_children":	[{
-							"m_type":	4456,
+							"m_type":	4442,
 							"proportion":	1,
 							"border":	5,
-							"gbSpan":	",",
-							"gbPosition":	",",
-							"m_styles":	["wxBORDER_NONE"],
+							"gbSpan":	"1,1",
+							"gbPosition":	"0,0",
+							"m_styles":	["wxBK_DEFAULT"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -821,15 +941,15 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	""
+									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
-									"m_value":	""
+									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_auinotebook1"
+									"m_value":	"m_notebook2"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
@@ -847,6 +967,18 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
@@ -859,11 +991,11 @@
 							"m_children":	[{
 									"m_type":	4441,
 									"proportion":	0,
-									"border":	0,
-									"gbSpan":	",",
-									"gbPosition":	",",
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
 									"m_styles":	["wxTAB_TRAVERSAL"],
-									"m_sizerFlags":	[],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
@@ -871,15 +1003,15 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
-											"m_value":	""
+											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Minimum Size:",
-											"m_value":	""
+											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_panel2"
+											"m_value":	"m_panel4"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -896,6 +1028,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -915,7 +1059,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
-											"m_value":	false
+											"m_value":	true
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -982,7 +1126,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -1015,6 +1159,18 @@
 																	"type":	"font",
 																	"m_label":	"Font:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -1071,6 +1227,18 @@
 																	"m_label":	"Fg Colour:",
 																	"colour":	"<Default>"
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
 																	"m_value":	""
@@ -1098,7 +1266,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -1131,6 +1299,18 @@
 																	"type":	"font",
 																	"m_label":	"Font:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -1191,6 +1371,18 @@
 																	"m_label":	"Font:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
 																	"m_value":	""
@@ -1218,7 +1410,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -1251,6 +1443,18 @@
 																	"type":	"font",
 																	"m_label":	"Font:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -1311,6 +1515,18 @@
 																	"m_label":	"Font:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
 																	"m_value":	""
@@ -1341,11 +1557,11 @@
 								}, {
 									"m_type":	4441,
 									"proportion":	0,
-									"border":	0,
-									"gbSpan":	",",
-									"gbPosition":	",",
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
 									"m_styles":	["wxTAB_TRAVERSAL"],
-									"m_sizerFlags":	[],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
@@ -1353,15 +1569,15 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
-											"m_value":	""
+											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Minimum Size:",
-											"m_value":	""
+											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_panel1"
+											"m_value":	"m_panel6"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -1378,6 +1594,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1478,6 +1706,18 @@
 																	"type":	"font",
 																	"m_label":	"Font:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -1601,6 +1841,18 @@
 																					"m_label":	"Font:",
 																					"m_value":	""
 																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
 																					"m_value":	""
@@ -1655,6 +1907,18 @@
 																					"type":	"colour",
 																					"m_label":	"Fg Colour:",
 																					"colour":	"<Default>"
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
@@ -1717,6 +1981,18 @@
 																					"m_label":	"Font:",
 																					"m_value":	""
 																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
 																					"m_value":	""
@@ -1775,6 +2051,18 @@
 																					"type":	"font",
 																					"m_label":	"Font:",
 																					"m_value":	""
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
@@ -1837,6 +2125,18 @@
 																					"m_label":	"Font:",
 																					"m_value":	""
 																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
 																					"m_value":	""
@@ -1895,6 +2195,18 @@
 																					"type":	"font",
 																					"m_label":	"Font:",
 																					"m_value":	""
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
@@ -1975,6 +2287,18 @@
 																					"type":	"font",
 																					"m_label":	"Font:",
 																					"m_value":	""
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
@@ -2060,6 +2384,18 @@
 																					"m_label":	"Font:",
 																					"m_value":	""
 																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
 																					"m_value":	""
@@ -2132,6 +2468,18 @@
 																			"m_label":	"Font:",
 																			"m_value":	""
 																		}, {
+																			"type":	"bool",
+																			"m_label":	"Hidden",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Disabled",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Focused",
+																			"m_value":	false
+																		}, {
 																			"type":	"string",
 																			"m_label":	"Class Name:",
 																			"m_value":	""
@@ -2182,6 +2530,18 @@
 																			"type":	"font",
 																			"m_label":	"Font:",
 																			"m_value":	""
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Hidden",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Disabled",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Focused",
+																			"m_value":	false
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Class Name:",
@@ -2261,6 +2621,18 @@
 																					"m_label":	"Font:",
 																					"m_value":	""
 																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
 																					"m_value":	""
@@ -2333,6 +2705,18 @@
 																					"type":	"font",
 																					"m_label":	"Font:",
 																					"m_value":	""
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
@@ -2407,6 +2791,18 @@
 																					"m_label":	"Font:",
 																					"m_value":	""
 																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
 																					"m_value":	""
@@ -2479,6 +2875,18 @@
 																					"type":	"font",
 																					"m_label":	"Font:",
 																					"m_value":	""
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
@@ -2553,6 +2961,18 @@
 																					"m_label":	"Font:",
 																					"m_value":	""
 																				}, {
+																					"type":	"bool",
+																					"m_label":	"Hidden",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Disabled",
+																					"m_value":	false
+																				}, {
+																					"type":	"bool",
+																					"m_label":	"Focused",
+																					"m_value":	false
+																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
 																					"m_value":	""
@@ -2593,11 +3013,11 @@
 								}, {
 									"m_type":	4441,
 									"proportion":	0,
-									"border":	0,
-									"gbSpan":	",",
-									"gbPosition":	",",
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
 									"m_styles":	["wxTAB_TRAVERSAL"],
-									"m_sizerFlags":	[],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
@@ -2605,15 +3025,15 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
-											"m_value":	""
+											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Minimum Size:",
-											"m_value":	""
+											"m_value":	"-1,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_panel3"
+											"m_value":	"m_panel8"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -2630,6 +3050,18 @@
 											"type":	"font",
 											"m_label":	"Font:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -2716,7 +3148,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -2749,6 +3181,18 @@
 																	"type":	"font",
 																	"m_label":	"Font:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -2808,6 +3252,18 @@
 																	"type":	"font",
 																	"m_label":	"Font:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -2870,6 +3326,18 @@
 															"type":	"font",
 															"m_label":	"Font:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",

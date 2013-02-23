@@ -16,7 +16,7 @@
 #include <wx/clrpicker.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/aui/auibook.h>
+#include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/fontpicker.h>
 #include <wx/textctrl.h>
@@ -44,7 +44,7 @@ protected:
     virtual void OnRestoreDefaults(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(557,373), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Syntax Highlight:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
 };
 
@@ -52,15 +52,15 @@ public:
 class LexerPageBase : public wxPanel
 {
 protected:
-    wxAuiNotebook* m_auinotebook1;
-    wxPanel* m_panel2;
+    wxNotebook* m_notebook2;
+    wxPanel* m_panel4;
     wxStaticText* m_staticText6;
     wxFontPickerCtrl* m_globalFontPicker;
     wxStaticText* m_staticText7;
     wxColourPickerCtrl* m_globalBgColourPicker;
     wxStaticText* m_staticText8;
     wxTextCtrl* m_fileSpec;
-    wxPanel* m_panel1;
+    wxPanel* m_panel6;
     wxListBox* m_properties;
     wxStaticText* m_staticText2;
     wxFontPickerCtrl* m_fontPicker;
@@ -77,7 +77,7 @@ protected:
     wxButton* m_button7;
     wxButton* m_button8;
     wxButton* m_button9;
-    wxPanel* m_panel3;
+    wxPanel* m_panel8;
     wxStaticText* m_staticText9;
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
     wxButton* m_buttonTextSelApplyToAll;
@@ -99,7 +99,7 @@ protected:
     virtual void OnTextSelApplyToAll(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    LexerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,272), long style = wxTAB_TRAVERSAL);
+    LexerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~LexerPageBase();
 };
 

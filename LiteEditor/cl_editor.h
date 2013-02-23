@@ -146,6 +146,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     int                                         m_positionToEnsureVisible;
     bool                                        m_preserveSelection;
     bool                                        m_fullLineCopyCut;
+    wxArrayInt                                  m_savedMarkers;
 
 public:
     static bool                                 m_ccShowPrivateMembers;
@@ -721,6 +722,9 @@ private:
     void    DoMarkHyperlink(wxMouseEvent &event, bool isMiddle);
     void    DoQuickJump(wxMouseEvent &event, bool isMiddle);
     bool    DoFindAndSelect(const wxString &pattern, const wxString &what, int start_pos, NavMgr *navmgr);
+    void    DoSaveMarkers();
+    void    DoRestoreMarkers();
+    
     wxMenu* DoCreateDebuggerWatchMenu(const wxString &word);
 
     DECLARE_EVENT_TABLE()
@@ -757,6 +761,8 @@ private:
     void OnDragEnd(wxStyledTextEvent &e);
     void DoSetCaretAt(long pos);
     void OnSetActive(wxCommandEvent &e);
+    void OnFileFormatDone(wxCommandEvent &e);
+    void OnFileFormatStarting(wxCommandEvent &e);
 };
 
 #endif // LITEEDITOR_EDITOR_H

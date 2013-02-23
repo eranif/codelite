@@ -465,6 +465,14 @@ enum {
     
     // User changed the default theme color of codelite
     wxEVT_CL_THEME_CHANGED,
+    
+    // Sent from the CodeFormatter plugin when a file indentation was completed
+    // event.GetString() will return the name of the indented file
+    wxEVT_CODEFORMATTER_INDENT_COMPLETED,
+    
+    // Sent from the CodeFormatter plugin when a file indentation is about to begin
+    // event.GetString() will return the name of the indented file
+    wxEVT_CODEFORMATTER_INDENT_STARTING,
 };
 
 //------------------------------------------------------------------

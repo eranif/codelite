@@ -185,11 +185,15 @@ LEditor::LEditor(wxWindow* parent)
 
     m_deltas = new EditorDeltasHolder;
     EventNotifier::Get()->Connect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(LEditor::OnFileFormatStarting), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(LEditor::OnFileFormatDone), NULL, this);
 }
 
 LEditor::~LEditor()
 {
     EventNotifier::Get()->Disconnect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(LEditor::OnFileFormatStarting), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CODEFORMATTER_INDENT_COMPLETED, wxCommandEventHandler(LEditor::OnFileFormatDone), NULL, this);
     delete m_deltas;
 }
 
@@ -4170,4 +4174,46 @@ size_t LEditor::GetCodeNavModifier()
     return mod;
 }
 
+void LEditor::OnFileFormatDone(wxCommandEvent& e)
+{
+    if ( e.GetString() != GetFileName().GetFullPath() ) {
+        // not this file
+        e.Skip();
+        return;
+    }
+    
+    // Restore the markers
+    DoRestoreMarkers();
+}
 
+void LEditor::OnFileFormatStarting(wxCommandEvent& e)
+{
+    if ( e.GetString() != GetFileName().GetFullPath() ) {
+        // not this file
+        e.Skip();
+        return;
+    }
+    DoSaveMarkers();
+}
+
+void LEditor::DoRestoreMarkers()
+{
+    MarkerDeleteAll(smt_bookmark);
+    for(size_t i=0; i<m_savedMarkers.GetCount(); ++i) {
+        MarkerAdd(m_savedMarkers.Item(i), smt_bookmark);
+    }
+    m_savedMarkers.clear();
+}
+
+void LEditor::DoSaveMarkers()
+{
+    m_savedMarkers.clear();
+    int nLine = LineFromPosition(0);
+    int mask = mmt_bookmarks;
+    
+    int nFoundLine = MarkerNext(nLine, mask);
+    while ( nFoundLine >= 0 ) {
+        m_savedMarkers.Add( nFoundLine );
+        nFoundLine = MarkerNext(nFoundLine+1, mask);
+    }
+}

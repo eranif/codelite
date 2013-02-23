@@ -167,7 +167,12 @@ void CodeFormatter::OnFormat(wxCommandEvent &e)
 	// get the editor that requires formatting
 	if (!editor)
 		return;
-
+    
+    // Notify about indentation about to start
+    wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_STARTING);
+    evt.SetString( editor->GetFileName().GetFullPath() );
+    EventNotifier::Get()->ProcessEvent(evt);
+    
 	m_mgr->SetStatusMessage(wxString::Format(wxT("%s: %s..."), _("Formatting"), editor->GetFileName().GetFullPath().c_str()), 0);
 	DoFormatFile(editor);
 	m_mgr->SetStatusMessage(_("Done"), 0);
@@ -234,6 +239,11 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
 			editor->SetCaretAt(curpos);
 		}
 	}
+    
+    // Notify that a file was indented
+    wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_COMPLETED);
+    evt.SetString( editor->GetFileName().GetFullPath() );
+    EventNotifier::Get()->AddPendingEvent( evt );
 }
 
 void CodeFormatter::AstyleFormat(const wxString &input, const wxString &options, wxString &output)

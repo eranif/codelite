@@ -114,8 +114,6 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 
 void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 {
-    Freeze();
-
     // get the current open editor's lexer name
     wxString currentLexer;
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
@@ -163,8 +161,6 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
             m_lexersBook->InsertPage(parentIndex, CreateLexerPage(m_lexersBook, lexer), lexer->GetName(), currentLexer == iter->second->GetName());
         }
     }
-    Thaw();
-
     // The outputview colours are global to all a theme's lexors, so are dealt with separately
     m_colourPickerOutputPanesFgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewFgColour()));
     m_colourPickerOutputPanesBgColour->SetColour(wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour()));
@@ -172,6 +168,7 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 
 void SyntaxHighlightDlg::OnThemeChanged(wxCommandEvent& event)
 {
+    event.Skip();
     int sel = event.GetSelection();
     wxString themeName = m_themes->GetString((unsigned int)sel);
 

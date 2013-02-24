@@ -31,24 +31,16 @@ CCVirtualListCtrl::CCVirtualListCtrl(wxWindow* parent, wxWindowID id, const wxPo
     : wxListView(parent, id, pos, size, style)
 {
     // set the colors based on the C++ lexer using the "Default" style
+    
     LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("C++");
     if ( lexer ) {
-        const StylePropertyList& props = lexer->GetLexerProperties();
-        if ( !props.empty() ) {
-            StyleProperty sp = *(props.begin());
-#ifdef __WXGTK__            
-            SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+#ifdef __WXGTK__
+        SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 #endif
-            wxColour bgColour (sp.GetBgColour());
-            wxColour fgColour ( *wxBLACK );
-            if ( DrawingUtils::IsDark( bgColour) ) {
-                fgColour = *wxWHITE;
-            }
-            
-            SetBackgroundColour( bgColour );
-            SetForegroundColour( fgColour );
-            m_styleFont = lexer->GetFontForSyle(38);
-        }
+        
+        SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour() );
+        SetForegroundColour( DrawingUtils::GetOutputPaneFgColour() );
+        m_styleFont = lexer->GetFontForSyle(38);
     }
 }
 

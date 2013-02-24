@@ -36,6 +36,7 @@
 #include "manager.h"
 #include "theme_handler.h"
 #include "event_notifier.h"
+#include <wx/wupdlock.h>
 
 SyntaxHighlightDlg::SyntaxHighlightDlg( wxWindow* parent )
     : SyntaxHighlightBaseDlg( parent ), restartRequired(false)
@@ -114,6 +115,10 @@ wxPanel *SyntaxHighlightDlg::CreateSyntaxHighlightPage()
 
 void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
 {
+#ifdef __WXMSW__
+    wxWindowUpdateLocker locker(this);
+#endif
+
     // get the current open editor's lexer name
     wxString currentLexer;
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();

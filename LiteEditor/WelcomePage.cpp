@@ -74,13 +74,13 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
     wxArrayString recentWorkspaces;
     for(size_t i=0; i<files.GetCount(); i++) {
         wxFileName fn(files.Item(i));
-        recentWorkspaces.Add( fn.GetName() + " - " + fn.GetFullPath() );
+        recentWorkspaces.Add( fn.GetName() + " @ " + fn.GetFullPath() );
     }
 
     int id = DoGetPopupMenuSelection(m_cmdLnkBtnWorkspaces, recentWorkspaces, _("Open workspace"));
     if ( id != wxID_NONE ) {
         wxString filename = m_idToName[id];
-        filename = filename.AfterFirst('-');
+        filename = filename.AfterFirst('@');
         filename.Trim().Trim(false);
 
         // post an event to the main frame requesting a workspace open

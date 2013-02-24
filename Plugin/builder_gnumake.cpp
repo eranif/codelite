@@ -582,7 +582,17 @@ void BuilderGnuMake::CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString
 void BuilderGnuMake::CreateSrcList(ProjectPtr proj, const wxString &confToBuild, wxString &text)
 {
     std::vector<wxFileName> files;
-    proj->GetFiles(files);
+    Project::FileInfoVector_t filesMetadata;
+    proj->GetFilesMetadata(filesMetadata);
+    
+    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
+    for(; iterFile != filesMetadata.end(); ++iterFile) {
+        // Include only files that don't have the 'exclude from build' flag set
+        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+            files.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
+        }
+    }
+    
     text << wxT("Srcs=");
 
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
@@ -627,7 +637,15 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 {
     m_objectChunks = 1;
     std::vector<wxFileName> files;
-    proj->GetFiles(files, true);
+    Project::FileInfoVector_t filesMetadata;
+    proj->GetFilesMetadata(filesMetadata);
+    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
+    for(; iterFile != filesMetadata.end(); ++iterFile) {
+        // Include only files that don't have the 'exclude from build' flag set
+        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+            files.push_back( wxFileName(iterFile->GetFilename()) );
+        }
+    }
     
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
     wxString cmpType = bldConf->GetCompilerType();
@@ -697,7 +715,21 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
     // support for full path
     PRINT_TIMESTAMP(wxT("Loading file list...\n"));
-    proj->GetFiles(rel_paths, abs_files);
+    Project::FileInfoVector_t filesMetadata;
+    proj->GetFilesMetadata(filesMetadata);
+    
+    abs_files.reserve( filesMetadata.size() );
+    rel_paths.reserve( filesMetadata.size() );
+    
+    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
+    for(; iterFile != filesMetadata.end(); ++iterFile) {
+        // Include only files that don't have the 'exclude from build' flag set
+        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+            abs_files.push_back( wxFileName(iterFile->GetFilename()) );
+            rel_paths.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
+        }
+    }
+    
     PRINT_TIMESTAMP(wxT("Loading file list...done\n"));
 
     text << wxT("\n\n");
@@ -854,7 +886,20 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 
     // support for full path
     PRINT_TIMESTAMP(_("Loading file list for clean...\n"));
-    proj->GetFiles(rel_paths, abs_files);
+    Project::FileInfoVector_t filesMetadata;
+    proj->GetFilesMetadata(filesMetadata);
+    
+    abs_files.reserve( filesMetadata.size() );
+    rel_paths.reserve( filesMetadata.size() );
+    
+    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
+    for(; iterFile != filesMetadata.end(); ++iterFile) {
+        // Include only files that don't have the 'exclude from build' flag set
+        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+            abs_files.push_back( wxFileName(iterFile->GetFilename()) );
+            rel_paths.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
+        }
+    }
     PRINT_TIMESTAMP(_("Loading file list...done\n"));
 
     //add clean target

@@ -192,14 +192,24 @@ public:
     // -----------------------------------------
     class FileInfo
     {
-
         wxString m_filename;
         wxString m_virtualFolder;
-
+        wxString m_filenameRelpath;
+        size_t   m_flags;
     public:
-        FileInfo() {}
+        enum {
+            Exclude_From_Build = 0x00000001
+        };
+    public:
+        FileInfo() : m_flags(0) {}
         ~FileInfo() {}
 
+        void SetFilenameRelpath(const wxString& filenameRelpath) {
+            this->m_filenameRelpath = filenameRelpath;
+        }
+        const wxString& GetFilenameRelpath() const {
+            return m_filenameRelpath;
+        }
         void SetFilename(const wxString& filename) {
             this->m_filename = filename;
         }
@@ -212,8 +222,14 @@ public:
         const wxString& GetVirtualFolder() const {
             return m_virtualFolder;
         }
+        void SetFlags(size_t flags) {
+            this->m_flags = flags;
+        }
+        size_t GetFlags() const {
+            return m_flags;
+        }
     };
-    typedef std::list<FileInfo> FileInfoList_t;
+    typedef std::vector<FileInfo> FileInfoVector_t;
 
 public:
     const wxFileName &GetFileName() const {
@@ -355,12 +371,12 @@ public:
      */
     wxString GetFiles(bool absPath = false);
 
-    
+
     /**
      * @brief return the file meta data. The file names on the list
      * are in fullpath
      */
-    void GetFilesMetadata(Project::FileInfoList_t &files);
+    void GetFilesMetadata(Project::FileInfoVector_t &files);
 
     /**
      * Return list of files in this project - in both absolute and relative path
@@ -553,10 +569,27 @@ public:
      */
     wxArrayString GetIncludePaths();
     void ClearAllVirtDirs();
-
+    
+    /**
+     * @brief sets the flags of a file
+     * @param fileName the fullpath of the file
+     * @param virtualDirPath virtual folder path (a:b:c)
+     * @param flags the flags to set
+     */
+    void SetFileFlags(const wxString &fileName, const wxString &virtualDirPath, size_t flags);
+    
+    /**
+     * @brief return the flags for a specific file in the project
+     * @param fileName the fullpath of the file
+     * @param virtualDirPath virtual folder path (a:b:c)
+     * @return the virtual flags of a file if the file does not exists, 
+     * return wxString::npos
+     */
+    size_t GetFileFlags(const wxString &fileName, const wxString &virtualDirPath);
+    
 private:
     wxString DoFormatVirtualFolderName(const wxXmlNode* node) const;
-    
+
     void DoDeleteVDFromCache(const wxString &vd);
     wxArrayString DoBacktickToIncludePath(const wxString &backtick);
     void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);

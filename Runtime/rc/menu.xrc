@@ -989,6 +989,11 @@
             <label>Preprocess</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="exclude_from_build">
+            <label>Exclude from Build</label>
+            <checkable>1</checkable>
+        </object>
+		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="rename_item">
             <label>Rename...</label>
         </object>

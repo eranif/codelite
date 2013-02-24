@@ -63,6 +63,7 @@
 #include "project.h"
 #include "macros.h"
 #include <wx/treectrl.h>
+#include "drawingutils.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -101,6 +102,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
     EVT_MENU( XRCID( "reconcile_project" ),            FileViewTree::OnReconcileProject )
     EVT_MENU( XRCID( "open_in_editor" ),               FileViewTree::OnOpenInEditor )
     EVT_MENU( XRCID( "compile_item" ),                 FileViewTree::OnCompileItem )
+    EVT_MENU( XRCID( "exclude_from_build" ),           FileViewTree::OnExcludeFromBuild )
     EVT_MENU( XRCID( "preprocess_item" ),              FileViewTree::OnPreprocessItem )
     EVT_MENU( XRCID( "rename_item" ),                  FileViewTree::OnRenameItem )
     EVT_MENU( XRCID( "rename_virtual_folder" ),        FileViewTree::OnRenameVirtualFolder )
@@ -129,6 +131,7 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
     EVT_UPDATE_UI( XRCID( "import_directory" ),        FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "reconcile_project" ),       FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "compile_item" ),            FileViewTree::OnBuildInProgress)
+    EVT_UPDATE_UI( XRCID( "exclude_from_build" ),      FileViewTree::OnExcludeFromBuildUI)
     EVT_UPDATE_UI( XRCID( "preprocess_item" ),         FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "rename_item" ),             FileViewTree::OnBuildInProgress)
     EVT_UPDATE_UI( XRCID( "generate_makefile" ),       FileViewTree::OnBuildInProgress)
@@ -325,6 +328,9 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
                                         GetIconIndex( node->GetData() ),		// item image index
                                         GetIconIndex( node->GetData() ),		// selected item image
                                         new FilewViewTreeItemData( node->GetData() ) );
+        if ( IsFileExcludedFromBuild(hti) ) {
+            SetItemTextColour(hti, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+        }
         m_itemsToSort[parentHti.m_pItem] = true;
 
         // Set active project with bold
@@ -1019,7 +1025,7 @@ wxTreeItemId FileViewTree::DoAddVirtualFolder( wxTreeItemId &parent, const wxStr
     return item;
 }
 
-wxString FileViewTree::GetItemPath( wxTreeItemId &item )
+wxString FileViewTree::GetItemPath( wxTreeItemId &item ) const
 {
     std::deque<wxString> queue;
     wxString text = GetItemText( item );
@@ -2194,4 +2200,67 @@ void FileViewTree::OnCleanProjectOnlyInternal(wxCommandEvent& e)
 
     ManagerST::Get()->PushQueueCommand(info);
     ManagerST::Get()->ProcessCommandQueue();
+}
+
+void FileViewTree::OnExcludeFromBuild(wxCommandEvent& e)
+{
+    wxUnusedVar( e );
+    wxTreeItemId item = GetSingleSelection();
+    if ( item.IsOk() ) {
+        FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+        if (data->GetData().GetKind() == ProjectItem::TypeFile) {
+            Manager *mgr = ManagerST::Get();
+            wxTreeItemId parent = GetItemParent( item );
+            if ( parent.IsOk() ) {
+                wxString path = GetItemPath( parent );
+                wxString proj = path.BeforeFirst(wxT(':'));
+                ProjectPtr p = mgr->GetProject(proj);
+                if ( p ) {
+                    wxString vdPath   = path.AfterFirst(':');
+                    wxString filename = data->GetData().GetFile();
+                    size_t flags = p->GetFileFlags( filename, vdPath );
+                    
+                    if ( e.IsChecked() ) {
+                        flags |= Project::FileInfo::Exclude_From_Build;
+                        SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+        
+                    } else {
+                        flags &= ~Project::FileInfo::Exclude_From_Build;
+                        SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour() );
+                    }
+                    p->SetFileFlags( filename, vdPath, flags);
+                }
+            }
+        }
+    }
+}
+
+void FileViewTree::OnExcludeFromBuildUI(wxUpdateUIEvent& event)
+{
+    // by default enable it
+    event.Check( IsFileExcludedFromBuild( GetSingleSelection() ) ) ;
+}
+
+bool FileViewTree::IsFileExcludedFromBuild(const wxTreeItemId& item) const
+{
+    if ( item.IsOk() ) {
+        FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+        if (data->GetData().GetKind() == ProjectItem::TypeFile) {
+            Manager *mgr = ManagerST::Get();
+            wxTreeItemId parent = GetItemParent( item );
+            if ( parent.IsOk() ) {
+                wxString path = GetItemPath( parent );
+                wxString proj = path.BeforeFirst(wxT(':'));
+                ProjectPtr p = mgr->GetProject(proj);
+                if ( p ) {
+                    wxString vdPath   = path.AfterFirst(':');
+                    wxString filename = data->GetData().GetFile();
+                    size_t flags = p->GetFileFlags( filename, vdPath );
+                    
+                    return (flags & Project::FileInfo::Exclude_From_Build);
+                }
+            }
+        }
+    }
+    return false;
 }

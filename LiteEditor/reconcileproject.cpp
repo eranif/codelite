@@ -230,7 +230,7 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
     // populate the 'stale files' tab
     //---------------------------------------------------------
     m_dataviewStaleFilesModel->Clear();
-    Project::FileInfoList_t::const_iterator staleIter = m_stalefiles.begin();
+    Project::FileInfoVector_t::const_iterator staleIter = m_stalefiles.begin();
     for(; staleIter != m_stalefiles.end(); ++staleIter) {
 
         wxVector<wxVariant> cols;
@@ -300,11 +300,11 @@ void ReconcileProjectDlg::DoFindFiles()
     wxCHECK_RET(proj, "Can't find a Project with the supplied name");
 
     // get list of files from the project
-    Project::FileInfoList_t projectfiles;
+    Project::FileInfoVector_t projectfiles;
     proj->GetFilesMetadata(projectfiles);
     wxStringSet_t projectfilesSet;
     
-    Project::FileInfoList_t::const_iterator it = projectfiles.begin();
+    Project::FileInfoVector_t::const_iterator it = projectfiles.begin();
     for( ; it != projectfiles.end(); ++it ) {
         projectfilesSet.insert( it->GetFilename() );
     }
@@ -315,7 +315,7 @@ void ReconcileProjectDlg::DoFindFiles()
 
     // now run the diff reverse to get list of stale files
     m_stalefiles.clear();
-    Project::FileInfoList_t::const_iterator iter = projectfiles.begin();
+    Project::FileInfoVector_t::const_iterator iter = projectfiles.begin();
     for(; iter != projectfiles.end(); ++iter ) {
         if ( !wxFileName::Exists( iter->GetFilename() ) ) {
             m_stalefiles.push_back( *iter );

@@ -151,6 +151,7 @@ protected:
     virtual void OnRetagProject(wxCommandEvent &event);
     virtual void OnRetagWorkspace(wxCommandEvent &event);
     virtual void OnBuildInProgress(wxUpdateUIEvent &event);
+    virtual void OnExcludeFromBuildUI(wxUpdateUIEvent &event);
     virtual void OnRetagInProgressUI(wxUpdateUIEvent &event);
     virtual void OnItemBeginDrag(wxTreeEvent &event);
     virtual void OnItemEndDrag(wxTreeEvent &event);
@@ -158,6 +159,7 @@ protected:
     virtual void OnReconcileProject(wxCommandEvent &e);
     virtual void OnRenameItem(wxCommandEvent &e);
     virtual void OnCompileItem(wxCommandEvent &e);
+    virtual void OnExcludeFromBuild(wxCommandEvent &e);
     virtual void OnPreprocessItem(wxCommandEvent &e);
     virtual void SortTree();
     virtual void SortItem(wxTreeItemId &item);
@@ -181,8 +183,9 @@ private:
     // Build project node
     void BuildProjectNode(const wxString &projectName);
     int GetIconIndex(const ProjectItem &item);
-    wxString GetItemPath(wxTreeItemId &item);
-
+    wxString GetItemPath(wxTreeItemId &item) const;
+    bool IsFileExcludedFromBuild(const wxTreeItemId &item) const;
+    
     bool DoAddNewItem(wxTreeItemId &item, const wxString &filename, const wxString &vdFullpath);
     void DoRemoveProject(const wxString &name);
     void DoSetProjectActive(wxTreeItemId &item);

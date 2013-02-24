@@ -172,15 +172,15 @@ bool Project::Load(const wxString &path)
 wxXmlNode *Project::GetVirtualDir(const wxString &vdFullPath)
 {
     wxArrayString paths = wxStringTokenize( vdFullPath, ":", wxTOKEN_STRTOK );
-    
+
     // test the cache
     std::map<wxString, wxXmlNode*>::iterator iter = m_vdCache.find(vdFullPath);
     if(iter != m_vdCache.end()) {
         return iter->second;
     }
-    
+
     wxString filename = m_fileName.GetFullPath();
-    
+
     wxXmlNode *parent = m_doc.GetRoot();
     for(size_t i=0; i<paths.GetCount(); ++i) {
         wxString curpath = paths.Item(i);
@@ -190,7 +190,7 @@ wxXmlNode *Project::GetVirtualDir(const wxString &vdFullPath)
             return NULL;
         }
     }
-    
+
     // cache the result
     m_vdCache[vdFullPath] = parent;
     return parent;
@@ -340,7 +340,7 @@ bool Project::RemoveFile(const wxString &fileName, const wxString &virtualDir)
         wxLogMessage(wxT("Failed to remove file %s from project"), tmp.GetFullPath(wxPATH_UNIX).c_str());
     }
     SetModified(true);
-    
+
     if ( InTransaction() )
         return true;
     else
@@ -761,7 +761,7 @@ bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, co
     }
 
     SetModified(true);
-    
+
     if ( InTransaction() )
         return true;
     else
@@ -1436,26 +1436,26 @@ void Project::SetReconciliationData(const wxString& toplevelDir, const wxString&
     } else {
         XmlUtils::RemoveChildren(regexnode);
     }
-        
+
     for (size_t n = 0; n < regexes.GetCount(); ++n) {
         wxXmlNode* itemnode = new wxXmlNode(regexnode, wxXML_ELEMENT_NODE, "Regex");
         XmlUtils::SetNodeContent(itemnode, regexes.Item(n));
     }
-    
     SaveXmlFile();
 }
 
-void Project::GetFilesMetadata(Project::FileInfoList_t& files)
+
+void Project::GetFilesMetadata(Project::FileInfoVector_t& files)
 {
     std::queue<wxXmlNode*> elements;
     if ( !m_doc.IsOk() || !m_doc.GetRoot())
         return;
-        
+
     elements.push( m_doc.GetRoot() );
     while ( !elements.empty() ) {
         wxXmlNode *element = elements.front();
         elements.pop();
-        
+
         while ( element ) {
             if ( element->GetName() == wxT("File") ) {
 
@@ -1464,11 +1464,12 @@ void Project::GetFilesMetadata(Project::FileInfoList_t& files)
                 wxFileName tmp(fileName);
                 tmp.MakeAbsolute(m_fileName.GetPath());
                 FileInfo fi;
+                fi.SetFilenameRelpath(fileName);
                 fi.SetFilename( tmp.GetFullPath() );
-                
+                fi.SetFlags( XmlUtils::ReadLong(element, "Flags", 0) );
                 fi.SetVirtualFolder( DoFormatVirtualFolderName(element) );
                 files.push_back( fi );
-                
+
             } else if ( element->GetChildren() ) {
                 elements.push( element->GetChildren() );
             }
@@ -1490,15 +1491,54 @@ wxString Project::DoFormatVirtualFolderName(const wxXmlNode* node) const
             break;
         p = p->GetParent();
     }
-    
+
     while ( !q.empty() ) {
         name << q.front() << ":";
         q.pop_front();
     }
-    
+
     if ( name.IsEmpty() == false )
         name.RemoveLast();
     return name;
 }
 
+void Project::SetFileFlags(const wxString& fileName, const wxString& virtualDirPath, size_t flags)
+{
+    wxXmlNode *vdNode = GetVirtualDir(virtualDirPath);
+    if ( !vdNode ) {
+        return;
+    }
+    
+    // locate our file
+    wxFileName tmp(fileName);
+    tmp.MakeRelativeTo(m_fileName.GetPath());
+    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
+    wxXmlNode *fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
+    if ( !fileNode ) {
+        return;
+    }
+    
+    // we have located the file node
+    // updat the flags
+    XmlUtils::UpdateProperty(fileNode, "Flags", wxString() << flags );
+    SaveXmlFile();
+}
 
+size_t Project::GetFileFlags(const wxString& fileName, const wxString& virtualDirPath)
+{
+    wxXmlNode *vdNode = GetVirtualDir(virtualDirPath);
+    if ( !vdNode ) {
+        return wxString::npos;
+    }
+    
+    // locate our file
+    wxFileName tmp(fileName);
+    tmp.MakeRelativeTo(m_fileName.GetPath());
+    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
+    wxXmlNode *fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
+    if ( !fileNode ) {
+        return wxString::npos;
+    }
+    
+    return XmlUtils::ReadLong(fileNode, "Flags", 0);
+}

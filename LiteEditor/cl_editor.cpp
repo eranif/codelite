@@ -2770,7 +2770,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
     }
     
     size_t mod = GetCodeNavModifier();
-    if ( event.GetModifiers() == mod && mod != wxMOD_NONE ) {
+    if ( m_hyperLinkType != wxID_NONE && event.GetModifiers() == mod && mod != wxMOD_NONE ) {
         ClearSelections();
         SetCaretAt( PositionFromPointClose(event.GetX(), event.GetY()) );
     }

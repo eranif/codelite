@@ -16,7 +16,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DCMAKE_BUILD_TYPE=Relase|Debug          // Build Debug Or Release                                                                                            #
 ##      -DPREFIX="<some-prefix>"                 // Installation prefix, default is set to /usr                                                                       #
 ##      -DENABLE_CLANG=1|0                       // Build codelite with clang code completion support?, default is 1 (with clang)                                     #
-##      -DWX_CONFIG=<path-to-my-wx-config-tool>  // By default codelite uses the wx-config that is in the path, however, you can force it to use a different one      #
 ##      -DWITH_WXC=1|0                           // Build wxCrafter (sources are not part of codelite distribution) default is 0                                      #
 ##                                                                                                                                                                    #
 #######################################################################################################################################################################
@@ -44,6 +43,11 @@ else ( APPLE )
   set(WX_COMPONENTS "std aui propgrid stc")
 endif()
 
+if (UNIX)
+    execute_process(COMMAND which wx-config OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
+    message("-- wx-config used is: ${WX_TOOL}")
+endif (UNIX)
+
 ########################################
 ## Override defaults with user input
 ########################################
@@ -56,11 +60,6 @@ endif(PREFIX)
 if(ENABLE_CLANG MATCHES 0)
   set( USE_CLANG 0 )
 endif (ENABLE_CLANG MATCHES 0)
-
-## use different wx-config?
-if ( WX_CONFIG )
-  set ( CL_WX_CONFIG ${WX_CONFIG} )
-endif(WX_CONFIG)
 
 ## build wxCrafter?
 if ( WITH_WXC )
@@ -182,7 +181,7 @@ message( "-- clang binary ${CLANG_BINARY}" )
 message( "-- CL_SRC_ROOT is set to => " ${CL_SRC_ROOT} )
 message( "-- PLUGINS_DIR is set to => " ${PLUGINS_DIR} )
 message( "-- PREFIX      is set to => " ${CL_PREFIX} )
-message( "-- wx-config   is set to => " ${CL_WX_CONFIG} )
+message( "-- wx-config   is set to => " ${WX_TOOL} )
 
 else()
 message( "--WARNING: clang support is disabled" )

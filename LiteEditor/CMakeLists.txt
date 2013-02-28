@@ -76,9 +76,9 @@ else (UNIX)
 endif (UNIX)
 
 if(GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
 else (GTK2_FOUND)
-    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3 -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
 endif(GTK2_FOUND)
 
 ##################################################################

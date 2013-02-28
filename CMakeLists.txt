@@ -248,7 +248,7 @@ endif ( APPLE )
 ##
 ## Setup the proper dependencies
 ##
-add_dependencies(wxsqlite3 sqlite3)
+add_dependencies(wxsqlite3 sqlite3lib)
 add_dependencies(databaselayersqlite wxsqlite3)
 add_dependencies(wxshapeframework wxsqlite3)
 add_dependencies(libcodelite wxshapeframework databaselayersqlite sqlite3)

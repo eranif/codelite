@@ -28,6 +28,6 @@ FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" )
 
 # Define the output
 add_library(libcodelite SHARED ${SRCS})
-target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3 -lwxsqlite3 )
+target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 )
 install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
 

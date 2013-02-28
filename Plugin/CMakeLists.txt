@@ -42,9 +42,9 @@ FILE(GLOB SRCS "*.cpp")
 # Define the output
 add_library(plugin SHARED ${SRCS})
 if(GTK2_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3 -llibcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
 else (GTK2_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3 -llibcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
 endif(GTK2_FOUND)
 
 install(TARGETS plugin DESTINATION ${PLUGINS_DIR})

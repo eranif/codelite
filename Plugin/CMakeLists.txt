@@ -24,7 +24,7 @@ if (UNIX AND NOT APPLE)
 
     find_package(GTK2)
     if (GTK2_FOUND)
-        include_directories("${GTK2_INCLUDE_DIRS}")
+        include_directories(${GTK2_INCLUDE_DIRS})
     else (GTK2_FOUND)
         message(FATAL_ERROR "Could not locate GTK.")
     endif (GTK2_FOUND)

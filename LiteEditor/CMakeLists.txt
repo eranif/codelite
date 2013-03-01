@@ -125,6 +125,31 @@ install(
   PATTERN ".git" EXCLUDE
 ) 
 
+if (UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
+    # We need to deduce the location of the wx libs to be installed
+    execute_process(COMMAND ${WX_TOOL} --libs OUTPUT_VARIABLE WX_LIBSOUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if (${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with -L/foo/bar
+        string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" WX_LIBS_DIR ${WX_LIBSOUTPUT})
+    else()
+        set(WX_LIBS_DIR "/usr/lib") # ${WX_LIBS_DIR} will be empty for older, non multi-architecture, distro versions that still use /usr/lib
+    endif()
+    message("-- wxlibsdir is: ${WX_LIBS_DIR}")
+
+    # Grab the necessary libs
+    execute_process(COMMAND ${WX_TOOL} --libs all OUTPUT_VARIABLE WX_LIBS_ALL_IN OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REPLACE " " ";" WX_LIBS_ALL_LIST ${WX_LIBS_ALL_IN}) # the semicolons make the variable into a list
+
+    foreach(ITEM ${WX_LIBS_ALL_LIST})
+        # We want to replace -l with lib. We also want to exclude imaginary libs called _all.so, which buggy wx-config scripts can invent
+        if (${ITEM} MATCHES "-lwx_.+" AND NOT ${ITEM} MATCHES "-l.+_all.+")
+            string(REGEX REPLACE "^-l" "lib" LIBITEM ${ITEM})
+            list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEM}.so*) # we need the terminal [.]so because the rpms contain both dynamic and static libs
+        endif()
+    endforeach()
+    
+    file(GLOB wxfilepaths ${WX_LIBS_ALL})
+    install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/lib/codelite)
+endif()
 
 if ( USE_CLANG )
   install(FILES ${CLANG_BINARY} DESTINATION ${PLUGINS_DIR})

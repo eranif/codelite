@@ -17,6 +17,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DPREFIX="<some-prefix>"                 // Installation prefix, default is set to /usr                                                                       #
 ##      -DENABLE_CLANG=1|0                       // Build codelite with clang code completion support?, default is 1 (with clang)                                     #
 ##      -DWITH_WXC=1|0                           // Build wxCrafter (sources are not part of codelite distribution) default is 0                                      #
+##      -DCOPY_WX_LIBS=1|0                       // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                                      #
 ##                                                                                                                                                                    #
 #######################################################################################################################################################################
 
@@ -30,6 +31,7 @@ set( CL_WX_CONFIG wx-config )
 set( USE_CLANG 1 )
 set( IS_FREEBSD 0 )
 set( BUILD_WXC 0 )
+set( CL_COPY_WX_LIBS 0 )
 
 set (OS_NAME "WIN")
 if (UNIX)
@@ -84,6 +86,11 @@ if ( WITH_WXC )
         set(WX_COMPONENTS "std aui propgrid stc richtext")
     endif (UNIX AND NOT APPLE )
 endif ( WITH_WXC )
+
+## package the wx libs?
+if (COPY_WX_LIBS MATCHES 1)
+  set( CL_COPY_WX_LIBS 1 )
+endif()
 
 set( PLUGINS_DIR "${CL_PREFIX}/lib/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)

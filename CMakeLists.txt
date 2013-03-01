@@ -45,7 +45,23 @@ endif()
 
 if (UNIX)
     execute_process(COMMAND which wx-config OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if (NOT WX_TOOL)
+      message(FATAL_ERROR
+"\nNo functional wx_config script was found in your PATH.\nIs the wxWidgets development package installed?"
+             )
+    else()
+      execute_process(COMMAND ${WX_TOOL} --version OUTPUT_VARIABLE WX_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+      string(SUBSTRING "${WX_VERSION}" "0" "1" wxMAJOR_VERSION)
+      string(SUBSTRING "${WX_VERSION}" "2" "1" wxMINOR_VERSION)
+      string(SUBSTRING "${WX_VERSION}" "4" "1" wxRELEASE_NUMBER)
+      if ( wxMAJOR_VERSION LESS 3 AND (wxMINOR_VERSION LESS 9 OR wxRELEASE_NUMBER LESS 4) )
+        message(FATAL_ERROR
+"\nI'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-2.9.4"
+             )
+      endif()
+    endif()
     message("-- wx-config used is: ${WX_TOOL}")
+    message("-- wxWidgets version is: ${WX_VERSION}")
 endif (UNIX)
 
 ########################################
@@ -248,7 +264,7 @@ endif ( APPLE )
 ##
 ## Setup the proper dependencies
 ##
-add_dependencies(wxsqlite3 sqlite3)
+add_dependencies(wxsqlite3 sqlite3lib)
 add_dependencies(databaselayersqlite wxsqlite3)
 add_dependencies(wxshapeframework wxsqlite3)
 add_dependencies(libcodelite wxshapeframework databaselayersqlite sqlite3)

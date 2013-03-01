@@ -125,6 +125,13 @@ install(
   PATTERN ".git" EXCLUDE
 ) 
 
+install(
+  DIRECTORY ${CL_SRC_ROOT}/translations/
+  DESTINATION ${CL_PREFIX}/share/locale
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING PATTERN "codelite.mo"
+) 
+
 if (UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
     # We need to deduce the location of the wx libs to be installed
     execute_process(COMMAND ${WX_TOOL} --libs OUTPUT_VARIABLE WX_LIBSOUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)

@@ -155,7 +155,7 @@ if (UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
     endforeach()
     
     file(GLOB wxfilepaths ${WX_LIBS_ALL})
-    install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/lib/codelite)
+    install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
 endif()
 
 if ( USE_CLANG )

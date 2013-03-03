@@ -17,16 +17,21 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DPREFIX="<some-prefix>"                 // Installation prefix, default is set to /usr                                                                       #
 ##      -DENABLE_CLANG=1|0                       // Build codelite with clang code completion support?, default is 1 (with clang)                                     #
 ##      -DWITH_WXC=1|0                           // Build wxCrafter (sources are not part of codelite distribution) default is 0                                      #
-##      -DCOPY_WX_LIBS=1|0                       // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                                      #
+##      -DCOPY_WX_LIBS=1|0                       // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                   #
 ##                                                                                                                                                                    #
 #######################################################################################################################################################################
+
 
 #############################################
 ## Defaults
 #############################################
 
 set( CL_PREFIX "/usr" )
-set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
+if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
+    set( CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
+else()
+    set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
+endif()
 set( CL_WX_CONFIG wx-config )
 set( USE_CLANG 1 )
 set( IS_FREEBSD 0 )
@@ -70,8 +75,15 @@ endif (UNIX)
 ## Override defaults with user input
 ########################################
 
+set( CL_INSTALL_LIBDIR "lib" )
 if ( PREFIX )
   set ( CL_PREFIX ${PREFIX} )
+else()
+    # If the caller hasn't set his own destination, install to a multi-arch lib dir if applicable
+    if (CMAKE_VERSION VERSION_GREATER 2.8.7 AND ( UNIX AND NOT APPLE ))
+        include (GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
+        set( CL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
+    endif()
 endif(PREFIX)
 
 ## enable clang support?
@@ -92,7 +104,7 @@ if (COPY_WX_LIBS MATCHES 1)
   set( CL_COPY_WX_LIBS 1 )
 endif()
 
-set( PLUGINS_DIR "${CL_PREFIX}/lib/codelite")
+set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
 add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
 add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
@@ -202,8 +214,9 @@ message( "-- clang link line ${CLANG_LIBRARY} ")
 message( "-- clang include path ${CLANG_INCLUDE} ")
 message( "-- clang binary ${CLANG_BINARY}" )
 message( "-- CL_SRC_ROOT is set to => " ${CL_SRC_ROOT} )
-message( "-- PLUGINS_DIR is set to => " ${PLUGINS_DIR} )
 message( "-- PREFIX      is set to => " ${CL_PREFIX} )
+message( "-- PREFIX/LIB_DIR is set to => " ${CL_PREFIX}/${CL_INSTALL_LIBDIR} )
+message( "-- PLUGINS_DIR is set to => " ${PLUGINS_DIR} )
 message( "-- wx-config   is set to => " ${WX_TOOL} )
 
 else()

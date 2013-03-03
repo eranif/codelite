@@ -83,7 +83,7 @@ endif (ENABLE_CLANG MATCHES 0)
 if ( WITH_WXC )
     set(BUILD_WXC 1)
     if ( UNIX AND NOT APPLE )
-        set(WX_COMPONENTS "std aui propgrid stc richtext")
+        set(WX_COMPONENTS "std aui propgrid stc richtext ribbon")
     endif (UNIX AND NOT APPLE )
 endif ( WITH_WXC )
 

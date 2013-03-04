@@ -583,7 +583,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     m_auibar->AddSeparator();
     
-    m_auibar->AddTool(wxID_CLEAR, _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
+    m_auibar->AddTool(XRCID("git_clear_log"), _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
     
     m_auibar->AddTool(wxID_ABORT, _("m_toolKill"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Terminate git process"), _("Terminate git process"), NULL);
     
@@ -592,6 +592,10 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_auibar->AddTool(XRCID("git_set_repository"), _("Set git repository path"), wxXmlResource::Get()->LoadBitmap(wxT("document-open")), wxNullBitmap, wxITEM_NORMAL, _("Set git repository path"), _("Set git repository path"), NULL);
     
     m_auibar->AddTool(XRCID("git_clone"), _("git clone"), wxXmlResource::Get()->LoadBitmap(wxT("git-clone")), wxNullBitmap, wxITEM_NORMAL, _("git clone"), _("git clone"), NULL);
+    
+    m_auibar->AddSeparator();
+    
+    m_auibar->AddTool(XRCID("git_apply_patch"), _("Apply Patch..."), wxXmlResource::Get()->LoadBitmap(wxT("apply-patch")), wxNullBitmap, wxITEM_NORMAL, _("Apply Patch..."), _("Apply Patch..."), NULL);
     
     m_auibar->AddSeparator();
     
@@ -637,10 +641,11 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     }
     Centre(wxBOTH);
     // Connect events
-    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
-    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
+    this->Connect(XRCID("git_clear_log"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
+    this->Connect(XRCID("git_clear_log"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
+    this->Connect(XRCID("git_apply_patch"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnApplyPatch), NULL, this);
     this->Connect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
     this->Connect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     this->Connect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
@@ -652,10 +657,11 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
 GitConsoleBase::~GitConsoleBase()
 {
-    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
-    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
+    this->Disconnect(XRCID("git_clear_log"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnClearGitLogUI), NULL, this);
+    this->Disconnect(XRCID("git_clear_log"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
+    this->Disconnect(XRCID("git_apply_patch"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnApplyPatch), NULL, this);
     this->Disconnect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
     this->Disconnect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     this->Disconnect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
@@ -747,5 +753,74 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
 GitFileDiffDlgBase::~GitFileDiffDlgBase()
 {
     this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
+    
+}
+
+GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer154 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer154);
+    
+    wxFlexGridSizer* flexGridSizer162 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer162->SetFlexibleDirection( wxBOTH );
+    flexGridSizer162->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer162->AddGrowableCol(1);
+    
+    boxSizer154->Add(flexGridSizer162, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText164 = new wxStaticText(this, wxID_ANY, _("Select patch file"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer162->Add(m_staticText164, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_filePickerPatchFile = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("Patch files (*.diff;*.patch)|*.diff;*.patch|All Files (*)|*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerPatchFile->SetToolTip(_("Patch file to apply"));
+    m_filePickerPatchFile->SetFocus();
+    
+    flexGridSizer162->Add(m_filePickerPatchFile, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText168 = new wxStaticText(this, wxID_ANY, _("git apply additional flags to use:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer162->Add(m_staticText168, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlExtraFlags = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlExtraFlags->SetToolTip(_("By default, codelite will use 'git apply --whitespace=nowarn' for applying patch files.\nSet here an extra flags to use with this command, e.g.:\n\n--ignore-whitespace\n\nSee git manual for available options"));
+    
+    flexGridSizer162->Add(m_textCtrlExtraFlags, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer156 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer154->Add(boxSizer156, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button158 = new wxButton(this, wxID_OK, _("&Apply"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button158->SetDefault();
+    
+    boxSizer156->Add(m_button158, 0, wxALL, 5);
+    
+    m_button160 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer156->Add(m_button160, 0, wxALL, 5);
+    
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_button158->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
+    
+}
+
+GitApplyPatchDlgBase::~GitApplyPatchDlgBase()
+{
+    m_button158->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
     
 }

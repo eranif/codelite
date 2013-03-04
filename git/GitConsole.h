@@ -29,6 +29,7 @@ public:
     bool IsVerbose() const;
     void UpdateTreeView(const wxString &output);
 protected:
+    virtual void OnApplyPatch(wxCommandEvent& event);
     virtual void OnFileActivated(wxDataViewEvent& event);
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event);
     virtual void OnAddFile(wxCommandEvent& event);

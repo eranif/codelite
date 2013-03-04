@@ -34,6 +34,8 @@
     <File Name="gitCloneDlg.cpp"/>
     <File Name="GitConsole.h"/>
     <File Name="GitConsole.cpp"/>
+    <File Name="GitApplyPatchDlg.cpp"/>
+    <File Name="GitApplyPatchDlg.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -256,6 +258,5 @@
       <File Name="dataviewfilesmodel.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <VirtualDirectory Name="src"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

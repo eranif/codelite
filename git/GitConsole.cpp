@@ -9,6 +9,7 @@
 #include "fileextmanager.h"
 #include <wx/icon.h>
 #include <wx/tokenzr.h>
+#include "GitApplyPatchDlg.h"
 
 #define GIT_MESSAGE(...)  AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)  if ( IsVerbose() ) { AddText(wxString::Format(__VA_ARGS__)); }
@@ -253,11 +254,11 @@ void GitConsole::UpdateTreeView(const wxString& output)
     cols.clear();
     cols.push_back(MakeIconText(_("New Files"), m_newBmp));
     m_itemNew  = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("New Files"));
-    
+
     cols.clear();
     cols.push_back(MakeIconText(_("Deleted Files"), m_deleteBmp));
     m_itemDeleted  = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("Deleted Files"));
-    
+
     cols.clear();
     cols.push_back(MakeIconText(_("Untracked"), m_untrackedBmp));
     m_itemUntracked = m_dvFilesModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData("Untracked"));
@@ -266,7 +267,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
     std::sort(files.begin(), files.end());
 
     for(size_t i=0; i<files.GetCount(); ++i) {
-        
+
         wxString filename = files.Item(i);
         filename.Trim().Trim(false);
         filename.Replace("\t", " ");
@@ -275,7 +276,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
         wxString filenameFullpath = filename;
 
         filename.Trim().Trim(false);
-        
+
         wxFileName fn(filename);
         if ( fn.IsRelative() ) {
             fn.MakeAbsolute( m_git->GetRepositoryDirectory() );
@@ -283,7 +284,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
                 filenameFullpath = fn.GetFullPath();
             }
         }
-        
+
         wxBitmap bmp;
         if ( filename.EndsWith("/") ) {
             bmp = m_folderBmp;
@@ -295,31 +296,31 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
         cols.clear();
         cols.push_back(MakeIconText(filename, bmp));
-        
+
         wxChar chX = prefix[0];
         wxChar chY = 0;
         if ( prefix.length() > 1 ) {
             chY = prefix[1];
         }
-        
+
         if ( chX == 'M' ) {
             m_dvFilesModel->AppendItem(m_itemModified, cols, new GitClientData( filenameFullpath ));
 
         } else if ( chX == 'A' ) {
             m_dvFilesModel->AppendItem(m_itemNew, cols, new GitClientData( filenameFullpath ));
-            
+
         } else if ( chX == 'D' ) {
             // Delete from index
             m_dvFilesModel->AppendItem(m_itemDeleted, cols, new GitClientData( filenameFullpath ));
-            
+
         } else if ( chX == 'R' ) {
             // Renamed in index
-            
+
         } else {
             m_dvFilesModel->AppendItem(m_itemUntracked, cols, new GitClientData( filenameFullpath ));
         }
     }
-    
+
 #ifndef __WXMAC__
     if ( !m_dvFilesModel->HasChildren(m_itemModified) )
         m_dvFilesModel->DeleteItem(m_itemModified);
@@ -333,7 +334,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
         m_dvFilesModel->DeleteItem(m_itemNew);
     else
         m_dvFiles->Expand(m_itemNew);
-        
+
     if ( !m_dvFilesModel->HasChildren(m_itemDeleted) )
         m_dvFilesModel->DeleteItem(m_itemDeleted);
     else
@@ -422,12 +423,12 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
             files.push_back( gcd->GetPath() );
         }
     }
-    
+
     if ( files.IsEmpty() ) {
         event.Skip();
         return;
     }
-    
+
     // open the files
     for(size_t i=0; i<files.GetCount(); ++i) {
         GIT_MESSAGE("Opening file: %s", files.Item(i).c_str());
@@ -447,8 +448,15 @@ void GitConsole::OnShowFileDiff(wxCommandEvent& e)
             files.push_back( gcd->GetPath() );
         }
     }
-    
+
     if ( !files.IsEmpty() ) {
         m_git->ShowDiff( files );
+    }
+}
+void GitConsole::OnApplyPatch(wxCommandEvent& event)
+{
+    GitApplyPatchDlg dlg(wxTheApp->GetTopWindow());
+    if( dlg.ShowModal() == wxID_OK ) {
+        m_git->ApplyPatch( dlg.GetPatchFile(), dlg.GetExtraFlags() );
     }
 }

@@ -185,10 +185,11 @@ protected:
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
-    virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnApplyPatch(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }
@@ -214,6 +215,25 @@ protected:
 public:
     GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitFileDiffDlgBase();
+};
+
+
+class GitApplyPatchDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText164;
+    wxFilePickerCtrl* m_filePickerPatchFile;
+    wxStaticText* m_staticText168;
+    wxTextCtrl* m_textCtrlExtraFlags;
+    wxButton* m_button158;
+    wxButton* m_button160;
+
+protected:
+    virtual void OnApplyGitPatchUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Apply Patch"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~GitApplyPatchDlgBase();
 };
 
 #endif

@@ -66,6 +66,7 @@ class GitPlugin : public IPlugin
         gitStatus,
         gitUndoAdd,
         gitRmFiles,
+        gitApplyPatch,
 #if 0
         gitBisectStart,
         gitBisectGood,
@@ -187,6 +188,7 @@ public:
         DoShowDiffsForFiles(files);
     }
     
+    void ApplyPatch(const wxString &filename, const wxString &extraFlags);
     void AddFiles(const wxArrayString &files) {
         DoAddFiles(files);
     }

@@ -819,6 +819,11 @@ void GitPlugin::ProcessGitActionQueue()
 
     wxString command = m_pathGITExecutable;
     switch(ga.action) {
+    case gitApplyPatch:
+        command << " apply --whitespace=nowarn " << ga.arguments;
+        GIT_MESSAGE("%s", command.c_str());
+        break;
+        
     case gitRmFiles:
         command << " --no-pager rm --force " << ga.arguments;
         GIT_MESSAGE("%s", command.c_str());
@@ -1332,7 +1337,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         dlg.SetDiff(m_commandOutput);
         dlg.ShowModal();
         
-    } else if(ga.action == gitResetFile ) {
+    } else if( ga.action == gitResetFile || ga.action == gitApplyPatch ) {
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
 
@@ -1884,4 +1889,11 @@ void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files)
 void GitPlugin::OnStartGitkUI(wxUpdateUIEvent& e)
 {
     e.Enable( !m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty() );
+}
+
+void GitPlugin::ApplyPatch(const wxString& filename, const wxString& extraFlags)
+{
+    gitAction ga(gitApplyPatch, wxString() << extraFlags << " \"" << filename << "\" ");
+    m_gitActionQueue.push(ga);
+    ProcessGitActionQueue();
 }

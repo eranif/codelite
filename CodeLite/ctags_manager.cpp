@@ -136,6 +136,8 @@ BEGIN_EVENT_TABLE(TagsManager, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED,       TagsManager::OnIndexerTerminated)
 END_EVENT_TABLE()
 
+//ToDo: use GetScopesByScopeName method - DRY
+
 TagsManager::TagsManager()
     : wxEvtHandler()
     , m_codeliteIndexerPath(wxT("codelite_indexer"))
@@ -378,7 +380,6 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
         return;
     }
 
-
     // send the request
     if ( !clIndexerProtocol::SendRequest(&client, req) ) {
         wxPrintf(wxT("Failed to send request to indexer ID [%d]\n"), (int)wxGetProcessId());
@@ -405,6 +406,8 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
     if(tags.empty()) {
         tags = wxString::From8BitData(reply.getTags().c_str());
     }
+	
+	AddEnumClassData(tags);
 
 #if 0
     wxFFile fff(wxStandardPaths::Get().GetUserDataDir() + wxT("\\tmp_tags"), wxT("w+"));
@@ -730,6 +733,13 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
         PERF_BLOCK("TagsByScope") {
             TagsByScope(scope, filter, candidates, true);
         }
+		
+		//Let's search in typerefs
+		if (candidates.empty()) {
+			PERF_BLOCK("TagsByTyperef") {
+				TagsByTyperef(scope, filter, candidates, true);
+			}			
+		}			
 
     } else {
 
@@ -2141,27 +2151,30 @@ void TagsManager::GetAllTagsNames(wxArrayString &tagsList)
 void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon)
 {
     wxUnusedVar(include_anon);
-    std::vector<wxString> derivationList;
 
-    //add this scope as well to the derivation list
-    wxString _scopeName = DoReplaceMacros( scopeName );
-    derivationList.push_back(_scopeName);
-    std::set<wxString> scannedInherits;
-    GetDerivationList(_scopeName, NULL, derivationList, scannedInherits);
-
-    //make enough room for max of 500 elements in the vector
-    tags.reserve(500);
     wxArrayString scopes;
-    for (size_t i=0; i<derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i));
-        tmpScope = DoReplaceMacros(tmpScope);
-        scopes.Add(tmpScope);
-    }
-
+	GetScopesByScopeName(scopeName, scopes);
+	//make enough room for max of 500 elements in the vector    
+	tags.reserve(500);
     GetDatabase()->GetTagsByScopesAndKind(scopes, kind, tags);
 
     // and finally sort the results
     std::sort(tags.begin(), tags.end(), SAscendingSort());
+}
+
+void TagsManager::TagsByTyperef(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon)
+{
+    wxUnusedVar(include_anon);
+
+    wxArrayString scopes;
+	GetScopesByScopeName(scopeName, scopes);
+	//make enough room for max of 500 elements in the vector    
+	tags.reserve(500);
+
+    GetDatabase()->GetTagsByTyperefAndKind(scopes, kind, tags);
+
+    // and finally sort the results
+    std::sort(tags.begin(), tags.end(), SAscendingSort());	
 }
 
 wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, std::vector<std::pair<int, int> > *paramLen)
@@ -2960,4 +2973,59 @@ void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
     tags.insert(tags.end(), publicTags.begin(),    publicTags.end());
     tags.insert(tags.end(), protectedTags.begin(), protectedTags.end());
     tags.insert(tags.end(), privateTags.begin(),   privateTags.end());
+}
+
+void TagsManager::AddEnumClassData(wxString& tags)
+{
+	//Add tisInEnumNamespace flag for enums. For declaration "enum class ..." (C++11)
+	size_t startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), 0);
+	while (startIndex != (size_t)wxNOT_FOUND) {		
+		size_t patternEndIndex = tags.find(wxT("$/"), startIndex);
+		wxString pattern = tags.substr(startIndex, patternEndIndex - startIndex);
+		if (pattern.Contains(TagEntry::KIND_CLASS)) {
+		
+			wxString enumName = pattern.AfterLast(wxT(' '));
+		
+			//Get namespace
+			wxString enumNamespace = wxT("");
+			size_t endIndex = tags.find(wxT("\n"), startIndex);
+			wxString line = tags.substr(startIndex, endIndex - startIndex);
+			size_t namespaceStartIndex = line.find(TagEntry::KIND_NAMESPACE, 0);
+			if (namespaceStartIndex != (size_t)wxNOT_FOUND) {
+				size_t namespaceNameStartIndex = line.find(wxT(":"), namespaceStartIndex);
+				if (namespaceNameStartIndex != (size_t)wxNOT_FOUND) {
+					namespaceNameStartIndex++;
+					size_t namespaceNameEndIndex = line.find_first_of(wxT("\t\r"), namespaceNameStartIndex);
+					enumNamespace = line.substr(namespaceNameStartIndex, namespaceNameEndIndex - namespaceNameStartIndex);
+				}
+			}
+		
+			wxString fullName = enumNamespace.IsEmpty() ? enumName : enumNamespace + wxT("::") + enumName;		
+			wxString parametersFrom = TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\r");
+			wxString parametersTo = TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\tisInEnumNamespace:1") + wxT("\r");
+			size_t lengthBefore = tags.Length();
+			tags.Replace(parametersFrom, parametersTo, true);
+			startIndex += tags.Length() - lengthBefore;
+		}
+			
+		startIndex += TagEntry::KIND_ENUM.Length();
+		startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), startIndex);
+	} 	
+}
+
+void TagsManager::GetScopesByScopeName(const wxString &scopeName, wxArrayString & scopes)
+{	
+    std::vector<wxString> derivationList;
+
+    //add this scope as well to the derivation list
+    wxString _scopeName = DoReplaceMacros( scopeName );
+    derivationList.push_back(_scopeName);
+    std::set<wxString> scannedInherits;
+    GetDerivationList(_scopeName, NULL, derivationList, scannedInherits);
+
+    for (size_t i=0; i<derivationList.size(); i++) {
+        wxString tmpScope(derivationList.at(i));
+        tmpScope = DoReplaceMacros(tmpScope);
+        scopes.Add(tmpScope);
+    }	
 }

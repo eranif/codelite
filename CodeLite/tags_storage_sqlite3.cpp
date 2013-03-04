@@ -142,7 +142,7 @@ void TagsStorageSQLite::CreateSchema()
         m_db->ExecuteUpdate(trigger2);
 
         // Create unique index on tags table
-        sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(kind, path, signature);");
+        sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(kind, path, signature, typeref);");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("CREATE INDEX IF NOT EXISTS KIND_IDX on tags(kind);");
@@ -165,12 +165,15 @@ void TagsStorageSQLite::CreateSchema()
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("CREATE INDEX IF NOT EXISTS TAGS_SCOPE on tags(scope);");
-        m_db->ExecuteUpdate(sql);
+        m_db->ExecuteUpdate(sql);	
 
         sql = wxT("CREATE INDEX IF NOT EXISTS TAGS_PATH on tags(path);");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("CREATE INDEX IF NOT EXISTS TAGS_PARENT on tags(parent);");
+        m_db->ExecuteUpdate(sql);
+		
+        sql = wxT("CREATE INDEX IF NOT EXISTS TAGS_TYPEREF on tags(typeref);");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("CREATE INDEX IF NOT EXISTS MACROS_NAME on MACROS(name);");
@@ -293,8 +296,6 @@ void TagsStorageSQLite::Store(TagTreePtr tree, const wxFileName& path, bool auto
             // Skip root node
             if (walker.GetNode() == tree->GetRoot())
                 continue;
-
-            // does not matter if we insert or update, the cache must be cleared for any related tags
 
             DoInsertTagEntry(walker.GetNode()->GetData());
         }
@@ -828,6 +829,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
     if ( !tag.IsOk() )
         return TagOk;
 
+		// does not matter if we insert or update, the cache must be cleared for any related tags
     if (GetUseCache()) {
         ClearCache();
     }
@@ -1111,6 +1113,23 @@ void TagsStorageSQLite::GetTagsByScopesAndKindNoLimit(const wxArrayString& scope
     sql << wxT(") ORDER BY NAME");
 
     DoFetchTags(sql, tags, kinds);
+}
+
+void TagsStorageSQLite::GetTagsByTyperefAndKind(const wxArrayString& typerefs, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags)
+{
+    if ( kinds.empty() || typerefs.empty() ) {
+        return;
+    }
+
+    wxString sql;
+    sql << wxT("select * from tags where typeref in (");
+    for (size_t i=0; i<typerefs.GetCount(); i++) {
+        sql << wxT("'") << typerefs.Item(i) << wxT("',");
+    }
+    sql.RemoveLast();
+    sql << wxT(") ORDER BY NAME ");
+    DoAddLimitPartToQuery(sql, tags);
+    DoFetchTags(sql, tags, kinds);	
 }
 
 void TagsStorageSQLite::GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit)

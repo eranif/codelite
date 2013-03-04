@@ -404,8 +404,16 @@ public:
 	 * @param scopes array of possible scopes
 	 * @param kinds array of possible kinds
 	 * @param tags [output]
-	 */
+	 */		
 	virtual void GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
+	
+	/**
+	 * @brief return list of tags by typerefs and kinds
+	 * @param typerefs array of possible typerefs
+	 * @param kinds array of possible kinds
+	 * @param tags [output]
+	 */	
+	virtual void GetTagsByTyperefAndKind(const wxArrayString& typerefs, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
 
 	/**
 	 * @brief return tags by files / scope

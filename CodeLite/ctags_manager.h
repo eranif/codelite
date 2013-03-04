@@ -460,6 +460,16 @@ public:
      * @param include_anon included anonymous members (of Unions/structs/enums)
      */
     void TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon = false);
+	
+    /**
+     * return tags belongs to given typeref and kind
+     * @param scopeName the typeref to search
+     * @param kind list of tags kind to return
+     * @param tags [ouput] the result vector
+     * @param inherits set to true if you want inherited members as well members
+     * @param include_anon included anonymous members (of Unions/structs/enums)
+     */	
+	void TagsByTyperef(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon = false);
 
     /**
      * Find implementation/declaration of symbol
@@ -826,6 +836,8 @@ protected:
     wxArrayString  BreakToOuterScopes(const wxString &scope);
     wxString       DoReplaceMacrosFromDatabase(const wxString &name);
     void           DoSortByVisibility(TagEntryPtrVector_t& tags);
+	void           AddEnumClassData(wxString& tags);
+	void           GetScopesByScopeName(const wxString &scopeName, wxArrayString & scopes);
 };
 
 /// create the singleton typedef

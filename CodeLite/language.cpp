@@ -867,20 +867,19 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
 
     // Try the lookup tables
     bool hasMatch = DoSearchByNameAndScope(token->GetName(), token->GetContextScope(), tags, type, typeScope);
-    if ( !hasMatch ) {
-        if ( token->GetPrev() == NULL) {
-            // failed to find it in the local scope and in the lookup table
-            // try the additional scopes
-            for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
-                tags.clear();
-                if (DoSearchByNameAndScope(token->GetName(), GetAdditionalScopes().at(i), tags, type, typeScope)) {
-                    token->SetTypeName(type);
-                    token->SetTypeScope(typeScope);
-                    return DoCorrectUsingNamespaces(token, tags);
-                }
-            }
+    if ( !hasMatch && token->GetPrev() == NULL) {
+		// failed to find it in the local scope and in the lookup table
+		// try the additional scopes
+		for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
+			tags.clear();
+			hasMatch = DoSearchByNameAndScope(token->GetName(), GetAdditionalScopes().at(i), tags, type, typeScope);
+			if (hasMatch) {
+				break;
+			}
+		}
 
-            // Try macros
+		if ( !hasMatch ) {
+			// Try macros
             PPToken tok  = GetTagsManager()->GetDatabase()->GetMacro(token->GetName());
             if(tok.flags & PPToken::IsValid) {
                 // we got a match in the macros DB
@@ -902,10 +901,10 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
                 DoFixTokensFromVariable(tokeContainer, tok.replacement);
                 return false;
             }
-        }
-        return false;
-
-    } else if( tags.size() ) {
+		}
+	}
+        
+    if( hasMatch && tags.size() ) {
         if(token->GetPrev() == NULL) {
 
             // we are first in the chain, but still we exists in the database
@@ -963,7 +962,6 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
         // we got a match
         token->SetTypeName ( type      );
         token->SetTypeScope( typeScope );
-
 
         return DoCorrectUsingNamespaces(token, tags);
     }

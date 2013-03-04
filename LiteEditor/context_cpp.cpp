@@ -691,7 +691,7 @@ void ContextCpp::CompleteWord()
         wxChar ch1 = rCtrl.SafeGetChar(pos - 1);
         wxChar ch2 = rCtrl.SafeGetChar(pos - 2);
 
-        if (ch1 == wxT('.') || (ch2 == wxT('-') && ch1 == wxT('>')) ) {
+        if (ch1 == wxT('.') || (ch2 == wxT('-') && ch1 == wxT('>')) || (ch2 == wxT(':') && ch1 == wxT(':'))) {
             CodeComplete();
         }
         return;

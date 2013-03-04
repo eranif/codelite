@@ -201,23 +201,23 @@ void TagEntry::Create(const wxString &fileName,
             }
         }
     }
+	
+	if (!path.IsEmpty()) {
+		SetScope(path);
+	} else {
+		SetScope(wxT("<global>"));
+	}	
+	
+	// If there is no path, path is set to name
+	if ( GetPath().IsEmpty() )
+		SetPath( GetName() );	
+	
+	// Get the parent name
+	StringTokenizer tok(GetPath(), wxT("::"));
+	wxString parent;
 
-    if (!path.IsEmpty()) {
-        SetScope(path);
-    } else {
-        SetScope(wxT("<global>"));
-    }
-
-    // If there is no path, path is set to name
-    if ( GetPath().IsEmpty() )
-        SetPath( GetName() );
-
-    // Get the parent name
-    StringTokenizer tok(GetPath(), wxT("::"));
-    wxString parent;
-
-    (tok.Count() < 2) ? parent = wxT("<global>") : parent = tok[tok.Count()-2];
-    SetParent(parent);
+	(tok.Count() < 2) ? parent = wxT("<global>") : parent = tok[tok.Count()-2];
+	SetParent(parent);	
 }
 
 void TagEntry::Create(const tagEntry& entry)
@@ -571,19 +571,32 @@ void TagEntry::FromLine(const wxString& line)
     pattern = pattern.Trim();
 
     if (kind == wxT("enumerator")) {
-        // enums are specials, they are not really a scope so they should appear when I type:
+		// enums are specials, they are a scope, when they declared as "enum class ..." (C++11), 
+        // but not a scope when declared as "enum ...". So, for "enum class ..." declaration 
+		//(and anonymous enums) we appear enumerators when typed:
         // enumName::
-        // they should be member of their parent (which can be <global>, or class)
-        // but we want to know the "enum" type they belong to, so save that in typeref,
-        // then patch the enum field to lift the enumerator into the enclosing scope.
-        // watch out for anonymous enums -- leave their typeref field blank.
-        std::map<wxString,wxString>::iterator e = extFields.find(wxT("enum"));
-        if (e != extFields.end()) {
-            wxString typeref = e->second;
-            e->second = e->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
-            if (!typeref.AfterLast(wxT(':')).StartsWith(wxT("__anon"))) {
-                extFields[wxT("typeref")] = typeref;
-            }
+		//Is global scope there aren't appears. For "enum ..." declaration we appear 
+		//enumerators when typed:
+		// enumName::
+		//and when it global (or same namespace) scope.
+        std::map<wxString,wxString>::iterator enumField = extFields.find(wxT("enum"));
+        if (enumField != extFields.end()) {
+            wxString enumName = enumField->second;
+			bool isAnonymous = enumName.AfterLast(wxT(':')).StartsWith(wxT("__anon"));
+			
+			bool isInEnumNamespace = false;
+			std::map<wxString,wxString>::const_iterator isInEnumNamespaceField = extFields.find(wxT("isInEnumNamespace"));
+			if (isInEnumNamespaceField != extFields.end()) {
+				wxString isInEnumNamespaceValue = isInEnumNamespaceField->second;
+				isInEnumNamespace = isInEnumNamespaceValue.AfterLast(wxT(':')) == wxT("1") ? true : false;
+			}
+			
+			if (!isInEnumNamespace) {
+				enumField->second = enumField->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
+				if (!isAnonymous) {
+					extFields[wxT("typeref")] = enumName;
+				}
+			}		
         }
     }
 

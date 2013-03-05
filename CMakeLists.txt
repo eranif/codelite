@@ -13,11 +13,11 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##                                                                                                                                                                    #
 ## Optional command line arguments:                                                                                                                                   #
 ##                                                                                                                                                                    #
-##      -DCMAKE_BUILD_TYPE=Relase|Debug          // Build Debug Or Release                                                                                            #
-##      -DPREFIX="<some-prefix>"                 // Installation prefix, default is set to /usr                                                                       #
-##      -DENABLE_CLANG=1|0                       // Build codelite with clang code completion support?, default is 1 (with clang)                                     #
-##      -DWITH_WXC=1|0                           // Build wxCrafter (sources are not part of codelite distribution) default is 0                                      #
-##      -DCOPY_WX_LIBS=1|0                       // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                   #
+##      -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull // Build release, debug + optimisation or debug without optimisation (for others see the Cmake docs)               #
+##      -DPREFIX="<some-prefix>"                   // Installation prefix, default is set to /usr                                                                     #
+##      -DENABLE_CLANG=1|0                         // Build codelite with clang code completion support?, default is 1 (with clang)                                   #
+##      -DWITH_WXC=1|0                             // Build wxCrafter (sources are not part of codelite distribution) default is 0                                    #
+##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                 #
 ##                                                                                                                                                                    #
 #######################################################################################################################################################################
 

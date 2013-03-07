@@ -217,9 +217,9 @@ static void ChildTerminatedSingalHandler(int signo)
 
 IMPLEMENT_APP(CodeLiteApp)
 
-BEGIN_EVENT_TABLE(CodeLiteApp, wxApp)
-    EVT_ACTIVATE_APP(CodeLiteApp::OnAppAcitvated)
-END_EVENT_TABLE()
+//BEGIN_EVENT_TABLE(CodeLiteApp, wxApp)
+//    EVT_ACTIVATE_APP(CodeLiteApp::OnAppAcitvated)
+//END_EVENT_TABLE()
 
 extern void InitXmlResource();
 CodeLiteApp::CodeLiteApp(void)
@@ -789,19 +789,19 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
     return defaultMenuFile;
 }
 
-void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
-{
-    CodeCompletionBox::Get().CancelTip();
-    if(e.GetActive()) {
-
-        if(clMainFrame::Get()) {
-            SetTopWindow(clMainFrame::Get());
-        }
-
-        if(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsWorkspaceClosing()) {
-            // Retag the workspace the light way
-            ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
-        }
-
-    }
-}
+//void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)
+//{
+//    CodeCompletionBox::Get().CancelTip();
+//    if(e.GetActive()) {
+//
+//        if(clMainFrame::Get()) {
+//            SetTopWindow(clMainFrame::Get());
+//        }
+//
+//        if(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsWorkspaceClosing()) {
+//            // Retag the workspace the light way
+//            ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
+//        }
+//
+//    }
+//}

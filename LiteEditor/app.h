@@ -89,8 +89,8 @@ protected:
     virtual int OnExit();
     virtual void OnFatalException();
 
-    DECLARE_EVENT_TABLE()
-    void OnAppAcitvated(wxActivateEvent &e);
+//    DECLARE_EVENT_TABLE()
+//    void OnAppAcitvated(wxActivateEvent &e);
 };
 
 #endif // LITEEDITOR_APP_H

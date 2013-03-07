@@ -721,6 +721,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
         UserSelectFiles(files, _("Reload Modified Files"), _("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
     }
 
+    
     std::vector<wxFileName> filesToRetag;
     for (size_t i = 0; i < files.size(); i++) {
         if (files[i].second) {

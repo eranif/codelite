@@ -43,6 +43,7 @@
 #include <wx/splash.h>
 #include "clsplashscreen.h"
 #include "WelcomePage.h"
+#include "code_completion_box.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -3288,10 +3289,17 @@ void clMainFrame::CompleteInitialization()
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
 {
+    CodeCompletionBox::Get().CancelTip();
     if (m_theFrame && e.GetActive()) {
+        
         m_theFrame->ReloadExternallyModifiedProjectFiles();
         m_theFrame->GetMainBook()->ReloadExternallyModified(true);
-
+        
+        if(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsWorkspaceClosing()) {
+            // Retag the workspace the light way
+            ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
+        }
+        
     } else if(m_theFrame) {
 
         LEditor *editor = GetMainBook()->GetActiveEditor();

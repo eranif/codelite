@@ -28,13 +28,14 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     m_banner1 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     m_banner1->SetBitmap(wxNullBitmap);
     m_banner1->SetText(_("Import Files"), _("Select the directories to import from"));
-    m_banner1->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner1->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+    m_banner1->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    m_banner1->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
     
     mainSizer->Add(m_banner1, 0, wxALL|wxEXPAND, 5);
     
     m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE);
     m_dirPicker->SetToolTip(_("Select the base folder for importing"));
+    m_dirPicker->SetFocus();
     
     mainSizer->Add(m_dirPicker, 0, wxALL|wxEXPAND, 5);
     

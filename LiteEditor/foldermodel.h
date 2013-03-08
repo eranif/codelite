@@ -156,7 +156,13 @@ protected:
 public:
     FolderModel();
     virtual ~FolderModel();
-
+    
+    /**
+     * @brief a helper method creating a wxVariant containing both bitmap and text
+     * this is useful when mostly when populating a column of type 'icontext'
+     */
+    static wxVariant CreateIconTextVariant(const wxString &text, const wxBitmap& bmp);
+    
     void SetColCount(unsigned int colCount) {
         this->m_colCount = colCount;
     }

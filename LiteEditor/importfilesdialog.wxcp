@@ -146,7 +146,7 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Fg Colour:",
-									"colour":	"CaptionText"
+									"colour":	"ButtonText"
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
@@ -191,11 +191,11 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Gradient Start",
-									"colour":	"ActiveCaption"
+									"colour":	"ButtonFace"
 								}, {
 									"type":	"colour",
 									"m_label":	"Gradient End",
-									"colour":	"ActiveCaption"
+									"colour":	"ButtonFace"
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -250,7 +250,7 @@
 								}, {
 									"type":	"bool",
 									"m_label":	"Focused",
-									"m_value":	false
+									"m_value":	true
 								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",

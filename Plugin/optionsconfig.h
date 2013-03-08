@@ -51,6 +51,7 @@ public:
         Opt_NavKey_Alt               = 0x00000800,
         Opt_NavKey_Control           = 0x00001000,
         Opt_IconSet_Classic_Dark     = 0x00002000,
+        Opt_Mark_Debugger_Line       = 0x00004000,
     };
 
 protected:
@@ -117,8 +118,9 @@ protected:
     bool           m_useLocale;
     bool           m_trimOnlyModifiedLines;
     size_t         m_options;
+    wxColour       m_debuggerMarkerLine;
 
-protected:
+public:
     // Helpers
     void EnableOption(size_t flag, bool b) {
         if(b) {
@@ -551,6 +553,13 @@ public:
     }
     void SetWordWrap(bool wordWrap) {
         this->m_wordWrap = wordWrap;
+    }
+
+    void SetDebuggerMarkerLine(const wxColour& debuggerMarkerLine) {
+        this->m_debuggerMarkerLine = debuggerMarkerLine;
+    }
+    const wxColour& GetDebuggerMarkerLine() const {
+        return m_debuggerMarkerLine;
     }
     /**
      * Return an XML representation of this object

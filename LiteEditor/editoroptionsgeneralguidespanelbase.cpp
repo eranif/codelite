@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -129,8 +129,31 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	
 	bSizer1->Add( sbSizer2, 0, wxEXPAND|wxALL, 5 );
 	
+	wxStaticBoxSizer* sbSizer4;
+	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Debugger Marker:") ), wxVERTICAL );
 	
-	bSizer1->Add( 0, 0, 1, wxEXPAND, 5 );
+	wxFlexGridSizer* fgSizer4;
+	fgSizer4 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer4->AddGrowableCol( 1 );
+	fgSizer4->SetFlexibleDirection( wxBOTH );
+	fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	m_checkBoxMarkdebuggerLine = new wxCheckBox( this, wxID_ANY, _("Highlight deugger line"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer4->Add( m_checkBoxMarkdebuggerLine, 0, wxALL, 5 );
+	
+	
+	fgSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticText41 = new wxStaticText( this, wxID_ANY, _("Debugger line colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText41->Wrap( -1 );
+	fgSizer4->Add( m_staticText41, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+	
+	m_colourPickerDbgLine = new wxColourPickerCtrl( this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
+	fgSizer4->Add( m_colourPickerDbgLine, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	
+	sbSizer4->Add( fgSizer4, 0, wxEXPAND, 5 );
+	
+	bSizer1->Add( sbSizer4, 0, wxEXPAND|wxALL, 5 );
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
@@ -140,6 +163,8 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase( wxWind
 	m_highlightCaretLine->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLine ), NULL, this );
 	m_staticText1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_caretLineColourPicker->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
+	m_staticText41->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI ), NULL, this );
+	m_colourPickerDbgLine->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI ), NULL, this );
 }
 
 EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
@@ -148,5 +173,7 @@ EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
 	m_highlightCaretLine->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLine ), NULL, this );
 	m_staticText1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
 	m_caretLineColourPicker->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnhighlightCaretLineUI ), NULL, this );
+	m_staticText41->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI ), NULL, this );
+	m_colourPickerDbgLine->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( EditorOptionsGeneralGuidesPanelBase::OnDebuggerLineUI ), NULL, this );
 	
 }

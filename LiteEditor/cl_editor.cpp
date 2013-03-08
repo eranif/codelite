@@ -482,14 +482,19 @@ void LEditor::SetProperties()
     MarkerDefineBitmap(smt_bp_ignored, wxBitmap(wxImage(BreakptIgnore)));
     MarkerDefineBitmap(smt_cond_bp, wxBitmap(wxImage(ConditionalBreakpt)));
     MarkerDefineBitmap(smt_cond_bp_disabled, wxBitmap(wxImage(ConditionalBreakptDisabled)));
-
-    //debugger line marker
-    wxImage img(arrow_right_green_xpm);
-    wxBitmap bmp(img);
-    MarkerDefineBitmap(smt_indicator, bmp);
-    MarkerSetBackground(smt_indicator, wxT("LIME GREEN"));
-    MarkerSetForeground(smt_indicator, wxT("BLACK"));
-
+    
+    if ( options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line) ) {
+        MarkerDefine(smt_indicator, wxSTC_MARK_BACKGROUND, wxNullColour, options->GetDebuggerMarkerLine());
+        
+    } else {
+        
+        wxImage img(arrow_right_green_xpm);
+        wxBitmap bmp(img);
+        MarkerDefineBitmap(smt_indicator, bmp);
+        MarkerSetBackground(smt_indicator, wxT("LIME GREEN"));
+        MarkerSetForeground(smt_indicator, wxT("BLACK"));
+    }
+    
     // warning and error markers
     MarkerDefine(smt_warning, wxSTC_MARK_SHORTARROW);
     MarkerSetForeground(smt_error, wxColor(128, 128, 0));

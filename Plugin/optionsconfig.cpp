@@ -100,6 +100,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     , m_trimOnlyModifiedLines(true)
     , m_options(TabCurved | Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift)
 {
+    m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
 #ifdef __WXMSW__
     int major, minor;
@@ -174,6 +175,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         m_useLocale                     = XmlUtils::ReadBool  (node, wxT("m_useLocale"),               m_useLocale);
         m_trimOnlyModifiedLines         = XmlUtils::ReadBool  (node, wxT("m_trimOnlyModifiedLines"),   m_trimOnlyModifiedLines);
         m_options                       = XmlUtils::ReadLong  (node, wxT("m_options"),                 m_options);
+        m_debuggerMarkerLine            = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),      m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+        
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
         long trim             (0);
         long appendLf         (0);
@@ -250,7 +253,8 @@ wxXmlNode *OptionsConfig::ToXml() const
     n->AddProperty(wxT("m_preferredLocale"),             m_preferredLocale);
     n->AddProperty(wxT("m_useLocale"),                   BoolToString(m_useLocale));
     n->AddProperty(wxT("m_trimOnlyModifiedLines"),       BoolToString(m_trimOnlyModifiedLines));
-
+    n->AddProperty(wxT("m_debuggerMarkerLine"),          m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+    
     wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);

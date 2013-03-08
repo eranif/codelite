@@ -46,6 +46,8 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel( wxWindow* pare
     m_checkBoxDisableSemicolonShift->SetValue( options->GetDisableSemicolonShift() );
 
     m_checkBoxDoubleQuotes->SetValue(options->GetAutoCompleteDoubleQuotes());
+    m_checkBoxMarkdebuggerLine->SetValue(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line));
+    m_colourPickerDbgLine->SetColour(options->GetDebuggerMarkerLine());
 
     const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"), wxTRANSLATE("Visible always"), wxTRANSLATE("Visible after indentation") };
     wxString currentWhitespace;
@@ -79,7 +81,10 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
     options->SetDisableSemicolonShift( m_checkBoxDisableSemicolonShift->IsChecked() );
 
     options->SetAutoCompleteDoubleQuotes(m_checkBoxDoubleQuotes->IsChecked());
-
+    options->SetDebuggerMarkerLine( m_colourPickerDbgLine->GetColour() );
+    
+    options->EnableOption( OptionsConfig::Opt_Mark_Debugger_Line, m_checkBoxMarkdebuggerLine->IsChecked() );
+    
     // save the whitespace visibility
     wxString Whitespace = m_WSstringManager.GetStringSelection();
     int style(wxSTC_WS_INVISIBLE); // invisible
@@ -96,4 +101,9 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 void EditorOptionsGeneralGuidesPanel::OnhighlightCaretLineUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_highlightCaretLine->IsChecked());
+}
+
+void EditorOptionsGeneralGuidesPanel::OnDebuggerLineUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_checkBoxMarkdebuggerLine->IsChecked() );
 }

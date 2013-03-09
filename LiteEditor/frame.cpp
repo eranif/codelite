@@ -1063,7 +1063,7 @@ void clMainFrame::CreateToolbars24()
     tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  _("Reload File"));
     tb->AddSeparator();
     tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save")),    _("Save"));
-    tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_as")), _("Save As"));
+    tb->AddTool(XRCID("save_all"),    _("Save All"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_all")),     _("Save All"));
     tb->AddSeparator();
     tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_close")),   _("Close File"));
     tb->AddSeparator();
@@ -1188,7 +1188,7 @@ void clMainFrame::CreateNativeToolbar16()
     tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_reload")),  _("Reload File"));
     tb->AddSeparator();
     tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save")),    _("Save"));
-    tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_as")), _("Save As"));
+    tb->AddTool(XRCID("save_all"),    _("Save All"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_all")),     _("Save All"));
     tb->AddSeparator();
     tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_close")),   _("Close File"));
     tb->AddSeparator();
@@ -1263,7 +1263,7 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_reload")),  _("Reload File"));
     tb->AddSeparator();
     tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save")),    _("Save"));
-    tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_as")), _("Save As"));
+    tb->AddTool(XRCID("save_all"),    _("Save All"),             bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_save_all")),     _("Save All"));
     tb->AddSeparator();
     tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/file_close")),   _("Close File"));
     tb->AddSeparator();
@@ -1351,7 +1351,7 @@ void clMainFrame::CreateToolbars16()
     tb->AddTool(XRCID("refresh_file"),    _("Reload"),          bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_reload")),  _("Reload File"));
     tb->AddSeparator();
     tb->AddTool(XRCID("save_file"),       _("Save"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save")),    _("Save"));
-    tb->AddTool(XRCID("save_file_as"),    _("Save As"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_as")), _("Save As"));
+    tb->AddTool(XRCID("save_all"),    _("Save All"),             bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_save_all")),     _("Save All"));
     tb->AddSeparator();
     tb->AddTool(XRCID("close_file"),      _("Close"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/file_close")),   _("Close File"));
     tb->AddSeparator();

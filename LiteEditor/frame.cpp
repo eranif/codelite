@@ -198,7 +198,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("refresh_file"),        clMainFrame::OnFileExistUpdateUI)
     EVT_UPDATE_UI(XRCID("save_file"),           clMainFrame::OnFileSaveUI)
     EVT_UPDATE_UI(XRCID("save_file_as"),        clMainFrame::OnFileExistUpdateUI)
-    EVT_UPDATE_UI(XRCID("save_all"),            clMainFrame::OnFileExistUpdateUI)
+    EVT_UPDATE_UI(XRCID("save_all"),            clMainFrame::OnFileSaveAllUI)
     EVT_UPDATE_UI(XRCID("save_tab_group"),      clMainFrame::OnFileExistUpdateUI)
     EVT_UPDATE_UI(XRCID("close_file"),          clMainFrame::OnFileCloseUI)
     EVT_UPDATE_UI(XRCID("load_last_session"),   clMainFrame::OnLoadLastSessionUI)
@@ -1679,7 +1679,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     //    if (rc == wxNO) {
     //        boDoNotClose = true;
     //    }
-    //}
+    // }
 
     if (!boDoNotClose) {
         ManagerST::Get()->SetShutdownInProgress(true);
@@ -5133,4 +5133,19 @@ void clMainFrame::OnCleanProjectOnly(wxCommandEvent& event)
 {
     wxCommandEvent e(wxEVT_CMD_CLEAN_PROJECT_ONLY);
     EventNotifier::Get()->AddPendingEvent( e );
+}
+
+void clMainFrame::OnFileSaveAllUI(wxUpdateUIEvent& event)
+{
+    bool hasModifiedEditor = false;
+    std::vector<LEditor*> editors;
+    GetMainBook()->GetAllEditors(editors);
+    for(size_t i=0; i<editors.size(); ++i) {
+        if( editors.at(i)->IsModified() ) {
+            hasModifiedEditor = true;
+            break;
+        }
+    }
+    
+    event.Enable( hasModifiedEditor );
 }

@@ -383,6 +383,7 @@ protected:
     void OnFileSaveAll(wxCommandEvent &event);
     void OnFileSaveTabGroup(wxCommandEvent &event);
     void OnFileExistUpdateUI(wxUpdateUIEvent &event);
+    void OnFileSaveAllUI(wxUpdateUIEvent &event);
     void OnCompleteWordUpdateUI(wxUpdateUIEvent &event);
     void OnFunctionCalltipUI(wxUpdateUIEvent &event);
     void OnIncrementalSearch(wxCommandEvent &event);

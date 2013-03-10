@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
  #include "cpptoken.h"
 #include <wx/string.h>
+#include <wx/crt.h>
 CppToken::CppToken()
 {
 	reset();

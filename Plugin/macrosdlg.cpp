@@ -28,6 +28,7 @@
 #include <wx/clipbrd.h>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/crt.h>
 #include "macrosdlg.h"
 #include "globals.h"
 #include "ieditor.h"

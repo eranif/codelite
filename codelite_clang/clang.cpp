@@ -5,6 +5,7 @@
 #include <wx/ffile.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
+#include <wx/crt.h>
 #include "../CodeLite/cpp_scanner.h"
 #include "../CodeLite/y.tab.h"
 

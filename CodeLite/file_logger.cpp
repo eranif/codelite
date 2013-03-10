@@ -3,6 +3,7 @@
 #include <wx/stdpaths.h>
 #include <sys/time.h>
 #include <wx/log.h>
+#include <wx/crt.h>
 
 static FileLogger theLogger;
 static bool initialized = false;

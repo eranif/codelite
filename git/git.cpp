@@ -656,6 +656,8 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
 void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
     wxUnusedVar(e);
+    gitAction ga(gitListAll, wxT(""));
+    m_gitActionQueue.push(ga);
     AddDefaultActions();
     ProcessGitActionQueue();
 }
@@ -1058,11 +1060,14 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     gitFileSet.insert(tmpArray.begin(), tmpArray.end());
 
     if (ga.action == gitListAll) {
+        m_mgr->SetStatusMessage(_("Colouring tracked git files..."), 0);
         ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, OverlayTool::Bmp_OK);
         m_trackedFiles.swap(gitFileSet);
 
     } else if (ga.action == gitListModified) {
-
+        m_mgr->SetStatusMessage(_("Colouring modifed git files..."), 0);
+        //Reset modified files
+        ColourFileTree(m_mgr->GetTree(TreeFileView), m_modifiedFiles, OverlayTool::Bmp_OK);
         // First get an up to date map of the filepaths/treeitemids
         // (Trying to cache these results in segfaults when the tree has been modified)
         std::map<wxString, wxTreeItemId> IDs;
@@ -1088,6 +1093,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         // Finally, cache the modified-files list: it's used in other functions
         m_modifiedFiles.swap(gitFileSet);
     }
+    m_mgr->SetStatusMessage(_(""), 0);
 }
 
 /*******************************************************************************/
@@ -1518,6 +1524,8 @@ void GitPlugin::InitDefaults()
         m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
         m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
 #endif
+        gitAction ga(gitListAll, wxT(""));
+        m_gitActionQueue.push(ga);
         AddDefaultActions();
         ProcessGitActionQueue();
     }
@@ -1529,8 +1537,8 @@ void GitPlugin::AddDefaultActions()
     gitAction ga(gitBranchCurrent, wxT(""));
     m_gitActionQueue.push(ga);
 
-    ga.action = gitListAll;
-    m_gitActionQueue.push(ga);
+//    ga.action = gitListAll;
+//    m_gitActionQueue.push(ga);
 
     ga.action = gitListModified;
     m_gitActionQueue.push(ga);

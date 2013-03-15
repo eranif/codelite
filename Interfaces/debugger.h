@@ -33,6 +33,7 @@
 #include "wx/event.h"
 #include "vector"
 #include "macros.h"
+#include <wx/stdpaths.h>
 
 enum DebuggerCommands {
     DBG_PAUSE = 0,
@@ -124,8 +125,8 @@ struct VariableObject {
     wxString gdbId;         // GDB unique identifier for this variable object
     wxString typeName;      // the type of this variable object
     int      numChilds;     // Number of children
-
-    VariableObject() : isPtr(false), isPtrPtr(false), numChilds(0) {}
+    bool     has_more;      // has_nore?
+    VariableObject() : isPtr(false), isPtrPtr(false), numChilds(0), has_more(false) {}
 };
 
 struct LocalVariable {
@@ -425,7 +426,18 @@ public:
         arch.Read(wxT("catchThrow"),                          catchThrow);
         arch.Read(wxT("showTooltips"),                        showTooltipsOnlyWithControlKeyIsDown);
         arch.Read(wxT("debugAsserts"),                        debugAsserts);
+        
         arch.ReadCData(wxT("startupCommands"),                startupCommands);
+        
+        wxFileName codeliteInstallDir;
+
+#ifdef __WXGTK__
+        codeliteInstallDir = wxFileName(wxString(INSTALL_DIR, wxConvUTF8), "gdb_printers");
+#else
+        codeliteInstallDir = wxFileName(wxStandardPaths::Get().GetDataDir(), "gdb_printers");
+#endif
+
+        startupCommands.Replace("$CodeLiteGdbPrinters", codeliteInstallDir.GetFullPath());
         startupCommands.Trim();
 
         arch.Read(wxT("maxDisplayStringSize"),                maxDisplayStringSize);

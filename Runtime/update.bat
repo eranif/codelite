@@ -13,6 +13,7 @@ xcopy lib*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy plugins\resources\*.* "%TARGET_DIR%\CodeLite\plugins\resources\" /E /I /H /Y /EXCLUDE:excludes
 xcopy rc\*.xrc "%TARGET_DIR%\CodeLite\rc\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\ "%TARGET_DIR%\CodeLite\templates\" /E /I /H /Y /EXCLUDE:excludes
+xcopy gdb_printers\*.py "%TARGET_DIR%\CodeLite\gdb_printers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\formbuilder\* "%TARGET_DIR%\CodeLite\templates\formbuilder\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\projects\* "%TARGET_DIR%\CodeLite\templates\projects\" /E /I /H /Y /EXCLUDE:excludes
 xcopy templates\gizmos\* "%TARGET_DIR%\CodeLite\templates\gizmos\" /E /I /H /Y /EXCLUDE:excludes

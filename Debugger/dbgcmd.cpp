@@ -300,15 +300,15 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
     m_gdb->GetDebugeePID(line);
 
     // Get the reason
-    std::vector<std::map<std::string, std::string> > children;
-    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
     wxString func;
     bool foundReason;
 
     foundReason = false;
-    for (size_t i=0; i<children.size(); i++) {
-        std::map<std::string, std::string> attr = children.at(i);
+    for (size_t i=0; i<info.children.size(); i++) {
+        std::map<std::string, std::string> attr = info.children.at(i);
         std::map<std::string, std::string >::const_iterator iter;
 
         iter = attr.find("reason");
@@ -600,11 +600,11 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
 {
     LocalVariables locals;
 
-    std::vector<std::map<std::string, std::string> > children;
-    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
-    for (size_t i=0; i<children.size(); i++) {
-        std::map<std::string, std::string> attr = children.at(i);
+    for (size_t i=0; i<info.children.size(); i++) {
+        std::map<std::string, std::string> attr = info.children.at(i);
         LocalVariable var;
         std::map<std::string, std::string >::const_iterator iter;
 
@@ -657,11 +657,11 @@ bool DbgCmdHandlerFuncArgs::ProcessOutput(const wxString &line)
 {
     LocalVariables locals;
 
-    std::vector<std::map<std::string, std::string> > children;
-    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
-    for (size_t i=0; i<children.size(); i++) {
-        std::map<std::string, std::string> attr = children.at(i);
+    for (size_t i=0; i<info.children.size(); i++) {
+        std::map<std::string, std::string> attr = info.children.at(i);
         LocalVariable var;
         std::map<std::string, std::string >::const_iterator iter;
 
@@ -934,15 +934,15 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 {
     wxString dbg_output( line );
     std::vector<BreakpointInfo> li;
-    std::vector<std::map<std::string, std::string> > children;
-    gdbParseListChildren(dbg_output.mb_str(wxConvUTF8).data(), children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(dbg_output.mb_str(wxConvUTF8).data(), info);
 
     // Children is a vector of map of attribues.
     // Each map represents an information about a breakpoint
     // the way gdb sees it
-    for(size_t i=0; i<children.size(); i++) {
+    for(size_t i=0; i<info.children.size(); i++) {
         BreakpointInfo breakpoint;
-        std::map<std::string, std::string> attr = children.at(i);
+        std::map<std::string, std::string> attr = info.children.at(i);
         std::map<std::string, std::string >::const_iterator iter;
 
         iter = attr.find("what");
@@ -1150,11 +1150,11 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
     // Variable object was created
     // Output sample:
     // ^done,name="var1",numchild="2",value="{...}",type="ChildClass",thread-id="1",has_more="0"
-    std::vector<std::map<std::string, std::string> > children;
-    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
-    if( children.size() ) {
-        std::map<std::string, std::string> attr = children.at(0);
+    if( info.children.size() ) {
+        std::map<std::string, std::string> attr = info.children.at(0);
         VariableObject vo;
         std::map<std::string, std::string >::const_iterator iter;
 
@@ -1203,7 +1203,9 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
                 vo.isPtrPtr = true;
             }
         }
-
+        
+        vo.has_more = info.has_more;
+        
         if ( vo.gdbId.IsEmpty() == false  ) {
 
             // set frozeness of the variable object
@@ -1264,15 +1266,15 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
     DebuggerEvent e;
     std::string cbuffer = line.mb_str(wxConvUTF8).data();
 
-    std::vector< std::map<std::string, std::string > > children;
-    gdbParseListChildren(cbuffer, children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(cbuffer, info);
 
     // Convert the parser output to codelite data structure
-    for (size_t i=0; i<children.size(); i++) {
-        e.m_varObjChildren.push_back( FromParserOutput( children.at(i) ) );
+    for (size_t i=0; i<info.children.size(); i++) {
+        e.m_varObjChildren.push_back( FromParserOutput( info.children.at(i) ) );
     }
 
-    if ( children.size() > 0 ) {
+    if ( info.children.size() > 0 ) {
         e.m_updateReason = DBG_UR_LISTCHILDREN;
         e.m_expression = m_variable;
         e.m_userReason = m_userReason;
@@ -1284,11 +1286,11 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 {
     std::string cbuffer = line.mb_str(wxConvUTF8).data();
-    std::vector< std::map<std::string, std::string > > children;
-    gdbParseListChildren(cbuffer, children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(cbuffer, info);
 
-    if(children.empty() == false) {
-        wxString display_line = ExtractGdbChild(children.at(0), wxT("value"));
+    if(info.children.empty() == false) {
+        wxString display_line = ExtractGdbChild(info.children.at(0), wxT("value"));
         display_line.Trim().Trim(false);
         if ( display_line.IsEmpty() == false ) {
             if(m_userReason == DBG_USERR_WATCHTABLE || display_line != wxT("{...}")) {
@@ -1355,13 +1357,13 @@ bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
     }
 
     std::string cbuffer = line.mb_str(wxConvUTF8).data();
-    std::vector< std::map<std::string, std::string > > children;
-    gdbParseListChildren(cbuffer, children);
+    GdbChildrenInfo info;
+    gdbParseListChildren(cbuffer, info);
 
-    for(size_t i=0; i<children.size(); i++) {
-        wxString name         = ExtractGdbChild(children.at(i), wxT("name"));
-        wxString in_scope     = ExtractGdbChild(children.at(i), wxT("in_scope"));
-        wxString type_changed = ExtractGdbChild(children.at(i), wxT("type_changed"));
+    for(size_t i=0; i<info.children.size(); i++) {
+        wxString name         = ExtractGdbChild(info.children.at(i), wxT("name"));
+        wxString in_scope     = ExtractGdbChild(info.children.at(i), wxT("in_scope"));
+        wxString type_changed = ExtractGdbChild(info.children.at(i), wxT("type_changed"));
         if(in_scope == wxT("false") || type_changed == wxT("true")) {
             e.m_varObjUpdateInfo.removeIds.Add(name);
 

@@ -107,6 +107,8 @@ stopped                                                    {RETURN_VAL(GDB_STOPP
 time                                                       {RETURN_VAL(GDB_TIME);}
 reason                                                     {RETURN_VAL(GDB_REASON);}
 changelist                                                 {RETURN_VAL(GDB_CHANGELIST);}
+has_more                                                   {RETURN_VAL(GDB_HAS_MORE);}
+displayhint                                                {RETURN_VAL(GDB_DISPLAYHINT);}
 {identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
 "^"                                                        {RETURN_VAL((int)*yytext);}
 "="                                                        {RETURN_VAL((int)*yytext);}

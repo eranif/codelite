@@ -94,6 +94,7 @@ Source: "C:\MinGW-4.7.1\bin\cygwin1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\MinGW-4.7.1\bin\libintl3.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "C:\MinGW-4.7.1\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\Runtime\locale\*"; DestDir: "{app}\locale"; Flags: recursesubdirs ; Components: Editor
+Source: "..\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs ; Components: Editor
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"

@@ -33,14 +33,16 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="">
+      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>
@@ -75,16 +77,24 @@ gdb_result_lexer.cpp: gdb_result.l
 	mv lex.gdb_result_.c gdb_result.cpp
 </CustomPreBuild>
       </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="" C_Options="" Required="yes" PreCompiledHeader="">
+      <Compiler Options="" C_Options="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
       <Linker Options="-O2" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>
@@ -105,6 +115,12 @@ gdb_result_lexer.cpp: gdb_result.l
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
   </Settings>
 </CodeLite_Project>

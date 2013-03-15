@@ -99,6 +99,7 @@ Source: "C:\MinGW-4.7.1\bin\pthreadGC2.dll"; DestDir: "{app}"; Flags: ignorevers
 Source: "C:\MinGW-4.7.1\*"; Excludes: "*.~*,msys\*,mingw-get\*"; DestDir: "{code:GetMinGWInstallDir}"; Flags: recursesubdirs ; Components: MinGW
 Source: "..\Runtime\wxWidgets-2.9.4\*"; DestDir: "{code:GetWxInstallDir}"; Flags: recursesubdirs ; Components: wxWidgets
 Source: "..\UnitTest++\*"; DestDir: "{code:GetUnitTestPPInstallDir}"; Flags: recursesubdirs ; Components: UnitTestPP
+Source: "..\Runtime\gdb_printers\*"; DestDir: "{app}\gdb_printers"; Flags: recursesubdirs ; Components: Editor
 
 [Icons]
 Name: "{group}\CodeLite "; Filename: "{app}\CodeLite.exe"; WorkingDir: "{app}"

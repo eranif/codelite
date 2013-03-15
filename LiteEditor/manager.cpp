@@ -3351,7 +3351,7 @@ void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
             view->m_variableName << wxT(" [") << event.m_variableObject.typeName << wxT("] ");
         }
 
-        if ( event.m_variableObject.numChilds > 0 ) {
+        if ( event.m_variableObject.numChilds > 0 || event.m_variableObject.has_more ) {
             // Complex type
             dbgr->ListChildren(event.m_variableObject.gdbId, event.m_userReason);
 

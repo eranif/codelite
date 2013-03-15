@@ -1,2 +1,1 @@
-^done,value="0 '\\0'",time={wallclock="0.00002",user="0.00002",system="0.00000",start="1292616626.233981",end="1292616626.234002"}
- 
+^done,name="var4",numchild="0",value="\"hello world\"",type="std::string",thread-id="1",displayhint="string",dynamic="1",has_more="1"

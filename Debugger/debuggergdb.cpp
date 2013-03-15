@@ -1094,6 +1094,8 @@ bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const w
     } else {
         SetShouldBreakAtMain(false); // Needs explicitly to be set, in case the user has just changed his options
     }
+    //enable python based pretty printing
+    WriteCommand( wxT( "-enable-pretty-printing" ), NULL );
     return true;
 }
 

@@ -2,5 +2,5 @@ BUGS:
 =====
 
 - MAC: Run make_mac_bundle.sh when build is ended
-
+- Fix mailing list
 

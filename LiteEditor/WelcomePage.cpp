@@ -120,14 +120,14 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
 
     pos.y += btn->GetSize().y;
 #ifdef __WXGTK__
-    pos.y += 10;
-    pos.x += 10;
+    pos.y += 5;
+    pos.x += 5;
 #elif defined(__WXMAC__)
-    pos.y += 15;
-    pos.x += 15;
-#else // MSW
     pos.y += 10;
     pos.x += 10;
+#else // MSW
+    pos.y += 5;
+    pos.x += 5;
 #endif
     return GetPopupMenuSelectionFromUser(menu, pos);
 }

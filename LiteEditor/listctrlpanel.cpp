@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "listctrlpanel.h"
+#include "listctrlpanel.h"
 #include "manager.h"
 #include "globals.h"
 #include "pluginmanager.h"
@@ -30,123 +30,102 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/imaglist.h>
 #include <memory>
+#include "globals.h"
+#include <wx/wupdlock.h>
 
 ListCtrlPanel::ListCtrlPanel ( wxWindow* parent )
-		: ListCtrlPanelBase ( parent )
-		, m_currLevel(0)
+    : ListCtrlPanelBase ( parent )
+    , m_currLevel(0)
 {
-	const wxBitmap& currLevel = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/forward"));
-	std::auto_ptr<wxImageList> imageList(new wxImageList(currLevel.GetWidth(), currLevel.GetHeight(), true));
-	imageList->Add(currLevel);
-	m_listCtrl->AssignImageList(imageList.release(), wxIMAGE_LIST_SMALL);
-
-	m_listCtrl->InsertColumn ( 0, _("Level")   );
-	m_listCtrl->InsertColumn ( 1, _("Address") );
-	m_listCtrl->InsertColumn ( 2, _("Function"));
-	m_listCtrl->InsertColumn ( 3, _("File")    );
-	m_listCtrl->InsertColumn ( 4, _("Line")    );
 }
 
-void ListCtrlPanel::OnItemActivated ( wxListEvent& event )
+void ListCtrlPanel::OnItemActivated(wxDataViewEvent& event)
 {
-	long frame, frameLine;
-	wxString frameNumber = GetColumnText ( event.m_itemIndex, 0 );
-	wxString frameLineStr   = GetColumnText ( event.m_itemIndex, 4 );
-	frameNumber.ToLong(&frame);
-	frameLineStr.ToLong(&frameLine);
+    int row = m_dvListCtrl->ItemToRow(event.GetItem());
 
-	if (m_currLevel != event.m_itemIndex)
-	{
-		if (m_currLevel >= 0 && m_currLevel < m_listCtrl->GetItemCount())
-			m_listCtrl->SetItemImage(m_currLevel, -1);
-		SetCurrentLevel( event.m_itemIndex );
-	}
+    StackEntry* entry = reinterpret_cast<StackEntry*>( m_dvListCtrl->GetItemData( event.GetItem() ) );
+    if ( entry ) {
+        long frame, frameLine;
+        entry->level.ToLong(&frame);
+        entry->line.ToLong(&frameLine);
+        SetCurrentLevel( row );
+        ManagerST::Get()->DbgSetFrame(frame, frameLine);
 
-	ManagerST::Get()->DbgSetFrame(frame, frameLine);
+        // Refresh the view
+        StackEntryArray stack = m_stack;
+        Update( stack );
+    }
 }
 
 void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
 {
-	m_listCtrl->Freeze();
-	Clear();
-	if (!stackArr.empty()) {
-		for (int i=0; i<(int)stackArr.size(); i++) {
-			long item = AppendListCtrlRow(m_listCtrl);
+    Clear();
+    m_stack.insert(m_stack.end(), stackArr.begin(), stackArr.end());
 
-			StackEntry entry = stackArr.at(i);
-			SetColumnText(item, 0, entry.level);
-			SetColumnText(item, 1, entry.address);
-			SetColumnText(item, 2, entry.function);
-			SetColumnText(item, 3, entry.file);
-			SetColumnText(item, 4, entry.line);
-			m_listCtrl->SetItemImage(item, -1);
-		}
-		m_listCtrl->SetColumnWidth(1, wxLIST_AUTOSIZE);
-		m_listCtrl->SetColumnWidth(2, wxLIST_AUTOSIZE);
-		m_listCtrl->SetColumnWidth(3, wxLIST_AUTOSIZE);
+    if (!m_stack.empty()) {
+        for (int i=0; i<(int)m_stack.size(); i++) {
 
-		if (m_currLevel >= 0 && m_currLevel < m_listCtrl->GetItemCount())
-			m_listCtrl->SetItemImage(m_currLevel, 0);
+            bool isactive = (i == m_currLevel);
+            StackEntry entry = m_stack.at(i);
+            wxVector<wxVariant> cols;
+            cols.push_back( ::MakeIconText(entry.level, isactive ? m_images.Bitmap("arrowActive") : m_images.Bitmap("arrowInactive")) ) ;
+            cols.push_back(entry.address);
+            cols.push_back(entry.function);
+            cols.push_back(entry.file);
+            cols.push_back(entry.line);
+            m_dvListCtrl->AppendItem( cols, (wxUIntPtr)new StackEntry(entry) );
 
-		m_listCtrl->EnsureVisible(m_currLevel);
-	}
-	m_listCtrl->Thaw();
-}
-
-void ListCtrlPanel::Clear()
-{
-	m_listCtrl->DeleteAllItems();
-}
-
-void ListCtrlPanel::SetColumnText ( long indx, long column, const wxString &rText )
-{
-	m_listCtrl->Freeze();
-	wxListItem list_item;
-	list_item.SetId ( indx );
-	list_item.SetColumn ( column );
-	list_item.SetMask ( wxLIST_MASK_TEXT );
-	list_item.SetText ( rText );
-	m_listCtrl->SetItem ( list_item );
-	m_listCtrl->Thaw();
-}
-
-wxString ListCtrlPanel::GetColumnText(long index, long column)
-{
-	wxListItem list_item;
-	list_item.SetId ( index );
-	list_item.SetColumn ( column );
-	list_item.SetMask ( wxLIST_MASK_TEXT );
-	m_listCtrl->GetItem ( list_item );
-	return list_item.GetText();
+            if ( isactive ) {
+                wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+                if ( item.IsOk() ) {
+                    m_dvListCtrl->EnsureVisible( item );
+                }
+            }
+        }
+    }
 }
 
 void ListCtrlPanel::SetCurrentLevel(const int level)
 {
-	// Set m_currLevel to level, or 0 if level is out of bounds
-	m_currLevel = (level >=0 && level < m_listCtrl->GetItemCount()) ? level : 0;
+    // Set m_currLevel to level, or 0 if level is out of bounds
+    m_currLevel = (level >=0 && level < m_dvListCtrl->GetItemCount()) ? level : 0;
 }
 
-void ListCtrlPanel::OnItemRightClicked(wxListEvent& event)
+void ListCtrlPanel::Clear()
 {
-	// Popup the menu
-	wxMenu menu;
+    m_stack.clear();
+    for(int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->GetStore()->GetItem(i);
+        if ( item.IsOk() ) {
+            StackEntry* entry = reinterpret_cast<StackEntry*>( m_dvListCtrl->GetItemData( item ) );
+            if ( entry ) {
+                delete entry;
+            }
+        }
+    }
+    m_dvListCtrl->DeleteAllItems();
+}
+void ListCtrlPanel::OnMenu(wxDataViewEvent& event)
+{
+    // Popup the menu
+    wxMenu menu;
 
-	menu.Append(XRCID("stack_copy_backtrace"),  _("Copy Backtrace to Clipboard"));
-	menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(ListCtrlPanel::OnCopyBacktrace), NULL, this);
-	m_listCtrl->PopupMenu( &menu );
+    menu.Append(XRCID("stack_copy_backtrace"),  _("Copy Backtrace to Clipboard"));
+    menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,  wxCommandEventHandler(ListCtrlPanel::OnCopyBacktrace), NULL, this);
+    m_dvListCtrl->PopupMenu( &menu );
 }
 
 void ListCtrlPanel::OnCopyBacktrace(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-	wxString trace;
-	for(int i=0; i<m_listCtrl->GetItemCount(); i++) {
-		trace << ::GetColumnText(m_listCtrl, i, 0) << wxT("  ")
-			  << ::GetColumnText(m_listCtrl, i, 1) << wxT("  ")
-			  << ::GetColumnText(m_listCtrl, i, 2) << wxT("  ")
-			  << ::GetColumnText(m_listCtrl, i, 3) << wxT("  ")
-			  << ::GetColumnText(m_listCtrl, i, 4) << wxT("\n");
-	}
-	trace.RemoveLast();
-	CopyToClipboard( trace );
+    wxUnusedVar(event);
+    wxString trace;
+    for(int i=0; i<m_stack.size(); ++i) {
+        trace << m_stack.at(i).level << wxT("  ")
+              << m_stack.at(i).address << wxT("  ")
+              << m_stack.at(i).function << wxT("  ")
+              << m_stack.at(i).file << wxT("  ")
+              << m_stack.at(i).line << wxT("\n");
+    }
+    trace.RemoveLast();
+    CopyToClipboard( trace );
 }

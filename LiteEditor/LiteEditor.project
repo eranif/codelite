@@ -774,12 +774,14 @@
       <File Name="OpenWindowsPanelBase.wxcp"/>
       <File Name="OpenWindowsPanelBase_liteeditor_bitmaps.cpp"/>
       <File Name="newquickwatch_liteeditor_bitmaps.cpp"/>
+      <File Name="listctrlpanel_formbuilder_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
     <File Name="importfilesdialog.wxcp"/>
     <File Name="implementparentvirtualfunctionsbase.wxcp"/>
     <File Name="newquickwatch.wxcp"/>
+    <File Name="../formbuilder/listctrlpanel.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

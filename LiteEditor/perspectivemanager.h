@@ -26,7 +26,7 @@ protected:
 protected:
     wxString DoGetPathFromName(const wxString &name);
     void DoEnsureDebuggerPanesAreVisible();
-    
+    void DoShowPane(const wxString &panename, bool show, bool &needUpdate);
     // Event handlers
     void OnPaneClosing(wxAuiManagerEvent &event);
     

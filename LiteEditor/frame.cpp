@@ -406,6 +406,22 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     //-------------------------------------------------------
     // Debug menu
     //-------------------------------------------------------
+    EVT_MENU(XRCID("debugger_win_locals"),      clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_watches"),     clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_output"),      clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_threads"),     clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_callstack"),   clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_memory"),      clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_breakpoints"), clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_asciiview"),   clMainFrame::OnShowDebuggerWindow)
+    EVT_UPDATE_UI(XRCID("debugger_win_locals"),      clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_watches"),     clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_output"),      clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_threads"),     clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_callstack"),   clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_memory"),      clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_breakpoints"), clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_asciiview"),   clMainFrame::OnShowDebuggerWindowUI)
     EVT_MENU(XRCID("start_debugger"),           clMainFrame::OnDebug)
     EVT_MENU(XRCID("restart_debugger"),         clMainFrame::OnDebugRestart)
     EVT_MENU(XRCID("attach_debugger"),          clMainFrame::OnDebugAttach)
@@ -5148,4 +5164,79 @@ void clMainFrame::OnFileSaveAllUI(wxUpdateUIEvent& event)
     }
     
     event.Enable( hasModifiedEditor );
+}
+
+void clMainFrame::OnShowDebuggerWindow(wxCommandEvent& e)
+{
+    // load the debugger configuration
+    clConfig conf("debugger-view.conf");
+    DebuggerPaneConfig item;
+    conf.ReadItem( &item );
+    
+    bool show = e.IsChecked();
+    if( e.GetId() == XRCID("debugger_win_locals") ) 
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Locals, show);
+        
+    if( e.GetId() == XRCID("debugger_win_watches"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Watches, show);
+        
+    if( e.GetId() == XRCID("debugger_win_output"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Output, show);
+        
+    if( e.GetId() == XRCID("debugger_win_threads"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Threads, show);
+        
+    if( e.GetId() == XRCID("debugger_win_callstack"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Callstack, show);
+        
+    if( e.GetId() == XRCID("debugger_win_memory"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Memory, show);
+        
+    if( e.GetId() == XRCID("debugger_win_breakpoints"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Breakpoints, show);
+        
+    if( e.GetId() == XRCID("debugger_win_asciiview"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::AsciiViewer, show);
+
+    conf.WriteItem( &item );
+    // Reload the perspective
+    ManagerST::Get()->GetPerspectiveManager().LoadPerspective();
+}
+
+void clMainFrame::OnShowDebuggerWindowUI(wxUpdateUIEvent& e)
+{
+    // load the debugger configuration
+    clConfig conf("debugger-view.conf");
+    DebuggerPaneConfig item;
+    conf.ReadItem( &item );
+    
+    DebuggerPaneConfig::eDebuggerWindows winid = DebuggerPaneConfig::None;
+    
+    if( e.GetId() == XRCID("debugger_win_locals") ) 
+        winid = DebuggerPaneConfig::Locals;
+        
+    if( e.GetId() == XRCID("debugger_win_watches"))
+        winid = DebuggerPaneConfig::Watches;
+        
+    if( e.GetId() == XRCID("debugger_win_output"))
+        winid = DebuggerPaneConfig::Output;
+        
+    if( e.GetId() == XRCID("debugger_win_threads"))
+        winid = DebuggerPaneConfig::Threads;
+        
+    if( e.GetId() == XRCID("debugger_win_callstack"))
+        winid = DebuggerPaneConfig::Callstack;
+        
+    if( e.GetId() == XRCID("debugger_win_memory"))
+        winid = DebuggerPaneConfig::Memory;
+        
+    if( e.GetId() == XRCID("debugger_win_breakpoints"))
+        winid = DebuggerPaneConfig::Breakpoints;
+        
+    if( e.GetId() == XRCID("debugger_win_asciiview"))
+        winid = DebuggerPaneConfig::AsciiViewer;
+    
+    if ( winid != DebuggerPaneConfig::None ) {
+        e.Check( item.IsDebuggerWindowShown(winid) );
+    }
 }

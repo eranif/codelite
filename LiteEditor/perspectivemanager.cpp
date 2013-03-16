@@ -4,12 +4,13 @@
 #include <wx/stdpaths.h>
 #include <wx/aui/framemanager.h>
 #include "globals.h"
+#include "debuggerpane.h"
 
 wxString DEBUG_LAYOUT  = wxT("debug.layout");
 wxString NORMAL_LAYOUT = wxT("default.layout");
 
 PerspectiveManager::PerspectiveManager()
-    : m_active(wxT("Default"))
+    : m_active(NORMAL_LAYOUT)
     , m_aui(NULL)
 {
     wxString active = EditorConfigST::Get()->GetStringValue(wxT("ActivePerspective"));
@@ -31,7 +32,7 @@ void PerspectiveManager::DeleteAllPerspectives()
 
     wxLogNull noLog;
     for(size_t i=0; i<files.GetCount(); i++) {
-        wxRemoveFile(files.Item(i));
+        ::wxRemoveFile(files.Item(i));
     }
 }
 
@@ -43,59 +44,33 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
     }
 
     wxString file = DoGetPathFromName(pname);
-    wxString nameOnly;
-
-    if(name.Find(wxT(".")) == wxNOT_FOUND) {
-        nameOnly = name;
-    } else {
-        nameOnly = name.BeforeLast(wxT('.'));
-    }
-
-//	// check whether the perspective has been modified before switching
-//	// in such case - update the active perspective and then
-//	// load the new one
-//	if(nameOnly.CmpNoCase(m_active) != 0) {
-//		wxString activeContent;
-//		wxString activeFileName = DoGetPathFromName(m_active);
-//		wxString perspective    = clMainFrame::Get()->GetDockingManager().SavePerspective();
-//
-//		if(ReadFileWithConversion(activeFileName, activeContent) && activeContent != perspective) {
-//			// Need to update the active perspective
-//			WriteFileWithBackup(DoGetPathFromName(m_active), perspective, false);
-//		}
-//	}
-
     wxString content;
+    
     if(ReadFileWithConversion(file, content)) {
         clMainFrame::Get()->GetDockingManager().LoadPerspective(content);
-        m_active = nameOnly;
+        m_active = pname;
         EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 
-        if(name == DEBUG_LAYOUT) {
+        if(pname == DEBUG_LAYOUT) {
             DoEnsureDebuggerPanesAreVisible();
         }
 
     } else {
-        if(name == DEBUG_LAYOUT) {
+        if(pname == DEBUG_LAYOUT) {
             DoEnsureDebuggerPanesAreVisible();
 
-            SavePerspective(name);
-            m_active = nameOnly;
+            SavePerspective(pname);
+            m_active = pname;
             EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
 
-        } else if (name == NORMAL_LAYOUT) {
+        } else if (pname == NORMAL_LAYOUT) {
             // Requested to load the Normal layout but we got no such layout
             // Make the current one the default layout
-            SavePerspective(name);
-            m_active = nameOnly;
+            SavePerspective(pname);
+            m_active = pname;
             EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
         }
     }
-
-//#ifdef __WXMAC__
-//	clMainFrame::Get()->GetDockingManager().Update();
-//#endif
-
 }
 
 void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
@@ -104,15 +79,12 @@ void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
     if(pname.IsEmpty()) {
         pname = GetActive();
     }
+
     WriteFileWithBackup(DoGetPathFromName(pname),
                         clMainFrame::Get()->GetDockingManager().SavePerspective(),
                         false);
+    m_active = pname;
 
-    if(pname.Find(wxT(".")) == wxNOT_FOUND) {
-        m_active = pname;
-    } else {
-        m_active = pname.BeforeLast(wxT('.'));
-    }
     EditorConfigST::Get()->SaveStringValue(wxT("ActivePerspective"), m_active);
     if(notify) {
         wxCommandEvent evt(wxEVT_REFRESH_PERSPECTIVE_MENU);
@@ -127,15 +99,7 @@ wxArrayString PerspectiveManager::GetAllPerspectives()
 
     for(size_t i=0; i<files.GetCount(); i++) {
         wxFileName fn(files.Item(i));
-        wxString name = fn.GetName();
-#if wxVERSION_NUMBER >= 2900
-        name = name.Capitalize();
-#else
-        name.MakeLower();
-        wxString start  = name.Mid(0, 1);
-        start.MakeUpper();
-        name[0] = start[0];
-#endif
+        wxString name = fn.GetFullName();
         perspectives.Add(name);
     }
     return perspectives;
@@ -229,6 +193,22 @@ void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
         info.Show();
         needUpdate = true;
     }
+    
+    // read the debugger pane configuration and make sure that all the windows 
+    // are visible according to the configuration
+    clConfig conf("debugger-view.conf");
+    DebuggerPaneConfig item;
+    conf.ReadItem( &item );
+    
+    DoShowPane(item.WindowName(DebuggerPaneConfig::AsciiViewer), (item.GetWindows() & DebuggerPaneConfig::AsciiViewer), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Threads),     (item.GetWindows() & DebuggerPaneConfig::Threads    ), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Callstack),   (item.GetWindows() & DebuggerPaneConfig::Callstack  ), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Breakpoints), (item.GetWindows() & DebuggerPaneConfig::Breakpoints), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Watches),     (item.GetWindows() & DebuggerPaneConfig::Watches    ), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Locals),      (item.GetWindows() & DebuggerPaneConfig::Locals     ), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Output),      (item.GetWindows() & DebuggerPaneConfig::Output     ), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Memory),      (item.GetWindows() & DebuggerPaneConfig::Memory     ), needUpdate );
+
 #ifndef __WXMSW__
     wxAuiPaneInfo &dbgPaneInfo = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger Console"));
     if(dbgPaneInfo.IsOk() && !dbgPaneInfo.IsShown()) {
@@ -236,8 +216,9 @@ void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
         needUpdate = true;
     }
 #endif
-    if(needUpdate)
+    if(needUpdate) {
         clMainFrame::Get()->GetDockingManager().Update();
+    }
 }
 
 void PerspectiveManager::OnPaneClosing(wxAuiManagerEvent& event)
@@ -299,3 +280,18 @@ void PerspectiveManager::DisconnectEvents()
     m_aui = NULL;
 }
 
+void PerspectiveManager::DoShowPane(const wxString& panename, bool show, bool& needUpdate)
+{
+    wxAuiManager* aui = &clMainFrame::Get()->GetDockingManager();
+    wxAuiPaneInfo &pane_info = aui->GetPane(panename);
+    if ( pane_info.IsOk() ) {
+        if ( show && !pane_info.IsShown() ) {
+            pane_info.Show();
+            needUpdate = true;
+            
+        } else if ( !show && pane_info.IsShown() ) {
+            pane_info.Show(false);
+            needUpdate = true;
+        }
+    }
+}

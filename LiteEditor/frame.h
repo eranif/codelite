@@ -469,7 +469,9 @@ protected:
     void OnRecentWorkspace(wxCommandEvent &event);
     void OnBackwardForward(wxCommandEvent &event);
     void OnBackwardForwardUI(wxUpdateUIEvent &event);
-
+    
+    void OnShowDebuggerWindow(wxCommandEvent &e);
+    void OnShowDebuggerWindowUI(wxUpdateUIEvent &e);
     void OnDebug(wxCommandEvent &e);
     void OnDebugUI(wxUpdateUIEvent &e);
     void OnDebugRestart(wxCommandEvent &e);

@@ -237,3 +237,63 @@ void DebuggerPane::Clear()
     GetMemoryView()->Clear();
     //GetDebugWindow()->Clear();
 }
+
+//----------------------------------------------------------------
+// Debugger config
+//----------------------------------------------------------------
+
+void DebuggerPaneConfig::FromJSON(const JSONElement& json)
+{
+    m_windows = json.namedObject("m_windows").toSize_t(All);
+}
+
+JSONElement DebuggerPaneConfig::ToJSON() const
+{
+    JSONElement e = JSONElement::createObject(GetName());
+    e.addProperty("m_windows", m_windows);
+    return e;
+}
+
+DebuggerPaneConfig::DebuggerPaneConfig()
+    : clConfigItem("debuggerWindows")
+    , m_windows(All)
+{
+}
+
+DebuggerPaneConfig::~DebuggerPaneConfig()
+{
+}
+
+wxString DebuggerPaneConfig::WindowName(eDebuggerWindows flag) const
+{
+    switch(flag) {
+    default:
+    case All:
+        return wxEmptyString;
+        
+    case Locals:
+        return wxGetTranslation(DebuggerPane::LOCALS);
+    
+    case Watches:
+        return wxGetTranslation(DebuggerPane::WATCHES);
+        
+    case Threads:
+        return wxGetTranslation(DebuggerPane::THREADS);
+    
+    case Callstack:
+        return wxGetTranslation(DebuggerPane::FRAMES);
+        
+    case Breakpoints:
+        return wxGetTranslation(DebuggerPane::BREAKPOINTS);
+        
+    case Memory:
+        return wxGetTranslation(DebuggerPane::MEMORY);
+    
+    case AsciiViewer:
+        return wxGetTranslation(DebuggerPane::ASCII_VIEWER);
+    
+    case Output:
+        return wxGetTranslation(DebuggerPane::DEBUGGER_OUTPUT);
+        
+    }
+}

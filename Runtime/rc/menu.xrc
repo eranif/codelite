@@ -467,6 +467,43 @@
         <object class="wxMenu" name="debug">
             <label>&amp;Debug</label>
             <style>wxMENU_TEAROFF</style>
+            <object class="wxMenu" name="debugger_windows">
+                <label>Windows</label>
+                <style>wxMENU_TEAROFF</style>
+                <object class="wxMenuItem" name="debugger_win_locals">
+                    <label>Locals</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="debugger_win_watches">
+                    <label>Watches</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="debugger_win_output">
+                    <label>Output</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="debugger_win_threads">
+                    <label>Threads</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="debugger_win_callstack">
+                    <label>Call Stack</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="debugger_win_memory">
+                    <label>Memory</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="debugger_win_breakpoints">
+                    <label>Breakpoints</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="debugger_win_asciiview">
+                    <label>ASCII Viewer</label>
+                    <checkable>1</checkable>
+                </object>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="start_debugger">
                 <label>&amp;Start/Continue Debugger</label>
             </object>

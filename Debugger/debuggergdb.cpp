@@ -594,7 +594,7 @@ bool DbgGdb::QueryFileLine()
 
 bool DbgGdb::QueryLocals()
 {
-    bool res = WriteCommand( wxT( "-stack-list-locals 2" ), new DbgCmdHandlerLocals( m_observer ) );
+    bool res = WriteCommand( wxT( "-stack-list-locals 1" ), new DbgCmdHandlerLocals( m_observer ) );
     if ( !res ) {
         return false;
     }

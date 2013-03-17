@@ -338,7 +338,12 @@ bool CodeLiteApp::OnInit()
     if (parser.Found(wxT("b"), &newBaseDir)) {
         homeDir = newBaseDir;
     }
-
+    
+    // Copy gdb pretty printers from the installation folder to a writeable location
+    // this is  needed because python complies the files and in most cases the user
+    // running codelite has no write permissions to /usr/share/codelite/...
+    DoCopyGdbPrinters();
+    
 #if defined (__WXGTK__)
     if (homeDir.IsEmpty()) {
         SetAppName(wxT("codelite"));
@@ -787,6 +792,22 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
         return menuFile.GetFullPath();
     }
     return defaultMenuFile;
+}
+
+void CodeLiteApp::DoCopyGdbPrinters()
+{
+    wxFileName printersInstallDir;
+#ifdef __WXGTK__
+    printersInstallDir = wxFileName(wxString(INSTALL_DIR, wxConvUTF8), "gdb_printers");
+#else
+    printersInstallDir = wxFileName(wxStandardPaths::Get().GetDataDir(), "gdb_printers");
+#endif
+    
+    // copy the files to ~/.codelite/gdb_printers
+    wxLogNull nolog;
+    wxFileName targetDir(wxStandardPaths::Get().GetUserDataDir(), "gdb_printers");
+    ::wxMkdir(targetDir.GetFullPath());
+    ::CopyDir(printersInstallDir.GetFullPath(), targetDir.GetFullPath());
 }
 
 //void CodeLiteApp::OnAppAcitvated(wxActivateEvent& e)

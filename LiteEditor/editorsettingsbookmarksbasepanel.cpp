@@ -68,7 +68,7 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     fgSizer1->Add(m_staticText66, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_highlightColor = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
-    m_highlightColor->SetToolTip(_("This lets you set the 'Highlight Matching Word' colour. To se the colour of the selection itself, see 'Settings > Syntax Highlight and Fonts'."));
+    m_highlightColor->SetToolTip(_("This lets you set the 'Highlight Matching Word' colour (the colour of words that match the selection). To set the colour of the selection itself, see 'Settings > Syntax Highlight and Fonts'."));
     
     fgSizer1->Add(m_highlightColor, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
     
@@ -77,7 +77,7 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     fgSizer1->Add(m_staticText54, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_spinCtrlHighlightAlpha = new wxSpinCtrl(this, wxID_ANY, wxT("128"), wxDefaultPosition, wxSize(-1,-1), wxSP_ARROW_KEYS);
-    m_spinCtrlHighlightAlpha->SetToolTip(_("Choose a colour between 0 and 256. Higher values give a less-transparent background"));
+    m_spinCtrlHighlightAlpha->SetToolTip(_("This affects the intensity of the colour set in the field above (for words matching the selection). Choose a value between 0 and 256. Higher values give a less-transparent background."));
     m_spinCtrlHighlightAlpha->SetRange(0, 255);
     
     fgSizer1->Add(m_spinCtrlHighlightAlpha, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);

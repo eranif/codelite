@@ -429,14 +429,7 @@ public:
         
         arch.ReadCData(wxT("startupCommands"),                startupCommands);
         
-        wxFileName codeliteInstallDir;
-
-#ifdef __WXGTK__
-        codeliteInstallDir = wxFileName(wxString(INSTALL_DIR, wxConvUTF8), "gdb_printers");
-#else
-        codeliteInstallDir = wxFileName(wxStandardPaths::Get().GetDataDir(), "gdb_printers");
-#endif
-
+        wxFileName codeliteInstallDir = wxFileName(wxStandardPaths::Get().GetUserDataDir(), "gdb_printers");
         startupCommands.Replace("$CodeLiteGdbPrinters", codeliteInstallDir.GetFullPath());
         startupCommands.Trim();
 

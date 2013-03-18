@@ -134,6 +134,7 @@ cp -r rc ./codelite.app/Contents/SharedSupport/
 cp -r templates ./codelite.app/Contents/SharedSupport/
 cp -r images ./codelite.app/Contents/SharedSupport/
 cp -r lexers ./codelite.app/Contents/SharedSupport/
+cp -r gdb_printers ./codelite.app/Contents/SharedSupport/
 
 cp astyle.sample ./codelite.app/Contents/SharedSupport/
 cp index.html ./codelite.app/Contents/SharedSupport/

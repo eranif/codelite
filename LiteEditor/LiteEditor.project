@@ -641,8 +641,6 @@
     <File Name="debugcoredumpbase.h"/>
     <File Name="debugcoredumpinfo.cpp"/>
     <File Name="debugcoredumpinfo.h"/>
-    <File Name="LocalsView.h"/>
-    <File Name="LocalsView.cpp"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="UnixCodeLite">
@@ -765,10 +763,6 @@
       <File Name="wxcAboutDlg.cpp"/>
       <File Name="addfunctionsmodel.cpp"/>
       <File Name="addfunctionsmodel.h"/>
-      <File Name="localsviewmodel.cpp"/>
-      <File Name="localsviewmodel.h"/>
-      <File Name="debugger_ui.h"/>
-      <File Name="debugger_ui.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -781,7 +775,6 @@
       <File Name="OpenWindowsPanelBase_liteeditor_bitmaps.cpp"/>
       <File Name="newquickwatch_liteeditor_bitmaps.cpp"/>
       <File Name="listctrlpanel_formbuilder_bitmaps.cpp"/>
-      <File Name="debugger_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -789,7 +782,6 @@
     <File Name="implementparentvirtualfunctionsbase.wxcp"/>
     <File Name="newquickwatch.wxcp"/>
     <File Name="../formbuilder/listctrlpanel.wxcp"/>
-    <File Name="debugger.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

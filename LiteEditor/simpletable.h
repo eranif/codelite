@@ -75,20 +75,20 @@ public:
      * responded for our CreateVariableObject call
      * @param event
      */
-    void OnCreateVariableObject  (const DebuggerEvent &event);
+    void OnCreateVariableObject  (const DebuggerEventData &event);
 
     /**
      * @brief a type resolving is completed, we can now add the watch
      */
-    void OnTypeResolved(const DebuggerEvent &event);
+    void OnTypeResolved(const DebuggerEventData &event);
     /**
      * @brief a callback called from the global manager when the debugger
      * responded for our ListChildren call
      * @param event
      */
-    void OnListChildren( const DebuggerEvent &event );
+    void OnListChildren( const DebuggerEventData &event );
 
-    void OnUpdateVariableObject(const DebuggerEvent &event);
+    void OnUpdateVariableObject(const DebuggerEventData &event);
 public:
     /** Constructor */
     WatchesTable( wxWindow* parent );

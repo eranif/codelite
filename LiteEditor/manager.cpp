@@ -1919,6 +1919,9 @@ static void DebugMessage ( wxString msg )
 
 void Manager::UpdateDebuggerPane()
 {
+    wxCommandEvent evtDbgRefreshViews(wxEVT_DEBUGGER_UPDATE_VIEWS);
+    EventNotifier::Get()->AddPendingEvent( evtDbgRefreshViews );
+    
     DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
 
 #if CL_USE_NATIVEBOOK
@@ -2485,7 +2488,7 @@ void Manager::UpdateFileLine ( const wxString &filename, int lineno, bool reposi
     UpdateDebuggerPane();
 }
 
-void Manager::UpdateGotControl ( const DebuggerEvent &e )
+void Manager::UpdateGotControl ( const DebuggerEventData &e )
 {
     int reason = e.m_controlReason;
     bool userTriggered = GetBreakpointsMgr()->GetExpectingControl();
@@ -3014,7 +3017,7 @@ void Manager::DbgClearWatches()
     m_dbgWatchExpressions.Clear();
 }
 
-void Manager::DebuggerUpdate(const DebuggerEvent& event)
+void Manager::DebuggerUpdate(const DebuggerEventData& event)
 {
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     DebuggerInformation dbgInfo = dbgr ? dbgr->GetDebuggerInformation() : DebuggerInformation();
@@ -3200,7 +3203,7 @@ void Manager::DebuggerUpdate(const DebuggerEvent& event)
             // Watch table
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnListChildren( event );
 
-        } else if(event.m_userReason == QUERY_LOCALS_CHILDS || event.m_userReason == LIST_LOCALS_CHILDS) {
+        } else if(event.m_userReason == QUERY_LOCALS_CHILDS || event.m_userReason == LIST_LOCALS_CHILDS || event.m_userReason == QUERY_LOCALS_CHILDS_FAKE_NODE) {
             // Locals table
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnListChildren( event );
 
@@ -3300,7 +3303,7 @@ void Manager::OnRestart(wxCommandEvent& event)
     DoRestartCodeLite();
 }
 
-void Manager::DoShowQuickWatchDialog( const DebuggerEvent &event )
+void Manager::DoShowQuickWatchDialog( const DebuggerEventData &event )
 {
     /////////////////////////////////////////////
     // Handle Tooltips

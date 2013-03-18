@@ -128,7 +128,7 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
     }
 }
 
-void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEvent& event)
+void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEventData& event)
 {
     wxString gdbId = event.m_expression;
     wxString value = event.m_evaluated;
@@ -341,7 +341,7 @@ wxString DebuggerTreeListCtrlBase::GetItemPath(const wxTreeItemId &item)
     return itemPath;
 }
 
-void DebuggerTreeListCtrlBase::OnCreateVariableObjError(const DebuggerEvent& event)
+void DebuggerTreeListCtrlBase::OnCreateVariableObjError(const DebuggerEventData& event)
 {
     // failed to create a variable object!
     // remove this expression from the table

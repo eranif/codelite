@@ -40,6 +40,7 @@
 #include "threadlistpanel.h"
 #include "debuggermanager.h"
 #include "debugger.h"
+#include "LocalsView.h"
 
 const wxString DebuggerPane::LOCALS          = _("Locals");
 const wxString DebuggerPane::WATCHES         = _("Watches");
@@ -123,6 +124,10 @@ void DebuggerPane::CreateGUIControls()
         m_localsTable = new LocalsTable(m_book);
         m_book->AddPage(m_localsTable, name, false, bmp);
     }
+    
+    // Add "Locals2"
+//    LocalsView* localsView = new LocalsView(m_book);
+//    m_book->AddPage(localsView, "Locals 2", false, bmp);
 
     // Add the 'watches View'
     name = wxGetTranslation(WATCHES);

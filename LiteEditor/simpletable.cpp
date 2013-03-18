@@ -173,7 +173,7 @@ void WatchesTable::AddExpression(const wxString &expr)
         dbgr->ResolveType(expr, DBG_USERR_WATCHTABLE);
         
     } else {
-        DebuggerEvent dummy;
+        DebuggerEventData dummy;
         dummy.m_expression = expr;
         dummy.m_evaluated  = expr;
         OnTypeResolved(dummy);
@@ -290,7 +290,7 @@ void WatchesTable::OnNewWatch_Internal(wxCommandEvent& event)
     }
 }
 
-void WatchesTable::OnCreateVariableObject(const DebuggerEvent& event)
+void WatchesTable::OnCreateVariableObject(const DebuggerEventData& event)
 {
     wxString expr = event.m_expression;
     IDebugger *dbgr = DoGetDebugger();
@@ -328,7 +328,7 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEvent& event)
     }
 }
 
-void WatchesTable::OnListChildren(const DebuggerEvent& event)
+void WatchesTable::OnListChildren(const DebuggerEventData& event)
 {
     wxString gdbId = event.m_expression;
     std::map<wxString, wxTreeItemId>::iterator iter = m_listChildItemId.find(gdbId);
@@ -465,7 +465,7 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
     }
 }
 
-void WatchesTable::OnUpdateVariableObject(const DebuggerEvent& event)
+void WatchesTable::OnUpdateVariableObject(const DebuggerEventData& event)
 {
     if(event.m_varObjUpdateInfo.refreshIds.IsEmpty())
         return;
@@ -477,7 +477,7 @@ void WatchesTable::OnUpdateVariableObject(const DebuggerEvent& event)
     }
 }
 
-void WatchesTable::OnTypeResolved(const DebuggerEvent& event)
+void WatchesTable::OnTypeResolved(const DebuggerEventData& event)
 {
     wxString expr = ::DbgPrependCharPtrCastIfNeeded(event.m_expression, event.m_evaluated);
     

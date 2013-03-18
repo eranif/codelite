@@ -72,7 +72,7 @@ public:
     void BuildTree  (const VariableObjChildren &children, IDebugger *debugger);
     void HideDialog ();
     void ShowDialog (bool center);
-    void OnCreateVariableObjError(const DebuggerEvent &event);
+    void OnCreateVariableObjError(const DebuggerEventData &event);
 
 };
 

@@ -32,6 +32,8 @@
 #include "gdb_parser_incl.h"
 #include "procutils.h"
 #include "gdbmi_parse_thread_info.h"
+#include "event_notifier.h"
+#include "debuggermanager.h"
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 
@@ -490,7 +492,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
             gdbVar = gdbVar.AfterFirst(wxT('"'));
             gdbVar = gdbVar.BeforeFirst(wxT('"'));
 
-            DebuggerEvent evt;
+            DebuggerEventData evt;
             evt.m_updateReason = DBG_UR_FUNCTIONFINISHED;
             evt.m_expression   = gdbVar;
             m_observer->DebuggerUpdate(evt);
@@ -650,6 +652,16 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
         locals.push_back( var );
     }
     m_observer->UpdateLocals( locals );
+    
+    // The new way of notifying: send a wx's event
+    wxCommandEvent evtLocals(wxEVT_DEBUGGER_QUERY_LOCALS);
+    DebuggerEventData data;
+    data.m_updateReason = DBG_UR_LOCALS;
+    data.m_userReason   = DBG_USERR_LOCALS;
+    data.m_locals = locals;
+    evtLocals.SetClientObject( new DebuggerEventData(data) );
+    EventNotifier::Get()->AddPendingEvent( evtLocals );
+    
     return true;
 }
 
@@ -765,7 +777,7 @@ bool DbgCmdSelectFrame::ProcessOutput(const wxString &line)
 {
     wxUnusedVar(line);
 
-    DebuggerEvent e;
+    DebuggerEventData e;
     e.m_updateReason  = DBG_UR_GOT_CONTROL;
     e.m_controlReason = DBG_END_STEPPING;
     e.m_frameInfo.function = wxEmptyString;
@@ -872,7 +884,7 @@ bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
     m_debugger->WriteCommand(cmd, NULL); // pass in NULL handler so the output of this command will be ignored
 
     // Update the observer
-    DebuggerEvent e;
+    DebuggerEventData e;
     e.m_updateReason = DBG_UR_TYPE_RESOLVED;
     e.m_userReason   = m_userReason;
     e.m_expression   = m_expression;
@@ -1021,7 +1033,7 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 {
     GdbMIThreadInfoParser parser;
     parser.Parse(line);
-    DebuggerEvent e;
+    DebuggerEventData e;
     const GdbMIThreadInfoVec_t& threads = parser.GetThreads();
     for(size_t i=0; i<threads.size(); ++i) {
         e.m_threads.push_back( threads.at(i).ToThreadEntry() );
@@ -1035,7 +1047,7 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 
 bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 {
-    DebuggerEvent e;
+    DebuggerEventData e;
     int divider (sizeof(unsigned long));
     int factor((int)(m_count/divider));
 
@@ -1136,7 +1148,7 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 
 bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
 {
-    DebuggerEvent e;
+    DebuggerEventData e;
 
     if(line.StartsWith(wxT("^error"))) {
         // Notify the observer we failed to create variable object
@@ -1207,18 +1219,18 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
         vo.has_more = info.has_more;
         
         if ( vo.gdbId.IsEmpty() == false  ) {
-
-            // set frozeness of the variable object
-            //wxString cmd;
-            //cmd << wxT("-var-set-frozen ") << vo.gdbId << wxT(" 0");
-            //m_debugger->WriteCommand(cmd, NULL);
-
+            
             e.m_updateReason = DBG_UR_VARIABLEOBJ;
             e.m_variableObject = vo;
             e.m_expression = m_expression;
             e.m_userReason = m_userReason;
             m_observer->DebuggerUpdate( e );
+            
+            wxCommandEvent evtCreate(wxEVT_DEBUGGER_VAROBJECT_CREATED);
+            evtCreate.SetClientObject( new DebuggerEventData(e) );
+            EventNotifier::Get()->AddPendingEvent( evtCreate );
         }
+
     }
     return true;
 }
@@ -1263,7 +1275,7 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
 
 bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 {
-    DebuggerEvent e;
+    DebuggerEventData e;
     std::string cbuffer = line.mb_str(wxConvUTF8).data();
 
     GdbChildrenInfo info;
@@ -1279,6 +1291,10 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
         e.m_expression = m_variable;
         e.m_userReason = m_userReason;
         m_observer->DebuggerUpdate( e );
+        
+        wxCommandEvent evtList(wxEVT_DEBUGGER_LIST_CHILDREN);
+        evtList.SetClientObject( new DebuggerEventData(e) );
+        EventNotifier::Get()->AddPendingEvent( evtList );
     }
     return true;
 }
@@ -1294,12 +1310,16 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
         display_line.Trim().Trim(false);
         if ( display_line.IsEmpty() == false ) {
             if(m_userReason == DBG_USERR_WATCHTABLE || display_line != wxT("{...}")) {
-                DebuggerEvent e;
+                DebuggerEventData e;
                 e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
                 e.m_expression    = m_variable;
                 e.m_evaluated     = display_line;
                 e.m_userReason    = m_userReason;
                 m_observer->DebuggerUpdate( e );
+                
+                wxCommandEvent evtList(wxEVT_DEBUGGER_VAROBJ_EVALUATED);
+                evtList.SetClientObject( new DebuggerEventData(e) );
+                EventNotifier::Get()->AddPendingEvent( evtList );
             }
         }
         return true;
@@ -1329,7 +1349,7 @@ bool DbgFindMainBreakpointIdHandler::ProcessOutput(const wxString& line)
 
 bool DbgCmdHandlerStackDepth::ProcessOutput(const wxString& line)
 {
-    DebuggerEvent e;
+    DebuggerEventData e;
     long frameLevel(-1);
     static wxRegEx reFrameDepth(wxT("depth=\"([0-9]+)\""));
     if(reFrameDepth.Matches(line)) {
@@ -1345,7 +1365,7 @@ bool DbgCmdHandlerStackDepth::ProcessOutput(const wxString& line)
 
 bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
 {
-    DebuggerEvent e;
+    DebuggerEventData e;
 
     if(line.StartsWith(wxT("^error"))) {
         // Notify the observer we failed to create variable object
@@ -1387,7 +1407,7 @@ bool DbgCmdHandlerExecRun::ProcessOutput(const wxString& line)
         errmsg.Replace(wxT("\\n"), wxT("\n"));
 
         // exec-run failed, notify about it
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason  = DBG_UR_GOT_CONTROL;
         e.m_controlReason = DBG_EXIT_WITH_ERROR;
         e.m_text          = errmsg;

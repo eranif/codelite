@@ -67,6 +67,90 @@
 #include <unistd.h>
 #endif
 
+const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
+const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
+
+// --------------------------------------------------------
+// Internal handler to handle queuing requests...
+// --------------------------------------------------------
+class clInternalEventHandlerData : public wxClientData
+{
+    
+    
+    wxObject*     m_this;
+    clEventFunc_t m_funcPtr;
+    wxObject*     m_arg;
+public:
+    clInternalEventHandlerData(wxObject* instance, clEventFunc_t func, wxObject* arg)
+        : m_this(instance)
+        , m_funcPtr(func)
+        , m_arg(arg)
+    {}
+
+    clInternalEventHandlerData(wxObject* instance, clEventFunc_t func)
+        : m_this(instance)
+        , m_funcPtr(func)
+        , m_arg(NULL)
+    {}
+
+    virtual ~clInternalEventHandlerData() {}
+    wxObject* GetArg() const {
+        return m_arg;
+    }
+    clEventFunc_t GetFuncPtr() const {
+        return m_funcPtr;
+    }
+    wxObject* GetThis() {
+        return m_this;
+    }
+};
+
+class clInternalEventHandler : public wxEvtHandler
+{
+public:
+    clInternalEventHandler() {
+        EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS, wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
+        EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS, wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
+    }
+
+    virtual ~clInternalEventHandler() {
+        EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS, wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
+        EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS, wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
+    }
+
+    /**
+     * @brief Call 1 arguments function
+     */
+    void OnInternalEvent1(wxCommandEvent &e) {
+        clInternalEventHandlerData* cd = reinterpret_cast<clInternalEventHandlerData*>(e.GetClientObject());
+        if ( cd ) {
+            wxObject* obj      = cd->GetThis();
+            wxObject* arg      = cd->GetArg();
+            clEventFunc_t func = cd->GetFuncPtr();
+            (obj->*func)(arg);
+        }
+    }
+    
+    /**
+     * @brief Call 0 arguments function
+     */
+    void OnInternalEvent0(wxCommandEvent &e) {
+        clInternalEventHandlerData* cd = reinterpret_cast<clInternalEventHandlerData*>(e.GetClientObject());
+        if ( cd ) {
+            wxObject* obj      = cd->GetThis();
+            clEventFunc_t func = cd->GetFuncPtr();
+            (obj->*func)(NULL);
+        }
+    }
+};
+
+// construct a global handler here
+clInternalEventHandler clEventHandlerHelper;
+
+// --------------------------------------------------------
+// Internal handler to handle queuing requests... end
+// --------------------------------------------------------
+
 static wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, const wxString &projectName, const wxString &confToBuild, const wxString &fileName);
 
 #ifdef __WXMAC__
@@ -99,8 +183,7 @@ static wxString MacGetInstallPath()
 #include <dirent.h>
 #endif
 
-struct ProjListCompartor
-{
+struct ProjListCompartor {
     bool operator() (const ProjectPtr p1, const ProjectPtr p2) const {
         return p1->GetName() > p2->GetName();
     }
@@ -156,7 +239,7 @@ static bool ReadBOMFile(const char *file_name, wxString &content, BOM& bom)
                     char *ptr = buffer;
                     ptr += bom.Len();
                     content = wxString(ptr, conv);
-                    
+
                     if ( content.IsEmpty() ) {
                         content  = wxString::From8BitData(ptr);
                     }
@@ -685,7 +768,7 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
     dir.Traverse ( dt );
 
     wxArrayString &files = dt.GetFiles();
-    
+
     if ( files.GetCount() > 0 ) {
 
         // Allocate image list
@@ -729,7 +812,7 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
         list.push_back ( dllProj );
         list.push_back ( exeProj );
     }
-    
+
     list.sort(ProjListCompartor());
 }
 
@@ -1340,7 +1423,7 @@ unsigned int UCS2FromUTF8(const char *s, unsigned int len, wchar_t *tbuf, unsign
 wxString DbgPrependCharPtrCastIfNeeded(const wxString &expr, const wxString &exprType)
 {
     static wxRegEx reConstArr(wxT("(const )?[ ]*(w)?char(_t)? *[\\[0-9\\]]*"));
-    
+
     bool arrayAsCharPtr = false;
     DebuggerInformation info;
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -1348,17 +1431,18 @@ wxString DbgPrependCharPtrCastIfNeeded(const wxString &expr, const wxString &exp
         DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
         arrayAsCharPtr = info.charArrAsPtr;
     }
-    
+
     wxString newExpr;
     if(arrayAsCharPtr && reConstArr.Matches(exprType)) {
         // array
         newExpr << wxT("(char*)") << expr;
-        
+
     } else {
         newExpr << expr;
     }
     return newExpr;
 }
+
 
 wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
 {
@@ -1368,4 +1452,20 @@ wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
     wxVariant v;
     v << ict;
     return v;
+}
+
+void PostCall(wxObject* instance, clEventFunc_t func, wxObject* arg)
+{
+    clInternalEventHandlerData *cd = new clInternalEventHandlerData(instance, func, arg);
+    wxCommandEvent evt(wxEVT_COMMAND_CL_INTERNAL_1_ARGS);
+    evt.SetClientObject( cd );
+    EventNotifier::Get()->AddPendingEvent( evt );
+}
+
+void PostCall(wxObject* instance, clEventFunc_t func)
+{
+    clInternalEventHandlerData *cd = new clInternalEventHandlerData(instance, func);
+    wxCommandEvent evt(wxEVT_COMMAND_CL_INTERNAL_0_ARGS);
+    evt.SetClientObject( cd );
+    EventNotifier::Get()->AddPendingEvent( evt );
 }

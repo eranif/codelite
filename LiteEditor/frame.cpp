@@ -3316,6 +3316,11 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
             ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
         }
         
+        // Notify plugins that we got the focus.
+        // Some plugins want to hide some frames etc
+        wxCommandEvent evtGotFocus(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS);
+        EventNotifier::Get()->AddPendingEvent( evtGotFocus );
+        
     } else if(m_theFrame) {
 
         LEditor *editor = GetMainBook()->GetActiveEditor();
@@ -3325,7 +3330,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
             editor->HideCompletionBox();
         }
     }
-
+    
     e.Skip();
 }
 

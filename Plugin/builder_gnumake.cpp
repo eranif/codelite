@@ -658,13 +658,32 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
     wxString cwd = ::wxGetCwd();
 
     wxString objectsList;
-    size_t objCounter = 0;
-    text << "Objects" << objCounter++ << "=";
+    size_t   objCounter = 0;
+    int      numOfObjectsInCurrentChunk = 0;
+    wxString curChunk;
+    
+    // We break the list of files into a seriese of objects variables 
+    // each variable contains up to 100 files.
+    // This is needed because on MSW, the ECHO command can not handle over 8K bytes
+    // and codelite uses the ECHO command to create a file with all the objects 
+    // so we can pass it to the liker
     for (size_t i=0; i<files.size(); ++i) {
-
+        
+        // Did we collect 100 objects yet?
         if ( i && ((i % 100) == 0) ) {
-            text << "\n\n";
-            text << "Objects" << objCounter++ << "=";
+            
+            // only if this chunk contains objects (even one), add it to the makefile
+            // otherwise, clear it and continue collecting
+            if ( numOfObjectsInCurrentChunk ) {
+                curChunk.Prepend( wxString() << "Objects" << objCounter << "=" );
+                curChunk << "\n\n";
+                text << curChunk;
+                objCounter++;
+            }
+            
+            // start a new chunk
+            curChunk.clear();
+            numOfObjectsInCurrentChunk = 0;
         }
 
         // is this a valid file?
@@ -678,15 +697,26 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
         wxString objPrefix = DoGetTargetPrefix(files.at(i), cwd, cmp);
         if (ft.kind == Compiler::CmpFileKindResource) {
             // resource files are handled differently
-            text << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
+            curChunk << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
         } else {
             // Compiler::CmpFileKindSource file
-            text << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetName() << wxT("$(ObjectSuffix) ");
+            curChunk << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetName() << wxT("$(ObjectSuffix) ");
         }
+        
+        // for readability, break every 10 objects and start a new line
         if (counter % 10 == 0) {
-            text << wxT("\\\n\t");
+            curChunk << wxT("\\\n\t");
         }
         counter++;
+        numOfObjectsInCurrentChunk++;
+    }
+    
+    // Add any leftovers...
+    if ( numOfObjectsInCurrentChunk ) {
+        curChunk.Prepend( wxString() << "Objects" << objCounter << "=" );
+        curChunk << "\n\n";
+        text << curChunk;
+        objCounter++;
     }
     
     text << "\n\nObjects=";

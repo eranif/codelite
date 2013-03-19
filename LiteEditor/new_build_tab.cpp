@@ -137,7 +137,7 @@ public:
         str.Trim();
         wxPoint pt = cell.GetTopLeft();
         wxFont f = m_font;
-        bool isSelected = state & wxDATAVIEW_CELL_SELECTED;
+        bool isSelected = false; //state & wxDATAVIEW_CELL_SELECTED;
 
         if ( str.StartsWith(ERROR_MARKER, &str) ) {
             if ( !isSelected ) {
@@ -806,6 +806,7 @@ bool NewBuildTab::DoSelectAndOpen(const wxDataViewItem& item)
     if( item.IsOk() == false )
         return false;
 
+    m_listctrl->UnselectAll(); // Clear any selection
     m_listctrl->EnsureVisible(item);
     m_listctrl->Select(item);
 

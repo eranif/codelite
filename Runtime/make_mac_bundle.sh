@@ -159,6 +159,9 @@ cat Info.plist.template | sed s/EXE_NAME/codelite/g >> ./codelite.app/Contents/I
 
 cp config/debuggers.xml.default ./codelite.app/Contents/SharedSupport/config
 
+## License
+cp ../LICENSE  ./codelite.app/Contents/SharedSupport/
+
 ## Copy plugins...
 cp ../lib/CodeFormatter.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/DebuggerGDB.dylib ./codelite.app/Contents/SharedSupport/debuggers/

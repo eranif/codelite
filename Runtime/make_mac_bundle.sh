@@ -184,7 +184,7 @@ cp ../lib/ZoomNavigator.dylib ./codelite.app/Contents/SharedSupport/plugins/
 if [ -f ../lib/wxcrafter.dylib ]; then
     cp ../lib/wxcrafter.dylib ./codelite.app/Contents/SharedSupport/plugins/
     cp -pr ../wxcrafter/wxgui.zip ./codelite.app/Contents/SharedSupport/
-    cp -pr ../wxcrafter/wxcrafter.accelerators ./codelite.app/Contents/SharedSupport/config/
+    cp -pr ../wxcrafter/wxcrafter.accelerators ./codelite.app/Contents/SharedSupport/plugins/resources
 fi
 
 cp ../lib/libplugin.dylib ./codelite.app/Contents/MacOS/

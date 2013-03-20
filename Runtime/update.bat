@@ -1,7 +1,9 @@
 @echo off
 
 set TARGET_DIR=%ProgramFiles(x86)%
+set COPY_WXC_RESOURCES=0
 IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
+IF EXIST ..\wxcrafter\wxcrafter.accelerators (set COPY_WXC_RESOURCES=1)
 
 xcopy config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\build_settings.xml.default.win "%TARGET_DIR%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
@@ -33,6 +35,8 @@ if "%WXWIN%" == "" GOTO OTHERS
 xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %WXWIN%\lib\gcc_dll\wxbase*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %WXWIN%\lib\gcc_dll\wxrc.exe "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+
+if "%COPY_WXC_RESOURCES%" == "1" (xcopy ..\wxcrafter\wxcrafter.accelerators  "%TARGET_DIR%\CodeLite\plugins\resources" )
 
 :OTHERS
 :: Copy the misc files

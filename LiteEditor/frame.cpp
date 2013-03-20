@@ -3624,12 +3624,14 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
             btn.isDefault   = true;
             btn.window      = this;
 
-            GetMainBook()->ShowMessage(_("A new version of CodeLite is available"), true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")), btn);
+            GetMainBook()->ShowMessage(_("A new version of codelite is available"), true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")), btn);
 
         } else {
             if (!data->GetShowMessage()) {
-                wxLogMessage(wxString::Format(_("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), (int)data->GetCurrentVersion(), (int)data->GetNewVersion()));
-
+                wxLogMessage(wxString() << "Info: codelite is up-to-date (or newer), version used: " 
+                                        << data->GetCurVersion() 
+                                        << ", version on site: "
+                                        << data->GetNewVersion());
             } else {
                 // User initiated the version check request
                 GetMainBook()->ShowMessage(_("CodeLite is up-to-date"));

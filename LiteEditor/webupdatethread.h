@@ -34,61 +34,61 @@ extern const wxEventType wxEVT_CMD_VERSION_UPTODATE;
 class WebUpdateJobData
 {
 
-	wxString m_url;
-	long     m_curVersion;
-	long     m_newVersion;
-	bool     m_upToDate;
-	wxString m_releaseNotes;
-	bool     m_showMessage;
+    wxString m_url;
+    wxString m_curVersion;
+    wxString m_newVersion;
+    bool     m_upToDate;
+    wxString m_releaseNotes;
+    bool     m_showMessage;
 
 public:
-	WebUpdateJobData(const wxString &url, const wxString &releaseNotes, long curVersion, long newVersion, bool upToDate, bool showMessage)
-			: m_url(url.c_str())
-			, m_curVersion(curVersion)
-			, m_newVersion(newVersion)
-			, m_upToDate(upToDate)
-			, m_releaseNotes(releaseNotes)
-			, m_showMessage(showMessage) {}
+    WebUpdateJobData(const wxString &url, const wxString &releaseNotes, wxString curVersion, wxString newVersion, bool upToDate, bool showMessage)
+        : m_url(url.c_str())
+        , m_curVersion(curVersion)
+        , m_newVersion(newVersion)
+        , m_upToDate(upToDate)
+        , m_releaseNotes(releaseNotes)
+        , m_showMessage(showMessage) {}
 
-	~WebUpdateJobData() {}
+    ~WebUpdateJobData() {}
 
-	const wxString& GetUrl() const {
-		return m_url;
-	}
-	long GetCurrentVersion() const {
-		return m_curVersion;
-	}
-	long GetNewVersion() const {
-		return m_newVersion;
-	}
+    const wxString& GetCurVersion() const {
+        return m_curVersion;
+    }
+    const wxString& GetNewVersion() const {
+        return m_newVersion;
+    }
+    const wxString& GetUrl() const {
+        return m_url;
+    }
 
-	bool IsUpToDate() const {
-		return m_upToDate;
-	}
+    bool IsUpToDate() const {
+        return m_upToDate;
+    }
 
-	void SetReleaseNotes(const wxString& releaseNotes) {
-		this->m_releaseNotes = releaseNotes;
-	}
-	const wxString& GetReleaseNotes() const {
-		return m_releaseNotes;
-	}
-	bool GetShowMessage() const {
-		return m_showMessage;
-	}
+    void SetReleaseNotes(const wxString& releaseNotes) {
+        this->m_releaseNotes = releaseNotes;
+    }
+    const wxString& GetReleaseNotes() const {
+        return m_releaseNotes;
+    }
+    bool GetShowMessage() const {
+        return m_showMessage;
+    }
 };
 
 class WebUpdateJob : public Job
 {
-	wxString m_dataRead;
-	bool     m_userRequest;
+    wxString m_dataRead;
+    bool     m_userRequest;
 public:
-	WebUpdateJob(wxEvtHandler *parent, bool userRequest);
-	virtual ~WebUpdateJob();
-	void ParseFile();
+    WebUpdateJob(wxEvtHandler *parent, bool userRequest);
+    virtual ~WebUpdateJob();
+    void ParseFile();
 
-	static size_t WriteData(void *buffer, size_t size, size_t nmemb, void *obj);
+    static size_t WriteData(void *buffer, size_t size, size_t nmemb, void *obj);
 
 public:
-	virtual void Process(wxThread *thread);
+    virtual void Process(wxThread *thread);
 };
 #endif // __webupdatethread__

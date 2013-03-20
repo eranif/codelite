@@ -46,7 +46,10 @@ void ListCtrlPanel::OnItemActivated(wxDataViewEvent& event)
     StackEntry* entry = reinterpret_cast<StackEntry*>( m_dvListCtrl->GetItemData( event.GetItem() ) );
     if ( entry ) {
         long frame, frameLine;
-        entry->level.ToLong(&frame);
+        if ( !entry->level.ToLong(&frame) ) {
+            frame = 0;
+        }
+        
         entry->line.ToLong(&frameLine);
         SetCurrentLevel( row );
         ManagerST::Get()->DbgSetFrame(frame, frameLine);

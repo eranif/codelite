@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles. 
 project(codelite)
-if (UNIX AND MAKE_AUTOGEN_REVISION_STRING)
+if (UNIX)
   message("-- Generating ${CL_SRC_ROOT}/LiteEditor/autoversion.cpp")
   execute_process(COMMAND "${CL_SRC_ROOT}/git-revision.sh" WORKING_DIRECTORY "${CL_SRC_ROOT}")
 else(UNIX)
@@ -20,8 +20,10 @@ endif (  UNIX AND NOT APPLE )
 ###########################################
 ## Generate autoversion.cpp file
 ###########################################
-ADD_CUSTOM_TARGET(GIT_REVISION COMMAND "${CL_SRC_ROOT}/git-revision.sh" WORKING_DIRECTORY "${CL_SRC_ROOT}"
+if ( MAKE_AUTOGEN_REVISION_STRING )
+	ADD_CUSTOM_TARGET(GIT_REVISION COMMAND "${CL_SRC_ROOT}/git-revision.sh" WORKING_DIRECTORY "${CL_SRC_ROOT}"
                    COMMENT Generating LiteEditor/autoversion.cpp file)
+endif( MAKE_AUTOGEN_REVISION_STRING )
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)

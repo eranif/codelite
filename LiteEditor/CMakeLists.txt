@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles. 
 project(codelite)
-if (UNIX)
+if (UNIX AND MAKE_AUTOGEN_REVISION_STRING)
   message("-- Generating ${CL_SRC_ROOT}/LiteEditor/autoversion.cpp")
   execute_process(COMMAND "${CL_SRC_ROOT}/git-revision.sh" WORKING_DIRECTORY "${CL_SRC_ROOT}")
 else(UNIX)

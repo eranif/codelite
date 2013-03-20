@@ -714,7 +714,7 @@ clMainFrame::~clMainFrame(void)
 void clMainFrame::Initialize(bool loadLastSession)
 {
     //set the revision number in the frame title
-    wxString title(_("CodeLite - Revision: "));
+    wxString title(_("CodeLite "));
     title << clGitRevision;
 
     //initialize the environment variable configuration manager
@@ -3855,7 +3855,7 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
         title << wxT("- ");
     }
 
-    title << _("CodeLite - Revision: ");
+    title << _("CodeLite ");
     title << clGitRevision;
     SetTitle(title);
 }

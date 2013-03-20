@@ -49,7 +49,7 @@ clSplashScreen::clSplashScreen(wxWindow* parent, const wxBitmap& bmp)
     label_dc.SetFont(font);
     
     wxString versionString = CODELITE_VERSION_STR;
-    versionString = versionString.BeforeLast('-');
+    //versionString = versionString.BeforeLast('-');
     
     label_dc.GetMultiLineTextExtent(versionString, &ww, &hh);
     wxCoord bmpW = bmp.GetWidth();

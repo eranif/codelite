@@ -1347,10 +1347,9 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
 
-        gitAction ga (gitListAll,wxT(""));
-        m_gitActionQueue.push(ga);
-        ga.action = gitListModified;
-        m_gitActionQueue.push(ga);
+        gitAction newAction;
+        newAction.action = gitListModified;
+        m_gitActionQueue.push(newAction);
         
     } else if(ga.action == gitBranchCurrent ) {
         GetCurrentBranchAction(ga);

@@ -2650,7 +2650,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"res/icon.png"
+							"m_path":	"../wxcrafter/resources/wxc-logo-16.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]

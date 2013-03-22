@@ -793,11 +793,19 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
                 wxFileName fn( files.Item( i ) );
                 wxString imageFileName(fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png") );
                 if( wxFileExists( imageFileName )) {
-                    int img_id = (*lstImages)->Add( wxBitmap( fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png"), wxBITMAP_TYPE_PNG ) );;
-                    (*imageMap)[proj->GetName()] = img_id;
+                    wxBitmap bmp = wxBitmap( fn.GetPath( wxPATH_GET_SEPARATOR ) + wxT("icon.png"), wxBITMAP_TYPE_PNG );
+                    if ( bmp.IsOk() && bmp.GetWidth() == 24 && bmp.GetHeight() == 24 ) {
+                        int img_id = (*lstImages)->Add( bmp );
+                        (*imageMap)[proj->GetName()] = img_id;
+                        
+                    } else {
+                        // wrong size...
+                        bmp = wxBitmap();
+                    }
                 }
             }
         }
+        
     } else {
         //if we ended up here, it means the installation got screwed up since
         //there should be at least 8 project templates !

@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DENABLE_CLANG=1|0                         // Build codelite with clang code completion support?, default is 1 (with clang)                                   #
 ##      -DWITH_WXC=1|0                             // Build wxCrafter (sources are not part of codelite distribution) default is 0                                    #
 ##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                 #
-##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 0?                    #
+##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
 ##                                                                                                                                                                    #
 #######################################################################################################################################################################
 
@@ -92,11 +92,11 @@ if(ENABLE_CLANG MATCHES 0)
   set( USE_CLANG 0 )
 endif (ENABLE_CLANG MATCHES 0)
 
-if (AUTOGEN_REVISION MATCHES 1)
-    set ( MAKE_AUTOGEN_REVISION_STRING 1)
-else (AUTOGEN_REVISION MATCHES 1)
+if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)
-endif (AUTOGEN_REVISION MATCHES 1)
+else (AUTOGEN_REVISION MATCHES 1)
+    set ( MAKE_AUTOGEN_REVISION_STRING 1)
+endif (AUTOGEN_REVISION MATCHES 0)
 
 ## build wxCrafter?
 if ( WITH_WXC )

@@ -39,6 +39,8 @@ class wxListCtrl;
 class IEditor;
 class IManager;
 
+typedef void (wxObject::*clEventFunc_t)(const wxObject* arg);
+
 class WXDLLIMPEXP_SDK BOM
 {
     wxMemoryBuffer m_bom;
@@ -368,4 +370,11 @@ WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString &expr, con
  * @brief create wxVariant from wxString + wxBitmap
  */
 WXDLLIMPEXP_SDK wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp);
+
+/**
+ * @brief queue a call to a function to be executed on the next event loop
+ */
+WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func, wxObject* arg);
+WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func);
+
 #endif //GLOBALS_H

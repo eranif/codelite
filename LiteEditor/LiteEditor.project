@@ -1182,8 +1182,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1222,9 +1221,7 @@ svninfo.cpp:
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
-      <PreBuild>
-        <Command Enabled="yes">..\git-revision.bat</Command>
-      </PreBuild>
+      <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite.exe" ..\Runtime</Command>
       </PostBuild>
@@ -1242,7 +1239,8 @@ svninfo.cpp:
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

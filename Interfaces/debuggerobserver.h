@@ -87,7 +87,8 @@ enum UserReason {
     DBG_USERR_LOCALS_INLINE
 };
 
-struct DebuggerEvent {
+class DebuggerEventData : public wxClientData {
+public:
     DebuggerUpdateReason          m_updateReason;     // Event reason - the reason why this event was sent
     // ==================================================
     // Available when the following UpdateReason are set:
@@ -111,7 +112,7 @@ struct DebuggerEvent {
     int                           m_userReason;       // User reason as provided in the calling API which triggered the DebuggerUpdate call
     StackEntry                    m_frameInfo;        // DBG_UR_FRAMEINFO
     VariableObjectUpdateInfo      m_varObjUpdateInfo; // DBG_UR_VAROBJUPDATE
-    DebuggerEvent()
+    DebuggerEventData()
         : m_updateReason  (DBG_UR_INVALID)
         , m_controlReason (DBG_UNKNOWN   )
         , m_file          (wxEmptyString )
@@ -146,7 +147,7 @@ public:
      * @brief the reporting method of the debugger. Must be implemented by any 'DebuggerObserver'
      * @param event struct containing the update reason along with additional information per update type
      */
-    virtual void DebuggerUpdate( const DebuggerEvent &event ) = 0;
+    virtual void DebuggerUpdate( const DebuggerEventData &event ) = 0;
 
 public:
     // For convinience
@@ -156,7 +157,7 @@ public:
      * @sa DebuggerReasons
      */
     void UpdateGotControl(DebuggerReasons reason, const wxString &func = wxEmptyString) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason  = DBG_UR_GOT_CONTROL;
         e.m_controlReason = reason;
         e.m_frameInfo.function = func;
@@ -167,7 +168,7 @@ public:
      * @brief this function is called when the debugger plugin loses the control.
      */
     void UpdateLostControl() {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason  = DBG_UR_LOST_CONTROL;
         DebuggerUpdate( e );
     }
@@ -178,7 +179,7 @@ public:
      * @param lineno the line number
      */
     void UpdateFileLine(const wxString &file, int lineno) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason  = DBG_UR_FILE_LINE;
         e.m_file = file;
         e.m_line = lineno;
@@ -190,7 +191,7 @@ public:
      * @param line message to log
      */
     void UpdateAddLine(const wxString &line, const bool OnlyIfLoggingOn = false) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason  = DBG_UR_ADD_LINE;
         e.m_text = line;
         e.m_onlyIfLogging = OnlyIfLoggingOn;
@@ -202,7 +203,7 @@ public:
      * @param the breakpoint's ids: internal and debugger
      */
     void UpdateBpAdded(const int internal_id, const int debugger_id) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_BP_ADDED;
         e.m_bpInternalId = internal_id;
         e.m_bpDebuggerId = debugger_id;
@@ -213,7 +214,7 @@ public:
      * @brief notify that the debugger is stopped (not used)
      */
     void UpdateStopped() {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_STOPPED;
         DebuggerUpdate( e );
     }
@@ -223,7 +224,7 @@ public:
      * @param array containing the local variable
      */
     void UpdateLocals(const LocalVariables &locals) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_LOCALS;
         e.m_userReason   = DBG_USERR_LOCALS;
         e.m_locals = locals;
@@ -235,7 +236,7 @@ public:
      * @param array containing the function arguments
      */
     void UpdateFunctionArguments(const LocalVariables &args) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_FUNC_ARGS;
         e.m_userReason   = DBG_USERR_LOCALS;
         e.m_locals = args;
@@ -248,7 +249,7 @@ public:
      * @param evaluated evaluated expression as string
      */
     void UpdateExpression(const wxString &expression, const wxString &evaluated) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_EXPRESSION;
         e.m_expression = expression;
         e.m_evaluated= evaluated;
@@ -260,7 +261,7 @@ public:
      * @param stackArray an array of StackEntry items
      */
     void UpdateStackList(const StackEntryArray &stackArray) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_UPDATE_STACK_LIST;
         e.m_stack = stackArray;
         DebuggerUpdate( e );
@@ -271,7 +272,7 @@ public:
      * @param line debugger output
      */
     void UpdateRemoteTargetConnected(const wxString &line) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_REMOTE_TARGET_CONNECTED;
         e.m_text = line;
         DebuggerUpdate( e );
@@ -282,7 +283,7 @@ public:
      * @param vector of breakpoints acquired from -break-list
      */
     void ReconcileBreakpoints(std::vector<BreakpointInfo>& li) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_RECONCILE_BPTS;
         e.m_bpInfoList = li;
         DebuggerUpdate( e );
@@ -293,7 +294,7 @@ public:
      * @param The breakpoint's ID
      */
     void UpdateBpHit(int id) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_BP_HIT;
         e.m_bpDebuggerId = id;
         DebuggerUpdate( e );
@@ -305,7 +306,7 @@ public:
      * @param tip
      */
     void UpdateAsciiViewer (const wxString &expression, const wxString &tip) {
-        DebuggerEvent e;
+        DebuggerEventData e;
         e.m_updateReason = DBG_UR_ASCII_VIEWER;
         e.m_expression = expression;
         e.m_text = tip;

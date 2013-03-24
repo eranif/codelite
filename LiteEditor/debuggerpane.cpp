@@ -123,7 +123,7 @@ void DebuggerPane::CreateGUIControls()
         m_localsTable = new LocalsTable(m_book);
         m_book->AddPage(m_localsTable, name, false, bmp);
     }
-
+    
     // Add the 'watches View'
     name = wxGetTranslation(WATCHES);
     bmp  = wxXmlResource::Get()->LoadBitmap(wxT("watches"));

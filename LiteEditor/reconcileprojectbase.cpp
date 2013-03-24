@@ -47,7 +47,7 @@ ReconcileProjectDlgBaseClass::ReconcileProjectDlgBaseClass(wxWindow* parent, wxW
     
     boxSizer224->Add(boxSizer276, 1, wxEXPAND, 5);
     
-    m_splitter = new wxSplitterWindow(m_panel220, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3D);
+    m_splitter = new wxSplitterWindow(m_panel220, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
     m_splitter->SetSashGravity(0.500000);
     m_splitter->SetMinimumPaneSize(10);
     

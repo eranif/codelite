@@ -73,6 +73,8 @@ static std::vector<std::string>  sg_locals;
 %token GDB_CHANGELIST
 %token GDB_DISPLAYHINT
 %token GDB_HAS_MORE
+%token GDB_NEW_NUM_CHILDREN
+%token GDB_NEW_CHILDREN
 %%
 
 parse: children_list
@@ -211,16 +213,17 @@ children     : GDB_CHILD '=' '{' child_attributes '}' {
              | children ',' GDB_CHILD '=' '{' child_attributes '}' {sg_children.push_back( sg_attributes ); sg_attributes.clear(); }
              ;
 
-child_attributes :  child_key '=' GDB_STRING {
-                        if ( $1 == "has_more" ) {
-                            sg_children.has_more = ($3 == "\"1\"");
+child_attributes : child_key '=' GDB_STRING {
+                       if ( $1 == "has_more" ) {
+                           sg_children.has_more = ($3 == "\"1\"");
 
-                        } else if (!$3.empty()) {
-                            sg_attributes[$1] = $3;
-                        }
-                    }
-                 |  child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
-                 |  GDB_TIME '=' '{' child_attributes '}'
+                       } else if (!$3.empty()) {
+                           sg_attributes[$1] = $3;
+                       }
+                   }
+                 | child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
+                 | GDB_NEW_CHILDREN '=' '[' { gdbConsumeList(); }
+                 | GDB_TIME '=' '{' child_attributes '}'
                  ;
 
 stop_statement : GDB_STOPPED ',' GDB_TIME '=' '{' child_attributes '}' ',' GDB_REASON '=' GDB_STRING {
@@ -233,15 +236,16 @@ stop_statement : GDB_STOPPED ',' GDB_TIME '=' '{' child_attributes '}' ',' GDB_R
                 }
                 ;
 
-child_key: GDB_NAME        {$$ = $1;}
-         | GDB_NUMCHILD    {$$ = $1;}
-         | GDB_TYPE        {$$ = $1;}
-         | GDB_VALUE       {$$ = $1;}
-         | GDB_ADDR        {$$ = $1;}
-         | GDB_IDENTIFIER  {$$ = $1;}
-         | GDB_LEVEL       {$$ = $1;}
-         | GDB_DISPLAYHINT {$$ = $1;}
-         | GDB_HAS_MORE    {$$ = $1;}
+child_key: GDB_NAME             {$$ = $1;}
+         | GDB_NUMCHILD         {$$ = $1;}
+         | GDB_TYPE             {$$ = $1;}
+         | GDB_VALUE            {$$ = $1;}
+         | GDB_ADDR             {$$ = $1;}
+         | GDB_IDENTIFIER       {$$ = $1;}
+         | GDB_LEVEL            {$$ = $1;}
+         | GDB_DISPLAYHINT      {$$ = $1;}
+         | GDB_HAS_MORE         {$$ = $1;}
+         | GDB_NEW_NUM_CHILDREN {$$ = $1;}
          ;
 %%
 
@@ -250,6 +254,24 @@ void cleanup()
     sg_attributes.clear();
     sg_children.clear();
     sg_locals.clear();
+}
+
+void gdbConsumeList()
+{
+    int depth = 1;
+    while(depth > 0) {
+        int ch = gdb_result_lex();
+        if(ch == 0) {
+            break;
+        }
+        if(ch == ']') {
+            depth--;
+            continue;
+        } else if(ch == ']') {
+            depth ++ ;
+            continue;
+        }
+    }
 }
 
 void gdbParseListChildren( const std::string &in, GdbChildrenInfo &children)

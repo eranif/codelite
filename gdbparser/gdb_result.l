@@ -108,6 +108,8 @@ time                                                       {RETURN_VAL(GDB_TIME)
 reason                                                     {RETURN_VAL(GDB_REASON);}
 changelist                                                 {RETURN_VAL(GDB_CHANGELIST);}
 has_more                                                   {RETURN_VAL(GDB_HAS_MORE);}
+new_children                                               {RETURN_VAL(GDB_NEW_CHILDREN);}
+new_num_children                                           {RETURN_VAL(GDB_NEW_NUM_CHILDREN);}
 displayhint                                                {RETURN_VAL(GDB_DISPLAYHINT);}
 {identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
 "^"                                                        {RETURN_VAL((int)*yytext);}

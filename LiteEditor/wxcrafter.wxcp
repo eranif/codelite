@@ -2650,7 +2650,7 @@
 						}, {
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
-							"m_path":	"res/icon.png"
+							"m_path":	"../wxcrafter/resources/wxc-logo-16.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -3076,6 +3076,10 @@
 																	"m_label":	"Note",
 																	"m_value":	"Download wxCrafter plugin from codelite's website"
 																}, {
+																	"type":	"filePicker",
+																	"m_label":	"Bitmap File:",
+																	"m_path":	""
+																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
 																	"m_value":	true
@@ -3156,6 +3160,10 @@
 																	"type":	"string",
 																	"m_label":	"Note",
 																	"m_value":	"Ignore the missing plugin and create the project anyway"
+																}, {
+																	"type":	"filePicker",
+																	"m_label":	"Bitmap File:",
+																	"m_path":	""
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Default Button",
@@ -3989,7 +3997,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxTAB_TRAVERSAL", "wxBORDER_THEME"],
+			"m_styles":	["wxTAB_TRAVERSAL"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -4427,6 +4435,10 @@
 																			"m_label":	"Note",
 																			"m_value":	"Open a recently used workspace"
 																		}, {
+																			"type":	"filePicker",
+																			"m_label":	"Bitmap File:",
+																			"m_path":	""
+																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
 																			"m_value":	false
@@ -4513,6 +4525,10 @@
 																			"type":	"string",
 																			"m_label":	"Note",
 																			"m_value":	"Open a recently used file"
+																		}, {
+																			"type":	"filePicker",
+																			"m_label":	"Bitmap File:",
+																			"m_path":	""
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4601,6 +4617,10 @@
 																			"m_label":	"Note",
 																			"m_value":	"Start a new project"
 																		}, {
+																			"type":	"filePicker",
+																			"m_label":	"Bitmap File:",
+																			"m_path":	""
+																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
 																			"m_value":	false
@@ -4681,6 +4701,10 @@
 																			"type":	"string",
 																			"m_label":	"Note",
 																			"m_value":	"Open a workspace"
+																		}, {
+																			"type":	"filePicker",
+																			"m_label":	"Bitmap File:",
+																			"m_path":	""
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -4763,6 +4787,10 @@
 																			"m_label":	"Note",
 																			"m_value":	"Visit codelite's forums"
 																		}, {
+																			"type":	"filePicker",
+																			"m_label":	"Bitmap File:",
+																			"m_path":	""
+																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
 																			"m_value":	false
@@ -4843,6 +4871,10 @@
 																			"type":	"string",
 																			"m_label":	"Note",
 																			"m_value":	"Search codelite's wiki pages"
+																		}, {
+																			"type":	"filePicker",
+																			"m_label":	"Bitmap File:",
+																			"m_path":	""
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",

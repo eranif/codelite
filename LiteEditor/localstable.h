@@ -6,8 +6,9 @@
 #include "debuggerobserver.h"
 #include "debuggersettings.h"
 
-#define LIST_LOCALS_CHILDS  600
-#define QUERY_LOCALS_CHILDS 601
+#define LIST_LOCALS_CHILDS            600
+#define QUERY_LOCALS_CHILDS           601
+#define QUERY_LOCALS_CHILDS_FAKE_NODE 602
 
 class LocalsTable : public DebuggerTreeListCtrlBase
 {
@@ -37,15 +38,15 @@ public:
 	 * @brief callback to IDebugger::CreateVariableObject
 	 * @param event
 	 */
-	void OnCreateVariableObj  (const DebuggerEvent& event);
+	void OnCreateVariableObj  (const DebuggerEventData& event);
 	/**
 	 * @brief callback to IDebugger::ListChildren
 	 */
-	void OnListChildren       (const DebuggerEvent& event);
+	void OnListChildren       (const DebuggerEventData& event);
 	/**
 	 * @brief called to IDEbugger::UpdateVariableObject
 	 */
-	void OnVariableObjUpdate  (const DebuggerEvent& event);
+	void OnVariableObjUpdate  (const DebuggerEventData& event);
 
 	void UpdateLocals  (const LocalVariables& locals);
 	void UpdateFrameInfo();

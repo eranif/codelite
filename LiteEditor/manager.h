@@ -664,7 +664,7 @@ public:
 
     void UpdateAddLine              (const wxString &line, const bool OnlyIfLoggingOn = false);
     void UpdateFileLine             (const wxString &file, int lineno, bool repositionEditor = true);
-    void UpdateGotControl           (const DebuggerEvent &e);
+    void UpdateGotControl           (const DebuggerEventData &e);
     void UpdateLostControl          ();
     void UpdateRemoteTargetConnected(const wxString &line);
     void UpdateTypeReolsved         (const wxString &expression, const wxString &type);
@@ -674,8 +674,8 @@ public:
     // Handle debugger event
     //---------------------------------------------------
 
-    void DebuggerUpdate        ( const DebuggerEvent &event );
-    void DoShowQuickWatchDialog( const DebuggerEvent &event );
+    void DebuggerUpdate        ( const DebuggerEventData &event );
+    void DoShowQuickWatchDialog( const DebuggerEventData &event );
 
     //--------------------------- Build Management -----------------------------
 public:

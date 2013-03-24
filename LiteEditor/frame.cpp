@@ -714,7 +714,7 @@ clMainFrame::~clMainFrame(void)
 void clMainFrame::Initialize(bool loadLastSession)
 {
     //set the revision number in the frame title
-    wxString title(_("CodeLite - Revision: "));
+    wxString title(_("CodeLite "));
     title << clGitRevision;
 
     //initialize the environment variable configuration manager
@@ -838,7 +838,7 @@ void clMainFrame::CreateGUIControls(void)
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR,                DrawingUtils::GetPanelBgColour());
 
     //initialize debugger configuration tool
-    DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("5.1"));
+    DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("5.11"));
     WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
@@ -3316,6 +3316,11 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
             ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
         }
         
+        // Notify plugins that we got the focus.
+        // Some plugins want to hide some frames etc
+        wxCommandEvent evtGotFocus(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS);
+        EventNotifier::Get()->AddPendingEvent( evtGotFocus );
+        
     } else if(m_theFrame) {
 
         LEditor *editor = GetMainBook()->GetActiveEditor();
@@ -3325,7 +3330,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
             editor->HideCompletionBox();
         }
     }
-
+    
     e.Skip();
 }
 
@@ -3619,12 +3624,14 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
             btn.isDefault   = true;
             btn.window      = this;
 
-            GetMainBook()->ShowMessage(_("A new version of CodeLite is available"), true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")), btn);
+            GetMainBook()->ShowMessage(_("A new version of codelite is available"), true, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/software_upgrade")), btn);
 
         } else {
             if (!data->GetShowMessage()) {
-                wxLogMessage(wxString::Format(_("Info: CodeLite is up-to-date (or newer), version used: %d, version on site:%d"), (int)data->GetCurrentVersion(), (int)data->GetNewVersion()));
-
+                wxLogMessage(wxString() << "Info: codelite is up-to-date (or newer), version used: " 
+                                        << data->GetCurVersion() 
+                                        << ", version on site: "
+                                        << data->GetNewVersion());
             } else {
                 // User initiated the version check request
                 GetMainBook()->ShowMessage(_("CodeLite is up-to-date"));
@@ -3850,7 +3857,7 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
         title << wxT("- ");
     }
 
-    title << _("CodeLite - Revision: ");
+    title << _("CodeLite ");
     title << clGitRevision;
     SetTitle(title);
 }

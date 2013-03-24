@@ -445,7 +445,7 @@ void DisplayVariableDlg::DoAdjustPosition()
     Move( ::wxGetMousePosition() );
 }
 
-void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEvent& event)
+void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEventData& event)
 {
     wxUnusedVar(event);
     m_keepCurrentPosition = false;

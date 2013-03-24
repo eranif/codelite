@@ -473,6 +473,9 @@ enum {
     // Sent from the CodeFormatter plugin when a file indentation is about to begin
     // event.GetString() will return the name of the indented file
     wxEVT_CODEFORMATTER_INDENT_STARTING,
+    
+    // Sent when codelite's main frame gained the focus
+    wxEVT_CODELITE_MAINFRAME_GOT_FOCUS,
 };
 
 //------------------------------------------------------------------

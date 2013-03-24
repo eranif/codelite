@@ -38,8 +38,8 @@ const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 static const size_t DLBUFSIZE = 4096;
 
 WebUpdateJob::WebUpdateJob(wxEvtHandler *parent, bool userRequest)
-		: Job(parent)
-		, m_userRequest(userRequest)
+    : Job(parent)
+    , m_userRequest(userRequest)
 {
 }
 
@@ -51,144 +51,137 @@ void WebUpdateJob::Process(wxThread* thread)
 {
 #ifndef __WXMSW__
 
-    wxFileName fn(wxT("/tmp/codelite-packages.txt"));
+    wxFileName fn(wxT("/tmp/codelite-packages-new.txt"));
     wxString command;
 #ifdef __WXMAC__
-    command << wxT("curl http://codelite.org/packages.txt  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+    command << wxT("curl http://codelite.org/packages-new.txt  --output ") << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
 #else
-    command << "wget http://codelite.org/packages.txt --output-file=/dev/null -O " << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
+    command << "wget http://codelite.org/packages-new.txt --output-file=/dev/null -O " << fn.GetFullPath() << wxT(" > /dev/null 2>&1");
 #endif
     {
         wxLogNull noLog;
         ::wxRemoveFile( fn.GetFullPath() );
     }
-    
+
     wxArrayString outputArr;
     ProcUtils::SafeExecuteCommand(command, outputArr);
-    
+
     if ( fn.FileExists() ) {
-        
+
         wxFFile fp(fn.GetFullPath(), wxT("rb"));
         if ( fp.IsOpened() ) {
-            
+
             m_dataRead.Clear();
             fp.ReadAll(&m_dataRead, wxConvUTF8);
-            
+
             ParseFile();
-            
+
         }
     }
-    
+
 #else
-	wxURL url(wxT("http://codelite.org/packages.txt"));
-	if (url.GetError() == wxURL_NOERR) {
+    wxURL url(wxT("http://codelite.org/packages-new.txt"));
+    if (url.GetError() == wxURL_NOERR) {
 
-		wxInputStream *in_stream = url.GetInputStream();
-		if (!in_stream) {
-			return;
-		}
-		bool shutdownRequest(false);
+        wxInputStream *in_stream = url.GetInputStream();
+        if (!in_stream) {
+            return;
+        }
+        bool shutdownRequest(false);
 
-		unsigned char buffer[DLBUFSIZE+1];
-		do {
+        unsigned char buffer[DLBUFSIZE+1];
+        do {
 
-			in_stream->Read(buffer, DLBUFSIZE);
-			size_t bytes_read = in_stream->LastRead();
-			if (bytes_read > 0) {
+            in_stream->Read(buffer, DLBUFSIZE);
+            size_t bytes_read = in_stream->LastRead();
+            if (bytes_read > 0) {
 
-				buffer[bytes_read] = 0;
-				wxString buffRead((const char*)buffer, wxConvUTF8);
-				m_dataRead.Append(buffRead);
-			}
+                buffer[bytes_read] = 0;
+                wxString buffRead((const char*)buffer, wxConvUTF8);
+                m_dataRead.Append(buffRead);
+            }
 
-			// Check termination request from time to time
-			if(thread->TestDestroy()) {
-				shutdownRequest = true;
-				break;
-			}
+            // Check termination request from time to time
+            if(thread->TestDestroy()) {
+                shutdownRequest = true;
+                break;
+            }
 
-		} while ( !in_stream->Eof() );
+        } while ( !in_stream->Eof() );
 
 
-		if(shutdownRequest == false) {
-			delete in_stream;
-			ParseFile();
-		}
-	}
-    
+        if(shutdownRequest == false) {
+            delete in_stream;
+            ParseFile();
+        }
+    }
 #endif
 }
 
 size_t WebUpdateJob::WriteData(void* buffer, size_t size, size_t nmemb, void* obj)
 {
-	WebUpdateJob *job = reinterpret_cast<WebUpdateJob*>(obj);
-	if (job) {
-		char *data = new char[size*nmemb+1];
-		memcpy(data, buffer, size*nmemb);
-		data[size*nmemb] = 0;
+    WebUpdateJob *job = reinterpret_cast<WebUpdateJob*>(obj);
+    if (job) {
+        char *data = new char[size*nmemb+1];
+        memcpy(data, buffer, size*nmemb);
+        data[size*nmemb] = 0;
 
-		job->m_dataRead.Append(_U(data));
-		delete [] data;
-		return size * nmemb;
-	}
-	return static_cast<size_t>(-1);
+        job->m_dataRead.Append(_U(data));
+        delete [] data;
+        return size * nmemb;
+    }
+    return static_cast<size_t>(-1);
 }
 
 void WebUpdateJob::ParseFile()
 {
-	wxString packageName(wxT("MSW"));
+    wxString packageName(wxT("MSW"));
 #if defined(__WXGTK__)
-	packageName = wxT("GTK");
+    packageName = wxT("GTK");
 #elif defined(__WXMAC__)
-	packageName = wxT("MAC");
+    packageName = wxT("MAC");
 #endif
 
-	// diffrentiate between the 64bit and the 32bit packages
+    // diffrentiate between the 64bit and the 32bit packages
 #ifdef ON_64_BIT
-	packageName << wxT("_64");
+    packageName << wxT("_64");
 #endif
 
-	wxArrayString lines = wxStringTokenize(m_dataRead, wxT("\n"));
-	for (size_t i=0; i<lines.GetCount(); i++) {
-		wxString line = lines.Item(i);
-		line = line.Trim().Trim(false);
-		if (line.StartsWith(wxT("#"))) {
-			//comment line
-			continue;
-		}
+    wxArrayString lines = wxStringTokenize(m_dataRead, wxT("\n"));
+    for (size_t i=0; i<lines.GetCount(); i++) {
+        wxString line = lines.Item(i);
+        line = line.Trim().Trim(false);
+        if (line.StartsWith(wxT("#"))) {
+            //comment line
+            continue;
+        }
 
-		// parse the line
-		wxArrayString tokens = wxStringTokenize(line, wxT("|"));
-		if (tokens.GetCount() > 3) {
-			// find the entry with our package name
-			if (tokens.Item(0).Trim().Trim(false) == packageName) {
-				wxString url = tokens.Item(2).Trim().Trim(false);
-				wxString rev = tokens.Item(1).Trim().Trim(false);
-				wxString releaseNotesUrl = tokens.Item(3).Trim().Trim(false);
+        // parse the line
+        wxArrayString tokens = wxStringTokenize(line, wxT("|"));
+        if (tokens.GetCount() > 3) {
+            // find the entry with our package name
+            if (tokens.Item(0).Trim().Trim(false) == packageName) {
+                wxString url = tokens.Item(2).Trim().Trim(false);
+                wxString rev = tokens.Item(1).Trim().Trim(false);
+                wxString releaseNotesUrl = tokens.Item(3).Trim().Trim(false);
 
-				long currev;
-				long webrev(0);
-
-				// convert strings to long
-				wxString sCurRev(clGitRevision);
-				sCurRev.ToLong(&currev);
-
-				wxString sUrlRev(rev);
-				sUrlRev.ToLong(&webrev);
-
-				if ( webrev > currev ) {
-					// notify the user that a new version is available
-					wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
-					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, false, m_userRequest));
-					wxPostEvent(m_parent, e);
-				} else {
-					// version is up to date, notify the main thread about it
-					wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
-					e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), currev, webrev, true, m_userRequest));
-					wxPostEvent(m_parent, e);
-				}
-				break;
-			}
-		}
-	}
+                // convert strings to long
+                wxString sCurRev(clGitRevision);
+                wxString sNewRev(rev);
+              
+                if ( sCurRev != sNewRev ) {
+                    // notify the user that a new version is available
+                    wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
+                    e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, false, m_userRequest));
+                    wxPostEvent(m_parent, e);
+                } else {
+                    // version is up to date, notify the main thread about it
+                    wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
+                    e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, true, m_userRequest));
+                    wxPostEvent(m_parent, e);
+                }
+                break;
+            }
+        }
+    }
 }

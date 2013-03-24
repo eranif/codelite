@@ -134,6 +134,7 @@ cp -r rc ./codelite.app/Contents/SharedSupport/
 cp -r templates ./codelite.app/Contents/SharedSupport/
 cp -r images ./codelite.app/Contents/SharedSupport/
 cp -r lexers ./codelite.app/Contents/SharedSupport/
+cp -r gdb_printers ./codelite.app/Contents/SharedSupport/
 
 cp astyle.sample ./codelite.app/Contents/SharedSupport/
 cp index.html ./codelite.app/Contents/SharedSupport/
@@ -157,6 +158,9 @@ cp config/codelite.xml.default.mac ./codelite.app/Contents/SharedSupport/config/
 cat Info.plist.template | sed s/EXE_NAME/codelite/g >> ./codelite.app/Contents/Info.plist
 
 cp config/debuggers.xml.default ./codelite.app/Contents/SharedSupport/config
+
+## License
+cp ../LICENSE  ./codelite.app/Contents/SharedSupport/
 
 ## Copy plugins...
 cp ../lib/CodeFormatter.dylib ./codelite.app/Contents/SharedSupport/plugins/
@@ -183,6 +187,7 @@ cp ../lib/ZoomNavigator.dylib ./codelite.app/Contents/SharedSupport/plugins/
 if [ -f ../lib/wxcrafter.dylib ]; then
     cp ../lib/wxcrafter.dylib ./codelite.app/Contents/SharedSupport/plugins/
     cp -pr ../wxcrafter/wxgui.zip ./codelite.app/Contents/SharedSupport/
+    cp -pr ../wxcrafter/wxcrafter.accelerators ./codelite.app/Contents/SharedSupport/plugins/resources
 fi
 
 cp ../lib/libplugin.dylib ./codelite.app/Contents/MacOS/
@@ -197,6 +202,7 @@ cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
 cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
 cp ./OpenTerm   ./codelite.app/Contents/SharedSupport/
 cp plugins/resources/*.*  ./codelite.app/Contents/SharedSupport/plugins/resources/
+
 
 ## Copy the locale files
 for lang in locale/* ; do

@@ -62,7 +62,7 @@ void LocalsTable::Initialize()
     m_curStackInfo.Clear();
 }
 
-void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
+void LocalsTable::OnCreateVariableObj(const DebuggerEventData& event)
 {
     wxString expr = event.m_expression;
     std::map<wxString, wxTreeItemId>::iterator iter = m_createVarItemId.find(expr);
@@ -92,7 +92,7 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEvent& event)
     }
 }
 
-void LocalsTable::OnListChildren(const DebuggerEvent& event)
+void LocalsTable::OnListChildren(const DebuggerEventData& event)
 {
     wxString gdbId = event.m_expression;
     std::map<wxString, wxTreeItemId>::iterator iter = m_listChildItemId.find(gdbId);
@@ -142,7 +142,7 @@ void LocalsTable::OnListChildren(const DebuggerEvent& event)
     }
 }
 
-void LocalsTable::OnVariableObjUpdate(const DebuggerEvent& event)
+void LocalsTable::OnVariableObjUpdate(const DebuggerEventData& event)
 {
     VariableObjectUpdateInfo updateInfo = event.m_varObjUpdateInfo;
 

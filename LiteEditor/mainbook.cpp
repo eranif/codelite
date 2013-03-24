@@ -387,18 +387,28 @@ LEditor *MainBook::FindEditor(const wxString &fileName)
 #ifdef __WXMSW__
     unixStyleFile.Replace(wxT("\\"), wxT("/"));
 #endif
+    // On gtk either fileName or the editor filepath (or both) may be (or their paths contain) symlinks
+    wxString fileNameDest = CLRealPath(fileName);
 
     for (size_t i = 0; i < m_book->GetPageCount(); i++) {
         LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
         if (editor) {
             wxString unixStyleFile(editor->GetFileName().GetFullPath());
-            wxString nativeFile   (editor->GetFileName().GetFullPath());
+            wxString nativeFile   (unixStyleFile);
 #ifdef __WXMSW__
             unixStyleFile.Replace(wxT("\\"), wxT("/"));
 #endif
-            if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0) {
+            if(nativeFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileName) == 0 || unixStyleFile.CmpNoCase(fileNameDest) == 0) {
                 return editor;
             }
+
+#if defined(__WXGTK__)
+            // Try again, dereferencing the editor fpath
+            wxString editorDest = CLRealPath(unixStyleFile);
+            if (editorDest.CmpNoCase(fileName) == 0 || editorDest.CmpNoCase(fileNameDest) == 0) {
+                return editor;
+            }
+#endif
         }
     }
     return NULL;

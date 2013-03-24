@@ -113,7 +113,25 @@ add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 ## Global optimizations
 #############################################
 
-if(CMAKE_BUILD_TYPE MATCHES Release)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    message("-- Building in Debug mode")
+    ## Set the libraries outout directory
+    set( CL_BIN_DIR bin_debug)
+    set( CL_LIB_DIR lib_debug)
+
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_BIN_DIR}" )
+    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
+    set( CL_LIBPATH                     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
+
+    message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "-g -O0")        ## No optimization, debug info
+    endif(CMAKE_COMPILER_IS_GNUCXX)
+    
+else ()
     message("-- Building in Release mode")
     
     ## Set the libraries outout directory
@@ -134,23 +152,6 @@ if(CMAKE_BUILD_TYPE MATCHES Release)
     endif(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-DNDEBUG)
 
-else ()
-    message("-- Building in Debug mode")
-    ## Set the libraries outout directory
-    set( CL_BIN_DIR bin_debug)
-    set( CL_LIB_DIR lib_debug)
-
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
-    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_BIN_DIR}" )
-    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
-    set( CL_LIBPATH                     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
-
-    message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-    message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-
-    if(CMAKE_COMPILER_IS_GNUCXX)
-        set(CMAKE_CXX_FLAGS "-g -O0")        ## No optimization, debug info
-    endif(CMAKE_COMPILER_IS_GNUCXX)
 
 endif()
 

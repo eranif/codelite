@@ -279,7 +279,6 @@ void OpenResourceDialog::Clear()
         }
     }
     m_listOptions->DeleteAllItems();
-    m_fullText->SetLabel(wxT(""));
 }
 
 void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selection, IManager* manager)
@@ -365,7 +364,6 @@ void OpenResourceDialog::DoSelectItem(int selection, bool makeFirst)
     // display the full name at the bottom static text control
     OpenResourceDialogItemData *data = (OpenResourceDialogItemData *) m_listOptions->GetItemData(selection);
     m_selection = *data;
-    m_fullText->SetLabel(data->m_file);
 }
 
 void OpenResourceDialog::OnItemSelected(wxListEvent& event)
@@ -375,7 +373,6 @@ void OpenResourceDialog::OnItemSelected(wxListEvent& event)
         // display the full name at the bottom static text control
         OpenResourceDialogItemData *data = (OpenResourceDialogItemData *) m_listOptions->GetItemData(event.m_itemIndex );
         m_selection = *data;
-        m_fullText->SetLabel(data->m_file);
     }
 }
 

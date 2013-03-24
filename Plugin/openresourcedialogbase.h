@@ -12,18 +12,14 @@
 #include <wx/dialog.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
-#include <wx/stattext.h>
 #include <wx/listctrl.h>
-#include <wx/statbox.h>
 #include <wx/button.h>
 
 class OpenResourceDialogBase : public wxDialog
 {
 protected:
     wxTextCtrl* m_textCtrlResourceName;
-    wxStaticText* m_staticText1;
     wxListView* m_listOptions;
-    wxStaticText* m_fullText;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 
@@ -35,8 +31,10 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    OpenResourceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Resource"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    OpenResourceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Resource"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~OpenResourceDialogBase();
 };
+
+
 
 #endif

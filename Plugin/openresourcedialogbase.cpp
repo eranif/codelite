@@ -11,7 +11,6 @@ extern void wxCFB13InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
 OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
@@ -26,8 +25,6 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     this->SetSizer(mainSizer);
     
     m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
-    wxFont m_textCtrlResourceNameFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlResourceName->SetFont(m_textCtrlResourceNameFont);
     
     mainSizer->Add(m_textCtrlResourceName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -38,20 +35,8 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     
     mainSizer->Add(fgSizer1, 0, wxEXPAND, 5);
     
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Matched resources:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    mainSizer->Add(m_staticText1, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
-    
     m_listOptions = new wxListView( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );
     mainSizer->Add(m_listOptions, 1, wxALL|wxEXPAND, 5);
-    
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
-    
-    mainSizer->Add(sbSizer1, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
-    
-    m_fullText = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    sbSizer1->Add(m_fullText, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     
@@ -67,7 +52,8 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     buttonSizer->Add(m_buttonCancel, 0, wxALL, 5);
     
     
-    SetSizeHints(400,300);
+    SetMinSize( wxSize(400,300) );
+    SetSizeHints(600,400);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -90,3 +76,4 @@ OpenResourceDialogBase::~OpenResourceDialogBase()
     m_buttonOk->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenResourceDialogBase::OnOKUI), NULL, this);
     
 }
+

@@ -141,6 +141,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 
     ## In debug, only add NDEBUG if the user says so
     if (PREVENT_WX_ASSERTS MATCHES 1)
+	message("-- Adding -DNDEBUG to definitions")
         add_definitions(-DNDEBUG)
     endif()
     
@@ -166,6 +167,7 @@ else ()
     
     ## In release, add NDEBUG unless explicitly told not to
     if (NOT PREVENT_WX_ASSERTS MATCHES 0)
+	message("-- Adding -DNDEBUG to definitions")
         add_definitions(-DNDEBUG)
     endif()
 

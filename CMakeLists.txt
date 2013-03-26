@@ -74,6 +74,19 @@ if (UNIX)
 endif (UNIX)
 
 ########################################
+## Support clang code completion
+########################################
+if(DEFINED ENV{CXX})
+    message("-- Using CXX $ENV{CXX}")
+    set(CMAKE_CXX_COMPILER $ENV{CXX} )
+endif()
+
+if(DEFINED ENV{CC})
+    message("-- Using CC $ENV{CC}")
+    set(CMAKE_CC_COMPILER $ENV{CC} )
+endif()
+
+########################################
 ## Override defaults with user input
 ########################################
 

@@ -42,9 +42,7 @@ public:
      */
     void NormalizeFilename(const wxArrayString &directories, const wxString &cygwinPath);
 
-    void SetFilename(const wxString& filename) {
-        this->m_filename = filename;
-    }
+    void SetFilename(const wxString& filename);
     void SetLineNumber(int line_number) {
         this->m_line_number = line_number;
     }

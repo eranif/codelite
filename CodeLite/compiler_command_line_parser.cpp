@@ -159,7 +159,18 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
             opt.Trim().Trim(false);
 
             wxString rest;
-            if(opt.StartsWith(wxT("-I"), &rest)) {
+            
+            if ( opt == "-isystem" && (i+1 < m_argc) ) {
+                
+                // the next arg is the include folder
+                wxString include_path = m_argv[i+1];
+                include_path.Trim().Trim(false);
+                
+                m_includes.Add( include_path );
+                m_includesWithPrefix.Add( wxString() << "-I" << include_path );
+                ++i;
+
+            } else if( opt.StartsWith(wxT("-I"), &rest)) {
                 m_includes.Add(rest);
                 m_includesWithPrefix.Add(opt);
             }

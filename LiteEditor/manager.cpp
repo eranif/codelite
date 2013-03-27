@@ -1269,6 +1269,9 @@ wxString Manager::GetProjectNameByFile(const wxString& fullPathFileName, bool ca
     wxArrayString projects;
     GetProjectList(projects);
 
+    // On gtk either fullPathFileName or the 'matching' project filename (or both) may be (or their paths contain) symlinks
+    wxString linkDestination = CLRealPath(fullPathFileName);
+
     std::vector<wxFileName> files;
     for (size_t i=0; i < projects.GetCount(); i++) {
         files.clear();
@@ -1276,16 +1279,31 @@ wxString Manager::GetProjectNameByFile(const wxString& fullPathFileName, bool ca
         proj->GetFiles(files, true);
 
         for (size_t xx=0; xx < files.size(); xx++) {
-            wxString f(files.at(xx ).GetFullPath());
+            wxString f(files.at(xx).GetFullPath());
             if (caseSensitive) {
-                if (f.Cmp(fullPathFileName) == 0) {
+                if (f.Cmp(fullPathFileName) == 0 || f.Cmp(linkDestination) == 0) {
                     return proj->GetName();
                 }
             } else {
-                if (f.CmpNoCase(fullPathFileName) == 0) {
+                if (f.CmpNoCase(fullPathFileName) == 0 || f.CmpNoCase(linkDestination) == 0) {
                     return proj->GetName();
                 }
             }
+#if defined(__WXGTK__)
+            // Try again, dereferencing f
+            wxString fdest = CLRealPath(f);
+            if (fdest != f) {
+                if (caseSensitive) {
+                    if (f.Cmp(fullPathFileName) == 0 || f.Cmp(linkDestination) == 0) {
+                        return proj->GetName();
+                    }
+                } else {
+                    if (f.CmpNoCase(fullPathFileName) == 0 || f.CmpNoCase(linkDestination) == 0) {
+                        return proj->GetName();
+                    }
+                }
+            }
+#endif
         }
     }
 

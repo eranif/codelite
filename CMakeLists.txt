@@ -18,6 +18,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DENABLE_CLANG=1|0                         // Build codelite with clang code completion support?, default is 1 (with clang)                                   #
 ##      -DWITH_WXC=1|0                             // Build wxCrafter (sources are not part of codelite distribution) default is 0                                    #
 ##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                 #
+##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                                #
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
 ##                                                                                                                                                                    #
 #######################################################################################################################################################################
@@ -73,6 +74,19 @@ if (UNIX)
 endif (UNIX)
 
 ########################################
+## Support clang code completion
+########################################
+if(DEFINED ENV{CXX})
+    message("-- Using CXX $ENV{CXX}")
+    set(CMAKE_CXX_COMPILER $ENV{CXX} )
+endif()
+
+if(DEFINED ENV{CC})
+    message("-- Using CC $ENV{CC}")
+    set(CMAKE_CC_COMPILER $ENV{CC} )
+endif()
+
+########################################
 ## Override defaults with user input
 ########################################
 
@@ -120,8 +134,8 @@ add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 ## Global optimizations
 #############################################
 
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    message("-- Building in Debug mode")
+if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
+    message("-- Building in ${CMAKE_BUILD_TYPE} mode")
     ## Set the libraries outout directory
     set( CL_BIN_DIR bin_debug)
     set( CL_LIB_DIR lib_debug)
@@ -137,6 +151,12 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_CXX_FLAGS "-g -O0")        ## No optimization, debug info
     endif(CMAKE_COMPILER_IS_GNUCXX)
+
+    ## In debug, only add NDEBUG if the user says so
+    if (PREVENT_WX_ASSERTS MATCHES 1)
+	message("-- Adding -DNDEBUG to definitions")
+        add_definitions(-DNDEBUG)
+    endif()
     
 else ()
     message("-- Building in Release mode")
@@ -157,7 +177,12 @@ else ()
         set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
         set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
     endif(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(-DNDEBUG)
+    
+    ## In release, add NDEBUG unless explicitly told not to
+    if (NOT PREVENT_WX_ASSERTS MATCHES 0)
+	message("-- Adding -DNDEBUG to definitions")
+        add_definitions(-DNDEBUG)
+    endif()
 
 
 endif()

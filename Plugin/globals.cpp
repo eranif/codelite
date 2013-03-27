@@ -1110,6 +1110,23 @@ wxFileName wxReadLink(const wxFileName & filename )
 #endif
 }
 
+wxString CLRealPath(const wxString& filepath)  // This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
+{
+#if defined(__WXGTK__)
+    char buf[PATH_MAX];
+    if (!filepath.empty()) {
+        if (realpath(filepath.mb_str(wxConvUTF8), buf) == NULL) {
+            return filepath;
+        }
+    }
+
+    return wxString(buf, wxConvUTF8);
+#else
+    return filepath;
+#endif
+}
+
+
 int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
 {
     long v;

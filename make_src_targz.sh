@@ -40,10 +40,10 @@ cd ${tmpdir}
 GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-gtk.src.tar.gz ${codelite_ver}/* --exclude *.exe --exclude *.dll --exclude *.dylib
 
 # then for MSWin
-tar cv --lzma -f ${curdir}/${codelite_ver}-win.src.tar.7z ${codelite_ver}/* --exclude *.so --exclude *.dylib
+#tar cv --lzma -f ${curdir}/${codelite_ver}-win.src.tar.7z ${codelite_ver}/* --exclude *.so --exclude *.dylib
 
 # and OS/X
-GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-mac.src.tar.gz ${codelite_ver}/* --exclude *.exe --exclude *.dll --exclude *.so
+#GZIP="-9" tar cvzf ${curdir}/${codelite_ver}-mac.src.tar.gz ${codelite_ver}/* --exclude *.exe --exclude *.dll --exclude *.so
 
 # Clean up
 rm -rf ${codelite_ver}

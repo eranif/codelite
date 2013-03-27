@@ -589,6 +589,12 @@ void NewBuildTab::MarkEditor(LEditor* editor)
     if ( iter.first == iter.second ) {
         // could not find any, try the fullname
         iter = m_buildInfoPerFile.equal_range(editor->GetFileName().GetFullName());
+#if defined(__WXGTK__)
+        if ( iter.first == iter.second ) {
+            // Nope. Perhaps it's a symlink
+            iter = m_buildInfoPerFile.equal_range(CLRealPath(editor->GetFileName().GetFullPath()));
+        }
+#endif
     }
     
     for(; iter.first != iter.second; ++iter.first) {
@@ -1091,4 +1097,15 @@ void BuildLineInfo::NormalizeFilename(const wxArrayString& directories, const wx
 
     // failed.. keep it as fullname only
     SetFilename(fn.GetFullName());
+}
+
+void BuildLineInfo::SetFilename(const wxString& filename) 
+{
+#if defined(__WXGTK__)
+    // CLRealPath copes with any symlinks in the filepath
+    m_filename = CLRealPath(filename);
+#else
+    this->m_filename = filename;
+#endif
+    
 }

@@ -35,7 +35,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer1->Add(bSizer2, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();
@@ -349,7 +349,6 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     m_spinCtrlNumElements = new wxSpinCtrl(m_panel6, wxID_ANY, wxT("200"), wxDefaultPosition, wxSize(-1, -1), wxSP_ARROW_KEYS);
     m_spinCtrlNumElements->SetToolTip(_("For no limit, set it to 0"));
-    m_spinCtrlNumElements->SetValue(200);
     m_spinCtrlNumElements->SetRange(0, 10000);
     
     fgSizer21->Add(m_spinCtrlNumElements, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
@@ -439,7 +438,6 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_maxFramesSpinCtrl = new wxSpinCtrl(m_panel7, wxID_ANY, wxT("500"), wxDefaultPosition, wxSize(70,-1), wxSP_ARROW_KEYS);
     m_maxFramesSpinCtrl->SetToolTip(_("The maximum number of frames that CodeLite will display in the Call Stack tab. This protects against a very long hang while trying to show 100,000 frames in an infinite recursion situation."));
     m_maxFramesSpinCtrl->SetRange(1, 999999);
-    m_maxFramesSpinCtrl->SetValue("500");
     
     boxSizer4->Add(m_maxFramesSpinCtrl, 0, wxALL, 5);
     

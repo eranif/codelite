@@ -641,6 +641,7 @@
     <File Name="debugcoredumpbase.h"/>
     <File Name="debugcoredumpinfo.cpp"/>
     <File Name="debugcoredumpinfo.h"/>
+    <File Name="DebuggerSettings.wxcp"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="UnixCodeLite">
@@ -775,6 +776,7 @@
       <File Name="OpenWindowsPanelBase_liteeditor_bitmaps.cpp"/>
       <File Name="newquickwatch_liteeditor_bitmaps.cpp"/>
       <File Name="listctrlpanel_formbuilder_bitmaps.cpp"/>
+      <File Name="DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -845,6 +847,7 @@
   <VirtualDirectory Name="src">
     <File Name="ImportFilesDialogNew.h"/>
     <File Name="ImportFilesDialogNew.cpp"/>
+    <File Name="DebuggerSettings_liteeditor_bitmaps.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ReconcileProject">
     <File Name="reconcileproject.cpp"/>

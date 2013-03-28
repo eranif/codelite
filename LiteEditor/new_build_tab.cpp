@@ -698,14 +698,17 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
 
         wxVector<wxVariant> data;
         data.push_back( wxVariant(buildLine) );
-
+        
         // Keep the line number in the build tab
         buildLineInfo->SetLineInBuildTab( m_listctrl->GetItemCount() );
         m_listctrl->AppendItem(data, (wxUIntPtr)buildLineInfo);
-
-        unsigned int count = m_listctrl->GetStore()->GetItemCount();
-        wxDataViewItem lastItem = m_listctrl->GetStore()->GetItem(count-1);
-        m_listctrl->EnsureVisible( lastItem );
+        
+        
+        if ( clConfig::Get().Read("build-auto-scroll", true) ) {
+            unsigned int count = m_listctrl->GetStore()->GetItemCount();
+            wxDataViewItem lastItem = m_listctrl->GetStore()->GetItem(count-1);
+            m_listctrl->EnsureVisible( lastItem );
+        }
 
     }
 

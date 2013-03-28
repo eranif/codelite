@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	249,
+		"m_objCounter":	255,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_liteeditor_bitmaps.cpp",
@@ -2139,7 +2139,7 @@
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
-											"m_winid":	"wxID_ANY"
+											"m_winid":	"XRCID(\"stick_build_pane\")"
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
@@ -2151,7 +2151,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"Don't close this pane when an editor gets focus"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
@@ -2189,27 +2189,27 @@
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
-											"m_winid":	"wxID_ANY"
+											"m_winid":	"XRCID(\"build-auto-scroll\")"
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_toolbarItem54"
+											"m_value":	"m_toolbarItemAutoScroll"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"Tool Label"
+											"m_value":	"Auto Scroll to Bottom"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"When checked, make sure that the last line added\\nis always visible"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
-											"m_value":	""
+											"m_value":	"When checked, make sure that the last line added\\nis always visible"
 										}, {
 											"type":	"filePicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"../../../../tmp/placeholder16.png"
+											"m_path":	"../codelite-icons/output-pane/16/auto-scroll.png"
 										}, {
 											"type":	"filePicker",
 											"m_label":	"Disabled-Bitmap File",
@@ -2217,8 +2217,40 @@
 										}, {
 											"type":	"choice",
 											"m_label":	"Kind:",
-											"m_selection":	3,
+											"m_selection":	1,
 											"m_options":	["normal", "checkable", "radio", "separator"]
+										}],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnAutoScroll(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+										}, {
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_eventHandler":	"wxUpdateUIEventHandler",
+											"m_functionNameAndSignature":	"OnAutoScrollUI(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event"
+										}],
+									"m_children":	[]
+								}, {
+									"m_type":	4504,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_tbSeparator255"
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	0,
+											"m_options":	["separator"]
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -2245,7 +2277,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"Save Build Log..."
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
@@ -2301,7 +2333,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"Clear Build Output"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",

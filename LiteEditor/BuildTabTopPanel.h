@@ -16,6 +16,8 @@ public:
     BuildTabTopPanel(wxWindow* parent);
     virtual ~BuildTabTopPanel();
 protected:
+    virtual void OnAutoScrollUI(wxUpdateUIEvent& event);
+    virtual void OnAutoScroll(wxCommandEvent& event);
     virtual void OnPaste(wxCommandEvent& event);
     virtual void OnPasteUI(wxUpdateUIEvent& event);
     virtual void OnCopyBuildOutput(wxCommandEvent& event);

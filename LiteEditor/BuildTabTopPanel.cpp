@@ -1,4 +1,5 @@
 #include "BuildTabTopPanel.h"
+#include "cl_config.h"
 
 #if CL_USE_NEW_BUILD_TAB
 
@@ -105,6 +106,14 @@ void BuildTabTopPanel::OnPasteUI(wxUpdateUIEvent& event)
         event.Enable( !m_buildTab->IsEmpty() );
 
     }
+}
+void BuildTabTopPanel::OnAutoScroll(wxCommandEvent& event)
+{
+    clConfig::Get().Write("build-auto-scroll", event.IsChecked());
+}
+void BuildTabTopPanel::OnAutoScrollUI(wxUpdateUIEvent& event)
+{
+    event.Check( clConfig::Get().Read("build-auto-scroll", true) );
 }
 
 #endif

@@ -2,6 +2,7 @@
 #include "editor_config.h"
 #include <wx/dcgraph.h>
 #include "plugin_general_wxcp.h"
+#include <wx/dcmemory.h>
 
 //-------------------------------------------------------------
 // The following code was copy as is from wxWidgets source tree

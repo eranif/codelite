@@ -470,14 +470,18 @@
       <File Name="VirtualDirectorySelectorBase_plugin_bitmaps.cpp"/>
       <File Name="openresourcedialogbase_plugin_bitmaps.cpp"/>
       <File Name="compiler_page_plugin_bitmaps.cpp"/>
+      <File Name="plugin_general_wxcp_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
       <File Name="VirtualDirectorySelectorBase.cpp"/>
       <File Name="compiler_pages.h"/>
       <File Name="compiler_pages.cpp"/>
+      <File Name="plugin_general_wxcp.h"/>
+      <File Name="plugin_general_wxcp.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
+    <File Name="plugin_general_wxcp.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

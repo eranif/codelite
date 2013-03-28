@@ -328,6 +328,10 @@ NewProjImgList::NewProjImgList()
     this->Add( bmp );
     m_bitmaps.insert( std::make_pair(wxT("wxc"), bmp ) );
     
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("tabClose"), bmp ) );
+    
     
 }
 

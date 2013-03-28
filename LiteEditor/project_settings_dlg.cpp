@@ -276,6 +276,7 @@ void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
 
     // another project was selected in the tree view
     m_projectName = e.GetString();
+    SetTitle( wxString() << m_projectName << " Project Settings" );
     DoGetAllBuildConfigs();
     LoadValues(m_configName);
 }

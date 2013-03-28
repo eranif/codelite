@@ -46,6 +46,7 @@ DebuggerPageMisc::DebuggerPageMisc(wxWindow* parent, const wxString &title)
         m_checkBoxEnableLog->SetValue(info.enableDebugLog);
         m_checkShowTerminal->SetValue(info.showTerminal);
         m_checkUseRelativePaths->SetValue(info.useRelativeFilePaths);
+        m_maxFramesSpinCtrl->SetValue(info.maxCallStackFrames);
 #ifdef __WXMSW__
         m_checkBoxDebugAssert->SetValue(info.debugAsserts);
 #endif
@@ -212,7 +213,7 @@ void DbgPagePreDefTypes::OnDeleteSetUI(wxUpdateUIEvent& event)
 void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
 {
     NewPreDefinedSetDlg dlg(this);
-    dlg.m_checkBoxMakeActive->SetValue(false);
+    dlg.GetCheckBoxMakeActive()->SetValue(false);
 
     wxArrayString copyFromArr;
     // Make sure that a set with this name does not already exists
@@ -220,12 +221,12 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
     for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++) {
         copyFromArr.Add(m_notebookPreDefTypes->GetPageText((size_t)i));
     }
-    dlg.m_choiceCopyFrom->Append(copyFromArr);
-    dlg.m_choiceCopyFrom->SetSelection(0);
-    dlg.m_textCtrlName->SetFocus();
+    dlg.GetChoiceCopyFrom()->Append(copyFromArr);
+    dlg.GetChoiceCopyFrom()->SetSelection(0);
+    dlg.GetNameTextctl()->SetFocus();
 
     if(dlg.ShowModal() == wxID_OK) {
-        wxString newName = dlg.m_textCtrlName->GetValue();
+        wxString newName = dlg.GetNameTextctl()->GetValue();
         newName.Trim().Trim(false);
         if(newName.IsEmpty())
             return;
@@ -239,7 +240,7 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
         }
 
         DebuggerPreDefinedTypes initialValues;
-        wxString copyFrom = dlg.m_choiceCopyFrom->GetStringSelection();
+        wxString copyFrom = dlg.GetChoiceCopyFrom()->GetStringSelection();
         if(copyFrom != wxT("None")) {
             for(size_t i=0; i<m_notebookPreDefTypes->GetPageCount(); i++) {
                 PreDefinedTypesPage *page = dynamic_cast<PreDefinedTypesPage*>(m_notebookPreDefTypes->GetPage(i));
@@ -253,7 +254,7 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
         initialValues.SetName( newName );
         m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, initialValues), 
                                        initialValues.GetName(), 
-                                       dlg.m_checkBoxMakeActive->IsChecked());
+                                       dlg.GetCheckBoxMakeActive()->IsChecked());
 
     }
 }
@@ -277,30 +278,30 @@ DebuggerSettingsDlg::DebuggerSettingsDlg( wxWindow* parent )
 
 void DebuggerSettingsDlg::Initialize()
 {
-    MSWSetNativeTheme(m_notebook2->GetTreeCtrl());
+    MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
 
     DebuggerMgr &mgr = DebuggerMgr::Get();
     wxArrayString debuggers = mgr.GetAvailableDebuggers();
     for (size_t i=0; i<debuggers.GetCount(); i++) {
 
         //create page per-debugger
-        m_notebook2->AddPage(0, debuggers.Item(i), false);
+        m_treebook2->AddPage(0, debuggers.Item(i), false);
 
         // for each debugger, add page
-        m_notebook2->AddSubPage(new DebuggerPage           (m_notebook2, debuggers.Item(i)), wxT("General"),          true);
-        m_notebook2->AddSubPage(new DebuggerPageMisc       (m_notebook2, debuggers.Item(i)), wxT("Misc"),             false);
-        m_notebook2->AddSubPage(new DebuggerPageStartupCmds(m_notebook2, debuggers.Item(i)), wxT("Startup Commands"), false);
+        m_treebook2->AddSubPage(new DebuggerPage           (m_treebook2, debuggers.Item(i)), wxT("General"),          true);
+        m_treebook2->AddSubPage(new DebuggerPageMisc       (m_treebook2, debuggers.Item(i)), wxT("Misc"),             false);
+        m_treebook2->AddSubPage(new DebuggerPageStartupCmds(m_treebook2, debuggers.Item(i)), wxT("Startup Commands"), false);
     }
 
-    m_notebook2->AddPage(new DbgPagePreDefTypes(m_notebook2), wxT("Pre Defined Types"), false);
+    m_treebook2->AddPage(new DbgPagePreDefTypes(m_treebook2), wxT("Pre Defined Types"), false);
 }
 
 void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
 {
     wxUnusedVar(e);
     //go over the debuggers and set the debugger path
-    for (size_t i=0; i<(size_t) m_notebook2->GetPageCount(); i++) {
-        wxWindow *win = m_notebook2->GetPage(i);
+    for (size_t i=0; i<(size_t) m_treebook2->GetPageCount(); i++) {
+        wxWindow *win = m_treebook2->GetPage(i);
         if( !win )
             continue;
 
@@ -338,6 +339,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
             info.enableDebugLog                      = miscPage->m_checkBoxEnableLog->GetValue();
             info.showTerminal                        = miscPage->m_checkShowTerminal->IsChecked();
             info.useRelativeFilePaths                = miscPage->m_checkUseRelativePaths->IsChecked();
+            info.maxCallStackFrames                  = miscPage->m_maxFramesSpinCtrl->GetValue();
 #ifdef __WXMSW__
             info.debugAsserts                        = miscPage->m_checkBoxDebugAssert->IsChecked();
 #endif

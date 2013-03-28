@@ -116,4 +116,18 @@ public:
 	virtual ~DebuggerSettingsDlg();
 };
 
+
+class NewPreDefinedSetDlg : public NewPreDefinedSetBaseDlg
+{
+protected:
+
+public:
+	NewPreDefinedSetDlg(wxWindow* parent) : NewPreDefinedSetBaseDlg(parent){}
+	virtual ~NewPreDefinedSetDlg(){}
+    
+    wxTextCtrl* GetNameTextctl() { return m_textCtrlName; }
+    wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }
+    wxCheckBox* GetCheckBoxMakeActive() { return m_checkBoxMakeActive; }
+};
+
 #endif // __debuggersettingsdlg__

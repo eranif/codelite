@@ -357,6 +357,7 @@ public:
     bool      showTerminal;
     wxString  consoleCommand;
     bool      useRelativeFilePaths;
+    int       maxCallStackFrames;
     bool      catchThrow;
     bool      showTooltipsOnlyWithControlKeyIsDown;
     bool      debugAsserts;
@@ -378,6 +379,7 @@ public:
         , showTerminal(false)
         , consoleCommand(TERMINAL_CMD)
         , useRelativeFilePaths(false)
+        , maxCallStackFrames(500)
         , catchThrow(false)
         , showTooltipsOnlyWithControlKeyIsDown(false)
         , debugAsserts(false)
@@ -401,6 +403,7 @@ public:
         arch.Write(wxT("showTerminal"),                        showTerminal);
         arch.Write(wxT("consoleCommand"),                      consoleCommand);
         arch.Write(wxT("useRelativeFilePaths"),                useRelativeFilePaths);
+        arch.Write(wxT("maxCallStackFrames"),                  maxCallStackFrames);
         arch.Write(wxT("catchThrow"),                          catchThrow);
         arch.Write(wxT("showTooltips"),                        showTooltipsOnlyWithControlKeyIsDown);
         arch.Write(wxT("debugAsserts"),                        debugAsserts);
@@ -423,6 +426,7 @@ public:
         arch.Read(wxT("showTerminal"),                        showTerminal);
         arch.Read(wxT("consoleCommand"),                      consoleCommand);
         arch.Read(wxT("useRelativeFilePaths"),                useRelativeFilePaths);
+        arch.Read(wxT("maxCallStackFrames"),                  maxCallStackFrames);
         arch.Read(wxT("catchThrow"),                          catchThrow);
         arch.Read(wxT("showTooltips"),                        showTooltipsOnlyWithControlKeyIsDown);
         arch.Read(wxT("debugAsserts"),                        debugAsserts);

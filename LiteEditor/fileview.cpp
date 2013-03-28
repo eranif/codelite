@@ -73,7 +73,8 @@ BEGIN_EVENT_TABLE( FileViewTree, wxTreeCtrl )
     EVT_TREE_BEGIN_DRAG(wxID_ANY, FileViewTree::OnItemBeginDrag )
     EVT_TREE_END_DRAG  (wxID_ANY, FileViewTree::OnItemEndDrag   )
     EVT_TREE_ITEM_MENU (wxID_ANY, FileViewTree::OnPopupMenu     )
-
+    EVT_TREE_SEL_CHANGED(wxID_ANY, FileViewTree::OnSelectionChanged)
+    
     EVT_MENU( XRCID( "local_workspace_prefs" ),        FileViewTree::OnLocalPrefs )
     EVT_MENU( XRCID( "local_workspace_settings" ),     FileViewTree::OnLocalWorkspaceSettings )
     EVT_MENU( XRCID( "remove_project" ),               FileViewTree::OnRemoveProject )
@@ -1114,13 +1115,13 @@ void FileViewTree::OnProjectProperties( wxCommandEvent & WXUNUSED( event ) )
     //open the project properties dialog
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
     //find the project configuration name that matches the workspace selected configuration
-    ProjectSettingsDlg dlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
+    ProjectSettingsDlg *dlg = new ProjectSettingsDlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ),
                             projectName,
                             title );
-
-    if(dlg.ShowModal() == wxID_OK) {
-        ManagerST::Get()->UpdateParserPaths(true);
-    }
+    dlg->Show();
+    //if(dlg.ShowModal() == wxID_OK) {
+    //    ManagerST::Get()->UpdateParserPaths(true);
+    //}
 
     //mark this project as modified
     ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
@@ -2263,4 +2264,18 @@ bool FileViewTree::IsFileExcludedFromBuild(const wxTreeItemId& item) const
         }
     }
     return false;
+}
+
+void FileViewTree::OnSelectionChanged(wxTreeEvent& e)
+{
+    e.Skip();
+    if ( !e.GetItem().IsOk() )
+        return;
+    
+    FilewViewTreeItemData *data = dynamic_cast<FilewViewTreeItemData*>( GetItemData( e.GetItem() ) );
+    if ( data && data->GetData().GetKind() == ProjectItem::TypeProject ) {
+        wxCommandEvent evtProjectSelected(wxEVT_PROJECT_TREEITEM_CLICKED);
+        evtProjectSelected.SetString( data->GetData().GetDisplayName() );
+        EventNotifier::Get()->AddPendingEvent( evtProjectSelected );
+    }
 }

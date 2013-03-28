@@ -476,6 +476,10 @@ enum {
     
     // Sent when codelite's main frame gained the focus
     wxEVT_CODELITE_MAINFRAME_GOT_FOCUS,
+    
+    // User clicked on a project item in the treeview
+    // the event.GetString() contains the project name that was clicked
+    wxEVT_PROJECT_TREEITEM_CLICKED,
 };
 
 //------------------------------------------------------------------

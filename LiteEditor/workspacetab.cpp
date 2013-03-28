@@ -239,10 +239,11 @@ void WorkspaceTab::OnProjectSettings(wxCommandEvent& e)
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 
     //find the project configuration name that matches the workspace selected configuration
-    ProjectSettingsDlg dlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
-    if(dlg.ShowModal() == wxID_OK) {
-        ManagerST::Get()->UpdateParserPaths(true);
-    }
+    ProjectSettingsDlg *dlg = new ProjectSettingsDlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
+    dlg->Show();
+    //if(dlg.ShowModal() == wxID_OK) {
+    //    ManagerST::Get()->UpdateParserPaths(true);
+    //}
 
     //mark this project as modified
     ProjectPtr proj = ManagerST::Get()->GetProject(projectName);

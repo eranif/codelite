@@ -110,7 +110,11 @@ void BuildTabTopPanel::OnPasteUI(wxUpdateUIEvent& event)
 void BuildTabTopPanel::OnAutoScroll(wxCommandEvent& event)
 {
     clConfig::Get().Write("build-auto-scroll", event.IsChecked());
+    if ( event.IsChecked() ) {
+        m_buildTab->ScrollToBottom();
+    }
 }
+
 void BuildTabTopPanel::OnAutoScrollUI(wxUpdateUIEvent& event)
 {
     event.Check( clConfig::Get().Read("build-auto-scroll", true) );

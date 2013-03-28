@@ -1009,6 +1009,17 @@ void NewBuildTab::OnCopySelectionUI(wxUpdateUIEvent& e)
     e.Enable( !m_buildInProgress && !items.IsEmpty() );
 }
 
+void NewBuildTab::ScrollToBottom()
+{
+    if ( m_listctrl->GetItemCount() ) {
+        int lastLine = m_listctrl->GetItemCount() - 1;
+        wxDataViewItem item = m_listctrl->RowToItem(lastLine);
+        if ( item.IsOk() ) {
+            m_listctrl->EnsureVisible( item );
+        }
+    }
+}
+
 ////////////////////////////////////////////
 // CmpPatter
 

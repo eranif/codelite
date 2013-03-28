@@ -1,16 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __PROJECT_SETTINGS_BASE_DLG_H__
-#define __PROJECT_SETTINGS_BASE_DLG_H__
+#ifndef __project_settings_base_dlg__
+#define __project_settings_base_dlg__
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
+
 #include <wx/string.h>
 #include <wx/choice.h>
 #include <wx/gdicmn.h>
@@ -60,13 +59,14 @@ class ProjectSettingsBaseDlg : public wxDialog
 		virtual void OnConfigurationChanged( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonHelp( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonOK( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonCancel( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonApply( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonApplyUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER ); 
+		ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~ProjectSettingsBaseDlg();
 	
 };
@@ -118,7 +118,7 @@ class PSGeneralPageBase : public wxPanel
 	public:
 		wxGridBagSizer* m_gbSizer1;
 		
-		PSGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSGeneralPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSGeneralPageBase();
 	
 };
@@ -170,7 +170,7 @@ class PSCompilerPageBase : public wxPanel
 	
 	public:
 		
-		PSCompilerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCompilerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCompilerPageBase();
 	
 };
@@ -188,6 +188,7 @@ class PSLinkPageBase : public wxPanel
 		wxGridBagSizer* m_gbSizer3;
 		wxStaticText* m_staticText3311;
 		wxChoice* m_choiceLnkUseWithGlobalSettings;
+		
 		wxStaticText* m_staticText10;
 		wxTextCtrl* m_textLinkerOptions;
 		wxButton* m_buttonLinkerOptions;
@@ -210,7 +211,7 @@ class PSLinkPageBase : public wxPanel
 	
 	public:
 		
-		PSLinkPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSLinkPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSLinkPageBase();
 	
 };
@@ -247,7 +248,7 @@ class PSDebuggerPageBase : public wxPanel
 	
 	public:
 		
-		PSDebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSDebuggerPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSDebuggerPageBase();
 	
 };
@@ -281,7 +282,7 @@ class PSResourcesPageBase : public wxPanel
 	
 	public:
 		
-		PSResourcesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSResourcesPageBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSResourcesPageBase();
 	
 };
@@ -309,7 +310,7 @@ class PSEnvironmentBasePage : public wxPanel
 	
 	public:
 		
-		PSEnvironmentBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSEnvironmentBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSEnvironmentBasePage();
 	
 };
@@ -328,7 +329,7 @@ class PSBuildEventsBasePage : public wxPanel
 	
 	public:
 		
-		PSBuildEventsBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSBuildEventsBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSBuildEventsBasePage();
 	
 };
@@ -375,7 +376,7 @@ class PSCustomBuildBasePage : public wxPanel
 	
 	public:
 		
-		PSCustomBuildBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCustomBuildBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCustomBuildBasePage();
 	
 };
@@ -435,7 +436,7 @@ class GlobalSettingsBasePanel : public wxPanel
 	
 	public:
 		
-		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~GlobalSettingsBasePanel();
 	
 };
@@ -462,7 +463,7 @@ class PSCustomMakefileBasePage : public wxPanel
 	
 	public:
 		
-		PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCustomMakefileBasePage();
 	
 };
@@ -490,15 +491,15 @@ class PSCompletionBase : public wxPanel
 	
 	public:
 		
-		PSCompletionBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL ); 
+		PSCompletionBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxTAB_TRAVERSAL );
 		~PSCompletionBase();
-		
 		void m_splitter1OnIdle( wxIdleEvent& )
 		{
-			m_splitter1->SetSashPosition( 0 );
-			m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter1OnIdle ), NULL, this );
+		m_splitter1->SetSashPosition( 0 );
+		m_splitter1->Disconnect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter1OnIdle ), NULL, this );
 		}
+		
 	
 };
 
-#endif //__PROJECT_SETTINGS_BASE_DLG_H__
+#endif //__project_settings_base_dlg__

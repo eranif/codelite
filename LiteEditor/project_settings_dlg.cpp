@@ -52,6 +52,8 @@
 #include "debuggermanager.h"
 #include "addoptioncheckdlg.h"
 #include "ps_general_page.h"
+#include "plugin.h"
+#include "event_notifier.h"
 
 const wxString APPEND_TO_GLOBAL_SETTINGS = _("Append to global settings");
 const wxString OVERWRITE_GLOBAL_SETTINGS = _("Overwrite global settings");
@@ -61,196 +63,263 @@ BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()
 
 ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title )
-	: ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 782,502 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
-	, m_projectName(projectName)
-	, m_configName(configName)
-	, m_isDirty(false)
-	, m_isCustomBuild(false)
+    : ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 782,502 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+    , m_projectName(projectName)
+    , m_configName(configName)
+    , m_isDirty(false)
+    , m_isCustomBuild(false)
 {
-	wxArrayString configs;
-	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
-	ProjectSettingsCookie cookie;
-	BuildConfigPtr conf = projSettingsPtr->GetFirstBuildConfiguration(cookie);
-	while (conf) {
-		configs.Add(conf->GetName());
-		conf = projSettingsPtr->GetNextBuildConfiguration(cookie);
-	}
+    DoGetAllBuildConfigs();
+    MSWSetNativeTheme( m_treebook->GetTreeCtrl() );
+    BuildTree();
+    LoadValues(m_configName);
 
-	m_choiceConfig->Append(configs);
-	int where = m_choiceConfig->FindString(m_configName);
-	if(where != wxNOT_FOUND) {
-		m_choiceConfig->SetSelection(where);
-	}
-	MSWSetNativeTheme( m_treebook->GetTreeCtrl() );
-	BuildTree();
-	LoadValues(m_configName);
-	
-	m_treebook->SetFocus();
-	GetSizer()->Fit(this);
+    m_treebook->SetFocus();
+    GetSizer()->Fit(this);
 
-	wxSize sz = GetSize();
-	Centre();
-	WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
+    wxSize sz = GetSize();
+    Centre();
+    WindowAttrManager::Load(this, wxT("ProjectSettingsDlg"), NULL);
 
-	// Make sure that all the controls are visible
-	wxSize newSize = GetSize();
-	if(newSize.x <= sz.x && newSize.y <= sz.y) {
-		GetSizer()->Fit(this);
-	}
+    // Make sure that all the controls are visible
+    wxSize newSize = GetSize();
+    if(newSize.x <= sz.x && newSize.y <= sz.y) {
+        GetSizer()->Fit(this);
+    }
+
+    EventNotifier::Get()->Connect(wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
+}
+
+void ProjectSettingsDlg::DoClearDialog()
+{
+    m_choiceConfig->Clear();
+    ClearValues();
 }
 
 void ProjectSettingsDlg::BuildTree()
 {
-	wxString selectedPage = EditorConfigST::Get()->GetStringValue(wxT("PSSelectedPage"));
-	if(selectedPage.IsEmpty()) {
-		selectedPage = _("General");
-	}
-	
+    wxString selectedPage = EditorConfigST::Get()->GetStringValue(wxT("PSSelectedPage"));
+    if(selectedPage.IsEmpty()) {
+        selectedPage = _("General");
+    }
+
     PSGeneralPage *gp = new PSGeneralPage(m_treebook, m_projectName, m_choiceConfig->GetStringSelection(), this);
-	m_treebook->AddPage(0, _("Common Settings"));
-	m_treebook->AddSubPage(gp,                                                       _("General"),               selectedPage == _("General"));
-	m_treebook->AddSubPage(new PSCompilerPage(m_treebook, m_projectName, this, gp),  _("Compiler"),              selectedPage == _("Compiler"));
-	m_treebook->AddSubPage(new PSLinkerPage(m_treebook, this, gp),                   _("Linker"),                selectedPage == _("Linker"));
-	m_treebook->AddSubPage(new PSEnvironmentPage(m_treebook, this),                  _("Environment"),           selectedPage == _("Environment"));
-	m_treebook->AddSubPage(new PSDebuggerPage(m_treebook, this),                     _("Debugger"),              selectedPage == _("Debugger"));
-	m_treebook->AddSubPage(new PSResourcesPage(m_treebook, this),                    _("Resources"),             selectedPage == _("Resources"));
+    m_treebook->AddPage(0, _("Common Settings"));
+    m_treebook->AddSubPage(gp,                                                       _("General"),               selectedPage == _("General"));
+    m_treebook->AddSubPage(new PSCompilerPage(m_treebook, m_projectName, this, gp),  _("Compiler"),              selectedPage == _("Compiler"));
+    m_treebook->AddSubPage(new PSLinkerPage(m_treebook, this, gp),                   _("Linker"),                selectedPage == _("Linker"));
+    m_treebook->AddSubPage(new PSEnvironmentPage(m_treebook, this),                  _("Environment"),           selectedPage == _("Environment"));
+    m_treebook->AddSubPage(new PSDebuggerPage(m_treebook, this),                     _("Debugger"),              selectedPage == _("Debugger"));
+    m_treebook->AddSubPage(new PSResourcesPage(m_treebook, this),                    _("Resources"),             selectedPage == _("Resources"));
 
-	m_treebook->AddPage(0, _("Pre / Post Build Commands"));
-	m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, true, this),            _("Pre Build"),             selectedPage == _("Pre Build"));
-	m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, false, this),           _("Post Build"),            selectedPage == _("Post Build"));
+    m_treebook->AddPage(0, _("Pre / Post Build Commands"));
+    m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, true, this),            _("Pre Build"),             selectedPage == _("Pre Build"));
+    m_treebook->AddSubPage(new PSBuildEventsPage(m_treebook, false, this),           _("Post Build"),            selectedPage == _("Post Build"));
 
-	m_treebook->AddPage(0, _("Customize"));
-	m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this),   _("Custom Build"),          selectedPage == _("Custom Build"));
-	m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this),          _("Custom Makefile Rules"), selectedPage == _("Custom Makefile Rules"));
-	
-	m_treebook->AddPage(new PSCompletionPage(m_treebook, this), _("Code Completion"), selectedPage == _("Code Completion"));
-	m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), _("Global Settings"),      selectedPage == _("Global Settings"));
+    m_treebook->AddPage(0, _("Customize"));
+    m_treebook->AddSubPage(new PSCustomBuildPage(m_treebook, m_projectName, this),   _("Custom Build"),          selectedPage == _("Custom Build"));
+    m_treebook->AddSubPage(new PSCustomMakefileRulesPage(m_treebook, this),          _("Custom Makefile Rules"), selectedPage == _("Custom Makefile Rules"));
 
-	// We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
-	gp->m_gbSizer1->AddGrowableCol(1);
+    m_treebook->AddPage(new PSCompletionPage(m_treebook, this), _("Code Completion"), selectedPage == _("Code Completion"));
+    m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), _("Global Settings"),      selectedPage == _("Global Settings"));
+
+    // We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
+    gp->m_gbSizer1->AddGrowableCol(1);
 }
 
 ProjectSettingsDlg::~ProjectSettingsDlg()
 {
-	PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
-	EditorConfigST::Get()->SaveStringValue(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
-	WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
+
+    PluginManager::Get()->UnHookProjectSettingsTab(m_treebook, m_projectName, wxEmptyString /* all tabs */);
+    EditorConfigST::Get()->SaveStringValue(wxT("PSSelectedPage"), m_treebook->GetPageText(m_treebook->GetSelection()));
+    WindowAttrManager::Save(this, wxT("ProjectSettingsDlg"), NULL);
 }
 
 void ProjectSettingsDlg::OnButtonOK(wxCommandEvent &event)
 {
-	OnButtonApply(event);
-	EndModal(wxID_OK);
+    event.Skip();
+    OnButtonApply(event);
+    ManagerST::Get()->UpdateParserPaths(true);
+    Destroy();
 }
 
 void ProjectSettingsDlg::OnButtonApply(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	SaveValues();
-	SetIsDirty(false);
+    wxUnusedVar(event);
+    SaveValues();
+    ManagerST::Get()->UpdateParserPaths();
+    SetIsDirty(false);
 }
 
 void ProjectSettingsDlg::SaveValues()
 {
 
-	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
-	BuildConfigPtr buildConf = projSettingsPtr->GetBuildConfiguration(m_configName);
-	if (!buildConf) {
-		return;
-	}
+    ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    BuildConfigPtr buildConf = projSettingsPtr->GetBuildConfiguration(m_configName);
+    if (!buildConf) {
+        return;
+    }
 
-	size_t pageCount = m_treebook->GetPageCount();
-	for(size_t i=0; i<pageCount; i++) {
-		wxWindow *page = m_treebook->GetPage(i);
-		if(!page) continue;
-		IProjectSettingsPage *p = dynamic_cast<IProjectSettingsPage*>(page);
-		if(p) {
-			p->Save(buildConf, projSettingsPtr);
-		}
-	}
+    size_t pageCount = m_treebook->GetPageCount();
+    for(size_t i=0; i<pageCount; i++) {
+        wxWindow *page = m_treebook->GetPage(i);
+        if(!page) continue;
+        IProjectSettingsPage *p = dynamic_cast<IProjectSettingsPage*>(page);
+        if(p) {
+            p->Save(buildConf, projSettingsPtr);
+        }
+    }
 
-	//save settings
-	ManagerST::Get()->SetProjectSettings(m_projectName, projSettingsPtr);
+    //save settings
+    ManagerST::Get()->SetProjectSettings(m_projectName, projSettingsPtr);
 
-	// Notify the plugins to save their data
-	SendCmdEvent(wxEVT_CMD_PROJ_SETTINGS_SAVED, (void*)&m_projectName, m_configName);
+    // Notify the plugins to save their data
+    SendCmdEvent(wxEVT_CMD_PROJ_SETTINGS_SAVED, (void*)&m_projectName, m_configName);
 }
 
 void ProjectSettingsDlg::LoadValues(const wxString& configName)
 {
-	int sel = m_treebook->GetSelection();
-	// Load the new tab for the new configuration
-	PluginManager::Get()->HookProjectSettingsTab(m_treebook, m_projectName, configName);
-	BuildConfigPtr buildConf;
-	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
-	buildConf = projSettingsPtr->GetBuildConfiguration(configName);
-	if (!buildConf) {
-		return;
-	}
-	size_t pageCount = m_treebook->GetPageCount();
-	for(size_t i=0; i<pageCount; i++) {
-		wxWindow *page = m_treebook->GetPage(i);
-		if (!page)                                       continue; // NULL page ...
-		IProjectSettingsPage *p = dynamic_cast<IProjectSettingsPage*>(page);
-		if(p) {
-			p->Load(buildConf);
-		}
-	}
+    int sel = m_treebook->GetSelection();
+    // Load the new tab for the new configuration
+    PluginManager::Get()->HookProjectSettingsTab(m_treebook, m_projectName, configName);
+    BuildConfigPtr buildConf;
+    ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    buildConf = projSettingsPtr->GetBuildConfiguration(configName);
+    if (!buildConf) {
+        return;
+    }
+    size_t pageCount = m_treebook->GetPageCount();
+    for(size_t i=0; i<pageCount; i++) {
+        wxWindow *page = m_treebook->GetPage(i);
+        if (!page)                                       continue; // NULL page ...
+        IProjectSettingsPage *p = dynamic_cast<IProjectSettingsPage*>(page);
+        if(p) {
+            p->Load(buildConf);
+        }
+    }
 
-	if( sel != wxNOT_FOUND ) {
-		m_treebook->SetSelection( sel );
-	}
-	m_isDirty = false;
+    if( sel != wxNOT_FOUND ) {
+        m_treebook->SetSelection( sel );
+    }
+    m_isDirty = false;
 }
 
 void ProjectSettingsDlg::ClearValues()
 {
-	size_t pageCount = m_treebook->GetPageCount();
-	for(size_t i=0; i<pageCount; i++) {
-		wxWindow *page = m_treebook->GetPage(i);
-		if(!page) continue;
+    size_t pageCount = m_treebook->GetPageCount();
+    for(size_t i=0; i<pageCount; i++) {
+        wxWindow *page = m_treebook->GetPage(i);
+        if(!page) continue;
 
-		IProjectSettingsPage *p = dynamic_cast<IProjectSettingsPage*>(page);
-		if(p) {
-			p->Clear();
-		}
-	}
+        IProjectSettingsPage *p = dynamic_cast<IProjectSettingsPage*>(page);
+        if(p) {
+            p->Clear();
+        }
+    }
 }
 
 void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
 {
-	wxUnusedVar(e);
+    wxUnusedVar(e);
 
-	ProjectPtr project = ManagerST::Get()->GetProject(m_projectName);
-	IEditor* editor = PluginManager::Get()->GetActiveEditor();
+    ProjectPtr project = ManagerST::Get()->GetProject(m_projectName);
+    IEditor* editor = PluginManager::Get()->GetActiveEditor();
 
-	MacrosDlg dlg(this, MacrosDlg::MacrosProject, project, editor);
-	dlg.ShowModal();
+    MacrosDlg dlg(this, MacrosDlg::MacrosProject, project, editor);
+    dlg.ShowModal();
 }
 
 void ProjectSettingsDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
 {
-	event.Enable( GetIsDirty() );
+    event.Enable( GetIsDirty() );
 }
 
 void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 {
-	event.Skip();
-	if(m_isDirty) {
-		if(wxMessageBox(_("Save changes before loading new configuration?"), _("Save Changes"), wxICON_QUESTION|wxYES_NO|wxCENTER) == wxYES) {
-			SaveValues();
-		} else {
-			ClearValues();
-		}
-	}
+    event.Skip();
+    if(m_isDirty) {
+        if(wxMessageBox(_("Save changes before loading new configuration?"), _("Save Changes"), wxICON_QUESTION|wxYES_NO|wxCENTER) == wxYES) {
+            SaveValues();
+        } else {
+            ClearValues();
+        }
+    }
 
-	m_configName = event.GetString();
+    m_configName = event.GetString();
 
-	clWindowUpdateLocker locker(this);
-	LoadValues(m_configName);
+    clWindowUpdateLocker locker(this);
+    LoadValues(m_configName);
 
-	m_treebook->SetFocus();
+    m_treebook->SetFocus();
 }
+
+void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
+{
+    e.Skip();
+
+    if(m_isDirty) {
+        int answer = ::wxMessageBox(_("Save changes before loading new configuration?"), _("Save Changes"), wxICON_QUESTION|wxYES_NO|wxCANCEL|wxCENTER);
+        switch ( answer ) {
+        case wxYES:
+            SaveValues();
+            break;
+        case wxNO:
+            break;
+        default:
+            // abort
+            return;
+        }
+    }
+
+    // another project was selected in the tree view
+    m_projectName = e.GetString();
+    DoGetAllBuildConfigs();
+    LoadValues(m_configName);
+}
+
+void ProjectSettingsDlg::DoGetAllBuildConfigs()
+{
+    m_choiceConfig->Clear();
+    wxArrayString configs;
+    ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    ProjectSettingsCookie cookie;
+    BuildConfigPtr conf = projSettingsPtr->GetFirstBuildConfiguration(cookie);
+    while (conf) {
+        configs.Add(conf->GetName());
+        conf = projSettingsPtr->GetNextBuildConfiguration(cookie);
+    }
+
+    m_choiceConfig->Append(configs);
+    int where = m_choiceConfig->FindString(m_configName);
+    if(where != wxNOT_FOUND) {
+
+        m_choiceConfig->SetSelection(where);
+
+    } else if ( !m_choiceConfig->IsEmpty() ) {
+
+        m_configName = m_choiceConfig->GetString(0);
+        m_choiceConfig->SetSelection(0);
+
+    } else {
+        m_configName.clear();
+    }
+}
+
+void ProjectSettingsDlg::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    Destroy();
+}
+
+void ProjectSettingsDlg::OnButtonCancel(wxCommandEvent& event)
+{
+    event.Skip();
+    Destroy();
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -258,160 +327,160 @@ void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 ///////////////////////////////////////////////////////////////////////////
 
 GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage* gp)
-	: GlobalSettingsBasePanel(parent)
-	, m_projectName(projectName)
-	, m_dlg(dlg)
-	, m_gp(gp)
+    : GlobalSettingsBasePanel(parent)
+    , m_projectName(projectName)
+    , m_dlg(dlg)
+    , m_gp(gp)
 {
-	GetSizer()->Fit(this);
-	Centre();
+    GetSizer()->Fit(this);
+    Centre();
 }
 
 void GlobalSettingsPanel::OnButtonAddCompilerOptions(wxCommandEvent &event)
 {
-	wxString cmpName = m_gp->GetCompiler();
-	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-	if (PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions())) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    wxString cmpName = m_gp->GetCompiler();
+    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+    if (PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions())) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnButtonAddCCompilerOptions(wxCommandEvent& event)
 {
-	wxString cmpName = m_gp->GetCompiler();
-	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-	if (PopupAddOptionCheckDlg(m_textCtrlCCompileOptions, _("C Compiler options"), cmp->GetCompilerOptions())) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    wxString cmpName = m_gp->GetCompiler();
+    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+    if (PopupAddOptionCheckDlg(m_textCtrlCCompileOptions, _("C Compiler options"), cmp->GetCompilerOptions())) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 
 void GlobalSettingsPanel::OnAddSearchPath(wxCommandEvent &event)
 {
-	if (PopupAddOptionDlg(m_textAdditionalSearchPath)) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    if (PopupAddOptionDlg(m_textAdditionalSearchPath)) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnButtonAddPreprocessor(wxCommandEvent &event)
 {
-	if (PopupAddOptionDlg(m_textPreprocessor)) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    if (PopupAddOptionDlg(m_textPreprocessor)) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnAddLibrary(wxCommandEvent &event)
 {
-	if (PopupAddOptionDlg(m_textLibraries)) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    if (PopupAddOptionDlg(m_textLibraries)) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnAddLibraryPath(wxCommandEvent &event)
 {
-	if (PopupAddOptionDlg(m_textLibraryPath)) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    if (PopupAddOptionDlg(m_textLibraryPath)) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnButtonAddLinkerOptions(wxCommandEvent &event)
 {
-	wxString cmpName = m_gp->GetCompiler();
-	CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-	if (PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions())) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    wxString cmpName = m_gp->GetCompiler();
+    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+    if (PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions())) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnResourceCmpAddOption(wxCommandEvent &event)
 {
-	if (PopupAddOptionDlg(m_textAddResCmpOptions)) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    if (PopupAddOptionDlg(m_textAddResCmpOptions)) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnResourceCmpAddPath(wxCommandEvent &event)
 {
-	if (PopupAddOptionDlg(m_textAddResCmpPath)) {
-		m_dlg->SetIsDirty(true);
-	}
-	event.Skip();
+    if (PopupAddOptionDlg(m_textAddResCmpPath)) {
+        m_dlg->SetIsDirty(true);
+    }
+    event.Skip();
 }
 
 void GlobalSettingsPanel::OnCmdEvtVModified(wxCommandEvent& event)
 {
-	wxUnusedVar(event);
-	m_dlg->SetIsDirty(true);
+    wxUnusedVar(event);
+    m_dlg->SetIsDirty(true);
 }
 
 void GlobalSettingsPanel::Clear()
 {
-	m_textCompilerOptions->SetValue(wxEmptyString);
-	m_textPreprocessor->SetValue(wxEmptyString);
-	m_textAdditionalSearchPath->SetValue(wxEmptyString);
+    m_textCompilerOptions->SetValue(wxEmptyString);
+    m_textPreprocessor->SetValue(wxEmptyString);
+    m_textAdditionalSearchPath->SetValue(wxEmptyString);
 
-	m_textLinkerOptions->SetValue(wxEmptyString);
-	m_textLibraries->SetValue(wxEmptyString);
-	m_textLibraryPath->SetValue(wxEmptyString);
+    m_textLinkerOptions->SetValue(wxEmptyString);
+    m_textLibraries->SetValue(wxEmptyString);
+    m_textLibraryPath->SetValue(wxEmptyString);
 
-	m_textAddResCmpOptions->SetValue(wxEmptyString);
-	m_textAddResCmpPath->SetValue(wxEmptyString);
+    m_textAddResCmpOptions->SetValue(wxEmptyString);
+    m_textAddResCmpPath->SetValue(wxEmptyString);
 }
 
 void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
 {
-	ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
-	BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
-	if (!globalSettings) {
-		Clear();
-		return;
-	}
+    ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
+    if (!globalSettings) {
+        Clear();
+        return;
+    }
 
-	m_textCompilerOptions->SetValue(globalSettings->GetCompileOptions());
-	m_textCtrlCCompileOptions->SetValue(globalSettings->GetCCompileOptions());
-	m_textPreprocessor->SetValue(globalSettings->GetPreprocessor());
-	m_textAdditionalSearchPath->SetValue(globalSettings->GetIncludePath());
+    m_textCompilerOptions->SetValue(globalSettings->GetCompileOptions());
+    m_textCtrlCCompileOptions->SetValue(globalSettings->GetCCompileOptions());
+    m_textPreprocessor->SetValue(globalSettings->GetPreprocessor());
+    m_textAdditionalSearchPath->SetValue(globalSettings->GetIncludePath());
 
-	m_textLinkerOptions->SetValue(globalSettings->GetLinkOptions());
-	m_textLibraries->SetValue(globalSettings->GetLibraries());
-	m_textLibraryPath->SetValue(globalSettings->GetLibPath());
+    m_textLinkerOptions->SetValue(globalSettings->GetLinkOptions());
+    m_textLibraries->SetValue(globalSettings->GetLibraries());
+    m_textLibraryPath->SetValue(globalSettings->GetLibPath());
 
-	m_textAddResCmpOptions->SetValue(globalSettings->GetResCompileOptions());
-	m_textAddResCmpPath->SetValue(globalSettings->GetResCmpIncludePath());
+    m_textAddResCmpOptions->SetValue(globalSettings->GetResCompileOptions());
+    m_textAddResCmpPath->SetValue(globalSettings->GetResCmpIncludePath());
 }
 
 void GlobalSettingsPanel::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
-	wxUnusedVar(buildConf);
-	wxUnusedVar(projSettingsPtr);
+    wxUnusedVar(buildConf);
+    wxUnusedVar(projSettingsPtr);
 
-	BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
-	if (!globalSettings) {
-		return;
-	}
+    BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
+    if (!globalSettings) {
+        return;
+    }
 
-	globalSettings->SetCompileOptions(m_textCompilerOptions->GetValue());
-	globalSettings->SetCCompileOptions(m_textCtrlCCompileOptions->GetValue());
-	globalSettings->SetIncludePath(m_textAdditionalSearchPath->GetValue());
-	globalSettings->SetPreprocessor(m_textPreprocessor->GetValue());
+    globalSettings->SetCompileOptions(m_textCompilerOptions->GetValue());
+    globalSettings->SetCCompileOptions(m_textCtrlCCompileOptions->GetValue());
+    globalSettings->SetIncludePath(m_textAdditionalSearchPath->GetValue());
+    globalSettings->SetPreprocessor(m_textPreprocessor->GetValue());
 
-	globalSettings->SetLibPath(m_textLibraryPath->GetValue());
-	globalSettings->SetLibraries(m_textLibraries->GetValue());
-	globalSettings->SetLinkOptions(m_textLinkerOptions->GetValue());
+    globalSettings->SetLibPath(m_textLibraryPath->GetValue());
+    globalSettings->SetLibraries(m_textLibraries->GetValue());
+    globalSettings->SetLinkOptions(m_textLinkerOptions->GetValue());
 
-	globalSettings->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
-	globalSettings->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
+    globalSettings->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
+    globalSettings->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
 
-	//save settings
-	ManagerST::Get()->SetProjectGlobalSettings(m_projectName, globalSettings);
+    //save settings
+    ManagerST::Get()->SetProjectGlobalSettings(m_projectName, globalSettings);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -421,38 +490,38 @@ void GlobalSettingsPanel::Save(BuildConfigPtr buildConf, ProjectSettingsPtr proj
 
 bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
 {
-	AddOptionDlg dlg(NULL, ctrl->GetValue());
-	if (dlg.ShowModal() == wxID_OK) {
-		ctrl->SetValue(dlg.GetValue());
-		return true;
-	}
-	return false;
+    AddOptionDlg dlg(NULL, ctrl->GetValue());
+    if (dlg.ShowModal() == wxID_OK) {
+        ctrl->SetValue(dlg.GetValue());
+        return true;
+    }
+    return false;
 }
 
 bool IProjectSettingsPage::SelectChoiceWithGlobalSettings(wxChoice* c, const wxString& text)
 {
-	if (text == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
-		c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
+    if (text == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
+        c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
 
-	} else if (text == BuildConfig::OVERWRITE_GLOBAL_SETTINGS) {
-		c->Select(c->FindString(OVERWRITE_GLOBAL_SETTINGS));
+    } else if (text == BuildConfig::OVERWRITE_GLOBAL_SETTINGS) {
+        c->Select(c->FindString(OVERWRITE_GLOBAL_SETTINGS));
 
-	} else if (text == BuildConfig::PREPEND_GLOBAL_SETTINGS) {
-		c->Select(c->FindString(PREPEND_GLOBAL_SETTINGS));
+    } else if (text == BuildConfig::PREPEND_GLOBAL_SETTINGS) {
+        c->Select(c->FindString(PREPEND_GLOBAL_SETTINGS));
 
-	} else {
-		c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
-		return false;
-	}
-	return true;
+    } else {
+        c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
+        return false;
+    }
+    return true;
 }
 
 bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options)
 {
-	AddOptionCheckDlg dlg(NULL, title, options, ctrl->GetValue());
-	if (dlg.ShowModal() == wxID_OK) {
-		ctrl->SetValue(dlg.GetValue());
-		return true;
-	}
-	return false;
+    AddOptionCheckDlg dlg(NULL, title, options, ctrl->GetValue());
+    if (dlg.ShowModal() == wxID_OK) {
+        ctrl->SetValue(dlg.GetValue());
+        return true;
+    }
+    return false;
 }

@@ -184,7 +184,8 @@ protected:
 public:
     NewBuildTab(wxWindow* parent);
     virtual ~NewBuildTab();
-
+    
+    void ScrollToBottom();
     bool GetBuildEndedSuccessfully() const {
         return m_errorCount == 0 && !m_buildInterrupted;
     }

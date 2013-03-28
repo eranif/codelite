@@ -46,16 +46,16 @@ class ProjectSettingsDlg;
 class IProjectSettingsPage
 {
 public:
-	IProjectSettingsPage() {}
-	virtual ~IProjectSettingsPage() {}
+    IProjectSettingsPage() {}
+    virtual ~IProjectSettingsPage() {}
 
-	virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) = 0;
-	virtual void Load(BuildConfigPtr buildConf) = 0;
-	virtual void Clear() = 0;
+    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) = 0;
+    virtual void Load(BuildConfigPtr buildConf) = 0;
+    virtual void Clear() = 0;
 
-	virtual bool PopupAddOptionDlg(wxTextCtrl *ctrl);
-	virtual bool SelectChoiceWithGlobalSettings(wxChoice* c, const wxString& text);
-	virtual bool PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options);
+    virtual bool PopupAddOptionDlg(wxTextCtrl *ctrl);
+    virtual bool SelectChoiceWithGlobalSettings(wxChoice* c, const wxString& text);
+    virtual bool PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options);
 };
 
 /**
@@ -63,31 +63,31 @@ public:
  */
 class GlobalSettingsPanel : public GlobalSettingsBasePanel, public IProjectSettingsPage
 {
-	wxString            m_projectName;
-	ProjectSettingsDlg *m_dlg;
-	PSGeneralPage *     m_gp;
-	
-public:
-	GlobalSettingsPanel(wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp);
+    wxString            m_projectName;
+    ProjectSettingsDlg *m_dlg;
+    PSGeneralPage *     m_gp;
 
-	virtual void Clear();
-	virtual void Load(BuildConfigPtr buildConf);
-	virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+public:
+    GlobalSettingsPanel(wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp);
+
+    virtual void Clear();
+    virtual void Load(BuildConfigPtr buildConf);
+    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
 
 protected:
 
-	virtual void OnButtonAddCCompilerOptions(wxCommandEvent& event);
-	virtual void OnCmdEvtVModified( wxCommandEvent& event );
-	virtual void OnButtonAddCompilerOptions(wxCommandEvent &event);
-	virtual void OnAddSearchPath(wxCommandEvent &event);
-	virtual void OnButtonAddPreprocessor(wxCommandEvent &event);
+    virtual void OnButtonAddCCompilerOptions(wxCommandEvent& event);
+    virtual void OnCmdEvtVModified( wxCommandEvent& event );
+    virtual void OnButtonAddCompilerOptions(wxCommandEvent &event);
+    virtual void OnAddSearchPath(wxCommandEvent &event);
+    virtual void OnButtonAddPreprocessor(wxCommandEvent &event);
 
-	virtual void OnAddLibraryPath(wxCommandEvent &event);
-	virtual void OnAddLibrary(wxCommandEvent &event);
-	virtual void OnButtonAddLinkerOptions(wxCommandEvent &event);
+    virtual void OnAddLibraryPath(wxCommandEvent &event);
+    virtual void OnAddLibrary(wxCommandEvent &event);
+    virtual void OnButtonAddLinkerOptions(wxCommandEvent &event);
 
-	virtual void OnResourceCmpAddPath(wxCommandEvent &e);
-	virtual void OnResourceCmpAddOption(wxCommandEvent &e);
+    virtual void OnResourceCmpAddPath(wxCommandEvent &e);
+    virtual void OnResourceCmpAddOption(wxCommandEvent &e);
 };
 
 /**
@@ -95,46 +95,51 @@ protected:
  */
 class ProjectSettingsDlg : public ProjectSettingsBaseDlg
 {
-	wxString  m_projectName;
-	wxString  m_configName;
-	bool      m_isDirty;
-	bool      m_isCustomBuild;
+    wxString  m_projectName;
+    wxString  m_configName;
+    bool      m_isDirty;
+    bool      m_isCustomBuild;
 
 protected:
-	void SaveValues();
-	void ClearValues();
-	void LoadValues(const wxString &configName);
-	void BuildTree();
+    void SaveValues();
+    void ClearValues();
+    void LoadValues(const wxString &configName);
+    void BuildTree();
+    void DoClearDialog();
+    void DoGetAllBuildConfigs();
 
 public:
-	bool IsCustomBuildEnabled() const {
-		return m_isCustomBuild;
-	}
-	void SetCustomBuildEnabled(bool b) {
-		if(b != m_isCustomBuild) {
-			SetIsDirty(true);
-		}
-		m_isCustomBuild = b;
-	}
-	void SetIsDirty(bool isDirty) {
-		this->m_isDirty = isDirty;
-	}
-	bool GetIsDirty() const {
-		return m_isDirty;
-	}
+    virtual void OnButtonCancel(wxCommandEvent& event);
+    bool IsCustomBuildEnabled() const {
+        return m_isCustomBuild;
+    }
+    void SetCustomBuildEnabled(bool b) {
+        if(b != m_isCustomBuild) {
+            SetIsDirty(true);
+        }
+        m_isCustomBuild = b;
+    }
+    void SetIsDirty(bool isDirty) {
+        this->m_isDirty = isDirty;
+    }
+    bool GetIsDirty() const {
+        return m_isDirty;
+    }
 
 public:
-	/** Constructor */
-	ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title );
-	virtual ~ProjectSettingsDlg();
+    /** Constructor */
+    ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title );
+    virtual ~ProjectSettingsDlg();
 
-	DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 
-	virtual void OnButtonApply(wxCommandEvent &event);
-	virtual void OnButtonOK(wxCommandEvent &event);
-	virtual void OnButtonHelp(wxCommandEvent &e);
-	virtual void OnButtonApplyUI(wxUpdateUIEvent& event);
-	virtual void OnConfigurationChanged(wxCommandEvent& event);
+    virtual void OnButtonApply(wxCommandEvent &event);
+    virtual void OnButtonOK(wxCommandEvent &event);
+    virtual void OnButtonHelp(wxCommandEvent &e);
+    virtual void OnButtonApplyUI(wxUpdateUIEvent& event);
+    virtual void OnConfigurationChanged(wxCommandEvent& event);
+    virtual void OnProjectSelected(wxCommandEvent &e);
+    virtual void OnWorkspaceClosed(wxCommandEvent &e);
 
 };
 

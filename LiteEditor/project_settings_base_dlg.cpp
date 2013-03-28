@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 30 2011)
+// C++ code generated with wxFormBuilder (version Dec 21 2009)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -80,6 +80,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg( wxWindow* parent, wxWindowID id,
 	m_choiceConfig->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnConfigurationChanged ), NULL, this );
 	m_buttonHelp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonHelp ), NULL, this );
 	m_buttonOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonOK ), NULL, this );
+	m_buttonCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonCancel ), NULL, this );
 	m_buttonApply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonApply ), NULL, this );
 	m_buttonApply->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectSettingsBaseDlg::OnButtonApplyUI ), NULL, this );
 }
@@ -90,9 +91,9 @@ ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 	m_choiceConfig->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnConfigurationChanged ), NULL, this );
 	m_buttonHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonHelp ), NULL, this );
 	m_buttonOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonOK ), NULL, this );
+	m_buttonCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonCancel ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ProjectSettingsBaseDlg::OnButtonApply ), NULL, this );
 	m_buttonApply->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( ProjectSettingsBaseDlg::OnButtonApplyUI ), NULL, this );
-	
 }
 
 PSGeneralPageBase::PSGeneralPageBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -261,7 +262,6 @@ PSGeneralPageBase::~PSGeneralPageBase()
 	m_textCtrlCommandWD->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
 	m_buttonBrowseCommandWD->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnBrowseCommandWD ), NULL, this );
 	m_checkBoxPauseWhenExecEnds->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSGeneralPageBase::OnCmdEvtVModified ), NULL, this );
-	
 }
 
 PSCompilerPageBase::PSCompilerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -473,7 +473,6 @@ PSCompilerPageBase::~PSCompilerPageBase()
 	m_checkBoxSeparatePCHFlags->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnCompiledNotNeededUI ), NULL, this );
 	m_textCtrlPCHCompilationFlags->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompilerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlPCHCompilationFlags->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCompilerPageBase::OnEnablePCHFLagsUI ), NULL, this );
-	
 }
 
 PSLinkPageBase::PSLinkPageBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -601,7 +600,6 @@ PSLinkPageBase::~PSLinkPageBase()
 	m_textLibraries->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSLinkPageBase::OnLinkerNotNeededUI ), NULL, this );
 	m_buttonLibraries->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSLinkPageBase::OnAddLibrary ), NULL, this );
 	m_buttonLibraries->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSLinkPageBase::OnLinkerNotNeededUI ), NULL, this );
-	
 }
 
 PSDebuggerPageBase::PSDebuggerPageBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -719,7 +717,6 @@ PSDebuggerPageBase::~PSDebuggerPageBase()
 	m_textCtrlDbgPort->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSDebuggerPageBase::OnRemoteDebugUI ), NULL, this );
 	m_textCtrlDbgCmds->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSDebuggerPageBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlDbgPostConnectCmds->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSDebuggerPageBase::OnCmdEvtVModified ), NULL, this );
-	
 }
 
 PSResourcesPageBase::PSResourcesPageBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -812,7 +809,6 @@ PSResourcesPageBase::~PSResourcesPageBase()
 	m_textAddResCmpPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSResourcesPageBase::OnrResourceCompilerNotNeededUI ), NULL, this );
 	m_buttonAddResCmpPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PSResourcesPageBase::OnResourceCmpAddPath ), NULL, this );
 	m_buttonAddResCmpPath->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSResourcesPageBase::OnrResourceCompilerNotNeededUI ), NULL, this );
-	
 }
 
 PSEnvironmentBasePage::PSEnvironmentBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -883,7 +879,6 @@ PSEnvironmentBasePage::~PSEnvironmentBasePage()
 	m_choiceEnv->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
 	m_choiceDbgEnv->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlEnvvars->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSEnvironmentBasePage::OnCmdEvtVModified ), NULL, this );
-	
 }
 
 PSBuildEventsBasePage::PSBuildEventsBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -1058,7 +1053,6 @@ PSCustomBuildBasePage::~PSCustomBuildBasePage()
 	m_staticText30->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCustomBuildBasePage::OnCustomBuildEnabledUI ), NULL, this );
 	m_textCtrlMakefileGenerationCmd->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCustomBuildBasePage::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlMakefileGenerationCmd->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCustomBuildBasePage::OnCustomBuildEnabledUI ), NULL, this );
-	
 }
 
 GlobalSettingsBasePanel::GlobalSettingsBasePanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -1256,7 +1250,6 @@ GlobalSettingsBasePanel::~GlobalSettingsBasePanel()
 	m_buttonAddResCmpOptions->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddOption ), NULL, this );
 	m_textAddResCmpPath->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( GlobalSettingsBasePanel::OnCmdEvtVModified ), NULL, this );
 	m_buttonAddResCmpPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GlobalSettingsBasePanel::OnResourceCmpAddPath ), NULL, this );
-	
 }
 
 PSCustomMakefileBasePage::PSCustomMakefileBasePage( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -1333,7 +1326,6 @@ PSCustomMakefileBasePage::~PSCustomMakefileBasePage()
 	m_textPreBuildRule->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCustomMakefileBasePage::OnCmdEvtVModified ), NULL, this );
 	m_textPreBuildRule->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCustomMakefileBasePage::OnProjectCustumBuildUI ), NULL, this );
 	m_staticText24->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( PSCustomMakefileBasePage::OnProjectCustumBuildUI ), NULL, this );
-	
 }
 
 PSCompletionBase::PSCompletionBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
@@ -1343,7 +1335,6 @@ PSCompletionBase::PSCompletionBase( wxWindow* parent, wxWindowID id, const wxPoi
 	
 	m_splitter1 = new wxSplitterWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE );
 	m_splitter1->Connect( wxEVT_IDLE, wxIdleEventHandler( PSCompletionBase::m_splitter1OnIdle ), NULL, this );
-	
 	m_panel14 = new wxPanel( m_splitter1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer35;
 	bSizer35 = new wxBoxSizer( wxVERTICAL );
@@ -1403,5 +1394,4 @@ PSCompletionBase::~PSCompletionBase()
 	m_textCtrlSearchPaths->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_textCtrlMacros->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
 	m_checkBoxC11->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PSCompletionBase::OnCmdEvtVModified ), NULL, this );
-	
 }

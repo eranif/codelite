@@ -126,6 +126,7 @@ protected:
     virtual void OnPopupMenu(wxTreeEvent &event);
     virtual void OnItemActivated(wxTreeEvent &event);
     virtual void OnMouseDblClick(wxMouseEvent &event);
+    virtual void OnSelectionChanged(wxTreeEvent &e);
     virtual void OnOpenInEditor(wxCommandEvent &event);
     virtual void OnRemoveProject(wxCommandEvent &event);
     virtual void OnSetActive(wxCommandEvent &event);

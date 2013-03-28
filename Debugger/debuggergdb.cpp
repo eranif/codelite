@@ -893,7 +893,9 @@ bool DbgGdb::EvaluateExpressionToString( const wxString &expression, const wxStr
 
 bool DbgGdb::ListFrames()
 {
-    return WriteCommand( wxT( "-stack-list-frames" ), new DbgCmdStackList( m_observer ) );
+    int max = m_info.maxCallStackFrames;
+    wxString command = wxString::Format("-stack-list-frames 0 %i", max);
+    return WriteCommand(command, new DbgCmdStackList( m_observer ));
 }
 
 bool DbgGdb::SetFrame( int frame )

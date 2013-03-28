@@ -2301,7 +2301,11 @@ void clMainFrame::OnViewPane(wxCommandEvent &event)
 {
     std::map<int, wxString>::iterator iter = m_panes.find(event.GetId());
     if (iter != m_panes.end()) {
-        ViewPane(iter->second, event.IsChecked());
+        // In >wxGTK-2.9.4 event.GetChecked() is invalid when coming from an accelerator; instead examine the actual state
+        wxAuiPaneInfo &info = m_mgr.GetPane(iter->second);
+        if (info.IsOk()) {
+            ViewPane(iter->second, !info.IsShown());
+        }
     }
 }
 

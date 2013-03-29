@@ -321,9 +321,23 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     gdc.SetPen( m_border_pen );
     
     wxSize sz = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
+    
     wxRect rr (in_rect.GetTopLeft(), sz);
     rr.y += 2;
     rr.width -= 2;
+    
+    /// the tab start position (x)
+    curx = rr.x + 8;
+    
+    // Set clipping region
+    int clip_width = rr.width;
+    if (rr.x + clip_width > in_rect.x + in_rect.width)
+        clip_width = (in_rect.x + in_rect.width) - rr.x;
+    
+    // since the above code above doesn't play well with WXDFB or WXCOCOA,
+    // we'll just use a rectangle for the clipping region for now --
+    gdc.SetClippingRegion(rr.x, rr.y, clip_width+1, rr.height);
+    
     path.AddRoundedRectangle(rr.x, rr.y, rr.width, rr.height, 5.0);
     gdc.GetGraphicsContext()->StrokePath( path );
     gdc.GetGraphicsContext()->FillPath( path );
@@ -356,7 +370,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     if ( caption == "Tp" )
         caption.Clear();
         
-    curx = rr.x + 8;
+    
     gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2));
     
     // advance the X offset
@@ -386,6 +400,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
         curx += m_active_close_bmp.GetWidth();
     }
     *out_tab_rect = rr;
+    gdc.DestroyClippingRegion();
 }
 
 int clAuiTabArt::GetIndentSize()

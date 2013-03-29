@@ -133,6 +133,7 @@ clAuiTabArt::clAuiTabArt()
     
     m_normal_font.SetPointSize( m_normal_font.GetPointSize() + 1 );
     m_selected_font = m_normal_font;
+    m_selected_font.SetWeight(wxBOLD);
     m_measuring_font = m_selected_font;
 
     m_fixed_tab_width = 100;

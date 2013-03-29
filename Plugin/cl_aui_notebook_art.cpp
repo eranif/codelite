@@ -145,7 +145,7 @@ clAuiTabArt::clAuiTabArt()
 #ifdef __WXGTK__
     wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
 #else
-    wxColor border_colour = DrawingUtils::DarkColour(m_base_colour, 4.0);
+    wxColor border_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
 #endif
 
     m_base_colour_pen = wxPen(m_base_colour);
@@ -339,8 +339,8 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     gdc.SetClippingRegion(rr.x, rr.y, clip_width+1, rr.height);
     
     path.AddRoundedRectangle(rr.x, rr.y, rr.width, rr.height, 5.0);
-    gdc.GetGraphicsContext()->StrokePath( path );
     gdc.GetGraphicsContext()->FillPath( path );
+    gdc.GetGraphicsContext()->StrokePath( path );
     
     wxRect bottomRect(rr.x, rr.y + rr.height - 1, rr.width, 2);
     gdc.SetBrush(m_bottom_rect_colour);
@@ -356,8 +356,8 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     
     if ( !page.active ) {
         gdc.SetPen(m_border_pen);
-        gdc.DrawLine(rr.x, in_rect.y + in_rect.height - 4, rr.x + rr.width, in_rect.y + in_rect.height - 4);
     }
+    gdc.DrawLine(rr.x, in_rect.y + in_rect.height - 4, rr.x + rr.width, in_rect.y + in_rect.height - 4);
     
     /// Draw the text
     wxString caption = page.caption;

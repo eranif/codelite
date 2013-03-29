@@ -174,8 +174,25 @@ bool ReconcileProjectDlg::LoadData()
 void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
 {
     VirtualDirectoryTree vdTree;
+    wxArrayString selectedFiles;
+    bool onlySelections;
+
     if (usingAutoallocate) {
         vdTree.BuildTree(m_projname);
+        // If we're autoallocating, cache the current selections as
+        // 1) we only want to operate on those, and 2) m_dvListCtrl1Unassigned is about to be cleared!
+        wxDataViewItemArray selecteditems;
+        m_dvListCtrl1Unassigned->GetSelections(selecteditems);
+        for (size_t i=0; i < selecteditems.GetCount(); ++i) {
+            wxVariant v;
+            m_dvListCtrl1Unassigned->GetValue(v, m_dvListCtrl1Unassigned->GetStore()->GetRow(selecteditems.Item(i)), 0);
+            wxDataViewIconText iv;
+            if (!v.IsNull()) {
+                iv << v;
+                selectedFiles.Add(iv.GetText());
+            }
+        }
+        onlySelections = !selectedFiles.empty();
     }
     
     //---------------------------------------------------------
@@ -208,14 +225,24 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
         }
 
         if (usingAutoallocate) {
-            wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
-            if (!virtualFolder.empty()) {
-                wxVector<wxVariant> cols;
-                cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename)) );
-                cols.push_back( virtualFolder );
-                ReconcileFileItemData* data = new ReconcileFileItemData(filename, virtualFolder);
-                m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
-                bFileAllocated = true;
+            bool attemptAllocation(true);
+            // First see if we should only process selected files and, if so, was this file selected
+            if (onlySelections) {
+                if (selectedFiles.Index(fn.GetFullPath()) == wxNOT_FOUND) {
+                    attemptAllocation = false;
+                }
+            }
+
+            if (attemptAllocation) {
+                wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+                if (!virtualFolder.empty()) {
+                    wxVector<wxVariant> cols;
+                    cols.push_back( ::MakeIconText(fn.GetFullPath(), GetBitmap(filename)) );
+                    cols.push_back( virtualFolder );
+                    ReconcileFileItemData* data = new ReconcileFileItemData(filename, virtualFolder);
+                    m_dataviewAssignedModel->AppendItem(wxDataViewItem(0), cols, data);
+                    bFileAllocated = true;
+                }
             }
         }
 

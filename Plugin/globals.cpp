@@ -1097,13 +1097,13 @@ wxFileName wxReadLink(const wxFileName & filename )
         wxFileName realFileName;
         char _tmp[512];
         memset(_tmp, 0, sizeof(_tmp));
-        ::readlink(filename.GetFullPath().mb_str(wxConvUTF8).data(), _tmp, sizeof(_tmp));
-        realFileName = wxFileName(wxString(_tmp, wxConvUTF8));
-        return realFileName;
-
-    } else {
-        return filename;
+        int len = readlink(filename.GetFullPath().mb_str(wxConvUTF8).data(), _tmp, sizeof(_tmp));
+        if (len != -1) {
+            realFileName = wxFileName(wxString(_tmp, wxConvUTF8, len));
+            return realFileName;
+        }
     }
+    return filename;
 
 #else
     return filename;

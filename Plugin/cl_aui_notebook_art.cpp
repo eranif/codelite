@@ -378,7 +378,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     
     /// Draw the bitmap
     if ( page.bitmap.IsOk() ) {
-        curx += 2;
+        curx += 4;
         int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight())/2);
         gdc.GetGraphicsContext()->DrawBitmap( page.bitmap, curx, bmpy, page.bitmap.GetWidth(), page.bitmap.GetHeight());
         curx += m_active_close_bmp.GetWidth();

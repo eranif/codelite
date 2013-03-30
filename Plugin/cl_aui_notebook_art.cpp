@@ -33,6 +33,9 @@ static unsigned char close_bits[]= {
 // these functions live in dockart.cpp -- they'll eventually
 // be moved to a new utility cpp file
 
+static const wxDouble X_RADIUS = 6.0;
+static const wxDouble X_DIAMETER = 2 * X_RADIUS;
+
 static wxColor wxAuiStepColour(const wxColor& c, int percent)
 {
     return DrawingUtils::LightColour(c, (float)(percent / 10));
@@ -387,17 +390,52 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     /// Draw the X button on the tab
     if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
         
-        curx += 2;
-        int btny = (rr.y + (rr.height - m_active_close_bmp.GetHeight())/2);
+        curx += 4;
+        int btny = (rr.y + (rr.height/2));
         
         if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {
             curx += 1;
             btny += 1;
         }
         
-        gdc.GetGraphicsContext()->DrawBitmap( m_active_close_bmp, curx, btny, m_active_close_bmp.GetWidth(), m_active_close_bmp.GetHeight());
-        *out_button_rect = wxRect(curx, btny, m_active_close_bmp.GetWidth(), m_active_close_bmp.GetHeight());
-        curx += m_active_close_bmp.GetWidth();
+        bool bDrawCircle = (close_button_state == wxAUI_BUTTON_STATE_PRESSED || close_button_state == wxAUI_BUTTON_STATE_HOVER);
+        
+        /// Defines the rectangle surrounding the X button
+        wxRect xRect = wxRect(curx, btny - X_RADIUS, X_DIAMETER, X_DIAMETER);
+        *out_button_rect = xRect;
+        
+        /// Defines the 'x' inside the circle
+        wxPoint circleCenter( curx + X_RADIUS, btny);
+        wxDouble xx_width = ::sqrt( ::pow(X_DIAMETER, 2.0) /2.0 );
+        wxDouble x_square = (circleCenter.x - (xx_width/2.0));
+        wxDouble y_square = (circleCenter.y - (xx_width/2.0));
+        
+        wxPoint2DDouble ptXTopLeft(x_square, y_square);
+        wxRect2DDouble insideRect(ptXTopLeft.m_x, ptXTopLeft.m_y, xx_width, xx_width);
+        insideRect.Inset(bDrawCircle ? 2.0 : 1.0 , bDrawCircle ? 2.0 : 1.0); // Shrink it by 1 pixle
+        
+        if ( bDrawCircle ) {
+            /// Draw the button using a circle with radius of 5px
+            wxGraphicsPath button_path = gdc.GetGraphicsContext()->CreatePath();
+            
+            /// Draw the circle surrounding the X
+            button_path.AddCircle( circleCenter.x, circleCenter.y, X_RADIUS );
+            gdc.SetPen( wxPen("#202020", 2) );
+            gdc.SetBrush( wxBrush("#202020"));
+            gdc.GetGraphicsContext()->FillPath( button_path  );
+            gdc.GetGraphicsContext()->StrokePath( button_path  );
+        }
+        
+        /// Draw the 'x' itself
+        wxGraphicsPath xpath = gdc.GetGraphicsContext()->CreatePath();
+        xpath.MoveToPoint( insideRect.GetLeftTop() );
+        xpath.AddLineToPoint( insideRect.GetRightBottom());
+        xpath.MoveToPoint( insideRect.GetRightTop() );
+        xpath.AddLineToPoint( insideRect.GetLeftBottom() );
+        gdc.SetPen( bDrawCircle ? wxPen(*wxWHITE, 2) : wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 2));
+        gdc.GetGraphicsContext()->StrokePath( xpath  );
+        
+        curx += X_DIAMETER;
     }
     *out_tab_rect = rr;
     gdc.DestroyClippingRegion();
@@ -434,7 +472,7 @@ wxSize clAuiTabArt::GetTabSize(wxDC& dc,
 
     // if the close button is showing, add space for it
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
-        tab_width += m_active_close_bmp.GetWidth() + 3;
+        tab_width += X_DIAMETER + 3;
 
     // if there's a bitmap, add space for it
     if (bitmap.IsOk()) {

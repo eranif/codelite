@@ -182,7 +182,7 @@ clAuiTabArt::clAuiTabArt()
     m_base_colour_4              = DrawingUtils::LightColour(m_base_colour, 4.0);
     m_colour_gradient_active_tab = m_base_colour;
     m_shade_colour               = DrawingUtils::DarkColour(m_base_colour, 2.0);
-    m_bottom_rect_colour         = m_base_colour;
+    m_bottom_rect_colour         = wxColour("WHITE");
     m_active_close_bmp           = il.Bitmap("tabClose");
     m_disabled_close_bmp         = il.Bitmap("tabClose");
 #endif

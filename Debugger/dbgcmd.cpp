@@ -192,7 +192,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
     wxCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
     DebuggerEventData *ded = new DebuggerEventData;
     ded->m_file = entry.file;
-    ded->m_line = entry.line;
+    ded->m_line = line_number;
     evtFileLine.SetClientObject( ded );
     EventNotifier::Get()->AddPendingEvent( evtFileLine );
     

@@ -235,9 +235,9 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     
     m_auibar48->AddSeparator();
     
-    m_auibar48->AddTool(wxID_SAVEAS, _("Save Build Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), wxNullBitmap, wxITEM_NORMAL, _("Save Build Log..."), _("Save Build Log..."), NULL);
-    
     m_auibar48->AddTool(wxID_CLEAR, _("Clear Build Output"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Build Output"), _("Clear Build Output"), NULL);
+    
+    m_auibar48->AddTool(wxID_SAVEAS, _("Save Build Log..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), wxNullBitmap, wxITEM_NORMAL, _("Save Build Log..."), _("Save Build Log..."), NULL);
     
     m_auibar48->AddTool(wxID_COPY, _("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("edit-copy")), wxNullBitmap, wxITEM_NORMAL, _("Copy Build Output to Clipboard"), _("Copy Build Output to Clipboard"), NULL);
     
@@ -254,10 +254,10 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     this->Connect(XRCID("stick_build_pane"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnToolPinCommandToolClicked), NULL, this);
     this->Connect(XRCID("build-auto-scroll"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnAutoScroll), NULL, this);
     this->Connect(XRCID("build-auto-scroll"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnAutoScrollUI), NULL, this);
-    this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutput), NULL, this);
-    this->Connect(wxID_SAVEAS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutputUI), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnClearBuildOutput), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnClearBuildOutputUI), NULL, this);
+    this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutput), NULL, this);
+    this->Connect(wxID_SAVEAS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutputUI), NULL, this);
     this->Connect(wxID_COPY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnCopyBuildOutput), NULL, this);
     this->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnCopyBuildOutputUI), NULL, this);
     this->Connect(wxID_PASTE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnPaste), NULL, this);
@@ -270,10 +270,10 @@ BuildTabTopPanelBaseClass::~BuildTabTopPanelBaseClass()
     this->Disconnect(XRCID("stick_build_pane"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnToolPinCommandToolClicked), NULL, this);
     this->Disconnect(XRCID("build-auto-scroll"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnAutoScroll), NULL, this);
     this->Disconnect(XRCID("build-auto-scroll"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnAutoScrollUI), NULL, this);
-    this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutput), NULL, this);
-    this->Disconnect(wxID_SAVEAS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutputUI), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnClearBuildOutput), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnClearBuildOutputUI), NULL, this);
+    this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutput), NULL, this);
+    this->Disconnect(wxID_SAVEAS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnSaveBuildOutputUI), NULL, this);
     this->Disconnect(wxID_COPY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnCopyBuildOutput), NULL, this);
     this->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTabTopPanelBaseClass::OnCopyBuildOutputUI), NULL, this);
     this->Disconnect(wxID_PASTE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(BuildTabTopPanelBaseClass::OnPaste), NULL, this);

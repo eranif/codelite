@@ -130,8 +130,8 @@ class DbgPageMiscBase : public wxPanel
 {
 protected:
     wxPanel* m_panel7;
-    wxCheckBox* m_checkBoxEnableLog;
     wxCheckBox* m_checkUseRelativePaths;
+    wxCheckBox* m_checkBoxEnableLog;
     wxCheckBox* m_checkShowTerminal;
     wxStaticText* m_staticText6;
     wxSpinCtrl* m_maxFramesSpinCtrl;

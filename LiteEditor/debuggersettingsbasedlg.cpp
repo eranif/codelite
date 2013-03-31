@@ -350,6 +350,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     m_spinCtrlNumElements = new wxSpinCtrl(m_panel6, wxID_ANY, wxT("200"), wxDefaultPosition, wxSize(-1, -1), wxSP_ARROW_KEYS);
     m_spinCtrlNumElements->SetToolTip(_("For no limit, set it to 0"));
     m_spinCtrlNumElements->SetRange(0, 10000);
+    m_spinCtrlNumElements->SetValue(200);
     
     fgSizer21->Add(m_spinCtrlNumElements, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -408,28 +409,28 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     bSizer17->Add(sbSizer2, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxGridSizer* gSizer2 = new wxGridSizer(  0, 1, 0, 0);
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     
-    sbSizer2->Add(gSizer2, 0, wxEXPAND, 5);
-    
-    m_checkBoxEnableLog = new wxCheckBox(m_panel7, wxID_ANY, _("Enable full debugger logging"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxEnableLog->SetValue(false);
-    
-    gSizer2->Add(m_checkBoxEnableLog, 0, wxALL, 5);
+    sbSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
     m_checkUseRelativePaths = new wxCheckBox(m_panel7, wxID_ANY, _("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkUseRelativePaths->SetValue(false);
     
-    gSizer2->Add(m_checkUseRelativePaths, 0, wxALL, 5);
+    boxSizer10->Add(m_checkUseRelativePaths, 0, wxALL, 5);
+    
+    m_checkBoxEnableLog = new wxCheckBox(m_panel7, wxID_ANY, _("Enable full debugger logging"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxEnableLog->SetValue(false);
+    
+    boxSizer10->Add(m_checkBoxEnableLog, 0, wxALL, 5);
     
     m_checkShowTerminal = new wxCheckBox(m_panel7, wxID_ANY, _("Show debugger terminal"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkShowTerminal->SetValue(false);
     
-    gSizer2->Add(m_checkShowTerminal, 0, wxALL, 5);
+    boxSizer10->Add(m_checkShowTerminal, 0, wxALL, 5);
     
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
-    gSizer2->Add(boxSizer4, 0, wxALL|wxEXPAND, 5);
+    boxSizer10->Add(boxSizer4, 0, wxEXPAND, 5);
     
     m_staticText6 = new wxStaticText(m_panel7, wxID_ANY, _("Max number of frames to allow in a call-stack"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -438,6 +439,7 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_maxFramesSpinCtrl = new wxSpinCtrl(m_panel7, wxID_ANY, wxT("500"), wxDefaultPosition, wxSize(70,-1), wxSP_ARROW_KEYS);
     m_maxFramesSpinCtrl->SetToolTip(_("The maximum number of frames that CodeLite will display in the Call Stack tab. This protects against a very long hang while trying to show 100,000 frames in an infinite recursion situation."));
     m_maxFramesSpinCtrl->SetRange(1, 999999);
+    m_maxFramesSpinCtrl->SetValue(500);
     
     boxSizer4->Add(m_maxFramesSpinCtrl, 0, wxALL, 5);
     

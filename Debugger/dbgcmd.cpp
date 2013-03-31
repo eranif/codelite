@@ -187,9 +187,16 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 
     long line_number;
     entry.line.ToLong(&line_number);
-    m_observer->UpdateFileLine(entry.file, line_number);
-
-#elif defined (__WXMSW__)
+    m_observer->UpdateFileLine(entry.file, entry.line);
+    
+    wxCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
+    DebuggerEventData *ded = new DebuggerEventData;
+    ded->m_file = entry.file;
+    ded->m_line = entry.line;
+    evtFileLine.SetClientObject( ded );
+    EventNotifier::Get()->AddPendingEvent( evtFileLine );
+    
+#else
     //Output of -file-list-exec-source-file
     //^done,line="36",file="a.cpp",fullname="C:/testbug1/a.cpp"
     //^done,line="2",file="main.cpp",fullname="/Users/eran/main.cpp"
@@ -217,7 +224,10 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 
     // fullname=
     if (tkz.HasMoreTokens()) {
-        fullName = tkz.NextToken();
+        wxString tmpfull_name = tkz.NextToken();
+        if ( tmpfull_name.StartsWith( "fullname" ) ) {
+            fullName = tmpfull_name;
+        }
     } else {
         return false;
     }
@@ -234,7 +244,6 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
     fullName.Replace(wxT("\\\\"), wxT("\\"));
     fullName.Trim().Trim(false);
 
-#ifdef __WXMSW__
     if(fullName.StartsWith(wxT("/"))) {
         // fallback to use file="<..>"
         filename = filename.AfterFirst(wxT('"'));
@@ -278,9 +287,16 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
             }
         }
     }
-#endif
     m_observer->UpdateFileLine(fullName, lineno);
-#endif // Mac || MSW
+    
+    wxCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
+    DebuggerEventData *ded = new DebuggerEventData;
+    ded->m_file = fullName;
+    ded->m_line = lineno;
+    evtFileLine.SetClientObject( ded );
+    EventNotifier::Get()->AddPendingEvent( evtFileLine );
+    
+#endif
     return true;
 }
 

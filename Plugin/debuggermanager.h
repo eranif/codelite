@@ -59,6 +59,9 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT;
 // sent by the debugger when a "disasseble" current line command returns
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_DISASSEBLE_CURLINE;
 
+// sent by the debugger when a "QueryFileLine" command has completed
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE;
+
 //extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS;
 //extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT;
 

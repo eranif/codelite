@@ -11,14 +11,18 @@ class DebuggerDisassemblyTab : public DebuggerDisassemblyTabBase
     
 protected:
     void DoClear();
+    void DoCentrLine(int line);
+    
+    void OnOutput(wxCommandEvent &e);
+    void OnCurLine(wxCommandEvent &e);
+    void OnDebuggerStopped(wxCommandEvent &e);
+    void OnQueryFileLineDone(wxCommandEvent &e);    
     
 public:
     DebuggerDisassemblyTab(wxWindow* parent, const wxString &label);
     virtual ~DebuggerDisassemblyTab();
     
-    void OnOutput(wxCommandEvent &e);
-    void OnCurLine(wxCommandEvent &e);
-    void OnDebuggerStopped(wxCommandEvent &e);
+
     
     void SetTitle(const wxString& title) {
         this->m_title = title;

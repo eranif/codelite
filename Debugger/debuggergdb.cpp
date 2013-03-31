@@ -587,13 +587,6 @@ bool DbgGdb::Interrupt()
 
 bool DbgGdb::QueryFileLine()
 {
-    // Trigger a "disasseble" call
-    if ( !WriteCommand("-data-disassemble -s \"$pc -50\" -e \"$pc + 50\" -- 0", new DbgCmdHandlerDisasseble(m_observer, this)) )
-        return false;
-        
-    if ( !WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0", new DbgCmdHandlerDisassebleCurLine(m_observer, this)) )
-        return false;
-        
 #if defined (__WXGTK__) || defined(__WXMAC__)
     if(!WriteCommand( wxT( "-stack-info-frame" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
         return false;
@@ -1361,4 +1354,29 @@ void DbgGdb::OnKillGDB(wxCommandEvent& e)
     wxUnusedVar(e);
     DoCleanup();
     m_observer->UpdateGotControl( DBG_DBGR_KILLED );
+}
+
+bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
+{
+    // Trigger a "disasseble" call
+    if ( /*filename.IsEmpty() || lineNumber == wxNOT_FOUND*/ true ) {
+        // Use the $pc
+        if ( !WriteCommand("-data-disassemble -s \"$pc -100\" -e \"$pc + 100\" -- 0", new DbgCmdHandlerDisasseble(m_observer, this)) )
+            return false;
+            
+    } else {
+        // else, use the file and line provided
+        wxString tmpfile = filename;
+        tmpfile.Replace("\\", "/"); // gdb does not like backslashes...
+        
+        if ( !WriteCommand(wxString() << "-data-disassemble -f \"" << tmpfile << "\" -l " << lineNumber << " -n -1 -- 0", 
+                           new DbgCmdHandlerDisasseble(m_observer, this)) )
+            return false;
+    }
+    
+    // get the current instruction
+    if ( !WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0", new DbgCmdHandlerDisassebleCurLine(m_observer, this)) )
+            return false;
+
+    return true;
 }

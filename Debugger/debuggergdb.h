@@ -134,6 +134,7 @@ public:
     virtual bool NextInstruction();
     virtual bool Continue();
     virtual bool QueryFileLine();
+    virtual bool Disassemble(const wxString &filename, int lineNumber);
     virtual bool Interrupt();
     virtual bool IsRunning();
     virtual bool ExecuteCmd(const wxString &cmd);

@@ -705,6 +705,13 @@ public:
      * \brief ask the debugger to query about its file & line. Once the result arrives, the observer's UpdateFileLine() will be invoked
      */
     virtual bool QueryFileLine() = 0;
+    
+    /**
+     * @brief disassemble the current file
+     * @param filename is the name of the file to disassemble 
+     * @param lineNumber is the line number to disassemble around 
+     */
+    virtual bool Disassemble(const wxString &filename, int lineNumber) = 0;
     /**
      * \brief executes a command that does not yield any output from the debugger
      */

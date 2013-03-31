@@ -90,5 +90,6 @@ void DebuggerDisassemblyTab::DoClear()
     m_stc->SetReadOnly(false);
     m_lines.clear();
     m_stc->ClearAll();
+    m_textCtrlCurFunction->ChangeValue("");
     m_stc->SetReadOnly(true);
 }

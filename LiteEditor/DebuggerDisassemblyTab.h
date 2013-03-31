@@ -9,12 +9,16 @@ class DebuggerDisassemblyTab : public DebuggerDisassemblyTabBase
     wxString m_title;
     DisassembleEntryVec_t m_lines;
     
+protected:
+    void DoClear();
+    
 public:
     DebuggerDisassemblyTab(wxWindow* parent, const wxString &label);
     virtual ~DebuggerDisassemblyTab();
     
     void OnOutput(wxCommandEvent &e);
     void OnCurLine(wxCommandEvent &e);
+    void OnDebuggerStopped(wxCommandEvent &e);
     
     void SetTitle(const wxString& title) {
         this->m_title = title;

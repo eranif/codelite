@@ -2446,6 +2446,11 @@ void Manager::DbgDoSimpleCommand ( int cmd )
         case DBG_SHOW_CURSOR:
             dbgr->QueryFileLine();
             break;
+        case DBG_NEXTI:
+            clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
+            clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
+            dbgr->NextInstruction();
+            break;
         default:
             break;
         }

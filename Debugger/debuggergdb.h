@@ -131,6 +131,7 @@ public:
     virtual bool StepIn();
     virtual bool StepOut();
     virtual bool Next();
+    virtual bool NextInstruction();
     virtual bool Continue();
     virtual bool QueryFileLine();
     virtual bool Interrupt();

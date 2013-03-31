@@ -369,6 +369,11 @@ bool DbgGdb::Next()
     return WriteCommand( wxT( "-exec-next" ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
 }
 
+bool DbgGdb::NextInstruction()
+{
+    return WriteCommand( wxT( "-exec-next-instruction" ), new DbgCmdHandlerAsyncCmd( m_observer, this ) );
+}
+
 void DbgGdb::SetBreakpoints()
 {
     for ( size_t i=0; i< m_bpList.size(); i++ ) {

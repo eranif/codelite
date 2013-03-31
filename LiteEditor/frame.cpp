@@ -430,8 +430,9 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("dbg_stepin"),               clMainFrame::OnDebugCmd)
     EVT_MENU(XRCID("dbg_stepout"),              clMainFrame::OnDebugCmd)
     EVT_MENU(XRCID("dbg_next"),                 clMainFrame::OnDebugCmd)
+    EVT_MENU(XRCID("dbg_nexti"),                clMainFrame::OnDebugCmd)
     EVT_MENU(XRCID("show_cursor"),              clMainFrame::OnDebugCmd)
-    EVT_MENU(XRCID("add_breakpoint"),						clMainFrame::DispatchCommandEvent)
+    EVT_MENU(XRCID("add_breakpoint"),           clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("insert_breakpoint"),        clMainFrame::DispatchCommandEvent) // Toggles
     EVT_MENU(XRCID("disable_all_breakpoints"),  clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("enable_all_breakpoints"),  	clMainFrame::DispatchCommandEvent)
@@ -454,6 +455,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("dbg_stepin"),          clMainFrame::OnDebugCmdUI)
     EVT_UPDATE_UI(XRCID("dbg_stepout"),         clMainFrame::OnDebugCmdUI)
     EVT_UPDATE_UI(XRCID("dbg_next"),            clMainFrame::OnDebugCmdUI)
+    EVT_UPDATE_UI(XRCID("dbg_nexti"),            clMainFrame::OnDebugCmdUI)
     EVT_UPDATE_UI(XRCID("show_cursor"),         clMainFrame::OnDebugCmdUI)
     EVT_UPDATE_UI(XRCID("insert_breakpoint"),   clMainFrame::OnDebugManageBreakpointsUI)
     EVT_UPDATE_UI(XRCID("disable_all_breakpoints"), clMainFrame::OnDebugManageBreakpointsUI)
@@ -3173,6 +3175,8 @@ void clMainFrame::OnDebugCmd(wxCommandEvent &e)
         cmd = DBG_NEXT;
     } else if (e.GetId() == XRCID("show_cursor")) {
         cmd = DBG_SHOW_CURSOR;
+    } else if ( e.GetId() == XRCID("dbg_nexti")) {
+        cmd = DBG_NEXTI;
     }
 
     if (cmd != wxNOT_FOUND) {
@@ -3187,6 +3191,7 @@ void clMainFrame::OnDebugCmdUI(wxUpdateUIEvent &e)
         e.GetId() == XRCID("dbg_stepin") ||
         e.GetId() == XRCID("dbg_stepout") ||
         e.GetId() == XRCID("dbg_next") ||
+        e.GetId() == XRCID("dbg_nexti") ||
         e.GetId() == XRCID("show_cursor")) {
         IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
         e.Enable(dbgr && dbgr->IsRunning());

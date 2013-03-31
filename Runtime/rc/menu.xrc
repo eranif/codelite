@@ -529,6 +529,9 @@
             <object class="wxMenuItem" name="dbg_next">
                 <label>Ne&amp;xt</label>
             </object>
+            <object class="wxMenuItem" name="dbg_nexti">
+                <label>Next Instruction</label>
+            </object>
             <object class="wxMenuItem" name="dbg_stepout">
                 <label>Step &amp;Out</label>
             </object>

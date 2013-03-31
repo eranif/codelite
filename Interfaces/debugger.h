@@ -40,7 +40,8 @@ enum DebuggerCommands {
     DBG_NEXT,
     DBG_STEPIN,
     DBG_STEPOUT,
-    DBG_SHOW_CURSOR
+    DBG_SHOW_CURSOR,
+    DBG_NEXTI,
 };
 
 // Breakpoint types. If you add more, LEditor::FillBPtoMarkerArray will also need altering
@@ -646,6 +647,12 @@ public:
      * \return true on success, false otherwise
      */
     virtual bool Next() = 0;
+    
+    /**
+     * @brief perform "next instruction" command
+     * @return true on success, false otherwise
+     */
+    virtual bool NextInstruction() = 0;
     /**
      * \brief continue execution of the debugger, until next breakpoint is hit, or program terminates
      * \return true on success, false otherwise

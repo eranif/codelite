@@ -136,7 +136,7 @@ clAuiTabArt::clAuiTabArt()
     
     m_normal_font.SetPointSize( m_normal_font.GetPointSize() + 1 );
     m_selected_font = m_normal_font;
-    m_selected_font.SetWeight(wxBOLD);
+    //m_selected_font.SetWeight(wxBOLD);
     m_measuring_font = m_selected_font;
 
     m_fixed_tab_width = 100;
@@ -390,7 +390,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     /// Draw the X button on the tab
     if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
         
-        curx += 4;
+        curx += 2;
         int btny = (rr.y + (rr.height/2));
         
         if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {

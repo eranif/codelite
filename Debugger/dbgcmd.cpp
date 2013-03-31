@@ -187,7 +187,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
 
     long line_number;
     entry.line.ToLong(&line_number);
-    m_observer->UpdateFileLine(entry.file, entry.line);
+    m_observer->UpdateFileLine(entry.file, line_number);
     
     wxCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
     DebuggerEventData *ded = new DebuggerEventData;

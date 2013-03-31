@@ -101,7 +101,7 @@ void DebuggerDisassemblyTab::OnQueryFileLineDone(wxCommandEvent& e)
 {
     e.Skip();
     
-    if ( IsShown() ) {
+    if ( /*IsShown()*/ true ) {
         wxString file; 
         int line = wxNOT_FOUND;
         

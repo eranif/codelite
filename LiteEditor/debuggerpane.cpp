@@ -40,6 +40,8 @@
 #include "threadlistpanel.h"
 #include "debuggermanager.h"
 #include "debugger.h"
+#include "DebuggerDisassemblyTab.h"
+#include "plugin_general_wxcp.h"
 
 const wxString DebuggerPane::LOCALS          = _("Locals");
 const wxString DebuggerPane::WATCHES         = _("Watches");
@@ -49,6 +51,7 @@ const wxString DebuggerPane::THREADS         = _("Threads");
 const wxString DebuggerPane::MEMORY          = _("Memory");
 const wxString DebuggerPane::ASCII_VIEWER    = _("Ascii Viewer");
 const wxString DebuggerPane::DEBUGGER_OUTPUT = _("Output");
+const wxString DebuggerPane::DISASSEMBLY     = _("Disassemble");
 
 #define IS_DETACHED(name) ( detachedPanes.Index(name) != wxNOT_FOUND ) ? true : false
 
@@ -88,7 +91,9 @@ void DebuggerPane::CreateGUIControls()
     SetSizer(mainSizer);
 
     long bookStyle = wxVB_TOP;
-
+    
+    GeneralImages img;
+    
 #if !CL_USE_NATIVEBOOK
     bookStyle |= wxAUI_NB_SCROLL_BUTTONS;
 #endif
@@ -202,7 +207,8 @@ void DebuggerPane::CreateGUIControls()
         m_memory = new MemoryView(m_book);
         m_book->AddPage(m_memory, name, false, bmp);
     }
-
+    
+    // Add the "Output" tab
     name = wxGetTranslation(DEBUGGER_OUTPUT);
     bmp  = wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab"));
     if( IS_DETACHED(name) ) {
@@ -214,7 +220,20 @@ void DebuggerPane::CreateGUIControls()
         m_outputDebug = new DebugTab(m_book, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
         m_book->AddPage(m_outputDebug, name, false, bmp);
     }
+    
+    // Add the "Output" tab
+    name = wxGetTranslation(DISASSEMBLY);
+    bmp  = img.Bitmap("dbgAsm");
+    if( IS_DETACHED(name) ) {
+        DockablePane *cp = new DockablePane(GetParent(), m_book, name, bmp, wxSize(200, 200));
+        m_disassemble = new DebuggerDisassemblyTab(cp, wxGetTranslation(DISASSEMBLY));
+        cp->SetChildNoReparent(m_disassemble);
 
+    } else {
+        m_disassemble = new DebuggerDisassemblyTab(m_book, wxGetTranslation(DISASSEMBLY));
+        m_book->AddPage(m_disassemble, name, false, bmp);
+    }
+    
     m_initDone = true;
 }
 

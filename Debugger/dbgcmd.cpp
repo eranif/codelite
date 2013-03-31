@@ -363,7 +363,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString &line)
                 if(id != wxNOT_FOUND && m_gdb->m_internalBpId == id) {
 
                     //*stopped,reason="breakpoint-hit",disp="del",bkptno="1",frame={addr="0x0040131e",func="main",args=[{name="argc",value="1"},
-                    //{name="argv",value="0x602420"}],file="C:/src/TestArea/TestEXE/main.cpp",fullname="C:\\src\\TestArea\\TestEXE\\main.cpp",line="5"},thread-id="1",stopped-threads="all"
+                    // {name="argv",value="0x602420"}],file="C:/src/TestArea/TestEXE/main.cpp",fullname="C:\\src\\TestArea\\TestEXE\\main.cpp",line="5"},thread-id="1",stopped-threads="all"
 
                     // try to locate the file name + line number:
                     int length = -1;
@@ -1430,6 +1430,85 @@ bool DbgCmdStopHandler::ProcessOutput(const wxString& line)
 {
     wxUnusedVar(line);
     wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
+    EventNotifier::Get()->AddPendingEvent(event);
+    return true;
+}
+
+bool DbgCmdHandlerDisasseble::ProcessOutput(const wxString& line)
+{
+    wxCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT);
+    GdbChildrenInfo info;
+    ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
+    
+    DebuggerEventData *evtData = new DebuggerEventData();
+    for( size_t i=0; i<info.children.size(); ++i ) {
+        
+        DisassembleEntry entry;
+        
+        GdbStringMap_t& attrs = info.children.at(i);
+        if( attrs.count("address") ) {
+            entry.m_address = attrs["address"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_address );
+        }
+        
+        if ( attrs.count("inst") ) {
+            entry.m_inst = attrs["inst"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_inst );
+        }
+        
+        if ( attrs.count("func-name") ) {
+            entry.m_function = attrs["func-name"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_function );
+            
+        }
+        
+        if ( attrs.count("offset") ) {
+            entry.m_offset = attrs["offset"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_offset );
+        }
+        evtData->m_disassembleLines.push_back( entry );
+    }
+    
+    event.SetClientObject( evtData );
+    EventNotifier::Get()->AddPendingEvent(event);
+    return true;
+}
+
+bool DbgCmdHandlerDisassebleCurLine::ProcessOutput(const wxString& line)
+{
+    wxCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_CURLINE);
+    GdbChildrenInfo info;
+    ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
+    
+    DebuggerEventData *evtData = new DebuggerEventData();
+    if(info.children.size()) {
+        
+        DisassembleEntry entry;
+        GdbStringMap_t& attrs = info.children.at(0);
+        if( attrs.count("address") ) {
+            entry.m_address = attrs["address"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_address );
+        }
+        
+        if ( attrs.count("inst") ) {
+            entry.m_inst = attrs["inst"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_inst );
+        }
+        
+        if ( attrs.count("func-name") ) {
+            entry.m_function = attrs["func-name"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_function );
+            
+        }
+        
+        if ( attrs.count("offset") ) {
+            entry.m_offset = attrs["offset"].c_str();
+            wxGDB_STRIP_QUOATES( entry.m_offset );
+        }
+        evtData->m_disassembleLines.push_back( entry );
+    }
+
+    event.SetClientObject( evtData );
     EventNotifier::Get()->AddPendingEvent(event);
     return true;
 }

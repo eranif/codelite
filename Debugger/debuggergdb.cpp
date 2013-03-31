@@ -70,7 +70,7 @@ static wxFFile gfp(wxT("debugger.log"), wxT("w+"));
 #    define DBG_LOG 0
 #endif
 
-const wxEventType wxEVT_DBG_STOP_DEBUGGER = wxNewEventType();
+const wxEventType wxEVT_DBG_STOP_DEBUGGER     = wxNewEventType();
 
 //Using the running image of child Thread 46912568064384 (LWP 7051).
 static wxRegEx reInfoProgram1( wxT( "\\(LWP[ \t]([0-9]+)\\)" ) );
@@ -582,6 +582,13 @@ bool DbgGdb::Interrupt()
 
 bool DbgGdb::QueryFileLine()
 {
+    // Trigger a "disasseble" call
+    if ( !WriteCommand("-data-disassemble -s \"$pc -50\" -e \"$pc + 50\" -- 0", new DbgCmdHandlerDisasseble(m_observer, this)) )
+        return false;
+        
+    if ( !WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0", new DbgCmdHandlerDisassebleCurLine(m_observer, this)) )
+        return false;
+        
 #if defined (__WXGTK__) || defined(__WXMAC__)
     if(!WriteCommand( wxT( "-stack-info-frame" ), new DbgCmdHandlerGetLine( m_observer, this ) ))
         return false;

@@ -53,8 +53,14 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN;
 // sent by the debugger after a successfull evaluation of variable object
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED;
 
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT;
+// sent by the debugger when a "disasseble" command returned
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT;
+
+// sent by the debugger when a "disasseble" current line command returns
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_DISASSEBLE_CURLINE;
+
+//extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS;
+//extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT;
 
 class WXDLLIMPEXP_SDK DebuggerMgr
 {

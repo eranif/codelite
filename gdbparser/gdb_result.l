@@ -111,6 +111,11 @@ has_more                                                   {RETURN_VAL(GDB_HAS_M
 new_children                                               {RETURN_VAL(GDB_NEW_CHILDREN);}
 new_num_children                                           {RETURN_VAL(GDB_NEW_NUM_CHILDREN);}
 displayhint                                                {RETURN_VAL(GDB_DISPLAYHINT);}
+func-name                                                  {RETURN_VAL(GDB_FUNC_NAME);}
+offset                                                     {RETURN_VAL(GDB_OFFSET);}
+inst                                                       {RETURN_VAL(GDB_INSTRUCTION);}
+address                                                    {RETURN_VAL(GDB_ADDRESS);}
+asm_insns                                                  {RETURN_VAL(GDB_ASM_INSTS);}
 {identifier}                                               {RETURN_VAL(GDB_IDENTIFIER);}
 "^"                                                        {RETURN_VAL((int)*yytext);}
 "="                                                        {RETURN_VAL((int)*yytext);}

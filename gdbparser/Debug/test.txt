@@ -1,1 +1,5 @@
-^done,changelist=[{name="var1",in_scope="true",type_changed="false",new_num_children="4",displayhint="array",dynamic="1",has_more="0",new_children=[{name="var1.[2]",exp="[2]",numchild="0",type="std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >",thread-id="1",displayhint="string",dynamic="1"},{name="var1.[3]",exp="[3]",numchild="0",type="std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >",thread-id="1",displayhint="string",dynamic="1"}]},{name="var1.[0]",in_scope="true",type_changed="false",displayhint="array",dynamic="1",has_more="0"},{name="var1.[1]",in_scope="true",type_changed="false",displayhint="array",dynamic="1",has_more="0"}]
+^done,asm_insns=
+[{address="0x0040136f",func-name="main(int, char**)",offset="59",inst="call   0x416b98 <_Unwind_SjLj_Register>"},
+{address="0x00401374",func-name="main(int, char**)",offset="64",inst="call   0x416600 <__main>"},
+{address="0x00401379",func-name="main(int, char**)",offset="69",inst="lea    -0x19(%ebp),%eax"},
+{address="0x0040137c",func-name="main(int, char**)",offset="72",inst="movl   $0x64,(%esp)"}]

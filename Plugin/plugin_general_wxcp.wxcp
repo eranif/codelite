@@ -1,8 +1,8 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	3,
-		"m_includeFiles":	[],
+		"m_objCounter":	5,
+		"m_includeFiles":	["codelite_exports.h"],
 		"m_bitmapFunction":	"wxCDEE4InitBitmapResources",
 		"m_bitmapsFile":	"plugin_general_wxcp_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
@@ -32,7 +32,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"integer",
 					"m_label":	"Bitmap Size:",
@@ -44,6 +44,25 @@
 				}],
 			"m_events":	[],
 			"m_children":	[{
+					"m_type":	4482,
+					"proportion":	0,
+					"border":	5,
+					"gbSpan":	"1,1",
+					"gbPosition":	"0,0",
+					"m_styles":	[],
+					"m_sizerFlags":	[],
+					"m_properties":	[{
+							"type":	"string",
+							"m_label":	"Name:",
+							"m_value":	"dbgAsm"
+						}, {
+							"type":	"filePicker",
+							"m_label":	"Bitmap File:",
+							"m_path":	"../icons/asm.png"
+						}],
+					"m_events":	[],
+					"m_children":	[]
+				}, {
 					"m_type":	4482,
 					"proportion":	0,
 					"border":	5,

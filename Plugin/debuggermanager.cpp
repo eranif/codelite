@@ -35,14 +35,16 @@
 //---------------------------------------------------------
 static DebuggerMgr *ms_instance = NULL;
 
-const wxEventType wxEVT_DEBUGGER_UPDATE_VIEWS      = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_QUERY_LOCALS      = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN     = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED  = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_UPDATE_VIEWS       = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_QUERY_LOCALS       = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN      = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED   = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_VAROBJECT_CREATED  = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT  = ::wxNewEventType();
+const wxEventType wxEVT_DEBUGGER_DISASSEBLE_CURLINE = ::wxNewEventType();
 
-const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS    = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT  = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJECT_CREATED = ::wxNewEventType();
+//const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS    = ::wxNewEventType();
+//const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT  = ::wxNewEventType();
 
 DebuggerMgr::DebuggerMgr()
 {

@@ -553,3 +553,84 @@ DbgPagePreDefTypesBase::~DbgPagePreDefTypesBase()
     m_notebookPreDefTypes->Disconnect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, wxChoicebookEventHandler(DbgPagePreDefTypesBase::OnPageChanged), NULL, this);
     
 }
+
+DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafter6v4fW1InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer14 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer14);
+    
+    wxFlexGridSizer* flexGridSizer22 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer22->SetFlexibleDirection( wxBOTH );
+    flexGridSizer22->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer22->AddGrowableCol(1);
+    
+    boxSizer14->Add(flexGridSizer22, 0, wxEXPAND, 5);
+    
+    m_staticText24 = new wxStaticText(this, wxID_ANY, _("Current function:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_staticText24Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText24Font.SetWeight(wxFONTWEIGHT_BOLD);
+    m_staticText24->SetFont(m_staticText24Font);
+    
+    flexGridSizer22->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlCurFunction = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_READONLY);
+    
+    flexGridSizer22->Add(m_textCtrlCurFunction, 0, wxALL|wxEXPAND, 5);
+    
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_ASM);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    m_stc->SetWrapMode(0);
+    m_stc->SetIndentationGuides(0);
+    m_stc->SetKeyWords(0, wxT(""));
+    m_stc->SetKeyWords(1, wxT(""));
+    m_stc->SetKeyWords(2, wxT(""));
+    m_stc->SetKeyWords(3, wxT(""));
+    m_stc->SetKeyWords(4, wxT(""));
+    
+    boxSizer14->Add(m_stc, 1, wxALL|wxEXPAND, 2);
+    
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+DebuggerDisassemblyTabBase::~DebuggerDisassemblyTabBase()
+{
+}

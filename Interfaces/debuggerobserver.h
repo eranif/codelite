@@ -112,6 +112,8 @@ public:
     int                           m_userReason;       // User reason as provided in the calling API which triggered the DebuggerUpdate call
     StackEntry                    m_frameInfo;        // DBG_UR_FRAMEINFO
     VariableObjectUpdateInfo      m_varObjUpdateInfo; // DBG_UR_VAROBJUPDATE
+    DisassembleEntryVec_t         m_disassembleLines; // None
+    
     DebuggerEventData()
         : m_updateReason  (DBG_UR_INVALID)
         , m_controlReason (DBG_UNKNOWN   )

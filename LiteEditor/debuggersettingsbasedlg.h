@@ -24,6 +24,7 @@
 #include <wx/statbox.h>
 #include <wx/spinctrl.h>
 #include <wx/choicebk.h>
+#include <wx/stc/stc.h>
 
 class DebuggerSettingsBaseDlg : public wxDialog
 {
@@ -166,6 +167,21 @@ protected:
 public:
     DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~DbgPagePreDefTypesBase();
+};
+
+
+class DebuggerDisassemblyTabBase : public wxPanel
+{
+protected:
+    wxStaticText* m_staticText24;
+    wxTextCtrl* m_textCtrlCurFunction;
+    wxStyledTextCtrl* m_stc;
+
+protected:
+
+public:
+    DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~DebuggerDisassemblyTabBase();
 };
 
 #endif

@@ -145,10 +145,19 @@ struct VariableObjectUpdateInfo {
     wxArrayString refreshIds;
 };
 
+struct DisassembleEntry {
+public:
+    wxString m_address;
+    wxString m_function;
+    wxString m_offset;
+    wxString m_inst;
+};
+
 typedef std::vector<VariableObjChild> VariableObjChildren;
 typedef std::vector<StackEntry>       StackEntryArray;
 typedef std::vector<ThreadEntry>      ThreadEntryArray;
 typedef std::vector<LocalVariable>    LocalVariables;
+typedef std::vector<DisassembleEntry> DisassembleEntryVec_t;
 
 class BreakpointInfo: public SerializedObject
 {

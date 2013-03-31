@@ -4,6 +4,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "plugin_general_wxcp.h"
+#include "codelite_exports.h"
 
 
 // Declare the bitmap loading function
@@ -22,6 +23,10 @@ GeneralImages::GeneralImages()
         bBitmapLoaded = true;
     }
     wxBitmap bmp;
+    
+    bmp = wxXmlResource::Get()->LoadBitmap(wxT("dbgAsm"));
+    this->Add( bmp );
+    m_bitmaps.insert( std::make_pair(wxT("dbgAsm"), bmp ) );
     
     bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose"));
     this->Add( bmp );

@@ -12,8 +12,9 @@
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
+#include "codelite_exports.h"
 
-class GeneralImages : public wxImageList
+class WXDLLIMPEXP_SDK GeneralImages : public wxImageList
 {
 protected:
     // Maintain a map of all bitmaps representd by their name

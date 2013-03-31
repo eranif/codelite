@@ -99,7 +99,6 @@ class clMainFrame : public wxFrame
     std::map<int, wxString>               m_viewAsMap;
     TagsOptionsData                       m_tagsOptionsData;
     DebuggerPane *                        m_debuggerPane;
-    wxToolBar *                           m_debuggerTb;
     bool                                  m_buildAndRun;
     GeneralInfo                           m_frameGeneralInfo;
     std::map<int, wxString>               m_toolbars;
@@ -245,13 +244,6 @@ public:
 
     wxAuiManager* GetDockingManagerPtr() {
         return &m_mgr;
-    }
-
-    /**
-     * Return the debugger toolbar
-     */
-    wxToolBar *GetDebuggerToolbar() {
-        return m_debuggerTb;
     }
 
     /**

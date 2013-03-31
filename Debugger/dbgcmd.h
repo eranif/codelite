@@ -79,6 +79,36 @@ public:
     virtual bool ProcessOutput(const wxString &line);
 };
 
+class DbgCmdHandlerDisasseble : public DbgCmdHandler
+{
+    DbgGdb*  m_gdb;
+public:
+    DbgCmdHandlerDisasseble(IDebuggerObserver *observe, DbgGdb* gdbr)
+        : DbgCmdHandler(observe)
+        , m_gdb(gdbr)
+    {}
+
+    virtual ~DbgCmdHandlerDisasseble()
+    {}
+
+    virtual bool ProcessOutput(const wxString &line);
+};
+
+class DbgCmdHandlerDisassebleCurLine : public DbgCmdHandler
+{
+    DbgGdb*  m_gdb;
+public:
+    DbgCmdHandlerDisassebleCurLine(IDebuggerObserver *observe, DbgGdb* gdbr)
+        : DbgCmdHandler(observe)
+        , m_gdb(gdbr)
+    {}
+
+    virtual ~DbgCmdHandlerDisassebleCurLine()
+    {}
+
+    virtual bool ProcessOutput(const wxString &line);
+};
+
 /**
  * @class DbgCmdHandlerStackInfo
  * handles the -stack-info-frame command

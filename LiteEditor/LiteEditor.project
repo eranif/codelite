@@ -642,6 +642,8 @@
     <File Name="debugcoredumpinfo.cpp"/>
     <File Name="debugcoredumpinfo.h"/>
     <File Name="DebuggerSettings.wxcp"/>
+    <File Name="DebuggerDisassemblyTab.h"/>
+    <File Name="DebuggerDisassemblyTab.cpp"/>
   </VirtualDirectory>
   <Options/>
   <Dependencies Name="UnixCodeLite">

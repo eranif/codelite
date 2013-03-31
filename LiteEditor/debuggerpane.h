@@ -39,6 +39,7 @@ class MemoryView;
 class wxAuiManager;
 class DebuggerAsciiViewer;
 class DebugTab;
+class DebuggerDisassemblyTab;
 
 class DebuggerPaneConfig : public clConfigItem
 {
@@ -54,6 +55,7 @@ public:
         Breakpoints = 0x00000020,
         Output      = 0x00000040,
         Threads     = 0x00000080,
+        Disassemble = 0x00000100,
         All         = 0xFFFFFFFF,
     };
 
@@ -101,21 +103,23 @@ public:
     static const wxString MEMORY;
     static const wxString ASCII_VIEWER;
     static const wxString DEBUGGER_OUTPUT;
+    static const wxString DISASSEMBLY;
 
 private:
-    Notebook *            m_book;
-    LocalsTable *         m_localsTable;
-    wxString              m_caption;
-    WatchesTable *        m_watchesTable;
-    ListCtrlPanel *       m_frameList;
-    BreakpointDlg *       m_breakpoints;
-    ThreadListPanel*      m_threads;
-    MemoryView *          m_memory;
-    DebuggerAsciiViewer*  m_asciiViewer;
-    bool                  m_initDone;
-    wxAuiManager *        m_mgr;
-    DebugTab*             m_outputDebug;
-    wxStringSet_t         m_visibleWindows;
+    Notebook *              m_book;
+    LocalsTable *           m_localsTable;
+    wxString                m_caption;
+    WatchesTable *          m_watchesTable;
+    ListCtrlPanel *         m_frameList;
+    BreakpointDlg *         m_breakpoints;
+    ThreadListPanel*        m_threads;
+    MemoryView *            m_memory;
+    DebuggerAsciiViewer*    m_asciiViewer;
+    DebuggerDisassemblyTab* m_disassemble;
+    bool                    m_initDone;
+    wxAuiManager *          m_mgr;
+    DebugTab*               m_outputDebug;
+    wxStringSet_t           m_visibleWindows;
 
 private:
     void CreateGUIControls();

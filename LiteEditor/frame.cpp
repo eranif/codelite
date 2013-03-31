@@ -1171,6 +1171,7 @@ void clMainFrame::CreateToolbars24()
     tb->AddSeparator();
     tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_in")),           _("Step In"));
     tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next")),              _("Next"));
+    tb->AddTool(XRCID("dbg_nexti"),         _("Next Instruction"),         bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/nexti")),              _("Next Instruction"));
     tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_out")),          _("Step Out"));
     tb->Realize();
 
@@ -1259,6 +1260,7 @@ void clMainFrame::CreateNativeToolbar16()
     tb->AddSeparator();
     tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_in")),           _("Step In"));
     tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/next")),              _("Next"));
+    tb->AddTool(XRCID("dbg_nexti"),         _("Next Instruction"),         bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/nexti")),             _("Next Instruction"));
     tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_out")),          _("Step Out"));
 
     SetToolBar(tb);
@@ -1332,6 +1334,7 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddSeparator();
     tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_in")),           _("Step In"));
     tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/next")),              _("Next"));
+    tb->AddTool(XRCID("dbg_nexti"),         _("Next Instruction"),         bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/nexti")),             _("Next Instruction"));
     tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/24/debugger/step_out")),          _("Step Out"));
 
     SetToolBar(tb);
@@ -1460,6 +1463,7 @@ void clMainFrame::CreateToolbars16()
     tb->AddSeparator();
     tb->AddTool(XRCID("dbg_stepin"),       _("Step Into"),                 bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_in")),           _("Step In"));
     tb->AddTool(XRCID("dbg_next"),         _("Next"),                      bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/next")),              _("Next"));
+    tb->AddTool(XRCID("dbg_nexti"),         _("Next Instruction"),         bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/nexti")),              _("Next Instruction"));
     tb->AddTool(XRCID("dbg_stepout"),      _("Step Out"),                  bmpLoader.LoadBitmap(wxT("toolbars/16/debugger/step_out")),          _("Step Out"));
 
     tb->Realize();

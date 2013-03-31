@@ -75,6 +75,7 @@ static std::vector<std::string>  sg_locals;
 %token GDB_HAS_MORE
 %token GDB_NEW_NUM_CHILDREN
 %token GDB_NEW_CHILDREN
+%token GDB_FUNC_NAME GDB_OFFSET GDB_INSTRUCTION GDB_ADDRESS GDB_ASM_INSTS
 %%
 
 parse: children_list
@@ -83,7 +84,7 @@ parse: children_list
 
 children_list:    { cleanup(); } child_pattern
                 |  error {
-                //printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
+                printf("CodeLite: syntax error, unexpected token '%s' found\n", gdb_result_lval.c_str());
                 }
             ;
 has_more_attr : /* empty */
@@ -135,6 +136,11 @@ child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN 
                     sg_children.push_back( sg_attributes );
                     sg_attributes.clear();
                 }
+                | '^' GDB_DONE ',' GDB_ASM_INSTS '=' list_open asm_insts list_close
+                {
+                    sg_children.push_back( sg_attributes );
+                    sg_attributes.clear();
+                }
                 /*
                  * ^done,changelist=[{name="var2",in_scope="false",type_changed="false",has_more="0"},{name="var1",in_scope="true"}]
                  */
@@ -142,6 +148,14 @@ child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN 
                 | '^' GDB_DONE ',' GDB_CHANGELIST '=' list_open change_set list_close
                 | stop_statement
                 ;
+
+asm_insts: list_open child_attributes list_close
+                {
+                    sg_children.push_back( sg_attributes );
+                    sg_attributes.clear();
+                }
+             | list_open child_attributes list_close {sg_children.push_back( sg_attributes ); sg_attributes.clear(); } ',' asm_insts
+             ;
 
 change_set:    list_open child_attributes list_close
                 {
@@ -246,6 +260,10 @@ child_key: GDB_NAME             {$$ = $1;}
          | GDB_DISPLAYHINT      {$$ = $1;}
          | GDB_HAS_MORE         {$$ = $1;}
          | GDB_NEW_NUM_CHILDREN {$$ = $1;}
+         | GDB_ADDRESS          {$$ = $1;}
+         | GDB_INSTRUCTION      {$$ = $1;}
+         | GDB_FUNC_NAME        {$$ = $1;}
+         | GDB_OFFSET           {$$ = $1;}
          ;
 %%
 

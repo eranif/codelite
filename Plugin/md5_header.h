@@ -64,8 +64,8 @@ public:
 	MD5              (ifstream& stream);      // digest stream, close, finalize
 
 // methods to acquire finalized result
-	unsigned char    *raw_digest ();  // digest as a 16-byte binary array
-	char *            hex_digest ();  // digest as a 33-byte ascii-hex string
+	// unsigned char    *raw_digest ();  // digest as a 16-byte binary array
+	const char *      hex_digest ();  // digest as a 33-byte ascii-hex string
 	friend ostream&   operator<< (ostream&, MD5 context);
 
 
@@ -82,8 +82,9 @@ private:
 	uint4 count[2];     // number of *bits*, mod 2^64
 	uint1 buffer[64];   // input buffer
 	uint1 digest[16];
+        char  hex_digest_buff[33];
 	uint1 finalized;
-
+	
 // last, the private methods, mostly static:
 	void init             ();               // called by all constructors
 	void transform        (uint1 *buffer);  // does the real update work.  Note

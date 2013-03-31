@@ -48,7 +48,7 @@ documentation and/or software.
 #include "md5_header.h"
 
 #include <assert.h>
-#include <strings.h>
+#include <string.h>
 #include <iostream>
 
 
@@ -254,10 +254,12 @@ MD5::MD5(ifstream& stream)
 }
 
 
-
+/*
+// never called
+// BUGGY - raw digest can't be returned as string
 unsigned char *MD5::raw_digest()
 {
-
+    // memory leak
     uint1 *s = new uint1[16];
 
     if (!finalized) {
@@ -267,29 +269,28 @@ unsigned char *MD5::raw_digest()
     }
 
     memcpy(s, digest, 16);
-    return s;
+    return digest;
 }
+*/
 
 
-
-char *MD5::hex_digest()
+const char *MD5::hex_digest()
 {
 
-    int i;
-    char *s= new char[33];
+    ::memset(hex_digest_buff, 0, sizeof(hex_digest_buff));
 
     if (!finalized) {
         cerr << "MD5::hex_digest:  Can't get digest if you haven't "<<
              "finalized the digest!" <<endl;
-        return "";
+        return hex_digest_buff;
     }
+    
+    for (int i=0; i<16; i++)
+        sprintf(hex_digest_buff+(i*2), "%02x", digest[i]);
 
-    for (i=0; i<16; i++)
-        sprintf(s+i*2, "%02x", digest[i]);
+    hex_digest_buff[32]='\0';
 
-    s[32]='\0';
-
-    return s;
+    return hex_digest_buff;
 }
 
 

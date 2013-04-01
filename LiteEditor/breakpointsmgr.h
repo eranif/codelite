@@ -41,8 +41,8 @@ class myDragImage;
 
 class BreakptMgr
 {
-    std::vector<BreakpointInfo> m_bps;        // The vector of breakpoints
-    std::vector<BreakpointInfo> m_pendingBreakpointsList; // These are any breakpoints that the debugger won't (yet) accept (often because they're in a plugin)
+    BreakpointInfoVec_t m_bps;        // The vector of breakpoints
+    BreakpointInfoVec_t m_pendingBreakpointsList; // These are any breakpoints that the debugger won't (yet) accept (often because they're in a plugin)
 
     int NextInternalID;		// Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 
@@ -200,7 +200,26 @@ public:
      * Delete break point by file and line
      */
     int DelBreakpointByLineno(const wxString& file, const int lineno);
-
+    
+    /**
+     * @brief delete all breakpoints from a given memort address
+     * @param address the memory address
+     * @return number of breakpoints removed
+     */
+    int DelBreakpointByAddress(const wxString &address);
+    
+    /**
+     * @brief add breakpoint by memory address.
+     * @param address the memory address
+     * @return true of success, false otherwise
+     */
+    bool AddBreakpointByAddress(const wxString &address);
+    /**
+     * @brief return list of allmemory breakpoints
+     * @param memoryBps
+     */
+    void GetAllMemoryBreakpoints(BreakpointInfoVec_t& memoryBps);
+    
     /**
      * Toggle a breakpoint's enabled state
      */

@@ -33,6 +33,15 @@
 
 //---------------------------------------------------------
 
+bool BreakptMgr::AddBreakpointByAddress(const wxString& address)
+{
+    BreakpointInfo bp;
+    bp.memory_address = address;
+    bp.origin = BO_Other;
+    bp.internal_id = GetNextID();
+    return AddBreakpoint(bp);
+}
+
 bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/)
 {
     BreakpointInfo bp;
@@ -1183,7 +1192,18 @@ void BreakptMgr::DoRemoveDuplicateBreakpoints()
             
         } else {
             wxString key;
-            key << bi.file << bi.lineno;
+            
+            /// construct a unique identifier for the breakpoint
+            if ( !bi.memory_address.IsEmpty() ) {
+                key << bi.memory_address;
+                
+            } else if ( !bi.function_name.IsEmpty() ) {
+                key << bi.function_name;
+                
+            } else {
+                key << bi.file << bi.lineno;
+                
+            }
             
             if ( uniqueNormalBreakpoints.count(key) ) {
                 continue;
@@ -1199,3 +1219,37 @@ void BreakptMgr::DoRemoveDuplicateBreakpoints()
     m_bps.swap( bps );
 }
 
+int BreakptMgr::DelBreakpointByAddress(const wxString& address)
+{
+    std::vector<BreakpointInfo> allBps; // Start by finding all on the line
+    GetBreakpoints(allBps);
+    
+    int breakpointsRemoved = 0;
+    for(size_t i=0; i<allBps.size(); i++) {
+        BreakpointInfo &bp = allBps.at(i);
+        if ( bp.memory_address == address ) {
+            int bpId = (bp.debugger_id == -1 ? bp.internal_id : bp.debugger_id );
+
+            if(bpId == wxID_CANCEL || bpId == BP_type_none)
+                continue;
+
+            if( DelBreakpoint(bpId) ) {
+                breakpointsRemoved++;
+            }
+        }
+    }
+    return breakpointsRemoved;
+}
+
+void BreakptMgr::GetAllMemoryBreakpoints(BreakpointInfoVec_t& memoryBps)
+{
+    BreakpointInfoVec_t allBps; // Start by finding all on the line
+    GetBreakpoints(allBps);
+    
+    for(size_t i=0; i<allBps.size(); i++) {
+        BreakpointInfo &bp = allBps.at(i);
+        if ( !bp.memory_address.IsEmpty() ) {
+            memoryBps.push_back( bp );
+        }
+    }
+}

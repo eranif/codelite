@@ -5092,7 +5092,7 @@
 								}, {
 									"type":	"bool",
 									"m_label":	"Symbol Margin",
-									"m_value":	false
+									"m_value":	true
 								}, {
 									"type":	"choice",
 									"m_label":	"Wrap Text",
@@ -5142,7 +5142,13 @@
 									"m_label":	"Keywords Set 5",
 									"m_value":	""
 								}],
-							"m_events":	[],
+							"m_events":	[{
+									"m_eventName":	"wxEVT_STC_MARGINCLICK",
+									"m_eventClass":	"wxStyledTextEvent",
+									"m_eventHandler":	"wxStyledTextEventHandler",
+									"m_functionNameAndSignature":	"OnMarginClicked(wxStyledTextEvent& event)",
+									"m_description":	"One of margin was left clicked with the mouse"
+								}],
 							"m_children":	[]
 						}]
 				}]

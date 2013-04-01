@@ -178,6 +178,7 @@ protected:
     wxStyledTextCtrl* m_stc;
 
 protected:
+    virtual void OnMarginClicked(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);

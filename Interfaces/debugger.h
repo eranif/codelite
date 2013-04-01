@@ -299,6 +299,7 @@ protected:
         arch.Read(wxT("origin"),     (int&)origin);
     }
 };
+typedef std::vector<BreakpointInfo> BreakpointInfoVec_t;
 
 /**
  * @class BreakpointInfoArray a wrapper class to allow saving and reading breakpoint array to and

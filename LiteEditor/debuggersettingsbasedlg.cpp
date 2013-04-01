@@ -598,7 +598,7 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     // Configure the symbol margin
     m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginWidth(2, 16);
     m_stc->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
@@ -629,8 +629,13 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_stc->Connect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL, this);
+    
 }
 
 DebuggerDisassemblyTabBase::~DebuggerDisassemblyTabBase()
 {
+    m_stc->Disconnect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL, this);
+    
 }

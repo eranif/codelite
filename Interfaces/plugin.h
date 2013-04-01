@@ -480,6 +480,9 @@ enum {
     // User clicked on a project item in the treeview
     // the event.GetString() contains the project name that was clicked
     wxEVT_PROJECT_TREEITEM_CLICKED,
+    
+    // user has deleted all the breakpoints using the "Breakpoints" table
+    wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED,
 };
 
 //------------------------------------------------------------------

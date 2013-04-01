@@ -48,8 +48,8 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
 
 bool BreakptMgr::AddBreakpoint(const BreakpointInfo &bp)
 {
-    if(bp.file.IsEmpty() && bp.function_name.IsEmpty() && bp.memory_address.IsEmpty() == false) {
-        // no function nor file?
+    if(bp.file.IsEmpty() && bp.function_name.IsEmpty() && bp.memory_address.IsEmpty() && bp.lineno == wxNOT_FOUND) {
+        // no function nor file? no memory address?
         // do nothing then
         return true;
     }

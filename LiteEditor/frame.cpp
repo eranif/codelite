@@ -414,6 +414,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("debugger_win_memory"),      clMainFrame::OnShowDebuggerWindow)
     EVT_MENU(XRCID("debugger_win_breakpoints"), clMainFrame::OnShowDebuggerWindow)
     EVT_MENU(XRCID("debugger_win_asciiview"),   clMainFrame::OnShowDebuggerWindow)
+    EVT_MENU(XRCID("debugger_win_disassemble"), clMainFrame::OnShowDebuggerWindow)
     EVT_UPDATE_UI(XRCID("debugger_win_locals"),      clMainFrame::OnShowDebuggerWindowUI)
     EVT_UPDATE_UI(XRCID("debugger_win_watches"),     clMainFrame::OnShowDebuggerWindowUI)
     EVT_UPDATE_UI(XRCID("debugger_win_output"),      clMainFrame::OnShowDebuggerWindowUI)
@@ -422,6 +423,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("debugger_win_memory"),      clMainFrame::OnShowDebuggerWindowUI)
     EVT_UPDATE_UI(XRCID("debugger_win_breakpoints"), clMainFrame::OnShowDebuggerWindowUI)
     EVT_UPDATE_UI(XRCID("debugger_win_asciiview"),   clMainFrame::OnShowDebuggerWindowUI)
+    EVT_UPDATE_UI(XRCID("debugger_win_disassemble"), clMainFrame::OnShowDebuggerWindowUI)
     EVT_MENU(XRCID("start_debugger"),           clMainFrame::OnDebug)
     EVT_MENU(XRCID("restart_debugger"),         clMainFrame::OnDebugRestart)
     EVT_MENU(XRCID("attach_debugger"),          clMainFrame::OnDebugAttach)
@@ -5217,6 +5219,9 @@ void clMainFrame::OnShowDebuggerWindow(wxCommandEvent& e)
         
     if( e.GetId() == XRCID("debugger_win_asciiview"))
         item.ShowDebuggerWindow(DebuggerPaneConfig::AsciiViewer, show);
+    
+    if( e.GetId() == XRCID("debugger_win_disassemble"))
+        item.ShowDebuggerWindow(DebuggerPaneConfig::Disassemble, show);
 
     conf.WriteItem( &item );
     // Reload the perspective

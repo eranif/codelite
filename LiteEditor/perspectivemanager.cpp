@@ -208,6 +208,7 @@ void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
     DoShowPane(item.WindowName(DebuggerPaneConfig::Locals),      (item.GetWindows() & DebuggerPaneConfig::Locals     ), needUpdate );
     DoShowPane(item.WindowName(DebuggerPaneConfig::Output),      (item.GetWindows() & DebuggerPaneConfig::Output     ), needUpdate );
     DoShowPane(item.WindowName(DebuggerPaneConfig::Memory),      (item.GetWindows() & DebuggerPaneConfig::Memory     ), needUpdate );
+    DoShowPane(item.WindowName(DebuggerPaneConfig::Disassemble), (item.GetWindows() & DebuggerPaneConfig::Disassemble), needUpdate );
 
 #ifndef __WXMSW__
     wxAuiPaneInfo &dbgPaneInfo = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger Console"));

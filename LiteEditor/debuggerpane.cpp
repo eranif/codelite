@@ -313,6 +313,8 @@ wxString DebuggerPaneConfig::WindowName(eDebuggerWindows flag) const
     
     case Output:
         return wxGetTranslation(DebuggerPane::DEBUGGER_OUTPUT);
-        
+    
+    case Disassemble:
+        return wxGetTranslation(DebuggerPane::DISASSEMBLY);
     }
 }

@@ -502,6 +502,10 @@
                     <label>ASCII Viewer</label>
                     <checkable>1</checkable>
                 </object>
+                <object class="wxMenuItem" name="debugger_win_disassemble">
+                    <label>Disassembly</label>
+                    <checkable>1</checkable>
+                </object>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="start_debugger">

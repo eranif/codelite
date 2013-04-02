@@ -202,7 +202,7 @@ void BackupPage::OnBtnBackupClick(wxCommandEvent& event) {
 
 		SerializableList::compatibility_iterator tabNode = m_pParentWizard->GetSelectedDatabase()->GetFirstChildNode();
 		while(tabNode) {
-			DBETable* tab = wxDynamicCast(tabNode->GetData(),DBETable);
+			Table* tab = wxDynamicCast(tabNode->GetData(),Table);
 			if (tab) {
 				retStr.append(m_pParentWizard->GetSelectedDatabase()->GetDbAdapter()->GetCreateTableSql(tab,true));
 			}
@@ -220,7 +220,7 @@ void BackupPage::OnBtnBackupClick(wxCommandEvent& event) {
 
 		tabNode = m_pParentWizard->GetSelectedDatabase()->GetFirstChildNode();
 		while(tabNode) {
-			DBETable* tab = wxDynamicCast(tabNode->GetData(),DBETable);
+			Table* tab = wxDynamicCast(tabNode->GetData(),Table);
 			if (tab) {
 				retStr.append(m_pParentWizard->GetSelectedDatabase()->GetDbAdapter()->GetAlterTableConstraintSql(tab));
 			}
@@ -238,7 +238,7 @@ void BackupPage::OnBtnBackupClick(wxCommandEvent& event) {
 		}
 		if (pTextFile.IsOpened()) {
 			pTextFile.AddLine(retStr);
-			pTextFile.Write();
+			pTextFile.Write(wxTextFileType_None, wxConvUTF8);
 			pTextFile.Close();
 			wxMessageBox(_("Structure saved!"));
 		}
@@ -403,10 +403,8 @@ void RestorePage::OnBtnRestoreClick(wxCommandEvent& event)
 	Clear();
 	try {
 		wxFileInputStream input(m_restoreFile->GetPath());
-		wxTextInputStream text( input );
-		text.SetStringSeparators(wxT(";"));
+		wxTextInputStream text( input, wxT(";"), wxConvUTF8 );
 		wxString command = wxT("");
-
 
 		pDbLayer = pDb->GetDbAdapter()->GetDatabaseLayer(pDb->GetName());
 		pDbLayer->BeginTransaction();
@@ -419,14 +417,14 @@ void RestorePage::OnBtnRestoreClick(wxCommandEvent& event)
 			//dialog.AppendText(line);
 			int index = line.Find(wxT("--"));
 			if (index != wxNOT_FOUND) line = line.Mid(0,index);
-			command.append(line);
+			command += line;
 			if (line.Find(wxT(";")) != wxNOT_FOUND) {
 				AppendSeparator();
 				AppendComment(wxT("Run SQL command:"));
 				AppendText(command);
 				pDbLayer->RunQuery(command);
 				AppendComment(_("Successful!"));
-				command.clear();
+				command.Clear();
 			}
 		}
 		pDbLayer->Commit();
@@ -477,6 +475,6 @@ void RestorePage::AppendSeparator()
 
 void RestorePage::AppendComment(const wxString& txt)
 {
-	m_text.Append(wxNow() + txt + wxT("\n"));
+	m_text.Append(wxNow() + wxT(" ") + txt + wxT("\n"));
 	m_txLog->SetValue(m_text);
 }

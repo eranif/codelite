@@ -32,9 +32,9 @@ public:
     /*! \brief Return string with type name in result format on UNIVERSAL TYPE base */
     wxString GetResTypeName(IDbType::UNIVERSAL_TYPE type);
     /*! \brief Return string with type name in Debea format on UNIVERSAL TYPE base */
-    wxString GetDebeaBinding(DBEColumn* pCol);
+    wxString GetDebeaBinding(Column* pCol);
     /*! \brief Return row for filling table row attribute. */
-    wxString GetFillData(DBEColumn* pCol, int colIndex);
+    wxString GetFillData(Column* pCol, int colIndex);
     /*! \brief Return string with type name on UNIVERSAL TYPE base */
     wxString GetResultFunction(IDbType::UNIVERSAL_TYPE type);
     /*! \brief Return string with type name in function parameter format on UNIVERSAL TYPE base */
@@ -44,10 +44,10 @@ public:
 
 
     /*! \brief Function for generating classes for selected table. It call GenerateFile function two times. Fist time for generate .h, second time for generate .cpp file. */
-    bool GenerateClass(DBETable* pTab, const wxString& path);
+    bool GenerateClass(Table* pTab, const wxString& path);
 
     /*! \brief Function for generating file for selected table.  */
-    bool GenerateFile(DBETable* pTab,wxTextFile& htmpFile, wxString& hFile, const wxString& classItemName,const wxString& classItemDef, const wxString& classColName, const wxString& classTableName, const wxString& classUtilName);
+    bool GenerateFile(Table* pTab,wxTextFile& htmpFile, wxString& hFile, const wxString& classItemName,const wxString& classItemDef, const wxString& classColName, const wxString& classTableName, const wxString& classUtilName);
     /*! \brief Format text file */
     void FormatFile(wxString& content);
 

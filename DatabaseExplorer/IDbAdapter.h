@@ -10,7 +10,7 @@
 //#include "databasecol.h"
 class DbConnection;
 class Database;
-class DBETable;
+class Table;
 class View;
 class IDbType;
 
@@ -50,7 +50,7 @@ public:
 	virtual void GetViews(Database* db) = 0;
 	
 	/*! \brief Function connect columns to the DBETable */
-	virtual bool GetColumns(DBETable* pTab) = 0;
+	virtual bool GetColumns(Table* pTab) = 0;
 	
 	
 	/*! \brief Return wxString with USE DB statement for dbName */
@@ -59,15 +59,17 @@ public:
 	virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName) = 0;
 	virtual wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName) = 0;
 	/*! \brief Return Create table sql statement */
-	virtual wxString GetCreateTableSql(DBETable* tab, bool dropTable) = 0;	
+	virtual wxString GetCreateTableSql(Table* tab, bool dropTable) = 0;	
 	/*! \brief Return Create view sql statement */
 	virtual wxString GetCreateViewSql(View* view, bool dropView) = 0;		
 	/*! \brief Return Create update table SQL statement for adding constraints */
-	virtual wxString GetAlterTableConstraintSql(DBETable* tab) = 0;
+	virtual wxString GetAlterTableConstraintSql(Table* tab) = 0;
 	/*! \brief Return Create database SQL statement. */
 	virtual wxString GetCreateDatabaseSql(const wxString& dbName) = 0;
 	/*! \brief Return Drop table SQL statement. */
-	virtual wxString GetDropTableSql(DBETable* pTab) = 0;
+	virtual wxString GetDropTableSql(Table* pTab) = 0;
+	/*! \brief Return Drop view SQL statement. */
+	virtual wxString GetDropViewSql(View* pView) = 0;
 	/*! \brief Return Drop database SQL statement. */
 	virtual wxString GetDropDatabaseSql(Database* pDb) = 0;	
 
@@ -83,7 +85,7 @@ public:
 	/*! \brief Convert IDbType to the special db type. (!!! Old type is deleted !!!) */
 	virtual IDbType* ConvertType (IDbType* pType) = 0;
 	/*! \brief Return wxArrayString of possible db types */
-	virtual void ConvertTable(DBETable* pTab) = 0;
+	virtual void ConvertTable(Table* pTab) = 0;
 	
 	const TYPE& GetAdapterType() const {return m_adapterType;}
 	

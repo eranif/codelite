@@ -11,7 +11,7 @@
 // Trida databazove tabulky
 // -------------------------------------------------
 /*! \brief Class representing one database table */
-class DBETable : public xsSerializable {
+class Table : public xsSerializable {
 protected:
 	wxString m_name;
 	wxString m_parentName;
@@ -23,13 +23,13 @@ protected:
 	void initSerializable();
 	
 public:
-	XS_DECLARE_CLONABLE_CLASS(DBETable);	
+	XS_DECLARE_CLONABLE_CLASS(Table);	
 	/*! \brief Default consturctors */
-	DBETable();
-	DBETable(const DBETable& obj);
-	DBETable(IDbAdapter* dbAdapter,const wxString& tableName, const wxString& parentName, bool isView);
+	Table();
+	Table(const Table& obj);
+	Table(IDbAdapter* dbAdapter,const wxString& tableName, const wxString& parentName, bool isView);
 	/*! \brief Default destructor*/
-	virtual ~DBETable();
+	virtual ~Table();
 	/*! \brief Return table name */
 	wxString GetName() { return this->m_name; }
 	/*! \brief Return parent name, usually dbName */
@@ -44,11 +44,11 @@ public:
 	/*! \brief DEPRECATED. Check if table modifications are saved */
 	bool IsSaved() { return this->m_isSaved; }
 	/*! \brief Add column */
-	void AddColumn(DBEColumn* col) { this->AddChild(col); }
+	void AddColumn(Column* col) { this->AddChild(col); }
 	/*! \brief Add constraint */
 	void AddConstraint(Constraint* cont) { this->AddChild(cont); } 
 	/*! \brief Return first talbe column */	
-	DBEColumn* GetFristColumn() { return (DBEColumn*) GetFirstChild( CLASSINFO(DBEColumn)); }
+	Column* GetFristColumn() { return (Column*) GetFirstChild( CLASSINFO(Column)); }
 	/*! \brief Return connected dbAdapter. */
 	IDbAdapter* GetDbAdapter() { return m_pDbAdapter; }
 	/*! \brief Is true, if table object was construted on view base. This feature is usisng in code generating. */

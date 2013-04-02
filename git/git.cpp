@@ -822,7 +822,7 @@ void GitPlugin::ProcessGitActionQueue()
     wxString command = m_pathGITExecutable;
     switch(ga.action) {
     case gitApplyPatch:
-        command << " apply --whitespace=nowarn " << ga.arguments;
+        command << " apply --whitespace=nowarn --ignore-whitespace " << ga.arguments;
         GIT_MESSAGE("%s", command.c_str());
         break;
         

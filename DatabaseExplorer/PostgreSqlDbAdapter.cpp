@@ -46,7 +46,7 @@ bool PostgreSqlDbAdapter::IsConnected() {
 	return this->m_pDbLayer->IsOpen();
 }
 
-wxString PostgreSqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
+wxString PostgreSqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
 	//TODO:SQL:
 	wxString str = wxT("");
 	if (dropTable) str = wxString::Format(wxT("DROP TABLE IF EXISTS %s CASCADE; \n"),tab->GetName().c_str());
@@ -56,8 +56,8 @@ wxString PostgreSqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
 
 	SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 	while( node ) {
-		DBEColumn* col = NULL;
-		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ) col = (DBEColumn*) node->GetData();
+		Column* col = NULL;
+		if( node->GetData()->IsKindOf( CLASSINFO(Column)) ) col = (Column*) node->GetData();
 		if(col)	str.append(wxString::Format(wxT("\t%s %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
 
 		Constraint* constr = wxDynamicCast(node->GetData(),Constraint);
@@ -67,7 +67,7 @@ wxString PostgreSqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable) {
 
 		node = node->GetNext();
 		if (node) {
-			if (wxDynamicCast(node->GetData(),DBEColumn)) str.append(wxT(",\n ")) ;
+			if (wxDynamicCast(node->GetData(),Column)) str.append(wxT(",\n ")) ;
 			else if ((constr = wxDynamicCast(node->GetData(),Constraint))) {
 				if (constr->GetType() == Constraint::primaryKey) str.append(wxT(",\n ")) ;
 			}
@@ -273,7 +273,7 @@ wxString PostgreSqlDbAdapter::GetDefaultSelect(const wxString& cols, const wxStr
 	return ret;
 }
 
-bool PostgreSqlDbAdapter::GetColumns(DBETable* pTab) {
+bool PostgreSqlDbAdapter::GetColumns(Table* pTab) {
 	if (pTab) {
 //		SetDatabase(pTab->GetParentName());
 		DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(pTab->GetParentName());
@@ -291,7 +291,7 @@ bool PostgreSqlDbAdapter::GetColumns(DBETable* pTab) {
 				pType->SetSize(database->GetResultInt(wxT("numeric_precision")));
 				pType->SetSize2(database->GetResultInt(wxT("numeric_precision_radix")));
 				pType->SetNotNull(database->GetResultString(wxT("is_nullable")) == wxT("NO"));
-				DBEColumn* pCol = new DBEColumn(database->GetResultString(wxT("column_name")),pTab->GetName(), pType);
+				Column* pCol = new Column(database->GetResultString(wxT("column_name")),pTab->GetName(), pType);
 				pTab->AddChild(pCol);
 			}
 		}
@@ -388,7 +388,7 @@ void PostgreSqlDbAdapter::GetTables(Database* db, bool includeViews) {
 				tabulky = dbLayer->RunQueryWithResults(wxString::Format(wxT("SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'")) );
 			}
 			while (tabulky->Next()) {
-				db->AddChild(new DBETable(this,  tabulky->GetResultString(wxT("TABLE_NAME")), db->GetName(),    tabulky->GetResultString(wxT("TABLE_TYPE")).Contains(wxT("VIEW"))    ));
+				db->AddChild(new Table(this,  tabulky->GetResultString(wxT("TABLE_NAME")), db->GetName(),    tabulky->GetResultString(wxT("TABLE_TYPE")).Contains(wxT("VIEW"))    ));
 			}
 			dbLayer->CloseResultSet(tabulky);
 			dbLayer->Close();
@@ -399,10 +399,10 @@ void PostgreSqlDbAdapter::GetTables(Database* db, bool includeViews) {
 wxString PostgreSqlDbAdapter::GetCreateDatabaseSql(const wxString& dbName) {
 	return wxString::Format(wxT("CREATE DATABASE %s"), dbName.c_str());
 }
-wxString PostgreSqlDbAdapter::GetDropTableSql(DBETable* pTab) {
+wxString PostgreSqlDbAdapter::GetDropTableSql(Table* pTab) {
 	return wxString::Format(wxT("DROP TABLE IF EXISTS %s;"), pTab->GetName().c_str());
 }
-wxString PostgreSqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab) {
+wxString PostgreSqlDbAdapter::GetAlterTableConstraintSql(Table* tab) {
 	//TODO:SQL:
 	wxString str =  wxString::Format(wxT("-- ---------- CONSTRAINTS FOR TABLE %s \n"),tab->GetName().c_str());
 	str.append(wxT("-- -------------------------------------------------------------\n"));
@@ -494,11 +494,11 @@ wxString PostgreSqlDbAdapter::GetCreateViewSql(View* view, bool dropView) {
 	str.append(wxT("-- -------------------------------------------------------------\n"));
 	return str;
 }
-void PostgreSqlDbAdapter::ConvertTable(DBETable* pTab) {
+void PostgreSqlDbAdapter::ConvertTable(Table* pTab) {
 	SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  {
-			DBEColumn* col = (DBEColumn*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  {
+			Column* col = (Column*) node->GetData();
 			col->SetPType(ConvertType(col->GetPType()));
 		}
 		node = node->GetNext();
@@ -545,4 +545,7 @@ IDbAdapter* PostgreSqlDbAdapter::Clone() {
 	return new PostgreSqlDbAdapter(m_serverName,m_port, m_defaultDb, m_userName, m_password);
 }
 
-
+wxString PostgreSqlDbAdapter::GetDropViewSql(View* pView)
+{
+	return wxString::Format(wxT("DROP VIEW IF EXISTS %s;"), pView->GetName().c_str());
+}

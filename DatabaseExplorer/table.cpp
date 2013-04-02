@@ -1,14 +1,14 @@
 #include "table.h"
 
-XS_IMPLEMENT_CLONABLE_CLASS(DBETable,xsSerializable);
+XS_IMPLEMENT_CLONABLE_CLASS(Table,xsSerializable);
 
-DBETable::DBETable()
+Table::Table()
 {
 	m_isView = false;
 	initSerializable();
 }
 
-DBETable::DBETable(const DBETable& obj): xsSerializable(obj)
+Table::Table(const Table& obj): xsSerializable(obj)
 {
 	this->m_name = obj.m_name;
 	this->m_parentName = obj.m_parentName;
@@ -20,7 +20,7 @@ DBETable::DBETable(const DBETable& obj): xsSerializable(obj)
 }
 
 
-DBETable::DBETable(IDbAdapter* dbAdapter, const wxString& tableName, const wxString& parentName, bool isView)
+Table::Table(IDbAdapter* dbAdapter, const wxString& tableName, const wxString& parentName, bool isView)
 {
 	this->m_name = tableName;
 	this->m_parentName = parentName;
@@ -31,17 +31,17 @@ DBETable::DBETable(IDbAdapter* dbAdapter, const wxString& tableName, const wxStr
 	
 	initSerializable();
 }
-DBETable::~DBETable()
+Table::~Table()
 {
 
 }
-void DBETable::SetName(const wxString& name)
+void Table::SetName(const wxString& name)
 {
 	 this->m_isSaved = false; 
 	 this->m_name = name; 
 }
 
-void DBETable::initSerializable()
+void Table::initSerializable()
 {
 	XS_SERIALIZE(this->m_name,wxT("tableName")); 
 	XS_SERIALIZE(this->m_parentName,wxT("parentName")); 
@@ -50,7 +50,7 @@ void DBETable::initSerializable()
 	XS_SERIALIZE(m_isView, wxT("isView"));
 	
 }
-void DBETable::RefreshChildren()
+void Table::RefreshChildren()
 {
 	GetChildrenList().DeleteContents(true);
 	GetChildrenList().Clear();

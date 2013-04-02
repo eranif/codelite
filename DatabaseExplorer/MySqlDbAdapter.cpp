@@ -47,7 +47,7 @@ bool MySqlDbAdapter::IsConnected()
 	return this->m_pDbLayer->IsOpen();
 }
 
-wxString MySqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable)
+wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 {
 	//TODO:SQL:
 	wxString str = wxT("");
@@ -58,8 +58,8 @@ wxString MySqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable)
 
 	SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 	while( node ) {
-		DBEColumn* col = NULL;
-		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ) col = (DBEColumn*) node->GetData();
+		Column* col = NULL;
+		if( node->GetData()->IsKindOf( CLASSINFO(Column)) ) col = (Column*) node->GetData();
 		if(col)	str.append(wxString::Format(wxT("\t`%s` %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
 
 		Constraint* constr = wxDynamicCast(node->GetData(),Constraint);
@@ -69,7 +69,7 @@ wxString MySqlDbAdapter::GetCreateTableSql(DBETable* tab, bool dropTable)
 
 		node = node->GetNext();
 		if (node) {
-			if (wxDynamicCast(node->GetData(),DBEColumn)) str.append(wxT(",\n ")) ;
+			if (wxDynamicCast(node->GetData(),Column)) str.append(wxT(",\n ")) ;
 			else if ((constr = wxDynamicCast(node->GetData(),Constraint))) {
 				if (constr->GetType() == Constraint::primaryKey) str.append(wxT(",\n ")) ;
 			}
@@ -177,7 +177,7 @@ wxString MySqlDbAdapter::GetDefaultSelect(const wxString& cols, const wxString& 
 	return ret;
 
 }
-bool MySqlDbAdapter::GetColumns(DBETable* pTab)
+bool MySqlDbAdapter::GetColumns(Table* pTab)
 {
 	DatabaseLayerPtr dbLayer = this->GetDatabaseLayer(wxT(""));
 
@@ -188,7 +188,7 @@ bool MySqlDbAdapter::GetColumns(DBETable* pTab)
 	while (database->Next()) {
 		IDbType* pType = parseTypeString(database->GetResultString(2));
 		if (pType) {
-			DBEColumn* pCol = new DBEColumn(database->GetResultString(1),pTab->GetName(), pType);
+			Column* pCol = new Column(database->GetResultString(1),pTab->GetName(), pType);
 			pTab->AddChild(pCol);
 		}
 	}
@@ -295,7 +295,7 @@ void MySqlDbAdapter::GetTables(Database* db, bool includeViews)
 			}
 			if (tabulky) {
 				while (tabulky->Next()) {
-					db->AddChild(new DBETable(this,  tabulky->GetResultString(wxT("TABLE_NAME")), db->GetName(),  tabulky->GetResultString(wxT("TABLE_TYPE")).Contains(wxT("VIEW"))));
+					db->AddChild(new Table(this,  tabulky->GetResultString(wxT("TABLE_NAME")), db->GetName(),  tabulky->GetResultString(wxT("TABLE_TYPE")).Contains(wxT("VIEW"))));
 				}
 				dbLayer->CloseResultSet(tabulky);
 			}
@@ -308,11 +308,11 @@ wxString MySqlDbAdapter::GetCreateDatabaseSql(const wxString& dbName)
 {
 	return wxString::Format(wxT("CREATE DATABASE `%s`"), dbName.c_str());
 }
-wxString MySqlDbAdapter::GetDropTableSql(DBETable* pTab)
+wxString MySqlDbAdapter::GetDropTableSql(Table* pTab)
 {
 	return wxString::Format(wxT("SET FOREIGN_KEY_CHECKS = 0;\nDROP TABLE IF EXISTS `%s`;\nSET FOREIGN_KEY_CHECKS = 1;"), pTab->GetName().c_str());
 }
-wxString MySqlDbAdapter::GetAlterTableConstraintSql(DBETable* tab)
+wxString MySqlDbAdapter::GetAlterTableConstraintSql(Table* tab)
 {
 	//TODO:SQL:
 	wxString str =  wxString::Format(wxT("-- ---------- CONSTRAINTS FOR TABLE `%s` \n"),tab->GetName().c_str());
@@ -401,12 +401,12 @@ wxString MySqlDbAdapter::GetCreateViewSql(View* view, bool dropView)
 	str.append(wxT("-- -------------------------------------------------------------\n"));
 	return str;
 }
-void MySqlDbAdapter::ConvertTable(DBETable* pTab)
+void MySqlDbAdapter::ConvertTable(Table* pTab)
 {
 	SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  {
-			DBEColumn* col = (DBEColumn*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  {
+			Column* col = (Column*) node->GetData();
 			col->SetPType(ConvertType(col->GetPType()));
 		}
 		node = node->GetNext();
@@ -454,4 +454,9 @@ IDbType* MySqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type)
 IDbAdapter* MySqlDbAdapter::Clone()
 {
 	return new MySqlDbAdapter(m_serverName, m_userName, m_password);
+}
+
+wxString MySqlDbAdapter::GetDropViewSql(View* pView)
+{
+	return wxString::Format(wxT("DROP VIEW IF EXISTS `%s`;"), pView->GetName().c_str());
 }

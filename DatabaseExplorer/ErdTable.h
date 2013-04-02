@@ -21,14 +21,14 @@ public:
 
 	ErdTable();
 	ErdTable(const ErdTable& obj);
-	ErdTable(DBETable* tab);
+	ErdTable(Table* tab);
 	
 	virtual ~ErdTable();
 	
 	void AddColumn(const wxString& colName, IDbType* type);
 	void UpdateColumns();
 	
-	DBETable* GetTable() { return (DBETable*) this->GetUserData(); }
+	Table* GetTable() { return (Table*) this->GetUserData(); }
 
 protected:	
 	void Initialize();

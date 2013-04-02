@@ -18,7 +18,7 @@ class TableSettings : public _TableSettings {
 	public:
 		TableSettings( wxWindow* parent,IDbAdapter* pDbAdapter, wxWindowID id = wxID_ANY, const wxString& title = wxT("DBETable settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
 		virtual ~TableSettings();
-		void SetTable(DBETable* tab, wxSFDiagramManager* pManager);
+		void SetTable(Table* tab, wxSFDiagramManager* pManager);
 
 		virtual void OnListBoxClick(wxCommandEvent& event);
 		virtual void OnNewColumnClick(wxCommandEvent& event);
@@ -50,14 +50,14 @@ class TableSettings : public _TableSettings {
 
 	protected:
 		bool m_fUpdating;
-		DBETable* m_pTable;
-		DBEColumn* m_pEditedColumn;
+		Table* m_pTable;
+		Column* m_pEditedColumn;
 		Constraint* m_pEditedConstraint;
 		IDbAdapter* m_pDbAdapter;
 		wxSFDiagramManager* m_pDiagramManager;
 		
-		DBETable *GetRefTable(const wxString& name);
-		void FillRefTableColums(DBETable *tab);
+		Table *GetRefTable(const wxString& name);
+		void FillRefTableColums(Table *tab);
 
 		void UpdateView();
 };

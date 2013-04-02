@@ -75,7 +75,7 @@ ErdPanel::ErdPanel(wxWindow *parent, IDbAdapter* dbAdapter, xsSerializable* pCon
 	Init(parent, dbAdapter);
 }
 
-ErdPanel::ErdPanel(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, DBETable* pTable):_ErdPanel(parent) {
+ErdPanel::ErdPanel(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pConnections, Table* pTable):_ErdPanel(parent) {
 	m_pErdTable = NULL;
 	m_pDbAdapter = dbAdapter;
 	m_pConnections = pConnections;
@@ -95,7 +95,7 @@ ErdPanel::ErdPanel(wxWindow* parent, IDbAdapter* dbAdapter, xsSerializable* pCon
 	int i = 10;
 	SerializableList::compatibility_iterator node = pItems->GetFirstChildNode();
 	while( node ) {
-		DBETable* pTable = wxDynamicCast(node->GetData(), DBETable);
+		Table* pTable = wxDynamicCast(node->GetData(), Table);
 		if( pTable ) {
 			ErdTable* pErdTab = new ErdTable(pTable);
 			m_diagramManager.AddShape(pErdTab, NULL, wxPoint( i ,10), sfINITIALIZE, sfDONT_SAVE_STATE);
@@ -218,7 +218,7 @@ void ErdPanel::OnSaveSql(wxCommandEvent& event) {
 			file.AddLine(wxT("-- SQL script created by DatabaseExplorer "));
 			file.AddLine(wxT(""));
 			file.AddLine(m_pFrameCanvas->GetSqlScript());
-			file.Write();
+			file.Write(wxTextFileType_None, wxConvUTF8);
 			file.Close();
 		}
 		wxMessageBox(wxString::Format(_("The SQL script has been saved to '%s'."), dlg.GetPath().GetData()), _("DatabaseExplorer"));
@@ -331,6 +331,7 @@ void ErdPanel::OnCommit(wxCommandEvent& event)
 	if (m_pConnections){
 		ErdCommitWizard wizard(this, m_pConnections, m_pFrameCanvas->GetSqlScript()); 
 		wizard.RunWizard(wizard.GetFirstPage());
+		DatabaseExplorer::GetViewerPanel()->RefreshDbView();
 	}
 }
 

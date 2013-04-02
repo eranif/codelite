@@ -26,7 +26,7 @@ wxString DumpClass::DumpData() {
 
 		SerializableList::compatibility_iterator node = m_pItems->GetFirstChildNode();
 		while( node ) {
-			DBETable* pTab = wxDynamicCast(node->GetData(), DBETable);
+			Table* pTab = wxDynamicCast(node->GetData(), Table);
 			if (pTab) {
 				totalRowCount += DumpTable(pOutFile, pTab);
 				tableCount++;
@@ -34,7 +34,7 @@ wxString DumpClass::DumpData() {
 			node = node->GetNext();
 			}
 			
-		pOutFile->Write();
+		pOutFile->Write(wxTextFileType_None, wxConvUTF8);
 		pOutFile->Close();
 		
 	}
@@ -42,14 +42,14 @@ wxString DumpClass::DumpData() {
 	return wxString::Format(wxT("Dumped %i rows in %i tables"),totalRowCount, tableCount );
 }
 
-int DumpClass::DumpTable(wxTextFile* pFile, DBETable* pTab) {
+int DumpClass::DumpTable(wxTextFile* pFile, Table* pTab) {
 	int rowCount = 0;
 	if ((pFile->IsOpened())&&(pTab != NULL)) {
 		
 		wxString cols = wxT("");
 		SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 		while (node){
-			DBEColumn* pCol = wxDynamicCast(node->GetData(), DBEColumn);
+			Column* pCol = wxDynamicCast(node->GetData(), Column);
 			if (pCol){
 				if (!cols.IsEmpty()) cols += wxT(", ");
 				cols += pCol->GetName();
@@ -75,7 +75,7 @@ int DumpClass::DumpTable(wxTextFile* pFile, DBETable* pTab) {
 				wxString dataLine = wxT("");
 				SerializableList::compatibility_iterator node = pTab->GetFirstChildNode();
 				while (node){
-					DBEColumn* pCol = wxDynamicCast(node->GetData(), DBEColumn);
+					Column* pCol = wxDynamicCast(node->GetData(), Column);
 					if (pCol){
 						
 						if (!dataLine.IsEmpty()) dataLine += wxT(", ");

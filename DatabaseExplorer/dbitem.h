@@ -7,15 +7,15 @@
 class DbItem : public wxTreeItemData {
 protected:
 	Database* m_pDatabase;
-	DBETable* m_pTable;	
+	Table* m_pTable;	
 	xsSerializable* m_pData;
 public:
-	DbItem(Database* pDatabase, DBETable* pTable);
+	DbItem(Database* pDatabase, Table* pTable);
 	DbItem(xsSerializable* data);
 	virtual ~DbItem();
 	
 	Database* GetDatabase(){ return this->m_pDatabase; }
-	DBETable* GetTable(){ return this->m_pTable; }
+	Table* GetTable(){ return this->m_pTable; }
 	xsSerializable* GetData() { return this->m_pData; }
 };
 

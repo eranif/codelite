@@ -52,8 +52,8 @@ WX_DEFINE_LIST(%%classItemName%%List);
 void %%classColName%%::Fill(wxGrid* pGrid)
 {
 	if( pGrid ) {
-		pGrid->DeleteCols(0,pGrid->GetNumberCols());
-		pGrid->DeleteRows(0,pGrid->GetNumberRows());
+		if(pGrid->GetNumberCols() > 0) pGrid->DeleteCols(0, pGrid->GetNumberCols());
+		if(pGrid->GetNumberRows() > 0) pGrid->DeleteRows(0, pGrid->GetNumberRows());
 
 		%%classColLabelFillGrid%%
 

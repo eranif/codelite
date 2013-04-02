@@ -791,7 +791,7 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer162->Add(m_staticText168, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlExtraFlags = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlExtraFlags->SetToolTip(_("By default, codelite will use 'git apply --whitespace=nowarn' for applying patch files.\nSet here an extra flags to use with this command, e.g.:\n\n--ignore-whitespace\n\nSee git manual for available options"));
+    m_textCtrlExtraFlags->SetToolTip(_("By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\nSet here an extra flags to use with this command, e.g.:\n\n--reverse\n\nSee the git manual for more options"));
     
     flexGridSizer162->Add(m_textCtrlExtraFlags, 0, wxALL|wxEXPAND, 5);
     

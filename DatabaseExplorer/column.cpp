@@ -1,19 +1,19 @@
 #include "column.h"
 
-XS_IMPLEMENT_CLONABLE_CLASS(DBEColumn,xsSerializable);
+XS_IMPLEMENT_CLONABLE_CLASS(Column,xsSerializable);
 
-DBEColumn::DBEColumn()
+Column::Column()
 {
 	m_pType = NULL;
 	initSerializable();
 }
 
-DBEColumn::~DBEColumn()
+Column::~Column()
 {
 	delete m_pType;
 }
 
-DBEColumn::DBEColumn(const DBEColumn& obj):xsSerializable(obj)
+Column::Column(const Column& obj):xsSerializable(obj)
 {
 	m_pType = (IDbType*) obj.m_pType->Clone();
 	m_name = obj.m_name;
@@ -21,7 +21,7 @@ DBEColumn::DBEColumn(const DBEColumn& obj):xsSerializable(obj)
 	initSerializable();
 }
 
-DBEColumn::DBEColumn(const wxString& name,
+Column::Column(const wxString& name,
                      const wxString& parentName,
                      IDbType* type)
 {
@@ -31,7 +31,7 @@ DBEColumn::DBEColumn(const wxString& name,
 	initSerializable();
 }
 
-void DBEColumn::Edit(wxString& name,
+void Column::Edit(wxString& name,
                      wxString& parentName,
                      IDbType* type)
 {
@@ -43,7 +43,7 @@ void DBEColumn::Edit(wxString& name,
 
 }
 
-void DBEColumn::initSerializable()
+void Column::initSerializable()
 {
 	XS_SERIALIZE(m_name,wxT("m_name"));
 	XS_SERIALIZE(m_parentName,wxT("m_parentName"));

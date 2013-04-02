@@ -23,7 +23,7 @@ Database::Database(IDbAdapter* dbAdapter,const wxString& dbName)
 		
 		SerializableList::compatibility_iterator tabNode = GetFirstChildNode();
 		while(tabNode) {
-			DBETable* pTab = wxDynamicCast(tabNode->GetData(), DBETable);
+			Table* pTab = wxDynamicCast(tabNode->GetData(), Table);
 			if (pTab) {
 				m_pDbAdapter->GetColumns(pTab);
 			}
@@ -46,7 +46,7 @@ void Database::RefreshChildren( bool includeViews)
 
 		SerializableList::compatibility_iterator tabNode = GetFirstChildNode();
 		while(tabNode) {
-			DBETable* pTab = wxDynamicCast(tabNode->GetData(), DBETable);
+			Table* pTab = wxDynamicCast(tabNode->GetData(), Table);
 			if (pTab) {
 				m_pDbAdapter->GetColumns(pTab);
 			}
@@ -60,7 +60,7 @@ void Database::RefreshChildrenDetails()
 {
 	SerializableList::compatibility_iterator tabNode = GetFirstChildNode();
 	while(tabNode) {
-		DBETable* pTab = wxDynamicCast(tabNode->GetData(),DBETable);
+		Table* pTab = wxDynamicCast(tabNode->GetData(),Table);
 		if (pTab) pTab->RefreshChildren();
 		tabNode = tabNode->GetNext();
 	}

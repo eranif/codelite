@@ -20,7 +20,7 @@ public:
 
 	
 protected:
-	int DumpTable(wxTextFile* pFile, DBETable* pTab);
+	int DumpTable(wxTextFile* pFile, Table* pTab);
 	wxString m_fileName;
 	xsSerializable* m_pItems;
 	IDbAdapter* m_pDbAdapter;

@@ -18,7 +18,7 @@ ErdTable::ErdTable():wxSFRoundRectShape()
 	Initialize();
 }
 
-ErdTable::ErdTable(DBETable* tab):wxSFRoundRectShape()
+ErdTable::ErdTable(Table* tab):wxSFRoundRectShape()
 {
 	SetUserData(tab);
 	Initialize();
@@ -136,14 +136,14 @@ void ErdTable::UpdateColumns()
 	int i = 0;
 	Constraint::constraintType type;
 
-	DBETable* tab = (DBETable*) wxDynamicCast(GetUserData(),DBETable);
+	Table* tab = (Table*) wxDynamicCast(GetUserData(),Table);
 	if (tab)
 	{
 		m_pLabel->SetText(tab->GetName());
 		SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 		while( node )
 		{
-			DBEColumn* pCol = wxDynamicCast(node->GetData(), DBEColumn);
+			Column* pCol = wxDynamicCast(node->GetData(), Column);
 			if( pCol )
 			{
 				type = Constraint::noKey;
@@ -279,8 +279,8 @@ void ErdTable::SetCommonProps(wxSFShapeBase* shape)
 
 void ErdTable::AddColumn(const wxString& colName, IDbType* type)
 {
-	DBETable* tab = (DBETable*) wxDynamicCast(GetUserData(),DBETable);
-	tab->AddColumn(new DBEColumn(colName,_("New table"),type));
+	Table* tab = (Table*) wxDynamicCast(GetUserData(),Table);
+	tab->AddColumn(new Column(colName,_("New table"),type));
 }
 
 void ErdTable::ClearConnections()

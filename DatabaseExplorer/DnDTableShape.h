@@ -13,7 +13,7 @@ public:
 	XS_DECLARE_CLONABLE_CLASS(dndTableShape);
 	dndTableShape();
 	dndTableShape(xsSerializable* pData);
-	dndTableShape(DBETable* tab);
+	dndTableShape(Table* tab);
 	virtual ~dndTableShape();
 };
 

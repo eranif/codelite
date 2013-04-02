@@ -1,15 +1,17 @@
 #ifndef COLUMN_H
 #define COLUMN_H
+
 #include <wx/wx.h>
 #include <wx/dblayer/include/DatabaseResultSet.h>
 #include <wx/wxxmlserializer/XmlSerializer.h>
 #include "IDbAdapter.h"
 #include "IDbType.h"
+
 // ------------------------------------------------
 // Trida databazoveho sloupecku
 // -------------------------------------------------
 /*! \brief Class representing one table column */
-class DBEColumn : public xsSerializable {
+class Column : public xsSerializable {
 protected:
 	wxString m_name;
 	wxString m_parentName;
@@ -21,15 +23,15 @@ public:
 	// -------------------------------------------------
 	// Konstruktor
 	// -------------------------------------------------
-	XS_DECLARE_CLONABLE_CLASS(DBEColumn);
+	XS_DECLARE_CLONABLE_CLASS(Column);
 	/*! \brief Default constuctor*/
-	DBEColumn();
-	DBEColumn(const DBEColumn& obj);
-	DBEColumn(const wxString& name,
+	Column();
+	Column(const Column& obj);
+	Column(const wxString& name,
 			const wxString& parentName,
 			IDbType* type);
 	/*! \brief Default destruktor */
-	virtual ~DBEColumn();
+	virtual ~Column();
 	
 	wxString FormatName() {
 		wxString typeDesc;

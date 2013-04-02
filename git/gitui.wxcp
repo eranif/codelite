@@ -6857,7 +6857,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	"By default, codelite will use 'git apply --whitespace=nowarn' for applying patch files.\\nSet here an extra flags to use with this command, e.g.:\\n\\n--ignore-whitespace\\n\\nSee git manual for available options"
+											"m_value":	"By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\\nSet here an extra flags to use with this command, e.g.:\\n\\n--reverse\\n\\nSee the git manual for more options"
 										}, {
 											"type":	"colour",
 											"m_label":	"Bg Colour:",

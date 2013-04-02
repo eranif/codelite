@@ -29,7 +29,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 	if( m_fUpdating ) return;
 
 	wxString name = m_listColumns->GetStringSelection().substr(4);
-	DBEColumn* col = NULL;
+	Column* col = NULL;
 	Constraint* constr = NULL;
 
 	m_pEditedColumn = NULL;
@@ -37,9 +37,9 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 
 	SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) ) {
+		if( node->GetData()->IsKindOf( CLASSINFO(Column)) ) {
 			
-			col = (DBEColumn*) node->GetData();
+			col = (Column*) node->GetData();
 
 			if (col->GetName() == name) {
 				m_pEditedColumn = col;
@@ -67,7 +67,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 				if (m_pTable) {
 					SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 					while( node ) {
-						if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_comboLocalColumn->AppendString(wxString::Format(wxT("%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
+						if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  m_comboLocalColumn->AppendString(wxString::Format(wxT("%s"),((Column*) node->GetData())->GetName().c_str()));
 						node = node->GetNext();
 					}
 					m_comboLocalColumn->SetStringSelection(constr->GetLocalColumn());
@@ -88,7 +88,7 @@ void TableSettings::OnListBoxClick(wxCommandEvent& event) {
 }
 
 void TableSettings::OnNewColumnClick(wxCommandEvent& event) {
-	DBEColumn* pCol = new DBEColumn(_("New col"),m_pTable->GetName(),m_pDbAdapter->GetDbTypeByName(m_pDbAdapter->GetDbTypes()->Last()));
+	Column* pCol = new Column(_("New col"),m_pTable->GetName(),m_pDbAdapter->GetDbTypeByName(m_pDbAdapter->GetDbTypes()->Last()));
 	if (pCol) m_pTable->AddColumn(pCol);
 	UpdateView();
 }
@@ -135,7 +135,7 @@ void TableSettings::OnTypeSelect(wxCommandEvent& event) {
 	}
 }
 
-void TableSettings::SetTable(DBETable* tab, wxSFDiagramManager* pManager) {
+void TableSettings::SetTable(Table* tab, wxSFDiagramManager* pManager) {
 	m_pTable = tab;
 	m_pDiagramManager = pManager;
 	if (m_pTable) {
@@ -167,7 +167,7 @@ void TableSettings::UpdateView() {
 
 		SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 		while( node ) {
-			if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  m_listColumns->AppendString(wxString::Format(wxT("col:%s"),((DBEColumn*) node->GetData())->GetName().c_str()));
+			if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  m_listColumns->AppendString(wxString::Format(wxT("col:%s"),((Column*) node->GetData())->GetName().c_str()));
 			node = node->GetNext();
 		}
 		node = m_pTable->GetFirstChildNode();
@@ -238,11 +238,11 @@ void TableSettings::OnUniqueUI(wxUpdateUIEvent& event) {
 }
 void TableSettings::OnDeleteColumn(wxCommandEvent& event) {
 	wxString name = m_listColumns->GetStringSelection().substr(4);
-	DBEColumn* col  = NULL;
+	Column* col  = NULL;
 	Constraint* constr = NULL;
 	SerializableList::compatibility_iterator node = m_pTable->GetFirstChildNode();
 	while( node ) {
-		if( node->GetData()->IsKindOf( CLASSINFO(DBEColumn)) )  col = (DBEColumn*) node->GetData();
+		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  col = (Column*) node->GetData();
 		if( node->GetData()->IsKindOf( CLASSINFO(Constraint)) )  constr = (Constraint*) node->GetData();
 
 		if ((col)&&(col->GetName() == name)) {
@@ -310,7 +310,7 @@ void TableSettings::OnColSize2UI(wxUpdateUIEvent& event) {
 	}
 }
 
-DBETable* TableSettings::GetRefTable(const wxString& name)
+Table* TableSettings::GetRefTable(const wxString& name)
 {
 	if (m_pDiagramManager) {
 		ShapeList lstShapes;
@@ -328,12 +328,12 @@ DBETable* TableSettings::GetRefTable(const wxString& name)
 	return NULL;
 }
 
-void TableSettings::FillRefTableColums(DBETable* tab)
+void TableSettings::FillRefTableColums(Table* tab)
 {
 	if (tab) {
 		SerializableList::compatibility_iterator node = tab->GetFirstChildNode();
 		while( node ) {
-			DBEColumn* col = wxDynamicCast(node->GetData(),DBEColumn);
+			Column* col = wxDynamicCast(node->GetData(),Column);
 			if (col) {
 				m_comboRefColumn->AppendString(col->GetName());
 			}

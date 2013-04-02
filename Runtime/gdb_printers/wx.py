@@ -30,6 +30,80 @@ class wxStringPrinter:
 
     def display_hint (self):
         return 'wxString'
+        
+class wxArrayFooPrinter:
+    "For wxArrayString, wxArrayInt, wxArrayDouble etc"
+
+    class _iterator:
+        def __init__ (self, items, item_count):
+            self.items = items
+            self.item_count = item_count
+            self.count = 0
+
+        def __iter__(self):
+            return self
+
+        def next(self):
+            count = self.count
+            self.count = self.count + 1
+            if count >= self.item_count or count > 5000: # Even 5000 gives a noticeable pause
+                raise StopIteration
+            try:
+                # Try the wx >=2.9 way first
+                elt = self.items[count]['m_impl']
+            except Exception:
+                # The wx2.8 way
+                elt = self.items[count]
+            return ('[%d]' % count, elt)
+    def __init__(self, val):
+        self.val = val
+
+    def children(self):
+        return self._iterator(self.val['m_pItems'], self.val['m_nCount'])
+
+    def to_string(self):
+        # It doesn't seem to matter what we return here; the top line is always: "<var-name>= {...} [wxArray<whichever>]"
+        return "wxArrayFoo"
+
+    def display_hint(self):
+        return 'array'
+
+
+class wxFileNamePrinter:
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        # It is simpler to just call the internal function here than to iterate
+        # over m_dirs array ourselves. The disadvantage of this approach is
+        # that it requires a live inferior process and so doesn't work when
+        # debugging using only a core file. If this ever becomes a serious
+        # problem, this should be rewritten to use m_dirs and m_name and m_ext.
+        return gdb.parse_and_eval('((wxFileName*)%s)->GetFullPath(0)' %
+                                  self.val.address)     
+
+
+class wxXYPrinterBase:
+    def __init__(self, val):
+        self.x = val['x']
+        self.y = val['y']
+
+class wxPointPrinter(wxXYPrinterBase):
+    def to_string(self):
+        return '(%d, %d)' % (self.x, self.y)
+
+class wxSizePrinter(wxXYPrinterBase):
+    def to_string(self):
+        return '%d*%d' % (self.x, self.y)
+
+class wxRectPrinter(wxXYPrinterBase):
+    def __init__(self, val):
+        wxXYPrinterBase.__init__(self, val)
+        self.width = val['width']
+        self.height = val['height']
+
+    def to_string(self):
+        return '(%d, %d) %d*%d' % (self.x, self.y, self.width, self.height)
 
 def register_wx_printers (obj):
     if obj == None:
@@ -67,6 +141,11 @@ def lookup_function (val):
 
 def build_dictionary ():
     pretty_printers_dict[re.compile('^wxString$')] = lambda val: wxStringPrinter(val)
+    pretty_printers_dict[re.compile('^wxArray.+$')] = lambda val: wxArrayFooPrinter(val)
+    pretty_printers_dict[re.compile('^wxFileName$')] = lambda val: wxFileNamePrinter(val)
+    pretty_printers_dict[re.compile('^wxPoint$')] = lambda val: wxPointPrinter(val)
+    pretty_printers_dict[re.compile('^wxSize$')] = lambda val: wxSizePrinter(val)
+    pretty_printers_dict[re.compile('^wxRect$')] = lambda val: wxRectPrinter(val)
 
 pretty_printers_dict = {}
 build_dictionary ()

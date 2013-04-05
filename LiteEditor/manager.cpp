@@ -1027,7 +1027,7 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
             // In Linux, files 'abc' and 'Abc' can happily co-exist, so see if that's what's happening
             wxString projName = this->GetProjectNameByFile(file, true); // 'true' is case-sensitive comparison
             if (projName.IsEmpty() || projName != project) {
-                wxString msg1(wxString::Format(_("There is already a file\n%s\nin this folder with a name that matches using case-insensitive comparison"), 
+                wxString msg1(wxString::Format(_("There is already a file in this folder with a name:\n%s\nthat matches using case-insensitive comparison"), 
                                                   file));
                 wxString msg2(_("\nThis won't be a problem on Linux, but it may be on other, case-insensitive platforms"));
                 wxString msg3(_("\n\nAdd the file anyway?"));

@@ -351,16 +351,21 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     gdc.DrawRectangle(bottomRect.x, bottomRect.y, bottomRect.width, bottomRect.height);
     
     gdc.SetPen(m_border_pen);
-    gdc.DrawLine(rr.x, in_rect.y + in_rect.height - 1, rr.x + rr.width, in_rect.y + in_rect.height - 1);
+    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 1, rr.x + rr.width+1, in_rect.y + in_rect.height - 1);
     
     gdc.SetPen(m_bottom_rect_colour);
-    gdc.DrawLine(rr.x, in_rect.y + in_rect.height - 2, rr.x + rr.width, in_rect.y + in_rect.height - 2);
-    gdc.DrawLine(rr.x, in_rect.y + in_rect.height - 3, rr.x + rr.width, in_rect.y + in_rect.height - 3);
+    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 2, rr.x + rr.width+1, in_rect.y + in_rect.height - 2);
+    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 3, rr.x + rr.width+1, in_rect.y + in_rect.height - 3);
     
     if ( !page.active ) {
         gdc.SetPen(m_border_pen);
     }
-    gdc.DrawLine(rr.x, in_rect.y + in_rect.height - 4, rr.x + rr.width, in_rect.y + in_rect.height - 4);
+    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 4, rr.x + rr.width+1, in_rect.y + in_rect.height - 4);
+    
+    if ( page.active ) {
+        gdc.SetPen(m_bottom_rect_colour);
+        gdc.DrawPoint(rr.x + rr.width+1, in_rect.y + in_rect.height - 4);
+    }
     
     /// Draw the text
     wxString caption = page.caption;

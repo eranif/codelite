@@ -88,6 +88,9 @@ UnitTestPP::UnitTestPP(IManager *manager)
     : IPlugin(manager)
     , m_proc(NULL)
 {
+    m_outputPage = new UnitTestsPage(m_mgr->GetOutputPaneNotebook(), m_mgr);
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPage, _("UnitTest++"), false, m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/unittest++/run_as_unittest"));
+    
     m_longName = _("A Unit test plugin based on the UnitTest++ framework");
     m_shortName = wxT("UnitTestPP");
     m_topWindow = m_mgr->GetTheApp();
@@ -163,9 +166,7 @@ void UnitTestPP::HookPopupMenu(wxMenu *menu, MenuType type)
 
 void UnitTestPP::UnPlug()
 {
-    if ( m_proc ) {
-        m_proc = NULL;
-    }
+    wxDELETE(m_proc);
     m_output.Clear();
 }
 
@@ -492,10 +493,8 @@ void UnitTestPP::OnProcessTerminated(wxCommandEvent& e)
 {
     ProcessEventData *ped = (ProcessEventData*) e.GetClientData();
     delete ped;
-    if( m_proc ) {
-        delete m_proc;
-    }
-    m_proc = NULL;
+
+    wxDELETE(m_proc);
 
     wxArrayString arr = wxStringTokenize(m_output, wxT("\r\n"));
     UnitTestCppOutputParser parser(arr);
@@ -504,16 +503,11 @@ void UnitTestPP::OnProcessTerminated(wxCommandEvent& e)
     TestSummary summary;
     parser.Parse( &summary );
 
-    // create new report page, and add it to the editor
-    static int counter(1);
-
     if (summary.totalTests == 0) {
         return;
     }
-
-    UnitTestsPage *page = new UnitTestsPage(m_mgr->GetDockingManager()->GetManagedWindow(), &summary, m_mgr);
-    m_mgr->AddPage(page, wxString::Format(wxT("UnitTest++ Report <%d>"), counter), wxNullBitmap, true);
-    counter++;
+    
+    m_outputPage->Initialize(&summary);
 
     wxString msg;
     double errCount = summary.errorCount;
@@ -522,12 +516,22 @@ void UnitTestPP::OnProcessTerminated(wxCommandEvent& e)
     double err_percent = (errCount / totalTests)*100;
     double pass_percent = ((totalTests - errCount) / totalTests)*100;
     msg << err_percent << wxT("%");
-    page->UpdateFailedBar((size_t)summary.errorCount, msg);
+    m_outputPage->UpdateFailedBar((size_t)summary.errorCount, msg);
 
     msg.clear();
     msg << pass_percent << wxT("%");
-    page->UpdatePassedBar((size_t)(summary.totalTests - summary.errorCount), msg);
-
-
+    m_outputPage->UpdatePassedBar((size_t)(summary.totalTests - summary.errorCount), msg);
+    
+    SelectUTPage();
 }
 
+void UnitTestPP::SelectUTPage()
+{
+    size_t pageCount = m_mgr->GetOutputPaneNotebook()->GetPageCount();
+    for(size_t i=0; i<pageCount; ++i) {
+        if ( m_mgr->GetOutputPaneNotebook()->GetPage(i) == m_outputPage ) {
+            m_mgr->GetOutputPaneNotebook()->SetSelection(i);
+            break;
+        }
+    }
+}

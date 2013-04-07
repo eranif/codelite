@@ -4,6 +4,10 @@
 #include "plugin_general_wxcp.h"
 #include <wx/dcmemory.h>
 
+#ifdef __WXMSW__
+#   include <wx/msw/uxtheme.h>
+#endif
+
 //-------------------------------------------------------------
 // The following code was copy as is from wxWidgets source tree
 //-------------------------------------------------------------
@@ -394,8 +398,18 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     
     /// Draw the X button on the tab
     if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
-        
-        curx += 2;
+
+#ifdef __WXMSW__
+        int major, minor;
+        bool themeEnabled = false;
+        wxGetOsVersion(&major, &minor);
+
+        if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
+            themeEnabled = true;
+        }
+#endif
+
+        curx += (themeEnabled ? 2 : 4);
         int btny = (rr.y + (rr.height/2));
         
         if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {

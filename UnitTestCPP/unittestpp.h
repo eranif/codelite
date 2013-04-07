@@ -33,12 +33,14 @@
 
 class wxMenuItem;
 class IProcess;
+class UnitTestsPage;
 
 class UnitTestPP : public IPlugin
 {
     wxEvtHandler *m_topWindow;
     IProcess *    m_proc;
     wxString      m_output;
+    UnitTestsPage* m_outputPage;
     
 public:
     UnitTestPP(IManager *manager);
@@ -71,7 +73,8 @@ protected:
     void       DoCreateFixtureTest (const wxString &name, const wxString &fixture, const wxString &projectName, const wxString &filename);
     IEditor*   DoAddTestFile       (const wxString &filename, const wxString &projectName);
     wxFileName FindBestSourceFile  (ProjectPtr proj, const wxFileName &filename);
-
+    void SelectUTPage();
+    
 private:
     wxMenu*    CreateEditorPopMenu ();
 };

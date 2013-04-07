@@ -28,78 +28,103 @@
 #include "unittestspage.h"
 #include "imanager.h"
 #include <wx/msgdlg.h>
+#include "event_notifier.h"
+#include "plugin.h"
 
-UnitTestsPage::UnitTestsPage(wxWindow* parent, TestSummary* summary, IManager *mgr )
-		: UnitTestsBasePage( parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), 0 )
-		, m_mgr(mgr)
+UnitTestsPage::UnitTestsPage(wxWindow* parent, IManager *mgr )
+    : UnitTestsBasePage( parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), 0 )
+    , m_mgr(mgr)
 {
-#ifdef __WXDEBUG__
-	summary->PrintSelf();
-#endif
+    m_listCtrlErrors->InsertColumn(0, _("File"));
+    m_listCtrlErrors->InsertColumn(1, _("Line"));
+    m_listCtrlErrors->InsertColumn(2, _("Description"));
+    
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
+}
 
-	m_progressPassed->SetMaxRange((size_t)summary->totalTests);
-	m_progressFailed->SetMaxRange((size_t)summary->totalTests);
-	m_progressFailed->SetFillCol(wxT("RED"));
-	m_progressPassed->SetFillCol(wxT("PALE GREEN"));
-
-	wxString msg;
-	msg << summary->totalTests;
-	m_staticTextTotalTests->SetLabel(msg);
-
-	msg.clear();
-	msg << summary->errorCount;
-	m_staticTextFailTestsNum->SetLabel(msg);
-
-	msg.clear();
-	msg << summary->totalTests - summary->errorCount;
-	m_staticTextSuccessTestsNum->SetLabel(msg);
-
-	m_listCtrlErrors->InsertColumn(0, _("File"));
-	m_listCtrlErrors->InsertColumn(1, _("Line"));
-	m_listCtrlErrors->InsertColumn(2, _("Description"));
-
-	for (size_t i=0; i<summary->errorLines.GetCount(); i++) {
-		ErrorLineInfo info = summary->errorLines.Item(i);
-		long row = AppendListCtrlRow(m_listCtrlErrors);
-		SetColumnText(m_listCtrlErrors, row, 0, info.file);
-		SetColumnText(m_listCtrlErrors, row, 1, info.line);
-		SetColumnText(m_listCtrlErrors, row, 2, info.description);
-	}
-
-	m_listCtrlErrors->SetColumnWidth(0, 200);
-	m_listCtrlErrors->SetColumnWidth(1, 100);
-	m_listCtrlErrors->SetColumnWidth(2, wxLIST_AUTOSIZE);
+UnitTestsPage::~UnitTestsPage()
+{
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL, this);
 }
 
 void UnitTestsPage::UpdateFailedBar(size_t amount, const wxString& msg)
 {
-	m_progressFailed->Update(amount, msg);
+    m_progressFailed->Update(amount, msg);
 }
 
 void UnitTestsPage::UpdatePassedBar(size_t amount, const wxString& msg)
 {
-	m_progressPassed->Update(amount, msg);
+    m_progressPassed->Update(amount, msg);
 }
 
 void UnitTestsPage::OnItemActivated(wxListEvent& e)
 {
-	wxString file = GetColumnText(m_listCtrlErrors, e.m_itemIndex, 0);
-	wxString line = GetColumnText(m_listCtrlErrors, e.m_itemIndex, 1);
+    wxString file = GetColumnText(m_listCtrlErrors, e.m_itemIndex, 0);
+    wxString line = GetColumnText(m_listCtrlErrors, e.m_itemIndex, 1);
 
-	long l;
-	line.ToLong(&l);
+    long l;
+    line.ToLong(&l);
 
-	// convert the file to absolute path
-	wxString err_msg, cwd;
-	wxString proj = m_mgr->GetWorkspace()->GetActiveProjectName();
-	ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(proj, err_msg);
+    // convert the file to absolute path
+    wxString err_msg, cwd;
+    wxString proj = m_mgr->GetWorkspace()->GetActiveProjectName();
+    ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(proj, err_msg);
 
-	if(p) {
-		cwd = p->GetFileName().GetPath();
-	}
+    if(p) {
+        cwd = p->GetFileName().GetPath();
+    }
 
-	wxFileName fn(file);
-	fn.MakeAbsolute(cwd);
+    wxFileName fn(file);
+    fn.MakeAbsolute(cwd);
 
-	m_mgr->OpenFile(fn.GetFullPath(), proj, l-1);
+    m_mgr->OpenFile(fn.GetFullPath(), proj, l-1);
+}
+
+void UnitTestsPage::Initialize(TestSummary* summary)
+{
+    Clear();
+#ifdef __WXDEBUG__
+    summary->PrintSelf();
+#endif
+    m_progressPassed->SetMaxRange((size_t)summary->totalTests);
+    m_progressFailed->SetMaxRange((size_t)summary->totalTests);
+    m_progressFailed->SetFillCol(wxT("RED"));
+    m_progressPassed->SetFillCol(wxT("PALE GREEN"));
+
+    wxString msg;
+    msg << summary->totalTests;
+    m_staticTextTotalTests->SetLabel(msg);
+
+    msg.clear();
+    msg << summary->errorCount;
+    m_staticTextFailTestsNum->SetLabel(msg);
+
+    msg.clear();
+    msg << summary->totalTests - summary->errorCount;
+    m_staticTextSuccessTestsNum->SetLabel(msg);
+    
+    for (size_t i=0; i<summary->errorLines.GetCount(); i++) {
+        ErrorLineInfo info = summary->errorLines.Item(i);
+        long row = AppendListCtrlRow(m_listCtrlErrors);
+        SetColumnText(m_listCtrlErrors, row, 0, info.file);
+        SetColumnText(m_listCtrlErrors, row, 1, info.line);
+        SetColumnText(m_listCtrlErrors, row, 2, info.description);
+    }
+
+    m_listCtrlErrors->SetColumnWidth(0, 200);
+    m_listCtrlErrors->SetColumnWidth(1, 100);
+    m_listCtrlErrors->SetColumnWidth(2, wxLIST_AUTOSIZE);
+}
+
+void UnitTestsPage::Clear()
+{
+    m_listCtrlErrors->DeleteAllItems();
+    m_progressFailed->Clear();
+    m_progressPassed->Clear();
+}
+
+void UnitTestsPage::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    Clear();
 }

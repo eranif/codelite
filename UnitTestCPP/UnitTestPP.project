@@ -24,8 +24,6 @@
     <File Name="testclassbasedlg.cpp"/>
     <File Name="testclassbasedlg.h"/>
     <File Name="testclassdlg.cpp"/>
-    <File Name="unittestsbasereport.cpp"/>
-    <File Name="unittestsbasereport.h"/>
     <File Name="unittestspage.h"/>
     <File Name="unittestspage.cpp"/>
   </VirtualDirectory>
@@ -181,4 +179,16 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="Resources">
+    <File Name="unittestreport.wxcp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="unittestreport_unittestcpp_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="unittestreport.h"/>
+      <File Name="unittestreport.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

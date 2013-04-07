@@ -1015,22 +1015,27 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
 
     //try to find this file in the workspace
     for (i=0; i < files.GetCount(); i++) {
-        wxString projName = this->GetProjectNameByFile(files.Item(i));
+        wxString file = files.Item(i);
+        wxString projName = this->GetProjectNameByFile(file);
         //allow adding the file, only if it does not already exist under the current project
         //(it can be already exist under the different project)
         if (projName.IsEmpty() || projName != project) {
-            actualAdded.Add(files.Item(i));
+            actualAdded.Add(file);
         }
 #if defined(__WXGTK__)
         else {
             // In Linux, files 'abc' and 'Abc' can happily co-exist, so see if that's what's happening
-            wxString projName = this->GetProjectNameByFile(files.Item(i), true); // 'true' is case-sensitive comparison
+            wxString projName = this->GetProjectNameByFile(file, true); // 'true' is case-sensitive comparison
             if (projName.IsEmpty() || projName != project) {
-                wxString msg1(_("There is already a file in this folder with a name that matches using case-insensitive comparison"));
+                wxString msg1(wxString::Format(_("There is already a file in this folder with a name:\n%s\nthat matches using case-insensitive comparison"), 
+                                                  file));
                 wxString msg2(_("\nThis won't be a problem on Linux, but it may be on other, case-insensitive platforms"));
                 wxString msg3(_("\n\nAdd the file anyway?"));
-                if (wxMessageBox(msg1+msg2+msg3, _("Possible name-clash"), wxICON_QUESTION|wxYES_NO|wxCANCEL, clMainFrame::Get()) == wxYES) {
-                    actualAdded.Add(files.Item(i));
+                int ans = wxMessageBox(msg1+msg2+msg3, _("Possible name-clash"), wxICON_QUESTION|wxYES_NO|wxCANCEL, clMainFrame::Get());
+                if ( ans == wxYES) {
+                    actualAdded.Add(file);
+                } else if ( ans == wxCANCEL) {
+                    return;
                 }
             }
         }

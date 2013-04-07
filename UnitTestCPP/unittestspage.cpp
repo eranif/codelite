@@ -121,6 +121,9 @@ void UnitTestsPage::Clear()
     m_listCtrlErrors->DeleteAllItems();
     m_progressFailed->Clear();
     m_progressPassed->Clear();
+    m_staticTextFailTestsNum->SetLabel("");
+    m_staticTextSuccessTestsNum->SetLabel("");
+    m_staticTextTotalTests->SetLabel("");
 }
 
 void UnitTestsPage::OnWorkspaceClosed(wxCommandEvent& e)

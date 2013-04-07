@@ -398,17 +398,16 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     
     /// Draw the X button on the tab
     if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
-
+        bool themeEnabled = false;
 #ifdef __WXMSW__
         int major, minor;
-        bool themeEnabled = false;
+        
         wxGetOsVersion(&major, &minor);
 
         if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
             themeEnabled = true;
         }
 #endif
-
         curx += (themeEnabled ? 2 : 4);
         int btny = (rr.y + (rr.height/2));
         

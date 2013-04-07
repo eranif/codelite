@@ -36,8 +36,8 @@ ProgressCtrl::~ProgressCtrl()
 {
 }
 
-ProgressCtrl::ProgressCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-		: wxPanel(parent, id, pos, size, style)
+ProgressCtrl::ProgressCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& , long style)
+		: wxPanel(parent, id, pos, wxSize(-1, 24), style)
 		, m_maxRange(100)
 		, m_currValue(0)
 		, m_fillCol(wxT("DARK GREEN"))

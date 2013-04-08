@@ -9,7 +9,6 @@
     <File Name="wx_pch.cpp"/>
     <File Name="ViewSettings.cpp"/>
     <File Name="view.cpp"/>
-    <File Name="TableSettingsDialog.cpp"/>
     <File Name="table.cpp"/>
     <File Name="SqliteType.cpp"/>
     <File Name="SqliteDbAdapter.cpp"/>
@@ -45,15 +44,14 @@
     <File Name="databaseexplorer.cpp"/>
     <File Name="db_explorer_settings.cpp"/>
     <File Name="imageexportdialog.cpp"/>
-    <File Name="imageexportdialog.h"/>
     <File Name="DbViewerPanel.cpp"/>
+    <File Name="TableSettings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="databaseexplorer.h"/>
     <File Name="wx_pch.h"/>
     <File Name="ViewSettings.h"/>
     <File Name="view.h"/>
-    <File Name="TableSettingsDialog.h"/>
     <File Name="table.h"/>
     <File Name="SqliteType.h"/>
     <File Name="SqliteDbAdapter.h"/>
@@ -94,11 +92,19 @@
     <File Name="GUI.fbp"/>
     <File Name="db_explorer_settings.h"/>
     <File Name="imageexportdialog.h"/>
+    <File Name="TableSettings.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="GUI.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="GUI_databaseexplorer_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -137,11 +143,9 @@
         <Library Value="libdatabaselayersqliteud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="../Runtime/plugins/DatabaseExplorer.dll" IntermediateDirectory="./DebugUnicode" Command="../../../../Aplikace/CodeLite/bin/codelite" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[
-      
-      ]]>
+        <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
@@ -149,10 +153,10 @@
       </Debugger>
       <PreBuild/>
       <PostBuild/>
-      <CustomBuild Enabled="no">
-        <RebuildCommand/>
-        <CleanCommand/>
-        <BuildCommand/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand>cd .. &amp;&amp; make clean &amp;&amp; cd ~ &amp;&amp; ./build_codelite_debug.sh</RebuildCommand>
+        <CleanCommand>cd .. &amp;&amp; make clean</CleanCommand>
+        <BuildCommand>cd ~ &amp;&amp; ./build_codelite_debug.sh</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
@@ -335,5 +339,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

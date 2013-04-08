@@ -173,7 +173,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             while( node ) {
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
                 if (pCol) {
-                    hFile << wxString::Format(wxT("\tconst %s Get%s() const {"), GetResTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
+                    hFile << wxString::Format(wxT("\tconst %s Get%s() const {"), GetResTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
                     hFile << wxString::Format(wxT("\t\treturn m_%s;"), pCol->GetName().c_str()) << "\n";
                     hFile << wxString::Format(wxT("\t\t}")) << "\n";
                 }
@@ -185,7 +185,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             while( node ) {
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
                 if (pCol) {
-                    hFile << wxString::Format(wxT("\t%s m_%s;"), GetTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str())<< "\n";
+                    hFile << wxString::Format(wxT("\t%s m_%s;"), GetTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str())<< "\n";
                 }
                 node = node->GetNext();
             }
@@ -195,7 +195,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             while( node ) {
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
                 if (pCol) {
-                    hFile << wxString::Format(wxT("\t\tm_%s = pResult->%s(wxT(\"%s\"));"),pCol->GetName().c_str(), GetResultFunction(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
+                    hFile << wxString::Format(wxT("\t\tm_%s = pResult->%s(wxT(\"%s\"));"),pCol->GetName().c_str(), GetResultFunction(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
                 }
                 node = node->GetNext();
             }
@@ -217,10 +217,10 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
                 if (pCol) {
                     if( first ) {
-                        hFile << wxString::Format(wxT("\t\t\t%s %s"), GetParamTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
+                        hFile << wxString::Format(wxT("\t\t\t%s %s"), GetParamTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
                         first = false;
                     } else {
-                        hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
+                        hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
                     }
                 }
                 node = node->GetNext();
@@ -262,12 +262,12 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
         } else if (str.Contains(wxT("%%primaryKeyHeader%%"))) {
             if (pPKCol) {
                 hFile << wxString::Format(wxT("\t/*! \\brief Return %s from db on the %s base */"),pPKCol->GetParentName().c_str(),pPKCol->GetName().c_str()) << "\n";
-                hFile << wxString::Format(wxT("\tstatic %s* GetBy%s(%s %s, DatabaseLayer* pDbLayer);"),classItemName.c_str(),pPKCol->GetName().c_str(), GetTypeName(pPKCol->GetPType()->GetUniversalType()).c_str(),pPKCol->GetName().c_str()) << "\n";
+                hFile << wxString::Format(wxT("\tstatic %s* GetBy%s(%s %s, DatabaseLayer* pDbLayer);"),classItemName.c_str(),pPKCol->GetName().c_str(), GetTypeName(pPKCol->GetType()->GetUniversalType()).c_str(),pPKCol->GetName().c_str()) << "\n";
             }
 
         } else if (str.Contains(wxT("%%primaryKeyBody%%"))) {
             if (pPKCol) {
-                hFile << wxString::Format(wxT("%s* %s::GetBy%s(%s %s, DatabaseLayer* pDbLayer)"),classItemName.c_str(),classItemName.c_str(),pPKCol->GetName().c_str(), GetTypeName(pPKCol->GetPType()->GetUniversalType()).c_str(),pPKCol->GetName().c_str()) << "\n";
+                hFile << wxString::Format(wxT("%s* %s::GetBy%s(%s %s, DatabaseLayer* pDbLayer)"),classItemName.c_str(),classItemName.c_str(),pPKCol->GetName().c_str(), GetTypeName(pPKCol->GetType()->GetUniversalType()).c_str(),pPKCol->GetName().c_str()) << "\n";
                 hFile << wxT("{") << "\n";
                 hFile << wxT("\tDatabaseResultSet* resSet = NULL;") << "\n";
                 hFile << wxT("\tPreparedStatement* pStatement = NULL;") << "\n";
@@ -295,7 +295,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             while( node ) {
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
                 if (pCol) {
-                    hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
+                    hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
                 }
                 node = node->GetNext();
             }
@@ -305,13 +305,13 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             while( node ) {
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
                 if (pCol && ( !pPKCol || (pCol->GetName() != pPKCol->GetName()) ) ) {
-                    hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pCol->GetPType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
+                    hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pCol->GetType()->GetUniversalType()).c_str(), pCol->GetName().c_str()) << "\n";
                 }
                 node = node->GetNext();
             }
 
         } else if (str.Contains(wxT("%%classUtilsDeleteParameters%%"))) {
-            if (pPKCol) hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pPKCol->GetPType()->GetUniversalType()).c_str(), pPKCol->GetName().c_str()) << "\n";
+            if (pPKCol) hFile << wxString::Format(wxT("\t\t\t,%s %s"), GetParamTypeName(pPKCol->GetType()->GetUniversalType()).c_str(), pPKCol->GetName().c_str()) << "\n";
 
         } else if (str.Contains(wxT("%%classUtilsAddSetParams%%"))) {
             int i = 1;
@@ -319,7 +319,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             while( node ) {
                 Column* pCol = wxDynamicCast(node->GetData(),Column);
                 if (pCol) {
-                    hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pCol->GetPType()->GetUniversalType()).c_str(),i++,pCol->GetName().c_str()) << "\n";
+                    hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pCol->GetType()->GetUniversalType()).c_str(),i++,pCol->GetName().c_str()) << "\n";
                 }
                 node = node->GetNext();
             }
@@ -336,7 +336,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             }
 
         } else if (str.Contains(wxT("%%classUtilsAddDelParams%%"))) {
-            if (pPKCol) hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pPKCol->GetPType()->GetUniversalType()).c_str(),1,pPKCol->GetName().c_str()) << "\n";
+            if (pPKCol) hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pPKCol->GetType()->GetUniversalType()).c_str(),1,pPKCol->GetName().c_str()) << "\n";
 
         } else if (str.Contains(wxT("%%classUtilsAddStatement%%"))) {
             wxString cols = wxT("");
@@ -385,7 +385,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             else hFile << wxT("\t\tPreparedStatement* pStatement = NULL;") << "\n";
 
         } else if (str.Contains(wxT("%%classUtilsPKSetParams%%"))) {
-            if (pPKCol) hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pPKCol->GetPType()->GetUniversalType()).c_str(),lastEditParam,pPKCol->GetName().c_str()) << "\n";
+            if (pPKCol) hFile << wxString::Format(wxT("\t\t\tpStatement->%s(%i, %s);"), GetAddParamFunction(pPKCol->GetType()->GetUniversalType()).c_str(),lastEditParam,pPKCol->GetName().c_str()) << "\n";
 
         } else if (str.Contains(wxT("%%classUtilsCreateStatement%%"))) {
             wxStringTokenizer tknz( m_pDbAdapter->GetCreateTableSql( pTab, true ), wxT("\n"), wxTOKEN_STRTOK );
@@ -408,7 +408,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
             str.Replace(wxT("%%classTableName%%"),classTableName);
             str.Replace(wxT("%%classUtilName%%"), classUtilName);
             if( pPKCol ) {
-                str.Replace(wxT("%%pkType%%"), GetParamTypeName(pPKCol->GetPType()->GetUniversalType()));
+                str.Replace(wxT("%%pkType%%"), GetParamTypeName(pPKCol->GetType()->GetUniversalType()));
                 str.Replace(wxT("%%pkName%%"), pPKCol->GetName());
             }
             hFile << str << "\n";
@@ -421,21 +421,21 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
 wxString ClassGenerateDialog::GetFillData(Column* pCol, int colIndex)
 {
     if ( m_choiceTemplates->GetStringSelection().Contains( wxT("wxDebea") ) ) {
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_TEXT) return wxT("\t\t\tpGrid->SetCellValue(row.m_")+ pCol->GetName() + wxString::Format(wxT(",i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME) return wxT("\t\t\tpGrid->SetCellValue(row.m_")+ pCol->GetName() + wxString::Format(wxT(".Format(),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_INT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_OTHER) return wxT("\t\t\tpGrid->SetCellValue(wxT(\"some data\")") + wxString::Format(wxT(",i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_TEXT) return wxT("\t\t\tpGrid->SetCellValue(row.m_")+ pCol->GetName() + wxString::Format(wxT(",i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME) return wxT("\t\t\tpGrid->SetCellValue(row.m_")+ pCol->GetName() + wxString::Format(wxT(".Format(),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_INT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row.m_")+ pCol->GetName() + wxString::Format(wxT("),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_OTHER) return wxT("\t\t\tpGrid->SetCellValue(wxT(\"some data\")") + wxString::Format(wxT(",i,%i);"),colIndex);
     } else {
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_TEXT) return wxT("\t\t\tpGrid->SetCellValue(row->Get")+ pCol->GetName() + wxString::Format(wxT("(),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME) return wxT("\t\t\tpGrid->SetCellValue(row->Get")+ pCol->GetName() + wxString::Format(wxT("().Format(),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_INT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
-        if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_OTHER) return wxT("\t\t\tpGrid->SetCellValue(wxT(\"some data\")") + wxString::Format(wxT(",i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_TEXT) return wxT("\t\t\tpGrid->SetCellValue(row->Get")+ pCol->GetName() + wxString::Format(wxT("(),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME) return wxT("\t\t\tpGrid->SetCellValue(row->Get")+ pCol->GetName() + wxString::Format(wxT("().Format(),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_INT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%lf\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN) return wxT("\t\t\tpGrid->SetCellValue(wxString::Format(wxT(\"%i\"),row->Get")+ pCol->GetName() + wxString::Format(wxT("()),i,%i);"),colIndex);
+        if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_OTHER) return wxT("\t\t\tpGrid->SetCellValue(wxT(\"some data\")") + wxString::Format(wxT(",i,%i);"),colIndex);
     }
 
     return wxT("");
@@ -496,7 +496,7 @@ wxString ClassGenerateDialog::GetDebeaBinding(Column *pCol)
     if( pCol ) {
         wxString bind, type;
 
-        switch( pCol->GetPType()->GetUniversalType() ) {
+        switch( pCol->GetType()->GetUniversalType() ) {
         case IDbType::dbtTYPE_TEXT:
             if( m_choiceTemplates->GetStringSelection().Contains( wxT("wxWidgets") ) ) {
                 bind = wxT("BIND_STR");

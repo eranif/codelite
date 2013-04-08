@@ -161,13 +161,13 @@ void FrameCanvas::OnRightDown(wxMouseEvent& event) {
 		
 		ErdTable* table = wxDynamicCast(m_pSelectedShape->GetGrandParentShape(), ErdTable);
 		if (table) {
-			mnu.AppendSeparator();
-			mnu.Append(XRCID("IDR_POPUP_MI1"), 	_("Add column to table"));
+			//mnu.AppendSeparator();
+			//mnu.Append(XRCID("IDR_POPUP_MI1"), 	_("Add column to table"));
 			mnu.AppendSeparator();
 			mnu.Append(XRCID("IDR_POPUP_NEW_KEY"), _("Create foreign key for table"));
 			mnu.Append(XRCID("IDR_POPUP_MI3"), _("Create view for table"));			
 			mnu.AppendSeparator();
-			mnu.Append(XRCID("IDR_POPUP_MI2"), 	_("Copy table SQL to the clipboard"));
+			mnu.Append(XRCID("IDR_POPUP_MI2"), _("Copy table SQL to the clipboard"));
 			
 		}
 	}
@@ -187,7 +187,6 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 			ErdTable* table = wxDynamicCast(m_pSelectedShape->GetGrandParentShape(), ErdTable);
 			if (table) {
 				table->AddColumn(_("newcol"),m_pDbAdapter->GetDbTypeByUniversalName(IDbType::dbtTYPE_INT));
-				//table->AddColumn(_("text"),m_pDbAdapter->GetDbTypeByUniversalName(IDbType::dbtTYPE_TEXT));
 				table->UpdateColumns();
 				table->Refresh();
 				SaveCanvasState();
@@ -197,7 +196,6 @@ void FrameCanvas::OnPopupClick(wxCommandEvent &evt) {
 			if (wxTheClipboard->Open()) {
 				ErdTable* table = wxDynamicCast(m_pSelectedShape->GetGrandParentShape(), ErdTable);
 				if (table) {
-					//TODO:LANG:
 					wxTheClipboard->SetData(new wxTextDataObject(m_pDbAdapter->GetCreateTableSql(table->GetTable(), dropTable)));
 				}
 				wxTheClipboard->Close();
@@ -286,8 +284,7 @@ void FrameCanvas::OnLeftDoubleClick(wxMouseEvent& event) {
 		ErdTable* table = wxDynamicCast(sp->GetGrandParentShape(),ErdTable);
 		if (table) {
 			if (table->GetTable() ) {
-				TableSettings settingDialog(this, m_pDbAdapter);
-				settingDialog.SetTable(table->GetTable(),(wxSFDiagramManager*) table->GetParentManager());
+				TableSettings settingDialog(this, m_pDbAdapter, table->GetTable(), (wxSFDiagramManager*)table->GetParentManager());
 				settingDialog.ShowModal();
 				table->UpdateColumns();
 				Refresh(false);

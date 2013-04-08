@@ -13,7 +13,7 @@
 #include "../Main/MySqlDbAdapter.h"
 #endif
 
-#include "TableSettingsDialog.h"
+#include "TableSettings.h"
 #include "ViewSettings.h"
 #include "IDbAdapter.h"
 #include "DnDTableShape.h"

@@ -128,14 +128,16 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
 	m_diagramManager.SetRootItem( pInfo );
 		
 	m_pFrameCanvas = new FrameCanvas(&m_diagramManager,dbAdapter,m_wxsfPanel,this, wxID_ANY);
-	m_wxsfSizer->Add(m_pFrameCanvas,  1, wxEXPAND, 2);
+	m_wxsfPanel->GetSizer()->Add(m_pFrameCanvas,  1, wxEXPAND, 2);
 	m_wxsfPanel->Layout();
 	
 	m_nToolMode = modeDESIGN;
 	
-	m_toolBarErd->SetToolBitmapSize(wxSize(16, 15));
-	m_toolBarErd->AddTool(XRCID("IDT_OPEN"), _("Open"), wxBitmap(fileopen_xpm),  _("Open diagram"));
-	m_toolBarErd->AddTool(XRCID("IDT_SAVE"), _("Save"), wxBitmap(filesave_xpm),  _("Save diagram"));
+	BitmapLoader *bmpLoader = DatabaseExplorer::GetManager()->GetStdIcons();
+	
+//	m_toolBarErd->SetToolBitmapSize(wxSize(16, 16));
+	m_toolBarErd->AddTool(XRCID("IDT_OPEN"), _("Open"), bmpLoader->LoadBitmap(wxT("toolbars/16/standard/file_open")),  _("Open diagram"));
+	m_toolBarErd->AddTool(XRCID("IDT_SAVE"), _("Save"), bmpLoader->LoadBitmap(wxT("toolbars/16/standard/file_save")),  _("Save diagram"));
 	m_toolBarErd->AddTool(XRCID("IDT_ERD_SAVE_SQL"), _("Save SQL"), wxBitmap(export_sql_xpm),_("Save SQL"));
 	m_toolBarErd->AddTool(XRCID("IDT_ERD_COMMIT"), _("Commit ERD"), wxBitmap(export_db_xpm),_("Commit ERD"));	
 	m_toolBarErd->AddTool(XRCID("IDT_ERD_SAVE_IMG"), _("Export canvas to image"), wxBitmap(export_img_xpm),_("Export canvas to image"));
@@ -143,17 +145,17 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter) {
 	m_toolBarErd->AddTool(XRCID("IDT_PRINT"), _("Print"), wxBitmap(fileprint_xpm),  _("Print diagram"));
 	m_toolBarErd->AddTool(XRCID("IDT_PREVIEW"), _("Preview"), wxBitmap(filepreview_xpm),  _("Print preview"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(XRCID("IDT_COPY"), _("Copy"), wxBitmap(editcopy_xpm),  _("Copy item"));
-	m_toolBarErd->AddTool(XRCID("IDT_CUT"), _("Cut"), wxBitmap(editcut_xpm),  _("Cut item"));
-	m_toolBarErd->AddTool(XRCID("IDT_PASTE"), _("Paste"), wxBitmap(editpaste_xpm),  _("Paste item"));
+	m_toolBarErd->AddTool(XRCID("IDT_COPY"), _("Copy"), bmpLoader->LoadBitmap(wxT("toolbars/16/standard/copy")),  _("Copy item"));
+	m_toolBarErd->AddTool(XRCID("IDT_CUT"), _("Cut"), bmpLoader->LoadBitmap(wxT("toolbars/16/standard/cut")),  _("Cut item"));
+	m_toolBarErd->AddTool(XRCID("IDT_PASTE"), _("Paste"), bmpLoader->LoadBitmap(wxT("toolbars/16/standard/paste")),  _("Paste item"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddTool(XRCID("IDT_UNDO"), _("Undo"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/undo")), _("Undo"));
-	m_toolBarErd->AddTool(XRCID("IDT_REDO"), _("Redo"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/standard/redo")), _("Redo"));
+	m_toolBarErd->AddTool(XRCID("IDT_UNDO"), _("Undo"), bmpLoader->LoadBitmap(wxT("toolbars/16/standard/undo")), _("Undo"));
+	m_toolBarErd->AddTool(XRCID("IDT_REDO"), _("Redo"), bmpLoader->LoadBitmap(wxT("toolbars/16/standard/redo")), _("Redo"));
 	m_toolBarErd->AddSeparator();
-	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_TOOL"), _("Tool"), wxBitmap(Tool_xpm), wxNullBitmap, _("Design tool"));
-	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_TABLE"), _("DBETable"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("db-explorer/16/table")),wxNullBitmap, _("Database table"));
-	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_VIEW"), _("View"), DatabaseExplorer::GetManager()->GetStdIcons()->LoadBitmap(wxT("toolbars/16/search/find")),wxNullBitmap, _("Database view"));
-	m_toolBarErd->AddRadioTool(XRCID("IDT_ERD_LINE"), _("Constraint 1:N"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),wxNullBitmap, _("Foreign key connection"));
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_TOOL"), _("Tool"), wxBitmap(Tool_xpm), wxNullBitmap, wxITEM_RADIO, _("Design tool"), _("Design tool"), NULL);
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_TABLE"), _("DBETable"), bmpLoader->LoadBitmap(wxT("db-explorer/16/table")), wxNullBitmap, wxITEM_RADIO, _("Database table"), _("Database table"), NULL);
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_VIEW"), _("View"), bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")), wxNullBitmap, wxITEM_RADIO, _("Database view"), _("Database view"), NULL);
+	m_toolBarErd->AddTool(XRCID("IDT_ERD_LINE"), _("Constraint 1:N"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_RADIO, _("Foreign key connection"), _("Foreign key connection"), NULL);
 	m_toolBarErd->AddSeparator();
 	m_toolBarErd->AddTool(XRCID("IDT_ERD_ALIGN_CIRCLE"), _("Align into circle"), wxBitmap(AlignCircle_xpm),  _("Align into circle"));
 	m_toolBarErd->AddTool(XRCID("IDT_ERD_ALIGN_MESH"), _("Align into mesh"), wxBitmap(AlignMesh_xpm),  _("Align into mesh"));

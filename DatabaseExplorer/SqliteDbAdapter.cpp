@@ -161,7 +161,7 @@ wxString SQLiteDbAdapter::GetCreateTableSql(Table* tab, bool dropTable) {
 	while( node ) {
 		Column* col = NULL;
 		if( node->GetData()->IsKindOf( CLASSINFO(Column)) ) col = (Column*) node->GetData();
-		if(col)	str.append(wxString::Format(wxT("\t'%s' %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
+		if(col)	str.append(wxString::Format(wxT("\t'%s' %s"),col->GetName().c_str(), col->GetType()->ReturnSql().c_str()));
 
 		node = node->GetNext();
 		if (node) {
@@ -285,7 +285,7 @@ void SQLiteDbAdapter::ConvertTable(Table* pTab) {
 	while( node ) {
 		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  {
 			Column* col = (Column*) node->GetData();
-			col->SetPType(ConvertType(col->GetPType()));
+			col->SetType(ConvertType(col->GetType()));
 		}
 		node = node->GetNext();
 	}

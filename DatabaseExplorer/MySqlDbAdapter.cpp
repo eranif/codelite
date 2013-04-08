@@ -60,7 +60,7 @@ wxString MySqlDbAdapter::GetCreateTableSql(Table* tab, bool dropTable)
 	while( node ) {
 		Column* col = NULL;
 		if( node->GetData()->IsKindOf( CLASSINFO(Column)) ) col = (Column*) node->GetData();
-		if(col)	str.append(wxString::Format(wxT("\t`%s` %s"),col->GetName().c_str(), col->GetPType()->ReturnSql().c_str()));
+		if(col)	str.append(wxString::Format(wxT("\t`%s` %s"),col->GetName().c_str(), col->GetType()->ReturnSql().c_str()));
 
 		Constraint* constr = wxDynamicCast(node->GetData(),Constraint);
 		if (constr) {
@@ -407,7 +407,7 @@ void MySqlDbAdapter::ConvertTable(Table* pTab)
 	while( node ) {
 		if( node->GetData()->IsKindOf( CLASSINFO(Column)) )  {
 			Column* col = (Column*) node->GetData();
-			col->SetPType(ConvertType(col->GetPType()));
+			col->SetType(ConvertType(col->GetType()));
 		}
 		node = node->GetNext();
 	}

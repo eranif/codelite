@@ -80,24 +80,24 @@ int DumpClass::DumpTable(wxTextFile* pFile, Table* pTab) {
 						
 						if (!dataLine.IsEmpty()) dataLine += wxT(", ");
 						
-						if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_TEXT){
+						if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_TEXT){
 							dataLine += wxString::Format(wxT("'%s'"), pResult->GetResultString(colIndex).c_str());							
-							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME){
+							} else if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_DATE_TIME){
 								dataLine += wxString::Format(wxT("'%s'"), pResult->GetResultDate(colIndex).FormatDate().c_str());							
-							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL){
+							} else if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_DECIMAL){
 								wxString cislo = wxString::Format(wxT("%f"), pResult->GetResultDouble(colIndex));
 								cislo.Replace(wxT(","),wxT("."));
 								dataLine += cislo;	
-							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT){
+							} else if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_FLOAT){
 								wxString cislo = wxString::Format(wxT("%f"), pResult->GetResultDouble(colIndex));
 								cislo.Replace(wxT(","),wxT("."));
 								dataLine += cislo;							
-							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_INT){
+							} else if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_INT){
 								dataLine += wxString::Format(wxT("%i"), pResult->GetResultInt(colIndex));							
-							} else if (pCol->GetPType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN){
+							} else if (pCol->GetType()->GetUniversalType() == IDbType::dbtTYPE_BOOLEAN){
 								if (pResult->GetResultBool(colIndex)) dataLine += wxT("true");	
 								else dataLine += wxT("false");
-							} else if (pCol->GetPType()->GetUniversalType() != IDbType::dbtTYPE_OTHER){
+							} else if (pCol->GetType()->GetUniversalType() != IDbType::dbtTYPE_OTHER){
 								dataLine += wxString::Format(wxT("%s"), pResult->GetResultString(colIndex).c_str());							
 							}				
 						colIndex++;

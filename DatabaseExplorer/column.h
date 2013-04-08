@@ -58,9 +58,9 @@ public:
 	wxString GetParentName() { return this->m_parentName; }
 	
 	/*! \brief Return IDbType */
-	IDbType* GetPType(){ return this->m_pType; }
+	IDbType* GetType(){ return this->m_pType; }
 	/*! \brief Set IDbType */
-	void SetPType(IDbType* pType ) { this->m_pType = pType; }
+	void SetType(IDbType* pType ) { this->m_pType = pType; }
 	
 	/*! \brief Function for column editing. */
 	void Edit(wxString& name,

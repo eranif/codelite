@@ -327,7 +327,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     gdc.SetBrush( page.active ? m_bottom_rect_colour : m_base_colour);
     gdc.SetPen( m_border_pen );
     
-    wxSize sz = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
+    wxSize sz = GetTabSize(gdc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
     
     wxRect rr (in_rect.GetTopLeft(), sz);
     rr.y += 2;

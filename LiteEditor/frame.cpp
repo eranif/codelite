@@ -3075,16 +3075,18 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
 
         if (!EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), build_first)) {
             // value does not exist in the configuration file, prompt the user
-            ThreeButtonDlg *dlg = new ThreeButtonDlg(this, _("Would you like to build the project before debugging it?"), _("CodeLite"));
-            build_first = dlg->ShowModal();
-            answer = dlg->GetDontAskMeAgain();
-            dlg->Destroy();
+            ThreeButtonDlg dlg(this, _("Would you like to build the project before debugging it?"), _("CodeLite"));
+            build_first = dlg.ShowModal();
+            answer = dlg.GetDontAskMeAgain();
 
             if (answer && build_first != wxID_CANCEL) {
                 // save the answer
                 EditorConfigST::Get()->SaveLongValue(wxT("BuildBeforeDebug"), build_first);
+                
+            } else if ( build_first == wxID_CANCEL ) {
+                // Do nothing
+                return;
             }
-
         }
 
         // if build first is required, place a build command on the queue

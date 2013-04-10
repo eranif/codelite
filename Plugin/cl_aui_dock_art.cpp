@@ -112,8 +112,11 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 {
     wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
     
-    if ( tmpRect.GetSize() == wxSize(0, 0) )
-        tmpRect.SetSize(wxSize(1, 1)); // or it will assert on linux
+    // Hackishly prevent assertions on linux
+    if (tmpRect.GetHeight() == 0)
+        tmpRect.SetHeight(1);
+    if (tmpRect.GetWidth() == 0)
+        tmpRect.SetWidth(1);
     
     wxBitmap bmp(tmpRect.GetSize());
     wxMemoryDC memDc;

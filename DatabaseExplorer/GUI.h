@@ -17,7 +17,6 @@
 #include <wx/statbox.h>
 #include <wx/radiobut.h>
 #include <wx/checkbox.h>
-#include <wx/statline.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
 #include <wx/splitter.h>
@@ -37,6 +36,7 @@
 #include <wx/radiobox.h>
 #include <wx/infobar.h>
 #include <wx/dataview.h>
+#include <wx/statline.h>
 
 class _ImageExportDialog : public wxDialog
 {
@@ -48,7 +48,6 @@ protected:
     wxRadioButton* m_radioBtnScaleCustom;
     wxTextCtrl* m_textCtrlScale;
     wxCheckBox* m_checkBoxBackground;
-    wxStaticLine* m_staticline8;
     wxStdDialogButtonSizer* m_sdbSizer2;
     wxButton* m_button126;
     wxButton* m_button127;
@@ -336,8 +335,8 @@ protected:
     wxChoice* m_choiceRefTable;
     wxStaticText* m_staticText135;
     wxChoice* m_choiceRefCol;
-    wxRadioBox* m_radioOnDelete;
     wxRadioBox* m_radioOnUpdate;
+    wxRadioBox* m_radioOnDelete;
     wxStaticLine* m_staticLine149;
     wxButton* m_button51;
     wxButton* m_button53;
@@ -360,13 +359,13 @@ protected:
     virtual void OnLocalColSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefTableSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefColSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRadioDeleteSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRadioUpdateSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRadioDeleteSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCancelClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKClick(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    _TableSettings(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(520,510), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    _TableSettings(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Table settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,700), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~_TableSettings();
 };
 

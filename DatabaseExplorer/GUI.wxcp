@@ -11309,7 +11309,7 @@
 																		}]
 																}, {
 																	"m_type":	4416,
-																	"proportion":	1,
+																	"proportion":	0,
 																	"border":	5,
 																	"gbSpan":	"3,1",
 																	"gbPosition":	"0,3",
@@ -11400,7 +11400,7 @@
 																	"m_children":	[]
 																}, {
 																	"m_type":	4416,
-																	"proportion":	1,
+																	"proportion":	0,
 																	"border":	5,
 																	"gbSpan":	"3,1",
 																	"gbPosition":	"0,2",

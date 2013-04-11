@@ -1284,7 +1284,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioOnUpdate = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On update"), wxDefaultPosition, wxSize(-1,-1), m_radioOnUpdateArr, 1, wxRA_SPECIFY_ROWS);
     m_radioOnUpdate->SetSelection(0);
     
-    boxSizer163->Add(m_radioOnUpdate, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer163->Add(m_radioOnUpdate, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
     wxArrayString m_radioOnDeleteArr;
     m_radioOnDeleteArr.Add(wxT("restrict"));
@@ -1294,7 +1294,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioOnDelete = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On delete"), wxDefaultPosition, wxSize(-1,-1), m_radioOnDeleteArr, 1, wxRA_SPECIFY_ROWS);
     m_radioOnDelete->SetSelection(0);
     
-    boxSizer163->Add(m_radioOnDelete, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer163->Add(m_radioOnDelete, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
     m_staticLine149 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
     

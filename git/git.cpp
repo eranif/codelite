@@ -94,7 +94,7 @@ GitPlugin::GitPlugin(IManager *manager)
     EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
-
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
     m_mgr->GetOutputPaneNotebook()->AddPage(m_console, wxT("git"), false, m_images.Bitmap("git"));
@@ -283,6 +283,8 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Disconnect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Disconnect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
+    
     /*Context Menu*/
     m_eventHandler->Disconnect( XRCID("git_add_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileAddSelected), NULL, this );
     //m_eventHandler->Disconnect( ID_DELETE_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GitPlugin::OnFileDeleteSelected), NULL, this );
@@ -1902,5 +1904,20 @@ void GitPlugin::ApplyPatch(const wxString& filename, const wxString& extraFlags)
 {
     gitAction ga(gitApplyPatch, wxString() << extraFlags << " \"" << filename << "\" ");
     m_gitActionQueue.push(ga);
+    
+    // Trigger a refresh
+    gitAction gaRefresh(gitListAll, "");
+    m_gitActionQueue.push(gaRefresh);
+    
+    ProcessGitActionQueue();
+}
+
+void GitPlugin::OnWorkspaceConfigurationChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    
+    // Trigger a refresh
+    gitAction gaRefresh(gitListAll, "");
+    m_gitActionQueue.push(gaRefresh);
     ProcessGitActionQueue();
 }

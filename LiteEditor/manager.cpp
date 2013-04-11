@@ -2333,10 +2333,18 @@ void Manager::DbgStart ( long attachPid )
 
 void Manager::DbgStop()
 {
+    {
+        IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+        
+        if ( dbgr && dbgr->IsRunning() ) {
+            // If the debugger is running assume that the current perspective is the 
+            // one that we want to use for our debugging purposes
 #ifndef __WXMAC__
-    GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
+            GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
 #endif
-    GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
+        }
+        GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
+    }
 
     if ( m_watchDlg ) {
         m_watchDlg->Destroy();

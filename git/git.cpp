@@ -1906,8 +1906,8 @@ void GitPlugin::ApplyPatch(const wxString& filename, const wxString& extraFlags)
     m_gitActionQueue.push(ga);
     
     // Trigger a refresh
-    gitAction gaRefresh(gitListAll, "");
-    m_gitActionQueue.push(gaRefresh);
+    gitAction gaStatus(gitStatus, "");
+    m_gitActionQueue.push(gaStatus);
     
     ProcessGitActionQueue();
 }
@@ -1917,7 +1917,7 @@ void GitPlugin::OnWorkspaceConfigurationChanged(wxCommandEvent& e)
     e.Skip();
     
     // Trigger a refresh
-    gitAction gaRefresh(gitListAll, "");
-    m_gitActionQueue.push(gaRefresh);
+    gitAction gaStatus(gitStatus, "");
+    m_gitActionQueue.push(gaStatus);
     ProcessGitActionQueue();
 }

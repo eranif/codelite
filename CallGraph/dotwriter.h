@@ -30,8 +30,8 @@ private:
 	wxString cwhite, cblack;
 	wxString dlabel, dedge, hedge, hnode;
 	LineParserList *mlines;
-	wxString output;
-	bool writedotfile;
+	wxString m_OutputString;
+	bool m_writedotfileFlag;
 	bool dwhideparams;
 	bool dwstripparams;
 	bool dwhidenamespaces;
@@ -95,13 +95,8 @@ public:
 	 * @brief Function write data in the DOT language to file dot.txt.
 	 * @param path for file where write file with DOT language.
 	 */
-	void SendToDotAppOutputDirectory(const wxString& path);
-	/**
-	 * @brief Function return bool value if the file in the DOT language is exist.
-	 * @param path for file where is file with DOT language placed.
-	 */
-	bool DotFileExist(const wxString& path);
-	//
+	bool SendToDotAppOutputDirectory(const wxString& path);
+	
 	/**
 	 * @brief Function return string modified by the options in the dialog settings of the plugin.
 	 * @param name of the function stored in the list of objects.

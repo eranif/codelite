@@ -16,6 +16,8 @@ GprofParser::GprofParser()
 	islom = false;
 	isplus = false;
 	isspontaneous = false;
+	lines.DeleteContents(true);
+	lines.Clear();
 };
 
 GprofParser::~GprofParser()
@@ -24,20 +26,20 @@ GprofParser::~GprofParser()
 	lines.Clear();
 };
 
-void GprofParser::GprofParserStream(wxInputStream *m_pInputStream)
+void	GprofParser::GprofParserStream(wxInputStream *gprof_output)
 {
 	wxRegEx re;
 	readlinetext = wxT("");
 	readlinetexttemp = wxT("");
 	wxCSConv conv( wxT("ISO-8859-1") );
-	wxTextInputStream text(*m_pInputStream);//, wxT(" \t"), conv);
+	wxTextInputStream text(*gprof_output);//, wxT(" \t"), conv);
 	//wxFileOutputStream out( wxT("DEBUG.TXT") );
 	//wxTextOutputStream tout( out );
 
 	isspontaneous = false;
 	calls.clear();
 
-	while(!m_pInputStream->Eof()) {
+	while(!gprof_output->Eof()) {
 		readlinetext = text.ReadLine();
 		//tout.WriteString( readlinetext + wxT("\n") );
 		nameLen = readlinetext.Len();

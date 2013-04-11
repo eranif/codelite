@@ -8,63 +8,24 @@
  * Notes:
  **************************************************************/
 
-#ifndef _STATIC_H__
-#define _STATIC_H__
+#ifndef __CALLGRAPH_STATIC_H__
+#define __CALLGRAPH_STATIC_H__
 
 #include <wx/string.h>
-#include <wx/filename.h>
-/**
- * @class stvariables
- * @brief Class define static variables.
- */
-class stvariables
-{	
-public:
-	/**
-	 * @brief Return string with name for picture file.
-	 */
-	static wxString dotpngname;
-	/**
-	 * @brief Return string with name for dot text file.
-	 */
-	static wxString dottxtname;
-	/**
-	 * @brief Return string with name for dot files folder.
-	 */
-	static wxString dotfilesdir;
-	/**
-	 * @brief Return string with name for gmon.out file.
-	 */
-	static wxString gmonfile;
-	/**
-	 * @brief Return string with file type.
-	 */
-	static wxString filetype;
-	/**
-	 * @brief Return string with separator directory.
-	 */
-	static wxString sd;
-	/**
-	 * @brief Return string with white char.
-	 */
-	static wxString sw;
-	/**
-	 * @brief Return string with quote char.
-	 */
-	static wxString sq;
-	/**
-	 * @brief Return string with gprof name.
-	 */
-	static wxString gprofname;
-	/**
-	 * @brief Return string with dot name.
-	 */
-	static wxString dotname;
-	/**
-	 * @brief Function inicialize static variables.
-	 */	 
-	static void InicializeStatic();
 
-};
+const wxString	GMON_FILENAME_OUT = "gmon.out";
+const wxString	DOT_FILENAME_PNG = "dot.png";
+const wxString	DOT_FILENAME_TXT = "dot.txt";
+const wxString	CALLGRAPH_DIR = "CallGraph";
 
+	#ifdef __WXMSW__
+		const wxString	GPROF_FILENAME_EXE = "gprof.exe";
+		const wxString	DOT_FILENAME_EXE = "dot.exe";
+		const wxString	EXECUTABLE_EXTENSION = "exe";
+	#else
+		const wxString	GPROF_FILENAME_EXE = "gprof";
+		const wxString	DOT_FILENAME_EXE = "dot";
+		const wxString	EXECUTABLE_EXTENSION = "";
 #endif
+
+#endif // __CALLGRAPH_STATIC_H__

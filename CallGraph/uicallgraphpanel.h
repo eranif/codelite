@@ -38,14 +38,14 @@ protected:
 	virtual void OnZoomOut(wxCommandEvent& event);
 	virtual void OnZoomOriginal(wxCommandEvent& event);
 
-	void CreateAndInserDataToTable(int nodethr);
+	int CreateAndInserDataToTable(int nodethr);	// returns min_threshold
 	void UpdateImage();
 
 	wxBitmap m_bmpOrig;
 	wxBitmap m_bmpScaled;
 	IManager *m_mgr;
-	wxString pathimage;
-	wxString pathproject;
+	wxString m_pathimage;
+	wxString m_pathproject;
 	LineParserList m_lines;
 	ConfCallGraph confData; // stored configuration data
 	wxPoint m_viewPortOrigin;

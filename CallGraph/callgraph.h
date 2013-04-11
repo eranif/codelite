@@ -23,6 +23,10 @@
 #include "static.h"
 
 
+// forward references
+class wxFileOutputStream;
+class wxTextOutputStream;
+
 /**
  * @class CallGraph
  * @brief Class define structure for plugin interface.
@@ -77,7 +81,15 @@ public:
 	 */
 	wxString GetDotPath();
 	
+	wxFileOutputStream	*m_LogFile;
+	
+	void    LogFn(wxString s);
+	
 protected:
+        
+	void    	MessageBox(const wxString &msg, unsigned long icon_mask);
+	wxString	LocateApp(const wxString &app_name);
+        
 	/**
 	 * @brief Function create and open About dialog Call graph plugin.
 	 * @param event Reference to event class
@@ -106,12 +118,13 @@ protected:
 	/**
 	 * @brief Pointer m_pInputStream type wxInputStream returned from gprof application.
 	 */
-	wxInputStream *m_pInputStream; // pointer m_pInputStream type wxInputStream returned from gprof application
+	// wxInputStream *m_pInputStream; // pointer m_pInputStream type wxInputStream returned from gprof application
 	/**
 	 * @brief Object confData type ConfCallGraph with stored configuration data.
 	 */
 	ConfCallGraph confData; // object confData type ConfCallGraph with stored configuration data
 
+        // wxString        m_ProfiledBinFullName;
 };
 
 extern CallGraph* thePlugin;

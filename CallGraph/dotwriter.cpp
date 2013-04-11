@@ -21,7 +21,7 @@ DotWriter::DotWriter()
 	hedge = wxT("");
 	dlabel = wxT("");
 	graph = wxT("");
-	output = wxT("");
+	// m_OutputString = wxT("");
 	mlines = NULL;
 	dwcn = 0;
 	dwce = 0;
@@ -30,7 +30,6 @@ DotWriter::DotWriter()
 	dwhideparams = false;
 	dwhidenamespaces = false;
 	dwstripparams = false;
-	writedotfile = false;
 }
 
 DotWriter::~DotWriter()
@@ -84,7 +83,7 @@ void DotWriter::WriteToDotLanguage()
 
 	//graph []; -- not used
 
-	output += begin_graph + wxT("\n") + graph + wxT("\n") + hnode + wxT("\n") + hedge + wxT("\n");
+	m_OutputString += begin_graph + wxT("\n") + graph + wxT("\n") + hnode + wxT("\n") + hedge + wxT("\n");
 
 	LineParserList::compatibility_iterator it = mlines->GetFirst();
 
@@ -119,7 +118,7 @@ void DotWriter::WriteToDotLanguage()
 			//
 			dlabel += wxT("\"];"); //, fontsize=\"10.00\"
 			//
-			output += dlabel + wxT("\n");
+			m_OutputString += dlabel + wxT("\n");
 			//
 			dlabel.Clear();
 		}
@@ -128,9 +127,13 @@ void DotWriter::WriteToDotLanguage()
 
 	it = mlines->GetFirst();
 
+	float	max_time = -2;
+	
 	while(it) {
 		LineParser *line = it->GetData();
 
+		if (max_time < line->time)	max_time = line->time;
+		
 		if(line->pline) {
 			pl_index = line->index; // index for primary node
 			pl_time = line->time; // time for primary node
@@ -152,51 +155,28 @@ void DotWriter::WriteToDotLanguage()
 			dedge += cblack;
 			dedge += wxT("\", penwidth=\"2.00\"];"); // labeldistance=\"4.00\",
 			//
-			output += dedge + wxT("\n");
+			m_OutputString += dedge + wxT("\n");
 			//
 			dedge.Clear();
 		}
 		it = it->GetNext();
 	}
-	output += end_graph;
+	m_OutputString += end_graph;
 
 	if (!is_node) { // if the call graph is empty create new graph with label node
-		output = wxT("digraph e {0 [label=");
-		output += _("\"The call-graph is empty; please check the node/edge threshold and the project settings!\"");
-		output += wxT(", shape=none, height=2, width=2, fontname=Arial, fontsize=14.00];}");
+		m_OutputString = wxT("digraph e {0 [label=");
+		m_OutputString += _(wxString::Format("\"The call-graph is empty; the node threshold ceiling is %d !\"", wxRound(max_time)));
+		m_OutputString += wxT(", shape=none, height=2, width=2, fontname=Arial, fontsize=14.00];}");
 	}
 }
 
-void DotWriter::SendToDotAppOutputDirectory(const wxString& apppathfolder)
-{
-	wxString dotfilespath = apppathfolder + stvariables::dotfilesdir + stvariables::sd;
-	wxString dottxtpath = dotfilespath + stvariables::dottxtname;
-	if(!wxDirExists(dotfilespath)) {
-		wxMkdir(dotfilespath.c_str());
-	}
+bool DotWriter::SendToDotAppOutputDirectory(const wxString &dot_fn)
+{	// (re)write dot.txt file
+	wxFile  pFile(dot_fn, wxFile::write);
 
-	if (wxFileExists(dottxtpath))
-		wxRemoveFile(dottxtpath);
+	bool	ok = pFile.Write(m_OutputString);
 
-	//create new txt file
-	wxFile pFile(dottxtpath, wxFile::write);
-	pFile.Open(dottxtpath, wxFile::write);
-
-	if(pFile.IsOpened()) {
-		writedotfile = pFile.Write(output);
-		pFile.Close();
-	} else {
-		return;
-	}
-}
-
-bool DotWriter::DotFileExist(const wxString& apppathfolder)
-{
-	wxString dotfilespath = apppathfolder + stvariables::dotfilesdir + stvariables::sd + stvariables::dottxtname;
-
-	if (wxFileExists(dotfilespath) && writedotfile)
-		return true;
-	else return false;
+	return ok;
 }
 
 wxString DotWriter::OptionsShortNameAndParameters(const wxString& name)

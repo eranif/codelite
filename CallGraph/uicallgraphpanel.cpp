@@ -10,8 +10,8 @@
 uicallgraphpanel::uicallgraphpanel(wxWindow *parent, IManager *mgr, const wxString& imagepath, const wxString& projectpath, int suggestedThreshold, LineParserList *pLines) : uicallgraph(parent)
 {
 	m_mgr = mgr;
-	pathimage = imagepath;
-	pathproject = projectpath;
+	m_pathimage = imagepath;
+	m_pathproject = projectpath;
 	m_scale = 1;
 
 	// copy lines to local storage
@@ -19,7 +19,7 @@ uicallgraphpanel::uicallgraphpanel(wxWindow *parent, IManager *mgr, const wxStri
 	for(LineParserList::iterator it = pLines->begin(); it != pLines->end(); ++it)
 		m_lines.Append((*it)->Clone());
 
-	m_bmpOrig.LoadFile(pathimage, wxBITMAP_TYPE_PNG);
+	m_bmpOrig.LoadFile(m_pathimage, wxBITMAP_TYPE_PNG);
 	UpdateImage();
 
 	m_scrolledWindow->SetBackgroundColour(wxColour(255, 255, 255));
@@ -76,13 +76,18 @@ void uicallgraphpanel::OnClosePanel(wxCommandEvent& event)
 	m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(evt);
 }
 
-void uicallgraphpanel::CreateAndInserDataToTable(int nodethr)
+int uicallgraphpanel::CreateAndInserDataToTable(int node_thr)
 {
 	LineParserList::compatibility_iterator it = m_lines.GetFirst();
 	int nr = 0;
+	float max_time = -2;
+	
 	while(it) {
 		LineParser *line = it->GetData();
-		if(line->pline && wxRound(line->time) >= nodethr) {
+		
+		if (max_time < line->time)	max_time = line->time;
+		
+		if(line->pline && wxRound(line->time) >= node_thr) {
 			m_grid->AppendRows(1, true);
 			//name   time %   self  children    called
 			m_grid->SetCellValue(nr, 0, line->name);
@@ -100,6 +105,8 @@ void uicallgraphpanel::CreateAndInserDataToTable(int nodethr)
 		}
 		it = it->GetNext();
 	}
+	
+	return wxRound(max_time);
 }
 
 void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
@@ -118,20 +125,29 @@ void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 							   m_checkBoxHN->GetValue());
 
 	dw.WriteToDotLanguage();
-	dw.SendToDotAppOutputDirectory(pathproject);
 
-	if (dw.DotFileExist(pathproject)) {
-		//-Gcharset=Latin1		//UTF-8
-		wxString cmddot = thePlugin->GetDotPath() + stvariables::sw + wxT("-Tpng -o") + stvariables::sw + pathproject + stvariables::dotfilesdir + stvariables::sd + stvariables::dotpngname  + stvariables::sw + pathproject + stvariables::dotfilesdir + stvariables::sd + stvariables::dottxtname;
-		wxProcess cmddotProcess;
-		cmddotProcess.Redirect();
-		wxExecute(cmddot, wxEXEC_SYNC, &cmddotProcess);
+	wxFileName	cfn(m_pathproject, DOT_FILENAME_TXT);
+	cfn.AppendDir(CALLGRAPH_DIR);
+	cfn.Normalize();
+		
+	wxString	dot_fn = cfn.GetFullPath();
 
-		m_bmpOrig.LoadFile(pathimage, wxBITMAP_TYPE_PNG);
+	bool	ok = dw.SendToDotAppOutputDirectory(dot_fn);
+	if (ok)
+	{	// delete any existing PNG
+		if (wxFileExists(m_pathimage))	wxRemoveFile(m_pathimage);
+	
+		wxString cmddot_ln;
+	
+		cmddot_ln << confData.GetDotPath() << " -Tpng -o" << m_pathimage << " " << dot_fn;
+		
+		wxExecute(cmddot_ln, wxEXEC_SYNC);
+
+		m_bmpOrig.LoadFile(m_pathimage, wxBITMAP_TYPE_PNG);
 		UpdateImage();
 
-	} else
-		wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+	}
+	else	wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."), wxT("CallGraph"), wxOK | wxICON_INFORMATION);
 
 	// update call table
 	CreateAndInserDataToTable(m_spinNT->GetValue());

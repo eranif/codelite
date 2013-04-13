@@ -256,34 +256,47 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
                                  wxWindow* WXUNUSED(wnd),
                                  const wxRect& rect)
 {
-    // draw background
-    wxColor top_color       = m_base_colour;
-    wxColor bottom_color    = m_base_colour;
-
+    wxGCDC gdc;
+    wxGraphicsRenderer* const renderer = wxGraphicsRenderer::GetDefaultRenderer();
+    wxGraphicsContext* context;
+    
+    if ( wxPaintDC *paintdc = wxDynamicCast(&dc, wxPaintDC) ) {
+        context = renderer->CreateContext(*paintdc);
+        
+    } else if ( wxMemoryDC *memdc = wxDynamicCast(&dc, wxMemoryDC) ) {
+        context = renderer->CreateContext(*memdc);
+    } else {
+        wxFAIL_MSG( "Unknown wxDC kind" );
+        return;
+    }
+    
+    gdc.SetGraphicsContext(context);
+    
     wxRect r;
 
     if (m_flags &wxAUI_NB_BOTTOM)
         r = wxRect(rect.x, rect.y, rect.width+2, rect.height);
+        
     // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
     // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
     else //for wxAUI_NB_TOP
         r = wxRect(rect.x, rect.y, rect.width+2, rect.height-3);
-    dc.GradientFillLinear(r, top_color, bottom_color, wxSOUTH);
+        
+    gdc.SetPen(m_base_colour);
+    gdc.SetBrush(m_base_colour);
+    gdc.DrawRectangle(r);
 
     // draw base lines
-    dc.SetPen(m_border_pen);
     int y = rect.GetHeight();
     int w = rect.GetWidth();
 
+    gdc.SetPen(m_border_pen);
     if (m_flags &wxAUI_NB_BOTTOM) {
-        dc.SetBrush(m_bottom_rect_colour);
-        dc.DrawRectangle(-1, 0, w+2, 4);
-    }
-    // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
-    // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
-    else { //for wxAUI_NB_TOP
-        dc.SetBrush(m_bottom_rect_colour);
-        dc.DrawRectangle(-1, y-4, w+2, 4);
+        gdc.SetBrush(m_bottom_rect_colour);
+        gdc.DrawRectangle(-1, 0, w+2, 4);
+    } else { //for wxAUI_NB_TOP
+        gdc.SetBrush(m_bottom_rect_colour);
+        gdc.DrawRectangle(-1, y-4, w+2, 4);
     }
 }
 

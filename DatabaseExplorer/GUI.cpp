@@ -27,7 +27,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     m_staticText34 = new wxStaticText(this, wxID_ANY, _("Output file:"), wxDefaultPosition, wxSize(400,-1), 0);
     
-    mainSizer->Add(m_staticText34, 0, wxLEFT|wxRIGHT|wxTOP, 5);
+    mainSizer->Add(m_staticText34, 0, wxALL, 5);
     m_staticText34->SetMinSize(wxSize(400,-1));
     
     wxBoxSizer* fpSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -36,15 +36,15 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_READONLY);
     
-    fpSizer->Add(m_textCtrlPath, 1, wxALL|wxEXPAND, 5);
+    fpSizer->Add(m_textCtrlPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_button29 = new wxButton(this, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fpSizer->Add(m_button29, 0, wxRIGHT|wxTOP|wxBOTTOM, 5);
+    fpSizer->Add(m_button29, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     wxStaticBoxSizer* scaleSizer = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Scale")), wxVERTICAL);
     
-    mainSizer->Add(scaleSizer, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
+    mainSizer->Add(scaleSizer, 0, wxALL|wxEXPAND, 5);
     
     m_radioBtnDefaultScale = new wxRadioButton(this, wxID_ANY, _("Current canvas scale"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_radioBtnDefaultScale->SetValue(0);
@@ -53,7 +53,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     wxBoxSizer* customScaleSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    scaleSizer->Add(customScaleSizer, 1, wxEXPAND, 5);
+    scaleSizer->Add(customScaleSizer, 0, wxEXPAND, 5);
     
     m_radioBtnScaleCustom = new wxRadioButton(this, wxID_ANY, _("Custom scale"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_radioBtnScaleCustom->SetValue(0);
@@ -62,7 +62,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     m_textCtrlScale = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(100,-1), 0);
     
-    customScaleSizer->Add(m_textCtrlScale, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    customScaleSizer->Add(m_textCtrlScale, 1, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
     m_textCtrlScale->SetMinSize(wxSize(100,-1));
     
     m_checkBoxBackground = new wxCheckBox(this, wxID_ANY, _("Export canvas background"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -70,13 +70,11 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     mainSizer->Add(m_checkBoxBackground, 0, wxALL, 5);
     
-    m_staticline8 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    mainSizer->Add(m_staticline8, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(0, 0, 1, wxALL|wxEXPAND, 5);
     
     m_sdbSizer2 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(m_sdbSizer2, 0, wxRIGHT|wxBOTTOM|wxALIGN_RIGHT, 5);
+    mainSizer->Add(m_sdbSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button126 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_sdbSizer2->AddButton(m_button126);
@@ -158,7 +156,7 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     m_toolBar3->Realize();
     
     m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH|wxBORDER_NONE);
-    m_splitter1->SetSashGravity(0.000000);
+    m_splitter1->SetSashGravity(0);
     m_splitter1->SetMinimumPaneSize(0);
     
     fgSizer3->Add(m_splitter1, 1, wxEXPAND, 5);
@@ -1166,8 +1164,8 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     
     boxSizer21->Add(m_textName, 1, wxTOP|wxBOTTOM, 5);
     
-    m_splitter27 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_3D);
-    m_splitter27->SetSashGravity(0.500000);
+    m_splitter27 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter27->SetSashGravity(0.5);
     m_splitter27->SetMinimumPaneSize(10);
     
     boxSizer19->Add(m_splitter27, 1, wxEXPAND, 5);
@@ -1192,9 +1190,9 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     
     m_auibar39->AddSeparator();
     
-    m_auibar39->AddTool(XRCID("IDT_DBE_TS_MOVE_UP"), _("Move column up"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_up")), wxNullBitmap, wxITEM_NORMAL, _("Move selected column up"), wxT(""), NULL);
+    m_auibar39->AddTool(XRCID("IDT_DBE_TS_MOVE_UP"), _("Move column up"), wxXmlResource::Get()->LoadBitmap(wxT("move-up")), wxNullBitmap, wxITEM_NORMAL, _("Move selected column up"), wxT(""), NULL);
     
-    m_auibar39->AddTool(XRCID("IDT_DBE_TS_MOVE_DOWN"), _("Move column down"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_down")), wxNullBitmap, wxITEM_NORMAL, _("Move selected column down"), wxT(""), NULL);
+    m_auibar39->AddTool(XRCID("IDT_DBE_TS_MOVE_DOWN"), _("Move column down"), wxXmlResource::Get()->LoadBitmap(wxT("move-down")), wxNullBitmap, wxITEM_NORMAL, _("Move selected column down"), wxT(""), NULL);
     m_auibar39->Realize();
     
     m_dvColumns = new wxDataViewListCtrl(m_splitterPage31, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
@@ -1240,58 +1238,63 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     flexGridSizer143->Add(m_dvKeys, 1, wxEXPAND, 5);
     
     m_dvKeys->AppendTextColumn(_("Key name"), wxDATAVIEW_CELL_EDITABLE, -2, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
+    
+    flexGridSizer143->Add(boxSizer163, 1, wxALL|wxEXPAND, 5);
+    
     wxFlexGridSizer* flexGridSizer147 = new wxFlexGridSizer(  0, 2, 0, 0);
     flexGridSizer147->SetFlexibleDirection( wxBOTH );
     flexGridSizer147->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer147->AddGrowableCol(1);
     
-    flexGridSizer143->Add(flexGridSizer147, 1, wxLEFT|wxTOP|wxEXPAND, 5);
+    boxSizer163->Add(flexGridSizer147, 0, wxEXPAND, 5);
     
     m_staticText125 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Local column:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer147->Add(m_staticText125, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_staticText125, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_choiceLocalColArr;
     m_choiceLocalCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceLocalColArr, 0);
     
-    flexGridSizer147->Add(m_choiceLocalCol, 0, wxRIGHT|wxTOP|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_choiceLocalCol, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText131 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. table:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer147->Add(m_staticText131, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_staticText131, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_choiceRefTableArr;
     m_choiceRefTable = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceRefTableArr, 0);
     
-    flexGridSizer147->Add(m_choiceRefTable, 0, wxRIGHT|wxTOP|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_choiceRefTable, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText135 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Ref. column:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer147->Add(m_staticText135, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer147->Add(m_staticText135, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_choiceRefColArr;
     m_choiceRefCol = new wxChoice(m_splitterPage35, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceRefColArr, 0);
     
-    flexGridSizer147->Add(m_choiceRefCol, 0, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxArrayString m_radioOnDeleteArr;
-    m_radioOnDeleteArr.Add(wxT("restrict"));
-    m_radioOnDeleteArr.Add(wxT("cascade"));
-    m_radioOnDeleteArr.Add(wxT("set null"));
-    m_radioOnDeleteArr.Add(wxT("no action"));
-    m_radioOnDelete = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On delete"), wxDefaultPosition, wxSize(-1,-1), m_radioOnDeleteArr, 1, wxRA_SPECIFY_COLS);
-    m_radioOnDelete->SetSelection(0);
-    
-    flexGridSizer143->Add(m_radioOnDelete, 0, wxALL, 5);
+    flexGridSizer147->Add(m_choiceRefCol, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_radioOnUpdateArr;
     m_radioOnUpdateArr.Add(wxT("restrict"));
     m_radioOnUpdateArr.Add(wxT("cascade"));
     m_radioOnUpdateArr.Add(wxT("set null"));
     m_radioOnUpdateArr.Add(wxT("no action"));
-    m_radioOnUpdate = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On update"), wxDefaultPosition, wxSize(-1,-1), m_radioOnUpdateArr, 1, wxRA_SPECIFY_COLS);
+    m_radioOnUpdate = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On update"), wxDefaultPosition, wxSize(-1,-1), m_radioOnUpdateArr, 1, wxRA_SPECIFY_ROWS);
     m_radioOnUpdate->SetSelection(0);
     
-    flexGridSizer143->Add(m_radioOnUpdate, 0, wxALL, 5);
+    boxSizer163->Add(m_radioOnUpdate, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    
+    wxArrayString m_radioOnDeleteArr;
+    m_radioOnDeleteArr.Add(wxT("restrict"));
+    m_radioOnDeleteArr.Add(wxT("cascade"));
+    m_radioOnDeleteArr.Add(wxT("set null"));
+    m_radioOnDeleteArr.Add(wxT("no action"));
+    m_radioOnDelete = new wxRadioBox(m_splitterPage35, wxID_ANY, _("On delete"), wxDefaultPosition, wxSize(-1,-1), m_radioOnDeleteArr, 1, wxRA_SPECIFY_ROWS);
+    m_radioOnDelete->SetSelection(0);
+    
+    boxSizer163->Add(m_radioOnDelete, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
     m_staticLine149 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
     
@@ -1299,7 +1302,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     
     wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer19->Add(boxSizer49, 0, wxALIGN_RIGHT, 5);
+    boxSizer19->Add(boxSizer49, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button51 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -1310,8 +1313,8 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     boxSizer49->Add(m_button53, 0, wxALL, 5);
     
     
-    SetMinSize( wxSize(520,510) );
-    SetSizeHints(520,510);
+    SetMinSize( wxSize(600,-1) );
+    SetSizeHints(600,700);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -1337,10 +1340,10 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     m_choiceRefTable->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
     m_choiceRefCol->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(_TableSettings::OnRefColSelected), NULL, this);
     m_choiceRefCol->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_radioOnDelete->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(_TableSettings::OnRadioDeleteSelected), NULL, this);
-    m_radioOnDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
     m_radioOnUpdate->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(_TableSettings::OnRadioUpdateSelected), NULL, this);
     m_radioOnUpdate->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
+    m_radioOnDelete->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(_TableSettings::OnRadioDeleteSelected), NULL, this);
+    m_radioOnDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
     m_button51->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnCancelClick), NULL, this);
     m_button53->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnOKClick), NULL, this);
     
@@ -1368,10 +1371,10 @@ _TableSettings::~_TableSettings()
     m_choiceRefTable->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
     m_choiceRefCol->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(_TableSettings::OnRefColSelected), NULL, this);
     m_choiceRefCol->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
-    m_radioOnDelete->Disconnect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(_TableSettings::OnRadioDeleteSelected), NULL, this);
-    m_radioOnDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
     m_radioOnUpdate->Disconnect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(_TableSettings::OnRadioUpdateSelected), NULL, this);
     m_radioOnUpdate->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
+    m_radioOnDelete->Disconnect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(_TableSettings::OnRadioDeleteSelected), NULL, this);
+    m_radioOnDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(_TableSettings::OnUpdateKeys), NULL, this);
     m_button51->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnCancelClick), NULL, this);
     m_button53->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_TableSettings::OnOKClick), NULL, this);
     

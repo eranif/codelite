@@ -3,6 +3,7 @@
 #include <wx/dcgraph.h>
 #include "plugin_general_wxcp.h"
 #include <wx/dcmemory.h>
+#include <editor_config.h>
 
 #ifdef __WXMSW__
 #   include <wx/msw/uxtheme.h>
@@ -271,35 +272,30 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
     }
     
     gdc.SetGraphicsContext(context);
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
     
-    wxRect r;
-
-    if (m_flags &wxAUI_NB_BOTTOM)
-        r = wxRect(rect.x, rect.y, rect.width+2, rect.height);
-        
-    // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
-    // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
-    else //for wxAUI_NB_TOP
-        r = wxRect(rect.x, rect.y, rect.width+2, rect.height-3);
-        
-    gdc.SetPen(m_base_colour);
-    gdc.SetBrush(m_base_colour);
-    gdc.DrawRectangle(r);
-
-    // draw base lines
-    int y = rect.GetHeight();
-    int w = rect.GetWidth();
-
-    gdc.SetPen(m_border_pen);
-    if (m_flags &wxAUI_NB_BOTTOM) {
-        gdc.SetBrush(m_bottom_rect_colour);
-        gdc.DrawRectangle(-1, 0, w+2, 4);
-    } else { //for wxAUI_NB_TOP
-        gdc.SetBrush(m_bottom_rect_colour);
-        gdc.DrawRectangle(-1, y-4, w+2, 4);
+    // Determine the pen colour
+    if ( DrawingUtils::IsDark(bgColour)) {
+        penColour = DrawingUtils::LightColour(bgColour, 4.0);
+    } else {
+        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
+    
+    // Now set the bg colour. It must be done after setting 
+    // the pen colour
+    if ( !DrawingUtils::IsDark(bgColour) ) {
+        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    } else {
+        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
+    }
+    
+    gdc.SetPen(bgColour);
+    gdc.SetBrush(bgColour);
+    gdc.DrawRectangle(rect);
+    gdc.SetPen(penColour);
+    gdc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 }
-
 
 // DrawTab() draws an individual tab.
 //
@@ -319,6 +315,18 @@ void clAuiTabArt::DrawTab(wxDC& dc,
                           wxRect* out_button_rect,
                           int* x_extent)
 {
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
+    bool isBgColourDark = DrawingUtils::IsDark(bgColour);
+    if ( isBgColourDark ) {
+        penColour = DrawingUtils::LightColour(bgColour, 4.0);
+    } else {
+        if ( !page.active ) {
+            bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        }
+        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+    
     int curx = 0;
     wxGCDC gdc;
     wxGraphicsRenderer* const renderer = wxGraphicsRenderer::GetDefaultRenderer();
@@ -337,14 +345,14 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     gdc.SetGraphicsContext(context);
     
     wxGraphicsPath path = gdc.GetGraphicsContext()->CreatePath();
-    gdc.SetBrush( page.active ? m_bottom_rect_colour : m_base_colour);
-    gdc.SetPen( m_border_pen );
+    gdc.SetPen( penColour );
     
     wxSize sz = GetTabSize(gdc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
     
     wxRect rr (in_rect.GetTopLeft(), sz);
     rr.y += 2;
     rr.width -= 2;
+    rr.height += 4;
     
     /// the tab start position (x)
     curx = rr.x + 8;
@@ -357,31 +365,16 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     // since the above code above doesn't play well with WXDFB or WXCOCOA,
     // we'll just use a rectangle for the clipping region for now --
     gdc.SetClippingRegion(rr.x, rr.y, clip_width+1, rr.height);
-    
     path.AddRoundedRectangle(rr.x, rr.y, rr.width, rr.height, 5.0);
+    
+    gdc.SetBrush( bgColour );
     gdc.GetGraphicsContext()->FillPath( path );
     gdc.GetGraphicsContext()->StrokePath( path );
     
-    wxRect bottomRect(rr.x, rr.y + rr.height - 1, rr.width, 2);
-    gdc.SetBrush(m_bottom_rect_colour);
-    gdc.SetPen(m_bottom_rect_colour);
-    gdc.DrawRectangle(bottomRect.x, bottomRect.y, bottomRect.width, bottomRect.height);
-    
-    gdc.SetPen(m_border_pen);
-    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 1, rr.x + rr.width+1, in_rect.y + in_rect.height - 1);
-    
-    gdc.SetPen(m_bottom_rect_colour);
-    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 2, rr.x + rr.width+1, in_rect.y + in_rect.height - 2);
-    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 3, rr.x + rr.width+1, in_rect.y + in_rect.height - 3);
-    
     if ( !page.active ) {
-        gdc.SetPen(m_border_pen);
-    }
-    gdc.DrawLine(rr.x-1, in_rect.y + in_rect.height - 4, rr.x + rr.width+1, in_rect.y + in_rect.height - 4);
-    
-    if ( page.active ) {
-        gdc.SetPen(m_bottom_rect_colour);
-        gdc.DrawPoint(rr.x + rr.width+1, in_rect.y + in_rect.height - 4);
+        // Draw a line at the bottom rect
+        gdc.SetPen(penColour);
+        gdc.DrawLine(in_rect.GetBottomLeft(), in_rect.GetBottomRight());
     }
     
     /// Draw the text
@@ -394,7 +387,12 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     wxSize ext = gdc.GetTextExtent( caption );
     if ( caption == "Tp" )
         caption.Clear();
-        
+    
+    if ( page.active ) {
+        gdc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+    } else {
+        gdc.SetTextForeground( isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+    }
     
     gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2));
     

@@ -141,7 +141,7 @@ clAuiTabArt::clAuiTabArt()
     
     m_normal_font.SetPointSize( m_normal_font.GetPointSize() + 1 );
     m_selected_font = m_normal_font;
-    //m_selected_font.SetWeight(wxBOLD);
+    m_selected_font.SetWeight(wxBOLD);
     m_measuring_font = m_selected_font;
 
     m_fixed_tab_width = 100;
@@ -322,7 +322,9 @@ void clAuiTabArt::DrawTab(wxDC& dc,
         penColour = DrawingUtils::LightColour(bgColour, 4.0);
     } else {
         if ( !page.active ) {
-            bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+            bgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+        } else {
+            bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 0.0);
         }
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
@@ -416,8 +418,6 @@ void clAuiTabArt::DrawTab(wxDC& dc,
             btny += 1;
         }
         
-        bool bDrawCircle = false /*(close_button_state == wxAUI_BUTTON_STATE_PRESSED || close_button_state == wxAUI_BUTTON_STATE_HOVER)*/;
-        
         /// Defines the rectangle surrounding the X button
         wxRect xRect = wxRect(curx, btny - X_RADIUS, X_DIAMETER, X_DIAMETER);
         *out_button_rect = xRect;
@@ -430,19 +430,19 @@ void clAuiTabArt::DrawTab(wxDC& dc,
         
         wxPoint2DDouble ptXTopLeft(x_square, y_square);
         wxRect2DDouble insideRect(ptXTopLeft.m_x, ptXTopLeft.m_y, xx_width, xx_width);
-        insideRect.Inset(bDrawCircle ? 2.0 : 1.0 , bDrawCircle ? 2.0 : 1.0); // Shrink it by 1 pixle
+        insideRect.Inset(1.0 , 1.0); // Shrink it by 1 pixle
         
-        if ( bDrawCircle ) {
-            /// Draw the button using a circle with radius of 5px
-            wxGraphicsPath button_path = gdc.GetGraphicsContext()->CreatePath();
-            
-            /// Draw the circle surrounding the X
-            button_path.AddCircle( circleCenter.x, circleCenter.y, X_RADIUS );
-            gdc.SetPen( wxPen("#202020", 2) );
-            gdc.SetBrush( wxBrush("#202020"));
-            gdc.GetGraphicsContext()->FillPath( button_path  );
-            gdc.GetGraphicsContext()->StrokePath( button_path  );
-        }
+        //if ( bDrawCircle ) {
+        //    /// Draw the button using a circle with radius of 5px
+        //    wxGraphicsPath button_path = gdc.GetGraphicsContext()->CreatePath();
+        //    
+        //    /// Draw the circle surrounding the X
+        //    button_path.AddCircle( circleCenter.x, circleCenter.y, X_RADIUS );
+        //    gdc.SetPen( wxPen("#202020", 2) );
+        //    gdc.SetBrush( wxBrush("#202020"));
+        //    gdc.GetGraphicsContext()->FillPath( button_path  );
+        //    gdc.GetGraphicsContext()->StrokePath( button_path  );
+        //}
         
         /// Draw the 'x' itself
         wxGraphicsPath xpath = gdc.GetGraphicsContext()->CreatePath();
@@ -450,7 +450,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
         xpath.AddLineToPoint( insideRect.GetRightBottom());
         xpath.MoveToPoint( insideRect.GetRightTop() );
         xpath.AddLineToPoint( insideRect.GetLeftBottom() );
-        gdc.SetPen( bDrawCircle ? wxPen(*wxWHITE, 2) : wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 2));
+        gdc.SetPen( wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 2) );
         gdc.GetGraphicsContext()->StrokePath( xpath  );
         
         curx += X_DIAMETER;

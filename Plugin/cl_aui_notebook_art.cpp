@@ -416,7 +416,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
             btny += 1;
         }
         
-        bool bDrawCircle = (close_button_state == wxAUI_BUTTON_STATE_PRESSED || close_button_state == wxAUI_BUTTON_STATE_HOVER);
+        bool bDrawCircle = false /*(close_button_state == wxAUI_BUTTON_STATE_PRESSED || close_button_state == wxAUI_BUTTON_STATE_HOVER)*/;
         
         /// Defines the rectangle surrounding the X button
         wxRect xRect = wxRect(curx, btny - X_RADIUS, X_DIAMETER, X_DIAMETER);

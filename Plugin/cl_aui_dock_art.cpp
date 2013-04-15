@@ -1,6 +1,7 @@
 #include "cl_aui_dock_art.h"
 #include "imanager.h"
 #include <wx/dcmemory.h>
+#include <wx/settings.h>
 #include <editor_config.h>
 
 // --------------------------------------------

@@ -1565,52 +1565,26 @@ void Manager::HidePane ( const wxString &paneName, bool commit )
 
 void Manager::TogglePanes()
 {
-    static bool toggled = false;
     static wxString savedLayout;
-
-    // list of panes to be toggled on and off
-    static wxArrayString panes;
-
-    if ( !toggled ) {
+    if ( savedLayout.IsEmpty() ) {
+        
         savedLayout = clMainFrame::Get()->GetDockingManager().SavePerspective();
-        panes.Clear();
-        // create the list of panes to be tested
-        wxArrayString candidates;
-        candidates.Add ( wxT("Output View") );
-        candidates.Add ( wxT("Workspace View") );
-        candidates.Add ( wxT("Debugger") );
-
-        // add the detached tabs list
-        wxArrayString dynamicPanes = clMainFrame::Get()->GetDockablePaneMenuManager()->GetDeatchedPanesList();
-        for ( size_t i=0; i<dynamicPanes.GetCount(); i++ ) {
-            candidates.Add ( dynamicPanes.Item ( i ) );
-        }
-
-        for ( size_t i=0; i<candidates.GetCount(); i++ ) {
-            wxAuiPaneInfo info;
-            info = clMainFrame::Get()->GetDockingManager().GetPane ( candidates.Item ( i ) );
-            if ( info.IsOk() && info.IsShown() ) {
-                panes.Add ( candidates.Item ( i ) );
+        wxAuiManager& aui = clMainFrame::Get()->GetDockingManager();
+        wxAuiPaneInfoArray &all_panes = aui.GetAllPanes();
+        for(size_t i=0; i<all_panes.GetCount(); ++i) {
+            if(all_panes.Item(i).IsOk() && all_panes.Item(i).IsShown() && all_panes.Item(i).dock_direction != wxAUI_DOCK_CENTER ) {
+                all_panes.Item(i).Hide();
             }
         }
-
-
-        // hide the matched panes
-        for ( size_t i=0; i<panes.GetCount(); i++ ) {
-            HidePane ( panes.Item ( i ), false );
-        }
-
+        
         //update changes
-        clMainFrame::Get()->GetDockingManager().Update();
-        toggled = true;
-
+        aui.Update();
+        
     } else {
         clMainFrame::Get()->GetDockingManager().LoadPerspective(savedLayout);
-        toggled = false;
         savedLayout.Clear();
     }
 }
-
 
 //--------------------------- Menu and Accelerator Mmgt -----------------------------
 

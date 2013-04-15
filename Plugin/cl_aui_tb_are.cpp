@@ -27,66 +27,106 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 
 void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-    wxAuiDefaultToolBarArt::DrawBackground(dc, wnd, rect);
-    
-//    static wxColor col1, col2;
-//    if(col1.IsOk() == false) {
-//        col1 = DrawingUtils::GetPanelBgColour();
-//    }
-//    if(col2.IsOk() == false) {
-//        col2 = DrawingUtils::DarkColour(col1, 2.0);
-//    }
-//
-//    if(m_mswWithThemeEnabled) {
-//        col1 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 2.0);
-//        col2 = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 2.0);
-//    }
-//
-//#if 0
-//    DrawingUtils::PaintStraightGradientBox(dc, rect, col1, col2, true);
-//
-//#else // Mac / Linux
-//    dc.SetPen  (col1);
-//    dc.SetBrush(col1);
-//    dc.DrawRectangle(rect);
-//#endif
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
+
+    // Determine the pen colour
+    if ( !DrawingUtils::IsDark(bgColour)) {
+        wxAuiDefaultToolBarArt::DrawBackground(dc, wnd, rect);
+        return;
+        
+    } else {
+        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+
+    // Now set the bg colour. It must be done after setting
+    // the pen colour
+    wxColour bgColour2 = bgColour;
+    bgColour = DrawingUtils::LightColour(bgColour, 3.0);
+     
+    dc.SetPen(bgColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(rect);
+    dc.GradientFillLinear(rect, bgColour2, bgColour, wxNORTH);
 }
 
 void CLMainAuiTBArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-    wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+
+    if ( !DrawingUtils::IsDark(bgColour)) {
+        wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
+        return;
+    }
+
+    wxColour gp1, gp2, gp3;
+    gp3 = DrawingUtils::LightColour(bgColour, 1.0);
+    gp2 = DrawingUtils::LightColour(bgColour, 2.0);
+    gp1 = DrawingUtils::LightColour(bgColour, 3.0);
+
+    int i = 0;
+    while (1) {
+        int x, y;
+
+        if (m_flags & wxAUI_TB_VERTICAL) {
+            x = rect.x + (i*4) + 5;
+            y = rect.y + 3;
+            if (x > rect.GetWidth()-5)
+                break;
+        } else {
+            x = rect.x + 3;
+            y = rect.y + (i*4) + 5;
+            if (y > rect.GetHeight()-5)
+                break;
+        }
+
+        dc.SetPen(gp1);
+        dc.DrawPoint(x, y);
+        dc.SetPen(gp2);
+        dc.DrawPoint(x, y+1);
+        dc.DrawPoint(x+1, y);
+        dc.SetPen(gp3);
+        dc.DrawPoint(x+2, y+1);
+        dc.DrawPoint(x+2, y+2);
+        dc.DrawPoint(x+1, y+2);
+
+        i++;
+    }
+
 }
 
 void CLMainAuiTBArt::DrawSeparator(wxDC& dc, wxWindow* wnd, const wxRect& _rect)
 {
-    if(m_mswWithThemeEnabled) {
-        bool horizontal = true;
-        if (m_flags & wxAUI_TB_VERTICAL)
-            horizontal = false;
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
 
-        wxRect rect = _rect;
-
-        if (horizontal) {
-            rect.x += (rect.width/2);
-            rect.width = 1;
-            int new_height = (rect.height*3)/4;
-            rect.y += (rect.height/2) - (new_height/2);
-            rect.height = new_height;
-        } else {
-            rect.y += (rect.height/2);
-            rect.height = 1;
-            int new_width = (rect.width*3)/4;
-            rect.x += (rect.width/2) - (new_width/2);
-            rect.width = new_width;
-        }
-
-        wxColour start_colour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 2.0);
-        wxColour end_colour   = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION), 2.0);
-        dc.GradientFillLinear(rect, start_colour, end_colour, horizontal ? wxSOUTH : wxEAST);
-
-    } else {
+    if ( !DrawingUtils::IsDark(bgColour)) {
         wxAuiDefaultToolBarArt::DrawSeparator(dc, wnd, _rect);
+        return;
     }
+
+    bool horizontal = true;
+    if (m_flags & wxAUI_TB_VERTICAL)
+        horizontal = false;
+
+    wxRect rect = _rect;
+
+    if (horizontal) {
+        rect.x += (rect.width/2);
+        rect.width = 1;
+        int new_height = (rect.height*3)/4;
+        rect.y += (rect.height/2) - (new_height/2);
+        rect.height = new_height;
+    } else {
+        rect.y += (rect.height/2);
+        rect.height = 1;
+        int new_width = (rect.width*3)/4;
+        rect.x += (rect.width/2) - (new_width/2);
+        rect.width = new_width;
+    }
+
+    wxColour startColour = bgColour.ChangeLightness(80);
+    wxColour endColour = bgColour.ChangeLightness(80);
+    dc.GradientFillLinear(rect, startColour, endColour, horizontal ? wxSOUTH : wxEAST);
 }
 
 #endif

@@ -1,6 +1,7 @@
 #include "cl_aui_dock_art.h"
 #include "imanager.h"
 #include <wx/dcmemory.h>
+#include <editor_config.h>
 
 // --------------------------------------------
 
@@ -124,20 +125,34 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
     memDc.SetPen(*wxTRANSPARENT_PEN);
     memDc.SetFont(m_captionFont);
-
-    DrawCaptionBackground(memDc, tmpRect, (pane.state & wxAuiPaneInfo::optionActive) ? true : false);
-
+    
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    bool isDarkTheme = DrawingUtils::IsDark(bgColour);
+    
+    if ( !isDarkTheme ) {
+        DrawCaptionBackground(memDc, tmpRect, (pane.state & wxAuiPaneInfo::optionActive) ? true : false);
+        
+    } else {
+        memDc.SetPen( *wxBLACK );
+        memDc.SetBrush( bgColour );
+        memDc.DrawRectangle( tmpRect );
+    }
+    
     int caption_offset = 0;
     if ( pane.icon.IsOk() ) {
         DrawIcon(memDc, tmpRect, pane);
         caption_offset += pane.icon.GetWidth() + 3;
     }
-
-    if (pane.state & wxAuiPaneInfo::optionActive)
-        memDc.SetTextForeground(m_activeCaptionTextColour);
-    else
-        memDc.SetTextForeground(m_inactiveCaptionTextColour);
-
+    
+    if ( !isDarkTheme ) {
+        if (pane.state & wxAuiPaneInfo::optionActive)
+            memDc.SetTextForeground(m_activeCaptionTextColour);
+        else
+            memDc.SetTextForeground(m_inactiveCaptionTextColour);
+    } else {
+        memDc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+    }
+    
     wxCoord w,h;
     memDc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
 
@@ -158,4 +173,70 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     memDc.DestroyClippingRegion();
     memDc.SelectObject(wxNullBitmap);
     dc.DrawBitmap( bmp, rect.x, rect.y, true );
+}
+
+void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
+{
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
+    
+    // Determine the pen colour
+    if ( DrawingUtils::IsDark(bgColour)) {
+        penColour = DrawingUtils::LightColour(bgColour, 4.0);
+    } else {
+        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+    
+    // Now set the bg colour. It must be done after setting 
+    // the pen colour
+    if ( !DrawingUtils::IsDark(bgColour) ) {
+        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    } else {
+        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
+    }
+    
+    dc.SetPen(bgColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(rect);
+    dc.SetPen(penColour);
+}
+
+void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
+{
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
+    
+    // Determine the pen colour
+    if ( !DrawingUtils::IsDark(bgColour)) {
+        wxAuiDefaultDockArt::DrawBorder(dc, window, rect, pane);
+        return;
+    }
+    
+    penColour = DrawingUtils::LightColour(bgColour, 4.0);
+    dc.SetPen(penColour);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRectangle(rect);
+    
+}
+
+void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
+{
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    if ( !DrawingUtils::IsDark(bgColour) ) {
+        wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
+        return;
+    }
+    
+    // dark theme
+#if defined(__WXMAC__) || defined (__WXGTK__)
+    wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
+    return;
+#endif
+
+    // MSW
+    wxUnusedVar(window);
+    wxUnusedVar(orientation);
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(rect);
 }

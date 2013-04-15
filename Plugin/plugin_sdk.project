@@ -161,8 +161,6 @@
       <File Name="listctrl_improved.cpp"/>
       <File Name="cl_editor_tip_window.cpp"/>
       <File Name="cl_editor_tip_window.h"/>
-      <File Name="cl_aui_tb_are.h"/>
-      <File Name="cl_aui_tb_are.cpp"/>
       <File Name="cl_treelistctrl.h"/>
       <File Name="cl_treelistctrl.cpp"/>
       <File Name="my_menu_bar.h"/>
@@ -210,14 +208,16 @@
       <File Name="notebook_ex_nav_dlg.h"/>
       <File Name="tabicons.h"/>
       <File Name="tabicons.cpp"/>
-      <File Name="cl_aui_notebook_art.cpp"/>
-      <File Name="cl_aui_notebook_art.h"/>
       <File Name="gtk_notebook_ex.cpp"/>
       <File Name="gtk_notebook_ex.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxAUI">
       <File Name="cl_aui_dock_art.h"/>
       <File Name="cl_aui_dock_art.cpp"/>
+      <File Name="cl_aui_tb_are.cpp"/>
+      <File Name="cl_aui_tb_are.h"/>
+      <File Name="cl_aui_notebook_art.cpp"/>
+      <File Name="cl_aui_notebook_art.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">

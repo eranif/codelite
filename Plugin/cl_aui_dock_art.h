@@ -8,6 +8,7 @@
 #include <wx/aui/dockart.h>
 #include "imanager.h"
 #include "codelite_exports.h"
+#include <wx/aui/auibar.h>
 
 class WXDLLIMPEXP_SDK clAuiDockArt : public wxAuiDefaultDockArt
 {
@@ -18,7 +19,8 @@ class WXDLLIMPEXP_SDK clAuiDockArt : public wxAuiDefaultDockArt
 public:
     clAuiDockArt(IManager *manager);
     virtual ~clAuiDockArt();
-
+    
+    virtual void DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane);
     virtual void DrawCaption(wxDC& dc, wxWindow *window,
                              const wxString& text,
                              const wxRect& rect,
@@ -29,6 +31,9 @@ public:
                                 int button_state,
                                 const wxRect& _rect,
                                 wxAuiPaneInfo& pane);
+    virtual void DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect);
+    
+    virtual void DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect &rect);
 };
 
 #endif // CLAUIDOCKART_H

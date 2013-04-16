@@ -83,7 +83,7 @@ void OutputPane::CreateGUIControls()
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxWindow::GetTextExtent(wxGetTranslation(REPLACE_IN_FILES), &xx, &yy, NULL, NULL, &fnt);
 
-    mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 1);
+    mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
 
 #if CL_USE_NEW_BUILD_TAB
     m_buildWin = new NewBuildTab(m_book);

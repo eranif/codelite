@@ -131,6 +131,13 @@ public:
     ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title );
     virtual ~ProjectSettingsDlg();
 
+    const wxString& GetConfigName() const {
+        return m_configName;
+    }
+    const wxString& GetProjectName() const {
+        return m_projectName;
+    }
+    
     DECLARE_EVENT_TABLE()
 
     virtual void OnButtonApply(wxCommandEvent &event);

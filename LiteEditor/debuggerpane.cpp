@@ -101,7 +101,7 @@ void DebuggerPane::CreateGUIControls()
     EditorConfigST::Get()->GetLongValue(wxT("DebuggerBook"), bookStyle);
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, bookStyle);
-    mainSizer->Add(m_book, 1, wxEXPAND|wxALL, 1);
+    mainSizer->Add(m_book, 1, wxEXPAND|wxALL, 0);
 
     // Calculate the widthest tab (the one with the 'Call Stack' label)
     int xx, yy;

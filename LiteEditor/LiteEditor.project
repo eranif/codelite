@@ -524,6 +524,7 @@
     <File Name="../InnoSetup/codelite_mingw.iss"/>
     <File Name="../InnoSetup/codelite_mingw_wx.iss"/>
     <File Name="../codelite-icons-fresh-farm/manifest.ini"/>
+    <File Name="project_settings.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>
@@ -779,6 +780,7 @@
       <File Name="newquickwatch_liteeditor_bitmaps.cpp"/>
       <File Name="listctrlpanel_formbuilder_bitmaps.cpp"/>
       <File Name="DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp"/>
+      <File Name="project_settings_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -1071,8 +1073,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1157,7 +1158,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . " WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
@@ -1188,7 +1189,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

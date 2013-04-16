@@ -2133,6 +2133,20 @@ void Manager::DbgStart ( long attachPid )
         wxString userDebuggr = bldConf->GetDebuggerPath();
         userDebuggr.Trim().Trim ( false );
         if ( userDebuggr.IsEmpty() == false ) {
+            // expand project macros
+            userDebuggr = MacroManager::Instance()->Expand(userDebuggr, 
+                                                           PluginManager::Get(), 
+                                                           proj->GetName(), 
+                                                           bldConf->GetName());
+            
+            // Convert any relative path to absolute path
+            // see bug# https://sourceforge.net/p/codelite/bugs/871/
+            wxFileName fnDebuggerPath(userDebuggr);
+            if ( fnDebuggerPath.IsRelative() ) {
+                if ( fnDebuggerPath.MakeAbsolute(proj->GetFileName().GetPath()) ) {
+                    userDebuggr = fnDebuggerPath.GetFullPath();
+                }
+            }
             dinfo.path = userDebuggr;
         }
     }
@@ -2177,7 +2191,21 @@ void Manager::DbgStart ( long attachPid )
         wxString userDebuggr = bldConf->GetDebuggerPath();
         userDebuggr.Trim().Trim ( false );
         if ( userDebuggr.IsEmpty() == false ) {
-            dbginfo.path = userDebuggr;
+            // expand project macros
+            userDebuggr = MacroManager::Instance()->Expand(userDebuggr, 
+                                                           PluginManager::Get(), 
+                                                           proj->GetName(), 
+                                                           bldConf->GetName());
+            
+            // Convert any relative path to absolute path
+            // see bug# https://sourceforge.net/p/codelite/bugs/871/
+            wxFileName fnDebuggerPath(userDebuggr);
+            if ( fnDebuggerPath.IsRelative() ) {
+                if ( fnDebuggerPath.MakeAbsolute(proj->GetFileName().GetPath()) ) {
+                    userDebuggr = fnDebuggerPath.GetFullPath();
+                }
+            }
+            dinfo.path = userDebuggr;
         }
     }
 

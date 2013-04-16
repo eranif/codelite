@@ -123,9 +123,6 @@ void ProjectSettingsDlg::BuildTree()
 
     m_treebook->AddPage(new PSCompletionPage(m_treebook, this), _("Code Completion"), selectedPage == _("Code Completion"));
     m_treebook->AddPage(new GlobalSettingsPanel(m_treebook, m_projectName, this, gp), _("Global Settings"),      selectedPage == _("Global Settings"));
-
-    // We do this here rather than in wxFB to avoid failure and an assert in >wx2.8
-    gp->m_gbSizer1->AddGrowableCol(1);
 }
 
 ProjectSettingsDlg::~ProjectSettingsDlg()

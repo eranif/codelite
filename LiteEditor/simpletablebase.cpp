@@ -9,6 +9,10 @@
 #include "manager.h"
 #include "debugger.h"
 #include "globals.h"
+#include "event_notifier.h"
+#include "plugin.h"
+#include "editor_config.h"
+
 ///////////////////////////////////////////////////////////////////////////
 
 DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
@@ -55,7 +59,9 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 
     this->SetSizer( bSizer1 );
     this->Layout();
-
+    
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
+    
     // Connect Events
     m_listTable->Connect( wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelBegin ), NULL, this );
     m_listTable->Connect( wxEVT_COMMAND_TREE_END_LABEL_EDIT,   wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelEnd ), NULL, this );
@@ -79,6 +85,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
 DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase()
 {
     // Disconnect Events
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
     m_listTable->Disconnect( wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelBegin ), NULL, this );
     m_listTable->Disconnect( wxEVT_COMMAND_TREE_END_LABEL_EDIT,   wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelEnd ), NULL, this );
     m_listTable->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU,        wxTreeEventHandler( DebuggerTreeListCtrlBase::OnItemRightClick ), NULL, this );
@@ -109,6 +116,9 @@ IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 
 void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_t itemKind)
 {
+    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    
     wxTreeItemIdValue cookieOne;
     wxTreeItemId child = m_listTable->GetFirstChild(item, cookieOne);
     while( child.IsOk() ) {
@@ -116,10 +126,10 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
 
         bool resetColor = ((itemKind == 0) || (data && (data->_kind & itemKind)));
         if(resetColor) {
-            m_listTable->SetItemTextColour(child, DrawingUtils::GetOutputPaneFgColour());
+            m_listTable->SetItemTextColour(child, fgColour);
         }
 
-        m_listTable->SetItemBackgroundColour(child, DrawingUtils::GetOutputPaneBgColour());
+        m_listTable->SetItemBackgroundColour(child, bgColour);
 
         if(m_listTable->HasChildren(child)) {
             DoResetItemColour(child, itemKind);
@@ -374,4 +384,19 @@ void DebuggerTreeListCtrlBase::UpdateVariableObjects()
         }
         item = m_listTable->GetNextChild(root, cookieOne);
     }
+}
+
+void DebuggerTreeListCtrlBase::OnThemeColourChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+
+    m_listTable->SetBackgroundColour(bgColour);
+    m_listTable->SetForegroundColour(fgColour);
+    
+    SetBackgroundColour(bgColour);
+    SetForegroundColour(fgColour);
+    
+    Refresh();
 }

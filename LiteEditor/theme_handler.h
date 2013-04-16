@@ -8,6 +8,7 @@
 class ThemeHandler : public wxEvtHandler
 {
     void DoUpdateColours( wxWindow* win, const wxColour& bg, const wxColour &fg );
+    void DoUpdateAuiToolBars( wxWindow* win );
     void DoUpdateSTCBgColour(wxStyledTextCtrl *stc);
     
 public:
@@ -15,6 +16,7 @@ public:
     virtual ~ThemeHandler();
     
     void OnEditorThemeChanged(wxCommandEvent &e);
+    void OnInitDone(wxCommandEvent &e);
 };
 
 #endif // THEMEHANDLER_H

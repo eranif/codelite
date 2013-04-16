@@ -118,7 +118,9 @@ protected:
     virtual void OnRefreshUI( wxUpdateUIEvent& event ) {
         event.Skip();
     }
-
+    
+    void OnThemeColourChanged(wxCommandEvent &e);
+    
 public:
     DebuggerTreeListCtrlBase( wxWindow* parent,
                               wxWindowID id = wxID_ANY,
@@ -145,6 +147,7 @@ public:
     virtual void         ResetTableColors        ();
     virtual wxString     GetItemPath             (const wxTreeItemId &item);
     virtual void         UpdateVariableObjects   ();
+    
 };
 
 #endif //__simpletablebase__

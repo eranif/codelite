@@ -13,16 +13,16 @@ class IDebugger;
 /** Implementing DebuggerAsciiViewerBase */
 class DebuggerAsciiViewer : public DebuggerAsciiViewerBase
 {
-	void OnClearView(wxCommandEvent &e);
-	void OnEdit  (wxCommandEvent &e);
-	void OnEditUI(wxUpdateUIEvent &e);
-
-	bool IsFocused();
+    void OnClearView(wxCommandEvent &e);
+    void OnEdit  (wxCommandEvent &e);
+    void OnEditUI(wxUpdateUIEvent &e);
+    void OnThemeColourChanged(wxCommandEvent &e);
+    bool IsFocused();
 public:
-	/** Constructor */
-	DebuggerAsciiViewer( wxWindow* parent     );
-	virtual ~DebuggerAsciiViewer();
-	void UpdateView    (const wxString &expr, const wxString &value);
+    /** Constructor */
+    DebuggerAsciiViewer( wxWindow* parent     );
+    virtual ~DebuggerAsciiViewer();
+    void UpdateView    (const wxString &expr, const wxString &value);
 };
 
 #endif // __debuggerasciiviewer__

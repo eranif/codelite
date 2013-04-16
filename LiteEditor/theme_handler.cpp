@@ -7,17 +7,21 @@
 #include <wx/listbox.h>
 #include "wxcl_log_text_ctrl.h"
 #include <wx/listctrl.h>
+#include <wx/aui/framemanager.h>
+#include "cl_aui_tb_are.h"
 
 #define CHECK_POINTER(p) if ( !p ) return;
 
 ThemeHandler::ThemeHandler()
 {
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandler::OnEditorThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ThemeHandler::OnInitDone), NULL, this);
 }
 
 ThemeHandler::~ThemeHandler()
 {
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ThemeHandler::OnEditorThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(ThemeHandler::OnInitDone), NULL, this);
 }
 
 void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
@@ -48,10 +52,23 @@ void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
         }
     }
     
+    pageCount = clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->GetPageCount();
+    for(size_t i=0; i<pageCount; ++i) {
+        
+        wxWindow * page = clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->GetPage(i);
+        if ( page ) {
+            DoUpdateColours(page, bgColour, fgColour);
+        }
+    }
+    
     wxclTextCtrl *log = dynamic_cast<wxclTextCtrl*>( wxLog::GetActiveTarget() );
     if ( log ) {
         log->Reset();
     }
+    
+    /// go over all the aui-toolbars and make sure they all have
+    /// our custom aui artproivder
+    DoUpdateAuiToolBars(clMainFrame::Get());
 }
 
 void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
@@ -77,4 +94,57 @@ void ThemeHandler::DoUpdateSTCBgColour(wxStyledTextCtrl* stc)
         stc->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
     }
     stc->Refresh();
+}
+
+void ThemeHandler::OnInitDone(wxCommandEvent& e)
+{
+    e.Skip();
+    // Load all wxAuiToolBars and make sure they all have our custom wxAuiTabArt (which supports dark theme)
+    wxAuiManager &aui = clMainFrame::Get()->GetDockingManager();
+    wxAuiPaneInfoArray& allPanes = aui.GetAllPanes();
+    for(size_t i=0; i<allPanes.GetCount(); ++i) {
+        if ( allPanes.Item(i).IsToolbar() ) {
+            wxAuiPaneInfo &pane = allPanes.Item(i);
+            wxAuiToolBar *auibar = dynamic_cast<wxAuiToolBar*>(pane.window);
+            if( auibar ) {
+                CLMainAuiTBArt *clArtProvider = dynamic_cast<CLMainAuiTBArt*>(auibar->GetArtProvider());
+                if ( !clArtProvider ) {
+                    /// not codelite's custom art provider
+                    /// replace it
+                    auibar->SetArtProvider( new CLMainAuiTBArt() );
+                }
+            }
+        }
+    }
+    aui.Update();
+}
+
+void ThemeHandler::DoUpdateAuiToolBars(wxWindow* win)
+{
+    bool bDarkBG = DrawingUtils::IsDark(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    
+    wxAuiToolBar *auibar = dynamic_cast<wxAuiToolBar*>( win );
+    if( auibar ) {
+        CLMainAuiTBArt *clArtProvider = dynamic_cast<CLMainAuiTBArt*>(auibar->GetArtProvider());
+        if ( !clArtProvider ) {
+            /// not codelite's custom art provider
+            /// replace it
+            auibar->SetArtProvider( new CLMainAuiTBArt() );
+        }
+        size_t toolCount = auibar->GetToolCount();
+        for(size_t i=0; i<toolCount; i++) {
+            wxAuiToolBarItem* tool = auibar->FindToolByIndex(i);
+            if ( tool->GetKind() == wxITEM_NORMAL || tool->GetKind() == wxITEM_CHECK || tool->GetKind() == wxITEM_DROPDOWN || tool->GetKind() == wxITEM_RADIO ) {
+                tool->SetDisabledBitmap( tool->GetBitmap().ConvertToDisabled(bDarkBG ? 50 : 255) );
+            }
+        }
+        auibar->Refresh();
+    }
+
+    wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
+    while(pclNode) {
+        wxWindow* pclChild = pclNode->GetData();
+        this->DoUpdateAuiToolBars(pclChild);
+        pclNode = pclNode->GetNext();
+    }
 }

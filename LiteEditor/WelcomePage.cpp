@@ -6,14 +6,19 @@
 #include "fileextmanager.h"
 #include "window_locker.h"
 #include <wx/clntdata.h>
+#include "event_notifier.h"
+#include "plugin.h"
+#include "editor_config.h"
 
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
 }
 
 WelcomePage::~WelcomePage()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
 }
 
 void WelcomePage::OnNewProject(wxCommandEvent& event)
@@ -144,4 +149,15 @@ void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
     wxArrayString files;
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
     event.Enable( !files.IsEmpty() );
+}
+
+void WelcomePage::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    //wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+    //wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    //
+    //SetBackgroundColour( bgColour );
+    //SetForegroundColour( fgColour );
+    //Refresh();
 }

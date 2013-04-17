@@ -24,5 +24,6 @@ protected:
     virtual void OnNewProject(wxCommandEvent& event);
     virtual void OnOpenForums(wxCommandEvent& event);
     virtual void OnOpenWiki(wxCommandEvent& event);
+    void OnThemeChanged(wxCommandEvent &e);
 };
 #endif // WELCOMEPAGE_H

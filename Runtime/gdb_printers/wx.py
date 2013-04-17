@@ -2,6 +2,7 @@
 import gdb
 import itertools
 import re
+import platform
 
 class wxStringPrinter:
 
@@ -142,7 +143,8 @@ def lookup_function (val):
 def build_dictionary ():
     pretty_printers_dict[re.compile('^wxString$')] = lambda val: wxStringPrinter(val)
     pretty_printers_dict[re.compile('^wxArray.+$')] = lambda val: wxArrayFooPrinter(val)
-    pretty_printers_dict[re.compile('^wxFileName$')] = lambda val: wxFileNamePrinter(val)
+    if platform.system() != 'Windows':
+        pretty_printers_dict[re.compile('^wxFileName$')] = lambda val: wxFileNamePrinter(val)
     pretty_printers_dict[re.compile('^wxPoint$')] = lambda val: wxPointPrinter(val)
     pretty_printers_dict[re.compile('^wxSize$')] = lambda val: wxSizePrinter(val)
     pretty_printers_dict[re.compile('^wxRect$')] = lambda val: wxRectPrinter(val)

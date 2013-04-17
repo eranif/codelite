@@ -28,26 +28,36 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
-    wxColour penColour;
+    wxColour borderUp, borderDown;
 
     // Determine the pen colour
     if ( !DrawingUtils::IsDark(bgColour)) {
-        wxAuiDefaultToolBarArt::DrawBackground(dc, wnd, rect);
-        return;
+        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        borderUp = *wxWHITE;
+        borderDown = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
         
     } else {
-        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+        borderUp = DrawingUtils::LightColour(bgColour, 1.0);
+        borderDown = DrawingUtils::DarkColour(bgColour, 1.0);
     }
 
     // Now set the bg colour. It must be done after setting
     // the pen colour
     wxColour bgColour2 = bgColour;
-    bgColour = DrawingUtils::LightColour(bgColour, 3.0);
+    bgColour = DrawingUtils::DarkColour(bgColour, 2.0);
      
     dc.SetPen(bgColour);
     dc.SetBrush(bgColour);
     dc.DrawRectangle(rect);
-    dc.GradientFillLinear(rect, bgColour2, bgColour, wxNORTH);
+    dc.GradientFillLinear(rect, bgColour2, bgColour, wxSOUTH);
+    
+    dc.SetPen(borderUp);
+    dc.DrawLine(rect.GetLeftBottom(), rect.GetLeftTop());
+    dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+    
+    dc.SetPen(borderDown);
+    dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 }
 
 void CLMainAuiTBArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)

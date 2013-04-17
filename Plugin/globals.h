@@ -34,6 +34,7 @@
 #include "workspace.h"
 #include <wx/variant.h>
 #include <wx/bitmap.h>
+#include <wx/brush.h>
 
 class wxListCtrl;
 class IEditor;
@@ -381,5 +382,8 @@ WXDLLIMPEXP_SDK wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp
  */
 WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func, wxObject* arg);
 WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func);
+
+WXDLLIMPEXP_SDK wxColour GetAUIPaneBGColour();
+WXDLLIMPEXP_SDK wxBrush GetAUIStippleBrush();
 
 #endif //GLOBALS_H

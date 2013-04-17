@@ -3,6 +3,7 @@
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 #include <editor_config.h>
+#include "globals.h"
 
 // --------------------------------------------
 
@@ -197,9 +198,8 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     }
     
     dc.SetPen(bgColour);
-    dc.SetBrush(bgColour);
+    dc.SetBrush( bgColour );
     dc.DrawRectangle(rect);
-    dc.SetPen(penColour);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
@@ -214,7 +214,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
     }
     
     penColour = DrawingUtils::LightColour(bgColour, 4.0);
-    dc.SetPen(penColour);
+    dc.SetPen(*wxTRANSPARENT_PEN);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(rect);
     
@@ -222,22 +222,19 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
-    if ( !DrawingUtils::IsDark(bgColour) ) {
-        wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
-        return;
-    }
-    
     // dark theme
 #if defined(__WXMAC__) || defined (__WXGTK__)
     wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
     return;
 #endif
-
+    
+    // Prepare a stipple bitmap
+    wxColour bgColour = ::GetAUIPaneBGColour();
+    
     // MSW
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(bgColour);
+    dc.SetBrush( ::GetAUIStippleBrush() );
     dc.DrawRectangle(rect);
 }

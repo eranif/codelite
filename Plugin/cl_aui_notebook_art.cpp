@@ -4,6 +4,7 @@
 #include "plugin_general_wxcp.h"
 #include <wx/dcmemory.h>
 #include <editor_config.h>
+#include "globals.h"
 
 #ifdef __WXMSW__
 #   include <wx/msw/uxtheme.h>
@@ -284,14 +285,10 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
     
     // Now set the bg colour. It must be done after setting 
     // the pen colour
-    if ( !DrawingUtils::IsDark(bgColour) ) {
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    } else {
-        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
-    }
+    bgColour = ::GetAUIPaneBGColour();
     
     gdc.SetPen(bgColour);
-    gdc.SetBrush(bgColour);
+    gdc.SetBrush( ::GetAUIStippleBrush() );
     gdc.DrawRectangle(rect);
     gdc.SetPen(penColour);
     gdc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());

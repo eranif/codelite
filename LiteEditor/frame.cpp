@@ -846,7 +846,7 @@ void clMainFrame::CreateGUIControls(void)
     WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
 
     // Load the menubar from XRC and set this frame's menubar to it.
     wxMenuBar *mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));

@@ -144,6 +144,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     if ( pane.icon.IsOk() ) {
         DrawIcon(memDc, tmpRect, pane);
         caption_offset += pane.icon.GetWidth() + 3;
+    } else {
+        caption_offset = 3;
     }
     
     if ( !isDarkTheme ) {
@@ -169,10 +171,32 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         clip_rect.width -= m_buttonSize;
 
     wxString draw_text = wxAuiChopText(memDc, text, clip_rect.width);
+    
+    wxSize textSize = memDc.GetTextExtent(draw_text);
+    
+    wxColour borderUp, borderDown;
 
-    memDc.SetClippingRegion(clip_rect);
-    memDc.DrawText(draw_text, tmpRect.x+3 + caption_offset, tmpRect.y+(tmpRect.height/2)-(h/2)-1);
-    memDc.DestroyClippingRegion();
+    // Determine the pen colour
+    if ( !isDarkTheme ) {
+        borderUp = *wxWHITE;
+        borderDown = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+        
+    } else {
+        borderUp = DrawingUtils::LightColour(bgColour, 1.0);
+        borderDown = DrawingUtils::DarkColour(bgColour, 1.0);
+    }
+    
+    //memDc.SetClippingRegion(clip_rect);
+    memDc.DrawText(draw_text, tmpRect.x+3 + caption_offset, tmpRect.y+((tmpRect.height - textSize.y)/2));
+    memDc.SetPen(borderUp);
+    memDc.DrawLine(tmpRect.GetTopLeft(), tmpRect.GetTopRight());
+    memDc.DrawLine(tmpRect.GetTopLeft(), tmpRect.GetBottomLeft());
+    
+    memDc.SetPen( borderDown );
+    memDc.DrawLine(tmpRect.GetTopRight(), tmpRect.GetBottomRight());
+    memDc.DrawLine(tmpRect.GetBottomLeft(), tmpRect.GetBottomRight());
+    
+    //memDc.DestroyClippingRegion();
     memDc.SelectObject(wxNullBitmap);
     dc.DrawBitmap( bmp, rect.x, rect.y, true );
 }
@@ -204,6 +228,11 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
+//    wxUnusedVar(dc);
+//    wxUnusedVar(window);
+//    wxUnusedVar(rect);
+//    wxUnusedVar(pane);
+//    return;
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
     wxColour penColour;
     

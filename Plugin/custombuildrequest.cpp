@@ -305,7 +305,7 @@ bool CustomBuildRequest::DoUpdateCommand(IManager *manager, wxString& cmd, Proje
     cmd << wxT("\"") << fn << wxT("\"");
 #else
     // *nix
-    cmd << wxT("/bin/sh -f './") << fn << wxT("'");
+    cmd << wxT("/bin/sh './") << fn << wxT("'");
 #endif
     return true;
 }

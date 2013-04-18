@@ -198,6 +198,7 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
     wxString result(in);
     wxString varName, text;
 
+    DollarEscaper de(result);
     while ( MacroManager::Instance()->FindVariable(result, varName, text) ) {
 
         wxString replacement;
@@ -217,4 +218,21 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
     //restore the ___MAKE___ back to $(MAKE)
     result.Replace(wxT("___MAKE___"), wxT("$(MAKE)"));
     return result;
+}
+
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+
+DollarEscaper::DollarEscaper(wxString& str)
+    : m_str(str)
+{
+    m_str.Replace("$$", "@@ESC_DOLLAR@@");
+}
+
+DollarEscaper::~DollarEscaper()
+{
+    // we restore it to non escaped $ !!
+    m_str.Replace("@@ESC_DOLLAR@@", "$");
 }

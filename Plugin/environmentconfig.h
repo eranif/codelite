@@ -30,6 +30,19 @@
 #include "evnvarlist.h"
 
 class EnvSetter;
+
+/// A helper class that makes sure that escpaed $ signs
+/// are kept unharmed
+class WXDLLIMPEXP_SDK DollarEscaper
+{
+    wxString &m_str;
+public:
+    DollarEscaper(wxString &str) ;
+    
+    ~DollarEscaper() ;
+};
+
+
 class WXDLLIMPEXP_SDK EnvironmentConfig : public ConfigurationToolBase
 {
     // Allow access to Apply/UnApply Env

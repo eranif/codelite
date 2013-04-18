@@ -63,6 +63,7 @@
 #include "drawingutils.h"
 #include <wx/settings.h>
 #include <wx/dcmemory.h>
+#include "environmentconfig.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -469,6 +470,7 @@ wxString DoExpandAllVariables(const wxString &expression, Workspace *workspace, 
 {
     wxString errMsg;
     wxString output(expression);
+    DollarEscaper de(output);
     if ( workspace ) {
         output.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
         ProjectPtr proj = workspace->FindProjectByName(projectName, errMsg);

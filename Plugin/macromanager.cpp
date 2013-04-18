@@ -25,7 +25,9 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
     wxString   errMsg;
     wxString   expandedString(expression);
     Workspace *workspace = manager->GetWorkspace();
-
+    
+    DollarEscaper de(expandedString);
+    
     if ( workspace ) {
         expandedString.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
         ProjectPtr proj = workspace->FindProjectByName(project, errMsg);

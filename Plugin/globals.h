@@ -386,4 +386,9 @@ WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func);
 WXDLLIMPEXP_SDK wxColour GetAUIPaneBGColour();
 WXDLLIMPEXP_SDK wxBrush GetAUIStippleBrush();
 
+/**
+ * @brief split lines (using CR|LF as the separator), taking into considertaion line continuation
+ * @param trim trim the lines with set to true
+ */
+WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString &inString, bool trim = true);
 #endif //GLOBALS_H

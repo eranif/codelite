@@ -187,7 +187,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
     }
 
     wxString fn;
-    fn << WorkspaceST::Get()->GetName()  << wxT("_wsp.mk");
+    fn << "Makefile";
     wxString text;
 
     wxFileName wspfile(WorkspaceST::Get()->GetWorkspaceFileName());
@@ -1494,7 +1494,7 @@ wxString BuilderGnuMake::GetBuildCommand(const wxString &project, const wxString
 
     // fix: replace all Windows like slashes to POSIX
     buildTool.Replace(wxT("\\"), wxT("/"));
-    cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\"");
+    cmd << buildTool << wxT(" Makefile");
     return cmd;
 }
 
@@ -1517,7 +1517,7 @@ wxString BuilderGnuMake::GetCleanCommand(const wxString &project, const wxString
 
     BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
     wxString type = Builder::NormalizeConfigName(matrix->GetSelectedConfigurationName());
-    cmd << buildTool << wxT(" \"") << WorkspaceST::Get()->GetName() << wxT("_wsp.mk\" clean");
+    cmd << buildTool << wxT(" Makefile clean");
     return cmd;
 }
 

@@ -21,6 +21,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                                #
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
+##      -DGTK_USE_AUIBOOK=1|0                      // Under GTK, use wxAuiNotebook instead of the native notebook                                                     #
 #######################################################################################################################################################################
 
 
@@ -116,6 +117,12 @@ set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
 add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
 add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
+
+## Allow user to use wxAuiNotebook instead of the native notebook
+if ( GTK_USE_AUIBOOK )
+    add_definitions( -DGTK_USE_AUIBOOK=1 )
+    message("-- Using wxAuiNotebook instead of wxNotebook")
+endif ( GTK_USE_AUIBOOK )
 
 #############################################
 ## Global optimizations

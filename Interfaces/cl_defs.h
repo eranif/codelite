@@ -34,6 +34,14 @@
 #    define CL_USE_NATIVEBOOK 0
 #endif
 
+/// Allow override the default CL_USE_NATIVEBOOK by cmake variable
+#if GTK_USE_AUIBOOK
+#   ifdef CL_USE_NATIVEBOOK
+#       undef CL_USE_NATIVEBOOK
+#   endif
+#   define CL_USE_NATIVEBOOK 0
+#endif
+
 #if wxVERSION_NUMBER < 2904
 #    define CL_USE_NEW_BUILD_TAB 0
 #else

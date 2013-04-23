@@ -137,7 +137,8 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     ## Set the libraries outout directory
     set( CL_BIN_DIR bin_debug)
     set( CL_LIB_DIR lib_debug)
-
+    add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=debug clean )
+    
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_BIN_DIR}" )
     set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CL_SRC_ROOT}/${CL_LIB_DIR}" )
@@ -161,6 +162,7 @@ else ()
     
     set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h")
     set( CL_PCH_TARGET "precompiled_header_release.h.gch")
+    add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=release clean )
     
     ## Set the libraries outout directory
     set( CL_BIN_DIR bin)

@@ -9,13 +9,15 @@ if ( CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull )
     add_custom_target (
         ${CL_PCH_TARGET} ALL
         DEPENDS "${CL_PCH_FILE}"
-        COMMAND ${CMAKE_CXX_COMPILER} `wx-config --cflags --debug=yes` -O0 -g -fPIC -c ${CL_PCH_FILE}
+        COMMAND "$(MAKE)" type=debug
+        WORKING_DIRECTORY ${CL_SRC_ROOT}/PCH
      )
 else()
     add_custom_target (
         ${CL_PCH_TARGET} ALL
         DEPENDS "${CL_PCH_FILE}"
-        COMMAND ${CMAKE_CXX_COMPILER} `wx-config --cflags --debug=no` -O3 -DNDEBUG -fPIC -c ${CL_PCH_FILE}
+        COMMAND "$(MAKE)" type=release
+        WORKING_DIRECTORY ${CL_SRC_ROOT}/PCH
      )
 endif()
 

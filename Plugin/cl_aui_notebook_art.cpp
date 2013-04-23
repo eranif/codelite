@@ -259,20 +259,9 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
                                  const wxRect& rect)
 {
     wxGCDC gdc;
-    wxGraphicsRenderer* const renderer = wxGraphicsRenderer::GetDefaultRenderer();
-    wxGraphicsContext* context;
-    
-    if ( wxPaintDC *paintdc = wxDynamicCast(&dc, wxPaintDC) ) {
-        context = renderer->CreateContext(*paintdc);
-        
-    } else if ( wxMemoryDC *memdc = wxDynamicCast(&dc, wxMemoryDC) ) {
-        context = renderer->CreateContext(*memdc);
-    } else {
-        wxFAIL_MSG( "Unknown wxDC kind" );
+    if ( !::GetGCDC(dc, gdc) )
         return;
-    }
-    
-    gdc.SetGraphicsContext(context);
+        
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
     wxColour penColour;
     
@@ -327,21 +316,11 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     }
     
     int curx = 0;
+    
     wxGCDC gdc;
-    wxGraphicsRenderer* const renderer = wxGraphicsRenderer::GetDefaultRenderer();
-    wxGraphicsContext* context;
-    
-    if ( wxPaintDC *paintdc = wxDynamicCast(&dc, wxPaintDC) ) {
-        context = renderer->CreateContext(*paintdc);
-        
-    } else if ( wxMemoryDC *memdc = wxDynamicCast(&dc, wxMemoryDC) ) {
-        context = renderer->CreateContext(*memdc);
-    } else {
-        wxFAIL_MSG( "Unknown wxDC kind" );
+    if ( !::GetGCDC(dc, gdc) )
         return;
-    }
-    
-    gdc.SetGraphicsContext(context);
+
     
     wxGraphicsPath path = gdc.GetGraphicsContext()->CreatePath();
     gdc.SetPen( penColour );
@@ -789,17 +768,40 @@ void clAuiSimpleTabArt::DrawBackground(wxDC& dc,
                                        wxWindow* WXUNUSED(wnd),
                                        const wxRect& rect)
 {
-    // draw background
-    dc.SetBrush(m_bkbrush);
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.DrawRectangle(-1, -1, rect.GetWidth()+2, rect.GetHeight()+2);
-
-    // draw base line
-    dc.SetPen(*wxGREY_PEN);
-    dc.DrawLine(0, rect.GetHeight()-2, rect.GetWidth(), rect.GetHeight()-2);
-
-    dc.SetPen(m_selected_bkpen);
-    dc.DrawLine(0, rect.GetHeight()-1, rect.GetWidth(), rect.GetHeight()-1);
+    wxGCDC gdc;
+    if ( !::GetGCDC(dc, gdc) )
+        return;
+        
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
+    
+    // Determine the pen colour
+    if ( DrawingUtils::IsDark(bgColour)) {
+        penColour = DrawingUtils::LightColour(bgColour, 4.0);
+    } else {
+        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+    
+    // Now set the bg colour. It must be done after setting 
+    // the pen colour
+    bgColour = ::GetAUIPaneBGColour();
+    
+    gdc.SetPen(bgColour);
+    gdc.SetBrush( bgColour );
+    gdc.DrawRectangle(rect);
+    gdc.SetPen(penColour);
+    
+    wxPoint pt1 = rect.GetBottomLeft(); 
+    wxPoint pt2 = rect.GetBottomRight();
+    pt1.y -= 1;
+    pt2.y -= 1;
+    gdc.DrawLine(pt1, pt2);
+    
+    pt1.y += 1;
+    pt2.y += 1;
+    gdc.SetPen(bgColour);
+    gdc.DrawLine(pt1, pt2);
+    
 }
 
 
@@ -821,6 +823,24 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
                                 wxRect* out_button_rect,
                                 int* x_extent)
 {
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
+    bool isBgColourDark = DrawingUtils::IsDark(bgColour);
+    if ( isBgColourDark ) {
+        penColour = DrawingUtils::LightColour(bgColour, 4.0);
+    } else {
+        if ( !page.active ) {
+            bgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+        } else {
+            bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 0.0);
+        }
+        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+    
+    wxGCDC gdc;
+    if ( !::GetGCDC(dc, gdc) )
+        return;
+        
     wxCoord normal_textx, normal_texty;
     wxCoord selected_textx, selected_texty;
     wxCoord textx, texty;
@@ -830,14 +850,14 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
     if (caption.empty())
         caption = wxT("Xj");
 
-    dc.SetFont(m_selected_font);
-    dc.GetTextExtent(caption, &selected_textx, &selected_texty);
+    gdc.SetFont(m_selected_font);
+    gdc.GetTextExtent(caption, &selected_textx, &selected_texty);
 
-    dc.SetFont(m_normal_font);
-    dc.GetTextExtent(caption, &normal_textx, &normal_texty);
+    gdc.SetFont(m_normal_font);
+    gdc.GetTextExtent(caption, &normal_textx, &normal_texty);
 
     // figure out the size of the tab
-    wxSize tab_size = GetTabSize(dc,
+    wxSize tab_size = GetTabSize(gdc,
                                  wnd,
                                  page.caption,
                                  page.bitmap,
@@ -853,17 +873,18 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
     caption = page.caption;
 
     // select pen, brush and font for the tab to be drawn
-
     if (page.active) {
-        dc.SetPen(m_selected_bkpen);
-        dc.SetBrush(m_selected_bkbrush);
-        dc.SetFont(m_normal_font);
+        gdc.SetPen(penColour);
+        gdc.SetBrush( bgColour );
+        gdc.SetFont(m_normal_font);
+        gdc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
         textx = selected_textx;
         texty = selected_texty;
     } else {
-        dc.SetPen(m_normal_bkpen);
-        dc.SetBrush(m_normal_bkbrush);
-        dc.SetFont(m_normal_font);
+        gdc.SetPen(penColour);
+        gdc.SetBrush(bgColour);
+        gdc.SetFont(m_normal_font);
+        gdc.SetTextForeground( isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
         textx = normal_textx;
         texty = normal_texty;
     }
@@ -887,23 +908,26 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
     points[5].y = tab_y + actual_tab_height - 1;
     points[6] = points[0];
 
-    dc.SetClippingRegion(in_rect);
+    gdc.SetClippingRegion(in_rect);
 
-    dc.DrawPolygon(WXSIZEOF(points) - 1, points);
-    dc.SetPen(*wxGREY_PEN);
+    gdc.DrawPolygon(WXSIZEOF(points) - 1, points);
+    gdc.SetPen(*wxGREY_PEN);
 
-    //dc.DrawLines(active ? WXSIZEOF(points) - 1 : WXSIZEOF(points), points);
-    dc.DrawLines(WXSIZEOF(points), points);
+    //gdc.DrawLines(active ? WXSIZEOF(points) - 1 : WXSIZEOF(points), points);
+    gdc.DrawLines(WXSIZEOF(points), points);
 
-    // Remove the grey line under the active tab
-    if(page.active) {
-        dc.SetPen(m_selected_bkpen);
+    if ( page.active ) {
+        gdc.SetPen( bgColour );
         wxPoint pt1 = points[0];
+        wxPoint pt2 = points[5];
         pt1.x += 1;
-        dc.DrawLine(pt1, points[5]);
+        gdc.DrawLine(pt1, pt2);
+    
+        pt1.y += 1;
+        pt2.y += 1;
+        gdc.DrawLine(pt1, pt2);
     }
-
-
+    
     int text_offset;
 
     int close_button_width = 0;
@@ -919,7 +943,7 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
         bitmap_offset = tab_x + tab_height - 1;
 
         // draw bitmap
-        dc.DrawBitmap(page.bitmap,
+        gdc.DrawBitmap(page.bitmap,
                       bitmap_offset,
                       tab_y + (tab_height/2) - (page.bitmap.GetHeight()/2),
                       true);
@@ -935,28 +959,14 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
         text_offset = tab_x + tab_height;
 
     // chop text if necessary
-    wxString draw_text = wxAuiChopText(dc,
+    wxString draw_text = wxAuiChopText(gdc,
                                        caption,
                                        tab_width - (text_offset-tab_x) - close_button_width);
 
     // draw tab text
-    dc.DrawText(draw_text,
+    gdc.DrawText(draw_text,
                 text_offset,
                 (tab_y + tab_height)/2 - (texty/2) + 1);
-
-
-//#ifndef __WXMAC__
-//    // draw focus rectangle
-//    if (page.active && (wnd->FindFocus() == wnd))
-//    {
-//        wxRect focusRect(text_offset, ((tab_y + tab_height)/2 - (texty/2) + 1),
-//            selected_textx, selected_texty);
-//
-//        focusRect.Inflate(2, 2);
-//
-//        DrawFocusRect(wnd, dc, focusRect, 0);
-//    }
-//#endif
 
     // draw close button if necessary
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN) {
@@ -970,7 +980,7 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
                     tab_y + (tab_height/2) - (bmp.GetHeight()/2) + 1,
                     close_button_width,
                     tab_height - 1);
-        DrawButtons(dc, rect, bmp, *wxWHITE, close_button_state);
+        DrawButtons(gdc, rect, bmp, *wxWHITE, close_button_state);
 
         *out_button_rect = rect;
     }
@@ -978,7 +988,7 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
 
     *out_tab_rect = wxRect(tab_x, tab_y, tab_width, tab_height);
 
-    dc.DestroyClippingRegion();
+    gdc.DestroyClippingRegion();
 }
 
 int clAuiSimpleTabArt::GetIndentSize()

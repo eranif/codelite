@@ -7,11 +7,14 @@
 		"m_bitmapsFile":	"subversion2_subversion2_bitmaps.cpp",
 		"m_GenerateCodeTypes":	2683785,
 		"m_outputFileName":	"subversion2_ui",
+		"m_firstWindowId":	1000,
+		"m_useEnum":	false,
 		"m_templateClasses":	[{
 				"m_includeFile":	"#include <wx/stc/stc.h>",
 				"m_allocationLine":	"// Create the default scintilla control\n#ifdef __WXGTK__\n\tm_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);\n#else\n\tm_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);\n#endif",
 				"m_className":	"wxStyledTextCtrl",
-				"m_xrcPreviewClass":	"wxTextCtrl"
+				"m_xrcPreviewClass":	"wxTextCtrl",
+				"m_events":	[]
 			}]
 	},
 	"windows":	[{
@@ -72,6 +75,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -109,6 +116,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"mainSizer"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -175,6 +186,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[{
@@ -251,6 +266,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Create Svn Tag"
 				}, {
@@ -289,6 +308,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer7"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -307,6 +330,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer1"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -394,6 +421,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Source URL:"
@@ -466,6 +497,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -534,6 +569,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -608,6 +647,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -677,6 +720,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"multi-string",
@@ -751,6 +798,10 @@
 									"m_value":	""
 								}, {
 									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
+									"type":	"string",
 									"m_label":	"Value:",
 									"m_value":	""
 								}, {
@@ -772,6 +823,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer8"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -838,6 +893,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -920,6 +979,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Cancel"
 										}, {
@@ -998,6 +1061,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -1036,6 +1103,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer9"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -1045,11 +1116,11 @@
 					"m_children":	[{
 							"m_type":	4465,
 							"proportion":	1,
-							"border":	5,
+							"border":	2,
 							"gbSpan":	",",
 							"gbPosition":	",",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxEXPAND"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
 									"m_label":	"ID:",
@@ -1101,6 +1172,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[],
@@ -1166,6 +1241,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Login"
 				}, {
@@ -1204,6 +1283,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer10"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -1222,6 +1305,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer2"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -1309,6 +1396,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Username:"
@@ -1381,6 +1472,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -1449,6 +1544,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -1523,6 +1622,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -1545,6 +1648,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer11"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -1611,6 +1718,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -1693,6 +1804,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Cancel"
 										}, {
@@ -1771,6 +1886,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Subversion Preferences"
 				}, {
@@ -1808,6 +1927,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"bSizer12"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -1875,6 +1998,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[{
@@ -1939,6 +2066,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"General"
 										}, {
@@ -1968,6 +2099,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer15"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -1986,6 +2121,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"fgSizer3"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -2073,6 +2212,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Executable:"
@@ -2145,6 +2288,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	"svn"
 																}, {
@@ -2213,6 +2360,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -2301,6 +2452,10 @@
 															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
 															"type":	"multi-string",
 															"m_label":	"Label:",
 															"m_value":	"Ignore the following file patterns:"
@@ -2373,6 +2528,10 @@
 															"m_value":	""
 														}, {
 															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"string",
 															"m_label":	"Value:",
 															"m_value":	"*.o *.obj *.exe *.lib *.so *.dll *.a *.dynlib *.exp *.ilk *.pdb *.d *.tags *.suo *.ncb *.bak *.orig *.dll *.mine *.o.d *.session Debug Release DebugUnicode ReleaseUnicode"
 														}, {
@@ -2394,6 +2553,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"sbSizer1"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -2464,6 +2627,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -2538,6 +2705,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Label:",
 																	"m_value":	"Retag workspace after svn update, revert or applying patch"
 																}, {
@@ -2609,6 +2780,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Label:",
 																	"m_value":	"When renaming a file in the project, rename it in the repository as well"
 																}, {
@@ -2677,6 +2852,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -2754,6 +2933,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"External Diff"
 										}, {
@@ -2782,6 +2965,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"bSizer16"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -2851,6 +3038,10 @@
 															"m_value":	""
 														}, {
 															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"string",
 															"m_label":	"Label:",
 															"m_value":	"Use external diff tool"
 														}, {
@@ -2872,6 +3063,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"fgSizer5"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -2959,6 +3154,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"External Diff Viewer:"
@@ -3037,6 +3236,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -3111,6 +3314,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -3208,6 +3415,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"SSH Client"
 										}, {
@@ -3237,6 +3448,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer161"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -3255,6 +3470,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"fgSizer6"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -3342,6 +3561,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"SSH Client:"
@@ -3414,6 +3637,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -3482,6 +3709,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -3569,6 +3800,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"SSH Client arguments:"
@@ -3641,6 +3876,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -3663,6 +3902,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"sbSizer2"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -3733,6 +3976,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -3810,6 +4057,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Integration"
 										}, {
@@ -3839,6 +4090,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer23"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -3857,6 +4112,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"sbSizer5"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -3930,6 +4189,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Label:",
 																	"m_value":	"Add revision number as preprocessor definition in the compilation line"
 																}, {
@@ -3951,6 +4214,10 @@
 																	"type":	"string",
 																	"m_label":	"Name:",
 																	"m_value":	"bSizer24"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Orientation:",
@@ -4017,6 +4284,10 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Include File:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Style:",
 																			"m_value":	""
 																		}, {
 																			"type":	"multi-string",
@@ -4097,6 +4368,10 @@
 																			"m_value":	""
 																		}, {
 																			"type":	"string",
+																			"m_label":	"Style:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
 																			"m_label":	"Value:",
 																			"m_value":	"SVN_REVISION"
 																		}, {
@@ -4129,6 +4404,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer13"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -4195,6 +4474,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -4283,6 +4566,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&Cancel"
 										}, {
@@ -4361,6 +4648,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Svn Info"
 				}, {
@@ -4399,6 +4690,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer17"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -4417,6 +4712,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer3"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -4440,6 +4739,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"fgSizer7"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -4527,6 +4830,10 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"multi-string",
 													"m_label":	"Label:",
 													"m_value":	"Root URL:"
@@ -4599,6 +4906,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -4667,6 +4978,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -4741,6 +5056,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -4809,6 +5128,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -4883,6 +5206,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -4951,6 +5278,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -5025,6 +5356,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -5093,6 +5428,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -5167,6 +5506,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -5190,6 +5533,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer18"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -5256,6 +5603,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -5337,6 +5688,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Svn Checkout"
 				}, {
@@ -5375,6 +5730,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer19"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -5393,6 +5752,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer4"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -5416,6 +5779,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"fgSizer8"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -5503,6 +5870,10 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"multi-string",
 													"m_label":	"Label:",
 													"m_value":	"URL of repository:"
@@ -5572,6 +5943,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -5674,6 +6049,10 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"multi-string",
 													"m_label":	"Label:",
 													"m_value":	"Checkout directory:"
@@ -5743,6 +6122,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -5817,6 +6200,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Label:",
 													"m_value":	"Browse"
 												}, {
@@ -5873,6 +6260,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer20"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -5939,6 +6330,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6033,6 +6428,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Cancel"
 										}, {
@@ -6111,6 +6510,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Svn Log"
 				}, {
@@ -6149,6 +6552,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer21"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -6167,6 +6574,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer9"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -6254,6 +6665,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"From revision:"
@@ -6323,6 +6738,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6396,6 +6815,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"To revision:"
@@ -6465,6 +6888,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6540,6 +6967,10 @@
 									"m_value":	""
 								}, {
 									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
+									"type":	"string",
 									"m_label":	"Label:",
 									"m_value":	"Create compact log"
 								}, {
@@ -6609,6 +7040,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -6624,6 +7059,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer22"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -6690,6 +7129,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6772,6 +7215,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&Cancel"
 										}, {
@@ -6850,6 +7297,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Svn Diff..."
 				}, {
@@ -6888,6 +7339,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer25"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -6906,6 +7361,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer9"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -6993,6 +7452,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"From Revision:"
@@ -7062,6 +7525,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -7135,6 +7602,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"To Revision:"
@@ -7204,6 +7675,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -7296,6 +7771,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -7311,6 +7790,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer26"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -7377,6 +7860,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -7459,6 +7946,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&Cancel"
 										}, {
@@ -7537,6 +8028,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -7574,6 +8069,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"bSizer27"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -7640,6 +8139,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"string",
@@ -7718,6 +8221,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Svn Properties..."
 				}, {
@@ -7755,6 +8262,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"bSizer28"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -7823,6 +8334,10 @@
 									"m_label":	"Include File:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"multi-string",
 									"m_label":	"Label:",
 									"m_value":	"Title"
@@ -7845,6 +8360,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer10"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -7932,6 +8451,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Bug URL Pattern:"
@@ -8004,6 +8527,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -8072,6 +8599,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -8146,6 +8677,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -8214,6 +8749,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -8288,6 +8827,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -8356,6 +8899,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -8427,6 +8974,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -8519,6 +9070,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -8534,6 +9089,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer29"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -8600,6 +9159,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -8682,6 +9245,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&Cancel"
 										}, {
@@ -8760,6 +9327,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Select patch file:"
 				}, {
@@ -8798,6 +9369,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer31"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -8816,6 +9391,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer11"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -8904,6 +9483,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -8976,6 +9559,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -9057,6 +9644,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -9072,6 +9663,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer32"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -9138,6 +9733,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -9220,6 +9819,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&OK"
 										}, {
@@ -9298,6 +9901,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Select Local Repository:"
 				}, {
@@ -9336,6 +9943,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer33"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -9354,6 +9965,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer13"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -9441,6 +10056,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Select path:"
@@ -9510,6 +10129,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -9584,6 +10207,10 @@
 									"m_label":	"Include File:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"multi-string",
 									"m_label":	"Label:",
 									"m_value":	"Recently used paths:"
@@ -9653,6 +10280,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"multi-string",
@@ -9743,6 +10374,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -9758,6 +10393,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer34"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -9824,6 +10463,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -9903,6 +10546,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",

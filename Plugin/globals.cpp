@@ -64,6 +64,8 @@
 #include <wx/settings.h>
 #include <wx/dcmemory.h>
 #include "environmentconfig.h"
+#include <wx/graphics.h>
+#include <wx/dcmemory.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1583,4 +1585,24 @@ wxArrayString SplitString(const wxString &inString, bool trim)
         curline.clear();
     }
     return lines;
+}
+
+bool GetGCDC(wxDC& dc, wxGCDC& gdc)
+{
+    wxGraphicsRenderer* const renderer = wxGraphicsRenderer::GetDefaultRenderer();
+    wxGraphicsContext* context;
+    
+    if ( wxPaintDC *paintdc = wxDynamicCast(&dc, wxPaintDC) ) {
+        context = renderer->CreateContext(*paintdc);
+
+    } else if ( wxMemoryDC *memdc = wxDynamicCast(&dc, wxMemoryDC) ) {
+        context = renderer->CreateContext(*memdc);
+
+    } else {
+        wxFAIL_MSG( "Unknown wxDC kind" );
+        return false;
+    }
+    
+    gdc.SetGraphicsContext(context);
+    return true;
 }

@@ -21,6 +21,11 @@ add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 
+if ( USE_PCH )
+    add_definitions(-include "${CL_PCH_FILE}")
+    add_definitions(-Winvalid-pch)
+endif ( USE_PCH )
+
 # Add RPATH
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 

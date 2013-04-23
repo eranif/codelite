@@ -19,6 +19,11 @@ if(WIN32)
     add_definitions(-DWXMAKINGDLL_SDK)
 endif(WIN32)
 
+if ( USE_PCH )
+    add_definitions(-include "${CL_PCH_FILE}")
+    add_definitions(-Winvalid-pch)
+endif ( USE_PCH )
+
 ## On UNIX we require GTK
 if (UNIX AND NOT APPLE)
 

@@ -26,6 +26,11 @@ if (UNIX AND NOT APPLE)
 
 endif (UNIX AND NOT APPLE)
 
+if ( USE_PCH )
+    add_definitions(-include "${CL_PCH_FILE}")
+    add_definitions(-Winvalid-pch)
+endif ( USE_PCH )
+
 # Include paths
 include_directories("${CL_SRC_ROOT}/Plugin" 
 		    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 

@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                 #
 ##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                                #
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
-##                                                                                                                                                                    #
+##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
 #######################################################################################################################################################################
 
 
@@ -74,19 +74,6 @@ if (UNIX)
 endif (UNIX)
 
 ########################################
-## Support clang code completion
-########################################
-##if(DEFINED ENV{CXX})
-##    message("-- Using CXX $ENV{CXX}")
-##    set(CMAKE_CXX_COMPILER $ENV{CXX} )
-##endif()
-##
-##if(DEFINED ENV{CC})
-##    message("-- Using CC $ENV{CC}")
-##    set(CMAKE_CC_COMPILER $ENV{CC} )
-##endif()
-
-########################################
 ## Override defaults with user input
 ########################################
 
@@ -136,6 +123,10 @@ add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     message("-- Building in ${CMAKE_BUILD_TYPE} mode")
+    
+    set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_dbg.h")
+    set( CL_PCH_TARGET "precompiled_header_dbg.h.gch")
+    
     ## Set the libraries outout directory
     set( CL_BIN_DIR bin_debug)
     set( CL_LIB_DIR lib_debug)
@@ -154,12 +145,15 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
 
     ## In debug, only add NDEBUG if the user says so
     if (PREVENT_WX_ASSERTS MATCHES 1)
-	message("-- Adding -DNDEBUG to definitions")
+    message("-- Adding -DNDEBUG to definitions")
         add_definitions(-DNDEBUG)
     endif()
     
 else ()
     message("-- Building in Release mode")
+    
+    set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h")
+    set( CL_PCH_TARGET "precompiled_header_release.h.gch")
     
     ## Set the libraries outout directory
     set( CL_BIN_DIR bin)
@@ -180,7 +174,7 @@ else ()
     
     ## In release, add NDEBUG unless explicitly told not to
     if (NOT PREVENT_WX_ASSERTS MATCHES 0)
-	message("-- Adding -DNDEBUG to definitions")
+    message("-- Adding -DNDEBUG to definitions")
         add_definitions(-DNDEBUG)
     endif()
 
@@ -266,9 +260,16 @@ if (UNIX AND NOT APPLE)
     SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif(UNIX AND NOT APPLE)
 
+if ( WITH_PCH )
+    set( USE_PCH 1 )
+endif( WITH_PCH )
+
 ###########################################
 ## Add the folders, the order matters here
 ###########################################
+if ( USE_PCH )
+    add_subdirectory(PCH)
+endif ( USE_PCH )
 
 add_subdirectory(sqlite3)
 add_subdirectory(sdk/wxsqlite3)
@@ -310,17 +311,20 @@ if (USE_CLANG)
 endif(USE_CLANG)
 
 if ( APPLE )
-message(Adding MacBundler...)
-add_subdirectory(MacBundler)
+    message("-- Adding MacBundler...")
+    add_subdirectory(MacBundler)
 endif ( APPLE )
 
 ##
 ## Setup the proper dependencies
 ##
+if ( USE_PCH )
+    add_dependencies(sqlite3lib ${CL_PCH_TARGET})
+endif ( USE_PCH )
+
 add_dependencies(wxsqlite3 sqlite3lib)
 add_dependencies(databaselayersqlite wxsqlite3)
 add_dependencies(wxshapeframework wxsqlite3)
-add_dependencies(libcodelite wxshapeframework databaselayersqlite sqlite3)
+add_dependencies(libcodelite wxshapeframework databaselayersqlite sqlite3 wxsqlite3)
 add_dependencies(plugin libcodelite)
 add_dependencies(codelite plugin)
-

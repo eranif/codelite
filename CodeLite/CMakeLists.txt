@@ -19,6 +19,11 @@ if(WIN32)
     add_definitions(-DWXMAKINGDLL_CL)
 endif(WIN32)
 
+if ( USE_PCH )
+    add_definitions(-include "${CL_PCH_FILE}")
+    add_definitions(-Winvalid-pch)
+endif ( USE_PCH )
+
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 
 # Add RPATH

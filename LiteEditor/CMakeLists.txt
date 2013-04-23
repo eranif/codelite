@@ -30,6 +30,12 @@ if (UNIX AND NOT APPLE)
     endif (GTK2_FOUND)
 
 endif (UNIX AND NOT APPLE)
+add_definitions(-fPIC)
+
+if ( USE_PCH )
+    add_definitions(-include "${CL_PCH_FILE}")
+    add_definitions(-Winvalid-pch)
+endif ( USE_PCH )
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)

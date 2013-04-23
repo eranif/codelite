@@ -25,6 +25,8 @@
 #ifndef CODELITE_PRECOMPILED_HEADER_RELEASE_H
 #define CODELITE_PRECOMPILED_HEADER_RELEASE_H
 
+#ifdef __cplusplus
+
 // Only include the headers we need here
 #include <wx/wx.h>
 #include <wx/app.h>
@@ -130,4 +132,5 @@
     #define _C(x) _CC((x),wxConvUTF8)
 #endif
 
+#endif // __cplusplus
 #endif // CODELITE_PRECOMPILED_HEADER_RELEASE_H

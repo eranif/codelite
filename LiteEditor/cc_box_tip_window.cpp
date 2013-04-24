@@ -171,16 +171,15 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
     wxBufferedPaintDC dc(this);
 
-    wxColour penColour   = wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT);
-    wxColour brushColour = wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK);
+    wxColour penColour   = DrawingUtils::GetThemeBorderColour();
+    wxColour brushColour = DrawingUtils::GetThemeTipBgColour();
 
     dc.SetBrush( brushColour   );
-    dc.SetPen  ( *wxBLACK_PEN );
+    dc.SetPen  ( penColour );
 
     wxRect rr = GetClientRect();
     dc.DrawRectangle(rr);
-    dc.SetPen  ( penColour );
-
+    
     // Draw left-right arrows
     if ( m_numOfTips > 1 && m_leftbmp.IsOk() && m_rightbmp.IsOk() ) {
         
@@ -206,7 +205,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     }
 
     dc.SetFont(m_commentFont);
-    dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    dc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
 
     ::setMarkupLexerInput(m_tip);
     wxString curtext;
@@ -295,7 +294,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         case COLOR_END: {
             DoPrintText(dc, curtext, pt);
             // restore default colour
-            dc.SetTextForeground(penColour);
+            dc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
             break;
         }
         //case PARAM_ARG: {

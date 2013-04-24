@@ -4,6 +4,9 @@
 #include <wx/settings.h>
 #include <wx/dcbuffer.h>
 #include <wx/log.h>
+#include <wx/dcgraph.h>
+#include "globals.h"
+#include "editor_config.h"
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
     EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -32,6 +35,16 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 {
     wxUnusedVar(e);
     wxBufferedPaintDC dc(this);
+    
+    wxGCDC gdc;
+    if ( !DrawingUtils::GetGCDC(dc, gdc) )
+        return;
+        
+    wxColour bgColour  = DrawingUtils::GetThemeBgColour();
+    wxColour penColour = DrawingUtils::GetThemeBorderColour();
+    
+    bool isDarkTheme = DrawingUtils::IsDark(bgColour);
+    
     wxFont font        = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxFont disableFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     disableFont.SetStyle(wxFONTSTYLE_ITALIC);
@@ -39,16 +52,10 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxRect rr = GetClientRect();
 
     // draw the background using the parent background colour
-    dc.SetBrush(m_parentBgColour);
-    dc.SetPen  (m_parentBgColour);
-    dc.DrawRectangle(rr);
-
-    // Draw the tip body + outline
-    dc.SetPen  ( wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW) );
-    dc.SetBrush( wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-
-    dc.DrawRectangle(rr);
-    dc.SetFont(font);
+    gdc.SetBrush(bgColour);
+    gdc.SetPen  (penColour);
+    gdc.DrawRectangle(rr);
+    gdc.SetFont(font);
 
     // Highlight the text
     clCallTipPtr tip = GetTip();
@@ -63,9 +70,9 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
         summaryLineXText -= (txtLen + TIP_SPACER);
 
         // Draw the summary line
-        dc.SetFont(disableFont);
-        dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-        dc.DrawText(txt, summaryLineXText, secondLineY + TIP_SPACER/2);
+        gdc.SetFont(disableFont);
+        gdc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
+        gdc.DrawText(txt, summaryLineXText, secondLineY + TIP_SPACER/2);
 
         int start(-1), len(-1);
         tip->GetHighlightPos(m_highlighIndex, start, len);
@@ -75,29 +82,36 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
             int x = DoGetTextLen(txtBefore);
             int w = DoGetTextLen(txtInclude);
-
-            bool tipColorIsDark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-            if ( tipColorIsDark ) {
-                dc.SetBrush( *wxTRANSPARENT_BRUSH );
-                dc.SetPen  (wxPen(wxT("YELLOW")) );
+            
+            wxColour baseColour;
+            // set the base colour (based on the active theme)
+            if ( isDarkTheme )
+                baseColour = "YELLOW";
+            else 
+                baseColour = "DARK GREEN";
+                
+            wxColour bodyColour, borderColour;
+            
+            bodyColour   = baseColour.ChangeLightness(180);
+            borderColour = baseColour.ChangeLightness(150);
+            
+            if ( isDarkTheme ) {
+                gdc.SetBrush( *wxTRANSPARENT_BRUSH );
+                gdc.SetPen  ( borderColour );
+                
             } else {
-                dc.SetBrush( wxBrush( DrawingUtils::LightColour(wxT("BLUE"), 7)) );
-                dc.SetPen  ( wxPen  ( DrawingUtils::LightColour(wxT("BLUE"), 7)) );
+                gdc.SetBrush( bodyColour );
+                gdc.SetPen  ( borderColour );
+                
             }
-
-#ifdef __WXGTK__
-            dc.DrawRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2));
-#else
-            dc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3);
-#endif
-
+            gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3);
         }
     }
 
     // Draw the Tip text
-    dc.SetFont(font);
-    dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
-    dc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
+    gdc.SetFont(font);
+    gdc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+    gdc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
 }
 
 void clEditorTipWindow::AddCallTip(clCallTipPtr tip)

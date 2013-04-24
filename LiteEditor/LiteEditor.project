@@ -1054,8 +1054,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="cmake RELEASE">mkdir -p build-release &amp;&amp; cd build-release &amp;&amp; rm -f CMakeCache.txt &amp;&amp; cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..</Target>
-        <Target Name="cmake DEBUG">mkdir -p build-debug &amp;&amp; cd build-debug &amp;&amp; rm -f CMakeCache.txt &amp;&amp; cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DPREFIX=/home/eran/root ..</Target>
+        <Target Name="cmake RELEASE">mkdir -p build-release &amp;&amp; cd build-release  &amp;&amp; cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DWITH_PCH=1 ..</Target>
+        <Target Name="cmake DEBUG">mkdir -p build-debug &amp;&amp; cd build-debug &amp;&amp; cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DWITH_PCH=1 -DPREFIX=/home/eran/root ..</Target>
         <Target Name="build-release">cd build-release &amp;&amp; make -j8</Target>
         <Target Name="build-debug">cd build-debug &amp;&amp; make -j8</Target>
         <Target Name="INSTALL RELEASE">cd build-release &amp;&amp; sudo -A make install</Target>
@@ -1073,7 +1073,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -1189,8 +1190,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

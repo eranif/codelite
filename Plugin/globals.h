@@ -385,11 +385,6 @@ WXDLLIMPEXP_SDK wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp
 WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func, wxObject* arg);
 WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func);
 
-/// wxAUI Drawing helpers
-WXDLLIMPEXP_SDK wxColour GetAUIPaneBGColour();
-WXDLLIMPEXP_SDK wxBrush  GetAUIStippleBrush();
-WXDLLIMPEXP_SDK bool     GetGCDC(wxDC& dc, wxGCDC& gdc);
-
 /**
  * @brief split lines (using CR|LF as the separator), taking into considertaion line continuation
  * @param trim trim the lines with set to true

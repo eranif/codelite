@@ -40,7 +40,7 @@ EditorOptionsGeneralIndentationPanel::EditorOptionsGeneralIndentationPanel( wxWi
 void EditorOptionsGeneralIndentationPanel::Save(OptionsConfigPtr options)
 {
     options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
-    options->SetIndentWidth( ::wxStringToInt(m_tabWidth->GetValue(), 4, 1, 20) );
+    options->SetIndentWidth( ::wxStringToInt(m_indentWidth->GetValue(), 4, 1, 20) );
     options->SetTabWidth( ::wxStringToInt(m_tabWidth->GetValue(), 4, 1, 20) );
     options->SetDisableSmartIndent(m_checkBoxDisableSmartIdent->IsChecked());
 }

@@ -258,12 +258,12 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
 #endif
     
     // Prepare a stipple bitmap
-    wxColour bgColour = ::GetAUIPaneBGColour();
+    wxColour bgColour = DrawingUtils::GetAUIPaneBGColour();
     
     // MSW
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush( ::GetAUIStippleBrush() );
+    dc.SetBrush( DrawingUtils::GetStippleBrush() );
     dc.DrawRectangle(rect);
 }

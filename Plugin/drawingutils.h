@@ -22,34 +22,75 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef DRAWINGUTILS_H
+#ifndef DRAWINGUTILS_H
 #define DRAWINGUTILS_H
 
 #include "wx/dc.h"
 #include "wx/colour.h"
 #include "codelite_exports.h"
+#include <wx/dcgraph.h>
 
 class WXDLLIMPEXP_SDK DrawingUtils
 {
 public:
-	static wxColor LightColour(const wxColour& color, float percent);
-	static wxColor DarkColour (const wxColour& color, float percent);
-	static wxColor GetPanelBgColour();
-	static wxColor GetTextCtrlTextColour();
-	static wxColor GetTextCtrlBgColour();
-	static wxColor GetOutputPaneFgColour();
-	static wxColor GetOutputPaneBgColour();
-	static wxColor GetMenuTextColour();
-	static wxColor GetMenuBarBgColour();
-	
-	static void TruncateText(wxDC& dc, const wxString& text, const int &maxWidth, wxString& fixedText);
-	static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor, const wxColour& endColor, bool vertical);
-	static void DrawVerticalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover = false);
-	static void DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover = false);
-	static bool IsDark(const wxColour &col);
-	static float GetDdkShadowLightFactor();
-	static float GetDdkShadowLightFactor2();
-	static wxColour GetGradient();
+    static wxColor LightColour(const wxColour& color, float percent);
+    static wxColor DarkColour (const wxColour& color, float percent);
+    static wxColor GetPanelBgColour();
+    static wxColor GetTextCtrlTextColour();
+    static wxColor GetTextCtrlBgColour();
+    static wxColor GetOutputPaneFgColour();
+    static wxColor GetOutputPaneBgColour();
+    static wxColor GetMenuTextColour();
+    static wxColor GetMenuBarBgColour();
+
+    static void TruncateText(wxDC& dc, const wxString& text, const int &maxWidth, wxString& fixedText);
+    static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor, const wxColour& endColor, bool vertical);
+    static void DrawVerticalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover = false);
+    static void DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool &focus, const bool &upperTabs, bool vertical, bool hover = false);
+    static bool IsDark(const wxColour &col);
+    static float GetDdkShadowLightFactor();
+    static float GetDdkShadowLightFactor2();
+    static wxColour GetGradient();
+    
+    /// -------------------------------------------------------------
+    /// New theme related API
+    /// -------------------------------------------------------------
+    
+    
+    /**
+     * @brief convert wxDC into wxGCDC
+     * @param dc [in] dc
+     * @param gdc [in/out] graphics DC
+     * @return true on success, false otherwise
+     */
+    static bool GetGCDC(wxDC& dc, wxGCDC& gdc);
+    
+    /**
+     * @brief Return true if the current theme dominant colour is dark
+     */
+    static bool IsThemeDark();
+    
+    /// Return the proper colour for painting panel's bg colour
+    static wxColour GetThemeBgColour();
+    
+    /// Return the proper colour for painting panel's border colour
+    static wxColour GetThemeBorderColour();
+
+    /// Return the proper colour for painting panel's text
+    static wxColour GetThemeTextColour();
+    
+    /// Return the proper colour for painting tooltip bg colour
+    static wxColour GetThemeTipBgColour();
+    
+    /**
+     * @brief return the AUI pane bg colour
+     */
+    static wxColour GetAUIPaneBGColour();
+    
+    /**
+     * @brief stipple brush used for painting on various wxPanels
+     */
+    static wxBrush GetStippleBrush();
 };
 
 #endif //DRAWINGUTILS_H

@@ -1502,44 +1502,6 @@ void PostCall(wxObject* instance, clEventFunc_t func)
     EventNotifier::Get()->AddPendingEvent( evt );
 }
 
-wxColour GetAUIPaneBGColour()
-{
-    // Now set the bg colour. It must be done after setting 
-    // the pen colour
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    if ( !DrawingUtils::IsDark(bgColour) ) {
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    } else {
-        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
-    }
-    return bgColour;
-}
-
-wxBrush GetAUIStippleBrush()
-{
-    wxMemoryDC memDC;
-    wxColour bgColour = ::GetAUIPaneBGColour();
-    wxBitmap bmpStipple(3, 3);
-    wxColour lightPen = DrawingUtils::DarkColour(bgColour, 1.0);
-    wxColour darkPen  = DrawingUtils::LightColour(bgColour, 1.0);
-    memDC.SelectObject(bmpStipple);
-    memDC.SetBrush( bgColour );
-    memDC.SetPen( bgColour );
-    memDC.DrawRectangle(wxPoint(0,0), bmpStipple.GetSize());
-    
-    /// Draw all the light points, we have 3 of them
-    memDC.SetPen(lightPen);
-    memDC.DrawPoint(0, 2);
-    memDC.DrawPoint(2, 0);
-    
-    /// and 2 dark points
-    memDC.SetPen(darkPen);
-    memDC.DrawPoint(0, 1);
-    
-    memDC.SelectObject(wxNullBitmap);
-    return wxBrush(bmpStipple);
-}
-
 wxArrayString SplitString(const wxString &inString, bool trim)
 {
     wxArrayString lines;
@@ -1585,24 +1547,4 @@ wxArrayString SplitString(const wxString &inString, bool trim)
         curline.clear();
     }
     return lines;
-}
-
-bool GetGCDC(wxDC& dc, wxGCDC& gdc)
-{
-    wxGraphicsRenderer* const renderer = wxGraphicsRenderer::GetDefaultRenderer();
-    wxGraphicsContext* context;
-    
-    if ( wxPaintDC *paintdc = wxDynamicCast(&dc, wxPaintDC) ) {
-        context = renderer->CreateContext(*paintdc);
-
-    } else if ( wxMemoryDC *memdc = wxDynamicCast(&dc, wxMemoryDC) ) {
-        context = renderer->CreateContext(*memdc);
-
-    } else {
-        wxFAIL_MSG( "Unknown wxDC kind" );
-        return false;
-    }
-    
-    gdc.SetGraphicsContext(context);
-    return true;
 }

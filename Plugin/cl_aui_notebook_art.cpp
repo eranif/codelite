@@ -259,7 +259,7 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
                                  const wxRect& rect)
 {
     wxGCDC gdc;
-    if ( !::GetGCDC(dc, gdc) )
+    if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
         
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
@@ -274,10 +274,10 @@ void clAuiTabArt::DrawBackground(wxDC& dc,
     
     // Now set the bg colour. It must be done after setting 
     // the pen colour
-    bgColour = ::GetAUIPaneBGColour();
+    bgColour = DrawingUtils::GetAUIPaneBGColour();
     
     gdc.SetPen(bgColour);
-    gdc.SetBrush( ::GetAUIStippleBrush() );
+    gdc.SetBrush( DrawingUtils::GetStippleBrush() );
     gdc.DrawRectangle(rect);
     gdc.SetPen(penColour);
     gdc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
@@ -318,7 +318,7 @@ void clAuiTabArt::DrawTab(wxDC& dc,
     int curx = 0;
     
     wxGCDC gdc;
-    if ( !::GetGCDC(dc, gdc) )
+    if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
 
     
@@ -769,7 +769,7 @@ void clAuiSimpleTabArt::DrawBackground(wxDC& dc,
                                        const wxRect& rect)
 {
     wxGCDC gdc;
-    if ( !::GetGCDC(dc, gdc) )
+    if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
         
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
@@ -784,7 +784,7 @@ void clAuiSimpleTabArt::DrawBackground(wxDC& dc,
     
     // Now set the bg colour. It must be done after setting 
     // the pen colour
-    bgColour = ::GetAUIPaneBGColour();
+    bgColour = DrawingUtils::GetAUIPaneBGColour();
     
     gdc.SetPen(bgColour);
     gdc.SetBrush( bgColour );
@@ -839,7 +839,7 @@ void clAuiSimpleTabArt::DrawTab(wxDC& dc,
     
 #ifdef __WXMSW__    
     wxGCDC gdc;
-    if ( !::GetGCDC(dc, gdc) )
+    if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
 #   define mydc gdc
 #else

@@ -40,7 +40,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
         
-    wxColour bgColour  = DrawingUtils::GetThemeBgColour();
+    wxColour bgColour  = DrawingUtils::GetThemeTipBgColour();
     wxColour penColour = DrawingUtils::GetThemeBorderColour();
     
     bool isDarkTheme = DrawingUtils::IsDark(bgColour);

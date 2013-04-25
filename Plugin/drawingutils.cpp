@@ -525,7 +525,7 @@ wxColour DrawingUtils::GetThemeTipBgColour()
     if ( IsThemeDark() ) {
         return GetThemeBgColour();
     } else {
-        return wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK);
+        return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     }
 }
 

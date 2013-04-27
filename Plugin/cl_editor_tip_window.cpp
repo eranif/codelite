@@ -90,21 +90,25 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             int w = DoGetTextLen(gdc, txtInclude);
             
             wxColour bodyColour, borderColour;
-            bodyColour   = wxColour(216, 98, 30);
-            borderColour = wxColour(216, 112, 52);
-            if ( !isDarkTheme ) {
-                borderColour = DrawingUtils::DarkColour(bodyColour, 3.0);
+            wxColour base = *wxRED;
+            bodyColour   = base.ChangeLightness(180);
+            borderColour = base.ChangeLightness(150);
+            
+            if ( isDarkTheme ) {
+                gdc.SetBrush( *wxTRANSPARENT_BRUSH );
+                gdc.SetPen( borderColour );
+                gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3.5);
+                    
+            } else {
+                gdc.SetBrush( bodyColour );
+                gdc.SetPen( borderColour );
+                gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3.5);
+                
+                wxFont f = m_font;
+                f.SetWeight(wxFONTWEIGHT_BOLD);
+                gdc.SetFont(f);
+                gdc.DrawText(txtInclude, wxPoint(x + TIP_SPACER, firstLineY));
             }
-            
-            gdc.SetBrush( bodyColour );
-            gdc.SetPen( borderColour );
-            gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3.5);
-            
-            wxFont f = m_font;
-            f.SetStyle(wxFONTSTYLE_ITALIC);
-            gdc.SetFont(f);
-            gdc.SetTextForeground(*wxWHITE);
-            gdc.DrawText(txtInclude, wxPoint(x + TIP_SPACER, firstLineY));
         }
     }
 }

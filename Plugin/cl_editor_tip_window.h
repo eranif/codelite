@@ -26,7 +26,7 @@ protected:
     
 protected:
     wxSize DoGetTipSize();
-    int    DoGetTextLen(const wxString &txt);
+    int    DoGetTextLen(wxDC& dc, const wxString &txt);
     void   DoAdjustPosition();
     void   DoLayoutTip();
 

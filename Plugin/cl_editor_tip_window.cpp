@@ -48,7 +48,6 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxFont font        = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxFont disableFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     disableFont.SetStyle(wxFONTSTYLE_ITALIC);
-    disableFont.SetPointSize(disableFont.GetPointSize() - 1);
     wxRect rr = GetClientRect();
 
     // draw the background using the parent background colour
@@ -64,7 +63,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     if(tip) {
         wxString txt;
         txt << tip->GetCurr()+1 << wxT(" of ") << tip->Count();
-        int txtLen = DoGetTextLen(txt);
+        int txtLen = DoGetTextLen(gdc, txt);
 
         int summaryLineXText (rr.GetWidth());
         summaryLineXText -= (txtLen + TIP_SPACER);
@@ -80,8 +79,8 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             wxString txtBefore  = m_tipText.Mid(0, start);
             wxString txtInclude = m_tipText.Mid(start, len);
 
-            int x = DoGetTextLen(txtBefore);
-            int w = DoGetTextLen(txtInclude);
+            int x = DoGetTextLen(gdc, txtBefore);
+            int w = DoGetTextLen(gdc, txtInclude);
             
             wxColour baseColour;
             // set the base colour (based on the active theme)
@@ -255,12 +254,10 @@ wxSize clEditorTipWindow::DoGetTipSize()
     return sz;
 }
 
-int clEditorTipWindow::DoGetTextLen(const wxString& txt)
+int clEditorTipWindow::DoGetTextLen(wxDC& dc, const wxString& txt)
 {
-    int xx, yy;
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxWindow::GetTextExtent(txt, &xx, &yy, NULL, NULL, &font);
-    return xx;
+    wxSize sz = dc.GetTextExtent(txt);
+    return sz.x;
 }
 
 void clEditorTipWindow::DoAdjustPosition()

@@ -7,6 +7,8 @@
 #include <wx/dcgraph.h>
 #include "globals.h"
 #include "editor_config.h"
+#include <wx/stc/stc.h>
+#include "editor_config.h"
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
     EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -19,6 +21,7 @@ clEditorTipWindow::clEditorTipWindow(wxWindow *parent)
     : wxPanel(parent)
     , m_highlighIndex(0)
 {
+    m_font = EditorConfigST::Get()->GetLexer("C++")->GetFontForSyle(wxSTC_C_DEFAULT);
     Hide();
 }
 
@@ -44,22 +47,26 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxColour penColour = DrawingUtils::GetThemeBorderColour();
     
     bool isDarkTheme = DrawingUtils::IsDark(bgColour);
+    wxUnusedVar(isDarkTheme);
     
-    wxFont font        = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxFont disableFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    disableFont.SetStyle(wxFONTSTYLE_ITALIC);
     wxRect rr = GetClientRect();
 
     // draw the background using the parent background colour
     gdc.SetBrush(bgColour);
     gdc.SetPen  (penColour);
     gdc.DrawRectangle(rr);
-    gdc.SetFont(font);
+    gdc.SetFont(m_font);
 
     // Highlight the text
     clCallTipPtr tip = GetTip();
     int secondLineY = (rr.GetHeight()/2) + 1;
     int firstLineY  = TIP_SPACER;
+    
+    // Draw the Tip text
+    gdc.SetFont(m_font);
+    gdc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+    gdc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
+
     if(tip) {
         wxString txt;
         txt << tip->GetCurr()+1 << wxT(" of ") << tip->Count();
@@ -69,7 +76,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
         summaryLineXText -= (txtLen + TIP_SPACER);
 
         // Draw the summary line
-        gdc.SetFont(disableFont);
+        gdc.SetFont(m_font);
         gdc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
         gdc.DrawText(txt, summaryLineXText, secondLineY + TIP_SPACER/2);
 
@@ -82,35 +89,21 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             int x = DoGetTextLen(gdc, txtBefore);
             int w = DoGetTextLen(gdc, txtInclude);
             
-            wxColour baseColour;
-            // set the base colour (based on the active theme)
-            if ( isDarkTheme )
-                baseColour = "YELLOW";
-            else 
-                baseColour = "DARK GREEN";
-                
             wxColour bodyColour, borderColour;
+            bodyColour   = wxColour(216, 98, 30);
+            borderColour = wxColour(216, 112, 52);
             
-            bodyColour   = baseColour.ChangeLightness(180);
-            borderColour = baseColour.ChangeLightness(150);
+            gdc.SetBrush( bodyColour );
+            gdc.SetPen( borderColour );
+            gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3.5);
             
-            if ( isDarkTheme ) {
-                gdc.SetBrush( *wxTRANSPARENT_BRUSH );
-                gdc.SetPen  ( borderColour );
-                
-            } else {
-                gdc.SetBrush( bodyColour );
-                gdc.SetPen  ( borderColour );
-                
-            }
-            gdc.DrawRoundedRectangle(x + TIP_SPACER - 1, firstLineY-(TIP_SPACER/2), w + 2, (rr.GetHeight()/2), 3);
+            wxFont f = m_font;
+            f.SetStyle(wxFONTSTYLE_ITALIC);
+            gdc.SetFont(f);
+            gdc.SetTextForeground(*wxWHITE);
+            gdc.DrawText(txtInclude, wxPoint(x + TIP_SPACER, firstLineY));
         }
     }
-
-    // Draw the Tip text
-    gdc.SetFont(font);
-    gdc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
-    gdc.DrawText(m_tipText, wxPoint(TIP_SPACER, firstLineY));
 }
 
 void clEditorTipWindow::AddCallTip(clCallTipPtr tip)
@@ -237,27 +230,39 @@ void clEditorTipWindow::Deactivate()
 
 wxSize clEditorTipWindow::DoGetTipSize()
 {
-    int xx, yy;
-
+    wxDC *dc;
+    
+    wxGCDC gdc;
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDC(bmp);
+    
+    if ( !DrawingUtils::GetGCDC(memDC, gdc) ) {
+        dc = (wxDC*)&memDC;
+    } else {
+        dc = (wxDC*)&gdc;
+    }
+    
     wxSize sz;
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxWindow::GetTextExtent(m_tipText, &sz.x, &sz.y, NULL, NULL, &font);
-    wxWindow::GetTextExtent(wxT("100 of 100"), &xx, &yy, NULL, NULL, &font);
-
+    wxSize sz2;
+    dc->SetFont(m_font);
+    sz  = dc->GetTextExtent(m_tipText);
+    sz2 = dc->GetTextExtent(wxT("100 of 100"));
+    
     sz.y *= 2;
     sz.y += (2*TIP_SPACER);
     sz.x += (2*TIP_SPACER);
 
-    if(sz.x < xx) {
-        sz.x = xx;
+    if(sz.x < sz2.x) {
+        sz.x = sz2.x;
     }
     return sz;
 }
 
 int clEditorTipWindow::DoGetTextLen(wxDC& dc, const wxString& txt)
 {
-    wxSize sz = dc.GetTextExtent(txt);
-    return sz.x;
+    int xx, yy;
+    dc.GetTextExtent(txt, &xx, &yy, NULL, NULL, &m_font);
+    return xx;
 }
 
 void clEditorTipWindow::DoAdjustPosition()

@@ -23,6 +23,7 @@ protected:
     int                  m_lineHeight;
     wxColour             m_parentBgColour;
     wxString             m_selectedSignature;
+    wxFont               m_font;
     
 protected:
     wxSize DoGetTipSize();

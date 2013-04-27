@@ -92,6 +92,9 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             wxColour bodyColour, borderColour;
             bodyColour   = wxColour(216, 98, 30);
             borderColour = wxColour(216, 112, 52);
+            if ( !isDarkTheme ) {
+                borderColour = DrawingUtils::DarkColour(bodyColour, 3.0);
+            }
             
             gdc.SetBrush( bodyColour );
             gdc.SetPen( borderColour );

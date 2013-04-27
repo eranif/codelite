@@ -361,7 +361,10 @@ void GitConsole::OnAddFile(wxCommandEvent& event)
     for(size_t i=0; i<items.GetCount(); ++i) {
         GitClientData* gcd = dynamic_cast<GitClientData*>(m_dvFilesModel->GetClientObject( items.Item(i) ));
         if ( gcd ) {
-            files.push_back( gcd->GetPath() );
+            wxString path = gcd->GetPath();
+            path.Trim().Trim(false);
+            path.Replace("\\", "/");
+            files.push_back( path );
         }
     }
 

@@ -15,8 +15,7 @@ include( "${wxWidgets_USE_FILE}" )
 include_directories(./include/wx/dblayer/include src/sqlite3)
 
 if ( USE_PCH )
-    add_definitions(-include "${CL_PCH_FILE}")
-    add_definitions(-Winvalid-pch)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include ${CL_PCH_FILE} -Winvalid-pch ")
 endif ( USE_PCH )
 
 # Macros

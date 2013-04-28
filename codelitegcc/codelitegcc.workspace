@@ -2,10 +2,10 @@
 <CodeLite_Workspace Name="codelitegcc" Database="./codelitegcc.tags">
   <Project Name="codelitegcc" Path="codelitegcc.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="codelitegcc" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="codelitegcc" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

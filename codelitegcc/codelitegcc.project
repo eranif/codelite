@@ -30,7 +30,7 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="gcc -MF foo.c.d -c foo.c" UseSeparateDebugArgs="yes" DebugArguments="gcc -MF foo.c.d -c foo.c" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="gcc -MF .deps/foo.c -c foo.c" UseSeparateDebugArgs="no" DebugArguments="gcc -MF foo.c.d -c foo.c" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[CL_COMPILATION_DB=compilation.db]]>
       </Environment>

@@ -7,8 +7,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
+#include <sstream>
 
-std::string extract_file_name( const std::string& line );
+typedef std::vector<std::string> StringVec_t;
+
+std::vector<std::string> extract_file_name( const std::string& line );
 char * normalize_path(const char * src, size_t src_len);
 
 void * Memrchr(const void *buf, int c, size_t num);
@@ -54,17 +57,15 @@ int main(int argc, char **argv)
     }
 
     if ( pdb ) {
-        std::string file_name = extract_file_name(commandline);
-        if(file_name.empty() == false) {
-
+        StringVec_t file_names = extract_file_name(commandline);
+        for(size_t i=0; i<file_names.size(); ++i) {
 #if __DEBUG
-            printf("filename: %s\n", file_name.c_str());
+            printf("filename: %s\n", file_names.at(i).c_str());
 #endif
-
             std::string logfile = pdb;
             logfile += ".txt";
 
-            WriteContent(logfile, file_name, commandline);
+            WriteContent(logfile, file_names.at(i), commandline);
         }
     }
 
@@ -85,11 +86,11 @@ size_t search_file_extension(const std::string &line, const std::string& ext)
     // this fact makes the search easier for us:
     // always search for '{ext} ' or '{ext}"' this will avoid false matching like:
     // {source-name}.cpp.o
-    
-    std::vector<std::string> opts;
+
+    StringVec_t opts;
     opts.push_back(ext + " ");
     opts.push_back(ext + '"');
-    
+
     for(size_t i=0; i<opts.size(); ++i) {
         size_t where = line.find(opts.at(i));
         if ( where != std::string::npos ) {
@@ -99,63 +100,63 @@ size_t search_file_extension(const std::string &line, const std::string& ext)
     return std::string::npos;
 }
 
-std::string extract_file_name(const std::string& line)
+/**
+ * @brief split an input string using 'delim'
+ */
+StringVec_t& split_string(const std::string &s, char delim, StringVec_t &elems)
 {
-    std::vector<std::string> extensions;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+bool ends_with(const std::string &s, const std::string& e)
+{
+    size_t where = s.rfind(e);
+    return ( where == std::string::npos ? false : ((s.length() - where) == e.length()) );
+}
+
+StringVec_t extract_file_name(const std::string& line)
+{
+    StringVec_t extensions, tokens;
     extensions.push_back(".cpp");
     extensions.push_back(".cxx");
     extensions.push_back(".cc");
     extensions.push_back(".c");
 
-    // locate any of the known c/cpp extensions
-    size_t where = std::string::npos;
+    std::string tmp_line = line;
+    /// replace all tabs with spaces
+    std::replace(tmp_line.begin(), tmp_line.end(), '\t', ' ');
 
-    std::string ext;
-    for(size_t i=0; i<extensions.size(); ++i) {
-        ext = extensions.at(i);
-        where = search_file_extension(line, ext);
-        if ( where != std::string::npos )
-            break;
-    }
-
-    if ( where == std::string::npos )
-        return "";
-
-    std::string filename;
-    if (line.at(where + ext.length()) == ' ') {
-        // go backward until we find the first space
-        size_t start = line.rfind(' ', where);
-        if( start == std::string::npos )
-            start = 0;
-        filename = line.substr(start + 1, where + ext.length() - start);
-    }
-
-    if (line.at(where + ext.length()) == '"') {
-        // go backward until we find the first space
-        size_t start = line.rfind('"', where);
-        if( start == std::string::npos )
-            start = 0;
-        filename = line.substr(start + 1, where + ext.length() - start);
-    }
-
-    std::replace(filename.begin(), filename.end(), '\\', '/');
-    char* ret = normalize_path( filename.c_str(), filename.length() );
-    filename = ret;
-    free(ret);
+    split_string(line, ' ', tokens);
+    StringVec_t files;
+    for(size_t i=0; i<tokens.size(); ++i) {
+        for(size_t n=0; n<extensions.size(); ++n) {
+            if ( ends_with(tokens.at(i), extensions.at(n)) ) {
+                std::string file_name = tokens.at(i);
 
 #ifdef _WIN32
-    std::replace(filename.begin(), filename.end(), '/', '\\');
+                std::replace(file_name.begin(), file_name.end(), '/', '\\');
 #endif
+                char* ret = normalize_path(file_name.c_str(), file_name.length());
+                file_name = ret;
+                free(ret);
 
-    // trim whitespaces
+                // rtrim
+                file_name.erase(0, file_name.find_first_not_of("\t\r\v\n\" "));
 
-    // rtrim
-    filename.erase(0, filename.find_first_not_of("\t\r\v\n\" "));
+                // ltrim
+                file_name.erase(file_name.find_last_not_of("\t\r\v\n\" ")+1);
 
-    // ltrim
-    filename.erase(filename.find_last_not_of("\t\r\v\n\" ")+1);
-
-    return filename;
+                files.push_back( file_name );
+                break;
+            }
+        }
+    }
+    return files;
 }
 
 char * normalize_path(const char * src, size_t src_len)

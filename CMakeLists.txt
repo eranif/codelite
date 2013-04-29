@@ -130,7 +130,7 @@ endif ( GTK_USE_AUIBOOK )
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     message("-- Building in ${CMAKE_BUILD_TYPE} mode")
-    
+    set( DEBUG_BUILD 1 ) 
     set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_dbg.h")
     set( CL_PCH_TARGET "precompiled_header_dbg.h.gch")
     
@@ -159,7 +159,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     
 else ()
     message("-- Building in Release mode")
-    
+    set ( DEBUG_BUILD 0 ) 
     set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h")
     set( CL_PCH_TARGET "precompiled_header_release.h.gch")
     add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=release clean )
@@ -176,8 +176,8 @@ else ()
     message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
     message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
+    set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
     if(CMAKE_COMPILER_IS_GNUCXX)
-        set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
         set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
     endif(CMAKE_COMPILER_IS_GNUCXX)
     

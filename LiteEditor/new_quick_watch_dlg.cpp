@@ -491,8 +491,12 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 #endif
 
     m_editDlgIsUp = true;
-    clDebuggerEditItemDlg dlg( clMainFrame::Get(), oldText );
+    clDebuggerEditItemDlg dlg( this, oldText );
+    // We need to Hide() the tip before running the edit dialog, otherwise the dialog is covered by the tip
+    // (and can't be entered or cancelled...
+    Hide();
     int res = dlg.ShowModal();
+    Show();
     m_editDlgIsUp = false;
 
 #ifdef __WXGTK__

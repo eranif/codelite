@@ -30,8 +30,8 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="g++  -o main.cpp.o -c &quot;C:\Program Files\main.cpp&quot; " UseSeparateDebugArgs="yes" DebugArguments="g++  -o main.cpp.o -c &quot;C:\Program Files\main.cpp&quot; " WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="wxWidgets-29">
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="gcc -MF .deps/foo.c -c foo.c" UseSeparateDebugArgs="no" DebugArguments="gcc -MF foo.c.d -c foo.c" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[CL_COMPILATION_DB=compilation.db]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">

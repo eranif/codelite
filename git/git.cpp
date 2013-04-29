@@ -1801,7 +1801,7 @@ void GitPlugin::DoAddFiles(const wxArrayString& files)
         wxFileName fn(files.Item(i));
         if ( fn.IsAbsolute() )
             fn.MakeRelativeTo(m_repositoryDirectory);
-        filesToAdd << "\"" << fn.GetFullPath() << "\" ";
+        filesToAdd << "\"" << fn.GetFullPath(wxPATH_UNIX) << "\" ";
     }
 
     gitAction ga(gitAddFile, filesToAdd);

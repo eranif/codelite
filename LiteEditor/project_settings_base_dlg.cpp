@@ -1514,3 +1514,71 @@ PSCompletionBase::~PSCompletionBase()
     m_checkBoxC11->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
     
 }
+
+ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCA3F0InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer45 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer45);
+    
+    wxFlexGridSizer* flexGridSizer53 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer53->SetFlexibleDirection( wxBOTH );
+    flexGridSizer53->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer53->AddGrowableCol(1);
+    flexGridSizer53->AddGrowableRow(1);
+    
+    boxSizer45->Add(flexGridSizer53, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticTextTargetName = new wxStaticText(this, wxID_ANY, _("Target Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer53->Add(m_staticTextTargetName, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlTargetName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlTargetName->SetFocus();
+    
+    flexGridSizer53->Add(m_textCtrlTargetName, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticTextCommand = new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer53->Add(m_staticTextCommand, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlCommand = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_WORDWRAP|wxTE_RICH2|wxTE_MULTILINE);
+    
+    flexGridSizer53->Add(m_textCtrlCommand, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer47 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer45->Add(boxSizer47, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button49 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button49->SetDefault();
+    
+    boxSizer47->Add(m_button49, 0, wxALL, 5);
+    
+    m_button51 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer47->Add(m_button51, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_textCtrlTargetName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectCustomBuildTragetDlgBase::OnEditTargetNameUI), NULL, this);
+    
+}
+
+ProjectCustomBuildTragetDlgBase::~ProjectCustomBuildTragetDlgBase()
+{
+    m_textCtrlTargetName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectCustomBuildTragetDlgBase::OnEditTargetNameUI), NULL, this);
+    
+}

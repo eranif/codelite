@@ -1,17 +1,11 @@
 #include "ps_custom_build_page.h"
 #include "project_settings_dlg.h"
-#include "envvar_dlg.h"
 #include "dirsaver.h"
 #include "project.h"
 #include "globals.h"
 #include "manager.h"
 #include <wx/log.h>
-
-static const wxString CUSTOM_TARGET_BUILD   = wxT("Build");
-static const wxString CUSTOM_TARGET_CLEAN   = wxT("Clean");
-static const wxString CUSTOM_TARGET_REBUILD = wxT("Rebuild");
-static const wxString CUSTOM_TARGET_COMPILE_SINGLE_FILE = wxT("Compile Single File");
-static const wxString CUSTOM_TARGET_PREPROCESS_FILE = wxT("Preprocess File");
+#include "ProjectCustomBuildTragetDlg.h"
 
 PSCustomBuildPage::PSCustomBuildPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg  )
     : PSCustomBuildBasePage( parent )
@@ -78,10 +72,7 @@ void PSCustomBuildPage::OnNewTarget( wxCommandEvent& event )
 {
     wxUnusedVar(event);
 
-    EnvVarDlg dlg(this);
-    dlg.SetTitle(_("New target"));
-    dlg.SetStaticText1(_("Target Name:"));
-    dlg.SetStaticText2(_("Command:"));
+    ProjectCustomBuildTragetDlg dlg(this, "", "");
     if (dlg.ShowModal() == wxID_OK) {
         GetDlg()->SetIsDirty(true);
         if (GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
@@ -89,7 +80,7 @@ void PSCustomBuildPage::OnNewTarget( wxCommandEvent& event )
             return;
         }
         long item = AppendListCtrlRow(m_listCtrlTargets);
-        DoUpdateTarget(item, dlg.GetName(), dlg.GetValue());
+        DoUpdateTarget(item, dlg.GetTargetName(), dlg.GetTargetCommand());
     }
 }
 
@@ -121,10 +112,10 @@ void PSCustomBuildPage::OnDeleteTargetUI( wxUpdateUIEvent& event )
 {
     if (m_selecteCustomTaregt != wxNOT_FOUND) {
         wxString name = GetColumnText(m_listCtrlTargets, m_selecteCustomTaregt, 0);
-        event.Enable(name != CUSTOM_TARGET_BUILD               &&
-                     name != CUSTOM_TARGET_CLEAN               &&
-                     name != CUSTOM_TARGET_REBUILD             &&
-                     name != CUSTOM_TARGET_COMPILE_SINGLE_FILE &&
+        event.Enable(name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD               &&
+                     name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN               &&
+                     name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_REBUILD             &&
+                     name != ProjectCustomBuildTragetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE &&
                      m_checkEnableCustomBuild->IsChecked());
     } else {
         event.Enable(false);
@@ -136,21 +127,9 @@ void PSCustomBuildPage::DoEditTarget(long item)
     if (item != wxNOT_FOUND) {
         wxString target = GetColumnText(m_listCtrlTargets, item, 0);
         wxString cmd    = GetColumnText(m_listCtrlTargets, item, 1);
-        EnvVarDlg dlg(this);
-        dlg.SetTitle(_("Edit target"));
-        dlg.SetStaticText1(_("Target Name:"));
-        dlg.SetStaticText2(_("Command:"));
-        dlg.SetName(target);
-        dlg.SetValue(cmd);
-        // dont allow user to modify the common targets
-        if (target == CUSTOM_TARGET_BUILD              ||
-            target == CUSTOM_TARGET_CLEAN              ||
-            target == CUSTOM_TARGET_REBUILD            ||
-            target == CUSTOM_TARGET_COMPILE_SINGLE_FILE) {
-            dlg.DisableName();
-        }
+        ProjectCustomBuildTragetDlg dlg(this, target, cmd);
         if (dlg.ShowModal() == wxID_OK) {
-            DoUpdateTarget(item, dlg.GetName(), dlg.GetValue());
+            DoUpdateTarget(item, dlg.GetTargetName(), dlg.GetTargetCommand());
             GetDlg()->SetIsDirty(true);
         }
     }
@@ -192,37 +171,32 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
 
     m_listCtrlTargets->DeleteAllItems();
     long item = AppendListCtrlRow(m_listCtrlTargets);
-    SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_BUILD);
+    SetColumnText(m_listCtrlTargets, item, 0, ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD);
     SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetCustomBuildCmd());
 
     item = AppendListCtrlRow(m_listCtrlTargets);
-    SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_CLEAN);
+    SetColumnText(m_listCtrlTargets, item, 0, ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN);
     SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetCustomCleanCmd());
 
     item = AppendListCtrlRow(m_listCtrlTargets);
-    SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_REBUILD);
+    SetColumnText(m_listCtrlTargets, item, 0, ProjectCustomBuildTragetDlg::CUSTOM_TARGET_REBUILD);
     SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetCustomRebuildCmd());
 
     item = AppendListCtrlRow(m_listCtrlTargets);
-    SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_COMPILE_SINGLE_FILE);
+    SetColumnText(m_listCtrlTargets, item, 0, ProjectCustomBuildTragetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE);
     SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetSingleFileBuildCommand());
 
     item = AppendListCtrlRow(m_listCtrlTargets);
-    SetColumnText(m_listCtrlTargets, item, 0, CUSTOM_TARGET_PREPROCESS_FILE);
+    SetColumnText(m_listCtrlTargets, item, 0, ProjectCustomBuildTragetDlg::CUSTOM_TARGET_PREPROCESS_FILE);
     SetColumnText(m_listCtrlTargets, item, 1, buildConf->GetPreprocessFileCommand());
 
     // Initialize the custom build targets
     std::map<wxString, wxString> targets = buildConf->GetCustomTargets();
     std::map<wxString, wxString>::iterator titer = targets.begin();
     for (; titer != targets.end(); titer++) {
-
-        if (titer->first == CUSTOM_TARGET_BUILD               ||
-            titer->first == CUSTOM_TARGET_CLEAN               ||
-            titer->first == CUSTOM_TARGET_REBUILD             ||
-            titer->first == CUSTOM_TARGET_COMPILE_SINGLE_FILE ||
-            titer->first == CUSTOM_TARGET_PREPROCESS_FILE) {
+        
+        if ( ProjectCustomBuildTragetDlg::IsPredefinedTarget( titer->first ) )
             continue;
-        }
 
         item = AppendListCtrlRow(m_listCtrlTargets);
         SetColumnText(m_listCtrlTargets, item, 0, titer->first);
@@ -241,22 +215,18 @@ void PSCustomBuildPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
     std::map<wxString, wxString> targets;
     for (int i=0; i<(int)m_listCtrlTargets->GetItemCount(); i++) {
         wxString colText = GetColumnText(m_listCtrlTargets, i, 0);
-        if (colText == CUSTOM_TARGET_BUILD               ||
-            colText == CUSTOM_TARGET_CLEAN               ||
-            colText == CUSTOM_TARGET_REBUILD             ||
-            colText == CUSTOM_TARGET_COMPILE_SINGLE_FILE ||
-            colText == CUSTOM_TARGET_PREPROCESS_FILE) {
+        if( ProjectCustomBuildTragetDlg::IsPredefinedTarget( colText ) )
             continue;
-        }
+
         targets[GetColumnText(m_listCtrlTargets, i, 0)] = GetColumnText(m_listCtrlTargets, i, 1);
     }
 
     buildConf->SetCustomTargets(targets);
-    buildConf->SetCustomBuildCmd(GetTargetCommand(CUSTOM_TARGET_BUILD));
-    buildConf->SetCustomCleanCmd(GetTargetCommand(CUSTOM_TARGET_CLEAN));
-    buildConf->SetCustomRebuildCmd(GetTargetCommand(CUSTOM_TARGET_REBUILD));
-    buildConf->SetSingleFileBuildCommand(GetTargetCommand(CUSTOM_TARGET_COMPILE_SINGLE_FILE));
-    buildConf->SetPreprocessFileCommand(GetTargetCommand(CUSTOM_TARGET_PREPROCESS_FILE));
+    buildConf->SetCustomBuildCmd(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD));
+    buildConf->SetCustomCleanCmd(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN));
+    buildConf->SetCustomRebuildCmd(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_REBUILD));
+    buildConf->SetSingleFileBuildCommand(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_COMPILE_SINGLE_FILE));
+    buildConf->SetPreprocessFileCommand(GetTargetCommand(ProjectCustomBuildTragetDlg::CUSTOM_TARGET_PREPROCESS_FILE));
     buildConf->EnableCustomBuild(m_checkEnableCustomBuild->IsChecked());
     buildConf->SetCustomBuildWorkingDir(m_textCtrlCustomBuildWD->GetValue());
 }

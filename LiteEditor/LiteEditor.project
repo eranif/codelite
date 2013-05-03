@@ -82,8 +82,6 @@
       <File Name="free_text_dialog.cpp"/>
       <File Name="add_option_dialog.cpp"/>
       <File Name="add_option_dialog.h"/>
-      <File Name="envvar_dlg.cpp"/>
-      <File Name="envvar_dlg.h"/>
       <File Name="envvar_table.cpp"/>
       <File Name="envvar_table.h"/>
       <File Name="findreplacedlg.h"/>
@@ -320,6 +318,8 @@
       <File Name="ps_build_events_page.h"/>
       <File Name="ps_completion_page.cpp"/>
       <File Name="ps_completion_page.h"/>
+      <File Name="ProjectCustomBuildTragetDlg.h"/>
+      <File Name="ProjectCustomBuildTragetDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectManagement">
       <File Name="new_item_dlg.cpp"/>

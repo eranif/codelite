@@ -390,4 +390,23 @@ public:
     virtual ~PSCompletionBase();
 };
 
+
+class ProjectCustomBuildTragetDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticTextTargetName;
+    wxTextCtrl* m_textCtrlTargetName;
+    wxStaticText* m_staticTextCommand;
+    wxTextCtrl* m_textCtrlCommand;
+    wxButton* m_button49;
+    wxButton* m_button51;
+
+protected:
+    virtual void OnEditTargetNameUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~ProjectCustomBuildTragetDlgBase();
+};
+
 #endif

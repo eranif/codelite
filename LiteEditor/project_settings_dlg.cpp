@@ -35,7 +35,6 @@
 #include "ps_completion_page.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
-#include "envvar_dlg.h"
 #include "debuggerconfigtool.h"
 #include "project_settings_dlg.h"
 #include "debuggersettings.h"

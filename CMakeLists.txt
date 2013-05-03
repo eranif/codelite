@@ -197,6 +197,19 @@ endif()
 set(ARCH 32)
 set(ARCH_NAME i386)
 
+if ( UNIX AND NOT APPLE )
+    execute_process(COMMAND /bin/sh -c "lsb_release -a|grep -i Codename | cut -d: -f2"    OUTPUT_VARIABLE OS_CODENAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND /bin/sh -c "lsb_release -a|grep -i Distributor | cut -d: -f2" OUTPUT_VARIABLE OS_DISTRO OUTPUT_STRIP_TRAILING_WHITESPACE)
+    
+    ## replace any tab/space with nothing
+    string(REPLACE " " "" DISTRO_CODENAME "${OS_DISTRO}-${OS_CODENAME}")
+    string(REPLACE "\t" "" DISTRO_CODENAME "${DISTRO_CODENAME}")
+    string(TOLOWER ${DISTRO_CODENAME} DISTRO_CODENAME)
+    
+    set(CPACK_SYSTEM_NAME "${DISTRO_CODENAME}")
+    message("-- CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME}")
+endif ( UNIX AND NOT APPLE )
+
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(ARCH 64)
   set(ARCH_NAME x86_64)
@@ -220,7 +233,7 @@ if ( MAKE_DEB )
     
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "codelite")
-    set(CPACK_PACKAGE_VERSION             "5.1")
+    set(CPACK_PACKAGE_VERSION             "5.2")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>") #required
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "codelite IDE for C/C++")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")

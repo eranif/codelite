@@ -42,7 +42,7 @@ class wxListCtrl;
 class IEditor;
 class IManager;
 
-typedef void (wxObject::*clEventFunc_t)(const wxObject* arg);
+typedef void (wxObject::*clEventFunc_t)(wxObject* arg);
 
 class WXDLLIMPEXP_SDK BOM
 {

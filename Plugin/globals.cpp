@@ -99,7 +99,10 @@ public:
         , m_arg(NULL)
     {}
 
-    virtual ~clInternalEventHandlerData() {}
+    virtual ~clInternalEventHandlerData() {
+        wxDELETE(m_arg);
+    }
+    
     wxObject* GetArg() const {
         return m_arg;
     }

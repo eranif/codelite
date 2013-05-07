@@ -5,12 +5,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelitegcc)
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-#find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
-
-# wxWidgets include (this will do all the magic to configure everything)
-#include( "${wxWidgets_USE_FILE}" )
-
 # Include paths
 include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/lib" "${CL_SRC_ROOT}/sdk/codelite_cppcheck/cli")
 

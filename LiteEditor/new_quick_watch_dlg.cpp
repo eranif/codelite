@@ -34,7 +34,7 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
     Hide();
     Centre();
     MSWSetNativeTheme(m_treeCtrl);
-    WindowAttrManager::Load(this, wxT("DebuggerTip"), NULL);
+    WindowAttrManager::Load(this, "DebuggerTooltip", NULL);
     m_timer2 = new wxTimer(this);
     m_mousePosTimer = new wxTimer(this);
 
@@ -54,7 +54,7 @@ DisplayVariableDlg::~DisplayVariableDlg()
     wxDELETE(m_timer2);
     wxDELETE(m_mousePosTimer);
 
-    WindowAttrManager::Save(this, wxT("DebuggerTip"), NULL);
+    WindowAttrManager::Save(this, "DebuggerTooltip", NULL);
 }
 
 void DisplayVariableDlg::OnExpandItem( wxTreeEvent& event )
@@ -219,6 +219,7 @@ void DisplayVariableDlg::DoCleanUp()
 
 void DisplayVariableDlg::HideDialog()
 {
+    WindowAttrManager::Save(this, "DebuggerTooltip", NULL);
     DoCleanUp();
     //asm("int3");
     wxPopupWindow::Hide();
@@ -245,6 +246,8 @@ void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
 void DisplayVariableDlg::ShowDialog(bool center)
 {
     // Pass the focus back to the main editor
+    WindowAttrManager::Load(this, "DebuggerTooltip", NULL);
+    
     if ( !center ) {
         wxPopupWindow::Show();
         DoAdjustPosition();

@@ -426,8 +426,6 @@
     <File Name="checkdirtreectrl.h"/>
     <File Name="fileexplorertree.cpp"/>
     <File Name="fileexplorertree.h"/>
-    <File Name="debuggertip.cpp"/>
-    <File Name="debuggertip.h"/>
     <File Name="cc_boxbase.h"/>
     <File Name="cc_box.cpp"/>
     <File Name="cc_box.h"/>

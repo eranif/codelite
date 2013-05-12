@@ -238,7 +238,7 @@ child_attributes : child_key '=' GDB_STRING {
                    }
                  | child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
                  | GDB_NEW_CHILDREN '=' '[' { gdbConsumeList(); }
-                 | GDB_THREAD_GROUPS '=' '[' { gdbConsumeList(); }
+                 | GDB_THREAD_GROUPS '=' '[' { gdbConsumeList(); } ',' child_attributes
                  | GDB_TIME '=' '{' child_attributes '}'
                  ;
 

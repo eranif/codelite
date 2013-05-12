@@ -1,5 +1,2 @@
-^done,asm_insns=
-[{address="0x0040136f",func-name="main(int, char**)",offset="59",inst="call   0x416b98 <_Unwind_SjLj_Register>"},
-{address="0x00401374",func-name="main(int, char**)",offset="64",inst="call   0x416600 <__main>"},
-{address="0x00401379",func-name="main(int, char**)",offset="69",inst="lea    -0x19(%ebp),%eax"},
-{address="0x0040137c",func-name="main(int, char**)",offset="72",inst="movl   $0x64,(%esp)"}]
+^done,BreakpointTable={nr_rows="1",nr_cols="6",hdr=[{width="7",alignment="-1",col_name="number",colhdr="Num"},{width="14",alignment="-1",col_name="type",colhdr="Type"},{width="4",alignment="-1",col_name="disp",colhdr="Disp"},{width="3",alignment="-1",col_name="enabled",colhdr="Enb"},{width="18",alignment="-1",col_name="addr",colhdr="Address"},{width="40",alignment="2",col_name="what",colhdr="What"}],body=[bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x0000000000571521",func="MyFrame::MyFrame(wxSize)",file="./MyFrame.cpp",fullname="/home/david/devel/git/4Pane/MyFrame.cpp",line="508",thread-groups=["i1"],times="1",original-location="/home/david/devel/git/4Pane/MyFrame.cpp:508"}]}" [wchar_t
+ *]

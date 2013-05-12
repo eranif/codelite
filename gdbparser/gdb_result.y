@@ -76,6 +76,7 @@ static std::vector<std::string>  sg_locals;
 %token GDB_NEW_NUM_CHILDREN
 %token GDB_NEW_CHILDREN
 %token GDB_FUNC_NAME GDB_OFFSET GDB_INSTRUCTION GDB_ADDRESS GDB_ASM_INSTS
+%token GDB_THREAD_GROUPS
 %%
 
 parse: children_list
@@ -237,6 +238,7 @@ child_attributes : child_key '=' GDB_STRING {
                    }
                  | child_key '=' GDB_STRING { sg_attributes[$1] = $3;} ',' child_attributes
                  | GDB_NEW_CHILDREN '=' '[' { gdbConsumeList(); }
+                 | GDB_THREAD_GROUPS '=' '[' { gdbConsumeList(); }
                  | GDB_TIME '=' '{' child_attributes '}'
                  ;
 

@@ -109,6 +109,7 @@ reason                                                     {RETURN_VAL(GDB_REASO
 changelist                                                 {RETURN_VAL(GDB_CHANGELIST);}
 has_more                                                   {RETURN_VAL(GDB_HAS_MORE);}
 new_children                                               {RETURN_VAL(GDB_NEW_CHILDREN);}
+thread-groups                                              {RETURN_VAL(GDB_THREAD_GROUPS);}
 new_num_children                                           {RETURN_VAL(GDB_NEW_NUM_CHILDREN);}
 displayhint                                                {RETURN_VAL(GDB_DISPLAYHINT);}
 func-name                                                  {RETURN_VAL(GDB_FUNC_NAME);}

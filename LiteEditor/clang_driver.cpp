@@ -299,6 +299,35 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         cCompileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
     }
 
+    ///////////////////////////////////////////////////////////////////////
+    // Project setting additional flags
+    ///////////////////////////////////////////////////////////////////////
+
+    BuildConfigPtr buildConf = ManagerST::Get()->GetCurrentBuildConf();
+    if(buildConf) {
+        wxString projSearchPaths = buildConf->GetCcSearchPaths();
+        wxArrayString projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
+        for(size_t i=0; i<projectIncludePaths.GetCount(); i++) {
+            wxFileName fn(MacroManager::Instance()->Expand(projectIncludePaths.Item(i),
+                          PluginManager::Get(), ManagerST::Get()->GetActiveProjectName()), wxT(""));
+            fn.MakeAbsolute(WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
+            cppCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+            cCompileArgs.Add(wxString::Format(wxT("-I%s"), fn.GetPath().c_str()));
+        }
+
+        wxString strProjectMacros = buildConf->GetClangPPFlags();
+        wxArrayString projectMacros = wxStringTokenize(strProjectMacros, wxT("\n\r"), wxTOKEN_STRTOK);
+        for(size_t i=0; i<projectMacros.GetCount(); i++) {
+            cppCompileArgs.Add(wxString::Format(wxT("-D%s"), projectMacros.Item(i).Trim().Trim(false).c_str()));
+            cCompileArgs.Add(wxString::Format(wxT("-D%s"), projectMacros.Item(i).Trim().Trim(false).c_str()));
+        }
+
+        if (buildConf->IsClangC11()) {
+            cppCompileArgs.Add(wxT("-std=c++11"));
+            cCompileArgs.Add(wxT("-std=c++11"));
+        }
+    }
+
     cppCompileArgs.insert(cppCompileArgs.end(), args.begin(), args.end());
     cCompileArgs.insert(cCompileArgs.end(), args.begin(), args.end());
 

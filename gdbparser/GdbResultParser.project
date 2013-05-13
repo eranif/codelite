@@ -74,6 +74,57 @@ gdb_result_parser.cpp: gdb_result.y
 
 gdb_result_lexer.cpp: gdb_result.l
 	flex -L  -Pgdb_result_ gdb_result.l
+	mv lex.gdb_result_.c gdb_result.cpp</CustomPreBuild>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Linux" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp gdb_result.cpp ../Debugger</Command>
+        <Command Enabled="yes">cp gdb_result_parser.h ../Debugger</Command>
+        <Command Enabled="yes">cp gdb_parser_incl.h ../Debugger</Command>
+        <Command Enabled="yes">cp gdb_result_parser.cpp ../Debugger</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild>gdb_result_parser.cpp gdb_result_lexer.cpp
+gdb_result_parser.cpp: gdb_result.y
+	yacc -dl  -t -v -pgdb_result_ gdb_result.y
+	mv y.tab.c gdb_result_parser.cpp
+	mv y.tab.h gdb_result_parser.h
+
+gdb_result_lexer.cpp: gdb_result.l
+	flex -L  -Pgdb_result_ gdb_result.l
 	mv lex.gdb_result_.c gdb_result.cpp
 </CustomPreBuild>
       </AdditionalRules>

@@ -2182,34 +2182,7 @@ void Manager::DbgStart ( long attachPid )
         exepath = ExpandVariables ( exepath, proj, clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
     }
 
-    //get the debugger path to execute
-    DebuggerInformation dbginfo;
-    DebuggerMgr::Get().GetDebuggerInformation ( debuggerName, dbginfo );
-
-    // if user override the debugger path, apply it
-    if ( bldConf ) {
-        wxString userDebuggr = bldConf->GetDebuggerPath();
-        userDebuggr.Trim().Trim ( false );
-        if ( userDebuggr.IsEmpty() == false ) {
-            // expand project macros
-            userDebuggr = MacroManager::Instance()->Expand(userDebuggr, 
-                                                           PluginManager::Get(), 
-                                                           proj->GetName(), 
-                                                           bldConf->GetName());
-            
-            // Convert any relative path to absolute path
-            // see bug# https://sourceforge.net/p/codelite/bugs/871/
-            wxFileName fnDebuggerPath(userDebuggr);
-            if ( fnDebuggerPath.IsRelative() ) {
-                if ( fnDebuggerPath.MakeAbsolute(proj->GetFileName().GetPath()) ) {
-                    userDebuggr = fnDebuggerPath.GetFullPath();
-                }
-            }
-            dinfo.path = userDebuggr;
-        }
-    }
-
-    wxString dbgname = dbginfo.path;
+    wxString dbgname = dinfo.path;
     dbgname = EnvironmentConfig::Instance()->ExpandVariables ( dbgname, true );
 
     //set ourselves as the observer for the debugger class

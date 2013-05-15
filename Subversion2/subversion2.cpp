@@ -32,6 +32,7 @@
 #include <wx/dir.h>
 #include "svn_sync_dialog.h"
 #include "SvnLogDialog.h"
+#include <wx/fileconf.h>
 
 static Subversion2* thePlugin = NULL;
 
@@ -570,27 +571,15 @@ void Subversion2::RecreateLocalSvnConfigFile()
     if(!(GetSettings().GetFlags() & SvnUseExternalDiff)) {
         diffTool.Empty();
     }
-
-    wxFFile fp;
-    fp.Open(configFile.c_str(), wxT("w+b"));
-    if(fp.IsOpened()) {
-        fp.Write(wxT("[miscellany]\n"));
-        fp.Write(wxT("global-ignores = "));
-        fp.Write(ignorePatterns);
-        //fp.Write(wxT("\n\n[auth]\n"));
-        //fp.Write(wxT("password-stores =\n"));
-        //fp.Write(wxT("store-passwords = no\n"));
-        fp.Write(wxT("\n"));
-        fp.Write(wxT("[helpers]\n"));
-
-        if(diffTool.IsEmpty() == false) {
-            fp.Write(wxT("diff-cmd = "));
-            fp.Write(diffTool);
-            fp.Write(wxT("\n"));
-        }
-
-        fp.Close();
-    }
+    
+    wxFileConfig iniConfig("", 
+                           "", 
+                           configFile, 
+                           "", 
+                           wxCONFIG_USE_LOCAL_FILE);
+    iniConfig.Write("miscellany/global-ignores", ignorePatterns);
+    iniConfig.Write("helpers/diff-cmd",          diffTool);
+    iniConfig.Flush();
 }
 
 void Subversion2::DoGetSvnVersion()

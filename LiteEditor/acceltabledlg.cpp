@@ -153,9 +153,11 @@ void AccelTableDlg::PopulateTable(MenuItemDataMap *accelMap)
 	for (size_t i=0; i< m_itemsVec.size(); i++) {
 		MenuItemData item = m_itemsVec.at(i);
 		wxString action = item.action;
+		wxString accel = item.accel;
 
 		action.MakeLower();
-		if(filterString.IsEmpty() || action.Find(filterString) != wxNOT_FOUND) {
+		accel.MakeLower();
+		if(filterString.IsEmpty() || action.Find(filterString) != wxNOT_FOUND || accel.Find(filterString) != wxNOT_FOUND) {
 			long row = AppendListCtrlRow(m_listCtrl1);
 
 			// We got a filter and there is a match, show this item

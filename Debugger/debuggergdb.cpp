@@ -196,93 +196,39 @@ void DbgGdb::EmptyQueue()
     m_handlers.clear();
 }
 
-bool DbgGdb::Start( const wxString &debuggerPath,
-                    const wxString & exeName,
-                    int pid,
-                    const wxString& sudoCmd,
-                    const std::vector<BreakpointInfo> &bpList,
-                    const wxArrayString &cmds,
-                    const wxString &ttyName)
+bool DbgGdb::Start( const DebugSessionInfo& si)
 {
     //set the environment variables
     EnvSetter env( m_env, NULL, m_debuggeeProjectName );
 
     wxString dbgExeName;
-    if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
-        return false;
-    }
-
-    wxString cmd;
-
-#if defined (__WXGTK__) || defined (__WXMAC__)
-    cmd << dbgExeName << wxT( " --tty=" ) << ttyName << wxT( " --interpreter=mi " );
-#else
-    cmd << dbgExeName << wxT( " --interpreter=mi " );
-    cmd << ProcUtils::GetProcessNameByPid( pid ) << wxT( " " );
-#endif
-
-    if(sudoCmd.IsEmpty() == false) {
-        cmd.Prepend(sudoCmd + wxT(" "));
-    }
-
-    m_attachedMode = true;
-    m_debuggeePid = pid;
-    cmd << wxT( " --pid=" ) << m_debuggeePid;
-    wxLogMessage( cmd );
-
-    m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
-    m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), wxGetCwd().c_str() ) );
-    m_observer->UpdateAddLine( wxString::Format( wxT( "Starting debugger  : %s" ), cmd.c_str() ) );
-
-    m_gdbProcess = CreateAsyncProcess( this, cmd );
-    if ( !m_gdbProcess ) {
-        return false;
-    }
-    m_gdbProcess->SetHardKill( true );
-
-    DoInitializeGdb( bpList, cmds );
-    m_observer->UpdateGotControl( DBG_END_STEPPING );
-    return true;
-}
-
-bool DbgGdb::Start( const wxString &debuggerPath,
-                    const wxString &exeName,
-                    const wxString &cwd,
-                    const std::vector<BreakpointInfo> &bpList,
-                    const wxArrayString &cmds,
-                    const wxString &ttyName)
-{
-    //set the environment variables
-    EnvSetter env( m_env, NULL, m_debuggeeProjectName );
-
-    wxString dbgExeName;
-    if ( ! DoLocateGdbExecutable( debuggerPath, dbgExeName ) ) {
+    if ( ! DoLocateGdbExecutable( si.debuggerPath, dbgExeName ) ) {
         return false;
     }
 
     wxString cmd;
 #if defined (__WXGTK__) || defined (__WXMAC__)
-    cmd << dbgExeName << wxT( " --tty=" ) << ttyName << wxT( " --interpreter=mi " ) << exeName;
+    cmd << dbgExeName << wxT( " --tty=" ) << si.ttyName << wxT( " --interpreter=mi " ) << si.exeName;
 #else
-    cmd << dbgExeName << wxT( " --interpreter=mi " ) << exeName;
+    cmd << dbgExeName << wxT( " --interpreter=mi " ) << si.exeName;
 #endif
 
     m_debuggeePid = wxNOT_FOUND;
     m_attachedMode = false;
 
     m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
-    m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), cwd.c_str() ) );
+    m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), si.cwd.c_str() ) );
     m_observer->UpdateAddLine( wxString::Format( wxT( "Starting debugger  : %s" ), cmd.c_str() ) );
     m_gdbProcess = CreateAsyncProcess( this,
                                        cmd,
                                        // show console?
                                        m_info.showTerminal ? IProcessCreateConsole : IProcessCreateDefault,
-                                       cwd );
+                                       si.cwd );
     if ( !m_gdbProcess ) {
         return false;
     }
     m_gdbProcess->SetHardKill( true );
-    DoInitializeGdb( bpList, cmds );
+    DoInitializeGdb( si.bpList, si.cmds, si.searchPaths );
     return true;
 }
 
@@ -297,11 +243,6 @@ bool DbgGdb::WriteCommand( const wxString &command, DbgCmdHandler *handler )
     }
     RegisterHandler( id, handler );
     return true;
-}
-
-bool DbgGdb::Start( const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString& ttyName )
-{
-    return Start( wxT( "gdb" ), exeName, cwd, bpList, cmds, ttyName );
 }
 
 bool DbgGdb::Run( const wxString &args, const wxString &comm )
@@ -1035,7 +976,7 @@ bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgE
 }
 
 // Initialization stage
-bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds )
+bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo>& bpList, const wxArrayString& cmds, const wxArrayString& searchPaths)
 {
     m_goingDown = false;
     m_internalBpId = wxNOT_FOUND;
@@ -1103,6 +1044,18 @@ bool DbgGdb::DoInitializeGdb( const std::vector<BreakpointInfo> &bpList, const w
     }
     //enable python based pretty printing
     WriteCommand( wxT( "-enable-pretty-printing" ), NULL );
+    
+    // Add the additional search paths
+    for(size_t i=0; i<searchPaths.GetCount(); ++i) {
+        wxString dirCmd;
+        wxString path = searchPaths.Item(i);
+        path.Trim().Trim(false);
+        if ( path.Contains(" ") ) {
+            path.Prepend('"').Append('"');
+        }
+        dirCmd << "-environment-directory " << path;
+        WriteCommand( dirCmd, NULL );
+    }
     return true;
 }
 
@@ -1378,5 +1331,48 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
     if ( !WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0", new DbgCmdHandlerDisassebleCurLine(m_observer, this)) )
             return false;
 
+    return true;
+}
+
+bool DbgGdb::Attach(const DebugSessionInfo& si)
+{
+    //set the environment variables
+    EnvSetter env( m_env, NULL, m_debuggeeProjectName );
+
+    wxString dbgExeName;
+    if ( ! DoLocateGdbExecutable( si.debuggerPath, dbgExeName ) ) {
+        return false;
+    }
+
+    wxString cmd;
+
+#if defined (__WXGTK__) || defined (__WXMAC__)
+    cmd << dbgExeName << wxT( " --tty=" ) << si.ttyName << wxT( " --interpreter=mi " );
+#else
+    cmd << dbgExeName << wxT( " --interpreter=mi " );
+    cmd << ProcUtils::GetProcessNameByPid( si.PID ) << wxT( " " );
+#endif
+
+    //if(sudoCmd.IsEmpty() == false) {
+    //    cmd.Prepend(sudoCmd + wxT(" "));
+    //}
+
+    m_attachedMode = true;
+    m_debuggeePid = si.PID;
+    cmd << wxT( " --pid=" ) << m_debuggeePid;
+    wxLogMessage( cmd );
+
+    m_observer->UpdateAddLine( wxString::Format( wxT( "Current working dir: %s" ), wxGetCwd().c_str() ) );
+    m_observer->UpdateAddLine( wxString::Format( wxT( "Launching gdb from : %s" ), wxGetCwd().c_str() ) );
+    m_observer->UpdateAddLine( wxString::Format( wxT( "Starting debugger  : %s" ), cmd.c_str() ) );
+
+    m_gdbProcess = CreateAsyncProcess( this, cmd );
+    if ( !m_gdbProcess ) {
+        return false;
+    }
+    m_gdbProcess->SetHardKill( true );
+
+    DoInitializeGdb( si.bpList, si.cmds, si.searchPaths);
+    m_observer->UpdateGotControl( DBG_END_STEPPING );
     return true;
 }

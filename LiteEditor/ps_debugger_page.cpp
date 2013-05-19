@@ -30,6 +30,13 @@ void PSDebuggerPage::Load(BuildConfigPtr buildConf)
     m_textCtrl1DbgHost->ChangeValue(buildConf->GetDbgHostName());
     m_textCtrlDbgPort->ChangeValue(buildConf->GetDbgHostPort());
     m_textCtrlDebuggerPath->ChangeValue(buildConf->GetDebuggerPath());
+    
+    const wxArrayString &searchPaths = buildConf->GetDebuggerSearchPaths();
+    for(size_t i=0; i<searchPaths.GetCount(); ++i) {
+        wxVector<wxVariant> cols;
+        cols.push_back( searchPaths.Item(i) );
+        m_dvListCtrlDebuggerSearchPaths->AppendItem( cols , (wxUIntPtr)NULL );
+    }
 }
 
 void PSDebuggerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -40,6 +47,17 @@ void PSDebuggerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
     buildConf->SetDbgHostName(m_textCtrl1DbgHost->GetValue());
     buildConf->SetDbgHostPort(m_textCtrlDbgPort->GetValue());
     buildConf->SetDebuggerPath(m_textCtrlDebuggerPath->GetValue());
+
+    wxArrayString searchPaths;
+    int nCount = m_dvListCtrlDebuggerSearchPaths->GetItemCount();
+    for(int i=0; i<nCount; ++i) {
+        wxVariant colValue;
+        m_dvListCtrlDebuggerSearchPaths->GetValue(colValue, i, 0);
+        if ( !colValue.IsNull() ) {
+            searchPaths.Add( colValue.GetString() );
+        }
+    }
+    buildConf->SetDebuggerSearchPaths(searchPaths);
 }
 
 void PSDebuggerPage::Clear()
@@ -49,13 +67,14 @@ void PSDebuggerPage::Clear()
     m_textCtrlDbgCmds->Clear();
     m_textCtrlDbgPort->Clear();
     m_textCtrlDbgPostConnectCmds->Clear();
+    m_dvListCtrlDebuggerSearchPaths->DeleteAllItems();
     m_checkBoxDbgRemote->SetValue(false);
 }
 
 void PSDebuggerPage::OnBrowseForDebuggerPath(wxCommandEvent& event)
 {
     wxString debugger_path = ::wxFileSelector(_("Select debugger:"));
-    
+
     if ( !debugger_path.IsEmpty() ) {
         wxString errMsg;
         ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(m_dlg->GetProjectName(), errMsg);
@@ -69,4 +88,32 @@ void PSDebuggerPage::OnBrowseForDebuggerPath(wxCommandEvent& event)
         m_textCtrlDebuggerPath->ChangeValue( debugger_path );
         m_dlg->SetIsDirty(true);
     }
+}
+void PSDebuggerPage::OnAddDebuggerSearchPath(wxCommandEvent& event)
+{
+    wxString path = ::wxDirSelector();
+    if ( !path.IsEmpty() ) {
+        wxVector<wxVariant> cols;
+        cols.push_back( path );
+        m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
+        m_dlg->SetIsDirty(true);
+    }
+}
+
+void PSDebuggerPage::OnDeleteDebuggerSearchPath(wxCommandEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dvListCtrlDebuggerSearchPaths->GetSelections( items );
+    if ( items.IsEmpty() )
+        return;
+    
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        m_dvListCtrlDebuggerSearchPaths->DeleteItem( m_dvListCtrlDebuggerSearchPaths->ItemToRow( items.Item(i) ) );
+    }
+    m_dlg->SetIsDirty(true);
+}
+
+void PSDebuggerPage::OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dvListCtrlDebuggerSearchPaths->GetSelectedItemsCount() );
 }

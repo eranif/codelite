@@ -680,35 +680,90 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     m_staticText321 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Select debugger path. Leave empty to use the default:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer192->Add(m_staticText321, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    bSizer192->Add(m_staticText321, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer192->Add(boxSizer35, 0, wxALL|wxEXPAND, 5);
+    bSizer192->Add(boxSizer35, 0, wxEXPAND, 5);
     
     m_textCtrlDebuggerPath = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer35->Add(m_textCtrlDebuggerPath, 1, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer35->Add(m_textCtrlDebuggerPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_button39 = new wxButton(m_panelDebugger, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer35->Add(m_button39, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_staticline121 = new wxStaticLine(m_panelDebugger, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
+    m_notebook67 = new wxNotebook(m_panelDebugger, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     
-    bSizer192->Add(m_staticline121, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    bSizer192->Add(m_notebook67, 1, wxALL|wxEXPAND, 5);
+    
+    m_panel80 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook67->AddPage(m_panel80, _("Debugger Search Paths"), false);
+    
+    wxBoxSizer* boxSizer82 = new wxBoxSizer(wxHORIZONTAL);
+    m_panel80->SetSizer(boxSizer82);
+    
+    m_dvListCtrlDebuggerSearchPaths = new wxDataViewListCtrl(m_panel80, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
+    
+    boxSizer82->Add(m_dvListCtrlDebuggerSearchPaths, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlDebuggerSearchPaths->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer84 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer82->Add(boxSizer84, 0, wxEXPAND, 5);
+    
+    m_button88 = new wxButton(m_panel80, wxID_ADD, _("&Add.."), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer84->Add(m_button88, 0, wxALL|wxEXPAND, 5);
+    
+    m_button90 = new wxButton(m_panel80, wxID_DELETE, _("&Delete..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer84->Add(m_button90, 0, wxALL|wxEXPAND, 5);
+    
+    m_panel71 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook67->AddPage(m_panel71, _("Startup Commands"), false);
+    
+    wxBoxSizer* boxSizer76 = new wxBoxSizer(wxVERTICAL);
+    m_panel71->SetSizer(boxSizer76);
+    
+    m_staticText301 = new wxStaticText(m_panel71, wxID_ANY, _("Enter here any commands that should be passed to the debugger on startup:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    boxSizer76->Add(m_staticText301, 0, wxALL, 5);
+    
+    m_textCtrlDbgCmds = new wxTextCtrl(m_panel71, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
+    wxFont m_textCtrlDbgCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
+    m_textCtrlDbgCmds->SetFont(m_textCtrlDbgCmdsFont);
+    
+    boxSizer76->Add(m_textCtrlDbgCmds, 1, wxALL|wxEXPAND, 5);
+    
+    m_panel74 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook67->AddPage(m_panel74, _("Remote Attach Commands"), false);
+    
+    wxBoxSizer* boxSizer78 = new wxBoxSizer(wxVERTICAL);
+    m_panel74->SetSizer(boxSizer78);
+    
+    m_staticText311 = new wxStaticText(m_panel74, wxID_ANY, _("Enter here any commands that should be passed to the debugger after attaching the remote target:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    boxSizer78->Add(m_staticText311, 0, wxALL|wxEXPAND, 5);
+    
+    m_textCtrlDbgPostConnectCmds = new wxTextCtrl(m_panel74, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
+    wxFont m_textCtrlDbgPostConnectCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
+    m_textCtrlDbgPostConnectCmds->SetFont(m_textCtrlDbgPostConnectCmdsFont);
+    
+    boxSizer78->Add(m_textCtrlDbgPostConnectCmds, 1, wxALL|wxEXPAND, 5);
     
     m_checkBoxDbgRemote = new wxCheckBox(m_panelDebugger, wxID_ANY, _("Debugging a remote target"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxDbgRemote->SetValue(false);
     
-    bSizer192->Add(m_checkBoxDbgRemote, 0, wxALL, 5);
+    bSizer192->Add(m_checkBoxDbgRemote, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     wxFlexGridSizer* fgSizer61 = new wxFlexGridSizer(  1, 4, 0, 0);
     fgSizer61->SetFlexibleDirection( wxBOTH );
     fgSizer61->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer61->AddGrowableCol(1);
     
-    bSizer192->Add(fgSizer61, 0, wxLEFT|wxRIGHT|wxEXPAND, 15);
+    bSizer192->Add(fgSizer61, 0, wxEXPAND, 5);
     
     m_staticText31 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Host / tty:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -726,30 +781,6 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer61->Add(m_textCtrlDbgPort, 0, wxALL, 5);
     
-    m_staticline131 = new wxStaticLine(m_panelDebugger, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer192->Add(m_staticline131, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText301 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Enter here any commands that should be passed to the debugger on startup:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer192->Add(m_staticText301, 0, wxALL, 5);
-    
-    m_textCtrlDbgCmds = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
-    wxFont m_textCtrlDbgCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
-    m_textCtrlDbgCmds->SetFont(m_textCtrlDbgCmdsFont);
-    
-    bSizer192->Add(m_textCtrlDbgCmds, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticText311 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Enter here any commands that should be passed to the debugger after attaching the remote target:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer192->Add(m_staticText311, 0, wxALL|wxEXPAND, 5);
-    
-    m_textCtrlDbgPostConnectCmds = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
-    wxFont m_textCtrlDbgPostConnectCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
-    m_textCtrlDbgPostConnectCmds->SetFont(m_textCtrlDbgPostConnectCmdsFont);
-    
-    bSizer192->Add(m_textCtrlDbgPostConnectCmds, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -758,6 +789,11 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     Centre(wxBOTH);
     // Connect events
     m_button39->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
+    m_button88->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
+    m_button90->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
+    m_button90->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL, this);
+    m_textCtrlDbgCmds->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
+    m_textCtrlDbgPostConnectCmds->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxDbgRemote->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_staticText31->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
     m_textCtrl1DbgHost->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
@@ -765,14 +801,17 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_staticText32->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
     m_textCtrlDbgPort->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_textCtrlDbgPort->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_textCtrlDbgCmds->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDbgPostConnectCmds->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     
 }
 
 PSDebuggerPageBase::~PSDebuggerPageBase()
 {
     m_button39->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
+    m_button88->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
+    m_button90->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
+    m_button90->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL, this);
+    m_textCtrlDbgCmds->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
+    m_textCtrlDbgPostConnectCmds->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_checkBoxDbgRemote->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_staticText31->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
     m_textCtrl1DbgHost->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
@@ -780,8 +819,6 @@ PSDebuggerPageBase::~PSDebuggerPageBase()
     m_staticText32->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
     m_textCtrlDbgPort->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_textCtrlDbgPort->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_textCtrlDbgCmds->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDbgPostConnectCmds->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     
 }
 

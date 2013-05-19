@@ -84,7 +84,7 @@ public:
     static const wxString APPEND_TO_GLOBAL_SETTINGS;
     static const wxString PREPEND_GLOBAL_SETTINGS;
     typedef std::map<wxString, wxString> StringMap_t;
-    
+
 private:
     BuildConfigCommon m_commonConfig;
     wxString          m_name;
@@ -138,6 +138,7 @@ private:
     wxString          m_ccSearchPaths;
     wxString          m_ccPCH;
     bool              m_clangC11;
+    wxArrayString     m_debuggerSearchPaths;
 
 public:
     BuildConfig(wxXmlNode *node);
@@ -148,7 +149,12 @@ public:
     //--------------------------------
     // Setters / Getters
     //--------------------------------
-
+    void SetDebuggerSearchPaths(const wxArrayString& debuggerSearchPaths) {
+        this->m_debuggerSearchPaths = debuggerSearchPaths;
+    }
+    const wxArrayString& GetDebuggerSearchPaths() const {
+        return m_debuggerSearchPaths;
+    }
     void SetClangC11(bool clangC11) {
         this->m_clangC11 = clangC11;
     }

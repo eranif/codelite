@@ -84,7 +84,7 @@ protected:
 
 protected:
     bool               DoLocateGdbExecutable(const wxString &debuggerPath, wxString &dbgExeName);
-    bool               DoInitializeGdb      (const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds);
+    bool               DoInitializeGdb      (const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxArrayString &searchPaths);
     void               SetCliHandler        (DbgCmdCLIHandler *handler);
     DbgCmdCLIHandler * GetCliHandler        ();
 
@@ -116,9 +116,8 @@ public:
     virtual ~DbgGdb();
 
     //------ IDebugger ---------
-    virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName);
-    virtual bool Start(const wxString &debuggerPath, const wxString &exeName, int pid, const wxString &sudoCmd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName);
-    virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName);
+    virtual bool Start(const DebugSessionInfo& si);
+    virtual bool Attach(const DebugSessionInfo& si);
     virtual bool Run(const wxString &args, const wxString &comm);
     virtual bool Stop();
     virtual bool Break(const BreakpointInfo& bp);

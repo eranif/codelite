@@ -490,6 +490,24 @@ public:
     }
 };
 
+/// This structure contains the information needed
+/// by the debugger to start a debug session
+class DebugSessionInfo
+{
+public:
+    wxString debuggerPath;              /// The debugger to use
+    wxString exeName;                   /// Executable to debug
+    int      PID;                       /// Process ID to attach
+    wxString cwd;                       /// Working directory
+    std::vector<BreakpointInfo> bpList; /// Breakpoint list
+    wxArrayString cmds;                 /// Startup commands
+    wxString ttyName;                   /// TTY to use
+    wxArrayString searchPaths;          /// Additional search paths to pass to the debugger
+    DebugSessionInfo() 
+        : PID(wxNOT_FOUND)
+    {}
+};
+
 class IDebuggerObserver;
 class EnvironmentConfig;
 
@@ -580,43 +598,16 @@ public:
     //-------------------------------------------------------------
 
     /**
-     * \brief start the debugger
-     * \param debuggerPath path to the debugger executable
-     * \param exeName executable to debug
-     * \param cwd working directory to set
-     * \param bpList list of breakpoints to place before running the program
-     * \param cmds list of commands that will be passed to the debugger at startup
+     * \brief start the debugger by running an executable
      * \return true on success, false otherwise
      */
-    virtual bool Start(const wxString &debuggerPath, const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName) = 0;
+    virtual bool Start(const DebugSessionInfo& info) = 0;
 
     /**
-     * \brief start the debugger. this method is for convinience and uses the default debugger path
-     * \param exeName executable to debug
-     * \param cwd working directory to set
-     * \param bpList list of breakpoints to place before running the program
-     * \param cmds list of commands that will be passed to the debugger at startup
+     * \brief start the debugger by attaching to a process
      * \return true on success, false otherwise
      */
-    virtual bool Start(const wxString &exeName, const wxString &cwd, const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxString &ttyName) = 0;
-
-    /**
-     * \brief use this method when attempting to attach a running process
-     * \param debuggerPath debugger path
-     * \param exeName executable to debug
-      * \param pid the running instance process ID
-     * \param bpList list of breakpoints to set
-     * \param cmds list of commands that will be passed to the debugger at startup
-     * \param ttyName [Gtk/Mac] provide a tty for redireting all inferior output
-     * \return
-     */
-    virtual bool Start(const wxString &debuggerPath,
-                       const wxString &exeName,
-                       int pid,
-                       const wxString& sudoCmd,
-                       const std::vector<BreakpointInfo> &bpList,
-                       const wxArrayString &cmds,
-                       const wxString &ttyName) = 0;
+    virtual bool Attach(const DebugSessionInfo& info) = 0;
 
     /**
      * \brief Run the program under the debugger. This method must be called *after* Start() has been called

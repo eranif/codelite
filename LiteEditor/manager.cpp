@@ -2227,18 +2227,32 @@ void Manager::DbgStart ( long attachPid )
 
     // read
     wxArrayString dbg_cmds;
+    DebugSessionInfo si;
+    si.debuggerPath = dbgname;
+    si.exeName = exepath;
+    si.cwd = wd;
+    si.bpList = bps;
+    si.ttyName = clMainFrame::Get()->StartTTY(title);
+    si.PID = PID;
+    
+    if ( bldConf ) {
+        si.searchPaths = bldConf->GetDebuggerSearchPaths();
+    }
+    
     if ( attachPid == wxNOT_FOUND ) {
         //it is now OK to start the debugger...
         dbg_cmds = wxStringTokenize ( bldConf->GetDebuggerStartupCmds(), wxT ( "\n" ), wxTOKEN_STRTOK );
-        if ( !dbgr->Start ( dbgname, exepath, wd, bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
+        si.cmds = dbg_cmds;
+        if ( !dbgr->Start ( si ) ) {
             wxString errMsg;
             errMsg << _("Failed to initialize debugger: ") << dbgname << wxT("\n");
             DebugMessage ( errMsg );
             return;
         }
     } else {
+        si.cmds = dbg_cmds;
         //Attach to process...
-        if ( !dbgr->Start ( dbgname, exepath, PID, wxT(""), bps, dbg_cmds, clMainFrame::Get()->StartTTY(title) ) ) {
+        if ( !dbgr->Attach ( si ) ) {
             wxString errMsg;
             errMsg << _( "Failed to initialize debugger: " ) << dbgname << wxT( "\n" );
             DebugMessage ( errMsg );

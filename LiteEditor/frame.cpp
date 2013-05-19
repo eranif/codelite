@@ -4043,7 +4043,17 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 #endif
 
             dbgr->SetIsRemoteDebugging(false);
-            dbgr->Start(dbgname, exepath, wd, bpList, cmds, tty);
+            
+            // Start the debugger
+            DebugSessionInfo si;
+            si.debuggerPath = dbgname;
+            si.exeName = exepath;
+            si.cwd = wd;
+            si.cmds = cmds;
+            si.bpList = bpList;
+            si.ttyName = tty;
+            
+            dbgr->Start( si );
 
             // notify plugins that the debugger just started
             SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
@@ -4115,8 +4125,15 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             // The next two are empty, but are required as parameters
             std::vector<BreakpointInfo> bpList;
             wxArrayString cmds;
-
-            dbgr->Start(dbgname, debuggingcommand, wd, bpList, cmds, tty);
+            
+            DebugSessionInfo si;
+            si.debuggerPath = dbgname;
+            si.exeName = debuggingcommand;
+            si.cwd = wd;
+            si.bpList = bpList;
+            si.cmds = cmds;
+            si.ttyName = tty;
+            dbgr->Start( si );
 
             // notify plugins that the debugger just started
             SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);

@@ -21,9 +21,10 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/statbox.h>
-#include <wx/listctrl.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
+#include <wx/dataview.h>
+#include <wx/listctrl.h>
 #include <wx/splitter.h>
 
 class ProjectSettingsBaseDlg : public wxDialog
@@ -178,20 +179,28 @@ protected:
     wxStaticText* m_staticText321;
     wxTextCtrl* m_textCtrlDebuggerPath;
     wxButton* m_button39;
-    wxStaticLine* m_staticline121;
+    wxNotebook* m_notebook67;
+    wxPanel* m_panel80;
+    wxDataViewListCtrl* m_dvListCtrlDebuggerSearchPaths;
+    wxButton* m_button88;
+    wxButton* m_button90;
+    wxPanel* m_panel71;
+    wxStaticText* m_staticText301;
+    wxTextCtrl* m_textCtrlDbgCmds;
+    wxPanel* m_panel74;
+    wxStaticText* m_staticText311;
+    wxTextCtrl* m_textCtrlDbgPostConnectCmds;
     wxCheckBox* m_checkBoxDbgRemote;
     wxStaticText* m_staticText31;
     wxTextCtrl* m_textCtrl1DbgHost;
     wxStaticText* m_staticText32;
     wxTextCtrl* m_textCtrlDbgPort;
-    wxStaticLine* m_staticline131;
-    wxStaticText* m_staticText301;
-    wxTextCtrl* m_textCtrlDbgCmds;
-    wxStaticText* m_staticText311;
-    wxTextCtrl* m_textCtrlDbgPostConnectCmds;
 
 protected:
     virtual void OnBrowseForDebuggerPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAddDebuggerSearchPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteDebuggerSearchPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRemoteDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
 

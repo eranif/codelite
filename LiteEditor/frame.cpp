@@ -1936,20 +1936,28 @@ void clMainFrame::OnFileNew(wxCommandEvent &event)
 
 void clMainFrame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 {
-    const wxString ALL(	wxT("All Files (*)|*"));
-    static wxString s_openPath(wxEmptyString);
-
-    wxFileDialog *dlg = new wxFileDialog(this, _("Open File"), s_openPath, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
+    const wxString ALL( wxT("All Files (*)|*") );
+    
+    // Open a file using the current editor's path
+    LEditor * editor = GetMainBook()->GetActiveEditor();
+    wxString open_path;
+    
+    if ( editor ) {
+        open_path = editor->GetFileName().GetPath();
+    } else {
+        // Could not locate the active editor, use the project
+        ProjectPtr project = ManagerST::Get()->GetProject( ManagerST::Get()->GetActiveProjectName() );
+        if ( project ) {
+            open_path = project->GetFileName().GetPath();
+        }
+    }
+    
+    wxFileDialog *dlg = new wxFileDialog(this, _("Open File"), open_path, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
     if (dlg->ShowModal() == wxID_OK) {
         wxArrayString paths;
         dlg->GetPaths(paths);
         for (size_t i=0; i<paths.GetCount(); i++) {
             GetMainBook()->OpenFile(paths.Item(i));
-        }
-
-        if (paths.GetCount() > 0) {
-            wxFileName fn(paths.Item(0));
-            s_openPath = fn.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
         }
     }
     dlg->Destroy();

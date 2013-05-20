@@ -15,11 +15,11 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/treebook.h>
-#include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
+#include <wx/statline.h>
 #include <wx/statbox.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
@@ -33,7 +33,6 @@ protected:
     wxPanel* m_panelSettings;
     wxChoice* m_choiceConfig;
     wxTreebook* m_treebook;
-    wxStaticLine* m_staticline1;
     wxButton* m_buttonHelp;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
@@ -216,7 +215,6 @@ protected:
     wxPanel* m_resourceCmpPage;
     wxStaticText* m_staticText33111;
     wxChoice* m_choiceResUseWithGlobalSettings;
-    wxStaticLine* m_staticline9;
     wxStaticText* m_staticText221;
     wxTextCtrl* m_textAddResCmpOptions;
     wxButton* m_buttonAddResCmpOptions;

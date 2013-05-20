@@ -44,10 +44,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     m_treebook = new wxTreebook( m_panelSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
     m_sizerSettings->Add(m_treebook, 1, wxALL|wxEXPAND, 5);
     
-    m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    mainSizer->Add(m_staticline1, 0, wxALL|wxEXPAND, 5);
-    
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(bSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -687,6 +683,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     bSizer192->Add(boxSizer35, 0, wxEXPAND, 5);
     
     m_textCtrlDebuggerPath = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlDebuggerPath->SetFocus();
     
     boxSizer35->Add(m_textCtrlDebuggerPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -858,15 +855,13 @@ PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const 
     
     flexGridSizer25->Add(m_choiceResUseWithGlobalSettings, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     
-    flexGridSizer25->Add(0, 0, 0, wxALL, 5);
+    flexGridSizer25->Add(0, 0, 0, 0, 5);
     
-    flexGridSizer25->Add(0, 0, 0, wxALL, 5);
+    flexGridSizer25->Add(0, 0, 0, 0, 5);
     
-    m_staticline9 = new wxStaticLine(m_resourceCmpPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
+    flexGridSizer25->Add(0, 0, 0, 0, 5);
     
-    flexGridSizer25->Add(m_staticline9, 0, wxALL|wxEXPAND, 5);
-    
-    flexGridSizer25->Add(0, 0, 0, wxALL, 5);
+    flexGridSizer25->Add(0, 0, 0, 0, 5);
     
     m_staticText221 = new wxStaticText(m_resourceCmpPage, wxID_ANY, _("Compiler Options:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -1504,7 +1499,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxFont m_textCtrlSearchPathsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
     m_textCtrlSearchPaths->SetFont(m_textCtrlSearchPathsFont);
     
-    bSizer35->Add(m_textCtrlSearchPaths, 1, wxLEFT|wxRIGHT|wxEXPAND, 5);
+    bSizer35->Add(m_textCtrlSearchPaths, 1, wxALL|wxEXPAND, 5);
     
     m_panel15 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_splitter1->SplitHorizontally(m_panel14, m_panel15, 0);
@@ -1514,7 +1509,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_staticText49 = new wxStaticText(m_panel15, wxID_ANY, _("Macros (clang only):"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer36->Add(m_staticText49, 0, wxLEFT|wxRIGHT|wxBOTTOM, 5);
+    bSizer36->Add(m_staticText49, 0, wxALL, 5);
     
     m_textCtrlMacros = new wxTextCtrl(m_panel15, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE);
     wxFont m_textCtrlMacrosFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
@@ -1584,7 +1579,7 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
     
     m_staticTextCommand = new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    flexGridSizer53->Add(m_staticTextCommand, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer53->Add(m_staticTextCommand, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, 5);
     
     m_textCtrlCommand = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_WORDWRAP|wxTE_RICH2|wxTE_MULTILINE);
     

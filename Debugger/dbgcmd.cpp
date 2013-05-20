@@ -34,6 +34,7 @@
 #include "gdbmi_parse_thread_info.h"
 #include "event_notifier.h"
 #include "debuggermanager.h"
+#include "cl_command_event.h"
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 
@@ -189,7 +190,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
     entry.line.ToLong(&line_number);
     m_observer->UpdateFileLine(entry.file, line_number);
     
-    wxCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
+    clCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
     DebuggerEventData *ded = new DebuggerEventData;
     ded->m_file = entry.file;
     ded->m_line = line_number;
@@ -289,7 +290,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
     }
     m_observer->UpdateFileLine(fullName, lineno);
     
-    wxCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
+    clCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
     DebuggerEventData *ded = new DebuggerEventData;
     ded->m_file = fullName;
     ded->m_line = lineno;
@@ -670,7 +671,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
     m_observer->UpdateLocals( locals );
     
     // The new way of notifying: send a wx's event
-    wxCommandEvent evtLocals(wxEVT_DEBUGGER_QUERY_LOCALS);
+    clCommandEvent evtLocals(wxEVT_DEBUGGER_QUERY_LOCALS);
     DebuggerEventData data;
     data.m_updateReason = DBG_UR_LOCALS;
     data.m_userReason   = DBG_USERR_LOCALS;
@@ -1242,7 +1243,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
             e.m_userReason = m_userReason;
             m_observer->DebuggerUpdate( e );
             
-            wxCommandEvent evtCreate(wxEVT_DEBUGGER_VAROBJECT_CREATED);
+            clCommandEvent evtCreate(wxEVT_DEBUGGER_VAROBJECT_CREATED);
             evtCreate.SetClientObject( new DebuggerEventData(e) );
             EventNotifier::Get()->AddPendingEvent( evtCreate );
         }
@@ -1308,7 +1309,7 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
         e.m_userReason = m_userReason;
         m_observer->DebuggerUpdate( e );
         
-        wxCommandEvent evtList(wxEVT_DEBUGGER_LIST_CHILDREN);
+        clCommandEvent evtList(wxEVT_DEBUGGER_LIST_CHILDREN);
         evtList.SetClientObject( new DebuggerEventData(e) );
         EventNotifier::Get()->AddPendingEvent( evtList );
     }
@@ -1333,7 +1334,7 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
                 e.m_userReason    = m_userReason;
                 m_observer->DebuggerUpdate( e );
                 
-                wxCommandEvent evtList(wxEVT_DEBUGGER_VAROBJ_EVALUATED);
+                clCommandEvent evtList(wxEVT_DEBUGGER_VAROBJ_EVALUATED);
                 evtList.SetClientObject( new DebuggerEventData(e) );
                 EventNotifier::Get()->AddPendingEvent( evtList );
             }
@@ -1452,7 +1453,7 @@ bool DbgCmdStopHandler::ProcessOutput(const wxString& line)
 
 bool DbgCmdHandlerDisasseble::ProcessOutput(const wxString& line)
 {
-    wxCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT);
+    clCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT);
     GdbChildrenInfo info;
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
     
@@ -1492,7 +1493,7 @@ bool DbgCmdHandlerDisasseble::ProcessOutput(const wxString& line)
 
 bool DbgCmdHandlerDisassebleCurLine::ProcessOutput(const wxString& line)
 {
-    wxCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_CURLINE);
+    clCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_CURLINE);
     GdbChildrenInfo info;
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
     

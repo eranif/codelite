@@ -42,7 +42,7 @@ class wxListCtrl;
 class IEditor;
 class IManager;
 
-typedef void (wxObject::*clEventFunc_t)(wxObject* arg);
+typedef void (wxObject::*clEventFunc_t)(wxClientData* arg);
 
 class WXDLLIMPEXP_SDK BOM
 {
@@ -382,7 +382,7 @@ WXDLLIMPEXP_SDK wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp
 /**
  * @brief queue a call to a function to be executed on the next event loop
  */
-WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func, wxObject* arg);
+WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func, wxClientData* arg);
 WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func);
 
 /**

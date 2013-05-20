@@ -88,6 +88,7 @@
 #include "tabgroupmanager.h"
 #include "manager.h"
 #include "reconcileproject.h"
+#include "cl_command_event.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -1916,7 +1917,7 @@ static void DebugMessage ( wxString msg )
 
 void Manager::UpdateDebuggerPane()
 {
-    wxCommandEvent evtDbgRefreshViews(wxEVT_DEBUGGER_UPDATE_VIEWS);
+    clCommandEvent evtDbgRefreshViews(wxEVT_DEBUGGER_UPDATE_VIEWS);
     EventNotifier::Get()->AddPendingEvent( evtDbgRefreshViews );
     
     DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();

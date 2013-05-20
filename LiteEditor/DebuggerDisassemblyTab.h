@@ -3,6 +3,7 @@
 
 #include "debuggersettingsbasedlg.h"
 #include "debugger.h"
+#include "cl_command_event.h"
 
 class DebuggerDisassemblyTab : public DebuggerDisassemblyTabBase
 {
@@ -14,10 +15,10 @@ protected:
     void DoClear();
     void DoCentrLine(int line);
 
-    void OnOutput(wxCommandEvent &e);
-    void OnCurLine(wxCommandEvent &e);
+    void OnOutput(clCommandEvent &e);
+    void OnCurLine(clCommandEvent &e);
+    void OnQueryFileLineDone(clCommandEvent &e);
     void OnDebuggerStopped(wxCommandEvent &e);
-    void OnQueryFileLineDone(wxCommandEvent &e);
     void OnAllBreakpointsDeleted(wxCommandEvent &e);
     
 public:

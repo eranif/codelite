@@ -28,6 +28,7 @@
 #include "wx/treectrl.h"
 #include "tree_node.h"
 #include "debugger.h"
+#include <wx/sharedptr.h>
 
 struct NodeData {
     wxString name;

@@ -85,9 +85,10 @@ class clInternalEventHandlerData : public wxClientData
     
     wxObject*     m_this;
     clEventFunc_t m_funcPtr;
-    wxObject*     m_arg;
+    wxClientData* m_arg;
+    
 public:
-    clInternalEventHandlerData(wxObject* instance, clEventFunc_t func, wxObject* arg)
+    clInternalEventHandlerData(wxObject* instance, clEventFunc_t func, wxClientData* arg)
         : m_this(instance)
         , m_funcPtr(func)
         , m_arg(arg)
@@ -103,7 +104,7 @@ public:
         wxDELETE(m_arg);
     }
     
-    wxObject* GetArg() const {
+    wxClientData* GetArg() const {
         return m_arg;
     }
     clEventFunc_t GetFuncPtr() const {
@@ -134,12 +135,15 @@ public:
         clInternalEventHandlerData* cd = reinterpret_cast<clInternalEventHandlerData*>(e.GetClientObject());
         if ( cd ) {
             wxObject* obj      = cd->GetThis();
-            wxObject* arg      = cd->GetArg();
+            wxClientData* arg  = cd->GetArg();
             clEventFunc_t func = cd->GetFuncPtr();
             (obj->*func)(arg);
+            
+            delete cd;
+            e.SetClientObject(NULL);
         }
     }
-    
+
     /**
      * @brief Call 0 arguments function
      */
@@ -149,6 +153,9 @@ public:
             wxObject* obj      = cd->GetThis();
             clEventFunc_t func = cd->GetFuncPtr();
             (obj->*func)(NULL);
+
+            delete cd;
+            e.SetClientObject(NULL);
         }
     }
 };
@@ -1489,7 +1496,7 @@ wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
     return v;
 }
 
-void PostCall(wxObject* instance, clEventFunc_t func, wxObject* arg)
+void PostCall(wxObject* instance, clEventFunc_t func, wxClientData* arg)
 {
     clInternalEventHandlerData *cd = new clInternalEventHandlerData(instance, func, arg);
     wxCommandEvent evt(wxEVT_COMMAND_CL_INTERNAL_1_ARGS);

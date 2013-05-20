@@ -4,6 +4,7 @@
 #include <project.h>
 #include <workspace.h>
 #include <wx/filedlg.h>
+#include "globals.h"
 
 PSDebuggerPage::PSDebuggerPage( wxWindow* parent, ProjectSettingsDlg* dlg )
     : PSDebuggerPageBase( parent )
@@ -31,7 +32,7 @@ void PSDebuggerPage::Load(BuildConfigPtr buildConf)
     m_textCtrl1DbgHost->ChangeValue(buildConf->GetDbgHostName());
     m_textCtrlDbgPort->ChangeValue(buildConf->GetDbgHostPort());
     m_textCtrlDebuggerPath->ChangeValue(buildConf->GetDebuggerPath());
-    
+
     const wxArrayString &searchPaths = buildConf->GetDebuggerSearchPaths();
     for(size_t i=0; i<searchPaths.GetCount(); ++i) {
         wxVector<wxVariant> cols;
@@ -107,7 +108,7 @@ void PSDebuggerPage::OnDeleteDebuggerSearchPath(wxCommandEvent& event)
     m_dvListCtrlDebuggerSearchPaths->GetSelections( items );
     if ( items.IsEmpty() )
         return;
-    
+
     for(size_t i=0; i<items.GetCount(); ++i) {
         m_dvListCtrlDebuggerSearchPaths->DeleteItem( m_dvListCtrlDebuggerSearchPaths->ItemToRow( items.Item(i) ) );
     }
@@ -117,4 +118,30 @@ void PSDebuggerPage::OnDeleteDebuggerSearchPath(wxCommandEvent& event)
 void PSDebuggerPage::OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_dvListCtrlDebuggerSearchPaths->GetSelectedItemsCount() );
+}
+
+void PSDebuggerPage::OnItemActivated(wxDataViewEvent& event)
+{
+    wxVariant value;
+    m_dvListCtrlDebuggerSearchPaths->GetValue(value, m_dvListCtrlDebuggerSearchPaths->ItemToRow(event.GetItem()), 0);
+    
+    if ( !value.IsNull() ) {
+        
+        wxString path = value.GetString();
+        path = ::wxDirSelector(_("Select a folder"), path);
+        
+        if ( !path.IsEmpty() ) {
+            m_dvListCtrlDebuggerSearchPaths->DeleteItem( m_dvListCtrlDebuggerSearchPaths->ItemToRow(event.GetItem()) );
+            ::PostCall(this, (clEventFunc_t) &PSDebuggerPage::DoAddPath, new wxStringClientData(path));
+            
+        }
+    }
+}
+
+void PSDebuggerPage::DoAddPath(wxStringClientData* path)
+{
+    wxVector<wxVariant> cols;
+    cols.push_back( path->GetData() );
+    m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
+    m_dlg->SetIsDirty(true);
 }

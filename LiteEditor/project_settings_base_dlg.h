@@ -197,6 +197,7 @@ protected:
 
 protected:
     virtual void OnBrowseForDebuggerPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnAddDebuggerSearchPath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteDebuggerSearchPath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event) { event.Skip(); }

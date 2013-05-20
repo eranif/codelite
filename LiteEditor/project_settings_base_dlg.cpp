@@ -786,6 +786,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     Centre(wxBOTH);
     // Connect events
     m_button39->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
+    m_dvListCtrlDebuggerSearchPaths->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSDebuggerPageBase::OnItemActivated), NULL, this);
     m_button88->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
     m_button90->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
     m_button90->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL, this);
@@ -804,6 +805,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
 PSDebuggerPageBase::~PSDebuggerPageBase()
 {
     m_button39->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
+    m_dvListCtrlDebuggerSearchPaths->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSDebuggerPageBase::OnItemActivated), NULL, this);
     m_button88->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
     m_button90->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
     m_button90->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL, this);

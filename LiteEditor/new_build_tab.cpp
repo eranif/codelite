@@ -23,6 +23,7 @@
 #include "macros.h"
 #include <wx/fdrepdlg.h>
 #include "buildtabsettingsdata.h"
+#include "cl_command_event.h"
 
 static size_t BUILD_PANE_WIDTH = 10000;
 
@@ -252,10 +253,11 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     
     m_listctrl->AppendColumn(new wxDataViewColumn(_("Message"), m_textRenderer, 0, screenWidth, wxALIGN_LEFT));
 
-    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
-    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
-    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_ADDLINE,         wxCommandEventHandler ( NewBuildTab::OnBuildAddLine ),    NULL, this );
-    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_PROCESS_ENDED,   wxCommandEventHandler ( NewBuildTab::OnBuildEnded ),      NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_STARTED,         clCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, clCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_ADDLINE,         clCommandEventHandler ( NewBuildTab::OnBuildAddLine ),    NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_SHELL_COMMAND_PROCESS_ENDED,   clCommandEventHandler ( NewBuildTab::OnBuildEnded ),      NULL, this );
+    
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(NewBuildTab::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(NewBuildTab::OnWorkspaceClosed), NULL, this);
 
@@ -269,15 +271,15 @@ NewBuildTab::~NewBuildTab()
 {
     m_listctrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxContextMenuEventHandler(NewBuildTab::OnMenu), NULL, this);
     
-    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED,         wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
-    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, wxCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
-    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_ADDLINE,         wxCommandEventHandler ( NewBuildTab::OnBuildAddLine ),    NULL, this );
-    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_PROCESS_ENDED,   wxCommandEventHandler ( NewBuildTab::OnBuildEnded ),      NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED,         clCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_STARTED_NOCLEAN, clCommandEventHandler ( NewBuildTab::OnBuildStarted ),    NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_ADDLINE,         clCommandEventHandler ( NewBuildTab::OnBuildAddLine ),    NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_SHELL_COMMAND_PROCESS_ENDED,   clCommandEventHandler ( NewBuildTab::OnBuildEnded ),      NULL, this );
     wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( NewBuildTab::OnNextBuildError ),   NULL, this );
     wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler ( NewBuildTab::OnNextBuildErrorUI ), NULL, this );
 }
 
-void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
+void NewBuildTab::OnBuildEnded(clCommandEvent& e)
 {
     e.Skip();
     CL_DEBUG("Build Ended!");
@@ -323,7 +325,7 @@ void NewBuildTab::OnBuildEnded(wxCommandEvent& e)
     PostCmdEvent(wxEVT_BUILD_ENDED);
 }
 
-void NewBuildTab::OnBuildStarted(wxCommandEvent& e)
+void NewBuildTab::OnBuildStarted(clCommandEvent& e)
 {
     e.Skip();
     if ( IS_WINDOWS ) {
@@ -380,7 +382,7 @@ void NewBuildTab::OnBuildStarted(wxCommandEvent& e)
     PostCmdEvent(wxEVT_BUILD_STARTED);
 }
 
-void NewBuildTab::OnBuildAddLine(wxCommandEvent& e)
+void NewBuildTab::OnBuildAddLine(clCommandEvent& e)
 {
     e.Skip(); // Allways call skip..
     m_output << e.GetString();

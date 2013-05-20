@@ -29,9 +29,9 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
     m_stc->MarkerDefineBitmap(BREAKPOINT_MARKER, wxBitmap(wxImage(stop_xpm)));
 
     m_stc->SetYCaretPolicy(wxSTC_CARET_SLOP, 30);
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT, wxCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_CURLINE, wxCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_QUERY_FILELINE, wxCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT,  clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_QUERY_FILELINE,     clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(DebuggerDisassemblyTab::OnDebuggerStopped), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED, wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted), NULL, this);
 
@@ -43,14 +43,14 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
 
 DebuggerDisassemblyTab::~DebuggerDisassemblyTab()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT, wxCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEBLE_CURLINE, wxCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT,  clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_QUERY_FILELINE,     clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(DebuggerDisassemblyTab::OnDebuggerStopped), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_QUERY_FILELINE, wxCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED, wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted), NULL, this);
 }
 
-void DebuggerDisassemblyTab::OnOutput(wxCommandEvent& e)
+void DebuggerDisassemblyTab::OnOutput(clCommandEvent& e)
 {
     e.Skip();
     DoClear();
@@ -82,7 +82,7 @@ void DebuggerDisassemblyTab::OnOutput(wxCommandEvent& e)
     m_stc->SetReadOnly(true);
 }
 
-void DebuggerDisassemblyTab::OnCurLine(wxCommandEvent& e)
+void DebuggerDisassemblyTab::OnCurLine(clCommandEvent& e)
 {
     e.Skip();
     size_t curline = wxString::npos;
@@ -124,7 +124,7 @@ void DebuggerDisassemblyTab::DoClear()
     m_stc->SetReadOnly(true);
 }
 
-void DebuggerDisassemblyTab::OnQueryFileLineDone(wxCommandEvent& e)
+void DebuggerDisassemblyTab::OnQueryFileLineDone(clCommandEvent& e)
 {
     e.Skip();
 

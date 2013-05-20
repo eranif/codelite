@@ -207,9 +207,9 @@ public:
     
     wxString GetBuildContent() const;
 protected:
-    void OnBuildStarted(wxCommandEvent &e);
-    void OnBuildEnded(wxCommandEvent &e);
-    void OnBuildAddLine(wxCommandEvent &e);
+    void OnBuildStarted(clCommandEvent &e);
+    void OnBuildEnded(clCommandEvent &e);
+    void OnBuildAddLine(clCommandEvent &e);
     void OnLineSelected(wxDataViewEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnWorkspaceLoaded(wxCommandEvent &e);

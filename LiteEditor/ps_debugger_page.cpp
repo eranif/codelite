@@ -24,6 +24,7 @@ void PSDebuggerPage::OnRemoteDebugUI( wxUpdateUIEvent& event )
 
 void PSDebuggerPage::Load(BuildConfigPtr buildConf)
 {
+    Clear();
     m_textCtrlDbgCmds->ChangeValue(buildConf->GetDebuggerStartupCmds());
     m_textCtrlDbgPostConnectCmds->ChangeValue(buildConf->GetDebuggerPostRemoteConnectCmds());
     m_checkBoxDbgRemote->SetValue(buildConf->GetIsDbgRemoteTarget());

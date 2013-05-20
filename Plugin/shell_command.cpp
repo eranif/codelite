@@ -31,6 +31,7 @@
 #include "event_notifier.h"
 #include "wx/tokenzr.h"
 #include "asyncprocess.h"
+#include "cl_command_event.h"
 
 const wxEventType wxEVT_SHELL_COMMAND_ADDLINE = XRCID("wxEVT_SHELL_COMMAND_ADDLINE");
 const wxEventType wxEVT_SHELL_COMMAND_STARTED = XRCID("wxEVT_SHELL_COMMAND_STARTED");
@@ -64,7 +65,7 @@ void ShellCommand::Stop()
 
 void ShellCommand::SendStartMsg()
 {
-    wxCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
+    clCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
     event.SetString(m_info.GetSynopsis());
 
     BuildEventDetails *eventData = new BuildEventDetails();

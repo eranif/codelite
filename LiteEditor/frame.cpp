@@ -662,7 +662,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     wxTheApp->Connect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, clCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
@@ -694,7 +694,7 @@ clMainFrame::~clMainFrame(void)
     wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
     wxTheApp->Disconnect(wxID_CUT,       wxEVT_UPDATE_UI, wxUpdateUIEventHandler( clMainFrame::DispatchUpdateUIEvent ), NULL, this);
 
-    EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, wxCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, clCommandEventHandler(clMainFrame::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_PROJECT_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
@@ -2424,7 +2424,7 @@ void clMainFrame::OnAdvanceSettings(wxCommandEvent &event)
     SelectBestEnvSet();
 }
 
-void clMainFrame::OnBuildEnded(wxCommandEvent &event)
+void clMainFrame::OnBuildEnded(clCommandEvent& event)
 {
     event.Skip();
     if (m_buildAndRun) {

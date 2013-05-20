@@ -232,7 +232,7 @@ void ContinuousBuild::OnBuildProcessEnded(wxCommandEvent& e)
     int pid = m_buildProcess.GetPid();
     m_view->RemoveFile(m_buildProcess.GetFileName());
 
-    wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+    clCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
     EventNotifier::Get()->AddPendingEvent(event);
 
     int exitCode(-1);

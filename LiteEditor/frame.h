@@ -45,6 +45,7 @@
 #include "mainbook.h"
 #include <set>
 #include "theme_handler.h"
+#include "cl_command_event.h"
 
 // forward decls
 class TagEntry;
@@ -354,7 +355,7 @@ protected:
     //----------------------------------------------------
     void OnRestoreDefaultLayout(wxCommandEvent &e);
     void OnIdle(wxIdleEvent &e);
-    void OnBuildEnded(wxCommandEvent &event);
+    void OnBuildEnded(clCommandEvent &event);
     void OnQuit(wxCommandEvent& WXUNUSED(event));
     void OnClose(wxCloseEvent &event);
 

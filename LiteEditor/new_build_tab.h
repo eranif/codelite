@@ -12,6 +12,7 @@
 #include "compiler.h"
 #include <map>
 #include <wx/regex.h>
+#include "cl_command_event.h"
 
 class wxDataViewListCtrl;
 

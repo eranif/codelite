@@ -482,19 +482,19 @@ void LEditor::SetProperties()
     MarkerDefineBitmap(smt_bp_ignored, wxBitmap(wxImage(BreakptIgnore)));
     MarkerDefineBitmap(smt_cond_bp, wxBitmap(wxImage(ConditionalBreakpt)));
     MarkerDefineBitmap(smt_cond_bp_disabled, wxBitmap(wxImage(ConditionalBreakptDisabled)));
-    
+
     if ( options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line) ) {
         MarkerDefine(smt_indicator, wxSTC_MARK_BACKGROUND, wxNullColour, options->GetDebuggerMarkerLine());
-        
+
     } else {
-        
+
         wxImage img(arrow_right_green_xpm);
         wxBitmap bmp(img);
         MarkerDefineBitmap(smt_indicator, bmp);
         MarkerSetBackground(smt_indicator, wxT("LIME GREEN"));
         MarkerSetForeground(smt_indicator, wxT("BLACK"));
     }
-    
+
     // warning and error markers
     MarkerDefine(smt_warning, wxSTC_MARK_SHORTARROW);
     MarkerSetForeground(smt_error, wxColor(128, 128, 0));
@@ -511,7 +511,7 @@ void LEditor::SetProperties()
     // on Mac
     SetTwoPhaseDraw(false);
     SetBufferedDraw(false);
-    
+
     // Using BufferedDraw as 'false'
     // improves performance *alot*, however
     // the downside is that the word hightlight does
@@ -569,9 +569,9 @@ void LEditor::SetProperties()
     IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(MARKER_WORD_HIGHLIGHT, col2);
     long alpha(1);
-	if (EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
-		IndicatorSetAlpha(MARKER_WORD_HIGHLIGHT, alpha);
-	}
+    if (EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
+        IndicatorSetAlpha(MARKER_WORD_HIGHLIGHT, alpha);
+    }
 
     IndicatorSetStyle     (HYPERLINK_INDICATOR, wxSTC_INDIC_PLAIN);
     IndicatorSetStyle     (MATCH_INDICATOR, wxSTC_INDIC_BOX);
@@ -667,12 +667,12 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     if ( !GetFoldExpanded(curLine) ) {
         ToggleFold(curLine);
     }
-    
+
     bool bJustAddedIndicator = false;
     // add complete quotes; but don't if the next char is alnum,
     // which is annoying if you're trying to retrofit quotes around a string!
-    // Also not if the previous char is alnum: it's more likely (especially in non-code editors) 
-    // that someone is trying to type _don't_ than it's a burning desire to write _don''_ 
+    // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
+    // that someone is trying to type _don't_ than it's a burning desire to write _don''_
     int nextChar = SafeGetChar(pos), prevChar = SafeGetChar(pos-2);
     if (GetOptions()->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
         if( event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
@@ -680,7 +680,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
             SetIndicatorCurrent(MATCH_INDICATOR);
             IndicatorFillRange(pos, 1);
             bJustAddedIndicator = true;
-            
+
         } else if ( event.GetKey() == wxT('\'') && !m_context->IsCommentOrString(pos)) {
             InsertText(pos, wxT("'"));
             SetIndicatorCurrent(MATCH_INDICATOR);
@@ -688,7 +688,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
             bJustAddedIndicator = true;
         }
     }
-    
+
     if ( !bJustAddedIndicator && IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
         CharRight();
         DeleteBack();
@@ -702,7 +702,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
             DeleteBack();
         }
     }
-    
+
     wxChar matchChar (0);
     switch ( event.GetKey() ) {
     case ';':
@@ -989,22 +989,22 @@ void LEditor::OnMarginClick(wxStyledTextEvent& event)
             wxBitmap bm;
             if (markers & mmt_bp_disabled) {
                 bm = wxBitmap(wxImage(BreakptDisabled));
-                
+
             } else if (markers & mmt_bp_cmdlist) {
                 bm = wxBitmap(wxImage(BreakptCommandList));
-                
+
             } else if (markers & mmt_bp_cmdlist_disabled) {
                 bm = wxBitmap(wxImage(BreakptCommandListDisabled));
-                
+
             } else if (markers & mmt_bp_ignored) {
                 bm = wxBitmap(wxImage(BreakptIgnore));
-                
+
             } else if (markers & mmt_cond_bp) {
                 bm = wxBitmap(wxImage(ConditionalBreakpt));
-                
+
             } else if (markers & mmt_cond_bp_disabled) {
                 bm = wxBitmap(wxImage(ConditionalBreakptDisabled));
-                
+
             } else {
                 // Make the standard bp bitmap the default
                 bm = wxBitmap(wxImage(stop_xpm));
@@ -1219,7 +1219,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
                                       wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding()).c_str()), _("CodeLite"), wxOK|wxICON_WARNING);
         return false;
     }
-    
+
     if ( buf.length() == 0 && !theText.IsEmpty()) {
         // something went wrong in the conversion process
         wxString errmsg;
@@ -1227,7 +1227,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
         wxMessageBox(errmsg, "CodeLite", wxOK|wxICON_ERROR|wxCENTER, wxTheApp->GetTopWindow());
         return false;
     }
-    
+
     file.Write(buf.data(), strlen(buf.data()));
     file.Close();
 
@@ -2019,7 +2019,7 @@ void LEditor::DoRecursivelyExpandFolds(bool expand, int startline, int endline)
     for (int line = startline; line < endline; ++line) {
         if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
             int BottomOfFold = GetLastChild(line, -1);
-            
+
             if (expand) {
                 // Expand this fold
                 SetFoldExpanded(line, true);
@@ -2032,7 +2032,7 @@ void LEditor::DoRecursivelyExpandFolds(bool expand, int startline, int endline)
                 SetFoldExpanded(line, false);
                 HideLines(line+1, BottomOfFold);
             }
-            
+
 
             line = BottomOfFold; // Now skip over the fold we've just dealt with, ready for any later siblings
         }
@@ -2080,11 +2080,11 @@ void LEditor::ToggleAllFoldsInSelection()
 
     if (!expanding) {
         // The caret will (surely) be inside the selection, and unless it was on the first line or an unfolded one, it'll now be hidden
-        // If so place it at the top, which will be visible. Unfortunately SetCaretAt() destroys the selection, 
+        // If so place it at the top, which will be visible. Unfortunately SetCaretAt() destroys the selection,
         // and I can't find a way to preserve/reinstate it while still setting the caret. DoEnsureCaretIsVisible() also fails :(
         int caretline = LineFromPos(GetCurrentPos());
-        if (!GetLineVisible(caretline)) { 
-           SetCaretAt(selStart);
+        if (!GetLineVisible(caretline)) {
+            SetCaretAt(selStart);
         }
     }
 }
@@ -2724,21 +2724,21 @@ void LEditor::OnRightDown(wxMouseEvent& event)
 {
     size_t mod = GetCodeNavModifier();
     if ( event.GetModifiers() == mod && mod != wxMOD_NONE) {
-        
+
         ClearSelections();
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
         if (pos != wxNOT_FOUND) {
             DoSetCaretAt(pos);
         }
-        
+
         wxMenu menu(_("Find Symbol"));
         menu.Append(XRCID("find_decl"), _("Go to Declaration"));
         menu.Append(XRCID("find_impl"), _("Go to Implementation"));
         PopupMenu(&menu);
-        
+
     } else {
         event.Skip();
-        
+
     }
 }
 
@@ -2746,7 +2746,7 @@ void LEditor::OnMotion(wxMouseEvent& event)
 {
     size_t mod = GetCodeNavModifier();
     if ( event.GetModifiers() == mod && mod != wxMOD_NONE) {
-    
+
         m_hyperLinkIndicatroStart = wxNOT_FOUND;
         m_hyperLinkIndicatroEnd = wxNOT_FOUND;
         m_hyperLinkType = wxID_NONE;
@@ -2773,7 +2773,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
     if ( ManagerST::Get()->GetDebuggerTip()->IsShown() ) {
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
     }
-    
+
     size_t mod = GetCodeNavModifier();
     if ( m_hyperLinkType != wxID_NONE && event.GetModifiers() == mod && mod != wxMOD_NONE ) {
         ClearSelections();
@@ -3716,7 +3716,7 @@ void LEditor::SetEOL()
 
 void LEditor::OnChange(wxStyledTextEvent& event)
 {
-    if ( m_autoAddNormalBraces && !m_disableSmartIndent) {
+    if ( (m_autoAddNormalBraces && !m_disableSmartIndent) || GetOptions()->GetAutoCompleteDoubleQuotes() ) {
         if ( (event.GetModificationType() & wxSTC_MOD_BEFOREDELETE) && (event.GetModificationType() & wxSTC_PERFORMED_USER) ) {
             wxString deletedText = GetTextRange(event.GetPosition(), event.GetPosition() + event.GetLength());
             if ( deletedText.IsEmpty() == false && deletedText.Length() == 1 ) {
@@ -3729,6 +3729,22 @@ void LEditor::OnChange(wxStyledTextEvent& event)
                         e.SetInt( PositionBefore(where) );
                         AddPendingEvent( e );
                     }
+                } else if ( deletedText.GetChar(0) == '\'' || deletedText.GetChar(0) == '"' ) {
+
+                    wxChar searchChar = deletedText.GetChar(0);
+                    // search for the matching close quote
+                    int from = event.GetPosition() + 1;
+                    int until = GetLineEndPosition(GetCurrentLine());
+
+                    for(int i=from; i<until; ++i) {
+                        if ( SafeGetChar(i) == searchChar ) {
+                            wxCommandEvent e(wxCMD_EVENT_REMOVE_MATCH_INDICATOR);
+                            // the removal will take place after the actual deletion of the
+                            // character, so we set it to be position before
+                            e.SetInt( PositionBefore(i) );
+                            AddPendingEvent( e );
+                        }
+                    }
                 }
             }
         }
@@ -3737,7 +3753,7 @@ void LEditor::OnChange(wxStyledTextEvent& event)
     if ( event.GetModificationType() & wxSTC_MOD_CHANGESTYLE ) {
 #ifdef __WXGTK__
         // Contents, styling or markers have been changed
-       // Refresh();
+        // Refresh();
 #endif
     }
 
@@ -4001,7 +4017,7 @@ void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
     SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
 
 #ifdef __WXMAC__
-	IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
+    IndicatorSetUnder(MARKER_WORD_HIGHLIGHT, true);
 #endif
 
     // clear the old markers
@@ -4136,16 +4152,16 @@ void LEditor::PasteLineAbove()
     int curpos = GetCurrentPos();
     int col    = GetColumn(curpos);
     int line   = GetCurrentLine();
-    
+
     int pasteLine = line;
     if ( pasteLine> 0 ) {
         ++line;
     }
-    
+
     int pastePos = PositionFromLine(pasteLine);
     SetCaretAt(pastePos);
     Paste();
-    
+
     // restore caret position
     int newpos = FindColumn(line, col);
     SetCaretAt(newpos);
@@ -4155,15 +4171,15 @@ void LEditor::OnKeyUp(wxKeyEvent& event)
 {
     event.Skip();
     if ( event.GetKeyCode() == WXK_SHIFT || event.GetKeyCode() == WXK_CONTROL || event.GetKeyCode() == WXK_ALT ) {
-        
+
         // Clear hyperlink markers
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         IndicatorClearRange(0, GetLength());
-        
+
         // Clear debugger marker
         SetIndicatorCurrent(DEBUGGER_INDICATOR);
         IndicatorClearRange(0, GetLength());
-        
+
     }
 }
 
@@ -4172,10 +4188,10 @@ size_t LEditor::GetCodeNavModifier()
     size_t mod = wxMOD_NONE;
     if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Alt )
         mod |= wxMOD_ALT;
-    
+
     if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Control )
         mod |= wxMOD_CONTROL;
-    
+
     if ( GetOptions()->GetOptions() & OptionsConfig::Opt_NavKey_Shift )
         mod |= wxMOD_SHIFT;
     return mod;
@@ -4188,7 +4204,7 @@ void LEditor::OnFileFormatDone(wxCommandEvent& e)
         e.Skip();
         return;
     }
-    
+
     // Restore the markers
     DoRestoreMarkers();
 }
@@ -4217,7 +4233,7 @@ void LEditor::DoSaveMarkers()
     m_savedMarkers.clear();
     int nLine = LineFromPosition(0);
     int mask = mmt_bookmarks;
-    
+
     int nFoundLine = MarkerNext(nLine, mask);
     while ( nFoundLine >= 0 ) {
         m_savedMarkers.Add( nFoundLine );

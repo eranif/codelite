@@ -965,7 +965,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="../../../root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -977,6 +977,7 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
+        <Target Name="install">cd build-debug &amp;&amp; make install</Target>
         <Target Name="cmake">cd build-debug &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  ..</Target>
         <RebuildCommand>cd build-debug &amp;&amp; make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>cd build-debug &amp;&amp; make clean</CleanCommand>

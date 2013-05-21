@@ -662,6 +662,13 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
         }
     }
 
+    // make sure line is visible
+    int curLine = LineFromPosition(pos);
+    if ( !GetFoldExpanded(curLine) ) {
+        ToggleFold(curLine);
+    }
+    
+    bool bJustAddedIndicator = false;
     // add complete quotes; but don't if the next char is alnum,
     // which is annoying if you're trying to retrofit quotes around a string!
     // Also not if the previous char is alnum: it's more likely (especially in non-code editors) 
@@ -676,20 +683,19 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
 
         } else if( event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
             InsertText(pos, wxT("\""));
-
+            SetIndicatorCurrent(MATCH_INDICATOR);
+            IndicatorFillRange(pos, 1);
+            bJustAddedIndicator = true;
+            
         } else if ( event.GetKey() == wxT('\'') && !m_context->IsCommentOrString(pos)) {
             InsertText(pos, wxT("'"));
-
+            SetIndicatorCurrent(MATCH_INDICATOR);
+            IndicatorFillRange(pos, 1);
+            bJustAddedIndicator = true;
         }
     }
-
-    // make sure line is visible
-    int curLine = LineFromPosition(pos);
-    if ( !GetFoldExpanded(curLine) ) {
-        ToggleFold(curLine);
-    }
-
-    if (IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
+    
+    if ( !bJustAddedIndicator && IndicatorValueAt(MATCH_INDICATOR, pos) && event.GetKey() == GetCharAt(pos)) {
         CharRight();
         DeleteBack();
 
@@ -702,7 +708,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
             DeleteBack();
         }
     }
-
+    
     wxChar matchChar (0);
     switch ( event.GetKey() ) {
     case ';':

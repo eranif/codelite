@@ -675,13 +675,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     // that someone is trying to type _don't_ than it's a burning desire to write _don''_ 
     int nextChar = SafeGetChar(pos), prevChar = SafeGetChar(pos-2);
     if (GetOptions()->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
-        if( (event.GetKey() == wxT('"') && GetCharAt( pos ) == wxT('"')) ||
-            (event.GetKey() == wxT('\'') && GetCharAt( pos ) == wxT('\''))
-          ) {
-            CharRight();
-            DeleteBack();
-
-        } else if( event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
+        if( event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
             InsertText(pos, wxT("\""));
             SetIndicatorCurrent(MATCH_INDICATOR);
             IndicatorFillRange(pos, 1);

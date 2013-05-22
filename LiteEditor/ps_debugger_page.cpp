@@ -1,6 +1,7 @@
 #include "ps_debugger_page.h"
 #include <wx/filename.h>
 #include <wx/filedlg.h>
+#include <wx/dirdlg.h>
 #include <project.h>
 #include <workspace.h>
 #include <wx/filedlg.h>

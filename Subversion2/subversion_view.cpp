@@ -791,7 +791,7 @@ void SubversionView::OnDiff(wxCommandEvent& event)
 
         // Simple diff
         wxString command;
-        command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" diff -r") << from << to << wxT(" ");
+        command << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString << wxT(" diff -r") << from << to << wxT(" ");
         for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
             command << wxT("\"") << m_selectionInfo.m_paths.Item(i) << wxT("\" ");
         }
@@ -931,7 +931,7 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
 
     // Simple diff
     wxString command;
-    command << m_plugin->GetSvnExeName(nonInteractive) << loginString << wxT(" diff -r") << diffAgainst << wxT(" ");
+    command << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString << wxT(" diff -r") << diffAgainst << wxT(" ");
     for (size_t i=0; i<paths.GetCount(); i++) {
         command << wxT("\"") << paths.Item(i) << wxT("\" ");
     }

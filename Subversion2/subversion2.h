@@ -41,132 +41,133 @@ class wxMenuItem;
 class Subversion2 : public IPlugin
 {
 private:
-	SubversionView*     m_subversionView;
-	SvnConsole*         m_subversionConsole;
-	wxMenuItem*         m_explorerSepItem;
-	wxMenuItem*          m_projectSepItem;
-	SvnCommand          m_simpleCommand;
-	SvnCommand          m_diffCommand;
-	SvnCommand          m_blameCommand;
-	double              m_svnClientVersion;
-	CommitMessagesCache m_commitMessagesCache;
-	bool                m_skipRemoveFilesDlg;
+    SubversionView*     m_subversionView;
+    SvnConsole*         m_subversionConsole;
+    wxMenuItem*         m_explorerSepItem;
+    wxMenuItem*          m_projectSepItem;
+    SvnCommand          m_simpleCommand;
+    SvnCommand          m_diffCommand;
+    SvnCommand          m_blameCommand;
+    double              m_svnClientVersion;
+    CommitMessagesCache m_commitMessagesCache;
+    bool                m_skipRemoveFilesDlg;
 
 protected:
-	void OnSettings(wxCommandEvent &event);
+    void OnSettings(wxCommandEvent &event);
 
 public:
-	void EditSettings();
+    void EditSettings();
 
 protected:
 
-	///////////////////////////////////////////////////////////
-	// File Explorer event handlers
-	///////////////////////////////////////////////////////////
-	void OnCommit           (wxCommandEvent &event);
-	void OnUpdate           (wxCommandEvent &event);
-	void OnAdd              (wxCommandEvent &event);
-	void OnDelete           (wxCommandEvent &event);
-	void OnRevert           (wxCommandEvent &event);
-	void OnDiff             (wxCommandEvent &event);
-	void OnPatch            (wxCommandEvent &event);
-	void OnLog              (wxCommandEvent &event);
-	void OnBlame            (wxCommandEvent &event);
-	void OnIgnoreFile       (wxCommandEvent &event);
-	void OnIgnoreFilePattern(wxCommandEvent &event);
-	void OnSelectAsView     (wxCommandEvent &event);
-	void OnSwitchURL        (wxCommandEvent &event);
-	void OnLockFile         (wxCommandEvent &event);
-	void OnUnLockFile       (wxCommandEvent &event);
-	void OnRename           (wxCommandEvent& event);
-	void OnSync             (wxCommandEvent &event);
+    ///////////////////////////////////////////////////////////
+    // File Explorer event handlers
+    ///////////////////////////////////////////////////////////
+    void OnCommit           (wxCommandEvent &event);
+    void OnUpdate           (wxCommandEvent &event);
+    void OnAdd              (wxCommandEvent &event);
+    void OnDelete           (wxCommandEvent &event);
+    void OnRevert           (wxCommandEvent &event);
+    void OnDiff             (wxCommandEvent &event);
+    void OnPatch            (wxCommandEvent &event);
+    void OnLog              (wxCommandEvent &event);
+    void OnBlame            (wxCommandEvent &event);
+    void OnIgnoreFile       (wxCommandEvent &event);
+    void OnIgnoreFilePattern(wxCommandEvent &event);
+    void OnSelectAsView     (wxCommandEvent &event);
+    void OnSwitchURL        (wxCommandEvent &event);
+    void OnLockFile         (wxCommandEvent &event);
+    void OnUnLockFile       (wxCommandEvent &event);
+    void OnRename           (wxCommandEvent& event);
+    void OnSync             (wxCommandEvent &event);
 
-	///////////////////////////////////////////////////////////
-	// IDE events
-	///////////////////////////////////////////////////////////
-	void OnGetCompileLine        (wxCommandEvent &event);
-	void OnWorkspaceConfigChanged(wxCommandEvent &event);
-	void OnFileRemoved           (wxCommandEvent &event);
+    ///////////////////////////////////////////////////////////
+    // IDE events
+    ///////////////////////////////////////////////////////////
+    void OnGetCompileLine        (wxCommandEvent &event);
+    void OnWorkspaceConfigChanged(wxCommandEvent &event);
+    void OnFileRemoved           (wxCommandEvent &event);
 
-	wxMenu* CreateFileExplorerPopMenu();
-	bool    IsSubversionViewDetached ();
-	wxMenu* CreateProjectPopMenu();
-	
+    wxMenu* CreateFileExplorerPopMenu();
+    bool    IsSubversionViewDetached ();
+    wxMenu* CreateProjectPopMenu();
+
 public:
-	void    DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString &workingDirectory);
-	void    DoSwitchURL     (const wxString &workingDirectory, const wxString &sourceUrl, wxCommandEvent &event);
-	void    DoLockFile      (const wxString &workingDirectory, const wxArrayString &fullpaths, wxCommandEvent &event, bool lock);
-	void    DoRename        (const wxString &workingDirectory, const wxString &oldname, const wxString &newname, wxCommandEvent &event);
-	void    DoCommit        (const wxArrayString& files, const wxString &workingDirectory, wxCommandEvent &event);
-	
+    void    DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString &workingDirectory);
+    void    DoSwitchURL     (const wxString &workingDirectory, const wxString &sourceUrl, wxCommandEvent &event);
+    void    DoLockFile      (const wxString &workingDirectory, const wxArrayString &fullpaths, wxCommandEvent &event, bool lock);
+    void    DoRename        (const wxString &workingDirectory, const wxString &oldname, const wxString &newname, wxCommandEvent &event);
+    void    DoCommit        (const wxArrayString& files, const wxString &workingDirectory, wxCommandEvent &event);
+
 public:
-	Subversion2(IManager *manager);
-	~Subversion2();
+    Subversion2(IManager *manager);
+    ~Subversion2();
 
-	//--------------------------------------------
-	//Abstract methods
-	//--------------------------------------------
-	virtual clToolBar *CreateToolBar(wxWindow *parent);
-	virtual void CreatePluginMenu(wxMenu *pluginsMenu);
-	virtual void HookPopupMenu(wxMenu *menu, MenuType type);
-	virtual void UnPlug();
+    //--------------------------------------------
+    //Abstract methods
+    //--------------------------------------------
+    virtual clToolBar *CreateToolBar(wxWindow *parent);
+    virtual void CreatePluginMenu(wxMenu *pluginsMenu);
+    virtual void HookPopupMenu(wxMenu *menu, MenuType type);
+    virtual void UnPlug();
 
-	SvnConsole *GetConsole() ;
+    SvnConsole *GetConsole() ;
 
-	IManager *GetManager() {
-		return m_mgr;
-	}
+    IManager *GetManager() {
+        return m_mgr;
+    }
 
-	SubversionView *GetSvnView() {
-		return m_subversionView;
-	}
+    SubversionView *GetSvnView() {
+        return m_subversionView;
+    }
 
-	SvnSettingsData GetSettings();
-	void            SetSettings(SvnSettingsData& ssd);
-	wxString        GetSvnExeName(bool nonInteractive = true);
-	wxString        GetUserConfigDir();
-	void            RecreateLocalSvnConfigFile();
-	void            Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id);
-	void            IgnoreFiles(const wxArrayString& files, bool pattern);
-	void            Blame(wxCommandEvent& event, const wxArrayString &files);
+    SvnSettingsData GetSettings();
+    void            SetSettings(SvnSettingsData& ssd);
+    wxString        GetSvnExeName(bool nonInteractive = true);
+    wxString        GetSvnExeNameNoConfigDir(bool nonInteractive = true);
+    wxString        GetUserConfigDir();
+    void            RecreateLocalSvnConfigFile();
+    void            Patch(bool dryRun, const wxString &workingDirectory, wxEvtHandler *owner, int id);
+    void            IgnoreFiles(const wxArrayString& files, bool pattern);
+    void            Blame(wxCommandEvent& event, const wxArrayString &files);
 
-	void SetSvnClientVersion(double svnClientVersion) {
-		this->m_svnClientVersion = svnClientVersion;
-	}
+    void SetSvnClientVersion(double svnClientVersion) {
+        this->m_svnClientVersion = svnClientVersion;
+    }
 
-	double GetSvnClientVersion() const {
-		return m_svnClientVersion;
-	}
-	CommitMessagesCache& GetCommitMessagesCache() {
-		return m_commitMessagesCache;
-	}
+    double GetSvnClientVersion() const {
+        return m_svnClientVersion;
+    }
+    CommitMessagesCache& GetCommitMessagesCache() {
+        return m_commitMessagesCache;
+    }
 
-	bool LoginIfNeeded        (wxCommandEvent &event, const wxString &workingDirectory, wxString& loginString);
-	bool GetNonInteractiveMode(wxCommandEvent &event);
-	bool IsPathUnderSvn       (const wxString &path);
-	void ChangeLog            (const wxString &path, const wxString &fullpath, wxCommandEvent &event);
-	void FinishSyncProcess(ProjectPtr& proj, 
+    bool LoginIfNeeded        (wxCommandEvent &event, const wxString &workingDirectory, wxString& loginString);
+    bool GetNonInteractiveMode(wxCommandEvent &event);
+    bool IsPathUnderSvn       (const wxString &path);
+    void ChangeLog            (const wxString &path, const wxString &fullpath, wxCommandEvent &event);
+    void FinishSyncProcess(ProjectPtr& proj,
                            const wxString& workDir,
                            bool excludeBin,
                            const wxString& excludeExtensions,
                            const wxString& output);
 
 protected:
-	void DoInitialize();
-	void DoSetSSH();
-	void DoGetSvnVersion();
-	wxArrayString DoGetSvnStatusQuiet(const wxString &wd);
-	bool NormalizeDir(wxString& wd);
-	std::vector<wxString> GetLocalAddsDels(const wxString& wd);
-	std::vector<wxString> GetFilesMarkedBinary(const wxString& wd);
+    void DoInitialize();
+    void DoSetSSH();
+    void DoGetSvnVersion();
+    wxArrayString DoGetSvnStatusQuiet(const wxString &wd);
+    bool NormalizeDir(wxString& wd);
+    std::vector<wxString> GetLocalAddsDels(const wxString& wd);
+    std::vector<wxString> GetFilesMarkedBinary(const wxString& wd);
     std::vector<wxString> RemoveExcludeExts(const std::vector<wxString>& aryInFiles, const wxString& excludeExtensions);
 
-	wxString DoGetFileExplorerItemFullPath();
-	wxString DoGetFileExplorerItemPath();
-	
-	wxArrayString DoGetFileExplorerFiles();
-	wxString      DoGetFileExplorerFilesAsString();
-	wxArrayString DoGetFileExplorerFilesToCommitRelativeTo(const wxString &wd);
+    wxString DoGetFileExplorerItemFullPath();
+    wxString DoGetFileExplorerItemPath();
+
+    wxArrayString DoGetFileExplorerFiles();
+    wxString      DoGetFileExplorerFilesAsString();
+    wxArrayString DoGetFileExplorerFilesToCommitRelativeTo(const wxString &wd);
 };
 
 #endif //Subversion2

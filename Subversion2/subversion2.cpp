@@ -453,7 +453,7 @@ void Subversion2::OnDiff(wxCommandEvent& event)
         return;
     }
     bool nonInteractive = GetNonInteractiveMode(event);
-    command << GetSvnExeName(nonInteractive) << loginString << wxT("diff -r") << diffAgainst << wxT(" ") << DoGetFileExplorerFilesAsString();
+    command << GetSvnExeNameNoConfigDir(nonInteractive) << loginString << wxT("diff -r") << diffAgainst << wxT(" ") << DoGetFileExplorerFilesAsString();
     GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDiffHandler(this, event.GetId(), this), false);
 }
 
@@ -475,15 +475,6 @@ wxString Subversion2::GetSvnExeName(bool nonInteractive)
     } else {
         executeable << ssd.GetExecutable() << wxT(" ");
     }
-
-//	if(nonInteractive)
-//		executeable << wxT(" --non-interactive ");
-
-    // --trust-server-cert was introduced in version >=1.6
-    // but it also requires --non-interactive mode enabled
-//	if(GetSvnClientVersion() >= 1.6 && nonInteractive) {
-//		executeable << wxT(" --trust-server-cert ");
-//	}
 
     executeable << wxT(" --config-dir \"") << GetUserConfigDir() << wxT("\" ");
     return executeable;
@@ -1408,4 +1399,20 @@ void Subversion2::FinishSyncProcess(ProjectPtr& proj,
         wxLogMessage(_("rawData=%s\n"), rawData.c_str());
         projRefreshed->SetPluginData(_("subversion2"), rawData);    
     }
+}
+
+wxString Subversion2::GetSvnExeNameNoConfigDir(bool nonInteractive)
+{
+    SvnSettingsData ssd = GetSettings();
+    wxString executeable;
+    bool encloseQuotations = false;
+    wxString exeName = ssd.GetExecutable();
+    exeName.Trim().Trim(false);
+    encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
+    if (encloseQuotations) {
+        executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" ");
+    } else {
+        executeable << ssd.GetExecutable() << wxT(" ");
+    }
+    return executeable;
 }

@@ -16341,7 +16341,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Focused",
-											"m_value":	true
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -16497,7 +16497,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Focused",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",

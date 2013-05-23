@@ -40,9 +40,9 @@ void wxCA3F0InitBitmapResources()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/project_settings_liteeditor_bitmaps.cpp$._project_settings_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/project_settings_liteeditor_bitmaps.cpp$._project_settings_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/project_settings_liteeditor_bitmaps.cpp$project_settings_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/project_settings_liteeditor_bitmaps.cpp$project_settings_liteeditor_bitmaps.xrc"));
 }

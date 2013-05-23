@@ -1575,7 +1575,6 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
     flexGridSizer53->Add(m_staticTextTargetName, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlTargetName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlTargetName->SetFocus();
     
     flexGridSizer53->Add(m_textCtrlTargetName, 1, wxALL|wxEXPAND, 5);
     
@@ -1584,6 +1583,7 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
     flexGridSizer53->Add(m_staticTextCommand, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, 5);
     
     m_textCtrlCommand = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_WORDWRAP|wxTE_RICH2|wxTE_MULTILINE);
+    m_textCtrlCommand->SetFocus();
     
     flexGridSizer53->Add(m_textCtrlCommand, 0, wxALL|wxEXPAND, 5);
     

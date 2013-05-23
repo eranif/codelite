@@ -829,6 +829,12 @@ void Subversion2::DoGetSvnInfoSync(SvnInfo& svnInfo, const wxString &workingDire
         svnInfoCommand << wxT("\"") << workingDirectory << wxT("\"");
     else
         svnInfoCommand << workingDirectory;
+    
+    
+#ifndef __WXMSW__
+    // Hide stderr
+    svnInfoCommand << " 2> /dev/null";
+#endif
 
     wxArrayString xmlArr;
 

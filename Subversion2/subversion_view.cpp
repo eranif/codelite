@@ -838,6 +838,7 @@ void SubversionView::OnRefreshView(wxCommandEvent& event)
 void SubversionView::OnFileAdded(wxCommandEvent& event)
 {
     event.Skip();
+    
     SvnSettingsData ssd = m_plugin->GetSettings();
     if(ssd.GetFlags() & SvnAddFileToSvn) {
         wxArrayString *files = (wxArrayString*)event.GetClientData();

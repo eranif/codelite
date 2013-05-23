@@ -750,42 +750,44 @@ void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 void GitPlugin::OnFilesRemovedFromProject(wxCommandEvent& e)
 {
     e.Skip();
-    wxArrayString *files = (wxArrayString*)e.GetClientData();
-    if(files && !files->IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
-        // Build the message:
-
-        // Limit the message to maximum of 10 files
-        wxString filesString;
-        wxString msg;
-        msg << _("Would you like to remove the following files from git?\n\n");
-        size_t fileCount = files->GetCount();
-
-        for(size_t i=0; i<files->GetCount(); i++) {
-            if ( i < 10 ) {
-                msg << files->Item(i) << wxT("\n");
-                filesString << wxT("\"") << files->Item(i) << wxT("\" ");
-                --fileCount;
-            } else {
-                break;
-            }
-        }
-
-        if ( fileCount ) {
-            msg << ".. and " << fileCount << " more files";
-        }
-
-        if(wxMessageBox(msg,
-                        wxT("Git"),
-                        wxYES_NO|wxCANCEL|wxCENTER,
-                        GetManager()->GetTheApp()->GetTopWindow()) == wxYES) {
-
-            // Remove the files
-            gitAction ga(gitRmFiles, filesString);
-            m_gitActionQueue.push( ga );
-            ProcessGitActionQueue();
-            RefreshFileListView();
-        }
-    }
+    RefreshFileListView(); // in git world, deleting a file is enough
+    
+    //wxArrayString *files = (wxArrayString*)e.GetClientData();
+    //if(files && !files->IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
+    //    // Build the message:
+    //
+    //    // Limit the message to maximum of 10 files
+    //    wxString filesString;
+    //    wxString msg;
+    //    msg << _("Would you like to remove the following files from git?\n\n");
+    //    size_t fileCount = files->GetCount();
+    //
+    //    for(size_t i=0; i<files->GetCount(); i++) {
+    //        if ( i < 10 ) {
+    //            msg << files->Item(i) << wxT("\n");
+    //            filesString << wxT("\"") << files->Item(i) << wxT("\" ");
+    //            --fileCount;
+    //        } else {
+    //            break;
+    //        }
+    //    }
+    //
+    //    if ( fileCount ) {
+    //        msg << ".. and " << fileCount << " more files";
+    //    }
+    //
+    //    if(wxMessageBox(msg,
+    //                    wxT("Git"),
+    //                    wxYES_NO|wxCANCEL|wxCENTER,
+    //                    GetManager()->GetTheApp()->GetTopWindow()) == wxYES) {
+    //
+    //        // Remove the files
+    //        gitAction ga(gitRmFiles, filesString);
+    //        m_gitActionQueue.push( ga );
+    //        ProcessGitActionQueue();
+    //        RefreshFileListView();
+    //    }
+    //}
 }
 
 /*******************************************************************************/

@@ -327,18 +327,13 @@ wxString CallGraph::GetGprofPath()
     if (!gprofPath.IsEmpty())	return gprofPath;
 
 #ifdef __WXMSW__
-    gprofPath = wxFileSelector("Please select the gprof.exe path", "", "", "");
-    if (gprofPath.IsEmpty()) {
-        ::wxMessageBox("selected binary was canceled", "CodeLite", wxICON_ERROR|wxOK|wxCENTRE);
-        return wxEmptyString;
-    }
+    return wxEmptyString;
 #else
     gprofPath = LocateApp(GPROF_FILENAME_EXE);
 #endif
 
     confData.SetGprofPath(gprofPath);
     m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
-
     return gprofPath;
 }
 
@@ -352,15 +347,13 @@ wxString CallGraph::GetDotPath()
 
     wxString dotPath = confData.GetDotPath();
 
-    if (!dotPath.IsEmpty())	 return dotPath;
+    if (!dotPath.IsEmpty()) return dotPath;
 
 #ifdef __WXMSW__
-    dotPath = wxFileSelector("Please select the dot.exe path", "", "", "");
-    if (dotPath.IsEmpty()) {
-        ::wxMessageBox("selected binary was canceled", "CodeLite", wxOK|wxCENTER|wxICON_ERROR);
-        return wxEmptyString;
-    }
+    // dont annoy with messages on startup
+    return wxEmptyString;
 #else
+
     dotPath = LocateApp(DOT_FILENAME_EXE);
 #endif
 

@@ -245,7 +245,7 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
     item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), _("Revert changes"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     
-    item = new wxMenuItem(menu, XRCID("svn_explorer_revert_to_revision"), _("Revert to a revision"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("svn_explorer_revert_to_revision"), _("Revert to revision"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
 

@@ -68,6 +68,7 @@ protected:
     void OnAdd              (wxCommandEvent &event);
     void OnDelete           (wxCommandEvent &event);
     void OnRevert           (wxCommandEvent &event);
+    void OnRevertToRevision (wxCommandEvent &event);
     void OnDiff             (wxCommandEvent &event);
     void OnPatch            (wxCommandEvent &event);
     void OnLog              (wxCommandEvent &event);

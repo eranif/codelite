@@ -139,6 +139,7 @@ Subversion2::Subversion2(IManager *manager)
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_delete"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDelete),            NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_rename"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRename),            NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_revert"),              wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevert),            NULL, this);
+    GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_revert_to_revision"),  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnRevertToRevision),  NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_patch"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnPatch),             NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_diff"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnDiff),              NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_log"),                 wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnLog),               NULL, this);
@@ -241,7 +242,10 @@ wxMenu* Subversion2::CreateFileExplorerPopMenu()
 
     menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), _("Revert"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("svn_explorer_revert"), _("Revert changes"), wxEmptyString, wxITEM_NORMAL);
+    menu->Append(item);
+    
+    item = new wxMenuItem(menu, XRCID("svn_explorer_revert_to_revision"), _("Revert to a revision"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
 
@@ -1421,4 +1425,25 @@ wxString Subversion2::GetSvnExeNameNoConfigDir(bool nonInteractive)
         executeable << ssd.GetExecutable() << wxT(" ");
     }
     return executeable;
+}
+
+void Subversion2::OnRevertToRevision(wxCommandEvent& event)
+{
+    wxString command;
+    wxString loginString;
+    
+    wxString revision = wxGetTextFromUser(_("Set the revision number:"), _("Revert to revision"));
+    if ( revision.IsEmpty() ) {
+        // user canceled
+        return;
+    }
+
+    long nRevision;
+    if ( !revision.ToCLong(&nRevision) ) {
+        ::wxMessageBox(_("Invalid revision number"), "codelite", wxOK|wxICON_ERROR|wxCENTER);
+        return;
+    }
+
+    command << GetSvnExeName(false) << loginString << " merge -r HEAD:" << nRevision << DoGetFileExplorerFilesAsString();
+    GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDefaultCommandHandler(this, event.GetId(), this));
 }

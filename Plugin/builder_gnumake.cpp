@@ -1070,6 +1070,8 @@ void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldC
         extraDeps << "\"" << fn.GetFullPath() << wxT("\" ");
 
         depsRules << "\"" << fn.GetFullPath() << wxT("\":\n");
+        // Make sure the dependecy directory exists
+        depsRules << "\t@$(MakeDirCommand) \"" << fn.GetPath() << "\"\n";
         depsRules << wxT("\t@echo stam > ") << wxT("\"") << fn.GetFullPath() << wxT("\"\n");
         depsRules << wxT("\n\n");
     }

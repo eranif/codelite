@@ -45,6 +45,7 @@
 #include "clsplashscreen.h"
 #include "WelcomePage.h"
 #include "code_completion_box.h"
+#include "cl_aui_tool_stickness.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -5121,6 +5122,7 @@ void clMainFrame::OnShowAuiBuildMenu(wxAuiToolBarEvent& e)
 
         wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(e.GetEventObject());
         if ( auibar ) {
+            clAuiToolStickness ts(auibar, e.GetToolId());
             wxRect rect = auibar->GetToolRect(e.GetId());
             wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
             pt = ScreenToClient(pt);

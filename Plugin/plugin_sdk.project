@@ -219,6 +219,8 @@
       <File Name="cl_aui_notebook_art.cpp"/>
       <File Name="cl_aui_notebook_art.h"/>
     </VirtualDirectory>
+    <File Name="cl_aui_tool_stickness.h"/>
+    <File Name="cl_aui_tool_stickness.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

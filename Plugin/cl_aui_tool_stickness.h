@@ -1,6 +1,7 @@
 #ifndef CLAUITOOLSTICKNESS_H
 #define CLAUITOOLSTICKNESS_H
 
+#include <wx/bitmap.h>
 #include <wx/aui/auibar.h>
 #include "codelite_exports.h"
 

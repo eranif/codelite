@@ -14,6 +14,16 @@ find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
+if ( WITH_MYSQL )
+    find_library(LIBMYSQLCLIENT NAMES libmysqlclient.so)
+    if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND") 
+        message( FATAL_ERROR "-- Could not locate libmysqlclient.so" )
+    else ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
+        message( "-- LIBMYSQLCLIENT is set to ${LIBMYSQLCLIENT}" )
+    endif ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
+    add_definitions( -DDBL_USE_MYSQL=1 )
+endif ( WITH_MYSQL )
+
 ## On UNIX we require GTK
 if (UNIX AND NOT APPLE)
 
@@ -33,11 +43,11 @@ endif ( USE_PCH )
 
 # Include paths
 include_directories("${CL_SRC_ROOT}/Plugin" 
-		    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
-		    "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" 
+                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
+                    "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" 
                     "${CL_SRC_ROOT}/Interfaces" 
-		    "${CL_SRC_ROOT}/sdk/wxshapeframework/include"
-		    "${CL_SRC_ROOT}/sdk/databaselayer/include" )
+                    "${CL_SRC_ROOT}/sdk/wxshapeframework/include"
+                    "${CL_SRC_ROOT}/sdk/databaselayer/include" )
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -53,7 +63,7 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin -ldatabaselayersqlite -lwxshapeframework)
+target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${LIBMYSQLCLIENT} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin -ldatabaselayersqlite -lwxshapeframework)
 # Make sure that the plugin will not start build before 'plugin.so' is ready
 add_dependencies(${PLUGIN_NAME} plugin)
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

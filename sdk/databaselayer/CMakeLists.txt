@@ -25,10 +25,29 @@ endif(WIN32)
 
 # Add RPATH
 SET (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
-
 FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
 
+if ( WITH_MYSQL )
+    find_library(LIBMYSQLCLIENT NAMES libmysqlclient.so)
+    find_path(MYSQLCLIENT_INCLUDE NAMES mysql.h PATH_SUFFIXES mysql)
+    
+    if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND") 
+        message( FATAL_ERROR "-- Could not locate libmysqlclient.so" )
+    else ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
+        message( "-- LIBMYSQLCLIENT is set to ${LIBMYSQLCLIENT}" )
+    endif ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
+    
+    if ( ${MYSQLCLIENT_INCLUDE} STREQUAL "MYSQLCLIENT_INCLUDE-NOTFOUND" )
+        message( FATAL_ERROR "-- Could not locate mysql.h" )
+    endif ( ${MYSQLCLIENT_INCLUDE} STREQUAL "MYSQLCLIENT_INCLUDE-NOTFOUND" )
+    
+    add_definitions( -DDBL_USE_MYSQL=1 )
+    include_directories(${MYSQLCLIENT_INCLUDE})
+    message("-- Adding MySQL include path: ${MYSQLCLIENT_INCLUDE} ")
+    FILE(GLOB MYSQL_SRCS "src/dblayer/Mysql*.cpp")
+endif ( WITH_MYSQL )
+
 # Define the output
-add_library(databaselayersqlite SHARED ${SRCS})
+add_library(databaselayersqlite SHARED ${SRCS} ${MYSQL_SRCS})
 target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
 install(TARGETS databaselayersqlite DESTINATION ${PLUGINS_DIR})

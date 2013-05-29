@@ -31,7 +31,8 @@ void DbExplorerSettings::Serialize(Archive& arch)
 	// Write the connections
 	arch.Write(wxT("num_of_connections"), m_connections.size());
 	for(size_t i=0; i<m_connections.size(); i++) {
-		wxString connId = wxString::Format(wxT("connection_%u"), i);
+		wxString connId;
+        connId << "connection_" << i;
 		arch.Write(connId, &m_connections.at(i));
 	}
 }

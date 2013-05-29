@@ -544,7 +544,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     gridSizer235->Add(m_cmdLnkBtn155, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn151 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_cmdLnkBtn151 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
     gridSizer235->Add(m_cmdLnkBtn151, 0, wxALL|wxEXPAND, 5);
     

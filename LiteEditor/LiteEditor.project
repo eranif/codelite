@@ -599,11 +599,9 @@
     <File Name="../Runtime/update.bat"/>
     <File Name="../Runtime/make_mac_bundle.sh"/>
     <File Name="../make_src_targz.sh"/>
-    <File Name="../make_deb.sh"/>
     <File Name="../make_repo.sh"/>
     <File Name="../git-revision.bat"/>
     <File Name="../git-revision.sh"/>
-    <File Name="../configure"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="newversionbasedlg.fbp"/>

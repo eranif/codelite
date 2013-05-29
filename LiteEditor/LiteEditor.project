@@ -1116,7 +1116,6 @@ resources.cpp: resources.xrc
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="install">make install</Target>
         <Target Name="cmake">cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DWITH_MYSQL=1 -DCMAKE_BUILD_TYPE=Release ..</Target>
         <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
@@ -1125,7 +1124,7 @@ resources.cpp: resources.xrc
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName/>
-        <WorkingDirectory>$(WorkspacePath)../build-release-mysql</WorkingDirectory>
+        <WorkingDirectory>$(WorkspacePath)/build-release-mysql</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>

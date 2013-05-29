@@ -26,7 +26,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     this->SetSizer(boxSizer1);
     
     m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
-    m_splitter5->SetSashGravity(0.500000);
+    m_splitter5->SetSashGravity(0.5);
     m_splitter5->SetMinimumPaneSize(10);
     
     boxSizer1->Add(m_splitter5, 1, wxALL|wxEXPAND, 5);
@@ -162,7 +162,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     this->SetSizer(boxSizer36);
     
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
-    m_splitter->SetSashGravity(0.000000);
+    m_splitter->SetSashGravity(0);
     m_splitter->SetMinimumPaneSize(10);
     
     boxSizer36->Add(m_splitter, 1, wxEXPAND, 5);
@@ -524,27 +524,27 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer195->Add(gridSizer235, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_cmdLnkBtnWorkspaces = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"), wxDefaultPosition, wxSize(-1,100), 0);
+    m_cmdLnkBtnWorkspaces = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"), wxDefaultPosition, wxSize(-1,100), wxBU_LEFT);
     
     gridSizer235->Add(m_cmdLnkBtnWorkspaces, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtnFilesMenu = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent files"), _("Open a recently used file"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtnFilesMenu = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent files"), _("Open a recently used file"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
     gridSizer235->Add(m_cmdLnkBtnFilesMenu, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn157 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New"), _("Start a new project"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtn157 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("New"), _("Start a new project"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
     gridSizer235->Add(m_cmdLnkBtn157, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn231 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Open"), _("Open a workspace"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtn231 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Open"), _("Open a workspace"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
     gridSizer235->Add(m_cmdLnkBtn231, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn155 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Forums"), _("Visit codelite's forums"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtn155 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Forums"), _("Visit codelite's forums"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
     gridSizer235->Add(m_cmdLnkBtn155, 0, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtn151 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtn151 = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
     
     gridSizer235->Add(m_cmdLnkBtn151, 0, wxALL|wxEXPAND, 5);
     

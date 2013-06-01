@@ -220,7 +220,26 @@ void ContextHtml::GotoPreviousDefintion()
 
 bool ContextHtml::IsCommentOrString(long pos)
 {
-    return IsComment(pos);
+    int style = GetCtrl().GetStyleAt(pos);
+    return IsComment(pos) || 
+           style == wxSTC_H_DOUBLESTRING ||
+           style == wxSTC_H_SINGLESTRING ||
+           style == wxSTC_H_SGML_DOUBLESTRING ||
+           style == wxSTC_H_SGML_SIMPLESTRING ||
+           style == wxSTC_HJ_DOUBLESTRING ||
+           style == wxSTC_HJ_SINGLESTRING ||
+           style == wxSTC_HJ_STRINGEOL ||
+           style == wxSTC_HJA_DOUBLESTRING ||
+           style == wxSTC_HJA_SINGLESTRING ||
+           style == wxSTC_HJA_STRINGEOL ||
+           style == wxSTC_HB_STRING ||
+           style == wxSTC_HBA_STRING ||
+           style == wxSTC_HBA_STRINGEOL ||
+           style == wxSTC_HP_STRING ||
+           style == wxSTC_HPA_STRING ||
+           style == wxSTC_HPA_CHARACTER ||
+           style == wxSTC_HPHP_HSTRING ||
+           style == wxSTC_HPHP_SIMPLESTRING;
 }
 
 bool ContextHtml::IsDefaultContext() const

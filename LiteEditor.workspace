@@ -40,7 +40,7 @@
     <![CDATA[]]>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
@@ -148,68 +148,6 @@
       <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
       <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
       <Project Name="LiteEditor" ConfigName="CMake_Debug"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
-      <Project Name="git" ConfigName="WinReleaseUnicode"/>
-      <Project Name="ExternalTools" ConfigName="WinReleaseUnicode"/>
-      <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
-      <Project Name="databaselayer_sqlite" ConfigName="WinReleaseUnicode"/>
-      <Project Name="DatabaseExplorer" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CppChecker" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
-      <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
-      <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
-    </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_DBE_MySQL" Selected="no">
-      <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
-      <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Subversion2" ConfigName="WinReleaseUnicode"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
-      <Project Name="QMakePlugin" ConfigName="WinReleaseUnicode"/>
-      <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
-      <Project Name="PCH" ConfigName="Release"/>
-      <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
-      <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
-      <Project Name="LiteEditor" ConfigName="CMake_Debug_DBE_MySQL"/>
-      <Project Name="Interfaces" ConfigName="Common"/>
-      <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
-      <Project Name="git" ConfigName="WinReleaseUnicode"/>
-      <Project Name="ExternalTools" ConfigName="WinReleaseUnicode"/>
-      <Project Name="DebuggerGDB" ConfigName="WinReleaseUnicode"/>
-      <Project Name="databaselayer_sqlite" ConfigName="WinReleaseUnicode"/>
-      <Project Name="DatabaseExplorer" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Cscope" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CppChecker" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Copyright" ConfigName="WinReleaseUnicode"/>
-      <Project Name="ContinuousBuild" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
-      <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
-      <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
-    </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release_DBE_MySQL" Selected="yes">
-      <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
-      <Project Name="wxFormBuilder" ConfigName="WinReleaseUnicode"/>
-      <Project Name="UnitTestPP" ConfigName="WinReleaseUnicode"/>
-      <Project Name="Subversion2" ConfigName="WinReleaseUnicode"/>
-      <Project Name="sqlite3" ConfigName="Common"/>
-      <Project Name="snipwiz" ConfigName="WinReleaseUnicode"/>
-      <Project Name="QMakePlugin" ConfigName="WinReleaseUnicode"/>
-      <Project Name="plugin_sdk" ConfigName="WinReleaseUnicode"/>
-      <Project Name="PCH" ConfigName="Release"/>
-      <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
-      <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
-      <Project Name="LiteEditor" ConfigName="CMake_Release_DBE_MySQL"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
       <Project Name="git" ConfigName="WinReleaseUnicode"/>

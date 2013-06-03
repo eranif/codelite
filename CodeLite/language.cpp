@@ -384,7 +384,7 @@ bool Language::ProcessExpression(const wxString& stmt,
         CL_DEBUG(wxT("PrcocessToken..."));
         bool res = ProcessToken( &container );
         CL_DEBUG(wxT("step 1 completed"));
-
+        
         if ( !res && !container.Rewind()) {
             evaluationSucceeded = false;
             break;
@@ -859,7 +859,16 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
             Variable var = (*iter);
             wxString var_name = _U(var.m_name.c_str());
             if (var_name == token->GetName()) {
-                DoFixTokensFromVariable(tokeContainer, wxString::From8BitData(var.m_completeType.c_str()));
+                
+                if ( var.m_isAuto ) {
+                    tokeContainer->current->SetIsAutoVariable(true);
+                    tokeContainer->current->SetAutoExpression( var.m_completeType );
+                    DoFixTokensFromVariable(tokeContainer, tokeContainer->current->GetAutoExpression());
+                    
+                } else {
+                    DoFixTokensFromVariable(tokeContainer, wxString::From8BitData(var.m_completeType.c_str()));
+                    
+                }
                 return false;
             }
         }
@@ -868,18 +877,18 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
     // Try the lookup tables
     bool hasMatch = DoSearchByNameAndScope(token->GetName(), token->GetContextScope(), tags, type, typeScope);
     if ( !hasMatch && token->GetPrev() == NULL) {
-		// failed to find it in the local scope and in the lookup table
-		// try the additional scopes
-		for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
-			tags.clear();
-			hasMatch = DoSearchByNameAndScope(token->GetName(), GetAdditionalScopes().at(i), tags, type, typeScope);
-			if (hasMatch) {
-				break;
-			}
-		}
+        // failed to find it in the local scope and in the lookup table
+        // try the additional scopes
+        for (size_t i=0; i<GetAdditionalScopes().size(); i++) {
+            tags.clear();
+            hasMatch = DoSearchByNameAndScope(token->GetName(), GetAdditionalScopes().at(i), tags, type, typeScope);
+            if (hasMatch) {
+                break;
+            }
+        }
 
-		if ( !hasMatch ) {
-			// Try macros
+        if ( !hasMatch ) {
+            // Try macros
             PPToken tok  = GetTagsManager()->GetDatabase()->GetMacro(token->GetName());
             if(tok.flags & PPToken::IsValid) {
                 // we got a match in the macros DB
@@ -901,9 +910,9 @@ bool Language::ProcessToken(TokenContainer *tokeContainer)
                 DoFixTokensFromVariable(tokeContainer, tok.replacement);
                 return false;
             }
-		}
-	}
-        
+        }
+    }
+
     if( hasMatch && tags.size() ) {
         if(token->GetPrev() == NULL) {
 
@@ -2069,18 +2078,18 @@ int Language::DoReadClassName(CppScanner& scanner, wxString &clsname)
 {
     clsname.clear();
     int type  = 0;
-    
+
     while ( true ) {
         type =  scanner.yylex();
-        if ( type == 0 ) 
+        if ( type == 0 )
             return 0;
-        
+
         if ( type == IDENTIFIER ) {
             clsname = scanner.YYText();
-            
+
         } else if ( type == '{' || type == ':' ) {
             return type;
-            
+
         } else if ( type == ';' ) {
             // we probably encountered a forward declaration or 'friend' statement
             clsname.Clear();
@@ -2131,7 +2140,7 @@ bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& funct
             if( type == 0 ) {
                 return false;
             }
-            
+
             if ( name == clsname ) {
                 // We found the lex
                 success = true;
@@ -2150,7 +2159,7 @@ bool Language::InsertFunctionDecl(const wxString& clsname, const wxString& funct
         // DoReadClassName already consumed the '{' character
         // mark this as a success and continue
         success = true;
-        
+
     } else {
         while ( true ) {
             type = scanner.yylex();

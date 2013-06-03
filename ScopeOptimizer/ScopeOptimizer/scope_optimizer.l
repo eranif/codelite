@@ -176,7 +176,7 @@ for[ ]*\(               {
 		current_scope.clear();
 	}
 }
-auto                {}
+auto                {current_scope.str += yytext;}
 break               {}
 case                {}
 continue            {}

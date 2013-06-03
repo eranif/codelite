@@ -172,7 +172,10 @@ template_parameter    :    const_or_volatile_spec nested_scope_specifier LE_IDEN
 //the main rule for finding variables
 //in the code. if this rule succeeded, the variables
 //is added to the gs_vars vriable
-variables           : LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumBracketsContent('{');} typedef_name_list ';'
+variables           : stmnt_starter LE_AUTO LE_IDENTIFIER '=' {var_consumeAutoAssignment($3);}
+                    {}
+                    
+                    LE_TYPEDEF LE_STRUCT optional_struct_name '{' {var_consumBracketsContent('{');} typedef_name_list ';'
                     {
                     }
                     | stmnt_starter variable_decl special_star_amp const_or_volatile_spec variable_name_list '{'{var_consumBracketsContent('{');} ';'
@@ -537,6 +540,37 @@ variable_decl       :   const_or_volatile_spec basic_type_name
 
 %%
 void yyerror(char *s) {}
+
+void var_consumeAutoAssignment(const std::string& varname)
+{
+    // Collect everything until we encounter the first ';'
+    std::string expression;
+    while ( true ) {
+        int ch = cl_scope_lex();
+        if(ch == 0){
+            break;
+        }
+        
+        if ( ch == ';' ) {
+            // add an auto variable
+            Variable var;
+            var.m_name = varname;
+            var.m_isAuto = true;
+            var.m_completeType.swap(expression);
+            curr_var.m_lineno = cl_scope_lineno;
+            
+            s_templateInitList.clear();
+            gs_vars->push_back(var);
+            
+            curr_var.Reset();
+            gs_names.clear();
+            
+            break;
+        } else {
+            expression.append( cl_scope_text ).append(" ");
+        }
+    }
+}
 
 std::string var_consumBracketsContent(char openBrace)
 {

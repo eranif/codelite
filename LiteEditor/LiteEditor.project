@@ -523,6 +523,8 @@
     <File Name="../InnoSetup/codelite_mingw_wx.iss"/>
     <File Name="../codelite-icons-fresh-farm/manifest.ini"/>
     <File Name="project_settings.wxcp"/>
+    <File Name="../InnoSetup/wxwidgets.iss"/>
+    <File Name="../InnoSetup/modpath.iss"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>
@@ -602,6 +604,7 @@
     <File Name="../make_repo.sh"/>
     <File Name="../git-revision.bat"/>
     <File Name="../git-revision.sh"/>
+    <File Name="../InnoSetup/make_packages.bat"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="newversionbasedlg.fbp"/>

@@ -979,7 +979,7 @@
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <Target Name="install">cd build-debug &amp;&amp; make install</Target>
-        <Target Name="cmake">cd build-debug &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  ..</Target>
+        <Target Name="cmake">cd build-debug &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  -DWITH_MYSQL=1 ..</Target>
         <RebuildCommand>cd build-debug &amp;&amp; make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>cd build-debug &amp;&amp; make clean</CleanCommand>
         <BuildCommand>cd build-debug &amp;&amp; make -j8</BuildCommand>
@@ -1075,7 +1075,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="cmake">cd build-release &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 ..</Target>
+        <Target Name="cmake">cd build-release &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DWITH_MYSQL=1 ..</Target>
         <RebuildCommand>cd build-release &amp;&amp; make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>cd build-release &amp;&amp; make clean</CleanCommand>
         <BuildCommand>cd build-release &amp;&amp; make -e -j 8</BuildCommand>

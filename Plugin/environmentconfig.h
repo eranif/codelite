@@ -75,6 +75,10 @@ public:
 class EnvSetter
 {
     EnvironmentConfig *m_env;
+    wxString           m_envName;
+    wxString           m_oldEnvValue;
+    bool               m_restoreOldValue;
+    
 public:
     EnvSetter(StringMap *om = NULL) : m_env(EnvironmentConfig::Instance()) {
         m_env->ApplyEnv(om, wxEmptyString);
@@ -90,10 +94,28 @@ public:
             m_env->ApplyEnv(om, project);
         }
     }
+    
+    EnvSetter(const wxString &var, const wxString &value) {
+        m_envName = var;
+        // keep old value
+        m_restoreOldValue = ::wxGetEnv(m_envName, &m_oldEnvValue);
+        ::wxSetEnv(m_envName, value);
+    }
+    
     ~EnvSetter() {
         if (m_env) {
             m_env->UnApplyEnv();
             m_env = NULL;
+        }
+        
+        if ( m_restoreOldValue ) {
+            // restore old env variable value
+            ::wxSetEnv(m_envName, m_oldEnvValue);
+            
+        } else if ( !m_envName.IsEmpty() ) {
+            // we applied a single evn variable without old value
+            // uset it
+            ::wxUnsetEnv( m_envName );
         }
     }
 };

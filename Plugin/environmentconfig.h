@@ -28,6 +28,7 @@
 #include "configurationtoolbase.h"
 #include "archive.h"
 #include "evnvarlist.h"
+#include <wx/utils.h>
 
 class EnvSetter;
 

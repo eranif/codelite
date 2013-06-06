@@ -188,7 +188,7 @@ void TagsStorageSQLite::CreateSchema()
         sql = wxT("create unique index if not exists tags_version_uniq on tags_version(version);");
         m_db->ExecuteUpdate(sql);
 
-        sql = wxString(wxT("insert into tags_version values ('")) << GetVersion() << wxT("');");
+        sql = wxString(wxT("replace into tags_version values ('")) << GetVersion() << wxT("');");
         m_db->ExecuteUpdate(sql);
 
     } catch (wxSQLite3Exception &e) {

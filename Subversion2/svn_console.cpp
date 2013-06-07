@@ -193,9 +193,9 @@ void SvnConsole::DoProcessNextCommand()
     wxString cmdShell (m_currCmd.cmd);
 
     // Apply the environment variables before executing the command
-    StringMap om;
-    om[wxT("LC_ALL")] = wxT("C");
-
+    wxStringMap_t om;
+    om.insert( std::make_pair( "LC_ALL", "C" ) );
+    
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
     EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
 

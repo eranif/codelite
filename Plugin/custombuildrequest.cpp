@@ -63,9 +63,9 @@ CustomBuildRequest::~CustomBuildRequest()
 
 void CustomBuildRequest::Process(IManager *manager)
 {
-    wxString  cmd;
-    wxString  errMsg;
-    StringMap om;
+    wxString      cmd;
+    wxString      errMsg;
+    wxStringMap_t om;
 
     BuildSettingsConfig *bsc ( manager->GetBuildSettingsConfigManager() );
     Workspace *          w   ( manager->GetWorkspace()                  );

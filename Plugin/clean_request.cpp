@@ -30,7 +30,7 @@
 #include "event_notifier.h"
 #include "macros.h"
 #include "compiler.h"
- #include "clean_request.h"
+#include "clean_request.h"
 #include "environmentconfig.h"
 #include "globals.h"
 #include "buildmanager.h"
@@ -40,112 +40,112 @@
 #include "plugin.h"
 
 CleanRequest::CleanRequest(const QueueCommand &info)
-		: ShellCommand(info)
+    : ShellCommand(info)
 {
 }
 
 CleanRequest::~CleanRequest()
 {
-	//no need to delete the process, it will be deleted by the wx library
+    //no need to delete the process, it will be deleted by the wx library
 }
 
 
 //do the actual cleanup
 void CleanRequest::Process(IManager *manager)
 {
-	wxString cmd;
-	wxString errMsg;
-	StringMap om;
+    wxString cmd;
+    wxString errMsg;
+    wxStringMap_t om;
 
-	BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
-	BuildManager *       bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
-	Workspace *          w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
-	
+    BuildSettingsConfig *bsc(manager ? manager->GetBuildSettingsConfigManager() : BuildSettingsConfigST::Get());
+    BuildManager *       bm(manager ? manager->GetBuildManager() : BuildManagerST::Get());
+    Workspace *          w(manager ? manager->GetWorkspace() : WorkspaceST::Get());
 
-	ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
-	if (!proj) {
-		AppendLine(_("Cant find project: ") + m_info.GetProject());
-		return;
-	}
-	wxString             pname (proj->GetName());
 
-	//BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
-	BuilderPtr builder = bm->GetSelectedBuilder();
-	if (m_info.GetProjectOnly()) {
-		cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
-	} else {
-		cmd = builder->GetCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
-	}
+    ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
+    if (!proj) {
+        AppendLine(_("Cant find project: ") + m_info.GetProject());
+        return;
+    }
+    wxString             pname (proj->GetName());
 
-	if ( cmd.IsEmpty() ) {
-		AppendLine(_("Sorry, there is no 'Clean' command available\n"));
-		return;
-	}
+    //BuilderPtr builder = bm->GetBuilder(wxT("GNU makefile for g++/gcc"));
+    BuilderPtr builder = bm->GetSelectedBuilder();
+    if (m_info.GetProjectOnly()) {
+        cmd = builder->GetPOCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
+    } else {
+        cmd = builder->GetCleanCommand(m_info.GetProject(), m_info.GetConfiguration());
+    }
 
-	BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
-	if(bldConf) {
-		wxString cmpType = bldConf->GetCompilerType();
-		CompilerPtr cmp = bsc->GetCompiler(cmpType);
-		if(cmp) {
-			wxString value( cmp->GetPathVariable() );
-			if(value.Trim().Trim(false).IsEmpty() == false) {
-				wxLogMessage(wxString::Format(wxT("Setting PATH to '%s'"), value.c_str()));
-				om[wxT("PATH")] = value.Trim().Trim(false);
-			}
-		}
-	} else {
-		AppendLine(_("Sorry, couldn't find the Build configuration\n"));
-		return;
-	}
+    if ( cmd.IsEmpty() ) {
+        AppendLine(_("Sorry, there is no 'Clean' command available\n"));
+        return;
+    }
 
-	// Notify plugins that a compile process is going to start
-	wxCommandEvent event(wxEVT_BUILD_STARTING);
-	event.SetClientData((void*)&pname);
-	event.SetString( m_info.GetConfiguration() );
+    BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+    if(bldConf) {
+        wxString cmpType = bldConf->GetCompilerType();
+        CompilerPtr cmp = bsc->GetCompiler(cmpType);
+        if(cmp) {
+            wxString value( cmp->GetPathVariable() );
+            if(value.Trim().Trim(false).IsEmpty() == false) {
+                wxLogMessage(wxString::Format(wxT("Setting PATH to '%s'"), value.c_str()));
+                om[wxT("PATH")] = value.Trim().Trim(false);
+            }
+        }
+    } else {
+        AppendLine(_("Sorry, couldn't find the Build configuration\n"));
+        return;
+    }
 
-	if (EventNotifier::Get()->ProcessEvent(event)) {
+    // Notify plugins that a compile process is going to start
+    wxCommandEvent event(wxEVT_BUILD_STARTING);
+    event.SetClientData((void*)&pname);
+    event.SetString( m_info.GetConfiguration() );
 
-		// the build is being handled by some plugin, no need to build it
-		// using the standard way
-		return;
-	}
-	SendStartMsg();
+    if (EventNotifier::Get()->ProcessEvent(event)) {
 
-	//expand the variables of the command
-	cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
-	WrapInShell(cmd);
-	DirSaver ds;
-	DoSetWorkingDirectory(proj, false, false);
+        // the build is being handled by some plugin, no need to build it
+        // using the standard way
+        return;
+    }
+    SendStartMsg();
 
-	if (m_info.GetProjectOnly() ) {
-		//need to change directory to project dir
-		wxSetWorkingDirectory(proj->GetFileName().GetPath());
-	}
-	//print the build command
-	AppendLine(cmd + wxT("\n"));
+    //expand the variables of the command
+    cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
+    WrapInShell(cmd);
+    DirSaver ds;
+    DoSetWorkingDirectory(proj, false, false);
 
-	// print the prefix message of the build start. This is important since the parser relies
-	// on this message
-	if(m_info.GetProjectOnly()){
-		wxString configName(m_info.GetConfiguration());
+    if (m_info.GetProjectOnly() ) {
+        //need to change directory to project dir
+        wxSetWorkingDirectory(proj->GetFileName().GetPath());
+    }
+    //print the build command
+    AppendLine(cmd + wxT("\n"));
 
-		//also, send another message to the main frame, indicating which project is being built
-		//and what configuration
-		wxString text;
-		text << wxGetTranslation(CLEAN_PROJECT_PREFIX) << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
-		text << wxT("----------\n");
-		AppendLine(text);
-	}
+    // print the prefix message of the build start. This is important since the parser relies
+    // on this message
+    if(m_info.GetProjectOnly()) {
+        wxString configName(m_info.GetConfiguration());
 
-	//apply environment settings
-	EnvSetter env(NULL, &om, proj->GetName());
-	m_proc = CreateAsyncProcess(this, cmd);
-	if ( !m_proc ) {
+        //also, send another message to the main frame, indicating which project is being built
+        //and what configuration
+        wxString text;
+        text << wxGetTranslation(CLEAN_PROJECT_PREFIX) << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
+        text << wxT("----------\n");
+        AppendLine(text);
+    }
 
-		//remove environment settings applied
-		wxString message;
-		message << _("Failed to start clean process, command: ") << cmd << _(", process terminated with exit code: 0");
-		AppendLine(message);
-		return;
-	}
+    //apply environment settings
+    EnvSetter env(NULL, &om, proj->GetName());
+    m_proc = CreateAsyncProcess(this, cmd);
+    if ( !m_proc ) {
+
+        //remove environment settings applied
+        wxString message;
+        message << _("Failed to start clean process, command: ") << cmd << _(", process terminated with exit code: 0");
+        AppendLine(message);
+        return;
+    }
 }

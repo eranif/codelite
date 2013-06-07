@@ -29,6 +29,7 @@
 #include "archive.h"
 #include "evnvarlist.h"
 #include <wx/utils.h>
+#include "macros.h"
 
 class EnvSetter;
 
@@ -48,13 +49,13 @@ class WXDLLIMPEXP_SDK EnvironmentConfig : public ConfigurationToolBase
 {
     // Allow access to Apply/UnApply Env
     friend class EnvSetter;
-
-    StringMap m_envSnapshot;
-    int       m_envApplied;
+    
+    wxStringMap_t m_envSnapshot;
+    int           m_envApplied;
 
 protected:
     wxString    DoExpandVariables(const wxString &in);
-    void        ApplyEnv(StringMap *overrideMap, const wxString &project);
+    void        ApplyEnv(wxStringMap_t *overrideMap, const wxString &project);
     void        UnApplyEnv();
 
 public:
@@ -81,16 +82,16 @@ class EnvSetter
     bool               m_restoreOldValue;
     
 public:
-    EnvSetter(StringMap *om = NULL) : m_env(EnvironmentConfig::Instance()) {
+    EnvSetter(wxStringMap_t *om = NULL) : m_env(EnvironmentConfig::Instance()) {
         m_env->ApplyEnv(om, wxEmptyString);
     }
 
-    EnvSetter(EnvironmentConfig *conf, StringMap *om = NULL) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
+    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om = NULL) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
         if (m_env) {
             m_env->ApplyEnv(om, wxEmptyString);
         }
     }
-    EnvSetter(EnvironmentConfig *conf, StringMap *om, const wxString &project) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
+    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om, const wxString &project) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
         if (m_env) {
             m_env->ApplyEnv(om, project);
         }

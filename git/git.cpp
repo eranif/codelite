@@ -1024,13 +1024,14 @@ void GitPlugin::ProcessGitActionQueue()
 #endif
     
     // Set locale to english
-    StringMap om;
-    om["LC_ALL"]             = "C";
-    om["GIT_MERGE_AUTOEDIT"] = "no";
+    wxStringMap_t om;
+    om.insert( std::make_pair( "LC_ALL", "C" ) );
+    om.insert( std::make_pair( "GIT_MERGE_AUTOEDIT", "no" ) );
+    
 #ifdef __WXMSW__ 
     wxString homeDir;
     if ( wxGetEnv("USERPROFILE", &homeDir) ) {
-        om["HOME"] = homeDir;
+        om.insert( std::make_pair( "HOME", homeDir ) );
     }
 #endif
     EnvSetter es( &om );

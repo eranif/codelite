@@ -114,7 +114,7 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in, bool applyEnviro
     return expandedValue;
 }
 
-void EnvironmentConfig::ApplyEnv(StringMap *overrideMap, const wxString &project)
+void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &project)
 {
     // Dont allow recursive apply of the environment
     m_envApplied++;
@@ -132,7 +132,7 @@ void EnvironmentConfig::ApplyEnv(StringMap *overrideMap, const wxString &project
     // if we have an "override map" place all the entries from the override map
     // into the global map before applying the environment
     if(overrideMap) {
-        StringMap::iterator it = overrideMap->begin();
+        wxStringMap_t::iterator it = overrideMap->begin();
         for(; it != overrideMap->end(); it++) {
             variables.Put(it->first, it->second);
         }
@@ -149,7 +149,16 @@ void EnvironmentConfig::ApplyEnv(StringMap *overrideMap, const wxString &project
         if( wxGetEnv(key, &oldVal) == false ) {
             oldVal = __NO_SUCH_ENV__;
         }
-        m_envSnapshot[key] = oldVal;
+
+        // keep the old value, however, don't override it if it
+        // already exists as it might cause the variable to grow in size...
+        // Simple case:
+        // PATH=$(PATH);\New\Path
+        // PATH=$(PATH);\Another\New\Path
+        // If we replace the value, PATH will contain the original PATH + \New\Path
+        if ( m_envSnapshot.count( key ) == 0 ) {
+            m_envSnapshot.insert( std::make_pair( key, oldVal ) );
+        }
 
         // Incase this line contains other environment variables, expand them before setting this environment variable
         wxString newVal = DoExpandVariables(val);
@@ -165,7 +174,7 @@ void EnvironmentConfig::UnApplyEnv()
 
     if(m_envApplied == 0) {
         //loop over the old values and restore them
-        StringMap::iterator iter = m_envSnapshot.begin();
+        wxStringMap_t::iterator iter = m_envSnapshot.begin();
         for ( ; iter != m_envSnapshot.end(); iter++ ) {
             wxString key = iter->first;
             wxString value = iter->second;

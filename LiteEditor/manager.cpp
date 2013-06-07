@@ -2034,14 +2034,6 @@ void Manager::DbgStart ( long attachPid )
     wxString terminal;
     wxArrayString tokens;
     wxArrayString configuredTerminal;
-    /*if ( !ExeLocator::Locate ( wxT ( "gnome-terminal" ), where ) &&
-         !ExeLocator::Locate ( wxT ( "konsole" ), where )        &&
-         !ExeLocator::Locate ( wxT ( "terminal" ), where )       &&
-         !ExeLocator::Locate ( wxT ( "lxterminal" ), where )     &&
-         !ExeLocator::Locate ( wxT ( "xterm" ), where ) ) {
-    	wxMessageBox ( _( "Failed to locate any terminal application required by CodeLite, please install one and try again!" ), _("CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
-    	return;
-    }*/
     terminal = wxT ( "xterm" );
     if ( !EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand().IsEmpty() ) {
         tokens = wxStringTokenize ( EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand(), wxT ( " " ), wxTOKEN_STRTOK );
@@ -2155,6 +2147,9 @@ void Manager::DbgStart ( long attachPid )
     dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
     dbgr->SetDebuggerInformation ( dinfo );
     
+    // Apply the environment variables before starting
+    EnvSetter env(NULL, NULL, proj ? proj->GetName() : wxString());
+    
     if ( !bldConf && attachPid == wxNOT_FOUND ) {
         wxString errmsg;
         errmsg << _("Could not find project configuration!\n") << _("Make sure that everything is set properly in your project settings");
@@ -2175,7 +2170,6 @@ void Manager::DbgStart ( long attachPid )
         exepath.Append ( wxT ( "\"" ) );
 
         // Apply environment variables
-        EnvSetter env(NULL, NULL, proj ? proj->GetName() : wxT(""));
         wd = bldConf->GetWorkingDirectory();
 
         // Expand variables before passing them to the debugger

@@ -31,6 +31,7 @@
 #include "globals.h"
 #include "debugger.h"
 #include "simpletablebase.h"
+#include "event_notifier.h"
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
@@ -62,11 +63,14 @@ WatchesTable::WatchesTable( wxWindow* parent )
     Connect(XRCID("edit_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnMenuEditExprUI), NULL, this);
     Connect(XRCID("del_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnDeleteWatchUI), NULL, this);
     
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
     SetDropTarget( new WatchDropTarget(this) );
 }
 
 WatchesTable::~WatchesTable()
 {
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
+    
     if (m_rclickMenu) {
         delete m_rclickMenu;
         m_rclickMenu = NULL;
@@ -173,7 +177,7 @@ void WatchesTable::AddExpression(const wxString &expr)
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if( dbgr && ManagerST::Get()->DbgCanInteract() ) {
         dbgr->ResolveType(expr, DBG_USERR_WATCHTABLE);
-        
+
     } else {
         DebuggerEventData dummy;
         dummy.m_expression = expr;
@@ -482,18 +486,18 @@ void WatchesTable::OnUpdateVariableObject(const DebuggerEventData& event)
 void WatchesTable::OnTypeResolved(const DebuggerEventData& event)
 {
     wxString expr = ::DbgPrependCharPtrCastIfNeeded(event.m_expression, event.m_evaluated);
-    
+
     //make sure that the expression does not exist
     wxTreeItemId root = m_listTable->GetRootItem();
     if(!root.IsOk()) {
         return;
     }
-    
+
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(!dbgr) {
         return;
     }
-    
+
     // Obtain the debugger and make sure that we can interact with it
     if( !ManagerST::Get()->DbgCanInteract() )
         return;
@@ -507,6 +511,66 @@ void WatchesTable::OnTypeResolved(const DebuggerEventData& event)
     dbgr->CreateVariableObject(expr, true, m_DBG_USERR);
     m_createVarItemId[expr] = item;
 }
+
+void WatchesTable::OnRefresh(wxCommandEvent& event)
+{
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if(!dbgr || !ManagerST::Get()->DbgCanInteract()) {
+        return;
+    }
+
+    // First delete all variable objects
+    wxArrayString watches;
+
+    // Loop over the top level entries and search for items that has no gdbId
+    // for those items, create a variable object
+    wxTreeItemIdValue cookieOne;
+    wxTreeItemId root = m_listTable->GetRootItem();
+    wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
+    while( item.IsOk() ) {
+
+        watches.Add( m_listTable->GetItemText(item) );
+        DbgTreeItemData* data = static_cast<DbgTreeItemData*>(m_listTable->GetItemData(item));
+        if(data && data->_gdbId.IsEmpty()) {
+            dbgr->DeleteVariableObject(data->_gdbId);
+        }
+        item = m_listTable->GetNextChild(root, cookieOne);
+    }
+    m_createVarItemId.clear();
+    Clear();
+    for(size_t i=0; i<watches.GetCount(); ++i) {
+        AddExpression( watches.Item(i) );
+    }
+}
+
+void WatchesTable::OnRefreshUI(wxUpdateUIEvent& event)
+{
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    event.Enable(dbgr && ManagerST::Get()->DbgCanInteract() );
+}
+
+void WatchesTable::OnTypeResolveError(clCommandEvent& event)
+{
+    DebuggerEventData* ded = dynamic_cast<DebuggerEventData*>(event.GetClientObject());
+    if ( ded && ded->m_userReason == m_DBG_USERR) {
+        // this event was meant for us
+        // could not resolve type
+        wxTreeItemId id = DoFindItemByExpression(ded->m_expression);
+        if ( id.IsOk() ) {
+            // update
+            m_listTable->SetItemText(id, 1, ded->m_text);
+        } else {
+            // add
+            wxTreeItemId child = m_listTable->AppendItem(m_listTable->GetRootItem(), ded->m_expression);
+            m_listTable->SetItemText(child, 1, ded->m_text);
+        }
+    } else {
+        event.Skip();
+        
+    }
+}
+
+// ----------------------------------------------------------------
 
 bool WatchDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
 {

@@ -32,7 +32,7 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
         m_auibar31->DeleteTool( wxID_NEW );
         m_auibar31->Realize();
     }
-    
+
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
 }
 
@@ -384,6 +384,11 @@ void DebuggerTreeListCtrlBase::OnNewWatchUI(wxUpdateUIEvent& event)
 }
 
 void DebuggerTreeListCtrlBase::OnRefresh(wxCommandEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnRefreshUI(wxUpdateUIEvent& event)
 {
     event.Skip();
 }

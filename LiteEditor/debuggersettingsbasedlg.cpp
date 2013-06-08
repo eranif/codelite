@@ -670,6 +670,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     Centre(wxBOTH);
     // Connect events
     this->Connect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL, this);
+    this->Connect(wxID_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnRefreshUI), NULL, this);
     this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnNewWatch), NULL, this);
     this->Connect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
     this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch), NULL, this);
@@ -685,6 +686,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
 LocalsTableBase::~LocalsTableBase()
 {
     this->Disconnect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL, this);
+    this->Disconnect(wxID_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnRefreshUI), NULL, this);
     this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnNewWatch), NULL, this);
     this->Disconnect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
     this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch), NULL, this);

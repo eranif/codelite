@@ -280,6 +280,9 @@ public:
 
     virtual ~DbgCmdResolveTypeHandler() {}
     virtual bool ProcessOutput(const wxString & line);
+    virtual bool WantsErrors() const {
+        return true;
+    }
 };
 
 class DbgCmdCLIHandler : public DbgCmdHandler

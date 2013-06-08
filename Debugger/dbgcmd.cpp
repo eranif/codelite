@@ -189,14 +189,14 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
     long line_number;
     entry.line.ToLong(&line_number);
     m_observer->UpdateFileLine(entry.file, line_number);
-    
+
     clCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
     DebuggerEventData *ded = new DebuggerEventData;
     ded->m_file = entry.file;
     ded->m_line = line_number;
     evtFileLine.SetClientObject( ded );
     EventNotifier::Get()->AddPendingEvent( evtFileLine );
-    
+
 #else
     //Output of -file-list-exec-source-file
     //^done,line="36",file="a.cpp",fullname="C:/testbug1/a.cpp"
@@ -289,14 +289,14 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString &line)
         }
     }
     m_observer->UpdateFileLine(fullName, lineno);
-    
+
     clCommandEvent evtFileLine(wxEVT_DEBUGGER_QUERY_FILELINE);
     DebuggerEventData *ded = new DebuggerEventData;
     ded->m_file = fullName;
     ded->m_line = lineno;
     evtFileLine.SetClientObject( ded );
     EventNotifier::Get()->AddPendingEvent( evtFileLine );
-    
+
 #endif
     return true;
 }
@@ -669,7 +669,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
         locals.push_back( var );
     }
     m_observer->UpdateLocals( locals );
-    
+
     // The new way of notifying: send a wx's event
     clCommandEvent evtLocals(wxEVT_DEBUGGER_QUERY_LOCALS);
     DebuggerEventData data;
@@ -678,7 +678,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString &line)
     data.m_locals = locals;
     evtLocals.SetClientObject( new DebuggerEventData(data) );
     EventNotifier::Get()->AddPendingEvent( evtLocals );
-    
+
     return true;
 }
 
@@ -827,65 +827,80 @@ bool DbgCmdDisplayOutput::ProcessOutput(const wxString& line)
 
 bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
 {
-    // parse the output
-    // ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
     const wxCharBuffer scannerText =  _C(line);
     setGdbLexerInput(scannerText.data(), true);
 
     int type;
     wxString cmd, var_name;
     wxString type_name, currentToken;
+    wxString err_msg;
+    // parse the output
+    // ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
+    if ( line.StartsWith("^error") ) {
+        err_msg = line.AfterFirst('=');
+        err_msg.Prepend("GDB ERROR: ");
 
-    do {
-        // ^done
-        GDB_NEXT_TOKEN();
-        GDB_ABORT('^');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_DONE);
+        clCommandEvent evt(wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR);
+        DebuggerEventData* data = new DebuggerEventData();
+        data->m_expression = m_expression;
+        data->m_text       = err_msg;
+        data->m_userReason = m_userReason;
+        evt.SetClientObject( data );
+        EventNotifier::Get()->AddPendingEvent( evt );
+        return true;
 
-        // ,name="..."
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(',');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_NAME);
-        GDB_NEXT_TOKEN();
-        GDB_ABORT('=');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_STRING);
-        var_name = currentToken;
+    } else {
 
-        // ,numchild="..."
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(',');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_NUMCHILD);
-        GDB_NEXT_TOKEN();
-        GDB_ABORT('=');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_STRING);
-        // On Mac this part does not seem to be reported by GDB
+        do {
+            // ^done
+            GDB_NEXT_TOKEN();
+            GDB_ABORT('^');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_DONE);
+
+            // ,name="..."
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(',');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_NAME);
+            GDB_NEXT_TOKEN();
+            GDB_ABORT('=');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_STRING);
+            var_name = currentToken;
+
+            // ,numchild="..."
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(',');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_NUMCHILD);
+            GDB_NEXT_TOKEN();
+            GDB_ABORT('=');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_STRING);
+            // On Mac this part does not seem to be reported by GDB
 #ifndef __WXMAC__
-        // ,value="..."
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(',');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_VALUE);
-        GDB_NEXT_TOKEN();
-        GDB_ABORT('=');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_STRING);
+            // ,value="..."
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(',');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_VALUE);
+            GDB_NEXT_TOKEN();
+            GDB_ABORT('=');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_STRING);
 #endif
-        // ,type="..."
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(',');
-        GDB_NEXT_TOKEN();
-        GDB_ABORT(GDB_TYPE);
-        GDB_NEXT_TOKEN();
-        GDB_ABORT('=');
-        GDB_NEXT_TOKEN();
-        type_name = currentToken;
-
-    } while (0);
+            // ,type="..."
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(',');
+            GDB_NEXT_TOKEN();
+            GDB_ABORT(GDB_TYPE);
+            GDB_NEXT_TOKEN();
+            GDB_ABORT('=');
+            GDB_NEXT_TOKEN();
+            type_name = currentToken;
+        } while ( 0 );
+    }
     gdb_result_lex_clean();
 
     wxGDB_STRIP_QUOATES(type_name);
@@ -1055,7 +1070,7 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
     for(size_t i=0; i<threads.size(); ++i) {
         e.m_threads.push_back( threads.at(i).ToThreadEntry() );
     }
-    
+
     // Notify the observer
     e.m_updateReason  = DBG_UR_LISTTHRAEDS;
     m_observer->DebuggerUpdate( e );
@@ -1232,17 +1247,17 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
                 vo.isPtrPtr = true;
             }
         }
-        
+
         vo.has_more = info.has_more;
-        
+
         if ( vo.gdbId.IsEmpty() == false  ) {
-            
+
             e.m_updateReason = DBG_UR_VARIABLEOBJ;
             e.m_variableObject = vo;
             e.m_expression = m_expression;
             e.m_userReason = m_userReason;
             m_observer->DebuggerUpdate( e );
-            
+
             clCommandEvent evtCreate(wxEVT_DEBUGGER_VAROBJECT_CREATED);
             evtCreate.SetClientObject( new DebuggerEventData(e) );
             EventNotifier::Get()->AddPendingEvent( evtCreate );
@@ -1308,7 +1323,7 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
         e.m_expression = m_variable;
         e.m_userReason = m_userReason;
         m_observer->DebuggerUpdate( e );
-        
+
         clCommandEvent evtList(wxEVT_DEBUGGER_LIST_CHILDREN);
         evtList.SetClientObject( new DebuggerEventData(e) );
         EventNotifier::Get()->AddPendingEvent( evtList );
@@ -1333,7 +1348,7 @@ bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
                 e.m_evaluated     = display_line;
                 e.m_userReason    = m_userReason;
                 m_observer->DebuggerUpdate( e );
-                
+
                 clCommandEvent evtList(wxEVT_DEBUGGER_VAROBJ_EVALUATED);
                 evtList.SetClientObject( new DebuggerEventData(e) );
                 EventNotifier::Get()->AddPendingEvent( evtList );
@@ -1456,36 +1471,36 @@ bool DbgCmdHandlerDisasseble::ProcessOutput(const wxString& line)
     clCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT);
     GdbChildrenInfo info;
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
-    
+
     DebuggerEventData *evtData = new DebuggerEventData();
     for( size_t i=0; i<info.children.size(); ++i ) {
-        
+
         DisassembleEntry entry;
-        
+
         GdbStringMap_t& attrs = info.children.at(i);
         if( attrs.count("address") ) {
             entry.m_address = attrs["address"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_address );
         }
-        
+
         if ( attrs.count("inst") ) {
             entry.m_inst = attrs["inst"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_inst );
         }
-        
+
         if ( attrs.count("func-name") ) {
             entry.m_function = attrs["func-name"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_function );
-            
+
         }
-        
+
         if ( attrs.count("offset") ) {
             entry.m_offset = attrs["offset"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_offset );
         }
         evtData->m_disassembleLines.push_back( entry );
     }
-    
+
     event.SetClientObject( evtData );
     EventNotifier::Get()->AddPendingEvent(event);
     return true;
@@ -1496,28 +1511,28 @@ bool DbgCmdHandlerDisassebleCurLine::ProcessOutput(const wxString& line)
     clCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_CURLINE);
     GdbChildrenInfo info;
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
-    
+
     DebuggerEventData *evtData = new DebuggerEventData();
     if(info.children.size()) {
-        
+
         DisassembleEntry entry;
         GdbStringMap_t& attrs = info.children.at(0);
         if( attrs.count("address") ) {
             entry.m_address = attrs["address"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_address );
         }
-        
+
         if ( attrs.count("inst") ) {
             entry.m_inst = attrs["inst"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_inst );
         }
-        
+
         if ( attrs.count("func-name") ) {
             entry.m_function = attrs["func-name"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_function );
-            
+
         }
-        
+
         if ( attrs.count("offset") ) {
             entry.m_offset = attrs["offset"].c_str();
             wxGDB_STRIP_QUOATES( entry.m_offset );

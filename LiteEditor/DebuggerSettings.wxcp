@@ -5702,6 +5702,12 @@
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnRefresh(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+										}, {
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_eventHandler":	"wxUpdateUIEventHandler",
+											"m_functionNameAndSignature":	"OnRefreshUI(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event"
 										}],
 									"m_children":	[]
 								}, {

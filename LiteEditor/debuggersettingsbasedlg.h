@@ -199,6 +199,7 @@ protected:
 
 protected:
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnNewWatch(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNewWatchUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDeleteWatch(wxCommandEvent& event) { event.Skip(); }

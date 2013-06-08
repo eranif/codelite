@@ -77,8 +77,9 @@ void EvnVarList::InsertVariable(const wxString& setName, const wxString& name, c
     DoGetSetVariablesStr(setName, actualSetName);
 
     EnvMap set = GetVariables(actualSetName, false, wxT(""));
-    set.Put(name, value);
-
+	if ( !set.Contains(name) ) {
+		set.Put(name, value);
+	}
     m_envVarSets[actualSetName] = set.String();
 }
 

@@ -21,88 +21,25 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase( wxWindow* parent,
         const wxPoint& pos,
         const wxSize& size,
         long style )
-    : wxPanel( parent, id, pos, size, style )
+    : LocalsTableBase( parent, id, pos, size, style )
     , m_withButtons(withButtonsPane)
 {
-    wxBoxSizer* bSizer1;
-    bSizer1 = new wxBoxSizer( wxVERTICAL );
-
-    wxBoxSizer* bSizer3;
-    bSizer3 = new wxBoxSizer( wxHORIZONTAL );
-
-    long treeStyle = wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS;
-    m_listTable = new clTreeListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, treeStyle);
-    MSWSetNativeTheme(m_listTable);
-
     m_listTable->SetForegroundColour(DrawingUtils::GetTextCtrlTextColour());
-    bSizer3->Add( m_listTable, 1, wxEXPAND|wxALL, 1 );
 
-    if(m_withButtons) {
-        wxBoxSizer* bSizer4;
-        bSizer4 = new wxBoxSizer( wxVERTICAL );
-        m_button1 = new wxButton( this, wxID_ANY, _("New..."), wxDefaultPosition, wxDefaultSize, 0 );
-        bSizer4->Add( m_button1, 0, wxALL|wxEXPAND, 5 );
-        m_button2 = new wxButton( this, wxID_ANY, _("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
-        bSizer4->Add( m_button2, 0, wxALL|wxEXPAND, 5 );
-        m_button3 = new wxButton( this, wxID_ANY, _("Delete All"), wxDefaultPosition, wxDefaultSize, 0 );
-        bSizer4->Add( m_button3, 0, wxALL|wxEXPAND, 5 );
-        bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
-    } else {
-        wxBoxSizer* bSizer4;
-        bSizer4 = new wxBoxSizer( wxVERTICAL );
-        m_button1 = new wxButton( this, wxID_REFRESH, _("Refresh"), wxDefaultPosition, wxDefaultSize, 0 );
-        bSizer4->Add( m_button1, 0, wxALL|wxEXPAND, 5 );
-        bSizer3->Add( bSizer4, 0, wxEXPAND, 5 );
+    if ( !m_withButtons ) {
+        m_auibar31->DeleteByIndex(1); // separator
+        m_auibar31->DeleteTool( wxID_DELETE );
+        m_auibar31->DeleteTool( wxID_NEW );
+        m_auibar31->Realize();
     }
-
-    bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
-
-    this->SetSizer( bSizer1 );
-    this->Layout();
     
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
-    
-    // Connect Events
-    m_listTable->Connect( wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelBegin ), NULL, this );
-    m_listTable->Connect( wxEVT_COMMAND_TREE_END_LABEL_EDIT,   wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelEnd ), NULL, this );
-    m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_MENU,        wxTreeEventHandler( DebuggerTreeListCtrlBase::OnItemRightClick ), NULL, this );
-    m_listTable->Connect( wxEVT_COMMAND_TREE_KEY_DOWN,         wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListKeyDown ), NULL, this );
-    m_listTable->Connect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( DebuggerTreeListCtrlBase::OnItemExpanding ), NULL, this );
-
-    if(m_withButtons) {
-        m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnNewWatch ), NULL, this );
-        m_button1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnNewWatchUI ), NULL, this );
-        m_button2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnDeleteWatch ), NULL, this );
-        m_button2->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteWatchUI ), NULL, this );
-        m_button3->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnDeleteAll ), NULL, this );
-        m_button3->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteAllUI ), NULL, this );
-    } else {
-        m_button1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnRefresh ), NULL, this );
-        m_button1->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnRefreshUI ), NULL, this );
-    }
 }
 
 DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase()
 {
     // Disconnect Events
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
-    m_listTable->Disconnect( wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelBegin ), NULL, this );
-    m_listTable->Disconnect( wxEVT_COMMAND_TREE_END_LABEL_EDIT,   wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListEditLabelEnd ), NULL, this );
-    m_listTable->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU,        wxTreeEventHandler( DebuggerTreeListCtrlBase::OnItemRightClick ), NULL, this );
-    m_listTable->Disconnect( wxEVT_COMMAND_TREE_KEY_DOWN,         wxTreeEventHandler( DebuggerTreeListCtrlBase::OnListKeyDown ), NULL, this );
-    m_listTable->Disconnect( wxEVT_COMMAND_TREE_ITEM_EXPANDING,   wxTreeEventHandler( DebuggerTreeListCtrlBase::OnItemExpanding ), NULL, this );
-
-    if(m_withButtons) {
-        m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnNewWatch ), NULL, this );
-        m_button1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnNewWatchUI ), NULL, this );
-        m_button2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnDeleteWatch ), NULL, this );
-        m_button2->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteWatchUI ), NULL, this );
-        m_button3->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnDeleteAll ), NULL, this );
-        m_button3->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnDeleteAllUI ), NULL, this );
-    } else {
-        m_button1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DebuggerTreeListCtrlBase::OnRefresh ), NULL, this );
-        m_button1->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( DebuggerTreeListCtrlBase::OnRefreshUI ), NULL, this );
-    }
 }
 
 IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
@@ -118,7 +55,7 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
 {
     wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
     wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    
+
     wxTreeItemIdValue cookieOne;
     wxTreeItemId child = m_listTable->GetFirstChild(item, cookieOne);
     while( child.IsOk() ) {
@@ -394,9 +331,59 @@ void DebuggerTreeListCtrlBase::OnThemeColourChanged(wxCommandEvent& e)
 
     m_listTable->SetBackgroundColour(bgColour);
     m_listTable->SetForegroundColour(fgColour);
-    
+
     SetBackgroundColour(bgColour);
     SetForegroundColour(fgColour);
-    
+
     Refresh();
+}
+
+void DebuggerTreeListCtrlBase::OnDeleteWatch(wxCommandEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnDeleteWatchUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !m_withButtons );
+}
+
+void DebuggerTreeListCtrlBase::OnItemExpanding(wxTreeEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnItemRightClick(wxTreeEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnListEditLabelBegin(wxTreeEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnListEditLabelEnd(wxTreeEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnListKeyDown(wxTreeEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnNewWatch(wxCommandEvent& event)
+{
+    event.Skip();
+}
+
+void DebuggerTreeListCtrlBase::OnNewWatchUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_withButtons );
+}
+
+void DebuggerTreeListCtrlBase::OnRefresh(wxCommandEvent& event)
+{
+    event.Skip();
 }

@@ -61,6 +61,8 @@ WatchesTable::WatchesTable( wxWindow* parent )
     // UI events
     Connect(XRCID("edit_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnMenuEditExprUI), NULL, this);
     Connect(XRCID("del_expr"),wxEVT_UPDATE_UI, wxUpdateUIEventHandler( WatchesTable::OnDeleteWatchUI), NULL, this);
+    
+    SetDropTarget( new WatchDropTarget(this) );
 }
 
 WatchesTable::~WatchesTable()
@@ -504,4 +506,10 @@ void WatchesTable::OnTypeResolved(const DebuggerEventData& event)
 
     dbgr->CreateVariableObject(expr, true, m_DBG_USERR);
     m_createVarItemId[expr] = item;
+}
+
+bool WatchDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& text)
+{
+    m_parent->AddExpression( text );
+    return false; // so the text won't get cut from the editor...
 }

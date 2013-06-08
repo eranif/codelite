@@ -25,6 +25,11 @@
 #include <wx/spinctrl.h>
 #include <wx/choicebk.h>
 #include <wx/stc/stc.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <wx/toolbar.h>
+#include <wx/treectrl.h>
+#include "cl_treelistctrl.h"
 
 class DebuggerSettingsBaseDlg : public wxDialog
 {
@@ -183,6 +188,30 @@ protected:
 public:
     DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~DebuggerDisassemblyTabBase();
+};
+
+
+class LocalsTableBase : public wxPanel
+{
+protected:
+    wxAuiToolBar* m_auibar31;
+    clTreeListCtrl* m_listTable;
+
+protected:
+    virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNewWatch(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNewWatchUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDeleteWatch(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteWatchUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnListEditLabelBegin(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnListEditLabelEnd(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnItemRightClick(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnListKeyDown(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+
+public:
+    LocalsTableBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~LocalsTableBase();
 };
 
 #endif

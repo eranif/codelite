@@ -46,7 +46,6 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     
     bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -81,7 +80,6 @@ DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, 
     m_textCtrlStartupCommands->SetFont(m_textCtrlStartupCommandsFont);
     
     bSizer7->Add(m_textCtrlStartupCommands, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -137,7 +135,6 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
     m_buttonDelete = new wxButton(m_panel2, wxID_ANY, _("&Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer6->Add(m_buttonDelete, 0, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -227,7 +224,6 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
     m_button10 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer18->Add(m_button10, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -368,7 +364,6 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer21->Add(0, 0, 1, wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -466,7 +461,6 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     gSizer5->Add(m_textCtrlCygwinPathCommand, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -530,7 +524,6 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, 
     m_notebookPreDefTypes = new wxChoicebook(m_panel6, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
     
     sbSizer5->Add(m_notebookPreDefTypes, 1, wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -623,7 +616,6 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     
     boxSizer14->Add(m_stc, 1, wxALL|wxEXPAND, 2);
     
-    
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -637,5 +629,70 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
 DebuggerDisassemblyTabBase::~DebuggerDisassemblyTabBase()
 {
     m_stc->Disconnect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL, this);
+    
+}
+
+LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafter6v4fW1InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer29 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer29);
+    
+    m_auibar31 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar31->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer29->Add(m_auibar31, 0, wxEXPAND, 5);
+    
+    m_auibar31->AddTool(wxID_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("restart")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Refresh"), NULL);
+    
+    m_auibar31->AddSeparator();
+    
+    m_auibar31->AddTool(wxID_NEW, _("New..."), wxXmlResource::Get()->LoadBitmap(wxT("add")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("New..."), NULL);
+    
+    m_auibar31->AddTool(wxID_DELETE, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-line")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete"), NULL);
+    m_auibar31->Realize();
+    
+    m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS);
+    
+    boxSizer29->Add(m_listTable, 1, wxALL|wxEXPAND, 2);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    this->Connect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL, this);
+    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnNewWatch), NULL, this);
+    this->Connect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnDeleteWatchUI), NULL, this);
+    m_listTable->Connect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
+    m_listTable->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd), NULL, this);
+    m_listTable->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL, this);
+    m_listTable->Connect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(LocalsTableBase::OnListKeyDown), NULL, this);
+    m_listTable->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LocalsTableBase::OnItemExpanding), NULL, this);
+    
+}
+
+LocalsTableBase::~LocalsTableBase()
+{
+    this->Disconnect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL, this);
+    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnNewWatch), NULL, this);
+    this->Disconnect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnDeleteWatchUI), NULL, this);
+    m_listTable->Disconnect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
+    m_listTable->Disconnect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd), NULL, this);
+    m_listTable->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL, this);
+    m_listTable->Disconnect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(LocalsTableBase::OnListKeyDown), NULL, this);
+    m_listTable->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LocalsTableBase::OnItemExpanding), NULL, this);
     
 }

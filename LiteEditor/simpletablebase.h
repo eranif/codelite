@@ -17,6 +17,7 @@
 #include "debugger.h"
 #include "manager.h"
 #include "debuggerobserver.h"
+#include "debuggersettingsbasedlg.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -56,16 +57,23 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 /// Class SimpleTableBase
 ///////////////////////////////////////////////////////////////////////////////
-class DebuggerTreeListCtrlBase : public wxPanel
+class DebuggerTreeListCtrlBase : public LocalsTableBase
 {
 private:
-    bool                             m_withButtons;
+    bool m_withButtons;
 
 protected:
-    clTreeListCtrl*                  m_listTable;
-    wxButton*                        m_button1;
-    wxButton*                        m_button2;
-    wxButton*                        m_button3;
+    virtual void OnDeleteWatch(wxCommandEvent& event);
+    virtual void OnDeleteWatchUI(wxUpdateUIEvent& event);
+    virtual void OnItemExpanding(wxTreeEvent& event);
+    virtual void OnItemRightClick(wxTreeEvent& event);
+    virtual void OnListEditLabelBegin(wxTreeEvent& event);
+    virtual void OnListEditLabelEnd(wxTreeEvent& event);
+    virtual void OnListKeyDown(wxTreeEvent& event);
+    virtual void OnNewWatch(wxCommandEvent& event);
+    virtual void OnNewWatchUI(wxUpdateUIEvent& event);
+    virtual void OnRefresh(wxCommandEvent& event);
+
     std::map<wxString, wxTreeItemId> m_gdbIdToTreeId;
     std::map<wxString, wxTreeItemId> m_listChildItemId;
     std::map<wxString, wxTreeItemId> m_createVarItemId;
@@ -77,50 +85,8 @@ protected:
     int                              m_LIST_CHILDS;
 
 protected:
-    // Virtual event handlers, overide them in your derived class
-    virtual void OnListEditLabelBegin( wxTreeEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnListEditLabelEnd( wxTreeEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnItemRightClick( wxTreeEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnListKeyDown( wxTreeEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnItemExpanding( wxTreeEvent& event ) {
-        event.Skip();
-    }
-
-    virtual void OnNewWatch( wxCommandEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnNewWatchUI( wxUpdateUIEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnDeleteWatch( wxCommandEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnDeleteWatchUI( wxUpdateUIEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnDeleteAll( wxCommandEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnDeleteAllUI( wxUpdateUIEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnRefresh( wxCommandEvent& event ) {
-        event.Skip();
-    }
-    virtual void OnRefreshUI( wxUpdateUIEvent& event ) {
-        event.Skip();
-    }
-    
     void OnThemeColourChanged(wxCommandEvent &e);
-    
+
 public:
     DebuggerTreeListCtrlBase( wxWindow* parent,
                               wxWindowID id = wxID_ANY,
@@ -147,7 +113,7 @@ public:
     virtual void         ResetTableColors        ();
     virtual wxString     GetItemPath             (const wxTreeItemId &item);
     virtual void         UpdateVariableObjects   ();
-    
+
 };
 
 #endif //__simpletablebase__

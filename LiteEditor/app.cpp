@@ -728,7 +728,7 @@ void CodeLiteApp::MSWReadRegistry()
 
         m_parserPaths.Clear();
         wxString strWx, strMingw, strUnitTestPP;
-        registry.Read(wxT("wx"),         strWx);
+        //registry.Read(wxT("wx"),         strWx);
         registry.Read(wxT("mingw"),      strMingw);
         registry.Read(wxT("unittestpp"), strUnitTestPP);
 

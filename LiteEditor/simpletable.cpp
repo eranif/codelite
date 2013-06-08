@@ -505,9 +505,6 @@ void WatchesTable::OnTypeResolved(const DebuggerEventData& event)
     // Append the new item and call the debugger to create a new variable object for this
     // expression
     wxTreeItemId item = m_listTable->AppendItem(root, expr, -1, -1, new DbgTreeItemData());
-    wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
-    m_listTable->SetItemBackgroundColour(item, rootItemColour);
-
     dbgr->CreateVariableObject(expr, true, m_DBG_USERR);
     m_createVarItemId[expr] = item;
 }

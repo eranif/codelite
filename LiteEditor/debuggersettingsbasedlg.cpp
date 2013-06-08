@@ -650,13 +650,13 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer29->Add(m_auibar31, 0, wxEXPAND, 5);
     
-    m_auibar31->AddTool(wxID_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("restart")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Refresh"), NULL);
+    m_auibar31->AddTool(wxID_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("restart")), wxNullBitmap, wxITEM_NORMAL, _("Refresh"), _("Refresh"), NULL);
     
     m_auibar31->AddSeparator();
     
-    m_auibar31->AddTool(wxID_NEW, _("New..."), wxXmlResource::Get()->LoadBitmap(wxT("add")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("New..."), NULL);
+    m_auibar31->AddTool(wxID_NEW, _("New..."), wxXmlResource::Get()->LoadBitmap(wxT("add")), wxNullBitmap, wxITEM_NORMAL, _("New..."), _("New..."), NULL);
     
-    m_auibar31->AddTool(wxID_DELETE, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-line")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete"), NULL);
+    m_auibar31->AddTool(wxID_DELETE, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-line")), wxNullBitmap, wxITEM_NORMAL, _("Delete"), _("Delete"), NULL);
     m_auibar31->Realize();
     
     m_listTable = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_HIDE_ROOT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_FULL_ROW_HIGHLIGHT|wxTR_EDIT_LABELS|wxTR_HAS_BUTTONS);

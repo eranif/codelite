@@ -5677,7 +5677,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"Refresh"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
@@ -5753,7 +5753,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"New..."
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
@@ -5809,7 +5809,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"Delete"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",

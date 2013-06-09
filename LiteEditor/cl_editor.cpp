@@ -1383,11 +1383,6 @@ void LEditor::GotoDefinition()
     m_context->GotoDefinition();
 }
 
-void LEditor::GotoPreviousDefintion()
-{
-    m_context->GotoPreviousDefintion();
-}
-
 void LEditor::OnDwellStart(wxStyledTextEvent & event)
 {
     // First see if we're hovering over a breakpoint or build marker

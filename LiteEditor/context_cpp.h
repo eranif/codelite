@@ -79,7 +79,6 @@ public:
     virtual void CompleteWord();
     virtual void CodeComplete(long pos = wxNOT_FOUND);
     virtual void GotoDefinition();
-    virtual void GotoPreviousDefintion();
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
     virtual wxString GetCurrentScopeName();
     virtual void AutoIndent(const wxChar&);

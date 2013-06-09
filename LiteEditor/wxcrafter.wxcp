@@ -3230,7 +3230,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	[],
+															"m_styles":	["wxBU_LEFT"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -3275,7 +3275,7 @@
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Focused",
-																	"m_value":	false
+																	"m_value":	true
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -3319,7 +3319,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	[],
+															"m_styles":	["wxBU_LEFT"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",

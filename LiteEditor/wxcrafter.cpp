@@ -25,7 +25,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
-    m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
     m_splitter5->SetSashGravity(0.5);
     m_splitter5->SetMinimumPaneSize(10);
     
@@ -119,7 +119,6 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer2->Add(m_button4, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -188,7 +187,6 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer43->Add(m_func, 0, wxALL|wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -243,7 +241,6 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     
     m_auibar48->AddTool(wxID_PASTE, _("Paste"), wxXmlResource::Get()->LoadBitmap(wxT("edit-paste")), wxNullBitmap, wxITEM_NORMAL, _("Paste Build Output into an Empty Editor"), _("Paste Build Output into an Empty Editor"), NULL);
     m_auibar48->Realize();
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -332,7 +329,6 @@ NewProjImgList::NewProjImgList()
     this->Add( bmp );
     m_bitmaps.insert( std::make_pair(wxT("tabClose"), bmp ) );
     
-    
 }
 
 NewProjImgList::~NewProjImgList()
@@ -374,15 +370,15 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     wxBoxSizer* boxSizer79 = new wxBoxSizer(wxVERTICAL);
     m_panel75->SetSizer(boxSizer79);
     
-    m_cmdLnkBtnDownload = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Install"), _("Download wxCrafter plugin from codelite's website"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtnDownload = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Install"), _("Download wxCrafter plugin from codelite's website"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     m_cmdLnkBtnDownload->SetDefault();
+    m_cmdLnkBtnDownload->SetFocus();
     
     boxSizer79->Add(m_cmdLnkBtnDownload, 1, wxALL|wxEXPAND, 5);
     
-    m_cmdLnkBtnContinue = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Continue"), _("Ignore the missing plugin and create the project anyway"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_cmdLnkBtnContinue = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Continue"), _("Ignore the missing plugin and create the project anyway"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
     
     boxSizer79->Add(m_cmdLnkBtnContinue, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -467,7 +463,6 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer119->Add(m_button123, 0, wxALL, 5);
     
-    
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -549,7 +544,6 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     gridSizer235->Add(m_cmdLnkBtn151, 0, wxALL|wxEXPAND, 5);
     
     boxSizer195->Add(0, 0, 0, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

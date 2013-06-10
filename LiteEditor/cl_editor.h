@@ -240,9 +240,6 @@ public:
     // User clicked Ctrl+.
     void GotoDefinition();
 
-    // User clicked Ctrl+,
-    void GotoPreviousDefintion();
-
     // return the EOL according to the content
     int GetEOLByContent();
 

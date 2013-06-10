@@ -327,13 +327,9 @@ void GotoDefinitionHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent 
     if ( !editor ) {
         return;
     }
-
     if (event.GetId() == XRCID("goto_definition")) {
         editor->GotoDefinition();
-    } else if (event.GetId() == XRCID("goto_previous_definition")) {
-        editor->GotoPreviousDefintion();
     }
-
 }
 
 void GotoDefinitionHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event)

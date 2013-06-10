@@ -758,12 +758,6 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString &word)
 // <<<<<<<<<<<<<<<<<<<<<<<<<<< CodeCompletion API - END
 //=============================================================================
 
-void ContextCpp::GotoPreviousDefintion()
-{
-    CHECK_JS_RETURN_VOID();
-    NavMgr::Get()->NavigateBackward(PluginManager::Get());
-}
-
 TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 {
     CHECK_JS_RETURN_NULL();

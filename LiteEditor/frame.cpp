@@ -1859,21 +1859,25 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 
     bool promptUser = true;
     wxString wspFile;
-
-    wxCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
-    e.SetEventObject(this);
-    e.SetString(wxT(""));
-    if(EventNotifier::Get()->ProcessEvent(e)) {
-        // the plugin processed it by itself
-        return;
-    }
-
-    if(e.GetString().IsEmpty() == false) {
-        // the plugin processed it by itself and the user already selected a file
-        // don't bother to prompt the user again just use what he already selected
-        promptUser = false;
-        wspFile = e.GetString();
-
+    
+    // Is it an internal command? (usually the workspace file name to load is set in the 
+    // event.SetString() )
+    if ( event.GetString().IsEmpty() ) {
+        wxCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
+        e.SetEventObject(this);
+        e.SetString(wxT(""));
+        if(EventNotifier::Get()->ProcessEvent(e)) {
+            // the plugin processed it by itself
+            return;
+        }
+        
+        if(e.GetString().IsEmpty() == false) {
+            // the plugin processed it by itself and the user already selected a file
+            // don't bother to prompt the user again just use what he already selected
+            promptUser = false;
+            wspFile = e.GetString();
+        }
+        
     } else if ( !event.GetString().IsEmpty() ) {
         promptUser = false;
         wspFile = event.GetString();
@@ -3792,7 +3796,12 @@ void clMainFrame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
 void clMainFrame::OnReloadWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
+    
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if ( dbgr && dbgr->IsRunning() ) {
+        return;
+    }
+    
     // Save the current session before re-loading
     SaveLayoutAndSession();
 

@@ -93,7 +93,6 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -123,59 +122,59 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
     
-    m_splitter2 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
-    m_splitter2->SetSashGravity(0.500000);
-    m_splitter2->SetMinimumPaneSize(0);
+    m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitterMain->SetSashGravity(1);
+    m_splitterMain->SetMinimumPaneSize(20);
     
-    bSizer4->Add(m_splitter2, 1, wxALL|wxEXPAND, 5);
+    bSizer4->Add(m_splitterMain, 1, wxALL|wxEXPAND, 5);
     
-    m_panel3 = new wxPanel(m_splitter2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel3 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer12);
     
-    m_splitter1 = new wxSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
-    m_splitter1->SetSashGravity(0.500000);
-    m_splitter1->SetMinimumPaneSize(0);
+    m_splitterInner = new wxSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitterInner->SetSashGravity(0);
+    m_splitterInner->SetMinimumPaneSize(20);
     
-    bSizer12->Add(m_splitter1, 1, wxEXPAND, 5);
+    bSizer12->Add(m_splitterInner, 1, wxEXPAND, 5);
     
-    m_panel1 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_panel1 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
     
     m_staticText6 = new wxStaticText(m_panel1, wxID_ANY, _("Modified paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer11->Add(m_staticText6, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer11->Add(m_staticText6, 0, wxALL|wxALIGN_LEFT, 5);
     
     wxArrayString m_listBoxArr;
     m_listBox = new wxCheckListBox(m_panel1, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxArr, wxLB_SINGLE);
     
     bSizer11->Add(m_listBox, 1, wxALL|wxEXPAND, 5);
     
-    m_panel2 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    m_splitter1->SplitVertically(m_panel1, m_panel2, 0);
+    m_panel2 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_splitterInner->SplitVertically(m_panel1, m_panel2, 0);
     
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer9);
     
     m_staticText7 = new wxStaticText(m_panel2, wxID_ANY, _("Diff:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer9->Add(m_staticText7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer9->Add(m_staticText7, 0, wxALL|wxALIGN_LEFT, 5);
     
     m_editor = new GitCommitEditor( m_panel2 );
     bSizer9->Add(m_editor, 1, wxALL|wxEXPAND, 5);
     
-    m_panel4 = new wxPanel(m_splitter2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    m_splitter2->SplitHorizontally(m_panel3, m_panel4, 0);
+    m_panel4 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_splitterMain->SplitHorizontally(m_panel3, m_panel4, 0);
     
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
     
     m_staticText8 = new wxStaticText(m_panel4, wxID_ANY, _("Commit message:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer13->Add(m_staticText8, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer13->Add(m_staticText8, 0, wxALL|wxALIGN_LEFT, 5);
     
     m_commitMessage = new wxTextCtrl(m_panel4, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_WORDWRAP|wxTE_RICH2|wxTE_MULTILINE);
     wxFont m_commitMessageFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Sans"));
@@ -195,7 +194,6 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_button6 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer5->Add(m_button6, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -277,7 +275,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_sdbSizer1->AddButton(m_button136);
     m_sdbSizer1->Realize();
     
-    
     SetSizeHints(879,600);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -309,8 +306,8 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
     
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
-    m_splitter->SetSashGravity(0.500000);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
     
     bSizer17->Add(m_splitter, 1, wxALL|wxEXPAND, 5);
@@ -350,7 +347,6 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_button145->SetDefault();
     m_sdbSizer1->AddButton(m_button145);
     m_sdbSizer1->Realize();
-    
     
     SetSizeHints(879,600);
     if ( GetSizer() ) {
@@ -455,7 +451,6 @@ GitImages::GitImages()
     this->Add( bmp );
     m_bitmaps.insert( std::make_pair(wxT("gitSettings"), bmp ) );
     
-    
 }
 
 GitImages::~GitImages()
@@ -536,7 +531,6 @@ gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     
     boxSizer18->Add(m_button20, 0, wxALL, 5);
     
-    
     SetSizeHints(500,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -605,7 +599,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_auibar->Realize();
     
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
-    m_splitter->SetSashGravity(0.500000);
+    m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
     
     boxSizer36->Add(m_splitter, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
@@ -633,7 +627,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_dvListCtrl = new wxDataViewListCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_SINGLE);
     
     boxSizer92->Add(m_dvListCtrl, 1, wxEXPAND, 2);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -739,7 +732,6 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer126->Add(m_button128, 0, wxALL, 5);
     
-    
     SetSizeHints(500,300);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -807,7 +799,6 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
     m_button160 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer156->Add(m_button160, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

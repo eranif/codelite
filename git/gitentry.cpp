@@ -28,6 +28,8 @@ GitEntry::GitEntry()
     , m_gitConsoleSashPos(0)
     , m_colourTrackedFile(*wxGREEN)
     , m_colourDiffFile(*wxRED)
+    , m_gitCommitDlgHSashPos(0)
+    , m_gitCommitDlgVSashPos(0)
 {
 }
 
@@ -46,6 +48,8 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_flags             = json.namedObject("m_flags").toSize_t(m_flags);
     m_gitDiffDlgSashPos = json.namedObject("m_gitDiffDlgSashPos").toInt(m_gitDiffDlgSashPos);
     m_gitConsoleSashPos = json.namedObject("m_gitConsoleSashPos").toInt(m_gitConsoleSashPos);
+    m_gitCommitDlgHSashPos = json.namedObject("m_gitCommitDlgHSashPos").toInt(m_gitCommitDlgHSashPos);
+    m_gitCommitDlgVSashPos = json.namedObject("m_gitCommitDlgVSashPos").toInt(m_gitCommitDlgVSashPos);
     
     // override the colour only if it is a valid colour
     if ( !track.IsEmpty() ) {
@@ -73,6 +77,8 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_flags",             m_flags);
     json.addProperty("m_gitDiffDlgSashPos", m_gitDiffDlgSashPos);
     json.addProperty("m_gitConsoleSashPos", m_gitConsoleSashPos);
+    json.addProperty("m_gitCommitDlgHSashPos", m_gitCommitDlgHSashPos);
+    json.addProperty("m_gitCommitDlgVSashPos", m_gitCommitDlgVSashPos);
     return json;
 }
 

@@ -23,6 +23,8 @@ class GitEntry : public clConfigItem
     size_t                     m_flags;
     int                        m_gitDiffDlgSashPos;
     int                        m_gitConsoleSashPos;
+    int                        m_gitCommitDlgHSashPos;
+    int                        m_gitCommitDlgVSashPos;
 
 public:
     enum {
@@ -44,6 +46,18 @@ public:
         }
     }
 
+    void SetGitCommitDlgHSashPos(int gitCommitDlgHSashPos) {
+        this->m_gitCommitDlgHSashPos = gitCommitDlgHSashPos;
+    }
+    void SetGitCommitDlgVSashPos(int gitCommitDlgVSashPos) {
+        this->m_gitCommitDlgVSashPos = gitCommitDlgVSashPos;
+    }
+    int GetGitCommitDlgHSashPos() const {
+        return m_gitCommitDlgHSashPos;
+    }
+    int GetGitCommitDlgVSashPos() const {
+        return m_gitCommitDlgVSashPos;
+    }
     void SetGitDiffDlgSashPos(int gitDiffDlgSashPos) {
         this->m_gitDiffDlgSashPos = gitDiffDlgSashPos;
     }

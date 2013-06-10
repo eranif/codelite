@@ -59,9 +59,9 @@ public:
 class GitCommitDlgBase : public wxDialog
 {
 protected:
-    wxSplitterWindow* m_splitter2;
+    wxSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
-    wxSplitterWindow* m_splitter1;
+    wxSplitterWindow* m_splitterInner;
     wxPanel* m_panel1;
     wxStaticText* m_staticText6;
     wxCheckListBox* m_listBox;

@@ -38,6 +38,7 @@
 #include "globals.h"
 #include "virtualdirtreectrl.h"
 #include "SvnInfoDialog.h"
+#include <map>
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
     EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
@@ -839,6 +840,9 @@ void SubversionView::OnFileAdded(wxCommandEvent& event)
 {
     event.Skip();
     
+    typedef std::map<wxString, bool> StringBoolMap_t;
+    StringBoolMap_t path_in_svn;
+    
     SvnSettingsData ssd = m_plugin->GetSettings();
     if(ssd.GetFlags() & SvnAddFileToSvn) {
         wxArrayString *files = (wxArrayString*)event.GetClientData();
@@ -847,12 +851,22 @@ void SubversionView::OnFileAdded(wxCommandEvent& event)
             wxString command;
             command << m_plugin->GetSvnExeName() << wxT(" add ");
             for(size_t i=0; i<files->GetCount(); i++) {
-
-                if(m_plugin->IsPathUnderSvn( wxFileName(files->Item(i)).GetPath() )) {
+                
+                wxFileName fn(files->Item(i));
+                bool curPathUnderSvn = false;
+                if ( path_in_svn.count( fn.GetPath() ) ) {
+                    // use the cached result
+                    curPathUnderSvn = path_in_svn.find(fn.GetPath())->second;
+                } else {
+                    // query svn and cache the result for future use
+                    curPathUnderSvn = m_plugin->IsPathUnderSvn( fn.GetPath() );
+                    path_in_svn.insert( std::make_pair(fn.GetPath(), curPathUnderSvn ) );
+                }
+                
+                if (curPathUnderSvn) {
                     command << wxT("\"") << files->Item(i) << wxT("\" ");
                     addToSvn = true;
                 }
-
             }
 
             if(addToSvn) {

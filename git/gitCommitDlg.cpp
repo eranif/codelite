@@ -2,18 +2,36 @@
 #include "gitCommitEditor.h"
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
+#include "gitentry.h"
 
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, const wxString& repoDir)
     : GitCommitDlgBase(parent)
-    ,m_workingDir(repoDir)
+    , m_workingDir(repoDir)
 {
+    // read the configuration
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem( &data );
+    
+    m_splitterInner->SetSashPosition(data.GetGitCommitDlgHSashPos());
+    m_splitterMain->SetSashPosition(data.GetGitCommitDlgVSashPos());
+    
     WindowAttrManager::Load(this, wxT("GitCommitDlg"), NULL);
 }
 
 /*******************************************************************************/
 GitCommitDlg::~GitCommitDlg()
 {
+    // read the configuration
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem( &data );
+    
+    data.SetGitCommitDlgHSashPos(m_splitterInner->GetSashPosition());
+    data.SetGitCommitDlgVSashPos(m_splitterMain->GetSashPosition());
+    conf.WriteItem( &data );
+    
     WindowAttrManager::Save(this, wxT("GitCommitDlg"), NULL);
 }
 

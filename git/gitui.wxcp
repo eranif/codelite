@@ -7,6 +7,8 @@
 		"m_bitmapsFile":	"gitui_git_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
 		"m_outputFileName":	"gitui",
+		"m_firstWindowId":	1000,
+		"m_useEnum":	false,
 		"m_templateClasses":	[{
 				"m_includeFile":	"#include \"gitCommitEditor.h\"",
 				"m_allocationLine":	"$name = new GitCommitEditor( $parent );",
@@ -73,6 +75,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Git settings..."
 				}, {
@@ -111,6 +117,10 @@
 							"m_label":	"Name:",
 							"m_value":	"mainSizer"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -129,6 +139,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"staticBoxSizer78"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -152,6 +166,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"fgSizer11"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -239,6 +257,10 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"multi-string",
 													"m_label":	"Label:",
 													"m_value":	"Path to git executable:"
@@ -308,6 +330,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -385,6 +411,10 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"multi-string",
 													"m_label":	"Label:",
 													"m_value":	"Path to gitk executable:"
@@ -457,6 +487,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -485,6 +519,10 @@
 									"m_label":	"Name:",
 									"m_value":	"staticBoxSizer85"
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	0,
@@ -507,6 +545,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"boxSizer766"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -573,6 +615,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -647,6 +693,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Label:",
 													"m_value":	"Verbose Logging"
 												}, {
@@ -718,6 +768,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Label:",
 													"m_value":	"Colour modified items in the workspace view"
 												}, {
@@ -760,6 +814,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer3"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -826,6 +884,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -914,6 +976,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Cancel"
 										}, {
@@ -992,6 +1058,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Git commit..."
 				}, {
@@ -1030,6 +1100,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer4"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -1042,7 +1116,7 @@
 							"border":	5,
 							"gbSpan":	",",
 							"gbPosition":	",",
-							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
+							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -1059,7 +1133,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_splitter2"
+									"m_value":	"m_splitterMain"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
@@ -1097,6 +1171,10 @@
 									"m_label":	"Include File:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Split Mode:",
 									"m_selection":	0,
@@ -1104,11 +1182,11 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Sash Gravity:",
-									"m_value":	"0.5"
+									"m_value":	"1"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Pane Size:",
-									"m_value":	"0"
+									"m_value":	"20"
 								}, {
 									"type":	"string",
 									"m_label":	"Sash Position:",
@@ -1175,6 +1253,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -1190,6 +1272,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer12"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -1202,7 +1288,7 @@
 													"border":	5,
 													"gbSpan":	",",
 													"gbPosition":	",",
-													"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
+													"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -1219,7 +1305,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"m_splitter1"
+															"m_value":	"m_splitterInner"
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
@@ -1257,6 +1343,10 @@
 															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
 															"type":	"choice",
 															"m_label":	"Split Mode:",
 															"m_selection":	1,
@@ -1264,11 +1354,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Sash Gravity:",
-															"m_value":	"0.5"
+															"m_value":	"0"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Pane Size:",
-															"m_value":	"0"
+															"m_value":	"20"
 														}, {
 															"type":	"string",
 															"m_label":	"Sash Position:",
@@ -1335,6 +1425,10 @@
 																	"type":	"string",
 																	"m_label":	"Include File:",
 																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
 																}],
 															"m_events":	[],
 															"m_children":	[{
@@ -1350,6 +1444,10 @@
 																			"m_label":	"Name:",
 																			"m_value":	"bSizer11"
 																		}, {
+																			"type":	"string",
+																			"m_label":	"Style:",
+																			"m_value":	""
+																		}, {
 																			"type":	"choice",
 																			"m_label":	"Orientation:",
 																			"m_selection":	0,
@@ -1363,7 +1461,7 @@
 																			"gbSpan":	",",
 																			"gbPosition":	",",
 																			"m_styles":	[],
-																			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+																			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_LEFT"],
 																			"m_properties":	[{
 																					"type":	"winid",
 																					"m_label":	"ID:",
@@ -1415,6 +1513,10 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
 																					"m_value":	""
 																				}, {
 																					"type":	"multi-string",
@@ -1486,6 +1588,10 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
 																					"m_value":	""
 																				}, {
 																					"type":	"multi-string",
@@ -1562,6 +1668,10 @@
 																	"type":	"string",
 																	"m_label":	"Include File:",
 																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
 																}],
 															"m_events":	[],
 															"m_children":	[{
@@ -1577,6 +1687,10 @@
 																			"m_label":	"Name:",
 																			"m_value":	"bSizer9"
 																		}, {
+																			"type":	"string",
+																			"m_label":	"Style:",
+																			"m_value":	""
+																		}, {
 																			"type":	"choice",
 																			"m_label":	"Orientation:",
 																			"m_selection":	0,
@@ -1590,7 +1704,7 @@
 																			"gbSpan":	",",
 																			"gbPosition":	",",
 																			"m_styles":	[],
-																			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+																			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_LEFT"],
 																			"m_properties":	[{
 																					"type":	"winid",
 																					"m_label":	"ID:",
@@ -1642,6 +1756,10 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
 																					"m_value":	""
 																				}, {
 																					"type":	"multi-string",
@@ -1714,6 +1832,10 @@
 																					"type":	"string",
 																					"m_label":	"Include File:",
 																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
+																					"m_value":	""
 																				}],
 																			"m_events":	[],
 																			"m_children":	[],
@@ -1783,6 +1905,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -1798,6 +1924,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer13"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -1811,7 +1941,7 @@
 													"gbSpan":	",",
 													"gbPosition":	",",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_LEFT"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -1863,6 +1993,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -1937,6 +2071,10 @@
 															"m_value":	""
 														}, {
 															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"string",
 															"m_label":	"Value:",
 															"m_value":	""
 														}, {
@@ -1961,6 +2099,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer5"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -2027,6 +2169,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -2115,6 +2261,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Cancel"
 										}, {
@@ -2193,6 +2343,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Commit List"
 				}, {
@@ -2231,6 +2385,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer17"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -2249,6 +2407,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer1"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -2320,6 +2482,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_LIST_ITEM_SELECTED",
@@ -2343,6 +2509,10 @@
 									"m_label":	"Name:",
 									"m_value":	"bSizer18"
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	1,
@@ -2361,6 +2531,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"sbSizer3"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -2433,6 +2607,10 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"multi-string",
 													"m_label":	"Choices:",
 													"m_value":	""
@@ -2462,6 +2640,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"sbSizer5"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -2533,6 +2715,10 @@
 													"type":	"string",
 													"m_label":	"Include File:",
 													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}],
 											"m_events":	[],
 											"m_children":	[],
@@ -2551,6 +2737,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer2"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -2624,6 +2814,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -2694,6 +2888,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -2756,6 +2954,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[],
@@ -2848,6 +3050,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Current Diffs"
 				}, {
@@ -2886,6 +3092,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer17"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -2898,7 +3108,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxSP_LIVE_UPDATE"],
+							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -2951,6 +3161,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"choice",
@@ -3031,6 +3245,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -3045,6 +3263,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"boxSizer62"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -3111,6 +3333,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -3182,6 +3408,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -3262,6 +3492,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -3276,6 +3510,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"boxSizer64"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -3342,6 +3580,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -3414,6 +3656,10 @@
 															"type":	"string",
 															"m_label":	"Include File:",
 															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}],
 													"m_events":	[],
 													"m_children":	[],
@@ -3480,6 +3726,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[],
@@ -3968,6 +4218,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"git clone.."
 				}, {
@@ -4006,6 +4260,10 @@
 							"m_label":	"Name:",
 							"m_value":	"boxSizer17"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -4024,6 +4282,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"flexGridSizer21"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -4111,6 +4373,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Clone URL:"
@@ -4180,6 +4446,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -4253,6 +4523,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Target Directory:"
@@ -4322,6 +4596,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -4415,6 +4693,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Use login credentials:"
 										}, {
@@ -4483,6 +4765,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -4563,6 +4849,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -4637,6 +4927,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -4717,6 +5011,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -4745,6 +5043,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"boxSizer18"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -4811,6 +5113,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -4899,6 +5205,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&Cancel"
 										}, {
@@ -4977,6 +5287,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -5014,6 +5328,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"boxSizer36"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -5699,6 +6017,10 @@
 									"m_label":	"Include File:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Split Mode:",
 									"m_selection":	1,
@@ -5777,6 +6099,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -5791,6 +6117,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"boxSizer94"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -5857,6 +6187,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"string",
@@ -5981,6 +6315,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -5995,6 +6333,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"boxSizer92"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -6062,6 +6404,10 @@
 															"type":	"string",
 															"m_label":	"Include File:",
 															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -6128,6 +6474,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"File diff"
 				}, {
@@ -6165,6 +6515,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"boxSizer124"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -6306,6 +6660,10 @@
 									"m_label":	"Include File:",
 									"m_value":	"gitCommitEditor.h"
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"bool",
 									"m_label":	"Fold Margin",
 									"m_value":	false
@@ -6385,6 +6743,10 @@
 									"m_label":	"Name:",
 									"m_value":	"boxSizer126"
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	1,
@@ -6450,6 +6812,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6531,6 +6897,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Git Apply Patch"
 				}, {
@@ -6569,6 +6939,10 @@
 							"m_label":	"Name:",
 							"m_value":	"boxSizer154"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -6587,6 +6961,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"flexGridSizer162"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -6674,6 +7052,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Select patch file"
@@ -6743,6 +7125,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6820,6 +7206,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"git apply additional flags to use:"
@@ -6892,6 +7282,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -6914,6 +7308,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"boxSizer156"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -6980,6 +7378,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -7065,6 +7467,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",

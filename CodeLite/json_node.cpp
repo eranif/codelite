@@ -43,7 +43,7 @@ JSONRoot::~JSONRoot()
     }
 }
 
-void JSONRoot::save(const wxFileName& fn)
+void JSONRoot::save(const wxFileName& fn) const
 {
     wxFFile fp( fn.GetFullPath(), wxT("w+b") );
     if( fp.IsOpened() ) {

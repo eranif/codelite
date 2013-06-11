@@ -152,7 +152,7 @@ public:
     JSONRoot(const wxFileName& filename);
     virtual ~JSONRoot();
     
-    void save(const wxFileName &fn);
+    void save(const wxFileName &fn) const;
     wxString errorString() const;
     bool isOk() const {
         return _json != NULL;

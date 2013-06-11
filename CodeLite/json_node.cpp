@@ -136,27 +136,27 @@ bool JSONElement::isNull() const
     return _json->type == cJSON_NULL;
 }
 
-bool JSONElement::toBool() const 
+bool JSONElement::toBool(bool defaultValue) const 
 {
     if(!_json) {
-        return false;
+        return defaultValue;
     }
 
     if(!isBool()) {
-        return false;
+        return defaultValue;
     }
 
     return _json->type == cJSON_True;
 }
 
-wxString JSONElement::toString() const 
+wxString JSONElement::toString(const wxString& defaultValue) const 
 {
     if(!_json) {
-        return wxT("");
+        return defaultValue;
     }
 
     if(_json->type != cJSON_String) {
-        return wxT("");
+        return defaultValue;
     }
 
     return wxString(_json->valuestring, wxConvUTF8);

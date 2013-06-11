@@ -30,47 +30,48 @@
 #include <map>
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_CL FileExtManager 
+class WXDLLIMPEXP_CL FileExtManager
 {
 public:
-	enum FileType {
-		TypeSourceC,
-		TypeSourceCpp,
-		TypeHeader,
-		TypeResource,
-		TypeYacc,
-		TypeLex,
-		TypeQtForm,
-		TypeQtResource,
-		TypeWorkspace,
-		TypeProject,
-		TypeFormbuilder,
-		TypeCodedesigner,
-		TypeErd,
-		TypePhp,
-		TypeXml,
-		TypeCSS,
-		TypeJS,
-		TypePython,
-		TypeExe,
-		TypeHtml,
-		TypeArchive,
-		TypeDll,
-		TypeBmp,
-		TypeMakefile,
-		TypeText,
-		TypeScript,
+    enum FileType {
+        TypeSourceC,
+        TypeSourceCpp,
+        TypeHeader,
+        TypeResource,
+        TypeYacc,
+        TypeLex,
+        TypeQtForm,
+        TypeQtResource,
+        TypeWorkspace,
+        TypeProject,
+        TypeFormbuilder,
+        TypeCodedesigner,
+        TypeErd,
+        TypePhp,
+        TypeXml,
+        TypeCSS,
+        TypeJS,
+        TypePython,
+        TypeExe,
+        TypeHtml,
+        TypeArchive,
+        TypeDll,
+        TypeBmp,
+        TypeMakefile,
+        TypeText,
+        TypeScript,
         TypeWxCrafter,
-		TypeXRC,
+        TypeXRC,
         TypeSQL,
-		TypeOther = wxNOT_FOUND
-	};
+        TypeFolder,
+        TypeOther = wxNOT_FOUND
+    };
 
 private:
-	static std::map<wxString, FileType> m_map;
+    static std::map<wxString, FileType> m_map;
 
 public:
-	static FileType GetType(const wxString &filename);
-	static void     Init();
+    static FileType GetType(const wxString &filename);
+    static void     Init();
 };
 #endif // __fileextmanager__

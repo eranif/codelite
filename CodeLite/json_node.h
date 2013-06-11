@@ -56,8 +56,8 @@ public:
     ////////////////////////////////////////////////
     JSONElement   namedObject(const wxString& name) const ;
     bool          hasNamedObject(const wxString &name) const;
-    bool          toBool()           const ;
-    wxString      toString()         const ;
+    bool          toBool(bool defaultValue = false) const ;
+    wxString      toString(const wxString &defaultValue = wxEmptyString) const ;
     wxArrayString toArrayString()    const ;
     JSONElement   arrayItem(int pos) const ;
     bool          isNull()           const ;

@@ -64,6 +64,7 @@ public:
         TypeXRC,
         TypeSQL,
         TypeFolder,
+        TypeProjectActive,
         TypeOther = wxNOT_FOUND
     };
 

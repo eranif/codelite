@@ -221,5 +221,6 @@ BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
     images[FileExtManager::TypeResource] = LoadBitmap(wxT("mime/16/res"));
     images[FileExtManager::TypeSQL] = LoadBitmap(wxT("mime/16/sql"));
     images[FileExtManager::TypeFolder] = LoadBitmap(wxT("mime/16/folder"));
+    images[FileExtManager::TypeProjectActive] = LoadBitmap(wxT("workspace/16/project_active"));
     return images;
 }

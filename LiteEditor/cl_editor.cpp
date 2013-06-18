@@ -730,14 +730,8 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
 
     case ':':
         m_context->AutoIndent(event.GetKey());
-
-        // fall through...
-    case '.':
-    case '>':
-        if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
-            CodeComplete();
-        }
         break;
+        
     case ')':
         // Remove one tip from the queue. If the queue new size is 0
         // the tooltip is then cancelled
@@ -786,7 +780,23 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
     default:
         break;
     }
-
+    
+    // Check for code completion strings
+    wxChar charTyped = event.GetKey();
+    // get the previous char. Note that the current position is already *after* the 
+    // current char, so we need to go back 2 chars
+    wxChar firstChar = SafeGetChar( GetCurrentPos() -2 );
+    
+    wxString strTyped, strTyped2;
+    strTyped << charTyped;
+    strTyped2 << firstChar << charTyped;
+    
+    if ( (GetContext()->GetCompletionTriggerStrings().count( strTyped ) || GetContext()->GetCompletionTriggerStrings().count( strTyped2 )) 
+          && !GetContext()->IsCommentOrString(GetCurrentPos())) {
+        // this char should trigger a code completion
+        CodeComplete();
+    }
+    
     if (matchChar && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
         if ( matchChar == ')' && m_autoAddNormalBraces) {
             // Only add a close brace if the next char is whitespace

@@ -32,6 +32,8 @@
 #include "lexer_configuration.h"
 #include <vector>
 #include "entry.h"
+#include <set>
+#include "macros.h"
 
 class LEditor;
 
@@ -54,6 +56,7 @@ protected:
     wxString m_name;
     wxString m_selectedWord;
     std::vector<wxMenuItem*> m_dynItems;
+    wxStringSet_t m_completionTriggerStrings;
 
 protected:
     void SetName(const wxString &name) {
@@ -71,6 +74,9 @@ public:
     ContextBase(const wxString &name);
     virtual ~ContextBase();
 
+    const wxStringSet_t& GetCompletionTriggerStrings() const {
+        return m_completionTriggerStrings;
+    }
     /**
      * Return the context parent control
      */

@@ -2069,8 +2069,13 @@ void ContextCpp::Initialize()
     if ( !IsJavaScript() ) {
         //load the context menu from the resource manager
         m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
+        m_completionTriggerStrings.insert(".");
+        m_completionTriggerStrings.insert("->");
+        m_completionTriggerStrings.insert("::");
+        
     } else {
         m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
+        m_completionTriggerStrings.insert(".");
     }
 }
 

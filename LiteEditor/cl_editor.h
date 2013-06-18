@@ -115,7 +115,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     wxStopWatch                                 m_watch;
     ContextBasePtr                              m_context;
     wxMenu *                                    m_rightClickMenu;
-    EditorDeltasHolder*                         m_deltas;		// Holds any text position changes, in case they affect FindinFiles results
+    EditorDeltasHolder*                         m_deltas;   // Holds any text position changes, in case they affect FindinFiles results
     std::vector<wxMenuItem*>                    m_dynItems;
     std::vector<BPtoMarker>                     m_BPstoMarkers;
     static FindReplaceDialog *                  m_findReplaceDlg;

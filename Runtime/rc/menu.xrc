@@ -468,7 +468,7 @@
         </object>
 
         <object class="wxMenu" name="debug">
-            <label>&amp;Debug</label>
+            <label>&amp;GDB</label>
             <style>wxMENU_TEAROFF</style>
             <object class="wxMenu" name="debugger_windows">
                 <label>Windows</label>
@@ -608,7 +608,7 @@
                 <label>&amp;Build Settings...</label>
             </object>
 			<object class="wxMenuItem" name="debuger_settings">
-                <label>&amp;Debugger Settings...</label>
+                <label>&amp;GDB Settings...</label>
             </object>
 			<object class="wxMenuItem" name="tags_options">
                 <label>&amp;Tags Settings...</label>

@@ -2229,6 +2229,8 @@ void Manager::DbgStart ( long attachPid )
     si.bpList = bps;
     si.ttyName = clMainFrame::Get()->StartTTY(title);
     si.PID = PID;
+    si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
+    si.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
     
     if ( bldConf ) {
         si.searchPaths = bldConf->GetDebuggerSearchPaths();
@@ -2237,7 +2239,10 @@ void Manager::DbgStart ( long attachPid )
     if ( attachPid == wxNOT_FOUND ) {
         //it is now OK to start the debugger...
         dbg_cmds = wxStringTokenize ( bldConf->GetDebuggerStartupCmds(), wxT ( "\n" ), wxTOKEN_STRTOK );
-        si.cmds = dbg_cmds;
+        
+        // append project level commands to the global commands
+        si.cmds.insert(si.cmds.end(), dbg_cmds.begin(), dbg_cmds.end());
+        
         if ( !dbgr->Start ( si ) ) {
             wxString errMsg;
             errMsg << _("Failed to initialize debugger: ") << dbgname << wxT("\n");
@@ -2245,7 +2250,9 @@ void Manager::DbgStart ( long attachPid )
             return;
         }
     } else {
-        si.cmds = dbg_cmds;
+        // append project level commands to the global commands
+        si.cmds.insert(si.cmds.end(), dbg_cmds.begin(), dbg_cmds.end());
+        
         //Attach to process...
         if ( !dbgr->Attach ( si ) ) {
             wxString errMsg;

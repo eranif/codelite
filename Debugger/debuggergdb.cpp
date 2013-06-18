@@ -228,7 +228,7 @@ bool DbgGdb::Start( const DebugSessionInfo& si)
         return false;
     }
     m_gdbProcess->SetHardKill( true );
-    DoInitializeGdb( si.bpList, si.cmds, si.searchPaths );
+    DoInitializeGdb( si );
     return true;
 }
 
@@ -976,7 +976,7 @@ bool DbgGdb::DoLocateGdbExecutable( const wxString& debuggerPath, wxString& dbgE
 }
 
 // Initialization stage
-bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo>& bpList, const wxArrayString& cmds, const wxArrayString& searchPaths)
+bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
 {
     m_goingDown = false;
     m_internalBpId = wxNOT_FOUND;
@@ -1011,12 +1011,12 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo>& bpList, const wx
     ExecuteCmd( sizeCommand );
 
     // set the project startup commands
-    for ( size_t i=0; i<cmds.GetCount(); i++ ) {
-        ExecuteCmd( cmds.Item( i ) );
+    for ( size_t i=0; i<sessionInfo.cmds.GetCount(); i++ ) {
+        ExecuteCmd( sessionInfo.cmds.Item( i ) );
     }
 
     // keep the list of breakpoints
-    m_bpList = bpList;
+    m_bpList = sessionInfo.bpList;
 
 
     bool setBreakpointsAfterMain( m_info.applyBreakpointsAfterProgramStarted );
@@ -1042,13 +1042,16 @@ bool DbgGdb::DoInitializeGdb(const std::vector<BreakpointInfo>& bpList, const wx
     } else {
         SetShouldBreakAtMain(false); // Needs explicitly to be set, in case the user has just changed his options
     }
-    //enable python based pretty printing
-    WriteCommand( wxT( "-enable-pretty-printing" ), NULL );
+    
+    // Enable python based pretty printing?
+    if ( sessionInfo.enablePrettyPrinting ) {
+        WriteCommand( wxT( "-enable-pretty-printing" ), NULL );
+    }
     
     // Add the additional search paths
-    for(size_t i=0; i<searchPaths.GetCount(); ++i) {
+    for(size_t i=0; i<sessionInfo.searchPaths.GetCount(); ++i) {
         wxString dirCmd;
-        wxString path = searchPaths.Item(i);
+        wxString path = sessionInfo.searchPaths.Item(i);
         path.Trim().Trim(false);
         if ( path.Contains(" ") ) {
             path.Prepend('"').Append('"');
@@ -1372,7 +1375,7 @@ bool DbgGdb::Attach(const DebugSessionInfo& si)
     }
     m_gdbProcess->SetHardKill( true );
 
-    DoInitializeGdb( si.bpList, si.cmds, si.searchPaths);
+    DoInitializeGdb( si );
     m_observer->UpdateGotControl( DBG_END_STEPPING );
     return true;
 }

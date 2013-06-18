@@ -84,7 +84,7 @@ protected:
 
 protected:
     bool               DoLocateGdbExecutable(const wxString &debuggerPath, wxString &dbgExeName);
-    bool               DoInitializeGdb      (const std::vector<BreakpointInfo> &bpList, const wxArrayString &cmds, const wxArrayString &searchPaths);
+    bool               DoInitializeGdb      ( const DebugSessionInfo& sessionInfo );
     void               SetCliHandler        (DbgCmdCLIHandler *handler);
     DbgCmdCLIHandler * GetCliHandler        ();
 

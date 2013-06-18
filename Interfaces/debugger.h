@@ -380,6 +380,7 @@ public:
     bool      whenBreakpointHitRaiseCodelite;
     wxString  cygwinPathCommand;
     bool      charArrAsPtr;
+    bool      enableGDBPrettyPrinting;
 public:
     DebuggerInformation()
         : name(wxEmptyString)
@@ -400,8 +401,9 @@ public:
         , autoExpandTipItems(true)
         , applyBreakpointsAfterProgramStarted(false)
         , whenBreakpointHitRaiseCodelite(true)
-        , charArrAsPtr(false) {
-    }
+        , charArrAsPtr(false)
+        , enableGDBPrettyPrinting(false) 
+    {}
 
     virtual ~DebuggerInformation() {}
 
@@ -426,6 +428,7 @@ public:
         arch.Write(wxT("whenBreakpointHitRaiseCodelite"),      whenBreakpointHitRaiseCodelite);
         arch.Write(wxT("cygwinPathCommand"),                   cygwinPathCommand);
         arch.Write(wxT("charArrAsPtr"),                        charArrAsPtr);
+        arch.Write(wxT("enableGDBPrettyPrinting"),             enableGDBPrettyPrinting);
     }
 
     void DeSerialize(Archive &arch) {
@@ -455,6 +458,7 @@ public:
         arch.Read(wxT("whenBreakpointHitRaiseCodelite"),      whenBreakpointHitRaiseCodelite);
         arch.Read(wxT("cygwinPathCommand"),                   cygwinPathCommand);
         arch.Read(wxT("charArrAsPtr"),                        charArrAsPtr);
+        arch.Read(wxT("enableGDBPrettyPrinting"),             enableGDBPrettyPrinting);
     }
 };
 
@@ -503,8 +507,10 @@ public:
     wxArrayString cmds;                 /// Startup commands
     wxString ttyName;                   /// TTY to use
     wxArrayString searchPaths;          /// Additional search paths to pass to the debugger
+    bool enablePrettyPrinting;          /// Should we enable pretty printing?
     DebugSessionInfo() 
         : PID(wxNOT_FOUND)
+        , enablePrettyPrinting(false)
     {}
 };
 

@@ -364,6 +364,14 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer21->Add(0, 0, 1, wxEXPAND, 5);
     
+    m_checkBoxUsePrettyPrinting = new wxCheckBox(m_panel6, wxID_ANY, _("Enable GDB Pretty Printing"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxUsePrettyPrinting->SetValue(false);
+    m_checkBoxUsePrettyPrinting->SetToolTip(_("If ticked, examining the contents of e.g. std::string, wxString, wxArrayString will be much easier"));
+    
+    fgSizer21->Add(m_checkBoxUsePrettyPrinting, 0, wxALL, 5);
+    
+    fgSizer21->Add(0, 0, 0, wxALL, 5);
+    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);

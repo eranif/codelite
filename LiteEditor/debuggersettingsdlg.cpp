@@ -112,6 +112,7 @@ DebuggerPage::DebuggerPage(wxWindow *parent, wxString title)
         m_checkBoxSetBreakpointsAfterMain->SetValue(info.applyBreakpointsAfterProgramStarted);
         m_raiseOnBpHit->SetValue(info.whenBreakpointHitRaiseCodelite);
         m_checkBoxCharArrAsPtr->SetValue(info.charArrAsPtr);
+        m_checkBoxUsePrettyPrinting->SetValue(info.enableGDBPrettyPrinting);
     }
 }
 
@@ -325,8 +326,8 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent &e)
             info.applyBreakpointsAfterProgramStarted  = page->m_checkBoxSetBreakpointsAfterMain->IsChecked();
             info.whenBreakpointHitRaiseCodelite       = page->m_raiseOnBpHit->IsChecked();
             info.charArrAsPtr                         = page->m_checkBoxCharArrAsPtr->IsChecked();
+            info.enableGDBPrettyPrinting              = page->m_checkBoxUsePrettyPrinting->IsChecked();
             DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
-
         }
 
         DebuggerPageMisc *miscPage =  dynamic_cast<DebuggerPageMisc*>(win);

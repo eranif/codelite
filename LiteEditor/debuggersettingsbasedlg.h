@@ -122,6 +122,7 @@ protected:
     wxSpinCtrl* m_spinCtrlNumElements;
     wxCheckBox* m_checkBoxExpandLocals;
     wxCheckBox* m_checkBoxCharArrAsPtr;
+    wxCheckBox* m_checkBoxUsePrettyPrinting;
 
 protected:
     virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }

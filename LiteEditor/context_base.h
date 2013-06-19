@@ -124,7 +124,7 @@ public:
     virtual void OnFileSaved() {}
     virtual void OnEnterHit() {}
     virtual void RetagFile() {}
-    virtual void OnUserTypedXChars(const wxString &WXUNUSED(word)) {}
+    virtual void OnUserTypedXChars(const wxString &word) ;
     virtual wxString CallTipContent() {
         return wxEmptyString;
     }

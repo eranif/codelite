@@ -1333,8 +1333,9 @@ void LEditor::CompleteWord(bool onlyRefresh)
         return;
 
     // Let the plugins a chance to override the default behavior
-    wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
-    evt.SetInt(GetCurrentPosition());
+    clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE);
+    evt.SetPosition(GetCurrentPosition());
+    evt.SetEditor( this );
     evt.SetEventObject(this);
 
     if(EventNotifier::Get()->ProcessEvent(evt)) {
@@ -1360,9 +1361,10 @@ void LEditor::CodeComplete()
     if(EventNotifier::Get()->IsEventsDiabled())
         return;
 
-    wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE);
-    evt.SetInt(GetCurrentPosition());
+    clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE);
+    evt.SetPosition(GetCurrentPosition());
     evt.SetEventObject(this);
+    evt.SetEditor(this);
 
     if(EventNotifier::Get()->ProcessEvent(evt))
         // the plugin handled the code-complete request
@@ -1438,9 +1440,10 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
 
         // Allow the plugins to override the default built-in behavior of displaying
         // the type info tooltip
-        wxCommandEvent evtTypeinfo(wxEVT_CMD_TYPEINFO_TIP, GetId());
+        clCodeCompletionEvent evtTypeinfo(wxEVT_CMD_TYPEINFO_TIP, GetId());
         evtTypeinfo.SetEventObject(this);
-        evtTypeinfo.SetInt(event.GetPosition());
+        evtTypeinfo.SetEditor(this);
+        evtTypeinfo.SetPosition(event.GetPosition());
 
         if(EventNotifier::Get()->ProcessEvent(evtTypeinfo))
             return;
@@ -3398,10 +3401,11 @@ void LEditor::ShowFunctionTipFromCurrentPos()
         int pos = DoGetOpenBracePos();
 
         // see if any of the plugins want to handle it
-        wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
+        clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
         evt.SetEventObject(this);
-        evt.SetInt(pos);
-
+        evt.SetEditor(this);
+        evt.SetPosition( pos );
+        
         if(EventNotifier::Get()->ProcessEvent(evt))
             return;
 

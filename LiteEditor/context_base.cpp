@@ -29,6 +29,10 @@
 #include "editor_config.h"
 #include "cl_editor.h"
 #include "frame.h"
+#include "ctags_manager.h"
+#include "cl_command_event.h"
+#include "event_notifier.h"
+#include "plugin.h"
 
 static wxColor GetInactiveColor(const wxColor& col)
 {
@@ -332,4 +336,29 @@ int ContextBase::DoGetCalltipParamterIndex()
         }
     }
     return index;
+}
+
+void ContextBase::OnUserTypedXChars(const wxString& word) 
+{
+    // user typed more than 3 chars, display completion box with C++ keywords
+    if ( IsCommentOrString(GetCtrl().GetCurrentPos()) ) {
+        return;
+    }
+
+    if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
+        clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD);
+        ccEvt.SetEditor( &GetCtrl() );
+        ccEvt.SetWord( word );
+        
+        if ( EventNotifier::Get()->ProcessEvent( ccEvt ) ) {
+            const std::vector<TagEntryPtr>& tags = ccEvt.GetTags();
+            if ( tags.empty() == false ) {
+                GetCtrl().ShowCompletionBox(tags,   // list of tags
+                                            word,   // partial word
+                                            false,  // dont show full declaration
+                                            true,   // auto hide if there is no match in the list
+                                            false); // do not automatically insert word if there is only single choice
+            }
+        }
+    }
 }

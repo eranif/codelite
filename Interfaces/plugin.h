@@ -258,28 +258,29 @@ enum {
     // event.GetString() returns the selected configuration
     wxEVT_PLUGIN_EXPORT_MAKEFILE,
 
-    /////////////////////////////////////////////////
+    //-------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------
     // Code completion events
-    /////////////////////////////////////////////////
-
+    // Events sent here are of type 'clCodeCompletionEvent'
+    //-------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------
+    
     // User hit Ctrl-Space in the editor
     // let the plugins a chance to handle this
     // event.
-    // Call event.GetInt() to get the position in the current editor
-    // Use m_mgr->GetActiveEditor() to get the active editor
     wxEVT_CMD_CODE_COMPLETE,
 
     // A tooltip is requested for the selected entry in the completion box
     // clientData is set to the client data set by the user
     // the plugin returns the tooltip to the IDE using the:
-    // evt.SetString(..) method
+    // evt.SetTooltip(..) method
     // Use evt.GetClientData() to retrieve the client data associated with this tag
     wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT,
 
     // A function calltip is requesed
     // clientData is set to the client data set by the user
     // the plugin returns the tooltip to the IDE using the:
-    // evt.SetString(..) method
+    // evt.SetTooltip(..) method
     wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP,
 
     // The code completion box has been dismissed
@@ -290,17 +291,20 @@ enum {
     wxEVT_CMD_SHOW_QUICK_OUTLINE,
 
     // User is hovering a text, display the typeinfo
-    // User m_mgr->GetActiveEditor() to get the current editor Or
-    // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
-    // Hover position is set in the evt.GetInt()
+    // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
+    // Hover position is set in the evt.GetPosition()
     wxEVT_CMD_TYPEINFO_TIP,
-
-    // codelite is about to display a code-completion
-    // box with the language specific keywords
-    // User m_mgr->GetActiveEditor() to get the current editor Or
-    // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
-    wxEVT_CMD_DISPLAY_LANGUAGE_KEYWORDS_CC_BOX,
-
+    
+    // Send a clCodeCompletionEvent
+    // Codelite is about to show the completion box for language keywords
+    wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
+    
+    //-------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------
+    // Code completion events - END
+    //-------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------
+    
     /////////////////////////////////////////////////
     // Project management events
     /////////////////////////////////////////////////

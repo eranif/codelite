@@ -46,6 +46,7 @@
 #include <wx/display.h>
 #include "event_notifier.h"
 #include "cc_box_tip_window.h"
+#include "cl_command_event.h"
 
 #ifdef __WXGTK__
 #   define TIP_TIMER 100
@@ -632,7 +633,7 @@ void CCBox::PreviousPage()
 
 void CCBox::HideCCBox()
 {
-    wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED, GetId());
+    clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED, GetId());
     evt.SetEventObject(this);
     EventNotifier::Get()->AddPendingEvent(evt);
 
@@ -673,7 +674,7 @@ void CCBox::DoShowTagTip()
     // Send the plugins an event requesting tooltip for this tag
     bool gotAComment(false);
     if(m_owner) {
-        wxCommandEvent evt(wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT, GetId());
+        clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT, GetId());
         evt.SetEventObject(this);
         evt.SetClientData(tag.GetUserData());
         if(EventNotifier::Get()->ProcessEvent(evt)) {

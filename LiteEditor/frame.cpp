@@ -46,6 +46,7 @@
 #include "WelcomePage.h"
 #include "code_completion_box.h"
 #include "cl_aui_tool_stickness.h"
+#include "cl_command_event.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2764,8 +2765,9 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
         return;
 
     // let the plugins process this first
-    wxCommandEvent evt(wxEVT_CMD_SHOW_QUICK_OUTLINE, GetId());
+    clCodeCompletionEvent evt(wxEVT_CMD_SHOW_QUICK_OUTLINE, GetId());
     evt.SetEventObject(this);
+    evt.SetEditor( GetMainBook()->GetActiveEditor() );
     if(EventNotifier::Get()->ProcessEvent(evt))
         return;
 

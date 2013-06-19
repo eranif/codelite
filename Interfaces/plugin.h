@@ -268,32 +268,32 @@ enum {
     // User hit Ctrl-Space in the editor
     // let the plugins a chance to handle this
     // event.
-    wxEVT_CMD_CODE_COMPLETE,
+    wxEVT_CC_CODE_COMPLETE,
 
     // A tooltip is requested for the selected entry in the completion box
     // clientData is set to the client data set by the user
     // the plugin returns the tooltip to the IDE using the:
     // evt.SetTooltip(..) method
     // Use evt.GetClientData() to retrieve the client data associated with this tag
-    wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT,
+    wxEVT_CC_CODE_COMPLETE_TAG_COMMENT,
 
     // A function calltip is requesed
     // clientData is set to the client data set by the user
     // the plugin returns the tooltip to the IDE using the:
     // evt.SetTooltip(..) method
-    wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP,
+    wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
 
     // The code completion box has been dismissed
-    wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED,
+    wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
 
     // User has requested to display the current files' outline
     // Use m_mgr->GetActiveEditor() to get the active editor
-    wxEVT_CMD_SHOW_QUICK_OUTLINE,
+    wxEVT_CC_SHOW_QUICK_OUTLINE,
 
     // User is hovering a text, display the typeinfo
     // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
     // Hover position is set in the evt.GetPosition()
-    wxEVT_CMD_TYPEINFO_TIP,
+    wxEVT_CC_TYPEINFO_TIP,
     
     // Send a clCodeCompletionEvent
     // Codelite is about to show the completion box for language keywords

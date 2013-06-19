@@ -1333,7 +1333,7 @@ void LEditor::CompleteWord(bool onlyRefresh)
         return;
 
     // Let the plugins a chance to override the default behavior
-    clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE);
+    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetEditor( this );
     evt.SetEventObject(this);
@@ -1361,7 +1361,7 @@ void LEditor::CodeComplete()
     if(EventNotifier::Get()->IsEventsDiabled())
         return;
 
-    clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE);
+    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetEventObject(this);
     evt.SetEditor(this);
@@ -1440,7 +1440,7 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
 
         // Allow the plugins to override the default built-in behavior of displaying
         // the type info tooltip
-        clCodeCompletionEvent evtTypeinfo(wxEVT_CMD_TYPEINFO_TIP, GetId());
+        clCodeCompletionEvent evtTypeinfo(wxEVT_CC_TYPEINFO_TIP, GetId());
         evtTypeinfo.SetEventObject(this);
         evtTypeinfo.SetEditor(this);
         evtTypeinfo.SetPosition(event.GetPosition());
@@ -3401,7 +3401,7 @@ void LEditor::ShowFunctionTipFromCurrentPos()
         int pos = DoGetOpenBracePos();
 
         // see if any of the plugins want to handle it
-        clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
+        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
         evt.SetEventObject(this);
         evt.SetEditor(this);
         evt.SetPosition( pos );

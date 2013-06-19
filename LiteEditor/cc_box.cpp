@@ -633,7 +633,7 @@ void CCBox::PreviousPage()
 
 void CCBox::HideCCBox()
 {
-    clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE_BOX_DISMISSED, GetId());
+    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED, GetId());
     evt.SetEventObject(this);
     EventNotifier::Get()->AddPendingEvent(evt);
 
@@ -674,7 +674,7 @@ void CCBox::DoShowTagTip()
     // Send the plugins an event requesting tooltip for this tag
     bool gotAComment(false);
     if(m_owner) {
-        clCodeCompletionEvent evt(wxEVT_CMD_CODE_COMPLETE_TAG_COMMENT, GetId());
+        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_TAG_COMMENT, GetId());
         evt.SetEventObject(this);
         evt.SetClientData(tag.GetUserData());
         if(EventNotifier::Get()->ProcessEvent(evt)) {

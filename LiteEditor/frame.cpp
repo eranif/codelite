@@ -2765,7 +2765,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
         return;
 
     // let the plugins process this first
-    clCodeCompletionEvent evt(wxEVT_CMD_SHOW_QUICK_OUTLINE, GetId());
+    clCodeCompletionEvent evt(wxEVT_CC_SHOW_QUICK_OUTLINE, GetId());
     evt.SetEventObject(this);
     evt.SetEditor( GetMainBook()->GetActiveEditor() );
     if(EventNotifier::Get()->ProcessEvent(evt))

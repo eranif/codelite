@@ -678,7 +678,7 @@ void CCBox::DoShowTagTip()
         evt.SetEventObject(this);
         evt.SetClientData(tag.GetUserData());
         if(EventNotifier::Get()->ProcessEvent(evt)) {
-            prefix << evt.GetString();
+            prefix << evt.GetTooltip();
             gotAComment = true;
         }
     }

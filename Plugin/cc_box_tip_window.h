@@ -22,18 +22,17 @@ class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
     wxRect   m_rightTipRect;
     bool     m_positionedToRight;
 
-    //static wxBitmap m_leftbmp;
-    //static wxBitmap m_rightbmp;
-
 protected:
     void OnPaint(wxPaintEvent &e);
     void OnEraseBG(wxEraseEvent &e);
     void OnMouseLeft(wxMouseEvent &e);
     void DoPrintText(wxDC& dc, wxString &text, wxPoint& pt);
     wxString DoStripMarkups();
-
+    void DoInitialize( const wxString &tip, size_t numOfTips, bool simpleTip);
+    
 public:
     CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips, bool simpleTip = false);
+    CCBoxTipWindow(wxWindow* parent, const wxString &tip); 
     virtual ~CCBoxTipWindow();
 
     /**

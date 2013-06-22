@@ -12,26 +12,36 @@
 #include "editor_config.h"
 #include <wx/stc/stc.h>
 
-//wxBitmap CCBoxTipWindow::m_leftbmp = wxNullBitmap;
-//wxBitmap CCBoxTipWindow::m_rightbmp  = wxNullBitmap;
-
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP   = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
 
-CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips, bool simpleTip)
+CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
     : wxPopupWindow(parent)
     , m_tip(tip)
-    , m_numOfTips(numOfTips)
+    , m_positionedToRight(false)
+{
+    DoInitialize(tip, 1, true);
+}
+
+CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips, bool simpleTip)
+    : wxPopupWindow(parent)
     , m_positionedToRight(true)
 {
+    DoInitialize(tip, numOfTips, simpleTip);
+}
+
+CCBoxTipWindow::~CCBoxTipWindow()
+{
+}
+
+void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool simpleTip)
+{
+    m_tip = tip;
+    m_numOfTips = numOfTips;
+    
     //Invalidate the rectangles
     m_leftTipRect = wxRect();
     m_rightTipRect = wxRect();
-
-    //if ( m_leftbmp.IsNull() || m_rightbmp.IsNull() ) {
-    //    m_leftbmp  = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/prev-tip"));
-    //    m_rightbmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/next-tip"));
-    //}
 
     if ( !simpleTip && m_numOfTips > 1 )
         m_tip.Prepend(wxT("\n\n")); // Make room for the arrows
@@ -109,13 +119,6 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
     Connect(wxEVT_PAINT, wxPaintEventHandler(CCBoxTipWindow::OnPaint), NULL, this);
     Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(CCBoxTipWindow::OnEraseBG), NULL, this);
     Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CCBoxTipWindow::OnMouseLeft), NULL, this);
-}
-
-CCBoxTipWindow::~CCBoxTipWindow()
-{
-    Disconnect(wxEVT_PAINT, wxPaintEventHandler(CCBoxTipWindow::OnPaint), NULL, this);
-    Disconnect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(CCBoxTipWindow::OnEraseBG), NULL, this);
-    Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CCBoxTipWindow::OnMouseLeft), NULL, this);
 }
 
 void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, IEditor* focusEdior)
@@ -393,4 +396,3 @@ void CCBoxTipWindow::PositionAt(const wxPoint& pt, IEditor* focusEdior)
         focusEdior->SetActive();
     }
 }
-

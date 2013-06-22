@@ -2,20 +2,18 @@
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
 #include "ieditor.h"
-#include "pluginmanager.h"
-#include "cl_editor.h"
 #include <wx/settings.h>
 #include <wx/dcbuffer.h>
 #include "bitmap_loader.h"
 #include <wx/tokenzr.h>
 #include <wx/spinctrl.h>
 #include "Markup.h"
-#include "cc_box.h"
 #include "event_notifier.h"
 #include "editor_config.h"
+#include <wx/stc/stc.h>
 
-wxBitmap CCBoxTipWindow::m_leftbmp = wxNullBitmap;
-wxBitmap CCBoxTipWindow::m_rightbmp  = wxNullBitmap;
+//wxBitmap CCBoxTipWindow::m_leftbmp = wxNullBitmap;
+//wxBitmap CCBoxTipWindow::m_rightbmp  = wxNullBitmap;
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP   = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -30,10 +28,10 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t num
     m_leftTipRect = wxRect();
     m_rightTipRect = wxRect();
 
-    if ( m_leftbmp.IsNull() || m_rightbmp.IsNull() ) {
-        m_leftbmp  = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/prev-tip"));
-        m_rightbmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/next-tip"));
-    }
+    //if ( m_leftbmp.IsNull() || m_rightbmp.IsNull() ) {
+    //    m_leftbmp  = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/prev-tip"));
+    //    m_rightbmp = PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("cc/16/next-tip"));
+    //}
 
     if ( !simpleTip && m_numOfTips > 1 )
         m_tip.Prepend(wxT("\n\n")); // Make room for the arrows
@@ -120,7 +118,7 @@ CCBoxTipWindow::~CCBoxTipWindow()
     Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CCBoxTipWindow::OnMouseLeft), NULL, this);
 }
 
-void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, LEditor* focusEdior)
+void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, IEditor* focusEdior)
 {
     m_positionedToRight = true;
     // When shown, set the focus back to the editor
@@ -147,7 +145,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, LEditor* focusEdior)
     if ( focusEdior ) {
         // Check that the tip Y coord is inside the editor
         // this is to prevent some zombie tips appearing floating in no-man-land
-        wxRect editorRect = focusEdior->GetScreenRect();
+        wxRect editorRect = focusEdior->GetSTC()->GetScreenRect();
         if ( editorRect.GetTopLeft().y > pt.y ) {
             m_positionedToRight = true;
             return;
@@ -181,28 +179,27 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     dc.DrawRectangle(rr);
     
     // Draw left-right arrows
-    if ( m_numOfTips > 1 && m_leftbmp.IsOk() && m_rightbmp.IsOk() ) {
-        
-        // If the tip is positioned on the right side of the completion box
-        // place the <- -> buttons on the LEFT side
-        int leftButtonOffset = 5;
-        if ( !m_positionedToRight ) {
-            // Place the buttons on the RIGHT side
-            leftButtonOffset = rr.GetWidth() - m_leftbmp.GetWidth() - m_rightbmp.GetWidth() - 10; // 10 pixels padding
-        }
-        
-        m_leftTipRect  = wxRect(leftButtonOffset, 5, m_leftbmp.GetWidth(), m_leftbmp.GetHeight());
-        wxPoint rightBmpPt = m_leftTipRect.GetTopRight();
-        rightBmpPt.x += 5;
-        m_rightTipRect = wxRect(rightBmpPt, wxSize(m_rightbmp.GetWidth(), m_rightbmp.GetHeight()));
-
-        dc.DrawBitmap(m_leftbmp,  m_leftTipRect.GetTopLeft());
-        dc.DrawBitmap(m_rightbmp, m_rightTipRect.GetTopLeft());
-        
-    } else {
-        m_leftTipRect = wxRect();
-        m_rightTipRect = wxRect();
-    }
+    m_leftTipRect = wxRect();
+    m_rightTipRect = wxRect();
+    //if ( m_numOfTips > 1 && m_leftbmp.IsOk() && m_rightbmp.IsOk() ) {
+    //    
+    //    // If the tip is positioned on the right side of the completion box
+    //    // place the <- -> buttons on the LEFT side
+    //    int leftButtonOffset = 5;
+    //    if ( !m_positionedToRight ) {
+    //        // Place the buttons on the RIGHT side
+    //        leftButtonOffset = rr.GetWidth() - m_leftbmp.GetWidth() - m_rightbmp.GetWidth() - 10; // 10 pixels padding
+    //    }
+    //    
+    //    m_leftTipRect  = wxRect(leftButtonOffset, 5, m_leftbmp.GetWidth(), m_leftbmp.GetHeight());
+    //    wxPoint rightBmpPt = m_leftTipRect.GetTopRight();
+    //    rightBmpPt.x += 5;
+    //    m_rightTipRect = wxRect(rightBmpPt, wxSize(m_rightbmp.GetWidth(), m_rightbmp.GetHeight()));
+    //
+    //    dc.DrawBitmap(m_leftbmp,  m_leftTipRect.GetTopLeft());
+    //    dc.DrawBitmap(m_rightbmp, m_rightTipRect.GetTopLeft());
+    //    
+    //}
 
     dc.SetFont(m_commentFont);
     dc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
@@ -387,7 +384,7 @@ wxString CCBoxTipWindow::DoStripMarkups()
     return text;
 }
 
-void CCBoxTipWindow::PositionAt(const wxPoint& pt, LEditor* focusEdior)
+void CCBoxTipWindow::PositionAt(const wxPoint& pt, IEditor* focusEdior)
 {
     SetSize(wxRect(pt, GetSize()));
     Show();

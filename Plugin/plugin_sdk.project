@@ -165,6 +165,8 @@
       <File Name="cl_treelistctrl.cpp"/>
       <File Name="my_menu_bar.h"/>
       <File Name="my_menu_bar.cpp"/>
+      <File Name="cc_box_tip_window.cpp"/>
+      <File Name="cc_box_tip_window.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
       <File Name="threebuttondlg.h"/>

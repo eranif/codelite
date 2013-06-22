@@ -454,8 +454,6 @@
     <File Name="save_perspective_as_dlg.h"/>
     <File Name="NavBarControl.h"/>
     <File Name="NavBarControl.cpp"/>
-    <File Name="cc_box_tip_window.h"/>
-    <File Name="cc_box_tip_window.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>

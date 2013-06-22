@@ -351,6 +351,11 @@ public:
      * @brief return a pointer to the underlying scintilla control
      */
     virtual wxStyledTextCtrl* GetSTC() = 0;
+    
+    /**
+     * @brief set the focus to the current editor
+     */
+    virtual void SetActive() = 0;
 };
 
 #endif //IEDITOR_H

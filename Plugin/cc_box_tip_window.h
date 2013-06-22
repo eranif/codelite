@@ -3,14 +3,15 @@
 
 #include <wx/popupwin.h> // Base class: wxPopupTransientWindow
 #include <wx/panel.h>
+#include "codelite_exports.h"
 
-class LEditor;
+class IEditor;
 class CCBox;
 
-extern const wxEventType wxEVT_TIP_BTN_CLICKED_UP;
-extern const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN;
+WXDLLIMPEXP_SDK extern const wxEventType wxEVT_TIP_BTN_CLICKED_UP;
+WXDLLIMPEXP_SDK extern const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN;
 
-class CCBoxTipWindow : public wxPopupWindow
+class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
 {
     wxString m_tip;
     int      m_lineHeight;
@@ -21,8 +22,8 @@ class CCBoxTipWindow : public wxPopupWindow
     wxRect   m_rightTipRect;
     bool     m_positionedToRight;
 
-    static wxBitmap m_leftbmp;
-    static wxBitmap m_rightbmp;
+    //static wxBitmap m_leftbmp;
+    //static wxBitmap m_rightbmp;
 
 protected:
     void OnPaint(wxPaintEvent &e);
@@ -40,11 +41,11 @@ public:
      * if focusEditor is NOT null, the editor will gain the focus once
      * the tip is shown
      */
-    void PositionRelativeTo(wxWindow* win, LEditor* focusEdior = NULL);
+    void PositionRelativeTo(wxWindow* win, IEditor* focusEdior = NULL);
     /**
      * @brief position and show the tip at a given location
      */
-    void PositionAt(const wxPoint& pt, LEditor* focusEdior = NULL);
+    void PositionAt(const wxPoint& pt, IEditor* focusEdior = NULL);
 };
 
 #endif // CCBOXTIPWINDOW_H

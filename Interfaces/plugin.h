@@ -171,7 +171,18 @@ enum {
     /**
      * Build related events
      */
-
+    
+    // A user requested to execute the active project
+    wxEVT_CMD_EXECUTE_ACTIVE_PROJECT,
+    
+    // A user requested to stop the previously executed program
+    wxEVT_CMD_STOP_EXECUTED_PROGRAM,
+    
+    // codelite sends this event to query plugins incase there is a program running
+    // use evet.SetInt(1) to indicate that the plugin has launched an executable
+    // it is mainly used for displaying the 'Stop' button in the toolbar as active/disabled
+    wxEVT_CMD_IS_PROGRAM_RUNNING,
+    
     // clientData is NULL
     wxEVT_BUILD_STARTED,
 

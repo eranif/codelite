@@ -2542,9 +2542,14 @@ void clMainFrame::OnBuildProjectUI(wxUpdateUIEvent &event)
 void clMainFrame::OnStopExecutedProgramUI(wxUpdateUIEvent &event)
 {
     CHECK_SHUTDOWN();
+    wxCommandEvent e(wxEVT_CMD_IS_PROGRAM_RUNNING, GetId());
+    e.SetEventObject(this);
+    e.SetInt(0);
+    EventNotifier::Get()->ProcessEvent(e);
+
     Manager *mgr = ManagerST::Get();
     bool enable = mgr->IsProgramRunning();
-    event.Enable(enable);
+    event.Enable(enable || e.GetInt());
 }
 
 void clMainFrame::OnStopBuildUI(wxUpdateUIEvent &event)
@@ -2566,6 +2571,10 @@ void clMainFrame::OnStopBuild(wxCommandEvent &event)
 
 void clMainFrame::OnStopExecutedProgram(wxCommandEvent &event)
 {
+    wxCommandEvent evtExecute(wxEVT_CMD_STOP_EXECUTED_PROGRAM);
+    if ( EventNotifier::Get()->ProcessEvent( evtExecute ) )
+        return;
+    
     wxUnusedVar(event);
     Manager *mgr = ManagerST::Get();
     if (mgr->IsProgramRunning()) {
@@ -2604,6 +2613,11 @@ void clMainFrame::OnCleanProjectUI(wxUpdateUIEvent &event)
 
 void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
 {
+    // Test to see if any plugin wants to execute it
+    wxCommandEvent evtExecute(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT);
+    if ( EventNotifier::Get()->ProcessEvent( evtExecute ) )
+        return;
+    
     wxUnusedVar(event);
     wxString projectName;
 
@@ -2616,11 +2630,17 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
 void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
 {
     CHECK_SHUTDOWN();
-    event.Enable(ManagerST::Get()->GetActiveProjectName().IsEmpty() == false
+    wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+    e.SetEventObject(this);
+    e.SetInt(0);
+    EventNotifier::Get()->ProcessEvent(e);
+    
+    bool normalCondition = ManagerST::Get()->GetActiveProjectName().IsEmpty() == false
                  &&
                  !ManagerST::Get()->IsBuildInProgress()
                  &&
-                 !ManagerST::Get()->IsProgramRunning());
+                 !ManagerST::Get()->IsProgramRunning();
+    event.Enable(normalCondition || e.GetInt());
 }
 
 void clMainFrame::OnTimer(wxTimerEvent &event)

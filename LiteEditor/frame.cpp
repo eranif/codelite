@@ -2640,7 +2640,7 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
                  !ManagerST::Get()->IsBuildInProgress()
                  &&
                  !ManagerST::Get()->IsProgramRunning();
-    event.Enable(normalCondition || e.GetInt());
+    event.Enable(normalCondition || !e.GetInt());
 }
 
 void clMainFrame::OnTimer(wxTimerEvent &event)

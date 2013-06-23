@@ -2630,7 +2630,7 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
 void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
 {
     CHECK_SHUTDOWN();
-    wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+    wxCommandEvent e(wxEVT_CMD_IS_PROGRAM_RUNNING, GetId());
     e.SetEventObject(this);
     e.SetInt(0);
     EventNotifier::Get()->ProcessEvent(e);

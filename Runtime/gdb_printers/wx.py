@@ -63,8 +63,9 @@ class wxArrayFooPrinter:
         return self._iterator(self.val['m_pItems'], self.val['m_nCount'])
 
     def to_string(self):
-        # It doesn't seem to matter what we return here; the top line is always: "<var-name>= {...} [wxArray<whichever>]"
-        return "wxArrayFoo"
+        # Ideal would be to return e.g. "wxArrayInt", but how to find the type?
+        return "wxArray<T>"
+
 
     def display_hint(self):
         return 'array'

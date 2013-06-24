@@ -1604,10 +1604,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
         execLine = term;
 
 #elif defined (__WXMSW__)
-
-        execLine << " && pause";
-        ::WrapInShell(execLine);
-
+        execLine.Prepend("le_exec.exe ");
 #endif
     }
     return execLine;

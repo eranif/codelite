@@ -65,6 +65,9 @@ public:
         TypeSQL,
         TypeFolder,
         TypeProjectActive,
+        TypeWorkspacePHP,
+        TypeWorkspacePHPTags,
+        TypeWorkspaceDatabase,
         TypeOther = wxNOT_FOUND
     };
 

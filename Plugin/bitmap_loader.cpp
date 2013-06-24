@@ -175,6 +175,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/css"))),            FileExtManager::TypeCSS);
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))),     FileExtManager::TypeJS);
     AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/workspace"))), FileExtManager::TypeWorkspace);
+    AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/workspace_php"))), FileExtManager::TypeWorkspacePHP);
     AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/project"))),   FileExtManager::TypeProject);
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxcp"))),           FileExtManager::TypeWxCrafter);
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),            FileExtManager::TypeXRC);
@@ -215,6 +216,7 @@ BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
     images[FileExtManager::TypeCSS]    = LoadBitmap(wxT("mime/16/css"));
     images[FileExtManager::TypeJS]     = LoadBitmap(wxT("mime/16/javascript"));
     images[FileExtManager::TypeWorkspace] = LoadBitmap(wxT("workspace/16/workspace"));
+    images[FileExtManager::TypeWorkspacePHP] = LoadBitmap(wxT("workspace/16/workspace_php"));
     images[FileExtManager::TypeProject]   = LoadBitmap(wxT("workspace/16/project"));
     images[FileExtManager::TypeWxCrafter] = LoadBitmap(wxT("mime/16/wxcp"));
     images[FileExtManager::TypeXRC] = LoadBitmap(wxT("mime/16/xml"));

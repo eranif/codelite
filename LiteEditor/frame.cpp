@@ -2976,11 +2976,11 @@ void clMainFrame::OnRecentWorkspace(wxCommandEvent &event)
 
     if (idx < files.GetCount()) {
         wxString file_name (files.Item(idx));
-        if ( file_name.EndsWith(wxT(".workspace")) == false ) {
-            file_name << wxT(".workspace");
-        }
-        clWindowUpdateLocker locker(this);
-        ManagerST::Get()->OpenWorkspace( file_name );
+        
+        wxCommandEvent open_workspace_event(XRCID("switch_to_workspace"));
+        open_workspace_event.SetEventObject(this);
+        open_workspace_event.SetString( file_name );
+        GetEventHandler()->AddPendingEvent( open_workspace_event );
     }
 }
 

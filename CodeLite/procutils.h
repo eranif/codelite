@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef PROCUTILS_H
+#ifndef PROCUTILS_H
 #define PROCUTILS_H
 
 #include <wx/string.h>
@@ -40,32 +40,32 @@
 #endif
 
 struct ProcessEntry {
-	wxString name;
-	long pid;
+    wxString name;
+    long pid;
 };
 
 class WXDLLIMPEXP_CL ProcUtils
 {
 public:
-	ProcUtils();
-	~ProcUtils();
+    ProcUtils();
+    ~ProcUtils();
 
-	static void GetProcTree(std::map<unsigned long, bool> &parentsMap, long pid);
-	static void ExecuteCommand(const wxString &command, wxArrayString &output, long flags = wxEXEC_NODISABLE| wxEXEC_SYNC);
-	static void ExecuteInteractiveCommand(const wxString &command);
-	static wxString GetProcessNameByPid(long pid);
-	static void GetProcessList(std::vector<ProcessEntry> &proclist);
-	static void GetChildren(long pid, std::vector<long> &children);
-	static bool Shell(const wxString& programConsoleCommand);
-	static bool Locate(const wxString &name, wxString &where);
-
-	/**
-	 * \brief a safe function that executes 'command' and returns its output. This function
-	 * is safed to be called from secondary thread (hence, SafeExecuteCommand)
-	 * \param command
-	 * \param output
-	 */
-	static void SafeExecuteCommand(const wxString &command, wxArrayString &output);
+    static void GetProcTree(std::map<unsigned long, bool> &parentsMap, long pid);
+    static void ExecuteCommand(const wxString &command, wxArrayString &output, long flags = wxEXEC_NODISABLE| wxEXEC_SYNC);
+    static void ExecuteInteractiveCommand(const wxString &command);
+    static wxString GetProcessNameByPid(long pid);
+    static void GetProcessList(std::vector<ProcessEntry> &proclist);
+    static void GetChildren(long pid, std::vector<long> &children);
+    static bool Shell(const wxString& programConsoleCommand);
+    static bool Locate(const wxString &name, wxString &where);
+    
+    /**
+     * \brief a safe function that executes 'command' and returns its output. This function
+     * is safed to be called from secondary thread (hence, SafeExecuteCommand)
+     * \param command
+     * \param output
+     */
+    static void SafeExecuteCommand(const wxString &command, wxArrayString &output);
 };
 
 #endif // PROCUTILS_H

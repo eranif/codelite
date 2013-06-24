@@ -1558,3 +1558,57 @@ wxArrayString SplitString(const wxString &inString, bool trim)
     }
     return lines;
 }
+
+wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey)
+{
+    //execute command & cmdArgs
+    wxString execLine ( cmd );
+
+    //change directory to the working directory
+    if ( waitForAnyKey ) {
+        OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+
+#if defined(__WXMAC__)
+
+        execLine = opts->GetProgramConsoleCommand();
+
+        wxString tmp_cmd;
+        tmp_cmd = wxT("cd \"" ) + wd + wxT ( "\" && " ) + cmd;
+
+        execLine.Replace(wxT("$(CMD)"), tmp_cmd);
+        execLine.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
+
+#elif defined(__WXGTK__)
+
+        //set a console to the execute target
+        wxString term;
+        term = opts->GetProgramConsoleCommand();
+        term.Replace(wxT("$(TITLE)"), cmd);
+
+        // build the command
+        wxString command;
+        if ( waitForAnyKey ) {
+            wxString ld_lib_path;
+            wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
+            wxFileName exeWrapper ( exePath.GetPath(), wxT ( "codelite_exec" ) );
+
+            if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
+                command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
+            } else {
+                command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
+            }
+        }
+
+        command << execLine;
+        term.Replace(wxT("$(CMD)"), command);
+        execLine = term;
+
+#elif defined (__WXMSW__)
+
+        execLine << " && pause";
+        ::WrapInShell(execLine);
+
+#endif
+    }
+    return execLine;
+}

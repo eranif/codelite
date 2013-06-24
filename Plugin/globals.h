@@ -390,4 +390,9 @@ WXDLLIMPEXP_SDK void PostCall(wxObject *instance, clEventFunc_t func);
  * @param trim trim the lines with set to true
  */
 WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString &inString, bool trim = true);
+
+/**
+ * @brief make an execution command for running cmd under a shell and optionally prompt the user with the 'press any to key to continue...' message
+ */
+WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey);
 #endif //GLOBALS_H

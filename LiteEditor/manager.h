@@ -252,7 +252,9 @@ public:
 protected:
     void DoSetupWorkspace(const wxString &path);
     void AddToRecentlyOpenedWorkspaces(const wxString &fileName);
-
+    
+    void OnAddWorkspaceToRecentlyUsedList(wxCommandEvent &e);
+    
 
     //--------------------------- Workspace Projects Mgmt -----------------------------
 public:

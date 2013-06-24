@@ -193,6 +193,7 @@ Manager::Manager ( void )
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, wxCommandEventHandler(Manager::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
 }
 
 Manager::~Manager ( void )
@@ -3628,4 +3629,13 @@ bool Manager::DbgCanInteract()
 void Manager::OnBuildEnded(wxCommandEvent& e)
 {
     e.Skip();
+}
+
+void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)
+{
+    // We don't call e.Skip() here
+    wxFileName fn(e.GetString());
+    if ( fn.FileExists() ) {
+        AddToRecentlyOpenedWorkspaces( fn.GetFullPath() );
+    }
 }

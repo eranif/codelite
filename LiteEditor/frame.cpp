@@ -1850,8 +1850,8 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent &event)
     // In any case, make sure that we dont have a workspace opened
     if (ManagerST::Get()->IsWorkspaceOpen()) {
         ManagerST::Get()->CloseWorkspace();
-        ShowWelcomePage();
     }
+    ShowWelcomePage();
 }
 
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
@@ -1860,13 +1860,15 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 
     bool promptUser = true;
     wxString wspFile;
+    const wxString WSP_EXT = "workspace";
     
     // Is it an internal command? (usually the workspace file name to load is set in the 
     // event.SetString() )
-    if ( event.GetString().IsEmpty() ) {
+    if ( event.GetString().IsEmpty() || wxFileName(event.GetString()).GetExt() != WSP_EXT) {
+        
         wxCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
         e.SetEventObject(this);
-        e.SetString(wxT(""));
+        e.SetString( event.GetString() );
         if(EventNotifier::Get()->ProcessEvent(e)) {
             // the plugin processed it by itself
             return;

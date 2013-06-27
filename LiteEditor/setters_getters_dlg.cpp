@@ -437,7 +437,10 @@ void SettersGettersDlg::BuildTree()
     m_checkForDuplicateEntries = false;
 
     if (m_members.empty() == false) {
-        m_textClassName->SetValue(m_members.at(0)->GetParent());
+        wxString msg, title;
+        msg << _("Select the functions to generate from the list below");
+        title << _("Generate Setters/Getters for class ") << m_members.at(0)->GetParent();
+        m_banner6->SetText(title, msg);
     }
 }
 

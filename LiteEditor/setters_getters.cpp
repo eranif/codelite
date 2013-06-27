@@ -29,20 +29,13 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer1->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Class Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_banner6 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_banner6->SetBitmap(wxNullBitmap);
+    m_banner6->SetText(_("Generate Setters / Getters"), _("Select the functions to generate from the list below"));
+    m_banner6->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_banner6->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     
-    bSizer3->Add(m_staticText2, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textClassName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_READONLY);
-    
-    bSizer3->Add(m_textClassName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Select members from the list below :"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText3Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText3Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText3->SetFont(m_staticText3Font);
-    
-    bSizer3->Add(m_staticText3, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer3->Add(m_banner6, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     

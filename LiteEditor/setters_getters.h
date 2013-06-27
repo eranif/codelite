@@ -11,8 +11,7 @@
 #include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
+#include <wx/bannerwindow.h>
 #include <wx/dataview.h>
 #include "settersgettersmodel.h"
 #include <wx/button.h>
@@ -21,9 +20,7 @@
 class SettersGettersBaseDlg : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText2;
-    wxTextCtrl* m_textClassName;
-    wxStaticText* m_staticText3;
+    wxBannerWindow* m_banner6;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<SettersGettersModel> m_dataviewModel;
 

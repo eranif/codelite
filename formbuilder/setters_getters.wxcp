@@ -398,7 +398,7 @@
 											"border":	5,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
-											"m_styles":	["wxDV_NO_HEADER", "wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+											"m_styles":	["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -407,7 +407,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Size:",
-													"m_value":	"-1,-1"
+													"m_value":	"450,-1"
 												}, {
 													"type":	"string",
 													"m_label":	"Minimum Size:",
@@ -487,7 +487,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Width:",
-															"m_value":	"-2"
+															"m_value":	"400"
 														}, {
 															"type":	"choice",
 															"m_label":	"Column Type",

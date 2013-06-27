@@ -22,10 +22,10 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    bSizer3 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     
     bSizer1->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
     
@@ -44,11 +44,11 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer3->Add(m_staticText3, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer3->Add(bSizer4, 1, wxEXPAND, 5);
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(450,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new SettersGettersModel;
     m_dataviewModel->SetColCount( 2 );
@@ -56,9 +56,9 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer4->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
-    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
-    bSizer5 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     
     bSizer4->Add(bSizer5, 0, wxEXPAND, 5);
     
@@ -76,7 +76,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer3->Add(m_checkStartWithUppercase, 0, wxALL, 5);
     
-    bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

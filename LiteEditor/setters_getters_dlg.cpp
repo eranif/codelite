@@ -423,13 +423,13 @@ void SettersGettersDlg::BuildTree()
 
         cols.clear();
         cols.push_back( SettersGettersModel::CreateIconTextVariant(setter_display_name, funcBmp) );
-        cols.push_back( true );
-        m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Setter, setter_exist ? true : false));
+        cols.push_back( false );
+        m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Setter, false));
 
         cols.clear();
         cols.push_back( SettersGettersModel::CreateIconTextVariant(getter_display_name, funcBmp) );
-        cols.push_back( true );
-        m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Getter, getter_exist ? true : false));
+        cols.push_back( false );
+        m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Getter, false));
 
         m_dataview->Expand( memberItem );
     }

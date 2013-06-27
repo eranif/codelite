@@ -196,10 +196,6 @@
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>
       <File Name="quickoutlinedlg.h"/>
-      <File Name="setters_getters_base_dlg.cpp"/>
-      <File Name="setters_getters_base_dlg.h"/>
-      <File Name="setters_getters_dlg.cpp"/>
-      <File Name="setters_getters_dlg.h"/>
       <File Name="symbols_dialog.cpp"/>
       <File Name="symbols_dialog.h"/>
       <File Name="symbols_dialog_base.cpp"/>
@@ -390,6 +386,16 @@
       <File Name="taskpanel.h"/>
       <File Name="taskspaneldata.h"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="SettersGetters">
+      <File Name="setters_getters_dlg.cpp"/>
+      <File Name="setters_getters_dlg.h"/>
+      <File Name="setters_getters.cpp"/>
+      <File Name="setters_getters.h"/>
+      <File Name="setters_getters_formbuilder_bitmaps.cpp"/>
+      <File Name="settersgettersmodel.cpp"/>
+      <File Name="settersgettersmodel.h"/>
+      <File Name="../formbuilder/setters_getters.wxcp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>
@@ -440,8 +446,6 @@
     <File Name="filechecklist.h"/>
     <File Name="filechecklistbase.cpp"/>
     <File Name="filechecklistbase.h"/>
-    <File Name="settersgetterstreectrl.cpp"/>
-    <File Name="settersgetterstreectrl.h"/>
     <File Name="quickfindbarbase.h"/>
     <File Name="quickfindbarbase.cpp"/>
     <File Name="messagepane_base.h"/>
@@ -1159,7 +1163,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b . --no-plugins" UseSeparateDebugArgs="yes" DebugArguments="-b ." WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

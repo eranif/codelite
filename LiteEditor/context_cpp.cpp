@@ -1170,7 +1170,11 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
         s_dlg = new SettersGettersDlg(clMainFrame::Get());
     }
 
-    s_dlg->Init(tags, tag->GetFile(), lineno);
+    if ( !s_dlg->Init(tags, tag->GetFile(), lineno) ) {
+        ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), _("codelite"));
+        return;
+    }
+    
     if (s_dlg->ShowModal() == wxID_OK) {
         wxString code = s_dlg->GetGenCode();
         if (code.IsEmpty() == false) {

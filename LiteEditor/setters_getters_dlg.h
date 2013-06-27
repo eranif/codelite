@@ -60,7 +60,7 @@ protected:
     void OnUncheckAll(wxCommandEvent &e);
     void OnUpdatePreview(wxCommandEvent &e);
     void OnButtonOk(wxCommandEvent &e);
-    void BuildTree ();
+    int  BuildTree ();
     void UpdateTree();
 
     wxString GenerateFunctions();
@@ -82,7 +82,8 @@ public:
     bool GetFormatText() {
         return true;
     }
-    void Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno);
+    
+    bool Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno);
 };
 
 class SGDlgData : public SerializedObject

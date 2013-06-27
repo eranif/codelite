@@ -452,7 +452,7 @@ int SettersGettersDlg::BuildTree()
     if (m_members.empty() == false) {
         wxString msg, title;
         msg << _("Select the functions to generate from the list below");
-        title << _("Generate Setters/Getters for class ") << m_members.at(0)->GetParent();
+        title << _("Generate Setters/Getters for class '") << m_members.at(0)->GetParent() << _("'");
         m_banner6->SetText(title, msg);
     }
     return nEntriedAdded;

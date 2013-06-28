@@ -22,6 +22,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
 ##      -DGTK_USE_AUIBOOK=1|0                      // Under GTK, use wxAuiNotebook instead of the native notebook                                                     #
+##      -DWITH_WX_CONFIG=<fullpath>                // Specify a particular wxWidgets build to use. The format must be /path/to/different/wx-config                    #
 #######################################################################################################################################################################
 
 
@@ -35,7 +36,7 @@ if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
 else()
     set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
 endif()
-set( CL_WX_CONFIG wx-config )
+
 set( USE_CLANG 1 )
 set( IS_FREEBSD 0 )
 set( BUILD_WXC 0 )
@@ -61,8 +62,14 @@ else ( APPLE )
   set(WX_COMPONENTS "std aui propgrid stc")
 endif()
 
+if (WITH_WX_CONFIG)
+    set(CL_WX_CONFIG ${WITH_WX_CONFIG})
+else()
+    set( CL_WX_CONFIG wx-config )
+endif()
+
 if (UNIX)
-    execute_process(COMMAND which wx-config OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
     if (NOT WX_TOOL)
       message(FATAL_ERROR
 "\nNo functional wx_config script was found in your PATH.\nIs the wxWidgets development package installed?"

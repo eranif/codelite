@@ -67,6 +67,7 @@ if (WITH_WX_CONFIG)
 else()
     set( CL_WX_CONFIG wx-config )
 endif()
+unset(WITH_WX_CONFIG CACHE)
 
 if (UNIX)
     execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -108,12 +109,14 @@ endif(PREFIX)
 if(ENABLE_CLANG MATCHES 0)
   set( USE_CLANG 0 )
 endif (ENABLE_CLANG MATCHES 0)
+unset(ENABLE_CLANG CACHE)
 
 if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)
 else (AUTOGEN_REVISION MATCHES 1)
     set ( MAKE_AUTOGEN_REVISION_STRING 1)
 endif (AUTOGEN_REVISION MATCHES 0)
+unset(AUTOGEN_REVISION CACHE)
 
 ## build wxCrafter?
 if ( WITH_WXC )
@@ -122,11 +125,13 @@ if ( WITH_WXC )
         set(WX_COMPONENTS "std aui propgrid stc richtext ribbon")
     endif (UNIX AND NOT APPLE )
 endif ( WITH_WXC )
+unset(WITH_WXC CACHE)
 
 ## package the wx libs?
 if (COPY_WX_LIBS MATCHES 1)
   set( CL_COPY_WX_LIBS 1 )
 endif()
+unset(COPY_WX_LIBS CACHE)
 
 set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
@@ -138,6 +143,7 @@ if ( GTK_USE_AUIBOOK )
     add_definitions( -DGTK_USE_AUIBOOK=1 )
     message("-- Using wxAuiNotebook instead of wxNotebook")
 endif ( GTK_USE_AUIBOOK )
+unset(GTK_USE_AUIBOOK CACHE)
 
 #############################################
 ## Global optimizations
@@ -204,6 +210,8 @@ else ()
 
 
 endif()
+unset(CMAKE_BUILD_TYPE CACHE)
+unset(PREVENT_WX_ASSERTS CACHE)
 
 #############################################
 ## Determine if 32 or 64 bit
@@ -301,6 +309,7 @@ endif(UNIX AND NOT APPLE)
 if ( WITH_PCH )
     set( USE_PCH 1 )
 endif( WITH_PCH )
+unset(WITH_PCH CACHE)
 
 ###########################################
 ## Add the folders, the order matters here
@@ -371,3 +380,6 @@ add_dependencies(wxshapeframework wxsqlite3)
 add_dependencies(libcodelite wxshapeframework databaselayersqlite sqlite3 wxsqlite3)
 add_dependencies(plugin libcodelite)
 add_dependencies(codelite plugin)
+
+# Don't unset this earlier: it would affect the plugins' CMakeLists.txts
+unset(PREFIX CACHE)

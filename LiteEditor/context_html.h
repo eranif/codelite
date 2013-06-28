@@ -11,6 +11,7 @@ public:
     virtual ~ContextHtml();
 
 public:
+    virtual int GetActiveKeywordSet() const;
     virtual int  DoGetCalltipParamterIndex();
     virtual wxMenu* GetMenu();
     virtual void AddMenuDynamicContent(wxMenu* menu);
@@ -38,7 +39,6 @@ public:
     virtual void OnFileSaved();
     virtual void OnKeyDown(wxKeyEvent& event);
     virtual void OnSciUpdateUI(wxStyledTextEvent& event);
-    virtual void OnUserTypedXChars(const wxString& word);
     virtual void RemoveMenuDynamicContent(wxMenu* menu);
     virtual void RetagFile();
     virtual void SemicolonShift();

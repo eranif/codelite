@@ -300,10 +300,6 @@ void ContextHtml::OnSciUpdateUI(wxStyledTextEvent& event)
     }
 }
 
-void ContextHtml::OnUserTypedXChars(const wxString& word)
-{
-}
-
 void ContextHtml::RemoveMenuDynamicContent(wxMenu* menu)
 {
 }
@@ -363,4 +359,24 @@ bool ContextHtml::IsComment(long pos)
             style == wxSTC_HPA_COMMENTLINE ||
             style == wxSTC_HPHP_COMMENT    ||
             style == wxSTC_HPHP_COMMENTLINE;
+}
+
+#define IS_BETWEEN(style, x, y) (style >=x && style <=y)
+
+int ContextHtml::GetActiveKeywordSet() const
+{
+    // HTML 0,
+    // JS 1,
+    // Python 3
+    // PHP 4
+    int style = GetCtrl().GetStyleAt( GetCtrl().GetCurrentPos() );
+    if ( IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_SGML_BLOCK_DEFAULT) )
+        return 0;
+    else if ( IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX) )
+        return 1;
+    else if ( IS_BETWEEN(style, wxSTC_HPHP_DEFAULT, wxSTC_HPHP_OPERATOR) || style == wxSTC_HPHP_COMPLEX_VARIABLE)
+        return 4;
+    else if ( IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) || IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER) )
+        return 3;
+    return wxNOT_FOUND;
 }

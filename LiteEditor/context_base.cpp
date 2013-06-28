@@ -33,16 +33,17 @@
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "plugin.h"
+#include "macros.h"
 
-static wxColor GetInactiveColor(const wxColor& col)
-{
-    wxUnusedVar(col);
-#ifdef __WXGTK__
-    return wxColor(wxT("GREY"));
-#else
-    return wxColor(wxT("LIGHT GREY"));
-#endif
-}
+//static wxColor GetInactiveColor(const wxColor& col)
+//{
+//    wxUnusedVar(col);
+//#ifdef __WXGTK__
+//    return wxColor(wxT("GREY"));
+//#else
+//    return wxColor(wxT("LIGHT GREY"));
+//#endif
+//}
 
 ContextBase::ContextBase(LEditor *container)
     : m_container(container)
@@ -338,27 +339,62 @@ int ContextBase::DoGetCalltipParamterIndex()
     return index;
 }
 
-void ContextBase::OnUserTypedXChars(const wxString& word) 
+void ContextBase::OnUserTypedXChars(const wxString& word)
 {
     // user typed more than 3 chars, display completion box with C++ keywords
     if ( IsCommentOrString(GetCtrl().GetCurrentPos()) ) {
         return;
     }
 
+    TagEntryPtrVector_t tags;
     if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
         clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD);
         ccEvt.SetEditor( &GetCtrl() );
         ccEvt.SetWord( word );
-        
+
         if ( EventNotifier::Get()->ProcessEvent( ccEvt ) ) {
-            const std::vector<TagEntryPtr>& tags = ccEvt.GetTags();
-            if ( tags.empty() == false ) {
-                GetCtrl().ShowCompletionBox(tags,   // list of tags
-                                            word,   // partial word
-                                            false,  // dont show full declaration
-                                            true,   // auto hide if there is no match in the list
-                                            false); // do not automatically insert word if there is only single choice
+            tags = ccEvt.GetTags();
+
+        } else if ( GetActiveKeywordSet() != wxNOT_FOUND ) {
+
+            // the default action is to use the lexer keywords
+            LexerConfPtr lexPtr;
+            // Read the configuration file
+            if (EditorConfigST::Get()->IsOk()) {
+                lexPtr = EditorConfigST::Get()->GetLexer( GetName() );
             }
+
+            if ( !lexPtr )
+                return;
+
+            wxString Words = lexPtr->GetKeyWords( GetActiveKeywordSet() );
+
+            wxString s1(word);
+            wxStringSet_t uniqueWords;
+            wxArrayString wordsArr = ::wxStringTokenize(Words, wxT(" \r\t\n"));
+            for (size_t i=0; i<wordsArr.GetCount(); i++) {
+
+                // Dont add duplicate words
+                if(uniqueWords.count(wordsArr.Item(i)))
+                    continue;
+
+                uniqueWords.insert(wordsArr.Item(i));
+                wxString s2(wordsArr.Item(i));
+                if (s2.StartsWith(s1) || s2.Lower().StartsWith(s1.Lower())) {
+                    TagEntryPtr tag ( new TagEntry() );
+                    tag->SetName(wordsArr.Item(i));
+                    tag->SetKind("cpp_keyword");
+                    tags.push_back(tag);
+                }
+            }
+        }
+
+        if ( tags.empty() == false ) {
+            GetCtrl().ShowCompletionBox(tags,   // list of tags
+                                        word,   // partial word
+                                        false,  // dont show full declaration
+                                        true,   // auto hide if there is no match in the list
+                                        false); // do not automatically insert word if there is only single choice
         }
     }
 }

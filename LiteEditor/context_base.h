@@ -68,12 +68,21 @@ protected:
     void PrependMenuItemSeparator(wxMenu* menu);
 
 public:
-
+    
     // ctor-dtor
     ContextBase(LEditor *container);
     ContextBase(const wxString &name);
     virtual ~ContextBase();
-
+    
+    
+    /**
+     * @brief when the context is requested to display a code completion for keywords
+     * this functions determines which keyword set to display ( there are up to 5 0-4)
+     */
+    virtual int GetActiveKeywordSet() const {
+        return wxNOT_FOUND;
+    }
+    
     const wxStringSet_t& GetCompletionTriggerStrings() const {
         return m_completionTriggerStrings;
     }
@@ -83,7 +92,10 @@ public:
     LEditor &GetCtrl() {
         return *m_container;
     }
-
+    
+    LEditor &GetCtrl() const {
+        return *m_container;
+    }
     /**
      * Return the context name
      */

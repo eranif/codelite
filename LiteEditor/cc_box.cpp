@@ -414,9 +414,9 @@ void CCBox::DoInsertSelection(const wxString& word, bool triggerTip)
 {
     if (m_owner) {
         // Let the owner override the default behavior
-        wxCommandEvent e(wxEVT_CCBOX_SELECTION_MADE);
+        clCodeCompletionEvent e(wxEVT_CCBOX_SELECTION_MADE);
+        e.SetWord(word);
         e.SetEventObject(m_owner);
-        e.SetClientData( (void*)&word );
         if(EventNotifier::Get()->ProcessEvent(e))
             return;
     }

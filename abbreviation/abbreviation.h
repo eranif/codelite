@@ -27,6 +27,7 @@
 #define __abbreviation__
 
 #include "plugin.h"
+#include "cl_command_event.h"
 
 class AbbreviationPlugin : public IPlugin
 {
@@ -36,7 +37,7 @@ class AbbreviationPlugin : public IPlugin
 protected:
     void OnSettings(wxCommandEvent &e);
     void OnAbbreviations(wxCommandEvent &e);
-    void OnAbbrevSelected(wxCommandEvent &e);
+    void OnAbbrevSelected(clCodeCompletionEvent &e);
     void InitDefaults();
     bool InsertExpansion(const wxString& abbreviation);
 

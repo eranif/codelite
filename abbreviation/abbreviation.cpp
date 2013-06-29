@@ -70,7 +70,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager *manager)
     m_longName = _("Abbreviation plugin");
     m_shortName = wxT("abbreviation");
     m_topWindow = m_mgr->GetTheApp();
-    EventNotifier::Get()->Connect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
 
     InitDefaults();
 }
@@ -112,7 +112,7 @@ void AbbreviationPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 
 void AbbreviationPlugin::UnPlug()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CCBOX_SELECTION_MADE, wxCommandEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CCBOX_SELECTION_MADE, clCodeCompletionEventHandler(AbbreviationPlugin::OnAbbrevSelected), NULL, this);
     m_topWindow->Disconnect( XRCID("abbrev_settings"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnSettings ), NULL, this );
     m_topWindow->Disconnect( XRCID("abbrev_insert"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( AbbreviationPlugin::OnAbbreviations), NULL, this );
 }
@@ -169,15 +169,15 @@ void AbbreviationPlugin::OnAbbreviations(wxCommandEvent& e)
     }
 }
 
-void AbbreviationPlugin::OnAbbrevSelected(wxCommandEvent& e)
+void AbbreviationPlugin::OnAbbrevSelected(clCodeCompletionEvent& e)
 {
     if(e.GetEventObject() != this) {
         e.Skip();
         return;
     }
 
-    wxString wordAtCaret = *(wxString*)e.GetClientData();
-    InsertExpansion(wordAtCaret);
+    wxString wordAtCaret = e.GetWord();
+    InsertExpansion( wordAtCaret );
 }
 
 void AbbreviationPlugin::InitDefaults()

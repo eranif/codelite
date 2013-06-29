@@ -114,9 +114,6 @@ enum {
     //clientData is the project name (wxString*)
     wxEVT_PROJ_ADDED,
 
-    //clientData is the selected word (wxString*)
-    wxEVT_CCBOX_SELECTION_MADE,
-
     // the following 2 events are used as "transaction"
     // the first event indicates that any "wxEVT_FILE_SAVED" event sent from this point
     // is due to build process which is about to starte
@@ -280,6 +277,10 @@ enum {
     // let the plugins a chance to handle this
     // event.
     wxEVT_CC_CODE_COMPLETE,
+    
+    //clientData is the selected word (wxString*)
+    wxEVT_CCBOX_SELECTION_MADE,
+
 
     // A tooltip is requested for the selected entry in the completion box
     // clientData is set to the client data set by the user

@@ -22,6 +22,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
 ##      -DGTK_USE_AUIBOOK=1|0                      // Under GTK, use wxAuiNotebook instead of the native notebook                                                     #
+##      -DWITH_WX_CONFIG=<fullpath>                // Specify a particular wxWidgets build to use. The format must be /path/to/different/wx-config                    #
 #######################################################################################################################################################################
 
 
@@ -35,7 +36,7 @@ if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3
 else()
     set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
 endif()
-set( CL_WX_CONFIG wx-config )
+
 set( USE_CLANG 1 )
 set( IS_FREEBSD 0 )
 set( BUILD_WXC 0 )
@@ -61,8 +62,15 @@ else ( APPLE )
   set(WX_COMPONENTS "std aui propgrid stc")
 endif()
 
+if (WITH_WX_CONFIG)
+    set(CL_WX_CONFIG ${WITH_WX_CONFIG})
+else()
+    set( CL_WX_CONFIG wx-config )
+endif()
+unset(WITH_WX_CONFIG CACHE)
+
 if (UNIX)
-    execute_process(COMMAND which wx-config OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
     if (NOT WX_TOOL)
       message(FATAL_ERROR
 "\nNo functional wx_config script was found in your PATH.\nIs the wxWidgets development package installed?"
@@ -101,12 +109,14 @@ endif(PREFIX)
 if(ENABLE_CLANG MATCHES 0)
   set( USE_CLANG 0 )
 endif (ENABLE_CLANG MATCHES 0)
+unset(ENABLE_CLANG CACHE)
 
 if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)
 else (AUTOGEN_REVISION MATCHES 1)
     set ( MAKE_AUTOGEN_REVISION_STRING 1)
 endif (AUTOGEN_REVISION MATCHES 0)
+unset(AUTOGEN_REVISION CACHE)
 
 ## build wxCrafter?
 if ( WITH_WXC )
@@ -115,11 +125,13 @@ if ( WITH_WXC )
         set(WX_COMPONENTS "std aui propgrid stc richtext ribbon")
     endif (UNIX AND NOT APPLE )
 endif ( WITH_WXC )
+unset(WITH_WXC CACHE)
 
 ## package the wx libs?
 if (COPY_WX_LIBS MATCHES 1)
   set( CL_COPY_WX_LIBS 1 )
 endif()
+unset(COPY_WX_LIBS CACHE)
 
 set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
@@ -131,6 +143,7 @@ if ( GTK_USE_AUIBOOK )
     add_definitions( -DGTK_USE_AUIBOOK=1 )
     message("-- Using wxAuiNotebook instead of wxNotebook")
 endif ( GTK_USE_AUIBOOK )
+unset(GTK_USE_AUIBOOK CACHE)
 
 #############################################
 ## Global optimizations
@@ -197,6 +210,8 @@ else ()
 
 
 endif()
+unset(CMAKE_BUILD_TYPE CACHE)
+unset(PREVENT_WX_ASSERTS CACHE)
 
 #############################################
 ## Determine if 32 or 64 bit
@@ -294,6 +309,7 @@ endif(UNIX AND NOT APPLE)
 if ( WITH_PCH )
     set( USE_PCH 1 )
 endif( WITH_PCH )
+unset(WITH_PCH CACHE)
 
 ###########################################
 ## Add the folders, the order matters here
@@ -364,3 +380,6 @@ add_dependencies(wxshapeframework wxsqlite3)
 add_dependencies(libcodelite wxshapeframework databaselayersqlite sqlite3 wxsqlite3)
 add_dependencies(plugin libcodelite)
 add_dependencies(codelite plugin)
+
+# Don't unset this earlier: it would affect the plugins' CMakeLists.txts
+unset(PREFIX CACHE)

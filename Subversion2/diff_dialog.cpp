@@ -3,33 +3,38 @@
 #include "imanager.h"
 
 DiffDialog::DiffDialog( wxWindow* parent, IManager *manager )
-	: DiffDialogBase( parent )
-	, m_manager(manager)
+    : DiffDialogBase( parent )
+    , m_manager(manager)
 {
-	m_textCtrlFromRev->SetFocus();
-	WindowAttrManager::Load(this, wxT("DiffDialog"), m_manager->GetConfigTool());
+    m_textCtrlFromRev->SetFocus();
+    WindowAttrManager::Load(this, wxT("DiffDialog"), m_manager->GetConfigTool());
 }
 
 DiffDialog::~DiffDialog()
 {
-	WindowAttrManager::Save(this, wxT("DiffDialog"), m_manager->GetConfigTool());
+    WindowAttrManager::Save(this, wxT("DiffDialog"), m_manager->GetConfigTool());
 }
 
 wxString DiffDialog::GetFromRevision() const
 {
-	wxString from = m_textCtrlFromRev->GetValue();
-	from.Trim().Trim(false);
+    wxString from = m_textCtrlFromRev->GetValue();
+    from.Trim().Trim(false);
 
-	if(from.IsEmpty()) {
-		return wxT("BASE");
-	} else {
-		return from;
-	}
+    if(from.IsEmpty()) {
+        return wxT("BASE");
+    } else {
+        return from;
+    }
 }
 
 wxString DiffDialog::GetToRevision() const
 {
-	wxString to = m_textCtrlToRev->GetValue();
-	to.Trim().Trim(false);
-	return to;
+    wxString to = m_textCtrlToRev->GetValue();
+    to.Trim().Trim(false);
+    return to;
+}
+
+bool DiffDialog::IgnoreWhitespaces() const
+{
+    return m_checkBoxIgnoreWhitespace->IsChecked();
 }

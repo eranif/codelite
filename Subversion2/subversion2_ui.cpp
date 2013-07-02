@@ -29,7 +29,6 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     
     mainSizer->Add(m_treeCtrl, 1, wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -107,7 +106,6 @@ SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer8->Add(m_button5, 0, wxALL, 5);
     
-    
     SetSizeHints(575,315);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -137,9 +135,8 @@ SvnShellBase::SvnShellBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
     #else
     	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
-    #endif
+    #endif;
     bSizer9->Add(m_sci, 1, wxALL|wxEXPAND, 2);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -201,7 +198,6 @@ SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wx
     m_button7 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer11->Add(m_button7, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -410,7 +406,6 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     
     bSizer13->Add(m_button9, 0, wxALL, 5);
     
-    
     m_treebook1->ExpandNode( 0, true );
     m_treebook1->ExpandNode( 1, true );
     m_treebook1->ExpandNode( 2, true );
@@ -536,7 +531,6 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer18->Add(m_button13, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -609,7 +603,6 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase(wxWindow* parent, wxWindowID id, co
     m_button15 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer20->Add(m_button15, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -691,7 +684,6 @@ SvnLogDialogBase::SvnLogDialogBase(wxWindow* parent, wxWindowID id, const wxStri
     
     bSizer22->Add(m_button18, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -741,9 +733,10 @@ DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     bSizer25->Add(0, 0, 1, wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    m_staticline6 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
+    m_checkBoxIgnoreWhitespace = new wxCheckBox(this, wxID_ANY, _("Ignore whitespaces"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxIgnoreWhitespace->SetValue(true);
     
-    bSizer25->Add(m_staticline6, 0, wxALL|wxEXPAND, 5);
+    bSizer25->Add(m_checkBoxIgnoreWhitespace, 0, wxALL, 5);
     
     wxBoxSizer* bSizer26 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -757,7 +750,6 @@ DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_button19 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer26->Add(m_button19, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -788,7 +780,6 @@ ChangeLogPageBase::ChangeLogPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_textCtrl->SetFont(m_textCtrlFont);
     
     bSizer27->Add(m_textCtrl, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -889,7 +880,6 @@ SvnPropsBaseDlg::SvnPropsBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     
     bSizer29->Add(m_button22, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -950,7 +940,6 @@ PatchDlgBase::PatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     m_buttonOK->SetDefault();
     
     bSizer32->Add(m_buttonOK, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -1016,7 +1005,6 @@ SvnSelectLocalRepoBase::SvnSelectLocalRepoBase(wxWindow* parent, wxWindowID id, 
     m_button26 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer34->Add(m_button26, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

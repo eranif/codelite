@@ -39,16 +39,17 @@ class IManager;
 class DiffDialog : public DiffDialogBase
 {
 protected:
-	IManager *m_manager;
+    IManager *m_manager;
 
 public:
-	/** Constructor */
-	DiffDialog( wxWindow* parent, IManager *manager );
-	//// end generated class members
+    /** Constructor */
+    DiffDialog( wxWindow* parent, IManager *manager );
+    //// end generated class members
 
-	virtual ~DiffDialog();
-	wxString GetFromRevision() const;
-	wxString GetToRevision() const;
+    virtual ~DiffDialog();
+    wxString GetFromRevision() const;
+    wxString GetToRevision() const;
+    bool IgnoreWhitespaces() const;
 };
 
 #endif // __diff_dialog__

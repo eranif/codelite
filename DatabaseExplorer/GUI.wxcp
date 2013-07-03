@@ -1,14 +1,14 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	163,
+		"m_objCounter":	177,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterwyt5ghInitBitmapResources",
 		"m_bitmapsFile":	"GUI_databaseexplorer_bitmaps.cpp",
 		"m_GenerateCodeTypes":	184918881,
 		"m_outputFileName":	"GUI",
 		"m_firstWindowId":	1000,
-		"m_useEnum":	false,
+		"m_useEnum":	true,
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -69,6 +69,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Export image"
 				}, {
@@ -112,6 +116,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"mainSizer"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -180,6 +188,10 @@
 									"m_label":	"Include File:",
 									"m_value":	""
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"multi-string",
 									"m_label":	"Label:",
 									"m_value":	"Output file:"
@@ -202,6 +214,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fpSizer"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -268,6 +284,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -342,6 +362,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Browse"
 										}, {
@@ -378,6 +402,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"scaleSizer"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -451,6 +479,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Current canvas scale"
 										}, {
@@ -472,6 +504,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"customScaleSizer"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -538,6 +574,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -609,6 +649,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -688,6 +732,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"string",
@@ -778,6 +826,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[],
@@ -898,6 +950,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -935,6 +991,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"mainSizer"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -1002,6 +1062,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -1016,11 +1080,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	""
+					"m_value":	"SqlCommandPanel"
 				}, {
 					"type":	"string",
 					"m_label":	"Inherited Class",
-					"m_value":	""
+					"m_value":	"SQLCommandPanel"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -1039,6 +1103,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"fgSizer3"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"string",
 							"m_label":	"# Columns:",
@@ -1066,12 +1134,12 @@
 						}],
 					"m_events":	[],
 					"m_children":	[{
-							"m_type":	4461,
+							"m_type":	4463,
 							"proportion":	0,
 							"border":	5,
-							"gbSpan":	",",
-							"gbPosition":	",",
-							"m_styles":	["wxTB_HORIZONTAL"],
+							"gbSpan":	"1,1",
+							"gbPosition":	"0,0",
+							"m_styles":	["wxAUI_TB_DEFAULT_STYLE"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -1080,11 +1148,11 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	""
+									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_toolBar3"
+									"m_value":	"m_auibar167"
 								}, {
 									"type":	"string",
 									"m_label":	"Tooltip:",
@@ -1092,27 +1160,19 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Bitmap Size:",
-									"m_value":	""
+									"m_value":	"16,16"
 								}, {
 									"type":	"string",
 									"m_label":	"Margins:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Padding:",
-									"m_value":	"1"
-								}, {
-									"type":	"string",
-									"m_label":	"Separator Size:",
-									"m_value":	"5"
+									"m_value":	"-1,-1"
 								}],
 							"m_events":	[],
 							"m_children":	[{
-									"m_type":	4400,
+									"m_type":	4462,
 									"proportion":	0,
-									"border":	0,
-									"gbSpan":	",",
-									"gbPosition":	",",
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
 									"m_styles":	[],
 									"m_sizerFlags":	[],
 									"m_properties":	[{
@@ -1121,75 +1181,210 @@
 											"m_winid":	"wxID_ANY"
 										}, {
 											"type":	"string",
-											"m_label":	"Size:",
-											"m_value":	""
-										}, {
-											"type":	"string",
-											"m_label":	"Minimum Size:",
-											"m_value":	""
-										}, {
-											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_button34"
-										}, {
-											"type":	"multi-string",
-											"m_label":	"Tooltip:",
-											"m_value":	""
-										}, {
-											"type":	"colour",
-											"m_label":	"Bg Colour:",
-											"colour":	"<Default>"
-										}, {
-											"type":	"colour",
-											"m_label":	"Fg Colour:",
-											"colour":	"<Default>"
-										}, {
-											"type":	"font",
-											"m_label":	"Font:",
-											"m_value":	""
-										}, {
-											"type":	"bool",
-											"m_label":	"Hidden",
-											"m_value":	false
-										}, {
-											"type":	"bool",
-											"m_label":	"Disabled",
-											"m_value":	false
-										}, {
-											"type":	"bool",
-											"m_label":	"Focused",
-											"m_value":	false
-										}, {
-											"type":	"string",
-											"m_label":	"Class Name:",
-											"m_value":	""
-										}, {
-											"type":	"string",
-											"m_label":	"Include File:",
-											"m_value":	""
+											"m_value":	"m_toolbarItemLoad"
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"Templates"
+											"m_value":	"Load..."
 										}, {
-											"type":	"bool",
-											"m_label":	"Default Button",
-											"m_value":	false
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	"Load..."
+										}, {
+											"type":	"string",
+											"m_label":	"Help String:",
+											"m_value":	"Load..."
 										}, {
 											"type":	"filePicker",
 											"m_label":	"Bitmap File:",
+											"m_path":	"../codelite-icons/toolbars/16/standard/document-open.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disabled-Bitmap File",
 											"m_path":	""
 										}, {
-											"type":	"string",
-											"m_label":	"Margins:",
-											"m_value":	"2,2"
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	0,
+											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
 										}],
 									"m_events":	[{
-											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
-											"m_functionNameAndSignature":	"OnTemplatesBtnClick(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_functionNameAndSignature":	"OnLoadClick(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+										}],
+									"m_children":	[]
+								}, {
+									"m_type":	4462,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"XRCID(\"IDC_DBE_SQL_SAVE\")"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbarItemSave"
+										}, {
+											"type":	"string",
+											"m_label":	"Label:",
+											"m_value":	"Save..."
+										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	"Save..."
+										}, {
+											"type":	"string",
+											"m_label":	"Help String:",
+											"m_value":	"Save..."
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	"../codelite-icons/toolbars/16/standard/document-save.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disabled-Bitmap File",
+											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	0,
+											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnSaveClick(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+										}],
+									"m_children":	[]
+								}, {
+									"m_type":	4462,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"XRCID(\"IDC_DBE_SQL_EXEC\")"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbarItemExecute"
+										}, {
+											"type":	"string",
+											"m_label":	"Label:",
+											"m_value":	"Execute SQL"
+										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	"Execute SQL"
+										}, {
+											"type":	"string",
+											"m_label":	"Help String:",
+											"m_value":	""
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	"../codelite-icons/toolbars/16/build/execute.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disabled-Bitmap File",
+											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	0,
+											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnExecuteClick(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+										}],
+									"m_children":	[]
+								}, {
+									"m_type":	4504,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_tbSeparator177"
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	0,
+											"m_options":	["separator"]
+										}],
+									"m_events":	[],
+									"m_children":	[]
+								}, {
+									"m_type":	4462,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"ID_INSERT_TEMPLATE"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbarItemTemplates"
+										}, {
+											"type":	"string",
+											"m_label":	"Label:",
+											"m_value":	"Insert template"
+										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	"Insert template"
+										}, {
+											"type":	"string",
+											"m_label":	"Help String:",
+											"m_value":	"Insert template"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	"../codelite-icons/subversion/16/add.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disabled-Bitmap File",
+											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	4,
+											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN",
+											"m_eventClass":	"wxAuiToolBarEvent",
+											"m_eventHandler":	"wxAuiToolBarEventHandler",
+											"m_functionNameAndSignature":	"OnTemplatesBtnClick(wxAuiToolBarEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event"
 										}],
 									"m_children":	[]
 								}]
@@ -1252,6 +1447,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"choice",
@@ -1332,6 +1531,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -1346,6 +1549,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"bSizer23"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -1365,6 +1572,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"bSizer25"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -1421,13 +1632,17 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"bool",
 																	"m_label":	"Fold Margin",
-																	"m_value":	true
+																	"m_value":	false
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Line Number Margin",
-																	"m_value":	true
+																	"m_value":	false
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Separator Margin",
@@ -1458,7 +1673,7 @@
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Lexer",
-																	"m_selection":	58,
+																	"m_selection":	84,
 																	"m_options":	["wxSTC_LEX_ABAQUS", "wxSTC_LEX_ADA", "wxSTC_LEX_APDL", "wxSTC_LEX_ASM", "wxSTC_LEX_ASN1", "wxSTC_LEX_ASYMPTOTE", "wxSTC_LEX_AUTOMATIC", "wxSTC_LEX_AVE", "wxSTC_LEX_BAAN", "wxSTC_LEX_BASH", "wxSTC_LEX_BATCH", "wxSTC_LEX_BLITZBASIC", "wxSTC_LEX_BULLANT", "wxSTC_LEX_CAML", "wxSTC_LEX_CLW", "wxSTC_LEX_CLWNOCASE", "wxSTC_LEX_CMAKE", "wxSTC_LEX_COBOL", "wxSTC_LEX_CONF", "wxSTC_LEX_CONTAINER", "wxSTC_LEX_CPP", "wxSTC_LEX_CPPNOCASE", "wxSTC_LEX_CSOUND", "wxSTC_LEX_CSS", "wxSTC_LEX_D", "wxSTC_LEX_DIFF", "wxSTC_LEX_EIFFEL", "wxSTC_LEX_EIFFELKW", "wxSTC_LEX_ERLANG", "wxSTC_LEX_ERRORLIST", "wxSTC_LEX_ESCRIPT", "wxSTC_LEX_F77", "wxSTC_LEX_FLAGSHIP", "wxSTC_LEX_FORTH", "wxSTC_LEX_FORTRAN", "wxSTC_LEX_FREEBASIC", "wxSTC_LEX_GAP", "wxSTC_LEX_GUI4CLI", "wxSTC_LEX_HASKELL", "wxSTC_LEX_HTML", "wxSTC_LEX_INNOSETUP", "wxSTC_LEX_KIX", "wxSTC_LEX_LATEX", "wxSTC_LEX_LISP", "wxSTC_LEX_LOT", "wxSTC_LEX_LOUT", "wxSTC_LEX_LUA", "wxSTC_LEX_MAGIK", "wxSTC_LEX_MAKEFILE", "wxSTC_LEX_MARKDOWN", "wxSTC_LEX_MATLAB", "wxSTC_LEX_METAPOST", "wxSTC_LEX_MMIXAL", "wxSTC_LEX_MSSQL", "wxSTC_LEX_MYSQL", "wxSTC_LEX_NIMROD", "wxSTC_LEX_NNCRONTAB", "wxSTC_LEX_NSIS", "wxSTC_LEX_NULL", "wxSTC_LEX_OCTAVE", "wxSTC_LEX_OPAL", "wxSTC_LEX_PASCAL", "wxSTC_LEX_PERL", "wxSTC_LEX_PHPSCRIPT", "wxSTC_LEX_PLM", "wxSTC_LEX_PO", "wxSTC_LEX_POV", "wxSTC_LEX_POWERBASIC", "wxSTC_LEX_POWERPRO", "wxSTC_LEX_POWERSHELL", "wxSTC_LEX_PROGRESS", "wxSTC_LEX_PROPERTIES", "wxSTC_LEX_PS", "wxSTC_LEX_PUREBASIC", "wxSTC_LEX_PYTHON", "wxSTC_LEX_R", "wxSTC_LEX_REBOL", "wxSTC_LEX_RUBY", "wxSTC_LEX_SCRIPTOL", "wxSTC_LEX_SMALLTALK", "wxSTC_LEX_SML", "wxSTC_LEX_SORCUS", "wxSTC_LEX_SPECMAN", "wxSTC_LEX_SPICE", "wxSTC_LEX_SQL", "wxSTC_LEX_TACL", "wxSTC_LEX_TADS3", "wxSTC_LEX_TAL", "wxSTC_LEX_TCL", "wxSTC_LEX_TEX", "wxSTC_LEX_VB", "wxSTC_LEX_VBSCRIPT", "wxSTC_LEX_VERILOG", "wxSTC_LEX_VHDL", "wxSTC_LEX_XCODE", "wxSTC_LEX_XML", "wxSTC_LEX_YAML"]
 																}, {
 																	"type":	"font",
@@ -1487,281 +1702,6 @@
 																}],
 															"m_events":	[],
 															"m_children":	[]
-														}, {
-															"m_type":	4401,
-															"proportion":	0,
-															"border":	5,
-															"gbSpan":	",",
-															"gbPosition":	",",
-															"m_styles":	[],
-															"m_sizerFlags":	["wxEXPAND"],
-															"m_properties":	[{
-																	"type":	"string",
-																	"m_label":	"Name:",
-																	"m_value":	"bSizer26"
-																}, {
-																	"type":	"choice",
-																	"m_label":	"Orientation:",
-																	"m_selection":	0,
-																	"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
-																}],
-															"m_events":	[],
-															"m_children":	[{
-																	"m_type":	4400,
-																	"proportion":	0,
-																	"border":	5,
-																	"gbSpan":	",",
-																	"gbPosition":	",",
-																	"m_styles":	[],
-																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-																	"m_properties":	[{
-																			"type":	"winid",
-																			"m_label":	"ID:",
-																			"m_winid":	"XRCID(\"IDC_DBE_SQL_SAVE\")"
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Size:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Minimum Size:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Name:",
-																			"m_value":	"m_btnSave"
-																		}, {
-																			"type":	"multi-string",
-																			"m_label":	"Tooltip:",
-																			"m_value":	"Save the current SQL to file"
-																		}, {
-																			"type":	"colour",
-																			"m_label":	"Bg Colour:",
-																			"colour":	"<Default>"
-																		}, {
-																			"type":	"colour",
-																			"m_label":	"Fg Colour:",
-																			"colour":	"<Default>"
-																		}, {
-																			"type":	"font",
-																			"m_label":	"Font:",
-																			"m_value":	""
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Hidden",
-																			"m_value":	false
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Disabled",
-																			"m_value":	false
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Focused",
-																			"m_value":	false
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Class Name:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Include File:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Label:",
-																			"m_value":	"Save"
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Default Button",
-																			"m_value":	false
-																		}, {
-																			"type":	"filePicker",
-																			"m_label":	"Bitmap File:",
-																			"m_path":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Margins:",
-																			"m_value":	"2,2"
-																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnSaveClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
-																		}],
-																	"m_children":	[]
-																}, {
-																	"m_type":	4400,
-																	"proportion":	0,
-																	"border":	5,
-																	"gbSpan":	",",
-																	"gbPosition":	",",
-																	"m_styles":	[],
-																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-																	"m_properties":	[{
-																			"type":	"winid",
-																			"m_label":	"ID:",
-																			"m_winid":	"XRCID(\"IDC_DBE_SQL_LOAD\")"
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Size:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Minimum Size:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Name:",
-																			"m_value":	"m_btnLoad"
-																		}, {
-																			"type":	"multi-string",
-																			"m_label":	"Tooltip:",
-																			"m_value":	"Load SQL script"
-																		}, {
-																			"type":	"colour",
-																			"m_label":	"Bg Colour:",
-																			"colour":	"<Default>"
-																		}, {
-																			"type":	"colour",
-																			"m_label":	"Fg Colour:",
-																			"colour":	"<Default>"
-																		}, {
-																			"type":	"font",
-																			"m_label":	"Font:",
-																			"m_value":	""
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Hidden",
-																			"m_value":	false
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Disabled",
-																			"m_value":	false
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Focused",
-																			"m_value":	false
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Class Name:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Include File:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Label:",
-																			"m_value":	"Load"
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Default Button",
-																			"m_value":	false
-																		}, {
-																			"type":	"filePicker",
-																			"m_label":	"Bitmap File:",
-																			"m_path":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Margins:",
-																			"m_value":	"2,2"
-																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnLoadClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
-																		}],
-																	"m_children":	[]
-																}, {
-																	"m_type":	4400,
-																	"proportion":	0,
-																	"border":	5,
-																	"gbSpan":	",",
-																	"gbPosition":	",",
-																	"m_styles":	[],
-																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-																	"m_properties":	[{
-																			"type":	"winid",
-																			"m_label":	"ID:",
-																			"m_winid":	"XRCID(\"IDC_DBE_SQL_EXEC\")"
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Size:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Minimum Size:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Name:",
-																			"m_value":	"m_btnExecute"
-																		}, {
-																			"type":	"multi-string",
-																			"m_label":	"Tooltip:",
-																			"m_value":	"Execute the current SQL code"
-																		}, {
-																			"type":	"colour",
-																			"m_label":	"Bg Colour:",
-																			"colour":	"<Default>"
-																		}, {
-																			"type":	"colour",
-																			"m_label":	"Fg Colour:",
-																			"colour":	"<Default>"
-																		}, {
-																			"type":	"font",
-																			"m_label":	"Font:",
-																			"m_value":	""
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Hidden",
-																			"m_value":	false
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Disabled",
-																			"m_value":	false
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Focused",
-																			"m_value":	false
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Class Name:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Include File:",
-																			"m_value":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Label:",
-																			"m_value":	"Execute"
-																		}, {
-																			"type":	"bool",
-																			"m_label":	"Default Button",
-																			"m_value":	true
-																		}, {
-																			"type":	"filePicker",
-																			"m_label":	"Bitmap File:",
-																			"m_path":	""
-																		}, {
-																			"type":	"string",
-																			"m_label":	"Margins:",
-																			"m_value":	"2,2"
-																		}],
-																	"m_events":	[{
-																			"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
-																			"m_eventClass":	"wxCommandEvent",
-																			"m_eventHandler":	"wxCommandEventHandler",
-																			"m_functionNameAndSignature":	"OnExecuteClick(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
-																		}],
-																	"m_children":	[]
-																}]
 														}]
 												}]
 										}]
@@ -1825,6 +1765,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -1840,6 +1784,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer24"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -1852,7 +1800,7 @@
 													"border":	5,
 													"gbSpan":	",",
 													"gbPosition":	",",
-													"m_styles":	["wxBORDER_NONE"],
+													"m_styles":	["wxBORDER_THEME"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -1907,17 +1855,21 @@
 															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
 															"type":	"bool",
 															"m_label":	"Fit Content to Columns",
-															"m_value":	true
+															"m_value":	false
 														}, {
 															"type":	"bool",
 															"m_label":	"Use Native Header",
 															"m_value":	true
 														}, {
-															"type":	"multi-string",
-															"m_label":	"Columns:",
-															"m_value":	""
+															"type":	"integer",
+															"m_label":	"Height:",
+															"m_value":	-1
 														}, {
 															"type":	"choice",
 															"m_label":	"Col Label Horizontal Align",
@@ -1929,9 +1881,9 @@
 															"m_selection":	1,
 															"m_options":	["wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM"]
 														}, {
-															"type":	"multi-string",
-															"m_label":	"Rows:",
-															"m_value":	""
+															"type":	"integer",
+															"m_label":	"Width:",
+															"m_value":	-1
 														}, {
 															"type":	"choice",
 															"m_label":	"Row Label Horizontal Align",
@@ -1961,8 +1913,8 @@
 													"border":	5,
 													"gbSpan":	",",
 													"gbPosition":	",",
-													"m_styles":	[],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+													"m_styles":	["wxBORDER_THEME"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -2014,6 +1966,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -2089,6 +2045,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Select dbAdapter"
 				}, {
@@ -2126,6 +2086,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"bSizer9"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -2192,6 +2156,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"string",
@@ -2280,6 +2248,10 @@
 									"m_value":	""
 								}, {
 									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
+									"type":	"string",
 									"m_label":	"Label:",
 									"m_value":	"SQLite"
 								}, {
@@ -2362,6 +2334,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"string",
@@ -2448,6 +2424,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -2485,6 +2465,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"bSizer28"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -2595,6 +2579,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_TREE_BEGIN_DRAG",
@@ -2682,6 +2670,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Connection settings"
 				}, {
@@ -2719,6 +2711,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"bSizer4"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -2786,6 +2782,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[{
@@ -2850,6 +2850,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Sqlite"
 										}, {
@@ -2875,6 +2879,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer27"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -2893,6 +2901,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"fgSizer41"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -2980,6 +2992,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Database file:"
@@ -3049,6 +3065,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -3125,6 +3145,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}],
 													"m_events":	[{
@@ -3211,6 +3235,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"MySql"
 										}, {
@@ -3235,6 +3263,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"fgSizer3"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"string",
 													"m_label":	"# Columns:",
@@ -3273,6 +3305,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"fgSizer4"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -3360,6 +3396,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Connection name:"
@@ -3432,6 +3472,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -3500,6 +3544,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -3574,6 +3622,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -3642,6 +3694,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -3716,6 +3772,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -3784,6 +3844,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -3858,6 +3922,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -3886,6 +3954,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"bSizer8"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -3952,6 +4024,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -4047,6 +4123,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"PostgreSQL"
 										}, {
@@ -4072,6 +4152,10 @@
 													"m_label":	"Name:",
 													"m_value":	"bSizer_1"
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -4090,6 +4174,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"fgSizer42"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -4177,6 +4265,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Name:"
@@ -4249,6 +4341,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -4317,6 +4413,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -4391,6 +4491,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -4459,6 +4563,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -4533,6 +4641,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	"5432"
 																}, {
@@ -4601,6 +4713,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -4675,6 +4791,10 @@
 																	"m_value":	""
 																}, {
 																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
 																	"m_label":	"Value:",
 																	"m_value":	""
 																}, {
@@ -4743,6 +4863,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"multi-string",
@@ -4814,6 +4938,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -4893,6 +5021,10 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Label:",
 																	"m_value":	"Default database:"
@@ -4962,6 +5094,10 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
@@ -5036,6 +5172,10 @@
 															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
 															"type":	"multi-string",
 															"m_label":	"Choices:",
 															"m_value":	""
@@ -5079,6 +5219,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer28"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -5145,6 +5289,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -5224,6 +5372,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -5311,6 +5463,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -5354,6 +5510,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"fgSizer7"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"string",
 							"m_label":	"# Columns:",
@@ -5475,6 +5635,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[{
@@ -5489,6 +5653,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"m_wxsfSizer"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -5558,6 +5726,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Create foreign key"
 				}, {
@@ -5597,6 +5769,10 @@
 							"m_value":	"fgSizer12"
 						}, {
 							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
+							"type":	"string",
 							"m_label":	"# Columns:",
 							"m_value":	"3"
 						}, {
@@ -5633,6 +5809,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer7"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -5703,6 +5883,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -5777,6 +5961,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -5845,6 +6033,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -5918,6 +6110,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Choices:",
 											"m_value":	""
@@ -5941,6 +6137,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"gbSizer1"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"Growable columns:",
@@ -6018,6 +6218,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6100,6 +6304,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"OnDelete"
 										}, {
@@ -6179,6 +6387,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"OnUpdate"
 										}, {
@@ -6209,6 +6421,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer8"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -6279,6 +6495,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -6353,6 +6573,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -6421,6 +6645,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -6494,6 +6722,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Choices:",
 											"m_value":	""
@@ -6555,6 +6787,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer12"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -6621,6 +6857,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6706,6 +6946,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -6799,6 +7043,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Database log"
 				}, {
@@ -6838,6 +7086,10 @@
 							"m_value":	"fgSizer13"
 						}, {
 							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
+							"type":	"string",
 							"m_label":	"# Columns:",
 							"m_value":	"1"
 						}, {
@@ -6874,6 +7126,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"sbSizer9"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -6947,6 +7203,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -6969,6 +7229,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer13"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -7035,6 +7299,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -7128,6 +7396,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"View settings"
 				}, {
@@ -7166,6 +7438,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer15"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -7184,6 +7460,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer14"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -7222,6 +7502,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"bSizer14"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -7288,6 +7572,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -7362,6 +7650,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -7419,6 +7711,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"bool",
@@ -7549,6 +7845,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"OK"
 										}, {
@@ -7633,6 +7933,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Class generator dialog"
 				}, {
@@ -7671,6 +7975,10 @@
 							"m_label":	"Name:",
 							"m_value":	"bSizer22"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -7689,6 +7997,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer19"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -7776,6 +8088,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Class prefix:"
@@ -7848,6 +8164,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -7916,6 +8236,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -7990,6 +8314,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -8058,6 +8386,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -8132,6 +8464,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -8202,6 +8538,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Virtual folder:"
@@ -8224,6 +8564,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"fgSizer26"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -8312,6 +8656,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
@@ -8380,6 +8728,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -8468,6 +8820,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
 											"m_value":	"Template:"
@@ -8539,6 +8895,10 @@
 											"m_label":	"Include File:",
 											"m_value":	""
 										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
 											"type":	"multi-string",
 											"m_label":	"Choices:",
 											"m_value":	"DatabaseLayer (wxWidgets);Debea (STL);wxDebea (wxWidgets);Generic classes (STL)"
@@ -8608,6 +8968,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -8682,6 +9046,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -8723,6 +9091,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"bSizer20"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -8789,6 +9161,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -8877,6 +9253,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Generate"
 										}, {
@@ -8961,6 +9341,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"SQL Preview"
 				}, {
@@ -8998,6 +9382,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"boxSizer10"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -9052,6 +9440,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"bool",
@@ -9182,6 +9574,10 @@
 									"m_value":	""
 								}, {
 									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
+									"type":	"string",
 									"m_label":	"Label:",
 									"m_value":	"OK"
 								}, {
@@ -9265,6 +9661,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"Table settings"
 				}, {
@@ -9308,6 +9708,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"boxSizer19"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -9375,6 +9779,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -9390,6 +9798,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"boxSizer21"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -9456,6 +9868,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"multi-string",
@@ -9530,6 +9946,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Value:",
 											"m_value":	""
 										}, {
@@ -9599,6 +10019,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"choice",
@@ -9679,6 +10103,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -9693,6 +10121,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"boxSizer37"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -9759,6 +10191,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -10104,6 +10540,10 @@
 															"type":	"string",
 															"m_label":	"Include File:",
 															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED",
@@ -10403,6 +10843,10 @@
 											"type":	"string",
 											"m_label":	"Include File:",
 											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[{
@@ -10417,6 +10861,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"boxSizer43"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -10483,6 +10931,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"multi-string",
@@ -10650,6 +11102,10 @@
 															"m_value":	"flexGridSizer143"
 														}, {
 															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"string",
 															"m_label":	"# Columns:",
 															"m_value":	"4"
 														}, {
@@ -10734,6 +11190,10 @@
 																	"type":	"string",
 																	"m_label":	"Include File:",
 																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
@@ -10800,6 +11260,10 @@
 																	"m_label":	"Name:",
 																	"m_value":	"boxSizer163"
 																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
 																	"type":	"choice",
 																	"m_label":	"Orientation:",
 																	"m_selection":	0,
@@ -10818,6 +11282,10 @@
 																			"type":	"string",
 																			"m_label":	"Name:",
 																			"m_value":	"flexGridSizer147"
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Style:",
+																			"m_value":	""
 																		}, {
 																			"type":	"string",
 																			"m_label":	"# Columns:",
@@ -10905,6 +11373,10 @@
 																					"m_label":	"Include File:",
 																					"m_value":	""
 																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
+																					"m_value":	""
+																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Label:",
 																					"m_value":	"Local column:"
@@ -10974,6 +11446,10 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
 																					"m_value":	""
 																				}, {
 																					"type":	"multi-string",
@@ -11059,6 +11535,10 @@
 																					"m_label":	"Include File:",
 																					"m_value":	""
 																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
+																					"m_value":	""
+																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Label:",
 																					"m_value":	"Ref. table:"
@@ -11128,6 +11608,10 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
 																					"m_value":	""
 																				}, {
 																					"type":	"multi-string",
@@ -11213,6 +11697,10 @@
 																					"m_label":	"Include File:",
 																					"m_value":	""
 																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
+																					"m_value":	""
+																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Label:",
 																					"m_value":	"Ref. column:"
@@ -11282,6 +11770,10 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Style:",
 																					"m_value":	""
 																				}, {
 																					"type":	"multi-string",
@@ -11366,6 +11858,10 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Include File:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Style:",
 																			"m_value":	""
 																		}, {
 																			"type":	"string",
@@ -11457,6 +11953,10 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Include File:",
+																			"m_value":	""
+																		}, {
+																			"type":	"string",
+																			"m_label":	"Style:",
 																			"m_value":	""
 																		}, {
 																			"type":	"string",
@@ -11554,6 +12054,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -11569,6 +12073,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"boxSizer49"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -11635,6 +12143,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -11720,6 +12232,10 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",

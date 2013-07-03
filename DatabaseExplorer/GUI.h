@@ -18,6 +18,8 @@
 #include <wx/radiobut.h>
 #include <wx/checkbox.h>
 #include <wx/panel.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
@@ -28,8 +30,6 @@
 #include <wx/filepicker.h>
 #include <wx/listctrl.h>
 #include <wx/listbox.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/gbsizer.h>
@@ -41,10 +41,14 @@
 class _ImageExportDialog : public wxDialog
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxStaticText* m_staticText34;
+    wxBoxSizer* fpSizer;
     wxTextCtrl* m_textCtrlPath;
     wxButton* m_button29;
+    wxStaticBoxSizer* scaleSizer;
     wxRadioButton* m_radioBtnDefaultScale;
+    wxBoxSizer* customScaleSizer;
     wxRadioButton* m_radioBtnScaleCustom;
     wxTextCtrl* m_textCtrlScale;
     wxCheckBox* m_checkBoxBackground;
@@ -66,6 +70,7 @@ public:
 class _ThumbPane : public wxPanel
 {
 protected:
+    wxBoxSizer* mainSizer;
 
 protected:
 
@@ -78,23 +83,27 @@ public:
 class _SqlCommandPanel : public wxPanel
 {
 protected:
-    wxToolBar* m_toolBar3;
-    wxButton* m_button34;
+    enum {
+        ID_INSERT_TEMPLATE = 1001,
+    };
+protected:
+    wxFlexGridSizer* fgSizer3;
+    wxAuiToolBar* m_auibar167;
     wxSplitterWindow* m_splitter1;
     wxPanel* m_panel13;
+    wxBoxSizer* bSizer23;
+    wxBoxSizer* bSizer25;
     wxStyledTextCtrl* m_scintillaSQL;
-    wxButton* m_btnSave;
-    wxButton* m_btnLoad;
-    wxButton* m_btnExecute;
     wxPanel* m_panel14;
+    wxBoxSizer* bSizer24;
     wxGrid* m_gridTable;
     wxStaticText* m_labelStatus;
 
 protected:
-    virtual void OnTemplatesBtnClick(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSaveClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLoadClick(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSaveClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExecuteClick(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTemplatesBtnClick(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnGridCellRightClick(wxGridEvent& event) { event.Skip(); }
 
 public:
@@ -106,6 +115,7 @@ public:
 class _AdapterSelectDlg : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer9;
     wxButton* m_btnMySql;
     wxButton* m_btnSqlite;
     wxButton* m_button24;
@@ -124,6 +134,7 @@ public:
 class _DbViewerPanel : public wxPanel
 {
 protected:
+    wxBoxSizer* bSizer28;
     wxToolBar* m_toolBar1;
     wxTreeCtrl* m_treeDatabases;
 
@@ -142,12 +153,17 @@ public:
 class _DBSettingsDialog : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer4;
     wxNotebook* m_notebook2;
     wxPanel* m_Sqlite;
+    wxBoxSizer* bSizer27;
+    wxFlexGridSizer* fgSizer41;
     wxStaticText* m_staticText11;
     wxFilePickerCtrl* m_filePickerSqlite;
     wxListCtrl* m_listCtrlRecentFiles;
     wxPanel* m_MySqlPanel;
+    wxFlexGridSizer* fgSizer3;
+    wxFlexGridSizer* fgSizer4;
     wxStaticText* m_staticText10;
     wxTextCtrl* m_txName;
     wxStaticText* m_staticText1;
@@ -156,8 +172,11 @@ protected:
     wxTextCtrl* m_txUserName;
     wxStaticText* m_staticText3;
     wxTextCtrl* m_txPassword;
+    wxBoxSizer* bSizer8;
     wxListBox* m_listBox2;
     wxPanel* m_PostgrePanel;
+    wxBoxSizer* bSizer_1;
+    wxFlexGridSizer* fgSizer42;
     wxStaticText* m_staticText101;
     wxTextCtrl* m_txPgName;
     wxStaticText* m_staticText12;
@@ -171,6 +190,7 @@ protected:
     wxStaticText* m_staticText24;
     wxTextCtrl* m_txPgDatabase;
     wxListBox* m_listBoxPg;
+    wxBoxSizer* bSizer28;
     wxButton* m_button36;
     wxButton* m_button35;
 
@@ -196,8 +216,10 @@ public:
 class _ErdPanel : public wxPanel
 {
 protected:
+    wxFlexGridSizer* fgSizer7;
     wxAuiToolBar* m_toolBarErd;
     wxPanel* m_wxsfPanel;
+    wxBoxSizer* m_wxsfSizer;
 
 protected:
     virtual void OnMouseWheel(wxMouseEvent& event) { event.Skip(); }
@@ -211,17 +233,22 @@ public:
 class _CreateForeignKey : public wxDialog
 {
 protected:
+    wxFlexGridSizer* fgSizer12;
+    wxStaticBoxSizer* sbSizer7;
     wxStaticText* m_staticText15;
     wxTextCtrl* m_txSrcTable;
     wxStaticText* m_staticText17;
     wxChoice* m_cmbSrcCol;
+    wxGridBagSizer* gbSizer1;
     wxRadioBox* m_radioRelation;
     wxRadioBox* m_radioOnDelete;
     wxRadioBox* m_radioOnUpdate;
+    wxStaticBoxSizer* sbSizer8;
     wxStaticText* m_staticText16;
     wxTextCtrl* m_txDstTable;
     wxStaticText* m_staticText18;
     wxChoice* m_cmbDstCol;
+    wxBoxSizer* bSizer12;
     wxButton* m_btnCancel;
     wxButton* m_btnOK;
 
@@ -239,7 +266,10 @@ public:
 class _LogDialog : public wxDialog
 {
 protected:
+    wxFlexGridSizer* fgSizer13;
+    wxStaticBoxSizer* sbSizer9;
     wxTextCtrl* m_textCtrl11;
+    wxBoxSizer* bSizer13;
     wxButton* m_button18;
 
 protected:
@@ -255,6 +285,9 @@ public:
 class _ViewSettings : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer15;
+    wxFlexGridSizer* fgSizer14;
+    wxBoxSizer* bSizer14;
     wxStaticText* m_staticText19;
     wxTextCtrl* m_txName;
     wxStyledTextCtrl* m_scintilla2;
@@ -272,6 +305,8 @@ public:
 class _ClassGenerateDialog : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer22;
+    wxFlexGridSizer* fgSizer19;
     wxStaticText* m_staticText30;
     wxTextCtrl* m_txPrefix;
     wxStaticText* m_staticText31;
@@ -279,12 +314,14 @@ protected:
     wxStaticText* m_staticText28;
     wxDirPickerCtrl* m_dirPicker;
     wxStaticText* m_staticText34;
+    wxFlexGridSizer* fgSizer26;
     wxTextCtrl* m_txVirtualDir;
     wxButton* m_btnBrowseVirtualDir;
     wxStaticText* m_staticText36;
     wxChoice* m_choiceTemplates;
     wxStaticText* m_staticText29;
     wxTextCtrl* m_textLog;
+    wxBoxSizer* bSizer20;
     wxButton* m_button26;
     wxButton* m_button25;
 
@@ -302,6 +339,7 @@ public:
 class _CodePreviewDialog : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer10;
     wxStyledTextCtrl* m_scintilla3;
     wxButton* m_button14;
 
@@ -317,18 +355,25 @@ public:
 class _TableSettings : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer19;
     wxInfoBar* m_infobar;
+    wxBoxSizer* boxSizer21;
     wxStaticText* m_staticText23;
     wxTextCtrl* m_textName;
     wxSplitterWindow* m_splitter27;
     wxPanel* m_splitterPage31;
+    wxBoxSizer* boxSizer37;
     wxStaticText* m_staticText55;
     wxAuiToolBar* m_auibar39;
     wxDataViewListCtrl* m_dvColumns;
     wxPanel* m_splitterPage35;
+    wxBoxSizer* boxSizer43;
     wxStaticText* m_staticText57;
     wxAuiToolBar* m_auibar45;
+    wxFlexGridSizer* flexGridSizer143;
     wxDataViewListCtrl* m_dvKeys;
+    wxBoxSizer* boxSizer163;
+    wxFlexGridSizer* flexGridSizer147;
     wxStaticText* m_staticText125;
     wxChoice* m_choiceLocalCol;
     wxStaticText* m_staticText131;
@@ -338,6 +383,7 @@ protected:
     wxRadioBox* m_radioOnUpdate;
     wxRadioBox* m_radioOnDelete;
     wxStaticLine* m_staticLine149;
+    wxBoxSizer* boxSizer49;
     wxButton* m_button51;
     wxButton* m_button53;
 

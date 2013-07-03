@@ -9,6 +9,9 @@
 #include "cl_defs.h"
 #include "globals.h"
 #include <set>
+#include "cl_aui_tool_stickness.h"
+#include "lexer_configuration.h"
+#include "editor_config.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -29,7 +32,14 @@ END_EVENT_TABLE()
 SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const wxString& dbName, const wxString& dbTable)
     : _SqlCommandPanel(parent)
 {
-    DbViewerPanel::InitStyledTextCtrl( m_scintillaSQL );
+    LexerConfPtr lexerSQL = EditorConfigST::Get()->GetLexer("SQL");
+    if ( lexerSQL ) {
+        lexerSQL->Apply(m_scintillaSQL, true);
+        
+    } else {
+        DbViewerPanel::InitStyledTextCtrl( m_scintillaSQL );
+        
+    }
     m_pDbAdapter = dbAdapter;
     m_dbName = dbName;
     m_dbTable = dbTable;
@@ -251,7 +261,7 @@ void SQLCommandPanel::ExecuteSql()
 
 void SQLCommandPanel::OnLoadClick(wxCommandEvent& event)
 {
-    wxFileDialog dlg(this, _("Chose a file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+    wxFileDialog dlg(this, _("Choose a file"),wxT(""),wxT(""),wxT("Sql files(*.sql)|*.sql"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
     m_scintillaSQL->ClearAll();
     if (dlg.ShowModal() == wxID_OK) {
         wxTextFile file( dlg.GetPath());
@@ -281,17 +291,25 @@ void SQLCommandPanel::OnSaveClick(wxCommandEvent& event)
 void SQLCommandPanel::OnTeplatesLeftDown(wxMouseEvent& event)
 {
 }
-void SQLCommandPanel::OnTemplatesBtnClick(wxCommandEvent& event)
+void SQLCommandPanel::OnTemplatesBtnClick(wxAuiToolBarEvent& event)
 {
     wxMenu menu;
-
     menu.Append(XRCID("IDR_SQLCOMMAND_SELECT"),_("Insert SELECT SQL template"),_("Insert SELECT SQL statement template into editor."));
     menu.Append(XRCID("IDR_SQLCOMMAND_INSERT"),_("Insert INSERT SQL template"),_("Insert INSERT SQL statement template into editor."));
     menu.Append(XRCID("IDR_SQLCOMMAND_UPDATE"),_("Insert UPDATE SQL template"),_("Insert UPDATE SQL statement template into editor."));
     menu.Append(XRCID("IDR_SQLCOMMAND_DELETE"),_("Insert DELETE SQL template"),_("Insert DELETE SQL statement template into editor."));
     menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
-    PopupMenu(&menu);
+    
+    wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
+    if ( auibar ) {
+        clAuiToolStickness ts(auibar, event.GetToolId());
+        wxRect rect = auibar->GetToolRect(event.GetId());
+        wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
+        pt = ScreenToClient(pt);
+        PopupMenu(&menu, pt);
+    }
 }
+
 void SQLCommandPanel::OnPopupClick(wxCommandEvent& evt)
 {
     wxString text = m_scintillaSQL->GetText();

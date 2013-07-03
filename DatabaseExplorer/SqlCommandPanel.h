@@ -35,7 +35,7 @@ public:
 	virtual void OnLoadClick(wxCommandEvent& event);
 	virtual void OnSaveClick(wxCommandEvent& event);
 	virtual void OnTeplatesLeftDown(wxMouseEvent& event);
-	virtual void OnTemplatesBtnClick(wxCommandEvent& event);
+	virtual void OnTemplatesBtnClick(wxAuiToolBarEvent& event);
 
 	void OnPopupClick(wxCommandEvent &evt);
 	void ExecuteSql();

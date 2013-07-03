@@ -22,7 +22,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_staticText34 = new wxStaticText(this, wxID_ANY, _("Output file:"), wxDefaultPosition, wxSize(400,-1), 0);
@@ -30,7 +30,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     mainSizer->Add(m_staticText34, 0, wxALL, 5);
     m_staticText34->SetMinSize(wxSize(400,-1));
     
-    wxBoxSizer* fpSizer = new wxBoxSizer(wxHORIZONTAL);
+    fpSizer = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(fpSizer, 0, wxEXPAND, 5);
     
@@ -42,7 +42,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     fpSizer->Add(m_button29, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxStaticBoxSizer* scaleSizer = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Scale")), wxVERTICAL);
+    scaleSizer = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Scale")), wxVERTICAL);
     
     mainSizer->Add(scaleSizer, 0, wxALL|wxEXPAND, 5);
     
@@ -51,7 +51,7 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     
     scaleSizer->Add(m_radioBtnDefaultScale, 0, wxALL, 5);
     
-    wxBoxSizer* customScaleSizer = new wxBoxSizer(wxHORIZONTAL);
+    customScaleSizer = new wxBoxSizer(wxHORIZONTAL);
     
     scaleSizer->Add(customScaleSizer, 0, wxEXPAND, 5);
     
@@ -83,7 +83,6 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     m_sdbSizer2->AddButton(m_button127);
     m_sdbSizer2->Realize();
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -114,9 +113,8 @@ _ThumbPane::_ThumbPane(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -139,21 +137,28 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(  0, 1, 0, 0);
+    fgSizer3 = new wxFlexGridSizer(  0, 1, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer3->AddGrowableCol(0);
     fgSizer3->AddGrowableRow(1);
     this->SetSizer(fgSizer3);
     
-    m_toolBar3 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTB_HORIZONTAL);
-    m_toolBar3->SetToolBitmapSize(wxSize(16,16));
+    m_auibar167 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar167->SetToolBitmapSize(wxSize(16,16));
     
-    fgSizer3->Add(m_toolBar3, 0, wxEXPAND, 5);
+    fgSizer3->Add(m_auibar167, 0, wxEXPAND, 5);
     
-    m_button34 = new wxButton(m_toolBar3, wxID_ANY, _("Templates"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_toolBar3->AddControl(m_button34);
-    m_toolBar3->Realize();
+    m_auibar167->AddTool(wxID_ANY, _("Load..."), wxXmlResource::Get()->LoadBitmap(wxT("document-open")), wxNullBitmap, wxITEM_NORMAL, _("Load..."), _("Load..."), NULL);
+    
+    m_auibar167->AddTool(XRCID("IDC_DBE_SQL_SAVE"), _("Save..."), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), wxNullBitmap, wxITEM_NORMAL, _("Save..."), _("Save..."), NULL);
+    
+    m_auibar167->AddTool(XRCID("IDC_DBE_SQL_EXEC"), _("Execute SQL"), wxXmlResource::Get()->LoadBitmap(wxT("execute")), wxNullBitmap, wxITEM_NORMAL, _("Execute SQL"), wxT(""), NULL);
+    
+    m_auibar167->AddSeparator();
+    
+    m_auibar167->AddTool(ID_INSERT_TEMPLATE, _("Insert template"), wxXmlResource::Get()->LoadBitmap(wxT("add")), wxNullBitmap, wxITEM_NORMAL, _("Insert template"), _("Insert template"), NULL)->SetHasDropDown(true);
+    m_auibar167->Realize();
     
     m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH|wxBORDER_NONE);
     m_splitter1->SetSashGravity(0);
@@ -163,10 +168,10 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_panel13 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
+    bSizer23 = new wxBoxSizer(wxVERTICAL);
     m_panel13->SetSizer(bSizer23);
     
-    wxBoxSizer* bSizer25 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer25 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer23->Add(bSizer25, 1, wxEXPAND, 5);
     
@@ -175,16 +180,8 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     m_scintillaSQL->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_scintillaSQL->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
     m_scintillaSQL->SetMarginSensitive(4, true);
-    m_scintillaSQL->SetMarginWidth    (4, 16);
+    m_scintillaSQL->SetMarginWidth    (4, 0);
     
-    m_scintillaSQL->SetProperty(wxT("fold"),wxT("1"));
-    m_scintillaSQL->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN,    wxSTC_MARK_ARROWDOWN);
-    m_scintillaSQL->MarkerDefine(wxSTC_MARKNUM_FOLDER,        wxSTC_MARK_ARROW);
-    m_scintillaSQL->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB,     wxSTC_MARK_BACKGROUND);
-    m_scintillaSQL->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_BACKGROUND);
-    m_scintillaSQL->MarkerDefine(wxSTC_MARKNUM_FOLDEREND,     wxSTC_MARK_ARROW);
-    m_scintillaSQL->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
-    m_scintillaSQL->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_BACKGROUND);
     // Configure the tracker margin
     m_scintillaSQL->SetMarginWidth(1, 0);
     
@@ -195,16 +192,15 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     m_scintillaSQL->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
-    int m_scintillaSQL_PixelWidth = 4 + 5 *m_scintillaSQL->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
     m_scintillaSQL->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_scintillaSQL->SetMarginWidth(0,m_scintillaSQL_PixelWidth);
+    m_scintillaSQL->SetMarginWidth(0,0);
     
     // Configure the line symbol margin
     m_scintillaSQL->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_scintillaSQL->SetMarginMask(3, 0);
     m_scintillaSQL->SetMarginWidth(3,0);
     // Select the lexer
-    m_scintillaSQL->SetLexer(wxSTC_LEX_NULL);
+    m_scintillaSQL->SetLexer(wxSTC_LEX_SQL);
     // Set default font / styles
     m_scintillaSQL->StyleClearAll();
     m_scintillaSQL->SetWrapMode(0);
@@ -217,33 +213,13 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     
     bSizer25->Add(m_scintillaSQL, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer26 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer25->Add(bSizer26, 0, wxEXPAND, 5);
-    
-    m_btnSave = new wxButton(m_panel13, XRCID("IDC_DBE_SQL_SAVE"), _("Save"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_btnSave->SetToolTip(_("Save the current SQL to file"));
-    
-    bSizer26->Add(m_btnSave, 0, wxALL, 5);
-    
-    m_btnLoad = new wxButton(m_panel13, XRCID("IDC_DBE_SQL_LOAD"), _("Load"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_btnLoad->SetToolTip(_("Load SQL script"));
-    
-    bSizer26->Add(m_btnLoad, 0, wxALL, 5);
-    
-    m_btnExecute = new wxButton(m_panel13, XRCID("IDC_DBE_SQL_EXEC"), _("Execute"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_btnExecute->SetDefault();
-    m_btnExecute->SetToolTip(_("Execute the current SQL code"));
-    
-    bSizer26->Add(m_btnExecute, 0, wxALL, 5);
-    
     m_panel14 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_splitter1->SplitHorizontally(m_panel13, m_panel14, 163);
     
-    wxBoxSizer* bSizer24 = new wxBoxSizer(wxVERTICAL);
+    bSizer24 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(bSizer24);
     
-    m_gridTable = new wxGrid(m_panel14, wxID_ANY, wxDefaultPosition, wxSize(-1,200), wxBORDER_NONE);
+    m_gridTable = new wxGrid(m_panel14, wxID_ANY, wxDefaultPosition, wxSize(-1,200), wxBORDER_THEME);
     m_gridTable->CreateGrid(0, 0);
     m_gridTable->SetRowLabelAlignment(wxALIGN_RIGHT, wxALIGN_CENTRE);
     m_gridTable->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
@@ -254,10 +230,9 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     
     bSizer24->Add(m_gridTable, 1, wxALL|wxEXPAND, 5);
     
-    m_labelStatus = new wxStaticText(m_panel14, wxID_ANY, _("Result:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_labelStatus = new wxStaticText(m_panel14, wxID_ANY, _("Result:"), wxDefaultPosition, wxSize(-1, -1), wxBORDER_THEME);
     
-    bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
+    bSizer24->Add(m_labelStatus, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -265,20 +240,20 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     }
     Centre(wxBOTH);
     // Connect events
-    m_button34->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
-    m_btnSave->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
-    m_btnLoad->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
-    m_btnExecute->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
+    this->Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
+    this->Connect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
+    this->Connect(XRCID("IDC_DBE_SQL_EXEC"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
+    this->Connect(ID_INSERT_TEMPLATE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
     m_gridTable->Connect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick), NULL, this);
     
 }
 
 _SqlCommandPanel::~_SqlCommandPanel()
 {
-    m_button34->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
-    m_btnSave->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
-    m_btnLoad->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
-    m_btnExecute->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnLoadClick), NULL, this);
+    this->Disconnect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
+    this->Disconnect(XRCID("IDC_DBE_SQL_EXEC"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
+    this->Disconnect(ID_INSERT_TEMPLATE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
     m_gridTable->Disconnect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick), NULL, this);
     
 }
@@ -293,7 +268,7 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
+    bSizer9 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer9);
     
     m_btnMySql = new wxButton(this, wxID_ANY, _("MySql"), wxDefaultPosition, wxSize(175,-1), 0);
@@ -307,7 +282,6 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
     m_button24 = new wxButton(this, wxID_ANY, _("PostgreSQL"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer9->Add(m_button24, 0, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -339,7 +313,7 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer28 = new wxBoxSizer(wxVERTICAL);
+    bSizer28 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer28);
     
     m_toolBar1 = new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTB_NODIVIDER|wxTB_HORIZONTAL|wxTB_FLAT);
@@ -352,7 +326,6 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_treeDatabases->SetFont(m_treeDatabasesFont);
     
     bSizer28->Add(m_treeDatabases, 1, wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -386,7 +359,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
+    bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
     
     m_notebook2 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
@@ -396,10 +369,10 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     m_Sqlite = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_Sqlite, _("Sqlite"), false);
     
-    wxBoxSizer* bSizer27 = new wxBoxSizer(wxVERTICAL);
+    bSizer27 = new wxBoxSizer(wxVERTICAL);
     m_Sqlite->SetSizer(bSizer27);
     
-    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -422,14 +395,14 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     m_MySqlPanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_MySqlPanel, _("MySql"), false);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(  0, 1, 0, 0);
+    fgSizer3 = new wxFlexGridSizer(  0, 1, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer3->AddGrowableCol(0);
     fgSizer3->AddGrowableRow(1);
     m_MySqlPanel->SetSizer(fgSizer3);
     
-    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
@@ -473,7 +446,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer4->Add(m_txPassword, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
+    bSizer8 = new wxBoxSizer(wxVERTICAL);
     
     fgSizer3->Add(bSizer8, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -485,10 +458,10 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     m_PostgrePanel = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_PostgrePanel, _("PostgreSQL"), false);
     
-    wxBoxSizer* bSizer_1 = new wxBoxSizer(wxVERTICAL);
+    bSizer_1 = new wxBoxSizer(wxVERTICAL);
     m_PostgrePanel->SetSizer(bSizer_1);
     
-    wxFlexGridSizer* fgSizer42 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer42 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer42->SetFlexibleDirection( wxBOTH );
     fgSizer42->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer42->AddGrowableCol(1);
@@ -548,7 +521,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     bSizer_1->Add(m_listBoxPg, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer28 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer28 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer4->Add(bSizer28, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT, 5);
     
@@ -560,7 +533,6 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     m_button35->SetDefault();
     
     bSizer28->Add(m_button35, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -610,7 +582,7 @@ _ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
         bBitmapLoaded = true;
     }
     
-    wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(  0, 1, 0, 0);
+    fgSizer7 = new wxFlexGridSizer(  0, 1, 0, 0);
     fgSizer7->SetFlexibleDirection( wxBOTH );
     fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer7->AddGrowableCol(0);
@@ -626,9 +598,8 @@ _ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     
     fgSizer7->Add(m_wxsfPanel, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* m_wxsfSizer = new wxBoxSizer(wxVERTICAL);
+    m_wxsfSizer = new wxBoxSizer(wxVERTICAL);
     m_wxsfPanel->SetSizer(m_wxsfSizer);
-    
     
     SetSizeHints(640,480);
     if ( GetSizer() ) {
@@ -656,7 +627,7 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
         bBitmapLoaded = true;
     }
     
-    wxFlexGridSizer* fgSizer12 = new wxFlexGridSizer(  0, 3, 0, 0);
+    fgSizer12 = new wxFlexGridSizer(  0, 3, 0, 0);
     fgSizer12->SetFlexibleDirection( wxBOTH );
     fgSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer12->AddGrowableCol(0);
@@ -664,7 +635,7 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     fgSizer12->AddGrowableRow(0);
     this->SetSizer(fgSizer12);
     
-    wxStaticBoxSizer* sbSizer7 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
+    sbSizer7 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
     fgSizer12->Add(sbSizer7, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
@@ -685,7 +656,7 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     
     sbSizer7->Add(m_cmbSrcCol, 0, wxALL|wxEXPAND, 5);
     
-    wxGridBagSizer* gbSizer1 = new wxGridBagSizer(0, 0);
+    gbSizer1 = new wxGridBagSizer(0, 0);
     gbSizer1->AddGrowableCol(0);
     gbSizer1->AddGrowableRow(0);
     
@@ -719,7 +690,7 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     
     gbSizer1->Add(m_radioOnUpdate, wxGBPosition(1,1), wxGBSpan(1,1), wxALL, 5);
     
-    wxStaticBoxSizer* sbSizer8 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
+    sbSizer8 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, wxT("")), wxVERTICAL);
     
     fgSizer12->Add(sbSizer8, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
@@ -744,7 +715,7 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     
     fgSizer12->Add(0, 0, 1, wxEXPAND, 5);
     
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
     fgSizer12->Add(bSizer12, 1, wxEXPAND|wxALIGN_RIGHT, 5);
     
@@ -755,7 +726,6 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     m_btnOK = new wxButton(this, wxID_ANY, _("OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer12->Add(m_btnOK, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -787,14 +757,14 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
         bBitmapLoaded = true;
     }
     
-    wxFlexGridSizer* fgSizer13 = new wxFlexGridSizer(  0, 1, 0, 0);
+    fgSizer13 = new wxFlexGridSizer(  0, 1, 0, 0);
     fgSizer13->SetFlexibleDirection( wxBOTH );
     fgSizer13->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer13->AddGrowableCol(0);
     fgSizer13->AddGrowableRow(0);
     this->SetSizer(fgSizer13);
     
-    wxStaticBoxSizer* sbSizer9 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Log")), wxVERTICAL);
+    sbSizer9 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Log")), wxVERTICAL);
     
     fgSizer13->Add(sbSizer9, 1, wxALL|wxEXPAND, 5);
     
@@ -803,14 +773,13 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
     sbSizer9->Add(m_textCtrl11, 1, wxALL|wxEXPAND, 5);
     m_textCtrl11->SetMinSize(wxSize(600,350));
     
-    wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
+    bSizer13 = new wxBoxSizer(wxVERTICAL);
     
     fgSizer13->Add(bSizer13, 1, wxBOTTOM|wxEXPAND, 5);
     
     m_button18 = new wxButton(this, wxID_ANY, _("Close"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer13->Add(m_button18, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT, 5);
-    
     
     SetMinSize( wxSize(640,460) );
     SetSizeHints(640,460);
@@ -841,10 +810,10 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer15 = new wxBoxSizer(wxVERTICAL);
+    bSizer15 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer15);
     
-    wxFlexGridSizer* fgSizer14 = new wxFlexGridSizer(  0, 1, 0, 0);
+    fgSizer14 = new wxFlexGridSizer(  0, 1, 0, 0);
     fgSizer14->SetFlexibleDirection( wxBOTH );
     fgSizer14->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer14->AddGrowableCol(0);
@@ -852,7 +821,7 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
     
     bSizer15->Add(fgSizer14, 1, wxEXPAND, 5);
     
-    wxBoxSizer* bSizer14 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer14 = new wxBoxSizer(wxHORIZONTAL);
     
     fgSizer14->Add(bSizer14, 1, wxEXPAND, 5);
     
@@ -915,7 +884,6 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
     
     fgSizer14->Add(m_btnOK, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    
     SetMinSize( wxSize(650,450) );
     SetSizeHints(650,450);
     if ( GetSizer() ) {
@@ -943,10 +911,10 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer22 = new wxBoxSizer(wxVERTICAL);
+    bSizer22 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer22);
     
-    wxFlexGridSizer* fgSizer19 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer19 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer19->SetFlexibleDirection( wxBOTH );
     fgSizer19->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -980,7 +948,7 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     
     fgSizer19->Add(m_staticText34, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxFlexGridSizer* fgSizer26 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer26 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer26->SetFlexibleDirection( wxBOTH );
     fgSizer26->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer26->AddGrowableCol(0);
@@ -1019,7 +987,7 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     
     fgSizer19->Add(0, 0, 1, wxEXPAND, 5);
     
-    wxBoxSizer* bSizer20 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer20 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer22->Add(bSizer20, 0, wxALIGN_RIGHT, 5);
     
@@ -1030,7 +998,6 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     m_button25 = new wxButton(this, XRCID("IDC_DBE_CG_GENERATE"), _("Generate"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer20->Add(m_button25, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -1062,7 +1029,7 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
     
     m_scintilla3 = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1116,7 +1083,6 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer10->Add(m_button14, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    
     SetMinSize( wxSize(500,470) );
     SetSizeHints(500,470);
     if ( GetSizer() ) {
@@ -1144,7 +1110,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
+    boxSizer19 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer19);
     
     m_infobar = new wxInfoBar(this, wxID_ANY);
@@ -1152,7 +1118,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     
     boxSizer19->Add(m_infobar, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer19->Add(boxSizer21, 0, wxALL|wxEXPAND, 5);
     
@@ -1172,7 +1138,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     
     m_splitterPage31 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
+    boxSizer37 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage31->SetSizer(boxSizer37);
     
     m_staticText55 = new wxStaticText(m_splitterPage31, wxID_ANY, _("Columns:"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1208,7 +1174,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     m_splitterPage35 = new wxPanel(m_splitter27, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter27->SplitHorizontally(m_splitterPage31, m_splitterPage35, 0);
     
-    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
+    boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage35->SetSizer(boxSizer43);
     
     m_staticText57 = new wxStaticText(m_splitterPage35, wxID_ANY, _("Foreign keys:"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -1225,7 +1191,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     m_auibar45->AddTool(XRCID("IDT_DBE_TS_REMOVE_KEY"), _("Remove foreign key"), wxXmlResource::Get()->LoadBitmap(wxT("delete")), wxNullBitmap, wxITEM_NORMAL, _("Remove selected foreign key"), wxT(""), NULL);
     m_auibar45->Realize();
     
-    wxFlexGridSizer* flexGridSizer143 = new wxFlexGridSizer(  1, 4, 0, 0);
+    flexGridSizer143 = new wxFlexGridSizer(  1, 4, 0, 0);
     flexGridSizer143->SetFlexibleDirection( wxBOTH );
     flexGridSizer143->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer143->AddGrowableCol(0);
@@ -1238,11 +1204,11 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     flexGridSizer143->Add(m_dvKeys, 1, wxEXPAND, 5);
     
     m_dvKeys->AppendTextColumn(_("Key name"), wxDATAVIEW_CELL_EDITABLE, -2, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
+    boxSizer163 = new wxBoxSizer(wxVERTICAL);
     
     flexGridSizer143->Add(boxSizer163, 1, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer147 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer147 = new wxFlexGridSizer(  0, 2, 0, 0);
     flexGridSizer147->SetFlexibleDirection( wxBOTH );
     flexGridSizer147->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer147->AddGrowableCol(1);
@@ -1300,7 +1266,7 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     
     boxSizer19->Add(m_staticLine149, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer49 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer19->Add(boxSizer49, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -1311,7 +1277,6 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
     m_button53 = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer49->Add(m_button53, 0, wxALL, 5);
-    
     
     SetMinSize( wxSize(600,-1) );
     SetSizeHints(600,700);

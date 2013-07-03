@@ -214,7 +214,7 @@ protected:
     wxTextCtrl* m_textCtrlFromRev;
     wxStaticText* m_staticText26;
     wxTextCtrl* m_textCtrlToRev;
-    wxStaticLine* m_staticline6;
+    wxCheckBox* m_checkBoxIgnoreWhitespace;
     wxButton* m_button20;
     wxButton* m_button19;
 

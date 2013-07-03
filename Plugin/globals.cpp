@@ -1576,7 +1576,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
         tmp_cmd = wxT("cd \"" ) + wd + wxT ( "\" && " ) + cmd;
 
         execLine.Replace(wxT("$(CMD)"), tmp_cmd);
-        execLine.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
+        execLine.Replace(wxT("$(TITLE)"), cmd );
 
 #elif defined(__WXGTK__)
 

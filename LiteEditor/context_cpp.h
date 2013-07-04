@@ -60,7 +60,7 @@ class ContextCpp : public ContextBase
 private:
     bool TryOpenFile(const wxFileName &fileName, bool lookInEntireWorkspace = true);
     bool IsJavaScript() const;
-    
+
     void DisplayCompletionBox(const std::vector<TagEntryPtr> &tags, const wxString &word, bool showFullDecl);
     void DisplayFilesCompletionBox(const wxString &word);
     bool DoGetFunctionBody(long curPos, long &blockStartPos, long &blockEndPos, wxString &content);
@@ -70,6 +70,16 @@ private:
     void DoUpdateCalltipHighlight();
 
 public:
+    /**
+     * @brief
+     * @return
+     */
+    virtual bool IsAtBlockComment() const;
+    /**
+     * @brief
+     * @return
+     */
+    virtual bool IsAtLineComment() const;
     ContextCpp(LEditor *container);
     virtual bool IsDefaultContext() const;
 

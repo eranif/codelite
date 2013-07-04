@@ -624,7 +624,6 @@
     <File Name="editor_options_bookmarks.fbp"/>
     <File Name="editor_options_caret.fbp"/>
     <File Name="editor_options_comments.fbp"/>
-    <File Name="editor_options_comments_doxygen.fbp"/>
     <File Name="editor_options_indetation.fbp"/>
     <File Name="editor_options_dialogs.fbp"/>
     <File Name="editor_options_folding.fbp"/>
@@ -782,6 +781,7 @@
       <File Name="listctrlpanel_formbuilder_bitmaps.cpp"/>
       <File Name="DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="project_settings_liteeditor_bitmaps.cpp"/>
+      <File Name="editor_options_comments_doxygen_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -789,6 +789,7 @@
     <File Name="implementparentvirtualfunctionsbase.wxcp"/>
     <File Name="newquickwatch.wxcp"/>
     <File Name="../formbuilder/listctrlpanel.wxcp"/>
+    <File Name="editor_options_comments_doxygen.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

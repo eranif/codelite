@@ -77,7 +77,7 @@
 //#define __PERFORMANCE
 #include "performance.h"
 
-// Set of macros to allow use to disable any context code when we are using 
+// Set of macros to allow use to disable any context code when we are using
 // the C++ lexer for Java Script
 #define CHECK_JS_RETURN_TRUE()  if (IsJavaScript()) return true
 #define CHECK_JS_RETURN_FALSE() if (IsJavaScript()) return false
@@ -203,7 +203,7 @@ void ContextCpp::OnDwellEnd(wxStyledTextEvent &event)
 void ContextCpp::OnDwellStart(wxStyledTextEvent &event)
 {
     CHECK_JS_RETURN_VOID();
-    
+
     LEditor &rCtrl = GetCtrl();
 
     VALIDATE_PROJECT(rCtrl);
@@ -1174,7 +1174,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
         ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), _("codelite"));
         return;
     }
-    
+
     if (s_dlg->ShowModal() == wxID_OK) {
         wxString code = s_dlg->GetGenCode();
         if (code.IsEmpty() == false) {
@@ -1224,7 +1224,7 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent &event)
         event.Enable(false);
         return;
     }
-    
+
     bool workspaceOpen = ManagerST::Get()->IsWorkspaceOpen();
     bool projectAvailable = (GetCtrl().GetProjectName().IsEmpty() == false);
 
@@ -1414,7 +1414,7 @@ int ContextCpp::FindLineToAddInclude()
 void ContextCpp::OnMoveImpl(wxCommandEvent &e)
 {
     CHECK_JS_RETURN_VOID();
-    
+
     wxUnusedVar(e);
     LEditor &rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
@@ -1631,7 +1631,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 
         int oldLine = rCtrl.LineFromPos( rCtrl.GetCurrentPos() );
         wxString headerContent;
-        
+
         // add the declarations (public, protected, private)
         headerContent = GetCtrl().GetText();
         decl = dlg.GetDecl("public");
@@ -1641,7 +1641,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
             else
                 rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
         }
-        
+
         // protected
         headerContent = GetCtrl().GetText();
         decl = dlg.GetDecl("protected");
@@ -1651,17 +1651,17 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
             else
                 rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
         }
-        
+
         // private
         headerContent = GetCtrl().GetText();
         decl = dlg.GetDecl("private");
-        if ( !decl.IsEmpty() ) {        
+        if ( !decl.IsEmpty() ) {
             if ( TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 2) )
                 rCtrl.SetText( headerContent );
             else
                 rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
         }
-        
+
         if (dlg.IsFormatAfterInsert())
             DoFormatEditor( &GetCtrl() );
 
@@ -1686,7 +1686,7 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
 void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 {
     CHECK_JS_RETURN_VOID();
-    
+
     wxUnusedVar(e);
     LEditor &rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
@@ -1704,18 +1704,18 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
     // get map of all unimlpemented methods
     std::map<wxString, TagEntryPtr> protos;
     TagsManagerST::Get()->GetUnImplementedFunctions( scopeName, protos );
-    
+
     if ( protos.empty() ) {
         ::wxMessageBox(_("All your functions seems to have an implementation!"));
         return;
     }
-    
+
     TagEntryPtrVector_t tags;
     std::map<wxString, TagEntryPtr>::const_iterator iter = protos.begin();
     for(; iter != protos.end(); ++iter) {
         tags.push_back(iter->second);
     }
-    
+
     wxString targetFile;
     FindSwappedFile(rCtrl.GetFileName(), targetFile);
 
@@ -1725,13 +1725,13 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
         targetFile = dlg.GetFileName();
         wxString body = dlg.GetText();
         int insertedLine = wxNOT_FOUND;
-        
+
         // Open the C++ file
         LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
         if ( !editor ) {
             return;
         }
-        
+
         // Inser the new functions at the proper location
         wxString sourceContent = editor->GetText();
         TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
@@ -1743,7 +1743,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent &e)
 void ContextCpp::OnAddImpl(wxCommandEvent &e)
 {
     CHECK_JS_RETURN_VOID();
-    
+
     wxUnusedVar(e);
     LEditor &rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
@@ -1856,7 +1856,7 @@ void ContextCpp::DoFormatEditor(LEditor *editor)
 void ContextCpp::OnFileSaved()
 {
     PERF_FUNCTION();
-    
+
     if ( !IsJavaScript() ) {
         VariableList var_list;
         std::map< std::string, Variable > var_map;
@@ -1954,7 +1954,7 @@ void ContextCpp::OnFileSaved()
 
         // Update preprocessor visualization
         ManagerST::Get()->UpdatePreprocessorFile( &GetCtrl() );
-        
+
     }
 }
 
@@ -1979,21 +1979,21 @@ void ContextCpp::ApplySettings()
     wxString keyWords     = lexPtr->GetKeyWords(0);
     wxString doxyKeyWords = lexPtr->GetKeyWords(2);
     wxString jsKeywords   = lexPtr->GetKeyWords(1);
-    
+
     // C/C++ keywords
     keyWords.Replace(wxT("\n"), wxT(" "));
     keyWords.Replace(wxT("\r"), wxT(" "));
-    
+
     jsKeywords.Replace(wxT("\n"), wxT(" "));
     jsKeywords.Replace(wxT("\r"), wxT(" "));
-    
+
     // A javascript file?
     if ( !IsJavaScript() ) {
         rCtrl.SetKeyWords(0, keyWords);
     } else {
         rCtrl.SetKeyWords(0, jsKeywords);
     }
-    
+
     // Doxygen keywords
     doxyKeyWords.Replace(wxT("\n"), wxT(" "));
     doxyKeyWords.Replace(wxT("\r"), wxT(" "));
@@ -2076,7 +2076,7 @@ void ContextCpp::Initialize()
         m_completionTriggerStrings.insert(".");
         m_completionTriggerStrings.insert("->");
         m_completionTriggerStrings.insert("::");
-        
+
     } else {
         m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
         m_completionTriggerStrings.insert(".");
@@ -2086,7 +2086,7 @@ void ContextCpp::Initialize()
 void ContextCpp::AutoAddComment()
 {
     CHECK_JS_RETURN_VOID();
-    
+
     LEditor &rCtrl = GetCtrl();
 
     CommentConfigData data;
@@ -2399,7 +2399,7 @@ void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryP
         }
 
     } else {
-        
+
         if ( IsJavaScript() ) {
             cppWords =  "abstract boolean break byte case catch char class "
                         "const continue debugger default delete do double else enum export extends "
@@ -2414,15 +2414,15 @@ void ContextCpp::MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryP
                            "new not not_eq operator or or_eq private protected public register reinterpret_cast return short signed sizeof size_t static "
                            "static_cast struct switch template this throw true try typedef typeid typename union unsigned using virtual void volatile "
                            "wchar_t while xor xor_eq ");
-                           
+
         }
     }
-    
+
     if ( !IsJavaScript() ) {
         // add preprocessors
         cppWords << wxT(" ifdef undef define defined include endif elif ifndef ");
     }
-    
+
     wxString s1(word);
     std::set<wxString> uniqueWords;
     wxArrayString wordsArr = wxStringTokenize(cppWords, wxT(" \r\t\n"));
@@ -2455,7 +2455,7 @@ wxString ContextCpp::CallTipContent()
 void ContextCpp::DoCodeComplete(long pos)
 {
     CHECK_JS_RETURN_VOID();
-    
+
     long currentPosition = pos;
     bool showFuncProto = false;
     int pos1, pos2, end;
@@ -2791,7 +2791,7 @@ wxString ContextCpp::GetCurrentScopeName()
     if ( IsJavaScript() ) {
         return wxEmptyString;
     }
-    
+
     TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), GetCtrl().GetCurrentLine()+1);
     if(tag) {
         return tag->GetParent();
@@ -2804,7 +2804,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, LEditor *editor, boo
     if ( IsJavaScript() ) {
         return wxEmptyString;
     }
-    
+
     bool cont(true);
     int depth(0);
 
@@ -3092,4 +3092,18 @@ bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, LEditor *ct
 bool ContextCpp::IsJavaScript() const
 {
     return (m_container->GetFileName().GetExt().CmpNoCase("js") == 0 || m_container->GetFileName().GetExt().CmpNoCase("javascript") == 0);
+}
+
+bool ContextCpp::IsAtBlockComment() const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    int cur_style = GetCtrl().GetStyleAt(curpos);
+    return cur_style == wxSTC_C_COMMENTDOC || cur_style == wxSTC_C_COMMENT;
+}
+
+bool ContextCpp::IsAtLineComment() const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    int cur_style = GetCtrl().GetStyleAt(curpos);
+    return cur_style == wxSTC_C_COMMENTLINE || cur_style == wxSTC_C_COMMENTLINEDOC;
 }

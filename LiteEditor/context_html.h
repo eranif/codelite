@@ -43,6 +43,9 @@ public:
     virtual void RetagFile();
     virtual void SemicolonShift();
     virtual void SetActive();
+    virtual bool IsAtBlockComment() const;
+    virtual bool IsAtLineComment() const;
+    
 };
 
 #endif // CONTEXTHTML_H

@@ -144,7 +144,20 @@ public:
     virtual bool IsCommentOrString(long WXUNUSED(pos)) {
         return false;
     }
+    /**
+     * @brief return true if the caret is at a block comment
+     */
+    virtual bool IsAtBlockComment() const {
+        return false;
+    }
+    /**
+     * @brief return true if the caret is at a line comment
+     */
+    virtual bool IsAtLineComment() const {
+        return false;
+    }
     virtual void AutoIndent(const wxChar&);
+    virtual void AutoAddComment();
     virtual void CompleteWord() {}
     virtual void CodeComplete(long pos = wxNOT_FOUND) {
         wxUnusedVar(pos);

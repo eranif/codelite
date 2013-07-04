@@ -123,9 +123,9 @@ void OptionsDlg2::Initialize()
     AddSubPage(new EditorSettingsCaret(m_treeBook),                 _("Caret & Scrolling"));
     AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook),       _("Save Options"));
 
-    m_treeBook->AddPage(0, wxT("C++"));
+    m_treeBook->AddPage(0, wxT("Tweaks"));
     AddSubPage(new EditorSettingsComments(m_treeBook),             _("Code"));
-    AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), wxT("Doxygen"));
+    AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Doxygen"));
 
     AddPage(new EditorSettingsFolding(m_treeBook),       _("Folding"));
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook),_("Bookmarks & Breakpoints"));

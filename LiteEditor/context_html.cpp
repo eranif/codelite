@@ -61,10 +61,10 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
     }
 
     int curpos = rCtrl.GetCurrentPos();
-//	if (IsCommentOrString(curpos) && nChar == wxT('\n')) {
-//		AutoAddComment();
-//		return;
-//	}
+    if (IsCommentOrString(curpos) && nChar == wxT('\n')) {
+        AutoAddComment();
+        return;
+    }
 
     if (IsCommentOrString(curpos)) {
         ContextBase::AutoIndent(nChar);
@@ -224,7 +224,7 @@ void ContextHtml::GotoPreviousDefintion()
 bool ContextHtml::IsCommentOrString(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
-    return IsComment(pos) || 
+    return IsComment(pos) ||
            style == wxSTC_H_DOUBLESTRING ||
            style == wxSTC_H_SINGLESTRING ||
            style == wxSTC_H_SGML_DOUBLESTRING ||
@@ -379,4 +379,18 @@ int ContextHtml::GetActiveKeywordSet() const
     else if ( IS_BETWEEN(style, wxSTC_HP_START, wxSTC_HP_IDENTIFIER) || IS_BETWEEN(style, wxSTC_HPA_START, wxSTC_HPA_IDENTIFIER) )
         return 3;
     return wxNOT_FOUND;
+}
+
+bool ContextHtml::IsAtBlockComment() const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    int cur_style = GetCtrl().GetStyleAt(curpos);
+    return cur_style == wxSTC_HPHP_COMMENT;
+}
+
+bool ContextHtml::IsAtLineComment() const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    int cur_style = GetCtrl().GetStyleAt(curpos);
+    return cur_style == wxSTC_HPHP_COMMENTLINE;
 }

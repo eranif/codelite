@@ -37,10 +37,10 @@ public:
 
     TagEntryPtr m_tag;
     int         m_kind;
-    bool        m_disabled;
     bool        m_checked;
+    
 public:
-    SettersGettersTreeData(TagEntryPtr tag, int kind, bool disabled) : m_tag(tag), m_kind(kind), m_disabled(disabled), m_checked(true) {}
+    SettersGettersTreeData(TagEntryPtr tag, int kind, bool checked) : m_tag(tag), m_kind(kind), m_checked(checked) {}
     virtual ~SettersGettersTreeData() {}
 };
 

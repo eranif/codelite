@@ -89,7 +89,7 @@ void SettersGettersDlg::GenerateGetters(wxString &code)
             bool already_exists = false;
             wxString display_name;
             SettersGettersTreeData *data = (SettersGettersTreeData *) m_dataviewModel->GetClientObject(funcs.Item(j));
-            if ( data->m_kind == SettersGettersTreeData::Kind_Setter && data->m_checked ) {
+            if ( data->m_kind == SettersGettersTreeData::Kind_Getter && data->m_checked ) {
                 wxString getter_code = GenerateGetter(data->m_tag, already_exists, display_name);
                 if ( !already_exists ) {
                     code << getter_code << "\n";
@@ -405,9 +405,11 @@ int SettersGettersDlg::BuildTree()
     wxBitmap memberBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap("cc/16/member_public");
     wxBitmap funcBmp   = PluginManager::Get()->GetStdIcons()->LoadBitmap("cc/16/function_public");
     
-    int nEntriedAdded = 0;
     m_checkForDuplicateEntries = true;
-    for (size_t i=0; i<m_members.size() ; i++) {
+    
+    std::vector<TagEntryPtr> tmpTags = m_members;
+    m_members.clear();
+    for (size_t i=0; i<tmpTags.size() ; i++) {
         
         // add two children to generate the name of the next entries
         bool     getter_exist (false);
@@ -415,33 +417,30 @@ int SettersGettersDlg::BuildTree()
         wxString setter_display_name;
         wxString getter_display_name;
 
-        wxString getter = GenerateGetter(m_members.at(i), getter_exist, getter_display_name);
-        wxString setter = GenerateSetter(m_members.at(i), setter_exist, setter_display_name);
-        if ( getter_exist && setter_exist )
+        wxString getter = GenerateGetter(tmpTags.at(i), getter_exist, getter_display_name);
+        wxString setter = GenerateSetter(tmpTags.at(i), setter_exist, setter_display_name);
+        if ( getter_exist && setter_exist ) 
             continue;
         
+        m_members.push_back( tmpTags.at(i) );
         wxVector<wxVariant> cols;
-        cols.push_back( SettersGettersModel::CreateIconTextVariant(m_members.at(i)->GetName(), memberBmp) );
-        cols.push_back( true );
+        cols.push_back( SettersGettersModel::CreateIconTextVariant(tmpTags.at(i)->GetName(), memberBmp) );
+        cols.push_back( false );
         wxDataViewItem memberItem = m_dataviewModel->AppendItem(wxDataViewItem(0), cols);
 
 
         if ( !setter_exist ) {
-            ++nEntriedAdded;
-            
             cols.clear();
             cols.push_back( SettersGettersModel::CreateIconTextVariant(setter_display_name, funcBmp) );
             cols.push_back( false );
-            m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Setter, false));
+            m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(tmpTags.at(i), SettersGettersTreeData::Kind_Setter, false));
         }
         
         if ( !getter_exist ) {
-            ++nEntriedAdded;
-            
             cols.clear();
             cols.push_back( SettersGettersModel::CreateIconTextVariant(getter_display_name, funcBmp) );
             cols.push_back( false );
-            m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(m_members.at(i), SettersGettersTreeData::Kind_Getter, false));
+            m_dataviewModel->AppendItem(memberItem, cols, new SettersGettersTreeData(tmpTags.at(i), SettersGettersTreeData::Kind_Getter, false));
         }
         
         m_dataview->Expand( memberItem );
@@ -455,7 +454,7 @@ int SettersGettersDlg::BuildTree()
         title << _("Generate Setters/Getters for class '") << m_members.at(0)->GetParent() << _("'");
         m_banner6->SetText(title, msg);
     }
-    return nEntriedAdded;
+    return m_members.size();
 }
 
 void SettersGettersDlg::UpdateTree()

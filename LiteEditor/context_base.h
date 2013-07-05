@@ -77,10 +77,10 @@ public:
     
     /**
      * @brief when the context is requested to display a code completion for keywords
-     * this functions determines which keyword set to display ( there are up to 5 0-4)
+     * this functions determines which keyword set to display ( there are up to 5, indexed from: 0-4)
      */
     virtual int GetActiveKeywordSet() const {
-        return wxNOT_FOUND;
+        return 0;
     }
     
     const wxStringSet_t& GetCompletionTriggerStrings() const {

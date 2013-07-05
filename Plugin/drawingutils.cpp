@@ -595,3 +595,14 @@ wxBrush DrawingUtils::GetStippleBrush()
     memDC.SelectObject(wxNullBitmap);
     return wxBrush(bmpStipple);
 }
+
+wxColour DrawingUtils::GetThemeLinkColour()
+{
+    wxColour bgColour = GetThemeTipBgColour();
+    if ( !IsDark(bgColour) ) {
+        return "BLUE";
+        
+    } else {
+        return "YELLOW";
+    }
+}

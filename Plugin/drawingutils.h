@@ -82,6 +82,9 @@ public:
     /// Return the proper colour for painting tooltip bg colour
     static wxColour GetThemeTipBgColour();
     
+    /// Return the proper colour for painting URL link
+    static wxColour GetThemeLinkColour();
+    
     /**
      * @brief return the AUI pane bg colour
      */

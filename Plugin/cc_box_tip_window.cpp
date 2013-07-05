@@ -11,6 +11,7 @@
 #include "event_notifier.h"
 #include "editor_config.h"
 #include <wx/stc/stc.h>
+#include "file_logger.h"
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP   = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -170,6 +171,7 @@ void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e)
 
 void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
+    m_links.clear();
     wxBufferedPaintDC dc(this);
 
     wxColour penColour   = DrawingUtils::GetThemeBorderColour();
@@ -184,40 +186,44 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     // Draw left-right arrows
     m_leftTipRect = wxRect();
     m_rightTipRect = wxRect();
-    //if ( m_numOfTips > 1 && m_leftbmp.IsOk() && m_rightbmp.IsOk() ) {
-    //    
-    //    // If the tip is positioned on the right side of the completion box
-    //    // place the <- -> buttons on the LEFT side
-    //    int leftButtonOffset = 5;
-    //    if ( !m_positionedToRight ) {
-    //        // Place the buttons on the RIGHT side
-    //        leftButtonOffset = rr.GetWidth() - m_leftbmp.GetWidth() - m_rightbmp.GetWidth() - 10; // 10 pixels padding
-    //    }
-    //    
-    //    m_leftTipRect  = wxRect(leftButtonOffset, 5, m_leftbmp.GetWidth(), m_leftbmp.GetHeight());
-    //    wxPoint rightBmpPt = m_leftTipRect.GetTopRight();
-    //    rightBmpPt.x += 5;
-    //    m_rightTipRect = wxRect(rightBmpPt, wxSize(m_rightbmp.GetWidth(), m_rightbmp.GetHeight()));
-    //
-    //    dc.DrawBitmap(m_leftbmp,  m_leftTipRect.GetTopLeft());
-    //    dc.DrawBitmap(m_rightbmp, m_rightTipRect.GetTopLeft());
-    //    
-    //}
 
     dc.SetFont(m_commentFont);
     dc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
-
-    ::setMarkupLexerInput(m_tip);
+    
     wxString curtext;
-
+    MarkupParser parser(m_tip);
     wxPoint pt(5, 5);
-    while ( true ) {
-        int type = ::MarkupLex();
-
-        if ( type == 0 )  // EOF
-            break;
-
+    while ( parser.Next() ) {
+        int type = parser.GetType();
         switch (type) {
+        case LINK_URL: {
+            // Found URL
+            // Before we change the font, draw the buffer
+            DoPrintText(dc, curtext, pt);
+            
+            curtext = parser.GetToken();
+            wxString link_url = curtext;
+            
+            wxFont f = dc.GetFont();
+            f.SetWeight(wxFONTWEIGHT_NORMAL);
+            f.SetUnderlined(true);
+            dc.SetFont(f);
+            dc.SetTextForeground( DrawingUtils::GetThemeLinkColour() );
+            wxRect url_rect = DoPrintText(dc, curtext, pt);
+            
+            // keep info about this URL
+            CCBoxTipWindow::Links link_info;
+            link_info.m_rect = url_rect;
+            link_info.m_url  = link_url;
+            m_links.push_back( link_info );
+            
+            // Restore font and colour
+            f.SetUnderlined(false);
+            dc.SetFont(f);
+            dc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
+            
+            break;
+        }
         case BOLD_START: {
             // Before we change the font, draw the buffer
             DoPrintText(dc, curtext, pt);
@@ -285,7 +291,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
         }
         case COLOR_START: {
             DoPrintText(dc, curtext, pt);
-            wxString colorname = ::MarkupText();
+            wxString colorname = parser.GetToken();
             colorname = colorname.AfterFirst(wxT('"'));
             colorname = colorname.BeforeLast(wxT('"'));
             dc.SetTextForeground(wxColour(colorname));
@@ -297,28 +303,8 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             dc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
             break;
         }
-        //case PARAM_ARG: {
-        //    // print what we got so far and move on to the next line
-        //    DoPrintText(dc, curtext, pt);
-        //    pt.y += m_lineHeight;
-        //    pt.x = 5;
-        //    
-        //    // Now print: Parameter
-        //    wxFont f = dc.GetFont();
-        //    wxFontWeight curweight = f.GetWeight();
-        //    f.SetWeight(wxFONTWEIGHT_BOLD);
-        //    dc.SetFont(f);
-        //    wxString tmp = "Parameter";
-        //    DoPrintText(dc, tmp, pt);
-        //    // restore the font's weight
-        //    f.SetWeight(curweight);
-        //    dc.SetFont(f);
-        //    pt.y += m_lineHeight;
-        //    pt.x = 5;
-        //    break;
-        //}
         default:
-            curtext << ::MarkupText();
+            curtext << parser.GetToken();
             break;
         }
     }
@@ -326,18 +312,19 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
     if ( curtext.IsEmpty() == false ) {
         DoPrintText(dc, curtext, pt);
     }
-
-    ::MarkupClean();
 }
 
-void CCBoxTipWindow::DoPrintText(wxDC& dc, wxString& text, wxPoint& pt)
+wxRect CCBoxTipWindow::DoPrintText(wxDC& dc, wxString& text, wxPoint& pt)
 {
     if ( text.IsEmpty() == false ) {
         wxSize sz = dc.GetTextExtent(text);
+        wxRect rect(pt, sz);
         dc.DrawText(text, pt);
         pt.x += sz.x;
         text.Clear();
+        return rect;
     }
+    return wxRect();
 }
 
 void CCBoxTipWindow::OnMouseLeft(wxMouseEvent& e)
@@ -351,19 +338,21 @@ void CCBoxTipWindow::OnMouseLeft(wxMouseEvent& e)
         EventNotifier::Get()->AddPendingEvent(evt);
 
     } else {
-        e.Skip();
+        for(size_t i=0; i<m_links.size(); ++i) {
+            if ( m_links.at(i).m_rect.Contains( e.GetPosition() ) ) {
+                ::wxLaunchDefaultBrowser( m_links.at(i).m_url );
+                break;
+            }
+        }
     }
 }
 
 wxString CCBoxTipWindow::DoStripMarkups()
 {
-    ::setMarkupLexerInput(m_tip);
+    MarkupParser parser(m_tip);
     wxString text;
-    while ( true ) {
-        int type = ::MarkupLex();
-
-        if ( type == 0 )  // EOF
-            break;
+    while ( parser.Next() ) {
+        int type = parser.GetType();
         switch (type) {
         case BOLD_START:
         case BOLD_END:
@@ -378,12 +367,10 @@ wxString CCBoxTipWindow::DoStripMarkups()
             text << "\n";
             break;
         default:
-            text << ::MarkupText();
+            text << parser.GetToken();
             break;
         }
     }
-
-    ::MarkupClean();
     return text;
 }
 

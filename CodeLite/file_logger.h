@@ -40,6 +40,7 @@ public:
 #define CL_ERROR(...)   FileLogger::Get()->AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Error);
 #define CL_WARNING(...) FileLogger::Get()->AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Warning);
 #define CL_DEBUG(...)   FileLogger::Get()->AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Dbg);
+#define CL_DEBUGS(s)    FileLogger::Get()->AddLogLine(s, FileLogger::Dbg);
 #define CL_DEBUG1(...)  FileLogger::Get()->AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Developer);
 
 #endif // FILELOGGER_H

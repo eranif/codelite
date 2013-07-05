@@ -13,6 +13,13 @@ WXDLLIMPEXP_SDK extern const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN;
 
 class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
 {
+protected:
+    class Links {
+    public:
+        wxString m_url;
+        wxRect   m_rect;
+    };
+    
     wxString m_tip;
     int      m_lineHeight;
     wxFont   m_codeFont;
@@ -21,12 +28,13 @@ class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
     wxRect   m_leftTipRect;
     wxRect   m_rightTipRect;
     bool     m_positionedToRight;
-
+    std::vector<Links> m_links;
+    
 protected:
     void OnPaint(wxPaintEvent &e);
     void OnEraseBG(wxEraseEvent &e);
     void OnMouseLeft(wxMouseEvent &e);
-    void DoPrintText(wxDC& dc, wxString &text, wxPoint& pt);
+    wxRect DoPrintText(wxDC& dc, wxString &text, wxPoint& pt);
     wxString DoStripMarkups();
     void DoInitialize( const wxString &tip, size_t numOfTips, bool simpleTip);
     

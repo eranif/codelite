@@ -13,12 +13,12 @@ MarkupParser::MarkupParser(const wxString& tip)
     m_patterns.push_back( MarkupSearchPattern("</code>",                         CODE_END) );
     m_patterns.push_back( MarkupSearchPattern("<strong>",                        BOLD_START) );
     m_patterns.push_back( MarkupSearchPattern("</strong>",                       BOLD_END) );
-    m_patterns.push_back( MarkupSearchPattern("<p>",                             NEW_LINE) );
-    m_patterns.push_back( MarkupSearchPattern("</p>",                            NEW_LINE) );
+    m_patterns.push_back( MarkupSearchPattern("<p>",                             MARKUP_VOID) );
+    m_patterns.push_back( MarkupSearchPattern("</p>",                            MARKUP_VOID) );
     m_patterns.push_back( MarkupSearchPattern("<hr>",                            HORIZONTAL_LINE) );
     m_patterns.push_back( MarkupSearchPattern("</color>",                        COLOR_END) );
     m_patterns.push_back( MarkupSearchPattern("^<color=\"[a-zA-Z _]+\">",        COLOR_START, true) );
-    m_patterns.push_back( MarkupSearchPattern("^@link[ \t]+([^ \t\n\v\r]+)", LINK_URL, true, 1) );
+    m_patterns.push_back( MarkupSearchPattern("^@link[ \t]+([^ \t\n\v\r]+)",     LINK_URL, true, 1) );
 }
 
 bool MarkupParser::Next()

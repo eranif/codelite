@@ -21,14 +21,17 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
     , m_tip(tip)
     , m_positionedToRight(false)
 {
-    DoInitialize(tip, 1, true);
+    while ( m_tip.Replace("\n\n", "\n") ) {}
+    DoInitialize(m_tip, 1, true);
 }
 
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips, bool simpleTip)
     : wxPopupWindow(parent)
+    , m_tip(tip)
     , m_positionedToRight(true)
 {
-    DoInitialize(tip, numOfTips, simpleTip);
+    while ( m_tip.Replace("\n\n", "\n") ) {}
+    DoInitialize(m_tip, numOfTips, simpleTip);
 }
 
 CCBoxTipWindow::~CCBoxTipWindow()
@@ -303,6 +306,9 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
             dc.SetTextForeground( DrawingUtils::GetThemeTextColour() );
             break;
         }
+        case MARKUP_VOID:
+            // do nothing
+            break;
         default:
             curtext << parser.GetToken();
             break;

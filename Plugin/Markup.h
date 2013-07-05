@@ -7,6 +7,7 @@
 #include "codelite_exports.h"
 #include <wx/sharedptr.h>
 
+#define MARKUP_VOID     269
 #define BOLD_START      270
 #define BOLD_END        271
 #define HORIZONTAL_LINE 272

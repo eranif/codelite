@@ -400,12 +400,7 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag)
 
 int SettersGettersDlg::BuildTree()
 {
-    SGDlgData data;
-    EditorConfigST::Get()->ReadObject(wxT("SGDlgData"), &data);
-
     m_dataviewModel->Clear();
-    m_checkStartWithUppercase->SetValue(data.GetUseUpperCase());
-
     wxBitmap memberBmp = PluginManager::Get()->GetStdIcons()->LoadBitmap("cc/16/member_public");
     wxBitmap funcBmp   = PluginManager::Get()->GetStdIcons()->LoadBitmap("cc/16/function_public");
     
@@ -496,10 +491,6 @@ void SettersGettersDlg::UpdateTree()
 
 void SettersGettersDlg::OnButtonOk(wxCommandEvent& e)
 {
-    SGDlgData data;
-    data.SetFormatSource( true );
-    data.SetUseUpperCase( m_checkStartWithUppercase->IsChecked() );
-    EditorConfigST::Get()->WriteObject(wxT("SGDlgData"), &data);
     e.Skip();
 }
 
@@ -522,23 +513,3 @@ void SettersGettersDlg::OnValueChanged(wxDataViewEvent& event)
     m_dataviewModel->GetValue(v, event.GetItem(), 1);
     data->m_checked = v.GetBool();
 }
-
-//------------------------------------- Configuration Data -----------------------------------
-
-void SGDlgData::DeSerialize(Archive& arch)
-{
-    if ( arch.Read(wxT("m_useUpperCase"), m_useUpperCase) == false ) {
-        m_useUpperCase = true;
-    }
-
-    if ( arch.Read(wxT("m_formatSource"), m_formatSource) == false ) {
-        m_formatSource = true;
-    }
-}
-
-void SGDlgData::Serialize(Archive& arch)
-{
-    arch.Write(wxT("m_useUpperCase"), m_useUpperCase);
-    arch.Write(wxT("m_formatSource"), m_formatSource);
-}
-

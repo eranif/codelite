@@ -85,30 +85,4 @@ public:
     
     bool Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno);
 };
-
-class SGDlgData : public SerializedObject
-{
-    bool  m_useUpperCase;
-    bool  m_formatSource;
-
-public:
-    SGDlgData() : m_useUpperCase (true), m_formatSource(true) {}
-    ~SGDlgData() {}
-
-    virtual void Serialize(Archive &arch);
-    virtual void DeSerialize(Archive &arch);
-
-    void SetFormatSource(const bool& formatSource) {
-        this->m_formatSource = formatSource;
-    }
-    void SetUseUpperCase(const bool& useUpperCase) {
-        this->m_useUpperCase = useUpperCase;
-    }
-    const bool& GetFormatSource() const {
-        return m_formatSource;
-    }
-    const bool& GetUseUpperCase() const {
-        return m_useUpperCase;
-    }
-};
 #endif // __setters_getters_dlg__

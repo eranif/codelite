@@ -32,6 +32,7 @@
 #include "pluginmanager.h"
 #include "bitmap_loader.h"
 #include "windowattrmanager.h"
+#include "cl_config.h"
 
 //----------------------------------------------------
 
@@ -39,6 +40,9 @@ SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
     : SettersGettersBaseDlg(parent)
     , m_checkForDuplicateEntries(false)
 {
+    bool startWithUpperCase = clConfig::Get().Read("setters-getters-function-start-with-uppercase", true);
+    m_checkStartWithUppercase->SetValue(startWithUpperCase);
+    
     WindowAttrManager::Load(this, "SettersGettersDlg", NULL);
 }
 
@@ -501,6 +505,7 @@ void SettersGettersDlg::OnButtonOk(wxCommandEvent& e)
 
 SettersGettersDlg::~SettersGettersDlg()
 {
+    clConfig::Get().Write("setters-getters-function-start-with-uppercase", m_checkStartWithUppercase->IsChecked());
     WindowAttrManager::Save(this, "SettersGettersDlg", NULL);
 }
 

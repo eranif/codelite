@@ -176,7 +176,6 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="Resources">
@@ -191,4 +190,5 @@
       <File Name="unittestreport.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

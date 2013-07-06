@@ -248,7 +248,6 @@
   </Settings>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
       <File Name="gitui_git_bitmaps.cpp"/>
@@ -259,4 +258,5 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

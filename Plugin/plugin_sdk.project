@@ -466,7 +466,6 @@
     </Configuration>
   </Settings>
   <Dependencies Name="Custom"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
@@ -488,4 +487,5 @@
     <File Name="plugin_general_wxcp.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

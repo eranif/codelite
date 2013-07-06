@@ -32,7 +32,6 @@
     <File Name="cppcheck_settings.h"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -205,4 +204,5 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

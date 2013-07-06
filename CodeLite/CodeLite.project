@@ -324,7 +324,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="configuration">
     <File Name="json_node.cpp"/>
@@ -335,4 +334,5 @@
     <File Name="cl_config.h"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

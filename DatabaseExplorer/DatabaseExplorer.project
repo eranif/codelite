@@ -97,7 +97,6 @@
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <File Name="GUI.wxcp"/>
@@ -339,4 +338,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

@@ -24,7 +24,6 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="resources">
     <File Name="abbreviationssettingsbase.wxcp"/>
@@ -198,4 +197,5 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

@@ -91,7 +91,7 @@
     </GlobalSettings>
   </Settings>
   <Dependencies Name="Debug"/>
-  <Dependencies Name="Common"/>
   <Dependencies Name="Debug"/>
+  <Dependencies Name="Common"/>
   <Dependencies Name="Common"/>
 </CodeLite_Project>

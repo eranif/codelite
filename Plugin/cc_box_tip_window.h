@@ -3,6 +3,7 @@
 
 #include <wx/popupwin.h> // Base class: wxPopupTransientWindow
 #include <wx/panel.h>
+#include <vector>
 #include "codelite_exports.h"
 
 class IEditor;

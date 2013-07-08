@@ -51,7 +51,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;" C_Options="-g;" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0" C_Options="-g;" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="-O2" Required="yes">
@@ -70,8 +70,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
-        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
+        <Command Enabled="no">#copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="no">#copy *.cpp ..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -93,7 +93,7 @@ scope_parser.cpp: cpp_scope_grammar.y
 
 cpp_lexer.cpp: cpp.l
 	flex -L  -Pcl_scope_ cpp.l
-	mv lex.cl_scope_.c cpp_lexer.cpp
+	sed  -e "s/YY_BUF_SIZE 16384/YY_BUF_SIZE 16384*5/g" lex.cl_scope_.c &gt; cpp_lexer.cpp
 
 typedef_parser.cpp: typedef_grammar.y
 	yacc -l  -t -v -pcl_typedef_  typedef_grammar.y

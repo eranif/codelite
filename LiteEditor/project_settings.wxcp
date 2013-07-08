@@ -10652,7 +10652,7 @@
 														}, {
 															"type":	"font",
 															"m_label":	"Font:",
-															"m_value":	"12,normal, normal, swiss, 0, Arial"
+															"m_value":	"wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
 														}, {
 															"type":	"bool",
 															"m_label":	"Hidden",

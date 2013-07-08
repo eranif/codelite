@@ -65,7 +65,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     
     bSizer3->Add(m_buttonApply, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -248,7 +247,6 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_checkBoxPauseWhenExecEnds->SetValue(false);
     
     bSizer17->Add(m_checkBoxPauseWhenExecEnds, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -434,7 +432,6 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     sbSizer2->Add(m_textCtrlPCHCompilationFlags, 0, wxALL|wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -600,7 +597,6 @@ PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_buttonLibraries = new wxButton(m_linkerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
     
     flexGridSizer21->Add(m_buttonLibraries, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -778,7 +774,6 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer61->Add(m_textCtrlDbgPort, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -889,7 +884,6 @@ PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const 
     
     flexGridSizer25->Add(m_buttonAddResCmpPath, 0, wxALIGN_CENTER_VERTICAL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -985,7 +979,6 @@ PSEnvironmentBasePage::PSEnvironmentBasePage(wxWindow* parent, wxWindowID id, co
     
     bSizer34->Add(m_textCtrlEnvvars, 1, wxALL|wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -1035,11 +1028,10 @@ PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, co
     bSizer8->Add(bSizer9, 1, wxEXPAND, 5);
     
     m_textCtrlBuildEvents = new wxTextCtrl(m_preBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    wxFont m_textCtrlBuildEventsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
+    wxFont m_textCtrlBuildEventsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlBuildEvents->SetFont(m_textCtrlBuildEventsFont);
     
     bSizer9->Add(m_textCtrlBuildEvents, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -1120,7 +1112,6 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     m_buttonDeleteCustomTarget = new wxButton(m_customBuildPage, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer221->Add(m_buttonDeleteCustomTarget, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -1333,7 +1324,6 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id
     
     fgSizer4->Add(m_buttonAddResCmpPath, 0, wxALIGN_CENTER_VERTICAL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -1440,7 +1430,6 @@ PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID 
     
     sbSizer2->Add(m_staticText24, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -1528,7 +1517,6 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     bSizer40->Add(m_checkBoxC11, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -1599,7 +1587,6 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
     m_button51 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer47->Add(m_button51, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

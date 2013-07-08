@@ -70,8 +70,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="no">#copy *.h ..\CodeLite\.</Command>
-        <Command Enabled="no">#copy *.cpp ..\CodeLite\.</Command>
+        <Command Enabled="yes">copy *.h ..\CodeLite\.</Command>
+        <Command Enabled="yes">copy *.cpp ..\CodeLite\.</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -105,7 +105,7 @@ var_parser.cpp: cpp_variables_grammar.y
 
 cpp_expr_lexer.cpp: expr_lexer.l
 	flex -L  -Pcl_expr_ expr_lexer.l
-	mv lex.cl_expr_.c cpp_expr_lexer.cpp
+	sed  -e "s/YY_BUF_SIZE 16384/YY_BUF_SIZE 16384*5/g" lex.cl_expr_.c &gt; cpp_expr_lexer.cpp
 
 cpp_expr_parser.cpp: expr_grammar.y
 	yacc -l  -t -v -pcl_expr_ expr_grammar.y

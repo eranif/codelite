@@ -41,6 +41,7 @@
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -61,7 +62,7 @@
         <CustomPreBuild>crawler_lexer.cpp
 crawler_lexer.cpp: crawler.l
 	flex -L  -Pfc_ crawler.l
-	mv lex.fc_.c crawler_lexer.cpp</CustomPreBuild>
+	sed  -e "s/YY_BUF_SIZE 16384/YY_BUF_SIZE 16384*5/g" lex.fc_.c &gt; crawler_lexer.cpp</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>
@@ -81,13 +82,14 @@ crawler_lexer.cpp: crawler.l
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="no">#copy crawler* ..\..\..\CodeLite</Command>
-        <Command Enabled="no">#copy fc_* ..\..\..\CodeLite</Command>
+        <Command Enabled="yes">copy crawler* ..\..\..\CodeLite</Command>
+        <Command Enabled="yes">copy fc_* ..\..\..\CodeLite</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -104,7 +106,7 @@ crawler_lexer.cpp: crawler.l
         <CustomPreBuild>crawler_lexer.cpp
 crawler_lexer.cpp: crawler.l
 	flex -L  -Pfc_ crawler.l
-	mv lex.fc_.c crawler_lexer.cpp
+	sed  -e "s/YY_BUF_SIZE 16384/YY_BUF_SIZE 16384*5/g" lex.fc_.c &gt; crawler_lexer.cpp
 </CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">

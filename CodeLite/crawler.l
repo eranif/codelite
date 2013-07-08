@@ -1,7 +1,7 @@
 /**
  * the "incl" state is used for picking up the name
  * of an include file
- */
+ */  
 %x incl
 %x c_comment
 %x cpp_comment

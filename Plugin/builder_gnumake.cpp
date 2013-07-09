@@ -588,7 +588,7 @@ void BuilderGnuMake::CreateSrcList(ProjectPtr proj, const wxString &confToBuild,
     Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
     for(; iterFile != filesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
-        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+        if ( ! iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             files.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
         }
     }
@@ -642,7 +642,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
     Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
     for(; iterFile != filesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
-        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+        if ( !iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             files.push_back( wxFileName(iterFile->GetFilename()) );
         }
     }
@@ -754,7 +754,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
     Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
     for(; iterFile != filesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
-        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+        if ( !iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             abs_files.push_back( wxFileName(iterFile->GetFilename()) );
             rel_paths.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
         }
@@ -925,7 +925,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
     Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
     for(; iterFile != filesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
-        if ( !(iterFile->GetFlags() & Project::FileInfo::Exclude_From_Build) ) {
+        if ( !iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             abs_files.push_back( wxFileName(iterFile->GetFilename()) );
             rel_paths.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
         }

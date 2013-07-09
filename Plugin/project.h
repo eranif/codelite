@@ -192,18 +192,27 @@ public:
     // -----------------------------------------
     class FileInfo
     {
-        wxString m_filename;
-        wxString m_virtualFolder;
-        wxString m_filenameRelpath;
-        size_t   m_flags;
-    public:
-        enum {
-            Exclude_From_Build = 0x00000001
-        };
+        wxString      m_filename;
+        wxString      m_virtualFolder;
+        wxString      m_filenameRelpath;
+        size_t        m_flags;
+        wxStringSet_t m_excludeConfigs;
+
     public:
         FileInfo() : m_flags(0) {}
         ~FileInfo() {}
 
+        void SetExcludeConfigs(const wxStringSet_t& excludeConfigs) {
+            this->m_excludeConfigs = excludeConfigs;
+        }
+        void SetExcludeConfigs(const wxArrayString& excludeConfigs) {
+            this->m_excludeConfigs.clear();
+            this->m_excludeConfigs.insert(excludeConfigs.begin(), excludeConfigs.end());
+        }
+        
+        const wxStringSet_t& GetExcludeConfigs() const {
+            return m_excludeConfigs;
+        }
         void SetFilenameRelpath(const wxString& filenameRelpath) {
             this->m_filenameRelpath = filenameRelpath;
         }
@@ -227,6 +236,12 @@ public:
         }
         size_t GetFlags() const {
             return m_flags;
+        }
+        /**
+         * @brief return true if this file should be execluded from the build of a specific configuration
+         */
+        bool IsExcludeFromConfiguration(const wxString &config) const {
+            return m_excludeConfigs.count(config);
         }
     };
     typedef std::vector<FileInfo> FileInfoVector_t;
@@ -569,7 +584,7 @@ public:
      */
     wxArrayString GetIncludePaths();
     void ClearAllVirtDirs();
-    
+
     /**
      * @brief sets the flags of a file
      * @param fileName the fullpath of the file
@@ -577,16 +592,29 @@ public:
      * @param flags the flags to set
      */
     void SetFileFlags(const wxString &fileName, const wxString &virtualDirPath, size_t flags);
-    
+
     /**
      * @brief return the flags for a specific file in the project
      * @param fileName the fullpath of the file
      * @param virtualDirPath virtual folder path (a:b:c)
-     * @return the virtual flags of a file if the file does not exists, 
-     * return wxString::npos
+     * @return the virtual flags of a file or if the file does not exists, return 0
      */
     size_t GetFileFlags(const wxString &fileName, const wxString &virtualDirPath);
-    
+
+    /**
+     * @brief return list of configurations for whom the current file is excluded from the build
+     * @param fileName the fullpath of the file
+     * @param virtualDirPath virtual folder path (a:b:c)
+     */
+    wxArrayString GetExcludeConfigForFile(const wxString &filename, const wxString& virtualDirPath);
+
+    /**
+     * @brief set the exclude config list for a file
+     * @param fileName the fullpath of the file
+     * @param virtualDirPath virtual folder path (a:b:c)
+     */
+    void SetExcludeConfigForFile(const wxString &filename, const wxString& virtualDirPath, const wxArrayString& configs);
+
 private:
     wxString DoFormatVirtualFolderName(const wxXmlNode* node) const;
 

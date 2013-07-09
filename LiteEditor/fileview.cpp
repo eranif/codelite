@@ -2219,17 +2219,29 @@ void FileViewTree::OnExcludeFromBuild(wxCommandEvent& e)
                 if ( p ) {
                     wxString vdPath   = path.AfterFirst(':');
                     wxString filename = data->GetData().GetFile();
-                    size_t flags = p->GetFileFlags( filename, vdPath );
+                    
+                    BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(proj, "");
+                    if ( !buildConf ) {
+                        return;
+                    }
+                    
+                    wxString current_build_config = buildConf->GetName();
+                    
+                    wxArrayString configs = p->GetExcludeConfigForFile( filename, vdPath );
                     
                     if ( e.IsChecked() ) {
-                        flags |= Project::FileInfo::Exclude_From_Build;
-                        SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+                        configs.Add( current_build_config );
+                        //SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
         
                     } else {
-                        flags &= ~Project::FileInfo::Exclude_From_Build;
-                        SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour() );
+                        int where = configs.Index(current_build_config);
+                        if ( where != wxNOT_FOUND ) {
+                            configs.RemoveAt(where);
+                        }
+                        
+                        //SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour() );
                     }
-                    p->SetFileFlags( filename, vdPath, flags);
+                    p->SetExcludeConfigForFile( filename, vdPath, configs);
                 }
             }
         }
@@ -2254,11 +2266,17 @@ bool FileViewTree::IsFileExcludedFromBuild(const wxTreeItemId& item) const
                 wxString proj = path.BeforeFirst(wxT(':'));
                 ProjectPtr p = mgr->GetProject(proj);
                 if ( p ) {
+                    
+                    BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(proj, "");
+                    if ( !buildConf ) {
+                        return false;
+                    }
+                    
                     wxString vdPath   = path.AfterFirst(':');
                     wxString filename = data->GetData().GetFile();
-                    size_t flags = p->GetFileFlags( filename, vdPath );
+                    wxArrayString configs = p->GetExcludeConfigForFile( filename, vdPath );
                     
-                    return (flags & Project::FileInfo::Exclude_From_Build);
+                    return configs.Index(buildConf->GetName()) != wxNOT_FOUND;
                 }
             }
         }

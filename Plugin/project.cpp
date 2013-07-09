@@ -41,6 +41,8 @@ const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
 const wxString Project::EXECUTABLE = wxT("Executable");
 
+#define EXCLUDE_FROM_BUILD_FOR_CONFIG "ExcludeProjConfig"
+
 static wxArrayString Explode(const wxString& in)
 {
 
@@ -1467,6 +1469,9 @@ void Project::GetFilesMetadata(Project::FileInfoVector_t& files)
                 fi.SetFilenameRelpath(fileName);
                 fi.SetFilename( tmp.GetFullPath() );
                 fi.SetFlags( XmlUtils::ReadLong(element, "Flags", 0) );
+                
+                wxString excludeConfigs = XmlUtils::ReadString(element, EXCLUDE_FROM_BUILD_FOR_CONFIG);
+                fi.SetExcludeConfigs( ::wxStringTokenize(excludeConfigs, ";", wxTOKEN_STRTOK) );
                 fi.SetVirtualFolder( DoFormatVirtualFolderName(element) );
                 files.push_back( fi );
 
@@ -1528,7 +1533,7 @@ size_t Project::GetFileFlags(const wxString& fileName, const wxString& virtualDi
 {
     wxXmlNode *vdNode = GetVirtualDir(virtualDirPath);
     if ( !vdNode ) {
-        return wxString::npos;
+        return 0;
     }
     
     // locate our file
@@ -1537,8 +1542,60 @@ size_t Project::GetFileFlags(const wxString& fileName, const wxString& virtualDi
     wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
     wxXmlNode *fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
     if ( !fileNode ) {
-        return wxString::npos;
+        return 0;
     }
     
     return XmlUtils::ReadLong(fileNode, "Flags", 0);
+}
+
+wxArrayString Project::GetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath)
+{
+    wxArrayString configs;
+    wxXmlNode *vdNode = GetVirtualDir(virtualDirPath);
+    if ( !vdNode ) {
+        return configs;
+    }
+    
+    // locate our file
+    wxFileName tmp(filename);
+    tmp.MakeRelativeTo(m_fileName.GetPath());
+    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
+    wxXmlNode *fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
+    if ( !fileNode ) {
+        return configs;
+    }
+    
+    wxString excludeConfigs = XmlUtils::ReadString(fileNode, EXCLUDE_FROM_BUILD_FOR_CONFIG);
+    configs = ::wxStringTokenize(excludeConfigs, ";", wxTOKEN_STRTOK);
+    return configs;
+}
+
+void Project::SetExcludeConfigForFile(const wxString& filename, const wxString& virtualDirPath, const wxArrayString& configs)
+{
+    wxXmlNode *vdNode = GetVirtualDir(virtualDirPath);
+    if ( !vdNode ) {
+        return ;
+    }
+    
+    // locate our file
+    wxFileName tmp(filename);
+    tmp.MakeRelativeTo(m_fileName.GetPath());
+    wxString filepath = tmp.GetFullPath(wxPATH_UNIX);
+    wxXmlNode *fileNode = XmlUtils::FindNodeByName(vdNode, "File", filepath);
+    if ( !fileNode ) {
+        return ;
+    }
+    
+    // Make sure the list is unique
+    wxStringSet_t unique_set;
+    unique_set.insert(configs.begin(), configs.end());
+    wxArrayString uniqueArr;
+    wxStringSet_t::iterator iter = unique_set.begin();
+    for( ; iter != unique_set.end(); ++iter ) {
+        uniqueArr.Add( *iter );
+    }
+    
+    wxString excludeConfigs = ::wxJoin(uniqueArr, ';');
+    XmlUtils::UpdateProperty(fileNode, EXCLUDE_FROM_BUILD_FOR_CONFIG, excludeConfigs );
+    SaveXmlFile();
 }

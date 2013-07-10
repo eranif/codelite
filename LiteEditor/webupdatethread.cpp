@@ -37,6 +37,17 @@ const wxEventType wxEVT_CMD_VERSION_UPTODATE = wxNewEventType();
 
 static const size_t DLBUFSIZE = 4096;
 
+static long version_string_to_number( const wxString &versionString )
+{
+    wxString major = versionString.BeforeFirst('.');
+    wxString minor = versionString.AfterFirst('.');
+    long nMajor, nMinor, nVersionNumber;
+    major.ToCLong(&nMajor);
+    minor.ToCLong(&nMinor);
+    nVersionNumber = nMajor*1000 + nMinor*100; // 5.1=>5100
+    return nVersionNumber;
+}
+
 WebUpdateJob::WebUpdateJob(wxEvtHandler *parent, bool userRequest)
     : Job(parent)
     , m_userRequest(userRequest)
@@ -168,17 +179,25 @@ void WebUpdateJob::ParseFile()
                 // convert strings to long
                 wxString sCurRev(clGitRevision);
                 wxString sNewRev(rev);
-              
-                if ( sCurRev != sNewRev ) {
+                long nCurrentVersion, nWebSiteVersion;
+                
+                nCurrentVersion = version_string_to_number( sCurRev );
+                nWebSiteVersion = version_string_to_number( sNewRev );
+                
+                if ( nWebSiteVersion > nCurrentVersion ) {
+                    
                     // notify the user that a new version is available
                     wxCommandEvent e(wxEVT_CMD_NEW_VERSION_AVAILABLE);
                     e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, false, m_userRequest));
                     wxPostEvent(m_parent, e);
+                    
                 } else {
+                    
                     // version is up to date, notify the main thread about it
                     wxCommandEvent e(wxEVT_CMD_VERSION_UPTODATE);
                     e.SetClientData(new WebUpdateJobData(url.c_str(), releaseNotesUrl.c_str(), sCurRev, sNewRev, true, m_userRequest));
                     wxPostEvent(m_parent, e);
+                    
                 }
                 break;
             }

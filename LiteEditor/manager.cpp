@@ -314,11 +314,12 @@ void Manager::DoSetupWorkspace ( const wxString &path )
     wxBusyCursor cursor;
     AddToRecentlyOpenedWorkspaces ( path );
     SendCmdEvent ( wxEVT_WORKSPACE_LOADED );
-    if ( clMainFrame::Get()->GetFrameGeneralInfo().GetFlags() & CL_LOAD_LAST_SESSION ) {
+    
+    {
         SessionEntry session;
         if ( SessionManager::Get().FindSession ( path, session ) ) {
             SessionManager::Get().SetLastWorkspaceName ( path );
-            clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(true);	// Undo any workspace/editor link while loading
+            clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(true); // Undo any workspace/editor link while loading
             clMainFrame::Get()->GetMainBook()->RestoreSession(session);
             clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(false);
             GetBreakpointsMgr()->LoadSession(session);

@@ -40,6 +40,8 @@
     <File Name="wx_ordered_map.h"/>
     <File Name="cl_command_event.h"/>
     <File Name="cl_command_event.cpp"/>
+    <File Name="event_notifier.cpp"/>
+    <File Name="event_notifier.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>
@@ -173,6 +175,8 @@
     <File Name="clprogressdlgbase.cpp"/>
     <File Name="clprogressdlgbase.fbp"/>
     <File Name="clprogressdlgbase.h"/>
+    <File Name="refactoring_storage.h"/>
+    <File Name="refactoring_storage.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
   <Settings Type="Dynamic Library">

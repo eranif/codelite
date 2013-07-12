@@ -47,6 +47,8 @@
 #include "code_completion_box.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_command_event.h"
+#include "refactoring_storage.h"
+#include "refactorengine.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -634,8 +636,9 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 
     CreateGUIControls();
 
-    ManagerST::Get();	// Dummy call
-
+    ManagerST::Get();          // Dummy call
+    RefactoringEngine::Instance(); // Dummy call
+    
     //allow the main frame to receive files by drag and drop
     SetDropTarget( new FileDropTarget() );
 
@@ -670,6 +673,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
 
 }
 
@@ -703,6 +707,7 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
 
     delete m_timer;
     delete m_statusbarTimer;
@@ -1739,7 +1744,7 @@ void clMainFrame::LoadSession(const wxString &sessionName)
 {
     SessionEntry session;
 
-    if (SessionManager::Get().FindSession(sessionName, session)) {
+    if (SessionManager::Get().GetSession(sessionName, session)) {
         wxString wspFile = session.GetWorkspaceName();
         if (wspFile.IsEmpty() == false && wspFile != wxT("Default")) {
             ManagerST::Get()->OpenWorkspace(wspFile);
@@ -1803,7 +1808,7 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 
     clWindowUpdateLocker locker(this);
     TabGroupEntry session;
-    if (SessionManager::Get().FindSession(sessionFilepath, session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
+    if (SessionManager::Get().GetSession(sessionFilepath, session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
         // We've 'loaded' the requested tabs. If required, delete any current ones
         if ( dlg.GetReplaceCheck() ) {
             GetMainBook()->CloseAll(true);
@@ -5328,5 +5333,15 @@ void clMainFrame::OnShowDebuggerWindowUI(wxUpdateUIEvent& e)
     
     if ( winid != DebuggerPaneConfig::None ) {
         e.Check( item.IsDebuggerWindowShown(winid) );
+    }
+}
+void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
+{
+    e.Skip();
+    if ( e.GetInt() == 0 ) {
+        // start
+        wxLogMessage( wxString() << "Initializing refactoring database for workspace: " << WorkspaceST::Get()->GetName() );
+    } else {
+        wxLogMessage( wxString() << "Initializing refactoring database for workspace: " << WorkspaceST::Get()->GetName() << "... done" );
     }
 }

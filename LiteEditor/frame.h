@@ -553,6 +553,7 @@ protected:
     // Misc
     void OnActivateEditor (wxCommandEvent &e);
     void OnUpdateCustomTargetsDropDownMenu(wxCommandEvent &e);
+    void OnRefactoringCacheStatus(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     DECLARE_EVENT_TABLE()
 };

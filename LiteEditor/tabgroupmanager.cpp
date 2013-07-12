@@ -96,7 +96,7 @@ void TabgroupManager::LoadTabgroupData(const wxString& tabgroup)
 	// Load the data: we're only interested in the tab names here, not each CurrentLine etc
 	TabGroupEntry session;
 	wxString filepath = tabgroup.BeforeLast(wxT('.')); // FindSession() doesn't want the .ext here
-	if (SessionManager::Get().FindSession(filepath, session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
+	if (SessionManager::Get().GetSession(filepath, session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
 		wxArrayString tabnames;
 		const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
 		for (size_t i = 0; i < vTabInfoArr.size(); ++i) {

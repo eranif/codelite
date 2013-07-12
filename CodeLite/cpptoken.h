@@ -29,103 +29,129 @@
 #include <list>
 #include <map>
 #include "codelite_exports.h"
+#include <wx/wxsqlite3.h>
 
 class WXDLLIMPEXP_CL CppToken
 {
-	int      m_id;
-	std::string name;    // the name of the token
-	size_t   offset;  // file offset
-	std::string filename;
-	size_t   lineNumber;
-	
+    int      m_id;
+    wxString name;    // the name of the token
+    size_t   offset;  // file offset
+    wxString filename;
+    size_t   lineNumber;
 public:
-	CppToken();
-	~CppToken();
+    typedef std::list<CppToken> List_t;
+    
+public:
+    CppToken();
+    CppToken(wxSQLite3ResultSet &res);
+    ~CppToken();
 
-	void reset();
-	void append(const char ch);
+    void reset();
+    void append(wxChar ch);
+    
+    int store(wxSQLite3Database* db) const;
+    /**
+     * @brief load tokens from the cache by file/name
+     * @param db
+     * @param name
+     * @param file_name
+     * @return 
+     */
+    static CppToken::List_t loadByNameAndFile(wxSQLite3Database* db, const wxString& name, const wxString& filename);
+    /**
+     * @brief 
+     * @param db
+     * @param name
+     * @return 
+     */
+    static CppToken::List_t loadByName(wxSQLite3Database* db, const wxString& name);
+    
+    void setName(const wxString& name) {
+        this->name = name;
+    }
 
-	void setName(const std::string& name) {
-		this->name = name;
-	}
+    void setOffset(const size_t& offset) {
+        this->offset = offset;
+    }
 
-	void setOffset(const size_t& offset) {
-		this->offset = offset;
-	}
+    const wxString& getName() const {
+        return name;
+    }
+    const size_t& getOffset() const {
+        return offset;
+    }
 
-	const std::string& getName() const {
-		return name;
-	}
-	const size_t& getOffset() const {
-		return offset;
-	}
+    void setFilename(const wxString& filename) {
+        this->filename = filename;
+    }
 
-	void setFilename(const std::string& filename) {
-		this->filename = filename;
-	}
+    const wxString& getFilename() const {
+        return filename;
+    }
 
-	const std::string& getFilename() const {
-		return filename;
-	}
+    void setId(const int& id) {
+        this->m_id = id;
+    }
 
-	void setId(const int& id) {
-		this->m_id = id;
-	}
+    const int& getId() const {
+        return m_id;
+    }
 
-	const int& getId() const {
-		return m_id;
-	}
-	
-	size_t getLineNumber() const {
-		return lineNumber;
-	}
-	
-	void setLineNumber(size_t lineNo) {
-		lineNumber = lineNo;
-	}
-	
-	void print();
+    size_t getLineNumber() const {
+        return lineNumber;
+    }
 
-	// Provide lower-than operator so we can use std::list::sort method
-	bool operator < (const CppToken& rhs) {
-		return filename < rhs.filename;
-	}
+    void setLineNumber(size_t lineNo) {
+        lineNumber = lineNo;
+    }
+
+    void print();
+
+    // Provide lower-than operator so we can use std::list::sort method
+    bool operator < (const CppToken& rhs) {
+        return filename < rhs.filename;
+    }
 };
 
 class WXDLLIMPEXP_CL CppTokensMap
 {
-	std::map<std::string, std::list<CppToken>* > m_tokens;
+    std::map<wxString, std::list<CppToken>* > m_tokens;
 
 public:
-	CppTokensMap();
-	~CppTokensMap();
+    CppTokensMap();
+    ~CppTokensMap();
 
-	/**
-	 * @brief return true if any token with given name exists in the map
-	 * @param name token's name to search
-	 */
-	bool contains(const std::string &name);
-	/**
-	 * @brief return list of tokens with given name
-	 * @param name token name
-	 * @param tokens [output]
-	 */
-	void findTokens(const std::string &name, std::list<CppToken> &tokens);
-	/**
-	 * @brief add token to the map. if token with same name already exists, it will be appended so multiple tokens with same name is allowed
-	 * @param token token to add
-	 */
-	void addToken(const CppToken &token);
+    /**
+     * @brief return true if any token with given name exists in the map
+     * @param name token's name to search
+     */
+    bool contains(const wxString &name);
+    /**
+     * @brief return list of tokens with given name
+     * @param name token name
+     * @param tokens [output]
+     */
+    void findTokens(const wxString &name, std::list<CppToken> &tokens);
+    /**
+     * @brief add token to the map. if token with same name already exists, it will be appended so multiple tokens with same name is allowed
+     * @param token token to add
+     */
+    void addToken(const CppToken &token);
+    
+    /**
+     * @brief add list of tokens for a given name to the map
+     */
+    void addToken(const wxString& name, const CppToken::List_t &list);
 
-	/**
-	 * @brief clear all token
-	 */
-	void clear();
+    /**
+     * @brief clear all token
+     */
+    void clear();
 
-	/**
-	 * @brief return true if no tokens were found
-	 */
-	bool is_empty();
+    /**
+     * @brief return true if no tokens were found
+     */
+    bool is_empty();
 };
 
 #endif // __cpptoken__

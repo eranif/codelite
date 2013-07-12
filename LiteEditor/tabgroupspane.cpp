@@ -267,7 +267,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
 
         clWindowUpdateLocker locker(clMainFrame::Get());
         TabGroupEntry session;
-        if (SessionManager::Get().FindSession(filepath.BeforeLast(wxT('.')), session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
+        if (SessionManager::Get().GetSession(filepath.BeforeLast(wxT('.')), session, wxString(wxT(".tabgroup")), tabgroupTag) ) {
             clMainFrame::Get()->GetMainBook()->RestoreSession(session);
 
             // Remove any previous instance of this group from the history, then prepend it and save

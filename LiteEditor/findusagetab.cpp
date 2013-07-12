@@ -77,7 +77,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
     for(; iter != matches.end(); iter++) {
 
         // Print the line number
-        wxString file_name(iter->getFilename().c_str(), wxConvUTF8);
+        wxString file_name(iter->getFilename() );
         if(curfile != file_name) {
             curfile = file_name;
             wxFileName fn(file_name);
@@ -111,7 +111,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
         // Format the message
         wxString linenum = wxString::Format(wxT(" %5u "), (unsigned int)iter->getLineNumber() + 1);
         wxString scopeName (wxT("<global>"));
-        TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(wxString(iter->getFilename().c_str(), wxConvUTF8), iter->getLineNumber());
+        TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->getFilename(), iter->getLineNumber());
         if(tag) {
             scopeName = tag->GetPath();
         }
@@ -131,7 +131,7 @@ void FindUsageTab::ShowUsage(const std::list<CppToken>& matches, const wxString&
 void FindUsageTab::DoOpenResult(const CppToken& token)
 {
     if (!token.getFilename().empty()) {
-        LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(wxString(token.getFilename().c_str(), wxConvUTF8), wxEmptyString, token.getLineNumber());
+        LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile( token.getFilename() , wxEmptyString, token.getLineNumber());
         if(editor) {
             editor->GotoLine(token.getLineNumber());
             editor->ScrollToColumn(0);

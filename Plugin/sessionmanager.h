@@ -112,7 +112,7 @@ public:
 	static SessionManager& Get();
 	bool Load(const wxString &fileName);
 	bool Save(const wxString &name, SessionEntry &session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
-	bool FindSession(const wxString &name, SessionEntry &session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
+	bool GetSession(const wxString &name, SessionEntry &session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
 	void SetLastWorkspaceName(const wxString &name);
 	wxString GetLastSession();
 

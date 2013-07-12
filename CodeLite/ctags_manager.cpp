@@ -2704,7 +2704,7 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
         }
 
         // Construct a scanner based on the modified text
-        scanner = CppWordScanner(fileName.GetFullPath().mb_str().data(), modifiedText.mb_str().data(), 0);
+        scanner = CppWordScanner(fileName.GetFullPath(), modifiedText.mb_str().data(), 0);
         states = scanner.states();
 
     } else {
@@ -2731,7 +2731,7 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
     VariableList vars;
     std::map<std::string, std::string> ignoreMap;
 
-    get_variables(states->text.substr(from, to-from), vars, ignoreMap, false);
+    get_variables(states->text.substr(from, to-from).mb_str().data(), vars, ignoreMap, false);
     VariableList::iterator iter = vars.begin();
     bool isLocalVar(false);
     for(; iter != vars.end(); iter++) {

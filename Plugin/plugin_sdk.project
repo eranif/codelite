@@ -73,8 +73,6 @@
     <File Name="conffilelocator.h"/>
     <File Name="string_client_data.h"/>
     <File Name="window_locker.h"/>
-    <File Name="event_notifier.h"/>
-    <File Name="event_notifier.cpp"/>
     <File Name="wx_tree_traverser.h"/>
     <File Name="wx_tree_traverser.cpp"/>
     <File Name="macromanager.cpp"/>

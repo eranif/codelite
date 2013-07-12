@@ -89,6 +89,7 @@
 #include "manager.h"
 #include "reconcileproject.h"
 #include "cl_command_event.h"
+#include "refactorengine.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -309,15 +310,23 @@ void Manager::ReloadWorkspace()
 void Manager::DoSetupWorkspace ( const wxString &path )
 {
     wxString errMsg;
-    wxString dbfile = WorkspaceST::Get()->GetStringProperty ( wxT ( "Database" ), errMsg );
-    wxFileName fn ( dbfile );
     wxBusyCursor cursor;
     AddToRecentlyOpenedWorkspaces ( path );
-    SendCmdEvent ( wxEVT_WORKSPACE_LOADED );
     
+    wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
+    evtWorkspaceLoaded.SetString( path );
+    EventNotifier::Get()->ProcessEvent( evtWorkspaceLoaded );
+    
+    // Update the refactoring cache
+    wxFileList_t allfiles;
+    GetWorkspaceFiles(allfiles, true);
+
+    // Initialize the cache
+    RefactoringEngine::Instance()->InitializeCache( allfiles );
+
     {
         SessionEntry session;
-        if ( SessionManager::Get().FindSession ( path, session ) ) {
+        if ( SessionManager::Get().GetSession ( path, session ) ) {
             SessionManager::Get().SetLastWorkspaceName ( path );
             clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(true); // Undo any workspace/editor link while loading
             clMainFrame::Get()->GetMainBook()->RestoreSession(session);

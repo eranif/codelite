@@ -68,443 +68,450 @@ enum MenuType {
     MenuTypeEditor
 };
 
-//
-//Plugins events
-//
-enum {
-    //clientData is NULL
-    wxEVT_INIT_DONE = 3450,
+// ------------------------------------------------------------------------
+// 
+// Plugins events
+// 
+//  We use #define and not enum because to make sure that the event numbers
+//  will not change when we move an event up or down in this file...
+// ------------------------------------------------------------------------
 
-    //clientData is editor config node name (wxString*)
-    wxEVT_EDITOR_CONFIG_CHANGED,
+//clientData is NULL
+#define wxEVT_INIT_DONE 3450
 
-    //clientData is NULL
-    wxEVT_WORKSPACE_LOADED,
+//clientData is editor config node name (wxString*)
+#define wxEVT_EDITOR_CONFIG_CHANGED 3451
+
+// wxCommandEvent::GetString() will return the workspace fullpath
+#define wxEVT_WORKSPACE_LOADED  3452
     
-    // The build configuration was changed
-    // use event.GetString() to get the selected configuration name
-    wxEVT_WORKSPACE_CONFIG_CHANGED,
+// The build configuration was changed
+// use event.GetString() to get the selected configuration name
+#define wxEVT_WORKSPACE_CONFIG_CHANGED 3453
     
-    //clientData is NULL
-    wxEVT_WORKSPACE_CLOSED,
+//clientData is NULL
+#define wxEVT_WORKSPACE_CLOSED 3454
 
-    //clientData is NULL
-    wxEVT_FILE_VIEW_INIT_DONE,
-    //clientData is NULL
-    wxEVT_FILE_VIEW_REFRESHED,
-    //clientData is NULL
-    wxEVT_FILE_EXP_INIT_DONE,
-    //clientData is NULL
-    wxEVT_FILE_EXP_REFRESHED,
+//clientData is NULL
+#define wxEVT_FILE_VIEW_INIT_DONE 3455
 
-    //clientData is the wxTreeItemId*
-    wxEVT_CMD_FILE_EXP_ITEM_EXPANDING,
+//clientData is NULL
+#define wxEVT_FILE_VIEW_REFRESHED 3456
 
-    // an attempt to open a file using double click / ENTER was made
-    // on an item in the 'File Explorer' OR from the 'Workspace' tree
-    // clientData is the full path of the file (wxString*)
-    wxEVT_TREE_ITEM_FILE_ACTIVATED,
+//clientData is NULL
+#define wxEVT_FILE_EXP_INIT_DONE 3457
 
-    //clientData is list of files added to project (wxArrayString*)
-    wxEVT_PROJ_FILE_ADDED,
-    //clientData is list of files which have been removed (wxArrayString*)
-    wxEVT_PROJ_FILE_REMOVED,
-    //clientData is the project name (wxString*)
-    wxEVT_PROJ_REMOVED,
-    //clientData is the project name (wxString*)
-    wxEVT_PROJ_ADDED,
+//clientData is NULL
+#define wxEVT_FILE_EXP_REFRESHED 3458
 
-    // the following 2 events are used as "transaction"
-    // the first event indicates that any "wxEVT_FILE_SAVED" event sent from this point
-    // is due to build process which is about to starte
-    // the later event, indicates the end of that transaction
-    wxEVT_FILE_SAVE_BY_BUILD_END,
-    wxEVT_FILE_SAVE_BY_BUILD_START,
+//clientData is the wxTreeItemId*
+#define wxEVT_CMD_FILE_EXP_ITEM_EXPANDING 3459
 
-    // clientData is fileName (wxString*)
-    wxEVT_FILE_SAVED,
-    // clientData is list of files which have been retagged (std::vector<wxFileName>*)
-    wxEVT_FILE_RETAGGED,
-    // clientData is wxArrayString*: Item(0) = oldName
-    //                               Item(1) = newName
-    wxEVT_FILE_RENAMED,
+// an attempt to open a file using double click / ENTER was made
+// on an item in the 'File Explorer' OR from the 'Workspace' tree
+// clientData is the full path of the file (wxString*)
+#define wxEVT_TREE_ITEM_FILE_ACTIVATED 3460
 
-    //clientData is active editor (IEditor*)
-    wxEVT_ACTIVE_EDITOR_CHANGED,
-    //clientData is closing editor (IEditor*)
-    wxEVT_EDITOR_CLOSING,
-    //clientData is NULL
-    wxEVT_ALL_EDITORS_CLOSING,
-    //clientData is NULL
-    wxEVT_ALL_EDITORS_CLOSED,
+//clientData is list of files added to project (wxArrayString*)
+#define wxEVT_PROJ_FILE_ADDED 3461
 
-    // This event is sent when the user clicks inside an editor
-    // this event can not be Veto()
-    // clientData is NULL. You may query the clicked editor by calling to
-    // IManager::GetActiveEditor()
-    wxEVT_EDITOR_CLICKED,
+//clientData is list of files which have been removed (wxArrayString*)
+#define wxEVT_PROJ_FILE_REMOVED 3462
 
-    // User dismissed the Editor's settings dialog with
-    // Apply or OK (Settings | Editor)
-    // clientData is NULL
-    wxEVT_EDITOR_SETTINGS_CHANGED,
+//clientData is the project name (wxString*)
+#define wxEVT_PROJ_REMOVED 3463
 
-    // This event is sent from plugins to the application to tell it to reload
-    // any open files (and re-tag them as well)
-    wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
+//clientData is the project name (wxString*)
+#define wxEVT_PROJ_ADDED 3464
 
-    // Same as wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED
-    // just without prompting the user
-    // this event only reload code files without
-    // any reload to the workspace / project
-    wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
+// the following 2 events are used as "transaction"
+// the first event indicates that any "wxEVT_FILE_SAVED" event sent from this point
+// is due to build process which is about to starte
+// the later event, indicates the end of that transaction
+#define wxEVT_FILE_SAVE_BY_BUILD_END 3465
+#define wxEVT_FILE_SAVE_BY_BUILD_START 3466
 
-    // Sent by the project settings dialogs to indicate that
-    // the project configurations are saved
-    // clientData is the project name (wxString*)
-    // event.GetString() returns the selected configuration
-    wxEVT_CMD_PROJ_SETTINGS_SAVED,
+// clientData is fileName (wxString*)
+#define wxEVT_FILE_SAVED 3467
 
-    /**
-     * Build related events
-     */
+// clientData is list of files which have been retagged (std::vector<wxFileName>*)
+#define wxEVT_FILE_RETAGGED 3468
+
+// clientData is wxArrayString*: Item(0) = oldName
+//                               Item(1) = newName
+#define wxEVT_FILE_RENAMED 3469
+
+//clientData is active editor (IEditor*)
+#define wxEVT_ACTIVE_EDITOR_CHANGED 3470
+
+//clientData is closing editor (IEditor*)
+#define wxEVT_EDITOR_CLOSING 3471
+
+//clientData is NULL
+#define wxEVT_ALL_EDITORS_CLOSING 3472
+
+//clientData is NULL
+#define wxEVT_ALL_EDITORS_CLOSED 3473
+
+// This event is sent when the user clicks inside an editor
+// this event can not be Veto()
+// clientData is NULL. You may query the clicked editor by calling to
+// IManager::GetActiveEditor()
+#define wxEVT_EDITOR_CLICKED 3474
+
+// User dismissed the Editor's settings dialog with
+// Apply or OK (Settings | Editor)
+// clientData is NULL
+#define wxEVT_EDITOR_SETTINGS_CHANGED 3475
+
+// This event is sent from plugins to the application to tell it to reload
+// any open files (and re-tag them as well)
+#define wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED 3476
+
+// Same as wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED
+// just without prompting the user
+// this event only reload code files without
+// any reload to the workspace / project
+#define wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT 3477
+
+// Sent by the project settings dialogs to indicate that
+// the project configurations are saved
+// clientData is the project name (wxString*)
+// event.GetString() returns the selected configuration
+#define wxEVT_CMD_PROJ_SETTINGS_SAVED 3478
+
+// A user requested to execute the active project
+#define wxEVT_CMD_EXECUTE_ACTIVE_PROJECT 3479
     
-    // A user requested to execute the active project
-    wxEVT_CMD_EXECUTE_ACTIVE_PROJECT,
+// A user requested to stop the previously executed program
+#define wxEVT_CMD_STOP_EXECUTED_PROGRAM 3480
     
-    // A user requested to stop the previously executed program
-    wxEVT_CMD_STOP_EXECUTED_PROGRAM,
+// codelite sends this event to query plugins incase there is a program running
+// use evet.SetInt(1) to indicate that the plugin has launched an executable
+// it is mainly used for displaying the 'Stop' button in the toolbar as active/disabled
+#define wxEVT_CMD_IS_PROGRAM_RUNNING 3481
     
-    // codelite sends this event to query plugins incase there is a program running
-    // use evet.SetInt(1) to indicate that the plugin has launched an executable
-    // it is mainly used for displaying the 'Stop' button in the toolbar as active/disabled
-    wxEVT_CMD_IS_PROGRAM_RUNNING,
+// clientData is NULL
+#define wxEVT_BUILD_STARTED 3482
+
+// clientData is NULL
+#define wxEVT_BUILD_ENDED 3483
+
+// sent by the application to the plugins to indicate that a
+// build process is about to start. by handling this event
+// and by avoid calling event.Skip() codelite will NOT start
+// the build process
+// clientData is the builded project name (wxString*)
+// event.GetString() returns the selected configuration
+#define wxEVT_BUILD_STARTING 3484
+
+// return the project clean command
+// clientData is the builded project name (wxString*)
+// event.GetString() returns the selected configuration
+// the returned answer is expected in the event.SetString() and by
+// avoid calling event.Skip()
+#define wxEVT_GET_PROJECT_CLEAN_CMD 3485
+
+// return the project build command
+// clientData is the builded project name (wxString*)
+// event.GetString() returns the selected configuration
+// the returned answer is expected in the event.SetString() and by
+// avoid calling event.Skip()
+#define wxEVT_GET_PROJECT_BUILD_CMD 3486
+
+// the below two events are sent by the application to the plugins to query whether a
+// given project and build configuration are handled by the plugin.
+// the first event is whether the makefile file is generated by the plugin
+// and the second is to know whether the build process is also being
+// handled by the plugin.
+// clientData is the builded project name (wxString*)
+// event.GetString() returns the selected configuration
+// the return answer is done by simply avoid calling event.Skip() (which will result in ProcessEvent() == true)
+#define wxEVT_GET_IS_PLUGIN_MAKEFILE 3487
+#define wxEVT_GET_IS_PLUGIN_BUILD 3488
+
+/**
+ * Debug related events
+ */
+
+// sent when the debugger is about to start
+// clientData is a pointer to a DebuggerStartupInfo structure
+#define wxEVT_DEBUG_STARTING 3489
+
+// sent right after the debugger started; program is not running yet
+// clientData is a pointer to a DebuggerStartupInfo structure
+#define wxEVT_DEBUG_STARTED 3490
+
+// sent just before the debugger stops
+// clientData is NULL
+#define wxEVT_DEBUG_ENDING 3491
+
+// sent after the debugger stopped
+// clientData is NULL
+#define wxEVT_DEBUG_ENDED 3492
+
+// set when the editor gains or loses
+// the control over the debugger
+#define wxEVT_DEBUG_EDITOR_LOST_CONTROL 3493
+#define wxEVT_DEBUG_EDITOR_GOT_CONTROL 3494
+
+// These events allows the plugins to concatenate a string
+// to the compilation/link line of the default build system
+// By using the event.SetString()/event.GetString()
+// Note, that the since all multiple plugins
+// might be interesting with this feature, it is recommened
+// to use it like this:
+// wxString content = event.GetString();
+// content << wxT(" -DMYMACRO ");
+// event.SetString( content );
+// event.Skip();
+#define wxEVT_GET_ADDITIONAL_COMPILEFLAGS 3495
+#define wxEVT_GET_ADDITIONAL_LINKFLAGS 3496
+
+// Sent to the plugins to request to export the makefile
+// for the project + configuration
+// clientData is the builded project name (wxString*)
+// event.GetString() returns the selected configuration
+#define wxEVT_PLUGIN_EXPORT_MAKEFILE 3497
+
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+// Code completion events
+// Events sent here are of type 'clCodeCompletionEvent'
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+
+// User hit Ctrl-Space in the editor
+// let the plugins a chance to handle this
+// event.
+#define wxEVT_CC_CODE_COMPLETE 3498
     
-    // clientData is NULL
-    wxEVT_BUILD_STARTED,
+//clientData is the selected word (wxString*)
+#define wxEVT_CCBOX_SELECTION_MADE 3499
 
-    // clientData is NULL
-    wxEVT_BUILD_ENDED,
 
-    // sent by the application to the plugins to indicate that a
-    // build process is about to start. by handling this event
-    // and by avoid calling event.Skip() codelite will NOT start
-    // the build process
-    // clientData is the builded project name (wxString*)
-    // event.GetString() returns the selected configuration
-    wxEVT_BUILD_STARTING,
+// A tooltip is requested for the selected entry in the completion box
+// clientData is set to the client data set by the user
+// the plugin returns the tooltip to the IDE using the:
+// evt.SetTooltip(..) method
+// Use evt.GetClientData() to retrieve the client data associated with this tag
+#define wxEVT_CC_CODE_COMPLETE_TAG_COMMENT 3500
 
-    // return the project clean command
-    // clientData is the builded project name (wxString*)
-    // event.GetString() returns the selected configuration
-    // the returned answer is expected in the event.SetString() and by
-    // avoid calling event.Skip()
-    wxEVT_GET_PROJECT_CLEAN_CMD,
+// A function calltip is requesed
+// clientData is set to the client data set by the user
+// the plugin returns the tooltip to the IDE using the:
+// evt.SetTooltip(..) method
+#define wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP 3501
 
-    // return the project build command
-    // clientData is the builded project name (wxString*)
-    // event.GetString() returns the selected configuration
-    // the returned answer is expected in the event.SetString() and by
-    // avoid calling event.Skip()
-    wxEVT_GET_PROJECT_BUILD_CMD,
+// The code completion box has been dismissed
+#define wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED 3502
 
-    // the below two events are sent by the application to the plugins to query whether a
-    // given project and build configuration are handled by the plugin.
-    // the first event is whether the makefile file is generated by the plugin
-    // and the second is to know whether the build process is also being
-    // handled by the plugin.
-    // clientData is the builded project name (wxString*)
-    // event.GetString() returns the selected configuration
-    // the return answer is done by simply avoid calling event.Skip() (which will result in ProcessEvent() == true)
-    wxEVT_GET_IS_PLUGIN_MAKEFILE,
-    wxEVT_GET_IS_PLUGIN_BUILD,
+// User has requested to display the current files' outline
+// Use m_mgr->GetActiveEditor() to get the active editor
+#define wxEVT_CC_SHOW_QUICK_OUTLINE 3503
 
-    /**
-     * Debug related events
-     */
-
-    // sent when the debugger is about to start
-    // clientData is a pointer to a DebuggerStartupInfo structure
-    wxEVT_DEBUG_STARTING,
-
-    // sent right after the debugger started; program is not running yet
-    // clientData is a pointer to a DebuggerStartupInfo structure
-    wxEVT_DEBUG_STARTED,
-
-    // sent just before the debugger stops
-    // clientData is NULL
-    wxEVT_DEBUG_ENDING,
-
-    // sent after the debugger stopped
-    // clientData is NULL
-    wxEVT_DEBUG_ENDED,
-
-    // set when the editor gains or loses
-    // the control over the debugger
-    wxEVT_DEBUG_EDITOR_LOST_CONTROL,
-    wxEVT_DEBUG_EDITOR_GOT_CONTROL,
-
-    /**
-     ** Build events (additional)
-     **/
-    // These events allows the plugins to concatenate a string
-    // to the compilation/link line of the default build system
-    // By using the event.SetString()/event.GetString()
-    // Note, that the since all multiple plugins
-    // might be interesting with this feature, it is recommened
-    // to use it like this:
-    // wxString content = event.GetString();
-    // content << wxT(" -DMYMACRO ");
-    // event.SetString( content );
-    // event.Skip();
-    wxEVT_GET_ADDITIONAL_COMPILEFLAGS,
-    wxEVT_GET_ADDITIONAL_LINKFLAGS,
-
-    // Sent to the plugins to request to export the makefile
-    // for the project + configuration
-    // clientData is the builded project name (wxString*)
-    // event.GetString() returns the selected configuration
-    wxEVT_PLUGIN_EXPORT_MAKEFILE,
-
-    //-------------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------------
-    // Code completion events
-    // Events sent here are of type 'clCodeCompletionEvent'
-    //-------------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------------
+// User is hovering a text, display the typeinfo
+// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
+// Hover position is set in the evt.GetPosition()
+#define wxEVT_CC_TYPEINFO_TIP 3504
     
-    // User hit Ctrl-Space in the editor
-    // let the plugins a chance to handle this
-    // event.
-    wxEVT_CC_CODE_COMPLETE,
+// Send a clCodeCompletionEvent
+// Codelite is about to show the completion box for language keywords
+#define wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD 3505
     
-    //clientData is the selected word (wxString*)
-    wxEVT_CCBOX_SELECTION_MADE,
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+// Code completion events - END
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
 
+/////////////////////////////////////////////////
+// Project management events
+/////////////////////////////////////////////////
 
-    // A tooltip is requested for the selected entry in the completion box
-    // clientData is set to the client data set by the user
-    // the plugin returns the tooltip to the IDE using the:
-    // evt.SetTooltip(..) method
-    // Use evt.GetClientData() to retrieve the client data associated with this tag
-    wxEVT_CC_CODE_COMPLETE_TAG_COMMENT,
-
-    // A function calltip is requesed
-    // clientData is set to the client data set by the user
-    // the plugin returns the tooltip to the IDE using the:
-    // evt.SetTooltip(..) method
-    wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
-
-    // The code completion box has been dismissed
-    wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
-
-    // User has requested to display the current files' outline
-    // Use m_mgr->GetActiveEditor() to get the active editor
-    wxEVT_CC_SHOW_QUICK_OUTLINE,
-
-    // User is hovering a text, display the typeinfo
-    // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
-    // Hover position is set in the evt.GetPosition()
-    wxEVT_CC_TYPEINFO_TIP,
+// User selected an option to create a new workspace
+#define wxEVT_CMD_CREATE_NEW_WORKSPACE 3506
+// User selected an option to create a new project
+#define wxEVT_CMD_CREATE_NEW_PROJECT 3507
     
-    // Send a clCodeCompletionEvent
-    // Codelite is about to show the completion box for language keywords
-    wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
+// a _plugin_ sends this event to codelite to request adding 
+// a workspace to the recetly used list
+// The workspace path is sent in the evt.SetString()/GetString() 
+#define wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST 3508
     
-    //-------------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------------
-    // Code completion events - END
-    //-------------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------------
+// User requested to open a workspace
+// By default codelite will open a dialog to open a workspace with the '.workspace' suffix.
+// If a plugin wishes to offer a user a dialog with other extension (for example: .myworkspace)
+// it should handle this event and open the dialog itself and then based on the selected
+// file extension it should decide what to do: pass the selected file to codelite (assuming user selected the
+// standard .workspace file, or handle it by itself).
+// to pass the selection to codelite, simply set it in the evt.SetString(...) function
+// If the plugin wishes to handle the file by itself, it should avoid calling evt.Skip()
+#define wxEVT_CMD_OPEN_WORKSPACE 3509
+
+// User requested to close the workspace.
+#define wxEVT_CMD_CLOSE_WORKSPACE 3510
+
+// This event is sent by codelite to the plugins to query whether a
+// a custom workspace is opened (i.e. a worksapce which is completely managed
+// by the plugin) this allows codelite to enable menu items which otherwise
+// will be left disabled
+// to return a true or false reply to codelite, use
+// evt.SetInt(0) or evt.SetInt(1)
+#define wxEVT_CMD_IS_WORKSPACE_OPEN 3511
+
+// User has requested a retagging for the workspace
+#define wxEVT_CMD_RETAG_WORKSPACE 3512
+#define wxEVT_CMD_RETAG_WORKSPACE_FULL 3513 
+
+// codelite has requested a complete list of the workspace files.
+// The result should be wxArrayString that contains a list of files
+// in their ABSOLUTE path.
+// The wxArrayString IS OWNED by codelite
+// and the plugin should NOT attempt to delete it
+// <code>
+// if(I_want_to_handle_this_event) {
+// 		wxArrayString *files = (wxArrayString *) event.GetClientData();
+// 		<fill the files* array ...>
+// } else {
+// 		event.Skip();
+// }
+// </code>
+#define wxEVT_CMD_GET_WORKSPACE_FILES 3514
+// Same as the above event, however you should return
+// a list of the current active project files
+#define wxEVT_CMD_GET_ACTIVE_PROJECT_FILES 3515
+// Same as the above event, however you should return
+// a list of the current files' project files list
+#define wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES 3516
+
+/////////////////////////////////////////////////
+// Search events
+/////////////////////////////////////////////////
+
+// User requested to open the resource dialog
+#define wxEVT_CMD_OPEN_RESOURCE 3517
+
+// User requested to perform a raw search for a symbol
+// Use evt.GetString() to get the searched string
+#define wxEVT_CMD_FIND_SYMBOL 3518
+
+// codelite is about to display the editor's context menu
+// A plugin can override the default menu display by catching this event and
+// handling it differently
+// event.GetEventObject() holds a pointer to the editor triggered
+// the menu
+#define wxEVT_CMD_EDITOR_CONTEXT_MENU 3519
+
+// codelite is about to display the editor's *left margin* context menu
+// A plugin can override the default menu display by catching this event and
+// handling it differently
+// event.GetEventObject() holds a pointer to the editor triggered
+// the menu
+#define wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU 3520
+
+// codelite is requesting for the find-in-files file masking.
+// the format should be:
+// *.a;*.b
+// and should be placed at:
+// event.SetString("*.a;*.b");
+// The plugin can also control what codelite will do with its masking by
+// setting the event.SetInt() with the following values (the plugin can use
+// bitwise OR):
+// 0x00000001 -> append the plugins' masking to the default masking
+// 0x00000002 -> prepend the plugins' masking to default masking
+// 0x00000004 -> replace default masking with the one provided by the plugin
+// 0x00000008 -> select the plugin's masking by default
+#define wxEVT_CMD_GET_FIND_IN_FILES_MASK 3521
+
+////////////////////////////////////////////////////////
+// Debugger events
+////////////////////////////////////////////////////////
+
+// User is hovering a text, display the debugger tip for this variable
+// User m_mgr->GetActiveEditor() to get the current editor Or
+// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
+// Hover position is set in the evt.GetInt()
+// NOT IMPLEMENTED YET
+#define wxEVT_CMD_DEBUGGER_TIP 3522
+
+// codelite needs to know wether the user can interact with the
+// debugger
+#define wxEVT_CMD_DEBUGGER_CAN_INTERACT 3523
+
+/////////////////////////////////////////////////////////
+
+// Send dwell end event to the plugins to notify them
+// to dismiss any displayed tooltip
+// event.GetEventObject() holds a pointer to the editor
+#define wxEVT_CMD_EDITOR_TIP_DWELL_END 3524
+
+// Sent when the parser thread has completed a tagging request
+#define wxEVT_CMD_RETAG_COMPLETED 3525
+
+// send a wxNotifyEvent about page closing.
+// This event can be vetoed
+#define wxEVT_NOTIFY_PAGE_CLOSING 3526
+
+// send an wxCommandEvent indicating that the mainbook page has changed.
+// Unlike 'wxEVT_ACTIVE_EDITOR_CHANGED' this event is only sent when the
+// 'page' is not of type IEditor
+// use event.GetClientData() to get a pointer to the wxWindow*
+#define wxEVT_CMD_PAGE_CHANGED 3527
+
+// A "Start Debugger" command as been requested (via the menu Debug -> Start / Continue Debugger or via a Hotkey)
+// a plugin can veto this event.
+#define wxEVT_NOTIFY_DEBUGGER_START_CMD 3528
     
-    /////////////////////////////////////////////////
-    // Project management events
-    /////////////////////////////////////////////////
-
-    // User selected an option to create a new workspace
-    wxEVT_CMD_CREATE_NEW_WORKSPACE,
-    // User selected an option to create a new project
-    wxEVT_CMD_CREATE_NEW_PROJECT,
+// Triggers a workspace view tree rebuild (useful when user has modified the workspace / project structure and he want 
+// to reflect the changes in the tree view)
+#define wxEVT_REBUILD_WORKSPACE_TREE 3529
     
-    // a _plugin_ sends this event to codelite to request adding 
-    // a workspace to the recetly used list
-    // The workspace path is sent in the evt.SetString()/GetString() 
-    wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST,
+// Sent when user has changed the active project
+// call event.GetString() to get the name of the project
+#define wxEVT_ACTIVE_PROJECT_CHANGED 3530
     
-    // User requested to open a workspace
-    // By default codelite will open a dialog to open a workspace with the '.workspace' suffix.
-    // If a plugin wishes to offer a user a dialog with other extension (for example: .myworkspace)
-    // it should handle this event and open the dialog itself and then based on the selected
-    // file extension it should decide what to do: pass the selected file to codelite (assuming user selected the
-    // standard .workspace file, or handle it by itself).
-    // to pass the selection to codelite, simply set it in the evt.SetString(...) function
-    // If the plugin wishes to handle the file by itself, it should avoid calling evt.Skip()
-    wxEVT_CMD_OPEN_WORKSPACE,
-
-    // User requested to close the workspace.
-    wxEVT_CMD_CLOSE_WORKSPACE,
-
-    // This event is sent by codelite to the plugins to query whether a
-    // a custom workspace is opened (i.e. a worksapce which is completely managed
-    // by the plugin) this allows codelite to enable menu items which otherwise
-    // will be left disabled
-    // to return a true or false reply to codelite, use
-    // evt.SetInt(0) or evt.SetInt(1)
-    wxEVT_CMD_IS_WORKSPACE_OPEN,
-
-    // User has requested a retagging for the workspace
-    wxEVT_CMD_RETAG_WORKSPACE,
-    wxEVT_CMD_RETAG_WORKSPACE_FULL,
-
-    // codelite has requested a complete list of the workspace files.
-    // The result should be wxArrayString that contains a list of files
-    // in their ABSOLUTE path.
-    // The wxArrayString IS OWNED by codelite
-    // and the plugin should NOT attempt to delete it
-    // <code>
-    // if(I_want_to_handle_this_event) {
-    // 		wxArrayString *files = (wxArrayString *) event.GetClientData();
-    // 		<fill the files* array ...>
-    // } else {
-    // 		event.Skip();
-    // }
-    // </code>
-    wxEVT_CMD_GET_WORKSPACE_FILES,
-    // Same as the above event, however you should return
-    // a list of the current active project files
-    wxEVT_CMD_GET_ACTIVE_PROJECT_FILES,
-    // Same as the above event, however you should return
-    // a list of the current files' project files list
-    wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES,
-
-    /////////////////////////////////////////////////
-    // Search events
-    /////////////////////////////////////////////////
-
-    // User requested to open the resource dialog
-    wxEVT_CMD_OPEN_RESOURCE,
-
-    // User requested to perform a raw search for a symbol
-    // Use evt.GetString() to get the searched string
-    wxEVT_CMD_FIND_SYMBOL,
-
-    // codelite is about to display the editor's context menu
-    // A plugin can override the default menu display by catching this event and
-    // handling it differently
-    // event.GetEventObject() holds a pointer to the editor triggered
-    // the menu
-    wxEVT_CMD_EDITOR_CONTEXT_MENU,
-
-    // codelite is about to display the editor's *left margin* context menu
-    // A plugin can override the default menu display by catching this event and
-    // handling it differently
-    // event.GetEventObject() holds a pointer to the editor triggered
-    // the menu
-    wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU,
-
-    // codelite is requesting for the find-in-files file masking.
-    // the format should be:
-    // *.a;*.b
-    // and should be placed at:
-    // event.SetString("*.a;*.b");
-    // The plugin can also control what codelite will do with its masking by
-    // setting the event.SetInt() with the following values (the plugin can use
-    // bitwise OR):
-    // 0x00000001 -> append the plugins' masking to the default masking
-    // 0x00000002 -> prepend the plugins' masking to default masking
-    // 0x00000004 -> replace default masking with the one provided by the plugin
-    // 0x00000008 -> select the plugin's masking by default
-    wxEVT_CMD_GET_FIND_IN_FILES_MASK,
-
-    ////////////////////////////////////////////////////////
-    // Debugger events
-    ////////////////////////////////////////////////////////
-
-    // User is hovering a text, display the debugger tip for this variable
-    // User m_mgr->GetActiveEditor() to get the current editor Or
-    // IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
-    // Hover position is set in the evt.GetInt()
-    // NOT IMPLEMENTED YET
-    wxEVT_CMD_DEBUGGER_TIP,
-
-    // codelite needs to know wether the user can interact with the
-    // debugger
-    wxEVT_CMD_DEBUGGER_CAN_INTERACT,
-
-    /////////////////////////////////////////////////////////
-
-    // Send dwell end event to the plugins to notify them
-    // to dismiss any displayed tooltip
-    // event.GetEventObject() holds a pointer to the editor
-    wxEVT_CMD_EDITOR_TIP_DWELL_END,
-
-    // Sent when the parser thread has completed a tagging request
-    wxEVT_CMD_RETAG_COMPLETED,
-
-    // send a wxNotifyEvent about page closing.
-    // This event can be vetoed
-    wxEVT_NOTIFY_PAGE_CLOSING,
-
-    // send an wxCommandEvent indicating that the mainbook page has changed.
-    // Unlike 'wxEVT_ACTIVE_EDITOR_CHANGED' this event is only sent when the
-    // 'page' is not of type IEditor
-    // use event.GetClientData() to get a pointer to the wxWindow*
-    wxEVT_CMD_PAGE_CHANGED,
-
-    // A "Start Debugger" command as been requested (via the menu Debug -> Start / Continue Debugger or via a Hotkey)
-    // a plugin can veto this event.
-    wxEVT_NOTIFY_DEBUGGER_START_CMD,
+// This event is fired by codelite when the find-bar is requested to be shown
+// the default for the find bar is not to be shown if it has no window associated with it
+// The Window is passed using the event.GetClientData()
+// The Window *MUST* be of type wxStyledTextCtrl
+#define wxEVT_FINDBAR_ABOUT_TO_SHOW 3531
     
-    // Triggers a workspace view tree rebuild (useful when user has modified the workspace / project structure and he want 
-    // to reflect the changes in the tree view)
-    wxEVT_REBUILD_WORKSPACE_TREE,
+// A plugin *must* send this event to ask the find bar to release any window associated with it
+// This event should be used with  'wxEVT_FINDBAR_ABOUT_TO_SHOW'. If this event is not sent when the window
+// is destroyed - it might result in a crash
+// The window pointer is passed using event.GetClientData()
+// If the editor managed by the find-bar is the same as event.GetClientData() -> the find-bar will un-refernce it 
+// but *IT DOES NOT FREE ITS MEMORY*
+#define wxEVT_FINDBAR_RELEASE_EDITOR 3532
     
-    // Sent when user has changed the active project
-    // call event.GetString() to get the name of the project
-    wxEVT_ACTIVE_PROJECT_CHANGED,
+// Instruct codelite to build a project only ( no deps )
+// the project name is passed in the wxCommandEvent::GetString
+#define wxEVT_CMD_BUILD_PROJECT_ONLY 3533
+// Instruct codelite to clean a project only ( no deps )
+// the project name is passed in the wxCommandEvent::GetString
+#define wxEVT_CMD_CLEAN_PROJECT_ONLY 3534
     
-    // This event is fired by codelite when the find-bar is requested to be shown
-    // the default for the find bar is not to be shown if it has no window associated with it
-    // The Window is passed using the event.GetClientData()
-    // The Window *MUST* be of type wxStyledTextCtrl
-    wxEVT_FINDBAR_ABOUT_TO_SHOW,
+// User changed the default theme color of codelite
+#define wxEVT_CL_THEME_CHANGED 3535
     
-    // A plugin *must* send this event to ask the find bar to release any window associated with it
-    // This event should be used with  'wxEVT_FINDBAR_ABOUT_TO_SHOW'. If this event is not sent when the window
-    // is destroyed - it might result in a crash
-    // The window pointer is passed using event.GetClientData()
-    // If the editor managed by the find-bar is the same as event.GetClientData() -> the find-bar will un-refernce it 
-    // but *IT DOES NOT FREE ITS MEMORY*
-    wxEVT_FINDBAR_RELEASE_EDITOR,
+// Sent from the CodeFormatter plugin when a file indentation was completed
+// event.GetString() will return the name of the indented file
+#define wxEVT_CODEFORMATTER_INDENT_COMPLETED 3536
     
-    // Instruct codelite to build a project only ( no deps )
-    // the project name is passed in the wxCommandEvent::GetString
-    wxEVT_CMD_BUILD_PROJECT_ONLY,
-    // Instruct codelite to clean a project only ( no deps )
-    // the project name is passed in the wxCommandEvent::GetString
-    wxEVT_CMD_CLEAN_PROJECT_ONLY,
+// Sent from the CodeFormatter plugin when a file indentation is about to begin
+// event.GetString() will return the name of the indented file
+#define wxEVT_CODEFORMATTER_INDENT_STARTING 3537
     
-    // User changed the default theme color of codelite
-    wxEVT_CL_THEME_CHANGED,
+// Sent when codelite's main frame gained the focus
+#define wxEVT_CODELITE_MAINFRAME_GOT_FOCUS 3538
     
-    // Sent from the CodeFormatter plugin when a file indentation was completed
-    // event.GetString() will return the name of the indented file
-    wxEVT_CODEFORMATTER_INDENT_COMPLETED,
+// User clicked on a project item in the treeview
+// the event.GetString() contains the project name that was clicked
+#define wxEVT_PROJECT_TREEITEM_CLICKED 3539
     
-    // Sent from the CodeFormatter plugin when a file indentation is about to begin
-    // event.GetString() will return the name of the indented file
-    wxEVT_CODEFORMATTER_INDENT_STARTING,
-    
-    // Sent when codelite's main frame gained the focus
-    wxEVT_CODELITE_MAINFRAME_GOT_FOCUS,
-    
-    // User clicked on a project item in the treeview
-    // the event.GetString() contains the project name that was clicked
-    wxEVT_PROJECT_TREEITEM_CLICKED,
-    
-    // user has deleted all the breakpoints using the "Breakpoints" table
-    wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED,
-};
+// user has deleted all the breakpoints using the "Breakpoints" table
+#define wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED 3540
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

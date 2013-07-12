@@ -2228,10 +2228,15 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
         return;
 
     // Get list of files to modify
-    wxFileList files;
+    wxFileList_t files;
     ManagerST::Get()->GetWorkspaceFiles(files, true);
 
     // Invoke the RefactorEngine
+    if ( !RefactoringEngine::Instance()->IsCacheInitialized() ) {
+        ::wxMessageBox(_("Refactoring engine is still caching workspace info. Try again in a few seconds"), "codelite", wxOK|wxICON_WARNING);
+        return;
+    }
+    
     RefactoringEngine::Instance()->RenameGlobalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos+1), word_start, files);
 
     if(RefactoringEngine::Instance()->GetCandidates().empty() && RefactoringEngine::Instance()->GetPossibleCandidates().empty())
@@ -2278,7 +2283,7 @@ void ContextCpp::ReplaceInFiles ( const wxString &word, const std::list<CppToken
     LEditor* previous = NULL;
     for ( std::list<CppToken>::const_iterator iter = li.begin(); iter != li.end(); iter++ ) {
         CppToken cppToken = *iter;
-        wxString file_name(cppToken.getFilename().c_str(), wxConvUTF8);
+        wxString file_name(cppToken.getFilename() );
         if ( fileName == file_name ) {
             // update next token offset in case we are still in the same file
             cppToken.setOffset ( cppToken.getOffset() + off );
@@ -2970,9 +2975,15 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
     // Save all files before 'find usage'
     if (!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
         return;
-
+    
+    // Invoke the RefactorEngine
+    if ( !RefactoringEngine::Instance()->IsCacheInitialized() ) {
+        ::wxMessageBox(_("Refactoring engine is still caching workspace info. Try again in a few seconds"), "codelite", wxOK|wxICON_WARNING);
+        return;
+    }
+    
     // Get list of files to search in
-    wxFileList files;
+    wxFileList_t files;
     ManagerST::Get()->GetWorkspaceFiles(files, true);
 
     // Invoke the RefactorEngine

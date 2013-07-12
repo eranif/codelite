@@ -125,7 +125,7 @@ wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxStri
 	return name + suffix;
 }
 
-bool SessionManager::FindSession(const wxString &name, SessionEntry &session, const wxString& suffix /*=wxT("")*/, const wxChar* Tag /*=sessionTag*/)
+bool SessionManager::GetSession(const wxString &name, SessionEntry &session, const wxString& suffix /*=wxT("")*/, const wxChar* Tag /*=sessionTag*/)
 {
 	if (!m_doc.GetRoot()) {
 		return false;

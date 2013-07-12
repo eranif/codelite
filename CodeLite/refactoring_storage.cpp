@@ -1,6 +1,7 @@
 #include "refactoring_storage.h"
 #include "event_notifier.h"
 #include <wx/filename.h>
+#include <wx/log.h>
 #include "cppwordscanner.h"
 #include "refactorengine.h"
 

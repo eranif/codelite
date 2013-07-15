@@ -374,7 +374,7 @@ TextStatesPtr CppWordScanner::states()
         return NULL;
     }
 
-    bitmap->text = m_text.mb_str(wxConvUTF8).data();
+    bitmap->text = m_text;
 
     int state(STATE_NORMAL);
     int depth(0);

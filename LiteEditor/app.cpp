@@ -373,7 +373,6 @@ bool CodeLiteApp::OnInit()
 #elif defined (__WXMAC__)
     SetAppName(wxT("codelite"));
     homeDir = wxStandardPaths::Get().GetUserDataDir();
-
     {
         wxLogNull noLog;
 

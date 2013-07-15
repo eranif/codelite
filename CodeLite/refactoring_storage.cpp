@@ -48,6 +48,14 @@ public:
             if ( !storage.IsFileUpToDate(fullpath) ) {
                 CppWordScanner scanner( fullpath );
                 CppToken::List_t tokens = scanner.tokenize();
+                
+                if ( false ) {
+                    CppToken::List_t::iterator tokIter = tokens.begin();
+                    for(; tokIter != tokens.end(); ++tokIter ) {
+                        wxPrintf("%s | %s | %d\n", tokIter->getFilename().c_str(), tokIter->getName().c_str(), (int)tokIter->getOffset());
+                    }
+                }
+                
                 storage.StoreTokens( fullpath, tokens, false );
             }
         }
@@ -199,23 +207,19 @@ void RefactoringStorage::DoDeleteFile(const wxString& filename)
 
 void RefactoringStorage::Match(const wxString& symname, const wxString& filename, CppTokensMap& matches)
 {
-    CppToken::List_t list;
-    if ( IsCacheReady() && IsFileUpToDate(filename) ) {
-        // load tokens for a file from the database
-        list = CppToken::loadByNameAndFile(&m_db, symname, filename);
-        matches.addToken( symname, list );
-
-    } else {
-
-        CppWordScanner tmpScanner(filename);
-        tmpScanner.Match(symname, matches);
-        matches.findTokens(symname, list);
-        
-        // update the cache
-        if ( !list.empty() && IsCacheReady()) {
-            StoreTokens(symname, list, true);
-        }
+    if ( !IsCacheReady() ) {
+        return;
     }
+    
+    if ( !IsFileUpToDate(filename) ) {
+        // update the cache
+        CppWordScanner tmpScanner(filename);
+        CppToken::List_t tokens_list = tmpScanner.tokenize();
+        StoreTokens(filename, tokens_list, true);
+    }
+    
+    CppToken::List_t list = CppToken::loadByNameAndFile(&m_db, symname, filename);
+    matches.addToken( symname, list );
 }
 
 bool RefactoringStorage::IsFileUpToDate(const wxString& filename)

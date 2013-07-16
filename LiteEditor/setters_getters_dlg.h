@@ -30,6 +30,32 @@
 #include "ctags_manager.h"
 
 //----------------------------------------------------
+
+class SettersGetterData : public clConfigItem
+{
+    size_t m_flags;
+public:
+    enum {
+        FunctionStartWithUpperCase = 0x00000001,
+        FormatFileWhenDone         = 0x00000002,
+    };
+    
+public:
+    virtual void FromJSON(const JSONElement& json);
+    virtual JSONElement ToJSON() const;
+    
+    SettersGetterData();
+    virtual ~SettersGetterData();
+
+    void SetFlags(size_t flags) {
+        this->m_flags = flags;
+    }
+    size_t GetFlags() const {
+        return m_flags;
+    }
+};
+
+//----------------------------------------------------
 class SettersGettersTreeData : public wxTreeItemData
 {
 public:
@@ -52,7 +78,8 @@ class SettersGettersDlg : public SettersGettersBaseDlg
     std::map<wxString, TagEntryPtr> m_tagsMap;
     wxString                        m_code;
     bool                            m_checkForDuplicateEntries;
-
+    SettersGetterData               m_settings;
+    
 protected:
     virtual void OnValueChanged(wxDataViewEvent& event);
     void OnCheckStartWithUpperCase(wxCommandEvent &event);
@@ -79,8 +106,8 @@ public:
     SettersGettersDlg(wxWindow* parent);
     virtual ~SettersGettersDlg();
     wxString GetGenCode() ;
-    bool GetFormatText() {
-        return true;
+    bool GetFormatText() const {
+        return m_checkBoxForamtFileWhenDone->IsChecked();
     }
     
     bool Init(const std::vector<TagEntryPtr> &tags, const wxFileName &file, int lineno);

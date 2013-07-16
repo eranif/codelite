@@ -40,9 +40,9 @@ SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
     : SettersGettersBaseDlg(parent)
     , m_checkForDuplicateEntries(false)
 {
-    bool startWithUpperCase = clConfig::Get().Read("setters-getters-function-start-with-uppercase", true);
-    m_checkStartWithUppercase->SetValue(startWithUpperCase);
-    
+    clConfig::Get().ReadItem(&m_settings);
+    m_checkStartWithUppercase->SetValue( m_settings.GetFlags() & SettersGetterData::FunctionStartWithUpperCase );
+    m_checkBoxForamtFileWhenDone->SetValue( m_settings.GetFlags() & SettersGetterData::FormatFileWhenDone );
     WindowAttrManager::Load(this, "SettersGettersDlg", NULL);
 }
 
@@ -496,7 +496,15 @@ void SettersGettersDlg::OnButtonOk(wxCommandEvent& e)
 
 SettersGettersDlg::~SettersGettersDlg()
 {
-    clConfig::Get().Write("setters-getters-function-start-with-uppercase", m_checkStartWithUppercase->IsChecked());
+    size_t flags (0);
+    if ( m_checkStartWithUppercase->IsChecked() )
+        flags |= SettersGetterData::FunctionStartWithUpperCase;
+    
+    if ( m_checkBoxForamtFileWhenDone->IsChecked() )
+        flags |= SettersGetterData::FormatFileWhenDone;
+    m_settings.SetFlags( flags );
+    clConfig::Get().WriteItem(&m_settings);
+    
     WindowAttrManager::Save(this, "SettersGettersDlg", NULL);
 }
 
@@ -513,3 +521,28 @@ void SettersGettersDlg::OnValueChanged(wxDataViewEvent& event)
     m_dataviewModel->GetValue(v, event.GetItem(), 1);
     data->m_checked = v.GetBool();
 }
+
+//----------------------------------------------------
+//----------------------------------------------------
+
+SettersGetterData::SettersGetterData()
+    : clConfigItem("SettersGetterData")
+    , m_flags(FormatFileWhenDone|FunctionStartWithUpperCase)
+{
+}
+
+SettersGetterData::~SettersGetterData()
+{
+}
+void SettersGetterData::FromJSON(const JSONElement& json)
+{
+    m_flags = json.namedObject("m_flags").toSize_t(m_flags);
+}
+
+JSONElement SettersGetterData::ToJSON() const
+{
+    JSONElement element = JSONElement::createObject(GetName());
+    element.addProperty("m_flags", m_flags);
+    return element;
+}
+

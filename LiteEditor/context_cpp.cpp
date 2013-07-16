@@ -1165,26 +1165,23 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent &event)
     int lineno = editor.LineFromPosition(editor.GetCurrentPos()) + 1;
 
     //get the file name and line where to insert the setters getters
-    static SettersGettersDlg *s_dlg = NULL;
-    if (!s_dlg) {
-        s_dlg = new SettersGettersDlg(clMainFrame::Get());
-    }
-
-    if ( !s_dlg->Init(tags, tag->GetFile(), lineno) ) {
+    SettersGettersDlg dlg(EventNotifier::Get()->TopFrame());
+    if ( !dlg.Init(tags, tag->GetFile(), lineno) ) {
         ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), _("codelite"));
         return;
     }
 
-    if (s_dlg->ShowModal() == wxID_OK) {
-        wxString code = s_dlg->GetGenCode();
+    if (dlg.ShowModal() == wxID_OK) {
+        wxString code = dlg.GetGenCode();
         if (code.IsEmpty() == false) {
             editor.InsertTextWithIndentation(code, lineno);
         }
 
 
         int oldLine = editor.LineFromPos(editor.GetCurrentPos());
-        if ( s_dlg->GetFormatText() )
+        if ( dlg.GetFormatText() ) {
             DoFormatEditor( &GetCtrl() );
+        }
         editor.GotoLine( editor.GetLineCount() > oldLine ? oldLine : editor.GetLineCount() );
     }
 }

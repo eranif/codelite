@@ -66,7 +66,7 @@ public:
     wxString      format()           const ;
     int           arraySize()        const ;
     int           toInt(int defaultVal = -1) const ;
-    size_t        toSize_t(size_t defaultVal = -1) const ;
+    size_t        toSize_t(size_t defaultVal = 0) const ;
     double        toDouble(double defaultVal = -1.0) const;
     wxSize        toSize() const;
     wxPoint       toPoint() const;

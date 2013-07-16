@@ -22,10 +22,10 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
+    bSizer3 = new wxBoxSizer(wxVERTICAL);
     
     bSizer1->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
     
@@ -37,7 +37,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer3->Add(m_banner6, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer3->Add(bSizer4, 1, wxEXPAND, 5);
     
@@ -51,7 +51,7 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
+    bSizer5 = new wxBoxSizer(wxVERTICAL);
     
     bSizer4->Add(bSizer5, 0, wxEXPAND, 5);
     
@@ -69,7 +69,12 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     
     bSizer3->Add(m_checkStartWithUppercase, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    m_checkBoxForamtFileWhenDone = new wxCheckBox(this, wxID_ANY, _("Format the file when done"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxForamtFileWhenDone->SetValue(false);
+    
+    bSizer3->Add(m_checkBoxForamtFileWhenDone, 0, wxALL, 5);
+    
+    bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

@@ -26,12 +26,17 @@
 class FindInFilesDialogBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer1;
+    wxFlexGridSizer* fgSizer41;
     wxStaticText* m_staticText1;
     wxComboBox* m_findString;
     wxStaticText* m_staticText2;
+    wxBoxSizer* bSizer10;
     DirPicker* m_dirPicker;
     wxButton* m_btnAddPath;
+    wxBoxSizer* bSizer9;
     wxListBox* m_listPaths;
+    wxBoxSizer* boxSizer1;
     wxButton* m_btnRemovelPath;
     wxButton* m_btnClearPaths;
     wxStaticText* m_staticText3;
@@ -41,16 +46,21 @@ protected:
     wxStaticText* m_staticText7;
     wxNotebook* m_notebook1;
     wxPanel* m_panel1;
+    wxBoxSizer* bSizer6;
+    wxFlexGridSizer* fgSizer3;
     wxCheckBox* m_matchCase;
     wxCheckBox* m_matchWholeWord;
     wxCheckBox* m_regualrExpression;
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
     wxCheckBox* m_checkBoxSeparateTab;
     wxPanel* m_panel2;
+    wxBoxSizer* bSizer7;
+    wxFlexGridSizer* fgSizer4;
     wxCheckBox* m_printScope;
     wxCheckBox* m_checkBoxSkipMatchesFoundInComments;
     wxCheckBox* m_checkBoxSkipMatchesFoundInStrings;
     wxCheckBox* m_checkBoxHighlighStringComments;
+    wxBoxSizer* bSizer2;
     wxButton* m_find;
     wxButton* m_replaceAll;
     wxButton* m_stop;

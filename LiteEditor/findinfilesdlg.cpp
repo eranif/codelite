@@ -76,8 +76,6 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString &dataName)
 
     m_fileTypes->SetSelection(0);
 
-    Connect(wxEVT_CHAR_HOOK, wxCharEventHandler(FindInFilesDialog::OnCharEvent));
-
     m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE);
     m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
     m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
@@ -384,20 +382,6 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 void FindInFilesDialog::OnClose(wxCloseEvent &e)
 {
     Destroy();
-}
-
-void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
-{
-    if (event.GetKeyCode() == WXK_ESCAPE) {
-        Close();
-        return;
-        
-    } else if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
-        m_data.SetFindString( m_findString->GetValue() );
-        DoSearch();
-        return;
-    }
-    event.Skip();
 }
 
 void FindInFilesDialog::OnAddPath( wxCommandEvent& event )

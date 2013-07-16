@@ -48,7 +48,6 @@ protected:
     virtual void OnClearPaths( wxCommandEvent& event );
     virtual void OnClearPathsUI( wxUpdateUIEvent& event );
     virtual void OnRemovePathUI( wxUpdateUIEvent& event );
-    void OnCharEvent(wxKeyEvent &event);
 
     virtual void OnFindWhatUI( wxUpdateUIEvent& event );
 

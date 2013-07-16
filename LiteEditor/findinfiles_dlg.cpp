@@ -22,10 +22,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer1 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer1 = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(bSizer1);
     
-    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -47,7 +47,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* bSizer10 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer10 = new wxBoxSizer(wxHORIZONTAL);
     
     fgSizer41->Add(bSizer10, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -60,7 +60,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(0, 0, 0, wxEXPAND, 5);
     
-    wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer9 = new wxBoxSizer(wxHORIZONTAL);
     
     fgSizer41->Add(bSizer9, 0, wxEXPAND, 5);
     
@@ -69,7 +69,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     bSizer9->Add(m_listPaths, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
+    boxSizer1 = new wxBoxSizer(wxVERTICAL);
     
     bSizer9->Add(boxSizer1, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
@@ -124,10 +124,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_panel1 = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_panel1, _("General"), false);
     
-    wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
+    bSizer6 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer6);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(  0, 1, 0, 0);
+    fgSizer3 = new wxFlexGridSizer(  0, 1, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -165,10 +165,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_panel2 = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_panel2, _("C++"), false);
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
+    bSizer7 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer7);
     
-    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(  0, 1, 0, 0);
+    fgSizer4 = new wxFlexGridSizer(  0, 1, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -197,13 +197,14 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     fgSizer41->Add(0, 0, 0, wxBOTTOM|wxEXPAND, 10);
     
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
+    bSizer2 = new wxBoxSizer(wxVERTICAL);
     
     bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_find = new wxButton(this, wxID_FIND, _("&Find"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_find->SetDefault();
     m_find->SetToolTip(_("Begin search"));
+    m_find->SetFocus();
     
     bSizer2->Add(m_find, 0, wxALL|wxEXPAND, 5);
     
@@ -217,11 +218,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     
     bSizer2->Add(m_stop, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    m_cancel = new wxButton(this, wxID_CLOSE, _("Close"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_cancel = new wxButton(this, wxID_CANCEL, _("Close"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_cancel->SetToolTip(_("Close this dialog"));
     
     bSizer2->Add(m_cancel, 0, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

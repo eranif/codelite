@@ -32,7 +32,7 @@
 class FindInFilesDialog : public FindInFilesDialogBase
 {
     FindReplaceData m_data;
-
+protected:
     void       DoSearch();
     void       DoSearchReplace();
     void       DoSaveSearchPaths();
@@ -55,14 +55,17 @@ class FindInFilesDialog : public FindInFilesDialogBase
     void OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event);
 
 public:
-    FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data);
+    FindInFilesDialog(wxWindow* parent, const wxString &dataName);
     virtual ~FindInFilesDialog();
     void SetRootDir   (const wxString &rootDir);
 
     FindReplaceData& GetData() {
         return m_data;
     }
-
+    
+    const FindReplaceData& GetData() const {
+        return m_data;
+    }
     virtual bool Show();
 };
 

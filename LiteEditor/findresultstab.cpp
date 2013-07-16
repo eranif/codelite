@@ -69,8 +69,6 @@ BEGIN_EVENT_TABLE(FindResultsTab, OutputTabWindow)
     EVT_UPDATE_UI(XRCID("hold_pane_open"),  	 FindResultsTab::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
 
-FindInFilesDialog* FindResultsTab::m_find = NULL;
-
 FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, bool useBook)
     : OutputTabWindow(parent, id, name)
     , m_searchInProgress(false)
@@ -130,10 +128,6 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
 FindResultsTab::~FindResultsTab()
 {
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
-    if (m_find) {
-        delete m_find;
-        m_find = NULL;
-    }
     wxTheApp->Disconnect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
 }
 
@@ -146,24 +140,6 @@ MatchInfo& FindResultsTab::GetMatchInfo(size_t idx)
         }
     }
     return *itMatchInfo;
-}
-
-void FindResultsTab::LoadFindInFilesData()
-{
-    if (m_find != NULL)
-        return;
-
-    FindReplaceData data;
-    clConfig::Get().ReadItem( &data, "FindInFilesData");
-    
-    m_find = new FindInFilesDialog(EventNotifier::Get()->TopFrame(), wxID_ANY, data);
-}
-
-void FindResultsTab::SaveFindInFilesData()
-{
-    if ( m_find ) {
-        clConfig::Get().WriteItem( &m_find->GetData(), "FindInFilesData" );
-    }
 }
 
 void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
@@ -322,19 +298,18 @@ void FindResultsTab::OnPageClosed(NotebookEvent& e)
 
 void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
 {
-    LoadFindInFilesData();
-
     if (m_searchInProgress) {
-        wxMessageBox(_("The search thread is currently busy"), _("CodeLite"), wxICON_INFORMATION|wxOK);
+        ::wxMessageBox(_("The search thread is currently busy"), _("CodeLite"), wxICON_INFORMATION|wxOK);
         return;
     }
-
+    
+    FindInFilesDialog *dlg = new FindInFilesDialog(EventNotifier::Get()->TopFrame(), "FindInFilesData");
+    
     wxString rootDir = e.GetString();
     if (!rootDir.IsEmpty()) {
-        m_find->SetRootDir(rootDir);
+        dlg->SetRootDir(rootDir);
     }
-
-    if (m_find->IsShown() == false) m_find->Show();
+    dlg->Show();
 }
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)

@@ -105,13 +105,9 @@ public:
     void SetFindString(const wxString& str);
     void SetReplaceString(const wxString& str);
     
-    wxArrayString GetFindStringArr() const {
-        return m_findString;
-    }
+    wxArrayString GetFindStringArr() const ;
     
-    wxArrayString GetReplaceStringArr() const {
-        return m_replaceString;
-    }
+    wxArrayString GetReplaceStringArr() const ;
     
     void SetEncoding(const wxString& encoding) {
         this->m_encoding = encoding;

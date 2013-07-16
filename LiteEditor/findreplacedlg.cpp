@@ -507,7 +507,7 @@ wxString FindReplaceData::GetFindString() const
 {
     if (m_findString.IsEmpty()) {
         return wxEmptyString;
-        
+
     } else {
         return m_findString.Item(0);
     }
@@ -529,13 +529,13 @@ void FindReplaceData::FromJSON(const JSONElement& json)
     m_encoding      = json.namedObject("m_encoding").toString(m_encoding);
     m_fileMask      = json.namedObject("m_fileMask").toArrayString();
     m_selectedMask  = json.namedObject("m_selectedMask").toString(m_selectedMask);
-    
+
     long max_value(10);
     EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_value);
-    
-     TruncateArray(m_searchPaths,   (size_t)max_value); 
-     TruncateArray(m_replaceString, (size_t)max_value);
-     TruncateArray(m_findString,    (size_t)max_value);
+
+    TruncateArray(m_searchPaths,   (size_t)max_value);
+    TruncateArray(m_replaceString, (size_t)max_value);
+    TruncateArray(m_findString,    (size_t)max_value);
 }
 
 JSONElement FindReplaceData::ToJSON() const
@@ -550,4 +550,26 @@ JSONElement FindReplaceData::ToJSON() const
     element.addProperty("m_fileMask",      m_fileMask);
     element.addProperty("m_selectedMask",  m_selectedMask);
     return element;
+}
+
+wxArrayString FindReplaceData::GetFindStringArr() const
+{
+    wxArrayString findArr;
+    for(size_t i=0; i<m_findString.GetCount(); ++i) {
+        if ( (findArr.Index(m_findString.Item(i)) == wxNOT_FOUND) && !m_findString.Item(i).IsEmpty() ) {
+            findArr.Add( m_findString.Item(i) );
+        }
+    }
+    return findArr;
+}
+
+wxArrayString FindReplaceData::GetReplaceStringArr() const
+{
+    wxArrayString replaceArr;
+    for(size_t i=0; i<m_replaceString.GetCount(); ++i) {
+        if ( (replaceArr.Index(m_replaceString.Item(i)) == wxNOT_FOUND) && !m_replaceString.Item(i).IsEmpty() ) {
+            replaceArr.Add( m_replaceString.Item(i) );
+        }
+    }
+    return replaceArr;
 }

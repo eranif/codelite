@@ -707,8 +707,11 @@
             <label>Goto Implementation</label>
         </object>
 		<object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="grep_current_workspace">
+            <label>Search selected text in workspace</label>
+        </object>
 		<object class="wxMenu" name="editor_search">
-			<label>Search</label>
+            <label>Search</label>
 			<style>wxMENU_TEAROFF</style>
 			<object class="wxMenuItem" name="go_to_function_start">
 				<label>Goto Beginning of Current Function</label>

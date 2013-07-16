@@ -33,14 +33,17 @@
 #include "findinfilesdlg.h"
 #include "findresultstab.h"
 #include "replaceinfilespanel.h"
+#include "windowattrmanager.h"
 
-FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const FindReplaceData& data)
-    : FindInFilesDialogBase(parent, id)
-    , m_data(data)
+FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString &dataName)
+    : FindInFilesDialogBase(parent, wxID_ANY)
 {
-    // DirPicker values
-    wxArrayString choices;
+    m_data.SetName(dataName);
+    
+    // Store the find-in-files data
+    clConfig::Get().ReadItem( &m_data );
 
+    wxArrayString choices;
     size_t count = m_data.GetSearchPaths().GetCount();
     for (size_t i = 0; i < count; ++i) {
         choices.Add(m_data.GetSearchPaths().Item(i));
@@ -99,8 +102,9 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
         wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
         size_t pos = astrEncodings.Add(encodingName);
 
-        if(data.GetEncoding() == encodingName)
+        if(m_data.GetEncoding() == encodingName) {
             selection = static_cast<int>(pos);
+        }
     }
 
     m_choiceEncoding->Append(astrEncodings);
@@ -111,11 +115,15 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindowID id, const Find
     DoSetFileMask();
 
     GetSizer()->Fit(this);
+    
+    WindowAttrManager::Load(this, "FindInFilesDialog", NULL);
     Centre();
 }
 
 FindInFilesDialog::~FindInFilesDialog()
 {
+    clConfig::Get().WriteItem( &m_data );
+    WindowAttrManager::Save(this, "FindInFilesDialog", NULL);
 }
 
 void FindInFilesDialog::SetRootDir(const wxString &rootDir)
@@ -188,7 +196,7 @@ void FindInFilesDialog::DoSearchReplace()
     SearchThreadST::Get()->PerformSearch(data);
 
     DoSaveSearchPaths();
-    Hide();
+    Close();
 }
 
 void FindInFilesDialog::DoSearch()
@@ -201,7 +209,7 @@ void FindInFilesDialog::DoSearch()
     SearchThreadST::Get()->PerformSearch(data);
 
     DoSaveSearchPaths();
-    Hide();
+    Close();
 }
 
 SearchData FindInFilesDialog::DoGetSearchData()
@@ -310,9 +318,7 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
         DoSearchReplace();
 
     } else if (btnClicked == m_cancel) {
-        // Hide the dialog
-        DoSaveSearchPaths();
-        Hide();
+        Close();
 
     } else if (btnClicked == m_matchCase) {
         if (m_matchCase->IsChecked()) {
@@ -377,16 +383,15 @@ void FindInFilesDialog::OnClick(wxCommandEvent &event)
 
 void FindInFilesDialog::OnClose(wxCloseEvent &e)
 {
-    wxUnusedVar(e);
-    DoSaveSearchPaths();
-    Hide();
+    Destroy();
 }
 
 void FindInFilesDialog::OnCharEvent(wxKeyEvent &event)
 {
     if (event.GetKeyCode() == WXK_ESCAPE) {
-        Hide();
+        Close();
         return;
+        
     } else if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
         m_data.SetFindString( m_findString->GetValue() );
         DoSearch();

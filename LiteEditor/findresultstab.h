@@ -46,8 +46,8 @@ class FindResultsTab : public OutputTabWindow
 {
     SearchData m_searchData;
     bool       m_searchInProgress;
+    
 protected:
-    static FindInFilesDialog *m_find;
 
     Notebook    *m_book; // for multiple Find Results pages
     wxStyledTextCtrl *m_recv; // the page that is receiving results of a search
@@ -92,8 +92,6 @@ public:
     FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &name, bool useBook = false);
     ~FindResultsTab();
 
-    void        LoadFindInFilesData();
-    void        SaveFindInFilesData();
     long        GetBookStyle();
     static void SetStyles(wxStyledTextCtrl *sci);
     static void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e);

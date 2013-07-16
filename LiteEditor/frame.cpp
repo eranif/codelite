@@ -4403,13 +4403,6 @@ void clMainFrame::SaveLayoutAndSession()
     SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
     EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
     EditorConfigST::Get()->SaveLongValue(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
-
-    //save the 'find and replace' information
-    GetOutputPane()->GetFindResultsTab()->SaveFindInFilesData();
-    if (LEditor::GetFindReplaceDialog()) {
-        clConfig::Get().WriteItem( &(LEditor::GetFindReplaceDialog()->GetData()), "FindAndReplaceData" );
-    }
-
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();
 
     //save the current session before closing

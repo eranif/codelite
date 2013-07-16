@@ -77,11 +77,11 @@ int main(int argc, char **argv)
     int exitCode = 0;
 #ifdef _WIN32
     exitCode = ::ExecuteProcessWIN(commandline);
-#else
-    exitCode = ::ExecuteProcessUNIX(commandline);
-#endif
-
     return exitCode;
+    
+#else
+    return execvp(argv[1], argv+1);
+#endif
 }
 
 bool ends_with(const std::string &s, const std::string& e)

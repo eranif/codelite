@@ -41,6 +41,7 @@
 #include "search_thread.h"
 #include "event_notifier.h"
 #include "theme_handler.h"
+#include "cl_config.h"
 
 // Custom styles
 #define LEX_FIF_DEFAULT        0
@@ -153,14 +154,15 @@ void FindResultsTab::LoadFindInFilesData()
         return;
 
     FindReplaceData data;
-    EditorConfigST::Get()->ReadObject(wxT("FindInFilesData"), &data);
+    clConfig::Get().ReadItem( &data, "FindInFilesData");
+    
     m_find = new FindInFilesDialog(EventNotifier::Get()->TopFrame(), wxID_ANY, data);
 }
 
 void FindResultsTab::SaveFindInFilesData()
 {
-    if (m_find) {
-        EditorConfigST::Get()->WriteObject(wxT("FindInFilesData"), &m_find->GetData());
+    if ( m_find ) {
+        clConfig::Get().WriteItem( &m_find->GetData(), "FindInFilesData" );
     }
 }
 

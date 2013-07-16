@@ -911,12 +911,8 @@ void clMainFrame::CreateGUIControls(void)
     if ( !show_nav ) {
         m_mainBook->ShowNavBar( false );
     }
-
     BuildSettingsConfigST::Get()->Load(wxT("2.1"));
-
-    //load dialog properties
-    EditorConfigST::Get()->ReadObject(wxT("FindAndReplaceData"), &LEditor::GetFindReplaceData());
-
+    
     clConfig ccConfig("code-completion.conf");
     ccConfig.ReadItem( &m_tagsOptionsData );
 
@@ -4411,7 +4407,7 @@ void clMainFrame::SaveLayoutAndSession()
     //save the 'find and replace' information
     GetOutputPane()->GetFindResultsTab()->SaveFindInFilesData();
     if (LEditor::GetFindReplaceDialog()) {
-        EditorConfigST::Get()->WriteObject(wxT("FindAndReplaceData"), &(LEditor::GetFindReplaceDialog()->GetData()));
+        clConfig::Get().WriteItem( &(LEditor::GetFindReplaceDialog()->GetData()), "FindAndReplaceData" );
     }
 
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();

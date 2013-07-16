@@ -16,9 +16,7 @@ char * normalize_path(const char * src, size_t src_len);
 bool is_source_file(const std::string& filename, std::string &fixed_file_name);
 void * Memrchr(const void *buf, int c, size_t num);
 
-#ifndef _WIN32
-extern int ExecuteProcessUNIX(const std::string& commandline);
-#else
+#ifdef _WIN32
 extern int ExecuteProcessWIN(const std::string& commandline);
 #endif
 
@@ -78,7 +76,6 @@ int main(int argc, char **argv)
 #ifdef _WIN32
     exitCode = ::ExecuteProcessWIN(commandline);
     return exitCode;
-    
 #else
     return execvp(argv[1], argv+1);
 #endif

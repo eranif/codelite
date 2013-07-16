@@ -9,7 +9,6 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
-    <File Name="unixproc.cpp"/>
     <File Name="winproc.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Release"/>

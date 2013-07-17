@@ -7,11 +7,14 @@
 		"m_bitmapsFile":	"openresourcedialogbase_plugin_bitmaps.cpp",
 		"m_GenerateCodeTypes":	2683785,
 		"m_outputFileName":	"",
+		"m_firstWindowId":	1000,
+		"m_useEnum":	false,
 		"m_templateClasses":	[{
 				"m_includeFile":	"#include <wx/listctrl.h>",
 				"m_allocationLine":	"$name = new wxListView( $parent, $id, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VRULES );",
 				"m_className":	"wxListView",
-				"m_xrcPreviewClass":	"wxListCtrl"
+				"m_xrcPreviewClass":	"wxListCtrl",
+				"m_events":	[]
 			}]
 	},
 	"windows":	[{
@@ -51,12 +54,28 @@
 					"m_label":	"Font:",
 					"m_value":	""
 				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
+				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
 					"m_value":	""
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Style:",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -98,6 +117,10 @@
 							"m_label":	"Name:",
 							"m_value":	"mainSizer"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -131,7 +154,7 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
-									"m_value":	""
+									"m_value":	"Type resource name to open.\\nYou may use a space delimited list of words to narrow down the list of choices\\ne.g. Typing: 'Open Dialog' will include results that contain both words \"Open\" _and_ \"Dialog\""
 								}, {
 									"type":	"colour",
 									"m_label":	"Bg Colour:",
@@ -145,12 +168,28 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}, {
 									"type":	"string",
@@ -193,6 +232,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"fgSizer1"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -261,12 +304,28 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[],
@@ -284,6 +343,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"buttonSizer"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -332,12 +395,28 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -411,12 +490,28 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",

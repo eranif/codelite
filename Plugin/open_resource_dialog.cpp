@@ -156,6 +156,14 @@ void OpenResourceDialog::DoPopulateList()
     wxWindowUpdateLocker locker(m_listOptions);
 
     // First add the workspace files
+    
+    // Prepare the user filter
+    m_userFilters.Clear();
+    m_userFilters = ::wxStringTokenize(name, " \t", wxTOKEN_STRTOK);
+    for(size_t i=0; i<m_userFilters.GetCount(); ++i) {
+        m_userFilters.Item(i).MakeLower();
+    }
+    
     DoPopulateWorkspaceFile();
     DoPopulateTags();
 
@@ -173,13 +181,11 @@ void OpenResourceDialog::DoPopulateTags()
     bool gotExactMatch(false);
 
     // Next, add the tags
-    std::vector<TagEntryPtr> tags;
-    wxString prefix = m_textCtrlResourceName->GetValue();
-    prefix.Trim().Trim(false);
-    if(prefix.IsEmpty())
+    TagEntryPtrVector_t tags;
+    if ( m_userFilters.IsEmpty() )
         return;
-
-    m_manager->GetTagsManager()->GetTagsByPartialName(prefix, tags);
+    
+    m_manager->GetTagsManager()->GetTagsByPartialName(m_userFilters.Item(0), tags);
 
     for (size_t i=0; i<tags.size(); i++) {
         TagEntryPtr tag = tags.at(i);
@@ -188,6 +194,9 @@ void OpenResourceDialog::DoPopulateTags()
         if ( !m_filters.IsEmpty() && m_filters.Index(tag->GetKind()) == wxNOT_FOUND )
             continue;
         
+        if ( !MatchesFilter( tag->GetName()) )
+            continue;
+            
         wxString name(tag->GetName());
 
         // keep the fullpath
@@ -210,7 +219,8 @@ void OpenResourceDialog::DoPopulateTags()
                                  DoGetTagImgId(tag));
 
         }
-        if (prefix == name && !gotExactMatch) {
+        
+        if ((m_userFilters.GetCount() == 1) && (m_userFilters.Item(0).CmpNoCase(name) == 0) && !gotExactMatch) {
             gotExactMatch = true;
             DoSelectItem(index);
         }
@@ -227,16 +237,14 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
     if ( !m_filters.IsEmpty() && m_filters.Index(TagEntry::KIND_FILE) == wxNOT_FOUND)
         return;
     
-    wxString curSel = m_textCtrlResourceName->GetValue();
-    if (!curSel.Trim().Trim(false).IsEmpty()) {
+    if ( !m_userFilters.IsEmpty() ) {
 
-        curSel = curSel.MakeLower().Trim().Trim(false);
         std::multimap<wxString, wxString>::iterator iter  = m_files.begin();
         for(; iter != m_files.end(); iter++) {
-            // Take only keys that 'Contains' the filter
-            if(!iter->first.Contains(curSel))
+            
+            if ( !MatchesFilter( iter->first ) )
                 continue;
-
+            
             wxFileName fn(iter->second);
             FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());
             int imgId = m_tagImgMap[wxT("text")];
@@ -279,6 +287,7 @@ void OpenResourceDialog::Clear()
         }
     }
     m_listOptions->DeleteAllItems();
+    m_userFilters.Clear();
 }
 
 void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selection, IManager* manager)
@@ -451,4 +460,20 @@ int OpenResourceDialog::DoGetTagImgId(TagEntryPtr tag)
         imgId = m_tagImgMap[wxT("enumerator")];
 
     return imgId;
+}
+
+bool OpenResourceDialog::MatchesFilter(const wxString& name)
+{
+    wxString tmpname = name;
+    tmpname.MakeLower();
+    
+    if ( m_userFilters.IsEmpty() )
+        return false;
+    
+    
+    for(size_t i=0; i<m_userFilters.GetCount(); ++i) {
+        if ( !tmpname.Contains(m_userFilters.Item(i)) ) 
+            return false;
+    }
+    return true;
 }

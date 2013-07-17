@@ -11,6 +11,7 @@ extern void wxCFB13InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
+
 OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
@@ -25,6 +26,7 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     this->SetSizer(mainSizer);
     
     m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
+    m_textCtrlResourceName->SetToolTip(_("Type resource name to open.\nYou may use a space delimited list of words to narrow down the list of choices\ne.g. Typing: 'Open Dialog' will include results that contain both words \"Open\" _and_ \"Dialog\""));
     
     mainSizer->Add(m_textCtrlResourceName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -51,7 +53,6 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     
     buttonSizer->Add(m_buttonCancel, 0, wxALL, 5);
     
-    
     SetMinSize( wxSize(400,300) );
     SetSizeHints(600,400);
     if ( GetSizer() ) {
@@ -76,4 +77,3 @@ OpenResourceDialogBase::~OpenResourceDialogBase()
     m_buttonOk->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenResourceDialogBase::OnOKUI), NULL, this);
     
 }
-

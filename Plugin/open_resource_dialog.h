@@ -53,10 +53,12 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
     bool                              m_needRefresh;
     std::map<wxString, int>           m_tagImgMap;
     wxArrayString                     m_filters;
-
+    wxArrayString                     m_userFilters;
+    
 protected:
     void DoPopulateList();
     void DoPopulateWorkspaceFile();
+    bool MatchesFilter( const wxString &name );
     void DoPopulateTags();
     void DoSelectItem(int selection, bool makeFirst = true);
     void Clear();

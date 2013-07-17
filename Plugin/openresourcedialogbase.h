@@ -35,6 +35,4 @@ public:
     virtual ~OpenResourceDialogBase();
 };
 
-
-
 #endif

@@ -856,7 +856,7 @@ void clMainFrame::CreateGUIControls(void)
     WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
 #if wxCHECK_VERSION(2, 9, 5)
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 #else
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
 #endif

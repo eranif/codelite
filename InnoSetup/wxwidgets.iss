@@ -2,15 +2,15 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=wxWidgets 2.9.4
-AppVerName=wxWidgets 2.9.4
+AppName=wxWidgets 2.9.5
+AppVerName=wxWidgets 2.9.5
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
-DefaultDirName={sd}\wxWidgets-2.9.4
-DefaultGroupName=wxWidgets-2.9.4
+DefaultDirName={sd}\wxWidgets-2.9.5
+DefaultGroupName=wxWidgets-2.9.5
 OutputDir=.
-OutputBaseFilename=wxwidgets-294-tdm-gcc-471-32-devel
+OutputBaseFilename=wxwidgets-295-tdm-gcc-471-32-devel
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -29,10 +29,10 @@ Name: modifypath; Description: Add wxWidgets directory to your PATH environment 
 Name: "eng"; MessagesFile: "compiler:Default.isl"
 
 [Components]
-Name: "wxWidgets"; Description: "wxWidgets, Cross-Platform GUI Library (v2.9.4)"; Types: full; Flags: fixed
+Name: "wxWidgets"; Description: "wxWidgets, Cross-Platform GUI Library (v2.9.5)"; Types: full; Flags: fixed
 
 [Files]
-Source: "..\Runtime\wxWidgets-2.9.4\*"; DestDir: "{app}"; Flags: recursesubdirs ; Components: wxWidgets
+Source: "..\Runtime\wxWidgets-2.9.5\*"; DestDir: "{app}"; Flags: recursesubdirs ; Components: wxWidgets
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\lib\gcc_dll"; Components: wxWidgets
 
 [Icons] 

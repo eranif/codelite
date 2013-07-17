@@ -41,8 +41,17 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
         borderDown = DrawingUtils::DarkColour(bgColour, 1.0);
     }
 
+#if wxCHECK_VERSION(2, 9, 5)
     // Now set the bg colour. It must be done after setting
     // the pen colour
+    wxColour bgColour2 = bgColour;
+    bgColour = DrawingUtils::DarkColour(bgColour, 2.0);
+     
+    dc.SetPen(bgColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(rect);
+    dc.GradientFillLinear(rect, bgColour2, bgColour, wxSOUTH);
+#else
     wxColour bgColour2 = bgColour;
     bgColour = DrawingUtils::DarkColour(bgColour, 2.0);
      
@@ -58,6 +67,7 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
     dc.SetPen(borderDown);
     dc.DrawLine(rect.GetTopRight(), rect.GetBottomRight());
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+#endif
 }
 
 void CLMainAuiTBArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)

@@ -855,7 +855,12 @@ void clMainFrame::CreateGUIControls(void)
     DebuggerConfigTool::Get()->Load(wxT("config/debuggers.xml"), wxT("5.11"));
     WorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStarupDirectory());
 
+#if wxCHECK_VERSION(2, 9, 5)
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 1);
+#else
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
+#endif
+
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 6);
 
     // Load the menubar from XRC and set this frame's menubar to it.

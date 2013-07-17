@@ -20,6 +20,59 @@ void * Memrchr(const void *buf, int c, size_t num);
 extern int ExecuteProcessWIN(const std::string& commandline);
 #endif
 
+#ifndef _WIN32
+
+#include <unistd.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <string>
+#include <sys/wait.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/stat.h>
+
+void WriteContent( const std::string& logfile, const std::string& filename, const std::string& flags )
+{
+    // Open the file
+    int fd = ::open(logfile.c_str(), O_CREAT|O_APPEND, 0660);
+    ::chmod(logfile.c_str(), 0660);
+
+    // Lock it
+    if ( fd < 0 )
+        return;
+
+    if(::flock(fd, LOCK_EX) < 0) {
+        return;
+    }
+
+    char cwd[1024];
+    memset(cwd, 0, sizeof(cwd));
+    char* pcwd = ::getcwd(cwd, sizeof(cwd));
+    (void) pcwd;
+
+    std::string line = filename + "|" + cwd + "|" + flags + "\n";
+
+    FILE* fp = fopen(logfile.c_str(), "a+b");
+    if ( !fp ) {
+        perror("fopen");
+    }
+
+    // Write the content
+    ::fprintf(fp, "%s", line.c_str());
+    ::fflush(fp);
+    ::fclose(fp);
+
+    // Release the lock
+    ::flock(fd, LOCK_UN);
+
+    // close the fd
+    ::close(fd);
+}
+
+#endif
 extern void WriteContent( const std::string& logfile, const std::string& filename, const std::string& flags );
 
 // A thin wrapper around gcc

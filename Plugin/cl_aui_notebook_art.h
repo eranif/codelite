@@ -1,6 +1,7 @@
 #ifndef CLAUI_TAB_ART_H
 #define CLAUI_TAB_ART_H
 
+#if 0
 #include <wx/aui/auibook.h>
 #include <wx/pen.h>
 #include "codelite_exports.h"
@@ -258,5 +259,5 @@ protected:
     int m_fixed_tab_width;
     unsigned int m_flags;
 };
-
+#endif 
 #endif // CLAUI_TAB_ART_H

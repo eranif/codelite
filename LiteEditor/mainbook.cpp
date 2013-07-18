@@ -49,11 +49,7 @@
 #endif
 
 MainBook::MainBook(wxWindow *parent)
-#if wxCHECK_VERSION(2, 9, 5)
-    : wxPanel          (parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxBORDER_STATIC)
-#else
     : wxPanel          (parent)
-#endif    
     , m_navBar         (NULL)
     , m_book           (NULL)
     , m_quickFindBar   (NULL)

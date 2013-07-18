@@ -158,14 +158,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     bSizer2->Add(m_radioBoxHint, 1, wxALL|wxEXPAND, 5);
     
     wxArrayString m_radioBoxTabControlStyleArr;
-    m_radioBoxTabControlStyleArr.Add(wxT("Classic"));
     m_radioBoxTabControlStyleArr.Add(wxT("Glossy"));
     m_radioBoxTabControlStyleArr.Add(wxT("Curved"));
     m_radioBoxTabControlStyle = new wxRadioBox(this, wxID_ANY, _("Tab Control Style:"), wxDefaultPosition, wxSize(-1, -1), m_radioBoxTabControlStyleArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxTabControlStyle->SetSelection(0);
     
     bSizer2->Add(m_radioBoxTabControlStyle, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

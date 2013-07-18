@@ -1,4 +1,5 @@
 #include "cl_aui_notebook_art.h"
+#if 0
 #include "editor_config.h"
 #include <wx/dcgraph.h>
 #include "plugin_general_wxcp.h"
@@ -1182,3 +1183,5 @@ void clAuiSimpleTabArt::SetMeasuringFont(const wxFont& font)
 {
     m_measuring_font = font;
 }
+
+#endif

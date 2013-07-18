@@ -88,13 +88,10 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
     // Set the notebook theme
     wxAuiTabArt *artProvider;
     size_t flags = EditorConfigST::Get()->GetOptions()->GetOptions();
-    if(flags & OptionsConfig::TabClassic) {
-        artProvider = new clAuiTabArt();
-
-    } else if(flags & OptionsConfig::TabCurved) {
-        artProvider = new clAuiSimpleTabArt();
+    if(flags & OptionsConfig::TabCurved) {
+        artProvider = new wxAuiSimpleTabArt;
     } else {
-        artProvider = new wxAuiDefaultTabArt();
+        artProvider = new wxAuiDefaultTabArt;
     }
     SetArtProvider(artProvider);
 }

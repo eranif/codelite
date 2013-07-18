@@ -7,6 +7,9 @@
 #include <editor_config.h>
 #include "globals.h"
 
+static const wxDouble X_RADIUS = 6.0;
+static const wxDouble X_DIAMETER = 2 * X_RADIUS;
+
 clAuiGlossyTabArt::clAuiGlossyTabArt()
 {
 }
@@ -39,6 +42,207 @@ void clAuiGlossyTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& re
     gdc.SetPen(bgColour);
     gdc.SetBrush( DrawingUtils::GetStippleBrush() );
     gdc.DrawRectangle(rect);
-    gdc.SetPen(penColour);
-    gdc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+    gdc.SetPen( penColour );
+    
+    wxPoint ptBottomLeft  = rect.GetBottomLeft();
+    wxPoint ptBottomRight = rect.GetBottomRight();
+    gdc.DrawLine(ptBottomLeft, ptBottomRight);
+}
+
+void clAuiGlossyTabArt::DrawTab(wxDC& dc,
+                          wxWindow* wnd,
+                          const wxAuiNotebookPage& page,
+                          const wxRect& in_rect,
+                          int close_button_state,
+                          wxRect* out_tab_rect,
+                          wxRect* out_button_rect,
+                          int* x_extent)
+{
+    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    wxColour penColour;
+    bool isBgColourDark = DrawingUtils::IsDark(bgColour);
+    if ( isBgColourDark ) {
+        penColour = DrawingUtils::LightColour(bgColour, 4.0);
+    } else {
+        if ( !page.active ) {
+            bgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
+        } else {
+            bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 0.0);
+        }
+        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+    
+    int curx = 0;
+    
+    wxGCDC gdc;
+    if ( !DrawingUtils::GetGCDC(dc, gdc) )
+        return;
+
+    
+    wxGraphicsPath path = gdc.GetGraphicsContext()->CreatePath();
+    gdc.SetPen( penColour );
+    
+    wxSize sz = GetTabSize(gdc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
+    
+    wxRect rr (in_rect.GetTopLeft(), sz);
+    rr.y += 2;
+    rr.width -= 2;
+    rr.height += 4;
+    
+    /// the tab start position (x)
+    curx = rr.x + 8;
+    
+    // Set clipping region
+    int clip_width = rr.width;
+    if (rr.x + clip_width > in_rect.x + in_rect.width)
+        clip_width = (in_rect.x + in_rect.width) - rr.x;
+    
+    // since the above code above doesn't play well with WXDFB or WXCOCOA,
+    // we'll just use a rectangle for the clipping region for now --
+    gdc.SetClippingRegion(rr.x, rr.y, clip_width+1, rr.height);
+    path.AddRoundedRectangle(rr.x, rr.y, rr.width, rr.height, 5.0);
+    
+    gdc.SetBrush( bgColour );
+    gdc.GetGraphicsContext()->FillPath( path );
+    gdc.GetGraphicsContext()->StrokePath( path );
+    
+    if ( !page.active ) {
+        // Draw a line at the bottom rect
+        gdc.SetPen(penColour);
+        gdc.DrawLine(in_rect.GetBottomLeft(), in_rect.GetBottomRight());
+    }
+    
+    /// Draw the text
+    wxString caption = page.caption;
+    if ( caption.IsEmpty() ) {
+        caption = "Tp";
+    }
+    
+    gdc.SetFont( wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    wxSize ext = gdc.GetTextExtent( caption );
+    if ( caption == "Tp" )
+        caption.Clear();
+    
+    if ( page.active ) {
+        gdc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+    } else {
+        gdc.SetTextForeground( isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+    }
+    
+    gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-2);
+    
+    // advance the X offset
+    curx += ext.x;
+    
+    /// Draw the bitmap
+    if ( page.bitmap.IsOk() ) {
+        curx += 4;
+        int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight())/2);
+        gdc.GetGraphicsContext()->DrawBitmap( page.bitmap, curx, bmpy, page.bitmap.GetWidth(), page.bitmap.GetHeight());
+        curx += 8;
+    }
+    
+    /// Draw the X button on the tab
+    if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
+        curx += 4;
+        int btny = (rr.y + (rr.height/2));
+        if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {
+            curx += 1;
+            btny += 1;
+        }
+        
+        /// Defines the rectangle surrounding the X button
+        wxRect xRect = wxRect(curx, btny - X_RADIUS, X_DIAMETER, X_DIAMETER);
+        *out_button_rect = xRect;
+        
+        /// Defines the 'x' inside the circle
+        wxPoint circleCenter( curx + X_RADIUS, btny);
+        wxDouble xx_width = ::sqrt( ::pow(X_DIAMETER, 2.0) /2.0 );
+        wxDouble x_square = (circleCenter.x - (xx_width/2.0));
+        wxDouble y_square = (circleCenter.y - (xx_width/2.0));
+        
+        wxPoint2DDouble ptXTopLeft(x_square, y_square);
+        wxRect2DDouble insideRect(ptXTopLeft.m_x, ptXTopLeft.m_y, xx_width, xx_width);
+        insideRect.Inset(1.0 , 1.0); // Shrink it by 1 pixle
+        
+        //if ( bDrawCircle ) {
+        //    /// Draw the button using a circle with radius of 5px
+        //    wxGraphicsPath button_path = gdc.GetGraphicsContext()->CreatePath();
+        //    
+        //    /// Draw the circle surrounding the X
+        //    button_path.AddCircle( circleCenter.x, circleCenter.y, X_RADIUS );
+        //    gdc.SetPen( wxPen("#202020", 2) );
+        //    gdc.SetBrush( wxBrush("#202020"));
+        //    gdc.GetGraphicsContext()->FillPath( button_path  );
+        //    gdc.GetGraphicsContext()->StrokePath( button_path  );
+        //}
+        
+        /// Draw the 'x' itself
+        wxGraphicsPath xpath = gdc.GetGraphicsContext()->CreatePath();
+        xpath.MoveToPoint( insideRect.GetLeftTop() );
+        xpath.AddLineToPoint( insideRect.GetRightBottom());
+        xpath.MoveToPoint( insideRect.GetRightTop() );
+        xpath.AddLineToPoint( insideRect.GetLeftBottom() );
+        gdc.SetPen( wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 2) );
+        gdc.GetGraphicsContext()->StrokePath( xpath  );
+        
+        curx += X_DIAMETER;
+    }
+    *out_tab_rect = rr;
+    gdc.DestroyClippingRegion();
+}
+
+wxSize clAuiGlossyTabArt::GetTabSize(wxDC& dc,
+                               wxWindow* WXUNUSED(wnd),
+                               const wxString& caption,
+                               const wxBitmap& bitmap,
+                               bool WXUNUSED(active),
+                               int close_button_state,
+                               int* x_extent)
+{
+    static wxCoord measured_texty(wxNOT_FOUND);
+
+    wxCoord measured_textx;
+    wxCoord tmp;
+
+    dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    dc.GetTextExtent(caption, &measured_textx, &tmp);
+
+    // do it once
+    if(measured_texty == wxNOT_FOUND)
+        dc.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
+
+    // add padding around the text
+    wxCoord tab_width  = measured_textx;
+    wxCoord tab_height = measured_texty;
+
+    // if the close button is showing, add space for it
+    if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
+        tab_width += X_DIAMETER + 3;
+
+    // if there's a bitmap, add space for it
+    if (bitmap.IsOk()) {
+        tab_width += bitmap.GetWidth();
+        tab_width += 3; // right side bitmap padding
+        tab_height = wxMax(tab_height, bitmap.GetHeight());
+        tab_height += 10;
+    } else {
+        tab_height += 10;
+    }
+
+    // add padding
+#ifdef __WXMAC__
+    tab_width += 16;
+#else
+    tab_width += 16;
+#endif
+
+
+    if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
+        tab_width = 80;
+    }
+
+    *x_extent = tab_width;
+
+    return wxSize(tab_width, tab_height);
 }

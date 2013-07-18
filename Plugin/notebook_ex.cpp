@@ -91,7 +91,7 @@ Notebook::Notebook(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
     if(flags & OptionsConfig::TabCurved) {
         artProvider = new wxAuiSimpleTabArt;
     } else {
-        artProvider = new wxAuiDefaultTabArt;
+        artProvider = new clAuiGlossyTabArt;
     }
     SetArtProvider(artProvider);
 }

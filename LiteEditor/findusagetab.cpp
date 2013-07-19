@@ -14,6 +14,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent, const wxString &name)
     : OutputTabWindow(parent, wxID_ANY, name)
 {
     FindResultsTab::SetStyles(m_sci);
+    m_sci->HideSelection( true );
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindUsageTab::OnStyleNeeded), NULL, this);
     m_tb->RemoveTool ( XRCID ( "repeat_output" ) );
     m_tb->Realize();

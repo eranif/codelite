@@ -81,6 +81,8 @@
 
 #define CL_LINE_MODIFIED_STYLE      200
 #define CL_LINE_SAVED_STYLE         201
+#define ANNOTATION_STYLE_WARNING    210
+#define ANNOTATION_STYLE_ERROR      211
 
 //debugger line marker xpms
 extern const char *arrow_right_green_xpm[];
@@ -182,7 +184,7 @@ LEditor::LEditor(wxWindow* parent)
     // Create the various tip windows
     m_functionTip = new clEditorTipWindow(this);
     m_disableSmartIndent = GetOptions()->GetDisableSmartIndent();
-
+    
     m_deltas = new EditorDeltasHolder;
     EventNotifier::Get()->Connect(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEventHandler(LEditor::OnHighlightWordChecked), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODEFORMATTER_INDENT_STARTING, wxCommandEventHandler(LEditor::OnFileFormatStarting), NULL, this);
@@ -591,7 +593,6 @@ void LEditor::SetProperties()
         // movement
         CmdKeyAssign(wxSTC_KEY_LEFT,  wxSTC_SCMOD_CTRL ,                  wxSTC_CMD_WORDPARTLEFT);
         CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL,                   wxSTC_CMD_WORDPARTRIGHT);
-
     } else {
         // selection
         CmdKeyAssign(wxSTC_KEY_LEFT,  wxSTC_SCMOD_CTRL|wxSTC_SCMOD_SHIFT, wxSTC_CMD_WORDLEFTEXTEND);
@@ -600,7 +601,6 @@ void LEditor::SetProperties()
         // movement
         CmdKeyAssign(wxSTC_KEY_LEFT,  wxSTC_SCMOD_CTRL,                   wxSTC_CMD_WORDLEFT);
         CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_SCMOD_CTRL,                   wxSTC_CMD_WORDRIGHT);
-
     }
 }
 
@@ -2972,17 +2972,24 @@ void LEditor::ToggleBreakpoint(int lineno)
     }
 }
 
-void LEditor::SetWarningMarker(int lineno)
+void LEditor::SetWarningMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
         MarkerAdd(lineno, smt_warning);
+        
+        // define the warning marker
+        AnnotationSetText(lineno, annotationText);
+        AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
     }
 }
 
-void LEditor::SetErrorMarker(int lineno)
+void LEditor::SetErrorMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
         MarkerAdd(lineno, smt_error);
+        
+        AnnotationSetText(lineno, annotationText);
+        AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
     }
 }
 
@@ -2990,6 +2997,7 @@ void LEditor::DelAllCompilerMarkers()
 {
     MarkerDeleteAll(smt_warning);
     MarkerDeleteAll(smt_error);
+    AnnotationClearAll();
 }
 
 // Maybe one day we'll display multiple bps differently
@@ -4248,4 +4256,20 @@ void LEditor::DoSaveMarkers()
         m_savedMarkers.Add( nFoundLine );
         nFoundLine = MarkerNext(nFoundLine+1, mask);
     }
+}
+
+void LEditor::InitializeAnnotations()
+{
+    // Warning style
+    StyleSetBackground(ANNOTATION_STYLE_WARNING, wxColor(255, 215, 0));
+    StyleSetForeground(ANNOTATION_STYLE_WARNING, *wxBLACK);
+    StyleSetSizeFractional(ANNOTATION_STYLE_WARNING, (StyleGetSizeFractional(wxSTC_STYLE_DEFAULT)*4)/5);
+
+    // Error style
+    StyleSetBackground(ANNOTATION_STYLE_ERROR, wxColour(244, 220, 220));
+    StyleSetForeground(ANNOTATION_STYLE_ERROR, *wxBLACK);
+    StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, (StyleGetSizeFractional(wxSTC_STYLE_DEFAULT)*4)/5);
+    
+    // default all line style
+    AnnotationSetVisible(wxSTC_ANNOTATION_STANDARD);
 }

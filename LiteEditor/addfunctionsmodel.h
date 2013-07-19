@@ -192,9 +192,9 @@ public:
 
 protected:
     // Helpers
-    wxDataViewItem DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData = NULL);
-    wxDataViewItem DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData);
-    void DoChangeItemType(const wxDataViewItem& item, bool changeToContainer);
+    virtual wxDataViewItem DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData = NULL);
+    virtual wxDataViewItem DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData);
+    virtual void DoChangeItemType(const wxDataViewItem& item, bool changeToContainer);
     
 public:
     /**

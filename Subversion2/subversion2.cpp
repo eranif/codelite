@@ -496,24 +496,8 @@ wxString Subversion2::DoGetFileExplorerFilesAsString()
 
 wxArrayString Subversion2::DoGetFileExplorerFiles()
 {
-    wxArrayString files;
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
-
-    for(size_t i=0; i<item.m_items.size(); i++) {
-        wxString filename ( item.m_items.at(i).first.GetFullPath() );
-        filename.Trim().Trim(false);
-
-        if(filename.EndsWith(wxT("\\"))) {
-            filename.RemoveLast();
-
-        } else if(filename.EndsWith(wxT("/"))) {
-            filename.RemoveLast();
-
-        }
-
-        files.Add(filename);
-    }
-    return files;
+    return item.m_paths;
 }
 
 wxString Subversion2::DoGetFileExplorerItemFullPath()

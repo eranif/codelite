@@ -41,7 +41,6 @@
 #include "frame.h"
 #include "generalinfo.h"
 #include "editor_config.h"
-#include "fileexplorertree.h"
 #include "workspace_pane.h"
 #include "fileview.h"
 #include "wx/xrc/xmlres.h"
@@ -51,6 +50,7 @@
 #include "workspacetab.h"
 #include "file_logger.h"
 #include "cl_config.h"
+#include "FileExplorerTab.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -314,7 +314,7 @@ wxTreeCtrl *PluginManager::GetTree(TreeType type)
 {
     switch ( type ) {
     case TreeFileExplorer:
-        return clMainFrame::Get()->GetFileExplorer()->GetFileTree();
+        return clMainFrame::Get()->GetFileExplorer()->GetFileTree()->Tree()->GetTreeCtrl();
     case TreeFileView:
         return clMainFrame::Get()->GetWorkspaceTab()->GetFileView();
     default:

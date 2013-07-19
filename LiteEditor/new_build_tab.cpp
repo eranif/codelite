@@ -599,13 +599,17 @@ void NewBuildTab::MarkEditor(LEditor* editor)
 #endif
     }
     
+    editor->InitializeAnnotations();
+    
     for(; iter.first != iter.second; ++iter.first) {
         BuildLineInfo *bli = iter.first->second;
+        wxString text = m_listctrl->GetTextValue(bli->GetLineInBuildTab(), 0).Trim().Trim(false);
+        StripBuildMarkders(text);
         if( bli && bli->GetSeverity() == SV_ERROR ) {
-            editor->SetErrorMarker( bli->GetLineNumber() );
+            editor->SetErrorMarker( bli->GetLineNumber(), text );
 
         } else if(bli && bli->GetSeverity() == SV_WARNING ) {
-            editor->SetWarningMarker( bli->GetLineNumber() );
+            editor->SetWarningMarker( bli->GetLineNumber(), text );
         }
     }
     editor->Refresh();

@@ -33,7 +33,7 @@ protected:
     int           m_line_number;
     LINE_SEVERITY m_severity;
     int           m_lineInBuildTab;
-
+    
 public:
     BuildLineInfo() : m_line_number(-1), m_severity(SV_NONE), m_lineInBuildTab(-1) {}
     ~BuildLineInfo() {}
@@ -168,7 +168,7 @@ class NewBuildTab : public wxPanel
     BuildInfoList_t::iterator           m_curError;
     bool                                m_buildInProgress;
     wxString                            m_cygwinRoot;
-    
+
 protected:
     void DoCacheRegexes();
     BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);
@@ -181,11 +181,11 @@ protected:
     void DoToggleWindow();
     bool DoSelectAndOpen(const wxDataViewItem& item);
     wxFont DoGetFont() const;
-    
+
 public:
     NewBuildTab(wxWindow* parent);
     virtual ~NewBuildTab();
-    
+
     void ScrollToBottom();
     bool GetBuildEndedSuccessfully() const {
         return m_errorCount == 0 && !m_buildInterrupted;
@@ -201,11 +201,11 @@ public:
     bool IsBuildInProgress() const {
         return m_buildInProgress;
     }
-    
+
     void Clear() {
         DoClear();
     }
-    
+
     wxString GetBuildContent() const;
 protected:
     void OnBuildStarted(clCommandEvent &e);

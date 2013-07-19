@@ -76,7 +76,6 @@
 #include "threebuttondlg.h"
 #include "acceltabledlg.h"
 #include "drawingutils.h"
-#include "fileexplorertree.h"
 #include "newprojectdlg.h"
 #include "newworkspacedlg.h"
 #include "replaceinfilespanel.h"

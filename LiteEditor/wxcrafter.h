@@ -34,6 +34,7 @@
 #include "addfunctionsmodel.h"
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
+#include <wx/dirctrl.h>
 
 class NewProjectDlgBaseClass : public wxDialog
 {
@@ -206,6 +207,22 @@ protected:
 public:
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~WelcomePageBase();
+};
+
+
+class FileExplorerBase : public wxPanel
+{
+protected:
+    wxGenericDirCtrl* m_genericDirCtrl;
+
+protected:
+    virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxTreeEvent& event) { event.Skip(); }
+
+public:
+    FileExplorerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~FileExplorerBase();
 };
 
 #endif

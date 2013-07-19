@@ -277,6 +277,7 @@ void SubversionView::ClearAll()
     m_treeCtrl->DeleteAllItems();
 }
 
+#if 0
 static void DoAddArrayToMap(const wxArrayString &files, SvnFileExplorerTraverser::Map_t& mymap, int type, const wxString &rootDir)
 {
     for(size_t i=0; i<files.GetCount(); i++) {
@@ -288,6 +289,7 @@ static void DoAddArrayToMap(const wxArrayString &files, SvnFileExplorerTraverser
         mymap[fi.file] = fi;
     }
 }
+#endif
 
 void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles, const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles, const wxArrayString& ignoreFiles, bool fileExplorerOnly, const wxString& sRootDir)
 {
@@ -330,12 +332,13 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
 
     DoCreateFileExplorerImages();
 
+#if 0
     if(m_fileExplorerLastBaseImgIdx != -1) {
         // Unified all the arrays into a single map
         SvnFileExplorerTraverser::Map_t mymap;
 
-        wxVirtualDirTreeCtrl* fileExplorer = (wxVirtualDirTreeCtrl*) m_plugin->GetManager()->GetTree(TreeFileExplorer);
-        wxTreeItemId          feRootItem   = fileExplorer->GetItemByFullPath(rootDir);
+        wxTreeCtrl*   fileExplorer = m_plugin->GetManager()->GetTree(TreeFileExplorer);
+        wxTreeItemId  feRootItem   = fileExplorer->GetItemByFullPath(rootDir);
 
 #ifdef __WXMSW__
         wxWindowUpdateLocker locker(fileExplorer);
@@ -357,6 +360,8 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
             CL_DEBUG(wxT("wxTreeTraverser started...end"));
         }
     }
+#endif
+
 }
 
 void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::SvnNodeType nodeType, const wxArrayString& files)
@@ -1279,9 +1284,9 @@ void SubversionView::DoCreateFileExplorerImages()
     //     New,
     //     Ok
     // };
-
+#if 0
     if(m_fileExplorerLastBaseImgIdx == -1) {
-        wxVirtualDirTreeCtrl* fe = (wxVirtualDirTreeCtrl*)m_plugin->GetManager()->GetTree(TreeFileExplorer);
+        wxTreeCtrl* fe = m_plugin->GetManager()->GetTree(TreeFileExplorer);
         const std::vector<wxBitmap>& images  = fe->GetImages();
         wxImageList *il = fe->GetImageList();
 
@@ -1322,6 +1327,7 @@ void SubversionView::DoCreateFileExplorerImages()
         //int newCount = il->GetImageCount();
         //wxPrintf(wxT("%d\n"), newCount);
     }
+#endif
 }
 void SubversionView::OnFileExplorerItemExpanding(wxCommandEvent& e)
 {

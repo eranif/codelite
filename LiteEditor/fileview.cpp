@@ -54,8 +54,6 @@
 #include "yestoalldlg.h"
 #include "editorsettingslocal.h"
 #include "localworkspace.h"
-#include "fileexplorertree.h"
-#include "fileexplorer.h"
 #include "plugin.h"
 #include "event_notifier.h"
 #include "build_custom_targets_menu_manager.h"

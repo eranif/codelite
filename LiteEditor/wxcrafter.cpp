@@ -576,3 +576,41 @@ WelcomePageBase::~WelcomePageBase()
     m_cmdLnkBtn151->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WelcomePageBase::OnOpenWiki), NULL, this);
     
 }
+
+FileExplorerBase::FileExplorerBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer262 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer262);
+    
+    m_genericDirCtrl = new wxGenericDirCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxDIRCTRL_MULTIPLE|wxDIRCTRL_SHOW_FILTERS);
+    m_genericDirCtrl->ShowHidden(false);
+    
+    boxSizer262->Add(m_genericDirCtrl, 1, wxALL|wxEXPAND, 5);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_genericDirCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(FileExplorerBase::OnItemActivated), NULL, this);
+    m_genericDirCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(FileExplorerBase::OnContextMenu), NULL, this);
+    m_genericDirCtrl->Connect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerBase::OnKeyDown), NULL, this);
+    
+}
+
+FileExplorerBase::~FileExplorerBase()
+{
+    m_genericDirCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(FileExplorerBase::OnItemActivated), NULL, this);
+    m_genericDirCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(FileExplorerBase::OnContextMenu), NULL, this);
+    m_genericDirCtrl->Disconnect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerBase::OnKeyDown), NULL, this);
+    
+}

@@ -468,8 +468,9 @@ public:
     virtual void UnHighlightAll();
 
     // compiler warnings and errors
-    void SetWarningMarker(int lineno);
-    void SetErrorMarker(int lineno);
+    void SetWarningMarker(int lineno, const wxString &annotationText);
+    void SetErrorMarker(int lineno, const wxString &annotationText);
+    void InitializeAnnotations();
     void DelAllCompilerMarkers();
     void DoShowCalltip(int pos, const wxString &tip);
     void DoCancelCalltip();

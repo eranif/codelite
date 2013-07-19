@@ -593,7 +593,7 @@ FileExplorerBase::FileExplorerBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_genericDirCtrl = new wxGenericDirCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxDIRCTRL_MULTIPLE|wxDIRCTRL_SHOW_FILTERS);
     m_genericDirCtrl->ShowHidden(false);
     
-    boxSizer262->Add(m_genericDirCtrl, 1, wxALL|wxEXPAND, 5);
+    boxSizer262->Add(m_genericDirCtrl, 1, wxALL|wxEXPAND, 2);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {

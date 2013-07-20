@@ -32,6 +32,7 @@
 #include "svn_sync_dialog.h"
 #include "SvnLogDialog.h"
 #include <wx/fileconf.h>
+#include <wx/msgdlg.h>
 
 static Subversion2* thePlugin = NULL;
 

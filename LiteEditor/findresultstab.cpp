@@ -232,6 +232,7 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
     sci->SetMarginWidth(3, 0);
     sci->SetMarginWidth(4, 0);
     sci->SetMarginSensitive(1, true);
+    sci->HideSelection(true);
     sci->Refresh();
 }
 
@@ -372,10 +373,8 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
         }
     }
 
-#if wxVERSION_NUMBER >= 2900
     // This is needed in >=wxGTK-2.9, otherwise the 'Search' pane doesn't fully expand
     SendSizeEvent(wxSEND_EVENT_POST);
-#endif
 
     m_recv = m_sci;
     Clear();

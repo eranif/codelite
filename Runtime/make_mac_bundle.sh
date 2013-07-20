@@ -126,41 +126,41 @@ cp ${wxrc_tool} ./codelite.app/Contents/SharedSupport/
 cp ../bin/codelite ./codelite.app/Contents/MacOS/codelite
 
 ## Fix clang
-cp ../sdk/clang/lib/libclang.dylib ./codelite.app/Contents/MacOS/
+cp ../../sdk/clang/lib/libclang.dylib ./codelite.app/Contents/MacOS/
 echo install_name_tool -change @rpath/libclang.dylib @executable_path/libclang.dylib ./codelite.app/Contents/MacOS/codelite
 install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/MacOS/codelite
 
-cp -r rc ./codelite.app/Contents/SharedSupport/
-cp -r templates ./codelite.app/Contents/SharedSupport/
-cp -r images ./codelite.app/Contents/SharedSupport/
-cp -r lexers ./codelite.app/Contents/SharedSupport/
-cp -r gdb_printers ./codelite.app/Contents/SharedSupport/
+cp -r ../../Runtime/rc ./codelite.app/Contents/SharedSupport/
+cp -r ../../Runtime/templates ./codelite.app/Contents/SharedSupport/
+cp -r ../../Runtime/images ./codelite.app/Contents/SharedSupport/
+cp -r ../../Runtime/lexers ./codelite.app/Contents/SharedSupport/
+cp -r ../../Runtime/gdb_printers ./codelite.app/Contents/SharedSupport/
 
-cp astyle.sample ./codelite.app/Contents/SharedSupport/
-cp index.html ./codelite.app/Contents/SharedSupport/
-cp svnreport.html ./codelite.app/Contents/SharedSupport/
-cp *.icns ./codelite.app/Contents/Resources/
-cp -pr src/*.gz ./codelite.app/Contents/Resources/
-cp -pr codelite-icons.zip ./codelite.app/Contents/SharedSupport/
-cp -pr codelite-icons-dark.zip ./codelite.app/Contents/SharedSupport/
-cp -pr codelite-icons-fresh-farm.zip ./codelite.app/Contents/SharedSupport/
+cp ../../Runtime/astyle.sample ./codelite.app/Contents/SharedSupport/
+cp ../../Runtime/index.html ./codelite.app/Contents/SharedSupport/
+cp ../../Runtime/svnreport.html ./codelite.app/Contents/SharedSupport/
+cp ../../Runtime/*.icns ./codelite.app/Contents/Resources/
+cp -pr ../../Runtime/src/*.gz ./codelite.app/Contents/Resources/
+cp -pr ../../Runtime/codelite-icons.zip ./codelite.app/Contents/SharedSupport/
+cp -pr ../../Runtime/codelite-icons-dark.zip ./codelite.app/Contents/SharedSupport/
+cp -pr ../../Runtime/codelite-icons-fresh-farm.zip ./codelite.app/Contents/SharedSupport/
 
 ## copy empty layout file
-cp config/codelite.layout.default ./codelite.app/Contents/SharedSupport/config/codelite.layout
-cp config/accelerators.conf.default ./codelite.app/Contents/SharedSupport/config/
-cp config/build_settings.xml.default.mac ./codelite.app/Contents/SharedSupport/config/build_settings.xml.default
-cp config/plugins.xml.default ./codelite.app/Contents/SharedSupport/config
+cp ../../Runtime/config/codelite.layout.default ./codelite.app/Contents/SharedSupport/config/codelite.layout
+cp ../../Runtime/config/accelerators.conf.default ./codelite.app/Contents/SharedSupport/config/
+cp ../../Runtime/config/build_settings.xml.default.mac ./codelite.app/Contents/SharedSupport/config/build_settings.xml.default
+cp ../../Runtime/config/plugins.xml.default ./codelite.app/Contents/SharedSupport/config
 
 ## copy default Mac configuration file
-cp config/codelite.xml.default.mac ./codelite.app/Contents/SharedSupport/config/codelite.xml.default
+cp ../../Runtime/config/codelite.xml.default.mac ./codelite.app/Contents/SharedSupport/config/codelite.xml.default
 
 ## replace the executable name according to the configuration used in the build
-cat Info.plist.template | sed s/EXE_NAME/codelite/g >> ./codelite.app/Contents/Info.plist
+cat ../../Runtime/Info.plist.template | sed s/EXE_NAME/codelite/g >> ./codelite.app/Contents/Info.plist
 
-cp config/debuggers.xml.default ./codelite.app/Contents/SharedSupport/config
+cp ../../Runtime/config/debuggers.xml.default ./codelite.app/Contents/SharedSupport/config
 
 ## License
-cp ../LICENSE  ./codelite.app/Contents/SharedSupport/
+cp ../../Runtime/../LICENSE  ./codelite.app/Contents/SharedSupport/
 
 ## Copy plugins...
 cp ../lib/CodeFormatter.dylib ./codelite.app/Contents/SharedSupport/plugins/
@@ -186,8 +186,8 @@ cp ../lib/ZoomNavigator.dylib ./codelite.app/Contents/SharedSupport/plugins/
 
 if [ -f ../lib/wxcrafter.dylib ]; then
     cp ../lib/wxcrafter.dylib ./codelite.app/Contents/SharedSupport/plugins/
-    cp -pr ../wxcrafter/wxgui.zip ./codelite.app/Contents/SharedSupport/
-    cp -pr ../wxcrafter/wxcrafter.accelerators ./codelite.app/Contents/SharedSupport/plugins/resources
+    cp -pr ../../Runtime/../wxcrafter/wxgui.zip ./codelite.app/Contents/SharedSupport/
+    cp -pr ../../Runtime/../wxcrafter/wxcrafter.accelerators ./codelite.app/Contents/SharedSupport/plugins/resources
 fi
 
 cp ../lib/libplugin.dylib ./codelite.app/Contents/MacOS/
@@ -200,8 +200,8 @@ cp ../bin/codelite_indexer  ./codelite.app/Contents/SharedSupport/
 cp ../bin/codelite-clang  ./codelite.app/Contents/SharedSupport/
 cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
 cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
-cp ./OpenTerm   ./codelite.app/Contents/SharedSupport/
-cp plugins/resources/*.*  ./codelite.app/Contents/SharedSupport/plugins/resources/
+cp ../../Runtime/./OpenTerm   ./codelite.app/Contents/SharedSupport/
+cp ../../Runtime/plugins/resources/*.*  ./codelite.app/Contents/SharedSupport/plugins/resources/
 
 
 ## Copy the locale files

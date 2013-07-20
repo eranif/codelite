@@ -296,6 +296,11 @@ else()
 message( "--WARNING: clang support is disabled" )
 endif(USE_CLANG)
 
+if ( APPLE )
+    execute_process(COMMAND mkdir -p pack)
+    execute_process(COMMAND ../Runtime/make_mac_bundle.sh pack)
+endif( APPLE )
+
 ###########################################
 ## RPATH settings
 ###########################################

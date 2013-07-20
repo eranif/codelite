@@ -145,8 +145,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="GUI">
     <VirtualDirectory Name="Controls">
-      <File Name="virtualdirtreectrl.cpp"/>
-      <File Name="virtualdirtreectrl.h"/>
       <File Name="filepicker.cpp"/>
       <File Name="filepicker.h"/>
       <File Name="dirpicker.cpp"/>

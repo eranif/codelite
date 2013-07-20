@@ -11,7 +11,6 @@
 
 #include "globals.h"
 
-#include "virtualdirtreectrl.h"
 #include "workspace.h"
 
 #include "gitentry.h"

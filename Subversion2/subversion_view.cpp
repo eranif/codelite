@@ -34,9 +34,7 @@
 #include "workspace.h"
 #include "subversion2.h"
 #include "svn_console.h"
-#include "svn_file_explorer_traverser.h"
 #include "globals.h"
-#include "virtualdirtreectrl.h"
 #include "SvnInfoDialog.h"
 #include <map>
 
@@ -95,8 +93,6 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,             wxCommandEventHandler(SubversionView::OnFileAdded  ),               NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED,                wxCommandEventHandler(SubversionView::OnFileRenamed),               NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,       wxCommandEventHandler(SubversionView::OnActiveEditorChanged),       NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CMD_FILE_EXP_ITEM_EXPANDING, wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_EXP_REFRESHED,          wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
 }
 
 SubversionView::~SubversionView()
@@ -108,8 +104,6 @@ SubversionView::~SubversionView()
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,             wxCommandEventHandler(SubversionView::OnFileAdded  ),               NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_RENAMED,                wxCommandEventHandler(SubversionView::OnFileRenamed),               NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,       wxCommandEventHandler(SubversionView::OnActiveEditorChanged),       NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_FILE_EXP_ITEM_EXPANDING, wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_EXP_REFRESHED,          wxCommandEventHandler(SubversionView::OnFileExplorerItemExpanding), NULL, this);
 }
 
 void SubversionView::OnChangeRootDir( wxCommandEvent& event )
@@ -1328,17 +1322,4 @@ void SubversionView::DoCreateFileExplorerImages()
         //wxPrintf(wxT("%d\n"), newCount);
     }
 #endif
-}
-void SubversionView::OnFileExplorerItemExpanding(wxCommandEvent& e)
-{
-    e.Skip();
-    wxVirtualDirTreeCtrl *tree = (wxVirtualDirTreeCtrl *) m_plugin->GetManager()->GetTree(TreeFileExplorer);
-    wxTreeItemId *item = (wxTreeItemId*) e.GetClientData();
-
-    if(tree && item && item->IsOk()) {
-        VdtcTreeItemBase* itemData = (VdtcTreeItemBase*)tree->GetItemData(*item);
-        if(itemData && itemData->IsDir()) {
-            this->BuildExplorerTree(itemData->GetFullpath());
-        }
-    }
 }

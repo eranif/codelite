@@ -5,7 +5,6 @@
 #include "event_notifier.h"
 #include "subversion_password_db.h"
 #include "svnxml.h"
-#include "virtualdirtreectrl.h"
 #include <wx/tokenzr.h>
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
@@ -401,12 +400,8 @@ void Subversion2::OnAdd(wxCommandEvent& event)
 
 void Subversion2::OnCommit(wxCommandEvent& event)
 {
-    wxString rootPath = m_subversionView->GetRootDir();
-
-    if(rootPath == _("<No repository path is selected>"))
-        rootPath = DoGetFileExplorerItemPath();
-
-    DoCommit(DoGetFileExplorerFilesToCommitRelativeTo(rootPath), rootPath, event);
+    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
+    DoCommit(item.m_paths, "", event);
 }
 
 void Subversion2::OnDelete(wxCommandEvent& event)
@@ -1056,15 +1051,15 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
     }
 
     SvnInfo svnInfo;
-    DoGetSvnInfoSync(svnInfo, workingDirectory);
+    if ( !workingDirectory.IsEmpty() ) {
+        DoGetSvnInfoSync(svnInfo, workingDirectory);
+    }
 
     bool nonInteractive = GetNonInteractiveMode(event);
     command << GetSvnExeName(nonInteractive) << loginString << wxT(" commit ");
 
     SvnCommitDialog dlg(EventNotifier::Get()->TopFrame(), files, svnInfo.m_sourceUrl, this, workingDirectory);
     if(dlg.ShowModal() == wxID_OK) {
-
-
         wxArrayString actualFiles = dlg.GetPaths();
         if (actualFiles.IsEmpty())
             return;
@@ -1083,28 +1078,17 @@ void Subversion2::DoCommit(const wxArrayString& files, const wxString& workingDi
 wxArrayString Subversion2::DoGetFileExplorerFilesToCommitRelativeTo(const wxString& wd)
 {
     wxArrayString files;
-    wxVirtualDirTreeCtrl* fe = dynamic_cast<wxVirtualDirTreeCtrl*>( m_mgr->GetTree(TreeFileExplorer) );
-    if( !fe )
-        return files;
-
-    wxArrayTreeItemIds items;
-    fe->GetSelections(items);
-
-    for(size_t i=0; i<items.GetCount(); i++) {
-
-        VdtcTreeItemBase * itemData = dynamic_cast<VdtcTreeItemBase*>(fe->GetItemData(items.Item(i)));
-        if( !itemData )
-            continue;
-
-        if(itemData->IsDir()) {
-
+    TreeItemInfo itemInfo = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
+    files.swap( itemInfo.m_paths );
+    
+    for(size_t i=0; i<files.GetCount(); i++) {
+        if ( wxDir::Exists(files.Item(i)))  {
             // Get the list of modified files from the directory
-            wxFileName dir(itemData->GetFullpath(), wxT(""));
-            wxArrayString modFiles = DoGetSvnStatusQuiet(dir.GetPath());
+            wxArrayString modFiles = DoGetSvnStatusQuiet(files.Item(i));
 
             for(size_t j=0; j<modFiles.GetCount(); j++) {
                 wxFileName fn(modFiles.Item(j));
-                fn.MakeAbsolute(dir.GetPath());
+                fn.MakeAbsolute(files.Item(i));
                 fn.MakeRelativeTo(wd);
 
                 if(files.Index(fn.GetFullPath()) == wxNOT_FOUND) {
@@ -1113,7 +1097,7 @@ wxArrayString Subversion2::DoGetFileExplorerFilesToCommitRelativeTo(const wxStri
             }
 
         } else {
-            wxFileName fn(itemData->GetFullpath());
+            wxFileName fn(files.Item(i));
             fn.MakeRelativeTo(wd);
 
             if(files.Index(fn.GetFullPath()) == wxNOT_FOUND) {

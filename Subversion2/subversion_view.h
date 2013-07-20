@@ -148,8 +148,6 @@ protected:
 
     void OnStopUI                   (wxUpdateUIEvent &event);
     void OnClearOuptutUI            (wxUpdateUIEvent &event);
-    void OnFileExplorerItemExpanding(wxCommandEvent &e);
-
 
 public:
     /** Constructor */

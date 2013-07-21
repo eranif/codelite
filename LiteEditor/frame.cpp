@@ -5294,9 +5294,9 @@ void clMainFrame::OnShowDebuggerWindow(wxCommandEvent& e)
 void clMainFrame::OnShowDebuggerWindowUI(wxUpdateUIEvent& e)
 {
     // load the debugger configuration
-    clConfig conf("debugger-view.conf");
+    //clConfig conf("debugger-view.conf");
     DebuggerPaneConfig item;
-    conf.ReadItem( &item );
+    //conf.ReadItem( &item );
     
     DebuggerPaneConfig::eDebuggerWindows winid = DebuggerPaneConfig::None;
     

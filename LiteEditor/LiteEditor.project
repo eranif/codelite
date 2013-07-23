@@ -395,6 +395,7 @@
       <File Name="settersgettersmodel.cpp"/>
       <File Name="settersgettersmodel.h"/>
       <File Name="../formbuilder/setters_getters.wxcp"/>
+      <File Name="../formbuilder/rename_symbool_dlg.wxcp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
@@ -472,8 +473,6 @@
     <File Name="cl_editor.cpp"/>
     <File Name="cl_editor.h"/>
     <File Name="renamesymboldlg.h"/>
-    <File Name="renamesymbolbase.cpp"/>
-    <File Name="renamesymbolbase.h"/>
     <File Name="renamesymboldlg.cpp"/>
     <File Name="stringhighlighterjob.cpp"/>
     <File Name="stringhighlighterjob.h"/>
@@ -765,6 +764,8 @@
       <File Name="wxcAboutDlg.cpp"/>
       <File Name="addfunctionsmodel.cpp"/>
       <File Name="addfunctionsmodel.h"/>
+      <File Name="rename_symbool_dlg.h"/>
+      <File Name="rename_symbool_dlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -780,6 +781,7 @@
       <File Name="DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="project_settings_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_comments_doxygen_liteeditor_bitmaps.cpp"/>
+      <File Name="rename_symbool_dlg_formbuilder_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

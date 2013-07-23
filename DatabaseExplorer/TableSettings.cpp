@@ -78,6 +78,15 @@ void TableSettings::OnRemoveColumnClick(wxCommandEvent& event)
 {
     Column *col = GetColumn( GetSelectedColumnName() );
     if( col ) {
+		// delete associated keys
+		SerializableList keys;
+		GetConstraints( keys, col->GetName() );
+		for(SerializableList::iterator it = keys.begin(); it != keys.end(); ++it ) {
+			Constraint *key = (Constraint*) *it;
+			m_lstKeys.DeleteObject( key );
+			delete key;
+		}
+		// delete the column
         m_lstColumns.DeleteObject( col );
         delete col;
         UpdateView();

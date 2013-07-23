@@ -275,7 +275,7 @@ bool ClassGenerateDialog::GenerateFile(Table* pTab, wxTextFile& htmpFile, wxStri
                 hFile << wxT("\t\tif (pDbLayer->IsOpen()){") << "\n";
 
                 hFile << wxString::Format(wxT("\t\t\tpStatement = pDbLayer->PrepareStatement(wxT(\"SELECT * FROM %s WHERE %s = ?\"));"),classTableName.c_str(), pPKCol->GetName().c_str()) << "\n";
-                hFile << wxString::Format(wxT("\t\t\tpStatement->SetParamInt(1, %s);"),pPKCol->GetName().c_str()) << "\n";
+                hFile << wxString::Format(wxT("\t\t\tpStatement->%s(1, %s);"), GetAddParamFunction(pPKCol->GetType()->GetUniversalType()).c_str(), pPKCol->GetName().c_str()) << "\n";
                 hFile << wxT("\t\t\tresSet = pStatement->RunQueryWithResults();") << "\n";
                 hFile << wxT("\t\t\t}") << "\n";
                 hFile << wxT("\t\t}") << "\n";

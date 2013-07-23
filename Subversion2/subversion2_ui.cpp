@@ -130,12 +130,42 @@ SvnShellBase::SvnShellBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer9);
     
-    // Create the default scintilla control
-    #ifdef __WXGTK__
-    	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
-    #else
-    	m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
-    #endif
+    m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_sci->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_sci->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_sci->SetMarginSensitive(4, true);
+    m_sci->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_sci->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_sci->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_sci->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_sci->SetMarginWidth(2, 0);
+    m_sci->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_sci->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_sci->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_sci->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_sci->SetMarginMask(3, 0);
+    m_sci->SetMarginWidth(3,0);
+    // Select the lexer
+    m_sci->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_sci->StyleClearAll();
+    m_sci->SetWrapMode(0);
+    m_sci->SetIndentationGuides(0);
+    m_sci->SetKeyWords(0, wxT(""));
+    m_sci->SetKeyWords(1, wxT(""));
+    m_sci->SetKeyWords(2, wxT(""));
+    m_sci->SetKeyWords(3, wxT(""));
+    m_sci->SetKeyWords(4, wxT(""));
+    
     bSizer9->Add(m_sci, 1, wxALL|wxEXPAND, 2);
     
     SetSizeHints(500,300);
@@ -720,6 +750,7 @@ DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& 
     fgSizer9->Add(m_staticText25, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlFromRev = new wxTextCtrl(this, wxID_ANY, wxT("BASE"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlFromRev->SetFocus();
     
     fgSizer9->Add(m_textCtrlFromRev, 0, wxALL|wxEXPAND, 5);
     

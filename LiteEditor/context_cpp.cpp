@@ -2240,22 +2240,12 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
         return;
 
     // display the refactor dialog
-    RenameSymbol *dlg = new RenameSymbol(&rCtrl, RefactoringEngine::Instance()->GetCandidates(), RefactoringEngine::Instance()->GetPossibleCandidates(), word);
-    while (dlg->ShowModal() == wxID_OK) {
-        std::list<CppToken> matches;
-
-        dlg->GetMatches( matches );
-        if (matches.empty() == false) {
-            if (dlg->GetWord() == word) {
-                int answer = wxMessageBox(_("The replacement symbol is the same as the original. Try again?"), _("CodeLite"), wxICON_QUESTION | wxYES_NO, dlg);
-                if (answer == wxYES) {
-                    continue;
-                }
-                return;
-            }
-
-            ReplaceInFiles(dlg->GetWord(), matches);
-            return;
+    RenameSymbol dlg(&rCtrl, RefactoringEngine::Instance()->GetCandidates(), RefactoringEngine::Instance()->GetPossibleCandidates(), word);
+    if (dlg.ShowModal() == wxID_OK) {
+        CppToken::List_t matches;
+        dlg.GetMatches( matches );
+        if (!matches.empty() && dlg.GetWord() != word) {
+            ReplaceInFiles(dlg.GetWord(), matches);
         }
     }
 }

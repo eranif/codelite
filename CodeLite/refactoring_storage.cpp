@@ -4,6 +4,7 @@
 #include <wx/log.h>
 #include "cppwordscanner.h"
 #include "refactorengine.h"
+#include "ctags_manager.h"
 
 class CppTokenCacheMakerThread : public wxThread
 {
@@ -38,6 +39,10 @@ public:
         storage.Begin();
         wxFileList_t::const_iterator iter = m_files.begin();
         for(; iter != m_files.end(); ++iter ) {
+            if ( !TagsManagerST::Get()->IsValidCtagsFile( (*iter) ) ) {
+                continue;
+            }
+            
             ++count;
             if ( count % 100 == 0 ) {
                 storage.Commit();

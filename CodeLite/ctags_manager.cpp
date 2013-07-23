@@ -956,10 +956,16 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
                                bool imp,
                                bool workspaceOnly)
 {
+    // Don't attempt to parse non valid ctags file
+    if ( !IsValidCtagsFile(fileName) ) {
+        return;
+    }
+    
     wxString path;
     wxString tmp;
     std::vector<TagEntryPtr> tmpCandidates, candidates;
-
+    
+    
     //remove the word from the expression
     wxString expression(expr);
 

@@ -267,7 +267,7 @@ wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
     wxFileList_t res;
     wxFileList_t::const_iterator iter = files.begin();
     for(; iter != files.end(); ++iter ) {
-        if ( !IsFileUpToDate(iter->GetFullPath()) ) {
+        if ( TagsManagerST::Get()->IsValidCtagsFile((*iter)) && !IsFileUpToDate(iter->GetFullPath()) ) {
             res.push_back( *iter );
         }
     }

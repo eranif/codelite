@@ -361,7 +361,6 @@ void SQLCommandPanel::OnGridCellRightClick(wxGridEvent& event)
 
 void SQLCommandPanel::OnCopyCellValue(wxCommandEvent& e)
 {
-    e.Skip();
     if(m_cellValue.IsEmpty() == false) {
         CopyToClipboard(m_cellValue);
     }

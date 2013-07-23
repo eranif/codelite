@@ -2558,7 +2558,7 @@
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
-									"m_value":	"10,normal, normal, swiss, 0, Sans"
+									"m_value":	""
 								}, {
 									"type":	"bool",
 									"m_label":	"Hidden",

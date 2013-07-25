@@ -10,58 +10,58 @@
 #include "globals.h"
 
 WorkspaceSettingsDlg::WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *localWorkspace)
-	: WorkspaceSettingsBase( parent )
-	, m_localWorkspace(localWorkspace)
+    : WorkspaceSettingsBase( parent )
+    , m_localWorkspace(localWorkspace)
 {
-	m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
-	m_notebook1->AddPage(m_ccPage, wxT("Code Completion"), false);
+    m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
+    m_notebook1->AddPage(m_ccPage, wxT("Code Completion"), false);
 
-	EvnVarList vars;
-	EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-	std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
-	wxString activePage = vars.GetActiveSet();
-	m_choiceEnvSets->Clear();
+    EvnVarList vars;
+    EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
+    std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
+    wxString activePage = vars.GetActiveSet();
+    m_choiceEnvSets->Clear();
 
-	std::map<wxString, wxString>::iterator iter = envSets.begin();
-	int useActiveSetIndex = m_choiceEnvSets->Append(wxGetTranslation(USE_GLOBAL_SETTINGS));
+    std::map<wxString, wxString>::iterator iter = envSets.begin();
+    int useActiveSetIndex = m_choiceEnvSets->Append(wxGetTranslation(USE_GLOBAL_SETTINGS));
 
-	for (; iter != envSets.end(); iter++) {
-		m_choiceEnvSets->Append(iter->first);
-	}
+    for (; iter != envSets.end(); iter++) {
+        m_choiceEnvSets->Append(iter->first);
+    }
 
-	// select the current workspace active set name
-	wxString activeEnvSet;
-	wxString tmpSet = localWorkspace->GetActiveEnvironmentSet();
+    // select the current workspace active set name
+    wxString activeEnvSet;
+    wxString tmpSet = localWorkspace->GetActiveEnvironmentSet();
 
-	if(tmpSet == _("<Use Active Set>")) {
-		tmpSet = wxGetTranslation(USE_GLOBAL_SETTINGS);
-	}
+    if(tmpSet == _("<Use Active Set>")) {
+        tmpSet = wxGetTranslation(USE_GLOBAL_SETTINGS);
+    }
 
-	int where = m_choiceEnvSets->FindString(tmpSet);
-	if (where == wxNOT_FOUND) {
-		activeEnvSet = activePage;
-		m_choiceEnvSets->SetSelection(useActiveSetIndex);
+    int where = m_choiceEnvSets->FindString(tmpSet);
+    if (where == wxNOT_FOUND) {
+        activeEnvSet = activePage;
+        m_choiceEnvSets->SetSelection(useActiveSetIndex);
 
-	} else {
-		activeEnvSet = tmpSet;
-		m_choiceEnvSets->SetSelection(where);
-	}
+    } else {
+        activeEnvSet = tmpSet;
+        m_choiceEnvSets->SetSelection(where);
+    }
 
-	if(activeEnvSet.IsEmpty() == false) {
-		vars.SetActiveSet(activeEnvSet);
-		EnvironmentConfig::Instance()->SetSettings(vars);
-	}
-	
-	wxString envvars = WorkspaceST::Get()->GetEnvironmentVariabels();
-	envvars.Trim().Trim(false);
-	
-	m_textCtrlWspEnvVars->SetValue(envvars);
-	WindowAttrManager::Load(this, wxT("WorkspaceSettingsDlg"), NULL);
+    if(activeEnvSet.IsEmpty() == false) {
+        vars.SetActiveSet(activeEnvSet);
+        EnvironmentConfig::Instance()->SetSettings(vars);
+    }
+
+    wxString envvars = WorkspaceST::Get()->GetEnvironmentVariabels();
+    envvars.Trim().Trim(false);
+
+    m_textCtrlWspEnvVars->SetValue(envvars);
+    WindowAttrManager::Load(this, wxT("WorkspaceSettingsDlg"), NULL);
 }
 
 WorkspaceSettingsDlg::~WorkspaceSettingsDlg()
 {
-	WindowAttrManager::Save(this, wxT("WorkspaceSettingsDlg"), NULL);
+    WindowAttrManager::Save(this, wxT("WorkspaceSettingsDlg"), NULL);
 }
 
 //void WorkspaceSettingsDlg::OnAddIncludePath( wxCommandEvent& event )
@@ -96,18 +96,18 @@ WorkspaceSettingsDlg::~WorkspaceSettingsDlg()
 //
 wxArrayString WorkspaceSettingsDlg::GetExcludePaths() const
 {
-	return wxArrayString();
+    return wxArrayString();
 }
 
 wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const
 {
-	return m_ccPage->GetIncludePaths();
+    return m_ccPage->GetIncludePaths();
 }
 
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)
 {
-	m_localWorkspace->SetActiveEnvironmentSet(m_choiceEnvSets->GetStringSelection());
-	WorkspaceST::Get()->SetEnvironmentVariabels(m_textCtrlWspEnvVars->GetValue());
-	m_ccPage->Save();
-	event.Skip();
+    m_localWorkspace->SetActiveEnvironmentSet(m_choiceEnvSets->GetStringSelection());
+    WorkspaceST::Get()->SetEnvironmentVariabels(m_textCtrlWspEnvVars->GetValue());
+    m_ccPage->Save();
+    event.Skip();
 }

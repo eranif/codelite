@@ -407,6 +407,32 @@ void LocalWorkspace::SetParserPaths(const wxArrayString& inclduePaths, const wxA
     SaveXmlFile();
 }
 
+size_t LocalWorkspace::GetParserFlags()
+{
+    if(!SanityCheck())
+        return 0;
+
+    wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserFlags"));
+    if( node ) {
+        return XmlUtils::ReadLong(node, "flags", 0);
+    }
+    return 0;
+}
+
+void LocalWorkspace::SetParserFlags(size_t flags)
+{
+    if(!SanityCheck())
+        return;
+    
+    wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("WorkspaceParserFlags"));
+    if ( !node ) {
+        node = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("WorkspaceParserFlags"));
+    }
+    
+    XmlUtils::UpdateProperty(node, "flags", wxString() << flags);
+    SaveXmlFile();
+}
+
 wxString LocalWorkspace::GetActiveEnvironmentSet()
 {
     if(!SanityCheck())

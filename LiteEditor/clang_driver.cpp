@@ -298,7 +298,14 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
         cppCompileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
         cCompileArgs.Add(wxString::Format(wxT("-D%s"), workspaceMacros.Item(i).Trim().Trim(false).c_str()));
     }
-
+    
+    // C++ 11
+    size_t workspaceFlags = LocalWorkspaceST::Get()->GetParserFlags();
+    if ( workspaceFlags & LocalWorkspace::EnableCpp11 ) {
+        cppCompileArgs.Add(wxT("-std=c++11"));
+        cCompileArgs.Add(wxT("-std=c++11"));
+    }
+    
     ///////////////////////////////////////////////////////////////////////
     // Project setting additional flags
     ///////////////////////////////////////////////////////////////////////

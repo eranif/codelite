@@ -28,6 +28,9 @@ public:
     wxArrayString GetIncludePaths() const;
     wxString      GetMacros() const;
     wxString      GetIncludePathsAsString() const;
+    bool          IsCpp11Enabled() const {
+        return m_checkBoxCpp11->IsChecked();
+    }
 };
 
 #endif // CODECOMPLETIONPAGE_H

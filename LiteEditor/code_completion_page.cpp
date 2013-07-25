@@ -20,7 +20,8 @@ CodeCompletionPage::CodeCompletionPage(wxWindow *parent, int type)
 
         m_textCtrlSearchPaths->SetValue( wxImplode(includePaths, wxT("\n")) );
         m_textCtrlMacros->SetValue(macros );
-
+        
+        m_checkBoxCpp11->SetValue( LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp11 );
     }
 }
 
@@ -46,8 +47,12 @@ wxString CodeCompletionPage::GetIncludePathsAsString() const
 void CodeCompletionPage::Save()
 {
     if(m_type == TypeWorkspace) {
+        size_t flags = 0;
         LocalWorkspaceST::Get()->SetParserPaths(GetIncludePaths(), wxArrayString());
         LocalWorkspaceST::Get()->SetParserMacros(GetMacros());
+
+        if ( m_checkBoxCpp11->IsChecked() ) flags |= LocalWorkspace::EnableCpp11;
+        LocalWorkspaceST::Get()->SetParserFlags( flags );
         LocalWorkspaceST::Get()->Flush();
 
 #if HAS_LIBCLANG
@@ -63,3 +68,4 @@ void CodeCompletionPage::OnCCContentModified(wxCommandEvent& event)
 {
     m_ccChanged = true;
 }
+

@@ -268,6 +268,11 @@ public:
 
 class WXDLLIMPEXP_SDK LocalWorkspace
 {
+public:
+    enum CC_FLAGS {
+        EnableCpp11 = 0x00000001,
+    };
+    
 private:
     friend class LocalWorkspaceST;
     wxXmlDocument m_doc;
@@ -330,8 +335,9 @@ public:
      */
     void GetParserPaths(wxArrayString &inclduePaths, wxArrayString &excludePaths);
     void SetParserPaths(const wxArrayString &inclduePaths, const wxArrayString &excludePaths);
-
-
+    
+    size_t GetParserFlags();
+    void SetParserFlags(size_t flags);
 
     void GetParserMacros(wxString &macros);
     void SetParserMacros(const wxString &macros);

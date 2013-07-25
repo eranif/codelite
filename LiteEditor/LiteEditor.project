@@ -234,6 +234,7 @@
       <File Name="cc_clang_page.cpp"/>
       <File Name="AddFunctionsImpDlg.cpp"/>
       <File Name="AddFunctionsImpDlg.h"/>
+      <File Name="workspacesettingsbase.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>
@@ -610,7 +611,6 @@
     <File Name="optionsdialogbase2.fbp"/>
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
-    <File Name="workspacesettingsbase.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
     <File Name="quickfindbarbase.fbp"/>
     <File Name="messagepane.fbp"/>
@@ -782,6 +782,7 @@
       <File Name="project_settings_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_comments_doxygen_liteeditor_bitmaps.cpp"/>
       <File Name="rename_symbool_dlg_formbuilder_bitmaps.cpp"/>
+      <File Name="workspacesettingsbase_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

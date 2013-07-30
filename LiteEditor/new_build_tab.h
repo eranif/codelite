@@ -33,9 +33,10 @@ protected:
     int           m_line_number;
     LINE_SEVERITY m_severity;
     int           m_lineInBuildTab;
-    
+    int           m_regexLineMatch;
+
 public:
-    BuildLineInfo() : m_line_number(-1), m_severity(SV_NONE), m_lineInBuildTab(-1) {}
+    BuildLineInfo() : m_line_number(-1), m_severity(SV_NONE), m_lineInBuildTab(-1), m_regexLineMatch(0) {}
     ~BuildLineInfo() {}
 
     /**
@@ -43,6 +44,12 @@ public:
      */
     void NormalizeFilename(const wxArrayString &directories, const wxString &cygwinPath);
 
+    void SetRegexLineMatch(int regexLineMatch) {
+        this->m_regexLineMatch = regexLineMatch;
+    }
+    int GetRegexLineMatch() const {
+        return m_regexLineMatch;
+    }
     void SetFilename(const wxString& filename);
     void SetLineNumber(int line_number) {
         this->m_line_number = line_number;

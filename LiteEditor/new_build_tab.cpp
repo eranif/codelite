@@ -207,6 +207,13 @@ public:
 
 //////////////////////////////////////////////////////////////
 
+struct AnnotationInfo {
+    int line;
+    LINE_SEVERITY severity;
+    wxString text;
+};
+typedef std::map<int, AnnotationInfo> AnnotationInfoByLineMap_t;
+
 NewBuildTab::NewBuildTab(wxWindow* parent)
     : wxPanel(parent)
     , m_warnCount(0)
@@ -426,7 +433,8 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
                 buildLineInfo->SetSeverity(bli.GetSeverity());
                 buildLineInfo->SetLineNumber(bli.GetLineNumber());
                 buildLineInfo->NormalizeFilename(m_directories, m_cygwinRoot);
-
+                buildLineInfo->SetRegexLineMatch(bli.GetRegexLineMatch());
+                
                 // keep this info in the errors+warnings list only
                 m_errorsAndWarningsList.push_back(buildLineInfo);
 
@@ -444,7 +452,8 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
                     buildLineInfo->SetSeverity(bli.GetSeverity());
                     buildLineInfo->SetLineNumber(bli.GetLineNumber());
                     buildLineInfo->NormalizeFilename(m_directories, m_cygwinRoot);
-
+                    buildLineInfo->SetRegexLineMatch(bli.GetRegexLineMatch());
+                    
                     // keep this info in both lists (errors+warnings AND errors)
                     m_errorsAndWarningsList.push_back(buildLineInfo);
                     m_errorsList.push_back(buildLineInfo);
@@ -601,17 +610,57 @@ void NewBuildTab::MarkEditor(LEditor* editor)
     
     editor->InitializeAnnotations();
     
+    // Merge all the errors from the same line into a single error
+    AnnotationInfoByLineMap_t annotations;
+    
     for(; iter.first != iter.second; ++iter.first) {
         BuildLineInfo *bli = iter.first->second;
         wxString text = m_listctrl->GetTextValue(bli->GetLineInBuildTab(), 0).Trim().Trim(false);
+        
+        // strip any build markers
         StripBuildMarkders(text);
-        if( bli && bli->GetSeverity() == SV_ERROR ) {
-            editor->SetErrorMarker( bli->GetLineNumber(), text );
-
-        } else if(bli && bli->GetSeverity() == SV_WARNING ) {
-            editor->SetWarningMarker( bli->GetLineNumber(), text );
+        
+        // remove the line part from the text
+        text = text.Mid(bli->GetRegexLineMatch());
+        
+        // if the line starts with ':' remove it as well
+        text.StartsWith(":", &text);
+        text.Trim().Trim(false);
+        
+        if ( !text.IsEmpty() ) {
+            if( bli && (bli->GetSeverity() == SV_ERROR || bli->GetSeverity() == SV_WARNING) ) {
+                if( annotations.count(bli->GetLineNumber()) ) {
+                    // we already have an error on this line, concatenate the message
+                    AnnotationInfo &info = annotations[bli->GetLineNumber()];
+                    info.text << "\n" << text;
+                    
+                    if ( bli->GetSeverity() == SV_ERROR ) {
+                        // override the severity to ERROR
+                        info.severity = SV_ERROR; 
+                    }
+                    
+                } else {
+                    // insert new one
+                    AnnotationInfo info;
+                    info.line = bli->GetLineNumber();
+                    info.severity = bli->GetSeverity();
+                    info.text = text;
+                    annotations.insert( std::make_pair(bli->GetLineNumber(), info) );
+                }
+            }
+            
         }
     }
+    
+    AnnotationInfoByLineMap_t::iterator annIter = annotations.begin();
+    for(; annIter != annotations.end(); ++annIter) {
+        if ( annIter->second.severity == SV_ERROR ) {
+            editor->SetErrorMarker(annIter->first, annIter->second.text);
+        } else {
+            editor->SetWarningMarker(annIter->first, annIter->second.text);
+        }
+    }
+    // now place the errors
     editor->Refresh();
 }
 
@@ -1045,7 +1094,10 @@ bool CmpPattern::Matches(const wxString& line, BuildLineInfo& lineInfo)
     if ( m_regex->GetMatchCount() > (size_t)fidx ) {
         lineInfo.SetFilename( m_regex->GetMatch(line, fidx) );
     }
-
+    
+    // keep the match length
+    lineInfo.SetRegexLineMatch( m_regex->GetMatch(line, 0).length() );
+    
     if ( m_regex->GetMatchCount() > (size_t)lidx ) {
         long lineNumber;
         wxString strLine = m_regex->GetMatch(line, lidx);

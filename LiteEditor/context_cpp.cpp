@@ -73,6 +73,7 @@
 #include "new_quick_watch_dlg.h"
 #include "code_completion_api.h"
 #include "AddFunctionsImpDlg.h"
+#include "event_notifier.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -174,6 +175,8 @@ ContextCpp::ContextCpp(LEditor *container)
     , m_rclickMenu(NULL)
 {
     Initialize();
+    
+    EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
 }
 
 
@@ -181,10 +184,12 @@ ContextCpp::ContextCpp()
     : ContextBase(wxT("C++"))
     , m_rclickMenu(NULL)
 {
+    EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
 }
 
 ContextCpp::~ContextCpp()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
     wxDELETE(m_rclickMenu);
 }
 
@@ -3104,4 +3109,18 @@ bool ContextCpp::IsAtLineComment() const
     int curpos = GetCtrl().GetCurrentPos();
     int cur_style = GetCtrl().GetStyleAt(curpos);
     return cur_style == wxSTC_C_COMMENTLINE || cur_style == wxSTC_C_COMMENTLINEDOC;
+}
+
+void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
+{
+    LEditor *editor = dynamic_cast<LEditor*>( e.GetEditor() );
+    if ( !editor || editor != &GetCtrl() ) {
+        e.Skip();
+        return;
+    }
+
+    wxMenu menu(_("Find Symbol"));
+    menu.Append(XRCID("find_decl"), _("Go to Declaration"));
+    menu.Append(XRCID("find_impl"), _("Go to Implementation"));
+    editor->PopupMenu( &menu );
 }

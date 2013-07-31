@@ -2732,17 +2732,16 @@ void LEditor::OnRightDown(wxMouseEvent& event)
 {
     size_t mod = GetCodeNavModifier();
     if ( event.GetModifiers() == mod && mod != wxMOD_NONE) {
-
         ClearSelections();
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
         if (pos != wxNOT_FOUND) {
             DoSetCaretAt(pos);
         }
-
-        wxMenu menu(_("Find Symbol"));
-        menu.Append(XRCID("find_decl"), _("Go to Declaration"));
-        menu.Append(XRCID("find_impl"), _("Go to Implementation"));
-        PopupMenu(&menu);
+        
+        clCodeCompletionEvent event(wxEVT_CC_SHOW_QUICK_NAV_MENU);
+        event.SetEditor(this);
+        event.SetPosition(pos);
+        EventNotifier::Get()->AddPendingEvent( event );
 
     } else {
         event.Skip();

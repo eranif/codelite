@@ -318,7 +318,7 @@ enum MenuType {
 // Send a clCodeCompletionEvent
 // Codelite is about to show the completion box for language keywords
 #define wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD 3505
-    
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events - END
@@ -512,6 +512,10 @@ enum MenuType {
     
 // user has deleted all the breakpoints using the "Breakpoints" table
 #define wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED 3540
+
+// User right click while holding the code-navigation modifier key (default to Shift)
+// send a clCodeCompletionEvent
+#define wxEVT_CC_SHOW_QUICK_NAV_MENU 3541
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

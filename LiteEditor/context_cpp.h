@@ -30,6 +30,7 @@
 #include "ctags_manager.h"
 #include <map>
 #include "entry.h"
+#include "cl_command_event.h"
 
 class RefactorSource;
 
@@ -56,7 +57,9 @@ class ContextCpp : public ContextBase
     static wxBitmap m_cppFileBmp;
     static wxBitmap m_hFileBmp;
     static wxBitmap m_otherFileBmp;
-
+protected:
+    void OnShowCodeNavMenu(clCodeCompletionEvent &e);
+    
 private:
     bool TryOpenFile(const wxFileName &fileName, bool lookInEntireWorkspace = true);
     bool IsJavaScript() const;

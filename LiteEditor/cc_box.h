@@ -66,6 +66,7 @@ class CCBox : public CCBoxBase
     CCItemInfo               m_currentItem;
     LEditor*                 m_editor;
     wxTimer*                 m_refreshListTimer;
+    wxTimer*                 m_tipTimer;
     bool                     m_isKeywordsList;
     CCBoxTipWindow*          m_tipWindow;
 

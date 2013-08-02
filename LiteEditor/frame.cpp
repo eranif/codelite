@@ -3373,7 +3373,10 @@ void clMainFrame::CompleteInitialization()
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)
 {
+#ifndef __WXMAC__
     CodeCompletionBox::Get().CancelTip();
+#endif
+
     if (m_theFrame && e.GetActive()) {
         
         m_theFrame->ReloadExternallyModifiedProjectFiles();

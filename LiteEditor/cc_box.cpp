@@ -58,7 +58,11 @@ const wxEventType wxCMD_EVENT_SET_EDITOR_ACTIVE = XRCID("wxCMD_EVENT_SET_EDITOR_
 const wxEventType wxCMD_EVENT_DISMISS_CC_BOX = ::wxNewEventType();
 
 CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
+#if CCBOX_USE_POPUP
     : CCBoxBase(wxTheApp->GetTopWindow(), wxID_ANY, wxPoint(-1000,-1000), wxSize(1, 1))
+#else
+    : CCBoxBase(parent, wxID_ANY, wxPoint(10000,10000), wxSize(1, 1))
+#endif
     , m_height(BOX_HEIGHT)
     , m_autoHide(autoHide)
     , m_insertSingleChoice(autoInsertSingleChoice)
@@ -167,7 +171,10 @@ void CCBox::Show(const TagEntryPtrVector_t &tags, const wxString &word, bool isK
 
 void CCBox::Display(LEditor *editor)
 {
-    wxPopupWindow::Show(false);
+#if !CCBOX_USE_POPUP
+    Move( 10000, 10000 );
+#endif
+    CCBoxParent::Show(false);
 
     m_editor = editor;
     int     point      = editor->GetCurrentPos();
@@ -176,7 +183,9 @@ void CCBox::Display(LEditor *editor)
 
     // add the line height
     pt.y += lineHeight;
-
+    wxPoint ccPoint = pt;
+    
+#if CCBOX_USE_POPUP
     wxSize  size = ::wxGetDisplaySize();
 
     // FIX BUG#3032473: "CC box position and dual screen"
@@ -193,7 +202,6 @@ void CCBox::Display(LEditor *editor)
     }
 
     // the completion box is child of the main frame
-    wxPoint ccPoint = pt;
     // Make sure that CC box remains is fully visible
     ccPoint = editor->ClientToScreen(pt);
     int diff = ccPoint.x + BOX_WIDTH - size.x;
@@ -228,9 +236,9 @@ void CCBox::Display(LEditor *editor)
             pt.x = 0;
         }
     }
-
+#endif // CCBOX_USE_POPUP
     Move( ccPoint );
-    wxPopupWindow::Show(true);
+    CCBoxParent::Show(true);
 }
 
 bool CCBox::SelectWord(const wxString& word)
@@ -405,8 +413,9 @@ void CCBox::Show(const wxString& word)
     //m_mainPanel->GetSizer()->Fit(m_mainPanel);
     m_mainPanel->GetSizer()->Fit(this);
 
-    if ( !CodeCompletionManager::Get().GetWordCompletionRefreshNeeded() )
+    if ( !CodeCompletionManager::Get().GetWordCompletionRefreshNeeded() ) {
         Display(m_editor);
+    }
     SelectItem(m_selectedItem);
 }
 

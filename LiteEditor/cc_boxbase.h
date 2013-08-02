@@ -29,10 +29,24 @@
 #define BOX_HEIGHT 250
 #define BOX_WIDTH  600
 
+#if defined(__WXMSW__)
+#   define CCBOX_USE_POPUP 1
+#elif defined(__WXMAC__)
+#   define CCBOX_USE_POPUP 0
+#elif defined(__WXGTK__)
+#   define CCBOX_USE_POPUP 1
+#endif
+
+#if CCBOX_USE_POPUP
+#   define CCBoxParent wxPopupWindow
+#else
+#   define CCBoxParent wxPanel
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 /// Class CCBoxBase
 ///////////////////////////////////////////////////////////////////////////////
-class CCBoxBase : public wxPopupWindow
+class CCBoxBase : public CCBoxParent
 {
 protected:
     CCVirtualListCtrl* m_listCtrl;

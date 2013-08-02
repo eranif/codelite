@@ -3390,13 +3390,17 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
         EventNotifier::Get()->AddPendingEvent( evtGotFocus );
         
     } else if(m_theFrame) {
-
+        
+#ifndef __WXMAC__
+        /// this code causes crash on Mac, since it destorys an active CCBox
         LEditor *editor = GetMainBook()->GetActiveEditor();
         if(editor) {
             // we are loosing the focus
             editor->CallTipCancel();
             editor->HideCompletionBox();
         }
+#endif
+
     }
     
     e.Skip();

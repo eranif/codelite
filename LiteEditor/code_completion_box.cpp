@@ -44,6 +44,7 @@ void CodeCompletionBox::Display(LEditor* editor, const TagEntryPtrVector_t& tags
     // Show takes into account the return value of 'GetWordCompletionRefreshNeeded'
     // this is why we reset the flag *after* the call to Show(..)
     CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(false);
+    this->CallAfter(&CodeCompletionBox::FocusEditor, editor);
 }
 
 void CodeCompletionBox::Hide()
@@ -176,3 +177,7 @@ void CodeCompletionBox::DoCreateBox(LEditor* editor)
     }
 }
 
+void CodeCompletionBox::FocusEditor(LEditor* editor)
+{
+    editor->SetActive();
+}

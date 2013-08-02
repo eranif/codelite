@@ -20,7 +20,8 @@ private:
 
 protected:
     void DoCreateBox(LEditor *editor);
-
+    void FocusEditor(LEditor *editor);
+    
 public:
     virtual ~CodeCompletionBox();
     static CodeCompletionBox& Get();

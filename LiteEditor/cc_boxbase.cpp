@@ -20,7 +20,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 CCBoxBase::CCBoxBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
-    : wxPopupWindow( parent )
+    : CCBoxParent( parent )
 {
     SetSizeHints(BOX_WIDTH, BOX_HEIGHT);
     wxBoxSizer* mainSizer = new wxBoxSizer( wxVERTICAL );

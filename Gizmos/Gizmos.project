@@ -30,6 +30,7 @@
     <File Name="newinheritancebasedlg.cpp"/>
     <File Name="newinheritancebasedlg.h"/>
     <File Name="newinheritancedlg.cpp"/>
+    <File Name="newclasswizard.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="NewWxProjectDlg">
     <File Name="newwxprojectdlg.h"/>
@@ -188,4 +189,9 @@
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="newclasswizard_gizmos_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

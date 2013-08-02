@@ -293,12 +293,12 @@ message( "-- PLUGINS_DIR is set to => " ${PLUGINS_DIR} )
 message( "-- wx-config   is set to => " ${WX_TOOL} )
 
 else()
-message( "--WARNING: clang support is disabled" )
+message( "-- *** NOTICE ***: clang support is disabled" )
 endif(USE_CLANG)
 
 if ( APPLE )
     execute_process(COMMAND mkdir -p pack)
-    execute_process(COMMAND ../Runtime/make_mac_bundle.sh pack)
+    execute_process(COMMAND cp ../Runtime/make_mac_bundle.sh pack)
 endif( APPLE )
 
 ###########################################

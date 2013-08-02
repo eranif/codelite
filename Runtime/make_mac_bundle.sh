@@ -54,16 +54,18 @@ fix_non_plugins_depends() {
 }
 
 fix_codelite_clang_deps() {
-    orig_path=`otool -L ./codelite.app/Contents/SharedSupport/codelite-clang  | grep libwx_* | awk '{print $1;}'`
+    if test -f ./codelite.app/Contents/SharedSupport/codelite-clang ; then
+        orig_path=`otool -L ./codelite.app/Contents/SharedSupport/codelite-clang  | grep libwx_* | awk '{print $1;}'`
 
-    ## Loop over the files, and update the path of the wx library
-    for path in ${orig_path}
-    do
-        new_path=`echo ${path} | xargs basename`
-        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/codelite-clang
-    done
-    echo install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/SharedSupport/codelite-clang
-    install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/SharedSupport/codelite-clang
+        ## Loop over the files, and update the path of the wx library
+        for path in ${orig_path}
+        do
+            new_path=`echo ${path} | xargs basename`
+            install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/codelite-clang
+        done
+        echo install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/SharedSupport/codelite-clang
+        install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/SharedSupport/codelite-clang
+    fi
 }
 
 fix_codelite_indexer_deps() {
@@ -79,15 +81,16 @@ fix_codelite_indexer_deps() {
 }
 
 fix_wxrc_deps() {
+    if test -f ./codelite.app/Contents/SharedSupport/wxrc ; then
+        orig_path=`otool -L ./codelite.app/Contents/SharedSupport/wxrc  | grep libwx_* | awk '{print $1;}'`
 
-    orig_path=`otool -L ./codelite.app/Contents/SharedSupport/wxrc  | grep libwx_* | awk '{print $1;}'`
-
-    ## Loop over the files, and update the path of the wx library
-    for path in ${orig_path}
-    do
-        new_path=`echo ${path} | xargs basename`
-        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/wxrc
-    done
+        ## Loop over the files, and update the path of the wx library
+        for path in ${orig_path}
+        do
+            new_path=`echo ${path} | xargs basename`
+            install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/wxrc
+        done
+    fi
 }
 
 ## extract the file name from the Makefile
@@ -122,7 +125,9 @@ wx_config=`which wx-config`
 wxrc_tool=`dirname ${wx_config}`
 wxrc_tool=${wxrc_tool}/utils/wxrc/wxrc
 
-cp ${wxrc_tool} ./codelite.app/Contents/SharedSupport/
+if test -f ${wxrc_tool} ; then
+    cp ${wxrc_tool} ./codelite.app/Contents/SharedSupport/
+fi
 cp ../bin/codelite ./codelite.app/Contents/MacOS/codelite
 
 ## Fix clang

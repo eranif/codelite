@@ -114,7 +114,7 @@ void WorkspaceTab::CreateGUIControls()
 #ifdef __WXMAC__
     m_workspaceConfig->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
 #endif
-    sz->Add(m_workspaceConfig, 0, wxEXPAND, 2);
+    sz->Add(m_workspaceConfig, 0, wxEXPAND|wxALL, 2);
 
     // Construct the tree
     m_fileView = new FileViewTree(this, wxID_ANY);

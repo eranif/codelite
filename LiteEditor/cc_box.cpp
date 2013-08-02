@@ -832,6 +832,7 @@ void CCBox::DoShowTagTip()
     
 #if !CCBOX_USE_POPUP
     wxTheApp->GetTopWindow()->Raise();
+    m_editor->SetActive();
 #endif
 }
 

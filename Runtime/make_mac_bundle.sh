@@ -185,7 +185,7 @@ cp ../lib/QMakePlugin.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/cppchecker.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/MacBundler.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/DatabaseExplorer.dylib ./codelite.app/Contents/SharedSupport/plugins/
-cp ../lib/CallGraph.dylib ./codelite.app/Contents/SharedSupport/plugins/
+##cp ../lib/CallGraph.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/git.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/ZoomNavigator.dylib ./codelite.app/Contents/SharedSupport/plugins/
 
@@ -202,7 +202,11 @@ cp ../lib/libdatabaselayersqlite.dylib ./codelite.app/Contents/MacOS/
 cp ../lib/libwxshapeframework.dylib ./codelite.app/Contents/MacOS/
 
 cp ../bin/codelite_indexer  ./codelite.app/Contents/SharedSupport/
-cp ../bin/codelite-clang  ./codelite.app/Contents/SharedSupport/
+
+if test -f ../bin/codelite-clang ; then
+    cp ../bin/codelite-clang  ./codelite.app/Contents/SharedSupport/
+fi
+
 cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
 cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/./OpenTerm   ./codelite.app/Contents/SharedSupport/

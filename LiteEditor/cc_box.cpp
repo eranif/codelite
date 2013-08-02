@@ -73,11 +73,13 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 {
     Hide();
     m_constructing = true;
-    //MSWSetNativeTheme(m_listCtrl);
-
+    
     m_refreshListTimer = new wxTimer(this);
-    Connect(m_refreshListTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(CCBox::OnRefreshList),    NULL, this);
-
+    Connect(m_refreshListTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(CCBox::OnRefreshList), NULL, this);
+    
+    m_tipTimer = new wxTimer(this);
+    Connect(m_tipTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(CCBox::OnDisplayTooltip), NULL, this);
+    
     // load all the CC images
     wxImageList *il = new wxImageList(16, 16, true);
 
@@ -117,16 +119,16 @@ CCBox::CCBox(LEditor* parent, bool autoHide, bool autoInsertSingleChoice)
 
     EventNotifier::Get()->Connect(wxEVT_TIP_BTN_CLICKED_DOWN, wxCommandEventHandler(CCBox::OnTipClickedDown), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_TIP_BTN_CLICKED_UP,   wxCommandEventHandler(CCBox::OnTipClickedUp),   NULL, this);
-    //EventNotifier::Get()->Connect(wxCMD_EVENT_DISMISS_CC_BOX, wxCommandEventHandler(CCBox::OnClose), NULL, this);
 }
 
 CCBox::~CCBox()
 {
     EventNotifier::Get()->Disconnect(wxEVT_TIP_BTN_CLICKED_DOWN, wxCommandEventHandler(CCBox::OnTipClickedDown), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_TIP_BTN_CLICKED_UP,   wxCommandEventHandler(CCBox::OnTipClickedUp),   NULL, this);
-    //EventNotifier::Get()->Disconnect(wxCMD_EVENT_DISMISS_CC_BOX, wxCommandEventHandler(CCBox::OnClose), NULL, this);
 
-    delete m_refreshListTimer;
+    wxDELETE(m_refreshListTimer);
+    wxDELETE(m_tipTimer);
+    
     if ( m_tipWindow ) {
         m_tipWindow->Destroy();
         m_tipWindow = NULL;
@@ -327,11 +329,15 @@ void CCBox::PostSelectItem(long item)
         m_tipWindow->Destroy();
         m_tipWindow = NULL;
     }
-
-    CCItemInfo tag;
-    if(m_listCtrl->GetItemTagEntry(item, tag)) {
-        DoFormatDescriptionPage( tag );
-    }
+    
+    m_tipTimer->Stop();
+    m_tipTimer->Start(200, true);
+    
+    //CCItemInfo tag;
+    //if(m_listCtrl->GetItemTagEntry(item, tag)) {
+    //    DoFormatDescriptionPage( tag );
+    //}
+    m_editor->SetActive();
 }
 
 void CCBox::Show(const wxString& word)
@@ -823,6 +829,10 @@ void CCBox::DoShowTagTip()
 
     m_tipWindow = new CCBoxTipWindow(wxTheApp->GetTopWindow(), prefix, numOfTips);
     m_tipWindow->PositionRelativeTo(this, m_editor);
+    
+#if !CCBOX_USE_POPUP
+    wxTheApp->GetTopWindow()->Raise();
+#endif
 }
 
 void CCBox::DoFormatDescriptionPage(const CCItemInfo& item)

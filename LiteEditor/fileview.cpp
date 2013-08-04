@@ -153,7 +153,7 @@ void FileViewTree::OnBuildInProgress( wxUpdateUIEvent &event )
 
 FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
-    Create( parent, id, pos, size, style |wxBORDER_NONE );
+    Create( parent, id, pos, size, style );
     MSWSetNativeTheme(this);
 
     // Initialise images map

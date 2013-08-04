@@ -118,7 +118,7 @@ void WorkspaceTab::CreateGUIControls()
 
     // Construct the tree
     m_fileView = new FileViewTree(this, wxID_ANY);
-    sz->Add(m_fileView, 1, wxEXPAND|wxTOP, 2);
+    sz->Add(m_fileView, 1, wxEXPAND|wxALL, 2);
 }
 
 void WorkspaceTab::FreezeThaw(bool freeze /*=true*/)

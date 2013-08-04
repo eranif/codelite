@@ -1122,10 +1122,10 @@ wxWindow* MainBook::GetPage(size_t page)
 
 bool MainBook::ClosePage(const wxString& text)
 {
-    bool numPageClosed (0);
+    int numPageClosed (0);
     bool closed = ClosePage(FindPage(text));
     while(closed) {
-        numPageClosed++;
+        ++numPageClosed;
         closed = ClosePage(FindPage(text));
     }
     return numPageClosed > 0;

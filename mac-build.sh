@@ -43,8 +43,7 @@ do
             CMAKE_COMMAND="${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Debug "
             ;;
         "-w" | "--wxc")
-            BUILD_DIR=build-debug
-            CMAKE_COMMAND="${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Debug "
+            CMAKE_COMMAND="${CMAKE_COMMAND} -DWITH_WXC=1 "
             ;;
         "--cmake")
             RUN_CMAKE=1

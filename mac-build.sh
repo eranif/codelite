@@ -76,3 +76,7 @@ if [ ${RUN_CMAKE} -eq 1 ]; then
 fi
 
 ${MAKE_COMMAND}
+
+echo "-- Creating bundle codelite.app ...."
+cd pack && ./make_mac_bundle.sh
+echo "-- Done"

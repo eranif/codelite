@@ -100,7 +100,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     // since the above code above doesn't play well with WXDFB or WXCOCOA,
     // we'll just use a rectangle for the clipping region for now --
     gdc.SetClippingRegion(rr.x, rr.y, clip_width+1, rr.height);
-    path.AddRoundedRectangle(rr.x, rr.y, rr.width, rr.height, 5.0);
+    path.AddRoundedRectangle(rr.x, rr.y, rr.width, rr.height, 3.0);
     
     gdc.SetBrush( bgColour );
     gdc.GetGraphicsContext()->FillPath( path );

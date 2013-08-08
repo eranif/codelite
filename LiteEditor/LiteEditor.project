@@ -605,6 +605,7 @@
     <File Name="../git-revision.bat"/>
     <File Name="../git-revision.sh"/>
     <File Name="../InnoSetup/make_packages.bat"/>
+    <File Name="../mac-build.sh"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="newversionbasedlg.fbp"/>

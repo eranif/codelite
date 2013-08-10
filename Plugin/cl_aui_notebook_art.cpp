@@ -10,6 +10,10 @@
 static const wxDouble X_RADIUS = 6.0;
 static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
+#ifdef __WXMAC__
+#	include <wx/osx/private.h>
+#endif
+
 clAuiGlossyTabArt::clAuiGlossyTabArt()
 {
 }
@@ -67,11 +71,17 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         if ( !page.active ) {
             bgColour = DrawingUtils::LightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 2.0);
         } else {
+            // active page
+#ifdef __WXMAC__
+            bgColour = wxColour( wxMacCreateCGColorFromHITheme(kThemeBrushToolbarBackground));
+            bgColour = bgColour.ChangeLightness(88);
+#else
             bgColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), 0.0);
+#endif
         }
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
-    
+
     int curx = 0;
     
     wxGCDC gdc;

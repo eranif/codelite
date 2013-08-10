@@ -99,8 +99,8 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     
     // since the above code above doesn't play well with WXDFB or WXCOCOA,
     // we'll just use a rectangle for the clipping region for now --
-    gdc.SetClippingRegion(rr.x, rr.y, clip_width+1, rr.height);
-    path.AddRoundedRectangle(rr.x, rr.y, rr.width, rr.height, 3.0);
+    gdc.SetClippingRegion(rr.x, rr.y, clip_width, rr.height);
+    path.AddRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 3.0);
     
     gdc.SetBrush( bgColour );
     gdc.GetGraphicsContext()->FillPath( path );
@@ -164,18 +164,6 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         wxPoint2DDouble ptXTopLeft(x_square, y_square);
         wxRect2DDouble insideRect(ptXTopLeft.m_x, ptXTopLeft.m_y, xx_width, xx_width);
         insideRect.Inset(1.0 , 1.0); // Shrink it by 1 pixle
-        
-        //if ( bDrawCircle ) {
-        //    /// Draw the button using a circle with radius of 5px
-        //    wxGraphicsPath button_path = gdc.GetGraphicsContext()->CreatePath();
-        //    
-        //    /// Draw the circle surrounding the X
-        //    button_path.AddCircle( circleCenter.x, circleCenter.y, X_RADIUS );
-        //    gdc.SetPen( wxPen("#202020", 2) );
-        //    gdc.SetBrush( wxBrush("#202020"));
-        //    gdc.GetGraphicsContext()->FillPath( button_path  );
-        //    gdc.GetGraphicsContext()->StrokePath( button_path  );
-        //}
         
         /// Draw the 'x' itself
         wxGraphicsPath xpath = gdc.GetGraphicsContext()->CreatePath();

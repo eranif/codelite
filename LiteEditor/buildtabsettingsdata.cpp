@@ -34,7 +34,7 @@ BuildTabSettingsData::BuildTabSettingsData()
 		, m_autoHide(false)
 		, m_autoShow(false)
 		, m_errorsFirstLine(false)
-		, m_errorWarningStyle(EWS_Bookmarks)
+		, m_errorWarningStyle(EWS_Bookmarks | EWS_Annotate)
 		, m_buildpaneScrollTo(0)
 {
 	wxColour errColour(wxT("RED"));

@@ -42,6 +42,7 @@ BuildTabSetting::BuildTabSetting( wxWindow* parent )
     m_checkBoxAutoHide->SetValue(options.GetAutoHide());
     m_radioBuildPaneScrollDestination->SetSelection(options.GetBuildPaneScrollDestination());
     m_checkBoxDisplayMarkers->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks);
+    m_checkBoxDisplayAnnotations->SetValue(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate);
 }
 
 void BuildTabSetting::Save()
@@ -59,6 +60,9 @@ void BuildTabSetting::Save()
     int flag (BuildTabSettingsData::EWS_NoMarkers);
     if ( m_checkBoxDisplayMarkers->IsChecked() ) {
         flag |= BuildTabSettingsData::EWS_Bookmarks;
+    }
+    if ( m_checkBoxDisplayAnnotations->IsChecked() ) {
+        flag |= BuildTabSettingsData::EWS_Annotate;
     }
 
     options.SetErrorWarningStyle( flag );

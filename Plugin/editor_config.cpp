@@ -195,6 +195,9 @@ wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
 
 LexerConfPtr EditorConfig::GetLexer(const wxString &lexerName)
 {
+    if ( !m_activeThemeLexers )
+        return NULL;
+        
     std::map<wxString, LexerConfPtr>::const_iterator iter = m_activeThemeLexers->lexers.find(lexerName);
     if(iter == m_activeThemeLexers->lexers.end())
         return NULL;

@@ -187,6 +187,9 @@ void RefactoringStorage::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
     m_workspaceFile = e.GetString();
+    if ( m_workspaceFile.IsEmpty() ) {
+        return;
+    }
     m_cacheStatus = CACHE_NOT_READY;
     Open( m_workspaceFile );
 }

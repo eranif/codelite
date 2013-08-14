@@ -283,8 +283,6 @@
       <File Name="batchbuildbasedlg.cpp"/>
       <File Name="batchbuildbasedlg.h"/>
       <File Name="batchbuilddlg.cpp"/>
-      <File Name="BuildTabSettings.wxcp"/>
-      <File Name="buildsettingstab_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectSettings">
       <File Name="depend_dlg_page.cpp"/>
@@ -574,6 +572,7 @@
       <File Name="new_build_tab.h"/>
       <File Name="BuildTabTopPanel.h"/>
       <File Name="BuildTabTopPanel.cpp"/>
+      <File Name="buildsettingstab_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="editor_options_docking_windows.wxcp"/>
     <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>

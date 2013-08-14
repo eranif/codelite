@@ -294,39 +294,34 @@ void GitPlugin::UnPlug()
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!m_mgr->IsWorkspaceOpen()) {
-        wxMessageBox(_("No active workspace found!\n"
-                       "Setting a repository path relies on an active workspace."),
-                     _("Missing workspace"),
-                     wxICON_ERROR | wxOK, m_topWindow);
-        return;
-    }
-
-    wxString workspaceName = m_mgr->GetWorkspace()->GetName();
-
+    
+    wxString workspaceName = GetWorkspaceName();
+    
     // use the current repository as the starting path
     // if current repository is empty, use the current workspace path
     wxString startPath = m_repositoryDirectory;
     if(startPath.IsEmpty()) {
-        startPath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath();
+        startPath = GetWorkspaceFileName().GetPath();
     }
 
-    const wxString& dir = wxDirSelector(wxT("Select git root directory for this workspace"), startPath);
+    const wxString& dir = ::wxDirSelector(wxT("Select git root directory for this workspace"), startPath);
     if (dir.empty()) {
-        return;		// The user probably pressed Cancel
+        return; // The user probably pressed Cancel
     }
 
     // make sure that this is a valid git path
     if(wxFileName::DirExists(dir + wxFileName::GetPathSeparator() + wxT(".git"))) {
         if (m_repositoryDirectory != dir ) {
             m_repositoryDirectory = dir;
-
-            clConfig conf("git.conf");
-            GitEntry data;
-            conf.ReadItem(&data);
-            data.SetEntry(workspaceName, dir);
-            conf.WriteItem(&data);
-
+            
+            if ( !workspaceName.IsEmpty() ) {
+                clConfig conf("git.conf");
+                GitEntry data;
+                conf.ReadItem(&data);
+                data.SetEntry(workspaceName, dir);
+                conf.WriteItem(&data);
+            }
+            
             if(!dir.IsEmpty()) {
 #if 0
                 m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),true);
@@ -792,6 +787,7 @@ void GitPlugin::OnFilesRemovedFromProject(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
 {
+    m_workspaceFilename = e.GetString();
     DoCleanup();
     InitDefaults();
     RefreshFileListView();
@@ -1047,9 +1043,6 @@ void GitPlugin::ProcessGitActionQueue()
 /*******************************************************************************/
 void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
-    if(!m_mgr->GetWorkspace())
-        return;
-
     wxArrayString tmpArray = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
 
     // Convert path to absolute
@@ -1148,7 +1141,10 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
 /*******************************************************************************/
 void GitPlugin::UpdateFileTree()
 {
-
+    if ( !m_mgr->GetWorkspace()->IsOpen() ) {
+        return;
+    }
+    
     if(wxMessageBox(wxT("Do you want to start importing new / updating changed files?"),
                     wxT("Import files"), wxYES_NO, m_topWindow) == wxNO) {
         return;
@@ -1490,9 +1486,7 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
 /*******************************************************************************/
 void GitPlugin::InitDefaults()
 {
-    wxString workspaceName = m_mgr->GetWorkspace()->GetName();
     DoCreateTreeImages();
-
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
@@ -1509,8 +1503,13 @@ void GitPlugin::InitDefaults()
     if(!data.GetGITKExecutablePath().IsEmpty()) {
         m_pathGITKExecutable = data.GetGITKExecutablePath();
     }
-
-    wxString repoPath = data.GetPath(workspaceName);
+    
+    wxString repoPath;
+    if ( IsWorkspaceOpened() ) {
+        repoPath = data.GetPath( GetWorkspaceName() );
+    } else {
+        repoPath = ::wxGetCwd();
+    }
 
     if(!repoPath.IsEmpty() && wxFileName::DirExists(repoPath + wxFileName::GetPathSeparator() + wxT(".git"))) {
         m_repositoryDirectory = repoPath;
@@ -1691,19 +1690,21 @@ void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
     m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
     m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
 #endif
+
     // store the GIT entry data
-    if(m_mgr->GetWorkspace() && m_mgr->GetWorkspace()->GetName().IsEmpty() == false) {
+    if( IsWorkspaceOpened() ) {
 
         clConfig conf("git.conf");
         GitEntry data;
         conf.ReadItem(&data);
-        data.SetEntry(m_mgr->GetWorkspace()->GetName(), m_repositoryDirectory);
+        data.SetEntry(GetWorkspaceName(), m_repositoryDirectory);
         conf.WriteItem(&data);
     }
 
     // Clearn any saved data from the current workspace
     // git commands etc
     DoCleanup();
+    m_workspaceFilename.Clear();
 }
 
 void GitPlugin::DoCleanup()
@@ -1922,4 +1923,19 @@ void GitPlugin::OnWorkspaceConfigurationChanged(wxCommandEvent& e)
     gitAction gaStatus(gitStatus, "");
     m_gitActionQueue.push(gaStatus);
     ProcessGitActionQueue();
+}
+
+wxString GitPlugin::GetWorkspaceName() const
+{
+    return m_workspaceFilename.GetName();
+}
+
+bool GitPlugin::IsWorkspaceOpened() const
+{
+    return m_workspaceFilename.IsOk();
+}
+
+wxFileName GitPlugin::GetWorkspaceFileName() const
+{
+    return m_workspaceFilename;
 }

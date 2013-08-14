@@ -2974,21 +2974,35 @@ void LEditor::ToggleBreakpoint(int lineno)
 void LEditor::SetWarningMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
-        MarkerAdd(lineno, smt_warning);
+        BuildTabSettingsData options;
+        EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
         
-        // define the warning marker
-        AnnotationSetText(lineno, annotationText);
-        AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks) {
+            MarkerAdd(lineno, smt_warning);
+        }
+
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate) {
+            // define the warning marker
+            AnnotationSetText(lineno, annotationText);
+            AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
+        }
     }
 }
 
 void LEditor::SetErrorMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
-        MarkerAdd(lineno, smt_error);
-        
-        AnnotationSetText(lineno, annotationText);
-        AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
+        BuildTabSettingsData options;
+        EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
+
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks) {
+            MarkerAdd(lineno, smt_error);
+        }
+
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate) {
+            AnnotationSetText(lineno, annotationText);
+            AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
+        }
     }
 }
 

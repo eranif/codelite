@@ -283,6 +283,8 @@
       <File Name="batchbuildbasedlg.cpp"/>
       <File Name="batchbuildbasedlg.h"/>
       <File Name="batchbuilddlg.cpp"/>
+      <File Name="BuildTabSettings.wxcp"/>
+      <File Name="buildsettingstab_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectSettings">
       <File Name="depend_dlg_page.cpp"/>

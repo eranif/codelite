@@ -36,10 +36,10 @@
   <Project Name="CallGraph" Path="CallGraph/CallGraph.project" Active="No"/>
   <Project Name="Outline" Path="Outline/Outline.project" Active="No"/>
   <Project Name="ZoomNavigator" Path="ZoomNavigator/ZoomNavigator.project" Active="No"/>
+  <Project Name="CodeBeautifier" Path="CodeBeautifier/CodeBeautifier.project" Active="No"/>
   <Environment>
     <![CDATA[]]>
   </Environment>
-  <Project Name="CodeBeautifier" Path="CodeBeautifier/CodeBeautifier.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>

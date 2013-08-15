@@ -180,8 +180,21 @@ static unsigned char xml_res_file_4[] = {
 110,24,231,149,149,149,124,233,186,83,18,74,213,111,187,79,63,28,222,253,
 13,157,224,151,211,212,24,144,61,0,0,0,0,73,69,78,68,174,66,96,130};
 
-static size_t xml_res_size_5 = 381;
+static size_t xml_res_size_5 = 217;
 static unsigned char xml_res_file_5[] = {
+137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
+0,31,243,255,97,0,0,0,160,73,68,65,84,120,94,165,147,209,9,3,33,16,68,61,
+43,72,41,41,193,18,44,97,59,72,41,146,10,66,42,184,116,112,233,32,37,92,
+58,176,4,51,31,243,177,24,118,89,112,224,113,56,204,14,162,94,90,213,102,
+248,5,220,64,157,252,23,184,131,183,87,250,0,3,28,64,64,33,66,111,128,102,
+13,55,6,36,217,18,171,164,24,195,195,41,41,218,220,185,197,228,22,16,102,
+247,172,140,10,158,41,40,102,107,158,204,111,120,156,217,12,62,106,155,
+7,215,179,134,226,79,23,208,25,232,92,71,36,186,240,10,78,126,99,226,33,
+134,146,222,53,174,12,183,96,222,127,202,91,160,96,56,63,211,186,126,62,
+197,47,165,53,174,215,196,0,0,0,0,73,69,78,68,174,66,96,130};
+
+static size_t xml_res_size_6 = 381;
+static unsigned char xml_res_file_6[] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
 0,31,243,255,97,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,
 65,100,111,98,101,32,73,109,97,103,101,82,101,97,100,121,113,201,101,60,
@@ -202,8 +215,8 @@ static unsigned char xml_res_file_5[] = {
 101,129,50,222,5,24,0,185,32,163,186,0,158,3,95,0,0,0,0,73,69,78,68,174,
 66,96,130};
 
-static size_t xml_res_size_6 = 391;
-static unsigned char xml_res_file_6[] = {
+static size_t xml_res_size_7 = 391;
+static unsigned char xml_res_file_7[] = {
 137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,16,0,0,0,16,8,6,0,0,
 0,31,243,255,97,0,0,0,25,116,69,88,116,83,111,102,116,119,97,114,101,0,
 65,100,111,98,101,32,73,109,97,103,101,82,101,97,100,121,113,201,101,60,
@@ -224,8 +237,8 @@ static unsigned char xml_res_file_6[] = {
 80,246,123,32,190,135,45,59,3,4,24,0,58,206,177,253,3,180,249,115,0,0,0,
 0,73,69,78,68,174,66,96,130};
 
-static size_t xml_res_size_7 = 939;
-static unsigned char xml_res_file_7[] = {
+static size_t xml_res_size_8 = 1039;
+static unsigned char xml_res_file_8[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
@@ -263,6 +276,11 @@ static unsigned char xml_res_file_7[] = {
 115,95,49,54,95,98,117,105,108,100,95,101,120,101,99,117,116,101,46,112,
 110,103,60,47,111,98,106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,
 32,99,108,97,115,115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,
+101,61,34,104,105,115,116,111,114,121,34,62,71,85,73,95,100,97,116,97,98,
+97,115,101,101,120,112,108,111,114,101,114,95,98,105,116,109,97,112,115,
+46,99,112,112,36,114,101,115,95,104,105,115,116,111,114,121,46,112,110,
+103,60,47,111,98,106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,
+99,108,97,115,115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,
 101,61,34,109,111,118,101,45,100,111,119,110,34,62,71,85,73,95,100,97,116,
 97,98,97,115,101,101,120,112,108,111,114,101,114,95,98,105,116,109,97,112,
 115,46,99,112,112,36,114,101,115,95,109,111,118,101,45,100,111,119,110,
@@ -292,8 +310,9 @@ void wxCrafterwyt5ghInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_document-open.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_document-save.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$.._codelite-icons_toolbars_16_build_execute.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_move-down.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_move-up.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$C__src_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"), xml_res_file_7, xml_res_size_7, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/GUI_databaseexplorer_bitmaps.cpp$C__src_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_history.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_move-down.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_move-up.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$_home_eran_devl_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"), xml_res_file_8, xml_res_size_8, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/GUI_databaseexplorer_bitmaps.cpp$_home_eran_devl_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"));
 }

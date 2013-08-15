@@ -18,38 +18,39 @@
 class SQLCommandPanel : public _SqlCommandPanel
 {
 protected:
-	IDbAdapter*                              m_pDbAdapter;
-	wxString                                 m_dbName;
-	wxString                                 m_dbTable;
-	wxString                                 m_cellValue;
-	std::map<std::pair<int, int>, wxString > m_gridValues;
+    virtual void OnHistoryToolClicked(wxAuiToolBarEvent& event);
+    IDbAdapter*                              m_pDbAdapter;
+    wxString                                 m_dbName;
+    wxString                                 m_dbTable;
+    wxString                                 m_cellValue;
+    std::map<std::pair<int, int>, wxString > m_gridValues;
 protected:
-	bool IsBlobColumn(const wxString &str);
-	
+    bool IsBlobColumn(const wxString &str);
+
 public:
-	SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);
-	virtual ~SQLCommandPanel();
-	virtual void OnExecuteClick(wxCommandEvent& event);
-	virtual void OnScintilaKeyDown(wxKeyEvent& event);
+    SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);
+    virtual ~SQLCommandPanel();
+    virtual void OnExecuteClick(wxCommandEvent& event);
+    virtual void OnScintilaKeyDown(wxKeyEvent& event);
 
-	virtual void OnLoadClick(wxCommandEvent& event);
-	virtual void OnSaveClick(wxCommandEvent& event);
-	virtual void OnTeplatesLeftDown(wxMouseEvent& event);
-	virtual void OnTemplatesBtnClick(wxAuiToolBarEvent& event);
+    virtual void OnLoadClick(wxCommandEvent& event);
+    virtual void OnSaveClick(wxCommandEvent& event);
+    virtual void OnTeplatesLeftDown(wxMouseEvent& event);
+    virtual void OnTemplatesBtnClick(wxAuiToolBarEvent& event);
 
-	void OnPopupClick(wxCommandEvent &evt);
-	void ExecuteSql();
-	void SetDefaultSelect();
-	
-	void OnGridCellRightClick(wxGridEvent& event);
-	void OnCopyCellValue(wxCommandEvent &e);
+    void OnPopupClick(wxCommandEvent &evt);
+    void ExecuteSql();
+    void SetDefaultSelect();
 
-	virtual void OnGridLabelRightClick(wxGridEvent& event);
+    void OnGridCellRightClick(wxGridEvent& event);
+    void OnCopyCellValue(wxCommandEvent &e);
 
-	DECLARE_EVENT_TABLE()
-	void OnExecuteSQL(wxCommandEvent &e);
-	void OnEdit      (wxCommandEvent &e);
-	void OnEditUI    (wxUpdateUIEvent &e);
+    virtual void OnGridLabelRightClick(wxGridEvent& event);
+
+    DECLARE_EVENT_TABLE()
+    void OnExecuteSQL(wxCommandEvent &e);
+    void OnEdit      (wxCommandEvent &e);
+    void OnEditUI    (wxUpdateUIEvent &e);
 
 };
 

@@ -35,10 +35,10 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
     LexerConfPtr lexerSQL = EditorConfigST::Get()->GetLexer("SQL");
     if ( lexerSQL ) {
         lexerSQL->Apply(m_scintillaSQL, true);
-        
+
     } else {
         DbViewerPanel::InitStyledTextCtrl( m_scintillaSQL );
-        
+
     }
     m_pDbAdapter = dbAdapter;
     m_dbName = dbName;
@@ -255,8 +255,9 @@ void SQLCommandPanel::ExecuteSql()
             }
         }
 
-    } else
+    } else {
         wxMessageBox(_("Cant connect!"));
+    }
 }
 
 void SQLCommandPanel::OnLoadClick(wxCommandEvent& event)
@@ -299,7 +300,7 @@ void SQLCommandPanel::OnTemplatesBtnClick(wxAuiToolBarEvent& event)
     menu.Append(XRCID("IDR_SQLCOMMAND_UPDATE"),_("Insert UPDATE SQL template"),_("Insert UPDATE SQL statement template into editor."));
     menu.Append(XRCID("IDR_SQLCOMMAND_DELETE"),_("Insert DELETE SQL template"),_("Insert DELETE SQL statement template into editor."));
     menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
-    
+
     wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
     if ( auibar ) {
         clAuiToolStickness ts(auibar, event.GetToolId());
@@ -467,4 +468,7 @@ void SQLCommandPanel::SetDefaultSelect()
         wxCommandEvent event(wxEVT_EXECUTE_SQL);
         GetEventHandler()->AddPendingEvent(event);
     }
+}
+void SQLCommandPanel::OnHistoryToolClicked(wxAuiToolBarEvent& event)
+{
 }

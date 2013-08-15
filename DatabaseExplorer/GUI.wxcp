@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	177,
+		"m_objCounter":	179,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterwyt5ghInitBitmapResources",
 		"m_bitmapsFile":	"GUI_databaseexplorer_bitmaps.cpp",
@@ -1387,6 +1387,56 @@
 											"m_description":	"Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event"
 										}],
 									"m_children":	[]
+								}, {
+									"m_type":	4462,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	[],
+									"m_sizerFlags":	[],
+									"m_properties":	[{
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"ID_SQL_HISTORY"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolHistory"
+										}, {
+											"type":	"string",
+											"m_label":	"Label:",
+											"m_value":	"SQL History"
+										}, {
+											"type":	"multi-string",
+											"m_label":	"Tooltip:",
+											"m_value":	"SQL History"
+										}, {
+											"type":	"string",
+											"m_label":	"Help String:",
+											"m_value":	"SQL History"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Bitmap File:",
+											"m_path":	"res/history.png"
+										}, {
+											"type":	"filePicker",
+											"m_label":	"Disabled-Bitmap File",
+											"m_path":	""
+										}, {
+											"type":	"choice",
+											"m_label":	"Kind:",
+											"m_selection":	4,
+											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN",
+											"m_eventClass":	"wxAuiToolBarEvent",
+											"m_eventHandler":	"wxAuiToolBarEventHandler",
+											"m_functionNameAndSignature":	"OnHistoryToolClicked(wxAuiToolBarEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event"
+										}],
+									"m_children":	[]
 								}]
 						}, {
 							"m_type":	4447,
@@ -2237,7 +2287,7 @@
 								}, {
 									"type":	"bool",
 									"m_label":	"Focused",
-									"m_value":	false
+									"m_value":	true
 								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
@@ -2257,7 +2307,7 @@
 								}, {
 									"type":	"bool",
 									"m_label":	"Default Button",
-									"m_value":	false
+									"m_value":	true
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Bitmap File:",
@@ -3342,7 +3392,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -3461,7 +3511,7 @@
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Focused",
-																	"m_value":	false
+																	"m_value":	true
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -3492,7 +3542,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -3642,7 +3692,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -3792,7 +3842,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -4211,7 +4261,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -4330,7 +4380,7 @@
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Focused",
-																	"m_value":	false
+																	"m_value":	true
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
@@ -4361,7 +4411,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -4511,7 +4561,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -4661,7 +4711,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -4811,7 +4861,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -4967,7 +5017,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -5214,7 +5264,7 @@
 							"gbSpan":	",",
 							"gbPosition":	",",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxALIGN_RIGHT"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",

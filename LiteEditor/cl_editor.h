@@ -377,6 +377,16 @@ public:
     void DelMarker();
 
     /**
+     * Store all bookmarks in a wxArrayString
+     */
+    void StoreMarkersToArray(wxArrayString& bookmarks);
+
+    /**
+     * Load bookmarks from a wxArrayString
+     */
+    void LoadMarkersFromArray(const wxArrayString& bookmarks);
+
+    /**
      * Attempt to match brace backward
      * \param chCloseBrace the closing brace character (can be one of: '}' ')' ']')
      * \param pos position to start the match

@@ -2206,6 +2206,23 @@ bool LEditor::LineIsMarked(enum marker_mask_type mask)
     return (nBits & mask ? true : false);
 }
 
+void LEditor::StoreMarkersToArray(wxArrayString& bookmarks)
+{
+    for (int line = 0; (line = MarkerNext(line, 128)) >= 0; ++line) {
+        bookmarks.Add(wxString::Format("%d", line));
+    }
+}
+
+void LEditor::LoadMarkersFromArray(const wxArrayString& bookmarks)
+{
+    for (size_t i = 0; i < bookmarks.GetCount(); i++) {
+        long line = 0;
+        if (bookmarks.Item(i).ToLong(&line)) {
+            MarkerAdd(line, 0x7);
+        }
+    }
+}
+
 void LEditor::DelAllMarkers()
 {
     // Delete all markers from the view

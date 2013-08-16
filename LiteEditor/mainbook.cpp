@@ -297,10 +297,9 @@ void MainBook::SaveSession(SessionEntry &session, wxArrayInt& intArr)
         oTabInfo.SetFirstVisibleLine(editors[i]->GetFirstVisibleLine());
         oTabInfo.SetCurrentLine(editors[i]->GetCurrentLine());
         wxArrayString astrBookmarks;
-        for (int nLine = 0; (nLine = editors[i]->MarkerNext(nLine, 128)) >= 0; nLine++) {
-            astrBookmarks.Add(wxString::Format(wxT("%d"), nLine));
-        }
+        editors[i]->StoreMarkersToArray(astrBookmarks);
         oTabInfo.SetBookmarks(astrBookmarks);
+
         vTabInfoArr.push_back(oTabInfo);
     }
     session.SetTabInfoArr(vTabInfoArr);
@@ -323,14 +322,7 @@ void MainBook::RestoreSession(SessionEntry &session)
 
         editor->ScrollToLine(ti.GetFirstVisibleLine());
         editor->SetEnsureCaretIsVisible(editor->PositionFromLine(ti.GetCurrentLine()));
-
-        const wxArrayString &astrBookmarks = ti.GetBookmarks();
-        for (size_t i = 0; i < astrBookmarks.GetCount(); i++) {
-            long nLine = 0;
-            if (astrBookmarks.Item(i).ToLong(&nLine)) {
-                editor->MarkerAdd(nLine, 0x7);
-            }
-        }
+        editor->LoadMarkersFromArray(ti.GetBookmarks());
     }
     // We can't just use SelectPane() here.
     // Notebook::DoPageChangedEvent has posted events to us,

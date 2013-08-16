@@ -2425,6 +2425,10 @@ void LEditor::ReloadFile()
         return;
     }
 
+    // Cache any bookmarks
+    wxArrayString bookmarks;
+    StoreMarkersToArray(bookmarks);
+
     // get the pattern of the current file
     int lineNumber = GetCurrentLine();
 
@@ -2461,6 +2465,7 @@ void LEditor::ReloadFile()
 
     SetReloadingFile( false );
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
+    LoadMarkersFromArray(bookmarks);
 }
 
 void LEditor::SetEditorText(const wxString &text)

@@ -106,6 +106,12 @@ public:
     DbConnectionInfoVec GetMySQLConnections();
     void SetMySQLConnections(const DbConnectionInfoVec& conns);
 
+    void SetSqlHistory(const wxArrayString& sqlHistory) {
+        this->m_sqlHistory = sqlHistory;
+    }
+    const wxArrayString& GetSqlHistory() const {
+        return m_sqlHistory;
+    }
     virtual void FromJSON(const JSONElement &json);
     virtual JSONElement ToJSON() const;
 };

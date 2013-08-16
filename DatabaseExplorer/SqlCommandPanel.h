@@ -24,9 +24,12 @@ protected:
     wxString                                 m_dbTable;
     wxString                                 m_cellValue;
     std::map<std::pair<int, int>, wxString > m_gridValues;
+    
 protected:
     bool IsBlobColumn(const wxString &str);
-
+    wxArrayString ParseSql(const wxString &sql) const;
+    void SaveSqlHistory();
+    
 public:
     SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);
     virtual ~SQLCommandPanel();

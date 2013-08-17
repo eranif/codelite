@@ -598,7 +598,6 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <VirtualDirectory Name="scripts">
-    <File Name="../Runtime/build_update.bat"/>
     <File Name="../Runtime/update.bat"/>
     <File Name="../Runtime/make_mac_bundle.sh"/>
     <File Name="../make_src_targz.sh"/>
@@ -607,6 +606,7 @@
     <File Name="../git-revision.sh"/>
     <File Name="../InnoSetup/make_packages.bat"/>
     <File Name="../mac-build.sh"/>
+    <File Name="../Runtime/excludes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="newversionbasedlg.fbp"/>
@@ -1256,7 +1256,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command="./codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
@@ -1267,7 +1267,7 @@ resources.cpp: resources.xrc
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite.exe" ..\Runtime</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite-dbg.exe" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <Target Name="configure --enable-debug">./configure --enable-debug</Target>
@@ -1288,7 +1288,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>

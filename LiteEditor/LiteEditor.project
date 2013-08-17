@@ -514,13 +514,11 @@
     <File Name="../Runtime/rc/menu.xrc"/>
     <File Name="resources.xrc"/>
     <File Name="../Runtime/config/accelerators.conf.default"/>
-    <File Name="../InnoSetup/lite_editor.iss"/>
     <File Name="../Runtime/config/codelite.xml.default.gtk"/>
     <File Name="../Runtime/config/codelite.xml.default"/>
     <File Name="../Runtime/config/codelite.xml.default.mac"/>
     <File Name="../codelite-icons/manifest.ini"/>
     <File Name="../InnoSetup/codelite_mingw.iss"/>
-    <File Name="../InnoSetup/codelite_mingw_wx.iss"/>
     <File Name="../codelite-icons-fresh-farm/manifest.ini"/>
     <File Name="project_settings.wxcp"/>
     <File Name="../InnoSetup/wxwidgets.iss"/>

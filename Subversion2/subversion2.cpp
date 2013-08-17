@@ -515,7 +515,11 @@ wxString Subversion2::DoGetFileExplorerItemFullPath()
 wxString Subversion2::DoGetFileExplorerItemPath()
 {
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileExplorer);
-    return item.m_fileName.GetPath();
+    if ( !item.m_paths.IsEmpty() ) {
+        return item.m_paths.Item(0);
+    } else {
+        return wxEmptyString;
+    }
 }
 
 wxString Subversion2::GetUserConfigDir()

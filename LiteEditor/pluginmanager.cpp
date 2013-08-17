@@ -145,7 +145,7 @@ void PluginManager::Load()
         for ( size_t i=0; i<files.GetCount(); i++ ) {
             
             wxString fileName( files.Item( i ) );
-#if defined(__WXMSW__) && defined(__WXDEBUG__)
+#if defined(__WXMSW__) && !defined(NDEBUG)
             
             // Under MSW loading a release plugin while in debug mode will cause a crash
             if ( !fileName.EndsWith("-dbg.dll") ) {

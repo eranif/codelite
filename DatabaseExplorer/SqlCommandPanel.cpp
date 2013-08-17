@@ -12,6 +12,8 @@
 #include "cl_aui_tool_stickness.h"
 #include "lexer_configuration.h"
 #include "editor_config.h"
+#include "db_explorer_settings.h"
+#include <algorithm>
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -35,10 +37,10 @@ SQLCommandPanel::SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter,  const 
     LexerConfPtr lexerSQL = EditorConfigST::Get()->GetLexer("SQL");
     if ( lexerSQL ) {
         lexerSQL->Apply(m_scintillaSQL, true);
-        
+
     } else {
         DbViewerPanel::InitStyledTextCtrl( m_scintillaSQL );
-        
+
     }
     m_pDbAdapter = dbAdapter;
     m_dbName = dbName;
@@ -102,6 +104,10 @@ void SQLCommandPanel::ExecuteSql()
         for( size_t i = 0; i < arrCmdLines.GetCount(); i++) {
             if( ! arrCmdLines[i].Trim(false).StartsWith( wxT("--") ) ) cmdLines++;
         }
+        
+        // save the history
+        SaveSqlHistory();
+        
         if ( cmdLines > 0 ) {
             try {
                 if (!m_pDbAdapter->GetUseDb(m_dbName).IsEmpty()) m_pDbLayer->RunQuery(m_pDbAdapter->GetUseDb(m_dbName));
@@ -255,8 +261,9 @@ void SQLCommandPanel::ExecuteSql()
             }
         }
 
-    } else
+    } else {
         wxMessageBox(_("Cant connect!"));
+    }
 }
 
 void SQLCommandPanel::OnLoadClick(wxCommandEvent& event)
@@ -299,7 +306,7 @@ void SQLCommandPanel::OnTemplatesBtnClick(wxAuiToolBarEvent& event)
     menu.Append(XRCID("IDR_SQLCOMMAND_UPDATE"),_("Insert UPDATE SQL template"),_("Insert UPDATE SQL statement template into editor."));
     menu.Append(XRCID("IDR_SQLCOMMAND_DELETE"),_("Insert DELETE SQL template"),_("Insert DELETE SQL statement template into editor."));
     menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&SQLCommandPanel::OnPopupClick, NULL, this);
-    
+
     wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
     if ( auibar ) {
         clAuiToolStickness ts(auibar, event.GetToolId());
@@ -467,4 +474,96 @@ void SQLCommandPanel::SetDefaultSelect()
         wxCommandEvent event(wxEVT_EXECUTE_SQL);
         GetEventHandler()->AddPendingEvent(event);
     }
+}
+
+void SQLCommandPanel::OnHistoryToolClicked(wxAuiToolBarEvent& event)
+{
+    wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
+    if ( auibar ) {
+        clAuiToolStickness ts(auibar, event.GetToolId());
+        wxRect rect = auibar->GetToolRect(event.GetId());
+        wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
+        pt = ScreenToClient(pt);
+        
+        DbExplorerSettings settings;
+        clConfig conf(DBE_CONFIG_FILE);
+        conf.ReadItem(&settings);
+        settings.GetRecentFiles();
+        
+        wxArrayString sqls = settings.GetSqlHistory();
+        wxMenu menu;
+        for(size_t i=0; i<sqls.GetCount(); ++i) {
+            menu.Append(wxID_HIGHEST+i, sqls.Item(i));
+        }
+        
+        int pos = GetPopupMenuSelectionFromUser(menu, pt);
+        if ( pos == wxID_NONE )
+            return;
+        
+        size_t index = pos - wxID_HIGHEST;
+        if ( index > sqls.GetCount() )
+            return;
+        
+        m_scintillaSQL->SetText( sqls.Item(index) );
+        
+        wxCommandEvent eventExecSql(wxEVT_EXECUTE_SQL);
+        GetEventHandler()->AddPendingEvent( eventExecSql );
+    }
+}
+
+wxArrayString SQLCommandPanel::ParseSql(const wxString& sql) const
+{
+    // filter out comments
+    wxString noCommentsSql;
+    wxArrayString lines = ::wxStringTokenize(sql, "\n", wxTOKEN_STRTOK);
+    for(size_t i=0; i<lines.GetCount(); ++i) {
+        lines.Item(i).Trim().Trim(false);
+        if ( lines.Item(i).StartsWith("--") ) {
+            continue;
+        }
+        noCommentsSql << lines.Item(i) << "\n";
+    }
+    
+    // Split by semi-colon
+    wxArrayString tmpSqls = ::wxStringTokenize(noCommentsSql, ";", wxTOKEN_STRTOK);
+    wxArrayString sqls;
+    for(size_t i=0; i<tmpSqls.GetCount(); ++i) {
+        
+        wxString sql = tmpSqls.Item(i);
+        sql.Trim().Trim(false);
+        if ( sql.IsEmpty() )
+            continue;
+            
+        sql.Replace("\n", " ");
+        sql.Replace("\r", "");
+        sqls.Add( sql );
+    }
+    return sqls;
+}
+
+void SQLCommandPanel::SaveSqlHistory()
+{
+    wxArrayString sqls = ParseSql( m_scintillaSQL->GetText() );
+    if ( sqls.IsEmpty() )
+        return;
+    
+    DbExplorerSettings s;
+    clConfig conf(DBE_CONFIG_FILE);
+    conf.ReadItem( &s );
+    const wxArrayString &history = s.GetSqlHistory();
+    
+    // Append the current history to the new sqls (exclude dups)
+    for(size_t i=0; i<history.GetCount(); ++i) {
+        if ( sqls.Index(history.Item(i) ) == wxNOT_FOUND ) {
+            sqls.Add( history.Item(i) );
+        }
+    }
+
+    // Truncate the buffer
+    while( sqls.GetCount() > 15 ) {
+        sqls.RemoveAt(sqls.GetCount()-1);
+    }
+    
+    s.SetSqlHistory( sqls );
+    conf.WriteItem( &s );
 }

@@ -88,7 +88,7 @@ void clConfig::WriteItem(const clConfigItem* item, const wxString &differentName
     m_root->save(m_filename);
 }
 
-void clConfig::Reload()
+void clConfig::Reload() 
 {
     if ( m_filename.FileExists() == false )
         return;

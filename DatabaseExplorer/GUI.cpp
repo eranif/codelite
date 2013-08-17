@@ -158,6 +158,8 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     m_auibar167->AddSeparator();
     
     m_auibar167->AddTool(ID_INSERT_TEMPLATE, _("Insert template"), wxXmlResource::Get()->LoadBitmap(wxT("add")), wxNullBitmap, wxITEM_NORMAL, _("Insert template"), _("Insert template"), NULL)->SetHasDropDown(true);
+    
+    m_auibar167->AddTool(ID_SQL_HISTORY, _("Tool Label"), wxXmlResource::Get()->LoadBitmap(wxT("history")), wxNullBitmap, wxITEM_NORMAL, wxT(""), wxT(""), NULL)->SetHasDropDown(true);
     m_auibar167->Realize();
     
     m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH|wxBORDER_NONE);
@@ -244,6 +246,7 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     this->Connect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
     this->Connect(XRCID("IDC_DBE_SQL_EXEC"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
     this->Connect(ID_INSERT_TEMPLATE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
+    this->Connect(ID_SQL_HISTORY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnHistoryToolClicked), NULL, this);
     m_gridTable->Connect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick), NULL, this);
     
 }
@@ -254,6 +257,7 @@ _SqlCommandPanel::~_SqlCommandPanel()
     this->Disconnect(XRCID("IDC_DBE_SQL_SAVE"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnSaveClick), NULL, this);
     this->Disconnect(XRCID("IDC_DBE_SQL_EXEC"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(_SqlCommandPanel::OnExecuteClick), NULL, this);
     this->Disconnect(ID_INSERT_TEMPLATE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnTemplatesBtnClick), NULL, this);
+    this->Disconnect(ID_SQL_HISTORY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(_SqlCommandPanel::OnHistoryToolClicked), NULL, this);
     m_gridTable->Disconnect(wxEVT_GRID_CELL_RIGHT_CLICK, wxGridEventHandler(_SqlCommandPanel::OnGridCellRightClick), NULL, this);
     
 }
@@ -276,6 +280,8 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
     bSizer9->Add(m_btnMySql, 0, wxALL|wxEXPAND, 5);
     
     m_btnSqlite = new wxButton(this, wxID_ANY, _("SQLite"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_btnSqlite->SetDefault();
+    m_btnSqlite->SetFocus();
     
     bSizer9->Add(m_btnSqlite, 0, wxALL|wxEXPAND, 5);
     
@@ -409,17 +415,18 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText10 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Connection name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer4->Add(m_staticText10, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txName = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_txName->SetToolTip(_("Name for this connection"));
+    m_txName->SetFocus();
     
     fgSizer4->Add(m_txName, 1, wxALL|wxEXPAND, 5);
     
     m_staticText1 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Server:"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_staticText1->SetToolTip(_("Host name / IP of the server hosting the MySQL server"));
     
-    fgSizer4->Add(m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txServer = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
     m_txServer->SetToolTip(_("Host name / IP of the server hosting the MySQL server"));
@@ -428,7 +435,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText2 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("User name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer4->Add(m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txUserName = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
     m_txUserName->SetToolTip(_("Database user name"));
@@ -437,7 +444,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText3 = new wxStaticText(m_MySqlPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer4->Add(m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer4->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txPassword = new wxTextCtrl(m_MySqlPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), wxTE_PASSWORD);
     m_txPassword->SetToolTip(_("Database password"));
@@ -468,15 +475,16 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText101 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer42->Add(m_staticText101, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText101, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txPgName = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_txPgName->SetFocus();
     
     fgSizer42->Add(m_txPgName, 1, wxALL|wxEXPAND, 5);
     
     m_staticText12 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Server:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer42->Add(m_staticText12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txPgServer = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
     
@@ -484,7 +492,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText35 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Port:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer42->Add(m_staticText35, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText35, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txPgPort = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT("5432"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -492,7 +500,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText21 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("User name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer42->Add(m_staticText21, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText21, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txPgUserName = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), 0);
     
@@ -500,7 +508,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText31 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer42->Add(m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txPgPassword = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(150,-1), wxTE_PASSWORD);
     
@@ -508,7 +516,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     m_staticText24 = new wxStaticText(m_PostgrePanel, wxID_ANY, _("Default database:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer42->Add(m_staticText24, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer42->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_txPgDatabase = new wxTextCtrl(m_PostgrePanel, wxID_ANY, wxT("postgres"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -521,7 +529,7 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
     
     wxBoxSizer* bSizer28 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer4->Add(bSizer28, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT, 5);
+    bSizer4->Add(bSizer28, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button36 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     

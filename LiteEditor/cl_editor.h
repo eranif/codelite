@@ -446,9 +446,9 @@ public:
 
     /**
      * Add a breakpoint at the current line & file
-     * Optionally make it temporary or conditional
+     * Optionally make it temporary, disabled or conditional
      */
-    void AddBreakpoint(int lineno = -1, const wxString& conditions = wxT(""), const bool is_temp = false);
+    void AddBreakpoint(int lineno = -1, const wxString& conditions = wxT(""), const bool is_temp = false, const bool is_disabled = false);
 
     /**
      * Delete the breakpoint at the current line & file, or lineno if from ToggleBreakpoint()

@@ -276,10 +276,9 @@ public:
     void DebuggerStopped();
 
     /**
-     * Since a bp can't be created disabled, enable them all here when the debugger stops
-     * That way they're guaranteed all to be enabled when it starts again
+     * A bp can't be created disabled, so disable any that should be once the debugger is started
      */
-    void UnDisableAllBreakpoints();
+    void DisableAnyDisabledBreakpoints();
 
     /**
      * Enable/Disable all breakpoints. Only used while the debugger is running

@@ -71,6 +71,7 @@ MenuManager::MenuManager(void)
 	PushHandler(new DebuggerMenuHandler(XRCID("enable_all_breakpoints")));
 	PushHandler(new DebuggerMenuHandler(XRCID("delete_all_breakpoints")));
 	PushHandler(new DebuggerMenuHandler(XRCID("insert_temp_breakpoint")));
+	PushHandler(new DebuggerMenuHandler(XRCID("insert_disabled_breakpoint")));
 	PushHandler(new DebuggerMenuHandler(XRCID("insert_cond_breakpoint")));
 	PushHandler(new DebuggerMenuHandler(XRCID("insert_watchpoint")));
 	PushHandler(new DebuggerMenuHandler(XRCID("toggle_breakpoint_enabled_status")));

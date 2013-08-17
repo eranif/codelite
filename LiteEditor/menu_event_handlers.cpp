@@ -443,6 +443,7 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &e
         editor->ToggleBreakpoint();
     }
     if ((event.GetId() == XRCID("insert_temp_breakpoint"))
+        || (event.GetId() == XRCID("insert_disabled_breakpoint"))
         || (event.GetId() == XRCID("insert_cond_breakpoint"))) {
         editor->AddOtherBreakpointType(event);
     }

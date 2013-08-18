@@ -474,8 +474,7 @@ void SQLCommandPanel::SetDefaultSelect()
     m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
     if (!m_dbTable.IsEmpty()) {
         m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
-        wxCommandEvent event(wxEVT_EXECUTE_SQL);
-        GetEventHandler()->AddPendingEvent(event);
+        CallAfter( &SQLCommandPanel::ExecuteSql );
     }
 }
 

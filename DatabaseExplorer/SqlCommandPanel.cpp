@@ -92,7 +92,7 @@ void SQLCommandPanel::OnScintilaKeyDown(wxKeyEvent& event)
 void SQLCommandPanel::ExecuteSql()
 {
     wxBusyInfo infoDlg(_("Executing sql..."), wxTheApp->GetTopWindow());
-
+    
     clWindowUpdateLocker locker(this);
     std::set<int> textCols;
     std::set<int> blobCols;
@@ -110,6 +110,7 @@ void SQLCommandPanel::ExecuteSql()
         
         if ( cmdLines > 0 ) {
             try {
+                m_colsMetaData.clear();
                 if (!m_pDbAdapter->GetUseDb(m_dbName).IsEmpty()) m_pDbLayer->RunQuery(m_pDbAdapter->GetUseDb(m_dbName));
                 // run query
                 DatabaseResultSet* pResultSet = m_pDbLayer->RunQueryWithResults(m_scintillaSQL->GetText());
@@ -133,11 +134,13 @@ void SQLCommandPanel::ExecuteSql()
 
                 int rows = 0;
                 int cols = pResultSet->GetMetaData()->GetColumnCount();
-
+                m_colsMetaData.resize(cols);
+                
                 // create table header
                 m_gridTable->AppendCols(cols);
                 for (int i = 1; i<= pResultSet->GetMetaData()->GetColumnCount(); i++) {
                     m_gridTable->SetColLabelValue(i-1,pResultSet->GetMetaData()->GetColumnName(i));
+                    m_colsMetaData.at(i-1) = ColumnInfo(pResultSet->GetMetaData()->GetColumnType(i), pResultSet->GetMetaData()->GetColumnName(i) );
                 }
 
                 m_gridTable->BeginBatch();
@@ -505,9 +508,7 @@ void SQLCommandPanel::OnHistoryToolClicked(wxAuiToolBarEvent& event)
             return;
         
         m_scintillaSQL->SetText( sqls.Item(index) );
-        
-        wxCommandEvent eventExecSql(wxEVT_EXECUTE_SQL);
-        GetEventHandler()->AddPendingEvent( eventExecSql );
+        CallAfter( &SQLCommandPanel::ExecuteSql );
     }
 }
 

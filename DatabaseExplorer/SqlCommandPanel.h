@@ -15,8 +15,44 @@
 
 #include <map>
 
+// ----------------------------------------------------------------
+class ColumnInfo
+{
+    int m_type;
+    wxString m_name;
+public:
+    typedef std::vector<ColumnInfo> Vector_t;
+    
+public:
+    ColumnInfo()
+    {}
+
+    ColumnInfo(int type, const wxString &name)
+        : m_type(type)
+        , m_name(name)
+    {}
+
+    virtual ~ColumnInfo()
+    {}
+
+    void SetName(const wxString& name) {
+        this->m_name = name;
+    }
+    void SetType(int type) {
+        this->m_type = type;
+    }
+    const wxString& GetName() const {
+        return m_name;
+    }
+    int GetType() const {
+        return m_type;
+    }
+};
+
+// ----------------------------------------------------------------
 class SQLCommandPanel : public _SqlCommandPanel
 {
+
 protected:
     virtual void OnHistoryToolClicked(wxAuiToolBarEvent& event);
     IDbAdapter*                              m_pDbAdapter;
@@ -24,12 +60,13 @@ protected:
     wxString                                 m_dbTable;
     wxString                                 m_cellValue;
     std::map<std::pair<int, int>, wxString > m_gridValues;
-    
+    ColumnInfo::Vector_t                     m_colsMetaData;
+
 protected:
     bool IsBlobColumn(const wxString &str);
     wxArrayString ParseSql(const wxString &sql) const;
     void SaveSqlHistory();
-    
+
 public:
     SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);
     virtual ~SQLCommandPanel();

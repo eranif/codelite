@@ -132,7 +132,7 @@ void FileExplorer::OnActiveEditorChanged(wxCommandEvent& e)
     if (m_isLinkedToEditor) {
         LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
         if (editor && editor->GetFileName().FileExists()) {
-            m_fileTree->Tree()->UnselectAll();
+            m_fileTree->ClearSelections();
             m_fileTree->Tree()->ExpandPath(editor->GetFileName().GetFullPath());
         }
     }

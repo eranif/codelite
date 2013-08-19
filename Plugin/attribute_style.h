@@ -42,6 +42,8 @@
 #define FOLD_MARGIN_ATTR_ID -1
 #define SEL_TEXT_ATTR_ID    -2
 #define CARET_ATTR_ID       -3
+#define WHITE_SPACE_ATTR_ID -4
+
 #define LINE_NUMBERS_ATTR_ID 33
 
 class StyleProperty

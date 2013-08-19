@@ -295,7 +295,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             // whitespace colour. We dont allow changing the background colour, only the foreground colour
             wxColour whitespaceColour = sp.GetFgColour();
             if ( whitespaceColour.IsOk() ) {
-                ctrl->SetWhitespaceBackground(true, whitespaceColour);
+                ctrl->SetWhitespaceForeground(true, whitespaceColour);
             }
             break;
         }

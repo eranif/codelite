@@ -96,6 +96,7 @@ void FileExplorer::OnCollapseAll(wxCommandEvent &e)
 void FileExplorer::OnGoHome(wxCommandEvent &e)
 {
     wxUnusedVar(e);
+    m_fileTree->ClearSelections();
     m_fileTree->Tree()->ExpandPath( ::wxGetCwd() );
 }
 
@@ -112,6 +113,7 @@ void FileExplorer::OnShowFile(wxCommandEvent& e)
 {
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if (editor && editor->GetFileName().FileExists()) {
+        m_fileTree->ClearSelections();
         m_fileTree->Tree()->ExpandPath(editor->GetFileName().GetFullPath());
         ManagerST::Get()->ShowWorkspacePane(m_caption);
     }

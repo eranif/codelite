@@ -318,3 +318,21 @@ TreeItemInfo FileExplorerTab::GetSelectedItemInfo()
     info.m_item = wxTreeItemId();
     return info;
 }
+
+size_t FileExplorerTab::GetSelectionCount() const
+{
+    wxArrayTreeItemIds items;
+    return Tree()->GetTreeCtrl()->GetSelections(items);
+}
+
+void FileExplorerTab::ClearSelections()
+{
+    if ( GetSelectionCount() > 1 ) {
+        // multiple selections
+        Tree()->GetTreeCtrl()->UnselectAll();
+        
+    } else if ( GetSelectionCount() ) {
+        // single selection
+        Tree()->GetTreeCtrl()->Unselect();
+    }
+}

@@ -21,10 +21,11 @@ public:
     };
 protected:
     
-    wxSQLite3Database m_db;
-    wxString          m_cacheDb;
-    CacheStatus       m_cacheStatus;
-    wxString          m_workspaceFile;
+    wxSQLite3Database         m_db;
+    wxString                  m_cacheDb;
+    CacheStatus               m_cacheStatus;
+    wxString                  m_workspaceFile;
+    CppTokenCacheMakerThread* m_thread;
     
     friend class CppTokenCacheMakerThread;
 public:
@@ -43,6 +44,9 @@ protected:
     void Begin();
     void Commit();
     void Rollback();
+    
+    void JoinWorkerThread();
+    
 public:
     bool IsCacheReady() const {
         return m_cacheStatus == CACHE_READY;

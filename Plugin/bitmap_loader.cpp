@@ -182,6 +182,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/res"))),            FileExtManager::TypeResource);
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/sql"))),            FileExtManager::TypeSQL);
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/folder"))),         FileExtManager::TypeFolder);
+    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/asm"))),            FileExtManager::TypeAsm);
 
     m_bMapPopulated = true;
     return imageList;
@@ -224,5 +225,6 @@ BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
     images[FileExtManager::TypeSQL] = LoadBitmap(wxT("mime/16/sql"));
     images[FileExtManager::TypeFolder] = LoadBitmap(wxT("mime/16/folder"));
     images[FileExtManager::TypeProjectActive] = LoadBitmap(wxT("workspace/16/project_active"));
+    images[FileExtManager::TypeAsm] = LoadBitmap(wxT("mime/16/asm"));
     return images;
 }

@@ -68,6 +68,7 @@ public:
         TypeWorkspacePHP,
         TypeWorkspacePHPTags,
         TypeWorkspaceDatabase,
+        TypeAsm,
         TypeOther = wxNOT_FOUND
     };
 

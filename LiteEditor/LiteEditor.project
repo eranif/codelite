@@ -261,6 +261,7 @@
       <File Name="addoptioncheckdlg.cpp"/>
       <File Name="addoptioncheckdlg.h"/>
       <File Name="addoptioncheckdlgbase.cpp"/>
+      <File Name="compiler_page.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>
@@ -523,6 +524,7 @@
     <File Name="project_settings.wxcp"/>
     <File Name="../InnoSetup/wxwidgets.iss"/>
     <File Name="../InnoSetup/modpath.iss"/>
+    <File Name="../codelite-icons-dark/manifest.ini"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>
@@ -766,6 +768,8 @@
       <File Name="addfunctionsmodel.h"/>
       <File Name="rename_symbool_dlg.h"/>
       <File Name="rename_symbool_dlg.cpp"/>
+      <File Name="compiler_pages.h"/>
+      <File Name="compiler_pages.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -783,6 +787,7 @@
       <File Name="editor_options_comments_doxygen_liteeditor_bitmaps.cpp"/>
       <File Name="rename_symbool_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="workspacesettingsbase_liteeditor_bitmaps.cpp"/>
+      <File Name="compiler_page_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

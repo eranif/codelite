@@ -18,6 +18,7 @@
       <Tool Name="LinkerName" Value="clang++"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="clang++ -shared -fPIC"/>
+      <Tool Name="AS" Value="llvm-as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
       <Pattern Name="Error" FileNameIndex="3" LineNumberIndex="1">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)(\(\.text\+[0-9a-fx]*\))</Pattern>
@@ -71,6 +72,7 @@
       <Tool Name="LinkerName" Value="clang"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="clang -shared -fPIC"/>
+      <Tool Name="AS" Value="llvm-as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="2">^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error</Pattern>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
@@ -125,6 +127,7 @@
       <Tool Name="LinkerName" Value="g++"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="g++ -shared -fPIC"/>
+      <Tool Name="AS" Value="as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="2">^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error</Pattern>
 	  <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
@@ -176,6 +179,7 @@
       <Tool Name="LinkerName" Value="gcc"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="gcc -shared -fPIC"/>
+      <Tool Name="AS" Value="as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
 	  <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="2">^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error</Pattern>
 	  <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
@@ -226,6 +230,7 @@
       <Tool Name="LinkerName" Value="link.exe  /nologo"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="link.exe /DLL  /nologo"/>
+      <Tool Name="AS" Value="NASM"/>
       <Option Name="ObjectSuffix" Value=".obj"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="2">^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error</Pattern>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">(^[a-zA-Z\\\.0-9 _/\:\+\-]+ *)(\()([0-9]+)(\))( \: )(error)</Pattern>

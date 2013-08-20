@@ -15,16 +15,18 @@ CompilerToolsPage::CompilerToolsPage( wxWindow* parent, const wxString &cmpname 
     m_textResourceCmp->ChangeValue(cmp->GetTool(wxT("ResourceCompiler")));
     m_textCtrlPathVariable->ChangeValue(cmp->GetPathVariable());
     m_textCtrlMake->ChangeValue(cmp->GetTool("MAKE"));
+    m_textCtrlAssemblerName->ChangeValue(cmp->GetTool("AS"));
 }
 
 void CompilerToolsPage::Save(CompilerPtr cmp)
 {
-    cmp->SetTool(wxT("AR"),            m_textArchiveTool->GetValue());
-    cmp->SetTool(wxT("CXX"),           m_textCompilerName->GetValue());
-    cmp->SetTool(wxT("CC"),         m_textCtrlCCompilerName->GetValue());
+    cmp->SetTool(wxT("AR"),                     m_textArchiveTool->GetValue());
+    cmp->SetTool(wxT("CXX"),                    m_textCompilerName->GetValue());
+    cmp->SetTool(wxT("CC"),                     m_textCtrlCCompilerName->GetValue());
     cmp->SetTool(wxT("LinkerName"),             m_textLinkerName->GetValue());
     cmp->SetTool(wxT("SharedObjectLinkerName"), m_textSOLinker->GetValue());
     cmp->SetTool(wxT("ResourceCompiler"),       m_textResourceCmp->GetValue());
-    cmp->SetPathVariable(m_textCtrlPathVariable->GetValue());
     cmp->SetTool("MAKE", m_textCtrlMake->GetValue());
+    cmp->SetTool("AS", m_textCtrlAssemblerName->GetValue());
+    cmp->SetPathVariable(m_textCtrlPathVariable->GetValue());
 }

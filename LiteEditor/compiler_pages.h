@@ -18,9 +18,8 @@
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/dialog.h>
-#include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK CompilerPatternsBase : public wxPanel
+class CompilerPatternsBase : public wxPanel
 {
 protected:
     wxStaticText* m_staticText161;
@@ -53,13 +52,15 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerToolsBase : public wxPanel
+class CompilerToolsBase : public wxPanel
 {
 protected:
     wxStaticText* m_staticText92;
     wxTextCtrl* m_textCompilerName;
     wxStaticText* m_staticText254;
     wxTextCtrl* m_textCtrlCCompilerName;
+    wxStaticText* m_staticText43;
+    wxTextCtrl* m_textCtrlAssemblerName;
     wxStaticText* m_staticText116;
     wxTextCtrl* m_textLinkerName;
     wxStaticText* m_staticText128;
@@ -81,7 +82,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerSwitchesBase : public wxPanel
+class CompilerSwitchesBase : public wxPanel
 {
 protected:
     wxStaticText* m_staticText8;
@@ -97,7 +98,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerFileTypesBase : public wxPanel
+class CompilerFileTypesBase : public wxPanel
 {
 protected:
     wxStaticText* m_staticText23;
@@ -118,7 +119,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerAdvanceBase : public wxPanel
+class CompilerAdvanceBase : public wxPanel
 {
 protected:
     wxStaticText* m_staticText18;
@@ -145,7 +146,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerCompilerOptionsBase : public wxPanel
+class CompilerCompilerOptionsBase : public wxPanel
 {
 protected:
     wxStaticText* m_staticText23;
@@ -166,7 +167,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerLinkerOptionsBase : public wxPanel
+class CompilerLinkerOptionsBase : public wxPanel
 {
 protected:
     wxStaticText* m_staticText23;
@@ -187,7 +188,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerOptionDlgBase : public wxDialog
+class CompilerOptionDlgBase : public wxDialog
 {
 protected:
     wxStaticText* m_staticText26;
@@ -206,7 +207,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_SDK CompilerPatternDlgBase : public wxDialog
+class CompilerPatternDlgBase : public wxDialog
 {
 protected:
     wxStaticText* m_staticText5;

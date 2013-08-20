@@ -109,6 +109,9 @@ protected:
     wxStaticText* m_staticText45;
     wxTextCtrl* m_textCtrlCCompilerOptions;
     wxButton* m_button35;
+    wxStaticText* m_staticText94;
+    wxTextCtrl* m_textCtrlAssemblerOptions;
+    wxButton* m_button98;
     wxStaticText* m_staticText4;
     wxTextCtrl* m_textAdditionalSearchPath;
     wxButton* m_buttonAddSearchPath;
@@ -128,6 +131,7 @@ protected:
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonAddCompilerOptions(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonAddCCompilerOptions(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonAddAssemblerOptions(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddSearchPath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonAddPreprocessor(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowsePreCmpHeader(wxCommandEvent& event) { event.Skip(); }

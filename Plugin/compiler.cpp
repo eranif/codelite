@@ -43,7 +43,7 @@ Compiler::Compiler(wxXmlNode *node)
     SetSwitch("Output",        "");
     SetSwitch("Object",        "");
     SetSwitch("ArchiveOutput", "");
-    SetSwitch("PreprocessOnly", "");
+    SetSwitch("PreprocessOnly","");
 
     // ensure all relevant entries exist in tools map (makes sure they show up in build settings dlg)
     SetTool("LinkerName",             "");
@@ -53,6 +53,7 @@ Compiler::Compiler(wxXmlNode *node)
     SetTool("AR",                     "");
     SetTool("ResourceCompiler",       "");
     SetTool("MAKE",                   "");
+    SetTool("AS",                     "as"); // Assembler, default to as
 
     m_fileTypes.clear();
     if (node) {
@@ -162,6 +163,13 @@ Compiler::Compiler(wxXmlNode *node)
             }
         }
         
+        // Default values for the assembler
+        if ( GetTool("AS").IsEmpty() && GetName().CmpNoCase("vc++") == 0 ) {
+            SetTool("AS", "nasm");
+            
+        } else if ( GetTool("AS").IsEmpty() ) {
+            SetTool("AS", "as");
+        }
     } else {
         // Create a default compiler: g++
         m_name = "gnu g++";
@@ -196,6 +204,7 @@ Compiler::Compiler(wxXmlNode *node)
         SetTool("CC",                     "gcc");
         SetTool("AR",                     "ar rcu");
         SetTool("ResourceCompiler",       "windres");
+        SetTool("AS",                     "as");
 
 #ifdef __WXMSW__
         SetTool("MAKE",                   "mingw32-make");
@@ -227,7 +236,15 @@ Compiler::Compiler(wxXmlNode *node)
         AddCmpFileType("cc",  CmpFileKindSource,   "$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)");
         AddCmpFileType("m",   CmpFileKindSource,   "$(CXX) -x objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)");
         AddCmpFileType("mm",  CmpFileKindSource,   "$(CXX) -x objective-c++ $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(IncludePath)");
+        AddCmpFileType("s",   CmpFileKindSource,   "$(AS) \"$(FileFullPath)\" $(ASFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) -I$(IncludePath)");
         AddCmpFileType("rc",  CmpFileKindResource, "$(RcCompilerName) -i \"$(FileFullPath)\" $(RcCmpOptions)   $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) $(RcIncludePath)");
+    }
+    
+    // Add support for assembler file
+    if ( m_fileTypes.count("s") == 0 ) {
+        AddCmpFileType("s", 
+                       CmpFileKindSource, 
+                       "$(AS) \"$(FileFullPath)\" $(ASFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) -I$(IncludePath)");
     }
 }
 
@@ -382,6 +399,10 @@ void Compiler::AddCmpFileType(const wxString &extension, CmpFileKind type, const
 {
     Compiler::CmpFileTypeInfo ft;
     ft.extension = extension.Lower();
+    if ( m_fileTypes.count(ft.extension) ) {
+        m_fileTypes.erase(ft.extension);
+    }
+    
     ft.compilation_line = compile_line;
     ft.kind = type;
     m_fileTypes[extension] = ft;

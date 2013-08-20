@@ -198,6 +198,14 @@ public:
     const wxString& GetPchCompileFlags() const {
         return m_pchCompileFlags;
     }
+    
+    const wxString &GetAssmeblerOptions() const {
+        return m_commonConfig.GetAssemblerOptions();
+    }
+    void SetAssmeblerOptions(const wxString &options) {
+        m_commonConfig.SetAssemblerOptions(options);
+    }
+    
     void SetUseSeparatePCHFlags(bool useSeparatePCHFlags) {
         this->m_useSeparatePCHFlags = useSeparatePCHFlags;
     }

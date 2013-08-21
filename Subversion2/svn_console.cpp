@@ -13,6 +13,7 @@
 #include "lexer_configuration.h"
 #include "notebook_ex.h"
 #include "event_notifier.h"
+#include <wx/regex.h>
 
 //-------------------------------------------------------------
 BEGIN_EVENT_TABLE(SvnConsole, SvnShellBase)
@@ -54,13 +55,20 @@ void SvnConsole::OnReadProcessOutput(wxCommandEvent& event)
 
     if (m_currCmd.printProcessOutput)
         AppendText( ped->GetData() );
-
+    
+    static wxRegEx reUsername("username[ \t]*:", wxRE_DEFAULT|wxRE_ICASE);
     wxArrayString lines = wxStringTokenize(s, wxT("\n"), wxTOKEN_STRTOK);
-    if(lines.IsEmpty() == false && lines.Last().StartsWith(wxT("password for '"))) {
+    if( !lines.IsEmpty() && lines.Last().StartsWith(wxT("password for '")) ) {
         m_output.Clear();
         wxString pass = wxGetPasswordFromUser(ped->GetData(), wxT("Subversion"));
         if(!pass.IsEmpty() && m_process) {
             m_process->WriteToConsole(pass);
+        }
+    } else if ( !lines.IsEmpty() && reUsername.IsValid() && reUsername.Matches( lines.Last() ) ) {
+        // Prompt the user for "Username:"
+        wxString username = ::wxGetTextFromUser(ped->GetData(), "Subversion");
+        if ( !username.IsEmpty() && m_process ) {
+            m_process->Write(username + "\n");
         }
     }
     delete ped;

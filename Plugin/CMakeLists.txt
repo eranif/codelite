@@ -40,7 +40,15 @@ add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 
 # Add RPATH
-set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+# Add RPATH
+if ( WXC_APP )
+    string( REPLACE "codelite" "wxcrafter" WXC_LIBS_DIR ${PLUGINS_DIR})
+    set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}:${PLUGINS_DIR}")
+    message( "-- libplugin.so is using RPATH set to ${WXC_LIBS_DIR}:${PLUGINS_DIR}")
+else ( WXC_APP )
+    set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+    message( "-- libplugin.so is using RPATH set to ${PLUGINS_DIR}")
+endif ( WXC_APP )
 
 FILE(GLOB SRCS "*.cpp")
 

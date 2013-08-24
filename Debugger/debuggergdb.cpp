@@ -117,6 +117,9 @@ static void StripString( wxString &string )
     string.Replace( wxT( "\\\\r\\\\n" ), wxT( "\r\n" ) );
     string.Replace( wxT( "\\\\n" ), wxT( "\n" ) );
     string.Replace( wxT( "\\\\r" ), wxT( "\r" ) );
+#ifdef __WXMSW__
+    string.Replace("\\r\\n", "\r\n");
+#endif
     string = string.Trim();
 }
 

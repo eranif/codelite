@@ -1383,7 +1383,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << wxT("\n");
     text << wxT("##\n");
     text << wxT("## Common variables\n");
-    text << wxT("## AR, CXX, CC, CXXFLAGS and CFLAGS can be overriden using an environment variables\n");
+    text << wxT("## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables\n");
     text << wxT("##\n");
     text << wxT("AR       := ") << cmp->GetTool(wxT("AR"))  << wxT("\n");
     text << wxT("CXX      := ") << cmp->GetTool(wxT("CXX")) << wxT("\n");
@@ -1391,6 +1391,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << wxT("CXXFLAGS := ") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
     text << wxT("CFLAGS   := ") << cBuildOpts << wxT(" $(Preprocessors)") << wxT("\n");
     text << wxT("ASFLAGS  := ") << asOptions << "\n";
+    text << wxT("AS       := ") << cmp->GetTool(wxT("AS")) << "\n";
     text << wxT("\n\n");
 }
 

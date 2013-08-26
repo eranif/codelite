@@ -196,7 +196,6 @@ void CppSymbolTree::AdvanceSelection(bool forward)
 
     if (nextItem.IsOk()) {
         SelectItem(nextItem);
-        EnsureVisible(nextItem);
     }
 }
 

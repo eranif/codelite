@@ -1441,30 +1441,38 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
         // Handle password required
         wxString tmpOutput = output;
         tmpOutput.Trim().Trim(false);
-        if ( tmpOutput.EndsWith("password:") || tmpOutput.Contains("Password for") ) {
+        tmpOutput.MakeLower();
+        
+        if ( ga.action != gitDiffRepoCommit && 
+             ga.action != gitDiffFile       &&
+             ga.action != gitDiffRepoShow )
+        
+        {
+            if ( tmpOutput == "password:" || tmpOutput.Contains("password for") ) {
 
-            // Password is required
-            wxString pass = ::wxGetPasswordFromUser(output);
-            if ( pass.IsEmpty() ) {
+                // Password is required
+                wxString pass = ::wxGetPasswordFromUser(output);
+                if ( pass.IsEmpty() ) {
 
-                // No point on continuing
-                m_process->Terminate();
+                    // No point on continuing
+                    m_process->Terminate();
 
-            } else {
+                } else {
 
-                // write the password
-                m_process->WriteToConsole( pass );
+                    // write the password
+                    m_process->WriteToConsole( pass );
 
-            }
-        } else if (( tmpOutput.Contains("The authenticity of host") && tmpOutput.Contains("can't be established")) || tmpOutput.Contains("key fingerprint")) {
-            if ( ::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES ) {
-                m_process->WriteToConsole("yes");
+                }
+            } else if (( tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) || tmpOutput.Contains("key fingerprint")) {
+                if ( ::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"), wxYES_NO|wxCENTER|wxICON_QUESTION) == wxYES ) {
+                    m_process->WriteToConsole("yes");
 
-            } else {
-                m_process->Terminate();
+                } else {
+                    m_process->Terminate();
+                }
             }
         }
-
+        
         if(m_progressDialog && m_progressDialog->IsShown()) {
             wxString message = output.Left(output.Find(':'));
             int percent = output.Find('%',true);

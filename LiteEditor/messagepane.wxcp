@@ -164,7 +164,7 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Bg Colour:",
-									"colour":	"rgb(255, 255, 225)"
+									"colour":	"Tooltip"
 								}, {
 									"type":	"colour",
 									"m_label":	"Fg Colour:",
@@ -370,7 +370,7 @@
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
-																	"colour":	"rgb(255, 255, 225)"
+																	"colour":	"Tooltip"
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Fg Colour:",

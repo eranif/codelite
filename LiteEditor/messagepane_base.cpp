@@ -26,6 +26,7 @@ MessagePaneBase::MessagePaneBase(wxWindow* parent, wxWindowID id, const wxPoint&
     this->SetSizer(bSizer8);
     
     m_panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
+    m_panel2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     
     bSizer8->Add(m_panel2, 1, wxEXPAND, 0);
     
@@ -45,6 +46,7 @@ MessagePaneBase::MessagePaneBase(wxWindow* parent, wxWindowID id, const wxPoint&
     bSizer4->Add(m_bitmap1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_panel1 = new wxPanel(m_panel2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxWANTS_CHARS|wxTAB_TRAVERSAL);
+    m_panel1->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     
     bSizer4->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     

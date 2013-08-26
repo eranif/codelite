@@ -176,10 +176,20 @@ void CppSymbolTree::AdvanceSelection(bool forward)
 
     wxTreeItemId nextItem;
     if (forward) {
-        //Item is visible, scroll to it to make sure GetNextVisible() wont
-        //fail
-        ScrollTo(item);
         nextItem = GetNextVisible(item);
+        if ( !nextItem.IsOk() ) {
+            // we could not get the next visible, try the next sibling
+            nextItem = GetNextSibling(item);
+            if ( !nextItem.IsOk() ) {
+                // we are the last child... try the sibling of our parent
+                wxTreeItemId parent = GetItemParent(item);
+                if ( !parent.IsOk() ) {
+                    return;
+                }
+                nextItem = GetNextSibling(parent);
+            }
+        }
+        
     } else {
         nextItem = TryGetPrevItem(item);
     }

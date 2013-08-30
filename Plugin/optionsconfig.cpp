@@ -176,7 +176,7 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         m_trimOnlyModifiedLines         = XmlUtils::ReadBool  (node, wxT("m_trimOnlyModifiedLines"),   m_trimOnlyModifiedLines);
         m_options                       = XmlUtils::ReadLong  (node, wxT("m_options"),                 m_options);
         m_debuggerMarkerLine            = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),      m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
-        
+
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include "editor_config.h" too
         long trim             (0);
         long appendLf         (0);
@@ -254,7 +254,7 @@ wxXmlNode *OptionsConfig::ToXml() const
     n->AddProperty(wxT("m_useLocale"),                   BoolToString(m_useLocale));
     n->AddProperty(wxT("m_trimOnlyModifiedLines"),       BoolToString(m_trimOnlyModifiedLines));
     n->AddProperty(wxT("m_debuggerMarkerLine"),          m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
-    
+
     wxString tmp;
     tmp << m_indentWidth;
     n->AddProperty(wxT("IndentWidth"), tmp);
@@ -309,5 +309,21 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 
     if (wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) {
         this->m_fileFontEncoding = wxFONTENCODING_UTF8;
+    }
+}
+
+wxString OptionsConfig::GetEOLAsString() const
+{
+    if (GetEolMode() == wxT("Unix (LF)")) {
+        return "\n";
+        
+    } else if (GetEolMode() == wxT("Mac (CR)")) {
+        return "\r";
+        
+    } else if (GetEolMode() == wxT("Windows (CRLF)")) {
+        return "\r\n";
+        
+    } else {
+        return "\n";
     }
 }

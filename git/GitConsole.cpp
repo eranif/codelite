@@ -303,7 +303,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
             chY = prefix[1];
         }
 
-        if ( chX == 'M' ) {
+        if ( chX == 'M') {
             m_dvFilesModel->AppendItem(m_itemModified, cols, new GitClientData( filenameFullpath ));
 
         } else if ( chX == 'A' ) {
@@ -315,7 +315,9 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
         } else if ( chX == 'R' ) {
             // Renamed in index
-
+            // for now, we will treat renamed file as modified file
+            m_dvFilesModel->AppendItem(m_itemModified, cols, new GitClientData( filenameFullpath ));
+            
         } else {
             m_dvFilesModel->AppendItem(m_itemUntracked, cols, new GitClientData( filenameFullpath ));
         }

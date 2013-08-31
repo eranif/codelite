@@ -591,7 +591,7 @@ void NewBuildTab::MarkEditor(LEditor* editor)
     BuildTabSettingsData options;
     EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 
-    // Are annotations enabled?
+    // Are markers or annotations enabled?
     if( options.GetErrorWarningStyle() == BuildTabSettingsData::EWS_NoMarkers ) {
         return;
     }

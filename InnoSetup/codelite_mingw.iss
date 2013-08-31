@@ -70,8 +70,28 @@ Source: "..\Runtime\templates\projects\dynamic-library-wx-enabled\dynamic-librar
 
 ; XML settings
 Source: "..\Runtime\lexers\*.xml"; DestDir: "{app}\lexers\"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\debuggers\*.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
-Source: "..\Runtime\plugins\*.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\debuggers\DebuggerGDB.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; Components: Editor
+
+; Copy the plugins (by name)
+Source: "..\Runtime\plugins\abbreviation.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\CallGraph.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\CodeFormatter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\ContinuousBuild.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\Copyright.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\CppChecker.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\Cscope.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\DatabaseExplorer.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\ExternalTools.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\git.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\Gizmos.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\Outline.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\snipwiz.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\QMakePlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\Subversion2.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\UnitTestPP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\wxFormBuilder.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+Source: "..\Runtime\plugins\ZoomNavigator.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; Components: Editor
+
 Source: "..\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor
 Source: "..\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ; Components: Editor

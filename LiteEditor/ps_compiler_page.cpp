@@ -88,6 +88,7 @@ void PSCompilerPage::Load(BuildConfigPtr buildConf)
     m_checkBoxPCHInCommandLine->SetValue(buildConf->GetPchInCommandLine());
     m_checkBoxSeparatePCHFlags->SetValue(buildConf->GetUseSeparatePCHFlags());
     m_textCtrlPCHCompilationFlags->SetValue(buildConf->GetPchCompileFlags());
+    m_textCtrlAssemblerOptions->SetValue(buildConf->GetAssmeblerOptions());
 }
 
 void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -101,7 +102,8 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
     buildConf->SetPchInCommandLine(m_checkBoxPCHInCommandLine->IsChecked());
     buildConf->SetUseSeparatePCHFlags(m_checkBoxSeparatePCHFlags->IsChecked());
     buildConf->SetPchCompileFlags(m_textCtrlPCHCompilationFlags->GetValue());
-
+    buildConf->SetAssmeblerOptions(m_textCtrlAssemblerOptions->GetValue());
+    
     wxString useWithGlobalSettings = m_choiceCmpUseWithGlobalSettings->GetStringSelection();
     if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
         buildConf->SetBuildCmpWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
@@ -120,6 +122,7 @@ void PSCompilerPage::Clear()
     m_textPreprocessor->Clear();
     m_textCtrlPreCompiledHeader->Clear();
     m_textCtrlCCompilerOptions->Clear();
+    m_textCtrlAssemblerOptions->Clear();
 }
 
 void PSCompilerPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event)

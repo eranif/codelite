@@ -4,7 +4,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "compiler_pages.h"
-#include "codelite_exports.h"
 
 
 // Declare the bitmap loading function
@@ -100,7 +99,6 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer261->Add(m_btnUpdateWarnPattern, 0, wxALL|wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -175,6 +173,14 @@ CompilerToolsBase::CompilerToolsBase(wxWindow* parent, wxWindowID id, const wxPo
     
     fgSizer41->Add(m_textCtrlCCompilerName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
+    m_staticText43 = new wxStaticText(this, wxID_ANY, _("Assembler Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer41->Add(m_staticText43, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlAssemblerName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer41->Add(m_textCtrlAssemblerName, 0, wxALL|wxEXPAND, 5);
+    
     m_staticText116 = new wxStaticText(this, wxID_ANY, _("Linker Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer41->Add(m_staticText116, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
@@ -225,7 +231,6 @@ CompilerToolsBase::CompilerToolsBase(wxWindow* parent, wxWindowID id, const wxPo
     
     fgSizer41->Add(m_textCtrlPathVariable, 1, wxALL|wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -257,7 +262,6 @@ CompilerSwitchesBase::CompilerSwitchesBase(wxWindow* parent, wxWindowID id, cons
     m_listSwitches = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
     
     mainSizer->Add(m_listSwitches, 1, wxALL|wxEXPAND, 5);
-    
     
     SetSizeHints(438,428);
     if ( GetSizer() ) {
@@ -314,7 +318,6 @@ CompilerFileTypesBase::CompilerFileTypesBase(wxWindow* parent, wxWindowID id, co
     m_buttonDeleteFileType = new wxButton(this, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer111->Add(m_buttonDeleteFileType, 0, wxALL, 5);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -444,7 +447,6 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
     
     fgSizer3->Add(m_checkBoxReadObjectsFromFile, 0, wxALL|wxEXPAND, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -493,7 +495,6 @@ CompilerCompilerOptionsBase::CompilerCompilerOptionsBase(wxWindow* parent, wxWin
     m_buttonDeleteCompilerOption = new wxButton(this, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer111->Add(m_buttonDeleteCompilerOption, 0, wxALL, 5);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -556,7 +557,6 @@ CompilerLinkerOptionsBase::CompilerLinkerOptionsBase(wxWindow* parent, wxWindowI
     m_buttonDeleteLinkerOption = new wxButton(this, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer111->Add(m_buttonDeleteLinkerOption, 0, wxALL, 5);
-    
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -637,7 +637,6 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
     
     bSizer24->Add(m_buttonCancel, 0, wxALL, 5);
     
-    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
@@ -711,7 +710,6 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     m_buttonCancel = new wxButton(this, wxID_CANCEL, _("cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer24->Add(m_buttonCancel, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

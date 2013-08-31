@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
+##
 #######################################################################################################################################################################
 ##                                                                                                                                                                    #
 ## codelite IDE cmake file                                                                                                                                            #
@@ -23,6 +23,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
 ##      -DGTK_USE_AUIBOOK=1|0                      // Under GTK, use wxAuiNotebook instead of the native notebook                                                     #
 ##      -DWITH_WX_CONFIG=<fullpath>                // Specify a particular wxWidgets build to use. The format must be /path/to/different/wx-config                    #
+##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                        #
 #######################################################################################################################################################################
 
 

@@ -15,15 +15,30 @@ protected:
 
 public:
     CppTokenCacheMakerThread(RefactoringStorage* storage, const wxString &workspaceFile, const wxFileList_t& files)
-        : wxThread(wxTHREAD_DETACHED)
+        : wxThread(wxTHREAD_JOINABLE)
         , m_storage(storage)
-        , m_workspaceFile(workspaceFile.c_str()) {
+        , m_workspaceFile(workspaceFile.c_str())
+    {
         m_files.insert(m_files.end(), files.begin(), files.end());
     }
 
     virtual ~CppTokenCacheMakerThread()
     {}
 
+    /**
+     * @brief stop the working thread
+     * this function shdould be called from the main thread only
+     */
+    void Stop()
+    {
+        if ( IsAlive() ) {
+            Delete(NULL, wxTHREAD_WAIT_BLOCK);
+            
+        } else {
+            Wait(wxTHREAD_WAIT_BLOCK);
+        }
+    }
+    
     void *Entry() {
         RefactoringStorage storage;
         storage.Open(m_workspaceFile);
@@ -35,37 +50,48 @@ public:
         EventNotifier::Get()->AddPendingEvent( evtStatus1 );
 
         size_t count = 0;
-        
+
         storage.Begin();
         wxFileList_t::const_iterator iter = m_files.begin();
         for(; iter != m_files.end(); ++iter ) {
+
+            if ( TestDestroy() ) {
+                // we requested to stop
+                storage.Commit();
+                wxCommandEvent evtStatus2(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING);
+                evtStatus2.SetInt(100);
+                evtStatus2.SetString( m_workspaceFile );
+                EventNotifier::Get()->AddPendingEvent( evtStatus2 );
+                return NULL;
+            }
+
             if ( !TagsManagerST::Get()->IsValidCtagsFile( (*iter) ) ) {
                 continue;
             }
-            
+
             ++count;
             if ( count % 100 == 0 ) {
                 storage.Commit();
                 storage.Begin();
             }
-            
+
             wxString fullpath = iter->GetFullPath();
             if ( !storage.IsFileUpToDate(fullpath) ) {
                 CppWordScanner scanner( fullpath );
                 CppToken::List_t tokens = scanner.tokenize();
-                
+
                 if ( false ) {
                     CppToken::List_t::iterator tokIter = tokens.begin();
                     for(; tokIter != tokens.end(); ++tokIter ) {
                         wxPrintf("%s | %s | %d\n", tokIter->getFilename().c_str(), tokIter->getName().c_str(), (int)tokIter->getOffset());
                     }
                 }
-                
+
                 storage.StoreTokens( fullpath, tokens, false );
             }
         }
+
         storage.Commit();
-        
         wxCommandEvent evtStatus2(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING);
         evtStatus2.SetInt(100);
         evtStatus2.SetString( m_workspaceFile );
@@ -76,19 +102,26 @@ public:
 
 RefactoringStorage::RefactoringStorage()
     : m_cacheStatus(CACHE_NOT_READY)
+    , m_thread(NULL)
 {
-    // wxEVT_WORKSPACE_LOADED
-    EventNotifier::Get()->Connect(3452, wxCommandEventHandler(RefactoringStorage::OnWorkspaceLoaded), NULL, this);
-    // wxEVT_WORKSPACE_CLOSED
-    EventNotifier::Get()->Connect(3454, wxCommandEventHandler(RefactoringStorage::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(RefactoringStorage::OnThreadStatus), NULL, this);
+    if ( wxThread::IsMain() ) {
+        // wxEVT_WORKSPACE_LOADED
+        EventNotifier::Get()->Connect(3452, wxCommandEventHandler(RefactoringStorage::OnWorkspaceLoaded), NULL, this);
+        // wxEVT_WORKSPACE_CLOSED
+        EventNotifier::Get()->Connect(3454, wxCommandEventHandler(RefactoringStorage::OnWorkspaceClosed), NULL, this);
+        EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(RefactoringStorage::OnThreadStatus), NULL, this);
+    }
 }
 
 RefactoringStorage::~RefactoringStorage()
 {
-    EventNotifier::Get()->Disconnect(3452, wxCommandEventHandler(RefactoringStorage::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect(3454, wxCommandEventHandler(RefactoringStorage::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(RefactoringStorage::OnThreadStatus), NULL, this);
+    if ( wxThread::IsMain() ) {
+        EventNotifier::Get()->Disconnect(3452, wxCommandEventHandler(RefactoringStorage::OnWorkspaceLoaded), NULL, this);
+        EventNotifier::Get()->Disconnect(3454, wxCommandEventHandler(RefactoringStorage::OnWorkspaceClosed), NULL, this);
+        EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(RefactoringStorage::OnThreadStatus), NULL, this);
+        
+        JoinWorkerThread();
+    }
 }
 
 void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::List_t& tokens, bool startTx)
@@ -101,10 +134,10 @@ void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::L
         return;
 
     try {
-        if ( startTx )  { 
+        if ( startTx )  {
             Begin();
         }
-        
+
         DoDeleteFile(filename);
 
         CppToken::List_t::const_iterator iter = tokens.begin();
@@ -113,8 +146,8 @@ void RefactoringStorage::StoreTokens(const wxString& filename, const CppToken::L
         }
 
         DoUpdateFileTimestamp(filename);
-        
-        if ( startTx )  { 
+
+        if ( startTx )  {
             Commit();
         }
 
@@ -187,6 +220,9 @@ void RefactoringStorage::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
     m_workspaceFile = e.GetString();
+    if ( m_workspaceFile.IsEmpty() ) {
+        return;
+    }
     m_cacheStatus = CACHE_NOT_READY;
     Open( m_workspaceFile );
 }
@@ -215,14 +251,14 @@ void RefactoringStorage::Match(const wxString& symname, const wxString& filename
     if ( !IsCacheReady() ) {
         return;
     }
-    
+
     if ( !IsFileUpToDate(filename) ) {
         // update the cache
         CppWordScanner tmpScanner(filename);
         CppToken::List_t tokens_list = tmpScanner.tokenize();
         StoreTokens(filename, tokens_list, true);
     }
-    
+
     CppToken::List_t list = CppToken::loadByNameAndFile(&m_db, symname, filename);
     matches.addToken( symname, list );
 }
@@ -252,13 +288,14 @@ bool RefactoringStorage::IsFileUpToDate(const wxString& filename)
 
 void RefactoringStorage::InitializeCache(const wxFileList_t& files)
 {
-    if ( m_cacheStatus == CACHE_NOT_READY ) {
+    if ( m_thread == NULL ) {
         m_cacheStatus = CACHE_IN_PROGRESS;
-        CppTokenCacheMakerThread *thr = new CppTokenCacheMakerThread(this, m_workspaceFile, files);
-        thr->Create();
-        thr->Run();
+        m_thread = new CppTokenCacheMakerThread(this, m_workspaceFile, files);
+        m_thread->Create();
+        m_thread->Run();
     }
 }
+
 wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
 {
     if ( !IsCacheReady() ) {
@@ -288,7 +325,8 @@ void RefactoringStorage::OnWorkspaceClosed(wxCommandEvent& e)
     e.Skip();
     m_cacheStatus = CACHE_NOT_READY;
     try {
-
+        JoinWorkerThread();
+        
         m_db.Close();
         m_workspaceFile.Clear();
         m_cacheDb.Clear();
@@ -302,6 +340,10 @@ void RefactoringStorage::OnThreadStatus(wxCommandEvent& e)
 {
     e.Skip();
     if ( e.GetInt() == 100 ) {
+        
+        // Release the worker thread
+        JoinWorkerThread();
+        
         // completed
         if ( e.GetString() == m_workspaceFile && m_cacheStatus == CACHE_IN_PROGRESS ) {
             // same file
@@ -334,5 +376,13 @@ void RefactoringStorage::Rollback()
         m_db.Rollback();
     } catch (wxSQLite3Exception &e) {
         wxUnusedVar(e);
+    }
+}
+
+void RefactoringStorage::JoinWorkerThread()
+{
+    if ( m_thread ) {
+        m_thread->Stop();
+        m_thread = NULL;
     }
 }

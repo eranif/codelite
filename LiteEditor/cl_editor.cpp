@@ -2206,6 +2206,23 @@ bool LEditor::LineIsMarked(enum marker_mask_type mask)
     return (nBits & mask ? true : false);
 }
 
+void LEditor::StoreMarkersToArray(wxArrayString& bookmarks)
+{
+    for (int line = 0; (line = MarkerNext(line, 128)) >= 0; ++line) {
+        bookmarks.Add(wxString::Format("%d", line));
+    }
+}
+
+void LEditor::LoadMarkersFromArray(const wxArrayString& bookmarks)
+{
+    for (size_t i = 0; i < bookmarks.GetCount(); i++) {
+        long line = 0;
+        if (bookmarks.Item(i).ToLong(&line)) {
+            MarkerAdd(line, 0x7);
+        }
+    }
+}
+
 void LEditor::DelAllMarkers()
 {
     // Delete all markers from the view
@@ -2408,6 +2425,10 @@ void LEditor::ReloadFile()
         return;
     }
 
+    // Cache any bookmarks
+    wxArrayString bookmarks;
+    StoreMarkersToArray(bookmarks);
+
     // get the pattern of the current file
     int lineNumber = GetCurrentLine();
 
@@ -2444,6 +2465,7 @@ void LEditor::ReloadFile()
 
     SetReloadingFile( false );
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
+    LoadMarkersFromArray(bookmarks);
 }
 
 void LEditor::SetEditorText(const wxString &text)
@@ -2826,6 +2848,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 
     menu.Append(XRCID("add_breakpoint"), wxString(_("Add Breakpoint")));
     menu.Append(XRCID("insert_temp_breakpoint"), wxString(_("Add a Temporary Breakpoint")));
+    menu.Append(XRCID("insert_disabled_breakpoint"), wxString(_("Add a Disabled Breakpoint")));
     menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 
     std::vector<BreakpointInfo> lineBPs;
@@ -2838,21 +2861,21 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
         if (count == 1) {
             menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
             menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
-            IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-            if (dbgr && dbgr->IsRunning()) {
+            //IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+            //if (dbgr && dbgr->IsRunning()) {
                 // On MSWin it often crashes the debugger to try to load-then-disable a bp
-                // so don't show the menu item unless the debugger is running
+                // so don't show the menu item unless the debugger is running *** Hmm, that was written about 4 years ago. Let's try it again...
                 menu.Append(XRCID("toggle_breakpoint_enabled_status"),
                             lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
-            }
+            //}
             menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
         } else if (count > 1) {
             menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove a Breakpoint")));
             menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore a Breakpoint")));
-            IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-            if (dbgr && dbgr->IsRunning()) {
+            //IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+            //if (dbgr && dbgr->IsRunning()) {
                 menu.Append(XRCID("toggle_breakpoint_enabled_status"), wxString(_("Toggle a breakpoint's enabled state")));
-            }
+            //}
             menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit a Breakpoint")));
         }
     }
@@ -2873,7 +2896,8 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 
 void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
 {
-    bool is_temp = (event.GetId() == XRCID("insert_temp_breakpoint"));
+    bool is_temp     = (event.GetId() == XRCID("insert_temp_breakpoint"));
+    bool is_disabled = (event.GetId() == XRCID("insert_disabled_breakpoint"));
 
     wxString conditions;
     if (event.GetId() == XRCID("insert_cond_breakpoint")) {
@@ -2883,7 +2907,7 @@ void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
         }
     }
 
-    AddBreakpoint(-1, conditions, is_temp);
+    AddBreakpoint(-1, conditions, is_temp, is_disabled);
 }
 
 void LEditor::OnIgnoreBreakpoint()
@@ -2906,7 +2930,7 @@ void LEditor::ToggleBreakpointEnablement()
     }
 }
 
-void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/)
+void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/, const bool is_disabled/*=false*/)
 {
     if (lineno == -1) {
         lineno = GetCurrentLine()+1;
@@ -2916,10 +2940,15 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT
     if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp)) {
         wxMessageBox(_("Failed to insert breakpoint"));
     } else {
+        if (is_disabled) {
+            ToggleBreakpointEnablement();
+        }
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
         wxString message( _("Breakpoint successfully added") ), prefix;
         if (is_temp) {
             prefix = _("Temporary ");
+        } else if (is_disabled) {
+            prefix = _("Disabled ");
         } else if (!conditions.IsEmpty()) {
             prefix = _("Conditional ");
         }
@@ -2974,21 +3003,35 @@ void LEditor::ToggleBreakpoint(int lineno)
 void LEditor::SetWarningMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
-        MarkerAdd(lineno, smt_warning);
+        BuildTabSettingsData options;
+        EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
         
-        // define the warning marker
-        AnnotationSetText(lineno, annotationText);
-        AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks) {
+            MarkerAdd(lineno, smt_warning);
+        }
+
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate) {
+            // define the warning marker
+            AnnotationSetText(lineno, annotationText);
+            AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
+        }
     }
 }
 
 void LEditor::SetErrorMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
-        MarkerAdd(lineno, smt_error);
-        
-        AnnotationSetText(lineno, annotationText);
-        AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
+        BuildTabSettingsData options;
+        EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
+
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks) {
+            MarkerAdd(lineno, smt_error);
+        }
+
+        if (options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate) {
+            AnnotationSetText(lineno, annotationText);
+            AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
+        }
     }
 }
 

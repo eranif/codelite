@@ -289,31 +289,37 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         bool          italic    = sp.GetItalic();
         bool          underline = sp.GetUnderlined();
         //int           alpha     = sp.GetAlpha();
-
         // handle special cases
-        if ( sp.GetId() == FOLD_MARGIN_ATTR_ID ) {
-
+        switch ( sp.GetId() ) {
+        case WHITE_SPACE_ATTR_ID: {
+            // whitespace colour. We dont allow changing the background colour, only the foreground colour
+            wxColour whitespaceColour = sp.GetFgColour();
+            if ( whitespaceColour.IsOk() ) {
+                ctrl->SetWhitespaceForeground(true, whitespaceColour);
+            }
+            break;
+        }
+        case FOLD_MARGIN_ATTR_ID:
             // fold margin foreground colour
             ctrl->SetFoldMarginColour(true, sp.GetBgColour());
             ctrl->SetFoldMarginHiColour(true, sp.GetFgColour());
-
-        } else if ( sp.GetId() == SEL_TEXT_ATTR_ID ) {
-
+            break;
+        case SEL_TEXT_ATTR_ID:
             // selection colour
             if(wxColour(sp.GetBgColour()).IsOk()) {
                 ctrl->SetSelBackground(true, sp.GetBgColour());
             }
-
-        } else if ( sp.GetId() == CARET_ATTR_ID ) {
-
+            break;
+        case CARET_ATTR_ID: {
             // caret colour
             wxColour caretColour = sp.GetFgColour();
             if ( !caretColour.IsOk() ) {
                 caretColour = *wxBLACK;
             }
             ctrl->SetCaretForeground( caretColour );
-
-        } else {
+            break;
+        }
+        default: {
             int fontSize( size );
 
             wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
@@ -374,7 +380,9 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
                 ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
             }
+            break;
         }
+        } // switch
     }
 
     // set the calltip font

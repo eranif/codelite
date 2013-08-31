@@ -105,7 +105,8 @@ class GitPlugin : public IPlugin
     IntMap_t m_treeImageMapping;
     int      m_baseImageCount;
     GitConsole *m_console;
-
+    wxFileName  m_workspaceFilename;
+    
 private:
     void DoCreateTreeImages();
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType ) const;
@@ -114,7 +115,12 @@ private:
     void ProcessGitActionQueue();
     void ColourFileTree(wxTreeCtrl *tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
-
+    
+    /// Workspace management
+    bool IsWorkspaceOpened() const;
+    wxString GetWorkspaceName() const;
+    wxFileName GetWorkspaceFileName() const;
+    
     void FinishGitListAction(const gitAction& ga);
     void ListBranchAction(const gitAction& ga);
     void GetCurrentBranchAction(const gitAction& ga);

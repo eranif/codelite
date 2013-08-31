@@ -294,6 +294,7 @@ protected:
         commandlist.Trim().Trim(false); // ReadCData tends to add white-space to the commands e.g. a terminal \n
         arch.Read(wxT("regex"), regex);
         arch.Read(wxT("is_temp"), is_temp);
+        arch.Read(wxT("is_enabled"), is_enabled);
         arch.Read(wxT("ignore_number"), (int&)ignore_number);
         arch.Read(wxT("conditions"), conditions);
         arch.Read(wxT("origin"),     (int&)origin);

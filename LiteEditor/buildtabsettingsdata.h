@@ -50,7 +50,8 @@ private:
 public:
     enum ErrorsWarningStyle {
         EWS_NoMarkers   = 0x00000000,
-        EWS_Bookmarks   = 0x00000002
+        EWS_Bookmarks   = 0x00000002,
+        EWS_Annotate    = 0x00000004
     };
 
     enum ShowBuildPane {

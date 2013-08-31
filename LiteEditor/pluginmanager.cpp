@@ -142,10 +142,24 @@ void PluginManager::Load()
         
         // Sort the plugins by A-Z
         std::sort(files.begin(), files.end());
-        
         for ( size_t i=0; i<files.GetCount(); i++ ) {
-            clDynamicLibrary *dl = new clDynamicLibrary();
+            
             wxString fileName( files.Item( i ) );
+#if defined(__WXMSW__) && !defined(NDEBUG)
+            
+            // Under MSW loading a release plugin while in debug mode will cause a crash
+            if ( !fileName.EndsWith("-dbg.dll") ) {
+                continue;
+            }
+#elif defined(__WXMSW__)
+            
+            // filter debug plugins
+            if ( fileName.EndsWith("-dbg.dll") ) {
+                continue;
+            }
+#endif
+
+            clDynamicLibrary *dl = new clDynamicLibrary();
             if ( !dl->Load( fileName ) ) {
                 CL_ERROR( wxT( "Failed to load plugin's dll: " ) + fileName );
                 if (!dl->GetError().IsEmpty()) {

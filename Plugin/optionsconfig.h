@@ -138,7 +138,8 @@ public:
     OptionsConfig() {}
     OptionsConfig(wxXmlNode *node);
     virtual ~OptionsConfig(void);
-
+    
+    wxString GetEOLAsString() const;
     //-------------------------------------
     // Setters/Getters
     //-------------------------------------

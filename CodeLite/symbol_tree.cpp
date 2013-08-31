@@ -286,6 +286,7 @@ void SymbolTree::SelectItemByName(const wxString &name)
         if (wxStrnicmp(path, name, name.Length()) == 0) {
             //we got an item to select
             SelectItem(iter->second);
+            EnsureVisible(iter->second);
             return;
         }
     }

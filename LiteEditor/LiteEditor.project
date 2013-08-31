@@ -261,6 +261,7 @@
       <File Name="addoptioncheckdlg.cpp"/>
       <File Name="addoptioncheckdlg.h"/>
       <File Name="addoptioncheckdlgbase.cpp"/>
+      <File Name="compiler_page.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>
@@ -458,6 +459,7 @@
     <File Name="save_perspective_as_dlg.h"/>
     <File Name="NavBarControl.h"/>
     <File Name="NavBarControl.cpp"/>
+    <File Name="messagepane.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
     <File Name="context_base.h"/>
@@ -514,17 +516,16 @@
     <File Name="../Runtime/rc/menu.xrc"/>
     <File Name="resources.xrc"/>
     <File Name="../Runtime/config/accelerators.conf.default"/>
-    <File Name="../InnoSetup/lite_editor.iss"/>
     <File Name="../Runtime/config/codelite.xml.default.gtk"/>
     <File Name="../Runtime/config/codelite.xml.default"/>
     <File Name="../Runtime/config/codelite.xml.default.mac"/>
     <File Name="../codelite-icons/manifest.ini"/>
     <File Name="../InnoSetup/codelite_mingw.iss"/>
-    <File Name="../InnoSetup/codelite_mingw_wx.iss"/>
     <File Name="../codelite-icons-fresh-farm/manifest.ini"/>
     <File Name="project_settings.wxcp"/>
     <File Name="../InnoSetup/wxwidgets.iss"/>
     <File Name="../InnoSetup/modpath.iss"/>
+    <File Name="../codelite-icons-dark/manifest.ini"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>
@@ -572,6 +573,7 @@
       <File Name="new_build_tab.h"/>
       <File Name="BuildTabTopPanel.h"/>
       <File Name="BuildTabTopPanel.cpp"/>
+      <File Name="buildsettingstab_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="editor_options_docking_windows.wxcp"/>
     <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>
@@ -597,7 +599,6 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <VirtualDirectory Name="scripts">
-    <File Name="../Runtime/build_update.bat"/>
     <File Name="../Runtime/update.bat"/>
     <File Name="../Runtime/make_mac_bundle.sh"/>
     <File Name="../make_src_targz.sh"/>
@@ -606,6 +607,7 @@
     <File Name="../git-revision.sh"/>
     <File Name="../InnoSetup/make_packages.bat"/>
     <File Name="../mac-build.sh"/>
+    <File Name="../Runtime/excludes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="formbuilder">
     <File Name="newversionbasedlg.fbp"/>
@@ -614,7 +616,6 @@
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
     <File Name="quickfindbarbase.fbp"/>
-    <File Name="messagepane.fbp"/>
     <File Name="editor_options_codenav.fbp"/>
     <File Name="editor_options_right_margin.fbp"/>
     <File Name="editor_options_guides.fbp"/>
@@ -767,6 +768,8 @@
       <File Name="addfunctionsmodel.h"/>
       <File Name="rename_symbool_dlg.h"/>
       <File Name="rename_symbool_dlg.cpp"/>
+      <File Name="compiler_pages.h"/>
+      <File Name="compiler_pages.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -784,6 +787,8 @@
       <File Name="editor_options_comments_doxygen_liteeditor_bitmaps.cpp"/>
       <File Name="rename_symbool_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="workspacesettingsbase_liteeditor_bitmaps.cpp"/>
+      <File Name="compiler_page_plugin_bitmaps.cpp"/>
+      <File Name="messagepane_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -986,16 +991,16 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="install">cd build-debug &amp;&amp; make install</Target>
-        <Target Name="cmake">cd build-debug &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  -DWITH_MYSQL=1 -DCMAKE_BUILD_TYPE=Debug ..</Target>
-        <RebuildCommand>cd build-debug &amp;&amp; make clean &amp;&amp; make -j8</RebuildCommand>
-        <CleanCommand>cd build-debug &amp;&amp; make clean</CleanCommand>
-        <BuildCommand>cd build-debug &amp;&amp; make -j8</BuildCommand>
+        <Target Name="install">make install</Target>
+        <Target Name="cmake">cmake -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  -DWITH_MYSQL=1 -DCMAKE_BUILD_TYPE=Debug ..</Target>
+        <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make -j8</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName/>
-        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+        <WorkingDirectory>$(WorkspacePath)/build-debug</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
@@ -1255,7 +1260,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="./Debug" Command="./codelite.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command="./codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
@@ -1264,9 +1269,11 @@ resources.cpp: resources.xrc
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
-      <PreBuild/>
+      <PreBuild>
+        <Command Enabled="yes"/>
+      </PreBuild>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite.exe" ..\Runtime</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite-dbg.exe" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <Target Name="configure --enable-debug">./configure --enable-debug</Target>
@@ -1287,8 +1294,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>
@@ -1346,7 +1352,8 @@ svninfo.cpp:
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>

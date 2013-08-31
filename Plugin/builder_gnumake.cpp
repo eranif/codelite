@@ -801,7 +801,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
             compilationLine.Replace(wxT("$(FileFullName)"), fullnameOnly);
             compilationLine.Replace(wxT("$(FileFullPath)"), fullpathOnly);
             compilationLine.Replace(wxT("$(FilePath)"),     relPath);
-
+            
             // The object name is handled differently when using resource files
             if(ft.kind == Compiler::CmpFileKindResource)
                 compilationLine.Replace(wxT("$(ObjectName)"),   objPrefix + fullnameOnly);
@@ -1321,7 +1321,10 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
     wxString cBuildOpts = bldConf->GetCCompileOptions();
     cBuildOpts.Replace(wxT(";"), wxT(" "));
-
+    
+    wxString asOptions = bldConf->GetAssmeblerOptions();
+    asOptions.Replace(";", " ");
+    
     // Let the plugins add their content here
     wxCommandEvent e(wxEVT_GET_ADDITIONAL_COMPILEFLAGS);
     EventNotifier::Get()->ProcessEvent(e);
@@ -1380,14 +1383,15 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << wxT("\n");
     text << wxT("##\n");
     text << wxT("## Common variables\n");
-    text << wxT("## AR, CXX, CC, CXXFLAGS and CFLAGS can be overriden using an environment variables\n");
+    text << wxT("## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables\n");
     text << wxT("##\n");
     text << wxT("AR       := ") << cmp->GetTool(wxT("AR"))  << wxT("\n");
     text << wxT("CXX      := ") << cmp->GetTool(wxT("CXX")) << wxT("\n");
     text << wxT("CC       := ") << cmp->GetTool(wxT("CC"))  << wxT("\n");
     text << wxT("CXXFLAGS := ") << buildOpts << wxT(" $(Preprocessors)") << wxT("\n");
     text << wxT("CFLAGS   := ") << cBuildOpts << wxT(" $(Preprocessors)") << wxT("\n");
-
+    text << wxT("ASFLAGS  := ") << asOptions << "\n";
+    text << wxT("AS       := ") << cmp->GetTool(wxT("AS")) << "\n";
     text << wxT("\n\n");
 }
 

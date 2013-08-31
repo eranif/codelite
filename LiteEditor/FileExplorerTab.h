@@ -13,10 +13,20 @@ protected:
 public:
     FileExplorerTab(wxWindow* parent);
     virtual ~FileExplorerTab();
-    wxGenericDirCtrl *Tree() {
+    wxGenericDirCtrl *Tree() const {
         return m_genericDirCtrl;
     }
     TreeItemInfo GetSelectedItemInfo();
+    /**
+     * @brief return the number of items selected
+     */
+    size_t GetSelectionCount() const;
+    
+    /**
+     * @brief if there are any items selected, clear them
+     */
+    void ClearSelections();
+    
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

@@ -362,19 +362,22 @@ void BreakptMgr::DebuggerStopped()
 
     m_bps = newList;
     DoRemoveDuplicateBreakpoints();
-    UnDisableAllBreakpoints();
 }
 
-// Since a bp can't be created disabled, enable them all here when the debugger stops
-// That way they're guaranteed all to be enabled when it starts again
-void BreakptMgr::UnDisableAllBreakpoints()
+// Since a bp can't be created disabled, disable any here once the debugger is started
+void BreakptMgr::DisableAnyDisabledBreakpoints()
 {
-    for (size_t i=0; i<m_bps.size(); i++) {
-        BreakpointInfo &bp = m_bps.at(i);
-        bp.is_enabled = true;
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if (!(dbgr && dbgr->IsRunning())) {
+        return;
     }
 
-    RefreshBreakpointMarkers(); // Make this visible to the user
+    for (size_t i=0; i<m_bps.size(); i++) {
+        BreakpointInfo& bp = m_bps.at(i);
+        if (bp.is_enabled == false) {
+            dbgr->SetEnabledState(bp.debugger_id, false);
+        }
+    }
 }
 
 bool BreakptMgr::DelBreakpoint(const int id)

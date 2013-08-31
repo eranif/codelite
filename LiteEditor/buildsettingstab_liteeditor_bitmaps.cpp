@@ -30,7 +30,7 @@ static unsigned char xml_res_file_0[] = {
 47,119,120,120,114,99,34,32,118,101,114,115,105,111,110,61,34,50,46,51,
 46,48,46,49,34,47,62,10};
 
-void wxCAD0CInitBitmapResources()
+void wxCraftertNJGa9InitBitmapResources()
 {
 
     // Check for memory FS. If not present, load the handler:
@@ -40,9 +40,9 @@ void wxCAD0CInitBitmapResources()
         wxFSFile *f = fsys.OpenFile(wxT("memory:XRC_resource/dummy_file"));
         wxMemoryFSHandler::RemoveFile(wxT("XRC_resource/dummy_file"));
         if (f) delete f;
-        else wxFileSystem::AddHandler(new wxMemoryFSHandler);
+        else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/compiler_page_plugin_bitmaps.cpp$compiler_page_plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/compiler_page_plugin_bitmaps.cpp$compiler_page_plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/buildsettingstab_liteeditor_bitmaps.cpp$_home_david_devel_git_CL_LiteEditor_buildsettingstab_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/buildsettingstab_liteeditor_bitmaps.cpp$_home_david_devel_git_CL_LiteEditor_buildsettingstab_liteeditor_bitmaps.xrc"));
 }

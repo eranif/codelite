@@ -27,6 +27,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -52,6 +53,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -88,6 +90,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FFFFFF" BgColour="red" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -120,6 +123,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -154,6 +158,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -188,6 +193,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#008000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -212,6 +218,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -244,6 +251,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#000000" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
@@ -374,6 +382,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#000000" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -403,6 +412,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#000000" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -437,6 +447,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -466,6 +477,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#FFFF00" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -490,6 +502,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -539,6 +552,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -562,6 +576,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -596,6 +611,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="yes" Face="" Colour="#FF0000" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -635,6 +651,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#004080" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#000000" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="256" Size="10"/>
@@ -666,6 +683,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -684,6 +702,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
@@ -729,6 +748,7 @@
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="10"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="-1"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="#000000" BgColour="#D3D3D3" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="34" Name="Brace match" Bold="yes" Face="" Colour="#000000" BgColour="#80FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>
       <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="red" BgColour="white" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="10"/>

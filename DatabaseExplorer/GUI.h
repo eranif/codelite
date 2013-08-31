@@ -80,6 +80,7 @@ class _SqlCommandPanel : public wxPanel
 protected:
     enum {
         ID_INSERT_TEMPLATE = 1001,
+        ID_SQL_HISTORY = 1002,
     };
 protected:
     wxAuiToolBar* m_auibar167;
@@ -95,6 +96,7 @@ protected:
     virtual void OnSaveClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExecuteClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTemplatesBtnClick(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnHistoryToolClicked(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnGridCellRightClick(wxGridEvent& event) { event.Skip(); }
 
 public:

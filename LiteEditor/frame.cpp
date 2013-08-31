@@ -179,7 +179,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     //---------------------------------------------------
     // System events
     //---------------------------------------------------
-    //EVT_IDLE(Frame::OnIdle)
+    EVT_IDLE(clMainFrame::OnIdle)
     EVT_ACTIVATE(clMainFrame::OnAppActivated)
     EVT_CLOSE(clMainFrame::OnClose)
     EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
@@ -450,6 +450,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("enable_all_breakpoints"),  	clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("delete_all_breakpoints"),  	clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("insert_temp_breakpoint"),   clMainFrame::DispatchCommandEvent)
+    EVT_MENU(XRCID("insert_disabled_breakpoint"),clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("insert_cond_breakpoint"),   clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("edit_breakpoint"),          clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("show_breakpoint_dlg"),      clMainFrame::DispatchCommandEvent)
@@ -2465,7 +2466,11 @@ void clMainFrame::OnBuildProject(wxCommandEvent &event)
     wxUnusedVar(event);
     bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
     if (enable) {
-
+        
+        // Make sure that the working folder is set to the correct path
+        wxString workspacePath = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+        ::wxSetWorkingDirectory( workspacePath );
+        wxLogMessage("Setting working directory to: %s", workspacePath);
         SetStatusMessage(_("Build starting..."), 0);
 
         wxString conf, projectName;
@@ -3263,9 +3268,17 @@ void clMainFrame::OnDebuggerSettings(wxCommandEvent &e)
 
 void clMainFrame::OnIdle(wxIdleEvent &e)
 {
-    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if (dbgr && dbgr->IsRunning()) {
-        dbgr->Poke();
+    e.Skip();
+
+    // make sure that we are always set to the working directory of the workspace
+    if ( WorkspaceST::Get()->IsOpen() ) {
+        // Check that current working directory is set to the workspace folder
+        wxString path = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+        wxString curdir = ::wxGetCwd();
+        if ( path != curdir ) {
+            wxLogMessage("Current working directory is reset to %s", path);
+            ::wxSetWorkingDirectory( path );
+        }
     }
 }
 

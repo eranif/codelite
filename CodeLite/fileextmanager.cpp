@@ -88,6 +88,8 @@ void FileExtManager::Init()
         m_map[wxT("sql")]     = TypeSQL;
         m_map[wxT("phpwsp")]  = TypeWorkspacePHP;
         m_map[wxT("phptags")] = TypeWorkspacePHPTags;
+        
+        m_map["s"] = TypeAsm;
     }
 }
 

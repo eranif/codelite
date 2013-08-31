@@ -372,6 +372,19 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     flexGridSizer15->Add(m_button35, 0, wxALIGN_CENTER_VERTICAL, 5);
     
+    m_staticText94 = new wxStaticText(m_compilerPage, wxID_ANY, _("Assembler Options:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer15->Add(m_staticText94, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlAssemblerOptions = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlAssemblerOptions->SetToolTip(_("Additional C compiler options to pass to the assembler provided as a semi-colon delimited list\n(used for .s files only)"));
+    
+    flexGridSizer15->Add(m_textCtrlAssemblerOptions, 0, wxALL|wxEXPAND, 5);
+    
+    m_button98 = new wxButton(m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    
+    flexGridSizer15->Add(m_button98, 0, wxALIGN_CENTER_VERTICAL, 5);
+    
     m_staticText4 = new wxStaticText(m_compilerPage, wxID_ANY, _("Include Paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_staticText4->SetToolTip(_("Include path to pass to the compiler (provided as semi-colon delimited list)"));
     
@@ -452,6 +465,7 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlCCompilerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
     m_button35->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddCCompilerOptions), NULL, this);
     m_button35->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
+    m_button98->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddAssemblerOptions), NULL, this);
     m_staticText4->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
     m_textAdditionalSearchPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
     m_textAdditionalSearchPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
@@ -491,6 +505,7 @@ PSCompilerPageBase::~PSCompilerPageBase()
     m_textCtrlCCompilerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
     m_button35->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddCCompilerOptions), NULL, this);
     m_button35->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
+    m_button98->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddAssemblerOptions), NULL, this);
     m_staticText4->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
     m_textAdditionalSearchPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
     m_textAdditionalSearchPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);

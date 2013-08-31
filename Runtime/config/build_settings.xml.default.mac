@@ -18,6 +18,7 @@
       <Tool Name="LinkerName" Value="clang++"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="clang++ -shared -fPIC"/>
+      <Tool Name="AS" Value="llvm-as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
       <Pattern Name="Error" FileNameIndex="3" LineNumberIndex="1">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)(\(\.text\+[0-9a-fx]*\))</Pattern>
@@ -53,7 +54,7 @@
       <LinkerOption Name="-pg">Profile code when executed.</LinkerOption>
       <LinkerOption Name="-mwindows">Prevent a useless terminal console appearing with MSWindows GUI programs.</LinkerOption>
     </Compiler>
-      <Compiler Name="clang">
+    <Compiler Name="clang">
       <Switch Name="ArchiveOutput" Value=" "/>
       <Switch Name="Debug" Value="-gstab"/>
       <Switch Name="Include" Value="-I"/>
@@ -70,6 +71,7 @@
       <Tool Name="LinkerName" Value="clang"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="clang -shared -fPIC"/>
+      <Tool Name="AS" Value="llvm-as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
       <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
       <Pattern Name="Error" FileNameIndex="3" LineNumberIndex="1">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)(\(\.text\+[0-9a-fx]*\))</Pattern>
@@ -105,7 +107,6 @@
       <LinkerOption Name="-pg">Profile code when executed.</LinkerOption>
       <LinkerOption Name="-mwindows">Prevent a useless terminal console appearing with MSWindows GUI programs.</LinkerOption>
     </Compiler>
-
     <Compiler Name="gnu g++">
       <Switch Name="ArchiveOutput" Value=" "/>
       <Switch Name="Debug" Value="-gstab"/>
@@ -123,6 +124,7 @@
       <Tool Name="LinkerName" Value="g++"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="g++ -dynamiclib -fPIC"/>
+      <Tool Name="AS" Value="as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
 	  <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
       <Pattern Name="Error" FileNameIndex="3" LineNumberIndex="1">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)(\(\.text\+[0-9a-fx]*\))</Pattern>
@@ -173,6 +175,7 @@
       <Tool Name="LinkerName" Value="gcc"/>
       <Tool Name="ResourceCompiler" Value="windres"/>
       <Tool Name="SharedObjectLinkerName" Value="gcc -dynamiclib -fPIC"/>
+      <Tool Name="AS" Value="llvm-as"/>
       <Option Name="ObjectSuffix" Value=".o"/>
 	  <Pattern Name="Error" FileNameIndex="1" LineNumberIndex="3">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))</Pattern>
       <Pattern Name="Error" FileNameIndex="3" LineNumberIndex="1">^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)(\(\.text\+[0-9a-fx]*\))</Pattern>

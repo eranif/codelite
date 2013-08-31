@@ -117,6 +117,9 @@ static void StripString( wxString &string )
     string.Replace( wxT( "\\\\r\\\\n" ), wxT( "\r\n" ) );
     string.Replace( wxT( "\\\\n" ), wxT( "\n" ) );
     string.Replace( wxT( "\\\\r" ), wxT( "\r" ) );
+#ifdef __WXMSW__
+    string.Replace("\\r\\n", "\r\n");
+#endif
     string = string.Trim();
 }
 
@@ -617,25 +620,25 @@ void DbgGdb::Poke()
 
 
     //poll the debugger output
-    wxString line;
+    wxString curline;
     if ( !m_gdbProcess || m_gdbOutputArr.IsEmpty() ) {
         return;
     }
 
-    while ( DoGetNextLine( line ) ) {
+    while ( DoGetNextLine( curline ) ) {
 
-        GetDebugeePID(line);
+        GetDebugeePID(curline);
 
         // For string manipulations without damaging the original line read
-        wxString tmpline ( line );
+        wxString tmpline ( curline );
         StripString( tmpline );
         tmpline.Trim().Trim( false );
         if ( m_info.enableDebugLog ) {
             //Is logging enabled?
 
-            if ( line.IsEmpty() == false && !tmpline.StartsWith( wxT( ">" ) ) ) {
+            if ( curline.IsEmpty() == false && !tmpline.StartsWith( wxT( ">" ) ) ) {
                 wxString strdebug( wxT( "DEBUG>>" ) );
-                strdebug << line;
+                strdebug << curline;
 #if DBG_LOG
                 if(gfp.IsOpened()) {
                     gfp.Write(strdebug);
@@ -647,12 +650,12 @@ void DbgGdb::Poke()
             }
         }
 
-        if ( reConnectionRefused.Matches( line ) ) {
-            StripString( line );
+        if ( reConnectionRefused.Matches( curline ) ) {
+            StripString( curline );
 #ifdef __WXGTK__
             m_consoleFinder.FreeConsole();
 #endif
-            m_observer->UpdateAddLine( line );
+            m_observer->UpdateAddLine( curline );
             m_observer->UpdateGotControl( DBG_EXITED_NORMALLY );
             return;
         }
@@ -660,7 +663,7 @@ void DbgGdb::Poke()
         // Check for "Operation not permitted" usually means
         // that the process does not have enough permission to
         // attach to the process
-        if( line.Contains(wxT("Operation not permitted")) ) {
+        if( curline.Contains(wxT("Operation not permitted")) ) {
 #ifdef __WXGTK__
             m_consoleFinder.FreeConsole();
 #endif
@@ -675,54 +678,66 @@ void DbgGdb::Poke()
             continue;
         }
 
-        if ( line.StartsWith( wxT( "~" ) ) || line.StartsWith( wxT( "&" ) ) ) {
+        if ( curline.StartsWith( wxT( "~" ) ) || curline.StartsWith( wxT( "&" ) ) || curline.StartsWith("@") ) {
 
             // lines starting with ~ are considered "console stream" message
             // and are important to the CLI handler
             bool consoleStream( false );
-            if ( line.StartsWith( wxT( "~" ) ) ) {
+            bool targetConsoleStream(false);
+            
+            if ( curline.StartsWith( wxT( "~" ) ) ) {
                 consoleStream = true;
             }
-
+            
+            if ( curline.StartsWith( wxT( "@" ) ) ) {
+                targetConsoleStream = true;
+            }
+            
             // Filter out some gdb error lines...
-            if ( FilterMessage( line ) ) {
+            if ( FilterMessage( curline ) ) {
                 continue;
             }
 
-            StripString( line );
+            StripString( curline );
 
             // If we got a valid "CLI Handler" instead of writing the output to
             // the output view, concatenate it into the handler buffer
-            if ( GetCliHandler() && consoleStream ) {
-                GetCliHandler()->Append( line );
+            if ( targetConsoleStream ) {
+                m_observer->UpdateAddLine( curline );
+                
+            } else if ( consoleStream && GetCliHandler()) {
+                GetCliHandler()->Append( curline );
+                
             } else if ( consoleStream ) {
                 // log message
-                m_observer->UpdateAddLine( line );
+                m_observer->UpdateAddLine( curline );
+                
             }
-        } else if ( reCommand.Matches( line ) ) {
+            
+        } else if ( reCommand.Matches( curline ) ) {
 
             //not a gdb message, get the command associated with the message
-            wxString id = reCommand.GetMatch( line, 1 );
+            wxString id = reCommand.GetMatch( curline, 1 );
 
             if ( GetCliHandler() && GetCliHandler()->GetCommandId() == id ) {
                 // probably the "^done" message of the CLI command
-                GetCliHandler()->ProcessOutput( line );
+                GetCliHandler()->ProcessOutput( curline );
                 SetCliHandler( NULL ); // we are done processing the CLI
 
             } else {
                 //strip the id from the line
-                line = line.Mid( 8 );
-                DoProcessAsyncCommand( line, id );
+                curline = curline.Mid( 8 );
+                DoProcessAsyncCommand( curline, id );
 
             }
-        } else if ( line.StartsWith( wxT( "^done" ) ) || line.StartsWith( wxT( "*stopped" ) ) ) {
+        } else if ( curline.StartsWith( wxT( "^done" ) ) || curline.StartsWith( wxT( "*stopped" ) ) ) {
             //Unregistered command, use the default AsyncCommand handler to process the line
             DbgCmdHandlerAsyncCmd cmd( m_observer, this );
-            cmd.ProcessOutput( line );
+            cmd.ProcessOutput( curline );
         } else {
             //Unknow format, just log it
-            if( m_info.enableDebugLog && !FilterMessage( line ) ) {
-                m_observer->UpdateAddLine( line );
+            if( m_info.enableDebugLog && !FilterMessage( curline ) ) {
+                m_observer->UpdateAddLine( curline );
             }
         }
     }

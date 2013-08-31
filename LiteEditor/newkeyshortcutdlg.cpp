@@ -22,19 +22,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "newkeyshortcutdlg.h"
+#include "newkeyshortcutdlg.h"
 
-static const struct wxKeyName
-{
+static const struct wxKeyName {
     wxKeyCode code;
-  // Pre-2.9 wxTRANSLATE returned  a wxChar*, since then it's char*
+    // Pre-2.9 wxTRANSLATE returned  a wxChar*, since then it's char*
 #if wxVERSION_NUMBER < 2900
     const wxChar *name;
 #else
     const char *name;
 #endif
-} wxKeyNames[] =
-{
+} wxKeyNames[] = {
     { WXK_DELETE, wxTRANSLATE("DEL") },
     { WXK_DELETE, wxTRANSLATE("DELETE") },
     { WXK_BACK, wxTRANSLATE("BACK") },
@@ -103,70 +101,72 @@ static const struct wxKeyName
 };
 
 NewKeyShortcutDlg::NewKeyShortcutDlg( wxWindow* parent, const MenuItemData & mid )
-		:
-		NewKeyShortcutBaseDlg( parent )
-		, m_mid(mid)
+    :
+    NewKeyShortcutBaseDlg( parent )
+    , m_mid(mid)
 {
-	m_staticTextAction->SetLabel( _("Action:\t") + m_mid.action );
-	m_textCtrl1->SetValue( m_mid.accel );
-	m_textCtrl1->SetFocus();
-	Centre();
+    m_staticTextAction->SetLabel( _("Action:\t") + m_mid.action );
+    m_textCtrl1->SetValue( m_mid.accel );
+    m_textCtrl1->SetFocus();
+    Centre();
 }
 
 void NewKeyShortcutDlg::OnKeyDown( wxKeyEvent& event )
 {
-	wxString text = ToString(event);
-	if(text.IsEmpty()) { return; }
-	m_textCtrl1->SetValue( text );
+    wxString text = ToString(event);
+    if(text.IsEmpty()) {
+        return;
+    }
+    m_textCtrl1->SetValue( text );
 }
 
 wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
 {
-	wxString text;
+    wxString text;
 
-	int flags = e.GetModifiers();
-	if ( flags & wxACCEL_ALT )
-		text += wxT("Alt-");
-	if ( flags & wxACCEL_CTRL )
-		text += wxT("Ctrl-");
-	if ( flags & wxACCEL_SHIFT )
-		text += wxT("Shift-");
+    int flags = e.GetModifiers();
+    if ( flags & wxMOD_ALT )
+        text += wxT("Alt-");
+    if ( flags & wxMOD_CONTROL )
+        text += wxT("Ctrl-");
+    if ( flags & wxMOD_SHIFT )
+        text += wxT("Shift-");
 
-	const int code = e.GetKeyCode();
+    const int code = e.GetKeyCode();
 
-	if ( code >= WXK_F1 && code <= WXK_F12 )
-		text << _("F") << code - WXK_F1 + 1;
-	else if ( code >= WXK_NUMPAD0 && code <= WXK_NUMPAD9 )
-		text << _("KP_") << code - WXK_NUMPAD0;
-	else if ( code >= WXK_SPECIAL1 && code <= WXK_SPECIAL20 )
-		text << _("SPECIAL") << code - WXK_SPECIAL1 + 1;
-	else { // check the named keys
-		size_t n;
-		for ( n = 0; n < WXSIZEOF(wxKeyNames); n++ ) {
-			const wxKeyName& kn = wxKeyNames[n];
-			if ( code == kn.code ) {
-				text << wxGetTranslation(kn.name);
-				break;
-			}
-		}
+    if ( code >= WXK_F1 && code <= WXK_F12 )
+        text << _("F") << code - WXK_F1 + 1;
+    else if ( code >= WXK_NUMPAD0 && code <= WXK_NUMPAD9 )
+        text << _("KP_") << code - WXK_NUMPAD0;
+    else if ( code >= WXK_SPECIAL1 && code <= WXK_SPECIAL20 )
+        text << _("SPECIAL") << code - WXK_SPECIAL1 + 1;
+    else { // check the named keys
+        size_t n;
+        for ( n = 0; n < WXSIZEOF(wxKeyNames); n++ ) {
+            const wxKeyName& kn = wxKeyNames[n];
+            if ( code == kn.code ) {
+                text << wxGetTranslation(kn.name);
+                break;
+            }
+        }
 
-		if ( n == WXSIZEOF(wxKeyNames) ) {
-			// must be a simple key
-			if (
-			    isascii(code) /*&&
+        if ( n == WXSIZEOF(wxKeyNames) ) {
+            // must be a simple key
+            if (
+                isascii(code) /*&&
 			    wxIsalnum(code)*/ ) {
-				text << (wxChar)code;
-			} else {
-				return wxEmptyString;
-			}
-		}
-	}
+                text << (wxChar)code;
+            } else {
+                return wxEmptyString;
+            }
+        }
+    }
 
-	return text;
+    return text;
 }
 
 void NewKeyShortcutDlg::OnButtonClear(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	m_textCtrl1->Clear();
+    wxUnusedVar(event);
+    m_textCtrl1->Clear();
 }

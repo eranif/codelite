@@ -353,13 +353,10 @@
     </VirtualDirectory>
     <VirtualDirectory Name="Accelerators">
       <File Name="acceltabledlg.h"/>
-      <File Name="acceltablebasedlg.cpp"/>
-      <File Name="acceltablebasedlg.h"/>
       <File Name="acceltabledlg.cpp"/>
       <File Name="newkeyshortcutdlg.h"/>
-      <File Name="newkeyshortcutbasedlg.cpp"/>
-      <File Name="newkeyshortcutbasedlg.h"/>
       <File Name="newkeyshortcutdlg.cpp"/>
+      <File Name="AccelTableBaseDlg.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="About">
       <File Name="aboutdlg.cpp"/>
@@ -399,6 +396,7 @@
       <File Name="../formbuilder/setters_getters.wxcp"/>
       <File Name="../formbuilder/rename_symbool_dlg.wxcp"/>
     </VirtualDirectory>
+    <File Name="NewKeyShortcutBaseDlg.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Application">
     <File Name="app.cpp"/>
@@ -770,6 +768,10 @@
       <File Name="rename_symbool_dlg.cpp"/>
       <File Name="compiler_pages.h"/>
       <File Name="compiler_pages.cpp"/>
+      <File Name="NewKeyShortcutBaseDlg.h"/>
+      <File Name="NewKeyShortcutBaseDlg.cpp"/>
+      <File Name="AccelTableBaseDlg.h"/>
+      <File Name="AccelTableBaseDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -789,6 +791,8 @@
       <File Name="workspacesettingsbase_liteeditor_bitmaps.cpp"/>
       <File Name="compiler_page_plugin_bitmaps.cpp"/>
       <File Name="messagepane_liteeditor_bitmaps.cpp"/>
+      <File Name="NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp"/>
+      <File Name="AccelTableBaseDlg_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

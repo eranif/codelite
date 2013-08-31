@@ -33,6 +33,7 @@
 #include <wx/imaglist.h>
 #include <algorithm>
 #include <wx/imaglist.h>
+#include "windowattrmanager.h"
 
 //-------------------------------------------------------------------------------
 //Helper classes for sorting
@@ -76,8 +77,7 @@ struct ParentRSorter {
 //-------------------------------------------------------------------------------
 
 AccelTableDlg::AccelTableDlg( wxWindow* parent )
-		:
-		AccelTableBaseDlg( parent )
+		: AccelTableBaseDlg( parent )
 {
 	wxImageList* imageList= new wxImageList(16, 16);
 	imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("list-control/16/sort_down")));
@@ -101,6 +101,8 @@ AccelTableDlg::AccelTableDlg( wxWindow* parent )
 	Centre();
 
 	m_textCtrlFilter->SetFocus();
+	
+	WindowAttrManager::Load(this, "AccelTableDlg", NULL);
 }
 
 void AccelTableDlg::OnItemActivated( wxListEvent& event )
@@ -326,4 +328,9 @@ void AccelTableDlg::DisplayCorrectColumnImage() const
 		item.SetImage(image);
 		m_listCtrl1->SetColumn(n, item);
 	}
+}
+
+AccelTableDlg::~AccelTableDlg()
+{
+	WindowAttrManager::Save(this, "AccelTableDlg", NULL);
 }

@@ -137,9 +137,11 @@ CCBox::~CCBox()
 
 void CCBox::OnItemActivated( wxListEvent& event )
 {
+#if CCBOX_USE_POPUP
     m_selectedItem = event.m_itemIndex;
     InsertSelection();
     HideCCBox();
+#endif
 }
 
 void CCBox::OnItemDeSelected( wxListEvent& event )
@@ -188,8 +190,8 @@ void CCBox::Display(LEditor *editor)
     wxPoint ccPoint = pt;
     
 #if CCBOX_USE_POPUP
-    wxSize  size = ::wxGetDisplaySize();
 
+    wxSize size = ::wxGetDisplaySize();
     // FIX BUG#3032473: "CC box position and dual screen"
     // Incase we are using multiple screens,
     // re-calculate the width
@@ -202,7 +204,6 @@ void CCBox::Display(LEditor *editor)
             size.x += display.GetGeometry().width;
         }
     }
-
     // the completion box is child of the main frame
     // Make sure that CC box remains is fully visible
     ccPoint = editor->ClientToScreen(pt);
@@ -238,7 +239,24 @@ void CCBox::Display(LEditor *editor)
             pt.x = 0;
         }
     }
-#endif // CCBOX_USE_POPUP
+#else // CCBOX_USE_POPUP
+    
+    //-------------------------------------------------
+    // Using wxPanel as our completion box
+    //-------------------------------------------------
+    wxSize size = editor->GetClientSize();
+    
+    // X-axis
+    int diff = ccPoint.x + BOX_WIDTH - size.x;
+    if((ccPoint.x + BOX_WIDTH) > size.x) {
+        ccPoint.x -= diff;
+    }
+    
+    // Y-axis
+    if ((ccPoint.y + BOX_HEIGHT) > size.y) {
+        ccPoint.y -= (BOX_HEIGHT+lineHeight);
+    }
+#endif
     Move( ccPoint );
     CCBoxParent::Show(true);
 }
@@ -828,8 +846,12 @@ void CCBox::DoShowTagTip()
     }
 
     m_tipWindow = new CCBoxTipWindow(wxTheApp->GetTopWindow(), prefix, numOfTips);
+#if CCBOX_USE_POPUP
     m_tipWindow->PositionRelativeTo(this, m_editor);
-    
+#else
+    m_tipWindow->PositionLeftTo(this, m_editor);
+#endif
+
 #if !CCBOX_USE_POPUP
     wxTheApp->GetTopWindow()->Raise();
     m_editor->SetActive();

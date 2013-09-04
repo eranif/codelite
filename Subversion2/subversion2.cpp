@@ -452,8 +452,16 @@ void Subversion2::OnDiff(wxCommandEvent& event)
     if(LoginIfNeeded(event, DoGetFileExplorerItemPath(), loginString) == false) {
         return;
     }
+    
     bool nonInteractive = GetNonInteractiveMode(event);
-    command << GetSvnExeNameNoConfigDir(nonInteractive) << loginString << wxT("diff -r") << diffAgainst << wxT(" ") << DoGetFileExplorerFilesAsString();
+    command << GetSvnExeNameNoConfigDir(nonInteractive) << loginString;
+    
+    SvnSettingsData ssd = GetSettings();
+    if ( ssd.GetFlags() & SvnUseExternalDiff ) {
+        command << " --diff-cmd=\"" << ssd.GetExternalDiffViewer() << "\" ";
+    }
+    
+    command << wxT("diff -r") << diffAgainst << wxT(" ") << DoGetFileExplorerFilesAsString();
     GetConsole()->Execute(command, DoGetFileExplorerItemPath(), new SvnDiffHandler(this, event.GetId(), this), false);
 }
 

@@ -791,7 +791,14 @@ void SubversionView::OnDiff(wxCommandEvent& event)
 
         // Simple diff
         wxString diff_cmd;
-        diff_cmd << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString << " diff ";
+        diff_cmd << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString;
+        
+        SvnSettingsData ssd = m_plugin->GetSettings();
+        if ( ssd.GetFlags() & SvnUseExternalDiff ) {
+            diff_cmd << " --diff-cmd=\"" << ssd.GetExternalDiffViewer() << "\" ";
+        }
+        diff_cmd << " diff ";
+        
         if ( dlg.IgnoreWhitespaces() ) {
             diff_cmd << " -x -w ";
         }
@@ -951,7 +958,13 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
     // Simple diff
     wxString command;
     // By default use ignore-whitespaces
-    command << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString << wxT(" diff -x -w -r") << diffAgainst << wxT(" ");
+    command << m_plugin->GetSvnExeNameNoConfigDir(nonInteractive) << loginString;
+    
+    SvnSettingsData ssd = m_plugin->GetSettings();
+    if ( ssd.GetFlags() & SvnUseExternalDiff ) {
+        command << " --diff-cmd=\"" << ssd.GetExternalDiffViewer() << "\" ";
+    }
+    command << " diff -x -w -r" << diffAgainst << " ";
     for (size_t i=0; i<paths.GetCount(); i++) {
         command << wxT("\"") << paths.Item(i) << wxT("\" ");
     }

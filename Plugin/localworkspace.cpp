@@ -330,8 +330,7 @@ bool LocalWorkspace::Create()
 {
     m_doc = wxXmlDocument();
     // The idea is to make a name in the format foo.workspace.frodo
-    wxString fullpath = WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() + wxT('.') + clGetUserName();
-    m_fileName = wxFileName(fullpath);
+    m_fileName = DoGetFilePath();
     m_fileName.MakeAbsolute();
 
     // Load any previous options. If none, create a blank entry
@@ -539,4 +538,11 @@ void LocalWorkspace::SetCustomData(const wxString& name, const wxString& value)
     customNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, name);
     m_doc.GetRoot()->AddChild(customNode);
     SetCDATANodeContent(customNode, value);
+}
+
+wxFileName LocalWorkspace::DoGetFilePath() const
+{
+    wxFileName localWorkspaceFile(WorkspaceST::Get()->GetPrivateFolder(), 
+                                  WorkspaceST::Get()->GetWorkspaceFileName().GetFullName() + "." + ::clGetUserName());
+    return localWorkspaceFile;
 }

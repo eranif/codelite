@@ -290,7 +290,7 @@ protected:
     bool SanityCheck();
     bool Create();
     bool SaveXmlFile();
-
+    wxFileName DoGetFilePath() const;
 
 
 public:

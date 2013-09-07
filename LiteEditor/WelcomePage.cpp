@@ -74,11 +74,11 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
 {
     wxArrayString files;
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
-    files.Sort();
+//  files.Sort();
 
     wxArrayString recentWorkspaces;
-    for(size_t i=0; i<files.GetCount(); i++) {
-        wxFileName fn(files.Item(i));
+    for(size_t i=files.GetCount(); i > 0; --i) {
+        wxFileName fn(files.Item(i - 1));
         recentWorkspaces.Add( fn.GetName() + " @ " + fn.GetFullPath() );
     }
 

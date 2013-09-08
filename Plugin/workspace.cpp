@@ -123,19 +123,7 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
         delete ch;
     }
 
-    // Load the database
-    wxString dbfile = GetStringProperty(wxT("Database"), errMsg);
-    if ( dbfile.IsEmpty() ) {
-        errMsg = wxT("Missing 'Database' value in workspace '");
-        return false;
-    }
-
-    errMsg = tmperr;
-
-    // the database file names are relative to the workspace,
-    // convert them to absolute path
-    wxFileName fn(dbfile);
-
+    errMsg.Clear();
     TagsManager *mgr = TagsManagerST::Get();
     mgr->CloseDatabase();
     mgr->OpenDatabase( GetTagsFileName().GetFullPath() );

@@ -81,14 +81,20 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
         errMsg = wxString::Format(wxT("Could not open workspace file: '%s'"), fileName.c_str());
         return false;
     }
-
+    
     m_fileName = workSpaceFile;
     m_doc.Load(m_fileName.GetFullPath());
     if ( !m_doc.IsOk() ) {
         errMsg = wxT("Corrupted workspace file");
         return false;
     }
-
+    
+    // Make sure we have the WORKSPACE/.codelite folder exists
+    {
+        wxLogNull nolog;
+        wxMkdir( GetPrivateFolder() );
+    }
+    
     SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
 
     // This function sets the working directory to the workspace directory!
@@ -117,19 +123,7 @@ bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
         delete ch;
     }
 
-    // Load the database
-    wxString dbfile = GetStringProperty(wxT("Database"), errMsg);
-    if ( dbfile.IsEmpty() ) {
-        errMsg = wxT("Missing 'Database' value in workspace '");
-        return false;
-    }
-
-    errMsg = tmperr;
-
-    // the database file names are relative to the workspace,
-    // convert them to absolute path
-    wxFileName fn(dbfile);
-
+    errMsg.Clear();
     TagsManager *mgr = TagsManagerST::Get();
     mgr->CloseDatabase();
     mgr->OpenDatabase( GetTagsFileName().GetFullPath() );
@@ -193,7 +187,13 @@ bool Workspace::CreateWorkspace(const wxString &name, const wxString &path, wxSt
     // Create new
     // Open workspace database
     m_fileName = wxFileName(path, name + wxT(".workspace"));
-
+    
+    // Make sure we have the WORKSPACE/.codelite folder exists
+    {
+        wxLogNull nolog;
+        wxMkdir( GetPrivateFolder() );
+    }
+    
     // This function sets the working directory to the workspace directory!
     ::wxSetWorkingDirectory(m_fileName.GetPath());
 
@@ -813,10 +813,6 @@ bool Workspace::IsVirtualDirectoryExists(const wxString& vdFullPath)
 
 wxString Workspace::GetPrivateFolder() const
 {
-    if ( !IsOpen() ) {
-        return wxEmptyString;
-    }
-    
     return (wxString() << GetWorkspaceFileName().GetPath() << wxFILE_SEP_PATH << ".codelite");
 }
 

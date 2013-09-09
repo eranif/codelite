@@ -4516,7 +4516,7 @@ void clMainFrame::OnDatabaseUpgradeInternally(wxCommandEvent &e)
 {
     wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
     this->AddPendingEvent(evt);
-    GetMainBook()->ShowMessage(_("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
+    //GetMainBook()->ShowMessage(_("Your workspace symbols file does not match the current version of CodeLite. CodeLite will perform a full retag of the workspace"));
 }
 
 // Due to differnet schema versions, the database was truncated by the

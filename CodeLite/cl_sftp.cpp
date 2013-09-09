@@ -69,7 +69,7 @@ void clSFTP::Write(const wxString& fileContent, const wxString& remotePath) thro
         throw clException("SFTP is not initialized");
     }
 
-    int access_type = O_WRONLY | O_CREAT | O_TRUNC | O_BINARY;
+    int access_type = O_WRONLY | O_CREAT | O_TRUNC;
     sftp_file file;
     std::string str = fileContent.mb_str(wxConvUTF8).data();
 

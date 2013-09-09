@@ -27,7 +27,7 @@
 #define CLEXCEPTION_H
 
 #include <wx/string.h>
-#include <codelite_exports.h>
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL clException
 {

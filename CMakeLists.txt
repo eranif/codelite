@@ -106,6 +106,20 @@ else()
     endif()
 endif(PREFIX)
 
+#######################################
+## Locate libssh
+#######################################
+
+find_library(LIBSSH_LIB NAMES libssh.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
+find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h HINTS /usr/local/include /usr/include PATH_SUFFIXES libssh)
+string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND)
+if ( LIBSSH_NOT_FOUND GREATER -1 )
+    message(FATAL_ERROR "-- Could not find libssh")
+endif( LIBSSH_NOT_FOUND GREATER -1 )
+
+message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")
+message("-- LIBSSH_INCLUDE_DIR is set to ${LIBSSH_INCLUDE_DIR}")
+
 ## enable clang support?
 if(ENABLE_CLANG MATCHES 0)
   set( USE_CLANG 0 )

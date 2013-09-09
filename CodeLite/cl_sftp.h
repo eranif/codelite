@@ -30,7 +30,7 @@
 #include "cl_exception.h"
 #include <libssh/sftp.h>
 #include <wx/filename.h>
-#include <codelite_exports.h>
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL clSFTP
 {

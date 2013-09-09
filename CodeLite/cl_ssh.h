@@ -27,9 +27,10 @@
 #define CLSSH_H
 
 #include <wx/string.h>
+#include <errno.h>
 #include <libssh/libssh.h>
 #include "cl_exception.h"
-#include <codelite_exports.h>
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL clSSH
 {

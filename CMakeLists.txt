@@ -109,8 +109,12 @@ endif(PREFIX)
 #######################################
 ## Locate libssh
 #######################################
+if (UNIX AND NOT APPLE )
+    find_library(LIBSSH_LIB NAMES libssh.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
+else ( UNIX AND NOT APPLE )
+    find_library(LIBSSH_LIB NAMES libssh.dylib HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
+endif ( UNIX AND NOT APPLE ) 
 
-find_library(LIBSSH_LIB NAMES libssh.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
 find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h HINTS /usr/local/include /usr/include PATH_SUFFIXES libssh)
 string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND)
 if ( LIBSSH_NOT_FOUND GREATER -1 )

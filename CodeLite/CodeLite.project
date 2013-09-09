@@ -81,6 +81,7 @@
     <File Name="code_completion_api.h"/>
     <File Name="wx_xml_compatibility.h"/>
     <File Name="codelite_exports.h"/>
+    <File Name="cl_exception.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>
@@ -179,9 +180,26 @@
     <File Name="refactoring_storage.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <VirtualDirectory Name="configuration">
+    <File Name="json_node.cpp"/>
+    <File Name="json_node.h"/>
+    <File Name="cJSON.cpp"/>
+    <File Name="cJSON.h"/>
+    <File Name="cl_config.cpp"/>
+    <File Name="cl_config.h"/>
+  </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="ssh">
+    <File Name="cl_sftp.cpp"/>
+    <File Name="cl_sftp.h"/>
+    <File Name="cl_ssh.cpp"/>
+    <File Name="cl_ssh.h"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
-      <Compiler Options="" C_Options="">
+      <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
@@ -194,7 +212,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="-g;-Wall" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -211,6 +229,7 @@
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -232,23 +251,27 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/codelite_indexer/network"/>
         <IncludePath Value="../PCH"/>
+        <IncludePath Value="../sdk/libssh/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libssh"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../lib/gcc_lib/libcodeliteu.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
@@ -256,6 +279,7 @@
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -277,14 +301,15 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
     <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -300,6 +325,7 @@
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -321,22 +347,12 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <VirtualDirectory Name="configuration">
-    <File Name="json_node.cpp"/>
-    <File Name="json_node.h"/>
-    <File Name="cJSON.cpp"/>
-    <File Name="cJSON.h"/>
-    <File Name="cl_config.cpp"/>
-    <File Name="cl_config.h"/>
-  </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

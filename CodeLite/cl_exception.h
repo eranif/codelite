@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2013 by Eran Ifrah
-// file name            : $(CurrentFileName).$(CurrentFileExt)
+// file name            : cl_exception.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,3 +23,22 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#ifndef CLEXCEPTION_H
+#define CLEXCEPTION_H
+
+#include <wx/string.h>
+#include <codelite_exports.h>
+
+class WXDLLIMPEXP_CL clException
+{
+    wxString m_message;
+public:
+    clException(const wxString& message) : m_message(message) {}
+    virtual ~clException() {}
+    
+    const wxString& What() const {
+        return m_message;
+    }
+};
+
+#endif // CLEXCEPTION_H

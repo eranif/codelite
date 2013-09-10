@@ -1,5 +1,7 @@
 #include "PluginWizard.h"
 #include "globals.h"
+#include <wx/msgdlg.h>
+#include <wx/dir.h>
 
 PluginWizard::PluginWizard(wxWindow* parent)
     : PluginWizardBase(parent)

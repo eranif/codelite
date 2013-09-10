@@ -13,7 +13,10 @@
     <File Name="new_class_dlg_data.h"/>
     <File Name="new_class_dlg_data.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="Wizard"/>
+  <VirtualDirectory Name="Wizard">
+    <File Name="PluginWizard.h"/>
+    <File Name="PluginWizard.cpp"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="NewClassDialog">
     <File Name="newclassdlg.h"/>
     <File Name="newclassbasedlg.cpp"/>
@@ -47,6 +50,10 @@
       <File Name="gizmos_gizmos_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="gizmos.wxcp"/>
+    <VirtualDirectory Name="base">
+      <File Name="gizmos_base.h"/>
+      <File Name="gizmos_base.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

@@ -6,7 +6,7 @@
 		"m_bitmapFunction":	"wxC8028InitBitmapResources",
 		"m_bitmapsFile":	"gizmos_gizmos_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"gizmos_base",
 		"m_firstWindowId":	1000,
 		"m_useEnum":	false,
 		"m_templateClasses":	[]
@@ -17,7 +17,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
+			"m_styles":	["wxDEFAULT_DIALOG_STYLE"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -121,7 +121,19 @@
 					"m_label":	"Bitmap File (256x256):",
 					"m_path":	""
 				}],
-			"m_events":	[],
+			"m_events":	[{
+					"m_eventName":	"wxEVT_WIZARD_PAGE_CHANGING",
+					"m_eventClass":	"wxWizardEvent",
+					"m_eventHandler":	"wxWizardEventHandler",
+					"m_functionNameAndSignature":	"OnPageChanging(wxWizardEvent& event)",
+					"m_description":	"The page is being changed (this event can be vetoed)."
+				}, {
+					"m_eventName":	"wxEVT_WIZARD_FINISHED",
+					"m_eventClass":	"wxWizardEvent",
+					"m_eventHandler":	"wxWizardEventHandler",
+					"m_functionNameAndSignature":	"OnFinish(wxWizardEvent& event)",
+					"m_description":	"The wizard finished button was pressed."
+				}],
 			"m_children":	[{
 					"m_type":	4451,
 					"proportion":	0,
@@ -145,7 +157,7 @@
 						}, {
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_wizardPage4"
+							"m_value":	"m_wizardPage1"
 						}, {
 							"type":	"multi-string",
 							"m_label":	"Tooltip:",
@@ -583,7 +595,7 @@
 						}, {
 							"type":	"string",
 							"m_label":	"Name:",
-							"m_value":	"m_wizardPage8"
+							"m_value":	"m_wizardPage2"
 						}, {
 							"type":	"multi-string",
 							"m_label":	"Tooltip:",
@@ -935,7 +947,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Size:",
-													"m_value":	"250,-1"
+													"m_value":	"350,-1"
 												}, {
 													"type":	"string",
 													"m_label":	"Minimum Size:",
@@ -993,7 +1005,13 @@
 													"m_label":	"Message:",
 													"m_value":	"Select a folder"
 												}],
-											"m_events":	[],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_COMMAND_DIRPICKER_CHANGED",
+													"m_eventClass":	"wxFileDirPickerEvent",
+													"m_eventHandler":	"wxFileDirPickerEventHandler",
+													"m_functionNameAndSignature":	"OnProjectPathChanged(wxFileDirPickerEvent& event)",
+													"m_description":	"The user changed the directory selected in the control either using the button or using text control\n(see wxDIRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, e.g. an existing directory path)."
+												}],
 											"m_children":	[]
 										}, {
 											"m_type":	4454,
@@ -1020,7 +1038,7 @@
 											"border":	5,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
-											"m_styles":	[],
+											"m_styles":	["wxTE_READONLY"],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -1037,7 +1055,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Name:",
-													"m_value":	"m_textCtrl38"
+													"m_value":	"m_textCtrlPreview"
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
@@ -1061,7 +1079,7 @@
 												}, {
 													"type":	"bool",
 													"m_label":	"Disabled",
-													"m_value":	true
+													"m_value":	false
 												}, {
 													"type":	"bool",
 													"m_label":	"Focused",

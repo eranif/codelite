@@ -13,14 +13,7 @@
     <File Name="new_class_dlg_data.h"/>
     <File Name="new_class_dlg_data.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="Wizard">
-    <File Name="pluginwizard_page1.cpp"/>
-    <File Name="pluginwizard_page1.h"/>
-    <File Name="pluginwizard_pag2.h"/>
-    <File Name="pluginwizard_pag2.cpp"/>
-    <File Name="pluginwizard.h"/>
-    <File Name="pluginwizard.cpp"/>
-  </VirtualDirectory>
+  <VirtualDirectory Name="Wizard"/>
   <VirtualDirectory Name="NewClassDialog">
     <File Name="newclassdlg.h"/>
     <File Name="newclassbasedlg.cpp"/>
@@ -51,7 +44,9 @@
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
       <File Name="newclasswizard_gizmos_bitmaps.cpp"/>
+      <File Name="gizmos_gizmos_bitmaps.cpp"/>
     </VirtualDirectory>
+    <File Name="gizmos.wxcp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

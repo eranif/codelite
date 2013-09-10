@@ -45,6 +45,7 @@ copy codelitegcc.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
 copy ..\sdk\clang\lib\liblibclang.dll "%TARGET_DIR%\CodeLite\" /Y
+copy ..\sdk\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\" /Y
 copy makedir.exe "%TARGET_DIR%\CodeLite\" /Y
 copy le_exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy CodeLite.exe "%TARGET_DIR%\CodeLite\" /Y

@@ -116,13 +116,19 @@ else ( UNIX AND NOT APPLE )
 endif ( UNIX AND NOT APPLE ) 
 
 find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h HINTS /usr/local/include /usr/include PATH_SUFFIXES libssh)
-string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND)
-if ( LIBSSH_NOT_FOUND GREATER -1 )
+string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND_POS)
+if ( LIBSSH_NOT_FOUND_POS GREATER -1 )
+    if (UNIX AND NOT APPLE )
+        ## Linux / FreeBSD
+        message("**** NOTICE: Install libssh-dev and try again")
+    else (UNIX AND NOT APPLE )
+        ## OSX
+        message("**** NOTICE: Install libssh and try again (brew install libssh)")
+    endif (UNIX AND NOT APPLE )
     message(FATAL_ERROR "-- Could not find libssh")
-endif( LIBSSH_NOT_FOUND GREATER -1 )
+endif( LIBSSH_NOT_FOUND_POS GREATER -1 )
 
 message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")
-message("-- LIBSSH_INCLUDE_DIR is set to ${LIBSSH_INCLUDE_DIR}")
 
 ## enable clang support?
 if(ENABLE_CLANG MATCHES 0)

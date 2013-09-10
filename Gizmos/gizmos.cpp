@@ -34,7 +34,6 @@
 #include "newplugindata.h"
 #include "entry.h"
 #include <wx/xrc/xmlres.h>
-#include "pluginwizard.h"
 #include "globals.h"
 #include "dirsaver.h"
 #include "workspace.h"

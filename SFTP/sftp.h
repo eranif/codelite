@@ -1,14 +1,18 @@
-#ifndef __$(PluginName)__
-#define __$(PluginName)__
+#ifndef __SFTP__
+#define __SFTP__
 
 #include "plugin.h"
 
-class $(PluginName) : public IPlugin
+class SFTP : public IPlugin
 {
 public:
-    $(PluginName)(IManager *manager);
-    ~$(PluginName)();
-
+    SFTP(IManager *manager);
+    ~SFTP();
+    
+protected:
+    void OnSettings(wxCommandEvent &e);
+    
+public:
     //--------------------------------------------
     //Abstract methods
     //--------------------------------------------
@@ -19,4 +23,4 @@ public:
     virtual void UnPlug();
 };
 
-#endif //$(PluginName)
+#endif //SFTP

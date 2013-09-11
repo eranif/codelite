@@ -268,12 +268,10 @@ void WizardsPlugin::DoCreateNewPlugin()
         if (!ReadFileWithConversion(filename, content)) {
             return;
         }
-        //convert the paths provided by user to relative paths
-        DirSaver ds;
-        wxSetWorkingDirectory(data.GetProjectPath());
-        wxFileName fn(data.GetCodelitePath());
-
-        if (!fn.MakeRelativeTo(wxGetCwd())) {
+        
+        // Convert the paths provided by user to relative paths
+        wxFileName fn(data.GetCodelitePath(), "");
+        if ( !fn.MakeRelativeTo( wxFileName(data.GetProjectPath()).GetPath()) ) {
             wxLogMessage(wxT("Warning: Failed to convert paths to relative path."));
         }
 
@@ -282,9 +280,14 @@ void WizardsPlugin::DoCreateNewPlugin()
 #else
         wxString dllExt(wxT("so"));
 #endif
+
         wxString clpath = fn.GetFullPath();
         fn.Normalize(); // Remove all .. and . from the path
-
+        
+        if ( clpath.EndsWith("/") || clpath.EndsWith("\\") ) {
+            clpath.RemoveLast();
+        }
+        
         content.Replace(wxT("$(CodeLitePath)"), clpath);
         content.Replace(wxT("$(DllExt)"), dllExt);
         content.Replace(wxT("$(PluginName)"), data.GetPluginName());
@@ -296,6 +299,10 @@ void WizardsPlugin::DoCreateNewPlugin()
         //save the file to the disk
         wxString projectFileName;
         projectFileName << data.GetProjectPath();
+        {
+            wxLogNull noLog;
+            ::wxMkdir( wxFileName(data.GetProjectPath()).GetPath() );
+        }
         wxFFile file;
         if (!file.Open(projectFileName, wxT("w+b"))) {
             return;
@@ -305,8 +312,11 @@ void WizardsPlugin::DoCreateNewPlugin()
         file.Close();
 
         //Create the plugin source and header files
-        wxString srcFile(baseFileName + wxT(".cpp"));
-        wxString headerFile(baseFileName + wxT(".h"));
+        wxFileName srcFile(wxFileName(data.GetProjectPath()).GetPath(), baseFileName);
+        srcFile.SetExt("cpp");
+        
+        wxFileName headerFile(wxFileName(data.GetProjectPath()).GetPath(), baseFileName);
+        headerFile.SetExt("h");
 
         //---------------------------------------------------------------
         //write the content of the file based on the file template
@@ -326,11 +336,20 @@ void WizardsPlugin::DoCreateNewPlugin()
         content.Replace(wxT("$(PluginShortName)"), data.GetPluginName());
         content.Replace(wxT("$(PluginLongName)"), data.GetPluginDescription());
         content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
-
-        file.Open(srcFile, wxT("w+b"));
+        
+        // Notify the formatter plugin to format the plugin source files
+        wxCommandEvent evtFormat(XRCID("wxEVT_CF_FORMAT_STRING"));
+        
+        // format the content
+        evtFormat.SetString(content);
+        EventNotifier::Get()->ProcessEvent( evtFormat );
+        content = evtFormat.GetString();
+        
+        // Write it down
+        file.Open(srcFile.GetFullPath(), wxT("w+b"));
         file.Write(content);
         file.Close();
-
+        
         //create the header file
         filename = m_mgr->GetStartupDirectory() + wxT("/templates/gizmos/plugin.h.wizard");
         content.Clear();
@@ -346,7 +365,13 @@ void WizardsPlugin::DoCreateNewPlugin()
         content.Replace(wxT("$(PluginLongName)"), data.GetPluginDescription());
         content.Replace(wxT("$(UserName)"), wxGetUserName().c_str());
 
-        file.Open(headerFile, wxT("w+b"));
+        // format the content
+        evtFormat.SetString(content);
+        EventNotifier::Get()->ProcessEvent( evtFormat );
+        content = evtFormat.GetString();
+        
+        // Write it down
+        file.Open(headerFile.GetFullPath(), wxT("w+b"));
         file.Write(content);
         file.Close();
 

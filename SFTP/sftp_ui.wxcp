@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	47,
+		"m_objCounter":	51,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCE8CInitBitmapResources",
 		"m_bitmapsFile":	"sftp_ui_sftp_bitmaps.cpp",
@@ -343,7 +343,7 @@
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -432,7 +432,7 @@
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -840,7 +840,7 @@
 					"m_events":	[],
 					"m_children":	[{
 							"m_type":	4403,
-							"proportion":	1,
+							"proportion":	0,
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
@@ -1481,6 +1481,101 @@
 									"m_events":	[],
 									"m_children":	[]
 								}]
+						}, {
+							"m_type":	4400,
+							"proportion":	0,
+							"border":	10,
+							"gbSpan":	"1,1",
+							"gbPosition":	"0,0",
+							"m_styles":	[],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_properties":	[{
+									"type":	"winid",
+									"m_label":	"ID:",
+									"m_winid":	"wxID_ANY"
+								}, {
+									"type":	"string",
+									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Name:",
+									"m_value":	"m_button51"
+								}, {
+									"type":	"multi-string",
+									"m_label":	"Tooltip:",
+									"m_value":	""
+								}, {
+									"type":	"colour",
+									"m_label":	"Bg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"colour",
+									"m_label":	"Fg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"font",
+									"m_label":	"Font:",
+									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Label:",
+									"m_value":	"Test Connection"
+								}, {
+									"type":	"bool",
+									"m_label":	"Default Button",
+									"m_value":	false
+								}, {
+									"type":	"filePicker",
+									"m_label":	"Bitmap File:",
+									"m_path":	"../codelite-icons/db-explorer/16/connect.png"
+								}, {
+									"type":	"string",
+									"m_label":	"Margins:",
+									"m_value":	"5,5"
+								}],
+							"m_events":	[{
+									"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+									"m_eventClass":	"wxCommandEvent",
+									"m_eventHandler":	"wxCommandEventHandler",
+									"m_functionNameAndSignature":	"OnTestConnection(wxCommandEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+								}, {
+									"m_eventName":	"wxEVT_UPDATE_UI",
+									"m_eventClass":	"wxUpdateUIEvent",
+									"m_eventHandler":	"wxUpdateUIEventHandler",
+									"m_functionNameAndSignature":	"OnTestConnectionUI(wxUpdateUIEvent& event)",
+									"m_description":	"Process a wxEVT_UPDATE_UI event"
+								}],
+							"m_children":	[]
 						}, {
 							"m_type":	4401,
 							"proportion":	0,

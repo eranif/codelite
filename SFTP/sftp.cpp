@@ -1,6 +1,7 @@
 #include "sftp.h"
 #include <wx/xrc/xmlres.h>
 #include "SSHAccountManagerDlg.h"
+#include "sftp_settings.h"
 
 static SFTP* thePlugin = NULL;
 
@@ -105,5 +106,10 @@ void SFTP::OnSettings(wxCommandEvent& e)
     SSHAccountManagerDlg dlg(wxTheApp->GetTopWindow());
     if ( dlg.ShowModal() == wxID_OK ) {
         
+        SFTPSettings settings;
+        SFTPSettings::Load( settings );
+        
+        settings.SetAccounts( dlg.GetAccounts() );
+        SFTPSettings::Save( settings );
     }
 }

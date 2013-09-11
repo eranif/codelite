@@ -386,6 +386,7 @@ add_subdirectory(SnipWiz)
 add_subdirectory(Subversion2)
 add_subdirectory(ZoomNavigator)
 add_subdirectory(git)
+add_subdirectory(SFTP)
 
 ## Executables
 add_subdirectory(LiteEditor)

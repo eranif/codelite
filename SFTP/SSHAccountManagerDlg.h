@@ -13,6 +13,9 @@ public:
 protected:
     void DoAddAccount( const SSHAccountInfo& account );
     
+public:
+    SSHAccountInfo::List_t GetAccounts() const;
+    
 protected:
     virtual void OnAddAccount(wxCommandEvent& event);
     virtual void OnDeleteAccount(wxCommandEvent& event);

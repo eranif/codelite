@@ -41,11 +41,11 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     
     m_buttonNew = new wxButton(this, wxID_ADD, _("&Add"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer15->Add(m_buttonNew, 0, wxALL, 5);
+    boxSizer15->Add(m_buttonNew, 0, wxALL|wxEXPAND, 5);
     
     m_buttonDelete = new wxButton(this, wxID_DELETE, _("&Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer15->Add(m_buttonDelete, 0, wxALL, 5);
+    boxSizer15->Add(m_buttonDelete, 0, wxALL|wxEXPAND, 5);
     
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -98,7 +98,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     flexGridSizer31->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer31->AddGrowableCol(1);
     
-    boxSizer23->Add(flexGridSizer31, 1, wxALL|wxEXPAND, 5);
+    boxSizer23->Add(flexGridSizer31, 0, wxALL|wxEXPAND, 5);
     
     m_staticHostIp = new wxStaticText(this, wxID_ANY, _("Host / IP:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -133,6 +133,14 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     flexGridSizer31->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, 5);
     
+    m_button51 = new wxButton(this, wxID_ANY, _("Test Connection"), wxDefaultPosition, wxSize(-1,-1), 0);
+    #if wxVERSION_NUMBER >= 2904
+    m_button51->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("connect")));
+    m_button51->SetBitmapMargins(5,5);
+    #endif
+    
+    boxSizer23->Add(m_button51, 0, wxALL|wxEXPAND, 10);
+    
     wxBoxSizer* boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer23->Add(boxSizer29, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -152,12 +160,16 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     }
     Centre(wxBOTH);
     // Connect events
+    m_button51->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddSSHAcountDlgBase::OnTestConnection), NULL, this);
+    m_button51->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnTestConnectionUI), NULL, this);
     m_button27->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnOKUI), NULL, this);
     
 }
 
 AddSSHAcountDlgBase::~AddSSHAcountDlgBase()
 {
+    m_button51->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddSSHAcountDlgBase::OnTestConnection), NULL, this);
+    m_button51->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnTestConnectionUI), NULL, this);
     m_button27->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnOKUI), NULL, this);
     
 }

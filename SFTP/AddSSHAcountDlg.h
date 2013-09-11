@@ -8,12 +8,15 @@ class AddSSHAcountDlg : public AddSSHAcountDlgBase
 {
 public:
     AddSSHAcountDlg(wxWindow* parent);
+    AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo &account);
     virtual ~AddSSHAcountDlg();
 
 public:
     void GetAccountInfo(SSHAccountInfo& info);
-    
+
 protected:
+    virtual void OnTestConnectionUI(wxUpdateUIEvent& event);
+    virtual void OnTestConnection(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
 #endif // ADDSSHACOUNTDLG_H

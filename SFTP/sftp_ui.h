@@ -48,10 +48,13 @@ protected:
     wxTextCtrl* m_textCtrlUsername;
     wxStaticText* m_staticText41;
     wxTextCtrl* m_textCtrlPassword;
+    wxButton* m_button51;
     wxButton* m_button27;
     wxButton* m_button25;
 
 protected:
+    virtual void OnTestConnection(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTestConnectionUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:

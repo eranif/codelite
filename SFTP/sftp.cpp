@@ -3,6 +3,7 @@
 #include <wx/menu.h>
 #include "SSHAccountManagerDlg.h"
 #include "sftp_settings.h"
+#include "SFTPBrowserDlg.h"
 
 static SFTP* thePlugin = NULL;
 
@@ -107,4 +108,6 @@ void SFTP::OnSettings(wxCommandEvent& e)
 
 void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)
 {
+    SFTPBrowserDlg dlg(wxTheApp->GetTopWindow());
+    dlg.ShowModal();
 }

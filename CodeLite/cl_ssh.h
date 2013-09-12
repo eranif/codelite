@@ -31,6 +31,7 @@
 #include <libssh/libssh.h>
 #include "cl_exception.h"
 #include "codelite_exports.h"
+#include <wx/sharedptr.h>
 
 class WXDLLIMPEXP_CL clSSH
 {
@@ -40,6 +41,9 @@ class WXDLLIMPEXP_CL clSSH
     int         m_port;
     ssh_session m_session;
     bool        m_connected;
+    
+public:
+    typedef wxSharedPtr<clSSH> Ptr_t;
     
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);

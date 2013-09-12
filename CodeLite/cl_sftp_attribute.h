@@ -31,8 +31,9 @@
 #include "codelite_exports.h"
 #include <list>
 #include <wx/sharedptr.h>
+#include <wx/clntdata.h>
 
-class WXDLLIMPEXP_CL SFTPAttribute
+class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
 {
     wxString m_name;
     size_t   m_flags;
@@ -47,38 +48,48 @@ public:
         TYPE_FOLDER       = 0x00000001,
         TYPE_SYMBLINK     = 0x00000002,
         TYPE_REGULAR_FILE = 0x00000004,
-        TYPE_UNKNOWN      = 0x00000008,
+        TYPE_SEPCIAL      = 0x00000008,
+        TYPE_UNKNOWN      = 0x00000010,
     };
 
 protected:
     void DoClear();
     void DoConstruct();
-    
+
 public:
     SFTPAttribute(sftp_attributes attr);
     virtual ~SFTPAttribute();
     
+    static bool Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two);
     /**
      * @brief assign this object with attributes.
      * This object takes ownership of the attributes and it will free it when done
      * @param attr
      */
     void Assign(sftp_attributes attr);
-    
+
+    size_t GetSize() const {
+        return m_size;
+    }
+    wxString GetTypeAsString() const;
     const wxString& GetName() const {
         return m_name;
     }
-    
+
     bool IsFolder() const {
         return m_flags & TYPE_FOLDER;
     }
-    
+
     bool IsFile() const {
         return m_flags & TYPE_REGULAR_FILE;
     }
-    
+
     bool IsSymlink() const {
         return m_flags & TYPE_SYMBLINK;
+    }
+
+    bool IsSpecial() const {
+        return m_flags & TYPE_SEPCIAL;
     }
 };
 #endif // SFTPATTRIBUTE_H

@@ -35,12 +35,15 @@
 
 class WXDLLIMPEXP_CL clSFTP
 {
-    clSSH &m_ssh;
+    clSSH::Ptr_t m_ssh;
     sftp_session m_sftp;
-    bool    m_connected;
-
+    bool         m_connected;
+    
 public:
-    clSFTP(clSSH& ssh);
+    typedef wxSharedPtr<clSFTP> Ptr_t;
+    
+public:
+    clSFTP(clSSH::Ptr_t ssh);
     virtual ~clSFTP();
 
     bool IsConnected() const {

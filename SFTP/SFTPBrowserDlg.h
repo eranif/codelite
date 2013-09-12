@@ -2,14 +2,16 @@
 #define SFTPBROWSERDLG_H
 
 #include "sftp_ui.h"
-#include "cl_ssh.h"
+#include "cl_sftp.h"
+#include "bitmap_loader.h"
 
 class SFTPBrowserDlg : public SFTPBrowserBaseDlg
 {
-    clSSH* m_ssh;
-    
+    clSFTP::Ptr_t m_sftp;
+    BitmapLoader::BitmapMap_t m_bitmaps;
 protected:
     void DoCloseSession();
+    void DoDisplayEntriesForSelectedPath();
     
 public:
     SFTPBrowserDlg(wxWindow* parent);

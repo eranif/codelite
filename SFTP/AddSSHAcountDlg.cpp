@@ -46,17 +46,17 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
 {
     SSHAccountInfo account;
     GetAccountInfo(account);
-    clSSH ssh(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort());
+    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()) );
 
     try {
         wxString message;
-        ssh.Connect();
-        if ( !ssh.AuthenticateServer( message ) ) {
+        ssh->Connect();
+        if ( !ssh->AuthenticateServer( message ) ) {
             if ( ::wxMessageBox(message, "SSH", wxYES_NO|wxCENTER|wxICON_QUESTION, this) == wxYES ) {
-                ssh.AcceptServerAuthentication();
+                ssh->AcceptServerAuthentication();
             }
         }
-        ssh.Login();
+        ssh->Login();
         ::wxMessageBox("Successfully connected to host!");
 
     } catch (clException &e) {

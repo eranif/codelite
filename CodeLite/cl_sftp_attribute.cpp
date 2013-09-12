@@ -47,11 +47,43 @@ void SFTPAttribute::DoConstruct()
         m_flags |= TYPE_REGULAR_FILE;
         break;
     case SSH_FILEXFER_TYPE_SPECIAL:
+        m_flags |= TYPE_SEPCIAL;
+        break;
+        
     case SSH_FILEXFER_TYPE_UNKNOWN:
         m_flags |= TYPE_UNKNOWN;
         break;
+        
     case SSH_FILEXFER_TYPE_SYMLINK:
         m_flags |= TYPE_SYMBLINK;
         break;
+    }
+}
+
+wxString SFTPAttribute::GetTypeAsString() const
+{
+    if ( IsSpecial() ) {
+        return "Special";
+    } else if ( IsFolder() ) {
+        return "Folder";
+    } else if ( IsSymlink() ) {
+        return "Symlink";
+    } else if ( IsFile() ) {
+        return "File";
+    } else {
+        return "Unknown";
+    }
+}
+
+bool SFTPAttribute::Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two)
+{
+    if ( one->IsFolder() && !two->IsFolder() ) {
+        return true;
+        
+    } else if ( !one->IsFolder() && two->IsFolder() ) {
+        return false;
+        
+    } else {
+        return one->GetName() < two->GetName();
     }
 }

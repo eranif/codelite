@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-clSFTP::clSFTP(clSSH& ssh)
+clSFTP::clSFTP(clSSH::Ptr_t ssh)
     : m_ssh(ssh)
     , m_sftp(NULL)
     , m_connected(false)
@@ -20,14 +20,14 @@ void clSFTP::Initialize() throw (clException)
     if ( m_sftp )
         return;
 
-    m_sftp = sftp_new(m_ssh.GetSession());
+    m_sftp = sftp_new(m_ssh->GetSession());
     if (m_sftp == NULL) {
-        throw clException(wxString() << "Error allocating SFTP session: " << ssh_get_error(m_ssh.GetSession()));
+        throw clException(wxString() << "Error allocating SFTP session: " << ssh_get_error(m_ssh->GetSession()));
     }
 
     int rc = sftp_init(m_sftp);
     if (rc != SSH_OK) {
-        throw clException(wxString() << "Error initializing SFTP session: " << ssh_get_error(m_ssh.GetSession()));
+        throw clException(wxString() << "Error initializing SFTP session: " << ssh_get_error(m_ssh->GetSession()));
     }
     m_connected = true;
 }
@@ -75,13 +75,13 @@ void clSFTP::Write(const wxString& fileContent, const wxString& remotePath) thro
 
     file = sftp_open(m_sftp, remotePath.mb_str(wxConvUTF8).data(), access_type, 0644);
     if (file == NULL) {
-        throw clException(wxString() << _("Can't open file: ") << remotePath << ". " << ssh_get_error(m_ssh.GetSession()));
+        throw clException(wxString() << _("Can't open file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()));
     }
 
     size_t nbytes = sftp_write(file, str.c_str(), str.length());
     if (nbytes != str.length()) {
         sftp_close(file);
-        throw clException(wxString() << _("Can't write data to file: ") << remotePath << ". " << ssh_get_error(m_ssh.GetSession()));
+        throw clException(wxString() << _("Can't write data to file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()));
     }
 
     sftp_close(file);
@@ -99,7 +99,7 @@ SFTPAttribute::List_t clSFTP::List(const wxString& folder) throw (clException)
     int rc;
     dir = sftp_opendir(m_sftp, folder.mb_str(wxConvUTF8).data());
     if ( !dir ) {
-        throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh.GetSession()));
+        throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh->GetSession()));
     }
     SFTPAttribute::List_t files;
     
@@ -107,6 +107,8 @@ SFTPAttribute::List_t clSFTP::List(const wxString& folder) throw (clException)
     while ( attributes ) {
         SFTPAttribute::Ptr_t attr( new SFTPAttribute(attributes) );
         files.push_back( attr );
+        attributes = sftp_readdir(m_sftp, dir);
     }
+    files.sort( SFTPAttribute::Compare );
     return files;
 }

@@ -96,7 +96,6 @@ SFTPAttribute::List_t clSFTP::List(const wxString& folder) throw (clException)
         throw clException("SFTP is not initialized");
     }
     
-    int rc;
     dir = sftp_opendir(m_sftp, folder.mb_str(wxConvUTF8).data());
     if ( !dir ) {
         throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh->GetSession()));

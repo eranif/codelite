@@ -20,7 +20,6 @@
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <File Name="zoom_navigator.wxcp"/>
     <VirtualDirectory Name="resources">
@@ -31,7 +30,6 @@
       <File Name="zoom_navigator.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -261,4 +259,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

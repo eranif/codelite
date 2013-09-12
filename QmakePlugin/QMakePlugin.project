@@ -51,7 +51,6 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
       <File Name="NewQtProj_qmakeplugin_bitmaps.cpp"/>
@@ -63,7 +62,6 @@
       <File Name="NewQtProj.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -229,4 +227,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

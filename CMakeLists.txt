@@ -22,7 +22,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
 ##      -DGTK_USE_AUIBOOK=1|0                      // Under GTK, use wxAuiNotebook instead of the native notebook                                                     #
-##      -DWITH_WX_CONFIG=<fullpath>                // Specify a particular wxWidgets build to use. The format must be /path/to/different/wx-config                    #
 ##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                        #
 #######################################################################################################################################################################
 
@@ -63,12 +62,7 @@ else ( APPLE )
   set(WX_COMPONENTS "std aui propgrid stc")
 endif()
 
-if (WITH_WX_CONFIG)
-    set(CL_WX_CONFIG ${WITH_WX_CONFIG})
-else()
-    set( CL_WX_CONFIG wx-config )
-endif()
-unset(WITH_WX_CONFIG CACHE)
+set( CL_WX_CONFIG wx-config )
 
 if (UNIX)
     execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)

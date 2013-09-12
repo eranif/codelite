@@ -14,8 +14,7 @@ class SFTPBrowserEntryClientData : public wxClientData
 public:
     SFTPBrowserEntryClientData(SFTPAttribute::Ptr_t attr, const wxString &fullpath)
         : m_attribute(attr)
-        , m_fullpath(fullpath)
-    {
+        , m_fullpath(fullpath) {
         wxFileName fn;
         if ( m_attribute->IsFolder() ) {
             fn = wxFileName(fullpath, "");
@@ -126,14 +125,31 @@ void SFTPBrowserDlg::DoDisplayEntriesForSelectedPath()
 
             // Set the columns Name (icontext) | Type (text) | Size (text)
             wxVector<wxVariant> cols;
-            cols.push_back( SFTPTreeModel::CreateIconTextVariant((*iter)->GetName(), (*iter)->IsFolder() ? m_bitmaps[FileExtManager::TypeFolder] : m_bitmaps[FileExtManager::TypeText]) );
+            
+            // determine the bitmap type
+            wxBitmap bmp = m_bitmaps[FileExtManager::TypeText];
+            wxString fullname;
+            fullname << m_textCtrlRemoteFolder->GetValue() << "/" << (*iter)->GetName();
+            
+            if ( (*iter)->IsFolder() ) {
+                bmp = m_bitmaps[FileExtManager::TypeFolder];
+            } else {
+                wxFileName fn(fullname);
+                FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());
+                if ( m_bitmaps.count(type) ) {
+                    bmp = m_bitmaps[type];
+                }
+            }
+            
+            cols.push_back( SFTPTreeModel::CreateIconTextVariant((*iter)->GetName(), bmp ));
             cols.push_back( (*iter)->GetTypeAsString() );
             cols.push_back( wxString() << (*iter)->GetSize() );
-            
-            SFTPBrowserEntryClientData* cd = new SFTPBrowserEntryClientData((*iter), wxString() << m_textCtrlRemoteFolder->GetValue() << "/" << (*iter)->GetName());
+
+            SFTPBrowserEntryClientData* cd = new SFTPBrowserEntryClientData((*iter), fullname);
             m_dataviewModel->AppendItem(wxDataViewItem(0), cols, cd);
         }
-
+        m_dataview->Refresh();
+        
     } catch (clException &e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR|wxOK);
         DoCloseSession();
@@ -148,9 +164,24 @@ void SFTPBrowserDlg::DoCloseSession()
 
 void SFTPBrowserDlg::OnItemActivated(wxDataViewEvent& event)
 {
+    if ( !m_sftp ) {
+        DoCloseSession();
+        return;
+    }
+    
     SFTPBrowserEntryClientData* cd = dynamic_cast<SFTPBrowserEntryClientData*>(m_dataviewModel->GetClientObject(event.GetItem()));
     if ( cd && cd->GetAttribute()->IsFolder() ) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
+        m_dataviewModel->Clear();
+        DoDisplayEntriesForSelectedPath();
+    }
+}
+
+void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
+{
+    if ( !m_sftp ) {
+        OnRefresh(event);
+    } else {
         m_dataviewModel->Clear();
         DoDisplayEntriesForSelectedPath();
     }

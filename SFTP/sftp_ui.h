@@ -82,6 +82,7 @@ protected:
     wxButton* m_button61;
 
 protected:
+    virtual void OnTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }

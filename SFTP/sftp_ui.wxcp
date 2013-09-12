@@ -2090,7 +2090,7 @@
 											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
-											"m_functionNameAndSignature":	"OnRefresh(wxCommandEvent& event)",
+											"m_functionNameAndSignature":	"OnTextEnter(wxCommandEvent& event)",
 											"m_description":	"Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated)."
 										}],
 									"m_children":	[]

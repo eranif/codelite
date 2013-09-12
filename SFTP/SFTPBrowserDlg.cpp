@@ -2,6 +2,7 @@
 #include "sftp_settings.h"
 #include "ssh_account_info.h"
 #include <wx/msgdlg.h>
+#include "windowattrmanager.h"
 
 SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent)
     : SFTPBrowserBaseDlg(parent)
@@ -22,10 +23,12 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent)
     if ( !m_choiceAccount->IsEmpty() ) {
         m_choiceAccount->SetSelection(0);
     }
+    WindowAttrManager::Load(this, "SFTPBrowserDlg", NULL);
 }
 
 SFTPBrowserDlg::~SFTPBrowserDlg()
 {
+    WindowAttrManager::Save(this, "SFTPBrowserDlg", NULL);
 }
 
 void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)

@@ -19,12 +19,13 @@ public:
         wxFileName fn;
         if ( m_attribute->IsFolder() ) {
             fn = wxFileName(fullpath, "");
+            fn.Normalize();
+            m_fullpath = fn.GetPath(false, wxPATH_UNIX);
         } else {
             fn = wxFileName(fullpath);
+            fn.Normalize();
+            m_fullpath = fn.GetFullPath(wxPATH_UNIX);
         }
-        
-        fn.Normalize();
-        m_fullpath = fn.GetFullPath();
     }
 
     virtual ~SFTPBrowserEntryClientData()
@@ -129,7 +130,7 @@ void SFTPBrowserDlg::DoDisplayEntriesForSelectedPath()
             cols.push_back( (*iter)->GetTypeAsString() );
             cols.push_back( wxString() << (*iter)->GetSize() );
             
-            SFTPBrowserEntryClientData* cd = new SFTPBrowserEntryClientData((*iter), wxString() << m_textCtrlRemoteFolder->GetValue() << wxFILE_SEP_PATH << (*iter)->GetName());
+            SFTPBrowserEntryClientData* cd = new SFTPBrowserEntryClientData((*iter), wxString() << m_textCtrlRemoteFolder->GetValue() << "/" << (*iter)->GetName());
             m_dataviewModel->AppendItem(wxDataViewItem(0), cols, cd);
         }
 

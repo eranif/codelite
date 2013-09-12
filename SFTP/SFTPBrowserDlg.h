@@ -10,13 +10,14 @@ class SFTPBrowserDlg : public SFTPBrowserBaseDlg
     clSFTP::Ptr_t m_sftp;
     BitmapLoader::BitmapMap_t m_bitmaps;
 protected:
+    virtual void OnItemActivated(wxDataViewEvent& event);
     void DoCloseSession();
     void DoDisplayEntriesForSelectedPath();
-    
+
 public:
     SFTPBrowserDlg(wxWindow* parent);
     virtual ~SFTPBrowserDlg();
-    
+
 protected:
     virtual void OnRefresh(wxCommandEvent& event);
     virtual void OnRefreshUI(wxUpdateUIEvent& event);

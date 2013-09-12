@@ -2019,7 +2019,7 @@
 									"border":	5,
 									"gbSpan":	"1,1",
 									"gbPosition":	"1,1",
-									"m_styles":	[],
+									"m_styles":	["wxTE_PROCESS_ENTER"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -2086,7 +2086,13 @@
 											"m_label":	"Max Length:",
 											"m_value":	"0"
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnRefresh(wxCommandEvent& event)",
+											"m_description":	"Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated)."
+										}],
 									"m_children":	[]
 								}, {
 									"m_type":	4400,
@@ -2407,7 +2413,13 @@
 									"m_label":	"Container Item Has Columns",
 									"m_value":	true
 								}],
-							"m_events":	[],
+							"m_events":	[{
+									"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+									"m_eventClass":	"wxDataViewEvent",
+									"m_eventHandler":	"wxDataViewEventHandler",
+									"m_functionNameAndSignature":	"OnItemActivated(wxDataViewEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused"
+								}],
 							"m_children":	[{
 									"m_type":	4472,
 									"proportion":	0,

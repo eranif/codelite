@@ -1,5 +1,6 @@
 #include "sftp.h"
 #include <wx/xrc/xmlres.h>
+#include <wx/menu.h>
 #include "SSHAccountManagerDlg.h"
 #include "sftp_settings.h"
 

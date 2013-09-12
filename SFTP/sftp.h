@@ -11,6 +11,7 @@ public:
     
 protected:
     void OnSettings(wxCommandEvent &e);
+    void OnSetupWorkspaceMirroring(wxCommandEvent &e);
     
 public:
     //--------------------------------------------

@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2013 by Eran Ifrah
-// file name            : cl_sftp.h
+// file name            : cl_sftp_attribute.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,58 +23,62 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLSCP_H
-#define CLSCP_H
+#ifndef SFTPATTRIBUTE_H
+#define SFTPATTRIBUTE_H
 
-#include "cl_ssh.h"
-#include "cl_exception.h"
 #include <libssh/sftp.h>
 #include <wx/filename.h>
 #include "codelite_exports.h"
-#include "cl_sftp_attribute.h"
+#include <list>
+#include <wx/sharedptr.h>
 
-class WXDLLIMPEXP_CL clSFTP
+class WXDLLIMPEXP_CL SFTPAttribute
 {
-    clSSH &m_ssh;
-    sftp_session m_sftp;
-    bool    m_connected;
+    wxString m_name;
+    size_t   m_flags;
+    size_t   m_size;
+    sftp_attributes m_attributes;
 
 public:
-    clSFTP(clSSH& ssh);
-    virtual ~clSFTP();
+    typedef wxSharedPtr<SFTPAttribute>      Ptr_t;
+    typedef std::list<SFTPAttribute::Ptr_t> List_t;
 
-    bool IsConnected() const {
-        return m_connected;
+    enum {
+        TYPE_FOLDER       = 0x00000001,
+        TYPE_SYMBLINK     = 0x00000002,
+        TYPE_REGULAR_FILE = 0x00000004,
+        TYPE_UNKNOWN      = 0x00000008,
+    };
+
+protected:
+    void DoClear();
+    void DoConstruct();
+    
+public:
+    SFTPAttribute(sftp_attributes attr);
+    virtual ~SFTPAttribute();
+    
+    /**
+     * @brief assign this object with attributes.
+     * This object takes ownership of the attributes and it will free it when done
+     * @param attr
+     */
+    void Assign(sftp_attributes attr);
+    
+    const wxString& GetName() const {
+        return m_name;
     }
     
-    /**
-     * @brief intialize the scp over ssh
-     */
-    void Initialize() throw (clException);
-
-    /**
-     * @brief close the scp channel
-     */
-    void Close();
+    bool IsFolder() const {
+        return m_flags & TYPE_FOLDER;
+    }
     
-    /**
-     * @brief write the content of local file into a remote file
-     * @param localFile the local file
-     * @param remotePath the remote path (abs path)
-     */
-    void Write(const wxFileName& localFile, const wxString &remotePath) throw (clException);
+    bool IsFile() const {
+        return m_flags & TYPE_REGULAR_FILE;
+    }
     
-    /**
-     * @brief write the content of 'fileContent' into the remote file represented by remotePath
-     */
-    void Write(const wxString &fileContent, const wxString &remotePath) throw (clException);
-    
-    /**
-     * @brief list the content of a folder
-     * @param folder
-     * @throw clException incase an error occured
-     */
-    SFTPAttribute::List_t List(const wxString &folder) throw (clException);
+    bool IsSymlink() const {
+        return m_flags & TYPE_SYMBLINK;
+    }
 };
-
-#endif // CLSCP_H
+#endif // SFTPATTRIBUTE_H

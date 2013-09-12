@@ -45,3 +45,15 @@ void SFTPSettings::Save(const SFTPSettings& settings)
     clConfig config("sftp-settings.conf");
     config.WriteItem( &settings );
 }
+
+bool SFTPSettings::GetAccount(const wxString& name, SSHAccountInfo &account) const
+{
+    SSHAccountInfo::List_t::const_iterator iter = m_accounts.begin(); 
+    for(; iter != m_accounts.end(); ++iter ) {
+        if ( name == iter->GetAccountName() ) {
+            account = (*iter);
+            return true;
+        }
+    }
+    return false;
+}

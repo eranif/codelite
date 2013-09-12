@@ -56,10 +56,10 @@ void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath) thro
     if ( !fp.IsOpened() ) {
         throw clException(wxString() << "scp::Write could not open file '" << localFile.GetFullPath() << "'. " << ::strerror(errno) );
     }
-    
+
     wxString fileContent;
     fp.ReadAll(&fileContent);
-    
+
     Write(fileContent, remotePath);
 }
 
@@ -83,6 +83,30 @@ void clSFTP::Write(const wxString& fileContent, const wxString& remotePath) thro
         sftp_close(file);
         throw clException(wxString() << _("Can't write data to file: ") << remotePath << ". " << ssh_get_error(m_ssh.GetSession()));
     }
-    
+
     sftp_close(file);
+}
+
+SFTPAttribute::List_t clSFTP::List(const wxString& folder) throw (clException)
+{
+    sftp_dir dir;
+    sftp_attributes attributes;
+    
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+    
+    int rc;
+    dir = sftp_opendir(m_sftp, folder.mb_str(wxConvUTF8).data());
+    if ( !dir ) {
+        throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh.GetSession()));
+    }
+    SFTPAttribute::List_t files;
+    
+    attributes = sftp_readdir(m_sftp, dir);
+    while ( attributes ) {
+        SFTPAttribute::Ptr_t attr( new SFTPAttribute(attributes) );
+        files.push_back( attr );
+    }
+    return files;
 }

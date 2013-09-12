@@ -5,7 +5,9 @@
 
 static SFTP* thePlugin = NULL;
 
-const wxEventType wxEVT_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
+const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER  = ::wxNewEventType();
+const wxEventType wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING = ::wxNewEventType();
+
 
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -37,7 +39,8 @@ SFTP::SFTP(IManager *manager)
     m_longName = wxT("SFTP plugin for codelite IDE");
     m_shortName = wxT("SFTP");
     
-    wxTheApp->Connect(wxEVT_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
+    wxTheApp->Connect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
+    wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
 }
 
 SFTP::~SFTP()
@@ -56,48 +59,35 @@ void SFTP::CreatePluginMenu(wxMenu *pluginsMenu)
     wxMenu *menu = new wxMenu();
     wxMenuItem *item(NULL);
 
-    item = new wxMenuItem(menu, wxEVT_OPEN_SSH_ACCOUNT_MANAGER, _("Open SSH Account Manager"), _("Open SSH Account Manager"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu, wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, _("Open SSH Account Manager"), _("Open SSH Account Manager"), wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("SFTP"), menu);
 }
 
 void SFTP::HookPopupMenu(wxMenu *menu, MenuType type)
 {
-    if (type == MenuTypeEditor) {
-        //TODO::Append items for the editor context menu
-    } else if (type == MenuTypeFileExplorer) {
-        //TODO::Append items for the file explorer context menu
-    } else if (type == MenuTypeFileView_Workspace) {
-        //TODO::Append items for the file view / workspace context menu
-    } else if (type == MenuTypeFileView_Project) {
-        //TODO::Append items for the file view/Project context menu
-    } else if (type == MenuTypeFileView_Folder) {
-        //TODO::Append items for the file view/Virtual folder context menu
-    } else if (type == MenuTypeFileView_File) {
-        //TODO::Append items for the file view/file context menu
+    if (type == MenuTypeFileView_Workspace) {
+        //Create the popup menu for the virtual folders
+        wxMenuItem *item(NULL);
+
+        item = new wxMenuItem(menu, wxID_SEPARATOR);
+        menu->Prepend(item);
+
+        item = new wxMenuItem(menu, wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, _("&Setup workspace mirroring..."), wxEmptyString, wxITEM_NORMAL);
+        menu->Prepend(item);
     }
 }
 
 void SFTP::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
-    if (type == MenuTypeEditor) {
-        //TODO::Unhook items for the editor context menu
-    } else if (type == MenuTypeFileExplorer) {
-        //TODO::Unhook  items for the file explorer context menu
-    } else if (type == MenuTypeFileView_Workspace) {
-        //TODO::Unhook  items for the file view / workspace context menu
-    } else if (type == MenuTypeFileView_Project) {
-        //TODO::Unhook  items for the file view/Project context menu
-    } else if (type == MenuTypeFileView_Folder) {
-        //TODO::Unhook  items for the file view/Virtual folder context menu
-    } else if (type == MenuTypeFileView_File) {
-        //TODO::Unhook  items for the file view/file context menu
-    }
+    wxUnusedVar(menu);
+    wxUnusedVar(type);
 }
 
 void SFTP::UnPlug()
 {
-    wxTheApp->Disconnect(wxEVT_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
 }
 
 void SFTP::OnSettings(wxCommandEvent& e)
@@ -112,4 +102,8 @@ void SFTP::OnSettings(wxCommandEvent& e)
         settings.SetAccounts( dlg.GetAccounts() );
         SFTPSettings::Save( settings );
     }
+}
+
+void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)
+{
 }

@@ -19,6 +19,7 @@ public:
         return m_accounts;
     }
     
+    bool GetAccount(const wxString &name, SSHAccountInfo &account) const;
     static void Load(SFTPSettings& settings);
     static void Save(const SFTPSettings& settings);
     

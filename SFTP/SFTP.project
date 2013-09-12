@@ -245,6 +245,8 @@
     <File Name="SSHAccountManagerDlg.cpp"/>
     <File Name="AddSSHAcountDlg.h"/>
     <File Name="AddSSHAcountDlg.cpp"/>
+    <File Name="SFTPBrowserDlg.h"/>
+    <File Name="SFTPBrowserDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="sftp_ui.wxcp"/>
@@ -254,6 +256,8 @@
     <VirtualDirectory Name="base">
       <File Name="sftp_ui.h"/>
       <File Name="sftp_ui.cpp"/>
+      <File Name="sftptreemodel.cpp"/>
+      <File Name="sftptreemodel.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
 </CodeLite_Project>

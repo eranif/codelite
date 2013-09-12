@@ -18,7 +18,11 @@ public:
 
     virtual ~SSHAccountInfo();
     SSHAccountInfo& operator=(const SSHAccountInfo& other);
-
+    
+    wxString GetAccountName() const {
+        return wxString() << GetUsername() << "@" << GetHost();
+    }
+    
     void SetHost(const wxString& host) {
         this->m_host = host;
     }

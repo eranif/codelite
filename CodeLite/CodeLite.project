@@ -196,6 +196,8 @@
     <File Name="cl_sftp.h"/>
     <File Name="cl_ssh.cpp"/>
     <File Name="cl_ssh.h"/>
+    <File Name="cl_sftp_attribute.h"/>
+    <File Name="cl_sftp_attribute.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

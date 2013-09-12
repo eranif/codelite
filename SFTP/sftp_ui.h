@@ -16,6 +16,10 @@
 #include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/gbsizer.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include "sftptreemodel.h"
 
 class SSHAccountManagerDlgBase : public wxDialog
 {
@@ -60,6 +64,30 @@ protected:
 public:
     AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add Account"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddSSHAcountDlgBase();
+};
+
+
+class SFTPBrowserBaseDlg : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText66;
+    wxTextCtrl* m_textCtrlRemoteFolder;
+    wxButton* m_buttonRefresh;
+    wxStaticText* m_staticText82;
+    wxChoice* m_choiceAccount;
+    wxDataViewCtrl* m_dataview;
+    wxObjectDataPtr<SFTPTreeModel> m_dataviewModel;
+
+    wxButton* m_button59;
+    wxButton* m_button61;
+
+protected:
+    virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~SFTPBrowserBaseDlg();
 };
 
 #endif

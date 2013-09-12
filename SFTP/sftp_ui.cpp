@@ -21,6 +21,22 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
         wxCE8CInitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-16"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-32"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
     
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
@@ -89,6 +105,22 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
         wxCE8CInitBitmapResources();
         bBitmapLoaded = true;
     }
+    // Set icon(s) to the application/dialog
+    wxIconBundle app_icons;
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-16"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    {
+        wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("ssh-32"));
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        app_icons.AddIcon( icn );
+    }
+    SetIcons( app_icons );
+
     
     wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer23);
@@ -171,5 +203,87 @@ AddSSHAcountDlgBase::~AddSSHAcountDlgBase()
     m_button51->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddSSHAcountDlgBase::OnTestConnection), NULL, this);
     m_button51->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnTestConnectionUI), NULL, this);
     m_button27->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddSSHAcountDlgBase::OnOKUI), NULL, this);
+    
+}
+
+SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCE8CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer62);
+    
+    wxGridBagSizer* gridBagSizer80 = new wxGridBagSizer(0, 0);
+    
+    boxSizer62->Add(gridBagSizer80, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText66 = new wxStaticText(this, wxID_ANY, _("Remote folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    gridBagSizer80->Add(m_staticText66, wxGBPosition(1,0), wxGBSpan(1,1), wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlRemoteFolder = new wxTextCtrl(this, wxID_ANY, wxT("/"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlRemoteFolder->SetToolTip(_("Set the remote folder to browse and click on the 'Refresh' button"));
+    m_textCtrlRemoteFolder->SetFocus();
+    
+    gridBagSizer80->Add(m_textCtrlRemoteFolder, wxGBPosition(1,1), wxGBSpan(1,1), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_buttonRefresh = new wxButton(this, wxID_REFRESH, _("Refresh..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    gridBagSizer80->Add(m_buttonRefresh, wxGBPosition(1,2), wxGBSpan(1,1), wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText82 = new wxStaticText(this, wxID_ANY, _("Account:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    gridBagSizer80->Add(m_staticText82, wxGBPosition(0,0), wxGBSpan(1,1), wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceAccountArr;
+    m_choiceAccount = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceAccountArr, 0);
+    
+    gridBagSizer80->Add(m_choiceAccount, wxGBPosition(0,1), wxGBSpan(1,2), wxALL|wxEXPAND, 5);
+    gridBagSizer80->AddGrowableCol(1);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    m_dataviewModel = new SFTPTreeModel;
+    m_dataviewModel->SetColCount( 3 );
+    m_dataview->AssociateModel(m_dataviewModel.get() );
+    
+    boxSizer62->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
+    
+    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Size"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer62->Add(boxSizer57, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button59 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button59->SetDefault();
+    
+    boxSizer57->Add(m_button59, 0, wxALL, 5);
+    
+    m_button61 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer57->Add(m_button61, 0, wxALL, 5);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_buttonRefresh->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnRefresh), NULL, this);
+    m_buttonRefresh->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
+    
+}
+
+SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
+{
+    m_buttonRefresh->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnRefresh), NULL, this);
+    m_buttonRefresh->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
     
 }

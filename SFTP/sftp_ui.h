@@ -86,6 +86,8 @@ protected:
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

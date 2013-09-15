@@ -2,6 +2,7 @@
 #include <wx/ffile.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <wx/filefn.h>
 
 clSFTP::clSFTP(clSSH::Ptr_t ssh)
     : m_ssh(ssh)
@@ -87,7 +88,7 @@ void clSFTP::Write(const wxString& fileContent, const wxString& remotePath) thro
     sftp_close(file);
 }
 
-SFTPAttribute::List_t clSFTP::List(const wxString& folder) throw (clException)
+SFTPAttribute::List_t clSFTP::List(const wxString &folder, bool foldersOnly, const wxString &filter) throw (clException)
 {
     sftp_dir dir;
     sftp_attributes attributes;
@@ -104,9 +105,20 @@ SFTPAttribute::List_t clSFTP::List(const wxString& folder) throw (clException)
     
     attributes = sftp_readdir(m_sftp, dir);
     while ( attributes ) {
+        
         SFTPAttribute::Ptr_t attr( new SFTPAttribute(attributes) );
-        files.push_back( attr );
         attributes = sftp_readdir(m_sftp, dir);
+        
+        if ( foldersOnly && !attr->IsFolder()) {
+            continue;
+            
+        } else if ( !filter.IsEmpty() && !attr->IsFolder() && !::wxMatchWild(filter, attr->GetName()) ) {
+            continue;
+            
+        } else {
+            files.push_back( attr );
+            
+        }
     }
     files.sort( SFTPAttribute::Compare );
     return files;

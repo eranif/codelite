@@ -4,6 +4,8 @@
 #include "SSHAccountManagerDlg.h"
 #include "sftp_settings.h"
 #include "SFTPBrowserDlg.h"
+#include "event_notifier.h"
+#include "sftp_workspace_settings.h"
 
 static SFTP* thePlugin = NULL;
 
@@ -43,6 +45,8 @@ SFTP::SFTP(IManager *manager)
     
     wxTheApp->Connect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
     wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
 }
 
 SFTP::~SFTP()
@@ -90,6 +94,8 @@ void SFTP::UnPlug()
 {
     wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
 }
 
 void SFTP::OnSettings(wxCommandEvent& e)
@@ -108,6 +114,24 @@ void SFTP::OnSettings(wxCommandEvent& e)
 
 void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)
 {
-    SFTPBrowserDlg dlg(wxTheApp->GetTopWindow());
-    dlg.ShowModal();
+    SFTPBrowserDlg dlg(wxTheApp->GetTopWindow(), _("Select the remote workspace"), "*.workspace");
+    if ( dlg.ShowModal() == wxID_OK ) {
+        m_workspaceSettings.SetRemoteWorkspacePath( dlg.GetPath() );
+        m_workspaceSettings.SetAccount( dlg.GetAccount() );
+        SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+    }
+}
+
+void SFTP::OnWorkspaceOpened(wxCommandEvent& e)
+{
+    e.Skip();
+    m_workspaceFile = e.GetString();
+    SFTPWorkspaceSettings::Load(m_workspaceSettings, m_workspaceFile);
+}
+
+void SFTP::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+    m_workspaceFile.Clear();
 }

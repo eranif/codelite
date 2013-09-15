@@ -75,9 +75,11 @@ public:
     /**
      * @brief list the content of a folder
      * @param folder
+     * @param foldersOnly
+     * @param filter filter out files that do not match the filter
      * @throw clException incase an error occured
      */
-    SFTPAttribute::List_t List(const wxString &folder) throw (clException);
+    SFTPAttribute::List_t List(const wxString &folder, bool foldersOnly, const wxString &filter = "") throw (clException);
 };
 
 #endif // CLSCP_H

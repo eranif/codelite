@@ -198,7 +198,6 @@
     <File Name="cl_sftp_attribute.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -360,4 +359,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

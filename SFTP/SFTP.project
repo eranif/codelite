@@ -6,6 +6,8 @@
     <File Name="ssh_account_info.cpp"/>
     <File Name="sftp_settings.h"/>
     <File Name="sftp_settings.cpp"/>
+    <File Name="sftp_workspace_settings.h"/>
+    <File Name="sftp_workspace_settings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="sftp.h"/>
@@ -32,7 +34,6 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="WinReleaseUnicode"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -266,4 +267,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

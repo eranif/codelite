@@ -79,11 +79,6 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wx
         m_choiceAccount->SetSelection(0);
     }
     
-#ifdef __WXMSW__
-    m_dataview->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserDlg::OnKeyDown), NULL, this);
-#else
-    m_dataview->Connect(wxEVT_CHAR, wxKeyEventHandler(SFTPBrowserDlg::OnKeyDown), NULL, this);
-#endif
     WindowAttrManager::Load(this, "SFTPBrowserDlg", NULL);
 }
 
@@ -242,9 +237,9 @@ wxString SFTPBrowserDlg::GetAccount() const
 
 void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 {
-    wxFileName fn(path);
+    wxFileName fn(path, wxPATH_UNIX);
 
-    m_textCtrlRemoteFolder->ChangeValue( fn.GetPath() );
+    m_textCtrlRemoteFolder->ChangeValue( fn.GetPath(false, wxPATH_UNIX) );
     int where = m_choiceAccount->FindString(account);
     if ( where != wxNOT_FOUND ) {
         m_choiceAccount->SetSelection(where);
@@ -254,15 +249,20 @@ void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    if ( !m_textCtrlInlineSearch->IsShown() ) {
-        m_textCtrlInlineSearch->SetFocus();
-        m_textCtrlInlineSearch->Clear();
+    wxChar ch = (wxChar) event.GetKeyCode();
+    
+    if ( ::wxIsprint( ch ) ) {
+        if ( !m_textCtrlInlineSearch->IsShown() ) {
+            m_textCtrlInlineSearch->SetFocus();
+            m_textCtrlInlineSearch->Clear();
 #ifdef __WXMSW__
-        m_textCtrlInlineSearch->ChangeValue( wxString() << (wxChar)event.GetKeyCode() );
+            m_textCtrlInlineSearch->ChangeValue( wxString() << (wxChar)event.GetKeyCode() );
 #endif
-        m_textCtrlInlineSearch->SetInsertionPoint( m_textCtrlInlineSearch->GetLastPosition() );
-        m_textCtrlInlineSearch->Show();
-        GetSizer()->Layout();
+            m_textCtrlInlineSearch->SetInsertionPoint( m_textCtrlInlineSearch->GetLastPosition() );
+            m_textCtrlInlineSearch->Show();
+            GetSizer()->Layout();
+        }
+        
     }
 }
 

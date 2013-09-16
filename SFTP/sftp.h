@@ -33,6 +33,10 @@ public:
     virtual void HookPopupMenu(wxMenu *menu, MenuType type);
     virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
     virtual void UnPlug();
+    
+    // Callbacks
+    void OnFileWriteOK(const wxString &message);
+    void OnFileWriteError(const wxString &errorMessage);
 };
 
 #endif //SFTP

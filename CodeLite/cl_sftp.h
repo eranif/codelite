@@ -51,6 +51,12 @@ public:
     }
     
     /**
+     * @brief return the SSH account name that this sftp session is associated with (in the format of user@host)
+     * @return 
+     */
+    wxString GetAccountName() const;
+    
+    /**
      * @brief intialize the scp over ssh
      */
     void Initialize() throw (clException);

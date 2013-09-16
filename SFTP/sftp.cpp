@@ -6,14 +6,13 @@
 #include "SFTPBrowserDlg.h"
 #include "event_notifier.h"
 #include "sftp_workspace_settings.h"
+#include "sftp_writer_thread.h"
 
 static SFTP* thePlugin = NULL;
-
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER  = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING = ::wxNewEventType();
 
-
-//Define the plugin entry point
+// Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 {
     if (thePlugin == 0) {
@@ -48,6 +47,9 @@ SFTP::SFTP(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
+    
+    SFTPWriterThread::Instance()->SetNotifyWindow( this );
+    SFTPWriterThread::Instance()->Start();
 }
 
 SFTP::~SFTP()
@@ -93,6 +95,7 @@ void SFTP::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void SFTP::UnPlug()
 {
+    SFTPWriterThread::Release();
     wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
@@ -152,5 +155,27 @@ void SFTP::OnFileSaved(wxCommandEvent& e)
     if ( m_workspaceSettings.GetRemoteWorkspacePath().IsEmpty() )
         return;
     
-    // TODO :: Save the file on the remote server
+    wxString local_file = *(wxString*)e.GetClientData();
+    wxFileName file( local_file );
+    file.MakeRelativeTo( m_workspaceFile.GetPath() );
+    file.MakeAbsolute( wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
+    wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
+    
+    SFTPSettings settings;
+    SFTPSettings::Load( settings );
+    
+    SSHAccountInfo account;
+    if ( settings.GetAccount(m_workspaceSettings.GetAccount(), account) ) {
+        SFTPWriterThread::Instance()->Add( new SFTPWriterThreadRequet(account, remoteFile, local_file) );
+    }
+}
+
+void SFTP::OnFileWriteOK(const wxString& message)
+{
+    wxLogMessage( message );
+}
+
+void SFTP::OnFileWriteError(const wxString& errorMessage)
+{
+    wxLogMessage( errorMessage );
 }

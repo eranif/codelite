@@ -28,7 +28,7 @@ void clSFTP::Initialize() throw (clException)
 
     int rc = sftp_init(m_sftp);
     if (rc != SSH_OK) {
-        throw clException(wxString() << "Error initializing SFTP session: " << ssh_get_error(m_ssh->GetSession()));
+        throw clException(wxString() << "Error initializing SFTP session: " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
     }
     m_connected = true;
 }
@@ -76,13 +76,13 @@ void clSFTP::Write(const wxString& fileContent, const wxString& remotePath) thro
 
     file = sftp_open(m_sftp, remotePath.mb_str(wxConvUTF8).data(), access_type, 0644);
     if (file == NULL) {
-        throw clException(wxString() << _("Can't open file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()));
+        throw clException(wxString() << _("Can't open file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
     }
 
     size_t nbytes = sftp_write(file, str.c_str(), str.length());
     if (nbytes != str.length()) {
         sftp_close(file);
-        throw clException(wxString() << _("Can't write data to file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()));
+        throw clException(wxString() << _("Can't write data to file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
     }
 
     sftp_close(file);
@@ -99,7 +99,7 @@ SFTPAttribute::List_t clSFTP::List(const wxString &folder, bool foldersOnly, con
     
     dir = sftp_opendir(m_sftp, folder.mb_str(wxConvUTF8).data());
     if ( !dir ) {
-        throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh->GetSession()));
+        throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
     }
     SFTPAttribute::List_t files;
     
@@ -122,4 +122,15 @@ SFTPAttribute::List_t clSFTP::List(const wxString &folder, bool foldersOnly, con
     }
     files.sort( SFTPAttribute::Compare );
     return files;
+}
+
+wxString clSFTP::GetAccountName() const
+{
+    if ( !m_ssh ) {
+        return "";
+        
+    } else {
+        return wxString() << m_ssh->GetUsername() << "@" << m_ssh->GetHost();
+        
+    }
 }

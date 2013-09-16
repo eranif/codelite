@@ -32,12 +32,17 @@
 class WXDLLIMPEXP_CL clException
 {
     wxString m_message;
+    int      m_errorCode;
 public:
-    clException(const wxString& message) : m_message(message) {}
+    clException(const wxString& message) : m_message(message), m_errorCode(0) {}
+    clException(const wxString& message, int errorCode) : m_message(message), m_errorCode(errorCode) {}
     virtual ~clException() {}
     
     const wxString& What() const {
         return m_message;
+    }
+    int ErrorCode() const {
+        return m_errorCode;
     }
 };
 

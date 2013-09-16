@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2013 by Eran Ifrah
-// file name            : sftp_workspace_settings.h
+// file name            : sftp_writer_thread.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,39 +23,50 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef SFTPWORKSPACESETTINGS_H
-#define SFTPWORKSPACESETTINGS_H
+#ifndef SFTPWRITERTHREAD_H
+#define SFTPWRITERTHREAD_H
 
-#include "cl_config.h" // Base class: clConfigItem
+#include "worker_thread.h" // Base class: WorkerThread
+#include "cl_sftp.h"
+#include "ssh_account_info.h"
 
-class SFTPWorkspaceSettings : public clConfigItem
+class SFTPWriterThreadRequet : public ThreadRequest
 {
-    wxString m_account;
-    wxString m_remoteWorkspacePath;
+    SSHAccountInfo m_account;
+    wxString       m_remoteFile;
+    wxString       m_localFile;
 
 public:
-    SFTPWorkspaceSettings();
-    virtual ~SFTPWorkspaceSettings();
+    SFTPWriterThreadRequet(const SSHAccountInfo& accountInfo, const wxString &remoteFile, const wxString &localFile);
+    virtual ~SFTPWriterThreadRequet();
 
-    static void Load(SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile);
-    static void Save(const SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile);
-
-    void SetAccount(const wxString& account) {
-        this->m_account = account;
-    }
-    void SetRemoteWorkspacePath(const wxString& remoteWorkspacePath) {
-        this->m_remoteWorkspacePath = remoteWorkspacePath;
-    }
-    const wxString& GetAccount() const {
+    const SSHAccountInfo& GetAccount() const {
         return m_account;
     }
-    const wxString& GetRemoteWorkspacePath() const {
-        return m_remoteWorkspacePath;
+    const wxString& GetRemoteFile() const {
+        return m_remoteFile;
     }
-    
-public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    const wxString& GetLocalFile() const {
+        return m_localFile;
+    }
 };
 
-#endif // SFTPWORKSPACESETTINGS_H
+class SFTPWriterThread : public WorkerThread
+{
+    static SFTPWriterThread* ms_instance;
+    clSFTP::Ptr_t m_sftp;
+
+public:
+    static SFTPWriterThread* Instance();
+    static void Release();
+
+private:
+    SFTPWriterThread();
+    virtual ~SFTPWriterThread();
+    void DoConnect(SFTPWriterThreadRequet *req);
+
+public:
+    virtual void ProcessRequest(ThreadRequest* request);
+};
+
+#endif // SFTPWRITERTHREAD_H

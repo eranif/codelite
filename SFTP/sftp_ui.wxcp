@@ -2425,6 +2425,12 @@
 									"m_eventHandler":	"wxDataViewEventHandler",
 									"m_functionNameAndSignature":	"OnItemSelected(wxDataViewEvent& event)",
 									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event"
+								}, {
+									"m_eventName":	"wxEVT_CHAR",
+									"m_eventClass":	"wxKeyEvent",
+									"m_eventHandler":	"wxKeyEventHandler",
+									"m_functionNameAndSignature":	"OnKeyDown(wxKeyEvent& event)",
+									"m_description":	"Process a wxEVT_CHAR event"
 								}],
 							"m_children":	[{
 									"m_type":	4472,

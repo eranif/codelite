@@ -115,6 +115,7 @@ void SFTP::OnSettings(wxCommandEvent& e)
 void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)
 {
     SFTPBrowserDlg dlg(wxTheApp->GetTopWindow(), _("Select the remote workspace"), "*.workspace");
+    dlg.Initialize(m_workspaceSettings.GetAccount(), m_workspaceSettings.GetRemoteWorkspacePath());
     if ( dlg.ShowModal() == wxID_OK ) {
         m_workspaceSettings.SetRemoteWorkspacePath( dlg.GetPath() );
         m_workspaceSettings.SetAccount( dlg.GetAccount() );

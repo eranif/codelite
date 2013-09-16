@@ -20,6 +20,10 @@
     <File Name="AddSSHAcountDlg.cpp"/>
     <File Name="SFTPBrowserDlg.h"/>
     <File Name="SFTPBrowserDlg.cpp"/>
+    <File Name="my_sftp_tree_model.h"/>
+    <File Name="my_sftp_tree_model.cpp"/>
+    <File Name="FloatingTextCtrl.h"/>
+    <File Name="FloatingTextCtrl.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="sftp_ui.wxcp"/>

@@ -3,6 +3,9 @@
 #include "ssh_account_info.h"
 #include <wx/msgdlg.h>
 #include "windowattrmanager.h"
+#include "fileextmanager.h"
+#include "my_sftp_tree_model.h"
+#include "FloatingTextCtrl.h"
 
 // ================================================================================
 // ================================================================================
@@ -11,10 +14,12 @@ class SFTPBrowserEntryClientData : public wxClientData
 {
     SFTPAttribute::Ptr_t m_attribute;
     wxString             m_fullpath;
+
 public:
     SFTPBrowserEntryClientData(SFTPAttribute::Ptr_t attr, const wxString &fullpath)
         : m_attribute(attr)
-        , m_fullpath(fullpath) {
+        , m_fullpath(fullpath)
+    {
         wxFileName fn;
         if ( m_attribute->IsFolder() ) {
             fn = wxFileName(fullpath, "", wxPATH_UNIX);
@@ -30,6 +35,9 @@ public:
     virtual ~SFTPBrowserEntryClientData()
     {}
 
+    const wxString& GetDisplayName() const {
+        return GetAttribute()->GetName();
+    }
     void SetAttribute(const SFTPAttribute::Ptr_t& attribute) {
         this->m_attribute = attribute;
     }
@@ -52,6 +60,9 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wx
     , m_sftp(NULL)
     , m_filter(filter)
 {
+    m_dataviewModel = new MySFTPTreeModel();
+    m_dataview->AssociateModel( m_dataviewModel.get() );
+
     SetLabel( title );
 
     BitmapLoader bl;
@@ -69,6 +80,7 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wx
     if ( !m_choiceAccount->IsEmpty() ) {
         m_choiceAccount->SetSelection(0);
     }
+    m_textCtrl = new FloatingTextCtrl(this);
     WindowAttrManager::Load(this, "SFTPBrowserDlg", NULL);
 }
 
@@ -192,7 +204,8 @@ void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
 }
 void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable(true);
+    FileExtManager::FileType type = FileExtManager::GetType(m_textCtrlRemoteFolder->GetValue());
+    event.Enable( type == FileExtManager::TypeWorkspace );
 }
 
 SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& item) const
@@ -221,4 +234,54 @@ void SFTPBrowserDlg::OnItemSelected(wxDataViewEvent& event)
 wxString SFTPBrowserDlg::GetAccount() const
 {
     return m_choiceAccount->GetStringSelection();
+}
+
+void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
+{
+    wxFileName fn(path);
+
+    m_textCtrlRemoteFolder->ChangeValue( fn.GetPath() );
+    int where = m_choiceAccount->FindString(account);
+    if ( where != wxNOT_FOUND ) {
+        m_choiceAccount->SetSelection(where);
+    }
+}
+
+void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
+{
+    event.Skip();
+    if ( !m_textCtrl->IsShown() ) {
+        m_textCtrl->Show();
+    }
+}
+
+void SFTPBrowserDlg::OnInlineSearch()
+{
+    wxString text = m_textCtrl->GetValue();
+    wxDataViewItemArray children;
+    m_dataviewModel->GetChildren(wxDataViewItem(0), children);
+
+    for(size_t i=0; i<children.GetCount(); ++i) {
+        SFTPBrowserEntryClientData *cd = DoGetItemData(children.Item(i));
+        if ( cd && cd->GetDisplayName().StartsWith(text) ) {
+            m_dataview->Select( children.Item(i) );
+            m_dataview->EnsureVisible( children.Item(i) );
+            break;
+        }
+    }
+}
+
+void SFTPBrowserDlg::OnInlineSearchEnter()
+{
+    wxDataViewItem item = m_dataview->GetSelection();
+    if ( !item.IsOk() ) {
+        return;
+    }
+    
+    SFTPBrowserEntryClientData* cd = dynamic_cast<SFTPBrowserEntryClientData*>(m_dataviewModel->GetClientObject(item));
+    if ( cd && cd->GetAttribute()->IsFolder() ) {
+        m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
+        m_dataviewModel->Clear();
+        DoDisplayEntriesForSelectedPath();
+    }
 }

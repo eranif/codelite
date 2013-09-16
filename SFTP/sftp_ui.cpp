@@ -223,7 +223,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer62->Add(gridBagSizer80, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText66 = new wxStaticText(this, wxID_ANY, _("Remote folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText66 = new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     gridBagSizer80->Add(m_staticText66, wxGBPosition(1,0), wxGBSpan(1,1), wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -233,7 +233,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     gridBagSizer80->Add(m_textCtrlRemoteFolder, wxGBPosition(1,1), wxGBSpan(1,1), wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_buttonRefresh = new wxButton(this, wxID_REFRESH, _("Refresh..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonRefresh = new wxButton(this, wxID_REFRESH, _("Connect..."), wxDefaultPosition, wxSize(-1,-1), 0);
     
     gridBagSizer80->Add(m_buttonRefresh, wxGBPosition(1,2), wxGBSpan(1,1), wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -281,6 +281,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_buttonRefresh->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
+    m_dataview->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
     m_button59->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
     
 }
@@ -292,6 +293,45 @@ SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
     m_buttonRefresh->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
+    m_dataview->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
     m_button59->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
+    
+}
+
+FloatingTextCtrlBase::FloatingTextCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCE8CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer88);
+    
+    m_textCtrlInput = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlInput->SetFocus();
+    
+    boxSizer88->Add(m_textCtrlInput, 0, wxALL|wxEXPAND, 5);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_textCtrlInput->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(FloatingTextCtrlBase::OnTextUpdated), NULL, this);
+    m_textCtrlInput->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FloatingTextCtrlBase::OnEnter), NULL, this);
+    m_textCtrlInput->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(FloatingTextCtrlBase::OnFocusLost), NULL, this);
+    
+}
+
+FloatingTextCtrlBase::~FloatingTextCtrlBase()
+{
+    m_textCtrlInput->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(FloatingTextCtrlBase::OnTextUpdated), NULL, this);
+    m_textCtrlInput->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FloatingTextCtrlBase::OnEnter), NULL, this);
+    m_textCtrlInput->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(FloatingTextCtrlBase::OnFocusLost), NULL, this);
     
 }

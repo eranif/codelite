@@ -6,13 +6,17 @@
 #include "bitmap_loader.h"
 
 class SFTPBrowserEntryClientData;
+class FloatingTextCtrl;
+
 class SFTPBrowserDlg : public SFTPBrowserBaseDlg
 {
     clSFTP::Ptr_t m_sftp;
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxString m_filter;
-
+    FloatingTextCtrl* m_textCtrl;
+    
 protected:
+    virtual void OnKeyDown(wxKeyEvent& event);
     virtual void OnItemSelected(wxDataViewEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
     virtual void OnTextEnter(wxCommandEvent& event);
@@ -24,9 +28,14 @@ protected:
 public:
     SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wxString& filter);
     virtual ~SFTPBrowserDlg();
+
+    void Initialize(const wxString &account, const wxString &path);
     wxString GetPath() const;
     wxString GetAccount() const;
-
+    
+    void OnInlineSearch();
+    void OnInlineSearchEnter();
+    
 protected:
     virtual void OnRefresh(wxCommandEvent& event);
     virtual void OnRefreshUI(wxUpdateUIEvent& event);

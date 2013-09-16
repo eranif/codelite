@@ -20,6 +20,7 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include "sftptreemodel.h"
+#include <wx/panel.h>
 
 class SSHAccountManagerDlgBase : public wxDialog
 {
@@ -87,11 +88,28 @@ protected:
     virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SFTPBrowserBaseDlg();
+};
+
+
+class FloatingTextCtrlBase : public wxPanel
+{
+protected:
+    wxTextCtrl* m_textCtrlInput;
+
+protected:
+    virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFocusLost(wxFocusEvent& event) { event.Skip(); }
+
+public:
+    FloatingTextCtrlBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL|wxBORDER_STATIC);
+    virtual ~FloatingTextCtrlBase();
 };
 
 #endif

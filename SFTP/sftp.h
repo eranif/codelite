@@ -18,7 +18,8 @@ protected:
     void OnSetupWorkspaceMirroring(wxCommandEvent &e);
     void OnWorkspaceOpened(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
-
+    void OnFileSaved(wxCommandEvent &e);
+    
     bool IsWorkspaceOpened() const {
         return m_workspaceFile.IsOk();
     }

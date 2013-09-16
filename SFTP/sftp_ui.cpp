@@ -246,7 +246,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     gridBagSizer80->Add(m_choiceAccount, wxGBPosition(0,1), wxGBSpan(1,2), wxALL|wxEXPAND, 5);
     gridBagSizer80->AddGrowableCol(1);
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,100), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new SFTPTreeModel;
     m_dataviewModel->SetColCount( 3 );
@@ -290,8 +290,6 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_buttonRefresh->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
-    m_dataview->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
-    m_dataview->Connect(wxEVT_CHAR, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
     m_textCtrlInlineSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextUpdated), NULL, this);
     m_textCtrlInlineSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnEnter), NULL, this);
     m_textCtrlInlineSearch->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(SFTPBrowserBaseDlg::OnFocusLost), NULL, this);
@@ -306,8 +304,6 @@ SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
     m_buttonRefresh->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
-    m_dataview->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
-    m_dataview->Disconnect(wxEVT_CHAR, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
     m_textCtrlInlineSearch->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextUpdated), NULL, this);
     m_textCtrlInlineSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnEnter), NULL, this);
     m_textCtrlInlineSearch->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(SFTPBrowserBaseDlg::OnFocusLost), NULL, this);

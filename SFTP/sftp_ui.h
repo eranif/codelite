@@ -88,7 +88,6 @@ protected:
     virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFocusLost(wxFocusEvent& event) { event.Skip(); }

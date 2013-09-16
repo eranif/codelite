@@ -47,6 +47,7 @@ SFTP::SFTP(IManager *manager)
     wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
 }
 
 SFTP::~SFTP()
@@ -96,6 +97,7 @@ void SFTP::UnPlug()
     wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
 }
 
 void SFTP::OnSettings(wxCommandEvent& e)
@@ -135,4 +137,20 @@ void SFTP::OnWorkspaceClosed(wxCommandEvent& e)
     e.Skip();
     SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
     m_workspaceFile.Clear();
+}
+
+void SFTP::OnFileSaved(wxCommandEvent& e)
+{
+    e.Skip();
+    
+    // Sanity
+    
+    // check if we got a workspace file opened
+    if ( !m_workspaceFile.IsOk() )
+        return;
+    // check if mirroring is setup for this workspace
+    if ( m_workspaceSettings.GetRemoteWorkspacePath().IsEmpty() )
+        return;
+    
+    // TODO :: Save the file on the remote server
 }

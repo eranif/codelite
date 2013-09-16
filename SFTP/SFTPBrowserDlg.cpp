@@ -78,6 +78,12 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wx
     if ( !m_choiceAccount->IsEmpty() ) {
         m_choiceAccount->SetSelection(0);
     }
+    
+#ifdef __WXMSW__
+    m_dataview->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserDlg::OnKeyDown), NULL, this);
+#else
+    m_dataview->Connect(wxEVT_CHAR, wxKeyEventHandler(SFTPBrowserDlg::OnKeyDown), NULL, this);
+#endif
     WindowAttrManager::Load(this, "SFTPBrowserDlg", NULL);
 }
 
@@ -250,7 +256,10 @@ void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
     event.Skip();
     if ( !m_textCtrlInlineSearch->IsShown() ) {
         m_textCtrlInlineSearch->SetFocus();
+        m_textCtrlInlineSearch->Clear();
+#ifdef __WXMSW__
         m_textCtrlInlineSearch->ChangeValue( wxString() << (wxChar)event.GetKeyCode() );
+#endif
         m_textCtrlInlineSearch->SetInsertionPoint( m_textCtrlInlineSearch->GetLastPosition() );
         m_textCtrlInlineSearch->Show();
         GetSizer()->Layout();

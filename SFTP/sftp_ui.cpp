@@ -257,6 +257,15 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Size"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer62->Add(boxSizer94, 0, wxEXPAND|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 5);
+    
+    m_textCtrlInlineSearch = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlInlineSearch->Hide();
+    
+    boxSizer94->Add(m_textCtrlInlineSearch, 0, wxALL|wxEXPAND, 5);
+    
     wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer62->Add(boxSizer57, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -282,6 +291,10 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
     m_dataview->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
+    m_dataview->Connect(wxEVT_CHAR, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
+    m_textCtrlInlineSearch->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextUpdated), NULL, this);
+    m_textCtrlInlineSearch->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnEnter), NULL, this);
+    m_textCtrlInlineSearch->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(SFTPBrowserBaseDlg::OnFocusLost), NULL, this);
     m_button59->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
     
 }
@@ -294,44 +307,10 @@ SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemActivated), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
     m_dataview->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
+    m_dataview->Disconnect(wxEVT_CHAR, wxKeyEventHandler(SFTPBrowserBaseDlg::OnKeyDown), NULL, this);
+    m_textCtrlInlineSearch->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnTextUpdated), NULL, this);
+    m_textCtrlInlineSearch->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPBrowserBaseDlg::OnEnter), NULL, this);
+    m_textCtrlInlineSearch->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(SFTPBrowserBaseDlg::OnFocusLost), NULL, this);
     m_button59->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
-    
-}
-
-FloatingTextCtrlBase::FloatingTextCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCE8CInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer88);
-    
-    m_textCtrlInput = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(200,-1), wxTE_PROCESS_ENTER);
-    m_textCtrlInput->SetFocus();
-    
-    boxSizer88->Add(m_textCtrlInput, 0, wxALL|wxEXPAND, 5);
-    
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    Centre(wxBOTH);
-    // Connect events
-    m_textCtrlInput->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(FloatingTextCtrlBase::OnTextUpdated), NULL, this);
-    m_textCtrlInput->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FloatingTextCtrlBase::OnEnter), NULL, this);
-    m_textCtrlInput->Connect(wxEVT_KILL_FOCUS, wxFocusEventHandler(FloatingTextCtrlBase::OnFocusLost), NULL, this);
-    
-}
-
-FloatingTextCtrlBase::~FloatingTextCtrlBase()
-{
-    m_textCtrlInput->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(FloatingTextCtrlBase::OnTextUpdated), NULL, this);
-    m_textCtrlInput->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FloatingTextCtrlBase::OnEnter), NULL, this);
-    m_textCtrlInput->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(FloatingTextCtrlBase::OnFocusLost), NULL, this);
     
 }

@@ -5,7 +5,6 @@
 #include "windowattrmanager.h"
 #include "fileextmanager.h"
 #include "my_sftp_tree_model.h"
-#include "FloatingTextCtrl.h"
 
 // ================================================================================
 // ================================================================================
@@ -18,8 +17,7 @@ class SFTPBrowserEntryClientData : public wxClientData
 public:
     SFTPBrowserEntryClientData(SFTPAttribute::Ptr_t attr, const wxString &fullpath)
         : m_attribute(attr)
-        , m_fullpath(fullpath)
-    {
+        , m_fullpath(fullpath) {
         wxFileName fn;
         if ( m_attribute->IsFolder() ) {
             fn = wxFileName(fullpath, "", wxPATH_UNIX);
@@ -80,7 +78,6 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wx
     if ( !m_choiceAccount->IsEmpty() ) {
         m_choiceAccount->SetSelection(0);
     }
-    m_textCtrl = new FloatingTextCtrl(this);
     WindowAttrManager::Load(this, "SFTPBrowserDlg", NULL);
 }
 
@@ -165,7 +162,8 @@ void SFTPBrowserDlg::DoDisplayEntriesForSelectedPath()
             m_dataviewModel->AppendItem(wxDataViewItem(0), cols, cd);
         }
         m_dataview->Refresh();
-
+        m_dataview->SetFocus();
+        
     } catch (clException &e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR|wxOK);
         DoCloseSession();
@@ -250,14 +248,18 @@ void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    if ( !m_textCtrl->IsShown() ) {
-        m_textCtrl->Show();
+    if ( !m_textCtrlInlineSearch->IsShown() ) {
+        m_textCtrlInlineSearch->SetFocus();
+        m_textCtrlInlineSearch->ChangeValue( wxString() << (wxChar)event.GetKeyCode() );
+        m_textCtrlInlineSearch->SetInsertionPoint( m_textCtrlInlineSearch->GetLastPosition() );
+        m_textCtrlInlineSearch->Show();
+        GetSizer()->Layout();
     }
 }
 
 void SFTPBrowserDlg::OnInlineSearch()
 {
-    wxString text = m_textCtrl->GetValue();
+    wxString text = m_textCtrlInlineSearch->GetValue();
     wxDataViewItemArray children;
     m_dataviewModel->GetChildren(wxDataViewItem(0), children);
 
@@ -277,7 +279,7 @@ void SFTPBrowserDlg::OnInlineSearchEnter()
     if ( !item.IsOk() ) {
         return;
     }
-    
+
     SFTPBrowserEntryClientData* cd = dynamic_cast<SFTPBrowserEntryClientData*>(m_dataviewModel->GetClientObject(item));
     if ( cd && cd->GetAttribute()->IsFolder() ) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
@@ -285,4 +287,22 @@ void SFTPBrowserDlg::OnInlineSearchEnter()
         DoDisplayEntriesForSelectedPath();
         m_dataview->SetFocus();
     }
+}
+void SFTPBrowserDlg::OnEnter(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    CallAfter( &SFTPBrowserDlg::OnInlineSearchEnter );
+}
+
+void SFTPBrowserDlg::OnFocusLost(wxFocusEvent& event)
+{
+    event.Skip();
+    m_textCtrlInlineSearch->Hide();
+    GetSizer()->Layout();
+}
+
+void SFTPBrowserDlg::OnTextUpdated(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    CallAfter( &SFTPBrowserDlg::OnInlineSearch );
 }

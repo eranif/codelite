@@ -13,9 +13,11 @@ class SFTPBrowserDlg : public SFTPBrowserBaseDlg
     clSFTP::Ptr_t m_sftp;
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxString m_filter;
-    FloatingTextCtrl* m_textCtrl;
-    
+
 protected:
+    virtual void OnEnter(wxCommandEvent& event);
+    virtual void OnFocusLost(wxFocusEvent& event);
+    virtual void OnTextUpdated(wxCommandEvent& event);
     virtual void OnKeyDown(wxKeyEvent& event);
     virtual void OnItemSelected(wxDataViewEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
@@ -32,10 +34,10 @@ public:
     void Initialize(const wxString &account, const wxString &path);
     wxString GetPath() const;
     wxString GetAccount() const;
-    
+
     void OnInlineSearch();
     void OnInlineSearchEnter();
-    
+
 protected:
     virtual void OnRefresh(wxCommandEvent& event);
     virtual void OnRefreshUI(wxUpdateUIEvent& event);

@@ -283,5 +283,6 @@ void SFTPBrowserDlg::OnInlineSearchEnter()
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
         m_dataviewModel->Clear();
         DoDisplayEntriesForSelectedPath();
+        m_dataview->SetFocus();
     }
 }

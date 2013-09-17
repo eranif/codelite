@@ -391,6 +391,7 @@ add_subdirectory(SFTP)
 ## Executables
 add_subdirectory(LiteEditor)
 add_subdirectory(codelitegcc)
+add_subdirectory(codelite_make)
 add_subdirectory(sdk/codelite_indexer)
 add_subdirectory(sdk/codelite_cppcheck)
 

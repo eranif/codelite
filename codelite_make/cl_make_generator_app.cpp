@@ -2,6 +2,8 @@
 #include <workspace.h>
 #include <wx/filename.h>
 #include <builder_gnumake.h>
+#include <configuration_mapping.h>
+#include <macromanager.h>
 
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 
@@ -9,11 +11,13 @@ static const wxCmdLineEntryDesc g_cmdDesc[] = {
     { wxCMD_LINE_SWITCH, "h", "help", "show this help message", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
     { wxCMD_LINE_OPTION, "w", "workspace", "codelite workspace file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
     { wxCMD_LINE_OPTION, "c", "config", "configuration name to generate", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_MANDATORY },
-    { wxCMD_LINE_OPTION, "p", "project",   "project to build, if non given codelite will build the active project", wxCMD_LINE_VAL_STRING },
+    { wxCMD_LINE_OPTION, "p", "project",  "project to build, if non given codelite will build the active project", wxCMD_LINE_VAL_STRING },
+    { wxCMD_LINE_SWITCH, "v", "verbose",  "Run in verbose print all log to the stdout/stderr" },
     { wxCMD_LINE_NONE }
 };
 
 clMakeGeneratorApp::clMakeGeneratorApp()
+    : m_verbose(false)
 {
 }
 
@@ -28,6 +32,7 @@ int clMakeGeneratorApp::OnExit()
 
 bool clMakeGeneratorApp::OnInit()
 {
+    wxLog::EnableLogging(false);
     wxCmdLineParser parser(wxAppConsole::argc, wxAppConsole::argv);
     if ( !DoParseCommandLine( parser ) ) 
         return false;
@@ -37,8 +42,12 @@ bool clMakeGeneratorApp::OnInit()
         fnWorkspace.MakeAbsolute(m_workingDirectory);
     }
     
+    Info(wxString() << "-- Generting makefile for workspace file " << fnWorkspace.GetFullPath());
     wxString errmsg;
-    WorkspaceST::Get()->OpenWorkspace(fnWorkspace.GetFullPath(), errmsg);
+    if ( !WorkspaceST::Get()->OpenWorkspace(fnWorkspace.GetFullPath(), errmsg) ) {
+        Error(wxString() << "Error while loading workspace: " << fnWorkspace.GetFullPath() << ". " << errmsg);
+        return false;
+    }
     
     bool projectOnly = true;
     if ( m_project.IsEmpty() ) {
@@ -48,8 +57,31 @@ bool clMakeGeneratorApp::OnInit()
     
     // Which makefile should we create?
     BuilderGnuMake builder;
+    ProjectPtr project = WorkspaceST::Get()->FindProjectByName(m_project, errmsg);
+    if ( !project ) {
+        Error(wxString() << "Could not find project " << m_project << ". " << errmsg);
+        return false;
+    }
+    
+    // Load the build configuration
+    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(m_project, m_configuration);
+    if ( !bldConf ) {
+        Error(wxString() << "Could not find configuration " << m_configuration << " for project " << m_project);
+        return false;
+    }
+    
+    if ( bldConf->IsCustomBuild() ) {
+        Notice(wxString() << "Configuration " << m_configuration << " for project " << m_project << " is using a custom build - will not generate makefile");
+        Notice(wxString() << "Instead, here is the command line to use:");
+        Out(wxString() << "cd " << MacroManager::Instance()->Expand(bldConf->GetCustomBuildWorkingDir(), NULL, m_project, m_configuration) 
+                       << " && "
+                       << MacroManager::Instance()->Expand(bldConf->GetCustomBuildCmd(), NULL, m_project, m_configuration));
+        CallAfter( &clMakeGeneratorApp::DoExitApp);
+        return true;
+    }
+    
     if ( !builder.Export(m_project, m_configuration, projectOnly, true, errmsg) ) {
-        wxFprintf(stderr, "Error while exporting makefile: %s\n", errmsg);
+        Error(wxString() << "Error while exporting makefile. " << errmsg);
         return false;
     }
     
@@ -62,11 +94,14 @@ bool clMakeGeneratorApp::OnInit()
         
     }
     
-    wxFprintf(stdout, "-- Makefile generation completed successfully!\n");
-    wxFprintf(stdout, "-- To use the makefile, run the following commands from a terminal:\n");
-    wxFprintf(stdout, "    > cd %s\n", fnWorkspace.GetPath());
-    wxFprintf(stdout, "    > %s\n", commandToRun);
+    wxString workspace_path = fnWorkspace.GetPath();
+    if ( workspace_path.Contains(" ") || workspace_path.Contains("\t") ) {
+        workspace_path.Prepend("\"").Append("\"");
+    }
     
+    Info("-- Makefile generation completed successfully!");
+    Info("-- To use the makefile, run the following commands from a terminal:");\
+    Out(wxString() << "cd " << workspace_path << " && " << commandToRun);
     CallAfter( &clMakeGeneratorApp::DoExitApp);
     return true;
 }
@@ -89,6 +124,7 @@ bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
     }
     
     parser.Found("p", &m_project);
+    m_verbose = (parser.FoundSwitch("v") == wxCMD_SWITCH_ON);
     m_workingDirectory = ::wxGetCwd();
     return true;
 }
@@ -96,4 +132,35 @@ bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
 void clMakeGeneratorApp::DoExitApp()
 {
     ExitMainLoop();
+}
+
+// Log functions
+void clMakeGeneratorApp::Error(const wxString& msg)
+{
+    wxString e;
+    e << "[ERROR ] " << msg;
+    wxFprintf(stderr, "%s\n", e);
+}
+
+void clMakeGeneratorApp::Notice(const wxString& msg)
+{
+    if ( m_verbose ) {
+        wxString e;
+        e << "[NOTICE] " << msg;
+        wxFprintf(stderr, "%s\n", e);
+    }
+}
+
+void clMakeGeneratorApp::Info(const wxString& msg)
+{
+    if ( m_verbose ) {
+        wxString e;
+        e << "[INFO  ] " << msg;
+        wxFprintf(stdout, "%s\n", e);
+    }
+}
+
+void clMakeGeneratorApp::Out(const wxString& msg)
+{
+    wxPrintf("%s\n", msg);
 }

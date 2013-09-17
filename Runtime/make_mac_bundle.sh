@@ -80,6 +80,18 @@ fix_codelite_indexer_deps() {
     done
 }
 
+fix_codelite_make_deps() {
+
+    orig_path=`otool -L ./codelite.app/Contents/SharedSupport/codelite-make  | grep libwx_* | awk '{print $1;}'`
+
+    ## Loop over the files, and update the path of the wx library
+    for path in ${orig_path}
+    do
+        new_path=`echo ${path} | xargs basename`
+        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/SharedSupport/codelite-make
+    done
+}
+
 fix_wxrc_deps() {
     if test -f ./codelite.app/Contents/SharedSupport/wxrc ; then
         orig_path=`otool -L ./codelite.app/Contents/SharedSupport/wxrc  | grep libwx_* | awk '{print $1;}'`
@@ -188,6 +200,7 @@ cp ../lib/DatabaseExplorer.dylib ./codelite.app/Contents/SharedSupport/plugins/
 ##cp ../lib/CallGraph.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/git.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/ZoomNavigator.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/SFTP.dylib ./codelite.app/Contents/SharedSupport/plugins/
 
 if [ -f ../lib/wxcrafter.dylib ]; then
     cp ../lib/wxcrafter.dylib ./codelite.app/Contents/SharedSupport/plugins/
@@ -208,10 +221,10 @@ if test -f ../bin/codelite-clang ; then
 fi
 
 cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
+cp ../bin/codelite-make  ./codelite.app/Contents/SharedSupport/
 cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/./OpenTerm   ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/plugins/resources/*.*  ./codelite.app/Contents/SharedSupport/plugins/resources/
-
 
 ## Copy the locale files
 for lang in locale/* ; do
@@ -223,6 +236,7 @@ for lang in locale/* ; do
 done
 
 fix_codelite_indexer_deps
+fix_codelite_make_deps
 fix_wxrc_deps
 fix_codelite_clang_deps
 fix_shared_object_depends libwx_

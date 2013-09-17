@@ -110,23 +110,27 @@ endif(PREFIX)
 ## Locate libssh
 #######################################
 if (UNIX AND NOT APPLE )
+    ## Linux
     find_library(LIBSSH_LIB NAMES libssh.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
+    find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h HINTS /usr/local/include /usr/include PATH_SUFFIXES libssh)
+    string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND_POS)
+    if ( LIBSSH_NOT_FOUND_POS GREATER -1 )
+        if (UNIX AND NOT APPLE )
+            ## Linux / FreeBSD
+            message("**** NOTICE: Install libssh-dev and try again")
+        else (UNIX AND NOT APPLE )
+            ## OSX
+            message("**** NOTICE: Install libssh and try again (brew install libssh)")
+        endif (UNIX AND NOT APPLE )
+        message(FATAL_ERROR "-- Could not find libssh")
+    endif( LIBSSH_NOT_FOUND_POS GREATER -1 )
+    
 else ( UNIX AND NOT APPLE )
-    find_library(LIBSSH_LIB NAMES libssh.dylib HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
-endif ( UNIX AND NOT APPLE ) 
-
-find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h HINTS /usr/local/include /usr/include PATH_SUFFIXES libssh)
-string(FIND ${LIBSSH_INCLUDE_DIR} "NOTFOUND" LIBSSH_NOT_FOUND_POS)
-if ( LIBSSH_NOT_FOUND_POS GREATER -1 )
-    if (UNIX AND NOT APPLE )
-        ## Linux / FreeBSD
-        message("**** NOTICE: Install libssh-dev and try again")
-    else (UNIX AND NOT APPLE )
-        ## OSX
-        message("**** NOTICE: Install libssh and try again (brew install libssh)")
-    endif (UNIX AND NOT APPLE )
-    message(FATAL_ERROR "-- Could not find libssh")
-endif( LIBSSH_NOT_FOUND_POS GREATER -1 )
+    ## OSX
+    set( LIBSSH_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/libssh/include)
+    set( LIBSSH_LIB ${CL_SRC_ROOT}/sdk/libssh/lib/osx/libssh.a)
+    include_directories(${LIBSSH_INCLUDE_DIR})
+endif ( UNIX AND NOT APPLE )
 
 message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")
 

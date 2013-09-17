@@ -39,6 +39,10 @@ FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" )
 
 # Define the output
 add_library(libcodelite SHARED ${SRCS})
-target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB})
+if (UNIX AND NOT APPLE )
+    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB})
+else (UNIX AND NOT APPLE)
+    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB} -lz -lcrypto)
+endif ( UNIX AND NOT APPLE )
 install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
 

@@ -264,7 +264,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     gridBagSizer80->Add(m_choiceAccount, wxGBPosition(0,1), wxGBSpan(1,2), wxALL|wxEXPAND, 5);
     gridBagSizer80->AddGrowableCol(1);
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,100), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(600,100), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new SFTPTreeModel;
     m_dataviewModel->SetColCount( 3 );
@@ -272,9 +272,9 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer62->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
-    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Size"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dataview->AppendIconTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Size"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer62->Add(boxSizer94, 0, wxEXPAND|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 5);

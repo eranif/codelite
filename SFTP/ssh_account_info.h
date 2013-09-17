@@ -6,23 +6,26 @@
 
 class SSHAccountInfo : public clConfigItem
 {
+    wxString m_accountName;
     wxString m_username;
     wxString m_password;
     int      m_port;
     wxString m_host;
 public:
     typedef std::list<SSHAccountInfo> List_t;
-    
+
 public:
     SSHAccountInfo();
 
     virtual ~SSHAccountInfo();
     SSHAccountInfo& operator=(const SSHAccountInfo& other);
-    
-    wxString GetAccountName() const {
-        return wxString() << GetUsername() << "@" << GetHost();
+
+    void SetAccountName(const wxString& accountName) {
+        this->m_accountName = accountName;
     }
-    
+    const wxString& GetAccountName() const {
+        return m_accountName;
+    }
     void SetHost(const wxString& host) {
         this->m_host = host;
     }
@@ -47,7 +50,7 @@ public:
     const wxString& GetUsername() const {
         return m_username;
     }
-    
+
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;

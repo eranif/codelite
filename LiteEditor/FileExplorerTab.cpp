@@ -327,12 +327,8 @@ size_t FileExplorerTab::GetSelectionCount() const
 
 void FileExplorerTab::ClearSelections()
 {
-    if ( GetSelectionCount() > 1 ) {
+    if ( GetSelectionCount() ) {
         // multiple selections
         Tree()->GetTreeCtrl()->UnselectAll();
-        
-    } else if ( GetSelectionCount() ) {
-        // single selection
-        Tree()->GetTreeCtrl()->Unselect();
     }
 }

@@ -17,7 +17,7 @@ AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account
     m_textCtrlPassword->ChangeValue( account.GetPassword() );
     m_textCtrlPort->ChangeValue( wxString() << account.GetPort() );
     m_textCtrlUsername->ChangeValue( account.GetUsername() );
-    
+    m_textCtrlName->ChangeValue( account.GetAccountName() );
     WindowAttrManager::Load(this, "AddSSHAcountDlg", NULL);
 }
 
@@ -40,6 +40,7 @@ void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
     m_textCtrlPort->GetValue().ToCLong( &port );
     info.SetPort( port );
     info.SetUsername( m_textCtrlUsername->GetValue() );
+    info.SetAccountName( m_textCtrlName->GetValue() );
 }
 
 void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
@@ -65,5 +66,5 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
 }
 void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() );
+    event.Enable( !m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty() );
 }

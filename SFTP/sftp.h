@@ -16,6 +16,8 @@ public:
 protected:
     void OnSettings(wxCommandEvent &e);
     void OnSetupWorkspaceMirroring(wxCommandEvent &e);
+    void OnDisableWorkspaceMirroring(wxCommandEvent &e);
+    void OnDisableWorkspaceMirroringUI(wxUpdateUIEvent &e);
     void OnWorkspaceOpened(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnFileSaved(wxCommandEvent &e);

@@ -54,15 +54,16 @@ void SSHAccountManagerDlg::OnEditAccount(wxDataViewEvent& event)
         dlg.GetAccountInfo(*account);
         
         // update the UI
-        m_dvListCtrlAccounts->GetStore()->SetValue(account->GetHost(), event.GetItem(), 0);
+        m_dvListCtrlAccounts->GetStore()->SetValue(account->GetAccountName(), event.GetItem(), 0);
         m_dvListCtrlAccounts->GetStore()->SetValue(account->GetUsername(), event.GetItem(), 1);
+        m_dvListCtrlAccounts->Refresh();
     }
 }
 
 void SSHAccountManagerDlg::DoAddAccount(const SSHAccountInfo& account)
 {
     wxVector<wxVariant> cols;
-    cols.push_back( account.GetHost() );
+    cols.push_back( account.GetAccountName() );
     cols.push_back( account.GetUsername() );
     m_dvListCtrlAccounts->AppendItem( cols, (wxUIntPtr)(new SSHAccountInfo(account)));
 }

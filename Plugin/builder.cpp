@@ -33,10 +33,11 @@ Builder::Builder(const wxString &name, const wxString &buildTool, const wxString
     : m_name(name)
     , m_isActive(false)
 {
-    //override values from configuration file
+    // Override values from configuration file
     BuilderConfigPtr config = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
     if(config) {
-        m_isActive         = config->GetIsActive();
+        m_isActive = config->GetIsActive();
+        
     } else {
         m_isActive = (m_name == wxT("GNU makefile for g++/gcc"));
     }

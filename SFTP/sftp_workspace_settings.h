@@ -53,6 +53,12 @@ public:
         return m_remoteWorkspacePath;
     }
     
+    void Clear();
+    
+    bool IsOk() const {
+        return !m_account.IsEmpty() && !m_remoteWorkspacePath.IsEmpty();
+    }
+    
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;

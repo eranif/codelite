@@ -132,12 +132,23 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer23->Add(flexGridSizer31, 0, wxALL|wxEXPAND, 5);
     
+    m_staticText98 = new wxStaticText(this, wxID_ANY, _("Account Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText98->SetToolTip(_("Give this account a unique name"));
+    
+    flexGridSizer31->Add(m_staticText98, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlName->SetToolTip(_("Give this account a unique name"));
+    m_textCtrlName->SetFocus();
+    
+    flexGridSizer31->Add(m_textCtrlName, 0, wxALL|wxEXPAND, 5);
+    
     m_staticHostIp = new wxStaticText(this, wxID_ANY, _("Host / IP:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer31->Add(m_staticHostIp, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlHost = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlHost->SetFocus();
+    m_textCtrlHost->SetToolTip(_("The remote host ip address or its known name"));
     
     flexGridSizer31->Add(m_textCtrlHost, 0, wxALL|wxEXPAND, 5);
     
@@ -146,6 +157,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     flexGridSizer31->Add(m_staticText45, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlPort = new wxTextCtrl(this, wxID_ANY, wxT("22"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlPort->SetToolTip(_("The SSH port. If you don't know it, leave it as 22 (SSH default port)"));
     
     flexGridSizer31->Add(m_textCtrlPort, 0, wxALL|wxEXPAND, 5);
     
@@ -154,6 +166,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     flexGridSizer31->Add(m_staticText37, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlUsername = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlUsername->SetToolTip(_("Login user name"));
     
     flexGridSizer31->Add(m_textCtrlUsername, 0, wxALL|wxEXPAND, 5);
     
@@ -162,6 +175,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     flexGridSizer31->Add(m_staticText41, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlPassword = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PASSWORD);
+    m_textCtrlPassword->SetToolTip(_("The login password"));
     
     flexGridSizer31->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, 5);
     
@@ -172,6 +186,8 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     #endif
     
     boxSizer23->Add(m_button51, 0, wxALL|wxEXPAND, 10);
+    
+    boxSizer23->Add(0, 0, 1, wxALL, 5);
     
     wxBoxSizer* boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
     

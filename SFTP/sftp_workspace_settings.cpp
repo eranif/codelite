@@ -30,7 +30,7 @@ void SFTPWorkspaceSettings::Load(SFTPWorkspaceSettings& settings, const wxFileNa
     fn.SetExt("conf");
     fn.AppendDir(".codelite");
     clConfig config( fn.GetFullPath() );
-    config.WriteItem( &settings );
+    config.ReadItem( &settings );
 }
 
 void SFTPWorkspaceSettings::Save(const SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile)
@@ -41,4 +41,10 @@ void SFTPWorkspaceSettings::Save(const SFTPWorkspaceSettings& settings, const wx
     fn.AppendDir(".codelite");
     clConfig config( fn.GetFullPath() );
     config.WriteItem( &settings );
+}
+
+void SFTPWorkspaceSettings::Clear()
+{
+    m_account.Clear();
+    m_remoteWorkspacePath.Clear();
 }

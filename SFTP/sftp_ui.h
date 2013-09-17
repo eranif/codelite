@@ -44,6 +44,8 @@ public:
 class AddSSHAcountDlgBase : public wxDialog
 {
 protected:
+    wxStaticText* m_staticText98;
+    wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticHostIp;
     wxTextCtrl* m_textCtrlHost;
     wxStaticText* m_staticText45;

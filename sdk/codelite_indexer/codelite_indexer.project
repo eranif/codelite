@@ -124,7 +124,6 @@
   <Dependencies Name="Debug_Win"/>
   <Dependencies Name="ReleaseDebug_Win"/>
   <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Release_Win"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -338,4 +337,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release_Win"/>
 </CodeLite_Project>

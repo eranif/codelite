@@ -49,9 +49,7 @@ bool clMakeGeneratorApp::OnInit()
         return false;
     }
     
-    bool projectOnly = true;
     if ( m_project.IsEmpty() ) {
-        projectOnly = false;
         m_project = WorkspaceST::Get()->GetActiveProjectName();
     }
     
@@ -80,19 +78,13 @@ bool clMakeGeneratorApp::OnInit()
         return true;
     }
     
-    if ( !builder.Export(m_project, m_configuration, projectOnly, true, errmsg) ) {
+    if ( !builder.Export(m_project, m_configuration, false, true, errmsg) ) {
         Error(wxString() << "Error while exporting makefile. " << errmsg);
         return false;
     }
     
     wxString commandToRun;
-    if ( projectOnly ) {
-        commandToRun = builder.GetPOBuildCommand(m_project, m_configuration);
-        
-    } else {
-        commandToRun = builder.GetBuildCommand(m_project, m_configuration);
-        
-    }
+    commandToRun = builder.GetBuildCommand(m_project, m_configuration);
     
     wxString workspace_path = fnWorkspace.GetPath();
     if ( workspace_path.Contains(" ") || workspace_path.Contains("\t") ) {

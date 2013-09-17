@@ -19,7 +19,6 @@
     <File Name="y.tab.h"/>
   </VirtualDirectory>
   <Dependencies Name="Release"/>
-  <Dependencies Name="Windows_Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -193,4 +192,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Windows_Release"/>
 </CodeLite_Project>

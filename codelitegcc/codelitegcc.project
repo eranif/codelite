@@ -11,7 +11,6 @@
     <File Name="main.cpp"/>
     <File Name="winproc.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -100,4 +99,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

@@ -10,6 +10,7 @@
   <Project Name="wx-config" Path="../sdk/wxconfig/wx-config.project" Active="No"/>
   <Project Name="codelite_clang" Path="../codelite_clang/codelite_clang.project" Active="No"/>
   <Project Name="codelitegcc" Path="../codelitegcc/codelitegcc.project" Active="No"/>
+  <Project Name="codelite_make" Path="../codelite_make/codelite_make.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="autorev" ConfigName="Debug"/>
@@ -22,6 +23,7 @@
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_clang" ConfigName="Debug_Linux_64"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
+      <Project Name="codelite_make" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="autorev" ConfigName="Release"/>
@@ -34,6 +36,7 @@
       <Project Name="le_exec" ConfigName="Release"/>
       <Project Name="makedir" ConfigName="ReleaseUnicode"/>
       <Project Name="wx-config" ConfigName="Release"/>
+      <Project Name="codelite_make" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

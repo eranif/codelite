@@ -24,7 +24,7 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 {
     wxString   errMsg;
     wxString   expandedString(expression);
-    Workspace *workspace = manager->GetWorkspace();
+    Workspace *workspace = WorkspaceST::Get();
     
     DollarEscaper de(expandedString);
     
@@ -72,30 +72,32 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 
         }
     }
+    
+    if ( manager ) {
+        IEditor *editor = manager->GetActiveEditor();
+        if (editor) {
+            wxFileName fn(editor->GetFileName());
 
-    IEditor *editor = manager->GetActiveEditor();
+            expandedString.Replace(wxT("$(CurrentFileName)"), fn.GetName());
 
-    if (editor) {
-        wxFileName fn(editor->GetFileName());
+            wxString fpath(fn.GetPath());
+            fpath.Replace(wxT("\\"), wxT("/"));
+            expandedString.Replace(wxT("$(CurrentFilePath)"), fpath);
+            expandedString.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
 
-        expandedString.Replace(wxT("$(CurrentFileName)"), fn.GetName());
+            wxString ffullpath(fn.GetFullPath());
+            ffullpath.Replace(wxT("\\"), wxT("/"));
+            expandedString.Replace(wxT("$(CurrentFileFullPath)"), ffullpath);
+            expandedString.Replace(wxT("$(CurrentSelection)"), editor->GetSelection());
+            if(expandedString.Find(wxT("$(CurrentSelectionRange)")) != wxNOT_FOUND) {
+                int start=editor->GetSelectionStart(),
+                    end  =editor->GetSelectionEnd();
 
-        wxString fpath(fn.GetPath());
-        fpath.Replace(wxT("\\"), wxT("/"));
-        expandedString.Replace(wxT("$(CurrentFilePath)"), fpath);
-        expandedString.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
-
-        wxString ffullpath(fn.GetFullPath());
-        ffullpath.Replace(wxT("\\"), wxT("/"));
-        expandedString.Replace(wxT("$(CurrentFileFullPath)"), ffullpath);
-        expandedString.Replace(wxT("$(CurrentSelection)"), editor->GetSelection());
-        if(expandedString.Find(wxT("$(CurrentSelectionRange)")) != wxNOT_FOUND) {
-            int start=editor->GetSelectionStart(),
-                end  =editor->GetSelectionEnd();
-
-            wxString output=wxString::Format(wxT("%i:%i"),start,end);
-            expandedString.Replace(wxT("$(CurrentSelectionRange)"), output);
+                wxString output=wxString::Format(wxT("%i:%i"),start,end);
+                expandedString.Replace(wxT("$(CurrentSelectionRange)"), output);
+            }
         }
+        
     }
 
     //exapand common macros
@@ -105,10 +107,8 @@ wxString MacroManager::Expand(const wxString& expression, IManager* manager, con
 
     if (manager) {
         expandedString.Replace(wxT("$(CodeLitePath)"), manager->GetInstallDirectory());
+        expandedString = manager->GetEnv()->ExpandVariables(expandedString, true);
     }
-
-    //call the environment & workspace variables expand function
-    expandedString = manager->GetEnv()->ExpandVariables(expandedString, true);
     return expandedString;
 }
 

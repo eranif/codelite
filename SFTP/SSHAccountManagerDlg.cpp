@@ -3,13 +3,14 @@
 #include "ssh_account_info.h"
 #include "sftp_settings.h"
 #include "windowattrmanager.h"
+#include <wx/msgdlg.h>
 
 SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     : SSHAccountManagerDlgBase(parent)
 {
     SFTPSettings settings;
     SFTPSettings::Load( settings );
-    
+
     const SSHAccountInfo::List_t& accounts = settings.GetAccounts();
     SSHAccountInfo::List_t::const_iterator iter = accounts.begin();
     for(; iter != accounts.end(); ++iter) {
@@ -36,13 +37,25 @@ void SSHAccountManagerDlg::OnAddAccount(wxCommandEvent& event)
     if ( dlg.ShowModal() == wxID_OK ) {
         SSHAccountInfo account;
         dlg.GetAccountInfo( account );
-        
         DoAddAccount( account );
     }
 }
 
 void SSHAccountManagerDlg::OnDeleteAccount(wxCommandEvent& event)
 {
+    wxDataViewItemArray sels;
+    m_dvListCtrlAccounts->GetSelections( sels );
+    
+    if ( ::wxMessageBox(_("Are you sure you want to delete the selected accounts?"), "SFTP", wxYES_NO|wxCENTER|wxCANCEL|wxICON_QUESTION|wxNO_DEFAULT) != wxYES ) {
+        return;
+    }
+    
+    for(size_t i=0; i<sels.GetCount(); ++i) {
+        wxDataViewItem item = sels.Item(i);
+        m_dvListCtrlAccounts->DeleteItem( m_dvListCtrlAccounts->ItemToRow( item ) );
+    }
+
+    m_dvListCtrlAccounts->Refresh();
 }
 
 void SSHAccountManagerDlg::OnEditAccount(wxDataViewEvent& event)
@@ -52,7 +65,7 @@ void SSHAccountManagerDlg::OnEditAccount(wxDataViewEvent& event)
     if ( dlg.ShowModal() == wxID_OK ) {
         // update the user info
         dlg.GetAccountInfo(*account);
-        
+
         // update the UI
         m_dvListCtrlAccounts->GetStore()->SetValue(account->GetAccountName(), event.GetItem(), 0);
         m_dvListCtrlAccounts->GetStore()->SetValue(account->GetUsername(), event.GetItem(), 1);
@@ -75,4 +88,9 @@ SSHAccountInfo::List_t SSHAccountManagerDlg::GetAccounts() const
         accounts.push_back( *(SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData( m_dvListCtrlAccounts->RowToItem(i))) );
     }
     return accounts;
+}
+
+void SSHAccountManagerDlg::OnDeleteAccountUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dvListCtrlAccounts->GetSelectedItemsCount() );
 }

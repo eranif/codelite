@@ -45,7 +45,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     
     boxSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrlAccounts = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(200,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlAccounts = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(200,-1), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
     
     boxSizer10->Add(m_dvListCtrlAccounts, 1, wxALL|wxEXPAND, 5);
     
@@ -85,6 +85,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     m_dvListCtrlAccounts->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SSHAccountManagerDlgBase::OnEditAccount), NULL, this);
     m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnAddAccount), NULL, this);
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnDeleteAccount), NULL, this);
+    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHAccountManagerDlgBase::OnDeleteAccountUI), NULL, this);
     
 }
 
@@ -93,6 +94,7 @@ SSHAccountManagerDlgBase::~SSHAccountManagerDlgBase()
     m_dvListCtrlAccounts->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(SSHAccountManagerDlgBase::OnEditAccount), NULL, this);
     m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnAddAccount), NULL, this);
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnDeleteAccount), NULL, this);
+    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SSHAccountManagerDlgBase::OnDeleteAccountUI), NULL, this);
     
 }
 

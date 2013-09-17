@@ -9,13 +9,14 @@ class SSHAccountManagerDlg : public SSHAccountManagerDlgBase
 public:
     SSHAccountManagerDlg(wxWindow* parent);
     virtual ~SSHAccountManagerDlg();
-    
+
 protected:
+    virtual void OnDeleteAccountUI(wxUpdateUIEvent& event);
     void DoAddAccount( const SSHAccountInfo& account );
-    
+
 public:
     SSHAccountInfo::List_t GetAccounts() const;
-    
+
 protected:
     virtual void OnAddAccount(wxCommandEvent& event);
     virtual void OnDeleteAccount(wxCommandEvent& event);

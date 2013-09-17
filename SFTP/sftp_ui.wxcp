@@ -170,7 +170,7 @@
 									"border":	5,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
+									"m_styles":	["wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxDV_SINGLE"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -512,6 +512,12 @@
 													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnDeleteAccount(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+												}, {
+													"m_eventName":	"wxEVT_UPDATE_UI",
+													"m_eventClass":	"wxUpdateUIEvent",
+													"m_eventHandler":	"wxUpdateUIEventHandler",
+													"m_functionNameAndSignature":	"OnDeleteAccountUI(wxUpdateUIEvent& event)",
+													"m_description":	"Process a wxEVT_UPDATE_UI event"
 												}],
 											"m_children":	[]
 										}]

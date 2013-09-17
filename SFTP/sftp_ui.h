@@ -34,6 +34,7 @@ protected:
     virtual void OnEditAccount(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnAddAccount(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteAccount(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SSH Account Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

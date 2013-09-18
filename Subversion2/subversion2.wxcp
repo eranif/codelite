@@ -287,6 +287,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -769,7 +789,7 @@
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
-									"m_value":	"12,normal, normal, swiss, 0, Arial"
+									"m_value":	"wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
 								}, {
 									"type":	"bool",
 									"m_label":	"Hidden",
@@ -1313,6 +1333,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -1958,6 +1998,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -4720,6 +4780,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -5760,6 +5840,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -6582,6 +6682,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -7369,6 +7489,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -8172,7 +8312,7 @@
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
-									"m_value":	"12,normal, normal, swiss, 0, Arial"
+									"m_value":	"wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
 								}, {
 									"type":	"bool",
 									"m_label":	"Hidden",
@@ -8301,6 +8441,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -9407,6 +9567,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -9981,6 +10161,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"filePicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{

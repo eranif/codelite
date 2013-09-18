@@ -13,6 +13,7 @@
 #include <wx/sizer.h>
 #include <wx/treectrl.h>
 #include <wx/dialog.h>
+#include <wx/iconbndl.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>

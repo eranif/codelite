@@ -49,7 +49,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     flexGridSizer5->Add(m_textCtrlBugID, 0, wxALL|wxEXPAND, 5);
     
     m_splitterV = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
-    m_splitterV->SetSashGravity(0.500000);
+    m_splitterV->SetSashGravity(0.5);
     m_splitterV->SetMinimumPaneSize(10);
     
     boxSizer1->Add(m_splitterV, 1, wxALL|wxEXPAND, 5);
@@ -60,7 +60,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     m_splitterPage52->SetSizer(boxSizer58);
     
     m_splitterH = new wxSplitterWindow(m_splitterPage52, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
-    m_splitterH->SetSashGravity(0.500000);
+    m_splitterH->SetSashGravity(0.5);
     m_splitterH->SetMinimumPaneSize(10);
     
     boxSizer58->Add(m_splitterH, 1, wxALL|wxEXPAND, 5);
@@ -139,7 +139,13 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     boxSizer60->Add(m_staticText62, 0, wxALL, 5);
     
     m_textCtrlMessage = new wxTextCtrl(m_splitterPage56, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlMessageFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlMessageFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
     wxFont m_textCtrlMessageFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    #endif
     m_textCtrlMessage->SetFont(m_textCtrlMessageFont);
     
     boxSizer60->Add(m_textCtrlMessage, 1, wxALL|wxEXPAND, 5);
@@ -166,7 +172,6 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     m_button4 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer2->Add(m_button4, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -258,7 +263,6 @@ SvnSyncDialogBaseClass::SvnSyncDialogBaseClass(wxWindow* parent, wxWindowID id, 
     m_button29 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer27->Add(m_button29, 0, wxALL, 5);
-    
     
     SetSizeHints(500,200);
     if ( GetSizer() ) {

@@ -625,7 +625,13 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_splitterPage96->SetSizer(boxSizer92);
     
     m_stcLog = new wxStyledTextCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_stcLogFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_stcLogFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
     wxFont m_stcLogFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    #endif
     m_stcLog->SetFont(m_stcLogFont);
     // Configure the fold margin
     m_stcLog->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);

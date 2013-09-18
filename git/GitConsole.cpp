@@ -91,6 +91,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     : GitConsoleBase(parent)
     , m_git(git)
 {
+    m_stcLog->SetReadOnly(true);
     m_bitmapLoader = new BitmapLoader();
     GitImages m_images;
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
@@ -109,10 +110,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 
     m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
-
-    int screenWidth = 1000;// use a long screen width to allow long lines
-    m_dvListCtrl->AppendColumn(new wxDataViewColumn(_("Git Log"), new GitMyTextRenderer(m_dvListCtrl), 0, screenWidth, wxALIGN_LEFT));
-
     m_auibar->AddTool(XRCID("git_refresh"), wxT("Refresh"), m_images.Bitmap("gitRefresh"), wxT("Refresh tracked file list"));
     m_auibar->AddTool(XRCID("git_reset_repository"), wxT("Reset"), m_images.Bitmap("gitResetRepo"), wxT("Reset repository"));
     m_auibar->AddSeparator();
@@ -158,7 +155,9 @@ GitConsole::~GitConsole()
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
 {
-    m_dvListCtrl->DeleteAllItems();
+    m_stcLog->SetReadOnly(false);
+    m_stcLog->ClearAll();
+    m_stcLog->SetReadOnly(true);
 }
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
@@ -175,7 +174,7 @@ void GitConsole::OnStopGitProcessUI(wxUpdateUIEvent& event)
 
 void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event)
 {
-    event.Enable( m_dvListCtrl->GetItemCount() );
+    event.Enable( !m_stcLog->IsEmpty() );
 }
 
 void GitConsole::AddText(const wxString& text)
@@ -185,15 +184,12 @@ void GitConsole::AddText(const wxString& text)
 
     if ( tmp.IsEmpty() )
         return;
-
-    wxVector<wxVariant> cols;
-    cols.push_back(tmp);
-    m_dvListCtrl->AppendItem(cols, (wxUIntPtr)NULL);
-    wxDataViewItem item = m_dvListCtrl->GetStore()->GetItem(m_dvListCtrl->GetItemCount() - 1);
-    if ( item.IsOk() ) {
-        m_dvListCtrl->EnsureVisible( item );
-    }
-
+    
+    tmp << "\n";
+    m_stcLog->SetReadOnly(false);
+    m_stcLog->AppendText( tmp );
+    m_stcLog->SetReadOnly(true);
+    m_stcLog->ScrollToEnd();
 }
 
 void GitConsole::AddRawText(const wxString& text)
@@ -206,14 +202,7 @@ void GitConsole::AddRawText(const wxString& text)
 
     wxArrayString lines = ::wxStringTokenize(tmp, "\n\r", wxTOKEN_STRTOK);
     for(size_t i=0; i<lines.GetCount(); ++i) {
-        wxVector<wxVariant> cols;
-        cols.push_back(lines.Item(i));
-        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)NULL);
-    }
-
-    wxDataViewItem item = m_dvListCtrl->GetStore()->GetItem(m_dvListCtrl->GetItemCount() - 1);
-    if ( item.IsOk() ) {
-        m_dvListCtrl->EnsureVisible( item );
+        AddText(lines.Item(i));
     }
 }
 

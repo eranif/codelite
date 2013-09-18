@@ -10,6 +10,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
+#include <wx/iconbndl.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/stattext.h>
@@ -182,7 +183,7 @@ protected:
     wxObjectDataPtr<DataViewFilesModel> m_dvFilesModel;
 
     wxPanel* m_splitterPage96;
-    wxDataViewListCtrl* m_dvListCtrl;
+    wxStyledTextCtrl* m_stcLog;
 
 protected:
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }

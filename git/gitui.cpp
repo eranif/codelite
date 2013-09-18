@@ -598,11 +598,11 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_auibar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), wxXmlResource::Get()->LoadBitmap(wxT("git-reset")), wxNullBitmap, wxITEM_NORMAL, _("Reset File"), _("Reset File"), NULL);
     m_auibar->Realize();
     
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
     m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
     
-    boxSizer36->Add(m_splitter, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer36->Add(m_splitter, 1, wxEXPAND, 5);
     
     m_splitterPage100 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
@@ -615,7 +615,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_dvFilesModel->SetColCount( 1 );
     m_dvFiles->AssociateModel(m_dvFilesModel.get() );
     
-    boxSizer94->Add(m_dvFiles, 1, wxEXPAND, 5);
+    boxSizer94->Add(m_dvFiles, 1, wxALL|wxEXPAND, 5);
     
     m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
@@ -624,9 +624,48 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer92 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage96->SetSizer(boxSizer92);
     
-    m_dvListCtrl = new wxDataViewListCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_SINGLE);
+    m_stcLog = new wxStyledTextCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    wxFont m_stcLogFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_stcLog->SetFont(m_stcLogFont);
+    // Configure the fold margin
+    m_stcLog->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcLog->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcLog->SetMarginSensitive(4, true);
+    m_stcLog->SetMarginWidth    (4, 0);
     
-    boxSizer92->Add(m_dvListCtrl, 1, wxEXPAND, 2);
+    // Configure the tracker margin
+    m_stcLog->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcLog->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcLog->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcLog->SetMarginWidth(2, 0);
+    m_stcLog->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcLog->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcLog->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcLog->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcLog->SetMarginMask(3, 0);
+    m_stcLog->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcLog->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcLog->StyleClearAll();
+    for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
+        m_stcLog->StyleSetFont(i, m_stcLogFont);
+    }
+    m_stcLog->SetWrapMode(0);
+    m_stcLog->SetIndentationGuides(0);
+    m_stcLog->SetKeyWords(0, wxT(""));
+    m_stcLog->SetKeyWords(1, wxT(""));
+    m_stcLog->SetKeyWords(2, wxT(""));
+    m_stcLog->SetKeyWords(3, wxT(""));
+    m_stcLog->SetKeyWords(4, wxT(""));
+    
+    boxSizer92->Add(m_stcLog, 1, wxALL|wxEXPAND, 5);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {

@@ -732,9 +732,9 @@ void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
 {
     e.Skip();
 
-    GIT_MESSAGE(wxT("Files added to project, updating file list"));
     wxArrayString *files = (wxArrayString*) e.GetClientData();
     if(files && !m_repositoryDirectory.IsEmpty()) {
+        GIT_MESSAGE(wxT("Files added to project, updating file list"));
         DoAddFiles(*files);
         RefreshFileListView();
     }

@@ -420,7 +420,11 @@ bool Project::SaveXmlFile()
 {
     bool ok = m_doc.Save(m_fileName.GetFullPath());
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
-
+    
+    wxCommandEvent evt(wxEVT_FILE_SAVED);
+    evt.SetString( m_fileName.GetFullPath() );
+    EventNotifier::Get()->AddPendingEvent( evt );
+    
     return ok;
 }
 

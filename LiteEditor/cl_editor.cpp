@@ -1282,9 +1282,11 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
         SetSyntaxHighlight();
     }
 
-    //fire a wxEVT_FILE_SAVED event
-    wxString file_name = fileName.GetFullPath();
-    SendCmdEvent(wxEVT_FILE_SAVED, NULL, file_name);
+    // Fire a wxEVT_FILE_SAVED event
+    wxCommandEvent evtFileSaved(wxEVT_FILE_SAVED);
+    evtFileSaved.SetString( fileName.GetFullPath() );
+    EventNotifier::Get()->AddPendingEvent( evtFileSaved );
+    
     return true;
 }
 

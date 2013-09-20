@@ -175,14 +175,11 @@ void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
     }
 
     // Incase a file has been saved, we need to reparse its translation unit
-    wxString *filename = (wxString*)e.GetClientData();
-    if(filename) {
+    wxFileName fn( e.GetString() );
+    if(!TagsManagerST::Get()->IsValidCtagsFile(fn))
+        return;
 
-        wxFileName fn(*filename);
-        if(!TagsManagerST::Get()->IsValidCtagsFile(fn))
-            return;
-        m_clang.ReparseFile(*filename);
-    }
+    m_clang.ReparseFile( fn.GetFullPath() );
 }
 
 void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)

@@ -10,7 +10,7 @@
 extern void wxC59CAInitBitmapResources();
 
 static bool bBitmapLoaded = false;
- 
+
 
 CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
@@ -31,15 +31,15 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer3->Add(boxSizer4, 1, wxALL|wxEXPAND, 5);
+    bSizer3->Add(boxSizer4, 1, wxALL|wxEXPAND, 2);
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(600,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new CScoptViewResultsModel;
     m_dataviewModel->SetColCount( 3 );
     m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    boxSizer4->Add(m_dataview, 1, wxEXPAND, 5);
+    boxSizer4->Add(m_dataview, 1, wxEXPAND, 2);
     
     m_dataview->AppendIconTextColumn(_("Scope"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
@@ -87,7 +87,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,15), wxGA_SMOOTH|wxGA_HORIZONTAL);
     m_gauge->SetValue(0);
     
-    bSizer31->Add(m_gauge, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer31->Add(m_gauge, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

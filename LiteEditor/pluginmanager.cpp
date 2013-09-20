@@ -51,6 +51,7 @@
 #include "file_logger.h"
 #include "cl_config.h"
 #include "FileExplorerTab.h"
+#include "clang_code_completion.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -97,19 +98,19 @@ PluginManager::PluginManager()
 void PluginManager::Load()
 {
     wxString ext;
-#if defined (__WXGTK__) 
+#if defined (__WXGTK__)
     ext = wxT("so");
-    
+
 #elif defined(__WXMAC__)
     ext = wxT("dylib");
-    
+
 #else
     ext = wxT("dll");
 #endif
 
     wxString fileSpec( wxT( "*." ) + ext );
     clConfig conf("plugins.conf");
-    
+
     conf.ReadItem( &m_pluginsData );
 
     //set the managers
@@ -124,10 +125,10 @@ void PluginManager::Load()
     wxArrayString allowedPlugins;
     if( pp == CodeLiteApp::PP_None )
         return;
-        
+
     else if( pp == CodeLiteApp::PP_FromList )
         allowedPlugins = app->GetAllowedPlugins();
-    
+
 #ifdef __WXGTK__
     wxString pluginsDir(PLUGINS_DIR, wxConvUTF8);
 #else
@@ -135,24 +136,24 @@ void PluginManager::Load()
 #endif
 
     if ( wxDir::Exists(pluginsDir) ) {
-        
+
         //get list of dlls
         wxArrayString files;
         wxDir::GetAllFiles( pluginsDir, &files, fileSpec, wxDIR_FILES );
-        
+
         // Sort the plugins by A-Z
         std::sort(files.begin(), files.end());
         for ( size_t i=0; i<files.GetCount(); i++ ) {
-            
+
             wxString fileName( files.Item( i ) );
 #if defined(__WXMSW__) && !defined(NDEBUG)
-            
+
             // Under MSW loading a release plugin while in debug mode will cause a crash
             if ( !fileName.EndsWith("-dbg.dll") ) {
                 continue;
             }
 #elif defined(__WXMSW__)
-            
+
             // filter debug plugins
             if ( fileName.EndsWith("-dbg.dll") ) {
                 continue;
@@ -173,7 +174,7 @@ void PluginManager::Load()
             if ( !success ) {
                 continue;
             }
-            
+
             // load the plugin version method
             // if the methods does not exist, handle it as if it has value of 100 (lowest version API)
             int interface_version(100);
@@ -189,28 +190,28 @@ void PluginManager::Load()
 
             if ( interface_version != PLUGIN_INTERFACE_VERSION ) {
                 CL_WARNING(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface version is '%d', CodeLite interface version is '%d'"),
-                                              fileName.c_str(),
-                                              interface_version,
-                                              PLUGIN_INTERFACE_VERSION));
+                                            fileName.c_str(),
+                                            interface_version,
+                                            PLUGIN_INTERFACE_VERSION));
                 continue;
             }
 
             // Check if this dll can be loaded
             PluginInfo pluginInfo = pfnGetPluginInfo();
-            
+
             wxString pname = pluginInfo.GetName();
             pname.MakeLower().Trim().Trim(false);
-            
+
             // Check the policy
             if(pp == CodeLiteApp::PP_FromList && allowedPlugins.Index(pname) == wxNOT_FOUND) {
                 // Policy is set to 'from list' and this plugin does not match any plugins from
                 // the list, don't allow it to be loaded
                 continue;
             }
-            
+
             // Add the plugin information
             m_pluginsData.AddPlugin( pluginInfo );
-            
+
             // Can we load it?
             if ( !m_pluginsData.CanLoad( pluginInfo.GetName()) ) {
                 CL_WARNING( wxT( "Plugin " ) + pluginInfo.GetName() + wxT(" is not enabled") );
@@ -228,7 +229,7 @@ void PluginManager::Load()
                 m_pluginsData.DisablePlugin( pluginInfo.GetName() );
                 continue;
             }
-            
+
             // Construct the plugin
             IPlugin *plugin = pfn( ( IManager* )this );
             CL_DEBUG( wxT( "Loaded plugin: " ) + plugin->GetLongName() );
@@ -400,7 +401,7 @@ bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString &vdFullP
 
 void PluginManager::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)
 {
-	return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->RedefineProjFiles(proj, path, files);
+    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->RedefineProjFiles(proj, path, files);
 }
 
 int PluginManager::GetToolbarIconSize()
@@ -758,5 +759,17 @@ ProjectPtr PluginManager::GetSelectedProject() const
 
 IEditor* PluginManager::FindEditor(const wxString& filename) const
 {
-	return clMainFrame::Get()->GetMainBook()->FindEditor(filename);
+    return clMainFrame::Get()->GetMainBook()->FindEditor(filename);
+}
+
+void PluginManager::EnableClangCodeCompletion(bool b)
+{
+#if HAS_LIBCLANG
+    ClangCodeCompletion::Instance()->ClearCache();
+    TagsOptionsData &options = clMainFrame::Get()->GetTagsOptions();
+    size_t clang_flags = options.GetClangOptions();
+    clang_flags &= ~CC_CLANG_ENABLED;
+    options.SetClangOptions( clang_flags );
+    TagsManagerST::Get()->SetCtagsOptions( options );
+#endif
 }

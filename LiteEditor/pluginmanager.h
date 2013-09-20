@@ -61,6 +61,7 @@ private:
     virtual ~PluginManager();
 
 public:
+    
 
     static PluginManager *Get();
 
@@ -78,7 +79,7 @@ public:
     //------------------------------------
     //Implementation of IManager interface
     //------------------------------------
-
+    virtual void EnableClangCodeCompletion(bool b);
     virtual IEditor *              GetActiveEditor();
     virtual IConfigTool *          GetConfigTool();
     virtual TreeItemInfo           GetSelectedTreeItemInfo(TreeType type);
@@ -139,7 +140,7 @@ public:
     virtual ProjectPtr             GetSelectedProject() const;
     virtual void                   RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files);
     virtual IEditor*               FindEditor(const wxString &filename) const;
-	
+
     //------------------------------------
     //End of IManager interface
     //------------------------------------

@@ -432,12 +432,17 @@ public:
      * selected in the tree "blue highlight" or the parent of the selected item
      */
     virtual ProjectPtr GetSelectedProject() const = 0;
-	
-	/**
-	 * @brief search the mainbook for an editor representing a given filename
-	 * return IEditor* or NULL if no match was found
-	 */
-	virtual IEditor* FindEditor(const wxString &filename) const = 0;
+
+    /**
+     * @brief search the mainbook for an editor representing a given filename
+     * return IEditor* or NULL if no match was found
+     */
+    virtual IEditor* FindEditor(const wxString &filename) const = 0;
+    
+    /**
+     * @brief enable/disable clang code completion
+     */
+    virtual void EnableClangCodeCompletion(bool b) = 0;
 };
 
 #endif //IMANAGER_H

@@ -45,27 +45,14 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
     , m_table(NULL)
     , m_mgr(mgr)
 {
+    BitmapLoader bl;
+    m_bitmaps = bl.MakeStandardMimeMap();
+    
     CScopeConfData data;
-    MSWSetNativeTheme(m_treeCtrlResults);
-
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 
     const wxString SearchScope[] = { wxTRANSLATE("Entire Workspace"), wxTRANSLATE("Active Project") };
     m_stringManager.AddStrings(sizeof(SearchScope)/sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
-
-    m_treeCtrlResults->AddColumn(_("Scope"),   300);
-    m_treeCtrlResults->AddColumn(_("Line"),    50);
-    m_treeCtrlResults->AddColumn(_("Pattern"), 1000);
-    m_treeCtrlResults->AddRoot(_("CScope"));
-
-
-
-    wxImageList *imageList = new wxImageList(16, 16, true);
-    imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/c")));                              // 0
-    imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/cpp")));                            // 1
-    imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/h")));                              // 2
-    imageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("mime/16/text")));                           // 3
-    m_treeCtrlResults->AssignImageList( imageList );
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_font = wxFont( defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
@@ -76,7 +63,6 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 
     Clear(); // To make the Clear button UpdateUI work initially
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
-    m_treeCtrlResults->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(CscopeTab::OnItemActivated), NULL, this);
 }
 
 CscopeTab::~CscopeTab()
@@ -84,10 +70,10 @@ CscopeTab::~CscopeTab()
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
 }
 
-void CscopeTab::OnItemActivated( wxTreeEvent& event )
+void CscopeTab::OnItemActivated(wxDataViewEvent& event)
 {
-    wxTreeItemId item = event.GetItem();
-    DoItemActivated(item, event);
+    event.Skip();
+    DoItemActivated( event.GetItem() );
 }
 
 void CscopeTab::Clear()
@@ -96,79 +82,48 @@ void CscopeTab::Clear()
         //free the old table
         FreeTable();
     }
-    m_treeCtrlResults->DeleteChildren(m_treeCtrlResults->GetRootItem());
-    m_treeCtrlResults->SetItemHasChildren(m_treeCtrlResults->GetRootItem(), false); // Otherwise the Clear button UpdateUI fails
+    m_dataviewModel->Clear();
 }
 
-void CscopeTab::BuildTable(CscopeResultTable *table)
+void CscopeTab::BuildTable(CScopeResultTable_t *table)
 {
     if ( !table ) {
         return;
     }
 
     if (m_table) {
-        //free the old table
+        // Free the old table
         FreeTable();
     }
 
     m_table = table;
-    m_treeCtrlResults->DeleteChildren(m_treeCtrlResults->GetRootItem());
-
-    //add hidden root
-    wxTreeItemId root = m_treeCtrlResults->GetRootItem();
-
-    CscopeResultTable::iterator iter = m_table->begin();
-    for (; iter != m_table->end(); iter++ ) {
+    m_dataviewModel->Clear();
+    
+    wxStringSet_t insertedItems;
+    CScopeResultTable_t::iterator iter = m_table->begin();
+    for (; iter != m_table->end(); ++iter ) {
         wxString file = iter->first;
 
-        //add item for this file
-        wxTreeItemId parent;
-        std::set<wxString> insertedItems;
-
-        std::vector< CscopeEntryData >* vec = iter->second;
-        std::vector< CscopeEntryData >::iterator it = vec->begin();
-        for ( ; it != vec->end(); it++ ) {
-            CscopeEntryData entry = *it;
-            if (parent.IsOk() == false) {
-                //add parent item
-                CscopeEntryData parent_entry = entry;
-                parent_entry.SetKind(KindFileNode);
-
-                // detemine the image ID
-                int imgId(3); // text
-                switch(FileExtManager::GetType(entry.GetFile())) {
-                case FileExtManager::TypeHeader:
-                    imgId = 2;
-                    break;
-
-                case FileExtManager::TypeSourceC:
-                    imgId = 0;
-                    break;
-
-                case FileExtManager::TypeSourceCpp:
-                    imgId = 1;
-                    break;
-
-                default:
-                    imgId = 3;
-                    break;
-                }
-                parent = m_treeCtrlResults->AppendItem(root, entry.GetFile(), imgId, imgId, NULL);
-                m_treeCtrlResults->SetItemFont(parent, m_font);
-
-                //wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
-                //m_treeCtrlResults->SetItemBackgroundColour(parent, rootItemColour);
-            }
-
+        wxVector<wxVariant> cols;
+        cols.push_back( CScoptViewResultsModel::CreateIconTextVariant(file, GetBitmap(file)) );
+        cols.push_back(wxString());
+        cols.push_back(wxString());
+        wxDataViewItem fileItem = m_dataviewModel->AppendItem( wxDataViewItem(0), cols, NULL);
+        
+        // Add the entries for this file
+        CScopeEntryDataVec_t* vec = iter->second;
+        for ( size_t i=0; i<vec->size(); ++i ) {
+            CscopeEntryData entry = vec->at(i);
             // Dont insert duplicate entries to the match view
             wxString display_string;
             display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ") << entry.GetPattern();
             if(insertedItems.find(display_string) == insertedItems.end()) {
                 insertedItems.insert(display_string);
-                wxTreeItemId item = m_treeCtrlResults->AppendItem(parent, entry.GetScope(), wxNOT_FOUND, wxNOT_FOUND, new CscopeTabClientData(entry));
-                m_treeCtrlResults->SetItemFont(item, m_font);
-                m_treeCtrlResults->SetItemText(item, 1, wxString::Format(wxT("%d"), entry.GetLine()));
-                m_treeCtrlResults->SetItemText(item, 2, entry.GetPattern());
+                cols.clear();
+                cols.push_back( CScoptViewResultsModel::CreateIconTextVariant(entry.GetScope(), GetBitmap("")) );
+                cols.push_back( (wxString() << entry.GetLine()) );
+                cols.push_back( (wxString() << entry.GetPattern()) );
+                m_dataviewModel->AppendItem( fileItem, cols, new CscopeTabClientData(entry) );
             }
         }
     }
@@ -178,7 +133,7 @@ void CscopeTab::BuildTable(CscopeResultTable *table)
 void CscopeTab::FreeTable()
 {
     if (m_table) {
-        CscopeResultTable::iterator iter = m_table->begin();
+        CScopeResultTable_t::iterator iter = m_table->begin();
         for (; iter != m_table->end(); iter++ ) {
             //delete the vector
             delete iter->second;
@@ -188,59 +143,38 @@ void CscopeTab::FreeTable()
         m_table = NULL;
     }
 }
-void CscopeTab::OnLeftDClick(wxMouseEvent &event)
+
+void CscopeTab::DoItemActivated(const wxDataViewItem& item )
 {
-    // Make sure the double click was done on an actual item
-    int flags = wxTREE_HITTEST_ONITEMLABEL;
-    wxTreeItemId item = m_treeCtrlResults->GetSelection();
-    if ( item.IsOk() ) {
-        if ( m_treeCtrlResults->HitTest(event.GetPosition() , flags) == item ) {
-            DoItemActivated( item, event );
-            return;
+    CscopeTabClientData *data = dynamic_cast<CscopeTabClientData*>(m_dataviewModel->GetClientObject(item));
+    if (data) {
+        wxString wsp_path = WorkspaceST::Get()->GetPrivateFolder();
+        //a single entry was activated, open the file
+        //convert the file path to absolut path. We do it here, to improve performance
+        wxFileName fn(data->GetEntry().GetFile());
+
+        if ( !fn.MakeAbsolute(wsp_path) ) {
+            wxLogMessage(wxT("failed to convert file to absolute path"));
         }
-    }
-    event.Skip();
-}
 
-void CscopeTab::DoItemActivated( wxTreeItemId &item, wxEvent &event )
-{
-    if (item.IsOk()) {
-        CscopeTabClientData *data = (CscopeTabClientData*) m_treeCtrlResults->GetItemData(item);
-        if (data) {
-            wxString wsp_path = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
-
-            if (data->GetEntry().GetKind() == KindSingleEntry) {
-
-                //a single entry was activated, open the file
-                //convert the file path to absolut path. We do it here, to improve performance
-                wxFileName fn(data->GetEntry().GetFile());
-
-                if ( !fn.MakeAbsolute(wsp_path) ) {
-                    wxLogMessage(wxT("failed to convert file to absolute path"));
-                }
-
-                if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1)) {
-                    IEditor *editor = m_mgr->GetActiveEditor();
-                    if( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
-                        // We can't use data->GetEntry().GetPattern() as the line to search for as any appended comments have been truncated
-                        // For some reason LEditor::DoFindAndSelect checks it against the whole current line
-                        // and won't believe a match unless their lengths are the same
-                        int line = data->GetEntry().GetLine() - 1;
-                        int start = editor->PosFromLine(line);	// PosFromLine() returns the line start position
-                        int end = editor->LineEnd(line);
-                        wxString searchline(editor->GetTextRange(start, end));
-                        // Find and select the entry in the file
-                        editor->FindAndSelect(searchline, GetFindWhat(), start, m_mgr->GetNavigationMgr());
-                    }
-                }
-                return;
-            } else if (data->GetEntry().GetKind() == KindFileNode) {
-                event.Skip();
-                return;
+        if(m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, data->GetEntry().GetLine()-1)) {
+            IEditor *editor = m_mgr->GetActiveEditor();
+            if( editor && editor->GetFileName().GetFullPath() == fn.GetFullPath() && !GetFindWhat().IsEmpty()) {
+                // We can't use data->GetEntry().GetPattern() as the line to search for as any appended comments have been truncated
+                // For some reason LEditor::DoFindAndSelect checks it against the whole current line
+                // and won't believe a match unless their lengths are the same
+                int line = data->GetEntry().GetLine() - 1;
+                int start = editor->PosFromLine(line);	// PosFromLine() returns the line start position
+                int end = editor->LineEnd(line);
+                wxString searchline(editor->GetTextRange(start, end));
+                // Find and select the entry in the file
+                editor->FindAndSelect(searchline, GetFindWhat(), start, m_mgr->GetNavigationMgr());
             }
         }
+    } else {
+        // Parent item, expand it
+        m_dataview->Expand( item );
     }
-    event.Skip();
 }
 
 void CscopeTab::SetMessage(const wxString &msg, int percent)
@@ -259,7 +193,7 @@ void CscopeTab::OnClearResults(wxCommandEvent &e)
 void CscopeTab::OnClearResultsUI(wxUpdateUIEvent& e)
 {
     CHECK_CL_SHUTDOWN();
-    e.Enable(m_treeCtrlResults->HasChildren( m_treeCtrlResults->GetRootItem()));
+    e.Enable( !m_dataviewModel->IsEmpty() );
 }
 
 void CscopeTab::OnChangeSearchScope(wxCommandEvent& e)
@@ -288,6 +222,16 @@ void CscopeTab::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 void CscopeTab::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    m_treeCtrlResults->SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour() );
-    m_treeCtrlResults->SetForegroundColour( DrawingUtils::GetOutputPaneFgColour());
+    m_dataview->SetBackgroundColour( DrawingUtils::GetOutputPaneBgColour() );
+    m_dataview->SetForegroundColour( DrawingUtils::GetOutputPaneFgColour());
+}
+
+wxBitmap CscopeTab::GetBitmap(const wxString& filename) const
+{
+    wxFileName fn(filename);
+    FileExtManager::FileType type = FileExtManager::GetType(filename);
+    if ( m_bitmaps.count(type) == 0 ) {
+        type = FileExtManager::TypeText;
+    }
+    return m_bitmaps.find(type)->second;
 }

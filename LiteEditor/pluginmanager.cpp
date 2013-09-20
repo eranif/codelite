@@ -768,8 +768,17 @@ void PluginManager::EnableClangCodeCompletion(bool b)
     ClangCodeCompletion::Instance()->ClearCache();
     TagsOptionsData &options = clMainFrame::Get()->GetTagsOptions();
     size_t clang_flags = options.GetClangOptions();
-    clang_flags &= ~CC_CLANG_ENABLED;
+    
+    if ( b ) {
+        clang_flags |= CC_CLANG_ENABLED;
+    } else {
+        clang_flags &= ~CC_CLANG_ENABLED;
+    }
+    
     options.SetClangOptions( clang_flags );
     TagsManagerST::Get()->SetCtagsOptions( options );
+    
+#else
+    wxUnusedVar(b);
 #endif
 }

@@ -27,11 +27,11 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
+    mainSizer->Add(bSizer3, 1, wxALL|wxEXPAND, 2);
     
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer3->Add(boxSizer4, 1, wxALL|wxEXPAND, 2);
+    bSizer3->Add(boxSizer4, 1, wxEXPAND, 2);
     
     m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
@@ -50,7 +50,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     wxBoxSizer* bSizer31 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer3->Add(bSizer31, 0, wxEXPAND|wxALIGN_RIGHT, 5);
+    bSizer3->Add(bSizer31, 0, wxEXPAND|wxALIGN_RIGHT, 2);
     
     m_staticText2 = new wxStaticText(this, wxID_ANY, _("Search scope:"), wxDefaultPosition, wxSize(-1, -1), 0);
     

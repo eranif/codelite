@@ -38,6 +38,7 @@
 #include "globals.h"
 #include "macros.h"
 #include "wx_xml_compatibility.h"
+#include "plugin.h"
 
 Workspace::Workspace()
 {

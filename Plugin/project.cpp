@@ -36,6 +36,7 @@
 #include "globals.h"
 #include "macros.h"
 #include "wx_xml_compatibility.h"
+#include "plugin.h"
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");

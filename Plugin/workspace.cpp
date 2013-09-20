@@ -39,6 +39,7 @@
 #include "macros.h"
 #include "wx_xml_compatibility.h"
 #include "plugin.h"
+#include "event_notifier.h"
 
 Workspace::Workspace()
 {

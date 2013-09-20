@@ -1,6 +1,4 @@
 Move the following files to WORKSPACE_PATH/.codelite:
 
-- cscope_file.list
 - compilation.db
 - cppcheck.list
-

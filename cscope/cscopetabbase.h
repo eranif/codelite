@@ -5,7 +5,7 @@
 
 #ifndef CSCOPETABBASE_BASE_CLASSES_H
 #define CSCOPETABBASE_BASE_CLASSES_H
-
+ 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>

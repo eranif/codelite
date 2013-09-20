@@ -119,9 +119,7 @@ void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
     m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
 
     if (conf.GetEnabled()) {
-        wxString *fileName = (wxString*) e.GetClientData();
-        if(fileName)
-            DoBuild(*fileName);
+        DoBuild( e.GetString() );
     } else {
         CL_DEBUG(wxT("ContinuousBuild is disabled\n"));
     }

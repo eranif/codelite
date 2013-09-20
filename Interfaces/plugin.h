@@ -131,7 +131,8 @@ enum MenuType {
 #define wxEVT_FILE_SAVE_BY_BUILD_END 3465
 #define wxEVT_FILE_SAVE_BY_BUILD_START 3466
 
-// clientData is fileName (wxString*)
+// Sent when a file has been saved.
+// use event.GetString() to get the file name
 #define wxEVT_FILE_SAVED 3467
 
 // clientData is list of files which have been retagged (std::vector<wxFileName>*)

@@ -169,7 +169,7 @@ void SFTP::OnFileSaved(wxCommandEvent& e)
     if ( !m_workspaceSettings.IsOk() )
         return;
     
-    wxString local_file = *(wxString*)e.GetClientData();
+    wxString local_file = e.GetString();
     wxFileName file( local_file );
     file.MakeRelativeTo( m_workspaceFile.GetPath() );
     file.MakeAbsolute( wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());

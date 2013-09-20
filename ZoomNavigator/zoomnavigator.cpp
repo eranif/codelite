@@ -290,15 +290,12 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
 void ZoomNavigator::OnFileSaved(wxCommandEvent& e)
 {
     e.Skip();
-    wxString *filename = (wxString *)e.GetClientData();
-    if ( filename ) {
-        if ( *filename == m_curfile ) {
-            // Update the file content
-            m_curfile.Clear();
-            DoUpdate();
-        }
+   
+    if ( e.GetString() == m_curfile ) {
+        // Update the file content
+        m_curfile.Clear();
+        DoUpdate();
     }
-    
 }
 
 void ZoomNavigator::OnWorkspaceClosed(wxCommandEvent& e)

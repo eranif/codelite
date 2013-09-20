@@ -1284,7 +1284,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
     //fire a wxEVT_FILE_SAVED event
     wxString file_name = fileName.GetFullPath();
-    SendCmdEvent(wxEVT_FILE_SAVED, (void*)&file_name);
+    SendCmdEvent(wxEVT_FILE_SAVED, NULL, file_name);
     return true;
 }
 

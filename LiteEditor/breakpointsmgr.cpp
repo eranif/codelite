@@ -42,7 +42,7 @@ bool BreakptMgr::AddBreakpointByAddress(const wxString& address)
     return AddBreakpoint(bp);
 }
 
-bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/)
+bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions/*=wxT("")*/, bool is_temp/*=false*/, bool is_disabled/*=false*/)
 {
     BreakpointInfo bp;
     bp.Create(file, lineno, GetNextID());
@@ -51,6 +51,7 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
         bp.bp_type = BP_type_tempbreak;
         bp.is_temp = true;
     }
+    bp.is_enabled = !is_disabled;
     bp.conditions = conditions;
     return AddBreakpoint(bp);
 }

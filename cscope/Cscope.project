@@ -20,10 +20,9 @@
     <File Name="cscope.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
-    <File Name="cscopetabbase.h"/>
     <File Name="cscopetab.cpp"/>
     <File Name="cscopetab.h"/>
-    <File Name="cscopetabbase.cpp"/>
+    <File Name="CscopeTabBase.wxcp"/>
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
@@ -198,4 +197,15 @@
   </Settings>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="CscopeTabBase_cscope_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="CscopeTabBase.h"/>
+      <File Name="CscopeTabBase.cpp"/>
+      <File Name="cscoptviewresultsmodel.cpp"/>
+      <File Name="cscoptviewresultsmodel.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

@@ -58,7 +58,7 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	ProcUtils::SafeExecuteCommand(req->GetCmd(), output);
 	SendStatusEvent( _("Parsing results..."), 50, wxEmptyString, req->GetOwner() );
 
-	CscopeResultTable *result = ParseResults( output );
+	CScopeResultTable_t *result = ParseResults( output );
 	SendStatusEvent( _("Done"), 100, wxEmptyString, req->GetOwner() );
 
 	// send status message
@@ -70,9 +70,9 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest *request)
 	req->GetOwner()->AddPendingEvent(e);
 }
 
-CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &output)
+CScopeResultTable_t* CscopeDbBuilderThread::ParseResults(const wxArrayString &output)
 {
-	CscopeResultTable *results = new CscopeResultTable();
+	CScopeResultTable_t *results = new CScopeResultTable_t();
 	for (size_t i=0; i< output.GetCount(); i++) {
 		//parse each line
 		wxString line = output.Item(i);
@@ -106,7 +106,7 @@ CscopeResultTable* CscopeDbBuilderThread::ParseResults(const wxArrayString &outp
 		data.SetPattern(pattern);
 
 		//insert the result
-		CscopeResultTable::const_iterator iter = results->find(data.GetFile());
+		CScopeResultTable_t::const_iterator iter = results->find(data.GetFile());
 		std::vector< CscopeEntryData > *vec(NULL);
 		if (iter != results->end()) {
 			//this file already exist, append the result

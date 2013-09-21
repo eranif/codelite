@@ -38,7 +38,8 @@
 extern int wxEVT_CSCOPE_THREAD_DONE;
 extern int wxEVT_CSCOPE_THREAD_UPDATE_STATUS;
 
-typedef std::map<wxString, std::vector< CscopeEntryData >* > CscopeResultTable;
+typedef std::vector< CscopeEntryData > CScopeEntryDataVec_t;
+typedef std::map<wxString, CScopeEntryDataVec_t* > CScopeResultTable_t;
 
 /**
  * \class CscopeRequest
@@ -106,7 +107,7 @@ class CscopeDbBuilderThread : public WorkerThread
 	friend class Singleton< CscopeDbBuilderThread >;
 protected:
 	void ProcessRequest(ThreadRequest *req);
-	CscopeResultTable* ParseResults(const wxArrayString &output);
+	CScopeResultTable_t* ParseResults(const wxArrayString &output);
 
 protected:
 	void SendStatusEvent(const wxString &msg, int percent, const wxString &findWhat, wxEvtHandler *owner);

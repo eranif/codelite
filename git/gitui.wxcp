@@ -5442,7 +5442,7 @@
 					"m_children":	[{
 							"m_type":	4463,
 							"proportion":	0,
-							"border":	5,
+							"border":	0,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	["wxAUI_TB_DEFAULT_STYLE"],
@@ -6231,10 +6231,10 @@
 											"m_children":	[{
 													"m_type":	4473,
 													"proportion":	1,
-													"border":	5,
+													"border":	2,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxDV_MULTIPLE"],
+													"m_styles":	["wxDV_NO_HEADER", "wxDV_MULTIPLE", "wxBORDER_THEME"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -6447,10 +6447,10 @@
 											"m_children":	[{
 													"m_type":	4466,
 													"proportion":	1,
-													"border":	5,
+													"border":	2,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	[],
+													"m_styles":	["wxBORDER_THEME"],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",

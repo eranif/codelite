@@ -65,10 +65,11 @@ class CscopeTab : public CscopeTabBase
     StringManager      m_stringManager;
     wxFont             m_font;
     BitmapLoader::BitmapMap_t m_bitmaps;
-    
+
 protected:
+    virtual void OnItemSelected(wxDataViewEvent& event);
     wxBitmap GetBitmap(const wxString &filename) const;
-    
+
 protected:
     // Handlers for CscopeTabBase events.
     void OnItemActivated( wxDataViewEvent& event );
@@ -80,12 +81,12 @@ protected:
     void OnCreateDB(wxCommandEvent &e);
     void OnWorkspaceOpenUI(wxUpdateUIEvent &e);
     void OnThemeChanged(wxCommandEvent &e);
-    
+
 public:
     /** Constructor */
     CscopeTab( wxWindow* parent, IManager *mgr );
     virtual ~CscopeTab();
-    
+
     void BuildTable(CScopeResultTable_t *table);
     void Clear();
     void SetMessage(const wxString &msg, int percent);

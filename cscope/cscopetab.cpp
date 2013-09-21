@@ -47,7 +47,7 @@ CscopeTab::CscopeTab( wxWindow* parent, IManager *mgr )
 {
     BitmapLoader bl;
     m_bitmaps = bl.MakeStandardMimeMap();
-    
+
     CScopeConfData data;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 
@@ -98,7 +98,7 @@ void CscopeTab::BuildTable(CScopeResultTable_t *table)
 
     m_table = table;
     m_dataviewModel->Clear();
-    
+
     wxStringSet_t insertedItems;
     CScopeResultTable_t::iterator iter = m_table->begin();
     for (; iter != m_table->end(); ++iter ) {
@@ -109,7 +109,7 @@ void CscopeTab::BuildTable(CScopeResultTable_t *table)
         cols.push_back(wxString());
         cols.push_back(wxString());
         wxDataViewItem fileItem = m_dataviewModel->AppendItem( wxDataViewItem(0), cols, NULL);
-        
+
         // Add the entries for this file
         CScopeEntryDataVec_t* vec = iter->second;
         for ( size_t i=0; i<vec->size(); ++i ) {
@@ -120,7 +120,7 @@ void CscopeTab::BuildTable(CScopeResultTable_t *table)
             if(insertedItems.find(display_string) == insertedItems.end()) {
                 insertedItems.insert(display_string);
                 cols.clear();
-                cols.push_back( CScoptViewResultsModel::CreateIconTextVariant(entry.GetScope(), GetBitmap("")) );
+                cols.push_back( CScoptViewResultsModel::CreateIconTextVariant(entry.GetScope(), wxNullBitmap) );
                 cols.push_back( (wxString() << entry.GetLine()) );
                 cols.push_back( (wxString() << entry.GetPattern()) );
                 m_dataviewModel->AppendItem( fileItem, cols, new CscopeTabClientData(entry) );
@@ -139,8 +139,7 @@ void CscopeTab::FreeTable()
             delete iter->second;
         }
         m_table->clear();
-        delete m_table;
-        m_table = NULL;
+        wxDELETE(m_table);
     }
 }
 
@@ -234,4 +233,20 @@ wxBitmap CscopeTab::GetBitmap(const wxString& filename) const
         type = FileExtManager::TypeText;
     }
     return m_bitmaps.find(type)->second;
+}
+void CscopeTab::OnItemSelected(wxDataViewEvent& event)
+{
+    // Expand parent items on selection
+    CscopeTabClientData *data = dynamic_cast<CscopeTabClientData*>(m_dataviewModel->GetClientObject(event.GetItem()));
+    if ( !data ) {
+        // Parent item, expand it
+        if ( m_dataview->IsExpanded( event.GetItem() ) ) {
+            m_dataview->Collapse( event.GetItem() );
+        } else {
+            m_dataview->Expand( event.GetItem() );
+        }
+        
+    } else {
+        event.Skip();
+    }
 }

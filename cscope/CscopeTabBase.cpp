@@ -33,7 +33,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     bSizer3->Add(boxSizer4, 1, wxEXPAND, 2);
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE|wxBORDER_THEME);
     
     m_dataviewModel = new CScoptViewResultsModel;
     m_dataviewModel->SetColCount( 3 );
@@ -84,7 +84,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     
     bSizer31->Add(m_buttonClear, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,15), wxGA_SMOOTH|wxGA_HORIZONTAL);
+    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,-1), wxGA_SMOOTH|wxGA_HORIZONTAL);
     m_gauge->SetValue(0);
     
     bSizer31->Add(m_gauge, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -96,6 +96,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     Centre(wxBOTH);
     // Connect events
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CscopeTabBase::OnItemActivated), NULL, this);
+    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(CscopeTabBase::OnItemSelected), NULL, this);
     m_choiceSearchScope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CscopeTabBase::OnWorkspaceOpenUI), NULL, this);
@@ -111,6 +112,7 @@ CscopeTabBase::CscopeTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 CscopeTabBase::~CscopeTabBase()
 {
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CscopeTabBase::OnItemActivated), NULL, this);
+    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(CscopeTabBase::OnItemSelected), NULL, this);
     m_choiceSearchScope->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CscopeTabBase::OnChangeSearchScope), NULL, this);
     m_checkBoxUpdateDb->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CscopeTabBase::OnWorkspaceOpenUI), NULL, this);

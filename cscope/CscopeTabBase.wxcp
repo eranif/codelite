@@ -87,11 +87,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	""
+					"m_value":	"cscopetab"
 				}, {
 					"type":	"string",
 					"m_label":	"Inherited Class",
-					"m_value":	""
+					"m_value":	"CscopeTab"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -173,7 +173,7 @@
 											"border":	2,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
-											"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
+											"m_styles":	["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE", "wxBORDER_THEME"],
 											"m_sizerFlags":	["wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -246,6 +246,12 @@
 													"m_eventHandler":	"wxDataViewEventHandler",
 													"m_functionNameAndSignature":	"OnItemActivated(wxDataViewEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused"
+												}, {
+													"m_eventName":	"wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
+													"m_eventClass":	"wxDataViewEvent",
+													"m_eventHandler":	"wxDataViewEventHandler",
+													"m_functionNameAndSignature":	"OnItemSelected(wxDataViewEvent& event)",
+													"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event"
 												}],
 											"m_children":	[{
 													"m_type":	4472,
@@ -1015,7 +1021,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Size:",
-													"m_value":	"-1,15"
+													"m_value":	"-1,-1"
 												}, {
 													"type":	"string",
 													"m_label":	"Minimum Size:",

@@ -100,6 +100,10 @@ public:
         return m_break_at_main;
     }
     void GetDebugeePID(const wxString& line);
+    
+    bool HasValidDebugeePid() {
+        return m_debuggeePid > 0;
+    }
 
     void SetGoingDown(bool goingDown) {
         this->m_goingDown = goingDown;

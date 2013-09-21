@@ -78,7 +78,8 @@ enum DebuggerUpdateReason {
     DBG_UR_VAROBJUPDATE,            // An update to variable object
     DBG_UR_FRAMEDEPTH,              // Frame information
     DBG_UR_VARIABLEOBJUPDATEERR,    // Variable object update error
-    DBG_UR_FUNCTIONFINISHED         // Function execution finished, there might be a return value to display in the Locals view
+    DBG_UR_FUNCTIONFINISHED,        // Function execution finished, there might be a return value to display in the Locals view
+    DBG_UR_DEBUGGER_PID_VALID       // The debugger's pid is now known, so it's possible e.g. to interrupt it. Used for disabling bps
 };
 
 enum UserReason {
@@ -289,6 +290,15 @@ public:
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_RECONCILE_BPTS;
         e.m_bpInfoList = li;
+        DebuggerUpdate( e );
+    }
+
+    /**
+     * @brief Tell the manager that the debugger is now interruptable
+     */
+    void DebuggerPidValid() {
+        DebuggerEventData e;
+        e.m_updateReason = DBG_UR_DEBUGGER_PID_VALID;
         DebuggerUpdate( e );
     }
 

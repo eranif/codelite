@@ -640,7 +640,11 @@ public:
      * \brief return true of the debugger is currently running
      * \return true on success, false otherwise
      */
-    virtual bool IsRunning() = 0;
+    virtual bool IsRunning() = 0;    /**
+     * \brief return true if the debuggee pid is now known
+     * \return true if the debuggee pid > 0, false otherwise
+     */
+    virtual bool HasValidDebugeePid() = 0;
     /**
      * \brief step to next line
      * \return true on success, false otherwise

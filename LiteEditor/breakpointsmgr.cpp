@@ -115,10 +115,6 @@ void BreakptMgr::AddBreakpoint()
     }
 
     if (AddBreakpoint(dlg.b)) {
-        IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-        if ((!dlg.b.is_enabled) && dbgr && dbgr->IsRunning()) {
-            SetBPEnabledState(dlg.b.debugger_id, dlg.b.is_enabled);
-        }
         wxString msg;
         if (dlg.b.bp_type == BP_type_watchpt) {
             msg = _("Watchpoint successfully added");
@@ -375,7 +371,12 @@ void BreakptMgr::DisableAnyDisabledBreakpoints()
     for (size_t i=0; i<m_bps.size(); i++) {
         BreakpointInfo& bp = m_bps.at(i);
         if (bp.is_enabled == false) {
-            dbgr->SetEnabledState(bp.debugger_id, false);
+            if (dbgr->SetEnabledState(bp.debugger_id, false)) {
+                ManagerST::Get()->UpdateAddLine(wxString::Format(_("Successfully disabled breakpoint %i"), bp.debugger_id));
+                    } else {
+                        ManagerST::Get()->UpdateAddLine(wxString::Format(_("Failed to disable breakpoint %i"), bp.debugger_id));
+                    }
+            
         }
     }
 }
@@ -582,6 +583,17 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
             int index = FindBreakpointById(internal_id, m_pendingBreakpointsList);
             if (index != wxNOT_FOUND) {
                 m_pendingBreakpointsList.erase(m_pendingBreakpointsList.begin()+index);
+            }
+            // If the bp needs disabling, do so providing it's safe i.e. the debuggee pid is known (this happens after the first Poke() is processed)
+            if (!iter->is_enabled) {
+                IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+                if (dbgr && dbgr->IsRunning() && dbgr->HasValidDebugeePid()) {    
+                    if (SetBPEnabledState(debugger_id, false)) {
+                        ManagerST::Get()->UpdateAddLine(wxString::Format(_("Successfully disabled breakpoint %i"), debugger_id));
+                    } else {
+                        ManagerST::Get()->UpdateAddLine(wxString::Format(_("Failed to disable breakpoint %i"), debugger_id));
+                    }
+                }
             }
             // update the UI as well
             clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();

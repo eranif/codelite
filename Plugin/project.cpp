@@ -1092,7 +1092,7 @@ wxString Project::GetPluginData(const wxString& pluginName)
     return wxEmptyString;
 }
 
-void Project::SetPluginData(const wxString& pluginName, const wxString& data)
+void Project::SetPluginData(const wxString& pluginName, const wxString& data, bool saveToXml)
 {
     if(!m_doc.IsOk()) {
         return ;
@@ -1113,7 +1113,10 @@ void Project::SetPluginData(const wxString& pluginName, const wxString& data)
     wxString tmpData ( data );
     tmpData.Trim().Trim(false);
     XmlUtils::SetCDATANodeContent(plugin, tmpData);
-    SaveXmlFile();
+    
+    if ( saveToXml ) {
+        SaveXmlFile();
+    }
 }
 
 
@@ -1132,7 +1135,7 @@ void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataM
 
     std::map<wxString, wxString>::const_iterator iter = pluginsDataMap.begin();
     for(; iter != pluginsDataMap.end(); iter ++) {
-        SetPluginData( iter->first, iter->second );
+        SetPluginData( iter->first, iter->second, saveToFile );
     }
 
     if ( saveToFile ) {

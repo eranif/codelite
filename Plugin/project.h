@@ -542,7 +542,7 @@ public:
      * @param plugin the plugins' name
      * @param data the data
      */
-    void SetPluginData(const wxString &pluginName, const wxString &data);
+    void SetPluginData(const wxString &pluginName, const wxString &data, bool saveToXml = true);
 
     /**
      * @brief get all plugins data as map of plugin=value pair

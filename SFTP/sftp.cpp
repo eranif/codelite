@@ -159,7 +159,9 @@ void SFTP::OnFileSaved(wxCommandEvent& e)
 {
     e.Skip();
     
+    // --------------------------------------
     // Sanity
+    // --------------------------------------
     
     // check if we got a workspace file opened
     if ( !m_workspaceFile.IsOk() )
@@ -170,6 +172,11 @@ void SFTP::OnFileSaved(wxCommandEvent& e)
         return;
     
     wxString local_file = e.GetString();
+    local_file.Trim().Trim(false);
+    
+    if ( local_file.IsEmpty() )
+        return;
+    
     wxFileName file( local_file );
     file.MakeRelativeTo( m_workspaceFile.GetPath() );
     file.MakeAbsolute( wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());

@@ -96,54 +96,59 @@ void DbViewerPanel::OnConnectUI(wxUpdateUIEvent& event)
 
 void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 {
-    DbItem* item = (DbItem*) m_treeDatabases->GetItemData(event.GetItem());
-    if (item) {
-        wxMouseState cState = wxGetMouseState();
+    try {
+        DbItem* item = (DbItem*) m_treeDatabases->GetItemData(event.GetItem());
+        if (item) {
+            wxMouseState cState = ::wxGetMouseState();
 
-        wxString pagename;
-        if (Table* tab = wxDynamicCast(item->GetData(), Table)) {
-            if( cState.ControlDown() ) {
-                pagename = CreatePanelName(tab, DbViewerPanel::Erd);
-                ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() );
-                AddEditorPage(erdpanel, pagename);
+            wxString pagename;
+            if (Table* tab = wxDynamicCast(item->GetData(), Table)) {
+                if( cState.ControlDown() ) {
+                    pagename = CreatePanelName(tab, DbViewerPanel::Erd);
+                    ErdPanel *erdpanel = new ErdPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),m_pConnections, (Table*) tab->Clone() );
+                    AddEditorPage(erdpanel, pagename);
 
-            } else {
-#if defined (__WXMSW__)
-                clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
-#endif
-                pagename = CreatePanelName(tab, DbViewerPanel::Sql);
+                } else {
+    #if defined (__WXMSW__)
+                    clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
+    #endif
+                    pagename = CreatePanelName(tab, DbViewerPanel::Sql);
+                    if(!DoSelectPage(pagename)) {
+                        SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName());
+                        AddEditorPage(sqlpage, pagename);
+                    }
+                }
+            }
+
+            if (View* pView = wxDynamicCast(item->GetData(), View)) {
+                pagename = CreatePanelName(pView, DbViewerPanel::Sql);
                 if(!DoSelectPage(pagename)) {
-                    SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,tab->GetDbAdapter()->Clone(),tab->GetParentName(),tab->GetName());
+                    SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName());
                     AddEditorPage(sqlpage, pagename);
                 }
             }
-        }
 
-        if (View* pView = wxDynamicCast(item->GetData(), View)) {
-            pagename = CreatePanelName(pView, DbViewerPanel::Sql);
-            if(!DoSelectPage(pagename)) {
-                SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,pView->GetDbAdapter()->Clone(),pView->GetParentName(),pView->GetName());
-                AddEditorPage(sqlpage, pagename);
-            }
-        }
+            if (Database* db = wxDynamicCast(item->GetData(), Database)) {
+                if( cState.ControlDown() ) {
+                    pagename = CreatePanelName(db, DbViewerPanel::Erd);
+                    ErdPanel *erdpanel = new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone());
+                    AddEditorPage(erdpanel, pagename);
 
-        if (Database* db = wxDynamicCast(item->GetData(), Database)) {
-            if( cState.ControlDown() ) {
-                pagename = CreatePanelName(db, DbViewerPanel::Erd);
-                ErdPanel *erdpanel = new ErdPanel(m_pNotebook,db->GetDbAdapter()->Clone(),m_pConnections,(Database*)db->Clone());
-                AddEditorPage(erdpanel, pagename);
-
-            } else {
-                pagename = CreatePanelName(db, DbViewerPanel::Sql);
-                if(!DoSelectPage(pagename)) {
-                    SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT(""));
-#ifndef __WXMSW__
-                    sqlpage->Show();
-#endif
-                    AddEditorPage(sqlpage, pagename);
+                } else {
+                    pagename = CreatePanelName(db, DbViewerPanel::Sql);
+                    if(!DoSelectPage(pagename)) {
+                        SQLCommandPanel *sqlpage = new SQLCommandPanel(m_pNotebook,db->GetDbAdapter()->Clone(),db->GetName(),wxT(""));
+    #ifndef __WXMSW__
+                        sqlpage->Show();
+    #endif
+                        AddEditorPage(sqlpage, pagename);
+                    }
                 }
             }
         }
+        
+    } catch (DatabaseLayerException &e) {
+        ::wxMessageBox(wxString() << "Error occured while opening SQL panel: " << e.GetErrorMessage(), "Database Explorer", wxOK|wxICON_ERROR|wxCENTER);
     }
 }
 
@@ -808,67 +813,6 @@ void DbViewerPanel::InitStyledTextCtrl(wxStyledTextCtrl *sci)
     if ( lexer ) {
         lexer->Apply( sci, true );
     }
-    
-    //sci->SetLexer( wxSTC_LEX_SQL );
-    //sci->SetKeyWords(0, wxT("select insert into delete update from drop create alter where values order by desc asc show table column tables columns limit as in exists view join left right inner on set group") );
-    //wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    //font.SetFamily(wxTELETYPE);
-    //
-    //for(int i=0; i<wxSTC_STYLE_MAX; i++)
-    //    sci->StyleSetFont( wxSTC_STYLE_MAX, font);
-    //
-    //sci->StyleSetBold( wxSTC_C_WORD, true );
-    //sci->StyleSetForeground( wxSTC_C_WORD, *wxBLUE );
-    //sci->StyleSetForeground( wxSTC_C_STRING, *wxRED );
-    //sci->StyleSetForeground( wxSTC_C_STRINGEOL, *wxRED );
-    //sci->StyleSetForeground( wxSTC_C_PREPROCESSOR, wxColour( 49, 106, 197 ) );
-    //sci->StyleSetForeground( wxSTC_C_COMMENT, wxColour( 0, 128, 0 ) );
-    //sci->StyleSetForeground( wxSTC_C_COMMENTLINE, wxColour( 0, 128, 0 ) );
-    //sci->StyleSetForeground( wxSTC_C_COMMENTDOC, wxColour( 0, 128, 0 ) );
-    //sci->StyleSetForeground( wxSTC_C_COMMENTLINEDOC, wxColour( 0, 128, 0 ) );
-    //sci->StyleSetForeground( wxSTC_C_NUMBER, *wxGREEN );
-    //
-    //sci->SetSelBackground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
-    //sci->SetSelForeground( true, wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT ) );
-    //
-    //sci->SetCaretWidth( 2 );
-    //
-    //sci->SetTabIndents(true);
-    //sci->SetBackSpaceUnIndents(true);
-    //sci->SetUseTabs( false );
-    //sci->SetTabWidth( 4 );
-    //sci->SetIndent( 4 );
-    //
-    //// markers
-    //sci->MarkerDefine(wxSTC_MARKNUM_FOLDER,        wxSTC_MARK_BOXPLUS);
-    //sci->MarkerSetBackground( wxSTC_MARKNUM_FOLDER, wxColour( wxT("DARK GREY") ) );
-    //sci->MarkerSetForeground( wxSTC_MARKNUM_FOLDER, wxColour( wxT("WHITE") ) );
-    //
-    //sci->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN,    wxSTC_MARK_BOXMINUS);
-    //sci->MarkerSetBackground( wxSTC_MARKNUM_FOLDEROPEN, wxColour( wxT("DARK GREY") ) );
-    //sci->MarkerSetForeground( wxSTC_MARKNUM_FOLDEROPEN, wxColour( wxT("WHITE") ) );
-    //
-    //sci->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB,     wxSTC_MARK_VLINE);
-    //sci->MarkerSetBackground( wxSTC_MARKNUM_FOLDERSUB, wxColour( wxT("DARK GREY") ) );
-    //sci->MarkerSetForeground( wxSTC_MARKNUM_FOLDERSUB, wxColour( wxT("WHITE") ) );
-    //
-    //sci->MarkerDefine(wxSTC_MARKNUM_FOLDEREND,     wxSTC_MARK_EMPTY);
-    //sci->MarkerSetBackground( wxSTC_MARKNUM_FOLDEREND, wxColour( wxT("DARK GREY") ) );
-    //sci->MarkerSetForeground( wxSTC_MARKNUM_FOLDEREND, wxColour( wxT("WHITE") ) );
-    //
-    //sci->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUS);
-    //sci->MarkerSetBackground( wxSTC_MARKNUM_FOLDEROPENMID, wxColour( wxT("DARK GREY") ) );
-    //sci->MarkerSetForeground( wxSTC_MARKNUM_FOLDEROPENMID, wxColour( wxT("WHITE") ) );
-    //
-    //sci->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_TCORNER);
-    //sci->MarkerSetBackground( wxSTC_MARKNUM_FOLDERMIDTAIL, wxColour( wxT("DARK GREY") ) );
-    //sci->MarkerSetForeground( wxSTC_MARKNUM_FOLDERMIDTAIL, wxColour( wxT("WHITE") ) );
-    //
-    //sci->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL,    wxSTC_MARK_LCORNER);
-    //sci->MarkerSetBackground( wxSTC_MARKNUM_FOLDERTAIL, wxColour( wxT("DARK GREY") ) );
-    //sci->MarkerSetForeground( wxSTC_MARKNUM_FOLDERTAIL, wxColour( wxT("WHITE") ) );
-    //
-    //sci->SetFoldFlags( wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED );
 }
 
 void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e)

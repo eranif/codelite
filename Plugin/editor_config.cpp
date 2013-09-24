@@ -32,6 +32,7 @@
 #include <wx/ffile.h>
 #include "globals.h"
 #include "wx_xml_compatibility.h"
+#include "event_notifier.h"
 
 //-------------------------------------------------------------------------------------------
 SimpleLongValue::SimpleLongValue()
@@ -181,7 +182,9 @@ void EditorConfig::SaveLexers()
     }
 
     wxString nodeName = wxT("Lexers");
-    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
+    wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
+    evt.SetString(nodeName);
+    EventNotifier::Get()->AddPendingEvent( evt );
 }
 
 wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
@@ -267,7 +270,9 @@ void EditorConfig::SetOptions(OptionsConfigPtr opts)
     m_doc->GetRoot()->AddChild(opts->ToXml());
 
     DoSave();
-    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
+    wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
+    evt.SetString(nodeName);
+    EventNotifier::Get()->AddPendingEvent( evt );
 }
 
 void EditorConfig::SetTagsDatabase(const wxString &dbName)
@@ -284,7 +289,9 @@ void EditorConfig::SetTagsDatabase(const wxString &dbName)
     }
 
     DoSave();
-    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
+    wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
+    evt.SetString(nodeName);
+    EventNotifier::Get()->AddPendingEvent( evt );
 }
 
 wxString EditorConfig::GetTagsDatabase() const
@@ -340,7 +347,9 @@ void EditorConfig::SetRecentItems(const wxArrayString &files, const wxString nod
 
     //save the data to disk
     DoSave();
-    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &nodeName);
+    wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
+    evt.SetString(nodeName);
+    EventNotifier::Get()->AddPendingEvent( evt );
 }
 
 bool EditorConfig::WriteObject(const wxString &name, SerializedObject *obj)
@@ -350,7 +359,9 @@ bool EditorConfig::WriteObject(const wxString &name, SerializedObject *obj)
 
     //save the archive
     bool res = DoSave();
-    SendCmdEvent(wxEVT_EDITOR_CONFIG_CHANGED, (void*) &name);
+    wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
+    evt.SetString(name);
+    EventNotifier::Get()->AddPendingEvent( evt );
     return res;
 }
 

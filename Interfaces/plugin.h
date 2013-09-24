@@ -79,7 +79,7 @@ enum MenuType {
 //clientData is NULL
 #define wxEVT_INIT_DONE 3450
 
-//clientData is editor config node name (wxString*)
+// wxCommandEvent::GetString() will return the node name modified
 #define wxEVT_EDITOR_CONFIG_CHANGED 3451
 
 // wxCommandEvent::GetString() will return the workspace fullpath

@@ -9,6 +9,8 @@
 #include "editor_config.h"
 #include <wx/stc/stc.h>
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "plugin.h"
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
     EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -21,12 +23,14 @@ clEditorTipWindow::clEditorTipWindow(wxWindow *parent)
     : wxPanel(parent)
     , m_highlighIndex(0)
 {
-    m_font = EditorConfigST::Get()->GetLexer("C++")->GetFontForSyle(wxSTC_C_DEFAULT);
+    m_font = EditorConfigST::Get()->GetLexer("C++")->GetFontForSyle(wxSTC_STYLE_CALLTIP);
     Hide();
+    EventNotifier::Get()->Connect(wxEVT_EDITOR_CONFIG_CHANGED, wxCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
 }
 
 clEditorTipWindow::~clEditorTipWindow()
 {
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CONFIG_CHANGED, wxCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
 }
 
 void clEditorTipWindow::OnEraseBg(wxEraseEvent& e)
@@ -42,7 +46,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     wxGCDC gdc;
     if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
-        
+    
     wxColour bgColour  = DrawingUtils::GetThemeTipBgColour();
     wxColour penColour = DrawingUtils::GetThemeBorderColour();
     
@@ -90,7 +94,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
             int w = DoGetTextLen(gdc, txtInclude);
             
             wxColour bodyColour, borderColour;
-            wxColour base = *wxRED;
+            wxColour base = *wxBLUE;
             bodyColour   = base.ChangeLightness(180);
             borderColour = base.ChangeLightness(150);
             
@@ -311,5 +315,15 @@ void clEditorTipWindow::SelectSignature(const wxString& signature)
     if ( GetTip() ) {
         GetTip()->SelectSiganture( m_selectedSignature );
         m_selectedSignature.clear();
+    }
+}
+
+void clEditorTipWindow::OnEditoConfigChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    if ( e.GetString() == "Lexers" ) {
+        // the lexers were modified by the user, reload the font
+        m_font = EditorConfigST::Get()->GetLexer("C++")->GetFontForSyle(wxSTC_STYLE_CALLTIP);
+        Refresh();
     }
 }

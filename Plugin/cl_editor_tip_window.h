@@ -55,6 +55,7 @@ public:
     void OnPaint  (wxPaintEvent &e);
     void OnEraseBg(wxEraseEvent &e);
     void OnLeftDown(wxMouseEvent &e);
+    void OnEditoConfigChanged(wxCommandEvent &e);
 };
 
 #endif // CLFUNCTIONTIPWINDOW_H

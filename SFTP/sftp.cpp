@@ -8,11 +8,46 @@
 #include "event_notifier.h"
 #include "sftp_workspace_settings.h"
 #include "sftp_writer_thread.h"
+#include <wx/xrc/xmlres.h>
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER    = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING   = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
+
+// Exposed API (via events)
+// SFTP plugin provides SFTP functionality for codelite based on events
+// It uses the event type clCommandEvent to accept requests from codelite's code
+// the SFTP uses the event GetString() method to read a string in the form of JSON format
+// For example, to instruct the plugin to connect over SSH to a remote server and save a remote file:
+// the GetString() should retrun this JSON string:
+//  {
+//      account : "account-name-to-use",
+//      local_file : "/path/to/local/file",
+//      remote_file : "/path/to/remote/file",
+//      keep_alive : true|false
+//  }
+
+// Event type: clCommandEvent
+// Request SFTP to save a file remotely (see above for more details)
+const wxEventType wxEVT_SFTP_SAVE_FILE = XRCID("wxEVT_SFTP_SAVE_FILE");
+
+// Event type: clCommandEvent
+// Send this event from within your plugn/codelite core to request list of avaliable accounts 
+// defined by the SFTP plugin
+// use event.GetStrings() to get the account list
+const wxEventType wxEVT_SFTP_LIST_ACCOUNTS = XRCID("wxEVT_SFTP_LIST_ACCOUNTS");
+
+// Event type: clCommandEvent
+// Request to open the SSH account manager managed by the SFTP 
+const wxEventType wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG = XRCID("wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG");
+
+// Event type: clCommandEvent
+// Request SFTP to initialize clSSH session using account name
+// 
+// Use: clCommandEvent::SetClientData() to pass the clSSH object to initialise
+// + set the account name using the clCommandEvent::SetString() function
+const wxEventType wxEVT_SFTP_INIT_SESSION = XRCID("wxEVT_SFTP_INIT_SESSION");
 
 // Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)

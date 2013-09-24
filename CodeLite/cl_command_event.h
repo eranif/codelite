@@ -5,12 +5,14 @@
 #include <wx/sharedptr.h>
 #include "codelite_exports.h"
 #include "entry.h"
+#include <wx/arrstr.h>
 
 /// a wxCommandEvent that takes ownership of the clientData
 class WXDLLIMPEXP_CL clCommandEvent : public wxCommandEvent
 {
 protected:
     wxSharedPtr<wxClientData> m_ptr;
+    wxArrayString             m_strings;
 
 public:
     clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -24,6 +26,13 @@ public:
     wxClientData *GetClientObject() const ;
 
     virtual wxEvent *Clone() const;
+    
+    void SetStrings(const wxArrayString& strings) {
+        this->m_strings = strings;
+    }
+    const wxArrayString& GetStrings() const {
+        return m_strings;
+    }
 };
 
 typedef void (wxEvtHandler::*clCommandEventFunction)(clCommandEvent&);

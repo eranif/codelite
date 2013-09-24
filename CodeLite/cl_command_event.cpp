@@ -13,7 +13,9 @@ clCommandEvent::clCommandEvent(const clCommandEvent& event)
 
 clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
 {
+    m_strings.clear();
     m_ptr = src.m_ptr;
+    m_strings.insert(m_strings.end(), src.m_strings.begin(), src.m_strings.end());
     return *this;
 }
 

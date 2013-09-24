@@ -33,6 +33,7 @@
 #include "notebook_ex.h"
 #include "filehistory.h"
 #include "message_pane.h"
+#include "cl_command_event.h"
 
 enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
 
@@ -58,7 +59,7 @@ private:
     void OnPageChanged        (NotebookEvent     &e);
     void OnClosePage          (NotebookEvent     &e);
     void OnPageChanging       (NotebookEvent     &e);
-    void OnProjectFileAdded   (wxCommandEvent    &e);
+    void OnProjectFileAdded   (clCommandEvent& e);
     void OnProjectFileRemoved (wxCommandEvent    &e);
     void OnWorkspaceLoaded    (wxCommandEvent    &e);
     void OnWorkspaceClosed    (wxCommandEvent    &e);

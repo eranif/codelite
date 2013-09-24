@@ -98,7 +98,7 @@ void MainBook::ConnectEvents()
     m_book->Connect(wxEVT_COMMAND_BOOK_BG_DCLICK,            NotebookEventHandler(MainBook::OnMouseDClick),  NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,   clCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
@@ -118,7 +118,7 @@ MainBook::~MainBook()
     m_book->Disconnect(wxEVT_COMMAND_BOOK_BG_DCLICK,            NotebookEventHandler(MainBook::OnMouseDClick),  NULL, this);
 
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,   wxCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,   clCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
@@ -173,18 +173,15 @@ void MainBook::OnPageClosed(NotebookEvent &e)
     }
 }
 
-void MainBook::OnProjectFileAdded(wxCommandEvent &e)
+void MainBook::OnProjectFileAdded(clCommandEvent &e)
 {
     e.Skip();
-    wxArrayString *files = (wxArrayString*) e.GetClientData();
-    if (!files)
-        return;
-
-    for (size_t i = 0; i < files->GetCount(); i++) {
-        LEditor *editor = FindEditor(files->Item(i));
+    const wxArrayString &files = e.GetStrings();
+    for (size_t i = 0; i < files.GetCount(); i++) {
+        LEditor *editor = FindEditor(files.Item(i));
         if (editor) {
             wxString fileName = editor->GetFileName().GetFullPath();
-            if (files->Index(fileName) != wxNOT_FOUND) {
+            if (files.Index(fileName) != wxNOT_FOUND) {
                 editor->SetProject(ManagerST::Get()->GetProjectNameByFile(fileName));
             }
         }

@@ -112,7 +112,8 @@ enum MenuType {
 // clientData is the full path of the file (wxString*)
 #define wxEVT_TREE_ITEM_FILE_ACTIVATED 3460
 
-//clientData is list of files added to project (wxArrayString*)
+// Event type: clCommandEvent
+// Use: clCommandEvent::GetStrings() to get the list of files added
 #define wxEVT_PROJ_FILE_ADDED 3461
 
 //clientData is list of files which have been removed (wxArrayString*)

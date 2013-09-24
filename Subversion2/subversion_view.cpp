@@ -37,6 +37,7 @@
 #include "globals.h"
 #include "SvnInfoDialog.h"
 #include <map>
+#include "cl_command_event.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
     EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
@@ -90,7 +91,7 @@ SubversionView::SubversionView( wxWindow* parent, Subversion2 *plugin )
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,            wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),           NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,            wxCommandEventHandler(SubversionView::OnWorkspaceClosed),           NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,                  wxCommandEventHandler(SubversionView::OnRefreshView),               NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,             wxCommandEventHandler(SubversionView::OnFileAdded  ),               NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,             clCommandEventHandler(SubversionView::OnFileAdded  ),               NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_RENAMED,                wxCommandEventHandler(SubversionView::OnFileRenamed),               NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,       wxCommandEventHandler(SubversionView::OnActiveEditorChanged),       NULL, this);
 }
@@ -842,7 +843,7 @@ void SubversionView::OnRefreshView(wxCommandEvent& event)
     BuildTree();
 }
 
-void SubversionView::OnFileAdded(wxCommandEvent& event)
+void SubversionView::OnFileAdded(clCommandEvent& event)
 {
     event.Skip();
     
@@ -851,35 +852,34 @@ void SubversionView::OnFileAdded(wxCommandEvent& event)
     
     SvnSettingsData ssd = m_plugin->GetSettings();
     if(ssd.GetFlags() & SvnAddFileToSvn) {
-        wxArrayString *files = (wxArrayString*)event.GetClientData();
-        if(files) {
-            bool     addToSvn(false);
-            wxString command;
-            command << m_plugin->GetSvnExeName() << wxT(" add ");
-            for(size_t i=0; i<files->GetCount(); i++) {
-                
-                wxFileName fn(files->Item(i));
-                bool curPathUnderSvn = false;
-                if ( path_in_svn.count( fn.GetPath() ) ) {
-                    // use the cached result
-                    curPathUnderSvn = path_in_svn.find(fn.GetPath())->second;
-                } else {
-                    // query svn and cache the result for future use
-                    curPathUnderSvn = m_plugin->IsPathUnderSvn( fn.GetPath() );
-                    path_in_svn.insert( std::make_pair(fn.GetPath(), curPathUnderSvn ) );
-                }
-                
-                if (curPathUnderSvn) {
-                    command << wxT("\"") << files->Item(i) << wxT("\" ");
-                    addToSvn = true;
-                }
+        const wxArrayString &files = event.GetStrings();
+        bool     addToSvn(false);
+        wxString command;
+        command << m_plugin->GetSvnExeName() << wxT(" add ");
+        for(size_t i=0; i<files.GetCount(); i++) {
+            
+            wxFileName fn(files.Item(i));
+            bool curPathUnderSvn = false;
+            if ( path_in_svn.count( fn.GetPath() ) ) {
+                // use the cached result
+                curPathUnderSvn = path_in_svn.find(fn.GetPath())->second;
+            } else {
+                // query svn and cache the result for future use
+                curPathUnderSvn = m_plugin->IsPathUnderSvn( fn.GetPath() );
+                path_in_svn.insert( std::make_pair(fn.GetPath(), curPathUnderSvn ) );
             }
-
-            if(addToSvn) {
-                command.RemoveLast();
-                m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
+            
+            if (curPathUnderSvn) {
+                command << wxT("\"") << files.Item(i) << wxT("\" ");
+                addToSvn = true;
             }
         }
+
+        if(addToSvn) {
+            command.RemoveLast();
+            m_plugin->GetConsole()->Execute(command, DoGetCurRepoPath(), new SvnDefaultCommandHandler(m_plugin, event.GetId(), this));
+        }
+
     }
 }
 
@@ -1077,7 +1077,7 @@ void SubversionView::DisconnectEvents()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),          NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed),          NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,       wxCommandEventHandler(SubversionView::OnRefreshView),              NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,  wxCommandEventHandler(SubversionView::OnFileAdded),                NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,  clCommandEventHandler(SubversionView::OnFileAdded),                NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_RENAMED,     wxCommandEventHandler(SubversionView::OnFileRenamed),              NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(SubversionView::OnActiveEditorChanged), NULL, this);
 }

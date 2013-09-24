@@ -91,7 +91,7 @@ GitPlugin::GitPlugin(IManager *manager)
     EventNotifier::Get()->Connect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+    EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     // Add the console
@@ -281,7 +281,7 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Disconnect( wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect( wxEVT_PROJ_FILE_ADDED, wxCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
+    EventNotifier::Get()->Disconnect( wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     
     /*Context Menu*/
@@ -728,14 +728,14 @@ void GitPlugin::OnFileSaved(wxCommandEvent& e)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnFilesAddedToProject(wxCommandEvent& e)
+void GitPlugin::OnFilesAddedToProject(clCommandEvent& e)
 {
     e.Skip();
 
-    wxArrayString *files = (wxArrayString*) e.GetClientData();
-    if(files && !m_repositoryDirectory.IsEmpty()) {
+    const wxArrayString &files = e.GetStrings();
+    if( !files.IsEmpty() && !m_repositoryDirectory.IsEmpty() ) {
         GIT_MESSAGE(wxT("Files added to project, updating file list"));
-        DoAddFiles(*files);
+        DoAddFiles( files );
         RefreshFileListView();
     }
 }

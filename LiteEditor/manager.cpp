@@ -1011,7 +1011,10 @@ bool Manager::AddFileToProject ( const wxString &fileName, const wxString &vdFul
     //project
     wxArrayString files;
     files.Add ( fileName );
-    SendCmdEvent ( wxEVT_PROJ_FILE_ADDED, ( void* ) &files );
+    
+    clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
+    evtAddFiles.SetStrings( files );
+    EventNotifier::Get()->AddPendingEvent( evtAddFiles );
     return true;
 }
 
@@ -1071,7 +1074,9 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
     }
 
     if (!actualAdded.IsEmpty()) {
-        SendCmdEvent(wxEVT_PROJ_FILE_ADDED,(void*)&actualAdded);
+        clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
+        evtAddFiles.SetStrings( actualAdded );
+        EventNotifier::Get()->AddPendingEvent( evtAddFiles );
     }
 
     if (actualAdded.GetCount() < files.GetCount()) {
@@ -1143,7 +1148,10 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
     // to the workspace
     wxArrayString files;
     files.Add(newName);
-    SendCmdEvent(wxEVT_PROJ_FILE_ADDED, (void*)&files);
+    
+    clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
+    evtAddFiles.SetStrings( files );
+    EventNotifier::Get()->AddPendingEvent( evtAddFiles );
 
     // Step 5: Change all include files refering to the old
     // file

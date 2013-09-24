@@ -19,6 +19,7 @@
 #include "project.h" // wxStringSet_t
 #include <map>
 #include "overlaytool.h"
+#include "cl_command_event.h"
 
 class gitAction
 {
@@ -142,7 +143,7 @@ private:
     void OnProcessOutput(wxCommandEvent &event);
 
     void OnFileSaved(wxCommandEvent& e);
-    void OnFilesAddedToProject(wxCommandEvent& e);
+    void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(wxCommandEvent& e);
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent &e);

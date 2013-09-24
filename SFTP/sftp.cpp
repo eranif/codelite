@@ -9,6 +9,7 @@
 #include "sftp_workspace_settings.h"
 #include "sftp_writer_thread.h"
 #include <wx/xrc/xmlres.h>
+#include "cl_command_event.h"
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER    = ::wxNewEventType();
@@ -88,6 +89,11 @@ SFTP::SFTP(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
     
+    // API support
+    EventNotifier::Get()->Connect(wxEVT_SFTP_INIT_SESSION,            clCommandEventHandler(SFTP::OnInitSession),        NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG, clCommandEventHandler(SFTP::OnOpenAccountManager), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_SFTP_LIST_ACCOUNTS,           clCommandEventHandler(SFTP::OnListAccounts),       NULL, this);
+
     SFTPWriterThread::Instance()->SetNotifyWindow( this );
     SFTPWriterThread::Instance()->Start();
 }
@@ -149,6 +155,11 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
+    
+    EventNotifier::Get()->Disconnect(wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG, clCommandEventHandler(SFTP::OnOpenAccountManager), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_SFTP_INIT_SESSION, clCommandEventHandler(SFTP::OnInitSession), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_SFTP_LIST_ACCOUNTS, clCommandEventHandler(SFTP::OnListAccounts), NULL, this);
+    
 }
 
 void SFTP::OnSettings(wxCommandEvent& e)
@@ -257,4 +268,54 @@ void SFTP::OnDisableWorkspaceMirroring(wxCommandEvent& e)
 void SFTP::OnDisableWorkspaceMirroringUI(wxUpdateUIEvent& e)
 {
     e.Enable( m_workspaceFile.IsOk() && m_workspaceSettings.IsOk() );
+}
+
+void SFTP::OnInitSession(clCommandEvent& e)
+{
+    wxString accountName = e.GetString();
+    clSSH *ssh = reinterpret_cast<clSSH*>( e.GetClientData() );
+    if ( ssh ) {
+        SFTPSettings settings;
+        SFTPSettings::Load( settings );
+        
+        SSHAccountInfo accountInfo;
+        if ( settings.GetAccount(accountName, accountInfo) ) {
+            ssh->SetUsername( accountInfo.GetUsername() );
+            ssh->SetPassword( accountInfo.GetPassword() );
+            ssh->SetHost( accountInfo.GetHost() );
+            ssh->SetPort( accountInfo.GetPort() );
+            
+            try {
+                ssh->Connect();
+                wxString message;
+                if ( !ssh->AuthenticateServer( message ) ) {
+                    if ( ::wxMessageBox(message, "SSH", wxYES_NO|wxCENTER|wxICON_QUESTION, EventNotifier::Get()->TopFrame()) == wxYES ) {
+                        ssh->AcceptServerAuthentication();
+                    }
+                }
+                ssh->Login();
+            } catch ( clException &e ) {
+                ::wxMessageBox(e.What(), "SSH", wxICON_WARNING|wxOK, EventNotifier::Get()->TopFrame());
+            }
+        }
+    }
+}
+
+void SFTP::OnOpenAccountManager(clCommandEvent& e)
+{
+    OnSettings(e);
+}
+
+void SFTP::OnListAccounts(clCommandEvent& e)
+{
+    SFTPSettings settings;
+    SFTPSettings::Load( settings );
+    
+    wxArrayString accountsArray;
+    const SSHAccountInfo::List_t& accounts = settings.GetAccounts();
+    SSHAccountInfo::List_t::const_iterator iter = accounts.begin();
+    for( ; iter != accounts.begin(); ++iter ) {
+        accountsArray.Add( iter->GetAccountName() );
+    }
+    e.SetStrings( accountsArray );
 }

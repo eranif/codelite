@@ -12,6 +12,11 @@ clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, i
 {
 }
 
+clSSH::clSSH()
+    : m_port(22)
+{
+}
+
 clSSH::~clSSH()
 {
     Close();

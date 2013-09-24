@@ -47,6 +47,7 @@ public:
     
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
+    clSSH();
     virtual ~clSSH();
 
     /**

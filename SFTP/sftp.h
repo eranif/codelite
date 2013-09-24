@@ -3,6 +3,7 @@
 
 #include "plugin.h"
 #include "sftp_workspace_settings.h"
+#include "cl_command_event.h"
 
 class SFTP : public IPlugin
 {
@@ -25,6 +26,11 @@ protected:
     bool IsWorkspaceOpened() const {
         return m_workspaceFile.IsOk();
     }
+    
+    // API calls
+    void OnInitSession(clCommandEvent &e);
+    void OnOpenAccountManager(clCommandEvent &e);
+    void OnListAccounts(clCommandEvent &e);
     
 public:
     //--------------------------------------------

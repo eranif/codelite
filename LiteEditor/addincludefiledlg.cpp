@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah
+// copyright            : (C) 2013 by Eran Ifrah
 // file name            : addincludefiledlg.cpp
 //
 // -------------------------------------------------------------------------
@@ -30,6 +30,7 @@
 #include <algorithm>
 #include "editor_config.h"
 #include "lexer_configuration.h"
+#include "windowattrmanager.h"
 
 wxArrayString AddIncludeFileDlg::m_includePath;
 
@@ -63,6 +64,12 @@ AddIncludeFileDlg::AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath
     SetAndMarkLine();
     Centre();
     m_textCtrlLineToAdd->SetFocus();
+    WindowAttrManager::Load(this, "AddIncludeFileDlg", NULL);
+}
+
+AddIncludeFileDlg::~AddIncludeFileDlg()
+{
+    WindowAttrManager::Save(this, "AddIncludeFileDlg", NULL);
 }
 
 void AddIncludeFileDlg::UpdateLineToAdd()

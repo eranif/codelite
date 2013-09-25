@@ -94,6 +94,8 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     m_auibar6->AddTool(ID_LINEUP, _("Move Up"), wxXmlResource::Get()->LoadBitmap(wxT("arrow-up")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line up"), _("Move the #include statement one line up"), NULL);
     
     m_auibar6->AddTool(ID_LINEDOWN, _("Move Down"), wxXmlResource::Get()->LoadBitmap(wxT("git-arrow-down")), wxNullBitmap, wxITEM_NORMAL, _("Move the #include statement one line down"), _("Move the #include statement one line down"), NULL);
+    
+    m_auibar6->AddTool(wxID_CLEAR, _("Clear Cached Paths"), wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear Cached Paths"), _("Clear Cached Paths"), NULL);
     m_auibar6->Realize();
     
     wxFlexGridSizer* flexGridSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
@@ -133,10 +135,6 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     
     bSizer8->Add(m_buttonCancel, 0, wxALL, 5);
     
-    m_buttonClearCachedPaths = new wxButton(this, wxID_CLEAR, _("Clear Cached Paths"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer8->Add(m_buttonClearCachedPaths, 0, wxALL, 5);
-    
     SetMinSize( wxSize(250,-1) );
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -146,9 +144,9 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     // Connect events
     this->Connect(ID_LINEUP, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonUp), NULL, this);
     this->Connect(ID_LINEDOWN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonDown), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnClearCachedPaths), NULL, this);
     m_textCtrlLineToAdd->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AddIncludeFileDlgBase::OnTextUpdated), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonOK), NULL, this);
-    m_buttonClearCachedPaths->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnClearCachedPaths), NULL, this);
     
 }
 
@@ -156,8 +154,8 @@ AddIncludeFileDlgBase::~AddIncludeFileDlgBase()
 {
     this->Disconnect(ID_LINEUP, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonUp), NULL, this);
     this->Disconnect(ID_LINEDOWN, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonDown), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnClearCachedPaths), NULL, this);
     m_textCtrlLineToAdd->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(AddIncludeFileDlgBase::OnTextUpdated), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnButtonOK), NULL, this);
-    m_buttonClearCachedPaths->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddIncludeFileDlgBase::OnClearCachedPaths), NULL, this);
     
 }

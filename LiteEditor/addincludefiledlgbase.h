@@ -38,14 +38,13 @@ protected:
     wxTextCtrl* m_textCtrlFullPath;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
-    wxButton* m_buttonClearCachedPaths;
 
 protected:
     virtual void OnButtonUp(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonDown(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearCachedPaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearCachedPaths(wxCommandEvent& event) { event.Skip(); }
 
 public:
     AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add a missing header file"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

@@ -46,6 +46,7 @@ protected:
 public:
     /** Constructor */
     AddIncludeFileDlg( wxWindow* parent, const wxString &fullpath, const wxString &text, int lineNo );
+    virtual ~AddIncludeFileDlg();
     wxString GetLineToAdd() const {
         return m_textCtrlLineToAdd->GetValue();
     }

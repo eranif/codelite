@@ -48,7 +48,7 @@ protected:
     virtual void OnClearCachedPaths(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add missing include header file"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add a missing header file"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddIncludeFileDlgBase();
 };
 

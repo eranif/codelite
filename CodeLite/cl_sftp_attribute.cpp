@@ -1,6 +1,7 @@
 #include "cl_sftp_attribute.h"
+#include <libssh/sftp.h>
 
-SFTPAttribute::SFTPAttribute(sftp_attributes attr)
+SFTPAttribute::SFTPAttribute(SFTPAttribute_t attr)
     : m_attributes(NULL)
 {
     Assign(attr);
@@ -11,7 +12,7 @@ SFTPAttribute::~SFTPAttribute()
     DoClear();
 }
 
-void SFTPAttribute::Assign(sftp_attributes attr)
+void SFTPAttribute::Assign(SFTPAttribute_t attr)
 {
     DoClear();
     m_attributes = attr;

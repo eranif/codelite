@@ -26,19 +26,22 @@
 #ifndef SFTPATTRIBUTE_H
 #define SFTPATTRIBUTE_H
 
-#include <libssh/sftp.h>
 #include <wx/filename.h>
 #include "codelite_exports.h"
 #include <list>
 #include <wx/sharedptr.h>
 #include <wx/clntdata.h>
 
+// We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
+struct sftp_attributes_struct;
+typedef struct sftp_attributes_struct* SFTPAttribute_t;
+
 class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
 {
     wxString m_name;
     size_t   m_flags;
     size_t   m_size;
-    sftp_attributes m_attributes;
+    SFTPAttribute_t m_attributes;
 
 public:
     typedef wxSharedPtr<SFTPAttribute>      Ptr_t;
@@ -57,7 +60,7 @@ protected:
     void DoConstruct();
 
 public:
-    SFTPAttribute(sftp_attributes attr);
+    SFTPAttribute(SFTPAttribute_t attr);
     virtual ~SFTPAttribute();
     
     static bool Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two);
@@ -66,7 +69,7 @@ public:
      * This object takes ownership of the attributes and it will free it when done
      * @param attr
      */
-    void Assign(sftp_attributes attr);
+    void Assign(SFTPAttribute_t attr);
 
     size_t GetSize() const {
         return m_size;

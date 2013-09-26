@@ -28,19 +28,22 @@
 
 #include <wx/string.h>
 #include <errno.h>
-#include <libssh/libssh.h>
 #include "cl_exception.h"
 #include "codelite_exports.h"
 #include <wx/sharedptr.h>
 
+// We do it this way to avoid exposing the include to ssh/libssh.h to files including this header
+struct ssh_session_struct;
+typedef struct ssh_session_struct* SSHSession_t;
+
 class WXDLLIMPEXP_CL clSSH
 {
-    wxString    m_host;
-    wxString    m_username;
-    wxString    m_password;
-    int         m_port;
-    ssh_session m_session;
-    bool        m_connected;
+    wxString     m_host;
+    wxString     m_username;
+    wxString     m_password;
+    int          m_port;
+    SSHSession_t m_session;
+    bool         m_connected;
     
 public:
     typedef wxSharedPtr<clSSH> Ptr_t;
@@ -79,7 +82,7 @@ public:
      */
     void Close();
     
-    ssh_session GetSession() {
+    SSHSession_t GetSession() {
         return m_session;
     }
     

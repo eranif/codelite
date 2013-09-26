@@ -1,6 +1,7 @@
 #include <wx/string.h>
 #include <wx/translation.h>
 #include "cl_ssh.h"
+#include <libssh/libssh.h>
 
 clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, int port)
     : m_host(host)

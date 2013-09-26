@@ -28,19 +28,27 @@
 
 #include "cl_ssh.h"
 #include "cl_exception.h"
-#include <libssh/sftp.h>
 #include <wx/filename.h>
 #include "codelite_exports.h"
 #include "cl_sftp_attribute.h"
 
+// We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
+struct sftp_session_struct;
+typedef struct sftp_session_struct* SFTPSession_t;
+
+
 class WXDLLIMPEXP_CL clSFTP
 {
-    clSSH::Ptr_t m_ssh;
-    sftp_session m_sftp;
-    bool         m_connected;
+    clSSH::Ptr_t  m_ssh;
+    SFTPSession_t m_sftp;
+    bool          m_connected;
     
 public:
     typedef wxSharedPtr<clSFTP> Ptr_t;
+    enum {
+        SFTP_BROWSE_FILES   = 0x00000001,
+        SFTP_BROWSE_FOLDERS = 0x00000002,
+    };  
     
 public:
     clSFTP(clSSH::Ptr_t ssh);
@@ -85,7 +93,7 @@ public:
      * @param filter filter out files that do not match the filter
      * @throw clException incase an error occured
      */
-    SFTPAttribute::List_t List(const wxString &folder, bool foldersOnly, const wxString &filter = "") throw (clException);
+    SFTPAttribute::List_t List(const wxString &folder, size_t flags, const wxString &filter = "") throw (clException);
 };
 
 #endif // CLSCP_H

@@ -35,10 +35,11 @@ class FloatingTextCtrl;
 
 class WXDLLIMPEXP_SDK SFTPBrowserDlg : public SFTPBrowserBaseDlg
 {
-    clSFTP::Ptr_t m_sftp;
+    clSFTP::Ptr_t             m_sftp;
     BitmapLoader::BitmapMap_t m_bitmaps;
-    wxString m_filter;
-
+    wxString                  m_filter;
+    size_t                    m_flags;
+    
 protected:
     virtual void OnEnter(wxCommandEvent& event);
     virtual void OnFocusLost(wxFocusEvent& event);
@@ -53,7 +54,7 @@ protected:
     SFTPBrowserEntryClientData* DoGetItemData(const wxDataViewItem& item) const;
 
 public:
-    SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wxString& filter);
+    SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wxString& filter, size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
     virtual ~SFTPBrowserDlg();
 
     void Initialize(const wxString &account, const wxString &path);

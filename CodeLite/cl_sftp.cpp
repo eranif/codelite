@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <wx/filefn.h>
+#include <libssh/sftp.h>
 
 clSFTP::clSFTP(clSSH::Ptr_t ssh)
     : m_ssh(ssh)
@@ -88,7 +89,7 @@ void clSFTP::Write(const wxString& fileContent, const wxString& remotePath) thro
     sftp_close(file);
 }
 
-SFTPAttribute::List_t clSFTP::List(const wxString &folder, bool foldersOnly, const wxString &filter) throw (clException)
+SFTPAttribute::List_t clSFTP::List(const wxString &folder, size_t flags, const wxString &filter) throw (clException)
 {
     sftp_dir dir;
     sftp_attributes attributes;
@@ -109,10 +110,16 @@ SFTPAttribute::List_t clSFTP::List(const wxString &folder, bool foldersOnly, con
         SFTPAttribute::Ptr_t attr( new SFTPAttribute(attributes) );
         attributes = sftp_readdir(m_sftp, dir);
         
-        if ( foldersOnly && !attr->IsFolder()) {
+        // Don't show files ?
+        if ( !(flags & SFTP_BROWSE_FILES) && !attr->IsFolder()) {
             continue;
+        
+        } else if ( (flags & SFTP_BROWSE_FILES) && !attr->IsFolder()  // show files
+                    && filter.IsEmpty() ) {                           // no filter is given
+            files.push_back( attr );
             
-        } else if ( !filter.IsEmpty() && !attr->IsFolder() && !::wxMatchWild(filter, attr->GetName()) ) {
+        } else if ( (flags & SFTP_BROWSE_FILES) && !attr->IsFolder()  // show files
+                    && !::wxMatchWild(filter, attr->GetName()) ) {    // but the file does not match the filter
             continue;
             
         } else {

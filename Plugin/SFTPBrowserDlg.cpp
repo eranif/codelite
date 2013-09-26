@@ -53,10 +53,11 @@ public:
 // ================================================================================
 // ================================================================================
 
-SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wxString& filter)
+SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wxString& filter, size_t flags)
     : SFTPBrowserBaseDlg(parent)
     , m_sftp(NULL)
     , m_filter(filter)
+    , m_flags(flags)
 {
     m_dataviewModel = new MySFTPTreeModel();
     m_dataview->AssociateModel( m_dataviewModel.get() );
@@ -130,10 +131,9 @@ void SFTPBrowserDlg::OnRefreshUI(wxUpdateUIEvent& event)
 
 void SFTPBrowserDlg::DoDisplayEntriesForSelectedPath()
 {
-
     try {
         wxString folder = m_textCtrlRemoteFolder->GetValue();
-        SFTPAttribute::List_t attributes = m_sftp->List( folder, false, m_filter );
+        SFTPAttribute::List_t attributes = m_sftp->List( folder, m_flags, m_filter );
         SFTPAttribute::List_t::iterator iter = attributes.begin();
         for( ; iter != attributes.end(); ++iter ) {
 
@@ -203,8 +203,19 @@ void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
 }
 void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    FileExtManager::FileType type = FileExtManager::GetType(m_textCtrlRemoteFolder->GetValue());
-    event.Enable( type == FileExtManager::TypeWorkspace );
+    wxString selection = m_textCtrlRemoteFolder->GetValue();
+    if ( m_filter.IsEmpty() ) { // folder / files - and there is a selection 
+        event.Enable( !selection.IsEmpty() );
+        
+    } else if ( !(m_flags & clSFTP::SFTP_BROWSE_FILES) ) { // folders only
+        event.Enable( !selection.IsEmpty() );
+        
+    } else if ( !selection.IsEmpty() && (m_flags & clSFTP::SFTP_BROWSE_FILES) && ::wxMatchWild(m_filter, selection) ) {
+        event.Enable( true );
+        
+    } else {
+        event.Enable( false );
+    }
 }
 
 SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& item) const
@@ -237,9 +248,7 @@ wxString SFTPBrowserDlg::GetAccount() const
 
 void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 {
-    wxFileName fn(path, wxPATH_UNIX);
-
-    m_textCtrlRemoteFolder->ChangeValue( fn.GetPath(false, wxPATH_UNIX) );
+    m_textCtrlRemoteFolder->ChangeValue( path );
     int where = m_choiceAccount->FindString(account);
     if ( where != wxNOT_FOUND ) {
         m_choiceAccount->SetSelection(where);

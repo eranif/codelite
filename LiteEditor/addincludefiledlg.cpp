@@ -76,7 +76,7 @@ void AddIncludeFileDlg::UpdateLineToAdd()
 {
     wxString line;
     wxFileName fn(m_fullpath);
-    m_textCtrlFullPath->SetValue(fn.GetFullPath());
+    m_textCtrlFullPath->ChangeValue(fn.GetFullPath());
 
     //try to get a match in the include path for this file
     wxString pp = fn.GetFullPath();
@@ -123,9 +123,7 @@ void AddIncludeFileDlg::UpdateLineToAdd()
         line << wxT("#include \"") << rest << wxT("\"");
 
     }
-
-    m_textCtrlLineToAdd->SetValue(line);
-
+    m_textCtrlLineToAdd->ChangeValue(line);
 }
 
 void AddIncludeFileDlg::SetAndMarkLine()

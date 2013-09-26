@@ -29,8 +29,6 @@ protected:
     
     // API calls
     void OnInitSession(clCommandEvent &e);
-    void OnOpenAccountManager(clCommandEvent &e);
-    void OnListAccounts(clCommandEvent &e);
     
 public:
     //--------------------------------------------

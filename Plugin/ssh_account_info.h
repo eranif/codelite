@@ -3,8 +3,9 @@
 
 #include "cl_config.h" // Base class: clConfigItem
 #include <list>
+#include "codelite_exports.h"
 
-class SSHAccountInfo : public clConfigItem
+class WXDLLIMPEXP_SDK SSHAccountInfo : public clConfigItem
 {
     wxString m_accountName;
     wxString m_username;

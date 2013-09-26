@@ -20,8 +20,9 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include "sftptreemodel.h"
+#include "codelite_exports.h"
 
-class SSHAccountManagerDlgBase : public wxDialog
+class WXDLLIMPEXP_SDK SSHAccountManagerDlgBase : public wxDialog
 {
 protected:
     wxDataViewListCtrl* m_dvListCtrlAccounts;
@@ -42,7 +43,7 @@ public:
 };
 
 
-class AddSSHAcountDlgBase : public wxDialog
+class WXDLLIMPEXP_SDK AddSSHAcountDlgBase : public wxDialog
 {
 protected:
     wxStaticText* m_staticText98;
@@ -70,7 +71,7 @@ public:
 };
 
 
-class SFTPBrowserBaseDlg : public wxDialog
+class WXDLLIMPEXP_SDK SFTPBrowserBaseDlg : public wxDialog
 {
 protected:
     wxStaticText* m_staticText66;

@@ -34,16 +34,6 @@ const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_SAVE_FILE = XRCID("wxEVT_SFTP_SAVE_FILE");
 
 // Event type: clCommandEvent
-// Send this event from within your plugn/codelite core to request list of avaliable accounts 
-// defined by the SFTP plugin
-// use event.GetStrings() to get the account list
-const wxEventType wxEVT_SFTP_LIST_ACCOUNTS = XRCID("wxEVT_SFTP_LIST_ACCOUNTS");
-
-// Event type: clCommandEvent
-// Request to open the SSH account manager managed by the SFTP 
-const wxEventType wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG = XRCID("wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG");
-
-// Event type: clCommandEvent
 // Request SFTP to initialize clSSH session using account name
 // 
 // Use: clCommandEvent::SetClientData() to pass the clSSH object to initialise
@@ -91,8 +81,6 @@ SFTP::SFTP(IManager *manager)
     
     // API support
     EventNotifier::Get()->Connect(wxEVT_SFTP_INIT_SESSION,            clCommandEventHandler(SFTP::OnInitSession),        NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG, clCommandEventHandler(SFTP::OnOpenAccountManager), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_SFTP_LIST_ACCOUNTS,           clCommandEventHandler(SFTP::OnListAccounts),       NULL, this);
 
     SFTPWriterThread::Instance()->SetNotifyWindow( this );
     SFTPWriterThread::Instance()->Start();
@@ -156,10 +144,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
     
-    EventNotifier::Get()->Disconnect(wxEVT_SFTP_OPEN_ACOUNT_MANAGER_DLG, clCommandEventHandler(SFTP::OnOpenAccountManager), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_SFTP_INIT_SESSION, clCommandEventHandler(SFTP::OnInitSession), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_SFTP_LIST_ACCOUNTS, clCommandEventHandler(SFTP::OnListAccounts), NULL, this);
-    
 }
 
 void SFTP::OnSettings(wxCommandEvent& e)
@@ -299,23 +284,4 @@ void SFTP::OnInitSession(clCommandEvent& e)
             }
         }
     }
-}
-
-void SFTP::OnOpenAccountManager(clCommandEvent& e)
-{
-    OnSettings(e);
-}
-
-void SFTP::OnListAccounts(clCommandEvent& e)
-{
-    SFTPSettings settings;
-    SFTPSettings::Load( settings );
-    
-    wxArrayString accountsArray;
-    const SSHAccountInfo::List_t& accounts = settings.GetAccounts();
-    SSHAccountInfo::List_t::const_iterator iter = accounts.begin();
-    for( ; iter != accounts.begin(); ++iter ) {
-        accountsArray.Add( iter->GetAccountName() );
-    }
-    e.SetStrings( accountsArray );
 }

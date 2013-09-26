@@ -4,7 +4,7 @@
 #include "sftp_ui.h"
 #include "ssh_account_info.h"
 
-class AddSSHAcountDlg : public AddSSHAcountDlgBase
+class WXDLLIMPEXP_SDK AddSSHAcountDlg : public AddSSHAcountDlgBase
 {
 public:
     AddSSHAcountDlg(wxWindow* parent);

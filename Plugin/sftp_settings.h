@@ -4,7 +4,7 @@
 #include "cl_config.h" // Base class: clConfigItem
 #include "ssh_account_info.h"
 
-class SFTPSettings : public clConfigItem
+class WXDLLIMPEXP_SDK SFTPSettings : public clConfigItem
 {
     SSHAccountInfo::List_t m_accounts;
 

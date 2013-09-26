@@ -2,11 +2,11 @@
 	"metadata":	{
 		"m_generatedFilesDir":	".",
 		"m_objCounter":	100,
-		"m_includeFiles":	[],
+		"m_includeFiles":	["\"codelite_exports.h\""],
 		"m_bitmapFunction":	"wxCE8CInitBitmapResources",
 		"m_bitmapsFile":	"sftp_ui_sftp_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"sftp_ui",
 		"m_firstWindowId":	1000,
 		"m_useEnum":	false,
 		"m_templateClasses":	[]
@@ -95,7 +95,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"filePicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -798,7 +798,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"filePicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -2033,7 +2033,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"filePicker",
 					"m_label":	"Bitmap File (16x16)  :",

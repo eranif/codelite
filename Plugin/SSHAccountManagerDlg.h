@@ -4,7 +4,7 @@
 #include "sftp_ui.h"
 #include "AddSSHAcountDlg.h"
 
-class SSHAccountManagerDlg : public SSHAccountManagerDlgBase
+class WXDLLIMPEXP_SDK SSHAccountManagerDlg : public SSHAccountManagerDlgBase
 {
 public:
     SSHAccountManagerDlg(wxWindow* parent);

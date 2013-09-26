@@ -33,7 +33,7 @@
 class SFTPBrowserEntryClientData;
 class FloatingTextCtrl;
 
-class SFTPBrowserDlg : public SFTPBrowserBaseDlg
+class WXDLLIMPEXP_SDK SFTPBrowserDlg : public SFTPBrowserBaseDlg
 {
     clSFTP::Ptr_t m_sftp;
     BitmapLoader::BitmapMap_t m_bitmaps;

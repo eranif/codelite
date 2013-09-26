@@ -47,8 +47,7 @@ void SFTPWriterThread::ProcessRequest(ThreadRequest* request)
             // try to write
             try {
                 wxString msg;
-                msg << "SFTP: Successfully uploaded file: [" << req->GetAccount().GetAccountName() << "] " << req->GetRemoteFile();
-                
+                msg << "SFTP: Successfully uploaded file: [" << req->GetAccount().GetAccountName() << "] " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
                 m_sftp->Write(wxFileName(req->GetLocalFile()), req->GetRemoteFile());
                 GetNotifiedWindow()->CallAfter( &SFTP::OnFileWriteOK, msg);
                 

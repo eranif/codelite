@@ -10,6 +10,7 @@
 #include "sftp_writer_thread.h"
 #include <wx/xrc/xmlres.h>
 #include "cl_command_event.h"
+#include "json_node.h"
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER    = ::wxNewEventType();
@@ -26,19 +27,11 @@ const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 //      account : "account-name-to-use",
 //      local_file : "/path/to/local/file",
 //      remote_file : "/path/to/remote/file",
-//      keep_alive : true|false
 //  }
 
 // Event type: clCommandEvent
 // Request SFTP to save a file remotely (see above for more details)
 const wxEventType wxEVT_SFTP_SAVE_FILE = XRCID("wxEVT_SFTP_SAVE_FILE");
-
-// Event type: clCommandEvent
-// Request SFTP to initialize clSSH session using account name
-// 
-// Use: clCommandEvent::SetClientData() to pass the clSSH object to initialise
-// + set the account name using the clCommandEvent::SetString() function
-const wxEventType wxEVT_SFTP_INIT_SESSION = XRCID("wxEVT_SFTP_INIT_SESSION");
 
 // Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
@@ -80,7 +73,7 @@ SFTP::SFTP(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
     
     // API support
-    EventNotifier::Get()->Connect(wxEVT_SFTP_INIT_SESSION,            clCommandEventHandler(SFTP::OnInitSession),        NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
 
     SFTPWriterThread::Instance()->SetNotifyWindow( this );
     SFTPWriterThread::Instance()->Start();
@@ -144,7 +137,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
     
-    EventNotifier::Get()->Disconnect(wxEVT_SFTP_INIT_SESSION, clCommandEventHandler(SFTP::OnInitSession), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
 }
 
 void SFTP::OnSettings(wxCommandEvent& e)
@@ -255,33 +248,39 @@ void SFTP::OnDisableWorkspaceMirroringUI(wxUpdateUIEvent& e)
     e.Enable( m_workspaceFile.IsOk() && m_workspaceSettings.IsOk() );
 }
 
-void SFTP::OnInitSession(clCommandEvent& e)
+void SFTP::OnSaveFile(clCommandEvent& e)
 {
-    wxString accountName = e.GetString();
-    clSSH *ssh = reinterpret_cast<clSSH*>( e.GetClientData() );
-    if ( ssh ) {
-        SFTPSettings settings;
-        SFTPSettings::Load( settings );
+//  {
+//      account : "account-name-to-use",
+//      local_file : "/path/to/local/file",
+//      remote_file : "/path/to/remote/file",
+//  }
+
+    wxString requestString = e.GetString();
+    JSONRoot root(requestString);
+    JSONElement element = root.toElement();
+    if ( !element.hasNamedObject("account") || !element.hasNamedObject("local_file") || !element.hasNamedObject("remote_file") ) {
+        wxLogMessage(wxString() << "SFTP: Invalid save request");
+        return;
+    }
+    
+    SFTPSettings settings;
+    SFTPSettings::Load( settings );
+    
+    wxString accName    = element.namedObject("account").toString();
+    wxString localFile  = element.namedObject("local_file").toString();
+    wxString remoteFile = element.namedObject("remote_file").toString();
+    
+    SSHAccountInfo account;
+    if ( settings.GetAccount(accName, account) ) {
+        SFTPWriterThread::Instance()->Add( new SFTPWriterThreadRequet(account, remoteFile, localFile) );
         
-        SSHAccountInfo accountInfo;
-        if ( settings.GetAccount(accountName, accountInfo) ) {
-            ssh->SetUsername( accountInfo.GetUsername() );
-            ssh->SetPassword( accountInfo.GetPassword() );
-            ssh->SetHost( accountInfo.GetHost() );
-            ssh->SetPort( accountInfo.GetPort() );
-            
-            try {
-                ssh->Connect();
-                wxString message;
-                if ( !ssh->AuthenticateServer( message ) ) {
-                    if ( ::wxMessageBox(message, "SSH", wxYES_NO|wxCENTER|wxICON_QUESTION, EventNotifier::Get()->TopFrame()) == wxYES ) {
-                        ssh->AcceptServerAuthentication();
-                    }
-                }
-                ssh->Login();
-            } catch ( clException &e ) {
-                ::wxMessageBox(e.What(), "SSH", wxICON_WARNING|wxOK, EventNotifier::Get()->TopFrame());
-            }
-        }
+    } else {
+        wxString msg;
+        msg << _("Failed to synchronize file '") << localFile << "'\n"
+            << _("with remote server\n")
+            << _("Could not locate account: ") << accName;
+        ::wxMessageBox(msg, "SFTP", wxOK|wxICON_ERROR);
+        
     }
 }

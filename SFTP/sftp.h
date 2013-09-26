@@ -28,7 +28,7 @@ protected:
     }
     
     // API calls
-    void OnInitSession(clCommandEvent &e);
+    void OnSaveFile(clCommandEvent &e);
     
 public:
     //--------------------------------------------

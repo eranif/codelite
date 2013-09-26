@@ -412,6 +412,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../PCH"/>
+        <IncludePath Value="../sdk/libssh/include"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc --debug=no --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
@@ -422,9 +423,7 @@
       <ResourceCompiler Options="" Required="yes"/>
       <General OutputFile="../lib/gcc_lib/libplugin_sdku.dll" IntermediateDirectory="./WinReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[
-      
-      ]]>
+        <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <DebuggerSearchPaths/>

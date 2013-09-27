@@ -5,6 +5,15 @@
 #include <wx/filefn.h>
 #include <libssh/sftp.h>
 
+class SFTPDirCloser {
+    sftp_dir m_dir;
+public:
+    SFTPDirCloser(sftp_dir d) : m_dir(d) {}
+    ~SFTPDirCloser() {
+        sftp_closedir(m_dir);
+    }
+};
+
 clSFTP::clSFTP(clSSH::Ptr_t ssh)
     : m_ssh(ssh)
     , m_sftp(NULL)
@@ -102,6 +111,12 @@ SFTPAttribute::List_t clSFTP::List(const wxString &folder, size_t flags, const w
     if ( !dir ) {
         throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
     }
+    
+    // Keep the current folder name
+    m_currentFolder = dir->name;
+    
+    // Ensure the directory is closed
+    SFTPDirCloser dc(dir);
     SFTPAttribute::List_t files;
     
     attributes = sftp_readdir(m_sftp, dir);
@@ -140,4 +155,14 @@ wxString clSFTP::GetAccountName() const
         return wxString() << m_ssh->GetUsername() << "@" << m_ssh->GetHost();
         
     }
+}
+
+SFTPAttribute::List_t clSFTP::CdUp(size_t flags, const wxString &filter) throw (clException)
+{
+    wxString curfolder = m_currentFolder;
+    curfolder << "/../"; // Force a cd up
+    
+    wxFileName fn(curfolder, "", wxPATH_UNIX);
+    fn.Normalize();
+    return List(fn.GetPath(false, wxPATH_UNIX), flags, filter);
 }

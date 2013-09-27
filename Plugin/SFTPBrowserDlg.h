@@ -39,8 +39,11 @@ class WXDLLIMPEXP_SDK SFTPBrowserDlg : public SFTPBrowserBaseDlg
     BitmapLoader::BitmapMap_t m_bitmaps;
     wxString                  m_filter;
     size_t                    m_flags;
-    
+
 protected:
+    virtual void OnSSHAccountManager(wxCommandEvent& event);
+    virtual void OnCdUpUI(wxUpdateUIEvent& event);
+    virtual void OnCdUp(wxCommandEvent& event);
     virtual void OnEnter(wxCommandEvent& event);
     virtual void OnFocusLost(wxFocusEvent& event);
     virtual void OnTextUpdated(wxCommandEvent& event);
@@ -50,7 +53,7 @@ protected:
     virtual void OnTextEnter(wxCommandEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
     void DoCloseSession();
-    void DoDisplayEntriesForSelectedPath();
+    void DoDisplayEntriesForPath(const wxString &path = "");
     SFTPBrowserEntryClientData* DoGetItemData(const wxDataViewItem& item) const;
 
 public:

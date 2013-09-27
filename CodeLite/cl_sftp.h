@@ -42,14 +42,15 @@ class WXDLLIMPEXP_CL clSFTP
     clSSH::Ptr_t  m_ssh;
     SFTPSession_t m_sftp;
     bool          m_connected;
-    
+    wxString      m_currentFolder;
+
 public:
     typedef wxSharedPtr<clSFTP> Ptr_t;
     enum {
         SFTP_BROWSE_FILES   = 0x00000001,
         SFTP_BROWSE_FOLDERS = 0x00000002,
-    };  
-    
+    };
+
 public:
     clSFTP(clSSH::Ptr_t ssh);
     virtual ~clSFTP();
@@ -57,13 +58,13 @@ public:
     bool IsConnected() const {
         return m_connected;
     }
-    
+
     /**
      * @brief return the SSH account name that this sftp session is associated with (in the format of user@host)
-     * @return 
+     * @return
      */
     wxString GetAccountName() const;
-    
+
     /**
      * @brief intialize the scp over ssh
      */
@@ -73,19 +74,19 @@ public:
      * @brief close the scp channel
      */
     void Close();
-    
+
     /**
      * @brief write the content of local file into a remote file
      * @param localFile the local file
      * @param remotePath the remote path (abs path)
      */
     void Write(const wxFileName& localFile, const wxString &remotePath) throw (clException);
-    
+
     /**
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
     void Write(const wxString &fileContent, const wxString &remotePath) throw (clException);
-    
+
     /**
      * @brief list the content of a folder
      * @param folder
@@ -94,6 +95,19 @@ public:
      * @throw clException incase an error occured
      */
     SFTPAttribute::List_t List(const wxString &folder, size_t flags, const wxString &filter = "") throw (clException);
+
+    /**
+     * @brief cd up and list the content of the directory
+     * @return
+     */
+    SFTPAttribute::List_t CdUp(size_t flags, const wxString &filter) throw (clException);
+
+    /**
+     * @brief return the current folder
+     */
+    const wxString& GetCurrentFolder() const {
+        return m_currentFolder;
+    }
 };
 
 #endif // CLSCP_H

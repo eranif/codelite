@@ -19,6 +19,7 @@
 #include <wx/gbsizer.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/toolbar.h>
 #include "sftptreemodel.h"
 #include "codelite_exports.h"
 
@@ -74,11 +75,17 @@ public:
 class WXDLLIMPEXP_SDK SFTPBrowserBaseDlg : public wxDialog
 {
 protected:
+    enum {
+        ID_CD_UP = 1001,
+        ID_SSH_ACCOUNT_MANAGER = 1002,
+    };
+protected:
     wxStaticText* m_staticText66;
     wxTextCtrl* m_textCtrlRemoteFolder;
     wxButton* m_buttonRefresh;
     wxStaticText* m_staticText82;
     wxChoice* m_choiceAccount;
+    wxToolBar* m_toolbar;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<SFTPTreeModel> m_dataviewModel;
 
@@ -90,6 +97,9 @@ protected:
     virtual void OnTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCdUp(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCdUpUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSSHAccountManager(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }

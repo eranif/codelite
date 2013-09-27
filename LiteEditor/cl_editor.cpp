@@ -1338,6 +1338,8 @@ void LEditor::CompleteWord(bool onlyRefresh)
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetEditor( this );
+    evt.SetInsideCommentOrString( m_context->IsCommentOrString( GetCurrentPosition()) ) ;
+    
     evt.SetEventObject(this);
 
     if(EventNotifier::Get()->ProcessEvent(evt)) {
@@ -1365,6 +1367,7 @@ void LEditor::CodeComplete()
 
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
+    evt.SetInsideCommentOrString( m_context->IsCommentOrString( GetCurrentPosition()) ) ;
     evt.SetEventObject(this);
     evt.SetEditor(this);
 
@@ -1446,6 +1449,7 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         evtTypeinfo.SetEventObject(this);
         evtTypeinfo.SetEditor(this);
         evtTypeinfo.SetPosition(event.GetPosition());
+        evtTypeinfo.SetInsideCommentOrString( m_context->IsCommentOrString( event.GetPosition() ) ) ;
 
         if(EventNotifier::Get()->ProcessEvent(evtTypeinfo))
             return;
@@ -2765,6 +2769,7 @@ void LEditor::OnRightDown(wxMouseEvent& event)
         clCodeCompletionEvent event(wxEVT_CC_SHOW_QUICK_NAV_MENU);
         event.SetEditor(this);
         event.SetPosition(pos);
+        event.SetInsideCommentOrString( m_context->IsCommentOrString( pos ) ) ;
         EventNotifier::Get()->AddPendingEvent( event );
 
     } else {
@@ -3454,7 +3459,7 @@ void LEditor::ShowFunctionTipFromCurrentPos()
         evt.SetEventObject(this);
         evt.SetEditor(this);
         evt.SetPosition( pos );
-        
+        evt.SetInsideCommentOrString( m_context->IsCommentOrString(pos) ) ;
         if(EventNotifier::Get()->ProcessEvent(evt))
             return;
 

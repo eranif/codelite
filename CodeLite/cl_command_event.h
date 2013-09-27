@@ -26,7 +26,7 @@ public:
     wxClientData *GetClientObject() const ;
 
     virtual wxEvent *Clone() const;
-    
+
     void SetStrings(const wxArrayString& strings) {
         this->m_strings = strings;
     }
@@ -42,11 +42,12 @@ typedef void (wxEvtHandler::*clCommandEventFunction)(clCommandEvent&);
 /// a clCodeCompletionEvent
 class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
 {
-    std::vector<TagEntryPtr> m_tags;
-    wxObject* m_editor;
-    wxString  m_word;
-    int m_position;
-    wxString m_tooltip;
+    TagEntryPtrVector_t m_tags;
+    wxObject*           m_editor;
+    wxString            m_word;
+    int                 m_position;
+    wxString            m_tooltip;
+    bool                m_insideCommentOrString;
 
 public:
     clCodeCompletionEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -55,10 +56,17 @@ public:
     virtual ~clCodeCompletionEvent();
     virtual wxEvent *Clone() const;
 
-    void SetTags(const std::vector<TagEntryPtr>& tags) {
+    void SetInsideCommentOrString(bool insideCommentOrString) {
+        this->m_insideCommentOrString = insideCommentOrString;
+    }
+    
+    bool IsInsideCommentOrString() const {
+        return m_insideCommentOrString;
+    }
+    void SetTags(const TagEntryPtrVector_t& tags) {
         this->m_tags = tags;
     }
-    const std::vector<TagEntryPtr>& GetTags() const {
+    const TagEntryPtrVector_t& GetTags() const {
         return m_tags;
     }
     void SetEditor(wxObject* editor) {

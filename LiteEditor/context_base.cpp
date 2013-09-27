@@ -168,11 +168,18 @@ int ContextBase::DoGetCalltipParamterIndex()
                 // error?
                 exit_loop = true;
                 break;
+            case wxT('<'): 
+                if ( ch_before == '<' ) {
+                    // operator << 
+                    // dont count this as depth ++
+                    break;
+                }
+                // fall thru
             case wxT('('):
-            case wxT('<'):
             case wxT('['):
                 depth++;
                 break;
+                
             case wxT('>'):
                 if ( ch_before == wxT('-') ) {
                     // operator noting to do

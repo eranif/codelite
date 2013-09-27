@@ -2806,6 +2806,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
     clCodeCompletionEvent evt(wxEVT_CC_SHOW_QUICK_OUTLINE, GetId());
     evt.SetEventObject(this);
     evt.SetEditor( GetMainBook()->GetActiveEditor() );
+
     if(EventNotifier::Get()->ProcessEvent(evt))
         return;
 

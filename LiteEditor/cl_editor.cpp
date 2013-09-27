@@ -1391,9 +1391,12 @@ void LEditor::GotoDefinition()
 {
     // Let the plugins process this first
     wxString word = GetWordAtCaret();
-    wxCommandEvent event(wxEVT_CMD_FIND_SYMBOL, GetId());
+    clCodeCompletionEvent event(wxEVT_CC_FIND_SYMBOL, GetId());
     event.SetEventObject(this);
-    event.SetString(word.c_str());
+    event.SetEditor(this);
+    event.SetWord(word);
+    event.SetPosition( GetCurrentPosition() );
+    event.SetInsideCommentOrString( m_context->IsCommentOrString( GetCurrentPosition()) );
     if(EventNotifier::Get()->ProcessEvent(event))
         return;
 

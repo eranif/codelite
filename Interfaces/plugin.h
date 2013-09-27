@@ -321,6 +321,10 @@ enum MenuType {
 // Codelite is about to show the completion box for language keywords
 #define wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD 3505
 
+// User requested to perform a raw search for a symbol
+// Use evt.GetWord() to get the searched string
+#define wxEVT_CC_FIND_SYMBOL 3518
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events - END
@@ -393,10 +397,6 @@ enum MenuType {
 
 // User requested to open the resource dialog
 #define wxEVT_CMD_OPEN_RESOURCE 3517
-
-// User requested to perform a raw search for a symbol
-// Use evt.GetString() to get the searched string
-#define wxEVT_CMD_FIND_SYMBOL 3518
 
 // codelite is about to display the editor's context menu
 // A plugin can override the default menu display by catching this event and

@@ -2,6 +2,7 @@
 #include <wx/translation.h>
 #include "cl_ssh.h"
 #include <libssh/libssh.h>
+#include <wx/textdlg.h>
 
 clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, int port)
     : m_host(host)
@@ -112,47 +113,36 @@ void clSSH::Login() throw (clException)
     }
 
     int rc;
-    // rc = ssh_userauth_kbdint(m_session, NULL, NULL);
-    // if ( false /*rc == SSH_AUTH_INFO*/ ) {
-    //     while (rc == SSH_AUTH_INFO) {
-    //         const char *name, *instruction;
-    //         int nprompts, iprompt;
-    //         name = ssh_userauth_kbdint_getname(m_session);
-    //         instruction = ssh_userauth_kbdint_getinstruction(m_session);
-    //         nprompts = ssh_userauth_kbdint_getnprompts(m_session);
-    //         if (strlen(name) > 0)
-    //             printf("%s\n", name);
-    //         if (strlen(instruction) > 0)
-    //             printf("%s\n", instruction);
-    //         for (iprompt = 0; iprompt < nprompts; iprompt++) {
-    //             const char *prompt;
-    //             char echo;
-    //             prompt = ssh_userauth_kbdint_getprompt(m_session, iprompt, &echo);
-    //             if (echo) {
-    //                 char buffer[128], *ptr;
-    //                 printf("%s", prompt);
-    //                 if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-    //                     throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
-    //                 }
-    // 
-    //                 buffer[sizeof(buffer) - 1] = '\0';
-    //                 if ((ptr = strchr(buffer, '\n')) != NULL)
-    //                     ptr = '\0';
-    //                 if (ssh_userauth_kbdint_setanswer(m_session, iprompt, buffer) < 0) {
-    //                     throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
-    // 
-    //                 }
-    //                 memset(buffer, 0, strlen(buffer));
-    //             } else {
-    //                 if (ssh_userauth_kbdint_setanswer(m_session, iprompt, GetPassword().mb_str(wxConvUTF8).data()) < 0) {
-    //                     throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
-    //                 }
-    //             }
-    //         }
-    //         rc = ssh_userauth_kbdint(m_session, NULL, NULL);
-    //     }
-    // 
-    // } else {
+    rc = ssh_userauth_kbdint(m_session, NULL, NULL);
+    if ( rc == SSH_AUTH_INFO ) {
+        while (rc == SSH_AUTH_INFO) {
+            const char *name, *instruction;
+            int nprompts, iprompt;
+            name        = ssh_userauth_kbdint_getname(m_session);
+            instruction = ssh_userauth_kbdint_getinstruction(m_session);
+            nprompts    = ssh_userauth_kbdint_getnprompts(m_session);
+            for (iprompt = 0; iprompt < nprompts; iprompt++) {
+                const char *prompt;
+                char echo;
+                prompt = ssh_userauth_kbdint_getprompt(m_session, iprompt, &echo);
+                if ( echo ) {
+                    wxString answer = ::wxGetTextFromUser(prompt, "SSH");
+                    if ( answer.IsEmpty() ) {
+                        throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
+                    }
+                    if (ssh_userauth_kbdint_setanswer(m_session, iprompt, answer.mb_str(wxConvUTF8).data()) < 0) {
+                        throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
+                    }
+                } else {
+                    if (ssh_userauth_kbdint_setanswer(m_session, iprompt, GetPassword().mb_str(wxConvUTF8).data()) < 0) {
+                        throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
+                    }
+                }
+            }
+            rc = ssh_userauth_kbdint(m_session, NULL, NULL);
+        }
+    
+    } else {
         // interactive keyboard method failed, try another method
         rc = ssh_userauth_password(m_session, NULL, GetPassword().mb_str().data());
         if ( rc == SSH_AUTH_SUCCESS ) {
@@ -164,7 +154,7 @@ void clSSH::Login() throw (clException)
         } else {
             throw clException(wxString() << _("Authentication error: ") << ssh_get_error(m_session));
         }
-    // }
+    }
 }
 
 void clSSH::Close()

@@ -13,7 +13,7 @@ ContextHtml::ContextHtml(LEditor *editor)
 }
 
 ContextHtml::ContextHtml()
-    : ContextBase(wxT("Html"))
+    : ContextBase(wxT("html"))
 {
 }
 

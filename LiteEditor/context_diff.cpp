@@ -37,8 +37,8 @@ ContextDiff::ContextDiff()
 ContextDiff::ContextDiff(LEditor *container)
     : ContextBase(container)
 {
-    SetName(wxT("Diff"));
-	ApplySettings();
+    SetName(wxT("diff"));
+    ApplySettings();
 }
 
 ContextDiff::~ContextDiff()

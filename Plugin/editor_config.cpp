@@ -196,12 +196,40 @@ wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
     return NULL;
 }
 
+LexerConfPtr EditorConfig::GetLexerForFile(const wxString& filename)
+{
+    if ( !m_activeThemeLexers )
+        return NULL;
+    
+    wxFileName fnFileName(filename);
+    wxString fileNameLowercase = fnFileName.GetFullName();
+    fileNameLowercase.MakeLower();
+    
+    ThemeLexersMap::iterator iter = m_activeThemeLexers->lexers.begin();
+    for(; iter != m_activeThemeLexers->lexers.end(); ++iter) {
+        wxString fileSpec = iter->second->GetFileSpec();
+        fileSpec.MakeLower();
+        
+        wxArrayString specs = ::wxStringTokenize(fileSpec, ";", wxTOKEN_STRTOK);
+        for(size_t i=0; i<specs.GetCount(); ++i) {
+            if ( ::wxMatchWild(specs.Item(i), fileNameLowercase) ) {
+                // found the lexer for this file extension
+                return iter->second;
+            }
+        }
+    }
+    return GetLexer("Text");
+}
+
 LexerConfPtr EditorConfig::GetLexer(const wxString &lexerName)
 {
     if ( !m_activeThemeLexers )
         return NULL;
-        
-    std::map<wxString, LexerConfPtr>::const_iterator iter = m_activeThemeLexers->lexers.find(lexerName);
+    
+    wxString lexerNameLowercase = lexerName;
+    lexerNameLowercase.MakeLower();
+    
+    std::map<wxString, LexerConfPtr>::const_iterator iter = m_activeThemeLexers->lexers.find( lexerNameLowercase );
     if(iter == m_activeThemeLexers->lexers.end())
         return NULL;
 

@@ -124,6 +124,7 @@ void SyntaxHighlightDlg::LoadLexers(const wxString& theme)
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(editor) {
         currentLexer = editor->GetContext()->GetName();
+        currentLexer.MakeLower();
     }
 
     //remove old lexers

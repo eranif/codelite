@@ -37,77 +37,77 @@
 #include "codelite_exports.h"
 
 enum {
-	View_Show_Workspace_Tab = 0x00000001,
-	View_Show_Explorer_Tab  = 0x00000002,
-	View_Show_Tabs_Tab      = 0x00000004,
-	View_Show_Tabgroups_Tab = 0x00000008,
-	View_Show_Default       = View_Show_Workspace_Tab | View_Show_Explorer_Tab | View_Show_Tabs_Tab | View_Show_Tabgroups_Tab
+    View_Show_Workspace_Tab = 0x00000001,
+    View_Show_Explorer_Tab  = 0x00000002,
+    View_Show_Tabs_Tab      = 0x00000004,
+    View_Show_Tabgroups_Tab = 0x00000008,
+    View_Show_Default       = View_Show_Workspace_Tab | View_Show_Explorer_Tab | View_Show_Tabs_Tab | View_Show_Tabgroups_Tab
 };
 
 class WXDLLIMPEXP_SDK SimpleLongValue : public SerializedObject
 {
-	long m_value;
+    long m_value;
 public:
-	SimpleLongValue();
-	~SimpleLongValue();
+    SimpleLongValue();
+    ~SimpleLongValue();
 
-	void DeSerialize(Archive &arch);
-	void Serialize(Archive &arch);
+    void DeSerialize(Archive &arch);
+    void Serialize(Archive &arch);
 
-	//Setters
-	void SetValue(const long& value) {
-		this->m_value = value;
-	}
-	//Getters
-	const long& GetValue() const {
-		return m_value;
-	}
+    //Setters
+    void SetValue(const long& value) {
+        this->m_value = value;
+    }
+    //Getters
+    const long& GetValue() const {
+        return m_value;
+    }
 };
 
 class WXDLLIMPEXP_SDK SimpleStringValue : public SerializedObject
 {
-	wxString m_value;
+    wxString m_value;
 public:
-	SimpleStringValue();
-	~SimpleStringValue();
+    SimpleStringValue();
+    ~SimpleStringValue();
 
-	void DeSerialize(Archive &arch);
-	void Serialize(Archive &arch);
+    void DeSerialize(Archive &arch);
+    void Serialize(Archive &arch);
 
-	void SetValue(const wxString& value) {
-		this->m_value = value;
-	}
-	const wxString& GetValue() const {
-		return m_value;
-	}
+    void SetValue(const wxString& value) {
+        this->m_value = value;
+    }
+    const wxString& GetValue() const {
+        return m_value;
+    }
 };
 
 class WXDLLIMPEXP_SDK SimpleRectValue : public SerializedObject
 {
-	wxRect m_rect;
+    wxRect m_rect;
 
 public:
-	SimpleRectValue();
-	~SimpleRectValue();
+    SimpleRectValue();
+    ~SimpleRectValue();
 
-	void DeSerialize(Archive &arch);
-	void Serialize(Archive &arch);
+    void DeSerialize(Archive &arch);
+    void Serialize(Archive &arch);
 
-	void SetRect(const wxRect& rect) {
-		this->m_rect = rect;
-	}
-	const wxRect& GetRect() const {
-		return m_rect;
-	}
+    void SetRect(const wxRect& rect) {
+        this->m_rect = rect;
+    }
+    const wxRect& GetRect() const {
+        return m_rect;
+    }
 };
 
 typedef std::map<wxString, LexerConfPtr> ThemeLexersMap;
 struct LexersInfo {
-	ThemeLexersMap lexers;
-	wxString       filename;
-	wxString       theme;
-	wxString       outputpane_fg_colour;  // Here because they're global to this theme, not per lexor
-	wxString       outputpane_bg_colour;
+    ThemeLexersMap lexers;
+    wxString       filename;
+    wxString       theme;
+    wxString       outputpane_fg_colour;  // Here because they're global to this theme, not per lexor
+    wxString       outputpane_bg_colour;
 };
 
 /**
@@ -123,220 +123,227 @@ struct LexersInfo {
  */
 class WXDLLIMPEXP_SDK EditorConfig : public IConfigTool
 {
-	friend class EditorConfigST;
-	wxXmlDocument*                      m_doc;
-	wxFileName                          m_fileName;
-	std::map<wxString, LexersInfo*>     m_lexers;
-	bool                                m_transcation;
-	wxString                            m_svnRevision;
-	wxString                            m_version;
-	wxString                            m_installDir;
-	LexersInfo*                         m_activeThemeLexers;
+    friend class EditorConfigST;
+    wxXmlDocument*                      m_doc;
+    wxFileName                          m_fileName;
+    std::map<wxString, LexersInfo*>     m_lexers;
+    bool                                m_transcation;
+    wxString                            m_svnRevision;
+    wxString                            m_version;
+    wxString                            m_installDir;
+    LexersInfo*                         m_activeThemeLexers;
 
 private:
-	bool DoSave() const;
-	bool DoLoadDefaultSettings();
+    bool DoSave() const;
+    bool DoLoadDefaultSettings();
 
 public:
 
-	//load lexers again, based on the active theme
-	void LoadLexers(bool loadDefault);
-	wxArrayString GetLexersThemes();
+    //load lexers again, based on the active theme
+    void LoadLexers(bool loadDefault);
+    wxArrayString GetLexersThemes();
 
-	void Init(const wxChar *revision, const wxChar* version) {
-		this->m_svnRevision  = revision;
-		this->m_version      = version;
-	}
+    void Init(const wxChar *revision, const wxChar* version) {
+        this->m_svnRevision  = revision;
+        this->m_version      = version;
+    }
 
 public:
-	typedef std::map<wxString, LexerConfPtr>::const_iterator ConstIterator;
+    typedef std::map<wxString, LexerConfPtr>::const_iterator ConstIterator;
 
-	void Begin();
-	void Save();
+    void Begin();
+    void Save();
 
-	/**
-	 * Load the configuration file
-	 * \param fileName configuration file name
-	 * \return true on success false otherwise
-	 */
-	bool Load();
+    /**
+     * Load the configuration file
+     * \param fileName configuration file name
+     * \return true on success false otherwise
+     */
+    bool Load();
 
-	/**
-	 * Find lexer configuration and return a pointer to a LexerConf object
-	 * \param lexer lexer name (e.g. Cpp, Java, Default etc..)
-	 * \return LexerConfPtr
-	 */
-	LexerConfPtr GetLexer(const wxString& lexer);
+    /**
+     * Find lexer configuration and return a pointer to a LexerConf object
+     * \param lexer lexer name (e.g. Cpp, Java, Default etc..)
+     * \return LexerConfPtr
+     */
+    LexerConfPtr GetLexer(const wxString& lexer);
 
-	/**
-	 * Get the outputview's foreground colour, which is global to a theme
-	 * \return the colour as a wxString
-	 */
-	wxString GetCurrentOutputviewFgColour() const;
+    /**
+     * @brief return the proper lexer based on the file's extension
+     * @param filename
+     * @return the file's lexer or the "Text" lexer
+     */
+    LexerConfPtr GetLexerForFile(const wxString& filename);
+    
+    /**
+     * Get the outputview's foreground colour, which is global to a theme
+     * \return the colour as a wxString
+     */
+    wxString GetCurrentOutputviewFgColour() const;
 
-	/**
-	 * Get the outputview's background colour, which is global to a theme
-	 * \return the colour as a wxString
-	 */
-	wxString GetCurrentOutputviewBgColour() const;
+    /**
+     * Get the outputview's background colour, which is global to a theme
+     * \return the colour as a wxString
+     */
+    wxString GetCurrentOutputviewBgColour() const;
 
-	/**
-	 * Return iterator to the begin of the undelying lexer mapping
-	  */
-	ConstIterator LexerBegin();
+    /**
+     * Return iterator to the begin of the undelying lexer mapping
+      */
+    ConstIterator LexerBegin();
 
-	/**
-	 * Return iterator to the end of the undelying lexer mapping
-	 */
-	ConstIterator LexerEnd();
+    /**
+     * Return iterator to the end of the undelying lexer mapping
+     */
+    ConstIterator LexerEnd();
 
-	/**
-	 * Test if this configuration is loaded properly
-	 * \return true of a file is loaded into the configuration manager false otherwise
-	 */
-	bool IsOk() const {
-		return m_doc->IsOk();
-	}
+    /**
+     * Test if this configuration is loaded properly
+     * \return true of a file is loaded into the configuration manager false otherwise
+     */
+    bool IsOk() const {
+        return m_doc->IsOk();
+    }
 
-	/**
-	 * Read the editor options from the configuration file
-	 * and return them as an object
-	 */
-	OptionsConfigPtr GetOptions() const;
+    /**
+     * Read the editor options from the configuration file
+     * and return them as an object
+     */
+    OptionsConfigPtr GetOptions() const;
 
-	/**
-	 * Set options to the configuration file, override them if they does not exist
-	 */
-	void SetOptions(OptionsConfigPtr opts);
+    /**
+     * Set options to the configuration file, override them if they does not exist
+     */
+    void SetOptions(OptionsConfigPtr opts);
 
-	/**
-	 * Return the database that should be used by the editor
-	 * \return
-	 */
-	wxString GetTagsDatabase() const;
+    /**
+     * Return the database that should be used by the editor
+     * \return
+     */
+    wxString GetTagsDatabase() const;
 
-	/**
-	 * Set tags database to be use by editor (in addition to the workspace one)
-	 * \param &dbName
-	 */
-	void SetTagsDatabase(const wxString &dbName);
+    /**
+     * Set tags database to be use by editor (in addition to the workspace one)
+     * \param &dbName
+     */
+    void SetTagsDatabase(const wxString &dbName);
 
-	/**
-	 * Store in the current LexersInfo, the outputview's foreground colour as it's global to a theme
-	 */
-	void SetCurrentOutputviewFgColour(const wxString& colourstring) {
-		if (m_activeThemeLexers) {
-			m_activeThemeLexers->outputpane_fg_colour = colourstring;
-		}
-	}
+    /**
+     * Store in the current LexersInfo, the outputview's foreground colour as it's global to a theme
+     */
+    void SetCurrentOutputviewFgColour(const wxString& colourstring) {
+        if (m_activeThemeLexers) {
+            m_activeThemeLexers->outputpane_fg_colour = colourstring;
+        }
+    }
 
-	/**
-	 * Store in the current LexersInfo, the outputview's background colour as it's global to a theme
-	 */
-	void SetCurrentOutputviewBgColour(const wxString& colourstring) {
-		if (m_activeThemeLexers) {
-			m_activeThemeLexers->outputpane_bg_colour = colourstring;
-		}
-	}
+    /**
+     * Store in the current LexersInfo, the outputview's background colour as it's global to a theme
+     */
+    void SetCurrentOutputviewBgColour(const wxString& colourstring) {
+        if (m_activeThemeLexers) {
+            m_activeThemeLexers->outputpane_bg_colour = colourstring;
+        }
+    }
 
-	/**
-	 * save lexers settings
-	 */
-	void SaveLexers();
+    /**
+     * save lexers settings
+     */
+    void SaveLexers();
 
-	/**
-	 * get an array of recently opened items e.g. workspaces
-	 * \param files  [output] a place holder for the output
-	 * \param nodename  the type of item to get
-	 */
-	void GetRecentItems(wxArrayString &files, const wxString nodeName);
+    /**
+     * get an array of recently opened items e.g. workspaces
+     * \param files  [output] a place holder for the output
+     * \param nodename  the type of item to get
+     */
+    void GetRecentItems(wxArrayString &files, const wxString nodeName);
 
-	/**
-	 * Set an array of recently opened items e.g. workspaces
-	 * \param files  list of files to save
-	 * \param nodename  the type of item to set
-	 */
-	void SetRecentItems(const wxArrayString &files, const wxString nodeName);
+    /**
+     * Set an array of recently opened items e.g. workspaces
+     * \param files  list of files to save
+     * \param nodename  the type of item to set
+     */
+    void SetRecentItems(const wxArrayString &files, const wxString nodeName);
 
-	/**
-	 * \brief write an archived object to the xml configuration
-	 * \param name object name
-	 * \param arch the archived object container
-	 */
-	virtual bool WriteObject(const wxString &name, SerializedObject *obj);
+    /**
+     * \brief write an archived object to the xml configuration
+     * \param name object name
+     * \param arch the archived object container
+     */
+    virtual bool WriteObject(const wxString &name, SerializedObject *obj);
 
-	/**
-	 * \brief read an archived object from the configuration
-	 * \param name object to read
-	 * \param arch [output]
-	 */
-	virtual bool ReadObject(const wxString &name, SerializedObject *obj);
+    /**
+     * \brief read an archived object from the configuration
+     * \param name object to read
+     * \param arch [output]
+     */
+    virtual bool ReadObject(const wxString &name, SerializedObject *obj);
 
-	/**
-	 * Return the configuration version
-	 */
-	wxString GetRevision() const;
+    /**
+     * Return the configuration version
+     */
+    wxString GetRevision() const;
 
-	/**
-	 * Set the current configuration revision
-	 */
-	void SetRevision(const wxString &rev);
-	void SetInstallDir(const wxString &instlDir);
+    /**
+     * Set the current configuration revision
+     */
+    void SetRevision(const wxString &rev);
+    void SetInstallDir(const wxString &instlDir);
 
-	/**
-	 * \brief convinience methods to store a single long value
-	 * \param name variable name
-	 * \param value value to store
-	 */
-	void SaveLongValue(const wxString &name, long value);
+    /**
+     * \brief convinience methods to store a single long value
+     * \param name variable name
+     * \param value value to store
+     */
+    void SaveLongValue(const wxString &name, long value);
 
-	/**
-	 * \brief convinience methods to retrieve a single long value stored using
-	 * the 'SaveLongValue()' method
-	 * \param name variable name
-	 * \param value value
-	 * \return return true on success, false otherwise
-	 */
-	bool GetLongValue(const wxString &name, long &value);
+    /**
+     * \brief convinience methods to retrieve a single long value stored using
+     * the 'SaveLongValue()' method
+     * \param name variable name
+     * \param value value
+     * \return return true on success, false otherwise
+     */
+    bool GetLongValue(const wxString &name, long &value);
 
-	/**
-	 * \brief get string from the configuration identified by key
-	 * \param key key identifiying the string
-	 * \return wxEmptyString or the value
-	 */
-	wxString GetStringValue(const wxString &key);
+    /**
+     * \brief get string from the configuration identified by key
+     * \param key key identifiying the string
+     * \return wxEmptyString or the value
+     */
+    wxString GetStringValue(const wxString &key);
 
-	/**
-	 * \brief
-	 * \param key
-	 * \param value
-	 */
-	void SaveStringValue(const wxString &key, const wxString &value);
+    /**
+     * \brief
+     * \param key
+     * \param value
+     */
+    void SaveStringValue(const wxString &key, const wxString &value);
 
-	/**
-	 * \brief should this pane remain open despite an editor click
-	 * \param caption string to identify the pane
-	 * \return true if the pane should stay open
-	 */
-	bool GetPaneStickiness(const wxString& caption);
+    /**
+     * \brief should this pane remain open despite an editor click
+     * \param caption string to identify the pane
+     * \return true if the pane should stay open
+     */
+    bool GetPaneStickiness(const wxString& caption);
 
-	/**
-	 * \brief sets whether this pane should remain open despite an editor click
-	 * \param caption string to identify the pane
-	 * \param stickiness true if the pane should stay open
-	 */	
-	void SetPaneStickiness(const wxString& caption, bool stickiness);
+    /**
+     * \brief sets whether this pane should remain open despite an editor click
+     * \param caption string to identify the pane
+     * \param stickiness true if the pane should stay open
+     */
+    void SetPaneStickiness(const wxString& caption, bool stickiness);
 
 private:
-	EditorConfig();
-	virtual ~EditorConfig();
-	wxXmlNode *GetLexerNode(const wxString& lexer);
+    EditorConfig();
+    virtual ~EditorConfig();
+    wxXmlNode *GetLexerNode(const wxString& lexer);
 };
 
 class WXDLLIMPEXP_SDK EditorConfigST
 {
 public:
-	static EditorConfig* Get();
-	static void Free();
+    static EditorConfig* Get();
+    static void Free();
 };
 #endif // LITEEDITOR_EDITOR_CONFIG_H

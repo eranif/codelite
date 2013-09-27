@@ -61,24 +61,12 @@ ZoomText::~ZoomText()
 void ZoomText::UpdateLexer(const wxString& filename)
 {
     m_filename = filename;
-    FileExtManager::FileType type = FileExtManager::GetType(filename);
-    switch ( type ) {
-    case FileExtManager::TypeHeader:
-    case FileExtManager::TypeSourceC:
-    case FileExtManager::TypeSourceCpp: {
-        LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("C++");
-        SetLexer(wxSTC_LEX_CPP);
-        lexer->Apply( this );
-        break;
+    LexerConfPtr lexer = EditorConfigST::Get()->GetLexerForFile(filename);
+    if ( !lexer ) {
+        lexer = EditorConfigST::Get()->GetLexer("Text");
     }
-    default: {
-        LexerConfPtr lexer = EditorConfigST::Get()->GetLexer("Text");
-        SetLexer(wxSTC_LEX_NULL);
-        lexer->Apply( this );
-        break;
-    }
-    }
-
+    lexer->Apply( this );
+    
     SetZoom( m_zoomFactor );
     SetEditable( false );
     SetUseHorizontalScrollBar( false );

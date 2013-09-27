@@ -1050,12 +1050,12 @@ void clMainFrame::CreateViewAsSubMenu()
             LexerConfPtr lex = iter->second;
             wxString lexName = lex->GetName();
             lexName.Trim().Trim(false);
-
+            lexName.MakeLower();
             if(lexName.IsEmpty())
                 continue;
 
             item = new wxMenuItem(submenu, minId, lex->GetName(), wxEmptyString, wxITEM_CHECK);
-            m_viewAsMap[minId] = lex->GetName();
+            m_viewAsMap[minId] = lexName;
             minId++;
             submenu->Append(item);
         }

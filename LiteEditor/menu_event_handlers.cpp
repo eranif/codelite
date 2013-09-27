@@ -368,7 +368,11 @@ void ViewAsHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event
 
     event.Enable(true);
     wxString lexName = clMainFrame::Get()->GetViewAsLanguageById(event.GetInt());
-    event.Check(editor->GetContext()->GetName() == lexName);
+    
+    wxString contextName = editor->GetContext()->GetName();
+    contextName.MakeLower();
+    
+    event.Check(contextName == lexName);
 }
 
 //----------------------------------------------------

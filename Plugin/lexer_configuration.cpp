@@ -49,7 +49,8 @@ void LexerConf::FromXml(wxXmlNode *element)
 
         // read the lexer name
         m_name = element->GetPropVal(wxT("Name"), wxEmptyString);
-
+        m_name.MakeLower();
+        
         m_styleWithinPreProcessor = element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false;
 
         // load key words
@@ -236,9 +237,9 @@ static wxColor GetInactiveColor(const wxColor& col)
 #define CL_LINE_SAVED_STYLE         201
 void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
+    ctrl->SetLexer( GetLexerId() );
     ctrl->StyleClearAll();
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
-
     // Define the styles for the editing margin
     ctrl->StyleSetBackground(CL_LINE_SAVED_STYLE,    wxColour(wxT("FOREST GREEN")));
     ctrl->StyleSetBackground(CL_LINE_MODIFIED_STYLE, wxColour(wxT("ORANGE")));

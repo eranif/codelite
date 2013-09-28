@@ -952,7 +952,9 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent &event)
             << wxT(",  Col ")
             << GetColumn(pos)
             << wxT(",  Pos ")
-            << pos;
+            << pos
+            << ", Style "
+            << GetStyleAt(pos);
 
     // Always update the status bar with event, calling it directly causes performance degredation
     DoSetStatusMessage(message, 1);

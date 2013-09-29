@@ -1340,7 +1340,7 @@ void LEditor::CompleteWord(bool onlyRefresh)
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetEditor( this );
-    evt.SetInsideCommentOrString( m_context->IsCommentOrString( GetCurrentPosition()) ) ;
+    evt.SetInsideCommentOrString( m_context->IsCommentOrString( PositionBefore( GetCurrentPos() ) ) ) ;
     
     evt.SetEventObject(this);
 
@@ -1369,7 +1369,7 @@ void LEditor::CodeComplete()
 
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
-    evt.SetInsideCommentOrString( m_context->IsCommentOrString( GetCurrentPosition()) ) ;
+    evt.SetInsideCommentOrString( m_context->IsCommentOrString( PositionBefore( GetCurrentPos() )) ) ;
     evt.SetEventObject(this);
     evt.SetEditor(this);
 
@@ -1398,7 +1398,7 @@ void LEditor::GotoDefinition()
     event.SetEditor(this);
     event.SetWord(word);
     event.SetPosition( GetCurrentPosition() );
-    event.SetInsideCommentOrString( m_context->IsCommentOrString( GetCurrentPosition()) );
+    event.SetInsideCommentOrString( m_context->IsCommentOrString( PositionBefore( GetCurrentPos() )) );
     if(EventNotifier::Get()->ProcessEvent(event))
         return;
 

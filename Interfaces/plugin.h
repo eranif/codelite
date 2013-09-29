@@ -296,7 +296,7 @@ enum MenuType {
 // clientData is set to the client data set by the user
 // the plugin returns the tooltip to the IDE using the:
 // evt.SetTooltip(..) method
-// Use evt.GetClientData() to retrieve the client data associated with this tag
+// Use evt.GetTagEntry() to retrieve the tag 
 #define wxEVT_CC_CODE_COMPLETE_TAG_COMMENT 3500
 
 // A function calltip is requesed

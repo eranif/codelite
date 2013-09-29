@@ -53,6 +53,7 @@ clCodeCompletionEvent::clCodeCompletionEvent(const clCodeCompletionEvent& event)
     : clCommandEvent(event)
     , m_editor(NULL)
     , m_insideCommentOrString(false)
+    , m_tagEntry(NULL)
 {
     *this = event;
 }
@@ -61,6 +62,7 @@ clCodeCompletionEvent::clCodeCompletionEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
     , m_editor(NULL)
     , m_insideCommentOrString(false)
+    , m_tagEntry(NULL)
 {
 }
 
@@ -79,5 +81,6 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     m_position = src.m_position;
     m_tooltip = src.m_tooltip;
     m_insideCommentOrString = src.m_insideCommentOrString;
+    m_tagEntry = src.m_tagEntry;
     return *this;
 }

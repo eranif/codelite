@@ -1448,7 +1448,7 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
              ga.action != gitDiffRepoShow )
         
         {
-            if ( tmpOutput == "password:" || tmpOutput.Contains("password for") ) {
+            if ( tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for") ) {
 
                 // Password is required
                 wxString pass = ::wxGetPasswordFromUser(output);

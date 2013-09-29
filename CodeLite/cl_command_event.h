@@ -48,6 +48,7 @@ class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
     int                 m_position;
     wxString            m_tooltip;
     bool                m_insideCommentOrString;
+    TagEntryPtr         m_tagEntry;
 
 public:
     clCodeCompletionEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -56,10 +57,22 @@ public:
     virtual ~clCodeCompletionEvent();
     virtual wxEvent *Clone() const;
 
+    void SetTagEntry(TagEntryPtr tag) {
+        this->m_tagEntry = tag;
+    }
+    
+    /**
+     * @brief return the tag entry associated with this event.
+     * This usually makes sense for event wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED
+     */
+    TagEntryPtr GetTagEntry() const {
+        return m_tagEntry;
+    }
+    
     void SetInsideCommentOrString(bool insideCommentOrString) {
         this->m_insideCommentOrString = insideCommentOrString;
     }
-    
+
     bool IsInsideCommentOrString() const {
         return m_insideCommentOrString;
     }

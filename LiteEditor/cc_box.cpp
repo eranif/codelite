@@ -709,7 +709,7 @@ void CCBox::DoShowTagTip()
     if(m_owner) {
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_TAG_COMMENT, GetId());
         evt.SetEventObject(this);
-        evt.SetClientData(tag.GetUserData());
+        evt.SetTagEntry( tag );
         if(EventNotifier::Get()->ProcessEvent(evt)) {
             prefix << evt.GetTooltip();
             gotAComment = true;

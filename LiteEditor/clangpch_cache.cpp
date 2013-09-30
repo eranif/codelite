@@ -89,10 +89,12 @@ void ClangTUCache::RemoveEntry(const wxString& filename)
     if(iter != m_cache.end()) {
         CL_DEBUG(wxT("clang_disposeTranslationUnit for TU: %p"), (void*)iter->second.TU);
         clang_disposeTranslationUnit(iter->second.TU);
+        {
+            wxLogNull nolog;
+            wxRemoveFile(iter->second.fileTU);
+        }
+        // it is now safe to erase the iter
         m_cache.erase(iter);
-
-        wxLogNull nolog;
-        wxRemoveFile(iter->second.fileTU);
     }
 }
 

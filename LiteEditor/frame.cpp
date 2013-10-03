@@ -374,7 +374,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("local_workspace_prefs"),    clMainFrame::OnWorkspaceOpen)
     EVT_UPDATE_UI(XRCID("local_workspace_settings"), clMainFrame::OnWorkspaceOpen)
     EVT_UPDATE_UI(XRCID("close_workspace"),          clMainFrame::OnWorkspaceOpen)
-    EVT_UPDATE_UI(XRCID("reload_workspace"),         clMainFrame::OnReloadWorkspaceUI)
+    EVT_UPDATE_UI(XRCID("reload_workspace"),         clMainFrame::OnWorkspaceOpen)
     EVT_UPDATE_UI(XRCID("add_project"),              clMainFrame::OnWorkspaceMenuUI)
     EVT_UPDATE_UI(XRCID("reconcile_project"),        clMainFrame::OnShowActiveProjectSettingsUI)
     EVT_UPDATE_UI(XRCID("retag_workspace"),          clMainFrame::OnRetagWorkspaceUI)
@@ -1855,7 +1855,7 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent &event)
     wxUnusedVar(event);
 
     // let the plugins close any custom workspace
-    wxCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
+    clCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
     e.SetEventObject(this);
     EventNotifier::Get()->ProcessEvent(e);
 
@@ -1878,19 +1878,19 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
     // event.SetString() )
     if ( event.GetString().IsEmpty() || wxFileName(event.GetString()).GetExt() != WSP_EXT) {
         
-        wxCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
+        clCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
         e.SetEventObject(this);
-        e.SetString( event.GetString() );
+        e.SetFileName( event.GetString() );
         if(EventNotifier::Get()->ProcessEvent(e)) {
             // the plugin processed it by itself
             return;
         }
         
-        if(e.GetString().IsEmpty() == false) {
+        if( e.GetFileName().IsEmpty() == false) {
             // the plugin processed it by itself and the user already selected a file
             // don't bother to prompt the user again just use what he already selected
             promptUser = false;
-            wspFile = e.GetString();
+            wspFile = e.GetFileName();
         }
         
     } else if ( !event.GetString().IsEmpty() ) {
@@ -3851,6 +3851,12 @@ void clMainFrame::OnFunctionCalltipUI(wxUpdateUIEvent& event)
 void clMainFrame::OnReloadWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    
+    // let the plugins close any custom workspace
+    clCommandEvent e(wxEVT_CMD_RELOAD_WORKSPACE, GetId());
+    e.SetEventObject(this);
+    if ( EventNotifier::Get()->ProcessEvent(e) )
+        return; // this event was handled by a plugin
     
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if ( dbgr && dbgr->IsRunning() ) {

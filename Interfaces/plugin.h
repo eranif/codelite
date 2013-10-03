@@ -337,6 +337,7 @@ enum MenuType {
 
 // User selected an option to create a new workspace
 #define wxEVT_CMD_CREATE_NEW_WORKSPACE 3506
+
 // User selected an option to create a new project
 #define wxEVT_CMD_CREATE_NEW_PROJECT 3507
     
@@ -344,17 +345,19 @@ enum MenuType {
 // a workspace to the recetly used list
 // The workspace path is sent in the evt.SetString()/GetString() 
 #define wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST 3508
-    
+
+// Event type: clCommandEvent
 // User requested to open a workspace
 // By default codelite will open a dialog to open a workspace with the '.workspace' suffix.
 // If a plugin wishes to offer a user a dialog with other extension (for example: .myworkspace)
 // it should handle this event and open the dialog itself and then based on the selected
 // file extension it should decide what to do: pass the selected file to codelite (assuming user selected the
 // standard .workspace file, or handle it by itself).
-// to pass the selection to codelite, simply set it in the evt.SetString(...) function
+// to pass the selection to codelite, simply set it in the evt.SetFileName(...) function
 // If the plugin wishes to handle the file by itself, it should avoid calling evt.Skip()
 #define wxEVT_CMD_OPEN_WORKSPACE 3509
 
+// Event type: clCommandEvent
 // User requested to close the workspace.
 #define wxEVT_CMD_CLOSE_WORKSPACE 3510
 
@@ -518,6 +521,12 @@ enum MenuType {
 // User right click while holding the code-navigation modifier key (default to Shift)
 // send a clCodeCompletionEvent
 #define wxEVT_CC_SHOW_QUICK_NAV_MENU 3541
+
+// Event type: clCommandEvent
+// User requested to reload the workspace
+// simply avoid calling event.Skip() to indicate to codelite that this event 
+// was handled by a plugin
+#define wxEVT_CMD_RELOAD_WORKSPACE 3542
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

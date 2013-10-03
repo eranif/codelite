@@ -2,11 +2,13 @@
 
 clCommandEvent::clCommandEvent(wxEventType commandType, int winid)
     : wxCommandEvent(commandType, winid)
+    , m_bool(false)
 {
 }
 
 clCommandEvent::clCommandEvent(const clCommandEvent& event)
     : wxCommandEvent(event)
+    , m_bool(false)
 {
     *this = event;
 }
@@ -16,6 +18,8 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_strings.clear();
     m_ptr = src.m_ptr;
     m_strings.insert(m_strings.end(), src.m_strings.begin(), src.m_strings.end());
+    m_fileName = src.m_fileName;
+    m_bool = src.m_bool;
     return *this;
 }
 

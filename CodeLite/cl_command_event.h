@@ -13,6 +13,8 @@ class WXDLLIMPEXP_CL clCommandEvent : public wxCommandEvent
 protected:
     wxSharedPtr<wxClientData> m_ptr;
     wxArrayString             m_strings;
+    wxString                  m_fileName;
+    bool                      m_bool;
 
 public:
     clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -27,6 +29,19 @@ public:
 
     virtual wxEvent *Clone() const;
 
+    void SetBool(bool b) {
+        this->m_bool = b;
+    }
+    
+    bool IsBool() const {
+        return m_bool;
+    }
+    void SetFileName(const wxString& fileName) {
+        this->m_fileName = fileName;
+    }
+    const wxString& GetFileName() const {
+        return m_fileName;
+    }
     void SetStrings(const wxArrayString& strings) {
         this->m_strings = strings;
     }
@@ -60,7 +75,7 @@ public:
     void SetTagEntry(TagEntryPtr tag) {
         this->m_tagEntry = tag;
     }
-    
+
     /**
      * @brief return the tag entry associated with this event.
      * This usually makes sense for event wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED
@@ -68,7 +83,7 @@ public:
     TagEntryPtr GetTagEntry() const {
         return m_tagEntry;
     }
-    
+
     void SetInsideCommentOrString(bool insideCommentOrString) {
         this->m_insideCommentOrString = insideCommentOrString;
     }

@@ -361,12 +361,13 @@ enum MenuType {
 // User requested to close the workspace.
 #define wxEVT_CMD_CLOSE_WORKSPACE 3510
 
+// Event type: clCommandEvent
 // This event is sent by codelite to the plugins to query whether a
 // a custom workspace is opened (i.e. a worksapce which is completely managed
 // by the plugin) this allows codelite to enable menu items which otherwise
 // will be left disabled
 // to return a true or false reply to codelite, use
-// evt.SetInt(0) or evt.SetInt(1)
+// evt.SetAnswer( true / false )
 #define wxEVT_CMD_IS_WORKSPACE_OPEN 3511
 
 // User has requested a retagging for the workspace

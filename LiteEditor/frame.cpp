@@ -2076,12 +2076,12 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent &event)
 {
     CHECK_SHUTDOWN();
-    wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
     e.SetEventObject(this);
-    e.SetInt(0);
+    e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
 
-    event.Enable(ManagerST::Get()->IsWorkspaceOpen() || e.GetInt());
+    event.Enable(ManagerST::Get()->IsWorkspaceOpen() || e.IsAnswer());
 }
 
 // Project->New Workspace
@@ -4871,12 +4871,12 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
     CHECK_SHUTDOWN();
 
     // See whether we got a custom workspace open in one of the plugins
-    wxCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
     e.SetEventObject(this);
-    e.SetInt(0);
+    e.SetAnswer(false);
     EventNotifier::Get()->ProcessEvent(e);
 
-    event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) || e.GetInt());
+    event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) || e.IsAnswer());
 }
 
 wxString clMainFrame::StartTTY(const wxString &title)

@@ -14,7 +14,7 @@ protected:
     wxSharedPtr<wxClientData> m_ptr;
     wxArrayString             m_strings;
     wxString                  m_fileName;
-    bool                      m_bool;
+    bool                      m_answer;
 
 public:
     clCommandEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -29,13 +29,13 @@ public:
 
     virtual wxEvent *Clone() const;
 
-    void SetBool(bool b) {
-        this->m_bool = b;
+    void SetAnswer(bool answer) {
+        this->m_answer = answer;
+    }
+    bool IsAnswer() const {
+        return m_answer;
     }
     
-    bool IsBool() const {
-        return m_bool;
-    }
     void SetFileName(const wxString& fileName) {
         this->m_fileName = fileName;
     }

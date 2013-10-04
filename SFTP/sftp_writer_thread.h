@@ -36,12 +36,19 @@ class SFTPWriterThreadRequet : public ThreadRequest
     wxString       m_remoteFile;
     wxString       m_localFile;
     size_t         m_retryCounter;
+    bool           m_uploadSuccess;
 
 public:
     SFTPWriterThreadRequet(const SSHAccountInfo& accountInfo, const wxString &remoteFile, const wxString &localFile);
     SFTPWriterThreadRequet(const SFTPWriterThreadRequet& other);
     virtual ~SFTPWriterThreadRequet();
 
+    void SetUploadSuccess(bool uploadSuccess) {
+        this->m_uploadSuccess = uploadSuccess;
+    }
+    bool IsUploadSuccess() const {
+        return m_uploadSuccess;
+    }
     void SetAccount(const SSHAccountInfo& account) {
         this->m_account = account;
     }
@@ -70,6 +77,44 @@ public:
     ThreadRequest* Clone() const;
 };
 
+class SFTPWriterThreadMessage
+{
+
+    int      m_status;
+    wxString m_message;
+    wxString m_account;
+
+public:
+    enum {
+        STATUS_NONE = -1,
+        STATUS_OK,
+        STATUS_ERROR,
+    };
+
+public:
+    SFTPWriterThreadMessage();
+    virtual ~SFTPWriterThreadMessage();
+
+    void SetAccount(const wxString& account) {
+        this->m_account = account;
+    }
+    void SetMessage(const wxString& message) {
+        this->m_message = message;
+    }
+    const wxString& GetAccount() const {
+        return m_account;
+    }
+    const wxString& GetMessage() const {
+        return m_message;
+    }
+    void SetStatus(int status) {
+        this->m_status = status;
+    }
+    int GetStatus() const {
+        return m_status;
+    }
+};
+
 class SFTPWriterThread : public WorkerThread
 {
     static SFTPWriterThread* ms_instance;
@@ -83,7 +128,8 @@ private:
     SFTPWriterThread();
     virtual ~SFTPWriterThread();
     void DoConnect(SFTPWriterThreadRequet *req);
-
+    void DoReportMessage(const wxString &account, const wxString &message, int status);
+    
 public:
     virtual void ProcessRequest(ThreadRequest* request);
 };

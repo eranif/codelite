@@ -5,10 +5,13 @@
 #include "sftp_workspace_settings.h"
 #include "cl_command_event.h"
 
+class SFTPStatusPage;
+
 class SFTP : public IPlugin
 {
-    wxFileName m_workspaceFile;
+    wxFileName            m_workspaceFile;
     SFTPWorkspaceSettings m_workspaceSettings;
+    SFTPStatusPage*       m_outputPane;
     
 public:
     SFTP(IManager *manager);

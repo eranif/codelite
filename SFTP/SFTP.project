@@ -246,4 +246,18 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="UI">
+    <File Name="SFTPStatusPage.h"/>
+    <File Name="SFTPStatusPage.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="UI.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="UI_sftp_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="UI.h"/>
+      <File Name="UI.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

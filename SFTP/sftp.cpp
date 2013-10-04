@@ -11,6 +11,7 @@
 #include <wx/xrc/xmlres.h>
 #include "cl_command_event.h"
 #include "json_node.h"
+#include "SFTPStatusPage.h"
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER    = ::wxNewEventType();
@@ -74,8 +75,12 @@ SFTP::SFTP(IManager *manager)
     
     // API support
     EventNotifier::Get()->Connect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
-
-    SFTPWriterThread::Instance()->SetNotifyWindow( this );
+    
+    SFTPImages images;
+    m_outputPane = new SFTPStatusPage( m_mgr->GetOutputPaneNotebook() );
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, "SFTP", false, images.Bitmap("sftp_tab"));
+    
+    SFTPWriterThread::Instance()->SetNotifyWindow( m_outputPane );
     SFTPWriterThread::Instance()->Start();
 }
 
@@ -127,6 +132,16 @@ void SFTP::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void SFTP::UnPlug()
 {
+    // Find our page and release it
+    // before this plugin is un-plugged we must remove the tab we added
+    for (size_t i=0; i<m_mgr->GetOutputPaneNotebook()->GetPageCount(); ++i) {
+        if (m_outputPane == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
+            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+            m_outputPane->Destroy();
+            break;
+        }
+    }
+    
     SFTPWriterThread::Release();
     wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);

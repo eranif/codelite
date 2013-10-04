@@ -36,7 +36,7 @@ void SFTPWriterThread::ProcessRequest(ThreadRequest* request)
 {
     SFTPWriterThreadRequet* req = dynamic_cast<SFTPWriterThreadRequet*>(request);
     // Check if we need to open an ssh connection
-    if ( !m_sftp || m_sftp->GetAccountName() != req->GetAccount().GetAccountName() ) {
+    if ( !m_sftp || m_sftp->GetAccount() != req->GetAccount().GetAccountName() ) {
         m_sftp.reset(NULL);
         DoConnect( req );
     }
@@ -87,6 +87,9 @@ void SFTPWriterThread::DoConnect(SFTPWriterThreadRequet* req)
 
         ssh->Login();
         m_sftp.reset( new clSFTP(ssh) );
+        
+        // associate the account with the connection
+        m_sftp->SetAccount( req->GetAccount().GetAccountName() );
         m_sftp->Initialize();
 
         wxString msg;

@@ -43,6 +43,7 @@ class WXDLLIMPEXP_CL clSFTP
     SFTPSession_t m_sftp;
     bool          m_connected;
     wxString      m_currentFolder;
+    wxString      m_account;
 
 public:
     typedef wxSharedPtr<clSFTP> Ptr_t;
@@ -59,12 +60,12 @@ public:
         return m_connected;
     }
 
-    /**
-     * @brief return the SSH account name that this sftp session is associated with (in the format of user@host)
-     * @return
-     */
-    wxString GetAccountName() const;
-
+    void SetAccount(const wxString& account) {
+        this->m_account = account;
+    }
+    const wxString& GetAccount() const {
+        return m_account;
+    }
     /**
      * @brief intialize the scp over ssh
      */

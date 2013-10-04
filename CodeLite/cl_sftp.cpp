@@ -146,17 +146,6 @@ SFTPAttribute::List_t clSFTP::List(const wxString &folder, size_t flags, const w
     return files;
 }
 
-wxString clSFTP::GetAccountName() const
-{
-    if ( !m_ssh ) {
-        return "";
-        
-    } else {
-        return wxString() << m_ssh->GetUsername() << "@" << m_ssh->GetHost();
-        
-    }
-}
-
 SFTPAttribute::List_t clSFTP::CdUp(size_t flags, const wxString &filter) throw (clException)
 {
     wxString curfolder = m_currentFolder;

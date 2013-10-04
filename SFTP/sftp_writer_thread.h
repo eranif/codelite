@@ -35,11 +35,28 @@ class SFTPWriterThreadRequet : public ThreadRequest
     SSHAccountInfo m_account;
     wxString       m_remoteFile;
     wxString       m_localFile;
+    size_t         m_retryCounter;
 
 public:
     SFTPWriterThreadRequet(const SSHAccountInfo& accountInfo, const wxString &remoteFile, const wxString &localFile);
+    SFTPWriterThreadRequet(const SFTPWriterThreadRequet& other);
     virtual ~SFTPWriterThreadRequet();
 
+    void SetAccount(const SSHAccountInfo& account) {
+        this->m_account = account;
+    }
+    void SetLocalFile(const wxString& localFile) {
+        this->m_localFile = localFile;
+    }
+    void SetRemoteFile(const wxString& remoteFile) {
+        this->m_remoteFile = remoteFile;
+    }
+    void SetRetryCounter(size_t retryCounter) {
+        this->m_retryCounter = retryCounter;
+    }
+    size_t GetRetryCounter() const {
+        return m_retryCounter;
+    }
     const SSHAccountInfo& GetAccount() const {
         return m_account;
     }
@@ -49,6 +66,8 @@ public:
     const wxString& GetLocalFile() const {
         return m_localFile;
     }
+
+    ThreadRequest* Clone() const;
 };
 
 class SFTPWriterThread : public WorkerThread

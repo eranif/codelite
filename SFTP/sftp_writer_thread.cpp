@@ -34,37 +34,34 @@ void SFTPWriterThread::Release()
 void SFTPWriterThread::ProcessRequest(ThreadRequest* request)
 {
     SFTPWriterThreadRequet* req = dynamic_cast<SFTPWriterThreadRequet*>(request);
-    
+
     // Check if we need to open an ssh connection
     if ( !m_sftp || m_sftp->GetAccountName() != req->GetAccount().GetAccountName() ) {
         m_sftp.reset(NULL);
         DoConnect( req );
     }
-    
-    for(size_t i=0; i<2; ++i) {
-        if ( m_sftp && m_sftp->IsConnected() ) {
+
+    if ( m_sftp && m_sftp->IsConnected() ) {
+        // try to write
+        try {
+            wxString msg;
+            msg << "SFTP: Successfully uploaded file: [" << req->GetAccount().GetAccountName() << "] " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
+            m_sftp->Write(wxFileName(req->GetLocalFile()), req->GetRemoteFile());
+            GetNotifiedWindow()->CallAfter( &SFTP::OnFileWriteOK, msg);
             
-            // try to write
-            try {
-                wxString msg;
-                msg << "SFTP: Successfully uploaded file: [" << req->GetAccount().GetAccountName() << "] " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
-                m_sftp->Write(wxFileName(req->GetLocalFile()), req->GetRemoteFile());
-                GetNotifiedWindow()->CallAfter( &SFTP::OnFileWriteOK, msg);
-                
-            } catch (clException &e) {
-                // Check to see if this is a connection error
-                if ( e.ErrorCode() == SSH_FX_CONNECTION_LOST ) {
-                    // Lost the connection, reconnect and try again
-                    m_sftp.reset(NULL);
-                    DoConnect(req);
-                    continue;
-                }
-                wxString msg;
-                msg << "SFTP: failed to upload file: [" << req->GetAccount().GetAccountName() << "] " << req->GetRemoteFile() << ". " << e.What();
-                GetNotifiedWindow()->CallAfter( &SFTP::OnFileWriteError, msg);
-                m_sftp.reset(NULL);
+        } catch (clException &e) {
+            wxString msg;
+            msg << "SFTP: failed to upload file: [" << req->GetAccount().GetAccountName() << "] " << req->GetRemoteFile() << ". " << e.What();
+            GetNotifiedWindow()->CallAfter( &SFTP::OnFileWriteError, msg);
+            m_sftp.reset(NULL);
+            
+            // Requeue our request
+            if ( req->GetRetryCounter() == 0 ) {
+                // first time trying this request, requeue it
+                SFTPWriterThreadRequet* retryReq = static_cast<SFTPWriterThreadRequet*>(req->Clone());
+                retryReq->SetRetryCounter(1);
+                Add( retryReq );
             }
-            break; // the for loop
         }
     }
 }
@@ -78,15 +75,15 @@ void SFTPWriterThread::DoConnect(SFTPWriterThreadRequet* req)
         if ( !ssh->AuthenticateServer( message ) ) {
             ssh->AcceptServerAuthentication();
         }
-        
+
         ssh->Login();
         m_sftp.reset( new clSFTP(ssh) );
         m_sftp->Initialize();
-        
+
         wxString msg;
         msg << "SFTP: Successfully connected to " << req->GetAccount().GetAccountName();
         GetNotifiedWindow()->CallAfter( &SFTP::OnFileWriteOK, msg);
-        
+
     } catch (clException &e) {
         wxString msg;
         msg << "SFTP: Connect error. [" << req->GetAccount().GetAccountName() << "] : " << e.What();
@@ -99,9 +96,23 @@ SFTPWriterThreadRequet::SFTPWriterThreadRequet(const SSHAccountInfo& accountInfo
     : m_account(accountInfo)
     , m_remoteFile(remoteFile)
     , m_localFile(localFile)
+    , m_retryCounter(0)
 {
+}
+
+SFTPWriterThreadRequet::SFTPWriterThreadRequet(const SFTPWriterThreadRequet& other)
+{
+    m_account      = other.m_account;
+    m_remoteFile   = other.m_remoteFile;
+    m_localFile    = other.m_localFile;
+    m_retryCounter = other.m_retryCounter;
 }
 
 SFTPWriterThreadRequet::~SFTPWriterThreadRequet()
 {
+}
+
+ThreadRequest* SFTPWriterThreadRequet::Clone() const
+{
+    return new SFTPWriterThreadRequet(*this);
 }

@@ -8,13 +8,24 @@ from the trunk/ directory, run:
 Pre-requisits:
 
 Mac: wxWidgets 2.9.4 or later
-Linux/FreeBSD: wxWidgets 2.9.4 or later, GTK devl package
+
+Linux/FreeBSD: wxWidgets 2.9.5 or later, gtk2 development package, cmake
 
 Building:
 
-	./configure
+//-----------------------------------------------------
+// Linux/FreeBSD 
+//-----------------------------------------------------
+
+  In the CodeLite source dir, do:
+  mkdir build-release
+  cd build-release
+	cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 	make
-	sudo make install
+	(Become the superuser)
+	make install
+	
+	There are various other options that you could pass to cmake. See CMakeLists.txt for the commonest.
 
 //-----------------------------------------------------
 // Windows: MinGW 
@@ -37,7 +48,7 @@ Once build is done, you can copy the files to the target directory by running th
 
 	trunk/Runtime/update.bat
 	
- Note that you may need to udpate the script to point it to the codelite installation directory
+ Note that you may need to update the script to point it to the codelite installation directory
  
 //---------------------------------------------------------
 // MacOSX

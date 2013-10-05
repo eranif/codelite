@@ -42,6 +42,8 @@
     <File Name="cl_command_event.cpp"/>
     <File Name="event_notifier.cpp"/>
     <File Name="event_notifier.h"/>
+    <File Name="xor_string.h"/>
+    <File Name="xor_string.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

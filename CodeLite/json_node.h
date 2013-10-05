@@ -96,7 +96,7 @@ public:
      */
     JSONElement& addProperty(const wxString &name, const wxString &value);
     JSONElement& addProperty(const wxString& name, const wxChar* value);
-    
+ 
     /**
      * @brief add int property to a JSON object
      */

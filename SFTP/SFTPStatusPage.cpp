@@ -41,6 +41,11 @@ void SFTPStatusPage::AddLine(SFTPWriterThreadMessage* message)
     cols.push_back( message->GetMessage() );
     m_dvListCtrl->AppendItem( cols );
     wxDELETE(message);
+    
+    // Ensure that the last item is visible
+    wxDataViewItem item = m_dvListCtrl->RowToItem(m_dvListCtrl->GetItemCount());
+    m_dvListCtrl->Select( item );
+    m_dvListCtrl->EnsureVisible( item );
 }
 
 void SFTPStatusPage::ShowContextMenu()

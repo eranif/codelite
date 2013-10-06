@@ -285,6 +285,10 @@
 											"m_value":	false
 										}, {
 											"type":	"bool",
+											"m_label":	"Null Page",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Expand Node",
 											"m_value":	true
 										}],
@@ -1273,6 +1277,10 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}, {
 											"type":	"bool",
@@ -2825,6 +2833,10 @@
 											"m_value":	false
 										}, {
 											"type":	"bool",
+											"m_label":	"Null Page",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Expand Node",
 											"m_value":	true
 										}],
@@ -3338,6 +3350,10 @@
 											"m_value":	false
 										}, {
 											"type":	"bool",
+											"m_label":	"Null Page",
+											"m_value":	true
+										}, {
+											"type":	"bool",
 											"m_label":	"Expand Node",
 											"m_value":	true
 										}],
@@ -3417,6 +3433,10 @@
 												}, {
 													"type":	"bool",
 													"m_label":	"Selected",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Null Page",
 													"m_value":	false
 												}, {
 													"type":	"bool",
@@ -3589,6 +3609,10 @@
 																			"type":	"bool",
 																			"m_label":	"Selected",
 																			"m_value":	true
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Null Page",
+																			"m_value":	false
 																		}],
 																	"m_events":	[],
 																	"m_children":	[{
@@ -3995,6 +4019,10 @@
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Selected",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Null Page",
 																			"m_value":	false
 																		}],
 																	"m_events":	[],
@@ -4405,6 +4433,10 @@
 												}, {
 													"type":	"bool",
 													"m_label":	"Selected",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Null Page",
 													"m_value":	false
 												}, {
 													"type":	"bool",
@@ -5063,6 +5095,10 @@
 																			"type":	"bool",
 																			"m_label":	"Selected",
 																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Null Page",
+																			"m_value":	false
 																		}],
 																	"m_events":	[],
 																	"m_children":	[{
@@ -5455,6 +5491,10 @@
 																			"type":	"bool",
 																			"m_label":	"Selected",
 																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Null Page",
+																			"m_value":	false
 																		}],
 																	"m_events":	[],
 																	"m_children":	[{
@@ -5742,6 +5782,10 @@
 											"m_value":	false
 										}, {
 											"type":	"bool",
+											"m_label":	"Null Page",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Expand Node",
 											"m_value":	true
 										}],
@@ -5991,6 +6035,10 @@
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Selected",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Null Page",
 																	"m_value":	false
 																}],
 															"m_events":	[],
@@ -6560,6 +6608,10 @@
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Selected",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Null Page",
 																	"m_value":	false
 																}],
 															"m_events":	[],

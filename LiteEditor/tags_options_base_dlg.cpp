@@ -253,8 +253,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer4->Add(m_checkAutoInsertSingleChoice, 0, wxALL, 5);
     
-    m_panelCtags = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook2->AddPage(m_panelCtags, _("CTags"), false, wxNOT_FOUND);
+    m_treebook2->AddPage(NULL, _("CTags"), false, wxNOT_FOUND);
     
     m_panelCtagsSearchPaths = new wxPanel(m_treebook2, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_treebook2->InsertSubPage(3, m_panelCtagsSearchPaths, _("Search paths"), false, wxNOT_FOUND);

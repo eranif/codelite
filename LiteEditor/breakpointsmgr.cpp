@@ -369,6 +369,8 @@ void BreakptMgr::DisableAnyDisabledBreakpoints()
         return;
     }
 
+    bool contIsNeeded = PauseDebuggerIfNeeded();
+
     for (size_t i=0; i<m_bps.size(); i++) {
         BreakpointInfo& bp = m_bps.at(i);
         if (bp.is_enabled == false) {
@@ -380,6 +382,13 @@ void BreakptMgr::DisableAnyDisabledBreakpoints()
             
         }
     }
+
+    if (contIsNeeded) {
+        dbgr->Continue();
+    }
+
+    // We only want to do this once, not every time the debugger restarts, so Unbind the event
+    wxTheApp->Unbind(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(clMainFrame::OnDisableAnyDisabledBreakpoints), clMainFrame::Get());
 }
 
 bool BreakptMgr::DelBreakpoint(const int id)

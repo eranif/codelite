@@ -1290,9 +1290,6 @@ void DbgGdb::GetDebugeePID(const wxString& line)
                         wxString msg;
                         msg << wxT( ">> Debuggee process ID: " ) << m_debuggeePid;
                         m_observer->UpdateAddLine( msg );
-                        
-                        // Now there's a known pid, the debugger can be interrupted to let any to-be-disabled bps be disabled. So...
-                        m_observer->DebuggerPidValid();
                     }
                 }
             }

@@ -14,6 +14,20 @@ include( "${wxWidgets_USE_FILE}" )
 # Include paths
 include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/sdk/codelite_indexer/network" "${CL_SRC_ROOT}/PCH")
 
+set( ADDITIONAL_LIBRARIES "" )
+
+if (UNIX)
+    if ( IS_FREEBSD )
+        set(ADDITIONAL_LIBRARIES "-lkvm")
+    elseif ( UNIX AND NOT APPLE )
+        set(ADDITIONAL_LIBRARIES "-ldl -lutil")
+    else ( )
+        set(ADDITIONAL_LIBRARIES "-ldl")
+    endif ( )
+else (UNIX)
+    ## Windows??
+endif (UNIX)
+
 ## Macros
 if(WIN32)
     add_definitions(-DWXMAKINGDLL_CL)
@@ -40,9 +54,9 @@ FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" )
 # Define the output
 add_library(libcodelite SHARED ${SRCS})
 if (UNIX AND NOT APPLE )
-    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB})
+    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB} ${ADDITIONAL_LIBRARIES})
 else (UNIX AND NOT APPLE)
-    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB} -lz -lcrypto)
+    target_link_libraries(libcodelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lsqlite3lib -lwxsqlite3 ${LIBSSH_LIB} ${ADDITIONAL_LIBRARIES} -lz -lcrypto)
 endif ( UNIX AND NOT APPLE )
 install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
 

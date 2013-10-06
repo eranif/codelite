@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/tokenzr.h>
-#include "pp_include.h"
 #include "pluginmanager.h"
+#include "pp_include.h"
 #include "pptable.h"
 #include "ieditor.h"
 #include "tags_options_dlg.h"

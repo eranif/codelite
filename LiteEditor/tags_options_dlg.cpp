@@ -22,31 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  6 2007)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
 
-#ifdef WX_PRECOMP
-
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
-#else
-#include <wx/wx.h>
-#endif //WX_PRECOMP
-
-#include "cc_display_and_behavior_page.h"
-#include "cc_colourise_page.h"
-#include "cc_triggering_page.h"
-#include "cc_include_files.h"
-#include "cc_clang_page.h"
-#include "cc_advance_page.h"
 #include <wx/tokenzr.h>
 #include "pp_include.h"
 #include "pluginmanager.h"
@@ -59,112 +35,366 @@
 #include "wx/tokenzr.h"
 #include "add_option_dialog.h"
 #include "globals.h"
+#include "includepathlocator.h"
+#include "clang_code_completion.h"
 
 //---------------------------------------------------------
 
 TagsOptionsDlg::TagsOptionsDlg( wxWindow* parent, const TagsOptionsData& data)
-	: TagsOptionsBaseDlg( parent )
-	, m_data(data)
+    : TagsOptionsBaseDlg( parent )
+    , m_data(data)
 {
-	m_colour_flags = m_data.GetCcColourFlags();
-	
-	m_treebook->AddPage(0, _("General"));
-	m_treebook->AddSubPage(new CCDisplayAndBehvior(m_treebook, data), _("Display and behavior"), true);
-	m_treebook->AddSubPage(new CCColourisePage(m_treebook, data), _("Colouring"), false);
-	m_treebook->AddSubPage(new CCTriggeringPage(m_treebook, data), _("Triggering"), false);
-	
-	m_treebook->AddPage(0, _("ctags"));
-	m_includeFilesPage = new CCIncludeFilesPage(m_treebook, data); 
-	m_treebook->AddSubPage(m_includeFilesPage, _("Include Files"), false);
-	
-	m_advancedPage = new CCAdvancePage(m_treebook, data, this);
-	m_treebook->AddSubPage(m_advancedPage, _("Advanced"), false);
-	
-	m_clangPage = new CCClangPage(m_treebook, data);
-	m_treebook->AddPage(m_clangPage, _("clang"), false);
-	
-	MSWSetNativeTheme(m_treebook->GetTreeCtrl());
-	
-	Centre();
-	GetSizer()->Fit(this);
-	WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
+    m_colour_flags = m_data.GetCcColourFlags();
+    MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
+
+    Centre();
+    GetSizer()->Fit(this);
+    WindowAttrManager::Load(this, wxT("TagsOptionsDlgAttr"), NULL);
+
+    // Set default values
+
+    //------------------------------------------------------------------
+    // Display and behavior
+    //------------------------------------------------------------------
+    m_checkDisplayFunctionTip->SetValue              (m_data.GetFlags() & CC_DISP_FUNC_CALLTIP ? true : false);
+    m_checkDisplayTypeInfo->SetValue                 (m_data.GetFlags() & CC_DISP_TYPE_INFO ? true : false);
+    m_checkCppKeywordAssist->SetValue                (m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
+    m_checkDisableParseOnSave->SetValue              (m_data.GetFlags() & CC_DISABLE_AUTO_PARSING ? true : false);
+    m_checkBoxretagWorkspaceOnStartup->SetValue      (m_data.GetFlags() & CC_RETAG_WORKSPACE_ON_STARTUP ? true : false);
+    m_checkBoxDeepUsingNamespaceResolving->SetValue  (m_data.GetFlags() & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING ? true : false);
+    m_checkBoxEnableCaseSensitiveCompletion->SetValue(m_data.GetFlags() & CC_IS_CASE_SENSITIVE ? true : false);
+    m_checkBoxKeepFunctionSignature->SetValue(m_data.GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED);
+    m_spinCtrlNumberOfCCItems->SetValue( ::wxIntToString( m_data.GetCcNumberOfDisplayItems()) );
+
+    //------------------------------------------------------------------
+    // Colouring
+    //------------------------------------------------------------------
+    m_checkColourLocalVars->SetValue     (m_data.GetFlags() & CC_COLOUR_VARS ? true : false);
+    m_checkColourProjTags->SetValue      (m_data.GetFlags() & CC_COLOUR_WORKSPACE_TAGS ? true : false);
+    m_checkBoxClass->SetValue            (m_data.GetCcColourFlags() & CC_COLOUR_CLASS);
+    m_checkBoxEnum->SetValue             (m_data.GetCcColourFlags() & CC_COLOUR_ENUM);
+    m_checkBoxFunction->SetValue         (m_data.GetCcColourFlags() & CC_COLOUR_FUNCTION);
+    m_checkBoxMacro->SetValue            (m_data.GetCcColourFlags() & CC_COLOUR_MACRO);
+    m_checkBoxNamespace->SetValue        (m_data.GetCcColourFlags() & CC_COLOUR_NAMESPACE);
+    m_checkBoxPrototype->SetValue        (m_data.GetCcColourFlags() & CC_COLOUR_PROTOTYPE);
+    m_checkBoxStruct->SetValue           (m_data.GetCcColourFlags() & CC_COLOUR_STRUCT);
+    m_checkBoxTypedef->SetValue          (m_data.GetCcColourFlags() & CC_COLOUR_TYPEDEF);
+    m_checkBoxUnion->SetValue            (m_data.GetCcColourFlags() & CC_COLOUR_UNION);
+    m_checkBoxEnumerator->SetValue       (m_data.GetCcColourFlags() & CC_COLOUR_ENUMERATOR);
+    m_checkBoxMember->SetValue           (m_data.GetCcColourFlags() & CC_COLOUR_MEMBER);
+    m_checkBoxVariable->SetValue         (m_data.GetCcColourFlags() & CC_COLOUR_VARIABLE);
+
+#if HAS_LIBCLANG
+    m_checkBoxColourMacroBlocks->SetValue(m_data.GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS);
+#else
+    m_checkBoxColourMacroBlocks->SetValue(false);
+    m_checkBoxColourMacroBlocks->Enable(false);
+#endif
+    m_spinCtrlMaxItemToColour->SetValue( wxString() << m_data.GetMaxItemToColour() );
+
+    // wxFB marks the checkboxes' labels to be localised. We really don't want e.g. "class" or "enum" translated
+    m_checkBoxClass->SetLabel(wxT("class"));
+    m_checkBoxEnum->SetLabel(wxT("enum"));
+    m_checkBoxFunction->SetLabel(wxT("function"));
+    m_checkBoxMacro->SetLabel(wxT("macro"));
+    m_checkBoxNamespace->SetLabel(wxT("namespace"));
+    m_checkBoxPrototype->SetLabel(wxT("prototype"));
+    m_checkBoxStruct->SetLabel(wxT("struct"));
+    m_checkBoxTypedef->SetLabel(wxT("typedef"));
+    m_checkBoxUnion->SetLabel(wxT("union"));
+    m_checkBoxEnumerator->SetLabel(wxT("enumerator"));
+    m_checkBoxMember->SetLabel(wxT("member"));
+    m_checkBoxVariable->SetLabel(wxT("variable"));
+
+    //----------------------------------------------------
+    // Triggering
+    //----------------------------------------------------
+    m_checkWordAssist->SetValue            (m_data.GetFlags() & CC_WORD_ASSIST ? true : false);
+    m_checkAutoInsertSingleChoice->SetValue(m_data.GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE ? true : false);
+    m_sliderMinWordLen->SetValue           (m_data.GetMinWordLen() );
+
+    //----------------------------------------------------
+    // CTags search paths
+    //----------------------------------------------------
+    m_textCtrlCtagsSearchPaths->SetValue(wxImplode(m_data.GetParserSearchPaths(),   wxT("\n")));
+    m_textCtrlCtagsExcludePaths->SetValue(wxImplode(m_data.GetParserExcludePaths(), wxT("\n")));
+    
+    //----------------------------------------------------
+    // CTags advanced page
+    //----------------------------------------------------
+    m_textPrep->SetValue         (m_data.GetTokens());
+    m_textTypes->SetValue        (m_data.GetTypes());
+    m_textCtrlFilesList->SetValue(m_data.GetMacrosFiles());
+    m_textFileSpec->SetValue     (m_data.GetFileSpec());
+    
+    //----------------------------------------------------
+    // Clang page
+    //----------------------------------------------------
+#if HAS_LIBCLANG
+    m_checkBoxEnableClangCC->SetValue(m_data.GetClangOptions() & CC_CLANG_ENABLED);
+#else
+    m_checkBoxEnableClangCC->SetValue(false);
+    m_checkBoxEnableClangCC->Enable(false);
+#endif
+
+    m_checkBoxClangFirst->SetValue(m_data.GetClangOptions() & CC_CLANG_FIRST);
+    m_textCtrlClangSearchPaths->SetValue(m_data.GetClangSearchPaths());
+    m_choiceCachePolicy->Clear();
+
+    // defaults
+    m_choiceCachePolicy->Append(TagsOptionsData::CLANG_CACHE_LAZY);
+    m_choiceCachePolicy->Append(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD);
+    m_choiceCachePolicy->Select(1);
+
+    int where = m_choiceCachePolicy->FindString(m_data.GetClangCachePolicy());
+    if(where != wxNOT_FOUND) {
+        m_choiceCachePolicy->Select(where);
+    }
 }
 
 TagsOptionsDlg::~TagsOptionsDlg()
 {
-	WindowAttrManager::Save(this, wxT("TagsOptionsDlgAttr"), NULL);
+    WindowAttrManager::Save(this, wxT("TagsOptionsDlgAttr"), NULL);
 }
 
 void TagsOptionsDlg::OnButtonOK(wxCommandEvent &event)
 {
-	wxUnusedVar(event);
-	CopyData();
-	EndModal(wxID_OK);
+    wxUnusedVar(event);
+    CopyData();
+    EndModal(wxID_OK);
 }
 
 void TagsOptionsDlg::CopyData()
 {
-	// Save data to the interal member m_data
-	for(size_t i=0; i<m_treebook->GetPageCount(); i++) {
-		TagsOptionsPageBase *page = dynamic_cast<TagsOptionsPageBase*>(m_treebook->GetPage(i));
-		if(page) {
-			page->Save(m_data);
-		}
-	}
+    //----------------------------------------------------
+    // Display and behavior
+    //----------------------------------------------------
+    SetFlag(CC_DISP_FUNC_CALLTIP,                   m_checkDisplayFunctionTip->IsChecked());
+    SetFlag(CC_DISP_TYPE_INFO,                      m_checkDisplayTypeInfo->IsChecked());
+    SetFlag(CC_CPP_KEYWORD_ASISST,                  m_checkCppKeywordAssist->IsChecked());
+    SetFlag(CC_RETAG_WORKSPACE_ON_STARTUP,          m_checkBoxretagWorkspaceOnStartup->IsChecked());
+    SetFlag(CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING, m_checkBoxDeepUsingNamespaceResolving->IsChecked());
+    SetFlag(CC_DISABLE_AUTO_PARSING,                m_checkDisableParseOnSave->IsChecked());
+    SetFlag(CC_IS_CASE_SENSITIVE,                   m_checkBoxEnableCaseSensitiveCompletion->IsChecked());
+    SetFlag(CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED, m_checkBoxKeepFunctionSignature->IsChecked());
+    m_data.SetCcNumberOfDisplayItems( ::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100, 50));
+
+    //----------------------------------------------------
+    // Colouring
+    //----------------------------------------------------
+    SetColouringFlag(CC_COLOUR_CLASS,        m_checkBoxClass->IsChecked());
+    SetColouringFlag(CC_COLOUR_ENUM,         m_checkBoxEnum->IsChecked());
+    SetColouringFlag(CC_COLOUR_FUNCTION,     m_checkBoxFunction->IsChecked());
+    SetColouringFlag(CC_COLOUR_MACRO,        m_checkBoxMacro->IsChecked());
+    SetColouringFlag(CC_COLOUR_NAMESPACE,    m_checkBoxNamespace->IsChecked());
+    SetColouringFlag(CC_COLOUR_PROTOTYPE,    m_checkBoxPrototype->IsChecked());
+    SetColouringFlag(CC_COLOUR_STRUCT,       m_checkBoxStruct->IsChecked());
+    SetColouringFlag(CC_COLOUR_TYPEDEF,      m_checkBoxTypedef->IsChecked());
+    SetColouringFlag(CC_COLOUR_UNION,        m_checkBoxUnion->IsChecked());
+    SetColouringFlag(CC_COLOUR_ENUMERATOR,   m_checkBoxEnumerator->IsChecked());
+    SetColouringFlag(CC_COLOUR_VARIABLE,     m_checkBoxVariable->IsChecked());
+    SetColouringFlag(CC_COLOUR_MEMBER,       m_checkBoxMember->IsChecked());
+    SetColouringFlag(CC_COLOUR_MACRO_BLOCKS, m_checkBoxColourMacroBlocks->IsChecked());
+    SetFlag(CC_COLOUR_VARS,                  m_checkColourLocalVars->IsChecked());
+    SetFlag(CC_COLOUR_WORKSPACE_TAGS,        m_checkColourProjTags->IsChecked());
+    m_data.SetMaxItemToColour( ::wxStringToInt(m_spinCtrlMaxItemToColour->GetValue(), 1000, 1000, 10000) );
+
+    //----------------------------------------------------
+    // Triggering
+    //----------------------------------------------------
+    SetFlag(CC_AUTO_INSERT_SINGLE_CHOICE, m_checkAutoInsertSingleChoice->IsChecked());
+    SetFlag(CC_WORD_ASSIST,               m_checkWordAssist->IsChecked());
+    m_data.SetMinWordLen( m_sliderMinWordLen->GetValue() );
+
+    //----------------------------------------------------
+    // CTags search paths
+    //----------------------------------------------------
+    m_data.SetParserSearchPaths( ::wxStringTokenize(m_textCtrlCtagsSearchPaths->GetValue(), wxT("\r\n"), wxTOKEN_STRTOK) );
+    m_data.SetParserExcludePaths( ::wxStringTokenize(m_textCtrlCtagsExcludePaths->GetValue(), wxT("\r\n"), wxTOKEN_STRTOK) );
+
+    //----------------------------------------------------
+    // CTags advanced paths
+    //----------------------------------------------------
+    m_data.SetFileSpec(m_textFileSpec->GetValue());
+    m_data.SetTokens(m_textPrep->GetValue());
+    m_data.SetTypes(m_textTypes->GetValue());
+    m_data.SetMacrosFiles( m_textCtrlFilesList->GetValue() );
+
+    //----------------------------------------------------
+    // Clang
+    //----------------------------------------------------
+    size_t options(0);
+    if(m_checkBoxEnableClangCC->IsChecked())
+        options |= CC_CLANG_ENABLED;
+
+    if(m_checkBoxClangFirst->IsChecked())
+        options |= CC_CLANG_FIRST;
+
+    m_data.SetClangOptions(options);
+    m_data.SetClangSearchPaths(m_textCtrlClangSearchPaths->GetValue());
+    m_data.SetClangCachePolicy(m_choiceCachePolicy->GetStringSelection());
 }
 
 void TagsOptionsDlg::SetFlag(CodeCompletionOpts flag, bool set)
 {
-	if (set) {
-		m_data.SetFlags(m_data.GetFlags() | flag);
-	} else {
-		m_data.SetFlags(m_data.GetFlags() & ~(flag));
-	}
+    if (set) {
+        m_data.SetFlags(m_data.GetFlags() | flag);
+    } else {
+        m_data.SetFlags(m_data.GetFlags() & ~(flag));
+    }
 }
 
 void TagsOptionsDlg::SetColouringFlag(CodeCompletionColourOpts flag, bool set)
 {
-	if (set) {
-		m_data.SetCcColourFlags(m_data.GetCcColourFlags() | flag);
-	} else {
-		m_data.SetCcColourFlags(m_data.GetCcColourFlags() & ~(flag));
-	}
+    if (set) {
+        m_data.SetCcColourFlags(m_data.GetCcColourFlags() | flag);
+    } else {
+        m_data.SetCcColourFlags(m_data.GetCcColourFlags() & ~(flag));
+    }
 }
 
 void TagsOptionsDlg::Parse()
 {
-	// Prepate list of files to work on
-	wxArrayString files       = wxStringTokenize(m_advancedPage->GetFiles(), wxT(" \t"), wxTOKEN_STRTOK);
-	wxArrayString searchPaths = m_includeFilesPage->GetIncludePaths();
+    // Prepate list of files to work on
+    wxArrayString files       = wxStringTokenize(m_textCtrlFilesList->GetValue(), wxT(" \t"), wxTOKEN_STRTOK);
+    wxArrayString searchPaths = GetCTagsSearchPaths();
+    wxArrayString fullpathsArr;
 
-	wxArrayString fullpathsArr;
+    for(size_t i=0; i<files.size(); i++) {
+        wxString file = files[i].Trim().Trim(false);
+        if(file.IsEmpty())
+            continue;
 
-	for(size_t i=0; i<files.size(); i++) {
-		wxString file = files[i].Trim().Trim(false);
-		if(file.IsEmpty())
-			continue;
+        for(size_t xx=0; xx<searchPaths.size(); xx++) {
+            wxString fullpath;
+            fullpath << searchPaths.Item(xx) << wxFileName::GetPathSeparator() << file;
+            wxFileName fn(fullpath);
+            if(fn.FileExists()) {
+                fullpathsArr.Add(fn.GetFullPath());
+                break;
+            }
+        }
+    }
 
-		for(size_t xx=0; xx<searchPaths.size(); xx++) {
-			wxString fullpath;
-			fullpath << searchPaths.Item(xx) << wxFileName::GetPathSeparator() << file;
-			wxFileName fn(fullpath);
-			if(fn.FileExists()) {
-				fullpathsArr.Add(fn.GetFullPath());
-				break;
-			}
-		}
-	}
+    // Clear the PreProcessor table
+    PPTable::Instance()->Clear();
+    for(size_t i=0; i<fullpathsArr.size(); i++)
+        PPScan( fullpathsArr.Item(i), true );
 
-	// Clear the PreProcessor table
-	PPTable::Instance()->Clear();
-	for(size_t i=0; i<fullpathsArr.size(); i++)
-		PPScan( fullpathsArr.Item(i), true );
+    // Open an editor and print out the results
+    IEditor * editor = PluginManager::Get()->NewEditor();
+    if(editor) {
+        editor->AppendText( PPTable::Instance()->Export() );
+        CopyData();
+        EndModal(wxID_OK);
+    }
+}
 
-	// Open an editor and print out the results
-	IEditor * editor = PluginManager::Get()->NewEditor();
-	if(editor) {
-		editor->AppendText( PPTable::Instance()->Export() );
-		CopyData();
-		EndModal(wxID_OK);
-	}
+void TagsOptionsDlg::OnAddExcludePath(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString new_path = wxDirSelector(_("Add ctags Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+    if(new_path.IsEmpty() == false) {
+        wxString currPathsStr = m_textCtrlCtagsExcludePaths->GetValue();
+        wxArrayString currPaths = wxStringTokenize(currPathsStr, wxT("\n\r"), wxTOKEN_STRTOK);
+        if(currPaths.Index(new_path) == wxNOT_FOUND) {
+            currPathsStr.Trim().Trim(false);
+            if(currPathsStr.IsEmpty() == false) {
+                currPathsStr << wxT("\n");
+            }
+            currPathsStr << new_path;
+            m_textCtrlCtagsExcludePaths->ChangeValue(currPathsStr);
+        }
+    }
+}
+
+void TagsOptionsDlg::OnAddSearchPath(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString new_path = wxDirSelector(_("Add ctags Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+    if(new_path.IsEmpty() == false) {
+        wxString currPathsStr = m_textCtrlCtagsSearchPaths->GetValue();
+        wxArrayString currPaths = wxStringTokenize(currPathsStr, wxT("\n\r"), wxTOKEN_STRTOK);
+        if(currPaths.Index(new_path) == wxNOT_FOUND) {
+            
+            currPathsStr.Trim().Trim(false);
+            if(currPathsStr.IsEmpty() == false) {
+                currPathsStr << wxT("\n");
+            }
+            currPathsStr << new_path;
+            
+            m_textCtrlCtagsSearchPaths->ChangeValue( currPathsStr );
+        }
+    }
+}
+
+void TagsOptionsDlg::OnAutoShowWordAssitUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_checkWordAssist->IsChecked());
+}
+
+void TagsOptionsDlg::OnClangCCEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_checkBoxEnableClangCC->IsChecked());
+}
+
+void TagsOptionsDlg::OnClearClangCache(wxCommandEvent& event)
+{
+    wxBusyCursor cursor;
+#if HAS_LIBCLANG
+    ClangCodeCompletion::Instance()->ClearCache();
+#endif
+}
+
+void TagsOptionsDlg::OnClearClangCacheUI(wxUpdateUIEvent& event)
+{
+#if HAS_LIBCLANG
+    event.Enable(m_checkBoxEnableClangCC->IsChecked() && !ClangCodeCompletion::Instance()->IsCacheEmpty());
+#else
+    event.Enable(false);
+#endif
+}
+
+void TagsOptionsDlg::OnColourWorkspaceUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_checkColourProjTags->IsChecked());
+}
+
+void TagsOptionsDlg::OnFileSelectedUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_textCtrlFilesList->GetValue().IsEmpty() == false);
+}
+
+void TagsOptionsDlg::OnParse(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    Parse();
+}
+
+void TagsOptionsDlg::OnSuggestSearchPaths(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    IncludePathLocator locator(PluginManager::Get());
+    wxArrayString paths, excludes;
+    locator.Locate(paths, excludes, false);
+
+    wxString suggestedPaths;
+    for(size_t i=0; i<paths.GetCount(); i++) {
+        suggestedPaths << paths.Item(i) << wxT("\n");
+    }
+
+    suggestedPaths.Trim().Trim(false);
+    if(m_textCtrlClangSearchPaths->GetValue().Contains(suggestedPaths) == false) {
+        wxString newVal = m_textCtrlClangSearchPaths->GetValue();
+        newVal.Trim().Trim(false);
+        if(newVal.IsEmpty() == false)
+            newVal << wxT("\n");
+        newVal << suggestedPaths;
+        m_textCtrlClangSearchPaths->SetValue(newVal);
+    }
+}
+
+wxArrayString TagsOptionsDlg::GetCTagsSearchPaths() const
+{
+    return wxStringTokenize(m_textCtrlCtagsSearchPaths->GetValue(), wxT("\r\n"), wxTOKEN_STRTOK);
 }

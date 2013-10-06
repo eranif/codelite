@@ -220,22 +220,11 @@
       <File Name="implementparentvirtualfunctionsbase.h"/>
       <File Name="implement_parent_virtual_functions.h"/>
       <File Name="implement_parent_virtual_functions.cpp"/>
-      <File Name="cc_colourise_page.cpp"/>
-      <File Name="cc_colourise_page.h"/>
-      <File Name="cc_display_and_behavior_page.cpp"/>
-      <File Name="cc_display_and_behavior_page.h"/>
-      <File Name="cc_triggering_page.cpp"/>
-      <File Name="cc_triggering_page.h"/>
-      <File Name="cc_include_files.cpp"/>
-      <File Name="cc_include_files.h"/>
-      <File Name="cc_advance_page.cpp"/>
-      <File Name="cc_advance_page.h"/>
-      <File Name="cc_clang_page.h"/>
-      <File Name="cc_clang_page.cpp"/>
       <File Name="AddFunctionsImpDlg.cpp"/>
       <File Name="AddFunctionsImpDlg.h"/>
       <File Name="workspacesettingsbase.wxcp"/>
       <File Name="AddIncludeFile.wxcp"/>
+      <File Name="../formbuilder/tags_options_base_dlg.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>
@@ -795,6 +784,7 @@
       <File Name="NewKeyShortcutBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AccelTableBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AddIncludeFile_liteeditor_bitmaps.cpp"/>
+      <File Name="tags_options_base_dlg_formbuilder_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

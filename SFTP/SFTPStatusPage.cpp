@@ -43,7 +43,7 @@ void SFTPStatusPage::AddLine(SFTPWriterThreadMessage* message)
     wxDELETE(message);
     
     // Ensure that the last item is visible
-    wxDataViewItem item = m_dvListCtrl->RowToItem(m_dvListCtrl->GetItemCount());
+    wxDataViewItem item = m_dvListCtrl->RowToItem(m_dvListCtrl->GetItemCount()-1);
     m_dvListCtrl->Select( item );
     m_dvListCtrl->EnsureVisible( item );
 }

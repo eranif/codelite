@@ -1255,7 +1255,7 @@ void wxSQLite3Statement::Bind(int paramIndex, const wxString& stringValue)
 {
   CheckStmt();
 
-  wxCharBuffer strStringValue = wxConvUTF8.cWC2MB(stringValue.wc_str(*wxConvCurrent));
+  wxCharBuffer strStringValue = stringValue.mb_str(wxConvISO8859_1).data();
   const char* localStringValue = strStringValue;
 
   int rc = sqlite3_bind_text((sqlite3_stmt*) m_stmt, paramIndex, localStringValue, -1, SQLITE_TRANSIENT);

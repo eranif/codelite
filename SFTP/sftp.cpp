@@ -12,6 +12,7 @@
 #include "cl_command_event.h"
 #include "json_node.h"
 #include "SFTPStatusPage.h"
+#include "SFTPTreeView.h"
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER    = ::wxNewEventType();
@@ -80,6 +81,9 @@ SFTP::SFTP(IManager *manager)
     m_outputPane = new SFTPStatusPage( m_mgr->GetOutputPaneNotebook() );
     m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, "SFTP", false, images.Bitmap("sftp_tab"));
     
+    m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook());
+    m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, "SFTP", false);
+    
     SFTPWriterThread::Instance()->SetNotifyWindow( m_outputPane );
     SFTPWriterThread::Instance()->Start();
 }
@@ -138,6 +142,14 @@ void SFTP::UnPlug()
         if (m_outputPane == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
             m_mgr->GetOutputPaneNotebook()->RemovePage(i);
             m_outputPane->Destroy();
+            break;
+        }
+    }
+    
+    for (size_t i=0; i<m_mgr->GetWorkspacePaneNotebook()->GetPageCount(); ++i) {
+        if (m_treeView == m_mgr->GetWorkspacePaneNotebook()->GetPage(i)) {
+            m_mgr->GetWorkspacePaneNotebook()->RemovePage(i);
+            m_treeView->Destroy();
             break;
         }
     }

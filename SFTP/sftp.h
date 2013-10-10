@@ -6,12 +6,14 @@
 #include "cl_command_event.h"
 
 class SFTPStatusPage;
+class SFTPTreeView;
 
 class SFTP : public IPlugin
 {
     wxFileName            m_workspaceFile;
     SFTPWorkspaceSettings m_workspaceSettings;
     SFTPStatusPage*       m_outputPane;
+    SFTPTreeView*         m_treeView;
     
 public:
     SFTP(IManager *manager);

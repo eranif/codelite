@@ -15,6 +15,13 @@
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <wx/toolbar.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/button.h>
+#include <wx/treelist.h>
 
 class SFTPStatusPageBase : public wxPanel
 {
@@ -47,6 +54,27 @@ public:
         return m_bitmaps.find(name)->second;
     }
     virtual ~SFTPImages();
+};
+
+
+class SFTPTreeViewBase : public wxPanel
+{
+protected:
+    wxAuiToolBar* m_auibar28;
+    wxChoice* m_choiceAccount;
+    wxButton* m_buttonConnect;
+    wxTreeListCtrl* m_treeListCtrl;
+
+protected:
+    virtual void OnOpenAccountManager(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnConnect(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnConnectUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnItemExpanding(wxTreeListEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxTreeListEvent& event) { event.Skip(); }
+
+public:
+    SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    virtual ~SFTPTreeViewBase();
 };
 
 #endif

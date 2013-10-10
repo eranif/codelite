@@ -249,6 +249,8 @@
   <VirtualDirectory Name="UI">
     <File Name="SFTPStatusPage.h"/>
     <File Name="SFTPStatusPage.cpp"/>
+    <File Name="SFTPTreeView.h"/>
+    <File Name="SFTPTreeView.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="UI.wxcp"/>

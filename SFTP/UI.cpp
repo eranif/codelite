@@ -82,3 +82,70 @@ SFTPImages::SFTPImages()
 SFTPImages::~SFTPImages()
 {
 }
+
+SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC32BEInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer16);
+    
+    m_auibar28 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar28->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer16->Add(m_auibar28, 0, wxEXPAND, 5);
+    
+    m_auibar28->AddTool(wxID_ANY, _("Open account manager..."), wxXmlResource::Get()->LoadBitmap(wxT("ssh-16")), wxNullBitmap, wxITEM_NORMAL, _("Open account manager..."), _("Open account manager..."), NULL);
+    m_auibar28->Realize();
+    
+    wxBoxSizer* boxSizer20 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer16->Add(boxSizer20, 0, wxALL|wxEXPAND, 2);
+    
+    wxArrayString m_choiceAccountArr;
+    m_choiceAccount = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceAccountArr, 0);
+    
+    boxSizer20->Add(m_choiceAccount, 1, wxEXPAND, 5);
+    
+    m_buttonConnect = new wxButton(this, wxID_ANY, _("connect!"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonConnect->SetDefault();
+    
+    boxSizer20->Add(m_buttonConnect, 0, wxLEFT, 5);
+    
+    m_treeListCtrl = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(200,200), wxTL_DEFAULT_STYLE|wxTL_MULTIPLE);
+    
+    boxSizer16->Add(m_treeListCtrl, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 2);
+    
+    m_treeListCtrl->AppendColumn(_("Name"), 400, wxALIGN_LEFT, wxCOL_RESIZABLE);
+    m_treeListCtrl->AppendColumn(_("Type"), 100, wxALIGN_LEFT, wxCOL_RESIZABLE);
+    m_treeListCtrl->AppendColumn(_("Size"), -2, wxALIGN_LEFT, wxCOL_RESIZABLE|wxCOL_REORDERABLE);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    this->Connect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnOpenAccountManager), NULL, this);
+    m_buttonConnect->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnConnect), NULL, this);
+    m_buttonConnect->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnConnectUI), NULL, this);
+    m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
+    m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
+    
+}
+
+SFTPTreeViewBase::~SFTPTreeViewBase()
+{
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnOpenAccountManager), NULL, this);
+    m_buttonConnect->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnConnect), NULL, this);
+    m_buttonConnect->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnConnectUI), NULL, this);
+    m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
+    m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
+    
+}

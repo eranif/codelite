@@ -131,4 +131,16 @@ const wxString TERMINAL_CMD         = wxT("");
 typedef std::map<wxString, bool>     wxStringBoolMap_t;
 typedef std::set<wxString>           wxStringSet_t;
 typedef std::map<wxString, wxString> wxStringMap_t;
+
+// Useful macros
+#define CHECK_PTR_RET(p) if ( !p ) return
+#define CHECK_PTR_RET_FALSE(p) if ( !p ) return false
+#define CHECK_PTR_RET_NULL(p) if ( !p ) return NULL
+#define CHECK_PTR_RET_EMPTY_STRING(p) if ( !p ) return wxEmptyString
+
+#define CHECK_ITEM_RET(item) if ( !item.IsOk() ) return
+#define CHECK_ITEM_RET_FALSE(item) if ( !item.IsOk() ) return false
+#define CHECK_ITEM_RET_NULL(item) if ( !item.IsOk() ) return NULL
+#define CHECK_ITEM_RET_EMPTY_STRING(item) if ( !item.IsOk() ) return wxEmptyString
+
 #endif // MACROS_H

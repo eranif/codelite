@@ -20,7 +20,6 @@
 #include <wx/toolbar.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/button.h>
 #include <wx/treelist.h>
 
 class SFTPStatusPageBase : public wxPanel
@@ -60,15 +59,22 @@ public:
 class SFTPTreeViewBase : public wxPanel
 {
 protected:
+    enum {
+        ID_OPEN_ACCOUNT_MANAGER = 1001,
+        ID_SFTP_CONNECT = 1002,
+        ID_SFTP_DISCONNECT = 1003,
+    };
+protected:
     wxAuiToolBar* m_auibar28;
     wxChoice* m_choiceAccount;
-    wxButton* m_buttonConnect;
     wxTreeListCtrl* m_treeListCtrl;
 
 protected:
     virtual void OnOpenAccountManager(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConnect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnConnectUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDisconnect(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDisconnectUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemExpanding(wxTreeListEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeListEvent& event) { event.Skip(); }
 

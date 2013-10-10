@@ -4,13 +4,16 @@
 #include <wx/msgdlg.h>
 #include "ssh_account_info.h"
 #include "bitmap_loader.h"
+#include "macros.h"
 
 class MyClientData : public wxClientData
 {
     wxString m_folder;
     bool     m_initialized;
+    bool     m_isFolder;
+
 public:
-    MyClientData(const wxString &folder) : m_folder(folder), m_initialized(false) {}
+    MyClientData(const wxString &folder) : m_folder(folder), m_initialized(false), m_isFolder(false) {}
     virtual ~MyClientData() {}
 
     void SetInitialized(bool initialized) {
@@ -24,6 +27,12 @@ public:
     }
     const wxString& GetFolder() const {
         return m_folder;
+    }
+    void SetIsFolder(bool isFolder) {
+        this->m_isFolder = isFolder;
+    }
+    bool IsFolder() const {
+        return m_isFolder;
     }
 };
 
@@ -45,6 +54,10 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent)
     if ( !m_choiceAccount->IsEmpty() ) {
         m_choiceAccount->SetSelection(0);
     }
+
+#ifdef __WXMSW__
+    m_treeListCtrl->GetDataView()->SetIndent( 16 );
+#endif
 }
 
 SFTPTreeView::~SFTPTreeView()
@@ -100,10 +113,23 @@ void SFTPTreeView::OnConnect(wxCommandEvent& event)
 
 void SFTPTreeView::OnItemActivated(wxTreeListEvent& event)
 {
+    event.Skip();
+    MyClientData *cd = GetItemData(event.GetItem());
+    CHECK_PTR_RET(cd);
+
+    if ( cd->IsFolder() ) {
+        m_treeListCtrl->Expand( event.GetItem() );
+        DoExpandItem(event.GetItem());
+
+    } else {
+        // FIXME: Load the file in an editor
+    }
 }
 
 void SFTPTreeView::OnItemExpanding(wxTreeListEvent& event)
 {
+    wxUnusedVar(event);
+    DoExpandItem(event.GetItem());
 }
 
 void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
@@ -152,29 +178,76 @@ void SFTPTreeView::DoCloseSession()
 
 void SFTPTreeView::OnConnectUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_choiceAccount->GetStringSelection().IsEmpty() );
+    event.Enable( !m_choiceAccount->GetStringSelection().IsEmpty() && !m_sftp );
 }
 
 void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
 {
-    MyClientData *cd = dynamic_cast<MyClientData*>(m_treeListCtrl->GetItemData(item));
-    if ( !cd ) return;
-    
+    MyClientData *cd = GetItemData( item );
+    CHECK_PTR_RET(cd);
+
     // already initialized this folder before?
     if ( cd->IsInitialized() ) {
         return;
     }
     cd->SetInitialized( true );
-    
+
     // Remove the dummy item and replace it with real items
     wxTreeListItem dummyItem = m_treeListCtrl->GetFirstChild(item);
     m_treeListCtrl->DeleteItem( dummyItem );
-    
+
     // get list of files and populate the tree
     SFTPAttribute::List_t attributes;
     attributes = m_sftp->List( cd->GetFolder(), clSFTP::SFTP_BROWSE_FILES|clSFTP::SFTP_BROWSE_FOLDERS );
     SFTPAttribute::List_t::iterator iter = attributes.begin();
     for( ; iter != attributes.end(); ++iter ) {
-        
+        SFTPAttribute::Ptr_t attr = (*iter);
+        if ( attr->GetName() == "." || attr->GetName() == ".." )
+            continue;
+
+        // determine the icon index
+        int imgIdx = wxNOT_FOUND;
+        if ( attr->IsFolder() ) {
+            imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder);
+
+        } else {
+            imgIdx = m_bmpLoader.GetMimeImageId(attr->GetName());
+        }
+
+        if ( imgIdx == wxNOT_FOUND ) {
+            imgIdx = m_bmpLoader.GetMimeImageId(FileExtManager::TypeText);
+        }
+
+        wxString path;
+        path << cd->GetFolder() << "/" << attr->GetName();
+
+        MyClientData* childClientData = new MyClientData(path);
+        childClientData->SetIsFolder( attr->IsFolder() );
+
+        wxTreeListItem child = m_treeListCtrl->AppendItem(item, attr->GetName(), imgIdx, imgIdx, childClientData);
+        m_treeListCtrl->SetItemText(child, 1, attr->GetTypeAsString());
+        m_treeListCtrl->SetItemText(child, 2, wxString() << attr->GetSize());
+
+        // if its type folder, add a fake child item
+        if ( attr->IsFolder() ) {
+            m_treeListCtrl->AppendItem(child, "<dummy>");
+        }
     }
+}
+
+MyClientData* SFTPTreeView::GetItemData(const wxTreeListItem& item)
+{
+    CHECK_ITEM_RET_NULL(item);
+    MyClientData *cd = dynamic_cast<MyClientData*>(m_treeListCtrl->GetItemData(item));
+    return cd;
+}
+
+void SFTPTreeView::OnDisconnect(wxCommandEvent& event)
+{
+    DoCloseSession();
+}
+
+void SFTPTreeView::OnDisconnectUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_sftp );
 }

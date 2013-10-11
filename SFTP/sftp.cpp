@@ -81,10 +81,11 @@ SFTP::SFTP(IManager *manager)
     m_outputPane = new SFTPStatusPage( m_mgr->GetOutputPaneNotebook() );
     m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, "SFTP", false, images.Bitmap("sftp_tab"));
     
-    m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook());
+    m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook(), this);
     m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, "SFTP", false);
     
     SFTPWorkerThread::Instance()->SetNotifyWindow( m_outputPane );
+    SFTPWorkerThread::Instance()->SetSftpPlugin( this );
     SFTPWorkerThread::Instance()->Start();
 }
 
@@ -218,38 +219,51 @@ void SFTP::OnFileSaved(wxCommandEvent& e)
     
     if ( local_file.IsEmpty() )
         return;
-        
-    // check if we got a workspace file opened
-    if ( !m_workspaceFile.IsOk() )
-        return;
-        
-    // check if mirroring is setup for this workspace
-    if ( !m_workspaceSettings.IsOk() )
-        return;
     
-    wxFileName file( local_file );
-    file.MakeRelativeTo( m_workspaceFile.GetPath() );
-    file.MakeAbsolute( wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
-    wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
-    
-    SFTPSettings settings;
-    SFTPSettings::Load( settings );
-    
-    SSHAccountInfo account;
-    if ( settings.GetAccount(m_workspaceSettings.GetAccount(), account) ) {
-        SFTPWorkerThread::Instance()->Add( new SFTPThreadRequet(account, remoteFile, local_file) );
+    // Check to see if this file is part of a remote files managed by our plugin
+    if ( m_remoteFiles.count(local_file) ) {
+        // ----------------------------------------------------------------------------------------------
+        // this file was opened by the SFTP explorer
+        // ----------------------------------------------------------------------------------------------
+        DoSaveRemoteFile( m_remoteFiles.find(local_file)->second );
         
     } else {
+        // ----------------------------------------------------------------------------------------------
+        // Not a remote file, see if have a sychronization setup between this workspace and a remote one
+        // ----------------------------------------------------------------------------------------------
         
-        wxString msg;
-        msg << _("Failed to synchronize file '") << local_file << "'\n"
-            << _("with remote server\n")
-            << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
-        ::wxMessageBox(msg, "SFTP", wxOK|wxICON_ERROR);
+        // check if we got a workspace file opened
+        if ( !m_workspaceFile.IsOk() )
+            return;
+            
+        // check if mirroring is setup for this workspace
+        if ( !m_workspaceSettings.IsOk() )
+            return;
         
-        // Disable the workspace mirroring for this workspace
-        m_workspaceSettings.Clear();
-        SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+        wxFileName file( local_file );
+        file.MakeRelativeTo( m_workspaceFile.GetPath() );
+        file.MakeAbsolute( wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
+        wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
+        
+        SFTPSettings settings;
+        SFTPSettings::Load( settings );
+        
+        SSHAccountInfo account;
+        if ( settings.GetAccount(m_workspaceSettings.GetAccount(), account) ) {
+            SFTPWorkerThread::Instance()->Add( new SFTPThreadRequet(account, remoteFile, local_file) );
+            
+        } else {
+            
+            wxString msg;
+            msg << _("Failed to synchronize file '") << local_file << "'\n"
+                << _("with remote server\n")
+                << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
+            ::wxMessageBox(msg, "SFTP", wxOK|wxICON_ERROR);
+            
+            // Disable the workspace mirroring for this workspace
+            m_workspaceSettings.Clear();
+            SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+        }
     }
 }
 
@@ -309,4 +323,22 @@ void SFTP::OnSaveFile(clCommandEvent& e)
         ::wxMessageBox(msg, "SFTP", wxOK|wxICON_ERROR);
         
     }
+}
+
+void SFTP::DoSaveRemoteFile(const RemoteFileInfo& remoteFile)
+{
+    SFTPWorkerThread::Instance()->Add( new SFTPThreadRequet(remoteFile.GetAccount(), remoteFile.GetRemoteFile(), remoteFile.GetLocalFile()) );
+}
+
+void SFTP::FileDownloadedSuccessfully(const wxString& localFileName)
+{
+    m_mgr->OpenFile(localFileName);
+}
+
+void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
+{
+    if ( m_remoteFiles.count(remoteFile.GetLocalFile()) ) {
+        m_remoteFiles.erase( remoteFile.GetLocalFile() );
+    }
+    m_remoteFiles.insert( std::make_pair(remoteFile.GetLocalFile(), remoteFile) );
 }

@@ -29,7 +29,9 @@
 #include "worker_thread.h" // Base class: WorkerThread
 #include "cl_sftp.h"
 #include "ssh_account_info.h"
+#include "remote_file_info.h"
 
+class SFTP;
 class SFTPThreadRequet : public ThreadRequest
 {
     SSHAccountInfo m_account;
@@ -47,6 +49,8 @@ public:
 
 public:
     SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString &remoteFile, const wxString &localFile);
+    SFTPThreadRequet(const RemoteFileInfo& remoteFile);
+    
     SFTPThreadRequet(const SFTPThreadRequet& other);
     SFTPThreadRequet& operator=(const SFTPThreadRequet& other);
     virtual ~SFTPThreadRequet();
@@ -80,10 +84,6 @@ public:
     }
     const wxString& GetLocalFile() const {
         return m_localFile;
-    }
-
-    void SetDirection(int direction) {
-        this->m_direction = direction;
     }
     int GetDirection() const {
         return m_direction;
@@ -133,7 +133,8 @@ class SFTPWorkerThread : public WorkerThread
 {
     static SFTPWorkerThread* ms_instance;
     clSFTP::Ptr_t m_sftp;
-
+    SFTP* m_plugin;
+    
 public:
     static SFTPWorkerThread* Instance();
     static void Release();
@@ -146,6 +147,7 @@ private:
 
 public:
     virtual void ProcessRequest(ThreadRequest* request);
+    void SetSftpPlugin(SFTP* sftp);
 };
 
 #endif // SFTPWRITERTHREAD_H

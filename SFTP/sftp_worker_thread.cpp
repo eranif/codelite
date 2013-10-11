@@ -9,6 +9,7 @@ SFTPWorkerThread* SFTPWorkerThread::ms_instance = 0;
 
 SFTPWorkerThread::SFTPWorkerThread()
     : m_sftp(NULL)
+    , m_plugin(NULL)
 {
 }
 
@@ -33,10 +34,6 @@ void SFTPWorkerThread::Release()
     ms_instance = 0;
 }
 
-/**
- * @brief 
- * @param request
- */
 void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
 {
     SFTPThreadRequet* req = dynamic_cast<SFTPThreadRequet*>(request);
@@ -69,7 +66,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
                 
                 // We should also notify the parent window about download completed
-                GetNotifiedWindow()->CallAfter( &SFTPStatusPage::FileDownloadedSuccessfully, req->GetLocalFile() );
+                m_plugin->CallAfter( &SFTP::FileDownloadedSuccessfully, req->GetLocalFile() );
             }
             
         } catch (clException &e) {
@@ -134,6 +131,11 @@ void SFTPWorkerThread::DoReportMessage(const wxString& account, const wxString& 
     GetNotifiedWindow()->CallAfter( &SFTPStatusPage::AddLine, pMessage );
 }
 
+void SFTPWorkerThread::SetSftpPlugin(SFTP* sftp)
+{
+    m_plugin = sftp;
+}
+
 // -----------------------------------------
 // SFTPWriterThreadRequet
 // -----------------------------------------
@@ -145,6 +147,16 @@ SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxSt
     , m_retryCounter(0)
     , m_uploadSuccess(false)
     , m_direction(kUpload)
+{
+}
+
+SFTPThreadRequet::SFTPThreadRequet(const RemoteFileInfo& remoteFile)
+    : m_account(remoteFile.GetAccount())
+    , m_remoteFile(remoteFile.GetRemoteFile())
+    , m_localFile(remoteFile.GetLocalFile())
+    , m_retryCounter(0)
+    , m_uploadSuccess(false)
+    , m_direction(kDownload)
 {
 }
 
@@ -165,6 +177,7 @@ SFTPThreadRequet& SFTPThreadRequet::operator=(const SFTPThreadRequet& other)
     m_direction     = other.m_direction;
     return *this;
 }
+
 
 SFTPThreadRequet::~SFTPThreadRequet()
 {

@@ -30,6 +30,7 @@
 #include "sftp_workspace_settings.h"
 #include "cl_command_event.h"
 #include "macros.h"
+#include "remote_file_info.h"
 
 class SFTPStatusPage;
 class SFTPTreeView;
@@ -40,12 +41,15 @@ class SFTP : public IPlugin
     SFTPWorkspaceSettings m_workspaceSettings;
     SFTPStatusPage*       m_outputPane;
     SFTPTreeView*         m_treeView;
-    wxStringMap_t         m_remoteFiles;
+    RemoteFileInfo::Map_t m_remoteFiles;
     
 public:
     SFTP(IManager *manager);
     ~SFTP();
-
+    
+    void FileDownloadedSuccessfully( const wxString &localFileName );
+    void AddRemoteFile(const RemoteFileInfo& remoteFile);
+    
 protected:
     void OnSettings(wxCommandEvent &e);
     void OnSetupWorkspaceMirroring(wxCommandEvent &e);
@@ -58,6 +62,7 @@ protected:
     bool IsWorkspaceOpened() const {
         return m_workspaceFile.IsOk();
     }
+    void DoSaveRemoteFile(const RemoteFileInfo& remoteFile);
     
     // API calls
     void OnSaveFile(clCommandEvent &e);

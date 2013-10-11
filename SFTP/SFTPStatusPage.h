@@ -36,7 +36,6 @@ public:
     virtual ~SFTPStatusPage();
     
     void AddLine( SFTPThreadMessage* message );
-    void FileDownloadedSuccessfully( const wxString &localFileName );
     void ShowContextMenu();
     
 protected:

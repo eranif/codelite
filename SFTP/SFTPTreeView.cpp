@@ -5,15 +5,25 @@
 #include "ssh_account_info.h"
 #include "bitmap_loader.h"
 #include "macros.h"
+#include "sftp_worker_thread.h"
+#include "sftp.h"
 
 class MyClientData : public wxClientData
 {
-    wxString m_folder;
+    wxString m_path;
     bool     m_initialized;
     bool     m_isFolder;
 
 public:
-    MyClientData(const wxString &folder) : m_folder(folder), m_initialized(false), m_isFolder(false) {}
+    MyClientData(const wxString &path) 
+        : m_path(path)
+        , m_initialized(false)
+        , m_isFolder(false) 
+    {
+        while (m_path.Replace("//", "/")) {}
+        while (m_path.Replace("\\\\", "\\")) {}
+    }
+    
     virtual ~MyClientData() {}
 
     void SetInitialized(bool initialized) {
@@ -22,11 +32,11 @@ public:
     bool IsInitialized() const {
         return m_initialized;
     }
-    void SetFolder(const wxString& folder) {
-        this->m_folder = folder;
+    void SetPath(const wxString& path) {
+        this->m_path = path;
     }
-    const wxString& GetFolder() const {
-        return m_folder;
+    const wxString& GetPath() const {
+        return m_path;
     }
     void SetIsFolder(bool isFolder) {
         this->m_isFolder = isFolder;
@@ -36,8 +46,9 @@ public:
     }
 };
 
-SFTPTreeView::SFTPTreeView(wxWindow* parent)
+SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
+    , m_plugin(plugin)
 {
     wxImageList* il = m_bmpLoader.MakeStandardMimeImageList();
     m_treeListCtrl->AssignImageList( il );
@@ -74,14 +85,14 @@ void SFTPTreeView::OnConnect(wxCommandEvent& event)
 
     SFTPSettings settings;
     SFTPSettings::Load( settings );
-
-    SSHAccountInfo account;
-    if ( !settings.GetAccount( accountName, account) ) {
+    
+    m_account = SSHAccountInfo();
+    if ( !settings.GetAccount( accountName, m_account) ) {
         ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR|wxOK, this);
         return;
     }
 
-    clSSH::Ptr_t ssh( new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()) );
+    clSSH::Ptr_t ssh( new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()) );
     try {
         wxString message;
         ssh->Connect();
@@ -122,7 +133,15 @@ void SFTPTreeView::OnItemActivated(wxTreeListEvent& event)
         DoExpandItem(event.GetItem());
 
     } else {
-        // FIXME: Load the file in an editor
+        
+        RemoteFileInfo remoteFile;
+        remoteFile.SetAccount( m_account );
+        remoteFile.SetRemoteFile( cd->GetPath() );
+
+        SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
+        SFTPWorkerThread::Instance()->Add( req );
+        
+        m_plugin->AddRemoteFile(remoteFile);
     }
 }
 
@@ -198,7 +217,7 @@ void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
 
     // get list of files and populate the tree
     SFTPAttribute::List_t attributes;
-    attributes = m_sftp->List( cd->GetFolder(), clSFTP::SFTP_BROWSE_FILES|clSFTP::SFTP_BROWSE_FOLDERS );
+    attributes = m_sftp->List( cd->GetPath(), clSFTP::SFTP_BROWSE_FILES|clSFTP::SFTP_BROWSE_FOLDERS );
     SFTPAttribute::List_t::iterator iter = attributes.begin();
     for( ; iter != attributes.end(); ++iter ) {
         SFTPAttribute::Ptr_t attr = (*iter);
@@ -219,7 +238,7 @@ void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
         }
 
         wxString path;
-        path << cd->GetFolder() << "/" << attr->GetName();
+        path << cd->GetPath() << "/" << attr->GetName();
 
         MyClientData* childClientData = new MyClientData(path);
         childClientData->SetIsFolder( attr->IsFolder() );

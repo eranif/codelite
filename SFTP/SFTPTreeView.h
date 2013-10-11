@@ -29,15 +29,19 @@
 #include "UI.h"
 #include "cl_sftp.h"
 #include "bitmap_loader.h"
+#include "ssh_account_info.h"
 
 class MyClientData;
+class SFTP;
 class SFTPTreeView : public SFTPTreeViewBase
 {
-    clSFTP::Ptr_t m_sftp;
-    BitmapLoader  m_bmpLoader;
-
+    clSFTP::Ptr_t  m_sftp;
+    BitmapLoader   m_bmpLoader;
+    SSHAccountInfo m_account;
+    SFTP*          m_plugin;
+    
 public:
-    SFTPTreeView(wxWindow* parent);
+    SFTPTreeView(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPTreeView();
 
 protected:

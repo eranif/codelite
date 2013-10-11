@@ -62,8 +62,3 @@ void SFTPStatusPage::OnClearLog(wxCommandEvent& event)
     wxUnusedVar(event);
     m_dvListCtrl->DeleteAllItems();
 }
-
-void SFTPStatusPage::FileDownloadedSuccessfully(const wxString& localFileName)
-{
-    // Remote file downloaded successfully
-}

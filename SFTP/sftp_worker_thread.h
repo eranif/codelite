@@ -144,6 +144,7 @@ private:
     virtual ~SFTPWorkerThread();
     void DoConnect(SFTPThreadRequet *req);
     void DoReportMessage(const wxString &account, const wxString &message, int status);
+    void DoReportStatusBarMessage(const wxString &message);
 
 public:
     virtual void ProcessRequest(ThreadRequest* request);

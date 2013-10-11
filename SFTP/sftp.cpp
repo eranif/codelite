@@ -80,7 +80,7 @@ SFTP::SFTP(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
     
     SFTPImages images;
-    m_outputPane = new SFTPStatusPage( m_mgr->GetOutputPaneNotebook() );
+    m_outputPane = new SFTPStatusPage( m_mgr->GetOutputPaneNotebook(), this );
     m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPane, "SFTP", false, images.Bitmap("sftp_tab"));
     
     m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook(), this);

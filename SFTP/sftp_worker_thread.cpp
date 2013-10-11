@@ -51,11 +51,14 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
             
             msg.Clear();
             if ( req->GetDirection() == SFTPThreadRequet::kUpload ) {
+                DoReportStatusBarMessage(wxString() << _("Uploading file: ") << req->GetRemoteFile());
                 m_sftp->Write(wxFileName(req->GetLocalFile()), req->GetRemoteFile());
                 msg << "Successfully uploaded file: " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
+                DoReportStatusBarMessage("");
                 
             } else {
+                DoReportStatusBarMessage(wxString() << _("Downloading file: ") << req->GetRemoteFile());
                 wxString fileContent = m_sftp->Read(req->GetRemoteFile());
                 wxFFile fp(req->GetLocalFile(), "w+b");
                 if ( fp.IsOpened() ) {
@@ -64,6 +67,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 }
                 msg << "Successfully downloaded file: " << req->GetLocalFile() << " <- " << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
+                DoReportStatusBarMessage("");
                 
                 // We should also notify the parent window about download completed
                 m_plugin->CallAfter( &SFTP::FileDownloadedSuccessfully, req->GetLocalFile() );
@@ -74,6 +78,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
             msg.Clear();
             msg << "SFTP error: " << e.What();
             DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_ERROR);
+            DoReportStatusBarMessage(msg);
             m_sftp.reset(NULL);
 
             // Requeue our request
@@ -97,6 +102,7 @@ void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
     clSSH::Ptr_t ssh( new clSSH(req->GetAccount().GetHost(), req->GetAccount().GetUsername(), req->GetAccount().GetPassword(), req->GetAccount().GetPort()) );
     try {
         wxString message;
+        DoReportStatusBarMessage(wxString() << _("Connecting to ") << accountName);
         DoReportMessage(accountName, "Connecting...", SFTPThreadMessage::STATUS_NONE);
         ssh->Connect();
         if ( !ssh->AuthenticateServer( message ) ) {
@@ -134,6 +140,11 @@ void SFTPWorkerThread::DoReportMessage(const wxString& account, const wxString& 
 void SFTPWorkerThread::SetSftpPlugin(SFTP* sftp)
 {
     m_plugin = sftp;
+}
+
+void SFTPWorkerThread::DoReportStatusBarMessage(const wxString& message)
+{
+    GetNotifiedWindow()->CallAfter( &SFTPStatusPage::SetStatusBarMessage, message );
 }
 
 // -----------------------------------------

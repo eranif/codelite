@@ -96,6 +96,7 @@ void SFTPTreeView::OnConnect(wxCommandEvent& event)
     clSSH::Ptr_t ssh( new clSSH(m_account.GetHost(), m_account.GetUsername(), m_account.GetPassword(), m_account.GetPort()) );
     try {
         wxString message;
+        m_plugin->GetManager()->SetStatusMessage( wxString() << _("Connecting to: ") << accountName << "..." );
         ssh->Connect();
         if ( !ssh->AuthenticateServer( message ) ) {
             if ( ::wxMessageBox(message, "SSH", wxYES_NO|wxCENTER|wxICON_QUESTION, this) == wxYES ) {
@@ -106,7 +107,7 @@ void SFTPTreeView::OnConnect(wxCommandEvent& event)
         ssh->Login();
         m_sftp.reset( new clSFTP(ssh) );
         m_sftp->Initialize();
-
+        m_plugin->GetManager()->SetStatusMessage( wxString() << _("Done!") );
         // add the root item
         wxTreeListItem root = m_treeListCtrl->AppendItem( m_treeListCtrl->GetRootItem(),
                               "/",

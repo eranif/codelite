@@ -28,15 +28,20 @@
 #include "UI.h"
 
 class SFTPThreadMessage;
+class SFTP;
+
 class SFTPStatusPage : public SFTPStatusPageBase
 {
     SFTPImages m_bitmaps;
+    SFTP* m_plugin;
+    
 public:
-    SFTPStatusPage(wxWindow* parent);
+    SFTPStatusPage(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPStatusPage();
     
     void AddLine( SFTPThreadMessage* message );
     void ShowContextMenu();
+    void SetStatusBarMessage( const wxString &message );
     
 protected:
     virtual void OnContentMenu(wxDataViewEvent& event);

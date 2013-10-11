@@ -2,11 +2,13 @@
 #include "sftp_worker_thread.h"
 #include <wx/menu.h>
 #include <wx/log.h>
+#include "sftp.h"
 
 static const int ID_CLEAR_SFTP_LOG = ::wxNewId();
 
-SFTPStatusPage::SFTPStatusPage(wxWindow* parent)
+SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     : SFTPStatusPageBase(parent)
+    , m_plugin(plugin)
 {
 }
 
@@ -64,4 +66,9 @@ void SFTPStatusPage::OnClearLog(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_dvListCtrl->DeleteAllItems();
+}
+
+void SFTPStatusPage::SetStatusBarMessage(const wxString& message)
+{
+    m_plugin->GetManager()->SetStatusMessage(message);
 }

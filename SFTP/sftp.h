@@ -77,6 +77,9 @@ public:
     virtual void HookPopupMenu(wxMenu *menu, MenuType type);
     virtual void UnHookPopupMenu(wxMenu *menu, MenuType type);
     virtual void UnPlug();
+    IManager *GetManager() {
+        return m_mgr;
+    }
     
     // Callbacks
     void OnFileWriteOK(const wxString &message);

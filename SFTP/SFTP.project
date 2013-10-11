@@ -4,8 +4,10 @@
     <File Name="sftp.cpp"/>
     <File Name="sftp_workspace_settings.h"/>
     <File Name="sftp_workspace_settings.cpp"/>
-    <File Name="sftp_writer_thread.h"/>
-    <File Name="sftp_writer_thread.cpp"/>
+    <File Name="sftp_worker_thread.h"/>
+    <File Name="sftp_worker_thread.cpp"/>
+    <File Name="remote_file_info.h"/>
+    <File Name="remote_file_info.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="sftp.h"/>

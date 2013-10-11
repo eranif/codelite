@@ -1,0 +1,190 @@
+#include "sftp_worker_thread.h"
+#include <libssh/sftp.h>
+#include "cl_ssh.h"
+#include "sftp.h"
+#include "SFTPStatusPage.h"
+#include <wx/ffile.h>
+
+SFTPWorkerThread* SFTPWorkerThread::ms_instance = 0;
+
+SFTPWorkerThread::SFTPWorkerThread()
+    : m_sftp(NULL)
+{
+}
+
+SFTPWorkerThread::~SFTPWorkerThread()
+{
+}
+
+SFTPWorkerThread* SFTPWorkerThread::Instance()
+{
+    if (ms_instance == 0) {
+        ms_instance = new SFTPWorkerThread();
+    }
+    return ms_instance;
+}
+
+void SFTPWorkerThread::Release()
+{
+    if (ms_instance) {
+        ms_instance->Stop();
+        delete ms_instance;
+    }
+    ms_instance = 0;
+}
+
+/**
+ * @brief 
+ * @param request
+ */
+void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
+{
+    SFTPThreadRequet* req = dynamic_cast<SFTPThreadRequet*>(request);
+    // Check if we need to open an ssh connection
+    if ( !m_sftp || m_sftp->GetAccount() != req->GetAccount().GetAccountName() ) {
+        m_sftp.reset(NULL);
+        DoConnect( req );
+    }
+    
+    wxString msg;
+    wxString accountName = req->GetAccount().GetAccountName();
+    if ( m_sftp && m_sftp->IsConnected() ) {
+        
+        try {
+            
+            msg.Clear();
+            if ( req->GetDirection() == SFTPThreadRequet::kUpload ) {
+                m_sftp->Write(wxFileName(req->GetLocalFile()), req->GetRemoteFile());
+                msg << "Successfully uploaded file: " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
+                DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
+                
+            } else {
+                wxString fileContent = m_sftp->Read(req->GetRemoteFile());
+                wxFFile fp(req->GetLocalFile(), "w+b");
+                if ( fp.IsOpened() ) {
+                    fp.Write( fileContent, wxConvISO8859_1 );
+                    fp.Close();
+                }
+                msg << "Successfully downloaded file: " << req->GetLocalFile() << " <- " << req->GetRemoteFile();
+                DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
+                
+                // We should also notify the parent window about download completed
+                GetNotifiedWindow()->CallAfter( &SFTPStatusPage::FileDownloadedSuccessfully, req->GetLocalFile() );
+            }
+            
+        } catch (clException &e) {
+            
+            msg.Clear();
+            msg << "SFTP error: " << e.What();
+            DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_ERROR);
+            m_sftp.reset(NULL);
+
+            // Requeue our request
+            if ( req->GetRetryCounter() == 0 ) {
+                msg.Clear();
+                msg << "Retrying to upload file: " << req->GetRemoteFile();
+                DoReportMessage(req->GetAccount().GetAccountName(), msg, SFTPThreadMessage::STATUS_NONE);
+            
+                // first time trying this request, requeue it
+                SFTPThreadRequet* retryReq = static_cast<SFTPThreadRequet*>(req->Clone());
+                retryReq->SetRetryCounter(1);
+                Add( retryReq );
+            }
+        }
+    }
+}
+
+void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
+{
+    wxString accountName = req->GetAccount().GetAccountName();
+    clSSH::Ptr_t ssh( new clSSH(req->GetAccount().GetHost(), req->GetAccount().GetUsername(), req->GetAccount().GetPassword(), req->GetAccount().GetPort()) );
+    try {
+        wxString message;
+        DoReportMessage(accountName, "Connecting...", SFTPThreadMessage::STATUS_NONE);
+        ssh->Connect();
+        if ( !ssh->AuthenticateServer( message ) ) {
+            ssh->AcceptServerAuthentication();
+        }
+
+        ssh->Login();
+        m_sftp.reset( new clSFTP(ssh) );
+        
+        // associate the account with the connection
+        m_sftp->SetAccount( req->GetAccount().GetAccountName() );
+        m_sftp->Initialize();
+
+        wxString msg;
+        msg << "Successfully connected to " << accountName;
+        DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
+
+    } catch (clException &e) {
+        wxString msg;
+        msg << "Connect error. " << e.What();
+        DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_ERROR);
+        m_sftp.reset(NULL);
+    }
+}
+
+void SFTPWorkerThread::DoReportMessage(const wxString& account, const wxString& message, int status)
+{
+    SFTPThreadMessage *pMessage = new SFTPThreadMessage();
+    pMessage->SetStatus( status );
+    pMessage->SetMessage( message );
+    pMessage->SetAccount( account );
+    GetNotifiedWindow()->CallAfter( &SFTPStatusPage::AddLine, pMessage );
+}
+
+// -----------------------------------------
+// SFTPWriterThreadRequet
+// -----------------------------------------
+
+SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile)
+    : m_account(accountInfo)
+    , m_remoteFile(remoteFile)
+    , m_localFile(localFile)
+    , m_retryCounter(0)
+    , m_uploadSuccess(false)
+    , m_direction(kUpload)
+{
+}
+
+SFTPThreadRequet::SFTPThreadRequet(const SFTPThreadRequet& other)
+{
+    if ( this == &other )
+        return;
+    *this = other;
+}
+
+SFTPThreadRequet& SFTPThreadRequet::operator=(const SFTPThreadRequet& other)
+{
+    m_account       = other.m_account;
+    m_remoteFile    = other.m_remoteFile;
+    m_localFile     = other.m_localFile;
+    m_retryCounter  = other.m_retryCounter;
+    m_uploadSuccess = other.m_uploadSuccess;
+    m_direction     = other.m_direction;
+    return *this;
+}
+
+SFTPThreadRequet::~SFTPThreadRequet()
+{
+}
+
+ThreadRequest* SFTPThreadRequet::Clone() const
+{
+    return new SFTPThreadRequet(*this);
+}
+
+
+// -----------------------------------------
+// SFTPThreadMessage
+// -----------------------------------------
+
+SFTPThreadMessage::SFTPThreadMessage()
+    : m_status(STATUS_NONE)
+{
+}
+
+SFTPThreadMessage::~SFTPThreadMessage()
+{
+}

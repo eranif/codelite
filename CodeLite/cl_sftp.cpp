@@ -5,7 +5,8 @@
 #include <wx/filefn.h>
 #include <libssh/sftp.h>
 
-class SFTPDirCloser {
+class SFTPDirCloser
+{
     sftp_dir m_dir;
 public:
     SFTPDirCloser(sftp_dir d) : m_dir(d) {}
@@ -102,44 +103,44 @@ SFTPAttribute::List_t clSFTP::List(const wxString &folder, size_t flags, const w
 {
     sftp_dir dir;
     sftp_attributes attributes;
-    
+
     if ( !m_sftp ) {
         throw clException("SFTP is not initialized");
     }
-    
+
     dir = sftp_opendir(m_sftp, folder.mb_str(wxConvUTF8).data());
     if ( !dir ) {
         throw clException(wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
     }
-    
+
     // Keep the current folder name
     m_currentFolder = dir->name;
-    
+
     // Ensure the directory is closed
     SFTPDirCloser dc(dir);
     SFTPAttribute::List_t files;
-    
+
     attributes = sftp_readdir(m_sftp, dir);
     while ( attributes ) {
-        
+
         SFTPAttribute::Ptr_t attr( new SFTPAttribute(attributes) );
         attributes = sftp_readdir(m_sftp, dir);
-        
+
         // Don't show files ?
         if ( !(flags & SFTP_BROWSE_FILES) && !attr->IsFolder()) {
             continue;
-        
+
         } else if ( (flags & SFTP_BROWSE_FILES) && !attr->IsFolder()  // show files
                     && filter.IsEmpty() ) {                           // no filter is given
             files.push_back( attr );
-            
+
         } else if ( (flags & SFTP_BROWSE_FILES) && !attr->IsFolder()  // show files
                     && !::wxMatchWild(filter, attr->GetName()) ) {    // but the file does not match the filter
             continue;
-            
+
         } else {
             files.push_back( attr );
-            
+
         }
     }
     files.sort( SFTPAttribute::Compare );
@@ -150,8 +151,39 @@ SFTPAttribute::List_t clSFTP::CdUp(size_t flags, const wxString &filter) throw (
 {
     wxString curfolder = m_currentFolder;
     curfolder << "/../"; // Force a cd up
-    
+
     wxFileName fn(curfolder, "", wxPATH_UNIX);
     fn.Normalize();
     return List(fn.GetPath(false, wxPATH_UNIX), flags, filter);
+}
+
+wxString clSFTP::Read(const wxString& remotePath) throw (clException)
+{
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+
+    sftp_file file = sftp_open(m_sftp, remotePath.mb_str(wxConvISO8859_1).data(), O_RDONLY, 0);
+    if (file == NULL) {
+        throw clException(wxString() << _("Failed to open remote file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
+    }
+    
+    wxString content;
+    char buffer[1024];
+    int nbytes = 0;
+    memset(buffer, 0, sizeof(buffer));
+    nbytes = sftp_read(file, buffer, sizeof(buffer));
+    while (nbytes > 0) {
+        content << wxString(buffer, nbytes);
+        
+        memset(buffer, 0, sizeof(buffer));
+        nbytes = sftp_read(file, buffer, sizeof(buffer));
+    }
+    
+    if ( nbytes < 0 ) {
+        sftp_close(file);
+        throw clException(wxString() << _("Failed to read remote file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
+    }
+    sftp_close( file );
+    return content;
 }

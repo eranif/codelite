@@ -1,9 +1,35 @@
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//
+// copyright            : (C) 2013 by Eran Ifrah
+// file name            : sftp.h
+//
+// -------------------------------------------------------------------------
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
 #ifndef __SFTP__
 #define __SFTP__
 
 #include "plugin.h"
 #include "sftp_workspace_settings.h"
 #include "cl_command_event.h"
+#include "macros.h"
 
 class SFTPStatusPage;
 class SFTPTreeView;
@@ -14,6 +40,7 @@ class SFTP : public IPlugin
     SFTPWorkspaceSettings m_workspaceSettings;
     SFTPStatusPage*       m_outputPane;
     SFTPTreeView*         m_treeView;
+    wxStringMap_t         m_remoteFiles;
     
 public:
     SFTP(IManager *manager);

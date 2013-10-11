@@ -30,18 +30,26 @@
 #include "cl_sftp.h"
 #include "ssh_account_info.h"
 
-class SFTPWriterThreadRequet : public ThreadRequest
+class SFTPThreadRequet : public ThreadRequest
 {
     SSHAccountInfo m_account;
     wxString       m_remoteFile;
     wxString       m_localFile;
     size_t         m_retryCounter;
     bool           m_uploadSuccess;
+    int            m_direction;
 
 public:
-    SFTPWriterThreadRequet(const SSHAccountInfo& accountInfo, const wxString &remoteFile, const wxString &localFile);
-    SFTPWriterThreadRequet(const SFTPWriterThreadRequet& other);
-    virtual ~SFTPWriterThreadRequet();
+    enum {
+        kUpload,
+        kDownload
+    };
+
+public:
+    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString &remoteFile, const wxString &localFile);
+    SFTPThreadRequet(const SFTPThreadRequet& other);
+    SFTPThreadRequet& operator=(const SFTPThreadRequet& other);
+    virtual ~SFTPThreadRequet();
 
     void SetUploadSuccess(bool uploadSuccess) {
         this->m_uploadSuccess = uploadSuccess;
@@ -74,10 +82,16 @@ public:
         return m_localFile;
     }
 
+    void SetDirection(int direction) {
+        this->m_direction = direction;
+    }
+    int GetDirection() const {
+        return m_direction;
+    }
     ThreadRequest* Clone() const;
 };
 
-class SFTPWriterThreadMessage
+class SFTPThreadMessage
 {
 
     int      m_status;
@@ -92,8 +106,8 @@ public:
     };
 
 public:
-    SFTPWriterThreadMessage();
-    virtual ~SFTPWriterThreadMessage();
+    SFTPThreadMessage();
+    virtual ~SFTPThreadMessage();
 
     void SetAccount(const wxString& account) {
         this->m_account = account;
@@ -115,21 +129,21 @@ public:
     }
 };
 
-class SFTPWriterThread : public WorkerThread
+class SFTPWorkerThread : public WorkerThread
 {
-    static SFTPWriterThread* ms_instance;
+    static SFTPWorkerThread* ms_instance;
     clSFTP::Ptr_t m_sftp;
 
 public:
-    static SFTPWriterThread* Instance();
+    static SFTPWorkerThread* Instance();
     static void Release();
 
 private:
-    SFTPWriterThread();
-    virtual ~SFTPWriterThread();
-    void DoConnect(SFTPWriterThreadRequet *req);
+    SFTPWorkerThread();
+    virtual ~SFTPWorkerThread();
+    void DoConnect(SFTPThreadRequet *req);
     void DoReportMessage(const wxString &account, const wxString &message, int status);
-    
+
 public:
     virtual void ProcessRequest(ThreadRequest* request);
 };

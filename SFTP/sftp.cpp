@@ -7,7 +7,7 @@
 #include "SFTPBrowserDlg.h"
 #include "event_notifier.h"
 #include "sftp_workspace_settings.h"
-#include "sftp_writer_thread.h"
+#include "sftp_worker_thread.h"
 #include <wx/xrc/xmlres.h>
 #include "cl_command_event.h"
 #include "json_node.h"
@@ -84,8 +84,8 @@ SFTP::SFTP(IManager *manager)
     m_treeView = new SFTPTreeView(m_mgr->GetWorkspacePaneNotebook());
     m_mgr->GetWorkspacePaneNotebook()->AddPage(m_treeView, "SFTP", false);
     
-    SFTPWriterThread::Instance()->SetNotifyWindow( m_outputPane );
-    SFTPWriterThread::Instance()->Start();
+    SFTPWorkerThread::Instance()->SetNotifyWindow( m_outputPane );
+    SFTPWorkerThread::Instance()->Start();
 }
 
 SFTP::~SFTP()
@@ -154,7 +154,7 @@ void SFTP::UnPlug()
         }
     }
     
-    SFTPWriterThread::Release();
+    SFTPWorkerThread::Release();
     wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring), NULL, this);
@@ -213,19 +213,18 @@ void SFTP::OnFileSaved(wxCommandEvent& e)
     // --------------------------------------
     // Sanity
     // --------------------------------------
+    wxString local_file = e.GetString();
+    local_file.Trim().Trim(false);
     
+    if ( local_file.IsEmpty() )
+        return;
+        
     // check if we got a workspace file opened
     if ( !m_workspaceFile.IsOk() )
         return;
         
     // check if mirroring is setup for this workspace
     if ( !m_workspaceSettings.IsOk() )
-        return;
-    
-    wxString local_file = e.GetString();
-    local_file.Trim().Trim(false);
-    
-    if ( local_file.IsEmpty() )
         return;
     
     wxFileName file( local_file );
@@ -238,7 +237,7 @@ void SFTP::OnFileSaved(wxCommandEvent& e)
     
     SSHAccountInfo account;
     if ( settings.GetAccount(m_workspaceSettings.GetAccount(), account) ) {
-        SFTPWriterThread::Instance()->Add( new SFTPWriterThreadRequet(account, remoteFile, local_file) );
+        SFTPWorkerThread::Instance()->Add( new SFTPThreadRequet(account, remoteFile, local_file) );
         
     } else {
         
@@ -300,7 +299,7 @@ void SFTP::OnSaveFile(clCommandEvent& e)
     
     SSHAccountInfo account;
     if ( settings.GetAccount(accName, account) ) {
-        SFTPWriterThread::Instance()->Add( new SFTPWriterThreadRequet(account, remoteFile, localFile) );
+        SFTPWorkerThread::Instance()->Add( new SFTPThreadRequet(account, remoteFile, localFile) );
         
     } else {
         wxString msg;

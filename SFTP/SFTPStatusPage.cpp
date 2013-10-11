@@ -1,5 +1,5 @@
 #include "SFTPStatusPage.h"
-#include "sftp_writer_thread.h"
+#include "sftp_worker_thread.h"
 #include <wx/menu.h>
 
 SFTPStatusPage::SFTPStatusPage(wxWindow* parent)
@@ -17,16 +17,16 @@ void SFTPStatusPage::OnContentMenu(wxDataViewEvent& event)
     CallAfter( &SFTPStatusPage::ShowContextMenu );
 }
 
-void SFTPStatusPage::AddLine(SFTPWriterThreadMessage* message)
+void SFTPStatusPage::AddLine(SFTPThreadMessage* message)
 {
     wxVector<wxVariant> cols;
     cols.push_back( wxDateTime::Now().FormatISOTime() );
     wxBitmap bmp;
     switch (message->GetStatus()) {
-    case SFTPWriterThreadMessage::STATUS_ERROR:
+    case SFTPThreadMessage::STATUS_ERROR:
         bmp = m_bitmaps.Bitmap("sftp_error");
         break;
-    case SFTPWriterThreadMessage::STATUS_OK:
+    case SFTPThreadMessage::STATUS_OK:
         bmp = m_bitmaps.Bitmap("sftp_ok");
         break;
     default:
@@ -61,4 +61,9 @@ void SFTPStatusPage::OnClearLog(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_dvListCtrl->DeleteAllItems();
+}
+
+void SFTPStatusPage::FileDownloadedSuccessfully(const wxString& localFileName)
+{
+    // Remote file downloaded successfully
 }

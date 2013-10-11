@@ -87,7 +87,12 @@ public:
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
     void Write(const wxString &fileContent, const wxString &remotePath) throw (clException);
-
+    
+    /**
+     * @brief read remote file and return its content
+     * @return the file content.
+     */
+    wxString Read(const wxString &remotePath) throw (clException);
     /**
      * @brief list the content of a folder
      * @param folder

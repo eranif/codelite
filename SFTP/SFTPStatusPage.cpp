@@ -1,6 +1,9 @@
 #include "SFTPStatusPage.h"
 #include "sftp_worker_thread.h"
 #include <wx/menu.h>
+#include <wx/log.h>
+
+static const int ID_CLEAR_SFTP_LOG = ::wxNewId();
 
 SFTPStatusPage::SFTPStatusPage(wxWindow* parent)
     : SFTPStatusPageBase(parent)
@@ -51,9 +54,9 @@ void SFTPStatusPage::AddLine(SFTPThreadMessage* message)
 void SFTPStatusPage::ShowContextMenu()
 {
     wxMenu menu;
-    menu.Append(wxID_CLEAR, _("Clear Log"));
-    menu.Enable(wxID_CLEAR, m_dvListCtrl->GetItemCount());
-    menu.Connect(wxID_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPStatusPage::OnClearLog), NULL, this);
+    menu.Append(ID_CLEAR_SFTP_LOG, _("Clear Log"));
+    menu.Enable(ID_CLEAR_SFTP_LOG, m_dvListCtrl->GetItemCount());
+    m_dvListCtrl->Connect(ID_CLEAR_SFTP_LOG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPStatusPage::OnClearLog), NULL, this);
     m_dvListCtrl->PopupMenu( &menu );
 }
 

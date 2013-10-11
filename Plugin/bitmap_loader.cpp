@@ -153,7 +153,7 @@ int BitmapLoader::GetMimeImageId(const wxString& filename) const
 
 wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
-    wxImageList *imageList = new wxImageList(16, 16, true);
+    wxImageList *imageList = new wxImageList(16, 16);
 
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/exe" ) )),          FileExtManager::TypeExe);
     AddImage( imageList->Add( LoadBitmap(wxT("mime/16/html" ) )),         FileExtManager::TypeHtml);

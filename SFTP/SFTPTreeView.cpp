@@ -7,6 +7,7 @@
 #include "macros.h"
 #include "sftp_worker_thread.h"
 #include "sftp.h"
+#include "event_notifier.h"
 
 class MyClientData : public wxClientData
 {
@@ -217,7 +218,13 @@ void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
 
     // get list of files and populate the tree
     SFTPAttribute::List_t attributes;
-    attributes = m_sftp->List( cd->GetPath(), clSFTP::SFTP_BROWSE_FILES|clSFTP::SFTP_BROWSE_FOLDERS );
+    try {
+        attributes = m_sftp->List( cd->GetPath(), clSFTP::SFTP_BROWSE_FILES|clSFTP::SFTP_BROWSE_FOLDERS );
+        
+    } catch (clException &e) {
+        ::wxMessageBox(e.What(), "SFTP", wxOK|wxICON_ERROR|wxCENTER, EventNotifier::Get()->TopFrame());
+        return;
+    }
     SFTPAttribute::List_t::iterator iter = attributes.begin();
     for( ; iter != attributes.end(); ++iter ) {
         SFTPAttribute::Ptr_t attr = (*iter);

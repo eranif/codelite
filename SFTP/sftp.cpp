@@ -13,6 +13,7 @@
 #include "json_node.h"
 #include "SFTPStatusPage.h"
 #include "SFTPTreeView.h"
+#include <wx/log.h>
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER    = ::wxNewEventType();
@@ -73,6 +74,7 @@ SFTP::SFTP(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SFTP::OnEditorClosed), NULL, this);
     
     // API support
     EventNotifier::Get()->Connect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
@@ -164,6 +166,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(SFTP::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SFTP::OnEditorClosed), NULL, this);
     
     EventNotifier::Get()->Disconnect(wxEVT_SFTP_SAVE_FILE, clCommandEventHandler(SFTP::OnSaveFile), NULL, this);
 }
@@ -341,4 +344,21 @@ void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
         m_remoteFiles.erase( remoteFile.GetLocalFile() );
     }
     m_remoteFiles.insert( std::make_pair(remoteFile.GetLocalFile(), remoteFile) );
+}
+
+void SFTP::OnEditorClosed(wxCommandEvent& e)
+{
+    IEditor* editor = (IEditor*) e.GetClientData();
+    if ( editor ) {
+        wxString localFile = editor->GetFileName().GetFullPath();
+        if( m_remoteFiles.count(localFile) ) {
+            
+            wxLogNull noLog;
+            
+            // Remove the file from our cache
+            ::wxRemoveFile( localFile );
+            m_remoteFiles.erase( localFile );
+            
+        }
+    }
 }

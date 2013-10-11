@@ -58,6 +58,7 @@ protected:
     void OnWorkspaceOpened(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnFileSaved(wxCommandEvent &e);
+    void OnEditorClosed(wxCommandEvent &e);
     
     bool IsWorkspaceOpened() const {
         return m_workspaceFile.IsOk();

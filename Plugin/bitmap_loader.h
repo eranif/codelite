@@ -49,7 +49,8 @@ protected:
     
 protected:
     void AddImage(int index, FileExtManager::FileType type);
-
+    wxIcon GetIcon(const wxBitmap& bmp) const;
+    
 public:
     BitmapLoader();
     ~BitmapLoader();

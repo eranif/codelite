@@ -73,6 +73,27 @@ public:
 
     /**
      * @brief login to the server with the user credentials
+     * @return true if we managed to login
+     * @throw clException incase something really bad happened
+     */
+    bool LoginPassword(bool throwExc = true) throw (clException);
+    
+    /**
+     * @brief login using public key
+     * @return true if we managed to login
+     * @throw clException incase something really bad happened
+     */
+    bool LoginPublicKey(bool throwExc = true) throw (clException);
+    
+    /**
+     * @brief login using interactive-keyboard method
+     * @return true if we managed to login
+     * @throw clException incase something really bad happened
+     */
+    bool LoginInteractiveKBD(bool throwExc = true) throw (clException);
+    
+    /**
+     * @brief try to login using all the methods we support (interactive-kbd, user/pass and public key)
      */
     void Login() throw (clException);
     

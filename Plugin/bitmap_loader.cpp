@@ -154,35 +154,36 @@ int BitmapLoader::GetMimeImageId(const wxString& filename) const
 wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
     wxImageList *imageList = new wxImageList(16, 16);
-
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/exe" ) )),          FileExtManager::TypeExe);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/html" ) )),         FileExtManager::TypeHtml);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/zip" ) )),          FileExtManager::TypeArchive);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/php" ) ) ),         FileExtManager::TypePhp);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/dll") )),           FileExtManager::TypeDll);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxfb" ))),          FileExtManager::TypeFormbuilder);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cd" ) )),           FileExtManager::TypeCodedesigner);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/bmp" ) ) ),         FileExtManager::TypeBmp);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/makefile"))),       FileExtManager::TypeMakefile);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/c"))),              FileExtManager::TypeSourceC);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/cpp"))),            FileExtManager::TypeSourceCpp);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/h"))),              FileExtManager::TypeHeader);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/text"))),           FileExtManager::TypeText);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/script"))),         FileExtManager::TypeScript);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),            FileExtManager::TypeXml);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/erd"))),            FileExtManager::TypeErd);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/python"))),         FileExtManager::TypePython);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/css"))),            FileExtManager::TypeCSS);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/javascript"))),     FileExtManager::TypeJS);
-    AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/workspace"))), FileExtManager::TypeWorkspace);
-    AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/workspace_php"))), FileExtManager::TypeWorkspacePHP);
-    AddImage( imageList->Add( LoadBitmap(wxT("workspace/16/project"))),   FileExtManager::TypeProject);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/wxcp"))),           FileExtManager::TypeWxCrafter);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/xml"))),            FileExtManager::TypeXRC);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/res"))),            FileExtManager::TypeResource);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/sql"))),            FileExtManager::TypeSQL);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/folder"))),         FileExtManager::TypeFolder);
-    AddImage( imageList->Add( LoadBitmap(wxT("mime/16/asm"))),            FileExtManager::TypeAsm);
+    
+    
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/exe" ) ))),          FileExtManager::TypeExe);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/html" ) ))),         FileExtManager::TypeHtml);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/zip" ) ))),          FileExtManager::TypeArchive);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/php" ) ) )),         FileExtManager::TypePhp);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/dll") ))),           FileExtManager::TypeDll);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/wxfb" )))),          FileExtManager::TypeFormbuilder);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/cd" ) ))),           FileExtManager::TypeCodedesigner);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/bmp" ) ) )),         FileExtManager::TypeBmp);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/makefile")))),       FileExtManager::TypeMakefile);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/c")))),              FileExtManager::TypeSourceC);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/cpp")))),            FileExtManager::TypeSourceCpp);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/h")))),              FileExtManager::TypeHeader);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/text")))),           FileExtManager::TypeText);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/script")))),         FileExtManager::TypeScript);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/xml")))),            FileExtManager::TypeXml);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/erd")))),            FileExtManager::TypeErd);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/python")))),         FileExtManager::TypePython);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/css")))),            FileExtManager::TypeCSS);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/javascript")))),     FileExtManager::TypeJS);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("workspace/16/workspace")))), FileExtManager::TypeWorkspace);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("workspace/16/workspace_php")))), FileExtManager::TypeWorkspacePHP);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("workspace/16/project")))),   FileExtManager::TypeProject);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/wxcp")))),           FileExtManager::TypeWxCrafter);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/xml")))),            FileExtManager::TypeXRC);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/res")))),            FileExtManager::TypeResource);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/sql")))),            FileExtManager::TypeSQL);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/folder")))),         FileExtManager::TypeFolder);
+    AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/asm")))),            FileExtManager::TypeAsm);
 
     m_bMapPopulated = true;
     return imageList;
@@ -227,4 +228,11 @@ BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
     images[FileExtManager::TypeProjectActive] = LoadBitmap(wxT("workspace/16/project_active"));
     images[FileExtManager::TypeAsm] = LoadBitmap(wxT("mime/16/asm"));
     return images;
+}
+
+wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
+{
+    wxIcon icn;
+    icn.CopyFromBitmap(bmp);
+    return icn;
 }

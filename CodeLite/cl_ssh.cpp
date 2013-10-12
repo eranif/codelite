@@ -108,10 +108,37 @@ void clSSH::AcceptServerAuthentication() throw (clException)
     ssh_write_knownhost(m_session);
 }
 
-void clSSH::Login() throw (clException)
+#define THROW_OR_FALSE(msg) if ( throwExc ) {\
+                                throw clException(msg);\
+                            }\
+                            return false;
+                            
+bool clSSH::LoginPassword(bool throwExc) throw (clException)
 {
     if ( !m_session ) {
-        throw clException("NULL SSH session");
+        THROW_OR_FALSE("NULL SSH session");
+    }
+
+    int rc;
+    // interactive keyboard method failed, try another method
+    rc = ssh_userauth_password(m_session, NULL, GetPassword().mb_str().data());
+    if ( rc == SSH_AUTH_SUCCESS ) {
+        return true;
+        
+    } else if ( rc == SSH_AUTH_DENIED )  {
+        THROW_OR_FALSE("Login failed: invalid username/password");
+        
+        
+    } else {
+        THROW_OR_FALSE(wxString() << _("Authentication error: ") << ssh_get_error(m_session));
+    }
+    return false;
+}
+
+bool clSSH::LoginInteractiveKBD(bool throwExc) throw (clException)
+{
+    if ( !m_session ) {
+        THROW_OR_FALSE("NULL SSH session");
     }
 
     int rc;
@@ -132,33 +159,38 @@ void clSSH::Login() throw (clException)
                 if ( echo ) {
                     wxString answer = ::wxGetTextFromUser(prompt, "SSH");
                     if ( answer.IsEmpty() ) {
-                        throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
+                        THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
+                        
                     }
                     if (ssh_userauth_kbdint_setanswer(m_session, iprompt, answer.mb_str(wxConvUTF8).data()) < 0) {
-                        throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
+                        THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
                     }
                 } else {
                     if (ssh_userauth_kbdint_setanswer(m_session, iprompt, GetPassword().mb_str(wxConvUTF8).data()) < 0) {
-                        throw clException(wxString() << "Login error: " << ssh_get_error(m_session));
+                        THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
                     }
                 }
             }
             rc = ssh_userauth_kbdint(m_session, NULL, NULL);
         }
-    
-    } else {
-        // interactive keyboard method failed, try another method
-        rc = ssh_userauth_password(m_session, NULL, GetPassword().mb_str().data());
-        if ( rc == SSH_AUTH_SUCCESS ) {
-            return;
-            
-        } else if ( rc == SSH_AUTH_DENIED ) {
-            throw clException("Login failed: invalid username/password");
-            
-        } else {
-            throw clException(wxString() << _("Authentication error: ") << ssh_get_error(m_session));
-        }
+        return true; // success
     }
+    THROW_OR_FALSE("Interactive Keyboard is not enabled for this server");
+    return false;
+}
+
+bool clSSH::LoginPublicKey(bool throwExc) throw (clException)
+{
+    if ( !m_session ) {
+       THROW_OR_FALSE("NULL SSH session");
+    }
+    
+    int rc;
+    rc = ssh_userauth_autopubkey(m_session, NULL);
+    if (rc != SSH_AUTH_SUCCESS) {
+        THROW_OR_FALSE(wxString() << _("Public Key error: ") << ssh_get_error(m_session));
+    }
+    return true;
 }
 
 void clSSH::Close()
@@ -173,4 +205,48 @@ void clSSH::Close()
     
     m_connected = false;
     m_session = NULL;
+}
+
+void clSSH::Login() throw (clException)
+{
+    int method, rc;
+    
+    rc = ssh_userauth_none(m_session, NULL);
+    if (rc == SSH_AUTH_SUCCESS) {
+        return;
+    }
+    
+    wxString errorMessage = "Unsupported login method";
+    method = ssh_userauth_list(m_session, NULL);
+    if ( method & SSH_AUTH_METHOD_PUBLICKEY ) {
+        try {
+            LoginPublicKey();
+            return;
+            
+        } catch (clException &e) {
+            errorMessage = e.What();
+        }
+    }
+    
+    if ( method & SSH_AUTH_METHOD_INTERACTIVE ) {
+        try {
+            LoginInteractiveKBD();
+            return;
+            
+        } catch (clException &e) {
+            errorMessage = e.What();
+        }
+    }
+    
+    if ( method & SSH_AUTH_METHOD_PASSWORD ) {
+        
+        try {
+            LoginPassword();
+            return;
+            
+        } catch (clException &e) {
+            errorMessage = e.What();
+        }
+    }
+    throw clException(errorMessage);
 }

@@ -28,14 +28,14 @@ AddSSHAcountDlg::~AddSSHAcountDlg()
 
 void AddSSHAcountDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_textCtrlHost->IsEmpty() && !m_textCtrlPassword->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
+    event.Enable( !m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty() );
 }
 
 void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
 {
     info.SetHost( m_textCtrlHost->GetValue() );
     info.SetPassword( m_textCtrlPassword->GetValue() );
-
+ 
     long port = 22;
     m_textCtrlPort->GetValue().ToCLong( &port );
     info.SetPort( port );
@@ -57,6 +57,8 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
                 ssh->AcceptServerAuthentication();
             }
         }
+        
+        // Try the login methods:
         ssh->Login();
         ::wxMessageBox("Successfully connected to host!");
 
@@ -66,5 +68,5 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
 }
 void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty() );
+    event.Enable( !m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
 }

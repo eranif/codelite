@@ -290,6 +290,11 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
         menu.AppendSeparator();
     }
     menu.Append(ID_DELETE, _("Delete"));
+
+#ifdef __WXMAC__
+    menu.Enable(ID_DELETE, false);
+#endif
+
     menu.Append(ID_RENAME, _("Rename"));
     m_treeListCtrl->PopupMenu( &menu );
 }

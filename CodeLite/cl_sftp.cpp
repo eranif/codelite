@@ -187,3 +187,77 @@ wxString clSFTP::Read(const wxString& remotePath) throw (clException)
     sftp_close( file );
     return content;
 }
+
+void clSFTP::CreateDir(const wxString& dirname) throw (clException)
+{
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+
+    int rc;
+    rc = sftp_mkdir(m_sftp, dirname.mb_str(wxConvISO8859_1).data(), S_IRWXU);
+    
+    if ( rc != SSH_OK ) {
+        throw clException(wxString() << _("Failed to create directory: ") << dirname << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
+    }
+}
+
+void clSFTP::Rename(const wxString& oldpath, const wxString& newpath) throw (clException)
+{
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+
+    int rc;
+    rc = sftp_rename(m_sftp, 
+                     oldpath.mb_str(wxConvISO8859_1).data(), 
+                     newpath.mb_str(wxConvISO8859_1).data());
+    
+    if ( rc != SSH_OK ) {
+        throw clException(wxString() << _("Failed to rename path. ") << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
+    }
+}
+
+void clSFTP::RemoveDir(const wxString& dirname) throw (clException)
+{
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+
+    int rc;
+    rc = sftp_rmdir(m_sftp, 
+                    dirname.mb_str(wxConvISO8859_1).data());
+    
+    if ( rc != SSH_OK ) {
+        throw clException(wxString() << _("Failed to remove directory: ") << dirname << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
+    }
+}
+
+void clSFTP::UnlinkFile(const wxString& path) throw (clException)
+{
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+
+    int rc;
+    rc = sftp_unlink(m_sftp, 
+                    path.mb_str(wxConvISO8859_1).data());
+    
+    if ( rc != SSH_OK ) {
+        throw clException(wxString() << _("Failed to unlink path: ") << path << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
+    }
+}
+
+SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path) throw (clException)
+{
+    if ( !m_sftp ) {
+        throw clException("SFTP is not initialized");
+    }
+    
+    sftp_attributes attr = sftp_stat(m_sftp, path.mb_str(wxConvISO8859_1).data());
+    if ( !attr ) {
+        throw clException(wxString() << _("Could not stat: ") << path << ". " << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
+    }
+    SFTPAttribute::Ptr_t pattr( new SFTPAttribute(attr) );
+    return pattr;
+}

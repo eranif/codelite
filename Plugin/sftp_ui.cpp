@@ -140,7 +140,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     
     flexGridSizer31->Add(m_staticText98, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(250,-1), 0);
     m_textCtrlName->SetToolTip(_("Give this account a unique name"));
     m_textCtrlName->SetFocus();
     
@@ -178,7 +178,7 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
     flexGridSizer31->Add(m_staticText41, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlPassword = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PASSWORD);
-    m_textCtrlPassword->SetToolTip(_("The login password"));
+    m_textCtrlPassword->SetToolTip(_("This field is optional. By leaving this field empty, codelite will attempt to connect only using public key authentication"));
     
     flexGridSizer31->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, 5);
     

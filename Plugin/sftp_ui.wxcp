@@ -976,7 +976,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
-											"m_value":	"-1,-1"
+											"m_value":	"250,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Minimum Size:",
@@ -1033,6 +1033,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1183,6 +1191,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1333,6 +1349,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1483,6 +1507,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1588,7 +1620,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	"The login password"
+											"m_value":	"This field is optional. By leaving this field empty, codelite will attempt to connect only using public key authentication"
 										}, {
 											"type":	"colour",
 											"m_label":	"Bg Colour:",
@@ -1633,6 +1665,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -2260,6 +2300,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
@@ -2966,6 +3014,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",

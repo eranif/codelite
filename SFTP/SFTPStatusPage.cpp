@@ -10,6 +10,7 @@ SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     : SFTPStatusPageBase(parent)
     , m_plugin(plugin)
 {
+    m_dvListCtrl->Connect(ID_CLEAR_SFTP_LOG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPStatusPage::OnClearLog), NULL, this);
 }
 
 SFTPStatusPage::~SFTPStatusPage()
@@ -58,7 +59,6 @@ void SFTPStatusPage::ShowContextMenu()
     wxMenu menu;
     menu.Append(ID_CLEAR_SFTP_LOG, _("Clear Log"));
     menu.Enable(ID_CLEAR_SFTP_LOG, m_dvListCtrl->GetItemCount());
-    m_dvListCtrl->Connect(ID_CLEAR_SFTP_LOG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPStatusPage::OnClearLog), NULL, this);
     m_dvListCtrl->PopupMenu( &menu );
 }
 

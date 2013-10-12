@@ -101,13 +101,41 @@ public:
      * @throw clException incase an error occured
      */
     SFTPAttribute::List_t List(const wxString &folder, size_t flags, const wxString &filter = "") throw (clException);
-
+    
+    /**
+     * @brief create a directory
+     * @param dirname
+     */
+    void CreateDir(const wxString &dirname) throw (clException);
+    
+    /**
+     * @brief Remove a directoy.
+     * @param dirname
+     */
+    void RemoveDir(const wxString &dirname) throw (clException);
+    
+    /**
+     * @brief Unlink (delete) a file.
+     * @param dirname
+     */
+    void UnlinkFile(const wxString &path) throw (clException);
+    
+    /**
+     * @brief Rename or move a file or directory
+     * @param oldpath
+     * @param newpath
+     */
+    void Rename(const wxString &oldpath, const wxString &newpath) throw (clException);
     /**
      * @brief cd up and list the content of the directory
      * @return
      */
     SFTPAttribute::List_t CdUp(size_t flags, const wxString &filter) throw (clException);
-
+    
+    /**
+     * @brief stat the path
+     */
+    SFTPAttribute::Ptr_t Stat(const wxString& path) throw (clException);
     /**
      * @brief return the current folder
      */

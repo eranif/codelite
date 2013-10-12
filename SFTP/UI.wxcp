@@ -942,6 +942,12 @@
 									"m_eventHandler":	"wxTreeListEventHandler",
 									"m_functionNameAndSignature":	"OnItemActivated(wxTreeListEvent& event)",
 									"m_description":	"Process wxEVT_TREELIST_ITEM_ACTIVATED event notifying about the user double clicking the item or activating it from keyboard."
+								}, {
+									"m_eventName":	"wxEVT_TREELIST_ITEM_CONTEXT_MENU",
+									"m_eventClass":	"wxTreeListEvent",
+									"m_eventHandler":	"wxTreeListEventHandler",
+									"m_functionNameAndSignature":	"OnContextMenu(wxTreeListEvent& event)",
+									"m_description":	"Process wxEVT_TREELIST_ITEM_CONTEXT_MENU event indicating that the popup menu for the given item should be displayed."
 								}],
 							"m_children":	[{
 									"m_type":	4510,
@@ -962,7 +968,7 @@
 										}, {
 											"type":	"colHeaderFlags",
 											"m_label":	"Column Flags",
-											"stringValue":	"wxCOL_RESIZABLE"
+											"stringValue":	"wxCOL_RESIZABLE|wxCOL_SORTABLE"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1008,7 +1014,7 @@
 										}, {
 											"type":	"colHeaderFlags",
 											"m_label":	"Column Flags",
-											"stringValue":	"wxCOL_RESIZABLE|wxCOL_REORDERABLE"
+											"stringValue":	"wxCOL_RESIZABLE"
 										}],
 									"m_events":	[],
 									"m_children":	[]

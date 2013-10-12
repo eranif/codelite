@@ -121,9 +121,9 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer16->Add(m_treeListCtrl, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 2);
     
-    m_treeListCtrl->AppendColumn(_("Name"), 400, wxALIGN_LEFT, wxCOL_RESIZABLE);
+    m_treeListCtrl->AppendColumn(_("Name"), 400, wxALIGN_LEFT, wxCOL_RESIZABLE|wxCOL_SORTABLE);
     m_treeListCtrl->AppendColumn(_("Type"), 100, wxALIGN_LEFT, wxCOL_RESIZABLE);
-    m_treeListCtrl->AppendColumn(_("Size"), 100, wxALIGN_LEFT, wxCOL_RESIZABLE|wxCOL_REORDERABLE);
+    m_treeListCtrl->AppendColumn(_("Size"), 100, wxALIGN_LEFT, wxCOL_RESIZABLE);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -138,6 +138,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     this->Connect(ID_SFTP_DISCONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnDisconnectUI), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
+    m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
     
 }
 
@@ -150,5 +151,6 @@ SFTPTreeViewBase::~SFTPTreeViewBase()
     this->Disconnect(ID_SFTP_DISCONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnDisconnectUI), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
+    m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
     
 }

@@ -30,29 +30,41 @@
 #include "cl_sftp.h"
 #include "bitmap_loader.h"
 #include "ssh_account_info.h"
+#include <vector>
 
 class MyClientData;
 class SFTP;
+
+typedef std::vector<MyClientData*> MyClientDataVect_t;
+
 class SFTPTreeView : public SFTPTreeViewBase
 {
     clSFTP::Ptr_t  m_sftp;
     BitmapLoader   m_bmpLoader;
     SSHAccountInfo m_account;
     SFTP*          m_plugin;
-    
+
 public:
     SFTPTreeView(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPTreeView();
 
 protected:
+    virtual void OnContextMenu(wxTreeListEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);
     virtual void OnDisconnectUI(wxUpdateUIEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);
     virtual void OnConnect(wxCommandEvent& event);
+    virtual void OnMenuNew(wxCommandEvent &event);
+    virtual void OnMenuOpen(wxCommandEvent &event);
+    virtual void OnMenuDelete(wxCommandEvent &event);
+    virtual void OnMenuRename(wxCommandEvent &event);
     
     void DoCloseSession();
     void DoExpandItem(const wxTreeListItem& item);
+    wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString &path);
+    
     MyClientData* GetItemData(const wxTreeListItem& item);
+    MyClientDataVect_t GetSelectionsItemData();
 
 protected:
     virtual void OnItemActivated(wxTreeListEvent& event);

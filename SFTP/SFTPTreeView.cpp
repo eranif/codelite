@@ -9,63 +9,12 @@
 #include "sftp.h"
 #include "event_notifier.h"
 #include <vector>
+#include "sftp_item_comparator.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME        = ::wxNewId();
 static const int ID_DELETE        = ::wxNewId();
 static const int ID_OPEN          = ::wxNewId();
-
-class MyClientData : public wxClientData
-{
-    wxString m_path;
-    bool     m_initialized;
-    bool     m_isFolder;
-
-public:
-    typedef std::vector<MyClientData*> Vector_t;
-
-public:
-    MyClientData(const wxString &path)
-        : m_path(path)
-        , m_initialized(false)
-        , m_isFolder(false) {
-        while (m_path.Replace("//", "/")) {}
-        while (m_path.Replace("\\\\", "\\")) {}
-    }
-
-    virtual ~MyClientData() {}
-    
-    wxString GetBasename() const {
-        return GetFullPath().BeforeLast('/');
-    }
-    wxString GetFullName() const {
-        return GetFullPath().AfterLast('/');
-    }
-    void SetFullName( const wxString &fullname ) {
-        wxString base = GetBasename();
-        base << "/" << fullname;
-        m_path.swap( base );
-    }
-    
-    void SetInitialized(bool initialized) {
-        this->m_initialized = initialized;
-    }
-    bool IsInitialized() const {
-        return m_initialized;
-    }
-    void SetPath(const wxString& path) {
-        this->m_path = path;
-    }
-    const wxString& GetFullPath() const {
-        return m_path;
-    }
-    void SetIsFolder(bool isFolder) {
-        this->m_isFolder = isFolder;
-    }
-    bool IsFolder() const {
-        return m_isFolder;
-    }
-};
 
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
@@ -90,7 +39,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 #ifdef __WXMSW__
     m_treeListCtrl->GetDataView()->SetIndent( 16 );
 #endif
-
+    m_treeListCtrl->SetItemComparator( new SFTPItemComparator );
     m_treeListCtrl->Connect(ID_OPEN,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuOpen), NULL, this);
     m_treeListCtrl->Connect(ID_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuDelete), NULL, this);
     m_treeListCtrl->Connect(ID_NEW,    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPTreeView::OnMenuNew), NULL, this);

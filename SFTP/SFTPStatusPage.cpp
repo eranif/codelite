@@ -3,6 +3,7 @@
 #include <wx/menu.h>
 #include <wx/log.h>
 #include "sftp.h"
+#include "sftp_item_comparator.h"
 
 static const int ID_CLEAR_SFTP_LOG = ::wxNewId();
 

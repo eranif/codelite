@@ -8,6 +8,8 @@
     <File Name="sftp_worker_thread.cpp"/>
     <File Name="remote_file_info.h"/>
     <File Name="remote_file_info.cpp"/>
+    <File Name="sftp_item_comparator.h"/>
+    <File Name="sftp_item_comparator.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="sftp.h"/>

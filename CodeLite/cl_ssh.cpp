@@ -32,10 +32,12 @@ void clSSH::Connect() throw(clException)
     }
 
     int verbosity = SSH_LOG_NOLOG;
+    int timeout = 5;
     ssh_options_set(m_session, SSH_OPTIONS_HOST,          m_host.mb_str(wxConvUTF8).data());
     ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     ssh_options_set(m_session, SSH_OPTIONS_PORT,          &m_port);
     ssh_options_set(m_session, SSH_OPTIONS_USER,          GetUsername().mb_str().data());
+    ssh_options_set(m_session, SSH_OPTIONS_TIMEOUT,       &timeout);
     
     int rc = ssh_connect(m_session);
     if (rc != SSH_OK) {
@@ -121,6 +123,8 @@ void clSSH::Login() throw (clException)
             name        = ssh_userauth_kbdint_getname(m_session);
             instruction = ssh_userauth_kbdint_getinstruction(m_session);
             nprompts    = ssh_userauth_kbdint_getnprompts(m_session);
+            wxUnusedVar(name);
+            wxUnusedVar(instruction);
             for (iprompt = 0; iprompt < nprompts; iprompt++) {
                 const char *prompt;
                 char echo;

@@ -73,7 +73,7 @@ public:
 };
 
 /*static*/
-IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, IProcessCreateFlags flags, const wxString &workingDir)
+IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxString &errMsg, IProcessCreateFlags flags, const wxString &workingDir, IProcessCallback* cb)
 {
     SECURITY_ATTRIBUTES saAttr;
     BOOL                fSuccess;
@@ -91,6 +91,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
     saAttr.bInheritHandle = TRUE;
     saAttr.lpSecurityDescriptor = NULL;
     WinProcessImpl *prc = new WinProcessImpl(parent);
+    prc->m_callback = cb;
     prc->m_flags = flags;
 
     // The steps for redirecting child process's STDOUT:
@@ -215,11 +216,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
     }
 
     BOOL ret = CreateProcess( NULL,
-#if wxVERSION_NUMBER < 2900
-                              (WCHAR*)cmd.GetData(),
-#else
                               cmd.wchar_str(),   // shell line execution command
-#endif
                               NULL,              // process security attributes
                               NULL,              // primary thread security attributes
                               TRUE,              // handles are inherited

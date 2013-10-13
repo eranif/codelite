@@ -34,40 +34,40 @@
 class wxTerminal;
 class WXDLLIMPEXP_CL UnixProcessImpl : public IProcess
 {
-	int                  m_readHandle;
-	int                  m_writeHandle;
-	ProcessReaderThread *m_thr;
+    int                  m_readHandle;
+    int                  m_writeHandle;
+    ProcessReaderThread *m_thr;
 
-	friend class wxTerminal;
+    friend class wxTerminal;
 private:
-	void StartReaderThread();
+    void StartReaderThread();
 
 public:
-	UnixProcessImpl(wxEvtHandler *parent);
-	virtual ~UnixProcessImpl();
+    UnixProcessImpl(wxEvtHandler *parent);
+    virtual ~UnixProcessImpl();
 
-	static IProcess *Execute(wxEvtHandler *parent, const wxString &cmd, IProcessCreateFlags flags, const wxString &workingDirectory = wxEmptyString);
+    static IProcess *Execute(wxEvtHandler *parent, const wxString &cmd, IProcessCreateFlags flags, const wxString &workingDirectory = wxEmptyString, IProcessCallback *cb = NULL);
 
-	void SetReadHandle(const int& readHandle) {
-		this->m_readHandle = readHandle;
-	}
-	void SetWriteHandler(const int& writeHandler) {
-		this->m_writeHandle = writeHandler;
-	}
-	const int& GetReadHandle() const {
-		return m_readHandle;
-	}
-	const int& GetWriteHandle() const {
-		return m_writeHandle;
-	}
+    void SetReadHandle(const int& readHandle) {
+        this->m_readHandle = readHandle;
+    }
+    void SetWriteHandler(const int& writeHandler) {
+        this->m_writeHandle = writeHandler;
+    }
+    const int& GetReadHandle() const {
+        return m_readHandle;
+    }
+    const int& GetWriteHandle() const {
+        return m_writeHandle;
+    }
 
 public:
-	virtual void Cleanup();
-	virtual bool IsAlive();
-	virtual bool Read(wxString& buff);
-	virtual bool Write(const wxString& buff);
-	virtual void Terminate();
-	virtual bool WriteToConsole(const wxString& buff);
+    virtual void Cleanup();
+    virtual bool IsAlive();
+    virtual bool Read(wxString& buff);
+    virtual bool Write(const wxString& buff);
+    virtual void Terminate();
+    virtual bool WriteToConsole(const wxString& buff);
 
 };
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)

@@ -56,30 +56,48 @@ void* ProcessReaderThread::Entry()
             wxString buff;
             if(m_process->Read( buff )) {
                 if( buff.IsEmpty() == false ) {
-                    // we got some data, send event to parent
-                    wxCommandEvent e(wxEVT_PROC_DATA_READ);
-                    ProcessEventData *ed = new ProcessEventData();
-                    ed->SetData(buff);
-                    ed->SetProcess( m_process );
-
-                    e.SetClientData( ed );
-                    if ( m_notifiedWindow ) {
-                        m_notifiedWindow->AddPendingEvent( e );
+                    
+                    // If we got a callback object, use it
+                    if ( m_process && m_process->GetCallback() ) {
+                        m_process->GetCallback()->CallAfter( &IProcessCallback::OnProcessOutput, buff );
+                        
                     } else {
-                        delete ed;
+                        // fallback to the event system
+                        // we got some data, send event to parent
+                        wxCommandEvent e(wxEVT_PROC_DATA_READ);
+                        ProcessEventData *ed = new ProcessEventData();
+                        ed->SetData(buff);
+                        ed->SetProcess( m_process );
+
+                        e.SetClientData( ed );
+                        if ( m_notifiedWindow ) {
+                            m_notifiedWindow->AddPendingEvent( e );
+                            
+                        } else {
+                            wxDELETE(ed);
+                        }
+                        
                     }
                 }
             } else {
-                // Process terminated??, exit
-                wxCommandEvent e(wxEVT_PROC_TERMINATED);
-                ProcessEventData *ed = new ProcessEventData();
-                ed->SetProcess( m_process );
-                e.SetClientData( ed );
-
-                if ( m_notifiedWindow ) {
-                    m_notifiedWindow->AddPendingEvent( e );
+                
+                // Process terminated, exit
+                // If we got a callback object, use it
+                if ( m_process && m_process->GetCallback() ) {
+                    m_process->GetCallback()->CallAfter( &IProcessCallback::OnProcessTerminated );
+                    
                 } else {
-                    delete ed;
+                    // fallback to the event system
+                    wxCommandEvent e(wxEVT_PROC_TERMINATED);
+                    ProcessEventData *ed = new ProcessEventData();
+                    ed->SetProcess( m_process );
+                    e.SetClientData( ed );
+
+                    if ( m_notifiedWindow ) {
+                        m_notifiedWindow->AddPendingEvent( e );
+                    } else {
+                        wxDELETE(ed);
+                    }
                 }
                 break;
             }

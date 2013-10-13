@@ -7,7 +7,7 @@ from the trunk/ directory, run:
 
 Pre-requisits:
 
-Mac: wxWidgets 2.9.4 or later
+Mac: wxWidgets 2.9.5 or later
 
 Linux/FreeBSD: wxWidgets 2.9.5 or later, gtk2 development package, cmake
 
@@ -18,61 +18,68 @@ Building:
 //-----------------------------------------------------
 
   In the CodeLite source dir, do:
-  mkdir build-release
-  cd build-release
-	cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-	make
-	(Become the superuser)
-	make install
-	
-	There are various other options that you could pass to cmake. See CMakeLists.txt for the commonest.
+    mkdir build-release
+    cd build-release
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+    make
+    (Become the superuser)
+    make install
+    
+There are various other options that you could pass to cmake. See CMakeLists.txt for the commonest.
 
 //-----------------------------------------------------
 // Windows: MinGW 
 //-----------------------------------------------------
 
 To build: 
-Download CodeLite for Windows (can be downloaded from here: 
+Download CodeLite for Windows + wxWidgets development 2.9.5 from here: (2 installers ):
 https://sourceforge.net/projects/codelite/files/Releases/
 
- !!! make sure to pick the version that includes both MinGW AND wxWidgets !!!
+Install them - it is recommended to _accept_ the default options suggested by the installer
+
 
 Step 1:
-Open the file trunk/codelite_utils/codelite_utils.workspace
-Select the 'Release' configuration and build it using F7
+
+Load the workspace codelite-sources/LiteEditor.workspace - and hit 'F7'
 
 Step 2:
-Close the workspace and load the workspace trunk/LiteEditor.workspace - and hit 'F7'
+
+Close the current workspace
+Load the workspace codelite-sources/codelite_utils/codelite_utils.workspace
+
+Step 3:
+Select the 'Release' configuration and build it using F7
 
 Once build is done, you can copy the files to the target directory by running the script:
 
-	trunk/Runtime/update.bat
-	
- Note that you may need to update the script to point it to the codelite installation directory
+    codelite-sources/Runtime/update.bat
+
+ **** Note that you may need to update the script to point it to the codelite installation directory ****
+ 
  
 //---------------------------------------------------------
 // MacOSX
 //---------------------------------------------------------
 
-You should have wxWidgets 2.9.4 or higher
+You should have wxWidgets 2.9.5 or higher
 To build wx under Mac, download the latest source package and build it as follows:
 
-cd wx-sources/
-mkdir build
-cd  build
-../configure --disable-debug --with-carbon --enable-shared --enable-monolithic --with-libjpeg=builtin --with-libpng=builtin --with-regex=builtin --without-libtiff --with-zlib=builtin --with-expat=builtin --enable-macosx_arch=i386 --with-macosx-version-min=10.5 --with-macosx-sdk=/Developer/SDKs/MacOSX10.5.sdk  
-sudo make install
+ $> cd wx-sources/
+ $> mkdir build-release
+ $> cd  build-release
+ $> ../configure --disable-debug --with-osx_cocoa --enable-shared --enable-monolithic
+ $> make -j4
+ $> sudo make install
 
 Next, build codelite:
 
-cd codelite-src/
-./configure --enable-pch
-make 
-
-At the end of the build, you should have a bundle under /path/to/codelite-src/Runtime/
-
-To run codelite, type:
-open Runtime/CodeLite.app/
+ $> cd codelite-src/
+ $> ./mac-build.sh --cmake
+ 
+ ... codelite will compile and will create a bundle, to run it:
+ 
+ $> open build-release/pack/codelite.app/
+ 
 
 Enjoy,
 Eran

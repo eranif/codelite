@@ -31,6 +31,14 @@
 #include "wx_xml_compatibility.h"
 #include "drawingutils.h"
 
+#ifdef __WXMSW__
+#   define DEFAULT_FACE_NAE "Consolas"
+#elif defined(__WXMAC__)
+#   define DEFAULT_FACE_NAE "monaco"
+#else // GTK, FreeBSD etc
+#   define DEFAULT_FACE_NAE "monospace"
+#endif
+
 static bool StringTolBool(const wxString &s)
 {
     bool res = s.CmpNoCase(wxT("Yes")) == 0 ? true : false;
@@ -55,41 +63,19 @@ void LexerConf::FromXml(wxXmlNode *element)
 
         // load key words
         wxXmlNode *node = NULL;
-        node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords0"));
-        if( node ) {
-            m_keyWords[0] = node->GetNodeContent();
-            m_keyWords[0].Replace(wxT("\n"), wxT(" "));
-            m_keyWords[0].Replace(wxT("\r"), wxT(" "));
+        for(int i=0; i<10; ++i) {
+            wxString tagName = "KeyWords";
+            tagName << i;
+            node = XmlUtils::FindFirstByTagName(element, tagName);
+            if( node ) {
+                wxString content = node->GetNodeContent();
+                content.Replace("\r", "");
+                content.Replace("\n", " ");
+                content.Replace("\\", " ");
+                m_keyWords[i] = content;
+            }
         }
-
-        node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords1"));
-        if( node ) {
-            m_keyWords[1] = node->GetNodeContent();
-            m_keyWords[1].Replace(wxT("\n"), wxT(" "));
-            m_keyWords[1].Replace(wxT("\r"), wxT(" "));
-        }
-
-        node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords2"));
-        if( node ) {
-            m_keyWords[2] = node->GetNodeContent();
-            m_keyWords[2].Replace(wxT("\n"), wxT(" "));
-            m_keyWords[2].Replace(wxT("\r"), wxT(" "));
-        }
-
-        node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords3"));
-        if( node ) {
-            m_keyWords[3] = node->GetNodeContent();
-            m_keyWords[3].Replace(wxT("\n"), wxT(" "));
-            m_keyWords[3].Replace(wxT("\r"), wxT(" "));
-        }
-
-        node = XmlUtils::FindFirstByTagName(element, wxT("KeyWords4"));
-        if( node ) {
-            m_keyWords[4] = node->GetNodeContent();
-            m_keyWords[4].Replace(wxT("\n"), wxT(" "));
-            m_keyWords[4].Replace(wxT("\r"), wxT(" "));
-        }
-
+        
         // load extensions
         node = XmlUtils::FindFirstByTagName(element, wxT("Extensions"));
         if( node ) {
@@ -281,7 +267,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     }
 
     iter = styles.begin();
-    for (; iter != styles.end(); iter++) {
+    for (; iter != styles.end(); ++iter) {
 
         StyleProperty sp        = (*iter);
         int           size      = sp.GetFontSize();
@@ -321,9 +307,14 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             break;
         }
         default: {
+            
             int fontSize( size );
-
-            wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , bold ? wxBOLD : wxNORMAL, underline, face);
+            wxFontInfo fontInfo = wxFontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(italic).Bold(bold).Underlined(underline);
+            if ( face.IsEmpty() ) {
+                fontInfo.FaceName(DEFAULT_FACE_NAE);
+            }
+            wxFont font(fontInfo);
+            
             if (sp.GetId() == 0) { //default
                 ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
                 ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT, size);

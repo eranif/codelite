@@ -182,16 +182,13 @@
           <File Name="editorsettingsdockingwidows.cpp"/>
         </VirtualDirectory>
       </VirtualDirectory>
-      <File Name="yestoalldlg.h"/>
-      <File Name="yestoallbasedlg.cpp"/>
-      <File Name="yestoallbasedlg.h"/>
-      <File Name="yestoalldlg.cpp"/>
       <File Name="env_var_dlg_base.h"/>
       <File Name="env_var_dlg_base.cpp"/>
       <File Name="SyntaxHighlightBaseDlg.wxcp"/>
       <File Name="editor_options_bookmarks.wxcp"/>
       <File Name="editor_options_bookmarks_liteeditor_bitmaps.cpp"/>
       <File Name="syntaxhighlightbasedlg_liteeditor_bitmaps.cpp"/>
+      <File Name="../yesnodlg.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

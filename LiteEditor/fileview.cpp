@@ -51,7 +51,6 @@
 #include "ctags_manager.h"
 #include <wx/progdlg.h>
 #include "editor_config.h"
-#include "yestoalldlg.h"
 #include "editorsettingslocal.h"
 #include "localworkspace.h"
 #include "plugin.h"
@@ -62,6 +61,7 @@
 #include "macros.h"
 #include <wx/treectrl.h>
 #include "drawingutils.h"
+#include <wx/richmsgdlg.h>
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -892,11 +892,13 @@ void FileViewTree::DoRemoveItems()
                     wxString message;
                     message << _( "Are you sure you want remove '" ) << name << wxT( "' ?" );
                     if ((num > 1) && ((i+1) < num) ) {
+                        
                         // For multiple selections, use a YesToAll dialog
-                        YesToAllDlg dlg(this, message);
-                        dlg.SetCheckboxText(wxString(_("Apply to all Files")));
+                        wxRichMessageDialog dlg(wxTheApp->GetTopWindow(), message, _("Confirm"), wxYES_NO|wxYES_DEFAULT|wxCANCEL|wxCENTER|wxICON_QUESTION);
+                        dlg.ShowCheckBox(_("Remember my answer and apply it all files"), false);
                         result = dlg.ShowModal();
-                        ApplyToEachFileRemoval = dlg.GetIsChecked();
+                        ApplyToEachFileRemoval = dlg.IsCheckBoxChecked();
+                        
                     } else {
                         result = wxMessageBox( message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this );
                     }
@@ -926,10 +928,10 @@ void FileViewTree::DoRemoveItems()
                             message << _("Do you also want to delete the file '")  << name << _("' from disc?");
                             if ((num > 1) && ((i+1) < num) ) {
                                 // For multiple selections, use a YesToAll dialog
-                                YesToAllDlg dlg(this, message);
-                                dlg.SetCheckboxText(wxString(_("Apply to all Files")));
+                                wxRichMessageDialog dlg(wxTheApp->GetTopWindow(), message, _("Confirm"), wxYES_NO|wxYES_DEFAULT|wxCANCEL|wxCENTER|wxICON_QUESTION);
+                                dlg.ShowCheckBox(_("Remember my answer and apply it all files"), false);
                                 DeleteThisItemFromDisc = dlg.ShowModal();
-                                ApplyToEachFileDeletion = dlg.GetIsChecked();
+                                ApplyToEachFileDeletion = dlg.IsCheckBoxChecked();
                             } else {
                                 DeleteThisItemFromDisc = wxMessageBox(message, _("Are you sure?"), wxYES_NO | wxICON_QUESTION, this);
                             }

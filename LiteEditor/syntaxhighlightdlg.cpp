@@ -37,6 +37,7 @@
 #include "theme_handler.h"
 #include "event_notifier.h"
 #include <wx/wupdlock.h>
+#include "context_manager.h"
 
 SyntaxHighlightDlg::SyntaxHighlightDlg( wxWindow* parent )
     : SyntaxHighlightBaseDlg( parent ), restartRequired(false)
@@ -264,5 +265,9 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& e)
 
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+    
+    // Update the context manager
+    ContextManager::Get()->Initialize();
+    
     EndModal(wxID_OK);
 }

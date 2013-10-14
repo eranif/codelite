@@ -32,11 +32,14 @@
 #include "drawingutils.h"
 
 #ifdef __WXMSW__
-#   define DEFAULT_FACE_NAE "Consolas"
+#   define DEFAULT_FACE_NAME "Consolas"
+#   define DEFAULT_FONT_SIZE 11
 #elif defined(__WXMAC__)
-#   define DEFAULT_FACE_NAE "monaco"
+#   define DEFAULT_FACE_NAME "monaco"
+#   define DEFAULT_FONT_SIZE 12
 #else // GTK, FreeBSD etc
-#   define DEFAULT_FACE_NAE "monospace"
+#   define DEFAULT_FACE_NAME "monospace"
+#   define DEFAULT_FONT_SIZE 11
 #endif
 
 static bool StringTolBool(const wxString &s)
@@ -308,13 +311,17 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
         default: {
             
+            wxString faceName = face;
             int fontSize( size );
-            wxFontInfo fontInfo = wxFontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(italic).Bold(bold).Underlined(underline);
             if ( face.IsEmpty() ) {
-                fontInfo.FaceName(DEFAULT_FACE_NAE);
+                // defaults
+                fontSize = DEFAULT_FONT_SIZE;
+                faceName = DEFAULT_FACE_NAME;
             }
-            wxFont font(fontInfo);
-            
+
+            wxFontInfo fontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(italic).Bold(bold).Underlined(underline).FaceName(faceName);
+            wxFont     font(fontInfo);
+
             if (sp.GetId() == 0) { //default
                 ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
                 ctrl->StyleSetSize(wxSTC_STYLE_DEFAULT, size);

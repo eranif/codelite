@@ -2,6 +2,8 @@
 #include "SSHAccountManagerDlg.h"
 #include "sftp_settings.h"
 #include <wx/msgdlg.h>
+#include <wx/menu.h>
+#include <wx/textdlg.h>
 #include "ssh_account_info.h"
 #include "bitmap_loader.h"
 #include "macros.h"

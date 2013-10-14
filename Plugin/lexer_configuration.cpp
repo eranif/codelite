@@ -319,7 +319,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 faceName = DEFAULT_FACE_NAME;
             }
 
-            wxFontInfo fontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(italic).Bold(bold).Underlined(underline).FaceName(faceName);
+            wxFontInfo fontInfo = wxFontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(italic).Bold(bold).Underlined(underline).FaceName(faceName);
             wxFont     font(fontInfo);
 
             if (sp.GetId() == 0) { //default

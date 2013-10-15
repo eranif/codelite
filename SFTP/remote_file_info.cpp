@@ -22,3 +22,11 @@ void RemoteFileInfo::SetRemoteFile(const wxString& remoteFile)
     localFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_localFile = localFile.GetFullPath();
 }
+
+wxString RemoteFileInfo::GetTempFolder()
+{
+    wxFileName localFile (wxStandardPaths::Get().GetUserDataDir(), "");
+    localFile.AppendDir("sftp");
+    localFile.AppendDir("tmp");
+    return localFile.GetPath();
+}

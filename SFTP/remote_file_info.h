@@ -56,6 +56,8 @@ public:
     const wxString& GetRemoteFile() const {
         return m_remoteFile;
     }
+    
+    static wxString GetTempFolder();
 };
 
 #endif // REMOTEFILEINFO_H

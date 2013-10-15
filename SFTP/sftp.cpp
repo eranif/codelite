@@ -300,6 +300,11 @@ void SFTP::OnSaveFile(clCommandEvent& e)
 //  }
 
     wxString requestString = e.GetString();
+    // ignore files which are located under our special tmporary folder
+    wxFileName fnFileName( requestString );
+    if ( fnFileName.GetPath().Contains( RemoteFileInfo::GetTempFolder() ) )
+        return;
+        
     JSONRoot root(requestString);
     JSONElement element = root.toElement();
     if ( !element.hasNamedObject("account") || !element.hasNamedObject("local_file") || !element.hasNamedObject("remote_file") ) {

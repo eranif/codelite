@@ -1867,10 +1867,15 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
     wxString wd;
 
     // we call it here once for the 'wd'
-    EnvSetter env1(NULL, NULL, projectName);
-    wxString execLine = GetProjectExecutionCommand ( projectName, wd, true );
-    ProjectPtr proj = GetProject ( projectName );
-
+    wxString execLine;
+    ProjectPtr proj;
+    
+    {
+        EnvSetter env1(NULL, NULL, projectName);
+        execLine = GetProjectExecutionCommand ( projectName, wd, true );
+        proj = GetProject ( projectName );
+    }
+    
     DirSaver ds;
 
     //print the current directory

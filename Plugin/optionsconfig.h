@@ -52,6 +52,9 @@ public:
         Opt_NavKey_Control           = 0x00001000,
         Opt_IconSet_Classic_Dark     = 0x00002000,
         Opt_Mark_Debugger_Line       = 0x00004000,
+        Opt_AlwaysCopyLine           = 0x00008000,
+        Opt_CopyLineIfLineNotEmpty   = 0x00010000,
+        Opt_CopyNothing              = 0x00020000,
     };
 
 protected:

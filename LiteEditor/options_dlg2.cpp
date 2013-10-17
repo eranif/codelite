@@ -45,6 +45,7 @@
 #include "editorsettingsmiscpanel.h"
 #include "manager.h"
 #include "windowattrmanager.h"
+#include "EditorOptionsCopyPaste.h"
 
 OptionsDlg2::OptionsDlg2( wxWindow* parent )
     : OptionsBaseDlg2( parent )
@@ -116,8 +117,9 @@ void OptionsDlg2::DoSave()
 
 void OptionsDlg2::Initialize()
 {
-    m_treeBook->AddPage(0,_("General"));
+    m_treeBook->AddPage(0,_("Editor"));
     AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook),     _("Guides"), true);
+    AddSubPage(new EditorOptionsCopyPaste(m_treeBook),              _("Copy / Cut Behavior"), false);
     AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook),_("Indentation"));
     AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook),_("Right Margin Indicator"));
     AddSubPage(new EditorSettingsCaret(m_treeBook),                 _("Caret & Scrolling"));

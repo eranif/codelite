@@ -109,6 +109,7 @@
             <File Name="editor_options_general_guides_panel.h"/>
             <File Name="editoroptionsgeneralguidespanelbase.cpp"/>
             <File Name="editoroptionsgeneralguidespanelbase.h"/>
+            <File Name="editor_options_guides.wxcp"/>
           </VirtualDirectory>
           <VirtualDirectory Name="Indentation">
             <File Name="editoroptionsgeneralindentationpanel.cpp"/>
@@ -127,6 +128,10 @@
             <File Name="editoroptionsgeneralsavepanel.h"/>
             <File Name="editoroptionsgeneralsavepanelbase.cpp"/>
             <File Name="editoroptionsgeneralsavepanelbase.h"/>
+          </VirtualDirectory>
+          <VirtualDirectory Name="CopyPaste">
+            <File Name="EditorOptionsCopyPaste.h"/>
+            <File Name="EditorOptionsCopyPaste.cpp"/>
           </VirtualDirectory>
         </VirtualDirectory>
         <VirtualDirectory Name="Comments">
@@ -759,6 +764,8 @@
       <File Name="NewKeyShortcutBaseDlg.cpp"/>
       <File Name="AccelTableBaseDlg.h"/>
       <File Name="AccelTableBaseDlg.cpp"/>
+      <File Name="editor_options_copy_paste.h"/>
+      <File Name="editor_options_copy_paste.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -782,6 +789,8 @@
       <File Name="AccelTableBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AddIncludeFile_liteeditor_bitmaps.cpp"/>
       <File Name="tags_options_base_dlg_formbuilder_bitmaps.cpp"/>
+      <File Name="editor_options_guides_liteeditor_bitmaps.cpp"/>
+      <File Name="editor_options_copy_paste_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -790,6 +799,7 @@
     <File Name="newquickwatch.wxcp"/>
     <File Name="../formbuilder/listctrlpanel.wxcp"/>
     <File Name="editor_options_comments_doxygen.wxcp"/>
+    <File Name="editor_options_copy_paste.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

@@ -34,7 +34,8 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 {
     wxUnusedVar(event);
     LEditor *editor = (LEditor*)owner;
-
+    
+    size_t flags = editor->GetOptions()->GetOptions();
     // hide completion box
     editor->HideCompletionBox();
 

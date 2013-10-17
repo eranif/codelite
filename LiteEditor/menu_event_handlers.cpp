@@ -35,20 +35,32 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
     wxUnusedVar(event);
     LEditor *editor = (LEditor*)owner;
     
-    size_t flags = editor->GetOptions()->GetOptions();
+    OptionsConfigPtr options = editor->GetOptions();
     // hide completion box
     editor->HideCompletionBox();
-
+    bool isSelectionEmpty = editor->GetSelectedText().IsEmpty();
+    
     if (event.GetId() == wxID_COPY) {
         
         // reset the 'full line' copy/cut flag
         editor->SetFullLineCopyCut(false);
         
-        // if the selection is empty, copy the line content
-        if(editor->GetSelectedText().IsEmpty()) {
+        if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyNothing) ) {
+            // do nothing
+            
+        } else if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyLineIfLineNotEmpty ) ) {
+            // Copy the line content only when the caret line is not empty
+            int lineNumber = editor->GetCurrentLine();
+            wxString lineContent = editor->GetLine(lineNumber);
+            if ( !lineContent.Trim().Trim(false).IsEmpty() ) {
+                editor->CopyAllowLine();
+                editor->SetFullLineCopyCut(true);
+            }
+        } else if ( isSelectionEmpty ) {
+            // default behavior
             editor->CopyAllowLine();
             editor->SetFullLineCopyCut(true);
-            
+
         } else {
             editor->Copy();
         }
@@ -58,14 +70,26 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
         // reset the 'full line' copy/cut flag
         editor->SetFullLineCopyCut(false);
         
-        if(editor->GetSelectedText().IsEmpty()) {
-            // If the selection is empty, copy the line.
+        if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyNothing) ) {
+            // do nothing
+            
+        } else if ( isSelectionEmpty && options->HasOption( OptionsConfig::Opt_CopyLineIfLineNotEmpty ) ) {
+            // Copy the line content only when the caret line is not empty
+            int lineNumber = editor->GetCurrentLine();
+            wxString lineContent = editor->GetLine(lineNumber);
+            if ( !lineContent.Trim().Trim(false).IsEmpty() ) {
+                editor->CopyAllowLine();
+                editor->LineDelete();
+                editor->SetFullLineCopyCut(true);
+            }
+        } else if ( isSelectionEmpty ) {
+            
+            // default behavior
             editor->CopyAllowLine();
             editor->LineDelete();
             editor->SetFullLineCopyCut(true);
-            
+        
         } else {
-            // If the text is selected, cut the selected text.
             editor->Cut();
         }
 

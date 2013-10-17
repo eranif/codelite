@@ -29,7 +29,7 @@ EditorOptionsCopyPasteBase::EditorOptionsCopyPasteBase(wxWindow* parent, wxWindo
     m_radioBoxCopyOptionsArr.Add(wxT("Copy / Cut the caret line to the clipboard"));
     m_radioBoxCopyOptionsArr.Add(wxT("Copy / Cut the caret line to the clipboard only when the caret line is not empty"));
     m_radioBoxCopyOptionsArr.Add(wxT("Do nothing"));
-    m_radioBoxCopyOptions = new wxRadioBox(this, wxID_ANY, _("What to copy/cut when there is no selection:"), wxDefaultPosition, wxSize(-1,-1), m_radioBoxCopyOptionsArr, 1, 0);
+    m_radioBoxCopyOptions = new wxRadioBox(this, wxID_ANY, _("What to copy/cut when there is no selection:"), wxDefaultPosition, wxSize(-1,-1), m_radioBoxCopyOptionsArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxCopyOptions->SetSelection(0);
     
     boxSizer2->Add(m_radioBoxCopyOptions, 0, wxALL|wxEXPAND, 5);

@@ -90,11 +90,6 @@ public:
     void ClearCache();
     bool IsCacheEmpty();
 
-    /**
-     * @brief return the clang compilatin database
-     */
-    wxFileName GetCompilationDatabase() const;
-
 protected:
     void DoCleanUp();
 

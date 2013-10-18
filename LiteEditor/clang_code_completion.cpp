@@ -251,12 +251,6 @@ void ClangCodeCompletion::GotoImplementation(IEditor* editor)
     m_clang.CodeCompletion(editor);
 }
 
-wxFileName ClangCodeCompletion::GetCompilationDatabase() const
-{
-    wxFileName dbFile(WorkspaceST::Get()->GetWorkspaceFileName().GetPath(), wxT("clang-compilation.db"));
-    return dbFile;
-}
-
 void ClangCodeCompletion::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();

@@ -7,18 +7,18 @@
 class MainApp : public wxApp
 {
 public:
-	MainApp() {}
-	virtual ~MainApp() {}
-	
-	virtual bool OnInit() {
-		// Add the common image handlers
-		wxImage::AddHandler( new wxPNGHandler );
-		wxImage::AddHandler( new wxJPEGHandler );
-		
-		MainDialog mainDialog(NULL);
-		mainDialog.ShowModal();
-		return false;
-	}
+    MainApp() {}
+    virtual ~MainApp() {}
+
+    virtual bool OnInit() {
+        // Add the common image handlers
+        wxImage::AddHandler( new wxPNGHandler );
+        wxImage::AddHandler( new wxJPEGHandler );
+
+        MainDialog mainDialog(NULL);
+        mainDialog.ShowModal();
+        return false;
+    }
 };
 
 DECLARE_APP(MainApp)

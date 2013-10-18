@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="wxWidgets Executable (wxDialog based + wxCrafter)" InternalType="GUI" IconIndex="wxc">
-  <Description>wxWidgets Executable. wxDialog based application + wxCrafter resources</Description>
+<CodeLite_Project Name="wxWidgets GUI Application (wxDialog, using wxCrafter)" InternalType="GUI" IconIndex="wxc">
+  <Description>A minimal wxDialog wxWidgets GUI application project, using wxCrafter designer</Description>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">

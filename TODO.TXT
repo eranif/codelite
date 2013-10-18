@@ -1,4 +1,5 @@
-Move the following files to WORKSPACE_PATH/.codelite:
+- Move the following files to WORKSPACE_PATH/.codelite:
+    cppcheck.list
 
-- compilation.db
-- cppcheck.list
+- codelite-make allow user to execute the build using --build argument
+    

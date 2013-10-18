@@ -35,10 +35,8 @@ void CompilationDatabase::Open(const wxFileName& fn)
     try {
 
         m_db = new wxSQLite3Database();
-        wxFileName dbfile = WorkspaceST::Get()->GetWorkspaceFileName();
-        dbfile.SetFullName(wxT("compilation.db"));
+        wxFileName dbfile(WorkspaceST::Get()->GetPrivateFolder(), "compilation.db");
         m_db->Open(dbfile.GetFullPath());
-
         CreateDatabase();
 
     } catch (wxSQLite3Exception &e) {
@@ -53,8 +51,7 @@ wxFileName CompilationDatabase::GetFileName() const
 {
     wxFileName dbfile;
     if ( !m_filename.IsOk() ) {
-        dbfile = WorkspaceST::Get()->GetWorkspaceFileName();
-        dbfile.SetFullName(wxT("compilation.db"));
+        dbfile = wxFileName(WorkspaceST::Get()->GetPrivateFolder(), "compilation.db");
         
     } else {
         dbfile = m_filename;

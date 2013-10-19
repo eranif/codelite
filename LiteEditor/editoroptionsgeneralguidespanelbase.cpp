@@ -152,7 +152,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     
     sbSizer4->Add(fgSizer4, 0, wxEXPAND, 5);
     
-    m_checkBoxMarkdebuggerLine = new wxCheckBox(this, wxID_ANY, _("Highlight deugger line"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxMarkdebuggerLine = new wxCheckBox(this, wxID_ANY, _("Highlight debugger line"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxMarkdebuggerLine->SetValue(false);
     
     fgSizer4->Add(m_checkBoxMarkdebuggerLine, 0, wxALL, 5);

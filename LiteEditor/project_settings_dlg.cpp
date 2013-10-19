@@ -255,7 +255,12 @@ void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
 {
     e.Skip();
-
+    
+    // Make sure we know which configuration to load for the new project
+    
+    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(e.GetString(), "");
+    CHECK_PTR_RET(bldConf);
+    
     if(m_isDirty) {
         int answer = ::wxMessageBox(_("Save changes before loading new configuration?"), _("Save Changes"), wxICON_QUESTION|wxYES_NO|wxCANCEL|wxCENTER);
         switch ( answer ) {
@@ -269,10 +274,16 @@ void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
             return;
         }
     }
-
+    
+    ClearValues();
+    
     // another project was selected in the tree view
     m_projectName = e.GetString();
+    m_configName  = bldConf->GetName();
+    
+    // determine the correct configuration to load
     SetTitle( wxString() << m_projectName << " Project Settings" );
+    
     DoGetAllBuildConfigs();
     LoadValues(m_configName);
 }

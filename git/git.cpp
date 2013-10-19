@@ -82,6 +82,7 @@ GitPlugin::GitPlugin(IManager *manager)
     , m_topWindow(NULL)
     , m_pluginToolbar(NULL)
     , m_pluginMenu(NULL)
+    , m_commitListDlg(NULL)
 {
     m_longName = wxT("GIT plugin");
     m_shortName = wxT("git");
@@ -526,15 +527,11 @@ void GitPlugin::OnCreateBranch(wxCommandEvent &e)
 void GitPlugin::OnCommit(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    if( m_modifiedFiles.empty() && !m_addedFiles ) {
-        wxMessageBox(wxT("No modified files found, nothing to commit..."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
-        return;
-    }
-
     gitAction ga (gitDiffRepoCommit,wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
 }
+
 /*******************************************************************************/
 void GitPlugin::OnCommitList(wxCommandEvent &e)
 {
@@ -549,10 +546,6 @@ void GitPlugin::OnCommitList(wxCommandEvent &e)
 void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if( m_modifiedFiles.empty() && !m_addedFiles) {
-        wxMessageBox(wxT("No modified files found."), wxT("CodeLite"), wxICON_INFORMATION | wxOK, m_topWindow);
-        return;
-    }
     gitAction ga(gitDiffRepoShow, wxT(""));
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
@@ -820,6 +813,11 @@ void GitPlugin::ProcessGitActionQueue()
 
     wxString command = m_pathGITExecutable;
     switch(ga.action) {
+    case gitRevertCommit:
+        command << " revert --no-commit " << ga.arguments;
+        GIT_MESSAGE("%s", command.c_str());
+        break;
+        
     case gitApplyPatch:
         command << " apply --whitespace=nowarn --ignore-whitespace " << ga.arguments;
         GIT_MESSAGE("%s", command.c_str());
@@ -979,7 +977,8 @@ void GitPlugin::ProcessGitActionQueue()
     case gitCommitList:
         GIT_MESSAGE1(wxT("Listing commits.."));
         ShowProgress(wxT("Fetching commit list"));
-        command << wxT(" --no-pager log --pretty=\"%h|%s|%an|%ci\"");
+        // hash @ author-name @ date @ subject
+        command << wxT(" --no-pager log --pretty=\"%h@%an@%ci@%s\"");
         GIT_MESSAGE1(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
@@ -1286,10 +1285,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
             m_gitActionQueue.pop();
         }
 
-        if (m_process) {
-            delete m_process;
-            m_process = NULL;
-        }
+        wxDELETE(m_process);
         m_commandOutput.Clear();
         return;
     }
@@ -1305,7 +1301,8 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
 
     } else if(ga.action == gitStatus) {
         m_console->UpdateTreeView(m_commandOutput);
-
+        FinishGitListAction(ga);
+        
     } else if(ga.action == gitListRemotes ) {
         wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
         m_remotes = gitList;
@@ -1408,20 +1405,20 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
             
         }
     } else if(ga.action == gitCommitList) {
-        GitCommitListDlg dlg(m_topWindow, m_repositoryDirectory);
-        dlg.SetCommitList(m_commandOutput);
-        dlg.ShowModal();
-
+        GitCommitListDlg *dlg = new GitCommitListDlg(m_topWindow, m_repositoryDirectory, this);
+        dlg->SetCommitList(m_commandOutput);
+        dlg->Show();
+        
+    } else if ( ga.action == gitRevertCommit ) {
+        AddDefaultActions();
     }
 
-    if (m_process) {
-        delete m_process;
-        m_process = NULL;
-    }
+    wxDELETE(m_process);
     m_commandOutput.Clear();
     m_gitActionQueue.pop();
     ProcessGitActionQueue();
 }
+
 /*******************************************************************************/
 void GitPlugin::OnProcessOutput(wxCommandEvent &event)
 {
@@ -1946,4 +1943,11 @@ bool GitPlugin::IsWorkspaceOpened() const
 wxFileName GitPlugin::GetWorkspaceFileName() const
 {
     return m_workspaceFilename;
+}
+
+void GitPlugin::RevertCommit(const wxString& commitId)
+{
+    gitAction ga(gitRevertCommit, commitId);
+    m_gitActionQueue.push(ga);
+    ProcessGitActionQueue();
 }

@@ -34,6 +34,7 @@ public:
     ~gitAction() {}
 };
 class GitConsole;
+class GitCommitListDlg;
 class GitPlugin : public IPlugin
 {
     typedef std::map<int, int> IntMap_t;
@@ -68,6 +69,7 @@ class GitPlugin : public IPlugin
         gitUndoAdd,
         gitRmFiles,
         gitApplyPatch,
+        gitRevertCommit,
 #if 0
         gitBisectStart,
         gitBisectGood,
@@ -76,37 +78,35 @@ class GitPlugin : public IPlugin
 #endif
     };
 
-    wxArrayString m_localBranchList;
-    wxArrayString m_remoteBranchList;
-    wxStringSet_t  m_trackedFiles;
-    wxStringSet_t  m_modifiedFiles;
-    bool m_addedFiles;
-    wxArrayString m_remotes;
-
-    wxColour m_colourTrackedFile;
-    wxColour m_colourDiffFile;
-    wxString m_pathGITExecutable;
-    wxString m_pathGITKExecutable;
-    wxString m_repositoryDirectory;
-    wxString m_currentBranch;
-    std::queue<gitAction> m_gitActionQueue;
-
-    wxTimer m_progressTimer;
-    wxProgressDialog* m_progressDialog;
-    wxString m_progressMessage;
-    wxString m_commandOutput;
-    bool m_bActionRequiresTreUpdate;
-    IProcess * m_process;
-    wxEvtHandler *m_eventHandler;
-    wxWindow *m_topWindow;
-
-    clToolBar* m_pluginToolbar;
-    wxMenu* m_pluginMenu;
-    GitImages m_images;
-    IntMap_t m_treeImageMapping;
-    int      m_baseImageCount;
-    GitConsole *m_console;
-    wxFileName  m_workspaceFilename;
+    wxArrayString           m_localBranchList;
+    wxArrayString           m_remoteBranchList;
+    wxStringSet_t           m_trackedFiles;
+    wxStringSet_t           m_modifiedFiles;
+    bool                    m_addedFiles;
+    wxArrayString           m_remotes;
+    wxColour                m_colourTrackedFile;
+    wxColour                m_colourDiffFile;
+    wxString                m_pathGITExecutable;
+    wxString                m_pathGITKExecutable;
+    wxString                m_repositoryDirectory;
+    wxString                m_currentBranch;
+    std::queue<gitAction>   m_gitActionQueue;
+    wxTimer                 m_progressTimer;
+    wxProgressDialog*       m_progressDialog;
+    wxString                m_progressMessage;
+    wxString                m_commandOutput;
+    bool                    m_bActionRequiresTreUpdate;
+    IProcess *              m_process;
+    wxEvtHandler *          m_eventHandler;
+    wxWindow *              m_topWindow;
+    clToolBar*              m_pluginToolbar;
+    wxMenu*                 m_pluginMenu;
+    GitImages               m_images;
+    IntMap_t                m_treeImageMapping;
+    int                     m_baseImageCount;
+    GitConsole *            m_console;
+    wxFileName              m_workspaceFilename;
+    GitCommitListDlg *      m_commitListDlg;
     
 private:
     void DoCreateTreeImages();
@@ -135,7 +135,8 @@ private:
     void DoGetFileViewSelectedFiles( wxArrayString &files, bool relativeToRepo );
     void DoShowDiffsForFiles(const wxArrayString &files);
     
-    DECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
+    
     // Event handlers
     void OnInitDone(wxCommandEvent& e);
     void OnProgressTimer(wxTimerEvent& Event);
@@ -200,7 +201,9 @@ public:
     void AddFiles(const wxArrayString &files) {
         DoAddFiles(files);
     }
-
+    
+    void RevertCommit(const wxString &commitId);
+    
     void ResetFiles(const wxArrayString &files) {
         DoResetFiles(files);
     }

@@ -36,7 +36,7 @@ DataViewFilesModel::DataViewFilesModel()
 DataViewFilesModel::~DataViewFilesModel()
 {
     for(size_t i=0; i<m_data.size(); ++i) {
-        delete m_data.at(i);
+        wxDELETE(m_data.at(i));
     }
     m_data.clear();
 }
@@ -76,6 +76,10 @@ wxString DataViewFilesModel::GetColumnType(unsigned int col) const
 
 wxDataViewItem DataViewFilesModel::GetParent(const wxDataViewItem& item) const
 {
+    if ( IsEmpty() ) {
+        return wxDataViewItem(NULL);
+    }
+    
     DataViewFilesModel_Item* node = reinterpret_cast<DataViewFilesModel_Item*>(item.m_pItem);
     if ( node ) {
         return wxDataViewItem(node->GetParent());
@@ -203,7 +207,7 @@ void DataViewFilesModel::DeleteItem(const wxDataViewItem& item)
         if ( parent && parent->GetChildren().empty() )
             DoChangeItemType(parentItem, false);
             
-        delete node;
+        wxDELETE(node);
     }
     
     if ( IsEmpty() )
@@ -228,6 +232,7 @@ void DataViewFilesModel::Clear()
     for(; iter != roots.end(); ++iter) {
         DeleteItem( wxDataViewItem(*iter) );
     }
+    m_data.clear();
     Cleared();
 }
 

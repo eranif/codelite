@@ -11,6 +11,7 @@
 #include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/stattext.h>
@@ -22,18 +23,17 @@
 #include <wx/checklst.h>
 #include "gitCommitEditor.h"
 #include <wx/textctrl.h>
-#include <wx/listctrl.h>
+#include <wx/dataview.h>
 #include <wx/listbox.h>
-#include <wx/statline.h>
+#include <wx/stc/stc.h>
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
+#include <wx/icon.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
-#include <wx/dataview.h>
 #include "dataviewfilesmodel.h"
-#include <wx/stc/stc.h>
 
 class GitSettingsDlgBase : public wxDialog
 {
@@ -88,20 +88,34 @@ public:
 class GitCommitListDlgBase : public wxDialog
 {
 protected:
-    wxListCtrl* m_commitListBox;
+    wxSplitterWindow* m_splitter174;
+    wxPanel* m_splitterPage178;
+    wxStaticText* m_staticText207;
+    wxDataViewListCtrl* m_dvListCtrlCommitList;
+    wxPanel* m_splitterPage182;
+    wxSplitterWindow* m_splitter186;
+    wxPanel* m_splitterPage190;
+    wxSplitterWindow* m_splitter196;
+    wxPanel* m_splitterPage200;
+    wxStaticText* m_staticText210;
     wxListBox* m_fileListBox;
-    GitCommitEditor* m_editor;
+    wxPanel* m_splitterPage204;
+    wxStaticText* m_staticText217;
+    wxStyledTextCtrl* m_stcDiff;
+    wxPanel* m_splitterPage194;
+    wxStaticText* m_staticText220;
     wxTextCtrl* m_commitMessage;
-    wxStaticLine* m_staticline4;
-    wxStdDialogButtonSizer* m_sdbSizer1;
-    wxButton* m_button136;
+    wxButton* m_button226;
 
 protected:
-    virtual void OnChangeCommit(wxListEvent& event) { event.Skip(); }
+    virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
+    virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitCommitListDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit List"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(879,600), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX);
+    GitCommitListDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit List"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxMAXIMIZE_BOX);
     virtual ~GitCommitListDlgBase();
 };
 

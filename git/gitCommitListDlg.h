@@ -10,32 +10,41 @@
 
 #include <map>
 #include "gitui.h"
+#include "macros.h"
 
 class GitCommitEditor;
 class IProcess;
-
+class GitPlugin;
 class GitCommitListDlg : public GitCommitListDlgBase
 {
-	std::map<wxString, wxString> m_diffMap;
-	wxString                     m_workingDir;
-	wxString                     m_commandOutput;
-	IProcess *                   m_process;
-	wxString                     m_gitPath;
-	
-public:
-	GitCommitListDlg(wxWindow* parent, const wxString& workingDir);
-	~GitCommitListDlg();
+    GitPlugin*    m_git;
+    wxStringMap_t m_diffMap;
+    wxString      m_workingDir;
+    wxString      m_commandOutput;
+    IProcess *    m_process;
+    wxString      m_gitPath;
 
-	void SetCommitList(const wxString& commits);
+public:
+    GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git);
+    ~GitCommitListDlg();
+
+    void SetCommitList(const wxString& commits);
 
 private:
-	void OnChangeCommit(wxListEvent& e);
-	void OnChangeFile(wxCommandEvent& e);
+    void OnChangeFile(wxCommandEvent& e);
+    DECLARE_EVENT_TABLE()
 
-	DECLARE_EVENT_TABLE();
-	// Event handlers
-	void OnProcessTerminated(wxCommandEvent &event);
-	void OnProcessOutput    (wxCommandEvent &event);
+    // Event handlers
+    void OnProcessTerminated(wxCommandEvent &event);
+    void OnProcessOutput    (wxCommandEvent &event);
+
+protected:
+    virtual void OnOK(wxCommandEvent& event);
+    virtual void OnClose(wxCloseEvent& event);
+    virtual void OnContextMenu(wxDataViewEvent& event);
+    virtual void OnSelectionChanged(wxDataViewEvent& event);
+    void OnRevertCommit(wxCommandEvent &e);
+    void OnCopyCommitHashToClipboard(wxCommandEvent &e);
 };
 
 #endif //__gitCommitListDlg__

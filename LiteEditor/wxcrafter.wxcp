@@ -96,6 +96,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -692,6 +712,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -871,6 +899,14 @@
 																			"type":	"string",
 																			"m_label":	"Max Length:",
 																			"m_value":	"0"
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Auto Complete Directories:",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Auto Complete Files:",
+																			"m_value":	false
 																		}],
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -945,7 +981,7 @@
 																			"m_label":	"Style:",
 																			"m_value":	""
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	"..\\icons\\find-folder.png"
 																		}, {
@@ -1360,6 +1396,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -1462,7 +1506,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -1557,7 +1601,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -2295,7 +2339,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Don't close this pane when an editor gets focus"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/output-pane/16/ToolPin.png"
 										}, {
@@ -2345,7 +2389,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"When checked, make sure that the last line added\\nis always visible"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/output-pane/16/auto-scroll.png"
 										}, {
@@ -2421,7 +2465,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Clear Build Output"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons-fresh-farm/output-pane/16/clear.png"
 										}, {
@@ -2477,7 +2521,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Save Build Log..."
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons-fresh-farm/toolbars/16/standard/document-save.png"
 										}, {
@@ -2533,7 +2577,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Copy Build Output to Clipboard"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/toolbars/16/standard/edit-copy.png"
 										}, {
@@ -2589,7 +2633,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Paste Build Output into an Empty Editor"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/toolbars/16/standard/edit-paste.png"
 										}, {
@@ -2929,6 +2973,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -3121,7 +3185,7 @@
 													"m_selection":	0,
 													"m_options":	["wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT"]
 												}, {
-													"type":	"filePicker",
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
 												}, {
@@ -3297,7 +3361,7 @@
 																	"m_label":	"Note",
 																	"m_value":	"Download wxCrafter plugin from codelite's website"
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -3386,7 +3450,7 @@
 																	"m_label":	"Note",
 																	"m_value":	"Ignore the missing plugin and create the project anyway"
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -3493,6 +3557,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -3596,7 +3680,7 @@
 									"m_selection":	0,
 									"m_options":	["wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT"]
 								}, {
-									"type":	"filePicker",
+									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
 									"m_path":	""
 								}, {
@@ -3959,7 +4043,7 @@
 													"m_label":	"Default Button",
 													"m_value":	false
 												}, {
-													"type":	"filePicker",
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
 												}, {
@@ -4048,7 +4132,7 @@
 													"m_label":	"Default Button",
 													"m_value":	false
 												}, {
-													"type":	"filePicker",
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
 												}, {
@@ -4162,7 +4246,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -4251,7 +4335,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -4631,7 +4715,7 @@
 																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"../Runtime/images/splashscreen.png"
 																}],
@@ -4744,7 +4828,7 @@
 																			"m_label":	"Note",
 																			"m_value":	"Open a recently used workspace"
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -4839,7 +4923,7 @@
 																			"m_label":	"Note",
 																			"m_value":	"Open a recently used file"
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -4934,7 +5018,7 @@
 																			"m_label":	"Note",
 																			"m_value":	"Start a new project"
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -5023,7 +5107,7 @@
 																			"m_label":	"Note",
 																			"m_value":	"Open a workspace"
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -5112,7 +5196,7 @@
 																			"m_label":	"Note",
 																			"m_value":	"Visit codelite's forums"
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -5201,7 +5285,7 @@
 																			"m_label":	"Note",
 																			"m_value":	"Search codelite's wiki pages"
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {

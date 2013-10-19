@@ -2301,6 +2301,9 @@ void Manager::DbgStart ( long attachPid )
     // wont need to read from the XML each time perform 'next' step
     clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Initialize();
 
+    // gdb can't cope with creating a BP already disabled, so disable any now
+    GetBreakpointsMgr()->DisableAnyDisabledBreakpoints();
+
     // let the active editor get the focus
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if ( editor ) {
@@ -2310,10 +2313,6 @@ void Manager::DbgStart ( long attachPid )
     // mark that we are waiting for the first GotControl()
     DebugMessage ( output );
     DebugMessage ( _( "Debug session started successfully!\n" ) );
-
-    // We need to tell the debugger to disable any disabled breakpoints, but not until it's running properly (too soon and it can't be successfully interrupted)
-    // So Bind the wxEVT_DEBUG_EDITOR_LOST_CONTROL event that will be sent by UpdateLostControl(). It'll be Unbound in the handler.
-    wxTheApp->Bind(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(clMainFrame::OnDisableAnyDisabledBreakpoints), clMainFrame::Get());
 
     if ( dbgr->GetIsRemoteDebugging() ) {
 
@@ -3170,6 +3169,10 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
 
     case DBG_UR_RECONCILE_BPTS:
         GetBreakpointsMgr()->ReconcileBreakpoints( event.m_bpInfoList );
+        break;
+
+    case DBG_UR_DEBUGGER_PID_VALID:
+        GetBreakpointsMgr()->DisableAnyDisabledBreakpoints();
         break;
 
     case DBG_UR_BP_HIT:

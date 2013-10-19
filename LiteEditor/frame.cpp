@@ -3267,13 +3267,6 @@ void clMainFrame::OnDebuggerSettings(wxCommandEvent &e)
     dlg->Destroy();
 }
 
-
-void clMainFrame::OnDisableAnyDisabledBreakpoints(wxCommandEvent &e)
-{
-    wxUnusedVar(e);
-    ManagerST::Get()->GetBreakpointsMgr()->DisableAnyDisabledBreakpoints();
-}
-
 void clMainFrame::OnIdle(wxIdleEvent &e)
 {
     e.Skip();

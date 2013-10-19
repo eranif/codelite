@@ -131,13 +131,11 @@ public:
     DockablePaneMenuManager *GetDockablePaneMenuManager() {
         return m_DPmenuMgr;
     }
-//--------------------- debugger---------------------------------
+//--------------------- debuger---------------------------------
     /**
      * @brief launch TTY
      */
     wxString StartTTY(const wxString &title);
-    
-    void OnDisableAnyDisabledBreakpoints(wxCommandEvent& e);
 
 //---------------------------------------------------------------
 

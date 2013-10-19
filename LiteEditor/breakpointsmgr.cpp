@@ -42,7 +42,7 @@ bool BreakptMgr::AddBreakpointByAddress(const wxString& address)
     return AddBreakpoint(bp);
 }
 
-bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions/*=wxT("")*/, bool is_temp/*=false*/, bool is_disabled/*=false*/)
+bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/)
 {
     BreakpointInfo bp;
     bp.Create(file, lineno, GetNextID());
@@ -51,7 +51,6 @@ bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, c
         bp.bp_type = BP_type_tempbreak;
         bp.is_temp = true;
     }
-    bp.is_enabled = !is_disabled;
     bp.conditions = conditions;
     return AddBreakpoint(bp);
 }
@@ -116,6 +115,10 @@ void BreakptMgr::AddBreakpoint()
     }
 
     if (AddBreakpoint(dlg.b)) {
+        IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+        if ((!dlg.b.is_enabled) && dbgr && dbgr->IsRunning()) {
+            SetBPEnabledState(dlg.b.debugger_id, dlg.b.is_enabled);
+        }
         wxString msg;
         if (dlg.b.bp_type == BP_type_watchpt) {
             msg = _("Watchpoint successfully added");
@@ -369,26 +372,12 @@ void BreakptMgr::DisableAnyDisabledBreakpoints()
         return;
     }
 
-    bool contIsNeeded = PauseDebuggerIfNeeded();
-
     for (size_t i=0; i<m_bps.size(); i++) {
         BreakpointInfo& bp = m_bps.at(i);
         if (bp.is_enabled == false) {
-            if (dbgr->SetEnabledState(bp.debugger_id, false)) {
-                ManagerST::Get()->UpdateAddLine(wxString::Format(_("Successfully disabled breakpoint %i"), bp.debugger_id));
-                    } else {
-                        ManagerST::Get()->UpdateAddLine(wxString::Format(_("Failed to disable breakpoint %i"), bp.debugger_id));
-                    }
-            
+            dbgr->SetEnabledState(bp.debugger_id, false);
         }
     }
-
-    if (contIsNeeded) {
-        dbgr->Continue();
-    }
-
-    // We only want to do this once, not every time the debugger restarts, so Unbind the event
-    wxTheApp->Unbind(wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEventHandler(clMainFrame::OnDisableAnyDisabledBreakpoints), clMainFrame::Get());
 }
 
 bool BreakptMgr::DelBreakpoint(const int id)
@@ -503,39 +492,31 @@ void BreakptMgr::DelAllBreakpoints()
 
 void BreakptMgr::SetAllBreakpointsEnabledState(bool enabled)
 {
-    unsigned int successes = 0;
-    bool debuggerIsRunning = false;
-    bool contIsNeeded = false;
-
+    // UpdateUI should prevent this from being called unless the debugger is running, but check anyway
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if (dbgr && dbgr->IsRunning()) {
-        debuggerIsRunning = true;
-        contIsNeeded = PauseDebuggerIfNeeded();
-    }
+        unsigned int successes = 0;
+        bool contIsNeeded = PauseDebuggerIfNeeded();
 
-    for (size_t i=0; i<m_bps.size(); ++i) {
-        BreakpointInfo &bp = m_bps.at(i);
-        if (((bp.debugger_id != -1) || !debuggerIsRunning) // Sanity check for when the debugger's running
-            && (bp.is_enabled != enabled)) { // No point setting it to the current status
-            if (debuggerIsRunning) {
+        for (size_t i=0; i<m_bps.size(); ++i) {
+            BreakpointInfo &bp = m_bps.at(i);
+            if ((bp.debugger_id != -1) 				// Sanity
+                && (bp.is_enabled != enabled)) { // No point setting it to the current status
                 if (dbgr->SetEnabledState(bp.debugger_id, enabled)) {
                     bp.is_enabled = enabled;
                     ++successes;
                 }
-            } else {
-                bp.is_enabled = enabled;
-                ++successes;
             }
         }
-    }
 
-    if (debuggerIsRunning && contIsNeeded) {
-        dbgr->Continue();
-    }
+        if (contIsNeeded) {
+            dbgr->Continue();
+        }
 
-    if (successes) {
-        RefreshBreakpointMarkers();
-        clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+        if (successes) {
+            RefreshBreakpointMarkers();
+            clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+        }
 
         wxString msg = wxString::Format(wxT("%u "), successes);
         msg << (enabled ? _("breakpoints enabled") : _("breakpoints disabled"));
@@ -601,17 +582,6 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
             int index = FindBreakpointById(internal_id, m_pendingBreakpointsList);
             if (index != wxNOT_FOUND) {
                 m_pendingBreakpointsList.erase(m_pendingBreakpointsList.begin()+index);
-            }
-            // If the bp needs disabling, do so providing it's safe i.e. the debuggee pid is known (this happens after the first Poke() is processed)
-            if (!iter->is_enabled) {
-                IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-                if (dbgr && dbgr->IsRunning() && dbgr->HasValidDebugeePid()) {    
-                    if (SetBPEnabledState(debugger_id, false)) {
-                        ManagerST::Get()->UpdateAddLine(wxString::Format(_("Successfully disabled breakpoint %i"), debugger_id));
-                    } else {
-                        ManagerST::Get()->UpdateAddLine(wxString::Format(_("Failed to disable breakpoint %i"), debugger_id));
-                    }
-                }
             }
             // update the UI as well
             clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
@@ -1065,6 +1035,12 @@ void BreakptMgr::SetBreakpoints(const std::vector<BreakpointInfo>& bps)
 
 bool BreakptMgr::AreThereEnabledBreakpoints(bool enabled /*= true*/)
 {
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if (!(dbgr && dbgr->IsRunning())) {
+        // No point playing with bp enablement when the debugger's not running
+        return false;
+    }
+
     for (size_t i=0; i<m_bps.size(); ++i) {
         BreakpointInfo &bp = m_bps.at(i);
         if (bp.is_enabled == enabled) {

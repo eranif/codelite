@@ -200,12 +200,17 @@ wxFont LexerConf::GetFontForSyle(int styleId) const
     StylePropertyList::const_iterator iter = m_properties.begin();
     for( ; iter != m_properties.end(); ++iter ) {
         if ( iter->GetId() == styleId ) {
-            wxFont font = wxFont(iter->GetFontSize(),
-                                 wxFONTFAMILY_TELETYPE,
-                                 iter->GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-                                 iter->IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
-                                 iter->GetUnderlined(),
-                                 iter->GetFaceName());
+            
+            int fontSize( iter->GetFontSize() );
+            wxString face = iter->GetFaceName();
+            if ( face.IsEmpty() ) {
+                // defaults
+                fontSize = DEFAULT_FONT_SIZE;
+                face = DEFAULT_FACE_NAME;
+            }
+
+            wxFontInfo fontInfo = wxFontInfo(fontSize).Family(wxFONTFAMILY_TELETYPE).Italic(iter->GetItalic()).Bold(iter->IsBold()).Underlined(iter->GetUnderlined()).FaceName(face);
+            wxFont     font(fontInfo);
             return font;
         }
     }

@@ -10,6 +10,8 @@
 #include <wx/icon.h>
 #include <wx/tokenzr.h>
 #include "GitApplyPatchDlg.h"
+#include "lexer_configuration.h"
+#include "editor_config.h"
 
 #define GIT_MESSAGE(...)  AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)  if ( IsVerbose() ) { AddText(wxString::Format(__VA_ARGS__)); }
@@ -91,7 +93,16 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     : GitConsoleBase(parent)
     , m_git(git)
 {
+    // set the font to fit the C++ lexer default font
+    LexerConfPtr lexCpp = EditorConfigST::Get()->GetLexer("c++");
+    if ( lexCpp ) {
+        wxFont font = lexCpp->GetFontForSyle(wxSTC_C_DEFAULT);
+        for( int i=0; i<wxSTC_STYLE_MAX; ++i ){
+            m_stcLog->StyleSetFont(i, font);
+        }
+    }
     m_stcLog->SetReadOnly(true);
+    
     m_bitmapLoader = new BitmapLoader();
     GitImages m_images;
     m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();

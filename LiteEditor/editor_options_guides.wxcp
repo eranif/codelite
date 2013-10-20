@@ -1628,7 +1628,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Label:",
-													"m_value":	"Highlight deugger line"
+													"m_value":	"Highlight debugger line"
 												}, {
 													"type":	"bool",
 													"m_label":	"Value:",

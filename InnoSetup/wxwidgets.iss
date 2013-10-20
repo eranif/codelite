@@ -32,8 +32,8 @@ Name: "eng"; MessagesFile: "compiler:Default.isl"
 Name: "wxWidgets"; Description: "wxWidgets, Cross-Platform GUI Library (v2.9.5)"; Types: full; Flags: fixed
 
 [Files]
-Source: "..\Runtime\wxWidgets-2.9.5\*"; DestDir: "{app}"; Flags: recursesubdirs ; Components: wxWidgets
-Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\lib\gcc_dll"; Components: wxWidgets
+Source: "..\Runtime\wxWidgets-2.9.5\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion ; Components: wxWidgets
+Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}\lib\gcc_dll"; Flags: ignoreversion; Components: wxWidgets
 
 [Icons] 
 Name: "{group}\{cm:UninstallProgram, wxWidgets}"; Filename: "{uninstallexe}"

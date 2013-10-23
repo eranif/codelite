@@ -41,7 +41,7 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
         borderDown = DrawingUtils::DarkColour(bgColour, 1.0);
     }
 
-#if wxCHECK_VERSION(2, 9, 5)
+#if 0
     // Now set the bg colour. It must be done after setting
     // the pen colour
     wxColour bgColour2 = bgColour;

@@ -7,9 +7,15 @@
 #include "entry.h"
 #include <wx/arrstr.h>
 
+// Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
+enum {
+    kEventImportingFolder = 0x00000001,
+};
+
 /// a wxCommandEvent that takes ownership of the clientData
 class WXDLLIMPEXP_CL clCommandEvent : public wxCommandEvent
 {
+   
 protected:
     wxSharedPtr<wxClientData> m_ptr;
     wxArrayString             m_strings;

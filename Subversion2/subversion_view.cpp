@@ -850,6 +850,11 @@ void SubversionView::OnFileAdded(clCommandEvent& event)
     typedef std::map<wxString, bool> StringBoolMap_t;
     StringBoolMap_t path_in_svn;
     
+    // svn is setup ?
+    int flags = event.GetInt();
+    if ( flags & kEventImportingFolder )
+        return;
+    
     SvnSettingsData ssd = m_plugin->GetSettings();
     if(ssd.GetFlags() & SvnAddFileToSvn) {
         const wxArrayString &files = event.GetStrings();
@@ -858,15 +863,16 @@ void SubversionView::OnFileAdded(clCommandEvent& event)
         command << m_plugin->GetSvnExeName() << wxT(" add ");
         for(size_t i=0; i<files.GetCount(); i++) {
             
-            wxFileName fn(files.Item(i));
+            wxString currentFilePath = files.Item(i).BeforeLast(wxFILE_SEP_PATH);
             bool curPathUnderSvn = false;
-            if ( path_in_svn.count( fn.GetPath() ) ) {
+            if ( path_in_svn.count( currentFilePath ) ) {
                 // use the cached result
-                curPathUnderSvn = path_in_svn.find(fn.GetPath())->second;
+                curPathUnderSvn = path_in_svn.find(currentFilePath)->second;
+                
             } else {
                 // query svn and cache the result for future use
-                curPathUnderSvn = m_plugin->IsPathUnderSvn( fn.GetPath() );
-                path_in_svn.insert( std::make_pair(fn.GetPath(), curPathUnderSvn ) );
+                curPathUnderSvn = m_plugin->IsPathUnderSvn( currentFilePath );
+                path_in_svn.insert( std::make_pair(currentFilePath, curPathUnderSvn ) );
             }
             
             if (curPathUnderSvn) {

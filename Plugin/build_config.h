@@ -139,6 +139,7 @@ private:
     wxString          m_ccPCH;
     bool              m_clangC11;
     wxArrayString     m_debuggerSearchPaths;
+    bool              m_isGUIProgram;
 
 public:
     BuildConfig(wxXmlNode *node);
@@ -149,6 +150,13 @@ public:
     //--------------------------------
     // Setters / Getters
     //--------------------------------
+
+    void SetIsGUIProgram(bool isGUIProgram) {
+        this->m_isGUIProgram = isGUIProgram;
+    }
+    bool IsGUIProgram() const {
+        return m_isGUIProgram;
+    }
     void SetDebuggerSearchPaths(const wxArrayString& debuggerSearchPaths) {
         this->m_debuggerSearchPaths = debuggerSearchPaths;
     }
@@ -198,14 +206,14 @@ public:
     const wxString& GetPchCompileFlags() const {
         return m_pchCompileFlags;
     }
-    
+
     const wxString &GetAssmeblerOptions() const {
         return m_commonConfig.GetAssemblerOptions();
     }
     void SetAssmeblerOptions(const wxString &options) {
         m_commonConfig.SetAssemblerOptions(options);
     }
-    
+
     void SetUseSeparatePCHFlags(bool useSeparatePCHFlags) {
         this->m_useSeparatePCHFlags = useSeparatePCHFlags;
     }

@@ -1408,7 +1408,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
     wd = ExpandVariables ( wd, GetProject ( projectName ), clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 
     //change directory to the working directory
-    if ( considerPauseWhenExecuting ) {
+    if ( considerPauseWhenExecuting && !bldConf->IsGUIProgram() ) {
         ProjectPtr proj = GetProject ( projectName );
         OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
 
@@ -1897,7 +1897,7 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
     // call it again here to get the actual exection line - we do it here since
     // the environment has been applied
     execLine = GetProjectExecutionCommand ( projectName, wd, true );
-    m_asyncExeCmd->Execute ( execLine, false, false );
+    m_asyncExeCmd->Execute( execLine, false, false );
 
     if ( m_asyncExeCmd->GetProcess() ) {
         m_asyncExeCmd->GetProcess()->Connect ( wxEVT_END_PROCESS, wxProcessEventHandler ( Manager::OnProcessEnd ), NULL, this );

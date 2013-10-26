@@ -146,6 +146,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_checkBoxPauseWhenExecEnds->SetValue(buildConf->GetPauseWhenExecEnds());
     m_checkBoxUseDebugArgs->SetValue(buildConf->GetUseSeparateDebugArgs());
     m_textCtrlDebugArgs->SetValue(buildConf->GetDebugArgs());
+    m_checkBoxGUI->SetValue( buildConf->IsGUIProgram() );
 
 }
 
@@ -165,6 +166,7 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
     buildConf->SetProjectType(ProjectType);
     buildConf->SetUseSeparateDebugArgs(m_checkBoxUseDebugArgs->IsChecked());
     buildConf->SetDebugArgs(m_textCtrlDebugArgs->GetValue());
+    buildConf->SetIsGUIProgram( m_checkBoxGUI->IsChecked() );
 }
 
 void PSGeneralPage::Clear()

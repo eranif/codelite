@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	98,
+		"m_objCounter":	112,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCA3F0InitBitmapResources",
 		"m_bitmapsFile":	"project_settings_liteeditor_bitmaps.cpp",
@@ -102,6 +102,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -487,7 +507,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -576,7 +596,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -665,7 +685,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -754,7 +774,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -1647,6 +1667,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -1826,6 +1854,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -1908,7 +1944,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -2044,6 +2080,119 @@
 												}],
 											"m_events":	[],
 											"m_children":	[{
+													"m_type":	4454,
+													"proportion":	1,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_properties":	[{
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"Spacer104"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"0,0"
+														}],
+													"m_events":	[],
+													"m_children":	[]
+												}, {
+													"m_type":	4415,
+													"proportion":	0,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_properties":	[{
+															"type":	"winid",
+															"m_label":	"ID:",
+															"m_winid":	"wxID_ANY"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"m_checkBoxGUI"
+														}, {
+															"type":	"multi-string",
+															"m_label":	"Tooltip:",
+															"m_value":	"When checked, codelite will run the executable as is without wrapping the command with a shell"
+														}, {
+															"type":	"colour",
+															"m_label":	"Bg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"colour",
+															"m_label":	"Fg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"font",
+															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Label:",
+															"m_value":	"This is a GUI application"
+														}, {
+															"type":	"bool",
+															"m_label":	"Value:",
+															"m_value":	false
+														}],
+													"m_events":	[],
+													"m_children":	[]
+												}, {
+													"m_type":	4454,
+													"proportion":	1,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_properties":	[{
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"Spacer106"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"0,0"
+														}],
+													"m_events":	[],
+													"m_children":	[]
+												}, {
 													"m_type":	4405,
 													"proportion":	0,
 													"border":	5,
@@ -2190,6 +2339,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -2272,7 +2429,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -2435,6 +2592,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -2517,7 +2682,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -2680,6 +2845,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -2710,7 +2883,7 @@
 													"m_children":	[]
 												}, {
 													"m_type":	4454,
-													"proportion":	0,
+													"proportion":	1,
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
@@ -2719,7 +2892,7 @@
 													"m_properties":	[{
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"Spacer8"
+															"m_value":	"Spacer108"
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
@@ -2810,7 +2983,7 @@
 													"m_children":	[]
 												}, {
 													"m_type":	4454,
-													"proportion":	0,
+													"proportion":	1,
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
@@ -2819,7 +2992,7 @@
 													"m_properties":	[{
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"Spacer83"
+															"m_value":	"Spacer110"
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
@@ -2832,7 +3005,7 @@
 													"proportion":	0,
 													"border":	5,
 													"gbSpan":	"1,1",
-													"gbPosition":	"10,0",
+													"gbPosition":	"0,0",
 													"m_styles":	[],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
@@ -2842,15 +3015,15 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
-															"m_value":	""
+															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",
-															"m_value":	""
+															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"m_staticText44"
+															"m_value":	"m_staticText112"
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
@@ -2894,19 +3067,13 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Label:",
-															"m_value":	"Debug Arguments:"
+															"m_value":	"Debugger Arguments:"
 														}, {
 															"type":	"string",
 															"m_label":	"Wrap:",
 															"m_value":	"-1"
 														}],
-													"m_events":	[{
-															"m_eventName":	"wxEVT_UPDATE_UI",
-															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
-															"m_functionNameAndSignature":	"OnUseDebugArgsUI(wxUpdateUIEvent& event)",
-															"m_description":	"Process a wxEVT_UPDATE_UI event"
-														}],
+													"m_events":	[],
 													"m_children":	[]
 												}, {
 													"m_type":	4406,
@@ -2980,6 +3147,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -2995,71 +3170,42 @@
 															"m_description":	"Process a wxEVT_UPDATE_UI event"
 														}],
 													"m_children":	[]
+												}, {
+													"m_type":	4454,
+													"proportion":	0,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_properties":	[{
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"Spacer83"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"0,0"
+														}],
+													"m_events":	[],
+													"m_children":	[]
 												}]
 										}, {
-											"m_type":	4418,
-											"proportion":	0,
+											"m_type":	4454,
+											"proportion":	1,
 											"border":	5,
-											"gbSpan":	",",
-											"gbPosition":	",",
-											"m_styles":	["wxLI_HORIZONTAL"],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	[],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 											"m_properties":	[{
-													"type":	"winid",
-													"m_label":	"ID:",
-													"m_winid":	"wxID_ANY"
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"Spacer100"
 												}, {
 													"type":	"string",
 													"m_label":	"Size:",
-													"m_value":	""
-												}, {
-													"type":	"string",
-													"m_label":	"Minimum Size:",
-													"m_value":	""
-												}, {
-													"type":	"string",
-													"m_label":	"Name:",
-													"m_value":	"m_staticline11"
-												}, {
-													"type":	"multi-string",
-													"m_label":	"Tooltip:",
-													"m_value":	""
-												}, {
-													"type":	"colour",
-													"m_label":	"Bg Colour:",
-													"colour":	"<Default>"
-												}, {
-													"type":	"colour",
-													"m_label":	"Fg Colour:",
-													"colour":	"<Default>"
-												}, {
-													"type":	"font",
-													"m_label":	"Font:",
-													"m_value":	""
-												}, {
-													"type":	"bool",
-													"m_label":	"Hidden",
-													"m_value":	false
-												}, {
-													"type":	"bool",
-													"m_label":	"Disabled",
-													"m_value":	false
-												}, {
-													"type":	"bool",
-													"m_label":	"Focused",
-													"m_value":	false
-												}, {
-													"type":	"string",
-													"m_label":	"Class Name:",
-													"m_value":	""
-												}, {
-													"type":	"string",
-													"m_label":	"Include File:",
-													"m_value":	""
-												}, {
-													"type":	"string",
-													"m_label":	"Style:",
-													"m_value":	""
+													"m_value":	"0,0"
 												}],
 											"m_events":	[],
 											"m_children":	[]
@@ -3070,7 +3216,7 @@
 											"gbSpan":	",",
 											"gbPosition":	",",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxEXPAND"],
+											"m_sizerFlags":	["wxALIGN_LEFT"],
 											"m_properties":	[{
 													"type":	"string",
 													"m_label":	"Name:",
@@ -3082,7 +3228,7 @@
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
-													"m_selection":	0,
+													"m_selection":	1,
 													"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
 												}],
 											"m_events":	[],
@@ -3093,7 +3239,7 @@
 													"gbSpan":	",",
 													"gbPosition":	",",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_LEFT"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -3861,6 +4007,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -3949,7 +4103,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -4124,6 +4278,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -4212,7 +4374,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -4381,6 +4543,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -4457,7 +4627,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -4626,6 +4796,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -4714,7 +4892,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -4889,6 +5067,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -4977,7 +5163,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -5123,6 +5309,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -5211,7 +5405,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -5480,6 +5674,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -6189,6 +6391,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -6277,7 +6487,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -6452,6 +6662,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -6540,7 +6758,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -6715,6 +6933,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -6803,7 +7029,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -7200,6 +7426,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -7276,7 +7510,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -7428,12 +7662,16 @@
 															"m_label":	"Label:",
 															"m_value":	"Debugger Search Paths"
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
 															"type":	"bool",
 															"m_label":	"Selected",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Null Page",
 															"m_value":	false
 														}],
 													"m_events":	[],
@@ -7667,7 +7905,7 @@
 																					"m_label":	"Default Button",
 																					"m_value":	false
 																				}, {
-																					"type":	"filePicker",
+																					"type":	"bitmapPicker",
 																					"m_label":	"Bitmap File:",
 																					"m_path":	""
 																				}, {
@@ -7756,7 +7994,7 @@
 																					"m_label":	"Default Button",
 																					"m_value":	false
 																				}, {
-																					"type":	"filePicker",
+																					"type":	"bitmapPicker",
 																					"m_label":	"Bitmap File:",
 																					"m_path":	""
 																				}, {
@@ -7850,12 +8088,16 @@
 															"m_label":	"Label:",
 															"m_value":	"Startup Commands"
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
 															"type":	"bool",
 															"m_label":	"Selected",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Null Page",
 															"m_value":	false
 														}],
 													"m_events":	[],
@@ -8029,6 +8271,14 @@
 																			"type":	"string",
 																			"m_label":	"Max Length:",
 																			"m_value":	"0"
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Auto Complete Directories:",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Auto Complete Files:",
+																			"m_value":	false
 																		}],
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -8109,12 +8359,16 @@
 															"m_label":	"Label:",
 															"m_value":	"Remote Attach Commands"
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
 															"type":	"bool",
 															"m_label":	"Selected",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Null Page",
 															"m_value":	false
 														}],
 													"m_events":	[],
@@ -8288,6 +8542,14 @@
 																			"type":	"string",
 																			"m_label":	"Max Length:",
 																			"m_value":	"0"
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Auto Complete Directories:",
+																			"m_value":	false
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Auto Complete Files:",
+																			"m_value":	false
 																		}],
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -8576,6 +8838,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -8744,6 +9014,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -9396,6 +9674,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -9484,7 +9770,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -9659,6 +9945,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -9747,7 +10041,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -10542,6 +10836,14 @@
 													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	"0"
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Directories:",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Files:",
+													"m_value":	false
 												}],
 											"m_events":	[{
 													"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -10924,6 +11226,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -11461,6 +11771,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -11549,7 +11867,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -11776,7 +12094,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -11871,7 +12189,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -11966,7 +12284,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -12239,12 +12557,16 @@
 											"m_label":	"Label:",
 											"m_value":	"Compiler"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -12460,6 +12782,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -12542,7 +12872,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -12705,6 +13035,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -12787,7 +13125,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -12950,6 +13288,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -13032,7 +13378,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -13195,6 +13541,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -13277,7 +13631,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -13365,12 +13719,16 @@
 											"m_label":	"Label:",
 											"m_value":	"Linker"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -13586,6 +13944,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -13668,7 +14034,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -13831,6 +14197,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -13913,7 +14287,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -14076,6 +14450,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -14158,7 +14540,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -14246,12 +14628,16 @@
 											"m_label":	"Label:",
 											"m_value":	"Resources"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -14467,6 +14853,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -14549,7 +14943,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -14712,6 +15106,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -14794,7 +15196,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -15210,6 +15612,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -15378,6 +15788,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -15936,6 +16354,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -16183,6 +16609,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -16387,6 +16821,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -16601,6 +17055,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
@@ -16757,6 +17219,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -16857,7 +17327,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -16940,7 +17410,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {

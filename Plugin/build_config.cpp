@@ -44,6 +44,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
     , m_pchInCommandLine(false)
     , m_useSeparatePCHFlags(false)
     , m_clangC11(false)
+    , m_isGUIProgram(false)
 {
     if ( node ) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
@@ -235,6 +236,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
             m_pauseWhenExecEnds     = XmlUtils::ReadBool  (general, wxT("PauseExecWhenProcTerminates"), true);
             m_useSeparateDebugArgs  = XmlUtils::ReadBool  (general, wxT("UseSeparateDebugArgs"), false);
             m_debugArgs             = XmlUtils::ReadString(general, wxT("DebugArguments"));
+            m_isGUIProgram          = XmlUtils::ReadBool  (general, "IsGUIProgram", false);
         }
 
     } else {
@@ -337,6 +339,8 @@ wxXmlNode *BuildConfig::ToXml() const
     general->AddProperty(wxT("DebugArguments"),   m_debugArgs);
     general->AddProperty(wxT("WorkingDirectory"), m_workingDirectory);
     general->AddProperty(wxT("PauseExecWhenProcTerminates"), BoolToString(m_pauseWhenExecEnds));
+    general->AddProperty("IsGUIProgram", BoolToString(m_isGUIProgram));
+    
     node->AddChild(general);
 
     wxXmlNode *debugger = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Debugger"));

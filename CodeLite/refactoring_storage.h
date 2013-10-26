@@ -9,7 +9,6 @@
 #include <wx/filename.h>
 #include <vector>
 
-typedef std::vector<wxFileName> wxFileList_t;
 class CppTokenCacheMakerThread;
 class WXDLLIMPEXP_CL RefactoringStorage : public wxEvtHandler
 {
@@ -55,7 +54,7 @@ public:
     void Match(const wxString &symname, const wxString &filename, CppTokensMap& matches);
     void InitializeCache(const wxFileList_t& files);
     wxFileList_t FilterUpToDateFiles(const wxFileList_t& files);
-    CppToken::List_t GetTokens(const wxString &symname);
+    CppToken::List_t GetTokens(const wxString& symname, const wxFileList_t& filelist = wxFileList_t());
 };
 
 #endif // REFACTORINGSTORAGE_H

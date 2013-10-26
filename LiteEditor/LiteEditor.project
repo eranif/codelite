@@ -227,6 +227,8 @@
       <File Name="workspacesettingsbase.wxcp"/>
       <File Name="AddIncludeFile.wxcp"/>
       <File Name="../formbuilder/tags_options_base_dlg.wxcp"/>
+      <File Name="SelectProjectsDlg.h"/>
+      <File Name="SelectProjectsDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
       <File Name="advanced_settings.h"/>

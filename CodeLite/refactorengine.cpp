@@ -351,7 +351,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
         prgDlg->Destroy();
     }
     // load all tokens, first we need to parse the workspace files...
-    CppToken::List_t tokens = m_storage.GetTokens(symname);
+    CppToken::List_t tokens = m_storage.GetTokens(symname, files);
     if (tokens.empty())
         return;
 
@@ -366,7 +366,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
     wxString      statesPtrFileName;
     prgDlg = CreateProgressDialog(_("Stage 2/2: Parsing matches..."), (int) tokens.size());
 
-    for (; iter != tokens.end(); iter++) {
+    for (; iter != tokens.end(); ++iter) {
 
         // TODO :: send an event here to report our progress
         wxFileName f( iter->getFilename() );

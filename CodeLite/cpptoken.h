@@ -31,7 +31,12 @@
 #include "codelite_exports.h"
 #include <wx/string.h>
 #include <wx/wxsqlite3.h>
+#include <vector>
+#include <wx/filename.h>
+#include <set>
+#include <algorithm>
 
+typedef std::vector<wxFileName> wxFileList_t;
 class WXDLLIMPEXP_CL CppToken
 {
     int      m_id;
@@ -42,6 +47,44 @@ class WXDLLIMPEXP_CL CppToken
 public:
     typedef std::list<CppToken> List_t;
     
+    class wxFileNameToString {
+    public:
+        wxString operator()( const wxFileName& fn) {
+            return fn.GetFullPath();
+        }
+    };
+    
+    /**
+     * @class Predicate
+     * a helper class that can be used to filter tokens using std:remove_if
+     * this Predicate filters files that do not exist in m_files member
+     */
+    class RemoveIfNotIn {
+        std::set<wxString> m_files;
+        
+    public:
+        RemoveIfNotIn(const wxFileList_t &fileList) {
+            
+            // first convert vector<wxFileName> to vector<wxString>
+            std::vector<wxString> v;
+            v.resize( fileList.size() );
+            std::transform(fileList.begin(), fileList.end(), v.begin(), wxFileNameToString());
+            
+            // construct a set based on the vector content
+            m_files = std::set<wxString>(v.begin(), v.end());
+        }
+        
+        RemoveIfNotIn(const std::set<wxString> &filesSet) : m_files(filesSet) {}
+        
+        /**
+         * @brief return true if the token's file does _not_ exists in the 
+         * m_files member (which was initialized while constructing the Predicate)
+         */
+        bool operator()(const CppToken& token) {
+            return m_files.count(token.getFilename()) == 0;
+        }
+    };
+
 public:
     CppToken();
     CppToken(wxSQLite3ResultSet &res);

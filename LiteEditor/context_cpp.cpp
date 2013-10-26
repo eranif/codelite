@@ -74,6 +74,7 @@
 #include "code_completion_api.h"
 #include "AddFunctionsImpDlg.h"
 #include "event_notifier.h"
+#include "SelectProjectsDlg.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -2228,11 +2229,30 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
     // Save all files before refactoring
     if (!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
         return;
-
-    // Get list of files to modify
+    
+    // Get list of projects to work on 
+    SelectProjectsDlg projectSelectorDlg(EventNotifier::Get()->TopFrame());
+    if ( projectSelectorDlg.ShowModal() != wxID_OK ) {
+        return;
+    }
+    
+    wxArrayString projects = projectSelectorDlg.GetProjects();
+    if ( projects.IsEmpty() ) {
+        return;
+    }
+    
+    wxArrayString filesArr;
+    for ( size_t i=0; i<projects.GetCount(); ++i ) {
+        ManagerST::Get()->GetProjectFiles(projects.Item ( i ), filesArr );
+    }
+    
+    // Convert the array into wxFileList_t
     wxFileList_t files;
-    ManagerST::Get()->GetWorkspaceFiles(files, true);
-
+    files.reserve( filesArr.GetCount() );
+    for( size_t i=0; i<filesArr.GetCount(); ++i ) {
+        files.push_back( wxFileName(filesArr.Item(i) ) );
+    }
+    
     // Invoke the RefactorEngine
     if ( !RefactoringEngine::Instance()->IsCacheInitialized() ) {
         ::wxMessageBox(_("Refactoring engine is still caching workspace info. Try again in a few seconds"), "codelite", wxOK|wxICON_WARNING);

@@ -35,13 +35,15 @@ class RenameSymbol : public RenameSymbolBase
 {
     std::vector<CppToken> m_tokens;
     wxString              m_filename;
-    
+
 protected:
+    virtual void OnCheckAll(wxCommandEvent& event);
+    virtual void OnUncheckAll(wxCommandEvent& event);
     virtual void OnSelection(wxDataViewEvent& event);
     void OnButtonOK    (wxCommandEvent &e);
     void AddMatch      (const CppToken &token, bool check);
     void DoSelectFile  (const CppToken &token);
-    
+
 public:
     RenameSymbol( wxWindow* parent, const CppToken::List_t& candidates, const CppToken::List_t& possCandidates, const wxString& oldname = wxEmptyString );
     virtual ~RenameSymbol();

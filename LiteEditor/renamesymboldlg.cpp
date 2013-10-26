@@ -45,7 +45,7 @@ RenameSymbol::RenameSymbol( wxWindow* parent, const CppToken::List_t& candidates
     m_preview->SetReadOnly(true);
     EditorConfigST::Get()->GetLexer("C++")->Apply( m_preview, true );
     m_tokens.clear();
-    
+
     CppToken::List_t::const_iterator iter = candidates.begin();
     for (; iter != candidates.end(); ++iter) {
         AddMatch(*iter, true);
@@ -64,7 +64,7 @@ RenameSymbol::RenameSymbol( wxWindow* parent, const CppToken::List_t& candidates
 
     m_textCtrlNewName->SetValue(oldname);
     m_textCtrlNewName->SetFocus();
-    
+
     WindowAttrManager::Load(this, "RenameSymbol", NULL);
 }
 
@@ -74,7 +74,7 @@ void RenameSymbol::AddMatch(const CppToken& token, bool check)
     wxFileName fn( token.getFilename() );
     fn.MakeRelativeTo( relativeTo );
 
-    
+
     wxVector<wxVariant> cols;
     cols.push_back(check);
     cols.push_back(fn.GetFullPath());
@@ -99,7 +99,7 @@ void RenameSymbol::GetMatches(CppToken::List_t& matches)
     wxVariant v;
     for (int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
         m_dvListCtrl->GetValue(v, i, 0);
-        
+
         if ( v.GetBool() ) {
             matches.push_back( ((RenameSymbolData*) m_dvListCtrl->GetItemData( m_dvListCtrl->RowToItem(i) ))->m_token );
         }
@@ -133,4 +133,18 @@ void RenameSymbol::OnSelection(wxDataViewEvent& event)
 RenameSymbol::~RenameSymbol()
 {
     WindowAttrManager::Save(this, "RenameSymbol", NULL);
+}
+
+void RenameSymbol::OnCheckAll(wxCommandEvent& event)
+{
+    for(int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
+        m_dvListCtrl->SetValue(true, i, 0);
+    }
+}
+
+void RenameSymbol::OnUncheckAll(wxCommandEvent& event)
+{
+    for(int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
+        m_dvListCtrl->SetValue(false, i, 0);
+    }
 }

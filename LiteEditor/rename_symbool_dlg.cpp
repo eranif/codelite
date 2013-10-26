@@ -22,10 +22,10 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer4, 0, wxALL|wxEXPAND, 5);
     
@@ -46,7 +46,7 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     
     m_splitterPage11 = new wxPanel(m_splitter7, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
+    bSizer2 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage11->SetSizer(bSizer2);
     
     m_dvListCtrl = new wxDataViewListCtrl(m_splitterPage11, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
@@ -56,10 +56,22 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     m_dvListCtrl->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
     m_dvListCtrl->AppendTextColumn(_("Location"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_dvListCtrl->AppendTextColumn(_("Position"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    boxSizer53 = new wxBoxSizer(wxHORIZONTAL);
+    
+    bSizer2->Add(boxSizer53, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonCheckAll = new wxButton(m_splitterPage11, ID_CHECK_ALL, _("&Check All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer53->Add(m_buttonCheckAll, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
+    
+    m_buttonUncheckAll = new wxButton(m_splitterPage11, ID_UNCHECK_ALL, _("&Uncheck All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer53->Add(m_buttonUncheckAll, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
+    
     m_splitterPage15 = new wxPanel(m_splitter7, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter7->SplitVertically(m_splitterPage11, m_splitterPage15, 0);
     
-    wxBoxSizer* boxSizer3 = new wxBoxSizer(wxVERTICAL);
+    boxSizer3 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage15->SetSizer(boxSizer3);
     
     m_preview = new wxStyledTextCtrl(m_splitterPage15, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -101,18 +113,22 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     
     boxSizer3->Add(m_preview, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    m_staticLine55 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
+    
+    bSizer1->Add(m_staticLine55, 0, wxALL|wxEXPAND, 5);
+    
+    bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_buttonOk = new wxButton(this, wxID_OK, _("&Rename"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOk->SetDefault();
     
-    bSizer3->Add(m_buttonOk, 0, wxALL, 5);
+    bSizer3->Add(m_buttonOk, 0, wxALL|wxALIGN_RIGHT, 5);
     
     m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
+    bSizer3->Add(m_buttonCancel, 0, wxALL|wxALIGN_RIGHT, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -121,6 +137,8 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     Centre();
     // Connect events
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(RenameSymbolBase::OnSelection), NULL, this);
+    m_buttonCheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RenameSymbolBase::OnCheckAll), NULL, this);
+    m_buttonUncheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RenameSymbolBase::OnUncheckAll), NULL, this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RenameSymbolBase::OnButtonOK), NULL, this);
     
 }
@@ -128,6 +146,80 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
 RenameSymbolBase::~RenameSymbolBase()
 {
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(RenameSymbolBase::OnSelection), NULL, this);
+    m_buttonCheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RenameSymbolBase::OnCheckAll), NULL, this);
+    m_buttonUncheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RenameSymbolBase::OnUncheckAll), NULL, this);
     m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RenameSymbolBase::OnButtonOK), NULL, this);
+    
+}
+
+SelectProjectsDlgBase::SelectProjectsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF5E0InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    boxSizer25 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer25);
+    
+    m_banner45 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_banner45->SetBitmap(wxNullBitmap);
+    m_banner45->SetText(_("Select Projects"), _("Select the 'rename symbol' project scope"));
+    m_banner45->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    
+    boxSizer25->Add(m_banner45, 0, wxALL|wxEXPAND, 5);
+    
+    boxSizer33 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer25->Add(boxSizer33, 1, wxALL|wxEXPAND, 5);
+    
+    wxArrayString m_checkListBoxProjectsArr;
+    m_checkListBoxProjects = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_checkListBoxProjectsArr, wxLB_SINGLE);
+    
+    boxSizer33->Add(m_checkListBoxProjects, 1, wxALL|wxEXPAND, 5);
+    
+    boxSizer35 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer33->Add(boxSizer35, 0, 0, 5);
+    
+    m_button37 = new wxButton(this, ID_CHECK_ALL, _("&Check All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer35->Add(m_button37, 0, wxALL, 5);
+    
+    m_button39 = new wxButton(this, ID_UNCHECK_ALL, _("&Uncheck All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer35->Add(m_button39, 0, wxALL, 5);
+    
+    boxSizer27 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer25->Add(boxSizer27, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button29 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button29->SetDefault();
+    
+    boxSizer27->Add(m_button29, 0, wxALL, 5);
+    
+    m_button31 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer27->Add(m_button31, 0, wxALL, 5);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_button37->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectProjectsDlgBase::OnSelectAll), NULL, this);
+    m_button39->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectProjectsDlgBase::OnUnSelectAll), NULL, this);
+    
+}
+
+SelectProjectsDlgBase::~SelectProjectsDlgBase()
+{
+    m_button37->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectProjectsDlgBase::OnSelectAll), NULL, this);
+    m_button39->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectProjectsDlgBase::OnUnSelectAll), NULL, this);
     
 }

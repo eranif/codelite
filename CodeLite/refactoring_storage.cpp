@@ -311,13 +311,23 @@ wxFileList_t RefactoringStorage::FilterUpToDateFiles(const wxFileList_t& files)
     return res;
 }
 
-CppToken::List_t RefactoringStorage::GetTokens(const wxString& symname)
+CppToken::List_t RefactoringStorage::GetTokens(const wxString& symname, const wxFileList_t& filelist)
 {
     if ( !IsCacheReady() ) {
         return CppToken::List_t();
     }
-
-    return CppToken::loadByName(&m_db, symname);
+    
+    CppToken::List_t tokens = CppToken::loadByName(&m_db, symname);
+    
+    // Include only tokens which belongs to the current list of files
+    // unless the filelist is empty and in this case, we ignore this filter
+    if ( filelist.empty() ) {
+        return tokens;
+    }
+    
+    CppToken::List_t::iterator iter = std::remove_if(tokens.begin(), tokens.end(), CppToken::RemoveIfNotIn(filelist));
+    tokens.resize(std::distance(tokens.begin(), iter));
+    return tokens;
 }
 
 void RefactoringStorage::OnWorkspaceClosed(wxCommandEvent& e)

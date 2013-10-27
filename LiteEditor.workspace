@@ -42,7 +42,7 @@
     <![CDATA[]]>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeBeautifier" ConfigName="WinReleaseUnicode"/>
@@ -174,7 +174,7 @@
       <Project Name="CodeBeautifier" ConfigName="DebugUnicode"/>
       <Project Name="SFTP" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>

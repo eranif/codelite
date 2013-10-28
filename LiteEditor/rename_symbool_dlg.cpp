@@ -22,10 +22,10 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
         bBitmapLoaded = true;
     }
     
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
-    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer4, 0, wxALL|wxEXPAND, 5);
     
@@ -46,7 +46,7 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     
     m_splitterPage11 = new wxPanel(m_splitter7, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    bSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage11->SetSizer(bSizer2);
     
     m_dvListCtrl = new wxDataViewListCtrl(m_splitterPage11, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
@@ -56,7 +56,7 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     m_dvListCtrl->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_LEFT);
     m_dvListCtrl->AppendTextColumn(_("Location"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_dvListCtrl->AppendTextColumn(_("Position"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    boxSizer53 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer53 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer2->Add(boxSizer53, 0, wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -71,7 +71,7 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     m_splitterPage15 = new wxPanel(m_splitter7, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter7->SplitVertically(m_splitterPage11, m_splitterPage15, 0);
     
-    boxSizer3 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer3 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage15->SetSizer(boxSizer3);
     
     m_preview = new wxStyledTextCtrl(m_splitterPage15, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -117,7 +117,7 @@ RenameSymbolBase::RenameSymbolBase(wxWindow* parent, wxWindowID id, const wxStri
     
     bSizer1->Add(m_staticLine55, 0, wxALL|wxEXPAND, 5);
     
-    bSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -162,7 +162,7 @@ SelectProjectsDlgBase::SelectProjectsDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    boxSizer25 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer25 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer25);
     
     m_banner45 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
@@ -172,7 +172,7 @@ SelectProjectsDlgBase::SelectProjectsDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer25->Add(m_banner45, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer33 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer33 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer25->Add(boxSizer33, 1, wxALL|wxEXPAND, 5);
     
@@ -181,19 +181,19 @@ SelectProjectsDlgBase::SelectProjectsDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer33->Add(m_checkListBoxProjects, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer35 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer33->Add(boxSizer35, 0, 0, 5);
     
     m_button37 = new wxButton(this, ID_CHECK_ALL, _("&Check All"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer35->Add(m_button37, 0, wxALL, 5);
+    boxSizer35->Add(m_button37, 0, wxALL|wxEXPAND, 5);
     
     m_button39 = new wxButton(this, ID_UNCHECK_ALL, _("&Uncheck All"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    boxSizer35->Add(m_button39, 0, wxALL, 5);
+    boxSizer35->Add(m_button39, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer27 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer27 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer25->Add(boxSizer27, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

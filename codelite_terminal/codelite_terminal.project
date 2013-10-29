@@ -33,6 +33,7 @@
   <VirtualDirectory Name="resources">
     <File Name="wxcrafter.wxcp"/>
     <File Name="win_resources.rc"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

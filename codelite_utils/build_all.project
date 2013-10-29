@@ -88,18 +88,6 @@
   <VirtualDirectory Name="src">
     <File Name="dummy.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Release">
-    <Project Name="autorev"/>
-    <Project Name="codelite_cppcheck"/>
-    <Project Name="codelite_launcher"/>
-    <Project Name="codelite_indexer"/>
-    <Project Name="le_exec"/>
-    <Project Name="makedir"/>
-    <Project Name="wx-config"/>
-    <Project Name="codelite_clang"/>
-    <Project Name="codelitegcc"/>
-    <Project Name="codelite_make"/>
-  </Dependencies>
   <Dependencies Name="Debug">
     <Project Name="codelite_cppcheck"/>
     <Project Name="autorev"/>
@@ -111,5 +99,18 @@
     <Project Name="codelite_clang"/>
     <Project Name="codelite_make"/>
     <Project Name="codelitegcc"/>
+  </Dependencies>
+  <Dependencies Name="Release">
+    <Project Name="autorev"/>
+    <Project Name="codelite_cppcheck"/>
+    <Project Name="codelite_launcher"/>
+    <Project Name="codelite_indexer"/>
+    <Project Name="le_exec"/>
+    <Project Name="makedir"/>
+    <Project Name="wx-config"/>
+    <Project Name="codelite_clang"/>
+    <Project Name="codelitegcc"/>
+    <Project Name="codelite_make"/>
+    <Project Name="codelite_terminal"/>
   </Dependencies>
 </CodeLite_Project>

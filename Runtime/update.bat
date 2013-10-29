@@ -51,6 +51,7 @@ copy le_exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy CodeLite.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-clang.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-make.exe "%TARGET_DIR%\CodeLite\" /Y
+copy codelite-terminal.exe "%TARGET_DIR%\CodeLite\" /Y
 copy patch.exe "%TARGET_DIR%\CodeLite\" /Y
 copy rm.exe "%TARGET_DIR%\CodeLite\" /Y
 copy astyle.sample "%TARGET_DIR%\CodeLite\" /Y

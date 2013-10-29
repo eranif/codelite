@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6.2)
 project(codelite-terminal)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS core base stc REQUIRED)
+find_package(wxWidgets COMPONENTS std stc REQUIRED)
 
 # Add RPATH
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")

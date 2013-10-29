@@ -142,9 +142,8 @@ void MainFrame::DoExecuteCurrentLine()
     } else {
         WrapInShell( cmd );
         m_process = ::CreateAsyncProcessCB(this, &m_callback, cmd, IProcessCreateWithHiddenConsole, ::wxGetCwd());
+        SetCartAtEnd();
     }
-    
-    m_fromPos = m_stc->GetLength();
 }
 
 wxString MainFrame::GetCurrentLine() const
@@ -156,9 +155,7 @@ wxString MainFrame::GetCurrentLine() const
 
 void MainFrame::OnStcUpdateUI(wxStyledTextEvent& event)
 {
-    // int curLine = m_stc->LineFromPosition( m_stc->GetCurrentPos() );
-    // int lastLine = m_stc->LineFromPosition( m_stc->GetLastPosition() );
-    // m_stc->SetReadOnly( curLine < lastLine );
+    m_stc->SetReadOnly( m_stc->GetCurrentPos() < m_fromPos );
 }
 
 void MainFrame::SetCartAtEnd()
@@ -174,6 +171,7 @@ void MainFrame::SetCartAtEnd()
 void MainFrame::AppendNewLine()
 {
     m_stc->AppendText("\n");
+    m_fromPos = m_stc->GetLength();
 }
 
 wxString MainFrame::StartTTY()

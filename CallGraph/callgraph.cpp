@@ -92,8 +92,8 @@ CallGraph::CallGraph(IManager *manager)
     m_mgr->GetTheApp()->Connect( XRCID("cg_show_callgraph"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler( CallGraph::OnShowCallGraph ), NULL, this );
 
     // initialize paths for standard and stored paths for this plugin
-    GetDotPath();
-    GetGprofPath();
+    // GetDotPath();
+    // GetGprofPath();
 }
 
 //---- DTOR -------------------------------------------------------------------

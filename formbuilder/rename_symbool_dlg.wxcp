@@ -1368,7 +1368,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
+			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxCAPTION", "wxRESIZE_BORDER"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -1425,7 +1425,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
-					"m_value":	"Select Projects"
+					"m_value":	"Rename Symbol Scope"
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
@@ -1708,7 +1708,7 @@
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -1797,7 +1797,7 @@
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",

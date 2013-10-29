@@ -32,22 +32,16 @@ protected:
         ID_UNCHECK_ALL = 1002,
     };
 protected:
-    wxBoxSizer* bSizer1;
-    wxBoxSizer* bSizer4;
     wxStaticText* m_staticText31;
     wxTextCtrl* m_textCtrlNewName;
     wxSplitterWindow* m_splitter7;
     wxPanel* m_splitterPage11;
-    wxBoxSizer* bSizer2;
     wxDataViewListCtrl* m_dvListCtrl;
-    wxBoxSizer* boxSizer53;
     wxButton* m_buttonCheckAll;
     wxButton* m_buttonUncheckAll;
     wxPanel* m_splitterPage15;
-    wxBoxSizer* boxSizer3;
     wxStyledTextCtrl* m_preview;
     wxStaticLine* m_staticLine55;
-    wxBoxSizer* bSizer3;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 
@@ -71,14 +65,10 @@ protected:
         ID_UNCHECK_ALL = 1002,
     };
 protected:
-    wxBoxSizer* boxSizer25;
     wxBannerWindow* m_banner45;
-    wxBoxSizer* boxSizer33;
     wxCheckListBox* m_checkListBoxProjects;
-    wxBoxSizer* boxSizer35;
     wxButton* m_button37;
     wxButton* m_button39;
-    wxBoxSizer* boxSizer27;
     wxButton* m_button29;
     wxButton* m_button31;
 
@@ -87,7 +77,7 @@ protected:
     virtual void OnUnSelectAll(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    SelectProjectsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Projects"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SelectProjectsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Rename Symbol Scope"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxCAPTION|wxRESIZE_BORDER);
     virtual ~SelectProjectsDlgBase();
 };
 

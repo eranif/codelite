@@ -55,6 +55,7 @@ public:
         Opt_AlwaysCopyLine           = 0x00008000,
         Opt_CopyLineIfLineNotEmpty   = 0x00010000,
         Opt_CopyNothing              = 0x00020000,
+        Opt_Use_CodeLite_Terminal    = 0x00040000,
     };
 
 protected:

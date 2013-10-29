@@ -1404,14 +1404,22 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 
     //execute command & cmdArgs
     wxString execLine ( cmd + wxT ( " " ) + cmdArgs );
+    execLine.Trim().Trim(false);
     wd = bldConf->GetWorkingDirectory();
     wd = ExpandVariables ( wd, GetProject ( projectName ), clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
+    
+    wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
+    fnCodeliteTerminal.SetFullName("codelite-terminal");
+    
+    wxString title;
+    title << cmd << " " << cmdArgs;
+    
+    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
 
     //change directory to the working directory
     if ( considerPauseWhenExecuting && !bldConf->IsGUIProgram() ) {
+        
         ProjectPtr proj = GetProject ( projectName );
-        OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-
 #if defined(__WXMAC__)
 
         execLine = opts->GetProgramConsoleCommand();
@@ -1420,37 +1428,56 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
         tmp_cmd = wxT("cd \"") + proj->GetFileName().GetPath() + wxT ( "\" && cd \"" ) + wd + wxT ( "\" && " ) + cmd + wxT ( " " ) + cmdArgs;
 
         execLine.Replace(wxT("$(CMD)"), tmp_cmd);
-        execLine.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
+        execLine.Replace(wxT("$(TITLE)"), title);
 
 #elif defined(__WXGTK__)
 
-        //set a console to the execute target
-        wxString term;
-        term = opts->GetProgramConsoleCommand();
-        term.Replace(wxT("$(TITLE)"), cmd + wxT ( " " ) + cmdArgs);
-
-        // build the command
-        wxString command;
-        if ( bldConf->GetPauseWhenExecEnds() ) {
-            wxString ld_lib_path;
-            wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
-            wxFileName exeWrapper ( exePath.GetPath(), wxT ( "codelite_exec" ) );
-
-            if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
-                command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
-            } else {
-                command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
+        // Set a console to the execute target
+        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
+            wxString newCommand;
+            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+            if ( bldConf->GetPauseWhenExecEnds() ) { 
+                newCommand << " -w ";
             }
+            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+            execLine = newCommand;
+            
+        } else {
+            wxString term;
+            term = opts->GetProgramConsoleCommand();
+            term.Replace(wxT("$(TITLE)"), title);
+
+            // build the command
+            wxString command;
+            if ( bldConf->GetPauseWhenExecEnds() ) {
+                wxString ld_lib_path;
+                wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
+                wxFileName exeWrapper ( exePath.GetPath(), wxT ( "codelite_exec" ) );
+
+                if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
+                    command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
+                } else {
+                    command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
+                }
+            }
+
+            command << execLine;
+            term.Replace(wxT("$(CMD)"), command);
+            execLine = term;
         }
-
-        command << execLine;
-        term.Replace(wxT("$(CMD)"), command);
-        execLine = term;
-
 #elif defined (__WXMSW__)
-
-        if ( bldConf->GetPauseWhenExecEnds() ) {
-            execLine.Prepend ( wxT ( "le_exec.exe " ) );
+        
+        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
+            wxString newCommand;
+            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+            if ( bldConf->GetPauseWhenExecEnds() ) { 
+                newCommand << " -w ";
+            }
+            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+            execLine = newCommand;
+            
+        } else if ( bldConf->GetPauseWhenExecEnds() ) {
+            execLine.Prepend ("le_exec.exe ");
         }
 #endif
     }

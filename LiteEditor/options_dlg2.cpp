@@ -134,9 +134,7 @@ void OptionsDlg2::Initialize()
     AddPage(new EditorSettingsDialogs(m_treeBook),       _("Dialogs"));
     AddPage(new EditorSettingsDockingWindows(m_treeBook),_("Windows & Tabs"));
 
-#ifndef __WXMSW__
     // the Terminal page should NOT be added under Windows
     AddPage(new EditorSettingsTerminal(m_treeBook),      _("Terminal"));
-#endif
     AddPage(new EditorSettingsMiscPanel(m_treeBook),     _("Misc"));
 }

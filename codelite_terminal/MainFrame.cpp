@@ -128,6 +128,13 @@ void MainFrame::DoExecuteCurrentLine()
     if ( cmd.IsEmpty() )
         return;
     
+#ifdef __WXMSW__
+    if ( cmd.StartsWith("./") ) {
+        cmd = cmd.Mid(2);
+        cmd.Prepend(".\\");
+    }
+#endif
+
     static wxRegEx reCD("cd[ \t]+");
     if ( reCD.Matches( cmd ) ) {
         reCD.Replace(&cmd, "");

@@ -179,6 +179,7 @@
           <File Name="editorsettings_terminal_base.h"/>
           <File Name="editorsettingsterminal.h"/>
           <File Name="editorsettingsterminal.cpp"/>
+          <File Name="editor_options_terminal.wxcp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="DockingWindows">
           <File Name="editorsettingsdockingwindowsbase.cpp"/>
@@ -793,6 +794,7 @@
       <File Name="tags_options_base_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="editor_options_guides_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_copy_paste_liteeditor_bitmaps.cpp"/>
+      <File Name="editor_options_terminal_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

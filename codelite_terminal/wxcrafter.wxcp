@@ -17,7 +17,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxCAPTION", "wxRESIZE_BORDER", "wxMAXIMIZE_BOX", "wxMINIMIZE_BOX", "wxSYSTEM_MENU", "wxCLOSE_BOX"],
+			"m_styles":	["wxDEFAULT_FRAME_STYLE"],
 			"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -104,11 +104,11 @@
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
-					"m_path":	""
+					"m_path":	"terminal-16.png"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (32x32)  :",
-					"m_path":	""
+					"m_path":	"terminal-32.png"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (64x64)  :",

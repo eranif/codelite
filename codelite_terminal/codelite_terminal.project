@@ -21,6 +21,10 @@
     <File Name="winprocess_impl.h"/>
     <File Name="my_callback.h"/>
     <File Name="my_callback.cpp"/>
+    <File Name="terminal_options.h"/>
+    <File Name="terminal_options.cpp"/>
+    <File Name="my_config.h"/>
+    <File Name="my_config.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>
@@ -88,7 +92,7 @@
         <Library Value="util"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

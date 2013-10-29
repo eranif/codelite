@@ -18,4 +18,17 @@ public:
 
 };
 
+class PtyCallback : public IProcessCallback
+{
+    MainFrame* m_frame;
+    
+public:
+    virtual void OnProcessOutput(const wxString& str);
+    virtual void OnProcessTerminated();
+    
+    PtyCallback(MainFrame* frame);
+    virtual ~PtyCallback();
+
+};
+
 #endif // MYCALLBACK_H

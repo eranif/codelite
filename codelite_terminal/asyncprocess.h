@@ -44,6 +44,10 @@ public:
         wxUnusedVar(str);
     }
     virtual void OnProcessTerminated() {}
+    virtual void OnProcessStarted(int pid, const wxString &tty) {
+        wxUnusedVar(pid);
+        wxUnusedVar(tty);
+    }
 };
 
 /**
@@ -72,6 +76,9 @@ public:
     static void SetProcessExitCode(int pid, int exitCode);
     static bool GetProcessExitCode(int pid, int &exitCode);
 
+    void SetCallback(IProcessCallback* callback) {
+        this->m_callback = callback;
+    }
     // Read from process stdout - return immediately if no data is available
     virtual bool Read(wxString& buff) = 0;
 

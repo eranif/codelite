@@ -35,8 +35,6 @@ class UnixProcessImpl : public IProcess
     int                  m_readHandle;
     int                  m_writeHandle;
     ProcessReaderThread *m_thr;
-private:
-    void StartReaderThread();
 
 public:
     UnixProcessImpl(wxEvtHandler *parent);
@@ -44,6 +42,7 @@ public:
 
     static IProcess *Execute(wxEvtHandler *parent, const wxString &cmd, IProcessCreateFlags flags, const wxString &workingDirectory = wxEmptyString, IProcessCallback *cb = NULL);
 
+    void StartReaderThread();
     void SetReadHandle(const int& readHandle) {
         this->m_readHandle = readHandle;
     }

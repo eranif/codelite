@@ -19,10 +19,12 @@ void MyCallback::OnProcessOutput(const wxString& str)
 
 void MyCallback::OnProcessTerminated()
 {
+#if 0
     wxString message;
     message << "[" << m_frame->m_process->GetPid() << "] Done\n";
     wxStyledTextCtrl *stc = m_frame->m_stc;
     stc->AppendText( message );
+#endif
     
     wxDELETE(m_frame->m_process);
     m_frame->SetCartAtEnd();

@@ -20,7 +20,9 @@
 class MainFrameBaseClass : public wxFrame
 {
 protected:
+    wxBoxSizer* boxSizer1;
     wxPanel* m_mainPanel;
+    wxBoxSizer* boxSizer11;
     wxStyledTextCtrl* m_stc;
     wxMenuBar* m_menuBar;
     wxMenu* m_name6;

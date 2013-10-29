@@ -3,6 +3,7 @@
 
 #include <wx/config.h>
 #include <wx/gdicmn.h>
+#include <wx/fileconf.h>
 
 class MyConfig : public wxFileConfig
 {

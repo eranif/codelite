@@ -38,8 +38,9 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
 {
     SetTitle( m_options.GetTitle() );
     m_stc->SetFont( wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT) );
-    
     StartTTY();
+    
+#if 0
     wxString message;
     message << "codelite-terminal started. tty=" << m_tty << "\n";
     m_stc->AppendText( message );
@@ -47,7 +48,8 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     message.Clear();
     message << "Current working directory is set to: " << ::wxGetCwd() << "\n";
     m_stc->AppendText( message );
-    
+#endif
+
     SetCartAtEnd();
     
     SetSize( m_config.GetTerminalSize() );

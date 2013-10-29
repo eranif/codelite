@@ -1433,7 +1433,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 #elif defined(__WXGTK__)
 
         // Set a console to the execute target
-        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
+        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) && !bldConf->IsGUIProgram() ) {
             wxString newCommand;
             newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
             if ( bldConf->GetPauseWhenExecEnds() ) { 
@@ -1466,18 +1466,21 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
             execLine = term;
         }
 #elif defined (__WXMSW__)
-        
-        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
-            wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
-            if ( bldConf->GetPauseWhenExecEnds() ) { 
-                newCommand << " -w ";
+
+        if ( !bldConf->IsGUIProgram() ) {
+            if ( bldConf->GetPauseWhenExecEnds() && opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
+                wxString newCommand;
+                newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+                if ( bldConf->GetPauseWhenExecEnds() ) { 
+                    newCommand << " -w ";
+                }
+                newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+                execLine = newCommand;
+                
+            } else if ( bldConf->GetPauseWhenExecEnds() ) {
+                execLine.Prepend ("le_exec.exe ");
             }
-            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
-            execLine = newCommand;
             
-        } else if ( bldConf->GetPauseWhenExecEnds() ) {
-            execLine.Prepend ("le_exec.exe ");
         }
 #endif
     }

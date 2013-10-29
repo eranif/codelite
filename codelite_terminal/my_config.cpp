@@ -1,7 +1,7 @@
 #include "my_config.h"
 
 MyConfig::MyConfig()
-    : wxFileConfig()
+    : wxFileConfig("codelite-terminal", "", "", "", wxCONFIG_USE_SUBDIR|wxCONFIG_USE_LOCAL_FILE)
 {
 }
 

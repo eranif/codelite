@@ -4,6 +4,9 @@
 #include <wx/image.h>
 #include <wx/cmdline.h>
 #include "terminal_options.h"
+#include <wx/dir.h>
+#include <wx/log.h>
+#include <wx/stdpaths.h>
 
 // Define the MainApp
 class MainApp : public wxApp
@@ -13,8 +16,12 @@ public:
     virtual ~MainApp() {}
 
     virtual bool OnInit() {
-        
+        SetAppName("codelite-terminal");
         wxCmdLineParser parser(wxApp::argc, wxApp::argv);
+        {
+            wxLogNull noLog;
+            wxFileName::Mkdir(wxStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        }
         
         parser.AddOption("c", "command", "command line to execute",                       wxCMD_LINE_VAL_STRING);
         parser.AddOption("t", "title",   "set the console title",                         wxCMD_LINE_VAL_STRING);

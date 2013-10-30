@@ -1402,7 +1402,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
     wxString cmdArgs = bldConf->GetCommandArguments();
     cmdArgs = ExpandVariables ( cmdArgs, GetProject ( projectName ), clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
 
-    //execute command & cmdArgs
+    // Execute command & cmdArgs
     wxString execLine ( cmd + wxT ( " " ) + cmdArgs );
     execLine.Trim().Trim(false);
     wd = bldConf->GetWorkingDirectory();
@@ -1471,12 +1471,21 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 
         if ( !bldConf->IsGUIProgram() ) {
             if ( bldConf->GetPauseWhenExecEnds() && opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
+                
+                // codelite-terminal does not like forward slashes...
+                wxString commandToRun;
+                commandToRun << cmd << " ";
+                commandToRun.Replace("/", "\\");
+                commandToRun << cmdArgs;
+                commandToRun.Trim().Trim(false);
+                
                 wxString newCommand;
                 newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
                 if ( bldConf->GetPauseWhenExecEnds() ) { 
                     newCommand << " -w ";
                 }
-                newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+                
+                newCommand << " -t \"" << commandToRun << "\" -c \"" << commandToRun << "\"";
                 execLine = newCommand;
                 
             } else if ( bldConf->GetPauseWhenExecEnds() ) {

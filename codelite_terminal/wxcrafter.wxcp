@@ -302,7 +302,7 @@
 												}, {
 													"type":	"bool",
 													"m_label":	"Symbol Margin",
-													"m_value":	false
+													"m_value":	true
 												}, {
 													"type":	"choice",
 													"m_label":	"Wrap Text",
@@ -365,11 +365,11 @@
 													"m_functionNameAndSignature":	"OnStcUpdateUI(wxStyledTextEvent& event)",
 													"m_description":	"Update UI"
 												}, {
-													"m_eventName":	"wxEVT_STC_MODIFIED",
-													"m_eventClass":	"wxStyledTextEvent",
-													"m_eventHandler":	"wxStyledTextEventHandler",
-													"m_functionNameAndSignature":	"OnChange(wxStyledTextEvent& event)",
-													"m_description":	"Document modified"
+													"m_eventName":	"wxEVT_IDLE",
+													"m_eventClass":	"wxIdleEvent",
+													"m_eventHandler":	"wxIdleEventHandler",
+													"m_functionNameAndSignature":	"OnIdle(wxIdleEvent& event)",
+													"m_description":	"Process a wxEVT_IDLE event"
 												}],
 											"m_children":	[]
 										}]

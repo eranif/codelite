@@ -23,7 +23,7 @@ class MainFrame : public MainFrameBaseClass
     MyConfig        m_config;
 
 protected:
-    virtual void OnChange(wxStyledTextEvent& event);
+    virtual void OnIdle(wxIdleEvent& event);
     virtual void OnStcUpdateUI(wxStyledTextEvent& event);
     void DoExecuteCurrentLine();
     wxString GetCurrentLine() const;

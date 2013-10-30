@@ -53,7 +53,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc --debug);-mwindows" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="-c &quot;ls -l&quot; -e -w" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="-c &quot;ls -l&quot; -e -w" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -127,7 +127,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;$(shell wx-config --cflags)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-O2;-Wall;$(shell wx-config --cflags --debug=no)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>

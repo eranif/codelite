@@ -2,6 +2,7 @@
 #include <wx/aboutdlg.h>
 #include <wx/regex.h>
 #include <errno.h>
+#include <wx/settings.h>
 
 #ifndef __WXMSW__
 #if defined(__WXGTK__)
@@ -30,8 +31,7 @@ static void WrapInShell(wxString& cmd)
 #endif
 }
 
-#define MARGIN_ID 3
-#define STYLE_ID  15
+#define MARKER_ID 1
 
 MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     : MainFrameBaseClass(parent)
@@ -44,14 +44,10 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     SetTitle( m_options.GetTitle() );
     m_stc->SetFont( wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT) );
     StartTTY();
-    m_stc->SetMarginType(MARGIN_ID, wxSTC_MARGIN_RTEXT);
-    m_stc->SetMarginWidth(MARGIN_ID, 32);
-    m_stc->StyleSetBackground(STYLE_ID, "LIGHT GREY");
-    m_stc->StyleSetForeground(STYLE_ID, "BLACK");
     SetCartAtEnd();
-    m_stc->MarginSetText(0, "$");
-    m_stc->MarginSetStyle(0, STYLE_ID);
-    
+    m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_BACKGROUND);
+    m_stc->MarkerSetBackground(MARKER_ID, *wxBLUE);
+    m_stc->MarkerSetAlpha(MARKER_ID, 5);
     SetSize( m_config.GetTerminalSize() );
     SetPosition( m_config.GetTerminalPosition() );
     CallAfter( &MainFrame::DoExecStartCommand );
@@ -136,13 +132,6 @@ void MainFrame::DoExecuteCurrentLine()
         SetCartAtEnd();
         return;
     }
-    
-#ifdef __WXMSW__
-    if ( cmd.StartsWith("./") ) {
-        cmd = cmd.Mid(2);
-        cmd.Prepend(".\\");
-    }
-#endif
 
     m_process = NULL;
     static wxRegEx reCD("cd[ \t]+");
@@ -258,23 +247,32 @@ void MainFrame::Exit()
         Close();
     }
 }
-void MainFrame::OnChange(wxStyledTextEvent& event)
-{
-    if (event.GetModificationType() & wxSTC_MOD_INSERTTEXT || event.GetModificationType() & wxSTC_MOD_DELETETEXT) {
-        int numlines(event.GetLinesAdded());
-        int curline (m_stc->LineFromPosition(event.GetPosition()));
-        if ( numlines == 0 ) {
-            
-            // probably only the current line was modified
-            m_stc->MarginSetText (curline, "$");
-            m_stc->MarginSetStyle(curline, STYLE_ID);
-            
-        } else {
 
-            for (int i=0; i<=numlines; ++i) {
-                m_stc->MarginSetText(curline+i, "$");
-                m_stc->MarginSetStyle(curline+i, STYLE_ID);
-            }
-        }
-    }
+void MainFrame::OnIdle(wxIdleEvent& event)
+{
+    int lastLine = m_stc->LineFromPosition(m_stc->GetLength());
+    m_stc->MarkerDeleteAll(MARKER_ID);
+    m_stc->MarkerAdd( lastLine, MARKER_ID );
 }
+
+// void MainFrame::OnChange(wxStyledTextEvent& event)
+// {
+//     if (event.GetModificationType() & wxSTC_MOD_INSERTTEXT || event.GetModificationType() & wxSTC_MOD_DELETETEXT) {
+//         int numlines(event.GetLinesAdded());
+//         int curline (m_stc->LineFromPosition(event.GetPosition()));
+//         if ( numlines == 0 ) {
+//
+//             // probably only the current line was modified
+//             m_stc->MarginSetText (curline, PROMPT);
+//             m_stc->MarginSetStyle(curline, STYLE_ID);
+//
+//         } else {
+//
+//             for (int i=0; i<=numlines; ++i) {
+//                 m_stc->MarginSetText(curline+i, PROMPT);
+//                 m_stc->MarginSetStyle(curline+i, STYLE_ID);
+//             }
+//         }
+//     }
+// }
+//

@@ -38,14 +38,14 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     SetIcons( app_icons );
 
     
-    wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
+    boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800,600), wxTAB_TRAVERSAL);
     
     boxSizer1->Add(m_mainPanel, 1, wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
+    boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer11);
     
     m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -70,7 +70,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     // Configure the symbol margin
     m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginWidth(2, 16);
     m_stc->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
@@ -121,7 +121,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     // Connect events
     m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
-    m_stc->Connect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(MainFrameBaseClass::OnChange), NULL, this);
+    m_stc->Connect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     
@@ -131,7 +131,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
 {
     m_stc->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
-    m_stc->Disconnect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(MainFrameBaseClass::OnChange), NULL, this);
+    m_stc->Disconnect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     

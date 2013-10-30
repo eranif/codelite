@@ -242,7 +242,7 @@ void PluginManager::Load()
                 // When using AUI toolbars, use our own custom art-provider
                 tb->SetArtProvider(new CLMainAuiTBArt());
 #endif
-                clMainFrame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top() );
+                clMainFrame::Get()->GetDockingManager().AddPane( tb, wxAuiPaneInfo().Name( plugin->GetShortName() ).LeftDockable( true ).RightDockable( true ).Caption( plugin->GetShortName() ).ToolbarPane().Top().Row(1) );
 
                 //Add menu entry at the 'View->Toolbars' menu for this toolbar
                 wxMenuItem* item = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("toolbars_menu"));

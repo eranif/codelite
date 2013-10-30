@@ -1169,7 +1169,7 @@ void clMainFrame::CreateToolbars24()
     if (PluginManager::Get()->AllowToolbar()) {
         tb->Realize();
         info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top().Row(1));
+        m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top());
     }
 
     //----------------------------------------------
@@ -1198,7 +1198,7 @@ void clMainFrame::CreateToolbars24()
 
     if (PluginManager::Get()->AllowToolbar()) {
         info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Debug")).ToolbarPane().Top().Row(1));
+        m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Debug")).ToolbarPane().Top());
 
         RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
         RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
@@ -1208,7 +1208,7 @@ void clMainFrame::CreateToolbars24()
 #if !USE_AUI_TOOLBAR
         SetToolBar(tb);
 #else
-        m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Main Toolbar")).ToolbarPane().Top().Row(1));
+        m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Main Toolbar")).ToolbarPane().Top());
 #endif
     }
 }
@@ -1461,7 +1461,7 @@ void clMainFrame::CreateToolbars16()
     if (PluginManager::Get()->AllowToolbar()) {
         tb->Realize();
         info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top().Row(1));
+        m_mgr.AddPane(tb, info.Name(wxT("Build Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Build")).ToolbarPane().Top());
     }
 
     //----------------------------------------------
@@ -1490,7 +1490,7 @@ void clMainFrame::CreateToolbars16()
     tb->Realize();
     if (PluginManager::Get()->AllowToolbar()) {
         info = wxAuiPaneInfo();
-        m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Debug")).ToolbarPane().Top().Row(1));
+        m_mgr.AddPane(tb, info.Name(wxT("Debugger Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Debug")).ToolbarPane().Top());
         RegisterToolbar(XRCID("show_std_toolbar"), wxT("Standard Toolbar"));
         RegisterToolbar(XRCID("show_search_toolbar"), wxT("Search Toolbar"));
         RegisterToolbar(XRCID("show_build_toolbar"), wxT("Build Toolbar"));
@@ -1499,7 +1499,7 @@ void clMainFrame::CreateToolbars16()
 #if !USE_AUI_TOOLBAR
         SetToolBar(tb);
 #else
-        m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Main Toolbar")).ToolbarPane().Top().Row(1));
+        m_mgr.AddPane(tb, info.Name(wxT("Main Toolbar")).LeftDockable(true).RightDockable(true).Caption(_("Main Toolbar")).ToolbarPane().Top());
 #endif
     }
 }

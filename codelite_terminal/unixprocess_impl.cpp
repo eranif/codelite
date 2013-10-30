@@ -408,7 +408,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
         wxSetWorkingDirectory(curdir);
 
         UnixProcessImpl *proc = new UnixProcessImpl(parent);
-        proc->m_callback = cb;
+        proc->LinkCallback( cb );
         proc->SetReadHandle  (master);
         proc->SetWriteHandler(master);
 

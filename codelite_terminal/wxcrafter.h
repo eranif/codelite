@@ -20,9 +20,7 @@
 class MainFrameBaseClass : public wxFrame
 {
 protected:
-    wxBoxSizer* boxSizer1;
     wxPanel* m_mainPanel;
-    wxBoxSizer* boxSizer11;
     wxStyledTextCtrl* m_stc;
     wxMenuBar* m_menuBar;
     wxMenu* m_name6;
@@ -33,6 +31,7 @@ protected:
 protected:
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnChange(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 

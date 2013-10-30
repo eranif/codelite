@@ -38,14 +38,14 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     SetIcons( app_icons );
 
     
-    boxSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800,600), wxTAB_TRAVERSAL);
     
     boxSizer1->Add(m_mainPanel, 1, wxEXPAND, 5);
     
-    boxSizer11 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer11);
     
     m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -70,7 +70,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     // Configure the symbol margin
     m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stc->SetMarginWidth(2, 16);
+    m_stc->SetMarginWidth(2, 0);
     m_stc->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
@@ -80,7 +80,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     // Configure the line symbol margin
     m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3,0);
+    m_stc->SetMarginWidth(3,1);
     // Select the lexer
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -121,6 +121,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     // Connect events
     m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
+    m_stc->Connect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(MainFrameBaseClass::OnChange), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     
@@ -130,6 +131,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
 {
     m_stc->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
+    m_stc->Disconnect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(MainFrameBaseClass::OnChange), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     

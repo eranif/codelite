@@ -85,7 +85,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler *parent, const wxString& cmd, wxS
     saAttr.bInheritHandle = TRUE;
     saAttr.lpSecurityDescriptor = NULL;
     WinProcessImpl *prc = new WinProcessImpl(parent);
-    prc->m_callback = cb;
+    prc->LinkCallback( cb );
     prc->m_flags = flags;
 
     // The steps for redirecting child process's STDOUT:

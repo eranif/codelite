@@ -298,11 +298,11 @@
 												}, {
 													"type":	"bool",
 													"m_label":	"Separator Margin",
-													"m_value":	false
+													"m_value":	true
 												}, {
 													"type":	"bool",
 													"m_label":	"Symbol Margin",
-													"m_value":	true
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Wrap Text",
@@ -364,6 +364,12 @@
 													"m_eventHandler":	"wxStyledTextEventHandler",
 													"m_functionNameAndSignature":	"OnStcUpdateUI(wxStyledTextEvent& event)",
 													"m_description":	"Update UI"
+												}, {
+													"m_eventName":	"wxEVT_STC_MODIFIED",
+													"m_eventClass":	"wxStyledTextEvent",
+													"m_eventHandler":	"wxStyledTextEventHandler",
+													"m_functionNameAndSignature":	"OnChange(wxStyledTextEvent& event)",
+													"m_description":	"Document modified"
 												}],
 											"m_children":	[]
 										}]

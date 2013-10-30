@@ -30,11 +30,12 @@ static void WrapInShell(wxString& cmd)
 #endif
 }
 
+#define MARGIN_ID 3
+#define STYLE_ID  15
 
 MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     : MainFrameBaseClass(parent)
     , m_process(NULL)
-    , m_callback(this)
     , m_ptyCllback(this)
     , m_fromPos(0)
     , m_options(options)
@@ -43,18 +44,13 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     SetTitle( m_options.GetTitle() );
     m_stc->SetFont( wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT) );
     StartTTY();
-    
-#if 0
-    wxString message;
-    message << "codelite-terminal started. tty=" << m_tty << "\n";
-    m_stc->AppendText( message );
-    
-    message.Clear();
-    message << "Current working directory is set to: " << ::wxGetCwd() << "\n";
-    m_stc->AppendText( message );
-#endif
-
+    m_stc->SetMarginType(MARGIN_ID, wxSTC_MARGIN_RTEXT);
+    m_stc->SetMarginWidth(MARGIN_ID, 32);
+    m_stc->StyleSetBackground(STYLE_ID, "LIGHT GREY");
+    m_stc->StyleSetForeground(STYLE_ID, "BLACK");
     SetCartAtEnd();
+    m_stc->MarginSetText(0, "$");
+    m_stc->MarginSetStyle(0, STYLE_ID);
     
     SetSize( m_config.GetTerminalSize() );
     SetPosition( m_config.GetTerminalPosition() );
@@ -92,7 +88,7 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
         Close();
         return;
     }
-    
+
     if ( event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER ) {
         if ( m_process ) {
             wxString cmd = GetCurrentLine();
@@ -103,13 +99,13 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
             DoExecuteCurrentLine();
 
         }
-        
+
     } else if ( event.GetKeyCode() == WXK_UP ||event.GetKeyCode() == WXK_NUMPAD_UP ) {
         // TODO: show history here
-        
+
     } else if ( event.GetKeyCode() == WXK_DOWN ||event.GetKeyCode() == WXK_NUMPAD_DOWN ) {
         // TODO: show history here
-        
+
     } else if ( event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE ) {
         event.Skip();
 
@@ -118,7 +114,7 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
             return;
         }
         event.Skip();
-        
+
     } else {
         event.Skip();
     }
@@ -126,11 +122,20 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
 
 void MainFrame::DoExecuteCurrentLine()
 {
+    bool async = false;
     wxString cmd = GetCurrentLine();
     cmd.Trim().Trim(false);
+    if ( cmd.EndsWith("&") ) {
+        // Run in the background
+        cmd.RemoveLast();
+        async = true;
+    }
+
     AppendNewLine();
-    if ( cmd.IsEmpty() )
+    if ( cmd.IsEmpty() ) {
+        SetCartAtEnd();
         return;
+    }
     
 #ifdef __WXMSW__
     if ( cmd.StartsWith("./") ) {
@@ -139,20 +144,25 @@ void MainFrame::DoExecuteCurrentLine()
     }
 #endif
 
+    m_process = NULL;
     static wxRegEx reCD("cd[ \t]+");
     if ( reCD.Matches( cmd ) ) {
         reCD.Replace(&cmd, "");
         if ( ::wxSetWorkingDirectory( cmd ) ) {
             m_stc->AppendText("current directory: " + ::wxGetCwd() + "\n");
-            
+
         } else {
             m_stc->AppendText( wxString(strerror(errno)) + "\n" );
         }
         SetCartAtEnd();
-        
+
     } else {
         WrapInShell( cmd );
-        m_process = ::CreateAsyncProcessCB(this, &m_callback, cmd, IProcessCreateWithHiddenConsole, ::wxGetCwd());
+        IProcess *proc = ::CreateAsyncProcessCB(this, new MyCallback(this), cmd, IProcessCreateWithHiddenConsole, ::wxGetCwd());
+        if ( !async ) {
+            // keep the process handle for sync commands only
+            m_process = proc;
+        }
         SetCartAtEnd();
     }
 }
@@ -210,7 +220,7 @@ wxString MainFrame::StartTTY()
     // Start a listener on the tty
     m_dummyProcess = new UnixProcessImpl(this);
     m_dummyProcess->SetCallback( &m_ptyCllback );
-    
+
     static_cast<UnixProcessImpl*>(m_dummyProcess)->SetReadHandle  (master);
     static_cast<UnixProcessImpl*>(m_dummyProcess)->SetWriteHandler(master);
     static_cast<UnixProcessImpl*>(m_dummyProcess)->SetPid(wxNOT_FOUND);
@@ -243,8 +253,28 @@ void MainFrame::Exit()
         m_stc->AppendText("Hit any key to continue...");
         SetCartAtEnd();
         m_exitOnNextKey = true;
-        
+
     } else {
         Close();
+    }
+}
+void MainFrame::OnChange(wxStyledTextEvent& event)
+{
+    if (event.GetModificationType() & wxSTC_MOD_INSERTTEXT || event.GetModificationType() & wxSTC_MOD_DELETETEXT) {
+        int numlines(event.GetLinesAdded());
+        int curline (m_stc->LineFromPosition(event.GetPosition()));
+        if ( numlines == 0 ) {
+            
+            // probably only the current line was modified
+            m_stc->MarginSetText (curline, "$");
+            m_stc->MarginSetStyle(curline, STYLE_ID);
+            
+        } else {
+
+            for (int i=0; i<=numlines; ++i) {
+                m_stc->MarginSetText(curline+i, "$");
+                m_stc->MarginSetStyle(curline+i, STYLE_ID);
+            }
+        }
     }
 }

@@ -19,19 +19,18 @@ void MyCallback::OnProcessOutput(const wxString& str)
 
 void MyCallback::OnProcessTerminated()
 {
-#if 0
-    wxString message;
-    message << "[" << m_frame->m_process->GetPid() << "] Done\n";
-    wxStyledTextCtrl *stc = m_frame->m_stc;
-    stc->AppendText( message );
-#endif
+    // if the process linked to this callback object is the same as the one in the main frame
+    // it means that this is the "sync" process - we need to delete it as well from the main
+    // frame
+    if ( m_frame->m_process == m_process ) {
+        wxDELETE(m_frame->m_process);
+    }
     
-    wxDELETE(m_frame->m_process);
     m_frame->SetCartAtEnd();
-    
     if ( m_frame->GetOptions().HasFlag( TerminalOptions::kExitWhenInfiriorTerminates ) ) {
         m_frame->CallAfter( &MainFrame::Exit );
     }
+    delete this;
 }
 
 // -------------------------------------------------------------------

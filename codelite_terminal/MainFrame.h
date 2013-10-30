@@ -13,7 +13,6 @@ class MainFrame : public MainFrameBaseClass
     friend class PtyCallback;
 
     IProcess *      m_process;
-    MyCallback      m_callback;
     PtyCallback     m_ptyCllback;
     int             m_fromPos;
     IProcess *      m_dummyProcess;
@@ -22,8 +21,9 @@ class MainFrame : public MainFrameBaseClass
     TerminalOptions m_options;
     bool            m_exitOnNextKey;
     MyConfig        m_config;
-    
+
 protected:
+    virtual void OnChange(wxStyledTextEvent& event);
     virtual void OnStcUpdateUI(wxStyledTextEvent& event);
     void DoExecuteCurrentLine();
     wxString GetCurrentLine() const;
@@ -43,9 +43,9 @@ public:
     const TerminalOptions& GetOptions() const {
         return m_options;
     }
-    
+
     void Exit();
-    
+
 protected:
     virtual void OnKeyDown(wxKeyEvent& event);
 };

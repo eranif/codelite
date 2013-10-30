@@ -39,7 +39,14 @@ enum IProcessCreateFlags {
 class IProcess;
 class IProcessCallback : public wxEvtHandler
 {
+protected:
+    IProcess* m_process;
+    
 public:
+    IProcessCallback() : m_process(NULL) {}
+    void SetProcess(IProcess* process) {
+        m_process = process;
+    }
     virtual void OnProcessOutput(const wxString &str) {
         wxUnusedVar(str);
     }
@@ -75,7 +82,12 @@ public:
     // handled by codelite
     static void SetProcessExitCode(int pid, int exitCode);
     static bool GetProcessExitCode(int pid, int &exitCode);
-
+    
+    void LinkCallback(IProcessCallback* pcb) {
+        m_callback = pcb;
+        pcb->SetProcess( this );
+    }
+    
     void SetCallback(IProcessCallback* callback) {
         this->m_callback = callback;
     }

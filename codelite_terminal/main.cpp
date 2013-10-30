@@ -21,6 +21,7 @@ public:
         {
             wxLogNull noLog;
             wxFileName::Mkdir(wxStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+            ::wxMkdir(wxStandardPaths::Get().GetUserDataDir());
         }
         
         parser.AddOption("c", "command", "command line to execute",                       wxCMD_LINE_VAL_STRING);

@@ -99,7 +99,7 @@
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
-        <DebuggerSearchPaths/>
+        <DebuggerSearchPaths>/home/eran/devl/wx295/build</DebuggerSearchPaths>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>

@@ -44,10 +44,10 @@ class WXDLLIMPEXP_SDK CLMainAuiTBArt : public wxAuiDefaultToolBarArt
 public:
     CLMainAuiTBArt();
     virtual ~CLMainAuiTBArt();
-
-    virtual void DrawGripper( wxDC& dc, wxWindow* wnd, const wxRect& rect);
+    wxAuiToolBarArt *Clone() {
+        return new CLMainAuiTBArt();
+    }
     virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
-    virtual void DrawSeparator(wxDC& dc, wxWindow* wnd, const wxRect& rect);
 };
 #endif
 

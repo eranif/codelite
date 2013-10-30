@@ -49,66 +49,14 @@ clAuiDockArt::~clAuiDockArt()
 {
 }
 
-void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow *WXUNUSED(window),
+void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow *window,
                                   int button,
                                   int button_state,
                                   const wxRect& _rect,
                                   wxAuiPaneInfo& pane)
 {
-    wxBitmap bmp;
-    if (!(&pane))
-        return;
-        
-    switch (button) {
-    default:
-    case wxAUI_BUTTON_CLOSE:
-        if (pane.state & wxAuiPaneInfo::optionActive)
-            bmp = m_bmpClose;
-        else
-            bmp = m_bmpCloseInactive;
-        break;
-    case wxAUI_BUTTON_PIN:
-        if (pane.state & wxAuiPaneInfo::optionActive)
-            bmp = m_activePinBitmap;
-        else
-            bmp = m_inactivePinBitmap;
-        break;
-    case wxAUI_BUTTON_MAXIMIZE_RESTORE:
-        if (pane.IsMaximized()) {
-            if (pane.state & wxAuiPaneInfo::optionActive)
-                bmp = m_activeRestoreBitmap;
-            else
-                bmp = m_inactiveRestoreBitmap;
-        } else {
-            if (pane.state & wxAuiPaneInfo::optionActive)
-                bmp = m_activeMaximizeBitmap;
-            else
-                bmp = m_inactiveMaximizeBitmap;
-        }
-        break;
-    }
-
-
-    wxRect rect = _rect;
-
-    int old_y = rect.y;
-    rect.y = rect.y + (rect.height/2) - (bmp.GetHeight()/2);
-    rect.height = old_y + rect.height - rect.y - 1;
-
-    if (button_state == wxAUI_BUTTON_STATE_HOVER || button_state == wxAUI_BUTTON_STATE_PRESSED) {
-        if (pane.state & wxAuiPaneInfo::optionActive) {
-            dc.SetBrush(wxBrush(m_activeCaptionColour.ChangeLightness(120)));
-            dc.SetPen(wxPen(m_activeCaptionColour.ChangeLightness(70)));
-        } else {
-            dc.SetBrush(wxBrush(m_inactiveCaptionColour.ChangeLightness(120)));
-            dc.SetPen(wxPen(m_inactiveCaptionColour.ChangeLightness(70)));
-        }
-    }
-
-
-    // draw the button itself
-    if ( bmp.IsOk() )
-        dc.DrawBitmap(bmp, rect.x, rect.y, true);
+    wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, _rect, pane);
+    return; 
 }
 
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
@@ -203,27 +151,28 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
-    wxColour penColour;
-    
-    // Determine the pen colour
-    if ( DrawingUtils::IsDark(bgColour)) {
-        penColour = DrawingUtils::LightColour(bgColour, 4.0);
-    } else {
-        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-    }
-    
-    // Now set the bg colour. It must be done after setting 
-    // the pen colour
-    if ( !DrawingUtils::IsDark(bgColour) ) {
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    } else {
-        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
-    }
-    
-    dc.SetPen(bgColour);
-    dc.SetBrush( bgColour );
-    dc.DrawRectangle(rect);
+    wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
+//    wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+//    wxColour penColour;
+//    
+//    // Determine the pen colour
+//    if ( DrawingUtils::IsDark(bgColour)) {
+//        penColour = DrawingUtils::LightColour(bgColour, 4.0);
+//    } else {
+//        penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+//    }
+//    
+//    // Now set the bg colour. It must be done after setting 
+//    // the pen colour
+//    if ( !DrawingUtils::IsDark(bgColour) ) {
+//        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+//    } else {
+//        bgColour = DrawingUtils::LightColour(bgColour, 3.0);
+//    }
+//    
+//    dc.SetPen(bgColour);
+//    dc.SetBrush( bgColour );
+//    dc.DrawRectangle(rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)

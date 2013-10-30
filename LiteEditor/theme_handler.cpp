@@ -121,30 +121,30 @@ void ThemeHandler::OnInitDone(wxCommandEvent& e)
 
 void ThemeHandler::DoUpdateAuiToolBars(wxWindow* win)
 {
-    bool bDarkBG = DrawingUtils::IsDark(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
-    
-    wxAuiToolBar *auibar = dynamic_cast<wxAuiToolBar*>( win );
-    if( auibar ) {
-        CLMainAuiTBArt *clArtProvider = dynamic_cast<CLMainAuiTBArt*>(auibar->GetArtProvider());
-        if ( !clArtProvider ) {
-            /// not codelite's custom art provider
-            /// replace it
-            auibar->SetArtProvider( new CLMainAuiTBArt() );
-        }
-        size_t toolCount = auibar->GetToolCount();
-        for(size_t i=0; i<toolCount; i++) {
-            wxAuiToolBarItem* tool = auibar->FindToolByIndex(i);
-            if ( tool->GetKind() == wxITEM_NORMAL || tool->GetKind() == wxITEM_CHECK || tool->GetKind() == wxITEM_DROPDOWN || tool->GetKind() == wxITEM_RADIO ) {
-                tool->SetDisabledBitmap( tool->GetBitmap().ConvertToDisabled(bDarkBG ? 50 : 255) );
-            }
-        }
-        auibar->Refresh();
-    }
-
-    wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
-    while(pclNode) {
-        wxWindow* pclChild = pclNode->GetData();
-        this->DoUpdateAuiToolBars(pclChild);
-        pclNode = pclNode->GetNext();
-    }
+    // bool bDarkBG = DrawingUtils::IsDark(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
+    // 
+    // wxAuiToolBar *auibar = dynamic_cast<wxAuiToolBar*>( win );
+    // if( auibar ) {
+    //     CLMainAuiTBArt *clArtProvider = dynamic_cast<CLMainAuiTBArt*>(auibar->GetArtProvider());
+    //     if ( !clArtProvider ) {
+    //         /// not codelite's custom art provider
+    //         /// replace it
+    //         auibar->SetArtProvider( new CLMainAuiTBArt() );
+    //     }
+    //     size_t toolCount = auibar->GetToolCount();
+    //     for(size_t i=0; i<toolCount; i++) {
+    //         wxAuiToolBarItem* tool = auibar->FindToolByIndex(i);
+    //         if ( tool->GetKind() == wxITEM_NORMAL || tool->GetKind() == wxITEM_CHECK || tool->GetKind() == wxITEM_DROPDOWN || tool->GetKind() == wxITEM_RADIO ) {
+    //             tool->SetDisabledBitmap( tool->GetBitmap().ConvertToDisabled(bDarkBG ? 50 : 255) );
+    //         }
+    //     }
+    //     auibar->Refresh();
+    // }
+    // 
+    // wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
+    // while(pclNode) {
+    //     wxWindow* pclChild = pclNode->GetData();
+    //     this->DoUpdateAuiToolBars(pclChild);
+    //     pclNode = pclNode->GetNext();
+    // }
 }

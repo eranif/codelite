@@ -680,6 +680,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
 
 }
 
@@ -714,9 +715,10 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
-
-    delete m_timer;
-    delete m_statusbarTimer;
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
+    
+    wxDELETE(m_timer);
+    wxDELETE(m_statusbarTimer);
 
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
@@ -897,15 +899,13 @@ void clMainFrame::CreateGUIControls(void)
 
     // Add the explorer pane
     m_workspacePane = new WorkspacePane(this, wxT("Workspace View"), &m_mgr);
-    m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().MinimizeButton().
-                  Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).
-                  Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
+    m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo().MinimizeButton().MaximizeButton().Name(m_workspacePane->GetCaption()).Caption(m_workspacePane->GetCaption()).Left().BestSize(250, 300).Layer(1).Position(0).CloseButton(true));
     RegisterDockWindow(XRCID("workspace_pane"), wxT("Workspace View"));
 
     //add the debugger locals tree, make it hidden by default
     m_debuggerPane = new DebuggerPane(this, wxT("Debugger"), &m_mgr);
     m_mgr.AddPane(m_debuggerPane,
-                  wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton().Hide());
+                  wxAuiPaneInfo().Name(m_debuggerPane->GetCaption()).Caption(m_debuggerPane->GetCaption()).Bottom().Layer(1).Position(1).CloseButton(true).MinimizeButton().Hide().MaximizeButton());
     RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
     m_mainBook = new MainBook(this);
@@ -914,7 +914,7 @@ void clMainFrame::CreateGUIControls(void)
 
     m_outputPane = new OutputPane(this, wxT("Output View"));
     wxAuiPaneInfo paneInfo;
-    m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(true).MinimizeButton().Show().BestSize(wxSize(-1, 200)));
+    m_mgr.AddPane(m_outputPane, paneInfo.Name(wxT("Output View")).Caption(wxT("Output View")).Bottom().Layer(1).Position(0).CaptionVisible(true).MinimizeButton().Show().BestSize(wxSize(400, 200)).MaximizeButton());
     RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
     long show_nav(1);
@@ -5369,4 +5369,14 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
     } else {
         wxLogMessage( wxString() << "Initializing refactoring database for workspace: " << WorkspaceST::Get()->GetName() << "... done" );
     }
+}
+
+void clMainFrame::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+//    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
+//    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+//    SetBackgroundColour( bgColour );
+//    SetForegroundColour( fgColour );
+//    Refresh();
 }

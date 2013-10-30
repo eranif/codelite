@@ -448,7 +448,8 @@ protected:
     void OnPreviousFiFMatchUI(wxUpdateUIEvent &e);
     void OnGrepWord          (wxCommandEvent &e);
     void OnGrepWordUI        (wxUpdateUIEvent& e);
-
+    void OnThemeChanged(wxCommandEvent &e);
+    
     //handle symbol tree events
     void OnParsingThreadMessage       (wxCommandEvent  &e);
     void OnDatabaseUpgrade            (wxCommandEvent  &e);

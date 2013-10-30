@@ -3,8 +3,12 @@
 #include <wx/regex.h>
 #include <errno.h>
 
-#if defined(__WXGTK__) || defined(__WXMAC__)
+#ifndef __WXMSW__
+#if defined(__WXGTK__)
 #   include <pty.h>
+#else
+#   include <util.h>
+#endif
 #   include "unixprocess_impl.h"
 #endif
 

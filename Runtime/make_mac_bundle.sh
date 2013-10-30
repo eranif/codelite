@@ -92,6 +92,19 @@ fix_codelite_make_deps() {
     done
 }
 
+fix_codelite_terminal_deps() {
+
+    orig_path=`otool -L ./codelite.app/Contents/MacOS/codelite-terminal  | grep libwx_* | awk '{print $1;}'`
+
+    ## Loop over the files, and update the path of the wx library
+    for path in ${orig_path}
+    do
+        new_path=`echo ${path} | xargs basename`
+        install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/MacOS/codelite-terminal
+    done
+}
+
+
 fix_wxrc_deps() {
     if test -f ./codelite.app/Contents/SharedSupport/wxrc ; then
         orig_path=`otool -L ./codelite.app/Contents/SharedSupport/wxrc  | grep libwx_* | awk '{print $1;}'`
@@ -221,6 +234,7 @@ if test -f ../bin/codelite-clang ; then
 fi
 
 cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
+cp ../bin/codelite-terminal  ./codelite.app/Contents/MacOS/
 cp ../bin/codelite-make  ./codelite.app/Contents/SharedSupport/
 cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/./OpenTerm   ./codelite.app/Contents/SharedSupport/
@@ -237,6 +251,7 @@ done
 
 fix_codelite_indexer_deps
 fix_codelite_make_deps
+fix_codelite_terminal_deps
 fix_wxrc_deps
 fix_codelite_clang_deps
 fix_shared_object_depends libwx_

@@ -187,6 +187,7 @@
           <File Name="editorsettingsdockingwidows.h"/>
           <File Name="editorsettingsdockingwidows.cpp"/>
         </VirtualDirectory>
+        <File Name="optionsdialogbase2.wxcp"/>
       </VirtualDirectory>
       <File Name="env_var_dlg_base.h"/>
       <File Name="env_var_dlg_base.cpp"/>
@@ -795,6 +796,7 @@
       <File Name="editor_options_guides_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_copy_paste_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_terminal_liteeditor_bitmaps.cpp"/>
+      <File Name="optionsdialogbase2_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

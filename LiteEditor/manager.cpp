@@ -1420,16 +1420,18 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
     if ( considerPauseWhenExecuting && !bldConf->IsGUIProgram() ) {
         
         ProjectPtr proj = GetProject ( projectName );
+        
 #if defined(__WXMAC__)
-
-        execLine = opts->GetProgramConsoleCommand();
-
-        wxString tmp_cmd;
-        tmp_cmd = wxT("cd \"") + proj->GetFileName().GetPath() + wxT ( "\" && cd \"" ) + wd + wxT ( "\" && " ) + cmd + wxT ( " " ) + cmdArgs;
-
-        execLine.Replace(wxT("$(CMD)"), tmp_cmd);
-        execLine.Replace(wxT("$(TITLE)"), title);
-
+        if ( !bldConf->IsGUIProgram() ) {
+            wxString newCommand;
+            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+            if ( bldConf->GetPauseWhenExecEnds() ) { 
+                newCommand << " -w ";
+            }
+            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+            execLine = newCommand;
+        }
+        
 #elif defined(__WXGTK__)
 
         // Set a console to the execute target

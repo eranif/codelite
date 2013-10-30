@@ -1,40 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleExecutable</key>
-	<string>EXE_NAME</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>CodeLite</string>
-	<key>CFBundleIconFile</key>
-	<string>icon.icns</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleVersion</key>
-	<string>CodeLite version 1.0</string>
-	<key>CFBundleShortVersionString</key>
-	<string>CodeLite version 1.0</string>
-	<key>CSResourcesFileMapped</key>
-	<true/>	
-	
-	<key>CFBundleDocumentTypes</key> <array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>workspace</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>      <string>cl_workspace.icns</string>
-			<key>CFBundleTypeName</key>          <string>CodeLite workspace</string>
-			<key>CFBundleTypeRole</key>          <string>Editor</string>
-			<key>LSIsAppleDefaultForType</key>   <true/>
-			<key>LSTypeIsPackage</key>           <false/>
-		</dict>
-		
-	</array>
-
-</dict>
+  <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundleExecutable</key>
+    <string>EXE_NAME</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>CodeLite</string>
+    <key>CFBundleIconFile</key>
+    <string>icon.icns</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleVersion</key>
+    <string>CodeLite version 1.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>CodeLite version 1.0</string>
+    <key>CSResourcesFileMapped</key>
+    <true/>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>
+          <string>workspace</string>
+        </array>
+        <key>CFBundleTypeIconFile</key>
+        <string>cl_workspace.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>CodeLite workspace</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSIsAppleDefaultForType</key>
+        <true/>
+        <key>LSTypeIsPackage</key>
+        <false/>
+      </dict>
+    </array>
+  </dict>
 </plist>

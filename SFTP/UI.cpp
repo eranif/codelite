@@ -59,23 +59,42 @@ SFTPImages::SFTPImages()
         wxC32BEInitBitmapResources();
         bBitmapLoaded = true;
     }
-    wxBitmap bmp;
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_ok"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("sftp_ok"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_ok"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("sftp_ok"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_error"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("sftp_error"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_error"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("sftp_error"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_info"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("sftp_info"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_info"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("sftp_info"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_tab"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("sftp_tab"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_tab"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("sftp_tab"), bmp ) );
+    }
     
 }
 
@@ -96,7 +115,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
-    m_auibar28 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar28 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar28->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer16->Add(m_auibar28, 0, wxEXPAND, 5);

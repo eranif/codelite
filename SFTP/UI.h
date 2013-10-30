@@ -10,11 +10,13 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/panel.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/dataview.h>
 #include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
+#include <wx/icon.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>

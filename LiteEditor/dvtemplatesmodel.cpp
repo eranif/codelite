@@ -36,7 +36,7 @@ DVTemplatesModel::DVTemplatesModel()
 DVTemplatesModel::~DVTemplatesModel()
 {
     for(size_t i=0; i<m_data.size(); ++i) {
-        delete m_data.at(i);
+        wxDELETE(m_data.at(i));
     }
     m_data.clear();
 }
@@ -76,6 +76,10 @@ wxString DVTemplatesModel::GetColumnType(unsigned int col) const
 
 wxDataViewItem DVTemplatesModel::GetParent(const wxDataViewItem& item) const
 {
+    if ( IsEmpty() ) {
+        return wxDataViewItem(NULL);
+    }
+    
     DVTemplatesModel_Item* node = reinterpret_cast<DVTemplatesModel_Item*>(item.m_pItem);
     if ( node ) {
         return wxDataViewItem(node->GetParent());
@@ -203,7 +207,7 @@ void DVTemplatesModel::DeleteItem(const wxDataViewItem& item)
         if ( parent && parent->GetChildren().empty() )
             DoChangeItemType(parentItem, false);
             
-        delete node;
+        wxDELETE(node);
     }
     
     if ( IsEmpty() )
@@ -228,6 +232,7 @@ void DVTemplatesModel::Clear()
     for(; iter != roots.end(); ++iter) {
         DeleteItem( wxDataViewItem(*iter) );
     }
+    m_data.clear();
     Cleared();
 }
 

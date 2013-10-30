@@ -2254,24 +2254,24 @@ void wxC3F25InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_output-pane_16_ToolPin.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_archive.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_output-pane_16_auto-scroll.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_clear.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_console.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_dll.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons-fresh-farm_toolbars_16_standard_document-save.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_edit-copy.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_edit-paste.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._icons_find-folder.png"), xml_res_file_9, xml_res_size_9, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_gear.png"), xml_res_file_10, xml_res_size_10, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_gtk.png"), xml_res_file_11, xml_res_size_11, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_makefile.png"), xml_res_file_12, xml_res_size_12, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_qt.png"), xml_res_file_13, xml_res_size_13, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._Runtime_images_splashscreen.png"), xml_res_file_14, xml_res_size_14, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._icons_close.png"), xml_res_file_15, xml_res_size_15, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_wx.png"), xml_res_file_16, xml_res_size_16, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._wxcrafter_resources_wxc-logo-16.png"), xml_res_file_17, xml_res_size_17, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_output-pane_16_ToolPin.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_archive.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_output-pane_16_auto-scroll.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons-fresh-farm_output-pane_16_clear.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_console.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_dll.png"), xml_res_file_5, xml_res_size_5, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons-fresh-farm_toolbars_16_standard_document-save.png"), xml_res_file_6, xml_res_size_6, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_edit-copy.png"), xml_res_file_7, xml_res_size_7, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_edit-paste.png"), xml_res_file_8, xml_res_size_8, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._icons_find-folder.png"), xml_res_file_9, xml_res_size_9, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_gear.png"), xml_res_file_10, xml_res_size_10, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_gtk.png"), xml_res_file_11, xml_res_size_11, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_makefile.png"), xml_res_file_12, xml_res_size_12, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_qt.png"), xml_res_file_13, xml_res_size_13, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._Runtime_images_splashscreen.png"), xml_res_file_14, xml_res_size_14, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._icons_close.png"), xml_res_file_15, xml_res_size_15, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$res_wx.png"), xml_res_file_16, xml_res_size_16, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$.._wxcrafter_resources_wxc-logo-16.png"), xml_res_file_17, xml_res_size_17, wxT("image/x-apple-ios-png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$_home_eran_devl_codelitegit_LiteEditor_wxcrafter_liteeditor_bitmaps.xrc"), xml_res_file_18, xml_res_size_18, wxT("text/xml"));
     wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_liteeditor_bitmaps.cpp$_home_eran_devl_codelitegit_LiteEditor_wxcrafter_liteeditor_bitmaps.xrc"));
 }

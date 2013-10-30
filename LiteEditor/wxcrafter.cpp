@@ -222,7 +222,7 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer47 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer47);
     
-    m_auibar48 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_VERTICAL);
+    m_auibar48 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_VERTICAL);
     m_auibar48->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer47->Add(m_auibar48, 1, wxEXPAND, 5);
@@ -287,47 +287,96 @@ NewProjImgList::NewProjImgList()
         wxC3F25InitBitmapResources();
         bBitmapLoaded = true;
     }
-    wxBitmap bmp;
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("gear16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("gear16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gear16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("gear16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("qt16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("qt16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("qt16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("qt16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("wx16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("wx16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("wx16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("wx16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("gtk16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("gtk16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gtk16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("gtk16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("console16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("console16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("console16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("console16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("archive16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("archive16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("archive16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("archive16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("dll16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("dll16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("dll16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("dll16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("makefile16"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("makefile16"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("makefile16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("makefile16"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("wxc"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("wxc"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("wxc"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("wxc"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("tabClose"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("tabClose"), bmp ) );
+    }
     
 }
 

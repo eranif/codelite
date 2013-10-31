@@ -43,8 +43,8 @@ BuildTabSettingsData::BuildTabSettingsData()
 	m_errorColour = errColour.GetAsString(wxC2S_HTML_SYNTAX);
 	m_warnColour  = wrnColour.GetAsString(wxC2S_HTML_SYNTAX);
 
-	m_warnColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
-	m_errorColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
+	m_warnColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
+	m_errorColourBg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString();
 }
 
 BuildTabSettingsData::~BuildTabSettingsData()

@@ -14,28 +14,39 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <wx/toolbar.h>
 #include <wx/stc/stc.h>
 #include <wx/menu.h>
+#include <wx/timer.h>
 
 class MainFrameBaseClass : public wxFrame
 {
 protected:
-    wxBoxSizer* boxSizer1;
+    enum {
+        ID_KILL_INFIRIOR = 1001,
+    };
+protected:
     wxPanel* m_mainPanel;
-    wxBoxSizer* boxSizer11;
+    wxAuiToolBar* m_auibar17;
     wxStyledTextCtrl* m_stc;
     wxMenuBar* m_menuBar;
     wxMenu* m_name6;
     wxMenuItem* m_menuItem7;
     wxMenu* m_name8;
     wxMenuItem* m_menuItem9;
+    wxTimer* m_timerMarker;
 
 protected:
+    virtual void OnClearView(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTerminateInfirior(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTerminateInfiriorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnIdle(wxIdleEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAddMarker(wxTimerEvent& event) { event.Skip(); }
 
 public:
     MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("My Frame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE);

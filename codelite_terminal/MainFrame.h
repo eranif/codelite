@@ -23,7 +23,10 @@ class MainFrame : public MainFrameBaseClass
     MyConfig        m_config;
 
 protected:
-    virtual void OnIdle(wxIdleEvent& event);
+    virtual void OnTerminateInfirior(wxCommandEvent& event);
+    virtual void OnTerminateInfiriorUI(wxUpdateUIEvent& event);
+    virtual void OnClearView(wxCommandEvent& event);
+    virtual void OnAddMarker(wxTimerEvent& event);
     virtual void OnStcUpdateUI(wxStyledTextEvent& event);
     void DoExecuteCurrentLine();
     wxString GetCurrentLine() const;

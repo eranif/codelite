@@ -38,15 +38,25 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     SetIcons( app_icons );
 
     
-    boxSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800,600), wxTAB_TRAVERSAL);
     
     boxSizer1->Add(m_mainPanel, 1, wxEXPAND, 5);
     
-    boxSizer11 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer11);
+    
+    m_auibar17 = new wxAuiToolBar(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar17->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer11->Add(m_auibar17, 0, wxEXPAND, 5);
+    
+    m_auibar17->AddTool(wxID_CLEAR, _("Clear"), wxArtProvider::GetBitmap(wxART_CROSS_MARK, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Clear view"), _("Clear view"), NULL);
+    
+    m_auibar17->AddTool(ID_KILL_INFIRIOR, _("Terminate Infirior process"), wxArtProvider::GetBitmap(wxART_ERROR, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Terminate Infirior process"), NULL);
+    m_auibar17->Realize();
     
     m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     #ifdef __WXMSW__
@@ -58,6 +68,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_stcFont.SetFamily(wxFONTFAMILY_TELETYPE);
     #endif
     m_stc->SetFont(m_stcFont);
+    m_stc->SetFocus();
     // Configure the fold margin
     m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -113,26 +124,38 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_menuItem9 = new wxMenuItem(m_name8, wxID_ABOUT, _("About..."), wxT(""), wxITEM_NORMAL);
     m_name8->Append(m_menuItem9);
     
+    m_timerMarker = new wxTimer;
+    m_timerMarker->Start(50, false);
+    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
     // Connect events
+    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
+    this->Connect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
+    this->Connect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnTerminateInfiriorUI), NULL, this);
     m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
-    m_stc->Connect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
+    m_timerMarker->Connect(wxEVT_TIMER, wxTimerEventHandler(MainFrameBaseClass::OnAddMarker), NULL, this);
     
 }
 
 MainFrameBaseClass::~MainFrameBaseClass()
 {
+    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
+    this->Disconnect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
+    this->Disconnect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnTerminateInfiriorUI), NULL, this);
     m_stc->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
-    m_stc->Disconnect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
+    m_timerMarker->Disconnect(wxEVT_TIMER, wxTimerEventHandler(MainFrameBaseClass::OnAddMarker), NULL, this);
     
+    m_timerMarker->Stop();
+    wxDELETE( m_timerMarker );
+
 }

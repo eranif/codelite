@@ -45,9 +45,9 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     m_stc->SetFont( wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT) );
     StartTTY();
     SetCartAtEnd();
-    m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_BACKGROUND);
-    m_stc->MarkerSetBackground(MARKER_ID, *wxBLUE);
-    m_stc->MarkerSetAlpha(MARKER_ID, 5);
+    m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_DOTDOTDOT);
+    m_stc->MarkerSetBackground(MARKER_ID, *wxBLACK);
+    //m_stc->MarkerSetAlpha(MARKER_ID, 5);
     SetSize( m_config.GetTerminalSize() );
     SetPosition( m_config.GetTerminalPosition() );
     CallAfter( &MainFrame::DoExecStartCommand );
@@ -144,7 +144,11 @@ void MainFrame::DoExecuteCurrentLine()
             m_stc->AppendText( wxString(strerror(errno)) + "\n" );
         }
         SetCartAtEnd();
-
+        
+    } else if ( cmd == "tty" ) {
+        m_stc->AppendText(m_tty + "\n");
+        SetCartAtEnd();
+    
     } else {
         WrapInShell( cmd );
         IProcess *proc = ::CreateAsyncProcessCB(this, new MyCallback(this), cmd, IProcessCreateWithHiddenConsole, ::wxGetCwd());
@@ -165,7 +169,7 @@ wxString MainFrame::GetCurrentLine() const
 
 void MainFrame::OnStcUpdateUI(wxStyledTextEvent& event)
 {
-    m_stc->SetReadOnly( m_stc->GetCurrentPos() < m_fromPos );
+    //m_stc->SetReadOnly( m_stc->GetCurrentPos() < m_fromPos );
 }
 
 void MainFrame::SetCartAtEnd()
@@ -248,31 +252,30 @@ void MainFrame::Exit()
     }
 }
 
-void MainFrame::OnIdle(wxIdleEvent& event)
+void MainFrame::OnAddMarker(wxTimerEvent& event)
 {
     int lastLine = m_stc->LineFromPosition(m_stc->GetLength());
-    m_stc->MarkerDeleteAll(MARKER_ID);
-    m_stc->MarkerAdd( lastLine, MARKER_ID );
+    if ( m_process == NULL ) {
+        m_stc->MarkerDeleteAll(MARKER_ID);
+        m_stc->MarkerAdd( lastLine, MARKER_ID);
+    }
 }
 
-// void MainFrame::OnChange(wxStyledTextEvent& event)
-// {
-//     if (event.GetModificationType() & wxSTC_MOD_INSERTTEXT || event.GetModificationType() & wxSTC_MOD_DELETETEXT) {
-//         int numlines(event.GetLinesAdded());
-//         int curline (m_stc->LineFromPosition(event.GetPosition()));
-//         if ( numlines == 0 ) {
-//
-//             // probably only the current line was modified
-//             m_stc->MarginSetText (curline, PROMPT);
-//             m_stc->MarginSetStyle(curline, STYLE_ID);
-//
-//         } else {
-//
-//             for (int i=0; i<=numlines; ++i) {
-//                 m_stc->MarginSetText(curline+i, PROMPT);
-//                 m_stc->MarginSetStyle(curline+i, STYLE_ID);
-//             }
-//         }
-//     }
-// }
-//
+void MainFrame::OnClearView(wxCommandEvent& event)
+{
+    m_stc->SetReadOnly(false);
+    m_stc->ClearAll();
+    m_fromPos = 0;
+}
+
+void MainFrame::OnTerminateInfirior(wxCommandEvent& event)
+{
+    if ( m_process ) {
+        m_process->Terminate();
+    }
+}
+
+void MainFrame::OnTerminateInfiriorUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_process != NULL);
+}

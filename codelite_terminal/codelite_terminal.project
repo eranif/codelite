@@ -88,9 +88,8 @@
     <Configuration Name="Debug_Linux" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cflags --debug)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
-        <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc --debug);" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc,aui --debug);" Required="yes">
         <Library Value="util"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>

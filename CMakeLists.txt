@@ -27,6 +27,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 #######################################################################################################################################################################
 
 
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/") No, this breaks finding gtk2, so set this locally
+
 #############################################
 ## Defaults
 #############################################
@@ -73,22 +75,28 @@ set( CL_WX_CONFIG wx-config )
 if (UNIX)
     execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)
     if (NOT WX_TOOL)
-      message(FATAL_ERROR
+        message(FATAL_ERROR
 "\nNo functional wx_config script was found in your PATH.\nIs the wxWidgets development package installed?"
              )
     else()
-      execute_process(COMMAND ${WX_TOOL} --version OUTPUT_VARIABLE WX_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-      string(SUBSTRING "${WX_VERSION}" "0" "1" wxMAJOR_VERSION)
-      string(SUBSTRING "${WX_VERSION}" "2" "1" wxMINOR_VERSION)
-      string(SUBSTRING "${WX_VERSION}" "4" "1" wxRELEASE_NUMBER)
-      if ( wxMAJOR_VERSION LESS 3 AND (wxMINOR_VERSION LESS 9 OR wxRELEASE_NUMBER LESS 5) )
+        execute_process(COMMAND ${WX_TOOL} --version OUTPUT_VARIABLE WX_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+        string(SUBSTRING "${WX_VERSION}" "0" "1" wxMAJOR_VERSION)
+        string(SUBSTRING "${WX_VERSION}" "2" "1" wxMINOR_VERSION)
+        string(SUBSTRING "${WX_VERSION}" "4" "1" wxRELEASE_NUMBER)
+        if ( wxMAJOR_VERSION LESS 3 AND (wxMINOR_VERSION LESS 9 OR wxRELEASE_NUMBER LESS 5) )
         message(FATAL_ERROR
 "\nI'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-2.9.5"
              )
-      endif()
+        endif()
     endif()
     message("-- wx-config used is: ${WX_TOOL}")
     message("-- wxWidgets version is: ${WX_VERSION}")
+    if (NOT APPLE)
+        # Is the wx we are using built on gtk2 or 3?
+        execute_process(COMMAND ${WX_TOOL} --selected_config OUTPUT_VARIABLE WX_GTK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+        string(SUBSTRING "${WX_GTK_VERSION}" "3" "1" GTK_VERSION)
+        message("-- gtk version is: ${GTK_VERSION}")
+    endif()
 endif (UNIX)
 
 ########################################

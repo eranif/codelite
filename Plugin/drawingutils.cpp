@@ -357,6 +357,12 @@ wxColor DrawingUtils::GetPanelBgColour()
     if( !intitialized ) {
         // try to get the background colour from a menu
         GtkWidget *menu = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+#ifdef __WXGTK3__
+        GdkRGBA col;
+        GtkStyleContext* context = gtk_widget_get_style_context( menu );
+        gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
+        bgColour = wxColour(col);
+#else
         GtkStyle   *def = gtk_rc_get_style( menu );
         if(!def)
             def = gtk_widget_get_default_style();
@@ -365,6 +371,7 @@ wxColor DrawingUtils::GetPanelBgColour()
             GdkColor col = def->bg[GTK_STATE_NORMAL];
             bgColour = wxColour(col);
         }
+#endif
         gtk_widget_destroy( menu );
         intitialized = true;
     }
@@ -383,6 +390,12 @@ wxColor DrawingUtils::GetTextCtrlTextColour()
     if( !intitialized ) {
         // try to get the text colour from a textctrl
         GtkWidget *textCtrl = gtk_text_view_new();
+#ifdef __WXGTK3__
+        GdkRGBA col;
+        GtkStyleContext* context = gtk_widget_get_style_context( textCtrl );
+        gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
+        textColour = wxColour(col);
+#else
         GtkStyle   *def = gtk_rc_get_style( textCtrl );
         if(!def)
             def = gtk_widget_get_default_style();
@@ -391,6 +404,7 @@ wxColor DrawingUtils::GetTextCtrlTextColour()
             GdkColor col = def->text[GTK_STATE_NORMAL];
             textColour = wxColour(col);
         }
+#endif
         gtk_widget_destroy( textCtrl );
         intitialized = true;
     }
@@ -409,6 +423,12 @@ wxColor DrawingUtils::GetMenuTextColour()
     if( !intitialized ) {
         // try to get the text colour from a menu
         GtkWidget *menuBar = gtk_menu_new();
+#ifdef __WXGTK3__
+        GdkRGBA col;
+        GtkStyleContext* context = gtk_widget_get_style_context( menuBar );
+        gtk_style_context_get_color(context, GTK_STATE_FLAG_NORMAL, &col);
+        textColour = wxColour(col);
+#else
         GtkStyle   *def = gtk_rc_get_style( menuBar );
         if(!def)
             def = gtk_widget_get_default_style();
@@ -417,6 +437,7 @@ wxColor DrawingUtils::GetMenuTextColour()
             GdkColor col = def->text[GTK_STATE_NORMAL];
             textColour = wxColour(col);
         }
+#endif
         gtk_widget_destroy( menuBar );
         intitialized = true;
     }
@@ -435,6 +456,12 @@ wxColor DrawingUtils::GetMenuBarBgColour()
     if( !intitialized ) {
         // try to get the background colour from a menu
         GtkWidget *menuBar = gtk_menu_bar_new();
+#ifdef __WXGTK3__
+        GdkRGBA col;
+        GtkStyleContext* context = gtk_widget_get_style_context( menuBar );
+        gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &col);
+        textColour = wxColour(col);
+#else
         GtkStyle   *def = gtk_rc_get_style( menuBar );
         if(!def)
             def = gtk_widget_get_default_style();
@@ -443,6 +470,7 @@ wxColor DrawingUtils::GetMenuBarBgColour()
             GdkColor col = def->bg[GTK_STATE_NORMAL];
             textColour = wxColour(col);
         }
+#endif
         gtk_widget_destroy( menuBar );
         intitialized = true;
     }

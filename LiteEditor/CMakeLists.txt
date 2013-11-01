@@ -22,12 +22,24 @@ include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/includ
 ## On UNIX we require GTK
 if (UNIX AND NOT APPLE)
 
-    find_package(GTK2)
-    if (GTK2_FOUND)
-        include_directories(${GTK2_INCLUDE_DIRS})
-    else (GTK2_FOUND)
-        message(FATAL_ERROR "Could not locate GTK.")
-    endif (GTK2_FOUND)
+    if (GTK_VERSION EQUAL 3)
+        set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
+        set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+        find_package(GTK3)
+        set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official path isn't used again :/
+        if (GTK3_FOUND)
+            include_directories(${GTK3_INCLUDE_DIRS})
+        else (GTK3_FOUND)
+            message(FATAL_ERROR "Could not locate GTK.")
+        endif (GTK3_FOUND)
+    else()
+        find_package(GTK2)
+        if (GTK2_FOUND)
+            include_directories(${GTK2_INCLUDE_DIRS})
+        else (GTK2_FOUND)
+            message(FATAL_ERROR "Could not locate GTK.")
+        endif (GTK2_FOUND)
+    endif()
 
 endif (UNIX AND NOT APPLE)
 add_definitions(-fPIC)
@@ -70,9 +82,11 @@ endif (UNIX)
 
 if(GTK2_FOUND)
     target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
-else (GTK2_FOUND)
+elseif (GTK3_FOUND)
+    target_link_libraries(codelite ${LINKER_OPTIONS} ${GTK3_LIBRARIES} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
+else()
     target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin ${ADDITIONAL_LIBRARIES})
-endif(GTK2_FOUND)
+endif()
 
 ##################################################################
 ## Install

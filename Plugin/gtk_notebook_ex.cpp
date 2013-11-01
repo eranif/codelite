@@ -553,8 +553,11 @@ void Notebook::GTKAddCloseButtonAndReorderable(int idx)
         // so re-order it to position 0, which in a GTK_PACK_END box means the far right
         gtk_box_reorder_child(GTK_BOX(pg->m_box), pgInfo->m_button, 0);
         gtk_box_set_spacing  (GTK_BOX(pg->m_box), 5);
-
+#ifdef __WXGTK3__
+        g_signal_connect (pgInfo->m_button, "clicked", G_CALLBACK (OnNotebookButtonClicked), pgInfo);
+#else
         gtk_signal_connect (GTK_OBJECT (pgInfo->m_button), "clicked", GTK_SIGNAL_FUNC (OnNotebookButtonClicked), pgInfo);
+#endif
         m_gtk_page_info[page] = pgInfo;
         GTKShowCloseButton(idx);
     }

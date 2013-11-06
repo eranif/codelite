@@ -68,11 +68,11 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    sbSizer1->Add(fgSizer1, 1, wxEXPAND, 5);
+    sbSizer1->Add(fgSizer1, 1, wxALL|wxEXPAND, 5);
     
     m_staticTextHomePage = new wxStaticText(this, wxID_ANY, _("Home Page:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer1->Add(m_staticTextHomePage, 1, wxALL|wxALIGN_RIGHT, 5);
+    fgSizer1->Add(m_staticTextHomePage, 1, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_hyperlink1 = new wxHyperlinkCtrl(this, wxID_ANY, _("http://www.codelite.org"), wxT("http://www.codelite.org"), wxDefaultPosition, wxSize(-1, -1), wxHL_DEFAULT_STYLE);
     
@@ -80,7 +80,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     
     m_staticText2 = new wxStaticText(this, wxID_ANY, _("CodeLite Forum:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer1->Add(m_staticText2, 0, wxALL, 5);
+    fgSizer1->Add(m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_hyperlink2 = new wxHyperlinkCtrl(this, wxID_ANY, _("http://forums.codelite.org"), wxT("http://forums.codelite.org"), wxDefaultPosition, wxSize(-1, -1), wxHL_DEFAULT_STYLE);
     
@@ -98,7 +98,7 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     
     fgSizer1->Add(m_bitmapPayPal, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_hyperlink3 = new wxHyperlinkCtrl(this, wxID_ANY, _("Donate via PayPal"), wxT("https://sourceforge.net/donate/index.php?group_id=202033"), wxDefaultPosition, wxSize(-1, -1), wxHL_DEFAULT_STYLE);
+    m_hyperlink3 = new wxHyperlinkCtrl(this, wxID_ANY, _("Support CodeLite"), wxT("http://codelite.org/support.php"), wxDefaultPosition, wxSize(-1, -1), wxHL_DEFAULT_STYLE);
     
     fgSizer1->Add(m_hyperlink3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -108,9 +108,9 @@ AboutDlgBase::AboutDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
     
     m_buttonOk = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOk->SetDefault();
+    m_buttonOk->SetFocus();
     
     buttonSizer->Add(m_buttonOk, 0, wxALL, 5);
-    
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

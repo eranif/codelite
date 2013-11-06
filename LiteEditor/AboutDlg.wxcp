@@ -7,6 +7,8 @@
 		"m_bitmapsFile":	"AboutDlg_bitmaps.cpp",
 		"m_GenerateCodeTypes":	5,
 		"m_outputFileName":	"wxcAboutDlg",
+		"m_firstWindowId":	1000,
+		"m_useEnum":	false,
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -67,6 +69,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	"About CodeLite"
 				}, {
@@ -90,6 +96,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -104,6 +130,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"mainSizer"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -171,6 +201,10 @@
 									"type":	"string",
 									"m_label":	"Include File:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[{
@@ -235,15 +269,23 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"About"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -259,6 +301,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"bSizer3"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -327,7 +373,11 @@
 															"m_label":	"Include File:",
 															"m_value":	""
 														}, {
-															"type":	"filePicker",
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	"../Runtime/images/splashscreen.png"
 														}],
@@ -397,15 +447,23 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"Credits"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -421,6 +479,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"bSizer4"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -487,6 +549,10 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
 															"m_value":	""
 														}, {
 															"type":	"string",
@@ -563,15 +629,23 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"License"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -587,6 +661,10 @@
 													"type":	"string",
 													"m_label":	"Name:",
 													"m_value":	"bSizer5"
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -656,12 +734,24 @@
 															"m_value":	""
 														}, {
 															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}, {
+															"type":	"string",
 															"m_label":	"Value:",
 															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -681,6 +771,10 @@
 									"m_label":	"Name:",
 									"m_value":	"sbSizer1"
 								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	2,
@@ -698,11 +792,15 @@
 									"gbSpan":	",",
 									"gbPosition":	",",
 									"m_styles":	[],
-									"m_sizerFlags":	["wxEXPAND"],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"fgSizer1"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -736,7 +834,7 @@
 											"gbSpan":	",",
 											"gbPosition":	",",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -788,6 +886,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -862,6 +964,10 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Label:",
 													"m_value":	"http://www.codelite.org"
 												}, {
@@ -890,7 +996,7 @@
 											"gbSpan":	",",
 											"gbPosition":	",",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -942,6 +1048,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -1013,6 +1123,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -1098,6 +1212,10 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
 													"type":	"multi-string",
 													"m_label":	"Label:",
 													"m_value":	"Version:"
@@ -1167,6 +1285,10 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -1240,7 +1362,11 @@
 													"m_label":	"Include File:",
 													"m_value":	""
 												}, {
-													"type":	"filePicker",
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	"../codelite-icons/about/32/paypal.png"
 												}],
@@ -1308,12 +1434,16 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Label:",
-													"m_value":	"Donate via PayPal"
+													"m_value":	"Support CodeLite"
 												}, {
 													"type":	"string",
 													"m_label":	"URL:",
-													"m_value":	"https://sourceforge.net/donate/index.php?group_id=202033"
+													"m_value":	"http://codelite.org/support.php"
 												}, {
 													"type":	"colour",
 													"m_label":	"Normal Colour:",
@@ -1343,6 +1473,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"buttonSizer"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -1401,7 +1535,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Focused",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -1412,6 +1546,10 @@
 											"m_value":	""
 										}, {
 											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
+										}, {
+											"type":	"string",
 											"m_label":	"Label:",
 											"m_value":	"&OK"
 										}, {
@@ -1419,7 +1557,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {

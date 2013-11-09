@@ -241,6 +241,17 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
 
     m_listctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_listctrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxContextMenuEventHandler(NewBuildTab::OnMenu), NULL, this);
+    
+    m_listctrl->Connect(XRCID("copy_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopy), NULL, this);
+    m_listctrl->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopySelection), NULL, this);
+    m_listctrl->Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnOpenInEditor), NULL, this);
+    m_listctrl->Connect(wxID_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnClear), NULL, this);
+    
+    m_listctrl->Connect(XRCID("copy_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopyUI), NULL, this);
+    m_listctrl->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopySelectionUI), NULL, this);
+    m_listctrl->Connect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnOpenInEditorUI), NULL, this);
+    m_listctrl->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnClearUI), NULL, this);
+
     // Make sure we have enought height for the icon
     yy < 12 ? yy = 12 : yy = yy;
     m_listctrl->SetRowHeight(yy);
@@ -990,17 +1001,6 @@ void NewBuildTab::OnMenu(wxContextMenuEvent& e)
     menu.Append(wxID_PASTE,        _("Open Build Output in an Empty Editor"));
     menu.AppendSeparator();
     menu.Append(wxID_CLEAR,        _("Clear"));
-    
-    // Connect events
-    menu.Connect(XRCID("copy_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopy), NULL, this);
-    menu.Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnCopySelection), NULL, this);
-    menu.Connect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnOpenInEditor), NULL, this);
-    menu.Connect(wxID_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(NewBuildTab::OnClear), NULL, this);
-    
-    m_listctrl->Connect(XRCID("copy_all"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopyUI), NULL, this);
-    m_listctrl->Connect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnCopySelectionUI), NULL, this);
-    m_listctrl->Connect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnOpenInEditorUI), NULL, this);
-    m_listctrl->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewBuildTab::OnClearUI), NULL, this);
     m_listctrl->PopupMenu(&menu);
 }
 

@@ -23,11 +23,20 @@ class MainFrame : public MainFrameBaseClass
     MyConfig        m_config;
 
 protected:
+    virtual void OnSignalInferiorUI(wxUpdateUIEvent& event);
+    virtual void OnSignalinferior(wxAuiToolBarEvent& event);
+    virtual void OnColorize(wxAuiToolBarEvent& event);
+    virtual void OnClearViewUI(wxUpdateUIEvent& event);
     virtual void OnTerminateInfirior(wxCommandEvent& event);
     virtual void OnTerminateInfiriorUI(wxUpdateUIEvent& event);
     virtual void OnClearView(wxCommandEvent& event);
     virtual void OnAddMarker(wxTimerEvent& event);
     virtual void OnStcUpdateUI(wxStyledTextEvent& event);
+
+    void OnSelectBgColour(wxCommandEvent &e);
+    void OnSelectFgColour(wxCommandEvent &e);
+    void OnSignal(wxCommandEvent &e);
+
     void DoExecuteCurrentLine();
     wxString GetCurrentLine() const;
     void SetCartAtEnd();
@@ -35,6 +44,7 @@ protected:
     wxString StartTTY();
     void StopTTY();
     void DoExecStartCommand();
+    void DoSetColour(const wxColour& colour, bool bgColour = false);
 
 public:
     MainFrame(wxWindow* parent, const TerminalOptions &options);

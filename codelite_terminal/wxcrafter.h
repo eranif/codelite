@@ -25,10 +25,13 @@ class MainFrameBaseClass : public wxFrame
 {
 protected:
     enum {
-        ID_KILL_INFIRIOR = 1001,
+        ID_COLORIZE = 1001,
+        ID_KILL_INFIRIOR = 1002,
     };
 protected:
+    wxBoxSizer* boxSizer1;
     wxPanel* m_mainPanel;
+    wxBoxSizer* boxSizer11;
     wxAuiToolBar* m_auibar17;
     wxStyledTextCtrl* m_stc;
     wxMenuBar* m_menuBar;
@@ -40,8 +43,11 @@ protected:
 
 protected:
     virtual void OnClearView(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnClearViewUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnTerminateInfirior(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnTerminateInfiriorUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSignalInferiorUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSignalinferior(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnColorize(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }

@@ -42,3 +42,33 @@ void MyConfig::Save()
 {
     Flush();
 }
+
+wxColour MyConfig::GetBgColour() const
+{
+    wxString col;
+    if ( Read("bg_colour", &col) && !col.IsEmpty() ) {
+        wxColour colour(col);
+        return colour;
+    }
+    return *wxBLACK;
+}
+
+wxColour MyConfig::GetFgColour() const
+{
+    wxString col;
+    if ( Read("fg_colour", &col) && !col.IsEmpty() ) {
+        wxColour colour(col);
+        return colour;
+    }
+    return *wxWHITE;
+}
+
+void MyConfig::SetBgColour(const wxColour& col)
+{
+    Write("bg_colour", col.GetAsString());
+}
+
+void MyConfig::SetFgColour(const wxColour& col)
+{
+    Write("fg_colour", col.GetAsString());
+}

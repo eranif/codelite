@@ -4,6 +4,7 @@
 #include <wx/config.h>
 #include <wx/gdicmn.h>
 #include <wx/fileconf.h>
+#include <wx/colour.h>
 
 class MyConfig : public wxFileConfig
 {
@@ -13,10 +14,13 @@ public:
     
     wxPoint GetTerminalPosition() const;
     wxSize  GetTerminalSize() const;
+    wxColour GetBgColour() const;
+    wxColour GetFgColour() const;
     
     void SetTerminalPosition(const wxPoint& pt);
     void SetTerminalSize(const wxSize &size);
-    
+    void SetBgColour(const wxColour& col);
+    void SetFgColour(const wxColour& col);
     void Save();
 };
 

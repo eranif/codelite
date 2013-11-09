@@ -3,6 +3,7 @@
 #include <wx/regex.h>
 #include <errno.h>
 #include <wx/settings.h>
+#include <wx/colordlg.h>
 
 #ifndef __WXMSW__
 #if defined(__WXGTK__)
@@ -12,6 +13,13 @@
 #endif
 #   include "unixprocess_impl.h"
 #endif
+
+static const int ID_FG_COLOR = ::wxNewId();
+static const int ID_BG_COLOR = ::wxNewId();
+static const int ID_SIGKILL  = ::wxNewId();
+static const int ID_SIGHUP   = ::wxNewId();
+static const int ID_SIGTERM  = ::wxNewId();
+static const int ID_SIGINT   = ::wxNewId();
 
 static void WrapInShell(wxString& cmd)
 {
@@ -50,7 +58,19 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     //m_stc->MarkerSetAlpha(MARKER_ID, 5);
     SetSize( m_config.GetTerminalSize() );
     SetPosition( m_config.GetTerminalPosition() );
+
+    DoSetColour( m_config.GetBgColour(), true );
+    DoSetColour( m_config.GetFgColour(), false );
+
     CallAfter( &MainFrame::DoExecStartCommand );
+
+    // Connect color menu items
+    Connect(ID_BG_COLOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSelectBgColour), NULL, this);
+    Connect(ID_FG_COLOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSelectFgColour), NULL, this);
+    Connect(ID_SIGKILL,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSignal), NULL, this);
+    Connect(ID_SIGINT,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSignal), NULL, this);
+    Connect(ID_SIGTERM,  wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSignal), NULL, this);
+    Connect(ID_SIGHUP,   wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSignal), NULL, this);
 }
 
 MainFrame::~MainFrame()
@@ -58,6 +78,8 @@ MainFrame::~MainFrame()
     StopTTY();
     m_config.SetTerminalPosition( GetPosition() );
     m_config.SetTerminalSize( GetSize() );
+    m_config.SetBgColour( m_stc->StyleGetBackground(0) );
+    m_config.SetFgColour( m_stc->StyleGetForeground(0) );
     m_config.Save();
 }
 
@@ -72,7 +94,7 @@ void MainFrame::OnAbout(wxCommandEvent& event)
     wxUnusedVar(event);
     wxAboutDialogInfo info;
     info.SetName("codelite-terminal");
-    info.SetCopyright(_("By Eran Ifrah"));
+    info.SetCopyright(_("by Eran Ifrah"));
     info.SetLicence(_("GPL v2 or later"));
     info.SetDescription(_("A terminal emulator designed for codelite IDE"));
     ::wxAboutBox(info);
@@ -144,11 +166,11 @@ void MainFrame::DoExecuteCurrentLine()
             m_stc->AppendText( wxString(strerror(errno)) + "\n" );
         }
         SetCartAtEnd();
-        
+
     } else if ( cmd == "tty" ) {
         m_stc->AppendText(m_tty + "\n");
         SetCartAtEnd();
-    
+
     } else {
         WrapInShell( cmd );
         IProcess *proc = ::CreateAsyncProcessCB(this, new MyCallback(this), cmd, IProcessCreateWithHiddenConsole, ::wxGetCwd());
@@ -278,4 +300,95 @@ void MainFrame::OnTerminateInfirior(wxCommandEvent& event)
 void MainFrame::OnTerminateInfiriorUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_process != NULL);
+}
+
+void MainFrame::OnClearViewUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !m_stc->IsEmpty() );
+}
+
+void MainFrame::OnColorize(wxAuiToolBarEvent& event)
+{
+    wxMenu menu;
+    menu.Append(ID_FG_COLOR, _("Select text colour..."));
+    menu.Append(ID_BG_COLOR, _("Select background colour..."));
+    m_auibar17->SetToolSticky(ID_COLORIZE, true);
+    PopupMenu(&menu, event.GetItemRect().GetLeftBottom());
+    m_auibar17->SetToolSticky(ID_COLORIZE, false);
+}
+
+void MainFrame::OnSelectBgColour(wxCommandEvent& e)
+{
+    wxColour col = ::wxGetColourFromUser(this);
+    DoSetColour(col, true);
+}
+
+void MainFrame::OnSelectFgColour(wxCommandEvent& e)
+{
+    wxColour col = ::wxGetColourFromUser(this);
+    DoSetColour(col, false);
+}
+
+void MainFrame::DoSetColour(const wxColour& colour, bool bgColour)
+{
+    if ( colour.IsOk() ) {
+        for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
+            if ( bgColour ) {
+                m_stc->StyleSetBackground(i, colour);
+
+            } else {
+                m_stc->StyleSetForeground(i, colour);
+
+            }
+        }
+        if ( !bgColour ) {
+            m_stc->SetCaretForeground(colour);
+            m_stc->MarkerSetForeground(MARKER_ID, colour);
+        }
+    }
+}
+
+void MainFrame::OnSignalInferiorUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_process );
+}
+
+void MainFrame::OnSignalinferior(wxAuiToolBarEvent& event)
+{
+    if ( m_process ) {
+        if ( event.IsDropDownClicked() ) {
+            wxMenu menu;
+            menu.Append(ID_SIGKILL, _("SIGKILL"));
+            menu.Append(ID_SIGTERM, _("SIGTERM"));
+            menu.Append(ID_SIGINT,  _("SIGINT"));
+            menu.Append(ID_SIGHUP,  _("SIGHUP"));
+            
+            m_auibar17->SetToolSticky(ID_KILL_INFIRIOR, true);
+            PopupMenu(&menu, event.GetItemRect().GetLeftBottom());
+            m_auibar17->SetToolSticky(ID_KILL_INFIRIOR, false);
+
+        } else {
+            // Terminate
+            m_process->Terminate();
+            
+        }
+    }
+}
+
+void MainFrame::OnSignal(wxCommandEvent& e)
+{
+    if ( m_process ) {
+        int sigid = e.GetId();
+        if ( sigid == ID_SIGHUP ) 
+            wxKill(m_process->GetPid(), wxSIGHUP);
+            
+        else if ( sigid == ID_SIGINT ) 
+            wxKill(m_process->GetPid(), wxSIGINT);
+        
+        else if ( sigid == ID_SIGKILL ) 
+            wxKill(m_process->GetPid(), wxSIGKILL);
+        
+        else if ( sigid == ID_SIGKILL )
+            wxKill(m_process->GetPid(), wxSIGTERM);
+    }
 }

@@ -7,6 +7,8 @@
 		"m_bitmapsFile":	"newquickwatch_liteeditor_bitmaps.cpp",
 		"m_GenerateCodeTypes":	5,
 		"m_outputFileName":	"newquickwatch",
+		"m_firstWindowId":	1000,
+		"m_useEnum":	false,
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -20,7 +22,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"200,100"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -46,12 +48,28 @@
 					"m_label":	"Font:",
 					"m_value":	""
 				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
+				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
 					"m_value":	""
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Style:",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -93,6 +111,10 @@
 							"m_label":	"Name:",
 							"m_value":	"boxSizer4"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -114,11 +136,11 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"-1,-1"
+									"m_value":	"200,100"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
-									"m_value":	"-1,-1"
+									"m_value":	"200,100"
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
@@ -140,12 +162,28 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[],
@@ -161,6 +199,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"boxSizer48"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -209,12 +251,28 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"string",
@@ -238,6 +296,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"bSizer5"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -286,12 +348,28 @@
 																	"m_label":	"Font:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
 																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
 																	"m_value":	""
 																}],
 															"m_events":	[{
@@ -375,12 +453,28 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}],
 											"m_events":	[{
@@ -408,6 +502,10 @@
 															"type":	"string",
 															"m_label":	"Name:",
 															"m_value":	"boxSizer42"
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -456,6 +554,18 @@
 																	"m_label":	"Font:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
 																	"m_value":	""
@@ -464,7 +574,11 @@
 																	"m_label":	"Include File:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"../icons/resize.png"
 																}],
@@ -519,12 +633,28 @@
 					"m_label":	"Font:",
 					"m_value":	""
 				}, {
+					"type":	"bool",
+					"m_label":	"Hidden",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Disabled",
+					"m_value":	false
+				}, {
+					"type":	"bool",
+					"m_label":	"Focused",
+					"m_value":	false
+				}, {
 					"type":	"string",
 					"m_label":	"Class Name:",
 					"m_value":	""
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
+					"m_value":	""
+				}, {
+					"type":	"string",
+					"m_label":	"Style:",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -551,6 +681,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -565,6 +715,10 @@
 							"type":	"string",
 							"m_label":	"Name:",
 							"m_value":	"boxSizer24"
+						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -613,12 +767,28 @@
 									"m_label":	"Font:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
 									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[],
@@ -634,6 +804,10 @@
 											"type":	"string",
 											"m_label":	"Name:",
 											"m_value":	"boxSizer34"
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
+											"m_value":	""
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -682,12 +856,28 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
 													"m_value":	""
 												}, {
 													"type":	"multi-string",
@@ -741,6 +931,18 @@
 													"m_label":	"Font:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
 													"m_value":	""
@@ -750,12 +952,24 @@
 													"m_value":	""
 												}, {
 													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
 													"m_label":	"Value:",
 													"m_value":	""
 												}, {
 													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	"0"
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Directories:",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Files:",
+													"m_value":	false
 												}],
 											"m_events":	[],
 											"m_children":	[]
@@ -773,6 +987,10 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"boxSizer26"
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -821,12 +1039,28 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -837,7 +1071,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -888,12 +1122,28 @@
 											"m_label":	"Font:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Hidden",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Disabled",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Focused",
+											"m_value":	false
+										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
 											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Style:",
 											"m_value":	""
 										}, {
 											"type":	"string",
@@ -904,7 +1154,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {

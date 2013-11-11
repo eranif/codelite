@@ -147,7 +147,13 @@ public:
      * \return visible scope
      */
     wxString OptimizeScope(const wxString& srcString, int lastFuncLine, wxString &localsScope);
-
+    
+    /**
+     * @brief given fileContent, locate the best line to place a class forward declaration
+     * statement
+     */
+    int GetBestLineForForwardDecl(const wxString &fileContent, const wxString &className) const;
+    
     void CheckForTemplateAndTypedef(ParsedToken *token);
 
     void SetLastFunctionSignature(const wxString& lastFunctionSignature) {
@@ -348,12 +354,12 @@ private:
     // code
     bool DoIsTypeAndScopeExist   ( ParsedToken *token                                );
     bool DoCorrectUsingNamespaces( ParsedToken *token, std::vector<TagEntryPtr> &tags );
-    
+
     /**
-     * @brief read the class name. This function assumes that the last token 
+     * @brief read the class name. This function assumes that the last token
      * consumed by the scanner is 'class' (type: lexCLASS)
      */
-    int DoReadClassName(CppScanner& scanner, wxString &clsname);
+    int DoReadClassName(CppScanner& scanner, wxString &clsname) const;
 };
 
 class WXDLLIMPEXP_CL LanguageST

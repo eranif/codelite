@@ -2074,7 +2074,7 @@ wxString Language::ApplyCtagsReplacementTokens(const wxString& in)
     return outputStr;
 }
 
-int Language::DoReadClassName(CppScanner& scanner, wxString &clsname)
+int Language::DoReadClassName(CppScanner& scanner, wxString &clsname) const
 {
     clsname.clear();
     int type  = 0;
@@ -2362,4 +2362,46 @@ void Language::InsertFunctionImpl(const wxString& clsname, const wxString& funct
         newContent << functionImpl;
     }
     sourceContent = newContent;
+}
+
+int Language::GetBestLineForForwardDecl(const wxString& fileContent, const wxString& className) const
+{
+    // step 1: locate the class
+    CppScanner scanner;
+    scanner.SetText( fileContent.mb_str(wxConvUTF8).data() );
+
+    bool success = false;
+    int type = 0;
+    while ( true ) {
+        type = scanner.yylex();
+        if ( type == 0) {
+            // EOF
+            return wxNOT_FOUND; 
+        }
+
+        if ( type == lexCLASS ) {
+            wxString name;
+            type = DoReadClassName(scanner, name);
+            if( type == 0 ) {
+                // EOF
+                return wxNOT_FOUND;
+            }
+
+            if ( name == className ) {
+                // We found the lex
+                success = true;
+                break;
+            }
+        }
+    }
+    
+    if ( !success ) {
+        return wxNOT_FOUND;
+    }
+    
+    int class_line = scanner.LineNo();
+    if ( class_line ) {
+        --class_line;
+    }
+    return class_line;
 }

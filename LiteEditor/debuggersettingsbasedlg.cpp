@@ -22,18 +22,14 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
     m_treebook2 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     
     bSizer1->Add(m_treebook2, 1, wxALL|wxEXPAND, 5);
     
-    m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer1->Add(m_staticline1, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer1->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -72,11 +68,18 @@ DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
+    bSizer7 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer7);
     
     m_textCtrlStartupCommands = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    wxFont m_textCtrlStartupCommandsFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Sans"));
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlStartupCommandsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlStartupCommandsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_textCtrlStartupCommandsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlStartupCommandsFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
     m_textCtrlStartupCommands->SetFont(m_textCtrlStartupCommandsFont);
     
     bSizer7->Add(m_textCtrlStartupCommands, 1, wxALL|wxEXPAND, 5);
@@ -102,17 +105,17 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
+    bSizer11 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer11);
     
     m_panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer11->Add(m_panel2, 1, wxEXPAND, 5);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
+    bSizer4 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer4);
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer5 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer4->Add(bSizer5, 1, wxEXPAND, 5);
     
@@ -120,7 +123,7 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
     
     bSizer5->Add(m_listCtrl1, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
+    bSizer6 = new wxBoxSizer(wxVERTICAL);
     
     bSizer5->Add(bSizer6, 0, wxEXPAND, 5);
     
@@ -172,10 +175,10 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
+    bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
     
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer2 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
@@ -184,15 +187,15 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
     
     m_staticText3 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2);
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer2->Add(m_textCtrlName, 0, wxALL|wxEXPAND, 5);
     
     m_staticText4 = new wxStaticText(this, wxID_ANY, _("Copy Values From:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_choiceCopyFromArr;
     m_choiceCopyFrom = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceCopyFromArr, 0);
@@ -208,13 +211,9 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
     
     bSizer17->Add(0, 0, 1, wxEXPAND, 5);
     
-    m_staticline2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
+    bSizer18 = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizer17->Add(m_staticline2, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer18 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer17->Add(bSizer18, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer17->Add(bSizer18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_button9 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button9->SetDefault();
@@ -246,37 +245,40 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer18 = new wxBoxSizer(wxVERTICAL);
+    bSizer18 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer18);
     
     m_panel6 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer18->Add(m_panel6, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
+    bSizer16 = new wxBoxSizer(wxVERTICAL);
     m_panel6->SetSizer(bSizer16);
     
-    wxBoxSizer* bSizer10 = new wxBoxSizer(wxHORIZONTAL);
+    flexGridSizer49 = new wxFlexGridSizer(  0, 3, 0, 0);
+    flexGridSizer49->SetFlexibleDirection( wxBOTH );
+    flexGridSizer49->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer49->AddGrowableCol(1);
     
-    bSizer16->Add(bSizer10, 0, wxEXPAND, 5);
+    bSizer16->Add(flexGridSizer49, 1, wxALL|wxEXPAND, 5);
     
     m_staticText1 = new wxStaticText(m_panel6, wxID_ANY, _("Debugger path:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer10->Add(m_staticText1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer49->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrDbgPath = new wxTextCtrl(m_panel6, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2);
+    m_textCtrDbgPath = new wxTextCtrl(m_panel6, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer10->Add(m_textCtrDbgPath, 1, wxLEFT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer49->Add(m_textCtrDbgPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonBrowse = new wxButton(m_panel6, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer10->Add(m_buttonBrowse, 0, wxRIGHT|wxTOP|wxBOTTOM, 5);
+    flexGridSizer49->Add(m_buttonBrowse, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Options:")), wxVERTICAL);
+    sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Options:")), wxVERTICAL);
     
     bSizer16->Add(sbSizer1, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxGridSizer* gSizer3 = new wxGridSizer(  0, 1, 0, 0);
+    gSizer3 = new wxGridSizer(  0, 1, 0, 0);
     
     sbSizer1->Add(gSizer3, 0, wxEXPAND, 5);
     
@@ -309,11 +311,11 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     
     gSizer3->Add(m_raiseOnBpHit, 0, wxALL, 5);
     
-    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Debugger Tooltip:")), wxVERTICAL);
+    sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Debugger Tooltip:")), wxVERTICAL);
     
     bSizer16->Add(sbSizer4, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxGridSizer* gSizer31 = new wxGridSizer(  2, 1, 0, 0);
+    gSizer31 = new wxGridSizer(  2, 1, 0, 0);
     
     sbSizer4->Add(gSizer31, 0, wxEXPAND, 5);
     
@@ -321,18 +323,18 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     m_showTooltipsRequiresControl->SetValue(true);
     m_showTooltipsRequiresControl->SetToolTip(_("When enabled, codelite will evaluate the expression under the cursor only if the CTRL key is down. \nOtherwise, it will evaluate it automatically"));
     
-    gSizer31->Add(m_showTooltipsRequiresControl, 0, wxALL|wxEXPAND, 5);
+    gSizer31->Add(m_showTooltipsRequiresControl, 0, wxALL, 5);
     
     m_checkBoxAutoExpand = new wxCheckBox(m_panel6, wxID_ANY, _("Auto expand items under the cursor"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxAutoExpand->SetValue(false);
     
-    gSizer31->Add(m_checkBoxAutoExpand, 0, wxALL|wxEXPAND, 5);
+    gSizer31->Add(m_checkBoxAutoExpand, 0, wxALL, 5);
     
-    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Display:")), wxHORIZONTAL);
+    sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Display:")), wxHORIZONTAL);
     
     bSizer16->Add(sbSizer3, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer21 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer21 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer21->SetFlexibleDirection( wxBOTH );
     fgSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
@@ -360,7 +362,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     m_checkBoxCharArrAsPtr = new wxCheckBox(m_panel6, wxID_ANY, _("Auto cast 'char[]' into 'char*'"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxCharArrAsPtr->SetValue(false);
     
-    fgSizer21->Add(m_checkBoxCharArrAsPtr, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer21->Add(m_checkBoxCharArrAsPtr, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     fgSizer21->Add(0, 0, 1, wxEXPAND, 5);
     
@@ -398,21 +400,21 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
+    bSizer19 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer19);
     
     m_panel7 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer19->Add(m_panel7, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
+    bSizer17 = new wxBoxSizer(wxVERTICAL);
     m_panel7->SetSizer(bSizer17);
     
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_panel7, wxID_ANY, wxT("")), wxVERTICAL);
+    sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_panel7, wxID_ANY, wxT("")), wxVERTICAL);
     
     bSizer17->Add(sbSizer2, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    boxSizer10 = new wxBoxSizer(wxVERTICAL);
     
     sbSizer2->Add(boxSizer10, 1, wxALL|wxEXPAND, 5);
     
@@ -431,7 +433,7 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer10->Add(m_checkShowTerminal, 0, wxALL, 5);
     
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer10->Add(boxSizer4, 0, wxEXPAND, 5);
     
@@ -446,11 +448,11 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer4->Add(m_maxFramesSpinCtrl, 0, wxALL, 5);
     
-    wxStaticBoxSizer* sbSizer6 = new wxStaticBoxSizer( new wxStaticBox(m_panel7, wxID_ANY, _("MinGW / Cygwin:")), wxVERTICAL);
+    sbSizer6 = new wxStaticBoxSizer( new wxStaticBox(m_panel7, wxID_ANY, _("MinGW / Cygwin:")), wxVERTICAL);
     
     bSizer17->Add(sbSizer6, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
-    wxGridSizer* gSizer5 = new wxGridSizer(  0, 1, 0, 0);
+    gSizer5 = new wxGridSizer(  0, 1, 0, 0);
     
     sbSizer6->Add(gSizer5, 0, wxEXPAND, 5);
     
@@ -464,7 +466,7 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     gSizer5->Add(m_staticText5, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlCygwinPathCommand = new wxTextCtrl(m_panel7, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2);
+    m_textCtrlCygwinPathCommand = new wxTextCtrl(m_panel7, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_textCtrlCygwinPathCommand->SetToolTip(_("Set here the command to use in order to convert cygwin paths into native Windows paths (use $(File) as a place holder for the file name)"));
     
     gSizer5->Add(m_textCtrlCygwinPathCommand, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
@@ -501,17 +503,17 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer21 = new wxBoxSizer(wxVERTICAL);
+    bSizer21 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer21);
     
     m_panel6 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer21->Add(m_panel6, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
+    bSizer16 = new wxBoxSizer(wxVERTICAL);
     m_panel6->SetSizer(bSizer16);
     
-    wxBoxSizer* bSizer14 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer14 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer16->Add(bSizer14, 0, wxALIGN_RIGHT, 5);
     
@@ -525,7 +527,7 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, 
     
     bSizer14->Add(m_buttonDeleteSet, 0, wxALL, 5);
     
-    wxStaticBoxSizer* sbSizer5 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Available sets:")), wxVERTICAL);
+    sbSizer5 = new wxStaticBoxSizer( new wxStaticBox(m_panel6, wxID_ANY, _("Available sets:")), wxVERTICAL);
     
     bSizer16->Add(sbSizer5, 1, wxEXPAND, 5);
     
@@ -565,10 +567,10 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer14 = new wxBoxSizer(wxVERTICAL);
+    boxSizer14 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer14);
     
-    wxFlexGridSizer* flexGridSizer22 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer22 = new wxFlexGridSizer(  0, 2, 0, 0);
     flexGridSizer22->SetFlexibleDirection( wxBOTH );
     flexGridSizer22->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer22->AddGrowableCol(1);
@@ -576,9 +578,6 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     boxSizer14->Add(flexGridSizer22, 0, wxEXPAND, 5);
     
     m_staticText24 = new wxStaticText(this, wxID_ANY, _("Current function:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    wxFont m_staticText24Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText24Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText24->SetFont(m_staticText24Font);
     
     flexGridSizer22->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -650,7 +649,7 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer29 = new wxBoxSizer(wxVERTICAL);
+    boxSizer29 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer29);
     
     m_auibar31 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);

@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	47,
+		"m_objCounter":	49,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafter6v4fW1InitBitmapResources",
 		"m_bitmapsFile":	"DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp",
@@ -96,6 +96,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -145,73 +165,6 @@
 									"type":	"string",
 									"m_label":	"Name:",
 									"m_value":	"m_treebook2"
-								}, {
-									"type":	"multi-string",
-									"m_label":	"Tooltip:",
-									"m_value":	""
-								}, {
-									"type":	"colour",
-									"m_label":	"Bg Colour:",
-									"colour":	"<Default>"
-								}, {
-									"type":	"colour",
-									"m_label":	"Fg Colour:",
-									"colour":	"<Default>"
-								}, {
-									"type":	"font",
-									"m_label":	"Font:",
-									"m_value":	""
-								}, {
-									"type":	"bool",
-									"m_label":	"Hidden",
-									"m_value":	false
-								}, {
-									"type":	"bool",
-									"m_label":	"Disabled",
-									"m_value":	false
-								}, {
-									"type":	"bool",
-									"m_label":	"Focused",
-									"m_value":	false
-								}, {
-									"type":	"string",
-									"m_label":	"Class Name:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Include File:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Style:",
-									"m_value":	""
-								}],
-							"m_events":	[],
-							"m_children":	[]
-						}, {
-							"m_type":	4418,
-							"proportion":	0,
-							"border":	5,
-							"gbSpan":	",",
-							"gbPosition":	",",
-							"m_styles":	["wxLI_HORIZONTAL"],
-							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-							"m_properties":	[{
-									"type":	"winid",
-									"m_label":	"ID:",
-									"m_winid":	"wxID_ANY"
-								}, {
-									"type":	"string",
-									"m_label":	"Size:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Minimum Size:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Name:",
-									"m_value":	"m_staticline1"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
@@ -351,7 +304,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -434,7 +387,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -602,7 +555,7 @@
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
-									"m_value":	"10,normal, normal, swiss, 0, Sans"
+									"m_value":	"wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
 								}, {
 									"type":	"bool",
 									"m_label":	"Hidden",
@@ -635,6 +588,14 @@
 									"type":	"string",
 									"m_label":	"Max Length:",
 									"m_value":	"0"
+								}, {
+									"type":	"bool",
+									"m_label":	"Auto Complete Directories:",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Auto Complete Files:",
+									"m_value":	false
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -1043,7 +1004,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -1132,7 +1093,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -1221,7 +1182,7 @@
 																	"m_label":	"Default Button",
 																	"m_value":	false
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}, {
@@ -1328,6 +1289,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -1402,7 +1383,7 @@
 									"gbSpan":	",",
 									"gbPosition":	",",
 									"m_styles":	[],
-									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
@@ -1476,7 +1457,7 @@
 									"border":	5,
 									"gbSpan":	",",
 									"gbPosition":	",",
-									"m_styles":	["wxTE_RICH2"],
+									"m_styles":	[],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -1542,6 +1523,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -1552,7 +1541,7 @@
 									"gbSpan":	",",
 									"gbPosition":	",",
 									"m_styles":	[],
-									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 									"m_properties":	[{
 											"type":	"winid",
 											"m_label":	"ID:",
@@ -1810,80 +1799,13 @@
 							"m_events":	[],
 							"m_children":	[]
 						}, {
-							"m_type":	4418,
-							"proportion":	0,
-							"border":	5,
-							"gbSpan":	",",
-							"gbPosition":	",",
-							"m_styles":	["wxLI_HORIZONTAL"],
-							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-							"m_properties":	[{
-									"type":	"winid",
-									"m_label":	"ID:",
-									"m_winid":	"wxID_ANY"
-								}, {
-									"type":	"string",
-									"m_label":	"Size:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Minimum Size:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Name:",
-									"m_value":	"m_staticline2"
-								}, {
-									"type":	"multi-string",
-									"m_label":	"Tooltip:",
-									"m_value":	""
-								}, {
-									"type":	"colour",
-									"m_label":	"Bg Colour:",
-									"colour":	"<Default>"
-								}, {
-									"type":	"colour",
-									"m_label":	"Fg Colour:",
-									"colour":	"<Default>"
-								}, {
-									"type":	"font",
-									"m_label":	"Font:",
-									"m_value":	""
-								}, {
-									"type":	"bool",
-									"m_label":	"Hidden",
-									"m_value":	false
-								}, {
-									"type":	"bool",
-									"m_label":	"Disabled",
-									"m_value":	false
-								}, {
-									"type":	"bool",
-									"m_label":	"Focused",
-									"m_value":	false
-								}, {
-									"type":	"string",
-									"m_label":	"Class Name:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Include File:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Style:",
-									"m_value":	""
-								}],
-							"m_events":	[],
-							"m_children":	[]
-						}, {
 							"m_type":	4401,
 							"proportion":	0,
 							"border":	5,
 							"gbSpan":	",",
 							"gbPosition":	",",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxALIGN_CENTER_HORIZONTAL"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -1972,7 +1894,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -2055,7 +1977,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -2268,26 +2190,45 @@
 										}],
 									"m_events":	[],
 									"m_children":	[{
-											"m_type":	4401,
-											"proportion":	0,
+											"m_type":	4403,
+											"proportion":	1,
 											"border":	5,
-											"gbSpan":	",",
-											"gbPosition":	",",
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
 											"m_styles":	[],
-											"m_sizerFlags":	["wxEXPAND"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"string",
 													"m_label":	"Name:",
-													"m_value":	"bSizer10"
+													"m_value":	"flexGridSizer49"
 												}, {
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
-													"type":	"choice",
-													"m_label":	"Orientation:",
-													"m_selection":	1,
-													"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
+													"type":	"string",
+													"m_label":	"# Columns:",
+													"m_value":	"3"
+												}, {
+													"type":	"string",
+													"m_label":	"# Rows:",
+													"m_value":	"0"
+												}, {
+													"type":	"string",
+													"m_label":	"Growable columns:",
+													"m_value":	"1"
+												}, {
+													"type":	"string",
+													"m_label":	"Growable rows:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Horizontal gap:",
+													"m_value":	"0"
+												}, {
+													"type":	"string",
+													"m_label":	"Vertical gap:",
+													"m_value":	"0"
 												}],
 											"m_events":	[],
 											"m_children":	[{
@@ -2297,7 +2238,7 @@
 													"gbSpan":	",",
 													"gbPosition":	",",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -2367,12 +2308,12 @@
 													"m_children":	[]
 												}, {
 													"m_type":	4406,
-													"proportion":	1,
+													"proportion":	0,
 													"border":	5,
 													"gbSpan":	",",
 													"gbPosition":	",",
-													"m_styles":	["wxTE_RICH2"],
-													"m_sizerFlags":	["wxLEFT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -2437,6 +2378,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -2447,7 +2396,7 @@
 													"gbSpan":	",",
 													"gbPosition":	",",
 													"m_styles":	[],
-													"m_sizerFlags":	["wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_sizerFlags":	["wxALIGN_LEFT", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
 															"type":	"winid",
 															"m_label":	"ID:",
@@ -2513,7 +2462,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -3036,7 +2985,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -3111,7 +3060,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -3505,7 +3454,7 @@
 															"gbSpan":	",",
 															"gbPosition":	",",
 															"m_styles":	[],
-															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
 																	"m_label":	"ID:",
@@ -4581,7 +4530,7 @@
 															"border":	5,
 															"gbSpan":	",",
 															"gbPosition":	",",
-															"m_styles":	["wxTE_RICH2"],
+															"m_styles":	[],
 															"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -4647,6 +4596,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
@@ -4957,7 +4914,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -5046,7 +5003,7 @@
 															"m_label":	"Default Button",
 															"m_value":	false
 														}, {
-															"type":	"filePicker",
+															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
 															"m_path":	""
 														}, {
@@ -5365,7 +5322,7 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Font:",
-											"m_value":	"wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
+											"m_value":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Hidden",
@@ -5473,6 +5430,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -5777,7 +5742,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Refresh"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons-fresh-farm/toolbars/16/debugger/restart.png"
 										}, {
@@ -5853,7 +5818,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"New..."
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../icons/add.png"
 										}, {
@@ -5909,7 +5874,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Delete"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../icons/delete-line.png"
 										}, {

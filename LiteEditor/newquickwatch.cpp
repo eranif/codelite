@@ -22,14 +22,14 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
+    boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
     
-    m_panel46 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
+    m_panel46 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200,100), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
     
     boxSizer4->Add(m_panel46, 1, wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer48 = new wxBoxSizer(wxVERTICAL);
+    boxSizer48 = new wxBoxSizer(wxVERTICAL);
     m_panel46->SetSizer(boxSizer48);
     
     m_scrollWin6 = new wxScrolledWindow(m_panel46, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_NONE|wxHSCROLL|wxVSCROLL);
@@ -37,7 +37,7 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     
     boxSizer48->Add(m_scrollWin6, 1, wxEXPAND, 2);
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
+    bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin6->SetSizer(bSizer5);
     
     m_treeCtrl = new wxTreeCtrl(m_scrollWin6, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxBORDER_NONE);
@@ -51,15 +51,15 @@ clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent,long style)
     
     boxSizer48->Add(m_panelStatusBar, 0, wxEXPAND, 2);
     
-    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
+    boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_panelStatusBar->SetSizer(boxSizer42);
     
     m_staticBitmap44 = new wxStaticBitmap(m_panelStatusBar, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("resize")), wxDefaultPosition, wxSize(16,16), 0 );
     
     boxSizer42->Add(m_staticBitmap44, 0, wxALL|wxALIGN_RIGHT|wxALIGN_BOTTOM, 5);
+    m_panel46->SetMinSize(wxSize(200,100));
     
-    
-    SetSizeHints(200,100);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -101,14 +101,14 @@ clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer24 = new wxBoxSizer(wxVERTICAL);
+    boxSizer24 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer24);
     
     m_panel32 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     boxSizer24->Add(m_panel32, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer34 = new wxBoxSizer(wxVERTICAL);
+    boxSizer34 = new wxBoxSizer(wxVERTICAL);
     m_panel32->SetSizer(boxSizer34);
     
     m_staticText36 = new wxStaticText(m_panel32, wxID_ANY, _("Enter new expression:"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -119,7 +119,7 @@ clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowI
     
     boxSizer34->Add(m_textCtrl38, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer26 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer26 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer24->Add(boxSizer26, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -131,7 +131,6 @@ clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowI
     m_button30 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer26->Add(m_button30, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
     
     SetMinSize( wxSize(400,-1) );
     SetSizeHints(400,-1);

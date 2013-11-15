@@ -668,7 +668,24 @@ bool ContextCpp::IsIncludeStatement(const wxString &line, wxString *fileName)
     if (tmpLine.StartsWith(wxT("#"), &tmpLine1)) {
         if (reIncludeFile.Matches(tmpLine1)) {
             if (fileName) {
-                *fileName = reIncludeFile.GetMatch(tmpLine1, 1);
+                // 'line' contains the entire current line
+                // we want the part up until the caret
+                int caretpos = GetCtrl().GetCurrentPos();
+                int lineStartPos = GetCtrl().PositionFromLine( GetCtrl().GetCurrentLine() );
+                if ( lineStartPos > caretpos )
+                    return false;
+                
+                wxString partialLine = GetCtrl().GetTextRange(lineStartPos, caretpos);
+                
+                // Get the partial file name (up to the caret)
+                size_t where = partialLine.find_first_of("<\"");
+                if ( where == wxString::npos )
+                    return false;
+                ++where; // Skip the < or " character found
+                
+                partialLine = partialLine.Mid(where);
+                partialLine = partialLine.AfterLast('/');
+                *fileName = partialLine;
             }
             return true;
         }

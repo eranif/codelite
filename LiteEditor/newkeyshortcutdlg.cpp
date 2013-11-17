@@ -101,12 +101,17 @@ static const struct wxKeyName {
 };
 
 NewKeyShortcutDlg::NewKeyShortcutDlg( wxWindow* parent, const MenuItemData & mid )
-    :
-    NewKeyShortcutBaseDlg( parent )
+    : NewKeyShortcutBaseDlg( parent )
     , m_mid(mid)
 {
-    m_staticTextAction->SetLabel( _("Action:\t") + m_mid.action );
-    m_textCtrl1->SetValue( m_mid.accel );
+    NewKeyShortcutDlg::KeyboardShortcut ks = FromString( mid.accel );
+    m_staticTextAction->SetLabel( m_mid.action );
+    m_textCtrl1->ChangeValue( ks.key );
+
+    m_checkBoxAlt->SetValue(ks.modifiers & kAlt);
+    m_checkBoxCtrl->SetValue(ks.modifiers & kCtrl);
+    m_checkBoxShift->SetValue(ks.modifiers & kShift);
+
     m_textCtrl1->SetFocus();
     Centre();
 }
@@ -117,7 +122,7 @@ void NewKeyShortcutDlg::OnKeyDown( wxKeyEvent& event )
     if(text.IsEmpty()) {
         return;
     }
-    m_textCtrl1->SetValue( text );
+    m_textCtrl1->ChangeValue( text );
 }
 
 wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
@@ -152,9 +157,7 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
 
         if ( n == WXSIZEOF(wxKeyNames) ) {
             // must be a simple key
-            if (
-                isascii(code) /*&&
-			    wxIsalnum(code)*/ ) {
+            if (isascii(code) ) {
                 text << (wxChar)code;
             } else {
                 return wxEmptyString;
@@ -165,8 +168,45 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
     return text;
 }
 
-void NewKeyShortcutDlg::OnButtonClear(wxCommandEvent &event)
+NewKeyShortcutDlg::KeyboardShortcut NewKeyShortcutDlg::FromString(const wxString& accelString)
 {
-    wxUnusedVar(event);
-    m_textCtrl1->Clear();
+    wxString tmp_accel = accelString;
+    tmp_accel.MakeLower();
+
+    NewKeyShortcutDlg::KeyboardShortcut ks;
+    wxArrayString tokens = ::wxStringTokenize(accelString, "-+", wxTOKEN_STRTOK);
+
+    for(size_t i=0; i<tokens.GetCount(); ++i) {
+        wxString token = tokens.Item(i);
+        token.MakeLower();
+        if ( token == "shift" ) {
+            ks.modifiers |= kShift;
+
+        } else if ( token == "alt" ) {
+            ks.modifiers |= kAlt;
+
+        } else if ( token == "cmd" ) {
+            ks.modifiers |= kCtrl;
+
+        } else if ( token == "ctrl" ) {
+            ks.modifiers |= kCtrl;
+
+        } else {
+            ks.key = tokens.Item(i);
+        }
+    }
+    return ks;
+}
+
+wxString NewKeyShortcutDlg::GetAccel() const
+{
+    wxString accel;
+    if ( m_checkBoxCtrl->IsChecked()  ) accel << "Ctrl-";
+    if ( m_checkBoxAlt->IsChecked()   ) accel << "Alt-";
+    if ( m_checkBoxShift->IsChecked() ) accel << "Shift-";
+    accel << m_textCtrl1->GetValue();
+    if ( accel.EndsWith("-") ) {
+        accel.RemoveLast();
+    }
+    return accel;
 }

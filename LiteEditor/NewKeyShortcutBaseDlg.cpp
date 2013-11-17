@@ -22,40 +22,65 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
+    bSizer3 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer3);
     
-    m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxTAB_TRAVERSAL);
+    m_panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     bSizer3->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
+    bSizer5 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer5);
     
-    m_staticTextAction = new wxStaticText(m_panel1, wxID_ANY, _("Action:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    flexGridSizer8 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer8->SetFlexibleDirection( wxBOTH );
+    flexGridSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer8->AddGrowableCol(1);
     
-    bSizer5->Add(m_staticTextAction, 1, wxALL|wxEXPAND, 5);
+    bSizer5->Add(flexGridSizer8, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText = new wxStaticText(m_panel1, wxID_ANY, _("Hit any key combination:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticTextFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticTextFont.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText->SetFont(m_staticTextFont);
+    m_staticTextActionLabel = new wxStaticText(m_panel1, wxID_ANY, _("Action:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer5->Add(m_staticText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    flexGridSizer8->Add(m_staticTextActionLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* bSizer6 = new wxBoxSizer(wxHORIZONTAL);
+    m_staticTextAction = new wxStaticText(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    bSizer5->Add(bSizer6, 0, wxEXPAND, 5);
+    flexGridSizer8->Add(m_staticTextAction, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText10 = new wxStaticText(m_panel1, wxID_ANY, _("Key:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer8->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrl1 = new wxTextCtrl(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER);
+    m_textCtrl1->SetToolTip(_("Hit any keyboard key"));
+    m_textCtrl1->SetFocus();
     
-    bSizer6->Add(m_textCtrl1, 1, wxALL|wxEXPAND, 5);
+    flexGridSizer8->Add(m_textCtrl1, 0, wxALL|wxEXPAND, 5);
     
-    m_buttonClear = new wxButton(m_panel1, wxID_ANY, _("Clear"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText12 = new wxStaticText(m_panel1, wxID_ANY, _("Modifiers:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
-    bSizer6->Add(m_buttonClear, 0, wxALL, 5);
+    flexGridSizer8->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer6 = new wxBoxSizer(wxHORIZONTAL);
+    
+    flexGridSizer8->Add(bSizer6, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_checkBoxCtrl = new wxCheckBox(m_panel1, wxID_ANY, _("Ctrl/Cmd"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxCtrl->SetValue(false);
+    
+    bSizer6->Add(m_checkBoxCtrl, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_checkBoxAlt = new wxCheckBox(m_panel1, wxID_ANY, _("Alt"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxAlt->SetValue(false);
+    
+    bSizer6->Add(m_checkBoxAlt, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_checkBoxShift = new wxCheckBox(m_panel1, wxID_ANY, _("Shift"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxShift->SetValue(false);
+    
+    bSizer6->Add(m_checkBoxShift, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer3->Add(bSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -75,13 +100,11 @@ NewKeyShortcutBaseDlg::NewKeyShortcutBaseDlg(wxWindow* parent, wxWindowID id, co
     Centre();
     // Connect events
     m_textCtrl1->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewKeyShortcutBaseDlg::OnKeyDown), NULL, this);
-    m_buttonClear->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnButtonClear), NULL, this);
     
 }
 
 NewKeyShortcutBaseDlg::~NewKeyShortcutBaseDlg()
 {
     m_textCtrl1->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(NewKeyShortcutBaseDlg::OnKeyDown), NULL, this);
-    m_buttonClear->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewKeyShortcutBaseDlg::OnButtonClear), NULL, this);
     
 }

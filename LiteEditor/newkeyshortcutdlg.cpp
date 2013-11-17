@@ -26,18 +26,12 @@
 
 static const struct wxKeyName {
     wxKeyCode code;
-    // Pre-2.9 wxTRANSLATE returned  a wxChar*, since then it's char*
-#if wxVERSION_NUMBER < 2900
-    const wxChar *name;
-#else
     const char *name;
-#endif
 } wxKeyNames[] = {
     { WXK_DELETE, wxTRANSLATE("DEL") },
     { WXK_DELETE, wxTRANSLATE("DELETE") },
     { WXK_BACK, wxTRANSLATE("BACK") },
     { WXK_INSERT, wxTRANSLATE("INS") },
-    { WXK_INSERT, wxTRANSLATE("INSERT") },
     { WXK_RETURN, wxTRANSLATE("ENTER") },
     { WXK_RETURN, wxTRANSLATE("RETURN") },
     { WXK_PAGEUP, wxTRANSLATE("PGUP") },
@@ -71,29 +65,29 @@ static const struct wxKeyName {
     { WXK_SCROLL, wxTRANSLATE("SCROLL_LOCK") },
     { WXK_PAGEUP, wxTRANSLATE("PAGEUP") },
     { WXK_PAGEDOWN, wxTRANSLATE("PAGEDOWN") },
-    { WXK_NUMPAD_SPACE, wxTRANSLATE("KP_SPACE") },
-    { WXK_NUMPAD_TAB, wxTRANSLATE("KP_TAB") },
-    { WXK_NUMPAD_ENTER, wxTRANSLATE("KP_ENTER") },
-    { WXK_NUMPAD_HOME, wxTRANSLATE("KP_HOME") },
-    { WXK_NUMPAD_LEFT, wxTRANSLATE("KP_LEFT") },
-    { WXK_NUMPAD_UP, wxTRANSLATE("KP_UP") },
-    { WXK_NUMPAD_RIGHT, wxTRANSLATE("KP_RIGHT") },
-    { WXK_NUMPAD_DOWN, wxTRANSLATE("KP_DOWN") },
-    { WXK_NUMPAD_PAGEUP, wxTRANSLATE("KP_PRIOR") },
-    { WXK_NUMPAD_PAGEUP, wxTRANSLATE("KP_PAGEUP") },
-    { WXK_NUMPAD_PAGEDOWN, wxTRANSLATE("KP_NEXT") },
-    { WXK_NUMPAD_PAGEDOWN, wxTRANSLATE("KP_PAGEDOWN") },
-    { WXK_NUMPAD_END, wxTRANSLATE("KP_END") },
-    { WXK_NUMPAD_BEGIN, wxTRANSLATE("KP_BEGIN") },
-    { WXK_NUMPAD_INSERT, wxTRANSLATE("KP_INSERT") },
-    { WXK_NUMPAD_DELETE, wxTRANSLATE("KP_DELETE") },
-    { WXK_NUMPAD_EQUAL, wxTRANSLATE("KP_EQUAL") },
-    { WXK_NUMPAD_MULTIPLY, wxTRANSLATE("KP_MULTIPLY") },
-    { WXK_NUMPAD_ADD, wxTRANSLATE("KP_ADD") },
+    { WXK_NUMPAD_SPACE, wxTRANSLATE("SPACE") },
+    { WXK_NUMPAD_TAB, wxTRANSLATE("TAB") },
+    { WXK_NUMPAD_ENTER, wxTRANSLATE("ENTER") },
+    { WXK_NUMPAD_HOME, wxTRANSLATE("HOME") },
+    { WXK_NUMPAD_LEFT, wxTRANSLATE("LEFT") },
+    { WXK_NUMPAD_UP, wxTRANSLATE("UP") },
+    { WXK_NUMPAD_RIGHT, wxTRANSLATE("RIGHT") },
+    { WXK_NUMPAD_DOWN, wxTRANSLATE("DOWN") },
+    { WXK_NUMPAD_PAGEUP, wxTRANSLATE("PRIOR") },
+    { WXK_NUMPAD_PAGEUP, wxTRANSLATE("PGUP") },
+    { WXK_NUMPAD_PAGEDOWN, wxTRANSLATE("NEXT") },
+    { WXK_NUMPAD_PAGEDOWN, wxTRANSLATE("PGDN") },
+    { WXK_NUMPAD_END, wxTRANSLATE("END") },
+    { WXK_NUMPAD_BEGIN, wxTRANSLATE("BEGIN") },
+    { WXK_NUMPAD_INSERT, wxTRANSLATE("INS") },
+    { WXK_NUMPAD_DELETE, wxTRANSLATE("DEL") },
+    { WXK_NUMPAD_EQUAL, wxTRANSLATE("=") },
+    { WXK_NUMPAD_MULTIPLY, wxTRANSLATE("*") },
+    { WXK_NUMPAD_ADD, wxTRANSLATE("+") },
     { WXK_NUMPAD_SEPARATOR, wxTRANSLATE("KP_SEPARATOR") },
-    { WXK_NUMPAD_SUBTRACT, wxTRANSLATE("KP_SUBTRACT") },
-    { WXK_NUMPAD_DECIMAL, wxTRANSLATE("KP_DECIMAL") },
-    { WXK_NUMPAD_DIVIDE, wxTRANSLATE("KP_DIVIDE") },
+    { WXK_NUMPAD_SUBTRACT, wxTRANSLATE("-") },
+    { WXK_NUMPAD_DECIMAL, wxTRANSLATE(".") },
+    { WXK_NUMPAD_DIVIDE, wxTRANSLATE("/") },
     { WXK_WINDOWS_LEFT, wxTRANSLATE("WINDOWS_LEFT") },
     { WXK_WINDOWS_RIGHT, wxTRANSLATE("WINDOWS_RIGHT") },
     { WXK_WINDOWS_MENU, wxTRANSLATE("WINDOWS_MENU") },
@@ -142,7 +136,7 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent &e)
     if ( code >= WXK_F1 && code <= WXK_F12 )
         text << _("F") << code - WXK_F1 + 1;
     else if ( code >= WXK_NUMPAD0 && code <= WXK_NUMPAD9 )
-        text << _("KP_") << code - WXK_NUMPAD0;
+        text << code - WXK_NUMPAD0;
     else if ( code >= WXK_SPECIAL1 && code <= WXK_SPECIAL20 )
         text << _("SPECIAL") << code - WXK_SPECIAL1 + 1;
     else { // check the named keys

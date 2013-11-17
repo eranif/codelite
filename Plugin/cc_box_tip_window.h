@@ -53,7 +53,6 @@ protected:
     size_t   m_numOfTips;
     wxRect   m_leftTipRect;
     wxRect   m_rightTipRect;
-    bool     m_positionedToRight;
     std::vector<Links> m_links;
     
 protected:

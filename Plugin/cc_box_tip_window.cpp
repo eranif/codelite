@@ -19,7 +19,6 @@ const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
     : wxPopupWindow(parent)
     , m_tip(tip)
-    , m_positionedToRight(false)
 {
     while ( m_tip.Replace("\n\n", "\n") ) {}
     DoInitialize(m_tip, 1, true);
@@ -28,7 +27,6 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString &tip, size_t numOfTips, bool simpleTip)
     : wxPopupWindow(parent)
     , m_tip(tip)
-    , m_positionedToRight(true)
 {
     while ( m_tip.Replace("\n\n", "\n") ) {}
     DoInitialize(m_tip, numOfTips, simpleTip);
@@ -127,25 +125,30 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
 
 void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, IEditor* focusEdior)
 {
-    m_positionedToRight = true;
     // When shown, set the focus back to the editor
     wxPoint pt = win->GetScreenPosition();
-    pt.x += win->GetSize().x;
+    wxPoint windowPos = pt;
+    wxSize  ccBoxSize = win->GetSize();
+    pt.x += ccBoxSize.x;
 
     // Check for overflow
     wxSize  size = ::wxGetDisplaySize();
     if ( pt.x + GetSize().x > size.x ) {
         // Move the tip to the left
-        pt = win->GetScreenPosition();
+        pt = windowPos;
         pt.x -= GetSize().x;
-        m_positionedToRight = false;
 
         if ( pt.x < 0 ) {
-            // the window can not fit to the screen, restore its position
-            // to the right side
-            pt = win->GetScreenPosition();
-            pt.x += win->GetSize().x;
-            m_positionedToRight = true;
+            // it cant be placed on the left side either
+            // try placing it on top of the completion box
+            pt = windowPos;
+            pt.y -= (GetSize().y + 20); // use 20 pixels as a rough approximation of a line height
+            
+            if ( pt.y < 0) {
+                // try placing under the completion box
+                pt = windowPos;
+                pt.y += ccBoxSize.y + 1;
+            }
         }
     }
 
@@ -154,7 +157,6 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, IEditor* focusEdior)
         // this is to prevent some zombie tips appearing floating in no-man-land
         wxRect editorRect = focusEdior->GetSTC()->GetScreenRect();
         if ( editorRect.GetTopLeft().y > pt.y ) {
-            m_positionedToRight = true;
             return;
         }
     }
@@ -395,7 +397,6 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
     // Move the tip to the left
     wxPoint pt = win->GetScreenPosition();
     pt.x -= GetSize().x;
-    m_positionedToRight = false;
 
     SetSize(wxRect(pt, GetSize()));
     Show();

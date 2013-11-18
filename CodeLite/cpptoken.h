@@ -54,6 +54,11 @@ public:
         }
     };
     
+    // Required by later versions of clang compiler
+    bool operator<(const CppToken& rhs) const {
+        return this->getName() < rhs.getName();
+    }
+    
     /**
      * @class Predicate
      * a helper class that can be used to filter tokens using std:remove_if

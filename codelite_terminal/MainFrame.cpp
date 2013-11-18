@@ -358,10 +358,10 @@ void MainFrame::OnSignalinferior(wxAuiToolBarEvent& event)
     if ( m_process ) {
         if ( event.IsDropDownClicked() ) {
             wxMenu menu;
-            menu.Append(ID_SIGKILL, _("SIGKILL"));
-            menu.Append(ID_SIGTERM, _("SIGTERM"));
-            menu.Append(ID_SIGINT,  _("SIGINT"));
-            menu.Append(ID_SIGHUP,  _("SIGHUP"));
+            menu.Append(ID_SIGKILL, "SIGKILL");
+            menu.Append(ID_SIGTERM, "SIGTERM");
+            menu.Append(ID_SIGINT,  "SIGINT");
+            menu.Append(ID_SIGHUP,  "SIGHUP");
             
             m_auibar17->SetToolSticky(ID_KILL_INFIRIOR, true);
             PopupMenu(&menu, event.GetItemRect().GetLeftBottom());

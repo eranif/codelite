@@ -28,10 +28,11 @@ public:
             ::wxMkdir(wxStandardPaths::Get().GetUserDataDir());
         }
 
-        parser.AddOption("c", "command", "command line to execute",                       wxCMD_LINE_VAL_STRING);
-        parser.AddOption("t", "title",   "set the console title",                         wxCMD_LINE_VAL_STRING);
-        parser.AddSwitch("e", "exit",    "exit when execution of command terminates",     wxCMD_LINE_PARAM_OPTIONAL);
-        parser.AddSwitch("w", "wait",    "wait for any key to be pressed before exiting", wxCMD_LINE_PARAM_OPTIONAL);
+        parser.AddOption("c", "command",            "Command line to execute",                       wxCMD_LINE_VAL_STRING);
+        parser.AddOption("t", "title",              "Set the console title",                         wxCMD_LINE_VAL_STRING);
+        parser.AddSwitch("e", "exit",               "Exit when execution of command terminates",     wxCMD_LINE_PARAM_OPTIONAL);
+        parser.AddSwitch("w", "wait",               "Wait for any key to be pressed before exiting", wxCMD_LINE_PARAM_OPTIONAL);
+        parser.AddOption("d", "working-directory",  "Set the working directory",                     wxCMD_LINE_VAL_STRING);
 
         if ( !DoParseCommandLine( parser ) ) {
             return false;
@@ -42,12 +43,17 @@ public:
         wxImage::AddHandler( new wxJPEGHandler );
 
         TerminalOptions options;
-        wxString commandToRun, title;
+        wxString commandToRun, title, workingDirectory;
         parser.Found("c", &commandToRun);
+        parser.Found("d", &workingDirectory);
         if ( parser.Found("t", &title) ) {
             options.SetTitle( title );
         }
-
+        
+        if ( !workingDirectory.IsEmpty() ) {
+            ::wxSetWorkingDirectory( workingDirectory );
+        }
+        
         options.EnableFlag( TerminalOptions::kExitWhenInfiriorTerminates,   parser.Found("e") );
         options.EnableFlag( TerminalOptions::kPauseBeforeExit,              parser.Found("w") );
         options.SetCommand( commandToRun );

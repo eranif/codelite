@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <wx/settings.h>
 #include <wx/colordlg.h>
+#include "SettingsDlg.h"
 
 #ifndef __WXMSW__
 #if defined(__WXGTK__)
@@ -59,9 +60,7 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
     SetSize( m_config.GetTerminalSize() );
     SetPosition( m_config.GetTerminalPosition() );
 
-    DoSetColour( m_config.GetBgColour(), true );
-    DoSetColour( m_config.GetFgColour(), false );
-
+    DoApplySettings();
     CallAfter( &MainFrame::DoExecStartCommand );
 
     // Connect color menu items
@@ -307,16 +306,6 @@ void MainFrame::OnClearViewUI(wxUpdateUIEvent& event)
     event.Enable( !m_stc->IsEmpty() );
 }
 
-void MainFrame::OnColorize(wxAuiToolBarEvent& event)
-{
-    wxMenu menu;
-    menu.Append(ID_FG_COLOR, _("Select text colour..."));
-    menu.Append(ID_BG_COLOR, _("Select background colour..."));
-    m_auibar17->SetToolSticky(ID_COLORIZE, true);
-    PopupMenu(&menu, event.GetItemRect().GetLeftBottom());
-    m_auibar17->SetToolSticky(ID_COLORIZE, false);
-}
-
 void MainFrame::OnSelectBgColour(wxCommandEvent& e)
 {
     wxColour col = ::wxGetColourFromUser(this);
@@ -327,6 +316,15 @@ void MainFrame::OnSelectFgColour(wxCommandEvent& e)
 {
     wxColour col = ::wxGetColourFromUser(this);
     DoSetColour(col, false);
+}
+
+void MainFrame::DoSetFont(wxFont font)
+{
+    if ( font.IsOk() ) {
+        for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
+            m_stc->StyleSetFont(i, font);
+        }
+    }
 }
 
 void MainFrame::DoSetColour(const wxColour& colour, bool bgColour)
@@ -362,7 +360,7 @@ void MainFrame::OnSignalinferior(wxAuiToolBarEvent& event)
             menu.Append(ID_SIGTERM, "SIGTERM");
             menu.Append(ID_SIGINT,  "SIGINT");
             menu.Append(ID_SIGHUP,  "SIGHUP");
-            
+
             m_auibar17->SetToolSticky(ID_KILL_INFIRIOR, true);
             PopupMenu(&menu, event.GetItemRect().GetLeftBottom());
             m_auibar17->SetToolSticky(ID_KILL_INFIRIOR, false);
@@ -370,7 +368,7 @@ void MainFrame::OnSignalinferior(wxAuiToolBarEvent& event)
         } else {
             // Terminate
             m_process->Terminate();
-            
+
         }
     }
 }
@@ -379,16 +377,35 @@ void MainFrame::OnSignal(wxCommandEvent& e)
 {
     if ( m_process ) {
         int sigid = e.GetId();
-        if ( sigid == ID_SIGHUP ) 
+        if ( sigid == ID_SIGHUP )
             wxKill(m_process->GetPid(), wxSIGHUP);
-            
-        else if ( sigid == ID_SIGINT ) 
+
+        else if ( sigid == ID_SIGINT )
             wxKill(m_process->GetPid(), wxSIGINT);
-        
-        else if ( sigid == ID_SIGKILL ) 
+
+        else if ( sigid == ID_SIGKILL )
             wxKill(m_process->GetPid(), wxSIGKILL);
-        
+
         else if ( sigid == ID_SIGKILL )
             wxKill(m_process->GetPid(), wxSIGTERM);
     }
+}
+
+void MainFrame::OnSettings(wxCommandEvent& event)
+{
+    SettingsDlg dlg(this);
+    if( dlg.ShowModal() == wxID_OK ) {
+        m_config.SetFgColour( dlg.GetFgColour() );
+        m_config.SetBgColour( dlg.GetBgColour() );
+        m_config.SetFont( dlg.GetFont() );
+        m_config.Save();
+        DoApplySettings();
+    }
+}
+
+void MainFrame::DoApplySettings()
+{
+    DoSetColour( m_config.GetFgColour(), false );
+    DoSetColour( m_config.GetBgColour(), true );
+    DoSetFont  ( m_config.GetFont() );
 }

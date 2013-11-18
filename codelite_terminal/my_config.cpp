@@ -1,4 +1,6 @@
 #include "my_config.h"
+#include <wx/font.h>
+#include <wx/settings.h>
 
 MyConfig::MyConfig()
     : wxFileConfig("codelite-terminal", "", "", "", wxCONFIG_USE_SUBDIR|wxCONFIG_USE_LOCAL_FILE)
@@ -71,4 +73,26 @@ void MyConfig::SetBgColour(const wxColour& col)
 void MyConfig::SetFgColour(const wxColour& col)
 {
     Write("fg_colour", col.GetAsString());
+}
+
+wxFont MyConfig::GetFont() const
+{
+    wxFont defaultFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    defaultFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    
+    // read the attributes
+    wxString facename;
+    int pointSize;
+    
+    Read("font_facename", &facename,  defaultFont.GetFaceName());
+    Read("font_size",     &pointSize, defaultFont.GetPointSize());
+    
+    wxFont f( wxFontInfo(pointSize).FaceName(facename).Family( wxFONTFAMILY_TELETYPE ) );
+    return f;
+}
+
+void MyConfig::SetFont(const wxFont& font)
+{
+    Write("font_facename", font.GetFaceName());
+    Write("font_size",     font.GetPointSize());
 }

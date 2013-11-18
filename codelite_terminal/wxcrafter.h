@@ -20,13 +20,18 @@
 #include <wx/stc/stc.h>
 #include <wx/menu.h>
 #include <wx/timer.h>
+#include <wx/dialog.h>
+#include <wx/stattext.h>
+#include <wx/clrpicker.h>
+#include <wx/fontpicker.h>
+#include <wx/button.h>
 
 class MainFrameBaseClass : public wxFrame
 {
 protected:
     enum {
-        ID_COLORIZE = 1001,
-        ID_KILL_INFIRIOR = 1002,
+        ID_KILL_INFIRIOR = 1001,
+        ID_SETTINGS = 1002,
     };
 protected:
     wxBoxSizer* boxSizer1;
@@ -47,7 +52,7 @@ protected:
     virtual void OnTerminateInfirior(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSignalInferiorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSignalinferior(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnColorize(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
@@ -57,6 +62,32 @@ protected:
 public:
     MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("My Frame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE);
     virtual ~MainFrameBaseClass();
+};
+
+
+class SettingsDlgBase : public wxDialog
+{
+protected:
+    wxBoxSizer* boxSizer27;
+    wxFlexGridSizer* flexGridSizer29;
+    wxStaticText* m_staticText31;
+    wxColourPickerCtrl* m_colourPickerFG;
+    wxStaticText* m_staticText35;
+    wxColourPickerCtrl* m_colourPickerBG;
+    wxStaticText* m_staticText39;
+    wxFontPickerCtrl* m_fontPicker;
+    wxBoxSizer* boxSizer43;
+    wxButton* m_button45;
+    wxButton* m_button47;
+
+protected:
+    virtual void OnFGColour(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnBGColour(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnFontSelected(wxFontPickerEvent& event) { event.Skip(); }
+
+public:
+    SettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~SettingsDlgBase();
 };
 
 #endif

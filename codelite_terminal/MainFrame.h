@@ -23,9 +23,9 @@ class MainFrame : public MainFrameBaseClass
     MyConfig        m_config;
 
 protected:
+    virtual void OnSettings(wxCommandEvent& event);
     virtual void OnSignalInferiorUI(wxUpdateUIEvent& event);
     virtual void OnSignalinferior(wxAuiToolBarEvent& event);
-    virtual void OnColorize(wxAuiToolBarEvent& event);
     virtual void OnClearViewUI(wxUpdateUIEvent& event);
     virtual void OnTerminateInfirior(wxCommandEvent& event);
     virtual void OnTerminateInfiriorUI(wxUpdateUIEvent& event);
@@ -45,6 +45,8 @@ protected:
     void StopTTY();
     void DoExecStartCommand();
     void DoSetColour(const wxColour& colour, bool bgColour = false);
+    void DoSetFont(wxFont font);
+    void DoApplySettings();
 
 public:
     MainFrame(wxWindow* parent, const TerminalOptions &options);

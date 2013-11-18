@@ -16,11 +16,13 @@ public:
     wxSize  GetTerminalSize() const;
     wxColour GetBgColour() const;
     wxColour GetFgColour() const;
+    wxFont   GetFont() const;
     
     void SetTerminalPosition(const wxPoint& pt);
     void SetTerminalSize(const wxSize &size);
     void SetBgColour(const wxColour& col);
     void SetFgColour(const wxColour& col);
+    void SetFont(const wxFont& font);
     void Save();
 };
 

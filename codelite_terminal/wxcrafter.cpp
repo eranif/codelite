@@ -57,7 +57,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_auibar17->AddTool(ID_KILL_INFIRIOR, _("Send inferior process signal"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Send inferior process signal"), NULL)->SetHasDropDown(true);
     
-    m_auibar17->AddTool(ID_COLORIZE, _("Change Colours"), wxXmlResource::Get()->LoadBitmap(wxT("colorize")), wxNullBitmap, wxITEM_NORMAL, _("Change Colours"), _("Change Colours"), NULL)->SetHasDropDown(true);
+    m_auibar17->AddTool(ID_SETTINGS, _("Settings..."), wxXmlResource::Get()->LoadBitmap(wxT("cog")), wxNullBitmap, wxITEM_NORMAL, _("Settings..."), _("Settings..."), NULL);
     m_auibar17->Realize();
     
     m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -140,7 +140,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
     this->Connect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSignalInferiorUI), NULL, this);
     this->Connect(ID_KILL_INFIRIOR, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnSignalinferior), NULL, this);
-    this->Connect(ID_COLORIZE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnColorize), NULL, this);
+    this->Connect(ID_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
     m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
@@ -156,7 +156,7 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
     this->Disconnect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSignalInferiorUI), NULL, this);
     this->Disconnect(ID_KILL_INFIRIOR, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnSignalinferior), NULL, this);
-    this->Disconnect(ID_COLORIZE, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnColorize), NULL, this);
+    this->Disconnect(ID_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
     m_stc->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
@@ -166,4 +166,89 @@ MainFrameBaseClass::~MainFrameBaseClass()
     m_timerMarker->Stop();
     wxDELETE( m_timerMarker );
 
+}
+
+SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9ED9InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    boxSizer27 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer27);
+    
+    flexGridSizer29 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer29->SetFlexibleDirection( wxBOTH );
+    flexGridSizer29->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer29->AddGrowableCol(1);
+    
+    boxSizer27->Add(flexGridSizer29, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText31 = new wxStaticText(this, wxID_ANY, _("Text Colour:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer29->Add(m_staticText31, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_colourPickerFG = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(255,255,255)")), wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    
+    flexGridSizer29->Add(m_colourPickerFG, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText35 = new wxStaticText(this, wxID_ANY, _("Background Colour:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer29->Add(m_staticText35, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_colourPickerBG = new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(32,32,32)")), wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    
+    flexGridSizer29->Add(m_colourPickerBG, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText39 = new wxStaticText(this, wxID_ANY, _("Font:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer29->Add(m_staticText39, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_fontPickerFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_fontPickerFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_fontPickerFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_fontPickerFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
+    m_fontPicker = new wxFontPickerCtrl(this, wxID_ANY, m_fontPickerFont, wxDefaultPosition, wxSize(-1,-1), wxFNTP_DEFAULT_STYLE);
+    
+    flexGridSizer29->Add(m_fontPicker, 0, wxALL|wxEXPAND, 5);
+    
+    boxSizer43 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer27->Add(boxSizer43, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button45 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer43->Add(m_button45, 0, wxALL, 5);
+    
+    m_button47 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button47->SetFocus();
+    
+    boxSizer43->Add(m_button47, 0, wxALL, 5);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_colourPickerFG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnFGColour), NULL, this);
+    m_colourPickerBG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnBGColour), NULL, this);
+    m_fontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SettingsDlgBase::OnFontSelected), NULL, this);
+    
+}
+
+SettingsDlgBase::~SettingsDlgBase()
+{
+    m_colourPickerFG->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnFGColour), NULL, this);
+    m_colourPickerBG->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(SettingsDlgBase::OnBGColour), NULL, this);
+    m_fontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SettingsDlgBase::OnFontSelected), NULL, this);
+    
 }

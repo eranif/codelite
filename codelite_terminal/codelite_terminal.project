@@ -25,6 +25,8 @@
     <File Name="terminal_options.cpp"/>
     <File Name="my_config.h"/>
     <File Name="my_config.cpp"/>
+    <File Name="SettingsDlg.h"/>
+    <File Name="SettingsDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>

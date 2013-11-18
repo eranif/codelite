@@ -1422,16 +1422,20 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
         ProjectPtr proj = GetProject ( projectName );
         
 #if defined(__WXMAC__)
-        if ( !bldConf->IsGUIProgram() ) {
-            wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
-            if ( bldConf->GetPauseWhenExecEnds() ) { 
-                newCommand << " -w ";
-            }
-            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
-            execLine = newCommand;
+        wxString newCommand;
+        newCommand << "/usr/bin/open " << fnCodeliteTerminal.GetPath(true) << "codelite-terminal.app --args ";
+        newCommand << " --exit ";
+        if ( bldConf->GetPauseWhenExecEnds() ) { 
+            newCommand << " --wait ";
         }
         
+        wxFileName fnWD(wd, "");
+        if ( fnWD.IsRelative() ) {
+            fnWD.MakeAbsolute( GetProject(projectName)->GetFileName().GetPath() );
+        }
+        newCommand << " --working-directory \"" << fnWD.GetFullPath() << "\" --title \"" << title << "\" --command \"" << title << "\"";
+        execLine = newCommand;
+
 #elif defined(__WXGTK__)
 
         // Set a console to the execute target

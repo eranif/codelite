@@ -112,7 +112,7 @@ struct tagParseResult {
 //////////////////////////////////////
 static TagsManager* gs_TagsManager = NULL;
 
-                                     void TagsManagerST::Free()
+void TagsManagerST::Free()
 {
     if(gs_TagsManager) {
         delete gs_TagsManager;
@@ -406,8 +406,8 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
     if(tags.empty()) {
         tags = wxString::From8BitData(reply.getTags().c_str());
     }
-	
-	AddEnumClassData(tags);
+
+    AddEnumClassData(tags);
 
 #if 0
     wxFFile fff(wxStandardPaths::Get().GetUserDataDir() + wxT("\\tmp_tags"), wxT("w+"));
@@ -566,14 +566,14 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
     wxString oper;
     wxString tmpExp(expression);
     tmpExp.Trim().Trim(false);
-    
+
     // Keep 3 vectors of the results
     // we keep 3 vectors so the end user will see the matches
     // by their importance order: locals -> scoped -> globals
     TagEntryPtrVector_t locals;
     TagEntryPtrVector_t scoped;
     TagEntryPtrVector_t globals;
-    
+
     if ( tmpExp.IsEmpty() ) {
         // Collect all the tags from the current scope, and
         // from the global scope
@@ -597,22 +597,22 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
         for (size_t i=0; i<additionlScopes.size(); i++) {
             TagsByScopeAndName(additionlScopes.at(i), word, scoped);
         }
-        
+
         // for every vector filter the results
         DoFilterDuplicatesByTagID    (locals, locals);
         DoFilterDuplicatesBySignature(locals, locals);
-        
+
         DoFilterDuplicatesByTagID    (scoped, scoped);
         DoFilterDuplicatesBySignature(scoped, scoped);
 
         DoFilterDuplicatesByTagID    (globals, globals);
         DoFilterDuplicatesBySignature(globals, globals);
-        
+
         // unified the results into a single match
         candidates.insert(candidates.end(), locals.begin(), locals.end());
         candidates.insert(candidates.end(), scoped.begin(), scoped.end());
         candidates.insert(candidates.end(), globals.begin(), globals.end());
-        
+
     } else if( tmpExp == wxT("::") ) {
         // Global scope only
         // e.g.: ::My <CTRL>+<SPACE>
@@ -657,7 +657,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName &fileName, int linen
             DoFilterDuplicatesByTagID(tmpCandidates, candidates);
             DoFilterDuplicatesBySignature(candidates, candidates);
         }
-        
+
         DoSortByVisibility( candidates );
     }
 
@@ -733,13 +733,13 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
         PERF_BLOCK("TagsByScope") {
             TagsByScope(scope, filter, candidates, true);
         }
-		
-		//Let's search in typerefs
-		if (candidates.empty()) {
-			PERF_BLOCK("TagsByTyperef") {
-				TagsByTyperef(scope, filter, candidates, true);
-			}			
-		}			
+
+        //Let's search in typerefs
+        if (candidates.empty()) {
+            PERF_BLOCK("TagsByTyperef") {
+                TagsByTyperef(scope, filter, candidates, true);
+            }
+        }
 
     } else {
 
@@ -752,7 +752,7 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName &fileName, int lineno,
     }
 
     PERF_END();
-    
+
     DoSortByVisibility( candidates );
     return candidates.empty() == false;
 }
@@ -960,12 +960,12 @@ void TagsManager::FindImplDecl(const wxFileName &fileName,
     if ( !IsValidCtagsFile(fileName) ) {
         return;
     }
-    
+
     wxString path;
     wxString tmp;
     std::vector<TagEntryPtr> tmpCandidates, candidates;
-    
-    
+
+
     //remove the word from the expression
     wxString expression(expr);
 
@@ -1548,7 +1548,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
     if ( isDarkBG ) {
         retValueColour = "\"YELLOW\"";
     }
-    
+
     for (size_t i=0; i<tags.size(); i++) {
         if (tags.at(i)->GetName() != word)
             continue;
@@ -1611,11 +1611,11 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr> &tags, const wxStr
 
         // BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
         tip = WrapLines(tip);
-        
+
         if ( !tips.empty() ) {
-            tip.Prepend("\n<hr>\n"); 
+            tip.Prepend("\n<hr>\n");
         }
-        
+
         // prepend any comment if exists
         tips.push_back(tip);
     }
@@ -2159,9 +2159,9 @@ void TagsManager::TagsByScope(const wxString &scopeName, const wxArrayString &ki
     wxUnusedVar(include_anon);
 
     wxArrayString scopes;
-	GetScopesByScopeName(scopeName, scopes);
-	//make enough room for max of 500 elements in the vector    
-	tags.reserve(500);
+    GetScopesByScopeName(scopeName, scopes);
+    //make enough room for max of 500 elements in the vector
+    tags.reserve(500);
     GetDatabase()->GetTagsByScopesAndKind(scopes, kind, tags);
 
     // and finally sort the results
@@ -2173,14 +2173,14 @@ void TagsManager::TagsByTyperef(const wxString &scopeName, const wxArrayString &
     wxUnusedVar(include_anon);
 
     wxArrayString scopes;
-	GetScopesByScopeName(scopeName, scopes);
-	//make enough room for max of 500 elements in the vector    
-	tags.reserve(500);
+    GetScopesByScopeName(scopeName, scopes);
+    //make enough room for max of 500 elements in the vector
+    tags.reserve(500);
 
     GetDatabase()->GetTagsByTyperefAndKind(scopes, kind, tags);
 
     // and finally sort the results
-    std::sort(tags.begin(), tags.end(), SAscendingSort());	
+    std::sort(tags.begin(), tags.end(), SAscendingSort());
 }
 
 wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, std::vector<std::pair<int, int> > *paramLen)
@@ -2491,7 +2491,7 @@ wxString TagsManager::GetFunctionReturnValueFromPattern(TagEntryPtr tag)
             return_value << _U(foo.m_returnValue.m_starAmp.c_str());
             return_value << wxT(" ");
         }
-        
+
         if ( !foo.m_returnValue.m_rightSideConst.empty() ) {
             return_value << foo.m_returnValue.m_rightSideConst << " ";
         }
@@ -2952,26 +2952,26 @@ void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
 {
     TagEntryPtrVector_t publicTags, privateTags, protectedTags;
     for(size_t i=0; i<tags.size(); ++i) {
-        
+
         TagEntryPtr tag = tags.at(i);
         wxString access = tag->GetAccess();
-        
+
         if( access == "private" ) {
             privateTags.push_back( tag );
-            
+
         } else if ( access == "protected" ) {
             protectedTags.push_back( tag );
-            
+
         } else if ( access == "public" ) {
             publicTags.push_back( tag );
-            
+
         } else {
             // assume private
             privateTags.push_back( tag );
         }
-        
+
     }
-    
+
     std::sort(privateTags.begin(),   privateTags.end(), SAscendingSort());
     std::sort(publicTags.begin(),    publicTags.end(), SAscendingSort());
     std::sort(protectedTags.begin(), protectedTags.end(), SAscendingSort());
@@ -2983,44 +2983,44 @@ void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
 
 void TagsManager::AddEnumClassData(wxString& tags)
 {
-	//Add tisInEnumNamespace flag for enums. For declaration "enum class ..." (C++11)
-	size_t startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), 0);
-	while (startIndex != (size_t)wxNOT_FOUND) {		
-		size_t patternEndIndex = tags.find(wxT("$/"), startIndex);
-		wxString pattern = tags.substr(startIndex, patternEndIndex - startIndex);
-		if (pattern.Contains(TagEntry::KIND_CLASS)) {
-		
-			wxString enumName = pattern.AfterLast(wxT(' '));
-		
-			//Get namespace
-			wxString enumNamespace = wxT("");
-			size_t endIndex = tags.find(wxT("\n"), startIndex);
-			wxString line = tags.substr(startIndex, endIndex - startIndex);
-			size_t namespaceStartIndex = line.find(TagEntry::KIND_NAMESPACE, 0);
-			if (namespaceStartIndex != (size_t)wxNOT_FOUND) {
-				size_t namespaceNameStartIndex = line.find(wxT(":"), namespaceStartIndex);
-				if (namespaceNameStartIndex != (size_t)wxNOT_FOUND) {
-					namespaceNameStartIndex++;
-					size_t namespaceNameEndIndex = line.find_first_of(wxT("\t\r"), namespaceNameStartIndex);
-					enumNamespace = line.substr(namespaceNameStartIndex, namespaceNameEndIndex - namespaceNameStartIndex);
-				}
-			}
-		
-			wxString fullName = enumNamespace.IsEmpty() ? enumName : enumNamespace + wxT("::") + enumName;		
-			wxString parametersFrom = TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\r");
-			wxString parametersTo = TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\tisInEnumNamespace:1") + wxT("\r");
-			size_t lengthBefore = tags.Length();
-			tags.Replace(parametersFrom, parametersTo, true);
-			startIndex += tags.Length() - lengthBefore;
-		}
-			
-		startIndex += TagEntry::KIND_ENUM.Length();
-		startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), startIndex);
-	} 	
+    //Add tisInEnumNamespace flag for enums. For declaration "enum class ..." (C++11)
+    size_t startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), 0);
+    while (startIndex != (size_t)wxNOT_FOUND) {
+        size_t patternEndIndex = tags.find(wxT("$/"), startIndex);
+        wxString pattern = tags.substr(startIndex, patternEndIndex - startIndex);
+        if (pattern.Contains(TagEntry::KIND_CLASS)) {
+
+            wxString enumName = pattern.AfterLast(wxT(' '));
+
+            //Get namespace
+            wxString enumNamespace = wxT("");
+            size_t endIndex = tags.find(wxT("\n"), startIndex);
+            wxString line = tags.substr(startIndex, endIndex - startIndex);
+            size_t namespaceStartIndex = line.find(TagEntry::KIND_NAMESPACE, 0);
+            if (namespaceStartIndex != (size_t)wxNOT_FOUND) {
+                size_t namespaceNameStartIndex = line.find(wxT(":"), namespaceStartIndex);
+                if (namespaceNameStartIndex != (size_t)wxNOT_FOUND) {
+                    namespaceNameStartIndex++;
+                    size_t namespaceNameEndIndex = line.find_first_of(wxT("\t\r"), namespaceNameStartIndex);
+                    enumNamespace = line.substr(namespaceNameStartIndex, namespaceNameEndIndex - namespaceNameStartIndex);
+                }
+            }
+
+            wxString fullName = enumNamespace.IsEmpty() ? enumName : enumNamespace + wxT("::") + enumName;
+            wxString parametersFrom = TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\r");
+            wxString parametersTo = TagEntry::KIND_ENUM + wxT(":") + fullName + wxT("\tisInEnumNamespace:1") + wxT("\r");
+            size_t lengthBefore = tags.Length();
+            tags.Replace(parametersFrom, parametersTo, true);
+            startIndex += tags.Length() - lengthBefore;
+        }
+
+        startIndex += TagEntry::KIND_ENUM.Length();
+        startIndex = tags.find(TagEntry::KIND_ENUM + wxT(" "), startIndex);
+    }
 }
 
 void TagsManager::GetScopesByScopeName(const wxString &scopeName, wxArrayString & scopes)
-{	
+{
     std::vector<wxString> derivationList;
 
     //add this scope as well to the derivation list
@@ -3033,5 +3033,15 @@ void TagsManager::GetScopesByScopeName(const wxString &scopeName, wxArrayString 
         wxString tmpScope(derivationList.at(i));
         tmpScope = DoReplaceMacros(tmpScope);
         scopes.Add(tmpScope);
-    }	
+    }
+}
+
+void TagsManager::InsertForwardDeclaration(const wxString& classname, const wxString& fileContent, wxString& lineToAdd, int& line, const wxString& impExpMacro)
+{
+    lineToAdd << "class ";
+    if ( !impExpMacro.IsEmpty() ) {
+        lineToAdd << impExpMacro << " ";
+    }
+    lineToAdd << classname << ";";
+    line = GetLanguage()->GetBestLineForForwardDecl(fileContent);
 }

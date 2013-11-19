@@ -1722,7 +1722,6 @@ case 135:
 YY_RULE_SETUP
 {
 						defineFound = false;
-						cl_scope_lineno++;
 						BEGIN INITIAL;
 					}
 	YY_BREAK
@@ -1741,7 +1740,6 @@ YY_RULE_SETUP
 case 138:
 YY_RULE_SETUP
 {
-						cl_scope_lineno++;
 						BEGIN PREPR;
 					}
 	YY_BREAK

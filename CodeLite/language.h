@@ -152,7 +152,7 @@ public:
      * @brief given fileContent, locate the best line to place a class forward declaration
      * statement
      */
-    int GetBestLineForForwardDecl(const wxString &fileContent, const wxString &className) const;
+    int GetBestLineForForwardDecl(const wxString &fileContent) const;
     
     void CheckForTemplateAndTypedef(ParsedToken *token);
 

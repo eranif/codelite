@@ -139,6 +139,7 @@ public:
     virtual void OnUpdateUI(wxUpdateUIEvent &event);
     virtual void OnContextOpenDocument(wxCommandEvent &event);
     virtual void OnAddIncludeFile(wxCommandEvent &e);
+    virtual void OnAddForwardDecl(wxCommandEvent &e);
     virtual void OnMoveImpl(wxCommandEvent &e);
     virtual void OnAddImpl(wxCommandEvent &e);
     virtual void OnAddMultiImpl(wxCommandEvent &e);
@@ -159,7 +160,7 @@ private:
     wxString      GetImageString(const TagEntry &entry);
     wxString      GetExpression(long pos, bool onlyWord, LEditor *editor = NULL, bool forCC = true);
     void          DoGotoSymbol(TagEntryPtr tag);
-    bool          IsIncludeStatement(const wxString &line, wxString *fileName = NULL);
+    bool          IsIncludeStatement(const wxString &line, wxString *fileName = NULL, wxString *fileNameUpToCaret = NULL);
     void          RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
     int           FindLineToAddInclude();
     void          MakeCppKeywordsTags(const wxString &word, std::vector<TagEntryPtr> &tags);

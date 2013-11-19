@@ -163,6 +163,7 @@ BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
     EVT_MENU(XRCID("add_pure_virtual_impl"),        ContextCpp::OnOverrideParentVritualFunctions)
     EVT_MENU(XRCID("setters_getters"),              ContextCpp::OnGenerateSettersGetters)
     EVT_MENU(XRCID("add_include_file"),             ContextCpp::OnAddIncludeFile)
+    EVT_MENU(XRCID("add_forward_decl"),             ContextCpp::OnAddForwardDecl)
     EVT_MENU(XRCID("rename_symbol"),                ContextCpp::OnRenameGlobalSymbol)
     EVT_MENU(XRCID("rename_local_variable"),        ContextCpp::OnRenameLocalSymbol)
     EVT_MENU(XRCID("find_references"),              ContextCpp::OnFindReferences)
@@ -571,10 +572,53 @@ void ContextCpp::AddMenuDynamicContent(wxMenu *menu)
         wxString word = rCtrl.GetWordAtCaret();
         if (word.IsEmpty() == false) {
             PrependMenuItemSeparator(menu);
+            
+            menuItemText << _("Add Forward Declaration for \"") << word << "\"";
+            PrependMenuItem(menu, menuItemText, XRCID("add_forward_decl"));
+            
+            menuItemText.Clear();
             menuItemText <<_("Add Include File for \"") << word << wxT("\"");
             PrependMenuItem(menu, menuItemText, XRCID("add_include_file"));
+
             m_selectedWord = word;
         }
+    }
+}
+
+void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
+{
+    CHECK_JS_RETURN_VOID();
+    wxUnusedVar(e);
+    LEditor &rCtrl = GetCtrl();
+    
+    //get expression
+    int pos = rCtrl.GetCurrentPos();
+
+    if (IsCommentOrString(pos))
+        return;
+        
+    // get the scope
+    wxString text = rCtrl.GetTextRange(0, rCtrl.GetCurrentPos());
+
+    wxString word = m_selectedWord;
+    if (word.IsEmpty()) {
+        //try the word under the caret
+        word = rCtrl.GetWordAtCaret();
+        if (word.IsEmpty()) {
+            return;
+        }
+    }
+    
+    int lineNumber = wxNOT_FOUND;
+    wxString lineToAdd;
+    TagsManagerST::Get()->InsertForwardDeclaration(word, text, lineToAdd, lineNumber);
+    if ( lineNumber == wxNOT_FOUND ) {
+        // Append it to the end of the file
+        rCtrl.AppendText( rCtrl.GetEolString() + lineToAdd );
+        
+    } else {
+        int pos = rCtrl.PositionFromLine(lineNumber);
+        rCtrl.InsertText(pos, lineToAdd + rCtrl.GetEolString());
     }
 }
 
@@ -652,7 +696,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent &e)
     dlg->Destroy();
 }
 
-bool ContextCpp::IsIncludeStatement(const wxString &line, wxString *fileName)
+bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wxString* fileNameUpToCaret)
 {
     CHECK_JS_RETURN_FALSE();
     wxString tmpLine(line);
@@ -667,7 +711,7 @@ bool ContextCpp::IsIncludeStatement(const wxString &line, wxString *fileName)
     static wxRegEx reIncludeFile(wxT("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.\\+\\-]*)"));
     if (tmpLine.StartsWith(wxT("#"), &tmpLine1)) {
         if (reIncludeFile.Matches(tmpLine1)) {
-            if (fileName) {
+            if (fileNameUpToCaret) {
                 // 'line' contains the entire current line
                 // we want the part up until the caret
                 int caretpos = GetCtrl().GetCurrentPos();
@@ -685,7 +729,11 @@ bool ContextCpp::IsIncludeStatement(const wxString &line, wxString *fileName)
                 
                 partialLine = partialLine.Mid(where);
                 partialLine = partialLine.AfterLast('/');
-                *fileName = partialLine;
+                *fileNameUpToCaret = partialLine;
+            }
+            
+            if (fileName) {
+                *fileName = reIncludeFile.GetMatch(tmpLine1, 1);
             }
             return true;
         }
@@ -707,7 +755,7 @@ void ContextCpp::CompleteWord()
     wxString fileName;
 
     wxString line = rCtrl.GetCurLine();
-    if (IsIncludeStatement(line, &fileName)) {
+    if (IsIncludeStatement(line, NULL, &fileName)) {
         DisplayFilesCompletionBox(fileName);
         return;
     }

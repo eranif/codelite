@@ -460,7 +460,7 @@ public:
      * @param include_anon included anonymous members (of Unions/structs/enums)
      */
     void TagsByScope(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon = false);
-	
+
     /**
      * return tags belongs to given typeref and kind
      * @param scopeName the typeref to search
@@ -468,8 +468,8 @@ public:
      * @param tags [ouput] the result vector
      * @param inherits set to true if you want inherited members as well members
      * @param include_anon included anonymous members (of Unions/structs/enums)
-     */	
-	void TagsByTyperef(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon = false);
+     */
+    void TagsByTyperef(const wxString &scopeName, const wxArrayString &kind, std::vector<TagEntryPtr> &tags, bool include_anon = false);
 
     /**
      * Find implementation/declaration of symbol
@@ -748,25 +748,35 @@ public:
      * @brief clear the underlying caching mechanism
      */
     void ClearTagsCache();
-    
+
     /**
      * @brief return true of v1 cotnains the same tags as v2
      */
     bool AreTheSame(const TagEntryPtrVector_t &v1, const TagEntryPtrVector_t &v2) const;
-	
-	/**
-	 * @brief insert functionBody into clsname. This function will search for best location 
-	 * to place the function body. set visibility to 0 for 'pubilc' function, 1 for 'protected' and 2 for private
-	 * return true if this function succeeded, false otherwise
-	 */
-	bool InsertFunctionDecl(const wxString &clsname, const wxString &functionDecl, wxString &sourceContent, int visibility = 0);
-	
-	/**
-	 * @brief insert functionBody into clsname. This function will search for best location 
-	 * to place the function body
-	 */
-	void InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename, wxString& sourceContent, int &insertedLine);
-	
+
+    /**
+     * @brief insert functionBody into clsname. This function will search for best location
+     * to place the function body. set visibility to 0 for 'pubilc' function, 1 for 'protected' and 2 for private
+     * return true if this function succeeded, false otherwise
+     */
+    bool InsertFunctionDecl(const wxString &clsname, const wxString &functionDecl, wxString &sourceContent, int visibility = 0);
+
+    /**
+     * @brief insert functionBody into clsname. This function will search for best location
+     * to place the function body
+     */
+    void InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename, wxString& sourceContent, int &insertedLine);
+    
+    /**
+     * @brief insert forward declaration statement at the top of the file
+     * @param classname the class name to add
+     * @param fileContent [input] the file content 
+     * @param lineToAdd [output] the line that should be added
+     * @param line [output] line number where to add the forward declaration
+     * @param impExpMacro [optional/input] Windows DLL Imp/Exp macro
+     */
+    void InsertForwardDeclaration(const wxString &classname, const wxString &fileContent, wxString &lineToAdd, int &line, const wxString &impExpMacro = "");
+    
 protected:
     std::map<wxString, bool> m_typeScopeCache;
     std::map<wxString, bool> m_typeScopeContainerCache;
@@ -836,8 +846,8 @@ protected:
     wxArrayString  BreakToOuterScopes(const wxString &scope);
     wxString       DoReplaceMacrosFromDatabase(const wxString &name);
     void           DoSortByVisibility(TagEntryPtrVector_t& tags);
-	void           AddEnumClassData(wxString& tags);
-	void           GetScopesByScopeName(const wxString &scopeName, wxArrayString & scopes);
+    void           AddEnumClassData(wxString& tags);
+    void           GetScopesByScopeName(const wxString &scopeName, wxArrayString & scopes);
 };
 
 /// create the singleton typedef

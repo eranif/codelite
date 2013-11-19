@@ -551,6 +551,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     //-----------------------------------------------------------------
     EVT_MENU(XRCID("open_include_file"),        clMainFrame::OnCppContextMenu)
     EVT_MENU(XRCID("add_include_file"),         clMainFrame::OnCppContextMenu)
+    EVT_MENU(XRCID("add_forward_decl"),         clMainFrame::OnCppContextMenu)
     EVT_MENU(XRCID("swap_files"),               clMainFrame::OnCppContextMenu)
     EVT_MENU(XRCID("find_decl"),                clMainFrame::OnCppContextMenu)
     EVT_MENU(XRCID("find_impl"),                clMainFrame::OnCppContextMenu)

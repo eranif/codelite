@@ -2364,44 +2364,22 @@ void Language::InsertFunctionImpl(const wxString& clsname, const wxString& funct
     sourceContent = newContent;
 }
 
-int Language::GetBestLineForForwardDecl(const wxString& fileContent, const wxString& className) const
+int Language::GetBestLineForForwardDecl(const wxString& fileContent) const
 {
-    // step 1: locate the class
-    CppScanner scanner;
-    scanner.SetText( fileContent.mb_str(wxConvUTF8).data() );
-
-    bool success = false;
-    int type = 0;
+    // Locating the place for adding forward declaration is one line on top of the first non comment/preprocessor 
+    // code. So basically we constrcut our lexer and call yylex() once (it will skip all whitespaces/comments/pp... )
+    CppLexer lexer( fileContent.mb_str(wxConvISO8859_1).data() );
+    
     while ( true ) {
-        type = scanner.yylex();
+        int type = lexer.lex();
         if ( type == 0) {
             // EOF
             return wxNOT_FOUND; 
         }
-
-        if ( type == lexCLASS ) {
-            wxString name;
-            type = DoReadClassName(scanner, name);
-            if( type == 0 ) {
-                // EOF
-                return wxNOT_FOUND;
-            }
-
-            if ( name == className ) {
-                // We found the lex
-                success = true;
-                break;
-            }
-        }
+        break;
     }
-    
-    if ( !success ) {
-        return wxNOT_FOUND;
-    }
-    
-    int class_line = scanner.LineNo();
-    if ( class_line ) {
-        --class_line;
-    }
-    return class_line;
+    // stc is 0 based
+    int line = lexer.line_number();
+    if ( line ) --line;
+    return line;
 }

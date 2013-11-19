@@ -284,7 +284,6 @@ dllexport			{CPP_KEYWORD_RETURN(LE_DLLIEXPORT);}
 .						{return yytext[0];}
 <PREPR>\n			{
 						defineFound = false;
-						cl_scope_lineno++;
 						BEGIN INITIAL;
 					}
 <PREPR>\\			{
@@ -294,7 +293,6 @@ dllexport			{CPP_KEYWORD_RETURN(LE_DLLIEXPORT);}
 						defineFound = true;
 					}
 <WRAP_PREP>\n		{
-						cl_scope_lineno++;
 						BEGIN PREPR;
 					}
 <WRAP_PREP>{identifier}   {

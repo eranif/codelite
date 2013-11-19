@@ -122,7 +122,6 @@ exe_name=codelite
 
 rm -rf codelite.app
 mkdir -p ./codelite.app/Contents/MacOS
-mkdir -p ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS
 mkdir -p ./codelite.app/Contents/Resources
 mkdir -p ./codelite.app/Contents/SharedSupport
 mkdir -p ./codelite.app/Contents/SharedSupport/plugins
@@ -155,6 +154,13 @@ if test -f ${wxrc_tool} ; then
 fi
 cp ../bin/codelite ./codelite.app/Contents/MacOS/codelite
 
+## codelite-terminal bundle
+mkdir -p ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS
+mkdir -p ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/Resources
+cp ../../codelite_terminal/icon.icns ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/Resources
+cp ../bin/codelite-terminal  ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/
+cp ../../codelite_terminal/Info.plist ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/
+
 ## Fix clang
 cp ../../sdk/clang/lib/libclang.dylib ./codelite.app/Contents/MacOS/
 echo install_name_tool -change @rpath/libclang.dylib @executable_path/libclang.dylib ./codelite.app/Contents/MacOS/codelite
@@ -170,6 +176,7 @@ cp ../../Runtime/astyle.sample ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/index.html ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/svnreport.html ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/*.icns ./codelite.app/Contents/Resources/
+
 cp -pr ../../Runtime/src/*.gz ./codelite.app/Contents/Resources/
 cp -pr ../../Runtime/codelite-icons.zip ./codelite.app/Contents/SharedSupport/
 cp -pr ../../Runtime/codelite-icons-dark.zip ./codelite.app/Contents/SharedSupport/
@@ -234,7 +241,6 @@ if test -f ../bin/codelite-clang ; then
 fi
 
 cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
-cp ../bin/codelite-terminal  ./codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/
 cp ../bin/codelite-make  ./codelite.app/Contents/SharedSupport/
 cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/./OpenTerm   ./codelite.app/Contents/SharedSupport/

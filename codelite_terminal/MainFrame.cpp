@@ -287,6 +287,7 @@ void MainFrame::OnClearView(wxCommandEvent& event)
     m_stc->SetReadOnly(false);
     m_stc->ClearAll();
     m_fromPos = 0;
+    m_stc->SetFocus();
 }
 
 void MainFrame::OnTerminateInfirior(wxCommandEvent& event)

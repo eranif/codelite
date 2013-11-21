@@ -29,7 +29,7 @@
 #    ifndef INSTALL_DIR
 #        define INSTALL_DIR "/usr/share/codelite"
 #    endif
-#    define CL_USE_NATIVEBOOK 1
+#    define CL_USE_NATIVEBOOK 0
 #else
 #    define CL_USE_NATIVEBOOK 0
 #endif

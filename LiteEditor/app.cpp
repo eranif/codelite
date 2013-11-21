@@ -464,6 +464,15 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
+#ifdef __WXGTK__
+    // Redirect stdout/error to a file
+    wxFileName stdout_err(wxStandardPaths::Get().GetUserDataDir(), "codelite-stdout-stderr.log");
+    FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stdout);
+    FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stderr);
+    wxUnusedVar(new_stderr);
+    wxUnusedVar(new_stdout);
+#endif
+
     // Set the log file verbosity
     long log_verbosity(FileLogger::Error);
     EditorConfigST::Get()->GetLongValue(wxT("LogVerbosity"), log_verbosity);

@@ -1563,31 +1563,41 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
 {
     //execute command & cmdArgs
     wxString execLine ( cmd );
-
+    wxString title ( cmd );
+    
+    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+    wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
+    fnCodeliteTerminal.SetFullName("codelite-terminal");
+    
     //change directory to the working directory
-    if ( waitForAnyKey ) {
-        OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-
 #if defined(__WXMAC__)
-
-        execLine = opts->GetProgramConsoleCommand();
-
-        wxString tmp_cmd;
-        tmp_cmd = wxT("cd \"" ) + wd + wxT ( "\" && " ) + cmd;
-
-        execLine.Replace(wxT("$(CMD)"), tmp_cmd);
-        execLine.Replace(wxT("$(TITLE)"), cmd );
-
+        wxString newCommand;
+        newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+        if ( waitForAnyKey ) {
+            newCommand << " -w ";
+        }
+        newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+        execLine = newCommand;
+        
 #elif defined(__WXGTK__)
 
-        //set a console to the execute target
-        wxString term;
-        term = opts->GetProgramConsoleCommand();
-        term.Replace(wxT("$(TITLE)"), cmd);
+        // Set a console to the execute target
+        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
+            wxString newCommand;
+            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+            if ( waitForAnyKey ) { 
+                newCommand << " -w ";
+            }
+            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+            execLine = newCommand;
+            
+        } else {
+            wxString term;
+            term = opts->GetProgramConsoleCommand();
+            term.Replace(wxT("$(TITLE)"), title);
 
-        // build the command
-        wxString command;
-        if ( waitForAnyKey ) {
+            // build the command
+            wxString command;
             wxString ld_lib_path;
             wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
             wxFileName exeWrapper ( exePath.GetPath(), wxT ( "codelite_exec" ) );
@@ -1597,15 +1607,33 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
             } else {
                 command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
             }
+            command << execLine;
+            term.Replace(wxT("$(CMD)"), command);
+            execLine = term;
         }
-
-        command << execLine;
-        term.Replace(wxT("$(CMD)"), command);
-        execLine = term;
-
 #elif defined (__WXMSW__)
-        execLine.Prepend("le_exec.exe ");
+
+        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
+            
+            // codelite-terminal does not like forward slashes...
+            wxString commandToRun;
+            commandToRun << cmd << " ";
+            commandToRun.Replace("/", "\\");
+            commandToRun << cmdArgs;
+            commandToRun.Trim().Trim(false);
+            
+            wxString newCommand;
+            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+            if ( waitForAnyKey ) { 
+                newCommand << " -w ";
+            }
+            
+            newCommand << " -t \"" << commandToRun << "\" -c \"" << commandToRun << "\"";
+            execLine = newCommand;
+            
+        } else if ( waitForAnyKey ) {
+            execLine.Prepend ("le_exec.exe ");
+        }
 #endif
-    }
     return execLine;
 }

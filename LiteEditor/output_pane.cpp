@@ -118,6 +118,7 @@ void OutputPane::CreateGUIControls()
 
     m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
     m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap(wxT("output-pane/16/tasks")));
+    SetMinSize( wxSize(200, 100) );
     mainSizer->Layout();
 }
 

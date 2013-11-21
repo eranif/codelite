@@ -14,7 +14,7 @@ static const wxDouble X_RADIUS = 6.0;
 static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
 #ifdef __WXMAC__
-#	include <wx/osx/private.h>
+#   include <wx/osx/private.h>
 #endif
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
@@ -28,10 +28,14 @@ clAuiGlossyTabArt::~clAuiGlossyTabArt()
 void clAuiGlossyTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxUnusedVar(wnd);
+#ifdef __WXGTK__
+    wxDC &gdc = dc;
+#else
     wxGCDC gdc;
     if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
-        
+#endif
+
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
     wxColour penColour;
     
@@ -98,11 +102,101 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     clColourEvent colourEvent( wxEVT_COLOUR_TAB );
     colourEvent.SetIsActiveTab( page.active );
     colourEvent.SetPage( page.window );
+    bool customDrawing = false;
     if ( EventNotifier::Get()->ProcessEvent( colourEvent ) ) {
         bgColour = colourEvent.GetBgColour();
         textColour = colourEvent.GetFgColour();
+        customDrawing = true;
     }
-    
+
+#ifdef __WXGTK__
+    if ( !customDrawing ) {
+        wxAuiDefaultTabArt::DrawTab(dc, wnd, page, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
+        
+    } else {
+        wxSize sz = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
+        
+        wxRect rr (in_rect.GetTopLeft(), sz);
+        rr.y += 2;
+        rr.width -= 2;
+        rr.height += 8;
+        dc.SetPen( penColour );
+        /// the tab start position (x)
+        curx = rr.x + 8;
+        
+        // Set clipping region
+        int clip_width = rr.width;
+        if (rr.x + clip_width > in_rect.x + in_rect.width)
+            clip_width = (in_rect.x + in_rect.width) - rr.x;
+        
+        // since the above code above doesn't play well with WXDFB or WXCOCOA,
+        // we'll just use a rectangle for the clipping region for now --
+        dc.SetBrush( bgColour );
+        dc.SetClippingRegion(rr.x, rr.y, clip_width, rr.height);
+        dc.DrawRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 3.0);
+        if ( !page.active ) {
+            // Draw a line at the bottom rect
+            dc.SetPen(penColour);
+            dc.DrawLine(in_rect.GetBottomLeft(), in_rect.GetBottomRight());
+        }
+        
+        wxString caption = page.caption;
+        if ( caption.IsEmpty() ) {
+            caption = "Tp";
+        }
+        
+        dc.SetFont( wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+        wxSize ext = dc.GetTextExtent( caption );
+        if ( caption == "Tp" )
+            caption.Clear();
+        
+        dc.SetTextForeground( textColour );
+        dc.DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-2);
+        
+        // advance the X offset
+        curx += ext.x;
+        
+        /// Draw the bitmap
+        if ( page.bitmap.IsOk() ) {
+            curx += 4;
+            int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight())/2);
+            dc.DrawBitmap( page.bitmap, curx, bmpy );
+            curx += 8;
+        }
+        
+            /// Draw the X button on the tab
+        if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
+            curx += 4;
+            int btny = (rr.y + (rr.height/2));
+            if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {
+                curx += 1;
+                btny += 1;
+            }
+            
+            /// Defines the rectangle surrounding the X button
+            wxRect xRect = wxRect(curx, btny - X_RADIUS, X_DIAMETER, X_DIAMETER);
+            *out_button_rect = xRect;
+            
+            /// Defines the 'x' inside the circle
+            wxPoint circleCenter( curx + X_RADIUS, btny);
+            wxDouble xx_width = ::sqrt( ::pow(X_DIAMETER, 2.0) /2.0 );
+            wxDouble x_square = (circleCenter.x - (xx_width/2.0));
+            wxDouble y_square = (circleCenter.y - (xx_width/2.0));
+            
+            wxPoint ptXTopLeft(x_square, y_square);
+            wxRect insideRect(ptXTopLeft.x, ptXTopLeft.y, xx_width, xx_width);
+            insideRect.Deflate(1.0 , 1.0); // Shrink it by 1 pixle
+            
+            /// Draw the 'x' itself
+            dc.SetPen( wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 2) );
+            dc.DrawLine( insideRect.GetLeftTop(), insideRect.GetRightBottom() );
+            dc.DrawLine( insideRect.GetRightTop(), insideRect.GetLeftBottom() );
+            curx += X_DIAMETER;
+        }
+        *out_tab_rect = rr;
+        dc.DestroyClippingRegion();
+    }
+#else
     wxGCDC gdc;
     if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
@@ -201,6 +295,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     }
     *out_tab_rect = rr;
     gdc.DestroyClippingRegion();
+#endif
 }
 
 wxSize clAuiGlossyTabArt::GetTabSize(wxDC& dc,

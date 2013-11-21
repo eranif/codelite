@@ -6,6 +6,9 @@
 #include <wx/dcmemory.h>
 #include <editor_config.h>
 #include "globals.h"
+#include "cl_command_event.h"
+#include "plugin.h"
+#include "event_notifier.h"
 
 static const wxDouble X_RADIUS = 6.0;
 static const wxDouble X_DIAMETER = 2 * X_RADIUS;
@@ -64,6 +67,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
 {
     wxColour bgColour = wxColour(EditorConfigST::Get()->GetCurrentOutputviewBgColour());
     wxColour penColour;
+    wxColour textColour;
     bool isBgColourDark = DrawingUtils::IsDark(bgColour);
     if ( isBgColourDark ) {
         penColour = DrawingUtils::LightColour(bgColour, 4.0);
@@ -81,14 +85,28 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         }
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
-
+    
+    if ( page.active ) {
+        textColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    } else {
+        textColour = isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    }
+    
     int curx = 0;
+    
+    // Allow the plugins to override the default colours
+    clColourEvent colourEvent( wxEVT_COLOUR_TAB );
+    colourEvent.SetIsActiveTab( page.active );
+    colourEvent.SetPage( page.window );
+    if ( EventNotifier::Get()->ProcessEvent( colourEvent ) ) {
+        bgColour = colourEvent.GetBgColour();
+        textColour = colourEvent.GetFgColour();
+    }
     
     wxGCDC gdc;
     if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
 
-    
     wxGraphicsPath path = gdc.GetGraphicsContext()->CreatePath();
     gdc.SetPen( penColour );
     
@@ -133,12 +151,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     if ( caption == "Tp" )
         caption.Clear();
     
-    if ( page.active ) {
-        gdc.SetTextForeground( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
-    } else {
-        gdc.SetTextForeground( isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
-    }
-    
+    gdc.SetTextForeground( textColour );
     gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-2);
     
     // advance the X offset

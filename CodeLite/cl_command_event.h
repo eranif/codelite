@@ -15,7 +15,7 @@ enum {
 /// a wxCommandEvent that takes ownership of the clientData
 class WXDLLIMPEXP_CL clCommandEvent : public wxCommandEvent
 {
-   
+
 protected:
     wxSharedPtr<wxClientData> m_ptr;
     wxArrayString             m_strings;
@@ -41,7 +41,7 @@ public:
     bool IsAnswer() const {
         return m_answer;
     }
-    
+
     void SetFileName(const wxString& fileName) {
         this->m_fileName = fileName;
     }
@@ -142,5 +142,51 @@ public:
 typedef void (wxEvtHandler::*clCodeCompletionEventFunction)(clCodeCompletionEvent&);
 #define clCodeCompletionEventHandler(func) \
     wxEVENT_HANDLER_CAST(clCodeCompletionEventFunction, func)
+
+class WXDLLIMPEXP_CL clColourEvent : public clCommandEvent
+{
+    wxColour  m_bgColour;
+    wxColour  m_fgColour;
+    wxWindow* m_page;
+    bool      m_isActiveTab;
+
+public:
+    clColourEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clColourEvent(const clColourEvent& event);
+    clColourEvent& operator=(const clColourEvent& src);
+    virtual ~clColourEvent();
+    virtual wxEvent *Clone() const {
+        return new clColourEvent(*this);
+    };
+
+    void SetPage(wxWindow* page) {
+        this->m_page = page;
+    }
+    wxWindow* GetPage() {
+        return m_page;
+    }
+    void SetBgColour(const wxColour& bgColour) {
+        this->m_bgColour = bgColour;
+    }
+    void SetFgColour(const wxColour& fgColour) {
+        this->m_fgColour = fgColour;
+    }
+    const wxColour& GetBgColour() const {
+        return m_bgColour;
+    }
+    const wxColour& GetFgColour() const {
+        return m_fgColour;
+    }
+    void SetIsActiveTab(bool isActiveTab) {
+        this->m_isActiveTab = isActiveTab;
+    }
+    bool IsActiveTab() const {
+        return m_isActiveTab;
+    }
+};
+
+typedef void (wxEvtHandler::*clColourEventFunction)(clColourEvent&);
+#define clColourEventHandler(func) \
+    wxEVENT_HANDLER_CAST(clColourEventFunction, func)
 
 #endif // CLCOMMANDEVENT_H

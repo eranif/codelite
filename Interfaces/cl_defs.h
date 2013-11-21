@@ -22,6 +22,7 @@
 #    define USE_AUI_TOOLBAR    0
 #endif
 
+// Defaults
 #ifdef __WXGTK__
 #    ifndef PLUGINS_DIR
 #        define PLUGINS_DIR "/usr/lib/codelite"
@@ -34,8 +35,13 @@
 #    define CL_USE_NATIVEBOOK 0
 #endif
 
-/// Allow override the default CL_USE_NATIVEBOOK by cmake variable
-#if GTK_USE_AUIBOOK
+// Allow override the default CL_USE_NATIVEBOOK by cmake variable
+#if GTK_USE_NATIVEBOOK
+#   ifdef CL_USE_NATIVEBOOK
+#       undef CL_USE_NATIVEBOOK
+#   endif
+#   define CL_USE_NATIVEBOOK 1
+#else
 #   ifdef CL_USE_NATIVEBOOK
 #       undef CL_USE_NATIVEBOOK
 #   endif

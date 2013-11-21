@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                                #
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
-##      -DGTK_USE_AUIBOOK=1|0                      // Under GTK, use wxAuiNotebook instead of the native notebook                                                     #
+##      -DGTK_USE_NATIVEBOOK=1|0                   // Under GTK, use wxNotebook instead of wxAuiNotebook. Default is set to 0                                         #
 ##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/         #
 ##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                        #
 #######################################################################################################################################################################
@@ -168,11 +168,14 @@ add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
 add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
 
 ## Allow user to use wxAuiNotebook instead of the native notebook
-if ( GTK_USE_AUIBOOK )
-    add_definitions( -DGTK_USE_AUIBOOK=1 )
-    message("-- Using wxAuiNotebook instead of wxNotebook")
-endif ( GTK_USE_AUIBOOK )
-unset(GTK_USE_AUIBOOK CACHE)
+if ( GTK_USE_NATIVEBOOK )
+    add_definitions( -DGTK_USE_NATIVEBOOK=1 )
+    message("-- Using wxNotebook")
+else ( GTK_USE_NATIVEBOOK )
+    add_definitions( -DGTK_USE_NATIVEBOOK=0 )
+    message("-- Using wxAuiNotebook")
+endif ( GTK_USE_NATIVEBOOK )
+unset(GTK_USE_NATIVEBOOK CACHE)
 
 #############################################
 ## Global optimizations
@@ -382,6 +385,7 @@ if ( NOT NO_CPP_PLUGINS )
     endif ( APPLE )
 endif ( NOT NO_CPP_PLUGINS )
 
+add_subdirectory(Tweaks)
 add_subdirectory(CodeFormatter)
 add_subdirectory(Copyright)
 add_subdirectory(DatabaseExplorer)

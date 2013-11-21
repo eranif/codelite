@@ -992,7 +992,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="../../../root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--g-fatal-warnings" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="../../../root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -1005,7 +1005,6 @@
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <Target Name="install">make install</Target>
-        <Target Name="cmake GTK AUI Book">cmake -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  -DWITH_MYSQL=1 -DCMAKE_BUILD_TYPE=Debug .. -DGTK_USE_AUIBOOK=1</Target>
         <Target Name="cmake">cmake -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  -DWITH_MYSQL=1 -DCMAKE_BUILD_TYPE=Debug ..</Target>
         <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
@@ -1145,7 +1144,6 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="cmake GTK AUI Book">cd build-release &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DWITH_MYSQL=1 .. -DGTK_USE_AUIBOOK=1</Target>
         <Target Name="cmake">cd build-release &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DWITH_MYSQL=1 ..</Target>
         <RebuildCommand>cd build-release &amp;&amp; make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>cd build-release &amp;&amp; make clean</CleanCommand>

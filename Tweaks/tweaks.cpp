@@ -107,25 +107,20 @@ void Tweaks::OnColourTab(clColourEvent& e)
         e.Skip();
     
     } else {
-        if ( e.IsActiveTab() ) {
-            e.SetBgColour( EditorConfigST::Get()->GetCurrentOutputviewBgColour() );
-            e.SetFgColour( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+        
+        const ProjectTweaks& tw = m_settings.GetProjectTweaks( editor->GetProjectName() );
+        if ( tw.IsOk() ) {
+            e.SetBgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : tw.GetTabBgColour() );
+            e.SetFgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : tw.GetTabFgColour() );
+            
+        } else if ( m_settings.GetGlobalBgColour().IsOk() && m_settings.GetGlobalFgColour().IsOk() ) {
+            e.SetBgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : m_settings.GetGlobalBgColour() );
+            e.SetFgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : m_settings.GetGlobalFgColour() );
             
         } else {
-            const ProjectTweaks& tw = m_settings.GetProjectTweaks( editor->GetProjectName() );
-            if ( tw.IsOk() ) {
-                e.SetBgColour( tw.GetTabBgColour() );
-                e.SetFgColour( tw.GetTabFgColour() );
-                
-            } else if ( m_settings.GetGlobalBgColour().IsOk() && m_settings.GetGlobalFgColour().IsOk() ) {
-                e.SetBgColour( m_settings.GetGlobalBgColour() );
-                e.SetFgColour( m_settings.GetGlobalFgColour() );
-                
-            } else {
-                e.Skip();
-            }
-            
+            e.Skip();
         }
+    
     }
 }
 

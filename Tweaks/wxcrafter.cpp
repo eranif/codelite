@@ -35,12 +35,12 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     boxSizer2->Add(m_notebook12, 1, wxALL|wxEXPAND, 5);
     
     m_panel62 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook12->AddPage(m_panel62, _("Global"), false);
+    m_notebook12->AddPage(m_panel62, _("Editor Tabs"), false);
     
     boxSizer64 = new wxBoxSizer(wxVERTICAL);
     m_panel62->SetSizer(boxSizer64);
     
-    staticBoxSizer76 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Tab Colours")), wxVERTICAL);
+    staticBoxSizer76 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Global Tab Colours:")), wxVERTICAL);
     
     boxSizer64->Add(staticBoxSizer76, 0, wxALL|wxEXPAND, 5);
     
@@ -69,25 +69,15 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer66->Add(m_colourPickerGlobalFG, 0, wxALL|wxEXPAND, 5);
     
-    m_panel14 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook12->AddPage(m_panel14, _("Customize"), false);
+    staticBoxSizer80 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Tab Colours Per Project:")), wxVERTICAL);
     
-    boxSizer16 = new wxBoxSizer(wxVERTICAL);
-    m_panel14->SetSizer(boxSizer16);
-    
-    m_banner22 = new wxBannerWindow(m_panel14, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
-    m_banner22->SetBitmap(wxNullBitmap);
-    m_banner22->SetText(_("Setup colours"), _("Set a different tab colour per project"));
-    m_banner22->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner22->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
-    
-    boxSizer16->Add(m_banner22, 0, wxALL|wxEXPAND, 5);
+    boxSizer64->Add(staticBoxSizer80, 1, wxALL|wxEXPAND, 5);
     
     boxSizer24 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer16->Add(boxSizer24, 1, wxEXPAND, 5);
+    staticBoxSizer80->Add(boxSizer24, 1, wxEXPAND, 5);
     
-    m_dvListCtrlProjects = new wxDataViewListCtrl(m_panel14, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlProjects = new wxDataViewListCtrl(m_panel62, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer24->Add(m_dvListCtrlProjects, 1, wxALL|wxEXPAND, 5);
     
@@ -96,16 +86,16 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer24->Add(boxSizer28, 0, wxEXPAND, 5);
     
-    m_button30 = new wxButton(m_panel14, wxID_ADD, _("&Add..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button30 = new wxButton(m_panel62, wxID_ADD, _("&Add..."), wxDefaultPosition, wxSize(-1,-1), 0);
     m_button30->SetToolTip(_("Add a project"));
     
     boxSizer28->Add(m_button30, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
-    m_button54 = new wxButton(m_panel14, wxID_EDIT, _("&Edit..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button54 = new wxButton(m_panel62, wxID_EDIT, _("&Edit..."), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer28->Add(m_button54, 0, wxALL|wxEXPAND, 5);
     
-    m_button60 = new wxButton(m_panel14, wxID_EDIT, _("&Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button60 = new wxButton(m_panel62, wxID_EDIT, _("&Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer28->Add(m_button60, 0, wxALL|wxEXPAND, 5);
     

@@ -20,7 +20,6 @@
 #include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/clrpicker.h>
-#include <wx/bannerwindow.h>
 #include <wx/dataview.h>
 #include <wx/button.h>
 #include <wx/choice.h>
@@ -40,9 +39,7 @@ protected:
     wxColourPickerCtrl* m_colourPickerGlobalBG;
     wxStaticText* m_staticText72;
     wxColourPickerCtrl* m_colourPickerGlobalFG;
-    wxPanel* m_panel14;
-    wxBoxSizer* boxSizer16;
-    wxBannerWindow* m_banner22;
+    wxStaticBoxSizer* staticBoxSizer80;
     wxBoxSizer* boxSizer24;
     wxDataViewListCtrl* m_dvListCtrlProjects;
     wxBoxSizer* boxSizer28;

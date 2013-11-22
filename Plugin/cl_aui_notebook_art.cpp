@@ -145,7 +145,11 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
             caption = "Tp";
         }
         
-        dc.SetFont( wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+        wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        if ( page.active ) {
+            fnt.SetWeight(wxFONTWEIGHT_BOLD);
+        }
+        dc.SetFont( fnt );
         wxSize ext = dc.GetTextExtent( caption );
         if ( caption == "Tp" )
             caption.Clear();
@@ -240,7 +244,11 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         caption = "Tp";
     }
     
-    gdc.SetFont( wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    if ( page.active ) {
+        fnt.SetWeight(wxFONTWEIGHT_BOLD);
+    }
+    gdc.SetFont( fnt );
     wxSize ext = gdc.GetTextExtent( caption );
     if ( caption == "Tp" )
         caption.Clear();
@@ -302,7 +310,7 @@ wxSize clAuiGlossyTabArt::GetTabSize(wxDC& dc,
                                wxWindow* WXUNUSED(wnd),
                                const wxString& caption,
                                const wxBitmap& bitmap,
-                               bool WXUNUSED(active),
+                               bool active,
                                int close_button_state,
                                int* x_extent)
 {
@@ -310,8 +318,13 @@ wxSize clAuiGlossyTabArt::GetTabSize(wxDC& dc,
 
     wxCoord measured_textx;
     wxCoord tmp;
-
-    dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    
+    wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    if ( active ) {
+        f.SetWeight(wxFONTWEIGHT_BOLD);
+    }
+    
+    dc.SetFont(f);
     dc.GetTextExtent(caption, &measured_textx, &tmp);
 
     // do it once

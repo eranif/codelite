@@ -1619,9 +1619,8 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
             wxString commandToRun;
             commandToRun << cmd << " ";
             commandToRun.Replace("/", "\\");
-            commandToRun << cmdArgs;
             commandToRun.Trim().Trim(false);
-            
+
             wxString newCommand;
             newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
             if ( waitForAnyKey ) { 

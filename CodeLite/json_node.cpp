@@ -438,6 +438,19 @@ wxPoint JSONElement::toPoint() const
     return wxPoint(nX, nY);
 }
 
+wxColour JSONElement::toColour(const wxColour& defaultColour) const
+{
+    if(!_json) {
+        return defaultColour;
+    }
+
+    if(_json->type != cJSON_String) {
+        return defaultColour;
+    }
+    
+    return wxColour( _json->valuestring );
+}
+
 wxSize JSONElement::toSize() const
 {
     wxPoint pt = toPoint();
@@ -494,3 +507,11 @@ JSONElement& JSONElement::addProperty(const wxString& name, size_t value)
     return addProperty(name, (int)value);
 }
 
+JSONElement& JSONElement::addProperty(const wxString& name, const wxColour& colour)
+{
+    wxString colourValue;
+    if ( colour.IsOk() ) {
+        colourValue = colour.GetAsString(wxC2S_HTML_SYNTAX);
+    }
+    return addProperty(name, colourValue);
+}

@@ -111,6 +111,7 @@ public:
 
     wxWindow *GetCurrentPage();
     wxWindow *GetPage(size_t page);
+    size_t   GetPageCount() const;
     wxWindow *FindPage      (const wxString &text);
 
     LEditor *NewEditor();

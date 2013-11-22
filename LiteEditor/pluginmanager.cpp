@@ -782,3 +782,8 @@ void PluginManager::EnableClangCodeCompletion(bool b)
     wxUnusedVar(b);
 #endif
 }
+
+size_t PluginManager::GetPageCount() const
+{
+    return clMainFrame::Get()->GetMainBook()->GetPageCount();
+}

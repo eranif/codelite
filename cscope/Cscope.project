@@ -195,7 +195,6 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
@@ -208,4 +207,5 @@
       <File Name="cscoptviewresultsmodel.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

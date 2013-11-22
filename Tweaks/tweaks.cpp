@@ -1,5 +1,8 @@
 #include "tweaks.h"
 #include <wx/xrc/xmlres.h>
+#include "event_notifier.h"
+#include "TweaksSettingsDlg.h"
+#include "editor_config.h"
 
 static Tweaks* thePlugin = NULL;
 
@@ -36,6 +39,17 @@ Tweaks::Tweaks(IManager *manager)
     m_shortName = wxT("Tweaks");
     
     m_mgr->GetTheApp()->Connect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
+}
+
+void Tweaks::UnPlug()
+{
+    m_mgr->GetTheApp()->Disconnect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
 }
 
 Tweaks::~Tweaks()
@@ -69,12 +83,60 @@ void Tweaks::UnHookPopupMenu(wxMenu *menu, MenuType type)
     wxUnusedVar(type);
 }
 
-void Tweaks::UnPlug()
-{
-    m_mgr->GetTheApp()->Disconnect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
-}
-
 void Tweaks::OnSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
+    TweaksSettingsDlg dlg( m_mgr->GetTheApp()->GetTopWindow() );
+    dlg.ShowModal();
+    m_settings.Load(); // Refresh our cached settings
+    
+    // Refresh the drawings
+    m_mgr->GetTheApp()->GetTopWindow()->Refresh();
+}
+
+void Tweaks::OnColourTab(clColourEvent& e)
+{
+    IEditor* editor = FindEditorByPage( e.GetPage() );
+    if ( !editor || editor->GetProjectName().IsEmpty() ) {
+        e.Skip();
+
+    } else {
+        const ProjectTweaks& tw = m_settings.GetProjectTweaks( editor->GetProjectName() );
+        if ( tw.IsOk() ) {
+            if ( e.IsActiveTab() ) {
+                e.SetBgColour( EditorConfigST::Get()->GetCurrentOutputviewBgColour() );
+                e.SetFgColour( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+
+            } else {
+                e.SetBgColour( tw.GetTabBgColour() );
+                e.SetFgColour( tw.GetTabFgColour() );
+                
+            }
+        } else {
+            e.Skip();
+        }
+    }
+}
+
+IEditor* Tweaks::FindEditorByPage(wxWindow* page)
+{
+    for(size_t i=0; i<m_mgr->GetPageCount(); ++i) {
+        if ( m_mgr->GetPage(i) == page ) {
+            return dynamic_cast<IEditor*>( m_mgr->GetPage(i) );
+        }
+    }
+    return NULL;
+}
+
+void Tweaks::OnWorkspaceLoaded(wxCommandEvent& e)
+{
+    e.Skip();
+    // Refresh the list with the current workspace setup
+    m_settings.Load();
+}
+
+void Tweaks::OnWorkspaceClosed(wxCommandEvent& e)
+{
+    e.Skip();
+    m_settings.Clear();
 }

@@ -909,6 +909,7 @@
     <Project Name="CallGraph"/>
     <Project Name="ZoomNavigator"/>
     <Project Name="SFTP"/>
+    <Project Name="Tweaks"/>
   </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="PCH"/>
@@ -939,6 +940,7 @@
     <Project Name="ZoomNavigator"/>
     <Project Name="CodeBeautifier"/>
     <Project Name="SFTP"/>
+    <Project Name="Tweaks"/>
   </Dependencies>
   <Dependencies Name="WinDebugUnicode">
     <Project Name="PCH"/>
@@ -969,6 +971,7 @@
     <Project Name="ZoomNavigator"/>
     <Project Name="CodeBeautifier"/>
     <Project Name="SFTP"/>
+    <Project Name="Tweaks"/>
   </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -1315,7 +1318,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command="./codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no" IsGUIProgram="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command="./codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no" IsGUIProgram="no"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>
@@ -1349,7 +1352,8 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .</CustomPreBuild>
+	autorev .
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>

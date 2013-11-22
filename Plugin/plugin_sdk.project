@@ -277,7 +277,6 @@
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="sftp_ui">
     <File Name="AddSSHAcountDlg.cpp"/>
@@ -506,4 +505,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

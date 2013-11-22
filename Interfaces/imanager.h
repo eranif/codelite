@@ -443,6 +443,11 @@ public:
      * @brief enable/disable clang code completion
      */
     virtual void EnableClangCodeCompletion(bool b) = 0;
+    
+    /**
+     * @brief return the number of pages in the main editor
+     */
+    virtual size_t GetPageCount() const = 0;
 };
 
 #endif //IMANAGER_H

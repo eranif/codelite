@@ -135,6 +135,7 @@ public:
     virtual wxPanel*               GetEditorPaneNotebook();
     virtual wxWindow*              GetActivePage();
     virtual wxWindow*              GetPage(size_t page);
+    virtual size_t                 GetPageCount() const;
     virtual wxString               GetPageTitle(wxWindow* win) const;
     virtual void                   SetPageTitle(wxWindow* win, const wxString& title);
     virtual ProjectPtr             GetSelectedProject() const;

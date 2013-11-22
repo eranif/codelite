@@ -56,6 +56,7 @@ public:
     ////////////////////////////////////////////////
     JSONElement   namedObject(const wxString& name) const ;
     bool          hasNamedObject(const wxString &name) const;
+    
     bool          toBool(bool defaultValue = false) const ;
     wxString      toString(const wxString &defaultValue = wxEmptyString) const ;
     wxArrayString toArrayString()    const ;
@@ -70,6 +71,7 @@ public:
     double        toDouble(double defaultVal = -1.0) const;
     wxSize        toSize() const;
     wxPoint       toPoint() const;
+    wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
     JSONElement::wxStringMap_t toStringMap() const;
     
     
@@ -91,32 +93,17 @@ public:
      */
     void append(const JSONElement& element);
     
-    /**
-     * @brief add string property to a JSON object
-     */
     JSONElement& addProperty(const wxString &name, const wxString &value);
     JSONElement& addProperty(const wxString& name, const wxChar* value);
- 
-    /**
-     * @brief add int property to a JSON object
-     */
     JSONElement& addProperty(const wxString &name, int value);
     JSONElement& addProperty(const wxString &name, size_t value);
-
-    /**
-     * @brief add boolean property to a JSON object
-     */
     JSONElement& addProperty(const wxString &name, bool value);
-    
     JSONElement& addProperty(const wxString &name, const wxSize& sz);
     JSONElement& addProperty(const wxString &name, const wxPoint& pt);
-    
-    /**
-     * @brief add wxArrayString property 
-     */
+    JSONElement& addProperty(const wxString &name, const wxColour& colour);
     JSONElement& addProperty(const wxString &name, const wxArrayString &arr);
-    
     JSONElement& addProperty(const wxString &name, const JSONElement::wxStringMap_t& stringMap);
+    
     /**
      * @brief delete property by name
      */

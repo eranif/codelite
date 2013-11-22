@@ -1120,3 +1120,8 @@ bool MainBook::ClosePage(const wxString& text)
     return numPageClosed > 0;
 }
 
+size_t MainBook::GetPageCount() const
+{
+    return m_book->GetPageCount();
+}
+

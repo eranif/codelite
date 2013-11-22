@@ -2,9 +2,15 @@
 #define __Tweaks__
 
 #include "plugin.h"
+#include "cl_command_event.h"
+#include "tweaks_settings.h"
 
 class Tweaks : public IPlugin
 {
+    TweaksSettings m_settings;
+protected:
+    IEditor* FindEditorByPage( wxWindow* page );
+    
 public:
     Tweaks(IManager *manager);
     ~Tweaks();
@@ -20,6 +26,9 @@ public:
     
     // Event handlers
     void OnSettings(wxCommandEvent &e);
+    void OnColourTab(clColourEvent& e);
+    void OnWorkspaceLoaded(wxCommandEvent &e);
+    void OnWorkspaceClosed(wxCommandEvent &e);
 };
 
 #endif //Tweaks

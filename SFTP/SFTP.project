@@ -15,7 +15,6 @@
     <File Name="sftp.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -266,4 +265,5 @@
       <File Name="UI.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

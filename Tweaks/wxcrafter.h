@@ -13,22 +13,33 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/checkbox.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
+#include <wx/statbox.h>
+#include <wx/stattext.h>
+#include <wx/clrpicker.h>
 #include <wx/bannerwindow.h>
 #include <wx/dataview.h>
 #include <wx/button.h>
-#include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/clrpicker.h>
 
 class TweaksSettingsDlgBase : public wxDialog
 {
 protected:
     wxBoxSizer* boxSizer2;
+    wxCheckBox* m_checkBox78;
     wxNotebook* m_notebook12;
+    wxPanel* m_panel62;
+    wxBoxSizer* boxSizer64;
+    wxStaticBoxSizer* staticBoxSizer76;
+    wxFlexGridSizer* flexGridSizer66;
+    wxStaticText* m_staticText68;
+    wxColourPickerCtrl* m_colourPickerGlobalBG;
+    wxStaticText* m_staticText72;
+    wxColourPickerCtrl* m_colourPickerGlobalFG;
     wxPanel* m_panel14;
     wxBoxSizer* boxSizer16;
     wxBannerWindow* m_banner22;
@@ -39,10 +50,14 @@ protected:
     wxButton* m_button54;
     wxButton* m_button60;
     wxBoxSizer* boxSizer4;
-    wxButton* m_button6;
     wxButton* m_button8;
 
 protected:
+    virtual void OnEnableTweaks(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEnableTweaksUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnGlobalBgColourChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnGlobalFgColourChanged(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnAddProject(wxCommandEvent& event) { event.Skip(); }

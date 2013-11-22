@@ -9,6 +9,11 @@ public:
     virtual ~TweaksSettingsDlg();
 
 protected:
+    virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event);
+    virtual void OnEnableTweaks(wxCommandEvent& event);
+    virtual void OnEnableTweaksUI(wxUpdateUIEvent& event);
+    virtual void OnGlobalBgColourChanged(wxColourPickerEvent& event);
+    virtual void OnGlobalFgColourChanged(wxColourPickerEvent& event);
     virtual void OnDelete(wxCommandEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
     virtual void OnEditUI(wxUpdateUIEvent& event);

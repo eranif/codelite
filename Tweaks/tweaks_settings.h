@@ -19,7 +19,7 @@ public:
     virtual JSONElement ToJSON() const;
     ProjectTweaks();
     virtual ~ ProjectTweaks();
-    
+
     bool IsOk() const {
         return !m_projectName.IsEmpty();
     }
@@ -46,6 +46,10 @@ public:
 class TweaksSettings : public clConfigItem
 {
     ProjectTweaks::Map_t m_projects;
+    wxColour             m_globalBgColour;
+    wxColour             m_globalFgColour;
+    bool                 m_enableTweaks;
+
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
@@ -56,11 +60,32 @@ public:
     TweaksSettings& Load();
     void Clear();
     void Save();
-    
+
     const ProjectTweaks::Map_t& GetProjects() const {
         return m_projects;
     }
-    
+
+    void SetGlobalBgColour(const wxColour& globalBgColour) {
+        this->m_globalBgColour = globalBgColour;
+    }
+    void SetGlobalFgColour(const wxColour& globalFgColour) {
+        this->m_globalFgColour = globalFgColour;
+    }
+    void SetProjects(const ProjectTweaks::Map_t& projects) {
+        this->m_projects = projects;
+    }
+    const wxColour& GetGlobalBgColour() const {
+        return m_globalBgColour;
+    }
+    const wxColour& GetGlobalFgColour() const {
+        return m_globalFgColour;
+    }
+    void SetEnableTweaks(bool enableTweaks) {
+        this->m_enableTweaks = enableTweaks;
+    }
+    bool IsEnableTweaks() const {
+        return m_enableTweaks;
+    }
     const ProjectTweaks& GetProjectTweaks(const wxString &project) const;
     void UpdateProject(const ProjectTweaks& pt);
     void DeleteProject(const wxString& pt);

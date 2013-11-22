@@ -3,6 +3,7 @@
 #include "event_notifier.h"
 #include "TweaksSettingsDlg.h"
 #include "editor_config.h"
+#include "workspace.h"
 
 static Tweaks* thePlugin = NULL;
 
@@ -96,24 +97,34 @@ void Tweaks::OnSettings(wxCommandEvent& e)
 
 void Tweaks::OnColourTab(clColourEvent& e)
 {
-    IEditor* editor = FindEditorByPage( e.GetPage() );
-    if ( !editor || editor->GetProjectName().IsEmpty() ) {
+    if ( !m_settings.IsEnableTweaks() || !WorkspaceST::Get()->IsOpen() ) {
         e.Skip();
-
+        return;
+    }
+    
+    IEditor* editor = FindEditorByPage( e.GetPage() );
+    if ( !editor ) {
+        e.Skip();
+    
     } else {
-        const ProjectTweaks& tw = m_settings.GetProjectTweaks( editor->GetProjectName() );
-        if ( tw.IsOk() ) {
-            if ( e.IsActiveTab() ) {
-                e.SetBgColour( EditorConfigST::Get()->GetCurrentOutputviewBgColour() );
-                e.SetFgColour( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
-
-            } else {
+        if ( e.IsActiveTab() ) {
+            e.SetBgColour( EditorConfigST::Get()->GetCurrentOutputviewBgColour() );
+            e.SetFgColour( EditorConfigST::Get()->GetCurrentOutputviewFgColour() );
+            
+        } else {
+            const ProjectTweaks& tw = m_settings.GetProjectTweaks( editor->GetProjectName() );
+            if ( tw.IsOk() ) {
                 e.SetBgColour( tw.GetTabBgColour() );
                 e.SetFgColour( tw.GetTabFgColour() );
                 
+            } else if ( m_settings.GetGlobalBgColour().IsOk() && m_settings.GetGlobalFgColour().IsOk() ) {
+                e.SetBgColour( m_settings.GetGlobalBgColour() );
+                e.SetFgColour( m_settings.GetGlobalFgColour() );
+                
+            } else {
+                e.Skip();
             }
-        } else {
-            e.Skip();
+            
         }
     }
 }

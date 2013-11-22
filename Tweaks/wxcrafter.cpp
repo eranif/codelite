@@ -25,19 +25,59 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
+    m_checkBox78 = new wxCheckBox(this, wxID_ANY, _("Enable Tweaks"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBox78->SetValue(false);
+    
+    boxSizer2->Add(m_checkBox78, 0, wxALL, 5);
+    
     m_notebook12 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     
     boxSizer2->Add(m_notebook12, 1, wxALL|wxEXPAND, 5);
     
+    m_panel62 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook12->AddPage(m_panel62, _("Global"), false);
+    
+    boxSizer64 = new wxBoxSizer(wxVERTICAL);
+    m_panel62->SetSizer(boxSizer64);
+    
+    staticBoxSizer76 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Tab Colours")), wxVERTICAL);
+    
+    boxSizer64->Add(staticBoxSizer76, 0, wxALL|wxEXPAND, 5);
+    
+    flexGridSizer66 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer66->SetFlexibleDirection( wxBOTH );
+    flexGridSizer66->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer66->AddGrowableCol(1);
+    
+    staticBoxSizer76->Add(flexGridSizer66, 0, wxEXPAND, 5);
+    
+    m_staticText68 = new wxStaticText(m_panel62, wxID_ANY, _("File background colour:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer66->Add(m_staticText68, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_colourPickerGlobalBG = new wxColourPickerCtrl(m_panel62, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    m_colourPickerGlobalBG->SetToolTip(_("Set the global tab background colour"));
+    
+    flexGridSizer66->Add(m_colourPickerGlobalBG, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText72 = new wxStaticText(m_panel62, wxID_ANY, _("File foreground colour:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer66->Add(m_staticText72, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_colourPickerGlobalFG = new wxColourPickerCtrl(m_panel62, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1,-1), wxCLRP_DEFAULT_STYLE);
+    m_colourPickerGlobalFG->SetToolTip(_("Set the global tab text colour"));
+    
+    flexGridSizer66->Add(m_colourPickerGlobalFG, 0, wxALL|wxEXPAND, 5);
+    
     m_panel14 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook12->AddPage(m_panel14, _("Customize Project"), false);
+    m_notebook12->AddPage(m_panel14, _("Customize"), false);
     
     boxSizer16 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(boxSizer16);
     
     m_banner22 = new wxBannerWindow(m_panel14, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner22->SetBitmap(wxNullBitmap);
-    m_banner22->SetText(_("Setup colours"), _("Setup different colour for various project elements"));
+    m_banner22->SetText(_("Setup colours"), _("Set a different tab colour per project"));
     m_banner22->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
     m_banner22->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
     
@@ -71,17 +111,13 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_button6 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer4->Add(m_button6, 0, wxALL, 5);
-    
-    m_button8 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button8 = new wxButton(this, wxID_OK, _("&Close"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_button8->SetDefault();
     m_button8->SetFocus();
     
-    boxSizer4->Add(m_button8, 0, wxALL, 5);
+    boxSizer4->Add(m_button8, 0, wxALL|wxALIGN_RIGHT, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -89,6 +125,11 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     }
     Centre(wxBOTH);
     // Connect events
+    m_checkBox78->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnEnableTweaks), NULL, this);
+    m_checkBox78->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksCheckboxUI), NULL, this);
+    m_notebook12->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksUI), NULL, this);
+    m_colourPickerGlobalBG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(TweaksSettingsDlgBase::OnGlobalBgColourChanged), NULL, this);
+    m_colourPickerGlobalFG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(TweaksSettingsDlgBase::OnGlobalFgColourChanged), NULL, this);
     m_dvListCtrlProjects->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnWorkspaceOpenUI), NULL, this);
     m_dvListCtrlProjects->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(TweaksSettingsDlgBase::OnItemActivated), NULL, this);
     m_button30->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnAddProject), NULL, this);
@@ -102,6 +143,11 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
 
 TweaksSettingsDlgBase::~TweaksSettingsDlgBase()
 {
+    m_checkBox78->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnEnableTweaks), NULL, this);
+    m_checkBox78->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksCheckboxUI), NULL, this);
+    m_notebook12->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksUI), NULL, this);
+    m_colourPickerGlobalBG->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(TweaksSettingsDlgBase::OnGlobalBgColourChanged), NULL, this);
+    m_colourPickerGlobalFG->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler(TweaksSettingsDlgBase::OnGlobalFgColourChanged), NULL, this);
     m_dvListCtrlProjects->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnWorkspaceOpenUI), NULL, this);
     m_dvListCtrlProjects->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(TweaksSettingsDlgBase::OnItemActivated), NULL, this);
     m_button30->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnAddProject), NULL, this);

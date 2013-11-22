@@ -10,6 +10,7 @@
 
 TweaksSettings::TweaksSettings()
     : clConfigItem(TWEAKS_CONF_FILE)
+    , m_enableTweaks(false)
 {
 }
 
@@ -20,6 +21,10 @@ TweaksSettings::~TweaksSettings()
 void TweaksSettings::FromJSON(const JSONElement& json)
 {
     m_projects.clear();
+    m_globalBgColour = json.namedObject("m_globalBgColour").toColour();
+    m_globalFgColour = json.namedObject("m_globalFgColour").toColour();
+    m_enableTweaks = json.namedObject("m_enableTweaks").toBool(false);
+    
     JSONElement arr = json.namedObject("projects");
     int size = arr.arraySize();
     for(int i=0; i<size; ++i) {
@@ -32,6 +37,10 @@ void TweaksSettings::FromJSON(const JSONElement& json)
 JSONElement TweaksSettings::ToJSON() const
 {
     JSONElement e = JSONElement::createObject(GetName());
+    
+    e.addProperty("m_globalBgColour", m_globalBgColour);
+    e.addProperty("m_globalFgColour", m_globalFgColour);
+    e.addProperty("m_enableTweaks", m_enableTweaks);
     JSONElement arr = JSONElement::createArray("projects");
     e.append( arr );
     

@@ -78,10 +78,10 @@ void TweaksSettingsDlg::OnDelete(wxCommandEvent& event)
 {
     wxDataViewItem sel = m_dvListCtrlProjects->GetSelection();
     CHECK_ITEM_RET(sel);
-    
+
     wxVariant value;
     m_dvListCtrlProjects->GetValue(value, m_dvListCtrlProjects->ItemToRow(sel), 0);
-    
+
     int answer = ::wxMessageBox(wxString() << _("Are you sure you want to delete tweaks for the project '") << value.GetString() << "' ? ", _("Confirm"), wxICON_QUESTION|wxYES_NO|wxCANCEL|wxCENTER, this);
     if ( answer == wxYES ) {
         TweaksSettings settings;
@@ -96,7 +96,7 @@ void TweaksSettingsDlg::DoPopulateList()
 {
     TweaksSettings settings;
     settings.Load();
-        
+
     m_dvListCtrlProjects->DeleteAllItems();
     ProjectTweaks::Map_t::const_iterator iter = settings.GetProjects().begin();
     for( ; iter != settings.GetProjects().end(); ++iter ) {
@@ -104,4 +104,41 @@ void TweaksSettingsDlg::DoPopulateList()
         cols.push_back( iter->first );
         m_dvListCtrlProjects->AppendItem(cols);
     }
+    m_colourPickerGlobalBG->SetColour( settings.GetGlobalBgColour() );
+    m_colourPickerGlobalFG->SetColour( settings.GetGlobalFgColour() );
+    m_checkBox78->SetValue( settings.IsEnableTweaks() );
+}
+
+void TweaksSettingsDlg::OnGlobalBgColourChanged(wxColourPickerEvent& event)
+{
+    TweaksSettings settings;
+    settings.Load();
+    settings.SetGlobalBgColour( event.GetColour() );
+    settings.Save();
+}
+
+void TweaksSettingsDlg::OnGlobalFgColourChanged(wxColourPickerEvent& event)
+{
+    TweaksSettings settings;
+    settings.Load();
+    settings.SetGlobalFgColour( event.GetColour() );
+    settings.Save();
+}
+
+void TweaksSettingsDlg::OnEnableTweaks(wxCommandEvent& event)
+{
+    TweaksSettings settings;
+    settings.Load();
+    settings.SetEnableTweaks( event.IsChecked() );
+    settings.Save();
+}
+
+void TweaksSettingsDlg::OnEnableTweaksUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_checkBox78->IsChecked() && WorkspaceST::Get()->IsOpen() );
+}
+
+void TweaksSettingsDlg::OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event)
+{
+    event.Enable( WorkspaceST::Get()->IsOpen() );
 }

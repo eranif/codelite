@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	78,
+		"m_objCounter":	82,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC94E6InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_tweaks_bitmaps.cpp",
@@ -375,7 +375,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"bool",
 											"m_label":	"Null Page",

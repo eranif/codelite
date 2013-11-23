@@ -28,25 +28,17 @@
 class TweaksSettingsDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer2;
     wxCheckBox* m_checkBox78;
     wxNotebook* m_notebook12;
     wxPanel* m_panel62;
-    wxBoxSizer* boxSizer64;
-    wxStaticBoxSizer* staticBoxSizer76;
-    wxFlexGridSizer* flexGridSizer66;
     wxStaticText* m_staticText68;
     wxColourPickerCtrl* m_colourPickerGlobalBG;
     wxStaticText* m_staticText72;
     wxColourPickerCtrl* m_colourPickerGlobalFG;
-    wxStaticBoxSizer* staticBoxSizer80;
-    wxBoxSizer* boxSizer24;
     wxDataViewListCtrl* m_dvListCtrlProjects;
-    wxBoxSizer* boxSizer28;
     wxButton* m_button30;
     wxButton* m_button54;
     wxButton* m_button60;
-    wxBoxSizer* boxSizer4;
     wxButton* m_button8;
 
 protected:
@@ -71,15 +63,12 @@ public:
 class ProjectColoursDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer36;
-    wxFlexGridSizer* flexGridSizer44;
     wxStaticText* m_staticText56;
     wxChoice* m_choiceProject;
     wxStaticText* m_staticText50;
     wxColourPickerCtrl* m_colourPickerTabBG;
     wxStaticText* m_staticText46;
     wxColourPickerCtrl* m_colourPickerTabFG;
-    wxBoxSizer* boxSizer38;
     wxButton* m_button40;
     wxButton* m_button42;
 

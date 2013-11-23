@@ -22,7 +22,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_checkBox78 = new wxCheckBox(this, wxID_ANY, _("Enable Tweaks"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -35,16 +35,16 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     boxSizer2->Add(m_notebook12, 1, wxALL|wxEXPAND, 5);
     
     m_panel62 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook12->AddPage(m_panel62, _("Editor Tabs"), false);
+    m_notebook12->AddPage(m_panel62, _("Editor Tabs"), true);
     
-    boxSizer64 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
     m_panel62->SetSizer(boxSizer64);
     
-    staticBoxSizer76 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Global Tab Colours:")), wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer76 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Global Tab Colours:")), wxVERTICAL);
     
     boxSizer64->Add(staticBoxSizer76, 0, wxALL|wxEXPAND, 5);
     
-    flexGridSizer66 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer66 = new wxFlexGridSizer(  0, 2, 0, 0);
     flexGridSizer66->SetFlexibleDirection( wxBOTH );
     flexGridSizer66->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer66->AddGrowableCol(1);
@@ -69,11 +69,11 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer66->Add(m_colourPickerGlobalFG, 0, wxALL|wxEXPAND, 5);
     
-    staticBoxSizer80 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Tab Colours Per Project:")), wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer80 = new wxStaticBoxSizer( new wxStaticBox(m_panel62, wxID_ANY, _("Tab Colours Per Project:")), wxVERTICAL);
     
     boxSizer64->Add(staticBoxSizer80, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer24 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer24 = new wxBoxSizer(wxHORIZONTAL);
     
     staticBoxSizer80->Add(boxSizer24, 1, wxEXPAND, 5);
     
@@ -82,7 +82,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     boxSizer24->Add(m_dvListCtrlProjects, 1, wxALL|wxEXPAND, 5);
     
     m_dvListCtrlProjects->AppendTextColumn(_("Project"), wxDATAVIEW_CELL_INERT, 250, wxALIGN_LEFT);
-    boxSizer28 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer28 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer24->Add(boxSizer28, 0, wxEXPAND, 5);
     
@@ -99,7 +99,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer28->Add(m_button60, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_RIGHT, 5);
     
@@ -159,10 +159,10 @@ ProjectColoursDlgBase::ProjectColoursDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    boxSizer36 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
-    flexGridSizer44 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer44 = new wxFlexGridSizer(  0, 2, 0, 0);
     flexGridSizer44->SetFlexibleDirection( wxBOTH );
     flexGridSizer44->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer44->AddGrowableCol(1);
@@ -197,7 +197,7 @@ ProjectColoursDlgBase::ProjectColoursDlgBase(wxWindow* parent, wxWindowID id, co
     
     flexGridSizer44->Add(m_colourPickerTabFG, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer38 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer38 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer36->Add(boxSizer38, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

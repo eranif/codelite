@@ -62,6 +62,7 @@
 #include <wx/treectrl.h>
 #include "drawingutils.h"
 #include <wx/richmsgdlg.h>
+#include "cl_command_event.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -182,11 +183,11 @@ FileViewTree::~FileViewTree()
     EventNotifier::Get()->Disconnect(wxEVT_CMD_BUILD_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnBuildProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_CLEAN_PROJECT_ONLY, wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     
-    delete m_folderMenu;
-    delete m_projectMenu;
-    delete m_fileMenu;
-    delete m_workspaceMenu;
-    delete m_emptyTreeMenu;
+    wxDELETE(m_folderMenu);
+    wxDELETE(m_projectMenu);
+    wxDELETE(m_fileMenu);
+    wxDELETE(m_workspaceMenu);
+    wxDELETE(m_emptyTreeMenu);
 }
 
 void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
@@ -282,9 +283,17 @@ int FileViewTree::GetIconIndex( const ProjectItem &item )
     BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
     int icondIndex( bmpLoader->GetMimeImageId(FileExtManager::TypeText) );
     switch ( item.GetKind() ) {
-    case ProjectItem::TypeProject:
-        icondIndex = PROJECT_IMG_IDX;
+    case ProjectItem::TypeProject: {
+        // Allow the plugins to set a different icon for the project
+        clCommandEvent evt(wxEVT_PROJECT_ICON);
+        evt.SetString( item.GetDisplayName() ); // the project name
+        if ( EventNotifier::Get()->ProcessEvent( evt ) ) {
+            icondIndex = evt.GetInt();
+        } else {
+            icondIndex = PROJECT_IMG_IDX;
+        }
         break;
+    }
     case ProjectItem::TypeVirtualDirectory:
         icondIndex = FOLDER_IMG_IDX;
         break;
@@ -322,10 +331,10 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
             parentHti = items.find( parentKey )->second;
         }
 
-        wxTreeItemId hti = AppendItem(	parentHti,							// parent
-                                        node->GetData().GetDisplayName(),	// display name
-                                        GetIconIndex( node->GetData() ),		// item image index
-                                        GetIconIndex( node->GetData() ),		// selected item image
+        wxTreeItemId hti = AppendItem(  parentHti,                          // parent
+                                        node->GetData().GetDisplayName(),   // display name
+                                        GetIconIndex( node->GetData() ),    // item image index
+                                        GetIconIndex( node->GetData() ),    // selected item image
                                         new FilewViewTreeItemData( node->GetData() ) );
         if ( IsFileExcludedFromBuild(hti) ) {
             SetItemTextColour(hti, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );

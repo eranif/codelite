@@ -535,6 +535,14 @@ enum MenuType {
 // colour. The colours (*plural*) should be passed using the 'event.SetFgColour()' and 'event.SetBgColour()'
 #define wxEVT_COLOUR_TAB 3543
 
+// Event type: clCommandEvent
+// Sent by codelite when it is about to set an icon to a project in file view
+// avoid calling event.Skip() to notify codelite that the plugin wants to place a sepcial icon index
+// Pass back the icon index using event.SetInt()
+// NOTE: the image list should be manipulated by the plugin before to contains the correct index (look at the "Tweaks" plugin for 
+// an example of how to use this)
+#define wxEVT_PROJECT_ICON 3544
+
 //------------------------------------------------------------------
 //each plugin must implement this interface
 //------------------------------------------------------------------

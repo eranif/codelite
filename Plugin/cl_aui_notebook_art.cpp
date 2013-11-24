@@ -130,8 +130,12 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     wxRect rr (in_rect.GetTopLeft(), sz);
     rr.y += 2;
     rr.width -= 2;
+#ifdef __WXGTK__
     rr.height += 8;
-    
+#else
+    rr.height += 4;
+#endif
+
     /// the tab start position (x)
     curx = rr.x + 8;
     

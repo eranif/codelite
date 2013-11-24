@@ -169,7 +169,6 @@ FileViewTree::FileViewTree( wxWindow *parent, const wxWindowID id, const wxPoint
     PROJECT_IMG_IDX        = bmpLoader->GetMimeImageId(FileExtManager::TypeProject);
 
     AssignImageList( images );
-
     Connect( GetId(), wxEVT_LEFT_DCLICK, wxMouseEventHandler( FileViewTree::OnMouseDblClick ) );
     Connect( GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler( FileViewTree::OnItemActivated ) );
     EventNotifier::Get()->Connect(wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), NULL, this);
@@ -211,6 +210,15 @@ void FileViewTree::Create( wxWindow *parent, const wxWindowID id, const wxPoint&
 void FileViewTree::BuildTree()
 {
     wxWindowUpdateLocker locker(this);
+    clCommandEvent event(wxEVT_WORKSPACE_VIEW_BUILD_STARTING);
+    if ( EventNotifier::Get()->ProcessEvent(event)) {
+        // User wishes to replace the icons
+        wxImageList* imgList = reinterpret_cast<wxImageList*>( event.GetClientData() );
+        if ( imgList ) {
+            AssignImageList( imgList );
+        }
+    }
+
     DeleteAllItems();
     long flags = GetWindowStyle();
     SetWindowStyle( flags | wxTR_MULTIPLE );
@@ -283,17 +291,9 @@ int FileViewTree::GetIconIndex( const ProjectItem &item )
     BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
     int icondIndex( bmpLoader->GetMimeImageId(FileExtManager::TypeText) );
     switch ( item.GetKind() ) {
-    case ProjectItem::TypeProject: {
-        // Allow the plugins to set a different icon for the project
-        clCommandEvent evt(wxEVT_PROJECT_ICON);
-        evt.SetString( item.GetDisplayName() ); // the project name
-        if ( EventNotifier::Get()->ProcessEvent( evt ) ) {
-            icondIndex = evt.GetInt();
-        } else {
-            icondIndex = PROJECT_IMG_IDX;
-        }
+    case ProjectItem::TypeProject:
+        icondIndex = PROJECT_IMG_IDX;
         break;
-    }
     case ProjectItem::TypeVirtualDirectory:
         icondIndex = FOLDER_IMG_IDX;
         break;

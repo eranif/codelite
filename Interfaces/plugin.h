@@ -536,12 +536,11 @@ enum MenuType {
 #define wxEVT_COLOUR_TAB 3543
 
 // Event type: clCommandEvent
-// Sent by codelite when it is about to set an icon to a project in file view
-// avoid calling event.Skip() to notify codelite that the plugin wants to place a sepcial icon index
-// Pass back the icon index using event.SetInt()
-// NOTE: the image list should be manipulated by the plugin before to contains the correct index (look at the "Tweaks" plugin for 
-// an example of how to use this)
-#define wxEVT_PROJECT_ICON 3544
+// Sent by codelite before it starts building the "Workspsace View" tree view.
+// User may provide a different image list by placing it inside the event
+// event.SetClientData() member and avoid calling event.Skip() (so codelite will know that
+// a new wxImageList is provided)
+#define wxEVT_WORKSPACE_VIEW_BUILD_STARTING 3544
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

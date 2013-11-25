@@ -25,14 +25,14 @@ void testColorLocals()
 int main()
 {
     char *buf = loadFile("../Debug/test.h");
-    testPureLexer( buf );
+    //testPureLexer( buf );
     //print the scope name
     //testScopeParser(buf);
     //testVarParser(buf);
     //testExprParser(buf);
     //testFuncParser(buf);
     //testTypedefParser(buf);
-    //testIsPrimitive(buf);
+    testIsPrimitive(buf);
     free(buf);
 }
 

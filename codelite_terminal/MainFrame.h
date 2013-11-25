@@ -37,7 +37,7 @@ protected:
     void OnSelectFgColour(wxCommandEvent &e);
     void OnSignal(wxCommandEvent &e);
 
-    void DoExecuteCurrentLine();
+    void DoExecuteCurrentLine(const wxString &command = wxEmptyString);
     wxString GetCurrentLine() const;
     void SetCartAtEnd();
     void AppendNewLine();

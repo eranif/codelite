@@ -137,18 +137,21 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void MainFrame::DoExecuteCurrentLine()
+void MainFrame::DoExecuteCurrentLine(const wxString &command)
 {
     bool async = false;
-    wxString cmd = GetCurrentLine();
+    wxString cmd = command.IsEmpty() ? GetCurrentLine() : command;
     cmd.Trim().Trim(false);
     if ( cmd.EndsWith("&") ) {
         // Run in the background
         cmd.RemoveLast();
         async = true;
     }
-
-    AppendNewLine();
+    
+    if ( command.IsEmpty() ) {
+        AppendNewLine();
+    }
+    
     if ( cmd.IsEmpty() ) {
         SetCartAtEnd();
         return;
@@ -256,8 +259,8 @@ void MainFrame::StopTTY()
 void MainFrame::DoExecStartCommand()
 {
     if ( !m_options.GetCommand().IsEmpty() ) {
-        m_stc->AppendText( m_options.GetCommand() );
-        DoExecuteCurrentLine();
+        //m_stc->AppendText( m_options.GetCommand() );
+        DoExecuteCurrentLine(m_options.GetCommand());
     }
 }
 

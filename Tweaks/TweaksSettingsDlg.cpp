@@ -104,8 +104,14 @@ void TweaksSettingsDlg::DoPopulateList()
         cols.push_back( iter->first );
         m_dvListCtrlProjects->AppendItem(cols);
     }
-    m_colourPickerGlobalBG->SetColour( settings.GetGlobalBgColour() );
-    m_colourPickerGlobalFG->SetColour( settings.GetGlobalFgColour() );
+    wxColour bgcol = settings.GetGlobalBgColour();
+    if (bgcol.IsOk()) {
+        m_colourPickerGlobalBG->SetColour(bgcol);
+    }
+    wxColour fgcol = settings.GetGlobalFgColour();
+    if (fgcol.IsOk()) {
+        m_colourPickerGlobalFG->SetColour(fgcol);
+    }
     m_checkBox78->SetValue( settings.IsEnableTweaks() );
 }
 

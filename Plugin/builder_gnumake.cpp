@@ -143,7 +143,27 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
     PRINT_TIMESTAMP(_("Reading project dependencies...\n"));
     wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
     PRINT_TIMESTAMP(_("Reading project dependencies...done\n"));
-
+    
+    // Filter all disabled projects from the dependencies array
+    wxArrayString updatedDepsArr;
+    for(size_t i=0; i<depsArr.GetCount(); ++i) {
+        wxString errmsg;
+        ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errmsg);
+        if (!dependProj) {
+            continue;
+        }
+        
+        wxString projectSelConf = WorkspaceST::Get()->GetBuildMatrix()->GetProjectSelectedConf(WorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName(), 
+                                                                                               dependProj->GetName());
+        BuildConfigPtr dependProjbldConf = WorkspaceST::Get()->GetProjBuildConf(dependProj->GetName(), projectSelConf);
+        if ( dependProjbldConf && dependProjbldConf->IsProjectEnabled() ) {
+            updatedDepsArr.Add( depsArr.Item(i) );
+        }
+    }
+    
+    // Update the dependencies with the correct list
+    depsArr.swap( updatedDepsArr );
+    
     wxArrayString removeList;
     if (!isProjectOnly) {
         //this function assumes that the working directory is located at the workspace path
@@ -208,7 +228,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
     wxArrayString depsProjs;
     if (!isProjectOnly) {
-        for (size_t i=0; i<depsArr.GetCount(); i++) {
+        for (size_t i=0; i<depsArr.GetCount(); ++i) {
             bool isCustom(false);
             ProjectPtr dependProj = WorkspaceST::Get()->FindProjectByName(depsArr.Item(i), errMsg);
             if (!dependProj) {
@@ -226,7 +246,12 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
             if (confToBuild.IsEmpty() == false) {
                 dependProj->SetModified( true );
             }
-
+            
+            if ( !dependProjbldConf->IsProjectEnabled() ) {
+                // Ignore disabled projects
+                continue;
+            }
+            
             text << wxT("\t@echo \"") << wxGetTranslation(BUILD_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ") << projectSelConf << wxT(" ]----------\"\n");
             // make the paths relative, if it's sensible to do so
             wxFileName fn(dependProj->GetFileName());

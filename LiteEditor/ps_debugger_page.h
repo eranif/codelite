@@ -42,6 +42,7 @@ class PSDebuggerPage : public PSDebuggerPageBase, public IProjectSettingsPage
     ProjectSettingsDlg *m_dlg;
 
 protected:
+    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
     virtual void OnAddDebuggerSearchPath(wxCommandEvent& event);
     virtual void OnDeleteDebuggerSearchPath(wxCommandEvent& event);
@@ -52,7 +53,7 @@ protected:
     void OnCmdEvtVModified( wxCommandEvent& event );
     void OnRemoteDebugUI( wxUpdateUIEvent& event );
     void DoAddPath(wxStringClientData* path);
-    
+
 public:
     /** Constructor */
     PSDebuggerPage( wxWindow* parent, ProjectSettingsDlg* dlg );

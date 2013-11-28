@@ -140,6 +140,7 @@ private:
     bool              m_clangC11;
     wxArrayString     m_debuggerSearchPaths;
     bool              m_isGUIProgram;
+    bool              m_isProjectEnabled;
 
 public:
     BuildConfig(wxXmlNode *node);
@@ -151,6 +152,12 @@ public:
     // Setters / Getters
     //--------------------------------
 
+    void SetIsProjectEnabled(bool isProjectEnabled) {
+        this->m_isProjectEnabled = isProjectEnabled;
+    }
+    bool IsProjectEnabled() const {
+        return m_isProjectEnabled;
+    }
     void SetIsGUIProgram(bool isGUIProgram) {
         this->m_isGUIProgram = isGUIProgram;
     }

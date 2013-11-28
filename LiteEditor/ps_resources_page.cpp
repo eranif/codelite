@@ -81,3 +81,8 @@ void PSResourcesPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event)
 {
     event.Enable( !m_dlg->IsCustomBuildEnabled() );
 }
+
+void PSResourcesPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dlg->IsProjectEnabled() );
+}

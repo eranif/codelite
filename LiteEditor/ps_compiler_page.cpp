@@ -103,7 +103,7 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
     buildConf->SetUseSeparatePCHFlags(m_checkBoxSeparatePCHFlags->IsChecked());
     buildConf->SetPchCompileFlags(m_textCtrlPCHCompilationFlags->GetValue());
     buildConf->SetAssmeblerOptions(m_textCtrlAssemblerOptions->GetValue());
-    
+
     wxString useWithGlobalSettings = m_choiceCmpUseWithGlobalSettings->GetStringSelection();
     if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
         buildConf->SetBuildCmpWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
@@ -146,4 +146,14 @@ void PSCompilerPage::OnEnablePCHFLagsUI(wxUpdateUIEvent& event)
     bool compiledIsRequired  = m_checkCompilerNeeded->IsChecked();
     bool useSeparatePCHFlags = m_checkBoxSeparatePCHFlags->IsChecked();
     event.Enable(!customIsEnabled && !compiledIsRequired && useSeparatePCHFlags);
+}
+
+void PSCompilerPage::OnButtonAddAssemblerOptions(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+}
+
+void PSCompilerPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dlg->IsProjectEnabled() );
 }

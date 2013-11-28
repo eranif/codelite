@@ -125,16 +125,16 @@ void PSDebuggerPage::OnItemActivated(wxDataViewEvent& event)
 {
     wxVariant value;
     m_dvListCtrlDebuggerSearchPaths->GetValue(value, m_dvListCtrlDebuggerSearchPaths->ItemToRow(event.GetItem()), 0);
-    
+
     if ( !value.IsNull() ) {
-        
+
         wxString path = value.GetString();
         path = ::wxDirSelector(_("Select a folder"), path);
-        
+
         if ( !path.IsEmpty() ) {
             m_dvListCtrlDebuggerSearchPaths->DeleteItem( m_dvListCtrlDebuggerSearchPaths->ItemToRow(event.GetItem()) );
             ::PostCall(this, (clEventFunc_t) &PSDebuggerPage::DoAddPath, new wxStringClientData(path));
-            
+
         }
     }
 }
@@ -145,4 +145,9 @@ void PSDebuggerPage::DoAddPath(wxStringClientData* path)
     cols.push_back( path->GetData() );
     m_dvListCtrlDebuggerSearchPaths->AppendItem(cols, (wxUIntPtr)NULL);
     m_dlg->SetIsDirty(true);
+}
+
+void PSDebuggerPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable( m_dlg->IsProjectEnabled() );
 }

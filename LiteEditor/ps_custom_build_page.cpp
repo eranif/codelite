@@ -194,7 +194,7 @@ void PSCustomBuildPage::Load(BuildConfigPtr buildConf)
     std::map<wxString, wxString> targets = buildConf->GetCustomTargets();
     std::map<wxString, wxString>::iterator titer = targets.begin();
     for (; titer != targets.end(); titer++) {
-        
+
         if ( ProjectCustomBuildTragetDlg::IsPredefinedTarget( titer->first ) )
             continue;
 
@@ -236,4 +236,8 @@ void PSCustomBuildPage::Clear()
     m_checkEnableCustomBuild->SetValue(false);
     m_listCtrlTargets->DeleteAllItems();
     m_textCtrlCustomBuildWD->ChangeValue(wxT("$(WorkspacePath)"));
+}
+void PSCustomBuildPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dlg->IsProjectEnabled());
 }

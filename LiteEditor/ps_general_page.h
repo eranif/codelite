@@ -47,6 +47,8 @@ class PSGeneralPage : public PSGeneralPageBase, public IProjectSettingsPage
     StringManager m_stringManager;
 
 protected:
+    virtual void OnEnableProject(wxCommandEvent& event);
+    virtual void OnConfigurationEnabledUI(wxUpdateUIEvent& event);
     wxString DoGetWorkingDirectory();
 
 protected:

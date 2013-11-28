@@ -45,6 +45,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
     , m_useSeparatePCHFlags(false)
     , m_clangC11(false)
     , m_isGUIProgram(false)
+    , m_isProjectEnabled(true)
 {
     if ( node ) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
@@ -237,6 +238,7 @@ BuildConfig::BuildConfig(wxXmlNode *node)
             m_useSeparateDebugArgs  = XmlUtils::ReadBool  (general, wxT("UseSeparateDebugArgs"), false);
             m_debugArgs             = XmlUtils::ReadString(general, wxT("DebugArguments"));
             m_isGUIProgram          = XmlUtils::ReadBool  (general, "IsGUIProgram", false);
+            m_isProjectEnabled      = XmlUtils::ReadBool( general, "IsEnabled", true);
         }
 
     } else {
@@ -340,6 +342,7 @@ wxXmlNode *BuildConfig::ToXml() const
     general->AddProperty(wxT("WorkingDirectory"), m_workingDirectory);
     general->AddProperty(wxT("PauseExecWhenProcTerminates"), BoolToString(m_pauseWhenExecEnds));
     general->AddProperty("IsGUIProgram", BoolToString(m_isGUIProgram));
+    general->AddProperty("IsEnabled", BoolToString(m_isProjectEnabled));
     
     node->AddChild(general);
 

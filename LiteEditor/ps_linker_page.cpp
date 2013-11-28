@@ -98,3 +98,8 @@ void PSLinkerPage::OnProjectCustumBuildUI(wxUpdateUIEvent& event)
 {
     event.Enable( !m_dlg->IsCustomBuildEnabled() );
 }
+
+void PSLinkerPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dlg->IsProjectEnabled());
+}

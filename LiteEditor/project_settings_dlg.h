@@ -99,6 +99,7 @@ class ProjectSettingsDlg : public ProjectSettingsBaseDlg
     wxString  m_configName;
     bool      m_isDirty;
     bool      m_isCustomBuild;
+    bool      m_isProjectEnabled;
 
 protected:
     void SaveValues();
@@ -110,6 +111,12 @@ protected:
 
 public:
     virtual void OnButtonCancel(wxCommandEvent& event);
+    void SetIsProjectEnabled(bool isProjectEnabled) {
+        this->m_isProjectEnabled = isProjectEnabled;
+    }
+    bool IsProjectEnabled() const {
+        return m_isProjectEnabled;
+    }
     bool IsCustomBuildEnabled() const {
         return m_isCustomBuild;
     }
@@ -137,7 +144,7 @@ public:
     const wxString& GetProjectName() const {
         return m_projectName;
     }
-    
+
     DECLARE_EVENT_TABLE()
 
     virtual void OnButtonApply(wxCommandEvent &event);

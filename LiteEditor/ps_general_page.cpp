@@ -16,7 +16,7 @@ PSGeneralPage::PSGeneralPage( wxWindow* parent, const wxString &projectName, con
 
 void PSGeneralPage::OnProjectCustumBuildUI( wxUpdateUIEvent& event )
 {
-    event.Enable(!m_dlg->IsCustomBuildEnabled());
+    event.Enable(!m_dlg->IsCustomBuildEnabled() && !m_checkBoxDisableProject->IsChecked());
 }
 
 void PSGeneralPage::OnCmdEvtVModified( wxCommandEvent& event )
@@ -147,7 +147,8 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_checkBoxUseDebugArgs->SetValue(buildConf->GetUseSeparateDebugArgs());
     m_textCtrlDebugArgs->SetValue(buildConf->GetDebugArgs());
     m_checkBoxGUI->SetValue( buildConf->IsGUIProgram() );
-
+    m_checkBoxDisableProject->SetValue( !buildConf->IsProjectEnabled() );
+    m_dlg->SetIsProjectEnabled( buildConf->IsProjectEnabled() );
 }
 
 void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -167,6 +168,7 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
     buildConf->SetUseSeparateDebugArgs(m_checkBoxUseDebugArgs->IsChecked());
     buildConf->SetDebugArgs(m_textCtrlDebugArgs->GetValue());
     buildConf->SetIsGUIProgram( m_checkBoxGUI->IsChecked() );
+    buildConf->SetIsProjectEnabled( !m_checkBoxDisableProject->IsChecked() );
 }
 
 void PSGeneralPage::Clear()
@@ -181,7 +183,7 @@ void PSGeneralPage::Clear()
 
 void PSGeneralPage::OnUseDebugArgsUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_checkBoxUseDebugArgs->IsChecked());
+    event.Enable(m_checkBoxUseDebugArgs->IsChecked() && !m_checkBoxDisableProject->IsChecked());
 }
 
 wxString PSGeneralPage::DoGetWorkingDirectory()
@@ -189,4 +191,14 @@ wxString PSGeneralPage::DoGetWorkingDirectory()
     wxString expr = m_textCtrlCommandWD->GetValue();
     expr = ::ExpandAllVariables(expr, WorkspaceST::Get(), m_projectName, m_configName, wxEmptyString);
     return expr;
+}
+
+void PSGeneralPage::OnConfigurationEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !m_checkBoxDisableProject->IsChecked() );
+}
+void PSGeneralPage::OnEnableProject(wxCommandEvent& event)
+{
+    m_dlg->SetIsProjectEnabled( !event.IsChecked() );
+    OnCmdEvtVModified(event);
 }

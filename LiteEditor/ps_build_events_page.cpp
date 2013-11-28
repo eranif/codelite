@@ -72,3 +72,7 @@ void PSBuildEventsPage::Clear()
 {
     m_textCtrlBuildEvents->Clear();
 }
+void PSBuildEventsPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dlg->IsProjectEnabled());
+}

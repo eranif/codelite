@@ -67,6 +67,7 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &config
     , m_configName(configName)
     , m_isDirty(false)
     , m_isCustomBuild(false)
+    , m_isProjectEnabled(true)
 {
     DoGetAllBuildConfigs();
     MSWSetNativeTheme( m_treebook->GetTreeCtrl() );

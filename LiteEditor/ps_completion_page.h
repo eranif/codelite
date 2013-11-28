@@ -42,6 +42,7 @@ class ProjectSettingsDlg;
 class PSCompletionPage : public PSCompletionBase, public IProjectSettingsPage
 {
 protected:
+    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
     ProjectSettingsDlg* m_dlg;
     bool                m_ccSettingsModified;
 

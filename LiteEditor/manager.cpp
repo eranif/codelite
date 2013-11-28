@@ -3074,7 +3074,7 @@ void Manager::DoCmdWorkspace ( int cmd )
     for ( size_t i=0; i<projects.GetCount(); i++ ) {
         ProjectPtr p = GetProject ( projects.Item ( i ) );
         BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf ( projects.Item ( i ), wxEmptyString );
-        if ( p && buildConf ) {
+        if ( p && buildConf && buildConf->IsProjectEnabled()) {
             wxArrayString deps = p->GetDependencies ( buildConf->GetName() );
             for ( size_t j=0; j<deps.GetCount(); j++ ) {
                 // add a project only if it does not exist yet
@@ -3092,7 +3092,7 @@ void Manager::DoCmdWorkspace ( int cmd )
     // add a build/clean project only command for every project in the optimized list
     for ( size_t i=0; i<optimizedList.GetCount(); i++ ) {
         BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf ( optimizedList.Item ( i ), wxEmptyString );
-        if ( buildConf ) {
+        if ( buildConf  && buildConf->IsProjectEnabled() ) {
             QueueCommand bi ( optimizedList.Item ( i ), buildConf->GetName(), true, cmd );
             if ( buildConf->IsCustomBuild() ) {
                 bi.SetKind ( QueueCommand::CustomBuild );

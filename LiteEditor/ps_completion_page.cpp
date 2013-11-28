@@ -57,3 +57,7 @@ void PSCompletionPage::OnBrowsePCH(wxCommandEvent& event)
 //        OnCmdEvtVModified(event);
 //    }
 }
+void PSCompletionPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dlg->IsProjectEnabled());
+}

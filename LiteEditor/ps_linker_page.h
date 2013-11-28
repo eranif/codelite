@@ -41,27 +41,28 @@ class PSGeneralPage;
 /** Implementing PSLinkPageBase */
 class PSLinkerPage : public PSLinkPageBase, public IProjectSettingsPage
 {
-	ProjectSettingsDlg *m_dlg;
-	PSGeneralPage*      m_gp;
+    ProjectSettingsDlg *m_dlg;
+    PSGeneralPage*      m_gp;
 
 protected:
-	// Handlers for PSLinkPageBase events.
-	void OnCheckLinkerNeeded( wxCommandEvent& event );
-	void OnLinkerNotNeededUI( wxUpdateUIEvent& event );
-	void OnCmdEvtVModified( wxCommandEvent& event );
-	void OnButtonAddLinkerOptions( wxCommandEvent& event );
-	void OnAddLibraryPath( wxCommandEvent& event );
-	void OnAddLibrary( wxCommandEvent& event );
-	void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
+    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    // Handlers for PSLinkPageBase events.
+    void OnCheckLinkerNeeded( wxCommandEvent& event );
+    void OnLinkerNotNeededUI( wxUpdateUIEvent& event );
+    void OnCmdEvtVModified( wxCommandEvent& event );
+    void OnButtonAddLinkerOptions( wxCommandEvent& event );
+    void OnAddLibraryPath( wxCommandEvent& event );
+    void OnAddLibrary( wxCommandEvent& event );
+    void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
 
 public:
-	/** Constructor */
-	PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneralPage *gp );
-	//// end generated class members
+    /** Constructor */
+    PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneralPage *gp );
+    //// end generated class members
 
-	virtual void Load(BuildConfigPtr buildConf);
-	virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
-	virtual void Clear();
+    virtual void Load(BuildConfigPtr buildConf);
+    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    virtual void Clear();
 
 };
 

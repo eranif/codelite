@@ -42,32 +42,34 @@ class PSGeneralPage;
 /** Implementing PSCompilerPageBase */
 class PSCompilerPage : public PSCompilerPageBase, public IProjectSettingsPage
 {
-	ProjectSettingsDlg *m_dlg;
-	wxString            m_projectName;
-	PSGeneralPage *     m_gp;
+    ProjectSettingsDlg *m_dlg;
+    wxString            m_projectName;
+    PSGeneralPage *     m_gp;
 
 protected:
-	// Handlers for PSCompilerPageBase events.
-	void OnCheckCompilerNeeded( wxCommandEvent& event );
-	void OnCompiledNotNeededUI( wxUpdateUIEvent& event );
-	void OnCmdEvtVModified( wxCommandEvent& event );
-	void OnButtonAddCompilerOptions( wxCommandEvent& event );
-	void OnAddSearchPath( wxCommandEvent& event );
-	void OnButtonAddPreprocessor( wxCommandEvent& event );
-	void OnBrowsePreCmpHeader( wxCommandEvent& event );
-	void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
-	void OnButtonAddCCompilerOptions(wxCommandEvent& event);
-	void OnEnablePCHFLagsUI(wxUpdateUIEvent& event);
+    virtual void OnButtonAddAssemblerOptions(wxCommandEvent& event);
+    virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
+    // Handlers for PSCompilerPageBase events.
+    void OnCheckCompilerNeeded( wxCommandEvent& event );
+    void OnCompiledNotNeededUI( wxUpdateUIEvent& event );
+    void OnCmdEvtVModified( wxCommandEvent& event );
+    void OnButtonAddCompilerOptions( wxCommandEvent& event );
+    void OnAddSearchPath( wxCommandEvent& event );
+    void OnButtonAddPreprocessor( wxCommandEvent& event );
+    void OnBrowsePreCmpHeader( wxCommandEvent& event );
+    void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
+    void OnButtonAddCCompilerOptions(wxCommandEvent& event);
+    void OnEnablePCHFLagsUI(wxUpdateUIEvent& event);
 
 
 public:
-	/** Constructor */
-	PSCompilerPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp );
-	//// end generated class members
+    /** Constructor */
+    PSCompilerPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp );
+    //// end generated class members
 
-	virtual void Load(BuildConfigPtr buildConf);
-	virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
-	virtual void Clear();
+    virtual void Load(BuildConfigPtr buildConf);
+    virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
+    virtual void Clear();
 };
 
 #endif // __ps_compiler_page__

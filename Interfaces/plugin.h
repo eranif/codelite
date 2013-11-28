@@ -542,6 +542,20 @@ enum MenuType {
 // a new wxImageList is provided)
 #define wxEVT_WORKSPACE_VIEW_BUILD_STARTING 3544
 
+// Event type: clColourEvent
+// Sent by codelite adding a project item to the file-view ("Workspace View"). Use event.GetString() to get the project name
+// User may alter the following attributes:
+// . Project item background colour
+// . Project item text colour
+// . Project icon
+// The image id is returned as INT event.SetInt()
+// Avoid calling event.Skip() to notify codelite that a new attributes were provided
+// IMPORTANT:
+// codelite will not check the validity of the icon index. Its up to the plugin to provide a proper
+// index image. One can use the event wxEVT_WORKSPACE_VIEW_BUILD_STARTING to replace the default
+// image list with its own list
+#define wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT 3545
+
 //------------------------------------------------------------------
 //each plugin must implement this interface
 //------------------------------------------------------------------

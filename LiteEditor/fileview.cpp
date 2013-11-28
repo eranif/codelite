@@ -330,7 +330,23 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
                 continue;
             parentHti = items.find( parentKey )->second;
         }
-
+        
+        // Allow plugins to customize the project icon/colours
+        int projectIconIndex = wxNOT_FOUND;
+        if ( node->GetData().GetKind() == ProjectItem::TypeProject ) {
+            clColourEvent event(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT);
+            event.SetEventObject(this);
+            // set the project name
+            event.SetString( node->GetData().GetDisplayName() ); 
+            if ( EventNotifier::Get()->ProcessEvent( event ) ) {
+                projectIconIndex = event.GetInt();
+            } else {
+                projectIconIndex = GetIconIndex(node->GetData());
+            }
+        } else {
+            projectIconIndex = GetIconIndex(node->GetData());
+        }
+        
         wxTreeItemId hti = AppendItem(  parentHti,                          // parent
                                         node->GetData().GetDisplayName(),   // display name
                                         GetIconIndex( node->GetData() ),    // item image index

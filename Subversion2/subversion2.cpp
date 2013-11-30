@@ -151,7 +151,7 @@ Subversion2::Subversion2(IManager *manager)
     GetManager()->GetTheApp()->Connect(XRCID("svn_explorer_lock"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnLockFile),          NULL, this);
     GetManager()->GetTheApp()->Connect(XRCID("svn_workspace_sync"),               wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSync),              NULL, this);
 
-    EventNotifier::Get()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine),         NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, clBuildEventHandler(Subversion2::OnGetCompileLine),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,    wxCommandEventHandler(Subversion2::OnWorkspaceConfigChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED,           wxCommandEventHandler(Subversion2::OnFileRemoved),            NULL, this);
 }
@@ -289,7 +289,7 @@ void Subversion2::UnPlug()
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_ignore_file_pattern"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnIgnoreFilePattern), NULL, this);
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_set_as_view"),         wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSelectAsView),      NULL, this);
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_workspace_sync"),                wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Subversion2::OnSync),              NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, wxCommandEventHandler(Subversion2::OnGetCompileLine), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, clBuildEventHandler(Subversion2::OnGetCompileLine), NULL, this);
 
     m_subversionView->DisconnectEvents();
 
@@ -790,7 +790,7 @@ void Subversion2::Blame(wxCommandEvent& event, const wxArrayString& files)
     m_blameCommand.Execute(command, wxT(""), new SvnBlameHandler(this, event.GetId(), this), this);
 }
 
-void Subversion2::OnGetCompileLine(wxCommandEvent& event)
+void Subversion2::OnGetCompileLine(clBuildEvent& event)
 {
     if ( !(GetSettings().GetFlags() & SvnExposeRevisionMacro) )
         return;
@@ -807,11 +807,11 @@ void Subversion2::OnGetCompileLine(wxCommandEvent& event)
     SvnInfo svnInfo;
     DoGetSvnInfoSync(svnInfo, workingDirectory);
 
-    wxString content = event.GetString();
+    wxString content = event.GetCommand();
     content << wxT(" -D");
     content << macroName << wxT("=\\\"");
     content << svnInfo.m_revision << wxT("\\\" ");
-    event.SetString( content );
+    event.SetCommand( content );
     event.Skip();
 }
 

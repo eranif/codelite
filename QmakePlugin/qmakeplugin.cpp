@@ -57,12 +57,12 @@ QMakePlugin::QMakePlugin(IManager *manager)
 
     //Connect items
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(QMakePlugin::OnSaveConfig     ),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING,           wxCommandEventHandler(QMakePlugin::OnBuildStarting  ),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_GET_PROJECT_BUILD_CMD,    wxCommandEventHandler(QMakePlugin::OnGetBuildCommand),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_GET_PROJECT_CLEAN_CMD,    wxCommandEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING,           clBuildEventHandler(QMakePlugin::OnBuildStarting  ),     NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_GET_PROJECT_BUILD_CMD,    clBuildEventHandler(QMakePlugin::OnGetBuildCommand),     NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_GET_PROJECT_CLEAN_CMD,    clBuildEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile),            NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PLUGIN_EXPORT_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnExportMakefile),      NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PLUGIN_EXPORT_MAKEFILE,   clBuildEventHandler(QMakePlugin::OnExportMakefile),      NULL, this);
 }
 
 QMakePlugin::~QMakePlugin()
@@ -131,11 +131,12 @@ void QMakePlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 void QMakePlugin::UnPlug()
 {
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(QMakePlugin::OnSaveConfig     ),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING,           wxCommandEventHandler(QMakePlugin::OnBuildStarting  ),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_PROJECT_BUILD_CMD,    wxCommandEventHandler(QMakePlugin::OnGetBuildCommand),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_PROJECT_CLEAN_CMD,    wxCommandEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   wxCommandEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING,           clBuildEventHandler(QMakePlugin::OnBuildStarting  ),     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_GET_PROJECT_BUILD_CMD,    clBuildEventHandler(QMakePlugin::OnGetBuildCommand),     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_GET_PROJECT_CLEAN_CMD,    clBuildEventHandler(QMakePlugin::OnGetCleanCommand),     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_GET_IS_PLUGIN_MAKEFILE,   clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED, wxCommandEventHandler(QMakePlugin::OnOpenFile),            NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PLUGIN_EXPORT_MAKEFILE,   clBuildEventHandler(QMakePlugin::OnExportMakefile),      NULL, this);
     wxTheApp->Disconnect(XRCID("new_qmake_project"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject), NULL, (wxEvtHandler*)this);
     wxTheApp->Disconnect(XRCID("qmake_settings"), wxEVT_COMMAND_MENU_SELECTED,    wxCommandEventHandler(QMakePlugin::OnSettings), NULL, (wxEvtHandler*)this);
 }
@@ -213,16 +214,14 @@ void QMakePlugin::OnSettings(wxCommandEvent& event)
     dlg.ShowModal();
 }
 
-void QMakePlugin::OnBuildStarting(wxCommandEvent& event)
+void QMakePlugin::OnBuildStarting(clBuildEvent& event)
 {
     // call Skip() to allow the standard compilation to take place
     event.Skip();
 
     QmakePluginData::BuildConfPluginData bcpd;
-
-    wxString *cd = (wxString *)event.GetClientData();
-    wxString  project = *cd;
-    wxString  config  = event.GetString();
+    wxString  project = event.GetProjectName();
+    wxString  config  = event.GetConfigurationName();
 
     if ( !DoGetData(project, config, bcpd) ) {
         return;
@@ -279,13 +278,12 @@ bool QMakePlugin::DoGetData(const wxString& project, const wxString& conf, Qmake
     return false;
 }
 
-void QMakePlugin::OnGetCleanCommand(wxCommandEvent& event)
+void QMakePlugin::OnGetCleanCommand(clBuildEvent& event)
 {
     QmakePluginData::BuildConfPluginData bcpd;
 
-    wxString *cd = (wxString *)event.GetClientData();
-    wxString  project = *cd;
-    wxString  config  = event.GetString();
+    wxString  project = event.GetProjectName();
+    wxString  config  = event.GetConfigurationName();
 
     if ( !DoGetData(project, config, bcpd) ) {
         event.Skip();
@@ -297,16 +295,15 @@ void QMakePlugin::OnGetCleanCommand(wxCommandEvent& event)
         return;
     }
 
-    event.SetString( DoGetBuildCommand(project, config, event.GetInt() == 1) + wxT(" clean") );
+    event.SetCommand( DoGetBuildCommand(project, config, event.IsProjectOnly()) + wxT(" clean") );
 }
 
-void QMakePlugin::OnGetBuildCommand(wxCommandEvent& event)
+void QMakePlugin::OnGetBuildCommand(clBuildEvent& event)
 {
     QmakePluginData::BuildConfPluginData bcpd;
 
-    wxString *cd = (wxString *)event.GetClientData();
-    wxString  project = *cd;
-    wxString  config  = event.GetString();
+    wxString  project = event.GetProjectName();
+    wxString  config  = event.GetConfigurationName();
 
     if ( !DoGetData(project, config, bcpd) ) {
         event.Skip();
@@ -319,16 +316,15 @@ void QMakePlugin::OnGetBuildCommand(wxCommandEvent& event)
     }
 
     // we avoid calling event.Skip() to override the default build system by this one
-    event.SetString( DoGetBuildCommand(project, config, event.GetInt() == 1) );
+    event.SetCommand( DoGetBuildCommand(project, config, event.IsProjectOnly()) );
 }
 
-void QMakePlugin::OnGetIsPluginMakefile(wxCommandEvent& event)
+void QMakePlugin::OnGetIsPluginMakefile(clBuildEvent& event)
 {
     QmakePluginData::BuildConfPluginData bcpd;
 
-    wxString *cd = (wxString *)event.GetClientData();
-    wxString  project = *cd;
-    wxString  config  = event.GetString();
+    wxString project = event.GetProjectName();
+    wxString config  = event.GetConfigurationName();
 
     if ( !DoGetData(project, config, bcpd) ) {
         event.Skip();
@@ -480,13 +476,12 @@ void QMakePlugin::OnOpenFile(wxCommandEvent &event)
     event.Skip();
 }
 
-void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
+void QMakePlugin::OnExportMakefile(clBuildEvent& event)
 {
     QmakePluginData::BuildConfPluginData bcpd;
 
-    wxString *cd = (wxString *)event.GetClientData();
-    wxString  project = *cd;
-    wxString  config  = event.GetString();
+    wxString  project = event.GetProjectName();
+    wxString  config  = event.GetConfigurationName();
 
     if ( !DoGetData(project, config, bcpd) ) {
         event.Skip();

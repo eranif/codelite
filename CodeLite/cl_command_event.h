@@ -189,4 +189,52 @@ typedef void (wxEvtHandler::*clColourEventFunction)(clColourEvent&);
 #define clColourEventHandler(func) \
     wxEVENT_HANDLER_CAST(clColourEventFunction, func)
 
+// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
+class WXDLLIMPEXP_CL clBuildEvent : public clCommandEvent
+{
+    wxString m_projectName;
+    wxString m_configurationName;
+    wxString m_command;
+    bool     m_projectOnly;
+
+public:
+    clBuildEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clBuildEvent(const clBuildEvent& event);
+    clBuildEvent& operator=(const clBuildEvent& src);
+    virtual ~clBuildEvent();
+    virtual wxEvent *Clone() const {
+        return new clBuildEvent(*this);
+    };
+
+    void SetProjectOnly(bool projectOnly) {
+        this->m_projectOnly = projectOnly;
+    }
+    bool IsProjectOnly() const {
+        return m_projectOnly;
+    }
+    void SetCommand(const wxString& command) {
+        this->m_command = command;
+    }
+    const wxString& GetCommand() const {
+        return m_command;
+    }
+    void SetConfigurationName(const wxString& configurationName) {
+        this->m_configurationName = configurationName;
+    }
+    void SetProjectName(const wxString& projectName) {
+        this->m_projectName = projectName;
+    }
+    const wxString& GetConfigurationName() const {
+        return m_configurationName;
+    }
+    const wxString& GetProjectName() const {
+        return m_projectName;
+    }
+};
+
+typedef void (wxEvtHandler::*clBuildEventFunction)(clBuildEvent&);
+#define clBuildEventHandler(func) \
+    wxEVENT_HANDLER_CAST(clBuildEventFunction, func)
+
 #endif // CLCOMMANDEVENT_H

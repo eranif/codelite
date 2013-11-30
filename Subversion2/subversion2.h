@@ -32,6 +32,7 @@
 #include "svncommand.h"
 #include "svnsettingsdata.h"
 #include "project.h"
+#include "cl_command_event.h"
 
 class SubversionView;
 class SvnConsole;
@@ -85,7 +86,7 @@ protected:
     ///////////////////////////////////////////////////////////
     // IDE events
     ///////////////////////////////////////////////////////////
-    void OnGetCompileLine        (wxCommandEvent &event);
+    void OnGetCompileLine        (clBuildEvent &event);
     void OnWorkspaceConfigChanged(wxCommandEvent &event);
     void OnFileRemoved           (wxCommandEvent &event);
 

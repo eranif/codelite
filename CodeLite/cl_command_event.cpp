@@ -20,6 +20,10 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_strings.insert(m_strings.end(), src.m_strings.begin(), src.m_strings.end());
     m_fileName = src.m_fileName;
     m_answer = src.m_answer;
+    
+    // need to copy these 2 manually
+    m_eventType = src.m_eventType;
+    m_id = src.m_id;
     return *this;
 }
 
@@ -89,7 +93,10 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     return *this;
 }
 
+// ------------------------------------------------
 // clColourEvent
+// ------------------------------------------------
+
 clColourEvent::clColourEvent(const clColourEvent& event)
 {
     *this = event;
@@ -114,5 +121,35 @@ clColourEvent& clColourEvent::operator=(const clColourEvent& src)
     m_fgColour    = src.m_fgColour;
     m_page        = src.m_page;
     m_isActiveTab = src.m_isActiveTab;
+    return *this;
+}
+
+// ------------------------------------------------
+// clBuildEvent
+// ------------------------------------------------
+
+clBuildEvent::clBuildEvent(const clBuildEvent& event)
+{
+    *this = event;
+}
+
+clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+    , m_projectOnly(false)
+{
+}
+
+clBuildEvent::~clBuildEvent()
+{
+}
+
+clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
+{
+    // Call parent operator =
+    clCommandEvent::operator=(src);
+    m_projectName = src.m_projectName;
+    m_configurationName = src.m_configurationName;
+    m_command = src.m_command;
+    m_projectOnly = src.m_projectOnly;
     return *this;
 }

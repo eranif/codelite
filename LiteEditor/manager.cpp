@@ -193,7 +193,6 @@ Manager::Manager ( void )
     Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED,  wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, wxCommandEventHandler(Manager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
 }
 
@@ -3699,11 +3698,6 @@ bool Manager::DbgCanInteract()
     }
 
     return m_dbgCanInteract;
-}
-
-void Manager::OnBuildEnded(wxCommandEvent& e)
-{
-    e.Skip();
 }
 
 void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)

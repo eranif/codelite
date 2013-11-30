@@ -337,10 +337,11 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
 
     // make it invalid
     m_curError = m_errorsAndWarningsList.begin();
-    
     CL_DEBUG("Posting wxEVT_BUILD_ENDED event");
-    // notify the plugins that the build had started
-    PostCmdEvent(wxEVT_BUILD_ENDED);
+    
+    // notify the plugins that the build has ended
+    clBuildEvent buildEvent(wxEVT_BUILD_ENDED);
+    EventNotifier::Get()->AddPendingEvent( buildEvent );
 }
 
 void NewBuildTab::OnBuildStarted(clCommandEvent& e)
@@ -395,9 +396,15 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
         ManagerST::Get()->HidePane(opane->GetName());
     }
     m_sw.Start();
-
-    // notify the plugins that the build had started
-    PostCmdEvent(wxEVT_BUILD_STARTED);
+    
+    BuildEventDetails* bed = dynamic_cast<BuildEventDetails*>(e.GetClientObject());
+    if ( bed ) {
+        // notify the plugins that the build had started
+        clBuildEvent buildEvent(wxEVT_BUILD_STARTED);
+        buildEvent.SetProjectName( bed->GetProjectName() );
+        buildEvent.SetConfigurationName( bed->GetConfiguration() );
+        EventNotifier::Get()->AddPendingEvent( buildEvent );
+    }
 }
 
 void NewBuildTab::OnBuildAddLine(clCommandEvent& e)

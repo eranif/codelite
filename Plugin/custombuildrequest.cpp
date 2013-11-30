@@ -38,6 +38,7 @@
 #include "workspace.h"
 #include "plugin.h"
 #include "macros.h"
+#include "cl_command_event.h"
 
 #ifdef __WXMSW__
 #   define ECHO_CMD    wxT("@echo ")
@@ -78,11 +79,9 @@ void CustomBuildRequest::Process(IManager *manager)
     }
 
     // Notify plugins that a compile process is going to start
-    wxCommandEvent event(wxEVT_BUILD_STARTING);
-
-    wxString pname (proj->GetName());
-    event.SetClientData((void*)&pname);
-    event.SetString( m_info.GetConfiguration() );
+    clBuildEvent event(wxEVT_BUILD_STARTING);
+    event.SetProjectName(proj->GetName());
+    event.SetConfigurationName( m_info.GetConfiguration() );
 
     if (EventNotifier::Get()->ProcessEvent(event)) {
         // the build is being handled by some plugin, no need to build it

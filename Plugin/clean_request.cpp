@@ -38,6 +38,7 @@
 #include "dirsaver.h"
 #include "workspace.h"
 #include "plugin.h"
+#include "cl_command_event.h"
 
 CleanRequest::CleanRequest(const QueueCommand &info)
     : ShellCommand(info)
@@ -99,19 +100,18 @@ void CleanRequest::Process(IManager *manager)
     }
 
     // Notify plugins that a compile process is going to start
-    wxCommandEvent event(wxEVT_BUILD_STARTING);
-    event.SetClientData((void*)&pname);
-    event.SetString( m_info.GetConfiguration() );
-
+    clBuildEvent event(wxEVT_BUILD_STARTING);
+    event.SetProjectName( pname );
+    event.SetConfigurationName( m_info.GetConfiguration() );
+    
     if (EventNotifier::Get()->ProcessEvent(event)) {
-
         // the build is being handled by some plugin, no need to build it
         // using the standard way
         return;
     }
+    
     SendStartMsg();
-
-    //expand the variables of the command
+    // Expand the variables of the command
     cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
     WrapInShell(cmd);
     DirSaver ds;

@@ -39,6 +39,7 @@
 #include "workspace.h"
 #include "dirsaver.h"
 #include "plugin.h"
+#include "cl_command_event.h"
 
 CompileRequest::CompileRequest(const QueueCommand &buildInfo, const wxString &fileName, bool runPremakeOnly, bool preprocessOnly)
     : ShellCommand(buildInfo)
@@ -95,9 +96,9 @@ void CompileRequest::Process(IManager *manager)
     }
 
     // Notify plugins that a compile process is going to start
-    wxCommandEvent event(wxEVT_BUILD_STARTING);
-    event.SetClientData((void*)&pname);
-    event.SetString( m_info.GetConfiguration() );
+    clBuildEvent event(wxEVT_BUILD_STARTING);
+    event.SetProjectName(pname);
+    event.SetConfigurationName( m_info.GetConfiguration() );
 
     if (EventNotifier::Get()->ProcessEvent(event)) {
 

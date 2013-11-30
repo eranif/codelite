@@ -35,6 +35,7 @@
 #include "clang_driver.h"
 #include "clang_output_parser_api.h"
 #include <set>
+#include "cl_command_event.h"
 
 class IEditor;
 class IManager;
@@ -99,8 +100,8 @@ protected:
     void OnAllEditorsClosing(wxCommandEvent &e);
     void OnAllEditorsClosed(wxCommandEvent &e);
 
-    void OnBuildStarting(wxCommandEvent &e);
-    void OnBuildEnded(wxCommandEvent &e);
+    void OnBuildStarting(clBuildEvent &e);
+    void OnBuildEnded(clBuildEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
 
 private:

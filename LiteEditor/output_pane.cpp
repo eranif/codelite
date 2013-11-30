@@ -56,8 +56,8 @@ OutputPane::OutputPane(wxWindow *parent, const wxString &caption)
 {
     CreateGUIControls();
     EventNotifier::Get()->Connect ( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
-    EventNotifier::Get()->Connect ( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
-    EventNotifier::Get()->Connect ( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_BUILD_STARTED ,  clBuildEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+    EventNotifier::Get()->Connect ( wxEVT_BUILD_ENDED ,    clBuildEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
     SetSize(-1, 250);
 }
 
@@ -65,8 +65,8 @@ OutputPane::~OutputPane()
 {
     delete wxLog::SetActiveTarget(m_logTargetOld);
     EventNotifier::Get()->Disconnect( wxEVT_EDITOR_CLICKED , wxCommandEventHandler ( OutputPane::OnEditorFocus  ), NULL, this );
-    EventNotifier::Get()->Disconnect( wxEVT_BUILD_STARTED ,  wxCommandEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
-    EventNotifier::Get()->Disconnect( wxEVT_BUILD_ENDED ,    wxCommandEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_BUILD_STARTED ,  clBuildEventHandler ( OutputPane::OnBuildStarted ), NULL, this );
+    EventNotifier::Get()->Disconnect( wxEVT_BUILD_ENDED ,    clBuildEventHandler ( OutputPane::OnBuildEnded   ), NULL, this );
 }
 
 void OutputPane::CreateGUIControls()
@@ -142,13 +142,13 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
     }
 }
 
-void OutputPane::OnBuildStarted(wxCommandEvent& e)
+void OutputPane::OnBuildStarted(clBuildEvent& e)
 {
     e.Skip();
     m_buildInProgress = true;
 }
 
-void OutputPane::OnBuildEnded(wxCommandEvent& e)
+void OutputPane::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
     m_buildInProgress = false;

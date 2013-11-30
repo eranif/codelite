@@ -28,6 +28,7 @@
 #include <wx/panel.h>
 
 #include "shelltab.h"
+#include "cl_command_event.h"
 
 class FindResultsTab;
 #if CL_USE_NEW_BUILD_TAB
@@ -60,65 +61,81 @@ class FindUsageTab;
 class OutputPane : public wxPanel
 {
 public:
-	static const wxString FIND_IN_FILES_WIN;
-	static const wxString BUILD_WIN;
-	static const wxString OUTPUT_WIN;
-	static const wxString OUTPUT_DEBUG;
-	static const wxString REPLACE_IN_FILES;
-	static const wxString TASKS;
-	static const wxString TRACE_TAB;
-	static const wxString SHOW_USAGE;
-	
-private:
-	wxString m_caption;
-	wxLog   *m_logTargetOld;
+    static const wxString FIND_IN_FILES_WIN;
+    static const wxString BUILD_WIN;
+    static const wxString OUTPUT_WIN;
+    static const wxString OUTPUT_DEBUG;
+    static const wxString REPLACE_IN_FILES;
+    static const wxString TASKS;
+    static const wxString TRACE_TAB;
+    static const wxString SHOW_USAGE;
 
-	Notebook              *m_book;
-	FindResultsTab        *m_findResultsTab;
-	ReplaceInFilesPanel   *m_replaceResultsTab;
-	
-#if CL_USE_NEW_BUILD_TAB	
-	NewBuildTab           *m_buildWin;
+private:
+    wxString m_caption;
+    wxLog   *m_logTargetOld;
+
+    Notebook              *m_book;
+    FindResultsTab        *m_findResultsTab;
+    ReplaceInFilesPanel   *m_replaceResultsTab;
+
+#if CL_USE_NEW_BUILD_TAB
+    NewBuildTab           *m_buildWin;
 #else
-	BuildTab              *m_buildWin;
+    BuildTab              *m_buildWin;
 #endif
 
-	ShellTab              *m_outputWind;
-	TaskPanel             *m_taskPanel;
-	FindUsageTab          *m_showUsageTab;
-	bool                   m_buildInProgress;
-	
+    ShellTab              *m_outputWind;
+    TaskPanel             *m_taskPanel;
+    FindUsageTab          *m_showUsageTab;
+    bool                   m_buildInProgress;
+
 protected:
-	void CreateGUIControls();
-	void OnEditorFocus(wxCommandEvent &e);
-	void OnBuildStarted(wxCommandEvent &e);
-	void OnBuildEnded(wxCommandEvent &e);
-	
+    void CreateGUIControls();
+    void OnEditorFocus(wxCommandEvent &e);
+    void OnBuildStarted(clBuildEvent &e);
+    void OnBuildEnded(clBuildEvent &e);
+
 public:
-	/**
-	 * Constructor
-	 * \param parent parent window for this pane
-	 * \param caption the caption
-	 */
-	OutputPane(wxWindow *parent, const wxString &caption);
+    /**
+     * Constructor
+     * \param parent parent window for this pane
+     * \param caption the caption
+     */
+    OutputPane(wxWindow *parent, const wxString &caption);
 
-	/**
-	 * Destructor
-	 */
-	virtual ~OutputPane();
+    /**
+     * Destructor
+     */
+    virtual ~OutputPane();
 
-	Notebook       *GetNotebook()      { return m_book;    }
-	const wxString &     GetCaption () const { return m_caption; }
+    Notebook       *GetNotebook()      {
+        return m_book;
+    }
+    const wxString &     GetCaption () const {
+        return m_caption;
+    }
 
-	FindResultsTab        *GetFindResultsTab   () { return m_findResultsTab;    }
-	ReplaceInFilesPanel   *GetReplaceResultsTab() { return m_replaceResultsTab; }
+    FindResultsTab        *GetFindResultsTab   () {
+        return m_findResultsTab;
+    }
+    ReplaceInFilesPanel   *GetReplaceResultsTab() {
+        return m_replaceResultsTab;
+    }
 #if CL_USE_NEW_BUILD_TAB
-	NewBuildTab           *GetBuildTab         () { return m_buildWin;          }
+    NewBuildTab           *GetBuildTab         () {
+        return m_buildWin;
+    }
 #else
-	BuildTab              *GetBuildTab         () { return m_buildWin;          }
-#endif	
-	ShellTab              *GetOutputWindow     () { return m_outputWind;        }
-	FindUsageTab          *GetShowUsageTab     () { return m_showUsageTab;      }
+    BuildTab              *GetBuildTab         () {
+        return m_buildWin;
+    }
+#endif
+    ShellTab              *GetOutputWindow     () {
+        return m_outputWind;
+    }
+    FindUsageTab          *GetShowUsageTab     () {
+        return m_showUsageTab;
+    }
 };
 
 #endif // OUTPUT_PANE_H

@@ -40,8 +40,8 @@ ClangCodeCompletion::ClangCodeCompletion()
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,             wxCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING,         wxCommandEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED,            wxCommandEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING,         clBuildEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED,            clBuildEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,       wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed),   NULL, this);
 }
 
@@ -51,8 +51,8 @@ ClangCodeCompletion::~ClangCodeCompletion()
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,             wxCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING,         wxCommandEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED,            wxCommandEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING,         clBuildEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED,            clBuildEventHandler(ClangCodeCompletion::OnBuildEnded),        NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,       wxCommandEventHandler(ClangCodeCompletion::OnWorkspaceClosed),   NULL, this);
 }
 
@@ -182,7 +182,7 @@ void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
     m_clang.ReparseFile( fn.GetFullPath() );
 }
 
-void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
+void ClangCodeCompletion::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
     CHECK_CLANG_ENABLED_RET();
@@ -202,7 +202,7 @@ void ClangCodeCompletion::OnBuildEnded(wxCommandEvent& e)
     ClearCache();
 }
 
-void ClangCodeCompletion::OnBuildStarting(wxCommandEvent& e)
+void ClangCodeCompletion::OnBuildStarting(clBuildEvent& e)
 {
     e.Skip();
     CHECK_CLANG_ENABLED_RET();
@@ -216,9 +216,8 @@ void ClangCodeCompletion::OnBuildStarting(wxCommandEvent& e)
     ::wxSetEnv(wxT("CL_COMPILATION_DB"), cdb.GetFileName().GetFullPath());
 
     // If this is NOT a custom project, set the CXX and CC environment
-    wxString *cd = (wxString *)e.GetClientData();
-    wxString  project = *cd;
-    wxString  config  = e.GetString();
+    wxString  project = e.GetProjectName();
+    wxString  config  = e.GetConfigurationName();
     
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(project, config);
     if( bldConf && !bldConf->IsCustomBuild()) {

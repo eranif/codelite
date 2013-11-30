@@ -83,7 +83,9 @@ ProjectTweaks& TweaksSettings::GetProjectTweaks(const wxString& project)
 {
     if ( m_projects.count(project) == 0 ) {
         // add an entry
-        m_projects.insert( std::make_pair(project, ProjectTweaks()) );
+        ProjectTweaks pt;
+        pt.SetProjectName(project);
+        m_projects.insert( std::make_pair(project, pt) );
     }
     return m_projects.find( project )->second;
 }

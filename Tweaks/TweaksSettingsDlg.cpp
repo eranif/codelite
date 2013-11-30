@@ -62,8 +62,8 @@ void TweaksSettingsDlg::DoPopulateList()
             m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG, wxPG_LABEL, pt.GetTabBgColour() ));
             m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG, wxPG_LABEL, pt.GetTabFgColour() ));
         } else {
-            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG));
-            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG));
+            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG))->SetValueToUnspecified();
+            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG))->SetValueToUnspecified();
         }
     }
 }

@@ -1,28 +1,27 @@
 #ifndef TWEAKSSETTINGSDLG_H
 #define TWEAKSSETTINGSDLG_H
 #include "wxcrafter.h"
+#include "tweaks_settings.h"
 
 class TweaksSettingsDlg : public TweaksSettingsDlgBase
 {
+    TweaksSettings m_settings;
 public:
     TweaksSettingsDlg(wxWindow* parent);
     virtual ~TweaksSettingsDlg();
+    TweaksSettings& GetSettings() {
+        return m_settings;
+    }
 
 protected:
+    virtual void OnImageSelected(wxPropertyGridEvent& event);
+    virtual void OnColourChanged(wxPropertyGridEvent& event);
     virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event);
     virtual void OnEnableTweaks(wxCommandEvent& event);
     virtual void OnEnableTweaksUI(wxUpdateUIEvent& event);
-    virtual void OnGlobalBgColourChanged(wxColourPickerEvent& event);
-    virtual void OnGlobalFgColourChanged(wxColourPickerEvent& event);
-    virtual void OnDelete(wxCommandEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
-    virtual void OnEditUI(wxUpdateUIEvent& event);
-    virtual void OnEdit(wxCommandEvent& event);
-    virtual void OnAddProject(wxCommandEvent& event);
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
 
 protected:
-    bool IsExists(const wxString &projectName) const;
     void DoPopulateList();
 };
 #endif // TWEAKSSETTINGSDLG_H

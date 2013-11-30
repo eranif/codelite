@@ -17,69 +17,42 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
-#include <wx/statbox.h>
-#include <wx/stattext.h>
-#include <wx/clrpicker.h>
-#include <wx/dataview.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
 #include <wx/button.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
 
 class TweaksSettingsDlgBase : public wxDialog
 {
 protected:
-    wxCheckBox* m_checkBox78;
+    wxBoxSizer* boxSizer2;
+    wxCheckBox* m_checkBoxEnableTweaks;
     wxNotebook* m_notebook12;
     wxPanel* m_panel62;
-    wxStaticText* m_staticText68;
-    wxColourPickerCtrl* m_colourPickerGlobalBG;
-    wxStaticText* m_staticText72;
-    wxColourPickerCtrl* m_colourPickerGlobalFG;
-    wxDataViewListCtrl* m_dvListCtrlProjects;
-    wxButton* m_button30;
-    wxButton* m_button54;
-    wxButton* m_button60;
+    wxBoxSizer* boxSizer64;
+    wxPropertyGridManager* m_pgMgrTabColours;
+    wxPGProperty* m_pgProp114;
+    wxPGProperty* m_pgPropGlobalTabBG;
+    wxPGProperty* m_pgPropGlobalTabFG;
+    wxPGProperty* m_pgPropProjectsColours;
+    wxPanel* m_panel84;
+    wxBoxSizer* boxSizer241;
+    wxPropertyGridManager* m_pgMgr;
+    wxPGProperty* m_pgPropProjects;
+    wxBoxSizer* boxSizer4;
     wxButton* m_button8;
+    wxButton* m_button88;
 
 protected:
     virtual void OnEnableTweaks(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnGlobalBgColourChanged(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnGlobalFgColourChanged(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnAddProject(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEdit(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEditUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnColourChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnImageSelected(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
     TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Tweaks Setting"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~TweaksSettingsDlgBase();
-};
-
-
-class ProjectColoursDlgBase : public wxDialog
-{
-protected:
-    wxStaticText* m_staticText56;
-    wxChoice* m_choiceProject;
-    wxStaticText* m_staticText50;
-    wxColourPickerCtrl* m_colourPickerTabBG;
-    wxStaticText* m_staticText46;
-    wxColourPickerCtrl* m_colourPickerTabFG;
-    wxButton* m_button40;
-    wxButton* m_button42;
-
-protected:
-    virtual void OnProjectChanged(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    ProjectColoursDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Colours"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-    virtual ~ProjectColoursDlgBase();
 };
 
 #endif

@@ -10,6 +10,7 @@ class ProjectTweaks : public clConfigItem
     wxColour m_tabFgColour;
     wxColour m_tabBgColour;
     wxString m_projectName;
+    wxString m_bitmapFilename;
 
 public:
     typedef std::map<wxString, ProjectTweaks> Map_t;
@@ -20,8 +21,14 @@ public:
     ProjectTweaks();
     virtual ~ ProjectTweaks();
 
+    void SetBitmapFilename(const wxString& bitmapFilename) {
+        this->m_bitmapFilename = bitmapFilename;
+    }
+    const wxString& GetBitmapFilename() const {
+        return m_bitmapFilename;
+    }
     bool IsOk() const {
-        return !m_projectName.IsEmpty();
+        return !m_projectName.IsEmpty() && m_tabBgColour.IsOk() && m_tabFgColour.IsOk();
     }
     void SetTabBgColour(const wxColour& tabBgColour) {
         this->m_tabBgColour = tabBgColour;
@@ -49,7 +56,13 @@ class TweaksSettings : public clConfigItem
     wxColour             m_globalBgColour;
     wxColour             m_globalFgColour;
     bool                 m_enableTweaks;
-
+    size_t               m_flags;
+    
+public:
+    enum {
+        kDontPromptForProjectReload = 0x00000001
+    };
+    
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
@@ -60,7 +73,18 @@ public:
     TweaksSettings& Load();
     void Clear();
     void Save();
-
+    
+    bool HasFlag(int flag) const {
+        return m_flags & kDontPromptForProjectReload;
+    }
+    void EnableFlag(int flag, bool b) {
+        if ( b ) {
+            m_flags |= flag;
+        } else {
+            m_flags &= ~flag;
+        }
+    }
+    
     const ProjectTweaks::Map_t& GetProjects() const {
         return m_projects;
     }
@@ -87,6 +111,7 @@ public:
         return m_enableTweaks;
     }
     const ProjectTweaks& GetProjectTweaks(const wxString &project) const;
+    ProjectTweaks& GetProjectTweaks(const wxString &project);
     void UpdateProject(const ProjectTweaks& pt);
     void DeleteProject(const wxString& pt);
 };

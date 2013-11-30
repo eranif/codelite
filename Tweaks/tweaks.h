@@ -4,10 +4,14 @@
 #include "plugin.h"
 #include "cl_command_event.h"
 #include "tweaks_settings.h"
+#include <map>
 
 class Tweaks : public IPlugin
 {
+    typedef std::map<wxString, int> ProjectIconMap_t;
     TweaksSettings m_settings;
+    ProjectIconMap_t m_project2Icon;
+    
 protected:
     IEditor* FindEditorByPage( wxWindow* page );
     
@@ -29,6 +33,8 @@ public:
     void OnColourTab(clColourEvent& e);
     void OnWorkspaceLoaded(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
+    void OnFileViewBuildTree(clCommandEvent &e);
+    void OnCustomizeProject(clColourEvent &e);
 };
 
 #endif //Tweaks

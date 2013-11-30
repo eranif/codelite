@@ -319,6 +319,10 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 
     std::map<wxString, wxTreeItemId> items;
     for ( ; !walker.End(); walker++ ) {
+        
+        // Did we get the icon from a plugin?
+        bool iconFromPlugin = false;
+        
         // Add the item to the tree
         ProjectTreeNode* node = walker.GetNode();
         wxTreeItemId parentHti;
@@ -334,23 +338,16 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
         // Allow plugins to customize the project icon/colours
         int projectIconIndex = wxNOT_FOUND;
         if ( node->GetData().GetKind() == ProjectItem::TypeProject ) {
-            clColourEvent event(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT);
-            event.SetEventObject(this);
-            // set the project name
-            event.SetString( node->GetData().GetDisplayName() ); 
-            if ( EventNotifier::Get()->ProcessEvent( event ) ) {
-                projectIconIndex = event.GetInt();
-            } else {
-                projectIconIndex = GetIconIndex(node->GetData());
-            }
+            DoGetProjectIconIndex(node->GetData().GetDisplayName(), projectIconIndex, iconFromPlugin);
+            
         } else {
             projectIconIndex = GetIconIndex(node->GetData());
         }
         
         wxTreeItemId hti = AppendItem(  parentHti,                          // parent
                                         node->GetData().GetDisplayName(),   // display name
-                                        GetIconIndex( node->GetData() ),    // item image index
-                                        GetIconIndex( node->GetData() ),    // selected item image
+                                        projectIconIndex,    // item image index
+                                        projectIconIndex,    // selected item image
                                         new FilewViewTreeItemData( node->GetData() ) );
         if ( IsFileExcludedFromBuild(hti) ) {
             SetItemTextColour(hti, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
@@ -363,9 +360,11 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
 
         if ( parentHti == GetRootItem() && displayName == activeProjectName) {
             SetItemBold( hti );
-            SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX);
-            SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_Selected);
-            SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_SelectedExpanded);
+            if ( !iconFromPlugin ) {
+                SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX);
+                SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_Selected);
+                SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_SelectedExpanded);
+            }
         }
 
         items[node->GetKey()] = hti;
@@ -838,13 +837,17 @@ void FileViewTree::DoSetProjectActive( wxTreeItemId &item )
             // find previous active project and remove its bold style
             wxTreeItemIdValue cookie;
             wxTreeItemId child = GetFirstChild( GetRootItem(), cookie );
+            bool fromPlugin = false;
+            int iconIndex = wxNOT_FOUND;
             while ( child.IsOk() ) {
                 FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
                 if ( childData &&  childData->GetData().GetDisplayName() == curActiveProj ) {
+                    
+                    DoGetProjectIconIndex(childData->GetData().GetDisplayName(), iconIndex, fromPlugin);
                     SetItemBold( child, false );
-                    SetItemImage(child, PROJECT_IMG_IDX);
-                    SetItemImage(child, PROJECT_IMG_IDX, wxTreeItemIcon_Selected);
-                    SetItemImage(child, PROJECT_IMG_IDX, wxTreeItemIcon_SelectedExpanded);
+                    SetItemImage(child, iconIndex);
+                    SetItemImage(child, iconIndex, wxTreeItemIcon_Selected);
+                    SetItemImage(child, iconIndex, wxTreeItemIcon_SelectedExpanded);
                     break;
                 }
                 child = GetNextChild( GetRootItem(), cookie );
@@ -852,9 +855,10 @@ void FileViewTree::DoSetProjectActive( wxTreeItemId &item )
 
             ManagerST::Get()->SetActiveProject( data->GetData().GetDisplayName() );
             SetItemBold( item );
-            SetItemImage(item, ACTIVE_PROJECT_IMG_IDX);
-            SetItemImage(item, ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_Selected);
-            SetItemImage(item, ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_SelectedExpanded);
+            DoGetProjectIconIndex(data->GetData().GetDisplayName(), iconIndex, fromPlugin);
+            SetItemImage(item, fromPlugin ? iconIndex : ACTIVE_PROJECT_IMG_IDX);
+            SetItemImage(item, fromPlugin ? iconIndex : ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_Selected);
+            SetItemImage(item, fromPlugin ? iconIndex : ACTIVE_PROJECT_IMG_IDX, wxTreeItemIcon_SelectedExpanded);
         }
     }
 }
@@ -2320,5 +2324,21 @@ void FileViewTree::OnSelectionChanged(wxTreeEvent& e)
         wxCommandEvent evtProjectSelected(wxEVT_PROJECT_TREEITEM_CLICKED);
         evtProjectSelected.SetString( data->GetData().GetDisplayName() );
         EventNotifier::Get()->AddPendingEvent( evtProjectSelected );
+    }
+}
+
+void FileViewTree::DoGetProjectIconIndex(const wxString& projectName, int& iconIndex, bool& fromPlugin)
+{
+    fromPlugin = false;
+    clColourEvent event(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT);
+    event.SetEventObject(this);
+    // set the project name
+    event.SetString( projectName ); 
+    if ( EventNotifier::Get()->ProcessEvent( event ) ) {
+        iconIndex = event.GetInt();
+        fromPlugin = true;
+        
+    } else {
+        iconIndex = PROJECT_IMG_IDX;
     }
 }

@@ -11,6 +11,7 @@
 TweaksSettings::TweaksSettings()
     : clConfigItem(TWEAKS_CONF_FILE)
     , m_enableTweaks(false)
+    , m_flags(0)
 {
 }
 
@@ -24,6 +25,7 @@ void TweaksSettings::FromJSON(const JSONElement& json)
     m_globalBgColour = json.namedObject("m_globalBgColour").toColour();
     m_globalFgColour = json.namedObject("m_globalFgColour").toColour();
     m_enableTweaks = json.namedObject("m_enableTweaks").toBool(false);
+    m_flags = json.namedObject("m_flags").toSize_t();
     
     JSONElement arr = json.namedObject("projects");
     int size = arr.arraySize();
@@ -41,6 +43,7 @@ JSONElement TweaksSettings::ToJSON() const
     e.addProperty("m_globalBgColour", m_globalBgColour);
     e.addProperty("m_globalFgColour", m_globalFgColour);
     e.addProperty("m_enableTweaks", m_enableTweaks);
+    e.addProperty("m_flags", m_flags);
     JSONElement arr = JSONElement::createArray("projects");
     e.append( arr );
     
@@ -74,6 +77,15 @@ const ProjectTweaks& TweaksSettings::GetProjectTweaks(const wxString& project) c
     }
     static ProjectTweaks DUMMY;
     return DUMMY;
+}
+
+ProjectTweaks& TweaksSettings::GetProjectTweaks(const wxString& project)
+{
+    if ( m_projects.count(project) == 0 ) {
+        // add an entry
+        m_projects.insert( std::make_pair(project, ProjectTweaks()) );
+    }
+    return m_projects.find( project )->second;
 }
 
 void TweaksSettings::UpdateProject(const ProjectTweaks& pt)
@@ -112,13 +124,15 @@ void ProjectTweaks::FromJSON(const JSONElement& json)
     m_tabBgColour = json.namedObject("m_tabBgColour").toColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     m_tabFgColour = json.namedObject("m_tabFgColour").toColour(*wxBLACK);
     m_projectName = json.namedObject("m_projectName").toString();
+    m_bitmapFilename = json.namedObject("m_bitmapFilename").toString();
 }
 
 JSONElement ProjectTweaks::ToJSON() const
 {
     JSONElement e = JSONElement::createObject();
-    e.addProperty("m_tabFgColour", m_tabFgColour);
-    e.addProperty("m_tabBgColour", m_tabBgColour);
-    e.addProperty("m_projectName", m_projectName);
+    e.addProperty("m_tabFgColour",      m_tabFgColour);
+    e.addProperty("m_tabBgColour",      m_tabBgColour);
+    e.addProperty("m_projectName",      m_projectName);
+    e.addProperty("m_bitmapFilename",   m_bitmapFilename);
     return e;
 }

@@ -187,6 +187,7 @@ private:
     wxString GetItemPath(wxTreeItemId &item) const;
     bool IsFileExcludedFromBuild(const wxTreeItemId &item) const;
     
+    void DoGetProjectIconIndex(const wxString &projectName, int &iconIndex, bool &fromPlugin);
     bool DoAddNewItem(wxTreeItemId &item, const wxString &filename, const wxString &vdFullpath);
     void DoRemoveProject(const wxString &name);
     void DoSetProjectActive(wxTreeItemId &item);

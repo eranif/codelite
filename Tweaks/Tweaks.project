@@ -13,8 +13,6 @@
   <VirtualDirectory Name="UI">
     <File Name="TweaksSettingsDlg.h"/>
     <File Name="TweaksSettingsDlg.cpp"/>
-    <File Name="ProjectColoursDlg.h"/>
-    <File Name="ProjectColoursDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="wxcrafter.wxcp"/>
@@ -57,7 +55,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/Tweaks.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no"/>
+      <General OutputFile="$(ConfigurationName)/Tweaks.so" IntermediateDirectory="./DebugUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -110,7 +108,7 @@
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/Tweaks.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no"/>
+      <General OutputFile="$(ConfigurationName)/Tweaks.so" IntermediateDirectory="./ReleaseUnicode" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./ReleaseUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -157,14 +155,14 @@
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
+      <Linker Options="$(shell wx-config --debug=yes --libs std,stc,propgrid --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/Tweaks-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command="../../Runtime/codelite-dbg.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes"/>
+      <General OutputFile="$(ConfigurationName)/Tweaks-dbg.dll" IntermediateDirectory="./WinDebugUnicode" Command=".\codelite-dbg.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -213,14 +211,14 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc,propgrid --unicode=yes);-s" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/Tweaks.dll" IntermediateDirectory="./WinReleaseUnicode" Command=".\codelite.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes"/>
+      <General OutputFile="$(ConfigurationName)/Tweaks.dll" IntermediateDirectory="./WinReleaseUnicode" Command=".\codelite.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

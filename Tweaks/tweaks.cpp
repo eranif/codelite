@@ -9,6 +9,8 @@ static Tweaks* thePlugin = NULL;
 
 static int ID_TWEAKS_SETTINGS = ::wxNewId();
 
+#define TWEAKS_ENABLED_EVENT_HANDLER() if ( !m_settings.IsEnableTweaks() || !WorkspaceST::Get()->IsOpen() ) { e.Skip(); return; }
+
 //Define the plugin entry point
 extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 {
@@ -43,6 +45,8 @@ Tweaks::Tweaks(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
 }
 
 void Tweaks::UnPlug()
@@ -51,6 +55,8 @@ void Tweaks::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
 }
 
 Tweaks::~Tweaks()
@@ -88,19 +94,18 @@ void Tweaks::OnSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     TweaksSettingsDlg dlg( m_mgr->GetTheApp()->GetTopWindow() );
-    dlg.ShowModal();
-    m_settings.Load(); // Refresh our cached settings
+    if ( dlg.ShowModal() == wxID_OK ) {
+        dlg.GetSettings().Save();
+    }
     
+    m_settings.Load(); // Refresh our cached settings
     // Refresh the drawings
     m_mgr->GetTheApp()->GetTopWindow()->Refresh();
 }
 
 void Tweaks::OnColourTab(clColourEvent& e)
 {
-    if ( !m_settings.IsEnableTweaks() || !WorkspaceST::Get()->IsOpen() ) {
-        e.Skip();
-        return;
-    }
+    TWEAKS_ENABLED_EVENT_HANDLER();
     
     IEditor* editor = FindEditorByPage( e.GetPage() );
     if ( !editor ) {
@@ -145,4 +150,61 @@ void Tweaks::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     m_settings.Clear();
+    m_project2Icon.clear();
+}
+
+void Tweaks::OnFileViewBuildTree(clCommandEvent& e)
+{
+    TWEAKS_ENABLED_EVENT_HANDLER();
+    m_project2Icon.clear();
+    if ( m_settings.GetProjects().empty() ) {
+        e.Skip();
+        return;
+    }
+    
+    // See if we got a new image for a project
+    wxImageList *images = new wxImageList(16, 16);
+    wxImageList *old_images = m_mgr->GetTree(TreeFileView)->GetImageList();
+    
+    // Copy the old images to the new one
+    for(int i=0; i<old_images->GetImageCount(); ++i) {
+        images->Add( old_images->GetIcon(i) );
+    }
+    
+    ProjectTweaks::Map_t::const_iterator iter = m_settings.GetProjects().begin();
+    for(; iter != m_settings.GetProjects().end(); ++iter ) {
+        wxString bmpfile = iter->second.GetBitmapFilename();
+        bmpfile.Trim().Trim(false);
+        if ( bmpfile.IsEmpty() ) {
+            continue;
+        }
+        wxBitmap bmp(bmpfile, wxBITMAP_TYPE_ANY);
+        if ( bmp.IsOk() ) {
+            wxIcon icn;
+            icn.CopyFromBitmap( bmp );
+            int index = images->Add( icn );
+            m_project2Icon.insert( std::make_pair(iter->first, index) );
+        }
+    }
+    
+    if ( m_project2Icon.empty() ) {
+        e.Skip();
+        wxDELETE(images);
+        
+    } else {
+        // send back the new image list
+        e.SetClientData( images );
+    }
+}
+
+void Tweaks::OnCustomizeProject(clColourEvent& e)
+{
+    TWEAKS_ENABLED_EVENT_HANDLER();
+    if ( m_project2Icon.count(e.GetString()) ) {
+        // We got a new icon for this project!
+        e.SetInt( m_project2Icon.find(e.GetString())->second );
+        
+    } else {
+        e.Skip();
+    }
 }

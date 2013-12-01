@@ -25,21 +25,17 @@
 class TweaksSettingsDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* boxSizer2;
     wxCheckBox* m_checkBoxEnableTweaks;
     wxNotebook* m_notebook12;
     wxPanel* m_panel62;
-    wxBoxSizer* boxSizer64;
     wxPropertyGridManager* m_pgMgrTabColours;
     wxPGProperty* m_pgProp114;
     wxPGProperty* m_pgPropGlobalTabBG;
     wxPGProperty* m_pgPropGlobalTabFG;
     wxPGProperty* m_pgPropProjectsColours;
     wxPanel* m_panel84;
-    wxBoxSizer* boxSizer241;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgPropProjects;
-    wxBoxSizer* boxSizer4;
     wxButton* m_button8;
     wxButton* m_button88;
 

@@ -559,7 +559,7 @@
 																		}, {
 																			"type":	"colour",
 																			"m_label":	"Bg Colour:",
-																			"colour":	"Tooltip"
+																			"colour":	"(244,246,211)"
 																		}, {
 																			"type":	"choice",
 																			"m_label":	"Kind:",
@@ -619,7 +619,7 @@
 																		}, {
 																			"type":	"colour",
 																			"m_label":	"Bg Colour:",
-																			"colour":	"Tooltip"
+																			"colour":	"(244,246,211)"
 																		}, {
 																			"type":	"choice",
 																			"m_label":	"Kind:",

@@ -131,7 +131,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     rr.y += 2;
     rr.width -= 2;
 #ifdef __WXGTK__
-    rr.height += 8;
+    rr.height += 12;
 #else
     rr.height += 4;
 #endif

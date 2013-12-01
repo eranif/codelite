@@ -38,6 +38,8 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 Tweaks::Tweaks(IManager *manager)
     : IPlugin(manager)
 {
+    wxPGInitResourceModule(); // Or we crash...
+    
     m_longName = wxT("Tweak codelite");
     m_shortName = wxT("Tweaks");
     

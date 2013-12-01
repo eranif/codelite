@@ -99,6 +99,10 @@ void TweaksSettings::UpdateProject(const ProjectTweaks& pt)
 void TweaksSettings::Clear()
 {
     m_projects.clear();
+    m_globalBgColour = wxColour();
+    m_globalFgColour = wxColour();
+    m_enableTweaks = false;
+    m_flags = 0x0;
 }
 
 void TweaksSettings::DeleteProject(const wxString& name)

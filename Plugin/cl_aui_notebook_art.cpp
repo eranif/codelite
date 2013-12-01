@@ -102,21 +102,19 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     clColourEvent colourEvent( wxEVT_COLOUR_TAB );
     colourEvent.SetIsActiveTab( page.active );
     colourEvent.SetPage( page.window );
-    bool customDrawing = false;
     if ( EventNotifier::Get()->ProcessEvent( colourEvent ) ) {
         bgColour = colourEvent.GetBgColour();
         textColour = colourEvent.GetFgColour();
-        customDrawing = true;
     }
     
-#ifdef __WXGTK__
-    // Under GTK, if _not_ using custom drawing
-    // use the default AUI tab drawings (which uses the native GTK theme engines)
-    if ( !customDrawing ) {
-        wxAuiDefaultTabArt::DrawTab(dc, wnd, page, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
-        return;
-    }
-#endif
+//#ifdef __WXGTK__
+//    // Under GTK, if _not_ using custom drawing
+//    // use the default AUI tab drawings (which uses the native GTK theme engines)
+//    if ( !customDrawing ) {
+//        wxAuiDefaultTabArt::DrawTab(dc, wnd, page, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
+//        return;
+//    }
+//#endif
 
     wxGCDC gdc;
     if ( !DrawingUtils::GetGCDC(dc, gdc) )
@@ -264,9 +262,9 @@ wxSize clAuiGlossyTabArt::GetTabSize(wxDC& dc,
         tab_width += bitmap.GetWidth();
         tab_width += 3; // right side bitmap padding
         tab_height = wxMax(tab_height, bitmap.GetHeight());
-        tab_height += 10;
+        tab_height += 4;
     } else {
-        tab_height += 10;
+        tab_height += 4;
     }
 
     // add padding

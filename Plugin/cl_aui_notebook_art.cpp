@@ -15,6 +15,11 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 
 #ifdef __WXMAC__
 #   include <wx/osx/private.h>
+#   define TAB_HEIGHT_SPACER 8
+#elif defined(__WXMSW__)
+#   define TAB_HEIGHT_SPACER 8
+#else // GTK/FreeBSD
+#   define TAB_HEIGHT_SPACER 4
 #endif
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
@@ -128,6 +133,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     wxRect rr (in_rect.GetTopLeft(), sz);
     rr.y += 2;
     rr.width -= 2;
+
 #ifdef __WXGTK__
     rr.height += 12;
 #else
@@ -262,9 +268,9 @@ wxSize clAuiGlossyTabArt::GetTabSize(wxDC& dc,
         tab_width += bitmap.GetWidth();
         tab_width += 3; // right side bitmap padding
         tab_height = wxMax(tab_height, bitmap.GetHeight());
-        tab_height += 4;
+        tab_height += TAB_HEIGHT_SPACER;
     } else {
-        tab_height += 4;
+        tab_height += TAB_HEIGHT_SPACER;
     }
 
     // add padding

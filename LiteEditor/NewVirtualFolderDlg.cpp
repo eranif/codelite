@@ -1,10 +1,12 @@
 #include "NewVirtualFolderDlg.h"
 #include "workspace.h"
 #include "windowattrmanager.h"
+#include "cl_config.h"
 
 NewVirtualFolderDlg::NewVirtualFolderDlg(wxWindow* parent, const wxString& currentVD)
     : NewVirtualFolderDlgBase(parent)
 {
+    m_checkBoxCreateOnDisk->SetValue( clConfig::Get().Read("CreateVirtualFoldersOnDisk", false) );
     wxString project_name = currentVD.BeforeFirst(':');
     wxString vd_path = currentVD.AfterFirst(':');
     vd_path.Replace(":", wxFILE_SEP_PATH);
@@ -18,6 +20,7 @@ NewVirtualFolderDlg::NewVirtualFolderDlg(wxWindow* parent, const wxString& curre
 NewVirtualFolderDlg::~NewVirtualFolderDlg()
 {
     WindowAttrManager::Save(this, "NewVirtualFolderDlg");
+    clConfig::Get().Write("CreateVirtualFoldersOnDisk", m_checkBoxCreateOnDisk->IsChecked());
 }
 
 void NewVirtualFolderDlg::OnCreateOnDiskUI(wxUpdateUIEvent& event)

@@ -98,12 +98,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
     
-    if ( page.active ) {
-        textColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    } else {
-        textColour = isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-    }
-    
+    textColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     int curx = 0;
     
     // Allow the plugins to override the default colours

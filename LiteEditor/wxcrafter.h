@@ -19,11 +19,10 @@
 #include "dvtemplatesmodel.h"
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/bmpbuttn.h>
+#include <wx/button.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/checkbox.h>
-#include <wx/button.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
@@ -42,22 +41,28 @@
 class NewProjectDlgBaseClass : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer1;
     wxSplitterWindow* m_splitter5;
     wxPanel* m_splitterPageRight;
+    wxBoxSizer* boxSizer10;
     wxDataViewCtrl* m_dataviewTemplates;
     wxObjectDataPtr<DVTemplatesModel> m_dataviewTemplatesModel;
 
     wxPanel* m_splitterPageLeft;
+    wxBoxSizer* boxSizer11;
+    wxFlexGridSizer* flexGridSizer15;
     wxStaticText* m_staticText16;
     wxTextCtrl* m_txtProjName;
     wxStaticText* m_staticText18;
+    wxBoxSizer* boxSizer30;
     wxTextCtrl* m_textCtrlProjectPath;
-    wxBitmapButton* m_bmpButton33;
+    wxButton* m_button268;
     wxStaticText* m_staticText21;
     wxChoice* m_chCompiler;
     wxCheckBox* m_cbSeparateDir;
     wxStaticText* m_stxtFullFileName;
     wxTextCtrl* m_txtDescription;
+    wxBoxSizer* boxSizer2;
     wxButton* m_button3;
     wxButton* m_button4;
 
@@ -78,10 +83,13 @@ public:
 class NavBarControlBaseClass : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer36;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPage39;
+    wxBoxSizer* boxSizer42;
     wxChoice* m_scope;
     wxPanel* m_splitterPage41;
+    wxBoxSizer* boxSizer43;
     wxChoice* m_func;
 
 protected:
@@ -99,6 +107,7 @@ public:
 class BuildTabTopPanelBaseClass : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer47;
     wxAuiToolBar* m_auibar48;
 
 protected:
@@ -143,9 +152,12 @@ public:
 class wxcDownloadDlgBaseClass : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer71;
     wxPanel* m_panel81;
+    wxBoxSizer* boxSizer82;
     wxBannerWindow* m_banner76;
     wxPanel* m_panel75;
+    wxBoxSizer* boxSizer79;
     wxCommandLinkButton* m_cmdLnkBtnDownload;
     wxCommandLinkButton* m_cmdLnkBtnContinue;
 
@@ -162,13 +174,17 @@ public:
 class AddFunctionsImplBaseDlg : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer117;
     wxBannerWindow* m_banner125;
     wxFilePickerCtrl* m_filePicker;
+    wxBoxSizer* boxSizer129;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<AddFunctionsModel> m_dataviewModel;
 
+    wxBoxSizer* boxSizer131;
     wxButton* m_button133;
     wxButton* m_button135;
+    wxBoxSizer* boxSizer119;
     wxButton* m_button121;
     wxButton* m_button123;
 
@@ -186,9 +202,13 @@ public:
 class WelcomePageBase : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer149;
     wxScrolledWindow* m_scrollWin247;
+    wxBoxSizer* boxSizer249;
     wxPanel* m_panel191;
+    wxBoxSizer* boxSizer195;
     wxStaticBitmap* m_staticBitmap161;
+    wxGridSizer* gridSizer235;
     wxCommandLinkButton* m_cmdLnkBtnWorkspaces;
     wxCommandLinkButton* m_cmdLnkBtnFilesMenu;
     wxCommandLinkButton* m_cmdLnkBtn157;
@@ -216,6 +236,7 @@ public:
 class FileExplorerBase : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer262;
     wxGenericDirCtrl* m_genericDirCtrl;
 
 protected:

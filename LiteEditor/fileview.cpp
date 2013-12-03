@@ -63,6 +63,7 @@
 #include "drawingutils.h"
 #include <wx/richmsgdlg.h>
 #include "cl_command_event.h"
+#include "NewVirtualFolderDlg.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -1025,11 +1026,9 @@ void FileViewTree::OnNewVirtualFolder( wxCommandEvent & WXUNUSED( event ) )
     defaultName << count++;
 
     wxTreeItemId item = GetSingleSelection();
-
-    wxTextEntryDialog dlg( NULL, _( "Virtual Directory Name:" ), _( "New Virtual Directory" ), defaultName );
-    dlg.Centre();
-    if ( dlg.ShowModal() == wxID_OK && dlg.GetValue().Trim().IsEmpty() == false) {
-        DoAddVirtualFolder( item, dlg.GetValue() );
+    NewVirtualFolderDlg dlg(clMainFrame::Get());
+    if ( dlg.ShowModal() == wxID_OK ) {
+        DoAddVirtualFolder( item, dlg.GetName() );
     }
 }
 

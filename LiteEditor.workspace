@@ -145,7 +145,7 @@
       <Project Name="SFTP" ConfigName="DebugUnicode"/>
       <Project Name="Tweaks" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>

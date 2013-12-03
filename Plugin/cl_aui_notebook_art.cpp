@@ -16,10 +16,13 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #ifdef __WXMAC__
 #   include <wx/osx/private.h>
 #   define TAB_HEIGHT_SPACER 10
+#   define TAB_Y_OFFSET      2
 #elif defined(__WXMSW__)
-#   define TAB_HEIGHT_SPACER 8
+#   define TAB_HEIGHT_SPACER 10
+#   define TAB_Y_OFFSET      2
 #else // GTK/FreeBSD
-#   define TAB_HEIGHT_SPACER 12
+#   define TAB_Y_OFFSET      5
+#   define TAB_HEIGHT_SPACER TAB_Y_OFFSET + 6
 #endif
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
@@ -131,11 +134,11 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     wxSize sz = GetTabSize(gdc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
     
     wxRect rr (in_rect.GetTopLeft(), sz);
-    rr.y += 2;
+    rr.y += TAB_Y_OFFSET;
     rr.width -= 2;
 
 #ifdef __WXGTK__
-    rr.height += 12;
+    rr.height += TAB_HEIGHT_SPACER;
 #else
     rr.height += 4;
 #endif
@@ -179,7 +182,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         caption.Clear();
     
     gdc.SetTextForeground( textColour );
-    gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-2);
+    gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-TAB_Y_OFFSET);
     
     // advance the X offset
     curx += ext.x;
@@ -187,7 +190,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     /// Draw the bitmap
     if ( page.bitmap.IsOk() ) {
         curx += 4;
-        int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight())/2);
+        int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight())/2)-TAB_Y_OFFSET;
         gdc.GetGraphicsContext()->DrawBitmap( page.bitmap, curx, bmpy, page.bitmap.GetWidth(), page.bitmap.GetHeight());
         curx += 8;
     }
@@ -195,7 +198,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     /// Draw the X button on the tab
     if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
         curx += 4;
-        int btny = (rr.y + (rr.height/2));
+        int btny = (rr.y + (rr.height/2))-TAB_Y_OFFSET;
         if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {
             curx += 1;
             btny += 1;

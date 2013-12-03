@@ -51,7 +51,7 @@ void TweaksSettingsDlg::DoPopulateList()
     for(size_t i=0; i<projects.GetCount(); ++i) {
         const ProjectTweaks& pt = m_settings.GetProjectTweaks(projects.Item(i));
         // Image table
-        m_pgMgr->Append( new wxFileProperty(projects.Item(i), wxPG_LABEL, pt.IsOk() ? pt.GetBitmapFilename() : ""));
+        m_pgMgr->Append( new wxFileProperty(projects.Item(i), wxPG_LABEL, pt.GetBitmapFilename()) );
 
         // Colours table
         wxPGProperty *parentProject = m_pgMgrTabColours->AppendIn(m_pgPropProjectsColours, new wxPropertyCategory(projects.Item(i)));

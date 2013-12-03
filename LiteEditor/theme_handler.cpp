@@ -78,7 +78,7 @@ void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxCo
         win->SetForegroundColour( fg );
         win->Refresh();
     }
-
+    
     wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
     while(pclNode) {
         wxWindow* pclChild = pclNode->GetData();

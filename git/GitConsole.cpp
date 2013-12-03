@@ -12,6 +12,7 @@
 #include "GitApplyPatchDlg.h"
 #include "lexer_configuration.h"
 #include "editor_config.h"
+#include "drawingutils.h"
 
 #define GIT_MESSAGE(...)  AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)  if ( IsVerbose() ) { AddText(wxString::Format(__VA_ARGS__)); }
@@ -30,6 +31,7 @@ public:
         return m_path;
     }
 };
+
 // we use a custom column randerer so can have a better control over the font
 class GitMyTextRenderer : public wxDataViewCustomRenderer
 {
@@ -114,7 +116,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     EventNotifier::Get()->Connect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
-
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(GitConsole::OnEditorThemeChanged), NULL, this);
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
@@ -162,6 +164,7 @@ GitConsole::~GitConsole()
     wxDELETE(m_bitmapLoader);
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(GitConsole::OnEditorThemeChanged), NULL, this);
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
@@ -465,3 +468,15 @@ void GitConsole::OnApplyPatch(wxCommandEvent& event)
         m_git->ApplyPatch( dlg.GetPatchFile(), dlg.GetExtraFlags() );
     }
 }
+
+void GitConsole::OnEditorThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    
+    for (int i=0; i<=wxSTC_STYLE_DEFAULT; ++i) {
+        m_stcLog->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
+        m_stcLog->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
+    }
+    m_stcLog->Refresh();
+}
+

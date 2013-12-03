@@ -42,6 +42,7 @@ protected:
     void OnShowFileDiff(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnConfigurationChanged(wxCommandEvent &e);
+    void OnEditorThemeChanged(wxCommandEvent &e);
 
 };
 #endif // GITCONSOLE_H

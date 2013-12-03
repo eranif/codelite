@@ -101,7 +101,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     if ( page.active ) {
         textColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     } else {
-        textColour = isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+        textColour = isBgColourDark ? wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT) : EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     }
     
     int curx = 0;

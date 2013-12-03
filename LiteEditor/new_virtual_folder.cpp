@@ -74,6 +74,7 @@ NewVirtualFolderDlgBase::NewVirtualFolderDlgBase(wxWindow* parent, wxWindowID id
     Centre(wxBOTH);
     // Connect events
     m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewVirtualFolderDlgBase::OnNameUpdated), NULL, this);
+    m_checkBoxCreateOnDisk->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewVirtualFolderDlgBase::OnCreateOnFolderChecked), NULL, this);
     m_textCtrlPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewVirtualFolderDlgBase::OnCreateOnDiskUI), NULL, this);
     m_button8->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewVirtualFolderDlgBase::OnOkUI), NULL, this);
     
@@ -82,6 +83,7 @@ NewVirtualFolderDlgBase::NewVirtualFolderDlgBase(wxWindow* parent, wxWindowID id
 NewVirtualFolderDlgBase::~NewVirtualFolderDlgBase()
 {
     m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewVirtualFolderDlgBase::OnNameUpdated), NULL, this);
+    m_checkBoxCreateOnDisk->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewVirtualFolderDlgBase::OnCreateOnFolderChecked), NULL, this);
     m_textCtrlPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewVirtualFolderDlgBase::OnCreateOnDiskUI), NULL, this);
     m_button8->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewVirtualFolderDlgBase::OnOkUI), NULL, this);
     

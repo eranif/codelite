@@ -1189,7 +1189,7 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
     wxArrayString subDirs = wxStringTokenize(vdPath, wxT(":"), wxTOKEN_STRTOK);
     bestPath = basePath;
     for(size_t i=0; i<subDirs.GetCount(); i++) {
-        wxFileName fn(basePath + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
+        wxFileName fn(bestPath + wxFileName::GetPathSeparator() + subDirs.Item(i), wxEmptyString);
         if(fn.DirExists()) {
             bestPath << wxFileName::GetPathSeparator() << subDirs.Item(i);
             matches++;

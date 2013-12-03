@@ -33,6 +33,7 @@ protected:
 
 protected:
     virtual void OnNameUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCreateOnFolderChecked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCreateOnDiskUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 

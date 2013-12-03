@@ -19,7 +19,7 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #elif defined(__WXMSW__)
 #   define TAB_HEIGHT_SPACER 8
 #else // GTK/FreeBSD
-#   define TAB_HEIGHT_SPACER 10
+#   define TAB_HEIGHT_SPACER 12
 #endif
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()

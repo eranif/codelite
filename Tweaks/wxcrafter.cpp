@@ -37,7 +37,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_panel62 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook12->AddPage(m_panel62, _("Editor Tabs"), true);
     
-    wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer64 = new wxBoxSizer(wxHORIZONTAL);
     m_panel62->SetSizer(boxSizer64);
     
     wxArrayString m_pgMgrTabColoursArr;
@@ -54,13 +54,21 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_pgPropGlobalTabBG = m_pgMgrTabColours->AppendIn( m_pgProp114,  new wxSystemColourProperty( _("File background colour")) );
     m_pgPropGlobalTabBG->SetValueToUnspecified();
     m_pgPropGlobalTabBG->SetHelpString(wxT(""));
-    m_pgPropGlobalTabBG->SetBackgroundColour(wxColour(wxT("rgb(244,246,211)")));
+    
     m_pgPropGlobalTabFG = m_pgMgrTabColours->AppendIn( m_pgProp114,  new wxSystemColourProperty( _("File text colour")) );
     m_pgPropGlobalTabFG->SetValueToUnspecified();
     m_pgPropGlobalTabFG->SetHelpString(wxT(""));
-    m_pgPropGlobalTabFG->SetBackgroundColour(wxColour(wxT("rgb(244,246,211)")));
+    
     m_pgPropProjectsColours = m_pgMgrTabColours->Append(  new wxPropertyCategory( _("Tab Colours Per Project") ) );
     m_pgPropProjectsColours->SetHelpString(wxT(""));
+    
+    wxBoxSizer* boxSizer122 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer64->Add(boxSizer122, 0, wxEXPAND, 5);
+    
+    m_button124 = new wxButton(m_panel62, wxID_ANY, _("My Button"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer122->Add(m_button124, 0, wxALL|wxEXPAND, 5);
     
     m_panel84 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook12->AddPage(m_panel84, _("Images"), false);

@@ -219,7 +219,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         xpath.AddLineToPoint( insideRect.GetRightBottom());
         xpath.MoveToPoint( insideRect.GetRightTop() );
         xpath.AddLineToPoint( insideRect.GetLeftBottom() );
-        gdc.SetPen( wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW), 2) );
+        gdc.SetPen( wxPen(textColour, 2) );
         gdc.GetGraphicsContext()->StrokePath( xpath  );
         
         curx += X_DIAMETER;

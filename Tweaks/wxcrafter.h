@@ -33,6 +33,7 @@ protected:
     wxPGProperty* m_pgPropGlobalTabBG;
     wxPGProperty* m_pgPropGlobalTabFG;
     wxPGProperty* m_pgPropProjectsColours;
+    wxButton* m_button124;
     wxPanel* m_panel84;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgPropProjects;

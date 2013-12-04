@@ -130,7 +130,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     
     wxRect rr (in_rect.GetTopLeft(), sz);
     rr.y += TAB_Y_OFFSET;
-    rr.width -= 2;
+    rr.width -= 1;
 
 #ifdef __WXGTK__
     rr.height += TAB_HEIGHT_SPACER;

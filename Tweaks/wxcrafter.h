@@ -17,6 +17,7 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
+#include <wx/bannerwindow.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
@@ -28,6 +29,7 @@ protected:
     wxCheckBox* m_checkBoxEnableTweaks;
     wxNotebook* m_notebook12;
     wxPanel* m_panel62;
+    wxBannerWindow* m_banner136;
     wxPropertyGridManager* m_pgMgrTabColours;
     wxPGProperty* m_pgProp114;
     wxPGProperty* m_pgPropGlobalTabBG;
@@ -35,6 +37,7 @@ protected:
     wxPGProperty* m_pgPropProjectsColours;
     wxButton* m_button124;
     wxPanel* m_panel84;
+    wxBannerWindow* m_banner138;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgPropProjects;
     wxButton* m_button8;
@@ -44,7 +47,7 @@ protected:
     virtual void OnEnableTweaks(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnColourChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnResetColours(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageSelected(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:

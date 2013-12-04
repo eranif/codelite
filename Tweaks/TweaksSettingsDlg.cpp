@@ -118,10 +118,10 @@ void TweaksSettingsDlg::OnImageSelected(wxPropertyGridEvent& event)
 {
     wxPGProperty* prop = event.GetProperty();
     CHECK_PTR_RET(prop);
-    
+
     wxString projectName = prop->GetLabel();
     m_settings.GetProjectTweaks(projectName).SetBitmapFilename( prop->GetValueAsString() );
-    
+
     if ( !m_settings.HasFlag( TweaksSettings::kDontPromptForProjectReload ) ) {
         wxRichMessageDialog dlg(this, _("Icon changes require a workspace reload"), "CodeLite", wxOK|wxOK_DEFAULT|wxCANCEL|wxICON_INFORMATION);
         dlg.ShowCheckBox(_("Remember my answer"));
@@ -131,4 +131,7 @@ void TweaksSettingsDlg::OnImageSelected(wxPropertyGridEvent& event)
             }
         }
     }
+}
+void TweaksSettingsDlg::OnResetColours(wxCommandEvent& event)
+{
 }

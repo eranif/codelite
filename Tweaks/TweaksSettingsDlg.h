@@ -14,6 +14,7 @@ public:
     }
 
 protected:
+    virtual void OnResetColours(wxCommandEvent& event);
     virtual void OnImageSelected(wxPropertyGridEvent& event);
     virtual void OnColourChanged(wxPropertyGridEvent& event);
     virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event);

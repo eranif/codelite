@@ -98,7 +98,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
     m_maxItemsFindReplace->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxItemsInFindReplaceDialog", 15) ) );
     m_spinCtrlMaxOpenTabs->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxOpenedTabs", 15) ) );
     m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString( clConfig::Get().Read("LogVerbosity", FileLogger::Error) ) );
-    m_checkBoxRestoreSession->SetValue( clConfig::Get().Read("RestoreLastSession", false) );
+    m_checkBoxRestoreSession->SetValue( clConfig::Get().Read("RestoreLastSession", true) );
     
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);

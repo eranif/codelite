@@ -58,6 +58,12 @@ void clAuiGlossyTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& re
     // the pen colour
     bgColour = DrawingUtils::GetAUIPaneBGColour();
     
+    // Allow the plugins to override the border colour
+    // clColourEvent borderColourEvent( wxEVT_GET_TAB_BORDER_COLOUR );
+    // if ( EventNotifier::Get()->ProcessEvent( borderColourEvent ) ) {
+    //     penColour = borderColourEvent.GetBorderColour();
+    // }
+    
     gdc.SetPen(bgColour);
     gdc.SetBrush( DrawingUtils::GetStippleBrush() );
     gdc.DrawRectangle(rect);
@@ -97,7 +103,6 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         }
         penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
-    
     textColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
     int curx = 0;
     
@@ -110,15 +115,13 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         textColour = colourEvent.GetFgColour();
     }
     
-//#ifdef __WXGTK__
-//    // Under GTK, if _not_ using custom drawing
-//    // use the default AUI tab drawings (which uses the native GTK theme engines)
-//    if ( !customDrawing ) {
-//        wxAuiDefaultTabArt::DrawTab(dc, wnd, page, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
-//        return;
-//    }
-//#endif
-
+    // Allow the plugins to override the border colour
+    wxColour originalPenColour = penColour;
+    clColourEvent borderColourEvent( wxEVT_GET_TAB_BORDER_COLOUR );
+    if ( !page.active && EventNotifier::Get()->ProcessEvent( borderColourEvent ) ) {
+        penColour = borderColourEvent.GetBorderColour();
+    }
+    
     wxGCDC gdc;
     if ( !DrawingUtils::GetGCDC(dc, gdc) )
         return;
@@ -149,7 +152,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     // since the above code above doesn't play well with WXDFB or WXCOCOA,
     // we'll just use a rectangle for the clipping region for now --
     gdc.SetClippingRegion(rr.x, rr.y, clip_width, rr.height);
-    path.AddRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 3.0);
+    path.AddRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 6.0);
     
     gdc.SetBrush( bgColour );
     gdc.GetGraphicsContext()->FillPath( path );
@@ -157,8 +160,12 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     
     if ( !page.active ) {
         // Draw a line at the bottom rect
-        gdc.SetPen(penColour);
+        gdc.SetPen(originalPenColour);
         gdc.DrawLine(in_rect.GetBottomLeft(), in_rect.GetBottomRight());
+        
+    } else {
+       // gdc.SetPen(bgColour);
+       // gdc.DrawLine(in_rect.GetBottomLeft(), in_rect.GetBottomRight());
     }
     
     /// Draw the text

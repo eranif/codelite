@@ -560,6 +560,10 @@ enum MenuType {
 // image list with its own list
 #define wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT 3545
 
+// Event type: clColourEvent
+// Sent by codelite whenever it needs the pen colour for the tab area
+#define wxEVT_GET_TAB_BORDER_COLOUR 3546
+
 //------------------------------------------------------------------
 //each plugin must implement this interface
 //------------------------------------------------------------------

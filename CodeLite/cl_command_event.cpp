@@ -117,10 +117,11 @@ clColourEvent& clColourEvent::operator=(const clColourEvent& src)
 {
     // Call parent operator =
     clCommandEvent::operator=(src);
-    m_bgColour    = src.m_bgColour;
-    m_fgColour    = src.m_fgColour;
-    m_page        = src.m_page;
-    m_isActiveTab = src.m_isActiveTab;
+    m_bgColour     = src.m_bgColour;
+    m_fgColour     = src.m_fgColour;
+    m_page         = src.m_page;
+    m_isActiveTab  = src.m_isActiveTab;
+    m_borderColour = src.m_borderColour;
     return *this;
 }
 

@@ -35,6 +35,7 @@ public:
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnFileViewBuildTree(clCommandEvent &e);
     void OnCustomizeProject(clColourEvent &e);
+    void OnTabBorderColour(clColourEvent &e);
 };
 
 #endif //Tweaks

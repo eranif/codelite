@@ -49,6 +49,7 @@ Tweaks::Tweaks(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_GET_TAB_BORDER_COLOUR, clColourEventHandler(Tweaks::OnTabBorderColour), NULL, this);
 }
 
 void Tweaks::UnPlug()
@@ -59,6 +60,7 @@ void Tweaks::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING, clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT, clColourEventHandler(Tweaks::OnCustomizeProject), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_GET_TAB_BORDER_COLOUR, clColourEventHandler(Tweaks::OnTabBorderColour), NULL, this);
 }
 
 Tweaks::~Tweaks()
@@ -111,7 +113,15 @@ void Tweaks::OnColourTab(clColourEvent& e)
     
     IEditor* editor = FindEditorByPage( e.GetPage() );
     if ( !editor ) {
-        e.Skip();
+        
+        if ( m_settings.GetGlobalFgColour().IsOk() && m_settings.GetGlobalBgColour().IsOk() ) {
+            // Non editor tab
+            e.SetBgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : m_settings.GetGlobalBgColour() );
+            e.SetFgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : m_settings.GetGlobalFgColour() );
+            
+        } else {
+            e.Skip();
+        }
     
     } else {
         
@@ -146,6 +156,8 @@ void Tweaks::OnWorkspaceLoaded(wxCommandEvent& e)
     e.Skip();
     // Refresh the list with the current workspace setup
     m_settings.Load();
+    m_mgr->GetWorkspacePaneNotebook()->Refresh();
+    m_mgr->GetOutputPaneNotebook()->Refresh();
 }
 
 void Tweaks::OnWorkspaceClosed(wxCommandEvent& e)
@@ -206,6 +218,16 @@ void Tweaks::OnCustomizeProject(clColourEvent& e)
         // We got a new icon for this project!
         e.SetInt( m_project2Icon.find(e.GetString())->second );
         
+    } else {
+        e.Skip();
+    }
+}
+
+void Tweaks::OnTabBorderColour(clColourEvent& e)
+{
+    TWEAKS_ENABLED_EVENT_HANDLER();
+    if ( m_settings.IsEnableTweaks() && m_settings.GetGlobalBgColour().IsOk() ) {
+        e.SetBorderColour( DrawingUtils::DarkColour(m_settings.GetGlobalBgColour(), 1.5) );
     } else {
         e.Skip();
     }

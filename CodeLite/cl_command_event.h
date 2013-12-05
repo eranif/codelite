@@ -147,6 +147,7 @@ class WXDLLIMPEXP_CL clColourEvent : public clCommandEvent
 {
     wxColour  m_bgColour;
     wxColour  m_fgColour;
+    wxColour  m_borderColour;
     wxWindow* m_page;
     bool      m_isActiveTab;
 
@@ -159,6 +160,12 @@ public:
         return new clColourEvent(*this);
     };
 
+    void SetBorderColour(const wxColour& borderColour) {
+        this->m_borderColour = borderColour;
+    }
+    const wxColour& GetBorderColour() const {
+        return m_borderColour;
+    }
     void SetPage(wxWindow* page) {
         this->m_page = page;
     }

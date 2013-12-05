@@ -2,10 +2,15 @@
 #define TWEAKSSETTINGSDLG_H
 #include "wxcrafter.h"
 #include "tweaks_settings.h"
+#include <list>
 
+class wxPGProperty;
 class TweaksSettingsDlg : public TweaksSettingsDlgBase
 {
+    typedef std::list<wxPGProperty*> PropPtrList_t;
     TweaksSettings m_settings;
+    PropPtrList_t  m_colourProperties;
+    
 public:
     TweaksSettingsDlg(wxWindow* parent);
     virtual ~TweaksSettingsDlg();

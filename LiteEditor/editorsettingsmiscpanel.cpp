@@ -34,6 +34,7 @@
 #include <wx/fontmap.h>
 #include "ctags_manager.h"
 #include "globals.h"
+#include "cl_config.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -73,7 +74,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
         m_AvailableLocales->SetSelection(select);
     }
 
-
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
     int iCurrSelId = 0;
@@ -92,34 +92,16 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
     m_fileEncoding->Append(astrEncodings);
     m_fileEncoding->SetSelection(iCurrSelId);
 
-    long single_instance(1);
-    EditorConfigST::Get()->GetLongValue(wxT("SingleInstance"), single_instance);
-    m_singleAppInstance->SetValue(single_instance ? true : false);
-
-    long check(1);
-    EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"), check);
-    m_versionCheckOnStartup->SetValue(check ? true : false);
-
-    check = 1;
-    EditorConfigST::Get()->GetLongValue(wxT("ShowFullPathInFrameTitle"), check);
-    m_fullFilePath->SetValue(check ? true : false);
-
+    m_singleAppInstance->SetValue(clConfig::Get().Read("SingleInstance", false));
+    m_versionCheckOnStartup->SetValue( clConfig::Get().Read("CheckForNewVersion", true));
+    m_fullFilePath->SetValue( clConfig::Get().Read("ShowFullPathInFrameTitle", true) );
+    m_maxItemsFindReplace->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxItemsInFindReplaceDialog", 15) ) );
+    m_spinCtrlMaxOpenTabs->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxOpenedTabs", 15) ) );
+    m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString( clConfig::Get().Read("LogVerbosity", FileLogger::Error) ) );
+    m_checkBoxRestoreSession->SetValue( clConfig::Get().Read("RestoreLastSession", false) );
+    
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
-
-    long max_items(10);
-    EditorConfigST::Get()->GetLongValue(wxT("MaxItemsInFindReplaceDialog"), max_items);
-    m_maxItemsFindReplace->ChangeValue( ::wxIntToString(max_items) );
-
-    long maxTabs(15);
-    EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), maxTabs);
-    m_spinCtrlMaxOpenTabs->SetValue( ::wxIntToString(maxTabs) );
-
-    // Set the logging verbosity
-    long logVerbosity(FileLogger::Error);
-    EditorConfigST::Get()->GetLongValue(wxT("LogVerbosity"), logVerbosity);
-    m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString(logVerbosity) );
-
     m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
 }
 
@@ -144,16 +126,16 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     if(m_oldMswUseTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
         m_restartRequired = true;
     }
-
-    EditorConfigST::Get()->SaveLongValue(wxT("SingleInstance"), m_singleAppInstance->IsChecked() ? 1 : 0);
-    EditorConfigST::Get()->SaveLongValue(wxT("CheckNewVersion"), m_versionCheckOnStartup->IsChecked() ? 1 : 0);
-    EditorConfigST::Get()->SaveLongValue(wxT("ShowFullPathInFrameTitle"), m_fullFilePath->IsChecked() ? 1 : 0);
+    
+    clConfig::Get().Write("SingleInstance",              m_singleAppInstance->IsChecked());
+    clConfig::Get().Write("CheckForNewVersion",          m_versionCheckOnStartup->IsChecked());
+    clConfig::Get().Write("ShowFullPathInFrameTitle",    m_fullFilePath->IsChecked());
+    clConfig::Get().Write("MaxItemsInFindReplaceDialog", ::wxStringToInt(m_maxItemsFindReplace->GetValue(), 15) );
+    clConfig::Get().Write("MaxOpenedTabs",               ::wxStringToInt(m_spinCtrlMaxOpenTabs->GetValue(), 15) );
+    clConfig::Get().Write("RestoreLastSession",          m_checkBoxRestoreSession->IsChecked());
 
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
     EditorConfigST::Get()->SaveLongValue(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
-
-    EditorConfigST::Get()->SaveLongValue(wxT("MaxItemsInFindReplaceDialog"), ::wxStringToInt(m_maxItemsFindReplace->GetValue(), 10, 1, 50));
-    EditorConfigST::Get()->SaveLongValue(wxT("MaxOpenedTabs"), ::wxStringToInt(m_spinCtrlMaxOpenTabs->GetValue(), 15, 5, 30) );
 
     //check to see of the icon size was modified
     int oldIconSize(24);
@@ -317,7 +299,7 @@ int EditorSettingsMiscPanel::FindAvailableLocales()
 void EditorSettingsMiscPanel::OnLogVerbosityChanged(wxCommandEvent& event)
 {
     FileLogger::Get()->SetVerbosity(event.GetString());
-    EditorConfigST::Get()->SaveLongValue(wxT("LogVerbosity"), FileLogger::GetVerbosityAsNumber(m_choice4->GetStringSelection()));
+    clConfig::Get().Write("LogVerbosity", FileLogger::GetVerbosityAsNumber(m_choice4->GetStringSelection()));
 }
 
 void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)

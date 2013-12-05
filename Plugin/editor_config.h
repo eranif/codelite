@@ -35,6 +35,7 @@
 #include "serialized_object.h"
 #include "plugin.h"
 #include "codelite_exports.h"
+#include "cl_config.h"
 
 enum {
     View_Show_Workspace_Tab = 0x00000001,

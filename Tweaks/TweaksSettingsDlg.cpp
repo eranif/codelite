@@ -20,6 +20,7 @@ TweaksSettingsDlg::TweaksSettingsDlg(wxWindow* parent)
 TweaksSettingsDlg::~TweaksSettingsDlg()
 {
     WindowAttrManager::Save(this, "TweaksSettingsDlg", NULL);
+    m_colourProperties.clear();
 }
 
 void TweaksSettingsDlg::OnWorkspaceOpenUI(wxUpdateUIEvent& event)
@@ -29,6 +30,7 @@ void TweaksSettingsDlg::OnWorkspaceOpenUI(wxUpdateUIEvent& event)
 
 void TweaksSettingsDlg::DoPopulateList()
 {
+    m_colourProperties.clear();
     // Get list of projects
     wxArrayString projects;
     WorkspaceST::Get()->GetProjectList( projects );
@@ -39,13 +41,13 @@ void TweaksSettingsDlg::DoPopulateList()
     if ( m_settings.GetGlobalBgColour().IsOk() ) {
         wxVariant value;
         value << m_settings.GetGlobalBgColour();
-        m_pgMgrTabColours->SetPropertyValue( m_pgPropGlobalTabBG, value );
+        m_pgPropGlobalTabBG->SetValue( value );
     }
 
     if ( m_settings.GetGlobalFgColour().IsOk() ) {
         wxVariant value;
         value << m_settings.GetGlobalFgColour();
-        m_pgMgrTabColours->SetPropertyValue( m_pgPropGlobalTabFG, value );
+        m_pgPropGlobalTabFG->SetValue( value );
     }
 
     for(size_t i=0; i<projects.GetCount(); ++i) {
@@ -59,11 +61,18 @@ void TweaksSettingsDlg::DoPopulateList()
         labelBG << projects.Item(i) << " background colour";
         labelFG << projects.Item(i) << " text colour";
         if ( pt.IsOk() ) {
-            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG, wxPG_LABEL, pt.GetTabBgColour() ));
-            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG, wxPG_LABEL, pt.GetTabFgColour() ));
+            m_colourProperties.push_back( m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG, wxPG_LABEL, pt.GetTabBgColour() )) );
+            m_colourProperties.push_back( m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG, wxPG_LABEL, pt.GetTabFgColour() )) );
         } else {
-            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG))->SetValueToUnspecified();
-            m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG))->SetValueToUnspecified();
+            wxPGProperty* prop(NULL);
+            
+            prop = m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG));
+            prop->SetValueToUnspecified();
+            m_colourProperties.push_back( prop );
+            
+            prop = m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG));
+            prop->SetValueToUnspecified();
+            m_colourProperties.push_back( prop );
         }
     }
 }
@@ -134,4 +143,12 @@ void TweaksSettingsDlg::OnImageSelected(wxPropertyGridEvent& event)
 }
 void TweaksSettingsDlg::OnResetColours(wxCommandEvent& event)
 {
+    wxUnusedVar( event );
+    PropPtrList_t::iterator iter = m_colourProperties.begin();
+    for( ; iter != m_colourProperties.end(); ++iter ) {
+        (*iter)->SetValueToUnspecified();
+    }
+    m_pgPropGlobalTabBG->SetValueToUnspecified();
+    m_pgPropGlobalTabFG->SetValueToUnspecified();
+    m_settings.ResetColours();
 }

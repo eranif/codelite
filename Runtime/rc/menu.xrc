@@ -49,12 +49,6 @@
 				<label>Recent &amp;Workspaces</label>
 				<style>wxMENU_TEAROFF</style>
             </object>
-
-			<object class="wxMenuItem" name="wxID_SEPARATOR"/>
-			<object class="wxMenuItem" name="load_last_session">
-                <label>Load last session on restart</label>
-				<checkable>1</checkable>
-            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="wxID_EXIT">
                 <label>E&amp;xit</label>

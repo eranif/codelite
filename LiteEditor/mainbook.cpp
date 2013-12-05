@@ -583,15 +583,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
     if (m_book->GetPageIndex(win) != Notebook::npos)
         return false;
 
-    long MaxBuffers(15);
-    EditorConfigST::Get()->GetLongValue(wxT("MaxOpenedTabs"), MaxBuffers);
-
-//#ifdef __WXMSW__
-//	// On Mac adding this locker causes wierd behaviors like not showing the file content or
-//	// hiding the welcome page
-//	//clWindowUpdateLocker locker(m_book);
-//#endif
-
+    long MaxBuffers = clConfig::Get().Read("MaxOpenedTabs", 15);
     bool closeLastTab = ((long)(m_book->GetPageCount()) >= MaxBuffers) && GetUseBuffereLimit();
     if ((insert_at_index == (size_t)wxNOT_FOUND) || (insert_at_index >= m_book->GetPageCount())) {
 

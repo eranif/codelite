@@ -26,20 +26,25 @@
 class TweaksSettingsDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer2;
     wxCheckBox* m_checkBoxEnableTweaks;
     wxNotebook* m_notebook12;
     wxPanel* m_panel62;
+    wxBoxSizer* boxSizer126;
     wxBannerWindow* m_banner136;
     wxPropertyGridManager* m_pgMgrTabColours;
     wxPGProperty* m_pgProp114;
     wxPGProperty* m_pgPropGlobalTabBG;
     wxPGProperty* m_pgPropGlobalTabFG;
     wxPGProperty* m_pgPropProjectsColours;
+    wxBoxSizer* boxSizer122;
     wxButton* m_button124;
     wxPanel* m_panel84;
+    wxBoxSizer* boxSizer241;
     wxBannerWindow* m_banner138;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgPropProjects;
+    wxBoxSizer* boxSizer4;
     wxButton* m_button8;
     wxButton* m_button88;
 
@@ -47,6 +52,7 @@ protected:
     virtual void OnEnableTweaks(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnColourChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnResetColours(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageSelected(wxPropertyGridEvent& event) { event.Skip(); }
 

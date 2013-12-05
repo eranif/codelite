@@ -99,8 +99,7 @@ void TweaksSettings::UpdateProject(const ProjectTweaks& pt)
 void TweaksSettings::Clear()
 {
     m_projects.clear();
-    m_globalBgColour = wxColour();
-    m_globalFgColour = wxColour();
+    ResetColours();
     m_enableTweaks = false;
     m_flags = 0x0;
 }
@@ -109,6 +108,16 @@ void TweaksSettings::DeleteProject(const wxString& name)
 {
     if ( m_projects.count(name) ) {
         m_projects.erase(name);
+    }
+}
+
+void TweaksSettings::ResetColours()
+{
+    m_globalBgColour = wxColour();
+    m_globalFgColour = wxColour();
+    ProjectTweaks::Map_t::iterator iter = m_projects.begin();
+    for(; iter != m_projects.end(); ++iter ) {
+        iter->second.ResetColours();
     }
 }
 
@@ -141,4 +150,10 @@ JSONElement ProjectTweaks::ToJSON() const
     e.addProperty("m_projectName",      m_projectName);
     e.addProperty("m_bitmapFilename",   m_bitmapFilename);
     return e;
+}
+
+void ProjectTweaks::ResetColours()
+{
+    m_tabBgColour = wxColour();
+    m_tabFgColour = wxColour();
 }

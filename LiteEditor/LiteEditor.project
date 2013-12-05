@@ -188,6 +188,7 @@
           <File Name="editorsettingsdockingwidows.cpp"/>
         </VirtualDirectory>
         <File Name="optionsdialogbase2.wxcp"/>
+        <File Name="editor_options_misc.wxcp"/>
       </VirtualDirectory>
       <File Name="env_var_dlg_base.h"/>
       <File Name="env_var_dlg_base.cpp"/>
@@ -622,7 +623,6 @@
     <File Name="editor_options_indetation.fbp"/>
     <File Name="editor_options_dialogs.fbp"/>
     <File Name="editor_options_folding.fbp"/>
-    <File Name="editor_options_misc.fbp"/>
     <File Name="editor_options_terminal.fbp"/>
     <File Name="manageperspectivesbasedlg.fbp"/>
   </VirtualDirectory>
@@ -802,6 +802,7 @@
       <File Name="editor_options_terminal_liteeditor_bitmaps.cpp"/>
       <File Name="optionsdialogbase2_liteeditor_bitmaps.cpp"/>
       <File Name="new_virtual_folder_liteeditor_bitmaps.cpp"/>
+      <File Name="editor_options_misc_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -1324,7 +1325,7 @@ resources.cpp: resources.xrc
         <Library Value="liblibclang.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command="./codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="./Debug" Command="./codelite-dbg.exe" CommandArguments="-b ." UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins Tweaks" WorkingDirectory="../Runtime " PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="Default" DbgSetName="">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Environment>

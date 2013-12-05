@@ -20,7 +20,8 @@ public:
     virtual JSONElement ToJSON() const;
     ProjectTweaks();
     virtual ~ ProjectTweaks();
-
+    
+    void ResetColours();
     void SetBitmapFilename(const wxString& bitmapFilename) {
         this->m_bitmapFilename = bitmapFilename;
     }
@@ -72,6 +73,7 @@ public:
 
     TweaksSettings& Load();
     void Clear();
+    void ResetColours();
     void Save();
     
     bool HasFlag(int flag) const {

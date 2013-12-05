@@ -22,7 +22,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_checkBoxEnableTweaks = new wxCheckBox(this, wxID_ANY, _("Enable Tweaks"), wxDefaultPosition, wxSize(-1,-1), 0);
@@ -37,7 +37,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_panel62 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook12->AddPage(m_panel62, _("Editor Tabs"), true);
     
-    wxBoxSizer* boxSizer126 = new wxBoxSizer(wxVERTICAL);
+    boxSizer126 = new wxBoxSizer(wxVERTICAL);
     m_panel62->SetSizer(boxSizer126);
     
     m_banner136 = new wxBannerWindow(m_panel62, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
@@ -70,7 +70,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_pgPropProjectsColours = m_pgMgrTabColours->Append(  new wxPropertyCategory( _("Tab Colours Per Project") ) );
     m_pgPropProjectsColours->SetHelpString(wxT(""));
     
-    wxBoxSizer* boxSizer122 = new wxBoxSizer(wxVERTICAL);
+    boxSizer122 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer126->Add(boxSizer122, 0, wxEXPAND, 5);
     
@@ -82,7 +82,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_panel84 = new wxPanel(m_notebook12, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook12->AddPage(m_panel84, _("Images"), false);
     
-    wxBoxSizer* boxSizer241 = new wxBoxSizer(wxVERTICAL);
+    boxSizer241 = new wxBoxSizer(wxVERTICAL);
     m_panel84->SetSizer(boxSizer241);
     
     m_banner138 = new wxBannerWindow(m_panel84, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
@@ -104,7 +104,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_pgPropProjects = m_pgMgr->Append(  new wxPropertyCategory( _("Projects") ) );
     m_pgPropProjects->SetHelpString(wxT(""));
     
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -127,6 +127,7 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_checkBoxEnableTweaks->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnEnableTweaks), NULL, this);
     m_checkBoxEnableTweaks->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksCheckboxUI), NULL, this);
     m_notebook12->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksUI), NULL, this);
+    m_pgMgrTabColours->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnColourChanged), NULL, this);
     m_button124->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnResetColours), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnImageSelected), NULL, this);
     
@@ -137,6 +138,7 @@ TweaksSettingsDlgBase::~TweaksSettingsDlgBase()
     m_checkBoxEnableTweaks->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnEnableTweaks), NULL, this);
     m_checkBoxEnableTweaks->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksCheckboxUI), NULL, this);
     m_notebook12->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksUI), NULL, this);
+    m_pgMgrTabColours->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnColourChanged), NULL, this);
     m_button124->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnResetColours), NULL, this);
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnImageSelected), NULL, this);
     

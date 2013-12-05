@@ -202,7 +202,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU_RANGE(RecentFilesSubMenuID, RecentFilesSubMenuID + 10, clMainFrame::OnRecentFile)
     EVT_MENU_RANGE(RecentWorkspaceSubMenuID, RecentWorkspaceSubMenuID + 10, clMainFrame::OnRecentWorkspace)
     EVT_MENU_RANGE(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, clMainFrame::OnBuildCustomTarget)
-    EVT_MENU(XRCID("load_last_session"),        clMainFrame::OnLoadLastSession)
     EVT_MENU(wxID_EXIT,                         clMainFrame::OnQuit)
 
     EVT_UPDATE_UI(XRCID("refresh_file"),        clMainFrame::OnFileExistUpdateUI)
@@ -211,7 +210,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_UPDATE_UI(XRCID("save_all"),            clMainFrame::OnFileSaveAllUI)
     EVT_UPDATE_UI(XRCID("save_tab_group"),      clMainFrame::OnFileExistUpdateUI)
     EVT_UPDATE_UI(XRCID("close_file"),          clMainFrame::OnFileCloseUI)
-    EVT_UPDATE_UI(XRCID("load_last_session"),   clMainFrame::OnLoadLastSessionUI)
 
     //--------------------------------------------------
     // Edit menu
@@ -2667,44 +2665,12 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     // since there is a bug in wxURL, which it can not be used while constucting a wxFrame,
     // it must be called *after* the frame constuction
     // add new version notification updater
-    long check(1);
     long updatePaths(1);
 
-    EditorConfigST::Get()->GetLongValue(wxT("CheckNewVersion"),   check);
     EditorConfigST::Get()->GetLongValue(wxT("UpdateParserPaths"), updatePaths);
-    if ( check ) {
+    if ( clConfig::Get().Read("CheckForNewVersion", true) ) {
         JobQueueSingleton::Instance()->PushJob(new WebUpdateJob(this, false));
     }
-
-    //update the build system to contain the number of CPUs
-//    int cpus = wxThread::GetCPUCount();
-//    if (cpus != wxNOT_FOUND) {
-//        //update the build system
-//        BuilderConfigPtr bs = BuildSettingsConfigST::Get()->GetBuilderConfig(wxT("GNU makefile for g++/gcc"));
-//        if ( bs ) {
-//            wxString jobs;
-//            jobs << cpus;
-//
-//            long dontPromptForCPUFix(0);
-//            EditorConfigST::Get()->GetLongValue(wxT("AdjustCPUNumber"), dontPromptForCPUFix);
-//
-//            if ( bs->GetToolJobs() != jobs && !dontPromptForCPUFix) {
-//
-//                ButtonDetails btn1;
-//                btn1.buttonLabel = _("Update Number of Build Processes");
-//                btn1.commandId   = XRCID("update_num_builders_count");
-//                btn1.window      = this;
-//
-//                GetMainBook()->ShowMessage(_("Should CodeLite adjust the number of concurrent build jobs to match the number of CPUs?"),
-//                                           true,
-//                                           PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/settings")),
-//                                           btn1,
-//                                           ButtonDetails(),
-//                                           ButtonDetails(),
-//                                           CheckboxDetails(wxT("AdjustCPUNumber")));
-//            }
-//        }
-//    }
 
     // enable/disable plugins toolbar functionality
     PluginManager::Get()->EnableToolbars();
@@ -2764,7 +2730,7 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     }
 
     // Load last session?
-    if (m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION && m_loadLastSession) {
+    if ( clConfig::Get().Read("RestoreLastSession", true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
         EventNotifier::Get()->AddPendingEvent(loadSessionEvent);
     }
@@ -3337,12 +3303,6 @@ void clMainFrame::OnStartPageEvent(wxCommandEvent& e)
     delete data;
 }
 
-void clMainFrame::OnLoadLastSessionUI(wxUpdateUIEvent &event)
-{
-    CHECK_SHUTDOWN();
-    event.Check(m_frameGeneralInfo.GetFlags() & CL_LOAD_LAST_SESSION);
-}
-
 void clMainFrame::SetFrameFlag(bool set, int flag)
 {
     if (set) {
@@ -3350,11 +3310,6 @@ void clMainFrame::SetFrameFlag(bool set, int flag)
     } else {
         m_frameGeneralInfo.SetFlags(m_frameGeneralInfo.GetFlags() & ~(flag));
     }
-}
-
-void clMainFrame::OnLoadLastSession(wxCommandEvent &event)
-{
-    SetFrameFlag(event.IsChecked(), CL_LOAD_LAST_SESSION);
 }
 
 void clMainFrame::OnShowWelcomePageUI(wxUpdateUIEvent &event)
@@ -3946,12 +3901,10 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     }
 
     //LEditor *activeEditor = GetMainBook()->GetActiveEditor();
-    if (editor/* && activeEditor == editor*/) {
+    if ( editor ) {
         title << editor->GetFileName().GetFullName() << wxT(" ");
         // by default display the full path as well
-        long value(1);
-        EditorConfigST::Get()->GetLongValue(wxT("ShowFullPathInFrameTitle"), value);
-        if (value) {
+        if (clConfig::Get().Read("ShowFullPathInFrameTitle", true)) {
             title << wxT("[") << editor->GetFileName().GetFullPath() << wxT("] ");
         }
         title << wxT("- ");

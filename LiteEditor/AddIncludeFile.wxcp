@@ -97,23 +97,23 @@
 					"m_label":	"Class Decorator",
 					"m_value":	""
 				}, {
-					"type":	"filePicker",
+					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
 					"m_path":	""
 				}, {
-					"type":	"filePicker",
+					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (32x32)  :",
 					"m_path":	""
 				}, {
-					"type":	"filePicker",
+					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (64x64)  :",
 					"m_path":	""
 				}, {
-					"type":	"filePicker",
+					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (128x128):",
 					"m_path":	""
 				}, {
-					"type":	"filePicker",
+					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (256x256):",
 					"m_path":	""
 				}],
@@ -435,7 +435,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	"Move the #include statement one line up"
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"../git/icons/png/arrow-up.png"
 																}, {
@@ -485,7 +485,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	"Move the #include statement one line down"
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"../git/icons/png/git-arrow-down.png"
 																}, {
@@ -535,7 +535,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	"Clear Cached Paths"
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"../codelite-icons/toolbars/16/build/clean.png"
 																}, {
@@ -747,6 +747,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
@@ -903,6 +911,14 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Directories:",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Auto Complete Files:",
+															"m_value":	false
 														}],
 													"m_events":	[],
 													"m_children":	[]
@@ -1005,7 +1021,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -1094,7 +1110,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {

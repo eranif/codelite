@@ -142,7 +142,7 @@ subpage  subsection subsubsection test throw todo tparam typedef union until var
   </KeyWords2>
   <KeyWords3></KeyWords3>
   <KeyWords4></KeyWords4>
-  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.js;*.javascript</Extensions>
+  <Extensions>*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.js;*.javascript;*.ipp</Extensions>
   <Properties>
     <Property Id="0" Name="Default" Bold="no" Face="" Colour="#808080" BgColour="#000000" Size="11"/>
     <Property Id="1" Name="Common C style comment" Bold="no" Face="" Colour="#00FF00" BgColour="#000000" Size="11"/>

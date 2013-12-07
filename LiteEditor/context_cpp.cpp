@@ -90,7 +90,7 @@ static bool IsSource(const wxString &ext)
 {
     wxString e(ext);
     e = e.MakeLower();
-    return e == wxT("cpp") || e == wxT("cxx") || e == wxT("c") || e == wxT("c++") || e == wxT("cc");
+    return e == "cpp" || e == "cxx" || e == "c" || e == "c++" || e == "cc" || e == "ipp";
 }
 
 static bool IsHeader(const wxString &ext)
@@ -930,13 +930,15 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
         exts.Add(wxT("hxx"));
         exts.Add(wxT("hh"));
         exts.Add(wxT("h++"));
+        
     } else {
         //try to find a implementation file
-        exts.Add(wxT("cpp"));
-        exts.Add(wxT("cxx"));
-        exts.Add(wxT("c++"));
-        exts.Add(wxT("cc"));
-        exts.Add(wxT("c"));
+        exts.Add("cpp");
+        exts.Add("cxx");
+        exts.Add("c++");
+        exts.Add("cc" );
+        exts.Add("c"  );
+        exts.Add("ipp");
     }
 
     // search in current directory first

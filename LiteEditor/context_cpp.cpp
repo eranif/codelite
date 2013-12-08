@@ -942,13 +942,31 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
     }
 
     // search in current directory first
+    wxArrayString file_options;
     for (size_t i=0; i<exts.GetCount(); i++) {
         otherFile.SetExt(exts.Item(i));
-
-        if (TryOpenFile(otherFile, false))
+        
+        if ( otherFile.Exists() ) {
+            file_options.Add( otherFile.GetFullPath() );
+        }
+    }
+    wxString file_to_open;
+    if ( file_options.GetCount() > 1 ) {
+        // More than one option
+        file_to_open = ::wxGetSingleChoice(_("Multiple candidates found. Select a file to open:"), _("Swap Header/Source Implementation"), file_options, 0);
+        
+        if ( file_to_open.IsEmpty() )
+            // Cancel clicked
+            return;
+        
+        TryOpenFile(file_to_open, false);
+        return;
+        
+    } else {
+        if ( TryOpenFile(file_to_open, false) )
             return;
     }
-
+    
     // if that failed, now look in entire workspace
     for (size_t i=0; i<exts.GetCount(); i++) {
         otherFile.SetExt(exts.Item(i));

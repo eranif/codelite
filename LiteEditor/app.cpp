@@ -653,7 +653,7 @@ void CodeLiteApp::OnFatalException()
 bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser &parser, const wxString &curdir)
 {
     // check for single instance
-    if ( clConfig::Get().Read("SingleInstance", true) ) {
+    if ( clConfig::Get().Read("SingleInstance", false) ) {
         const wxString name = wxString::Format(wxT("CodeLite-%s"), wxGetUserId().c_str());
 
         m_singleInstance = new wxSingleInstanceChecker(name);

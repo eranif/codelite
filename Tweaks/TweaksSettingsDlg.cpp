@@ -94,6 +94,7 @@ void TweaksSettingsDlg::OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event)
 
 void TweaksSettingsDlg::OnColourChanged(wxPropertyGridEvent& event)
 {
+    event.Skip();
     wxPGProperty* prop = event.GetProperty();
     CHECK_PTR_RET(prop);
 

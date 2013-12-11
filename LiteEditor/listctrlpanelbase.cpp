@@ -25,7 +25,7 @@ ListCtrlPanelBase::ListCtrlPanelBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_SINGLE);
     
     mainSizer->Add(m_dvListCtrl, 1, wxEXPAND, 5);
     
@@ -62,16 +62,24 @@ DebuggerBtImgList::DebuggerBtImgList()
         wxCF3AAInitBitmapResources();
         bBitmapLoaded = true;
     }
-    wxBitmap bmp;
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrowActive"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("arrowActive"), bmp ) );
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrowActive"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("arrowActive"), bmp ) );
+    }
     
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrowInactive"));
-    this->Add( bmp );
-    m_bitmaps.insert( std::make_pair(wxT("arrowInactive"), bmp ) );
-    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrowInactive"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("arrowInactive"), bmp ) );
+    }
     
 }
 

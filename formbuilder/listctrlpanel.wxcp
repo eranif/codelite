@@ -7,6 +7,8 @@
 		"m_bitmapsFile":	"listctrlpanel_formbuilder_bitmaps.cpp",
 		"m_GenerateCodeTypes":	5,
 		"m_outputFileName":	"listctrlpanelbase",
+		"m_firstWindowId":	1000,
+		"m_useEnum":	false,
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -67,6 +69,10 @@
 					"m_value":	""
 				}, {
 					"type":	"string",
+					"m_label":	"Style:",
+					"m_value":	""
+				}, {
+					"type":	"string",
 					"m_label":	"Title:",
 					"m_value":	""
 				}, {
@@ -105,6 +111,10 @@
 							"m_label":	"Name:",
 							"m_value":	"mainSizer"
 						}, {
+							"type":	"string",
+							"m_label":	"Style:",
+							"m_value":	""
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -117,7 +127,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
+							"m_styles":	["wxDV_SINGLE"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -170,6 +180,10 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
 									"m_value":	""
 								}],
 							"m_events":	[{

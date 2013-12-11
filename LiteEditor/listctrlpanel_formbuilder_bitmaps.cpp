@@ -112,8 +112,8 @@ void wxCF3AAInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_forward.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_forward-disabled.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$._listctrlpanel_formbuilder_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$._listctrlpanel_formbuilder_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_forward.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_forward-disabled.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
+    XRC_ADD_FILE(wxT("XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$_home_eran_devl_codelitegit_formbuilder_listctrlpanel_formbuilder_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/listctrlpanel_formbuilder_bitmaps.cpp$_home_eran_devl_codelitegit_formbuilder_listctrlpanel_formbuilder_bitmaps.xrc"));
 }

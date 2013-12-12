@@ -1,6 +1,7 @@
 #include <wx/string.h>
 #include <wx/process.h>
 #include <wx/cmdline.h>
+#include <wx/crt.h>
 
 const wxCmdLineEntryDesc gCmdLineDesc[] = {
 	{ wxCMD_LINE_OPTION, "n",   "name", "Executable to launch", wxCMD_LINE_VAL_STRING },

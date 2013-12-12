@@ -4,6 +4,7 @@
 #include <builder_gnumake.h>
 #include <configuration_mapping.h>
 #include <macromanager.h>
+#include <wx/crt.h>
 
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 

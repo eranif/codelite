@@ -122,6 +122,7 @@ void TabInfo::DeSerialize(Archive &arch)
 	arch.Read(wxT("FirstVisibleLine"), m_firstVisibleLine);
 	arch.Read(wxT("CurrentLine"), m_currentLine);
 	arch.Read(wxT("Bookmarks"), m_bookmarks);
+	arch.Read(wxT("CollapsedFolds"), m_folds);
 }
 
 void TabInfo::Serialize(Archive &arch)
@@ -130,6 +131,7 @@ void TabInfo::Serialize(Archive &arch)
 	arch.Write(wxT("FirstVisibleLine"), m_firstVisibleLine);
 	arch.Write(wxT("CurrentLine"), m_currentLine);
 	arch.Write(wxT("Bookmarks"), m_bookmarks);
+	arch.Write(wxT("CollapsedFolds"), m_folds);
 }
 
 // class Archive
@@ -206,6 +208,24 @@ bool Archive::Write(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
 		arch.SetXmlNode(child);
 		_vTabInfoArr[i].Serialize(arch);
 		node->AddChild(child);
+	}
+	return true;
+}
+
+bool Archive::Write(const wxString &name, std::vector<int>& _vInt)
+{
+	if (!m_root) {
+		return false;
+	}
+	wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IntVector"));
+	m_root->AddChild(node);
+	node->AddProperty(wxT("Name"), name);
+
+	//add an entry for each int in the vector
+	for (size_t i=0; i<_vInt.size(); ++i) {
+		wxXmlNode *child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IntVectorItem"));
+		node->AddChild(child);
+		child->AddProperty(wxT("Value"), wxString::Format(wxT("%i"), _vInt.at(i)));
 	}
 	return true;
 }
@@ -311,6 +331,32 @@ bool Archive::Read(const wxString &name, std::vector<TabInfo>& _vTabInfoArr)
 				TabInfo oTabInfo;
 				oTabInfo.DeSerialize(arch);
 				_vTabInfoArr.push_back(oTabInfo);
+			}
+			child = child->GetNext();
+		}
+		return true;
+	}
+	return false;
+}
+
+bool Archive::Read(const wxString &name, std::vector<int>& _vInt)
+{
+	if (!m_root) {
+		return false;
+	}
+
+	wxXmlNode *node = FindNodeByName(m_root, wxT("IntVector"), name);
+	if (node) {
+		//fill the output array with the values
+		_vInt.clear();
+		wxXmlNode *child = node->GetChildren();
+		while (child) {
+			if (child->GetName() == wxT("IntVectorItem")) {
+				long value;
+                wxString stringvalue = child->GetPropVal(wxT("Value"), wxEmptyString);
+                if (stringvalue.ToLong(&value)) {
+                    _vInt.push_back(value);
+                }
 			}
 			child = child->GetNext();
 		}

@@ -2245,6 +2245,27 @@ void LEditor::ToggleTopmostFoldsInSelection()
     }
 }
 
+void LEditor::StoreCollapsedFoldsToArray(std::vector<int>& folds) const
+{
+    for (int line = 0; line < GetLineCount(); ++line) {
+        if ((GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) && (GetFoldExpanded(line) == false)) {
+            folds.push_back(line);
+        }
+    }
+}
+
+void LEditor::LoadCollapsedFoldsFromArray(const std::vector<int>& folds)
+{
+    for (int i = 0; i < folds.size(); ++i) {
+        int line = folds.at(i);
+        // 'line' was collapsed when serialised, so collapse it now. That assumes that the line-numbers haven't changed in the meanwhile.
+        // If we cared enough, we could have saved a fold-level too, and/or the function name +/- the line's displacement within the function. But for now...
+        if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
+            ToggleFold(line);
+        }
+    }
+}
+
 //----------------------------------------------
 // Bookmarks
 //----------------------------------------------
@@ -2499,11 +2520,13 @@ void LEditor::ReloadFile()
         return;
     }
 
-    // Cache any bookmarks
+    // Store a 'template' of the current file, so that it can be reapplied after
     wxArrayString bookmarks;
     StoreMarkersToArray(bookmarks);
 
-    // get the pattern of the current file
+    std::vector<int> folds;
+    StoreCollapsedFoldsToArray(folds);
+
     int lineNumber = GetCurrentLine();
 
     clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, 1);
@@ -2538,8 +2561,11 @@ void LEditor::ReloadFile()
     clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 
     SetReloadingFile( false );
+
+    // Now restore as far as possible the look'n'feel of the file
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
     LoadMarkersFromArray(bookmarks);
+    LoadCollapsedFoldsFromArray(folds);
 }
 
 void LEditor::SetEditorText(const wxString &text)

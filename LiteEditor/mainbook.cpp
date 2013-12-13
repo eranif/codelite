@@ -293,9 +293,14 @@ void MainBook::SaveSession(SessionEntry &session, wxArrayInt& intArr)
         oTabInfo.SetFileName(editors[i]->GetFileName().GetFullPath());
         oTabInfo.SetFirstVisibleLine(editors[i]->GetFirstVisibleLine());
         oTabInfo.SetCurrentLine(editors[i]->GetCurrentLine());
+
         wxArrayString astrBookmarks;
         editors[i]->StoreMarkersToArray(astrBookmarks);
         oTabInfo.SetBookmarks(astrBookmarks);
+
+        std::vector<int> folds;
+        editors[i]->StoreCollapsedFoldsToArray(folds);
+        oTabInfo.SetCollapsedFolds(folds);
 
         vTabInfoArr.push_back(oTabInfo);
     }
@@ -320,6 +325,7 @@ void MainBook::RestoreSession(SessionEntry &session)
         editor->ScrollToLine(ti.GetFirstVisibleLine());
         editor->SetEnsureCaretIsVisible(editor->PositionFromLine(ti.GetCurrentLine()));
         editor->LoadMarkersFromArray(ti.GetBookmarks());
+        editor->LoadCollapsedFoldsFromArray(ti.GetCollapsedFolds());
     }
     // We can't just use SelectPane() here.
     // Notebook::DoPageChangedEvent has posted events to us,

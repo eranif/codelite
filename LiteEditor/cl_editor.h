@@ -348,6 +348,14 @@ public:
      *  Find the topmost fold level within the selection, and toggle all selected folds of that level
      */
     void ToggleTopmostFoldsInSelection();
+    /**
+     * Load collapsed folds from a vector
+     */
+    void LoadCollapsedFoldsFromArray(const std::vector<int>& folds);
+    /**
+     * Store any collapsed folds to a vector, so they can be serialised
+     */
+    void StoreCollapsedFoldsToArray(std::vector<int>& folds) const;
 
 
     static FindReplaceDialog* GetFindReplaceDialog() {

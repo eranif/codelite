@@ -313,6 +313,6 @@ void wxCrafterwyt5ghInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_history.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_move-down.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$res_move-up.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$_home_eran_devl_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"), xml_res_file_8, xml_res_size_8, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/GUI_databaseexplorer_bitmaps.cpp$_home_eran_devl_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/GUI_databaseexplorer_bitmaps.cpp$C__src_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"), xml_res_file_8, xml_res_size_8, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/GUI_databaseexplorer_bitmaps.cpp$C__src_codelitegit_DatabaseExplorer_GUI_databaseexplorer_bitmaps.xrc"));
 }

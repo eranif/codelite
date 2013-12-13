@@ -96,6 +96,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[{
 					"m_eventName":	"wxEVT_INIT_DIALOG",
@@ -297,6 +317,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -373,7 +401,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -662,6 +690,14 @@
 													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Directories:",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Files:",
+													"m_value":	false
 												}],
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
@@ -1196,7 +1232,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Load..."
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/toolbars/16/standard/document-open.png"
 										}, {
@@ -1246,7 +1282,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Save..."
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/toolbars/16/standard/document-save.png"
 										}, {
@@ -1296,7 +1332,7 @@
 											"m_label":	"Help String:",
 											"m_value":	""
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/toolbars/16/build/execute.png"
 										}, {
@@ -1366,7 +1402,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"Insert template"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"../codelite-icons/subversion/16/add.png"
 										}, {
@@ -1416,7 +1452,7 @@
 											"m_label":	"Help String:",
 											"m_value":	"SQL History"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	"res/history.png"
 										}, {
@@ -1963,7 +1999,7 @@
 													"border":	5,
 													"gbSpan":	",",
 													"gbPosition":	",",
-													"m_styles":	["wxBORDER_THEME"],
+													"m_styles":	[],
 													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT", "wxALIGN_CENTER_VERTICAL"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -2122,6 +2158,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -2220,7 +2276,7 @@
 									"m_label":	"Default Button",
 									"m_value":	false
 								}, {
-									"type":	"filePicker",
+									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
 									"m_path":	""
 								}, {
@@ -2309,7 +2365,7 @@
 									"m_label":	"Default Button",
 									"m_value":	true
 								}, {
-									"type":	"filePicker",
+									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
 									"m_path":	""
 								}, {
@@ -2398,7 +2454,7 @@
 									"m_label":	"Default Button",
 									"m_value":	false
 								}, {
-									"type":	"filePicker",
+									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
 									"m_path":	""
 								}, {
@@ -2747,6 +2803,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -2907,12 +2983,16 @@
 											"m_label":	"Label:",
 											"m_value":	"Sqlite"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -3292,12 +3372,16 @@
 											"m_label":	"Label:",
 											"m_value":	"MySql"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -3532,6 +3616,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -3682,6 +3774,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -3832,6 +3932,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -3982,6 +4090,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_KEY_DOWN",
@@ -4180,12 +4296,16 @@
 											"m_label":	"Label:",
 											"m_value":	"PostgreSQL"
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
 											"type":	"bool",
 											"m_label":	"Selected",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Null Page",
 											"m_value":	false
 										}],
 									"m_events":	[],
@@ -4401,6 +4521,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -4551,6 +4679,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -4701,6 +4837,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -4851,6 +4995,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -5001,6 +5153,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_KEY_DOWN",
@@ -5157,6 +5317,14 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Directories:",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Auto Complete Files:",
+																	"m_value":	false
 																}],
 															"m_events":	[],
 															"m_children":	[]
@@ -5353,7 +5521,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -5436,7 +5604,7 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -5803,6 +5971,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -6021,6 +6209,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -6633,6 +6829,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -6921,7 +7125,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -7010,7 +7214,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -7120,6 +7324,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -7263,6 +7487,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -7363,7 +7595,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -7473,6 +7705,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -7710,6 +7962,14 @@
 													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Directories:",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Files:",
+													"m_value":	false
 												}],
 											"m_events":	[],
 											"m_children":	[]
@@ -7906,7 +8166,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -8010,6 +8270,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -8224,6 +8504,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -8374,6 +8662,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -8716,6 +9012,14 @@
 													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Directories:",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Files:",
+													"m_value":	false
 												}],
 											"m_events":	[],
 											"m_children":	[]
@@ -8792,7 +9096,7 @@
 													"m_label":	"Default Button",
 													"m_value":	false
 												}, {
-													"type":	"filePicker",
+													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
 													"m_path":	""
 												}, {
@@ -9106,6 +9410,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -9225,7 +9537,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -9314,7 +9626,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -9418,6 +9730,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -9635,7 +9967,7 @@
 									"m_label":	"Default Button",
 									"m_value":	false
 								}, {
-									"type":	"filePicker",
+									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
 									"m_path":	""
 								}, {
@@ -9738,6 +10070,26 @@
 					"type":	"string",
 					"m_label":	"Class Decorator",
 					"m_value":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (16x16)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (32x32)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (64x64)  :",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (128x128):",
+					"m_path":	""
+				}, {
+					"type":	"bitmapPicker",
+					"m_label":	"Bitmap File (256x256):",
+					"m_path":	""
 				}],
 			"m_events":	[{
 					"m_eventName":	"wxEVT_INIT_DIALOG",
@@ -10006,6 +10358,14 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Directories:",
+											"m_value":	false
+										}, {
+											"type":	"bool",
+											"m_label":	"Auto Complete Files:",
+											"m_value":	false
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -10320,7 +10680,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"res/add.png"
 																}, {
@@ -10370,7 +10730,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"res/delete.png"
 																}, {
@@ -10446,7 +10806,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"res/move-up.png"
 																}, {
@@ -10502,7 +10862,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"res/move-down.png"
 																}, {
@@ -11060,7 +11420,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"res/add.png"
 																}, {
@@ -11110,7 +11470,7 @@
 																	"m_label":	"Help String:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	"res/delete.png"
 																}, {
@@ -12207,7 +12567,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {
@@ -12296,7 +12656,7 @@
 											"m_label":	"Default Button",
 											"m_value":	false
 										}, {
-											"type":	"filePicker",
+											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
 											"m_path":	""
 										}, {

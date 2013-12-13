@@ -98,7 +98,7 @@ void TableSettings::OnMoveDownClick(wxCommandEvent& event)
     Column *col = GetColumn( GetSelectedColumnName() );
     if( col ) {
         int i = m_lstColumns.IndexOf( col );
-        if( i != wxNOT_FOUND && i < m_lstColumns.GetCount() - 1 ) {
+        if( i != wxNOT_FOUND && i < (int)m_lstColumns.GetCount() - 1 ) {
             m_lstColumns.DeleteObject( col );
             m_lstColumns.Insert( i + 1, col );
             UpdateView();

@@ -439,10 +439,11 @@ void FoldHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 
     if (event.GetId() == XRCID("toggle_fold")) editor->ToggleCurrentFold();
      else if (event.GetId() == XRCID("fold_all_in_selection")) editor->ToggleAllFoldsInSelection();
+     else if (event.GetId() == XRCID("fold_topmost_in_selection")) editor->ToggleTopmostFoldsInSelection();
      else editor->FoldAll();
 }
 
-void FoldHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event) // Used for ToggleAllFoldsInSelection()
+void FoldHandler::ProcessUpdateUIEvent(wxWindow *owner, wxUpdateUIEvent &event) // Used for ToggleAllFoldsInSelection() etc
 {
     LEditor *editor = dynamic_cast<LEditor*>(owner);
     if ( !editor ) {

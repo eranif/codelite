@@ -2182,6 +2182,69 @@ void LEditor::FoldAll()
     }
 }
 
+// Toggle all the highest-level folds in the selection i.e. if the selection contains folds of level 3, 4 and 5, toggle all the level 3 ones
+void LEditor::ToggleTopmostFoldsInSelection()
+{
+    int selStart = GetSelectionStart();
+    int selEnd = GetSelectionEnd();
+    if (selStart == selEnd) {
+        return; // No selection. UpdateUI prevents this from the menu, but not from an accelerator
+    }
+
+    int startline = LineFromPos(selStart);
+    int endline = LineFromPos(selEnd);
+    if (startline == endline) {
+        ToggleFold(startline); // For a single-line selection just toggle
+        return;
+    }
+    if ( startline > endline) {
+        wxSwap(startline, endline);
+    }
+
+    // Go thru the selection to find the topmost contained fold level. Also ask the first one of this level if it's folded
+    int toplevel(wxSTC_FOLDLEVELNUMBERMASK);
+    bool expanded(true);
+    for (int line = startline; line < endline; ++line) { // not <=. If only the last line of the sel is folded it's unlikely that the user meant it
+        if (!GetLineVisible(line)) {
+            break;
+        }
+        if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
+            int level = GetFoldLevel(line) & wxSTC_FOLDLEVELNUMBERMASK;
+            if (level < toplevel) {
+                toplevel = level;
+                expanded = GetFoldExpanded(line);
+            }
+        }
+    }
+    if (toplevel == wxSTC_FOLDLEVELNUMBERMASK) { // No fold found
+        return;
+    }
+
+   for (int line = startline; line < endline; ++line) {
+       if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
+           if ((GetFoldLevel(line) & wxSTC_FOLDLEVELNUMBERMASK) == toplevel && GetFoldExpanded(line) == expanded) {
+               ToggleFold(line);
+           }
+       }
+   }
+ 
+    // make sure the caret is visible. If it was hidden, place it at the first visible line
+    int curpos = GetCurrentPos();
+    if (expanded && curpos != wxNOT_FOUND) {
+        int curline = LineFromPosition(curpos);
+        if (curline != wxNOT_FOUND && GetLineVisible(curline) == false) {
+            // the caret line is hidden, make sure the caret is visible
+            while (curline >= 0) {
+                if ((GetFoldLevel(curline) & wxSTC_FOLDLEVELHEADERFLAG) && GetLineVisible(curline)) {
+                    SetCaretAt(PositionFromLine(curline));
+                    break;
+                }
+                curline--;
+            }
+        }
+    }
+}
+
 //----------------------------------------------
 // Bookmarks
 //----------------------------------------------

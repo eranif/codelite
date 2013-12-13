@@ -343,7 +343,11 @@ public:
      * Toggles *all* folds within the selection, not just the outer one of each function
      */
     void ToggleAllFoldsInSelection();
-    void DoRecursivelyExpandFolds(bool expand, int startline, int endline);
+    void DoRecursivelyExpandFolds(bool expand, int startline, int endline); // Helper function for ToggleAllFoldsInSelection()
+    /**
+     *  Find the topmost fold level within the selection, and toggle all selected folds of that level
+     */
+    void ToggleTopmostFoldsInSelection();
 
 
     static FindReplaceDialog* GetFindReplaceDialog() {

@@ -59,6 +59,7 @@ class WXDLLIMPEXP_CL TabInfo : public SerializedObject
 	int m_firstVisibleLine;
 	int m_currentLine;
 	wxArrayString m_bookmarks;
+	std::vector<int> m_folds;
 public:
 	// setters
 	void SetFileName(const wxString& _fileName) {
@@ -73,6 +74,9 @@ public:
 	void SetBookmarks(const wxArrayString& _bookmarks) {
 		this->m_bookmarks = _bookmarks;
 	}
+	void SetCollapsedFolds(const std::vector<int>& folds) {
+		m_folds = folds;
+	}
 	//getters
 	const wxString& GetFileName() const {
 		return this->m_fileName;
@@ -85,6 +89,9 @@ public:
 	}
 	const wxArrayString& GetBookmarks() const {
 		return this->m_bookmarks;
+	}
+	const std::vector<int>& GetCollapsedFolds() const {
+		return m_folds;
 	}
 
 	TabInfo();

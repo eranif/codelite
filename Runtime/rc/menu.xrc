@@ -160,6 +160,9 @@
 			<object class="wxMenuItem" name="fold_all">
 				<label>Toggle &amp;All Folds</label>
 			</object>
+			<object class="wxMenuItem" name="fold_topmost_in_selection">
+				<label>Toggle All To&amp;pmost Folds in Selection</label>
+			</object>
 			<object class="wxMenuItem" name="fold_all_in_selection">
 				<label>Toggle &amp;Every Fold in Selection</label>
 			</object>

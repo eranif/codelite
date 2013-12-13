@@ -2182,6 +2182,90 @@ void LEditor::FoldAll()
     }
 }
 
+// Toggle all the highest-level folds in the selection i.e. if the selection contains folds of level 3, 4 and 5, toggle all the level 3 ones
+void LEditor::ToggleTopmostFoldsInSelection()
+{
+    int selStart = GetSelectionStart();
+    int selEnd = GetSelectionEnd();
+    if (selStart == selEnd) {
+        return; // No selection. UpdateUI prevents this from the menu, but not from an accelerator
+    }
+
+    int startline = LineFromPos(selStart);
+    int endline = LineFromPos(selEnd);
+    if (startline == endline) {
+        ToggleFold(startline); // For a single-line selection just toggle
+        return;
+    }
+    if ( startline > endline) {
+        wxSwap(startline, endline);
+    }
+
+    // Go thru the selection to find the topmost contained fold level. Also ask the first one of this level if it's folded
+    int toplevel(wxSTC_FOLDLEVELNUMBERMASK);
+    bool expanded(true);
+    for (int line = startline; line < endline; ++line) { // not <=. If only the last line of the sel is folded it's unlikely that the user meant it
+        if (!GetLineVisible(line)) {
+            break;
+        }
+        if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
+            int level = GetFoldLevel(line) & wxSTC_FOLDLEVELNUMBERMASK;
+            if (level < toplevel) {
+                toplevel = level;
+                expanded = GetFoldExpanded(line);
+            }
+        }
+    }
+    if (toplevel == wxSTC_FOLDLEVELNUMBERMASK) { // No fold found
+        return;
+    }
+
+   for (int line = startline; line < endline; ++line) {
+       if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
+           if ((GetFoldLevel(line) & wxSTC_FOLDLEVELNUMBERMASK) == toplevel && GetFoldExpanded(line) == expanded) {
+               ToggleFold(line);
+           }
+       }
+   }
+ 
+    // make sure the caret is visible. If it was hidden, place it at the first visible line
+    int curpos = GetCurrentPos();
+    if (expanded && curpos != wxNOT_FOUND) {
+        int curline = LineFromPosition(curpos);
+        if (curline != wxNOT_FOUND && GetLineVisible(curline) == false) {
+            // the caret line is hidden, make sure the caret is visible
+            while (curline >= 0) {
+                if ((GetFoldLevel(curline) & wxSTC_FOLDLEVELHEADERFLAG) && GetLineVisible(curline)) {
+                    SetCaretAt(PositionFromLine(curline));
+                    break;
+                }
+                curline--;
+            }
+        }
+    }
+}
+
+void LEditor::StoreCollapsedFoldsToArray(std::vector<int>& folds) const
+{
+    for (int line = 0; line < GetLineCount(); ++line) {
+        if ((GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) && (GetFoldExpanded(line) == false)) {
+            folds.push_back(line);
+        }
+    }
+}
+
+void LEditor::LoadCollapsedFoldsFromArray(const std::vector<int>& folds)
+{
+    for (int i = 0; i < folds.size(); ++i) {
+        int line = folds.at(i);
+        // 'line' was collapsed when serialised, so collapse it now. That assumes that the line-numbers haven't changed in the meanwhile.
+        // If we cared enough, we could have saved a fold-level too, and/or the function name +/- the line's displacement within the function. But for now...
+        if (GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
+            ToggleFold(line);
+        }
+    }
+}
+
 //----------------------------------------------
 // Bookmarks
 //----------------------------------------------
@@ -2436,11 +2520,13 @@ void LEditor::ReloadFile()
         return;
     }
 
-    // Cache any bookmarks
+    // Store a 'template' of the current file, so that it can be reapplied after
     wxArrayString bookmarks;
     StoreMarkersToArray(bookmarks);
 
-    // get the pattern of the current file
+    std::vector<int> folds;
+    StoreCollapsedFoldsToArray(folds);
+
     int lineNumber = GetCurrentLine();
 
     clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, 1);
@@ -2475,8 +2561,11 @@ void LEditor::ReloadFile()
     clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this, IsFileReadOnly(GetFileName()));
 
     SetReloadingFile( false );
+
+    // Now restore as far as possible the look'n'feel of the file
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
     LoadMarkersFromArray(bookmarks);
+    LoadCollapsedFoldsFromArray(folds);
 }
 
 void LEditor::SetEditorText(const wxString &text)

@@ -109,6 +109,18 @@ bool DebuggerMgr::LoadDebuggers()
     for(size_t i=0; i<files.GetCount(); i++) {
         clDynamicLibrary *dl = new clDynamicLibrary();
         wxString fileName(files.Item(i));
+#if defined(__WXMSW__) && !defined(NDEBUG)
+            // Under MSW loading a release plugin while in debug mode will cause a crash
+            if ( !fileName.EndsWith("-dbg.dll") ) {
+                continue;
+            }
+#elif defined(__WXMSW__)
+
+            // filter debug plugins
+            if ( fileName.EndsWith("-dbg.dll") ) {
+                continue;
+            }
+#endif
         if(!dl->Load(fileName)) {
             wxLogMessage(wxT("Failed to load debugger's dll: ") + fileName);
             if (!dl->GetError().IsEmpty()) {

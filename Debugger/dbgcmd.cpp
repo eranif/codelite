@@ -545,8 +545,8 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
     // so the breakpoint ID will come in form of
     // ^done,bkpt={number="2"....
     // ^done,wpt={number="2"
-    static wxRegEx reBreak   (wxT("done,bkpt={number=\"([0-9]+)\""));
-    static wxRegEx reWatch   (wxT("done,wpt={number=\"([0-9]+)\""));
+    static wxRegEx reBreak(wxT("done,bkpt={number=\"([0-9]+)\""));
+    static wxRegEx reWatch(wxT("done,wpt={number=\"([0-9]+)\""));
 
     wxString number;
     long breakpointId(wxNOT_FOUND);
@@ -568,7 +568,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
 
     m_observer->UpdateBpAdded(m_bp.internal_id, breakpointId);
     if (breakpointId == wxNOT_FOUND) {
-        return true;	// If the bp wasn't matched, the most likely reason is that bp creation failed. So don't say it worked
+        return true; // If the bp wasn't matched, the most likely reason is that bp creation failed. So don't say it worked
     }
 
     wxString msg;
@@ -610,7 +610,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString &line)
             msg << m_bp.lineno;
         }
     }
-
+    
     m_observer->UpdateAddLine(msg);
     return true;
 }

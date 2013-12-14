@@ -2345,9 +2345,6 @@ void Manager::DbgStart ( long attachPid )
     // wont need to read from the XML each time perform 'next' step
     clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Initialize();
 
-    // gdb can't cope with creating a BP already disabled, so disable any now
-    GetBreakpointsMgr()->DisableAnyDisabledBreakpoints();
-
     // let the active editor get the focus
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if ( editor ) {
@@ -3213,10 +3210,6 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
 
     case DBG_UR_RECONCILE_BPTS:
         GetBreakpointsMgr()->ReconcileBreakpoints( event.m_bpInfoList );
-        break;
-
-    case DBG_UR_DEBUGGER_PID_VALID:
-        GetBreakpointsMgr()->DisableAnyDisabledBreakpoints();
         break;
 
     case DBG_UR_BP_HIT:

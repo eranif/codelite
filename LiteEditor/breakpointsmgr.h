@@ -70,11 +70,6 @@ protected:
     bool CanThisBreakpointBeUpdated(const BreakpointInfo &bp1, const BreakpointInfo &bp2) const;
 
     /**
-     * Get id of the breakpoint on this line. If multiple bps, ask the user to select
-     */
-    int GetDesiredBreakpointIfMultiple(const wxString &fileName, const int lineno, const wxString msg = wxT(""));
-
-    /**
      * Sets bp.bp_type to the value most appropriate to its contents
      */
     void SetBestBPType(BreakpointInfo& bp);
@@ -176,7 +171,7 @@ public:
      * Add a breakpoint to the current debugger at the given line-number/file
      * Depending on the parameters, a temporary/ignored/conditional/commandlist bp can be created
      */
-    bool AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions = wxT(""), const bool is_temp = false);
+    bool AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions = wxT(""), bool is_temp = false, bool is_disabled = false);
 
     /**
      * Add a breakpoint using the 'Properties' dialog
@@ -221,11 +216,6 @@ public:
     void GetAllMemoryBreakpoints(BreakpointInfoVec_t& memoryBps);
     
     /**
-     * Toggle a breakpoint's enabled state
-     */
-    bool ToggleEnabledStateByLineno(const wxString& file, const int lineno);
-
-    /**
      * Summon the BreakptProperties dialog for a bp
      */
     void EditBreakpointByLineno(const wxString& file, const int lineno);
@@ -247,16 +237,10 @@ public:
     void SetBreakpointDebuggerID(const int internal_id, const int debugger_id);
 
     /**
-     * return the number of this line's breakpoints
-     * with the breakpoints themselves in li
+     * @brief return the breakpoint for a given file/line
      */
-    unsigned int GetBreakpoints(std::vector<BreakpointInfo>& li, const wxString &fileName, const int lineno);
-
-    /**
-     * return whether this line has a breakpoint of type bp_type
-     * Any matches found are returned in li
-     */
-    bool GetMatchingBreakpoints(std::vector<BreakpointInfo>& li, const wxString &fileName, const int lineno, enum BreakpointType bp_type);
+    BreakpointInfo& GetBreakpoint(const wxString &fileName, const int lineno);
+    const BreakpointInfo& GetBreakpoint(const wxString &fileName, const int lineno) const;
 
     /**
      * Returns a string containing details of any breakpoints on this line
@@ -274,11 +258,6 @@ public:
      * Called when the debugger has stopped, so they're  no longer valid
      */
     void DebuggerStopped();
-
-    /**
-     * A bp can't be created disabled, so disable any that should be once the debugger is started
-     */
-    void DisableAnyDisabledBreakpoints();
 
     /**
      * Enable/Disable all breakpoints. Only used while the debugger is running
@@ -326,7 +305,7 @@ public:
     /**
      * The 'drop' bit of breakpoints 'drag'n'drop'
      */
-    void DropBreakpoint(std::vector<BreakpointInfo>& BPs, int newline);
+    void DropBreakpoint(const BreakpointInfo& bp, int newline);
 
     /**
      * Getter for the myDragImage pointer
@@ -356,16 +335,14 @@ public:
 class myDragImage  :  public wxDragImage, public wxEvtHandler
 {
     LEditor* editor;
-    wxBitmap bitmap;
-    std::vector<BreakpointInfo> lineBPs;
+    BreakpointInfo m_bp;
     int m_startx; // The initial x position
     wxCursor oldcursor;
 
 public:
-    myDragImage(LEditor* ed, wxBitmap bitmap, std::vector<BreakpointInfo>& BPs);
+    myDragImage(LEditor* ed, const wxBitmap& bitmap, const BreakpointInfo& bp);
     bool StartDrag();
     void OnMotion(wxMouseEvent& event);
     void OnEndDrag(wxMouseEvent& event);
-
 };
 #endif //BREAKPOINTS_MANAGER_H

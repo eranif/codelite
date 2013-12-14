@@ -442,11 +442,6 @@ public:
     void AddOtherBreakpointType(wxCommandEvent &event);
 
     /**
-     * toggle whether the break point at the current line & file is enabled
-     */
-    void ToggleBreakpointEnablement();
-
-    /**
      * Ignore the break point at the current line & file
      */
     void OnIgnoreBreakpoint();
@@ -466,7 +461,12 @@ public:
      * Delete the breakpoint at the current line & file, or lineno if from ToggleBreakpoint()
      */
     void DelBreakpoint(int lineno = -1);
-
+    
+    /**
+     * @brief change the breakpoint at the current line to disable or enable
+     */
+    void ToggleBreakpointEnablement();
+    
     /**
      * @brief search the editor for pattern. If pattern is found, the editor will then search for 'what'
      * inside the pattern and will select it

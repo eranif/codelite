@@ -184,15 +184,16 @@ class DbgCmdHandlerBp : public DbgCmdHandler
     std::vector< BreakpointInfo > *m_bplist;
     int                            m_bpType; // BP_type_break by default
     DbgGdb*                        m_debugger;
-
+    
 public:
     DbgCmdHandlerBp(IDebuggerObserver *observer, DbgGdb *debugger, BreakpointInfo bp, std::vector< BreakpointInfo > *bplist, int bptype = BP_type_break)
         : DbgCmdHandler(observer)
         , m_bp(bp)
         , m_bplist(bplist)
         , m_bpType(bptype)
-        , m_debugger(debugger) {}
-
+        , m_debugger(debugger) 
+        {}
+    
     virtual ~DbgCmdHandlerBp() {}
     virtual bool ProcessOutput(const wxString &line);
     virtual bool WantsErrors() const {

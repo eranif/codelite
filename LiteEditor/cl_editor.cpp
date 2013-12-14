@@ -264,11 +264,9 @@ void LEditor::FillBPtoMarkerArray()
     m_BPstoMarkers.push_back(bpcondm);
 
     BPtoMarker bpignm;
-    bpignm.bp_type = BP_type_ignoredbreak;
-    bpignm.marker =
-        bpignm.marker_disabled = smt_bp_ignored;
-    bpignm.mask =
-        bpignm.mask_disabled = mmt_bp_ignored; // Enabled/disabled are the same
+    bpignm.bp_type  = BP_type_ignoredbreak;
+    bpignm.marker   = bpignm.marker_disabled = smt_bp_ignored;
+    bpignm.mask     = bpignm.mask_disabled = mmt_bp_ignored; // Enabled/disabled are the same
     m_BPstoMarkers.push_back(bpignm);
 
     bpm.bp_type = BP_type_tempbreak;
@@ -2256,7 +2254,7 @@ void LEditor::StoreCollapsedFoldsToArray(std::vector<int>& folds) const
 
 void LEditor::LoadCollapsedFoldsFromArray(const std::vector<int>& folds)
 {
-    for (int i = 0; i < folds.size(); ++i) {
+    for (size_t i = 0; i < folds.size(); ++i) {
         int line = folds.at(i);
         // 'line' was collapsed when serialised, so collapse it now. That assumes that the line-numbers haven't changed in the meanwhile.
         // If we cared enough, we could have saved a fold-level too, and/or the function name +/- the line's displacement within the function. But for now...
@@ -2852,7 +2850,7 @@ void LEditor::OnRightUp(wxMouseEvent& event)
 
 void LEditor::OnRightDown(wxMouseEvent& event)
 {
-    size_t mod = GetCodeNavModifier();
+    int mod = GetCodeNavModifier();
     if ( event.GetModifiers() == mod && mod != wxMOD_NONE) {
         ClearSelections();
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
@@ -2874,7 +2872,7 @@ void LEditor::OnRightDown(wxMouseEvent& event)
 
 void LEditor::OnMotion(wxMouseEvent& event)
 {
-    size_t mod = GetCodeNavModifier();
+    int mod = GetCodeNavModifier();
     if ( event.GetModifiers() == mod && mod != wxMOD_NONE) {
 
         m_hyperLinkIndicatroStart = wxNOT_FOUND;
@@ -2904,7 +2902,7 @@ void LEditor::OnLeftDown(wxMouseEvent &event)
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
     }
 
-    size_t mod = GetCodeNavModifier();
+    int mod = GetCodeNavModifier();
     if ( m_hyperLinkType != wxID_NONE && event.GetModifiers() == mod && mod != wxMOD_NONE ) {
         ClearSelections();
         SetCaretAt( PositionFromPointClose(event.GetX(), event.GetY()) );
@@ -2952,36 +2950,28 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
     menu.Append(XRCID("insert_disabled_breakpoint"), wxString(_("Add a Disabled Breakpoint")));
     menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 
-    std::vector<BreakpointInfo> lineBPs;
-    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(lineBPs, GetFileName().GetFullPath(), GetCurrentLine()+1);
-    size_t count = lineBPs.size();
-
+    BreakpointInfo &bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), GetCurrentLine()+1);
+    
     // What we show depends on whether there's already a bp here (or several)
-    if (count > 0) {
+    if ( !bp.IsNull() ) {
+
+        // Disable all the "Add*" entries
+        menu.Enable(XRCID("add_breakpoint"), false);
+        menu.Enable(XRCID("insert_temp_breakpoint"), false);
+        menu.Enable(XRCID("insert_disabled_breakpoint"), false);
+        menu.Enable(XRCID("insert_cond_breakpoint"), false);
         menu.AppendSeparator();
-        if (count == 1) {
-            menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
-            menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
-            //IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-            //if (dbgr && dbgr->IsRunning()) {
-                // On MSWin it often crashes the debugger to try to load-then-disable a bp
-                // so don't show the menu item unless the debugger is running *** Hmm, that was written about 4 years ago. Let's try it again...
-                menu.Append(XRCID("toggle_breakpoint_enabled_status"),
-                            lineBPs[0].is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
-            //}
-            menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
-        } else if (count > 1) {
-            menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove a Breakpoint")));
-            menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore a Breakpoint")));
-            //IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-            //if (dbgr && dbgr->IsRunning()) {
-                menu.Append(XRCID("toggle_breakpoint_enabled_status"), wxString(_("Toggle a breakpoint's enabled state")));
-            //}
-            menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit a Breakpoint")));
-        }
+
+        menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
+        menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
+        // On MSWin it often crashes the debugger to try to load-then-disable a bp
+        // so don't show the menu item unless the debugger is running *** Hmm, that was written about 4 years ago. Let's try it again...
+        menu.Append(XRCID("toggle_breakpoint_enabled_status"),
+                    bp.is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
+        menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
     }
 
-    if (ManagerST::Get()->DbgCanInteract()) {
+    if ( ManagerST::Get()->DbgCanInteract() ) {
         menu.AppendSeparator();
         ToHereId = wxNewId();
         menu.Append(ToHereId, _("Run to here"));
@@ -2989,10 +2979,11 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
     }
 
     PopupMenu(&menu, pt.x, pt.y);
-
     m_popupIsOn = false;
-
-    if (ToHereId) menu.Disconnect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
+    
+    if ( ToHereId ) {
+        menu.Disconnect(ToHereId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnDbgRunToCursor), NULL, this);
+    }
 }
 
 void LEditor::AddOtherBreakpointType(wxCommandEvent &event)
@@ -3024,13 +3015,6 @@ void LEditor::OnEditBreakpoint()
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
-void LEditor::ToggleBreakpointEnablement()
-{
-    if (ManagerST::Get()->GetBreakpointsMgr()->ToggleEnabledStateByLineno(GetFileName().GetFullPath(), GetCurrentLine()+1)) {
-        clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-    }
-}
-
 void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT("")*/, const bool is_temp/*=false*/, const bool is_disabled/*=false*/)
 {
     if (lineno == -1) {
@@ -3038,12 +3022,11 @@ void LEditor::AddBreakpoint(int lineno /*= -1*/,const wxString& conditions/*=wxT
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp)) {
+    if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
+        
     } else {
-        if (is_disabled) {
-            ToggleBreakpointEnablement();
-        }
+        
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
         wxString message( _("Breakpoint successfully added") ), prefix;
         if (is_temp) {
@@ -3092,12 +3075,16 @@ void LEditor::ToggleBreakpoint(int lineno)
     if (lineno == -1) {
         lineno = GetCurrentLine()+1;
     }
-    std::vector<BreakpointInfo> lineBPs;
-    if (ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(lineBPs, GetFileName().GetFullPath(), lineno) == 0) {
+    
+    const BreakpointInfo &bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), lineno);
+    
+    if ( bp.IsNull() ) {
         // This will (always?) be from a margin mouse-click, so assume it's a standard breakpt that's wanted
         AddBreakpoint(lineno);
+        
     } else {
         DelBreakpoint(lineno);
+        
     }
 }
 
@@ -4415,4 +4402,23 @@ void LEditor::InitializeAnnotations()
     
     // default all line style
     AnnotationSetVisible(wxSTC_ANNOTATION_STANDARD);
+}
+
+void LEditor::ToggleBreakpointEnablement()
+{
+    int lineno = GetCurrentLine()+1;
+    
+    BreakptMgr* bm = ManagerST::Get()->GetBreakpointsMgr();
+    BreakpointInfo bp = bm->GetBreakpoint(GetFileName().GetFullPath(), lineno);
+    if ( bp.IsNull() )
+        return;
+    
+    if ( !bm->DelBreakpointByLineno(bp.file, bp.lineno) )
+        return;
+
+    bp.is_enabled = !bp.is_enabled;
+    bp.debugger_id = wxNOT_FOUND;
+    bp.internal_id = bm->GetNextID();
+    ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint(bp);
+    clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }

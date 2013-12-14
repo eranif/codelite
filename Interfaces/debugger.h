@@ -163,6 +163,17 @@ typedef std::vector<DisassembleEntry> DisassembleEntryVec_t;
 class BreakpointInfo: public SerializedObject
 {
 public:
+    class PredicateByFileAndLine {
+        wxString m_filename;
+        int      m_line;
+    public:
+        PredicateByFileAndLine(const wxString &file, int line) : m_filename(file), m_line(line) {}
+        bool operator()(const BreakpointInfo& bp) const {
+            return m_filename == bp.file && m_line == bp.lineno;
+        }
+    };
+    
+public:
     // Where the bp is: file/lineno, function name (e.g. main()) or the memory location
     wxString               file;
     int                    lineno;
@@ -211,17 +222,18 @@ public:
         }
     }
 
-    BreakpointInfo() : lineno(-1), regex(false), debugger_id(-1), bp_type(BP_type_break),
+    BreakpointInfo() : lineno(-1), regex(false), internal_id(wxNOT_FOUND), debugger_id(wxNOT_FOUND), bp_type(BP_type_break),
         ignore_number(0), is_enabled(true), is_temp(false), watchpoint_type(WP_watch), origin(BO_Other) {}
-
-//	BreakpointInfo(const BreakpointInfo& BI ) {
-//		*this = BI;
-//	}
 
     bool IsConditional() {
         return ! conditions.IsEmpty();
     }
-
+    
+    int GetId() const {
+        int best_id = (this->debugger_id == -1 ? this->internal_id : this->debugger_id );
+        return best_id;
+    }
+    
     void Create(wxString filename, int line, int int_id, int ext_id = -1) {
         wxFileName fn(filename);
         fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
@@ -261,7 +273,11 @@ public:
                 && (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) && (is_temp == BI.is_temp)
                 && (bp_type==BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) && (!function_name.IsEmpty() ? (regex == BI.regex) : true));
     }
-
+    
+    bool IsNull() const {
+        return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND;
+    }
+    
 protected:
     // SerializedObject interface
     virtual void Serialize(Archive& arch) {

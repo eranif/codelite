@@ -380,7 +380,13 @@ bool DbgGdb::Break( const BreakpointInfo& bp )
     default:
         // Should be standard breakpts. But if someone tries to make an ignored temp bp
         // it won't have the BP_type_tempbreak type, so check again here
-        command =  ( bp.is_temp ? breakinsertcmd + wxT("-t ") : breakinsertcmd );
+        command << breakinsertcmd;
+        if ( bp.is_temp ) {
+            command << " -t ";
+        }
+        if ( !bp.is_enabled ) {
+            command << " -d ";
+        }
         break;
     }
 
@@ -424,7 +430,8 @@ bool DbgGdb::Break( const BreakpointInfo& bp )
     gdbCommand << command << condition << ignoreCounnt << breakWhere;
 
     // execute it
-    return WriteCommand( gdbCommand, new DbgCmdHandlerBp( m_observer, this, bp, &m_bpList, bp.bp_type ) );
+    DbgCmdHandlerBp* dbgCommandHandler = new DbgCmdHandlerBp( m_observer, this, bp, &m_bpList, bp.bp_type );
+    return WriteCommand( gdbCommand,  dbgCommandHandler);
 }
 
 bool DbgGdb::SetIgnoreLevel( const int bid, const int ignorecount )

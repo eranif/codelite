@@ -250,7 +250,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, 600, wxALIGN_LEFT);
     m_splitterPage182 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter174->SplitVertically(m_splitterPage178, m_splitterPage182, 150);
+    m_splitter174->SplitHorizontally(m_splitterPage178, m_splitterPage182, 150);
     
     boxSizer184 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage182->SetSizer(boxSizer184);
@@ -287,7 +287,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer208->Add(m_fileListBox, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
     m_splitterPage204 = new wxPanel(m_splitter196, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter196->SplitHorizontally(m_splitterPage200, m_splitterPage204, 0);
+    m_splitter196->SplitVertically(m_splitterPage200, m_splitterPage204, 0);
     
     boxSizer215 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage204->SetSizer(boxSizer215);
@@ -335,7 +335,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer215->Add(m_stcDiff, 1, wxALL|wxEXPAND, 5);
     
     m_splitterPage194 = new wxPanel(m_splitter186, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter186->SplitVertically(m_splitterPage190, m_splitterPage194, 100);
+    m_splitter186->SplitHorizontally(m_splitterPage190, m_splitterPage194, 100);
     
     boxSizer218 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage194->SetSizer(boxSizer218);

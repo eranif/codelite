@@ -595,13 +595,13 @@ void QuickFindBar::DoMarkAll()
 
     int fixed_offset(0);
 
-    editor->DelAllMarkers();
+    editor->DelAllMarkers(true);
 
     // set the active indicator to be 1
     editor->SetIndicatorCurrent(1);
 
     while ( StringFindReplacer::Search(pinput, offset, findWhat.wc_str(), flags, pos, match_len) ) {
-        editor->MarkerAdd(editor->LineFromPosition(fixed_offset + pos), smt_bookmark);
+        editor->MarkerAdd(editor->LineFromPosition(fixed_offset + pos), smt_find_bookmark);
 
         // add indicator as well
         editor->IndicatorFillRange(fixed_offset + pos, match_len);
@@ -621,15 +621,15 @@ void QuickFindBar::OnHighlightMatches(wxCommandEvent& event)
 #else
     checked = event.IsChecked();
 #endif
+    LEditor* editor = dynamic_cast<LEditor*>(m_sci);
 
-    if(checked) {
+    if (checked && editor) {
+        editor->SetFindBookmarksActive(true);
         DoMarkAll();
     } else {
-        if(m_sci) {
-            LEditor *editor = dynamic_cast<LEditor*>( m_sci );
-            if( editor ) {
-                editor->DelAllMarkers();
-            }
+        if (editor) {
+            editor->DelAllMarkers(true);
+            editor->SetFindBookmarksActive(false);
         }
     }
 }
@@ -653,8 +653,7 @@ void QuickFindBar::OnHighlightMatchesUI(wxUpdateUIEvent& event)
         } else {
             // Check to see if there are any markers
             int nLine = editor->LineFromPosition(0);
-            int mask = mmt_bookmarks;
-            int nFoundLine = editor->MarkerNext(nLine + 1, mask);
+            int nFoundLine = editor->MarkerNext(nLine + 1, mmt_find_bookmark);
 
             event.Enable(true);
             event.Check(nFoundLine != wxNOT_FOUND);

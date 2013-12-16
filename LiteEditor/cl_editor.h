@@ -62,16 +62,20 @@ enum sci_annotation_styles {
 // If you add another type here, watch out for smt_LAST_BP_TYPE; and you need also to add to the enum 'marker_mask_type' below
 // The higher the value, the nearer the top of the pecking order displaywise. So keep the most important breakpoint at the top i.e. smt_breakpoint,
 // but have smt_breakpointsmt_indicator above it, so you can see the indicator when there's a breakpt too
-enum sci_marker_types { smt_bookmark=7, smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled,
-                        smt_bp_ignored, smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint, smt_indicator, smt_warning, smt_error
-                      };
+enum sci_marker_types { /* markers 0-2 are unused atm */
+    smt_FIRST_BMK_TYPE=3, smt_bookmark1=smt_FIRST_BMK_TYPE, smt_bookmark2, smt_bookmark3, smt_bookmark4, smt_find_bookmark=7, smt_LAST_BMK_TYPE=smt_find_bookmark,
+    smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled, smt_bp_ignored,
+    smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint,
+    smt_indicator, smt_warning, smt_error
+};
 
 // These are bitmap masks of the various margin markers.
 // So 256 == 0x100 == 100000000, 2^9, and masks the ninth marker, smt_cond_bp_disabled==8 (as the markers are zero-based)
 // 0x7f00 is binary 111111100000000 and masks all the 7 current breakpoint types. If you add others, change it
-enum marker_mask_type { mmt_folds=wxSTC_MASK_FOLDERS, mmt_bookmarks=128, mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400,
-                        mmt_bp_ignored=0x800,  mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint,  mmt_all_breakpoints=0x7f00,   mmt_indicator=0x8000,
-                        mmt_compiler=0x30000 /* masks compiler errors/warnings */
+enum marker_mask_type { mmt_standard_bookmarks=0x78, mmt_find_bookmark=0x80, mmt_all_bookmarks=0xF8,
+                        mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400, mmt_bp_ignored=0x800,
+                        mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint, mmt_all_breakpoints=0x7f00,
+                        mmt_indicator=0x8000, mmt_compiler=0x30000 /* masks compiler errors/warnings */, mmt_folds=wxSTC_MASK_FOLDERS /* 0xFE000000 */
                       };
 
 /**
@@ -147,6 +151,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     bool                                        m_preserveSelection;
     bool                                        m_fullLineCopyCut;
     wxArrayInt                                  m_savedMarkers;
+    bool                                        m_findBookmarksActive;
 
 public:
     static bool                                 m_ccShowPrivateMembers;
@@ -174,11 +179,11 @@ public:
     void SetFullLineCopyCut(bool fullLineCopyCut) {
         this->m_fullLineCopyCut = fullLineCopyCut;
     }
-    
+
     bool IsFullLineCopyCut() const {
         return m_fullLineCopyCut;
     }
-    
+
 public:
     /// Construct a LEditor object
     LEditor(wxWindow* parent);
@@ -322,18 +327,58 @@ public:
     bool LineIsMarked(enum marker_mask_type mask);
     // Toggle marker at the current line
     void ToggleMarker();
-    // Delete all markers from the current document
-    void DelAllMarkers();
+
+    /**
+     * Delete markers from the current document
+     * \param find_marker if true, delete 'find' bookmarks, otherwise the currently-active type
+     */
+    void DelAllMarkers(bool find_marker = false);
+
     // Find next marker and move cursor to that line
     void FindNextMarker();
     // Find previous marker and move cursor to that line
     void FindPrevMarker();
 
+    /**
+     * Sets whether the currently-active bookmark level is Find', or the current standard-bookmark type
+     */
+    void SetFindBookmarksActive(bool findBookmarksActive) {
+        m_findBookmarksActive = findBookmarksActive;
+    }
+    /**
+     * Returns true if the currently-active bookmark level is 'Find'
+     */
+    bool IsFindBookmarksActive() const {
+        return m_findBookmarksActive;
+    }
+
+    /**
+     * Sets the currently-active bookmark level, caching the old value
+     * \param type the new type
+     */
+    void SetActiveBookmarkType(sci_marker_types type);
+
+    /**
+     * Returns the currently-active bookmark level
+     */
+    int GetActiveBookmarkType() const;
+
+    /**
+     * Sets the currently-active bookmark mask
+     * \param mask the new mask
+     */
+    void SetActiveBookmarkMask(marker_mask_type mask);
+
+    /**
+     * Returns the mask for the currently-active bookmark level
+     */
+    enum marker_mask_type GetActiveBookmarkMask() const;
+
     // Replace all
     bool ReplaceAll();
     bool ReplaceAllExactMatch(const wxString &what, const wxString &replaceWith);
     // mark all occurances
-    bool MarkAll();
+    bool MarkAllFinds();
 
     // Folding API
     //-----------------------------------------
@@ -461,12 +506,12 @@ public:
      * Delete the breakpoint at the current line & file, or lineno if from ToggleBreakpoint()
      */
     void DelBreakpoint(int lineno = -1);
-    
+
     /**
      * @brief change the breakpoint at the current line to disable or enable
      */
     void ToggleBreakpointEnablement();
-    
+
     /**
      * @brief search the editor for pattern. If pattern is found, the editor will then search for 'what'
      * inside the pattern and will select it
@@ -719,7 +764,7 @@ public:
      * @brief paste the clipboard content one line above the caret position
      */
     void PasteLineAbove();
-    
+
 private:
     void FillBPtoMarkerArray();
     BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);
@@ -744,7 +789,7 @@ private:
     bool    DoFindAndSelect(const wxString &pattern, const wxString &what, int start_pos, NavMgr *navmgr);
     void    DoSaveMarkers();
     void    DoRestoreMarkers();
-    
+
     wxMenu* DoCreateDebuggerWatchMenu(const wxString &word);
 
     DECLARE_EVENT_TABLE()

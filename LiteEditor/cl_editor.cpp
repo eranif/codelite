@@ -160,6 +160,7 @@ LEditor::LEditor(wxWindow* parent)
     , m_pluginInitializedRMenu   (false)
     , m_positionToEnsureVisible  (wxNOT_FOUND)
     , m_fullLineCopyCut          (false)
+    , m_findBookmarksActive      (false)
 {
     ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSTC_MARK_SMALLRECT;
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
@@ -373,11 +374,11 @@ void LEditor::SetProperties()
 
     // symbol margin
     SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
-    // Line numbes
+    // Line numbers
     SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
 
     // line number margin displays every thing but folding, bookmarks and breakpoint
-    SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
+    SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
 
     SetMarginType     (EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
     SetMarginWidth    (EDIT_TRACKER_MARGIN_ID, options->GetHideChangeMarkerMargin() ? 0 : 3);
@@ -471,9 +472,12 @@ void LEditor::SetProperties()
         marker = iter->second;
     }
 
-    MarkerDefine(smt_bookmark, marker);
-    MarkerSetBackground(smt_bookmark, options->GetBookmarkBgColour());
-    MarkerSetForeground(smt_bookmark, options->GetBookmarkFgColour());
+    for (size_t bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
+        MarkerDefine(bmt, marker); // BMTODO
+        if (bmt == smt_LAST_BMK_TYPE)       MarkerSetBackground(bmt, wxT("YELLOW"));
+            else MarkerSetBackground(bmt, options->GetBookmarkBgColour());
+        MarkerSetForeground(bmt, options->GetBookmarkFgColour());
+    }
 
     MarkerDefineBitmap(smt_breakpoint, wxBitmap(wxImage(stop_xpm)));
     MarkerDefineBitmap(smt_bp_disabled, wxBitmap(wxImage(BreakptDisabled)));
@@ -1886,10 +1890,10 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
         ReplaceAll();
 
     } else if (type == wxEVT_FRD_BOOKMARKALL) {
-        MarkAll();
+        MarkAllFinds();
 
     } else if (type == wxEVT_FRD_CLEARBOOKMARKS) {
-        DelAllMarkers();
+        DelAllMarkers(true);
     }
 }
 
@@ -2271,20 +2275,20 @@ void LEditor::AddMarker()
 {
     int nPos = GetCurrentPos();
     int nLine = LineFromPosition(nPos);
-    MarkerAdd(nLine, smt_bookmark);
+    MarkerAdd(nLine, GetActiveBookmarkType());
 }
 
 void LEditor::DelMarker()
 {
     int nPos = GetCurrentPos();
     int nLine = LineFromPosition(nPos);
-    MarkerDelete(nLine, smt_bookmark);
+    MarkerDelete(nLine, GetActiveBookmarkType());
 }
 
 void LEditor::ToggleMarker()
 {
     // Add/Remove marker
-    if ( !LineIsMarked(mmt_bookmarks) )
+    if ( !LineIsMarked(GetActiveBookmarkMask()) )
         AddMarker();
     else
         DelMarker();
@@ -2316,12 +2320,16 @@ void LEditor::LoadMarkersFromArray(const wxArrayString& bookmarks)
     }
 }
 
-void LEditor::DelAllMarkers()
+void LEditor::DelAllMarkers(bool find_marker /*=false*/)
 {
-    // Delete all markers from the view
-    MarkerDeleteAll(smt_bookmark);
+    // Delete all relevant markers from the view
+    if (find_marker) {
+        MarkerDeleteAll(smt_find_bookmark);
+    } else {
+        MarkerDeleteAll(GetActiveBookmarkType());
+    }
 
-    // delete all markers as well
+    // delete other markers as well
     SetIndicatorCurrent(1);
     IndicatorClearRange(0, GetLength());
 
@@ -2347,15 +2355,14 @@ void LEditor::FindNextMarker()
 {
     int nPos = GetCurrentPos();
     int nLine = LineFromPosition(nPos);
-    int mask = mmt_bookmarks;
-    int nFoundLine = MarkerNext(nLine + 1, mask);
+    int nFoundLine = MarkerNext(nLine + 1, GetActiveBookmarkMask());
     if (nFoundLine >= 0) {
         // mark this place before jumping to next marker
         GotoLine(nFoundLine);
     } else {
         //We reached the last marker, try again from top
         nLine = LineFromPosition(0);
-        nFoundLine = MarkerNext(nLine, mask);
+        nFoundLine = MarkerNext(nLine, GetActiveBookmarkMask());
         if (nFoundLine >= 0) {
             GotoLine(nFoundLine);
         }
@@ -2370,7 +2377,7 @@ void LEditor::FindPrevMarker()
 {
     int nPos = GetCurrentPos();
     int nLine = LineFromPosition(nPos);
-    int mask = mmt_bookmarks;
+    int mask = GetActiveBookmarkMask();
     int nFoundLine = MarkerPrevious(nLine - 1, mask);
     if (nFoundLine >= 0) {
         GotoLine(nFoundLine);
@@ -2458,7 +2465,7 @@ bool LEditor::ReplaceAll()
     return m_findReplaceDlg->GetReplacedCount() > 0;
 }
 
-bool LEditor::MarkAll()
+bool LEditor::MarkAllFinds()
 {
     wxString findWhat = m_findReplaceDlg->GetData().GetFindString();
 
@@ -2486,13 +2493,13 @@ bool LEditor::MarkAll()
         txt = GetText();
     }
 
-    DelAllMarkers();
+    DelAllMarkers(true);
 
     // set the active indicator to be 1
     SetIndicatorCurrent(1);
 
     while ( StringFindReplacer::Search(txt.wc_str(), offset, findWhat.wc_str(), flags, pos, match_len) ) {
-        MarkerAdd(LineFromPosition(fixed_offset + pos), smt_bookmark);
+        MarkerAdd(LineFromPosition(fixed_offset + pos), smt_find_bookmark);
 
         // add indicator as well
         IndicatorFillRange(fixed_offset + pos, match_len);
@@ -2503,6 +2510,20 @@ bool LEditor::MarkAll()
     SetCurrentPos(savedPos);
     EnsureCaretVisible();
     return true;
+}
+
+int LEditor::GetActiveBookmarkType() const
+{
+    if (IsFindBookmarksActive()) {
+        return smt_find_bookmark;
+    } else {
+        return clMainFrame::Get()->GetMainBook()->GetActiveBookmarkType();
+    }
+}
+
+enum marker_mask_type LEditor::GetActiveBookmarkMask() const
+{
+    return IsFindBookmarksActive() ? mmt_find_bookmark : mmt_standard_bookmarks;   
 }
 
 void LEditor::ReloadFile()
@@ -2942,7 +2963,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
     wxMenu menu;
 
     // First, add/del bookmark
-    menu.Append(XRCID("toggle_bookmark"), LineIsMarked(mmt_bookmarks) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
+    menu.Append(XRCID("toggle_bookmark"), LineIsMarked(GetActiveBookmarkMask()) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
     menu.AppendSeparator();
 
     menu.Append(XRCID("add_breakpoint"), wxString(_("Add Breakpoint")));
@@ -4368,9 +4389,9 @@ void LEditor::OnFileFormatStarting(wxCommandEvent& e)
 
 void LEditor::DoRestoreMarkers()
 {
-    MarkerDeleteAll(smt_bookmark);
+    MarkerDeleteAll(mmt_all_bookmarks);
     for(size_t i=0; i<m_savedMarkers.GetCount(); ++i) {
-        MarkerAdd(m_savedMarkers.Item(i), smt_bookmark);
+        MarkerAdd(m_savedMarkers.Item(i), smt_bookmark1); // BMTODO
     }
     m_savedMarkers.clear();
 }
@@ -4379,11 +4400,11 @@ void LEditor::DoSaveMarkers()
 {
     m_savedMarkers.clear();
     int nLine = LineFromPosition(0);
-    int mask = mmt_bookmarks;
+    int mask = mmt_all_bookmarks;
 
     int nFoundLine = MarkerNext(nLine, mask);
     while ( nFoundLine >= 0 ) {
-        m_savedMarkers.Add( nFoundLine );
+        m_savedMarkers.Add( nFoundLine ); // BMTODO
         nFoundLine = MarkerNext(nFoundLine+1, mask);
     }
 }

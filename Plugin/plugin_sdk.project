@@ -187,6 +187,8 @@
       <File Name="open_resource_dialog.h"/>
       <File Name="open_resource_dialog.cpp"/>
       <File Name="VirtualDirectorySelectorBase.wxcp"/>
+      <File Name="EditDlg.h"/>
+      <File Name="EditDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
       <File Name="drawingutils.cpp"/>
@@ -265,6 +267,7 @@
       <File Name="openresourcedialogbase_plugin_bitmaps.cpp"/>
       <File Name="plugin_general_wxcp_plugin_bitmaps.cpp"/>
       <File Name="sftp_ui_sftp_bitmaps.cpp"/>
+      <File Name="wxcrafter_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="VirtualDirectorySelectorBase.h"/>
@@ -273,9 +276,12 @@
       <File Name="plugin_general_wxcp.cpp"/>
       <File Name="sftp_ui.h"/>
       <File Name="sftp_ui.cpp"/>
+      <File Name="wxcrafter_plugin.h"/>
+      <File Name="wxcrafter_plugin.cpp"/>
     </VirtualDirectory>
     <File Name="openresourcedialogbase.wxcp"/>
     <File Name="plugin_general_wxcp.wxcp"/>
+    <File Name="wxcrafter.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="sftp_ui">

@@ -22,10 +22,10 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
+    bSizer14 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer14);
     
-    wxBoxSizer* bSizerError = new wxBoxSizer(wxVERTICAL);
+    bSizerError = new wxBoxSizer(wxVERTICAL);
     
     bSizer14->Add(bSizerError, 1, wxALL|wxEXPAND, 5);
     
@@ -33,7 +33,7 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizerError->Add(m_staticText161, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer25 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer25 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerError->Add(bSizer25, 1, wxEXPAND, 5);
     
@@ -41,7 +41,7 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer25->Add(m_listErrPatterns, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer26 = new wxBoxSizer(wxVERTICAL);
+    bSizer26 = new wxBoxSizer(wxVERTICAL);
     
     bSizer25->Add(bSizer26, 0, 0, 5);
     
@@ -64,7 +64,7 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer14->Add(m_staticline5, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizerWarnings = new wxBoxSizer(wxVERTICAL);
+    bSizerWarnings = new wxBoxSizer(wxVERTICAL);
     
     bSizer14->Add(bSizerWarnings, 1, wxALL|wxEXPAND, 5);
     
@@ -72,7 +72,7 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizerWarnings->Add(m_staticText17, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer251 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer251 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerWarnings->Add(bSizer251, 1, wxEXPAND, 5);
     
@@ -80,7 +80,7 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer251->Add(m_listWarnPatterns, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer261 = new wxBoxSizer(wxVERTICAL);
+    bSizer261 = new wxBoxSizer(wxVERTICAL);
     
     bSizer251->Add(bSizer261, 0, 0, 5);
     
@@ -147,10 +147,10 @@ CompilerToolsBase::CompilerToolsBase(wxWindow* parent, wxWindowID id, const wxPo
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -252,7 +252,7 @@ CompilerSwitchesBase::CompilerSwitchesBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_staticText8 = new wxStaticText(this, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -291,14 +291,14 @@ CompilerFileTypesBase::CompilerFileTypesBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
+    bSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer10);
     
     m_staticText23 = new wxStaticText(this, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer10->Add(m_staticText23, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer10->Add(bSizer12, 1, wxALL|wxEXPAND, 5);
     
@@ -306,7 +306,7 @@ CompilerFileTypesBase::CompilerFileTypesBase(wxWindow* parent, wxWindowID id, co
     
     bSizer12->Add(m_listCtrlFileTypes, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer111 = new wxBoxSizer(wxVERTICAL);
+    bSizer111 = new wxBoxSizer(wxVERTICAL);
     
     bSizer12->Add(bSizer111, 0, wxEXPAND, 5);
     
@@ -353,53 +353,67 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
+    bSizer11 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer11);
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
+    bSizer7 = new wxBoxSizer(wxVERTICAL);
     
     bSizer11->Add(bSizer7, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer3 = new wxFlexGridSizer(  0, 3, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer3->AddGrowableCol(1);
     
     bSizer7->Add(fgSizer3, 0, wxEXPAND, 5);
     
-    fgSizer3->Add(0, 0, 0, wxALL, 5);
-    
     m_staticText18 = new wxStaticText(this, wxID_ANY, _("Global Paths"), wxDefaultPosition, wxSize(-1, -1), 0);
     wxFont m_staticText18Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText18Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText18->SetFont(m_staticText18Font);
     
-    fgSizer3->Add(m_staticText18, 0, wxALL|wxALIGN_LEFT, 5);
+    fgSizer3->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT, 5);
+    
+    fgSizer3->Add(0, 0, 0, wxALL, 5);
+    
+    fgSizer3->Add(0, 0, 1, wxALL, 5);
     
     m_staticText141 = new wxStaticText(this, wxID_ANY, _("Include Path:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer3->Add(m_staticText141, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlGlobalIncludePath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlGlobalIncludePath->SetToolTip(_("Set here an additional include paths. Each path should be separated with a semi-colon\nNote that usually you don't need to modify this field and it should be left empty"));
     
-    fgSizer3->Add(m_textCtrlGlobalIncludePath, 0, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_textCtrlGlobalIncludePath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_button67 = new wxButton(this, wxID_ANY, _("Edit..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer3->Add(m_button67, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText16 = new wxStaticText(this, wxID_ANY, _("Libraries Path:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer3->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlGlobalLibPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlGlobalLibPath->SetToolTip(_("Set here an additional library search paths. Each path should be separated with a semi-colon\nNote that usually you don't need to modify this field and it should be left empty"));
     
-    fgSizer3->Add(m_textCtrlGlobalLibPath, 0, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_textCtrlGlobalLibPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    fgSizer3->Add(0, 0, 0, wxALL, 5);
+    m_button69 = new wxButton(this, wxID_ANY, _("Edit..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer3->Add(m_button69, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText19 = new wxStaticText(this, wxID_ANY, _("Misc"), wxDefaultPosition, wxSize(-1, -1), 0);
     wxFont m_staticText19Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText19Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText19->SetFont(m_staticText19Font);
     
-    fgSizer3->Add(m_staticText19, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    fgSizer3->Add(m_staticText19, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    fgSizer3->Add(0, 0, 0, wxALL, 5);
+    
+    fgSizer3->Add(0, 0, 1, wxALL, 5);
     
     m_staticText3 = new wxStaticText(this, wxID_ANY, _("Objects extension:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -407,7 +421,9 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
     
     m_textObjectExtension = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer3->Add(m_textObjectExtension, 1, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_textObjectExtension, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    fgSizer3->Add(0, 0, 1, wxALL, 5);
     
     m_staticText24 = new wxStaticText(this, wxID_ANY, _("Depends extension:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -415,7 +431,9 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
     
     m_textDependExtension = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer3->Add(m_textDependExtension, 0, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_textDependExtension, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    fgSizer3->Add(0, 0, 1, wxALL, 5);
     
     m_staticText25 = new wxStaticText(this, wxID_ANY, _("Preprocessed extension:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
@@ -423,14 +441,18 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
     
     m_textPreprocessExtension = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer3->Add(m_textPreprocessExtension, 0, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_textPreprocessExtension, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     fgSizer3->Add(0, 0, 0, wxALL, 5);
+    
+    fgSizer3->Add(0, 0, 1, wxALL, 5);
     
     m_checkBoxGenerateDependenciesFiles = new wxCheckBox(this, wxID_ANY, _("Use compiler -MT switch to generate source dependencies files (*.o.d)"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxGenerateDependenciesFiles->SetValue(false);
     
     fgSizer3->Add(m_checkBoxGenerateDependenciesFiles, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    fgSizer3->Add(0, 0, 1, wxALL, 5);
     
     fgSizer3->Add(0, 0, 0, wxALL, 5);
     
@@ -438,7 +460,9 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
     m_checkBoxObjectNameSameAsFileName->SetValue(false);
     m_checkBoxObjectNameSameAsFileName->SetToolTip(_("By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\nUncheck this option to make the object name exactly as the file name without any prefixes"));
     
-    fgSizer3->Add(m_checkBoxObjectNameSameAsFileName, 0, wxALL|wxEXPAND, 5);
+    fgSizer3->Add(m_checkBoxObjectNameSameAsFileName, 0, wxALL, 5);
+    
+    fgSizer3->Add(0, 0, 1, wxALL, 5);
     
     fgSizer3->Add(0, 0, 0, wxALL, 5);
     
@@ -452,10 +476,17 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_button67->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerAdvanceBase::OnEditIncludePaths), NULL, this);
+    m_button69->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerAdvanceBase::OnEditLibraryPaths), NULL, this);
+    
 }
 
 CompilerAdvanceBase::~CompilerAdvanceBase()
 {
+    m_button67->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerAdvanceBase::OnEditIncludePaths), NULL, this);
+    m_button69->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerAdvanceBase::OnEditLibraryPaths), NULL, this);
+    
 }
 
 CompilerCompilerOptionsBase::CompilerCompilerOptionsBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -468,14 +499,14 @@ CompilerCompilerOptionsBase::CompilerCompilerOptionsBase(wxWindow* parent, wxWin
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
+    bSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer10);
     
     m_staticText23 = new wxStaticText(this, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer10->Add(m_staticText23, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer10->Add(bSizer12, 1, wxEXPAND, 5);
     
@@ -483,7 +514,7 @@ CompilerCompilerOptionsBase::CompilerCompilerOptionsBase(wxWindow* parent, wxWin
     
     bSizer12->Add(m_listCompilerOptions, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer111 = new wxBoxSizer(wxVERTICAL);
+    bSizer111 = new wxBoxSizer(wxVERTICAL);
     
     bSizer12->Add(bSizer111, 0, wxEXPAND, 5);
     
@@ -530,14 +561,14 @@ CompilerLinkerOptionsBase::CompilerLinkerOptionsBase(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
+    bSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer10);
     
     m_staticText23 = new wxStaticText(this, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer10->Add(m_staticText23, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer10->Add(bSizer12, 1, wxEXPAND, 5);
     
@@ -545,7 +576,7 @@ CompilerLinkerOptionsBase::CompilerLinkerOptionsBase(wxWindow* parent, wxWindowI
     
     bSizer12->Add(m_listLinkerOptions, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer111 = new wxBoxSizer(wxVERTICAL);
+    bSizer111 = new wxBoxSizer(wxVERTICAL);
     
     bSizer12->Add(bSizer111, 0, wxEXPAND, 5);
     
@@ -592,10 +623,10 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
+    bSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer23);
     
-    wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer7 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer7->SetFlexibleDirection( wxBOTH );
     fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer7->AddGrowableCol(1);
@@ -624,7 +655,7 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
     
     bSizer23->Add(m_staticline4, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer24 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer24 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer23->Add(bSizer24, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -658,10 +689,10 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizerError = new wxBoxSizer(wxVERTICAL);
+    bSizerError = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerError);
     
-    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
+    fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -698,7 +729,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     
     bSizerError->Add(m_staticline5, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer24 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer24 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerError->Add(bSizer24, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

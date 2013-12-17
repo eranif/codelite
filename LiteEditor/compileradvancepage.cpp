@@ -1,3 +1,4 @@
+#include <wx/tokenzr.h>
 #include "compileradvancepage.h"
 #include "build_settings_config.h"
 #include "compiler.h"

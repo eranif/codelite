@@ -330,9 +330,9 @@ public:
 
     /**
      * Delete markers from the current document
-     * \param find_marker if true, delete 'find' bookmarks, otherwise the currently-active type
+     * \param which_type if >0, delete the matching bookmark type; 0 delete the currently-active type; -1 delete all types
      */
-    void DelAllMarkers(bool find_marker = false);
+    void DelAllMarkers(int which_type);
 
     // Find next marker and move cursor to that line
     void FindNextMarker();
@@ -351,6 +351,11 @@ public:
     bool IsFindBookmarksActive() const {
         return m_findBookmarksActive;
     }
+
+    /**
+     * The user is changing the currently-active bookmark type
+     */
+    void OnChangeActiveBookmarkType(wxCommandEvent& event);
 
     /**
      * Sets the currently-active bookmark level, caching the old value
@@ -791,6 +796,7 @@ private:
     void    DoRestoreMarkers();
 
     wxMenu* DoCreateDebuggerWatchMenu(const wxString &word);
+    void    AddBookmarksSubmenu(wxMenu* parentMenu);
 
     DECLARE_EVENT_TABLE()
     void OnHighlightWordChecked(wxCommandEvent &e);
@@ -828,6 +834,8 @@ private:
     void OnSetActive(wxCommandEvent &e);
     void OnFileFormatDone(wxCommandEvent &e);
     void OnFileFormatStarting(wxCommandEvent &e);
+    
+
 };
 
 #endif // LITEEDITOR_EDITOR_H

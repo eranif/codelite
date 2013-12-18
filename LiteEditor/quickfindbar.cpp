@@ -595,7 +595,7 @@ void QuickFindBar::DoMarkAll()
 
     int fixed_offset(0);
 
-    editor->DelAllMarkers(true);
+    editor->DelAllMarkers(smt_find_bookmark);
 
     // set the active indicator to be 1
     editor->SetIndicatorCurrent(1);
@@ -628,7 +628,7 @@ void QuickFindBar::OnHighlightMatches(wxCommandEvent& event)
         DoMarkAll();
     } else {
         if (editor) {
-            editor->DelAllMarkers(true);
+            editor->DelAllMarkers(smt_find_bookmark);
             editor->SetFindBookmarksActive(false);
         }
     }

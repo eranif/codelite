@@ -56,6 +56,8 @@ public:
         Opt_CopyLineIfLineNotEmpty   = 0x00010000,
         Opt_CopyNothing              = 0x00020000,
         Opt_Use_CodeLite_Terminal    = 0x00040000,
+        Opt_Disable_Multiselect      = 0x00080000,
+        Opt_Disable_Multipaste       = 0x00100000,
     };
 
 protected:

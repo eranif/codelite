@@ -13,6 +13,8 @@ EditorOptionsCopyPaste::EditorOptionsCopyPaste(wxWindow* parent)
         sel = 2;
     }
     m_radioBoxCopyOptions->SetSelection( sel );
+    m_checkBoxDisableMultiPaste->SetValue( flags & OptionsConfig::Opt_Disable_Multipaste );
+    m_checkBoxDisableMultiSelection->SetValue( flags & OptionsConfig::Opt_Disable_Multiselect );
 }
 
 EditorOptionsCopyPaste::~EditorOptionsCopyPaste()
@@ -22,7 +24,11 @@ EditorOptionsCopyPaste::~EditorOptionsCopyPaste()
 void EditorOptionsCopyPaste::Save(OptionsConfigPtr options)
 {
     size_t flags = options->GetOptions();
-    flags &= ~(OptionsConfig::Opt_AlwaysCopyLine|OptionsConfig::Opt_CopyNothing|OptionsConfig::Opt_CopyLineIfLineNotEmpty);
+    flags &= ~( OptionsConfig::Opt_AlwaysCopyLine|
+                OptionsConfig::Opt_CopyNothing|
+                OptionsConfig::Opt_CopyLineIfLineNotEmpty|
+                OptionsConfig::Opt_Disable_Multipaste|
+                OptionsConfig::Opt_Disable_Multiselect);
     
     switch ( m_radioBoxCopyOptions->GetSelection() ) {
     case 1:
@@ -36,5 +42,8 @@ void EditorOptionsCopyPaste::Save(OptionsConfigPtr options)
         flags |= OptionsConfig::Opt_AlwaysCopyLine;
         break;
     }
+    
+    if ( m_checkBoxDisableMultiPaste->IsChecked() ) flags |= OptionsConfig::Opt_Disable_Multipaste;
+    if ( m_checkBoxDisableMultiSelection->IsChecked() ) flags |= OptionsConfig::Opt_Disable_Multiselect;
     options->SetOptions( flags );
 }

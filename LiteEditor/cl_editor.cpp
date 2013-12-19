@@ -295,10 +295,9 @@ void LEditor::SetCaretAt(long pos)
 /// Setup some scintilla properties
 void LEditor::SetProperties()
 {
-    SetMultipleSelection(true);
     SetRectangularSelectionModifier(wxSTC_SCMOD_CTRL);
     SetAdditionalSelectionTyping(true);
-    SetVirtualSpaceOptions(1);
+    SetVirtualSpaceOptions(2);
     OptionsConfigPtr options = GetOptions();
     CallTipUseStyle(1);
 
@@ -311,7 +310,9 @@ void LEditor::SetProperties()
     m_autoAdjustHScrollbarWidth = options->GetAutoAdjustHScrollBarWidth();
     m_disableSmartIndent        = options->GetDisableSmartIndent();
     m_disableSemicolonShift     = options->GetDisableSemicolonShift();
-
+    SetMultipleSelection( !options->HasOption(OptionsConfig::Opt_Disable_Multiselect ) );
+    SetMultiPaste( options->HasOption(OptionsConfig::Opt_Disable_Multipaste ) ? 0 : 1 );
+    
     if (!m_hightlightMatchedBraces) {
         wxStyledTextCtrl::BraceHighlight(wxSTC_INVALID_POSITION, wxSTC_INVALID_POSITION);
         SetHighlightGuide(0);

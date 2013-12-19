@@ -34,6 +34,22 @@ EditorOptionsCopyPasteBase::EditorOptionsCopyPasteBase(wxWindow* parent, wxWindo
     
     boxSizer2->Add(m_radioBoxCopyOptions, 0, wxALL|wxEXPAND, 5);
     
+    wxStaticBoxSizer* staticBoxSizer12 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Multiple selections && Caret:")), wxVERTICAL);
+    
+    boxSizer2->Add(staticBoxSizer12, 0, wxALL|wxEXPAND, 5);
+    
+    m_checkBoxDisableMultiSelection = new wxCheckBox(this, wxID_ANY, _("Disable multiple selection"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxDisableMultiSelection->SetValue(false);
+    m_checkBoxDisableMultiSelection->SetToolTip(_("When multiple selection is disabled, it is not possible to select multiple ranges by holding down the Ctrl key while dragging with the mouse."));
+    
+    staticBoxSizer12->Add(m_checkBoxDisableMultiSelection, 0, wxALL, 5);
+    
+    m_checkBoxDisableMultiPaste = new wxCheckBox(this, wxID_ANY, _("Disable multi caret paste"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxDisableMultiPaste->SetValue(false);
+    m_checkBoxDisableMultiPaste->SetToolTip(_("When pasting into multiple selections, the pasted text can go into just the main selection or into each selection"));
+    
+    staticBoxSizer12->Add(m_checkBoxDisableMultiPaste, 0, wxALL, 5);
+    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);

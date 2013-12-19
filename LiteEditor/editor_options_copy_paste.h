@@ -10,13 +10,18 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/panel.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/radiobox.h>
+#include <wx/statbox.h>
+#include <wx/checkbox.h>
 
 class EditorOptionsCopyPasteBase : public wxPanel
 {
 protected:
     wxRadioBox* m_radioBoxCopyOptions;
+    wxCheckBox* m_checkBoxDisableMultiSelection;
+    wxCheckBox* m_checkBoxDisableMultiPaste;
 
 protected:
 

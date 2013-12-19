@@ -22,7 +22,7 @@ MessagePaneBase::MessagePaneBase(wxWindow* parent, wxWindowID id, const wxPoint&
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
+    bSizer8 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer8);
     
     m_panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
@@ -30,14 +30,14 @@ MessagePaneBase::MessagePaneBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     bSizer8->Add(m_panel2, 1, wxEXPAND, 0);
     
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
+    mainSizer = new wxBoxSizer(wxHORIZONTAL);
     m_panel2->SetSizer(mainSizer);
     
-    wxBoxSizer* bSizer81 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer81 = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(bSizer81, 1, wxALIGN_CENTER_VERTICAL, 5);
     
-    wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer81->Add(bSizer4, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -50,18 +50,22 @@ MessagePaneBase::MessagePaneBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     bSizer4->Add(m_panel1, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    bSizer2 = new wxBoxSizer(wxHORIZONTAL);
     m_panel1->SetSizer(bSizer2);
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
+    bSizer3 = new wxBoxSizer(wxVERTICAL);
     
     bSizer2->Add(bSizer3, 1, wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText2 = new wxStaticText(m_panel1, wxID_ANY, _("Message:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_staticText2->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     bSizer3->Add(m_staticText2, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticTextMessage = new wxStaticText(m_panel1, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticTextMessage->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_staticTextMessage->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     bSizer3->Add(m_staticTextMessage, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -73,22 +77,22 @@ MessagePaneBase::MessagePaneBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     bSizer3->Add(m_DontAnnoyMeCheck, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
+    bSizer7 = new wxBoxSizer(wxVERTICAL);
     
     bSizer4->Add(bSizer7, 0, wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonClose = new wxButton(m_panel2, wxID_CANCEL, _("Hide"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer7->Add(m_buttonClose, 0, wxALL|wxEXPAND, 5);
+    bSizer7->Add(m_buttonClose, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
     
     m_buttonAction = new wxButton(m_panel2, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonAction->SetDefault();
     
-    bSizer7->Add(m_buttonAction, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer7->Add(m_buttonAction, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonAction1 = new wxButton(m_panel2, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    bSizer7->Add(m_buttonAction1, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer7->Add(m_buttonAction1, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonAction2 = new wxButton(m_panel2, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     

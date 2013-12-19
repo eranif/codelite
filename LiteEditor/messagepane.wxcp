@@ -333,7 +333,7 @@
 																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
-																	"type":	"filePicker",
+																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
 																	"m_path":	""
 																}],
@@ -482,11 +482,11 @@
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Bg Colour:",
-																							"colour":	"rgb(255, 255, 225)"
+																							"colour":	"Tooltip"
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Fg Colour:",
-																							"colour":	"black"
+																							"colour":	"TooltipText"
 																						}, {
 																							"type":	"font",
 																							"m_label":	"Font:",
@@ -557,11 +557,11 @@
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Bg Colour:",
-																							"colour":	"rgb(255, 255, 225)"
+																							"colour":	"Tooltip"
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Fg Colour:",
-																							"colour":	"black"
+																							"colour":	"TooltipText"
 																						}, {
 																							"type":	"font",
 																							"m_label":	"Font:",
@@ -709,7 +709,7 @@
 																	"gbSpan":	",",
 																	"gbPosition":	",",
 																	"m_styles":	[],
-																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+																	"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxEXPAND"],
 																	"m_properties":	[{
 																			"type":	"winid",
 																			"m_label":	"ID:",
@@ -775,7 +775,7 @@
 																			"m_label":	"Default Button",
 																			"m_value":	false
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -798,7 +798,7 @@
 																	"gbSpan":	",",
 																	"gbPosition":	",",
 																	"m_styles":	[],
-																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+																	"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 																	"m_properties":	[{
 																			"type":	"winid",
 																			"m_label":	"ID:",
@@ -864,7 +864,7 @@
 																			"m_label":	"Default Button",
 																			"m_value":	true
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -887,7 +887,7 @@
 																	"gbSpan":	",",
 																	"gbPosition":	",",
 																	"m_styles":	[],
-																	"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
+																	"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxTOP", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 																	"m_properties":	[{
 																			"type":	"winid",
 																			"m_label":	"ID:",
@@ -953,7 +953,7 @@
 																			"m_label":	"Default Button",
 																			"m_value":	false
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {
@@ -1042,7 +1042,7 @@
 																			"m_label":	"Default Button",
 																			"m_value":	false
 																		}, {
-																			"type":	"filePicker",
+																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
 																			"m_path":	""
 																		}, {

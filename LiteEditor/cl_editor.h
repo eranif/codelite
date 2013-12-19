@@ -151,6 +151,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     bool                                        m_preserveSelection;
     bool                                        m_fullLineCopyCut;
     wxArrayInt                                  m_savedMarkers;
+    wxArrayString                               m_markerLabels;
     bool                                        m_findBookmarksActive;
 
 public:
@@ -378,6 +379,26 @@ public:
      * Returns the mask for the currently-active bookmark level
      */
     enum marker_mask_type GetActiveBookmarkMask() const;
+
+    /**
+     * Returns the label for the passed bookmark type, or its type as a string
+     */
+    wxString GetBookmarkLabel(sci_marker_types type) const;
+
+    /**
+     * Returns a tooltip for the most significant bookmark on the passed line
+     */
+    wxString GetBookmarkTooltip(const int lineno);
+    
+    wxArrayString GetMarkerLabels() const {
+        return m_markerLabels;
+    }
+
+    void SetMarkerLabel(const wxString& label, size_t index) {
+        if (index < m_markerLabels.GetCount()) {
+            m_markerLabels.Item(index) = label;
+        }
+    }
 
     // Replace all
     bool ReplaceAll();

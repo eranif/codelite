@@ -166,6 +166,8 @@ LEditor::LEditor(wxWindow* parent)
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
     ms_bookmarkShapes[wxT("Small Arrow")]       = wxSTC_MARK_ARROW;
     ms_bookmarkShapes[wxT("Circle")]            = wxSTC_MARK_CIRCLE;
+    
+    m_markerLabels.Add("", smt_LAST_BMK_TYPE - smt_FIRST_BMK_TYPE + 1); // Initially a bookmark won't have a string label
 
     SetSyntaxHighlight();
     CmdKeyClear(wxT('D'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
@@ -1430,7 +1432,8 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
     if (IsContextMenuOn()) {
         // Don't cover the context menu with a tooltip!
 
-    } else if ( event.GetX() < margin ) {
+    } else if (event.GetX() > 0 // It seems that we can get spurious events with x == 0
+                && event.GetX() < margin ) {
         // We can't use event.GetPosition() here, as in the margin it returns -1
         int position = PositionFromPoint(wxPoint(event.GetX(),event.GetY()));
         int line = LineFromPosition(position);
@@ -1441,7 +1444,9 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
             tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
 
         }
-
+        else if (MarkerGet(line) & mmt_all_bookmarks) {
+            tooltip = GetBookmarkTooltip(line);
+        }
         wxString tmpTip = tooltip;
         tmpTip.Trim().Trim(false);
 
@@ -2542,6 +2547,17 @@ enum marker_mask_type LEditor::GetActiveBookmarkMask() const
     }
 }
 
+wxString LEditor::GetBookmarkLabel(sci_marker_types type) const
+{
+    wxCHECK_MSG(type >= smt_FIRST_BMK_TYPE && type <= smt_LAST_BMK_TYPE, "", "Invalid marker type");
+    wxString label = m_markerLabels.Item(type - smt_FIRST_BMK_TYPE);
+    if (label.empty()) {
+        label = wxString::Format("type %i", type - smt_FIRST_BMK_TYPE + 1);
+    }
+
+    return label;
+}
+
 void LEditor::AddBookmarksSubmenu(wxMenu* parentMenu)
 {
     wxMenu* menu = new wxMenu;
@@ -2577,6 +2593,34 @@ void LEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
 {
     int requested = event.GetId() - XRCID("BookmarkTypes[start]");
     clMainFrame::Get()->GetMainBook()->SetActiveBookmarkType(requested + smt_FIRST_BMK_TYPE -1);
+}
+
+wxString LEditor::GetBookmarkTooltip(const int lineno)
+{
+    wxString active, others;
+
+    // If we've arrived here we know there's a bookmark on the line; however we don't know which type(s)
+    // If multiple, list each, with the visible one first
+    int linebits = MarkerGet(lineno);
+    if (linebits & GetActiveBookmarkMask()) {
+        active = "<b>Bookmark " + GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType()) + "</b>";
+    }
+    
+    for (size_t bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
+        if (bmt != GetActiveBookmarkType()) {
+            if (linebits & (1 << bmt)) {
+                if (!others.empty()) {
+                    others << "\n";
+                }
+                others << "Bookmark " << GetBookmarkLabel((sci_marker_types)bmt);
+            }
+        }
+    }
+
+    if (!active.empty() && !others.empty()) {
+        active << "\n<hr>";
+    }
+    return active + others;
 }
 
 void LEditor::ReloadFile()

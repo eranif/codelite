@@ -795,9 +795,10 @@ void SubversionView::OnDiff(wxCommandEvent& event)
         }
         diff_cmd << " diff ";
         
-        if ( dlg.IgnoreWhitespaces() ) {
+        if ( dlg.IgnoreWhitespaces() && !(ssd.GetFlags() & SvnUseExternalDiff) ) {
             diff_cmd << " -x -w ";
         }
+        
         diff_cmd << " -r " << from << to << " ";
         
         for (size_t i=0; i<m_selectionInfo.m_paths.GetCount(); i++) {
@@ -965,7 +966,12 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
     if ( ssd.GetFlags() & SvnUseExternalDiff ) {
         command << " --diff-cmd=\"" << ssd.GetExternalDiffViewer() << "\" ";
     }
-    command << " diff -x -w -r" << diffAgainst << " ";
+    command << " diff ";
+    if ( !(ssd.GetFlags() & SvnUseExternalDiff) ) { 
+        command << " -x -w "; 
+    }
+    command << " -r" << diffAgainst << " ";
+    
     for (size_t i=0; i<paths.GetCount(); i++) {
         command << wxT("\"") << paths.Item(i) << wxT("\" ");
     }

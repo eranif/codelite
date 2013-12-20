@@ -152,7 +152,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     int                                         m_positionToEnsureVisible;
     bool                                        m_preserveSelection;
     bool                                        m_fullLineCopyCut;
-    wxArrayInt                                  m_savedMarkers;
+    std::vector< std::pair<int,int> >           m_savedMarkers;
     wxArrayString                               m_markerLabels;
     bool                                        m_findBookmarksActive;
 

@@ -4488,8 +4488,8 @@ void LEditor::OnFileFormatStarting(wxCommandEvent& e)
 void LEditor::DoRestoreMarkers()
 {
     MarkerDeleteAll(mmt_all_bookmarks);
-    for(size_t i=0; i<m_savedMarkers.GetCount(); ++i) {
-        MarkerAdd(m_savedMarkers.Item(i), smt_bookmark1); // BMTODO
+    for(size_t i=smt_FIRST_BMK_TYPE; i<m_savedMarkers.size(); ++i) {
+        MarkerAdd(m_savedMarkers.at(i).first, m_savedMarkers.at(i).second);
     }
     m_savedMarkers.clear();
 }
@@ -4498,12 +4498,16 @@ void LEditor::DoSaveMarkers()
 {
     m_savedMarkers.clear();
     int nLine = LineFromPosition(0);
-    int mask = mmt_all_bookmarks;
 
-    int nFoundLine = MarkerNext(nLine, mask);
+    int nFoundLine = MarkerNext(nLine, mmt_all_bookmarks);
     while ( nFoundLine >= 0 ) {
-        m_savedMarkers.Add( nFoundLine ); // BMTODO
-        nFoundLine = MarkerNext(nFoundLine+1, mask);
+        for (size_t type=smt_FIRST_BMK_TYPE; type < smt_LAST_BMK_TYPE; ++type) {
+            int mask = (1 << type);
+            if (MarkerGet(nLine) & mask) {
+                m_savedMarkers.push_back(std::make_pair(nFoundLine, type));
+            }
+        }    
+        nFoundLine = MarkerNext(nFoundLine+1, mmt_all_bookmarks);
     }
 }
 

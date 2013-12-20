@@ -2315,17 +2315,30 @@ bool LEditor::LineIsMarked(enum marker_mask_type mask)
 
 void LEditor::StoreMarkersToArray(wxArrayString& bookmarks)
 {
-    for (int line = 0; (line = MarkerNext(line, 128)) >= 0; ++line) {
-        bookmarks.Add(wxString::Format("%d", line));
+    for (int line = 0; (line = MarkerNext(line, mmt_all_bookmarks)) >= 0; ++line) {
+        for (int type=smt_FIRST_BMK_TYPE; type <= smt_LAST_BMK_TYPE; ++type) {
+            int mask = (1 << type);
+            if (MarkerGet(line) & mask) {
+                // We need to serialise both the line and BM type. To keep things simple in sessionmanager, just merge their strings
+                bookmarks.Add(wxString::Format("%d:%d", line, type)); 
+            }
+        }
     }
 }
 
 void LEditor::LoadMarkersFromArray(const wxArrayString& bookmarks)
 {
     for (size_t i = 0; i < bookmarks.GetCount(); i++) {
+        // Unless this is an old file, each bookmark will have been stored in the form: "linenumber:type"
+        wxString lineno = bookmarks.Item(i).BeforeFirst(':');
+        long bmt = smt_bookmark1;
+        wxString type = bookmarks.Item(i).AfterFirst(':');
+        if (!type.empty()) {
+            type.ToLong(&bmt);
+        }
         long line = 0;
-        if (bookmarks.Item(i).ToLong(&line)) {
-            MarkerAdd(line, 0x7); // BMTODO
+        if (lineno.ToLong(&line)) {
+            MarkerAdd(line, bmt);
         }
     }
 }

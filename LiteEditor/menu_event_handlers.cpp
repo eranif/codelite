@@ -325,14 +325,16 @@ void BookmarkHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event
         return;
     }
 
-    if		 (event.GetId() == XRCID("toggle_bookmark")) {
+    if (event.GetId() == XRCID("toggle_bookmark")) {
         editor->ToggleMarker();
     } else if (event.GetId() == XRCID("next_bookmark")) {
         editor->FindNextMarker();
     } else if (event.GetId() == XRCID("previous_bookmark")) {
         editor->FindPrevMarker();
+    } else if (event.GetId() == XRCID("removeall_current_bookmarks")) {
+        editor->DelAllMarkers(0);   //  0 == only the currently-active type
     } else if (event.GetId() == XRCID("removeall_bookmarks")) {
-        editor->DelAllMarkers();
+        editor->DelAllMarkers(-1);  // -1 == all types
     }
 }
 

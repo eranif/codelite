@@ -130,7 +130,7 @@ void OptionsDlg2::Initialize()
     AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Doxygen"));
 
     AddPage(new EditorSettingsFolding(m_treeBook),       _("Folding"));
-    AddPage(new EditorSettingsBookmarksPanel(m_treeBook),_("Bookmarks & Breakpoints"));
+    AddPage(new EditorSettingsBookmarksPanel(m_treeBook),_("Bookmarks"));
     AddPage(new EditorSettingsDialogs(m_treeBook),       _("Dialogs"));
     AddPage(new EditorSettingsDockingWindows(m_treeBook),_("Windows & Tabs"));
 

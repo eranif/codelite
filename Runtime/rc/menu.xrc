@@ -349,9 +349,14 @@
             <object class="wxMenuItem" name="previous_bookmark">
                 <label>Previo&amp;us Bookmark</label>
             </object>
+            <object class="wxMenuItem" name="removeall_current_bookmarks">
+                <label>Remove All &amp;Currently-Active Bookmarks</label>
+            </object>
             <object class="wxMenuItem" name="removeall_bookmarks">
                 <label>Remove &amp;All Bookmarks</label>
             </object>
+            <!-- An ID range for bookmark types. 15 is overkill, but future-proof... -->
+            <ids-range name="BookmarkTypes" size="15" />
         </object>
 
         <!-- Workspace Menu -->

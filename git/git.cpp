@@ -1445,7 +1445,11 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
              ga.action != gitDiffRepoShow )
         
         {
-            if ( tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for") ) {
+            if ( tmpOutput.Contains("*** please tell me who you are") ) {
+                ::wxMessageBox(output, "git", wxICON_ERROR|wxCENTER|wxOK, EventNotifier::Get()->TopFrame());
+                m_process->Terminate();
+                
+            } else if ( tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for") ) {
 
                 // Password is required
                 wxString pass = ::wxGetPasswordFromUser(output);
@@ -1485,9 +1489,10 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
                 }
             }
         }
-        delete ped;
+        wxDELETE(ped);
     }
 }
+
 /*******************************************************************************/
 void GitPlugin::InitDefaults()
 {

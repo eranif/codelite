@@ -65,8 +65,9 @@ protected:
     wxString       m_foldStyle;
     bool           m_displayBookmarkMargin;
     wxString       m_bookmarkShape;
-    wxColour       m_bookmarkBgColour;
-    wxColour       m_bookmarkFgColour;
+    wxString       m_bookmarkBgColours;
+    wxString       m_bookmarkFgColours;
+    wxString       m_bookmarkLabels;
     bool           m_highlightCaretLine;
     bool           m_displayLineNumbers;
     bool           m_showIndentationGuidelines;
@@ -342,12 +343,12 @@ public:
     wxString GetBookmarkShape() const {
         return m_bookmarkShape;
     }
-    wxColour GetBookmarkFgColour() const {
-        return m_bookmarkFgColour;
-    }
-    wxColour GetBookmarkBgColour() const {
-        return m_bookmarkBgColour;
-    }
+    wxColour GetBookmarkFgColour(size_t index) const;
+
+    wxColour GetBookmarkBgColour(size_t index) const;
+
+    wxString GetBookmarkLabel(size_t index) const;
+
     bool GetHighlightCaretLine() const {
         return m_highlightCaretLine;
     }
@@ -380,12 +381,12 @@ public:
     void SetBookmarkShape(wxString s) {
         m_bookmarkShape = s;
     }
-    void SetBookmarkFgColour(wxColour c) {
-        m_bookmarkFgColour = c;
-    }
-    void SetBookmarkBgColour(wxColour c) {
-        m_bookmarkBgColour = c;
-    }
+    void SetBookmarkFgColour(wxColour c, size_t index);
+
+    void SetBookmarkBgColour(wxColour c, size_t index);
+    
+    void SetBookmarkLabel(const wxString& label, size_t index);
+
     void SetHighlightCaretLine(bool b) {
         m_highlightCaretLine = b;
     }

@@ -480,10 +480,10 @@ void LEditor::SetProperties()
     }
 
     for (size_t bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
-        MarkerDefine(bmt, marker); // BMTODO
-        if (bmt == smt_LAST_BMK_TYPE)       MarkerSetBackground(bmt, wxT("YELLOW")); // BMTODO
-            else MarkerSetBackground(bmt, options->GetBookmarkBgColour());
-        MarkerSetForeground(bmt, options->GetBookmarkFgColour());
+        MarkerDefine(bmt, marker);
+        MarkerSetBackground(bmt, options->GetBookmarkBgColour(bmt - smt_FIRST_BMK_TYPE));
+        MarkerSetForeground(bmt, options->GetBookmarkFgColour(bmt - smt_FIRST_BMK_TYPE));
+        m_markerLabels.Item(bmt - smt_FIRST_BMK_TYPE) = options->GetBookmarkLabel(bmt - smt_FIRST_BMK_TYPE);
     }
 
     MarkerDefineBitmap(smt_breakpoint, wxBitmap(wxImage(stop_xpm)));
@@ -573,7 +573,7 @@ void LEditor::SetProperties()
         col2 = wxColour(val2);
     }
 
-    IndicatorSetForeground(1, options->GetBookmarkBgColour());
+    IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
 
     // Word highlight indicator
     IndicatorSetStyle(MARKER_WORD_HIGHLIGHT, wxSTC_INDIC_ROUNDBOX);
@@ -2325,7 +2325,7 @@ void LEditor::LoadMarkersFromArray(const wxArrayString& bookmarks)
     for (size_t i = 0; i < bookmarks.GetCount(); i++) {
         long line = 0;
         if (bookmarks.Item(i).ToLong(&line)) {
-            MarkerAdd(line, 0x7);
+            MarkerAdd(line, 0x7); // BMTODO
         }
     }
 }
@@ -2552,7 +2552,7 @@ wxString LEditor::GetBookmarkLabel(sci_marker_types type) const
     wxCHECK_MSG(type >= smt_FIRST_BMK_TYPE && type <= smt_LAST_BMK_TYPE, "", "Invalid marker type");
     wxString label = m_markerLabels.Item(type - smt_FIRST_BMK_TYPE);
     if (label.empty()) {
-        label = wxString::Format("type %i", type - smt_FIRST_BMK_TYPE + 1);
+        label = wxString::Format("Type %i", type - smt_FIRST_BMK_TYPE + 1);
     }
 
     return label;
@@ -2603,7 +2603,7 @@ wxString LEditor::GetBookmarkTooltip(const int lineno)
     // If multiple, list each, with the visible one first
     int linebits = MarkerGet(lineno);
     if (linebits & GetActiveBookmarkMask()) {
-        active = "<b>Bookmark " + GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType()) + "</b>";
+        active = "<b>" + GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType()) + " bookmark</b>";
     }
     
     for (size_t bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
@@ -2612,7 +2612,7 @@ wxString LEditor::GetBookmarkTooltip(const int lineno)
                 if (!others.empty()) {
                     others << "\n";
                 }
-                others << "Bookmark " << GetBookmarkLabel((sci_marker_types)bmt);
+                others << GetBookmarkLabel((sci_marker_types)bmt) << " bookmark";
             }
         }
     }

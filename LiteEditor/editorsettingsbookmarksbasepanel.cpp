@@ -39,15 +39,43 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     
     bSizer2->Add(m_bookMarkShape, 0, wxALL|wxEXPAND, 5);
     
+    wxBoxSizer* boxSizer6 = new wxBoxSizer(wxHORIZONTAL);
+    
+    bSizer2->Add(boxSizer6, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer8 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer6->Add(boxSizer8, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText10 = new wxStaticText(this, wxID_ANY, _("Select bookmark type:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer8->Add(m_staticText10, 0, wxALL, 5);
+    
+    m_spinBookmarkType = new wxSpinCtrl(this, wxID_ANY, wxT("1"), wxDefaultPosition, wxSize(-1,-1), wxSP_ARROW_KEYS);
+    m_spinBookmarkType->SetToolTip(_("There are several different bookmark types; one is used to mark 'Find' results, the others are standard. Here you can alter their appearance and label."));
+    m_spinBookmarkType->SetRange(1, 100);
+    m_spinBookmarkType->SetValue(1);
+    
+    boxSizer8->Add(m_spinBookmarkType, 0, wxALL|wxEXPAND, 5);
+    
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(0);
     fgSizer1->AddGrowableCol(1);
     
-    bSizer2->Add(fgSizer1, 0, wxALL|wxEXPAND, 5);
+    boxSizer6->Add(fgSizer1, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Select the bookmark background colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText41 = new wxStaticText(this, wxID_ANY, _("Bookmark label:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    fgSizer1->Add(m_staticText41, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_BookmarkLabel = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_BookmarkLabel->SetToolTip(_("The label shown in e.g. a tooltip. You can set it to something descriptive if you wish."));
+    
+    fgSizer1->Add(m_BookmarkLabel, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Background colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -55,7 +83,7 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     
     fgSizer1->Add(m_backgroundColor, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
     
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Select the bookmark foreground colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Foreground colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer1->Add(m_staticText5, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
@@ -63,33 +91,50 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     
     fgSizer1->Add(m_foregroundColor, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
     
-    m_staticText66 = new wxStaticText(this, wxID_ANY, _("Select 'Highlight Matching Word' colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticLine18 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
     
-    fgSizer1->Add(m_staticText66, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    bSizer2->Add(m_staticLine18, 0, wxALL|wxEXPAND, 5);
+    
+    wxFlexGridSizer* flexGridSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer4->SetFlexibleDirection( wxBOTH );
+    flexGridSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer4->AddGrowableCol(0);
+    flexGridSizer4->AddGrowableCol(1);
+    
+    bSizer2->Add(flexGridSizer4, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText66 = new wxStaticText(this, wxID_ANY, _("'Highlight Matching Word' colour:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    flexGridSizer4->Add(m_staticText66, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_highlightColor = new wxColourPickerCtrl(this, wxID_ANY, *wxBLACK, wxDefaultPosition, wxSize(-1, -1), wxCLRP_DEFAULT_STYLE);
     m_highlightColor->SetToolTip(_("This lets you set the 'Highlight Matching Word' colour (the colour of words that match the selection). To set the colour of the selection itself, see 'Settings > Syntax Highlight and Fonts'."));
     
-    fgSizer1->Add(m_highlightColor, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
+    flexGridSizer4->Add(m_highlightColor, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
     
     m_staticText54 = new wxStaticText(this, wxID_ANY, _("'Highlight Matching Word' alpha:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer1->Add(m_staticText54, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer4->Add(m_staticText54, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_spinCtrlHighlightAlpha = new wxSpinCtrl(this, wxID_ANY, wxT("128"), wxDefaultPosition, wxSize(-1,-1), wxSP_ARROW_KEYS);
     m_spinCtrlHighlightAlpha->SetToolTip(_("This affects the intensity of the colour set in the field above (for words matching the selection). Choose a value between 0 and 256. Higher values give a less-transparent background."));
     m_spinCtrlHighlightAlpha->SetRange(0, 255);
+    m_spinCtrlHighlightAlpha->SetValue(128);
     
-    fgSizer1->Add(m_spinCtrlHighlightAlpha, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
-    
+    flexGridSizer4->Add(m_spinCtrlHighlightAlpha, 0, wxALL|wxEXPAND|wxALIGN_RIGHT, 5);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_spinBookmarkType->Connect(wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler(EditorSettingsBookmarksBasePanel::OnBookmarkSelectionChanged), NULL, this);
+    
 }
 
 EditorSettingsBookmarksBasePanel::~EditorSettingsBookmarksBasePanel()
 {
+    m_spinBookmarkType->Disconnect(wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler(EditorSettingsBookmarksBasePanel::OnBookmarkSelectionChanged), NULL, this);
+    
 }

@@ -28,11 +28,35 @@
 #include <wx/fontmap.h>
 #include "xmlutils.h"
 #include "macros.h"
+#include "cl_defs.h"
 #include "wx_xml_compatibility.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
 #endif
+
+const wxString defaultBookmarkLabels = wxString(';', CL_N0_OF_BOOKMARK_TYPES - 1) + "Find";
+
+wxString SetDefaultBookmarkColours(bool foreground)
+{
+    // Confusingly, the 'foreground' is actually just the rim of the marker; the background is the central bulk
+    wxString fgcol("#FF0080"), output;
+    wxString findcol = foreground ? fgcol : "#FFFF00";
+    const wxString arr[] = { "#FF0080", "#FFA080", "#80FFFF", "#B000FF" };
+    for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES - 1; ++n) { // Skip Find here
+        if (foreground) {
+            output << fgcol << ';';
+        } else {
+            if (n < sizeof(arr)/sizeof(wxString)) {
+                output << arr[n] << ';';
+            } else {
+                output << fgcol << ';';
+            }
+        }
+    }
+
+    return output + findcol; // We want 'find' colour always to be the most significant
+}
 
 OptionsConfig::OptionsConfig(wxXmlNode *node)
     : m_displayFoldMargin(true)
@@ -41,8 +65,9 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     , m_foldStyle(wxT("Arrows with Background Colour"))
     , m_displayBookmarkMargin(true)
     , m_bookmarkShape(wxT("Small Arrow"))
-    , m_bookmarkBgColour(wxColour(12, 133, 222))
-    , m_bookmarkFgColour(wxColour(66, 169, 244))
+    , m_bookmarkBgColours(SetDefaultBookmarkColours(false))
+    , m_bookmarkFgColours(SetDefaultBookmarkColours(true))
+    , m_bookmarkLabels(defaultBookmarkLabels)
     , m_highlightCaretLine(true)
     , m_displayLineNumbers(false)
     , m_showIndentationGuidelines(false)
@@ -121,8 +146,9 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         m_foldStyle                     = XmlUtils::ReadString(node, wxT("FoldStyle"),                 m_foldStyle);
         m_displayBookmarkMargin         = XmlUtils::ReadBool  (node, wxT("DisplayBookmarkMargin"),     m_displayBookmarkMargin);
         m_bookmarkShape                 = XmlUtils::ReadString(node, wxT("BookmarkShape"),             m_bookmarkShape);
-        m_bookmarkBgColour              = XmlUtils::ReadString(node, wxT("BookmarkBgColour"),          m_bookmarkBgColour.GetAsString(wxC2S_HTML_SYNTAX));
-        m_bookmarkFgColour              = XmlUtils::ReadString(node, wxT("BookmarkFgColour"),          m_bookmarkFgColour.GetAsString(wxC2S_HTML_SYNTAX));
+        m_bookmarkBgColours             = XmlUtils::ReadString(node, wxT("BookmarkBgColours"),         ""); // No default; we'll deal with this later
+        m_bookmarkFgColours             = XmlUtils::ReadString(node, wxT("BookmarkFgColours"),         "");
+        m_bookmarkLabels                = XmlUtils::ReadString(node, wxT("BookmarkLabels"),            defaultBookmarkLabels);
         m_highlightCaretLine            = XmlUtils::ReadBool  (node, wxT("HighlightCaretLine"),        m_highlightCaretLine);
         m_displayLineNumbers            = XmlUtils::ReadBool  (node, wxT("ShowLineNumber"),            m_displayLineNumbers);
         m_showIndentationGuidelines     = XmlUtils::ReadBool  (node, wxT("IndentationGuides"),         m_showIndentationGuidelines);
@@ -196,6 +222,19 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
         m_mswTheme = false;
     }
 #endif
+
+    // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
+    if (m_bookmarkFgColours.empty()) {
+        // This must be the first time with multiple BMs, so rescue any old user-set value
+        m_bookmarkFgColours = SetDefaultBookmarkColours(true);
+        wxString oldcolour = XmlUtils::ReadString(node, "BookmarkFgColour", "#FF0080");
+        SetBookmarkFgColour(oldcolour, 0);
+    }
+    if (m_bookmarkBgColours.empty()) {
+        m_bookmarkBgColours = SetDefaultBookmarkColours(false);
+        wxString oldcolour = XmlUtils::ReadString(node, "BookmarkBgColour", "#FF0080");
+        SetBookmarkBgColour(oldcolour, 0);
+    }
 }
 
 OptionsConfig::~OptionsConfig(void)
@@ -210,8 +249,9 @@ wxXmlNode *OptionsConfig::ToXml() const
     n->AddProperty(wxT("FoldStyle"),                     m_foldStyle);
     n->AddProperty(wxT("DisplayBookmarkMargin"),         BoolToString(m_displayBookmarkMargin));
     n->AddProperty(wxT("BookmarkShape"),                 m_bookmarkShape);
-    n->AddProperty(wxT("BookmarkBgColour"),              m_bookmarkBgColour.GetAsString(wxC2S_HTML_SYNTAX));
-    n->AddProperty(wxT("BookmarkFgColour"),              m_bookmarkFgColour.GetAsString(wxC2S_HTML_SYNTAX));
+    n->AddProperty(wxT("BookmarkBgColours"),             m_bookmarkBgColours);
+    n->AddProperty(wxT("BookmarkFgColours"),             m_bookmarkFgColours);
+    n->AddProperty(wxT("BookmarkLabels"),                m_bookmarkLabels);
     n->AddProperty(wxT("HighlightCaretLine"),            BoolToString(m_highlightCaretLine));
     n->AddProperty(wxT("ShowLineNumber"),                BoolToString(m_displayLineNumbers));
     n->AddProperty(wxT("IndentationGuides"),             BoolToString(m_showIndentationGuidelines));
@@ -325,5 +365,64 @@ wxString OptionsConfig::GetEOLAsString() const
         
     } else {
         return "\n";
+    }
+}
+
+wxColour OptionsConfig::GetBookmarkFgColour(size_t index) const
+{
+    wxColour col;
+    wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
+    if (index < arr.GetCount()) {
+        return wxColour(arr.Item(index));
+    }
+
+    return col;
+}
+
+void OptionsConfig::SetBookmarkFgColour(wxColour c, size_t index)
+{
+    wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
+    if (index < arr.GetCount()) {
+        arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
+        m_bookmarkFgColours = wxJoin(arr, ';');
+    }
+}
+
+wxColour OptionsConfig::GetBookmarkBgColour(size_t index) const
+{
+    wxColour col;
+    wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
+    if (index < arr.GetCount()) {
+        return wxColour(arr.Item(index));
+    }
+
+    return col;
+}
+
+void OptionsConfig::SetBookmarkBgColour(wxColour c, size_t index)
+{
+    wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
+    if (index < arr.GetCount()) {
+        arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
+        m_bookmarkBgColours = wxJoin(arr, ';');
+    }
+}
+
+wxString OptionsConfig::GetBookmarkLabel(size_t index) const
+{
+    wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
+    if (index < arr.GetCount()) {
+        return arr.Item(index);
+    }
+
+    return "";
+}
+
+void OptionsConfig::SetBookmarkLabel(const wxString& label, size_t index)
+{
+    wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
+    if (index < arr.GetCount()) {
+        arr.Item(index) = label;
+        m_bookmarkLabels = wxJoin(arr, ';');
     }
 }

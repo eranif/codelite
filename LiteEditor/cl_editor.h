@@ -42,6 +42,7 @@
 #include "breakpointsmgr.h"
 #include "plugin.h"
 #include "globals.h"
+#include "cl_defs.h"
 
 #define DEBUGGER_INDICATOR          11
 #define MATCH_INDICATOR             10
@@ -63,7 +64,8 @@ enum sci_annotation_styles {
 // The higher the value, the nearer the top of the pecking order displaywise. So keep the most important breakpoint at the top i.e. smt_breakpoint,
 // but have smt_breakpointsmt_indicator above it, so you can see the indicator when there's a breakpt too
 enum sci_marker_types { /* markers 0-2 are unused atm */
-    smt_FIRST_BMK_TYPE=3, smt_bookmark1=smt_FIRST_BMK_TYPE, smt_bookmark2, smt_bookmark3, smt_bookmark4, smt_find_bookmark=7, smt_LAST_BMK_TYPE=smt_find_bookmark,
+    smt_FIRST_BMK_TYPE=3, smt_LAST_BMK_TYPE=smt_FIRST_BMK_TYPE + CL_N0_OF_BOOKMARK_TYPES - 1,
+    smt_bookmark1=smt_FIRST_BMK_TYPE, smt_bookmark2, smt_bookmark3, smt_bookmark4, smt_find_bookmark=smt_LAST_BMK_TYPE,
     smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled, smt_bp_ignored,
     smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint,
     smt_indicator, smt_warning, smt_error

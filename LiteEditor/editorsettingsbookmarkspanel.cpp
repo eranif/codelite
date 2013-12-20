@@ -28,10 +28,8 @@
 
 EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
 : EditorSettingsBookmarksBasePanel( parent )
-, TreeBookNode<EditorSettingsBookmarksPanel>()
+, TreeBookNode<EditorSettingsBookmarksPanel>(), m_previous(wxNOT_FOUND)
 {
-	m_backgroundColor->SetColour(wxColour(255,0,255));
-	m_foregroundColor->SetColour(wxColour(255,0,255));
 	m_highlightColor->SetColour(wxString(wxT("LIGHT BLUE")));
 
 	//get the editor's options from the disk
@@ -42,8 +40,27 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
 	const wxString UnlocalisedShapes[] = { wxTRANSLATE("Small Rectangle"), wxTRANSLATE("Rounded Rectangle"), wxTRANSLATE("Circle"), wxTRANSLATE("Small Arrow") };
 	m_stringManager.AddStrings(sizeof(UnlocalisedShapes)/sizeof(wxString), UnlocalisedShapes, options->GetBookmarkShape(), m_bookMarkShape);
 
-	m_backgroundColor->SetColour(options->GetBookmarkBgColour());
-	m_foregroundColor->SetColour(options->GetBookmarkFgColour());
+	for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
+        BookmarkData arr;
+        wxColour col = options->GetBookmarkBgColour(n);
+        if (!col.IsOk()) {
+            col = options->GetBookmarkBgColour(0);
+        }
+        arr.bg = col;
+
+        col = options->GetBookmarkFgColour(n);
+        if (!col.IsOk()) {
+            col = options->GetBookmarkFgColour(0);
+        }
+        arr.fg = col;
+
+        arr.label = options->GetBookmarkLabel(n);
+
+        m_bookmarksData.push_back(arr);
+    }
+
+    m_spinBookmarkType->SetRange(1, CL_N0_OF_BOOKMARK_TYPES);
+    ChangeSelection(0); // Fake a change to display the standard-bookmark values
 
 	wxString val1 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
 	if (val1.IsEmpty() == false) {
@@ -68,8 +85,35 @@ void EditorSettingsBookmarksPanel::Save(OptionsConfigPtr options)
 	}
 	options->SetBookmarkShape( bmShape);
 
-	options->SetBookmarkBgColour( m_backgroundColor->GetColour() );
-	options->SetBookmarkFgColour( m_foregroundColor->GetColour() );
+    ChangeSelection(m_spinBookmarkType->GetValue() - 1); // Fake a change to store any altered values
+
+    for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
+        BookmarkData& arr = m_bookmarksData.at(n);
+        options->SetBookmarkBgColour(arr.bg, n);
+        options->SetBookmarkFgColour(arr.fg, n);
+        options->SetBookmarkLabel(arr.label, n);
+    }
+
 	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_highlightColor->GetColour().GetAsString());
 	EditorConfigST::Get()->SaveLongValue(wxT("WordHighlightAlpha"), (long)m_spinCtrlHighlightAlpha->GetValue());
+}
+
+void EditorSettingsBookmarksPanel::ChangeSelection(int index)
+{
+    wxCHECK_RET(index < CL_N0_OF_BOOKMARK_TYPES, "Bookmark type out of range");
+    
+    if (m_previous >= 0) {
+        // Store the current data in case it was just altered
+        BookmarkData& arr = m_bookmarksData.at(m_previous);
+        arr.bg = m_backgroundColor->GetColour();
+        arr.fg = m_foregroundColor->GetColour();
+        arr.label = m_BookmarkLabel->GetValue();
+    }
+    
+    BookmarkData arr = m_bookmarksData.at(index);
+    m_backgroundColor->SetColour(arr.bg);
+    m_foregroundColor->SetColour(arr.fg);
+    m_BookmarkLabel->ChangeValue(arr.label);
+
+    m_previous = index;
 }

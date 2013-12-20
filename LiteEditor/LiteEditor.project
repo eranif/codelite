@@ -169,8 +169,6 @@
           <File Name="editorsettingsmiscpanel.h"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Caret">
-          <File Name="editorsettingscaretbase.cpp"/>
-          <File Name="editorsettingscaretbase.h"/>
           <File Name="editorsettingscaret.h"/>
           <File Name="editorsettingscaret.cpp"/>
         </VirtualDirectory>
@@ -189,6 +187,7 @@
         </VirtualDirectory>
         <File Name="optionsdialogbase2.wxcp"/>
         <File Name="editor_options_misc.wxcp"/>
+        <File Name="editor_options_caret.wxcp"/>
       </VirtualDirectory>
       <File Name="env_var_dlg_base.h"/>
       <File Name="env_var_dlg_base.cpp"/>
@@ -618,7 +617,6 @@
     <File Name="editor_options_guides.fbp"/>
     <File Name="editor_options_save.fbp"/>
     <File Name="editor_options_bookmarks.fbp"/>
-    <File Name="editor_options_caret.fbp"/>
     <File Name="editor_options_comments.fbp"/>
     <File Name="editor_options_indetation.fbp"/>
     <File Name="editor_options_dialogs.fbp"/>
@@ -774,6 +772,8 @@
       <File Name="editor_options_copy_paste.cpp"/>
       <File Name="new_virtual_folder.h"/>
       <File Name="new_virtual_folder.cpp"/>
+      <File Name="editor_options_caret.h"/>
+      <File Name="editor_options_caret.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -803,6 +803,7 @@
       <File Name="optionsdialogbase2_liteeditor_bitmaps.cpp"/>
       <File Name="new_virtual_folder_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_misc_liteeditor_bitmaps.cpp"/>
+      <File Name="editor_options_caret_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

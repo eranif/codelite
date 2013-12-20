@@ -58,6 +58,7 @@ public:
         Opt_Use_CodeLite_Terminal    = 0x00040000,
         Opt_Disable_Multiselect      = 0x00080000,
         Opt_Disable_Multipaste       = 0x00100000,
+        Opt_AllowCaretAfterEndOfLine = 0x00200000,
     };
 
 protected:

@@ -297,7 +297,6 @@ void LEditor::SetProperties()
 {
     SetRectangularSelectionModifier(wxSTC_SCMOD_CTRL);
     SetAdditionalSelectionTyping(true);
-    SetVirtualSpaceOptions(2);
     OptionsConfigPtr options = GetOptions();
     CallTipUseStyle(1);
 
@@ -318,6 +317,7 @@ void LEditor::SetProperties()
         SetHighlightGuide(0);
     }
 
+    SetVirtualSpaceOptions( options->GetOptions() & OptionsConfig::Opt_AllowCaretAfterEndOfLine ? 2 : 1 );
     SetWrapMode(options->GetWordWrap() ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
     SetViewWhiteSpace(options->GetShowWhitspaces());
     SetMouseDwellTime(500);

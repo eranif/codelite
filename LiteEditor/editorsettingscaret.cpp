@@ -12,6 +12,7 @@ EditorSettingsCaret::EditorSettingsCaret( wxWindow* parent )
     m_checkBoxCaretUseCamelCase->SetValue(options->GetCaretUseCamelCase());
     m_checkBoxScrollBeyondLastLine->SetValue( options->GetScrollBeyondLastLine() );
     m_checkBoxAdjustScrollbarSize->SetValue(options->GetAutoAdjustHScrollBarWidth());
+    m_checkBoxCaretOnVirtualSpace->SetValue( options->GetOptions() & OptionsConfig::Opt_AllowCaretAfterEndOfLine );
 }
 
 void EditorSettingsCaret::Save(OptionsConfigPtr options)
@@ -21,4 +22,13 @@ void EditorSettingsCaret::Save(OptionsConfigPtr options)
     options->SetCaretUseCamelCase(m_checkBoxCaretUseCamelCase->IsChecked());
     options->SetScrollBeyondLastLine(m_checkBoxScrollBeyondLastLine->IsChecked());
     options->SetAutoAdjustHScrollBarWidth(m_checkBoxAdjustScrollbarSize->IsChecked());
+    
+    size_t flags = options->GetOptions();
+    flags &= ~OptionsConfig::Opt_AllowCaretAfterEndOfLine;
+    
+    if ( m_checkBoxCaretOnVirtualSpace->IsChecked() ) {
+        flags |= OptionsConfig::Opt_AllowCaretAfterEndOfLine;
+    }
+    
+    options->SetOptions( flags );
 }

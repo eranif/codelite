@@ -63,7 +63,14 @@ EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(w
     fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, 5);
     
     m_textCtrlClassPattern = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_MULTILINE);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlClassPatternFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlClassPatternFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
     wxFont m_textCtrlClassPatternFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlClassPatternFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
     m_textCtrlClassPattern->SetFont(m_textCtrlClassPatternFont);
     
     fgSizer1->Add(m_textCtrlClassPattern, 1, wxALL|wxEXPAND, 5);
@@ -73,13 +80,27 @@ EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(w
     fgSizer1->Add(m_staticText5, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, 5);
     
     m_textCtrlFunctionPattern = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_MULTILINE);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_textCtrlFunctionPatternFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textCtrlFunctionPatternFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
     wxFont m_textCtrlFunctionPatternFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_textCtrlFunctionPatternFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
     m_textCtrlFunctionPattern->SetFont(m_textCtrlFunctionPatternFont);
     
     fgSizer1->Add(m_textCtrlFunctionPattern, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("The following macros are available:\n$(CurrentFileName), $(CurrentFilePath),\n$(User), $(Date), $(Name)\n$(CurrentFileFullPath), $(CurrentFileExt),\n$(ProjectName), $(WorksapceName)"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText1 = new wxStaticText(this, wxID_ANY, _("The following macros are available:\n$(CurrentFileName), $(CurrentFilePath),\n$(User), $(Date), $(Name)\n$(CurrentFileFullPath), $(CurrentFileExt),\n$(ProjectName), $(WorkspaceName)"), wxDefaultPosition, wxSize(-1, -1), 0);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_staticText1Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText1Font.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
     wxFont m_staticText1Font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_staticText1Font.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
     m_staticText1->SetFont(m_staticText1Font);
     
     bSizer2->Add(m_staticText1, 0, wxALL|wxEXPAND, 5);

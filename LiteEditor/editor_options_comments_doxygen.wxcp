@@ -698,6 +698,14 @@
 													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	"0"
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Directories:",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Files:",
+													"m_value":	false
 												}],
 											"m_events":	[],
 											"m_children":	[]
@@ -848,6 +856,14 @@
 													"type":	"string",
 													"m_label":	"Max Length:",
 													"m_value":	"0"
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Directories:",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Auto Complete Files:",
+													"m_value":	false
 												}],
 											"m_events":	[],
 											"m_children":	[]
@@ -919,7 +935,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
-											"m_value":	"The following macros are available:\\n$(CurrentFileName), $(CurrentFilePath),\\n$(User), $(Date), $(Name)\\n$(CurrentFileFullPath), $(CurrentFileExt),\\n$(ProjectName), $(WorksapceName)"
+											"m_value":	"The following macros are available:\\n$(CurrentFileName), $(CurrentFilePath),\\n$(User), $(Date), $(Name)\\n$(CurrentFileFullPath), $(CurrentFileExt),\\n$(ProjectName), $(WorkspaceName)"
 										}, {
 											"type":	"string",
 											"m_label":	"Wrap:",

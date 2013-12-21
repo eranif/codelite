@@ -48,6 +48,7 @@ private:
     QuickFindBar *m_quickFindBar;
     MessagePane  *m_messagePane;
     bool          m_useBuffereLimit;
+    int           m_activeBookmarkType;
 
 private:
     void CreateGuiControls();
@@ -80,11 +81,11 @@ public:
     FileHistory &GetRecentlyOpenedFilesClass() {
         return m_recentFiles;
     }
-    
+
     void ShowQuickBarForPlugins() {
         m_quickFindBar->ShowForPlugins();
     }
-    
+
     void ShowQuickBar (bool s = true)           {
         m_quickFindBar->Show(s);
     }
@@ -158,6 +159,12 @@ public:
     }
     bool GetUseBuffereLimit() const {
         return m_useBuffereLimit;
+    }
+    void SetActiveBookmarkType(int activeBookmarkType) {
+        m_activeBookmarkType = activeBookmarkType;
+    }
+    int GetActiveBookmarkType() const {
+        return m_activeBookmarkType;
     }
 };
 

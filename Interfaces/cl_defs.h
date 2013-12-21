@@ -54,4 +54,6 @@
 #    define CL_USE_NEW_BUILD_TAB 1
 #endif
 
+#define  CL_N0_OF_BOOKMARK_TYPES 5
+
 #endif // CL_DEFS_H

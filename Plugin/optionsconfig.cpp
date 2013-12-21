@@ -37,25 +37,21 @@
 
 const wxString defaultBookmarkLabels = wxString(';', CL_N0_OF_BOOKMARK_TYPES - 1) + "Find";
 
-wxString SetDefaultBookmarkColours(bool foreground)
+wxString SetDefaultBookmarkColours()
 {
-    // Confusingly, the 'foreground' is actually just the rim of the marker; the background is the central bulk
-    wxString fgcol("#FF0080"), output;
-    wxString findcol = foreground ? fgcol : "#FFFF00";
-    const wxString arr[] = { "#FF0080", "#FFA080", "#80FFFF", "#B000FF" };
-    for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES - 1; ++n) { // Skip Find here
-        if (foreground) {
-            output << fgcol << ';';
+    // (Confusingly, the 'foreground' is actually just the rim of the marker; the background is the central bulk)
+    // NB: We want the 'find' colour always to be the most significant, so add any future extra items *before* the last one
+    const wxString arr[] = { "#FF0080", "#0000FF", "#FF0000", "#00FF00", "#FFFF00" };
+    wxString output;
+    for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
+        if (n < sizeof(arr)/sizeof(wxString)) {
+            output << arr[n] << ';';
         } else {
-            if (n < sizeof(arr)/sizeof(wxString)) {
-                output << arr[n] << ';';
-            } else {
-                output << fgcol << ';';
-            }
+            output << "#FF0080" << ';';
         }
     }
 
-    return output + findcol; // We want 'find' colour always to be the most significant
+    return output;
 }
 
 OptionsConfig::OptionsConfig(wxXmlNode *node)
@@ -65,8 +61,8 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     , m_foldStyle(wxT("Arrows with Background Colour"))
     , m_displayBookmarkMargin(true)
     , m_bookmarkShape(wxT("Small Arrow"))
-    , m_bookmarkBgColours(SetDefaultBookmarkColours(false))
-    , m_bookmarkFgColours(SetDefaultBookmarkColours(true))
+    , m_bookmarkBgColours(SetDefaultBookmarkColours())
+    , m_bookmarkFgColours(SetDefaultBookmarkColours())
     , m_bookmarkLabels(defaultBookmarkLabels)
     , m_highlightCaretLine(true)
     , m_displayLineNumbers(false)
@@ -226,12 +222,12 @@ OptionsConfig::OptionsConfig(wxXmlNode *node)
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
     if (m_bookmarkFgColours.empty()) {
         // This must be the first time with multiple BMs, so rescue any old user-set value
-        m_bookmarkFgColours = SetDefaultBookmarkColours(true);
+        m_bookmarkFgColours = SetDefaultBookmarkColours();
         wxString oldcolour = XmlUtils::ReadString(node, "BookmarkFgColour", "#FF0080");
         SetBookmarkFgColour(oldcolour, 0);
     }
     if (m_bookmarkBgColours.empty()) {
-        m_bookmarkBgColours = SetDefaultBookmarkColours(false);
+        m_bookmarkBgColours = SetDefaultBookmarkColours();
         wxString oldcolour = XmlUtils::ReadString(node, "BookmarkBgColour", "#FF0080");
         SetBookmarkBgColour(oldcolour, 0);
     }

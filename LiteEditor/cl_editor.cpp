@@ -2597,7 +2597,6 @@ void LEditor::AddBookmarksSubmenu(wxMenu* parentMenu)
 
     menu->AppendSeparator();
     menu->Append(XRCID("removeall_current_bookmarks"), _("Remove All Currently-Active Bookmarks"));
-    menu->Append(XRCID("removeall_bookmarks"), _("Remove All Bookmarks"));
 
     item = new wxMenuItem(parentMenu, XRCID("more_bookmark_options"), _("More..."), "", wxITEM_NORMAL, menu);
     parentMenu->Append(item);
@@ -3075,6 +3074,8 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
 
     // First, add/del bookmark
     menu.Append(XRCID("toggle_bookmark"), LineIsMarked(GetActiveBookmarkMask()) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
+    menu.Append(XRCID("removeall_bookmarks"), _("Remove All Bookmarks"));
+
     AddBookmarksSubmenu(&menu);
     menu.AppendSeparator();
 

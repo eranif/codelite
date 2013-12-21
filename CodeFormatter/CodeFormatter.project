@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="CodeFormatter">
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>../CodeFormatter</Topleveldir>
+  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00040001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
@@ -24,8 +33,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
     <File Name="codeformatterdlg.h"/>
-    <File Name="codeforammaterbasedlg.cpp"/>
-    <File Name="codeforammaterbasedlg.h"/>
     <File Name="codeformatterdlg.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
@@ -36,6 +43,10 @@
   <VirtualDirectory Name="CodeFormatter">
     <File Name="ASLocalizer.cpp"/>
     <File Name="ASLocalizer.h"/>
+    <File Name="codeformatterdlg.wxcp"/>
+    <File Name="codeformatterdlg_codeformatter_bitmaps.cpp"/>
+    <File Name="codeformatterdlgbase.cpp"/>
+    <File Name="codeformatterdlgbase.h"/>
   </VirtualDirectory>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">

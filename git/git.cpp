@@ -30,6 +30,7 @@
 #include "environmentconfig.h"
 #include "dirsaver.h"
 #include <wx/sstream.h>
+#include <wx/msgdlg.h>
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));

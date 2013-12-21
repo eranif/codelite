@@ -32,12 +32,21 @@ public:
         Git_Show_Terminal    = 0x00000002,
         Git_Colour_Tree_View = 0x00000004
     };
-
+    
+    struct GitProperties {
+        wxString global_username;
+        wxString global_email;
+        wxString local_username;
+        wxString local_email;
+    };
+    
 public:
     GitEntry();
     virtual ~GitEntry();
 public:
-
+    static GitEntry::GitProperties ReadGitProperties(const wxString& localRepoPath = "" );
+    static void WriteGitProperties(const wxString& localRepoPath, const GitEntry::GitProperties &props);
+    
     void EnableFlag( size_t flag, bool b ) {
         if ( b ) {
             m_flags |= flag;

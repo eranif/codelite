@@ -9,14 +9,17 @@
 #define __gitSettingsDlg__
 
 #include "gitui.h"
+#include "git.h"
 
 class GitSettingsDlg : public GitSettingsDlgBase
 {
+    wxString m_localRepoPath;
 public:
-    GitSettingsDlg(wxWindow* parent);
+    GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath);
     virtual ~GitSettingsDlg();
 
 protected:
+    virtual void OnLocalRepoUI(wxUpdateUIEvent& event);
     virtual void OnOK(wxCommandEvent& event);
 };
 

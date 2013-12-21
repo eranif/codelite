@@ -29,6 +29,7 @@
 #include "project.h"
 #include "environmentconfig.h"
 #include "dirsaver.h"
+#include <wx/sstream.h>
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...)  m_console->AddText(wxString::Format(__VA_ARGS__));
@@ -104,9 +105,9 @@ GitPlugin::GitPlugin(IManager *manager)
 /*******************************************************************************/
 GitPlugin::~GitPlugin()
 {
-    delete m_progressDialog;
-    m_progressDialog = NULL;
+    wxDELETE(m_progressDialog);
 }
+
 /*******************************************************************************/
 clToolBar *GitPlugin::CreateToolBar(wxWindow *parent)
 {
@@ -352,7 +353,7 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 /*******************************************************************************/
 void GitPlugin::OnSettings(wxCommandEvent &e)
 {
-    GitSettingsDlg dlg(m_topWindow);
+    GitSettingsDlg dlg(m_topWindow, m_repositoryDirectory);
     if ( dlg.ShowModal() == wxID_OK ) {
         
         // update the paths

@@ -35,10 +35,10 @@ public:
 };
 class GitConsole;
 class GitCommitListDlg;
+
 class GitPlugin : public IPlugin
 {
     typedef std::map<int, int> IntMap_t;
-
     enum {
         gitNone = 0,
         gitUpdateRemotes,

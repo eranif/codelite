@@ -25,60 +25,111 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    staticBoxSizer78 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Files:")), wxVERTICAL);
+    m_treebook230 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
     
-    mainSizer->Add(staticBoxSizer78, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_treebook230, 1, wxALL|wxEXPAND, 5);
+    
+    m_panel232 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_treebook230->AddPage(m_panel232, _("Tools"), true, wxNOT_FOUND);
+    
+    boxSizer240 = new wxBoxSizer(wxVERTICAL);
+    m_panel232->SetSizer(boxSizer240);
     
     fgSizer11 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer11->SetFlexibleDirection( wxBOTH );
     fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer11->AddGrowableCol(1);
     
-    staticBoxSizer78->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
+    boxSizer240->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText42 = new wxStaticText(this, wxID_ANY, _("Path to git executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText42 = new wxStaticText(m_panel232, wxID_ANY, _("Path to git executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer11->Add(m_staticText42, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_pathGIT = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
+    m_pathGIT = new wxFilePickerCtrl(m_panel232, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
     
     fgSizer11->Add(m_pathGIT, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_staticText54 = new wxStaticText(this, wxID_ANY, _("Path to gitk executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText54 = new wxStaticText(m_panel232, wxID_ANY, _("Path to gitk executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer11->Add(m_staticText54, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_pathGITK = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
+    m_pathGITK = new wxFilePickerCtrl(m_panel232, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE);
     
     fgSizer11->Add(m_pathGITK, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
-    staticBoxSizer85 = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("Options")), wxVERTICAL);
+    m_panel234 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_treebook230->AddPage(m_panel234, _("Configuration"), false, wxNOT_FOUND);
     
-    mainSizer->Add(staticBoxSizer85, 0, wxALL|wxEXPAND, 5);
+    boxSizer242 = new wxBoxSizer(wxVERTICAL);
+    m_panel234->SetSizer(boxSizer242);
+    
+    flexGridSizer244 = new wxFlexGridSizer(  0, 2, 0, 0);
+    flexGridSizer244->SetFlexibleDirection( wxBOTH );
+    flexGridSizer244->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer244->AddGrowableCol(1);
+    
+    boxSizer242->Add(flexGridSizer244, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText246 = new wxStaticText(m_panel234, wxID_ANY, _("Global user name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer244->Add(m_staticText246, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlGlobalName = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlGlobalName->SetToolTip(_("Set the global user name (this name will tell git who you are)"));
+    
+    flexGridSizer244->Add(m_textCtrlGlobalName, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText250 = new wxStaticText(m_panel234, wxID_ANY, _("Global email:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer244->Add(m_staticText250, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlGlobalEmail = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlGlobalEmail->SetToolTip(_("Set the current repository email"));
+    
+    flexGridSizer244->Add(m_textCtrlGlobalEmail, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText254 = new wxStaticText(m_panel234, wxID_ANY, _("Local repository user name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer244->Add(m_staticText254, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlLocalName = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlLocalName->SetToolTip(_("Set the current repository user name (this name will tell git who you are).\nIf this field letf empty, the global one is used"));
+    
+    flexGridSizer244->Add(m_textCtrlLocalName, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText258 = new wxStaticText(m_panel234, wxID_ANY, _("Local repository email:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer244->Add(m_staticText258, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlLocalEmail = new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlLocalEmail->SetToolTip(_("Set the current repository email\nIf this field letf empty, the global one is used"));
+    
+    flexGridSizer244->Add(m_textCtrlLocalEmail, 0, wxALL|wxEXPAND, 5);
+    
+    m_panel236 = new wxPanel(m_treebook230, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_treebook230->AddPage(m_panel236, _("Misc"), false, wxNOT_FOUND);
     
     boxSizer766 = new wxBoxSizer(wxVERTICAL);
+    m_panel236->SetSizer(boxSizer766);
     
-    staticBoxSizer85->Add(boxSizer766, 0, wxALL, 5);
-    
-    m_checkBoxTerminal = new wxCheckBox(this, wxID_ANY, _("Show Terminal"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxTerminal = new wxCheckBox(m_panel236, wxID_ANY, _("Show Terminal"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxTerminal->SetValue(false);
     m_checkBoxTerminal->SetToolTip(_("Mainly useful for Windows when the password\nprompt is not accessible via the UI"));
     
     boxSizer766->Add(m_checkBoxTerminal, 0, wxALL, 5);
     
-    m_checkBoxLog = new wxCheckBox(this, wxID_ANY, _("Verbose Logging"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxLog = new wxCheckBox(m_panel236, wxID_ANY, _("Verbose Logging"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxLog->SetValue(false);
     m_checkBoxLog->SetToolTip(_("Tick this option to enable a verbose logging of git"));
     
     boxSizer766->Add(m_checkBoxLog, 0, wxALL, 5);
     
-    m_checkBoxTrackTree = new wxCheckBox(this, wxID_ANY, _("Colour modified items in the workspace view"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxTrackTree = new wxCheckBox(m_panel236, wxID_ANY, _("Colour modified items in the workspace view"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxTrackTree->SetValue(false);
     m_checkBoxTrackTree->SetToolTip(_("Colour modified items in the workspace view tree"));
     
     boxSizer766->Add(m_checkBoxTrackTree, 0, wxALL, 5);
-    
-    mainSizer->Add(0, 0, 1, wxALL, 5);
     
     bSizer3 = new wxBoxSizer(wxHORIZONTAL);
     
@@ -93,18 +144,30 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
     
+    m_treebook230->ExpandNode( 0, true );
+    m_treebook230->ExpandNode( 1, true );
+    m_treebook230->ExpandNode( 2, true );
+    
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
     // Connect events
+    m_staticText254->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
+    m_textCtrlLocalName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
+    m_staticText258->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
+    m_textCtrlLocalEmail->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitSettingsDlgBase::OnOK), NULL, this);
     
 }
 
 GitSettingsDlgBase::~GitSettingsDlgBase()
 {
+    m_staticText254->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
+    m_textCtrlLocalName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
+    m_staticText258->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
+    m_textCtrlLocalEmail->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
     m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitSettingsDlgBase::OnOK), NULL, this);
     
 }

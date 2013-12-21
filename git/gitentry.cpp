@@ -2,6 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "gitentry.h"
+#include <wx/sstream.h>
 
 const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 
@@ -99,5 +100,110 @@ wxString GitEntry::GetGITKExecutablePath() const
         
     } else {
         return m_pathGITK;
+    }
+}
+
+GitEntry::GitProperties GitEntry::ReadGitProperties(const wxString& localRepoPath)
+{
+    GitEntry::GitProperties props;
+    // Read the global name/email
+    // ~/.gitconfig | %USERPROFILE%\.gitconfig
+    {
+        wxFileName globalConfig( ::wxGetHomeDir(), ".gitconfig" );
+        if ( globalConfig.Exists() ) {
+            wxFFile fp( globalConfig.GetFullPath(), "rb" );
+            if ( fp.IsOpened() ) {
+                wxString content;
+                fp.ReadAll( &content, wxConvUTF8 );
+                wxStringInputStream sis( content );
+                
+                wxFileConfig conf(sis);
+                conf.Read("user/email", &props.global_email);
+                conf.Read("user/name", &props.global_username);
+                
+                fp.Close();
+            }
+        }
+    }
+    
+    // Read the repo config file
+    if ( !localRepoPath.IsEmpty() ) {
+        wxFileName localConfig( localRepoPath, "config" );
+        localConfig.AppendDir(".git");
+        wxFFile fp( localConfig.GetFullPath(), "rb" );
+        if ( fp.IsOpened() ) {
+            wxString content;
+            fp.ReadAll( &content, wxConvUTF8 );
+            wxStringInputStream sis( content );
+            
+            wxFileConfig conf(sis);
+            conf.Read("user/email", &props.local_email);
+            conf.Read("user/name", &props.local_username);
+            
+            fp.Close();
+        }
+    }
+    return props;
+}
+
+void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry::GitProperties &props)
+{
+    // Read the global name/email
+    // ~/.gitconfig | %USERPROFILE%\.gitconfig
+    {
+        wxFileName globalConfig( ::wxGetHomeDir(), ".gitconfig" );
+        if ( globalConfig.Exists() ) {
+            wxFFile fp( globalConfig.GetFullPath(), "rb" );
+            if ( fp.IsOpened() ) {
+                wxString content;
+                fp.ReadAll( &content, wxConvUTF8 );
+                fp.Close();
+                wxStringInputStream sis( content );
+                wxFileConfig conf(sis);
+                conf.Write("user/email", props.global_email);
+                conf.Write("user/name",  props.global_username);
+                
+                // Write the content
+                content.Clear();
+                wxStringOutputStream sos( &content );
+                if ( conf.Save( sos, wxConvUTF8 ) ) {
+                    wxFFile fpo(globalConfig.GetFullPath(), "w+b");
+                    if ( fpo.IsOpened() ) {
+                        fpo.Write( content, wxConvUTF8 );
+                        fpo.Close();
+                    }
+                } else {
+                    ::wxMessageBox("Could not save GIT global configuration. Configuration is unmodified", "git", wxICON_WARNING|wxOK|wxCENTER);
+                }
+            }
+        }
+    }
+    
+    // Read the repo config file
+    if ( !localRepoPath.IsEmpty() ) {
+        wxFileName localConfig( localRepoPath, "config" );
+        localConfig.AppendDir(".git");
+        wxFFile fp( localConfig.GetFullPath(), "rb" );
+        if ( fp.IsOpened() ) {
+            wxString content;
+            fp.ReadAll( &content, wxConvUTF8 );
+            fp.Close();
+            wxStringInputStream sis( content );
+            wxFileConfig conf(sis);
+            conf.Write("user/email", props.local_email);
+            conf.Write("user/name",  props.local_username);
+            
+            content.Clear();
+            wxStringOutputStream sos( &content );
+            if ( conf.Save( sos, wxConvUTF8 ) ) {
+                wxFFile fpo(localConfig.GetFullPath(), "w+b");
+                if ( fpo.IsOpened() ) {
+                    fpo.Write( content, wxConvUTF8 );
+                    fpo.Close();
+                }
+            } else {
+                ::wxMessageBox("Could not save GIT local configuration. Configuration is unmodified", "git", wxICON_WARNING|wxOK|wxCENTER);
+            }
+        }
     }
 }

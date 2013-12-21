@@ -13,20 +13,20 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
+#include <wx/treebook.h>
+#include <wx/panel.h>
+#include <wx/imaglist.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
+#include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/splitter.h>
-#include <wx/panel.h>
 #include <wx/checklst.h>
 #include "gitCommitEditor.h"
-#include <wx/textctrl.h>
 #include <wx/dataview.h>
 #include <wx/listbox.h>
 #include <wx/stc/stc.h>
-#include <wx/imaglist.h>
 #include <wx/bitmap.h>
 #include <map>
 #include <wx/icon.h>
@@ -39,13 +39,26 @@ class GitSettingsDlgBase : public wxDialog
 {
 protected:
     wxBoxSizer* mainSizer;
-    wxStaticBoxSizer* staticBoxSizer78;
+    wxTreebook* m_treebook230;
+    wxPanel* m_panel232;
+    wxBoxSizer* boxSizer240;
     wxFlexGridSizer* fgSizer11;
     wxStaticText* m_staticText42;
     wxFilePickerCtrl* m_pathGIT;
     wxStaticText* m_staticText54;
     wxFilePickerCtrl* m_pathGITK;
-    wxStaticBoxSizer* staticBoxSizer85;
+    wxPanel* m_panel234;
+    wxBoxSizer* boxSizer242;
+    wxFlexGridSizer* flexGridSizer244;
+    wxStaticText* m_staticText246;
+    wxTextCtrl* m_textCtrlGlobalName;
+    wxStaticText* m_staticText250;
+    wxTextCtrl* m_textCtrlGlobalEmail;
+    wxStaticText* m_staticText254;
+    wxTextCtrl* m_textCtrlLocalName;
+    wxStaticText* m_staticText258;
+    wxTextCtrl* m_textCtrlLocalEmail;
+    wxPanel* m_panel236;
     wxBoxSizer* boxSizer766;
     wxCheckBox* m_checkBoxTerminal;
     wxCheckBox* m_checkBoxLog;
@@ -55,10 +68,11 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
+    virtual void OnLocalRepoUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitSettingsDlgBase();
 };
 

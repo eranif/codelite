@@ -4,8 +4,9 @@
 #include "gitentry.h"
 #include "event_notifier.h"
 
-GitSettingsDlg::GitSettingsDlg(wxWindow* parent)
-    :GitSettingsDlgBase(parent)
+GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
+    : GitSettingsDlgBase(parent)
+    , m_localRepoPath(localRepoPath)
 {
     clConfig conf("git.conf");
     GitEntry data;
@@ -16,7 +17,14 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent)
     m_checkBoxLog->SetValue( data.GetFlags() & GitEntry::Git_Verbose_Log );
     m_checkBoxTerminal->SetValue( data.GetFlags() & GitEntry::Git_Show_Terminal );
     m_checkBoxTrackTree->SetValue( data.GetFlags() & GitEntry::Git_Colour_Tree_View );
-    
+
+    GitEntry::GitProperties props = GitEntry::ReadGitProperties( m_localRepoPath );
+
+    m_textCtrlGlobalEmail->ChangeValue( props.global_email );
+    m_textCtrlGlobalName->ChangeValue( props.global_username );
+    m_textCtrlLocalEmail->ChangeValue( props.local_email );
+    m_textCtrlLocalName->ChangeValue( props.local_username );
+
     WindowAttrManager::Load(this, wxT("GitSettingsDlg"), NULL);
 }
 
@@ -32,23 +40,35 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     conf.ReadItem(&data);
     data.SetGITExecutablePath( m_pathGIT->GetPath() );
     data.SetGITKExecutablePath( m_pathGITK->GetPath() );
-    
+
     size_t flags = 0;
     if ( m_checkBoxLog->IsChecked() )
         flags |= GitEntry::Git_Verbose_Log;
-        
+
     if ( m_checkBoxTerminal->IsChecked() )
         flags |= GitEntry::Git_Show_Terminal;
-        
-    if ( m_checkBoxTrackTree->IsChecked()) 
+
+    if ( m_checkBoxTrackTree->IsChecked())
         flags |= GitEntry::Git_Colour_Tree_View;
-        
+
     data.SetFlags( flags );
     conf.WriteItem(&data);
-    
+
+    GitEntry::GitProperties props;
+    props.global_email = m_textCtrlGlobalEmail->GetValue();
+    props.global_username = m_textCtrlGlobalName->GetValue();
+    props.local_email = m_textCtrlLocalEmail->GetValue();
+    props.local_username = m_textCtrlLocalName->GetValue();
+    GitEntry::WriteGitProperties(m_localRepoPath, props);
+
     // Notify about configuration changed
     wxCommandEvent evt(wxEVT_GIT_CONFIG_CHANGED);
     EventNotifier::Get()->AddPendingEvent( evt );
-    
+
     EndModal(wxID_OK);
+}
+
+void GitSettingsDlg::OnLocalRepoUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !m_localRepoPath.IsEmpty() );
 }

@@ -4,6 +4,8 @@
 #include "gitentry.h"
 #include <wx/sstream.h>
 #include <wx/fileconf.h>
+#include <wx/msgdlg.h>
+#include <wx/ffile.h>
 
 const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 

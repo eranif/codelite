@@ -5190,6 +5190,7 @@ void clMainFrame::OnShowAuiBuildMenu(wxAuiToolBarEvent& e)
 void clMainFrame::OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e)
 {
     e.Skip();
+    delete m_buildDropDownMenu;
     m_buildDropDownMenu = new wxMenu;
     DoCreateBuildDropDownMenu(m_buildDropDownMenu);
     if ( GetToolBar() &&
@@ -5234,6 +5235,7 @@ void clMainFrame::OnWorkspaceClosed(wxCommandEvent& e)
     CustomTargetsMgr::Get().Clear();
 
     // Reset the menu
+    delete m_buildDropDownMenu;
     m_buildDropDownMenu = new wxMenu;
     if ( GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project")) ) {
         GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);

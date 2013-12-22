@@ -17,12 +17,15 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #   include <wx/osx/private.h>
 #   define TAB_HEIGHT_SPACER 10
 #   define TAB_Y_OFFSET      2
+#   define TEXT_Y_SPACER     0
 #elif defined(__WXMSW__)
 #   define TAB_HEIGHT_SPACER 10
 #   define TAB_Y_OFFSET      2
+#   define TEXT_Y_SPACER     0
 #else // GTK/FreeBSD
 #   define TAB_Y_OFFSET      5
 #   define TAB_HEIGHT_SPACER TAB_Y_OFFSET + 6
+#   define TEXT_Y_SPACER     2
 #endif
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
@@ -188,7 +191,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         caption.Clear();
     
     gdc.SetTextForeground( textColour );
-    gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-TAB_Y_OFFSET);
+    gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-TAB_Y_OFFSET+TEXT_Y_SPACER);
     
     // advance the X offset
     curx += ext.x;
@@ -204,7 +207,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     /// Draw the X button on the tab
     if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
         curx += 4;
-        int btny = (rr.y + (rr.height/2))-TAB_Y_OFFSET;
+        int btny = (rr.y + (rr.height/2))-TAB_Y_OFFSET+TEXT_Y_SPACER;
         if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {
             curx += 1;
             btny += 1;

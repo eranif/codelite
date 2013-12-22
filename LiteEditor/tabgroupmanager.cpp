@@ -69,7 +69,7 @@ wxString TabgroupManager::GetTabgroupDirectory()
 
 void TabgroupManager::SetTabgroupDirectory()
 {
-	wxFileName TabgrpPath = wxFileName::DirName( wxStandardPaths::Get().GetUserDataDir() + wxT("/tabgroups/") );
+	wxFileName TabgrpPath = wxFileName::DirName( clStandardPaths::Get().GetUserDataDir() + wxT("/tabgroups/") );
 	if (!TabgrpPath.DirExists()) {
 		TabgrpPath.Mkdir(0777, wxPATH_MKDIR_FULL);
 	}

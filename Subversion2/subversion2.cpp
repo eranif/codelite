@@ -33,6 +33,7 @@
 #include "SvnLogDialog.h"
 #include <wx/fileconf.h>
 #include <wx/msgdlg.h>
+#include "cl_standard_paths.h"
 
 static Subversion2* thePlugin = NULL;
 
@@ -532,7 +533,7 @@ wxString Subversion2::DoGetFileExplorerItemPath()
 
 wxString Subversion2::GetUserConfigDir()
 {
-    wxString configDir(wxStandardPaths::Get().GetUserDataDir());
+    wxString configDir(clStandardPaths::Get().GetUserDataDir());
     if(wxFileName::DirExists(configDir) == false) {
         wxMkdir(configDir);
     }

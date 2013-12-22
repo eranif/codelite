@@ -4,12 +4,13 @@
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include "cl_standard_paths.h"
 
 SubversionPasswordDb::SubversionPasswordDb()
 {
 	// disable logging
 	wxLog::EnableLogging(false);
-	wxString configDir(wxStandardPaths::Get().GetUserDataDir());
+	wxString configDir(clStandardPaths::Get().GetUserDataDir());
 	wxMkdir(configDir);
 	
 	configDir << wxFileName::GetPathSeparator() << wxT("subversion");

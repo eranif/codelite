@@ -306,7 +306,7 @@ void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString logfile;
-    logfile << wxStandardPaths::Get().GetUserDataDir()
+    logfile << clStandardPaths::Get().GetUserDataDir()
             << wxFileName::GetPathSeparator()
             << wxT("codelite.log");
 

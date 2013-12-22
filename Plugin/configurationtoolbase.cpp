@@ -29,6 +29,7 @@
 #include <wx/stdpaths.h>
 #include "wx/filename.h"
 #include "wx/ffile.h"
+#include "cl_standard_paths.h"
 
 ConfigurationToolBase::ConfigurationToolBase()
 : m_fileName(wxEmptyString)
@@ -42,7 +43,7 @@ ConfigurationToolBase::~ConfigurationToolBase()
 bool ConfigurationToolBase::Load(const wxString &fileName)
 {
 	// Try to open the file from the user data settings first
-	wxFileName userFile(wxStandardPaths::Get().GetUserDataDir() + wxT("/") + fileName);
+	wxFileName userFile(clStandardPaths::Get().GetUserDataDir() + wxT("/") + fileName);
 	m_fileName = userFile.GetFullPath();
 
 	if(userFile.FileExists() == false){

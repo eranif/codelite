@@ -61,6 +61,7 @@
 #include "code_completion_api.h"
 #include <wx/stdpaths.h>
 #include "tags_storage_sqlite3.h"
+#include "cl_standard_paths.h"
 
 
 //#define __PERFORMANCE
@@ -315,7 +316,7 @@ void TagsManager::StartCodeLiteIndexer()
 
     // concatenate the PID to identifies this channel to this instance of codelite
     cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid << wxT(" --pid");
-    m_codeliteIndexerProcess = CreateAsyncProcess(this, cmd, IProcessCreateDefault, wxStandardPaths::Get().GetUserDataDir());
+    m_codeliteIndexerProcess = CreateAsyncProcess(this, cmd, IProcessCreateDefault, clStandardPaths::Get().GetUserDataDir());
 }
 
 void TagsManager::RestartCodeLiteIndexer()
@@ -410,7 +411,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
     AddEnumClassData(tags);
 
 #if 0
-    wxFFile fff(wxStandardPaths::Get().GetUserDataDir() + wxT("\\tmp_tags"), wxT("w+"));
+    wxFFile fff(clStandardPaths::Get().GetUserDataDir() + wxT("\\tmp_tags"), wxT("w+"));
     if(fff.IsOpened()) {
         fff.Write(tags);
     }

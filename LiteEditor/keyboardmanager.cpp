@@ -109,7 +109,7 @@ void KeyboardManager::Update(const MenuItemDataMap& accelMap)
 		content << wxT("\n");
 	}
 
-	wxString fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf");
+	wxString fileName = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf");
 	wxFFile file;
 	if (!file.Open(fileName, wxT("w+b"))) {
 		return;

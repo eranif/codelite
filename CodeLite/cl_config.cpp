@@ -3,19 +3,20 @@
 #include <wx/filefn.h>
 #include <wx/log.h>
 #include <algorithm>
+#include "cl_standard_paths.h"
 
 clConfig::clConfig(const wxString& filename)
 {
     if ( wxFileName(filename).IsAbsolute() ) {
         m_filename = filename;
     } else {
-        m_filename = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" + wxFileName::GetPathSeparator() + filename;
+        m_filename = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" + wxFileName::GetPathSeparator() + filename;
     }
     
     {
         // Make sure that the directory exists
         wxLogNull noLog;
-        wxMkdir( wxStandardPaths::Get().GetUserDataDir() );
+        wxMkdir( clStandardPaths::Get().GetUserDataDir() );
         wxMkdir( m_filename.GetPath() );
     }
     

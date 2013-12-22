@@ -26,6 +26,7 @@
 #include "conffilelocator.h"
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include "cl_standard_paths.h"
 
 ConfFileLocator* ConfFileLocator::ms_instance = 0;
 
@@ -81,7 +82,7 @@ void ConfFileLocator::DeleteLocalCopy(const wxString& basename)
 
 wxString ConfFileLocator::GetLocalCopy(const wxString& baseName)
 {
-	return wxStandardPaths::Get().GetUserDataDir() + wxT("/") + baseName;
+	return clStandardPaths::Get().GetUserDataDir() + wxT("/") + baseName;
 }
 
 wxString ConfFileLocator::GetDefaultCopy(const wxString& baseName)

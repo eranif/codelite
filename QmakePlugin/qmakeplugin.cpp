@@ -20,6 +20,7 @@
 #include "qmaketab.h"
 #include "qmakeconf.h"
 #include "build_system.h"
+#include "cl_standard_paths.h"
 
 static QMakePlugin* thePlugin = NULL;
 
@@ -53,7 +54,7 @@ QMakePlugin::QMakePlugin(IManager *manager)
     m_longName = _("Qt's QMake integration with CodeLite");
     m_shortName = wxT("QMakePlugin");
 
-    m_conf = new QmakeConf(wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/qmake.ini"));
+    m_conf = new QmakeConf(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/qmake.ini"));
 
     //Connect items
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(QMakePlugin::OnSaveConfig     ),     NULL, this);

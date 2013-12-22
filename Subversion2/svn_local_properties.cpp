@@ -4,6 +4,7 @@
 #include <wx/tokenzr.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include "cl_standard_paths.h"
 
 wxString SubversionLocalProperties::BUG_TRACKER_URL           = wxT("bug_tracker_url");
 wxString SubversionLocalProperties::BUG_TRACKER_MESSAGE       = wxT("bug_tracker_message");
@@ -56,7 +57,7 @@ wxString SubversionLocalProperties::GetConfigFile()
 {
 	wxLogNull noLog;
 	// disable logging
-	wxString configDir(wxStandardPaths::Get().GetUserDataDir());
+	wxString configDir(clStandardPaths::Get().GetUserDataDir());
 	configDir << wxFileName::GetPathSeparator() << wxT("subversion");
 
 	wxMkdir(configDir);

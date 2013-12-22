@@ -34,6 +34,7 @@
 #include "vector"
 #include "macros.h"
 #include <wx/stdpaths.h>
+#include "cl_standard_paths.h"
 
 enum DebuggerCommands {
     DBG_PAUSE = 0,
@@ -464,7 +465,7 @@ public:
         
         arch.ReadCData(wxT("startupCommands"),                startupCommands);
         
-        wxFileName codeliteInstallDir = wxFileName(wxStandardPaths::Get().GetUserDataDir(), "gdb_printers");
+        wxFileName codeliteInstallDir = wxFileName(clStandardPaths::Get().GetUserDataDir(), "gdb_printers");
         startupCommands.Replace("$CodeLiteGdbPrinters", codeliteInstallDir.GetFullPath());
         startupCommands.Trim();
 

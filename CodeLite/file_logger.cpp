@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <wx/log.h>
 #include <wx/crt.h>
+#include "cl_standard_paths.h"
 
 static FileLogger theLogger;
 static bool initialized = false;
@@ -75,7 +76,7 @@ FileLogger* FileLogger::Get()
 {
 	if(!initialized) {
 		wxString filename;
-		filename << wxStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << wxT("codelite.log");
+		filename << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << wxT("codelite.log");
 		theLogger.m_fp = wxFopen(filename, wxT("a+"));
 		initialized = true;
 	}

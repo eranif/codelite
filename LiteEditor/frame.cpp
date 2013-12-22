@@ -1009,7 +1009,7 @@ void clMainFrame::CreateGUIControls(void)
     DebuggerMgr::Get().LoadDebuggers();
 
     wxString sessConfFile;
-    sessConfFile << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
+    sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
 
     // Now the session's loaded, it's safe to fill the tabgroups tab
@@ -4532,7 +4532,7 @@ void clMainFrame::StartTimer()
 void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 {
     wxString file;
-    file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/codelite.layout");
+    file << clStandardPaths::Get().GetUserDataDir() << wxT("/config/codelite.layout");
 
     wxFileName oldLayoutFile(file);
     if(oldLayoutFile.FileExists(file)) {

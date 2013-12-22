@@ -28,7 +28,7 @@ PerspectiveManager::~PerspectiveManager()
 void PerspectiveManager::DeleteAllPerspectives()
 {
     wxArrayString files;
-    wxDir::GetAllFiles(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
+    wxDir::GetAllFiles(clStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
 
     wxLogNull noLog;
     for(size_t i=0; i<files.GetCount(); i++) {
@@ -95,7 +95,7 @@ void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
 wxArrayString PerspectiveManager::GetAllPerspectives()
 {
     wxArrayString files, perspectives;
-    wxDir::GetAllFiles(wxStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
+    wxDir::GetAllFiles(clStandardPaths::Get().GetUserDataDir() + wxT("/config/"), &files, wxT("*.layout"));
 
     for(size_t i=0; i<files.GetCount(); i++) {
         wxFileName fn(files.Item(i));
@@ -167,7 +167,7 @@ wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
         filename << wxT(".layout");
     }
 
-    file << wxStandardPaths::Get().GetUserDataDir() << wxT("/config/") << filename;
+    file << clStandardPaths::Get().GetUserDataDir() << wxT("/config/") << filename;
     return file;
 }
 

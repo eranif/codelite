@@ -1,5 +1,6 @@
 #include "remote_file_info.h"
 #include <wx/stdpaths.h>
+#include "cl_standard_paths.h"
 
 RemoteFileInfo::RemoteFileInfo()
 {
@@ -15,7 +16,7 @@ void RemoteFileInfo::SetRemoteFile(const wxString& remoteFile)
     
     // Generate a temporary file location
     wxFileName fnRemoteFile(m_remoteFile);
-    wxFileName localFile (wxStandardPaths::Get().GetUserDataDir(), fnRemoteFile.GetFullName());
+    wxFileName localFile (clStandardPaths::Get().GetUserDataDir(), fnRemoteFile.GetFullName());
     localFile.AppendDir("sftp");
     localFile.AppendDir("tmp");
     // Ensure that the path to the sftp temp folder exists
@@ -25,7 +26,7 @@ void RemoteFileInfo::SetRemoteFile(const wxString& remoteFile)
 
 wxString RemoteFileInfo::GetTempFolder()
 {
-    wxFileName localFile (wxStandardPaths::Get().GetUserDataDir(), "");
+    wxFileName localFile (clStandardPaths::Get().GetUserDataDir(), "");
     localFile.AppendDir("sftp");
     localFile.AppendDir("tmp");
     return localFile.GetPath();

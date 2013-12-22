@@ -224,7 +224,7 @@ void AccelTableDlg::OnButtonOk(wxCommandEvent &e)
 	}
 
 	wxString fileName;
-	fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf");
+	fileName = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf");
 
 	wxFFile file;
 	if (!file.Open(fileName, wxT("w+b"))) {

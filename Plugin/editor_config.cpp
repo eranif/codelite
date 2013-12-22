@@ -33,6 +33,7 @@
 #include "globals.h"
 #include "wx_xml_compatibility.h"
 #include "event_notifier.h"
+#include "cl_standard_paths.h"
 
 //-------------------------------------------------------------------------------------------
 SimpleLongValue::SimpleLongValue()
@@ -107,14 +108,14 @@ bool EditorConfig::DoLoadDefaultSettings()
 bool EditorConfig::Load()
 {
     //first try to load the user's settings
-    m_fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
+    m_fileName = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
     wxString localFileName = m_fileName.GetFullPath();
 
     {
         // Make sure that the directory exists
         wxLogNull noLog;
         wxMkdir(m_fileName.GetPath());
-        wxMkdir(wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("lexers"));
+        wxMkdir(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("lexers"));
     }
 
     bool userSettingsLoaded(false);
@@ -152,7 +153,7 @@ bool EditorConfig::Load()
     LoadLexers(false);
 
     // make sure that the file name is set to .xml and not .default
-    m_fileName = wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
+    m_fileName = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/codelite.xml");
     return true;
 }
 
@@ -161,7 +162,7 @@ void EditorConfig::SaveLexers()
     std::map<wxString, LexersInfo*>::iterator iter = m_lexers.begin();
     for (; iter != m_lexers.end(); iter++) {
         wxFileName fn(iter->second->filename);
-        wxString userLexer( wxStandardPaths::Get().GetUserDataDir() +
+        wxString userLexer( clStandardPaths::Get().GetUserDataDir() +
                             wxFileName::GetPathSeparator() +
                             wxT("lexers") +
                             wxFileName::GetPathSeparator() +
@@ -481,7 +482,7 @@ void EditorConfig::LoadLexers(bool loadDefault)
         //try to locate a file with the same name but with the user extension
         wxFileName fn(files.Item(i));
 
-        wxString userLexer( wxStandardPaths::Get().GetUserDataDir() +
+        wxString userLexer( clStandardPaths::Get().GetUserDataDir() +
                             wxFileName::GetPathSeparator() +
                             wxT("lexers") +
                             wxFileName::GetPathSeparator() +

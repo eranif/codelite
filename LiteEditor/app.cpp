@@ -347,7 +347,7 @@ bool CodeLiteApp::OnInit()
 #if defined (__WXGTK__)
     if (homeDir.IsEmpty()) {
         SetAppName(wxT("codelite"));
-        homeDir = wxStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
+        homeDir = clStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
 
         //Create the directory structure
         wxLogNull noLog;
@@ -372,7 +372,7 @@ bool CodeLiteApp::OnInit()
 
 #elif defined (__WXMAC__)
     SetAppName(wxT("codelite"));
-    homeDir = wxStandardPaths::Get().GetUserDataDir();
+    homeDir = clStandardPaths::Get().GetUserDataDir();
     {
         wxLogNull noLog;
 
@@ -453,7 +453,7 @@ bool CodeLiteApp::OnInit()
 #ifdef __WXMSW__
     {
         wxLogNull noLog;
-        wxMkdir(wxStandardPaths::Get().GetUserDataDir());
+        wxMkdir(clStandardPaths::Get().GetUserDataDir());
     }
 #endif
 
@@ -466,7 +466,7 @@ bool CodeLiteApp::OnInit()
 
 #ifdef __WXGTK__
     // Redirect stdout/error to a file
-    wxFileName stdout_err(wxStandardPaths::Get().GetUserDataDir(), "codelite-stdout-stderr.log");
+    wxFileName stdout_err(clStandardPaths::Get().GetUserDataDir(), "codelite-stdout-stderr.log");
     FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stdout);
     FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stderr);
     wxUnusedVar(new_stderr);
@@ -639,7 +639,7 @@ void CodeLiteApp::OnFatalException()
 {
 #if wxUSE_STACKWALKER
     wxString startdir;
-    startdir << wxStandardPaths::Get().GetUserDataDir() << wxT("/crash.log");
+    startdir << clStandardPaths::Get().GetUserDataDir() << wxT("/crash.log");
 
     wxFileOutputStream outfile(startdir);
     wxTextOutputStream out(outfile);
@@ -782,7 +782,7 @@ void CodeLiteApp::MSWReadRegistry()
 wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxString &requiredVersion)
 {
     wxString defaultMenuFile = installDirectory + wxFileName::GetPathSeparator() + wxT("rc") + wxFileName::GetPathSeparator() + wxT("menu.xrc");
-    wxFileName menuFile(wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("rc") + wxFileName::GetPathSeparator() + wxT("menu.xrc"));
+    wxFileName menuFile(clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("rc") + wxFileName::GetPathSeparator() + wxT("menu.xrc"));
     if(menuFile.FileExists()) {
         // if we find the user's file menu, check that it has the required version
         {
@@ -811,7 +811,7 @@ void CodeLiteApp::DoCopyGdbPrinters()
     
     // copy the files to ~/.codelite/gdb_printers
     wxLogNull nolog;
-    wxFileName targetDir(wxStandardPaths::Get().GetUserDataDir(), "gdb_printers");
+    wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "gdb_printers");
     ::wxMkdir(targetDir.GetFullPath());
     ::CopyDir(printersInstallDir.GetFullPath(), targetDir.GetFullPath());
 }

@@ -190,6 +190,8 @@
     <File Name="cJSON.h"/>
     <File Name="cl_config.cpp"/>
     <File Name="cl_config.h"/>
+    <File Name="cl_standard_paths.h"/>
+    <File Name="cl_standard_paths.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ssh">
     <File Name="cl_sftp.cpp"/>

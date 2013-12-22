@@ -1844,7 +1844,7 @@ void Manager::GetAcceleratorMap ( MenuItemDataMap& accelMap )
 void Manager::DoGetAccelFiles ( wxArrayString& files )
 {
     //try to locate the user's settings
-    wxFileName fileName ( wxStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf") );
+    wxFileName fileName ( clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("config/accelerators.conf") );
     if ( !fileName.FileExists() ) {
 
         //use the default settings

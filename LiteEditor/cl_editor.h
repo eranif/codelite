@@ -408,6 +408,8 @@ public:
     // mark all occurances
     bool MarkAllFinds();
 
+    wxMenu* AddBookmarksSubmenu(wxMenu* parentMenu);
+
     // Folding API
     //-----------------------------------------
     void ToggleCurrentFold();
@@ -819,7 +821,6 @@ private:
     void    DoRestoreMarkers();
 
     wxMenu* DoCreateDebuggerWatchMenu(const wxString &word);
-    void    AddBookmarksSubmenu(wxMenu* parentMenu);
 
     DECLARE_EVENT_TABLE()
     void OnHighlightWordChecked(wxCommandEvent &e);

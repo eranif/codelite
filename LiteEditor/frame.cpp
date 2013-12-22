@@ -329,6 +329,8 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("grep_current_file"),            clMainFrame::OnGrepWord            )
     EVT_MENU(XRCID("grep_current_workspace"),       clMainFrame::OnGrepWord            )
 
+    EVT_AUITOOLBAR_TOOL_DROPDOWN(XRCID("toggle_bookmark"),clMainFrame::OnShowBookmarkMenu)
+
     EVT_UPDATE_UI(wxID_FIND,                        clMainFrame::OnIncrementalSearchUI )
     EVT_UPDATE_UI(wxID_REPLACE,                     clMainFrame::OnFileExistUpdateUI   )
     EVT_UPDATE_UI(XRCID("find_next"),               clMainFrame::OnFileExistUpdateUI   )
@@ -623,6 +625,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     , m_highlightWord           (false)
     , m_workspaceRetagIsRequired(false)
     , m_buildDropDownMenu       (NULL)
+    , m_bookmarksDropDownMenu   (NULL)
 {
 #if  defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -993,10 +996,12 @@ void clMainFrame::CreateGUIControls(void)
         CreateToolbars24();
     }
 
-    // Connect the custom build target events range
+    // Connect the custom build target events range: !USE_AUI_TOOLBAR only
     if ( GetToolBar() ) {
         GetToolBar()->Connect(ID_MENU_CUSTOM_TARGET_FIRST, ID_MENU_CUSTOM_TARGET_MAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnBuildCustomTarget), NULL, this);
     }
+
+    Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnChangeActiveBookmarkType), this, XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
 
     GetWorkspacePane()->GetNotebook()->SetRightClickMenu( wxXmlResource::Get()->LoadMenu(wxT("workspace_view_rmenu")) );
     GetDebuggerPane()->GetNotebook()->SetRightClickMenu(wxXmlResource::Get()->LoadMenu( wxT("debugger_view_rmenu") ) );
@@ -1116,6 +1121,7 @@ void clMainFrame::CreateToolbars24()
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
     tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     _("Toggle Bookmark"));
+    tb->SetToolDropDown(XRCID("toggle_bookmark"), true);
 
 
     if (PluginManager::Get()->AllowToolbar()) {
@@ -1241,7 +1247,7 @@ void clMainFrame::CreateNativeToolbar16()
     tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/16/standard/back")),         _("Backward"));
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
-    tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     _("Toggle Bookmark"));
+    tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     _("Toggle Bookmark"), wxITEM_DROPDOWN);
 
 
     //----------------------------------------------
@@ -1317,7 +1323,7 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back")),         _("Backward"));
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
-    tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     _("Toggle Bookmark"));
+    tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     _("Toggle Bookmark"), wxITEM_DROPDOWN);
 
 
     //----------------------------------------------
@@ -1407,6 +1413,7 @@ void clMainFrame::CreateToolbars16()
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
     tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     _("Toggle Bookmark"));
+    tb->SetToolDropDown(XRCID("toggle_bookmark"), true);
 
 
     if (PluginManager::Get()->AllowToolbar()) {
@@ -5134,6 +5141,32 @@ void clMainFrame::OnLoadSession(wxCommandEvent& e)
     LoadSession(SessionManager::Get().GetLastSession());
 }
 
+void clMainFrame::OnShowBookmarkMenu(wxAuiToolBarEvent& e)
+{
+    if ( e.IsDropDownClicked() ) {
+        wxMenu* menu = GetMainBook()->GetActiveEditor()->AddBookmarksSubmenu(NULL); // Despite the name, this provides almost all the bookmark menuitems
+        if (!menu) {
+            e.Skip();
+            return;
+        }
+        menu->Append(XRCID("removeall_bookmarks"), _("Remove All Bookmarks")); // This missing one
+
+        wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(e.GetEventObject());
+        if ( auibar ) {
+            clAuiToolStickness ts(auibar, e.GetToolId());
+            wxRect rect = auibar->GetToolRect(e.GetId());
+            wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
+            pt = ScreenToClient(pt);
+            PopupMenu(menu, pt);
+        }
+
+        delete menu;
+
+    } else {
+        e.Skip();
+    }
+}
+
 void clMainFrame::OnShowAuiBuildMenu(wxAuiToolBarEvent& e)
 {
     if ( e.IsDropDownClicked() ) {
@@ -5336,4 +5369,12 @@ void clMainFrame::OnThemeChanged(wxCommandEvent& e)
 //    SetBackgroundColour( bgColour );
 //    SetForegroundColour( fgColour );
 //    Refresh();
+}
+
+void clMainFrame::OnChangeActiveBookmarkType(wxCommandEvent& e)
+{
+    LEditor* editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        editor->OnChangeActiveBookmarkType(e);
+    }
 }

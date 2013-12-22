@@ -117,6 +117,7 @@ class clMainFrame : public wxFrame
     StatusbarTimer*                       m_statusbarTimer;
     MyMenuBar*                            m_myMenuBar;
     wxMenu*                               m_buildDropDownMenu;
+    wxMenu*                               m_bookmarksDropDownMenu;
     ThemeHandler                          m_themeHandler;
     static clSplashScreen*                m_splashScreen;
     
@@ -555,6 +556,8 @@ protected:
     void OnUpdateCustomTargetsDropDownMenu(wxCommandEvent &e);
     void OnRefactoringCacheStatus(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
+    void OnChangeActiveBookmarkType(wxCommandEvent &e);
+    void OnShowBookmarkMenu(wxAuiToolBarEvent &e);
     DECLARE_EVENT_TABLE()
 };
 

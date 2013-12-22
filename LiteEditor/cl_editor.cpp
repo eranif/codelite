@@ -2572,7 +2572,7 @@ wxString LEditor::GetBookmarkLabel(sci_marker_types type) const
     return label;
 }
 
-void LEditor::AddBookmarksSubmenu(wxMenu* parentMenu)
+wxMenu* LEditor::AddBookmarksSubmenu(wxMenu* parentMenu)
 {
     wxMenu* menu = new wxMenu;
     menu->Append(XRCID("next_bookmark"), _("Next Bookmark"));
@@ -2583,23 +2583,27 @@ void LEditor::AddBookmarksSubmenu(wxMenu* parentMenu)
     static int bmktypes = smt_LAST_BMK_TYPE - smt_FIRST_BMK_TYPE + 1;
 
     int current = clMainFrame::Get()->GetMainBook()->GetActiveBookmarkType();
-    wxCHECK_RET(current >= smt_FIRST_BMK_TYPE && current < smt_find_bookmark, "Out-of-range standard bookmarktype");
+    wxCHECK_MSG(current >= smt_FIRST_BMK_TYPE && current < smt_find_bookmark, menu, "Out-of-range standard bookmarktype");
     
     for (size_t bmt=1; bmt < bmktypes; ++bmt) { // Not <= as we don't want smt_find_bookmark here
-        wxMenuItem* item = submenu->AppendRadioItem(XRCID("BookmarkTypes[start]") + bmt, wxString::Format("%s %i", _("Type"), (int)bmt));
+        wxMenuItem* item = submenu->AppendRadioItem(XRCID("BookmarkTypes[start]") + bmt, GetBookmarkLabel((sci_marker_types)(smt_FIRST_BMK_TYPE + bmt-1)));
         if (bmt == (current - smt_FIRST_BMK_TYPE + 1)) {
             item->Check();
         }
     }
 
-    wxMenuItem* item = new wxMenuItem(parentMenu, XRCID("change_active_bookmark_type"), _("Change Active Bookmark Type..."), "", wxITEM_NORMAL, submenu);
+    wxMenuItem* item = new wxMenuItem(menu, XRCID("change_active_bookmark_type"), _("Change Active Bookmark Type..."), "", wxITEM_NORMAL, submenu);
     menu->Append(item);
 
     menu->AppendSeparator();
     menu->Append(XRCID("removeall_current_bookmarks"), _("Remove All Currently-Active Bookmarks"));
 
-    item = new wxMenuItem(parentMenu, XRCID("more_bookmark_options"), _("More..."), "", wxITEM_NORMAL, menu);
-    parentMenu->Append(item);
+    if (parentMenu) {
+        item = new wxMenuItem(parentMenu, XRCID("more_bookmark_options"), _("More..."), "", wxITEM_NORMAL, menu);
+        parentMenu->Append(item);
+    }
+    
+    return menu;
 }
 
 void LEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)

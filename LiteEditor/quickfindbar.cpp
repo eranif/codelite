@@ -653,7 +653,7 @@ void QuickFindBar::OnHighlightMatchesUI(wxUpdateUIEvent& event)
         } else {
             // Check to see if there are any markers
             int nLine = editor->LineFromPosition(0);
-            int nFoundLine = editor->MarkerNext(nLine + 1, mmt_find_bookmark);
+            int nFoundLine = editor->MarkerNext(nLine, mmt_find_bookmark);
 
             event.Enable(true);
             event.Check(nFoundLine != wxNOT_FOUND);

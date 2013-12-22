@@ -30,7 +30,8 @@ wxString clStandardPaths::GetUserDataDir() const
     // Release mode
     return wxStandardPaths::Get().GetUserDataDir();
     
-#endif // Windows / OSX
+#endif
+#else // Windows / OSX
     return wxStandardPaths::Get().GetUserDataDir();
 #endif
 }

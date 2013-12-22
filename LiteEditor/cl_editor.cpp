@@ -2616,7 +2616,9 @@ wxString LEditor::GetBookmarkTooltip(const int lineno)
     // If multiple, list each, with the visible one first
     int linebits = MarkerGet(lineno);
     if (linebits & GetActiveBookmarkMask()) {
-        active = "<b>" + GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType()) + " bookmark</b>";
+        wxString label = GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
+        wxString suffix = label.Lower().Contains("bookmark") ? "" : " bookmark";
+        active = "<b>" + label + suffix + "</b>";
     }
     
     for (size_t bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
@@ -2625,7 +2627,9 @@ wxString LEditor::GetBookmarkTooltip(const int lineno)
                 if (!others.empty()) {
                     others << "\n";
                 }
-                others << GetBookmarkLabel((sci_marker_types)bmt) << " bookmark";
+                wxString label = GetBookmarkLabel((sci_marker_types)bmt);
+                wxString suffix = label.Lower().Contains("bookmark") ? "" : " bookmark";
+                others << label << suffix << "";
             }
         }
     }

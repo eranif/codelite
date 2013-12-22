@@ -109,18 +109,6 @@ wxString MacGetBasePath()
 
 ///////////////////////////////////////////////////////////////////
 
-#if wxVERSION_NUMBER < 2900
-static const wxCmdLineEntryDesc cmdLineDesc[] = {
-    {wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),      wxT("Print current version"),                       wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),         wxT("Print usage"),                                 wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_SWITCH, wxT("n"), wxT("no-plugins"),   wxT("Start codelite without any plugins"),          wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_OPTION, wxT("l"), wxT("line"),         wxT("Open the file at a given line number"),        wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_OPTION, wxT("b"), wxT("basedir"),      wxT("Use this path as CodeLite installation path"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_OPTION, wxT("p"), wxT("with-plugins"), wxT("Comma separated list of plugins to load"),     wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_PARAM,  NULL,     NULL,                wxT("Input file"),                                  wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_NONE }
-};
-#else
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
     {wxCMD_LINE_SWITCH, "v",  "version",      "Print current version",                       wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     {wxCMD_LINE_SWITCH, "h",  "help",         "Print usage",                                 wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
@@ -131,7 +119,6 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
     {wxCMD_LINE_PARAM,  NULL, NULL,           "Input file",                                  wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
     {wxCMD_LINE_NONE }
 };
-#endif
 
 static void massCopy(const wxString &sourceDir, const wxString &spec, const wxString &destDir)
 {

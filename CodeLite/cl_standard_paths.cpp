@@ -23,7 +23,7 @@ wxString clStandardPaths::GetUserDataDir() const
 #ifndef NDEBUG
     // Debug mode
     wxFileName fn(wxStandardPaths::Get().GetUserDataDir());
-    fn.SetFullName("codelite-dbg");
+    fn.SetFullName(".codelite-dbg");
     return fn.GetFullPath();
     
 #else

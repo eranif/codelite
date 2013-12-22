@@ -2237,47 +2237,53 @@ void FileViewTree::OnCleanProjectOnlyInternal(wxCommandEvent& e)
 
 void FileViewTree::OnExcludeFromBuild(wxCommandEvent& e)
 {
-    wxUnusedVar( e );
-    wxTreeItemId item = GetSingleSelection();
-    if ( item.IsOk() ) {
-        FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
-        if (data->GetData().GetKind() == ProjectItem::TypeFile) {
-            Manager *mgr = ManagerST::Get();
-            wxTreeItemId parent = GetItemParent( item );
-            if ( parent.IsOk() ) {
-                wxString path = GetItemPath( parent );
-                wxString proj = path.BeforeFirst(wxT(':'));
-                ProjectPtr p = mgr->GetProject(proj);
-                if ( p ) {
-                    wxString vdPath   = path.AfterFirst(':');
-                    wxString filename = data->GetData().GetFile();
-                    
-                    BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(proj, "");
-                    if ( !buildConf ) {
-                        return;
-                    }
-                    
-                    wxString current_build_config = buildConf->GetName();
-                    
-                    wxArrayString configs = p->GetExcludeConfigForFile( filename, vdPath );
-                    
-                    if ( e.IsChecked() ) {
-                        configs.Add( current_build_config );
-                        //SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-        
-                    } else {
-                        int where = configs.Index(current_build_config);
-                        if ( where != wxNOT_FOUND ) {
-                            configs.RemoveAt(where);
-                        }
-                        
-                        //SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour() );
-                    }
-                    p->SetExcludeConfigForFile( filename, vdPath, configs);
-                }
-            }
-        }
-    }
+       wxUnusedVar( e );
+
+       wxArrayTreeItemIds selections;
+       size_t count = GetSelections(selections);
+       for( int selectionIndex=0; selectionIndex<count; selectionIndex++)
+       {
+               wxTreeItemId item = selections[selectionIndex];
+               if ( item.IsOk() ) {
+                       FilewViewTreeItemData *data = static_cast<FilewViewTreeItemData*>( GetItemData( item ) );
+                       if (data->GetData().GetKind() == ProjectItem::TypeFile) {
+                               Manager *mgr = ManagerST::Get();
+                               wxTreeItemId parent = GetItemParent( item );
+                               if ( parent.IsOk() ) {
+                                       wxString path = GetItemPath( parent );
+                                       wxString proj = path.BeforeFirst(wxT(':'));
+                                       ProjectPtr p = mgr->GetProject(proj);
+                                       if ( p ) {
+                                               wxString vdPath   = path.AfterFirst(':');
+                                               wxString filename = data->GetData().GetFile();
+                                              
+                                               BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(proj, "");
+                                               if ( !buildConf ) {
+                                                       return;
+                                               }
+                                              
+                                               wxString current_build_config = buildConf->GetName();
+                                              
+                                               wxArrayString configs = p->GetExcludeConfigForFile( filename, vdPath );
+                                              
+                                               if ( e.IsChecked() ) {
+                                                       configs.Add( current_build_config );
+                                                       //SetItemTextColour(item, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+                      
+                                               } else {
+                                                       int where = configs.Index(current_build_config);
+                                                       if ( where != wxNOT_FOUND ) {
+                                                               configs.RemoveAt(where);
+                                                       }
+                                                      
+                                                       //SetItemTextColour(item, DrawingUtils::GetOutputPaneFgColour() );
+                                               }
+                                               p->SetExcludeConfigForFile( filename, vdPath, configs);
+                                       }
+                               }
+                       }
+               }
+       }
 }
 
 void FileViewTree::OnExcludeFromBuildUI(wxUpdateUIEvent& event)

@@ -114,7 +114,8 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
     {wxCMD_LINE_SWITCH, "h",  "help",         "Print usage",                                 wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     {wxCMD_LINE_SWITCH, "n",  "no-plugins",   "Start codelite without any plugins",          wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     {wxCMD_LINE_OPTION, "l",  "line",         "Open the file at a given line number",        wxCMD_LINE_VAL_NUMBER, wxCMD_LINE_PARAM_OPTIONAL },
-    {wxCMD_LINE_OPTION, "b",  "basedir",      "Use this path as CodeLite installation path", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    {wxCMD_LINE_OPTION, "b",  "basedir",      "Use this path as the CodeLite installation path (Windows only)", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    {wxCMD_LINE_OPTION, "d",  "datadir",      "Use this path as the CodeLite data path",     wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     {wxCMD_LINE_OPTION, "p",  "with-plugins", "Comma separated list of plugins to load",     wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     {wxCMD_LINE_PARAM,  NULL, NULL,           "Input file",                                  wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE|wxCMD_LINE_PARAM_OPTIONAL },
     {wxCMD_LINE_NONE }
@@ -323,7 +324,16 @@ bool CodeLiteApp::OnInit()
 
     wxString newBaseDir(wxEmptyString);
     if (parser.Found(wxT("b"), &newBaseDir)) {
+#if defined (__WXMSW__)
         homeDir = newBaseDir;
+#else
+        wxLogDebug("Ignoring the Windows-only --basedir option as not running Windows");
+#endif
+    }
+ 
+    wxString newDataDir(wxEmptyString);
+    if (parser.Found(wxT("d"), &newDataDir)) {
+        clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
     
     // Copy gdb pretty printers from the installation folder to a writeable location

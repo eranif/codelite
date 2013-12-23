@@ -18,6 +18,11 @@ clStandardPaths& clStandardPaths::Get()
 
 wxString clStandardPaths::GetUserDataDir() const
 {
+    // If the user has provided an alternative datadir, use it
+    if (!m_path.empty()) {
+        return m_path;
+    }
+
 #ifdef __WXGTK__
 
 #ifndef NDEBUG
@@ -34,4 +39,9 @@ wxString clStandardPaths::GetUserDataDir() const
 #else // Windows / OSX
     return wxStandardPaths::Get().GetUserDataDir();
 #endif
+}
+
+void clStandardPaths::SetUserDataDir(const wxString& path)
+{
+    m_path = path;
 }

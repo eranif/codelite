@@ -22,7 +22,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
         bBitmapLoaded = true;
     }
     
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
     
     m_notebook2 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
@@ -32,14 +32,14 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_panel1 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel1, _("General"), true);
     
-    bSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer2);
     
-    staticBoxSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_panel1, wxID_ANY, _("Look and Feel:")), wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_panel1, wxID_ANY, _("Look and Feel:")), wxVERTICAL);
     
     bSizer2->Add(staticBoxSizer3, 0, wxALL|wxEXPAND, 5);
     
-    fgSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
@@ -81,7 +81,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     staticBoxSizer3->Add(m_checkBoxEnableMSWTheme, 0, wxALL|wxEXPAND, 5);
     
-    staticBoxSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_panel1, wxID_ANY, _("Other:")), wxVERTICAL);
+    wxStaticBoxSizer* staticBoxSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_panel1, wxID_ANY, _("Other:")), wxVERTICAL);
     
     bSizer2->Add(staticBoxSizer4, 0, wxALL|wxEXPAND, 5);
     
@@ -118,10 +118,10 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_panel2 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel2, _("Encoding & Locale"), false);
     
-    bSizer4 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer4);
     
-    fgSizer1 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
@@ -158,7 +158,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_panel3 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel3, _("History"), false);
     
-    fgSizer2 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
@@ -192,15 +192,20 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_panel4 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel4, _("Log"), false);
     
-    fgSizer3 = new wxFlexGridSizer(  0, 3, 0, 0);
-    fgSizer3->SetFlexibleDirection( wxBOTH );
-    fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer3->AddGrowableCol(0);
-    m_panel4->SetSizer(fgSizer3);
+    wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
+    m_panel4->SetSizer(boxSizer11);
     
-    m_staticText6 = new wxStaticText(m_panel4, wxID_ANY, _("Log file verbosity:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    wxFlexGridSizer* flexGridSizer13 = new wxFlexGridSizer(  0, 3, 0, 0);
+    flexGridSizer13->SetFlexibleDirection( wxBOTH );
+    flexGridSizer13->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer13->AddGrowableCol(1);
+    flexGridSizer13->AddGrowableCol(2);
     
-    fgSizer3->Add(m_staticText6, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer11->Add(flexGridSizer13, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText6 = new wxStaticText(m_panel4, wxID_ANY, _("CodeLite's Log-file verbosity:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    
+    flexGridSizer13->Add(m_staticText6, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     wxArrayString m_choice4Arr;
     m_choice4Arr.Add(wxT("Error"));
@@ -211,12 +216,22 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_choice4->SetToolTip(_("codelite logs to file various events, this option controls the logging verbosity"));
     m_choice4->SetSelection(0);
     
-    fgSizer3->Add(m_choice4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer13->Add(m_choice4, 0, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_buttonOpenLog = new wxButton(m_panel4, wxID_ANY, _("Open.."), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOpenLog->SetToolTip(_("Open the log file into an editor"));
     
-    fgSizer3->Add(m_buttonOpenLog, 0, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer13->Add(m_buttonOpenLog, 0, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticLine15 = new wxStaticLine(m_panel4, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
+    
+    boxSizer11->Add(m_staticLine15, 0, wxALL|wxEXPAND, 10);
+    
+    m_redirectLogOutput = new wxCheckBox(m_panel4, wxID_ANY, _("GTK only: Redirect stdout/stderr output to a log file"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_redirectLogOutput->SetValue(true);
+    m_redirectLogOutput->SetToolTip(_("If ticked, all output from e.g. cout or wxLogDebug will be redirected to the file .codelite/codelite-stdout-stderr.log"));
+    
+    boxSizer11->Add(m_redirectLogOutput, 0, wxALL, 10);
     
     SetSizeHints(449,382);
     if ( GetSizer() ) {
@@ -232,6 +247,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_clearButton->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnClearUI), NULL, this);
     m_choice4->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnLogVerbosityChanged), NULL, this);
     m_buttonOpenLog->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnShowLogFile), NULL, this);
+    m_redirectLogOutput->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
     
 }
 
@@ -245,5 +261,6 @@ EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
     m_clearButton->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnClearUI), NULL, this);
     m_choice4->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnLogVerbosityChanged), NULL, this);
     m_buttonOpenLog->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnShowLogFile), NULL, this);
+    m_redirectLogOutput->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
     
 }

@@ -462,12 +462,15 @@ bool CodeLiteApp::OnInit()
     }
 
 #ifdef __WXGTK__
-    // Redirect stdout/error to a file
-    wxFileName stdout_err(clStandardPaths::Get().GetUserDataDir(), "codelite-stdout-stderr.log");
-    FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stdout);
-    FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stderr);
-    wxUnusedVar(new_stderr);
-    wxUnusedVar(new_stdout);
+    bool redirect = clConfig::Get().Read("RedirectLogOutput", true);
+    if (redirect) {
+        // Redirect stdout/error to a file
+        wxFileName stdout_err(clStandardPaths::Get().GetUserDataDir(), "codelite-stdout-stderr.log");
+        FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stdout);
+        FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stderr);
+        wxUnusedVar(new_stderr);
+        wxUnusedVar(new_stdout);
+    }
 #endif
 
     // Set the log file verbosity

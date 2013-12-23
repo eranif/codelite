@@ -21,38 +21,31 @@
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
+#include <wx/statline.h>
 
 class EditorSettingsMiscBasePanel : public wxPanel
 {
 protected:
-    wxBoxSizer* bSizer1;
     wxNotebook* m_notebook2;
     wxPanel* m_panel1;
-    wxBoxSizer* bSizer2;
-    wxStaticBoxSizer* staticBoxSizer3;
-    wxFlexGridSizer* fgSizer4;
     wxStaticText* m_staticText7;
     wxChoice* m_choiceIconSet;
     wxStaticText* m_staticText8;
     wxChoice* m_toolbarIconSize;
     wxCheckBox* m_useSingleToolbar;
     wxCheckBox* m_checkBoxEnableMSWTheme;
-    wxStaticBoxSizer* staticBoxSizer4;
     wxCheckBox* m_showSplashScreen;
     wxCheckBox* m_singleAppInstance;
     wxCheckBox* m_versionCheckOnStartup;
     wxCheckBox* m_fullFilePath;
     wxCheckBox* m_checkBoxRestoreSession;
     wxPanel* m_panel2;
-    wxBoxSizer* bSizer4;
-    wxFlexGridSizer* fgSizer1;
     wxStaticText* m_staticText1;
     wxChoice* m_fileEncoding;
     wxCheckBox* m_SetLocale;
     wxStaticText* m_staticTextLocale;
     wxChoice* m_AvailableLocales;
     wxPanel* m_panel3;
-    wxFlexGridSizer* fgSizer2;
     wxStaticText* m_staticText2;
     wxButton* m_clearButton;
     wxStaticText* m_staticText3;
@@ -60,10 +53,11 @@ protected:
     wxStaticText* m_staticText4;
     wxTextCtrl* m_spinCtrlMaxOpenTabs;
     wxPanel* m_panel4;
-    wxFlexGridSizer* fgSizer3;
     wxStaticText* m_staticText6;
     wxChoice* m_choice4;
     wxButton* m_buttonOpenLog;
+    wxStaticLine* m_staticLine15;
+    wxCheckBox* m_redirectLogOutput;
 
 protected:
     virtual void OnEnableThemeUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -74,6 +68,7 @@ protected:
     virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLogVerbosityChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnShowLogFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     EditorSettingsMiscBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(449,382), long style = wxTAB_TRAVERSAL);

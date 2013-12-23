@@ -55,10 +55,10 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 
     if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
         m_choiceIconSet->SetSelection(1);
-        
+
     else if( options->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
         m_choiceIconSet->SetSelection(2);
-        
+
     else
         m_choiceIconSet->SetSelection(0); // Default
 
@@ -99,10 +99,12 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
     m_spinCtrlMaxOpenTabs->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxOpenedTabs", 15) ) );
     m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString( clConfig::Get().Read("LogVerbosity", FileLogger::Error) ) );
     m_checkBoxRestoreSession->SetValue( clConfig::Get().Read("RestoreLastSession", true) );
-    
+
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
     m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
+    
+    m_redirectLogOutput->SetValue(clConfig::Get().Read("RedirectLogOutput", true));
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick( wxCommandEvent& )
@@ -126,7 +128,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     if(m_oldMswUseTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
         m_restartRequired = true;
     }
-    
+
     clConfig::Get().Write("SingleInstance",              m_singleAppInstance->IsChecked());
     clConfig::Get().Write("CheckForNewVersion",          m_versionCheckOnStartup->IsChecked());
     clConfig::Get().Write("ShowFullPathInFrameTitle",    m_fullFilePath->IsChecked());
@@ -211,8 +213,10 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     } else { // 1
         newIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
         flags |= OptionsConfig::Opt_IconSet_FreshFarm;
-    
+
     }
+
+    clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
 
     options->SetOptions(flags);
     m_restartRequired = ((oldIconFlags != newIconFlags) || m_restartRequired);
@@ -312,3 +316,13 @@ void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)
 
     clMainFrame::Get()->GetMainBook()->OpenFile(logfile);
 }
+void EditorSettingsMiscPanel::OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event)
+{
+#ifdef __WXGTK__
+    event.Enable(true);
+#else
+    m_redirectLogOutput->SetValue(false);
+    event.Enable(false);
+#endif
+}
+

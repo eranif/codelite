@@ -2563,7 +2563,7 @@ enum marker_mask_type LEditor::GetActiveBookmarkMask() const
 wxString LEditor::GetBookmarkLabel(sci_marker_types type)
 {
     wxCHECK_MSG(type >= smt_FIRST_BMK_TYPE && type <= smt_LAST_BMK_TYPE, "", "Invalid marker type");
-    wxString label = BookmarkManager::Get().GetMarkerLabel(type - smt_FIRST_BMK_TYPE);
+    wxString label = BookmarkManager::Get().GetMarkerLabel(type);
     if (label.empty()) {
         label = wxString::Format("Type %i", type - smt_FIRST_BMK_TYPE + 1);
     }

@@ -37,6 +37,7 @@ private:
     
 protected:
     void OnEditorSettingsChanged(wxCommandEvent &e);
+    void DoPopulateDefaultLabels();
     
 public:
     static BookmarkManager& Get();

@@ -7,21 +7,8 @@
 BookmarkManager::BookmarkManager()
     : m_activeBookmarkType(smt_bookmark1)
 {
-    for(int i=smt_FIRST_BMK_TYPE; i<=smt_LAST_BMK_TYPE; ++i) {
-        wxString label;
-        switch(i) {
-        case smt_bookmark1:
-            label << _("Normal bookmark");
-            break;
-        case smt_find_bookmark:
-            label << _("Find bookmark");
-            break;
-        default:
-            label << "Bookmark Type " << (i-smt_FIRST_BMK_TYPE);
-            break;
-        }
-        m_markerLabels.insert( std::make_pair(i, label) );
-    }
+    wxCommandEvent dummy;
+    OnEditorSettingsChanged(dummy);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(BookmarkManager::OnEditorSettingsChanged), NULL, this);
 }
 
@@ -45,10 +32,17 @@ void BookmarkManager::SetMarkerLabel(const wxString& label, int index)
 
 void BookmarkManager::OnEditorSettingsChanged(wxCommandEvent& e)
 {
-    m_markerLabels.clear();
+    wxUnusedVar(e);
+    DoPopulateDefaultLabels();
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     for(int i=smt_FIRST_BMK_TYPE; i<=smt_LAST_BMK_TYPE; ++i) {
-        m_markerLabels.insert( std::make_pair(i,  options->GetBookmarkLabel(i-smt_FIRST_BMK_TYPE)) );
+        wxString new_label = options->GetBookmarkLabel(i-smt_FIRST_BMK_TYPE);
+        new_label.Trim().Trim(false);
+        
+        if ( !new_label.IsEmpty() ) {
+            m_markerLabels.erase(i);
+            m_markerLabels.insert( std::make_pair(i, new_label) );
+        }
     }
 }
 
@@ -92,4 +86,24 @@ wxMenu* BookmarkManager::CreateBookmarksSubmenu(wxMenu* parentMenu)
     }
     
     return menu;
+}
+
+void BookmarkManager::DoPopulateDefaultLabels()
+{
+    m_markerLabels.clear();
+    for(int i=smt_FIRST_BMK_TYPE; i<=smt_LAST_BMK_TYPE; ++i) {
+        wxString label;
+        switch(i) {
+        case smt_bookmark1:
+            label << _("Normal bookmark");
+            break;
+        case smt_find_bookmark:
+            label << _("Find bookmark");
+            break;
+        default:
+            label << "Bookmark Type " << (i-smt_FIRST_BMK_TYPE);
+            break;
+        }
+        m_markerLabels.insert( std::make_pair(i, label) );
+    }
 }

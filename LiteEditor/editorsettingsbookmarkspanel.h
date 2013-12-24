@@ -34,6 +34,7 @@ struct BookmarkData {
     wxColour fg;
     wxColour bg;
     wxString label;
+    wxString defaultLabel;
 };
 
 class EditorSettingsBookmarksPanel

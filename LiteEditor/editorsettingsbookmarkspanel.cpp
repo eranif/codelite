@@ -54,7 +54,12 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
         }
         arr.fg = col;
 
+        arr.defaultLabel = m_choiceBMType->GetString(n); // Store the default  value
         arr.label = options->GetBookmarkLabel(n);
+        if (!arr.label.empty()) {
+            wxCHECK_RET(n < m_choiceBMType->GetCount(), "More bookmark types than there are Choice entries");
+            m_choiceBMType->SetString(n, arr.label);
+        }
 
         m_bookmarksData.push_back(arr);
     }
@@ -106,6 +111,11 @@ void EditorSettingsBookmarksPanel::ChangeSelection(int index)
         arr.bg = m_backgroundColor->GetColour();
         arr.fg = m_foregroundColor->GetColour();
         arr.label = m_BookmarkLabel->GetValue();
+        if (m_BookmarkLabel->GetValue().empty()) {
+            m_choiceBMType->SetString(m_previous, arr.defaultLabel);
+        } else {
+            m_choiceBMType->SetString(m_previous, arr.label);
+        }
     }
 
     BookmarkData arr = m_bookmarksData.at(index);

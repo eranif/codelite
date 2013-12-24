@@ -25,9 +25,7 @@
 class EditorSettingsBookmarksBasePanel : public wxPanel
 {
 protected:
-    wxBoxSizer* bSizer2;
     wxCheckBox* m_displaySelection;
-    wxFlexGridSizer* fgSizer1;
     wxStaticText* m_staticText3;
     wxChoice* m_bookMarkShape;
     wxStaticText* m_staticText10;
@@ -39,7 +37,6 @@ protected:
     wxStaticText* m_staticText5;
     wxColourPickerCtrl* m_foregroundColor;
     wxStaticLine* m_staticLine18;
-    wxFlexGridSizer* flexGridSizer4;
     wxStaticText* m_staticText66;
     wxColourPickerCtrl* m_highlightColor;
     wxStaticText* m_staticText54;

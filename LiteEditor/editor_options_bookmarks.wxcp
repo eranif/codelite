@@ -530,7 +530,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Choices:",
-											"m_value":	"1 - Default bookmark;2;3;4;5 - Find bar bookmark"
+											"m_value":	"1 - Default bookmark;2;3;4;5 - Find-bar bookmark"
 										}, {
 											"type":	"string",
 											"m_label":	"Selection:",

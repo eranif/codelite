@@ -23,7 +23,7 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
         bBitmapLoaded = true;
     }
     
-    bSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer2);
     
     m_displaySelection = new wxCheckBox(this, wxID_ANY, _("Display Breakpoints / Bookmarks margin"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -31,7 +31,7 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     
     bSizer2->Add(m_displaySelection, 0, wxALL, 5);
     
-    fgSizer1 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(  0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
@@ -56,7 +56,7 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     m_choiceBMTypeArr.Add(wxT("2"));
     m_choiceBMTypeArr.Add(wxT("3"));
     m_choiceBMTypeArr.Add(wxT("4"));
-    m_choiceBMTypeArr.Add(wxT("5 - Find bar bookmark"));
+    m_choiceBMTypeArr.Add(wxT("5 - Find-bar bookmark"));
     m_choiceBMType = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceBMTypeArr, 0);
     m_choiceBMType->SetToolTip(_("Select the bookmark type from the following list"));
     m_choiceBMType->SetSelection(0);
@@ -92,7 +92,7 @@ EditorSettingsBookmarksBasePanel::EditorSettingsBookmarksBasePanel(wxWindow* par
     
     bSizer2->Add(m_staticLine18, 0, wxALL|wxEXPAND, 5);
     
-    flexGridSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
     flexGridSizer4->SetFlexibleDirection( wxBOTH );
     flexGridSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer4->AddGrowableCol(1);

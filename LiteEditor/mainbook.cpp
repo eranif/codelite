@@ -54,7 +54,6 @@ MainBook::MainBook(wxWindow *parent)
     , m_book           (NULL)
     , m_quickFindBar   (NULL)
     , m_useBuffereLimit(true)
-    , m_activeBookmarkType(smt_bookmark1)
 {
     CreateGuiControls();
     ConnectEvents();

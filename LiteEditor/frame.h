@@ -116,7 +116,6 @@ class clMainFrame : public wxFrame
     wxSizer*                              m_horzSizer;
     StatusbarTimer*                       m_statusbarTimer;
     MyMenuBar*                            m_myMenuBar;
-    wxMenu*                               m_buildDropDownMenu;
     wxMenu*                               m_bookmarksDropDownMenu;
     ThemeHandler                          m_themeHandler;
     static clSplashScreen*                m_splashScreen;

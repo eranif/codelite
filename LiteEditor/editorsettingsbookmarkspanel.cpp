@@ -1,25 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : editorsettingsbookmarkspanel.cpp              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : editorsettingsbookmarkspanel.cpp
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -27,20 +27,20 @@
 #include "editorsettingsbookmarkspanel.h"
 
 EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
-: EditorSettingsBookmarksBasePanel( parent )
-, TreeBookNode<EditorSettingsBookmarksPanel>(), m_previous(wxNOT_FOUND)
+    : EditorSettingsBookmarksBasePanel( parent )
+    , TreeBookNode<EditorSettingsBookmarksPanel>(), m_previous(wxNOT_FOUND)
 {
-	m_highlightColor->SetColour(wxString(wxT("LIGHT BLUE")));
+    m_highlightColor->SetColour(wxString(wxT("LIGHT BLUE")));
 
-	//get the editor's options from the disk
-	OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-	m_displaySelection->SetValue(options->GetDisplayBookmarkMargin());
+    //get the editor's options from the disk
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    m_displaySelection->SetValue(options->GetDisplayBookmarkMargin());
 
-	// These are localised inside m_bookMarkShape. However serialising the translated strings will break other locales...
-	const wxString UnlocalisedShapes[] = { wxTRANSLATE("Small Rectangle"), wxTRANSLATE("Rounded Rectangle"), wxTRANSLATE("Circle"), wxTRANSLATE("Small Arrow") };
-	m_stringManager.AddStrings(sizeof(UnlocalisedShapes)/sizeof(wxString), UnlocalisedShapes, options->GetBookmarkShape(), m_bookMarkShape);
+    // These are localised inside m_bookMarkShape. However serialising the translated strings will break other locales...
+    const wxString UnlocalisedShapes[] = { wxTRANSLATE("Small Rectangle"), wxTRANSLATE("Rounded Rectangle"), wxTRANSLATE("Circle"), wxTRANSLATE("Small Arrow") };
+    m_stringManager.AddStrings(sizeof(UnlocalisedShapes)/sizeof(wxString), UnlocalisedShapes, options->GetBookmarkShape(), m_bookMarkShape);
 
-	for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
+    for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
         BookmarkData arr;
         wxColour col = options->GetBookmarkBgColour(n);
         if (!col.IsOk()) {
@@ -58,34 +58,32 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel( wxWindow* parent )
 
         m_bookmarksData.push_back(arr);
     }
-
-    m_spinBookmarkType->SetRange(1, CL_N0_OF_BOOKMARK_TYPES);
     ChangeSelection(0); // Fake a change to display the standard-bookmark values
 
-	wxString val1 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
-	if (val1.IsEmpty() == false) {
-		m_highlightColor->SetColour(val1);
-	}
+    wxString val1 = EditorConfigST::Get()->GetStringValue(wxT("WordHighlightColour"));
+    if (val1.IsEmpty() == false) {
+        m_highlightColor->SetColour(val1);
+    }
 
-	long alpha(1);
-	if (EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
-		m_spinCtrlHighlightAlpha->SetValue(alpha);
-	}
+    long alpha(1);
+    if (EditorConfigST::Get()->GetLongValue(wxT("WordHighlightAlpha"), alpha)) {
+        m_spinCtrlHighlightAlpha->SetValue(alpha);
+    }
 }
 
 
 void EditorSettingsBookmarksPanel::Save(OptionsConfigPtr options)
 {
-	options->SetDisplayBookmarkMargin( m_displaySelection->IsChecked() );
-	
-	// Get the bookmark selection, unlocalised
-	wxString bmShape = m_stringManager.GetStringSelection();
-	if (bmShape.IsEmpty()) {
-		bmShape = wxT("Small Arrow");
-	}
-	options->SetBookmarkShape( bmShape);
+    options->SetDisplayBookmarkMargin( m_displaySelection->IsChecked() );
 
-    ChangeSelection(m_spinBookmarkType->GetValue() - 1); // Fake a change to store any altered values
+    // Get the bookmark selection, unlocalised
+    wxString bmShape = m_stringManager.GetStringSelection();
+    if (bmShape.IsEmpty()) {
+        bmShape = wxT("Small Arrow");
+    }
+    options->SetBookmarkShape( bmShape);
+
+    ChangeSelection(m_choiceBMType->GetSelection()); // Fake a change to store any altered values
 
     for (size_t n=0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
         BookmarkData& arr = m_bookmarksData.at(n);
@@ -94,14 +92,14 @@ void EditorSettingsBookmarksPanel::Save(OptionsConfigPtr options)
         options->SetBookmarkLabel(arr.label, n);
     }
 
-	EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_highlightColor->GetColour().GetAsString());
-	EditorConfigST::Get()->SaveLongValue(wxT("WordHighlightAlpha"), (long)m_spinCtrlHighlightAlpha->GetValue());
+    EditorConfigST::Get()->SaveStringValue(wxT("WordHighlightColour"), m_highlightColor->GetColour().GetAsString());
+    EditorConfigST::Get()->SaveLongValue(wxT("WordHighlightAlpha"), (long)m_spinCtrlHighlightAlpha->GetValue());
 }
 
 void EditorSettingsBookmarksPanel::ChangeSelection(int index)
 {
     wxCHECK_RET(index < CL_N0_OF_BOOKMARK_TYPES, "Bookmark type out of range");
-    
+
     if (m_previous >= 0) {
         // Store the current data in case it was just altered
         BookmarkData& arr = m_bookmarksData.at(m_previous);
@@ -109,7 +107,7 @@ void EditorSettingsBookmarksPanel::ChangeSelection(int index)
         arr.fg = m_foregroundColor->GetColour();
         arr.label = m_BookmarkLabel->GetValue();
     }
-    
+
     BookmarkData arr = m_bookmarksData.at(index);
     m_backgroundColor->SetColour(arr.bg);
     m_foregroundColor->SetColour(arr.fg);
@@ -117,3 +115,9 @@ void EditorSettingsBookmarksPanel::ChangeSelection(int index)
 
     m_previous = index;
 }
+
+void EditorSettingsBookmarksPanel::OnBookmarkChanged(wxCommandEvent& event)
+{
+    ChangeSelection(event.GetSelection());
+}
+

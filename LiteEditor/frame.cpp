@@ -49,6 +49,7 @@
 #include "cl_command_event.h"
 #include "refactoring_storage.h"
 #include "refactorengine.h"
+#include "bookmark_manager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -624,7 +625,6 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     , m_cppMenu                 (NULL)
     , m_highlightWord           (false)
     , m_workspaceRetagIsRequired(false)
-    , m_buildDropDownMenu       (NULL)
     , m_bookmarksDropDownMenu   (NULL)
 {
 #if  defined(__WXGTK20__)
@@ -1248,7 +1248,7 @@ void clMainFrame::CreateNativeToolbar16()
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
     tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/16/standard/bookmark")),     _("Toggle Bookmark"), wxITEM_DROPDOWN);
-
+    tb->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
 
     //----------------------------------------------
     //create the search toolbar
@@ -1324,7 +1324,7 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
     tb->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("toolbars/24/standard/bookmark")),     _("Toggle Bookmark"), wxITEM_DROPDOWN);
-
+    tb->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
 
     //----------------------------------------------
     //create the search toolbar
@@ -5144,7 +5144,7 @@ void clMainFrame::OnLoadSession(wxCommandEvent& e)
 void clMainFrame::OnShowBookmarkMenu(wxAuiToolBarEvent& e)
 {
     if ( e.IsDropDownClicked() ) {
-        wxMenu* menu = GetMainBook()->GetActiveEditor()->AddBookmarksSubmenu(NULL); // Despite the name, this provides almost all the bookmark menuitems
+        wxMenu* menu = BookmarkManager::Get().CreateBookmarksSubmenu(NULL); // Despite the name, this provides almost all the bookmark menuitems
         if (!menu) {
             e.Skip();
             return;
@@ -5190,12 +5190,12 @@ void clMainFrame::OnShowAuiBuildMenu(wxAuiToolBarEvent& e)
 void clMainFrame::OnUpdateCustomTargetsDropDownMenu(wxCommandEvent& e)
 {
     e.Skip();
-    delete m_buildDropDownMenu;
-    m_buildDropDownMenu = new wxMenu;
-    DoCreateBuildDropDownMenu(m_buildDropDownMenu);
+    
+    wxMenu *buildDropDownMenu = new wxMenu;
+    DoCreateBuildDropDownMenu(buildDropDownMenu);
     if ( GetToolBar() &&
          GetToolBar()->FindById(XRCID("build_active_project")) ) {
-        GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+         GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
     }
 }
 
@@ -5235,10 +5235,9 @@ void clMainFrame::OnWorkspaceClosed(wxCommandEvent& e)
     CustomTargetsMgr::Get().Clear();
 
     // Reset the menu
-    delete m_buildDropDownMenu;
-    m_buildDropDownMenu = new wxMenu;
+    wxMenu* buildDropDownMenu = new wxMenu;
     if ( GetToolBar() && GetToolBar()->FindById(XRCID("build_active_project")) ) {
-        GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), m_buildDropDownMenu);
+        GetToolBar()->SetDropdownMenu(XRCID("build_active_project"), buildDropDownMenu);
     }
 }
 

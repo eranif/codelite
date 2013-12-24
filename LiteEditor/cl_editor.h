@@ -43,6 +43,7 @@
 #include "plugin.h"
 #include "globals.h"
 #include "cl_defs.h"
+#include "bookmark_manager.h"
 
 #define DEBUGGER_INDICATOR          11
 #define MATCH_INDICATOR             10
@@ -57,18 +58,6 @@ class EditorDeltasHolder;
 
 enum sci_annotation_styles {
     eAnnotationStyleError = 128, eAnnotationStyleWarning
-};
-
-// NB The following are sci markers, which are zero based. So smt_bookmark is actually the eighth of them (important when masking it!)
-// If you add another type here, watch out for smt_LAST_BP_TYPE; and you need also to add to the enum 'marker_mask_type' below
-// The higher the value, the nearer the top of the pecking order displaywise. So keep the most important breakpoint at the top i.e. smt_breakpoint,
-// but have smt_breakpointsmt_indicator above it, so you can see the indicator when there's a breakpt too
-enum sci_marker_types { /* markers 0-2 are unused atm */
-    smt_FIRST_BMK_TYPE=3, smt_LAST_BMK_TYPE=smt_FIRST_BMK_TYPE + CL_N0_OF_BOOKMARK_TYPES - 1,
-    smt_bookmark1=smt_FIRST_BMK_TYPE, smt_bookmark2, smt_bookmark3, smt_bookmark4, smt_find_bookmark=smt_LAST_BMK_TYPE,
-    smt_FIRST_BP_TYPE=8, smt_cond_bp_disabled = smt_FIRST_BP_TYPE, smt_bp_cmdlist_disabled, smt_bp_disabled, smt_bp_ignored,
-    smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint,
-    smt_indicator, smt_warning, smt_error
 };
 
 // These are bitmap masks of the various margin markers.
@@ -153,7 +142,6 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     bool                                        m_preserveSelection;
     bool                                        m_fullLineCopyCut;
     std::vector< std::pair<int,int> >           m_savedMarkers;
-    wxArrayString                               m_markerLabels;
     bool                                        m_findBookmarksActive;
 
 public:
@@ -385,30 +373,18 @@ public:
     /**
      * Returns the label for the passed bookmark type, or its type as a string
      */
-    wxString GetBookmarkLabel(sci_marker_types type) const;
+    static wxString GetBookmarkLabel(sci_marker_types type);
 
     /**
      * Returns a tooltip for the most significant bookmark on the passed line
      */
     wxString GetBookmarkTooltip(const int lineno);
     
-    wxArrayString GetMarkerLabels() const {
-        return m_markerLabels;
-    }
-
-    void SetMarkerLabel(const wxString& label, size_t index) {
-        if (index < m_markerLabels.GetCount()) {
-            m_markerLabels.Item(index) = label;
-        }
-    }
-
     // Replace all
     bool ReplaceAll();
     bool ReplaceAllExactMatch(const wxString &what, const wxString &replaceWith);
     // mark all occurances
     bool MarkAllFinds();
-
-    wxMenu* AddBookmarksSubmenu(wxMenu* parentMenu);
 
     // Folding API
     //-----------------------------------------

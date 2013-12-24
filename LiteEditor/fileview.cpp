@@ -2241,7 +2241,7 @@ void FileViewTree::OnExcludeFromBuild(wxCommandEvent& e)
 
        wxArrayTreeItemIds selections;
        size_t count = GetSelections(selections);
-       for( int selectionIndex=0; selectionIndex<count; selectionIndex++)
+       for( size_t selectionIndex=0; selectionIndex<count; selectionIndex++)
        {
                wxTreeItemId item = selections[selectionIndex];
                if ( item.IsOk() ) {

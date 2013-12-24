@@ -66,6 +66,7 @@
 #include "new_build_tab.h"
 #include "localworkspace.h"
 #include "findresultstab.h"
+#include "bookmark_manager.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -167,8 +168,6 @@ LEditor::LEditor(wxWindow* parent)
     ms_bookmarkShapes[wxT("Small Arrow")]       = wxSTC_MARK_ARROW;
     ms_bookmarkShapes[wxT("Circle")]            = wxSTC_MARK_CIRCLE;
     
-    m_markerLabels.Add("", smt_LAST_BMK_TYPE - smt_FIRST_BMK_TYPE + 1); // Initially a bookmark won't have a string label
-
     SetSyntaxHighlight();
     CmdKeyClear(wxT('D'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
     Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(LEditor::OnDwellStart), NULL, this);
@@ -484,7 +483,6 @@ void LEditor::SetProperties()
         MarkerDefine(bmt, marker);
         MarkerSetBackground(bmt, options->GetBookmarkBgColour(bmt - smt_FIRST_BMK_TYPE));
         MarkerSetForeground(bmt, options->GetBookmarkFgColour(bmt - smt_FIRST_BMK_TYPE));
-        m_markerLabels.Item(bmt - smt_FIRST_BMK_TYPE) = options->GetBookmarkLabel(bmt - smt_FIRST_BMK_TYPE);
     }
 
     MarkerDefineBitmap(smt_breakpoint, wxBitmap(wxImage(stop_xpm)));
@@ -2546,8 +2544,9 @@ int LEditor::GetActiveBookmarkType() const
 {
     if (IsFindBookmarksActive()) {
         return smt_find_bookmark;
+
     } else {
-        return clMainFrame::Get()->GetMainBook()->GetActiveBookmarkType();
+        return BookmarkManager::Get().GetActiveBookmarkType();
     }
 }
 
@@ -2557,14 +2556,14 @@ enum marker_mask_type LEditor::GetActiveBookmarkMask() const
     if (IsFindBookmarksActive()) {
         return mmt_find_bookmark;
     } else {
-        return (marker_mask_type)(1 << clMainFrame::Get()->GetMainBook()->GetActiveBookmarkType());
+        return (marker_mask_type)(1 <<BookmarkManager::Get().GetActiveBookmarkType());
     }
 }
 
-wxString LEditor::GetBookmarkLabel(sci_marker_types type) const
+wxString LEditor::GetBookmarkLabel(sci_marker_types type)
 {
     wxCHECK_MSG(type >= smt_FIRST_BMK_TYPE && type <= smt_LAST_BMK_TYPE, "", "Invalid marker type");
-    wxString label = m_markerLabels.Item(type - smt_FIRST_BMK_TYPE);
+    wxString label = BookmarkManager::Get().GetMarkerLabel(type - smt_FIRST_BMK_TYPE);
     if (label.empty()) {
         label = wxString::Format("Type %i", type - smt_FIRST_BMK_TYPE + 1);
     }
@@ -2572,44 +2571,10 @@ wxString LEditor::GetBookmarkLabel(sci_marker_types type) const
     return label;
 }
 
-wxMenu* LEditor::AddBookmarksSubmenu(wxMenu* parentMenu)
-{
-    wxMenu* menu = new wxMenu;
-    menu->Append(XRCID("next_bookmark"), _("Next Bookmark"));
-    menu->Append(XRCID("previous_bookmark"), _("Previous Bookmark"));
-    menu->AppendSeparator();
-
-    wxMenu* submenu = new wxMenu; // For the individual BM types
-    static int bmktypes = smt_LAST_BMK_TYPE - smt_FIRST_BMK_TYPE + 1;
-
-    int current = clMainFrame::Get()->GetMainBook()->GetActiveBookmarkType();
-    wxCHECK_MSG(current >= smt_FIRST_BMK_TYPE && current < smt_find_bookmark, menu, "Out-of-range standard bookmarktype");
-    
-    for (size_t bmt=1; bmt < bmktypes; ++bmt) { // Not <= as we don't want smt_find_bookmark here
-        wxMenuItem* item = submenu->AppendRadioItem(XRCID("BookmarkTypes[start]") + bmt, GetBookmarkLabel((sci_marker_types)(smt_FIRST_BMK_TYPE + bmt-1)));
-        if (bmt == (current - smt_FIRST_BMK_TYPE + 1)) {
-            item->Check();
-        }
-    }
-
-    wxMenuItem* item = new wxMenuItem(menu, XRCID("change_active_bookmark_type"), _("Change Active Bookmark Type..."), "", wxITEM_NORMAL, submenu);
-    menu->Append(item);
-
-    menu->AppendSeparator();
-    menu->Append(XRCID("removeall_current_bookmarks"), _("Remove All Currently-Active Bookmarks"));
-
-    if (parentMenu) {
-        item = new wxMenuItem(parentMenu, XRCID("more_bookmark_options"), _("More..."), "", wxITEM_NORMAL, menu);
-        parentMenu->Append(item);
-    }
-    
-    return menu;
-}
-
 void LEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
 {
     int requested = event.GetId() - XRCID("BookmarkTypes[start]");
-    clMainFrame::Get()->GetMainBook()->SetActiveBookmarkType(requested + smt_FIRST_BMK_TYPE -1);
+    BookmarkManager::Get().SetActiveBookmarkType(requested + smt_FIRST_BMK_TYPE -1);
 }
 
 wxString LEditor::GetBookmarkTooltip(const int lineno)
@@ -2625,7 +2590,7 @@ wxString LEditor::GetBookmarkTooltip(const int lineno)
         active = "<b>" + label + suffix + "</b>";
     }
     
-    for (size_t bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
+    for (int bmt=smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
         if (bmt != GetActiveBookmarkType()) {
             if (linebits & (1 << bmt)) {
                 if (!others.empty()) {
@@ -3084,7 +3049,7 @@ void LEditor::DoBreakptContextMenu(wxPoint pt)
     menu.Append(XRCID("toggle_bookmark"), LineIsMarked(GetActiveBookmarkMask()) ? wxString(_("Remove Bookmark")) : wxString(_("Add Bookmark")) );
     menu.Append(XRCID("removeall_bookmarks"), _("Remove All Bookmarks"));
 
-    AddBookmarksSubmenu(&menu);
+    BookmarkManager::Get().CreateBookmarksSubmenu(&menu);
     menu.AppendSeparator();
 
     menu.Append(XRCID("add_breakpoint"), wxString(_("Add Breakpoint")));

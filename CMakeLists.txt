@@ -32,6 +32,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 #############################################
 ## Defaults
 #############################################
+project( "CodeLite" )
 
 set( CL_PREFIX "/usr" )
 if (CMAKE_CURRENT_LIST_DIR) # since cmake 2.8.3

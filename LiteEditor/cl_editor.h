@@ -60,6 +60,8 @@ enum sci_annotation_styles {
     eAnnotationStyleError = 128, eAnnotationStyleWarning
 };
 
+    /**************** NB: enum sci_marker_types has now moved to bookmark_manager.h ****************/
+
 // These are bitmap masks of the various margin markers.
 // So 256 == 0x100 == 100000000, 2^9, and masks the ninth marker, smt_cond_bp_disabled==8 (as the markers are zero-based)
 // 0x7f00 is binary 111111100000000 and masks all the 7 current breakpoint types. If you add others, change it

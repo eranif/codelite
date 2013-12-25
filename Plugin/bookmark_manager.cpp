@@ -23,13 +23,6 @@ BookmarkManager& BookmarkManager::Get()
     return mgr;
 }
 
-void BookmarkManager::SetMarkerLabel(const wxString& label, int index)
-{
-    if ( m_markerLabels.count(index) ) {
-        m_markerLabels[index] = label;
-    }
-}
-
 void BookmarkManager::OnEditorSettingsChanged(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -38,7 +31,7 @@ void BookmarkManager::OnEditorSettingsChanged(wxCommandEvent& e)
     for(int i=smt_FIRST_BMK_TYPE; i<=smt_LAST_BMK_TYPE; ++i) {
         wxString new_label = options->GetBookmarkLabel(i-smt_FIRST_BMK_TYPE);
         new_label.Trim().Trim(false);
-        
+
         if ( !new_label.IsEmpty() ) {
             m_markerLabels.erase(i);
             m_markerLabels.insert( std::make_pair(i, new_label) );
@@ -101,7 +94,7 @@ void BookmarkManager::DoPopulateDefaultLabels()
             label << _("Find bookmark");
             break;
         default:
-            label << "Bookmark Type " << (i-smt_FIRST_BMK_TYPE);
+            label << _("Bookmark Type") << ' ' << (i-smt_FIRST_BMK_TYPE+1);
             break;
         }
         m_markerLabels.insert( std::make_pair(i, label) );

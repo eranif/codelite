@@ -48,13 +48,7 @@ public:
     int GetActiveBookmarkType() const {
         return m_activeBookmarkType;
     }
-    void SetMarkerLabels(const BookmarkManager::Map_t& markerLabels) {
-        this->m_markerLabels = markerLabels;
-    }
-    const BookmarkManager::Map_t& GetMarkerLabels() const {
-        return m_markerLabels;
-    }
-    void SetMarkerLabel(const wxString& label, int index) ;
+
     wxString GetMarkerLabel(int index) const;
     
     wxMenu* CreateBookmarksSubmenu(wxMenu* parentMenu);

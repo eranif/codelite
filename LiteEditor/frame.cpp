@@ -3254,8 +3254,11 @@ void clMainFrame::OnIdle(wxIdleEvent &e)
         wxString path = WorkspaceST::Get()->GetWorkspaceFileName().GetPath();
         wxString curdir = ::wxGetCwd();
         if ( path != curdir ) {
-            wxLogMessage("Current working directory is reset to %s", path);
-            ::wxSetWorkingDirectory( path );
+            // Check that it really *is* different, not just a symlink issue: see bug #942
+            if ( CLRealPath(path) != CLRealPath(curdir) ) {
+                wxLogMessage("Current working directory is reset to %s", path);
+                ::wxSetWorkingDirectory( path );
+            }
         }
     }
 }

@@ -528,8 +528,15 @@ void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
         for( ; from != range.second; ++from ) {
             vdFiles.Add( from->second );
         }
-        AddMissingFiles(vdFiles, *iter);
-        m_projectModified = true;
+        wxArrayString additions = AddMissingFiles(vdFiles, *iter);
+        
+        if (additions.GetCount()) {
+            m_projectModified = true;
+        }
+        // We must also remove the processed files from m_newfiles, otherwise a rerun of the wizard will offer them for insertion again
+        for (size_t n=0; n < additions.GetCount(); ++n ) {
+            m_newfiles.erase(additions.Item(n));
+        }
     }
     m_dataviewAssignedModel->DeleteItems( wxDataViewItem(0), items );
 }

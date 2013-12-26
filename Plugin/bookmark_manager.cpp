@@ -25,7 +25,7 @@ BookmarkManager& BookmarkManager::Get()
 
 void BookmarkManager::OnEditorSettingsChanged(wxCommandEvent& e)
 {
-    wxUnusedVar(e);
+    e.Skip();
     DoPopulateDefaultLabels();
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     for(int i=smt_FIRST_BMK_TYPE; i<=smt_LAST_BMK_TYPE; ++i) {

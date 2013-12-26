@@ -37,6 +37,7 @@ class WXDLLIMPEXP_SDK VirtualDirectorySelectorDlg : public VirtualDirectorySelec
     Workspace *  m_workspace;
     wxString     m_projectName;
     wxString     m_initialPath;
+    wxString     m_suggestedName;
     wxImageList *m_images;
     bool         m_reloadTreeNeeded;
     
@@ -64,6 +65,9 @@ public:
     }
     bool SelectPath(const wxString &path);
     void SetText(const wxString& text);
+    void SetSuggestedName(const wxString& suggestedName) {
+        m_suggestedName = suggestedName;
+    }
 };
 
 #endif // VIRTUALDIRECTORYSELECTORDLG_H

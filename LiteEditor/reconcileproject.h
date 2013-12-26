@@ -68,6 +68,7 @@ protected:
 protected:
     void DoFindFiles();
     wxBitmap GetBitmap(const wxString &filename) const;
+    bool GuessNewVirtualDirName(wxString& suggestedPath, wxString& suggestedName) const;
 
 public:
     ReconcileProjectDlg(wxWindow* parent, const wxString& projname);

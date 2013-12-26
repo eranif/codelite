@@ -464,14 +464,12 @@ void EditorConfig::LoadLexers(bool loadDefault)
     DirSaver ds;
     wxSetWorkingDirectory(wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + wxT("lexers"));
 
-    wxString cwd = wxGetCwd();
+    wxString cwd = ::wxGetCwd();
 
     // load all lexer configuration files
     wxArrayString files;
     wxDir::GetAllFiles(cwd, &files,wxT("*.xml"), wxDIR_FILES);
     wxString path_( cwd + wxFileName::GetPathSeparator() );
-
-    m_lexers.clear();
 
     LexersInfo *pLexersInfo = NULL;
     m_lexers.clear();
@@ -489,12 +487,11 @@ void EditorConfig::LoadLexers(bool loadDefault)
                             fn.GetFullName());
 
         if ( wxFileName::FileExists( userLexer ) ) {
-            if (!loadDefault) {
+            if ( !loadDefault ) {
                 fileToLoad = userLexer;
 
             } else {
-                // backup the old file
-                wxRemoveFile(userLexer);
+                ::wxRemoveFile( userLexer );
             }
         }
 

@@ -134,7 +134,7 @@ TagsOptionsData::TagsOptionsData()
     : clConfigItem("code-completion")
     , m_ccFlags       (CC_DISP_FUNC_CALLTIP | CC_LOAD_EXT_DB | CC_CPP_KEYWORD_ASISST | CC_COLOUR_VARS | CC_ACCURATE_SCOPE_RESOLVING | CC_PARSE_EXT_LESS_FILES)
     , m_ccColourFlags (CC_COLOUR_DEFAULT)
-    , m_fileSpec(wxT  ("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc"))
+    , m_fileSpec(wxT  ("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hxx;*.h++"))
     , m_minWordLen    (3)
     , m_parserEnabled (true)
     , m_maxItemToColour(1000)
@@ -440,7 +440,7 @@ void TagsOptionsData::FromJSON(const JSONElement& json)
     m_ccColourFlags          = json.namedObject(wxT("m_ccColourFlags")).toSize_t();
     m_tokens                 = json.namedObject(wxT("m_tokens")).toArrayString();
     m_types                  = json.namedObject(wxT("m_types")).toArrayString();
-    m_fileSpec               = json.namedObject(wxT("m_fileSpec")).toString();
+    m_fileSpec               = json.namedObject(wxT("m_fileSpec")).toString(m_fileSpec);
     m_languages              = json.namedObject(wxT("m_languages")).toArrayString();
     m_minWordLen             = json.namedObject(wxT("m_minWordLen")).toInt();
     m_parserSearchPaths      = json.namedObject(wxT("m_parserSearchPaths")).toArrayString();
@@ -455,6 +455,10 @@ void TagsOptionsData::FromJSON(const JSONElement& json)
     m_clangMacros            = json.namedObject(wxT("m_clangMacros")).toString();
     m_clangCachePolicy       = json.namedObject(wxT("m_clangCachePolicy")).toString();
     m_ccNumberOfDisplayItems = json.namedObject(wxT("m_ccNumberOfDisplayItems")).toSize_t();
+    
+    if ( !m_fileSpec.Contains("*.hxx") ) {
+        m_fileSpec = "*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hxx;*.h++";
+    }
 
     DoUpdateTokensWxMapReversed();
     DoUpdateTokensWxMap();

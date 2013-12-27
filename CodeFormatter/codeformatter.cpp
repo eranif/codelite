@@ -234,7 +234,7 @@ void CodeFormatter::DoFormatFile(IEditor *editor)
 
         if( formatSelectionOnly ) {
             // format the text (add the indentation)
-            output = editor->FormatTextKeepIndent(output, editor->GetSelectionStart(), Format_Text_Indent_Prev_Line);
+            output = editor->FormatTextKeepIndent(output, editor->GetSelectionStart(), Format_Text_Indent_Prev_Line|Format_Text_Save_Empty_Lines);
             editor->ReplaceSelection(output);
 
         } else {

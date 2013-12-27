@@ -2124,12 +2124,11 @@ void clMainFrame::OnProjectNewProject(wxCommandEvent &event)
     }
 
     wxUnusedVar(event);
-    NewProjectDlg *dlg = new NewProjectDlg(this);
-    if (dlg->ShowModal() == wxID_OK) {
-        ProjectData data = dlg->GetProjectData();
+    NewProjectDlg dlg(this);
+    if (dlg.ShowModal() == wxID_OK) {
+        ProjectData data = dlg.GetProjectData();
         ManagerST::Get()->CreateProject(data);
     }
-    dlg->Destroy();
 }
 
 void clMainFrame::OnProjectAddProject(wxCommandEvent &event)

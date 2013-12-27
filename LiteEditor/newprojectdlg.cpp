@@ -201,7 +201,12 @@ void NewProjectDlg::OnCreate(wxCommandEvent &event)
         wxMessageBox(_("Invalid path: ") + fn.GetPath(), _("Error"), wxOK | wxICON_HAND);
         return;
     }
-
+    
+    if ( fn.Exists() ) {
+        ::wxMessageBox(_("A project with this name already exists. Please select a different name"), "codelite", wxICON_ERROR|wxOK|wxCENTER, this);
+        return;
+    }
+    
     // make sure that there is no conflict in files between the template project and the selected path
     if (m_projectData.m_srcProject) {
         ProjectPtr p = m_projectData.m_srcProject;

@@ -144,16 +144,30 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 
         int curline  = editor->GetCurrentLine();
         int lastline = editor->LineFromPosition(editor->GetLength()-1);
-        // Dont transpose if we reached end of the document
-        if(curline == lastline)
-            return;
 
-        editor->LineDown();
-        editor->LineTranspose();
+        if (editor->GetSelection().empty()
+                ||  (editor->LineFromPos(editor->GetSelectionStart() == editor->LineFromPos(editor->GetSelectionEnd())))) {
+            // No selection (or only a trivial 1-line one)
+            if (curline != lastline) {
+                editor->LineDown();              
+                editor->LineTranspose();
+            }
+
+        } else {
+            editor->MoveSelectedLinesDown();  // There is a selection, so we can move it direct
+        }
 
     } else if (event.GetId() == XRCID("move_line_up")) {
-        editor->LineTranspose();
-        editor->LineUp();
+
+        if (editor->GetSelection().empty()
+                ||  (editor->LineFromPos(editor->GetSelectionStart() == editor->LineFromPos(editor->GetSelectionEnd())))) {
+            // No selection (or only a trivial 1-line one)
+            editor->LineTranspose();
+            editor->LineUp();
+
+        } else {
+            editor->MoveSelectedLinesUp();  // There is a selection, so we can move it direct
+        }
 
     } else if (event.GetId() == XRCID("center_line")) {
         //editor->VerticalCentreCaret();

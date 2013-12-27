@@ -104,7 +104,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
             
         } else {
             bgColour  = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), 2.0);
-            penColour = DrawingUtils::DarkColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), 1.0);
+            penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
             textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
         }
     }
@@ -112,7 +112,9 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     memDc.SetPen( penColour );
     memDc.SetBrush( bgColour );
     memDc.DrawRectangle( tmpRect );
-
+    memDc.SetPen( bgColour );
+    memDc.DrawLine( tmpRect.GetBottomLeft(), tmpRect.GetBottomRight() );
+    
     int caption_offset = 0;
     if ( pane.icon.IsOk() ) {
         DrawIcon(memDc, tmpRect, pane);

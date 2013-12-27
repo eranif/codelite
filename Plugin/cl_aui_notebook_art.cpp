@@ -20,7 +20,7 @@ static const wxDouble X_DIAMETER = 2 * X_RADIUS;
 #   define TEXT_Y_SPACER     0
 #elif defined(__WXMSW__)
 #   define TAB_HEIGHT_SPACER 10
-#   define TAB_Y_OFFSET      2
+#   define TAB_Y_OFFSET      3
 #   define TEXT_Y_SPACER     0
 #else // GTK/FreeBSD
 #   define TAB_Y_OFFSET      5

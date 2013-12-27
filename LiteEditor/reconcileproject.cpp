@@ -360,7 +360,12 @@ wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const
 
 void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
 {
-    VirtualDirectorySelectorDlg selector(this, WorkspaceST::Get(), "", m_projname);
+    wxString suggestedPath, suggestedName;
+    bool guessed = GuessNewVirtualDirName(suggestedPath, suggestedName);
+    VirtualDirectorySelectorDlg selector(this, WorkspaceST::Get(), suggestedPath, m_projname);
+    if (guessed) {
+        selector.SetSuggestedName(suggestedName);
+    }
     if ( selector.ShowModal()  == wxID_OK ) {
         wxString vd = selector.GetVirtualDirectoryPath();
         wxDataViewItemArray items;
@@ -388,6 +393,56 @@ void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
             m_dvListCtrl1Unassigned->DeleteItem(  m_dvListCtrl1Unassigned->GetStore()->GetRow(items.Item(i)) );
         }
     }
+}
+
+bool ReconcileProjectDlg::GuessNewVirtualDirName(wxString& suggestedPath, wxString& suggestedName) const
+{
+    wxDataViewItemArray items;
+    m_dvListCtrl1Unassigned->GetSelections(items);
+    if (!items.GetCount()) {
+        return false;
+    }
+
+    // Test only the first item. For this to be useful, all the selections must have the same destination anyway
+    wxVariant v;
+    m_dvListCtrl1Unassigned->GetValue(v, m_dvListCtrl1Unassigned->GetStore()->GetRow(items.Item(0)), 0);
+
+    wxString path;
+    wxDataViewIconText iv;
+    if ( !v.IsNull() ) {
+        iv << v;
+        path = iv.GetText();
+    }
+
+    wxFileName fn(path);
+    fn.MakeAbsolute(m_toplevelDir);
+       
+    VirtualDirectoryTree vdTree;
+    vdTree.BuildTree(m_projname);
+    wxString residue;
+    do {
+        wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+        if (!virtualFolder.empty()) {
+            suggestedPath = fn.GetPath();
+            suggestedName = residue;
+            return true;
+        }
+
+        wxString pathend = fn.GetPath().AfterLast(wxFILE_SEP_PATH);
+        if (pathend == m_projname) {
+            suggestedPath = pathend;
+            suggestedName = residue;
+            return true;
+        }
+
+        if (!residue.empty()) {
+            residue = ':' + residue;
+        }
+        residue = pathend + residue; // Save the name(s) of missing VDs
+        fn.RemoveLastDir();
+    } while (fn.GetDirCount());
+
+    return false;
 }
 
 void ReconcileProjectDlg::OnAddFileUI(wxUpdateUIEvent& event)
@@ -528,8 +583,15 @@ void ReconcileProjectDlg::OnApply(wxCommandEvent& event)
         for( ; from != range.second; ++from ) {
             vdFiles.Add( from->second );
         }
-        AddMissingFiles(vdFiles, *iter);
-        m_projectModified = true;
+        wxArrayString additions = AddMissingFiles(vdFiles, *iter);
+        
+        if (additions.GetCount()) {
+            m_projectModified = true;
+        }
+        // We must also remove the processed files from m_newfiles, otherwise a rerun of the wizard will offer them for insertion again
+        for (size_t n=0; n < additions.GetCount(); ++n ) {
+            m_newfiles.erase(additions.Item(n));
+        }
     }
     m_dataviewAssignedModel->DeleteItems( wxDataViewItem(0), items );
 }

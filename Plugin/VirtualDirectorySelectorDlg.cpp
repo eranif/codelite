@@ -249,18 +249,20 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
         return;
     
     wxString curpath = DoGetPath(m_treeCtrl, id, false);
-    wxString name;
-    name << "Folder" << ++counter;
+    wxString name = m_suggestedName;
+    if (name.empty()) {
+        name << "Folder" << ++counter;
+    }
     wxString newname = wxGetTextFromUser(_("New Virtual Folder Name:"), _("New Virtual Folder"), name);
     newname.Trim().Trim(false);
     
     if ( newname.IsEmpty() )
         return;
     
-    if ( newname.Contains(":") ) {
+/*    if ( newname.Contains(":") ) { // No, don't check this: we may have been passed a multi-segment path, or be trying to create one
         wxMessageBox(_("':' is not a valid virtual folder character"), "codelite");
         return;
-    }
+    }*/
     
     curpath << ":" << newname;
     wxString errmsg;

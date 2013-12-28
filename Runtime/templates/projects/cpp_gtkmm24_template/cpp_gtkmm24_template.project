@@ -58,6 +58,7 @@
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;`pkg-config --cflags gtkmm-2.4`" C_Options="-O2;-Wall" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Options="`pkg-config --libs gtkmm-2.4`" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>

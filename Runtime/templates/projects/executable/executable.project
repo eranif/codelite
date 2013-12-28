@@ -31,6 +31,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-O2;-Wall">
         <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Required="yes" Options=""/>
       <ResourceCompiler Required="no" Options=""/>

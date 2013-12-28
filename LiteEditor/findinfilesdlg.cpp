@@ -39,7 +39,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString &dataName)
     : FindInFilesDialogBase(parent, wxID_ANY)
 {
     m_data.SetName(dataName);
-    
+
     // Store the find-in-files data
     clConfig::Get().ReadItem( &m_data );
 
@@ -113,7 +113,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString &dataName)
     DoSetFileMask();
 
     GetSizer()->Fit(this);
-    
+
     WindowAttrManager::Load(this, "FindInFilesDialog", NULL);
     Centre();
 }

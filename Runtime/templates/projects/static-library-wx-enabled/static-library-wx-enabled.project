@@ -28,6 +28,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-O2;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);">
         <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Required="yes" Options="-s;$(shell wx-config --libs --debug=no --unicode=yes)"/>
       <ResourceCompiler Required="no" Options=""/>

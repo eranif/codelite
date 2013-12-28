@@ -2575,6 +2575,9 @@ void LEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
 {
     int requested = event.GetId() - XRCID("BookmarkTypes[start]");
     BookmarkManager::Get().SetActiveBookmarkType(requested + smt_FIRST_BMK_TYPE -1);
+    if ((requested + smt_FIRST_BMK_TYPE -1) != smt_find_bookmark) {
+        SetFindBookmarksActive(false);
+    }
 }
 
 wxString LEditor::GetBookmarkTooltip(const int lineno)

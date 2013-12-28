@@ -53,6 +53,13 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
         m_toolbarIconSize->SetSelection(1);
     }
 
+#ifdef __WXMAC__
+    // On Mac we support only this image type
+    m_choiceIconSet->Clear();
+    m_choiceIconSet->Append("Fresh Farm");
+    m_choiceIconSet->SetSelection(0);
+
+#else
     if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
         m_choiceIconSet->SetSelection(1);
 
@@ -61,6 +68,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 
     else
         m_choiceIconSet->SetSelection(0); // Default
+#endif
 
     m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
     m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
@@ -103,7 +111,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
     m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
-    
+
     m_redirectLogOutput->SetValue(clConfig::Get().Read("RedirectLogOutput", true));
 }
 
@@ -202,6 +210,12 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
     flags &= ~(OptionsConfig::Opt_IconSet_Classic_Dark);
 
+#ifdef __WXMAC__
+    flags |= OptionsConfig::Opt_IconSet_FreshFarm;
+    oldIconFlags = OptionsConfig::Opt_IconSet_FreshFarm;
+    newIconFlags = OptionsConfig::Opt_IconSet_FreshFarm;
+    
+#else
     if(m_choiceIconSet->GetSelection() == 0) {
         newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
         flags |= OptionsConfig::Opt_IconSet_Classic;
@@ -215,7 +229,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
         flags |= OptionsConfig::Opt_IconSet_FreshFarm;
 
     }
-
+#endif
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
 
     options->SetOptions(flags);

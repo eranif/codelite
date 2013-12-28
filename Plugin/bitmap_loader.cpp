@@ -20,15 +20,18 @@ BitmapLoader::BitmapLoader()
     wxString zipname;
     wxFileName fn;
 
+#ifdef __WXMAC__
+    zipname = wxT("codelite-icons-fresh-farm.zip");
+#else
     if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
         zipname = wxT("codelite-icons-fresh-farm.zip");
-        
+
     else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
         zipname = wxT("codelite-icons-dark.zip");
-        
+
     else
         zipname = wxT("codelite-icons.zip");
-
+#endif
     // Under linux, take into account the --prefix
 #ifdef __WXGTK__
     wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);
@@ -155,8 +158,8 @@ int BitmapLoader::GetMimeImageId(const wxString& filename) const
 wxImageList* BitmapLoader::MakeStandardMimeImageList()
 {
     wxImageList *imageList = new wxImageList(16, 16);
-    
-    
+
+
     AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/exe" ) ))),          FileExtManager::TypeExe);
     AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/html" ) ))),         FileExtManager::TypeHtml);
     AddImage( imageList->Add( GetIcon(LoadBitmap(wxT("mime/16/zip" ) ))),          FileExtManager::TypeArchive);

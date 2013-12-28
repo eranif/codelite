@@ -57,7 +57,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc --debug);-mwindows" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="-e -w -- cmake -G &quot;MinGW Makefiles&quot;" UseSeparateDebugArgs="yes" DebugArguments="-e -w -- cmake -G &quot;MinGW Makefiles&quot;" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="--exit  --wait  -- D:\src\cmake\build-debug\bin\cmake.exe -G &quot;CodeLite - MinGW Makefiles&quot;  .." UseSeparateDebugArgs="yes" DebugArguments="--exit  --wait  -- D:\src\cmake\build-debug\bin\cmake.exe -G &quot;CodeLite - MinGW Makefiles&quot;  .." WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

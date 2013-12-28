@@ -91,7 +91,8 @@ protected:
     bool HasMore();
 
     CommandLineParser::OptionInfo GetOptionInfo(const wxString &name) const;
-
+    wxString StripDash(const wxString &opt) const;
+    
 public:
     CommandLineParser(int argc, char **argv);
     virtual ~CommandLineParser();

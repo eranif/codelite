@@ -51,10 +51,10 @@ void CommandLineParser::DoParse()
             if ( oi.IsOk() ) {
                 if ( oi.GetFlags() & CommandLineParser::kOptionWithValue ) {
                     wxString value = NextToken();
-                    m_argsMap.insert( std::make_pair(optionName, value) );
+                    m_argsMap.insert( std::make_pair(StripDash(optionName), value) );
 
                 } else {
-                    m_argsMap.insert( std::make_pair(optionName, "") );
+                    m_argsMap.insert( std::make_pair(StripDash(optionName), "") );
                 }
             }
         }
@@ -99,4 +99,13 @@ CommandLineParser::OptionInfo CommandLineParser::GetOptionInfo(const wxString& n
         return CommandLineParser::OptionInfo();
     }
     return *iter;
+}
+
+wxString CommandLineParser::StripDash(const wxString& opt) const
+{
+    wxString noPrefix (opt);
+    noPrefix.StartsWith("--", &noPrefix);
+    noPrefix.StartsWith("-",  &noPrefix);
+    noPrefix.StartsWith("/",  &noPrefix);
+    return noPrefix;
 }

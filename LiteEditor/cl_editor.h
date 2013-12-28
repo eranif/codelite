@@ -145,7 +145,8 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     bool                                        m_fullLineCopyCut;
     std::vector< std::pair<int,int> >           m_savedMarkers;
     bool                                        m_findBookmarksActive;
-
+    std::map<int, wxString>                     m_compilerMessagesMap;
+    
 public:
     static bool                                 m_ccShowPrivateMembers;
     static bool                                 m_ccShowItemsComments;

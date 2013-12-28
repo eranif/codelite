@@ -1441,11 +1441,18 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
 
         if (MarkerGet(line) & mmt_all_breakpoints) {
             tooltip = ManagerST::Get()->GetBreakpointsMgr()->GetTooltip(fname, line+1);
-
         }
+        
         else if (MarkerGet(line) & mmt_all_bookmarks) {
             tooltip = GetBookmarkTooltip(line);
         }
+        
+        // Compiler marker takes precedence over any other tooltip on that margin
+        if ( (MarkerGet(line) & mmt_compiler) && m_compilerMessagesMap.count(line) ) {
+            // Get the compiler tooltip
+            tooltip = m_compilerMessagesMap.find(line)->second;
+        }
+        
         wxString tmpTip = tooltip;
         tmpTip.Trim().Trim(false);
 
@@ -3201,6 +3208,13 @@ void LEditor::ToggleBreakpoint(int lineno)
 void LEditor::SetWarningMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
+        
+        // Keep the text message
+        if ( m_compilerMessagesMap.count(lineno) ) {
+            m_compilerMessagesMap.erase(lineno);
+        }
+        m_compilerMessagesMap.insert( std::make_pair(lineno, annotationText) );
+        
         BuildTabSettingsData options;
         EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
         
@@ -3219,6 +3233,13 @@ void LEditor::SetWarningMarker(int lineno, const wxString& annotationText)
 void LEditor::SetErrorMarker(int lineno, const wxString& annotationText)
 {
     if (lineno >= 0) {
+        
+        // Keep the text message
+        if ( m_compilerMessagesMap.count(lineno) ) {
+            m_compilerMessagesMap.erase(lineno);
+        }
+        m_compilerMessagesMap.insert( std::make_pair(lineno, annotationText) );
+        
         BuildTabSettingsData options;
         EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 
@@ -3238,6 +3259,7 @@ void LEditor::DelAllCompilerMarkers()
     MarkerDeleteAll(smt_warning);
     MarkerDeleteAll(smt_error);
     AnnotationClearAll();
+    m_compilerMessagesMap.clear();
 }
 
 // Maybe one day we'll display multiple bps differently

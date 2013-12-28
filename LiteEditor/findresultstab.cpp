@@ -120,7 +120,7 @@ FindResultsTab::FindResultsTab(wxWindow *parent, wxWindowID id, const wxString &
     Connect( XRCID ( "stop_search" ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler ( FindResultsTab::OnStopSearch  ), NULL, this );
     Connect( XRCID ( "stop_search" ), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler( FindResultsTab::OnStopSearchUI), NULL, this );
     m_tb->Realize();
-    
+
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL, this);
 
 }
@@ -150,14 +150,16 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
         sci->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
         sci->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
     }
-    
+
     sci->StyleSetForeground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneFgColour());
     sci->StyleSetBackground(LEX_FIF_DEFAULT, DrawingUtils::GetOutputPaneBgColour());
 
-    sci->StyleSetForeground(LEX_FIF_HEADER, DrawingUtils::GetOutputPaneFgColour());
+    wxColour headerColour = DrawingUtils::IsThemeDark() ? wxColour("GREY") : wxColour("BLACK");
+
+    sci->StyleSetForeground(LEX_FIF_HEADER, headerColour);
     sci->StyleSetBackground(LEX_FIF_HEADER, DrawingUtils::GetOutputPaneBgColour());
 
-    sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, wxT("MAROON"));
+    sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, DrawingUtils::IsThemeDark()  ? wxColour("#FACE43") : wxColour("MAROON"));
     sci->StyleSetBackground(LEX_FIF_LINE_NUMBER, DrawingUtils::GetOutputPaneBgColour());
 
     sci->StyleSetForeground(LEX_FIF_MATCH, DrawingUtils::GetOutputPaneFgColour());
@@ -175,30 +177,16 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
 
     LexerConfPtr cppLexer = EditorConfigST::Get()->GetLexer(wxT("C++"));
     if(cppLexer) {
-        std::list<StyleProperty> styles = cppLexer->GetLexerProperties();
-        std::list<StyleProperty>::iterator iter = styles.begin();
-        for (; iter != styles.end(); iter++) {
-            if(iter->GetId() == wxSTC_C_COMMENTLINE) {
-                fgColour = iter->GetFgColour();
-                break;
-
-            } else if(iter->GetId() == wxSTC_C_DEFAULT) {
-                StyleProperty sp        = (*iter);
-                int           size      = sp.GetFontSize();
-                wxString      face      = sp.GetFaceName();
-                bool          italic    = sp.GetItalic();
-
-                font = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxNORMAL, false, face);
-                bold = wxFont(size, wxFONTFAMILY_TELETYPE, italic ? wxITALIC : wxNORMAL , wxBOLD,   false, face);
-            }
-        }
+        font = cppLexer->GetFontForSyle(wxSTC_C_DEFAULT);
+        bold = font;
+        bold.SetWeight(wxFONTWEIGHT_BOLD);
     }
 
     sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, fgColour);
     sci->StyleSetBackground(LEX_FIF_MATCH_COMMENT, DrawingUtils::GetOutputPaneBgColour());
     sci->StyleSetEOLFilled (LEX_FIF_MATCH_COMMENT, true);
 
-    sci->StyleSetForeground(LEX_FIF_FILE, DrawingUtils::GetOutputPaneFgColour());
+    sci->StyleSetForeground(LEX_FIF_FILE, headerColour);
     sci->StyleSetBackground(LEX_FIF_FILE, DrawingUtils::GetOutputPaneBgColour());
     sci->StyleSetEOLFilled (LEX_FIF_FILE, true);
 
@@ -209,23 +197,27 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
 
     sci->StyleSetFont(LEX_FIF_FILE,          font);
     sci->StyleSetFont(LEX_FIF_DEFAULT,       bold);
-    sci->StyleSetFont(LEX_FIF_HEADER,       bold);
+    sci->StyleSetFont(LEX_FIF_HEADER,        bold);
     sci->StyleSetFont(LEX_FIF_MATCH,         font);
-    sci->StyleSetFont(LEX_FIF_LINE_NUMBER,    font);
+    sci->StyleSetFont(LEX_FIF_LINE_NUMBER,   font);
     sci->StyleSetFont(LEX_FIF_SCOPE,         font);
     sci->StyleSetFont(LEX_FIF_MATCH_COMMENT, font);
 
     sci->StyleSetHotSpot(LEX_FIF_MATCH,         true);
     sci->StyleSetHotSpot(LEX_FIF_FILE,          true);
     sci->StyleSetHotSpot(LEX_FIF_MATCH_COMMENT, true);
-    sci->SetHotspotActiveForeground(true, "BLUE");
-    sci->MarkerDefine       (7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, *wxBLACK);
 
-    sci->IndicatorSetForeground(1, wxColour(wxT("#6495ED")));
+    sci->SetHotspotActiveForeground(true, DrawingUtils::GetOutputPaneFgColour());
+    sci->SetHotspotActiveUnderline(false);
+
+    sci->MarkerDefine       (7, wxSTC_MARK_ARROW);
+    sci->MarkerSetBackground(7, DrawingUtils::IsThemeDark()  ? "YELLOW" : "BLACK");
+    sci->MarkerSetForeground(7, DrawingUtils::IsThemeDark()  ? "YELLOW" : "BLACK");
+
+    sci->IndicatorSetForeground(1, DrawingUtils::IsThemeDark()  ? *wxYELLOW : wxColour(wxT("#6495ED")));
     sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     sci->IndicatorSetUnder(1, true);
-    
+
     sci->SetMarginWidth(0, 0);
     sci->SetMarginWidth(1, 16);
     sci->SetMarginWidth(2, 0);
@@ -303,9 +295,9 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent &e)
         ::wxMessageBox(_("The search thread is currently busy"), _("CodeLite"), wxICON_INFORMATION|wxOK);
         return;
     }
-    
+
     FindInFilesDialog *dlg = new FindInFilesDialog(EventNotifier::Get()->TopFrame(), "FindInFilesData");
-    
+
     wxString rootDir = e.GetString();
     if (!rootDir.IsEmpty()) {
         dlg->SetRootDir(rootDir);
@@ -325,7 +317,7 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
             wxStyledTextCtrl *sci = new wxStyledTextCtrl(m_book);
             SetStyles(sci);
             sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindResultsTab::OnStyleNeeded), NULL, this);
-            
+
             // Make sure we can add more tabs, if not delete the last used tab and then add
             // a new tab
 
@@ -573,7 +565,7 @@ void FindResultsTab::OnMouseDClick(wxStyledTextEvent &e)
 
     if (style == LEX_FIF_FILE || style == LEX_FIF_HEADER) {
         m_sci->ToggleFold(line);
-        
+
     } else {
         size_t n = m_book ? m_book->GetSelection() : 0;
         const MatchInfo& matchInfo = GetMatchInfo(n);
@@ -832,10 +824,10 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
     int startPos = ctrl->GetEndStyled();
     int endPos   = e.GetPosition();
     wxString text = ctrl->GetTextRange(startPos, endPos);
-    
+
     wxArrayString lines = ::wxStringTokenize(text, wxT("\r\n"), wxTOKEN_RET_DELIMS);
     ctrl->StartStyling(startPos, 0x1f); // text styling
-    
+
     int bytes_left = 0;
     bool inMatchLine = false;
     int offset = 0;
@@ -843,29 +835,29 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
         wxString curline = lines.Item(i);
         bytes_left = curline.length();
         offset = 0;
-        
+
         if ( curline.StartsWith("/") ) {
             ctrl->SetStyling(curline.Length(), LEX_FIF_MATCH_COMMENT);
             bytes_left = 0;
-            
+
         } else if ( curline.StartsWith(wxT(" ") ) ) {
             ctrl->SetStyling(6, LEX_FIF_LINE_NUMBER); // first 6 chars are the line number
             bytes_left -= 6;
             inMatchLine = true;
             offset = 6;
-            
+
         } else if ( curline.StartsWith("=") ) {
             ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos) + i, 1 | wxSTC_FOLDLEVELHEADERFLAG);
             ctrl->SetStyling(curline.Length(), LEX_FIF_HEADER); // first 6 chars are the line number
             bytes_left = 0;
-            
+
         } else {
             // File name
             ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos) + i, 2 | wxSTC_FOLDLEVELHEADERFLAG);
             ctrl->SetStyling(curline.Length(), LEX_FIF_FILE); // first 6 chars are the line number
             bytes_left = 0;
         }
-        
+
         // Check for scope
         static wxRegEx reScopeName(" \\[[\\<\\>a-z0-9_:~ ]+\\] ", wxRE_DEFAULT|wxRE_ICASE);
         size_t scopeStart = wxString::npos, scopeLen = 0;
@@ -880,7 +872,7 @@ void FindResultsTab::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e)
         if ( inMatchLine && bytes_left > 0 ) {
             // The remainder of this line should be a hyper link
             ctrl->SetStyling(bytes_left, LEX_FIF_MATCH);
-            
+
         } else if( bytes_left > 0 ) {
             ctrl->SetStyling(bytes_left, LEX_FIF_DEFAULT);
         }

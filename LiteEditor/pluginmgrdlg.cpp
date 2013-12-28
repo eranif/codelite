@@ -45,15 +45,15 @@ void PluginMgrDlg::Initialize()
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
     conf.ReadItem(&plugins);
-    
+
     m_initialDisabledPlugins = plugins.GetDisabledPlugins();
     std::sort(m_initialDisabledPlugins.begin(), m_initialDisabledPlugins.end());
-    
+
     const PluginInfo::PluginMap_t& pluginsMap = plugins.GetPlugins();
-    
+
     //Clear the list
     m_checkListPluginsList->Clear();
-    
+
     PluginInfo::PluginMap_t::const_iterator iter = pluginsMap.begin();
     for ( ; iter != pluginsMap.end(); ++iter ) {
         PluginInfo info = iter->second;
@@ -82,18 +82,18 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent &event)
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
     conf.ReadItem(&plugins);
-    
+
     wxArrayString disabledPlugins;
     for (unsigned int i = 0; i<m_checkListPluginsList->GetCount(); i++) {
         if ( m_checkListPluginsList->IsChecked(i) == false ) {
             disabledPlugins.Add( m_checkListPluginsList->GetString(i) );
         }
     }
-    
+
     std::sort(disabledPlugins.begin(), disabledPlugins.end());
     plugins.DisablePugins( disabledPlugins );
     conf.WriteItem( &plugins );
-    
+
     EndModal( disabledPlugins == m_initialDisabledPlugins ? wxID_CANCEL : wxID_OK );
 }
 
@@ -102,7 +102,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
     conf.ReadItem(&plugins);
-    
+
     //get the plugin name
     wxString pluginName = m_checkListPluginsList->GetString(index);
     PluginInfo::PluginMap_t::const_iterator iter = plugins.GetPlugins().find(pluginName);
@@ -161,4 +161,41 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 
         m_htmlWinDesc->SetPage(content);
     }
+}
+void PluginMgrDlg::OnCheckAll(wxCommandEvent& event)
+{
+    for(size_t i=0; i<m_checkListPluginsList->GetCount(); ++i) {
+        m_checkListPluginsList->Check(i, true);
+    }
+}
+
+void PluginMgrDlg::OnCheckAllUI(wxUpdateUIEvent& event)
+{
+    bool atLeastOneIsUnChecked = false;
+    for(size_t i=0; i<m_checkListPluginsList->GetCount(); ++i) {
+        if ( !m_checkListPluginsList->IsChecked(i) ) {
+            atLeastOneIsUnChecked = true;
+            break;
+        }
+    }
+    event.Enable( atLeastOneIsUnChecked );
+}
+
+void PluginMgrDlg::OnUncheckAll(wxCommandEvent& event)
+{
+    for(size_t i=0; i<m_checkListPluginsList->GetCount(); ++i) {
+        m_checkListPluginsList->Check(i, false);
+    }
+}
+
+void PluginMgrDlg::OnUncheckAllUI(wxUpdateUIEvent& event)
+{
+    bool atLeastOneIsChecked = false;
+    for(size_t i=0; i<m_checkListPluginsList->GetCount(); ++i) {
+        if ( m_checkListPluginsList->IsChecked(i) ) {
+            atLeastOneIsChecked = true;
+            break;
+        }
+    }
+    event.Enable( atLeastOneIsChecked );
 }

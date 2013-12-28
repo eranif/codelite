@@ -342,6 +342,7 @@
       <File Name="plugindlgbase.cpp"/>
       <File Name="plugindlgbase.h"/>
       <File Name="pluginmgrdlg.cpp"/>
+      <File Name="plugindlgbase.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="DoxygenUI">
       <File Name="commentpagebase.h"/>
@@ -804,6 +805,7 @@
       <File Name="new_virtual_folder_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_misc_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_caret_liteeditor_bitmaps.cpp"/>
+      <File Name="plugindlgbase_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

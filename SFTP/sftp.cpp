@@ -353,6 +353,7 @@ void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
 
 void SFTP::OnEditorClosed(wxCommandEvent& e)
 {
+    e.Skip();
     IEditor* editor = (IEditor*) e.GetClientData();
     if ( editor ) {
         wxString localFile = editor->GetFileName().GetFullPath();

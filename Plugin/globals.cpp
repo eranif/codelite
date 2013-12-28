@@ -81,12 +81,12 @@ const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 // --------------------------------------------------------
 class clInternalEventHandlerData : public wxClientData
 {
-    
-    
+
+
     wxObject*     m_this;
     clEventFunc_t m_funcPtr;
     wxClientData* m_arg;
-    
+
 public:
     clInternalEventHandlerData(wxObject* instance, clEventFunc_t func, wxClientData* arg)
         : m_this(instance)
@@ -103,7 +103,7 @@ public:
     virtual ~clInternalEventHandlerData() {
         wxDELETE(m_arg);
     }
-    
+
     wxClientData* GetArg() const {
         return m_arg;
     }
@@ -138,7 +138,7 @@ public:
             wxClientData* arg  = cd->GetArg();
             clEventFunc_t func = cd->GetFuncPtr();
             (obj->*func)(arg);
-            
+
             delete cd;
             e.SetClientObject(NULL);
         }
@@ -814,7 +814,7 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
                     if ( bmp.IsOk() && bmp.GetWidth() == 24 && bmp.GetHeight() == 24 ) {
                         int img_id = (*lstImages)->Add( bmp );
                         (*imageMap)[proj->GetName()] = img_id;
-                        
+
                     } else {
                         // wrong size...
                         bmp = wxBitmap();
@@ -822,7 +822,7 @@ void GetProjectTemplateList ( IManager *manager, std::list<ProjectPtr> &list, st
                 }
             }
         }
-        
+
     } else {
         //if we ended up here, it means the installation got screwed up since
         //there should be at least 8 project templates !
@@ -1516,13 +1516,13 @@ wxArrayString SplitString(const wxString &inString, bool trim)
 {
     wxArrayString lines;
     wxString curline;
-    
+
     bool inContinuation = false;
     for(size_t i=0; i<inString.length(); ++i) {
         wxChar ch  = inString.GetChar(i);
         wxChar ch1 = (i + 1 < inString.length()) ? inString.GetChar(i+1) : wxUniChar(0);
         wxChar ch2 = (i + 2 < inString.length()) ? inString.GetChar(i+2) : wxUniChar(0);
-        
+
         switch ( ch ) {
         case '\r':
             // do nothing
@@ -1531,7 +1531,7 @@ wxArrayString SplitString(const wxString &inString, bool trim)
         case '\n':
             if ( inContinuation ) {
                 curline << ch;
-                
+
             } else {
                 lines.Add( trim ? curline.Trim().Trim(false) : curline );
                 curline.clear();
@@ -1550,7 +1550,7 @@ wxArrayString SplitString(const wxString &inString, bool trim)
             break;
         }
     }
-    
+
     // any leftovers?
     if ( curline.IsEmpty() == false ) {
         lines.Add( trim ? curline.Trim().Trim(false) : curline );
@@ -1564,11 +1564,11 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     //execute command & cmdArgs
     wxString execLine ( cmd );
     wxString title ( cmd );
-    
+
     OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
     wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
     fnCodeliteTerminal.SetFullName("codelite-terminal");
-    
+
     //change directory to the working directory
 #if defined(__WXMAC__)
         wxString newCommand;
@@ -1576,21 +1576,21 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
         if ( waitForAnyKey ) {
             newCommand << " -w ";
         }
-        newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+        newCommand << " -- " << title;
         execLine = newCommand;
-        
+
 #elif defined(__WXGTK__)
 
         // Set a console to the execute target
         if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
             wxString newCommand;
             newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
-            if ( waitForAnyKey ) { 
+            if ( waitForAnyKey ) {
                 newCommand << " -w ";
             }
-            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+            newCommand << " -- " << title;
             execLine = newCommand;
-            
+
         } else {
             wxString term;
             term = opts->GetProgramConsoleCommand();
@@ -1614,7 +1614,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
 #elif defined (__WXMSW__)
 
         if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
-            
+
             // codelite-terminal does not like forward slashes...
             wxString commandToRun;
             commandToRun << cmd << " ";
@@ -1623,13 +1623,13 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
 
             wxString newCommand;
             newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
-            if ( waitForAnyKey ) { 
+            if ( waitForAnyKey ) {
                 newCommand << " -w ";
             }
-            
-            newCommand << " -t \"" << commandToRun << "\" -c \"" << commandToRun << "\"";
+
+            newCommand << " -- " << commandToRun;
             execLine = newCommand;
-            
+
         } else if ( waitForAnyKey ) {
             execLine.Prepend ("le_exec.exe ");
         }

@@ -58,6 +58,9 @@ public:
 
         if ( parser.HasOption("t", "title") ) {
             options.SetTitle( parser.GetArg("t", "title") );
+
+        } else if ( !parser.GetCommand().IsEmpty() ) {
+            options.SetTitle( parser.GetCommand() );
         }
 
         if ( !workingDirectory.IsEmpty() ) {

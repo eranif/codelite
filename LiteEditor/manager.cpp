@@ -311,11 +311,11 @@ void Manager::DoSetupWorkspace ( const wxString &path )
     wxString errMsg;
     wxBusyCursor cursor;
     AddToRecentlyOpenedWorkspaces ( path );
-    
+
     wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
     evtWorkspaceLoaded.SetString( path );
     EventNotifier::Get()->ProcessEvent( evtWorkspaceLoaded );
-    
+
     // Update the refactoring cache
     wxFileList_t allfiles;
     GetWorkspaceFiles(allfiles, true);
@@ -609,11 +609,11 @@ bool Manager::RemoveProject ( const wxString &name, bool notify )
         for ( size_t i = 0; i < projectFiles.size(); i++ ) {
             prjfls.Add ( projectFiles[i].GetFullPath() );
         }
-        
+
         if ( notify )
             SendCmdEvent ( wxEVT_PROJ_FILE_REMOVED, ( void* ) &prjfls );
     }
-    
+
     if ( notify )
         SendCmdEvent ( wxEVT_PROJ_REMOVED, ( void* ) &name );
     return true;
@@ -652,7 +652,7 @@ void Manager::SetActiveProject ( const wxString &name )
     WorkspaceST::Get()->SetActiveProject ( WorkspaceST::Get()->GetActiveProjectName(), false );
     WorkspaceST::Get()->SetActiveProject ( name, true );
     clMainFrame::Get()->SelectBestEnvSet();
-    
+
     wxCommandEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
     evt.SetString(name);
     EventNotifier::Get()->AddPendingEvent( evt );
@@ -666,7 +666,7 @@ BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const
 void Manager::SetWorkspaceBuildMatrix ( BuildMatrixPtr matrix )
 {
     WorkspaceST::Get()->SetBuildMatrix ( matrix );
-    
+
     // Notify about the configuration change to the plugins
     wxCommandEvent e(wxEVT_WORKSPACE_CONFIG_CHANGED);
     e.SetString( matrix->GetSelectedConfigurationName() );
@@ -1010,7 +1010,7 @@ bool Manager::AddFileToProject ( const wxString &fileName, const wxString &vdFul
     //project
     wxArrayString files;
     files.Add ( fileName );
-    
+
     clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
     evtAddFiles.SetStrings( files );
     EventNotifier::Get()->AddPendingEvent( evtAddFiles );
@@ -1041,7 +1041,7 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
             // In Linux, files 'abc' and 'Abc' can happily co-exist, so see if that's what's happening
             wxString projName = this->GetProjectNameByFile(file, true); // 'true' is case-sensitive comparison
             if (projName.IsEmpty() || projName != project) {
-                wxString msg1(wxString::Format(_("There is already a file in this folder with a name:\n%s\nthat matches using case-insensitive comparison"), 
+                wxString msg1(wxString::Format(_("There is already a file in this folder with a name:\n%s\nthat matches using case-insensitive comparison"),
                                                   file));
                 wxString msg2(_("\nThis won't be a problem on Linux, but it may be on other, case-insensitive platforms"));
                 wxString msg3(_("\n\nAdd the file anyway?"));
@@ -1147,7 +1147,7 @@ bool Manager::RenameFile(const wxString &origName, const wxString &newName, cons
     // to the workspace
     wxArrayString files;
     files.Add(newName);
-    
+
     clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
     evtAddFiles.SetStrings( files );
     EventNotifier::Get()->AddPendingEvent( evtAddFiles );
@@ -1406,33 +1406,33 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
     execLine.Trim().Trim(false);
     wd = bldConf->GetWorkingDirectory();
     wd = ExpandVariables ( wd, GetProject ( projectName ), clMainFrame::Get()->GetMainBook()->GetActiveEditor() );
-    
+
     wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
     fnCodeliteTerminal.SetFullName("codelite-terminal");
-    
+
     wxString title;
     title << cmd << " " << cmdArgs;
-    
+
     OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
 
     //change directory to the working directory
     if ( considerPauseWhenExecuting && !bldConf->IsGUIProgram() ) {
-        
+
         ProjectPtr proj = GetProject ( projectName );
-        
+
 #if defined(__WXMAC__)
         wxString newCommand;
         newCommand << "/usr/bin/open " << fnCodeliteTerminal.GetPath(true) << "codelite-terminal.app --args ";
         newCommand << " --exit ";
-        if ( bldConf->GetPauseWhenExecEnds() ) { 
+        if ( bldConf->GetPauseWhenExecEnds() ) {
             newCommand << " --wait ";
         }
-        
+
         wxFileName fnWD(wd, "");
         if ( fnWD.IsRelative() ) {
             fnWD.MakeAbsolute( GetProject(projectName)->GetFileName().GetPath() );
         }
-        newCommand << " --working-directory \"" << fnWD.GetFullPath() << "\" --title \"" << title << "\" --command \"" << title << "\"";
+        newCommand << " --working-directory \"" << fnWD.GetFullPath() << "\" --title \"" << title << "\" -- " << title;
         execLine = newCommand;
 
 #elif defined(__WXGTK__)
@@ -1440,13 +1440,13 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
         // Set a console to the execute target
         if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) && !bldConf->IsGUIProgram() ) {
             wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
-            if ( bldConf->GetPauseWhenExecEnds() ) { 
-                newCommand << " -w ";
+            newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
+            if ( bldConf->GetPauseWhenExecEnds() ) {
+                newCommand << " --wait ";
             }
-            newCommand << " -t \"" << title << "\" -c \"" << title << "\"";
+            newCommand << " -- " << title;
             execLine = newCommand;
-            
+
         } else {
             wxString term;
             term = opts->GetProgramConsoleCommand();
@@ -1474,27 +1474,25 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
 
         if ( !bldConf->IsGUIProgram() ) {
             if ( bldConf->GetPauseWhenExecEnds() && opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
-                
+
                 // codelite-terminal does not like forward slashes...
                 wxString commandToRun;
                 commandToRun << cmd << " ";
                 commandToRun.Replace("/", "\\");
                 commandToRun << cmdArgs;
                 commandToRun.Trim().Trim(false);
-                
+
                 wxString newCommand;
-                newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
-                if ( bldConf->GetPauseWhenExecEnds() ) { 
-                    newCommand << " -w ";
+                newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
+                if ( bldConf->GetPauseWhenExecEnds() ) {
+                    newCommand << " --wait ";
                 }
-                
-                newCommand << " -t \"" << commandToRun << "\" -c \"" << commandToRun << "\"";
+
+                newCommand << " -- " << commandToRun;
                 execLine = newCommand;
-                
             } else if ( bldConf->GetPauseWhenExecEnds() ) {
                 execLine.Prepend ("le_exec.exe ");
             }
-            
         }
 #endif
     }
@@ -1631,7 +1629,7 @@ void Manager::TogglePanes()
 {
     static wxString savedLayout;
     if ( savedLayout.IsEmpty() ) {
-        
+
         savedLayout = clMainFrame::Get()->GetDockingManager().SavePerspective();
         wxAuiManager& aui = clMainFrame::Get()->GetDockingManager();
         wxAuiPaneInfoArray &all_panes = aui.GetAllPanes();
@@ -1640,10 +1638,10 @@ void Manager::TogglePanes()
                 all_panes.Item(i).Hide();
             }
         }
-        
+
         //update changes
         aui.Update();
-        
+
     } else {
         clMainFrame::Get()->GetDockingManager().LoadPerspective(savedLayout);
         savedLayout.Clear();
@@ -1913,13 +1911,13 @@ void Manager::ExecuteNoDebug ( const wxString &projectName )
     // we call it here once for the 'wd'
     wxString execLine;
     ProjectPtr proj;
-    
+
     {
         EnvSetter env1(NULL, NULL, projectName);
         execLine = GetProjectExecutionCommand ( projectName, wd, true );
         proj = GetProject ( projectName );
     }
-    
+
     DirSaver ds;
 
     //print the current directory
@@ -1987,7 +1985,7 @@ void Manager::UpdateDebuggerPane()
 {
     clCommandEvent evtDbgRefreshViews(wxEVT_DEBUGGER_UPDATE_VIEWS);
     EventNotifier::Get()->AddPendingEvent( evtDbgRefreshViews );
-    
+
     DebuggerPane *pane = clMainFrame::Get()->GetDebuggerPane();
 
 #if CL_USE_NATIVEBOOK
@@ -2195,11 +2193,11 @@ void Manager::DbgStart ( long attachPid )
         userDebuggr.Trim().Trim ( false );
         if ( userDebuggr.IsEmpty() == false ) {
             // expand project macros
-            userDebuggr = MacroManager::Instance()->Expand(userDebuggr, 
-                                                           PluginManager::Get(), 
-                                                           proj->GetName(), 
+            userDebuggr = MacroManager::Instance()->Expand(userDebuggr,
+                                                           PluginManager::Get(),
+                                                           proj->GetName(),
                                                            bldConf->GetName());
-            
+
             // Convert any relative path to absolute path
             // see bug# https://sourceforge.net/p/codelite/bugs/871/
             wxFileName fnDebuggerPath(userDebuggr);
@@ -2214,16 +2212,16 @@ void Manager::DbgStart ( long attachPid )
     // read the console command
     dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
     dbgr->SetDebuggerInformation ( dinfo );
-    
+
     // Apply the environment variables before starting
     EnvSetter env(NULL, NULL, proj ? proj->GetName() : wxString());
-    
+
     if ( !bldConf && attachPid == wxNOT_FOUND ) {
         wxString errmsg;
         errmsg << _("Could not find project configuration!\n") << _("Make sure that everything is set properly in your project settings");
         ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK|wxICON_ERROR);
         return;
-    
+
     } else if ( attachPid == wxNOT_FOUND ) {
         exepath = bldConf->GetCommand();
 
@@ -2299,18 +2297,18 @@ void Manager::DbgStart ( long attachPid )
     si.PID = PID;
     si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
     si.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
-    
+
     if ( bldConf ) {
         si.searchPaths = bldConf->GetDebuggerSearchPaths();
     }
-    
+
     if ( attachPid == wxNOT_FOUND ) {
         //it is now OK to start the debugger...
         dbg_cmds = wxStringTokenize ( bldConf->GetDebuggerStartupCmds(), wxT ( "\n" ), wxTOKEN_STRTOK );
-        
+
         // append project level commands to the global commands
         si.cmds.insert(si.cmds.end(), dbg_cmds.begin(), dbg_cmds.end());
-        
+
         if ( !dbgr->Start ( si ) ) {
             wxString errMsg;
             errMsg << _("Failed to initialize debugger: ") << dbgname << wxT("\n");
@@ -2320,7 +2318,7 @@ void Manager::DbgStart ( long attachPid )
     } else {
         // append project level commands to the global commands
         si.cmds.insert(si.cmds.end(), dbg_cmds.begin(), dbg_cmds.end());
-        
+
         //Attach to process...
         if ( !dbgr->Attach ( si ) ) {
             wxString errMsg;
@@ -2394,9 +2392,9 @@ void Manager::DbgStop()
 {
     {
         IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-        
+
         if ( dbgr && dbgr->IsRunning() ) {
-            // If the debugger is running assume that the current perspective is the 
+            // If the debugger is running assume that the current perspective is the
             // one that we want to use for our debugging purposes
 #ifndef __WXMAC__
             GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
@@ -3219,15 +3217,15 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
     case DBG_UR_TYPE_RESOLVED:
         if ( event.m_userReason == DBG_USERR_WATCHTABLE ) {
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnTypeResolved(event);
-            
+
         } else if ( event.m_userReason == DBG_USERR_QUICKWACTH ) {
             wxString expr = ::DbgPrependCharPtrCastIfNeeded(event.m_expression, event.m_evaluated);
             dbgr->CreateVariableObject(expr, false, DBG_USERR_QUICKWACTH);
-            
+
         } else {
             // Default
             UpdateTypeReolsved( event.m_expression, event.m_evaluated );
-            
+
         }
         break;
 

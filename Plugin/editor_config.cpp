@@ -449,6 +449,66 @@ void EditorConfig::SaveStringValue(const wxString &key, const wxString &value)
     WriteObject(key, &data);
 }
 
+void EditorConfig::UpgradeUserLexer(const wxString& userLexer, const wxString& installedLexer)
+{
+    wxXmlDocument userdoc(userLexer), srcdoc(installedLexer);
+    if(userdoc.IsOk() && srcdoc.IsOk()) {
+        wxXmlNode* userroot = userdoc.GetRoot();
+        wxXmlNode* srcroot = srcdoc.GetRoot();
+        if (userroot && srcroot) {
+            bool dirty(false);
+
+            // Iterate through the lexers, looking for novelties
+            wxXmlNode* child = srcroot->GetChildren();
+            while (child) {
+                wxString name = child->GetAttribute("Name", "");
+                wxXmlNode* usernode = XmlUtils::FindNodeByName(userroot, "Lexer", name);
+                if (!usernode) {
+                    usernode = XmlUtils::FindNodeByName(userroot, "Lexer", name.Lower());
+                    if (usernode) {
+                        // Lexers used to have lower-case names. Upgrade the spelling for compatibility; it shouldn't break anything
+                        wxXmlAttribute* attrib = usernode->GetAttributes();
+                        while (attrib) {
+                            if (attrib->GetName() == "Name") {
+                                attrib->SetValue(name);
+                                dirty = true;
+                                break;
+                            }
+                            attrib = attrib->GetNext();
+                        }
+                    }
+                }
+
+                if (!usernode) {
+                        // Found a missing lexer, so copy it across
+                        userroot->AddChild(new wxXmlNode(*child));
+                        dirty = true;
+                } else {
+                    // This lexer is already present, but check for any missing attributes
+                    wxXmlNode* properties = XmlUtils::FindFirstByTagName(child, "Properties");
+                    wxXmlNode* userproperties = XmlUtils::FindFirstByTagName(usernode, "Properties");
+                    if (properties && userproperties) {
+                        wxXmlNode* property = properties->GetChildren();
+                        while (property) {
+                             if (!XmlUtils::FindNodeByName(userproperties, "Property", property->GetAttribute("Name", ""))) {
+                                // Found a missing attribute
+                                userproperties->AddChild(new wxXmlNode(*property));
+                                dirty = true;
+                             }
+                            property = property->GetNext();
+                        }
+                    }
+                }
+                child = child->GetNext();
+            }
+
+            if (dirty) {
+                userdoc.Save(userLexer);
+            }
+        }
+    }
+}
+
 void EditorConfig::LoadLexers(bool loadDefault)
 {
     m_lexers.clear();
@@ -488,6 +548,8 @@ void EditorConfig::LoadLexers(bool loadDefault)
 
         if ( wxFileName::FileExists( userLexer ) ) {
             if ( !loadDefault ) {
+                // First try to merge any new lexers or new properties into the user's one, without overwriting any user-set preferences
+                UpgradeUserLexer(userLexer, fileToLoad);
                 fileToLoad = userLexer;
 
             } else {

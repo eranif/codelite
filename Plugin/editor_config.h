@@ -335,6 +335,14 @@ public:
      */
     void SetPaneStickiness(const wxString& caption, bool stickiness);
 
+protected:
+    /**
+     * \brief Update the user's lexer with any novel lexers or attributes
+     * \param userLexer the current lexer, which may contain user prefs
+     * \param installedLexer the equivalent unaltered lexer from the CodeLite installation
+     */
+    void UpgradeUserLexer(const wxString& userLexer, const wxString& installedLexer);
+
 private:
     EditorConfig();
     virtual ~EditorConfig();

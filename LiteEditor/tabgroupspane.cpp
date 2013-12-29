@@ -231,6 +231,9 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
+    if (!data) {
+        return;
+    }
     wxString filepath = data->GetFilepath();
     wxFileName fn(filepath);
 
@@ -297,6 +300,9 @@ void TabgroupsPane::OnItemRtClick(wxTreeEvent& event)
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
+    if (!data) {
+        return;
+    }
 
     wxMenu menu; // Tabgroup Menu
     if (data->GetType() == TGT_group) {
@@ -351,6 +357,9 @@ void TabgroupsPane::OnDelete(wxCommandEvent& WXUNUSED(event))  	// From a keypre
     wxTreeItemId item = m_tree->GetSelection();
     if (item.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
+        if (!data) {
+            return;
+        }
         if (data->GetType() == TGT_group) {
             DeleteTabgroup();
         } else {
@@ -364,7 +373,7 @@ void TabgroupsPane::OnBeginLabelEdit(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     if (item.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-        if (data->GetType() == TGT_group) {
+        if (!data || data->GetType() == TGT_group) {
             // Only allow renaming of a group; renaming an item makes little sense: the name is the filename
             return;
         }
@@ -382,6 +391,9 @@ void TabgroupsPane::OnEndLabelEdit(wxTreeEvent& event)
     }
 
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
+    if (!data) {
+        return;
+    }
     wxFileName oldfilepath(data->GetFilepath());
 
     wxString newfilename = event.GetLabel();
@@ -411,7 +423,7 @@ void TabgroupsPane::OnBeginDrag(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     if (item.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
-        if (data->GetType() == TGT_item) {
+        if (data && data->GetType() == TGT_item) {
             // Only allow dragging of an item, not a group
             m_draggedItem = item;
             event.Allow();  // need explicitly to allow drag
@@ -516,6 +528,9 @@ void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId(
     wxTreeItemId ItemId(GroupId);
 
     TabGrpTreeItemData* groupdata = (TabGrpTreeItemData*)m_tree->GetItemData(GroupId);
+    if (!groupdata) {
+        return;
+    }
     if (groupdata->GetType() == TGT_item) {
         GroupId = m_tree->GetItemParent(ItemId);
         wxCHECK_RET(GroupId.IsOk(), wxT("Trying to paste on something that isn't a tabgroup"));
@@ -523,6 +538,9 @@ void TabgroupsPane::PasteTabgroupItem(wxTreeItemId itemtopaste /*= wxTreeItemId(
     } else {
         // The paste *was* on the group, so null ItemId: we use ItemId.IsOk() later as a flag
         ItemId = wxTreeItemId();
+    }
+    if (!groupdata) {
+        return;
     }
     wxCHECK_RET(groupdata->GetType() == TGT_group, wxT("Trying to paste on something that isn't a tabgroup"));
 
@@ -585,6 +603,9 @@ void TabgroupsPane::DeleteTabgroup()
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
+    if (!data) {
+        return;
+    }
     wxCHECK_RET(data->GetType()==TGT_group, wxT("The selection wasn't a tabgroup"));
 
     wxString filepath = data->GetFilepath();
@@ -620,6 +641,10 @@ void TabgroupsPane::DuplicateTabgroup()
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(selection);
+    if (!data) {
+        return;
+    }
+
     wxCHECK_RET(data->GetType()==TGT_group, wxT("The selection wasn't a tabgroup"));
 
     wxFileName oldfilepath(data->GetFilepath());
@@ -673,12 +698,18 @@ void TabgroupsPane::CopyTabgroupItem(wxTreeItemId itemtocopy /*= wxTreeItemId()*
     }
 
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
+    if (!data) {
+        return;
+    }
     if (data->GetType() != TGT_item) {
         return;	// I can't think of any reason to copy a whole group
     }
 
     wxTreeItemId GroupId = m_tree->GetItemParent(item);
     TabGrpTreeItemData* groupdata = (TabGrpTreeItemData*)m_tree->GetItemData(GroupId);
+    if (!groupdata) {
+        return;
+    }
 
     wxString filepath = groupdata->GetFilepath();
     wxXmlDocument doc(filepath);
@@ -707,10 +738,16 @@ void TabgroupsPane::DeleteTabgroupItem(bool DoCut /*=false*/, wxTreeItemId itemt
         return;
     }
     TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(item);
+    if (!data) {
+        return;
+    }
     wxCHECK_RET(data->GetType()==TGT_item, wxT("The selection was a tabgroup, not a tabgroup item"));
     wxString itemfilepath = data->GetFilepath(); // Need to do this here, before the item is deleted!
     wxTreeItemId parent = m_tree->GetItemParent(item);
     TabGrpTreeItemData* tabgrpdata = (TabGrpTreeItemData*)m_tree->GetItemData(parent);
+    if (!tabgrpdata) {
+        return;
+    }
     wxString filepath = tabgrpdata->GetFilepath();
     if (!wxFileName::FileExists(filepath)) {
         return;

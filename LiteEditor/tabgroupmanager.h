@@ -47,6 +47,10 @@ public:
 
 	wxString GetTabgroupDirectory();
 	vTabGrps& GetTabgroups();
+	void ClearTabgroups() {
+        m_tabgroups.clear();
+        m_tabgroupdir.Clear();
+    }
 
 	/*!
 	 * \brief Finds the spTabGrp that matches tabgroupname, returning its TabgroupItems in items

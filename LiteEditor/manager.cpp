@@ -383,6 +383,7 @@ void Manager::CloseWorkspace()
     GetBreakpointsMgr()->DelAllBreakpoints();
 
     clMainFrame::Get()->GetWorkspacePane()->GetTabgroupsTab()->ClearTabgroups();
+    TabGroupsManager::Get()->ClearTabgroups();
 
     // since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
     // default

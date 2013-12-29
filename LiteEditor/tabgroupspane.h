@@ -68,6 +68,9 @@ public:
     TabgroupsPane(wxWindow* parent, const wxString& caption);
     ~TabgroupsPane();
     void DisplayTabgroups();
+    void ClearTabgroups() {
+        m_tree->DeleteChildren(m_tree->GetRootItem());
+    }
     bool AddNewTabgroupToTree(const wxString& newfilepath, wxTreeItemId selection = wxTreeItemId());
 
 protected:

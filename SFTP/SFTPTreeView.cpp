@@ -108,7 +108,6 @@ void SFTPTreeView::OnItemActivated(wxTreeListEvent& event)
 
     if ( cd->IsFolder() ) {
         m_treeListCtrl->Expand( event.GetItem() );
-        DoExpandItem(event.GetItem());
 
     } else {
 
@@ -125,8 +124,9 @@ void SFTPTreeView::OnItemActivated(wxTreeListEvent& event)
 
 void SFTPTreeView::OnItemExpanding(wxTreeListEvent& event)
 {
-    wxUnusedVar(event);
-    DoExpandItem(event.GetItem());
+    if ( !DoExpandItem(event.GetItem()) ) {
+        event.Veto();
+    }
 }
 
 void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
@@ -178,20 +178,15 @@ void SFTPTreeView::OnConnectUI(wxUpdateUIEvent& event)
     event.Enable( !m_choiceAccount->GetStringSelection().IsEmpty() && !m_sftp );
 }
 
-void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
+bool SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
 {
     MyClientData *cd = GetItemData( item );
-    CHECK_PTR_RET(cd);
+    CHECK_PTR_RET_FALSE(cd);
 
     // already initialized this folder before?
     if ( cd->IsInitialized() ) {
-        return;
+        return true;
     }
-    cd->SetInitialized( true );
-
-    // Remove the dummy item and replace it with real items
-    wxTreeListItem dummyItem = m_treeListCtrl->GetFirstChild(item);
-    m_treeListCtrl->DeleteItem( dummyItem );
 
     // get list of files and populate the tree
     SFTPAttribute::List_t attributes;
@@ -200,8 +195,14 @@ void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
 
     } catch (clException &e) {
         ::wxMessageBox(e.What(), "SFTP", wxOK|wxICON_ERROR|wxCENTER, EventNotifier::Get()->TopFrame());
-        return;
+        return false;
     }
+
+    // Remove the dummy item and replace it with real items
+    wxTreeListItem dummyItem = m_treeListCtrl->GetFirstChild(item);
+    m_treeListCtrl->DeleteItem( dummyItem );
+    cd->SetInitialized( true );
+
     SFTPAttribute::List_t::iterator iter = attributes.begin();
     for( ; iter != attributes.end(); ++iter ) {
         SFTPAttribute::Ptr_t attr = (*iter);
@@ -224,7 +225,7 @@ void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
         wxString path;
         path << cd->GetFullPath() << "/" << attr->GetName();
         while (path.Replace("//", "/")) {}
-        
+
         MyClientData* childClientData = new MyClientData(path);
         childClientData->SetIsFolder( attr->IsFolder() );
 
@@ -237,6 +238,7 @@ void SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
             m_treeListCtrl->AppendItem(child, "<dummy>");
         }
     }
+    return true;
 }
 
 MyClientData* SFTPTreeView::GetItemData(const wxTreeListItem& item)
@@ -280,7 +282,7 @@ void SFTPTreeView::OnContextMenu(wxTreeListEvent& event)
 
     // Just incase, make sure the item is selected
     m_treeListCtrl->Select(event.GetItem());
-    
+
     wxMenu menu;
 
     if ( !cd->IsFolder() ) {
@@ -339,17 +341,17 @@ void SFTPTreeView::OnMenuNew(wxCommandEvent& event)
     m_treeListCtrl->GetSelections(items);
     if ( items.size() != 1)
         return;
-    
+
     MyClientData *cd = GetItemData(items.at(0));
     CHECK_PTR_RET(cd);
-    
+
     if ( !cd->IsFolder() ) {
         return;
     }
-    
+
     wxString new_name = ::wxGetTextFromUser(_("Enter the new directory name:"), _("New Directory"));
     if ( !new_name.IsEmpty() ) {
-        
+
         wxString fullpath = cd->GetFullPath();
         fullpath << "/" << new_name;
         DoAddFolder(items.at(0), fullpath);
@@ -365,19 +367,19 @@ void SFTPTreeView::OnMenuRename(wxCommandEvent& event)
 
     try {
         for(size_t i=0; i<items.size(); ++i) {
-            
+
             MyClientData *cd = GetItemData(items.at(i));
             if ( !cd ) continue; // ??
-                
+
             wxString new_name = ::wxGetTextFromUser(_("Enter new name:"), _("Rename"), cd->GetFullName());
             if ( !new_name.IsEmpty() ) {
                 wxString old_path = cd->GetFullPath();
                 cd->SetFullName( new_name );
                 m_sftp->Rename( old_path, cd->GetFullPath() );
-                
+
                 // Remove the selection
                 m_treeListCtrl->SetItemText(items.at(i), 0, new_name);
-                
+
             }
         }
 
@@ -393,13 +395,13 @@ void SFTPTreeView::OnMenuOpen(wxCommandEvent& event)
     m_treeListCtrl->GetSelections(items);
     if ( items.empty() )
         return;
-    
+
     for(size_t i=0; i<items.size(); ++i) {
         MyClientData *cd = GetItemData(items.at(i));
         if ( !cd || cd->IsFolder() ) {
             continue;
         }
-        
+
         RemoteFileInfo remoteFile;
         remoteFile.SetAccount( m_account );
         remoteFile.SetRemoteFile( cd->GetFullPath() );
@@ -420,14 +422,14 @@ wxTreeListItem SFTPTreeView::DoAddFolder(const wxTreeListItem& parent, const wxS
         MyClientData *newCd = new MyClientData(path);
         newCd->SetIsFolder( true );
         newCd->SetInitialized(false);
-        
+
         wxTreeListItem child = m_treeListCtrl->AppendItem(parent, newCd->GetFullName(), m_bmpLoader.GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, newCd);
         m_treeListCtrl->SetItemText(child, 1, attr->GetTypeAsString());
         m_treeListCtrl->SetItemText(child, 2, wxString() << attr->GetSize());
         m_treeListCtrl->AppendItem(child, "<dummy>");
         m_treeListCtrl->SetSortColumn(0);
         return child;
-        
+
     } catch (clException &e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR|wxOK|wxCENTER);
     }

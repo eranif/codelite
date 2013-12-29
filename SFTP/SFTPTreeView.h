@@ -58,11 +58,11 @@ protected:
     virtual void OnMenuOpen(wxCommandEvent &event);
     virtual void OnMenuDelete(wxCommandEvent &event);
     virtual void OnMenuRename(wxCommandEvent &event);
-    
+
     void DoCloseSession();
-    void DoExpandItem(const wxTreeListItem& item);
+    bool DoExpandItem(const wxTreeListItem& item);
     wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString &path);
-    
+
     MyClientData* GetItemData(const wxTreeListItem& item);
     MyClientDataVect_t GetSelectionsItemData();
 

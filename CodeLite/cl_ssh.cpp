@@ -32,13 +32,13 @@ void clSSH::Connect() throw(clException)
     }
 
     int verbosity = SSH_LOG_NOLOG;
-    int timeout = 5;
+    int timeout = 10;
     ssh_options_set(m_session, SSH_OPTIONS_HOST,          m_host.mb_str(wxConvUTF8).data());
     ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     ssh_options_set(m_session, SSH_OPTIONS_PORT,          &m_port);
     ssh_options_set(m_session, SSH_OPTIONS_USER,          GetUsername().mb_str().data());
     ssh_options_set(m_session, SSH_OPTIONS_TIMEOUT,       &timeout);
-    
+
     int rc = ssh_connect(m_session);
     if (rc != SSH_OK) {
         throw clException(ssh_get_error(m_session));
@@ -112,7 +112,7 @@ void clSSH::AcceptServerAuthentication() throw (clException)
                                 throw clException(msg);\
                             }\
                             return false;
-                            
+
 bool clSSH::LoginPassword(bool throwExc) throw (clException)
 {
     if ( !m_session ) {
@@ -124,11 +124,11 @@ bool clSSH::LoginPassword(bool throwExc) throw (clException)
     rc = ssh_userauth_password(m_session, NULL, GetPassword().mb_str().data());
     if ( rc == SSH_AUTH_SUCCESS ) {
         return true;
-        
+
     } else if ( rc == SSH_AUTH_DENIED )  {
         THROW_OR_FALSE("Login failed: invalid username/password");
-        
-        
+
+
     } else {
         THROW_OR_FALSE(wxString() << _("Authentication error: ") << ssh_get_error(m_session));
     }
@@ -160,7 +160,7 @@ bool clSSH::LoginInteractiveKBD(bool throwExc) throw (clException)
                     wxString answer = ::wxGetTextFromUser(prompt, "SSH");
                     if ( answer.IsEmpty() ) {
                         THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
-                        
+
                     }
                     if (ssh_userauth_kbdint_setanswer(m_session, iprompt, answer.mb_str(wxConvUTF8).data()) < 0) {
                         THROW_OR_FALSE(wxString() << "Login error: " << ssh_get_error(m_session));
@@ -184,7 +184,7 @@ bool clSSH::LoginPublicKey(bool throwExc) throw (clException)
     if ( !m_session ) {
        THROW_OR_FALSE("NULL SSH session");
     }
-    
+
     int rc;
     rc = ssh_userauth_autopubkey(m_session, NULL);
     if (rc != SSH_AUTH_SUCCESS) {
@@ -198,55 +198,36 @@ void clSSH::Close()
     if ( m_session && m_connected ) {
         ssh_disconnect(m_session);
     }
-    
+
     if ( m_session ) {
         ssh_free(m_session);
     }
-    
+
     m_connected = false;
     m_session = NULL;
 }
 
 void clSSH::Login() throw (clException)
 {
-    int method, rc;
-    
+    int rc;
+
     rc = ssh_userauth_none(m_session, NULL);
     if (rc == SSH_AUTH_SUCCESS) {
         return;
     }
-    
-    wxString errorMessage = "Unsupported login method";
-    method = ssh_userauth_list(m_session, NULL);
-    if ( method & SSH_AUTH_METHOD_PUBLICKEY ) {
-        try {
-            LoginPublicKey();
-            return;
-            
-        } catch (clException &e) {
-            errorMessage = e.What();
-        }
-    }
-    
-    if ( method & SSH_AUTH_METHOD_INTERACTIVE ) {
+
+    // Try the following 3 methods in order
+    // if non succeeded, this function will throw an exception
+
+    try {
+        LoginPublicKey();
+
+    } catch (clException &e) {
         try {
             LoginInteractiveKBD();
-            return;
-            
-        } catch (clException &e) {
-            errorMessage = e.What();
-        }
-    }
-    
-    if ( method & SSH_AUTH_METHOD_PASSWORD ) {
-        
-        try {
+
+        } catch (clException &e2) {
             LoginPassword();
-            return;
-            
-        } catch (clException &e) {
-            errorMessage = e.What();
         }
     }
-    throw clException(errorMessage);
 }

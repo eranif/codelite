@@ -224,10 +224,10 @@ void clSSH::Login() throw (clException)
 
     } catch (clException &e) {
         try {
-            LoginInteractiveKBD();
+            LoginPassword();
 
         } catch (clException &e2) {
-            LoginPassword();
+            LoginInteractiveKBD();
         }
     }
 }

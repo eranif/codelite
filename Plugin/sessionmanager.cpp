@@ -119,7 +119,9 @@ bool SessionManager::Load(const wxString &fileName)
 wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxString& suffix /*=wxT("")*/) const
 {
     wxFileName sessionFileName(name);
-    sessionFileName.AppendDir(".codelite");
+    if (suffix != "tabgroup") {
+        sessionFileName.AppendDir(".codelite");
+    }
     sessionFileName.SetExt( suffix.IsEmpty() ? wxString("session") : suffix);
     return sessionFileName;
 }

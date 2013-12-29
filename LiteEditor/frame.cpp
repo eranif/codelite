@@ -1004,9 +1004,6 @@ void clMainFrame::CreateGUIControls(void)
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
 
-    // Now the session's loaded, it's safe to fill the tabgroups tab
-    GetWorkspacePane()->GetTabgroupsTab()->DisplayTabgroups();
-
     //try to locate the build tools
 
     long fix(1);
@@ -2041,7 +2038,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
             TabGroupEntry session;
             session.SetTabgroupName(path + sessionName);
             GetMainBook()->SaveSession(session, intArr);
-            SessionManager::Get().Save(session.GetTabgroupName(), session, wxString(wxT(".tabgroup")), tabgroupTag);
+            SessionManager::Get().Save(session.GetTabgroupName(), session, "tabgroup", tabgroupTag);
             // Add the new tabgroup to the tabgroup manager and pane
             GetWorkspacePane()->GetTabgroupsTab()->AddNewTabgroupToTree(filepath);
 

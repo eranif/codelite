@@ -2,6 +2,7 @@
 #include "event_notifier.h"
 #include <wx/filename.h>
 #include <wx/log.h>
+#include <wx/crt.h>
 #include "cppwordscanner.h"
 #include "refactorengine.h"
 #include "ctags_manager.h"

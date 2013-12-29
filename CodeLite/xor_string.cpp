@@ -1,3 +1,4 @@
+#include <wx/crt.h>
 #include "xor_string.h"
 
 XORString::XORString()

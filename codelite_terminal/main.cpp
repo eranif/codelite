@@ -7,6 +7,7 @@
 #include <wx/dir.h>
 #include <wx/log.h>
 #include <wx/stdpaths.h>
+#include <wx/crt.h>
 #include "commandlineparser.h"
 
 #ifdef __WXMAC__

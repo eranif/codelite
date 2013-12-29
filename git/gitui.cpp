@@ -309,7 +309,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, 5);
     
     m_dvListCtrlCommitList->AppendTextColumn(_("Commit"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
-    m_dvListCtrlCommitList->AppendTextColumn(_("Atuthor"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
+    m_dvListCtrlCommitList->AppendTextColumn(_("Author"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, 600, wxALIGN_LEFT);
     m_splitterPage182 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);

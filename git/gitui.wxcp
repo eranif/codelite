@@ -3843,7 +3843,7 @@
 															"m_properties":	[{
 																	"type":	"string",
 																	"m_label":	"Name:",
-																	"m_value":	"Atuthor"
+																	"m_value":	"Author"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Width:",

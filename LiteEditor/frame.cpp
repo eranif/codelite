@@ -686,6 +686,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
 
 }
 
@@ -721,6 +722,7 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(clMainFrame::OnUpdateCustomTargetsDropDownMenu), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
 
     wxDELETE(m_timer);
     wxDELETE(m_statusbarTimer);
@@ -4607,9 +4609,25 @@ void clMainFrame::SelectBestEnvSet()
     preDefTypeMap.SetActive(dbgSetName);
     DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefTypeMap);
 
-    SetStatusMessage(wxString::Format(wxT("Env: %s, Dbg: %s"),
+    wxString bookmarkString;
+    LEditor* editor = GetMainBook()->GetActiveEditor();
+    if (editor) {
+        sci_marker_types activeBMtype = (sci_marker_types)editor->GetActiveBookmarkType();
+        bookmarkString = editor->GetBookmarkLabel(activeBMtype);
+    }
+
+    wxString displayString = wxString::Format(wxT("Env: %s, Dbg: %s"),
                                       activeSetName.c_str(),
-                                      preDefTypeMap.GetActiveSet().GetName().c_str()), 2);
+                                      preDefTypeMap.GetActiveSet().GetName().c_str());
+    if (editor) {
+        displayString << ", ";
+        if (!bookmarkString.Lower().Contains("type")) {
+            displayString << _("Bookmark type") << ": ";
+        }
+        displayString << bookmarkString;
+    }
+
+    SetStatusMessage(displayString, 2);
 }
 
 void clMainFrame::OnClearTagsCache(wxCommandEvent& e)
@@ -5119,6 +5137,12 @@ void clMainFrame::OnActivateEditor(wxCommandEvent& e)
 {
     LEditor* editor = dynamic_cast<LEditor*>(e.GetEventObject());
     if (editor) editor->SetActive();
+}
+
+void clMainFrame::OnActiveEditorChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    SelectBestEnvSet(); // Updates the statusbar bookmark display
 }
 
 void clMainFrame::OnLoadSession(wxCommandEvent& e)

@@ -1906,10 +1906,13 @@ void LEditor::OnFindDialog(wxCommandEvent& event)
         ReplaceAll();
 
     } else if (type == wxEVT_FRD_BOOKMARKALL) {
+        SetFindBookmarksActive(true);
         MarkAllFinds();
 
     } else if (type == wxEVT_FRD_CLEARBOOKMARKS) {
         DelAllMarkers(smt_find_bookmark);
+        SetFindBookmarksActive(false);
+        clMainFrame::Get()->SelectBestEnvSet();
     }
 }
 
@@ -2544,6 +2547,7 @@ bool LEditor::MarkAllFinds()
     // Restore the caret
     SetCurrentPos(savedPos);
     EnsureCaretVisible();
+    clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
     return true;
 }
 
@@ -2585,6 +2589,8 @@ void LEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
     if ((requested + smt_FIRST_BMK_TYPE -1) != smt_find_bookmark) {
         SetFindBookmarksActive(false);
     }
+    
+    clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
 }
 
 wxString LEditor::GetBookmarkTooltip(const int lineno)

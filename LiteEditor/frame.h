@@ -552,6 +552,7 @@ protected:
 
     // Misc
     void OnActivateEditor (wxCommandEvent &e);
+    void OnActiveEditorChanged(wxCommandEvent& e);
     void OnUpdateCustomTargetsDropDownMenu(wxCommandEvent &e);
     void OnRefactoringCacheStatus(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);

@@ -632,6 +632,8 @@ void QuickFindBar::OnHighlightMatches(wxCommandEvent& event)
             editor->SetFindBookmarksActive(false);
         }
     }
+
+    clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
 }
 
 void QuickFindBar::OnHighlightMatchesUI(wxUpdateUIEvent& event)

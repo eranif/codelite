@@ -22,9 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
 #ifndef SFTPATTRIBUTE_H
 #define SFTPATTRIBUTE_H
+
+#if USE_SFTP
 
 #include <wx/filename.h>
 #include "codelite_exports.h"
@@ -62,7 +63,7 @@ protected:
 public:
     SFTPAttribute(SFTPAttribute_t attr);
     virtual ~SFTPAttribute();
-    
+
     static bool Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two);
     /**
      * @brief assign this object with attributes.
@@ -95,4 +96,5 @@ public:
         return m_flags & TYPE_SEPCIAL;
     }
 };
+#endif
 #endif // SFTPATTRIBUTE_H

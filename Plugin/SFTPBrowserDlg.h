@@ -26,6 +26,8 @@
 #ifndef SFTPBROWSERDLG_H
 #define SFTPBROWSERDLG_H
 
+#if USE_SFTP
+
 #include "sftp_ui.h"
 #include "cl_sftp.h"
 #include "bitmap_loader.h"
@@ -71,4 +73,6 @@ protected:
     virtual void OnRefresh(wxCommandEvent& event);
     virtual void OnRefreshUI(wxUpdateUIEvent& event);
 };
+#endif // USE_SFTP
+
 #endif // SFTPBROWSERDLG_H

@@ -26,6 +26,7 @@
 #ifndef SSHACCOUNTINFO_H
 #define SSHACCOUNTINFO_H
 
+#if USE_SFTP
 #include "cl_config.h" // Base class: clConfigItem
 #include <list>
 #include "codelite_exports.h"
@@ -81,5 +82,5 @@ public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 };
-
+#endif // USE_SFTP
 #endif // SSHACCOUNTINFO_H

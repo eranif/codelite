@@ -26,6 +26,8 @@
 #ifndef CLSSH_H
 #define CLSSH_H
 
+#if USE_SFTP
+
 #include <wx/string.h>
 #include <errno.h>
 #include "cl_exception.h"
@@ -44,10 +46,10 @@ class WXDLLIMPEXP_CL clSSH
     int          m_port;
     SSHSession_t m_session;
     bool         m_connected;
-    
+
 public:
     typedef wxSharedPtr<clSSH> Ptr_t;
-    
+
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
     clSSH();
@@ -77,36 +79,36 @@ public:
      * @throw clException incase something really bad happened
      */
     bool LoginPassword(bool throwExc = true) throw (clException);
-    
+
     /**
      * @brief login using public key
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
     bool LoginPublicKey(bool throwExc = true) throw (clException);
-    
+
     /**
      * @brief login using interactive-keyboard method
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
     bool LoginInteractiveKBD(bool throwExc = true) throw (clException);
-    
+
     /**
      * @brief try to login using all the methods we support (interactive-kbd, user/pass and public key)
      */
     void Login() throw (clException);
-    
+
     /**
      * @brief close the SSH session
      * IMPORTANT: this will invalidate all other channels (like: scp)
      */
     void Close();
-    
+
     SSHSession_t GetSession() {
         return m_session;
     }
-    
+
     void SetPassword(const wxString& password) {
         this->m_password = password;
     }
@@ -133,5 +135,5 @@ public:
         return m_username;
     }
 };
-
+#endif // USE_SFTP
 #endif // CLSSH_H

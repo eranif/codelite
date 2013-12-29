@@ -26,6 +26,8 @@
 #ifndef CLSCP_H
 #define CLSCP_H
 
+#if USE_SFTP
+
 #include "cl_ssh.h"
 #include "cl_exception.h"
 #include <wx/filename.h>
@@ -87,7 +89,7 @@ public:
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
     void Write(const wxString &fileContent, const wxString &remotePath) throw (clException);
-    
+
     /**
      * @brief read remote file and return its content
      * @return the file content.
@@ -101,25 +103,25 @@ public:
      * @throw clException incase an error occured
      */
     SFTPAttribute::List_t List(const wxString &folder, size_t flags, const wxString &filter = "") throw (clException);
-    
+
     /**
      * @brief create a directory
      * @param dirname
      */
     void CreateDir(const wxString &dirname) throw (clException);
-    
+
     /**
      * @brief Remove a directoy.
      * @param dirname
      */
     void RemoveDir(const wxString &dirname) throw (clException);
-    
+
     /**
      * @brief Unlink (delete) a file.
      * @param dirname
      */
     void UnlinkFile(const wxString &path) throw (clException);
-    
+
     /**
      * @brief Rename or move a file or directory
      * @param oldpath
@@ -131,7 +133,7 @@ public:
      * @return
      */
     SFTPAttribute::List_t CdUp(size_t flags, const wxString &filter) throw (clException);
-    
+
     /**
      * @brief stat the path
      */
@@ -144,4 +146,5 @@ public:
     }
 };
 
+#endif // USE_SFTP
 #endif // CLSCP_H

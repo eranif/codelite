@@ -1,31 +1,31 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-##
-#######################################################################################################################################################################
-##                                                                                                                                                                    #
-## codelite IDE cmake file                                                                                                                                            #
-## Typical usage will be (build in release mode):                                                                                                                     #
-##                                                                                                                                                                    #
-## > mkdir build                                                                                                                                                      #
-## > cd build                                                                                                                                                         #
-## > cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..                                                                                                          #
-## > make -jN                                                                                                                                                         #
-## > sudo make install                                                                                                                                                #
-##                                                                                                                                                                    #
-## Optional command line arguments:                                                                                                                                   #
-##                                                                                                                                                                    #
-##      -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull // Build release, debug + optimisation or debug without optimisation (for others see the Cmake docs)               #
-##      -DPREFIX="<some-prefix>"                   // Installation prefix, default is set to /usr                                                                     #
-##      -DENABLE_CLANG=1|0                         // Build codelite with clang code completion support?, default is 1 (with clang)                                   #
-##      -DWITH_WXC=1|0                             // Build wxCrafter (sources are not part of codelite distribution) default is 0                                    #
-##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0                 #
-##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                                #
-##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1                     #
-##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                                     #
-##      -DGTK_USE_NATIVEBOOK=1|0                   // Under GTK, use wxNotebook instead of wxAuiNotebook. Default is set to 0                                         #
-##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/         #
-##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                        #
-#######################################################################################################################################################################
 
+#################################################################################################################################################################
+##                                                                                                                                                              #
+## codelite IDE cmake file                                                                                                                                      #
+## Typical usage will be (build in release mode):                                                                                                               #
+##                                                                                                                                                              #
+## > mkdir build                                                                                                                                                #
+## > cd build                                                                                                                                                   #
+## > cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..                                                                                                    #
+## > make -jN                                                                                                                                                   #
+## > sudo make install                                                                                                                                          #
+##                                                                                                                                                              #
+## Optional command line arguments:                                                                                                                             #
+##                                                                                                                                                              #
+##      -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull // Build release, debug + optimisation or debug without optimisation (for others see the Cmake docs)         #
+##      -DPREFIX="<some-prefix>"                   // Installation prefix, default is set to /usr                                                               #
+##      -DENABLE_CLANG=1|0                         // Build codelite with clang code completion support?, default is 1 (with clang)                             #
+##      -DWITH_WXC=1|0                             // Build wxCrafter (sources are not part of codelite distribution) default is 0                              #
+##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0           #
+##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                          #
+##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1               #
+##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                               #
+##      -DGTK_USE_NATIVEBOOK=1|0                   // Under GTK, use wxNotebook instead of wxAuiNotebook. Default is set to 0                                   #
+##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/   #
+##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                  #
+##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
+#################################################################################################################################################################
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/") No, this breaks finding gtk2, so set this locally
 
@@ -45,6 +45,7 @@ set( USE_CLANG 1 )
 set( IS_FREEBSD 0 )
 set( BUILD_WXC 0 )
 set( CL_COPY_WX_LIBS 0 )
+set( WITH_SFTP 1 )
 
 if ( UNIX )
     execute_process(COMMAND pwd OUTPUT_VARIABLE BUILD_DIRECTORY OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -133,7 +134,7 @@ if (UNIX AND NOT APPLE )
         endif (UNIX AND NOT APPLE )
         message(FATAL_ERROR "-- Could not find libssh")
     endif( LIBSSH_NOT_FOUND_POS GREATER -1 )
-    
+
 else ( UNIX AND NOT APPLE )
     ## OSX
     set( LIBSSH_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/libssh/include)
@@ -148,6 +149,12 @@ if(ENABLE_CLANG MATCHES 0)
   set( USE_CLANG 0 )
 endif (ENABLE_CLANG MATCHES 0)
 unset(ENABLE_CLANG CACHE)
+
+## Enable SFTP support?
+if(ENABLE_SFTP MATCHES 0)
+  set( WITH_SFTP 0 )
+endif (ENABLE_SFTP MATCHES 0)
+unset(ENABLE_SFTP CACHE)
 
 if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)
@@ -192,15 +199,15 @@ unset(GTK_USE_NATIVEBOOK CACHE)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     message("-- Building in ${CMAKE_BUILD_TYPE} mode")
-    set( DEBUG_BUILD 1 ) 
+    set( DEBUG_BUILD 1 )
     set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_dbg.h")
     set( CL_PCH_TARGET "precompiled_header_dbg.h.gch")
-    
+
     ## Set the libraries outout directory
     set( CL_BIN_DIR bin)
     set( CL_LIB_DIR lib)
     add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=debug clean )
-    
+
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/${CL_LIB_DIR}" )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/${CL_BIN_DIR}" )
     set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/${CL_LIB_DIR}" )
@@ -218,14 +225,14 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     message("-- Adding -DNDEBUG to definitions")
         add_definitions(-DNDEBUG)
     endif()
-    
+
 else ()
     message("-- Building in Release mode")
-    set ( DEBUG_BUILD 0 ) 
+    set ( DEBUG_BUILD 0 )
     set( CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h")
     set( CL_PCH_TARGET "precompiled_header_release.h.gch")
     add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=release clean )
-    
+
     ## Set the libraries outout directory
     set( CL_BIN_DIR bin)
     set( CL_LIB_DIR lib)
@@ -242,7 +249,7 @@ else ()
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
     endif(CMAKE_COMPILER_IS_GNUCXX)
-    
+
     ## In release, add NDEBUG unless explicitly told not to
     if (NOT PREVENT_WX_ASSERTS MATCHES 0)
     message("-- Adding -DNDEBUG to definitions")
@@ -265,12 +272,12 @@ if ( UNIX AND NOT APPLE )
     execute_process(COMMAND /bin/sh -c "lsb_release -a|grep -i Codename | cut -d: -f2"    OUTPUT_VARIABLE OS_CODENAME OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
     execute_process(COMMAND /bin/sh -c "lsb_release -a|grep -i Distributor | cut -d: -f2" OUTPUT_VARIABLE OS_DISTRO OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
     execute_process(COMMAND /bin/sh -c "uname -m" OUTPUT_VARIABLE OS_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
-    
+
     ## replace any tab/space with nothing
     string(REPLACE " " "" DISTRO_CODENAME "${OS_DISTRO}-${OS_CODENAME}-${OS_ARCH}")
     string(REPLACE "\t" "" DISTRO_CODENAME "${DISTRO_CODENAME}")
     string(TOLOWER ${DISTRO_CODENAME} DISTRO_CODENAME)
-    
+
     set(CPACK_SYSTEM_NAME "${DISTRO_CODENAME}")
     message("-- CPACK_SYSTEM_NAME ${CPACK_SYSTEM_NAME}")
 endif ( UNIX AND NOT APPLE )
@@ -295,7 +302,7 @@ if ( MAKE_DEB )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
         set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
     endif ()
-    
+
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "codelite")
     set(CPACK_PACKAGE_VERSION             "5.3")
@@ -336,6 +343,22 @@ message( "-- wx-config   is set to => " ${WX_TOOL} )
 else()
 message( "-- *** NOTICE ***: clang support is disabled" )
 endif(USE_CLANG)
+
+############################################
+## SFTP support
+############################################
+if (WITH_SFTP)
+
+    ## Default is set to 1
+    add_definitions(-DUSE_SFTP=1)
+    message("-- USE_SFTP is set to 1")
+
+else(WITH_SFTP)
+    add_definitions(-DUSE_SFTP=0)
+    message("-- USE_SFTP is set to 0")
+    message( "-- *** NOTICE ***: SFTP support is disabled " )
+
+endif(WITH_SFTP)
 
 if ( APPLE )
     execute_process(COMMAND mkdir -p pack)
@@ -383,11 +406,11 @@ if ( NOT NO_CPP_PLUGINS )
     add_subdirectory(cppchecker)
     add_subdirectory(cscope)
     add_subdirectory(wxformbuilder)
-    
+
     if ( BUILD_WXC )
         add_subdirectory(wxcrafter)
     endif( BUILD_WXC )
-    
+
     if ( APPLE )
         message("-- Adding MacBundler...")
         add_subdirectory(MacBundler)
@@ -403,7 +426,10 @@ add_subdirectory(SnipWiz)
 add_subdirectory(Subversion2)
 add_subdirectory(ZoomNavigator)
 add_subdirectory(git)
-add_subdirectory(SFTP)
+
+if (WITH_SFTP)
+    add_subdirectory(SFTP)
+endif(WITH_SFTP)
 
 ## Executables
 add_subdirectory(LiteEditor)

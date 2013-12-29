@@ -1,4 +1,5 @@
 #include "ssh_account_info.h"
+#if USE_SFTP
 #include "xor_string.h"
 
 SSHAccountInfo::SSHAccountInfo()
@@ -15,7 +16,7 @@ SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
 {
     if ( &other == this )
         return *this;
-        
+
     m_accountName = other.m_accountName;
     m_username    = other.m_username;
     m_password    = other.m_password;
@@ -42,8 +43,9 @@ JSONElement SSHAccountInfo::ToJSON() const
     element.addProperty("m_username", m_username);
     element.addProperty("m_port", m_port);
     element.addProperty("m_host", m_host);
-    
+
     XORString x(m_password);
     element.addProperty("m_password", x.Encrypt());
     return element;
 }
+#endif // USE_SFTP

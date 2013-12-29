@@ -1,4 +1,6 @@
 #include "SSHAccountManagerDlg.h"
+#if USE_SFTP
+
 #include "AddSSHAcountDlg.h"
 #include "ssh_account_info.h"
 #include "sftp_settings.h"
@@ -45,11 +47,11 @@ void SSHAccountManagerDlg::OnDeleteAccount(wxCommandEvent& event)
 {
     wxDataViewItemArray sels;
     m_dvListCtrlAccounts->GetSelections( sels );
-    
+
     if ( ::wxMessageBox(_("Are you sure you want to delete the selected accounts?"), "SFTP", wxYES_NO|wxCENTER|wxCANCEL|wxICON_QUESTION|wxNO_DEFAULT) != wxYES ) {
         return;
     }
-    
+
     for(size_t i=0; i<sels.GetCount(); ++i) {
         wxDataViewItem item = sels.Item(i);
         m_dvListCtrlAccounts->DeleteItem( m_dvListCtrlAccounts->ItemToRow( item ) );
@@ -94,3 +96,4 @@ void SSHAccountManagerDlg::OnDeleteAccountUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_dvListCtrlAccounts->GetSelectedItemsCount() );
 }
+#endif // USE_SFTP

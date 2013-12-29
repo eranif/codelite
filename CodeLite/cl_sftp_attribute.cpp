@@ -1,3 +1,5 @@
+#if USE_SFTP
+
 #include "cl_sftp_attribute.h"
 #include <libssh/sftp.h>
 
@@ -34,11 +36,11 @@ void SFTPAttribute::DoConstruct()
 {
     if ( !m_attributes )
         return;
-        
+
     m_name = m_attributes->name;
     m_size = m_attributes->size;
     m_flags = 0;
-    
+
     switch ( m_attributes->type ) {
     case SSH_FILEXFER_TYPE_DIRECTORY:
         m_flags |= TYPE_FOLDER;
@@ -50,11 +52,11 @@ void SFTPAttribute::DoConstruct()
     case SSH_FILEXFER_TYPE_SPECIAL:
         m_flags |= TYPE_SEPCIAL;
         break;
-        
+
     case SSH_FILEXFER_TYPE_UNKNOWN:
         m_flags |= TYPE_UNKNOWN;
         break;
-        
+
     case SSH_FILEXFER_TYPE_SYMLINK:
         m_flags |= TYPE_SYMBLINK;
         break;
@@ -80,11 +82,14 @@ bool SFTPAttribute::Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two)
 {
     if ( one->IsFolder() && !two->IsFolder() ) {
         return true;
-        
+
     } else if ( !one->IsFolder() && two->IsFolder() ) {
         return false;
-        
+
     } else {
         return one->GetName() < two->GetName();
     }
 }
+
+#endif // USE_SFTP
+

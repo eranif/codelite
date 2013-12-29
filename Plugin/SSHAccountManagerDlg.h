@@ -25,7 +25,7 @@
 
 #ifndef SSHACCOUNTMANAGERDLG_H
 #define SSHACCOUNTMANAGERDLG_H
-
+#if USE_SFTP
 #include "sftp_ui.h"
 #include "AddSSHAcountDlg.h"
 
@@ -47,4 +47,5 @@ protected:
     virtual void OnDeleteAccount(wxCommandEvent& event);
     virtual void OnEditAccount(wxDataViewEvent& event);
 };
+#endif // USE_SFTP
 #endif // SSHACCOUNTMANAGERDLG_H

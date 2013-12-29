@@ -1,3 +1,5 @@
+#if USE_SFTP
+
 #include <wx/string.h>
 #include <wx/translation.h>
 #include "cl_ssh.h"
@@ -231,3 +233,4 @@ void clSSH::Login() throw (clException)
         }
     }
 }
+#endif // USE_SFTP

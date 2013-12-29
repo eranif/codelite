@@ -26,6 +26,8 @@
 #ifndef ADDSSHACOUNTDLG_H
 #define ADDSSHACOUNTDLG_H
 
+#if USE_SFTP
+
 #include "sftp_ui.h"
 #include "ssh_account_info.h"
 
@@ -44,4 +46,5 @@ protected:
     virtual void OnTestConnection(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
+#endif // USE_SFTP
 #endif // ADDSSHACOUNTDLG_H

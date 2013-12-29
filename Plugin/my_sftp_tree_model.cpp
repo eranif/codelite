@@ -1,4 +1,5 @@
 #include "my_sftp_tree_model.h"
+#if USE_SFTP
 
 MySFTPTreeModel::MySFTPTreeModel()
 {
@@ -17,3 +18,5 @@ wxString MySFTPTreeModel::GetColumnType(unsigned int col) const
     return SFTPTreeModel::GetColumnType(col);
 #endif
 }
+
+#endif // USE_SFTP

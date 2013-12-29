@@ -26,6 +26,7 @@
 #ifndef MYSFTPTREEMODEL_H
 #define MYSFTPTREEMODEL_H
 
+#if USE_SFTP
 #include "sftptreemodel.h" // Base class: SFTPTreeModel
 
 class MySFTPTreeModel : public SFTPTreeModel
@@ -38,5 +39,5 @@ public:
 
 
 };
-
+#endif // USE_SFTP
 #endif // MYSFTPTREEMODEL_H

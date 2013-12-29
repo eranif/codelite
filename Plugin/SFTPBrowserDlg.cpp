@@ -1,3 +1,5 @@
+#if USE_SFTP
+
 #include "SFTPBrowserDlg.h"
 #include "sftp_settings.h"
 #include "ssh_account_info.h"
@@ -144,7 +146,7 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
             attributes = m_sftp->CdUp( m_flags, m_filter );
             m_textCtrlRemoteFolder->ChangeValue( m_sftp->GetCurrentFolder() );
             folder = m_sftp->GetCurrentFolder();
-            
+
         } else {
             folder = path;
             attributes = m_sftp->List( folder, m_flags, m_filter );
@@ -356,36 +358,37 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 {
     SSHAccountManagerDlg dlg(this);
     if ( dlg.ShowModal() == wxID_OK ) {
-        
+
         SFTPSettings settings;
         SFTPSettings::Load( settings );
-        
+
         settings.SetAccounts( dlg.GetAccounts() );
         SFTPSettings::Save( settings );
-        
+
         // Update the selections at the top
         wxString curselection = m_choiceAccount->GetStringSelection();
-        
+
         m_choiceAccount->Clear();
         const SSHAccountInfo::List_t& accounts = settings.GetAccounts();
         if ( accounts.empty() ) {
             DoCloseSession();
             return;
-            
+
         } else {
             SSHAccountInfo::List_t::const_iterator iter = accounts.begin();
             for(; iter != accounts.end(); ++iter ) {
                 m_choiceAccount->Append( iter->GetAccountName() );
             }
-            
+
             int where = m_choiceAccount->FindString(curselection);
             if ( where == wxNOT_FOUND ) {
                 // Our previous session is no longer available, close the session
-                DoCloseSession(); 
+                DoCloseSession();
                 where = 0;
             }
-        
+
             m_choiceAccount->SetSelection(where);
         }
     }
 }
+#endif // USE_SFTP

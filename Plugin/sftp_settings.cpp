@@ -1,4 +1,5 @@
 #include "sftp_settings.h"
+#if USE_SFTP
 
 SFTPSettings::SFTPSettings()
     : clConfigItem("sftp-settings")
@@ -26,8 +27,8 @@ JSONElement SFTPSettings::ToJSON() const
     JSONElement element = JSONElement::createObject(GetName());
     JSONElement arrAccounts = JSONElement::createArray("accounts");
     element.append(arrAccounts);
-    
-    SSHAccountInfo::List_t::const_iterator iter = m_accounts.begin(); 
+
+    SSHAccountInfo::List_t::const_iterator iter = m_accounts.begin();
     for(; iter != m_accounts.end(); ++iter ) {
         arrAccounts.append( iter->ToJSON() );
     }
@@ -48,7 +49,7 @@ void SFTPSettings::Save(const SFTPSettings& settings)
 
 bool SFTPSettings::GetAccount(const wxString& name, SSHAccountInfo &account) const
 {
-    SSHAccountInfo::List_t::const_iterator iter = m_accounts.begin(); 
+    SSHAccountInfo::List_t::const_iterator iter = m_accounts.begin();
     for(; iter != m_accounts.end(); ++iter ) {
         if ( name == iter->GetAccountName() ) {
             account = (*iter);
@@ -57,3 +58,4 @@ bool SFTPSettings::GetAccount(const wxString& name, SSHAccountInfo &account) con
     }
     return false;
 }
+#endif // USE_SFTP

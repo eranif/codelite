@@ -25,6 +25,7 @@
 
 #ifndef SFTPSETTINGS_H
 #define SFTPSETTINGS_H
+#if USE_SFTP
 
 #include "cl_config.h" // Base class: clConfigItem
 #include "ssh_account_info.h"
@@ -43,14 +44,14 @@ public:
     const SSHAccountInfo::List_t& GetAccounts() const {
         return m_accounts;
     }
-    
+
     bool GetAccount(const wxString &name, SSHAccountInfo &account) const;
     static void Load(SFTPSettings& settings);
     static void Save(const SFTPSettings& settings);
-    
+
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 };
-
+#endif // USE_SFTP
 #endif // SFTPSETTINGS_H

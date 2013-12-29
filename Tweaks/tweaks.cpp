@@ -1,5 +1,6 @@
 #include "tweaks.h"
 #include <wx/xrc/xmlres.h>
+#include <wx/menu.h>
 #include "event_notifier.h"
 #include "TweaksSettingsDlg.h"
 #include "editor_config.h"

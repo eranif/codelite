@@ -7660,15 +7660,15 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Label:",
-											"m_value":	"git gettings"
+											"m_value":	"git settings"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"git settings"
 										}, {
 											"type":	"string",
 											"m_label":	"Help String:",
-											"m_value":	"git gettings"
+											"m_value":	"git settings"
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",

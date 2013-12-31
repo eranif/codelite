@@ -592,7 +592,7 @@ public:
                 if (cfg["MONOLITHIC"] == "0")
                     if (cfg["USE_GUI"] == "1")
                         po["__WXLIB_ADV_p"] = addLib(po["LIB_BASENAME_MSW"] + "_adv");
-            } else if (lib == "rich") {
+            } else if (lib == "rich" || lib == "richtext") {
                 if (cfg["MONOLITHIC"] == "0")
                     if (cfg["USE_GUI"] == "1")
                         po["__WXLIB_RICH_p"] = addLib(po["LIB_BASENAME_MSW"] + "_richtext");
@@ -641,6 +641,30 @@ public:
                         }
                     }
                 }
+            } else if (lib == "webview") {
+                if (cfg["MONOLITHIC"] == "0")
+                    if (cfg["USE_GUI"] == "1")
+                        if (cfg["USE_WEBVIEW"] == "1") {
+                            po["__WXLIB_WEBVIEW_p"] = addLib(po["LIB_BASENAME_MSW"] + "_webview");
+                        }
+            } else if (lib == "stc") {
+                if (cfg["MONOLITHIC"] == "0")
+                    if (cfg["USE_GUI"] == "1")
+                        if (cfg["USE_STC"] == "1") {
+                            po["__WXLIB_STC_p"] = addLib(po["LIB_BASENAME_MSW"] + "_stc");
+                        }
+            } else if (lib == "propgrid") {
+                if (cfg["MONOLITHIC"] == "0")
+                    if (cfg["USE_GUI"] == "1")
+                        if (cfg["USE_PROPGRID"] == "1") {
+                            po["__WXLIB_PROPGRID_p"] = addLib(po["LIB_BASENAME_MSW"] + "_propgrid");
+                        }
+            } else if (lib == "ribbon") {
+                if (cfg["MONOLITHIC"] == "0")
+                    if (cfg["USE_GUI"] == "1")
+                        if (cfg["USE_RIBBON"] == "1") {
+                            po["__WXLIB_RIBBON_p"] = addLib(po["LIB_BASENAME_MSW"] + "_ribbon");
+                        }
             } else if (lib == "opengl" || lib == "gl") {
                 if (cfg["USE_OPENGL"] == "1")
                     if (cfg["USE_GUI"] == "1")
@@ -660,6 +684,10 @@ public:
 
 
         /// External libs (to wxWidgets)
+
+        if (cfg["USE_GUI"] == "1")
+            if (sho["wxUSE_STC"])
+                po["__LIB_WXSCINTILLA_p"] = addLib("wxscintilla" + po["WXDEBUGFLAG"]);
 
         if (cfg["USE_GUI"] == "1")
             if (sho["wxUSE_LIBTIFF"])
@@ -767,11 +795,14 @@ public:
     std::string getAllLibs(Options& po) {
         std::string libs;
         libs += po["__WXLIB_ARGS_p"] + po["__WXLIB_OPENGL_p"] + po["__WXLIB_MEDIA_p"];
+        libs += po["__WXLIB_STC_p"] + po["__WXLIB_WEBVIEW_p"];
+        libs += po["__WXLIB_PROPGRID_p"] + po["__WXLIB_RIBBON_p"];
+        libs += po["__WXLIB_RICH_p"];
         libs += po["__WXLIB_DBGRID_p"] + po["__WXLIB_ODBC_p"] + po["__WXLIB_XRC_p"];
         libs += po["__WXLIB_QA_p"] + po["__WXLIB_AUI_p"] + po["__WXLIB_HTML_p"] + po["__WXLIB_ADV_p"];
         libs += po["__WXLIB_CORE_p"] + po["__WXLIB_XML_p"] + po["__WXLIB_NET_p"];
-        libs += po["__WXLIB_RICH_p"];
         libs += po["__WXLIB_BASE_p"] + po["__WXLIB_MONO_p"];
+        libs += po["__LIB_WXSCINTILLA_p"];
         libs += po["__LIB_TIFF_p"] + po["__LIB_JPEG_p"] + po["__LIB_PNG_p"];
         libs += po["__LIB_ZLIB_p"] + po["__LIB_REGEX_p"] + po["__LIB_EXPAT_p"];
         libs += po["EXTRALIBS_FOR_BASE"] + po["__UNICOWS_LIB_p"] + po["__GDIPLUS_LIB_p"];

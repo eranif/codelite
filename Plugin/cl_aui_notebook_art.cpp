@@ -61,12 +61,6 @@ void clAuiGlossyTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& re
     // the pen colour
     bgColour = DrawingUtils::GetAUIPaneBGColour();
     
-    // Allow the plugins to override the border colour
-    // clColourEvent borderColourEvent( wxEVT_GET_TAB_BORDER_COLOUR );
-    // if ( EventNotifier::Get()->ProcessEvent( borderColourEvent ) ) {
-    //     penColour = borderColourEvent.GetBorderColour();
-    // }
-    
     gdc.SetPen(bgColour);
     gdc.SetBrush( DrawingUtils::GetStippleBrush() );
     gdc.DrawRectangle(rect);

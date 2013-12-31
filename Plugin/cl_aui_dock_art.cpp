@@ -112,8 +112,18 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     memDc.SetPen( penColour );
     memDc.SetBrush( bgColour );
     memDc.DrawRectangle( tmpRect );
-    memDc.SetPen( bgColour );
-    memDc.DrawLine( tmpRect.GetBottomLeft(), tmpRect.GetBottomRight() );
+    
+    wxPoint bottomLeft, bottomRight;
+    bottomLeft = tmpRect.GetBottomLeft();
+    bottomRight = tmpRect.GetBottomRight();
+    bottomRight.x += 1;
+    memDc.SetPen( wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE) );
+    memDc.DrawLine(bottomLeft, bottomRight);
+    
+    memDc.SetPen( penColour );
+    bottomLeft.y--;
+    bottomRight.y--;
+    memDc.DrawLine(bottomLeft, bottomRight);
     
     int caption_offset = 0;
     if ( pane.icon.IsOk() ) {

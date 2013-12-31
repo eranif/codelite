@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="codelite_utils" Database="./codelite_utils.tags">
-  <Project Name="build_all" Path="build_all.project" Active="No"/>
+  <Project Name="build_all" Path="build_all.project" Active="Yes"/>
   <Project Name="codelite_launcher" Path="../codelite_launcher/codelite_launcher.project" Active="No"/>
   <Project Name="autorev" Path="../AutoRevision/autorev/autorev.project" Active="No"/>
   <Project Name="makedir" Path="../TestDir/makedir.project" Active="No"/>
@@ -10,7 +10,7 @@
   <Project Name="wx-config" Path="../sdk/wxconfig/wx-config.project" Active="No"/>
   <Project Name="codelite_clang" Path="../codelite_clang/codelite_clang.project" Active="No"/>
   <Project Name="codelitegcc" Path="../codelitegcc/codelitegcc.project" Active="No"/>
-  <Project Name="codelite_make" Path="../codelite_make/codelite_make.project" Active="Yes"/>
+  <Project Name="codelite_make" Path="../codelite_make/codelite_make.project" Active="No"/>
   <Project Name="codelite_terminal" Path="../codelite_terminal/codelite_terminal.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">

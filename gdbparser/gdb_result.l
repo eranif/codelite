@@ -147,7 +147,7 @@ asm_insns                                                  {RETURN_VAL(GDB_ASM_I
 <string_state>"\\\\\\"["]                                  { gs_string += "\\\""; }
 <string_state>"\\\\\\\\"                                   { gs_string += "\\"; }
 <string_state>"\\"["]{1}                                   { gs_string += "\\\"";}
-
+<string_state>"\\\\"                                         { gs_string += "\\";}
 <string_state>["]                                          {
 	gs_string += "\"";
 	gdb_result_string = gs_string;

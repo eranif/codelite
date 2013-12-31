@@ -146,7 +146,7 @@ public:
     virtual void Poke();
     virtual bool GetAsciiViewerContent(const wxString &dbgCommand, const wxString &expression);
     virtual bool ResolveType(const wxString &expression, int userReason);
-    virtual bool WatchMemory(const wxString &address, size_t count);
+    virtual bool WatchMemory(const wxString &address, size_t count, size_t columns);
     virtual bool SetMemory(const wxString &address, size_t count, const wxString &hex_value);
     virtual void SetDebuggerInformation(const DebuggerInformation &info);
     virtual void BreakList();

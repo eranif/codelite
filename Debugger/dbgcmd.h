@@ -365,11 +365,18 @@ class DbgCmdWatchMemory : public DbgCmdHandler
 {
     wxString m_address;
     size_t   m_count;
-
+    size_t   m_columns;
 public:
-    DbgCmdWatchMemory(IDebuggerObserver *observer, const wxString &address, size_t count) : DbgCmdHandler(observer), m_address(address), m_count(count) {}
+    DbgCmdWatchMemory(  IDebuggerObserver *observer, 
+                        const wxString &address, 
+                        size_t count,
+                        size_t columns) 
+        : DbgCmdHandler(observer)
+        , m_address(address)
+        , m_count(count) 
+        , m_columns(columns)
+    {}
     virtual ~DbgCmdWatchMemory() {}
-
     virtual bool ProcessOutput(const wxString & line);
 };
 

@@ -2068,7 +2068,7 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
             if ( memView->GetExpression().IsEmpty() == false ) {
 
                 wxString output;
-                dbgr->WatchMemory ( memView->GetExpression(), memView->GetSize() );
+                dbgr->WatchMemory ( memView->GetExpression(), memView->GetSize(), memView->GetColumns() );
             }
         }
     }

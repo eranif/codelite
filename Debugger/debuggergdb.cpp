@@ -909,10 +909,10 @@ bool DbgGdb::ResolveType( const wxString& expression, int userReason )
     return WriteCommand( cmd, new DbgCmdResolveTypeHandler( expression, this, userReason ) );
 }
 
-bool DbgGdb::WatchMemory( const wxString& address, size_t count )
+bool DbgGdb::WatchMemory( const wxString& address, size_t count, size_t columns )
 {
     // make the line per WORD size
-    int divider ( sizeof( unsigned long ) );
+    int divider ( columns );
     int factor( ( int )( count/divider ) );
     if ( count % divider != 0 ) {
         factor = ( int )( count / divider ) + 1;
@@ -922,7 +922,7 @@ bool DbgGdb::WatchMemory( const wxString& address, size_t count )
     // and the 'divider' is the columns
     wxString cmd;
     cmd << wxT( "-data-read-memory \"" ) << address << wxT( "\" x 1 " ) << factor << wxT( " " ) << divider << wxT( " ?" );
-    return WriteCommand( cmd, new DbgCmdWatchMemory( m_observer, address, count ) );
+    return WriteCommand( cmd, new DbgCmdWatchMemory( m_observer, address, count, columns ) );
 }
 
 bool DbgGdb::SetMemory( const wxString& address, size_t count, const wxString& hex_value )

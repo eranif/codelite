@@ -1080,7 +1080,7 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 {
     DebuggerEventData e;
-    int divider (sizeof(unsigned long));
+    int divider ( m_columns );
     int factor((int)(m_count/divider));
 
     if (m_count % divider != 0) {

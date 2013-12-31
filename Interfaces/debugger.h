@@ -794,7 +794,7 @@ public:
      * \param count address range
      * \return true on success, false otherwise
      */
-    virtual bool WatchMemory(const wxString &address, size_t count) = 0;
+    virtual bool WatchMemory(const wxString &address, size_t count, size_t columns) = 0;
 
     /**
      * \brief set memory at given address and of size count. the value to set must be a space delimited

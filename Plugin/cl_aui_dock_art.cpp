@@ -117,7 +117,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     bottomLeft = tmpRect.GetBottomLeft();
     bottomRight = tmpRect.GetBottomRight();
     bottomRight.x += 1;
-    memDc.SetPen( wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE) );
+    memDc.SetPen( bgColour );
     memDc.DrawLine(bottomLeft, bottomRight);
     
     memDc.SetPen( penColour );

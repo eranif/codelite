@@ -244,7 +244,7 @@
 									"border":	5,
 									"gbSpan":	",",
 									"gbPosition":	",",
-									"m_styles":	[],
+									"m_styles":	["wxTE_PROCESS_ENTER"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",

@@ -37,7 +37,7 @@ MemoryViewBase::MemoryViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     flexGridSizer6->Add(m_staticText2, 0, wxLEFT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlExpression = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_textCtrlExpression = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
     m_textCtrlExpression->SetToolTip(_("Address or pointer to watch"));
     
     flexGridSizer6->Add(m_textCtrlExpression, 1, wxALL|wxEXPAND, 5);

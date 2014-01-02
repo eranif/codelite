@@ -36,11 +36,11 @@ void CompilerAdvancePage::Save(CompilerPtr cmp)
 void CompilerAdvancePage::OnEditIncludePaths(wxCommandEvent& event)
 {
     wxString curIncludePath = m_textCtrlGlobalIncludePath->GetValue();
-    curIncludePath = wxJoin( ::wxStringTokenize(curIncludePath, ";", wxTOKEN_STRTOK), '\n' );
+    curIncludePath = wxJoin( ::wxStringTokenize(curIncludePath, ";", wxTOKEN_STRTOK), '\n', '\0' );
     wxString newIncludePath = ::clGetTextFromUser(curIncludePath, EventNotifier::Get()->TopFrame());
     newIncludePath.Trim().Trim(false);
     if ( !newIncludePath.IsEmpty() ) {
-        newIncludePath = wxJoin( ::wxStringTokenize(newIncludePath, "\n", wxTOKEN_STRTOK), ';' );
+        newIncludePath = wxJoin( ::wxStringTokenize(newIncludePath, "\n\r", wxTOKEN_STRTOK), ';', '\0' );
         m_textCtrlGlobalIncludePath->ChangeValue( newIncludePath );
     }
 }
@@ -48,11 +48,11 @@ void CompilerAdvancePage::OnEditIncludePaths(wxCommandEvent& event)
 void CompilerAdvancePage::OnEditLibraryPaths(wxCommandEvent& event)
 {
     wxString curLibPath = m_textCtrlGlobalLibPath->GetValue();
-    curLibPath = wxJoin( ::wxStringTokenize(curLibPath, ";", wxTOKEN_STRTOK), '\n' );
+    curLibPath = wxJoin( ::wxStringTokenize(curLibPath, ";", wxTOKEN_STRTOK), '\n', '\0' );
     wxString newLibPath = ::clGetTextFromUser(curLibPath, EventNotifier::Get()->TopFrame());
     newLibPath.Trim().Trim(false);
     if ( !newLibPath.IsEmpty() ) {
-        newLibPath = wxJoin( ::wxStringTokenize(newLibPath, "\n", wxTOKEN_STRTOK), ';' );
+        newLibPath = wxJoin( ::wxStringTokenize(newLibPath, "\n\r", wxTOKEN_STRTOK), ';', '\0' );
         m_textCtrlGlobalLibPath->ChangeValue( newLibPath );
     }
 }

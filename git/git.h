@@ -20,6 +20,7 @@
 #include <map>
 #include "overlaytool.h"
 #include "cl_command_event.h"
+#include "gitentry.h"
 
 class gitAction
 {
@@ -113,7 +114,8 @@ private:
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType ) const;
     void InitDefaults();
     void AddDefaultActions();
-    void ProcessGitActionQueue();
+    void LoadDefaultGitCommands(GitEntry& data);
+    void ProcessGitActionQueue(const wxString& commandString = "");
     void ColourFileTree(wxTreeCtrl *tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
     

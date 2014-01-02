@@ -62,6 +62,14 @@ void GitEntry::FromJSON(const JSONElement& json)
     if ( !diff.IsEmpty() ) {
         m_colourDiffFile = diff;
     }
+
+    // read the git commands
+    JSONElement arrCommands = json.namedObject("Commands");
+    for (int i=0; i < arrCommands.arraySize(); ++i) {
+        GitCommandsEntries entry;
+        entry.FromJSON( arrCommands.arrayItem(i) );
+        m_commandsMap.insert(std::make_pair(entry.GetCommandname(), entry));
+    }
 }
 
 JSONElement GitEntry::ToJSON() const
@@ -83,6 +91,14 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_gitConsoleSashPos", m_gitConsoleSashPos);
     json.addProperty("m_gitCommitDlgHSashPos", m_gitCommitDlgHSashPos);
     json.addProperty("m_gitCommitDlgVSashPos", m_gitCommitDlgVSashPos);
+    
+     // Add the git commands array
+    JSONElement arrCommands = JSONElement::createArray("Commands");
+    json.append(arrCommands);
+    GitCommandsEntriesMap_t::const_iterator iter = m_commandsMap.begin();
+    for (; iter != m_commandsMap.end(); ++iter) {
+        iter->second.ToJSON( arrCommands );
+    }
     return json;
 }
 
@@ -149,6 +165,27 @@ GitEntry::GitProperties GitEntry::ReadGitProperties(const wxString& localRepoPat
     return props;
 }
 
+GitCommandsEntries& GitEntry::GetGitCommandsEntries(const wxString& entryName)
+{
+    if (!m_commandsMap.count(entryName)) {
+        GitCommandsEntries entries(entryName);
+        m_commandsMap.insert(std::make_pair(entryName, entries));
+    }
+
+    GitCommandsEntriesMap_t::iterator iter = m_commandsMap.find(entryName);
+    wxASSERT(iter != m_commandsMap.end());
+        
+    return iter->second;
+}
+
+void GitEntry::AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName)
+{
+    if (!m_commandsMap.count(entryName)) {
+        m_commandsMap.insert(std::make_pair(entryName, entries));
+    }
+    // Possible TODO: Append any novel items to the existing vector
+}
+
 void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry::GitProperties &props)
 {
     // Read the global name/email
@@ -209,4 +246,38 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
             }
         }
     }
+}
+
+
+void GitCommandsEntries::FromJSON(const JSONElement& json)
+{
+    m_commands.clear();
+    m_commandName = json.namedObject("m_commandName").toString();
+    m_lastUsed = json.namedObject("m_lastUsed").toInt();
+    JSONElement arrCommandChoices = json.namedObject("m_commands");
+    for (int i=0; i < arrCommandChoices.arraySize(); ++i) {
+        GitLabelCommand item;
+        item.label = arrCommandChoices.arrayItem(i).namedObject("label").toString();
+        item.command = arrCommandChoices.arrayItem(i).namedObject("command").toString();
+        m_commands.push_back(item);
+    }
+}
+
+void GitCommandsEntries::ToJSON(JSONElement &arr) const
+{
+    JSONElement obj = JSONElement::createObject();
+    obj.addProperty("m_commandName", m_commandName);
+    obj.addProperty("m_lastUsed", m_lastUsed);
+
+    JSONElement commandsArr = JSONElement::createArray("m_commands");
+    obj.append(commandsArr);
+    
+    vGitLabelCommands_t::const_iterator iter = m_commands.begin();
+    for (; iter != m_commands.end(); ++iter) {
+        JSONElement e = JSONElement::createObject();
+        e.addProperty("label", iter->label);
+        e.addProperty("command", iter->command);
+        commandsArr.arrayAppend(e);
+    }
+    arr.arrayAppend( obj );
 }

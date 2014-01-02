@@ -580,14 +580,22 @@ void GitPlugin::OnPush(wxCommandEvent &e)
 /*******************************************************************************/
 void GitPlugin::OnPull(wxCommandEvent &e)
 {
-    wxUnusedVar(e);
+    wxString commandString = e.GetString(); // This might be user-specified e.g. pull --rebase
+    if (commandString.empty()) {
+        clConfig conf("git.conf");
+        GitEntry data;
+        conf.ReadItem(&data);
+        GitCommandsEntries& ce = data.GetGitCommandsEntries("git_pull");
+        commandString = ce.GetDefaultCommand();
+    }
+
     if(wxMessageBox(wxT("Save all changes and pull remote changes?"),
                     wxT("Pull remote changes"), wxYES_NO, m_topWindow) == wxYES) {
         m_mgr->SaveAll();
         gitAction ga(gitPull, wxT(""));
         m_gitActionQueue.push(ga);
         AddDefaultActions();
-        ProcessGitActionQueue();
+        ProcessGitActionQueue(commandString);
     }
 }
 /*******************************************************************************/
@@ -795,7 +803,7 @@ void GitPlugin::OnInitDone(wxCommandEvent& e)
     m_topWindow = m_mgr->GetTheApp()->GetTopWindow();
 }
 /*******************************************************************************/
-void GitPlugin::ProcessGitActionQueue()
+void GitPlugin::ProcessGitActionQueue(const wxString& commandString /*= ""*/)
 {
     if(m_gitActionQueue.size() == 0)
         return;
@@ -912,7 +920,13 @@ void GitPlugin::ProcessGitActionQueue()
     case gitPull:
         GIT_MESSAGE(wxT("Pull remote changes"));
         ShowProgress(wxT("Obtaining remote changes"), false);
-        command << wxT(" --no-pager pull --log");
+        command << " --no-pager ";
+        if (commandString.empty()) {
+            command << " pull ";
+        } else {
+            command << commandString;
+        }
+        command << " --log";
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
 
@@ -1516,6 +1530,12 @@ void GitPlugin::InitDefaults()
     if(!data.GetGITKExecutablePath().IsEmpty()) {
         m_pathGITKExecutable = data.GetGITKExecutablePath();
     }
+ 
+    if (data.GetCommandsMap().empty()) {
+        LoadDefaultGitCommands(data);
+        conf.WriteItem(&data);
+        conf.Save();
+    }
 
     wxString repoPath;
     if ( IsWorkspaceOpened() ) {
@@ -1958,4 +1978,17 @@ void GitPlugin::RevertCommit(const wxString& commitId)
     gitAction ga(gitRevertCommit, commitId);
     m_gitActionQueue.push(ga);
     ProcessGitActionQueue();
+}
+
+void GitPlugin::LoadDefaultGitCommands(GitEntry& data)
+{
+    GitCommandsEntries entries("git_pull");
+    vGitLabelCommands_t gitPullEntries;
+    GitLabelCommand entry1("git pull", "pull");
+    gitPullEntries.push_back(entry1);
+    GitLabelCommand entry2("git pull --rebase", "pull --rebase");
+    gitPullEntries.push_back(entry2);
+    
+    entries.SetCommands(gitPullEntries);
+    data.AddGitCommandsEntry(entries, "git_pull");
 }

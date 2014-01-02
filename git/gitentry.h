@@ -10,7 +10,72 @@
 
 #include <wx/colour.h>
 #include <wx/event.h>
+#include <vector>
+#include <map>
 #include "cl_config.h"
+
+struct GitLabelCommand
+{
+    GitLabelCommand() {}
+
+    GitLabelCommand(const wxString& l, const wxString& c) : label(l), command(c) {}
+
+    wxString label;     // The menu label
+    wxString command;   // The command string, without the initial 'git' or the extras like --no-pager
+};
+
+typedef std::vector<GitLabelCommand> vGitLabelCommands_t;
+class GitCommandsEntries // Holds a command-list for a particular git command e.g. 'git pull' might be that, or 'git pull --rebase'
+{
+protected:
+    vGitLabelCommands_t m_commands;
+    wxString m_commandName;
+    int m_lastUsed;
+    
+public:
+    GitCommandsEntries() {}
+    GitCommandsEntries(const wxString& commandName) : m_commandName(commandName), m_lastUsed(-1) {}
+    GitCommandsEntries(const GitCommandsEntries& gce) 
+        : m_commands(gce.m_commands)
+        , m_commandName(gce.m_commandName)
+        , m_lastUsed(gce.m_lastUsed)
+    {}
+
+    virtual ~GitCommandsEntries() {}
+    void FromJSON(const JSONElement& json);
+    void ToJSON(JSONElement& arr) const;
+    
+    const wxString& GetCommandname() const {
+        return m_commandName;
+    }
+
+    const vGitLabelCommands_t& GetCommands() const {
+        return m_commands;
+    }
+
+    void SetCommands(const vGitLabelCommands_t& commands) {
+        m_commands = commands;
+    }
+
+    const wxString GetDefaultCommand() const {
+        wxString str;
+        if (m_lastUsed >= 0 && m_lastUsed < m_commands.size()) {
+            str = m_commands.at(m_lastUsed).command;
+        }
+        return str;
+    }
+
+    int GetLastUsedCommandIndex() const {
+        return m_lastUsed;
+    }
+    
+    void SetLastUsedCommandIndex(int index) {
+        m_lastUsed =  index;
+    }
+
+};
+
+typedef std::map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
 
 extern const wxEventType wxEVT_GIT_CONFIG_CHANGED;
 class GitEntry : public clConfigItem
@@ -20,6 +85,7 @@ class GitEntry : public clConfigItem
     wxString                   m_pathGIT;
     wxString                   m_pathGITK;
     JSONElement::wxStringMap_t m_entries;
+    GitCommandsEntriesMap_t    m_commandsMap;
     size_t                     m_flags;
     int                        m_gitDiffDlgSashPos;
     int                        m_gitConsoleSashPos;
@@ -88,6 +154,9 @@ public:
     void SetEntry(const wxString& workspace, const wxString& repo) {
         this->m_entries[workspace] = repo;
     }
+    GitCommandsEntriesMap_t GetCommandsMap() const {
+        return m_commandsMap;
+    }
     void SetTrackedFileColour(const wxColour& colour) {
         this->m_colourTrackedFile = colour;
     }
@@ -117,7 +186,12 @@ public:
     int GetGitConsoleSashPos() const {
         return m_gitConsoleSashPos;
     }
+    
+    GitCommandsEntries& GetGitCommandsEntries(const wxString& entryName);
+    
+    void AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName);
+
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 };
-#endif
+ #endif

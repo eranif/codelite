@@ -13,6 +13,7 @@
 #include "lexer_configuration.h"
 #include "editor_config.h"
 #include "drawingutils.h"
+#include "cl_aui_tool_stickness.h"
 
 #define GIT_MESSAGE(...)  AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)  if ( IsVerbose() ) { AddText(wxString::Format(__VA_ARGS__)); }
@@ -128,6 +129,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddSeparator();
 
     m_auibar->AddTool(XRCID("git_pull"), wxT("Pull"), m_images.Bitmap("gitPull"), wxT("Pull remote changes"));
+    m_auibar->SetToolDropDown(XRCID("git_pull"), true);
     m_auibar->AddTool(XRCID("git_commit"), wxT("Commit"), m_images.Bitmap("gitCommitLocal"), wxT("Commit local changes"));
     m_auibar->AddTool(XRCID("git_push"), wxT("Push"), m_images.Bitmap("gitPush"), wxT("Push local changes"));
     m_auibar->AddSeparator();
@@ -151,6 +153,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_browse_commit_list"), wxT("Log"), m_images.Bitmap("gitCommitedFiles"), wxT("Browse commit history"));
     m_auibar->AddTool(XRCID("git_start_gitk"), wxT("gitk"), m_images.Bitmap("gitStart"), wxT("Start gitk"));
     m_auibar->Realize();
+    
+    Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GitConsole::OnGitPullDropdown), this, XRCID("git_pull"));
 }
 
 GitConsole::~GitConsole()
@@ -480,3 +484,66 @@ void GitConsole::OnEditorThemeChanged(wxCommandEvent& e)
     m_stcLog->Refresh();
 }
 
+struct GitCommandData : public wxObject
+{
+    GitCommandData(const wxArrayString a, const wxString n, int i) : arr(a), name(n), id(i) {}
+    wxArrayString arr;  // Holds the possible command-strings
+    wxString name;      // Holds the name of the command e.g. "git_pull"
+    int id;             // Holds the id of the command e.g. XRCID("git_pull")
+};
+
+void GitConsole::OnGitPullDropdown(wxAuiToolBarEvent& e)
+{
+  
+    if (!e.IsDropDownClicked()) {
+        e.Skip();
+        return;
+    }
+    
+    GitEntry data;
+    {
+    clConfig conf("git.conf");
+    conf.ReadItem(&data);
+    } // Force conf out of scope, else its dtor clobbers the GitConsole::OnDropDownMenuEvent Save()
+    GitCommandsEntries& ce = data.GetGitCommandsEntries("git_pull");
+    vGitLabelCommands_t entries = ce.GetCommands();
+    int lastUsed = ce.GetLastUsedCommandIndex();
+
+    wxArrayString arr;
+    wxMenu menu;
+    for (size_t n=0; n < entries.size(); ++n) {
+        wxMenuItem* item = menu.AppendRadioItem(n, entries.at(n).label);
+        item->Check(n == lastUsed);
+        arr.Add(entries.at(n).command);
+    }
+    menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
+                                                                 this, 0, arr.GetCount(), new GitCommandData(arr, "git_pull", XRCID("git_pull")));
+        
+    wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(e.GetEventObject());
+    if ( auibar ) {
+        clAuiToolStickness ts(auibar, e.GetToolId());
+        wxRect rect = auibar->GetToolRect(e.GetId());
+        wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
+        pt = ScreenToClient(pt);
+        PopupMenu(&menu, pt);
+    }
+    menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
+                                                                   this, 0, arr.GetCount(), new GitCommandData(arr, "git_pull", XRCID("git_pull")));
+}
+
+void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
+{
+    int id = event.GetId();
+    GitCommandData* userdata = static_cast<GitCommandData*>(event.GetEventUserData());
+    wxCHECK_RET(userdata->arr.GetCount() > event.GetId(), "Out-of-range ID");
+    event.SetString( userdata->arr.Item(id) );
+    event.SetId(userdata->id);
+
+    wxPostEvent(m_git, event); // We've now populated the event object with useful data, so get GitPlugin to process it
+    
+    clConfig conf("git.conf"); GitEntry data; conf.ReadItem(&data);
+    GitCommandsEntries& ce = data.GetGitCommandsEntries(userdata->name);
+    ce.SetLastUsedCommandIndex(id);
+    conf.WriteItem(&data);
+    conf.Save();
+}

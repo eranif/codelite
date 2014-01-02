@@ -44,5 +44,8 @@ protected:
     void OnConfigurationChanged(wxCommandEvent &e);
     void OnEditorThemeChanged(wxCommandEvent &e);
 
+    void OnGitPullDropdown(wxAuiToolBarEvent& e);
+    void OnDropDownMenuEvent(wxCommandEvent& e);
+
 };
 #endif // GITCONSOLE_H

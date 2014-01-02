@@ -3897,19 +3897,26 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     if (editor && editor->GetModify()) {
         title << wxT("*");
     }
-
-    //LEditor *activeEditor = GetMainBook()->GetActiveEditor();
-    if ( editor ) {
-        title << editor->GetFileName().GetFullName() << wxT(" ");
-        // by default display the full path as well
-        if (clConfig::Get().Read("ShowFullPathInFrameTitle", true)) {
-            title << wxT("[") << editor->GetFileName().GetFullPath() << wxT("] ");
-        }
-        title << wxT("- ");
+    
+    wxString pattern   = clConfig::Get().Read("FrameTitlePattern", wxString("$workspace: $fullpath CodeLite"));
+    wxString username  = ::wxGetUserId();
+    wxString workspace = WorkspaceST::Get()->GetName();
+    if ( workspace.IsEmpty() ) {
+        workspace = "<No Workspace>";
     }
-
-    title << _("CodeLite ");
-    title << clGitRevision;
+    
+    wxString fullname, fullpath;
+    // We support the following macros:
+    if ( editor ) {
+        fullname = editor->GetFileName().GetFullName() + ". ";
+        fullpath = editor->GetFileName().GetFullPath() + ". ";
+    }
+    pattern.Replace("$workspace", workspace);
+    pattern.Replace("$user", username);
+    pattern.Replace("$fullname", fullname);
+    pattern.Replace("$fullpath", fullpath);
+    
+    title << pattern;
     SetTitle(title);
 }
 

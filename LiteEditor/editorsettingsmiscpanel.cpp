@@ -102,12 +102,12 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
 
     m_singleAppInstance->SetValue(clConfig::Get().Read("SingleInstance", false));
     m_versionCheckOnStartup->SetValue( clConfig::Get().Read("CheckForNewVersion", true));
-    m_fullFilePath->SetValue( clConfig::Get().Read("ShowFullPathInFrameTitle", true) );
     m_maxItemsFindReplace->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxItemsInFindReplaceDialog", 15) ) );
     m_spinCtrlMaxOpenTabs->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxOpenedTabs", 15) ) );
     m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString( clConfig::Get().Read("LogVerbosity", FileLogger::Error) ) );
     m_checkBoxRestoreSession->SetValue( clConfig::Get().Read("RestoreLastSession", true) );
-
+    m_textCtrlPattern->ChangeValue( clConfig::Get().Read("FrameTitlePattern", wxString("$workspace: $fullpath CodeLite")) );
+    
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
     m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
@@ -139,11 +139,11 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 
     clConfig::Get().Write("SingleInstance",              m_singleAppInstance->IsChecked());
     clConfig::Get().Write("CheckForNewVersion",          m_versionCheckOnStartup->IsChecked());
-    clConfig::Get().Write("ShowFullPathInFrameTitle",    m_fullFilePath->IsChecked());
     clConfig::Get().Write("MaxItemsInFindReplaceDialog", ::wxStringToInt(m_maxItemsFindReplace->GetValue(), 15) );
     clConfig::Get().Write("MaxOpenedTabs",               ::wxStringToInt(m_spinCtrlMaxOpenTabs->GetValue(), 15) );
     clConfig::Get().Write("RestoreLastSession",          m_checkBoxRestoreSession->IsChecked());
-
+    clConfig::Get().Write("FrameTitlePattern", m_textCtrlPattern->GetValue());
+    
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
     EditorConfigST::Get()->SaveLongValue(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
 

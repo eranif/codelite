@@ -1310,7 +1310,7 @@ resources.cpp: resources.xrc
       </Completion>
     </Configuration>
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config --wxcfg=gcc_dll/mswud --debug=yes --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
+      <Compiler Options="-g;-Wall;$(shell wx-config --debug=yes --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -1375,7 +1375,7 @@ svninfo.cpp:
       </Completion>
     </Configuration>
     <Configuration Name="WinReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;;$(shell wx-config --wxcfg=gcc_dll/mswu --debug=no --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2">
+      <Compiler Options="-O2;;$(shell wx-config --debug=no --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>

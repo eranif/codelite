@@ -60,6 +60,18 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
     return PLUGIN_INTERFACE_VERSION;
 }
 
+/*******************************************************************************/
+// Helper that returns the last-used selection for those git commands with several alternative options
+wxString GetAnyDefaultCommand(const wxString& gitCommand)
+{
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    GitCommandsEntries& ce = data.GetGitCommandsEntries(gitCommand);
+    return ce.GetDefaultCommand();
+}
+/*******************************************************************************/
+
 BEGIN_EVENT_TABLE(GitPlugin, wxEvtHandler)
     EVT_TIMER(wxID_ANY, GitPlugin::OnProgressTimer)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  GitPlugin::OnProcessOutput)
@@ -582,11 +594,7 @@ void GitPlugin::OnPull(wxCommandEvent &e)
 {
     wxString commandString = e.GetString(); // This might be user-specified e.g. pull --rebase
     if (commandString.empty()) {
-        clConfig conf("git.conf");
-        GitEntry data;
-        conf.ReadItem(&data);
-        GitCommandsEntries& ce = data.GetGitCommandsEntries("git_pull");
-        commandString = ce.GetDefaultCommand();
+        commandString = GetAnyDefaultCommand("git_pull");
     }
 
     if(wxMessageBox(wxT("Save all changes and pull remote changes?"),
@@ -1531,11 +1539,9 @@ void GitPlugin::InitDefaults()
         m_pathGITKExecutable = data.GetGITKExecutablePath();
     }
  
-    if (data.GetCommandsMap().empty()) {
-        LoadDefaultGitCommands(data);
-        conf.WriteItem(&data);
-        conf.Save();
-    }
+    LoadDefaultGitCommands(data); // Always do this, in case of new entries
+    conf.WriteItem(&data);
+    conf.Save();
 
     wxString repoPath;
     if ( IsWorkspaceOpened() ) {
@@ -1980,15 +1986,43 @@ void GitPlugin::RevertCommit(const wxString& commitId)
     ProcessGitActionQueue();
 }
 
-void GitPlugin::LoadDefaultGitCommands(GitEntry& data)
+void GitPlugin::LoadDefaultGitCommands(GitEntry& data, bool overwrite/*= false*/)
 {
-    GitCommandsEntries entries("git_pull");
-    vGitLabelCommands_t gitPullEntries;
-    GitLabelCommand entry1("git pull", "pull");
-    gitPullEntries.push_back(entry1);
-    GitLabelCommand entry2("git pull --rebase", "pull --rebase");
-    gitPullEntries.push_back(entry2);
+    static const char* commands[] = {
+    //  ID_String|MenuLabel,Command;MenuLabel,Command; ...
+        "git_pull|git pull,pull;git pull --rebase,pull --rebase"
+        
+    };
+    const size_t items = sizeof(commands)/sizeof(char*);
     
-    entries.SetCommands(gitPullEntries);
-    data.AddGitCommandsEntry(entries, "git_pull");
+    for (size_t n=0; n < items; ++n) {
+        wxString item = commands[n];
+        
+        wxString name = item.BeforeFirst('|');
+        if (name.empty() || name.Len() == item.Len()) {
+            wxASSERT(name.empty() || name.Len() == item.Len());
+            continue;
+        }
+
+        if (!overwrite && !data.GetGitCommandsEntries(name).GetCommands().empty()) {
+            continue;
+        }
+        
+        GitCommandsEntries gce(name);
+        vGitLabelCommands_t commandEntries;
+        wxArrayString entries = wxStringTokenize(item.AfterFirst('|'), ";");
+
+        for (size_t entry=0; entry < entries.GetCount(); ++entry) {
+            wxString label = entries.Item(entry).BeforeFirst(',');
+            wxString command = entries.Item(entry).AfterFirst(',');
+            wxASSERT(!label.empty() && !command.empty());
+            if (!label.empty() && !command.empty()) {
+                commandEntries.push_back(GitLabelCommand(label, command));
+            }
+        }
+    
+        gce.SetCommands(commandEntries);
+        data.DeleteGitCommandsEntry(name);
+        data.AddGitCommandsEntry(gce, name);
+    }
 }

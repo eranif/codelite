@@ -114,7 +114,7 @@ private:
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType ) const;
     void InitDefaults();
     void AddDefaultActions();
-    void LoadDefaultGitCommands(GitEntry& data);
+    void LoadDefaultGitCommands(GitEntry& data, bool overwrite = false);
     void ProcessGitActionQueue(const wxString& commandString = "");
     void ColourFileTree(wxTreeCtrl *tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;

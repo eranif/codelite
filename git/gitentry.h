@@ -190,6 +190,9 @@ public:
     GitCommandsEntries& GetGitCommandsEntries(const wxString& entryName);
     
     void AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName);
+    void DeleteGitCommandsEntry(const wxString& entryName) {
+        m_commandsMap.erase(entryName);
+    }
 
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;

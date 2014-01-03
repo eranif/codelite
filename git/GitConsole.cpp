@@ -169,6 +169,8 @@ GitConsole::~GitConsole()
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(GitConsole::OnEditorThemeChanged), NULL, this);
+    
+    Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GitConsole::OnGitPullDropdown), this, XRCID("git_pull"));
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
@@ -492,7 +494,7 @@ struct GitCommandData : public wxObject
     int id;             // Holds the id of the command e.g. XRCID("git_pull")
 };
 
-void GitConsole::OnGitPullDropdown(wxAuiToolBarEvent& e)
+void GitConsole::DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName, int id)
 {
   
     if (!e.IsDropDownClicked()) {
@@ -505,7 +507,7 @@ void GitConsole::OnGitPullDropdown(wxAuiToolBarEvent& e)
     clConfig conf("git.conf");
     conf.ReadItem(&data);
     } // Force conf out of scope, else its dtor clobbers the GitConsole::OnDropDownMenuEvent Save()
-    GitCommandsEntries& ce = data.GetGitCommandsEntries("git_pull");
+    GitCommandsEntries& ce = data.GetGitCommandsEntries(commandName);
     vGitLabelCommands_t entries = ce.GetCommands();
     int lastUsed = ce.GetLastUsedCommandIndex();
 
@@ -517,7 +519,7 @@ void GitConsole::OnGitPullDropdown(wxAuiToolBarEvent& e)
         arr.Add(entries.at(n).command);
     }
     menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
-                                                                 this, 0, arr.GetCount(), new GitCommandData(arr, "git_pull", XRCID("git_pull")));
+                                                                 this, 0, arr.GetCount(), new GitCommandData(arr, commandName, id));
         
     wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(e.GetEventObject());
     if ( auibar ) {
@@ -528,7 +530,7 @@ void GitConsole::OnGitPullDropdown(wxAuiToolBarEvent& e)
         PopupMenu(&menu, pt);
     }
     menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
-                                                                   this, 0, arr.GetCount(), new GitCommandData(arr, "git_pull", XRCID("git_pull")));
+                                                                   this, 0, arr.GetCount(), new GitCommandData(arr, commandName, id));
 }
 
 void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)

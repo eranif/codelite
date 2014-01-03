@@ -43,8 +43,13 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnConfigurationChanged(wxCommandEvent &e);
     void OnEditorThemeChanged(wxCommandEvent &e);
+    
+    
+    void OnGitPullDropdown(wxAuiToolBarEvent& event) {
+        DoOnDropdown(event, "git_pull", XRCID("git_pull"));
+    }
 
-    void OnGitPullDropdown(wxAuiToolBarEvent& e);
+    void DoOnDropdown(wxAuiToolBarEvent& e, const wxString& commandName, int id);
     void OnDropDownMenuEvent(wxCommandEvent& e);
 
 };

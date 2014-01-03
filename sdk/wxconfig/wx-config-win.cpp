@@ -686,7 +686,7 @@ public:
         /// External libs (to wxWidgets)
 
         if (cfg["USE_GUI"] == "1")
-            if (sho["wxUSE_STC"])
+            if (cfg["USE_STC"] == "1" )
                 po["__LIB_WXSCINTILLA_p"] = addLib("wxscintilla" + po["WXDEBUGFLAG"]);
 
         if (cfg["USE_GUI"] == "1")

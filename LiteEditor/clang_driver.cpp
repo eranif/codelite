@@ -56,6 +56,8 @@ ClangDriver::ClangDriver()
     m_index = clang_createIndex(0, 0);
     m_pchMakerThread.SetSleepInterval(30);
     m_pchMakerThread.Start();
+    m_clangCleanerThread.Start();
+    
     EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),   NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError),  NULL, this);
@@ -74,6 +76,7 @@ ClangDriver::~ClangDriver()
 
     m_pchMakerThread.Stop();
     m_pchMakerThread.ClearCache(); // clear cache and dispose all translation units
+    m_clangCleanerThread.Stop();
     clang_disposeIndex(m_index);
 }
 
@@ -146,6 +149,21 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
     wxString projectPath;
     wxString pchFile;
     FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath, pchFile);
+    
+    // Prepare a copy of the file but with as special prefix CODELITE_CLANG_FILE_PREFIX
+    // We do this because on Windows, libclang locks the file so
+    // the user can not save into the file until it is released by libclang (which may take a while...)
+    // we overcome this by letting clang compile a copy of the file
+    // The temporary file that was created for this purpose is later deleted by a special "cleaner" thread
+    // which removes all kind of libclang leftovers (preamble*.pch files under %TMP% and these files)
+    wxFileName source_file(fileName);
+    source_file.SetFullName( CODELITE_CLANG_FILE_PREFIX + source_file.GetFullName() );
+    
+    {
+        wxLogNull nl;
+        ::wxCopyFile( fileName, source_file.GetFullPath() );
+    }
+    
     ClangThreadRequest* request = new ClangThreadRequest(m_index,
             fileName,
             currentBuffer,
@@ -154,7 +172,7 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
             context,
             lineNumber,
             column, DoCreateListOfModifiedBuffers(editor));
-    request->SetPchFile(pchFile);
+    request->SetFileName( source_file.GetFullPath() );
     return request;
 }
 
@@ -463,12 +481,21 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 
     // Sanity
     ClangThreadReply* reply = (ClangThreadReply*) e.GetClientData();
-    if(!reply)
+    if( !reply ) {
         return;
-
+    }
+    
     // Make sure we delete the reply at the end...
     std::auto_ptr<ClangThreadReply> ap(reply);
-
+    
+    // Delete the fake file...
+    DoDeleteTempFile( reply->filename );
+    
+    // Just a notification without real info?
+    if ( reply->context == CTX_None ) {
+        return;
+    }
+    
     if(reply->context == ::CTX_CachePCH || reply->context == ::CTX_ReparseTU) {
         return; // Nothing more to be done
     }
@@ -482,7 +509,7 @@ void ClangDriver::OnPrepareTUEnded(wxCommandEvent& e)
 
     // Adjust the activeEditor to fit the filename
     IEditor *editor = clMainFrame::Get()->GetMainBook()->FindEditor(reply->filename);
-    if(!editor) {
+    if ( !editor ) {
         CL_DEBUG(wxT("Could not find an editor for file %s"), reply->filename.c_str());
         return;
     }
@@ -709,6 +736,11 @@ void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)
 void ClangDriver::OnTUCreateError(wxCommandEvent& e)
 {
     e.Skip();
+    ClangThreadReply* reply = reinterpret_cast<ClangThreadReply*>( e.GetClientData() );
+    if ( reply ) {
+        DoDeleteTempFile( reply->filename );
+        wxDELETE(reply);
+    }
     DoCleanup();
 }
 
@@ -806,6 +838,20 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
         modifiedBuffers.push_back( std::make_pair( editors.at(i)->GetFileName().GetFullPath(), editors.at(i)->GetText() ) );
     }
     return modifiedBuffers;
+}
+
+void ClangDriver::DoDeleteTempFile(const wxString& fileName)
+{
+    if ( fileName.IsEmpty() ) {
+        return;
+    }
+    
+    wxFileName sourceFile( fileName );
+    sourceFile.SetFullName( CODELITE_CLANG_FILE_PREFIX + sourceFile.GetFullName() );
+    {
+        wxLogNull nl;
+        m_clangCleanerThread.AddFileName( sourceFile.GetFullPath() );
+    }
 }
 
 #endif // HAS_LIBCLANG

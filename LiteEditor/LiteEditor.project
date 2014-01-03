@@ -716,6 +716,8 @@
     <File Name="code_completion_box.cpp"/>
     <File Name="clang_compilation_db_thread.h"/>
     <File Name="clang_compilation_db_thread.cpp"/>
+    <File Name="clang_cleaner_thread.h"/>
+    <File Name="clang_cleaner_thread.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>
@@ -1364,8 +1366,7 @@ resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
 
 svninfo.cpp:
-	autorev .
-</CustomPreBuild>
+	autorev .</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>
@@ -1386,7 +1387,7 @@ svninfo.cpp:
         <IncludePath Value="../sdk/clang/include"/>
         <Preprocessor Value="HAS_LIBCLANG"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --debug=no --unicode=yes --libs std,stc);-Wl,--subsystem,windows -mwindows;-Wl,-M=codelite.map;-O2" Required="yes">
+      <Linker Options="-s;$(shell wx-config --debug=no --unicode=yes --libs std,stc);-Wl,--subsystem,windows -mwindows;-O2" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/clang/lib"/>
@@ -1423,7 +1424,8 @@ svninfo.cpp:
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">
         <ClangCmpFlagsC/>

@@ -70,7 +70,7 @@ static wxFFile gfp(wxT("debugger.log"), wxT("w+"));
 #    define DBG_LOG 0
 #endif
 
-const wxEventType wxEVT_DBG_STOP_DEBUGGER     = wxNewEventType();
+const wxEventType wxEVT_GDB_STOP_DEBUGGER     = wxNewEventType();
 
 //Using the running image of child Thread 46912568064384 (LWP 7051).
 static wxRegEx reInfoProgram1( wxT( "\\(LWP[ \t]([0-9]+)\\)" ) );
@@ -159,7 +159,7 @@ DbgGdb::DbgGdb()
     }
 #endif
 
-    EventNotifier::Get()->Connect(wxEVT_DBG_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
 }
 
 DbgGdb::~DbgGdb()
@@ -170,7 +170,7 @@ DbgGdb::~DbgGdb()
         Kernel32Dll = NULL;
     }
 #endif
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
 }
 
 void DbgGdb::RegisterHandler( const wxString &id, DbgCmdHandler *cmd )
@@ -303,7 +303,7 @@ bool DbgGdb::Stop()
 
     }
 
-    wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
+    wxCommandEvent event(wxEVT_GDB_STOP_DEBUGGER);
     EventNotifier::Get()->AddPendingEvent(event);
     return true;
 }

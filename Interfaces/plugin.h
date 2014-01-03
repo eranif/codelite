@@ -469,10 +469,6 @@ enum MenuType {
 // use event.GetClientData() to get a pointer to the wxWindow*
 #define wxEVT_CMD_PAGE_CHANGED 3527
 
-// A "Start Debugger" command as been requested (via the menu Debug -> Start / Continue Debugger or via a Hotkey)
-// a plugin can veto this event.
-#define wxEVT_NOTIFY_DEBUGGER_START_CMD 3528
-    
 // Triggers a workspace view tree rebuild (useful when user has modified the workspace / project structure and he want 
 // to reflect the changes in the tree view)
 #define wxEVT_REBUILD_WORKSPACE_TREE 3529
@@ -563,6 +559,20 @@ enum MenuType {
 // Event type: clColourEvent
 // Sent by codelite whenever it needs the pen colour for the tab area
 #define wxEVT_GET_TAB_BORDER_COLOUR 3546
+
+// ---------------------------------------------------------------------
+// Debugger events
+// The following events are firing the clDebugEvent class
+// If a plugin wishes to override codelite's default debugger (gdb)
+// it simply needs to connect the event and avoid calling 'event.Skip();
+//----------------------------------------------------------------------
+#define wxEVT_DBG_UI_START_OR_CONT 3547 // Start the debugger or continue
+#define wxEVT_DBG_UI_STOP          3549 // Stop the debugger
+#define wxEVT_DBG_UI_STEP_IN       3550 // Step into function
+#define wxEVT_DBG_UI_STEP_OUT      3551 // Step out of current frame
+#define wxEVT_DBG_UI_NEXT          3552 // Next line
+#define wxEVT_DBG_UI_NEXT_INST     3553 // Next instruction
+#define wxEVT_DBG_UI_INTERRUPT     3553 // Interrupt the debugger execution
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

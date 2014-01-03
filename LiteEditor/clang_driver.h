@@ -34,6 +34,7 @@
 #include "clangpch_cache.h"
 #include "clang_pch_maker_thread.h"
 #include <clang-c/Index.h>
+#include "clang_cleaner_thread.h"
 
 class IEditor;
 class ClangDriverCleaner;
@@ -46,13 +47,14 @@ struct ClangRequest {
 class ClangDriver : public wxEvtHandler
 {
 protected:
-    bool              m_isBusy;
-    ClangWorkerThread m_pchMakerThread;
-    WorkingContext    m_context;
-    CXIndex           m_index;
-    IEditor*          m_activeEditor;
-    int               m_position;
-
+    bool               m_isBusy;
+    ClangWorkerThread  m_pchMakerThread;
+    WorkingContext     m_context;
+    CXIndex            m_index;
+    IEditor*           m_activeEditor;
+    int                m_position;
+    ClangCleanerThread m_clangCleanerThread;
+    
 protected:
     void                DoCleanup();
     FileTypeCmpArgs_t   DoPrepareCompilationArgs(const wxString &projectName, const wxString &sourceFile, wxString &projectPath, wxString &pchfile);
@@ -63,7 +65,8 @@ protected:
 
     // Event handlers
     void OnDeletMacroHandler(wxCommandEvent &e);
-
+    void DoDeleteTempFile( const wxString &fileName );
+    
 public:
     ClangDriver();
     virtual ~ClangDriver();

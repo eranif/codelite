@@ -1461,7 +1461,7 @@ bool DbgCmdJumpHandler::ProcessOutput(const wxString& line)
 bool DbgCmdStopHandler::ProcessOutput(const wxString& line)
 {
     wxUnusedVar(line);
-    wxCommandEvent event(wxEVT_DBG_STOP_DEBUGGER);
+    wxCommandEvent event(wxEVT_GDB_STOP_DEBUGGER);
     EventNotifier::Get()->AddPendingEvent(event);
     return true;
 }

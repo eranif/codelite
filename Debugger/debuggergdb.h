@@ -52,7 +52,7 @@ class IProcess;
 
 WX_DECLARE_STRING_HASH_MAP(DbgCmdHandler*, HandlersMap);
 
-extern const wxEventType wxEVT_DBG_STOP_DEBUGGER;
+extern const wxEventType wxEVT_GDB_STOP_DEBUGGER;
 
 class DbgGdb : public wxEvtHandler, public IDebugger
 {

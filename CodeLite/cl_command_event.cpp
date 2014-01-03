@@ -154,3 +154,27 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
     m_projectOnly = src.m_projectOnly;
     return *this;
 }
+
+// ------------------------------------------------------------------
+// clDebugEvent
+// ------------------------------------------------------------------
+clDebugEvent::clDebugEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clDebugEvent::~clDebugEvent()
+{
+}
+
+clDebugEvent::clDebugEvent(const clDebugEvent& event)
+{
+    *this = event;
+}
+
+clDebugEvent& clDebugEvent::operator=(const clDebugEvent& src)
+{
+    m_projectName = src.m_projectName;
+    m_configurationName = src.m_configurationName;
+    return *this;
+}

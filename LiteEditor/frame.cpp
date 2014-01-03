@@ -3068,15 +3068,12 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
     wxUnusedVar(e);
 
     // Let the plugin know that we are about to start debugging
-    wxNotifyEvent dbgEvent(wxEVT_NOTIFY_DEBUGGER_START_CMD);
-    EventNotifier::Get()->ProcessEvent(dbgEvent);
-    if( !dbgEvent.IsAllowed() )
+    clDebugEvent dbgEvent(wxEVT_DBG_UI_START_OR_CONT);
+    if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) {
         return;
-
+    }
+    
     Manager *mgr = ManagerST::Get();
-
-
-
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if (dbgr && dbgr->IsRunning()) {
         //debugger is already running -> probably a continue command
@@ -3159,6 +3156,10 @@ void clMainFrame::OnDebugRestartUI(wxUpdateUIEvent &e)
 void clMainFrame::OnDebugStop(wxCommandEvent &e)
 {
     wxUnusedVar(e);
+    clDebugEvent debugEvent(wxEVT_DBG_UI_STOP);
+    if ( EventNotifier::Get()->ProcessEvent( debugEvent ) ) {
+        return;
+    }
     ManagerST::Get()->DbgStop();
 }
 

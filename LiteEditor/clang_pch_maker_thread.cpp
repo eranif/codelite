@@ -37,20 +37,17 @@ ClangWorkerThread::~ClangWorkerThread()
 void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 {
     // Send start event
-    PostEvent(wxEVT_CLANG_PCH_CACHE_STARTED);
+    PostEvent(wxEVT_CLANG_PCH_CACHE_STARTED, "");
 
     ClangThreadRequest *task = dynamic_cast<ClangThreadRequest*>( request );
-    if( !task ) {
-        PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED);
-        return;
-    }
+    wxASSERT_MSG(task, "ClangWorkerThread: NULL task");
 
     {
         // A bit of optimization
         wxCriticalSectionLocker locker(m_criticalSection);
         if(task->GetContext() == CTX_CachePCH && m_cache.Contains(task->GetFileName())) {
             // Nothing to be done here
-            PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED);
+            PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED, task->GetFileName());
             return;
         }
     }
@@ -76,7 +73,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
     if(!TU) {
         DoSetStatusMsg(wxT("Ready"));
         CL_DEBUG(wxT("Failed to parse Translation UNIT..."));
-        PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+        PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
         return;
     }
 
@@ -95,7 +92,7 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
 
             // The only thing that left to be done here, is to dispose the TU
             clang_disposeTranslationUnit(TU);
-            PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+            PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
 
             return;
         }
@@ -115,7 +112,13 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
     reply->filterWord = task->GetFilterWord();
     reply->filename   = task->GetFileName().c_str();
     reply->results    = NULL;
-
+    
+    wxFileName realFileName( reply->filename );
+    if ( realFileName.GetFullName().StartsWith(CODELITE_CLANG_FILE_PREFIX) ) {
+        realFileName.SetFullName( realFileName.GetFullName().Mid(strlen(CODELITE_CLANG_FILE_PREFIX)) );
+    }
+    reply->filename = realFileName.GetFullPath();
+    
     if( task->GetContext() == CTX_CodeCompletion || task->GetContext() == CTX_WordCompletion || task->GetContext() == CTX_Calltip) {
         CL_DEBUG(wxT("Calling clang_codeCompleteAt..."));
 
@@ -210,8 +213,8 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                 cr.SetCancelled(true); // cancel the re-caching of the TU
                 CL_DEBUG(wxT("clang_reparseTranslationUnit failed for file: %s"), task->GetFileName().c_str());
                 clang_disposeTranslationUnit(TU);
-                delete reply;
-                PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+                wxDELETE(reply);
+                PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
                 return;
             }
 
@@ -234,14 +237,14 @@ void ClangWorkerThread::ProcessRequest(ThreadRequest* request)
                      (int)task->GetColumn());
 
             // Failed, delete the 'reply' allocatd earlier
-            delete reply;
-            PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+            wxDELETE(reply);
+            PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
 
         }
     } else {
 
-        delete reply;
-        PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED);
+        wxDELETE(reply);
+        PostEvent(wxEVT_CLANG_PCH_CACHE_ENDED, task->GetFileName());
 
     }
 }
@@ -365,10 +368,25 @@ bool ClangWorkerThread::DoGotoDefinition(CXTranslationUnit& TU, ClangThreadReque
     return false;
 }
 
-void ClangWorkerThread::PostEvent(int type)
+void ClangWorkerThread::PostEvent(int type, const wxString& fileName)
 {
     wxCommandEvent e(type);
-    e.SetClientData(NULL);
+    if ( !fileName.IsEmpty() ) {
+        
+        wxFileName realFileName( fileName );
+        if ( realFileName.GetFullName().StartsWith(CODELITE_CLANG_FILE_PREFIX) ) {
+            realFileName.SetFullName( realFileName.GetFullName().Mid(strlen(CODELITE_CLANG_FILE_PREFIX)) );
+        }
+
+        ClangThreadReply* reply = new ClangThreadReply;
+        reply->filename = realFileName.GetFullPath();
+        e.SetClientData(reply);
+        
+    } else {
+        e.SetClientData(NULL);
+        
+    }
+    
     EventNotifier::Get()->AddPendingEvent(e);
 }
 
@@ -423,7 +441,7 @@ CXTranslationUnit ClangWorkerThread::DoCreateTU(CXIndex index, ClangThreadReques
 
             // The only thing that left to be done here, is to dispose the TU
             clang_disposeTranslationUnit(TU);
-            PostEvent(wxEVT_CLANG_TU_CREATE_ERROR);
+            PostEvent(wxEVT_CLANG_TU_CREATE_ERROR, task->GetFileName());
             return NULL;
         }
     }

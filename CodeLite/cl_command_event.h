@@ -244,4 +244,40 @@ typedef void (wxEvtHandler::*clBuildEventFunction)(clBuildEvent&);
 #define clBuildEventHandler(func) \
     wxEVENT_HANDLER_CAST(clBuildEventFunction, func)
 
+// -------------------------------------------------------------------------
+// clDebugEvent
+// -------------------------------------------------------------------------
+class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
+{
+    wxString m_projectName;
+    wxString m_configurationName;
+
+public:
+    clDebugEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clDebugEvent(const clDebugEvent& event);
+    clDebugEvent& operator=(const clDebugEvent& src);
+    
+    virtual ~clDebugEvent();
+    virtual wxEvent *Clone() const {
+        return new clDebugEvent(*this);
+    };
+
+    void SetConfigurationName(const wxString& configurationName) {
+        this->m_configurationName = configurationName;
+    }
+    void SetProjectName(const wxString& projectName) {
+        this->m_projectName = projectName;
+    }
+    const wxString& GetConfigurationName() const {
+        return m_configurationName;
+    }
+    const wxString& GetProjectName() const {
+        return m_projectName;
+    }
+};
+
+typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
+#define clDebugEventHandler(func) \
+    wxEVENT_HANDLER_CAST(clDebugEventFunction, func)
+
 #endif // CLCOMMANDEVENT_H

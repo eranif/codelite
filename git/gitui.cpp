@@ -583,6 +583,15 @@ GitImages::GitImages()
     {
         wxBitmap bmp;
         wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitApply"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("gitApply"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("gitModifiedFiles"));
         icn.CopyFromBitmap( bmp );
         this->Add( icn );

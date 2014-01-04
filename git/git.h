@@ -163,6 +163,7 @@ private:
     void OnCommit(wxCommandEvent &e);
     void OnCommitList(wxCommandEvent& e);
     void OnShowDiffs(wxCommandEvent& e);
+    void OnApplyPatch(wxCommandEvent& e);
     void OnPush(wxCommandEvent &e);
     void OnPull(wxCommandEvent &e);
     void OnResetRepository(wxCommandEvent &e);

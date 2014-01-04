@@ -9,7 +9,6 @@
 #include "fileextmanager.h"
 #include <wx/icon.h>
 #include <wx/tokenzr.h>
-#include "GitApplyPatchDlg.h"
 #include "lexer_configuration.h"
 #include "editor_config.h"
 #include "drawingutils.h"
@@ -124,34 +123,34 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 
     m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
-    m_auibar->AddTool(XRCID("git_refresh"), wxT("Refresh"), m_images.Bitmap("gitRefresh"), wxT("Refresh tracked file list"));
-    m_auibar->AddTool(XRCID("git_reset_repository"), wxT("Reset"), m_images.Bitmap("gitResetRepo"), wxT("Reset repository"));
+    m_auibar->AddTool(XRCID("git_refresh"), _("Refresh"), m_images.Bitmap("gitRefresh"), _("Refresh tracked file list"));
+    m_auibar->AddTool(XRCID("git_reset_repository"), _("Reset"), m_images.Bitmap("gitResetRepo"), _("Reset repository"));
     m_auibar->AddSeparator();
 
-    m_auibar->AddTool(XRCID("git_pull"), wxT("Pull"), m_images.Bitmap("gitPull"), wxT("Pull remote changes"));
+    m_auibar->AddTool(XRCID("git_pull"), _("Pull"), m_images.Bitmap("gitPull"), _("Pull remote changes"));
     m_auibar->SetToolDropDown(XRCID("git_pull"), true);
-    m_auibar->AddTool(XRCID("git_commit"), wxT("Commit"), m_images.Bitmap("gitCommitLocal"), wxT("Commit local changes"));
-    m_auibar->AddTool(XRCID("git_push"), wxT("Push"), m_images.Bitmap("gitPush"), wxT("Push local changes"));
+    m_auibar->AddTool(XRCID("git_commit"), _("Commit"), m_images.Bitmap("gitCommitLocal"), _("Commit local changes"));
+    m_auibar->AddTool(XRCID("git_push"), _("Push"), m_images.Bitmap("gitPush"), _("Push local changes"));
     m_auibar->AddSeparator();
 
-    m_auibar->AddTool(XRCID("git_create_branch"), wxT("Create branch"), m_images.Bitmap("gitNewBranch"), wxT("Create local branch"));
-    m_auibar->AddTool(XRCID("git_switch_branch"), wxT("Local branch"), m_images.Bitmap("gitSwitchLocalBranch"), wxT("Switch to local branch"));
-    //m_auibar->AddTool(XRCID("git_switch_to_remote_branch"), wxT("Remote branch"), XPM_BITMAP(menuexport), wxT("Init and switch to remote branch"));
+    m_auibar->AddTool(XRCID("git_create_branch"), _("Create branch"), m_images.Bitmap("gitNewBranch"), _("Create local branch"));
+    m_auibar->AddTool(XRCID("git_switch_branch"), _("Local branch"), m_images.Bitmap("gitSwitchLocalBranch"), _("Switch to local branch"));
+    //m_auibar->AddTool(XRCID("git_switch_to_remote_branch"), _("Remote branch"), XPM_BITMAP(menuexport), _("Init and switch to remote branch"));
     m_auibar->AddSeparator();
 #if 0
-    //m_auibar->AddTool(XRCID("git_bisect_start"), wxT("Bisect"), XPM_BITMAP(menu_start_bisect), wxT("Start bisect"));
+    //m_auibar->AddTool(XRCID("git_bisect_start"), _("Bisect"), XPM_BITMAP(menu_start_bisect), _("Start bisect"));
     //m_auibar->EnableTool(XRCID("git_bisect_start"),false);
-    //m_auibar->AddTool(XRCID("git_bisect_good"), wxT("Good commit"), wxArtProvider::GetIcon(wxART_TICK_MARK), wxT("Mark commit as good"));
+    //m_auibar->AddTool(XRCID("git_bisect_good"), _("Good commit"), wxArtProvider::GetIcon(wxART_TICK_MARK), _("Mark commit as good"));
     //m_auibar->EnableTool(XRCID("git_bisect_good"),false);
-    //m_auibar->AddTool(XRCID("git_bisect_bad"), wxT("Bad commit"), wxArtProvider::GetIcon(wxART_ERROR), wxT("Mark commit as bad"));
+    //m_auibar->AddTool(XRCID("git_bisect_bad"), _("Bad commit"), wxArtProvider::GetIcon(wxART_ERROR), _("Mark commit as bad"));
     //m_auibar->EnableTool(XRCID("git_bisect_bad"),false);
-    //m_auibar->AddTool(XRCID("git_bisect_reset"), wxT("End bisect"), wxArtProvider::GetIcon(wxART_QUIT), wxT("Quit bisect"));
+    //m_auibar->AddTool(XRCID("git_bisect_reset"), _("End bisect"), wxArtProvider::GetIcon(wxART_QUIT), _("Quit bisect"));
     //m_auibar->EnableTool(XRCID("git_bisect_reset"),false);
     //m_auibar->AddSeparator();
 #endif
-    m_auibar->AddTool(XRCID("git_commit_diff"), wxT("Diffs"), m_images.Bitmap("gitDiffs"), wxT("Show current diffs"));
-    m_auibar->AddTool(XRCID("git_browse_commit_list"), wxT("Log"), m_images.Bitmap("gitCommitedFiles"), wxT("Browse commit history"));
-    m_auibar->AddTool(XRCID("git_start_gitk"), wxT("gitk"), m_images.Bitmap("gitStart"), wxT("Start gitk"));
+    m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
+    m_auibar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"), _("Browse commit history"));
+    m_auibar->AddTool(XRCID("git_start_gitk"), _("gitk"), m_images.Bitmap("gitStart"), _("Start gitk"));
     m_auibar->Realize();
     
     Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GitConsole::OnGitPullDropdown), this, XRCID("git_pull"));
@@ -469,10 +468,7 @@ void GitConsole::OnShowFileDiff(wxCommandEvent& e)
 }
 void GitConsole::OnApplyPatch(wxCommandEvent& event)
 {
-    GitApplyPatchDlg dlg(wxTheApp->GetTopWindow());
-    if( dlg.ShowModal() == wxID_OK ) {
-        m_git->ApplyPatch( dlg.GetPatchFile(), dlg.GetExtraFlags() );
-    }
+    wxPostEvent(m_git, event);
 }
 
 void GitConsole::OnEditorThemeChanged(wxCommandEvent& e)

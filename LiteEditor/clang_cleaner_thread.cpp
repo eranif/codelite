@@ -2,6 +2,9 @@
 #include "file_logger.h"
 #include <wx/dir.h>
 #include <wx/filefn.h>
+#include <wx/log.h>
+#include <wx/filename.h>
+#include <wx/utils.h>
 #if HAS_LIBCLANG
 
 ClangCleanerThread::ClangCleanerThread()

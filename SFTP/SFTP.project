@@ -32,7 +32,6 @@
       <File Name="UI.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -272,4 +271,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

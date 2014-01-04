@@ -303,7 +303,6 @@
     <File Name="my_sftp_tree_model.cpp"/>
     <File Name="my_sftp_tree_model.h"/>
   </VirtualDirectory>
-  <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -516,4 +515,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

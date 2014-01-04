@@ -9,7 +9,6 @@
     <File Name="tweaks.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="UI">
     <File Name="TweaksSettingsDlg.h"/>
     <File Name="TweaksSettingsDlg.cpp"/>
@@ -253,4 +252,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

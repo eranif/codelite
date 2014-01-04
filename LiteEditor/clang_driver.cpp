@@ -149,13 +149,16 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
     wxString projectPath;
     wxString pchFile;
     FileTypeCmpArgs_t compileFlags = DoPrepareCompilationArgs(editor->GetProjectName(), fileName, projectPath, pchFile);
-    
+
+#if 0
+    //{
     // Prepare a copy of the file but with as special prefix CODELITE_CLANG_FILE_PREFIX
     // We do this because on Windows, libclang locks the file so
     // the user can not save into the file until it is released by libclang (which may take a while...)
     // we overcome this by letting clang compile a copy of the file
     // The temporary file that was created for this purpose is later deleted by a special "cleaner" thread
     // which removes all kind of libclang leftovers (preamble*.pch files under %TMP% and these files)
+
     wxFileName source_file(fileName);
     source_file.SetFullName( CODELITE_CLANG_FILE_PREFIX + source_file.GetFullName() );
     
@@ -163,7 +166,11 @@ ClangThreadRequest* ClangDriver::DoMakeClangThreadRequest(IEditor* editor, Worki
         wxLogNull nl;
         ::wxCopyFile( fileName, source_file.GetFullPath() );
     }
-    
+    //}
+#else
+    wxFileName source_file(fileName);
+#endif
+
     ClangThreadRequest* request = new ClangThreadRequest(m_index,
             fileName,
             currentBuffer,
@@ -842,6 +849,8 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
 
 void ClangDriver::DoDeleteTempFile(const wxString& fileName)
 {
+    wxUnusedVar(fileName);
+    /*
     if ( fileName.IsEmpty() ) {
         return;
     }
@@ -851,7 +860,7 @@ void ClangDriver::DoDeleteTempFile(const wxString& fileName)
     {
         wxLogNull nl;
         m_clangCleanerThread.AddFileName( sourceFile.GetFullPath() );
-    }
+    }*/
 }
 
 #endif // HAS_LIBCLANG

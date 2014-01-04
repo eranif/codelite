@@ -372,6 +372,7 @@ enum MenuType {
 // will be left disabled
 // to return a true or false reply to codelite, use
 // evt.SetAnswer( true / false )
+// The workspace name should also returned in the evt.SetString(..) 
 #define wxEVT_CMD_IS_WORKSPACE_OPEN 3511
 
 // User has requested a retagging for the workspace
@@ -572,7 +573,8 @@ enum MenuType {
 #define wxEVT_DBG_UI_STEP_OUT      3551 // Step out of current frame
 #define wxEVT_DBG_UI_NEXT          3552 // Next line
 #define wxEVT_DBG_UI_NEXT_INST     3553 // Next instruction
-#define wxEVT_DBG_UI_INTERRUPT     3553 // Interrupt the debugger execution
+#define wxEVT_DBG_UI_INTERRUPT     3554 // Interrupt the debugger execution
+#define wxEVT_DBG_IS_RUNNING       3555 // Use evet.SetAnswer() method to reply
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

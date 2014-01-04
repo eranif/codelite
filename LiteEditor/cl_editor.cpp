@@ -67,6 +67,7 @@
 #include "localworkspace.h"
 #include "findresultstab.h"
 #include "bookmark_manager.h"
+#include "clang_code_completion.h"
 
 // fix bug in wxscintilla.h
 #ifdef EVT_STC_CALLTIP_CLICK
@@ -1216,6 +1217,19 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
 
     // Make sure we can open the file for writing
     wxString tmp_file;
+    
+#if HAS_LIBCLANG
+#ifdef __WXMSW__
+    // There is a bug in clang that locks the file
+    wxFFile testFile(fileName.GetFullPath().GetData(), "wb"); // use ab to make sure that the file content is not discarded
+    if ( !testFile.IsOpened() ) {
+        ClangCodeCompletion::Instance()->ClearCache();
+    } else {
+        testFile.Close();
+    }
+#endif
+#endif //HAS_LIBCLANG
+
     wxFFile file(fileName.GetFullPath().GetData(), wxT("wb"));
     if (file.IsOpened() == false) {
         // Nothing to be done

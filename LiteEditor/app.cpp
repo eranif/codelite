@@ -340,7 +340,7 @@ bool CodeLiteApp::OnInit()
     // this is  needed because python complies the files and in most cases the user
     // running codelite has no write permissions to /usr/share/codelite/...
     DoCopyGdbPrinters();
-    
+
 #if defined (__WXGTK__)
     if (homeDir.IsEmpty()) {
         SetAppName(wxT("codelite"));

@@ -19,13 +19,13 @@ void* ClangCleanerThread::Entry()
     while ( !TestDestroy() ) {
         
         // Clear all temporary files created for clang parsing
-        DeleteTemporaryFiles();
+        // DeleteTemporaryFiles();
 
         // Clear stale .pch files from %TMP%
         // libclang does not clear properly any stale files under %TMP% (this is at least under Windows)
         DeleteStalePCHFiles();
 
-        wxThread::This()->Sleep( 2000 );
+        wxThread::This()->Sleep( 5000 );
     }
     
     // Before we exit, try to perform one last cleanup

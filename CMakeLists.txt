@@ -427,6 +427,7 @@ add_subdirectory(SnipWiz)
 add_subdirectory(Subversion2)
 add_subdirectory(ZoomNavigator)
 add_subdirectory(git)
+add_subdirectory(CMakePlugin)
 
 if (WITH_SFTP)
     add_subdirectory(SFTP)

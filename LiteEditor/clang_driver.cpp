@@ -56,8 +56,9 @@ ClangDriver::ClangDriver()
     m_index = clang_createIndex(0, 0);
     m_pchMakerThread.SetSleepInterval(30);
     m_pchMakerThread.Start();
+#ifdef __WXMSW__
     m_clangCleanerThread.Start();
-    
+#endif
     EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_ENDED,   wxCommandEventHandler(ClangDriver::OnPrepareTUEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CLANG_PCH_CACHE_CLEARED, wxCommandEventHandler(ClangDriver::OnCacheCleared),   NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CLANG_TU_CREATE_ERROR,   wxCommandEventHandler(ClangDriver::OnTUCreateError),  NULL, this);
@@ -76,7 +77,9 @@ ClangDriver::~ClangDriver()
 
     m_pchMakerThread.Stop();
     m_pchMakerThread.ClearCache(); // clear cache and dispose all translation units
+#ifdef __WXMSW__
     m_clangCleanerThread.Stop();
+#endif
     clang_disposeIndex(m_index);
 }
 

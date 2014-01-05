@@ -2,6 +2,7 @@
 #include "CMake.h"
 #include "globals.h"
 #include "procutils.h"
+#include <wx/ffile.h>
 
 /**
  * @brief Loads help of type from command into list.
@@ -25,21 +26,36 @@ static void LoadList(const wxString& command, const wxString& type, CMake::HelpM
     // Create temp file name
     // This is required because cmake is able export to HTML only into file
     wxString tmpFileName = wxFileName::CreateTempFileName("cmake_") + ".html";
-    wxString html;
-
+    
     // Foreach names
-    for (wxArrayString::const_iterator it = names.begin(), ite = names.end(); it != ite; ++it) {
+    for (size_t i=0; i<names.GetCount(); ++i) {
         
         // Export help
         wxArrayString dummy;
-        ProcUtils::SafeExecuteCommand(command + " --help-" + type + " " + *it + " " + tmpFileName, dummy);
+        wxString commandToRun;
+        wxString commandName = names.Item(i);
+        commandName.Trim().Trim(false);
+        
+        commandToRun << command 
+                     << " --help-"
+                     << type 
+                     << " " 
+                     << commandName 
+                     << " " 
+                     << tmpFileName;
+        ProcUtils::SafeExecuteCommand(commandToRun, dummy);
 
         // Read help
-        if (! ::ReadFileWithConversion(tmpFileName, html))
-            continue;
-
-        // Store HTML page
-        list[*it] = html;
+        wxFFile fp(tmpFileName, "rb");
+        if ( fp.IsOpened() ) {
+            
+            wxString html;
+            fp.ReadAll( &html, wxConvUTF8 );
+            fp.Close();
+            
+            // Store HTML page
+            list.insert( std::make_pair(commandName, html) );
+        }
     }
 }
 

@@ -296,6 +296,10 @@ void CMake::StoreIntoDatabase()
     }
 
     try {
+        
+        // Wrap everythign within a transcation (it will boost sqite performance by magnitude of X100
+        m_db.Begin();
+        
         // Commands
         {
             wxSQLite3Statement stmt = m_db.PrepareStatement("REPLACE INTO commands (name, desc) VALUES(?, ?)");
@@ -342,6 +346,7 @@ void CMake::StoreIntoDatabase()
             stmt.Bind(1, m_version);
             stmt.ExecuteUpdate();
         }
+        m_db.Commit();
     } catch (wxSQLite3Exception &e) {
         CL_ERROR("An error occured while storing CMake data into database: %s", e.GetMessage());
     }

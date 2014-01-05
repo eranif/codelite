@@ -34,12 +34,12 @@
 #include <wx/filename.h>
 #include <wx/arrstr.h>
 #include <wx/vector.h>
+#include <wx/wxsqlite3.h>
 
 /* ************************************************************************ */
 /* FORWARD DECLARATIONS                                                     */
 /* ************************************************************************ */
 
-class wxSQLite3Database;
 class CMakeHelpThread;
 class CMakePlugin;
 
@@ -56,12 +56,49 @@ class CMakePlugin;
  
 class CMake : public wxEvtHandler
 {
-
 // Public Types
 public:
     /// Lines map.
     typedef std::map<wxString, wxString> HelpMap;
+    
+// Private Data Members
+private:
+    /// If data is dirty and need to be reloaded.
+    bool m_dirty;
 
+    /// CMake application path.
+    wxFileName m_path;
+
+    /// Cached CMake version.
+    wxString m_version;
+
+    /// List of commands.
+    HelpMap m_commands;
+
+    /// List of modules.
+    HelpMap m_modules;
+
+    /// List of properties.
+    HelpMap m_properties;
+
+    /// List of variables.
+    HelpMap m_variables;
+    
+    /// While loading cmake help data - this marker is set to false
+    bool m_helpLoaded;
+    
+    /// Background thread for loading the help content
+    CMakeHelpThread* m_helpLoaderThread;
+    
+    /// The cmake plugin
+    CMakePlugin* m_plugin;
+    
+    /// A database that contains all cmake help content
+    wxSQLite3Database m_db;
+    
+    /// Was the database initialized properly?
+    bool m_dbInitialized;
+    
 // Public Ctors
 public:
 
@@ -226,7 +263,10 @@ public:
     
 // Private Operations
 private:
-
+    /**
+     * @brief initialize the database (create indexes + tables)
+     */
+    void DoPrepareDatabase();
 
     /**
      * @brief Reads everything from CMake.
@@ -242,52 +282,13 @@ private:
      *
      * @return If data is loaded.
      */
-    bool LoadFromDatabase(wxSQLite3Database& db);
+    bool LoadFromDatabase();
 
 
     /**
      * @brief Stores data into SQLite3 database.
-     *
-     * @param db Database.
-     *
-     * @return If data is stored.
      */
-    bool StoreIntoDatabase(wxSQLite3Database& db) const;
-
-
-// Private Data Members
-private:
-
-
-    /// If data is dirty and need to be reloaded.
-    bool m_dirty;
-
-    /// CMake application path.
-    wxFileName m_path;
-
-    /// Cached CMake version.
-    wxString m_version;
-
-    /// List of commands.
-    HelpMap m_commands;
-
-    /// List of modules.
-    HelpMap m_modules;
-
-    /// List of properties.
-    HelpMap m_properties;
-
-    /// List of variables.
-    HelpMap m_variables;
-    
-    /// While loading cmake help data - this marker is set to false
-    bool m_helpLoaded;
-    
-    /// Background thread for loading the help content
-    CMakeHelpThread* m_helpLoaderThread;
-    
-    /// The cmake plugin
-    CMakePlugin* m_plugin;
+    void StoreIntoDatabase();
 };
 
 /* ************************************************************************ */

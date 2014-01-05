@@ -482,7 +482,7 @@ CMakePlugin::OnHelp(wxCommandEvent& event)
     if (m_cmake->IsDirty()) {
         if ( !m_cmake->LoadData() ) {
             // help content is still being loaded... prompt the user and abort
-            ::wxMessageBox(_("CMake help content is still being loaded, please try again in a minute or less"), "CodeLite", wxOK|wxCENTER|wxICON_INFORMATION);
+            ::wxMessageBox(_("CMake help content is being constructed\nPlease try again in a minute"), "CodeLite", wxOK|wxCENTER|wxICON_INFORMATION);
             return;
         }
     }

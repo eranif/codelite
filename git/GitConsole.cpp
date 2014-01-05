@@ -90,6 +90,44 @@ public:
 };
 
 // ---------------------------------------------------------------------
+void PopulateAuiToolbarOverflow(wxAuiToolBarItemArray& append_items, const GitImages& images) // Helper function, partly because there's no convenient wxAuiToolBarItem ctor
+{
+    static const char* labels[] = { wxTRANSLATE("Create local branch"), wxTRANSLATE("Switch to local branch"), wxTRANSLATE("Switch to remote branch"), "",
+                                    wxTRANSLATE("Refresh"), wxTRANSLATE("Apply Patch"), "",
+                                    wxTRANSLATE("Start gitk"), wxTRANSLATE("Garbage collect"), "",
+                                    wxTRANSLATE("Plugin settings"), wxTRANSLATE("Set repository path"), wxTRANSLATE("Clone a git repository")
+                                  };
+    static const char* bitmapnames[] = { "gitNewBranch", "gitSwitchLocalBranch", "", "",
+                                         "gitRefresh", "gitApply", "",
+                                         "gitStart", "gitTrash", "",
+                                         "gitSettings", "gitPath", "gitClone"
+                                       };
+    static const int IDs[] = { XRCID("git_create_branch"), XRCID("git_switch_branch"), XRCID("git_switch_to_remote_branch"), 0,
+                        XRCID("git_refresh"), XRCID("git_apply_patch"), 0,
+                        XRCID("git_start_gitk"), XRCID("git_garbage_collection"), 0,
+                        XRCID("git_settings"), XRCID("git_set_repository"), XRCID("git_clone") 
+                      };
+    size_t IDsize = sizeof(IDs)/sizeof(int);
+    wxCHECK_RET(sizeof(labels)/sizeof(char*) == IDsize,      "Mismatched arrays");
+    wxCHECK_RET(sizeof(bitmapnames)/sizeof(char*) == IDsize, "Mismatched arrays");
+    
+    wxAuiToolBarItem item, separator;
+    item.SetKind(wxITEM_NORMAL);
+    separator.SetKind(wxITEM_SEPARATOR);
+    
+    for (size_t n=0; n < IDsize; ++n) {
+        if (IDs[n] != 0) {
+            item.SetId(IDs[n]);
+            item.SetBitmap(images.Bitmap(bitmapnames[n]));
+            item.SetLabel(labels[n]);
+            append_items.Add(item);
+        } else {
+            append_items.Add(separator);
+        }
+    }
+}
+
+// ---------------------------------------------------------------------
 
 GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     : GitConsoleBase(parent)
@@ -123,7 +161,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 
     m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
-    m_auibar->AddTool(XRCID("git_refresh"), _("Refresh"), m_images.Bitmap("gitRefresh"), _("Refresh tracked file list"));
     m_auibar->AddTool(XRCID("git_reset_repository"), _("Reset"), m_images.Bitmap("gitResetRepo"), _("Reset repository"));
     m_auibar->AddSeparator();
 
@@ -132,11 +169,9 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_commit"), _("Commit"), m_images.Bitmap("gitCommitLocal"), _("Commit local changes"));
     m_auibar->AddTool(XRCID("git_push"), _("Push"), m_images.Bitmap("gitPush"), _("Push local changes"));
     m_auibar->AddSeparator();
+    m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
+    m_auibar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"), _("Browse commit history"));
 
-    m_auibar->AddTool(XRCID("git_create_branch"), _("Create branch"), m_images.Bitmap("gitNewBranch"), _("Create local branch"));
-    m_auibar->AddTool(XRCID("git_switch_branch"), _("Local branch"), m_images.Bitmap("gitSwitchLocalBranch"), _("Switch to local branch"));
-    //m_auibar->AddTool(XRCID("git_switch_to_remote_branch"), _("Remote branch"), XPM_BITMAP(menuexport), _("Init and switch to remote branch"));
-    m_auibar->AddSeparator();
 #if 0
     //m_auibar->AddTool(XRCID("git_bisect_start"), _("Bisect"), XPM_BITMAP(menu_start_bisect), _("Start bisect"));
     //m_auibar->EnableTool(XRCID("git_bisect_start"),false);
@@ -148,9 +183,12 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     //m_auibar->EnableTool(XRCID("git_bisect_reset"),false);
     //m_auibar->AddSeparator();
 #endif
-    m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
-    m_auibar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"), _("Browse commit history"));
-    m_auibar->AddTool(XRCID("git_start_gitk"), _("gitk"), m_images.Bitmap("gitStart"), _("Start gitk"));
+    
+    wxAuiToolBarItemArray prepend_items;
+    wxAuiToolBarItemArray append_items;
+    PopulateAuiToolbarOverflow(append_items, m_images);
+    m_auibar->SetCustomOverflowItems(prepend_items, append_items);
+
     m_auibar->Realize();
     
     Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(GitConsole::OnGitPullDropdown), this, XRCID("git_pull"));

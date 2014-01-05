@@ -218,7 +218,6 @@ protected:
     virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnApplyPatch(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }

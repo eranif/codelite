@@ -823,28 +823,14 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
-    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_OVERFLOW);
     m_auibar->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer36->Add(m_auibar, 0, wxLEFT|wxRIGHT|wxEXPAND, 0);
     
-    m_auibar->AddTool(XRCID("git_settings"), _("git settings"), wxXmlResource::Get()->LoadBitmap(wxT("git-settings")), wxNullBitmap, wxITEM_NORMAL, _("git settings"), _("git settings"), NULL);
-    
-    m_auibar->AddSeparator();
-    
     m_auibar->AddTool(XRCID("git_clear_log"), _("Clear Log"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear Log"), _("Clear Log"), NULL);
     
     m_auibar->AddTool(wxID_ABORT, _("m_toolKill"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Terminate git process"), _("Terminate git process"), NULL);
-    
-    m_auibar->AddSeparator();
-    
-    m_auibar->AddTool(XRCID("git_set_repository"), _("Set git repository path"), wxXmlResource::Get()->LoadBitmap(wxT("document-open")), wxNullBitmap, wxITEM_NORMAL, _("Set git repository path"), _("Set git repository path"), NULL);
-    
-    m_auibar->AddTool(XRCID("git_clone"), _("git clone"), wxXmlResource::Get()->LoadBitmap(wxT("git-clone")), wxNullBitmap, wxITEM_NORMAL, _("git clone"), _("git clone"), NULL);
-    
-    m_auibar->AddSeparator();
-    
-    m_auibar->AddTool(XRCID("git_apply_patch"), _("Apply Patch..."), wxXmlResource::Get()->LoadBitmap(wxT("apply-patch")), wxNullBitmap, wxITEM_NORMAL, _("Apply Patch..."), _("Apply Patch..."), NULL);
     
     m_auibar->AddSeparator();
     
@@ -939,7 +925,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     this->Connect(XRCID("git_clear_log"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Connect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
-    this->Connect(XRCID("git_apply_patch"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnApplyPatch), NULL, this);
     this->Connect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
     this->Connect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     this->Connect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);
@@ -955,7 +940,6 @@ GitConsoleBase::~GitConsoleBase()
     this->Disconnect(XRCID("git_clear_log"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsoleBase::OnClearGitLog), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnStopGitProcess), NULL, this);
     this->Disconnect(wxID_ABORT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnStopGitProcessUI), NULL, this);
-    this->Disconnect(XRCID("git_apply_patch"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnApplyPatch), NULL, this);
     this->Disconnect(XRCID("git_console_add_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnAddFile), NULL, this);
     this->Disconnect(XRCID("git_console_add_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     this->Disconnect(XRCID("git_console_reset_file"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitConsoleBase::OnResetFile), NULL, this);

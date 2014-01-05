@@ -462,7 +462,7 @@ void Notebook::DoPageChangedEvent(wxAuiNotebookEvent& e)
     event.SetSelection   ( e.GetSelection()    );
     event.SetOldSelection( e.GetOldSelection() );
     event.SetEventObject ( this );
-    GetEventHandler()->AddPendingEvent(event);
+    GetEventHandler()->ProcessEvent(event);
 
     PushPageHistory( GetPage(e.GetSelection()) );
     e.Skip();

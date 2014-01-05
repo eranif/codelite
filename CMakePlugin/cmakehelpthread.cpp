@@ -4,21 +4,16 @@
 #include "procutils.h"
 #include <wx/ffile.h>
 
-/**
- * @brief Loads help of type from command into list.
- *
- * @param command CMake command.
- * @param type    Help type.
- * @param list    Output variable.
- */
-static void LoadList(const wxString& command, const wxString& type, CMake::HelpMap& list)
+
+bool CMakeHelpThread::LoadList(const wxString& command, const wxString& type, CMake::HelpMap& list)
 {
     // Get list
     wxArrayString names;
     ProcUtils::SafeExecuteCommand(command + " --help-" + type + "-list", names);
 
     if ( names.IsEmpty() )
-        return;
+        // something bad just happened
+        return false;
         
     // Remove version
     names.RemoveAt(0);
@@ -29,6 +24,10 @@ static void LoadList(const wxString& command, const wxString& type, CMake::HelpM
     
     // Foreach names
     for (size_t i=0; i<names.GetCount(); ++i) {
+        
+        if ( TestDestroy() ) {
+            return false;
+        }
         
         // Export help
         wxArrayString dummy;
@@ -57,6 +56,7 @@ static void LoadList(const wxString& command, const wxString& type, CMake::HelpM
             list.insert( std::make_pair(commandName, html) );
         }
     }
+    return true;
 }
 
 CMakeHelpThread::CMakeHelpThread(CMake* cmake, const wxString &command)
@@ -73,25 +73,26 @@ CMakeHelpThread::~CMakeHelpThread()
 void* CMakeHelpThread::Entry()
 {
     CMake::HelpMap* commands = new CMake::HelpMap;
-    LoadList(m_command, "command", *commands);
-    m_cmake->CallAfter( &CMake::OnCommandsHelpLoaded, commands );
-    if ( TestDestroy() )
+    if ( !LoadList(m_command, "command", *commands) )
         return NULL;
         
+    m_cmake->CallAfter( &CMake::OnCommandsHelpLoaded, commands );
+        
     CMake::HelpMap* property = new CMake::HelpMap;
-    LoadList(m_command, "property", *property);
-    m_cmake->CallAfter( &CMake::OnPropertiesHelpLoaded, property );
-    if ( TestDestroy() )
+    if ( !LoadList(m_command, "property", *property) )
         return NULL;
+        
+    m_cmake->CallAfter( &CMake::OnPropertiesHelpLoaded, property );
     
     CMake::HelpMap* module = new CMake::HelpMap;
-    LoadList(m_command, "module", *module);
-    m_cmake->CallAfter( &CMake::OnModulesHelpLoaded, module );
-    if ( TestDestroy() )
+    if ( !LoadList(m_command, "module", *module) )
         return NULL;
+    m_cmake->CallAfter( &CMake::OnModulesHelpLoaded, module );
     
     CMake::HelpMap* variable = new CMake::HelpMap;
-    LoadList(m_command, "variable", *variable);
+    if ( !LoadList(m_command, "variable", *variable) )
+        return NULL;
+        
     m_cmake->CallAfter( &CMake::OnVariablesHelpLoaded, variable );
     
     // Notify that we are done

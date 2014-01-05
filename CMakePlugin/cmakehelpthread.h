@@ -3,6 +3,7 @@
 
 #include <wx/thread.h> // Base class: wxThread
 #include <wx/string.h>
+#include "CMake.h"
 
 class CMake;
 class CMakeHelpThread : public wxThread
@@ -18,6 +19,17 @@ public:
         return m_busy;
     }
     
+protected:
+    /**
+     * @brief Loads help of type from command into list.
+     *
+     * @param command CMake command.
+     * @param type    Help type.
+     * @param list    Output variable.
+     * @return false if the thread was requested to terminate while executing cmake help commands
+     */
+    bool LoadList(const wxString& command, const wxString& type, CMake::HelpMap& list);
+
 public:
     virtual void* Entry();
     

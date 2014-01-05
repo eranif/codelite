@@ -390,7 +390,6 @@ void CMake::OnHelpLoadCompleted()
 
     // Save the info into the database
     StoreIntoDatabase();
-
     m_plugin->GetManager()->SetStatusMessage(_("CMake help content load is completed!"));
 }
 

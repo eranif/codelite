@@ -6,6 +6,7 @@
 #include "macros.h"
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
+#include "cl_defs.h"
 
 TweaksSettingsDlg::TweaksSettingsDlg(wxWindow* parent)
     : TweaksSettingsDlgBase(parent)
@@ -15,6 +16,13 @@ TweaksSettingsDlg::TweaksSettingsDlg(wxWindow* parent)
 
     DoPopulateList();
     WindowAttrManager::Load(this, "TweaksSettingsDlg", NULL);
+#if defined(__WXGTK__)
+#if CL_USE_NATIVEBOOK
+    // Under GTK, when native books are enabled, the tab coloring is not 
+    // available
+    m_tabEditorTabsColours->Disable();
+#endif
+#endif
 }
 
 TweaksSettingsDlg::~TweaksSettingsDlg()

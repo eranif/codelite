@@ -323,7 +323,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_panel62"
+											"m_value":	"m_tabEditorTabsColours"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -948,7 +948,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_panel84"
+											"m_value":	"m_tabProjectIcons"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",

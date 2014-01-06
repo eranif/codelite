@@ -110,6 +110,14 @@ void Tweaks::OnSettings(wxCommandEvent& e)
 
 void Tweaks::OnColourTab(clColourEvent& e)
 {
+#ifdef __WXGTK__
+#if CL_USE_NATIVEBOOK
+    // Not supported with native notebooks
+    e.Skip();
+    return;
+#endif
+#endif
+
     TWEAKS_ENABLED_EVENT_HANDLER();
     
     IEditor* editor = FindEditorByPage( e.GetPage() );
@@ -226,6 +234,13 @@ void Tweaks::OnCustomizeProject(clColourEvent& e)
 
 void Tweaks::OnTabBorderColour(clColourEvent& e)
 {
+#ifdef __WXGTK__
+#if CL_USE_NATIVEBOOK
+    // Not supported with native notebooks
+    e.Skip();
+    return;
+#endif
+#endif
     TWEAKS_ENABLED_EVENT_HANDLER();
     if ( m_settings.IsEnableTweaks() && m_settings.GetGlobalBgColour().IsOk() ) {
         e.SetBorderColour( DrawingUtils::DarkColour(m_settings.GetGlobalBgColour(), 1.5) );

@@ -23,7 +23,6 @@
 #include <wx/bannerwindow.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
-#include <wx/statline.h>
 
 class EditorSettingsMiscBasePanel : public wxPanel
 {
@@ -70,7 +69,6 @@ protected:
     wxStaticText* m_staticText6;
     wxChoice* m_choice4;
     wxButton* m_buttonOpenLog;
-    wxStaticLine* m_staticLine15;
     wxCheckBox* m_redirectLogOutput;
 
 protected:

@@ -3899,23 +3899,30 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
         title << wxT("*");
     }
     
-    wxString pattern   = clConfig::Get().Read("FrameTitlePattern", wxString("$workspace: $fullpath CodeLite"));
+    wxString pattern   = clConfig::Get().Read("FrameTitlePattern", wxString("$workspace $fullpath"));
     wxString username  = ::wxGetUserId();
+    username.Prepend("[ ").Append(" ]");
+    
     wxString workspace = WorkspaceST::Get()->GetName();
-    if ( workspace.IsEmpty() ) {
-        workspace = "<No Workspace>";
+    if ( !workspace.IsEmpty() ) {
+        workspace.Prepend("[ ").Append(" ]");
     }
     
     wxString fullname, fullpath;
     // We support the following macros:
     if ( editor ) {
-        fullname = editor->GetFileName().GetFullName() + ". ";
-        fullpath = editor->GetFileName().GetFullPath() + ". ";
+        fullname = editor->GetFileName().GetFullName();
+        fullpath = editor->GetFileName().GetFullPath();
     }
+    
     pattern.Replace("$workspace", workspace);
-    pattern.Replace("$user", username);
-    pattern.Replace("$fullname", fullname);
-    pattern.Replace("$fullpath", fullpath);
+    pattern.Replace("$user",      username);
+    pattern.Replace("$fullname",  fullname);
+    pattern.Replace("$fullpath",  fullpath);
+    pattern.Trim().Trim(false);
+    if ( pattern.IsEmpty() ) {
+        pattern << "CodeLite";
+    }
     
     title << pattern;
     SetTitle(title);

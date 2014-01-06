@@ -142,7 +142,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     flexGridSizer29->Add(m_staticText33, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_staticText35 = new wxStaticText(m_panel23, wxID_ANY, _("the current user name"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText35 = new wxStaticText(m_panel23, wxID_ANY, _("the current user name inside square brackets"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer29->Add(m_staticText35, 0, wxALL, 5);
     
@@ -153,7 +153,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     flexGridSizer29->Add(m_staticText37, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_staticText39 = new wxStaticText(m_panel23, wxID_ANY, _("the current file name. A dot is also appended"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText39 = new wxStaticText(m_panel23, wxID_ANY, _("the current file name"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer29->Add(m_staticText39, 0, wxALL, 5);
     
@@ -164,7 +164,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     flexGridSizer29->Add(m_staticText41, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_staticText43 = new wxStaticText(m_panel23, wxID_ANY, _("the current file fullpath. A dot is also appended"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText43 = new wxStaticText(m_panel23, wxID_ANY, _("the current file fullpath"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer29->Add(m_staticText43, 0, wxALL, 5);
     
@@ -175,7 +175,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     flexGridSizer29->Add(m_staticText45, 0, wxALL|wxALIGN_RIGHT, 5);
     
-    m_staticText47 = new wxStaticText(m_panel23, wxID_ANY, _("the current workspace name. Empty string is no workspace is opened"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText47 = new wxStaticText(m_panel23, wxID_ANY, _("the current workspace name inside square brackets"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer29->Add(m_staticText47, 0, wxALL, 5);
     
@@ -183,7 +183,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     flexGridSizer29->Add(m_staticText49, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_textCtrlPattern = new wxTextCtrl(m_panel23, wxID_ANY, wxT("$workspace: $fullpath CodeLite"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlPattern = new wxTextCtrl(m_panel23, wxID_ANY, wxT("$workspace $fullpath"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer29->Add(m_textCtrlPattern, 0, wxALL|wxEXPAND, 5);
     
@@ -294,10 +294,6 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_buttonOpenLog->SetToolTip(_("Open the log file into an editor"));
     
     flexGridSizer13->Add(m_buttonOpenLog, 0, wxALL|wxEXPAND|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticLine15 = new wxStaticLine(m_panel4, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
-    
-    boxSizer11->Add(m_staticLine15, 0, wxALL|wxEXPAND, 10);
     
     m_redirectLogOutput = new wxCheckBox(m_panel4, wxID_ANY, _("GTK only: Redirect stdout/stderr output to a log file"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_redirectLogOutput->SetValue(true);

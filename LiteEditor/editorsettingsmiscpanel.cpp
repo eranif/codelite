@@ -106,7 +106,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
     m_spinCtrlMaxOpenTabs->ChangeValue( ::wxIntToString( clConfig::Get().Read("MaxOpenedTabs", 15) ) );
     m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString( clConfig::Get().Read("LogVerbosity", FileLogger::Error) ) );
     m_checkBoxRestoreSession->SetValue( clConfig::Get().Read("RestoreLastSession", true) );
-    m_textCtrlPattern->ChangeValue( clConfig::Get().Read("FrameTitlePattern", wxString("$workspace: $fullpath CodeLite")) );
+    m_textCtrlPattern->ChangeValue( clConfig::Get().Read("FrameTitlePattern", wxString("$workspace $fullpath")) );
     
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);

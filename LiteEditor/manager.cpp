@@ -1437,7 +1437,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
         if ( fnWD.IsRelative() ) {
             fnWD.MakeAbsolute( GetProject(projectName)->GetFileName().GetPath() );
         }
-        newCommand << " --working-directory \"" << fnWD.GetFullPath() << "\" --title \"" << title << "\" -- " << title;
+        newCommand << " --working-directory \"" << fnWD.GetFullPath() << "\" --title \"" << title << "\" --cmd " << title;
         execLine = newCommand;
 
 #elif defined(__WXGTK__)
@@ -1449,8 +1449,9 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
             if ( bldConf->GetPauseWhenExecEnds() ) {
                 newCommand << " --wait ";
             }
-            newCommand << " -- " << title;
+            newCommand << " --cmd " << title;
             execLine = newCommand;
+            
         } else if ( bldConf->IsGUIProgram() ) {
             // do nothing run the command as-is
             
@@ -1495,7 +1496,7 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
                     newCommand << " --wait ";
                 }
 
-                newCommand << " -- " << commandToRun;
+                newCommand << " --cmd " << commandToRun;
                 execLine = newCommand;
             } else if ( bldConf->GetPauseWhenExecEnds() ) {
                 execLine.Prepend ("le_exec.exe ");

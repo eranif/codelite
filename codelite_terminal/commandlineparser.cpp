@@ -35,7 +35,7 @@ void CommandLineParser::DoParse()
     // when we see the "--" we consider the rest as the command
     while ( HasMore() ) {
         wxString optionName = NextToken();
-        if ( optionName == "--" ) {
+        if ( optionName == "--cmd" ) {
             // Stop parsing, from this point on, everything is the command to execute
             while ( HasMore() ) {
                 wxString cmdToken = NextToken();

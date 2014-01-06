@@ -1572,11 +1572,11 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     //change directory to the working directory
 #if defined(__WXMAC__)
         wxString newCommand;
-        newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+        newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
         if ( waitForAnyKey ) {
-            newCommand << " -w ";
+            newCommand << " --wait ";
         }
-        newCommand << " -- " << title;
+        newCommand << " --cmd " << title;
         execLine = newCommand;
 
 #elif defined(__WXGTK__)
@@ -1584,11 +1584,11 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
         // Set a console to the execute target
         if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
             wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+            newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
             if ( waitForAnyKey ) {
-                newCommand << " -w ";
+                newCommand << " --wait ";
             }
-            newCommand << " -- " << title;
+            newCommand << " --cmd " << title;
             execLine = newCommand;
 
         } else {
@@ -1622,12 +1622,12 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
             commandToRun.Trim().Trim(false);
 
             wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " -e ";
+            newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
             if ( waitForAnyKey ) {
-                newCommand << " -w ";
+                newCommand << " --wait";
             }
 
-            newCommand << " -- " << commandToRun;
+            newCommand << " --cmd " << commandToRun;
             execLine = newCommand;
 
         } else if ( waitForAnyKey ) {

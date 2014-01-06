@@ -22,7 +22,7 @@ public:
     virtual ~MainApp() {}
 
     void PrintUsage() {
-        wxPrintf("%s [-t <title>] [-e] [-w] [-d <working directory>] -- <command to execute>\n", wxApp::argv[0]);
+        wxPrintf("%s [-t <title>] [-e] [-w] [-d <working directory>] [--cmd <command to execute>]\n", wxApp::argv[0]);
         wxPrintf("-t | --title             Set the console title\n");
         wxPrintf("-e | --exit              Exit when execution of command terminates\n");
         wxPrintf("-w | --wait              Wait for any key to be pressed before exiting\n");

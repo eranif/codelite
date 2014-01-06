@@ -152,11 +152,6 @@ void Notebook::SetSelection(size_t page, bool notify)
     PushPageHistory(GetPage(page));
 }
 
-size_t Notebook::GetSelection()
-{
-    return static_cast<size_t>(wxAuiNotebook::GetSelection());
-}
-
 wxWindow* Notebook::GetPage(size_t page) const
 {
     if (page >= GetPageCount())

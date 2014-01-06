@@ -79,12 +79,6 @@ public:
     virtual ~Notebook();
 
     /**
-     * \brief return the currently selected item index
-     * \return the currently selected item, of the book is empty, return Notebook::npos
-     */
-    size_t GetSelection();
-
-    /**
      * \brief set page at given index to be the selected page. this function does not trigger an event
      * \param page
      */

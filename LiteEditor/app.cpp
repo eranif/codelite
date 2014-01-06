@@ -387,7 +387,15 @@ bool CodeLiteApp::OnInit()
     ManagerST::Get()->SetInstallDir( installPath );
     //copy the settings from the global location if needed
     CopySettings(homeDir, installPath);
-
+    
+    // Since GCC 4.8.2 gcc has a default colored output
+    // which breaks codelite output parsing
+    // to disable this, we need to set GCC_COLORS to an empty
+    // string.
+    // https://sourceforge.net/p/codelite/bugs/946/
+    // http://gcc.gnu.org/onlinedocs/gcc/Language-Independent-Options.html
+    ::wxSetEnv("GCC_COLORS", "");
+    
 #else //__WXMSW__
     if (homeDir.IsEmpty()) { //did we got a basedir from user?
         homeDir = ::wxGetCwd();
@@ -496,7 +504,7 @@ bool CodeLiteApp::OnInit()
     EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 
     //---------------------------------------------------------
-
+    
 #ifdef __WXMSW__
 
     // Read registry values

@@ -1451,7 +1451,9 @@ wxString Manager::GetProjectExecutionCommand ( const wxString& projectName, wxSt
             }
             newCommand << " -- " << title;
             execLine = newCommand;
-
+        } else if ( bldConf->IsGUIProgram() ) {
+            // do nothing run the command as-is
+            
         } else {
             wxString term;
             term = opts->GetProgramConsoleCommand();

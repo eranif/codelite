@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  8 2009)
+// C++ code generated with wxFormBuilder (version Nov  5 2013)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __gui__
-#define __gui__
+#ifndef __GUI_H__
+#define __GUI_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/statline.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -31,7 +32,6 @@ class MainDialogBase : public wxDialog
 	private:
 	
 	protected:
-		
 		wxStaticLine* m_staticLine;
 		wxStdDialogButtonSizer* m_sdbSizer;
 		wxButton* m_sdbSizerOK;
@@ -45,9 +45,9 @@ class MainDialogBase : public wxDialog
 	
 	public:
 		
-		MainDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("wxMiniApp"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,300 ), long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE );
+		MainDialogBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,300 ), long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE ); 
 		~MainDialogBase();
 	
 };
 
-#endif //__gui__
+#endif //__GUI_H__

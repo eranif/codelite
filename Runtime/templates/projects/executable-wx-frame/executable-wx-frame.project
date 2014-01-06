@@ -80,5 +80,6 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)</Descrip
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="gui.fbp"/>
+	<File Name="win_resources.rc"/>
   </VirtualDirectory>
 </CodeLite_Project>

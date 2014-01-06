@@ -10,7 +10,7 @@ class TweaksSettingsDlg : public TweaksSettingsDlgBase
     typedef std::list<wxPGProperty*> PropPtrList_t;
     TweaksSettings m_settings;
     PropPtrList_t  m_colourProperties;
-    
+
 public:
     TweaksSettingsDlg(wxWindow* parent);
     virtual ~TweaksSettingsDlg();
@@ -19,6 +19,7 @@ public:
     }
 
 protected:
+    virtual void OnEnableColoursTableUI(wxUpdateUIEvent& event);
     virtual void OnResetColours(wxCommandEvent& event);
     virtual void OnImageSelected(wxPropertyGridEvent& event);
     virtual void OnColourChanged(wxPropertyGridEvent& event);

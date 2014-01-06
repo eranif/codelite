@@ -495,7 +495,13 @@
 															"m_label":	"Gradient End",
 															"colour":	"Tooltip"
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_UPDATE_UI",
+															"m_eventClass":	"wxUpdateUIEvent",
+															"m_eventHandler":	"wxUpdateUIEventHandler",
+															"m_functionNameAndSignature":	"OnEnableColoursTableUI(wxUpdateUIEvent& event)",
+															"m_description":	"Process a wxEVT_UPDATE_UI event"
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4485,
@@ -568,6 +574,12 @@
 															"m_eventHandler":	"wxPropertyGridEventHandler",
 															"m_functionNameAndSignature":	"OnColourChanged(wxPropertyGridEvent& event)",
 															"m_description":	"Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user"
+														}, {
+															"m_eventName":	"wxEVT_UPDATE_UI",
+															"m_eventClass":	"wxUpdateUIEvent",
+															"m_eventHandler":	"wxUpdateUIEventHandler",
+															"m_functionNameAndSignature":	"OnEnableColoursTableUI(wxUpdateUIEvent& event)",
+															"m_description":	"Process a wxEVT_UPDATE_UI event"
 														}],
 													"m_children":	[{
 															"m_type":	4486,

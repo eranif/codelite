@@ -16,13 +16,6 @@ TweaksSettingsDlg::TweaksSettingsDlg(wxWindow* parent)
 
     DoPopulateList();
     WindowAttrManager::Load(this, "TweaksSettingsDlg", NULL);
-#if defined(__WXGTK__)
-#if CL_USE_NATIVEBOOK
-    // Under GTK, when native books are enabled, the tab coloring is not 
-    // available
-    m_tabEditorTabsColours->Disable();
-#endif
-#endif
 }
 
 TweaksSettingsDlg::~TweaksSettingsDlg()
@@ -73,11 +66,11 @@ void TweaksSettingsDlg::DoPopulateList()
             m_colourProperties.push_back( m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG, wxPG_LABEL, pt.GetTabFgColour() )) );
         } else {
             wxPGProperty* prop(NULL);
-            
+
             prop = m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG));
             prop->SetValueToUnspecified();
             m_colourProperties.push_back( prop );
-            
+
             prop = m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG));
             prop->SetValueToUnspecified();
             m_colourProperties.push_back( prop );
@@ -160,4 +153,18 @@ void TweaksSettingsDlg::OnResetColours(wxCommandEvent& event)
     m_pgPropGlobalTabBG->SetValueToUnspecified();
     m_pgPropGlobalTabFG->SetValueToUnspecified();
     m_settings.ResetColours();
+}
+
+void TweaksSettingsDlg::OnEnableColoursTableUI(wxUpdateUIEvent& event)
+{
+#if defined(__WXGTK__)
+#if CL_USE_NATIVEBOOK
+    // Under GTK, when native books are enabled, the tab coloring is not
+    // available
+    event.Enable(false);
+    return;
+#endif
+#endif
+
+    event.Enable( m_checkBoxEnableTweaks->IsChecked() && WorkspaceST::Get()->IsOpen() );
 }

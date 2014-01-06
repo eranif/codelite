@@ -48,6 +48,7 @@ protected:
     virtual void OnEnableTweaks(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEnableTweaksUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEnableColoursTableUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnColourChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnResetColours(wxCommandEvent& event) { event.Skip(); }
     virtual void OnImageSelected(wxPropertyGridEvent& event) { event.Skip(); }

@@ -128,7 +128,9 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_checkBoxEnableTweaks->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnEnableTweaks), NULL, this);
     m_checkBoxEnableTweaks->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksCheckboxUI), NULL, this);
     m_notebook12->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksUI), NULL, this);
+    m_banner136->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableColoursTableUI), NULL, this);
     m_pgMgrTabColours->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnColourChanged), NULL, this);
+    m_pgMgrTabColours->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableColoursTableUI), NULL, this);
     m_button124->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnResetColours), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnImageSelected), NULL, this);
     
@@ -139,7 +141,9 @@ TweaksSettingsDlgBase::~TweaksSettingsDlgBase()
     m_checkBoxEnableTweaks->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnEnableTweaks), NULL, this);
     m_checkBoxEnableTweaks->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksCheckboxUI), NULL, this);
     m_notebook12->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableTweaksUI), NULL, this);
+    m_banner136->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableColoursTableUI), NULL, this);
     m_pgMgrTabColours->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnColourChanged), NULL, this);
+    m_pgMgrTabColours->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TweaksSettingsDlgBase::OnEnableColoursTableUI), NULL, this);
     m_button124->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TweaksSettingsDlgBase::OnResetColours), NULL, this);
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(TweaksSettingsDlgBase::OnImageSelected), NULL, this);
     

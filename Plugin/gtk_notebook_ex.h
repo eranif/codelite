@@ -76,7 +76,7 @@ class Notebook : public wxNotebook
 
 public:
 
-    static const size_t npos = static_cast<size_t>(-1);
+    static const size_t npos = static_cast<size_t>(wxNOT_FOUND);
 
 protected:
     void      Initialize();
@@ -106,12 +106,6 @@ public:
     virtual ~Notebook();
 
     /**
-     * \brief return the currently selected item index
-     * \return the currently selected item, of the book is empty, return Notebook::npos
-     */
-    size_t GetSelection();
-
-    /**
      * \brief set page at given index to be the selected page. this function does not trigger an event
      * \param page
      */
@@ -131,7 +125,7 @@ public:
      * \param page page's index
      * \return the page or NULL if index is out of bounds
      */
-    wxWindow *GetPage(size_t page);
+    wxWindow *GetPage(size_t page) const ;
 
     /**
      * \brief return the page caption
@@ -176,21 +170,21 @@ public:
      * \brief return the active page
      * \return active page or NULL if there are no pages in the book
      */
-    wxWindow *GetCurrentPage();
+    wxWindow *GetCurrentPage() const ;
 
     /**
      * \brief return page index by window pointer
      * \param page page to search
      * \return page index, or Notebook::npos if page does not exist in the notebook
      */
-    size_t GetPageIndex(wxWindow *page);
+    size_t GetPageIndex(wxWindow *page) const;
 
     /**
      * \brief return page index by page text
      * \param text text to search for
      * \return page index, or Notebook::npos if page does not exist in the notebook
      */
-    size_t GetPageIndex(const wxString &text);
+    size_t GetPageIndex(const wxString &text) const;
 
     /**
      * \brief set the text for page at a given index

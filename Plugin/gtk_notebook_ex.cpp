@@ -178,12 +178,7 @@ void Notebook::SetSelection(size_t page, bool notify)
 }
 
 
-size_t Notebook::GetSelection()
-{
-    return static_cast<size_t>(wxNotebook::GetSelection());
-}
-
-wxWindow* Notebook::GetPage(size_t page)
+wxWindow* Notebook::GetPage(size_t page) const
 {
     if (page >= GetPageCount())
         return NULL;
@@ -302,7 +297,7 @@ void Notebook::SetRightClickMenu(wxMenu* menu)
     m_contextMenu = menu;
 }
 
-wxWindow* Notebook::GetCurrentPage()
+wxWindow* Notebook::GetCurrentPage() const
 {
     size_t selection = GetSelection();
     if (selection != Notebook::npos) {
@@ -311,7 +306,7 @@ wxWindow* Notebook::GetCurrentPage()
     return NULL;
 }
 
-size_t Notebook::GetPageIndex(wxWindow *page)
+size_t Notebook::GetPageIndex(wxWindow *page) const
 {
     if ( !page )
         return Notebook::npos;
@@ -324,7 +319,7 @@ size_t Notebook::GetPageIndex(wxWindow *page)
     return Notebook::npos;
 }
 
-size_t Notebook::GetPageIndex(const wxString& text)
+size_t Notebook::GetPageIndex(const wxString& text) const
 {
     for (size_t i=0; i< GetPageCount(); i++) {
 

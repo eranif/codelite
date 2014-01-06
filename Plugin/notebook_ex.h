@@ -144,7 +144,7 @@ public:
      * \brief return the active page
      * \return active page or NULL if there are no pages in the book
      */
-    wxWindow *GetCurrentPage();
+    wxWindow *GetCurrentPage() const;
 
     /**
      * \brief return page index by window pointer

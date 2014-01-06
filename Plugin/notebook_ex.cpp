@@ -262,7 +262,7 @@ void Notebook::SetRightClickMenu(wxMenu* menu)
     m_contextMenu = menu;
 }
 
-wxWindow* Notebook::GetCurrentPage()
+wxWindow* Notebook::GetCurrentPage() const
 {
     size_t selection = GetSelection();
     if (selection != Notebook::npos) {

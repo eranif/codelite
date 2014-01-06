@@ -3689,7 +3689,7 @@
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Fg Colour:",
-																							"colour":	"(255,255,255)"
+																							"colour":	"CaptionText"
 																						}, {
 																							"type":	"font",
 																							"m_label":	"Font:",
@@ -3738,11 +3738,11 @@
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Gradient Start",
-																							"colour":	"(48,48,48)"
+																							"colour":	"ActiveCaption"
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Gradient End",
-																							"colour":	"(48,48,48)"
+																							"colour":	"ActiveCaption"
 																						}],
 																					"m_events":	[],
 																					"m_children":	[]
@@ -4108,7 +4108,7 @@
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Fg Colour:",
-																							"colour":	"(255,255,255)"
+																							"colour":	"CaptionText"
 																						}, {
 																							"type":	"font",
 																							"m_label":	"Font:",
@@ -4157,11 +4157,11 @@
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Gradient Start",
-																							"colour":	"(48,48,48)"
+																							"colour":	"ActiveCaption"
 																						}, {
 																							"type":	"colour",
 																							"m_label":	"Gradient End",
-																							"colour":	"(48,48,48)"
+																							"colour":	"ActiveCaption"
 																						}],
 																					"m_events":	[],
 																					"m_children":	[]

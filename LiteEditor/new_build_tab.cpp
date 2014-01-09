@@ -595,6 +595,7 @@ void NewBuildTab::DoClear()
         editors.at(i)->DelAllCompilerMarkers();
         editors.at(i)->AnnotationClearAll();
     }
+    m_curError = m_errorsAndWarningsList.end();
 }
 
 void NewBuildTab::MarkEditor(LEditor* editor)

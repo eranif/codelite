@@ -257,7 +257,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Size:",
-													"m_value":	""
+													"m_value":	"-1,-1"
 												}, {
 													"type":	"string",
 													"m_label":	"Minimum Size:",
@@ -353,7 +353,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
-															"m_value":	""
+															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",
@@ -2776,7 +2776,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"438,428"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -2965,7 +2965,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	""
+									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -3042,7 +3042,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"500,300"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -5290,7 +5290,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"500,300"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -5788,7 +5788,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"500,300"
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",

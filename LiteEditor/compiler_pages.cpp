@@ -38,7 +38,7 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizerError->Add(bSizer25, 1, wxEXPAND, 5);
     
-    m_listErrPatterns = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_listErrPatterns = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
     
     bSizer25->Add(m_listErrPatterns, 1, wxALL|wxEXPAND, 5);
     
@@ -46,7 +46,7 @@ CompilerPatternsBase::CompilerPatternsBase(wxWindow* parent, wxWindowID id, cons
     
     bSizer25->Add(bSizer26, 0, 0, 5);
     
-    m_btnAddErrPattern = new wxButton(this, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_btnAddErrPattern = new wxButton(this, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_btnAddErrPattern->SetToolTip(_("Add new error pattern"));
     
     bSizer26->Add(m_btnAddErrPattern, 0, wxALL|wxEXPAND, 5);
@@ -260,11 +260,11 @@ CompilerSwitchesBase::CompilerSwitchesBase(wxWindow* parent, wxWindowID id, cons
     
     mainSizer->Add(m_staticText8, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_listSwitches = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_listSwitches = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
     
     mainSizer->Add(m_listSwitches, 1, wxALL|wxEXPAND, 5);
     
-    SetSizeHints(438,428);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -320,7 +320,7 @@ CompilerFileTypesBase::CompilerFileTypesBase(wxWindow* parent, wxWindowID id, co
     
     bSizer111->Add(m_buttonDeleteFileType, 0, wxALL, 5);
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -528,7 +528,7 @@ CompilerCompilerOptionsBase::CompilerCompilerOptionsBase(wxWindow* parent, wxWin
     
     bSizer111->Add(m_buttonDeleteCompilerOption, 0, wxALL, 5);
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -590,7 +590,7 @@ CompilerLinkerOptionsBase::CompilerLinkerOptionsBase(wxWindow* parent, wxWindowI
     
     bSizer111->Add(m_buttonDeleteLinkerOption, 0, wxALL, 5);
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

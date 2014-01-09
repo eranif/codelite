@@ -96,7 +96,7 @@ protected:
     virtual void OnItemSelected(wxListEvent& event) { event.Skip(); }
 
 public:
-    CompilerSwitchesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(438,428), long style = wxTAB_TRAVERSAL);
+    CompilerSwitchesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~CompilerSwitchesBase();
 };
 
@@ -117,7 +117,7 @@ protected:
     virtual void OnDeleteFileType(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    CompilerFileTypesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    CompilerFileTypesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~CompilerFileTypesBase();
 };
 
@@ -169,7 +169,7 @@ protected:
     virtual void OnDeleteCompilerOption(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    CompilerCompilerOptionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    CompilerCompilerOptionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~CompilerCompilerOptionsBase();
 };
 
@@ -190,7 +190,7 @@ protected:
     virtual void OnDeleteLinkerOption(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    CompilerLinkerOptionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    CompilerLinkerOptionsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~CompilerLinkerOptionsBase();
 };
 

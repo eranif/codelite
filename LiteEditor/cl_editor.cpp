@@ -965,6 +965,14 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent &event)
             << ", Style "
             << GetStyleAt(pos);
 
+    message << ", ";
+    
+    wxString bookmarkString = GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
+    if (!bookmarkString.Lower().Contains("type")) {
+        message << _("Bookmark type") << ": ";
+    }
+    message << bookmarkString;
+
     // Always update the status bar with event, calling it directly causes performance degredation
     DoSetStatusMessage(message, 1);
 

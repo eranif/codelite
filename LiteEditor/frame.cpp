@@ -4624,23 +4624,9 @@ void clMainFrame::SelectBestEnvSet()
     preDefTypeMap.SetActive(dbgSetName);
     DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefTypeMap);
 
-    wxString bookmarkString;
-    LEditor* editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        sci_marker_types activeBMtype = (sci_marker_types)editor->GetActiveBookmarkType();
-        bookmarkString = editor->GetBookmarkLabel(activeBMtype);
-    }
-
     wxString displayString = wxString::Format(wxT("Env: %s, Dbg: %s"),
                                       activeSetName.c_str(),
                                       preDefTypeMap.GetActiveSet().GetName().c_str());
-    if (editor) {
-        displayString << ", ";
-        if (!bookmarkString.Lower().Contains("type")) {
-            displayString << _("Bookmark type") << ": ";
-        }
-        displayString << bookmarkString;
-    }
 
     SetStatusMessage(displayString, 2);
 }

@@ -30,6 +30,7 @@ include_directories(
 # Define some macros about DLL
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
+add_definitions(-DWXUSINGDLL_SDK)
 
 # Only with precompiled headers
 if (USE_PCH)
@@ -54,7 +55,8 @@ target_link_libraries(${PLUGIN_NAME}
     -L"${CL_LIBPATH}"
     -llibcodelite
     -lplugin
-
+    -lwxsqlite3 
+    -lsqlite3lib
 )
 
 # The plugin library is required

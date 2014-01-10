@@ -12,6 +12,7 @@
     <File Name="newplugindata.h"/>
     <File Name="new_class_dlg_data.h"/>
     <File Name="new_class_dlg_data.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Wizard">
     <File Name="PluginWizard.h"/>

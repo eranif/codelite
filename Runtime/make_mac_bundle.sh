@@ -218,10 +218,10 @@ cp ../lib/cppchecker.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/MacBundler.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/DatabaseExplorer.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/Tweaks.dylib ./codelite.app/Contents/SharedSupport/plugins/
-##cp ../lib/CallGraph.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/git.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/ZoomNavigator.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/SFTP.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/CMakePlugin.dylib ./codelite.app/Contents/SharedSupport/plugins/
 
 if [ -f ../lib/wxcrafter.dylib ]; then
     cp ../lib/wxcrafter.dylib ./codelite.app/Contents/SharedSupport/plugins/

@@ -20,6 +20,7 @@
     <File Name="CMake.cpp"/>
     <File Name="CMakeSettingsManager.cpp"/>
     <File Name="CMakeParser.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="CMakePlugin.h"/>

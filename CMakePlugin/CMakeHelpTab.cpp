@@ -65,7 +65,7 @@ CMakeHelpTab::CMakeHelpTab(wxWindow* parent, CMakePlugin* plugin)
     Bind(EVT_THREAD_DONE, &CMakeHelpTab::OnThreadDone, this);
 
     // Initial load
-    LoadData();
+    //LoadData();
 }
 
 /* ************************************************************************ */
@@ -431,5 +431,16 @@ CMakeHelpTab::Done()
 {
     AddPendingEvent(wxThreadEvent(EVT_THREAD_DONE));
 }
+
+void CMakeHelpTab::Stop()
+{
+    if ( GetThread() && GetThread()->IsAlive() )  {
+        GetThread()->Delete(NULL, wxTHREAD_WAIT_BLOCK);
+        
+    } else if ( GetThread() ) {
+        GetThread()->Wait(wxTHREAD_WAIT_BLOCK);
+    }
+}
+
 
 /* ************************************************************************ */

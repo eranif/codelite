@@ -444,9 +444,14 @@ CMakePlugin::UnPlug()
 
     size_t pos = notebook->GetPageIndex("CMake Help");
     if (pos != Notebook::npos) {
+        CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>( notebook->GetPage(pos) );
+        if ( helpTab ) {
+            helpTab->Stop();
+        }
         notebook->RemovePage(pos);
     }
-
+    
+    
     // Unbind events
     wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &CMakePlugin::OnSettings, this, XRCID("cmake_settings"));
 

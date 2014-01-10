@@ -49,13 +49,12 @@ class CMakePlugin;
  * @brief Dockable window with CMake help.
  */
 class CMakeHelpTab : public CMakeHelpTabBase, public wxThreadHelper,
-                     public CMake::LoadNotifier
+    public CMake::LoadNotifier
 {
 
 // Public Ctors & Dtors
 public:
-
-
+   
     /**
      * @brief Constructor.
      *
@@ -230,7 +229,11 @@ public:
      */
     virtual void Done();
 
-
+    /**
+     * @brief stop the worker thread
+     */
+    virtual void Stop();
+    
 // Protected Operations
 protected:
 

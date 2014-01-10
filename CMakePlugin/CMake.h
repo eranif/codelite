@@ -94,7 +94,11 @@ public:
          * @brief Loading is done.
          */
         virtual void Done() = 0;
-
+        
+        /**
+         * @brief stop the current thread
+         */
+        virtual void Stop() = 0;
     };
 
 
@@ -283,8 +287,10 @@ private:
      * @param list    Output variable.
      * @param handler Progress notifier.
      * @param limit   Notifier limit.
+     * @return false incase 'RequestStop' was called during the loading of the help
+     *         true otherwise
      */
-    void LoadList(const wxString& type, CMake::HelpMap& list,
+    bool LoadList(const wxString& type, CMake::HelpMap& list,
                   LoadNotifier* notifier, int limit);
 
 

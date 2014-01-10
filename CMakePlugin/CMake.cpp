@@ -191,7 +191,8 @@ CMake::LoadData(bool force, LoadNotifier* notifier)
     }
 
     // Load data
-    LoadFromCMake(notifier);
+    if ( !LoadFromCMake(notifier) )
+        return false;
 
     // Request to stop
     if (notifier && notifier->RequestStop()) {
@@ -283,7 +284,8 @@ CMake::LoadFromCMake(LoadNotifier* notifier)
         }
 
         // Load
-        LoadList(types[i].first, *types[i].second, notifier, STEP);
+        if ( !LoadList(types[i].first, *types[i].second, notifier, STEP) )
+            return false;
     }
 
     return true;
@@ -446,7 +448,7 @@ CMake::StoreIntoDatabase()
 
 /* ************************************************************************ */
 
-void
+bool
 CMake::LoadList(const wxString& type, CMake::HelpMap& list,
                 LoadNotifier* notifier, int limit)
 {
@@ -466,7 +468,12 @@ CMake::LoadList(const wxString& type, CMake::HelpMap& list,
 
     // Foreach names
     for (wxArrayString::const_iterator it = names.begin(), ite = names.end(); it != ite; ++it) {
-
+        
+        if ( notifier && notifier->RequestStop() ) {
+            // Someone called 'wxThread::Delete'
+            return false;
+        }
+        
         // Trim name
         wxString name = *it;
         name.Trim().Trim(false);
@@ -496,6 +503,7 @@ CMake::LoadList(const wxString& type, CMake::HelpMap& list,
             loaded = 0;
         }
     }
+    return true;
 }
 
 /* ************************************************************************ */

@@ -180,7 +180,9 @@ CMakeHelpTabBase::CMakeHelpTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     // Connect events
     m_staticTextVersion->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_staticTextVersionValue->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
+    m_staticText222->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_choiceTopics->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CMakeHelpTabBase::OnChangeTopic), NULL, this);
+    m_choiceTopics->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_buttonReload->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CMakeHelpTabBase::OnReload), NULL, this);
     m_buttonReload->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_splitter->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(CMakeHelpTabBase::OnRightClick), NULL, this);
@@ -199,7 +201,9 @@ CMakeHelpTabBase::~CMakeHelpTabBase()
 {
     m_staticTextVersion->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_staticTextVersionValue->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
+    m_staticText222->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_choiceTopics->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CMakeHelpTabBase::OnChangeTopic), NULL, this);
+    m_choiceTopics->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_buttonReload->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CMakeHelpTabBase::OnReload), NULL, this);
     m_buttonReload->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeHelpTabBase::OnUpdateUi), NULL, this);
     m_splitter->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(CMakeHelpTabBase::OnRightClick), NULL, this);

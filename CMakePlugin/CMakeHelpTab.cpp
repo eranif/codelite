@@ -65,7 +65,7 @@ CMakeHelpTab::CMakeHelpTab(wxWindow* parent, CMakePlugin* plugin)
     Bind(EVT_THREAD_DONE, &CMakeHelpTab::OnThreadDone, this);
 
     // Initial load
-    //LoadData();
+    LoadData();
 }
 
 /* ************************************************************************ */

@@ -43,6 +43,6 @@ void wxCrafterR3nJ3cInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$C__Users_Geo_Development_Cpp_codelite-dev_CMakePlugin_CMakePluginUi_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/CMakePluginUi_bitmaps.cpp$C__Users_Geo_Development_Cpp_codelite-dev_CMakePlugin_CMakePluginUi_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$C__src_codelitegit_CMakePlugin_CMakePluginUi_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/CMakePluginUi_bitmaps.cpp$C__src_codelitegit_CMakePlugin_CMakePluginUi_bitmaps.xrc"));
 }

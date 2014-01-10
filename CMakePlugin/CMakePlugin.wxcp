@@ -1019,7 +1019,13 @@
 											"m_label":	"Wrap:",
 											"m_value":	"-1"
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_eventHandler":	"wxUpdateUIEventHandler",
+											"m_functionNameAndSignature":	"OnUpdateUi(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event"
+										}],
 									"m_children":	[]
 								}, {
 									"m_type":	4411,
@@ -1100,6 +1106,12 @@
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnChangeTopic(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected."
+										}, {
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_eventHandler":	"wxUpdateUIEventHandler",
+											"m_functionNameAndSignature":	"OnUpdateUi(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event"
 										}],
 									"m_children":	[]
 								}, {

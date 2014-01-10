@@ -192,11 +192,16 @@ void WorkspacePane::UpdateTabs()
     DoShowTab(flags & View_Show_Tabs_Tab,      _("Tabs"));
     DoShowTab(flags & View_Show_Tabgroups_Tab, _("Tabgroups"));
 }
+typedef struct {
+    wxString text;
+    wxWindow* win;
+    wxBitmap bmp;
+} tagTabInfo;
 
 #include "file_logger.h"
 void WorkspacePane::ApplySavedTabOrder() const
 {
-    typedef std::pair<wxString, wxWindow*> spTab;
+    
 
     wxArrayString tabs;
     int index = -1;
@@ -206,7 +211,7 @@ void WorkspacePane::ApplySavedTabOrder() const
     // There are (currently) 4 'standard' panes and a variable number of plugin ones
     // NB Since we're only dealing with panes currently in the notebook, this shouldn't
     // be broken by floating panes or non-loaded plugins
-    std::vector<spTab> vTempstore;
+    std::vector<tagTabInfo> vTempstore;
     for (size_t t=0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
         if (title.empty()) {
@@ -214,7 +219,11 @@ void WorkspacePane::ApplySavedTabOrder() const
         }
         for (size_t n=0; n < m_book->GetPageCount(); ++n) {
             if (title == m_book->GetPageText(n)) {
-                spTab Tab(title, m_book->GetPage(n));
+                tagTabInfo Tab;
+                Tab.text = title;
+                Tab.win  = m_book->GetPage(n);
+                Tab.bmp  = m_book->GetPageBitmap(n);
+                
                 vTempstore.push_back(Tab);
                 m_book->RemovePage(n);
                 break;
@@ -226,7 +235,7 @@ void WorkspacePane::ApplySavedTabOrder() const
     // All the matched tabs are now stored in the vector. Any left in m_book are presumably new additions
     // Now prepend the ordered tabs, so that any additions will effectively be appended
     for (size_t n=0; n < vTempstore.size(); ++n) {
-        m_book->InsertPage(n, vTempstore.at(n).second, vTempstore.at(n).first);
+        m_book->InsertPage(n, vTempstore.at(n).win, vTempstore.at(n).text, false, vTempstore.at(n).bmp);
     }
 
 //wxPrintf("After load");for (size_t n=0; n < m_book->GetPageCount(); ++n)  CL_DEBUG1(wxString::Format("Tab %i:  %zs",(int)n,m_book->GetPageText(n)));

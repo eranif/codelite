@@ -598,7 +598,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
         // the selection programtically
         int next_pos = m_book->GetPageCount();
 #endif
-        m_book->AddPage(win, text, closeLastTab ? true : selected);
+        m_book->AddPage(win, text, closeLastTab ? true : selected, bmp);
 
 #if CL_USE_NATIVEBOOK
         // If the newly added page is expected to be the selected one
@@ -614,7 +614,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
         }
 #endif
     } else {
-        m_book->InsertPage(insert_at_index, win, text, closeLastTab ? true : selected);
+        m_book->InsertPage(insert_at_index, win, text, closeLastTab ? true : selected, bmp);
     }
 
     if( closeLastTab ) {

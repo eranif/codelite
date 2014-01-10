@@ -143,7 +143,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
 #endif
 
     /// the tab start position (x)
-    curx = rr.x + 8;
+    curx = rr.x + 7;
     
     // Set clipping region
     int clip_width = rr.width;
@@ -153,7 +153,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     // since the above code above doesn't play well with WXDFB or WXCOCOA,
     // we'll just use a rectangle for the clipping region for now --
     gdc.SetClippingRegion(rr.x, rr.y, clip_width, rr.height);
-    path.AddRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 6.0);
+    path.AddRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 3.0);
     
     gdc.SetBrush( bgColour );
     gdc.GetGraphicsContext()->FillPath( path );
@@ -164,12 +164,8 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
         gdc.SetPen(originalPenColour);
         gdc.DrawLine(in_rect.GetBottomLeft(), in_rect.GetBottomRight());
         
-    } else {
-       // gdc.SetPen(bgColour);
-       // gdc.DrawLine(in_rect.GetBottomLeft(), in_rect.GetBottomRight());
     }
     
-    /// Draw the text
     wxString caption = page.caption;
     if ( caption.IsEmpty() ) {
         caption = "Tp";
@@ -184,23 +180,24 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     if ( caption == "Tp" )
         caption.Clear();
     
+    /// Draw the bitmap
+    if ( page.bitmap.IsOk() ) {
+        int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight())/2)-TAB_Y_OFFSET;
+        gdc.GetGraphicsContext()->DrawBitmap( page.bitmap, curx, bmpy, page.bitmap.GetWidth(), page.bitmap.GetHeight());
+        curx += page.bitmap.GetWidth();
+        curx += 3;
+    }
+    
+    /// Draw the text
     gdc.SetTextForeground( textColour );
-    gdc.GetGraphicsContext()->DrawText( page.caption, rr.x + 8, (rr.y + (rr.height - ext.y)/2)-TAB_Y_OFFSET+TEXT_Y_SPACER);
+    gdc.GetGraphicsContext()->DrawText( page.caption, curx, (rr.y + (rr.height - ext.y)/2)-TAB_Y_OFFSET+TEXT_Y_SPACER);
     
     // advance the X offset
     curx += ext.x;
-    
-    /// Draw the bitmap
-    if ( page.bitmap.IsOk() ) {
-        curx += 4;
-        int bmpy = (rr.y + (rr.height - page.bitmap.GetHeight())/2)-TAB_Y_OFFSET;
-        gdc.GetGraphicsContext()->DrawBitmap( page.bitmap, curx, bmpy, page.bitmap.GetWidth(), page.bitmap.GetHeight());
-        curx += 8;
-    }
+    curx += 3;
     
     /// Draw the X button on the tab
     if ( close_button_state != wxAUI_BUTTON_STATE_HIDDEN ) {
-        curx += 4;
         int btny = (rr.y + (rr.height/2))-TAB_Y_OFFSET+TEXT_Y_SPACER;
         if ( close_button_state == wxAUI_BUTTON_STATE_PRESSED ) {
             curx += 1;
@@ -264,19 +261,22 @@ wxSize clAuiGlossyTabArt::GetTabSize(wxDC& dc,
     // add padding around the text
     wxCoord tab_width  = measured_textx;
     wxCoord tab_height = measured_texty;
-
+    
+    if ( tab_height < 16 ) 
+        tab_height = 16;
+    
     // if the close button is showing, add space for it
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
         tab_width += X_DIAMETER + 3;
 
     // if there's a bitmap, add space for it
+    
+    // NOTE: we only support 16 pixels bitmap (or smaller)
+    // so there is no need to adjust the tab height!
+    tab_height += TAB_HEIGHT_SPACER;
     if (bitmap.IsOk()) {
         tab_width += bitmap.GetWidth();
         tab_width += 3; // right side bitmap padding
-        tab_height = wxMax(tab_height, bitmap.GetHeight());
-        tab_height += TAB_HEIGHT_SPACER;
-    } else {
-        tab_height += TAB_HEIGHT_SPACER;
     }
 
     // add padding

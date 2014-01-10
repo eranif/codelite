@@ -193,11 +193,14 @@ CMakePlugin::CMakePlugin(IManager* manager)
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
+    cmakeImages images;
+    const wxBitmap &bmp = images.Bitmap("cmake_16");
     if (IsPaneDetached()) {
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, bmp, wxSize(200, 200));
         cp->SetChildNoReparent(new CMakeHelpTab(cp, this));
+        
     } else {
-        book->AddPage(new CMakeHelpTab(book, this), HELP_TAB_NAME, false);
+        book->AddPage(new CMakeHelpTab(book, this), HELP_TAB_NAME, false, bmp);
     }
 
     // Bind events

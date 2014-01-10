@@ -28,6 +28,10 @@
 #include <wx/checkbox.h>
 #include <wx/combobox.h>
 #include <wx/textctrl.h>
+#include <wx/imaglist.h>
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
 
 class CMakeSettingsDialogBase : public wxDialog
 {
@@ -104,6 +108,26 @@ protected:
 public:
     CMakeProjectSettingsPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxTAB_TRAVERSAL);
     virtual ~CMakeProjectSettingsPanelBase();
+};
+
+
+class cmakeImages : public wxImageList
+{
+protected:
+    // Maintain a map of all bitmaps representd by their name
+    std::map<wxString, wxBitmap> m_bitmaps;
+
+
+protected:
+
+public:
+    cmakeImages();
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
+        return m_bitmaps.find(name)->second;
+    }
+    virtual ~cmakeImages();
 };
 
 #endif

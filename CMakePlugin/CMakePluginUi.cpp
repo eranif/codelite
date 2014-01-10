@@ -343,3 +343,28 @@ CMakeProjectSettingsPanelBase::~CMakeProjectSettingsPanelBase()
     m_textCtrlArguments->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CMakeProjectSettingsPanelBase::OnCheck2), NULL, this);
     
 }
+
+cmakeImages::cmakeImages()
+    : wxImageList(16, 16, true)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterR3nJ3cInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake_16"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("cmake_16"), bmp ) );
+    }
+    
+}
+
+cmakeImages::~cmakeImages()
+{
+}

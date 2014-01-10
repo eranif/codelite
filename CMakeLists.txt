@@ -85,9 +85,9 @@ if (UNIX)
         string(SUBSTRING "${WX_VERSION}" "0" "1" wxMAJOR_VERSION)
         string(SUBSTRING "${WX_VERSION}" "2" "1" wxMINOR_VERSION)
         string(SUBSTRING "${WX_VERSION}" "4" "1" wxRELEASE_NUMBER)
-        if ( wxMAJOR_VERSION LESS 3 AND (wxMINOR_VERSION LESS 9 OR wxRELEASE_NUMBER LESS 5) )
+        if ( wxMAJOR_VERSION LESS 3 )
         message(FATAL_ERROR
-"\nI'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-2.9.5"
+"\nI'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.0.0"
              )
         endif()
     endif()

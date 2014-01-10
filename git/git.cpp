@@ -1534,7 +1534,7 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
                 number.Trim(false);
                 unsigned long current;
                 if(number.ToULong(&current)) {
-                    message.Prepend(m_progressMessage+wxT("\nStatus: "));
+                    message.Prepend(m_progressMessage+wxT(". Status: "));
                     m_console->UpdateProgress(current, message);
                 }
             }

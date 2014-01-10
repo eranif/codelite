@@ -15,7 +15,6 @@
     <File Name="sftp.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="WinDebugUnicode"/>
   <VirtualDirectory Name="UI">
     <File Name="SFTPStatusPage.h"/>
     <File Name="SFTPStatusPage.cpp"/>
@@ -271,5 +270,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

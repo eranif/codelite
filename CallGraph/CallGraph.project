@@ -37,8 +37,6 @@
     <File Name="uicallgraphpanel.cpp"/>
     <File Name="toolbaricons.h"/>
   </VirtualDirectory>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -273,6 +271,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

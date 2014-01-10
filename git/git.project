@@ -37,8 +37,6 @@
     <File Name="GitApplyPatchDlg.cpp"/>
     <File Name="GitApplyPatchDlg.h"/>
   </VirtualDirectory>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="resources">
       <File Name="gitui_git_bitmaps.cpp"/>
@@ -285,6 +283,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

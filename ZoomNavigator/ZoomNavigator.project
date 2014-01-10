@@ -18,8 +18,6 @@
     <File Name="zoomtext.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
   <VirtualDirectory Name="wxcrafter">
     <File Name="zoom_navigator.wxcp"/>
     <VirtualDirectory Name="resources">
@@ -259,6 +257,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

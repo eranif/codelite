@@ -90,7 +90,6 @@
     </VirtualDirectory>
     <File Name="subversion2.wxcp"/>
   </VirtualDirectory>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -257,4 +256,5 @@
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

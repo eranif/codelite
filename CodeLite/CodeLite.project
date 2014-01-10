@@ -182,7 +182,6 @@
     <File Name="refactoring_storage.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="configuration">
     <File Name="json_node.cpp"/>
     <File Name="json_node.h"/>
@@ -201,7 +200,6 @@
     <File Name="cl_sftp_attribute.h"/>
     <File Name="cl_sftp_attribute.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Settings Type="Dynamic Library">
     <Configuration Name="WinDebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" UseDifferentPCHFlags="yes" PCHFlags="$(shell wx-config --cxxflags --debug=yes --unicode=yes) -g">
@@ -365,5 +363,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

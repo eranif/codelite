@@ -68,7 +68,6 @@
     <File Name="UncrustifyCodeBeautifier/windows_compat.h"/>
     <File Name="UncrustifyCodeBeautifier/uncrustify.h"/>
   </VirtualDirectory>
-  <Dependencies Name="DebugUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -284,6 +283,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
 </CodeLite_Project>

@@ -32,7 +32,6 @@
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
   <VirtualDirectory Name="Resources">
     <File Name="unittestreport.wxcp"/>
   </VirtualDirectory>
@@ -212,4 +211,5 @@
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
 </CodeLite_Project>

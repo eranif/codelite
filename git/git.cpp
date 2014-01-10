@@ -90,7 +90,6 @@ GitPlugin::GitPlugin(IManager *manager)
     , m_pathGITExecutable(wxT("git"))
     , m_pathGITKExecutable(wxT("gitk"))
 #endif
-    , m_progressDialog(NULL)
     , m_bActionRequiresTreUpdate(false)
     , m_process(NULL)
     , m_eventHandler(NULL)
@@ -119,7 +118,6 @@ GitPlugin::GitPlugin(IManager *manager)
 /*******************************************************************************/
 GitPlugin::~GitPlugin()
 {
-    wxDELETE(m_progressDialog);
 }
 
 /*******************************************************************************/
@@ -1527,7 +1525,7 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
             }
         }
 
-        if(m_progressDialog && m_progressDialog->IsShown()) {
+        if( m_console->IsProgressShown() ) {
             wxString message = output.Left(output.Find(':'));
             int percent = output.Find('%',true);
             if(percent != wxNOT_FOUND) {
@@ -1537,8 +1535,7 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
                 unsigned long current;
                 if(number.ToULong(&current)) {
                     message.Prepend(m_progressMessage+wxT("\nStatus: "));
-                    m_progressDialog->Update(current, message);
-                    m_progressDialog->Layout();
+                    m_console->UpdateProgress(current, message);
                 }
             }
         }
@@ -1704,42 +1701,28 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
 /*******************************************************************************/
 void GitPlugin::OnProgressTimer(wxTimerEvent& Event)
 {
-    if(m_progressDialog && m_progressDialog->IsShown())
-        m_progressDialog->Pulse(wxT(""));
+    if( m_console->IsProgressShown() )
+        m_console->PulseProgress();
 }
 
 /*******************************************************************************/
 void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 {
-    // The dialog was previously created in OnInitDone(), but this caused a brief,
-    // or not-so-brief, 'show' before a Hide() took effect (and one lucky user
-    // got to see the dialog permanently...). So now it's created on demand
-    if(!m_progressDialog) {
-        m_progressDialog = new wxProgressDialog(wxT("Git progress"),
-                                                wxT("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n"),
-                                                101, m_topWindow);
-        m_progressDialog->SetIcon(wxICON(icon_git));
-    }
-
+    m_console->ShowProgress(message, pulse);
+    
     if(pulse) {
-        m_progressDialog->Pulse(message);
-        m_progressDialog->Layout();
         m_progressTimer.Start(50);
+        
     } else {
         m_progressMessage = message;
-        m_progressDialog->Update(0, message);
-        m_progressDialog->Layout();
     }
-    m_progressDialog->Show();
 }
 
 /*******************************************************************************/
 void GitPlugin::HideProgress()
 {
-    if(m_progressDialog) {
-        m_progressDialog->Hide();
-        m_progressTimer.Stop();
-    }
+    m_console->HideProgress();
+    m_progressTimer.Stop();
 }
 
 void GitPlugin::OnEnableGitRepoExists(wxUpdateUIEvent& e)

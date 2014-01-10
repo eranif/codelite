@@ -28,6 +28,16 @@ public:
     void AddRawText(const wxString &text);
     bool IsVerbose() const;
     void UpdateTreeView(const wxString &output);
+    
+    //
+    // Progress bar API
+    //
+    void ShowProgress(const wxString& message, bool pulse = false);
+    void HideProgress();
+    void UpdateProgress(unsigned long current, const wxString &message);
+    bool IsProgressShown() const;
+    void PulseProgress();
+    
 protected:
     virtual void OnApplyPatch(wxCommandEvent& event);
     virtual void OnFileActivated(wxDataViewEvent& event);

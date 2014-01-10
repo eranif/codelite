@@ -36,7 +36,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer240 = new wxBoxSizer(wxVERTICAL);
     m_panel232->SetSizer(boxSizer240);
     
-    wxFlexGridSizer* fgSizer11 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer11 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer11->SetFlexibleDirection( wxBOTH );
     fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer11->AddGrowableCol(1);
@@ -65,7 +65,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer242 = new wxBoxSizer(wxVERTICAL);
     m_panel234->SetSizer(boxSizer242);
     
-    wxFlexGridSizer* flexGridSizer244 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer244 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer244->SetFlexibleDirection( wxBOTH );
     flexGridSizer244->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer244->AddGrowableCol(1);
@@ -725,7 +725,7 @@ gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer17);
     
-    wxFlexGridSizer* flexGridSizer21 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer21 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer21->SetFlexibleDirection( wxBOTH );
     flexGridSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer21->AddGrowableCol(1);
@@ -845,12 +845,12 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     boxSizer36->Add(m_splitter, 1, wxEXPAND, 5);
     
-    m_splitterPage100 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPageTreeView = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage100->SetSizer(boxSizer94);
+    m_splitterPageTreeView->SetSizer(boxSizer94);
     
-    m_dvFiles = new wxDataViewCtrl(m_splitterPage100, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_MULTIPLE|wxBORDER_THEME);
+    m_dvFiles = new wxDataViewCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_MULTIPLE|wxBORDER_THEME);
     
     m_dvFilesModel = new DataViewFilesModel;
     m_dvFilesModel->SetColCount( 1 );
@@ -859,8 +859,25 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     boxSizer94->Add(m_dvFiles, 1, wxALL|wxEXPAND, 2);
     
     m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
+    m_panelProgress = new wxPanel(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panelProgress->Hide();
+    
+    boxSizer94->Add(m_panelProgress, 0, wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer272 = new wxBoxSizer(wxVERTICAL);
+    m_panelProgress->SetSizer(boxSizer272);
+    
+    m_staticTextGauge = new wxStaticText(m_panelProgress, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer272->Add(m_staticTextGauge, 0, wxALL, 2);
+    
+    m_gauge = new wxGauge(m_panelProgress, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,-1), wxGA_SMOOTH|wxGA_HORIZONTAL);
+    m_gauge->SetValue(10);
+    
+    boxSizer272->Add(m_gauge, 0, wxALL|wxEXPAND, 2);
+    
     m_splitterPage96 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPage100, m_splitterPage96, 0);
+    m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 0);
     
     wxBoxSizer* boxSizer92 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage96->SetSizer(boxSizer92);
@@ -1046,7 +1063,7 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer154 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer154);
     
-    wxFlexGridSizer* flexGridSizer162 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer162 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer162->SetFlexibleDirection( wxBOTH );
     flexGridSizer162->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer162->AddGrowableCol(1);

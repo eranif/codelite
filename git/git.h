@@ -93,7 +93,6 @@ class GitPlugin : public IPlugin
     wxString                m_currentBranch;
     std::queue<gitAction>   m_gitActionQueue;
     wxTimer                 m_progressTimer;
-    wxProgressDialog*       m_progressDialog;
     wxString                m_progressMessage;
     wxString                m_commandOutput;
     bool                    m_bActionRequiresTreUpdate;

@@ -35,6 +35,7 @@
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
 #include "dataviewfilesmodel.h"
+#include <wx/gauge.h>
 
 class GitSettingsDlgBase : public wxDialog
 {
@@ -206,10 +207,13 @@ class GitConsoleBase : public wxPanel
 protected:
     wxAuiToolBar* m_auibar;
     wxSplitterWindow* m_splitter;
-    wxPanel* m_splitterPage100;
+    wxPanel* m_splitterPageTreeView;
     wxDataViewCtrl* m_dvFiles;
     wxObjectDataPtr<DataViewFilesModel> m_dvFilesModel;
 
+    wxPanel* m_panelProgress;
+    wxStaticText* m_staticTextGauge;
+    wxGauge* m_gauge;
     wxPanel* m_splitterPage96;
     wxStyledTextCtrl* m_stcLog;
 

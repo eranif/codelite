@@ -172,18 +172,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_auibar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
     m_auibar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"), _("Browse commit history"));
 
-#if 0
-    //m_auibar->AddTool(XRCID("git_bisect_start"), _("Bisect"), XPM_BITMAP(menu_start_bisect), _("Start bisect"));
-    //m_auibar->EnableTool(XRCID("git_bisect_start"),false);
-    //m_auibar->AddTool(XRCID("git_bisect_good"), _("Good commit"), wxArtProvider::GetIcon(wxART_TICK_MARK), _("Mark commit as good"));
-    //m_auibar->EnableTool(XRCID("git_bisect_good"),false);
-    //m_auibar->AddTool(XRCID("git_bisect_bad"), _("Bad commit"), wxArtProvider::GetIcon(wxART_ERROR), _("Mark commit as bad"));
-    //m_auibar->EnableTool(XRCID("git_bisect_bad"),false);
-    //m_auibar->AddTool(XRCID("git_bisect_reset"), _("End bisect"), wxArtProvider::GetIcon(wxART_QUIT), _("Quit bisect"));
-    //m_auibar->EnableTool(XRCID("git_bisect_reset"),false);
-    //m_auibar->AddSeparator();
-#endif
-    
     wxAuiToolBarItemArray prepend_items;
     wxAuiToolBarItemArray append_items;
     PopulateAuiToolbarOverflow(append_items, m_images);
@@ -582,4 +570,50 @@ void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
     ce.SetLastUsedCommandIndex(id);
     conf.WriteItem(&data);
     conf.Save();
+}
+
+void GitConsole::HideProgress()
+{
+    if ( m_panelProgress->IsShown() ) {
+        m_gauge->SetValue(0);
+        m_staticTextGauge->SetLabel("");
+        m_panelProgress->Hide();
+        m_splitterPageTreeView->GetSizer()->Layout();
+    }
+}
+
+void GitConsole::ShowProgress(const wxString& message, bool pulse)
+{
+    if ( !m_panelProgress->IsShown() ) {
+        m_panelProgress->Show();
+        m_splitterPageTreeView->GetSizer()->Layout();
+    }
+    
+    wxString trimmedMessage = message;
+    m_staticTextGauge->SetLabel( trimmedMessage.Trim().Trim(false) );
+    if ( pulse ) {
+        m_gauge->Pulse();
+        m_gauge->Update();
+        
+    } else {
+        m_gauge->SetValue(0);
+        m_gauge->Update();
+    }
+}
+
+void GitConsole::UpdateProgress(unsigned long current, const wxString& message)
+{
+    wxString trimmedMessage = message;
+    m_gauge->SetValue(current);
+    m_staticTextGauge->SetLabel( trimmedMessage.Trim().Trim(false) );
+}
+
+bool GitConsole::IsProgressShown() const
+{
+    return m_panelProgress->IsShown();
+}
+
+void GitConsole::PulseProgress()
+{
+    m_gauge->Pulse();
 }

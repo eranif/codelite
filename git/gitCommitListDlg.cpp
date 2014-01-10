@@ -144,6 +144,10 @@ void GitCommitListDlg::OnProcessOutput(wxCommandEvent &event)
 void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
 {
     wxVariant v;
+    if ( !event.GetItem().IsOk() ) {
+        return;
+    }
+    
     m_dvListCtrlCommitList->GetValue(v, m_dvListCtrlCommitList->ItemToRow(event.GetItem()), 0);
     wxString commitID = v.GetString();
     wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath.c_str(), commitID.c_str());

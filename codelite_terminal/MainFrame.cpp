@@ -5,6 +5,7 @@
 #include <wx/settings.h>
 #include <wx/colordlg.h>
 #include "SettingsDlg.h"
+#include <wx/filedlg.h>
 
 #ifndef __WXMSW__
 #if defined(__WXGTK__)
@@ -147,11 +148,11 @@ void MainFrame::DoExecuteCurrentLine(const wxString &command)
         cmd.RemoveLast();
         async = true;
     }
-    
+
     if ( command.IsEmpty() ) {
         AppendNewLine();
     }
-    
+
     if ( cmd.IsEmpty() ) {
         SetCartAtEnd();
         return;
@@ -412,4 +413,20 @@ void MainFrame::DoApplySettings()
     DoSetColour( m_config.GetFgColour(), false );
     DoSetColour( m_config.GetBgColour(), true );
     DoSetFont  ( m_config.GetFont() );
+}
+
+void MainFrame::OnSaveContent(wxCommandEvent& event)
+{
+    const wxString ALL(wxT("All Files (*)|*"));
+    wxFileDialog dlg(this, _("Save As"), ::wxGetCwd(), "codelite-terminal.txt", ALL,
+                     wxFD_SAVE | wxFD_OVERWRITE_PROMPT ,
+                     wxDefaultPosition);
+    if ( dlg.ShowModal() == wxID_OK ) {
+        m_stc->SaveFile( dlg.GetPath() );
+    }
+}
+
+void MainFrame::OnSaveContentUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !m_stc->IsEmpty() );
 }

@@ -23,6 +23,8 @@ class MainFrame : public MainFrameBaseClass
     MyConfig        m_config;
 
 protected:
+    virtual void OnSaveContentUI(wxUpdateUIEvent& event);
+    virtual void OnSaveContent(wxCommandEvent& event);
     virtual void OnSettings(wxCommandEvent& event);
     virtual void OnSignalInferiorUI(wxUpdateUIEvent& event);
     virtual void OnSignalinferior(wxAuiToolBarEvent& event);

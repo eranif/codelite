@@ -52,6 +52,8 @@ protected:
     virtual void OnSignalInferiorUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSignalinferior(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSaveContent(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSaveContentUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }

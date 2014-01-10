@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	47,
+		"m_objCounter":	49,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC9ED9InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_bitmaps.cpp",
@@ -300,7 +300,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"resources/clean.png"
+															"m_path":	"resources/stop.png"
 														}, {
 															"type":	"filePicker",
 															"m_label":	"Disabled-Bitmap File",
@@ -356,7 +356,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"resources/stop.png"
+															"m_path":	"resources/signal.png"
 														}, {
 															"type":	"filePicker",
 															"m_label":	"Disabled-Bitmap File",
@@ -418,7 +418,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"resources/cog.png"
+															"m_path":	"resources/settings.png"
 														}, {
 															"type":	"filePicker",
 															"m_label":	"Disabled-Bitmap File",
@@ -435,6 +435,62 @@
 															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnSettings(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+														}],
+													"m_children":	[]
+												}, {
+													"m_type":	4462,
+													"proportion":	0,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	[],
+													"m_properties":	[{
+															"type":	"winid",
+															"m_label":	"ID:",
+															"m_winid":	"wxID_SAVE"
+														}, {
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"m_toolbarItemSaveContent"
+														}, {
+															"type":	"string",
+															"m_label":	"Label:",
+															"m_value":	"Save"
+														}, {
+															"type":	"multi-string",
+															"m_label":	"Tooltip:",
+															"m_value":	"Save"
+														}, {
+															"type":	"string",
+															"m_label":	"Help String:",
+															"m_value":	"Save"
+														}, {
+															"type":	"bitmapPicker",
+															"m_label":	"Bitmap File:",
+															"m_path":	"resources/save.png"
+														}, {
+															"type":	"filePicker",
+															"m_label":	"Disabled-Bitmap File",
+															"m_path":	""
+														}, {
+															"type":	"choice",
+															"m_label":	"Kind:",
+															"m_selection":	0,
+															"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+														}],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+															"m_eventClass":	"wxCommandEvent",
+															"m_eventHandler":	"wxCommandEventHandler",
+															"m_functionNameAndSignature":	"OnSaveContent(wxCommandEvent& event)",
+															"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+														}, {
+															"m_eventName":	"wxEVT_UPDATE_UI",
+															"m_eventClass":	"wxUpdateUIEvent",
+															"m_eventHandler":	"wxUpdateUIEventHandler",
+															"m_functionNameAndSignature":	"OnSaveContentUI(wxUpdateUIEvent& event)",
+															"m_description":	"Process a wxEVT_UPDATE_UI event"
 														}],
 													"m_children":	[]
 												}]

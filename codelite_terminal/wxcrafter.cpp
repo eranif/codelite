@@ -54,11 +54,13 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer11->Add(m_auibar17, 0, wxEXPAND, 5);
     
-    m_auibar17->AddTool(wxID_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("clean")), wxNullBitmap, wxITEM_NORMAL, _("Clear view"), _("Clear view"), NULL);
+    m_auibar17->AddTool(wxID_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Clear view"), _("Clear view"), NULL);
     
-    m_auibar17->AddTool(ID_KILL_INFIRIOR, _("Send inferior process signal"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Send inferior process signal"), NULL)->SetHasDropDown(true);
+    m_auibar17->AddTool(ID_KILL_INFIRIOR, _("Send inferior process signal"), wxXmlResource::Get()->LoadBitmap(wxT("signal")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Send inferior process signal"), NULL)->SetHasDropDown(true);
     
-    m_auibar17->AddTool(ID_SETTINGS, _("Settings..."), wxXmlResource::Get()->LoadBitmap(wxT("cog")), wxNullBitmap, wxITEM_NORMAL, _("Settings..."), _("Settings..."), NULL);
+    m_auibar17->AddTool(ID_SETTINGS, _("Settings..."), wxXmlResource::Get()->LoadBitmap(wxT("settings")), wxNullBitmap, wxITEM_NORMAL, _("Settings..."), _("Settings..."), NULL);
+    
+    m_auibar17->AddTool(wxID_SAVE, _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("save")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
     m_auibar17->Realize();
     
     m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
@@ -142,6 +144,8 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSignalInferiorUI), NULL, this);
     this->Connect(ID_KILL_INFIRIOR, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnSignalinferior), NULL, this);
     this->Connect(ID_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
+    this->Connect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSaveContent), NULL, this);
+    this->Connect(wxID_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSaveContentUI), NULL, this);
     m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
     this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
@@ -158,6 +162,8 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(ID_KILL_INFIRIOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSignalInferiorUI), NULL, this);
     this->Disconnect(ID_KILL_INFIRIOR, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::OnSignalinferior), NULL, this);
     this->Disconnect(ID_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
+    this->Disconnect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnSaveContent), NULL, this);
+    this->Disconnect(wxID_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnSaveContentUI), NULL, this);
     m_stc->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
     m_stc->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
     this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
@@ -182,7 +188,7 @@ SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer27);
     
-    wxFlexGridSizer* flexGridSizer29 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer29 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer29->SetFlexibleDirection( wxBOTH );
     flexGridSizer29->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer29->AddGrowableCol(1);

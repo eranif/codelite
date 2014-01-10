@@ -558,6 +558,8 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnChangeActiveBookmarkType(wxCommandEvent &e);
     void OnShowBookmarkMenu(wxAuiToolBarEvent &e);
+    void OnSettingsChanged(wxCommandEvent &e);
+    
     DECLARE_EVENT_TABLE()
 };
 

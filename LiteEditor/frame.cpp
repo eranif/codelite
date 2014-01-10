@@ -687,6 +687,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
 
 }
 
@@ -723,6 +724,7 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
 
     wxDELETE(m_timer);
     wxDELETE(m_statusbarTimer);
@@ -5389,4 +5391,10 @@ void clMainFrame::OnChangeActiveBookmarkType(wxCommandEvent& e)
     if (editor) {
         editor->OnChangeActiveBookmarkType(e);
     }
+}
+
+void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    SetFrameTitle( GetMainBook()->GetActiveEditor() );
 }

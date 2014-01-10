@@ -482,14 +482,12 @@ wxString CppCheckPlugin::DoGetCommand()
 wxString CppCheckPlugin::DoGenerateFileList()
 {
     //create temporary file and save the file there
-    wxString wspPath = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
-    wxString list_file( wspPath );
-    list_file << wxT("cppcheck.list");
+    wxFileName fnFileList( WorkspaceST::Get()->GetPrivateFolder(), "cppcheck.list");
 
     //create temporary file and save the file there
-    wxFFile file(list_file, wxT("w+b"));
+    wxFFile file(fnFileList.GetFullPath(), wxT("w+b"));
     if (!file.IsOpened()) {
-        wxMessageBox(_("Failed to open temporary file ") + list_file, _("Warning"), wxOK|wxCENTER|wxICON_WARNING);
+        wxMessageBox(_("Failed to open temporary file ") + fnFileList.GetFullPath(), _("Warning"), wxOK|wxCENTER|wxICON_WARNING);
         return wxEmptyString;
     }
 
@@ -501,8 +499,7 @@ wxString CppCheckPlugin::DoGenerateFileList()
     file.Write( content );
     file.Flush();
     file.Close();
-
-    return list_file;
+    return fnFileList.GetFullPath();
 }
 
 void CppCheckPlugin::OnCppCheckReadData(wxCommandEvent& e)

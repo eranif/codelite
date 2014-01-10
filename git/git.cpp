@@ -1086,6 +1086,13 @@ void GitPlugin::ProcessGitActionQueue(const wxString& commandString /*= ""*/)
 /*******************************************************************************/
 void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+
+    if ( !(data.GetFlags() & GitEntry::Git_Colour_Tree_View) )
+        return;
+
     wxArrayString tmpArray = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
 
     // Convert path to absolute

@@ -1,7 +1,4 @@
-- Move the following files to WORKSPACE_PATH/.codelite:
-    cppcheck.list
-
 - wxCrafter: make sure that after code generation an event is sent to git/svn views are updated accordingly
 - Git: remove the progress dialog and use an inline progress bar
-- Git: colorizing tree works over time (when it should not be working at all)
 - CMakePlugin / wxCrafter: use icon for the tabs?
+- Change the default "50" entries warning message

@@ -160,10 +160,10 @@
   <Dependencies Name="WinDebugUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="WinReleaseUnicode">
+  <Dependencies Name="Win_wxWidgets_29">
     <Project Name="sqlite3"/>
   </Dependencies>
-  <Dependencies Name="Win_wxWidgets_29">
+  <Dependencies Name="WinReleaseUnicode">
     <Project Name="sqlite3"/>
   </Dependencies>
 </CodeLite_Project>

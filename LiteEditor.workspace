@@ -42,10 +42,12 @@
     <![CDATA[]]>
   </Environment>
   <Project Name="Tweaks" Path="Tweaks/Tweaks.project" Active="No"/>
+  <Project Name="CMakePlugin" Path="CMakePlugin/CMakePlugin.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CMakePlugin" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeBeautifier" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinReleaseUnicode"/>
       <Project Name="CodeLite" ConfigName="WinReleaseUnicode"/>
@@ -77,9 +79,10 @@
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
+      <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeBeautifier" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeFormatter" ConfigName="WinDebugUnicode"/>
       <Project Name="CodeLite" ConfigName="WinDebugUnicode"/>
@@ -144,6 +147,7 @@
       <Project Name="CodeBeautifier" ConfigName="DebugUnicode"/>
       <Project Name="SFTP" ConfigName="DebugUnicode"/>
       <Project Name="Tweaks" ConfigName="DebugUnicode"/>
+      <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
@@ -178,6 +182,7 @@
       <Project Name="CodeBeautifier" ConfigName="DebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
+      <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
@@ -212,6 +217,7 @@
       <Project Name="CallGraph" ConfigName="DebugUnicode"/>
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="Tweaks" ConfigName="DebugUnicode"/>
+      <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

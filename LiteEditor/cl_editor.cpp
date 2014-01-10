@@ -961,9 +961,7 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent &event)
             << wxT(",  Col ")
             << GetColumn(pos)
             << wxT(",  Pos ")
-            << pos
-            << ", Style "
-            << GetStyleAt(pos);
+            << pos;
 
     message << ", ";
     

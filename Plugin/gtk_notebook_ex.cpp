@@ -675,6 +675,10 @@ wxBitmap Notebook::GetPageBitmap(size_t page) const
     }
 
     int imgIdx = wxNotebook::GetPageImage(page);
+    if (imgIdx == wxNOT_FOUND) {
+        return wxNullBitmap;
+    }
+
     return m_imgList->GetBitmap(imgIdx);
 }
 

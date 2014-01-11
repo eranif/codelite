@@ -1,3 +1,2 @@
-- wxCrafter: make sure that after code generation an event is sent to git/svn views are updated accordingly
 - Add events for all debugger UI actions so plugins code implement it instead of the default debugger
 - Allow multiple file open in open-resource dialog

@@ -3691,7 +3691,7 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
     size_t     sel = GetWorkspacePane()->GetNotebook()->GetSelection();
     wxWindow *page = GetWorkspacePane()->GetNotebook()->GetCurrentPage();
     wxString  text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
-    wxBitmap  bmp;
+    wxBitmap  bmp  = GetWorkspacePane()->GetNotebook()->GetPageBitmap(sel); // We might have a bitmap on the tab, make sure we restore it
 
 #if !CL_USE_NATIVEBOOK
     DockablePane *pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, bmp, wxSize(200, 200));

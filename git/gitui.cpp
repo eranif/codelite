@@ -562,7 +562,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_sdbSizer1->AddButton(m_button145);
     m_sdbSizer1->Realize();
     
-    SetSizeHints(879,600);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

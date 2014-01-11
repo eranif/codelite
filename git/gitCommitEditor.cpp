@@ -5,7 +5,7 @@
 #include "editor_config.h"
 
 GitCommitEditor::GitCommitEditor(wxWindow* parent, wxWindowID id, const wxPoint &position, const wxSize& size, long style)
-    : wxStyledTextCtrl(parent, id, position, size, style)
+    : wxStyledTextCtrl(parent, id, position, size, style|wxBORDER_THEME)
 {
     InitStyles();
 }

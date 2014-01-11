@@ -132,6 +132,11 @@ void PSCustomBuildPage::DoEditTarget(long item)
             DoUpdateTarget(item, dlg.GetTargetName(), dlg.GetTargetCommand());
             GetDlg()->SetIsDirty(true);
         }
+
+#ifdef __WXMAC__
+        GetDlg()->Raise();
+#endif
+
     }
 }
 

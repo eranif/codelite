@@ -227,6 +227,9 @@ void ProjectSettingsDlg::OnButtonHelp(wxCommandEvent& e)
 
     MacrosDlg dlg(this, MacrosDlg::MacrosProject, project, editor);
     dlg.ShowModal();
+#ifdef __WXMAC__
+    Raise();
+#endif
 }
 
 void ProjectSettingsDlg::OnButtonApplyUI(wxUpdateUIEvent& event)

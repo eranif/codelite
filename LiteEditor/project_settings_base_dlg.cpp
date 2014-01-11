@@ -23,17 +23,17 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_panelSettings = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     mainSizer->Add(m_panelSettings, 1, wxEXPAND, 5);
     
-    m_sizerSettings = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* m_sizerSettings = new wxBoxSizer(wxVERTICAL);
     m_panelSettings->SetSizer(m_sizerSettings);
     
-    bSizer44 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer44 = new wxBoxSizer(wxHORIZONTAL);
     
     m_sizerSettings->Add(bSizer44, 0, wxEXPAND, 5);
     
@@ -45,26 +45,23 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     m_treebook = new wxTreebook( m_panelSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
     m_sizerSettings->Add(m_treebook, 1, wxALL|wxEXPAND, 5);
     
-    bSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer126 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(bSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(m_stdBtnSizer126, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_buttonHelp = new wxButton(this, wxID_HELP, _("Help..."), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button_ok = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button_ok->SetDefault();
+    m_stdBtnSizer126->AddButton(m_button_ok);
     
-    bSizer3->Add(m_buttonHelp, 0, wxALL, 5);
+    m_button_apply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer126->AddButton(m_button_apply);
     
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOK->SetDefault();
+    m_button_cancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer126->AddButton(m_button_cancel);
     
-    bSizer3->Add(m_buttonOK, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
-    
-    m_buttonApply = new wxButton(this, wxID_APPLY, _("Apply"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer3->Add(m_buttonApply, 0, wxALL, 5);
+    m_button_help = new wxButton(this, wxID_HELP, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer126->AddButton(m_button_help);
+    m_stdBtnSizer126->Realize();
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -73,22 +70,20 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     Centre(wxBOTH);
     // Connect events
     m_choiceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
-    m_buttonHelp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
-    m_buttonCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
-    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
-    m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);
+    m_button_ok->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
+    m_button_apply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
+    m_button_cancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
+    m_button_help->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
     
 }
 
 ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 {
     m_choiceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
-    m_buttonHelp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
-    m_buttonCancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);
+    m_button_ok->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
+    m_button_apply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
+    m_button_cancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
+    m_button_help->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
     
 }
 
@@ -102,17 +97,17 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
         bBitmapLoaded = true;
     }
     
-    bSizer35 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer35 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer35);
     
     m_generalPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer35->Add(m_generalPage, 1, wxALL|wxEXPAND, 5);
     
-    bSizer19 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
     m_generalPage->SetSizer(bSizer19);
     
-    flexGridSizer2 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer2->SetFlexibleDirection( wxBOTH );
     flexGridSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer2->AddGrowableCol(1);
@@ -166,7 +161,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     
     flexGridSizer2->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
     
     flexGridSizer2->Add(boxSizer4, 0, wxEXPAND, 5);
     
@@ -185,7 +180,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     
     bSizer19->Add(m_staticText17, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    flexGridSizer6 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* flexGridSizer6 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer6->SetFlexibleDirection( wxBOTH );
     flexGridSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer6->AddGrowableCol(1);
@@ -258,7 +253,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     
     bSizer19->Add(0, 0, 1, wxALL, 5);
     
-    bSizer17 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer17 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer19->Add(bSizer17, 0, wxALIGN_LEFT, 5);
     
@@ -373,14 +368,14 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    bSizer36 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer36);
     
     m_compilerPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer36->Add(m_compilerPage, 1, wxALL|wxEXPAND, 5);
     
-    compilerPageSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* compilerPageSizer = new wxBoxSizer(wxVERTICAL);
     m_compilerPage->SetSizer(compilerPageSizer);
     
     m_checkCompilerNeeded = new wxCheckBox(m_compilerPage, wxID_ANY, _("Compiler is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -388,11 +383,11 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     compilerPageSizer->Add(m_checkCompilerNeeded, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_compilerPage, wxID_ANY, _("Compiler Options:")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_compilerPage, wxID_ANY, _("Compiler Options:")), wxVERTICAL);
     
     compilerPageSizer->Add(sbSizer3, 1, wxALL|wxEXPAND, 5);
     
-    flexGridSizer15 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* flexGridSizer15 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer15->SetFlexibleDirection( wxBOTH );
     flexGridSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer15->AddGrowableCol(1);
@@ -478,11 +473,11 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     flexGridSizer15->Add(m_buttonAddPreprocessor, 0, wxALIGN_CENTER_VERTICAL, 5);
     
-    sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_compilerPage, wxID_ANY, _("Pre Compiled Headers:")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_compilerPage, wxID_ANY, _("Pre Compiled Headers:")), wxVERTICAL);
     
     compilerPageSizer->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
     
-    bSizer33 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer33 = new wxBoxSizer(wxHORIZONTAL);
     
     sbSizer2->Add(bSizer33, 0, wxEXPAND, 5);
     
@@ -614,14 +609,14 @@ PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& p
         bBitmapLoaded = true;
     }
     
-    bSizer37 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer37 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer37);
     
     m_linkerPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer37->Add(m_linkerPage, 1, wxALL|wxEXPAND, 5);
     
-    linkerPageSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* linkerPageSizer = new wxBoxSizer(wxVERTICAL);
     m_linkerPage->SetSizer(linkerPageSizer);
     
     m_checkLinkerNeeded = new wxCheckBox(m_linkerPage, wxID_ANY, _("Linker is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -629,11 +624,11 @@ PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     linkerPageSizer->Add(m_checkLinkerNeeded, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_linkerPage, wxID_ANY, _("Linker Options:")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_linkerPage, wxID_ANY, _("Linker Options:")), wxVERTICAL);
     
     linkerPageSizer->Add(sbSizer4, 0, wxALL|wxEXPAND, 5);
     
-    flexGridSizer21 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* flexGridSizer21 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer21->SetFlexibleDirection( wxBOTH );
     flexGridSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer21->AddGrowableCol(1);
@@ -752,21 +747,21 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    bSizer38 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer38 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer38);
     
     m_panelDebugger = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer38->Add(m_panelDebugger, 1, wxALL|wxEXPAND, 5);
     
-    bSizer192 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer192 = new wxBoxSizer(wxVERTICAL);
     m_panelDebugger->SetSizer(bSizer192);
     
     m_staticText321 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Select debugger path. Leave empty to use the default:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer192->Add(m_staticText321, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer35 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer35 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer192->Add(boxSizer35, 0, wxEXPAND, 5);
     
@@ -786,7 +781,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_panel80 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook67->AddPage(m_panel80, _("Debugger Search Paths"), false);
     
-    boxSizer82 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer82 = new wxBoxSizer(wxHORIZONTAL);
     m_panel80->SetSizer(boxSizer82);
     
     m_dvListCtrlDebuggerSearchPaths = new wxDataViewListCtrl(m_panel80, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
@@ -794,7 +789,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer82->Add(m_dvListCtrlDebuggerSearchPaths, 1, wxALL|wxEXPAND, 5);
     
     m_dvListCtrlDebuggerSearchPaths->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    boxSizer84 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer84 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer82->Add(boxSizer84, 0, wxEXPAND, 5);
     
@@ -809,7 +804,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_panel71 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook67->AddPage(m_panel71, _("Startup Commands"), false);
     
-    boxSizer76 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer76 = new wxBoxSizer(wxVERTICAL);
     m_panel71->SetSizer(boxSizer76);
     
     m_staticText301 = new wxStaticText(m_panel71, wxID_ANY, _("Enter here any commands that should be passed to the debugger on startup:"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -825,7 +820,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_panel74 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_notebook67->AddPage(m_panel74, _("Remote Attach Commands"), false);
     
-    boxSizer78 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer78 = new wxBoxSizer(wxVERTICAL);
     m_panel74->SetSizer(boxSizer78);
     
     m_staticText311 = new wxStaticText(m_panel74, wxID_ANY, _("Enter here any commands that should be passed to the debugger after attaching the remote target:"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -843,7 +838,7 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     
     bSizer192->Add(m_checkBoxDbgRemote, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    fgSizer61 = new wxFlexGridSizer(  1, 4, 0, 0);
+    wxFlexGridSizer* fgSizer61 = new wxFlexGridSizer(1, 4, 0, 0);
     fgSizer61->SetFlexibleDirection( wxBOTH );
     fgSizer61->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer61->AddGrowableCol(1);
@@ -920,17 +915,17 @@ PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const 
         bBitmapLoaded = true;
     }
     
-    bSizer39 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer39 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer39);
     
     m_resourceCmpPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer39->Add(m_resourceCmpPage, 1, wxALL|wxEXPAND, 5);
     
-    bSizer151 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer151 = new wxBoxSizer(wxVERTICAL);
     m_resourceCmpPage->SetSizer(bSizer151);
     
-    flexGridSizer25 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* flexGridSizer25 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer25->SetFlexibleDirection( wxBOTH );
     flexGridSizer25->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer25->AddGrowableCol(1);
@@ -1028,17 +1023,17 @@ PSEnvironmentBasePage::PSEnvironmentBasePage(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    bSizer44 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer44 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer44);
     
     m_panelEnv = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer44->Add(m_panelEnv, 1, wxALL|wxEXPAND, 5);
     
-    bSizer34 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer34 = new wxBoxSizer(wxVERTICAL);
     m_panelEnv->SetSizer(bSizer34);
     
-    fgSizer12 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer12 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer12->SetFlexibleDirection( wxBOTH );
     fgSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer12->AddGrowableCol(1);
@@ -1107,21 +1102,21 @@ PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    bSizer41 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer41 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer41);
     
     m_preBuildPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer41->Add(m_preBuildPage, 1, wxEXPAND, 5);
     
-    bSizer8 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
     m_preBuildPage->SetSizer(bSizer8);
     
     m_staticText11 = new wxStaticText(m_preBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     
     bSizer8->Add(m_staticText11, 0, wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    bSizer9 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer8->Add(bSizer9, 1, wxEXPAND, 5);
     
@@ -1164,14 +1159,14 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
         bBitmapLoaded = true;
     }
     
-    bSizer42 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer42 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer42);
     
     m_customBuildPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer42->Add(m_customBuildPage, 1, wxALL|wxEXPAND, 5);
     
-    bSizer15 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer15 = new wxBoxSizer(wxVERTICAL);
     m_customBuildPage->SetSizer(bSizer15);
     
     m_checkEnableCustomBuild = new wxCheckBox(m_customBuildPage, wxID_ANY, _("Enable custom build"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -1183,7 +1178,7 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     
     bSizer15->Add(m_staticline12, 0, wxALL|wxEXPAND, 5);
     
-    bSizer23 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer23 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer15->Add(bSizer23, 0, wxEXPAND, 5);
     
@@ -1199,15 +1194,15 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
     
     bSizer23->Add(m_buttonBrowseCustomBuildWD, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     
-    bSizer211 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer211 = new wxBoxSizer(wxHORIZONTAL);
     
     bSizer15->Add(bSizer211, 1, wxEXPAND, 5);
     
-    m_listCtrlTargets = new wxListCtrl(m_customBuildPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
+    m_listCtrlTargets = new wxListCtrl(m_customBuildPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT|wxBORDER_THEME);
     
     bSizer211->Add(m_listCtrlTargets, 1, wxALL|wxEXPAND, 5);
     
-    bSizer221 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer221 = new wxBoxSizer(wxVERTICAL);
     
     bSizer211->Add(bSizer221, 0, wxEXPAND, 5);
     
@@ -1281,7 +1276,7 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    bSizer117 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer117 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer117);
     
     m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
@@ -1291,10 +1286,10 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id
     m_compilerPage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_compilerPage, _("Compiler"), false);
     
-    compilerPageSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* compilerPageSizer = new wxBoxSizer(wxVERTICAL);
     m_compilerPage->SetSizer(compilerPageSizer);
     
-    fgSizer10 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* fgSizer10 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer10->SetFlexibleDirection( wxBOTH );
     fgSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer10->AddGrowableCol(1);
@@ -1352,10 +1347,10 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id
     m_linkerPage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_linkerPage, _("Linker"), false);
     
-    linkerPageSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* linkerPageSizer = new wxBoxSizer(wxVERTICAL);
     m_linkerPage->SetSizer(linkerPageSizer);
     
-    fgSizer11 = new wxFlexGridSizer(  3, 3, 0, 0);
+    wxFlexGridSizer* fgSizer11 = new wxFlexGridSizer(3, 3, 0, 0);
     fgSizer11->SetFlexibleDirection( wxBOTH );
     fgSizer11->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer11->AddGrowableCol(1);
@@ -1402,10 +1397,10 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id
     m_resourceCmpPage = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_resourceCmpPage, _("Resources"), false);
     
-    bSizer151 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer151 = new wxBoxSizer(wxVERTICAL);
     m_resourceCmpPage->SetSizer(bSizer151);
     
-    fgSizer4 = new wxFlexGridSizer(  2, 3, 0, 0);
+    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(2, 3, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
@@ -1496,17 +1491,17 @@ PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
     
-    bSizer43 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer43 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer43);
     
     m_customMakefileStep = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     bSizer43->Add(m_customMakefileStep, 1, wxALL|wxEXPAND, 5);
     
-    bSizer16 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
     m_customMakefileStep->SetSizer(bSizer16);
     
-    fgSizer5 = new wxFlexGridSizer(  2, 2, 0, 0);
+    wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer(2, 2, 0, 0);
     fgSizer5->SetFlexibleDirection( wxBOTH );
     fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer5->AddGrowableCol(1);
@@ -1548,7 +1543,7 @@ PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID 
     
     fgSizer5->Add(m_textPreBuildRule, 0, wxALL|wxEXPAND, 5);
     
-    sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_customMakefileStep, wxID_ANY, wxT("")), wxVERTICAL);
+    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_customMakefileStep, wxID_ANY, wxT("")), wxVERTICAL);
     
     bSizer16->Add(sbSizer2, 0, wxEXPAND, 5);
     
@@ -1596,7 +1591,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    bSizer34 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer34 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer34);
     
     m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
@@ -1607,7 +1602,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     m_panel14 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
-    bSizer35 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer35 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(bSizer35);
     
     m_staticText47 = new wxStaticText(m_panel14, wxID_ANY, _("Search paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -1630,7 +1625,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_panel15 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_splitter1->SplitHorizontally(m_panel14, m_panel15, 0);
     
-    bSizer36 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer36 = new wxBoxSizer(wxVERTICAL);
     m_panel15->SetSizer(bSizer36);
     
     m_staticText49 = new wxStaticText(m_panel15, wxID_ANY, _("Macros (clang only):"), wxDefaultPosition, wxSize(-1, -1), 0);
@@ -1650,7 +1645,7 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     bSizer36->Add(m_textCtrlMacros, 1, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
-    bSizer40 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer40 = new wxBoxSizer(wxVERTICAL);
     
     bSizer36->Add(bSizer40, 0, wxEXPAND, 5);
     
@@ -1691,10 +1686,10 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
         bBitmapLoaded = true;
     }
     
-    boxSizer45 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer45 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer45);
     
-    flexGridSizer53 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer53 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer53->SetFlexibleDirection( wxBOTH );
     flexGridSizer53->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer53->AddGrowableCol(1);
@@ -1719,18 +1714,17 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
     
     flexGridSizer53->Add(m_textCtrlCommand, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer47 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer120 = new wxStdDialogButtonSizer();
     
-    boxSizer45->Add(boxSizer47, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer45->Add(m_stdBtnSizer120, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button49 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button49->SetDefault();
+    m_button122 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button122->SetDefault();
+    m_stdBtnSizer120->AddButton(m_button122);
     
-    boxSizer47->Add(m_button49, 0, wxALL, 5);
-    
-    m_button51 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer47->Add(m_button51, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    m_button124 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer120->AddButton(m_button124);
+    m_stdBtnSizer120->Realize();
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

@@ -2745,7 +2745,7 @@
 																			"border":	5,
 																			"gbSpan":	",",
 																			"gbPosition":	",",
-																			"m_styles":	[],
+																			"m_styles":	["wxBORDER_THEME"],
 																			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 																			"m_properties":	[{
 																					"type":	"winid",

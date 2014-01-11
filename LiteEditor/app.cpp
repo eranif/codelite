@@ -344,7 +344,12 @@ bool CodeLiteApp::OnInit()
 #if defined (__WXGTK__)
     if (homeDir.IsEmpty()) {
         SetAppName(wxT("codelite"));
-        homeDir = clStandardPaths::Get().GetUserDataDir(); // ~/Library/Application Support/codelite or ~/.codelite
+        homeDir = clStandardPaths::Get().GetUserDataDir(); // By default, ~/Library/Application Support/codelite or ~/.codelite
+        if (!wxFileName::Exists(homeDir)) {
+            wxLogNull noLog;
+            wxFileName::Mkdir(homeDir, wxS_DIR_DEFAULT,  wxPATH_MKDIR_FULL);
+            wxCHECK_MSG(wxFileName::DirExists(homeDir), false, "Failed to create the requested data dir");
+        }
 
         //Create the directory structure
         wxLogNull noLog;
@@ -370,6 +375,12 @@ bool CodeLiteApp::OnInit()
 #elif defined (__WXMAC__)
     SetAppName(wxT("codelite"));
     homeDir = clStandardPaths::Get().GetUserDataDir();
+    if (!wxFileName::Exists(homeDir)) {
+        wxLogNull noLog;
+        wxFileName::Mkdir(homeDir, wxS_DIR_DEFAULT,  wxPATH_MKDIR_FULL);
+        wxCHECK_MSG(wxFileName::DirExists(homeDir), false, "Failed to create the requested data dir");
+    }
+
     {
         wxLogNull noLog;
 
@@ -458,7 +469,7 @@ bool CodeLiteApp::OnInit()
 #ifdef __WXMSW__
     {
         wxLogNull noLog;
-        wxMkdir(clStandardPaths::Get().GetUserDataDir());
+        wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT,  wxPATH_MKDIR_FULL);
     }
 #endif
 

@@ -44,7 +44,7 @@
   <Project Name="Tweaks" Path="Tweaks/Tweaks.project" Active="No"/>
   <Project Name="CMakePlugin" Path="CMakePlugin/CMakePlugin.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinReleaseUnicode"/>
@@ -219,7 +219,7 @@
       <Project Name="Tweaks" ConfigName="DebugUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>

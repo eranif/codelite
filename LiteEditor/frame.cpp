@@ -3157,7 +3157,7 @@ void clMainFrame::OnDebugRestartUI(wxUpdateUIEvent &e)
     CHECK_SHUTDOWN();
     
     clDebugEvent event(wxEVT_DBG_IS_RUNNING);
-    EventNotifier::Get()->ProcessEvent( event )
+    EventNotifier::Get()->ProcessEvent( event );
     
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     e.Enable(event.IsAnswer() || (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) );

@@ -13,8 +13,8 @@ const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 #    define GIT_EXE "git"
 #    define GITK_EXE "gitk"
 #elif defined(__WXMAC__)
-#    define GIT_EXE "/usr/local/git/bin/git"
-#    define GITK_EXE "/usr/local/git/bin/gitk"
+#    define GIT_EXE "git"
+#    define GITK_EXE "gitk"
 #else
 #    define GIT_EXE "/usr/bin/git"
 #    define GITK_EXE "/usr/bin/gitk"

@@ -37,7 +37,11 @@ DisplayVariableDlg::DisplayVariableDlg( wxWindow* parent)
     WindowAttrManager::Load(this, "DebuggerTooltip", NULL);
     m_timer2 = new wxTimer(this);
     m_mousePosTimer = new wxTimer(this);
-
+	
+	if (GetSize().x < 100 || GetSize().y < 100 ) {
+		SetSize( wxRect(GetPosition(), wxSize(100, 100) ) );
+	}
+	
     Connect(m_timer2->GetId(),        wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
     Connect(m_mousePosTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnCheckMousePosTimer), NULL, this);
     m_panelStatusBar->Connect(wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler(DisplayVariableDlg::OnCaptureLost), NULL, this);
@@ -604,7 +608,7 @@ void DisplayVariableDlg::DoUpdateSize(bool performClean)
     if ( m_dragging ) {
         wxRect curect = GetScreenRect();
         curect.SetBottomRight( ::wxGetMousePosition() );
-        if ( curect.GetHeight() <= 10 || curect.GetWidth() <= 10 ) {
+        if ( curect.GetHeight() <= 100 || curect.GetWidth() <= 100 ) {
             if ( performClean ) {
                 m_dragging = false;
                 if ( m_panelStatusBar->HasCapture() ) {

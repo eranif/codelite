@@ -40,7 +40,7 @@ CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id
     m_filePickerProgram = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     m_filePickerProgram->SetToolTip(_("Path to cmake executable."));
     
-    flexGridSizer->Add(m_filePickerProgram, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer->Add(m_filePickerProgram, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     m_filePickerProgram->SetMinSize(wxSize(200,-1));
     
     m_staticTextDefaultGenerator = new wxStaticText(this, wxID_ANY, _("Default Generator:"), wxDefaultPosition, wxSize(-1,-1), 0);

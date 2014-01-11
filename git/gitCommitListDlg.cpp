@@ -31,7 +31,10 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     if ( lex ) {
         lex->Apply( m_stcDiff, true );
     }
-
+    
+    LexerConfPtr textLex = EditorConfigST::Get()->GetLexer("text");
+    textLex->Apply( m_stcCommitMessage, true );
+    
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
@@ -87,13 +90,10 @@ void GitCommitListDlg::OnChangeFile(wxCommandEvent& e)
 void GitCommitListDlg::OnProcessTerminated(wxCommandEvent &event)
 {
     ProcessEventData* ped = (ProcessEventData*)event.GetClientData();
-    delete ped;
+    wxDELETE(ped);
+    wxDELETE(m_process);
 
-    if ( m_process )
-        delete m_process;
-    m_process = NULL;
-
-    m_commitMessage->Clear();
+    m_stcCommitMessage->ClearAll();
     m_fileListBox->Clear();
     m_diffMap.clear();
     m_commandOutput.Replace(wxT("\r"), wxT(""));
@@ -103,15 +103,19 @@ void GitCommitListDlg::OnProcessTerminated(wxCommandEvent &event)
     unsigned index = 0;
     wxString currentFile;
     while(index < diffList.GetCount()) {
+        
         wxString line = diffList[index];
         if(line.StartsWith(wxT("diff"))) {
             line.Replace(wxT("diff --git a/"), wxT(""));
             currentFile = line.Left(line.Find(wxT(" ")));
             foundFirstDiff = true;
+            
         } else if(line.StartsWith(wxT("Binary"))) {
             m_diffMap[currentFile] = wxT("Binary diff");
+            
         } else if(!foundFirstDiff) {
-            m_commitMessage->AppendText(line+wxT("\n"));
+            m_stcCommitMessage->AppendText(line+wxT("\n"));
+            
         } else {
             m_diffMap[currentFile].Append(line+wxT("\n"));
         }
@@ -121,7 +125,7 @@ void GitCommitListDlg::OnProcessTerminated(wxCommandEvent &event)
         m_fileListBox->Append((*it).first);
     }
     m_stcDiff->SetReadOnly(false);
-    m_stcDiff->SetText(wxT(""));
+    m_stcDiff->ClearAll();
 
     if(m_diffMap.size() != 0) {
         std::map<wxString,wxString>::iterator it=m_diffMap.begin();

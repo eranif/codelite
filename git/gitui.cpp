@@ -132,18 +132,17 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer766->Add(m_checkBoxTrackTree, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer284 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(bSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(m_stdBtnSizer284, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_buttonOk = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonOk->SetDefault();
+    m_button286 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button286->SetDefault();
+    m_stdBtnSizer284->AddButton(m_button286);
     
-    bSizer3->Add(m_buttonOk, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer3->Add(m_buttonCancel, 0, wxALL, 5);
+    m_button288 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer284->AddButton(m_button288);
+    m_stdBtnSizer284->Realize();
     
     m_treebook230->ExpandNode( 0, true );
     m_treebook230->ExpandNode( 1, true );
@@ -159,7 +158,6 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlLocalName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
     m_staticText258->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
     m_textCtrlLocalEmail->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
-    m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitSettingsDlgBase::OnOK), NULL, this);
     
 }
 
@@ -169,7 +167,6 @@ GitSettingsDlgBase::~GitSettingsDlgBase()
     m_textCtrlLocalName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
     m_staticText258->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
     m_textCtrlLocalEmail->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitSettingsDlgBase::OnLocalRepoUI), NULL, this);
-    m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitSettingsDlgBase::OnOK), NULL, this);
     
 }
 
@@ -240,24 +237,55 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     
     bSizer13->Add(m_staticText8, 0, wxALL|wxALIGN_LEFT, 5);
     
-    m_commitMessage = new wxTextCtrl(m_panel4, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_WORDWRAP|wxTE_RICH2|wxTE_MULTILINE);
-    wxFont m_commitMessageFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Sans"));
-    m_commitMessage->SetFont(m_commitMessageFont);
+    m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    // Configure the fold margin
+    m_stcCommitMessage->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcCommitMessage->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcCommitMessage->SetMarginSensitive(4, true);
+    m_stcCommitMessage->SetMarginWidth    (4, 0);
     
-    bSizer13->Add(m_commitMessage, 1, wxALL|wxEXPAND, 5);
+    // Configure the tracker margin
+    m_stcCommitMessage->SetMarginWidth(1, 0);
     
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
+    // Configure the symbol margin
+    m_stcCommitMessage->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcCommitMessage->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcCommitMessage->SetMarginWidth(2, 0);
+    m_stcCommitMessage->SetMarginSensitive(2, true);
     
-    bSizer4->Add(bSizer5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    // Configure the line numbers margin
+    m_stcCommitMessage->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcCommitMessage->SetMarginWidth(0,0);
     
-    m_button5 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_button5->SetDefault();
+    // Configure the line symbol margin
+    m_stcCommitMessage->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcCommitMessage->SetMarginMask(3, 0);
+    m_stcCommitMessage->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcCommitMessage->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcCommitMessage->StyleClearAll();
+    m_stcCommitMessage->SetWrapMode(0);
+    m_stcCommitMessage->SetIndentationGuides(0);
+    m_stcCommitMessage->SetKeyWords(0, wxT(""));
+    m_stcCommitMessage->SetKeyWords(1, wxT(""));
+    m_stcCommitMessage->SetKeyWords(2, wxT(""));
+    m_stcCommitMessage->SetKeyWords(3, wxT(""));
+    m_stcCommitMessage->SetKeyWords(4, wxT(""));
     
-    bSizer5->Add(m_button5, 0, wxALL, 5);
+    bSizer13->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, 5);
     
-    m_button6 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer278 = new wxStdDialogButtonSizer();
     
-    bSizer5->Add(m_button6, 0, wxALL, 5);
+    bSizer4->Add(m_stdBtnSizer278, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer278->AddButton(m_buttonOK);
+    
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer278->AddButton(m_buttonCancel);
+    m_stdBtnSizer278->Realize();
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -266,14 +294,14 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     Centre(wxBOTH);
     // Connect events
     m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
-    m_button5->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
+    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }
 
 GitCommitDlgBase::~GitCommitDlgBase()
 {
     m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
-    m_button5->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
     
 }
 
@@ -307,7 +335,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, 5);
+    boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL|wxEXPAND, 2);
     
     m_dvListCtrlCommitList->AppendTextColumn(_("Commit"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     m_dvListCtrlCommitList->AppendTextColumn(_("Author"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
@@ -348,7 +376,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     wxArrayString m_fileListBoxArr;
     m_fileListBox = new wxListBox(m_splitterPage200, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_fileListBoxArr, 0);
     
-    boxSizer208->Add(m_fileListBox, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer208->Add(m_fileListBox, 1, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 2);
     
     m_splitterPage204 = new wxPanel(m_splitter196, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter196->SplitVertically(m_splitterPage200, m_splitterPage204, 0);
@@ -360,7 +388,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer215->Add(m_staticText217, 0, wxALL, 5);
     
-    m_stcDiff = new wxStyledTextCtrl(m_splitterPage204, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcDiff = new wxStyledTextCtrl(m_splitterPage204, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
     // Configure the fold margin
     m_stcDiff->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -396,7 +424,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stcDiff->SetKeyWords(3, wxT(""));
     m_stcDiff->SetKeyWords(4, wxT(""));
     
-    boxSizer215->Add(m_stcDiff, 1, wxALL|wxEXPAND, 5);
+    boxSizer215->Add(m_stcDiff, 1, wxALL|wxEXPAND, 2);
     
     m_splitterPage194 = new wxPanel(m_splitter186, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter186->SplitHorizontally(m_splitterPage190, m_splitterPage194, 100);
@@ -408,18 +436,52 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     boxSizer218->Add(m_staticText220, 0, wxALL, 5);
     
-    m_commitMessage = new wxTextCtrl(m_splitterPage194, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH2|wxTE_MULTILINE);
+    m_stcCommitMessage = new wxStyledTextCtrl(m_splitterPage194, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    // Configure the fold margin
+    m_stcCommitMessage->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcCommitMessage->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcCommitMessage->SetMarginSensitive(4, true);
+    m_stcCommitMessage->SetMarginWidth    (4, 0);
     
-    boxSizer218->Add(m_commitMessage, 1, wxALL|wxEXPAND, 5);
+    // Configure the tracker margin
+    m_stcCommitMessage->SetMarginWidth(1, 0);
     
-    wxBoxSizer* boxSizer224 = new wxBoxSizer(wxHORIZONTAL);
+    // Configure the symbol margin
+    m_stcCommitMessage->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcCommitMessage->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcCommitMessage->SetMarginWidth(2, 0);
+    m_stcCommitMessage->SetMarginSensitive(2, true);
     
-    bSizer17->Add(boxSizer224, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    // Configure the line numbers margin
+    m_stcCommitMessage->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcCommitMessage->SetMarginWidth(0,0);
     
-    m_button226 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button226->SetDefault();
+    // Configure the line symbol margin
+    m_stcCommitMessage->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcCommitMessage->SetMarginMask(3, 0);
+    m_stcCommitMessage->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcCommitMessage->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcCommitMessage->StyleClearAll();
+    m_stcCommitMessage->SetWrapMode(0);
+    m_stcCommitMessage->SetIndentationGuides(0);
+    m_stcCommitMessage->SetKeyWords(0, wxT(""));
+    m_stcCommitMessage->SetKeyWords(1, wxT(""));
+    m_stcCommitMessage->SetKeyWords(2, wxT(""));
+    m_stcCommitMessage->SetKeyWords(3, wxT(""));
+    m_stcCommitMessage->SetKeyWords(4, wxT(""));
     
-    boxSizer224->Add(m_button226, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer218->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, 2);
+    
+    m_stdBtnSizer290 = new wxStdDialogButtonSizer();
+    
+    bSizer17->Add(m_stdBtnSizer290, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button292 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button292->SetDefault();
+    m_stdBtnSizer290->AddButton(m_button292);
+    m_stdBtnSizer290->Realize();
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -431,7 +493,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_dvListCtrlCommitList->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(GitCommitListDlgBase::OnSelectionChanged), NULL, this);
     m_dvListCtrlCommitList->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitCommitListDlgBase::OnContextMenu), NULL, this);
     m_fileListBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitListDlgBase::OnChangeFile), NULL, this);
-    m_button226->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnOK), NULL, this);
+    m_button292->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnOK), NULL, this);
     
 }
 
@@ -441,7 +503,7 @@ GitCommitListDlgBase::~GitCommitListDlgBase()
     m_dvListCtrlCommitList->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(GitCommitListDlgBase::OnSelectionChanged), NULL, this);
     m_dvListCtrlCommitList->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitCommitListDlgBase::OnContextMenu), NULL, this);
     m_fileListBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitListDlgBase::OnChangeFile), NULL, this);
-    m_button226->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnOK), NULL, this);
+    m_button292->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitListDlgBase::OnOK), NULL, this);
     
 }
 
@@ -513,6 +575,256 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
 GitDiffDlgBase::~GitDiffDlgBase()
 {
     m_fileListBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnChangeFile), NULL, this);
+    
+}
+
+gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer17 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer17);
+    
+    wxFlexGridSizer* flexGridSizer21 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer21->SetFlexibleDirection( wxBOTH );
+    flexGridSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer21->AddGrowableCol(1);
+    
+    boxSizer17->Add(flexGridSizer21, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText22 = new wxStaticText(this, wxID_ANY, _("Clone URL:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer21->Add(m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlURL->SetToolTip(_("git URL to clone"));
+    
+    flexGridSizer21->Add(m_textCtrlURL, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText24 = new wxStaticText(this, wxID_ANY, _("Target Directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer21->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_dirPickerTargetDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST);
+    m_dirPickerTargetDir->SetToolTip(_("Clone the sources into this target directory"));
+    
+    flexGridSizer21->Add(m_dirPickerTargetDir, 0, wxALL|wxEXPAND, 5);
+    
+    flexGridSizer21->Add(0, 0, 0, wxALL, 5);
+    
+    m_checkBoxUseLogin = new wxCheckBox(this, wxID_ANY, _("Use login credentials:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxUseLogin->SetValue(false);
+    
+    flexGridSizer21->Add(m_checkBoxUseLogin, 0, wxALL|wxALIGN_LEFT, 5);
+    
+    m_staticText28 = new wxStaticText(this, wxID_ANY, _("Username:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer21->Add(m_staticText28, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlUsername = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer21->Add(m_textCtrlUsername, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText30 = new wxStaticText(this, wxID_ANY, _("Password:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer21->Add(m_staticText30, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlPassword = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PASSWORD);
+    
+    flexGridSizer21->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer18 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer17->Add(boxSizer18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonOK->SetDefault();
+    
+    boxSizer18->Add(m_buttonOK, 0, wxALL, 5);
+    
+    m_button20 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer18->Add(m_button20, 0, wxALL, 5);
+    
+    SetSizeHints(500,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_staticText28->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_textCtrlUsername->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_staticText30->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_textCtrlPassword->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnOKUI), NULL, this);
+    
+}
+
+gitCloneDlgBaseClass::~gitCloneDlgBaseClass()
+{
+    m_staticText28->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_textCtrlUsername->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_staticText30->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_textCtrlPassword->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnOKUI), NULL, this);
+    
+}
+
+GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer124);
+    
+    m_auibar132 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar132->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer124->Add(m_auibar132, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    
+    m_auibar132->AddTool(wxID_SAVEAS, _("Save as patch"), wxXmlResource::Get()->LoadBitmap(wxT("save")), wxNullBitmap, wxITEM_NORMAL, _("Save as patch"), _("Save as patch"), NULL);
+    m_auibar132->Realize();
+    
+    m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_editor->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_editor->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_editor->SetMarginSensitive(4, true);
+    m_editor->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_editor->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_editor->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_editor->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_editor->SetMarginWidth(2, 0);
+    m_editor->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_editor->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_editor->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_editor->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_editor->SetMarginMask(3, 0);
+    m_editor->SetMarginWidth(3,0);
+    // Select the lexer
+    m_editor->SetLexer(wxSTC_LEX_DIFF);
+    // Set default font / styles
+    m_editor->StyleClearAll();
+    m_editor->SetWrapMode(0);
+    m_editor->SetIndentationGuides(0);
+    m_editor->SetKeyWords(0, wxT(""));
+    m_editor->SetKeyWords(1, wxT(""));
+    m_editor->SetKeyWords(2, wxT(""));
+    m_editor->SetKeyWords(3, wxT(""));
+    m_editor->SetKeyWords(4, wxT(""));
+    
+    boxSizer124->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer126 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer124->Add(boxSizer126, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button128 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button128->SetDefault();
+    
+    boxSizer126->Add(m_button128, 0, wxALL, 5);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
+    
+}
+
+GitFileDiffDlgBase::~GitFileDiffDlgBase()
+{
+    this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
+    
+}
+
+GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer154 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer154);
+    
+    wxFlexGridSizer* flexGridSizer162 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer162->SetFlexibleDirection( wxBOTH );
+    flexGridSizer162->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer162->AddGrowableCol(1);
+    
+    boxSizer154->Add(flexGridSizer162, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText164 = new wxStaticText(this, wxID_ANY, _("Select patch file"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer162->Add(m_staticText164, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_filePickerPatchFile = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("Patch files (*.diff;*.patch)|*.diff;*.patch|All Files (*)|*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerPatchFile->SetToolTip(_("Patch file to apply"));
+    m_filePickerPatchFile->SetFocus();
+    
+    flexGridSizer162->Add(m_filePickerPatchFile, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText168 = new wxStaticText(this, wxID_ANY, _("git apply additional flags to use:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer162->Add(m_staticText168, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlExtraFlags = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlExtraFlags->SetToolTip(_("By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\nSet here an extra flags to use with this command, e.g.:\n\n--reverse\n\nSee the git manual for more options"));
+    
+    flexGridSizer162->Add(m_textCtrlExtraFlags, 0, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer156 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer154->Add(boxSizer156, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button158 = new wxButton(this, wxID_OK, _("&Apply"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button158->SetDefault();
+    
+    boxSizer156->Add(m_button158, 0, wxALL, 5);
+    
+    m_button160 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer156->Add(m_button160, 0, wxALL, 5);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_button158->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
+    
+}
+
+GitApplyPatchDlgBase::~GitApplyPatchDlgBase()
+{
+    m_button158->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
     
 }
 
@@ -712,104 +1024,6 @@ GitImages::~GitImages()
 {
 }
 
-gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterpca4kKInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    wxBoxSizer* boxSizer17 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer17);
-    
-    wxFlexGridSizer* flexGridSizer21 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer21->SetFlexibleDirection( wxBOTH );
-    flexGridSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer21->AddGrowableCol(1);
-    
-    boxSizer17->Add(flexGridSizer21, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticText22 = new wxStaticText(this, wxID_ANY, _("Clone URL:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer21->Add(m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlURL->SetToolTip(_("git URL to clone"));
-    
-    flexGridSizer21->Add(m_textCtrlURL, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText24 = new wxStaticText(this, wxID_ANY, _("Target Directory:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer21->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_dirPickerTargetDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST);
-    m_dirPickerTargetDir->SetToolTip(_("Clone the sources into this target directory"));
-    
-    flexGridSizer21->Add(m_dirPickerTargetDir, 0, wxALL|wxEXPAND, 5);
-    
-    flexGridSizer21->Add(0, 0, 0, wxALL, 5);
-    
-    m_checkBoxUseLogin = new wxCheckBox(this, wxID_ANY, _("Use login credentials:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxUseLogin->SetValue(false);
-    
-    flexGridSizer21->Add(m_checkBoxUseLogin, 0, wxALL|wxALIGN_LEFT, 5);
-    
-    m_staticText28 = new wxStaticText(this, wxID_ANY, _("Username:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer21->Add(m_staticText28, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlUsername = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer21->Add(m_textCtrlUsername, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText30 = new wxStaticText(this, wxID_ANY, _("Password:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer21->Add(m_staticText30, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlPassword = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PASSWORD);
-    
-    flexGridSizer21->Add(m_textCtrlPassword, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* boxSizer18 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer17->Add(boxSizer18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_buttonOK->SetDefault();
-    
-    boxSizer18->Add(m_buttonOK, 0, wxALL, 5);
-    
-    m_button20 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer18->Add(m_button20, 0, wxALL, 5);
-    
-    SetSizeHints(500,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    Centre(wxBOTH);
-    // Connect events
-    m_staticText28->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_textCtrlUsername->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_staticText30->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_textCtrlPassword->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnOKUI), NULL, this);
-    
-}
-
-gitCloneDlgBaseClass::~gitCloneDlgBaseClass()
-{
-    m_staticText28->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_textCtrlUsername->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_staticText30->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_textCtrlPassword->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnUseCredentialsUI), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(gitCloneDlgBaseClass::OnOKUI), NULL, this);
-    
-}
-
 GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
@@ -963,157 +1177,5 @@ GitConsoleBase::~GitConsoleBase()
     this->Disconnect(XRCID("git_console_reset_file"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitConsoleBase::OnItemSelectedUI), NULL, this);
     m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
     m_dvFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(GitConsoleBase::OnFileActivated), NULL, this);
-    
-}
-
-GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterpca4kKInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer124);
-    
-    m_auibar132 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
-    m_auibar132->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer124->Add(m_auibar132, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
-    
-    m_auibar132->AddTool(wxID_SAVEAS, _("Save as patch"), wxXmlResource::Get()->LoadBitmap(wxT("save")), wxNullBitmap, wxITEM_NORMAL, _("Save as patch"), _("Save as patch"), NULL);
-    m_auibar132->Realize();
-    
-    m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
-    // Configure the fold margin
-    m_editor->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_editor->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
-    m_editor->SetMarginSensitive(4, true);
-    m_editor->SetMarginWidth    (4, 0);
-    
-    // Configure the tracker margin
-    m_editor->SetMarginWidth(1, 0);
-    
-    // Configure the symbol margin
-    m_editor->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_editor->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_editor->SetMarginWidth(2, 0);
-    m_editor->SetMarginSensitive(2, true);
-    
-    // Configure the line numbers margin
-    m_editor->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_editor->SetMarginWidth(0,0);
-    
-    // Configure the line symbol margin
-    m_editor->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_editor->SetMarginMask(3, 0);
-    m_editor->SetMarginWidth(3,0);
-    // Select the lexer
-    m_editor->SetLexer(wxSTC_LEX_DIFF);
-    // Set default font / styles
-    m_editor->StyleClearAll();
-    m_editor->SetWrapMode(0);
-    m_editor->SetIndentationGuides(0);
-    m_editor->SetKeyWords(0, wxT(""));
-    m_editor->SetKeyWords(1, wxT(""));
-    m_editor->SetKeyWords(2, wxT(""));
-    m_editor->SetKeyWords(3, wxT(""));
-    m_editor->SetKeyWords(4, wxT(""));
-    
-    boxSizer124->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
-    
-    wxBoxSizer* boxSizer126 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer124->Add(boxSizer126, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button128 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button128->SetDefault();
-    
-    boxSizer126->Add(m_button128, 0, wxALL, 5);
-    
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    Centre(wxBOTH);
-    // Connect events
-    this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
-    
-}
-
-GitFileDiffDlgBase::~GitFileDiffDlgBase()
-{
-    this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
-    
-}
-
-GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterpca4kKInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    wxBoxSizer* boxSizer154 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer154);
-    
-    wxFlexGridSizer* flexGridSizer162 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer162->SetFlexibleDirection( wxBOTH );
-    flexGridSizer162->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer162->AddGrowableCol(1);
-    
-    boxSizer154->Add(flexGridSizer162, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticText164 = new wxStaticText(this, wxID_ANY, _("Select patch file"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer162->Add(m_staticText164, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_filePickerPatchFile = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("Patch files (*.diff;*.patch)|*.diff;*.patch|All Files (*)|*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
-    m_filePickerPatchFile->SetToolTip(_("Patch file to apply"));
-    m_filePickerPatchFile->SetFocus();
-    
-    flexGridSizer162->Add(m_filePickerPatchFile, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText168 = new wxStaticText(this, wxID_ANY, _("git apply additional flags to use:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer162->Add(m_staticText168, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlExtraFlags = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlExtraFlags->SetToolTip(_("By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\nSet here an extra flags to use with this command, e.g.:\n\n--reverse\n\nSee the git manual for more options"));
-    
-    flexGridSizer162->Add(m_textCtrlExtraFlags, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* boxSizer156 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer154->Add(boxSizer156, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button158 = new wxButton(this, wxID_OK, _("&Apply"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button158->SetDefault();
-    
-    boxSizer156->Add(m_button158, 0, wxALL, 5);
-    
-    m_button160 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer156->Add(m_button160, 0, wxALL, 5);
-    
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    Centre(wxBOTH);
-    // Connect events
-    m_button158->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
-    
-}
-
-GitApplyPatchDlgBase::~GitApplyPatchDlgBase()
-{
-    m_button158->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
     
 }

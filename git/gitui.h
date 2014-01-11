@@ -25,15 +25,15 @@
 #include <wx/splitter.h>
 #include <wx/checklst.h>
 #include "gitCommitEditor.h"
+#include <wx/stc/stc.h>
 #include <wx/dataview.h>
 #include <wx/listbox.h>
-#include <wx/stc/stc.h>
-#include <wx/bitmap.h>
-#include <map>
-#include <wx/icon.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
 #include "dataviewfilesmodel.h"
 #include <wx/gauge.h>
 
@@ -59,12 +59,12 @@ protected:
     wxCheckBox* m_checkBoxTerminal;
     wxCheckBox* m_checkBoxLog;
     wxCheckBox* m_checkBoxTrackTree;
-    wxButton* m_buttonOk;
-    wxButton* m_buttonCancel;
+    wxStdDialogButtonSizer* m_stdBtnSizer284;
+    wxButton* m_button286;
+    wxButton* m_button288;
 
 protected:
     virtual void OnLocalRepoUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
@@ -86,9 +86,10 @@ protected:
     GitCommitEditor* m_editor;
     wxPanel* m_panel4;
     wxStaticText* m_staticText8;
-    wxTextCtrl* m_commitMessage;
-    wxButton* m_button5;
-    wxButton* m_button6;
+    wxStyledTextCtrl* m_stcCommitMessage;
+    wxStdDialogButtonSizer* m_stdBtnSizer278;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
 
 protected:
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
@@ -119,8 +120,9 @@ protected:
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_splitterPage194;
     wxStaticText* m_staticText220;
-    wxTextCtrl* m_commitMessage;
-    wxButton* m_button226;
+    wxStyledTextCtrl* m_stcCommitMessage;
+    wxStdDialogButtonSizer* m_stdBtnSizer290;
+    wxButton* m_button292;
 
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
@@ -157,26 +159,6 @@ public:
 };
 
 
-class GitImages : public wxImageList
-{
-protected:
-    // Maintain a map of all bitmaps representd by their name
-    std::map<wxString, wxBitmap> m_bitmaps;
-
-
-protected:
-
-public:
-    GitImages();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name) )
-            return wxNullBitmap;
-        return m_bitmaps.find(name)->second;
-    }
-    virtual ~GitImages();
-};
-
-
 class gitCloneDlgBaseClass : public wxDialog
 {
 protected:
@@ -199,38 +181,6 @@ protected:
 public:
     gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("git clone.."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~gitCloneDlgBaseClass();
-};
-
-
-class GitConsoleBase : public wxPanel
-{
-protected:
-    wxAuiToolBar* m_auibar;
-    wxSplitterWindow* m_splitter;
-    wxPanel* m_splitterPageTreeView;
-    wxDataViewCtrl* m_dvFiles;
-    wxObjectDataPtr<DataViewFilesModel> m_dvFilesModel;
-
-    wxPanel* m_panelProgress;
-    wxStaticText* m_staticTextGauge;
-    wxGauge* m_gauge;
-    wxPanel* m_splitterPage96;
-    wxStyledTextCtrl* m_stcLog;
-
-protected:
-    virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnItemSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnFileActivated(wxDataViewEvent& event) { event.Skip(); }
-
-public:
-    GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
-    virtual ~GitConsoleBase();
 };
 
 
@@ -266,6 +216,58 @@ protected:
 public:
     GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Apply Patch"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitApplyPatchDlgBase();
+};
+
+
+class GitImages : public wxImageList
+{
+protected:
+    // Maintain a map of all bitmaps representd by their name
+    std::map<wxString, wxBitmap> m_bitmaps;
+
+
+protected:
+
+public:
+    GitImages();
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name) )
+            return wxNullBitmap;
+        return m_bitmaps.find(name)->second;
+    }
+    virtual ~GitImages();
+};
+
+
+class GitConsoleBase : public wxPanel
+{
+protected:
+    wxAuiToolBar* m_auibar;
+    wxSplitterWindow* m_splitter;
+    wxPanel* m_splitterPageTreeView;
+    wxDataViewCtrl* m_dvFiles;
+    wxObjectDataPtr<DataViewFilesModel> m_dvFilesModel;
+
+    wxPanel* m_panelProgress;
+    wxStaticText* m_staticTextGauge;
+    wxGauge* m_gauge;
+    wxPanel* m_splitterPage96;
+    wxStyledTextCtrl* m_stcLog;
+
+protected:
+    virtual void OnClearGitLogUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClearGitLog(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStopGitProcess(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStopGitProcessUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnAddFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnItemSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnResetFile(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnFileActivated(wxDataViewEvent& event) { event.Skip(); }
+
+public:
+    GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~GitConsoleBase();
 };
 
 #endif

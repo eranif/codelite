@@ -3,6 +3,8 @@
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
 #include "gitentry.h"
+#include "lexer_configuration.h"
+#include "editor_config.h"
 
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, const wxString& repoDir)
@@ -18,6 +20,8 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, const wxString& repoDir)
     m_splitterMain->SetSashPosition(data.GetGitCommitDlgVSashPos());
     
     WindowAttrManager::Load(this, wxT("GitCommitDlg"), NULL);
+    LexerConfPtr lex = EditorConfigST::Get()->GetLexer("text");
+    lex->Apply(m_stcCommitMessage);
 }
 
 /*******************************************************************************/
@@ -46,10 +50,13 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
         if(line.StartsWith(wxT("diff"))) {
             line.Replace(wxT("diff --git a/"), wxT(""));
             currentFile = line.Left(line.Find(wxT(" ")));
+            
         } else if(line.StartsWith(wxT("Binary"))) {
             m_diffMap[currentFile] = wxT("Binary diff");
+            
         } else {
             m_diffMap[currentFile].Append(line+wxT("\n"));
+            
         }
         ++index;
     }
@@ -65,14 +72,8 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
         m_listBox->Select(0);
         m_editor->SetReadOnly(true);
     }
-
-    wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-    wxTextAttr atr = m_commitMessage->GetDefaultStyle();
-    atr.SetFont(font);
-    m_commitMessage->SetDefaultStyle(atr);
-    m_commitMessage->SetFont(font);
-
 }
+
 /*******************************************************************************/
 wxArrayString GitCommitDlg::GetSelectedFiles()
 {
@@ -86,7 +87,7 @@ wxArrayString GitCommitDlg::GetSelectedFiles()
 /*******************************************************************************/
 wxString GitCommitDlg::GetCommitMessage()
 {
-    wxString msg = m_commitMessage->GetValue();
+    wxString msg = m_stcCommitMessage->GetText();
     msg.Replace(wxT("\""),wxT("\\\""));
     return msg;
 }
@@ -102,7 +103,7 @@ void GitCommitDlg::OnChangeFile(wxCommandEvent& e)
 
 void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
 {
-    if ( m_commitMessage->GetValue().IsEmpty() ) {
+    if ( m_stcCommitMessage->GetText().IsEmpty() ) {
         ::wxMessageBox(_("Git requires a commit message"), "codelite", wxICON_WARNING|wxOK|wxCENTER);
         return;
     }

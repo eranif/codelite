@@ -3141,6 +3141,10 @@ void clMainFrame::OnDebugUI(wxUpdateUIEvent &e)
 
 void clMainFrame::OnDebugRestart(wxCommandEvent &e)
 {
+    clDebugEvent event(wxEVT_DBG_UI_RESTART);
+    if ( EventNotifier::Get()->ProcessEvent( event ) ) 
+        return;
+        
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         GetDebuggerPane()->GetLocalsTable()->Clear();
@@ -3151,8 +3155,12 @@ void clMainFrame::OnDebugRestart(wxCommandEvent &e)
 void clMainFrame::OnDebugRestartUI(wxUpdateUIEvent &e)
 {
     CHECK_SHUTDOWN();
+    
+    clDebugEvent event(wxEVT_DBG_IS_RUNNING);
+    EventNotifier::Get()->ProcessEvent( event )
+    
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    e.Enable(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract());
+    e.Enable(event.IsAnswer() || (dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) );
 }
 
 void clMainFrame::OnDebugStop(wxCommandEvent &e)
@@ -3168,8 +3176,12 @@ void clMainFrame::OnDebugStop(wxCommandEvent &e)
 void clMainFrame::OnDebugStopUI(wxUpdateUIEvent &e)
 {
     CHECK_SHUTDOWN();
+    
+    clDebugEvent eventIsRunning(wxEVT_DBG_IS_RUNNING);
+    EventNotifier::Get()->ProcessEvent( eventIsRunning );
+
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    e.Enable(dbgr && dbgr->IsRunning());
+    e.Enable( eventIsRunning.IsAnswer() || (dbgr && dbgr->IsRunning()) );
 }
 
 void clMainFrame::OnDebugManageBreakpointsUI(wxUpdateUIEvent &e)
@@ -3191,20 +3203,40 @@ void clMainFrame::OnDebugManageBreakpointsUI(wxUpdateUIEvent &e)
 void clMainFrame::OnDebugCmd(wxCommandEvent &e)
 {
     int cmd(wxNOT_FOUND);
+    int eventId(wxNOT_FOUND);
+    
     if (e.GetId() == XRCID("pause_debugger")) {
         cmd = DBG_PAUSE;
+        eventId = wxEVT_DBG_UI_INTERRUPT;
+        
     } else if (e.GetId() == XRCID("dbg_stepin")) {
         cmd = DBG_STEPIN;
+        eventId = wxEVT_DBG_UI_STEP_IN;
+        
     } else if (e.GetId() == XRCID("dbg_stepout")) {
         cmd = DBG_STEPOUT;
+        eventId = wxEVT_DBG_UI_STEP_OUT;
+        
     } else if (e.GetId() == XRCID("dbg_next")) {
         cmd = DBG_NEXT;
+        eventId = wxEVT_DBG_UI_NEXT;
+        
     } else if (e.GetId() == XRCID("show_cursor")) {
         cmd = DBG_SHOW_CURSOR;
+        eventId = wxEVT_DBG_UI_SHOW_CURSOR;
+        
     } else if ( e.GetId() == XRCID("dbg_nexti")) {
         cmd = DBG_NEXTI;
+        eventId = wxEVT_DBG_UI_NEXT_INST;
+        
     }
-
+    
+    // ALlow the plugins to handle this command first
+    clDebugEvent evnt(eventId);
+    if ( EventNotifier::Get()->ProcessEvent( evnt ) ) {
+        return;
+    }
+    
     if (cmd != wxNOT_FOUND) {
         ManagerST::Get()->DbgDoSimpleCommand(cmd);
     }
@@ -3213,6 +3245,10 @@ void clMainFrame::OnDebugCmd(wxCommandEvent &e)
 void clMainFrame::OnDebugCmdUI(wxUpdateUIEvent &e)
 {
     CHECK_SHUTDOWN();
+    
+    clDebugEvent eventIsRunning(wxEVT_DBG_IS_RUNNING);
+    EventNotifier::Get()->ProcessEvent( eventIsRunning );
+    
     if (e.GetId() == XRCID("pause_debugger") ||
         e.GetId() == XRCID("dbg_stepin") ||
         e.GetId() == XRCID("dbg_stepout") ||
@@ -3220,7 +3256,7 @@ void clMainFrame::OnDebugCmdUI(wxUpdateUIEvent &e)
         e.GetId() == XRCID("dbg_nexti") ||
         e.GetId() == XRCID("show_cursor")) {
         IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
-        e.Enable(dbgr && dbgr->IsRunning());
+        e.Enable(eventIsRunning.IsAnswer() || (dbgr && dbgr->IsRunning()) );
     }
 }
 

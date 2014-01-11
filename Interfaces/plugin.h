@@ -574,7 +574,9 @@ enum MenuType {
 #define wxEVT_DBG_UI_NEXT          3552 // Next line
 #define wxEVT_DBG_UI_NEXT_INST     3553 // Next instruction
 #define wxEVT_DBG_UI_INTERRUPT     3554 // Interrupt the debugger execution
-#define wxEVT_DBG_IS_RUNNING       3555 // Use evet.SetAnswer() method to reply
+#define wxEVT_DBG_UI_SHOW_CURSOR   3555 // Set the focus to the current debugger file/line
+#define wxEVT_DBG_UI_RESTART       3556 // Restart the debug session
+#define wxEVT_DBG_IS_RUNNING       3557 // Use evet.SetAnswer() method to reply
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

@@ -9303,7 +9303,7 @@
 														}, {
 															"type":	"bool",
 															"m_label":	"Hidden",
-															"m_value":	true
+															"m_value":	false
 														}, {
 															"type":	"bool",
 															"m_label":	"Disabled",
@@ -9352,7 +9352,7 @@
 															"m_children":	[{
 																	"m_type":	4405,
 																	"proportion":	0,
-																	"border":	2,
+																	"border":	5,
 																	"gbSpan":	"1,1",
 																	"gbPosition":	"0,0",
 																	"m_styles":	[],
@@ -9427,7 +9427,7 @@
 																}, {
 																	"m_type":	4420,
 																	"proportion":	0,
-																	"border":	2,
+																	"border":	5,
 																	"gbSpan":	"1,1",
 																	"gbPosition":	"0,0",
 																	"m_styles":	["wxGA_SMOOTH", "wxGA_HORIZONTAL"],

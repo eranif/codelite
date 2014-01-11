@@ -93,6 +93,6 @@ void wxCrafterR3nJ3cInitBitmapResources()
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$cmake-16.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$C__src_codelitegit_CMakePlugin_CMakePluginUi_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/CMakePluginUi_bitmaps.cpp$C__src_codelitegit_CMakePlugin_CMakePluginUi_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$_Users_eran_devl_codelitegit_CMakePlugin_CMakePluginUi_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/CMakePluginUi_bitmaps.cpp$_Users_eran_devl_codelitegit_CMakePlugin_CMakePluginUi_bitmaps.xrc"));
 }

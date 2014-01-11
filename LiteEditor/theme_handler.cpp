@@ -10,6 +10,10 @@
 #include <wx/aui/framemanager.h>
 #include "cl_aui_tb_are.h"
 
+#ifdef __WXMAC__
+#include <wx/srchctrl.h>
+#endif
+
 #define CHECK_POINTER(p) if ( !p ) return;
 
 ThemeHandler::ThemeHandler()
@@ -73,6 +77,12 @@ void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
 
 void ThemeHandler::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
 {
+#ifdef __WXMAC__
+    if ( dynamic_cast<wxSearchCtrl*>(win) ) {
+        // On OSX, this looks bad...
+        // so dont alter its colours, so we simply do nothing here
+    } else 
+#endif
     if ( dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) || dynamic_cast<wxTextCtrl*>(win) || dynamic_cast<wxListCtrl*>(win)) {
         win->SetBackgroundColour( bg );
         win->SetForegroundColour( fg );

@@ -43,6 +43,6 @@ void wxC2A73InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/messagepane_liteeditor_bitmaps.cpp$C__src_codelitegit_LiteEditor_messagepane_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/messagepane_liteeditor_bitmaps.cpp$C__src_codelitegit_LiteEditor_messagepane_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/messagepane_liteeditor_bitmaps.cpp$_Users_eran_devl_codelitegit_LiteEditor_messagepane_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/messagepane_liteeditor_bitmaps.cpp$_Users_eran_devl_codelitegit_LiteEditor_messagepane_liteeditor_bitmaps.xrc"));
 }

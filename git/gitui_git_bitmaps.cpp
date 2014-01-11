@@ -1150,6 +1150,6 @@ void wxCrafterpca4kKInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$icons_png_git-trash.png"), xml_res_file_20, xml_res_size_20, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._wxcrafter_resources_save.png"), xml_res_file_21, xml_res_size_21, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$.._codelite-icons-fresh-farm_subversion_16_stop.png"), xml_res_file_22, xml_res_size_22, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$C__src_codelitegit_git_gitui_git_bitmaps.xrc"), xml_res_file_23, xml_res_size_23, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$C__src_codelitegit_git_gitui_git_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/gitui_git_bitmaps.cpp$_Users_eran_devl_codelitegit_git_gitui_git_bitmaps.xrc"), xml_res_file_23, xml_res_size_23, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/gitui_git_bitmaps.cpp$_Users_eran_devl_codelitegit_git_gitui_git_bitmaps.xrc"));
 }

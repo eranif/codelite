@@ -689,7 +689,7 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer124);
     
-    m_auibar132 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
+    m_auibar132 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar132->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer124->Add(m_auibar132, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
@@ -697,7 +697,7 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_auibar132->AddTool(wxID_SAVEAS, _("Save as patch"), wxXmlResource::Get()->LoadBitmap(wxT("save")), wxNullBitmap, wxITEM_NORMAL, _("Save as patch"), _("Save as patch"), NULL);
     m_auibar132->Realize();
     
-    m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxSize(500,300), wxBORDER_THEME);
     // Configure the fold margin
     m_editor->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_editor->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -735,16 +735,16 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer124->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer126 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer294 = new wxStdDialogButtonSizer();
     
-    boxSizer124->Add(boxSizer126, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer124->Add(m_stdBtnSizer294, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button128 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button128->SetDefault();
+    m_button296 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button296->SetDefault();
+    m_stdBtnSizer294->AddButton(m_button296);
+    m_stdBtnSizer294->Realize();
     
-    boxSizer126->Add(m_button128, 0, wxALL, 5);
-    
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

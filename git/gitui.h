@@ -189,13 +189,14 @@ class GitFileDiffDlgBase : public wxDialog
 protected:
     wxAuiToolBar* m_auibar132;
     GitCommitEditor* m_editor;
-    wxButton* m_button128;
+    wxStdDialogButtonSizer* m_stdBtnSizer294;
+    wxButton* m_button296;
 
 protected:
     virtual void OnSaveAsPatch(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitFileDiffDlgBase();
 };
 

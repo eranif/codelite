@@ -1074,6 +1074,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     
     m_dvFiles->AppendIconTextColumn(_("File View"), m_dvFiles->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     m_panelProgress = new wxPanel(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panelProgress->Hide();
     
     boxSizer94->Add(m_panelProgress, 0, wxEXPAND, 5);
     

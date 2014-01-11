@@ -15,24 +15,10 @@
     <int Value="200" Name="maxDisplayStringSize"/>
     <bool Value="0" Name="resolveLocals"/>
     <bool Value="0" Name="autoExpandTipItems"/>
-    <bool Value="0" Name="applyBreakpointsAfterProgramStarted"/>
+    <bool Value="1" Name="applyBreakpointsAfterProgramStarted"/>
     <CData Name="startupCommands">
-      <![CDATA[python
-import sys
-sys.path.insert(0, '$CodeLiteGdbPrinters')
-
-from libstdcxx.v6.printers import register_libstdcxx_printers
-register_libstdcxx_printers (None)
-
-from qt4 import register_qt4_printers
-register_qt4_printers (None)
-
-from wx import register_wx_printers
-register_wx_printers (None)
-
-end]]>
+      <![CDATA[]]>
     </CData>
   </ArchiveObject>
   <ArchiveObject Name="DebuggerCommands"/>
 </Debuggers>
-

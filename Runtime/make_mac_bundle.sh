@@ -194,7 +194,7 @@ cp ../../Runtime/config/codelite.xml.default.mac ./codelite.app/Contents/SharedS
 ## replace the executable name according to the configuration used in the build
 cat ../../Runtime/Info.plist.template | sed s/EXE_NAME/codelite/g >> ./codelite.app/Contents/Info.plist
 
-cp ../../Runtime/config/debuggers.xml.default ./codelite.app/Contents/SharedSupport/config
+cp ../../Runtime/config/debuggers.xml.mac ./codelite.app/Contents/SharedSupport/config/debuggers.xml.default
 
 ## License
 cp ../../Runtime/../LICENSE  ./codelite.app/Contents/SharedSupport/

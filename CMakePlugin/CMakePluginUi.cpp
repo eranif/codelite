@@ -65,7 +65,8 @@ CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id
     m_stdBtnSizer->AddButton(m_buttonCancel);
     m_stdBtnSizer->Realize();
     
-    SetSizeHints(-1,-1);
+    SetMinSize( wxSize(400,150) );
+    SetSizeHints(400,150);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

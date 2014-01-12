@@ -47,7 +47,7 @@ protected:
 protected:
 
 public:
-    CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CMakePlugin Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CMakePlugin Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,150), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CMakeSettingsDialogBase();
 };
 

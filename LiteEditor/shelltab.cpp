@@ -31,6 +31,8 @@
 #include "frame.h"
 #include "shelltab.h"
 #include "pluginmanager.h"
+#include "editor_config.h"
+#include "lexer_configuration.h"
 
 
 BEGIN_EVENT_TABLE(ShellTab, OutputTabWindow)
@@ -83,9 +85,9 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
     m_vertSizer->Add(m_inputSizer,  0, wxEXPAND | wxALL, 1);
 
 #ifdef __WXMAC__
-    mainSizer->Insert(0, m_vertSizer,     1, wxEXPAND | wxALL, 1);
+    mainSizer->Insert(0, m_vertSizer, 1, wxEXPAND | wxALL, 1);
 #else
-    mainSizer->Add(m_vertSizer,     1, wxEXPAND | wxALL, 1);
+    mainSizer->Add(m_vertSizer, 1, wxEXPAND | wxALL, 1);
 #endif
 
     mainSizer->Layout();
@@ -98,19 +100,8 @@ ShellTab::~ShellTab()
 
 void ShellTab::InitStyle(wxStyledTextCtrl* sci)
 {
-    int caretSlop = 1;
-    int caretStrict = 0;
-    int caretEven = 0;
-    int caretJumps = 0;
-    int caretZone = 20;
-    sci->SetXCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-
-    caretSlop = 1;
-    caretStrict = 4;
-    caretEven = 8;
-    caretJumps = 0;
-    caretZone = 1;
-    sci->SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
+    LexerConfPtr text = EditorConfigST::Get()->GetLexer("text");
+    text->Apply(sci);
 }
 
 bool ShellTab::DoSendInput(const wxString &line)

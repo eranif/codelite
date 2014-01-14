@@ -33,6 +33,7 @@
 #include "pluginmanager.h"
 #include "quickfindbar.h"
 #include "event_notifier.h"
+#include "lexer_configuration.h"
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
     EVT_MENU(XRCID("scroll_on_output"),      OutputTabWindow::OnOutputScrolls)
@@ -102,7 +103,7 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl *sci, int lexer, bool folding)
     }
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    wxFont font = EditorConfigST::Get()->GetLexer("text")->GetFontForSyle(0);
     sci->StyleSetFont(0, font);
 
     sci->SetIndicatorCurrent(1);

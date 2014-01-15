@@ -84,6 +84,7 @@ protected:
     virtual void whitespaceStyleUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void choiceEOLUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void fileEncodingUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     LocalEditorSettingsbase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Local Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

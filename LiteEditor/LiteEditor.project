@@ -207,7 +207,6 @@
       <File Name="editor_options_bookmarks.wxcp"/>
       <File Name="editor_options_bookmarks_liteeditor_bitmaps.cpp"/>
       <File Name="syntaxhighlightbasedlg_liteeditor_bitmaps.cpp"/>
-      <File Name="../yesnodlg.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>

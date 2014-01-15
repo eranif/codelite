@@ -48,21 +48,18 @@
 #include "globals.h"
 #include "frame.h"
 #include <wx/textdlg.h>
+#include "advance_settings_base.h"
 
-BEGIN_EVENT_TABLE(AdvancedDlg, wxDialog)
+BEGIN_EVENT_TABLE(AdvancedDlg, AdvancedDlgBase)
     EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
 END_EVENT_TABLE()
 
 ///////////////////////////////////////////////////////////////////////////
 
 AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxString title, wxPoint pos, wxSize size, int style )
-    : wxDialog( parent, id, title, pos, size, style | wxRESIZE_BORDER )
+    : AdvancedDlgBase( parent )
     , m_rightclickMenu(NULL)
 {
-    wxBoxSizer* mainSizer;
-    mainSizer = new wxBoxSizer( wxVERTICAL );
-
-    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     m_compilersPage = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
     wxBoxSizer* bSizer5;
@@ -79,9 +76,6 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
 
     bSizer5->Add( bSizer4, 0, wxALIGN_RIGHT|wxEXPAND, 5 );
 
-    m_staticline2 = new wxStaticLine( m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-    bSizer5->Add( m_staticline2, 0, wxEXPAND | wxRIGHT | wxLEFT, 5 );
-
     m_compilersNotebook = new wxTreebook(m_compilersPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_DEFAULT );
     bSizer5->Add( m_compilersNotebook, 1, wxALL|wxEXPAND, 5 );
     MSWSetNativeTheme(m_compilersNotebook->GetTreeCtrl());
@@ -91,30 +85,14 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
     bSizer5->Fit( m_compilersPage );
     m_notebook->AddPage( m_compilersPage, _("Compilers"), true );
 
-    mainSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
-
     wxBoxSizer* btnSizer;
     btnSizer = new wxBoxSizer( wxHORIZONTAL );
-
-    m_buttonOK = new wxButton( this, wxID_OK, _("&OK"), wxDefaultPosition, wxDefaultSize, 0 );
-    btnSizer->Add( m_buttonOK, 0, wxALL, 5 );
-
-    m_buttonCancel = new wxButton( this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-    btnSizer->Add( m_buttonCancel, 0, wxALL, 5 );
-
-    m_buttonRestoreDefaults = new wxButton( this, wxID_REVERT, _("Load Defaults..."), wxDefaultPosition, wxDefaultSize, 0 );
-    btnSizer->Add( m_buttonRestoreDefaults, 0, wxALL, 5 );
-    m_buttonRestoreDefaults->SetToolTip(_("Revert all the changes and restore all the build settings to the factory defaults"));
-    mainSizer->Add( btnSizer, 0, wxALIGN_RIGHT, 5 );
 
     m_buildSettings = new BuildTabSetting(m_notebook);
     m_notebook->AddPage(m_buildSettings, _("Build Output Appearance"), false);
 
     m_buildPage = new BuildPage(m_notebook);
     m_notebook->AddPage(m_buildPage, _("Build Systems"), false);
-
-    this->SetSizer( mainSizer );
-    this->Layout();
 
     m_compilersNotebook->GetTreeCtrl()->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(AdvancedDlg::OnContextMenu), NULL, this);
     m_rightclickMenu = wxXmlResource::Get()->LoadMenu(wxT("delete_compiler_menu"));
@@ -126,18 +104,13 @@ AdvancedDlg::AdvancedDlg( wxWindow* parent, size_t selected_page, int id, wxStri
             m_compilersNotebook->ExpandNode(m_compilersNotebook->GetSelection());
         }
     }
-
-    ConnectButton(m_buttonNewCompiler, AdvancedDlg::OnButtonNewClicked);
-    ConnectButton(m_buttonOK, AdvancedDlg::OnButtonOKClicked);
-    ConnectButton(m_buttonRestoreDefaults, AdvancedDlg::OnRestoreDefaults);
-
-    m_notebook->SetSelection( selected_page );
-
+    
+    m_buttonNewCompiler->Bind(wxEVT_BUTTON, &AdvancedDlg::OnButtonNewClicked, this);
+    
     // center the dialog
     Centre();
     this->Layout();
     GetSizer()->Fit(this);
-    m_buttonOK->SetDefault();
     m_compilersNotebook->SetFocus();
     WindowAttrManager::Load(this, wxT("BuildSettingsDlg"), NULL);
 }
@@ -169,7 +142,7 @@ void AdvancedDlg::LoadCompilers()
 
 AdvancedDlg::~AdvancedDlg()
 {
-    delete m_rightclickMenu;
+    wxDELETE(m_rightclickMenu);
     WindowAttrManager::Save(this, wxT("BuildSettingsDlg"), NULL);
 }
 

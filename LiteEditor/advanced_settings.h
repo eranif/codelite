@@ -43,6 +43,7 @@
 #include <wx/toolbook.h>
 #include <map>
 #include <vector>
+#include "advance_settings_base.h"
 
 ///////////////////////////////////////////////////////////////////////////
 class BuildTabSetting;
@@ -59,22 +60,18 @@ public:
     virtual void Save(CompilerPtr cmp) = 0;
 };
 
-class AdvancedDlg : public wxDialog
+class AdvancedDlg : public AdvancedDlgBase
 {
     DECLARE_EVENT_TABLE();
     std::map<wxString, std::vector<ICompilerSubPage*> > m_compilerPagesMap;
 
 protected:
-    wxNotebook* m_notebook;
     wxPanel* m_compilersPage;
     wxStaticText* m_staticText1;
     wxButton* m_buttonNewCompiler;
     wxStaticLine* m_staticline2;
     wxTreebook* m_compilersNotebook;
     wxStaticLine* m_staticline10;
-    wxButton* m_buttonOK;
-    wxButton* m_buttonCancel;
-    wxButton* m_buttonRestoreDefaults;
     BuildPage *m_buildPage;
     BuildTabSetting *m_buildSettings;
     wxMenu *m_rightclickMenu;

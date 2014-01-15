@@ -270,6 +270,7 @@
       <File Name="addoptioncheckdlg.h"/>
       <File Name="addoptioncheckdlgbase.cpp"/>
       <File Name="compiler_page.wxcp"/>
+      <File Name="advance_settings.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>
@@ -790,6 +791,8 @@
       <File Name="new_virtual_folder.cpp"/>
       <File Name="editor_options_caret.h"/>
       <File Name="editor_options_caret.cpp"/>
+      <File Name="advance_settings_base.h"/>
+      <File Name="advance_settings_base.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -822,6 +825,7 @@
       <File Name="editor_options_caret_liteeditor_bitmaps.cpp"/>
       <File Name="plugindlgbase_liteeditor_bitmaps.cpp"/>
       <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>
+      <File Name="advance_settings_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -898,6 +902,8 @@
     <File Name="DebuggerSettings_liteeditor_bitmaps.cpp"/>
     <File Name="FileExplorerTab.h"/>
     <File Name="FileExplorerTab.cpp"/>
+    <File Name="advance_settings.h"/>
+    <File Name="advance_settings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ReconcileProject">
     <File Name="reconcileproject.cpp"/>

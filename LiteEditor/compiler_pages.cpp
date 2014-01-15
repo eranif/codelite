@@ -151,7 +151,7 @@ CompilerToolsBase::CompilerToolsBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -361,7 +361,7 @@ CompilerAdvanceBase::CompilerAdvanceBase(wxWindow* parent, wxWindowID id, const 
     
     bSizer11->Add(bSizer7, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer3->SetFlexibleDirection( wxBOTH );
     fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer3->AddGrowableCol(1);
@@ -627,7 +627,7 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer23);
     
-    wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer7->SetFlexibleDirection( wxBOTH );
     fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer7->AddGrowableCol(1);
@@ -693,7 +693,7 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* bSizerError = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerError);
     
-    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer41->SetFlexibleDirection( wxBOTH );
     fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer41->AddGrowableCol(1);
@@ -756,5 +756,71 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
 CompilerPatternDlgBase::~CompilerPatternDlgBase()
 {
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
+    
+}
+
+NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCAD0CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer73 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer73);
+    
+    wxFlexGridSizer* flexGridSizer82 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer82->SetFlexibleDirection( wxBOTH );
+    flexGridSizer82->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer82->AddGrowableCol(1);
+    
+    boxSizer73->Add(flexGridSizer82, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText84 = new wxStaticText(this, wxID_ANY, _("New compiler name:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer82->Add(m_staticText84, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlCompilerName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlCompilerName->SetFocus();
+    
+    flexGridSizer82->Add(m_textCtrlCompilerName, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText88 = new wxStaticText(this, wxID_ANY, _("Copy settings from:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer82->Add(m_staticText88, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceCompilersArr;
+    m_choiceCompilers = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceCompilersArr, 0);
+    
+    flexGridSizer82->Add(m_choiceCompilers, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_stdBtnSizer75 = new wxStdDialogButtonSizer();
+    
+    boxSizer73->Add(m_stdBtnSizer75, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer75->AddButton(m_buttonCancel);
+    
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer75->AddButton(m_buttonOK);
+    m_stdBtnSizer75->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewCompilerDlgBase::OnOkUI), NULL, this);
+    
+}
+
+NewCompilerDlgBase::~NewCompilerDlgBase()
+{
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewCompilerDlgBase::OnOkUI), NULL, this);
     
 }

@@ -49,6 +49,7 @@
 #include "frame.h"
 #include <wx/textdlg.h>
 #include "advance_settings_base.h"
+#include "NewCompilerDlg.h"
 
 BEGIN_EVENT_TABLE(AdvancedDlg, AdvancedDlgBase)
     EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
@@ -149,11 +150,9 @@ AdvancedDlg::~AdvancedDlg()
 void AdvancedDlg::OnButtonNewClicked(wxCommandEvent &event)
 {
     wxUnusedVar(event);
-    wxString newCompilerName = ::wxGetTextFromUser( _("Enter New Compiler Name:"), _("New Compiler"));
-    TrimString(newCompilerName);
-    
-    if ( !newCompilerName.IsEmpty() ) {
-        CreateDefaultNewCompiler(newCompilerName);
+    NewCompilerDlg dlg(this);
+    if ( dlg.ShowModal() == wxID_OK ) {
+        CreateNewCompiler(dlg.GetCompilerName(), dlg.GetMasterCompiler());
         LoadCompilers();
 
         if(m_compilersNotebook->GetPageCount() > ((m_compilerPagesMap.size() *6)-1) ) {
@@ -226,14 +225,19 @@ void AdvancedDlg::SaveCompilers()
     }
 }
 
-bool AdvancedDlg::CreateDefaultNewCompiler ( const wxString &name )
+bool AdvancedDlg::CreateNewCompiler (const wxString& name, const wxString& copyFrom)
 {
     if ( BuildSettingsConfigST::Get()->IsCompilerExist ( name ) ) {
         wxMessageBox ( _( "A compiler with this name already exists" ), _( "Error" ), wxOK | wxICON_HAND );
         return false;
     }
-
-    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler ( name );
+    
+    CompilerPtr cmp;
+    if ( !copyFrom.IsEmpty() ) {
+        cmp = BuildSettingsConfigST::Get()->GetCompiler ( copyFrom );
+    } else {
+        cmp = BuildSettingsConfigST::Get()->GetCompiler ( name );
+    }
     cmp->SetName ( name );
     BuildSettingsConfigST::Get()->SetCompiler ( cmp );
     return true;

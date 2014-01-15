@@ -21,6 +21,8 @@
 #include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 
 class CompilerPatternsBase : public wxPanel
 {
@@ -233,6 +235,26 @@ protected:
 public:
     CompilerPatternDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CompilerPatternDlgBase();
+};
+
+
+class NewCompilerDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText84;
+    wxTextCtrl* m_textCtrlCompilerName;
+    wxStaticText* m_staticText88;
+    wxChoice* m_choiceCompilers;
+    wxStdDialogButtonSizer* m_stdBtnSizer75;
+    wxButton* m_buttonCancel;
+    wxButton* m_buttonOK;
+
+protected:
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    NewCompilerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Compiler"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~NewCompilerDlgBase();
 };
 
 #endif

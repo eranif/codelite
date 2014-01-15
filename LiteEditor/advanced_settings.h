@@ -83,7 +83,7 @@ protected:
     void OnContextMenu(wxContextMenuEvent &e);
 
     void LoadCompilers();
-    bool CreateDefaultNewCompiler(const wxString &name);
+    bool CreateNewCompiler(const wxString &name, const wxString &copyFrom);
     void AddCompiler(CompilerPtr cmp, bool selected);
     bool DeleteCompiler(const wxString &name);
     void SaveCompilers();

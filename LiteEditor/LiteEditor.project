@@ -271,6 +271,8 @@
       <File Name="addoptioncheckdlgbase.cpp"/>
       <File Name="compiler_page.wxcp"/>
       <File Name="advance_settings.wxcp"/>
+      <File Name="NewCompilerDlg.h"/>
+      <File Name="NewCompilerDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>

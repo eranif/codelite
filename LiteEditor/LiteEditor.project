@@ -904,8 +904,6 @@
     <File Name="DebuggerSettings_liteeditor_bitmaps.cpp"/>
     <File Name="FileExplorerTab.h"/>
     <File Name="FileExplorerTab.cpp"/>
-    <File Name="advance_settings.h"/>
-    <File Name="advance_settings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ReconcileProject">
     <File Name="reconcileproject.cpp"/>

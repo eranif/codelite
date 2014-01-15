@@ -52,13 +52,17 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
         m_choiceMessages->Append(previews.Item(i), new CommitMessageStringData(lastMessages.Item(i)));
     }
 
-    m_textCtrlMessage->SetFocus();
     WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
-
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if ( sashPos != wxNOT_FOUND ) {
         m_splitterH->SetSashPosition(sashPos);
     }
+    
+    LexerConfPtr textLexer = EditorConfigST::Get()->GetLexer("text");
+    if ( textLexer ) {
+        textLexer->Apply( m_stcMessage );
+    }
+
 }
 
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, const wxString &url, Subversion2 *plugin, const wxString &repoPath)
@@ -90,7 +94,6 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
         DoShowDiff(0);
     }
     
-    m_textCtrlMessage->SetFocus();
     WindowAttrManager::Load(this, wxT("SvnCommitDialog"), m_plugin->GetManager()->GetConfigTool());
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if ( sashPos != wxNOT_FOUND ) {
@@ -107,13 +110,18 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString &paths, c
         m_stcDiff->SetLexer(wxSTC_LEX_DIFF);
         diffLexer->Apply( m_stcDiff );
     }
+    
+    LexerConfPtr textLexer = EditorConfigST::Get()->GetLexer("text");
+    if ( textLexer ) {
+        textLexer->Apply( m_stcMessage );
+    }
 }
 
 SvnCommitDialog::~SvnCommitDialog()
 {
     wxDELETE( m_process );
 
-    wxString message = m_textCtrlMessage->GetValue();
+    wxString message = m_stcMessage->GetText();
     m_plugin->GetCommitMessagesCache().AddMessage(message);
 
     int sashPos = m_splitterH->GetSashPosition();
@@ -128,7 +136,7 @@ SvnCommitDialog::~SvnCommitDialog()
 wxString SvnCommitDialog::GetMesasge()
 {
     SubversionLocalProperties props(m_url);
-    wxString msg = NormalizeMessage(m_textCtrlMessage->GetValue());
+    wxString msg = NormalizeMessage(m_stcMessage->GetText());
     msg << wxT("\n");
 
     // Append any bug URLs to the commit message
@@ -230,7 +238,7 @@ void SvnCommitDialog::OnChoiceMessage(wxCommandEvent& e)
 
     CommitMessageStringData* data = (CommitMessageStringData*)m_choiceMessages->GetClientObject(idx);
     if(data) {
-        m_textCtrlMessage->SetValue(data->GetData());
+        m_stcMessage->SetText( data->GetData() );
     }
 }
 

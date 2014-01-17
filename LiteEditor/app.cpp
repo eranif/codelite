@@ -45,6 +45,7 @@
 #include "frame.h"
 #include "asyncprocess.h" // IProcess
 #include "new_build_tab.h"
+#include "cl_config.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -493,9 +494,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
     // Set the log file verbosity
-    long log_verbosity(FileLogger::Error);
-    EditorConfigST::Get()->GetLongValue(wxT("LogVerbosity"), log_verbosity);
-    FileLogger::Get()->SetVerbosity(log_verbosity);
+    FileLogger::Get()->SetVerbosity( clConfig::Get().Read("LogVerbosity", FileLogger::Error) );
     CL_SYSTEM(wxT("Starting codelite..."));
 
     // check for single instance

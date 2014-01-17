@@ -30,6 +30,7 @@
 #include "stringsearcher.h"
 #include <wx/stc/stc.h>
 #include "fc_fileopener.h"
+#include "macros.h"
 
 #include "outline_symbol_tree.h"
 //#include "manager.h"
@@ -221,6 +222,9 @@ wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
 
 void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxString& name)
 {
+    // sanity
+    CHECK_PTR_RET(editor);
+    
     if( editor->FindAndSelect(pattern, name, 0 /* from pos */, m_manager->GetNavigationMgr()) == false ) {
         // Could not select, clear the selection
         editor->GetSTC()->SetSelectionStart(wxNOT_FOUND);

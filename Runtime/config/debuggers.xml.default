@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Debuggers Version="5.11">
+<Debuggers Version="5.4">
   <ArchiveObject Name="GNU gdb debugger">
     <wxString Value="GNU gdb debugger" Name="name"/>
     <wxString Value="" Name="path"/>
@@ -32,22 +32,5 @@ register_wx_printers (None)
 end]]>
     </CData>
   </ArchiveObject>
-  <ArchiveObject Name="DebuggerCommands">
-    <long Value="1" Name="size"/>
-     <SerializedObject Name="PreDefinedSet0">
-       <wxString Value="Default" Name="m_name"/>
-       <bool Value="1" Name="m_active"/>
-       <long Value="2" Name="size"/>
-       <SerializedObject Name="DebuggerCmd0">
-         <wxString Value="std::string" Name="m_name"/>
-         <wxString Value="($(Variable))._M_dataplus._M_p" Name="m_command"/>
-         <wxString Value="print" Name="m_dbgCommand"/>
-       </SerializedObject>
-       <SerializedObject Name="DebuggerCmd1">
-         <wxString Value="wxString" Name="m_name"/>
-         <wxString Value="($(Variable)).m_impl._M_dataplus._M_p" Name="m_command"/>
-         <wxString Value="print" Name="m_dbgCommand"/>
-       </SerializedObject>
-     </SerializedObject>
-  </ArchiveObject>
+  <ArchiveObject Name="DebuggerCommands"/>
 </Debuggers>

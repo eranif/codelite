@@ -567,16 +567,17 @@ enum MenuType {
 // If a plugin wishes to override codelite's default debugger (gdb)
 // it simply needs to connect the event and avoid calling 'event.Skip();
 //----------------------------------------------------------------------
-#define wxEVT_DBG_UI_START_OR_CONT 3547 // Start the debugger or continue
-#define wxEVT_DBG_UI_STOP          3549 // Stop the debugger
-#define wxEVT_DBG_UI_STEP_IN       3550 // Step into function
-#define wxEVT_DBG_UI_STEP_OUT      3551 // Step out of current frame
-#define wxEVT_DBG_UI_NEXT          3552 // Next line
-#define wxEVT_DBG_UI_NEXT_INST     3553 // Next instruction
-#define wxEVT_DBG_UI_INTERRUPT     3554 // Interrupt the debugger execution
-#define wxEVT_DBG_UI_SHOW_CURSOR   3555 // Set the focus to the current debugger file/line
-#define wxEVT_DBG_UI_RESTART       3556 // Restart the debug session
-#define wxEVT_DBG_IS_RUNNING       3557 // Use evet.SetAnswer() method to reply
+#define wxEVT_DBG_UI_START_OR_CONT     3547 // Start the debugger or continue
+#define wxEVT_DBG_UI_STOP              3549 // Stop the debugger
+#define wxEVT_DBG_UI_STEP_IN           3550 // Step into function
+#define wxEVT_DBG_UI_STEP_OUT          3551 // Step out of current frame
+#define wxEVT_DBG_UI_NEXT              3552 // Next line
+#define wxEVT_DBG_UI_NEXT_INST         3553 // Next instruction
+#define wxEVT_DBG_UI_INTERRUPT         3554 // Interrupt the debugger execution
+#define wxEVT_DBG_UI_SHOW_CURSOR       3555 // Set the focus to the current debugger file/line
+#define wxEVT_DBG_UI_RESTART           3556 // Restart the debug session
+#define wxEVT_DBG_IS_RUNNING           3557 // Use evet.SetAnswer() method to reply
+#define wxEVT_DBG_UI_TOGGLE_BREAKPOINT 3558 // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
 
 //------------------------------------------------------------------
 //each plugin must implement this interface

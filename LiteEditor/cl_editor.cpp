@@ -3214,9 +3214,17 @@ void LEditor::DelBreakpoint(int lineno /*= -1*/)
 
 void LEditor::ToggleBreakpoint(int lineno)
 {
-// Coming from OnMarginClick() means that lineno comes from the mouse position, not necessarily the current line
+    // Coming from OnMarginClick() means that lineno comes from the mouse position, not necessarily the current line
     if (lineno == -1) {
         lineno = GetCurrentLine()+1;
+    }
+    
+    // Does any of the plugins want to handle this?
+    clDebugEvent dbgEvent(wxEVT_DBG_UI_TOGGLE_BREAKPOINT);
+    dbgEvent.SetInt( lineno );
+    dbgEvent.SetFileName( GetFileName().GetFullPath() );
+    if ( EventNotifier::Get()->ProcessEvent( dbgEvent ) ) {
+        return;
     }
     
     const BreakpointInfo &bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), lineno);

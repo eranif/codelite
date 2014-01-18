@@ -64,7 +64,7 @@ void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
 {
     Clear();
     m_stack.insert(m_stack.end(), stackArr.begin(), stackArr.end());
-
+    int activeFrame (-1);
     if (!m_stack.empty()) {
         for (int i=0; i<(int)m_stack.size(); i++) {
 
@@ -79,10 +79,13 @@ void ListCtrlPanel::Update ( const StackEntryArray &stackArr )
             m_dvListCtrl->AppendItem( cols, (wxUIntPtr)new StackEntry(entry) );
 
             if ( isactive ) {
-                wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-                if ( item.IsOk() ) {
-                    m_dvListCtrl->EnsureVisible( item );
-                }
+                activeFrame = i;
+            }
+        }
+        if ( activeFrame != wxNOT_FOUND ) {
+            wxDataViewItem item = m_dvListCtrl->RowToItem(activeFrame);
+            if ( item.IsOk() ) {
+                m_dvListCtrl->EnsureVisible( item );
             }
         }
     }

@@ -451,10 +451,10 @@ TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn,
     if (bIsImpl) {
         // The "source" is an implementaion, which means that we need to prepare declaration signature
         // this could be tricky since we might lose the "default" values
-        signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Default_value|Normalize_Func_Name);
+        signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Default_value|Normalize_Func_Name|Normalize_Func_Reverse_Macro);
     } else {
         // Prepare an "implementation" signature
-        signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Name);
+        signature = TagsManagerST::Get()->NormalizeFunctionSig(func->GetSignature(), Normalize_Func_Name|Normalize_Func_Reverse_Macro);
     }
 
     tag->SetSignature(signature);

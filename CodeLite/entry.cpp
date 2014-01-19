@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
 #include "precompiled_header.h"
 #include "ctags_manager.h"
 #include "pptable.h"
@@ -201,23 +202,23 @@ void TagEntry::Create(const wxString &fileName,
             }
         }
     }
-	
-	if (!path.IsEmpty()) {
-		SetScope(path);
-	} else {
-		SetScope(wxT("<global>"));
-	}	
-	
-	// If there is no path, path is set to name
-	if ( GetPath().IsEmpty() )
-		SetPath( GetName() );	
-	
-	// Get the parent name
-	StringTokenizer tok(GetPath(), wxT("::"));
-	wxString parent;
 
-	(tok.Count() < 2) ? parent = wxT("<global>") : parent = tok[tok.Count()-2];
-	SetParent(parent);	
+    if (!path.IsEmpty()) {
+        SetScope(path);
+    } else {
+        SetScope(wxT("<global>"));
+    }
+
+    // If there is no path, path is set to name
+    if ( GetPath().IsEmpty() )
+        SetPath( GetName() );
+
+    // Get the parent name
+    StringTokenizer tok(GetPath(), wxT("::"));
+    wxString parent;
+
+    (tok.Count() < 2) ? parent = wxT("<global>") : parent = tok[tok.Count()-2];
+    SetParent(parent);
 }
 
 void TagEntry::Create(const tagEntry& entry)
@@ -571,32 +572,32 @@ void TagEntry::FromLine(const wxString& line)
     pattern = pattern.Trim();
 
     if (kind == wxT("enumerator")) {
-		// enums are specials, they are a scope, when they declared as "enum class ..." (C++11), 
-        // but not a scope when declared as "enum ...". So, for "enum class ..." declaration 
-		//(and anonymous enums) we appear enumerators when typed:
+        // enums are specials, they are a scope, when they declared as "enum class ..." (C++11),
+        // but not a scope when declared as "enum ...". So, for "enum class ..." declaration
+        //(and anonymous enums) we appear enumerators when typed:
         // enumName::
-		//Is global scope there aren't appears. For "enum ..." declaration we appear 
-		//enumerators when typed:
-		// enumName::
-		//and when it global (or same namespace) scope.
+        //Is global scope there aren't appears. For "enum ..." declaration we appear
+        //enumerators when typed:
+        // enumName::
+        //and when it global (or same namespace) scope.
         std::map<wxString,wxString>::iterator enumField = extFields.find(wxT("enum"));
         if (enumField != extFields.end()) {
             wxString enumName = enumField->second;
-			bool isAnonymous = enumName.AfterLast(wxT(':')).StartsWith(wxT("__anon"));
-			
-			bool isInEnumNamespace = false;
-			std::map<wxString,wxString>::const_iterator isInEnumNamespaceField = extFields.find(wxT("isInEnumNamespace"));
-			if (isInEnumNamespaceField != extFields.end()) {
-				wxString isInEnumNamespaceValue = isInEnumNamespaceField->second;
-				isInEnumNamespace = isInEnumNamespaceValue.AfterLast(wxT(':')) == wxT("1") ? true : false;
-			}
-			
-			if (!isInEnumNamespace) {
-				enumField->second = enumField->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
-				if (!isAnonymous) {
-					extFields[wxT("typeref")] = enumName;
-				}
-			}		
+            bool isAnonymous = enumName.AfterLast(wxT(':')).StartsWith(wxT("__anon"));
+
+            bool isInEnumNamespace = false;
+            std::map<wxString,wxString>::const_iterator isInEnumNamespaceField = extFields.find(wxT("isInEnumNamespace"));
+            if (isInEnumNamespaceField != extFields.end()) {
+                wxString isInEnumNamespaceValue = isInEnumNamespaceField->second;
+                isInEnumNamespace = isInEnumNamespaceValue.AfterLast(wxT(':')) == wxT("1") ? true : false;
+            }
+
+            if (!isInEnumNamespace) {
+                enumField->second = enumField->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
+                if (!isAnonymous) {
+                    extFields[wxT("typeref")] = enumName;
+                }
+            }
         }
     }
 
@@ -788,7 +789,7 @@ TagEntryPtr TagEntry::ReplaceSimpleMacro()
 int TagEntry::CompareDisplayString(const TagEntryPtr& rhs) const
 {
     wxString d1, d2;
-    
+
     d1 << GetReturnValue()     << wxT(": ") << GetFullDisplayName()     << wxT(":") << GetAccess();
     d2 << rhs->GetReturnValue() << wxT(": ") << rhs->GetFullDisplayName() << wxT(":") << rhs->GetAccess();
     return d1.Cmp(d2);

@@ -1536,12 +1536,8 @@ void TagsStorageSQLite::DoAddNamePartToQuery(wxString &sql, const wxString& name
         wxString from  = name;
         wxString until = name;
 
-#if wxVERSION_NUMBER < 2900
-        until.Last() = until.Last() + 1;
-#else
         wxChar ch = until.Last();
         until.SetChar(until.length() - 1,  ch + 1);
-#endif
 
         // add the name condition
         if (partial) {

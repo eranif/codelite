@@ -3168,12 +3168,12 @@ bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, LEditor *ct
     int nDepth = 1;
     while ((nCur < nLen) && nDepth > 0) {
 
-        if(IsCommentOrString(nCur)) {
+        wxChar ch = ctrl->SafeGetChar(nCur);
+        if(ctrl->GetContext()->IsCommentOrString(nCur)) {
             nCur++;
             continue;
         }
 
-        wxChar ch = ctrl->SafeGetChar(nCur);
         switch(ch) {
         case wxT('('):
             nDepth++;

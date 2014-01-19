@@ -84,7 +84,8 @@ protected:
     void OnDisplayTooltip(wxTimerEvent &event);
     void OnRefreshList(wxTimerEvent &event);
     void Display(LEditor *editor);
-
+    void SortTags(std::vector<CCItemInfo> &tags, const wxString &userTyped);
+    
 protected:
     // helper methods
     int GetImageId(TagEntryPtr entry);

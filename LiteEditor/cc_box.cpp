@@ -962,3 +962,9 @@ void CCBox::OnClose(wxCommandEvent& e)
     e.Skip();
     Destroy();
 }
+
+void CCBox::SortTags(std::vector<CCItemInfo>& tags, const wxString& userTyped)
+{
+    wxUnusedVar(tags);
+    wxUnusedVar(userTyped);
+}

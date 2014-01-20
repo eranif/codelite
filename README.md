@@ -1,17 +1,17 @@
 
-
-![CodeLite IDE Logo][1] What is [CodeLite][2]?
+What is [CodeLite][2]?
 ====
 
 [CodeLite][3] is an open source, free, cross platform IDE for the C/C++ programming languages which runs on all major Platforms ( OSX, Windows and Linux )
 
 You can download pre-built binaries for Windows / OSX and Linux from our main **[Download Page][4]**
 
-For more information visit the following URLs:
+More information can be found here:
 
  - [Official Website][5]
  - [Wiki][6]
-
+ - [Download Page][11]
+ 
 ----------
 
 

@@ -55,8 +55,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
     <VirtualDirectory Name="Debugger">
-      <File Name="breakpoint_dlg_base.cpp"/>
-      <File Name="breakpoint_dlg_base.h"/>
       <File Name="breakpointdlg.h"/>
       <File Name="breakpointdlg.cpp"/>
       <File Name="debuggersettingsdlg.h"/>
@@ -85,6 +83,10 @@
       <File Name="console_frame.h"/>
       <File Name="clDebuggerEditItemDlg.h"/>
       <File Name="clDebuggerEditItemDlg.cpp"/>
+      <File Name="BuildTabSettings.wxcp"/>
+      <File Name="breakpointdlg.wxcp"/>
+      <File Name="breakpointdlgbase.h"/>
+      <File Name="breakpointslistctrl.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Misc">
       <File Name="simpletable.cpp"/>
@@ -909,6 +911,8 @@
     <File Name="DebuggerSettings_liteeditor_bitmaps.cpp"/>
     <File Name="FileExplorerTab.h"/>
     <File Name="FileExplorerTab.cpp"/>
+    <File Name="breakpoint_dlg_liteeditor_bitmaps.cpp"/>
+    <File Name="breakpointdlgbase.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ReconcileProject">
     <File Name="reconcileproject.cpp"/>

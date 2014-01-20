@@ -1751,7 +1751,13 @@ void clMainFrame::LoadSession(const wxString &sessionName)
     if (SessionManager::Get().GetSession(sessionName, session)) {
         wxString wspFile = session.GetWorkspaceName();
         if (wspFile.IsEmpty() == false && wspFile != wxT("Default")) {
-            ManagerST::Get()->OpenWorkspace(wspFile);
+            
+            // Load the workspace only if it exists
+            wxFileName fnWorkspace( wspFile );
+            if ( fnWorkspace.Exists() ) {
+                ManagerST::Get()->OpenWorkspace(wspFile);
+            }
+            
         } else {
             // no workspace to open, so just restore any previously open editors
             GetMainBook()->RestoreSession(session);

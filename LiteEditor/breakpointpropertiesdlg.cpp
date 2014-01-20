@@ -63,15 +63,7 @@ void BreakptPropertiesDlg::EnterBPData( const BreakpointInfo &bp )
     }
     m_choicebook->Connect( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxChoicebookEventHandler( BreakptPropertiesDlg::OnPageChanging ), NULL, this );
 
-    // if b.debugger_id > -1, the debugger must be running
-    if (b.debugger_id > -1) {
-        m_checkDisable->SetValue(!bp.is_enabled);
-    } else {
-        // On MSWin it often crashes the debugger to try to load-then-disable a bp
-        // so hide the checkbox if the debugger isn't running, or we're adding a bp
-        m_checkDisable->Hide();
-        m_checkDisable->GetContainingSizer()->Layout();
-    }
+    m_checkDisable->SetValue(!bp.is_enabled);
     m_checkTemp->SetValue(bp.is_temp);
     m_checkTemp->Show(its_a_breakpt); // Watchpoints can't be temporary
     m_spinIgnore->SetValue(bp.ignore_number);
@@ -134,9 +126,7 @@ void BreakptPropertiesDlg::EndModal( int retCode )
         }
     }
 
-    if (b.debugger_id > -1) {
-        b.is_enabled = ! m_checkDisable->GetValue();
-    }
+    b.is_enabled = ! m_checkDisable->GetValue();
     b.is_temp = m_checkTemp->GetValue();
     b.ignore_number = m_spinIgnore->GetValue();
     b.conditions = m_textCond->GetValue();

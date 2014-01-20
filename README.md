@@ -1,7 +1,13 @@
-What is [CodeLite]?
+What is [CodeLite][1]?
 ====
 
-[CodeLite] is an open source, free, cross platform IDE for the C/C++ programming languages which runs on all major Platforms ( OSX, Windows and Linux )
+[CodeLite][1] is an open source, free, cross platform IDE for the C/C++ programming languages which runs on all major Platforms ( OSX, Windows and Linux )
+
+You can download pre-built binaries for Windows / OSX and Linux from our main **[Download Page][3]**
+
+
+----------
+
 
 Building CodeLite on Linux
 ----
@@ -15,7 +21,7 @@ To build CodeLite on you computer you will need these packages:
  - git
  - cmake
 
-You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy ...) you can [download it install wxWidgets from CodeLite's repository]
+You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy ...) you can [download it install wxWidgets from CodeLite's repository][2]
 
 
 On Ubuntu / Debian you can install all of the above (except for wxWidgets 3.0) by typing:
@@ -36,5 +42,6 @@ Run cmake and build codelite:
     sudo make install
 
 
-[CodeLite]: http://codelite.org
-[download it install wxWidgets from CodeLite's repository]: http://www.codelite.org/LiteEditor/WxWidgets30Binaries
+[1]: http://codelite.org
+[2]: http://www.codelite.org/LiteEditor/WxWidgets30Binaries
+[3]: http://codelite.org/support.php

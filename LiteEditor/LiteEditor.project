@@ -622,10 +622,6 @@
     <File Name="../Runtime/update.bat"/>
     <File Name="../Runtime/make_mac_bundle.sh"/>
     <File Name="../make_src_targz.sh"/>
-    <File Name="../make_repo.sh"/>
-    <File Name="../git-revision.bat"/>
-    <File Name="../git-revision.sh"/>
-    <File Name="../InnoSetup/make_packages.bat"/>
     <File Name="../mac-build.sh"/>
     <File Name="../Runtime/excludes"/>
   </VirtualDirectory>

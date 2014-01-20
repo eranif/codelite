@@ -41,6 +41,24 @@ Run cmake and build codelite:
     make -j4
     sudo make install
 
+----------
+
+Building CodeLite on Windows
+----
+Git clone the sources
+
+    git clone git@github.com:eranif/codelite.git
+
+
+ - Download codelite installer for Windows from our [Download Page][3]
+ - Download wxWidgets 3.0 installer. Also from our [Download Page][3]
+ - Open the workspace **LiteEditor.workspace** (located in the codelite folder)
+ - Select the configuration **Win Release Unicode** hit **F7**
+ - When the compilation is over, close the workspace
+ - Next, locate the workspace **codelite_utils/codelite_utils.workspce** and open it
+ - Select the **Release** build configuration hit F7 and wait for the compilation to end
+ - Close CodeLite
+ - To update your installation with the new codelite, close codelite and from a CMD.EXE window navigate to codelite-sources/Runtime/ and run the file 
 
 [1]: http://codelite.org
 [2]: http://www.codelite.org/LiteEditor/WxWidgets30Binaries

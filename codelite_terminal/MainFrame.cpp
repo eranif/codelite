@@ -6,6 +6,7 @@
 #include <wx/colordlg.h>
 #include "SettingsDlg.h"
 #include <wx/filedlg.h>
+#include <wx/clipbrd.h>
 
 #ifndef __WXMSW__
 #if defined(__WXGTK__)
@@ -81,6 +82,9 @@ MainFrame::~MainFrame()
     m_config.SetBgColour( m_stc->StyleGetBackground(0) );
     m_config.SetFgColour( m_stc->StyleGetForeground(0) );
     m_config.Save();
+    
+    // Call this so the clipboard is still available after codelite-terminal exits
+    wxTheClipboard->Flush(); 
 }
 
 void MainFrame::OnExit(wxCommandEvent& event)
@@ -103,8 +107,18 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 void MainFrame::OnKeyDown(wxKeyEvent& event)
 {
     if ( m_exitOnNextKey ) {
-        Close();
-        return;
+        
+        if ( event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER ) {
+            Close();
+            
+        } else if ( event.GetModifiers() == wxMOD_CONTROL && event.GetKeyCode() == 'C') {
+            // allow copy
+            event.Skip();
+            
+        } else {
+            return;
+        }
+        
     }
 
     if ( event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER ) {
@@ -268,7 +282,7 @@ void MainFrame::DoExecStartCommand()
 void MainFrame::Exit()
 {
     if ( m_options.HasFlag( TerminalOptions::kPauseBeforeExit ) ) {
-        m_stc->AppendText("Hit any key to continue...");
+        m_stc->AppendText("Hit ENTER to continue...");
         SetCartAtEnd();
         m_exitOnNextKey = true;
 

@@ -1,15 +1,21 @@
-What is [CodeLite][1]?
+
+
+![CodeLite IDE Logo][1] What is [CodeLite][2]?
 ====
 
-[CodeLite][1] is an open source, free, cross platform IDE for the C/C++ programming languages which runs on all major Platforms ( OSX, Windows and Linux )
+[CodeLite][3] is an open source, free, cross platform IDE for the C/C++ programming languages which runs on all major Platforms ( OSX, Windows and Linux )
 
-You can download pre-built binaries for Windows / OSX and Linux from our main **[Download Page][3]**
+You can download pre-built binaries for Windows / OSX and Linux from our main **[Download Page][4]**
 
+For more information visit the following URLs:
+
+ - [Official Website][5]
+ - [Wiki][6]
 
 ----------
 
 
-Building CodeLite on Linux
+![Linux logo][7] Building CodeLite on Linux
 ----
 
 To build CodeLite on you computer you will need these packages:
@@ -21,7 +27,7 @@ To build CodeLite on you computer you will need these packages:
  - git
  - cmake
 
-You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy ...) you can [download it install wxWidgets from CodeLite's repository][2]
+You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy ...) you can [download it install wxWidgets from CodeLite's repository][8]
 
 
 On Ubuntu / Debian you can install all of the above (except for wxWidgets 3.0) by typing:
@@ -43,15 +49,15 @@ Run cmake and build codelite:
 
 ----------
 
-Building CodeLite on Windows
+![Windows Logo][9] Building CodeLite on Windows
 ----
 Git clone the sources
 
     git clone git@github.com:eranif/codelite.git
 
 
- - Download codelite installer for Windows from our [Download Page][3]
- - Download wxWidgets 3.0 installer. Also from our [Download Page][3]
+ - Download codelite installer for Windows from our [Download Page][10]
+ - Download wxWidgets 3.0 installer. Also from our [Download Page][11]
  - Open the workspace **LiteEditor.workspace** (located in the codelite folder)
  - Select the configuration **Win Release Unicode** hit **F7**
  - When the compilation is over, close the workspace
@@ -60,6 +66,15 @@ Git clone the sources
  - Close CodeLite
  - To update your installation with the new codelite, close codelite and from a CMD.EXE window navigate to codelite-sources/Runtime/ and run the file 
 
-[1]: http://codelite.org
-[2]: http://www.codelite.org/LiteEditor/WxWidgets30Binaries
-[3]: http://codelite.org/support.php
+
+  [1]: http://codelite.org/images/logo.png
+  [2]: http://codelite.org
+  [3]: http://codelite.org
+  [4]: http://codelite.org/support.php
+  [5]: http://codelite.org
+  [6]: http://wiki.codelite.org
+  [7]: http://wxcrafter.codelite.org/img/linux.png
+  [8]: http://www.codelite.org/LiteEditor/WxWidgets30Binaries
+  [9]: http://wxcrafter.codelite.org/img/windows.png
+  [10]: http://codelite.org/support.php
+  [11]: http://codelite.org/support.php

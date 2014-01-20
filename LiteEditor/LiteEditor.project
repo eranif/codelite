@@ -546,6 +546,7 @@
     <File Name="../InnoSetup/wxwidgets.iss"/>
     <File Name="../InnoSetup/modpath.iss"/>
     <File Name="../codelite-icons-dark/manifest.ini"/>
+    <File Name="../README.md"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Docking Windows">
     <File Name="output_pane.cpp"/>

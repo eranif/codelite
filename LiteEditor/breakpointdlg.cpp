@@ -30,9 +30,10 @@
 #include "globals.h"
 #include "plugin.h"
 #include "event_notifier.h"
+#include "breakpointslistctrl.h"
 
 BreakpointDlg::BreakpointDlg( wxWindow* parent )
-    : BreakpointTab( parent )
+    : BreakpointTabBase( parent )
     , m_selectedItem(wxNOT_FOUND)
 {
     Initialize();

@@ -7,7 +7,7 @@
 
 
 BreakptPropertiesDlg::BreakptPropertiesDlg( wxWindow* parent )
-    :	BreakpointPropertiesDlg( parent )
+    :	BreakpointPropertiesDlgBase( parent )
 {
     its_a_breakpt = true; 			// Default to breakpoint for new items
     whichBreakcheck = wbc_line;	// and assume it'll be a line-number type

@@ -162,6 +162,13 @@ bool SvnConsole::IsEmpty()
 
 void SvnConsole::EnsureVisible()
 {
+    // Ensure that the Output View is displayed
+    wxAuiPaneInfo& pi = m_plugin->GetManager()->GetDockingManager()->GetPane("Output View");
+    if ( pi.IsOk() && !pi.IsShown() ) {
+        pi.Show( true );
+        m_plugin->GetManager()->GetDockingManager()->Update();
+    }
+    
     Notebook* book = m_plugin->GetManager()->GetOutputPaneNotebook();
     for(size_t i=0; i<book->GetPageCount(); i++) {
         if(this == book->GetPage(i)) {

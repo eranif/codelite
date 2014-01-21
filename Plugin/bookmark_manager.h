@@ -7,6 +7,7 @@
 #include <map>
 #include "cl_defs.h"
 #include <wx/menu.h>
+#include <wx/stc/stc.h>
 
 #define MAX_BOOKMARK CL_N0_OF_BOOKMARK_TYPES
 
@@ -21,6 +22,15 @@ enum sci_marker_types { /* markers 0-2 are unused atm */
     smt_cond_bp, smt_bp_cmdlist, smt_breakpoint, smt_LAST_BP_TYPE = smt_breakpoint,
     smt_indicator, smt_warning, smt_error
 };
+
+// These are bitmap masks of the various margin markers.
+// So 256 == 0x100 == 100000000, 2^9, and masks the ninth marker, smt_cond_bp_disabled==8 (as the markers are zero-based)
+// 0x7f00 is binary 111111100000000 and masks all the 7 current breakpoint types. If you add others, change it
+enum marker_mask_type { mmt_standard_bookmarks=0x78, mmt_find_bookmark=0x80, mmt_all_bookmarks=0xF8,
+                        mmt_FIRST_BP_TYPE=0x100, mmt_cond_bp_disabled=mmt_FIRST_BP_TYPE, mmt_bp_cmdlist_disabled=0x200, mmt_bp_disabled=0x400, mmt_bp_ignored=0x800,
+                        mmt_cond_bp=0x1000,mmt_bp_cmdlist=0x2000, mmt_breakpoint=0x4000, mmt_LAST_BP_TYPE=mmt_breakpoint, mmt_all_breakpoints=0x7f00,
+                        mmt_indicator=0x8000, mmt_compiler=0x30000 /* masks compiler errors/warnings */, mmt_folds=wxSTC_MASK_FOLDERS /* 0xFE000000 */
+                      };
 
 class WXDLLIMPEXP_SDK BookmarkManager : public wxEvtHandler
 {

@@ -4,6 +4,8 @@
 #include "svn_console.h"
 #include "globals.h"
 #include "subversion2.h"
+#include <wx/aui/framemanager.h>
+#include "imanager.h"
 
 BEGIN_EVENT_TABLE(SvnCommand, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  SvnCommand::OnProcessOutput)
@@ -46,7 +48,13 @@ bool SvnCommand::Execute(const wxString &command, const wxString &workingDirecto
 
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
     EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
-
+    
+    // Ensure that the Output View is displayed
+    wxAuiPaneInfo& pi = m_plugin->GetManager()->GetDockingManager()->GetPane("Output View");
+    if ( pi.IsOk() && !pi.IsShown() ) {
+        pi.Show( true );
+        m_plugin->GetManager()->GetDockingManager()->Update();
+    }
 
     m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
     if ( !m_process ) {

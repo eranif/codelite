@@ -6,6 +6,7 @@
 #include <wx/listbox.h>
 #include <wx/dataview.h>
 #include <wx/textctrl.h>
+#include <wx/html/htmlwin.h>
 
 class wxDataViewCtrl;
 class wxTextCtrl;
@@ -37,7 +38,23 @@ void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
 
 void ThemeHandlerHelper::DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg)
 {
-    if ( dynamic_cast<wxTreeCtrl*>(win) || dynamic_cast<wxListBox*>(win) || dynamic_cast<wxDataViewCtrl*>(win) || dynamic_cast<wxTextCtrl*>(win)) {
+    // wxTextCtrl needs some extra special handling
+    if ( dynamic_cast<wxTextCtrl*>(win) ) {
+        wxTextCtrl* txtCtrl = dynamic_cast<wxTextCtrl*>(win);
+        wxTextAttr attr = txtCtrl->GetDefaultStyle();
+        attr.SetBackgroundColour( bg );
+        attr.SetTextColour( fg );
+        txtCtrl->SetDefaultStyle( attr );
+    }
+    
+    // Generic handling
+    if ( dynamic_cast<wxTreeCtrl*>(win)     || 
+         dynamic_cast<wxListBox*>(win)      || 
+         dynamic_cast<wxDataViewCtrl*>(win) || 
+         dynamic_cast<wxTextCtrl*>(win)     /*||
+         dynamic_cast<wxHtmlWindow*>(win) */
+        )
+    {
         win->SetBackgroundColour( bg );
         win->SetForegroundColour( fg );
         win->Refresh();

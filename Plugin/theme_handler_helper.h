@@ -29,10 +29,14 @@
 #include <wx/event.h>
 #include <wx/window.h>
 #include "codelite_exports.h"
+#include <wx/sharedptr.h>
 
 class WXDLLIMPEXP_SDK ThemeHandlerHelper : public wxEvtHandler
 {
     wxWindow* m_window;
+public:
+    typedef wxSharedPtr<ThemeHandlerHelper> Ptr;
+    
 protected:
     void DoUpdateColours(wxWindow* win, const wxColour& bg, const wxColour& fg);
     

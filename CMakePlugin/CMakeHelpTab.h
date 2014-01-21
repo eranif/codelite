@@ -27,6 +27,7 @@
 
 // C++
 #include <map>
+#include "theme_handler_helper.h"
 
 // wxWidgets
 #include <wx/thread.h>
@@ -288,6 +289,8 @@ private:
 
     /// Current progress state.
     int m_progress;
+    
+    ThemeHandlerHelper::Ptr m_themeHelper;
 };
 
 /* ************************************************************************ */

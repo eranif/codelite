@@ -58,7 +58,8 @@ CMakeHelpTab::CMakeHelpTab(wxWindow* parent, CMakePlugin* plugin)
 {
     wxASSERT(plugin);
     wxASSERT(m_gaugeLoad->GetRange() == 100); // Must be 100
-
+    
+    m_themeHelper.reset( new ThemeHandlerHelper(this) );
     Bind(wxEVT_CLOSE_WINDOW, &CMakeHelpTab::OnClose, this);
     Bind(EVT_THREAD_START, &CMakeHelpTab::OnThreadStart, this);
     Bind(EVT_THREAD_UPDATE, &CMakeHelpTab::OnThreadUpdate, this);

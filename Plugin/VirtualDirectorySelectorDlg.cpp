@@ -198,7 +198,9 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
     }
 
     // if a initialPath was provided, try to find and select it
-    SelectPath(m_initialPath);
+    if (SelectPath(m_initialPath)) {
+        m_treeCtrl->Expand(m_treeCtrl->GetSelection());
+    }
 }
 
 void VirtualDirectorySelectorDlg::OnButtonOkUI(wxUpdateUIEvent& event)

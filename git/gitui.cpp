@@ -1035,7 +1035,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_splitterPageTreeView->SetSizer(boxSizer94);
     
     m_dvFiles = new wxDataViewCtrl(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_MULTIPLE|wxBORDER_THEME);
-    m_dvFiles->Hide();
     
     m_dvFilesModel = new DataViewFilesModel;
     m_dvFilesModel->SetColCount( 1 );

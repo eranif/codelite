@@ -10,7 +10,6 @@ public:
     virtual ~gitCloneDlg();
 
 protected:
-    virtual void OnUseCredentialsUI(wxUpdateUIEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 
 public:

@@ -393,11 +393,14 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, IP
         return NULL;
 
     } else {
+        
         // Parent
         close(slave);
         freeargv(argv);
         argc = 0;
-
+        
+        
+        
         // disable ECHO
         struct termios termio;
         tcgetattr(master, &termio);

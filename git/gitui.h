@@ -154,7 +154,7 @@ protected:
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Current Diffs"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX);
+    GitDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Current Diffs"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(879,600), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX);
     virtual ~GitDiffDlgBase();
 };
 
@@ -166,16 +166,11 @@ protected:
     wxTextCtrl* m_textCtrlURL;
     wxStaticText* m_staticText24;
     wxDirPickerCtrl* m_dirPickerTargetDir;
-    wxCheckBox* m_checkBoxUseLogin;
-    wxStaticText* m_staticText28;
-    wxTextCtrl* m_textCtrlUsername;
-    wxStaticText* m_staticText30;
-    wxTextCtrl* m_textCtrlPassword;
-    wxButton* m_buttonOK;
-    wxButton* m_button20;
+    wxStdDialogButtonSizer* m_stdBtnSizer294;
+    wxButton* m_buttonOk;
+    wxButton* m_buttonCancel;
 
 protected:
-    virtual void OnUseCredentialsUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
@@ -189,34 +184,14 @@ class GitFileDiffDlgBase : public wxDialog
 protected:
     wxAuiToolBar* m_auibar132;
     GitCommitEditor* m_editor;
-    wxStdDialogButtonSizer* m_stdBtnSizer294;
-    wxButton* m_button296;
+    wxButton* m_button128;
 
 protected:
     virtual void OnSaveAsPatch(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~GitFileDiffDlgBase();
-};
-
-
-class GitApplyPatchDlgBase : public wxDialog
-{
-protected:
-    wxStaticText* m_staticText164;
-    wxFilePickerCtrl* m_filePickerPatchFile;
-    wxStaticText* m_staticText168;
-    wxTextCtrl* m_textCtrlExtraFlags;
-    wxButton* m_button158;
-    wxButton* m_button160;
-
-protected:
-    virtual void OnApplyGitPatchUI(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Apply Patch"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-    virtual ~GitApplyPatchDlgBase();
 };
 
 
@@ -237,6 +212,25 @@ public:
         return m_bitmaps.find(name)->second;
     }
     virtual ~GitImages();
+};
+
+
+class GitApplyPatchDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText164;
+    wxFilePickerCtrl* m_filePickerPatchFile;
+    wxStaticText* m_staticText168;
+    wxTextCtrl* m_textCtrlExtraFlags;
+    wxButton* m_button158;
+    wxButton* m_button160;
+
+protected:
+    virtual void OnApplyGitPatchUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Apply Patch"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~GitApplyPatchDlgBase();
 };
 
 

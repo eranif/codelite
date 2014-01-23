@@ -1057,6 +1057,7 @@ void GitPlugin::ProcessGitActionQueue(const wxString& commandString /*= ""*/)
     }
 #else
     createFlags = IProcessCreateWithHiddenConsole;
+   
 #endif
 
     // Set locale to english

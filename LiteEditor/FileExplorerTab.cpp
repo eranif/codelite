@@ -232,11 +232,20 @@ void FileExplorerTab::OnSearchNode(wxCommandEvent& event)
     wxArrayString paths;
     m_genericDirCtrl->GetPaths(paths);
     
-    if ( paths.IsEmpty() ) {
+    if ( paths.GetCount() != 1 ) {
         return;
     }
     
-    wxFileName fn(paths.Item(0));
+    wxFileName fn;
+    if ( wxFileName::DirExists(paths.Item(0)) ) {
+        // the selection is a folder
+        fn = wxFileName(paths.Item(0), "");
+        
+    } else {
+        // a file was selected
+        fn = wxFileName(paths.Item(0));
+    }
+    
     wxCommandEvent ff(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_in_files"));
     ff.SetString(fn.GetPath());
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);

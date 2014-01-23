@@ -46,6 +46,7 @@ protected:
     virtual void OnConfigurationChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonApply(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonHelp(wxCommandEvent& event) { event.Skip(); }
 

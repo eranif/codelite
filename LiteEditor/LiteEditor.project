@@ -1530,12 +1530,9 @@ resources.cpp: resources.xrc
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>
-        <CustomPreBuild>resources.cpp svninfo.cpp
+        <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
 	wxrc /c /v /o resources.cpp resources.xrc
-
-svninfo.cpp:
-	autorev .
 </CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes">

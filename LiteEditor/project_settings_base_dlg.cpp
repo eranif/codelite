@@ -72,6 +72,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     m_choiceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
     m_button_ok->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
     m_button_apply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
+    m_button_apply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);
     m_button_cancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
     m_button_help->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
     
@@ -82,6 +83,7 @@ ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
     m_choiceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
     m_button_ok->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
     m_button_apply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
+    m_button_apply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);
     m_button_cancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
     m_button_help->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
     

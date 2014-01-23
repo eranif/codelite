@@ -92,11 +92,11 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Inherited Class",
+					"m_label":	"File:",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -543,6 +543,12 @@
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnButtonApply(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+										}, {
+											"m_eventName":	"wxEVT_UPDATE_UI",
+											"m_eventClass":	"wxUpdateUIEvent",
+											"m_eventHandler":	"wxUpdateUIEventHandler",
+											"m_functionNameAndSignature":	"OnButtonApplyUI(wxUpdateUIEvent& event)",
+											"m_description":	"Process a wxEVT_UPDATE_UI event"
 										}],
 									"m_children":	[]
 								}, {
@@ -691,12 +697,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_general_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSGeneralPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_general_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -3448,12 +3454,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_compiler_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSCompilerPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_compiler_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -5862,12 +5868,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_linker_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSLinkerPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_linker_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -7223,12 +7229,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_debugger_page.cpp"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSDebuggerPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_debugger_page.cpp"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -9214,12 +9220,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_resources_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSResourcesPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_resources_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -10246,12 +10252,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_environment_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSEnvironmentPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_environment_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -11041,12 +11047,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_build_events_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSBuildEventsPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_build_events_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -11432,12 +11438,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_custom_build_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSCustomBuildPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_custom_build_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -12508,11 +12514,11 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Inherited Class",
+					"m_label":	"File:",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -15414,12 +15420,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_custom_makefile_rules_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSCustomMakefileRulesPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_custom_makefile_rules_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -16127,12 +16133,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"ps_completion_page"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"PSCompletionPage"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"ps_completion_page"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -16944,11 +16950,11 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Inherited Class",
 					"m_value":	"ProjectCustomBuildTragetDlg"
 				}, {
 					"type":	"string",
-					"m_label":	"Inherited Class",
+					"m_label":	"File:",
 					"m_value":	"ProjectCustomBuildTragetDlg"
 				}, {
 					"type":	"string",

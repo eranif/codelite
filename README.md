@@ -36,7 +36,7 @@ On Ubuntu / Debian you can install all of the above (except for wxWidgets 3.0) b
 
 Git clone the sources:
 
-    git clone git@github.com:eranif/codelite.git
+    git clone https://github.com/eranif/codelite.git
 
 Run cmake and build codelite:
 
@@ -53,7 +53,7 @@ Run cmake and build codelite:
 ----
 Git clone the sources
 
-    git clone git@github.com:eranif/codelite.git
+    git clone https://github.com/eranif/codelite.git
 
 
  - Download codelite installer for Windows from our [Download Page][10]

@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="codelite_make" InternalType="Console">
+  <Plugins>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+		"name":	"Debug",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}]]]>
+    </Plugin>
+  </Plugins>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
@@ -18,7 +32,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;-O0;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../Plugin"/>
@@ -32,7 +46,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="./Debug" Command="./codelite-make" CommandArguments="-c Debug -w ../codelite_make.workspace -e" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="./Debug" Command="./codelite-make" CommandArguments="--workspace=D:/src/TestArea/SampleCodeliteMake/SampleCodeliteMake.workspace --project=SampleCodeliteMake --config=Debug" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

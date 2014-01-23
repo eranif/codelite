@@ -6,6 +6,7 @@
 #include <macromanager.h>
 #include <wx/crt.h>
 #include <globals.h>
+#include <build_settings_config.h>
 
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 
@@ -31,16 +32,21 @@ clMakeGeneratorApp::~clMakeGeneratorApp()
 
 int clMakeGeneratorApp::OnExit()
 {
+    BuildSettingsConfigST::Free();
     return TRUE;
 }
 
 bool clMakeGeneratorApp::OnInit()
 {
+    SetAppName("codelite");
     wxLog::EnableLogging(false);
     wxCmdLineParser parser(wxAppConsole::argc, wxAppConsole::argv);
     if ( !DoParseCommandLine( parser ) )
         return false;
-
+    
+    // Load compilers settings
+    BuildSettingsConfigST::Get()->Load("2.4");
+    
     wxFileName fnWorkspace(m_workspaceFile);
     if ( fnWorkspace.IsRelative() ) {
         fnWorkspace.MakeAbsolute(m_workingDirectory);
@@ -75,10 +81,18 @@ bool clMakeGeneratorApp::OnInit()
     if ( bldConf->IsCustomBuild() ) {
         Notice(wxString() << "Configuration " << m_configuration << " for project " << m_project << " is using a custom build - will not generate makefile");
         Notice(wxString() << "Instead, here is the command line to use:");
-        Out(wxString() << "cd " << MacroManager::Instance()->Expand(bldConf->GetCustomBuildWorkingDir(), NULL, m_project, m_configuration)
-            << " && "
-            << MacroManager::Instance()->Expand(bldConf->GetCustomBuildCmd(), NULL, m_project, m_configuration));
-        CallAfter( &clMakeGeneratorApp::DoExitApp);
+        wxString command;
+        command << "cd " << MacroManager::Instance()->Expand(bldConf->GetCustomBuildWorkingDir(), NULL, m_project, m_configuration)
+                << " && "
+                << MacroManager::Instance()->Expand(bldConf->GetCustomBuildCmd(), NULL, m_project, m_configuration);
+        Out( command );
+        if ( m_executeCommand ) {
+            CallAfter( &clMakeGeneratorApp::DoExecCommand, command );
+            
+        } else {
+            CallAfter( &clMakeGeneratorApp::DoExitApp);
+            
+        }
         return true;
     }
 

@@ -448,6 +448,11 @@ public:
      * @brief return the number of pages in the main editor
      */
     virtual size_t GetPageCount() const = 0;
+    
+    /**
+     * @brief return list of all open editors
+     */
+    virtual size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false) = 0;
 };
 
 #endif //IMANAGER_H

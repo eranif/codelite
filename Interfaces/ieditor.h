@@ -33,6 +33,7 @@
 #include "entry.h"
 #include <vector>
 #include "cl_calltip.h"
+#include <list>
 
 class wxStyledTextCtrl;
 
@@ -56,6 +57,9 @@ enum {
  */
 class IEditor
 {
+public:
+    typedef std::list<IEditor*> List_t;
+    
 public:
     IEditor() {}
     virtual ~IEditor() {}

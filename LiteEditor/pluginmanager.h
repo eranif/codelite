@@ -141,7 +141,8 @@ public:
     virtual ProjectPtr             GetSelectedProject() const;
     virtual void                   RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files);
     virtual IEditor*               FindEditor(const wxString &filename) const;
-
+    virtual size_t                 GetAllEditors(IEditor::List_t& editors, bool inOrder = false);
+    
     //------------------------------------
     //End of IManager interface
     //------------------------------------

@@ -3394,11 +3394,12 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
         m_theFrame->ReloadExternallyModifiedProjectFiles();
         m_theFrame->GetMainBook()->ReloadExternallyModified(true);
 
+/*
         if(ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->IsWorkspaceClosing()) {
             // Retag the workspace the light way
             ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick_No_Scan);
         }
-
+*/
         // Notify plugins that we got the focus.
         // Some plugins want to hide some frames etc
         wxCommandEvent evtGotFocus(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS);

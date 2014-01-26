@@ -4,9 +4,9 @@
 [Setup]
 AppName=CodeLite
 AppVerName=CodeLite
-AppPublisherURL=http://codelite.sourceforge.net
-AppSupportURL=http://codelite.sourceforge.net
-AppUpdatesURL=http://codelite.sourceforge.net
+AppPublisherURL=http://codelite.org
+AppSupportURL=http://codelite.org
+AppUpdatesURL=http://codelite.org
 DefaultDirName={reg:HKLM\Software\codelite\settings,InstalPath|{pf}\CodeLite}
 DefaultGroupName=CodeLite
 LicenseFile=license.txt

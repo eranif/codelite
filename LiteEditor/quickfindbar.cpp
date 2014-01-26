@@ -426,7 +426,7 @@ void QuickFindBar::DoShowControls()
     bool canShowToggleReplaceButton = m_sci && !m_sci->GetReadOnly();
     bool showReplaceControls        = canShowToggleReplaceButton && v;
 
-    ShowReplaceControls(showReplaceControls);
+    ShowReplaceControls(/*showReplaceControls*/);
     Refresh();
     GetParent()->GetSizer()->Layout();
 }

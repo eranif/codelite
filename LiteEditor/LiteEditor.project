@@ -855,6 +855,7 @@
     <File Name="editor_options_comments_doxygen.wxcp"/>
     <File Name="editor_options_copy_paste.wxcp"/>
     <File Name="new_virtual_folder.wxcp"/>
+    <File Name="quickfindbarbase.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

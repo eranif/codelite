@@ -124,11 +124,11 @@
 					"m_children":	[{
 							"m_type":	4401,
 							"proportion":	0,
-							"border":	5,
+							"border":	2,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxEXPAND"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_HORIZONTAL"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",
@@ -209,7 +209,7 @@
 												}, {
 													"type":	"bitmapPicker",
 													"m_label":	"Bitmap File:",
-													"m_path":	"wxART_CLOSE,wxART_TOOLBAR,16"
+													"m_path":	"../codelite-icons/toolbars/16/standard/document-close.png"
 												}, {
 													"type":	"filePicker",
 													"m_label":	"Disabled-Bitmap File",
@@ -623,7 +623,13 @@
 															"m_selection":	1,
 															"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
+															"m_eventClass":	"wxCommandEvent",
+															"m_eventHandler":	"wxCommandEventHandler",
+															"m_functionNameAndSignature":	"OnHighlightMatches(wxCommandEvent& event)",
+															"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+														}],
 													"m_children":	[]
 												}]
 										}, {
@@ -855,7 +861,7 @@
 														}, {
 															"type":	"bitmapPicker",
 															"m_label":	"Bitmap File:",
-															"m_path":	"wxART_FIND_AND_REPLACE,wxART_TOOLBAR,16"
+															"m_path":	"../codelite-icons/toolbars/16/search/edit-find-replace.png"
 														}, {
 															"type":	"filePicker",
 															"m_label":	"Disabled-Bitmap File",
@@ -886,11 +892,11 @@
 						}, {
 							"m_type":	4401,
 							"proportion":	0,
-							"border":	5,
+							"border":	2,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
 							"m_styles":	[],
-							"m_sizerFlags":	["wxALIGN_CENTER_HORIZONTAL"],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT"],
 							"m_properties":	[{
 									"type":	"string",
 									"m_label":	"Name:",

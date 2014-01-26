@@ -28,14 +28,14 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     wxBoxSizer* boxSizer23 = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(boxSizer23, 0, wxEXPAND, 5);
+    mainSizer->Add(boxSizer23, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 2);
     
     m_auibarClose = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_VERTICAL);
     m_auibarClose->SetToolBitmapSize(wxSize(16,16));
     
     boxSizer23->Add(m_auibarClose, 0, wxALIGN_TOP, 5);
     
-    m_auibarClose->AddTool(ID_TOOL_CLOSE, _("Close"), wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Close"), _("Close"), NULL);
+    m_auibarClose->AddTool(ID_TOOL_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("document-close")), wxNullBitmap, wxITEM_NORMAL, _("Close"), _("Close"), NULL);
     m_auibarClose->Realize();
     
     wxFlexGridSizer* fgSizer113 = new wxFlexGridSizer(0, 3, 0, 0);
@@ -80,12 +80,12 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     fgSizer113->Add(m_toolBarReplace, 0, wxEXPAND, 5);
     
-    m_toolBarReplace->AddTool(ID_TOOL_REPLACE, _("Replace Selection"), wxArtProvider::GetBitmap(wxART_FIND_AND_REPLACE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Replace Selection"), _("Replace Selection"), NULL);
+    m_toolBarReplace->AddTool(ID_TOOL_REPLACE, _("Replace Selection"), wxXmlResource::Get()->LoadBitmap(wxT("edit-find-replace")), wxNullBitmap, wxITEM_NORMAL, _("Replace Selection"), _("Replace Selection"), NULL);
     m_toolBarReplace->Realize();
     
     wxBoxSizer* boxSizer18 = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(boxSizer18, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(boxSizer18, 0, wxALL|wxALIGN_RIGHT, 2);
     
     m_checkBoxCase = new wxCheckBox(this, wxID_ANY, _("Case"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxCase->SetValue(false);
@@ -114,6 +114,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
     this->Connect(ID_TOOL_NEXT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnNext), NULL, this);
     this->Connect(ID_TOOL_PREV, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnPrev), NULL, this);
+    this->Connect(ID_TOOL_HIGHLIGHT_MATCHES, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnHighlightMatches), NULL, this);
     m_replaceWith->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Connect(ID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     this->Connect(ID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);
@@ -130,6 +131,7 @@ QuickFindBarBase::~QuickFindBarBase()
     m_findWhat->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
     this->Disconnect(ID_TOOL_NEXT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnNext), NULL, this);
     this->Disconnect(ID_TOOL_PREV, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnPrev), NULL, this);
+    this->Disconnect(ID_TOOL_HIGHLIGHT_MATCHES, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnHighlightMatches), NULL, this);
     m_replaceWith->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Disconnect(ID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     this->Disconnect(ID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);

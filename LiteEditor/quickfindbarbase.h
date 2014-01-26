@@ -49,6 +49,7 @@ protected:
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNext(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPrev(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnHighlightMatches(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }

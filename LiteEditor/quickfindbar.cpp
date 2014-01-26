@@ -185,9 +185,9 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
     switch (e.GetKeyCode()) {
     case WXK_ESCAPE: {
-        wxCommandEvent cmd(wxEVT_COMMAND_TOOL_CLICKED, wxID_HIDE);
-        cmd.SetEventObject(m_toolBar1);
-        m_toolBar1->GetEventHandler()->AddPendingEvent(cmd);
+        wxCommandEvent cmd(wxEVT_COMMAND_TOOL_CLICKED, ID_TOOL_CLOSE);
+        cmd.SetEventObject(m_auibarClose);
+        m_auibarClose->GetEventHandler()->AddPendingEvent(cmd);
         break;
     }
     default:
@@ -205,7 +205,7 @@ void QuickFindBar::OnEnter(wxCommandEvent& e)
     wxUnusedVar(e);
 
     bool shift = wxGetKeyState(WXK_SHIFT);
-    wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, shift ? wxID_FIND_PREVIOUS : wxID_FIND_NEXT);
+    wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, shift ? ID_TOOL_PREV : ID_TOOL_NEXT);
     evt.SetEventObject(this);
     GetEventHandler()->AddPendingEvent(evt);
 }
@@ -351,7 +351,7 @@ wxTextCtrl* QuickFindBar::GetFocusedControl()
 void QuickFindBar::OnReplaceEnter(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, wxID_TOOL_REPLACE);
+    wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, ID_TOOL_REPLACE);
     GetEventHandler()->AddPendingEvent(evt);
 }
 
@@ -408,7 +408,7 @@ void QuickFindBar::OnCheckBoxWord(wxCommandEvent& event)
 
 int QuickFindBar::GetCloseButtonId()
 {
-    return wxID_HIDE;
+    return ID_TOOL_CLOSE;
 }
 
 void QuickFindBar::OnToggleReplaceControls(wxCommandEvent& event)
@@ -616,16 +616,12 @@ void QuickFindBar::DoMarkAll()
 void QuickFindBar::OnHighlightMatches(wxCommandEvent& event)
 {
     bool checked;
-#if USE_AUI_TOOLBAR
-    checked = m_toolBar2->GetToolToggled(wxID_HIGHLIGHT_MATCHES);
-#else
-    checked = event.IsChecked();
-#endif
+    checked = m_auibarFind->GetToolToggled(ID_TOOL_HIGHLIGHT_MATCHES);
     LEditor* editor = dynamic_cast<LEditor*>(m_sci);
-
     if (checked && editor) {
         editor->SetFindBookmarksActive(true);
         DoMarkAll();
+		
     } else {
         if (editor) {
             editor->DelAllMarkers(smt_find_bookmark);

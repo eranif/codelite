@@ -83,24 +83,31 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_toolBarReplace->AddTool(ID_TOOL_REPLACE, _("Replace Selection"), wxXmlResource::Get()->LoadBitmap(wxT("edit-find-replace")), wxNullBitmap, wxITEM_NORMAL, _("Replace Selection"), _("Replace Selection"), NULL);
     m_toolBarReplace->Realize();
     
-    wxBoxSizer* boxSizer18 = new wxBoxSizer(wxHORIZONTAL);
+    m_staticLine38 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_VERTICAL);
     
-    mainSizer->Add(boxSizer18, 0, wxALL|wxALIGN_RIGHT, 2);
+    boxSizer23->Add(m_staticLine38, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer23->Add(boxSizer18, 0, wxALL|wxALIGN_LEFT, 2);
     
     m_checkBoxCase = new wxCheckBox(this, wxID_ANY, _("Case"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxCase->SetValue(false);
+    m_checkBoxCase->SetToolTip(_("Use case sensitive match"));
     
-    boxSizer18->Add(m_checkBoxCase, 0, wxALIGN_LEFT, 1);
+    boxSizer18->Add(m_checkBoxCase, 0, wxALL|wxALIGN_LEFT, 1);
     
     m_checkBoxWord = new wxCheckBox(this, wxID_ANY, _("Word"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxWord->SetValue(false);
+    m_checkBoxWord->SetToolTip(_("Match a whole word only"));
     
-    boxSizer18->Add(m_checkBoxWord, 0, wxLEFT|wxRIGHT, 1);
+    boxSizer18->Add(m_checkBoxWord, 0, wxALL, 1);
     
     m_checkBoxRegex = new wxCheckBox(this, wxID_ANY, _("Regexp"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxRegex->SetValue(false);
+    m_checkBoxRegex->SetToolTip(_("Use regular expression"));
     
-    boxSizer18->Add(m_checkBoxRegex, 0, wxLEFT|wxRIGHT|wxALIGN_RIGHT, 1);
+    boxSizer18->Add(m_checkBoxRegex, 0, wxALL|wxALIGN_RIGHT, 1);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -113,13 +120,17 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_findWhat->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
     m_findWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
     this->Connect(ID_TOOL_NEXT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnNext), NULL, this);
+    this->Connect(ID_TOOL_NEXT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Connect(ID_TOOL_PREV, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnPrev), NULL, this);
+    this->Connect(ID_TOOL_PREV, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Connect(ID_TOOL_HIGHLIGHT_MATCHES, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnHighlightMatches), NULL, this);
+    this->Connect(ID_TOOL_HIGHLIGHT_MATCHES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnHighlightMatchesUI), NULL, this);
     m_replaceWith->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Connect(ID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     this->Connect(ID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);
     m_checkBoxCase->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxCase), NULL, this);
     m_checkBoxWord->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxWord), NULL, this);
+    m_checkBoxRegex->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxRegex), NULL, this);
     
 }
 
@@ -130,12 +141,16 @@ QuickFindBarBase::~QuickFindBarBase()
     m_findWhat->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(QuickFindBarBase::OnKeyDown), NULL, this);
     m_findWhat->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(QuickFindBarBase::OnEnter), NULL, this);
     this->Disconnect(ID_TOOL_NEXT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnNext), NULL, this);
+    this->Disconnect(ID_TOOL_NEXT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Disconnect(ID_TOOL_PREV, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnPrev), NULL, this);
+    this->Disconnect(ID_TOOL_PREV, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Disconnect(ID_TOOL_HIGHLIGHT_MATCHES, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnHighlightMatches), NULL, this);
+    this->Disconnect(ID_TOOL_HIGHLIGHT_MATCHES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnHighlightMatchesUI), NULL, this);
     m_replaceWith->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Disconnect(ID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     this->Disconnect(ID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);
     m_checkBoxCase->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxCase), NULL, this);
     m_checkBoxWord->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxWord), NULL, this);
+    m_checkBoxRegex->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxRegex), NULL, this);
     
 }

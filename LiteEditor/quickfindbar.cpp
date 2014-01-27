@@ -68,6 +68,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_sci(NULL)
     , m_flags(0)
     , m_lastTextPtr(NULL)
+    , m_themeHelper(this)
 {
     Hide();
     DoShowControls();
@@ -145,7 +146,7 @@ void QuickFindBar::DoSearch(bool fwd, bool incr)
         }
     }
 
-    m_findWhat->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_findWhat->SetBackgroundColour( EditorConfigST::Get()->GetCurrentOutputviewBgColour() );
     m_findWhat->Refresh();
     m_sci->SetSelection(pos, pos+len);
 

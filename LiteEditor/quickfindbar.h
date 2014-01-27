@@ -27,6 +27,7 @@
 
 #include <wx/panel.h>
 #include "quickfindbarbase.h"
+#include "theme_handler_helper.h"
 
 class wxStyledTextCtrl;
 class QuickFindBar : public QuickFindBarBase
@@ -35,7 +36,8 @@ class QuickFindBar : public QuickFindBarBase
     size_t        m_flags;
     wxString      m_lastText;
     wchar_t*      m_lastTextPtr;
-
+    ThemeHandlerHelper m_themeHelper;
+    
 protected:
     virtual void OnCheckBoxRegex(wxCommandEvent& event);
     virtual void OnCheckWild(wxCommandEvent& event);

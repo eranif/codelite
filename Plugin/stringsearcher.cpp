@@ -66,8 +66,19 @@ bool StringFindReplacer::DoWildcardSearch(const wxString& input, int startOffset
 {
     // Conver the wildcard to regex
     wxString regexPattern = find_what;
-    regexPattern.Replace("*", ".*?"); // Non greedy wildcard '*'
-    regexPattern.Replace("?", "."); // Any character
+    
+    // Escape braces
+    regexPattern.Replace("(", "\\(");
+    regexPattern.Replace(")", "\\)");
+    regexPattern.Replace("[", "\\[");
+    regexPattern.Replace("]", "\\]");
+    regexPattern.Replace("{", "\\{");
+    regexPattern.Replace("}", "\\}");
+    
+    // Covnert match syntax to regular expression
+    regexPattern.Replace("?", ".");     // Any character
+    regexPattern.Replace("*", ".*?");   // Non greedy wildcard '*'
+    
     return DoRESearch(input, startOffset, regexPattern, flags, pos, matchLen);
 }
 

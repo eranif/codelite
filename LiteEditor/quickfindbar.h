@@ -37,6 +37,8 @@ class QuickFindBar : public QuickFindBarBase
     wchar_t*      m_lastTextPtr;
 
 protected:
+    virtual void OnCheckBoxRegex(wxCommandEvent& event);
+    virtual void OnCheckWild(wxCommandEvent& event);
     void     ShowReplaceControls(bool show = true);
     void     DoSearch(bool fwd, bool incr);
     void     DoMarkAll();
@@ -63,9 +65,6 @@ protected:
     void OnUpdateUI     (wxUpdateUIEvent &e);
     void OnReplaceUI    (wxUpdateUIEvent &e);
     void OnReplaceEnter (wxCommandEvent &e);
-    void OnCheckBoxCase ( wxCommandEvent& event );
-    void OnCheckBoxRegex( wxCommandEvent& event );
-    void OnCheckBoxWord ( wxCommandEvent& event );
     void OnToggleReplaceControls( wxCommandEvent& event );
     void OnToggleReplaceControlsUI(wxUpdateUIEvent& event);
     void OnHighlightMatches(wxCommandEvent& event);
@@ -82,7 +81,7 @@ protected:
 protected:
     bool DoShow(bool s, const wxString &findWhat);
     wxStyledTextCtrl *DoCheckPlugins();
-    
+
 public:
     QuickFindBar(wxWindow *parent, wxWindowID id = wxID_ANY);
     virtual ~QuickFindBar();

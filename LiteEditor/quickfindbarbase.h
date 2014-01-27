@@ -43,6 +43,7 @@ protected:
     wxCheckBox* m_checkBoxCase;
     wxCheckBox* m_checkBoxWord;
     wxCheckBox* m_checkBoxRegex;
+    wxCheckBox* m_checkBoxWildcard;
 
 protected:
     virtual void OnHide(wxCommandEvent& event) { event.Skip(); }
@@ -56,9 +57,8 @@ protected:
     virtual void OnHighlightMatchesUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCheckBoxCase(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckBoxWord(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckBoxRegex(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckWild(wxCommandEvent& event) { event.Skip(); }
 
 public:
     QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxBORDER_THEME);

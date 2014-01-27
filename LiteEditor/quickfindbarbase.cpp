@@ -49,7 +49,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     fgSizer113->Add(m_staticTextFind14, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 2);
     
-    m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_ENTER);
+    m_findWhat = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
     m_findWhat->SetToolTip(_("Hit ENTER to search, or Shift + ENTER to search backward"));
     m_findWhat->SetFocus();
     
@@ -71,7 +71,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     fgSizer113->Add(m_replaceStaticText, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 2);
     
-    m_replaceWith = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_ENTER);
+    m_replaceWith = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_PROCESS_ENTER);
     
     fgSizer113->Add(m_replaceWith, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 2);
     
@@ -87,27 +87,35 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     boxSizer23->Add(m_staticLine38, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
+    wxFlexGridSizer* flexGridSizer39 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer39->SetFlexibleDirection( wxBOTH );
+    flexGridSizer39->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     
-    boxSizer23->Add(boxSizer18, 0, wxALL|wxALIGN_LEFT, 2);
+    boxSizer23->Add(flexGridSizer39, 0, wxALL|wxALIGN_LEFT|wxALIGN_TOP, 2);
     
     m_checkBoxCase = new wxCheckBox(this, wxID_ANY, _("Case"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxCase->SetValue(false);
     m_checkBoxCase->SetToolTip(_("Use case sensitive match"));
     
-    boxSizer18->Add(m_checkBoxCase, 0, wxALL|wxALIGN_LEFT, 1);
+    flexGridSizer39->Add(m_checkBoxCase, 0, wxALL|wxALIGN_LEFT, 1);
     
     m_checkBoxWord = new wxCheckBox(this, wxID_ANY, _("Word"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxWord->SetValue(false);
     m_checkBoxWord->SetToolTip(_("Match a whole word only"));
     
-    boxSizer18->Add(m_checkBoxWord, 0, wxALL, 1);
+    flexGridSizer39->Add(m_checkBoxWord, 0, wxALL, 1);
     
     m_checkBoxRegex = new wxCheckBox(this, wxID_ANY, _("Regexp"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxRegex->SetValue(false);
     m_checkBoxRegex->SetToolTip(_("Use regular expression"));
     
-    boxSizer18->Add(m_checkBoxRegex, 0, wxALL|wxALIGN_RIGHT, 1);
+    flexGridSizer39->Add(m_checkBoxRegex, 0, wxALL|wxALIGN_RIGHT, 1);
+    
+    m_checkBoxWildcard = new wxCheckBox(this, wxID_ANY, _("Wildcard"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxWildcard->SetValue(false);
+    m_checkBoxWildcard->SetToolTip(_("Use wildcard syntax (* and ?)"));
+    
+    flexGridSizer39->Add(m_checkBoxWildcard, 0, wxALL, 1);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -128,9 +136,8 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_replaceWith->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Connect(ID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     this->Connect(ID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);
-    m_checkBoxCase->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxCase), NULL, this);
-    m_checkBoxWord->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxWord), NULL, this);
     m_checkBoxRegex->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxRegex), NULL, this);
+    m_checkBoxWildcard->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckWild), NULL, this);
     
 }
 
@@ -149,8 +156,7 @@ QuickFindBarBase::~QuickFindBarBase()
     m_replaceWith->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnUpdateUI), NULL, this);
     this->Disconnect(ID_TOOL_REPLACE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnReplace), NULL, this);
     this->Disconnect(ID_TOOL_REPLACE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickFindBarBase::OnReplaceUI), NULL, this);
-    m_checkBoxCase->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxCase), NULL, this);
-    m_checkBoxWord->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxWord), NULL, this);
     m_checkBoxRegex->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckBoxRegex), NULL, this);
+    m_checkBoxWildcard->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(QuickFindBarBase::OnCheckWild), NULL, this);
     
 }

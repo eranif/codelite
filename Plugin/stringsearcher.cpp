@@ -76,8 +76,8 @@ bool StringFindReplacer::DoWildcardSearch(const wxString& input, int startOffset
     regexPattern.Replace("}", "\\}");
     
     // Covnert match syntax to regular expression
-    regexPattern.Replace("?", ".");     // Any character
-    regexPattern.Replace("*", ".*?");   // Non greedy wildcard '*'
+    regexPattern.Replace("?", ".");         // Any character
+    regexPattern.Replace("*", "[^\\n]*?");  // Non greedy wildcard '*', but don't allow matches to go beyond a single line
     
     return DoRESearch(input, startOffset, regexPattern, flags, pos, matchLen);
 }

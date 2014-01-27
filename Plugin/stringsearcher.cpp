@@ -258,6 +258,7 @@ bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wch
     bool bResult = false;
     if ( flags & wxSD_WILDCARD ) {
         bResult = DoWildcardSearch(input, startOffset, find_what, flags, posInChars, matchLenInChars);
+        flags |= wxSD_REGULAREXPRESSION;
         
     } else  if (flags & wxSD_REGULAREXPRESSION) {
         bResult = DoRESearch(input, startOffset, find_what, flags, posInChars, matchLenInChars);

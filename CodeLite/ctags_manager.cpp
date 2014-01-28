@@ -1216,7 +1216,7 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
                 // and try to resolve it. If we succeed, we collect only the ctors matches from that list
                 TagEntryPtrVector_t matches;
                 tmpCandidates.clear();
-                if ( AutoCompleteCandidates(fileName, lineno, expr, text, matches) && !matches.empty() ) {
+                if ( AutoCompleteCandidates(fileName, lineno, expr + ".", text, matches) && !matches.empty() ) {
                     std::for_each(matches.begin(), matches.end(), TagEntry::ForEachCopyIfCtor(tmpCandidates) );
                     GetFunctionTipFromTags(tmpCandidates, matches.at(0)->GetScopeName(), tips);
                 }

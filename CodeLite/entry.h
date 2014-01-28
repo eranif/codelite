@@ -88,6 +88,18 @@ public:
     static wxString KIND_MACRO;
     static wxString KIND_STRUCT;
     static wxString KIND_FILE;
+    
+    // Used by std::for_each to copy elements which are constructors
+    class ForEachCopyIfCtor {
+        TagEntryPtrVector_t &m_matches;
+    public:
+        ForEachCopyIfCtor(TagEntryPtrVector_t &v) : m_matches(v) {}
+        void operator()(TagEntryPtr tag) {
+            if ( tag->IsConstructor() ) {
+                m_matches.push_back( tag );
+            }
+        }
+    };
 public:
     /**
      * Construct a TagEntry from tagEntry struct

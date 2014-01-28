@@ -62,6 +62,7 @@
 #include <wx/stdpaths.h>
 #include "tags_storage_sqlite3.h"
 #include "cl_standard_paths.h"
+#include <algorithm>
 
 
 //#define __PERFORMANCE
@@ -1208,6 +1209,17 @@ clCallTipPtr TagsManager::GetFunctionTip(const wxFileName &fileName, int lineno,
             if( tmpCandidates.size() == 1) {
                 TagEntryPtr t = tmpCandidates.at(0);
                 DoGetFunctionTipForEmptyExpression(t->GetScope(), text, tips);
+                
+            } else {
+                // Stil no luck, try this:
+                // Assume that the expression is a code-complete expression (i.e. an expression that ends with -> or .
+                // and try to resolve it. If we succeed, we collect only the ctors matches from that list
+                TagEntryPtrVector_t matches;
+                tmpCandidates.clear();
+                if ( AutoCompleteCandidates(fileName, lineno, expr, text, matches) && !matches.empty() ) {
+                    std::for_each(matches.begin(), matches.end(), TagEntry::ForEachCopyIfCtor(tmpCandidates) );
+                    GetFunctionTipFromTags(tmpCandidates, matches.at(0)->GetScopeName(), tips);
+                }
             }
         }
     } else if( expression == wxT("::") ) {

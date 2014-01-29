@@ -2893,6 +2893,10 @@ void Manager::ProcessCommandQueue()
     }
 
     switch ( qcmd.GetKind() ) {
+    case QueueCommand::ExecuteNoDebug:
+        ExecuteNoDebug( GetActiveProjectName() );
+        break;
+        
     case QueueCommand::CustomBuild:
         DoCustomBuild ( qcmd );
         break;

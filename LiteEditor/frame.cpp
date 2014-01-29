@@ -2631,17 +2631,15 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
     
     // Prepare the commands to execute
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
-    bool prompt = clConfig::Get().Read("PromptForBuildBeforeExecute", true);
-    if ( prompt ) {
-        // User did not save his answer
-        wxRichMessageDialog d(this, _("Would you like to build before executing the program?"), "CodeLite", wxYES_NO|wxYES_DEFAULT|wxICON_QUESTION);
-        d.ShowCheckBox(_("Remember my answer and don't ask me again"));
-        d.SetYesNoLabels(_("Build"), _("Execute"));
-        if ( d.ShowModal() == wxID_YES ) {
-            QueueCommand buildCommand( QueueCommand::kBuild );
-            ManagerST::Get()->PushQueueCommand( buildCommand );
-            commandExecute.SetCheckBuildSuccess( true ); // execute only if build was successfull
-        }
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Would you like to build before executing the program?"), 
+                                                           _("Remember my answer and don't ask me again"), 
+                                                           "PromptForBuildBeforeExecute", 
+                                                           _("Build"), 
+                                                           _("Execute"));
+    if ( res == wxID_YES ) {
+        QueueCommand buildCommand( QueueCommand::kBuild );
+        ManagerST::Get()->PushQueueCommand( buildCommand );
+        commandExecute.SetCheckBuildSuccess( true ); // execute only if build was successfull
     }
     
     ManagerST::Get()->PushQueueCommand( commandExecute );

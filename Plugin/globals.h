@@ -395,4 +395,24 @@ WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString &inString, bool trim = 
  * @brief make an execution command for running cmd under a shell and optionally prompt the user with the 'press any to key to continue...' message
  */
 WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey);
+
+/**
+ * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"
+ * @param message the message to show to the user
+ * @param checkboxLabel the message to display next to the checkbox
+ * @param dlgId a unique string ID which will be used for storing the user value incase he checks the 'dont annoy me again' checkbox
+ * @param yesLabel set a different label to the "Yes" button
+ * @param noLabel set a different label to the "No" button
+ * @param style the wxRichMessageDialog style
+ * @param checkboxInitialValue
+ * @return wxRichMessageDialog::ShowModal() return value
+ */
+WXDLLIMPEXP_SDK  wxStandardID PromptForYesNoDialogWithCheckbox( const wxString &message, 
+                                                                const wxString &checkboxLabel,
+                                                                const wxString &dlgId,
+                                                                const wxString &yesLabel, 
+                                                                const wxString &noLabel, 
+                                                                long style = wxYES_NO|wxICON_QUESTION|wxYES_DEFAULT, 
+                                                                bool checkboxInitialValue = false);
+
 #endif //GLOBALS_H

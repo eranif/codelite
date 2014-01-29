@@ -66,6 +66,7 @@
 #include "environmentconfig.h"
 #include <wx/graphics.h>
 #include <wx/dcmemory.h>
+#include <wx/richmsgdlg.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1633,4 +1634,22 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
         }
 #endif
     return execLine;
+}
+
+wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& checkboxLabel, const wxString& dlgId, const wxString& yesLabel, const wxString& noLabel, long style, bool checkboxInitialValue)
+{
+    int res = clConfig::Get().Read(dlgId, wxNOT_FOUND);
+    if ( res == wxNOT_FOUND ) {
+        
+        // User did not save his answer
+        wxRichMessageDialog d(EventNotifier::Get()->TopFrame(), message, "CodeLite", style);
+        d.ShowCheckBox(checkboxLabel);
+        d.SetYesNoLabels(yesLabel, noLabel);
+        res = d.ShowModal();
+        if ( d.IsCheckBoxChecked() ) {
+            // store the user result
+            clConfig::Get().Write(dlgId, res);
+        }
+    }
+    return static_cast<wxStandardID>(res);
 }

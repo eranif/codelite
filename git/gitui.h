@@ -60,11 +60,12 @@ protected:
     wxCheckBox* m_checkBoxLog;
     wxCheckBox* m_checkBoxTrackTree;
     wxStdDialogButtonSizer* m_stdBtnSizer284;
-    wxButton* m_button286;
-    wxButton* m_button288;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
 
 protected:
     virtual void OnLocalRepoUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

@@ -8,9 +8,8 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
     : GitSettingsDlgBase(parent)
     , m_localRepoPath(localRepoPath)
 {
-    clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    data.Load();
 
     m_pathGIT->SetPath(data.GetGITExecutablePath());
     m_pathGITK->SetPath(data.GetGITKExecutablePath());
@@ -35,9 +34,9 @@ GitSettingsDlg::~GitSettingsDlg()
 
 void GitSettingsDlg::OnOK(wxCommandEvent& event)
 {
-    clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    data.Load();
+    
     data.SetGITExecutablePath( m_pathGIT->GetPath() );
     data.SetGITKExecutablePath( m_pathGITK->GetPath() );
 
@@ -52,7 +51,7 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
         flags |= GitEntry::Git_Colour_Tree_View;
 
     data.SetFlags( flags );
-    conf.WriteItem(&data);
+    data.Save();
 
     GitEntry::GitProperties props;
     props.global_email = m_textCtrlGlobalEmail->GetValue();

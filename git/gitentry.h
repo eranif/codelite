@@ -120,7 +120,10 @@ public:
             m_flags &= ~flag;
         }
     }
-
+    
+    void Save();
+    GitEntry& Load();
+    
     void SetGitCommitDlgHSashPos(int gitCommitDlgHSashPos) {
         this->m_gitCommitDlgHSashPos = gitCommitDlgHSashPos;
     }
@@ -197,4 +200,5 @@ public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 };
- #endif
+#endif
+

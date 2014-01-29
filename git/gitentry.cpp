@@ -248,6 +248,18 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
     }
 }
 
+GitEntry& GitEntry::Load()
+{
+    clConfig conf("git.conf");
+    conf.ReadItem( this );
+    return *this;
+}
+
+void GitEntry::Save()
+{
+    clConfig conf("git.conf");
+    conf.WriteItem( this );
+}
 
 void GitCommandsEntries::FromJSON(const JSONElement& json)
 {

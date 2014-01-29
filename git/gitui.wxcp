@@ -1904,7 +1904,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_button286"
+											"m_value":	"m_buttonOK"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -1914,7 +1914,13 @@
 											"m_label":	"Default Button",
 											"m_value":	true
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_eventHandler":	"wxCommandEventHandler",
+											"m_functionNameAndSignature":	"OnOK(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+										}],
 									"m_children":	[]
 								}, {
 									"m_type":	4468,
@@ -1932,7 +1938,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_button288"
+											"m_value":	"m_buttonCancel"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",

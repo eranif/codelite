@@ -43,14 +43,12 @@ class WXDLLIMPEXP_SDK QueueCommand
 public:
     // Command's kind
     enum {
-        Build,
-        Clean,
-        CustomBuild,
-        Debug,
-        Cmd,
-        BatchCmds,
-        ReBuild,
-        ExecuteNoDebug
+        kBuild,
+        kClean,
+        kCustomBuild,
+        kDebug,
+        kRebuild,
+        kExecuteNoDebug
     };
 
 public:

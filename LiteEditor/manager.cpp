@@ -2893,21 +2893,24 @@ void Manager::ProcessCommandQueue()
     }
 
     switch ( qcmd.GetKind() ) {
-    case QueueCommand::ExecuteNoDebug:
-        ExecuteNoDebug( GetActiveProjectName() );
+    case QueueCommand::kExecuteNoDebug:
+        ExecuteNoDebug( qcmd.GetProject() );
         break;
         
-    case QueueCommand::CustomBuild:
+    case QueueCommand::kCustomBuild:
         DoCustomBuild ( qcmd );
         break;
-    case QueueCommand::Clean:
+        
+    case QueueCommand::kClean:
         DoCleanProject ( qcmd );
         break;
-    case QueueCommand::ReBuild:
-    case QueueCommand::Build:
+        
+    case QueueCommand::kRebuild:
+    case QueueCommand::kBuild:
         DoBuildProject ( qcmd );
         break;
-    case QueueCommand::Debug:
+        
+    case QueueCommand::kDebug:
         DbgStart ( wxNOT_FOUND );
         break;
     }
@@ -2915,20 +2918,20 @@ void Manager::ProcessCommandQueue()
 
 void Manager::BuildWorkspace()
 {
-    DoCmdWorkspace ( QueueCommand::Build );
+    DoCmdWorkspace ( QueueCommand::kBuild );
     ProcessCommandQueue();
 }
 
 void Manager::CleanWorkspace()
 {
-    DoCmdWorkspace ( QueueCommand::Clean );
+    DoCmdWorkspace ( QueueCommand::kClean );
     ProcessCommandQueue();
 }
 
 void Manager::RebuildWorkspace()
 {
-    DoCmdWorkspace ( QueueCommand::Clean );
-    DoCmdWorkspace ( QueueCommand::Build );
+    DoCmdWorkspace ( QueueCommand::kClean );
+    DoCmdWorkspace ( QueueCommand::kBuild );
     ProcessCommandQueue();
 }
 
@@ -2944,7 +2947,7 @@ void Manager::RunCustomPreMakeCommand ( const wxString &project )
     if ( bldConf ) {
         conf = bldConf->GetName();
     }
-    QueueCommand info ( project, conf, false, QueueCommand::Build );
+    QueueCommand info ( project, conf, false, QueueCommand::kBuild );
 
     if ( m_shellProcess ) {
         delete m_shellProcess;
@@ -2978,20 +2981,20 @@ void Manager::CompileFile ( const wxString &projectName, const wxString &fileNam
         conf = bldConf->GetName();
     }
 
-    QueueCommand info ( projectName, conf, false, QueueCommand::Build );
+    QueueCommand info ( projectName, conf, false, QueueCommand::kBuild );
     if ( bldConf && bldConf->IsCustomBuild() ) {
         info.SetCustomBuildTarget ( preprocessOnly ? _("Preprocess File") : _("Compile Single File" ) );
-        info.SetKind ( QueueCommand::CustomBuild );
+        info.SetKind ( QueueCommand::kCustomBuild );
     }
 
     if ( m_shellProcess ) {
         delete m_shellProcess;
     }
     switch ( info.GetKind() ) {
-    case QueueCommand::Build:
+    case QueueCommand::kBuild:
         m_shellProcess = new CompileRequest ( info, fileName, false, preprocessOnly );
         break;
-    case  QueueCommand::CustomBuild:
+    case  QueueCommand::kCustomBuild:
         m_shellProcess = new CustomBuildRequest ( info, fileName );
         break;
     default:
@@ -3101,12 +3104,12 @@ void Manager::DoCmdWorkspace ( int cmd )
         if ( buildConf  && buildConf->IsProjectEnabled() ) {
             QueueCommand bi ( optimizedList.Item ( i ), buildConf->GetName(), true, cmd );
             if ( buildConf->IsCustomBuild() ) {
-                bi.SetKind ( QueueCommand::CustomBuild );
+                bi.SetKind ( QueueCommand::kCustomBuild );
                 switch ( cmd ) {
-                case QueueCommand::Build:
+                case QueueCommand::kBuild:
                     bi.SetCustomBuildTarget ( wxT ( "Build" ) );
                     break;
-                case QueueCommand::Clean:
+                case QueueCommand::kClean:
                     bi.SetCustomBuildTarget ( wxT ( "Clean" ) );
                     break;
                 }

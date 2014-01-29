@@ -71,8 +71,8 @@ void ShellCommand::SendStartMsg()
     BuildEventDetails *eventData = new BuildEventDetails();
     eventData->SetProjectName(m_info.GetProject());
     eventData->SetConfiguration(m_info.GetConfiguration());
-    eventData->SetIsCustomProject(m_info.GetKind() == QueueCommand::CustomBuild);
-    eventData->SetIsClean(m_info.GetKind() == QueueCommand::Clean || (m_info.GetKind() == QueueCommand::CustomBuild && m_info.GetCustomBuildTarget() == wxT("clean")));
+    eventData->SetIsCustomProject(m_info.GetKind() == QueueCommand::kCustomBuild);
+    eventData->SetIsClean(m_info.GetKind() == QueueCommand::kClean || (m_info.GetKind() == QueueCommand::kCustomBuild && m_info.GetCustomBuildTarget() == wxT("clean")));
 
     event.SetClientObject(eventData);
     EventNotifier::Get()->AddPendingEvent(event);

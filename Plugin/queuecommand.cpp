@@ -24,6 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "queuecommand.h"
+#include "workspace.h"
+#include "build_config.h"
+
 QueueCommand::QueueCommand(const wxString& project, const wxString& configuration, bool projectOnly, int kind)
     : m_project(project)
     , m_configuration(configuration)
@@ -35,11 +38,36 @@ QueueCommand::QueueCommand(const wxString& project, const wxString& configuratio
 }
 
 QueueCommand::QueueCommand(int kind)
-    : m_kind(kind)
-    , m_projectOnly(false)
+    : m_projectOnly(false)
+    , m_kind(kind)
     , m_cleanLog(true)
     , m_checkBuildSuccess(false)
 {
+    // Fill with default values
+    if ( WorkspaceST::Get()->IsOpen() ) {
+        m_project = WorkspaceST::Get()->GetActiveProjectName();
+        BuildConfigPtr buildPtr = WorkspaceST::Get()->GetProjBuildConf(m_project, "");
+        wxASSERT_MSG( buildPtr, "No active project" );
+        
+        // If a 'Build' or 'Clean' kinds where requested 
+        // and the project build configuration is Custom build
+        // change the kind to CustomBuild and set the proper build
+        // targets
+        if ( m_kind == kBuild && buildPtr->IsCustomBuild() ) {
+            // change the type to CustomBuild
+            m_kind = kCustomBuild;
+            SetCustomBuildTarget("Build");
+            
+        } else if ( m_kind == kClean && buildPtr->IsCustomBuild() ) {
+            // change the type to CustomBuild
+            m_kind = kCustomBuild;
+            SetCustomBuildTarget("Clean");
+        
+        } else {
+            m_configuration = buildPtr->GetName();
+            
+        }
+    }
 }
 
 QueueCommand::~QueueCommand()
@@ -101,19 +129,19 @@ wxString QueueCommand::DeriveSynopsis() const
 {
     wxString synopsis;
     switch (m_kind) {
-    case Build:
+    case kBuild:
         synopsis << wxT("Building ");
         break;
-    case Clean:
+    case kClean:
         synopsis << wxT("Cleaning ");
         break;
-    case CustomBuild:
+    case kCustomBuild:
         synopsis << wxT("Making '") << m_customBuildTarget << wxT("' In ");
         break;
-    case Debug:
+    case kDebug:
         synopsis << wxT("Debugging ");
         break;
-    case ExecuteNoDebug:
+    case kExecuteNoDebug:
         synopsis << "Executing ";
         break;
     default:

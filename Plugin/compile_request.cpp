@@ -82,11 +82,11 @@ void CompileRequest::Process(IManager *manager)
     } else if (m_info.GetProjectOnly()) {
 
         switch ( m_info.GetKind() ) {
-        case QueueCommand::ReBuild:
+        case QueueCommand::kRebuild:
             cmd = builder->GetPORebuildCommand(m_info.GetProject(), m_info.GetConfiguration());
             break;
         default:
-        case QueueCommand::Build:
+        case QueueCommand::kBuild:
             cmd = builder->GetPOBuildCommand(m_info.GetProject(), m_info.GetConfiguration());
             break;
         }

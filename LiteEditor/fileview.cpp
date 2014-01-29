@@ -1250,10 +1250,10 @@ void FileViewTree::OnClean( wxCommandEvent &event )
         if (bldConf) {
             conf = bldConf->GetName();
         }
-        QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
+        QueueCommand buildInfo(projectName, conf, false, QueueCommand::kClean);
 
         if (bldConf && bldConf->IsCustomBuild()) {
-            buildInfo.SetKind(QueueCommand::CustomBuild);
+            buildInfo.SetKind(QueueCommand::kCustomBuild);
             buildInfo.SetCustomBuildTarget(wxT("Clean"));
         }
         ManagerST::Get()->PushQueueCommand(buildInfo);
@@ -1275,9 +1275,9 @@ void FileViewTree::OnBuild( wxCommandEvent &event )
             conf = bldConf->GetName();
         }
 
-        QueueCommand buildInfo(projectName, conf, false, QueueCommand::Build);
+        QueueCommand buildInfo(projectName, conf, false, QueueCommand::kBuild);
         if (bldConf && bldConf->IsCustomBuild()) {
-            buildInfo.SetKind(QueueCommand::CustomBuild);
+            buildInfo.SetKind(QueueCommand::kCustomBuild);
             buildInfo.SetCustomBuildTarget(wxT("Build"));
         }
         ManagerST::Get()->PushQueueCommand(buildInfo);
@@ -1943,9 +1943,9 @@ void FileViewTree::OnReBuild(wxCommandEvent& event)
 
         // Custom build supports the 'Rebuild' target
         if(bldConf && bldConf->IsCustomBuild()) {
-            QueueCommand buildInfo(projectName, conf, false, QueueCommand::ReBuild);
+            QueueCommand buildInfo(projectName, conf, false, QueueCommand::kRebuild);
             if (bldConf && bldConf->IsCustomBuild()) {
-                buildInfo.SetKind(QueueCommand::CustomBuild);
+                buildInfo.SetKind(QueueCommand::kCustomBuild);
                 buildInfo.SetCustomBuildTarget(wxT("Rebuild"));
             }
 
@@ -2082,9 +2082,9 @@ void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
             conf = bldConf->GetName();
         }
 
-        QueueCommand info(projectName, conf, true, QueueCommand::ReBuild);
+        QueueCommand info(projectName, conf, true, QueueCommand::kRebuild);
         if (bldConf && bldConf->IsCustomBuild()) {
-            info.SetKind(QueueCommand::CustomBuild);
+            info.SetKind(QueueCommand::kCustomBuild);
             info.SetCustomBuildTarget(wxT("Rebuild"));
         }
 
@@ -2201,9 +2201,9 @@ void FileViewTree::OnBuildProjectOnlyInternal(wxCommandEvent& e)
         conf = bldConf->GetName();
     }
 
-    QueueCommand info(projectName, conf, true, QueueCommand::Build);
+    QueueCommand info(projectName, conf, true, QueueCommand::kBuild);
     if (bldConf && bldConf->IsCustomBuild()) {
-        info.SetKind(QueueCommand::CustomBuild);
+        info.SetKind(QueueCommand::kCustomBuild);
         info.SetCustomBuildTarget(wxT("Build"));
     }
     ManagerST::Get()->PushQueueCommand( info );
@@ -2225,9 +2225,9 @@ void FileViewTree::OnCleanProjectOnlyInternal(wxCommandEvent& e)
         conf = bldConf->GetName();
     }
 
-    QueueCommand info(projectName, conf, true, QueueCommand::Clean);
+    QueueCommand info(projectName, conf, true, QueueCommand::kClean);
     if (bldConf && bldConf->IsCustomBuild()) {
-        info.SetKind(QueueCommand::CustomBuild);
+        info.SetKind(QueueCommand::kCustomBuild);
         info.SetCustomBuildTarget(wxT("Clean"));
     }
 

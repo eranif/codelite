@@ -50,6 +50,7 @@
 #include "refactoring_storage.h"
 #include "refactorengine.h"
 #include "bookmark_manager.h"
+#include <wx/richmsgdlg.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2484,9 +2485,9 @@ void clMainFrame::OnBuildProject(wxCommandEvent &event)
             conf = bldConf->GetName();
         }
 
-        QueueCommand info(projectName, conf, false, QueueCommand::Build);
+        QueueCommand info(projectName, conf, false, QueueCommand::kBuild);
         if (bldConf && bldConf->IsCustomBuild()) {
-            info.SetKind(QueueCommand::CustomBuild);
+            info.SetKind(QueueCommand::kCustomBuild);
             info.SetCustomBuildTarget(wxT("Build"));
         }
         ManagerST::Get()->PushQueueCommand( info );
@@ -2510,7 +2511,7 @@ void clMainFrame::OnBuildCustomTarget(wxCommandEvent& event)
                 return;
             }
 
-            QueueCommand info(CustomTargetsMgr::Get().GetProjectName(), bldConf->GetName(), false, QueueCommand::CustomBuild);
+            QueueCommand info(CustomTargetsMgr::Get().GetProjectName(), bldConf->GetName(), false, QueueCommand::kCustomBuild);
             info.SetCustomBuildTarget(target.first);
 
             ManagerST::Get()->PushQueueCommand(info);
@@ -2534,10 +2535,10 @@ void clMainFrame::OnBuildAndRunProject(wxCommandEvent &event)
             conf = bldConf->GetName();
         }
 
-        QueueCommand info(projectName, conf, false, QueueCommand::Build);
+        QueueCommand info(projectName, conf, false, QueueCommand::kBuild);
 
         if (bldConf && bldConf->IsCustomBuild()) {
-            info.SetKind(QueueCommand::CustomBuild);
+            info.SetKind(QueueCommand::kCustomBuild);
             info.SetCustomBuildTarget(wxT("Build"));
         }
 
@@ -2609,17 +2610,7 @@ void clMainFrame::OnCleanProject(wxCommandEvent &event)
     wxString conf, projectName;
     projectName = ManagerST::Get()->GetActiveProjectName();
 
-    // get the selected configuration to be built
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-    if (bldConf) {
-        conf = bldConf->GetName();
-    }
-
-    QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
-    if (bldConf && bldConf->IsCustomBuild()) {
-        buildInfo.SetKind(QueueCommand::CustomBuild);
-        buildInfo.SetCustomBuildTarget(wxT("Clean"));
-    }
+    QueueCommand buildInfo(QueueCommand::kClean);
     ManagerST::Get()->PushQueueCommand(buildInfo);
     ManagerST::Get()->ProcessCommandQueue();
 }
@@ -2637,14 +2628,24 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
     wxCommandEvent evtExecute(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT);
     if ( EventNotifier::Get()->ProcessEvent( evtExecute ) )
         return;
-
-    wxUnusedVar(event);
-    wxString projectName;
-
-    projectName = ManagerST::Get()->GetActiveProjectName();
-    if (projectName.IsEmpty() == false) {
-        ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
+    
+    // Prepare the commands to execute
+    QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
+    bool prompt = clConfig::Get().Read("PromptForBuildBeforeExecute", true);
+    if ( prompt ) {
+        // User did not save his answer
+        wxRichMessageDialog d(this, _("Would you like to build before executing the program?"), "CodeLite", wxYES_NO|wxYES_DEFAULT|wxICON_QUESTION);
+        d.ShowCheckBox(_("Remember my answer and don't ask me again"));
+        d.SetYesNoLabels(_("Build"), _("Execute"));
+        if ( d.ShowModal() == wxID_YES ) {
+            QueueCommand buildCommand( QueueCommand::kBuild );
+            ManagerST::Get()->PushQueueCommand( buildCommand );
+            commandExecute.SetCheckBuildSuccess( true ); // execute only if build was successfull
+        }
     }
+    
+    ManagerST::Get()->PushQueueCommand( commandExecute );
+    ManagerST::Get()->ProcessCommandQueue();
 }
 
 void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
@@ -3115,12 +3116,12 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
 
         // if build first is required, place a build command on the queue
         if (build_first == wxID_OK) {
-            QueueCommand bldCmd(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::Build);
+            QueueCommand bldCmd(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::kBuild);
 
             // handle custom builds
             BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString);
             if (bldConf->IsCustomBuild()) {
-                bldCmd.SetKind(QueueCommand::CustomBuild);
+                bldCmd.SetKind(QueueCommand::kCustomBuild);
                 bldCmd.SetCustomBuildTarget(wxT("Build"));
             }
 
@@ -3128,7 +3129,7 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         }
 
         // place a debug command
-        QueueCommand dbgCmd(QueueCommand::Debug);
+        QueueCommand dbgCmd(QueueCommand::kDebug);
 
         // make sure that build was success before proceeding (only when build_first flag is on)
         dbgCmd.SetCheckBuildSuccess(build_first == wxID_OK);
@@ -3887,18 +3888,18 @@ void clMainFrame::RebuildProject(const wxString& projectName)
         }
 
         // first we place a clean command
-        QueueCommand buildInfo(projectName, conf, false, QueueCommand::Clean);
+        QueueCommand buildInfo(projectName, conf, false, QueueCommand::kClean);
         if (bldConf && bldConf->IsCustomBuild()) {
-            buildInfo.SetKind(QueueCommand::CustomBuild);
+            buildInfo.SetKind(QueueCommand::kCustomBuild);
             buildInfo.SetCustomBuildTarget(wxT("Clean"));
         }
         ManagerST::Get()->PushQueueCommand(buildInfo);
 
         // now we place a build command
-        buildInfo = QueueCommand(projectName, conf, false, QueueCommand::Build);
+        buildInfo = QueueCommand(projectName, conf, false, QueueCommand::kBuild);
 
         if (bldConf && bldConf->IsCustomBuild()) {
-            buildInfo.SetKind(QueueCommand::CustomBuild);
+            buildInfo.SetKind(QueueCommand::kCustomBuild);
             buildInfo.SetCustomBuildTarget(wxT("Build"));
         }
         ManagerST::Get()->PushQueueCommand(buildInfo);

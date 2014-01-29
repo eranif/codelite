@@ -17,6 +17,7 @@ public:
     ~GitFileDiffDlg();
     void SetDiff(const wxString& diff);
 protected:
+    virtual void OnCloseDialog(wxCommandEvent& event);
     virtual void OnSaveAsPatch(wxCommandEvent& event);
 };
 

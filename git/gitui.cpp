@@ -661,14 +661,6 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer124);
     
-    m_auibar132 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
-    m_auibar132->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer124->Add(m_auibar132, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
-    
-    m_auibar132->AddTool(wxID_SAVEAS, _("Save as patch"), wxXmlResource::Get()->LoadBitmap(wxT("save")), wxNullBitmap, wxITEM_NORMAL, _("Save as patch"), _("Save as patch"), NULL);
-    m_auibar132->Realize();
-    
     m_editor = new GitCommitEditor(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     // Configure the fold margin
     m_editor->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
@@ -707,14 +699,17 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     
     boxSizer124->Add(m_editor, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer126 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer306 = new wxStdDialogButtonSizer();
     
-    boxSizer124->Add(boxSizer126, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer124->Add(m_stdBtnSizer306, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button128 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button128->SetDefault();
+    m_button308 = new wxButton(this, wxID_CLOSE, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button308->SetDefault();
+    m_stdBtnSizer306->AddButton(m_button308);
     
-    boxSizer126->Add(m_button128, 0, wxALL, 5);
+    m_button310 = new wxButton(this, wxID_SAVE, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer306->AddButton(m_button310);
+    m_stdBtnSizer306->Realize();
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -722,13 +717,15 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
     }
     Centre(wxBOTH);
     // Connect events
-    this->Connect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
+    m_button308->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnCloseDialog), NULL, this);
+    m_button310->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
     
 }
 
 GitFileDiffDlgBase::~GitFileDiffDlgBase()
 {
-    this->Disconnect(wxID_SAVEAS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
+    m_button308->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnCloseDialog), NULL, this);
+    m_button310->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitFileDiffDlgBase::OnSaveAsPatch), NULL, this);
     
 }
 
@@ -967,33 +964,27 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
     
     flexGridSizer162->Add(m_textCtrlExtraFlags, 0, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* boxSizer156 = new wxBoxSizer(wxHORIZONTAL);
+    m_stdBtnSizer300 = new wxStdDialogButtonSizer();
     
-    boxSizer154->Add(boxSizer156, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer154->Add(m_stdBtnSizer300, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_button158 = new wxButton(this, wxID_OK, _("&Apply"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_button158->SetDefault();
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer300->AddButton(m_buttonCancel);
     
-    boxSizer156->Add(m_button158, 0, wxALL, 5);
-    
-    m_button160 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer156->Add(m_button160, 0, wxALL, 5);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer300->AddButton(m_buttonOK);
+    m_stdBtnSizer300->Realize();
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
-    // Connect events
-    m_button158->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
-    
 }
 
 GitApplyPatchDlgBase::~GitApplyPatchDlgBase()
 {
-    m_button158->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GitApplyPatchDlgBase::OnApplyGitPatchUI), NULL, this);
-    
 }
 
 GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

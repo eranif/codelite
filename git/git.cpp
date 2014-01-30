@@ -615,9 +615,9 @@ void GitPlugin::OnPull(wxCommandEvent &e)
     if (commandString.empty()) {
         commandString = GetAnyDefaultCommand("git_pull");
     }
-
-    if(wxMessageBox(_("Save all changes and pull remote changes?"),
-                    _("Pull remote changes"), wxYES_NO, m_topWindow) == wxYES) {
+    
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Save all changes and pull remote changes?"), "GitPullRemoteChanges");
+    if( res == wxID_YES ) {
         m_mgr->SaveAll();
         gitAction ga(gitPull, wxT(""));
         m_gitActionQueue.push(ga);
@@ -625,6 +625,7 @@ void GitPlugin::OnPull(wxCommandEvent &e)
         ProcessGitActionQueue(commandString);
     }
 }
+
 /*******************************************************************************/
 void GitPlugin::OnResetRepository(wxCommandEvent &e)
 {
@@ -1498,7 +1499,11 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
              ga.action != gitDiffRepoShow )
 
         {
-            if ( tmpOutput.Contains("*** please tell me who you are") ) {
+            if ( tmpOutput.Contains("commit-msg hook failure") ) {
+                m_process->Terminate();
+                ::wxMessageBox(output, "git", wxICON_ERROR|wxCENTER|wxOK, EventNotifier::Get()->TopFrame());
+
+            } else if ( tmpOutput.Contains("*** please tell me who you are") ) {
                 m_process->Terminate();
                 ::wxMessageBox(output, "git", wxICON_ERROR|wxCENTER|wxOK, EventNotifier::Get()->TopFrame());
                 

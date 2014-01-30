@@ -1636,7 +1636,13 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     return execLine;
 }
 
-wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& checkboxLabel, const wxString& dlgId, const wxString& yesLabel, const wxString& noLabel, long style, bool checkboxInitialValue)
+wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, 
+                                              const wxString& dlgId, 
+                                              const wxString& yesLabel, 
+                                              const wxString& noLabel, 
+                                              const wxString& checkboxLabel, 
+                                              long style, 
+                                              bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
     if ( res == wxNOT_FOUND ) {

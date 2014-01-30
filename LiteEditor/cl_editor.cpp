@@ -59,7 +59,6 @@
 #include "breakpointdlg.h"
 #include "debuggersettings.h"
 #include "globals.h"
-#include "threebuttondlg.h"
 #include "debuggerconfigtool.h"
 #include "addincludefiledlg.h"
 #include "quickfindbar.h"

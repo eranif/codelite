@@ -408,10 +408,10 @@ WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxSt
  * @return wxRichMessageDialog::ShowModal() return value
  */
 WXDLLIMPEXP_SDK  wxStandardID PromptForYesNoDialogWithCheckbox( const wxString &message, 
-                                                                const wxString &checkboxLabel,
                                                                 const wxString &dlgId,
-                                                                const wxString &yesLabel, 
-                                                                const wxString &noLabel, 
+                                                                const wxString &yesLabel = _("Yes"), 
+                                                                const wxString &noLabel  = _("No"), 
+                                                                const wxString &checkboxLabel = _("Remember my answer and don't ask me again"),
                                                                 long style = wxYES_NO|wxICON_QUESTION|wxYES_DEFAULT, 
                                                                 bool checkboxInitialValue = false);
 

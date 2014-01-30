@@ -166,10 +166,6 @@
       <File Name="cc_box_tip_window.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
-      <File Name="threebuttondlg.h"/>
-      <File Name="threebuttonbasedlg.cpp"/>
-      <File Name="threebuttonbasedlg.h"/>
-      <File Name="threebuttondlg.cpp"/>
       <File Name="nameanddescdlg.h"/>
       <File Name="nameanddescbasedlg.cpp"/>
       <File Name="nameanddescbasedlg.h"/>

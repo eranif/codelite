@@ -75,7 +75,6 @@
 #include "singleinstancethreadjob.h"
 #include "refactorindexbuildjob.h"
 #include "jobqueue.h"
-#include "threebuttondlg.h"
 #include "acceltabledlg.h"
 #include "drawingutils.h"
 #include "newprojectdlg.h"
@@ -2632,7 +2631,6 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
     // Prepare the commands to execute
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Would you like to build the active project\nbefore executing it?"), 
-                                                           _("Remember my answer and don't ask me again"), 
                                                            "PromptForBuildBeforeExecute", 
                                                            _("Build before execute"), 
                                                            _("No, just execute it"));
@@ -2641,7 +2639,7 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
         ManagerST::Get()->PushQueueCommand( buildCommand );
         commandExecute.SetCheckBuildSuccess( true ); // execute only if build was successfull
     }
-    
+
     ManagerST::Get()->PushQueueCommand( commandExecute );
     ManagerST::Get()->ProcessCommandQueue();
 }
@@ -3083,8 +3081,10 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
     Manager *mgr = ManagerST::Get();
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if (dbgr && dbgr->IsRunning()) {
-        //debugger is already running -> probably a continue command
+        
+        // Debugger is already running -> probably a continue command
         mgr->DbgStart();
+        
     } else if (mgr->IsWorkspaceOpen()) {
 
         if (WorkspaceST::Get()->GetActiveProjectName().IsEmpty()) {
@@ -3093,45 +3093,19 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         }
 
         // Debugger is not running, but workspace is opened -> start debug session
-        int build_first(wxNOT_FOUND);
         bool answer(false);
+        QueueCommand dbgCmd(QueueCommand::kDebug);
         
-        build_first = clConfig::Get().GetAnnoyingDlgAnswer("BuildBeforeDebug");
-        if ( build_first == wxNOT_FOUND ) {
-            // value does not exist in the configuration file, prompt the user
-            ThreeButtonDlg dlg(this, _("Would you like to build the project before debugging it?"), _("CodeLite"));
-            build_first = dlg.ShowModal();
-            answer = dlg.GetDontAskMeAgain();
-
-            if (answer && build_first != wxID_CANCEL) {
-                // save the answer
-                clConfig::Get().SetAnnoyingDlgAnswer("BuildBeforeDebug", build_first);
-
-            } else if ( build_first == wxID_CANCEL ) {
-                // Do nothing
-                return;
-            }
-        }
-
-        // if build first is required, place a build command on the queue
-        if (build_first == wxID_OK) {
-            QueueCommand bldCmd(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString, false, QueueCommand::kBuild);
-
-            // handle custom builds
-            BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(WorkspaceST::Get()->GetActiveProjectName(), wxEmptyString);
-            if (bldConf->IsCustomBuild()) {
-                bldCmd.SetKind(QueueCommand::kCustomBuild);
-                bldCmd.SetCustomBuildTarget(wxT("Build"));
-            }
-
+        wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Would you like to build the project before debugging it?"), 
+                                                              "BuildBeforeDebug",
+                                                              _("Build and Debug"), _("Debug without building"));
+        if ( res == wxID_YES ) {
+            QueueCommand bldCmd( QueueCommand::kBuild );
             ManagerST::Get()->PushQueueCommand(bldCmd);
+            dbgCmd.SetCheckBuildSuccess(true);
         }
 
         // place a debug command
-        QueueCommand dbgCmd(QueueCommand::kDebug);
-
-        // make sure that build was success before proceeding (only when build_first flag is on)
-        dbgCmd.SetCheckBuildSuccess(build_first == wxID_OK);
         ManagerST::Get()->PushQueueCommand(dbgCmd);
 
         // trigger the commands queue
@@ -4402,11 +4376,10 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
         return;
     
     // Make sure we don't have the mouse captured in any editor or we might get a crash somewhere
-    wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Workspace or project settings have been modified outside of CodeLite\nWould you like to reload the workspace?"), 
-                                                       _("Remember my answer and don't ask me again"), 
-                                                       "ReloadWorkspaceWhenAltered", 
-                                                       _("Yes, reload the workspace"), 
-                                                       _("Not now. I will reload it manually"));
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(  _("Workspace or project settings have been modified outside of CodeLite\nWould you like to reload the workspace?"), 
+                                                            "ReloadWorkspaceWhenAltered", 
+                                                            _("Yes, reload the workspace"), 
+                                                            _("Not now. I will reload it manually"));
     if ( res == wxID_YES ) {
         wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
         GetEventHandler()->AddPendingEvent( evtReload );

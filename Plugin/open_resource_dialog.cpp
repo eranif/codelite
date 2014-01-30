@@ -396,7 +396,7 @@ int OpenResourceDialog::DoAppendLine(const wxString& name, const wxString& fulln
     // Mark implementations with bold font
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     if(boldFont)
-        font.SetWeight(wxBOLD);
+        font.SetWeight(wxFONTWEIGHT_BOLD);
     m_listOptions->SetItemFont(index, font);
     return index;
 }

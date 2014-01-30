@@ -385,7 +385,7 @@ wxPen xsPenPropIO::FromString(const wxString& value)
 	wxStringTokenizer tokens(value, wxT(" "), wxTOKEN_STRTOK);
 	pen.SetColour(xsColourPropIO::FromString(tokens.GetNextToken()));
 	pen.SetWidth(xsLongPropIO::FromString(tokens.GetNextToken()));
-	pen.SetStyle(xsLongPropIO::FromString(tokens.GetNextToken()));
+	pen.SetStyle((wxPenStyle)xsLongPropIO::FromString(tokens.GetNextToken()));
 
 	return pen;
 }
@@ -407,7 +407,7 @@ wxBrush xsBrushPropIO::FromString(const wxString& value)
 
 	wxStringTokenizer tokens(value, wxT(" "), wxTOKEN_STRTOK);
 	brush.SetColour(xsColourPropIO::FromString(tokens.GetNextToken()));
-	brush.SetStyle(xsLongPropIO::FromString(tokens.GetNextToken()));
+	brush.SetStyle((wxBrushStyle)xsLongPropIO::FromString(tokens.GetNextToken()));
 
 	return brush;
 }

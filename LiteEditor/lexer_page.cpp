@@ -71,7 +71,7 @@ LexerPage::LexerPage( wxWindow* parent, LexerConfPtr lexer, int id, wxPoint pos,
         int size = p.GetFontSize();
         wxString face = p.GetFaceName();
         bool bold = p.IsBold();
-        initialFont = wxFont(size, wxFONTFAMILY_TELETYPE, wxNORMAL, bold ? wxBOLD : wxNORMAL, false, face);
+        initialFont = wxFont(size, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, face);
         //initialEolFilled = p.GetEolFilled();
     }
     initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();
@@ -115,7 +115,7 @@ void LexerPage::OnItemSelected(wxCommandEvent & event)
             wxString face = p.GetFaceName();
             bool bold = p.IsBold();
 
-            font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxITALIC : wxNORMAL, bold ? wxBOLD : wxNORMAL, p.GetUnderlined(), face);
+            font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, p.GetUnderlined(), face);
             m_fontPicker->SetSelectedFont(font);
             m_bgColourPicker->SetColour(bgColour);
             m_colourPicker->SetColour(colour);
@@ -137,7 +137,7 @@ void LexerPage::OnFontChanged(wxFontPickerEvent &event)
         iter->SetFaceName(f.GetFaceName());
         iter->SetFontSize(f.GetPointSize());
         iter->SetUnderlined(f.GetUnderlined());
-        iter->SetItalic(f.GetStyle() == wxITALIC);
+        iter->SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
 
     } else if (obj == m_globalFontPicker) {
         wxFont f = event.GetFont();
@@ -147,7 +147,7 @@ void LexerPage::OnFontChanged(wxFontPickerEvent &event)
             iter->SetFaceName(f.GetFaceName());
             iter->SetFontSize(f.GetPointSize());
             iter->SetUnderlined(f.GetUnderlined());
-            iter->SetItalic(f.GetStyle() == wxITALIC);
+            iter->SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
         }
         //update the style f picker as well
         m_fontPicker->SetSelectedFont(f);

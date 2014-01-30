@@ -21,7 +21,7 @@
 
 wxSFMultiSelRect::wxSFMultiSelRect(void)
 {
-	SetBorder(wxPen(wxColour(100, 100, 100), 1, wxDOT));
+	SetBorder(wxPen(wxColour(100, 100, 100), 1, wxPENSTYLE_DOT));
 	SetFill(*wxTRANSPARENT_BRUSH);
 }
 

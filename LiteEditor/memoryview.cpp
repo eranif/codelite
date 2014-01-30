@@ -123,7 +123,7 @@ void MemoryView::SetViewString(const wxString& text)
     wxTextAttr addrAttr;
     addrAttr.SetTextColour(wxT("GREY"));
     wxFont addrFont = m_textCtrlMemory->GetFont();
-    addrFont.SetWeight(wxBOLD);
+    addrFont.SetWeight(wxFONTWEIGHT_BOLD);
     addrFont.SetStyle(wxFONTSTYLE_ITALIC);
 
     addrAttr.SetFont(addrFont);

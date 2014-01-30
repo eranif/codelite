@@ -50,7 +50,7 @@ void ErdTable::Initialize()
 	AddStyle( sfsLOCK_CHILDREN );
 	AddStyle( sfsSHOW_SHADOW );
 
-	SetBorder( wxPen( wxColour(70, 125, 170), 1, wxSOLID ) );
+	SetBorder( wxPen( wxColour(70, 125, 170), 1, wxPENSTYLE_SOLID ) );
 	SetFill( wxBrush( wxColour(210, 225, 245) ) );
 
 	SetRadius(15);

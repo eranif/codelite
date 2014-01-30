@@ -117,7 +117,7 @@ void wxSFCurveShape::DrawCompleteLine(wxDC& dc)
 			}
 			
 			// draw unfinished line segment if any (for interactive line creation)
-			dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
+			dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
 			
 			if( i )
 			{
@@ -126,7 +126,7 @@ void wxSFCurveShape::DrawCompleteLine(wxDC& dc)
 			else if( m_nSrcShapeId != -1 )
 			{
 				// draw unfinished line segment if any (for interactive line creation)
-				dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
+				dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
 				
 				wxSFShapeBase* pSrcShape = GetShapeManager()->FindShape(m_nSrcShapeId);
 				if( pSrcShape )
@@ -155,7 +155,7 @@ void wxSFCurveShape::DrawCompleteLine(wxDC& dc)
 			}
 			
             // draw linesegment being updated
-            dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
+            dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
 			if( !m_lstPoints.IsEmpty() )
 			{
 				GetSegmentQuaternion( 0, A, B, C, D );
@@ -182,7 +182,7 @@ void wxSFCurveShape::DrawCompleteLine(wxDC& dc)
 				C = GetSrcPoint();
 
             // draw linesegment being updated
-            dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
+            dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
             dc.DrawLine(m_nUnfinishedPoint, Conv2Point(C));
             dc.SetPen(wxNullPen);
         }

@@ -89,7 +89,7 @@ void wxSFThumbnail::DrawContent(wxDC& dc)
 			{
 				if( pShape->IsKindOf(CLASSINFO(wxSFBitmapShape)) ) 
 				{
-					dc.SetPen( wxPen( *wxBLACK, 1, wxDOT) );
+					dc.SetPen( wxPen( *wxBLACK, 1, wxPENSTYLE_DOT) );
 					dc.SetBrush( *wxWHITE_BRUSH );
 					
 					dc.DrawRectangle( pShape->GetBoundingBox() );

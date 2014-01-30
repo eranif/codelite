@@ -366,7 +366,7 @@ void SubversionView::DoAddNode(const wxString& title, int imgId, SvnTreeData::Sv
 
         // Set the parent node with bold font
         wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        font.SetWeight(wxBOLD);
+        font.SetWeight(wxFONTWEIGHT_BOLD);
         m_treeCtrl->SetItemFont(parent, font);
 
         // Add all children items

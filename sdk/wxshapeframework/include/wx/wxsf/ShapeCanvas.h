@@ -72,7 +72,7 @@ extern wxPrintData *g_printData;
 /*! \brief Default shadow colour */
 #define sfdvSHAPECANVAS_SHADOWCOLOR wxColour(150, 150, 150, 128)
 /*! \brief Default value of wxSFCanvasSettings::m_ShadowFill data member */
-#define sfdvSHAPECANVAS_SHADOWBRUSH wxBrush(sfdvSHAPECANVAS_SHADOWCOLOR, wxSOLID)
+#define sfdvSHAPECANVAS_SHADOWBRUSH wxBrush(sfdvSHAPECANVAS_SHADOWCOLOR, wxBRUSHSTYLE_SOLID)
 /*! \brief Default value of wxSFCanvasSettings::m_nPrintHAlign data member */
 #define sfdvSHAPECANVAS_PRINT_HALIGN wxSFShapeCanvas::halignCENTER
 /*! \brief Default value of wxSFCanvasSettings::m_nPrintVAlign data member */

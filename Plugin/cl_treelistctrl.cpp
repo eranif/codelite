@@ -1150,7 +1150,7 @@ void clTreeListHeaderWindow::DoDrawRect( wxDC *dc, int x, int y, int w, int h )
 #if !wxCHECK_VERSION(2, 5, 0)
     wxPen pen (wxSystemSettings::GetSystemColour (wxSYS_COLOUR_BTNSHADOW ), 1, wxSOLID);
 #else
-    wxPen pen (wxSystemSettings::GetColour (wxSYS_COLOUR_BTNSHADOW ), 1, wxSOLID);
+    wxPen pen (wxSystemSettings::GetColour (wxSYS_COLOUR_BTNSHADOW ), 1, wxPENSTYLE_SOLID);
 #endif
 
     const int m_corner = 1;
@@ -1348,7 +1348,7 @@ void clTreeListHeaderWindow::DrawCurrent()
 
     wxScreenDC dc;
     dc.SetLogicalFunction (wxINVERT);
-    dc.SetPen (wxPen (*wxBLACK, 2, wxSOLID));
+    dc.SetPen (wxPen (*wxBLACK, 2, wxPENSTYLE_SOLID));
     dc.SetBrush (*wxTRANSPARENT_BRUSH);
 
     AdjustDC(dc);
@@ -1835,8 +1835,8 @@ void clTreeListMainWindow::Init() {
     m_hilightBrush = new wxBrush (wxSystemSettings::GetSystemColour (wxSYS_COLOUR_HIGHLIGHT), wxSOLID);
     m_hilightUnfocusedBrush = new wxBrush (wxSystemSettings::GetSystemColour (wxSYS_COLOUR_BTNSHADOW), wxSOLID);
 #else
-    m_hilightBrush = new wxBrush (wxSystemSettings::GetColour (wxSYS_COLOUR_HIGHLIGHT), wxSOLID);
-    m_hilightUnfocusedBrush = new wxBrush (wxSystemSettings::GetColour (wxSYS_COLOUR_BTNSHADOW), wxSOLID);
+    m_hilightBrush = new wxBrush (wxSystemSettings::GetColour (wxSYS_COLOUR_HIGHLIGHT), wxBRUSHSTYLE_SOLID);
+    m_hilightUnfocusedBrush = new wxBrush (wxSystemSettings::GetColour (wxSYS_COLOUR_BTNSHADOW), wxBRUSHSTYLE_SOLID);
 #endif
 
     m_imageListNormal = (wxImageList *) NULL;
@@ -1870,7 +1870,7 @@ void clTreeListMainWindow::Init() {
     m_boldFont = wxFont( m_normalFont.GetPointSize(),
                          m_normalFont.GetFamily(),
                          m_normalFont.GetStyle(),
-                         wxBOLD,
+                         wxFONTWEIGHT_BOLD,
                          m_normalFont.GetUnderlined(),
                          m_normalFont.GetFaceName(),
                          m_normalFont.GetEncoding());
@@ -1930,7 +1930,7 @@ bool clTreeListMainWindow::Create (clTreeListCtrl *parent,
     }
 #else
 //?    m_dottedPen = wxPen( *wxGREY_PEN, 1, wxDOT );  // too slow under XFree86
-    m_dottedPen = wxPen( _T("grey"), 0, 0 ); // Bitmap based pen is not supported by GTK!
+    m_dottedPen = wxPen( _T("grey"), 0, wxPENSTYLE_SOLID ); // Bitmap based pen is not supported by GTK!
 #endif
 
     m_owner = parent;
@@ -2113,7 +2113,7 @@ bool clTreeListMainWindow::SetFont (const wxFont &font) {
     m_boldFont = wxFont (m_normalFont.GetPointSize(),
                          m_normalFont.GetFamily(),
                          m_normalFont.GetStyle(),
-                         wxBOLD,
+                         wxFONTWEIGHT_BOLD,
                          m_normalFont.GetUnderlined(),
                          m_normalFont.GetFaceName());
     CalculateLineHeight();
@@ -3151,7 +3151,7 @@ void clTreeListMainWindow::PaintItem (clTreeListItem *item, wxDC& dc) {
     }else{
         colBg = m_backgroundColour;
     }
-    dc.SetBrush (wxBrush (colBg, wxSOLID));
+    dc.SetBrush (wxBrush (colBg, wxBRUSHSTYLE_SOLID));
     dc.SetPen (*wxTRANSPARENT_PEN);
     if (HasFlag (wxTR_FULL_ROW_HIGHLIGHT)) {
         if (item->IsSelected()) {
@@ -3251,7 +3251,7 @@ void clTreeListMainWindow::PaintItem (clTreeListItem *item, wxDC& dc) {
         }
 
         if (HasFlag(wxTR_COLUMN_LINES)) { // vertical lines between columns
-            wxPen pen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 1, wxSOLID);
+            wxPen pen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 1, wxPENSTYLE_SOLID);
             dc.SetPen (pen);
             dc.DrawLine (x_colstart+col_w-1, item->GetY(), x_colstart+col_w-1, item->GetY()+total_h);
         }
@@ -3319,7 +3319,7 @@ void clTreeListMainWindow::PaintLevel (clTreeListItem *item, wxDC &dc,
             int total_width = m_owner->GetHeaderWindow()->GetWidth();
             // if the background colour is white, choose a
             // contrasting color for the lines
-            wxPen pen (wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 1, wxSOLID);
+            wxPen pen (wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW), 1, wxPENSTYLE_SOLID);
 			
             dc.SetPen (pen);
             dc.DrawLine (0, y_top, total_width, y_top);
@@ -3464,7 +3464,7 @@ void clTreeListMainWindow::OnPaint (wxPaintEvent &WXUNUSED(event)) {
 
     // init device context, clear background (BEFORE changing DC origin...)
     wxAutoBufferedPaintDC dc (this);
-    wxBrush brush(GetBackgroundColour(), wxSOLID);
+    wxBrush brush(GetBackgroundColour(), wxBRUSHSTYLE_SOLID);
     dc.SetBackground(brush);
     dc.Clear();
     DoPrepareDC (dc);

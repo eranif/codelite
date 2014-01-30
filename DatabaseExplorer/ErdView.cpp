@@ -66,7 +66,7 @@ void ErdView::Initialize()
 	AddStyle( sfsLOCK_CHILDREN );
 	AddStyle( sfsSHOW_SHADOW );
 	
-	SetBorder( wxPen( wxColour(220, 219, 140), 1, wxSOLID ) );
+	SetBorder( wxPen( wxColour(220, 219, 140), 1, wxPENSTYLE_SOLID ) );
 	SetFill( wxBrush( wxColour(255, 250, 200) ) );
 	
 	SetRadius(15);

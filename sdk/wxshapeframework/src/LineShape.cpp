@@ -753,7 +753,7 @@ void wxSFLineShape::DrawCompleteLine(wxDC& dc)
 			}
 
             // draw unfinished line segment if any (for interactive line creation)
-            dc.SetPen( wxPen(*wxBLACK, 1, wxDOT) );
+            dc.SetPen( wxPen(*wxBLACK, 1, wxPENSTYLE_DOT) );
 			
 			if( i )
 			{
@@ -789,7 +789,7 @@ void wxSFLineShape::DrawCompleteLine(wxDC& dc)
             // draw linesegment being updated
 			GetLineSegment( 0, src, trg );
 			
-            if( !m_fStandAlone ) dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
+            if( !m_fStandAlone ) dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
             dc.DrawLine(m_nUnfinishedPoint, Conv2Point(trg));
             dc.SetPen(wxNullPen);
         }
@@ -810,7 +810,7 @@ void wxSFLineShape::DrawCompleteLine(wxDC& dc)
 				trg = GetSrcPoint();
 			
             // draw linesegment being updated
-            if( !m_fStandAlone ) dc.SetPen(wxPen(*wxBLACK, 1, wxDOT));
+            if( !m_fStandAlone ) dc.SetPen(wxPen(*wxBLACK, 1, wxPENSTYLE_DOT));
             dc.DrawLine( Conv2Point(trg), m_nUnfinishedPoint);
             dc.SetPen(wxNullPen);
         }

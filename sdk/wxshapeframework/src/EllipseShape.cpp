@@ -125,7 +125,7 @@ void wxSFEllipseShape::DrawShadow(wxDC& dc)
 {
 	// HINT: overload it for custom actions...
 
-    if( m_Fill.GetStyle() != wxTRANSPARENT )
+    if( m_Fill.GetStyle() != wxBRUSHSTYLE_TRANSPARENT )
     {
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.SetBrush(GetParentCanvas()->GetShadowFill());

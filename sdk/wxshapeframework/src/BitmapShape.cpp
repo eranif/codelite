@@ -231,7 +231,7 @@ void wxSFBitmapShape::DrawNormal(wxDC& dc)
 		dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
 
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.SetPen(wxPen(wxColour(100, 100, 100), 1, wxDOT));
+		dc.SetPen(wxPen(wxColour(100, 100, 100), 1, wxPENSTYLE_DOT));
 		dc.DrawRectangle(Conv2Point(GetAbsolutePosition()), Conv2Size(m_nRectSize));
 		dc.SetPen(wxNullPen);
 		dc.SetBrush(wxNullBrush);

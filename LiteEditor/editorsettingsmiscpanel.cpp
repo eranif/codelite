@@ -107,7 +107,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel( wxWindow* parent )
     m_choice4->SetStringSelection( FileLogger::GetVerbosityAsString( clConfig::Get().Read("LogVerbosity", FileLogger::Error) ) );
     m_checkBoxRestoreSession->SetValue( clConfig::Get().Read("RestoreLastSession", true) );
     m_textCtrlPattern->ChangeValue( clConfig::Get().Read("FrameTitlePattern", wxString("$workspace $fullpath")) );
-    
+
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
     m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
@@ -143,7 +143,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write("MaxOpenedTabs",               ::wxStringToInt(m_spinCtrlMaxOpenTabs->GetValue(), 15) );
     clConfig::Get().Write("RestoreLastSession",          m_checkBoxRestoreSession->IsChecked());
     clConfig::Get().Write("FrameTitlePattern", m_textCtrlPattern->GetValue());
-    
+
     bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
     EditorConfigST::Get()->SaveLongValue(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
 
@@ -214,7 +214,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     flags |= OptionsConfig::Opt_IconSet_FreshFarm;
     oldIconFlags = OptionsConfig::Opt_IconSet_FreshFarm;
     newIconFlags = OptionsConfig::Opt_IconSet_FreshFarm;
-    
+
 #else
     if(m_choiceIconSet->GetSelection() == 0) {
         newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
@@ -340,3 +340,8 @@ void EditorSettingsMiscPanel::OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event)
 #endif
 }
 
+void EditorSettingsMiscPanel::OnResetAnnoyingDialogsAnswers(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    clConfig::Get().ClearAnnoyingDlgAnswers();
+}

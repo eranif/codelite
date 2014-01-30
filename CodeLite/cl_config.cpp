@@ -200,3 +200,37 @@ wxString clConfig::Read(const wxString& name, const wxString& defaultValue)
 
     return defaultValue;
 }
+
+int clConfig::GetAnnoyingDlgAnswer(const wxString& name, int defaultValue)
+{
+    if ( m_root->toElement().hasNamedObject("AnnoyingDialogsAnswers") ) {
+        
+        JSONElement element = m_root->toElement().namedObject("AnnoyingDialogsAnswers");
+        if ( element.hasNamedObject(name) ) {
+            return element.namedObject(name).toInt(defaultValue);
+        }
+    }
+    return defaultValue;
+}
+
+void clConfig::SetAnnoyingDlgAnswer(const wxString& name, int value)
+{
+    if ( !m_root->toElement().hasNamedObject("AnnoyingDialogsAnswers") ) {
+        JSONElement element = JSONElement::createObject("AnnoyingDialogsAnswers");
+        m_root->toElement().append(element);
+    }
+    
+    JSONElement element =m_root->toElement().namedObject("AnnoyingDialogsAnswers");
+    if ( element.hasNamedObject(name) ) {
+        element.removeProperty(name);
+    }
+    element.addProperty(name, value);
+    Save();
+}
+
+void clConfig::ClearAnnoyingDlgAnswers()
+{
+    DoDeleteProperty("AnnoyingDialogsAnswers");
+    Save();
+    Reload();
+}

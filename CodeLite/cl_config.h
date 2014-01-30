@@ -83,6 +83,11 @@ public:
     // wxString
     wxString Read (const wxString& name, const wxString& defaultValue);
     void Write(const wxString& name, const wxString& value);
+    
+    // standard IDs for annoying dialogs
+    int GetAnnoyingDlgAnswer(const wxString &name, int defaultValue = wxNOT_FOUND);
+    void SetAnnoyingDlgAnswer(const wxString &name, int value);
+    void ClearAnnoyingDlgAnswers();
 };
 
 

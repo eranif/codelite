@@ -40,7 +40,6 @@
 #include "editorsettingscomments.h"
 #include "editorsettingscommentsdoxygenpanel.h"
 #include "editorsettingsbookmarkspanel.h"
-#include "editorsettingsdialogs.h"
 #include "editorsettingsfolding.h"
 #include "editorsettingsmiscpanel.h"
 #include "manager.h"
@@ -131,7 +130,6 @@ void OptionsDlg2::Initialize()
 
     AddPage(new EditorSettingsFolding(m_treeBook),       _("Folding"));
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook),_("Bookmarks"));
-    AddPage(new EditorSettingsDialogs(m_treeBook),       _("Dialogs"));
     AddPage(new EditorSettingsDockingWindows(m_treeBook),_("Windows & Tabs"));
 
     // the Terminal page should NOT be added under Windows

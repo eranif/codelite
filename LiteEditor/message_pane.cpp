@@ -3,6 +3,7 @@
 #include <wx/dcbuffer.h>
 #include "pluginmanager.h"
 #include "editor_config.h"
+#include "cl_config.h"
 
 MessagePane::MessagePane( wxWindow* parent )
     : MessagePaneBase( parent )
@@ -256,14 +257,14 @@ void MessagePane::SavePreferenceIfNeeded(const MessageDetails msg, int choice)
     if (choice != wxNOT_FOUND && m_DontAnnoyMeCheck->IsShown() && m_DontAnnoyMeCheck->IsChecked()) {
         wxString label = msg.check.GetLabel();
         if (!label.IsEmpty()) {
-            EditorConfigST::Get()->SaveLongValue(label, choice+1); // +1 to skip the Hide button
+            clConfig::Get().SetAnnoyingDlgAnswer(label, choice+1); // +1 to skip the Hide button
         }
     }
 
     if(choice == wxNOT_FOUND && m_DontAnnoyMeCheck->IsShown()) {
         wxString label = msg.check.GetLabel();
         if (!label.IsEmpty()) {
-            EditorConfigST::Get()->SaveLongValue(label, m_DontAnnoyMeCheck->IsChecked());
+            clConfig::Get().SetAnnoyingDlgAnswer(label, m_DontAnnoyMeCheck->IsChecked() ? 1 : 0 );
         }
     }
 }

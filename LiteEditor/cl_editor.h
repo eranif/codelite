@@ -793,6 +793,7 @@ private:
     wxMenu* DoCreateDebuggerWatchMenu(const wxString &word);
 
     DECLARE_EVENT_TABLE()
+    void OnMouseCaptureLost(wxMouseCaptureLostEvent &e);
     void OnHighlightWordChecked(wxCommandEvent &e);
     void OnRemoveMatchInidicator(wxCommandEvent &e);
     void OnSavePoint(wxStyledTextEvent &event);

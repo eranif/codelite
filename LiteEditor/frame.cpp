@@ -2631,11 +2631,11 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
     
     // Prepare the commands to execute
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
-    wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Would you like to build before executing the program?"), 
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Would you like to build the active project\nbefore executing it?"), 
                                                            _("Remember my answer and don't ask me again"), 
                                                            "PromptForBuildBeforeExecute", 
-                                                           _("Build"), 
-                                                           _("Execute"));
+                                                           _("Build before execute"), 
+                                                           _("No, just execute it"));
     if ( res == wxID_YES ) {
         QueueCommand buildCommand( QueueCommand::kBuild );
         ManagerST::Get()->PushQueueCommand( buildCommand );
@@ -3093,10 +3093,11 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         }
 
         // Debugger is not running, but workspace is opened -> start debug session
-        long build_first(wxID_NO);
+        int build_first(wxNOT_FOUND);
         bool answer(false);
-
-        if (!EditorConfigST::Get()->GetLongValue(wxT("BuildBeforeDebug"), build_first)) {
+        
+        build_first = clConfig::Get().GetAnnoyingDlgAnswer("BuildBeforeDebug");
+        if ( build_first == wxNOT_FOUND ) {
             // value does not exist in the configuration file, prompt the user
             ThreeButtonDlg dlg(this, _("Would you like to build the project before debugging it?"), _("CodeLite"));
             build_first = dlg.ShowModal();
@@ -3104,7 +3105,7 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
 
             if (answer && build_first != wxID_CANCEL) {
                 // save the answer
-                EditorConfigST::Get()->SaveLongValue(wxT("BuildBeforeDebug"), build_first);
+                clConfig::Get().SetAnnoyingDlgAnswer("BuildBeforeDebug", build_first);
 
             } else if ( build_first == wxID_CANCEL ) {
                 // Do nothing
@@ -3864,7 +3865,6 @@ void clMainFrame::OnReloadWorkspace(wxCommandEvent& event)
 
     // Save the current session before re-loading
     SaveLayoutAndSession();
-
     ManagerST::Get()->ReloadWorkspace();
 }
 
@@ -4400,33 +4400,23 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
 
     if (!project_modified && !workspace_modified)
         return;
+    
+    // Make sure we don't have the mouse captured in any editor or we might get a crash somewhere
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Workspace or project settings have been modified outside of CodeLite\nWould you like to reload the workspace?"), 
+                                                       _("Remember my answer and don't ask me again"), 
+                                                       "ReloadWorkspaceWhenAltered", 
+                                                       _("Yes, reload the workspace"), 
+                                                       _("Not now. I will reload it manually"));
+    if ( res == wxID_YES ) {
+        wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
+        GetEventHandler()->AddPendingEvent( evtReload );
 
-    // See if there's a saved 'Always do this' preference re reloading
-    long pref;
-    if (EditorConfigST::Get()->GetLongValue(wxT("ReloadWorkspaceWhenAltered"), pref)) {
-        if (pref == 1) { // 1 means never reload
-            return;
-        } else if (pref == 2) { // 2 means always reload
-            wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-            GetEventHandler()->AddPendingEvent(evt); // Lands in OnReloadWorkspace()
-            return;
+    } else {
+        // user cancelled the dialog or chosed not to reload the workspace
+        if ( GetMainBook()->GetActiveEditor() ) {
+            GetMainBook()->GetActiveEditor()->CallAfter( &LEditor::SetActive );
         }
     }
-
-    // No preference (or it's 'Always ask') so ask
-    ButtonDetails btn, noBtn;
-    btn.buttonLabel = _("Reload Workspace");
-    btn.commandId   = XRCID("reload_workspace");
-    btn.isDefault   = false;
-    btn.window      = this;
-
-    noBtn.buttonLabel = _("&Don't reload");
-    noBtn.isDefault   = true;
-    noBtn.window      = NULL;
-
-    CheckboxDetails cb(wxT("ReloadWorkspaceWhenAltered"));
-
-    GetMainBook()->ShowMessage(_("Workspace or project settings have been modified, would you like to reload the workspace and all contained projects?"), false, PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/reload_workspace")), noBtn, btn, ButtonDetails(), cb);
 }
 
 void clMainFrame::SaveLayoutAndSession()

@@ -188,12 +188,6 @@
           <File Name="editorsettingsfoldingbase.cpp"/>
           <File Name="editorsettingsfoldingbase.h"/>
         </VirtualDirectory>
-        <VirtualDirectory Name="Dialogs">
-          <File Name="editorsettingsdialogs.cpp"/>
-          <File Name="editorsettingsdialogs.h"/>
-          <File Name="editorsettingsdialogsbase.cpp"/>
-          <File Name="editorsettingsdialogsbase.h"/>
-        </VirtualDirectory>
         <VirtualDirectory Name="Misc">
           <File Name="editorsettingsmiscbasepanel.cpp"/>
           <File Name="editorsettingsmiscbasepanel.h"/>

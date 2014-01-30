@@ -975,20 +975,19 @@ void ContextCpp::SwapFiles(const wxFileName &fileName)
             return;
     }
 
-    long res(wxNOT_FOUND);
+    int res(wxNOT_FOUND);
 
     // we failed to locate matched file, offer the user to create one
     // check to see if user already provided an answer
     otherFile.SetExt(exts.Item(0));
-
-    bool userAnsweredBefore = EditorConfigST::Get()->GetLongValue(wxT("CreateSwappedFile"), res);
-    if (!userAnsweredBefore) {
+    res = clConfig::Get().GetAnnoyingDlgAnswer("CreateSwappedFile", wxNOT_FOUND);
+    if ( res == wxNOT_FOUND ) {
         // prompt the user with an "annoying" dialog
         ThreeButtonDlg dlg(clMainFrame::Get(), _("No matched file was found, would you like to create one?"),_("CodeLite"));
         res = dlg.ShowModal();
         if (dlg.GetDontAskMeAgain() && res != wxID_CANCEL) {
             // the user is not interested of creating file, so dont bot
-            EditorConfigST::Get()->SaveLongValue(wxT("CreateSwappedFile"), res);
+            clConfig::Get().SetAnnoyingDlgAnswer("CreateSwappedFile", res);
         }
     }
 

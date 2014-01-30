@@ -467,7 +467,7 @@ static bool IsFileExists(const wxFileName &filename)
 #endif
 }
 
-LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, enum OF_extra extra/*=OF_AddJump*/, bool preserveSelection /*=true*/)
+LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectName, int lineno, long position, OF_extra extra/*=OF_AddJump*/, bool preserveSelection /*=true*/)
 {
     wxFileName fileName(file_name);
     fileName.MakeAbsolute();
@@ -639,7 +639,7 @@ bool MainBook::AddPage(wxWindow *win, const wxString &text, const wxBitmap &bmp,
 bool MainBook::SelectPage(wxWindow *win)
 {
     size_t index = m_book->GetPageIndex(win);
-    if (index != Notebook::npos && m_book->GetSelection() != index) {
+    if (index != Notebook::npos && m_book->GetSelection() != (int)index) {
         m_book->SetSelection(index);
     }
 

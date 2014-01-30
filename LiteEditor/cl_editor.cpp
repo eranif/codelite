@@ -131,6 +131,7 @@ BEGIN_EVENT_TABLE(LEditor, wxStyledTextCtrl)
     EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
     EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
     EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_SET_EDITOR_ACTIVE,      LEditor::OnSetActive)
+    EVT_MOUSE_CAPTURE_LOST         (LEditor::OnMouseCaptureLost)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -172,7 +173,7 @@ LEditor::LEditor(wxWindow* parent)
     SetSyntaxHighlight();
     CmdKeyClear(wxT('D'), wxSTC_SCMOD_CTRL); // clear Ctrl+D because we use it for something else
     Connect(wxEVT_STC_DWELLSTART, wxStyledTextEventHandler(LEditor::OnDwellStart), NULL, this);
-
+    
     // Initialise the breakpt-marker array
     FillBPtoMarkerArray();
 
@@ -205,6 +206,10 @@ LEditor::~LEditor()
     Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(LEditor::OnChangeActiveBookmarkType), this, XRCID("BookmarkTypes[start]"), XRCID("BookmarkTypes[end]"));
 
     delete m_deltas;
+    
+    if ( this->HasCapture() ) {
+        this->ReleaseMouse();
+    }
 }
 
 time_t LEditor::GetFileLastModifiedTime() const
@@ -3499,9 +3504,8 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
     // alert the user
     int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
 
-    long ccTooManyMatches(0);
-    EditorConfigST::Get()->GetLongValue(wxT("CodeCompletionTooManyMatches"), ccTooManyMatches);
-
+    int ccTooManyMatches(0);
+    ccTooManyMatches = clConfig::Get().GetAnnoyingDlgAnswer("CodeCompletionTooManyMatches", 0);
     if ( tags.size() >= (size_t) limit && !ccTooManyMatches) {
         wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can increase the number of displayed items from the menu: 'Settings | Tags Settings'"), (unsigned int)tags.size());
         clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
@@ -3526,8 +3530,8 @@ void LEditor::ShowCompletionBox(const std::vector<TagEntryPtr>& tags, const wxSt
     // If the number of elements exceeds the maximum query result,
     // alert the user
     int limit ( TagsManagerST::Get()->GetDatabase()->GetSingleSearchLimit() );
-    long ccTooManyMatches(0);
-    EditorConfigST::Get()->GetLongValue(wxT("CodeCompletionTooManyMatches"), ccTooManyMatches);
+    int ccTooManyMatches(0);
+    ccTooManyMatches = clConfig::Get().GetAnnoyingDlgAnswer("CodeCompletionTooManyMatches", 0);
     if ( tags.size() >= (size_t) limit && !ccTooManyMatches) {
         wxString msg = wxString::Format(_("Too many matches found, displaying %u. Keep typing to narrow the choices\nYou can increase the number of displayed items from the menu: 'Settings | Tags Settings'"), (unsigned int)tags.size());
         clMainFrame::Get()->GetMainBook()->ShowMessage( msg,
@@ -4591,4 +4595,11 @@ void LEditor::ToggleBreakpointEnablement()
     bp.internal_id = bm->GetNextID();
     ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint(bp);
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+}
+
+void LEditor::OnMouseCaptureLost(wxMouseCaptureLostEvent& e)
+{
+    if ( HasCapture() ) {
+        ReleaseMouse();
+    }
 }

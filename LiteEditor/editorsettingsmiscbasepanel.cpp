@@ -40,7 +40,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     bSizer2->Add(staticBoxSizer3, 0, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection( wxBOTH );
     fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer4->AddGrowableCol(1);
@@ -128,7 +128,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     boxSizer25->Add(m_staticText31, 0, wxALL, 5);
     
-    wxFlexGridSizer* flexGridSizer29 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer29 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer29->SetFlexibleDirection( wxBOTH );
     flexGridSizer29->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer29->AddGrowableCol(1);
@@ -193,7 +193,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer4);
     
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection( wxBOTH );
     fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer1->AddGrowableCol(1);
@@ -230,7 +230,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_panel3 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel3, _("History"), false);
     
-    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer2->SetFlexibleDirection( wxBOTH );
     fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     fgSizer2->AddGrowableCol(1);
@@ -249,17 +249,25 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     
     fgSizer2->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_maxItemsFindReplace = new wxTextCtrl(m_panel3, wxID_ANY, wxT("10"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_spinCtrlMaxOpenTabs = new wxTextCtrl(m_panel3, wxID_ANY, wxT("15"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer2->Add(m_maxItemsFindReplace, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
+    fgSizer2->Add(m_spinCtrlMaxOpenTabs, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
     
     m_staticText4 = new wxStaticText(m_panel3, wxID_ANY, _("Maximum number of tabs opened in the editor:"), wxDefaultPosition, wxSize(-1, -1), 0);
     
     fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_spinCtrlMaxOpenTabs = new wxTextCtrl(m_panel3, wxID_ANY, wxT("15"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_maxItemsFindReplace = new wxTextCtrl(m_panel3, wxID_ANY, wxT("10"), wxDefaultPosition, wxSize(-1, -1), 0);
     
-    fgSizer2->Add(m_spinCtrlMaxOpenTabs, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
+    fgSizer2->Add(m_maxItemsFindReplace, 0, wxALL|wxEXPAND|wxALIGN_LEFT, 5);
+    
+    m_staticText53 = new wxStaticText(m_panel3, wxID_ANY, _("Reset annoying dialogs answers:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer2->Add(m_staticText53, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_buttonAnnoyingDialogs = new wxButton(m_panel3, wxID_ANY, _("&Reset"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    fgSizer2->Add(m_buttonAnnoyingDialogs, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
     
     m_panel4 = new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel4, _("Log"), false);
@@ -267,7 +275,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(boxSizer11);
     
-    wxFlexGridSizer* flexGridSizer13 = new wxFlexGridSizer(  0, 3, 0, 0);
+    wxFlexGridSizer* flexGridSizer13 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer13->SetFlexibleDirection( wxBOTH );
     flexGridSizer13->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer13->AddGrowableCol(1);
@@ -313,6 +321,7 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_AvailableLocales->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChoiceUpdateUI), NULL, this);
     m_clearButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnClearButtonClick), NULL, this);
     m_clearButton->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnClearUI), NULL, this);
+    m_buttonAnnoyingDialogs->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnResetAnnoyingDialogsAnswers), NULL, this);
     m_choice4->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnLogVerbosityChanged), NULL, this);
     m_buttonOpenLog->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnShowLogFile), NULL, this);
     m_redirectLogOutput->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);
@@ -327,6 +336,7 @@ EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
     m_AvailableLocales->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChoiceUpdateUI), NULL, this);
     m_clearButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnClearButtonClick), NULL, this);
     m_clearButton->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnClearUI), NULL, this);
+    m_buttonAnnoyingDialogs->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnResetAnnoyingDialogsAnswers), NULL, this);
     m_choice4->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnLogVerbosityChanged), NULL, this);
     m_buttonOpenLog->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsMiscBasePanel::OnShowLogFile), NULL, this);
     m_redirectLogOutput->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnLogoutputCheckUpdateUI), NULL, this);

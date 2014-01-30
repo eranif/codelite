@@ -62,9 +62,11 @@ protected:
     wxStaticText* m_staticText2;
     wxButton* m_clearButton;
     wxStaticText* m_staticText3;
-    wxTextCtrl* m_maxItemsFindReplace;
-    wxStaticText* m_staticText4;
     wxTextCtrl* m_spinCtrlMaxOpenTabs;
+    wxStaticText* m_staticText4;
+    wxTextCtrl* m_maxItemsFindReplace;
+    wxStaticText* m_staticText53;
+    wxButton* m_buttonAnnoyingDialogs;
     wxPanel* m_panel4;
     wxStaticText* m_staticText6;
     wxChoice* m_choice4;
@@ -78,6 +80,7 @@ protected:
     virtual void LocaleChoiceUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClearButtonClick(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnResetAnnoyingDialogsAnswers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLogVerbosityChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnShowLogFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }

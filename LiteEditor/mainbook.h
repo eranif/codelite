@@ -74,7 +74,7 @@ private:
 public:
     MainBook(wxWindow *parent);
     ~MainBook();
-
+    
     void ClearFileHistory();
     void GetRecentlyOpenedFiles(wxArrayString &files);
     FileHistory &GetRecentlyOpenedFilesClass() {
@@ -117,7 +117,7 @@ public:
     LEditor *NewEditor();
 
     LEditor *OpenFile(const wxString &file_name, const wxString &projectName = wxEmptyString,
-                      int lineno = wxNOT_FOUND, long position = wxNOT_FOUND, enum OF_extra extra = OF_AddJump, bool preserveSelection = true);
+                      int lineno = wxNOT_FOUND, long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true);
     LEditor *OpenFile(const BrowseRecord &rec) {
         return OpenFile(rec.filename, rec.project, rec.lineno, rec.position, OF_None, false);
     }

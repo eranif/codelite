@@ -591,9 +591,9 @@ void GitPlugin::OnPush(wxCommandEvent &e)
         wxMessageBox(_("No remotes found, can't push!"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
         return;
     }
-
-    if(wxMessageBox(_("Push all local commits?"),
-                    _("Push changes"), wxYES_NO, m_topWindow) == wxYES) {
+    
+    wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Push all local commits?"), "GitPromptBeforePush");
+    if( res == wxID_YES ) {
         wxString remote = m_remotes[0];
         if(m_remotes.GetCount() > 1) {
             remote = wxGetSingleChoice(_("Select remote to push to."),
@@ -607,6 +607,7 @@ void GitPlugin::OnPush(wxCommandEvent &e)
         ProcessGitActionQueue();
     }
 }
+
 /*******************************************************************************/
 void GitPlugin::OnPull(wxCommandEvent &e)
 {

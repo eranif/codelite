@@ -97,6 +97,7 @@ const wxString SEARCH_IN_WORKSPACE         = _("Entire Workspace");
 const wxString SEARCH_IN_PROJECT           = _("Active Project");
 const wxString SEARCH_IN_CURR_FILE_PROJECT = _("Current File's Project");
 const wxString SEARCH_IN_CURRENT_FILE      = _("Current File");
+const wxString SEARCH_IN_OPEN_FILES        = _("Open Files");
 
 const wxString USE_WORKSPACE_ENV_VAR_SET   = _("<Use Defaults>");
 const wxString USE_GLOBAL_SETTINGS         = _("<Use Defaults>");

@@ -217,56 +217,6 @@ static int wxStringCmpFunc(const wxString& item1, const wxString& item2)
     return item1.CmpNoCase(item2);
 }
 
-void WorkspaceTab::OnShowProjectListPopup(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-
-#ifdef __WXMSW__
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#endif
-
-    wxMenu popupMenu;
-
-    wxArrayString projects;
-    ManagerST::Get()->GetProjectList(projects);
-    projects.Sort(wxStringCmpFunc);
-    for (size_t i = 0; i < projects.GetCount(); i++) {
-        wxString text = projects.Item(i);
-        bool selected = ManagerST::Get()->GetActiveProjectName() == text;
-        wxMenuItem *item = new wxMenuItem(&popupMenu, i, text, text, wxITEM_CHECK);
-
-        //set the font
-#ifdef __WXMSW__
-        if (selected) {
-            font.SetWeight(wxBOLD);
-        }
-        item->SetFont(font);
-#endif
-        popupMenu.Append(item);
-        item->Check(selected);
-
-        //restore font
-#ifdef __WXMSW__
-        font.SetWeight(wxNORMAL);
-#endif
-    }
-
-    popupMenu.Connect(wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WorkspaceTab::OnMenuSelection), NULL, this);
-    PopupMenu(&popupMenu);
-}
-
-void WorkspaceTab::OnMenuSelection(wxCommandEvent& e)
-{
-    wxArrayString projects;
-    ManagerST::Get()->GetProjectList(projects);
-    projects.Sort(wxStringCmpFunc);
-
-    size_t sel = (size_t)e.GetId();
-    if(sel < projects.GetCount()) {
-        m_fileView->MarkActive(projects.Item(sel));
-    }
-}
-
 void WorkspaceTab::OnShowFile(wxCommandEvent& e)
 {
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();

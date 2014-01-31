@@ -59,8 +59,6 @@ protected:
     void OnProjectSettings           (wxCommandEvent &e);
     void OnShowFile                  (wxCommandEvent &e);
     void OnShowFileUI                (wxUpdateUIEvent&e);
-    void OnShowProjectListPopup      (wxCommandEvent &e);
-    void OnMenuSelection             (wxCommandEvent &e);
 
     void OnWorkspaceLoaded           (wxCommandEvent &e);
     void OnWorkspaceClosed           (wxCommandEvent &e);

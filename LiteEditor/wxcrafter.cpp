@@ -23,7 +23,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    boxSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
     m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
@@ -34,7 +34,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_splitterPageRight = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer10);
     
     m_dataviewTemplates = new wxDataViewCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
@@ -49,10 +49,10 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, 0);
     
-    boxSizer11 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer11);
     
-    flexGridSizer15 = new wxFlexGridSizer(  0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer15 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer15->SetFlexibleDirection( wxBOTH );
     flexGridSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer15->AddGrowableCol(1);
@@ -71,7 +71,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     flexGridSizer15->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
-    boxSizer30 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer30 = new wxBoxSizer(wxHORIZONTAL);
     
     flexGridSizer15->Add(boxSizer30, 0, wxEXPAND, 5);
     
@@ -108,7 +108,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer11->Add(m_txtDescription, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer2 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer1->Add(boxSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -159,7 +159,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
     
-    boxSizer36 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
     
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
@@ -170,7 +170,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     
     m_splitterPage39 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
-    boxSizer42 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage39->SetSizer(boxSizer42);
     
     wxArrayString m_scopeArr;
@@ -181,7 +181,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     m_splitterPage41 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage39, m_splitterPage41, 200);
     
-    boxSizer43 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage41->SetSizer(boxSizer43);
     
     wxArrayString m_funcArr;
@@ -221,7 +221,7 @@ BuildTabTopPanelBaseClass::BuildTabTopPanelBaseClass(wxWindow* parent, wxWindowI
         bBitmapLoaded = true;
     }
     
-    boxSizer47 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer47 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer47);
     
     m_auibar48 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_VERTICAL);
@@ -396,14 +396,14 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    boxSizer71 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer71 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer71);
     
     m_panel81 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     boxSizer71->Add(m_panel81, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer82 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer82 = new wxBoxSizer(wxVERTICAL);
     m_panel81->SetSizer(boxSizer82);
     
     m_banner76 = new wxBannerWindow(m_panel81, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
@@ -418,7 +418,7 @@ wxcDownloadDlgBaseClass::wxcDownloadDlgBaseClass(wxWindow* parent, wxWindowID id
     
     boxSizer82->Add(m_panel75, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer79 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer79 = new wxBoxSizer(wxVERTICAL);
     m_panel75->SetSizer(boxSizer79);
     
     m_cmdLnkBtnDownload = new wxCommandLinkButton(m_panel75, wxID_ANY, _("Install"), _("Download wxCrafter plugin from codelite's website"), wxDefaultPosition, wxSize(-1,-1), wxBU_LEFT);
@@ -459,7 +459,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    boxSizer117 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer117 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer117);
     
     m_banner125 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
@@ -475,7 +475,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer117->Add(m_filePicker, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer117->Add(boxSizer129, 1, wxEXPAND, 5);
     
@@ -489,7 +489,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 50, wxALIGN_CENTER);
     m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
-    boxSizer131 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
     
     boxSizer129->Add(boxSizer131, 0, wxEXPAND, 5);
     
@@ -501,7 +501,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     
     boxSizer131->Add(m_button135, 0, wxALL|wxEXPAND, 5);
     
-    boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer117->Add(boxSizer119, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -544,7 +544,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
         bBitmapLoaded = true;
     }
     
-    boxSizer149 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer149 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer149);
     
     m_scrollWin247 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(600,600), wxHSCROLL|wxVSCROLL);
@@ -552,21 +552,21 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     
     boxSizer149->Add(m_scrollWin247, 1, wxALL|wxEXPAND, 5);
     
-    boxSizer249 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin247->SetSizer(boxSizer249);
     
     m_panel191 = new wxPanel(m_scrollWin247, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
     
     boxSizer249->Add(m_panel191, 1, wxEXPAND, 5);
     
-    boxSizer195 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);
     
     m_staticBitmap161 = new wxStaticBitmap(m_panel191, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("splashscreen")), wxDefaultPosition, wxSize(-1,-1), 0 );
     
     boxSizer195->Add(m_staticBitmap161, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_TOP, 5);
     
-    gridSizer235 = new wxGridSizer(  3, 2, 0, 0);
+    wxGridSizer* gridSizer235 = new wxGridSizer(3, 2, 0, 0);
     
     boxSizer195->Add(gridSizer235, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
@@ -638,7 +638,7 @@ FileExplorerBase::FileExplorerBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    boxSizer262 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer262 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer262);
     
     m_genericDirCtrl = new wxGenericDirCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxDIRCTRL_MULTIPLE|wxDIRCTRL_SHOW_FILTERS);
@@ -663,5 +663,88 @@ FileExplorerBase::~FileExplorerBase()
     m_genericDirCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(FileExplorerBase::OnItemActivated), NULL, this);
     m_genericDirCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(FileExplorerBase::OnContextMenu), NULL, this);
     m_genericDirCtrl->Disconnect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(FileExplorerBase::OnKeyDown), NULL, this);
+    
+}
+
+WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(mainSizer);
+    
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    
+    mainSizer->Add(m_auibar, 0, wxEXPAND, 5);
+    
+    m_auibar->AddTool(ID_TOOL_LINK_EDITOR, _("Link Editor"), wxXmlResource::Get()->LoadBitmap(wxT("link_editor")), wxNullBitmap, wxITEM_CHECK, _("Link Editor"), _("Link Editor"), NULL);
+    
+    m_auibar->AddTool(ID_TOOL_COLLAPSE_ALL, _("Collapse All"), wxXmlResource::Get()->LoadBitmap(wxT("collapse")), wxNullBitmap, wxITEM_NORMAL, _("Collapse All"), _("Collapse All"), NULL);
+    
+    m_auibar->AddTool(ID_TOOL_GOTO_ACTIVE_PROJECT, _("Goto Active Project"), wxXmlResource::Get()->LoadBitmap(wxT("gohome")), wxNullBitmap, wxITEM_NORMAL, _("Goto Active Project"), _("Goto Active Project"), NULL);
+    
+    m_auibar->AddTool(ID_TOOL_ACTIVE_PROJECT_SETTINGS, _("Open Active Project Settings"), wxXmlResource::Get()->LoadBitmap(wxT("configure")), wxNullBitmap, wxITEM_NORMAL, _("Open Active Project Settings"), _("Open Active Project Settings"), NULL);
+    
+    m_auibar->AddStretchSpacer(1);
+    m_auibar->Realize();
+    
+    wxBoxSizer* boxSizer302 = new wxBoxSizer(wxHORIZONTAL);
+    
+    mainSizer->Add(boxSizer302, 0, wxEXPAND, 5);
+    
+    wxArrayString m_choiceActiveProjectArr;
+    m_choiceActiveProject = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceActiveProjectArr, 0);
+    m_choiceActiveProject->SetToolTip(_("Select the active porject"));
+    
+    boxSizer302->Add(m_choiceActiveProject, 1, wxALL, 2);
+    
+    wxArrayString m_workspaceConfigArr;
+    m_workspaceConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_workspaceConfigArr, 0);
+    m_workspaceConfig->SetToolTip(_("Select the workspace build configuration"));
+    
+    boxSizer302->Add(m_workspaceConfig, 1, wxALL, 2);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
+    this->Connect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
+    this->Connect(ID_TOOL_COLLAPSE_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnCollapseAll), NULL, this);
+    this->Connect(ID_TOOL_COLLAPSE_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnCollapseAllUI), NULL, this);
+    this->Connect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnGoHome), NULL, this);
+    this->Connect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnGoHomeUI), NULL, this);
+    this->Connect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnProjectSettings), NULL, this);
+    this->Connect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
+    m_choiceActiveProject->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
+    m_choiceActiveProject->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
+    m_workspaceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
+    m_workspaceConfig->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
+    
+}
+
+WorkspaceTabBase::~WorkspaceTabBase()
+{
+    this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnLinkEditor), NULL, this);
+    this->Disconnect(ID_TOOL_LINK_EDITOR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnLinkEditorUI), NULL, this);
+    this->Disconnect(ID_TOOL_COLLAPSE_ALL, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnCollapseAll), NULL, this);
+    this->Disconnect(ID_TOOL_COLLAPSE_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnCollapseAllUI), NULL, this);
+    this->Disconnect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnGoHome), NULL, this);
+    this->Disconnect(ID_TOOL_GOTO_ACTIVE_PROJECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnGoHomeUI), NULL, this);
+    this->Disconnect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(WorkspaceTabBase::OnProjectSettings), NULL, this);
+    this->Disconnect(ID_TOOL_ACTIVE_PROJECT_SETTINGS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnProjectSettingsUI), NULL, this);
+    m_choiceActiveProject->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnChoiceActiveProject), NULL, this);
+    m_choiceActiveProject->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnChoiceActiveProjectUI), NULL, this);
+    m_workspaceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceTabBase::OnConfigurationManagerChoice), NULL, this);
+    m_workspaceConfig->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     
 }

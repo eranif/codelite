@@ -482,8 +482,6 @@
     <File Name="ccboxmainpanel.cpp"/>
     <File Name="save_perspective_as_dlg.cpp"/>
     <File Name="save_perspective_as_dlg.h"/>
-    <File Name="NavBarControl.h"/>
-    <File Name="NavBarControl.cpp"/>
     <File Name="messagepane.wxcp"/>
     <File Name="quickfindbarbase_liteeditor_bitmaps.cpp"/>
   </VirtualDirectory>

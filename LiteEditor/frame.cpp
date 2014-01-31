@@ -4379,7 +4379,7 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(  _("Workspace or project settings have been modified outside of CodeLite\nWould you like to reload the workspace?"), 
                                                             "ReloadWorkspaceWhenAltered", 
                                                             _("Yes, reload the workspace"), 
-                                                            _("Not now. I will reload it manually"));
+                                                            _("Don't reload the workspace"));
     if ( res == wxID_YES ) {
         wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
         GetEventHandler()->AddPendingEvent( evtReload );

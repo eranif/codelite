@@ -196,18 +196,14 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     Centre(wxBOTH);
     // Connect events
     m_scope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL, this);
-    m_scope->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnScopeListMouseDown), NULL, this);
     m_func->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnFunction), NULL, this);
-    m_func->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnFuncListMouseDown), NULL, this);
     
 }
 
 NavBarControlBaseClass::~NavBarControlBaseClass()
 {
     m_scope->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL, this);
-    m_scope->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnScopeListMouseDown), NULL, this);
     m_func->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnFunction), NULL, this);
-    m_func->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(NavBarControlBaseClass::OnFuncListMouseDown), NULL, this);
     
 }
 
@@ -699,17 +695,35 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     
     mainSizer->Add(boxSizer302, 0, wxEXPAND, 5);
     
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_3DSASH);
+    m_splitter->SetToolTip(_("Resize the configuration bar"));
+    m_splitter->SetSashGravity(0);
+    m_splitter->SetMinimumPaneSize(10);
+    
+    boxSizer302->Add(m_splitter, 1, 0, 5);
+    
+    m_splitterPage308 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    wxBoxSizer* boxSizer314 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage308->SetSizer(boxSizer314);
+    
     wxArrayString m_choiceActiveProjectArr;
-    m_choiceActiveProject = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceActiveProjectArr, 0);
+    m_choiceActiveProject = new wxChoice(m_splitterPage308, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceActiveProjectArr, 0);
     m_choiceActiveProject->SetToolTip(_("Select the active porject"));
     
-    boxSizer302->Add(m_choiceActiveProject, 1, wxALL, 2);
+    boxSizer314->Add(m_choiceActiveProject, 0, wxALL|wxEXPAND, 2);
+    
+    m_splitterPage312 = new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter->SplitVertically(m_splitterPage308, m_splitterPage312, 100);
+    
+    wxBoxSizer* boxSizer316 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage312->SetSizer(boxSizer316);
     
     wxArrayString m_workspaceConfigArr;
-    m_workspaceConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_workspaceConfigArr, 0);
+    m_workspaceConfig = new wxChoice(m_splitterPage312, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_workspaceConfigArr, 0);
     m_workspaceConfig->SetToolTip(_("Select the workspace build configuration"));
     
-    boxSizer302->Add(m_workspaceConfig, 1, wxALL, 2);
+    boxSizer316->Add(m_workspaceConfig, 0, wxALL|wxEXPAND, 2);
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

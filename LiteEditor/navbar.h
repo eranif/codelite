@@ -34,24 +34,24 @@ class LEditor;
 class NavBar : public NavBarControlBaseClass
 {
 private:
-	TagEntryPtrVector_t m_tags;
-    
-protected:
-	void OnScope             (wxCommandEvent &e);
-	void OnFunction          (wxCommandEvent &e);
-	void OnFileSaved         (wxCommandEvent &e);
-	void OnEditorChanged     (wxCommandEvent &e);
-	
-protected:
-	void DoPopulateTags(const wxFileName& fn);
-	void DoPopulateFunctions(const wxFileName& fn, const wxString &scope);
-	wxFileName DoGetCurFileName() const;
-public:
-	NavBar(wxWindow *parent);
-	virtual ~NavBar();
+    TagEntryPtrVector_t m_tags;
 
-	void DoShow(bool s = true);
-	void UpdateScope(TagEntryPtr tag);
+protected:
+    void OnScope             (wxCommandEvent &e);
+    void OnFunction          (wxCommandEvent &e);
+    void OnFileSaved         (wxCommandEvent &e);
+    void OnEditorChanged     (wxCommandEvent &e);
+
+protected:
+    void DoPopulateTags(const wxFileName& fn);
+    void DoPopulateFunctions(const wxFileName& fn, const wxString &scope);
+    wxFileName DoGetCurFileName() const;
+public:
+    NavBar(wxWindow *parent);
+    virtual ~NavBar();
+
+    void DoShow(bool s = true);
+    void UpdateScope(TagEntryPtr tag);
 };
 
 #endif // __navbar__

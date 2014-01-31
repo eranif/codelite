@@ -55,6 +55,10 @@ WorkspaceTab::WorkspaceTab(wxWindow *parent, const wxString &caption)
     CreateGUIControls();
     ConnectEvents();
     m_themeHelper = new ThemeHandlerHelper(this);
+    int sashPos = clConfig::Get().Read("WorkspaceTabSashPosition", wxNOT_FOUND);
+    if ( sashPos != wxNOT_FOUND ) {
+        m_splitter->SetSashPosition( sashPos );
+    }
 }
 
 WorkspaceTab::~WorkspaceTab()
@@ -73,6 +77,7 @@ WorkspaceTab::~WorkspaceTab()
 
     wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnConfigurationManager), NULL, this);
     wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler (WorkspaceTab::OnProjectSettingsUI),   NULL, this);
+    clConfig::Get().Write("WorkspaceTabSashPosition", m_splitter->GetSashPosition());
 }
 
 void WorkspaceTab::CreateGUIControls()

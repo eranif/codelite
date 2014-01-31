@@ -61,8 +61,8 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString &dataName)
 
     if(choices.Index(wxGetTranslation(SEARCH_IN_CURRENT_FILE)) == wxNOT_FOUND)
         choices.Add(wxGetTranslation(SEARCH_IN_CURRENT_FILE));
-		
-	if(choices.Index(wxGetTranslation(SEARCH_IN_OPEN_FILES)) == wxNOT_FOUND)
+    
+    if(choices.Index(wxGetTranslation(SEARCH_IN_OPEN_FILES)) == wxNOT_FOUND)
         choices.Add(wxGetTranslation(SEARCH_IN_OPEN_FILES));
 
     int initial = m_data.GetSearchScope();
@@ -270,16 +270,16 @@ SearchData FindInFilesDialog::DoGetSearchData()
                 files.Add(editor->GetFileName().GetFullPath());
             }
         } else if ((rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES)) || (rootDir == SEARCH_IN_OPEN_FILES)) {
-			std::vector<LEditor*> editors;
-			clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, false);
-			
-			for (size_t n=0; n < editors.size(); ++n) {
-				LEditor* editor = dynamic_cast<LEditor*>(*(editors.begin()+n));
-				if (editor) {
-					files.Add(editor->GetFileName().GetFullPath());
-				}
-			}
-		}		
+            std::vector<LEditor*> editors;
+            clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, false);
+            
+            for (size_t n=0; n < editors.size(); ++n) {
+                LEditor* editor = dynamic_cast<LEditor*>(*(editors.begin()+n));
+                if (editor) {
+                    files.Add(editor->GetFileName().GetFullPath());
+                }
+            }
+        }
     }
 
     data.SetFiles(files);

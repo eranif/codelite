@@ -139,7 +139,7 @@ void SearchThread::GetFiles(const SearchData *data, wxArrayString &files)
         // Check both translations and otherwise: the history may have contained either
         if (rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE) || rootDir == wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)
             || rootDir == wxGetTranslation(SEARCH_IN_PROJECT) || rootDir == wxGetTranslation(SEARCH_IN_CURRENT_FILE)
-			|| rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES) 
+            || rootDir == wxGetTranslation(SEARCH_IN_OPEN_FILES) 
             || rootDir == SEARCH_IN_WORKSPACE || rootDir == SEARCH_IN_CURR_FILE_PROJECT
             || rootDir == SEARCH_IN_PROJECT || rootDir == SEARCH_IN_CURRENT_FILE || rootDir == SEARCH_IN_OPEN_FILES) {
             someFiles = data->GetFiles();

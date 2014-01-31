@@ -1499,7 +1499,7 @@ void GitPlugin::OnProcessOutput(wxCommandEvent &event)
              ga.action != gitDiffRepoShow )
 
         {
-            if ( tmpOutput.Contains("commit-msg hook failure") ) {
+            if ( tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure") ) {
                 m_process->Terminate();
                 ::wxMessageBox(output, "git", wxICON_ERROR|wxCENTER|wxOK, EventNotifier::Get()->TopFrame());
 

@@ -8,9 +8,9 @@ PSLinkerPage::PSLinkerPage( wxWindow* parent, ProjectSettingsDlg *dlg, PSGeneral
     , m_dlg(dlg)
     , m_gp(gp)
 {
-    m_choiceLnkUseWithGlobalSettings->AppendString(APPEND_TO_GLOBAL_SETTINGS);
-    m_choiceLnkUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
-    m_choiceLnkUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
+    m_choiceLnkUseWithGlobalSettings->AppendString(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
+    m_choiceLnkUseWithGlobalSettings->AppendString(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
+    m_choiceLnkUseWithGlobalSettings->AppendString(BuildConfig::PREPEND_GLOBAL_SETTINGS);
     m_choiceLnkUseWithGlobalSettings->Select(0);
 }
 
@@ -73,17 +73,7 @@ void PSLinkerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetting
     buildConf->SetLibraries(m_textLibraries->GetValue());
     buildConf->SetLinkerRequired(!m_checkLinkerNeeded->IsChecked());
     buildConf->SetLinkOptions(m_textLinkerOptions->GetValue());
-
-    wxString useWithGlobalSettings = m_choiceLnkUseWithGlobalSettings->GetStringSelection();
-    if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
-        buildConf->SetBuildLnkWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
-
-    } else if (useWithGlobalSettings == OVERWRITE_GLOBAL_SETTINGS) {
-        buildConf->SetBuildLnkWithGlobalSettings(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
-
-    } else if (useWithGlobalSettings == PREPEND_GLOBAL_SETTINGS) {
-        buildConf->SetBuildLnkWithGlobalSettings(BuildConfig::PREPEND_GLOBAL_SETTINGS);
-    }
+    buildConf->SetBuildLnkWithGlobalSettings(m_choiceLnkUseWithGlobalSettings->GetStringSelection());
 }
 
 void PSLinkerPage::Clear()

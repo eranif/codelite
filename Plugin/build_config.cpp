@@ -34,9 +34,9 @@
 #include "wx_xml_compatibility.h"
 #include <wx/tokenzr.h>
 
-const wxString BuildConfig::OVERWRITE_GLOBAL_SETTINGS = wxT("overwrite");
-const wxString BuildConfig::APPEND_TO_GLOBAL_SETTINGS = wxT("append");
-const wxString BuildConfig::PREPEND_GLOBAL_SETTINGS   = wxT("prepend");
+const wxString BuildConfig::OVERWRITE_GLOBAL_SETTINGS = "overwrite";
+const wxString BuildConfig::APPEND_TO_GLOBAL_SETTINGS = "append";
+const wxString BuildConfig::PREPEND_GLOBAL_SETTINGS   = "prepend";
 
 BuildConfig::BuildConfig(wxXmlNode *node)
     : m_commonConfig(node)

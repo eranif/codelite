@@ -16,189 +16,104 @@ PSGeneralPage::PSGeneralPage( wxWindow* parent, const wxString &projectName, con
 
 void PSGeneralPage::OnProjectCustumBuildUI( wxUpdateUIEvent& event )
 {
-    event.Enable(!m_dlg->IsCustomBuildEnabled() && !m_checkBoxDisableProject->IsChecked());
-}
-
-void PSGeneralPage::OnCmdEvtVModified( wxCommandEvent& event )
-{
-    wxUnusedVar(event);
-    m_dlg->SetIsDirty(true);
-}
-
-void PSGeneralPage::OnBrowseIntermediateDir( wxCommandEvent& event )
-{
-    DirSaver ds;
-
-    // Since all paths are relative to the project, set the working directory to the
-    // current project path
-    ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
-    if (p) {
-        ::wxSetWorkingDirectory(p->GetFileName().GetPath());
-    }
-
-    wxString new_path = ::wxDirSelector(_("Select working directory:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if (new_path.IsEmpty() == false) {
-        wxFileName fn(new_path, wxT(""));
-        fn.MakeRelativeTo(); // Make the path relative to the project
-        new_path = fn.GetPath();
-        new_path.Replace(wxT("\\"), wxT("/"));
-
-        m_textCtrlItermediateDir->SetValue(new_path);
-    }
-}
-
-void PSGeneralPage::OnBrowseProgram( wxCommandEvent& event )
-{
-    DirSaver ds;
-    wxUnusedVar(event);
-
-    wxString workingDir = DoGetWorkingDirectory();
-    ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
-    if (p) {
-        ::wxSetWorkingDirectory(p->GetFileName().GetPath());
-    }
-    ::wxSetWorkingDirectory(workingDir);
-
-    wxString program = ::wxFileSelector(_("Select Program to Run / Debug:"));
-    if (program.IsEmpty() == false) {
-        wxFileName fn ( program );
-        fn.MakeRelativeTo();
-        program = fn.GetFullPath();
-        program.Replace(wxT("\\"), wxT("/"));
-        if( program == fn.GetFullName() ) {
-            program.Prepend(wxT("./"));
-        }
-        m_textCommand->SetValue( program );
-    }
-}
-
-void PSGeneralPage::OnBrowseCommandWD( wxCommandEvent& event )
-{
-    DirSaver ds;
-
-    // Since all paths are relative to the project, set the working directory to the
-    // current project path
-    ProjectPtr p = ManagerST::Get()->GetProject(m_projectName);
-    if (p) {
-        wxSetWorkingDirectory(p->GetFileName().GetPath());
-    }
-
-    wxString new_path = ::wxDirSelector(_("Select working directory:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if (new_path.IsEmpty() == false) {
-        // make it relative to the current directory
-        wxFileName fn ( new_path, wxT("") );
-        fn.MakeRelativeTo();
-        new_path = fn.GetPath();
-        new_path.Replace(wxT("\\"), wxT("/"));
-        m_textCtrlCommandWD->SetValue( new_path );
-    }
+    event.Enable(!m_dlg->IsCustomBuildEnabled() && m_checkBoxEnabled->IsChecked());
 }
 
 void PSGeneralPage::Load(BuildConfigPtr buildConf)
 {
+    Clear();
     m_configName = buildConf->GetName();
+    m_checkBoxEnabled->SetValue( buildConf->IsProjectEnabled() );
+    m_pgPropArgs->SetValue( buildConf->GetCommandArguments() );
+    m_pgPropDebugArgs->SetValueFromString( buildConf->GetDebugArgs() );
+    m_pgPropIntermediateFolder->SetValueFromString( buildConf->GetIntermediateDirectory() );
+    m_pgPropGUIApp->SetValue( buildConf->IsGUIProgram() );
+    m_pgPropOutputFile->SetValueFromString( buildConf->GetOutputFileName() );
+    m_pgPropPause->SetValue( buildConf->GetPauseWhenExecEnds() );
+    m_pgPropProgram->SetValueFromString( buildConf->GetCommand() );
+    m_pgPropWorkingDirectory->SetValue( buildConf->GetWorkingDirectory() );
+    // Project type
+    wxPGChoices choices;
+    choices.Add(Project::STATIC_LIBRARY);
+    choices.Add(Project::DYNAMIC_LIBRARY);
+    choices.Add(Project::EXECUTABLE);
+    m_pgPropProjectType->SetChoices( choices );
+    m_pgPropProjectType->SetChoiceSelection( choices.Index(buildConf->GetProjectType() ) );
 
-    m_textOutputFilePicker->SetValue(buildConf->GetOutputFileName());
-    m_textCtrlItermediateDir->SetValue(buildConf->GetIntermediateDirectory());
-    m_textCommand->SetValue(buildConf->GetCommand());
-    m_textCommandArguments->SetValue(buildConf->GetCommandArguments());
-    m_textCtrlCommandWD->SetValue(buildConf->GetWorkingDirectory());
-
-    ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
-    wxString projType = projSettingsPtr->GetProjectType(buildConf->GetName());
-    const wxString ProjectTypes[] = { wxTRANSLATE("Static Library"), wxTRANSLATE("Dynamic Library"), wxTRANSLATE("Executable") };
-    m_stringManager.AddStrings(sizeof(ProjectTypes)/sizeof(wxString), ProjectTypes, projType, m_choiceProjectTypes);
-
-    m_choiceCompilerType->Clear();
+    // Compilers
+    choices.Clear();
     wxString cmpType = buildConf->GetCompilerType();
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
     while (cmp) {
-        m_choiceCompilerType->Append(cmp->GetName());
+        choices.Add(cmp->GetName());
         cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
     }
+    m_pgPropCompiler->SetChoices( choices );
+    m_pgPropCompiler->SetChoiceSelection( choices.Index( buildConf->GetCompiler()->GetName() ) );
 
-    m_choiceDebugger->Clear();
+    // Debuggers
+    choices.Clear();
     wxString dbgType = buildConf->GetDebuggerType();
     wxArrayString dbgs = DebuggerMgr::Get().GetAvailableDebuggers();
-    if (dbgs.GetCount() > 0) {
-        m_choiceDebugger->Append(dbgs);
-    }
+    choices.Add(dbgs);
+    m_pgPropDebugger->SetChoices( choices );
+    m_pgPropDebugger->SetChoiceSelection( choices.Index(buildConf->GetDebuggerType()) );
 
-    if (m_choiceDebugger->GetCount() > 0) {
-        int find = m_choiceDebugger->FindString(dbgType);
-        if (find != wxNOT_FOUND) {
-            m_choiceDebugger->SetSelection(find);
-        } else {
-            m_choiceDebugger->SetSelection(0);
-        }
-    }
-
-    int where = m_choiceCompilerType->FindString(cmpType);
-    if (where == wxNOT_FOUND) {
-        if (m_choiceCompilerType->GetCount() > 0) {
-            m_choiceCompilerType->SetSelection(0);
-        }
-    } else {
-        m_choiceCompilerType->SetSelection(where);
-    }
-
-    m_checkBoxPauseWhenExecEnds->SetValue(buildConf->GetPauseWhenExecEnds());
-    m_checkBoxUseDebugArgs->SetValue(buildConf->GetUseSeparateDebugArgs());
-    m_textCtrlDebugArgs->SetValue(buildConf->GetDebugArgs());
-    m_checkBoxGUI->SetValue( buildConf->IsGUIProgram() );
-    m_checkBoxDisableProject->SetValue( !buildConf->IsProjectEnabled() );
     m_dlg->SetIsProjectEnabled( buildConf->IsProjectEnabled() );
 }
 
 void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
-    buildConf->SetOutputFileName(m_textOutputFilePicker->GetValue());
-    buildConf->SetIntermediateDirectory(m_textCtrlItermediateDir->GetValue());
-    buildConf->SetCommand(m_textCommand->GetValue());
-    buildConf->SetCommandArguments(m_textCommandArguments->GetValue());
-    buildConf->SetWorkingDirectory(m_textCtrlCommandWD->GetValue());
+    buildConf->SetOutputFileName( GetPropertyAsString(m_pgPropOutputFile) );
+    buildConf->SetIntermediateDirectory( GetPropertyAsString(m_pgPropIntermediateFolder) );
+    buildConf->SetCommand( GetPropertyAsString(m_pgPropProgram) );
+    buildConf->SetCommandArguments(GetPropertyAsString(m_pgPropArgs));
+    buildConf->SetWorkingDirectory(GetPropertyAsString(m_pgPropWorkingDirectory));
+
     // Get the project type selection, unlocalised
-    wxString ProjectType = m_stringManager.GetStringSelection();
-    projSettingsPtr->SetProjectType(ProjectType);
-    buildConf->SetCompilerType(m_choiceCompilerType->GetStringSelection());
-    buildConf->SetDebuggerType(m_choiceDebugger->GetStringSelection());
-    buildConf->SetPauseWhenExecEnds(m_checkBoxPauseWhenExecEnds->IsChecked());
-    buildConf->SetProjectType(ProjectType);
-    buildConf->SetUseSeparateDebugArgs(m_checkBoxUseDebugArgs->IsChecked());
-    buildConf->SetDebugArgs(m_textCtrlDebugArgs->GetValue());
-    buildConf->SetIsGUIProgram( m_checkBoxGUI->IsChecked() );
-    buildConf->SetIsProjectEnabled( !m_checkBoxDisableProject->IsChecked() );
+    projSettingsPtr->SetProjectType( GetPropertyAsString(m_pgPropProjectType) );
+    buildConf->SetCompilerType( GetPropertyAsString(m_pgPropCompiler) );
+    buildConf->SetDebuggerType( GetPropertyAsString(m_pgPropDebugger) );
+    buildConf->SetPauseWhenExecEnds( GetPropertyAsBool(m_pgPropPause) );
+    buildConf->SetProjectType( GetPropertyAsString(m_pgPropProjectType) );
+    buildConf->SetDebugArgs( GetPropertyAsString(m_pgPropDebugArgs) );
+    buildConf->SetIsGUIProgram( GetPropertyAsBool(m_pgPropGUIApp) );
+    buildConf->SetIsProjectEnabled( m_checkBoxEnabled->IsChecked() );
 }
 
 void PSGeneralPage::Clear()
 {
-    m_textOutputFilePicker->Clear();
-    m_textCtrlItermediateDir->Clear();
-    m_textCommand->Clear();
-    m_textCommandArguments->Clear();
-    m_textCtrlCommandWD->Clear();
-    m_checkBoxPauseWhenExecEnds->SetValue(true);
+    m_checkBoxEnabled->SetValue(true);
+    m_pgPropOutputFile->SetValueToUnspecified();
+    m_pgPropIntermediateFolder->SetValueToUnspecified();
+    m_pgPropProgram->SetValueToUnspecified();
+    m_pgPropArgs->SetValueToUnspecified();
+    m_pgPropDebugArgs->SetValueToUnspecified();
+    m_pgPropWorkingDirectory->SetValueToUnspecified();
 }
 
-void PSGeneralPage::OnUseDebugArgsUI(wxUpdateUIEvent& event)
+void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
 {
-    event.Enable(m_checkBoxUseDebugArgs->IsChecked() && !m_checkBoxDisableProject->IsChecked());
+    event.Skip();
+    m_dlg->SetIsDirty(true);
 }
 
-wxString PSGeneralPage::DoGetWorkingDirectory()
+bool PSGeneralPage::GetPropertyAsBool(wxPGProperty* prop) const
 {
-    wxString expr = m_textCtrlCommandWD->GetValue();
-    expr = ::ExpandAllVariables(expr, WorkspaceST::Get(), m_projectName, m_configName, wxEmptyString);
-    return expr;
+    wxVariant v = prop->GetValue();
+    bool b = v.GetBool();
+    return b;
 }
 
-void PSGeneralPage::OnConfigurationEnabledUI(wxUpdateUIEvent& event)
+wxString PSGeneralPage::GetPropertyAsString(wxPGProperty* prop) const
 {
-    event.Enable( !m_checkBoxDisableProject->IsChecked() );
+    wxString s = prop->GetValueAsString();
+    return s;
 }
-void PSGeneralPage::OnEnableProject(wxCommandEvent& event)
+
+void PSGeneralPage::OnProjectEnabled(wxCommandEvent& event)
 {
-    m_dlg->SetIsProjectEnabled( !event.IsChecked() );
-    OnCmdEvtVModified(event);
+    m_dlg->SetIsProjectEnabled( event.IsChecked() );
+    m_dlg->SetIsDirty(true);
 }

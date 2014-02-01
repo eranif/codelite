@@ -102,167 +102,71 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* bSizer35 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer35);
     
-    m_generalPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    m_checkBoxEnabled = new wxCheckBox(this, wxID_ANY, _("Project enabled"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxEnabled->SetValue(true);
+    m_checkBoxEnabled->SetToolTip(_("When unchecked, this project will not be built for the current build configuration"));
     
-    bSizer35->Add(m_generalPage, 1, wxALL|wxEXPAND, 5);
+    bSizer35->Add(m_checkBoxEnabled, 0, wxALL, 5);
     
-    wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
-    m_generalPage->SetSizer(bSizer19);
+    wxArrayString m_pgMgr136Arr;
+    wxUnusedVar(m_pgMgr136Arr);
+    wxArrayInt m_pgMgr136IntArr;
+    wxUnusedVar(m_pgMgr136IntArr);
+    m_pgMgr136 = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    wxFlexGridSizer* flexGridSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer2->SetFlexibleDirection( wxBOTH );
-    flexGridSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer2->AddGrowableCol(1);
+    bSizer35->Add(m_pgMgr136, 1, wxALL|wxEXPAND, 5);
     
-    bSizer19->Add(flexGridSizer2, 0, wxEXPAND, 5);
+    CATEGORY_GENERAL = m_pgMgr136->Append(  new wxPropertyCategory( _("General Project Settings") ) );
+    CATEGORY_GENERAL->SetHelpString(wxT(""));
     
-    flexGridSizer2->Add(0, 0, 1, wxALL, 5);
+    m_pgMgr136Arr.Clear();
+    m_pgMgr136IntArr.Clear();
+    m_pgMgr136Arr.Add(_("Dynamic Library"));
+    m_pgMgr136Arr.Add(_("Static Library"));
+    m_pgMgr136Arr.Add(_("Executable"));
+    m_pgPropProjectType = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxEnumProperty( _("Project Type"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
+    m_pgPropProjectType->SetHelpString(_("Sets the type of the project"));
     
-    m_checkBoxDisableProject = new wxCheckBox(m_generalPage, wxID_ANY, _("Disable project for this build configuration"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxDisableProject->SetValue(false);
-    m_checkBoxDisableProject->SetToolTip(_("When checked, this project will be skipped completely during build"));
+    m_pgMgr136Arr.Clear();
+    m_pgMgr136IntArr.Clear();
+    m_pgPropCompiler = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxEnumProperty( _("Compiler"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
+    m_pgPropCompiler->SetHelpString(_("Select the compiler to use. The compiler controls two aspects of the project:\n- If the project is _not_ a custom build, then this compiler is used for compilation\n- CodeLite uses the compiler definition for parsing the output"));
     
-    flexGridSizer2->Add(m_checkBoxDisableProject, 0, wxALL, 5);
+    m_pgPropIntermediateFolder = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxStringProperty( _("Intermediate Folder"), wxPG_LABEL, wxT("")) );
+    m_pgPropIntermediateFolder->SetHelpString(_("The name of the folder used for the generated objects during compilation"));
     
-    m_staticText22 = new wxStaticText(m_generalPage, wxID_ANY, _("Project Type:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropOutputFile = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxStringProperty( _("Output File"), wxPG_LABEL, wxT("")) );
+    m_pgPropOutputFile->SetHelpString(_("The name of the output file (e.g. the executable file name)"));
     
-    flexGridSizer2->Add(m_staticText22, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropPause = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxBoolProperty( _("Pause when execution ends"), wxPG_LABEL, 1) );
+    m_pgPropPause->SetHelpString(_("After the execution of the program ends, show a console with the message \"Hit any key to continue...\"\nThis is useful when you wish to view the output printed to stdout before the console terminates"));
     
-    wxArrayString m_choiceProjectTypesArr;
-    m_choiceProjectTypes = new wxChoice(m_generalPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceProjectTypesArr, 0);
+    CATEGORY_EXECUTION = m_pgMgr136->Append(  new wxPropertyCategory( _("Execution") ) );
+    CATEGORY_EXECUTION->SetHelpString(wxT(""));
     
-    flexGridSizer2->Add(m_choiceProjectTypes, 0, wxALL|wxEXPAND, 5);
+    m_pgPropGUIApp = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxBoolProperty( _("This program is a GUI application"), wxPG_LABEL, 0) );
+    m_pgPropGUIApp->SetHelpString(_("By marking the project as a GUI project, CodeLite will launch the program without any console terminal wrapping the process execution"));
     
-    m_staticText191 = new wxStaticText(m_generalPage, wxID_ANY, _("Selected Compiler:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropProgram = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxFileProperty( _("Executable to Run / Debug"), wxPG_LABEL, wxT("")) );
+    m_pgMgr136->SetPropertyAttribute(m_pgPropProgram, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropProgram->SetHelpString(_("The executable to run / debug"));
     
-    flexGridSizer2->Add(m_staticText191, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropWorkingDirectory = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxDirProperty( _("Working Directory"), wxPG_LABEL, wxT("")) );
+    m_pgPropWorkingDirectory->SetHelpString(_("The working directory set before executing or debugging the program"));
     
-    wxArrayString m_choiceCompilerTypeArr;
-    m_choiceCompilerType = new wxChoice(m_generalPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceCompilerTypeArr, 0);
+    m_pgPropArgs = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Program Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropArgs->SetHelpString(_("The command line arguments to pass to the program when executing or debugging it"));
     
-    flexGridSizer2->Add(m_choiceCompilerType, 0, wxALL|wxEXPAND, 5);
+    CATEGORY_DEBUGGER = m_pgMgr136->Append(  new wxPropertyCategory( _("Debugging") ) );
+    CATEGORY_DEBUGGER->SetHelpString(wxT(""));
     
-    m_staticText231 = new wxStaticText(m_generalPage, wxID_ANY, _("Debugger:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgMgr136Arr.Clear();
+    m_pgMgr136IntArr.Clear();
+    m_pgPropDebugger = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxEnumProperty( _("Debugger"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
+    m_pgPropDebugger->SetHelpString(_("Select the debugger type to use for this project"));
     
-    flexGridSizer2->Add(m_staticText231, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxArrayString m_choiceDebuggerArr;
-    m_choiceDebugger = new wxChoice(m_generalPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceDebuggerArr, 0);
-    
-    flexGridSizer2->Add(m_choiceDebugger, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText15 = new wxStaticText(m_generalPage, wxID_ANY, _("Output File:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer2->Add(m_staticText15, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textOutputFilePicker = new wxTextCtrl(m_generalPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer2->Add(m_textOutputFilePicker, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText16 = new wxStaticText(m_generalPage, wxID_ANY, _("Intermediate Folder:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer2->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxHORIZONTAL);
-    
-    flexGridSizer2->Add(boxSizer4, 0, wxEXPAND, 5);
-    
-    m_textCtrlItermediateDir = new wxTextCtrl(m_generalPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    boxSizer4->Add(m_textCtrlItermediateDir, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonBrowseIM_WD = new wxButton(m_generalPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    boxSizer4->Add(m_buttonBrowseIM_WD, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText17 = new wxStaticText(m_generalPage, wxID_ANY, _("Program to Debug / Run:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    wxFont m_staticText17Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_staticText17Font.SetWeight(wxFONTWEIGHT_BOLD);
-    m_staticText17->SetFont(m_staticText17Font);
-    
-    bSizer19->Add(m_staticText17, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    wxFlexGridSizer* flexGridSizer6 = new wxFlexGridSizer(0, 3, 0, 0);
-    flexGridSizer6->SetFlexibleDirection( wxBOTH );
-    flexGridSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer6->AddGrowableCol(1);
-    
-    bSizer19->Add(flexGridSizer6, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    flexGridSizer6->Add(0, 0, 1, wxALL, 5);
-    
-    m_checkBoxGUI = new wxCheckBox(m_generalPage, wxID_ANY, _("This is a GUI application"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxGUI->SetValue(false);
-    m_checkBoxGUI->SetToolTip(_("When checked, codelite will run the executable as is without wrapping the command with a shell"));
-    
-    flexGridSizer6->Add(m_checkBoxGUI, 0, wxALL, 5);
-    
-    flexGridSizer6->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText18 = new wxStaticText(m_generalPage, wxID_ANY, _("Program:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer6->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCommand = new wxTextCtrl(m_generalPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer6->Add(m_textCommand, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonBrowseProgram = new wxButton(m_generalPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer6->Add(m_buttonBrowseProgram, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText20 = new wxStaticText(m_generalPage, wxID_ANY, _("Working Directory:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer6->Add(m_staticText20, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlCommandWD = new wxTextCtrl(m_generalPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer6->Add(m_textCtrlCommandWD, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonBrowseCommandWD = new wxButton(m_generalPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer6->Add(m_buttonBrowseCommandWD, 0, wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText19 = new wxStaticText(m_generalPage, wxID_ANY, _("Program Arguments:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer6->Add(m_staticText19, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCommandArguments = new wxTextCtrl(m_generalPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer6->Add(m_textCommandArguments, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    flexGridSizer6->Add(0, 0, 0, wxALL, 5);
-    
-    flexGridSizer6->Add(0, 0, 1, wxALL, 5);
-    
-    m_checkBoxUseDebugArgs = new wxCheckBox(m_generalPage, wxID_ANY, _("Use separate debug arguments"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxUseDebugArgs->SetValue(false);
-    m_checkBoxUseDebugArgs->SetToolTip(_("When enabled, codelite will use the arguments specified in the 'Debug Arguments' when running the program under debugger. \nOtherwise, codelite will use the arguments speicified in the 'Program Arguments' field"));
-    
-    flexGridSizer6->Add(m_checkBoxUseDebugArgs, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    flexGridSizer6->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText112 = new wxStaticText(m_generalPage, wxID_ANY, _("Debugger Arguments:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer6->Add(m_staticText112, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlDebugArgs = new wxTextCtrl(m_generalPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer6->Add(m_textCtrlDebugArgs, 0, wxALL|wxEXPAND, 5);
-    
-    flexGridSizer6->Add(0, 0, 0, wxALL, 5);
-    
-    bSizer19->Add(0, 0, 1, wxALL, 5);
-    
-    wxBoxSizer* bSizer17 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer19->Add(bSizer17, 0, wxALIGN_LEFT, 5);
-    
-    m_checkBoxPauseWhenExecEnds = new wxCheckBox(m_generalPage, wxID_ANY, _("Pause when execution ends"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxPauseWhenExecEnds->SetValue(false);
-    
-    bSizer17->Add(m_checkBoxPauseWhenExecEnds, 0, wxALL|wxALIGN_LEFT, 5);
+    m_pgPropDebugArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxStringProperty( _("Debug Program Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropDebugArgs->SetHelpString(_("When running the executable under the debugger, pass it these arguments\nIf this field is left empty, CodeLite will use the arguments provided for the execution"));
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -270,93 +174,17 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     }
     Centre(wxBOTH);
     // Connect events
-    m_checkBoxDisableProject->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnEnableProject), NULL, this);
-    m_staticText22->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_choiceProjectTypes->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_choiceProjectTypes->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_staticText191->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_choiceCompilerType->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_choiceCompilerType->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText231->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_choiceDebugger->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_choiceDebugger->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText15->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textOutputFilePicker->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textOutputFilePicker->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText16->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCtrlItermediateDir->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlItermediateDir->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_buttonBrowseIM_WD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnBrowseIntermediateDir), NULL, this);
-    m_buttonBrowseIM_WD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText17->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_checkBoxGUI->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxGUI->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText18->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCommand->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCommand->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_buttonBrowseProgram->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnBrowseProgram), NULL, this);
-    m_buttonBrowseProgram->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText20->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCtrlCommandWD->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlCommandWD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_buttonBrowseCommandWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnBrowseCommandWD), NULL, this);
-    m_buttonBrowseCommandWD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText19->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCommandArguments->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCommandArguments->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_checkBoxUseDebugArgs->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxUseDebugArgs->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText112->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCtrlDebugArgs->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDebugArgs->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnUseDebugArgsUI), NULL, this);
-    m_checkBoxPauseWhenExecEnds->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxPauseWhenExecEnds->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
+    m_checkBoxEnabled->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
+    m_pgMgr136->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanged), NULL, this);
+    m_pgMgr136->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
     
 }
 
 PSGeneralPageBase::~PSGeneralPageBase()
 {
-    m_checkBoxDisableProject->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnEnableProject), NULL, this);
-    m_staticText22->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_choiceProjectTypes->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_choiceProjectTypes->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_staticText191->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_choiceCompilerType->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_choiceCompilerType->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText231->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_choiceDebugger->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_choiceDebugger->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText15->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textOutputFilePicker->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textOutputFilePicker->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText16->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCtrlItermediateDir->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlItermediateDir->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_buttonBrowseIM_WD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnBrowseIntermediateDir), NULL, this);
-    m_buttonBrowseIM_WD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText17->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_checkBoxGUI->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxGUI->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText18->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCommand->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCommand->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_buttonBrowseProgram->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnBrowseProgram), NULL, this);
-    m_buttonBrowseProgram->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText20->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCtrlCommandWD->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlCommandWD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_buttonBrowseCommandWD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnBrowseCommandWD), NULL, this);
-    m_buttonBrowseCommandWD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText19->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCommandArguments->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCommandArguments->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_checkBoxUseDebugArgs->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxUseDebugArgs->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_staticText112->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
-    m_textCtrlDebugArgs->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDebugArgs->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnUseDebugArgsUI), NULL, this);
-    m_checkBoxPauseWhenExecEnds->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxPauseWhenExecEnds->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnConfigurationEnabledUI), NULL, this);
+    m_checkBoxEnabled->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
+    m_pgMgr136->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanged), NULL, this);
+    m_pgMgr136->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
     
 }
 
@@ -370,142 +198,64 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* bSizer36 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(bSizer36);
+    wxBoxSizer* boxSizer1761 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer1761);
     
-    m_compilerPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    bSizer36->Add(m_compilerPage, 1, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* compilerPageSizer = new wxBoxSizer(wxVERTICAL);
-    m_compilerPage->SetSizer(compilerPageSizer);
-    
-    m_checkCompilerNeeded = new wxCheckBox(m_compilerPage, wxID_ANY, _("Compiler is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkCompilerNeeded = new wxCheckBox(this, wxID_ANY, _("Compiler is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkCompilerNeeded->SetValue(false);
     
-    compilerPageSizer->Add(m_checkCompilerNeeded, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer1761->Add(m_checkCompilerNeeded, 0, wxALL|wxALIGN_LEFT, 5);
     
-    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_compilerPage, wxID_ANY, _("Compiler Options:")), wxVERTICAL);
+    wxArrayString m_pgMgrArr;
+    wxUnusedVar(m_pgMgrArr);
+    wxArrayInt m_pgMgrIntArr;
+    wxUnusedVar(m_pgMgrIntArr);
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    compilerPageSizer->Add(sbSizer3, 1, wxALL|wxEXPAND, 5);
+    boxSizer1761->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer15 = new wxFlexGridSizer(0, 3, 0, 0);
-    flexGridSizer15->SetFlexibleDirection( wxBOTH );
-    flexGridSizer15->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer15->AddGrowableCol(1);
+    CATEGORY_OPTIONS4 = m_pgMgr->Append(  new wxPropertyCategory( _("Options") ) );
+    CATEGORY_OPTIONS4->SetHelpString(wxT(""));
     
-    sbSizer3->Add(flexGridSizer15, 1, wxEXPAND, 5);
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgMgrArr.Add(_("Append to global settings"));
+    m_pgMgrArr.Add(_("Overwrite global settings"));
+    m_pgMgrArr.Add(_("Prepend to global settings"));
+    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxEnumProperty( _("Use with Global Settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropBehaviorWithGlobalSettings->SetHelpString(_("Define how CodeLite will merge the compiler settings defined in the 'Global Settings' with the settings defined on this page"));
     
-    m_staticText331 = new wxStaticText(m_compilerPage, wxID_ANY, _("Use with Global Settings:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropCppOpts = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("C++ Compiler Options"), wxPG_LABEL, wxT("")) );
+    m_pgPropCppOpts->SetHelpString(_("Additional compiler options to pass to the compiler provided as a semi-colon delimited list"));
+    m_pgPropCppOpts->SetEditor( wxT("TextCtrlAndButton") );
     
-    flexGridSizer15->Add(m_staticText331, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropCOpts = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("C Compiler Options"), wxPG_LABEL, wxT("")) );
+    m_pgPropCOpts->SetHelpString(_("Additional C compiler options to pass to the compiler provided as a semi-colon delimited list (used for C files only)"));
+    m_pgPropCOpts->SetEditor( wxT("TextCtrlAndButton") );
     
-    wxArrayString m_choiceCmpUseWithGlobalSettingsArr;
-    m_choiceCmpUseWithGlobalSettings = new wxChoice(m_compilerPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceCmpUseWithGlobalSettingsArr, 0);
+    m_pgPropAssembler = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("Assembler Options"), wxPG_LABEL, wxT("")) );
+    m_pgPropAssembler->SetHelpString(_("Additional assembler options to pass to the assembler provided as a semi-colon delimited list\n(used for .s files only)"));
     
-    flexGridSizer15->Add(m_choiceCmpUseWithGlobalSettings, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropIncludePaths = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("Include Paths"), wxPG_LABEL, wxT("")) );
+    m_pgPropIncludePaths->SetHelpString(_("Include path to pass to the compiler (provided as semi-colon delimited list)"));
+    m_pgPropIncludePaths->SetEditor( wxT("TextCtrlAndButton") );
     
-    flexGridSizer15->Add(0, 0, 0, wxALL, 5);
+    m_pgPropPreProcessors = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("Preprocessors"), wxPG_LABEL, wxT("")) );
+    m_pgPropPreProcessors->SetHelpString(_("macros (\"defines\") to pass to the compiler (provided as semi-colon delimited list)"));
+    m_pgPropPreProcessors->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_staticText6 = new wxStaticText(m_compilerPage, wxID_ANY, _("C++ Compiler Options:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_staticText6->SetToolTip(_("Additional compiler options to pass to the compiler provided as a semi-colon delimited list"));
+    CATEGORY_PCH11 = m_pgMgr->Append(  new wxPropertyCategory( _("Pre Compiled Header") ) );
+    CATEGORY_PCH11->SetHelpString(wxT(""));
     
-    flexGridSizer15->Add(m_staticText6, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropPreCmpHeaderFile = m_pgMgr->AppendIn( CATEGORY_PCH11,  new wxFileProperty( _("Header File"), wxPG_LABEL, wxT("")) );
+    m_pgMgr->SetPropertyAttribute(m_pgPropPreCmpHeaderFile, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropPreCmpHeaderFile->SetHelpString(_("Pre compiled header"));
     
-    m_textCompilerOptions = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    m_textCompilerOptions->SetToolTip(_("Additional compiler options to pass to the compiler provided as a semi-colon delimited list"));
+    m_pgPropIncludePCH = m_pgMgr->AppendIn( CATEGORY_PCH11,  new wxBoolProperty( _("Excplicitly Include PCH"), wxPG_LABEL, 1) );
+    m_pgPropIncludePCH->SetHelpString(_("Explicitly include the PCH file in the command line using a compiler switch (.e.g -include /path/to/pch)"));
     
-    flexGridSizer15->Add(m_textCompilerOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonCompilerOptions = new wxButton(m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer15->Add(m_buttonCompilerOptions, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText45 = new wxStaticText(m_compilerPage, wxID_ANY, _("C Compiler Options:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer15->Add(m_staticText45, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlCCompilerOptions = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    m_textCtrlCCompilerOptions->SetToolTip(_("Additional C compiler options to pass to the compiler provided as a semi-colon delimited list (used for C files only)"));
-    
-    flexGridSizer15->Add(m_textCtrlCCompilerOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_button35 = new wxButton(m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer15->Add(m_button35, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText94 = new wxStaticText(m_compilerPage, wxID_ANY, _("Assembler Options:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer15->Add(m_staticText94, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlAssemblerOptions = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlAssemblerOptions->SetToolTip(_("Additional C compiler options to pass to the assembler provided as a semi-colon delimited list\n(used for .s files only)"));
-    
-    flexGridSizer15->Add(m_textCtrlAssemblerOptions, 0, wxALL|wxEXPAND, 5);
-    
-    m_button98 = new wxButton(m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
-    
-    flexGridSizer15->Add(m_button98, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText4 = new wxStaticText(m_compilerPage, wxID_ANY, _("Include Paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_staticText4->SetToolTip(_("Include path to pass to the compiler (provided as semi-colon delimited list)"));
-    
-    flexGridSizer15->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textAdditionalSearchPath = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    m_textAdditionalSearchPath->SetToolTip(_("Include path to pass to the compiler (provided as semi-colon delimited list)"));
-    
-    flexGridSizer15->Add(m_textAdditionalSearchPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonAddSearchPath = new wxButton(m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer15->Add(m_buttonAddSearchPath, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText171 = new wxStaticText(m_compilerPage, wxID_ANY, _("Preprocessor:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_staticText171->SetToolTip(_("macros (\"defines\") to pass to the compiler (provided as semi-colon delimited list)"));
-    
-    flexGridSizer15->Add(m_staticText171, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textPreprocessor = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    m_textPreprocessor->SetToolTip(_("macros (\"defines\") to pass to the compiler (provided as semi-colon delimited list)"));
-    
-    flexGridSizer15->Add(m_textPreprocessor, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonAddPreprocessor = new wxButton(m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer15->Add(m_buttonAddPreprocessor, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_compilerPage, wxID_ANY, _("Pre Compiled Headers:")), wxVERTICAL);
-    
-    compilerPageSizer->Add(sbSizer2, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer33 = new wxBoxSizer(wxHORIZONTAL);
-    
-    sbSizer2->Add(bSizer33, 0, wxEXPAND, 5);
-    
-    m_textCtrlPreCompiledHeader = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    m_textCtrlPreCompiledHeader->SetToolTip(_("Specify here the pre-compiled header to use"));
-    
-    bSizer33->Add(m_textCtrlPreCompiledHeader, 1, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonBrowsePreCompiledHeader = new wxButton(m_compilerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    bSizer33->Add(m_buttonBrowsePreCompiledHeader, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_checkBoxPCHInCommandLine = new wxCheckBox(m_compilerPage, wxID_ANY, _("Explicitly include the PCH file in the command line using compiler switch"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxPCHInCommandLine->SetValue(false);
-    
-    sbSizer2->Add(m_checkBoxPCHInCommandLine, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxSeparatePCHFlags = new wxCheckBox(m_compilerPage, wxID_ANY, _("Use separate compilation flags for the PCH file:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxSeparatePCHFlags->SetValue(false);
-    
-    sbSizer2->Add(m_checkBoxSeparatePCHFlags, 0, wxALL|wxEXPAND, 5);
-    
-    m_textCtrlPCHCompilationFlags = new wxTextCtrl(m_compilerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    m_textCtrlPCHCompilationFlags->SetToolTip(_("Specify here different compiler flags for building the PCH file"));
-    
-    sbSizer2->Add(m_textCtrlPCHCompilationFlags, 0, wxALL|wxEXPAND, 5);
+    m_pgPropPCHCompileLine = m_pgMgr->AppendIn( CATEGORY_PCH11,  new wxLongStringProperty( _("PCH Compile Flags"), wxPG_LABEL, wxT("")) );
+    m_pgPropPCHCompileLine->SetHelpString(_("Use separate compilation flags for the PCH file"));
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -514,90 +264,20 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     Centre(wxBOTH);
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectEnabledUI), NULL, this);
-    m_checkCompilerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCheckCompilerNeeded), NULL, this);
-    m_checkCompilerNeeded->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_staticText331->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_choiceCmpUseWithGlobalSettings->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCompilerOptions->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCompilerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonCompilerOptions->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddCompilerOptions), NULL, this);
-    m_buttonCompilerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText45->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlCCompilerOptions->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlCCompilerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_button35->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddCCompilerOptions), NULL, this);
-    m_button35->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText94->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlAssemblerOptions->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlAssemblerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_button98->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddAssemblerOptions), NULL, this);
-    m_button98->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText4->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textAdditionalSearchPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textAdditionalSearchPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonAddSearchPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnAddSearchPath), NULL, this);
-    m_buttonAddSearchPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText171->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textPreprocessor->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textPreprocessor->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonAddPreprocessor->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddPreprocessor), NULL, this);
-    m_buttonAddPreprocessor->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlPreCompiledHeader->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlPreCompiledHeader->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonBrowsePreCompiledHeader->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnBrowsePreCmpHeader), NULL, this);
-    m_buttonBrowsePreCompiledHeader->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_checkBoxPCHInCommandLine->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxPCHInCommandLine->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_checkBoxSeparatePCHFlags->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxSeparatePCHFlags->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlPCHCompilationFlags->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlPCHCompilationFlags->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnEnablePCHFLagsUI), NULL, this);
+    m_checkCompilerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
+    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSCompilerPageBase::OnPropertyChanged), NULL, this);
+    m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI), NULL, this);
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCustomEditorClicked), NULL, this);
     
 }
 
 PSCompilerPageBase::~PSCompilerPageBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectEnabledUI), NULL, this);
-    m_checkCompilerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCheckCompilerNeeded), NULL, this);
-    m_checkCompilerNeeded->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_staticText331->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_choiceCmpUseWithGlobalSettings->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCompilerOptions->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCompilerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonCompilerOptions->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddCompilerOptions), NULL, this);
-    m_buttonCompilerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText45->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlCCompilerOptions->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlCCompilerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_button35->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddCCompilerOptions), NULL, this);
-    m_button35->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText94->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlAssemblerOptions->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlAssemblerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_button98->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddAssemblerOptions), NULL, this);
-    m_button98->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText4->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textAdditionalSearchPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textAdditionalSearchPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonAddSearchPath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnAddSearchPath), NULL, this);
-    m_buttonAddSearchPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_staticText171->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textPreprocessor->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textPreprocessor->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonAddPreprocessor->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnButtonAddPreprocessor), NULL, this);
-    m_buttonAddPreprocessor->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlPreCompiledHeader->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlPreCompiledHeader->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_buttonBrowsePreCompiledHeader->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnBrowsePreCmpHeader), NULL, this);
-    m_buttonBrowsePreCompiledHeader->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_checkBoxPCHInCommandLine->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxPCHInCommandLine->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_checkBoxSeparatePCHFlags->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxSeparatePCHFlags->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnCompiledNotNeededUI), NULL, this);
-    m_textCtrlPCHCompilationFlags->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompilerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlPCHCompilationFlags->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnEnablePCHFLagsUI), NULL, this);
+    m_checkCompilerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSCompilerPageBase::OnPropertyChanged), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCustomEditorClicked), NULL, this);
     
 }
 

@@ -55,10 +55,6 @@
 #include "event_notifier.h"
 #include "workspacetab.h"
 
-const wxString APPEND_TO_GLOBAL_SETTINGS = _("Append to global settings");
-const wxString OVERWRITE_GLOBAL_SETTINGS = _("Overwrite global settings");
-const wxString PREPEND_GLOBAL_SETTINGS = _("Prepend to global settings");
-
 BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()
 
@@ -514,19 +510,30 @@ bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
     return false;
 }
 
+bool IProjectSettingsPage::PopupAddOptionDlg(wxString& value)
+{
+    AddOptionDlg dlg(NULL, value);
+    if (dlg.ShowModal() == wxID_OK) {
+        value.Clear();
+        value << dlg.GetValue();
+        return true;
+    }
+    return false;
+}
+
 bool IProjectSettingsPage::SelectChoiceWithGlobalSettings(wxChoice* c, const wxString& text)
 {
     if (text == BuildConfig::APPEND_TO_GLOBAL_SETTINGS) {
-        c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
+        c->Select(c->FindString(BuildConfig::APPEND_TO_GLOBAL_SETTINGS));
 
     } else if (text == BuildConfig::OVERWRITE_GLOBAL_SETTINGS) {
-        c->Select(c->FindString(OVERWRITE_GLOBAL_SETTINGS));
+        c->Select(c->FindString(BuildConfig::OVERWRITE_GLOBAL_SETTINGS));
 
     } else if (text == BuildConfig::PREPEND_GLOBAL_SETTINGS) {
-        c->Select(c->FindString(PREPEND_GLOBAL_SETTINGS));
+        c->Select(c->FindString(BuildConfig::PREPEND_GLOBAL_SETTINGS));
 
     } else {
-        c->Select(c->FindString(APPEND_TO_GLOBAL_SETTINGS));
+        c->Select(c->FindString(BuildConfig::APPEND_TO_GLOBAL_SETTINGS));
         return false;
     }
     return true;
@@ -540,4 +547,24 @@ bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxStri
         return true;
     }
     return false;
+}
+
+bool IProjectSettingsPage::PopupAddOptionCheckDlg(wxString& v, const wxString& title, const Compiler::CmpCmdLineOptions& options)
+{
+    AddOptionCheckDlg dlg(NULL, title, options, v);
+    if (dlg.ShowModal() == wxID_OK) {
+        v = dlg.GetValue();
+        return true;
+    }
+    return false;
+}
+
+void IProjectSettingsPage::SelectChoiceWithGlobalSettings(wxPGProperty* p, const wxString& text)
+{
+    wxPGChoices choices;
+    choices.Add(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
+    choices.Add(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
+    choices.Add(BuildConfig::PREPEND_GLOBAL_SETTINGS);
+    p->SetChoices(choices);
+    p->SetChoiceSelection(choices.Index(text));
 }

@@ -10,9 +10,9 @@ PSResourcesPage::PSResourcesPage( wxWindow* parent, ProjectSettingsDlg *dlg )
     : PSResourcesPageBase( parent )
     , m_dlg(dlg)
 {
-    m_choiceResUseWithGlobalSettings->AppendString(APPEND_TO_GLOBAL_SETTINGS);
-    m_choiceResUseWithGlobalSettings->AppendString(OVERWRITE_GLOBAL_SETTINGS);
-    m_choiceResUseWithGlobalSettings->AppendString(PREPEND_GLOBAL_SETTINGS);
+    m_choiceResUseWithGlobalSettings->AppendString(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
+    m_choiceResUseWithGlobalSettings->AppendString(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
+    m_choiceResUseWithGlobalSettings->AppendString(BuildConfig::PREPEND_GLOBAL_SETTINGS);
     m_choiceResUseWithGlobalSettings->Select(0);
 }
 
@@ -60,15 +60,7 @@ void PSResourcesPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSett
 {
     buildConf->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
     buildConf->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
-
-    wxString useWithGlobalSettings = m_choiceResUseWithGlobalSettings->GetStringSelection();
-    if (useWithGlobalSettings == APPEND_TO_GLOBAL_SETTINGS) {
-        buildConf->SetBuildResWithGlobalSettings(BuildConfig::APPEND_TO_GLOBAL_SETTINGS);
-    } else if (useWithGlobalSettings == OVERWRITE_GLOBAL_SETTINGS) {
-        buildConf->SetBuildResWithGlobalSettings(BuildConfig::OVERWRITE_GLOBAL_SETTINGS);
-    } else if (useWithGlobalSettings == PREPEND_GLOBAL_SETTINGS) {
-        buildConf->SetBuildResWithGlobalSettings(BuildConfig::PREPEND_GLOBAL_SETTINGS);
-    }
+    buildConf->SetBuildResWithGlobalSettings(m_choiceResUseWithGlobalSettings->GetStringSelection());
 }
 
 void PSResourcesPage::Clear()

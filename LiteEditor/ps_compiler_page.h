@@ -47,20 +47,11 @@ class PSCompilerPage : public PSCompilerPageBase, public IProjectSettingsPage
     PSGeneralPage *     m_gp;
 
 protected:
-    virtual void OnButtonAddAssemblerOptions(wxCommandEvent& event);
+    virtual void OnCompilerNeeded(wxCommandEvent& event);
+    virtual void OnCustomEditorClicked(wxCommandEvent& event);
+    virtual void OnUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnPropertyChanged(wxPropertyGridEvent& event);
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
-    // Handlers for PSCompilerPageBase events.
-    void OnCheckCompilerNeeded( wxCommandEvent& event );
-    void OnCompiledNotNeededUI( wxUpdateUIEvent& event );
-    void OnCmdEvtVModified( wxCommandEvent& event );
-    void OnButtonAddCompilerOptions( wxCommandEvent& event );
-    void OnAddSearchPath( wxCommandEvent& event );
-    void OnButtonAddPreprocessor( wxCommandEvent& event );
-    void OnBrowsePreCmpHeader( wxCommandEvent& event );
-    void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
-    void OnButtonAddCCompilerOptions(wxCommandEvent& event);
-    void OnEnablePCHFLagsUI(wxUpdateUIEvent& event);
-
 
 public:
     /** Constructor */

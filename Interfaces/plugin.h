@@ -579,6 +579,9 @@ enum MenuType {
 #define wxEVT_DBG_IS_RUNNING           3557 // Use evet.SetAnswer() method to reply
 #define wxEVT_DBG_UI_TOGGLE_BREAKPOINT 3558 // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
 
+// -------------------Debugger events end------------------------------------------------
+#define wxEVT_CMD_OPEN_PROJ_SETTINGS   3580 // clCommandEvent. Use event.GetString() to get the project name
+
 //------------------------------------------------------------------
 //each plugin must implement this interface
 //------------------------------------------------------------------

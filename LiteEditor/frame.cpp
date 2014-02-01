@@ -4529,7 +4529,8 @@ void clMainFrame::OnCheckForUpdate(wxCommandEvent& e)
 
 void clMainFrame::OnShowActiveProjectSettings(wxCommandEvent& e)
 {
-    GetWorkspaceTab()->GetEventHandler()->ProcessEvent( e );
+    wxUnusedVar(e);
+    GetWorkspaceTab()->OpenProjectSettings();
 }
 
 void clMainFrame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)

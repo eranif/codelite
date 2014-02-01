@@ -29,15 +29,22 @@
 #include "theme_handler_helper.h"
 #include "wxcrafter.h"
 
+class ProjectSettingsDlg;
 class FileViewTree;
 
 class WorkspaceTab : public WorkspaceTabBase
 {
+    friend class ProjectSettingsDlg;
+    
     FileViewTree *      m_fileView;
     wxString            m_caption;
     bool                m_isLinkedToEditor;
     ThemeHandlerHelper* m_themeHelper;
-
+    ProjectSettingsDlg *m_dlg;
+    
+protected:
+    void ProjectSettingsDlgClosed();
+    
 protected:
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
     virtual void OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event);
@@ -73,7 +80,9 @@ protected:
 public:
     WorkspaceTab(wxWindow *parent, const wxString &caption);
     ~WorkspaceTab();
-
+    
+    void OpenProjectSettings( const wxString &project = "" );
+    
     FileViewTree   *GetFileView()       {
         return m_fileView;
     }

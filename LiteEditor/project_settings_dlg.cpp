@@ -53,6 +53,7 @@
 #include "ps_general_page.h"
 #include "plugin.h"
 #include "event_notifier.h"
+#include "workspacetab.h"
 
 const wxString APPEND_TO_GLOBAL_SETTINGS = _("Append to global settings");
 const wxString OVERWRITE_GLOBAL_SETTINGS = _("Overwrite global settings");
@@ -61,13 +62,14 @@ const wxString PREPEND_GLOBAL_SETTINGS = _("Prepend to global settings");
 BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()
 
-ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, const wxString &configName, const wxString &projectName, const wxString &title )
+ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, WorkspaceTab* workspaceTab, const wxString &configName, const wxString &projectName, const wxString &title )
     : ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 782,502 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
     , m_projectName(projectName)
     , m_configName(configName)
     , m_isDirty(false)
     , m_isCustomBuild(false)
     , m_isProjectEnabled(true)
+    , m_workspaceTab(workspaceTab)
 {
     DoGetAllBuildConfigs();
     MSWSetNativeTheme( m_treebook->GetTreeCtrl() );
@@ -127,6 +129,8 @@ void ProjectSettingsDlg::BuildTree()
 
 ProjectSettingsDlg::~ProjectSettingsDlg()
 {
+    m_workspaceTab->ProjectSettingsDlgClosed();
+    
     EventNotifier::Get()->Disconnect(wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
 

@@ -47,6 +47,7 @@ WorkspaceTab::WorkspaceTab(wxWindow *parent, const wxString &caption)
     : WorkspaceTabBase(parent)
     , m_caption(caption)
     , m_isLinkedToEditor(true)
+    , m_dlg(NULL)
 {
     long link(1);
     EditorConfigST::Get()->GetLongValue(wxT("LinkWorkspaceViewToEditor"), link);
@@ -191,25 +192,8 @@ void WorkspaceTab::OnGoHomeUI(wxUpdateUIEvent &e)
 
 void WorkspaceTab::OnProjectSettings(wxCommandEvent& e)
 {
-    wxString projectName = ManagerST::Get()->GetActiveProjectName();
-    wxString title( projectName );
-    title << _( " Project Settings" );
-
-    //open the project properties dialog
-    BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-
-    //find the project configuration name that matches the workspace selected configuration
-    ProjectSettingsDlg *dlg = new ProjectSettingsDlg( clMainFrame::Get(), matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
-    dlg->Show();
-    //if(dlg.ShowModal() == wxID_OK) {
-    //    ManagerST::Get()->UpdateParserPaths(true);
-    //}
-
-    //mark this project as modified
-    ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
-    if (proj) {
-        proj->SetModified(true);
-    }
+    wxUnusedVar(e);
+    OpenProjectSettings( );
 }
 
 void WorkspaceTab::OnProjectSettingsUI(wxUpdateUIEvent& e)
@@ -251,7 +235,7 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
         Notebook* book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
         if (book) {
             size_t index = book->GetPageIndex("wxCrafter");
-            if (index == book->GetSelection()) {
+            if (index == (size_t)book->GetSelection()) {
                 book->SetSelection(0); // The most likely to be wanted
             }
         }
@@ -410,4 +394,41 @@ void WorkspaceTab::OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event)
 void WorkspaceTab::OnWorkspaceOpenUI(wxUpdateUIEvent& event)
 {
     event.Enable(ManagerST::Get()->IsWorkspaceOpen());
+}
+
+void WorkspaceTab::OpenProjectSettings(const wxString& project)
+{
+    if ( m_dlg ) {
+        m_dlg->Raise();
+        return;
+    }
+    
+    wxString projectName = project.IsEmpty() ? ManagerST::Get()->GetActiveProjectName() : project;
+    wxString title( projectName );
+    title << _( " Project Settings" );
+    
+    // Allow plugins to process this event first
+    clCommandEvent openEvent(wxEVT_CMD_OPEN_PROJ_SETTINGS);
+    openEvent.SetString( project );
+    if ( EventNotifier::Get()->ProcessEvent( openEvent ) ) {
+        return;
+    }
+    
+    //open the project properties dialog
+    BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
+
+    // Find the project configuration name that matches the workspace selected configuration
+    m_dlg = new ProjectSettingsDlg( clMainFrame::Get(), this, matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
+    m_dlg->Show();
+    
+    //mark this project as modified
+    ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
+    if (proj) {
+        proj->SetModified(true);
+    }
+}
+
+void WorkspaceTab::ProjectSettingsDlgClosed()
+{
+    m_dlg = NULL;
 }

@@ -423,7 +423,7 @@ bool Project::SaveXmlFile()
 {
     wxString projectXml;
     wxStringOutputStream sos( &projectXml );
-    bool ok = m_doc.Save( projectXml );
+    bool ok = m_doc.Save( sos );
     
     wxFFile file(m_fileName.GetFullPath(), wxT("w+b"));
     if ( !file.IsOpened() ) {

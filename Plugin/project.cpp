@@ -39,6 +39,7 @@
 #include "plugin.h"
 #include "event_notifier.h"
 #include <wx/sstream.h>
+#include <wx/ffile.h>
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");

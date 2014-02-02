@@ -71,7 +71,8 @@ class SubversionView : public SubversionPageBase
     SvnConsole*          m_subversionConsole;
     int                  m_fileExplorerLastBaseImgIdx;
     ThemeHandlerHelper*  m_themeHelper;
-
+    wxFileName           m_workspaceFile;
+    
 public:
     enum {
         SvnInfo_Tag,

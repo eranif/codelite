@@ -38,6 +38,7 @@
 #include "SvnInfoDialog.h"
 #include <map>
 #include "cl_command_event.h"
+#include "workspacesvnsettings.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
     EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
@@ -105,9 +106,9 @@ SubversionView::~SubversionView()
 void SubversionView::OnChangeRootDir( wxCommandEvent& event )
 {
     wxUnusedVar(event);
-    SvnSelectLocalRepoDlg dlg(this, m_plugin, DoGetCurRepoPath());
-    if(dlg.ShowModal() == wxID_OK) {
-        DoRootDirChanged(dlg.GetPath());
+    wxString newPath = ::wxDirSelector(_("Choose directory"));
+    if ( !newPath.IsEmpty() ) {
+        DoRootDirChanged( newPath );
     }
 }
 
@@ -242,15 +243,14 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 
     // Workspace changes its directory to the workspace path, update the SVN path
     wxString path = ::wxGetCwd();
-
-    // Check if we got a customized directory
-    if(m_plugin->GetManager()->IsWorkspaceOpen()) {
-        wxString customizedPath = LocalWorkspaceST::Get()->GetCustomData(wxT("SubversionPath"));
-        if(customizedPath.IsEmpty() == false && wxFileName::DirExists(customizedPath)) {
-            path = customizedPath;
-        }
+    m_workspaceFile = event.GetString();
+    
+    WorkspaceSvnSettings conf(m_workspaceFile);
+    wxString customizedRepo = conf.Load().GetRepoPath();
+    if ( !customizedRepo.IsEmpty() ) {
+        path.swap( customizedRepo );
     }
-
+    
     DoRootDirChanged(path);
     BuildTree();
 }
@@ -258,6 +258,15 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
 void SubversionView::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
+    
+    // Save the local svn settings
+    if ( m_workspaceFile.IsOk() && m_workspaceFile.Exists() ) {
+        WorkspaceSvnSettings conf(m_workspaceFile);
+        conf.SetRepoPath( m_curpath );
+        conf.Save();
+    }
+    
+    m_workspaceFile.Clear();
     DoChangeRootPathUI(_("<No repository path is selected>"));
     m_plugin->GetConsole()->Clear();
 }
@@ -266,20 +275,6 @@ void SubversionView::ClearAll()
 {
     m_treeCtrl->DeleteAllItems();
 }
-
-#if 0
-static void DoAddArrayToMap(const wxArrayString &files, SvnFileExplorerTraverser::Map_t& mymap, int type, const wxString &rootDir)
-{
-    for(size_t i=0; i<files.GetCount(); i++) {
-        SvnFileInfo fi;
-        wxFileName fn(files.Item(i));
-        fn.MakeAbsolute(rootDir);
-        fi.file = fn.GetFullPath();
-        fi.type = type;
-        mymap[fi.file] = fi;
-    }
-}
-#endif
 
 void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles, const wxArrayString& unversionedFiles, const wxArrayString& newFiles, const wxArrayString& deletedFiles, const wxArrayString& lockedFiles, const wxArrayString& ignoreFiles, bool fileExplorerOnly, const wxString& sRootDir)
 {

@@ -1,1 +1,1 @@
-$ short unsigned int;
+enum ENUM_VAL k;

@@ -35,6 +35,7 @@ Variable & Variable::operator =(const Variable &src)
     m_completeType  = src.m_completeType;
     m_isVolatile    = src.m_isVolatile;
     m_isAuto        = src.m_isAuto;
+    m_enumInTypeDecl= src.m_enumInTypeDecl;
     return *this;
 }
 
@@ -58,6 +59,7 @@ void Variable::Reset()
     m_completeType = "";
     m_isVolatile = false;
     m_isAuto = false;
+    m_enumInTypeDecl = false;
 }
 
 void Variable::Print()
@@ -80,5 +82,6 @@ void Variable::Print()
               << "m_pattern        :" << m_pattern.c_str() << "\n"
               << "m_completeType   :" << m_completeType.c_str() << "\n"
               << "m_isVolatile     :" << m_isVolatile << "\n"
-              << "m_isAuto         :" << m_isAuto << "\n";
+              << "m_isAuto         :" << m_isAuto << "\n"
+              << "m_enumInTypeDecl :" << m_enumInTypeDecl << "\n";
 }

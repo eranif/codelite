@@ -462,6 +462,7 @@ const_or_volatile_spec: /* empty */    { $$ = "";           }
                     | LE_CONST '&'     { $$ = $1 + $2; curr_var.m_rightSideConst = $$;     }
                     | LE_CONST '*' '*' { $$ = $1 + $2 + $3; curr_var.m_rightSideConst = $$;}
                     | LE_VOLATILE { $$ = $1; curr_var.m_isVolatile = true; }
+                    | LE_ENUM const_or_volatile_spec { curr_var.m_enumInTypeDecl = true; }
                     ;
 
 amp_item            : /*empty*/    {$$ = ""; }

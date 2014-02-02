@@ -28,11 +28,12 @@ int main()
     //testPureLexer( buf );
     //print the scope name
     //testScopeParser(buf);
-    //testVarParser(buf);
+    testVarParser(buf);
     //testExprParser(buf);
     //testFuncParser(buf);
     //testTypedefParser(buf);
-    testIsPrimitive(buf);
+    //testIsPrimitive(buf);
+    //testFuncParser(buf);
     free(buf);
 }
 

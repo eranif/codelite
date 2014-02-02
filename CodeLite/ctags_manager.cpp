@@ -2233,12 +2233,17 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
         if ( v.m_isVolatile ) {
             str_output << wxT("volatile ");
         }
-
+        
+        // enum as part of the type?
+        if ( v.m_enumInTypeDecl ) {
+            str_output << "enum ";
+        }
+        
         //add scope
         if (v.m_typeScope.empty() == false) {
             str_output << _U(v.m_typeScope.c_str()) << wxT("::");
         }
-
+        
         if (v.m_type.empty() == false) {
             if(flags & Normalize_Func_Reverse_Macro) {
                 // replace the type if it exists in the map
@@ -2261,9 +2266,10 @@ wxString TagsManager::NormalizeFunctionSig(const wxString &sig, size_t flags, st
         if (v.m_rightSideConst.empty() == false) {
             str_output << wxT(" ") << _U(v.m_rightSideConst.c_str());
         }
-
+        
         if (v.m_name.empty() == false && (flags & Normalize_Func_Name)) {
             str_output << wxT(" ") << _U(v.m_name.c_str());
+            
         } else if ( v.m_isEllipsis ) {
             str_output << wxT(" ...");
         }

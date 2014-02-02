@@ -24,7 +24,7 @@ public:
     bool            m_isTemplate;
     std::string     m_templateDecl;
     bool            m_isPtr;
-    std::string     m_type;		//as in 'int a;' -> type=int
+    std::string     m_type; //as in 'int a;' -> type=int
     std::string     m_typeScope;//as in 'std::string a;' -> typeScope = std, type=string
     std::string     m_pattern;
     std::string     m_completeType;
@@ -38,7 +38,8 @@ public:
     bool            m_isBasicType;
     bool            m_isVolatile;
     bool            m_isAuto;
-    
+    bool            m_enumInTypeDecl; // e.g. enum MyENum e
+
 public:
     Variable();
     virtual ~Variable();

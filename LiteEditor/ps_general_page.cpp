@@ -16,7 +16,8 @@ PSGeneralPage::PSGeneralPage( wxWindow* parent, const wxString &projectName, con
 
 void PSGeneralPage::OnProjectCustumBuildUI( wxUpdateUIEvent& event )
 {
-    event.Enable(!m_dlg->IsCustomBuildEnabled() && m_checkBoxEnabled->IsChecked());
+    // do not disable the General page even when in custom build
+    event.Enable( m_checkBoxEnabled->IsChecked() );
 }
 
 void PSGeneralPage::Load(BuildConfigPtr buildConf)

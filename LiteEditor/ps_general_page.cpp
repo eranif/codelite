@@ -5,6 +5,8 @@
 #include "project.h"
 #include "dirsaver.h"
 #include "manager.h"
+#include <wx/filedlg.h>
+#include <wx/dirdlg.h>
 
 PSGeneralPage::PSGeneralPage( wxWindow* parent, const wxString &projectName, const wxString &conf, ProjectSettingsDlg *dlg )
     : PSGeneralPageBase( parent )
@@ -96,7 +98,6 @@ void PSGeneralPage::Clear()
 
 void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
 {
-    event.Skip();
     m_dlg->SetIsDirty(true);
 }
 
@@ -117,4 +118,29 @@ void PSGeneralPage::OnProjectEnabled(wxCommandEvent& event)
 {
     m_dlg->SetIsProjectEnabled( event.IsChecked() );
     m_dlg->SetIsDirty(true);
+}
+
+void PSGeneralPage::OnCustomEditorClicked(wxCommandEvent& event)
+{
+    wxPGProperty* prop = m_pgMgr136->GetSelectedProperty();
+    CHECK_PTR_RET(prop);
+    m_dlg->SetIsDirty(true);
+    
+    if ( prop == m_pgPropProgram ) {
+        wxFileName curvalue = prop->GetValueAsString();
+        wxString program = ::wxFileSelector(_("Choose a file"), curvalue.GetPath());
+        if ( !program.IsEmpty() ) {
+            program.Replace("\\", "/");
+            prop->SetValue( program );
+        }
+        
+    } else if ( prop == m_pgPropWorkingDirectory ) {
+        wxString curpath = prop->GetValueAsString();
+        wxFileName fp(curpath, "");
+        wxString newPath = ::wxDirSelector(_("Choose a directory"), fp.GetPath());
+        if ( !newPath.IsEmpty() ) {
+            newPath.Replace("\\", "/");
+            prop->SetValue( newPath );
+        }
+    }
 }

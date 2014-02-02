@@ -52,7 +52,7 @@ protected:
     virtual void OnUpdateUI(wxUpdateUIEvent& event);
     virtual void OnPropertyChanged(wxPropertyGridEvent& event);
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
-
+    
 public:
     /** Constructor */
     PSCompilerPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp );

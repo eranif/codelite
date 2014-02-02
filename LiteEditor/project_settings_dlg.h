@@ -59,6 +59,7 @@ public:
     virtual void SelectChoiceWithGlobalSettings(wxPGProperty* p, const wxString& text);
     virtual bool PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options);
     virtual bool PopupAddOptionCheckDlg(wxString &v, const wxString& title, const Compiler::CmpCmdLineOptions& options);
+    
 };
 
 /**

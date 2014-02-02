@@ -83,6 +83,7 @@ protected:
     virtual void OnProjectEnabled(wxCommandEvent& event) { event.Skip(); }
     virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
 
 public:
     PSGeneralPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

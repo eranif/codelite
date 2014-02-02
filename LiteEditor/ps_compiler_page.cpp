@@ -6,6 +6,7 @@
 #include "project.h"
 #include "ps_general_page.h"
 #include "manager.h"
+#include <wx/filedlg.h>
 
 PSCompilerPage::PSCompilerPage( wxWindow* parent, const wxString &projectName, ProjectSettingsDlg *dlg, PSGeneralPage *gp )
     : PSCompilerPageBase( parent )
@@ -62,7 +63,6 @@ void PSCompilerPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
 
 void PSCompilerPage::OnPropertyChanged(wxPropertyGridEvent& event)
 {
-    event.Skip();
     m_dlg->SetIsDirty(true);
 }
 
@@ -89,6 +89,13 @@ void PSCompilerPage::OnCustomEditorClicked(wxCommandEvent& event)
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
         if (PopupAddOptionCheckDlg(value, _("Compiler options"), cmp->GetCompilerOptions())) {
             prop->SetValueFromString( value );
+        }
+    } else if ( prop == m_pgPropPreCmpHeaderFile ) {
+        wxFileName curvalue = prop->GetValueAsString();
+        wxString program = ::wxFileSelector(_("Choose a file"), curvalue.GetPath());
+        if ( !program.IsEmpty() ) {
+            program.Replace("\\", "/");
+            prop->SetValue( program );
         }
     }
 }

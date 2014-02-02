@@ -147,12 +147,13 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgPropGUIApp = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxBoolProperty( _("This program is a GUI application"), wxPG_LABEL, 0) );
     m_pgPropGUIApp->SetHelpString(_("By marking the project as a GUI project, CodeLite will launch the program without any console terminal wrapping the process execution"));
     
-    m_pgPropProgram = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxFileProperty( _("Executable to Run / Debug"), wxPG_LABEL, wxT("")) );
-    m_pgMgr136->SetPropertyAttribute(m_pgPropProgram, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropProgram = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Executable to Run / Debug"), wxPG_LABEL, wxT("")) );
     m_pgPropProgram->SetHelpString(_("The executable to run / debug"));
+    m_pgPropProgram->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_pgPropWorkingDirectory = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxDirProperty( _("Working Directory"), wxPG_LABEL, wxT("")) );
+    m_pgPropWorkingDirectory = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Working Directory"), wxPG_LABEL, wxT("")) );
     m_pgPropWorkingDirectory->SetHelpString(_("The working directory set before executing or debugging the program"));
+    m_pgPropWorkingDirectory->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgPropArgs = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Program Arguments"), wxPG_LABEL, wxT("")) );
     m_pgPropArgs->SetHelpString(_("The command line arguments to pass to the program when executing or debugging it"));
@@ -177,6 +178,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_checkBoxEnabled->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
     m_pgMgr136->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanged), NULL, this);
     m_pgMgr136->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
+    m_pgMgr136->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked), NULL, this);
     
 }
 
@@ -185,6 +187,7 @@ PSGeneralPageBase::~PSGeneralPageBase()
     m_checkBoxEnabled->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
     m_pgMgr136->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanged), NULL, this);
     m_pgMgr136->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
+    m_pgMgr136->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked), NULL, this);
     
 }
 
@@ -247,9 +250,9 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     CATEGORY_PCH11 = m_pgMgr->Append(  new wxPropertyCategory( _("Pre Compiled Header") ) );
     CATEGORY_PCH11->SetHelpString(wxT(""));
     
-    m_pgPropPreCmpHeaderFile = m_pgMgr->AppendIn( CATEGORY_PCH11,  new wxFileProperty( _("Header File"), wxPG_LABEL, wxT("")) );
-    m_pgMgr->SetPropertyAttribute(m_pgPropPreCmpHeaderFile, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropPreCmpHeaderFile = m_pgMgr->AppendIn( CATEGORY_PCH11,  new wxStringProperty( _("Header File"), wxPG_LABEL, wxT("")) );
     m_pgPropPreCmpHeaderFile->SetHelpString(_("Pre compiled header"));
+    m_pgPropPreCmpHeaderFile->SetEditor( wxT("TextCtrlAndButton") );
     
     m_pgPropIncludePCH = m_pgMgr->AppendIn( CATEGORY_PCH11,  new wxBoolProperty( _("Excplicitly Include PCH"), wxPG_LABEL, 1) );
     m_pgPropIncludePCH->SetHelpString(_("Explicitly include the PCH file in the command line using a compiler switch (.e.g -include /path/to/pch)"));

@@ -46,6 +46,7 @@ class PSGeneralPage : public PSGeneralPageBase, public IProjectSettingsPage
     wxString            m_configName;
 
 protected:
+    virtual void OnCustomEditorClicked(wxCommandEvent& event);
     virtual void OnProjectEnabled(wxCommandEvent& event);
     virtual void OnValueChanged(wxPropertyGridEvent& event);
 
@@ -64,7 +65,6 @@ public:
     virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
     virtual void Load(BuildConfigPtr buildConf);
     virtual void Clear();
-
     wxString GetCompiler() const {
         return m_pgPropCompiler->GetValueAsString();
     }

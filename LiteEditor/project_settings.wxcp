@@ -894,6 +894,12 @@
 									"m_eventHandler":	"wxUpdateUIEventHandler",
 									"m_functionNameAndSignature":	"OnProjectCustumBuildUI(wxUpdateUIEvent& event)",
 									"m_description":	"Process a wxEVT_UPDATE_UI event"
+								}, {
+									"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+									"m_eventClass":	"wxCommandEvent",
+									"m_eventHandler":	"wxCommandEventHandler",
+									"m_functionNameAndSignature":	"OnCustomEditorClicked(wxCommandEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked."
 								}],
 							"m_children":	[{
 									"m_type":	4486,
@@ -1441,12 +1447,12 @@
 												}, {
 													"type":	"choice",
 													"m_label":	"Property Editor Control",
-													"m_selection":	0,
+													"m_selection":	5,
 													"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 												}, {
 													"type":	"choice",
 													"m_label":	"Kind:",
-													"m_selection":	8,
+													"m_selection":	4,
 													"m_options":	["wxPropertyCategory", "wxIntProperty", "wxFloatProperty", "wxBoolProperty", "wxStringProperty", "wxLongStringProperty", "wxDirProperty", "wxArrayStringProperty", "wxFileProperty", "wxEnumProperty", "wxEditEnumProperty", "wxFlagsProperty", "wxDateProperty", "wxImageFileProperty", "wxFontProperty", "wxSystemColourProperty"]
 												}, {
 													"type":	"string",
@@ -1506,12 +1512,12 @@
 												}, {
 													"type":	"choice",
 													"m_label":	"Property Editor Control",
-													"m_selection":	0,
+													"m_selection":	5,
 													"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 												}, {
 													"type":	"choice",
 													"m_label":	"Kind:",
-													"m_selection":	6,
+													"m_selection":	4,
 													"m_options":	["wxPropertyCategory", "wxIntProperty", "wxFloatProperty", "wxBoolProperty", "wxStringProperty", "wxLongStringProperty", "wxDirProperty", "wxArrayStringProperty", "wxFileProperty", "wxEnumProperty", "wxEditEnumProperty", "wxFlagsProperty", "wxDateProperty", "wxImageFileProperty", "wxFontProperty", "wxSystemColourProperty"]
 												}, {
 													"type":	"string",
@@ -2639,12 +2645,12 @@
 												}, {
 													"type":	"choice",
 													"m_label":	"Property Editor Control",
-													"m_selection":	0,
+													"m_selection":	5,
 													"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 												}, {
 													"type":	"choice",
 													"m_label":	"Kind:",
-													"m_selection":	8,
+													"m_selection":	4,
 													"m_options":	["wxPropertyCategory", "wxIntProperty", "wxFloatProperty", "wxBoolProperty", "wxStringProperty", "wxLongStringProperty", "wxDirProperty", "wxArrayStringProperty", "wxFileProperty", "wxEnumProperty", "wxEditEnumProperty", "wxFlagsProperty", "wxDateProperty", "wxImageFileProperty", "wxFontProperty", "wxSystemColourProperty"]
 												}, {
 													"type":	"string",

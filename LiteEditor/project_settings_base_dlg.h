@@ -23,7 +23,6 @@
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/notebook.h>
@@ -31,6 +30,7 @@
 #include <wx/dataview.h>
 #include <wx/statline.h>
 #include <wx/listctrl.h>
+#include <wx/statbox.h>
 #include <wx/splitter.h>
 
 class ProjectSettingsBaseDlg : public wxDialog
@@ -123,29 +123,20 @@ public:
 class PSLinkPageBase : public wxPanel
 {
 protected:
-    wxPanel* m_linkerPage;
     wxCheckBox* m_checkLinkerNeeded;
-    wxStaticText* m_staticText3311;
-    wxChoice* m_choiceLnkUseWithGlobalSettings;
-    wxStaticText* m_staticText10;
-    wxTextCtrl* m_textLinkerOptions;
-    wxButton* m_buttonLinkerOptions;
-    wxStaticText* m_staticText7;
-    wxTextCtrl* m_textLibraryPath;
-    wxButton* m_buttonLibraryPath;
-    wxStaticText* m_staticText8;
-    wxTextCtrl* m_textLibraries;
-    wxButton* m_buttonLibraries;
+    wxPropertyGridManager* m_pgMgr;
+    wxPGProperty* CATEGORY_OPTIONS;
+    wxPGProperty* m_pgPropBehaviorWithGlobalSettings;
+    wxPGProperty* m_pgPropOptions;
+    wxPGProperty* m_pgPropLibraryPaths;
+    wxPGProperty* m_pgPropLibraries;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCheckLinkerNeeded(wxCommandEvent& event) { event.Skip(); }
     virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLinkerNotNeededUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnButtonAddLinkerOptions(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnAddLibraryPath(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnAddLibrary(wxCommandEvent& event) { event.Skip(); }
 
 public:
     PSLinkPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

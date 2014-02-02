@@ -45,15 +45,11 @@ class PSLinkerPage : public PSLinkPageBase, public IProjectSettingsPage
     PSGeneralPage*      m_gp;
 
 protected:
+    virtual void OnCheckLinkerNeeded(wxCommandEvent& event);
+    virtual void OnLinkerNotNeededUI(wxUpdateUIEvent& event);
+    virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
+    virtual void OnCustomEditorClicked(wxCommandEvent& event);
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
-    // Handlers for PSLinkPageBase events.
-    void OnCheckLinkerNeeded( wxCommandEvent& event );
-    void OnLinkerNotNeededUI( wxUpdateUIEvent& event );
-    void OnCmdEvtVModified( wxCommandEvent& event );
-    void OnButtonAddLinkerOptions( wxCommandEvent& event );
-    void OnAddLibraryPath( wxCommandEvent& event );
-    void OnAddLibrary( wxCommandEvent& event );
-    void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
 
 public:
     /** Constructor */

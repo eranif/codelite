@@ -294,76 +294,38 @@ PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* bSizer37 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer37);
     
-    m_linkerPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    bSizer37->Add(m_linkerPage, 1, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* linkerPageSizer = new wxBoxSizer(wxVERTICAL);
-    m_linkerPage->SetSizer(linkerPageSizer);
-    
-    m_checkLinkerNeeded = new wxCheckBox(m_linkerPage, wxID_ANY, _("Linker is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkLinkerNeeded = new wxCheckBox(this, wxID_ANY, _("Linker is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkLinkerNeeded->SetValue(false);
     
-    linkerPageSizer->Add(m_checkLinkerNeeded, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizer37->Add(m_checkLinkerNeeded, 0, wxALL|wxALIGN_LEFT, 5);
     
-    wxStaticBoxSizer* sbSizer4 = new wxStaticBoxSizer( new wxStaticBox(m_linkerPage, wxID_ANY, _("Linker Options:")), wxVERTICAL);
+    wxArrayString m_pgMgrArr;
+    wxUnusedVar(m_pgMgrArr);
+    wxArrayInt m_pgMgrIntArr;
+    wxUnusedVar(m_pgMgrIntArr);
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    linkerPageSizer->Add(sbSizer4, 0, wxALL|wxEXPAND, 5);
+    bSizer37->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
     
-    wxFlexGridSizer* flexGridSizer21 = new wxFlexGridSizer(0, 3, 0, 0);
-    flexGridSizer21->SetFlexibleDirection( wxBOTH );
-    flexGridSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer21->AddGrowableCol(1);
+    CATEGORY_OPTIONS = m_pgMgr->Append(  new wxPropertyCategory( _("Options") ) );
+    CATEGORY_OPTIONS->SetHelpString(wxT(""));
     
-    sbSizer4->Add(flexGridSizer21, 1, wxEXPAND, 5);
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxEnumProperty( _("Use with global settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropBehaviorWithGlobalSettings->SetHelpString(_("Define how CodeLite will merge the linker settings defined in the 'Global Settings' with the settings defined on this page"));
     
-    m_staticText3311 = new wxStaticText(m_linkerPage, wxID_ANY, _("Use with global settings :"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropOptions = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxStringProperty( _("Linker Options"), wxPG_LABEL, wxT("")) );
+    m_pgPropOptions->SetHelpString(_("Add additional linker options separated by semi-colon"));
+    m_pgPropOptions->SetEditor( wxT("TextCtrlAndButton") );
     
-    flexGridSizer21->Add(m_staticText3311, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropLibraryPaths = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxStringProperty( _("Libraries Search Path"), wxPG_LABEL, wxT("")) );
+    m_pgPropLibraryPaths->SetHelpString(_("Add additional library search paths separated by semi-colon"));
+    m_pgPropLibraryPaths->SetEditor( wxT("TextCtrlAndButton") );
     
-    wxArrayString m_choiceLnkUseWithGlobalSettingsArr;
-    m_choiceLnkUseWithGlobalSettings = new wxChoice(m_linkerPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceLnkUseWithGlobalSettingsArr, 0);
-    
-    flexGridSizer21->Add(m_choiceLnkUseWithGlobalSettings, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    flexGridSizer21->Add(0, 0, 0, wxALL, 5);
-    
-    m_staticText10 = new wxStaticText(m_linkerPage, wxID_ANY, _("Options:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer21->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textLinkerOptions = new wxTextCtrl(m_linkerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer21->Add(m_textLinkerOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonLinkerOptions = new wxButton(m_linkerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer21->Add(m_buttonLinkerOptions, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText7 = new wxStaticText(m_linkerPage, wxID_ANY, _("Library Paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer21->Add(m_staticText7, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textLibraryPath = new wxTextCtrl(m_linkerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer21->Add(m_textLibraryPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonLibraryPath = new wxButton(m_linkerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer21->Add(m_buttonLibraryPath, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText8 = new wxStaticText(m_linkerPage, wxID_ANY, _("Libraries:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer21->Add(m_staticText8, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textLibraries = new wxTextCtrl(m_linkerPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    m_textLibraries->SetToolTip(_("Enter any extra library names, separated by';' e.g. Foo  or  Foo;Bar"));
-    
-    flexGridSizer21->Add(m_textLibraries, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonLibraries = new wxButton(m_linkerPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer21->Add(m_buttonLibraries, 0, wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropLibraries = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxStringProperty( _("Libraries"), wxPG_LABEL, wxT("")) );
+    m_pgPropLibraries->SetHelpString(_("Enter any extra library names, separated by';' e.g. Foo  or  Foo;Bar"));
+    m_pgPropLibraries->SetEditor( wxT("TextCtrlAndButton") );
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -374,23 +336,8 @@ PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectEnabledUI), NULL, this);
     m_checkLinkerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCheckLinkerNeeded), NULL, this);
     m_checkLinkerNeeded->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_staticText3311->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_choiceLnkUseWithGlobalSettings->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_staticText10->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_textLinkerOptions->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSLinkPageBase::OnCmdEvtVModified), NULL, this);
-    m_textLinkerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_buttonLinkerOptions->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnButtonAddLinkerOptions), NULL, this);
-    m_buttonLinkerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_staticText7->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_textLibraryPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSLinkPageBase::OnCmdEvtVModified), NULL, this);
-    m_textLibraryPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_buttonLibraryPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnAddLibraryPath), NULL, this);
-    m_buttonLibraryPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_staticText8->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_textLibraries->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSLinkPageBase::OnCmdEvtVModified), NULL, this);
-    m_textLibraries->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_buttonLibraries->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnAddLibrary), NULL, this);
-    m_buttonLibraries->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked), NULL, this);
+    m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
     
 }
 
@@ -399,23 +346,8 @@ PSLinkPageBase::~PSLinkPageBase()
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectEnabledUI), NULL, this);
     m_checkLinkerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCheckLinkerNeeded), NULL, this);
     m_checkLinkerNeeded->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_staticText3311->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_choiceLnkUseWithGlobalSettings->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_staticText10->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_textLinkerOptions->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSLinkPageBase::OnCmdEvtVModified), NULL, this);
-    m_textLinkerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_buttonLinkerOptions->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnButtonAddLinkerOptions), NULL, this);
-    m_buttonLinkerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_staticText7->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_textLibraryPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSLinkPageBase::OnCmdEvtVModified), NULL, this);
-    m_textLibraryPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_buttonLibraryPath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnAddLibraryPath), NULL, this);
-    m_buttonLibraryPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_staticText8->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_textLibraries->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSLinkPageBase::OnCmdEvtVModified), NULL, this);
-    m_textLibraries->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
-    m_buttonLibraries->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnAddLibrary), NULL, this);
-    m_buttonLibraries->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
     
 }
 

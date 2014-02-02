@@ -46,7 +46,7 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
 
 void PSCompilerPage::Clear()
 {
-    wxPropertyGridIterator iter = m_pgMgr->GetIterator();
+    wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
     for( ; !iter.AtEnd(); ++iter ) {
         if ( iter.GetProperty() && !iter.GetProperty()->IsCategory() ) {
             iter.GetProperty()->SetValueToUnspecified();

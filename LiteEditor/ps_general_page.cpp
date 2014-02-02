@@ -85,13 +85,13 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
 
 void PSGeneralPage::Clear()
 {
-    m_checkBoxEnabled->SetValue(true);
-    wxPropertyGridIterator iter = m_pgMgr136->GetIterator();
+    wxPropertyGridIterator iter = m_pgMgr136->GetGrid()->GetIterator();
     for( ; !iter.AtEnd(); ++iter ) {
         if ( iter.GetProperty() && !iter.GetProperty()->IsCategory() ) {
             iter.GetProperty()->SetValueToUnspecified();
         }
     }
+    m_checkBoxEnabled->SetValue(true);
 }
 
 void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)

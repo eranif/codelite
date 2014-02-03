@@ -130,7 +130,7 @@ void ProjectSettingsDlg::BuildTree()
 ProjectSettingsDlg::~ProjectSettingsDlg()
 {
     m_workspaceTab->ProjectSettingsDlgClosed();
-    
+
     EventNotifier::Get()->Disconnect(wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
 
@@ -265,12 +265,12 @@ void ProjectSettingsDlg::OnConfigurationChanged(wxCommandEvent& event)
 void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
 {
     e.Skip();
-    
+
     // Make sure we know which configuration to load for the new project
-    
+
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(e.GetString(), "");
     CHECK_PTR_RET(bldConf);
-    
+
     if(m_isDirty) {
         int answer = ::wxMessageBox(_("Save changes before loading new configuration?"), _("Save Changes"), wxICON_QUESTION|wxYES_NO|wxCANCEL|wxCENTER);
         switch ( answer ) {
@@ -284,16 +284,16 @@ void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
             return;
         }
     }
-    
+
     ClearValues();
-    
+
     // another project was selected in the tree view
     m_projectName = e.GetString();
     m_configName  = bldConf->GetName();
-    
+
     // determine the correct configuration to load
     SetTitle( wxString() << m_projectName << " Project Settings" );
-    
+
     DoGetAllBuildConfigs();
     LoadValues(m_configName);
 }
@@ -360,103 +360,14 @@ GlobalSettingsPanel::GlobalSettingsPanel(wxWindow* parent, const wxString &proje
     Centre();
 }
 
-void GlobalSettingsPanel::OnButtonAddCompilerOptions(wxCommandEvent &event)
-{
-    wxString cmpName = m_gp->GetCompiler();
-    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-    if (PopupAddOptionCheckDlg(m_textCompilerOptions, _("Compiler options"), cmp->GetCompilerOptions())) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnButtonAddCCompilerOptions(wxCommandEvent& event)
-{
-    wxString cmpName = m_gp->GetCompiler();
-    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-    if (PopupAddOptionCheckDlg(m_textCtrlCCompileOptions, _("C Compiler options"), cmp->GetCompilerOptions())) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-
-void GlobalSettingsPanel::OnAddSearchPath(wxCommandEvent &event)
-{
-    if (PopupAddOptionDlg(m_textAdditionalSearchPath)) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnButtonAddPreprocessor(wxCommandEvent &event)
-{
-    if (PopupAddOptionDlg(m_textPreprocessor)) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnAddLibrary(wxCommandEvent &event)
-{
-    if (PopupAddOptionDlg(m_textLibraries)) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnAddLibraryPath(wxCommandEvent &event)
-{
-    if (PopupAddOptionDlg(m_textLibraryPath)) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnButtonAddLinkerOptions(wxCommandEvent &event)
-{
-    wxString cmpName = m_gp->GetCompiler();
-    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-    if (PopupAddOptionCheckDlg(m_textLinkerOptions, _("Linker options"), cmp->GetLinkerOptions())) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnResourceCmpAddOption(wxCommandEvent &event)
-{
-    if (PopupAddOptionDlg(m_textAddResCmpOptions)) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnResourceCmpAddPath(wxCommandEvent &event)
-{
-    if (PopupAddOptionDlg(m_textAddResCmpPath)) {
-        m_dlg->SetIsDirty(true);
-    }
-    event.Skip();
-}
-
-void GlobalSettingsPanel::OnCmdEvtVModified(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    m_dlg->SetIsDirty(true);
-}
-
 void GlobalSettingsPanel::Clear()
 {
-    m_textCompilerOptions->SetValue(wxEmptyString);
-    m_textPreprocessor->SetValue(wxEmptyString);
-    m_textAdditionalSearchPath->SetValue(wxEmptyString);
-
-    m_textLinkerOptions->SetValue(wxEmptyString);
-    m_textLibraries->SetValue(wxEmptyString);
-    m_textLibraryPath->SetValue(wxEmptyString);
-
-    m_textAddResCmpOptions->SetValue(wxEmptyString);
-    m_textAddResCmpPath->SetValue(wxEmptyString);
+    wxPropertyGridIterator iter = m_pgMgr->GetGrid()->GetIterator();
+    for( ; !iter.AtEnd(); ++iter ) {
+        if ( iter.GetProperty() && !iter.GetProperty()->IsCategory() ) {
+            iter.GetProperty()->SetValueToUnspecified();
+        }
+    }
 }
 
 void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
@@ -467,18 +378,16 @@ void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
         Clear();
         return;
     }
-
-    m_textCompilerOptions->SetValue(globalSettings->GetCompileOptions());
-    m_textCtrlCCompileOptions->SetValue(globalSettings->GetCCompileOptions());
-    m_textPreprocessor->SetValue(globalSettings->GetPreprocessor());
-    m_textAdditionalSearchPath->SetValue(globalSettings->GetIncludePath());
-
-    m_textLinkerOptions->SetValue(globalSettings->GetLinkOptions());
-    m_textLibraries->SetValue(globalSettings->GetLibraries());
-    m_textLibraryPath->SetValue(globalSettings->GetLibPath());
-
-    m_textAddResCmpOptions->SetValue(globalSettings->GetResCompileOptions());
-    m_textAddResCmpPath->SetValue(globalSettings->GetResCmpIncludePath());
+    
+    m_pgPropCCmpOpts->SetValue( globalSettings->GetCCompileOptions() );
+    m_pgPropCppCmpOpts->SetValue( globalSettings->GetCompileOptions() );
+    m_pgPropPreProcessors->SetValue( globalSettings->GetPreprocessor() );
+    m_pgPropIncludePaths->SetValue( globalSettings->GetIncludePath() );
+    m_pgPropOptions->SetValue( globalSettings->GetLinkOptions() );
+    m_pgPropLIbs->SetValue( globalSettings->GetLibraries() );
+    m_pgPropLibPath->SetValue( globalSettings->GetLibPath() );
+    m_pgPropResCmpOptions->SetValue(globalSettings->GetResCompileOptions());
+    m_pgPropResCmpSearchPath->SetValue( globalSettings->GetResCmpIncludePath() );
 }
 
 void GlobalSettingsPanel::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -491,20 +400,58 @@ void GlobalSettingsPanel::Save(BuildConfigPtr buildConf, ProjectSettingsPtr proj
         return;
     }
 
-    globalSettings->SetCompileOptions(m_textCompilerOptions->GetValue());
-    globalSettings->SetCCompileOptions(m_textCtrlCCompileOptions->GetValue());
-    globalSettings->SetIncludePath(m_textAdditionalSearchPath->GetValue());
-    globalSettings->SetPreprocessor(m_textPreprocessor->GetValue());
+    globalSettings->SetCompileOptions(m_pgPropCppCmpOpts->GetValueAsString());
+    globalSettings->SetCCompileOptions(m_pgPropCCmpOpts->GetValueAsString());
+    globalSettings->SetIncludePath(m_pgPropIncludePaths->GetValueAsString());
+    globalSettings->SetPreprocessor(m_pgPropPreProcessors->GetValueAsString());
 
-    globalSettings->SetLibPath(m_textLibraryPath->GetValue());
-    globalSettings->SetLibraries(m_textLibraries->GetValue());
-    globalSettings->SetLinkOptions(m_textLinkerOptions->GetValue());
+    globalSettings->SetLibPath(m_pgPropLibPath->GetValueAsString());
+    globalSettings->SetLibraries(m_pgPropLIbs->GetValueAsString());
+    globalSettings->SetLinkOptions(m_pgPropOptions->GetValueAsString());
 
-    globalSettings->SetResCmpIncludePath(m_textAddResCmpPath->GetValue());
-    globalSettings->SetResCmpOptions(m_textAddResCmpOptions->GetValue());
+    globalSettings->SetResCmpIncludePath(m_pgPropResCmpSearchPath->GetValueAsString());
+    globalSettings->SetResCmpOptions(m_pgPropResCmpOptions->GetValueAsString());
 
     //save settings
     ManagerST::Get()->SetProjectGlobalSettings(m_projectName, globalSettings);
+}
+
+void GlobalSettingsPanel::OnCustomEditorClicked(wxCommandEvent& event)
+{
+    m_dlg->SetIsDirty(true);
+    wxPGProperty* prop = m_pgMgr->GetSelectedProperty();
+    CHECK_PTR_RET(prop);
+    
+    wxString cmpName = m_gp->GetCompiler();
+    CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
+    
+    if ( prop == m_pgPropCCmpOpts || prop == m_pgPropCppCmpOpts ) {
+        wxString v = prop->GetValueAsString();
+        if ( PopupAddOptionCheckDlg(v, _("Compiler Options"), cmp->GetCompilerOptions()) ) {
+            prop->SetValueFromString( v );
+        }
+    } else if ( prop == m_pgPropIncludePaths        || 
+                prop == m_pgPropPreProcessors       || 
+                prop == m_pgPropLibPath             || 
+                prop == m_pgPropLIbs                ||
+                prop == m_pgPropResCmpOptions       || 
+                prop == m_pgPropResCmpSearchPath
+    ) {
+        wxString v = prop->GetValueAsString();
+        if ( PopupAddOptionDlg( v ) ) {
+            prop->SetValueFromString( v );
+        }
+    } else if ( prop == m_pgPropOptions ) {
+        wxString v = prop->GetValueAsString();
+        if ( PopupAddOptionCheckDlg(v, _("Linker Options"), cmp->GetLinkerOptions()) ) {
+            prop->SetValueFromString( v );
+        }
+    }
+}
+
+void GlobalSettingsPanel::OnValueChanged(wxPropertyGridEvent& event)
+{
+    m_dlg->SetIsDirty(true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////

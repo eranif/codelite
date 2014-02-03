@@ -59,7 +59,7 @@ public:
     virtual void SelectChoiceWithGlobalSettings(wxPGProperty* p, const wxString& text);
     virtual bool PopupAddOptionCheckDlg(wxTextCtrl *ctrl, const wxString& title, const Compiler::CmpCmdLineOptions& options);
     virtual bool PopupAddOptionCheckDlg(wxString &v, const wxString& title, const Compiler::CmpCmdLineOptions& options);
-    
+
 };
 
 /**
@@ -79,19 +79,8 @@ public:
     virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
 
 protected:
-
-    virtual void OnButtonAddCCompilerOptions(wxCommandEvent& event);
-    virtual void OnCmdEvtVModified( wxCommandEvent& event );
-    virtual void OnButtonAddCompilerOptions(wxCommandEvent &event);
-    virtual void OnAddSearchPath(wxCommandEvent &event);
-    virtual void OnButtonAddPreprocessor(wxCommandEvent &event);
-
-    virtual void OnAddLibraryPath(wxCommandEvent &event);
-    virtual void OnAddLibrary(wxCommandEvent &event);
-    virtual void OnButtonAddLinkerOptions(wxCommandEvent &event);
-
-    virtual void OnResourceCmpAddPath(wxCommandEvent &e);
-    virtual void OnResourceCmpAddOption(wxCommandEvent &e);
+    virtual void OnCustomEditorClicked(wxCommandEvent& event);
+    virtual void OnValueChanged(wxPropertyGridEvent& event);
 };
 
 /**
@@ -105,7 +94,7 @@ class ProjectSettingsDlg : public ProjectSettingsBaseDlg
     bool      m_isCustomBuild;
     bool      m_isProjectEnabled;
     WorkspaceTab* m_workspaceTab;
-    
+
 protected:
     void SaveValues();
     void ClearValues();

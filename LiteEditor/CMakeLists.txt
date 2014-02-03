@@ -170,5 +170,3 @@ endif()
 if ( USE_CLANG )
   install(FILES ${CLANG_BINARY} DESTINATION ${PLUGINS_DIR})
 endif( USE_CLANG )
-
-add_dependencies(codelite GIT_REVISION)

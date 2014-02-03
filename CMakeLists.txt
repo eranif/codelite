@@ -457,7 +457,7 @@ endif ( USE_PCH )
 add_dependencies(wxsqlite3 sqlite3lib)
 add_dependencies(databaselayersqlite wxsqlite3)
 add_dependencies(wxshapeframework wxsqlite3)
-add_dependencies(libcodelite wxshapeframework databaselayersqlite sqlite3 wxsqlite3)
+add_dependencies(libcodelite wxshapeframework databaselayersqlite wxsqlite3)
 add_dependencies(plugin libcodelite)
 add_dependencies(codelite plugin)
 

@@ -59,7 +59,7 @@ BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()
 
 ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, WorkspaceTab* workspaceTab, const wxString &configName, const wxString &projectName, const wxString &title )
-    : ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 782,502 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+    : ProjectSettingsBaseDlg( parent, wxID_ANY, title )
     , m_projectName(projectName)
     , m_configName(configName)
     , m_isDirty(false)

@@ -23,7 +23,7 @@
 			"border":	0,
 			"gbSpan":	",",
 			"gbPosition":	",",
-			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxSTAY_ON_TOP", "wxRESIZE_BORDER"],
+			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
 			"m_sizerFlags":	[],
 			"m_properties":	[{
 					"type":	"string",

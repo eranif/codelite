@@ -59,7 +59,11 @@ BEGIN_EVENT_TABLE(ProjectSettingsDlg, ProjectSettingsBaseDlg)
 END_EVENT_TABLE()
 
 ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, WorkspaceTab* workspaceTab, const wxString &configName, const wxString &projectName, const wxString &title )
+#ifdef __WXMAC__
+    : ProjectSettingsBaseDlg( parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER )
+#else
     : ProjectSettingsBaseDlg( parent, wxID_ANY, title )
+#endif
     , m_projectName(projectName)
     , m_configName(configName)
     , m_isDirty(false)
@@ -140,7 +144,9 @@ void ProjectSettingsDlg::OnButtonOK(wxCommandEvent &event)
     event.Skip();
     OnButtonApply(event);
     ManagerST::Get()->UpdateParserPaths(true);
+#ifndef __WXMAC__
     Destroy();
+#endif
 }
 
 void ProjectSettingsDlg::OnButtonApply(wxCommandEvent &event)
@@ -323,13 +329,19 @@ void ProjectSettingsDlg::DoGetAllBuildConfigs()
 void ProjectSettingsDlg::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
+#ifndef __WXMAC__
     Destroy();
+#endif
+
 }
 
 void ProjectSettingsDlg::OnButtonCancel(wxCommandEvent& event)
 {
     event.Skip();
+#ifndef __WXMAC__
     Destroy();
+#endif
+
 }
 
 

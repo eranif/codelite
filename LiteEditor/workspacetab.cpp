@@ -417,11 +417,21 @@ void WorkspaceTab::OpenProjectSettings(const wxString& project)
     //open the project properties dialog
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
 
+#ifdef __WXMAC__
+    // On OSX we use a modal version of the project settings
+    // since otherwise we get some weird focus issues when the project 
+    // settings dialog popups helper dialogs
+    ProjectSettingsDlg dlg( clMainFrame::Get(), this, matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
+    dlg.ShowModal();
+    
+#else
     // Find the project configuration name that matches the workspace selected configuration
     m_dlg = new ProjectSettingsDlg( clMainFrame::Get(), this, matrix->GetProjectSelectedConf( matrix->GetSelectedConfigurationName(), projectName ), projectName, title );
     m_dlg->Show();
     
-    //mark this project as modified
+#endif
+
+    // Mark this project as modified
     ProjectPtr proj = ManagerST::Get()->GetProject(projectName);
     if (proj) {
         proj->SetModified(true);

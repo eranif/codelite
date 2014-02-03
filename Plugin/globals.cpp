@@ -749,11 +749,12 @@ void WrapInShell(wxString& cmd)
     cmd = command;
 #else
     command << wxT("/bin/sh -c '");
+	// escape any single quoutes
+	cmd.Replace("'", "\\'");
     command << cmd << wxT("'");
     cmd = command;
 #endif
 }
-
 
 wxString clGetUserName()
 {

@@ -92,7 +92,12 @@ void OutputPane::CreateGUIControls()
 #endif
     m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, bmpLoader->LoadBitmap(wxT("toolbars/16/build/build")));
 
+#ifdef __WXMAC__
+    m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN), false);
+#else
     m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN), true);
+#endif
+
     m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, bmpLoader->LoadBitmap(wxT("toolbars/16/search/find")));
 
     m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, wxGetTranslation(REPLACE_IN_FILES));

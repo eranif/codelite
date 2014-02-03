@@ -862,7 +862,16 @@ bool DbgGdb::EvaluateExpressionToString( const wxString &expression, const wxStr
 bool DbgGdb::ListFrames()
 {
     int max = m_info.maxCallStackFrames;
+#ifndef __WXMAC__    
     wxString command = wxString::Format("-stack-list-frames 0 %i", max);
+    
+#else
+    // Under OSX GDB version is old and does not support the min-max version
+    // of callstack info
+    wxString command = "-stack-list-frames";
+    
+#endif
+
     return WriteCommand(command, new DbgCmdStackList( m_observer ));
 }
 

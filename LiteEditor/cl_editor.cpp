@@ -130,7 +130,6 @@ BEGIN_EVENT_TABLE(LEditor, wxStyledTextCtrl)
     EVT_COMMAND                    (wxID_ANY, wxEVT_FRD_CLEARBOOKMARKS, LEditor::OnFindDialog)
     EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_REMOVE_MATCH_INDICATOR, LEditor::OnRemoveMatchInidicator)
     EVT_COMMAND                    (wxID_ANY, wxCMD_EVENT_SET_EDITOR_ACTIVE,      LEditor::OnSetActive)
-    EVT_MOUSE_CAPTURE_LOST         (LEditor::OnMouseCaptureLost)
 END_EVENT_TABLE()
 
 // Instantiate statics
@@ -4594,11 +4593,4 @@ void LEditor::ToggleBreakpointEnablement()
     bp.internal_id = bm->GetNextID();
     ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint(bp);
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-}
-
-void LEditor::OnMouseCaptureLost(wxMouseCaptureLostEvent& e)
-{
-    if ( HasCapture() ) {
-        ReleaseMouse();
-    }
 }

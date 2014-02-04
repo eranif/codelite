@@ -96,6 +96,7 @@ class ProjectSettingsDlg : public ProjectSettingsBaseDlg
     WorkspaceTab* m_workspaceTab;
 
 protected:
+    virtual void OnPageChanged(wxTreebookEvent& event);
     void SaveValues();
     void ClearValues();
     void LoadValues(const wxString &configName);
@@ -126,11 +127,17 @@ public:
     bool GetIsDirty() const {
         return m_isDirty;
     }
-    
+
     /**
      * @brief show an info bar at the top of the dialog to indicate that this project is disabled
      */
     void ShowHideDisabledMessage();
+
+    /**
+     * @brief show an info bar at the top of dialog to indicate that the options are disabled
+     */
+    void ShowCustomProjectMessage(bool show);
+
 public:
     /** Constructor */
     ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspaceTab, const wxString& configName, const wxString& projectName, const wxString& title);

@@ -14,11 +14,11 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/infobar.h>
 #include <wx/panel.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/treebook.h>
+#include <wx/infobar.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/propgrid/manager.h>
@@ -37,10 +37,10 @@
 class ProjectSettingsBaseDlg : public wxDialog
 {
 protected:
-    wxInfoBar* m_infobar;
     wxPanel* m_panelSettings;
     wxChoice* m_choiceConfig;
     wxTreebook* m_treebook;
+    wxInfoBar* m_infobar;
     wxStdDialogButtonSizer* m_stdBtnSizer126;
     wxButton* m_button_ok;
     wxButton* m_button_apply;
@@ -49,6 +49,7 @@ protected:
 
 protected:
     virtual void OnConfigurationChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnPageChanged(wxTreebookEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonApply(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event) { event.Skip(); }

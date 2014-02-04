@@ -92,7 +92,11 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, WorkspaceTab* workspac
     EventNotifier::Get()->Connect(wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
     
+    // No effects plz
+    m_infobar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    
     ShowHideDisabledMessage();
+    ShowCustomProjectMessage( IsCustomBuildEnabled() );
 }
 
 void ProjectSettingsDlg::DoClearDialog()
@@ -355,6 +359,41 @@ void ProjectSettingsDlg::ShowHideDisabledMessage()
     }
 }
 
+void ProjectSettingsDlg::ShowCustomProjectMessage(bool show)
+{
+    if ( show ) {
+        m_infobar->ShowMessage(_("Settings on this page are disabled because this project is setup as \"Custom Build\" project"), wxICON_INFORMATION);
+    } else {
+        m_infobar->Dismiss();
+    }
+}
+void ProjectSettingsDlg::OnPageChanged(wxTreebookEvent& event)
+{
+    event.Skip();
+    
+    // Do nothing if the project is disabled
+    if ( !IsProjectEnabled() )
+        return; 
+
+    int sel = m_treebook->GetSelection();
+    if ( sel != wxNOT_FOUND && IsCustomBuildEnabled() ) {
+        wxWindow *page = m_treebook->GetPage(sel);
+        
+        if ( !page                                  || 
+             dynamic_cast<PSCustomBuildPage*>(page) ||
+             dynamic_cast<PSGeneralPage*>(page)     ||
+             dynamic_cast<PSBuildEventsPage*>(page) ||
+             dynamic_cast<PSEnvironmentPage*>(page) ||
+             dynamic_cast<PSDebuggerPage*>(page) 
+             ) {
+            ShowCustomProjectMessage(false);
+            
+        } else {
+            ShowCustomProjectMessage(true);
+        }
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -388,7 +427,7 @@ void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
         Clear();
         return;
     }
-    
+
     m_pgPropCCmpOpts->SetValue( globalSettings->GetCCompileOptions() );
     m_pgPropCppCmpOpts->SetValue( globalSettings->GetCompileOptions() );
     m_pgPropPreProcessors->SetValue( globalSettings->GetPreprocessor() );
@@ -431,22 +470,22 @@ void GlobalSettingsPanel::OnCustomEditorClicked(wxCommandEvent& event)
     m_dlg->SetIsDirty(true);
     wxPGProperty* prop = m_pgMgr->GetSelectedProperty();
     CHECK_PTR_RET(prop);
-    
+
     wxString cmpName = m_gp->GetCompiler();
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpName);
-    
+
     if ( prop == m_pgPropCCmpOpts || prop == m_pgPropCppCmpOpts ) {
         wxString v = prop->GetValueAsString();
         if ( PopupAddOptionCheckDlg(v, _("Compiler Options"), cmp->GetCompilerOptions()) ) {
             prop->SetValueFromString( v );
         }
-    } else if ( prop == m_pgPropIncludePaths        || 
-                prop == m_pgPropPreProcessors       || 
-                prop == m_pgPropLibPath             || 
+    } else if ( prop == m_pgPropIncludePaths        ||
+                prop == m_pgPropPreProcessors       ||
+                prop == m_pgPropLibPath             ||
                 prop == m_pgPropLIbs                ||
-                prop == m_pgPropResCmpOptions       || 
+                prop == m_pgPropResCmpOptions       ||
                 prop == m_pgPropResCmpSearchPath
-    ) {
+              ) {
         wxString v = prop->GetValueAsString();
         if ( PopupAddOptionDlg( v ) ) {
             prop->SetValueFromString( v );

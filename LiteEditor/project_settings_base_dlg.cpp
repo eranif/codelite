@@ -26,12 +26,6 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_infobar = new wxInfoBar(this, wxID_ANY);
-    m_infobar->SetSize(wxSize(-1,-1));
-    m_infobar->Hide();
-    
-    mainSizer->Add(m_infobar, 0, wxALL|wxEXPAND, 5);
-    
     m_panelSettings = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     mainSizer->Add(m_panelSettings, 1, wxEXPAND, 5);
@@ -48,8 +42,15 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     
     bSizer44->Add(m_choiceConfig, 1, wxALL|wxEXPAND, 5);
     
-    m_treebook = new wxTreebook( m_panelSettings, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+    m_treebook = new wxTreebook(m_panelSettings, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    
     m_sizerSettings->Add(m_treebook, 1, wxALL|wxEXPAND, 5);
+    
+    m_infobar = new wxInfoBar(this, wxID_ANY);
+    m_infobar->SetSize(wxSize(-1,-1));
+    m_infobar->Hide();
+    
+    mainSizer->Add(m_infobar, 0, wxALL|wxEXPAND, 5);
     
     m_stdBtnSizer126 = new wxStdDialogButtonSizer();
     
@@ -76,6 +77,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     Centre(wxBOTH);
     // Connect events
     m_choiceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
+    m_treebook->Connect(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, wxTreebookEventHandler(ProjectSettingsBaseDlg::OnPageChanged), NULL, this);
     m_button_ok->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
     m_button_apply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
     m_button_apply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);
@@ -87,6 +89,7 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
 ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 {
     m_choiceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
+    m_treebook->Disconnect(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, wxTreebookEventHandler(ProjectSettingsBaseDlg::OnPageChanged), NULL, this);
     m_button_ok->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
     m_button_apply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
     m_button_apply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);

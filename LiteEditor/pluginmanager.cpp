@@ -280,7 +280,7 @@ void PluginManager::Load()
 
 IEditor *PluginManager::GetActiveEditor()
 {
-    return (IEditor*) clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    return (IEditor*) clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
 }
 
 IConfigTool* PluginManager::GetConfigTool()

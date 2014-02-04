@@ -539,10 +539,11 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_MENU(XRCID("copy_file_path"),                   clMainFrame::OnCopyFilePathOnly)
     EVT_MENU(XRCID("copy_file_name_only"),              clMainFrame::OnCopyFileName)
     EVT_MENU(XRCID("open_shell_from_filepath"),         clMainFrame::OnOpenShellFromFilePath)
-
+    EVT_MENU(XRCID("ID_DETACH_EDITOR"),                 clMainFrame::OnDetachEditor)
     EVT_UPDATE_UI(XRCID("copy_file_name"),              clMainFrame::OnFileExistUpdateUI)
     EVT_UPDATE_UI(XRCID("copy_file_path"),              clMainFrame::OnFileExistUpdateUI)
     EVT_UPDATE_UI(XRCID("open_shell_from_filepath"),    clMainFrame::OnFileExistUpdateUI)
+    EVT_UPDATE_UI(XRCID("ID_DETACH_EDITOR"),            clMainFrame::OnDetachEditorUI)
 
     //-----------------------------------------------------------------
     // Default editor context menu
@@ -3093,7 +3094,6 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         }
 
         // Debugger is not running, but workspace is opened -> start debug session
-        bool answer(false);
         QueueCommand dbgCmd(QueueCommand::kDebug);
         
         wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Would you like to build the project before debugging it?"), 
@@ -5397,4 +5397,14 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     SetFrameTitle( GetMainBook()->GetActiveEditor() );
+}
+
+void clMainFrame::OnDetachEditor(wxCommandEvent& e)
+{
+    GetMainBook()->DetachActiveEditor();
+}
+
+void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e)
+{
+    e.Enable( GetMainBook()->GetActiveEditor() != NULL );
 }

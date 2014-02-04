@@ -762,3 +762,77 @@ WorkspaceTabBase::~WorkspaceTabBase()
     m_workspaceConfig->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTabBase::OnConfigurationManagerChoiceUI), NULL, this);
     
 }
+
+EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxFrame(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3F25InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(mainSizer);
+    
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600,600), wxTAB_TRAVERSAL);
+    
+    mainSizer->Add(m_mainPanel, 1, wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer324 = new wxBoxSizer(wxVERTICAL);
+    m_mainPanel->SetSizer(boxSizer324);
+    
+    m_toolbar326 = this->CreateToolBar(wxTB_NOALIGN|wxTB_NODIVIDER|wxTB_FLAT, wxID_ANY);
+    m_toolbar326->SetToolBitmapSize(wxSize(24,24));
+    
+    m_toolbar326->AddTool(wxID_SAVE, _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
+    
+    m_toolbar326->AddTool(wxID_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("document-close")), wxNullBitmap, wxITEM_NORMAL, _("Close"), _("Close"), NULL);
+    
+    m_toolbar326->AddTool(wxID_REVERT_TO_SAVED, _("Reload File"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert")), wxNullBitmap, wxITEM_NORMAL, _("Reload File"), _("Reload File"), NULL);
+    m_toolbar326->Realize();
+    
+    m_menuBar334 = new wxMenuBar(0);
+    this->SetMenuBar(m_menuBar334);
+    
+    m_menu336 = new wxMenu();
+    m_menuBar334->Append(m_menu336, _("File"));
+    
+    m_menuItem342 = new wxMenuItem(m_menu336, wxID_SAVE, _("Save\tCtrl-S"), wxT(""), wxITEM_NORMAL);
+    m_menu336->Append(m_menuItem342);
+    
+    m_menuItem338 = new wxMenuItem(m_menu336, wxID_CLOSE, _("Close\tCtrl-W"), _("lose"), wxITEM_NORMAL);
+    m_menu336->Append(m_menuItem338);
+    
+    m_menu344 = new wxMenu();
+    m_menuBar334->Append(m_menu344, _("Edit"));
+    
+    m_menuItem340 = new wxMenuItem(m_menu344, wxID_REVERT_TO_SAVED, _("Revert to saved\tCtrl-R"), wxT(""), wxITEM_NORMAL);
+    m_menu344->Append(m_menuItem340);
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    this->Connect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnSave), NULL, this);
+    this->Connect(wxID_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnSaveUI), NULL, this);
+    this->Connect(wxID_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
+    this->Connect(wxID_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL, this);
+    this->Connect(wxID_REVERT_TO_SAVED, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnReload), NULL, this);
+    this->Connect(wxID_REVERT_TO_SAVED, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnReloadUI), NULL, this);
+    
+}
+
+EditorFrameBase::~EditorFrameBase()
+{
+    this->Disconnect(wxID_SAVE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnSave), NULL, this);
+    this->Disconnect(wxID_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnSaveUI), NULL, this);
+    this->Disconnect(wxID_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
+    this->Disconnect(wxID_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL, this);
+    this->Disconnect(wxID_REVERT_TO_SAVED, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnReload), NULL, this);
+    this->Disconnect(wxID_REVERT_TO_SAVED, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnReloadUI), NULL, this);
+    
+}

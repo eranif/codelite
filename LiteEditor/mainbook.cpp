@@ -37,6 +37,7 @@
 #include "mainbook.h"
 #include "message_pane.h"
 #include "theme_handler.h"
+#include "editorframe.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -103,7 +104,9 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
-
+    
+    EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
+    
     // Highlight Job
     Connect(wxEVT_CMD_JOB_STATUS_VOID_PTR,         wxCommandEventHandler(MainBook::OnStringHighlight),      NULL, this);
 }
@@ -123,6 +126,8 @@ MainBook::~MainBook()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
+    
+    EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     Disconnect(wxEVT_CMD_JOB_STATUS_VOID_PTR,         wxCommandEventHandler(MainBook::OnStringHighlight),      NULL, this);
 }
 
@@ -336,8 +341,17 @@ void MainBook::RestoreSession(SessionEntry &session)
     m_book->GetEventHandler()->AddPendingEvent(event);
 }
 
-LEditor *MainBook::GetActiveEditor()
+LEditor *MainBook::GetActiveEditor(bool includeDetachedEditors)
 {
+    if ( includeDetachedEditors ) {
+        EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
+        for(; iter != m_detachedEditors.end(); ++iter ) {
+            if ( (*iter)->GetEditor()->IsFocused() ) {
+                return (*iter)->GetEditor();
+            }
+        }
+    }
+    
     if ( !GetCurrentPage() ) {
         return NULL;
     }
@@ -404,6 +418,14 @@ LEditor *MainBook::FindEditor(const wxString &fileName)
                 return editor;
             }
 #endif
+        }
+    }
+    
+    // try the detached editors
+    EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
+    for(; iter != m_detachedEditors.end(); ++iter ) {
+        if ( (*iter)->GetEditor()->GetFileName().GetFullPath() == fileName ) {
+            return (*iter)->GetEditor();
         }
     }
     return NULL;
@@ -1121,5 +1143,33 @@ bool MainBook::ClosePage(const wxString& text)
 size_t MainBook::GetPageCount() const
 {
     return m_book->GetPageCount();
+}
+
+void MainBook::DetachActiveEditor()
+{
+    if ( GetActiveEditor() ) {
+        LEditor *editor = GetActiveEditor();
+        m_book->RemovePage( m_book->GetSelection(), true );
+        EditorFrame* frame = new EditorFrame(clMainFrame::Get(), editor);
+        frame->Show();
+        m_detachedEditors.push_back( frame );
+    }
+}
+
+void MainBook::OnDetachedEditorClosed(clCommandEvent& e)
+{
+    e.Skip();
+    DoEraseDetachedEditor( (IEditor*)e.GetClientData() );
+}
+
+void MainBook::DoEraseDetachedEditor(IEditor* editor)
+{
+    EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
+    for(; iter != m_detachedEditors.end(); ++iter ) {
+        if ( (*iter)->GetEditor() == editor ) {
+            m_detachedEditors.erase( iter );
+            break;
+        }
+    }
 }
 

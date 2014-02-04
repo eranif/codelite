@@ -682,6 +682,10 @@
             <label>Show In Explorer</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+        <object class="wxMenuItem" name="ID_DETACH_EDITOR">
+            <label>Detach Editor</label>
+        </object>
+        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
 		<object class="wxMenuItem" name="copy_file_name_only">
             <label>Copy File Name to Clipboard</label>
         </object>

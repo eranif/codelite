@@ -439,6 +439,8 @@ protected:
     void OnShowNavBar(wxCommandEvent &e);
     void OnShowNavBarUI(wxUpdateUIEvent &e);
     void OnOpenShellFromFilePath(wxCommandEvent &e);
+    void OnDetachEditor(wxCommandEvent &e);
+    void OnDetachEditorUI(wxUpdateUIEvent &e);
     void OnQuickDebug(wxCommandEvent &e);
     void OnQuickDebugUI(wxUpdateUIEvent &e);
     void OnDebugCoreDump(wxCommandEvent &e);

@@ -142,7 +142,7 @@ public:
     static bool                                 m_ccShowPrivateMembers;
     static bool                                 m_ccShowItemsComments;
     static bool                                 m_ccInitialized;
-
+    typedef std::vector<LEditor*> Vec_t;
 public:
     static FindReplaceData &GetFindReplaceData() {
         return m_findReplaceData;

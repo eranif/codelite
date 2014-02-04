@@ -9,6 +9,7 @@ EditorFrame::EditorFrame(wxWindow* parent, LEditor* editor)
     : EditorFrameBase(parent)
     , m_editor(editor)
 {
+	EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(EditorFrame::OnWorkspaceClosed), NULL, this);
     m_editor->Reparent( m_mainPanel );
     m_mainPanel->GetSizer()->Add(m_editor, 1, wxEXPAND|wxALL, 2);
     m_mainPanel->Layout();
@@ -17,6 +18,8 @@ EditorFrame::EditorFrame(wxWindow* parent, LEditor* editor)
 
 EditorFrame::~EditorFrame()
 {
+	EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(EditorFrame::OnWorkspaceClosed), NULL, this);
+	
     clCommandEvent evntInternalClosed(wxEVT_DETACHED_EDITOR_CLOSED);
     evntInternalClosed.SetClientData( (IEditor*)m_editor);
     EventNotifier::Get()->ProcessEvent( evntInternalClosed );
@@ -58,4 +61,11 @@ void EditorFrame::OnSave(wxCommandEvent& event)
 void EditorFrame::OnSaveUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_editor->GetModify());
+}
+
+void EditorFrame::OnWorkspaceClosed(wxCommandEvent& e)
+{
+	e.Skip();
+	// When closing the workspace destroy all floating editors
+	Destroy();
 }

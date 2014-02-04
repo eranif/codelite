@@ -20,6 +20,7 @@ protected:
     virtual void OnReloadUI(wxUpdateUIEvent& event);
     virtual void OnSave(wxCommandEvent& event);
     virtual void OnSaveUI(wxUpdateUIEvent& event);
+	void OnWorkspaceClosed(wxCommandEvent &e);
     LEditor *m_editor;
 
 public:

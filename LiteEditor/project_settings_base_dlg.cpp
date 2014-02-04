@@ -535,60 +535,29 @@ PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* bSizer39 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer39);
     
-    m_resourceCmpPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+    wxArrayString m_pgMgrArr;
+    wxUnusedVar(m_pgMgrArr);
+    wxArrayInt m_pgMgrIntArr;
+    wxUnusedVar(m_pgMgrIntArr);
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    bSizer39->Add(m_resourceCmpPage, 1, wxALL|wxEXPAND, 5);
+    bSizer39->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
     
-    wxBoxSizer* bSizer151 = new wxBoxSizer(wxVERTICAL);
-    m_resourceCmpPage->SetSizer(bSizer151);
+    CATEGORY_RESOURCES = m_pgMgr->Append(  new wxPropertyCategory( _("Resources") ) );
+    CATEGORY_RESOURCES->SetHelpString(wxT(""));
     
-    wxFlexGridSizer* flexGridSizer25 = new wxFlexGridSizer(0, 3, 0, 0);
-    flexGridSizer25->SetFlexibleDirection( wxBOTH );
-    flexGridSizer25->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer25->AddGrowableCol(1);
+    m_pgMgrArr.Clear();
+    m_pgMgrIntArr.Clear();
+    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxEnumProperty( _("Use with global settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropBehaviorWithGlobalSettings->SetHelpString(_("Define how CodeLite will merge the linker settings defined in the 'Global Settings' with the settings defined on this page"));
     
-    bSizer151->Add(flexGridSizer25, 1, wxEXPAND, 5);
+    m_pgPropResCmpOptions = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxStringProperty( _("Resource Compiler Options"), wxPG_LABEL, wxT("")) );
+    m_pgPropResCmpOptions->SetHelpString(_("Resource compiler options provided as semi-colon list"));
+    m_pgPropResCmpOptions->SetEditor( wxT("TextCtrlAndButton") );
     
-    m_staticText33111 = new wxStaticText(m_resourceCmpPage, wxID_ANY, _("Use with global settings :"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer25->Add(m_staticText33111, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxArrayString m_choiceResUseWithGlobalSettingsArr;
-    m_choiceResUseWithGlobalSettings = new wxChoice(m_resourceCmpPage, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceResUseWithGlobalSettingsArr, 0);
-    
-    flexGridSizer25->Add(m_choiceResUseWithGlobalSettings, 0, wxALL|wxEXPAND|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    flexGridSizer25->Add(0, 0, 0, 0, 5);
-    
-    flexGridSizer25->Add(0, 0, 0, 0, 5);
-    
-    flexGridSizer25->Add(0, 0, 0, 0, 5);
-    
-    flexGridSizer25->Add(0, 0, 0, 0, 5);
-    
-    m_staticText221 = new wxStaticText(m_resourceCmpPage, wxID_ANY, _("Compiler Options:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer25->Add(m_staticText221, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textAddResCmpOptions = new wxTextCtrl(m_resourceCmpPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer25->Add(m_textAddResCmpOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonAddResCmpOptions = new wxButton(m_resourceCmpPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer25->Add(m_buttonAddResCmpOptions, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText23 = new wxStaticText(m_resourceCmpPage, wxID_ANY, _("Include Paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer25->Add(m_staticText23, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textAddResCmpPath = new wxTextCtrl(m_resourceCmpPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    
-    flexGridSizer25->Add(m_textAddResCmpPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonAddResCmpPath = new wxButton(m_resourceCmpPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    
-    flexGridSizer25->Add(m_buttonAddResCmpPath, 0, wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropResCmpSearchPath = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxStringProperty( _("Additional Search Path"), wxPG_LABEL, wxT("")) );
+    m_pgPropResCmpSearchPath->SetHelpString(_("Resource compiler search path, as semi colon list"));
+    m_pgPropResCmpSearchPath->SetEditor( wxT("TextCtrlAndButton") );
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {
@@ -597,36 +566,18 @@ PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const 
     Centre(wxBOTH);
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnProjectEnabledUI), NULL, this);
-    m_staticText33111->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_choiceResUseWithGlobalSettings->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_staticText221->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_textAddResCmpOptions->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSResourcesPageBase::OnCmdEvtVModified), NULL, this);
-    m_textAddResCmpOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_buttonAddResCmpOptions->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnResourceCmpAddOption), NULL, this);
-    m_buttonAddResCmpOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_staticText23->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_textAddResCmpPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSResourcesPageBase::OnCmdEvtVModified), NULL, this);
-    m_textAddResCmpPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_buttonAddResCmpPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnResourceCmpAddPath), NULL, this);
-    m_buttonAddResCmpPath->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
+    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSResourcesPageBase::OnValueChanged), NULL, this);
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnCustomEditorClicked), NULL, this);
+    m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnResourcesEnabledUI), NULL, this);
     
 }
 
 PSResourcesPageBase::~PSResourcesPageBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnProjectEnabledUI), NULL, this);
-    m_staticText33111->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_choiceResUseWithGlobalSettings->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_staticText221->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_textAddResCmpOptions->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSResourcesPageBase::OnCmdEvtVModified), NULL, this);
-    m_textAddResCmpOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_buttonAddResCmpOptions->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnResourceCmpAddOption), NULL, this);
-    m_buttonAddResCmpOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_staticText23->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_textAddResCmpPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSResourcesPageBase::OnCmdEvtVModified), NULL, this);
-    m_textAddResCmpPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
-    m_buttonAddResCmpPath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnResourceCmpAddPath), NULL, this);
-    m_buttonAddResCmpPath->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnrResourceCompilerNotNeededUI), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSResourcesPageBase::OnValueChanged), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnCustomEditorClicked), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnResourcesEnabledUI), NULL, this);
     
 }
 

@@ -43,14 +43,9 @@ class PSResourcesPage : public PSResourcesPageBase, public IProjectSettingsPage
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
-    // Handlers for PSResourcesPageBase events.
-    void OnResourceCmpNeeded( wxCommandEvent& event );
-    void OnrResourceCompilerNotNeededUI( wxUpdateUIEvent& event );
-    void OnCmdEvtVModified( wxCommandEvent& event );
-    void OnResourceCmpAddOption( wxCommandEvent& event );
-    void OnResourceCmpAddPath( wxCommandEvent& event );
-    void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
-
+    virtual void OnResourcesEnabledUI(wxUpdateUIEvent& event);
+    virtual void OnCustomEditorClicked(wxCommandEvent& event);
+    virtual void OnValueChanged(wxPropertyGridEvent& event);
 
 public:
     /** Constructor */

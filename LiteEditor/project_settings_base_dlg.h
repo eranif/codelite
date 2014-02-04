@@ -188,22 +188,17 @@ public:
 class PSResourcesPageBase : public wxPanel
 {
 protected:
-    wxPanel* m_resourceCmpPage;
-    wxStaticText* m_staticText33111;
-    wxChoice* m_choiceResUseWithGlobalSettings;
-    wxStaticText* m_staticText221;
-    wxTextCtrl* m_textAddResCmpOptions;
-    wxButton* m_buttonAddResCmpOptions;
-    wxStaticText* m_staticText23;
-    wxTextCtrl* m_textAddResCmpPath;
-    wxButton* m_buttonAddResCmpPath;
+    wxPropertyGridManager* m_pgMgr;
+    wxPGProperty* CATEGORY_RESOURCES;
+    wxPGProperty* m_pgPropBehaviorWithGlobalSettings;
+    wxPGProperty* m_pgPropResCmpOptions;
+    wxPGProperty* m_pgPropResCmpSearchPath;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnrResourceCompilerNotNeededUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnResourceCmpAddOption(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnResourceCmpAddPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnResourcesEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     PSResourcesPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

@@ -14,6 +14,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/infobar.h>
 #include <wx/panel.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
@@ -36,6 +37,7 @@
 class ProjectSettingsBaseDlg : public wxDialog
 {
 protected:
+    wxInfoBar* m_infobar;
     wxPanel* m_panelSettings;
     wxChoice* m_choiceConfig;
     wxTreebook* m_treebook;

@@ -26,6 +26,12 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
+    m_infobar = new wxInfoBar(this, wxID_ANY);
+    m_infobar->SetSize(wxSize(-1,-1));
+    m_infobar->Hide();
+    
+    mainSizer->Add(m_infobar, 0, wxALL|wxEXPAND, 5);
+    
     m_panelSettings = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
     
     mainSizer->Add(m_panelSettings, 1, wxEXPAND, 5);

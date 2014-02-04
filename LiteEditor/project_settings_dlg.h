@@ -126,7 +126,11 @@ public:
     bool GetIsDirty() const {
         return m_isDirty;
     }
-
+    
+    /**
+     * @brief show an info bar at the top of the dialog to indicate that this project is disabled
+     */
+    void ShowHideDisabledMessage();
 public:
     /** Constructor */
     ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspaceTab, const wxString& configName, const wxString& projectName, const wxString& title);

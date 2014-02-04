@@ -91,6 +91,8 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, WorkspaceTab* workspac
 
     EventNotifier::Get()->Connect(wxEVT_PROJECT_TREEITEM_CLICKED, wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(ProjectSettingsDlg::OnWorkspaceClosed), NULL, this);
+    
+    ShowHideDisabledMessage();
 }
 
 void ProjectSettingsDlg::DoClearDialog()
@@ -344,6 +346,14 @@ void ProjectSettingsDlg::OnButtonCancel(wxCommandEvent& event)
 
 }
 
+void ProjectSettingsDlg::ShowHideDisabledMessage()
+{
+    if ( !m_isProjectEnabled ) {
+        m_infobar->ShowMessage(_("This project is disabled"), wxICON_WARNING);
+    } else {
+        m_infobar->Dismiss();
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////

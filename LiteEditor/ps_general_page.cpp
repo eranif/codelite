@@ -118,6 +118,7 @@ void PSGeneralPage::OnProjectEnabled(wxCommandEvent& event)
 {
     m_dlg->SetIsProjectEnabled( event.IsChecked() );
     m_dlg->SetIsDirty(true);
+    m_dlg->ShowHideDisabledMessage();
 }
 
 void PSGeneralPage::OnCustomEditorClicked(wxCommandEvent& event)

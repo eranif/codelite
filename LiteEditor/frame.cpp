@@ -3579,7 +3579,7 @@ void clMainFrame::OnManagePlugins(wxCommandEvent &e)
 void clMainFrame::OnCppContextMenu(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
     if (editor) {
         editor->GetContext()->ProcessEvent(e);
     }

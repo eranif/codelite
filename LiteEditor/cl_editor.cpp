@@ -1832,6 +1832,12 @@ void LEditor::SetActive()
 {
     clMainFrame::Get()->SetFrameTitle(this);
 
+    // ensure that the top level window parent of this editor is 'Raised'
+    wxWindow* tlw = ::wxGetTopLevelParent(this);
+    if ( tlw ) {
+        tlw->Raise();
+    }
+
     // if the find and replace dialog is opened, set ourself
     // as the event owners
     if ( m_findReplaceDlg ) {

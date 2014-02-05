@@ -404,8 +404,6 @@ void QuickFindBar::DoShowControls()
 {
     long v(1);
     EditorConfigST::Get()->GetLongValue(wxT("QuickFindBarShowReplace"), v);
-    bool canShowToggleReplaceButton = m_sci && !m_sci->GetReadOnly();
-
     ShowReplaceControls(/*showReplaceControls*/);
     Refresh();
     GetParent()->GetSizer()->Layout();

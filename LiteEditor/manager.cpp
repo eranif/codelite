@@ -1550,7 +1550,7 @@ bool Manager::ShowOutputPane ( wxString focusWin, bool commit )
         }
     }
 
-    if ( index != Notebook::npos && index != pane->GetNotebook()->GetSelection() ) {
+    if ( index != Notebook::npos && index != (size_t)pane->GetNotebook()->GetSelection() ) {
         wxWindow *focus = wxWindow::FindFocus();
         LEditor *editor = dynamic_cast<LEditor*>( focus );
         pane->GetNotebook()->SetSelection ( ( size_t ) index );
@@ -1620,7 +1620,7 @@ void Manager::ShowWorkspacePane ( wxString focusWin, bool commit )
     // set the selection to focus win
     Notebook *book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
     int index = book->GetPageIndex ( focusWin );
-    if ( index != wxNOT_FOUND && ( size_t ) index != book->GetSelection() ) {
+    if ( index != wxNOT_FOUND && index != book->GetSelection() ) {
         book->SetSelection ( ( size_t ) index );
     }
 }

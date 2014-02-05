@@ -2625,8 +2625,8 @@ void Manager::UpdateGotControl ( const DebuggerEventData &e )
         if ( clMainFrame::Get()->IsIconized() || !clMainFrame::Get()->IsShown() ) {
             clMainFrame::Get()->Restore();
             clMainFrame::Get()->Raise();
-            m_dbgCanInteract = true;
         }
+        m_dbgCanInteract = true;
     }
 
     SendCmdEvent(wxEVT_DEBUG_EDITOR_GOT_CONTROL);

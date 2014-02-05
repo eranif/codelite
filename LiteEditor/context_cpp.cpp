@@ -216,7 +216,7 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent &event)
     VALIDATE_PROJECT(rCtrl);
 
     //before we start, make sure we are the visible window
-    if (clMainFrame::Get()->GetMainBook()->GetActiveEditor() != &rCtrl) {
+    if (clMainFrame::Get()->GetMainBook()->GetActiveEditor(true) != &rCtrl) {
         event.Skip();
         return;
     }

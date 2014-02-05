@@ -123,14 +123,15 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CCBoxTipWindow::OnMouseLeft), NULL, this);
 }
 
-void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, IEditor* focusEdior)
+void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor* focusEdior)
 {
     // When shown, set the focus back to the editor
     wxPoint pt = win->GetScreenPosition();
     wxPoint windowPos = pt;
     wxSize  ccBoxSize = win->GetSize();
     pt.x += ccBoxSize.x;
-
+    
+    bool ccBoxIsAboveCaretLine = (windowPos.y < caretPos.y);
     // Check for overflow
     wxSize  size = ::wxGetDisplaySize();
     if ( pt.x + GetSize().x > size.x ) {
@@ -142,12 +143,19 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, IEditor* focusEdior)
             // it cant be placed on the left side either
             // try placing it on top of the completion box
             pt = windowPos;
-            pt.y -= (GetSize().y + 20); // use 20 pixels as a rough approximation of a line height
+            pt.y -= GetSize().y;
+            if ( !ccBoxIsAboveCaretLine ) {
+                pt.y -= 20; // The CC box is placed under the caret line, but the tip will be placed
+                            // on top of the CC box - use 20 pixels so we don't hide the caret line
+            }
             
             if ( pt.y < 0) {
                 // try placing under the completion box
                 pt = windowPos;
                 pt.y += ccBoxSize.y + 1;
+                if ( ccBoxIsAboveCaretLine ) {
+                    pt.y += 20; // dont hide the caret line
+                }
             }
         }
     }

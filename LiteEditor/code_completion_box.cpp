@@ -151,7 +151,7 @@ void CodeCompletionBox::ShowTip(const wxString& msg, const wxPoint& pt, LEditor*
         return;
     }
 
-    m_tip = new CCBoxTipWindow(wxTheApp->GetTopWindow(), msg, 1, true);
+    m_tip = new CCBoxTipWindow(::wxGetTopLevelParent(editor), msg, 1, true);
     m_tip->PositionAt(p);
 }
 

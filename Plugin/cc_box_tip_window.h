@@ -73,7 +73,7 @@ public:
      * if focusEditor is NOT null, the editor will gain the focus once
      * the tip is shown
      */
-    void PositionRelativeTo(wxWindow* win, IEditor* focusEdior = NULL);
+    void PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor* focusEdior = NULL);
     
     /**
      * @brief position this window to the left of 'win'

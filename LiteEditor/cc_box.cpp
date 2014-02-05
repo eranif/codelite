@@ -849,13 +849,16 @@ void CCBox::DoShowTagTip()
 
     m_tipWindow = new CCBoxTipWindow(wxTheApp->GetTopWindow(), prefix, numOfTips);
 #if CCBOX_USE_POPUP
-    m_tipWindow->PositionRelativeTo(this, m_editor);
+    m_tipWindow->PositionRelativeTo(this, m_editor->PointFromPosition(m_editor->GetCurrentPos()), m_editor);
 #else
-    m_tipWindow->PositionLeftTo(this, m_editor);
+    m_tipWindow->PositionRelativeTo(this, m_editor->PointFromPosition(m_editor->GetCurrentPos()), m_editor);
 #endif
 
 #if !CCBOX_USE_POPUP
-    wxTheApp->GetTopWindow()->Raise();
+    wxWindow *tlw = ::wxGetTopLevelParent(m_editor);
+    if ( tlw ) {
+        tlw->Raise();
+    }
     m_editor->SetActive();
 #endif
 }

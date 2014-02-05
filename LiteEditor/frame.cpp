@@ -2072,9 +2072,9 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 {
     CHECK_SHUTDOWN();
 
-    LEditor* editor = GetMainBook()->GetActiveEditor();
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
     // This menu item is enabled only if the current editor belongs to a project
-    event.Enable(editor);
+    event.Enable(editor && !editor->GetProject().IsEmpty());
 }
 
 void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent &event)
@@ -2767,13 +2767,13 @@ void clMainFrame::OnFileCloseAll(wxCommandEvent &event)
 void clMainFrame::OnQuickOutline(wxCommandEvent &event)
 {
     // Sanity
-    if (!GetMainBook()->GetActiveEditor())
-        return;
-
+    LEditor *activeEditor = GetMainBook()->GetActiveEditor(true);
+    CHECK_PTR_RET(activeEditor);
+    
     // let the plugins process this first
     clCodeCompletionEvent evt(wxEVT_CC_SHOW_QUICK_OUTLINE, GetId());
     evt.SetEventObject(this);
-    evt.SetEditor( GetMainBook()->GetActiveEditor() );
+    evt.SetEditor( activeEditor );
 
     if(EventNotifier::Get()->ProcessEvent(evt))
         return;
@@ -2782,11 +2782,11 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
     if (ManagerST::Get()->IsWorkspaceOpen() == false)
         return;
 
-    if (GetMainBook()->GetActiveEditor()->GetProject().IsEmpty())
+    if (activeEditor->GetProject().IsEmpty())
         return;
 
-    QuickOutlineDlg dlg(this,
-                        GetMainBook()->GetActiveEditor()->GetFileName().GetFullPath(),
+    QuickOutlineDlg dlg(::wxGetTopLevelParent(activeEditor),
+                        activeEditor->GetFileName().GetFullPath(),
                         wxID_ANY,
                         wxT(""),
                         wxDefaultPosition,
@@ -2795,13 +2795,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent &event)
                        );
 
     dlg.ShowModal();
-
-#ifdef __WXMAC__
-    LEditor *editor = GetMainBook()->GetActiveEditor();
-    if (editor) {
-        editor->SetActive();
-    }
-#endif
+    activeEditor->SetActive();
 }
 
 wxString clMainFrame::CreateWorkspaceTable()

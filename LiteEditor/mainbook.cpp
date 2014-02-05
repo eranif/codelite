@@ -886,7 +886,7 @@ void MainBook::SetPageTitle ( wxWindow *page, const wxString &name )
 void MainBook::ApplySettingsChanges()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
     }

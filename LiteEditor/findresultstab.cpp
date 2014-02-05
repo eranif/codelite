@@ -509,8 +509,8 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     // We need to tell all editors that there's been a (new) search
     // This lets them clear any already-saved line-changes,
     // which a new save will have taken into account
-    std::vector<LEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
+    LEditor::Vec_t editors;
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t n=0; n < editors.size(); ++n) {
         LEditor* editor = dynamic_cast<LEditor*>(*(editors.begin()+n));
         if (editor) {

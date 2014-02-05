@@ -1807,7 +1807,7 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 
     // Disable the 'Replace' checkbox if there aren't any editors to replace
     std::vector<LEditor*> editors;
-    GetMainBook()->GetAllEditors(editors);
+    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     dlg.EnableReplaceCheck(editors.size());
 
     if (dlg.ShowModal() != wxID_OK) {
@@ -5276,7 +5276,7 @@ void clMainFrame::OnFileSaveAllUI(wxUpdateUIEvent& event)
 {
     bool hasModifiedEditor = false;
     std::vector<LEditor*> editors;
-    GetMainBook()->GetAllEditors(editors);
+    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     for(size_t i=0; i<editors.size(); ++i) {
         if( editors.at(i)->IsModified() ) {
             hasModifiedEditor = true;

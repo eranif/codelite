@@ -49,7 +49,14 @@ private:
     MessagePane  *      m_messagePane;
     bool                m_useBuffereLimit;
     EditorFrame::List_t m_detachedEditors;
-
+public:
+    enum {
+        kGetAll_Default         = 0x00000000, // booked editors only
+        kGetAll_RetainOrder     = 0x00000001, // Order must keep
+        kGetAll_IncludeDetached = 0x00000002, // return both booked editors and detached
+        kGetAll_DetachedOnly    = 0x00000004, // return detached editors only
+    };
+    
 private:
     void CreateGuiControls();
     void ConnectEvents    ();
@@ -108,7 +115,7 @@ public:
     void RestoreSession(SessionEntry &session);
 
     LEditor *GetActiveEditor(bool includeDetachedEditors = false);
-    void     GetAllEditors  (std::vector<LEditor*> &editors, bool retain_order = false);
+    void     GetAllEditors  (LEditor::Vec_t &editors, size_t flags);
     LEditor *FindEditor     (const wxString &fileName);
     bool     CloseEditor    (const wxString &fileName) {
         return ClosePage(FindEditor(fileName));

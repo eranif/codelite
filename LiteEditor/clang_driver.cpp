@@ -839,7 +839,7 @@ ClangThreadRequest::List_t ClangDriver::DoCreateListOfModifiedBuffers(IEditor* e
     // Collect all modified buffers and pass them to clang as well
     ClangThreadRequest::List_t modifiedBuffers;
     std::vector<LEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     for(size_t i=0; i<editors.size(); i++) {
 
         if( editors.at(i) == excludeEditor || !editors.at(i)->IsModified())

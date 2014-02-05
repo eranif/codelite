@@ -358,35 +358,45 @@ LEditor *MainBook::GetActiveEditor(bool includeDetachedEditors)
     return dynamic_cast<LEditor*>(GetCurrentPage());
 }
 
-void MainBook::GetAllEditors(std::vector<LEditor*> &editors, bool retain_order /*= false*/)
+void MainBook::GetAllEditors(LEditor::Vec_t& editors, size_t flags)
 {
     editors.clear();
-    if (!retain_order) {
-        // Most of the time we don't care about the order the tabs are stored in
-        for (size_t i = 0; i < m_book->GetPageCount(); i++) {
-            LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-            if (editor) {
-                editors.push_back(editor);
+    if( !(flags & kGetAll_DetachedOnly) ) {
+        // Collect booked editors
+        if ( !(flags & kGetAll_RetainOrder) ) {
+            // Most of the time we don't care about the order the tabs are stored in
+            for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+                LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
+                if (editor) {
+                    editors.push_back(editor);
+                }
             }
-        }
-    } else {
-        std::vector<wxWindow*> windows;
-#if !CL_USE_NATIVEBOOK
-        m_book->GetEditorsInOrder(windows);
-        for (size_t i = 0; i < windows.size(); i++) {
-            LEditor *editor = dynamic_cast<LEditor*>(windows.at(i));
-            if (editor) {
-                editors.push_back(editor);
+        } else {
+            std::vector<wxWindow*> windows;
+    #if !CL_USE_NATIVEBOOK
+            m_book->GetEditorsInOrder(windows);
+            for (size_t i = 0; i < windows.size(); i++) {
+                LEditor *editor = dynamic_cast<LEditor*>(windows.at(i));
+                if (editor) {
+                    editors.push_back(editor);
+                }
             }
-        }
-#else
-        for(size_t i=0; i<m_book->GetPageCount(); i++) {
-            LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
-            if(editor) {
-                editors.push_back(editor);
+    #else
+            for(size_t i=0; i<m_book->GetPageCount(); i++) {
+                LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
+                if(editor) {
+                    editors.push_back(editor);
+                }
             }
+    #endif
         }
-#endif
+    }
+    if ( (flags & kGetAll_IncludeDetached) || (flags & kGetAll_DetachedOnly) ) {
+        // Add the detached editors
+        EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
+        for(; iter != m_detachedEditors.end(); ++iter ) {
+            editors.push_back( (*iter)->GetEditor() );
+        }
     }
 }
 
@@ -686,8 +696,8 @@ bool MainBook::UserSelectFiles(std::vector<std::pair<wxFileName,bool> > &files, 
 bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 {
     // turn the 'saving all' flag on so we could 'Veto' all focus events
-    std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    LEditor::Vec_t editors;
+    GetAllEditors(editors, MainBook::kGetAll_Default);
 
     std::vector<std::pair<wxFileName, bool> > files;
     size_t n = 0;
@@ -717,8 +727,8 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 
 void MainBook::ReloadExternallyModified(bool prompt)
 {
-    std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    LEditor::Vec_t editors;
+    GetAllEditors(editors, MainBook::kGetAll_Default);
 
     // filter list of editors for any whose files have been modified
     std::vector<std::pair<wxFileName, bool> > files;
@@ -790,8 +800,8 @@ bool MainBook::CloseAllButThis(wxWindow *page)
 
 bool MainBook::CloseAll(bool cancellable)
 {
-    std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    LEditor::Vec_t editors;
+    GetAllEditors(editors, kGetAll_IncludeDetached);
 
     // filter list of editors for any that need to be saved
     std::vector<std::pair<wxFileName, bool> > files;
@@ -825,6 +835,12 @@ bool MainBook::CloseAll(bool cancellable)
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 
     m_book->DeleteAllPages(false);
+    
+    // Delete all detached editors
+    EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
+    for(; iter != m_detachedEditors.end(); ++iter ) {
+        (*iter)->Destroy(); // Destroying the frame will release the editor
+    }
 
     // Since we got no more editors opened,
     // send a wxEVT_ALL_EDITORS_CLOSED event
@@ -870,7 +886,7 @@ void MainBook::SetPageTitle ( wxWindow *page, const wxString &name )
 void MainBook::ApplySettingsChanges()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
     }
@@ -884,7 +900,7 @@ void MainBook::ApplySettingsChanges()
 void MainBook::UnHighlightAll()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UnHighlightAll();
     }
@@ -893,7 +909,7 @@ void MainBook::UnHighlightAll()
 void MainBook::DelAllBreakpointMarkers()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->DelAllBreakpointMarkers();
     }
@@ -902,7 +918,7 @@ void MainBook::DelAllBreakpointMarkers()
 void MainBook::SetViewEOL(bool visible)
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetViewEOL(visible);
     }
@@ -911,7 +927,7 @@ void MainBook::SetViewEOL(bool visible)
 void MainBook::HighlightWord(bool hl)
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->HighlightWord(hl);
     }
@@ -920,7 +936,7 @@ void MainBook::HighlightWord(bool hl)
 void MainBook::ShowWhitespace(int ws)
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetViewWhiteSpace(ws);
     }
@@ -929,7 +945,7 @@ void MainBook::ShowWhitespace(int ws)
 void MainBook::UpdateColours()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UpdateColours();
     }
@@ -938,7 +954,7 @@ void MainBook::UpdateColours()
 void MainBook::UpdateBreakpoints()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UpdateBreakpoints();
     }
@@ -1113,7 +1129,7 @@ void MainBook::OnPageChanging(NotebookEvent& e)
 void MainBook::SetViewWordWrap(bool b)
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors);
+    GetAllEditors(editors, MainBook::kGetAll_Default);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetWrapMode(b ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
     }

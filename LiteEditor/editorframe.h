@@ -12,6 +12,9 @@ class EditorFrame : public EditorFrameBase
 {
 public:
     typedef std::list<EditorFrame*> List_t;
+    
+protected:
+    LEditor *m_editor;
 
 protected:
     virtual void OnClose(wxCommandEvent& event);
@@ -20,8 +23,7 @@ protected:
     virtual void OnReloadUI(wxUpdateUIEvent& event);
     virtual void OnSave(wxCommandEvent& event);
     virtual void OnSaveUI(wxUpdateUIEvent& event);
-	void OnWorkspaceClosed(wxCommandEvent &e);
-    LEditor *m_editor;
+    
 
 public:
     EditorFrame(wxWindow* parent, LEditor* editor);

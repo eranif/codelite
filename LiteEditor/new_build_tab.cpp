@@ -306,7 +306,7 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
     DoProcessOutput(true, false);
 
     std::vector<LEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     for(size_t i=0; i<editors.size(); i++) {
         MarkEditor( editors.at(i) );
     }
@@ -590,7 +590,7 @@ void NewBuildTab::DoClear()
 
     // Clear all markers from open editors
     std::vector<LEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors);
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
     for(size_t i=0; i<editors.size(); i++) {
         editors.at(i)->DelAllCompilerMarkers();
         editors.at(i)->AnnotationClearAll();

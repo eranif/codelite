@@ -790,8 +790,11 @@ size_t PluginManager::GetPageCount() const
 
 size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
 {
-    std::vector<LEditor*> tmpEditors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors( tmpEditors, inOrder );
+    LEditor::Vec_t tmpEditors;
+    size_t flags = MainBook::kGetAll_IncludeDetached;
+    if ( inOrder ) { flags |= MainBook::kGetAll_RetainOrder; }
+    
+    clMainFrame::Get()->GetMainBook()->GetAllEditors( tmpEditors, flags );
     editors.insert(editors.end(), tmpEditors.begin(), tmpEditors.end() );
     return editors.size();
 }

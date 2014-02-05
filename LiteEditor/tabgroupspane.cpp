@@ -255,7 +255,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
         }
 
         std::vector<LEditor*> editors;
-        clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+        clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached|MainBook::kGetAll_RetainOrder);
         if (editors.size() > 0) {
             // If there are editors currently loaded, ask if they are to be replaced or added to
             wxString msg(_("Do you want to replace the existing editors? (Say 'No' to load the new ones alongside)"));

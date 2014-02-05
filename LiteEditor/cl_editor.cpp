@@ -646,9 +646,7 @@ void LEditor::OnSavePoint(wxStyledTextEvent &event)
 
     title << GetFileName().GetFullName();
     clMainFrame::Get()->GetMainBook()->SetPageTitle(this, title);
-    if (clMainFrame::Get()->GetMainBook()->GetActiveEditor() == this) {
-        clMainFrame::Get()->SetFrameTitle(this);
-    }
+    DoUpdateTLWTitle( false );
 }
 
 void LEditor::OnCharAdded(wxStyledTextEvent& event)
@@ -1160,7 +1158,7 @@ bool LEditor::SaveFileAs()
 
         // update the tab title (again) since we really want to trigger an update to the file tooltip
         clMainFrame::Get()->GetMainBook()->SetPageTitle(this, m_fileName.GetFullName());
-        clMainFrame::Get()->SetFrameTitle(this);
+        DoUpdateTLWTitle(false);
 
         // update syntax highlight
         SetSyntaxHighlight();
@@ -1830,14 +1828,9 @@ void LEditor::BraceMatch(const bool& bSelRegion)
 
 void LEditor::SetActive()
 {
-    clMainFrame::Get()->SetFrameTitle(this);
-
     // ensure that the top level window parent of this editor is 'Raised'
-    wxWindow* tlw = ::wxGetTopLevelParent(this);
-    if ( tlw ) {
-        tlw->Raise();
-    }
-
+    DoUpdateTLWTitle(true);
+    
     // if the find and replace dialog is opened, set ourself
     // as the event owners
     if ( m_findReplaceDlg ) {
@@ -4599,4 +4592,31 @@ void LEditor::ToggleBreakpointEnablement()
     bp.internal_id = bm->GetNextID();
     ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint(bp);
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+}
+
+void LEditor::DoUpdateTLWTitle(bool raise)
+{
+    // ensure that the top level window parent of this editor is 'Raised'
+    wxWindow* tlw = ::wxGetTopLevelParent(this);
+    if ( tlw && raise ) {
+        tlw->Raise();
+    }
+    
+    if ( !IsDetached() ) {
+        clMainFrame::Get()->SetFrameTitle(this);
+
+    } else {
+        wxString title;
+        title << GetFileName().GetFullPath();
+        if ( GetModify() ) {
+            title.Prepend("*");
+        }
+        tlw->SetLabel( title );
+    }
+}
+
+bool LEditor::IsDetached() const
+{
+    const wxWindow* tlw = ::wxGetTopLevelParent(const_cast<LEditor*>(this));
+    return (tlw && (clMainFrame::Get() != tlw));
 }

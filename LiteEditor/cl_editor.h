@@ -731,7 +731,12 @@ public:
     virtual int PositionAfterPos(int pos);
     virtual int PositionBeforePos(int pos);
     virtual int GetCharAtPos(int pos);
-
+    
+    /**
+     * @brief return true if the current editor is detached from the mainbook
+     */
+    bool IsDetached() const;
+    
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------
 
@@ -766,6 +771,8 @@ public:
     void PasteLineAbove();
 
 private:
+    void DoUpdateTLWTitle(bool raise);
+    
     void FillBPtoMarkerArray();
     BPtoMarker GetMarkerForBreakpt(enum BreakpointType bp_type);
     void SetProperties();

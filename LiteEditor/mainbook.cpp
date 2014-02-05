@@ -900,7 +900,7 @@ void MainBook::ApplySettingsChanges()
 void MainBook::UnHighlightAll()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UnHighlightAll();
     }
@@ -909,7 +909,7 @@ void MainBook::UnHighlightAll()
 void MainBook::DelAllBreakpointMarkers()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->DelAllBreakpointMarkers();
     }
@@ -918,7 +918,7 @@ void MainBook::DelAllBreakpointMarkers()
 void MainBook::SetViewEOL(bool visible)
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetViewEOL(visible);
     }
@@ -927,7 +927,7 @@ void MainBook::SetViewEOL(bool visible)
 void MainBook::HighlightWord(bool hl)
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->HighlightWord(hl);
     }
@@ -936,7 +936,7 @@ void MainBook::HighlightWord(bool hl)
 void MainBook::ShowWhitespace(int ws)
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetViewWhiteSpace(ws);
     }
@@ -945,7 +945,7 @@ void MainBook::ShowWhitespace(int ws)
 void MainBook::UpdateColours()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UpdateColours();
     }
@@ -954,7 +954,7 @@ void MainBook::UpdateColours()
 void MainBook::UpdateBreakpoints()
 {
     std::vector<LEditor*> editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for (size_t i = 0; i < editors.size(); i++) {
         editors[i]->UpdateBreakpoints();
     }

@@ -56,7 +56,7 @@ public:
         kGetAll_IncludeDetached = 0x00000002, // return both booked editors and detached
         kGetAll_DetachedOnly    = 0x00000004, // return detached editors only
     };
-    
+
 private:
     void CreateGuiControls();
     void ConnectEvents    ();
@@ -75,17 +75,20 @@ private:
     void OnStringHighlight    (wxCommandEvent    &e);
     void OnInitDone           (wxCommandEvent    &e);
     void OnDetachedEditorClosed(clCommandEvent &e);
-    
+
     bool AskUserToSave(LEditor *editor);
     bool DoSelectPage (wxWindow *win  );
     void DoPositionFindBar(int where);
     void DoHandleFrameMenu(LEditor *editor);
     void DoEraseDetachedEditor(IEditor* editor);
-    
+
 public:
     MainBook(wxWindow *parent);
     ~MainBook();
-    
+
+    const EditorFrame::List_t& GetDetachedEditors() const {
+        return m_detachedEditors;
+    }
     void DetachActiveEditor();
     void ClearFileHistory();
     void GetRecentlyOpenedFiles(wxArrayString &files);

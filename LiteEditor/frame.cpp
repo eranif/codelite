@@ -1576,7 +1576,7 @@ bool clMainFrame::IsEditorEvent(wxEvent &event)
 {
 #ifdef __WXGTK__
     MainBook *mainBook = GetMainBook();
-    if(!mainBook || !mainBook->GetActiveEditor()) {
+    if(!mainBook || !mainBook->GetActiveEditor(true)) {
         if ( event.GetId() == wxID_FIND )
             return true;
         else
@@ -1596,7 +1596,7 @@ bool clMainFrame::IsEditorEvent(wxEvent &event)
             isFocused = true;
 
         } else {
-            isFocused = mainBook->GetActiveEditor()->IsFocused();
+            isFocused = mainBook->GetActiveEditor(true)->IsFocused();
 
         }
         return isFocused;
@@ -1644,7 +1644,7 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent &event)
     }
 
     // Do the default and pass this event to the Editor
-    LEditor* editor = GetMainBook()->GetActiveEditor();
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
     if ( !editor && event.GetId() != wxID_FIND ) {
         return;
     }
@@ -1667,7 +1667,7 @@ void clMainFrame::DispatchUpdateUIEvent(wxUpdateUIEvent &event)
         return;
     }
 
-    LEditor* editor = GetMainBook()->GetActiveEditor();
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
     if ( !editor ) {
         event.Enable(false);
         return;
@@ -1686,7 +1686,7 @@ void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent &event)
 {
     CHECK_SHUTDOWN();
 
-    LEditor* editor = GetMainBook()->GetActiveEditor();
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
     if ( !editor ) {
         event.Enable(false);
     } else {
@@ -1768,7 +1768,7 @@ void clMainFrame::LoadSession(const wxString &sessionName)
 
 void clMainFrame::OnSave(wxCommandEvent& event)
 {
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
     if (editor) {
         editor->SaveFile();
 
@@ -1839,14 +1839,14 @@ void clMainFrame::OnFileLoadTabGroup(wxCommandEvent& WXUNUSED(event))
 void clMainFrame::OnFileReload(wxCommandEvent &event)
 {
     wxUnusedVar(event);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
     if (editor) {
         if ( editor->GetModify() ) {
             // Ask user if he really wants to lose all changes
             wxString msg;
             msg << _("The file") << wxT(" '") << editor->GetFileName().GetFullName() << wxT(" '") << _("has been altered.") << wxT("\n");
             msg << _("Are you sure you want to lose all changes?");
-            if ( wxMessageBox(msg, _("Confirm"), wxYES_NO, this) != wxYES ) {
+            if ( wxMessageBox(msg, _("Confirm"), wxYES_NO, ::wxGetTopLevelParent(editor) ) != wxYES ) {
                 return;
             }
         }
@@ -5121,7 +5121,7 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
 void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
     if ( editor ) {
         event.Enable(editor->IsModified());
 
@@ -5276,14 +5276,13 @@ void clMainFrame::OnFileSaveAllUI(wxUpdateUIEvent& event)
 {
     bool hasModifiedEditor = false;
     std::vector<LEditor*> editors;
-    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for(size_t i=0; i<editors.size(); ++i) {
         if( editors.at(i)->IsModified() ) {
             hasModifiedEditor = true;
             break;
         }
     }
-
     event.Enable( hasModifiedEditor );
 }
 

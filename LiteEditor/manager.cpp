@@ -91,6 +91,7 @@
 #include "cl_command_event.h"
 #include "refactorengine.h"
 #include "tabgroupspane.h"
+#include "editorframe.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -1658,7 +1659,7 @@ void Manager::TogglePanes()
 
 //--------------------------- Menu and Accelerator Mmgt -----------------------------
 
-void Manager::UpdateMenuAccelerators()
+void Manager::UpdateMenuAccelerators(wxFrame* frame)
 {
     MenuItemDataMap menuMap, defAccelMap;
 
@@ -1681,61 +1682,75 @@ void Manager::UpdateMenuAccelerators()
             menuMap[it->first] = it->second;
         }
     }
-
-    wxMenuBar *bar = clMainFrame::Get()->GetMenuBar();
-
-    std::vector< wxAcceleratorEntry > accelVec;
-    size_t count = bar->GetMenuCount();
-    for ( size_t i=0; i< count; i++ ) {
-        wxMenu * menu = bar->GetMenu ( i );
-        UpdateMenu ( menu, menuMap, accelVec );
+    
+    std::vector<wxFrame*> frames;
+    // If the caller provided a wxFrame, update only it
+    // otherwise, update the main frame + all detached editors
+    if ( frame ) {
+        frames.push_back( frame );
+        
+    } else {
+        frames.push_back( clMainFrame::Get() );
+        const EditorFrame::List_t& deatchedFrames = clMainFrame::Get()->GetMainBook()->GetDetachedEditors();
+        frames.insert(frames.end(), deatchedFrames.begin(), deatchedFrames.end());
     }
 
-    //In case we still have items to map, map them. this can happen for items
-    //which exist in the list but does not have any menu associated to them in the menu bar (e.g. C++ menu)
-    if ( menuMap.empty() == false ) {
-//		wxString msg;
-//		msg << wxT("Info: UpdateMenuAccelerators: There are still ") << menuMap.size() << wxT(" un-mapped item(s)");
-//		wxLogMessage(msg);
+    wxFrame* curframe = NULL;
+    for(size_t x=0; x<frames.size(); ++x) {
+        curframe = frames.at(x);
+        wxMenuBar *bar = curframe->GetMenuBar();
+        if ( !bar ) { continue; }
+        
+        std::vector< wxAcceleratorEntry > accelVec;
+        size_t count = bar->GetMenuCount();
+        for ( size_t i=0; i< count; ++i ) {
+            wxMenu * menu = bar->GetMenu ( i );
+            UpdateMenu ( menu, menuMap, accelVec );
+        }
 
-        MenuItemDataMap::iterator iter = menuMap.begin();
-        for ( ; iter != menuMap.end(); iter++ ) {
-            MenuItemData itemData = iter->second;
+        // In case we still have items to map, map them. this can happen for items
+        // which exist in the list but does not have any menu associated to them in the menu bar (e.g. C++ menu)
+        if ( menuMap.empty() == false ) {
+            MenuItemDataMap::iterator iter = menuMap.begin();
+            for ( ; iter != menuMap.end(); iter++ ) {
+                MenuItemData itemData = iter->second;
 
-            wxString txt;
-            txt << itemData.action;
-            if ( itemData.accel.IsEmpty() == false ) {
-                txt << wxT ( "\t" ) << itemData.accel;
-            }
-
-            wxAcceleratorEntry* a = wxAcceleratorEntry::Create ( txt );
-            if ( a ) {
-                long commandId ( 0 );
-                itemData.id.ToLong ( &commandId );
-
-                //use the resource ID
-                if ( commandId == 0 ) {
-                    commandId = wxXmlResource::GetXRCID ( itemData.id );
+                wxString txt;
+                txt << itemData.action;
+                if ( itemData.accel.IsEmpty() == false ) {
+                    txt << wxT ( "\t" ) << itemData.accel;
                 }
 
-                a->Set ( a->GetFlags(), a->GetKeyCode(), commandId );
-                accelVec.push_back ( *a );
-                delete a;
+                wxAcceleratorEntry* a = wxAcceleratorEntry::Create ( txt );
+                if ( a ) {
+                    long commandId ( 0 );
+                    itemData.id.ToLong ( &commandId );
+
+                    //use the resource ID
+                    if ( commandId == 0 ) {
+                        commandId = wxXmlResource::GetXRCID ( itemData.id );
+                    }
+
+                    a->Set ( a->GetFlags(), a->GetKeyCode(), commandId );
+                    accelVec.push_back ( *a );
+                    wxDELETE(a);
+                }
             }
         }
+
+        //update the accelerator table of the curframe
+        wxAcceleratorEntry *entries = new wxAcceleratorEntry[accelVec.size() ];
+        for ( size_t i=0; i < accelVec.size(); i++ ) {
+            entries[i] = accelVec[i];
+        }
+
+        wxAcceleratorTable table ( accelVec.size(), entries );
+
+        //update the accelerator table
+        curframe->SetAcceleratorTable ( table );
+        wxDELETEA( entries );
+
     }
-
-    //update the accelerator table of the main frame
-    wxAcceleratorEntry *entries = new wxAcceleratorEntry[accelVec.size() ];
-    for ( size_t i=0; i < accelVec.size(); i++ ) {
-        entries[i] = accelVec[i];
-    }
-
-    wxAcceleratorTable table ( accelVec.size(), entries );
-
-    //update the accelerator table
-    clMainFrame::Get()->SetAcceleratorTable ( table );
-    delete [] entries;
 }
 
 void Manager::LoadAcceleratorTable ( const wxArrayString &files, MenuItemDataMap &accelMap )
@@ -2472,12 +2487,13 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
 
     //try to open the file
     wxFileName fn ( fileName );
-    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
     if ( editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
         editor->HighlightLine (lineno);
         editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1), false);
+        
     } else if (clMainFrame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND) && lineno > 0) {
-        editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+        editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
         if ( editor ) {
             editor->HighlightLine(lineno);
             editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1), false);
@@ -2606,12 +2622,11 @@ void Manager::UpdateGotControl ( const DebuggerEventData &e )
     // Raise CodeLite (unless the cause is a hit bp, and we're configured not to
     //   e.g. because there's a command-list breakpoint ending in 'continue')
     if ( (reason != DBG_BP_HIT) || dinfo.whenBreakpointHitRaiseCodelite ) {
-        //put us on top of the z-order window
-        long curFlags = clMainFrame::Get()->GetWindowStyleFlag();
-        clMainFrame::Get()->SetWindowStyleFlag(curFlags | wxSTAY_ON_TOP);
-        clMainFrame::Get()->Raise();
-        clMainFrame::Get()->SetWindowStyleFlag(curFlags);
-        m_dbgCanInteract = true;
+        if ( clMainFrame::Get()->IsIconized() || !clMainFrame::Get()->IsShown() ) {
+            clMainFrame::Get()->Restore();
+            clMainFrame::Get()->Raise();
+            m_dbgCanInteract = true;
+        }
     }
 
     SendCmdEvent(wxEVT_DEBUG_EDITOR_GOT_CONTROL);

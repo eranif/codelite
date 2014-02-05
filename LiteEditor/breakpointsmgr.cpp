@@ -226,10 +226,11 @@ void BreakptMgr::DeleteAllBreakpointMarkers()
 void BreakptMgr::RefreshBreakpointMarkers()
 {
     std::vector<LEditor*> editors;
-    clMainFrame::Get()->GetMainBook()->GetAllEditors( editors , MainBook::kGetAll_Default);
+    clMainFrame::Get()->GetMainBook()->GetAllEditors( editors , MainBook::kGetAll_IncludeDetached);
 
-    for(size_t i=0; i<editors.size(); i++)
+    for(size_t i=0; i<editors.size(); i++) {
         DoRefreshFileBreakpoints(editors.at(i));
+    }
 }
 
 // Delete all breakpoint markers for this file, then re-mark with the currently-correct marker

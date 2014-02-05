@@ -567,7 +567,7 @@ public:
     /**
      * \brief update the menu bar accelerators
      */
-    void UpdateMenuAccelerators();
+    void UpdateMenuAccelerators( wxFrame* frame = NULL );
 
     /**
      * \brief load accelerator table from the configuration section

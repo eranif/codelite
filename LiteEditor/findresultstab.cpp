@@ -241,7 +241,11 @@ void FindResultsTab::SetStyles(wxStyledTextCtrl *sci)
 
 size_t FindResultsTab::GetPageCount() const
 {
-    return m_book->GetPageCount();
+    if ( m_book ) {
+        return m_book->GetPageCount();
+    } else {
+        return 1;
+    }
 }
 
 void FindResultsTab::AppendText(const wxString& line)

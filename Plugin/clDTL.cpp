@@ -23,8 +23,8 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
             return;
 
         // Read the file content
-        fp1.ReadAll(&leftFile, wxConvUTF8);
-        fp2.ReadAll(&rightFile, wxConvUTF8);
+        fp1.ReadAll(&leftFile);
+        fp2.ReadAll(&rightFile);
     }
     
     m_result.clear();

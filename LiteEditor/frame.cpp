@@ -2634,14 +2634,17 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
                                                            "PromptForBuildBeforeExecute", 
                                                            _("Build before execute"), 
                                                            _("No, just execute it"));
-    if ( res == wxID_YES ) {
-        QueueCommand buildCommand( QueueCommand::kBuild );
-        ManagerST::Get()->PushQueueCommand( buildCommand );
-        commandExecute.SetCheckBuildSuccess( true ); // execute only if build was successfull
-    }
+    // Don't do anything if "X" is pressed
+    if ( res != wxID_CANCEL ) {
+        if ( res == wxID_YES ) {
+            QueueCommand buildCommand( QueueCommand::kBuild );
+            ManagerST::Get()->PushQueueCommand( buildCommand );
+            commandExecute.SetCheckBuildSuccess( true ); // execute only if build was successfull
+        }
 
-    ManagerST::Get()->PushQueueCommand( commandExecute );
-    ManagerST::Get()->ProcessCommandQueue();
+        ManagerST::Get()->PushQueueCommand( commandExecute );
+        ManagerST::Get()->ProcessCommandQueue();
+    }
 }
 
 void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent &event)
@@ -3092,17 +3095,20 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Would you like to build the project before debugging it?"), 
                                                               "BuildBeforeDebug",
                                                               _("Build and Debug"), _("Debug without building"));
-        if ( res == wxID_YES ) {
-            QueueCommand bldCmd( QueueCommand::kBuild );
-            ManagerST::Get()->PushQueueCommand(bldCmd);
-            dbgCmd.SetCheckBuildSuccess(true);
+        // Don't do anything if "X" is pressed
+        if ( res != wxID_CANCEL ) {
+            if ( res == wxID_YES ) {
+                QueueCommand bldCmd( QueueCommand::kBuild );
+                ManagerST::Get()->PushQueueCommand(bldCmd);
+                dbgCmd.SetCheckBuildSuccess(true);
+            }
+
+            // place a debug command
+            ManagerST::Get()->PushQueueCommand(dbgCmd);
+
+            // trigger the commands queue
+            ManagerST::Get()->ProcessCommandQueue();
         }
-
-        // place a debug command
-        ManagerST::Get()->PushQueueCommand(dbgCmd);
-
-        // trigger the commands queue
-        ManagerST::Get()->ProcessCommandQueue();
     }
 }
 
@@ -4367,14 +4373,17 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
                                                             "ReloadWorkspaceWhenAltered", 
                                                             _("Yes, reload the workspace"), 
                                                             _("Don't reload the workspace"));
-    if ( res == wxID_YES ) {
-        wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-        GetEventHandler()->AddPendingEvent( evtReload );
+    // Don't do anything if "X" is pressed
+    if ( res != wxID_CANCEL ) {
+        if ( res == wxID_YES ) {
+            wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
+            GetEventHandler()->AddPendingEvent( evtReload );
 
-    } else {
-        // user cancelled the dialog or chosed not to reload the workspace
-        if ( GetMainBook()->GetActiveEditor() ) {
-            GetMainBook()->GetActiveEditor()->CallAfter( &LEditor::SetActive );
+        } else {
+            // user cancelled the dialog or chosed not to reload the workspace
+            if ( GetMainBook()->GetActiveEditor() ) {
+                GetMainBook()->GetActiveEditor()->CallAfter( &LEditor::SetActive );
+            }
         }
     }
 }

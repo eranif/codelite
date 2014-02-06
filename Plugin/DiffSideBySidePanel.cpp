@@ -151,6 +151,9 @@ void DiffSideBySidePanel::OnLeftStcPainted(wxStyledTextEvent& event)
     wxUnusedVar(event);
     int firstLine = m_stcLeft->GetFirstVisibleLine();
     m_stcRight->SetFirstVisibleLine( firstLine );
+    
+    int scrollPos = m_stcLeft->GetXOffset();
+    m_stcRight->SetXOffset(scrollPos);
 }
 
 void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
@@ -158,6 +161,9 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
     wxUnusedVar(event);
     int firstLine = m_stcRight->GetFirstVisibleLine();
     m_stcLeft->SetFirstVisibleLine( firstLine );
+
+    int scrollPos = m_stcRight->GetXOffset();
+    m_stcLeft->SetXOffset(scrollPos);
 }
 
 void DiffSideBySidePanel::SetLeftFileReadOnly(bool b)

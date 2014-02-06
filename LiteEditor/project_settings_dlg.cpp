@@ -384,7 +384,8 @@ void ProjectSettingsDlg::OnPageChanged(wxTreebookEvent& event)
              dynamic_cast<PSGeneralPage*>(page)     ||
              dynamic_cast<PSBuildEventsPage*>(page) ||
              dynamic_cast<PSEnvironmentPage*>(page) ||
-             dynamic_cast<PSDebuggerPage*>(page) 
+             dynamic_cast<PSDebuggerPage*>(page)    ||
+             dynamic_cast<PSCompletionPage*>(page)
              ) {
             ShowCustomProjectMessage(false);
             

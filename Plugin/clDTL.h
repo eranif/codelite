@@ -1,0 +1,76 @@
+#ifndef CLDTL_H
+#define CLDTL_H
+
+#include <wx/string.h>
+#include <vector>
+#include <wx/filename.h>
+#include "codelite_exports.h"
+
+/**
+ * @class clDTL
+ * @brief Diff 2 files and return the result
+ * @code
+    
+    // An example of using the clDTL class:
+    clDTL d;
+    d.Diff(filePath1, filePath2);
+    const clDTL::LineInfoVec_t &result  = d.GetResult();
+    
+    // Create 2 strings "left" and "right"
+    wxString leftContent, rightContent;
+    for(size_t i=0; i<result.size(); ++i) {
+        // format the lines
+        switch(result.at(i).m_type) {
+        case clDTL::LINE_ADDED:
+            leftContent  << "- \n";
+            rightContent << "+ " << result.at(i).m_line;
+            break;
+        case clDTL::LINE_REMOVED:
+            leftContent  << "+ " << result.at(i).m_line;
+            rightContent << "- \n";
+            break;
+        case clDTL::LINE_COMMON:
+            leftContent  << " " << result.at(i).m_line;
+            rightContent << " " << result.at(i).m_line;
+            break;
+        }
+    }
+ * @endcode
+ */
+class WXDLLIMPEXP_SDK clDTL
+{
+public:
+    static const int LINE_REMOVED = -1;
+    static const int LINE_COMMON  = 0;
+    static const int LINE_ADDED   = 1;
+    
+    struct WXDLLIMPEXP_SDK LineInfo {
+        int m_type;
+        wxString m_line;
+        LineInfo(const wxString &line, int type ) : m_type(type), m_line(line) {}
+        LineInfo() : m_type(LINE_COMMON) {}
+    };
+    typedef std::vector<LineInfo> LineInfoVec_t;
+
+private:
+    LineInfoVec_t m_result;
+
+public:
+    clDTL();
+    virtual ~clDTL();
+
+    /**
+     * @brief "diff" two files and store the result in the m_result member
+     * When 2 files are identical, the result is empty
+     */
+    void Diff(const wxFileName& fnLeft, const wxFileName& fnRight);
+    /**
+     * @brief return the result of the previous 'Diff()' function
+     * empty result means that the 2 files are identical
+     */
+    const LineInfoVec_t& GetResult() const {
+        return m_result;
+    }
+};
+
+#endif // CLDTL_H

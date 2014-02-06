@@ -510,4 +510,18 @@
   <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
+  <VirtualDirectory Name="Diff">
+    <VirtualDirectory Name="dtl">
+      <File Name="dtl/Diff.hpp"/>
+      <File Name="dtl/Diff3.hpp"/>
+      <File Name="dtl/dtl.hpp"/>
+      <File Name="dtl/functors.hpp"/>
+      <File Name="dtl/Lcs.hpp"/>
+      <File Name="dtl/Sequence.hpp"/>
+      <File Name="dtl/Ses.hpp"/>
+      <File Name="dtl/variables.hpp"/>
+    </VirtualDirectory>
+    <File Name="clDTL.cpp"/>
+    <File Name="clDTL.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

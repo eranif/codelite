@@ -523,5 +523,7 @@
     </VirtualDirectory>
     <File Name="clDTL.cpp"/>
     <File Name="clDTL.h"/>
+    <File Name="DiffSideBySidePanel.h"/>
+    <File Name="DiffSideBySidePanel.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

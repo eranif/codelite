@@ -10,12 +10,12 @@
  * @class clDTL
  * @brief Diff 2 files and return the result
  * @code
-    
+
     // An example of using the clDTL class:
     clDTL d;
     d.Diff(filePath1, filePath2);
     const clDTL::LineInfoVec_t &result  = d.GetResult();
-    
+
     // Create 2 strings "left" and "right"
     wxString leftContent, rightContent;
     for(size_t i=0; i<result.size(); ++i) {
@@ -40,9 +40,10 @@
 class WXDLLIMPEXP_SDK clDTL
 {
 public:
-    static const int LINE_REMOVED = -1;
-    static const int LINE_COMMON  = 0;
-    static const int LINE_ADDED   = 1;
+    static const int LINE_PLACEHOLDER = -2;
+    static const int LINE_REMOVED     = -1;
+    static const int LINE_COMMON      = 0;
+    static const int LINE_ADDED       = 1;
     
     struct WXDLLIMPEXP_SDK LineInfo {
         int m_type;
@@ -53,7 +54,8 @@ public:
     typedef std::vector<LineInfo> LineInfoVec_t;
 
 private:
-    LineInfoVec_t m_result;
+    LineInfoVec_t m_resultLeft;
+    LineInfoVec_t m_resultRight;
 
 public:
     clDTL();
@@ -64,12 +66,12 @@ public:
      * When 2 files are identical, the result is empty
      */
     void Diff(const wxFileName& fnLeft, const wxFileName& fnRight);
-    /**
-     * @brief return the result of the previous 'Diff()' function
-     * empty result means that the 2 files are identical
-     */
-    const LineInfoVec_t& GetResult() const {
-        return m_result;
+    
+    const LineInfoVec_t& GetResultLeft() const {
+        return m_resultLeft;
+    }
+    const LineInfoVec_t& GetResultRight() const {
+        return m_resultRight;
     }
 };
 

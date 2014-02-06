@@ -27,7 +27,8 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
         fp2.ReadAll(&rightFile);
     }
     
-    m_result.clear();
+    m_resultLeft.clear();
+    m_resultRight.clear();
     
     typedef wxString elem;
     typedef std::pair<elem, dtl::elemInfo> sesElem;
@@ -51,9 +52,35 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
     
     // Loop over the diff and check if it is a whitespace only diff
     std::vector<sesElem> seq = diff.getSes().getSequence();
-    m_result.reserve( seq.size() );
+    m_resultLeft.reserve( seq.size() );
+    m_resultRight.reserve( seq.size() );
     for(size_t i=0; i<seq.size(); ++i) {
-        clDTL::LineInfo line(seq.at(i).first, seq.at(i).second.type);
-        m_result.push_back( line );
+        switch(seq.at(i).second.type) {
+        case dtl::SES_COMMON: {
+            clDTL::LineInfo line(seq.at(i).first, LINE_COMMON);
+            m_resultLeft.push_back( line );
+            m_resultRight.push_back( line );
+            break;
+            
+        }
+        case dtl::SES_ADD: {
+            clDTL::LineInfo lineLeft("\n", LINE_PLACEHOLDER);
+            m_resultLeft.push_back( lineLeft );
+            
+            clDTL::LineInfo lineRight(seq.at(i).first, LINE_ADDED);
+            m_resultRight.push_back( lineRight );
+            break;
+            
+        }
+        case dtl::SES_DELETE: {
+            clDTL::LineInfo lineLeft(seq.at(i).first, LINE_REMOVED);
+            m_resultLeft.push_back( lineLeft );
+            
+            clDTL::LineInfo lineRight("\n", LINE_PLACEHOLDER);
+            m_resultRight.push_back( lineRight );
+            break;
+            
+        }
+        }
     }
 }

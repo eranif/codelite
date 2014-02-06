@@ -5,14 +5,14 @@
 #include <wx/filename.h>
 #include <vector>
 
-class DiffSideBySidePanel : public DiffSideBySidePanelBase
+class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
 {
     typedef std::vector< int > Markers_t;
 
-    Markers_t m_leftGreenMarkers;   /// left view list of lines with green markers ("added")
-    Markers_t m_leftRedMarkers;     /// left view list of lines with red markers ("removed")
-    Markers_t m_rightGreenMarkers;  /// right view list of lines with green markers ("added")
-    Markers_t m_rightRedMarkers;    /// right view list of lines with red markers ("removed")
+    Markers_t m_leftRedMarkers;             /// left view list of lines with red markers ("removed")
+    Markers_t m_leftPlaceholdersMarkers;    /// left view list of lines with red markers ("removed")
+    Markers_t m_rightGreenMarkers;          /// right view list of lines with green markers ("added")
+    Markers_t m_rightPlaceholdersMarkers;   /// right view list of lines with green markers ("added")
 
 protected:
     virtual void OnLeftStcPainted(wxStyledTextEvent& event);
@@ -35,5 +35,8 @@ public:
      * Once set, you should call Diff() function
      */
     void SetFiles(const wxFileName& left, const wxFileName &right);
+    
+    void SetLeftFileReadOnly(bool b);
+    void SetRightFileReadOnly(bool b);
 };
 #endif // DIFFSIDEBYSIDEPANEL_H

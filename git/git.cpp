@@ -1954,7 +1954,7 @@ void GitPlugin::DoShowDiffsForFiles(const wxArrayString& files)
         // File name should be relative to the repo
         wxFileName fn(files.Item(i));
         fn.MakeRelativeTo(m_repositoryDirectory);
-        gitAction ga( gitDiffFile, fn.GetFullPath() );
+        gitAction ga( gitDiffFile, fn.GetFullPath(wxPATH_UNIX) );
         m_gitActionQueue.push( ga );
     }
     
@@ -2068,6 +2068,10 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     DiffSideBySidePanel* p = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
     p->SetFiles(tmpFilePath, fnWorkingCopy.GetFullPath());
     p->Diff();
-    //::wxRemoveFile( tmpFile.GetFullPath() );
+    p->SetLeftFileReadOnly(true);
+    p->SetRightFileReadOnly(true);
+    
+    // Remove our temp file
+    ::wxRemoveFile( tmpFile.GetFullPath() );
     m_mgr->AddPage(p, _("Git Diff: ") + fnWorkingCopy.GetFullName(), wxNullBitmap, true);
 }

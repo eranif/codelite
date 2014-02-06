@@ -13,6 +13,7 @@
 #include "editor_config.h"
 #include "drawingutils.h"
 #include "cl_aui_tool_stickness.h"
+#include "macros.h"
 
 #define GIT_MESSAGE(...)  AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)  if ( IsVerbose() ) { AddText(wxString::Format(__VA_ARGS__)); }
@@ -381,11 +382,11 @@ void GitConsole::UpdateTreeView(const wxString& output)
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
+    menu.Append(XRCID("git_console_open_file"),  _("Open File"));
+    menu.AppendSeparator();
     menu.Append(XRCID("git_console_add_file"), _("Add file"));
     menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
-    menu.AppendSeparator();
-    menu.Append(XRCID("git_console_diff_file"),  _("Show Diff"));
-    menu.Connect(XRCID("git_console_diff_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnShowFileDiff), NULL, this);
+    menu.Connect(XRCID("git_console_open_file"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(GitConsole::OnOpenFile), NULL, this);
     m_dvFiles->PopupMenu( &menu );
 }
 
@@ -453,6 +454,19 @@ void GitConsole::OnItemSelectedUI(wxUpdateUIEvent& event)
 
 void GitConsole::OnFileActivated(wxDataViewEvent& event)
 {
+    CHECK_ITEM_RET(event.GetItem());
+    
+    wxArrayString files;
+    GitClientData* gcd = dynamic_cast<GitClientData*>(m_dvFilesModel->GetClientObject( event.GetItem() ));
+    if ( gcd ) {
+        GIT_MESSAGE("Showing diff for: %s", gcd->GetPath().c_str());
+        files.push_back( gcd->GetPath() );
+        m_git->ShowDiff( files );
+    }
+}
+
+void GitConsole::OnOpenFile(wxCommandEvent& e)
+{
     wxDataViewItemArray items;
     m_dvFiles->GetSelections(items);
     wxArrayString files;
@@ -464,7 +478,7 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
     }
 
     if ( files.IsEmpty() ) {
-        event.Skip();
+        e.Skip();
         return;
     }
 
@@ -475,23 +489,6 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
     }
 }
 
-void GitConsole::OnShowFileDiff(wxCommandEvent& e)
-{
-    wxDataViewItemArray items;
-    m_dvFiles->GetSelections(items);
-    wxArrayString files;
-    for(size_t i=0; i<items.GetCount(); ++i) {
-        GitClientData* gcd = dynamic_cast<GitClientData*>(m_dvFilesModel->GetClientObject( items.Item(i) ));
-        if ( gcd ) {
-            GIT_MESSAGE("Showing diff for: %s", gcd->GetPath().c_str());
-            files.push_back( gcd->GetPath() );
-        }
-    }
-
-    if ( !files.IsEmpty() ) {
-        m_git->ShowDiff( files );
-    }
-}
 void GitConsole::OnApplyPatch(wxCommandEvent& event)
 {
     wxPostEvent(m_git, event);

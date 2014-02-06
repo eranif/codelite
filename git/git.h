@@ -110,6 +110,8 @@ class GitPlugin : public IPlugin
     
 private:
     void DoCreateTreeImages();
+    void DoShowDiffViewer(const wxString &headFile, const wxString& fileName);
+    
     void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType ) const;
     void InitDefaults();
     void AddDefaultActions();

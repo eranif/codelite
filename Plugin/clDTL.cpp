@@ -32,8 +32,8 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
     typedef wxString elem;
     typedef std::pair<elem, dtl::elemInfo> sesElem;
     
-    wxArrayString leftLines = wxStringTokenize(leftFile, "\n", wxTOKEN_RET_EMPTY_ALL);
-    wxArrayString rightLines = wxStringTokenize(rightFile, "\n", wxTOKEN_RET_EMPTY_ALL);
+    wxArrayString leftLines = wxStringTokenize(leftFile, "\n", wxTOKEN_RET_DELIMS);
+    wxArrayString rightLines = wxStringTokenize(rightFile, "\n", wxTOKEN_RET_DELIMS);
     
     std::vector<elem> leftLinesVec;
     std::vector<elem> rightLinesVec;

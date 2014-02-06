@@ -44,6 +44,8 @@ protected:
     wxStyledTextCtrl* m_stcRight;
 
 protected:
+    virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);

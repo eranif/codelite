@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	28,
+		"m_objCounter":	30,
 		"m_includeFiles":	["codelite_exports.h"],
 		"m_bitmapFunction":	"wxC9D6CInitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_plugin_bitmaps.cpp",
@@ -610,7 +610,7 @@
 									"border":	2,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
+									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -708,7 +708,7 @@
 									"border":	2,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
+									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -898,7 +898,14 @@
 											"m_label":	"Keywords Set 5",
 											"m_value":	""
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_STC_PAINTED",
+											"m_eventClass":	"wxStyledTextEvent",
+											"m_eventHandler":	"wxStyledTextEventHandler",
+											"m_functionNameAndSignature":	"OnLeftStcPainted(wxStyledTextEvent& event)",
+											"m_description":	"Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
+											"m_noBody":	false
+										}],
 									"m_children":	[]
 								}, {
 									"m_type":	4454,
@@ -1036,7 +1043,14 @@
 											"m_label":	"Keywords Set 5",
 											"m_value":	""
 										}],
-									"m_events":	[],
+									"m_events":	[{
+											"m_eventName":	"wxEVT_STC_PAINTED",
+											"m_eventClass":	"wxStyledTextEvent",
+											"m_eventHandler":	"wxStyledTextEventHandler",
+											"m_functionNameAndSignature":	"OnRightStcPainted(wxStyledTextEvent& event)",
+											"m_description":	"Painting has just been done.\nUseful when you want to update some other widgets based on a change in Scintilla\nbut want to have the paint occur first to appear more responsive",
+											"m_noBody":	false
+										}],
 									"m_children":	[]
 								}]
 						}]

@@ -211,7 +211,8 @@ void VirtualDirectorySelectorDlg::OnButtonOkUI(wxUpdateUIEvent& event)
 
 bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
 {
-    wxTreeItemId item = m_treeCtrl->GetRootItem();
+    wxTreeItemId item;
+
     wxArrayString tokens = wxStringTokenize(path, wxT(":"), wxTOKEN_STRTOK);
 
     for (size_t i=0; i<tokens.GetCount(); i++) {
@@ -230,11 +231,26 @@ bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
         }
     }
 
-    if(item.IsOk()) {
+    if (!item.IsOk()) {
+        // No match, so try to find a sensible default
+        // Start with the root, but this will fail for a hidden root...
+        item = m_treeCtrl->GetRootItem();
+        if (m_treeCtrl->GetWindowStyle() & wxTR_HIDE_ROOT) {
+            if (!item.IsOk() || !m_treeCtrl->HasChildren(item)) {
+                return false;
+            }
+
+            wxTreeItemIdValue cookie;
+            item = m_treeCtrl->GetFirstChild(item, cookie);
+        }
+    }
+
+    if (item.IsOk()) {
         m_treeCtrl->EnsureVisible(item);
         m_treeCtrl->SelectItem(item);
         return true;
     }
+
     return false;
 }
 

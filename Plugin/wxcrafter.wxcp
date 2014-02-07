@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	30,
+		"m_objCounter":	39,
 		"m_includeFiles":	["codelite_exports.h"],
 		"m_bitmapFunction":	"wxC9D6CInitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_plugin_bitmaps.cpp",
@@ -610,7 +610,7 @@
 									"border":	2,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -708,7 +708,7 @@
 									"border":	2,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL"],
+									"m_styles":	["wxFLP_DEFAULT_STYLE", "wxFLP_USE_TEXTCTRL", "wxFLP_SMALL"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -840,7 +840,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Line Number Margin",
-											"m_value":	true
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Separator Margin",
@@ -985,7 +985,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Line Number Margin",
-											"m_value":	true
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Separator Margin",

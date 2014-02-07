@@ -180,10 +180,10 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
 
 void DiffSideBySidePanel::SetLeftFileReadOnly(bool b)
 {
-    m_stcLeft->SetEditable(b);
+    m_stcLeft->SetEditable( !b );
 }
 
 void DiffSideBySidePanel::SetRightFileReadOnly(bool b)
 {
-    m_stcRight->SetEditable(b);
+    m_stcRight->SetEditable( !b );
 }

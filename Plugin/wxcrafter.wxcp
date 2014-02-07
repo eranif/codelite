@@ -820,7 +820,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Focused",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -848,7 +848,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Symbol Margin",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"choice",
 											"m_label":	"Wrap Text",
@@ -993,7 +993,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Symbol Margin",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"choice",
 											"m_label":	"Wrap Text",

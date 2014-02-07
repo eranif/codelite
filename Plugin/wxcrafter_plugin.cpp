@@ -112,17 +112,18 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     boxSizer13->Add(flexGridSizer20, 1, wxEXPAND, 5);
     
-    m_filePickerLeft = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerLeft = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     
     flexGridSizer20->Add(m_filePickerLeft, 1, wxALL|wxEXPAND, 2);
     
     flexGridSizer20->Add(0, 0, 1, wxALL, 5);
     
-    m_filePickerRight = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerRight = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
     
     flexGridSizer20->Add(m_filePickerRight, 0, wxALL|wxEXPAND, 2);
     
     m_stcLeft = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcLeft->SetFocus();
     // Configure the fold margin
     m_stcLeft->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcLeft->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -135,13 +136,12 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     // Configure the symbol margin
     m_stcLeft->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
     m_stcLeft->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stcLeft->SetMarginWidth(2, 0);
+    m_stcLeft->SetMarginWidth(2, 16);
     m_stcLeft->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
-    int m_stcLeft_PixelWidth = 4 + 5 *m_stcLeft->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
     m_stcLeft->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcLeft->SetMarginWidth(0,m_stcLeft_PixelWidth);
+    m_stcLeft->SetMarginWidth(0,0);
     
     // Configure the line symbol margin
     m_stcLeft->SetMarginType(3, wxSTC_MARGIN_FORE);
@@ -176,13 +176,12 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     // Configure the symbol margin
     m_stcRight->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
     m_stcRight->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stcRight->SetMarginWidth(2, 0);
+    m_stcRight->SetMarginWidth(2, 16);
     m_stcRight->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
-    int m_stcRight_PixelWidth = 4 + 5 *m_stcRight->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
     m_stcRight->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcRight->SetMarginWidth(0,m_stcRight_PixelWidth);
+    m_stcRight->SetMarginWidth(0,0);
     
     // Configure the line symbol margin
     m_stcRight->SetMarginType(3, wxSTC_MARGIN_FORE);

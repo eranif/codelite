@@ -149,21 +149,33 @@ void DiffSideBySidePanel::UpdateViews(const wxString& left, const wxString& righ
 void DiffSideBySidePanel::OnLeftStcPainted(wxStyledTextEvent& event)
 {
     wxUnusedVar(event);
-    int firstLine = m_stcLeft->GetFirstVisibleLine();
-    m_stcRight->SetFirstVisibleLine( firstLine );
-    
-    int scrollPos = m_stcLeft->GetXOffset();
-    m_stcRight->SetXOffset(scrollPos);
+    int rightFirstLine = m_stcRight->GetFirstVisibleLine();
+    int leftFirsLine   = m_stcLeft->GetFirstVisibleLine();
+    if ( rightFirstLine != leftFirsLine ) {
+        m_stcRight->SetFirstVisibleLine( leftFirsLine );
+    }
+
+    int rightScrollPos = m_stcRight->GetXOffset();
+    int leftScrollPos  = m_stcLeft->GetXOffset();
+    if ( leftScrollPos != rightScrollPos ) {
+        m_stcRight->SetXOffset( leftScrollPos );
+    }
 }
 
 void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
 {
     wxUnusedVar(event);
-    int firstLine = m_stcRight->GetFirstVisibleLine();
-    m_stcLeft->SetFirstVisibleLine( firstLine );
+    int rightFirstLine = m_stcRight->GetFirstVisibleLine();
+    int leftFirsLine   = m_stcLeft->GetFirstVisibleLine();
+    if ( rightFirstLine != leftFirsLine ) {
+        m_stcLeft->SetFirstVisibleLine( rightFirstLine );
+    }
 
-    int scrollPos = m_stcRight->GetXOffset();
-    m_stcLeft->SetXOffset(scrollPos);
+    int rightScrollPos = m_stcRight->GetXOffset();
+    int leftScrollPos  = m_stcLeft->GetXOffset();
+    if ( leftScrollPos != rightScrollPos ) {
+        m_stcLeft->SetXOffset( rightScrollPos );
+    }
 }
 
 void DiffSideBySidePanel::SetLeftFileReadOnly(bool b)

@@ -29,6 +29,7 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
     
     m_resultLeft.clear();
     m_resultRight.clear();
+    m_sequences.clear();
     
     typedef wxString elem;
     typedef std::pair<elem, dtl::elemInfo> sesElem;
@@ -54,12 +55,25 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
     std::vector<sesElem> seq = diff.getSes().getSequence();
     m_resultLeft.reserve( seq.size() );
     m_resultRight.reserve( seq.size() );
+    
+    const int STATE_NONE   = 0;
+    const int STATE_IN_SEQ = 1;
+    
+    int state = STATE_NONE;
+    int seqStartLine = wxNOT_FOUND;
+    
     for(size_t i=0; i<seq.size(); ++i) {
         switch(seq.at(i).second.type) {
         case dtl::SES_COMMON: {
             clDTL::LineInfo line(seq.at(i).first, LINE_COMMON);
             m_resultLeft.push_back( line );
             m_resultRight.push_back( line );
+            
+            if ( state == STATE_IN_SEQ ) {
+                m_sequences.push_back( std::make_pair(seqStartLine, i) );
+                seqStartLine = wxNOT_FOUND;
+                state = STATE_NONE;
+            }
             break;
             
         }
@@ -69,6 +83,11 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
             
             clDTL::LineInfo lineRight(seq.at(i).first, LINE_ADDED);
             m_resultRight.push_back( lineRight );
+            
+            if ( state == STATE_NONE ) {
+                seqStartLine = i;
+                state = STATE_IN_SEQ;
+            }
             break;
             
         }
@@ -78,9 +97,19 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
             
             clDTL::LineInfo lineRight("\n", LINE_PLACEHOLDER);
             m_resultRight.push_back( lineRight );
-            break;
             
+            if ( state == STATE_NONE ) {
+                seqStartLine = i;
+                state = STATE_IN_SEQ;
+            }
+            break;
         }
         }
+    }
+    
+    if ( state == STATE_IN_SEQ ) {
+        m_sequences.push_back( std::make_pair(seqStartLine, seq.size()-1) );
+        seqStartLine = wxNOT_FOUND;
+        state = STATE_NONE;
     }
 }

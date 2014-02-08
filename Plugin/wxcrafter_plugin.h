@@ -17,6 +17,11 @@
 #include <wx/stc/stc.h>
 #include <wx/button.h>
 #include <wx/panel.h>
+#include <wx/ribbon/bar.h>
+#include <wx/ribbon/art.h>
+#include <wx/ribbon/page.h>
+#include <wx/ribbon/panel.h>
+#include <wx/ribbon/buttonbar.h>
 #include <wx/filepicker.h>
 #include "codelite_exports.h"
 
@@ -38,12 +43,30 @@ public:
 class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
 {
 protected:
+    enum {
+        ID_TOOL_COPY_DIFF_LEFT_TO_RIGHT = 1001,
+        ID_TOOL_COPY_DIFF_RIGHT_TO_LEFT = 1002,
+    };
+protected:
+    wxRibbonBar* m_ribbonBar41;
+    wxRibbonPage* m_ribbonPage43;
+    wxRibbonPanel* m_ribbonPanel47;
+    wxRibbonButtonBar* m_ribbonButtonBar49;
+    wxRibbonPanel* m_ribbonPanel83;
+    wxRibbonButtonBar* m_ribbonButtonBar85;
     wxFilePickerCtrl* m_filePickerLeft;
     wxFilePickerCtrl* m_filePickerRight;
     wxStyledTextCtrl* m_stcLeft;
     wxStyledTextCtrl* m_stcRight;
 
 protected:
+    virtual void OnRefreshDiff(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnNextDiffSequence(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnNextDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnPrevDiffSequence(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnPrevDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCopyLeftToRightUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 

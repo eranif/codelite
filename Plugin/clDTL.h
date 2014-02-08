@@ -44,7 +44,7 @@ public:
     static const int LINE_REMOVED     = -1;
     static const int LINE_COMMON      = 0;
     static const int LINE_ADDED       = 1;
-    
+
     struct WXDLLIMPEXP_SDK LineInfo {
         int m_type;
         wxString m_line;
@@ -52,10 +52,13 @@ public:
         LineInfo() : m_type(LINE_COMMON) {}
     };
     typedef std::vector<LineInfo> LineInfoVec_t;
+    typedef std::vector<std::pair<int, int> > SeqLinePair_t;
+
 
 private:
     LineInfoVec_t m_resultLeft;
     LineInfoVec_t m_resultRight;
+    SeqLinePair_t m_sequences;
 
 public:
     clDTL();
@@ -66,12 +69,15 @@ public:
      * When 2 files are identical, the result is empty
      */
     void Diff(const wxFileName& fnLeft, const wxFileName& fnRight);
-    
+
     const LineInfoVec_t& GetResultLeft() const {
         return m_resultLeft;
     }
     const LineInfoVec_t& GetResultRight() const {
         return m_resultRight;
+    }
+    const SeqLinePair_t& GetSequences() const {
+        return m_sequences;
     }
 };
 

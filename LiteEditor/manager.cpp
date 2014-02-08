@@ -2626,6 +2626,9 @@ void Manager::UpdateGotControl ( const DebuggerEventData &e )
             clMainFrame::Get()->Restore();
             clMainFrame::Get()->Raise();
         }
+        if ( !clMainFrame::Get()->IsShownOnScreen() ) {
+            clMainFrame::Get()->Raise();
+        }
         m_dbgCanInteract = true;
     }
 

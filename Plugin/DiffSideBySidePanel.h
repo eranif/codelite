@@ -13,13 +13,25 @@ class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
     Markers_t m_leftPlaceholdersMarkers;    /// left view list of lines with red markers ("removed")
     Markers_t m_rightGreenMarkers;          /// right view list of lines with green markers ("added")
     Markers_t m_rightPlaceholdersMarkers;   /// right view list of lines with green markers ("added")
-
+    std::vector< std::pair<int, int> > m_sequences; // start-line - end-line pairs
+    int m_cur_sequence;
+    std::pair<int, int> m_selectedSequence;
+    
 protected:
+    virtual void OnCopyLeftToRightUI(wxUpdateUIEvent& event);
+    virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event);
+    virtual void OnNextDiffUI(wxUpdateUIEvent& event);
+    virtual void OnPrevDiffUI(wxUpdateUIEvent& event);
+    virtual void OnNextDiffSequence(wxRibbonButtonBarEvent& event);
+    virtual void OnPrevDiffSequence(wxRibbonButtonBarEvent& event);
+    virtual void OnRefreshDiff(wxRibbonButtonBarEvent& event);
     virtual void OnLeftStcPainted(wxStyledTextEvent& event);
     virtual void OnRightStcPainted(wxStyledTextEvent& event);
-    
+
     void PrepareViews();
     void UpdateViews(const wxString &left, const wxString &right);
+    void DoClean();
+    void DoDrawSequenceMarkers(int firstLine, int lastLine);
 
 public:
     DiffSideBySidePanel(wxWindow* parent);
@@ -35,7 +47,7 @@ public:
      * Once set, you should call Diff() function
      */
     void SetFiles(const wxFileName& left, const wxFileName &right);
-    
+
     void SetLeftFileReadOnly(bool b);
     void SetRightFileReadOnly(bool b);
 };

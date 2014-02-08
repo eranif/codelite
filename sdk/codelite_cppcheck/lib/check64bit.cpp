@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,23 +47,74 @@ void Check64BitPortability::pointerassignment()
     if (!_settings->isEnabled("portability"))
         return;
 
-    for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next()) {
-        if (Token::Match(tok, "[;{}] %var% = %var% [;+]")) {
-            const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
 
-            const Variable *var1(symbolDatabase->getVariableFromVarId(tok->next()->varId()));
-            const Variable *var2(symbolDatabase->getVariableFromVarId(tok->tokAt(3)->varId()));
+    // Check return values
+    const std::size_t functions = symbolDatabase->functionScopes.size();
+    for (std::size_t i = 0; i < functions; ++i) {
+        const Scope * scope = symbolDatabase->functionScopes[i];
+        if (scope->function == 0 || !scope->function->hasBody) // We only look for functions with a body
+            continue;
 
-            if (isaddr(var1) && isint(var2) && tok->strAt(4) != "+")
-                assignmentIntegerToAddressError(tok->next());
+        bool retPointer = false;
+        if (scope->function->token->strAt(-1) == "*") // Function returns a pointer
+            retPointer = true;
+        else if (Token::Match(scope->function->token->previous(), "int|long|DWORD")) // Function returns an integer
+            ;
+        else
+            continue;
 
-            else if (isint(var1) && isaddr(var2) && !tok->tokAt(3)->isPointerCompare()) {
-                // assigning address => warning
-                // some trivial addition => warning
-                if (Token::Match(tok->tokAt(4), "+ %any% !!;"))
-                    continue;
+        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+            if (Token::Match(tok, "return %var%|%num% [;+]") && !Token::simpleMatch(tok, "return 0 ;")) {
+                enum { NO, INT, PTR, PTRDIFF } type = NO;
+                for (const Token *tok2 = tok->next(); tok2; tok2 = tok2->next()) {
+                    if ((type == NO || type == INT) && Token::Match(tok2, "%var% [+;]") && isaddr(tok2->variable()))
+                        type = PTR;
+                    else if (type == NO && (tok2->isNumber() || isint(tok2->variable())))
+                        type = INT;
+                    else if (type == PTR && Token::Match(tok2, "- %var%") && isaddr(tok2->next()->variable()))
+                        type = PTRDIFF;
+                    else if (Token::Match(tok2, "(")) {
+                        type = NO;
+                        break;
+                    } else if (tok2->str() == "(") {
+                        // TODO: handle parentheses
+                        type = NO;
+                        break;
+                    } else if (type == PTR && Token::simpleMatch(tok2, "."))
+                        type = NO; // Reset after pointer reference, see #4642
+                    else if (tok2->str() == ";")
+                        break;
+                }
 
-                assignmentAddressToIntegerError(tok->next());
+                if (retPointer && (type == INT || type == PTRDIFF))
+                    returnIntegerError(tok);
+                else if (!retPointer && type == PTR)
+                    returnPointerError(tok);
+            }
+        }
+    }
+
+    // Check assignments
+    for (std::size_t i = 0; i < functions; ++i) {
+        const Scope * scope = symbolDatabase->functionScopes[i];
+        for (const Token *tok = scope->classStart; tok && tok != scope->classEnd; tok = tok->next()) {
+            if (Token::Match(tok, "[;{}] %var% = %var% [;+]")) {
+
+                const Variable *var1(tok->next()->variable());
+                const Variable *var2(tok->tokAt(3)->variable());
+
+                if (isaddr(var1) && isint(var2) && tok->strAt(4) != "+")
+                    assignmentIntegerToAddressError(tok->next());
+
+                else if (isint(var1) && isaddr(var2) && !tok->tokAt(3)->isPointerCompare()) {
+                    // assigning address => warning
+                    // some trivial addition => warning
+                    if (Token::Match(tok->tokAt(4), "+ %any% !!;"))
+                        continue;
+
+                    assignmentAddressToIntegerError(tok->next());
+                }
             }
         }
     }
@@ -73,20 +124,42 @@ void Check64BitPortability::assignmentAddressToIntegerError(const Token *tok)
 {
     reportError(tok, Severity::portability,
                 "AssignmentAddressToInteger",
-                "Assigning an address value to the integer (int/long/etc) type is not portable\n"
-                "Assigning an address value to the integer (int/long/etc) type is not portable across different platforms and "
+                "Assigning a pointer to an integer is not portable.\n"
+                "Assigning a pointer to an integer (int/long/etc) is not portable across different platforms and "
                 "compilers. For example in 32-bit Windows and linux they are same width, but in 64-bit Windows and linux "
                 "they are of different width. In worst case you end up assigning 64-bit address to 32-bit integer. The safe "
-                "way is to always assign addresses only to pointer types (or typedefs).");
+                "way is to store addresses only in pointer types (or typedefs like uintptr_t).");
 }
 
 void Check64BitPortability::assignmentIntegerToAddressError(const Token *tok)
 {
     reportError(tok, Severity::portability,
                 "AssignmentIntegerToAddress",
-                "Assigning an integer (int/long/etc) to a pointer is not portable\n"
+                "Assigning an integer to a pointer is not portable.\n"
                 "Assigning an integer (int/long/etc) to a pointer is not portable across different platforms and "
                 "compilers. For example in 32-bit Windows and linux they are same width, but in 64-bit Windows and linux "
-                "they are of different width. In worst case you end up assigning 32-bit integer to 64-bit pointer. The safe "
-                "way is to always assign address to pointer.");
+                "they are of different width. In worst case you end up assigning 64-bit integer to 32-bit pointer. The safe "
+                "way is to store addresses only in pointer types (or typedefs like uintptr_t).");
+}
+
+void Check64BitPortability::returnPointerError(const Token *tok)
+{
+    reportError(tok, Severity::portability,
+                "CastAddressToIntegerAtReturn",
+                "Returning an address value in a function with integer return type is not portable.\n"
+                "Returning an address value in a function with integer (int/long/etc) return type is not portable across "
+                "different platforms and compilers. For example in 32-bit Windows and Linux they are same width, but in "
+                "64-bit Windows and Linux they are of different width. In worst case you end up casting 64-bit address down "
+                "to 32-bit integer. The safe way is to always return an integer.");
+}
+
+void Check64BitPortability::returnIntegerError(const Token *tok)
+{
+    reportError(tok, Severity::portability,
+                "CastIntegerToAddressAtReturn",
+                "Returning an integer in a function with pointer return type is not portable.\n"
+                "Returning an integer (int/long/etc) in a function with pointer return type is not portable across different "
+                "platforms and compilers. For example in 32-bit Windows and Linux they are same width, but in 64-bit Windows "
+                "and Linux they are of different width. In worst case you end up casting 64-bit integer down to 32-bit pointer. "
+                "The safe way is to always return a pointer.");
 }

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #define checkexceptionsafetyH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 #include "settings.h"
 
@@ -39,19 +40,22 @@ class Token;
  * that certain variable values are corrupt.
  */
 
-class CheckExceptionSafety : public Check {
+class CPPCHECKLIB CheckExceptionSafety : public Check {
 public:
     /** This constructor is used when registering the CheckClass */
-    CheckExceptionSafety() : Check(myName())
-    { }
+    CheckExceptionSafety() : Check(myName()) {
+    }
 
     /** This constructor is used when running checks. */
     CheckExceptionSafety(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
+        : Check(myName(), tokenizer, settings, errorLogger) {
+    }
 
     /** Checks that uses the simplified token list */
     void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+        if (tokenizer->isC())
+            return;
+
         CheckExceptionSafety checkExceptionSafety(tokenizer, settings, errorLogger);
         checkExceptionSafety.destructors();
         checkExceptionSafety.deallocThrow();
@@ -74,24 +78,25 @@ public:
 private:
     /** Don't throw exceptions in destructors */
     void destructorsError(const Token * const tok) {
-        reportError(tok, Severity::error, "exceptThrowInDestructor", "Throwing exception in destructor");
+        reportError(tok, Severity::error, "exceptThrowInDestructor", "Exception thrown in destructor.");
     }
 
     void deallocThrowError(const Token * const tok, const std::string &varname) {
-        reportError(tok, Severity::warning, "exceptDeallocThrow", "Throwing exception in invalid state, " + varname + " points at deallocated memory");
+        reportError(tok, Severity::warning, "exceptDeallocThrow", "Exception thrown in invalid state, '" +
+                    varname + "' points at deallocated memory.");
     }
 
     void rethrowCopyError(const Token * const tok, const std::string &varname) {
         reportError(tok, Severity::style, "exceptRethrowCopy",
-                    "Throwing a copy of the caught exception instead of rethrowing the original exception\n"
-                    "Rethrowing an exception with 'throw " + varname + ";' makes an unnecessary copy of '" + varname + "'.\n"
+                    "Throwing a copy of the caught exception instead of rethrowing the original exception.\n"
+                    "Rethrowing an exception with 'throw " + varname + ";' creates an unnecessary copy of '" + varname + "'. "
                     "To rethrow the caught exception without unnecessary copying or slicing, use a bare 'throw;'.");
     }
 
     void catchExceptionByValueError(const Token *tok) {
         reportError(tok, Severity::style,
                     "catchExceptionByValue", "Exception should be caught by reference.\n"
-                    "The exception is caught as a value. It could be caught "
+                    "The exception is caught by value. It could be caught "
                     "as a (const) reference which is usually recommended in C++.");
     }
 
@@ -105,7 +110,7 @@ private:
     }
 
     /** Short description of class (for --doc) */
-    std::string myName() const {
+    static std::string myName() {
         return "Exception Safety";
     }
 
@@ -115,10 +120,9 @@ private:
                "* Throwing exceptions in destructors\n"
                "* Throwing exception during invalid state\n"
                "* Throwing a copy of a caught exception instead of rethrowing the original exception\n"
-               "* exception caught by value instead of by reference";
+               "* Exception caught by value instead of by reference\n";
     }
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checkexceptionsafetyH

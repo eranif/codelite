@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//---------------------------------------------------------------------------
 #ifndef executionpathH
 #define executionpathH
+//---------------------------------------------------------------------------
 
 #include <list>
+#include "config.h"
 
 class Token;
 class Check;
@@ -29,7 +32,7 @@ class SymbolDatabase;
  * Base class for Execution Paths checking
  * An execution path is a linear list of statements. There are no "if"/.. to worry about.
  **/
-class ExecutionPath {
+class CPPCHECKLIB ExecutionPath {
 private:
     /** No implementation */
     void operator=(const ExecutionPath &);
@@ -41,11 +44,11 @@ protected:
     virtual bool is_equal(const ExecutionPath *) const = 0;
 
 public:
-    ExecutionPath(Check *c, unsigned int id) : owner(c), numberOfIf(0), varId(id)
-    { }
+    ExecutionPath(Check *c, unsigned int id) : owner(c), numberOfIf(0), varId(id) {
+    }
 
-    virtual ~ExecutionPath()
-    { }
+    virtual ~ExecutionPath() {
+    }
 
     /** Implement this in each derived class. This function must create a copy of the current instance */
     virtual ExecutionPath *copy() = 0;
@@ -116,8 +119,8 @@ public:
     }
 
     /** going out of scope - all execution paths end */
-    virtual void end(const std::list<ExecutionPath *> & /*checks*/, const Token * /*tok*/) const
-    { }
+    virtual void end(const std::list<ExecutionPath *> & /*checks*/, const Token * /*tok*/) const {
+    }
 
     bool operator==(const ExecutionPath &e) const {
         return bool(varId == e.varId && is_equal(&e));
@@ -129,5 +132,5 @@ public:
 
 void checkExecutionPaths(const SymbolDatabase *symbolDatabase, ExecutionPath *c);
 
-
-#endif
+//---------------------------------------------------------------------------
+#endif // executionpathH

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CPPCHECK_H
-#define CPPCHECK_H
+//---------------------------------------------------------------------------
+#ifndef cppcheckH
+#define cppcheckH
+//---------------------------------------------------------------------------
 
+#include "config.h"
 #include "settings.h"
 #include "errorlogger.h"
 #include "checkunusedfunctions.h"
@@ -36,7 +39,7 @@
  * errors or places that could be improved.
  * Usage: See check() for more info.
  */
-class CppCheck : ErrorLogger {
+class CPPCHECKLIB CppCheck : ErrorLogger {
 public:
     /**
      * @brief Constructor.
@@ -103,7 +106,7 @@ public:
      */
     static const char * extraVersion();
 
-    virtual void reportStatus(unsigned int fileindex, unsigned int filecount, size_t sizedone, size_t sizetotal);
+    virtual void reportStatus(unsigned int fileindex, unsigned int filecount, std::size_t sizedone, std::size_t sizetotal);
 
     /**
      * @brief Terminate checking. The checking will be terminated as soon as possible.
@@ -123,20 +126,34 @@ public:
      */
     void analyseFile(std::istream &f, const std::string &filename);
 
-    /**
-     * @brief Get dependencies. Use this after calling 'check'.
-     */
-    const std::set<std::string>& dependencies() const {
-        return _dependencies;
+    void tooManyConfigsError(const std::string &file, const std::size_t numberOfConfigurations);
+
+    void dontSimplify() {
+        _simplify = false;
     }
 
 private:
 
-    /** @brief Process one file. */
-    unsigned int processFile(const std::string& filename);
+    /** @brief There has been a internal error => Report information message */
+    void internalError(const std::string &filename, const std::string &msg);
+
+    /**
+     * @brief Process one file.
+     * @param filename file name
+     * @param fileContent If this is non-empty then the file will not be loaded
+     * @return amount of errors found
+     */
+    unsigned int processFile(const std::string& filename, const std::string& fileContent);
 
     /** @brief Check file */
     void checkFile(const std::string &code, const char FileName[]);
+
+    /**
+     * @brief Execute rules, if any
+     * @param tokenlist token list to use (normal / simple)
+     * @param tokenizer tokenizer
+     */
+    void executeRules(const std::string &tokenlist, const Tokenizer &tokenizer);
 
     /**
      * @brief Errors and warnings are directed here.
@@ -167,22 +184,33 @@ private:
      */
     static void replaceAll(std::string& code, const std::string &from, const std::string &to);
 
-    unsigned int exitcode;
     std::list<std::string> _errorList;
     Settings _settings;
-    bool _useGlobalSuppressions;
-    std::string _fileContent;
-    std::set<std::string> _dependencies;
 
-    void reportProgress(const std::string &filename, const char stage[], const unsigned int value);
+    void reportProgress(const std::string &filename, const char stage[], const std::size_t value);
+
+    /**
+     * Output information messages.
+     */
+    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg);
 
     CheckUnusedFunctions _checkUnusedFunctions;
     ErrorLogger &_errorLogger;
 
     /** @brief Current preprocessor configuration */
     std::string cfg;
+
+    unsigned int exitcode;
+
+    bool _useGlobalSuppressions;
+
+    /** Are there too many configs? */
+    bool tooManyConfigs;
+
+    /** Simplify code? true by default */
+    bool _simplify;
 };
 
 /// @}
-
-#endif // CPPCHECK_H
+//---------------------------------------------------------------------------
+#endif // cppcheckH

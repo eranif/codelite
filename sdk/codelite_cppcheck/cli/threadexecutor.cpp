@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +16,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cppcheckexecutor.h"
 #include "threadexecutor.h"
 #include "cppcheck.h"
+#include "cppcheckexecutor.h"
 #ifdef THREADING_MODEL_FORK
 #include <algorithm>
 #include <iostream>
+#include <sys/select.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstdlib>
-#include <cstring>
 #include <cstdio>
 #include <errno.h>
 #include <time.h>
 #include <cstring>
 #include <sstream>
 #endif
+#ifdef THREADING_MODEL_WIN
+#include <process.h>
+#include <windows.h>
+#include <algorithm>
+#include <cstring>
+#include <errno.h>
+#endif
 
-ThreadExecutor::ThreadExecutor(const std::map<std::string, size_t> &files, Settings &settings, ErrorLogger &errorLogger)
+// required for FD_ZERO
+using std::memset;
+
+ThreadExecutor::ThreadExecutor(const std::map<std::string, std::size_t> &files, Settings &settings, ErrorLogger &errorLogger)
     : _files(files), _settings(settings), _errorLogger(errorLogger), _fileCount(0)
 {
-#ifdef THREADING_MODEL_FORK
+#if defined(THREADING_MODEL_FORK)
     _wpipe = 0;
+#elif defined(THREADING_MODEL_WIN)
+    _processedFiles = 0;
+    _totalFiles = 0;
+    _processedSize = 0;
+    _totalFileSize = 0;
 #endif
 }
 
@@ -52,7 +67,7 @@ ThreadExecutor::~ThreadExecutor()
 ////// This code is for platforms that support fork() only ////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef THREADING_MODEL_FORK
+#if defined(THREADING_MODEL_FORK)
 
 void ThreadExecutor::addFileContent(const std::string &path, const std::string &content)
 {
@@ -69,26 +84,26 @@ int ThreadExecutor::handleRead(int rpipe, unsigned int &result)
         return -1;
     }
 
-    if (type != REPORT_OUT && type != REPORT_ERROR && type != CHILD_END) {
+    if (type != REPORT_OUT && type != REPORT_ERROR && type != REPORT_INFO && type != CHILD_END) {
         std::cerr << "#### You found a bug from cppcheck.\nThreadExecutor::handleRead error, type was:" << type << std::endl;
-        exit(0);
+        std::exit(0);
     }
 
     unsigned int len = 0;
     if (read(rpipe, &len, sizeof(len)) <= 0) {
         std::cerr << "#### You found a bug from cppcheck.\nThreadExecutor::handleRead error, type was:" << type << std::endl;
-        exit(0);
+        std::exit(0);
     }
 
     char *buf = new char[len];
     if (read(rpipe, buf, len) <= 0) {
         std::cerr << "#### You found a bug from cppcheck.\nThreadExecutor::handleRead error, type was:" << type << std::endl;
-        exit(0);
+        std::exit(0);
     }
 
     if (type == REPORT_OUT) {
         _errorLogger.reportOut(buf);
-    } else if (type == REPORT_ERROR) {
+    } else if (type == REPORT_ERROR || type == REPORT_INFO) {
         ErrorLogger::ErrorMessage msg;
         msg.deserialize(buf);
 
@@ -104,7 +119,10 @@ int ThreadExecutor::handleRead(int rpipe, unsigned int &result)
             std::string errmsg = msg.toString(_settings._verbose);
             if (std::find(_errorList.begin(), _errorList.end(), errmsg) == _errorList.end()) {
                 _errorList.push_back(errmsg);
-                _errorLogger.reportErr(msg);
+                if (type == REPORT_ERROR)
+                    _errorLogger.reportErr(msg);
+                else
+                    _errorLogger.reportInfo(msg);
             }
         }
     } else if (type == CHILD_END) {
@@ -125,41 +143,41 @@ unsigned int ThreadExecutor::check()
     _fileCount = 0;
     unsigned int result = 0;
 
-    size_t totalfilesize = 0;
-    for (std::map<std::string, size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+    std::size_t totalfilesize = 0;
+    for (std::map<std::string, std::size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
         totalfilesize += i->second;
     }
 
     std::list<int> rpipes;
     std::map<pid_t, std::string> childFile;
     std::map<int, std::string> pipeFile;
-    size_t processedsize = 0;
-    std::map<std::string, size_t>::const_iterator i = _files.begin();
+    std::size_t processedsize = 0;
+    std::map<std::string, std::size_t>::const_iterator i = _files.begin();
     for (;;) {
         // Start a new child
         if (i != _files.end() && rpipes.size() < _settings._jobs) {
             int pipes[2];
             if (pipe(pipes) == -1) {
-                std::cerr << "pipe() failed: "<< strerror(errno) << std::endl;
-                exit(EXIT_FAILURE);
+                std::cerr << "pipe() failed: "<< std::strerror(errno) << std::endl;
+                std::exit(EXIT_FAILURE);
             }
 
             int flags = 0;
             if ((flags = fcntl(pipes[0], F_GETFL, 0)) < 0) {
-                std::cerr << "fcntl(F_GETFL) failed: "<< strerror(errno) << std::endl;
-                exit(EXIT_FAILURE);
+                std::cerr << "fcntl(F_GETFL) failed: "<< std::strerror(errno) << std::endl;
+                std::exit(EXIT_FAILURE);
             }
 
             if (fcntl(pipes[0], F_SETFL, flags | O_NONBLOCK) < 0) {
-                std::cerr << "fcntl(F_SETFL) failed: "<< strerror(errno) << std::endl;
-                exit(EXIT_FAILURE);
+                std::cerr << "fcntl(F_SETFL) failed: "<< std::strerror(errno) << std::endl;
+                std::exit(EXIT_FAILURE);
             }
 
             pid_t pid = fork();
             if (pid < 0) {
                 // Error
-                std::cerr << "Failed to create child process: "<< strerror(errno) << std::endl;
-                exit(EXIT_FAILURE);
+                std::cerr << "Failed to create child process: "<< std::strerror(errno) << std::endl;
+                std::exit(EXIT_FAILURE);
             } else if (pid == 0) {
                 close(pipes[0]);
                 _wpipe = pipes[1];
@@ -168,7 +186,7 @@ unsigned int ThreadExecutor::check()
                 fileChecker.settings() = _settings;
                 unsigned int resultOfCheck = 0;
 
-                if (_fileContents.size() > 0 && _fileContents.find(i->first) != _fileContents.end()) {
+                if (!_fileContents.empty() && _fileContents.find(i->first) != _fileContents.end()) {
                     // File content was given as a string
                     resultOfCheck = fileChecker.check(i->first, _fileContents[ i->first ]);
                 } else {
@@ -179,7 +197,7 @@ unsigned int ThreadExecutor::check()
                 std::ostringstream oss;
                 oss << resultOfCheck;
                 writeToPipe(CHILD_END, oss.str());
-                exit(0);
+                std::exit(0);
             }
 
             close(pipes[1]);
@@ -202,12 +220,12 @@ unsigned int ThreadExecutor::check()
                     if (FD_ISSET(*rp, &rfds)) {
                         int readRes = handleRead(*rp, result);
                         if (readRes == -1) {
-                            long size = 0;
+                            std::size_t size = 0;
                             std::map<int, std::string>::iterator p = pipeFile.find(*rp);
                             if (p != pipeFile.end()) {
                                 std::string name = p->second;
                                 pipeFile.erase(p);
-                                std::map<std::string, size_t>::const_iterator fs = _files.find(name);
+                                std::map<std::string, std::size_t>::const_iterator fs = _files.find(name);
                                 if (fs != _files.end()) {
                                     size = fs->second;
                                 }
@@ -274,7 +292,7 @@ void ThreadExecutor::writeToPipe(PipeSignal type, const std::string &data)
         delete [] out;
         out = 0;
         std::cerr << "#### ThreadExecutor::writeToPipe, Failed to write to pipe" << std::endl;
-        exit(0);
+        std::exit(0);
     }
 
     delete [] out;
@@ -288,6 +306,193 @@ void ThreadExecutor::reportOut(const std::string &outmsg)
 void ThreadExecutor::reportErr(const ErrorLogger::ErrorMessage &msg)
 {
     writeToPipe(REPORT_ERROR, msg.serialize());
+}
+
+void ThreadExecutor::reportInfo(const ErrorLogger::ErrorMessage &msg)
+{
+    writeToPipe(REPORT_INFO, msg.serialize());
+}
+
+#elif defined(THREADING_MODEL_WIN)
+
+void ThreadExecutor::addFileContent(const std::string &path, const std::string &content)
+{
+    _fileContents[path] = content;
+}
+
+unsigned int ThreadExecutor::check()
+{
+    HANDLE *threadHandles = new HANDLE[_settings._jobs];
+
+    _itNextFile = _files.begin();
+
+    _processedFiles = 0;
+    _processedSize = 0;
+    _totalFiles = _files.size();
+    _totalFileSize = 0;
+    for (std::map<std::string, std::size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+        _totalFileSize += i->second;
+    }
+
+    InitializeCriticalSection(&_fileSync);
+    InitializeCriticalSection(&_errorSync);
+    InitializeCriticalSection(&_reportSync);
+
+    for (unsigned int i = 0; i < _settings._jobs; ++i) {
+        threadHandles[i] = (HANDLE)_beginthreadex(NULL, 0, threadProc, this, 0, NULL);
+        if (!threadHandles[i]) {
+            std::cerr << "#### .\nThreadExecutor::check error, errno :" << errno << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    DWORD waitResult = WaitForMultipleObjects(_settings._jobs, threadHandles, TRUE, INFINITE);
+    if (waitResult != WAIT_OBJECT_0) {
+        if (waitResult == WAIT_FAILED) {
+            std::cerr << "#### .\nThreadExecutor::check wait failed, result: " << waitResult << " error: " << GetLastError() << std::endl;
+            exit(EXIT_FAILURE);
+        } else {
+            std::cerr << "#### .\nThreadExecutor::check wait failed, result: " << waitResult << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    unsigned int result = 0;
+    for (unsigned int i = 0; i < _settings._jobs; ++i) {
+        DWORD exitCode;
+
+        if (!GetExitCodeThread(threadHandles[i], &exitCode)) {
+            std::cerr << "#### .\nThreadExecutor::check get exit code failed, error:" << GetLastError() << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        result += exitCode;
+
+        if (!CloseHandle(threadHandles[i])) {
+            std::cerr << "#### .\nThreadExecutor::check close handle failed, error:" << GetLastError() << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    DeleteCriticalSection(&_fileSync);
+    DeleteCriticalSection(&_errorSync);
+    DeleteCriticalSection(&_reportSync);
+
+    delete[] threadHandles;
+
+    return result;
+}
+
+unsigned int __stdcall ThreadExecutor::threadProc(void *args)
+{
+    unsigned int result = 0;
+
+    ThreadExecutor *threadExecutor = static_cast<ThreadExecutor*>(args);
+    std::map<std::string, std::size_t>::const_iterator &it = threadExecutor->_itNextFile;
+
+    // guard static members of CppCheck against concurrent access
+    EnterCriticalSection(&threadExecutor->_fileSync);
+
+    CppCheck fileChecker(*threadExecutor, false);
+    fileChecker.settings() = threadExecutor->_settings;
+
+    LeaveCriticalSection(&threadExecutor->_fileSync);
+
+    for (;;) {
+
+        EnterCriticalSection(&threadExecutor->_fileSync);
+
+        if (it == threadExecutor->_files.end()) {
+            LeaveCriticalSection(&threadExecutor->_fileSync);
+            return result;
+
+        }
+        const std::string &file = it->first;
+        const std::size_t fileSize = it->second;
+        ++it;
+
+        LeaveCriticalSection(&threadExecutor->_fileSync);
+
+        std::map<std::string, std::string>::const_iterator fileContent = threadExecutor->_fileContents.find(file);
+        if (fileContent != threadExecutor->_fileContents.end()) {
+            // File content was given as a string
+            result += fileChecker.check(file, fileContent->second);
+        } else {
+            // Read file from a file
+            result += fileChecker.check(file);
+        }
+
+        EnterCriticalSection(&threadExecutor->_fileSync);
+
+        threadExecutor->_processedSize += fileSize;
+        threadExecutor->_processedFiles++;
+        if (!threadExecutor->_settings._errorsOnly) {
+            EnterCriticalSection(&threadExecutor->_reportSync);
+            CppCheckExecutor::reportStatus(threadExecutor->_processedFiles, threadExecutor->_totalFiles, threadExecutor->_processedSize, threadExecutor->_totalFileSize);
+            LeaveCriticalSection(&threadExecutor->_reportSync);
+        }
+
+        LeaveCriticalSection(&threadExecutor->_fileSync);
+    };
+
+    return result;
+}
+
+void ThreadExecutor::reportOut(const std::string &outmsg)
+{
+    EnterCriticalSection(&_reportSync);
+
+    _errorLogger.reportOut(outmsg);
+
+    LeaveCriticalSection(&_reportSync);
+}
+void ThreadExecutor::reportErr(const ErrorLogger::ErrorMessage &msg)
+{
+    report(msg, REPORT_ERROR);
+}
+
+void ThreadExecutor::reportInfo(const ErrorLogger::ErrorMessage &msg)
+{
+    report(msg, REPORT_INFO);
+}
+
+void ThreadExecutor::report(const ErrorLogger::ErrorMessage &msg, MessageType msgType)
+{
+    std::string file;
+    unsigned int line(0);
+    if (!msg._callStack.empty()) {
+        file = msg._callStack.back().getfile(false);
+        line = msg._callStack.back().line;
+    }
+
+    if (_settings.nomsg.isSuppressed(msg._id, file, line))
+        return;
+
+    // Alert only about unique errors
+    bool reportError = false;
+    std::string errmsg = msg.toString(_settings._verbose);
+
+    EnterCriticalSection(&_errorSync);
+    if (std::find(_errorList.begin(), _errorList.end(), errmsg) == _errorList.end()) {
+        _errorList.push_back(errmsg);
+        reportError = true;
+    }
+    LeaveCriticalSection(&_errorSync);
+
+    if (reportError) {
+        EnterCriticalSection(&_reportSync);
+
+        switch (msgType) {
+        case REPORT_ERROR:
+            _errorLogger.reportErr(msg);
+            break;
+        case REPORT_INFO:
+            _errorLogger.reportInfo(msg);
+            break;
+        }
+
+        LeaveCriticalSection(&_reportSync);
+    }
 }
 
 #else
@@ -307,6 +512,11 @@ void ThreadExecutor::reportOut(const std::string &/*outmsg*/)
 
 }
 void ThreadExecutor::reportErr(const ErrorLogger::ErrorMessage &/*msg*/)
+{
+
+}
+
+void ThreadExecutor::reportInfo(const ErrorLogger::ErrorMessage &/*msg*/)
 {
 
 }

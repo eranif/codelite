@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,6 @@ void CheckNonReentrantFunctions::nonReentrantFunctions()
     if (!_settings->standards.posix || !_settings->isEnabled("portability"))
         return;
 
-    // Don't check C# and Java code
-    if (_tokenizer->isJavaOrCSharp())
-        return;
-
     std::map<std::string,std::string>::const_iterator nonReentrant_end = _nonReentrantFunctions.end();
     for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next()) {
         // Look for function invocations
@@ -66,4 +62,3 @@ void CheckNonReentrantFunctions::nonReentrantFunctions()
     }
 }
 //---------------------------------------------------------------------------
-

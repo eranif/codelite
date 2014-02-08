@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #include <istream>
 #include <string>
 #include <list>
+#include <set>
+#include "config.h"
 
 class ErrorLogger;
 class Settings;
@@ -37,7 +39,7 @@ class Settings;
  * The preprocessor has special functionality for extracting the various ifdef
  * configurations that exist in a source file.
  */
-class Preprocessor {
+class CPPCHECKLIB Preprocessor {
 public:
 
     /**
@@ -61,7 +63,7 @@ public:
      * @param istr The (file/string) stream to read from.
      * @param result The map that will get the results
      * @param filename The name of the file to check e.g. "src/main.cpp"
-     * @param includePaths List of paths where incude files should be searched from,
+     * @param includePaths List of paths where include files should be searched from,
      * single path can be e.g. in format "include/".
      * There must be a path separator at the end. Default parameter is empty list.
      * Note that if path from given filename is also extracted and that is used as
@@ -80,7 +82,7 @@ public:
      * @param resultConfigurations List of configurations. Pass these one by one
      * to getcode() with processedFile.
      * @param filename The name of the file to check e.g. "src/main.cpp"
-     * @param includePaths List of paths where incude files should be searched from,
+     * @param includePaths List of paths where include files should be searched from,
      * single path can be e.g. in format "include/".
      * There must be a path separator at the end. Default parameter is empty list.
      * Note that if path from given filename is also extracted and that is used as
@@ -91,8 +93,17 @@ public:
     /** Just read the code into a string. Perform simple cleanup of the code */
     std::string read(std::istream &istr, const std::string &filename);
 
+    /** read preprocessor statements into a string. */
+    std::string readpreprocessor(std::istream &istr, const unsigned int bom) const;
+
+    /** should __cplusplus be defined? */
+    static bool cplusplus(const Settings *settings, const std::string &filename);
+
     /**
      * Get preprocessed code for a given configuration
+     * @param filedata file data including preprocessing 'if', 'define', etc
+     * @param cfg configuration to read out
+     * @param filename name of source file
      */
     std::string getcode(const std::string &filedata, const std::string &cfg, const std::string &filename);
 
@@ -109,7 +120,17 @@ public:
      * @param processedFile The data to be processed
      */
     static void preprocessWhitespaces(std::string &processedFile);
-protected:
+
+    /**
+     * make sure empty configuration macros are not used in code. the given code must be a single configuration
+     * @param code The input code
+     * @param cfg configuration
+     * @return true => configuration is valid
+     */
+    bool validateCfg(const std::string &code, const std::string &cfg);
+    void validateCfgError(const std::string &cfg, const std::string &macro);
+
+    void handleUndef(std::list<std::string> &configurations) const;
 
     /**
      * report error
@@ -127,7 +148,7 @@ protected:
      * @param str The string to be converted
      * @return The replaced string
      */
-    static std::string replaceIfDefined(const std::string &str);
+    std::string replaceIfDefined(const std::string &str) const;
 
     /**
      * expand macros in code. ifdefs etc are ignored so the code must be a single configuration
@@ -166,7 +187,7 @@ protected:
      * clean up #-preprocessor lines (only)
      * @param processedFile The data to be processed
      */
-    std::string preprocessCleanupDirectives(const std::string &processedFile) const;
+    static std::string preprocessCleanupDirectives(const std::string &processedFile);
 
     /**
      * Returns the string between double quote characters or \< \> characters.
@@ -187,15 +208,15 @@ private:
      */
     static std::string removeSpaceNearNL(const std::string &str);
 
+    static std::string getdef(std::string line, bool def);
+
+public:
+
     /**
      * Get all possible configurations sorted in alphabetical order.
      * By looking at the ifdefs and ifndefs in filedata
      */
-    std::list<std::string> getcfgs(const std::string &filedata, const std::string &filename);
-
-    static std::string getdef(std::string line, bool def);
-
-public:
+    std::list<std::string> getcfgs(const std::string &filedata, const std::string &filename, const std::map<std::string, std::string> &defs);
 
     /**
      * Remove asm(...) from a string
@@ -219,13 +240,18 @@ public:
      * @param filePath filename of code
      * @param includePaths Paths where headers might be
      * @param defs defines (only values)
+     * @param pragmaOnce includes that has already been included and contains a \#pragma once statement
      * @param includes provide a empty list. this is just used to prevent recursive inclusions.
      * \return resulting string
      */
-    std::string handleIncludes(const std::string &code, const std::string &filePath, const std::list<std::string> &includePaths, std::map<std::string,std::string> &defs, std::list<std::string> includes = std::list<std::string>());
+    std::string handleIncludes(const std::string &code, const std::string &filePath, const std::list<std::string> &includePaths, std::map<std::string,std::string> &defs, std::set<std::string> &pragmaOnce, std::list<std::string> includes);
+
+    void setFile0(const std::string &f) {
+        file0 = f;
+    }
 
 private:
-    void missingInclude(const std::string &filename, unsigned int linenr, const std::string &header, bool userheader);
+    void missingInclude(const std::string &filename, unsigned int linenr, const std::string &header, HeaderTypes headerType);
 
     void error(const std::string &filename, unsigned int linenr, const std::string &msg);
 
@@ -234,7 +260,7 @@ private:
      * file
      * @param code The source code to modify
      * @param filePath Relative path to file to check e.g. "src/main.cpp"
-     * @param includePaths List of paths where incude files should be searched from,
+     * @param includePaths List of paths where include files should be searched from,
      * single path can be e.g. in format "include/".
      * There must be a path separator at the end. Default parameter is empty list.
      * Note that if path from given filename is also extracted and that is used as
@@ -251,7 +277,5 @@ private:
 };
 
 /// @}
-
 //---------------------------------------------------------------------------
-#endif
-
+#endif // preprocessorH

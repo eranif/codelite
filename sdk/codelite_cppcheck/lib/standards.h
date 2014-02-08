@@ -15,8 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+//---------------------------------------------------------------------------
 #ifndef standardsH
 #define standardsH
+//---------------------------------------------------------------------------
 
 /// @addtogroup Core
 /// @{
@@ -27,19 +30,19 @@
  * This struct contains all possible standards that cppcheck recognize.
  */
 struct Standards {
-    /** Code is C99 standard */
-    bool c99;
+    /** C code C89/C99/C11 standard */
+    enum cstd_t { C89, C99, C11 } c;
+
+    /** C++ code standard */
+    enum cppstd_t { CPP03, CPP11 } cpp;
 
     /** Code is posix */
     bool posix;
 
-    /** Code follows C++11 standard */
-    bool cpp11;
-
     /** This constructor clear all the variables **/
-    Standards() : c99(false), posix(false), cpp11(false) {};
+    Standards() : c(C11), cpp(CPP11), posix(false) {}
 };
 
 /// @}
-
+//---------------------------------------------------------------------------
 #endif // standardsH

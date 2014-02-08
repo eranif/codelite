@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,13 @@
 #define checkuninitvarH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 #include "settings.h"
 
 class Token;
+class Scope;
+class Variable;
 
 /// @addtogroup Checks
 /// @{
@@ -33,22 +36,15 @@ class Token;
 
 /** @brief Checking for uninitialized variables */
 
-class CheckUninitVar : public Check {
+class CPPCHECKLIB CheckUninitVar : public Check {
 public:
     /** @brief This constructor is used when registering the CheckUninitVar */
-    CheckUninitVar() : Check(myName())
-    { }
+    CheckUninitVar() : Check(myName()), testrunner(false) {
+    }
 
     /** @brief This constructor is used when running checks. */
     CheckUninitVar(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
-
-    /** @brief Run checks against the normal token list */
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
-        (void)tokenizer;
-        (void)settings;
-        (void)errorLogger;
+        : Check(myName(), tokenizer, settings, errorLogger), testrunner(false) {
     }
 
     /** @brief Run checks against the simplified token list */
@@ -60,10 +56,15 @@ public:
 
     /** Check for uninitialized variables */
     void check();
-    bool checkScopeForVariable(const Token *tok, const unsigned int varid, bool ispointer, bool * const possibleInit);
-    bool checkIfForWhileHead(const Token *startparanthesis, unsigned int varid, bool ispointer, bool suppressErrors, bool isuninit);
-    bool isVariableUsage(const Token *vartok, bool ispointer) const;
-
+    void checkScope(const Scope* scope);
+    void checkStruct(const Scope* scope, const Token *tok, const Variable &structvar);
+    bool checkScopeForVariable(const Scope* scope, const Token *tok, const Variable& var, bool * const possibleInit, bool * const noreturn, bool * const alloc, const std::string &membervar);
+    bool checkIfForWhileHead(const Token *startparentheses, const Variable& var, bool suppressErrors, bool isuninit, bool alloc, const std::string &membervar);
+    bool checkLoopBody(const Token *tok, const Variable& var, const bool alloc, const std::string &membervar, const bool suppressErrors);
+    void checkRhs(const Token *tok, const Variable &var, bool alloc, const std::string &membervar);
+    static bool isVariableUsage(const Token *vartok, bool ispointer, bool alloc, bool cpp);
+    static bool isMemberVariableAssignment(const Token *tok, const std::string &membervar);
+    bool isMemberVariableUsage(const Token *tok, bool isPointer, bool alloc, const std::string &membervar) const;
 
     /**
      * @brief Uninitialized variables: analyse functions to see how they work with uninitialized variables
@@ -81,6 +82,10 @@ public:
     void uninitstringError(const Token *tok, const std::string &varname, bool strncpy_);
     void uninitdataError(const Token *tok, const std::string &varname);
     void uninitvarError(const Token *tok, const std::string &varname);
+    void uninitStructMemberError(const Token *tok, const std::string &membername);
+
+    /** testrunner: (don't abort() when assertion fails, just write error message) */
+    bool testrunner;
 
 private:
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
@@ -90,9 +95,10 @@ private:
         c.uninitstringError(0, "varname", true);
         c.uninitdataError(0, "varname");
         c.uninitvarError(0, "varname");
+        c.uninitStructMemberError(0, "a.b");
     }
 
-    std::string myName() const {
+    static std::string myName() {
         return "Uninitialized variables";
     }
 
@@ -103,5 +109,4 @@ private:
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checkuninitvarH

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
 #include "errorlogger.h"
 #include "path.h"
 #include "cppcheck.h"
+#include "tokenlist.h"
+#include "token.h"
+
+#include <tinyxml2.h>
 
 #include <cassert>
 #include <sstream>
@@ -36,11 +40,29 @@ ErrorLogger::ErrorMessage::ErrorMessage()
 
 ErrorLogger::ErrorMessage::ErrorMessage(const std::list<FileLocation> &callStack, Severity::SeverityType severity, const std::string &msg, const std::string &id, bool inconclusive) :
     _callStack(callStack), // locations for this error message
-    _severity(severity),   // severity for this error message
     _id(id),               // set the message id
+    _severity(severity),   // severity for this error message
     _inconclusive(inconclusive)
 {
     // set the summary and verbose messages
+    setmsg(msg);
+}
+
+ErrorLogger::ErrorMessage::ErrorMessage(const std::list<const Token*>& callstack, const TokenList* list, Severity::SeverityType severity, const std::string& id, const std::string& msg, bool inconclusive)
+    : _id(id), _severity(severity), _inconclusive(inconclusive)
+{
+    // Format callstack
+    for (std::list<const Token *>::const_iterator it = callstack.begin(); it != callstack.end(); ++it) {
+        // --errorlist can provide null values here
+        if (!(*it))
+            continue;
+
+        _callStack.push_back(ErrorLogger::ErrorMessage::FileLocation(*it, list));
+    }
+
+    if (list && !list->getFiles().empty())
+        file0 = list->getFiles()[0];
+
     setmsg(msg);
 }
 
@@ -157,95 +179,73 @@ std::string ErrorLogger::ErrorMessage::getXMLHeader(int xml_version)
 {
     // xml_version 1 is the default xml format
 
+    tinyxml2::XMLPrinter printer;
+
     // standard xml header
-    std::ostringstream ostr;
-    ostr << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    printer.PushDeclaration("xml version=\"1.0\" encoding=\"UTF-8\"");
 
-    // version 1 header
-    if (xml_version <= 1) {
-        ostr << "<results>";
-    }
-
+    // header
+    printer.OpenElement("results");
     // version 2 header
-    else {
-        ostr << "<results version=\"" << xml_version << "\">\n";
-        ostr << "  <cppcheck version=\"" << CppCheck::version() << "\"/>\n";
-        ostr << "  <errors>";
+    if (xml_version == 2) {
+        printer.PushAttribute("version", xml_version);
+        printer.OpenElement("cppcheck");
+        printer.PushAttribute("version", CppCheck::version());
+        printer.CloseElement();
+        printer.OpenElement("errors");
     }
 
-    return ostr.str();
+    return std::string(printer.CStr()) + '>';
 }
 
 std::string ErrorLogger::ErrorMessage::getXMLFooter(int xml_version)
 {
-    return (xml_version<=1) ? "</results>" : "  </errors>\n</results>";
-}
-
-static std::string stringToXml(std::string s)
-{
-    // convert a string so it can be save as xml attribute data
-    std::string::size_type pos = 0;
-    while ((pos = s.find_first_of("<>&\"\n", pos)) != std::string::npos) {
-        if (s[pos] == '<')
-            s.insert(pos + 1, "&lt;");
-        else if (s[pos] == '>')
-            s.insert(pos + 1, "&gt;");
-        else if (s[pos] == '&')
-            s.insert(pos + 1, "&amp;");
-        else if (s[pos] == '"')
-            s.insert(pos + 1, "&quot;");
-        else if (s[pos] == '\n')
-            s.insert(pos + 1, "&#xa;");
-        s.erase(pos, 1);
-        ++pos;
-    }
-    return s;
+    return (xml_version<=1) ? "</results>" : "    </errors>\n</results>";
 }
 
 std::string ErrorLogger::ErrorMessage::toXML(bool verbose, int version) const
 {
-    // Save this ErrorMessage as an XML element
-    std::ostringstream xml;
-
     // The default xml format
     if (version == 1) {
         // No inconclusive messages in the xml version 1
         if (_inconclusive)
             return "";
 
-        xml << "<error";
+        tinyxml2::XMLPrinter printer(0, false, 1);
+        printer.OpenElement("error");
         if (!_callStack.empty()) {
-            xml << " file=\"" << stringToXml(_callStack.back().getfile()) << "\"";
-            xml << " line=\"" << _callStack.back().line << "\"";
+            printer.PushAttribute("file", _callStack.back().getfile().c_str());
+            printer.PushAttribute("line", _callStack.back().line);
         }
-        xml << " id=\"" << _id << "\"";
-        xml << " severity=\"" << (_severity == Severity::error ? "error" : "style") << "\"";
-        xml << " msg=\"" << stringToXml(verbose ? _verboseMessage : _shortMessage) << "\"";
-        xml << "/>";
+        printer.PushAttribute("id", _id.c_str());
+        printer.PushAttribute("severity", (_severity == Severity::error ? "error" : "style"));
+        printer.PushAttribute("msg", (verbose ? _verboseMessage : _shortMessage).c_str());
+        printer.CloseElement();
+        return printer.CStr();
     }
 
     // The xml format you get when you use --xml-version=2
     else if (version == 2) {
-        xml << "  <error";
-        xml << " id=\"" << _id << "\"";
-        xml << " severity=\"" << Severity::toString(_severity) << "\"";
-        xml << " msg=\"" << stringToXml(_shortMessage) << "\"";
-        xml << " verbose=\"" << stringToXml(_verboseMessage) << "\"";
+        tinyxml2::XMLPrinter printer(0, false, 2);
+        printer.OpenElement("error");
+        printer.PushAttribute("id", _id.c_str());
+        printer.PushAttribute("severity", Severity::toString(_severity).c_str());
+        printer.PushAttribute("msg", _shortMessage.c_str());
+        printer.PushAttribute("verbose", _verboseMessage.c_str());
         if (_inconclusive)
-            xml << " inconclusive=\"true\"";
-        xml << ">" << std::endl;
+            printer.PushAttribute("inconclusive", "true");
 
         for (std::list<FileLocation>::const_reverse_iterator it = _callStack.rbegin(); it != _callStack.rend(); ++it) {
-            xml << "    <location";
-            xml << " file=\"" << stringToXml((*it).getfile()) << "\"";
-            xml << " line=\"" << (*it).line << "\"";
-            xml << "/>" << std::endl;
+            printer.OpenElement("location");
+            printer.PushAttribute("file", (*it).getfile().c_str());
+            printer.PushAttribute("line", (*it).line);
+            printer.CloseElement();
         }
-
-        xml << "  </error>";
+        printer.CloseElement();
+        return printer.CStr();
     }
 
-    return xml.str();
+    return "";
 }
 
 void ErrorLogger::ErrorMessage::findAndReplace(std::string &source, const std::string &searchFor, const std::string &replaceWith)
@@ -266,8 +266,12 @@ std::string ErrorLogger::ErrorMessage::toString(bool verbose, const std::string 
         std::ostringstream text;
         if (!_callStack.empty())
             text << callStackToString(_callStack) << ": ";
-        if (_severity != Severity::none)
-            text << '(' << Severity::toString(_severity) << ") ";
+        if (_severity != Severity::none) {
+            text << '(' << Severity::toString(_severity);
+            if (_inconclusive)
+                text << ", inconclusive";
+            text << ") ";
+        }
         text << (verbose ? _verboseMessage : _shortMessage);
         return text.str();
     }
@@ -275,10 +279,17 @@ std::string ErrorLogger::ErrorMessage::toString(bool verbose, const std::string 
     // template is given. Reformat the output according to it
     else {
         std::string result = outputFormat;
+        // Support a few special characters to allow to specific formatting, see http://sourceforge.net/apps/phpbb/cppcheck/viewtopic.php?f=4&t=494&sid=21715d362c0dbafd3791da4d9522f814
+        // Substitution should be done first so messages from cppcheck never get translated.
+        findAndReplace(result, "\\b", "\b");
+        findAndReplace(result, "\\n", "\n");
+        findAndReplace(result, "\\r", "\r");
+        findAndReplace(result, "\\t", "\t");
+
         findAndReplace(result, "{id}", _id);
         findAndReplace(result, "{severity}", Severity::toString(_severity));
         findAndReplace(result, "{message}", verbose ? _verboseMessage : _shortMessage);
-
+        findAndReplace(result, "{callstack}", _callStack.empty() ? "" : callStackToString(_callStack));
         if (!_callStack.empty()) {
             std::ostringstream oss;
             oss << _callStack.back().line;
@@ -295,7 +306,25 @@ std::string ErrorLogger::ErrorMessage::toString(bool verbose, const std::string 
 
 void ErrorLogger::reportUnmatchedSuppressions(const std::list<Suppressions::SuppressionEntry> &unmatched)
 {
+    // Report unmatched suppressions
     for (std::list<Suppressions::SuppressionEntry>::const_iterator i = unmatched.begin(); i != unmatched.end(); ++i) {
+        // don't report "unmatchedSuppression" as unmatched
+        if (i->id == "unmatchedSuppression")
+            continue;
+
+        // check if this unmatched suppression is suppressed
+        bool suppressed = false;
+        for (std::list<Suppressions::SuppressionEntry>::const_iterator i2 = unmatched.begin(); i2 != unmatched.end(); ++i2) {
+            if (i2->id == "unmatchedSuppression") {
+                if ((i2->file == "*" || i2->file == i->file) &&
+                    (i2->line == 0 || i2->line == i->line))
+                    suppressed = true;
+            }
+        }
+
+        if (suppressed)
+            continue;
+
         std::list<ErrorLogger::ErrorMessage::FileLocation> callStack;
         callStack.push_back(ErrorLogger::ErrorMessage::FileLocation(i->file, i->line));
         reportErr(ErrorLogger::ErrorMessage(callStack, Severity::information, "Unmatched suppression: " + i->id, "unmatchedSuppression", false));
@@ -306,14 +335,16 @@ std::string ErrorLogger::callStackToString(const std::list<ErrorLogger::ErrorMes
 {
     std::ostringstream ostr;
     for (std::list<ErrorLogger::ErrorMessage::FileLocation>::const_iterator tok = callStack.begin(); tok != callStack.end(); ++tok) {
-        ostr << (tok == callStack.begin() ? "" : " -> ") << '[' << (*tok).getfile();
-        if ((*tok).line != 0)
-            ostr << ':' << (*tok).line;
-        ostr << ']';
+        ostr << (tok == callStack.begin() ? "" : " -> ") << tok->stringify();
     }
     return ostr.str();
 }
 
+
+ErrorLogger::ErrorMessage::FileLocation::FileLocation(const Token* tok, const TokenList* list)
+    : line(tok->linenr()), _file(list->file(tok))
+{
+}
 
 std::string ErrorLogger::ErrorMessage::FileLocation::getfile(bool convert) const
 {
@@ -327,4 +358,14 @@ void ErrorLogger::ErrorMessage::FileLocation::setfile(const std::string &file)
     _file = file;
     _file = Path::fromNativeSeparators(_file);
     _file = Path::simplifyPath(_file.c_str());
+}
+
+std::string ErrorLogger::ErrorMessage::FileLocation::stringify() const
+{
+    std::ostringstream oss;
+    oss << '[' << Path::toNativeSeparators(_file);
+    if (line != 0)
+        oss << ':' << line;
+    oss << ']';
+    return oss.str();
 }

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PATH_H_INCLUDED
-#define PATH_H_INCLUDED
+//---------------------------------------------------------------------------
+#ifndef pathH
+#define pathH
+//---------------------------------------------------------------------------
 
+#include "config.h"
+#include <set>
 #include <string>
 #include <vector>
 
@@ -32,7 +36,7 @@
  * native separator for Unix-derived systems. When giving path to user
  * or for other functions we convert path separators back to native type.
  */
-class Path {
+class CPPCHECKLIB Path {
 public:
     /**
      * Convert path to use native separators.
@@ -54,6 +58,13 @@ public:
      * @return simplified path
      */
     static std::string simplifyPath(const char *originalPath);
+
+    /**
+     * @brief Lookup the path part from a filename (e.g., '/tmp/a.h' -> '/tmp/', 'a.h' -> '')
+     * @param filename filename to lookup, must have / -separators.
+     * @return path part of the filename
+     */
+    static std::string getPathFromFilename(const std::string &filename);
 
     /**
      * @brief Compare filenames to see if they are the same.
@@ -96,40 +107,46 @@ public:
     /**
      * @brief Check if the file extension indicates that it's a C/C++ source file.
      * Check if the file has source file extension: *.c;*.cpp;*.cxx;*.c++;*.cc;*.txx
-     * @param filename filename to check
+     * @param filename filename to check. path info is optional
      * @return returns true if the file extension indicates it should be checked
      */
-    static bool acceptFile(const std::string &filename);
+    static bool acceptFile(const std::string &filename) {
+        const std::set<std::string> extra;
+        return acceptFile(filename, extra);
+    }
+
+    /**
+     * @brief Check if the file extension indicates that it's a C/C++ source file.
+     * Check if the file has source file extension: *.c;*.cpp;*.cxx;*.c++;*.cc;*.txx
+     * @param filename filename to check. path info is optional
+     * @param extra    extra file extensions
+     * @return returns true if the file extension indicates it should be checked
+     */
+    static bool acceptFile(const std::string &filename, const std::set<std::string> &extra);
 
     /**
      * @brief Identify language based on file extension.
-     * @param extensionInLowerCase e.g. ".c"
+     * @param path filename to check. path info is optional
      * @return true if extension is meant for C files
      */
-    static bool isC(const std::string &extensionInLowerCase);
+    static bool isC(const std::string &path);
 
     /**
      * @brief Identify language based on file extension.
-     * @param extensionInLowerCase e.g. ".cpp"
+     * @param extensionInLowerCase filename to check. path info is optional
      * @return true if extension is meant for C++ files
      */
     static bool isCPP(const std::string &extensionInLowerCase);
 
+private:
     /**
-     * @brief Identify language based on file extension.
-     * @param extensionInLowerCase e.g. ".java"
-     * @return true if extension is meant for Java files
+     * @brief Is filename a header based on file extension
+     * @param path filename to check. path info is optional
+     * @return true if filename extension is meant for headers
      */
-    static bool isJava(const std::string &extensionInLowerCase);
-
-    /**
-     * @brief Identify language based on file extension.
-     * @param extensionInLowerCase e.g. ".cs"
-     * @return true if extension is meant for C# files
-     */
-    static bool isCSharp(const std::string &extensionInLowerCase);
+    static bool isHeader(const std::string &path);
 };
 
 /// @}
-
-#endif // PATH_H_INCLUDED
+//---------------------------------------------------------------------------
+#endif // pathH

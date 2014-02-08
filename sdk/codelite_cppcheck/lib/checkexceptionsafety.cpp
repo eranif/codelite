@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +36,20 @@ void CheckExceptionSafety::destructors()
     const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
 
     // Perform check..
-    for (std::list<Scope>::const_iterator i = symbolDatabase->scopeList.begin(); i != symbolDatabase->scopeList.end(); ++i) {
-        for (std::list<Function>::const_iterator j = i->functionList.begin(); j != i->functionList.end(); ++j) {
+    const std::size_t functions = symbolDatabase->functionScopes.size();
+    for (std::size_t i = 0; i < functions; ++i) {
+        const Scope * scope = symbolDatabase->functionScopes[i];
+        const Function * j = scope->function;
+        if (j) {
             // only looking for destructors
-            if (j->type == Function::eDestructor && j->start) {
+            if (j->type == Function::eDestructor) {
                 // Inspect this destructor..
-                for (const Token *tok = j->start->next(); tok != j->start->link(); tok = tok->next()) {
+                for (const Token *tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+                    // Skip try blocks
+                    if (Token::simpleMatch(tok, "try {")) {
+                        tok = tok->next()->link();
+                    }
+
                     // throw found within a destructor
                     if (tok->str() == "throw") {
                         destructorsError(tok);
@@ -58,69 +66,62 @@ void CheckExceptionSafety::destructors()
 
 void CheckExceptionSafety::deallocThrow()
 {
-    if (!_settings->isEnabled("style"))
+    if (!_settings->isEnabled("warning"))
         return;
 
     const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
 
     // Deallocate a global/member pointer and then throw exception
     // the pointer will be a dead pointer
-    for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next()) {
-        // only looking for delete now
-        if (tok->str() != "delete")
-            continue;
+    const std::size_t functions = symbolDatabase->functionScopes.size();
+    for (std::size_t i = 0; i < functions; ++i) {
+        const Scope * scope = symbolDatabase->functionScopes[i];
+        for (const Token *tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+            // only looking for delete now
+            if (tok->str() != "delete")
+                continue;
 
-        // Check if this is something similar with: "delete p;"
-        tok = tok->next();
-        if (Token::simpleMatch(tok, "[ ]"))
-            tok = tok->tokAt(2);
-        if (!tok)
-            break;
-        if (!Token::Match(tok, "%var% ;"))
-            continue;
-        const unsigned int varid(tok->varId());
-        if (varid == 0)
-            continue;
+            // Check if this is something similar with: "delete p;"
+            tok = tok->next();
+            if (Token::simpleMatch(tok, "[ ]"))
+                tok = tok->tokAt(2);
+            if (!tok)
+                break;
+            if (!Token::Match(tok, "%var% ;"))
+                continue;
 
-        // we only look for global variables
-        const Variable* var = symbolDatabase->getVariableFromVarId(varid);
-        if (!var || !(var->isGlobal() || var->isStatic()))
-            continue;
+            // we only look for global variables
+            const Variable *var = tok->variable();
+            if (!var || !(var->isGlobal() || var->isStatic()))
+                continue;
 
-        // indentlevel..
-        unsigned int indentlevel = 0;
+            const unsigned int varid(tok->varId());
 
-        // Token where throw occurs
-        const Token *ThrowToken = 0;
+            // Token where throw occurs
+            const Token *ThrowToken = 0;
 
-        // is there a throw after the deallocation?
-        for (const Token *tok2 = tok; tok2; tok2 = tok2->next()) {
-            if (tok2->str() == "{")
-                ++indentlevel;
-            else if (tok2->str() == "}") {
-                if (indentlevel == 0)
-                    break;
-                --indentlevel;
-            }
+            // is there a throw after the deallocation?
+            const Token* const end2 = tok->scope()->classEnd;
+            for (const Token *tok2 = tok; tok2 != end2; tok2 = tok2->next()) {
+                // Throw after delete -> Dead pointer
+                if (tok2->str() == "throw") {
+                    if (_settings->inconclusive) { // For inconclusive checking, throw directly.
+                        deallocThrowError(tok2, tok->str());
+                        break;
+                    }
+                    ThrowToken = tok2;
+                }
 
-            // Throw after delete -> Dead pointer
-            else if (tok2->str() == "throw") {
-                if (_settings->inconclusive) { // For inconclusive checking, throw directly.
-                    deallocThrowError(tok2, tok->str());
+                // Variable is assigned -> Bail out
+                else if (Token::Match(tok2, "%varid% =", varid)) {
+                    if (ThrowToken) // For non-inconclusive checking, wait until we find an assignment to it. Otherwise we assume it is safe to leave a dead pointer.
+                        deallocThrowError(ThrowToken, tok2->str());
                     break;
                 }
-                ThrowToken = tok2;
+                // Variable passed to function. Assume it becomes assigned -> Bail out
+                else if (Token::Match(tok2, "[,(] &| %varid% [,)]", varid)) // TODO: No bailout if passed by value or as const reference
+                    break;
             }
-
-            // Variable is assigned -> Bail out
-            else if (Token::Match(tok2, "%varid% =", varid)) {
-                if (ThrowToken) // For non-inconclusive checking, wait until we find an assignement to it. Otherwise we assume it is safe to leave a dead pointer.
-                    deallocThrowError(ThrowToken, tok2->str());
-                break;
-            }
-            // Variable passed to function. Assume it becomes assigned -> Bail out
-            else if (Token::Match(tok2, "[,(] &| %varid% [,)]", varid)) // TODO: No bailout if passed by value or as const reference
-                break;
         }
     }
 }
@@ -170,7 +171,7 @@ void CheckExceptionSafety::checkCatchExceptionByValue()
 
         // Find a pass-by-value declaration in the catch(), excluding basic types
         // e.g. catch (std::exception err)
-        const Variable* var = symbolDatabase->getVariableFromVarId(i->classStart->tokAt(-2)->varId());
+        const Variable *var = i->classStart->tokAt(-2)->variable();
         if (var && var->isClass() && !var->isPointer() && !var->isReference())
             catchExceptionByValueError(i->classDef);
     }

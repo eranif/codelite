@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 
 //---------------------------------------------------------------------------
-#ifndef CHECKBOOST_H
-#define CHECKBOOST_H
+#ifndef checkboostH
+#define checkboostH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 
 class Token;
@@ -31,19 +32,22 @@ class Token;
 
 
 /** @brief %Check Boost usage */
-class CheckBoost : public Check {
+class CPPCHECKLIB CheckBoost : public Check {
 public:
     /** This constructor is used when registering the CheckClass */
-    CheckBoost() : Check(myName())
-    { }
+    CheckBoost() : Check(myName()) {
+    }
 
     /** This constructor is used when running checks. */
     CheckBoost(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
+        : Check(myName(), tokenizer, settings, errorLogger) {
+    }
 
     /** Simplified checks. The token list is simplified. */
     void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+        if (!tokenizer->isCPP())
+            return;
+
         CheckBoost checkBoost(tokenizer, settings, errorLogger);
 
         checkBoost.checkBoostForeachModification();
@@ -60,7 +64,7 @@ private:
         c.boostForeachError(0);
     }
 
-    std::string myName() const {
+    static std::string myName() {
         return "Boost usage";
     }
 
@@ -71,5 +75,4 @@ private:
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checkboostH

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 
 //---------------------------------------------------------------------------
-#ifndef CheckBufferOverrunH
-#define CheckBufferOverrunH
+#ifndef checkbufferoverrunH
+#define checkbufferoverrunH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 #include "settings.h"
 #include "mathlib.h"
@@ -46,17 +47,17 @@ class Variable;
  * I generally use 'buffer overrun' if you for example call a strcpy or
  * other function and pass a buffer and reads or writes too much data.
  */
-class CheckBufferOverrun : public Check {
+class CPPCHECKLIB CheckBufferOverrun : public Check {
 public:
 
     /** This constructor is used when registering the CheckClass */
-    CheckBufferOverrun() : Check(myName())
-    { }
+    CheckBufferOverrun() : Check(myName()) {
+    }
 
     /** This constructor is used when running checks. */
     CheckBufferOverrun(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
+        : Check(myName(), tokenizer, settings, errorLogger) {
+    }
 
     void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
         CheckBufferOverrun checkBufferOverrun(tokenizer, settings, errorLogger);
@@ -66,6 +67,7 @@ public:
 
         /** ExecutionPath checking.. */
         checkBufferOverrun.executionPaths();
+        checkBufferOverrun.writeOutsideBufferSize();
     }
 
     /** @brief %Check for buffer overruns */
@@ -76,6 +78,9 @@ public:
 
     /** @brief %Check for buffer overruns by inspecting execution paths */
     void executionPaths();
+
+    /** @brief %Check using POSIX write function and writing outside buffer size */
+    void writeOutsideBufferSize();
 
     /**
      * @brief Get minimum length of format string result
@@ -109,25 +114,23 @@ public:
     void negativeIndex();
 
     /** Information about N-dimensional array */
-    class ArrayInfo {
+    class CPPCHECKLIB ArrayInfo {
     private:
         /** number of elements of array */
         std::vector<MathLib::bigint> _num;
 
-        /** size of each element in array */
-        MathLib::bigint _element_size;
-
-        /** variable id */
-        unsigned int _varid;
-
         /** full name of variable as pattern */
         std::string _varname;
 
+        /** size of each element in array */
+        MathLib::bigint _element_size;
+
+        /** declaration id */
+        unsigned int _declarationId;
+
     public:
         ArrayInfo();
-        ArrayInfo(const ArrayInfo &);
-        ArrayInfo(const Variable *var, const Tokenizer *tokenizer);
-        ArrayInfo & operator=(const ArrayInfo &ai);
+        ArrayInfo(const Variable *var, const Tokenizer *tokenizer, const unsigned int forcedeclid = 0);
 
         /**
          * Create array info with specified data
@@ -159,11 +162,11 @@ public:
         }
 
         /** Variable name */
-        unsigned int varid() const {
-            return _varid;
+        unsigned int declarationId() const {
+            return _declarationId;
         }
-        void varid(unsigned int id) {
-            _varid = id;
+        void declarationId(unsigned int id) {
+            _declarationId = id;
         }
 
         /** Variable name */
@@ -188,7 +191,7 @@ public:
     void parse_for_body(const Token *tok2, const ArrayInfo &arrayInfo, const std::string &strindex, bool condition_out_of_bounds, unsigned int counter_varid, const std::string &min_counter_value, const std::string &max_counter_value);
 
     /** Check readlink or readlinkat() buffer usage */
-    void checkReadlinkBufferUsage(const Token *tok, const Token *scope_begin, const MathLib::bigint total_size, const bool is_readlinkat);
+    void checkReadlinkBufferUsage(const Token *ftok, const Token *scope_begin, const unsigned int varid, const MathLib::bigint total_size);
 
     /**
      * Helper function for checkFunctionCall - check a function parameter
@@ -208,7 +211,11 @@ public:
     void checkFunctionCall(const Token *tok, const ArrayInfo &arrayInfo, std::list<const Token *> callstack);
 
     void arrayIndexOutOfBoundsError(const Token *tok, const ArrayInfo &arrayInfo, const std::vector<MathLib::bigint> &index);
+    void arrayIndexInForLoop(const Token *tok, const ArrayInfo &arrayInfo);
+
 private:
+
+    static bool isArrayOfStruct(const Token* tok, int &position);
     void arrayIndexOutOfBoundsError(const std::list<const Token *> &callstack, const ArrayInfo &arrayInfo, const std::vector<MathLib::bigint> &index);
     void bufferOverrunError(const Token *tok, const std::string &varnames = "");
     void bufferOverrunError(const std::list<const Token *> &callstack, const std::string &varnames = "");
@@ -219,10 +226,12 @@ private:
     void bufferNotZeroTerminatedError(const Token *tok, const std::string &varname, const std::string &function);
     void negativeIndexError(const Token *tok, MathLib::bigint index);
     void cmdLineArgsError(const Token *tok);
-    void pointerOutOfBoundsError(const Token *tok, const std::string &object);	// UB when result of calculation is out of bounds
+    void pointerOutOfBoundsError(const Token *tok, const std::string &object);  // UB when result of calculation is out of bounds
     void arrayIndexThenCheckError(const Token *tok, const std::string &indexName);
     void possibleBufferOverrunError(const Token *tok, const std::string &src, const std::string &dst, bool cat);
     void possibleReadlinkBufferOverrunError(const Token *tok, const std::string &funcname, const std::string &varname);
+    void argumentSizeError(const Token *tok, const std::string &functionName, const std::string &varname);
+    void writeOutsideBufferSizeError(const Token *tok, const std::size_t stringLength, const MathLib::bigint writeLength, const std::string& functionName);
 
 public:
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
@@ -242,20 +251,19 @@ public:
         c.arrayIndexThenCheckError(0, "index");
         c.possibleBufferOverrunError(0, "source", "destination", false);
         c.possibleReadlinkBufferOverrunError(0, "readlink", "buffer");
+        c.argumentSizeError(0, "function", "array");
+        c.writeOutsideBufferSizeError(0,2,3,"write");
     }
 private:
 
-    std::string myName() const {
+    static std::string myName() {
         return "Bounds checking";
     }
 
     std::string classInfo() const {
-        return "out of bounds checking";
+        return "out of bounds checking\n";
     }
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
-
-
+#endif // checkbufferoverrunH

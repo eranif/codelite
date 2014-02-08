@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//---------------------------------------------------------------------------
 #ifndef checkH
 #define checkH
+//---------------------------------------------------------------------------
 
+#include "config.h"
 #include "token.h"
 #include "tokenize.h"
 #include "settings.h"
@@ -35,15 +38,15 @@
  * @brief Interface class that cppcheck uses to communicate with the checks.
  * All checking classes must inherit from this class
  */
-class Check {
+class CPPCHECKLIB Check {
 public:
     /** This constructor is used when registering the CheckClass */
     explicit Check(const std::string &aname);
 
     /** This constructor is used when running checks. */
     Check(const std::string &aname, const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : _tokenizer(tokenizer), _settings(settings), _errorLogger(errorLogger), _name(aname)
-    { }
+        : _tokenizer(tokenizer), _settings(settings), _errorLogger(errorLogger), _name(aname) {
+    }
 
     virtual ~Check() {
 #if !defined(DJGPP) && !defined(__sun)
@@ -78,8 +81,8 @@ public:
     }
 
     /** run checks, the token list is not simplified */
-    virtual void runChecks(const Tokenizer *, const Settings *, ErrorLogger *)
-    { }
+    virtual void runChecks(const Tokenizer *, const Settings *, ErrorLogger *) {
+    }
 
     /** run checks, the token list is simplified */
     virtual void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) = 0;
@@ -114,61 +117,26 @@ protected:
     ErrorLogger * const _errorLogger;
 
     /** report an error */
-    void reportError(const Token *tok, const Severity::SeverityType severity, const std::string &id, const std::string &msg) {
-        std::list<const Token *> callstack;
-        if (tok)
-            callstack.push_back(tok);
-        reportError(callstack, severity, id, msg);
+    void reportError(const Token *tok, const Severity::SeverityType severity, const std::string &id, const std::string &msg, bool inconclusive = false) {
+        std::list<const Token *> callstack(1, tok);
+        reportError(callstack, severity, id, msg, inconclusive);
     }
 
     /** report an error */
-    void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const std::string &id, const std::string& msg) {
-        reportError(callstack, severity, id, msg, false);
-    }
-
-    /** report an inconclusive error */
-    void reportInconclusiveError(const Token *tok, const Severity::SeverityType severity, const std::string &id, const std::string &msg) {
-        std::list<const Token *> callstack;
-        if (tok)
-            callstack.push_back(tok);
-        reportInconclusiveError(callstack, severity, id, msg);
-    }
-
-    /** report an inconclusive error */
-    void reportInconclusiveError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const std::string &id, const std::string& msg) {
-        reportError(callstack, severity, id, msg, true);
-    }
-
-
-private:
-    const std::string _name;
-
-    /** disabled assignment operator */
-    void operator=(const Check &);
-
-    /** report an error */
-    void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const std::string &id, const std::string& msg, bool inconclusive) {
-        std::list<ErrorLogger::ErrorMessage::FileLocation> locationList;
-        for (std::list<const Token *>::const_iterator it = callstack.begin(); it != callstack.end(); ++it) {
-            // --errorlist can provide null values here
-            if (!(*it))
-                continue;
-
-            ErrorLogger::ErrorMessage::FileLocation loc;
-            loc.line = (*it)->linenr();
-            loc.setfile(_tokenizer->file(*it));
-            locationList.push_back(loc);
-        }
-
-        ErrorLogger::ErrorMessage errmsg(locationList, severity, msg, id, inconclusive);
-        if (_tokenizer && !_tokenizer->getFiles().empty())
-            errmsg.file0 = _tokenizer->getFiles()[0];
+    void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const std::string &id, const std::string& msg, bool inconclusive = false) {
+        ErrorLogger::ErrorMessage errmsg(callstack, _tokenizer?&_tokenizer->list:0, severity, id, msg, inconclusive);
         if (_errorLogger)
             _errorLogger->reportErr(errmsg);
         else
             reportError(errmsg);
     }
 
+private:
+    const std::string _name;
+
+    /** disabled assignment operator and copy constructor */
+    void operator=(const Check &);
+    Check(const Check &);
 };
 
 namespace std {
@@ -188,6 +156,5 @@ inline Check::Check(const std::string &aname)
 }
 
 /// @}
-
-#endif
-
+//---------------------------------------------------------------------------
+#endif //  checkH

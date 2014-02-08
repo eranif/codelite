@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,10 @@
 #include <list>
 #include <string>
 #include <vector>
+#include "config.h"
 
 class Token;
+class TokenList;
 class ErrorLogger;
 class Settings;
 
@@ -36,10 +38,10 @@ class Settings;
 /// @{
 
 /** @brief Simplify templates from the preprocessed and partially simplified code. */
-class TemplateSimplifier {
-public:
+class CPPCHECKLIB TemplateSimplifier {
     TemplateSimplifier();
     ~TemplateSimplifier();
+public:
 
     /**
      * Used after simplifyTemplates to perform a little cleanup.
@@ -63,35 +65,30 @@ public:
     static unsigned int templateParameters(const Token *tok);
 
     /**
-     * Remove "template < ..." they can cause false positives because they are not expanded
-     */
-    static void removeTemplates(Token *tok);
-
-    /**
      * Expand specialized templates : "template<>.."
      * @return names of expanded templates
      */
-    static std::set<std::string> simplifyTemplatesExpandSpecialized(Token *tokens);
+    static std::set<std::string> expandSpecialized(Token *tokens);
 
     /**
      * Get template declarations
      * @return list of template declarations
      */
-    static std::list<Token *> simplifyTemplatesGetTemplateDeclarations(Token *tokens, bool &codeWithTemplates);
+    static std::list<Token *> getTemplateDeclarations(Token *tokens, bool &codeWithTemplates);
 
     /**
      * Get template instantiations
      * @return list of template instantiations
      */
-    static std::list<Token *> simplifyTemplatesGetTemplateInstantiations(Token *tokens);
+    static std::list<Token *> getTemplateInstantiations(Token *tokens);
 
     /**
      * simplify template instantiations (use default argument values)
      * @param templates list of template declarations
      * @param templateInstantiations list of template instantiations
      */
-    static void simplifyTemplatesUseDefaultArgumentValues(const std::list<Token *> &templates,
-            const std::list<Token *> &templateInstantiations);
+    static void useDefaultArgumentValues(const std::list<Token *> &templates,
+                                         std::list<Token *> *templateInstantiations);
 
     /**
      * Match template declaration/instantiation
@@ -101,7 +98,7 @@ public:
      * @param patternAfter pattern that must match the tokens after the ">"
      * @return match => true
      */
-    static bool simplifyTemplatesInstantiateMatch(const Token *instance, const std::string &name, size_t numberOfArguments, const char patternAfter[]);
+    static bool instantiateMatch(const Token *instance, const std::string &name, std::size_t numberOfArguments, const char patternAfter[]);
 
     /**
      * Match template declaration/instantiation
@@ -109,57 +106,75 @@ public:
      * @return -1 to bail out or positive integer to identity the position
      * of the template name.
      */
-    static int simplifyTemplatesGetTemplateNamePosition(const Token *tok);
+    static int getTemplateNamePosition(const Token *tok);
 
-    static void addtoken2(Token ** token, const char str[], const unsigned int lineno, const unsigned int fileno);
-    static void addtoken2(Token ** token, const Token * tok, const unsigned int lineno, const unsigned int fileno);
-    static void simplifyTemplatesExpandTemplate(
-        Token *_tokens,
-        Token **_tokensBack,
+    static void expandTemplate(
+        TokenList& tokenlist,
         const Token *tok,
         const std::string &name,
         std::vector<const Token *> &typeParametersInDeclaration,
         const std::string &newName,
-        std::vector<const Token *> &typesUsedInTemplateInstantion,
+        std::vector<const Token *> &typesUsedInTemplateInstantiation,
         std::list<Token *> &templateInstantiations);
 
     /**
-     * Simplify templates : expand all instantiatiations for a template
+     * Simplify templates : expand all instantiations for a template
      * @todo It seems that inner templates should be instantiated recursively
+     * @param tokenlist token list
+     * @param errorlogger error logger
+     * @param _settings settings
      * @param tok token where the template declaration begins
      * @param templateInstantiations a list of template usages (not necessarily just for this template)
      * @param expandedtemplates all templates that has been expanded so far. The full names are stored.
+     * @return true if the template was instantiated
      */
-    static void simplifyTemplateInstantions(
-        Token *_tokens,
-        Token **_tokensBack,
-        ErrorLogger *_errorLogger,
+    static bool simplifyTemplateInstantiations(
+        TokenList& tokenlist,
+        ErrorLogger& errorlogger,
         const Settings *_settings,
-        const std::vector<std::string> &files,
         const Token *tok,
         std::list<Token *> &templateInstantiations,
         std::set<std::string> &expandedtemplates);
 
     /**
      * Simplify templates
+     * @param tokenlist token list
+     * @param errorlogger error logger
+     * @param _settings settings
+     * @param _codeWithTemplates output parameter that is set if code contains templates
      */
     static void simplifyTemplates(
-        Token *_tokens,
-        Token **_tokensBack,
-        ErrorLogger *_errorLogger,
+        TokenList& tokenlist,
+        ErrorLogger& errorlogger,
         const Settings *_settings,
-        const std::vector<std::string> &_files,
         bool &_codeWithTemplates);
 
     /**
      * Simplify constant calculations such as "1+2" => "3"
+     * @param tok start token
+     * @return true if modifications to token-list are done.
+     *         false if no modifications are done.
+     */
+    static bool simplifyNumericCalculations(Token *tok);
+
+    /**
+     * Simplify constant calculations such as "1+2" => "3".
+     * This also performs simple cleanup of parentheses etc.
+     * @param _tokens start token
      * @return true if modifications to token-list are done.
      *         false if no modifications are done.
      */
     static bool simplifyCalculations(Token *_tokens);
+
+private:
+
+    /**
+     * Remove a specific "template < ..." template class/function
+     */
+    static bool removeTemplate(Token *tok);
+
 };
 
 /// @}
-
 //---------------------------------------------------------------------------
-#endif
+#endif // templatesimplifierH

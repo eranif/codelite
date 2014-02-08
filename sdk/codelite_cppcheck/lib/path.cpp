@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ std::string Path::fromNativeSeparators(std::string path)
 std::string Path::simplifyPath(const char *originalPath)
 {
     // Skip ./ at the beginning
-    if (strlen(originalPath) > 2 && originalPath[0] == '.' &&
+    if (std::strlen(originalPath) > 2 && originalPath[0] == '.' &&
         originalPath[1] == '/') {
         originalPath += 2;
     }
@@ -103,6 +103,19 @@ std::string Path::simplifyPath(const char *originalPath)
 
     return oss.str();
 }
+
+std::string Path::getPathFromFilename(const std::string &filename)
+{
+    std::string path = "";
+
+    std::size_t pos = filename.find_last_of("\\/");
+
+    if (pos != std::string::npos)
+        path = filename.substr(0, 1 + pos);
+
+    return path;
+}
+
 
 bool Path::sameFileName(const std::string &fname1, const std::string &fname2)
 {
@@ -171,9 +184,9 @@ std::string Path::getRelativePath(const std::string& absolutePath, const std::ve
 
 bool Path::isC(const std::string &path)
 {
-    // In unix, ".C" is concidered C++ file
+    // In unix, ".C" is considered C++ file
     const std::string extension = getFilenameExtension(path);
-    return(extension == ".c");
+    return (extension == ".c");
 }
 
 bool Path::isCPP(const std::string &path)
@@ -183,29 +196,23 @@ bool Path::isCPP(const std::string &path)
         extension == ".cxx" ||
         extension == ".cc" ||
         extension == ".c++" ||
+        extension == ".hpp" ||
         extension == ".tpp" ||
         extension == ".txx") {
         return true;
     }
 
-    // In unix, ".C" is concidered C++ file
-    return(getFilenameExtension(path) == ".C");
+    // In unix, ".C" is considered C++ file
+    return (getFilenameExtension(path) == ".C");
 }
 
-bool Path::isJava(const std::string &path)
+bool Path::acceptFile(const std::string &path, const std::set<std::string> &extra)
+{
+    return !Path::isHeader(path) && (Path::isCPP(path) || Path::isC(path) || extra.find(getFilenameExtension(path)) != extra.end());
+}
+
+bool Path::isHeader(const std::string &path)
 {
     const std::string extension = getFilenameExtensionInLowerCase(path);
-    return(extension == ".java");
+    return (extension.compare(0, 2, ".h") == 0);
 }
-
-bool Path::isCSharp(const std::string &path)
-{
-    const std::string extension = getFilenameExtensionInLowerCase(path);
-    return(extension == ".cs");
-}
-
-bool Path::acceptFile(const std::string &filename)
-{
-    return(Path::isCPP(filename) || Path::isC(filename));
-}
-

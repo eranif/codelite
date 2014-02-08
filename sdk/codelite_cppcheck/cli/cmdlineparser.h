@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,21 +98,21 @@ protected:
     /**
      * Print help text to the console.
      */
-    void PrintHelp() const;
+    static void PrintHelp();
 
     /**
      * Print message (to console?).
      */
-    void PrintMessage(const std::string &message) const;
+    static void PrintMessage(const std::string &message);
 
 private:
+    std::vector<std::string> _pathnames;
+    std::vector<std::string> _ignoredPaths;
     Settings *_settings;
     bool _showHelp;
     bool _showVersion;
     bool _showErrorMessages;
     bool _exitAfterPrint;
-    std::vector<std::string> _pathnames;
-    std::vector<std::string> _ignoredPaths;
 };
 
 /// @}

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,20 @@
  */
 
 #include "cppcheckexecutor.h"
+#include "cmdlineparser.h"
 #include "cppcheck.h"
-#include "threadexecutor.h"
-#include "preprocessor.h"
 #include "errorlogger.h"
+#include "filelister.h"
+#include "path.h"
+#include "pathmatch.h"
+#include "preprocessor.h"
+#include "threadexecutor.h"
 #include <iostream>
 #include <sstream>
 #include <cstdlib> // EXIT_SUCCESS and EXIT_FAILURE
 #include <cstring>
 #include <algorithm>
 #include <climits>
-
-#include "cmdlineparser.h"
-#include "filelister.h"
-#include "path.h"
-#include "pathmatch.h"
 
 CppCheckExecutor::CppCheckExecutor()
     : _settings(0), time1(0), errorlist(false)
@@ -95,7 +94,7 @@ bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* c
         // Execute recursiveAddFiles() to each given file parameter
         std::vector<std::string>::const_iterator iter;
         for (iter = pathnames.begin(); iter != pathnames.end(); ++iter)
-            FileLister::recursiveAddFiles(_files, Path::toNativeSeparators(*iter));
+            FileLister::recursiveAddFiles(_files, Path::toNativeSeparators(*iter), _settings->library.markupExtensions());
     }
 
     if (!_files.empty()) {
@@ -124,7 +123,7 @@ bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* c
         const bool caseSensitive = true;
 #endif
         PathMatch matcher(parser.GetIgnoredPaths(), caseSensitive);
-        for (std::map<std::string, size_t>::iterator i = _files.begin(); i != _files.end();) {
+        for (std::map<std::string, std::size_t>::iterator i = _files.begin(); i != _files.end();) {
             if (matcher.Match(i->first))
                 _files.erase(i++);
             else
@@ -156,6 +155,29 @@ int CppCheckExecutor::check(int argc, const char* const argv[])
         return EXIT_FAILURE;
     }
 
+    bool std = settings.library.load(argv[0], "std.cfg");
+    bool posix = true;
+    if (settings.standards.posix)
+        posix = settings.library.load(argv[0], "posix.cfg");
+
+    if (!std || !posix) {
+        const std::list<ErrorLogger::ErrorMessage::FileLocation> callstack;
+        const std::string msg("Failed to load " + std::string(!std ? "std.cfg" : "posix.cfg") + ". Your Cppcheck installation is broken, please re-install.");
+#ifdef CFGDIR
+        const std::string details("The Cppcheck binary was compiled with CFGDIR set to \"" +
+                                  std::string(CFGDIR) + "\" and will therefore search for "
+                                  "std.cfg in that path.");
+#else
+        const std::string cfgfolder(Path::fromNativeSeparators(Path::getPathFromFilename(argv[0])) + "cfg");
+        const std::string details("The Cppcheck binary was compiled without CFGDIR set. Either the "
+                                  "std.cfg should be available in " + cfgfolder + " or the CFGDIR "
+                                  "should be configured.");
+#endif
+        ErrorLogger::ErrorMessage errmsg(callstack, Severity::information, msg+" "+details, "failedToLoadCfg", false);
+        reportErr(errmsg);
+        return EXIT_FAILURE;
+    }
+
     if (settings.reportProgress)
         time1 = std::time(0);
 
@@ -167,19 +189,34 @@ int CppCheckExecutor::check(int argc, const char* const argv[])
     if (settings._jobs == 1) {
         // Single process
 
-        size_t totalfilesize = 0;
-        for (std::map<std::string, size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+        std::size_t totalfilesize = 0;
+        for (std::map<std::string, std::size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
             totalfilesize += i->second;
         }
 
-        size_t processedsize = 0;
+        std::size_t processedsize = 0;
         unsigned int c = 0;
-        for (std::map<std::string, size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
-            returnValue += cppCheck.check(i->first);
-            processedsize += i->second;
-            if (!settings._errorsOnly)
-                reportStatus(c + 1, _files.size(), processedsize, totalfilesize);
-            c++;
+        for (std::map<std::string, std::size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+            if (!_settings->library.markupFile(i->first)
+                || !_settings->library.processMarkupAfterCode(i->first)) {
+                returnValue += cppCheck.check(i->first);
+                processedsize += i->second;
+                if (!settings._errorsOnly)
+                    reportStatus(c + 1, _files.size(), processedsize, totalfilesize);
+                c++;
+            }
+        }
+
+        // second loop to parse all markup files which may not work until all
+        // c/cpp files have been parsed and checked
+        for (std::map<std::string, std::size_t>::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+            if (_settings->library.markupFile(i->first) && _settings->library.processMarkupAfterCode(i->first)) {
+                returnValue += cppCheck.check(i->first);
+                processedsize += i->second;
+                if (!settings._errorsOnly)
+                    reportStatus(c + 1, _files.size(), processedsize, totalfilesize);
+                c++;
+            }
         }
 
         cppCheck.checkFunctionUsage();
@@ -191,9 +228,11 @@ int CppCheckExecutor::check(int argc, const char* const argv[])
         returnValue = executor.check();
     }
 
+    if (settings.isEnabled("information") || settings.checkConfiguration)
+        reportUnmatchedSuppressions(settings.nomsg.getUnmatchedGlobalSuppressions());
+
     if (!settings.checkConfiguration) {
-        if (!settings._errorsOnly)
-            reportUnmatchedSuppressions(settings.nomsg.getUnmatchedGlobalSuppressions());
+        cppCheck.tooManyConfigsError("",0U);
 
         if (settings.isEnabled("missingInclude") && Preprocessor::missingIncludeFlag) {
             const std::list<ErrorLogger::ErrorMessage::FileLocation> callStack;
@@ -207,7 +246,7 @@ int CppCheckExecutor::check(int argc, const char* const argv[])
                                           "--check-config.",
                                           "missingInclude",
                                           false);
-            reportErr(msg);
+            reportInfo(msg);
         }
     }
 
@@ -237,7 +276,7 @@ void CppCheckExecutor::reportOut(const std::string &outmsg)
     std::cout << outmsg << std::endl;
 }
 
-void CppCheckExecutor::reportProgress(const std::string &filename, const char stage[], const unsigned int value)
+void CppCheckExecutor::reportProgress(const std::string &filename, const char stage[], const std::size_t value)
 {
     (void)filename;
 
@@ -249,23 +288,23 @@ void CppCheckExecutor::reportProgress(const std::string &filename, const char st
     if (time2 >= (time1 + 10)) {
         time1 = time2;
 
-        // current time in the format "Www Mmm dd hh:mm:ss yyyy"
-        const std::string str(std::ctime(&time2));
-
         // format a progress message
         std::ostringstream ostr;
         ostr << "progress: "
              << stage
-             << ' ' << int(value) << '%';
-        if (_settings->_verbose)
-            ostr << " time=" << str.substr(11, 8);
+             << ' ' << value << '%';
 
         // Report progress message
         reportOut(ostr.str());
     }
 }
 
-void CppCheckExecutor::reportStatus(size_t fileindex, size_t filecount, size_t sizedone, size_t sizetotal)
+void CppCheckExecutor::reportInfo(const ErrorLogger::ErrorMessage &msg)
+{
+    reportErr(msg);
+}
+
+void CppCheckExecutor::reportStatus(std::size_t fileindex, std::size_t filecount, std::size_t sizedone, std::size_t sizetotal)
 {
     if (filecount > 1) {
         std::ostringstream oss;

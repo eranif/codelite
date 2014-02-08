@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #define checkstlH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 
 class Token;
@@ -31,19 +32,22 @@ class Token;
 
 
 /** @brief %Check STL usage (invalidation of iterators, mismatching containers, etc) */
-class CheckStl : public Check {
+class CPPCHECKLIB CheckStl : public Check {
 public:
     /** This constructor is used when registering the CheckClass */
-    CheckStl() : Check(myName())
-    { }
+    CheckStl() : Check(myName()) {
+    }
 
     /** This constructor is used when running checks. */
     CheckStl(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
+        : Check(myName(), tokenizer, settings, errorLogger) {
+    }
 
     /** Simplified checks. The token list is simplified. */
     void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+        if (!tokenizer->isCPP())
+            return;
+
         CheckStl checkStl(tokenizer, settings, errorLogger);
 
         checkStl.stlOutOfBounds();
@@ -51,17 +55,17 @@ public:
         checkStl.mismatchingContainers();
         checkStl.erase();
         checkStl.pushback();
-        checkStl.stlBoundries();
+        checkStl.stlBoundaries();
         checkStl.if_find();
         checkStl.string_c_str();
         checkStl.checkAutoPointer();
         checkStl.uselessCalls();
+        checkStl.checkDereferenceInvalidIterator();
 
         // Style check
         checkStl.size();
         checkStl.redundantCondition();
         checkStl.missingComparison();
-
     }
 
 
@@ -88,7 +92,6 @@ public:
      * it is bad to dereference it after the erase.
      */
     void erase();
-    void eraseError(const Token *tok);
 
 
     /**
@@ -99,7 +102,7 @@ public:
     /**
      * bad condition.. "it < alist.end()"
      */
-    void stlBoundries();
+    void stlBoundaries();
 
     /** if (a.find(x)) - possibly incorrect condition */
     void if_find();
@@ -132,7 +135,16 @@ public:
     /** @brief %Check calls that using them is useless */
     void uselessCalls();
 
+    /** @brief %Check for dereferencing an iterator that is invalid */
+    void checkDereferenceInvalidIterator();
 
+    /**
+     * Dereferencing an erased iterator
+     * @param erased token where the erase occurs
+     * @param deref token where the dereference occurs
+     * @param itername iterator name
+     */
+    void dereferenceErasedError(const Token* erased, const Token* deref, const std::string &itername);
 
 private:
 
@@ -142,13 +154,6 @@ private:
      * @param it iterator token
      */
     void eraseCheckLoop(const Token *it);
-
-    /**
-     * Dereferencing an erased iterator
-     * @param tok token where error occurs
-     * @param itername iterator name
-     */
-    void dereferenceErasedError(const Token *tok, const std::string &itername);
 
     void missingComparisonError(const Token *incrementToken1, const Token *incrementToken2);
     void string_c_strThrowError(const Token *tok);
@@ -161,8 +166,8 @@ private:
     void iteratorsError(const Token *tok, const std::string &container1, const std::string &container2);
     void mismatchingContainersError(const Token *tok);
     void invalidIteratorError(const Token *tok, const std::string &func, const std::string &iterator_name);
-    void invalidPointerError(const Token *tok, const std::string &pointer_name);
-    void stlBoundriesError(const Token *tok, const std::string &container_name);
+    void invalidPointerError(const Token *tok, const std::string &func, const std::string &pointer_name);
+    void stlBoundariesError(const Token *tok, const std::string &container_name);
     void if_findError(const Token *tok, bool str);
     void sizeError(const Token *tok);
     void redundantIfRemoveError(const Token *tok);
@@ -174,24 +179,28 @@ private:
     void uselessCallsReturnValueError(const Token *tok, const std::string &varname, const std::string &function);
     void uselessCallsSwapError(const Token *tok, const std::string &varname);
     void uselessCallsSubstrError(const Token *tok, bool empty);
+    void uselessCallsEmptyError(const Token *tok);
+    void uselessCallsRemoveError(const Token *tok, const std::string& function);
+
+    void dereferenceInvalidIteratorError(const Token* deref, const std::string &itername);
 
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
         CheckStl c(0, settings, errorLogger);
         c.invalidIteratorError(0, "iterator");
         c.iteratorsError(0, "container1", "container2");
         c.mismatchingContainersError(0);
-        c.dereferenceErasedError(0, "iter");
+        c.dereferenceErasedError(0, 0, "iter");
         c.stlOutOfBoundsError(0, "i", "foo", false);
-        c.eraseError(0);
         c.invalidIteratorError(0, "push_back|push_front|insert", "iterator");
-        c.invalidPointerError(0, "pointer");
-        c.stlBoundriesError(0, "container");
+        c.invalidPointerError(0, "push_back", "pointer");
+        c.stlBoundariesError(0, "container");
         c.if_findError(0, false);
         c.if_findError(0, true);
         c.string_c_strError(0);
         c.string_c_strReturn(0);
         c.string_c_strParam(0, 0);
         c.sizeError(0);
+        c.missingComparisonError(0, 0);
         c.redundantIfRemoveError(0);
         c.autoPointerError(0);
         c.autoPointerContainerError(0);
@@ -199,9 +208,12 @@ private:
         c.uselessCallsReturnValueError(0, "str", "find");
         c.uselessCallsSwapError(0, "str");
         c.uselessCallsSubstrError(0, false);
+        c.uselessCallsEmptyError(0);
+        c.uselessCallsRemoveError(0, "remove");
+        c.dereferenceInvalidIteratorError(0, "i");
     }
 
-    std::string myName() const {
+    static std::string myName() {
         return "STL usage";
     }
 
@@ -217,12 +229,10 @@ private:
                "* redundant condition\n"
                "* common mistakes when using string::c_str()\n"
                "* using auto pointer (auto_ptr)\n"
-               "* useless calls of string functions";
+               "* useless calls of string and STL functions\n"
+               "* dereferencing an invalid iterator\n";
     }
-
-    bool isStlContainer(unsigned int varid);
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checkstlH

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #define checkassignifH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 #include "mathlib.h"
 
@@ -32,7 +33,7 @@
  * @brief Check for assignment / condition mismatches
  */
 
-class CheckAssignIf : public Check {
+class CPPCHECKLIB CheckAssignIf : public Check {
 public:
     /** This constructor is used when registering the CheckAssignIf */
     CheckAssignIf() : Check(myName()) {
@@ -54,6 +55,14 @@ public:
     /** mismatching assignment / comparison */
     void assignIf();
 
+    /** parse scopes recursively */
+    bool assignIfParseScope(const Token * const assignTok,
+                            const Token * const startTok,
+                            const unsigned int varid,
+                            const bool islocal,
+                            const char bitop,
+                            const MathLib::bigint num);
+
     /** mismatching lhs and rhs in comparison */
     void comparison();
 
@@ -62,9 +71,12 @@ public:
 
 private:
 
-    void assignIfError(const Token *tok, bool result);
+    void assignIfError(const Token *tok1, const Token *tok2, const std::string &condition, bool result);
+
+    void mismatchingBitAndError(const Token *tok1, const MathLib::bigint num1, const Token *tok2, const MathLib::bigint num2);
 
     void comparisonError(const Token *tok,
+                         const std::string &bitop,
                          MathLib::bigint value1,
                          const std::string &op,
                          MathLib::bigint value2,
@@ -74,23 +86,24 @@ private:
 
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
         CheckAssignIf c(0, settings, errorLogger);
-        c.assignIfError(0, false);
-        c.comparisonError(0, 6, "==", 1, false);
+        c.assignIfError(0, 0, "", false);
+        c.comparisonError(0, "&", 6, "==", 1, false);
         c.multiConditionError(0,1);
+        c.mismatchingBitAndError(0,0xf0, 0, 1);
     }
 
-    std::string myName() const {
-        return "Match assignments and conditions";
+    static std::string myName() {
+        return "AssignIf";
     }
 
     std::string classInfo() const {
         return "Match assignments and conditions:\n"
                "* Mismatching assignment and comparison => comparison is always true/false\n"
                "* Mismatching lhs and rhs in comparison => comparison is always true/false\n"
-               "* Detect matching 'if' and 'else if' conditions";
+               "* Detect matching 'if' and 'else if' conditions\n"
+               "* Mismatching bitand (a &= 0xf0; a &= 1; => a = 0)\n";
     }
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checkassignifH

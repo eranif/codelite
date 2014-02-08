@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,11 @@
 
 
 //---------------------------------------------------------------------------
-#ifndef CheckPostfixOperatorH
-#define CheckPostfixOperatorH
+#ifndef checkpostfixoperatorH
+#define checkpostfixoperatorH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 
 /// @addtogroup Checks
@@ -31,18 +32,21 @@
  * @brief Using postfix operators ++ or -- rather than postfix operator.
  */
 
-class CheckPostfixOperator : public Check {
+class CPPCHECKLIB CheckPostfixOperator : public Check {
 public:
     /** This constructor is used when registering the CheckPostfixOperator */
-    CheckPostfixOperator() : Check(myName())
-    { }
+    CheckPostfixOperator() : Check(myName()) {
+    }
 
     /** This constructor is used when running checks. */
     CheckPostfixOperator(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
+        : Check(myName(), tokenizer, settings, errorLogger) {
+    }
 
     void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+        if (tokenizer->isC())
+            return;
+
         CheckPostfixOperator checkPostfixOperator(tokenizer, settings, errorLogger);
         checkPostfixOperator.postfixOperator();
     }
@@ -59,7 +63,7 @@ private:
         c.postfixOperatorError(0);
     }
 
-    std::string myName() const {
+    static std::string myName() {
         return "Using postfix operators";
     }
 
@@ -69,5 +73,4 @@ private:
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checkpostfixoperatorH

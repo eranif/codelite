@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,6 @@ bool PathMatch::Match(const std::string &path) const
 
 std::string PathMatch::RemoveFilename(const std::string &path)
 {
-    const size_t ind = path.find_last_of('/');
+    const std::size_t ind = path.find_last_of('/');
     return path.substr(0, ind + 1);
 }

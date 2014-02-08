@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TokenH
-#define TokenH
+//---------------------------------------------------------------------------
+#ifndef tokenH
+#define tokenH
+//---------------------------------------------------------------------------
 
 #include <string>
 #include <vector>
+#include <ostream>
+#include "config.h"
+
+class Scope;
+class Function;
+class Variable;
 
 /// @addtogroup Core
 /// @{
 
 /**
- * @brief The token list that the Tokenizer generates is a linked-list of this class.
+ * @brief The token list that the TokenList generates is a linked-list of this class.
  *
  * Tokens are stored as strings. The "if", "while", etc are stored in plain text.
  * The reason the Token class is needed (instead of using the string class) is that some extra functionality is also needed for tokens:
@@ -35,14 +43,25 @@
  *
  * The Token class also has other functions for management of token list, matching tokens, etc.
  */
-class Token {
+class CPPCHECKLIB Token {
 private:
     Token **tokensBack;
 
     // Not implemented..
     Token();
+    Token(const Token &);
+    Token operator=(const Token &);
 
 public:
+    enum Type {
+        eVariable, eType, eFunction, eName, // Names: Variable (varId), Type (typeId, later), Function (FuncId, later), Name (unknown identifier)
+        eNumber, eString, eChar, eBoolean, eLiteral, // Literals: Number, String, Character, User defined literal (C++11)
+        eArithmeticalOp, eComparisonOp, eAssignmentOp, eLogicalOp, eBitOp, eIncDecOp, eExtendedOp, // Operators: Arithmetical, Comparison, Assignment, Logical, Bitwise, ++/--, Extended
+        eBracket, // {, }, <, >: < and > only if link() is set. Otherwise they are comparison operators.
+        eOther,
+        eNone
+    };
+
     explicit Token(Token **tokensBack);
     ~Token();
 
@@ -69,14 +88,18 @@ public:
      * would return next from that one.
      */
     const Token *tokAt(int index) const;
-    Token *tokAt(int index);
+    Token *tokAt(int index) {
+        return const_cast<Token *>(static_cast<const Token *>(this)->tokAt(index));
+    }
 
     /**
      * Returns the link to the token in given index, related to this token.
      * For example index 1 would return the link to next token.
      */
     const Token *linkAt(int index) const;
-    Token *linkAt(int index);
+    Token *linkAt(int index) {
+        return const_cast<Token *>(static_cast<const Token *>(this)->linkAt(index));
+    }
 
     const std::string &strAt(int index) const;
 
@@ -110,8 +133,12 @@ public:
      * - "%type%" Anything that can be a variable type, e.g. "int", but not "delete".
      * - "%num%" Any numeric token, e.g. "23"
      * - "%bool%" true or false
+     * - "%char%" Any token enclosed in &apos;-character.
+     * - "%comp%" Any token such that isComparisonOp() returns true.
      * - "%str%" Any token starting with &quot;-character (C-string).
      * - "%varid%" Match with parameter varid
+     * - "%op%" Any token such that isOp() returns true.
+     * - "%cop%" Any token such that isConstOp() returns true.
      * - "%or%" A bitwise-or operator '|'
      * - "%oror%" A logical-or operator '||'
      * - "[abc]" Any of the characters 'a' or 'b' or 'c'
@@ -120,8 +147,16 @@ public:
      * - "!!else" No tokens or any token that is not "else".
      * - "someRandomText" If token contains "someRandomText".
      *
-     * multi-compare patterns such as "int|void|char" can contain %or%, %oror% and %op%
-     * but it is not recommended to put such an %cmd% as the first pattern.
+     * multi-compare patterns such as "int|void|char" can contain %%or%, %%oror% and %%op%
+     * but it is not recommended to put such an %%cmd% as the first pattern.
+     *
+     * It's possible to use multi-compare patterns with all the other %%cmds%,
+     * except for %%varid%, and normal names, but the %%cmds% should be put as
+     * the first patterns in the list, then the normal names.
+     * For example: "%var%|%num%|)" means yes to a variable, a number or ')'.
+     *
+     * @todo Make it possible to use the %%cmds% and the normal names in the
+     * multicompare list without an order.
      *
      * The patterns can be also combined to compare to multiple tokens at once
      * by separating tokens with a space, e.g.
@@ -129,12 +164,11 @@ public:
      * "const" or "void" and token after that is '{'. If even one of the tokens does not
      * match its pattern, false is returned.
      *
-     * @todo pattern "%type%|%num%" should mean either a type or a num.
-     *
      * @param tok List of tokens to be compared to the pattern
      * @param pattern The pattern against which the tokens are compared,
      * e.g. "const" or ") const|volatile| {".
-     * @param varid if %varid% is given in the pattern the Token::varId will be matched against this argument
+     * @param varid if %%varid% is given in the pattern the Token::varId
+     * will be matched against this argument
      * @return true if given token matches with given pattern
      *         false if given token does not match with given pattern
      */
@@ -143,62 +177,68 @@ public:
     /**
      * Return length of C-string.
      *
-     * Should be called for %str% tokens only.
+     * Should be called for %%str%% tokens only.
      *
      * @param tok token with C-string
      **/
     static std::size_t getStrLength(const Token *tok);
 
-    bool isName() const {
-        return _isName;
+    /**
+     * Return char of C-string at index (possible escaped "\\n")
+     *
+     * Should be called for %%str%% tokens only.
+     *
+     * @param tok token with C-string
+     * @param index position of character
+     **/
+    static std::string getCharAt(const Token *tok, std::size_t index);
+
+    Type type() const {
+        return _type;
     }
-    void isName(bool name) {
-        _isName = name;
+    void type(Type t) {
+        _type = t;
+    }
+    bool isName() const {
+        return _type == eName || _type == eType || _type == eVariable || _type == eFunction ||
+               _type == eBoolean; // TODO: "true"/"false" aren't really a name...
+    }
+    bool isUpperCaseName() const;
+    bool isLiteral() const {
+        return _type == eNumber || _type == eString || _type == eChar ||
+               _type == eBoolean || _type == eLiteral;
     }
     bool isNumber() const {
-        return _isNumber;
-    }
-    void isNumber(bool number) {
-        _isNumber = number;
-    }
-    bool isArithmeticalOp() const {
-        return (_str=="<<" || _str==">>" || (_str.size()==1 && _str.find_first_of("+-*/%") != std::string::npos));
+        return _type == eNumber;
     }
     bool isOp() const {
+        return (isConstOp() ||
+                isAssignmentOp() ||
+                _type == eIncDecOp);
+    }
+    bool isConstOp() const {
         return (isArithmeticalOp() ||
-                _str == "&&" ||
-                _str == "||" ||
-                _str == "==" ||
-                _str == "!=" ||
-                _str == "<"  ||
-                _str == "<=" ||
-                _str == ">"  ||
-                _str == ">=" ||
-                (_str.size() == 1 && _str.find_first_of("&|^~!") != std::string::npos));
+                _type == eLogicalOp ||
+                _type == eComparisonOp ||
+                _type == eBitOp);
     }
     bool isExtendedOp() const {
-        return isOp() ||
-               (_str.size() == 1 && _str.find_first_of(",[]()?:") != std::string::npos);
+        return isConstOp() ||
+               _type == eExtendedOp;
+    }
+    bool isArithmeticalOp() const {
+        return _type == eArithmeticalOp;
+    }
+    bool isComparisonOp() const {
+        return _type == eComparisonOp;
     }
     bool isAssignmentOp() const {
-        return (_str == "="   ||
-                _str == "+="  ||
-                _str == "-="  ||
-                _str == "*="  ||
-                _str == "/="  ||
-                _str == "%="  ||
-                _str == "&="  ||
-                _str == "^="  ||
-                _str == "|="  ||
-                _str == "<<=" ||
-                _str == ">>=");
+        return _type == eAssignmentOp;
     }
     bool isBoolean() const {
-        return _isBoolean;
+        return _type == eBoolean;
     }
-    void isBoolean(bool boolean) {
-        _isBoolean = boolean;
-    }
+
     bool isUnsigned() const {
         return _isUnsigned;
     }
@@ -223,25 +263,44 @@ public:
     void isLong(bool size) {
         _isLong = size;
     }
-    bool isUnused() const {
-        return _isUnused;
+    bool isStandardType() const {
+        return _isStandardType;
     }
-    void isUnused(bool used) {
-        _isUnused = used;
-    }
-    bool isStandardType() const;
-
     bool isExpandedMacro() const {
         return _isExpandedMacro;
     }
-    void setExpandedMacro(bool m) {
+    void isExpandedMacro(bool m) {
         _isExpandedMacro = m;
+    }
+    bool isAttributeConstructor() const {
+        return _isAttributeConstructor;
+    }
+    void isAttributeConstructor(bool ac) {
+        _isAttributeConstructor = ac;
+    }
+    bool isAttributeUnused() const {
+        return _isAttributeUnused;
+    }
+    void isAttributeUnused(bool unused) {
+        _isAttributeUnused = unused;
     }
 
     static const Token *findsimplematch(const Token *tok, const char pattern[]);
     static const Token *findsimplematch(const Token *tok, const char pattern[], const Token *end);
     static const Token *findmatch(const Token *tok, const char pattern[], unsigned int varId = 0);
     static const Token *findmatch(const Token *tok, const char pattern[], const Token *end, unsigned int varId = 0);
+    static Token *findsimplematch(Token *tok, const char pattern[]) {
+        return const_cast<Token *>(findsimplematch(static_cast<const Token *>(tok), pattern));
+    }
+    static Token *findsimplematch(Token *tok, const char pattern[], const Token *end) {
+        return const_cast<Token *>(findsimplematch(static_cast<const Token *>(tok), pattern, end));
+    }
+    static Token *findmatch(Token *tok, const char pattern[], unsigned int varId = 0) {
+        return const_cast<Token *>(findmatch(static_cast<const Token *>(tok), pattern, varId));
+    }
+    static Token *findmatch(Token *tok, const char pattern[], const Token *end, unsigned int varId = 0) {
+        return const_cast<Token *>(findmatch(static_cast<const Token *>(tok), pattern, end, varId));
+    }
 
     /**
      * Needle is build from multiple alternatives. If one of
@@ -250,13 +309,14 @@ public:
      * string, return value is 0. If needle was not found, return
      * value is -1.
      *
+     * @param tok Current token
      * @param haystack e.g. "one|two" or "|one|two"
      * @param needle e.g. "one", "two" or "invalid"
      * @return 1 if needle is found from the haystack
      *         0 if needle was empty string
      *        -1 if needle was not found
      */
-    static int multiCompare(const char *haystack, const char *needle);
+    static int multiCompare(const Token *tok, const char *haystack, const char *needle);
 
     unsigned int linenr() const {
         return _linenr;
@@ -290,8 +350,12 @@ public:
      * Insert new token after this token. This function will handle
      * relations between next and previous token also.
      * @param tokenStr String for the new token.
+     * @param prepend Insert the new token before this token when it's not
+     * the first one on the tokens list.
      */
-    void insertToken(const std::string &tokenStr);
+    void insertToken(const std::string &tokenStr, bool prepend=false);
+
+    void insertToken(const std::string &tokenStr, const std::string &originalNameStr, bool prepend=false);
 
     Token *previous() const {
         return _previous;
@@ -303,6 +367,10 @@ public:
     }
     void varId(unsigned int id) {
         _varId = id;
+        if (id != 0)
+            _type = eVariable;
+        else
+            update_property_info();
     }
 
     /**
@@ -332,10 +400,28 @@ public:
      */
     static void replace(Token *replaceThis, Token *start, Token *end);
 
-    /** Stringify a token list (with or without varId) */
-    std::string stringify(const Token* end) const;
-    std::string stringifyList(bool varid = false, const char *title = 0) const;
-    std::string stringifyList(bool varid, const char *title, const std::vector<std::string> &fileNames) const;
+    /**
+     * Stringify a token
+     * @param os The result is shifted into that output stream
+     * @param varid Print varids. (Style: "varname@id")
+     * @param attributes Print attributes of tokens like "unsigned" in front of it.
+     */
+    void stringify(std::ostream& os, bool varid, bool attributes) const;
+
+    /**
+     * Stringify a list of token, from current instance on.
+     * @param varid Print varids. (Style: "varname@id")
+     * @param attributes Print attributes of tokens like "unsigned" in front of it.
+     * @param linenumbers Print line number in front of each line
+     * @param linebreaks Insert \n into string when line number changes
+     * @param files print Files as numbers or as names (if fileNames is given)
+     * @param fileNames Vector of filenames. Used (if given) to print filenames as strings instead of numbers.
+     * @param end Stringification ends before this token is reached. 0 to stringify until end of list.
+     * @return Stringified token list as a string
+     */
+    std::string stringifyList(bool varid, bool attributes, bool linenumbers, bool linebreaks, bool files, const std::vector<std::string>* fileNames = 0, const Token* end = 0) const;
+    std::string stringifyList(const Token* end, bool attributes = true) const;
+    std::string stringifyList(bool varid = false) const;
 
     /**
      * Remove the contents for this token from the token list.
@@ -354,6 +440,8 @@ public:
      */
     void link(Token *linkToToken) {
         _link = linkToToken;
+        if (_str == "<" || _str == ">")
+            update_property_info();
     }
 
     /**
@@ -367,6 +455,59 @@ public:
      */
     Token *link() const {
         return _link;
+    }
+
+    /**
+     * Associate this token with given scope
+     * @param s Scope to be associated
+     */
+    void scope(const Scope *s) {
+        _scope = s;
+    }
+
+    /**
+     * Returns a pointer to the scope containing this token.
+     */
+    const Scope *scope() const {
+        return _scope;
+    }
+
+    /**
+     * Associate this token with given function
+     * @param f Function to be associated
+     */
+    void function(const Function *f) {
+        _function = f;
+        if (f)
+            _type = eFunction;
+        else if (_type == eFunction)
+            _type = eName;
+    }
+
+    /**
+     * Returns a pointer to the Function associated with this token.
+     */
+    const Function *function() const {
+        return _type == eFunction ? _function : 0;
+    }
+
+    /**
+     * Associate this token with given variable
+     * @param v Variable to be associated
+     */
+    void variable(const Variable *v) {
+        _variable = v;
+        if (v || _varId)
+            _type = eVariable;
+        else if (_type == eVariable)
+            _type = eName;
+    }
+
+    /**
+     * Returns a pointer to the variable associated with this token.
+     */
+    const Variable *variable() const {
+        return _type == eVariable ? _variable : 0;
     }
 
     /**
@@ -412,6 +553,28 @@ public:
      */
     Token* nextArgument() const;
 
+    /**
+     * Returns the closing bracket of opening '<'. Should only be used if link()
+     * is unavailable.
+     * @return closing '>', ')', ']' or '}'. if no closing bracket is found, NULL is returned
+     */
+    const Token* findClosingBracket() const;
+    Token* findClosingBracket();
+
+    /**
+     * Returns the original name.
+     */
+    const std::string & originalName() const {
+        return _originalName;
+    }
+
+    /**
+     * Sets the original name.
+     */
+    void originalName(const std::string & name) {
+        _originalName = name;
+    }
+
 private:
     void next(Token *nextToken) {
         _next = nextToken;
@@ -421,11 +584,11 @@ private:
     }
 
     /**
-     * Works almost like strcmp() except returns only 0 or 1 and
+     * Works almost like strcmp() except returns only true or false and
      * if str has empty space &apos; &apos; character, that character is handled
      * as if it were &apos;\\0&apos;
      */
-    static int firstWordEquals(const char *str, const char *word);
+    static bool firstWordEquals(const char *str, const char *word);
 
     /**
      * Works almost like strchr() except
@@ -446,19 +609,33 @@ private:
     Token *_previous;
     Token *_link;
 
-    bool _isName;
-    bool _isNumber;
-    bool _isBoolean;
+    // symbol database information
+    const Scope *_scope;
+    union {
+        const Function *_function;
+        const Variable *_variable;
+    };
+
+    std::string _str;
+    unsigned int _varId;
+    unsigned int _fileIndex;
+    unsigned int _linenr;
+
+    /**
+     * A value from 0-100 that provides a rough idea about where in the token
+     * list this token is located.
+     */
+    unsigned int _progressValue;
+
+    Type _type;
     bool _isUnsigned;
     bool _isSigned;
     bool _isPointerCompare;
     bool _isLong;
-    bool _isUnused;
     bool _isStandardType;
     bool _isExpandedMacro;
-    unsigned int _varId;
-    unsigned int _fileIndex;
-    unsigned int _linenr;
+    bool _isAttributeConstructor;  // __attribute__((constructor))
+    bool _isAttributeUnused;       // __attribute__((unused))
 
     /** Updates internal property cache like _isName or _isBoolean.
         Called after any _str() modification. */
@@ -467,15 +644,59 @@ private:
     /** Update internal property cache about isStandardType() */
     void update_property_isStandardType();
 
-    /**
-     * A value from 0-100 that provides a rough idea about where in the token
-     * list this token is located.
-     */
-    unsigned int _progressValue;
+    // AST..
+    Token *_astOperand1;
+    Token *_astOperand2;
+    Token *_astParent;
 
-    std::string _str;
+    // original name like size_t
+    std::string _originalName;
+
+public:
+    void astOperand1(Token *tok);
+    void astOperand2(Token *tok);
+
+    const Token * astOperand1() const {
+        return _astOperand1;
+    }
+    const Token * astOperand2() const {
+        return _astOperand2;
+    }
+    const Token * astParent() const {
+        return _astParent;
+    }
+    const Token *astTop() const {
+        const Token *ret = this;
+        while (ret->_astParent)
+            ret = ret->_astParent;
+        return ret;
+    }
+
+    /**
+     * Is current token a calculation? Only true for operands.
+     * For '*' and '&' tokens it is looked up if this is a
+     * dereference or address-of. A dereference or address-of is not
+     * counted as a calculation.
+     * @return returns true if current token is a calculation
+     */
+    bool isCalculation() const;
+
+    void clearAst() {
+        _astOperand1 = _astOperand2 = _astParent = NULL;
+    }
+
+    std::string astString(const char *sep = "") const {
+        std::string ret;
+        if (_astOperand1)
+            ret = _astOperand1->astString(sep);
+        if (_astOperand2)
+            ret += _astOperand2->astString(sep);
+        return ret + sep + _str;
+    }
+
+    void printAst() const;
 };
 
 /// @}
-
-#endif // TokenH
+//---------------------------------------------------------------------------
+#endif // tokenH

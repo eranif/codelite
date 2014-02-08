@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,27 +27,32 @@
 #include <cctype>
 #include <sstream>
 #include <map>
+#include <stack>
 
 Token::Token(Token **t) :
     tokensBack(t),
     _next(0),
     _previous(0),
     _link(0),
-    _isName(false),
-    _isNumber(false),
-    _isBoolean(false),
-    _isUnsigned(false),
-    _isSigned(false),
-    _isPointerCompare(false),
-    _isLong(false),
-    _isUnused(false),
-    _isStandardType(false),
-    _isExpandedMacro(false),
+    _scope(0),
+    _function(0), // Initialize whole union
+    _str(""),
     _varId(0),
     _fileIndex(0),
     _linenr(0),
     _progressValue(0),
-    _str("")
+    _type(eNone),
+    _isUnsigned(false),
+    _isSigned(false),
+    _isPointerCompare(false),
+    _isLong(false),
+    _isStandardType(false),
+    _isExpandedMacro(false),
+    _isAttributeConstructor(false),
+    _isAttributeUnused(false),
+    _astOperand1(NULL),
+    _astOperand2(NULL),
+    _astParent(NULL)
 {
 }
 
@@ -59,23 +64,57 @@ Token::~Token()
 void Token::update_property_info()
 {
     if (!_str.empty()) {
-        _isName = bool(_str[0] == '_' || std::isalpha(_str[0]));
-
-        if (std::isdigit(_str[0]))
-            _isNumber = true;
-        else if (_str.length() > 1 && _str[0] == '-' && std::isdigit(_str[1]))
-            _isNumber = true;
-        else
-            _isNumber = false;
-
         if (_str == "true" || _str == "false")
-            _isBoolean = true;
+            _type = eBoolean;
+        else if (_str[0] == '_' || std::isalpha(_str[0])) { // Name
+            if (_varId)
+                _type = eVariable;
+            else if (_type != eVariable && _type != eFunction && _type != eType)
+                _type = eName;
+        } else if (std::isdigit(_str[0]) || (_str.length() > 1 && _str[0] == '-' && std::isdigit(_str[1])))
+            _type = eNumber;
+        else if (_str.length() > 1 && _str[0] == '"' && _str[_str.length()-1] == '"')
+            _type = eString;
+        else if (_str.length() > 1 && _str[0] == '\'' && _str[_str.length()-1] == '\'')
+            _type = eChar;
+        else if (_str == "="   ||
+                 _str == "+="  ||
+                 _str == "-="  ||
+                 _str == "*="  ||
+                 _str == "/="  ||
+                 _str == "%="  ||
+                 _str == "&="  ||
+                 _str == "^="  ||
+                 _str == "|="  ||
+                 _str == "<<=" ||
+                 _str == ">>=")
+            _type = eAssignmentOp;
+        else if (_str.size() == 1 && _str.find_first_of(",[]()?:") != std::string::npos)
+            _type = eExtendedOp;
+        else if (_str=="<<" || _str==">>" || (_str.size()==1 && _str.find_first_of("+-*/%") != std::string::npos))
+            _type = eArithmeticalOp;
+        else if (_str.size() == 1 && _str.find_first_of("&|^~") != std::string::npos)
+            _type = eBitOp;
+        else if (_str == "&&" ||
+                 _str == "||" ||
+                 _str == "!")
+            _type = eLogicalOp;
+        else if ((_str == "==" ||
+                  _str == "!=" ||
+                  _str == "<"  ||
+                  _str == "<=" ||
+                  _str == ">"  ||
+                  _str == ">=") && !_link)
+            _type = eComparisonOp;
+        else if (_str == "++" ||
+                 _str == "--")
+            _type = eIncDecOp;
+        else if (_str.size() == 1 && (_str.find_first_of("{}") != std::string::npos || (_link && _str.find_first_of("<>") != std::string::npos)))
+            _type = eBracket;
         else
-            _isBoolean = false;
+            _type = eOther;
     } else {
-        _isName = false;
-        _isNumber = false;
-        _isBoolean = false;
+        _type = eNone;
     }
 
     update_property_isStandardType();
@@ -88,15 +127,27 @@ void Token::update_property_isStandardType()
     if (_str.size() < 3)
         return;
 
-    static const char * const type[] = {"int", "char", "bool", "long", "short", "float", "double", "size_t", 0};
-    for (int i = 0; type[i]; i++) {
-        if (_str == type[i]) {
+    static const char * const stdtype[] = {"int", "char", "bool", "long", "short", "float", "double", "wchar_t", "size_t", "void", 0};
+    for (int i = 0; stdtype[i]; i++) {
+        if (_str == stdtype[i]) {
             _isStandardType = true;
+            _type = eType;
             break;
         }
     }
 }
 
+
+bool Token::isUpperCaseName() const
+{
+    if (!isName())
+        return false;
+    for (unsigned int i = 0; i < _str.length(); ++i) {
+        if (std::islower(_str[i]))
+            return false;
+    }
+    return true;
+}
 
 void Token::str(const std::string &s)
 {
@@ -116,9 +167,7 @@ void Token::concatStr(std::string const& b)
 
 std::string Token::strValue() const
 {
-    assert(_str.length() >= 2);
-    assert(_str[0] == '"');
-    assert(_str[_str.length()-1] == '"');
+    assert(_type == eString);
     return _str.substr(1, _str.length() - 2);
 }
 
@@ -140,40 +189,46 @@ void Token::deleteThis()
 {
     if (_next) { // Copy next to this and delete next
         _str = _next->_str;
-        _isName = _next->_isName;
-        _isNumber = _next->_isNumber;
-        _isBoolean = _next->_isBoolean;
+        _type = _next->_type;
         _isUnsigned = _next->_isUnsigned;
         _isSigned = _next->_isSigned;
         _isPointerCompare = _next->_isPointerCompare;
         _isLong = _next->_isLong;
-        _isUnused = _next->_isUnused;
         _isStandardType = _next->_isStandardType;
         _isExpandedMacro = _next->_isExpandedMacro;
+        _isAttributeConstructor = _next->_isAttributeConstructor;
+        _isAttributeUnused = _next->_isAttributeUnused;
         _varId = _next->_varId;
         _fileIndex = _next->_fileIndex;
         _linenr = _next->_linenr;
         _link = _next->_link;
+        _scope = _next->_scope;
+        _function = _next->_function;
+        _variable = _next->_variable;
+        _originalName = _next->_originalName;
         if (_link)
             _link->link(this);
 
         deleteNext();
     } else if (_previous && _previous->_previous) { // Copy previous to this and delete previous
         _str = _previous->_str;
-        _isName = _previous->_isName;
-        _isNumber = _previous->_isNumber;
-        _isBoolean = _previous->_isBoolean;
+        _type = _previous->_type;
         _isUnsigned = _previous->_isUnsigned;
         _isSigned = _previous->_isSigned;
         _isPointerCompare = _previous->_isPointerCompare;
         _isLong = _previous->_isLong;
-        _isUnused = _previous->_isUnused;
         _isStandardType = _previous->_isStandardType;
         _isExpandedMacro = _previous->_isExpandedMacro;
+        _isAttributeConstructor = _previous->_isAttributeConstructor;
+        _isAttributeUnused = _previous->_isAttributeUnused;
         _varId = _previous->_varId;
         _fileIndex = _previous->_fileIndex;
         _linenr = _previous->_linenr;
         _link = _previous->_link;
+        _scope = _previous->_scope;
+        _function = _previous->_function;
+        _variable = _previous->_variable;
+        _originalName = _previous->_originalName;
         if (_link)
             _link->link(this);
 
@@ -236,56 +291,13 @@ const Token *Token::tokAt(int index) const
     return tok;
 }
 
-Token *Token::tokAt(int index)
-{
-    Token *tok = this;
-    int num = std::abs(index);
-    while (num > 0 && tok) {
-        if (index > 0)
-            tok = tok->next();
-        else
-            tok = tok->previous();
-        --num;
-    }
-    return tok;
-}
-
 const Token *Token::linkAt(int index) const
 {
     const Token *tok = this->tokAt(index);
     if (!tok) {
-        std::list<ErrorLogger::ErrorMessage::FileLocation> locationList;
-        ErrorLogger::ErrorMessage::FileLocation loc;
-        loc.setfile("");
-        loc.line = this->linenr();
-        locationList.push_back(loc);
-        const ErrorLogger::ErrorMessage errmsg(locationList,
-                                               Severity::error,
-                                               "Internal error. Token::linkAt called with index outside the tokens range.",
-                                               "cppcheckError",
-                                               false);
-        Check::reportError(errmsg);
+        throw InternalError(this, "Internal error. Token::linkAt called with index outside the tokens range.");
     }
-    return tok ? tok->link() : 0;
-}
-
-Token *Token::linkAt(int index)
-{
-    Token *tok = this->tokAt(index);
-    if (!tok) {
-        std::list<ErrorLogger::ErrorMessage::FileLocation> locationList;
-        ErrorLogger::ErrorMessage::FileLocation loc;
-        loc.setfile("");
-        loc.line = this->linenr();
-        locationList.push_back(loc);
-        const ErrorLogger::ErrorMessage errmsg(locationList,
-                                               Severity::error,
-                                               "Internal error. Token::linkAt called with index outside the tokens range.",
-                                               "cppcheckError",
-                                               false);
-        Check::reportError(errmsg);
-    }
-    return tok ? tok->link() : 0;
+    return tok->link();
 }
 
 const std::string &Token::strAt(int index) const
@@ -296,38 +308,26 @@ const std::string &Token::strAt(int index) const
     return tok ? tok->_str : empty_str;
 }
 
-static bool strisop(const char str[])
-{
-    if (str[1] == 0) {
-        if (strchr("+-*/%&|^~!<>", *str))
-            return true;
-    } else if (str[2] == 0) {
-        if ((str[0] == '&' && str[1] == '&') ||
-            (str[0] == '|' && str[1] == '|') ||
-            (str[0] == '=' && str[1] == '=') ||
-            (str[0] == '!' && str[1] == '=') ||
-            (str[0] == '>' && str[1] == '=') ||
-            (str[0] == '<' && str[1] == '=') ||
-            (str[0] == '>' && str[1] == '>') ||
-            (str[0] == '<' && str[1] == '<'))
-            return true;
-    }
-    return false;
-}
-
-static int multiComparePercent(const char * * haystack_p,
+static int multiComparePercent(const Token *tok, const char ** haystack_p,
                                const char * needle,
                                bool emptyStringFound)
 {
     const char *haystack = *haystack_p;
 
-    if (haystack[0] == '%' && haystack[1] != '|') {
+    if (haystack[0] == '%' && haystack[1] != '|' && haystack[1] != '\0' && haystack[1] != ' ') {
         if (haystack[1] == 'o' && // "%op%"
             haystack[2] == 'p' &&
             haystack[3] == '%') {
-            if (strisop(needle))
+            if (tok->isOp())
                 return 1;
             *haystack_p = haystack = haystack + 4;
+        } else if (haystack[1] == 'c' && // "%cop%"
+                   haystack[2] == 'o' &&
+                   haystack[3] == 'p' &&
+                   haystack[4] == '%') {
+            if (tok->isConstOp())
+                return 1;
+            *haystack_p = haystack = haystack + 5;
         } else if (haystack[1] == 'o' && // "%or%"
                    haystack[2] == 'r' &&
                    haystack[3] == '%') {
@@ -342,6 +342,13 @@ static int multiComparePercent(const char * * haystack_p,
             if (needle[0] == '|' && needle[1] == '|')
                 return 1;
             *haystack_p = haystack = haystack + 6;
+        } else if (haystack[1] == 'v' && // "%var%"
+                   haystack[2] == 'a' &&
+                   haystack[3] == 'r' &&
+                   haystack[4] == '%') {
+            if (tok->isName())
+                return 1;
+            *haystack_p = haystack = haystack + 5;
         }
 
         if (*haystack == '|')
@@ -355,14 +362,14 @@ static int multiComparePercent(const char * * haystack_p,
     return 0xFFFF;
 }
 
-int Token::multiCompare(const char *haystack, const char *needle)
+int Token::multiCompare(const Token *tok, const char *haystack, const char *needle)
 {
     if (haystack[0] == '%' && haystack[1] == 'o') {
         if (haystack[2] == 'p' && // "%op%|"
             haystack[3] == '%' &&
             haystack[4] == '|') {
             haystack = haystack + 5;
-            if (strisop(needle))
+            if (tok->isOp())
                 return 1;
         } else if (haystack[2] == 'r' && // "%or%|"
                    haystack[3] == '%' &&
@@ -379,6 +386,12 @@ int Token::multiCompare(const char *haystack, const char *needle)
             if (needle[0] == '|' && needle[1] == '|')
                 return 1;
         }
+    } else if (haystack[0] == '%' && haystack[1] == 'c' && haystack[2] == 'o' && // "%cop%|"
+               haystack[3] == 'p' && haystack[4] == '%' &&
+               haystack[5] == '|') {
+        haystack = haystack + 6;
+        if (tok->isConstOp())
+            return 1;
     }
 
     bool emptyStringFound = false;
@@ -402,7 +415,7 @@ int Token::multiCompare(const char *haystack, const char *needle)
             needlePointer = needle;
             ++haystack;
 
-            int ret = multiComparePercent(&haystack, needle, emptyStringFound);
+            int ret = multiComparePercent(tok, &haystack, needle, emptyStringFound);
             if (ret < 2)
                 return ret;
         } else if (*haystack == ' ' || *haystack == '\0') {
@@ -425,7 +438,7 @@ int Token::multiCompare(const char *haystack, const char *needle)
 
             ++haystack;
 
-            int ret = multiComparePercent(&haystack, needle, emptyStringFound);
+            int ret = multiComparePercent(tok, &haystack, needle, emptyStringFound);
             if (ret < 2)
                 return ret;
         }
@@ -446,21 +459,21 @@ bool Token::simpleMatch(const Token *tok, const char pattern[])
     const char *current, *next;
 
     current = pattern;
-    next = strchr(pattern, ' ');
+    next = std::strchr(pattern, ' ');
     if (!next)
-        next = pattern + strlen(pattern);
+        next = pattern + std::strlen(pattern);
 
     while (*current) {
-        size_t length = static_cast<size_t>(next - current);
+        std::size_t length = static_cast<std::size_t>(next - current);
 
-        if (!tok || length != tok->_str.length() || strncmp(current, tok->_str.c_str(), length))
+        if (!tok || length != tok->_str.length() || std::strncmp(current, tok->_str.c_str(), length))
             return false;
 
         current = next;
         if (*next) {
-            next = strchr(++current, ' ');
+            next = std::strchr(++current, ' ');
             if (!next)
-                next = current + strlen(current);
+                next = current + std::strlen(current);
         }
         tok = tok->next();
     }
@@ -468,13 +481,11 @@ bool Token::simpleMatch(const Token *tok, const char pattern[])
     return true;
 }
 
-int Token::firstWordEquals(const char *str, const char *word)
+bool Token::firstWordEquals(const char *str, const char *word)
 {
     for (;;) {
         if (*str != *word) {
-            if (*str == ' ' && *word == 0)
-                return 0;
-            return 1;
+            return (*str == ' ' && *word == 0);
         } else if (*str == 0)
             break;
 
@@ -482,7 +493,7 @@ int Token::firstWordEquals(const char *str, const char *word)
         ++word;
     }
 
-    return 0;
+    return true;
 }
 
 const char *Token::chrInFirstWord(const char *str, char c)
@@ -512,22 +523,38 @@ int Token::firstWordLen(const char *str)
     return len;
 }
 
+#define multicompare(p,cond,ismulticomp)        \
+{                                               \
+    if (!(cond)) {                              \
+        if (*(p) != '|')                        \
+            return false;                       \
+        ++(p);                                  \
+        ismulticomp = (*(p) && *(p) != ' ');    \
+        continue;                               \
+    }                                           \
+    if (*(p) == '|') {                          \
+        while (*(p) && *(p) != ' ')             \
+            ++(p);                              \
+    }                                           \
+    ismulticomp = false;                        \
+}
+
 bool Token::Match(const Token *tok, const char pattern[], unsigned int varid)
 {
     const char *p = pattern;
-    bool firstpattern = true;
+    bool ismulticomp = false;
     while (*p) {
         // Skip spaces in pattern..
         while (*p == ' ')
             ++p;
 
         // No token => Success!
-        if (*p == 0)
-            return true;
+        if (*p == '\0')
+            break;
 
         if (!tok) {
             // If we have no tokens, pattern "!!else" should return true
-            if (p[1] == '!' && p[0] == '!' && p[2] != '\0') {
+            if (p[0] == '!' && p[1] == '!' && p[2] != '\0') {
                 while (*p && *p != ' ')
                     ++p;
                 continue;
@@ -535,30 +562,27 @@ bool Token::Match(const Token *tok, const char pattern[], unsigned int varid)
                 return false;
         }
 
-        // If we are in the first token, we skip all initial !! patterns
-        if (firstpattern && !tok->previous() && tok->next() && p[1] == '!' && p[0] == '!' && p[2] != '\0') {
-            while (*p && *p != ' ')
-                ++p;
-            continue;
-        }
-
-        firstpattern = false;
-
         // Compare the first character of the string for optimization reasons
         // before doing more detailed checks.
         if (p[0] == '%') {
-            bool patternUnderstood = false;
-            switch (p[1]) {
+            ++p;
+            switch (p[0]) {
+            case '\0':
+            case ' ':
+            case '|':
+                //simple '%' character
+            {
+                multicompare(p, tok->str() == "%", ismulticomp);
+            }
+            break;
             case 'v':
                 // TODO: %var% should match only for
                 // variables that have varId != 0, but that needs a lot of
                 // work, before that change can be made.
                 // Any symbolname..
-                if (p[4] == '%') { // %var%
-                    if (!tok->isName())
-                        return false;
-                    p += 5;
-                    patternUnderstood = true;
+                if (p[3] == '%') { // %var%
+                    p += 4;
+                    multicompare(p,tok->isName(),ismulticomp);
                 } else { // %varid%
                     if (varid == 0) {
                         throw InternalError(tok, "Internal error. Token::Match called with varid 0. Please report this to Cppcheck developers");
@@ -567,145 +591,114 @@ bool Token::Match(const Token *tok, const char pattern[], unsigned int varid)
                     if (tok->varId() != varid)
                         return false;
 
-                    p += 7;
-                    patternUnderstood = true;
+                    p += 6;
                 }
                 break;
             case 't':
                 // Type (%type%)
             {
-                if (!tok->isName())
-                    return false;
-
-                if (tok->varId() != 0)
-                    return false;
-
-                if (tok->str() == "delete")
-                    return false;
-
-                p += 6;
-                patternUnderstood = true;
+                p += 5;
+                multicompare(p,tok->isName() && tok->varId() == 0 && tok->str() != "delete",ismulticomp);
             }
             break;
             case 'a':
                 // Accept any token (%any%)
             {
-                p += 5;
-                patternUnderstood = true;
+                p += 4;
+                if (p[0] == '|') {
+                    while (*p && *p != ' ')
+                        ++p;
+                }
+                ismulticomp = false;
             }
             break;
             case 'n':
-                // Number (%num)
+                // Number (%num%)
             {
-                if (!tok->isNumber())
-                    return false;
-                p += 5;
-                patternUnderstood = true;
+                p += 4;
+                multicompare(p,tok->isNumber(),ismulticomp);
+            }
+            break;
+            case 'c': {
+                p += 1;
+                // Character (%char%)
+                if (p[0] == 'h') {
+                    p += 4;
+                    multicompare(p,tok->type() == eChar,ismulticomp);
+                }
+                // Const operator (%cop%)
+                else if (p[1] == 'p') {
+                    p += 3;
+                    multicompare(p,tok->isConstOp(),ismulticomp);
+                }
+                // Comparison operator (%comp%)
+                else {
+                    p += 4;
+                    multicompare(p,tok->isComparisonOp(),ismulticomp);
+                }
             }
             break;
             case 's':
                 // String (%str%)
             {
-                if (tok->_str[0] != '\"')
-                    return false;
-                p += 5;
-                patternUnderstood = true;
+                p += 4;
+                multicompare(p,tok->type() == eString,ismulticomp);
             }
             break;
             case 'b':
                 // Bool (%bool%)
             {
-                if (!tok->isBoolean())
-                    return false;
-                p += 6;
-                patternUnderstood = true;
+                p += 5;
+                multicompare(p,tok->isBoolean(),ismulticomp);
             }
             break;
-            case 'o':
-                // Or (%or%) and Op (%op%)
-                if (p[3] == '%') {
-                    patternUnderstood = true;
-
-                    // multicompare..
-                    if (p[4] == '|') {
-                        int result = multiCompare(p, tok->str().c_str());
-                        if (result == -1)
-                            return false;   // No match
-
-                        while (*p && *p != ' ')
-                            p++;
+            case 'o': {
+                ++p;
+                if (p[1] == '%') {
+                    // Op (%op%)
+                    if (p[0] == 'p') {
+                        p += 2;
+                        multicompare(p,tok->isOp(),ismulticomp);
                     }
-
-                    // single compare..
-                    else if (p[2] == 'r') {
-                        if (tok->str() != "|")
-                            return false;
-                        p += 4;
-                    } else if (p[2] == 'p') {
-                        if (!tok->isOp())
-                            return false;
-                        p += 4;
-                    } else
-                        patternUnderstood = false;
+                    // Or (%or%)
+                    else {
+                        p += 2;
+                        multicompare(p,tok->str() == "|",ismulticomp)
+                    }
                 }
 
                 // Oror (%oror%)
-                else if (p[5] == '%') {
-                    // multicompare..
-                    if (p[6] == '|') {
-                        int result = multiCompare(p, tok->str().c_str());
-                        if (result == -1)
-                            return false;   // No match
-
-                        while (*p && *p != ' ')
-                            p++;
-                    }
-
-                    // single compare..
-                    else if (tok->str() != "||")
-                        return false;
-
-                    else
-                        p += 6;
-
-                    patternUnderstood = true;
+                else {
+                    p += 4;
+                    multicompare(p,tok->str() == "||",ismulticomp);
                 }
-                break;
+            }
+            break;
             default:
-                if (firstWordEquals(p, tok->_str.c_str())) {
-                    p += tok->_str.length();
-                    patternUnderstood = true;
-                }
-                break;
+                //unknown %cmd%, abort
+                std::abort();
             }
+        }
 
-            if (!patternUnderstood) {
-                return false;
-            }
-
-            // debugging: assert that this is not part of a multicompare pattern..
-            assert(*p != '|');
-
-            tok = tok->next();
+        else if (ismulticomp) {
+            ismulticomp = false;
             continue;
         }
 
         // [.. => search for a one-character token..
         else if (p[0] == '[' && chrInFirstWord(p, ']')) {
-            if (tok->_str.length() != 1)
+            if (tok->str().length() != 1)
                 return false;
 
-            const char *temp = p + 1;
+            const char *temp = p+1;
             bool chrFound = false;
-            int count = 0;
+            unsigned int count = 0;
             while (*temp && *temp != ' ') {
                 if (*temp == ']') {
                     ++count;
-                    ++temp;
-                    continue;
                 }
 
-                if (*temp == tok->_str[0]) {
+                else if (*temp == tok->str()[0]) {
                     chrFound = true;
                     break;
                 }
@@ -713,18 +706,20 @@ bool Token::Match(const Token *tok, const char pattern[], unsigned int varid)
                 ++temp;
             }
 
-            if (count > 1) {
-                if (tok->_str[0] == ']')
-                    chrFound = true;
-            }
+            if (count > 1 && tok->str()[0] == ']')
+                chrFound = true;
 
             if (!chrFound)
                 return false;
+
+            p = temp;
+            while (*p && *p != ' ')
+                ++p;
         }
 
         // Parse multi options, such as void|int|char (accept token which is one of these 3)
         else if (chrInFirstWord(p, '|') && (p[0] != '|' || firstWordLen(p) > 2)) {
-            int res = multiCompare(p, tok->_str.c_str());
+            int res = multiCompare(tok, p, tok->_str.c_str());
             if (res == 0) {
                 // Empty alternative matches, use the same token on next round
                 while (*p && *p != ' ')
@@ -737,12 +732,15 @@ bool Token::Match(const Token *tok, const char pattern[], unsigned int varid)
         }
 
         // Parse "not" options. Token can be anything except the given one
-        else if (p[1] == '!' && p[0] == '!' && p[2] != '\0') {
-            if (firstWordEquals(&(p[2]), tok->str().c_str()) == 0)
+        else if (p[0] == '!' && p[1] == '!' && p[2] != '\0') {
+            p += 2;
+            if (firstWordEquals(p, tok->str().c_str()))
                 return false;
+            while (*p && *p != ' ')
+                ++p;
         }
 
-        else if (firstWordEquals(p, tok->_str.c_str()) != 0) {
+        else if (!firstWordEquals(p, tok->_str.c_str())) {
             return false;
         }
 
@@ -760,7 +758,7 @@ std::size_t Token::getStrLength(const Token *tok)
 {
     assert(tok != NULL);
 
-    size_t len = 0;
+    std::size_t len = 0;
     const std::string strValue(tok->strValue());
     const char *str = strValue.c_str();
 
@@ -780,9 +778,32 @@ std::size_t Token::getStrLength(const Token *tok)
     return len;
 }
 
-bool Token::isStandardType() const
+std::string Token::getCharAt(const Token *tok, std::size_t index)
 {
-    return _isStandardType;
+    assert(tok != NULL);
+
+    const std::string strValue(tok->strValue());
+    const char *str = strValue.c_str();
+
+    while (*str) {
+        if (index == 0) {
+            std::string ret;
+            if (*str == '\\') {
+                ret = *str;
+                ++str;
+            }
+            ret += *str;
+            return ret;
+        }
+
+        if (*str == '\\')
+            ++str;
+        ++str;
+        --index;
+    }
+    assert(index == 0);
+
+    return "\\0";
 }
 
 void Token::move(Token *srcStart, Token *srcEnd, Token *newLocation)
@@ -813,10 +834,46 @@ Token* Token::nextArgument() const
             return tok->next();
         else if (tok->str() == "(" || tok->str() == "{" || tok->str() == "[")
             tok = tok->link();
+        else if (tok->str() == "<" && tok->link())
+            tok = tok->link();
         else if (tok->str() == ")" || tok->str() == ";")
             return 0;
     }
     return 0;
+}
+
+const Token * Token::findClosingBracket() const
+{
+    const Token *closing = 0;
+
+    if (_str == "<") {
+        unsigned int depth = 0;
+        for (closing = this; closing != NULL; closing = closing->next()) {
+            if (closing->str() == "{" || closing->str() == "[" || closing->str() == "(")
+                closing = closing->link();
+            else if (closing->str() == "}" || closing->str() == "]" || closing->str() == ")" || closing->str() == ";" || closing->str() == "=")
+                break;
+            else if (closing->str() == "<")
+                ++depth;
+            else if (closing->str() == ">") {
+                if (--depth == 0)
+                    break;
+            } else if (closing->str() == ">>") {
+                if (--depth == 0)
+                    break;
+                if (--depth == 0)
+                    break;
+            }
+        }
+    }
+
+    return closing;
+}
+
+Token * Token::findClosingBracket()
+{
+    // return value of const function
+    return const_cast<Token*>(const_cast<const Token*>(this)->findClosingBracket());
 }
 
 //---------------------------------------------------------------------------
@@ -857,10 +914,15 @@ const Token *Token::findmatch(const Token *tok, const char pattern[], const Toke
     return 0;
 }
 
-void Token::insertToken(const std::string &tokenStr)
+void Token::insertToken(const std::string &tokenStr, bool prepend)
 {
     Token *newToken;
-    if (_str == "")
+
+    //TODO: Find a solution for the first token on the list
+    if (prepend && !this->previous())
+        return;
+
+    if (_str.empty())
         newToken = this;
     else
         newToken = new Token(tokensBack);
@@ -870,14 +932,66 @@ void Token::insertToken(const std::string &tokenStr)
     newToken->_progressValue = _progressValue;
 
     if (newToken != this) {
-        if (this->next()) {
-            newToken->next(this->next());
-            newToken->next()->previous(newToken);
-        } else if (tokensBack) {
-            *tokensBack = newToken;
+        if (prepend) {
+            /*if (this->previous())*/ {
+                newToken->previous(this->previous());
+                newToken->previous()->next(newToken);
+            } /*else if (tokensFront?) {
+                *tokensFront? = newToken;
+            }*/
+            this->previous(newToken);
+            newToken->next(this);
+        } else {
+            if (this->next()) {
+                newToken->next(this->next());
+                newToken->next()->previous(newToken);
+            } else if (tokensBack) {
+                *tokensBack = newToken;
+            }
+            this->next(newToken);
+            newToken->previous(this);
         }
-        this->next(newToken);
-        newToken->previous(this);
+    }
+}
+
+void Token::insertToken(const std::string &tokenStr, const std::string &originalNameStr, bool prepend)
+{
+    Token *newToken;
+
+    //TODO: Find a solution for the first token on the list
+    if (prepend && !this->previous())
+        return;
+
+    if (_str.empty())
+        newToken = this;
+    else
+        newToken = new Token(tokensBack);
+    newToken->str(tokenStr);
+    newToken->_originalName = originalNameStr;
+    newToken->_linenr = _linenr;
+    newToken->_fileIndex = _fileIndex;
+    newToken->_progressValue = _progressValue;
+
+    if (newToken != this) {
+        if (prepend) {
+            /*if (this->previous())*/ {
+                newToken->previous(this->previous());
+                newToken->previous()->next(newToken);
+            } /*else if (tokensFront?) {
+                *tokensFront? = newToken;
+            }*/
+            this->previous(newToken);
+            newToken->next(this);
+        } else {
+            if (this->next()) {
+                newToken->next(this->next());
+                newToken->next()->previous(newToken);
+            } else if (tokensBack) {
+                *tokensBack = newToken;
+            }
+            this->next(newToken);
+            newToken->previous(this);
+        }
     }
 }
 
@@ -902,60 +1016,59 @@ void Token::createMutualLinks(Token *begin, Token *end)
 
 void Token::printOut(const char *title) const
 {
-    const std::vector<std::string> fileNames;
-    std::cout << stringifyList(true, title, fileNames) << std::endl;
+    if (title && title[0])
+        std::cout << "\n### " << title << " ###\n";
+    std::cout << stringifyList(true, true, true, true, true, 0, 0) << std::endl;
 }
 
 void Token::printOut(const char *title, const std::vector<std::string> &fileNames) const
 {
-    std::cout << stringifyList(true, title, fileNames) << std::endl;
+    if (title && title[0])
+        std::cout << "\n### " << title << " ###\n";
+    std::cout << stringifyList(true, true, true, true, true, &fileNames, 0) << std::endl;
 }
 
-std::string Token::stringify(const Token* end) const
+void Token::stringify(std::ostream& os, bool varid, bool attributes) const
+{
+    if (attributes) {
+        if (isUnsigned())
+            os << "unsigned ";
+        else if (isSigned())
+            os << "signed ";
+        if (isLong()) {
+            if (_type == eString || _type == eChar)
+                os << "L";
+            else
+                os << "long ";
+        }
+    }
+    if (isExpandedMacro())
+        os << "$";
+    if (_str[0] != '\"' || _str.find("\0") == std::string::npos)
+        os << _str;
+    else {
+        for (std::size_t i = 0U; i < _str.size(); ++i) {
+            if (_str[i] == '\0')
+                os << "\\0";
+            else
+                os << _str[i];
+        }
+    }
+    if (varid && _varId != 0)
+        os << '@' << _varId;
+}
+
+std::string Token::stringifyList(bool varid, bool attributes, bool linenumbers, bool linebreaks, bool files, const std::vector<std::string>* fileNames, const Token* end) const
 {
     if (this == end)
         return "";
 
     std::ostringstream ret;
 
-    if (isUnsigned())
-        ret << "unsigned ";
-    else if (isSigned())
-        ret << "signed ";
-    if (isLong())
-        ret << "long ";
-    ret << str();
-
-    for (const Token *tok = this->next(); tok && tok != end; tok = tok->next()) {
-        if (tok->str() == "")
-            continue;
-        if (tok->isUnsigned())
-            ret << " unsigned";
-        else if (tok->isSigned())
-            ret << " signed";
-        if (tok->isLong())
-            ret << " long";
-        ret << " " << tok->str();
-    }
-    return ret.str();
-}
-
-std::string Token::stringifyList(bool varid, const char *title) const
-{
-    const std::vector<std::string> fileNames;
-    return stringifyList(varid, title, fileNames);
-}
-
-std::string Token::stringifyList(bool varid, const char *title, const std::vector<std::string> &fileNames) const
-{
-    std::ostringstream ret;
-    if (title)
-        ret << "\n### " << title << " ###\n";
-
-    unsigned int lineNumber = 0;
-    int fileInd = -1;
+    unsigned int lineNumber = _linenr;
+    int fileInd = files ? -1 : static_cast<int>(_fileIndex);
     std::map<int, unsigned int> lineNumbers;
-    for (const Token *tok = this; tok; tok = tok->next()) {
+    for (const Token *tok = this; tok != end; tok = tok->next()) {
         bool fileChange = false;
         if (static_cast<int>(tok->_fileIndex) != fileInd) {
             if (fileInd != -1) {
@@ -963,29 +1076,124 @@ std::string Token::stringifyList(bool varid, const char *title, const std::vecto
             }
 
             fileInd = static_cast<int>(tok->_fileIndex);
-            ret << "\n\n##file ";
-            if (fileNames.size() > tok->_fileIndex)
-                ret << fileNames.at(tok->_fileIndex);
-            else
-                ret << fileInd;
+            if (files) {
+                ret << "\n\n##file ";
+                if (fileNames && fileNames->size() > tok->_fileIndex)
+                    ret << fileNames->at(tok->_fileIndex);
+                else
+                    ret << fileInd;
+            }
 
             lineNumber = lineNumbers[fileInd];
             fileChange = true;
         }
 
-        if (lineNumber != tok->linenr() || fileChange) {
-            while (lineNumber < tok->linenr()) {
-                ++lineNumber;
-                ret << "\n" << lineNumber << ":";
+        if (linebreaks && (lineNumber != tok->linenr() || fileChange)) {
+            if (lineNumber+4 < tok->linenr() && fileInd == static_cast<int>(tok->_fileIndex)) {
+                ret << '\n' << lineNumber+1 << ":\n|\n";
+                ret << tok->linenr()-1 << ":\n";
+                ret << tok->linenr() << ": ";
+            } else {
+                while (lineNumber < tok->linenr()) {
+                    ++lineNumber;
+                    ret << '\n';
+                    if (linenumbers) {
+                        ret << lineNumber << ':';
+                        if (lineNumber == tok->linenr())
+                            ret << ' ';
+                    }
+                }
             }
             lineNumber = tok->linenr();
         }
 
-        ret << " " << tok->str();
-        if (varid && tok->varId() > 0)
-            ret << "@" << tok->varId();
+        tok->stringify(ret, varid, attributes); // print token
+        if (tok->next() != end && (!linebreaks || (tok->next()->linenr() <= tok->linenr() && tok->next()->fileIndex() == tok->fileIndex())))
+            ret << ' ';
     }
-    ret << "\n";
+    if (linebreaks && files)
+        ret << '\n';
     return ret.str();
 }
 
+std::string Token::stringifyList(const Token* end, bool attributes) const
+{
+    return stringifyList(false, attributes, false, false, false, 0, end);
+}
+
+std::string Token::stringifyList(bool varid) const
+{
+    return stringifyList(varid, false, true, true, true, 0, 0);
+}
+
+void Token::astOperand1(Token *tok)
+{
+    // goto parent operator
+    while (tok->_astParent)
+        tok = tok->_astParent;
+    tok->_astParent = this;
+    _astOperand1 = tok;
+}
+
+void Token::astOperand2(Token *tok)
+{
+    // goto parent operator
+    while (tok->_astParent)
+        tok = tok->_astParent;
+    tok->_astParent = this;
+    _astOperand2 = tok;
+}
+
+bool Token::isCalculation() const
+{
+    if (!Token::Match(this, "%cop%|++|--"))
+        return false;
+
+    if (Token::Match(this, "*|&")) {
+        // dereference or address-of?
+        if (!this->astOperand2())
+            return false;
+
+        if (this->astOperand2()->str() == "[")
+            return false;
+
+        // type specification?
+        std::stack<const Token *> operands;
+        operands.push(this);
+        while (!operands.empty()) {
+            const Token *op = operands.top();
+            operands.pop();
+            if (op->isNumber() || op->varId() > 0)
+                return true;
+            if (op->astOperand1())
+                operands.push(op->astOperand1());
+            if (op->astOperand2())
+                operands.push(op->astOperand2());
+            else if (Token::Match(op, "*|&"))
+                return false;
+        }
+
+        // type specification => return false
+        return false;
+    }
+
+    return true;
+}
+
+void Token::printAst() const
+{
+    bool title = false;
+
+    bool print = true;
+    for (const Token *tok = this; tok; tok = tok->next()) {
+        if (print && tok->_astOperand1) {
+            if (!title)
+                std::cout << "\n\n##AST" << std::endl;
+            title = true;
+            std::cout << tok->astTop()->astString(" ") << std::endl;
+            print = false;
+        }
+        if (Token::Match(tok, "[;{}]"))
+            print = true;
+    }
+}

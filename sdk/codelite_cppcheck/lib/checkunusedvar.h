@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 //---------------------------------------------------------------------------
-#ifndef CheckUnusedVarH
-#define CheckUnusedVarH
+#ifndef checkunusedvarH
+#define checkunusedvarH
 //---------------------------------------------------------------------------
 
+#include <map>
+
+#include "config.h"
 #include "check.h"
 #include "settings.h"
 
+class Type;
 class Token;
 class Scope;
 class Variables;
@@ -35,16 +38,16 @@ class Variables;
 
 /** @brief Various small checks */
 
-class CheckUnusedVar : public Check {
+class CPPCHECKLIB CheckUnusedVar : public Check {
 public:
     /** @brief This constructor is used when registering the CheckClass */
-    CheckUnusedVar() : Check(myName())
-    { }
+    CheckUnusedVar() : Check(myName()) {
+    }
 
     /** @brief This constructor is used when running checks. */
     CheckUnusedVar(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
+        : Check(myName(), tokenizer, settings, errorLogger) {
+    }
 
     /** @brief Run checks against the normal token list */
     void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
@@ -63,7 +66,7 @@ public:
     }
 
     /** @brief %Check for unused function variables */
-    void checkFunctionVariableUsage_iterateScopes(const Scope* const scope, Variables& variables);
+    void checkFunctionVariableUsage_iterateScopes(const Scope* const scope, Variables& variables, bool insideLoop);
     void checkVariableUsage(const Scope* const scope, const Token* start, Variables& variables);
     void checkFunctionVariableUsage();
 
@@ -71,6 +74,8 @@ public:
     void checkStructMemberUsage();
 
 private:
+    bool isRecordTypeWithoutSideEffects(const Type* type);
+
     // Error messages..
     void unusedStructMemberError(const Token *tok, const std::string &structname, const std::string &varname);
     void unusedVariableError(const Token *tok, const std::string &varname);
@@ -89,7 +94,7 @@ private:
         c.unusedStructMemberError(0, "structname", "variable");
     }
 
-    std::string myName() const {
+    static std::string myName() {
         return "UnusedVar";
     }
 
@@ -103,8 +108,9 @@ private:
                "* unassigned variable\n"
                "* unused struct member\n";
     }
+
+    std::map<const Type *,bool> isRecordTypeWithoutSideEffectsMap;
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checkunusedvarH

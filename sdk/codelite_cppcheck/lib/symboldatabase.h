@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  */
 
 //---------------------------------------------------------------------------
-#ifndef SymbolDatabaseH
-#define SymbolDatabaseH
+#ifndef symboldatabaseH
+#define symboldatabaseH
 //---------------------------------------------------------------------------
 
 #include <string>
@@ -26,6 +26,7 @@
 #include <vector>
 #include <set>
 
+#include "config.h"
 #include "token.h"
 #include "mathlib.h"
 
@@ -45,25 +46,73 @@ enum AccessControl { Public, Protected, Private, Global, Namespace, Argument, Lo
  * @brief Array dimension information.
  */
 struct Dimension {
-    Dimension() : start(NULL), end(NULL), num(0) { }
+    Dimension() : start(NULL), end(NULL), num(0), known(true) { }
 
     const Token *start;  // size start token
     const Token *end;    // size end token
-    MathLib::bigint num; // dimension length when size is a number, 0 if not known
+    MathLib::bigint num; // (assumed) dimension length when size is a number, 0 if not known
+    bool known;          // Known size
+};
+
+/** @brief Information about a class type. */
+class CPPCHECKLIB Type {
+public:
+    const Token* classDef; // Points to "class" token
+    const Scope* classScope;
+    const Scope* enclosingScope;
+    enum NeedInitialization {
+        Unknown, True, False
+    } needInitialization;
+
+    struct BaseInfo {
+        std::string name;
+        const Type* type;
+        const Token* nameTok;
+        AccessControl access;  // public/protected/private
+        bool isVirtual;
+    };
+
+    struct FriendInfo {
+        const Token* nameStart;
+        const Token* nameEnd;
+        std::string name;
+        const Type* type;
+    };
+
+    std::vector<BaseInfo> derivedFrom;
+    std::list<FriendInfo> friendList;
+
+    Type(const Token* classDef_ = 0, const Scope* classScope_ = 0, const Scope* enclosingScope_ = 0) :
+        classDef(classDef_),
+        classScope(classScope_),
+        enclosingScope(enclosingScope_),
+        needInitialization(Unknown) {
+    }
+
+    const std::string& name() const {
+        static const std::string empty;
+        return classDef->next()->isName() ? classDef->strAt(1) : empty;
+    }
+
+    const Token *initBaseInfo(const Token *tok, const Token *tok1);
+
+    const Function* getFunction(const std::string& funcName) const;
 };
 
 /** @brief Information about a member variable. */
-class Variable {
+class CPPCHECKLIB Variable {
     /** @brief flags mask used to access specific bit. */
     enum {
         fIsMutable   = (1 << 0), /** @brief mutable variable */
         fIsStatic    = (1 << 1), /** @brief static variable */
         fIsConst     = (1 << 2), /** @brief const variable */
-        fIsClass     = (1 << 3), /** @brief user defined type */
-        fIsArray     = (1 << 4), /** @brief array variable */
-        fIsPointer   = (1 << 5), /** @brief pointer variable */
-        fIsReference = (1 << 6), /** @brief reference variable */
-        fHasDefault  = (1 << 7)  /** @brief function argument with default value */
+        fIsExtern    = (1 << 3), /** @brief extern variable */
+        fIsClass     = (1 << 4), /** @brief user defined type */
+        fIsArray     = (1 << 5), /** @brief array variable */
+        fIsPointer   = (1 << 6), /** @brief pointer variable */
+        fIsReference = (1 << 7), /** @brief reference variable */
+        fIsRValueRef = (1 << 8), /** @brief rvalue reference variable */
+        fHasDefault  = (1 << 9)  /** @brief function argument with default value */
     };
 
     /**
@@ -84,12 +133,18 @@ class Variable {
         _flags = state_ ? _flags | flag_ : _flags & ~flag_;
     }
 
+    /**
+     * @brief parse and save array dimension information
+     * @param dimensions array dimensions vector
+     * @param tok the first '[' token of array declaration
+     * @return true if array, false if not
+     */
+    static bool arrayDimensions(std::vector<Dimension> &dimensions, const Token *tok);
+
 public:
     Variable(const Token *name_, const Token *start_, const Token *end_,
-             std::size_t index_, AccessControl access_, bool mutable_,
-             bool static_, bool const_, bool class_, const Scope *type_,
-             const Scope *scope_, bool array_, bool pointer_, bool reference_,
-             bool default_, const std::vector<Dimension> &dimensions_)
+             std::size_t index_, AccessControl access_, const Type *type_,
+             const Scope *scope_)
         : _name(name_),
           _start(start_),
           _end(end_),
@@ -98,15 +153,7 @@ public:
           _flags(0),
           _type(type_),
           _scope(scope_) {
-        setFlag(fIsMutable, mutable_);
-        setFlag(fIsStatic, static_);
-        setFlag(fIsConst, const_);
-        setFlag(fIsClass, class_);
-        setFlag(fIsArray, array_);
-        setFlag(fIsPointer, pointer_);
-        setFlag(fIsReference, reference_);
-        setFlag(fHasDefault, default_);
-        _dimensions = dimensions_;
+        evaluate();
     }
 
     /**
@@ -119,6 +166,10 @@ public:
 
     /**
      * Get type start token.
+     * The type start token doesn't account 'static' and 'const' qualifiers
+     * E.g.:
+     *     static const int * const p = ...;
+     * type start token ^
      * @return type start token
      */
     const Token *typeStartToken() const {
@@ -127,6 +178,10 @@ public:
 
     /**
      * Get type end token.
+     * The type end token doesn't account the forward 'const' qualifier
+     * E.g.:
+     *     static const int * const p = ...;
+     *       type end token ^
      * @return type end token
      */
     const Token *typeEndToken() const {
@@ -148,10 +203,10 @@ public:
     }
 
     /**
-     * Get variable ID.
-     * @return variable ID
+     * Get declaration ID (varId used for variable in its declaration).
+     * @return declaration ID
      */
-    unsigned int varId() const {
+    unsigned int declarationId() const {
         // name may not exist for function arguments
         if (_name)
             return _name->varId();
@@ -161,7 +216,7 @@ public:
 
     /**
      * Get index of variable in declared order.
-     * @return varaible index
+     * @return variable index
      */
     std::size_t index() const {
         return _index;
@@ -220,7 +275,7 @@ public:
      * @return true if local, false if not
      */
     bool isLocal() const {
-        return _access == Local;
+        return (_access == Local) && !isExtern();
     }
 
     /**
@@ -237,6 +292,14 @@ public:
      */
     bool isStatic() const {
         return getFlag(fIsStatic);
+    }
+
+    /**
+     * Is variable extern.
+     * @return true if extern, false if not
+     */
+    bool isExtern() const {
+        return getFlag(fIsExtern);
     }
 
     /**
@@ -280,11 +343,27 @@ public:
     }
 
     /**
+     * Is array or pointer variable.
+     * @return true if pointer or array, false otherwise
+     */
+    bool isArrayOrPointer() const {
+        return getFlag(fIsArray) || getFlag(fIsPointer);
+    }
+
+    /**
      * Is reference variable.
      * @return true if reference, false otherwise
      */
     bool isReference() const {
         return getFlag(fIsReference);
+    }
+
+    /**
+     * Is reference variable.
+     * @return true if reference, false otherwise
+     */
+    bool isRValueReference() const {
+        return getFlag(fIsRValueRef);
     }
 
     /**
@@ -296,11 +375,19 @@ public:
     }
 
     /**
-     * Get Scope pointer of known type.
+     * Get Type pointer of known type.
      * @return pointer to type if known, NULL if not known
      */
-    const Scope *type() const {
+    const Type *type() const {
         return _type;
+    }
+
+    /**
+     * Get Scope pointer of known type.
+     * @return pointer to type scope if known, NULL if not known
+     */
+    const Scope *typeScope() const {
+        return _type ? _type->classScope : 0;
     }
 
     /**
@@ -327,7 +414,26 @@ public:
         return _dimensions[index_].num;
     }
 
+    /**
+     * Get array dimension known.
+     * @return length of dimension known
+     */
+    bool dimensionKnown(std::size_t index_) const {
+        return _dimensions[index_].known;
+    }
+
 private:
+    // only symbol database can change the type
+    friend class SymbolDatabase;
+
+    /**
+     * Set Type pointer to known type.
+     * @param t type
+     */
+    void type(const Type * t) {
+        _type = t;
+    }
+
     /** @brief variable name token */
     const Token *_name;
 
@@ -347,25 +453,33 @@ private:
     int _flags;
 
     /** @brief pointer to user defined type info (for known types) */
-    const Scope *_type;
+    const Type *_type;
 
     /** @brief pointer to scope this variable is in */
     const Scope *_scope;
 
     /** @brief array dimensions */
     std::vector<Dimension> _dimensions;
+
+    /** @brief fill in information, depending on Tokens given at instantiation */
+    void evaluate();
 };
 
-class Function {
+class CPPCHECKLIB Function {
 public:
-    enum Type { eConstructor, eCopyConstructor, eOperatorEqual, eDestructor, eFunction };
+    enum Type { eConstructor, eCopyConstructor, eMoveConstructor, eOperatorEqual, eDestructor, eFunction };
 
     Function()
         : tokenDef(NULL),
           argDef(NULL),
           token(NULL),
           arg(NULL),
-          start(NULL),
+          retDef(NULL),
+          retType(NULL),
+          functionScope(NULL),
+          nestedIn(NULL),
+          initArgCount(0),
+          type(eFunction),
           access(Public),
           hasBody(false),
           isInline(false),
@@ -375,23 +489,51 @@ public:
           isStatic(false),
           isFriend(false),
           isExplicit(false),
+          isDefault(false),
+          isDelete(false),
           isOperator(false),
-          retFuncPtr(false),
-          type(eFunction),
-          functionScope(NULL) {
+          retFuncPtr(false) {
+    }
+
+    const std::string &name() const {
+        return tokenDef->str();
     }
 
     std::size_t argCount() const {
         return argumentList.size();
     }
-    unsigned int initializedArgCount() const;
-    void addArguments(const SymbolDatabase *symbolDatabase, const Function *func, const Scope *scope);
+    std::size_t minArgCount() const {
+        return argumentList.size() - initArgCount;
+    }
+    const Variable* getArgumentVar(std::size_t num) const;
+    unsigned int initializedArgCount() const {
+        return initArgCount;
+    }
+    void addArguments(const SymbolDatabase *symbolDatabase, const Scope *scope);
+    /** @brief check if this function is virtual in the base classes */
+    bool isImplicitlyVirtual(bool defaultVal = false) const;
+
+    bool isConstructor() const {
+        return type==eConstructor ||
+               type==eCopyConstructor ||
+               type==eMoveConstructor;
+    }
+
+    bool isDestructor() const {
+        return type==eDestructor;
+    }
 
     const Token *tokenDef; // function name token in class definition
     const Token *argDef;   // function argument start '(' in class definition
     const Token *token;    // function name token in implementation
     const Token *arg;      // function argument start '('
-    const Token *start;    // function start '{'
+    const Token *retDef;   // function return type token
+    const ::Type *retType; // function return type
+    const Scope *functionScope; // scope of function body
+    const Scope* nestedIn; // Scope the function is declared in
+    std::list<Variable> argumentList; // argument list
+    unsigned int initArgCount; // number of args with default values
+    Type type;             // constructor, destructor, ...
     AccessControl access;  // public/protected/private
     bool hasBody;          // has implementation
     bool isInline;         // implementation in class definition
@@ -401,59 +543,58 @@ public:
     bool isStatic;         // is static
     bool isFriend;         // is friend
     bool isExplicit;       // is explicit
+    bool isDefault;        // is default
+    bool isDelete;         // is delete
     bool isOperator;       // is operator
     bool retFuncPtr;       // returns function pointer
-    Type type;             // constructor, destructor, ...
-    Scope *functionScope;  // scope of function body
-    std::list<Variable> argumentList; // argument list
+
+    static bool argsMatch(const Scope *info, const Token *first, const Token *second, const std::string &path, unsigned int depth);
+
+private:
+    bool isImplicitlyVirtual_rec(const ::Type* type, bool& safe) const;
 };
 
-class Scope {
+class CPPCHECKLIB Scope {
     // let tests access private function for testing
     friend class TestSymbolDatabase;
 
 public:
-    struct BaseInfo {
-        AccessControl access;  // public/protected/private
-        bool isVirtual;
-        std::string name;
-        Scope *scope;
-    };
-
-    struct FriendInfo {
-        std::string name;
-        Scope *scope;
+    struct UsingInfo {
+        const Token *start;
+        const Scope *scope;
     };
 
     enum ScopeType { eGlobal, eClass, eStruct, eUnion, eNamespace, eFunction, eIf, eElse, eElseIf, eFor, eWhile, eDo, eSwitch, eUnconditional, eTry, eCatch };
-    enum NeedInitialization { Unknown, True, False };
 
-    Scope(SymbolDatabase *check_, const Token *classDef_, Scope *nestedIn_);
-    Scope(SymbolDatabase *check_, const Token *classDef_, Scope *nestedIn_, ScopeType type_, const Token *start_);
+    Scope(const SymbolDatabase *check_, const Token *classDef_, const Scope *nestedIn_);
+    Scope(const SymbolDatabase *check_, const Token *classDef_, const Scope *nestedIn_, ScopeType type_, const Token *start_);
 
-    SymbolDatabase *check;
-    ScopeType type;
+    const SymbolDatabase *check;
     std::string className;
     const Token *classDef;   // class/struct/union/namespace token
     const Token *classStart; // '{' token
     const Token *classEnd;   // '}' token
     std::list<Function> functionList;
     std::list<Variable> varlist;
-    std::vector<BaseInfo> derivedFrom;
-    std::list<FriendInfo> friendList;
-    Scope *nestedIn;
+    const Scope *nestedIn;
     std::list<Scope *> nestedList;
-    AccessControl access;
     unsigned int numConstructors;
-    NeedInitialization needInitialization;
-    std::list<const Token *> usingList;
+    unsigned int numCopyOrMoveConstructors;
+    std::list<UsingInfo> usingList;
+    ScopeType type;
+    Type* definedType;
+    std::list<Type*> definedTypes;
 
     // function specific fields
-    Scope *functionOf; // scope this function belongs to
+    const Scope *functionOf; // scope this function belongs to
     Function *function; // function info for this function
 
     bool isClassOrStruct() const {
         return (type == eClass || type == eStruct);
+    }
+
+    bool isExecutable() const {
+        return type != eClass && type != eStruct && type != eUnion && type != eGlobal && type != eNamespace;
     }
 
     bool isLocal() const {
@@ -464,27 +605,40 @@ public:
     }
 
     /**
-     * @brief find if name is in nested list
-     * @param name name of nested scope
+     * @brief find a function
+     * @param tok token of function call
+     * @return pointer to function if found or NULL if not found
      */
-    Scope * findInNestedList(const std::string & name);
+    const Function *findFunction(const Token *tok) const;
 
     /**
      * @brief find if name is in nested list
      * @param name name of nested scope
      */
-    Scope * findInNestedListRecursive(const std::string & name);
+    Scope *findInNestedList(const std::string & name);
 
-    const Scope * findQualifiedScope(const std::string & name) const;
+    const Scope *findRecordInNestedList(const std::string & name) const;
+    Scope *findRecordInNestedList(const std::string & name) {
+        return const_cast<Scope *>(static_cast<const Scope *>(this)->findRecordInNestedList(name));
+    }
+
+    const Type* findType(const std::string& name) const;
+    Type* findType(const std::string& name) {
+        return const_cast<Type*>(static_cast<const Scope *>(this)->findType(name));
+    }
+
+    /**
+     * @brief find if name is in nested list
+     * @param name name of nested scope
+     */
+    Scope *findInNestedListRecursive(const std::string & name);
 
     void addVariable(const Token *token_, const Token *start_,
-                     const Token *end_, AccessControl access_, bool mutable_,
-                     bool static_, bool const_, bool class_, const Scope *type_,
-                     const Scope *scope_, bool array_, bool pointer_, bool reference_,
-                     const std::vector<Dimension> &dimensions_) {
+                     const Token *end_, AccessControl access_, const Type *type_,
+                     const Scope *scope_) {
         varlist.push_back(Variable(token_, start_, end_, varlist.size(),
-                                   access_, mutable_, static_, const_, class_,
-                                   type_, scope_, array_, pointer_, reference_, false, dimensions_));
+                                   access_,
+                                   type_, scope_));
     }
 
     /** @brief initialize varlist */
@@ -525,20 +679,26 @@ private:
      * @param tok pointer to token to check
      * @param vartok populated with pointer to the variable token, if found
      * @param typetok populated with pointer to the type token, if found
-     * @param isArray reference to variable to set if array is found
-     * @param isPointer reference to variable to set if pointer is found
      * @return true if tok points to a variable declaration, false otherwise
      */
-    bool isVariableDeclaration(const Token* tok, const Token*& vartok, const Token*& typetok, bool &isArray, bool &isPointer, bool &isReference) const;
-    bool findClosingBracket(const Token* tok, const Token*& close) const;
+    bool isVariableDeclaration(const Token* tok, const Token*& vartok, const Token*& typetok) const;
 };
 
-class SymbolDatabase {
+class CPPCHECKLIB SymbolDatabase {
 public:
     SymbolDatabase(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger);
 
     /** @brief Information about all namespaces/classes/structrues */
     std::list<Scope> scopeList;
+
+    /** @brief Fast access to function scopes */
+    std::vector<const Scope *> functionScopes;
+
+    /** @brief Fast access to class and struct scopes */
+    std::vector<const Scope *> classAndStructScopes;
+
+    /** @brief Fast access to types */
+    std::list<Type> typeList;
 
     /**
      * @brief find a variable type if it's a user defined type
@@ -546,25 +706,39 @@ public:
      * @param type token containing variable type
      * @return pointer to type if found or NULL if not found
      */
-    const Scope *findVariableType(const Scope *start, const Token *type) const;
+    const Type *findVariableType(const Scope *start, const Token *type) const;
 
-    const Scope *findFunctionScopeByToken(const Token *tok) const;
+    /**
+     * @brief find a function
+     * @param tok token of function call
+     * @return pointer to function if found or NULL if not found
+     */
+    const Function *findFunction(const Token *tok) const;
 
-    const Function *findFunctionByToken(const Token *tok) const;
+    const Scope *findScopeByName(const std::string& name) const;
 
-    const Scope* findScopeByName(const std::string& name) const;
-
-    bool argsMatch(const Scope *info, const Token *first, const Token *second, const std::string &path, unsigned int depth) const;
-
-    bool isClassOrStruct(const std::string &type) const {
-        return bool(classAndStructTypes.find(type) != classAndStructTypes.end());
+    const Type* findType(const Token *tok, const Scope *startScope) const;
+    Type* findType(const Token *tok, Scope *startScope) const {
+        return const_cast<Type*>(this->findType(tok, static_cast<const Scope *>(startScope)));
     }
 
-    const Variable *getVariableFromVarId(unsigned int varId) const {
+    const Scope *findScope(const Token *tok, const Scope *startScope) const;
+    Scope *findScope(const Token *tok, Scope *startScope) const {
+        return const_cast<Scope *>(this->findScope(tok, static_cast<const Scope *>(startScope)));
+    }
+
+    bool isClassOrStruct(const std::string &type) const {
+        for (std::list<Type>::const_iterator i = typeList.begin(); i != typeList.end(); ++i)
+            if (i->name() == type)
+                return true;
+        return false;
+    }
+
+    const Variable *getVariableFromVarId(std::size_t varId) const {
         return _variableList[varId];
     }
 
-    size_t getVariableListSize() const {
+    std::size_t getVariableListSize() const {
         return _variableList.size();
     }
 
@@ -573,16 +747,10 @@ public:
      */
     void debugMessage(const Token *tok, const std::string &msg) const;
 
-    /**
-     * @brief parse and save array dimension information
-     * @param dimensions array dimensions vector
-     * @param tok the first '[' token of array declaration
-     * @return true if array, false if not
-     */
-    bool arrayDimensions(std::vector<Dimension> &dimensions, const Token *tok) const;
-
     void printOut(const char * title = NULL) const;
     void printVariable(const Variable *var, const char *indent) const;
+
+    bool isCPP() const;
 
 private:
 
@@ -590,14 +758,11 @@ private:
     friend class Scope;
 
     void addClassFunction(Scope **info, const Token **tok, const Token *argStart);
-    Function* addGlobalFunctionDecl(Scope*& scope, const Token*& tok, const Token *argStart, const Token* funcStart);
-    Function* addGlobalFunction(Scope*& scope, const Token*& tok, const Token *argStart, const Token* funcStart);
+    Function *addGlobalFunctionDecl(Scope*& scope, const Token* tok, const Token *argStart, const Token* funcStart);
+    Function *addGlobalFunction(Scope*& scope, const Token*& tok, const Token *argStart, const Token* funcStart);
     void addNewFunction(Scope **info, const Token **tok);
-    const Token *initBaseInfo(Scope *info, const Token *tok);
-    bool isFunction(const Token *tok, const Scope* outerScope, const Token **funcStart, const Token **argStart) const;
-
-    /** class/struct types */
-    std::set<std::string> classAndStructTypes;
+    static bool isFunction(const Token *tok, const Scope* outerScope, const Token **funcStart, const Token **argStart);
+    const Type *findTypeInNested(const Token *tok, const Scope *startScope) const;
 
     const Tokenizer *_tokenizer;
     const Settings *_settings;
@@ -605,7 +770,9 @@ private:
 
     /** variable symbol table */
     std::vector<const Variable *> _variableList;
+
+    /** list for missing types */
+    std::list<Type> _blankTypes;
 };
-
-#endif
-
+//---------------------------------------------------------------------------
+#endif // symboldatabaseH

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,23 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+//---------------------------------------------------------------------------
 #ifndef errorloggerH
 #define errorloggerH
+//---------------------------------------------------------------------------
 
 #include <list>
 #include <string>
 
+#include "config.h"
 #include "suppressions.h"
 
 class Token;
-class Tokenizer;
+class TokenList;
 
 /// @addtogroup Core
 /// @{
 
+/** @brief Simple container to be thrown when internal error is detected. */
+struct InternalError {
+    InternalError(const Token *tok, const std::string &errorMsg);
+    const Token *token;
+    std::string errorMessage;
+};
+
 /** @brief enum class for severity. Used when reporting errors. */
-class Severity {
+class CPPCHECKLIB Severity {
 public:
     /**
      * Message severities.
@@ -108,7 +117,7 @@ public:
         case debug:
             return "debug";
         };
-        return "???";
+        throw InternalError(NULL, "Unknown severity");
     }
     static SeverityType fromString(const std::string &severity) {
         if (severity.empty())
@@ -137,28 +146,30 @@ public:
  * @brief This is an interface, which the class responsible of error logging
  * should implement.
  */
-class ErrorLogger {
+class CPPCHECKLIB ErrorLogger {
 public:
 
     /**
      * Wrapper for error messages, provided by reportErr()
      */
-    class ErrorMessage {
+    class CPPCHECKLIB ErrorMessage {
     public:
         /**
          * File name and line number.
          * Internally paths are stored with / separator. When getting the filename
          * it is by default converted to native separators.
          */
-        class FileLocation {
+        class CPPCHECKLIB FileLocation {
         public:
-            FileLocation() {
-                line = 0;
+            FileLocation()
+                : line(0) {
             }
 
             FileLocation(const std::string &file, unsigned int aline)
                 : line(aline), _file(file) {
             }
+
+            FileLocation(const Token* tok, const TokenList* list);
 
             /**
              * Return the filename.
@@ -172,6 +183,12 @@ public:
              * @param file Filename to set.
              */
             void setfile(const std::string &file);
+
+            /**
+             * Returns the location as a string. Format: [file:line]
+             */
+            std::string stringify() const;
+
             unsigned int line;
         private:
             std::string _file;
@@ -179,6 +196,7 @@ public:
         };
 
         ErrorMessage(const std::list<FileLocation> &callStack, Severity::SeverityType severity, const std::string &msg, const std::string &id, bool inconclusive);
+        ErrorMessage(const std::list<const Token*>& callstack, const TokenList* list, Severity::SeverityType severity, const std::string& id, const std::string& msg, bool inconclusive);
         ErrorMessage();
 
         /**
@@ -203,12 +221,13 @@ public:
         bool deserialize(const std::string &data);
 
         std::list<FileLocation> _callStack;
-        Severity::SeverityType _severity;
         std::string _id;
-        bool _inconclusive;
 
         /** source file (not header) */
         std::string file0;
+
+        Severity::SeverityType _severity;
+        bool _inconclusive;
 
         /** set short and verbose messages */
         void setmsg(const std::string &msg);
@@ -255,8 +274,7 @@ public:
      * Information about found errors and warnings is directed
      * here. Override this to receive the errormessages.
      *
-     * @param msg Location and other information about the found.
-     * error
+     * @param msg Location and other information about the found error.
      */
     virtual void reportErr(const ErrorLogger::ErrorMessage &msg) = 0;
 
@@ -266,10 +284,18 @@ public:
      * @param stage for example preprocess / tokenize / simplify / check
      * @param value progress value (0-100)
      */
-    virtual void reportProgress(const std::string &filename, const char stage[], const unsigned int value) {
+    virtual void reportProgress(const std::string &filename, const char stage[], const std::size_t value) {
         (void)filename;
         (void)stage;
         (void)value;
+    }
+
+    /**
+     * Output information messages.
+     * @param msg Location and other information about the found error.
+     */
+    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg) {
+        reportErr(msg);
     }
 
     /**
@@ -281,13 +307,6 @@ public:
     static std::string callStackToString(const std::list<ErrorLogger::ErrorMessage::FileLocation> &callStack);
 };
 
-/** @brief Simple container to be thrown when internal error is detected. */
-struct InternalError {
-    InternalError(const Token *tok, const std::string &errorMsg);
-    const Token *token;
-    std::string errorMessage;
-};
-
 /// @}
-
-#endif
+//---------------------------------------------------------------------------
+#endif // errorloggerH

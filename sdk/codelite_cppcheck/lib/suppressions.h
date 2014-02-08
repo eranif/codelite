@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,22 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef SUPPRESSIONS_H
-#define SUPPRESSIONS_H
+//---------------------------------------------------------------------------
+#ifndef suppressionsH
+#define suppressionsH
+//---------------------------------------------------------------------------
 
 #include <list>
 #include <string>
 #include <istream>
 #include <map>
+#include "config.h"
 
 /// @addtogroup Core
 /// @{
 
 /** @brief class for handling suppressions */
-class Suppressions {
+class CPPCHECKLIB Suppressions {
 private:
-    class FileMatcher {
+    class CPPCHECKLIB FileMatcher {
         friend class Suppressions;
     private:
         /** @brief List of filenames suppressed, bool flag indicates whether suppression matched. */
@@ -90,7 +92,7 @@ public:
     std::string addSuppressionLine(const std::string &line);
 
     /**
-     * @brief Don't show this error. If file and/or line are optional. In which case
+     * @brief Don't show this error. File and/or line are optional. In which case
      * the errorId alone is used for filtering.
      * @param errorId the id for the error, e.g. "arrayIndexOutOfBounds"
      * @param file File name with the path, e.g. "src/main.cpp"
@@ -119,8 +121,8 @@ public:
 
     struct SuppressionEntry {
         SuppressionEntry(const std::string &aid, const std::string &afile, unsigned int aline)
-            : id(aid), file(afile), line(aline)
-        { }
+            : id(aid), file(afile), line(aline) {
+        }
 
         std::string id;
         std::string file;
@@ -141,5 +143,5 @@ public:
 };
 
 /// @}
-
-#endif // SUPPRESSIONS_H
+//---------------------------------------------------------------------------
+#endif // suppressionsH

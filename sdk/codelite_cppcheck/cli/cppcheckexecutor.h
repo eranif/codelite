@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,12 @@ public:
     /** xml output of errors */
     virtual void reportErr(const ErrorLogger::ErrorMessage &msg);
 
-    void reportProgress(const std::string &filename, const char stage[], const unsigned int value);
+    void reportProgress(const std::string &filename, const char stage[], const std::size_t value);
+
+    /**
+     * Output information messages.
+     */
+    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg);
 
     /**
      * Information about how many files have been checked
@@ -80,7 +85,7 @@ public:
      * @param sizedone The sum of sizes of the files checked.
      * @param sizetotal The total sizes of the files.
      */
-    static void reportStatus(size_t fileindex, size_t filecount, size_t sizedone, size_t sizetotal);
+    static void reportStatus(std::size_t fileindex, std::size_t filecount, std::size_t sizedone, std::size_t sizetotal);
 
 protected:
 
@@ -94,6 +99,7 @@ protected:
      * @brief Parse command line args and get settings and file lists
      * from there.
      *
+     * @param cppcheck cppcheck instance
      * @param argc argc from main()
      * @param argv argv from main()
      * @return false when errors are found in the input
@@ -113,6 +119,11 @@ private:
     std::set<std::string> _errorList;
 
     /**
+     * Filename associated with size of file
+     */
+    std::map<std::string, std::size_t> _files;
+
+    /**
      * Report progress time
      */
     std::time_t time1;
@@ -121,11 +132,6 @@ private:
      * Has --errorlist been given?
      */
     bool errorlist;
-
-    /**
-     * Filename associated with size of file
-     */
-    std::map<std::string, size_t> _files;
 };
 
 #endif // CPPCHECKEXECUTOR_H

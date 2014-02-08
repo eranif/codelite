@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "filelister.h"
+#include "path.h"
 #include <cstring>
 #include <string>
 #include <sstream>
-#include "filelister.h"
-#include "path.h"
 
 
 #ifdef _WIN32
@@ -36,56 +36,7 @@
 
 // Here is the catch: cppcheck core is Ansi code (using char type).
 // When compiling Unicode targets WinAPI automatically uses *W Unicode versions
-// of called functions. So we must convert data given to WinAPI functions from
-// ANSI to Unicode. Likewise we must convert data we get from WinAPI from
-// Unicode to ANSI.
-
-// Note that qmake creates VS project files that define UNICODE but don't
-// define _UNICODE! Which means e.g. TCHAR macros don't work properly.
-
-#if defined(UNICODE)
-
-static bool TransformUcs2ToAnsi(LPCWSTR psUcs, LPSTR psAnsi, int nAnsi)
-{
-    WideCharToMultiByte(CP_ACP, 0, psUcs, -1, psAnsi, nAnsi, NULL, NULL);
-    return true;
-}
-
-static bool TransformAnsiToUcs2(LPCSTR psAnsi, LPWSTR psUcs, UINT nUcs)
-{
-    MultiByteToWideChar(CP_ACP, 0, psAnsi, -1, psUcs, nUcs);
-    return true;
-}
-
-static BOOL MyIsDirectory(const std::string& path)
-{
-    WCHAR * unicodeCleanPath = new WCHAR[path.size() + 1];
-    TransformAnsiToUcs2(path.c_str(), unicodeCleanPath, path.size() + 1);
-    // See http://msdn.microsoft.com/en-us/library/bb773621(VS.85).aspx
-    BOOL res = PathIsDirectory(unicodeCleanPath);
-    delete [] unicodeCleanPath;
-    return res;
-}
-
-static HANDLE MyFindFirstFile(const std::string& path, LPWIN32_FIND_DATA findData)
-{
-    WCHAR * unicodeOss = new wchar_t[path.size() + 1];
-    TransformAnsiToUcs2(path.c_str(), unicodeOss, path.size() + 1);
-    HANDLE hFind = FindFirstFile(unicodeOss, findData);
-    delete [] unicodeOss;
-    return hFind;
-}
-
-static BOOL MyFileExists(const std::string& path)
-{
-    WCHAR * unicodeOss = new wchar_t[path.size() + 1];
-    TransformAnsiToUcs2(path.c_str(), unicodeOss, path.size() + 1);
-    BOOL result = PathFileExists(unicodeOss);
-    delete [] unicodeOss;
-    return result;
-}
-
-#else // defined(UNICODE)
+// of called functions. Thus, we explicitly call *A versions of the functions.
 
 static BOOL MyIsDirectory(const std::string& path)
 {
@@ -93,13 +44,13 @@ static BOOL MyIsDirectory(const std::string& path)
     return (GetFileAttributes(path.c_str()) & FILE_ATTRIBUTE_DIRECTORY);
 #else
 // See http://msdn.microsoft.com/en-us/library/bb773621(VS.85).aspx
-    return PathIsDirectory(path.c_str());
+    return PathIsDirectoryA(path.c_str());
 #endif
 }
 
-static HANDLE MyFindFirstFile(const std::string& path, LPWIN32_FIND_DATA findData)
+static HANDLE MyFindFirstFile(const std::string& path, LPWIN32_FIND_DATAA findData)
 {
-    HANDLE hFind = FindFirstFile(path.c_str(), findData);
+    HANDLE hFind = FindFirstFileA(path.c_str(), findData);
     return hFind;
 }
 
@@ -111,48 +62,49 @@ static BOOL MyFileExists(const std::string& path)
     if (fa != INVALID_FILE_ATTRIBUTES && !(fa & FILE_ATTRIBUTE_DIRECTORY))
         result = TRUE;
 #else
-    BOOL result = PathFileExists(path.c_str());
+    BOOL result = PathFileExistsA(path.c_str());
 #endif
     return result;
 }
 
-#endif // defined(UNICODE)
-
-void FileLister::recursiveAddFiles(std::map<std::string, size_t> &files, const std::string &path)
+void FileLister::recursiveAddFiles(std::map<std::string, std::size_t> &files, const std::string &path, const std::set<std::string> &extra)
 {
-    // oss is the search string passed into FindFirst and FindNext.
-    // bdir is the base directory which is used to form pathnames.
+    const std::string cleanedPath = Path::toNativeSeparators(path);
+
+    // basedir is the base directory which is used to form pathnames.
     // It always has a trailing backslash available for concatenation.
-    std::ostringstream bdir, oss;
+    std::string basedir;
 
-    std::string cleanedPath = Path::toNativeSeparators(path);
+    // searchPattern is the search string passed into FindFirst and FindNext.
+    std::string searchPattern = cleanedPath;
 
-    oss << cleanedPath;
+    // The user wants to check all files in a dir
+    const bool checkAllFilesInDir = (MyIsDirectory(cleanedPath) != FALSE);
 
-    if (MyIsDirectory(cleanedPath)) {
+    if (checkAllFilesInDir) {
         char c = cleanedPath[ cleanedPath.size()-1 ];
         switch (c) {
         case '\\':
-            oss << '*';
-            bdir << cleanedPath;
+            searchPattern += '*';
+            basedir = cleanedPath;
             break;
         case '*':
-            bdir << cleanedPath.substr(0, cleanedPath.length() - 1);
+            basedir = cleanedPath.substr(0, cleanedPath.length() - 1);
             break;
         default:
-            oss << "\\*";
+            searchPattern += "\\*";
             if (cleanedPath != ".")
-                bdir << cleanedPath << '\\';
+                basedir = cleanedPath + '\\';
         }
     } else {
         std::string::size_type pos = cleanedPath.find_last_of('\\');
         if (std::string::npos != pos) {
-            bdir << cleanedPath.substr(0, pos + 1);
+            basedir = cleanedPath.substr(0, pos + 1);
         }
     }
 
-    WIN32_FIND_DATA ffd;
-    HANDLE hFind = MyFindFirstFile(oss.str(), &ffd);
+    WIN32_FIND_DATAA ffd;
+    HANDLE hFind = MyFindFirstFile(searchPattern, &ffd);
     if (INVALID_HANDLE_VALUE == hFind)
         return;
 
@@ -160,45 +112,33 @@ void FileLister::recursiveAddFiles(std::map<std::string, size_t> &files, const s
         if (ffd.cFileName[0] == '.' || ffd.cFileName[0] == '\0')
             continue;
 
-#if defined(UNICODE)
-        size_t length = wcslen(ffd.cFileName);
-        char * ansiFfd = new char[length + 1];
-        TransformUcs2ToAnsi(ffd.cFileName, ansiFfd, length + 1);
-#else // defined(UNICODE)
-        const char * ansiFfd = &ffd.cFileName[0];
+        const char* ansiFfd = ffd.cFileName;
         if (strchr(ansiFfd,'?')) {
-            ansiFfd = &ffd.cAlternateFileName[0];
+            ansiFfd = ffd.cAlternateFileName;
         }
-#endif // defined(UNICODE)
 
-        std::ostringstream fname;
-        fname << bdir.str() << ansiFfd;
+        const std::string fname(basedir + ansiFfd);
 
         if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
             // File
+            const std::string nativename = Path::fromNativeSeparators(fname);
 
-            // If recursive is not used, accept all files given by user
-            if (Path::sameFileName(path, ansiFfd) || Path::acceptFile(ansiFfd)) {
-                const std::string nativename = Path::fromNativeSeparators(fname.str());
+            if (!checkAllFilesInDir || Path::acceptFile(fname, extra)) {
                 // Limitation: file sizes are assumed to fit in a 'size_t'
 #ifdef _WIN64
-                files[nativename] = (static_cast<size_t>(ffd.nFileSizeHigh) << 32) | ffd.nFileSizeLow;
+                files[nativename] = (static_cast<std::size_t>(ffd.nFileSizeHigh) << 32) | ffd.nFileSizeLow;
 #else
                 files[nativename] = ffd.nFileSizeLow;
 #endif
             }
         } else {
             // Directory
-            FileLister::recursiveAddFiles(files, fname.str());
+            FileLister::recursiveAddFiles(files, fname, extra);
         }
-#if defined(UNICODE)
-        delete [] ansiFfd;
-#endif // defined(UNICODE)
-    } while (FindNextFile(hFind, &ffd) != FALSE);
+    } while (FindNextFileA(hFind, &ffd) != FALSE);
 
     if (INVALID_HANDLE_VALUE != hFind) {
         FindClose(hFind);
-        hFind = INVALID_HANDLE_VALUE;
     }
 }
 
@@ -246,8 +186,9 @@ std::string FileLister::getAbsolutePath(const std::string& path)
 }
 
 void FileLister::recursiveAddFiles2(std::set<std::string> &seen_paths,
-                                    std::map<std::string, size_t> &files,
-                                    const std::string &path)
+                                    std::map<std::string, std::size_t> &files,
+                                    const std::string &path,
+                                    const std::set<std::string> &extra)
 {
     std::ostringstream oss;
     oss << path;
@@ -273,13 +214,13 @@ void FileLister::recursiveAddFiles2(std::set<std::string> &seen_paths,
         if (filename[filename.length()-1] != '/') {
             // File
 
-            if (Path::sameFileName(path,filename) || Path::acceptFile(filename)) {
+            if (Path::sameFileName(path,filename) || Path::acceptFile(filename, extra)) {
                 seen_paths.insert(absolute_path);
 
                 struct stat sb;
                 if (stat(absolute_path.c_str(), &sb) == 0) {
                     // Limitation: file sizes are assumed to fit in a 'size_t'
-                    files[filename] = static_cast<size_t>(sb.st_size);
+                    files[filename] = static_cast<std::size_t>(sb.st_size);
                 } else
                     files[filename] = 0;
             }
@@ -287,17 +228,17 @@ void FileLister::recursiveAddFiles2(std::set<std::string> &seen_paths,
             // Directory
 
             seen_paths.insert(absolute_path);
-            recursiveAddFiles2(seen_paths, files, filename);
+            recursiveAddFiles2(seen_paths, files, filename, extra);
         }
     }
     globfree(&glob_results);
 }
 
 
-void FileLister::recursiveAddFiles(std::map<std::string, size_t> &files, const std::string &path)
+void FileLister::recursiveAddFiles(std::map<std::string, std::size_t> &files, const std::string &path, const std::set<std::string> &extra)
 {
     std::set<std::string> seen_paths;
-    recursiveAddFiles2(seen_paths, files, path);
+    recursiveAddFiles2(seen_paths, files, path, extra);
 }
 
 bool FileLister::isDirectory(const std::string &path)

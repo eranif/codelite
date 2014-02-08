@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 //---------------------------------------------------------------------------
-#ifndef CheckNonReentrantFunctionsH
-#define CheckNonReentrantFunctionsH
+#ifndef checknonreentrantfunctionsH
+#define checknonreentrantfunctionsH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 #include <string>
 #include <map>
@@ -34,7 +34,7 @@
  * @brief Using non reentrant functions that can be replaced by their reentrant versions
  */
 
-class CheckNonReentrantFunctions : public Check {
+class CPPCHECKLIB CheckNonReentrantFunctions : public Check {
 public:
     /** This constructor is used when registering the CheckNonReentrantFunctions */
     CheckNonReentrantFunctions() : Check(myName()) {
@@ -73,11 +73,11 @@ private:
 
         // generate messages
         for (unsigned int i = 0; i < (sizeof(non_reentrant_functions_list) / sizeof(char *)); ++i) {
-            std::string strMsg("Found non reentrant function \'");
+            std::string strMsg("Non reentrant function '");
             strMsg+=non_reentrant_functions_list[i];
-            strMsg+= "\'. For threadsafe applications it is recommended to use the reentrant replacement function \'";
+            strMsg+= "' called. For threadsafe applications it is recommended to use the reentrant replacement function '";
             strMsg+=non_reentrant_functions_list[i];
-            strMsg+="_r\'";
+            strMsg+="_r'.";
             _nonReentrantFunctions[non_reentrant_functions_list[i]] = strMsg;
         }
     }
@@ -91,7 +91,7 @@ private:
         }
     }
 
-    std::string myName() const {
+    static std::string myName() {
         return "Non reentrant functions";
     }
 
@@ -106,5 +106,4 @@ private:
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checknonreentrantfunctionsH

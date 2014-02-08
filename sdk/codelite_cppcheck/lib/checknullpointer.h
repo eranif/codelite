@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #define checknullpointerH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "check.h"
 #include "settings.h"
 
@@ -34,16 +35,16 @@ class SymbolDatabase;
 
 /** @brief check for null pointer dereferencing */
 
-class CheckNullPointer : public Check {
+class CPPCHECKLIB CheckNullPointer : public Check {
 public:
     /** @brief This constructor is used when registering the CheckNullPointer */
-    CheckNullPointer() : Check(myName())
-    { }
+    CheckNullPointer() : Check(myName()) {
+    }
 
     /** @brief This constructor is used when running checks. */
     CheckNullPointer(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-    { }
+        : Check(myName(), tokenizer, settings, errorLogger) {
+    }
 
     /** @brief Run checks against the normal token list */
     void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
@@ -58,18 +59,17 @@ public:
         checkNullPointer.executionPaths();
     }
 
-    /** Is string uppercase? */
-    static bool isUpper(const std::string &str);
-
     /**
      * @brief parse a function call and extract information about variable usage
      * @param tok first token
      * @param var variables that the function read / write.
+     * @param library --library files data
      * @param value 0 => invalid with null pointers as parameter.
      *              non-zero => invalid with uninitialized data.
      */
     static void parseFunctionCall(const Token &tok,
                                   std::list<const Token *> &var,
+                                  const Library *library,
                                   unsigned char value);
 
     /**
@@ -81,7 +81,7 @@ public:
      * @param unknown it is not known if there is a pointer dereference (could be reported as a debug message)
      * @return true => there is a dereference
      */
-    static bool isPointerDeRef(const Token *tok, bool &unknown, const SymbolDatabase* symbolDatabase);
+    static bool isPointerDeRef(const Token *tok, bool &unknown);
 
     /** @brief possible null pointer dereference */
     void nullPointer();
@@ -100,8 +100,8 @@ public:
 
     void nullPointerError(const Token *tok);  // variable name unknown / doesn't exist
     void nullPointerError(const Token *tok, const std::string &varname);
-    void nullPointerError(const Token *tok, const std::string &varname, const unsigned int line, bool inconclusive = false);
-
+    void nullPointerError(const Token *tok, const std::string &varname, const Token* nullcheck, bool inconclusive = false);
+    void nullPointerDefaultArgError(const Token *tok, const std::string &varname);
 private:
 
     /** Get error messages. Used by --errorlist */
@@ -111,7 +111,7 @@ private:
     }
 
     /** Name of check */
-    std::string myName() const {
+    static std::string myName() {
         return "Null pointer";
     }
 
@@ -120,12 +120,6 @@ private:
         return "Null pointers\n"
                "* null pointer dereferencing\n";
     }
-
-    /**
-     * @brief Does one part of the check for nullPointer().
-     * Locate insufficient null-pointer handling after loop
-     */
-    void nullPointerAfterLoop();
 
     /**
      * @brief Does one part of the check for nullPointer().
@@ -154,12 +148,23 @@ private:
     void nullPointerConditionalAssignment();
 
     /**
+     * @brief Does one part of the check for nullPointer().
+     * -# default argument that sets a pointer to 0
+     * -# dereference pointer
+     */
+    void nullPointerDefaultArgument();
+
+    /**
+     * @brief Removes any variable that may be assigned from pointerArgs.
+     */
+    static void removeAssignedVarFromSet(const Token* tok, std::set<unsigned int>& pointerArgs);
+
+    /**
      * @brief Investigate if function call can make pointer null. If
      * the pointer is passed by value it can't be made a null pointer.
      */
-    bool CanFunctionAssignPointer(const Token *functiontoken, unsigned int varid) const;
+    static bool CanFunctionAssignPointer(const Token *functiontoken, unsigned int varid, bool& unknown);
 };
 /// @}
 //---------------------------------------------------------------------------
-#endif
-
+#endif // checknullpointerH

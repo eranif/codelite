@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//---------------------------------------------------------------------------
 #ifndef settingsH
 #define settingsH
+//---------------------------------------------------------------------------
 
 #include <list>
 #include <vector>
 #include <string>
 #include <set>
+#include "config.h"
+#include "library.h"
 #include "suppressions.h"
 #include "standards.h"
+#include "timer.h"
 
 /// @addtogroup Core
 /// @{
@@ -35,7 +40,7 @@
  * to pass individual values to functions or constructors now or in the
  * future when we might have even more detailed settings.
  */
-class Settings {
+class CPPCHECKLIB Settings {
 private:
     /** @brief Code to append in the checks */
     std::string _append;
@@ -116,7 +121,7 @@ public:
     std::string _outputFormat;
 
     /** @brief show timing information (--showtime=file|summary|top5) */
-    unsigned int _showtime;
+    SHOWTIME_MODES _showtime;
 
     /** @brief List of include paths, e.g. "my/includes/" which should be used
         for finding include files inside source files. (-I) */
@@ -130,7 +135,7 @@ public:
 
     /** @brief Maximum number of configurations to check before bailing.
         Default is 12. (--max-configs=N) */
-    int _maxConfigs;
+    unsigned int _maxConfigs;
 
     /**
      * @brief Returns true if given id is in the list of
@@ -148,6 +153,13 @@ public:
      */
     std::string addEnabled(const std::string &str);
 
+    enum Language {
+        None, C, CPP
+    };
+
+    /** @brief Name of the language that is enforced. Empty per default. */
+    Language enforcedLang;
+
     /** @brief suppress message (--suppressions) */
     Suppressions nomsg;
 
@@ -160,21 +172,25 @@ public:
     /** @brief undefines given by the user */
     std::set<std::string> userUndefs;
 
-    /** @brief Experimental 2 pass checking of files */
-    bool test_2_pass;
+    /** @brief forced includes given by the user */
+    std::list<std::string> userIncludes;
 
     /** @brief --report-progress */
     bool reportProgress;
 
-#ifdef HAVE_RULES
+    /** Library (--library) */
+    Library library;
+
     /** Rule */
-    class Rule {
+    class CPPCHECKLIB Rule {
     public:
         Rule()
-            : id("rule") // default id
+            : tokenlist("simple") // use simple tokenlist
+            , id("rule")          // default id
             , severity("style") { // default severity
         }
 
+        std::string tokenlist;
         std::string pattern;
         std::string id;
         std::string severity;
@@ -185,10 +201,12 @@ public:
      * @brief Extra rules
      */
     std::list<Rule> rules;
-#endif
 
     /** Is the 'configuration checking' wanted? */
     bool checkConfiguration;
+
+    /** Check for incomplete info in library files? */
+    bool checkLibrary;
 
     /** Struct contains standards settings */
     Standards standards;
@@ -202,6 +220,7 @@ public:
     unsigned int sizeof_float;
     unsigned int sizeof_double;
     unsigned int sizeof_long_double;
+    unsigned int sizeof_wchar_t;
     unsigned int sizeof_size_t;
     unsigned int sizeof_pointer;
 
@@ -222,8 +241,18 @@ public:
 
     /** set the platform type for user specified platforms */
     bool platformFile(const std::string &filename);
+
+    /**
+     * @brief Returns true if platform type is Windows
+     * @return true if Windows platform type.
+     */
+    bool isWindowsPlatform() const {
+        return platformType == Win32A ||
+               platformType == Win32W ||
+               platformType == Win64;
+    }
 };
 
 /// @}
-
-#endif // SETTINGS_H
+//---------------------------------------------------------------------------
+#endif // settingsH

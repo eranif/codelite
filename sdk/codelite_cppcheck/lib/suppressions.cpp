@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2012 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "settings.h"
 #include "path.h"
 
+#include <algorithm>
 #include <sstream>
 #include <stack>
 #include <cctype>   // std::isdigit, std::isalnum, etc
@@ -31,8 +32,7 @@ std::string Suppressions::parseFile(std::istream &istr)
     std::string line;
     while (std::getline(istr, line))
         filedata += line + "\n";
-    while (filedata.find("\r") != std::string::npos)
-        filedata[filedata.find("\r")] = '\n';
+    std::replace(filedata.begin(), filedata.end(), '\r', '\n');
 
     // Parse filedata..
     std::istringstream istr2(filedata);
@@ -87,7 +87,7 @@ std::string Suppressions::addSuppressionLine(const std::string &line)
     }
 
     // We could perhaps check if the id is valid and return error if it is not
-    const std::string errmsg(addSuppression(id, file, lineNumber));
+    const std::string errmsg(addSuppression(id, Path::fromNativeSeparators(file), lineNumber));
     if (!errmsg.empty())
         return errmsg;
 
@@ -139,7 +139,7 @@ bool Suppressions::FileMatcher::match(const std::string &pattern, const std::str
             return true;
         }
 
-        // If there are no other paths to tray, then fail
+        // If there are no other paths to try, then fail
         if (backtrack.empty()) {
             return false;
         }
@@ -223,8 +223,13 @@ std::string Suppressions::addSuppression(const std::string &errorId, const std::
         return "Failed to add suppression. No id.";
     }
     if (errorId != "*") {
+        // Support "stlBoundries", as that was the name of the errorId until v1.59.
+        if (errorId == "stlBoundries") {
+            return _suppressions["stlBoundaries"].addFile(file, line);
+        }
+
         for (std::string::size_type pos = 0; pos < errorId.length(); ++pos) {
-            if (errorId[pos] < 0 || !std::isalnum(errorId[pos])) {
+            if (errorId[pos] < 0 || (!std::isalnum(errorId[pos]) && errorId[pos] != '_')) {
                 return "Failed to add suppression. Invalid id \"" + errorId + "\"";
             }
             if (pos == 0 && std::isdigit(errorId[pos])) {
@@ -264,6 +269,9 @@ std::list<Suppressions::SuppressionEntry> Suppressions::getUnmatchedLocalSuppres
 {
     std::list<SuppressionEntry> r;
     for (std::map<std::string, FileMatcher>::const_iterator i = _suppressions.begin(); i != _suppressions.end(); ++i) {
+        if (i->first == "unusedFunction")
+            continue;  // unusedFunction is not a "local" suppression
+
         std::map<std::string, std::map<unsigned int, bool> >::const_iterator f = i->second._files.find(file);
         if (f != i->second._files.end()) {
             for (std::map<unsigned int, bool>::const_iterator l = f->second.begin(); l != f->second.end(); ++l) {
@@ -280,6 +288,7 @@ std::list<Suppressions::SuppressionEntry> Suppressions::getUnmatchedGlobalSuppre
 {
     std::list<SuppressionEntry> r;
     for (std::map<std::string, FileMatcher>::const_iterator i = _suppressions.begin(); i != _suppressions.end(); ++i) {
+        // global suppressions..
         for (std::map<std::string, std::map<unsigned int, bool> >::const_iterator g = i->second._globs.begin(); g != i->second._globs.end(); ++g) {
             for (std::map<unsigned int, bool>::const_iterator l = g->second.begin(); l != g->second.end(); ++l) {
                 if (!l->second) {
@@ -287,7 +296,17 @@ std::list<Suppressions::SuppressionEntry> Suppressions::getUnmatchedGlobalSuppre
                 }
             }
         }
+
+        // unusedFunction..
+        if (i->first == "unusedFunction") {
+            for (std::map<std::string, std::map<unsigned int, bool> >::const_iterator f = i->second._files.begin(); f != i->second._files.end(); ++f) {
+                for (std::map<unsigned int, bool>::const_iterator l = f->second.begin(); l != f->second.end(); ++l) {
+                    if (!l->second) {
+                        r.push_back(SuppressionEntry(i->first, f->first, l->first));
+                    }
+                }
+            }
+        }
     }
     return r;
 }
-

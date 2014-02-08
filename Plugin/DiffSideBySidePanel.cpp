@@ -3,6 +3,7 @@
 #include "editor_config.h"
 #include "lexer_configuration.h"
 #include "drawingutils.h"
+#include <wx/msgdlg.h>
 
 #define RED_MARKER          1
 #define GREEN_MARKER        2

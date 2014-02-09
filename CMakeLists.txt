@@ -442,6 +442,7 @@ add_subdirectory(codelite_make)
 add_subdirectory(codelite_terminal)
 add_subdirectory(sdk/codelite_indexer)
 add_subdirectory(sdk/codelite_cppcheck)
+add_subdirectory(codelite_echo)
 
 if (USE_CLANG)
     add_subdirectory(codelite_clang)

@@ -15,6 +15,7 @@
 #include <wx/frame.h>
 #include <wx/event.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/image.h>
 
 #include "main.h"
 

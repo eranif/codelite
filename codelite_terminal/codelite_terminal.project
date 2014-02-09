@@ -71,7 +71,6 @@
     <File Name="win_resources.rc"/>
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -201,4 +200,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

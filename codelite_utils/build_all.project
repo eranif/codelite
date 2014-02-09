@@ -102,7 +102,6 @@
   </Dependencies>
   <Dependencies Name="Release">
     <Project Name="autorev"/>
-    <Project Name="codelite_cppcheck"/>
     <Project Name="codelite_launcher"/>
     <Project Name="codelite_indexer"/>
     <Project Name="le_exec"/>
@@ -112,5 +111,7 @@
     <Project Name="codelitegcc"/>
     <Project Name="codelite_make"/>
     <Project Name="codelite_terminal"/>
+    <Project Name="codelite_echo"/>
+    <Project Name="codelite_cppcheck"/>
   </Dependencies>
 </CodeLite_Project>

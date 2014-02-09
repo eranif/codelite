@@ -33,8 +33,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\Runtime\CodeLite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "..\Runtime\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\codelite-clang.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
+Source: "..\Runtime\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; Components: Editor

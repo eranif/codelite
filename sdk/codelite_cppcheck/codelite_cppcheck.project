@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="codelite_cppcheck" InternalType="Console">
   <Plugins>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+		"name":	"Release",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}]]]>
+    </Plugin>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="externals">
+    <VirtualDirectory Name="tinyxml">
+      <File Name="externals/tinyxml/tinyxml2.h"/>
+      <File Name="externals/tinyxml/tinyxml2.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>../codelite_cppcheck</Topleveldir>
+  </Reconciliation>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="cli">
     <File Name="cli/cppcheckexecutor.cpp"/>
     <File Name="cli/cppcheckexecutor.h"/>
     <File Name="cli/main.cpp"/>
-    <File Name="cli/resource.h"/>
     <File Name="cli/threadexecutor.cpp"/>
     <File Name="cli/threadexecutor.h"/>
     <File Name="cli/cmdlineparser.cpp"/>
@@ -39,7 +65,6 @@
     <File Name="lib/checkstl.h"/>
     <File Name="lib/checkunusedfunctions.cpp"/>
     <File Name="lib/checkunusedfunctions.h"/>
-    <File Name="lib/classinfo.h"/>
     <File Name="lib/cppcheck.cpp"/>
     <File Name="lib/cppcheck.h"/>
     <File Name="lib/errorlogger.cpp"/>
@@ -87,14 +112,46 @@
     <File Name="lib/templatesimplifier.h"/>
     <File Name="lib/timer.cpp"/>
     <File Name="lib/timer.h"/>
+    <File Name="lib/checkassert.cpp"/>
+    <File Name="lib/checkassert.h"/>
+    <File Name="lib/checkbool.cpp"/>
+    <File Name="lib/checkbool.h"/>
+    <File Name="lib/checkio.cpp"/>
+    <File Name="lib/checkio.h"/>
+    <File Name="lib/checkleakautovar.cpp"/>
+    <File Name="lib/checkleakautovar.h"/>
+    <File Name="lib/checksizeof.cpp"/>
+    <File Name="lib/checksizeof.h"/>
+    <File Name="lib/config.h"/>
+    <File Name="lib/library.cpp"/>
+    <File Name="lib/library.h"/>
+    <File Name="lib/tokenlist.cpp"/>
+    <File Name="lib/tokenlist.h"/>
+    <File Name="lib/version.h"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="lib"/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+        <Library Value="libshlwapi.a"/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
     <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g" Required="yes" PreCompiledHeader=""/>
+      <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags=""/>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -114,15 +171,26 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="" Required="yes" PreCompiledHeader="">
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
+        <IncludePath Value="externals/tinyxml"/>
       </Compiler>
       <Linker Options="-O2" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
@@ -145,18 +213,12 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
     </Configuration>
-    <GlobalSettings>
-      <Compiler Options="">
-        <IncludePath Value="lib"/>
-      </Compiler>
-      <Linker Options="">
-        <LibraryPath Value="."/>
-        <Library Value="libshlwapi.a"/>
-      </Linker>
-      <ResourceCompiler Options=""/>
-    </GlobalSettings>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>

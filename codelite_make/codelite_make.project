@@ -20,7 +20,6 @@
     <File Name="cl_make_generator_app.h"/>
     <File Name="cl_make_generator_app.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -129,4 +128,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

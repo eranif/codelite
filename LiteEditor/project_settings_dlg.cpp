@@ -200,6 +200,11 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
     if (!buildConf) {
         return;
     }
+    
+    if ( buildConf->GetProjectType().IsEmpty() ) {
+        // no project type is defined by the 
+        buildConf->SetProjectType( projSettingsPtr->GetProjectType(wxEmptyString) );
+    }
     size_t pageCount = m_treebook->GetPageCount();
     for(size_t i=0; i<pageCount; i++) {
         wxWindow *page = m_treebook->GetPage(i);

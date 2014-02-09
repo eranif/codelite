@@ -496,6 +496,11 @@ void Manager::CreateProject ( ProjectData &data )
         bldConf->SetLinkOptions(linkoptions);
 #endif
         bldConf->SetCompilerType ( data.m_cmpType );
+        
+        // Make sure that the build configuration has a project type associated with it
+        if ( bldConf->GetProjectType().IsEmpty() ) {
+            bldConf->SetProjectType( settings->GetProjectType(wxEmptyString) );
+        }
         bldConf = settings->GetNextBuildConfiguration ( cookie );
     }
     proj->SetSettings ( settings );

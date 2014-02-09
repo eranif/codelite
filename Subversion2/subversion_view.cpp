@@ -979,9 +979,6 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
             ::wxSetWorkingDirectory( DoGetCurRepoPath() );
             ProcUtils::SafeExecuteCommand(command, lines);
         }
-        
-        wxString logmessage = ::wxJoin(lines, '\n');
-        m_plugin->GetConsole()->AppendText( logmessage + "\n");
         if ( lines.GetCount() < 3 ) {
             return;
         }

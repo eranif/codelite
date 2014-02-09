@@ -107,10 +107,19 @@ void DiffSideBySidePanel::Diff()
 void DiffSideBySidePanel::PrepareViews()
 {
     // Prepare the views by selecting the proper syntax highlight
-    LexerConfPtr leftLexer  = EditorConfigST::Get()->GetLexerForFile(m_filePickerLeft->GetPath());
+    wxFileName fnLeft(m_filePickerLeft->GetPath());
+    wxFileName fnRight(m_filePickerRight->GetPath());
+    
+    bool useRightSideLexer = false;
+    if ( fnLeft.GetExt() == "svn-base" ) {
+        // doing svn diff, use the lexer for the right side file
+        useRightSideLexer = true;
+    }
+    
+    LexerConfPtr leftLexer  = EditorConfigST::Get()->GetLexerForFile(useRightSideLexer ? fnRight.GetFullName() : fnLeft.GetFullName());
     wxASSERT(leftLexer);
 
-    LexerConfPtr rightLexer = EditorConfigST::Get()->GetLexerForFile(m_filePickerRight->GetPath());
+    LexerConfPtr rightLexer = EditorConfigST::Get()->GetLexerForFile(fnRight.GetFullName());
     wxASSERT(rightLexer);
 
     leftLexer->Apply( m_stcLeft, true );
@@ -118,7 +127,7 @@ void DiffSideBySidePanel::PrepareViews()
 
     // Create the markers we need
     m_stcLeft->MarkerDefine(RED_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcLeft->MarkerSetBackground(RED_MARKER, "PINK");
+    m_stcLeft->MarkerSetBackground(RED_MARKER, "RED");
     m_stcLeft->MarkerSetAlpha(RED_MARKER, 50);
 
     m_stcRight->MarkerDefine(GREEN_MARKER, wxSTC_MARK_BACKGROUND);
@@ -136,13 +145,13 @@ void DiffSideBySidePanel::PrepareViews()
     m_stcLeft->MarkerSetBackground(PLACE_HOLDER_MARKER, colourPlaceHolder);
     m_stcLeft->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
     m_stcLeft->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
-    m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE, "CYAN");
+    m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE, "BLUE");
 
     m_stcRight->MarkerDefine(PLACE_HOLDER_MARKER, wxSTC_MARK_BACKGROUND);
     m_stcRight->MarkerSetBackground(PLACE_HOLDER_MARKER, colourPlaceHolder);
     m_stcRight->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
     m_stcRight->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
-    m_stcRight->MarkerSetBackground(MARKER_SEQUENCE, "CYAN");
+    m_stcRight->MarkerSetBackground(MARKER_SEQUENCE, "BLUE");
 
 }
 

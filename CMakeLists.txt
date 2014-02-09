@@ -64,7 +64,7 @@ message("-- OS name ${OS_NAME}")
 if ( APPLE )
   set(WX_COMPONENTS "std")
 else ( APPLE )
-  set(WX_COMPONENTS "std aui propgrid stc")
+  set(WX_COMPONENTS "std aui propgrid stc ribbon")
 endif()
 
 if (WITH_WXPATH)

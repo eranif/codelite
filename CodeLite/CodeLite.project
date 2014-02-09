@@ -44,6 +44,8 @@
     <File Name="event_notifier.h"/>
     <File Name="xor_string.h"/>
     <File Name="xor_string.cpp"/>
+    <File Name="clcommandlineparser.h"/>
+    <File Name="clcommandlineparser.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
     <File Name="y.tab.h"/>

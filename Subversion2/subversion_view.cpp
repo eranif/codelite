@@ -40,6 +40,9 @@
 #include "cl_command_event.h"
 #include "workspacesvnsettings.h"
 #include <wx/cmdline.h>
+#include "dirsaver.h"
+#include "clcommandlineparser.h"
+#include "DiffSideBySidePanel.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
     EVT_UPDATE_UI(XRCID("svn_stop"),         SubversionView::OnStopUI)
@@ -960,30 +963,45 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
         // Use the internal diff viewer
         // --diff-cmd will execute external tool like this:
         // -u -L "php-plugin/XDebugManager.cpp	(revision 447)" -L "php-plugin/XDebugManager.cpp	(working copy)" C:\src\codelite\codelitephp\.svn\pristine\ae\ae25b80b53f432c6124c455ef815679df6ed4ea4.svn-base C:\src\codelite\codelitephp\php-plugin\XDebugManager.cpp 
-        command << " diff \"" << data->GetFilepath() << "\" --diff-cmd ";
-#ifdef __WXMSW__
+        command << " diff \"" << data->GetFilepath() << "\" --diff-cmd=";
         // We dont have proper echo on windows that can be used here, so 
         // we provide our own batch script wrapper
-        wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-        exePath.SetFullName("codelite-echo.bat");
-        command << "\"" << exePath.GetFullPath() << "\" ";
-#else
-        command << "echo ";
+        wxFileName echoTool(wxStandardPaths::Get().GetExecutablePath());
+        echoTool.SetFullName("codelite-echo");
+#ifdef __WXMSW__
+        echoTool.SetExt("exe");
 #endif
+        command << "\"" << echoTool.GetFullPath() << "\"";
+        
         wxArrayString lines;
-        ProcUtils::SafeExecuteCommand(command, lines);
+        {
+            DirSaver ds;
+            ::wxSetWorkingDirectory( DoGetCurRepoPath() );
+            ProcUtils::SafeExecuteCommand(command, lines);
+        }
+        
         wxString logmessage = ::wxJoin(lines, '\n');
         m_plugin->GetConsole()->AppendText( logmessage + "\n");
         if ( lines.GetCount() < 3 ) {
             return;
         }
         
-        wxCmdLineParser parser(lines.Item(2));
-        parser.AddSwitch("u");
-        parser.AddSwitch("L"); // Since we get 2 -L we make it a "switch"
-        parser.Parse();
+        clCommandLineParser parser(lines.Item(2));
+        wxArrayString tokens = parser.ToArray();
+        if ( tokens.GetCount() < 2 )
+            return;
+
+        wxString rightFile = tokens.Last();
+        tokens.RemoveAt(tokens.GetCount()-1);
+        wxString leftFile = tokens.Last();
         
-        parser.GetParamCount();
+        DiffSideBySidePanel *diffPanel = new DiffSideBySidePanel( EventNotifier::Get()->TopFrame());
+        diffPanel->SetFiles( leftFile, rightFile );
+        diffPanel->SetLeftFileReadOnly(true);
+        diffPanel->SetRightFileReadOnly(true);
+        diffPanel->Diff();
+        
+        m_plugin->GetManager()->AddPage( diffPanel, _("Svn Diff: ") + wxFileName(data->GetFilepath()).GetFullName(), wxNullBitmap, true);
     }
 }
 

@@ -1581,7 +1581,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"The working directory set before executing or debugging the program"
+													"m_value":	"The working directory to set before executing or debugging the program"
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",
@@ -1837,11 +1837,11 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Label:",
-													"m_value":	"Use separate debguger args"
+													"m_value":	"Use separate debugger args"
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"When enabled (.e.g. set to True) codelite will pass the arguments sets in the 'Debug Program Arguments'"
+													"m_value":	"When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",

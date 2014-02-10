@@ -2629,11 +2629,11 @@ void Manager::UpdateGotControl ( const DebuggerEventData &e )
     if ( (reason != DBG_BP_HIT) || dinfo.whenBreakpointHitRaiseCodelite ) {
         if ( clMainFrame::Get()->IsIconized() || !clMainFrame::Get()->IsShown() ) {
             clMainFrame::Get()->Restore();
-            clMainFrame::Get()->Raise();
         }
-        if ( !clMainFrame::Get()->IsShownOnScreen() ) {
-            clMainFrame::Get()->Raise();
-        }
+        long curFlags = clMainFrame::Get()->GetWindowStyleFlag();
+        clMainFrame::Get()->SetWindowStyleFlag(curFlags | wxSTAY_ON_TOP);
+        clMainFrame::Get()->Raise();
+        clMainFrame::Get()->SetWindowStyleFlag(curFlags);
         m_dbgCanInteract = true;
     }
 

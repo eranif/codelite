@@ -22,6 +22,8 @@
 #include <wx/ribbon/page.h>
 #include <wx/ribbon/panel.h>
 #include <wx/ribbon/buttonbar.h>
+#include <wx/splitter.h>
+#include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include "codelite_exports.h"
 
@@ -54,9 +56,14 @@ protected:
     wxRibbonButtonBar* m_ribbonButtonBar49;
     wxRibbonPanel* m_ribbonPanel83;
     wxRibbonButtonBar* m_ribbonButtonBar85;
+    wxSplitterWindow* m_splitter101;
+    wxPanel* m_splitterPage105;
+    wxStaticText* m_staticTextLeft;
     wxFilePickerCtrl* m_filePickerLeft;
-    wxFilePickerCtrl* m_filePickerRight;
     wxStyledTextCtrl* m_stcLeft;
+    wxPanel* m_splitterPage109;
+    wxStaticText* m_staticTextRight;
+    wxFilePickerCtrl* m_filePickerRight;
     wxStyledTextCtrl* m_stcRight;
 
 protected:
@@ -71,7 +78,7 @@ protected:
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
-    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,500), long style = wxTAB_TRAVERSAL);
     virtual ~DiffSideBySidePanelBase();
 };
 

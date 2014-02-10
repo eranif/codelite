@@ -2066,10 +2066,10 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
         fp.Close();
     }
     DiffSideBySidePanel* p = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
-    p->SetFiles(tmpFilePath, fnWorkingCopy.GetFullPath());
+    DiffSideBySidePanel::FileInfo l(tmpFilePath, _("HEAD version"), true);
+    DiffSideBySidePanel::FileInfo r(fnWorkingCopy.GetFullPath(), _("Working copy"), true);
+    p->SetFilesDetails(l, r);
     p->Diff();
-    p->SetLeftFileReadOnly(true);
-    p->SetRightFileReadOnly(true);
     
     // Remove our temp file
     ::wxRemoveFile( tmpFile.GetFullPath() );

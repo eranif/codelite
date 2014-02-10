@@ -992,12 +992,17 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
         tokens.RemoveAt(tokens.GetCount()-1);
         wxString leftFile = tokens.Last();
         
-        DiffSideBySidePanel *diffPanel = new DiffSideBySidePanel( EventNotifier::Get()->TopFrame());
-        diffPanel->SetFiles( leftFile, rightFile );
-        diffPanel->SetLeftFileReadOnly(true);
-        diffPanel->SetRightFileReadOnly(true);
-        diffPanel->Diff();
+        // get the left file title
+        wxString title_left, title_right;
+        title_right = _("Working copy");
+        title_left  = _("HEAD version");
         
+        DiffSideBySidePanel *diffPanel = new DiffSideBySidePanel( EventNotifier::Get()->TopFrame());
+        DiffSideBySidePanel::FileInfo l(leftFile, title_left, true);
+        DiffSideBySidePanel::FileInfo r(rightFile, title_right, true);
+        diffPanel->SetFilesDetails(l, r);
+        diffPanel->Diff();
+
         m_plugin->GetManager()->AddPage( diffPanel, _("Svn Diff: ") + wxFileName(data->GetFilepath()).GetFullName(), wxNullBitmap, true);
     }
 }

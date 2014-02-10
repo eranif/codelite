@@ -8,7 +8,8 @@
 #define RED_MARKER          1
 #define GREEN_MARKER        2
 #define PLACE_HOLDER_MARKER 3
-#define MARKER_SEQUENCE     4
+
+#define MARKER_SEQUENCE  4
 
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
@@ -19,17 +20,11 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
 {
 }
 
-void DiffSideBySidePanel::SetFiles(const wxFileName& left, const wxFileName& right)
-{
-    m_filePickerLeft->SetPath( left.GetFullPath() );
-    m_filePickerRight->SetPath( right.GetFullPath() );
-}
-
 void DiffSideBySidePanel::Diff()
 {
     wxFileName fnLeft (m_filePickerLeft->GetPath());
     wxFileName fnRIght(m_filePickerRight->GetPath());
-    
+
     if ( !fnLeft.Exists( ) ) {
         ::wxMessageBox(wxString() << _("Left Side File:\n") << fnLeft.GetFullPath() << _(" does not exist!"), "CodeLite", wxICON_ERROR|wxCENTER|wxOK);
         return;
@@ -109,13 +104,13 @@ void DiffSideBySidePanel::PrepareViews()
     // Prepare the views by selecting the proper syntax highlight
     wxFileName fnLeft(m_filePickerLeft->GetPath());
     wxFileName fnRight(m_filePickerRight->GetPath());
-    
+
     bool useRightSideLexer = false;
     if ( fnLeft.GetExt() == "svn-base" ) {
         // doing svn diff, use the lexer for the right side file
         useRightSideLexer = true;
     }
-    
+
     LexerConfPtr leftLexer  = EditorConfigST::Get()->GetLexerForFile(useRightSideLexer ? fnRight.GetFullName() : fnLeft.GetFullName());
     wxASSERT(leftLexer);
 
@@ -126,32 +121,41 @@ void DiffSideBySidePanel::PrepareViews()
     rightLexer->Apply( m_stcRight, true );
 
     // Create the markers we need
+    wxColour red, green, grey, sideMarker;
+    if ( DrawingUtils::IsThemeDark() ) {
+        red   = "RED";
+        green = "GREEN";
+        grey  = "dark grey";
+        sideMarker = "yellow";
+        
+    } else {
+        red   = "RED";
+        green = "GREEN";
+        grey  = "LIGHT GREY";
+        sideMarker = "dark grey";
+    }
+    
     m_stcLeft->MarkerDefine(RED_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcLeft->MarkerSetBackground(RED_MARKER, "RED");
+    m_stcLeft->MarkerSetBackground(RED_MARKER, red);
     m_stcLeft->MarkerSetAlpha(RED_MARKER, 50);
+    
+    m_stcLeft->MarkerDefine(PLACE_HOLDER_MARKER, wxSTC_MARK_BACKGROUND);
+    m_stcLeft->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
+    m_stcLeft->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
+    
+    m_stcLeft->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_UNDERLINE);
+    m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
 
     m_stcRight->MarkerDefine(GREEN_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcRight->MarkerSetBackground(GREEN_MARKER, "FOREST GREEN");
+    m_stcRight->MarkerSetBackground(GREEN_MARKER, green);
     m_stcRight->MarkerSetAlpha(GREEN_MARKER, 50);
-
-    wxString colourPlaceHolder;
-    if ( DrawingUtils::IsThemeDark() ) {
-        colourPlaceHolder = "GREY";
-    } else {
-        colourPlaceHolder = "LIGHT GREY";
-    }
-
-    m_stcLeft->MarkerDefine(PLACE_HOLDER_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcLeft->MarkerSetBackground(PLACE_HOLDER_MARKER, colourPlaceHolder);
-    m_stcLeft->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
-    m_stcLeft->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
-    m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE, "BLUE");
-
+    
     m_stcRight->MarkerDefine(PLACE_HOLDER_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcRight->MarkerSetBackground(PLACE_HOLDER_MARKER, colourPlaceHolder);
+    m_stcRight->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
     m_stcRight->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
-    m_stcRight->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
-    m_stcRight->MarkerSetBackground(MARKER_SEQUENCE, "BLUE");
+    
+    m_stcRight->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_UNDERLINE);
+    m_stcRight->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
 
 }
 
@@ -159,10 +163,10 @@ void DiffSideBySidePanel::UpdateViews(const wxString& left, const wxString& righ
 {
     bool leftOldReadonly  = m_stcLeft->IsEditable();
     bool rightOldReadonly = m_stcRight->IsEditable();
-    
+
     m_stcLeft->SetEditable(true);
     m_stcRight->SetEditable(true);
-    
+
     m_stcLeft->SetText( left );
     m_stcLeft->MarkerDeleteAll(RED_MARKER);
 
@@ -190,7 +194,7 @@ void DiffSideBySidePanel::UpdateViews(const wxString& left, const wxString& righ
         int line = m_rightPlaceholdersMarkers.at(i);
         m_stcRight->MarkerAdd(line, PLACE_HOLDER_MARKER);
     }
-    
+
     // Restore the 'read-only' states
     m_stcLeft->SetEditable(leftOldReadonly);
     m_stcRight->SetEditable(rightOldReadonly);
@@ -228,14 +232,16 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
     }
 }
 
-void DiffSideBySidePanel::SetLeftFileReadOnly(bool b)
+void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile)
 {
-    m_stcLeft->SetEditable( !b );
-}
+    // left file
+    m_stcLeft->SetEditable( !leftFile.readOnly );
+    m_filePickerLeft->SetPath( leftFile.filename.GetFullPath() );
+    m_staticTextLeft->SetLabel( leftFile.title );
 
-void DiffSideBySidePanel::SetRightFileReadOnly(bool b)
-{
-    m_stcRight->SetEditable( !b );
+    m_stcRight->SetEditable( !rightFile.readOnly );
+    m_filePickerRight->SetPath( rightFile.filename.GetFullPath() );
+    m_staticTextRight->SetLabel( rightFile.title );
 }
 
 void DiffSideBySidePanel::OnNextDiffSequence(wxRibbonButtonBarEvent& event)
@@ -243,7 +249,8 @@ void DiffSideBySidePanel::OnNextDiffSequence(wxRibbonButtonBarEvent& event)
     m_cur_sequence++; // advance the sequence
     int firstLine = m_sequences.at(m_cur_sequence).first;
     int lastLine  = m_sequences.at(m_cur_sequence).second;
-    DoDrawSequenceMarkers(firstLine, lastLine);
+    DoDrawSequenceMarkers(firstLine, lastLine, m_stcLeft);
+    DoDrawSequenceMarkers(firstLine, lastLine, m_stcRight);
 }
 
 void DiffSideBySidePanel::OnPrevDiffSequence(wxRibbonButtonBarEvent& event)
@@ -251,7 +258,8 @@ void DiffSideBySidePanel::OnPrevDiffSequence(wxRibbonButtonBarEvent& event)
     m_cur_sequence--;
     int firstLine = m_sequences.at(m_cur_sequence).first;
     int lastLine  = m_sequences.at(m_cur_sequence).second;
-    DoDrawSequenceMarkers(firstLine, lastLine);
+    DoDrawSequenceMarkers(firstLine, lastLine, m_stcLeft);
+    DoDrawSequenceMarkers(firstLine, lastLine, m_stcRight);
 }
 
 void DiffSideBySidePanel::OnRefreshDiff(wxRibbonButtonBarEvent& event)
@@ -274,26 +282,24 @@ void DiffSideBySidePanel::DoClean()
     m_selectedSequence = std::make_pair(-1, -1);
 }
 
-void DiffSideBySidePanel::DoDrawSequenceMarkers(int firstLine, int lastLine)
+void DiffSideBySidePanel::DoDrawSequenceMarkers(int firstLine, int lastLine, wxStyledTextCtrl* ctrl)
 {
     // delete old markers
-    m_stcLeft->MarkerDeleteAll(MARKER_SEQUENCE);
-    m_stcRight->MarkerDeleteAll(MARKER_SEQUENCE);
-
-    // Add the markers
-    for(int i=firstLine; i<lastLine; ++i ) {
-        m_stcLeft->MarkerAdd(i, MARKER_SEQUENCE);
-        m_stcRight->MarkerAdd(i, MARKER_SEQUENCE);
-    }
-
+    ctrl->MarkerDeleteAll(MARKER_SEQUENCE);
+    
+    int line1 = firstLine - 1;
+    int line2 = lastLine - 1;
+    
+    ctrl->MarkerAdd( line1, MARKER_SEQUENCE );
+    ctrl->MarkerAdd( line2, MARKER_SEQUENCE );
+    
     // Make sure that the seq lines are visible
     int visibleLine = firstLine-5;
     if ( visibleLine < 0 ) {
         visibleLine = 0;
     }
 
-    m_stcLeft->ScrollToLine(visibleLine);
-    m_stcRight->ScrollToLine(visibleLine);
+    ctrl->ScrollToLine(visibleLine);
 }
 
 void DiffSideBySidePanel::OnNextDiffUI(wxUpdateUIEvent& event)

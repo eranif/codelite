@@ -49,7 +49,7 @@ public:
         int m_type;
         wxString m_line;
         LineInfo(const wxString &line, int type ) : m_type(type), m_line(line) {}
-        LineInfo() : m_type(LINE_COMMON) {}
+        LineInfo() : m_type(LINE_PLACEHOLDER), m_line("\n") {}
     };
     typedef std::vector<LineInfo> LineInfoVec_t;
     typedef std::vector<std::pair<int, int> > SeqLinePair_t;

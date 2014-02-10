@@ -13,7 +13,24 @@ public:
         wxFileName filename;
         wxString title;
         bool readOnly;
-        FileInfo(const wxFileName& fn, const wxString &caption, bool ro) : filename(fn), title(caption), readOnly(ro) {}
+        bool deleteFileOnDestroy;
+        
+        FileInfo(const wxFileName& fn, const wxString &caption, bool ro) : filename(fn), title(caption), readOnly(ro), deleteFileOnDestroy(false) {}
+        FileInfo() : readOnly(true), deleteFileOnDestroy(false) {}
+        
+        void Clear() {
+            filename.Clear();
+            title.Clear();
+            readOnly = true;
+            deleteFileOnDestroy = false;
+        }
+        
+        void DeleteFileIfNeeded() {
+            if ( deleteFileOnDestroy && filename.IsOk() && filename.Exists() ) {
+                ::wxRemoveFile( filename.GetFullPath() );
+            }
+            Clear();
+        }
     };
     
     Markers_t m_leftRedMarkers;             /// left view list of lines with red markers ("removed")
@@ -22,8 +39,10 @@ public:
     Markers_t m_rightPlaceholdersMarkers;   /// right view list of lines with green markers ("added")
     std::vector< std::pair<int, int> > m_sequences; // start-line - end-line pairs
     int m_cur_sequence;
-    std::pair<int, int> m_selectedSequence;
-
+    
+    DiffSideBySidePanel::FileInfo m_leftFile;
+    DiffSideBySidePanel::FileInfo m_rightFile;
+    
 protected:
     virtual void OnCopyLeftToRightUI(wxUpdateUIEvent& event);
     virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event);

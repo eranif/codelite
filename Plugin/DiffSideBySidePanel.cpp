@@ -19,6 +19,8 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
 
 DiffSideBySidePanel::~DiffSideBySidePanel()
 {
+    m_leftFile.DeleteFileIfNeeded();
+    m_rightFile.DeleteFileIfNeeded();
 }
 
 void DiffSideBySidePanel::Diff()
@@ -35,6 +37,7 @@ void DiffSideBySidePanel::Diff()
         ::wxMessageBox(wxString() << _("Right Side File:\n") << fnRIght.GetFullPath() << _(" does not exist!"), "CodeLite", wxICON_ERROR|wxCENTER|wxOK);
         return;
     }
+    
     // Cleanup
     DoClean();
 
@@ -239,14 +242,20 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
 
 void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile)
 {
+    m_leftFile.DeleteFileIfNeeded();  // will also call Clear()
+    m_rightFile.DeleteFileIfNeeded(); // will also call Clear()
+    
+    m_leftFile = leftFile;
+    m_rightFile = rightFile;
+    
     // left file
-    m_stcLeft->SetEditable( !leftFile.readOnly );
-    m_filePickerLeft->SetPath( leftFile.filename.GetFullPath() );
-    m_staticTextLeft->SetLabel( leftFile.title );
+    m_stcLeft->SetEditable( !m_leftFile.readOnly );
+    m_filePickerLeft->SetPath( m_leftFile.filename.GetFullPath() );
+    m_staticTextLeft->SetLabel( m_leftFile.title );
 
-    m_stcRight->SetEditable( !rightFile.readOnly );
-    m_filePickerRight->SetPath( rightFile.filename.GetFullPath() );
-    m_staticTextRight->SetLabel( rightFile.title );
+    m_stcRight->SetEditable( !m_rightFile.readOnly );
+    m_filePickerRight->SetPath( m_rightFile.filename.GetFullPath() );
+    m_staticTextRight->SetLabel( m_rightFile.title );
 }
 
 void DiffSideBySidePanel::OnNextDiffSequence(wxRibbonButtonBarEvent& event)
@@ -284,7 +293,6 @@ void DiffSideBySidePanel::DoClean()
     m_stcLeft->SetText("");
     m_stcRight->SetText("");
     m_cur_sequence = wxNOT_FOUND;
-    m_selectedSequence = std::make_pair(-1, -1);
 }
 
 void DiffSideBySidePanel::DoDrawSequenceMarkers(int firstLine, int lastLine, wxStyledTextCtrl* ctrl)

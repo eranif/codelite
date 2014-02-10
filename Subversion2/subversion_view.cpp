@@ -999,7 +999,7 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
         
         DiffSideBySidePanel *diffPanel = new DiffSideBySidePanel( EventNotifier::Get()->TopFrame());
         DiffSideBySidePanel::FileInfo l(leftFile, title_left, true);
-        DiffSideBySidePanel::FileInfo r(rightFile, title_right, true);
+        DiffSideBySidePanel::FileInfo r(rightFile, title_right, false);
         diffPanel->SetFilesDetails(l, r);
         diffPanel->Diff();
 

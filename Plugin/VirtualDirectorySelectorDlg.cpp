@@ -209,28 +209,47 @@ void VirtualDirectorySelectorDlg::OnButtonOkUI(wxUpdateUIEvent& event)
     event.Enable(id.IsOk() && m_treeCtrl->GetItemImage(id) == 1);
 }
 
-bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
+wxTreeItemId VirtualDirectorySelectorDlg::FindItemForPath(const wxString& path)
 {
-    wxTreeItemId item;
+    if (path.empty()) {
+        return wxTreeItemId();
+    }
 
     wxArrayString tokens = wxStringTokenize(path, wxT(":"), wxTOKEN_STRTOK);
+    wxTreeItemId item = m_treeCtrl->GetRootItem();
+    if (m_treeCtrl->GetWindowStyle() & wxTR_HIDE_ROOT) {
+        if (!item.IsOk() || !m_treeCtrl->HasChildren(item)) {
+            return wxTreeItemId();
+        }
+    }
+    // We need to pump-prime with the first token, otherwise the loop is never entered
+    wxTreeItemIdValue cookie;
+    item = m_treeCtrl->GetFirstChild(item, cookie);
 
-    for (size_t i=0; i<tokens.GetCount(); i++) {
-        if(item.IsOk() && m_treeCtrl->HasChildren(item)) {
-
+    for (size_t i=1; i<tokens.GetCount(); ++i) {
+        if (item.IsOk() && m_treeCtrl->HasChildren(item)) {
             // loop over the children of this node, and search for a match
             wxTreeItemIdValue cookie;
             wxTreeItemId child = m_treeCtrl->GetFirstChild(item, cookie);
-            while(child.IsOk()) {
-                if(m_treeCtrl->GetItemText(child) == tokens.Item(i)) {
+            while (child.IsOk()) {
+                if (m_treeCtrl->GetItemText(child) == tokens.Item(i)) {
                     item = child;
+                    if (i+1 == tokens.GetCount()) {
+                        return item; // Success!
+                    }
                     break;
                 }
-                child = m_treeCtrl->GetNextChild(child, cookie);
+                child = m_treeCtrl->GetNextChild(item, cookie);
             }
         }
     }
 
+    return wxTreeItemId();
+}
+
+bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
+{
+    wxTreeItemId item = FindItemForPath(path);
     if (!item.IsOk()) {
         // No match, so try to find a sensible default
         // Start with the root, but this will fail for a hidden root...
@@ -267,7 +286,20 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
         return;
     
     wxString curpath = DoGetPath(m_treeCtrl, id, false);
-    wxString name = m_suggestedName;
+    wxTreeItemId item = FindItemForPath(m_projectName + ':' + m_suggestedName);
+    wxString name;
+
+    if (!item.IsOk()) { // We don't want to suggest an already-existing path!
+        name = m_suggestedName;
+        wxString rest;
+        if (name.StartsWith(curpath.AfterFirst(':'), &rest)) {
+            name = rest;
+            if (!name.empty() && (name.GetChar(0) == ':')) { // Which it probably will be
+                name = name.AfterFirst(':');
+            }
+        }
+    }
+
     if (name.empty()) {
         name << "Folder" << ++counter;
     }

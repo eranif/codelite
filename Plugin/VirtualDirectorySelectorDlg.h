@@ -64,6 +64,7 @@ public:
         return m_staticTextPreview->GetLabel();
     }
     bool SelectPath(const wxString &path);
+    wxTreeItemId FindItemForPath(const wxString& path);
     void SetText(const wxString& text);
     void SetSuggestedName(const wxString& suggestedName) {
         m_suggestedName = suggestedName;

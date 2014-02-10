@@ -175,8 +175,11 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgPropDebugger = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxEnumProperty( _("Debugger"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
     m_pgPropDebugger->SetHelpString(_("Select the debugger type to use for this project"));
     
+    m_pgPropUseSeparateDebuggerArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxBoolProperty( _("Use separate debguger args"), wxPG_LABEL, 1) );
+    m_pgPropUseSeparateDebuggerArgs->SetHelpString(_("When enabled (.e.g. set to True) codelite will pass the arguments sets in the 'Debug Program Arguments'"));
+    
     m_pgPropDebugArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxStringProperty( _("Debug Program Arguments"), wxPG_LABEL, wxT("")) );
-    m_pgPropDebugArgs->SetHelpString(_("When running the executable under the debugger, pass it these arguments\nIf this field is left empty, CodeLite will use the arguments provided for the execution"));
+    m_pgPropDebugArgs->SetHelpString(_("Arguments to pass to the debugger"));
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

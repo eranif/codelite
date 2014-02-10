@@ -80,6 +80,7 @@ protected:
     wxPGProperty* m_pgPropArgs;
     wxPGProperty* CATEGORY_DEBUGGER;
     wxPGProperty* m_pgPropDebugger;
+    wxPGProperty* m_pgPropUseSeparateDebuggerArgs;
     wxPGProperty* m_pgPropDebugArgs;
 
 protected:

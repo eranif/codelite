@@ -9,7 +9,8 @@
 #define GREEN_MARKER        2
 #define PLACE_HOLDER_MARKER 3
 
-#define MARKER_SEQUENCE  4
+#define MARKER_SEQUENCE          4
+#define MARKER_SEQUENCE_VERTICAL 5
 
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
@@ -126,13 +127,13 @@ void DiffSideBySidePanel::PrepareViews()
         red   = "RED";
         green = "GREEN";
         grey  = "dark grey";
-        sideMarker = "yellow";
+        sideMarker = "CYAN";
         
     } else {
         red   = "RED";
         green = "GREEN";
         grey  = "LIGHT GREY";
-        sideMarker = "dark grey";
+        sideMarker = "BLUE";
     }
     
     m_stcLeft->MarkerDefine(RED_MARKER, wxSTC_MARK_BACKGROUND);
@@ -143,8 +144,10 @@ void DiffSideBySidePanel::PrepareViews()
     m_stcLeft->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
     m_stcLeft->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
     
-    m_stcLeft->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_UNDERLINE);
+    m_stcLeft->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
     m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
+    m_stcLeft->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_VLINE);
+    m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE_VERTICAL, sideMarker);
 
     m_stcRight->MarkerDefine(GREEN_MARKER, wxSTC_MARK_BACKGROUND);
     m_stcRight->MarkerSetBackground(GREEN_MARKER, green);
@@ -154,8 +157,10 @@ void DiffSideBySidePanel::PrepareViews()
     m_stcRight->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
     m_stcRight->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
     
-    m_stcRight->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_UNDERLINE);
+    m_stcRight->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
     m_stcRight->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
+    m_stcRight->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_VLINE);
+    m_stcRight->MarkerSetBackground(MARKER_SEQUENCE_VERTICAL, sideMarker);
 
 }
 
@@ -286,12 +291,14 @@ void DiffSideBySidePanel::DoDrawSequenceMarkers(int firstLine, int lastLine, wxS
 {
     // delete old markers
     ctrl->MarkerDeleteAll(MARKER_SEQUENCE);
+    ctrl->MarkerDeleteAll(MARKER_SEQUENCE_VERTICAL);
     
-    int line1 = firstLine - 1;
-    int line2 = lastLine - 1;
+    int line1 = firstLine;
+    int line2 = lastLine;
     
-    ctrl->MarkerAdd( line1, MARKER_SEQUENCE );
-    ctrl->MarkerAdd( line2, MARKER_SEQUENCE );
+    for(int i=line1; i<line2; ++i) {
+        ctrl->MarkerAdd(i, MARKER_SEQUENCE);
+    }
     
     // Make sure that the seq lines are visible
     int visibleLine = firstLine-5;

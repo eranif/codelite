@@ -96,7 +96,7 @@ ProjectSettingsDlg::ProjectSettingsDlg( wxWindow* parent, WorkspaceTab* workspac
     m_infobar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
     
     ShowHideDisabledMessage();
-    ShowCustomProjectMessage( IsCustomBuildEnabled() );
+    //ShowCustomProjectMessage( IsCustomBuildEnabled() );
 }
 
 void ProjectSettingsDlg::DoClearDialog()

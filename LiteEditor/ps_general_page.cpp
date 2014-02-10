@@ -62,7 +62,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     choices.Add(dbgs);
     m_pgPropDebugger->SetChoices( choices );
     m_pgPropDebugger->SetChoiceSelection( choices.Index(buildConf->GetDebuggerType()) );
-
+    m_pgPropUseSeparateDebuggerArgs->SetValue( buildConf->GetUseSeparateDebugArgs() );
     m_dlg->SetIsProjectEnabled( buildConf->IsProjectEnabled() );
 }
 
@@ -83,6 +83,7 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
     buildConf->SetDebugArgs( GetPropertyAsString(m_pgPropDebugArgs) );
     buildConf->SetIsGUIProgram( GetPropertyAsBool(m_pgPropGUIApp) );
     buildConf->SetIsProjectEnabled( m_checkBoxEnabled->IsChecked() );
+    buildConf->SetUseSeparateDebugArgs( GetPropertyAsBool(m_pgPropUseSeparateDebuggerArgs) );
 }
 
 void PSGeneralPage::Clear()

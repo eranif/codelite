@@ -2497,9 +2497,9 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
         editor->HighlightLine (lineno);
         editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1), false);
         
-    } else if (clMainFrame::Get()->GetMainBook()->OpenFile ( fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND) && lineno > 0) {
-        editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
-        if ( editor ) {
+    } else {
+        editor = clMainFrame::Get()->GetMainBook()->OpenFile (fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND);
+        if ( editor && lineno > 0 ) {
             editor->HighlightLine(lineno);
             editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1), false);
         }

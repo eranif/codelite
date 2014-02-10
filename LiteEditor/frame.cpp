@@ -1928,7 +1928,7 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent &event)
 void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
     if (editor) {
         editor->CompleteWord(true);
     }
@@ -1937,7 +1937,7 @@ void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event)
 void clMainFrame::OnCompleteWord(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
     if (editor) {
         editor->CompleteWord();
     }
@@ -1946,7 +1946,7 @@ void clMainFrame::OnCompleteWord(wxCommandEvent& event)
 void clMainFrame::OnFunctionCalltip(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LEditor *editor = GetMainBook()->GetActiveEditor();
+    LEditor *editor = GetMainBook()->GetActiveEditor(true);
     if (editor) {
         editor->ShowFunctionTipFromCurrentPos();
     }

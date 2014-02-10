@@ -515,7 +515,7 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
         projName = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
     }
 
-    LEditor* editor = GetActiveEditor();
+    LEditor* editor = GetActiveEditor(true);
     BrowseRecord jumpfrom = editor ? editor->CreateBrowseRecord() : BrowseRecord();
 
     editor = FindEditor(fileName.GetFullPath());

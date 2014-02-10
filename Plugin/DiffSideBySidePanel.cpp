@@ -56,9 +56,19 @@ void DiffSideBySidePanel::Diff()
     m_sequences = d.GetSequences();
 
     if ( m_sequences.empty() ) {
-        DoClean();
         // Files are the same !
         ::wxMessageBox(_("Files are the same!"));
+        m_stcLeft->SetReadOnly(false);
+        m_stcRight->SetReadOnly(false);
+        
+        m_stcLeft->LoadFile( fnLeft.GetFullPath() );
+        m_stcRight->LoadFile( fnRIght.GetFullPath() );
+        
+        m_stcLeft->SetSavePoint();
+        m_stcRight->SetSavePoint();
+        
+        m_stcLeft->SetReadOnly(true);
+        m_stcRight->SetReadOnly(true);
         return;
     }
 
@@ -292,9 +302,15 @@ void DiffSideBySidePanel::DoClean()
     m_leftPlaceholdersMarkers.clear();
     m_rightPlaceholdersMarkers.clear();
     m_sequences.clear();
-
+    
+    m_stcLeft->SetReadOnly(false);
+    m_stcRight->SetReadOnly(false);
     m_stcLeft->SetText("");
     m_stcRight->SetText("");
+    m_stcLeft->SetSavePoint();
+    m_stcRight->SetSavePoint();
+    m_stcLeft->SetReadOnly(true);
+    m_stcRight->SetReadOnly(true);
     m_cur_sequence = wxNOT_FOUND;
 }
 
@@ -322,14 +338,12 @@ void DiffSideBySidePanel::DoDrawSequenceMarkers(int firstLine, int lastLine, wxS
 
 void DiffSideBySidePanel::OnNextDiffUI(wxUpdateUIEvent& event)
 {
-    bool canNext = ((m_cur_sequence+1) < (int)m_sequences.size());
-    event.Enable(!m_sequences.empty() && canNext);
+    event.Enable( CanNextDiff() );
 }
 
 void DiffSideBySidePanel::OnPrevDiffUI(wxUpdateUIEvent& event)
 {
-    bool canPrev = ( (m_cur_sequence-1) >= 0 );
-    event.Enable(!m_sequences.empty() && canPrev);
+    event.Enable( CanPrevDiff() );
 }
 
 void DiffSideBySidePanel::OnCopyLeftToRightUI(wxUpdateUIEvent& event)
@@ -345,11 +359,19 @@ void DiffSideBySidePanel::OnCopyRightToLeftUI(wxUpdateUIEvent& event)
 void DiffSideBySidePanel::OnCopyLeftToRight(wxRibbonButtonBarEvent& event)
 {
     DoCopyCurrentSequence(m_stcLeft, m_stcRight);
+    if ( CanNextDiff() ) {
+        wxRibbonButtonBarEvent dummy;
+        OnNextDiffSequence( dummy );
+    }
 }
 
 void DiffSideBySidePanel::OnCopyRightToLeft(wxRibbonButtonBarEvent& event)
 {
     DoCopyCurrentSequence(m_stcRight, m_stcLeft);
+    if ( CanNextDiff() ) {
+        wxRibbonButtonBarEvent dummy;
+        OnNextDiffSequence( dummy );
+    }
 }
 
 void DiffSideBySidePanel::DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to)
@@ -382,6 +404,10 @@ void DiffSideBySidePanel::DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyled
         to->MarkerDelete(i, GREEN_MARKER);
         to->MarkerDelete(i, PLACE_HOLDER_MARKER);
         to->MarkerDelete(i, MARKER_SEQUENCE);
+        
+        from->MarkerDelete(i, RED_MARKER);
+        from->MarkerDelete(i, GREEN_MARKER);
+        from->MarkerDelete(i, PLACE_HOLDER_MARKER);
     }
 
     wxString textToCopy = from->GetTextRange(fromStartPos, fromEndPos);
@@ -389,10 +415,11 @@ void DiffSideBySidePanel::DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyled
     to->ReplaceSelection(textToCopy);
     for(int i=placeHolderMarkerFirstLine; i<placeHolderMarkerLastLine; ++i) {
         to->MarkerAdd(i, PLACE_HOLDER_MARKER);
+        from->MarkerAdd(i, PLACE_HOLDER_MARKER);
     }
 
     // Restore the MARKER_SEQUENCE
-    for(int i=toLine1; i<toLine2-1; ++i) {
+    for(int i=toLine1; i<toLine2; ++i) {
         to->MarkerAdd(i, MARKER_SEQUENCE);
     }
     to->SetReadOnly(true);
@@ -448,6 +475,7 @@ void DiffSideBySidePanel::OnSaveChanges(wxRibbonButtonBarEvent& event)
 {
     DoSave( m_stcLeft,  m_leftFile.filename );
     DoSave( m_stcRight, m_rightFile.filename );
+    Diff();
 }
 
 void DiffSideBySidePanel::OnSaveChangesUI(wxUpdateUIEvent& event)
@@ -455,3 +483,14 @@ void DiffSideBySidePanel::OnSaveChangesUI(wxUpdateUIEvent& event)
     event.Enable( m_stcLeft->IsModified() || m_stcRight->IsModified() );
 }
 
+bool DiffSideBySidePanel::CanNextDiff()
+{
+    bool canNext = ((m_cur_sequence+1) < (int)m_sequences.size());
+    return !m_sequences.empty() && canNext;
+}
+
+bool DiffSideBySidePanel::CanPrevDiff()
+{
+    bool canPrev = ( (m_cur_sequence-1) >= 0 );
+    return !m_sequences.empty() && canPrev;
+}

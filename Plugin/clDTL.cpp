@@ -119,23 +119,24 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight)
         }
     }
     
-    if ( !tmpSeqLeft.empty() || !tmpSeqRight.empty() ) {
+    if ( state == STATE_IN_SEQ ) {
         // set the sequence size
         seqSize = ::wxMax(tmpSeqLeft.size(), tmpSeqRight.size() );
-        
-        m_sequences.push_back( std::make_pair(seqStartLine, seqStartLine + seqSize) );
-        seqStartLine = wxNOT_FOUND;
-        state = STATE_NONE;
-        
-        // increase the buffer size
-        tmpSeqLeft.resize(seqSize);
-        tmpSeqRight.resize(seqSize);
-        
-        m_resultLeft.insert(m_resultLeft.end(), tmpSeqLeft.begin(), tmpSeqLeft.end());
-        m_resultRight.insert(m_resultRight.end(), tmpSeqRight.begin(), tmpSeqRight.end());
+        if ( seqSize ) {
+            m_sequences.push_back( std::make_pair(seqStartLine, seqStartLine + seqSize) );
+            seqStartLine = wxNOT_FOUND;
+            state = STATE_NONE;
+            
+            // increase the buffer size
+            tmpSeqLeft.resize(seqSize);
+            tmpSeqRight.resize(seqSize);
+            
+            m_resultLeft.insert(m_resultLeft.end(), tmpSeqLeft.begin(), tmpSeqLeft.end());
+            m_resultRight.insert(m_resultRight.end(), tmpSeqRight.begin(), tmpSeqRight.end());
 
-        tmpSeqLeft.clear();
-        tmpSeqRight.clear();
-        seqSize = 0;
+            tmpSeqLeft.clear();
+            tmpSeqRight.clear();
+            seqSize = 0;
+        }
     }
 }

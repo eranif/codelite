@@ -65,7 +65,10 @@ protected:
     void DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
     void DoGetPositionsToCopy(wxStyledTextCtrl* stc, int& startPos, int& endPos, int& placeHolderMarkerFirstLine, int& placeHolderMarkerLastLine);
     void DoSave(wxStyledTextCtrl* stc, const wxFileName& fn);
-
+    
+    bool CanNextDiff();
+    bool CanPrevDiff();
+    
 public:
     DiffSideBySidePanel(wxWindow* parent);
     virtual ~DiffSideBySidePanel();

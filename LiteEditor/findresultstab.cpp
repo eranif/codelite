@@ -766,7 +766,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxStyledText
                 }
             }
             if (!removed) {
-                editor->SetEnsureCaretIsVisible(position);
+                editor->SetEnsureCaretIsVisible(position, true, true);
                 int lineNumber = editor->LineFromPos(position);
                 if ( lineNumber ) {
                     lineNumber--;

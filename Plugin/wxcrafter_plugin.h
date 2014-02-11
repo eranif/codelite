@@ -48,7 +48,9 @@ protected:
     enum {
         ID_TOOL_COPY_DIFF_LEFT_TO_RIGHT = 1001,
         ID_TOOL_COPY_DIFF_RIGHT_TO_LEFT = 1002,
-        ID_TOOL_SAVE = 1003,
+        ID_TOOL_COPY_FILE_LEFT_TO_RIGHT = 1003,
+        ID_TOOL_COPY_FILE_RIGHT_TO_LEFT = 1004,
+        ID_TOOL_SAVE = 1005,
     };
 protected:
     wxRibbonBar* m_ribbonBar41;
@@ -77,6 +79,8 @@ protected:
     virtual void OnCopyLeftToRight(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCopyRightToLeft(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnCopyFileLeftToRight(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnCopyFileFromRight(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnSaveChanges(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnSaveChangesUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }

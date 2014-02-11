@@ -130,6 +130,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     
     m_ribbonButtonBar85->AddButton(ID_TOOL_COPY_DIFF_RIGHT_TO_LEFT, _("Copy from right"), wxXmlResource::Get()->LoadBitmap(wxT("diff-copy-right-to-left")), _("Copy current diff sequence from the right side to the left side"), wxRIBBON_BUTTON_NORMAL);
     
+    m_ribbonButtonBar85->AddButton(ID_TOOL_COPY_FILE_LEFT_TO_RIGHT, _("Copy file from left"), wxXmlResource::Get()->LoadBitmap(wxT("diff-copy-file-left-to-right")), _("Copy the content of the left file to the right file"), wxRIBBON_BUTTON_NORMAL);
+    
+    m_ribbonButtonBar85->AddButton(ID_TOOL_COPY_FILE_RIGHT_TO_LEFT, _("Copy file from right"), wxXmlResource::Get()->LoadBitmap(wxT("diff-copy-file-right-to-left")), _("Copy file from right to left"), wxRIBBON_BUTTON_NORMAL);
+    
     m_ribbonButtonBar85->AddButton(ID_TOOL_SAVE, _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("diff-save")), _("Save changes and refresh the diff view"), wxRIBBON_BUTTON_NORMAL);
     m_ribbonButtonBar85->Realize();
     m_ribbonBar41->Realize();
@@ -264,6 +268,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     m_ribbonButtonBar85->Connect(ID_TOOL_COPY_DIFF_LEFT_TO_RIGHT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyLeftToRight), NULL, this);
     m_ribbonButtonBar85->Connect(ID_TOOL_COPY_DIFF_RIGHT_TO_LEFT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnCopyRightToLeftUI), NULL, this);
     m_ribbonButtonBar85->Connect(ID_TOOL_COPY_DIFF_RIGHT_TO_LEFT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyRightToLeft), NULL, this);
+    m_ribbonButtonBar85->Connect(ID_TOOL_COPY_FILE_LEFT_TO_RIGHT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyFileLeftToRight), NULL, this);
+    m_ribbonButtonBar85->Connect(ID_TOOL_COPY_FILE_LEFT_TO_RIGHT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnCopyLeftToRightUI), NULL, this);
+    m_ribbonButtonBar85->Connect(ID_TOOL_COPY_FILE_RIGHT_TO_LEFT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyFileFromRight), NULL, this);
+    m_ribbonButtonBar85->Connect(ID_TOOL_COPY_FILE_RIGHT_TO_LEFT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnCopyRightToLeftUI), NULL, this);
     m_ribbonButtonBar85->Connect(ID_TOOL_SAVE, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnSaveChanges), NULL, this);
     m_ribbonButtonBar85->Connect(ID_TOOL_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnSaveChangesUI), NULL, this);
     m_stcLeft->Connect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);
@@ -282,6 +290,10 @@ DiffSideBySidePanelBase::~DiffSideBySidePanelBase()
     m_ribbonButtonBar85->Disconnect(ID_TOOL_COPY_DIFF_LEFT_TO_RIGHT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyLeftToRight), NULL, this);
     m_ribbonButtonBar85->Disconnect(ID_TOOL_COPY_DIFF_RIGHT_TO_LEFT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnCopyRightToLeftUI), NULL, this);
     m_ribbonButtonBar85->Disconnect(ID_TOOL_COPY_DIFF_RIGHT_TO_LEFT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyRightToLeft), NULL, this);
+    m_ribbonButtonBar85->Disconnect(ID_TOOL_COPY_FILE_LEFT_TO_RIGHT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyFileLeftToRight), NULL, this);
+    m_ribbonButtonBar85->Disconnect(ID_TOOL_COPY_FILE_LEFT_TO_RIGHT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnCopyLeftToRightUI), NULL, this);
+    m_ribbonButtonBar85->Disconnect(ID_TOOL_COPY_FILE_RIGHT_TO_LEFT, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnCopyFileFromRight), NULL, this);
+    m_ribbonButtonBar85->Disconnect(ID_TOOL_COPY_FILE_RIGHT_TO_LEFT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnCopyRightToLeftUI), NULL, this);
     m_ribbonButtonBar85->Disconnect(ID_TOOL_SAVE, wxEVT_COMMAND_RIBBONBUTTON_CLICKED, wxRibbonButtonBarEventHandler(DiffSideBySidePanelBase::OnSaveChanges), NULL, this);
     m_ribbonButtonBar85->Disconnect(ID_TOOL_SAVE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSideBySidePanelBase::OnSaveChangesUI), NULL, this);
     m_stcLeft->Disconnect(wxEVT_STC_PAINTED, wxStyledTextEventHandler(DiffSideBySidePanelBase::OnLeftStcPainted), NULL, this);

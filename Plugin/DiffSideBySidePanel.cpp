@@ -4,6 +4,9 @@
 #include "lexer_configuration.h"
 #include "drawingutils.h"
 #include <wx/msgdlg.h>
+#include "globals.h"
+#include "plugin.h"
+#include "event_notifier.h"
 
 #define RED_MARKER          5
 #define GREEN_MARKER        6
@@ -19,12 +22,15 @@
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
 {
+    EventNotifier::Get()->Connect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 }
 
 DiffSideBySidePanel::~DiffSideBySidePanel()
 {
     m_leftFile.DeleteFileIfNeeded();
     m_rightFile.DeleteFileIfNeeded();
+    
+    EventNotifier::Get()->Disconnect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 }
 
 void DiffSideBySidePanel::Diff()
@@ -60,13 +66,13 @@ void DiffSideBySidePanel::Diff()
         ::wxMessageBox(_("Files are the same!"));
         m_stcLeft->SetReadOnly(false);
         m_stcRight->SetReadOnly(false);
-        
+
         m_stcLeft->LoadFile( fnLeft.GetFullPath() );
         m_stcRight->LoadFile( fnRIght.GetFullPath() );
-        
+
         m_stcLeft->SetSavePoint();
         m_stcRight->SetSavePoint();
-        
+
         m_stcLeft->SetReadOnly(true);
         m_stcRight->SetReadOnly(true);
         return;
@@ -112,7 +118,7 @@ void DiffSideBySidePanel::Diff()
     UpdateViews(leftContent, rightContent);
     m_stcLeft->SetSavePoint();
     m_stcRight->SetSavePoint();
-    
+
     // Select the first diff
     wxRibbonButtonBarEvent dummy;
     m_cur_sequence = -1;
@@ -291,6 +297,12 @@ void DiffSideBySidePanel::OnPrevDiffSequence(wxRibbonButtonBarEvent& event)
 
 void DiffSideBySidePanel::OnRefreshDiff(wxRibbonButtonBarEvent& event)
 {
+    if ( m_stcLeft->IsModified() || m_stcRight->IsModified() ) {
+        wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Refreshing the view will lose all your changes\nDo you want to continue?"), "DiffRefreshViewDlg", _("Refresh"), _("Don't refresh"));
+        if ( res != wxID_YES ) {
+            return;
+        }
+    }
     Diff();
 }
 
@@ -302,7 +314,7 @@ void DiffSideBySidePanel::DoClean()
     m_leftPlaceholdersMarkers.clear();
     m_rightPlaceholdersMarkers.clear();
     m_sequences.clear();
-    
+
     m_stcLeft->SetReadOnly(false);
     m_stcRight->SetReadOnly(false);
     m_stcLeft->SetText("");
@@ -404,7 +416,7 @@ void DiffSideBySidePanel::DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyled
         to->MarkerDelete(i, GREEN_MARKER);
         to->MarkerDelete(i, PLACE_HOLDER_MARKER);
         to->MarkerDelete(i, MARKER_SEQUENCE);
-        
+
         from->MarkerDelete(i, RED_MARKER);
         from->MarkerDelete(i, GREEN_MARKER);
         from->MarkerDelete(i, PLACE_HOLDER_MARKER);
@@ -493,4 +505,45 @@ bool DiffSideBySidePanel::CanPrevDiff()
 {
     bool canPrev = ( (m_cur_sequence-1) >= 0 );
     return !m_sequences.empty() && canPrev;
+}
+
+void DiffSideBySidePanel::OnCopyFileFromRight(wxRibbonButtonBarEvent& event)
+{
+    DoCopyFileContent(m_stcRight, m_stcLeft);
+}
+
+void DiffSideBySidePanel::OnCopyFileLeftToRight(wxRibbonButtonBarEvent& event)
+{
+    DoCopyFileContent(m_stcLeft, m_stcRight);
+}
+
+void DiffSideBySidePanel::DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to)
+{
+    to->SetReadOnly(false);
+    to->SetText( from->GetText() );
+    to->SetReadOnly(true);
+    
+    // Clear RED and GREEN markers
+    to->MarkerDeleteAll( RED_MARKER );
+    to->MarkerDeleteAll( GREEN_MARKER );
+
+    from->MarkerDeleteAll( RED_MARKER );
+    from->MarkerDeleteAll( GREEN_MARKER );
+}
+
+void DiffSideBySidePanel::OnPageClosing(wxNotifyEvent& event)
+{
+    if ( m_stcLeft->IsModified() || m_stcRight->IsModified() ) {
+        wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Closing the diff viewer, will lose all your changes.\nContinue?"), "PromptDiffViewClose");
+        if ( res != wxID_YES ) {
+            event.Veto();
+        } else {
+            event.Skip();
+        }
+        
+    } else {
+        event.Skip();
+        
+    }
+    
 }

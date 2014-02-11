@@ -44,6 +44,8 @@ public:
     DiffSideBySidePanel::FileInfo m_rightFile;
 
 protected:
+    virtual void OnCopyFileFromRight(wxRibbonButtonBarEvent& event);
+    virtual void OnCopyFileLeftToRight(wxRibbonButtonBarEvent& event);
     virtual void OnSaveChanges(wxRibbonButtonBarEvent& event);
     virtual void OnSaveChangesUI(wxUpdateUIEvent& event);
     virtual void OnCopyLeftToRight(wxRibbonButtonBarEvent& event);
@@ -57,18 +59,20 @@ protected:
     virtual void OnRefreshDiff(wxRibbonButtonBarEvent& event);
     virtual void OnLeftStcPainted(wxStyledTextEvent& event);
     virtual void OnRightStcPainted(wxStyledTextEvent& event);
-
+    void OnPageClosing(wxNotifyEvent &event);
+    
     void PrepareViews();
     void UpdateViews(const wxString &left, const wxString &right);
     void DoClean();
     void DoDrawSequenceMarkers(int firstLine, int lastLine, wxStyledTextCtrl* ctrl);
     void DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
+    void DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
     void DoGetPositionsToCopy(wxStyledTextCtrl* stc, int& startPos, int& endPos, int& placeHolderMarkerFirstLine, int& placeHolderMarkerLastLine);
     void DoSave(wxStyledTextCtrl* stc, const wxFileName& fn);
-    
+
     bool CanNextDiff();
     bool CanPrevDiff();
-    
+
 public:
     DiffSideBySidePanel(wxWindow* parent);
     virtual ~DiffSideBySidePanel();

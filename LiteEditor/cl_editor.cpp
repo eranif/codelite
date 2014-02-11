@@ -1451,8 +1451,9 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         margin += GetMarginWidth(n);
     }
 
-    if (IsContextMenuOn() || IsDragging()) {
+    if (IsContextMenuOn() || IsDragging() || !GetSTCFocus()) {
         // Don't cover the context menu or a potential drop-point with a calltip!
+        // And, especially, try to avoid scintilla's party-piece: placing a permanent calltip on top of some innocent app!
 
     } else if (event.GetX() > 0 // It seems that we can get spurious events with x == 0
                 && event.GetX() < margin ) {
@@ -2980,12 +2981,16 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
     SetIndicatorCurrent(HYPERLINK_INDICATOR);
     IndicatorClearRange(0, GetLength());
 
+    DoCancelCalltip();
+
     event.Skip();
 }
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
     m_isFocused = false;
+    DoCancelCalltip();
+
     event.Skip();
 }
 

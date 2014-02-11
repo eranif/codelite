@@ -766,7 +766,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult &result, wxStyledText
                 }
             }
             if (!removed) {
-                editor->SetEnsureCaretIsVisible(position, true, true);
+                editor->SetEnsureCaretIsVisible(position, true, true); // The 3rd parameter sets a small delay, otherwise it fails for long folded files
                 int lineNumber = editor->LineFromPos(position);
                 if ( lineNumber ) {
                     lineNumber--;

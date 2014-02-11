@@ -44,6 +44,10 @@ public:
     DiffSideBySidePanel::FileInfo m_rightFile;
 
 protected:
+    virtual void OnHorizontal(wxRibbonButtonBarEvent& event);
+    virtual void OnHorizontalUI(wxUpdateUIEvent& event);
+    virtual void OnVertical(wxRibbonButtonBarEvent& event);
+    virtual void OnVerticalUI(wxUpdateUIEvent& event);
     virtual void OnCopyFileFromRight(wxRibbonButtonBarEvent& event);
     virtual void OnCopyFileLeftToRight(wxRibbonButtonBarEvent& event);
     virtual void OnSaveChanges(wxRibbonButtonBarEvent& event);
@@ -60,7 +64,7 @@ protected:
     virtual void OnLeftStcPainted(wxStyledTextEvent& event);
     virtual void OnRightStcPainted(wxStyledTextEvent& event);
     void OnPageClosing(wxNotifyEvent &event);
-    
+
     void PrepareViews();
     void UpdateViews(const wxString &left, const wxString &right);
     void DoClean();

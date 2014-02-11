@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="plugin_sdk">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00040001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
 		"name":	"WinDebugUnicode",
@@ -21,9 +24,6 @@
 		"arguments":	[],
 		"parentProject":	""
 	}]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00040001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
@@ -237,6 +237,8 @@
     </VirtualDirectory>
     <File Name="cl_aui_tool_stickness.h"/>
     <File Name="cl_aui_tool_stickness.cpp"/>
+    <File Name="art_metro.cpp"/>
+    <File Name="art_metro.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="JobQueue">
     <File Name="jobqueue.cpp"/>

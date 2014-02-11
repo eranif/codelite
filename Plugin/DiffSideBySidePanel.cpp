@@ -7,6 +7,7 @@
 #include "globals.h"
 #include "plugin.h"
 #include "event_notifier.h"
+#include "art_metro.h"
 
 #define RED_MARKER          5
 #define GREEN_MARKER        6
@@ -22,6 +23,7 @@
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
 {
+    m_ribbonBar->SetArtProvider( new wxRibbonMetroArtProvider );
     EventNotifier::Get()->Connect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 }
 
@@ -29,7 +31,7 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
 {
     m_leftFile.DeleteFileIfNeeded();
     m_rightFile.DeleteFileIfNeeded();
-    
+
     EventNotifier::Get()->Disconnect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 }
 
@@ -522,7 +524,7 @@ void DiffSideBySidePanel::DoCopyFileContent(wxStyledTextCtrl* from, wxStyledText
     to->SetReadOnly(false);
     to->SetText( from->GetText() );
     to->SetReadOnly(true);
-    
+
     // Clear RED and GREEN markers
     to->MarkerDeleteAll( RED_MARKER );
     to->MarkerDeleteAll( GREEN_MARKER );
@@ -540,10 +542,32 @@ void DiffSideBySidePanel::OnPageClosing(wxNotifyEvent& event)
         } else {
             event.Skip();
         }
-        
+
     } else {
         event.Skip();
-        
+
     }
-    
+
+}
+
+void DiffSideBySidePanel::OnHorizontal(wxRibbonButtonBarEvent& event)
+{
+    m_splitter->Unsplit();
+    m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
+}
+
+void DiffSideBySidePanel::OnHorizontalUI(wxUpdateUIEvent& event)
+{
+    event.Check( m_splitter->GetSplitMode() == wxSPLIT_HORIZONTAL );
+}
+
+void DiffSideBySidePanel::OnVertical(wxRibbonButtonBarEvent& event)
+{
+    m_splitter->Unsplit();
+    m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
+}
+
+void DiffSideBySidePanel::OnVerticalUI(wxUpdateUIEvent& event)
+{
+    event.Check( m_splitter->GetSplitMode() == wxSPLIT_VERTICAL );
 }

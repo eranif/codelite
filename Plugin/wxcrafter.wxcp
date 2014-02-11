@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	119,
+		"m_objCounter":	129,
 		"m_includeFiles":	["codelite_exports.h"],
 		"m_bitmapFunction":	"wxC9D6CInitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_plugin_bitmaps.cpp",
@@ -585,7 +585,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_ribbonBar41"
+									"m_value":	"m_ribbonBar"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
@@ -918,7 +918,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Refresh View"
+																	"m_value":	"Refresh"
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1009,7 +1009,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Next Diff"
+																	"m_value":	"Next"
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1107,7 +1107,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Previous Diff"
+																	"m_value":	"Previous"
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1347,7 +1347,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Copy from left"
+																	"m_value":	"Copy Left"
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1445,7 +1445,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Copy from right"
+																	"m_value":	"Copy Right"
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1543,7 +1543,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Copy file from left"
+																	"m_value":	"All Left"
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1641,7 +1641,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Copy file from right"
+																	"m_value":	"All Right"
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1772,6 +1772,344 @@
 															"m_children":	[]
 														}]
 												}]
+										}, {
+											"m_type":	4490,
+											"proportion":	0,
+											"border":	5,
+											"gbSpan":	"1,1",
+											"gbPosition":	"0,0",
+											"m_styles":	["wxRIBBON_PANEL_DEFAULT_STYLE"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+											"m_properties":	[{
+													"type":	"winid",
+													"m_label":	"ID:",
+													"m_winid":	"wxID_ANY"
+												}, {
+													"type":	"string",
+													"m_label":	"Size:",
+													"m_value":	"-1,-1"
+												}, {
+													"type":	"string",
+													"m_label":	"Minimum Size:",
+													"m_value":	"-1,-1"
+												}, {
+													"type":	"string",
+													"m_label":	"Name:",
+													"m_value":	"m_ribbonPanel121"
+												}, {
+													"type":	"multi-string",
+													"m_label":	"Tooltip:",
+													"m_value":	""
+												}, {
+													"type":	"colour",
+													"m_label":	"Bg Colour:",
+													"colour":	"<Default>"
+												}, {
+													"type":	"colour",
+													"m_label":	"Fg Colour:",
+													"colour":	"<Default>"
+												}, {
+													"type":	"font",
+													"m_label":	"Font:",
+													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Hidden",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Disabled",
+													"m_value":	false
+												}, {
+													"type":	"bool",
+													"m_label":	"Focused",
+													"m_value":	false
+												}, {
+													"type":	"string",
+													"m_label":	"Class Name:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Include File:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Style:",
+													"m_value":	""
+												}, {
+													"type":	"string",
+													"m_label":	"Label:",
+													"m_value":	"View"
+												}, {
+													"type":	"bitmapPicker",
+													"m_label":	"Bitmap File:",
+													"m_path":	""
+												}],
+											"m_events":	[],
+											"m_children":	[{
+													"m_type":	4491,
+													"proportion":	0,
+													"border":	5,
+													"gbSpan":	"1,1",
+													"gbPosition":	"0,0",
+													"m_styles":	[],
+													"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+													"m_properties":	[{
+															"type":	"winid",
+															"m_label":	"ID:",
+															"m_winid":	"wxID_ANY"
+														}, {
+															"type":	"string",
+															"m_label":	"Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Minimum Size:",
+															"m_value":	"-1,-1"
+														}, {
+															"type":	"string",
+															"m_label":	"Name:",
+															"m_value":	"m_ribbonButtonBar123"
+														}, {
+															"type":	"multi-string",
+															"m_label":	"Tooltip:",
+															"m_value":	""
+														}, {
+															"type":	"colour",
+															"m_label":	"Bg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"colour",
+															"m_label":	"Fg Colour:",
+															"colour":	"<Default>"
+														}, {
+															"type":	"font",
+															"m_label":	"Font:",
+															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Hidden",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Disabled",
+															"m_value":	false
+														}, {
+															"type":	"bool",
+															"m_label":	"Focused",
+															"m_value":	false
+														}, {
+															"type":	"string",
+															"m_label":	"Class Name:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Include File:",
+															"m_value":	""
+														}, {
+															"type":	"string",
+															"m_label":	"Style:",
+															"m_value":	""
+														}],
+													"m_events":	[],
+													"m_children":	[{
+															"m_type":	4495,
+															"proportion":	0,
+															"border":	5,
+															"gbSpan":	"1,1",
+															"gbPosition":	"0,0",
+															"m_styles":	[],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+															"m_properties":	[{
+																	"type":	"winid",
+																	"m_label":	"ID:",
+																	"m_winid":	"ID_VIEW_VRTICAL"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Minimum Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Name:",
+																	"m_value":	"m_ribbonButtonVertical"
+																}, {
+																	"type":	"multi-string",
+																	"m_label":	"Tooltip:",
+																	"m_value":	""
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Bg Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Fg Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"font",
+																	"m_label":	"Font:",
+																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Label:",
+																	"m_value":	"Vertical"
+																}, {
+																	"type":	"bitmapPicker",
+																	"m_label":	"Bitmap File:",
+																	"m_path":	"resources/tile_horizontal.png"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Help String:",
+																	"m_value":	"Vertical panes"
+																}, {
+																	"type":	"choice",
+																	"m_label":	"Kind:",
+																	"m_selection":	3,
+																	"m_options":	["wxRIBBON_BUTTON_NORMAL", "wxRIBBON_BUTTON_DROPDOWN", "wxRIBBON_BUTTON_HYBRID", "wxRIBBON_BUTTON_TOGGLE"]
+																}],
+															"m_events":	[{
+																	"m_eventName":	"wxEVT_COMMAND_RIBBONBUTTON_CLICKED",
+																	"m_eventClass":	"wxRibbonButtonBarEvent",
+																	"m_eventHandler":	"wxRibbonButtonBarEventHandler",
+																	"m_functionNameAndSignature":	"OnVertical(wxRibbonButtonBarEvent& event)",
+																	"m_description":	"Triggered when the normal (non-dropdown) region of a button on the button bar is clicked.",
+																	"m_noBody":	false
+																}, {
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"OnVerticalUI(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event",
+																	"m_noBody":	false
+																}],
+															"m_children":	[]
+														}, {
+															"m_type":	4495,
+															"proportion":	0,
+															"border":	5,
+															"gbSpan":	"1,1",
+															"gbPosition":	"0,0",
+															"m_styles":	[],
+															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+															"m_properties":	[{
+																	"type":	"winid",
+																	"m_label":	"ID:",
+																	"m_winid":	"ID_VIEW_HORIZONTAL"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Minimum Size:",
+																	"m_value":	"-1,-1"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Name:",
+																	"m_value":	"m_ribbonButtonHorizontal"
+																}, {
+																	"type":	"multi-string",
+																	"m_label":	"Tooltip:",
+																	"m_value":	""
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Bg Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"colour",
+																	"m_label":	"Fg Colour:",
+																	"colour":	"<Default>"
+																}, {
+																	"type":	"font",
+																	"m_label":	"Font:",
+																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Hidden",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Disabled",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Focused",
+																	"m_value":	false
+																}, {
+																	"type":	"string",
+																	"m_label":	"Class Name:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Include File:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Style:",
+																	"m_value":	""
+																}, {
+																	"type":	"string",
+																	"m_label":	"Label:",
+																	"m_value":	"Horizontal"
+																}, {
+																	"type":	"bitmapPicker",
+																	"m_label":	"Bitmap File:",
+																	"m_path":	"resources/tile_vertical.png"
+																}, {
+																	"type":	"string",
+																	"m_label":	"Help String:",
+																	"m_value":	"Horizontal panes"
+																}, {
+																	"type":	"choice",
+																	"m_label":	"Kind:",
+																	"m_selection":	3,
+																	"m_options":	["wxRIBBON_BUTTON_NORMAL", "wxRIBBON_BUTTON_DROPDOWN", "wxRIBBON_BUTTON_HYBRID", "wxRIBBON_BUTTON_TOGGLE"]
+																}],
+															"m_events":	[{
+																	"m_eventName":	"wxEVT_COMMAND_RIBBONBUTTON_CLICKED",
+																	"m_eventClass":	"wxRibbonButtonBarEvent",
+																	"m_eventHandler":	"wxRibbonButtonBarEventHandler",
+																	"m_functionNameAndSignature":	"OnHorizontal(wxRibbonButtonBarEvent& event)",
+																	"m_description":	"Triggered when the normal (non-dropdown) region of a button on the button bar is clicked.",
+																	"m_noBody":	false
+																}, {
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"OnHorizontalUI(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event",
+																	"m_noBody":	false
+																}],
+															"m_children":	[]
+														}]
+												}]
 										}]
 								}]
 						}, {
@@ -1797,7 +2135,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_splitter101"
+									"m_value":	"m_splitter"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
@@ -1880,7 +2218,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_splitterPage105"
+											"m_value":	"m_splitterPageLeft"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -2251,7 +2589,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_splitterPage109"
+											"m_value":	"m_splitterPageRight"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",

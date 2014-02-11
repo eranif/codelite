@@ -51,20 +51,24 @@ protected:
         ID_TOOL_COPY_FILE_LEFT_TO_RIGHT = 1003,
         ID_TOOL_COPY_FILE_RIGHT_TO_LEFT = 1004,
         ID_TOOL_SAVE = 1005,
+        ID_VIEW_HORIZONTAL = 1006,
+        ID_VIEW_VRTICAL = 1007,
     };
 protected:
-    wxRibbonBar* m_ribbonBar41;
+    wxRibbonBar* m_ribbonBar;
     wxRibbonPage* m_ribbonPage43;
     wxRibbonPanel* m_ribbonPanel47;
     wxRibbonButtonBar* m_ribbonButtonBar49;
     wxRibbonPanel* m_ribbonPanel83;
     wxRibbonButtonBar* m_ribbonButtonBar85;
-    wxSplitterWindow* m_splitter101;
-    wxPanel* m_splitterPage105;
+    wxRibbonPanel* m_ribbonPanel121;
+    wxRibbonButtonBar* m_ribbonButtonBar123;
+    wxSplitterWindow* m_splitter;
+    wxPanel* m_splitterPageLeft;
     wxFilePickerCtrl* m_filePickerLeft;
     wxStyledTextCtrl* m_stcLeft;
     wxStaticText* m_staticTextLeft;
-    wxPanel* m_splitterPage109;
+    wxPanel* m_splitterPageRight;
     wxFilePickerCtrl* m_filePickerRight;
     wxStyledTextCtrl* m_stcRight;
     wxStaticText* m_staticTextRight;
@@ -83,6 +87,10 @@ protected:
     virtual void OnCopyFileFromRight(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnSaveChanges(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnSaveChangesUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnVertical(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnVerticalUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnHorizontal(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnHorizontalUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 

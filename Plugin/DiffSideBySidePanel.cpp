@@ -23,7 +23,9 @@
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
 {
+#ifdef __WXMSW__
     m_ribbonBar->SetArtProvider( new wxRibbonMetroArtProvider );
+#endif
     EventNotifier::Get()->Connect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 }
 

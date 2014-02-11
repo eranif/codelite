@@ -111,6 +111,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     int                                         m_lastMatchPos;
     static std::map<wxString, int>              ms_bookmarkShapes;
     bool                                        m_popupIsOn;
+    bool                                        m_isDragging;
     time_t                                      m_modifyTime;
     std::map<int, wxString>                     m_customCmds;
     bool                                        m_isVisible;
@@ -468,6 +469,10 @@ public:
 
     bool IsContextMenuOn() const {
         return m_popupIsOn;
+    }
+
+    bool IsDragging() const {
+        return m_isDragging;
     }
 
     /**

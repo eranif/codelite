@@ -105,6 +105,8 @@ BEGIN_EVENT_TABLE(LEditor, wxStyledTextCtrl)
     EVT_STC_MARGINCLICK            (wxID_ANY, LEditor::OnMarginClick)
     EVT_STC_CALLTIP_CLICK          (wxID_ANY, LEditor::OnCallTipClick)
     EVT_STC_DWELLEND               (wxID_ANY, LEditor::OnDwellEnd)
+    EVT_STC_START_DRAG             (wxID_ANY, LEditor::OnDragStart)
+    EVT_STC_DO_DROP                (wxID_ANY, LEditor::OnDragEnd)
     EVT_STC_PAINTED                (wxID_ANY, LEditor::OnScnPainted)
     EVT_STC_UPDATEUI               (wxID_ANY, LEditor::OnSciUpdateUI)
     EVT_STC_SAVEPOINTREACHED       (wxID_ANY, LEditor::OnSavePoint)
@@ -1449,8 +1451,8 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         margin += GetMarginWidth(n);
     }
 
-    if (IsContextMenuOn()) {
-        // Don't cover the context menu with a tooltip!
+    if (IsContextMenuOn() || IsDragging()) {
+        // Don't cover the context menu or a potential drop-point with a calltip!
 
     } else if (event.GetX() > 0 // It seems that we can get spurious events with x == 0
                 && event.GetX() < margin ) {
@@ -2956,6 +2958,8 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
 
 void LEditor::OnLeftUp(wxMouseEvent& event)
 {
+    m_isDragging = false; // We can't still be in D'n'D, so stop disabling callticks
+
     long value(0);
     EditorConfigST::Get()->GetLongValue(wxT("QuickCodeNavigationUsesMouseMiddleButton"), value);
 
@@ -3481,13 +3485,18 @@ int LEditor::SafeGetChar(int pos)
     return GetCharAt(pos);
 }
 
-void LEditor::OnDragEnd(wxStyledTextEvent& e)
+void LEditor::OnDragStart(wxStyledTextEvent& e)
 {
+    m_isDragging = true; // Otherwise it sometimes obscures the desired drop zone!
     e.Skip();
 }
 
-void LEditor::OnDragStart(wxStyledTextEvent& e)
+void LEditor::OnDragEnd(wxStyledTextEvent& e)
 {
+    // For future reference, this will only be called when D'n'D ends successfully with a drop.
+    // Unfortunately scintilla doesn't seem to provide any notification when ESC is pressed, or the drop-zone is invalid
+    m_isDragging = false; // Turn on calltips again
+
     e.Skip();
 }
 

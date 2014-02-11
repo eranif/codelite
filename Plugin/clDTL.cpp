@@ -1,7 +1,8 @@
 #include "clDTL.h"
-#include <wx/tokenzr.h>
 #include "dtl/dtl.hpp"
 #include <wx/ffile.h>
+#include <wx/tokenzr.h>
+#include <wx/utils.h>
 
 clDTL::clDTL()
 {

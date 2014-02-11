@@ -979,6 +979,12 @@ void Manager::RemoveVirtualDirectory ( const wxString &virtualDirFullPath )
 bool Manager::AddNewFileToProject ( const wxString &fileName, const wxString &vdFullPath, bool openIt )
 {
     wxFile file;
+    wxFileName fn(fileName);
+    if ( !fn.DirExists() ) {
+        // ensure that the path to the file exists
+        fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL); 
+    }
+    
     if ( !file.Create ( fileName.GetData(), true ) )
         return false;
 

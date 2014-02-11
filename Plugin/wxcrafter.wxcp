@@ -1503,7 +1503,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	""
+																	"m_value":	"Save changes and refresh the diff view"
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",

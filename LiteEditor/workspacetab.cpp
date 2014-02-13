@@ -68,14 +68,15 @@ WorkspaceTab::~WorkspaceTab()
     wxTheApp->Disconnect(XRCID("show_in_workspace"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnShowFile),   NULL, this);
     wxTheApp->Disconnect(XRCID("show_in_workspace"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
 
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED,               wxCommandEventHandler(WorkspaceTab::OnProjectAdded),        NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_REMOVED,             wxCommandEventHandler(WorkspaceTab::OnProjectRemoved),      NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspaceTab::OnEditorClosing),       NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceConfig),     NULL, this);
-
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),      NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),      NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED,               wxCommandEventHandler(WorkspaceTab::OnProjectAdded),         NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_REMOVED,             wxCommandEventHandler(WorkspaceTab::OnProjectRemoved),       NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged),  NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspaceTab::OnEditorClosing),        NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceConfig),      NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_PROJECT_CHANGED,   wxCommandEventHandler(WorkspaceTab::OnActiveProjectChanged), NULL, this);
+    
     wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnConfigurationManager), NULL, this);
     wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,             wxUpdateUIEventHandler (WorkspaceTab::OnProjectSettingsUI),   NULL, this);
     clConfig::Get().Write("WorkspaceTabSashPosition", m_splitter->GetSashPosition());
@@ -124,7 +125,7 @@ void WorkspaceTab::ConnectEvents()
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspaceTab::OnEditorClosing),       NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceConfig),     NULL, this);
-
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_PROJECT_CHANGED,   wxCommandEventHandler(WorkspaceTab::OnActiveProjectChanged), NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler (WorkspaceTab::OnConfigurationManager),   NULL, this);
     wxTheApp->Connect(XRCID("configuration_manager"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler (WorkspaceTab::OnProjectSettingsUI),   NULL, this);
 }
@@ -441,4 +442,12 @@ void WorkspaceTab::OpenProjectSettings(const wxString& project)
 void WorkspaceTab::ProjectSettingsDlgClosed()
 {
     m_dlg = NULL;
+}
+
+void WorkspaceTab::OnActiveProjectChanged(wxCommandEvent& e)
+{
+    e.Skip();
+    
+    // Update the choice control
+    m_choiceActiveProject->SetStringSelection( e.GetString() );
 }

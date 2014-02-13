@@ -391,7 +391,8 @@
 															"m_eventClass":	"wxDataViewEvent",
 															"m_eventHandler":	"wxDataViewEventHandler",
 															"m_functionNameAndSignature":	"OnItemSelected(wxDataViewEvent& event)",
-															"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event"
+															"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
+															"m_noBody":	false
 														}],
 													"m_children":	[{
 															"m_type":	4472,
@@ -726,7 +727,8 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnProjectNameChanged(wxCommandEvent& event)",
-																	"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event."
+																	"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}, {
@@ -913,7 +915,8 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnProjectPathUpdated(wxCommandEvent& event)",
-																			"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event."
+																			"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -1002,7 +1005,8 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnBrowseProjectPath(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}]
@@ -1253,7 +1257,8 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnProjectNameChanged(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
+																	"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}]
@@ -1527,13 +1532,15 @@
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnCreate(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -1982,7 +1989,8 @@
 															"m_eventClass":	"wxCommandEvent",
 															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnScope(wxCommandEvent& event)",
-															"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected."
+															"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
+															"m_noBody":	false
 														}],
 													"m_children":	[]
 												}]
@@ -2154,7 +2162,8 @@
 															"m_eventClass":	"wxCommandEvent",
 															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnFunction(wxCommandEvent& event)",
-															"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected."
+															"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
+															"m_noBody":	false
 														}],
 													"m_children":	[]
 												}]
@@ -2353,7 +2362,8 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnToolPinCommandToolClicked(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2403,13 +2413,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnAutoScroll(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnAutoScrollUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2479,13 +2491,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnClearBuildOutput(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnClearBuildOutputUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2535,13 +2549,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnSaveBuildOutput(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnSaveBuildOutputUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2591,13 +2607,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnCopyBuildOutput(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnCopyBuildOutputUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -2647,13 +2665,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnPaste(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnPasteUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}]
@@ -3370,7 +3390,8 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnDownloadWxCrafterPlugin(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}, {
@@ -3459,7 +3480,8 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnIgnoreTheError(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}]
@@ -4052,7 +4074,8 @@
 													"m_eventClass":	"wxCommandEvent",
 													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnCheckAll(wxCommandEvent& event)",
-													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+													"m_noBody":	false
 												}],
 											"m_children":	[]
 										}, {
@@ -4141,7 +4164,8 @@
 													"m_eventClass":	"wxCommandEvent",
 													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnUncheckAll(wxCommandEvent& event)",
-													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+													"m_noBody":	false
 												}],
 											"m_children":	[]
 										}]
@@ -4255,7 +4279,8 @@
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -4435,7 +4460,8 @@
 					"m_eventClass":	"wxSizeEvent",
 					"m_eventHandler":	"wxSizeEventHandler",
 					"m_functionNameAndSignature":	"OnSize(wxSizeEvent& event)",
-					"m_description":	"Process a wxEVT_SIZE event"
+					"m_description":	"Process a wxEVT_SIZE event",
+					"m_noBody":	false
 				}],
 			"m_children":	[{
 					"m_type":	4401,
@@ -4837,13 +4863,15 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnShowWorkspaceMenu(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
 																		}, {
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnRecentProjectUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -4932,13 +4960,15 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnShowFileseMenu(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
 																		}, {
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
 																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnRecentFileUI(wxUpdateUIEvent& event)",
-																			"m_description":	"Process a wxEVT_UPDATE_UI event"
+																			"m_description":	"Process a wxEVT_UPDATE_UI event",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -5027,7 +5057,8 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnNewProject(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -5116,7 +5147,8 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnOpenWorkspace(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -5205,7 +5237,8 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnOpenForums(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}, {
@@ -5294,7 +5327,8 @@
 																			"m_eventClass":	"wxCommandEvent",
 																			"m_eventHandler":	"wxCommandEventHandler",
 																			"m_functionNameAndSignature":	"OnOpenWiki(wxCommandEvent& event)",
-																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
 																		}],
 																	"m_children":	[]
 																}]
@@ -5519,19 +5553,22 @@
 									"m_eventClass":	"wxTreeEvent",
 									"m_eventHandler":	"wxTreeEventHandler",
 									"m_functionNameAndSignature":	"OnItemActivated(wxTreeEvent& event)",
-									"m_description":	"An item has been activated (e.g. double clicked)."
+									"m_description":	"An item has been activated (e.g. double clicked).",
+									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_COMMAND_TREE_ITEM_MENU",
 									"m_eventClass":	"wxTreeEvent",
 									"m_eventHandler":	"wxTreeEventHandler",
 									"m_functionNameAndSignature":	"OnContextMenu(wxTreeEvent& event)",
-									"m_description":	"The context menu for the selected item has been requested,\neither by a right click or by using the menu key."
+									"m_description":	"The context menu for the selected item has been requested,\neither by a right click or by using the menu key.",
+									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_COMMAND_TREE_KEY_DOWN",
 									"m_eventClass":	"wxTreeEvent",
 									"m_eventHandler":	"wxTreeEventHandler",
 									"m_functionNameAndSignature":	"OnKeyDown(wxTreeEvent& event)",
-									"m_description":	"A key has been pressed."
+									"m_description":	"A key has been pressed.",
+									"m_noBody":	false
 								}],
 							"m_children":	[]
 						}]
@@ -5727,13 +5764,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnLinkEditor(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnLinkEditorUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -5783,13 +5822,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnCollapseAll(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnCollapseAllUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -5839,13 +5880,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnGoHome(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnGoHomeUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -5895,13 +5938,15 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnProjectSettings(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+											"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
 											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnProjectSettingsUI(wxUpdateUIEvent& event)",
-											"m_description":	"Process a wxEVT_UPDATE_UI event"
+											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -6197,13 +6242,15 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnChoiceActiveProject(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected."
+																	"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
+																	"m_noBody":	false
 																}, {
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
 																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnChoiceActiveProjectUI(wxUpdateUIEvent& event)",
-																	"m_description":	"Process a wxEVT_UPDATE_UI event"
+																	"m_description":	"Process a wxEVT_UPDATE_UI event",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}]
@@ -6375,13 +6422,15 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnConfigurationManagerChoice(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected."
+																	"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
+																	"m_noBody":	false
 																}, {
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
 																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnConfigurationManagerChoiceUI(wxUpdateUIEvent& event)",
-																	"m_description":	"Process a wxEVT_UPDATE_UI event"
+																	"m_description":	"Process a wxEVT_UPDATE_UI event",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}]
@@ -6750,13 +6799,15 @@
 									"m_eventClass":	"wxCommandEvent",
 									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnClose(wxCommandEvent& event)",
-									"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+									"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_UPDATE_UI",
 									"m_eventClass":	"wxUpdateUIEvent",
 									"m_eventHandler":	"wxUpdateUIEventHandler",
 									"m_functionNameAndSignature":	"OnCloseUI(wxUpdateUIEvent& event)",
-									"m_description":	"Process a wxEVT_UPDATE_UI event"
+									"m_description":	"Process a wxEVT_UPDATE_UI event",
+									"m_noBody":	false
 								}],
 							"m_children":	[]
 						}, {
@@ -6850,13 +6901,15 @@
 									"m_eventClass":	"wxCommandEvent",
 									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnFind(wxCommandEvent& event)",
-									"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"
+									"m_description":	"Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
+									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_UPDATE_UI",
 									"m_eventClass":	"wxUpdateUIEvent",
 									"m_eventHandler":	"wxUpdateUIEventHandler",
 									"m_functionNameAndSignature":	"OnFindUI(wxUpdateUIEvent& event)",
-									"m_description":	"Process a wxEVT_UPDATE_UI event"
+									"m_description":	"Process a wxEVT_UPDATE_UI event",
+									"m_noBody":	false
 								}],
 							"m_children":	[]
 						}, {

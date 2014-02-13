@@ -76,7 +76,8 @@ protected:
     void OnWorkspaceConfig           (wxCommandEvent &e);
     void OnConfigurationManagerChoice(wxCommandEvent &e);
     void OnConfigurationManager      (wxCommandEvent& e);
-
+    void OnActiveProjectChanged      (wxCommandEvent& e);
+    
 public:
     WorkspaceTab(wxWindow *parent, const wxString &caption);
     ~WorkspaceTab();

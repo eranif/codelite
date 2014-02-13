@@ -2632,8 +2632,8 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Would you like to build the active project\nbefore executing it?"), 
                                                            "PromptForBuildBeforeExecute", 
-                                                           _("Build before execute"), 
-                                                           _("No, just execute it"));
+                                                           _("Build and Execute"), 
+                                                           _("Execute"));
     // Don't do anything if "X" is pressed
     if ( res != wxID_CANCEL ) {
         if ( res == wxID_YES ) {
@@ -3094,7 +3094,7 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         
         wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Would you like to build the project before debugging it?"), 
                                                               "BuildBeforeDebug",
-                                                              _("Build and Debug"), _("Debug without building"));
+                                                              _("Build and Debug"), _("Debug"));
         // Don't do anything if "X" is pressed
         if ( res != wxID_CANCEL ) {
             if ( res == wxID_YES ) {
@@ -4371,8 +4371,8 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
     // Make sure we don't have the mouse captured in any editor or we might get a crash somewhere
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(  _("Workspace or project settings have been modified outside of CodeLite\nWould you like to reload the workspace?"), 
                                                             "ReloadWorkspaceWhenAltered", 
-                                                            _("Yes, reload the workspace"), 
-                                                            _("Don't reload the workspace"));
+                                                            _("Reload workspace"), 
+                                                            _("Not now"));
     // Don't do anything if "X" is pressed
     if ( res != wxID_CANCEL ) {
         if ( res == wxID_YES ) {

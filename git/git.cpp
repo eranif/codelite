@@ -1143,7 +1143,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         // Finally, cache the modified-files list: it's used in other functions
         m_modifiedFiles.swap(gitFileSet);
     }
-    m_mgr->SetStatusMessage(_(""), 0);
+    m_mgr->SetStatusMessage("", 0);
 }
 
 /*******************************************************************************/

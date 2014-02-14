@@ -430,6 +430,7 @@ add_subdirectory(Subversion2)
 add_subdirectory(ZoomNavigator)
 add_subdirectory(git)
 add_subdirectory(CMakePlugin)
+add_subdirectory(CodeLiteDiff)
 
 if (WITH_SFTP)
     add_subdirectory(SFTP)

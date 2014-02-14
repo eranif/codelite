@@ -243,6 +243,7 @@ if test -f ../bin/codelite-clang ; then
 fi
 
 cp ../bin/codelitegcc  ./codelite.app/Contents/MacOS/
+cp ../bin/codelite-echo  ./codelite.app/Contents/MacOS/
 cp ../bin/codelite-make  ./codelite.app/Contents/SharedSupport/
 cp ../bin/codelite_cppcheck ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/./OpenTerm   ./codelite.app/Contents/SharedSupport/

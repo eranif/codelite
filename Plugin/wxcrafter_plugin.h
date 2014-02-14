@@ -75,6 +75,7 @@ protected:
 
 protected:
     virtual void OnRefreshDiff(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnRefreshDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnNextDiffSequence(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnNextDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPrevDiffSequence(wxRibbonButtonBarEvent& event) { event.Skip(); }
@@ -91,7 +92,9 @@ protected:
     virtual void OnVerticalUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHorizontal(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnHorizontalUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnRightPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 public:

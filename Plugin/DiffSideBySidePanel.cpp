@@ -20,9 +20,15 @@
 #define MARKER_SEQUENCE          8
 #define MARKER_SEQUENCE_VERTICAL 9
 
-DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
+DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent, clDTL::DiffMode mode)
     : DiffSideBySidePanelBase(parent)
+    , m_diffMode(mode)
+    , m_flags(0)
 {
+    if ( m_diffMode == clDTL::kOnePane ) {
+        m_splitter->Unsplit();
+    }
+
 #ifdef __WXMSW__
     m_ribbonBar->SetArtProvider( new wxRibbonMetroArtProvider );
 #endif
@@ -31,9 +37,12 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
 
 DiffSideBySidePanel::~DiffSideBySidePanel()
 {
-    m_leftFile.DeleteFileIfNeeded();
-    m_rightFile.DeleteFileIfNeeded();
-
+    if ( m_flags & kDeleteLeftOnExit ) {
+        ::wxRemoveFile( m_filePickerLeft->GetPath() );
+    }
+    if ( m_flags & kDeleteRightOnExit ) {
+        ::wxRemoveFile( m_filePickerRight->GetPath() );
+    }
     EventNotifier::Get()->Disconnect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 }
 
@@ -60,14 +69,13 @@ void DiffSideBySidePanel::Diff()
 
     // Prepare the diff
     clDTL d;
-    d.Diff(m_filePickerLeft->GetPath(), m_filePickerRight->GetPath());
+    d.Diff(m_filePickerLeft->GetPath(), m_filePickerRight->GetPath(), m_diffMode);
     const clDTL::LineInfoVec_t &resultLeft  = d.GetResultLeft();
     const clDTL::LineInfoVec_t &resultRight = d.GetResultRight();
     m_sequences = d.GetSequences();
 
     if ( m_sequences.empty() ) {
         // Files are the same !
-        ::wxMessageBox(_("Files are the same!"));
         m_stcLeft->SetReadOnly(false);
         m_stcRight->SetReadOnly(false);
 
@@ -151,6 +159,12 @@ void DiffSideBySidePanel::PrepareViews()
     rightLexer->Apply( m_stcRight, true );
 
     // Create the markers we need
+    DefineMarkers( m_stcLeft );
+    DefineMarkers( m_stcRight );
+}
+
+void DiffSideBySidePanel::DefineMarkers(wxStyledTextCtrl* ctrl)
+{
     wxColour red, green, grey, sideMarker;
     if ( DrawingUtils::IsThemeDark() ) {
         red   = "RED";
@@ -165,32 +179,23 @@ void DiffSideBySidePanel::PrepareViews()
         sideMarker = "BLUE";
     }
 
-    m_stcLeft->MarkerDefine(RED_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcLeft->MarkerSetBackground(RED_MARKER, red);
-    m_stcLeft->MarkerSetAlpha(RED_MARKER, 50);
+    ctrl->MarkerDefine(GREEN_MARKER, wxSTC_MARK_BACKGROUND);
+    ctrl->MarkerSetBackground(GREEN_MARKER, green);
+    ctrl->MarkerSetAlpha(GREEN_MARKER, 50);
 
-    m_stcLeft->MarkerDefine(PLACE_HOLDER_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcLeft->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
-    m_stcLeft->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
+    ctrl->MarkerDefine(RED_MARKER, wxSTC_MARK_BACKGROUND);
+    ctrl->MarkerSetBackground(RED_MARKER, red);
+    ctrl->MarkerSetAlpha(RED_MARKER, 50);
 
-    m_stcLeft->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
-    m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
-    m_stcLeft->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_VLINE);
-    m_stcLeft->MarkerSetBackground(MARKER_SEQUENCE_VERTICAL, sideMarker);
+    ctrl->MarkerDefine(PLACE_HOLDER_MARKER, wxSTC_MARK_BACKGROUND);
+    ctrl->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
+    ctrl->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
 
-    m_stcRight->MarkerDefine(GREEN_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcRight->MarkerSetBackground(GREEN_MARKER, green);
-    m_stcRight->MarkerSetAlpha(GREEN_MARKER, 50);
+    ctrl->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
+    ctrl->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
 
-    m_stcRight->MarkerDefine(PLACE_HOLDER_MARKER, wxSTC_MARK_BACKGROUND);
-    m_stcRight->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
-    m_stcRight->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
-
-    m_stcRight->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
-    m_stcRight->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
-    m_stcRight->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_VLINE);
-    m_stcRight->MarkerSetBackground(MARKER_SEQUENCE_VERTICAL, sideMarker);
-
+    ctrl->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_VLINE);
+    ctrl->MarkerSetBackground(MARKER_SEQUENCE_VERTICAL, sideMarker);
 }
 
 void DiffSideBySidePanel::UpdateViews(const wxString& left, const wxString& right)
@@ -213,6 +218,10 @@ void DiffSideBySidePanel::UpdateViews(const wxString& left, const wxString& righ
         int line = m_leftRedMarkers.at(i);
         m_stcLeft->MarkerAdd(line, RED_MARKER);
     }
+    for(size_t i=0; i<m_leftGreenMarkers.size(); ++i) {
+        int line = m_leftGreenMarkers.at(i);
+        m_stcLeft->MarkerAdd(line, GREEN_MARKER);
+    }
     for(size_t i=0; i<m_leftPlaceholdersMarkers.size(); ++i) {
         int line = m_leftPlaceholdersMarkers.at(i);
         m_stcLeft->MarkerAdd(line, PLACE_HOLDER_MARKER);
@@ -220,6 +229,10 @@ void DiffSideBySidePanel::UpdateViews(const wxString& left, const wxString& righ
     for(size_t i=0; i<m_rightGreenMarkers.size(); ++i) {
         int line = m_rightGreenMarkers.at(i);
         m_stcRight->MarkerAdd(line, GREEN_MARKER);
+    }
+    for(size_t i=0; i<m_rightRedMarkers.size(); ++i) {
+        int line = m_rightRedMarkers.at(i);
+        m_stcRight->MarkerAdd(line, RED_MARKER);
     }
     for(size_t i=0; i<m_rightPlaceholdersMarkers.size(); ++i) {
         int line = m_rightPlaceholdersMarkers.at(i);
@@ -265,20 +278,18 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
 
 void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile)
 {
-    m_leftFile.DeleteFileIfNeeded();  // will also call Clear()
-    m_rightFile.DeleteFileIfNeeded(); // will also call Clear()
-
-    m_leftFile = leftFile;
-    m_rightFile = rightFile;
-
     // left file
-    m_stcLeft->SetEditable( !m_leftFile.readOnly );
-    m_filePickerLeft->SetPath( m_leftFile.filename.GetFullPath() );
-    m_staticTextLeft->SetLabel( m_leftFile.title );
+    m_filePickerLeft->SetPath( leftFile.filename.GetFullPath() );
+    m_staticTextLeft->SetLabel( leftFile.title );
 
-    m_stcRight->SetEditable( !m_rightFile.readOnly );
-    m_filePickerRight->SetPath( m_rightFile.filename.GetFullPath() );
-    m_staticTextRight->SetLabel( m_rightFile.title );
+    m_filePickerRight->SetPath( rightFile.filename.GetFullPath() );
+    m_staticTextRight->SetLabel( rightFile.title );
+
+    m_flags = 0x0;
+    if ( leftFile.readOnly )      m_flags |= kLeftReadOnly;
+    if ( leftFile.deleteOnExit )  m_flags |= kDeleteLeftOnExit;
+    if ( rightFile.readOnly )     m_flags |= kRightReadOnly;
+    if ( rightFile.deleteOnExit ) m_flags |= kDeleteRightOnExit;
 }
 
 void DiffSideBySidePanel::OnNextDiffSequence(wxRibbonButtonBarEvent& event)
@@ -364,30 +375,30 @@ void DiffSideBySidePanel::OnPrevDiffUI(wxUpdateUIEvent& event)
 
 void DiffSideBySidePanel::OnCopyLeftToRightUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_rightFile.readOnly );
+    event.Enable( !IsRightReadOnly() && m_diffMode == clDTL::kTwoPanes);
 }
 
 void DiffSideBySidePanel::OnCopyRightToLeftUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !m_leftFile.readOnly );
+    event.Enable( !IsLeftReadOnly() && m_diffMode == clDTL::kTwoPanes );
 }
 
 void DiffSideBySidePanel::OnCopyLeftToRight(wxRibbonButtonBarEvent& event)
 {
     DoCopyCurrentSequence(m_stcLeft, m_stcRight);
-    if ( CanNextDiff() ) {
-        wxRibbonButtonBarEvent dummy;
-        OnNextDiffSequence( dummy );
-    }
+    // if ( CanNextDiff() ) {
+    //     wxRibbonButtonBarEvent dummy;
+    //     OnNextDiffSequence( dummy );
+    // }
 }
 
 void DiffSideBySidePanel::OnCopyRightToLeft(wxRibbonButtonBarEvent& event)
 {
     DoCopyCurrentSequence(m_stcRight, m_stcLeft);
-    if ( CanNextDiff() ) {
-        wxRibbonButtonBarEvent dummy;
-        OnNextDiffSequence( dummy );
-    }
+    // if ( CanNextDiff() ) {
+    //     wxRibbonButtonBarEvent dummy;
+    //     OnNextDiffSequence( dummy );
+    // }
 }
 
 void DiffSideBySidePanel::DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to)
@@ -472,12 +483,7 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
         return;
 
     // remove all lines that have the 'placeholder' markers
-    wxString newContent;
-    for(int i=0; i<stc->GetLineCount(); ++i) {
-        if ( !(stc->MarkerGet(i) & PLACE_HOLDER_MARKER_MASK) ) {
-            newContent << stc->GetLine(i);
-        }
-    }
+    wxString newContent = DoGetContentNoPlaceholders(stc);
 
     stc->SetReadOnly(false);
     stc->SetText(newContent);
@@ -489,14 +495,14 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
 
 void DiffSideBySidePanel::OnSaveChanges(wxRibbonButtonBarEvent& event)
 {
-    DoSave( m_stcLeft,  m_leftFile.filename );
-    DoSave( m_stcRight, m_rightFile.filename );
+    DoSave( m_stcLeft,  m_filePickerLeft->GetPath() );
+    DoSave( m_stcRight, m_filePickerRight->GetPath() );
     Diff();
 }
 
 void DiffSideBySidePanel::OnSaveChangesUI(wxUpdateUIEvent& event)
 {
-    event.Enable( m_stcLeft->IsModified() || m_stcRight->IsModified() );
+    event.Enable( (m_stcLeft->IsModified() || m_stcRight->IsModified()) && m_diffMode == clDTL::kTwoPanes );
 }
 
 bool DiffSideBySidePanel::CanNextDiff()
@@ -524,7 +530,8 @@ void DiffSideBySidePanel::OnCopyFileLeftToRight(wxRibbonButtonBarEvent& event)
 void DiffSideBySidePanel::DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to)
 {
     to->SetReadOnly(false);
-    to->SetText( from->GetText() );
+    wxString newContent = DoGetContentNoPlaceholders( from );
+    to->SetText( newContent );
     to->SetReadOnly(true);
 
     // Clear RED and GREEN markers
@@ -560,7 +567,7 @@ void DiffSideBySidePanel::OnHorizontal(wxRibbonButtonBarEvent& event)
 
 void DiffSideBySidePanel::OnHorizontalUI(wxUpdateUIEvent& event)
 {
-    event.Check( m_splitter->GetSplitMode() == wxSPLIT_HORIZONTAL );
+    event.Check( m_splitter->GetSplitMode() == wxSPLIT_HORIZONTAL && m_diffMode == clDTL::kTwoPanes );
 }
 
 void DiffSideBySidePanel::OnVertical(wxRibbonButtonBarEvent& event)
@@ -571,5 +578,35 @@ void DiffSideBySidePanel::OnVertical(wxRibbonButtonBarEvent& event)
 
 void DiffSideBySidePanel::OnVerticalUI(wxUpdateUIEvent& event)
 {
-    event.Check( m_splitter->GetSplitMode() == wxSPLIT_VERTICAL );
+    event.Check( m_splitter->GetSplitMode() == wxSPLIT_VERTICAL && m_diffMode == clDTL::kTwoPanes);
+}
+
+void DiffSideBySidePanel::DiffNew()
+{
+    m_flags = 0x0;
+}
+
+void DiffSideBySidePanel::OnRefreshDiffUI(wxUpdateUIEvent& event)
+{
+    wxUnusedVar(event);
+}
+void DiffSideBySidePanel::OnLeftPickerUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !IsOriginSourceControl() );
+}
+
+void DiffSideBySidePanel::OnRightPickerUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !IsOriginSourceControl() );
+}
+
+wxString DiffSideBySidePanel::DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const
+{
+    wxString newContent;
+    for(int i=0; i<stc->GetLineCount(); ++i) {
+        if ( !(stc->MarkerGet(i) & PLACE_HOLDER_MARKER_MASK) ) {
+            newContent << stc->GetLine(i);
+        }
+    }
+    return newContent;
 }

@@ -873,7 +873,7 @@ void LEditor::OnCharAdded(wxStyledTextEvent& event)
 void LEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/, bool forceDelay /*=false*/)
 {
     OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    if (forceDelay || opts && opts->GetWordWrap()) {
+    if (forceDelay || (opts && opts->GetWordWrap()) )  {
         // If the text may be word-wrapped, don't EnsureVisible immediately but from the
         // paintevent handler, so that scintilla has time to take word-wrap into account
         m_positionToEnsureVisible = pos;

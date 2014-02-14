@@ -125,7 +125,7 @@ void ListCtrlPanel::OnCopyBacktrace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString trace;
-    for(int i=0; i<m_stack.size(); ++i) {
+    for(size_t i=0; i<m_stack.size(); ++i) {
         trace << m_stack.at(i).level << wxT("  ")
               << m_stack.at(i).address << wxT("  ")
               << m_stack.at(i).function << wxT("  ")

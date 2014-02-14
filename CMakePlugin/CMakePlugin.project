@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="CMakePlugin">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00030001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
 		"name":	"WinDebugUnicode",
@@ -12,9 +15,6 @@
 		"arguments":	[],
 		"parentProject":	""
 	}]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00030001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0013WinRelease_29000000000000]]>
     </Plugin>
   </Plugins>
   <Reconciliation>
@@ -71,7 +71,6 @@
     </VirtualDirectory>
     <File Name="CMakePlugin.wxcp"/>
   </VirtualDirectory>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -240,4 +239,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

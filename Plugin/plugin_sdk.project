@@ -318,7 +318,6 @@
     <File Name="my_sftp_tree_model.h"/>
   </VirtualDirectory>
   <Dependencies Name="Custom"/>
-  <Dependencies Name="WinDebugUnicode"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <VirtualDirectory Name="Diff">
@@ -549,4 +548,5 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="WinDebugUnicode"/>
 </CodeLite_Project>

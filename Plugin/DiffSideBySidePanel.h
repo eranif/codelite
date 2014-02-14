@@ -4,6 +4,7 @@
 #include "wxcrafter_plugin.h"
 #include <wx/filename.h>
 #include <vector>
+#include "clDTL.h"
 
 class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
 {
@@ -13,37 +14,59 @@ public:
         wxFileName filename;
         wxString title;
         bool readOnly;
-        bool deleteFileOnDestroy;
+        bool deleteOnExit;
 
-        FileInfo(const wxFileName& fn, const wxString &caption, bool ro) : filename(fn), title(caption), readOnly(ro), deleteFileOnDestroy(false) {}
-        FileInfo() : readOnly(true), deleteFileOnDestroy(false) {}
-
-        void Clear() {
-            filename.Clear();
-            title.Clear();
-            readOnly = true;
-            deleteFileOnDestroy = false;
-        }
-
-        void DeleteFileIfNeeded() {
-            if ( deleteFileOnDestroy && filename.IsOk() && filename.Exists() ) {
-                ::wxRemoveFile( filename.GetFullPath() );
-            }
-            Clear();
-        }
+        FileInfo(const wxFileName& fn, const wxString &caption, bool ro) : filename(fn), title(caption), readOnly(ro), deleteOnExit(false) {}
+        FileInfo() : readOnly(true), deleteOnExit(false) {}
     };
 
-    Markers_t m_leftRedMarkers;             /// left view list of lines with red markers ("removed")
-    Markers_t m_leftPlaceholdersMarkers;    /// left view list of lines with red markers ("removed")
-    Markers_t m_rightGreenMarkers;          /// right view list of lines with green markers ("added")
-    Markers_t m_rightPlaceholdersMarkers;   /// right view list of lines with green markers ("added")
+    enum {
+        kDeleteLeftOnExit    = 0x00000001,
+        kDeleteRightOnExit   = 0x00000002,
+        kLeftReadOnly        = 0x00000004,
+        kRightReadOnly       = 0x00000008,
+        kOriginSourceControl = 0x00000010,
+    };
+    
+protected:
+    virtual void OnLeftPickerUI(wxUpdateUIEvent& event);
+    virtual void OnRightPickerUI(wxUpdateUIEvent& event);
+    Markers_t m_leftRedMarkers;
+    Markers_t m_leftGreenMarkers;
+    Markers_t m_leftPlaceholdersMarkers;
+
+    Markers_t m_rightGreenMarkers;
+    Markers_t m_rightRedMarkers;
+    Markers_t m_rightPlaceholdersMarkers;
+
     std::vector< std::pair<int, int> > m_sequences; // start-line - end-line pairs
     int m_cur_sequence;
 
-    DiffSideBySidePanel::FileInfo m_leftFile;
-    DiffSideBySidePanel::FileInfo m_rightFile;
-
+    clDTL::DiffMode m_diffMode;
+    size_t m_flags;
+    wxString m_leftCaption;
+    wxString m_rightCaption;
+    
 protected:
+    wxString DoGetContentNoPlaceholders(wxStyledTextCtrl *stc) const;
+    bool IsLeftReadOnly() const {
+        return m_flags & kLeftReadOnly;
+    }
+    bool IsRightReadOnly() const {
+        return m_flags & kRightReadOnly;
+    }
+    bool IsDeleteLeftOnExit() const {
+        return m_flags & kDeleteLeftOnExit;
+    }
+    bool IsDeleteRightOnExit() const {
+        return m_flags & kDeleteRightOnExit;
+    }
+    bool IsOriginSourceControl() const {
+        return m_flags & kOriginSourceControl;
+    }
+    
+protected:
+    virtual void OnRefreshDiffUI(wxUpdateUIEvent& event);
     virtual void OnHorizontal(wxRibbonButtonBarEvent& event);
     virtual void OnHorizontalUI(wxUpdateUIEvent& event);
     virtual void OnVertical(wxRibbonButtonBarEvent& event);
@@ -76,15 +99,28 @@ protected:
 
     bool CanNextDiff();
     bool CanPrevDiff();
+    void DefineMarkers( wxStyledTextCtrl* ctrl );
 
 public:
-    DiffSideBySidePanel(wxWindow* parent);
+    DiffSideBySidePanel(wxWindow* parent, clDTL::DiffMode mode);
     virtual ~DiffSideBySidePanel();
 
     /**
      * @brief display a diff view for 2 files left and right
      */
     void Diff();
+    
+    /**
+     * @brief mark the current diff origin from source control
+     */
+    void SetOriginSourceControl() {
+        m_flags |= kOriginSourceControl;
+    }
+    
+    /**
+     * @brief start a new empty diff
+     */
+    void DiffNew();
 
     /**
      * @brief set the initial files to diff

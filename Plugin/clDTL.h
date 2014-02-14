@@ -53,7 +53,11 @@ public:
     };
     typedef std::vector<LineInfo> LineInfoVec_t;
     typedef std::vector<std::pair<int, int> > SeqLinePair_t;
-
+    
+    enum DiffMode {
+        kTwoPanes = 0x01,
+        kOnePane  = 0x02
+    };
 
 private:
     LineInfoVec_t m_resultLeft;
@@ -68,7 +72,7 @@ public:
      * @brief "diff" two files and store the result in the m_result member
      * When 2 files are identical, the result is empty
      */
-    void Diff(const wxFileName& fnLeft, const wxFileName& fnRight);
+    void Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode mode);
 
     const LineInfoVec_t& GetResultLeft() const {
         return m_resultLeft;

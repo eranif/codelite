@@ -940,6 +940,13 @@
 																	"m_functionNameAndSignature":	"OnRefreshDiff(wxRibbonButtonBarEvent& event)",
 																	"m_description":	"Triggered when the normal (non-dropdown) region of a button on the button bar is clicked.",
 																	"m_noBody":	false
+																}, {
+																	"m_eventName":	"wxEVT_UPDATE_UI",
+																	"m_eventClass":	"wxUpdateUIEvent",
+																	"m_eventHandler":	"wxUpdateUIEventHandler",
+																	"m_functionNameAndSignature":	"OnRefreshDiffUI(wxUpdateUIEvent& event)",
+																	"m_description":	"Process a wxEVT_UPDATE_UI event",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}, {
@@ -2118,7 +2125,7 @@
 							"border":	2,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
+							"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_PERMIT_UNSPLIT", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -2361,7 +2368,14 @@
 															"m_label":	"Wildcard:",
 															"m_value":	"*"
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_UPDATE_UI",
+															"m_eventClass":	"wxUpdateUIEvent",
+															"m_eventHandler":	"wxUpdateUIEventHandler",
+															"m_functionNameAndSignature":	"OnLeftPickerUI(wxUpdateUIEvent& event)",
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4466,
@@ -2556,7 +2570,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Label:",
-															"m_value":	"Static Text Label"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Wrap:",
@@ -2732,7 +2746,14 @@
 															"m_label":	"Wildcard:",
 															"m_value":	"*"
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_UPDATE_UI",
+															"m_eventClass":	"wxUpdateUIEvent",
+															"m_eventHandler":	"wxUpdateUIEventHandler",
+															"m_functionNameAndSignature":	"OnRightPickerUI(wxUpdateUIEvent& event)",
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4466,
@@ -2927,7 +2948,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Label:",
-															"m_value":	"Static Text Label"
+															"m_value":	""
 														}, {
 															"type":	"string",
 															"m_label":	"Wrap:",

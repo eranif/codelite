@@ -21,9 +21,12 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     m_fileName = src.m_fileName;
     m_answer = src.m_answer;
     
-    // need to copy these 2 manually
-    m_eventType = src.m_eventType;
-    m_id = src.m_id;
+    // Copy wxCommandEvent members here
+    m_eventType  = src.m_eventType;
+    m_id         = src.m_id;
+    m_cmdString  = src.m_cmdString;
+    m_commandInt = src.m_commandInt;
+    m_extraLong  = src.m_extraLong;
     return *this;
 }
 

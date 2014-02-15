@@ -161,6 +161,13 @@ void DiffSideBySidePanel::PrepareViews()
     // Create the markers we need
     DefineMarkers( m_stcLeft );
     DefineMarkers( m_stcRight );
+    
+    // Turn off PP highlighting
+    m_stcLeft->SetProperty("lexer.cpp.track.preprocessor",  "0");
+    m_stcLeft->SetProperty("lexer.cpp.update.preprocessor", "0");
+    
+    m_stcRight->SetProperty("lexer.cpp.track.preprocessor",  "0");
+    m_stcRight->SetProperty("lexer.cpp.update.preprocessor", "0");
 }
 
 void DiffSideBySidePanel::DefineMarkers(wxStyledTextCtrl* ctrl)

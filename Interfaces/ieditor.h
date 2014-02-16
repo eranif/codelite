@@ -130,7 +130,13 @@ public:
      * \brief return the current word under the caret. May return wxEmptyString
      */
     virtual wxString GetWordAtCaret() = 0;
-
+    
+    /**
+     * @brief return the word under the mouse pointer. 
+     * If a selection exists, return it instead
+     */
+    virtual wxString GetWordAtMousePointer() = 0;
+    
     /**
      * @brief return the EOL mode of the editor.
      * 	wxSCI_EOL_CRLF 	0

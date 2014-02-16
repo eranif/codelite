@@ -644,7 +644,20 @@ public:
     virtual const wxString &GetProjectName() const {
         return m_project;
     }
-    virtual wxString GetWordAtCaret() ;
+    /**
+     * @brief 
+     * @return 
+     */
+    virtual wxString GetWordAtCaret();
+    /**
+     * @brief 
+     * @return 
+     */
+    virtual wxString GetWordAtMousePointer();
+    /**
+     * @brief 
+     * @param text
+     */
     virtual void AppendText(const wxString &text) {
         wxStyledTextCtrl::AppendText(text);
     }

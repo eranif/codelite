@@ -435,21 +435,6 @@ enum MenuType {
 // 0x00000008 -> select the plugin's masking by default
 #define wxEVT_CMD_GET_FIND_IN_FILES_MASK 3521
 
-////////////////////////////////////////////////////////
-// Debugger events
-////////////////////////////////////////////////////////
-
-// User is hovering a text, display the debugger tip for this variable
-// User m_mgr->GetActiveEditor() to get the current editor Or
-// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEventObject());
-// Hover position is set in the evt.GetInt()
-// NOT IMPLEMENTED YET
-#define wxEVT_CMD_DEBUGGER_TIP 3522
-
-// codelite needs to know wether the user can interact with the
-// debugger
-#define wxEVT_CMD_DEBUGGER_CAN_INTERACT 3523
-
 /////////////////////////////////////////////////////////
 
 // Send dwell end event to the plugins to notify them
@@ -578,6 +563,10 @@ enum MenuType {
 #define wxEVT_DBG_UI_RESTART           3556 // Restart the debug session
 #define wxEVT_DBG_IS_RUNNING           3557 // Use evet.SetAnswer() method to reply
 #define wxEVT_DBG_UI_TOGGLE_BREAKPOINT 3558 // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
+#define wxEVT_DBG_CAN_INTERACT         3559 // Can CodeLite interact with the debugger? use event.SetAnswer(true); 
+                                            // Note: by avoid calling Skip() CodeLite will assume that the plugin is controlling the debug session
+                                            // and it will use the event.IsAnswer() as the answer to the question to : CanDbgInteract()
+#define wxEVT_DBG_EXPR_TOOLTIP         3560 // Provide a tooltip for the expression under the caret. user event.GetString() to get the expression
 
 // -------------------Debugger events end------------------------------------------------
 #define wxEVT_CMD_OPEN_PROJ_SETTINGS   3580 // clCommandEvent. Use event.GetString() to get the project name

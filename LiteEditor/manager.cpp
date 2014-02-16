@@ -3724,14 +3724,13 @@ void Manager::GetActiveProjectFiles(wxArrayString& files)
 
 bool Manager::DbgCanInteract()
 {
-    // Allow the plugins to override the default built-in behavior
-    wxCommandEvent evtDbgCanInteract(wxEVT_CMD_DEBUGGER_CAN_INTERACT);
-    evtDbgCanInteract.SetEventObject(this);
-    evtDbgCanInteract.SetInt(0);
-    if(EventNotifier::Get()->ProcessEvent(evtDbgCanInteract)) {
-        return evtDbgCanInteract.GetInt() == 1;
+    /// First, we also propogate this question to the plugins
+    clDebugEvent de(wxEVT_DBG_CAN_INTERACT);
+    if ( EventNotifier::Get()->ProcessEvent( de ) ) {
+        // a plugin answered this question, we assume that a debug session is running by 
+        // another plugin so avoid using our built-in debugger
+        return de.IsAnswer();
     }
-
     return m_dbgCanInteract;
 }
 

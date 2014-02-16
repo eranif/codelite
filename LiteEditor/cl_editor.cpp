@@ -1443,9 +1443,6 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
     int margin = 0;
     wxPoint pt ( ScreenToClient(wxGetMousePosition()) );
     wxRect  clientRect = GetClientRect();
-    /*if( clientRect.Contains(pt) == false ) {
-    	wxLogMessage(wxT("Dwell start called but mouse is off the client area"));
-    }*/
 
     for (int n=0; n < FOLD_MARGIN_ID; ++n) {
         margin += GetMarginWidth(n);
@@ -1485,7 +1482,15 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         }
 
     } else if (ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
-        //debugger is running and responsive, query it about the current token
+        
+        // debugger is running and responsive, query it about the current token
+        clDebugEvent evt(wxEVT_DBG_EXPR_TOOLTIP, GetId());
+        evt.SetEventObject(this);
+        evt.SetString( GetWordAtMousePointer() );
+        
+        if(EventNotifier::Get()->ProcessEvent(evt))
+            return;
+
         m_context->OnDbgDwellStart(event);
 
     } else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
@@ -4633,4 +4638,18 @@ bool LEditor::IsDetached() const
 {
     const wxWindow* tlw = ::wxGetTopLevelParent(const_cast<LEditor*>(this));
     return (tlw && (clMainFrame::Get() != tlw));
+}
+
+wxString LEditor::GetWordAtMousePointer()
+{
+    if ( GetSelectedText().IsEmpty() ) {
+        int pos = PositionFromPoint( ::wxGetMousePosition() );
+        if ( pos != wxNOT_FOUND ) {
+            long start = WordStartPosition(pos, true);
+            long end   = WordEndPosition(pos, true);
+            return GetTextRange(start, end);
+        }
+    } else {
+        return GetSelectedText();
+    }
 }

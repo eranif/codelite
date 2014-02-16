@@ -146,6 +146,7 @@ LEditor::LEditor(wxWindow* parent)
     : wxStyledTextCtrl           (parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
     , m_rightClickMenu           (NULL)
     , m_popupIsOn                (false)
+    , m_isDragging               (false)
     , m_modifyTime               (0)
     , m_isVisible                (true)
     , m_hyperLinkIndicatroStart  (wxNOT_FOUND)
@@ -4648,6 +4649,8 @@ wxString LEditor::GetWordAtMousePointer()
             long start = WordStartPosition(pos, true);
             long end   = WordEndPosition(pos, true);
             return GetTextRange(start, end);
+        } else {
+            return "";
         }
     } else {
         return GetSelectedText();

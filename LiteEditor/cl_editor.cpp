@@ -4644,7 +4644,9 @@ bool LEditor::IsDetached() const
 wxString LEditor::GetWordAtMousePointer()
 {
     if ( GetSelectedText().IsEmpty() ) {
-        int pos = PositionFromPoint( ::wxGetMousePosition() );
+        wxPoint mousePtInScreenCoord = ::wxGetMousePosition();
+        wxPoint clientPt = ScreenToClient( mousePtInScreenCoord );
+        int pos = PositionFromPoint( clientPt );
         if ( pos != wxNOT_FOUND ) {
             long start = WordStartPosition(pos, true);
             long end   = WordEndPosition(pos, true);

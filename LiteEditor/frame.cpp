@@ -2073,7 +2073,7 @@ void clMainFrame::OnCompleteWordUpdateUI(wxUpdateUIEvent &event)
 
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
     // This menu item is enabled only if the current editor belongs to a project
-    event.Enable(editor && !editor->GetProject().IsEmpty());
+    event.Enable( editor );
 }
 
 void clMainFrame::OnWorkspaceOpen(wxUpdateUIEvent &event)

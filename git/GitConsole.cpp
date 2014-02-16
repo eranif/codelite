@@ -226,32 +226,34 @@ void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event)
 void GitConsole::AddText(const wxString& text)
 {
     wxString tmp = text;
-    tmp.Trim().Trim(false);
-
-    if ( tmp.IsEmpty() )
-        return;
+    tmp.Replace("\r\n", "\n");
     
-    tmp << "\n";
     m_stcLog->SetReadOnly(false);
-    m_stcLog->AppendText( tmp );
-    m_stcLog->SetReadOnly(true);
+    
+    int lineNumber = m_stcLog->GetLineCount(); // there is always at least 1 line in the document
+    --lineNumber; // wxSTC count lines from 0
+
+    wxArrayString lines = ::wxStringTokenize(tmp, "\n", wxTOKEN_STRTOK);
+    for(size_t i=0; i<lines.GetCount(); ++i) {
+        wxString &curline = lines.Item(i);
+        if ( curline.StartsWith("\r") && lineNumber) {
+            m_stcLog->LineDelete(); // Deletes the "\n" we append to each line
+            m_stcLog->LineDelete(); // The the last line we added
+        }
+        m_stcLog->AppendText(curline + "\n");
+        
+        // update the lineNumber
+        lineNumber = m_stcLog->GetLineCount(); // there is always at least 1 line in the document
+        --lineNumber; // wxSTC count lines from 0
+    }
+    m_stcLog->SetReadOnly(false);
     m_stcLog->ScrollToEnd();
 }
 
 void GitConsole::AddRawText(const wxString& text)
 {
-    wxString tmp = text;
-    tmp.Trim().Trim(false);
-
-    if ( tmp.IsEmpty() )
-        return;
-
-    wxArrayString lines = ::wxStringTokenize(tmp, "\n\r", wxTOKEN_STRTOK);
-    for(size_t i=0; i<lines.GetCount(); ++i) {
-        AddText(lines.Item(i));
-    }
+    AddText( text );
 }
-
 
 bool GitConsole::IsVerbose() const
 {

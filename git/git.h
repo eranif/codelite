@@ -71,12 +71,8 @@ class GitPlugin : public IPlugin
         gitRmFiles,
         gitApplyPatch,
         gitRevertCommit,
-#if 0
-        gitBisectStart,
-        gitBisectGood,
-        gitBisectBad,
-        gitBisectReset,
-#endif
+        gitStash,
+        gitStashPop,
     };
 
     wxArrayString           m_localBranchList;

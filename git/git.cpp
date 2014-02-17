@@ -621,8 +621,18 @@ void GitPlugin::OnPull(wxCommandEvent &e)
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Save all changes and pull remote changes?"), "GitPullRemoteChanges");
     if( res == wxID_YES ) {
         m_mgr->SaveAll();
-        gitAction ga(gitPull, wxT(""));
-        m_gitActionQueue.push(ga);
+        if ( m_console->IsDirty() ) { 
+            gitAction ga(gitStash, wxT(""));
+            m_gitActionQueue.push(ga);
+        }
+        {
+            gitAction ga(gitPull, wxT(""));
+            m_gitActionQueue.push(ga);
+        }
+        if ( m_console->IsDirty() ) { 
+            gitAction ga(gitStashPop, wxT(""));
+            m_gitActionQueue.push(ga);
+        }
         AddDefaultActions();
         ProcessGitActionQueue(commandString);
     }
@@ -853,9 +863,21 @@ void GitPlugin::ProcessGitActionQueue(const wxString& commandString /*= ""*/)
 
     wxString command = m_pathGITExecutable;
     switch(ga.action) {
+    case gitStash:
+        command << " stash";
+        GIT_MESSAGE("Git repository is ditry, stashing local changes before pulling...");
+        GIT_MESSAGE("%s", command);
+        break;
+        
+    case gitStashPop:
+        command << " stash pop";
+        
+        GIT_MESSAGE("%s", command);
+        break;
+        
     case gitRevertCommit:
         command << " revert --no-commit " << ga.arguments;
-        GIT_MESSAGE("%s", command.c_str());
+        GIT_MESSAGE("%s", command);
         break;
 
     case gitApplyPatch:

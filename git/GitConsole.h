@@ -21,9 +21,6 @@ class GitConsole : public GitConsoleBase
     wxBitmap m_newBmp;
     wxBitmap m_deleteBmp;
     
-protected:
-    void DeleteLastLine();
-    
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);
     virtual ~GitConsole();
@@ -31,6 +28,12 @@ public:
     void AddText(const wxString &text);
     bool IsVerbose() const;
     void UpdateTreeView(const wxString &output);
+    
+    /**
+     * @brief return true if there are any deleted/new/modified items
+     * @return 
+     */
+    bool IsDirty() const;
     
     //
     // Progress bar API

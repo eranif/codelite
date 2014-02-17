@@ -361,23 +361,32 @@ void GitConsole::UpdateTreeView(const wxString& output)
     }
 
 #ifndef __WXMAC__
-    if ( !m_dvFilesModel->HasChildren(m_itemModified) )
+    if ( !m_dvFilesModel->HasChildren(m_itemModified) ) {
         m_dvFilesModel->DeleteItem(m_itemModified);
-    else
+        m_itemModified = wxDataViewItem();
+    } else {
         m_dvFiles->Expand(m_itemModified);
-
-    if ( !m_dvFilesModel->HasChildren(m_itemUntracked) )
+    }
+    
+    if ( !m_dvFilesModel->HasChildren(m_itemUntracked) ) {
         m_dvFilesModel->DeleteItem(m_itemUntracked);
-
-    if ( !m_dvFilesModel->HasChildren(m_itemNew) )
+        m_itemUntracked = wxDataViewItem();
+    }
+    
+    if ( !m_dvFilesModel->HasChildren(m_itemNew) ) {
         m_dvFilesModel->DeleteItem(m_itemNew);
-    else
+        m_itemNew = wxDataViewItem();
+    } else {
         m_dvFiles->Expand(m_itemNew);
-
-    if ( !m_dvFilesModel->HasChildren(m_itemDeleted) )
+    }
+    
+    if ( !m_dvFilesModel->HasChildren(m_itemDeleted) ) {
         m_dvFilesModel->DeleteItem(m_itemDeleted);
-    else
+        m_itemDeleted = wxDataViewItem();
+    } else {
         m_dvFiles->Expand(m_itemDeleted);
+        
+    }
 #endif
 }
 
@@ -615,4 +624,13 @@ bool GitConsole::IsProgressShown() const
 void GitConsole::PulseProgress()
 {
     m_gauge->Pulse();
+}
+
+bool GitConsole::IsDirty() const
+{
+    bool hasDeleted  = m_itemDeleted.IsOk() && m_dvFilesModel->HasChildren( m_itemDeleted );
+    bool hasModified = m_itemModified.IsOk() && m_dvFilesModel->HasChildren( m_itemModified );
+    bool hasNew      = m_itemNew.IsOk() && m_dvFilesModel->HasChildren( m_itemNew );
+    
+    return hasDeleted || hasModified || hasNew;
 }

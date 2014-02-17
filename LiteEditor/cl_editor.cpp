@@ -2986,17 +2986,12 @@ void LEditor::OnLeaveWindow(wxMouseEvent& event)
 
     SetIndicatorCurrent(HYPERLINK_INDICATOR);
     IndicatorClearRange(0, GetLength());
-
-    DoCancelCalltip();
-
     event.Skip();
 }
 
 void LEditor::OnFocusLost(wxFocusEvent &event)
 {
     m_isFocused = false;
-    DoCancelCalltip();
-
     event.Skip();
 }
 

@@ -224,9 +224,7 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
     m_lineHeight     = lineHeight;
     m_parentBgColour = parentBgColour;
 
-//	wxLogMessage(wxT("%s"), parentBgColour.GetAsString(wxC2S_NAME|wxC2S_CSS_SYNTAX).c_str());
     DoAdjustPosition();
-
     if(!IsActive()) {
         Show();
     }

@@ -1,6 +1,7 @@
 #include "codelitediff.h"
 #include <wx/xrc/xmlres.h>
 #include "DiffSideBySidePanel.h"
+#include "wx/menu.h"
 
 static CodeLiteDiff* thePlugin = NULL;
 

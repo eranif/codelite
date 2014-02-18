@@ -919,7 +919,10 @@ void clMainFrame::CreateGUIControls(void)
     if ( !show_nav ) {
         m_mainBook->ShowNavBar( false );
     }
-    BuildSettingsConfigST::Get()->Load(wxT("2.1"));
+    
+    if ( !BuildSettingsConfigST::Get()->Load(wxT("2.1")) ) {
+        CL_ERROR("Could not locate build configuration! CodeLite installation is broken this might cause unwanted behavior!");
+    }
 
     clConfig ccConfig("code-completion.conf");
     ccConfig.ReadItem( &m_tagsOptionsData );

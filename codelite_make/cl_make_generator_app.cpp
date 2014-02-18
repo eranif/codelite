@@ -43,10 +43,13 @@ bool clMakeGeneratorApp::OnInit()
     wxCmdLineParser parser(wxAppConsole::argc, wxAppConsole::argv);
     if ( !DoParseCommandLine( parser ) )
         return false;
-    
+
     // Load compilers settings
-    BuildSettingsConfigST::Get()->Load("2.4");
-    
+    if ( !BuildSettingsConfigST::Get()->Load("2.1") ) {
+        Error("Could not load build settings configuration object (Version 2.1 / build_settings.xml)");
+        return false;
+    }
+
     wxFileName fnWorkspace(m_workspaceFile);
     if ( fnWorkspace.IsRelative() ) {
         fnWorkspace.MakeAbsolute(m_workingDirectory);

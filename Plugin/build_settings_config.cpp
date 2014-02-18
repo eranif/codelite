@@ -28,6 +28,7 @@
 #include "xmlutils.h"
 #include <wx/ffile.h>
 #include "wx_xml_compatibility.h"
+#include "macros.h"
 
 
 BuildSettingsConfig::BuildSettingsConfig()
@@ -37,7 +38,7 @@ BuildSettingsConfig::BuildSettingsConfig()
 
 BuildSettingsConfig::~BuildSettingsConfig()
 {
-    delete m_doc;
+    wxDELETE(m_doc);
 }
 
 bool BuildSettingsConfig::Load(const wxString &version)
@@ -45,6 +46,8 @@ bool BuildSettingsConfig::Load(const wxString &version)
     m_version = version;
     wxString initialSettings = ConfFileLocator::Instance()->Locate(wxT("config/build_settings.xml"));
     bool loaded = m_doc->Load(initialSettings);
+    CHECK_PTR_RET_FALSE( m_doc->GetRoot() );
+    
     wxString xmlVersion = m_doc->GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
     if ( xmlVersion != version ) {
         loaded = m_doc->Load(ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));

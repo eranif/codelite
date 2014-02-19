@@ -136,7 +136,7 @@ void FileExplorer::OnActiveEditorChanged(wxCommandEvent& e)
             m_fileTree->ClearSelections();
 CL_DEBUG1(" ===> [Explorer] Expand to path for " + editor->GetFileName().GetFullPath() );
             m_fileTree->Tree()->ExpandPath(editor->GetFileName().GetFullPath());
-CL_DEBUG1" <=== [Explorer] Expand to path for " + editor->GetFileName().GetFullPath() );
+CL_DEBUG1(" <=== [Explorer] Expand to path for " + editor->GetFileName().GetFullPath() );
         }
     }
 }

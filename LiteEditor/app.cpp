@@ -495,7 +495,7 @@ bool CodeLiteApp::OnInit()
 
     // Set the log file verbosity
     FileLogger::Get()->SetVerbosity( clConfig::Get().Read("LogVerbosity", FileLogger::Error) );
-    CL_SYSTEM(wxT("Starting codelite..."));
+    CL_DEBUG(wxT("Starting codelite..."));
 
     // check for single instance
     if ( !IsSingleInstance(parser, ManagerST::Get()->GetOriginalCwd()) ) {
@@ -630,7 +630,7 @@ bool CodeLiteApp::OnInit()
 
 int CodeLiteApp::OnExit()
 {
-    CL_SYSTEM(wxT("Bye"));
+    CL_DEBUG(wxT("Bye"));
     EditorConfigST::Free();
     ConfFileLocator::Release();
     return 0;

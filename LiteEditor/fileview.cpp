@@ -65,6 +65,7 @@
 #include "cl_command_event.h"
 #include "NewVirtualFolderDlg.h"
 #include "workspacetab.h"
+#include "file_logger.h"
 
 IMPLEMENT_DYNAMIC_CLASS(FileViewTree, wxTreeCtrl)
 
@@ -1489,6 +1490,8 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
     if (!root.IsOk())
         return;
 
+CL_DEBUG1(" ===> [workspace] Expand to path for " + project + "::" + fileName.GetFullPath() );
+
     wxTreeItemIdValue cookie;
     for (wxTreeItemId child = GetFirstChild(root, cookie); child.IsOk(); child = GetNextChild(root, cookie)) {
         FilewViewTreeItemData *childData = static_cast<FilewViewTreeItemData*>( GetItemData( child ) );
@@ -1514,7 +1517,7 @@ void FileViewTree::ExpandToPath(const wxString &project, const wxFileName &fileN
             break;
         }
     }
-
+CL_DEBUG1(" <=== [workspace] Expand to path for " + project + "::" + fileName.GetFullPath() );
 }
 
 wxTreeItemId FileViewTree::FindItemByPath(wxTreeItemId &parent, const wxString &projectPath, const wxString &fileName)

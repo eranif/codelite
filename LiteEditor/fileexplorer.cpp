@@ -36,6 +36,7 @@
 #include "workspace_pane.h"
 #include "frame.h"
 #include "FileExplorerTab.h"
+#include "file_logger.h"
 
 FileExplorer::FileExplorer(wxWindow *parent, const wxString &caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(250, 300))
@@ -133,7 +134,9 @@ void FileExplorer::OnActiveEditorChanged(wxCommandEvent& e)
         LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
         if (editor && editor->GetFileName().FileExists()) {
             m_fileTree->ClearSelections();
+CL_DEBUG1(" ===> [Explorer] Expand to path for " + editor->GetFileName().GetFullPath() );
             m_fileTree->Tree()->ExpandPath(editor->GetFileName().GetFullPath());
+CL_DEBUG1" <=== [Explorer] Expand to path for " + editor->GetFileName().GetFullPath() );
         }
     }
 }

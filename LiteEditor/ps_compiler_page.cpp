@@ -14,6 +14,7 @@ PSCompilerPage::PSCompilerPage( wxWindow* parent, const wxString &projectName, P
     , m_projectName(projectName)
     , m_gp(gp)
 {
+    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
 }
 
 void PSCompilerPage::Load(BuildConfigPtr buildConf)

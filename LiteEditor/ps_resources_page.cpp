@@ -11,6 +11,7 @@ PSResourcesPage::PSResourcesPage( wxWindow* parent, ProjectSettingsDlg *dlg )
     : PSResourcesPageBase( parent )
     , m_dlg(dlg)
 {
+    m_pgMgr->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
 }
 
 void PSResourcesPage::Load(BuildConfigPtr buildConf)

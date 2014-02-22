@@ -14,6 +14,7 @@ PSGeneralPage::PSGeneralPage( wxWindow* parent, const wxString &projectName, con
     , m_projectName(projectName)
     , m_configName(conf)
 {
+    m_pgMgr136->GetGrid()->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
 }
 
 void PSGeneralPage::OnProjectCustumBuildUI( wxUpdateUIEvent& event )

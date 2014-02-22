@@ -17,11 +17,13 @@ CodeCompletionManager::CodeCompletionManager()
     , m_wordCompletionRefreshNeeded(false)
 {
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this );
 }
 
 CodeCompletionManager::~CodeCompletionManager()
 {
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
+    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this );
 }
 
 void CodeCompletionManager::WordCompletion(LEditor *editor, const wxString& expr, const wxString& word)
@@ -251,9 +253,21 @@ void CodeCompletionManager::GotoDecl(LEditor* editor)
 
 void CodeCompletionManager::OnBuildEnded(clBuildEvent& e)
 {
+    e.Skip();
+    DoUpdateCompilationDatabase();
+}
+
+void CodeCompletionManager::DoUpdateCompilationDatabase()
+{
     // Create a worker thread (detached thread) that 
     // will initialize the database now that the compilation is ended
     CompilationDatabase db;
     ClangCompilationDbThread* thr = new ClangCompilationDbThread( db.GetFileName().GetFullPath() );
     thr->Start();
+}
+
+void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
+{
+    e.Skip();
+    DoUpdateCompilationDatabase();
 }

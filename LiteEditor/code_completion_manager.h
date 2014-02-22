@@ -30,6 +30,7 @@
 #include <wx/filename.h>
 #include "cl_editor.h"
 #include "cl_command_event.h"
+#include <wx/event.h>
 
 class CodeCompletionManager : public wxEvtHandler
 {
@@ -53,9 +54,12 @@ protected:
     void DoClangGotoDecl      (LEditor *editor);
 
     void DoUpdateOptions();
+    void DoUpdateCompilationDatabase();
+    
 protected:
     // Event handlers
     void OnBuildEnded(clBuildEvent &e);
+    void OnAppActivated(wxActivateEvent &e);
     
 public:
     CodeCompletionManager();

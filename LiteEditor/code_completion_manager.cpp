@@ -10,7 +10,7 @@
 #include "event_notifier.h"
 #include "plugin.h"
 
-static CodeCompletionManager ms_CodeCompletionManager;
+static CodeCompletionManager *ms_CodeCompletionManager = NULL;
 
 CodeCompletionManager::CodeCompletionManager()
     : m_options(CC_CTAGS_ENABLED)
@@ -56,7 +56,10 @@ void CodeCompletionManager::WordCompletion(LEditor *editor, const wxString& expr
 
 CodeCompletionManager& CodeCompletionManager::Get()
 {
-    return ms_CodeCompletionManager;
+    if ( !ms_CodeCompletionManager ) {
+        ms_CodeCompletionManager = new CodeCompletionManager;
+    }
+    return *ms_CodeCompletionManager;
 }
 
 bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxString& expr, const wxString& word)
@@ -270,4 +273,9 @@ void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
     DoUpdateCompilationDatabase();
+}
+
+void CodeCompletionManager::Release()
+{
+    wxDELETE(ms_CodeCompletionManager);
 }

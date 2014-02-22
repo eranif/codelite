@@ -51,6 +51,7 @@
 #include "refactorengine.h"
 #include "bookmark_manager.h"
 #include <wx/richmsgdlg.h>
+#include "code_completion_manager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -689,11 +690,16 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
-
+    
+    // Start the code completion manager, we do this by calling it once
+    CodeCompletionManager::Get();
 }
 
 clMainFrame::~clMainFrame(void)
 {
+    // Free the code completion manager
+    CodeCompletionManager::Release();
+    
     // this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
     // see this wxWidgets bug report for more details:
     //  http://trac.wxwidgets.org/ticket/14292

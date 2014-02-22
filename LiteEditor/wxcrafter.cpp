@@ -26,8 +26,8 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
-    m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(500,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
-    m_splitter5->SetSashGravity(0.5);
+    m_splitter5 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(600,400), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter5->SetSashGravity(0);
     m_splitter5->SetMinimumPaneSize(10);
     
     boxSizer1->Add(m_splitter5, 1, wxALL|wxEXPAND, 5);
@@ -45,9 +45,9 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer10->Add(m_dataviewTemplates, 1, wxALL|wxEXPAND, 5);
     
-    m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
+    m_dataviewTemplates->AppendIconTextColumn(_("Template"), m_dataviewTemplates->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     m_splitterPageLeft = new wxPanel(m_splitter5, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, 0);
+    m_splitter5->SplitVertically(m_splitterPageRight, m_splitterPageLeft, 300);
     
     wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer11);
@@ -79,10 +79,10 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     
     boxSizer30->Add(m_textCtrlProjectPath, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     
-    m_button268 = new wxButton(m_splitterPageLeft, wxID_ANY, _("Browse"), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
-    m_button268->SetToolTip(_("Browse for folder"));
+    m_buttonBrowse = new wxButton(m_splitterPageLeft, wxID_ANY, _("Browse..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+    m_buttonBrowse->SetToolTip(_("Browse for folder"));
     
-    boxSizer30->Add(m_button268, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer30->Add(m_buttonBrowse, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     
     m_staticText21 = new wxStaticText(m_splitterPageLeft, wxID_ANY, _("Compiler:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
@@ -130,7 +130,7 @@ NewProjectDlgBaseClass::NewProjectDlgBaseClass(wxWindow* parent, wxWindowID id, 
     m_dataviewTemplates->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NewProjectDlgBaseClass::OnItemSelected), NULL, this);
     m_txtProjName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_textCtrlProjectPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectPathUpdated), NULL, this);
-    m_button268->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
+    m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
     m_cbSeparateDir->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_button3->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDlgBaseClass::OnOKUI), NULL, this);
     m_button3->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCreate), NULL, this);
@@ -142,7 +142,7 @@ NewProjectDlgBaseClass::~NewProjectDlgBaseClass()
     m_dataviewTemplates->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(NewProjectDlgBaseClass::OnItemSelected), NULL, this);
     m_txtProjName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_textCtrlProjectPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectPathUpdated), NULL, this);
-    m_button268->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
+    m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnBrowseProjectPath), NULL, this);
     m_cbSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnProjectNameChanged), NULL, this);
     m_button3->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDlgBaseClass::OnOKUI), NULL, this);
     m_button3->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDlgBaseClass::OnCreate), NULL, this);
@@ -374,6 +374,15 @@ NewProjImgList::NewProjImgList()
         icn.CopyFromBitmap( bmp );
         this->Add( icn );
         m_bitmaps.insert( std::make_pair(wxT("tabClose"), bmp ) );
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake"));
+        icn.CopyFromBitmap( bmp );
+        this->Add( icn );
+        m_bitmaps.insert( std::make_pair(wxT("cmake"), bmp ) );
     }
     
 }

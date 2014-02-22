@@ -1,5 +1,3 @@
-#if HAS_LIBCLANG
-
 #include "clang_compilation_db_thread.h"
 #include "compilation_database.h"
 
@@ -19,5 +17,3 @@ void* ClangCompilationDbThread::Entry()
     cdb.Initialize();
     return NULL;
 }
-
-#endif // #if HAS_LIBCLANG

@@ -188,16 +188,10 @@ void ClangCodeCompletion::OnBuildEnded(clBuildEvent& e)
     CHECK_CLANG_ENABLED_RET();
 
     // Clear environment variables previously set by this class
-    ::wxUnsetEnv(wxT("CL_COMPILATION_DB"));
-    ::wxUnsetEnv(wxT("CXX"));
-    ::wxUnsetEnv(wxT("CC"));
-    
-    // Create a worker thread (detached thread) that 
-    // will initialize the database now that the compilation is ended
-    CompilationDatabase db;
-    ClangCompilationDbThread* thr = new ClangCompilationDbThread( db.GetFileName().GetFullPath() );
-    thr->Start();
-    
+    ::wxUnsetEnv("CL_COMPILATION_DB");
+    ::wxUnsetEnv("CXX");
+    ::wxUnsetEnv("CC");
+
     // Clear the TU cache
     ClearCache();
 }
@@ -227,8 +221,8 @@ void ClangCodeCompletion::OnBuildStarting(clBuildEvent& e)
         cxx.Prepend(wxT("codelitegcc "));
         cc.Prepend(wxT("codelitegcc "));
         
-        ::wxSetEnv(wxT("CXX"), cxx);
-        ::wxSetEnv(wxT("CC"),  cc);
+        ::wxSetEnv("CXX", cxx);
+        ::wxSetEnv("CC" ,  cc);
     }
 }
 

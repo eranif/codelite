@@ -40,6 +40,15 @@ protected:
     void DropTables();
     void CreateDatabase();
     wxString GetDbVersion();
+    /**
+     * @brief create our compilation database out of CMake's compile_commands.json file
+     */
+    void ProcessCMakeCompilationDatabase( const wxFileName &compile_commands );
+    
+    /**
+     * @brief process a codelite standard compilation file
+     */
+    void ProcessCodeLiteCompilationDatabase( const wxFileName &compile_file );
     
 public:
     CompilationDatabase();
@@ -54,9 +63,18 @@ public:
         return m_db && m_db->IsOpen();
     }
     
+    /**
+     * @brief return the database file name (compilation.db), usually under the workspace private folder WORKSPACE_PATH/.codelite/compilation.db
+     */
     wxFileName GetFileName() const;
+    /**
+     * @brief return the location of the CMake (usually compile_commands.json)
+     * Note that this function does not check for the existance of the file
+     */
+    wxFileName GetCMakeDatabase() const;
     void CompilationLine(const wxString &filename, wxString &compliationLine, wxString &cwd);
     void Initialize();
+    bool IsOk() const;
 };
 
 #endif // COMPILATIONDATABASE_H

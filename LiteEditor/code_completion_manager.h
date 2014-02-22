@@ -29,8 +29,9 @@
 #include <wx/string.h>
 #include <wx/filename.h>
 #include "cl_editor.h"
+#include "cl_command_event.h"
 
-class CodeCompletionManager
+class CodeCompletionManager : public wxEvtHandler
 {
 protected:
     size_t m_options;
@@ -52,7 +53,10 @@ protected:
     void DoClangGotoDecl      (LEditor *editor);
 
     void DoUpdateOptions();
-
+protected:
+    // Event handlers
+    void OnBuildEnded(clBuildEvent &e);
+    
 public:
     CodeCompletionManager();
     virtual ~CodeCompletionManager();

@@ -26,8 +26,6 @@
 #ifndef CLANGCOMPILATIONDBTHREAD_H
 #define CLANGCOMPILATIONDBTHREAD_H
 
-#if HAS_LIBCLANG
-
 #include <wx/string.h>
 #include <wx/thread.h>
 
@@ -46,6 +44,5 @@ public:
         Run();
     }
 };
-#endif // HAS_LIBCLANG
 
 #endif // CLANGCOMPILATIONDBTHREAD_H

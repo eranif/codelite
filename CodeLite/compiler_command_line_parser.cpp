@@ -131,7 +131,7 @@ char **buildargv (const char *input, int &argc)
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
-CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
+CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, const wxString& workingDirectory)
 {
     m_argc = 0;
     m_argv = NULL;
@@ -160,7 +160,15 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString &cmdline)
 
             wxString rest;
             
-            if ( opt == "-isystem" && (i+1 < m_argc) ) {
+            if ( opt.StartsWith("@") && (opt.Contains("includes_C.rsp") || opt.Contains("includes_CXX.rsp") ) ) {
+                
+                // The include folders are inside the file - read the file and process its content
+                wxFileName fnIncludes( workingDirectory + "/" + opt.Mid(1) );
+                if ( fnIncludes.Exists() ) {
+                    AddIncludesFromFile( fnIncludes );
+                }
+
+            } else if ( opt == "-isystem" && (i+1 < m_argc) ) {
                 
                 // the next arg is the include folder
                 wxString include_path = m_argv[i+1];
@@ -258,5 +266,19 @@ void CompilerCommandLineParser::MakeAbsolute(const wxString &path)
     
     for(size_t i=0; i<m_includes.GetCount(); ++i) {
         m_includesWithPrefix.Add(wxT("-I") + m_includes.Item(i));
+    }
+}
+
+void CompilerCommandLineParser::AddIncludesFromFile(const wxFileName& includeFile)
+{
+    wxFFile fp( includeFile.GetFullPath(), "rb" );
+    if ( fp.IsOpened() ) {
+        wxString content;
+        fp.ReadAll( &content );
+        content.Replace("\n", " ");
+        CompilerCommandLineParser cclp( content );
+        m_includes.insert(m_includes.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
+        m_includesWithPrefix.insert(m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
+        fp.Close();
     }
 }

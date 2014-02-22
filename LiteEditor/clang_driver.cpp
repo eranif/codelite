@@ -252,7 +252,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
 
     CompilationDatabase cdb;
     static bool once = false;
-    if ( (!wxFileName::FileExists( cdb.GetFileName().GetFullPath() ) || !CompilationDatabase::IsDbVersionUpToDate(cdb.GetFileName())) && !once ) {
+    if ( !cdb.IsOk() && !once ) {
         once = true;
 
         wxString msg;
@@ -279,7 +279,7 @@ FileTypeCmpArgs_t ClangDriver::DoPrepareCompilationArgs(const wxString& projectN
             cdb.CompilationLine(fnSourceFile.GetFullPath(), compilationLine, cwd);
             cdb.Close();
 
-            CompilerCommandLineParser cclp(compilationLine);
+            CompilerCommandLineParser cclp(compilationLine, cwd);
             cclp.MakeAbsolute(cwd);
 
             CL_DEBUG(wxT("Loaded compilation flags: %s"), compilationLine.c_str());

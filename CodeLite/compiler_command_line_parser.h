@@ -24,9 +24,10 @@ protected:
     char **       m_argv;
     wxString      m_diretory;
     wxString      m_pchFile;
-
+protected:
+    void AddIncludesFromFile(const wxFileName& includeFile);
 public:
-    CompilerCommandLineParser(const wxString &cmdline);
+    CompilerCommandLineParser(const wxString &cmdline, const wxString &workingDirectory = wxEmptyString);
     virtual ~CompilerCommandLineParser();
 
     wxString GetCompileLine() const;

@@ -53,7 +53,7 @@ protected:
     wxTextCtrl* m_txtProjName;
     wxStaticText* m_staticText18;
     wxTextCtrl* m_textCtrlProjectPath;
-    wxButton* m_button268;
+    wxButton* m_buttonBrowse;
     wxStaticText* m_staticText21;
     wxChoice* m_chCompiler;
     wxCheckBox* m_cbSeparateDir;

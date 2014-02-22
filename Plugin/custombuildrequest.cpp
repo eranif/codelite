@@ -177,6 +177,14 @@ void CustomBuildRequest::Process(IManager *manager)
                                 bldConf->GetName(),
                                 filename);
     }
+    
+    {
+        // Ensure that the path to the working directory exist
+        wxFileName fnwd(wd, "");
+        if ( !fnwd.DirExists() ) {
+            fnwd.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        }
+    }
 
     ::wxSetWorkingDirectory(wd);
 

@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	368,
+		"m_objCounter":	370,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_liteeditor_bitmaps.cpp",
@@ -156,7 +156,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"500,-1"
+									"m_value":	"600,400"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -213,7 +213,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Sash Gravity:",
-									"m_value":	"0.5"
+									"m_value":	"0"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Pane Size:",
@@ -221,7 +221,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Sash Position:",
-									"m_value":	"0"
+									"m_value":	"300"
 								}],
 							"m_events":	[],
 							"m_children":	[{
@@ -409,7 +409,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Width:",
-																	"m_value":	"300"
+																	"m_value":	"-2"
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Column Type",
@@ -942,7 +942,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Name:",
-																			"m_value":	"m_button268"
+																			"m_value":	"m_buttonBrowse"
 																		}, {
 																			"type":	"multi-string",
 																			"m_label":	"Tooltip:",
@@ -986,7 +986,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Label:",
-																			"m_value":	"Browse"
+																			"m_value":	"Browse..."
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Default Button",
@@ -2356,6 +2356,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	1,
 											"m_options":	["normal", "checkable", "radio", "separator"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -2407,6 +2411,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	1,
 											"m_options":	["normal", "checkable", "radio", "separator"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -2485,6 +2493,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	0,
 											"m_options":	["normal", "checkable", "radio", "separator"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -2543,6 +2555,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	0,
 											"m_options":	["normal", "checkable", "radio", "separator"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -2601,6 +2617,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	0,
 											"m_options":	["normal", "checkable", "radio", "separator"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -2659,6 +2679,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	0,
 											"m_options":	["normal", "checkable", "radio", "separator"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -2900,6 +2924,25 @@
 							"type":	"filePicker",
 							"m_label":	"Bitmap File:",
 							"m_path":	"../icons/close.png"
+						}],
+					"m_events":	[],
+					"m_children":	[]
+				}, {
+					"m_type":	4482,
+					"proportion":	0,
+					"border":	5,
+					"gbSpan":	"1,1",
+					"gbPosition":	"0,0",
+					"m_styles":	[],
+					"m_sizerFlags":	[],
+					"m_properties":	[{
+							"type":	"string",
+							"m_label":	"Name:",
+							"m_value":	"cmake"
+						}, {
+							"type":	"filePicker",
+							"m_label":	"Bitmap File:",
+							"m_path":	"../CMakePlugin/cmake-16.png"
 						}],
 					"m_events":	[],
 					"m_children":	[]
@@ -5758,6 +5801,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	1,
 											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -5816,6 +5863,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	0,
 											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -5874,6 +5925,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	0,
 											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -5932,6 +5987,10 @@
 											"m_label":	"Kind:",
 											"m_selection":	0,
 											"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+										}, {
+											"type":	"bool",
+											"m_label":	"Construct the Dropdown Menu:",
+											"m_value":	true
 										}],
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -6749,6 +6808,10 @@
 									"m_label":	"Kind:",
 									"m_selection":	0,
 									"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+								}, {
+									"type":	"bool",
+									"m_label":	"Construct the Dropdown Menu:",
+									"m_value":	true
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -6793,6 +6856,10 @@
 									"m_label":	"Kind:",
 									"m_selection":	0,
 									"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+								}, {
+									"type":	"bool",
+									"m_label":	"Construct the Dropdown Menu:",
+									"m_value":	true
 								}],
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -6851,6 +6918,10 @@
 									"m_label":	"Kind:",
 									"m_selection":	0,
 									"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+								}, {
+									"type":	"bool",
+									"m_label":	"Construct the Dropdown Menu:",
+									"m_value":	true
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -6895,6 +6966,10 @@
 									"m_label":	"Kind:",
 									"m_selection":	0,
 									"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+								}, {
+									"type":	"bool",
+									"m_label":	"Construct the Dropdown Menu:",
+									"m_value":	true
 								}],
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_TOOL_CLICKED",
@@ -6953,6 +7028,10 @@
 									"m_label":	"Kind:",
 									"m_selection":	0,
 									"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+								}, {
+									"type":	"bool",
+									"m_label":	"Construct the Dropdown Menu:",
+									"m_value":	true
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -6997,6 +7076,10 @@
 									"m_label":	"Kind:",
 									"m_selection":	0,
 									"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+								}, {
+									"type":	"bool",
+									"m_label":	"Construct the Dropdown Menu:",
+									"m_value":	true
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -7041,6 +7124,10 @@
 									"m_label":	"Kind:",
 									"m_selection":	4,
 									"m_options":	["normal", "checkable", "radio", "separator", "dropdown"]
+								}, {
+									"type":	"bool",
+									"m_label":	"Construct the Dropdown Menu:",
+									"m_value":	true
 								}],
 							"m_events":	[],
 							"m_children":	[]

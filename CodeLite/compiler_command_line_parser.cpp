@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <wx/string.h>
 #include <wx/filename.h>
+#include <wx/ffile.h>
 
 //////////////////////////////////////////////////////
 // Helper C functions

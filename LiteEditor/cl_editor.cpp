@@ -4653,3 +4653,8 @@ wxString LEditor::GetWordAtMousePointer()
         return GetSelectedText();
     }
 }
+
+void LEditor::ShowRichTooltip(const wxString& tip, int pos)
+{
+    DoShowCalltip(pos, tip);
+}

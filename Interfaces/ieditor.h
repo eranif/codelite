@@ -245,7 +245,14 @@ public:
      * @param tip tip to display
      */
     virtual void ShowCalltip(clCallTipPtr tip) = 0;
-
+    
+    /**
+     * @brief display a rich tooltip (a tip that supports basic markup, such as <a></a>, <strong></strong> etc)
+     * @param tip tip text
+     * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
+     */
+    virtual void ShowRichTooltip(const wxString &tip, int pos = wxNOT_FOUND) = 0;
+    
     /**
      * @brief register new user image fot TagEntry kind
      * @param kind the kind string that will be associated with the bitmap (TagEntry::GetKind())

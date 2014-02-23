@@ -756,6 +756,12 @@ public:
      */
     bool IsDetached() const;
     
+    /**
+     * @brief display a rich tooltip (a tip that supports basic markup, such as <a></a>, <strong></strong> etc)
+     * @param tip tip text
+     * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
+     */
+    void ShowRichTooltip(const wxString& tip, int pos = wxNOT_FOUND);
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------
 

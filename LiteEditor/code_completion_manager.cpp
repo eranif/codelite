@@ -263,7 +263,7 @@ void CodeCompletionManager::OnBuildEnded(clBuildEvent& e)
 void CodeCompletionManager::DoUpdateCompilationDatabase()
 {
     // Create a worker thread (detached thread) that 
-    // will initialize the database now that the compilation is ended
+    // will initialize the database now that the compilation has ended
     CompilationDatabase db;
     ClangCompilationDbThread* thr = new ClangCompilationDbThread( db.GetFileName().GetFullPath() );
     thr->Start();

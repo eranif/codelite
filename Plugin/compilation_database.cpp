@@ -7,6 +7,7 @@
 #include "fileextmanager.h"
 #include "project.h"
 #include "json_node.h"
+#include "project.h"
 
 const wxString DB_VERSION = "2.0";
 
@@ -246,17 +247,27 @@ wxFileName CompilationDatabase::GetCMakeDatabase() const
     wxString dirname;
     wxFileName compileCommandsUpToDate;
     dir.Open( fn.GetPath() );
+    
+    // Prepare a list of files to check
+    FileNameVector_t files;
+    files.push_back( wxFileName(fn.GetPath(), "compile_commands.json" ) );
     bool cont = dir.GetFirst(&dirname, "", wxDIR_DIRS);
     while ( cont ) {
         wxFileName compile_commands( fn.GetPath(), "compile_commands.json" );
         compile_commands.AppendDir( dirname );
+        files.push_back( compile_commands );
+        cont = dir.GetNext( &dirname );
+    }
+    
+    // Take the most up-to-date compile_commands.json file
+    for(size_t i=0; i<files.size(); ++i) {
+        const wxFileName &compile_commands = files.at(i);
         if ( !compileCommandsUpToDate.IsOk() && compile_commands.Exists() ) {
             compileCommandsUpToDate = compile_commands;
 
         } else if ( compile_commands.Exists() && compile_commands.GetModificationTime().GetTicks() > compileCommandsUpToDate.GetModificationTime().GetTicks() ) {
             compileCommandsUpToDate = compile_commands;
         }
-        cont = dir.GetNext( &dirname );
     }
     return compileCommandsUpToDate;
 }

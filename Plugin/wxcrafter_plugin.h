@@ -82,8 +82,10 @@ protected:
     virtual void OnPrevDiffUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCopyLeftToRightUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCopyLeftToRight(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnCopyLeftToRightMenu(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnCopyRightToLeftUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCopyRightToLeft(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnCopyRightToLeftMenu(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnCopyFileLeftToRight(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnCopyFileFromRight(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnSaveChanges(wxRibbonButtonBarEvent& event) { event.Skip(); }

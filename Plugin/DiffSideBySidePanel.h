@@ -8,6 +8,13 @@
 
 class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
 {
+    enum {
+        ID_COPY_LEFT_TO_RIGHT = wxID_HIGHEST + 1,
+        ID_COPY_LEFT_TO_RIGHT_AND_MOVE,
+        ID_COPY_RIGHT_TO_LEFT,
+        ID_COPY_RIGHT_TO_LEFT_AND_MOVE,
+    };
+    
     typedef std::vector< int > Markers_t;
 public:
     struct FileInfo {
@@ -27,10 +34,16 @@ public:
         kRightReadOnly       = 0x00000008,
         kOriginSourceControl = 0x00000010,
     };
-    
+
 protected:
+    virtual void OnCopyLeftToRightMenu(wxRibbonButtonBarEvent& event);
+    virtual void OnCopyRightToLeftMenu(wxRibbonButtonBarEvent& event);
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event);
     virtual void OnRightPickerUI(wxUpdateUIEvent& event);
+    
+    void OnMenuCopyLeft2Right(wxCommandEvent &event);
+    void OnMenuCopyRight2Left(wxCommandEvent &event);
+    
     Markers_t m_leftRedMarkers;
     Markers_t m_leftGreenMarkers;
     Markers_t m_leftPlaceholdersMarkers;
@@ -46,7 +59,7 @@ protected:
     size_t m_flags;
     wxString m_leftCaption;
     wxString m_rightCaption;
-    
+
 protected:
     wxString DoGetContentNoPlaceholders(wxStyledTextCtrl *stc) const;
     bool IsLeftReadOnly() const {
@@ -64,7 +77,7 @@ protected:
     bool IsOriginSourceControl() const {
         return m_flags & kOriginSourceControl;
     }
-    
+
 protected:
     virtual void OnRefreshDiffUI(wxUpdateUIEvent& event);
     virtual void OnHorizontal(wxRibbonButtonBarEvent& event);
@@ -109,14 +122,14 @@ public:
      * @brief display a diff view for 2 files left and right
      */
     void Diff();
-    
+
     /**
      * @brief mark the current diff origin from source control
      */
     void SetOriginSourceControl() {
         m_flags |= kOriginSourceControl;
     }
-    
+
     /**
      * @brief start a new empty diff
      */

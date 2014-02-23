@@ -335,6 +335,8 @@
     <File Name="clDTL.h"/>
     <File Name="DiffSideBySidePanel.h"/>
     <File Name="DiffSideBySidePanel.cpp"/>
+    <File Name="DiffConfig.h"/>
+    <File Name="DiffConfig.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

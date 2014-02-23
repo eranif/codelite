@@ -1354,7 +1354,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Copy Left"
+																	"m_value":	" Copy "
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1366,7 +1366,7 @@
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Kind:",
-																	"m_selection":	0,
+																	"m_selection":	2,
 																	"m_options":	["wxRIBBON_BUTTON_NORMAL", "wxRIBBON_BUTTON_DROPDOWN", "wxRIBBON_BUTTON_HYBRID", "wxRIBBON_BUTTON_TOGGLE"]
 																}],
 															"m_events":	[{
@@ -1382,6 +1382,13 @@
 																	"m_eventHandler":	"wxRibbonButtonBarEventHandler",
 																	"m_functionNameAndSignature":	"OnCopyLeftToRight(wxRibbonButtonBarEvent& event)",
 																	"m_description":	"Triggered when the normal (non-dropdown) region of a button on the button bar is clicked.",
+																	"m_noBody":	false
+																}, {
+																	"m_eventName":	"wxEVT_COMMAND_RIBBONBUTTON_DROPDOWN_CLICKED",
+																	"m_eventClass":	"wxRibbonButtonBarEvent",
+																	"m_eventHandler":	"wxRibbonButtonBarEventHandler",
+																	"m_functionNameAndSignature":	"OnCopyLeftToRightMenu(wxRibbonButtonBarEvent& event)",
+																	"m_description":	"Triggered when the dropdown region of a button on the button bar is clicked. wxRibbonButtonBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown buttons should be doing).",
 																	"m_noBody":	false
 																}],
 															"m_children":	[]
@@ -1452,7 +1459,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Copy Right"
+																	"m_value":	" Copy "
 																}, {
 																	"type":	"bitmapPicker",
 																	"m_label":	"Bitmap File:",
@@ -1464,7 +1471,7 @@
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Kind:",
-																	"m_selection":	0,
+																	"m_selection":	2,
 																	"m_options":	["wxRIBBON_BUTTON_NORMAL", "wxRIBBON_BUTTON_DROPDOWN", "wxRIBBON_BUTTON_HYBRID", "wxRIBBON_BUTTON_TOGGLE"]
 																}],
 															"m_events":	[{
@@ -1480,6 +1487,13 @@
 																	"m_eventHandler":	"wxRibbonButtonBarEventHandler",
 																	"m_functionNameAndSignature":	"OnCopyRightToLeft(wxRibbonButtonBarEvent& event)",
 																	"m_description":	"Triggered when the normal (non-dropdown) region of a button on the button bar is clicked.",
+																	"m_noBody":	false
+																}, {
+																	"m_eventName":	"wxEVT_COMMAND_RIBBONBUTTON_DROPDOWN_CLICKED",
+																	"m_eventClass":	"wxRibbonButtonBarEvent",
+																	"m_eventHandler":	"wxRibbonButtonBarEventHandler",
+																	"m_functionNameAndSignature":	"OnCopyRightToLeftMenu(wxRibbonButtonBarEvent& event)",
+																	"m_description":	"Triggered when the dropdown region of a button on the button bar is clicked. wxRibbonButtonBarEvent::PopupMenu() should be called by the event handler if it wants to display a popup menu (which is what most dropdown buttons should be doing).",
 																	"m_noBody":	false
 																}],
 															"m_children":	[]

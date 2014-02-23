@@ -3,9 +3,9 @@
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
+#include <wx/filename.h>
 #include <set>
 #include "codelite_exports.h"
-
 
 class WXDLLIMPEXP_CL CompilerCommandLineParser
 {

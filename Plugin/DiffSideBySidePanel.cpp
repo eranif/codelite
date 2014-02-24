@@ -9,6 +9,7 @@
 #include "event_notifier.h"
 #include "art_metro.h"
 #include "DiffConfig.h"
+#include <wx/menu.h>
 
 #define RED_MARKER          5
 #define GREEN_MARKER        6

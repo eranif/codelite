@@ -8,6 +8,7 @@
 #include "project.h"
 #include "json_node.h"
 #include "project.h"
+#include <wx/dir.h>
 
 const wxString DB_VERSION = "2.0";
 

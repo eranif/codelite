@@ -372,20 +372,20 @@
       <Property Id="118" Name="PHP Default" Bold="no" Face="" Colour="#000000" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
       <Property Id="119" Name="PHP HString" Bold="no" Face="" Colour="#800000" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
       <Property Id="120" Name="PHP Simple String" Bold="no" Face="" Colour="#800000" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
-      <Property Id="121" Name="PHP Word" Bold="yes" Face="" Colour="#0000FF" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
+      <Property Id="121" Name="PHP Word" Bold="no" Face="" Colour="#0000FF" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
       <Property Id="122" Name="PHP Number" Bold="no" Face="" Colour="#0000FF" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
-      <Property Id="123" Name="PHP Variable" Bold="yes" Face="" Colour="#800080" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
+      <Property Id="123" Name="PHP Variable" Bold="no" Face="" Colour="#202020" BgColour="white" Italic="yes" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
       <Property Id="124" Name="PHP Multiline comment" Bold="no" Face="" Colour="rgb(43, 149, 255)" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
-      <Property Id="125" Name="PHP single line Comment" Bold="yes" Face="" Colour="#008000" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
-      <Property Id="126" Name="PHP HString Variable" Bold="yes" Face="" Colour="#FF8000" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
+      <Property Id="125" Name="PHP single line Comment" Bold="no" Face="" Colour="#606060" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
+      <Property Id="126" Name="PHP HString Variable" Bold="no" Face="" Colour="#202020" BgColour="white" Italic="yes" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
       <Property Id="127" Name="PHP Operator" Bold="no" Face="" Colour="#000000" BgColour="white" Italic="no" Underline="no" EolFilled="yes" Alpha="50" Size="11"/>
       <Property Id="-1" Name="Fold Margin" Bold="no" Face="" Colour="#FFFFFF" BgColour="#D0D0D0" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
       <Property Id="-2" Name="Text Selection" Bold="no" Face="" Colour="" BgColour="#D6D2D0" Italic="no" Underline="no" EolFilled="no" Alpha="80" Size="11"/>
       <Property Id="-3" Name="Caret Colour" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" Size="11"/>
+      <Property Id="-4" Name="Whitespace" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
       <Property Id="33" Name="Line Numbers" Bold="no" Face="" Colour="" BgColour="" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-      <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#8BBF86" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
-      <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#000000" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+      <Property Id="34" Name="Brace match" Bold="no" Face="" Colour="#000000" BgColour="#00FFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
+      <Property Id="35" Name="Brace bad match" Bold="no" Face="" Colour="#FFFFFF" BgColour="#FF0000" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
       <Property Id="37" Name="Indent Guide" Bold="no" Face="" Colour="#C0C0C0" BgColour="#FFFFFF" Italic="no" Underline="no" EolFilled="no" Alpha="50" Size="11"/>
     </Properties>
   </Lexer>

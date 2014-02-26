@@ -38,6 +38,7 @@
 #include "workspace.h"
 #include "editor_config.h"
 #include "new_class_dlg_data.h"
+#include <wx/filename.h>
 
 NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
     : NewClassBaseDlg( parent )
@@ -54,7 +55,6 @@ NewClassDlg::NewClassDlg( wxWindow* parent, IManager *mgr )
     m_checkBoxInline->SetValue         ( data.GetFlags() & NewClassDlgData::FileIniline);
     m_checkBoxHpp->SetValue            ( data.GetFlags() & NewClassDlgData::HppHeader);
     m_checkBoxSingleton->SetValue      ( data.GetFlags() & NewClassDlgData::Singleton);
-    m_checkBoxUseUnderscores->SetValue ( data.GetFlags() & NewClassDlgData::UseUnderscores);
     m_checkBoxVirtualDtor->SetValue    ( data.GetFlags() & NewClassDlgData::VirtualDtor);
 
     //set two columns to our list
@@ -211,9 +211,6 @@ void NewClassDlg::OnButtonOK(wxCommandEvent &e)
     if(m_checkBoxSingleton->IsChecked())
         flags |= NewClassDlgData::Singleton;
 
-    if(m_checkBoxUseUnderscores->IsChecked())
-        flags |= NewClassDlgData::UseUnderscores;
-
     if(m_checkBoxVirtualDtor->IsChecked())
         flags |= NewClassDlgData::VirtualDtor;
 
@@ -303,7 +300,7 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo &info)
     info.hppHeader          = this->HppHeader();
     info.path               = this->GetClassPath().Trim().Trim(false);
     info.isAssingable       = this->IsCopyableClass();
-    info.fileName           = this->GetClassFile().Trim().Trim(false);
+    info.fileName           = wxFileName( GetClassFile() ).GetName(); // Ommit any suffix the user might have typed in
     info.isVirtualDtor      = m_checkBoxVirtualDtor->IsChecked();
     info.implAllPureVirtual = m_checkBoxImplPureVirtual->IsChecked();
     info.implAllVirtual     = m_checkBoxImplVirtual->IsChecked();
@@ -318,23 +315,7 @@ wxString NewClassDlg::GetClassFile()
 
 void NewClassDlg::OnTextEnter(wxCommandEvent &e)
 {
-    wxString file_name( m_textClassName->GetValue() );
-    if(m_checkBoxUseUnderscores->IsChecked()) {
-        file_name = doSpliteByCaptilization(m_textClassName->GetValue());
-    }
-
-    file_name.MakeLower();
-    m_textCtrlFileName->ChangeValue( file_name );
-}
-
-void NewClassDlg::OnUseUnderscores(wxCommandEvent& e)
-{
-    wxString file_name( m_textClassName->GetValue() );
-    if(e.IsChecked()) {
-        file_name = doSpliteByCaptilization(file_name);
-    }
-    file_name.MakeLower();
-    m_textCtrlFileName->ChangeValue( file_name );
+    m_textCtrlFileName->ChangeValue( m_textClassName->GetValue() );
 }
 
 void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent &e)
@@ -439,7 +420,7 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
     wxString output;
     bool lastWasLower(true);
 
-    for(int i=str.length()-1; i >= 0; i--) {
+    for(int i=str.length()-1; i >= 0; --i) {
 
         int cur  = (int)str[i];
         if(!isalpha(cur)) {

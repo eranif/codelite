@@ -967,8 +967,6 @@ void LEditor::OnSciUpdateUI(wxStyledTextEvent &event)
             << wxT(",  Pos ")
             << pos;
 
-    message << ", ";
-    
     wxString bookmarkString = GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
     message << ", " << bookmarkString;
 

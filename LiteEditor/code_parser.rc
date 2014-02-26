@@ -27,3 +27,49 @@ aaaaa ICON "res/cubes.ico"
 #include "wx/msw/wx.rc"
 1 24 "wx/msw/wx.manifest"
 
+///////////////////////////////////////////////////////////////////////////////
+// Version information
+VS_VERSION_INFO    VERSIONINFO
+  FILEVERSION      6,0,0,0
+  PRODUCTVERSION   6,0,0,1
+  FILEFLAGSMASK    0x3fL // VS_FFI_FILEFLAGSMASK
+  FILEFLAGS        0x0L  // final version
+  FILEOS           VOS_NT_WINDOWS32
+  // Can be one of the following values:
+  //   VFT_UNKNOWN, VFT_APP, VFT_DLL, VFT_DRV, VFT_FONT, VFT_VXD, VFT_STATIC_LIB
+  FILETYPE         VFT_APP
+  // In case of VFT_DRV in FILETYPE:
+  //   VFT2_UNKNOWN,         VFT2_DRV_COMM,     VFT2_DRV_PRINTER,
+  //   VFT2_DRV_KEYBOARD,    VFT2_DRV_LANGUAGE, VFT2_DRV_DISPLAY,
+  //   VFT2_DRV_MOUSE,       VFT2_DRV_NETWORK,  VFT2_DRV_SYSTEM,
+  //   VFT2_DRV_INSTALLABLE, VFT2_DRV_SOUND,    VFT2_DRV_VERSIONED_PRINTER
+  // In case of VFT_FONT in FILETYPE:
+  //   VFT2_UNKNOWN, VFT2_FONT_RASTER, VFT2_FONT_VECTOR, VFT2_FONT_TRUETYPE
+  FILESUBTYPE      VFT2_UNKNOWN // not used
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "040904E4" // Lang=US English, CharSet=Windows Multilingual
+    {
+      VALUE "Comments",         "Licensed under GPL2."
+      VALUE "CompanyName",      "The CodeLite Team"
+      VALUE "Developer",        "The CodeLite Team"
+      VALUE "FileDescription",  "An Open Source, free, cross platform IDE for C/C++"
+      VALUE "FileVersion",      "6.0.0"
+      VALUE "InternalName",     "CodeLite"
+      VALUE "LegalCopyright",   "Copyright (C) 2007-2014 CodeLite Team"
+      VALUE "LegalTrademarks",  "All rights reserved."
+      VALUE "OriginalFilename", "codelite.exe"
+      VALUE "PrivateBuild",     ""
+      VALUE "ProductName",      "CodeLite"
+      VALUE "ProductVersion",   "6.0.0"
+      VALUE "SpecialBuild",     ""
+      VALUE "Support",          "http://forums.codelite.org"
+      VALUE "Users",            "Unlimited."
+    } // BLOCK "040904E4"
+  } // BLOCK "StringFileInfo"
+  BLOCK "VarFileInfo"
+  {
+    VALUE "Translation", 0x409, 1252 // 1252 = 0x04E4
+  } // BLOCK "VarFileInfo"
+}

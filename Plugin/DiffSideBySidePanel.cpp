@@ -509,6 +509,9 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
     stc->SetReadOnly(true);
     stc->SetSavePoint();
     stc->SetModified(false);
+    
+    // Emit a file-saved event
+    EventNotifier::Get()->PostFileSavedEvent( fn.GetFullPath() );
 }
 
 void DiffSideBySidePanel::OnSaveChanges(wxRibbonButtonBarEvent& event)

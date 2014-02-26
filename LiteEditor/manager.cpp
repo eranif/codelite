@@ -529,7 +529,11 @@ void Manager::CreateProject ( ProjectData &data )
 
     wxString projectName = proj->GetName();
     RetagProject ( projectName, true );
-    SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
+    
+    clCommandEvent evtProjectAdded( wxEVT_PROJ_ADDED );
+    evtProjectAdded.SetString( projectName );
+    evtProjectAdded.SetEventObject( this );
+    EventNotifier::Get()->AddPendingEvent( evtProjectAdded );
 }
 
 void Manager::AddProject ( const wxString & path )
@@ -553,7 +557,11 @@ void Manager::AddProject ( const wxString & path )
     wxFileName fn ( path );
     wxString projectName ( fn.GetName() );
     RetagProject ( projectName, true );
-    SendCmdEvent ( wxEVT_PROJ_ADDED, ( void* ) &projectName );
+    
+    clCommandEvent evtProjectAdded( wxEVT_PROJ_ADDED );
+    evtProjectAdded.SetString( projectName );
+    evtProjectAdded.SetEventObject( this );
+    EventNotifier::Get()->AddPendingEvent( evtProjectAdded );
 }
 
 void Manager::ReconcileProject(const wxString& projectName)
@@ -621,12 +629,20 @@ bool Manager::RemoveProject ( const wxString &name, bool notify )
             prjfls.Add ( projectFiles[i].GetFullPath() );
         }
 
-        if ( notify )
-            SendCmdEvent ( wxEVT_PROJ_FILE_REMOVED, ( void* ) &prjfls );
+        if ( notify ) {
+            clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
+            evtFileRemoved.SetStrings( prjfls );
+            evtFileRemoved.SetEventObject( this );
+            EventNotifier::Get()->ProcessEvent( evtFileRemoved );
+        }
     }
 
-    if ( notify )
-        SendCmdEvent ( wxEVT_PROJ_REMOVED, ( void* ) &name );
+    if ( notify ) {
+        clCommandEvent evnt(wxEVT_PROJ_REMOVED);
+        evnt.SetString( name );
+        evnt.SetEventObject( this );
+        EventNotifier::Get()->AddPendingEvent( evnt );
+    }
     return true;
 }
 
@@ -972,8 +988,11 @@ void Manager::RemoveVirtualDirectory ( const wxString &virtualDirFullPath )
         wxMessageBox(errMsg, _("Error"), wxOK | wxICON_HAND);
         return;
     }
-
-    SendCmdEvent ( wxEVT_PROJ_FILE_REMOVED, ( void* ) &files );
+    
+    clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
+    evtFileRemoved.SetStrings( files );
+    evtFileRemoved.SetEventObject( this );
+    EventNotifier::Get()->ProcessEvent( evtFileRemoved );
 }
 
 bool Manager::AddNewFileToProject ( const wxString &fileName, const wxString &vdFullPath, bool openIt )
@@ -1124,9 +1143,11 @@ bool Manager::RemoveFile( const wxString &fileName, const wxString &vdFullPath, 
 
     if( notify ) {
         wxArrayString files(1, &fileName);
-        SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&files);
+        clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
+        evtFileRemoved.SetStrings( files );
+        evtFileRemoved.SetEventObject( this );
+        EventNotifier::Get()->ProcessEvent( evtFileRemoved );
     }
-
     return true;
 }
 

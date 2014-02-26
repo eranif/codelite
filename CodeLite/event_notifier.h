@@ -29,6 +29,11 @@ public:
     bool SendCommandEvent(int eventId, void *clientData);
     void PostCommandEvent(int eventId, void *clientData);
     bool SendCommandEvent(int eventId, void *clientData, const wxString &s);
+    
+    /**
+     * @brief post a wxEVT_FILE_SAVED event
+     */
+    void PostFileSavedEvent( const wxString &filename );
 };
 
 #endif // EVENTNOTIFIER_H

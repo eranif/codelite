@@ -154,7 +154,7 @@ Subversion2::Subversion2(IManager *manager)
 
     EventNotifier::Get()->Connect(wxEVT_GET_ADDITIONAL_COMPILEFLAGS, clBuildEventHandler(Subversion2::OnGetCompileLine),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,    wxCommandEventHandler(Subversion2::OnWorkspaceConfigChanged), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED,           wxCommandEventHandler(Subversion2::OnFileRemoved),            NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED,           clCommandEventHandler(Subversion2::OnFileRemoved),            NULL, this);
 }
 
 Subversion2::~Subversion2()
@@ -970,18 +970,18 @@ void Subversion2::OnWorkspaceConfigChanged(wxCommandEvent& event)
     m_subversionView->BuildTree();
 }
 
-void Subversion2::OnFileRemoved(wxCommandEvent& event)
+void Subversion2::OnFileRemoved(clCommandEvent& event)
 {
     event.Skip();
     if (m_skipRemoveFilesDlg) {
         m_skipRemoveFilesDlg = false;
         return;
     }
-    wxArrayString *files = (wxArrayString*)event.GetClientData();
-    if(files && !files->IsEmpty()) {
+    const wxArrayString &files = event.GetStrings();
+    if( !files.IsEmpty() ) {
         
         // test the first file, see if it is under SVN
-        wxFileName fn(files->Item(0));
+        wxFileName fn(files.Item(0));
         if(IsPathUnderSvn( fn.GetPath() )) {
             // Build the message:
             
@@ -989,12 +989,12 @@ void Subversion2::OnFileRemoved(wxCommandEvent& event)
             wxString filesString;
             wxString msg;
             msg << _("Would you like to remove the following files from SVN?\n\n");
-            size_t fileCount = files->GetCount();
+            size_t fileCount = files.GetCount();
             
-            for(size_t i=0; i<files->GetCount(); i++) {
+            for(size_t i=0; i<files.GetCount(); i++) {
                 if ( i < 10 ) {
-                    msg << files->Item(i) << wxT("\n");
-                    filesString << wxT("\"") << files->Item(i) << wxT("\" ");
+                    msg << files.Item(i) << wxT("\n");
+                    filesString << wxT("\"") << files.Item(i) << wxT("\" ");
                     --fileCount;
                 } else {
                     break;

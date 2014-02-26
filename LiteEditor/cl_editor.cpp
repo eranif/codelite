@@ -1312,10 +1312,7 @@ bool LEditor::SaveToFile(const wxFileName &fileName)
     }
 
     // Fire a wxEVT_FILE_SAVED event
-    wxCommandEvent evtFileSaved(wxEVT_FILE_SAVED);
-    evtFileSaved.SetString( fileName.GetFullPath() );
-    EventNotifier::Get()->AddPendingEvent( evtFileSaved );
-    
+    EventNotifier::Get()->PostFileSavedEvent( fileName.GetFullPath() );
     return true;
 }
 

@@ -28,6 +28,7 @@
 #include <wx/panel.h>
 #include "theme_handler_helper.h"
 #include "wxcrafter.h"
+#include "cl_command_event.h"
 
 class ProjectSettingsDlg;
 class FileViewTree;
@@ -69,8 +70,8 @@ protected:
 
     void OnWorkspaceLoaded           (wxCommandEvent &e);
     void OnWorkspaceClosed           (wxCommandEvent &e);
-    void OnProjectAdded              (wxCommandEvent &e);
-    void OnProjectRemoved            (wxCommandEvent &e);
+    void OnProjectAdded              (clCommandEvent &e);
+    void OnProjectRemoved            (clCommandEvent& e);
     void OnActiveEditorChanged       (wxCommandEvent &e);
     void OnEditorClosing             (wxCommandEvent &e);
     void OnWorkspaceConfig           (wxCommandEvent &e);

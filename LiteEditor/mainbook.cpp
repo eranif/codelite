@@ -100,7 +100,7 @@ void MainBook::ConnectEvents()
 
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED,   clCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
@@ -122,7 +122,7 @@ MainBook::~MainBook()
 
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,  wxCommandEventHandler(MainBook::OnWorkspaceLoaded),    NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED,   clCommandEventHandler(MainBook::OnProjectFileAdded),   NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
@@ -193,15 +193,13 @@ void MainBook::OnProjectFileAdded(clCommandEvent &e)
     }
 }
 
-void MainBook::OnProjectFileRemoved(wxCommandEvent &e)
+void MainBook::OnProjectFileRemoved(clCommandEvent& e)
 {
     e.Skip();
-    wxArrayString *files = (wxArrayString*) e.GetClientData();
-    if (!files)
-        return;
-    for (size_t i = 0; i < files->GetCount(); i++) {
-        LEditor *editor = FindEditor(files->Item(i));
-        if (editor && files->Index(editor->GetFileName().GetFullPath()) != wxNOT_FOUND) {
+    const wxArrayString &files = e.GetStrings();
+    for (size_t i = 0; i < files.GetCount(); ++i) {
+        LEditor *editor = FindEditor(files.Item(i));
+        if (editor && files.Index(editor->GetFileName().GetFullPath()) != wxNOT_FOUND) {
             editor->SetProject(wxEmptyString);
         }
     }

@@ -142,9 +142,9 @@ private:
     void OnProcessTerminated(wxCommandEvent &event);
     void OnProcessOutput(wxCommandEvent &event);
 
-    void OnFileSaved(wxCommandEvent& e);
+    void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
-    void OnFilesRemovedFromProject(wxCommandEvent& e);
+    void OnFilesRemovedFromProject(clCommandEvent& e);
     void OnWorkspaceLoaded(wxCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnWorkspaceConfigurationChanged(wxCommandEvent &e);

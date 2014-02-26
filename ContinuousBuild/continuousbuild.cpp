@@ -63,7 +63,7 @@ ContinuousBuild::ContinuousBuild(IManager *manager)
     m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, LoadBitmapFile(wxT("compfile.png")));
 
     m_topWin = m_mgr->GetTheApp();
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,               wxCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,               clCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved),     NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVE_BY_BUILD_END,   wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
 }
@@ -100,12 +100,12 @@ void ContinuousBuild::UnPlug()
             break;
         }
     }
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,               wxCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,               clCommandEventHandler(ContinuousBuild::OnFileSaved),           NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved),     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_END,   wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
 }
 
-void ContinuousBuild::OnFileSaved(wxCommandEvent& e)
+void ContinuousBuild::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
     CL_DEBUG(wxT("ContinuousBuild::OnFileSaved\n"));

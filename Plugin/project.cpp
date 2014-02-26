@@ -40,6 +40,7 @@
 #include "event_notifier.h"
 #include <wx/sstream.h>
 #include <wx/ffile.h>
+#include "cl_command_event.h"
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
@@ -437,11 +438,7 @@ bool Project::SaveXmlFile()
     }
 
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
-    
-    wxCommandEvent evt(wxEVT_FILE_SAVED);
-    evt.SetString( m_fileName.GetFullPath() );
-    EventNotifier::Get()->AddPendingEvent( evt );
-    
+    EventNotifier::Get()->PostFileSavedEvent( m_fileName.GetFullPath() );
     return ok;
 }
 

@@ -28,6 +28,7 @@
 #include <vector>
 #include "entry.h"
 #include "wxcrafter.h"
+#include "cl_command_event.h"
 
 class LEditor;
 
@@ -39,7 +40,7 @@ private:
 protected:
     void OnScope             (wxCommandEvent &e);
     void OnFunction          (wxCommandEvent &e);
-    void OnFileSaved         (wxCommandEvent &e);
+    void OnFileSaved         (clCommandEvent &e);
     void OnEditorChanged     (wxCommandEvent &e);
 
 protected:

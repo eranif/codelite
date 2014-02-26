@@ -46,14 +46,14 @@ NavBar::NavBar(wxWindow* parent)
         m_splitter->SetSashPosition(sashPos);
     }
 
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, wxCommandEventHandler(NavBar::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(NavBar::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(NavBar::OnEditorChanged), NULL, this);
 }
 
 NavBar::~NavBar()
 {
     EditorConfigST::Get()->SaveLongValue(wxT("NavBarSashPos"), m_splitter->GetSashPosition());
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, wxCommandEventHandler(NavBar::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(NavBar::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(NavBar::OnEditorChanged), NULL, this);
 }
 
@@ -115,7 +115,7 @@ void NavBar::UpdateScope(TagEntryPtr tag)
     }
 }
 
-void NavBar::OnFileSaved(wxCommandEvent& e)
+void NavBar::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
 

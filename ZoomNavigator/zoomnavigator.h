@@ -12,6 +12,7 @@
 #include "zoomtext.h"
 #include <wx/timer.h>
 #include <set>
+#include "cl_command_event.h"
 
 extern const char* ZOOM_PANE_TITLE;
 
@@ -59,7 +60,7 @@ public:
     void OnPreviewClicked(wxMouseEvent &e);
     void OnSettings(wxCommandEvent &e);
     void OnSettingsChanged(wxCommandEvent &e);
-    void OnFileSaved(wxCommandEvent& e);
+    void OnFileSaved(clCommandEvent& e);
     void OnWorkspaceClosed(wxCommandEvent &e);
     void OnEnablePlugin(wxCommandEvent &e);
     void OnInitDone(wxCommandEvent &e);

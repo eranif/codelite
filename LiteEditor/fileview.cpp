@@ -1000,7 +1000,10 @@ void FileViewTree::DoRemoveItems()
 
     // Notify plugins if we actually removed files
     if ( filesRemoved.IsEmpty() == false ) {
-        SendCmdEvent(wxEVT_PROJ_FILE_REMOVED, (void*)&filesRemoved);
+        clCommandEvent evtFileRemoved(wxEVT_PROJ_FILE_REMOVED);
+        evtFileRemoved.SetStrings( filesRemoved );
+        evtFileRemoved.SetEventObject( this );
+        EventNotifier::Get()->ProcessEvent( evtFileRemoved );
     }
 }
 

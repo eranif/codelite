@@ -37,7 +37,7 @@ ClangCodeCompletion::ClangCodeCompletion()
     : m_allEditorsAreClosing(false)
 {
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,  wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),        NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,             wxCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED,             clCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING,         clBuildEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
@@ -48,7 +48,7 @@ ClangCodeCompletion::ClangCodeCompletion()
 ClangCodeCompletion::~ClangCodeCompletion()
 {
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,  wxCommandEventHandler(ClangCodeCompletion::OnFileLoaded),        NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,             wxCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED,             clCommandEventHandler(ClangCodeCompletion::OnFileSaved),         NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING,    wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosing), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED,     wxCommandEventHandler(ClangCodeCompletion::OnAllEditorsClosed ), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING,         clBuildEventHandler(ClangCodeCompletion::OnBuildStarting),     NULL, this);
@@ -164,7 +164,7 @@ void ClangCodeCompletion::ListMacros(IEditor* editor)
     m_clang.GetMacros(editor);
 }
 
-void ClangCodeCompletion::OnFileSaved(wxCommandEvent& e)
+void ClangCodeCompletion::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
     CHECK_CLANG_ENABLED_RET();

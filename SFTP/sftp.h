@@ -57,7 +57,7 @@ protected:
     void OnDisableWorkspaceMirroringUI(wxUpdateUIEvent &e);
     void OnWorkspaceOpened(wxCommandEvent &e);
     void OnWorkspaceClosed(wxCommandEvent &e);
-    void OnFileSaved(wxCommandEvent &e);
+    void OnFileSaved(clCommandEvent &e);
     void OnEditorClosed(wxCommandEvent &e);
     
     bool IsWorkspaceOpened() const {

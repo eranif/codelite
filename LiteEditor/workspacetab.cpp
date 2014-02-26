@@ -70,8 +70,8 @@ WorkspaceTab::~WorkspaceTab()
 
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),      NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),      NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED,               wxCommandEventHandler(WorkspaceTab::OnProjectAdded),         NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_REMOVED,             wxCommandEventHandler(WorkspaceTab::OnProjectRemoved),       NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED,               clCommandEventHandler(WorkspaceTab::OnProjectAdded),         NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_REMOVED,             clCommandEventHandler(WorkspaceTab::OnProjectRemoved),       NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged),  NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspaceTab::OnEditorClosing),        NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceConfig),      NULL, this);
@@ -120,8 +120,8 @@ void WorkspaceTab::ConnectEvents()
     wxTheApp->Connect(XRCID("show_in_workspace"),     wxEVT_UPDATE_UI,             wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),     NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,         wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),     NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_ADDED,               wxCommandEventHandler(WorkspaceTab::OnProjectAdded),        NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJ_REMOVED,             wxCommandEventHandler(WorkspaceTab::OnProjectRemoved),      NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_ADDED,               clCommandEventHandler(WorkspaceTab::OnProjectAdded),        NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_PROJ_REMOVED,             clCommandEventHandler(WorkspaceTab::OnProjectRemoved),      NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,    wxCommandEventHandler(WorkspaceTab::OnActiveEditorChanged), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING,           wxCommandEventHandler(WorkspaceTab::OnEditorClosing),       NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceConfig),     NULL, this);
@@ -274,19 +274,19 @@ void WorkspaceTab::OnWorkspaceClosed(wxCommandEvent& e)
     SendCmdEvent(wxEVT_FILE_VIEW_INIT_DONE);
 }
 
-void WorkspaceTab::OnProjectAdded(wxCommandEvent& e)
+void WorkspaceTab::OnProjectAdded(clCommandEvent& e)
 {
     e.Skip();
-    const wxString *projName = (const wxString *) e.GetClientData();
+    const wxString &projName = e.GetString();
     m_fileView->BuildTree();
-    if (projName && !projName->IsEmpty()) {
-        m_fileView->ExpandToPath(*projName, wxFileName());
+    if ( !projName.IsEmpty() ) {
+        m_fileView->ExpandToPath(projName, wxFileName());
     }
     DoUpdateChoiceWithProjects();
     SendCmdEvent(wxEVT_FILE_VIEW_REFRESHED);
 }
 
-void WorkspaceTab::OnProjectRemoved(wxCommandEvent& e)
+void WorkspaceTab::OnProjectRemoved(clCommandEvent& e)
 {
     e.Skip();
     Freeze();

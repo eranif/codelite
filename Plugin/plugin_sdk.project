@@ -248,7 +248,6 @@
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="BrowsingRecords">
-    <File Name="browse_record.h"/>
     <File Name="navigationmanager.h"/>
     <File Name="navigationmanager.cpp"/>
   </VirtualDirectory>

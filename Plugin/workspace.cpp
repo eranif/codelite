@@ -40,6 +40,7 @@
 #include "wx_xml_compatibility.h"
 #include "plugin.h"
 #include "event_notifier.h"
+#include "cl_command_event.h"
 
 Workspace::Workspace()
 {
@@ -599,10 +600,7 @@ bool Workspace::SaveXmlFile()
 {
     bool ok = m_doc.Save(m_fileName.GetFullPath());
     SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
-    
-    wxCommandEvent evt(wxEVT_FILE_SAVED);
-    evt.SetString( m_fileName.GetFullPath() );
-    EventNotifier::Get()->AddPendingEvent( evt );
+    EventNotifier::Get()->PostFileSavedEvent( m_fileName.GetFullPath() );
     return ok;
 }
 

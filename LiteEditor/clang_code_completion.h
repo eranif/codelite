@@ -96,7 +96,7 @@ protected:
 
     // Event handling
     void OnFileLoaded(wxCommandEvent &e);
-    void OnFileSaved(wxCommandEvent &e);
+    void OnFileSaved(clCommandEvent &e);
     void OnAllEditorsClosing(wxCommandEvent &e);
     void OnAllEditorsClosed(wxCommandEvent &e);
 

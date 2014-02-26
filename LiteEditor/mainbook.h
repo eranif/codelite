@@ -67,8 +67,8 @@ private:
     void OnPageChanged        (NotebookEvent     &e);
     void OnClosePage          (NotebookEvent     &e);
     void OnPageChanging       (NotebookEvent     &e);
-    void OnProjectFileAdded   (clCommandEvent& e);
-    void OnProjectFileRemoved (wxCommandEvent    &e);
+    void OnProjectFileAdded   (clCommandEvent    &e);
+    void OnProjectFileRemoved (clCommandEvent    &e);
     void OnWorkspaceLoaded    (wxCommandEvent    &e);
     void OnWorkspaceClosed    (wxCommandEvent    &e);
     void OnDebugEnded         (wxCommandEvent    &e);

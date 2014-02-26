@@ -15,6 +15,7 @@
     <File Name="plugin_version.h"/>
     <File Name="ikeyboard.h"/>
     <File Name="cl_defs.h"/>
+    <File Name="codelite_events.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Static Library">

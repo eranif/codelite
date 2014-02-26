@@ -113,6 +113,7 @@ protected:
     void OnWorkspaceClosed    (wxCommandEvent &event);
     void OnClearOuptut        (wxCommandEvent &event);
     void OnRefreshView        (wxCommandEvent &event);
+    void OnFileSaved          (clCommandEvent &event);
     void OnFileRenamed        (wxCommandEvent &event);
     void OnFileAdded          (clCommandEvent& event);
     void OnSettings           (wxCommandEvent &event);

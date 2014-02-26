@@ -86,6 +86,7 @@
     <File Name="wx_xml_compatibility.h"/>
     <File Name="codelite_exports.h"/>
     <File Name="cl_exception.h"/>
+    <File Name="browse_record.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="GeneratedFiles">
     <File Name="expression_result.h"/>

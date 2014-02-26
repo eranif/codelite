@@ -51,7 +51,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
-    info.SetAuthor(wxT("René Kraus"));
+    info.SetAuthor(wxT("RenÃ© Kraus"));
     info.SetName(wxT("git"));
     info.SetDescription(wxT("Simple GIT plugin"));
     info.SetVersion(wxT("v1.1.0"));
@@ -107,9 +107,9 @@ GitPlugin::GitPlugin(IManager *manager)
     EventNotifier::Get()->Connect( wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Connect( wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
-    EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_REMOVED, wxCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
+    EventNotifier::Get()->Connect( wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(GitPlugin::OnFilesRemovedFromProject), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
@@ -305,7 +305,7 @@ void GitPlugin::UnPlug()
 #endif
     /*SYSTEM*/
     EventNotifier::Get()->Disconnect( wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect( wxEVT_FILE_SAVED, wxCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect( wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect( wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL, this);
     EventNotifier::Get()->Disconnect( wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
@@ -742,10 +742,9 @@ void GitPlugin::OnBisectReset(wxCommandEvent& e)
 }
 #endif
 /*******************************************************************************/
-void GitPlugin::OnFileSaved(wxCommandEvent& e)
+void GitPlugin::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
-    wxUnusedVar(e);
     std::map<wxString, wxTreeItemId>::const_iterator it;
 
     // First get an up to date map of the filepaths/treeitemids of modified files
@@ -784,47 +783,10 @@ void GitPlugin::OnFilesAddedToProject(clCommandEvent& e)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnFilesRemovedFromProject(wxCommandEvent& e)
+void GitPlugin::OnFilesRemovedFromProject(clCommandEvent& e)
 {
     e.Skip();
     RefreshFileListView(); // in git world, deleting a file is enough
-
-    //wxArrayString *files = (wxArrayString*)e.GetClientData();
-    //if(files && !files->IsEmpty() && !m_repositoryDirectory.IsEmpty()) {
-    //    // Build the message:
-    //
-    //    // Limit the message to maximum of 10 files
-    //    wxString filesString;
-    //    wxString msg;
-    //    msg << _("Would you like to remove the following files from git?\n\n");
-    //    size_t fileCount = files->GetCount();
-    //
-    //    for(size_t i=0; i<files->GetCount(); i++) {
-    //        if ( i < 10 ) {
-    //            msg << files->Item(i) << wxT("\n");
-    //            filesString << wxT("\"") << files->Item(i) << wxT("\" ");
-    //            --fileCount;
-    //        } else {
-    //            break;
-    //        }
-    //    }
-    //
-    //    if ( fileCount ) {
-    //        msg << ".. and " << fileCount << " more files";
-    //    }
-    //
-    //    if(wxMessageBox(msg,
-    //                    wxT("Git"),
-    //                    wxYES_NO|wxCANCEL|wxCENTER,
-    //                    GetManager()->GetTheApp()->GetTopWindow()) == wxYES) {
-    //
-    //        // Remove the files
-    //        gitAction ga(gitRmFiles, filesString);
-    //        m_gitActionQueue.push( ga );
-    //        ProcessGitActionQueue();
-    //        RefreshFileListView();
-    //    }
-    //}
 }
 
 /*******************************************************************************/

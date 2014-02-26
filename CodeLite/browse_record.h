@@ -25,19 +25,19 @@
 #ifndef BROWSE_HISTORY_H
 #define BROWSE_HISTORY_H
 
-#include "wx/string.h"
+#include <wx/string.h>
 
 class BrowseRecord
 {
 public:
-	wxString filename;
-	wxString project;
-	int lineno;
-	int position;
+    wxString filename;
+    wxString project;
+    int lineno;
+    int position;
 public:
-	BrowseRecord() : filename(wxEmptyString), project(wxEmptyString), lineno(wxNOT_FOUND), position(wxNOT_FOUND) {}
+    BrowseRecord() : filename(wxEmptyString), project(wxEmptyString), lineno(wxNOT_FOUND), position(wxNOT_FOUND) {}
 
-	~BrowseRecord() {}
+    ~BrowseRecord() {}
 };
 
 #endif //BROWSE_HISTORY_H

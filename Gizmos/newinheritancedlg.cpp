@@ -32,8 +32,8 @@ NewIneritanceDlg::NewIneritanceDlg( wxWindow* parent, IManager *mgr, const wxStr
     , m_mgr(mgr)
 {
     // Do this the hard way, rather than letting wxFB localise these particular strings :p
-    const wxString AccessChoices[] = { wxT("public"), wxT("private"), wxT("protected"), wxT("virtual") };
-    wxArrayString choices(4, AccessChoices);
+    const wxString AccessChoices[] = { wxT("public"), wxT("private"), wxT("protected")};
+    wxArrayString choices(3, AccessChoices);
     m_choiceAccess->Clear();
     m_choiceAccess->Append(choices);
     //by default select 0

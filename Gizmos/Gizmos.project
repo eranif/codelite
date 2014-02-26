@@ -24,8 +24,6 @@
     <File Name="newclassbasedlg.h"/>
     <File Name="newclassdlg.cpp"/>
     <File Name="newinheritancedlg.h"/>
-    <File Name="newinheritancebasedlg.cpp"/>
-    <File Name="newinheritancebasedlg.h"/>
     <File Name="newinheritancedlg.cpp"/>
     <File Name="newclasswizard.wxcp"/>
   </VirtualDirectory>

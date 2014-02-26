@@ -256,3 +256,75 @@ NewClassBaseDlg::~NewClassBaseDlg()
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnOkUpdateUI), NULL, this);
     
 }
+
+NewIneritanceBaseDlg::NewIneritanceBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC3999InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer10);
+    
+    wxFlexGridSizer* flexGridSizer12 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer12->SetFlexibleDirection( wxBOTH );
+    flexGridSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer12->AddGrowableCol(1);
+    
+    boxSizer10->Add(flexGridSizer12, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText20 = new wxStaticText(this, wxID_ANY, _("Select Parent Class:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer12->Add(m_staticText20, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlInhertiance = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlInhertiance->SetToolTip(_("Type the name of the parent class"));
+    m_textCtrlInhertiance->SetFocus();
+    
+    flexGridSizer12->Add(m_textCtrlInhertiance, 0, wxALL|wxEXPAND, 5);
+    
+    m_button24 = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_button24->SetToolTip(_("Click here to open the open resource dialog"));
+    
+    flexGridSizer12->Add(m_button24, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_staticText26 = new wxStaticText(this, wxID_ANY, _("Inhertiance Access:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer12->Add(m_staticText26, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    wxArrayString m_choiceAccessArr;
+    m_choiceAccess = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceAccessArr, 0);
+    
+    flexGridSizer12->Add(m_choiceAccess, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_stdBtnSizer14 = new wxStdDialogButtonSizer();
+    
+    boxSizer10->Add(m_stdBtnSizer14, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button16 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button16->SetDefault();
+    m_stdBtnSizer14->AddButton(m_button16);
+    
+    m_button18 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer14->AddButton(m_button18);
+    m_stdBtnSizer14->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_button24->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewIneritanceBaseDlg::OnButtonMore), NULL, this);
+    
+}
+
+NewIneritanceBaseDlg::~NewIneritanceBaseDlg()
+{
+    m_button24->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewIneritanceBaseDlg::OnButtonMore), NULL, this);
+    
+}

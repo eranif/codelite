@@ -20,6 +20,8 @@
 #include <wx/checkbox.h>
 #include <wx/collpane.h>
 #include <wx/listctrl.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 
 class NewClassBaseDlg : public wxDialog
 {
@@ -74,6 +76,27 @@ protected:
 public:
     NewClassBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Class"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewClassBaseDlg();
+};
+
+
+class NewIneritanceBaseDlg : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText20;
+    wxTextCtrl* m_textCtrlInhertiance;
+    wxButton* m_button24;
+    wxStaticText* m_staticText26;
+    wxChoice* m_choiceAccess;
+    wxStdDialogButtonSizer* m_stdBtnSizer14;
+    wxButton* m_button16;
+    wxButton* m_button18;
+
+protected:
+    virtual void OnButtonMore(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    NewIneritanceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("NewIneritanceDlgBase"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~NewIneritanceBaseDlg();
 };
 
 #endif

@@ -77,3 +77,10 @@ void EventNotifier::PostReloadExternallyModifiedEvent(bool prompt)
     wxCommandEvent event( prompt ? wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED : wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT );
     AddPendingEvent( event );
 }
+
+void EventNotifier::PostFileRemovedEvent(const wxArrayString& files)
+{
+    clCommandEvent filesRemovedEvent(wxEVT_PROJ_FILE_REMOVED);
+    filesRemovedEvent.SetStrings( files );
+    AddPendingEvent( filesRemovedEvent );
+}

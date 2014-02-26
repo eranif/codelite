@@ -40,6 +40,11 @@ public:
      * @param prompt 
      */
     void PostReloadExternallyModifiedEvent( bool prompt = true );
+    
+    /**
+     * @brief post a wxEVT_PROJ_FILE_REMOVED event
+     */
+    void PostFileRemovedEvent( const wxArrayString &files );
 };
 
 #endif // EVENTNOTIFIER_H

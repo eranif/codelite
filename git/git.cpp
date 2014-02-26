@@ -1383,8 +1383,7 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         dlg.ShowModal();
 
     } else if( ga.action == gitResetFile || ga.action == gitApplyPatch ) {
-        wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT);
-        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(e);
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent( false );
 
         gitAction newAction;
         newAction.action = gitListModified;

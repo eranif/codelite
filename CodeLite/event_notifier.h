@@ -34,6 +34,12 @@ public:
      * @brief post a wxEVT_FILE_SAVED event
      */
     void PostFileSavedEvent( const wxString &filename );
+    
+    /**
+     * @brief post a wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT or wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED
+     * @param prompt 
+     */
+    void PostReloadExternallyModifiedEvent( bool prompt = true );
 };
 
 #endif // EVENTNOTIFIER_H

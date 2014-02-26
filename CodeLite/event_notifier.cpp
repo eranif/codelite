@@ -71,3 +71,9 @@ void EventNotifier::PostFileSavedEvent(const wxString& filename)
     event.SetFileName( filename );
     AddPendingEvent( event );
 }
+
+void EventNotifier::PostReloadExternallyModifiedEvent(bool prompt)
+{
+    wxCommandEvent event( prompt ? wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED : wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT );
+    AddPendingEvent( event );
+}

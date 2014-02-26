@@ -512,6 +512,9 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
     
     // Emit a file-saved event
     EventNotifier::Get()->PostFileSavedEvent( fn.GetFullPath() );
+    
+    // Reload any file opened in codelite
+    EventNotifier::Get()->PostReloadExternallyModifiedEvent( false );
 }
 
 void DiffSideBySidePanel::OnSaveChanges(wxRibbonButtonBarEvent& event)

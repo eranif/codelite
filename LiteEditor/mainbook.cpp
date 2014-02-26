@@ -726,7 +726,7 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 void MainBook::ReloadExternallyModified(bool prompt)
 {
     LEditor::Vec_t editors;
-    GetAllEditors(editors, MainBook::kGetAll_Default);
+    GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
     // filter list of editors for any whose files have been modified
     std::vector<std::pair<wxFileName, bool> > files;

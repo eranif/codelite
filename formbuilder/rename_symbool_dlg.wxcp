@@ -86,12 +86,12 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
-					"m_value":	"renamesymboldlg"
-				}, {
-					"type":	"string",
 					"m_label":	"Inherited Class",
 					"m_value":	"RenameSymbol"
+				}, {
+					"type":	"string",
+					"m_label":	"File:",
+					"m_value":	"renamesymboldlg"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -565,7 +565,8 @@
 															"m_eventClass":	"wxDataViewEvent",
 															"m_eventHandler":	"wxDataViewEventHandler",
 															"m_functionNameAndSignature":	"OnSelection(wxDataViewEvent& event)",
-															"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event"
+															"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
+															"m_noBody":	false
 														}],
 													"m_children":	[{
 															"m_type":	4472,
@@ -791,7 +792,8 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnCheckAll(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}, {
@@ -880,7 +882,8 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnUncheckAll(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}]
@@ -1273,7 +1276,8 @@
 											"m_eventClass":	"wxCommandEvent",
 											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnButtonOK(wxCommandEvent& event)",
-											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+											"m_noBody":	false
 										}],
 									"m_children":	[]
 								}, {
@@ -1437,11 +1441,11 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Inherited Class",
 					"m_value":	"SelectProjectsDlg"
 				}, {
 					"type":	"string",
-					"m_label":	"Inherited Class",
+					"m_label":	"File:",
 					"m_value":	"SelectProjectsDlg"
 				}, {
 					"type":	"string",
@@ -1527,7 +1531,7 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Fg Colour:",
-									"colour":	"<Default>"
+									"colour":	"CaptionText"
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
@@ -1787,7 +1791,8 @@
 													"m_eventClass":	"wxCommandEvent",
 													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnSelectAll(wxCommandEvent& event)",
-													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+													"m_noBody":	false
 												}],
 											"m_children":	[]
 										}, {
@@ -1876,7 +1881,8 @@
 													"m_eventClass":	"wxCommandEvent",
 													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnUnSelectAll(wxCommandEvent& event)",
-													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+													"m_noBody":	false
 												}],
 											"m_children":	[]
 										}]

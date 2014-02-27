@@ -9,8 +9,15 @@
 #include "json_node.h"
 #include "project.h"
 #include <wx/dir.h>
+#include <algorithm>
 
 const wxString DB_VERSION = "2.0";
+
+struct wxFileNameSorter {
+    bool operator()(const wxFileName& one, const wxFileName& two) const {
+        return one.GetModificationTime().GetTicks() > two.GetModificationTime().GetTicks();
+    }
+};
 
 CompilationDatabase::CompilationDatabase()
     : m_db(NULL)
@@ -125,22 +132,25 @@ void CompilationDatabase::Initialize()
     Open();
     if ( !IsOpened() )
         return;
-
-    wxFileName cmakeCompilationDb  = GetCMakeDatabase();
+    
+    // get list of files created by cmake
+    FileNameVector_t files  = GetCompileCommandsFiles();
+    
+    // pick codelite's compilation database created by codelitegcc
+    // - convert it to compile_commands.json
+    // - append it the list of files
     wxFileName clCustomCompileFile = GetFileName();
     clCustomCompileFile.SetExt("db.txt");
-    
-    if ( cmakeCompilationDb.Exists() && !clCustomCompileFile.Exists() ) {
-        ProcessCMakeCompilationDatabase( cmakeCompilationDb );
-        
-    } else if ( cmakeCompilationDb.Exists() && clCustomCompileFile.Exists() && cmakeCompilationDb.GetModificationTime().GetTicks() > clCustomCompileFile.GetModificationTime().GetTicks() ) {
-        // both cmake and our file exists, however, the cmake compilation database is newer - use it instead of ours
-        ProcessCMakeCompilationDatabase( cmakeCompilationDb );
+    wxFileName compile_commands = ConvertCodeLiteCompilationDatabaseToCMake( clCustomCompileFile );
+    if ( compile_commands.IsOk() ) {
+        files.push_back( compile_commands );
+    }
 
-    } else if ( clCustomCompileFile.Exists() ) {
-        // Our file is newer - use it instead
-        ProcessCodeLiteCompilationDatabase( clCustomCompileFile );
+    // Sort the files by modification time
+    std::sort(files.begin(), files.end(), wxFileNameSorter());
 
+    for(size_t i=0; i<files.size(); ++i) {
+        ProcessCMakeCompilationDatabase( files.at(i) );
     }
 }
 
@@ -238,39 +248,28 @@ bool CompilationDatabase::IsOk() const
     return fnDb.Exists() && IsDbVersionUpToDate( fnDb );
 }
 
-wxFileName CompilationDatabase::GetCMakeDatabase() const
+FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
 {
     wxFileName fn( GetFileName() ); // Usually it will be under the top folder
     fn.RemoveLastDir();
 
     // Since we can have multiple "compile_commands.json" files, we take the most updated file
-    wxDir dir;
-    wxString dirname;
-    wxFileName compileCommandsUpToDate;
-    dir.Open( fn.GetPath() );
-    
     // Prepare a list of files to check
     FileNameVector_t files;
-    files.push_back( wxFileName(fn.GetPath(), "compile_commands.json" ) );
-    bool cont = dir.GetFirst(&dirname, "", wxDIR_DIRS);
-    while ( cont ) {
-        wxFileName compile_commands( fn.GetPath(), "compile_commands.json" );
-        compile_commands.AppendDir( dirname );
-        files.push_back( compile_commands );
-        cont = dir.GetNext( &dirname );
-    }
+    wxArrayString    dirs;
     
-    // Take the most up-to-date compile_commands.json file
-    for(size_t i=0; i<files.size(); ++i) {
-        const wxFileName &compile_commands = files.at(i);
-        if ( !compileCommandsUpToDate.IsOk() && compile_commands.Exists() ) {
-            compileCommandsUpToDate = compile_commands;
-
-        } else if ( compile_commands.Exists() && compile_commands.GetModificationTime().GetTicks() > compileCommandsUpToDate.GetModificationTime().GetTicks() ) {
-            compileCommandsUpToDate = compile_commands;
+    // Get only directories
+    wxDir::GetAllFiles( fn.GetPath(), &dirs, wxEmptyString, wxDIR_DIRS );
+    dirs.Add( fn.GetPath() );
+    
+    // Collect all the compile_commands files we can find
+    for(size_t i=0; i<dirs.GetCount(); ++i) {
+        wxFileName fnCompileCommands( dirs.Item(i), "compile_commands.json" );
+        if ( fnCompileCommands.Exists() ) {
+            files.push_back( fnCompileCommands );
         }
     }
-    return compileCommandsUpToDate;
+    return files;
 }
 
 void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& compile_commands)
@@ -308,7 +307,7 @@ void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& comp
     }
 }
 
-void CompilationDatabase::ProcessCodeLiteCompilationDatabase(const wxFileName& compile_file)
+wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const wxFileName& compile_file)
 {
     wxFFile fp(compile_file.GetFullPath(), wxT("rb"));
     if( fp.IsOpened() ) {
@@ -316,43 +315,36 @@ void CompilationDatabase::ProcessCodeLiteCompilationDatabase(const wxFileName& c
         fp.ReadAll(&content, wxConvUTF8);
 
         if( content.IsEmpty() )
-            return;
-
-
+            return wxFileName();
+        
+        JSONRoot root(cJSON_Array);
+        JSONElement rootElement = root.toElement();
         wxArrayString lines = ::wxStringTokenize(content, "\n\r", wxTOKEN_STRTOK);
-        try {
+        for(size_t i=0; i<lines.GetCount(); ++i) {
+            wxArrayString parts = ::wxStringTokenize(lines.Item(i), wxT("|"), wxTOKEN_STRTOK);
+            if( parts.GetCount() != 3 )
+                continue;
 
-            wxString sql;
-            sql = wxT("REPLACE INTO COMPILATION_TABLE (FILE_NAME, FILE_PATH, CWD, COMPILE_FLAGS) VALUES(?, ?, ?, ?)");
-            wxSQLite3Statement st = m_db->PrepareStatement(sql);
+            wxString file_name = wxFileName(parts.Item(0).Trim().Trim(false)).GetFullPath();
+            wxString cwd       = parts.Item(1).Trim().Trim(false);
+            wxString cmp_flags = parts.Item(2).Trim().Trim(false);
 
-            m_db->ExecuteUpdate("BEGIN");
-            for(size_t i=0; i<lines.GetCount(); ++i) {
-                wxArrayString parts = ::wxStringTokenize(lines.Item(i), wxT("|"), wxTOKEN_STRTOK);
-                if( parts.GetCount() != 3 )
-                    continue;
-
-                wxString file_name = wxFileName(parts.Item(0).Trim().Trim(false)).GetFullPath();
-                wxString path      = wxFileName(file_name).GetPath();
-                wxString cwd       = parts.Item(1).Trim().Trim(false);
-                wxString cmp_flags = parts.Item(2).Trim().Trim(false);;
-
-                st.Bind(1, file_name);
-                st.Bind(2, path);
-                st.Bind(3, cwd);
-                st.Bind(4, cmp_flags);
-
-                st.ExecuteUpdate();
-            }
-            m_db->ExecuteUpdate("COMMIT");
-
-        } catch (wxSQLite3Exception &e) {
-            wxUnusedVar(e);
+            JSONElement element = JSONElement::createObject();
+            element.addProperty("directory", cwd);
+            element.addProperty("command",   cmp_flags);
+            element.addProperty("file",      file_name);
+            rootElement.append( element );
         }
-
-        wxLogNull nl;
-        fp.Close();
-        ::wxRemoveFile( compile_file.GetFullPath() );
-
+        
+        wxFileName fn(compile_file.GetPath(), "compile_commands.json");
+        root.save( fn );
+        // Delete the old file
+        {
+            wxLogNull nl;
+            fp.Close();
+            ::wxRemoveFile( compile_file.GetFullPath() );
+        }
+        return fn;
     }
+    return wxFileName();
 }

@@ -30,6 +30,7 @@
 #include <wx/string.h>
 #include <wx/filename.h>
 #include <wx/wxsqlite3.h>
+#include "project.h"
 
 class WXDLLIMPEXP_SDK CompilationDatabase
 {
@@ -45,10 +46,7 @@ protected:
      */
     void ProcessCMakeCompilationDatabase( const wxFileName &compile_commands );
     
-    /**
-     * @brief process a codelite standard compilation file
-     */
-    void ProcessCodeLiteCompilationDatabase( const wxFileName &compile_file );
+    wxFileName ConvertCodeLiteCompilationDatabaseToCMake( const wxFileName &compile_file );
     
 public:
     CompilationDatabase();
@@ -71,7 +69,7 @@ public:
      * @brief return the location of the CMake (usually compile_commands.json)
      * Note that this function does not check for the existance of the file
      */
-    wxFileName GetCMakeDatabase() const;
+    FileNameVector_t GetCompileCommandsFiles() const;
     void CompilationLine(const wxString &filename, wxString &compliationLine, wxString &cwd);
     void Initialize();
     bool IsOk() const;

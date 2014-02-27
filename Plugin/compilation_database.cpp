@@ -10,6 +10,7 @@
 #include "project.h"
 #include <wx/dir.h>
 #include <algorithm>
+#include "file_logger.h"
 
 const wxString DB_VERSION = "2.0";
 
@@ -250,7 +251,10 @@ bool CompilationDatabase::IsOk() const
 
 FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
 {
-    wxFileName fn( GetFileName() ); // Usually it will be under the top folder
+    wxFileName databaseFile ( GetFileName() );
+    wxFileName fn( databaseFile );
+    
+    // Usually it will be under the top folder
     fn.RemoveLastDir();
 
     // Since we can have multiple "compile_commands.json" files, we take the most updated file
@@ -266,10 +270,17 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
         dirs.pop();
         
         wxFileName fn(curdir, "compile_commands.json" );
-        if ( fn.Exists() ) {
+        if ( fn.Exists() &&                                                                          // file exists
+            (fn.GetModificationTime().GetTicks() > databaseFile.GetModificationTime().GetTicks() ) ) // and its newer than the database file
+        {
+            CL_DEBUG("CompilationDatabase: found file: " + fn.GetFullPath());
             files.push_back( fn );
         }
-        
+        else
+        {
+            CL_DEBUG("CompilationDatabase: will NOT use file: " + fn.GetFullPath() + " . File is older than the database");
+        }
+
         // Check to see if there are more directories to recurse
         wxDir dir;
         if ( dir.Open( curdir ) ) {
@@ -358,11 +369,14 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
         
         wxFileName fn(compile_file.GetPath(), "compile_commands.json");
         root.save( fn );
+        CL_DEBUG("CompilationDatabase: saved file: " + fn.GetFullPath());
         // Delete the old file
         {
             wxLogNull nl;
             fp.Close();
-            ::wxRemoveFile( compile_file.GetFullPath() );
+            if ( compile_file.Exists() ) {
+                ::wxRemoveFile( compile_file.GetFullPath() );
+            }
         }
         return fn;
     }

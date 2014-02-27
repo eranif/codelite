@@ -136,7 +136,7 @@ void CompilationDatabase::Initialize()
     // get list of files created by cmake
     FileNameVector_t files  = GetCompileCommandsFiles();
     
-    // pick codelite's compilation database created by codelitegcc
+    // pick codelite's compilation database created by codelite-cc
     // - convert it to compile_commands.json
     // - append it the list of files
     wxFileName clCustomCompileFile = GetFileName();

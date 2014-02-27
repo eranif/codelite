@@ -41,7 +41,7 @@ if "%COPY_WXC_RESOURCES%" == "1" (copy ..\wxcrafter\wxcrafter.accelerators  "%TA
 :OTHERS
 :: Copy the misc files
 copy codelite_indexer.exe "%TARGET_DIR%\CodeLite\" /Y
-copy codelitegcc.exe "%TARGET_DIR%\CodeLite\" /Y
+copy codelite-cc.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-echo.exe "%TARGET_DIR%\CodeLite\" /Y

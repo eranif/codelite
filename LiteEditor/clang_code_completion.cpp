@@ -218,8 +218,8 @@ void ClangCodeCompletion::OnBuildStarting(clBuildEvent& e)
         wxString cxx = bldConf->GetCompiler()->GetTool(wxT("CXX"));
         wxString cc  = bldConf->GetCompiler()->GetTool(wxT("CC"));
         
-        cxx.Prepend(wxT("codelitegcc "));
-        cc.Prepend(wxT("codelitegcc "));
+        cxx.Prepend(wxT("codelite-cc "));
+        cc.Prepend(wxT("codelite-cc "));
         
         ::wxSetEnv("CXX", cxx);
         ::wxSetEnv("CC" ,  cc);

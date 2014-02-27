@@ -278,7 +278,10 @@ void CodeCompletionManager::DoUpdateCompilationDatabase()
 void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
-    DoUpdateCompilationDatabase();
+    // dont start another thread while the build is in progress
+    if ( !m_buildInProgress ) {
+        DoUpdateCompilationDatabase();
+    }
 }
 
 void CodeCompletionManager::Release()

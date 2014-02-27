@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6.2)
  
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles. 
-project(codelitegcc)
+project(codelite-cc)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 #find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
@@ -20,8 +20,8 @@ set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 FILE(GLOB SRCS "*.cpp")
 
 # Define the output
-add_executable(codelitegcc ${SRCS})
-target_link_libraries(codelitegcc ${LINKER_OPTIONS})
+add_executable(codelite-cc ${SRCS})
+target_link_libraries(codelite-cc ${LINKER_OPTIONS})
 
-install(TARGETS codelitegcc DESTINATION ${CL_PREFIX}/bin)
+install(TARGETS codelite-cc DESTINATION ${CL_PREFIX}/bin)
 

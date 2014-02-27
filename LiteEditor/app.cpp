@@ -565,7 +565,7 @@ bool CodeLiteApp::OnInit()
         }
     }
 
-    // Append the binary's dir to $PATH. This makes codelitegcc available even for a --prefix= installation
+    // Append the binary's dir to $PATH. This makes codelite-cc available even for a --prefix= installation
 #if defined(__WXMSW__)
     wxChar pathsep(wxT(';'));
 #else

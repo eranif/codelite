@@ -15,14 +15,19 @@ static CodeCompletionManager *ms_CodeCompletionManager = NULL;
 CodeCompletionManager::CodeCompletionManager()
     : m_options(CC_CTAGS_ENABLED)
     , m_wordCompletionRefreshNeeded(false)
+    , m_buildInProgress(false)
 {
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL, this);
+    
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this );
 }
 
 CodeCompletionManager::~CodeCompletionManager()
 {
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL, this);
+    
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this );
 }
 
@@ -258,6 +263,7 @@ void CodeCompletionManager::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
     DoUpdateCompilationDatabase();
+    m_buildInProgress = false;
 }
 
 void CodeCompletionManager::DoUpdateCompilationDatabase()
@@ -278,4 +284,10 @@ void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
 void CodeCompletionManager::Release()
 {
     wxDELETE(ms_CodeCompletionManager);
+}
+
+void CodeCompletionManager::OnBuildStarted(clBuildEvent& e)
+{
+    e.Skip();
+    m_buildInProgress = true;
 }

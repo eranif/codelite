@@ -32,6 +32,7 @@
 class ClangCompilationDbThread : public wxThread
 {
     wxString m_dbfile;
+    static wxCriticalSection m_cs;
     
 public:
     ClangCompilationDbThread(const wxString &filename);

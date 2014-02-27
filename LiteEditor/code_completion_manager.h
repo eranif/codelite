@@ -37,7 +37,8 @@ class CodeCompletionManager : public wxEvtHandler
 protected:
     size_t m_options;
     bool   m_wordCompletionRefreshNeeded;
-
+    bool   m_buildInProgress;
+    
 protected:
     /// ctags implementions
     bool DoCtagsWordCompletion(LEditor* editor, const wxString& expr, const wxString& word);
@@ -59,6 +60,7 @@ protected:
 protected:
     // Event handlers
     void OnBuildEnded(clBuildEvent &e);
+    void OnBuildStarted(clBuildEvent &e);
     void OnAppActivated(wxActivateEvent &e);
     
 public:

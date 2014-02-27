@@ -256,17 +256,32 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
     // Since we can have multiple "compile_commands.json" files, we take the most updated file
     // Prepare a list of files to check
     FileNameVector_t files;
-    wxArrayString    dirs;
+    std::queue<wxString> dirs;
     
-    // Get only directories
-    wxDir::GetAllFiles( fn.GetPath(), &dirs, wxEmptyString, wxDIR_DIRS );
-    dirs.Add( fn.GetPath() );
+    // we start with the current path
+    dirs.push( fn.GetPath() );
     
-    // Collect all the compile_commands files we can find
-    for(size_t i=0; i<dirs.GetCount(); ++i) {
-        wxFileName fnCompileCommands( dirs.Item(i), "compile_commands.json" );
-        if ( fnCompileCommands.Exists() ) {
-            files.push_back( fnCompileCommands );
+    while ( !dirs.empty() ) {
+        wxString curdir = dirs.front();
+        dirs.pop();
+        
+        wxFileName fn(curdir, "compile_commands.json" );
+        if ( fn.Exists() ) {
+            files.push_back( fn );
+        }
+        
+        // Check to see if there are more directories to recurse
+        wxDir dir;
+        if ( dir.Open( curdir ) ) {
+            wxString dirname;
+            bool cont = dir.GetFirst( &dirname, "", wxDIR_DIRS );
+            while ( cont ) {
+                wxString new_dir;
+                new_dir << curdir << wxFileName::GetPathSeparator() << dirname;
+                dirs.push( new_dir );
+                dirname.Clear();
+                cont = dir.GetNext( &dirname );
+            }
         }
     }
     return files;
@@ -288,16 +303,21 @@ void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& comp
             // Each object has 3 properties:
             // directory, command, file
             JSONElement element = arr.arrayItem(i);
-            wxString cwd       = wxFileName(element.namedObject("directory").toString(), "").GetPath();
-            wxString file      = wxFileName(element.namedObject("file").toString()).GetFullPath();
-            wxString path      = wxFileName(file).GetPath();
-            wxString cmp_flags = element.namedObject("command").toString();
-            
-            st.Bind(1, file);
-            st.Bind(2, path);
-            st.Bind(3, cwd);
-            st.Bind(4, cmp_flags);
-            st.ExecuteUpdate();
+            if ( element.hasNamedObject("file") && element.hasNamedObject("directory") && element.hasNamedObject("command") ) {
+                wxString cmd  = element.namedObject("command").toString();
+                wxString file = element.namedObject("file").toString();
+                wxString path = wxFileName(file).GetPath();
+                wxString cwd  = element.namedObject("directory").toString();
+                
+                cwd  = wxFileName(cwd, "").GetPath();
+                file = wxFileName(file).GetFullPath();
+                
+                st.Bind(1, file);
+                st.Bind(2, path);
+                st.Bind(3, cwd);
+                st.Bind(4, cmd);
+                st.ExecuteUpdate();
+            }
         }
         
         m_db->ExecuteUpdate("COMMIT");
@@ -318,7 +338,7 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
             return wxFileName();
         
         JSONRoot root(cJSON_Array);
-        JSONElement rootElement = root.toElement();
+        JSONElement arr = root.toElement();
         wxArrayString lines = ::wxStringTokenize(content, "\n\r", wxTOKEN_STRTOK);
         for(size_t i=0; i<lines.GetCount(); ++i) {
             wxArrayString parts = ::wxStringTokenize(lines.Item(i), wxT("|"), wxTOKEN_STRTOK);
@@ -333,7 +353,7 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
             element.addProperty("directory", cwd);
             element.addProperty("command",   cmp_flags);
             element.addProperty("file",      file_name);
-            rootElement.append( element );
+            arr.arrayAppend( element );
         }
         
         wxFileName fn(compile_file.GetPath(), "compile_commands.json");

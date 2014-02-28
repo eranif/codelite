@@ -103,7 +103,7 @@ void CodeLiteDiff::UnPlug()
 
 void CodeLiteDiff::OnNewDiff(wxCommandEvent& e)
 {
-    DiffSideBySidePanel* diff = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook(), clDTL::kTwoPanes);
+    DiffSideBySidePanel* diff = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
     diff->DiffNew(); // Indicate that we want a clean diff, not from a source control
     m_mgr->AddPage(diff, _("Diff"), wxNullBitmap, true);
 }

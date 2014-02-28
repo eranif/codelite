@@ -168,20 +168,20 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode m
                 break;
             }
             case dtl::SES_ADD: {
-                clDTL::LineInfo line(seq.at(i).first, LINE_ADDED);
-                m_resultLeft.push_back( line );
                 if ( seqStartLine == wxNOT_FOUND ) {
                     seqStartLine = m_resultLeft.size();
                 }
+                clDTL::LineInfo line(seq.at(i).first, LINE_ADDED);
+                m_resultLeft.push_back( line );
                 break;
 
             }
             case dtl::SES_DELETE: {
-                clDTL::LineInfo line(seq.at(i).first, LINE_REMOVED);
-                m_resultLeft.push_back( line );
                 if ( seqStartLine == wxNOT_FOUND ) {
                     seqStartLine = m_resultLeft.size();
                 }
+                clDTL::LineInfo line(seq.at(i).first, LINE_REMOVED);
+                m_resultLeft.push_back( line );
                 break;
             }
             }

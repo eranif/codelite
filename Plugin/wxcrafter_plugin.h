@@ -52,7 +52,8 @@ protected:
         ID_TOOL_COPY_FILE_RIGHT_TO_LEFT = 1004,
         ID_TOOL_SAVE = 1005,
         ID_VIEW_HORIZONTAL = 1006,
-        ID_VIEW_VRTICAL = 1007,
+        ID_VIEW_SINGLE = 1007,
+        ID_VIEW_VRTICAL = 1008,
     };
 protected:
     wxRibbonBar* m_ribbonBar;
@@ -94,13 +95,15 @@ protected:
     virtual void OnVerticalUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHorizontal(wxRibbonButtonBarEvent& event) { event.Skip(); }
     virtual void OnHorizontalUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSingleView(wxRibbonButtonBarEvent& event) { event.Skip(); }
+    virtual void OnSingleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLeftStcPainted(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnRightPickerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnRightStcPainted(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
-    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,500), long style = wxTAB_TRAVERSAL);
+    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~DiffSideBySidePanelBase();
 };
 

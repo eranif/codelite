@@ -997,7 +997,7 @@ void SubversionView::OnItemActivated(wxTreeEvent& event)
         title_right = _("Working copy");
         title_left  = _("HEAD version");
         
-        DiffSideBySidePanel *diffPanel = new DiffSideBySidePanel( EventNotifier::Get()->TopFrame(), clDTL::kTwoPanes);
+        DiffSideBySidePanel *diffPanel = new DiffSideBySidePanel( EventNotifier::Get()->TopFrame());
         DiffSideBySidePanel::FileInfo l(leftFile, title_left, true);
         DiffSideBySidePanel::FileInfo r(rightFile, title_right, false);
         diffPanel->SetFilesDetails(l, r);

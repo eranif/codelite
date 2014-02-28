@@ -2048,7 +2048,7 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
         fp.Write( headFile );
         fp.Close();
     }
-    DiffSideBySidePanel* p = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook(), clDTL::kTwoPanes);
+    DiffSideBySidePanel* p = new DiffSideBySidePanel(m_mgr->GetEditorPaneNotebook());
     DiffSideBySidePanel::FileInfo l(tmpFilePath, _("HEAD version"), true);
     l.deleteOnExit = true;
     DiffSideBySidePanel::FileInfo r(fnWorkingCopy.GetFullPath(), _("Working copy"), false);

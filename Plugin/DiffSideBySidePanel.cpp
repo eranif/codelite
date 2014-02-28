@@ -22,12 +22,12 @@
 #define MARKER_SEQUENCE          8
 #define MARKER_SEQUENCE_VERTICAL 9
 
-DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent, clDTL::DiffMode mode)
+DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
-    , m_diffMode(mode)
     , m_flags(0)
 {
-    if ( m_diffMode == clDTL::kOnePane ) {
+    m_config.Load();
+    if ( m_config.IsSingleViewMode() ) {
         m_splitter->Unsplit();
     }
 
@@ -35,7 +35,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent, clDTL::DiffMode mode)
     m_ribbonBar->SetArtProvider( new wxRibbonMetroArtProvider );
 #endif
     EventNotifier::Get()->Connect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
-    
+
     Connect(ID_COPY_LEFT_TO_RIGHT, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyLeft2Right));
     Connect(ID_COPY_LEFT_TO_RIGHT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyLeft2Right));
     Connect(ID_COPY_RIGHT_TO_LEFT, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
@@ -50,6 +50,10 @@ DiffSideBySidePanel::~DiffSideBySidePanel()
     if ( m_flags & kDeleteRightOnExit ) {
         ::wxRemoveFile( m_filePickerRight->GetPath() );
     }
+    
+    // save the configuration
+    m_config.Save();
+    
     EventNotifier::Get()->Disconnect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing), NULL, this);
 }
 
@@ -76,7 +80,7 @@ void DiffSideBySidePanel::Diff()
 
     // Prepare the diff
     clDTL d;
-    d.Diff(m_filePickerLeft->GetPath(), m_filePickerRight->GetPath(), m_diffMode);
+    d.Diff(m_filePickerLeft->GetPath(), m_filePickerRight->GetPath(), m_config.IsSingleViewMode() ? clDTL::kOnePane : clDTL::kTwoPanes);
     const clDTL::LineInfoVec_t &resultLeft  = d.GetResultLeft();
     const clDTL::LineInfoVec_t &resultRight = d.GetResultRight();
     m_sequences = d.GetSequences();
@@ -104,7 +108,11 @@ void DiffSideBySidePanel::Diff()
 
     // The left pane is always the one with the deletions "-"
     for (size_t i=0; i<resultLeft.size(); ++i) {
-        if ( resultLeft.at(i).m_type == clDTL::LINE_REMOVED ) {
+        if ( resultLeft.at(i).m_type == clDTL::LINE_ADDED ) {
+            leftContent  << resultLeft.at(i).m_line;
+            m_leftGreenMarkers.push_back( i );
+            
+        } else if ( resultLeft.at(i).m_type == clDTL::LINE_REMOVED ) {
             leftContent  << resultLeft.at(i).m_line;
             m_leftRedMarkers.push_back( i );
 
@@ -121,7 +129,11 @@ void DiffSideBySidePanel::Diff()
 
     // The right pane is always with the new additions "+"
     for (size_t i=0; i<resultRight.size(); ++i) {
-        if ( resultRight.at(i).m_type == clDTL::LINE_ADDED ) {
+        if ( resultRight.at(i).m_type == clDTL::LINE_REMOVED ) {
+            rightContent  << resultRight.at(i).m_line;
+            m_rightRedMarkers.push_back( i );
+            
+        } else if ( resultRight.at(i).m_type == clDTL::LINE_ADDED ) {
             rightContent  << resultRight.at(i).m_line;
             m_rightGreenMarkers.push_back( i );
 
@@ -339,8 +351,11 @@ void DiffSideBySidePanel::DoClean()
 {
     // Cleanup
     m_leftRedMarkers.clear();
-    m_rightGreenMarkers.clear();
     m_leftPlaceholdersMarkers.clear();
+    m_leftGreenMarkers.clear();
+    
+    m_rightGreenMarkers.clear();
+    m_rightRedMarkers.clear();
     m_rightPlaceholdersMarkers.clear();
     m_sequences.clear();
 
@@ -389,18 +404,17 @@ void DiffSideBySidePanel::OnPrevDiffUI(wxUpdateUIEvent& event)
 
 void DiffSideBySidePanel::OnCopyLeftToRightUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !IsRightReadOnly() && m_diffMode == clDTL::kTwoPanes);
+    event.Enable( !IsRightReadOnly() && !m_config.IsSingleViewMode());
 }
 
 void DiffSideBySidePanel::OnCopyRightToLeftUI(wxUpdateUIEvent& event)
 {
-    event.Enable( !IsLeftReadOnly() && m_diffMode == clDTL::kTwoPanes );
+    event.Enable( !IsLeftReadOnly() && !m_config.IsSingleViewMode() );
 }
 
 void DiffSideBySidePanel::OnCopyLeftToRight(wxRibbonButtonBarEvent& event)
 {
-    DiffConfig conf;
-    bool moveToNext = conf.Load().GetFlags() & DiffConfig::kCopyLeftToRightAndMove;
+    bool moveToNext = m_config.GetFlags() & DiffConfig::kCopyLeftToRightAndMove;
     DoCopyCurrentSequence(m_stcLeft, m_stcRight);
     if ( moveToNext && CanNextDiff() ) {
         wxRibbonButtonBarEvent dummy;
@@ -410,8 +424,7 @@ void DiffSideBySidePanel::OnCopyLeftToRight(wxRibbonButtonBarEvent& event)
 
 void DiffSideBySidePanel::OnCopyRightToLeft(wxRibbonButtonBarEvent& event)
 {
-    DiffConfig conf;
-    bool moveToNext = conf.Load().GetFlags() & DiffConfig::kCopyRightToLeftAndMove;
+    bool moveToNext = m_config.GetFlags() & DiffConfig::kCopyRightToLeftAndMove;
     DoCopyCurrentSequence(m_stcRight, m_stcLeft);
     if ( moveToNext && CanNextDiff() ) {
         wxRibbonButtonBarEvent dummy;
@@ -509,10 +522,10 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
     stc->SetReadOnly(true);
     stc->SetSavePoint();
     stc->SetModified(false);
-    
+
     // Emit a file-saved event
     EventNotifier::Get()->PostFileSavedEvent( fn.GetFullPath() );
-    
+
     // Reload any file opened in codelite
     EventNotifier::Get()->PostReloadExternallyModifiedEvent( false );
 }
@@ -526,7 +539,7 @@ void DiffSideBySidePanel::OnSaveChanges(wxRibbonButtonBarEvent& event)
 
 void DiffSideBySidePanel::OnSaveChangesUI(wxUpdateUIEvent& event)
 {
-    event.Enable( (m_stcLeft->IsModified() || m_stcRight->IsModified()) && m_diffMode == clDTL::kTwoPanes );
+    event.Enable( (m_stcLeft->IsModified() || m_stcRight->IsModified()) && !m_config.IsSingleViewMode() );
 }
 
 bool DiffSideBySidePanel::CanNextDiff()
@@ -587,27 +600,34 @@ void DiffSideBySidePanel::OnHorizontal(wxRibbonButtonBarEvent& event)
 {
     m_splitter->Unsplit();
     m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
+    m_config.SetViewMode( DiffConfig::kViewHorizontalSplit );
+    Diff();
 }
 
 void DiffSideBySidePanel::OnHorizontalUI(wxUpdateUIEvent& event)
 {
-    event.Check( m_splitter->GetSplitMode() == wxSPLIT_HORIZONTAL && m_diffMode == clDTL::kTwoPanes );
+    event.Check( m_config.IsSplitHorizontal() );
 }
 
 void DiffSideBySidePanel::OnVertical(wxRibbonButtonBarEvent& event)
 {
     m_splitter->Unsplit();
     m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
+    m_config.SetViewMode( DiffConfig::kViewVerticalSplit);
+    Diff();
 }
 
 void DiffSideBySidePanel::OnVerticalUI(wxUpdateUIEvent& event)
 {
-    event.Check( m_splitter->GetSplitMode() == wxSPLIT_VERTICAL && m_diffMode == clDTL::kTwoPanes);
+    event.Check( m_config.IsSplitVertical() );
 }
 
 void DiffSideBySidePanel::DiffNew()
 {
     m_flags = 0x0;
+    m_config.SetViewMode( DiffConfig::kViewVerticalSplit );
+    m_splitter->Unsplit();
+    m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
 }
 
 void DiffSideBySidePanel::OnRefreshDiffUI(wxUpdateUIEvent& event)
@@ -637,30 +657,28 @@ wxString DiffSideBySidePanel::DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) 
 
 void DiffSideBySidePanel::OnCopyLeftToRightMenu(wxRibbonButtonBarEvent& event)
 {
-    DiffConfig conf;
-    size_t flags = conf.Load().GetFlags();
+    size_t flags = m_config.GetFlags();
     bool copyAndMove = flags & DiffConfig::kCopyLeftToRightAndMove;
-    
+
     wxMenu menu;
     menu.Append(ID_COPY_LEFT_TO_RIGHT, _("Copy to the right"), wxEmptyString, wxITEM_RADIO);
     menu.Check(ID_COPY_LEFT_TO_RIGHT, !copyAndMove);
-    
+
     menu.Append(ID_COPY_LEFT_TO_RIGHT_AND_MOVE, _("Copy to the right and move to the next diff"), wxEmptyString, wxITEM_RADIO);
     menu.Check(ID_COPY_LEFT_TO_RIGHT_AND_MOVE, copyAndMove);
-    
+
     event.PopupMenu( &menu );
 }
 
 void DiffSideBySidePanel::OnCopyRightToLeftMenu(wxRibbonButtonBarEvent& event)
 {
-    DiffConfig conf;
-    size_t flags = conf.Load().GetFlags();
+    size_t flags = m_config.GetFlags();
     bool copyAndMove = flags & DiffConfig::kCopyRightToLeftAndMove;
-    
+
     wxMenu menu;
     menu.Append(ID_COPY_RIGHT_TO_LEFT, _("Copy to the left"), wxEmptyString, wxITEM_RADIO);
     menu.Check(ID_COPY_RIGHT_TO_LEFT, !copyAndMove);
-    
+
     menu.Append(ID_COPY_RIGHT_TO_LEFT_AND_MOVE, _("Copy to the left and move to the next diff"), wxEmptyString, wxITEM_RADIO);
     menu.Check(ID_COPY_RIGHT_TO_LEFT_AND_MOVE, copyAndMove);
     event.PopupMenu( &menu );
@@ -668,30 +686,38 @@ void DiffSideBySidePanel::OnCopyRightToLeftMenu(wxRibbonButtonBarEvent& event)
 
 void DiffSideBySidePanel::OnMenuCopyLeft2Right(wxCommandEvent& event)
 {
-    DiffConfig conf;
-    size_t flags = conf.Load().GetFlags();
-    
+    size_t flags = m_config.GetFlags();
+
     flags &= ~DiffConfig::kCopyLeftToRightAndMove;
-    
+
     if ( event.IsChecked() && event.GetId() == ID_COPY_LEFT_TO_RIGHT_AND_MOVE ) {
         // save the new settings
         flags |= DiffConfig::kCopyLeftToRightAndMove;
     }
-    conf.SetFlags( flags );
-    conf.Save();
+    m_config.SetFlags( flags );
 }
 
 void DiffSideBySidePanel::OnMenuCopyRight2Left(wxCommandEvent& event)
 {
-    DiffConfig conf;
-    size_t flags = conf.Load().GetFlags();
-    
+    size_t flags = m_config.GetFlags();
+
     flags &= ~DiffConfig::kCopyRightToLeftAndMove;
-    
+
     if ( event.IsChecked() && event.GetId() == ID_COPY_RIGHT_TO_LEFT_AND_MOVE ) {
         // save the new settings
         flags |= DiffConfig::kCopyRightToLeftAndMove;
     }
-    conf.SetFlags( flags );
-    conf.Save();
+    m_config.SetFlags( flags );
+}
+
+void DiffSideBySidePanel::OnSingleUI(wxUpdateUIEvent& event)
+{
+    event.Check( m_config.IsSingleViewMode() );
+}
+
+void DiffSideBySidePanel::OnSingleView(wxRibbonButtonBarEvent& event)
+{
+    m_config.SetViewMode( DiffConfig::kViewSingle );
+    m_splitter->Unsplit();
+    Diff();
 }

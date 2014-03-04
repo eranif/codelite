@@ -52,6 +52,7 @@
 #include "bookmark_manager.h"
 #include <wx/richmsgdlg.h>
 #include "code_completion_manager.h"
+#include "clang_compilation_db_thread.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -962,7 +963,8 @@ void clMainFrame::CreateGUIControls(void)
     ParseThreadST::Get()->SetSearchPaths( m_tagsOptionsData.GetParserSearchPaths(), m_tagsOptionsData.GetParserExcludePaths() );
 
     ParseThreadST::Get()->Start();
-
+    ClangCompilationDbThreadST::Get()->Start();
+    
     // Connect this tree to the parse thread
     ParseThreadST::Get()->SetNotifyWindow( this );
 

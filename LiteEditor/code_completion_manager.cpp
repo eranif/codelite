@@ -271,17 +271,12 @@ void CodeCompletionManager::DoUpdateCompilationDatabase()
     // Create a worker thread (detached thread) that 
     // will initialize the database now that the compilation has ended
     CompilationDatabase db;
-    ClangCompilationDbThread* thr = new ClangCompilationDbThread( db.GetFileName().GetFullPath() );
-    thr->Start();
+    ClangCompilationDbThreadST::Get()->AddFile( db.GetFileName().GetFullPath() );
 }
 
 void CodeCompletionManager::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
-    // dont start another thread while the build is in progress
-    if ( !m_buildInProgress ) {
-        DoUpdateCompilationDatabase();
-    }
 }
 
 void CodeCompletionManager::Release()

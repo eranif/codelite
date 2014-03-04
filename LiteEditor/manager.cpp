@@ -92,6 +92,7 @@
 #include "refactorengine.h"
 #include "tabgroupspane.h"
 #include "editorframe.h"
+#include "clang_compilation_db_thread.h"
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -211,12 +212,14 @@ Manager::~Manager ( void )
         JobQueueSingleton::Instance()->Stop();
         ParseThreadST::Get()->Stop();
         SearchThreadST::Get()->Stop();
+        ClangCompilationDbThreadST::Get()->Stop();
     }
 
     //free all plugins
     PluginManager::Get()->UnLoad();
 
     // release singleton objects
+    ClangCompilationDbThreadST::Free();
     DebuggerMgr::Free();
     JobQueueSingleton::Release();
     ParseThreadST::Free();  //since the parser is making use of the TagsManager,

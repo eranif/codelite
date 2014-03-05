@@ -364,6 +364,7 @@ protected:
     void OnSaveAs(wxCommandEvent& event);
     void OnFileReload(wxCommandEvent& event);
     void OnFileLoadTabGroup(wxCommandEvent& event);
+    void OnTBUnRedo(wxAuiToolBarEvent& event);
     void OnCompleteWord(wxCommandEvent& event);
     void OnCompleteWordRefreshList(wxCommandEvent &event);
     void OnFunctionCalltip(wxCommandEvent& event);

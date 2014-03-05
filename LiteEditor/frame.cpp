@@ -52,6 +52,7 @@
 #include "bookmark_manager.h"
 #include <wx/richmsgdlg.h>
 #include "code_completion_manager.h"
+#include "cl_unredo.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -690,6 +691,9 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT, wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt), this);
     EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
 
+    Connect(wxID_UNDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo), NULL, this);
+    Connect(wxID_REDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo), NULL, this);
+
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 }
@@ -733,7 +737,10 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged), this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT, wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt), this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED, wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
-    
+
+    Disconnect(wxID_UNDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo), NULL, this);
+    Disconnect(wxID_REDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo), NULL, this);
+
     wxDELETE(m_timer);
     wxDELETE(m_statusbarTimer);
 
@@ -1115,7 +1122,9 @@ void clMainFrame::CreateToolbars24()
     tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/paste")),        _("Paste"));
     TB_SEPARATOR();
     tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo")),         _("Undo"));
+    tb->SetToolDropDown(wxID_UNDO, true);
     tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo")),         _("Redo"));
+    tb->SetToolDropDown(wxID_REDO, true);
     tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back")),         _("Backward"));
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
@@ -1241,8 +1250,8 @@ void clMainFrame::CreateNativeToolbar16()
     tb->AddTool(wxID_COPY,                _("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/copy")),         _("Copy"));
     tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/paste")),        _("Paste"));
     TB_SEPARATOR();
-    tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/undo")),         _("Undo"));
-    tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/redo")),         _("Redo"));
+    tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/undo")),         _("Undo"), wxITEM_DROPDOWN);
+    tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/redo")),         _("Redo"), wxITEM_DROPDOWN);
     tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/16/standard/back")),         _("Backward"));
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
@@ -1317,8 +1326,8 @@ void clMainFrame::CreateNativeToolbar24()
     tb->AddTool(wxID_COPY,                _("Copy"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/copy")),         _("Copy"));
     tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/24/standard/paste")),        _("Paste"));
     TB_SEPARATOR();
-    tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo")),         _("Undo"));
-    tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo")),         _("Redo"));
+    tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/undo")),         _("Undo"), wxITEM_DROPDOWN);
+    tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/24/standard/redo")),         _("Redo"), wxITEM_DROPDOWN);
     tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/24/standard/back")),         _("Backward"));
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/24/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
@@ -1407,7 +1416,9 @@ void clMainFrame::CreateToolbars16()
     tb->AddTool(wxID_PASTE,               _("Paste"),           bmpLoader.LoadBitmap(wxT("toolbars/16/standard/paste")),        _("Paste"));
     TB_SEPARATOR();
     tb->AddTool(wxID_UNDO,                _("Undo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/undo")),         _("Undo"));
+    tb->SetToolDropDown(wxID_UNDO, true);
     tb->AddTool(wxID_REDO,                _("Redo"),            bmpLoader.LoadBitmap(wxT("toolbars/16/standard/redo")),         _("Redo"));
+    tb->SetToolDropDown(wxID_REDO, true);
     tb->AddTool(wxID_BACKWARD,            _("Backward"),        bmpLoader.LoadBitmap(wxT("toolbars/16/standard/back")),         _("Backward"));
     tb->AddTool(wxID_FORWARD,             _("Forward"),         bmpLoader.LoadBitmap(wxT("toolbars/16/standard/forward")),      _("Forward"));
     TB_SEPARATOR();
@@ -1578,6 +1589,21 @@ void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     Close();
 }
+
+void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
+{
+     LEditor* editor = GetMainBook()->GetActiveEditor(true);
+    if (editor && event.IsDropDownClicked()) {
+        wxPoint pt = event.GetItemRect().GetBottomLeft();
+        pt.y++;
+        editor->GetCommandsProcessor().PopulateUnRedoMenu(this, pt, event.GetId() == wxID_UNDO);
+    }
+
+    else {
+        DispatchCommandEvent(event); // Revert to standard processing
+    }
+}
+
 //----------------------------------------------------
 // Helper method for the event handling
 //----------------------------------------------------

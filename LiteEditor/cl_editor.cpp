@@ -4087,7 +4087,7 @@ void LEditor::OnChange(wxStyledTextEvent& event)
 
     if (isCoalesceStart && GetCommandsProcessor().HasOpenCommand()) {
         // The user has changed mode e.g. from inserting to deleting, so the current command must be closed
-        GetCommandsProcessor().CommandProcessorBase::ProcessCurrentCommand(); // Use the base-class method, as this time we don't need to tell scintilla too
+        GetCommandsProcessor().CommandProcessorBase::ProcessOpenCommand(); // Use the base-class method, as this time we don't need to tell scintilla too
     }
 
     if (isInsert || isDelete) {
@@ -4099,10 +4099,10 @@ void LEditor::OnChange(wxStyledTextEvent& event)
             } 
             // We need to cope with a selection being deleted by typing; this results in 0x2012 followed immediately by 0x11 i.e. with no intervening wxSTC_STARTACTION
               else if (isInsert && currentOpen->GetCommandType() != CLC_insert) {
-                GetCommandsProcessor().ProcessCurrentCommand();
+                GetCommandsProcessor().ProcessOpenCommand();
                 GetCommandsProcessor().StartNewTextCommand(CLC_insert);
             } else if (isDelete && currentOpen->GetCommandType() != CLC_delete) {
-                GetCommandsProcessor().ProcessCurrentCommand();
+                GetCommandsProcessor().ProcessOpenCommand();
                 GetCommandsProcessor().StartNewTextCommand(CLC_delete);
             }
 

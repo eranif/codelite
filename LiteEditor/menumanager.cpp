@@ -34,6 +34,7 @@ MenuManager::MenuManager(void)
 	PushHandler(new EditHandler(wxID_PASTE));
 	PushHandler(new EditHandler(wxID_UNDO));
 	PushHandler(new EditHandler(wxID_REDO));
+	PushHandler(new EditHandler(XRCID("label_current_state")));
 	PushHandler(new EditHandler(wxID_SELECTALL));
 	PushHandler(new EditHandler(wxID_DUPLICATE));
 	PushHandler(new EditHandler(wxID_DELETE));

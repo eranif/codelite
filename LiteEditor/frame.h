@@ -562,6 +562,7 @@ protected:
     void OnChangeActiveBookmarkType(wxCommandEvent &e);
     void OnShowBookmarkMenu(wxAuiToolBarEvent &e);
     void OnSettingsChanged(wxCommandEvent &e);
+    void OnEditMenuOpened(wxMenuEvent& e);
     
     DECLARE_EVENT_TABLE()
 };

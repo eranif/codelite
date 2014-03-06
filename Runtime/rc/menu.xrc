@@ -67,6 +67,9 @@
             <object class="wxMenuItem" name="wxID_REDO">
                 <label>&amp;Redo</label>
             </object>
+            <object class="wxMenuItem" name="label_current_state">
+                <label>Set la&amp;bel for current state</label>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="wxID_CUT">
                 <label>&amp;Cut</label>

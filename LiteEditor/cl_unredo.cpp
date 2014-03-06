@@ -8,9 +8,9 @@ CLCommandProcessor::CLCommandProcessor() : CommandProcessorBase()
     m_initialCommand->Close();
 }
 
-void CLCommandProcessor::ProcessCurrentCommand()
+void CLCommandProcessor::ProcessOpenCommand()
 {
-    CommandProcessorBase::ProcessCurrentCommand(); // Do the real work
+    CommandProcessorBase::ProcessOpenCommand(); // Do the real work
     
     wxCHECK_RET(GetParent(), "A parentless CLCommandProcessor");
     GetParent()->BeginUndoAction(); // Tell scintilla to stop trying to append to the stale 'current' CLCommand. Yes, we *do* need both the Begin and End.

@@ -219,6 +219,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     //--------------------------------------------------
     EVT_MENU(wxID_UNDO,                           clMainFrame::DispatchCommandEvent)
     EVT_MENU(wxID_REDO,                           clMainFrame::DispatchCommandEvent)
+    EVT_MENU(XRCID("label_current_state"),        clMainFrame::DispatchCommandEvent)
     EVT_MENU(wxID_DUPLICATE,                      clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("delete_line"),                clMainFrame::DispatchCommandEvent)
     EVT_MENU(XRCID("delete_line_end"),            clMainFrame::DispatchCommandEvent)
@@ -895,6 +896,13 @@ void clMainFrame::CreateGUIControls(void)
     CreateRecentlyOpenedWorkspacesMenu();
     DoUpdatePerspectiveMenu();
 
+    // Connect to Edit menu, so that its labelled-state submenu can be added on the fly when necessary
+    wxMenu* editmenu = NULL;
+    wxMenuItem* menuitem = GetMenuBar()->FindItem(wxID_UNDO, &editmenu);
+    if (menuitem && editmenu) {
+        editmenu->Bind(wxEVT_MENU_OPEN, wxMenuEventHandler(clMainFrame::OnEditMenuOpened), this);
+    }
+
     m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
 
     //---------------------------------------------
@@ -1073,6 +1081,35 @@ void clMainFrame::CreateViewAsSubMenu()
             submenu->Append(item);
         }
         menu->Append(viewAsSubMenuID, _("View As"), submenu);
+    }
+}
+
+void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
+{
+    // First remove any current labelled-state submenu, which will almost certainly hold stale data
+    wxMenu* editmenu = event.GetMenu();
+    wxMenuItem* menuitem = editmenu->FindItem(XRCID("goto_labelled_state"));
+    if (menuitem) {
+        editmenu->Delete(menuitem);
+    }
+
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
+    if (!editor) {
+        return;
+    }
+
+    // Find the item we want to insert _after_
+    size_t pos;
+    menuitem = editmenu->FindChildItem(XRCID("label_current_state"), &pos);
+    wxCHECK_RET(menuitem, "Failed to find the 'label_current_state' item");
+
+    // Get any labelled undo/redo states into the submenu. If none, abort.
+    wxMenu* submenu = new wxMenu;
+    editor->GetCommandsProcessor().PopulateLabelledStatesMenu(submenu);
+    if (submenu->GetMenuItemCount()) {
+        editmenu->Insert(pos+2, XRCID("goto_labelled_state"), "Undo/Redo to a pre&viously labelled state", submenu);
+    } else {
+        delete submenu;
     }
 }
 
@@ -1592,7 +1629,7 @@ void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 {
-     LEditor* editor = GetMainBook()->GetActiveEditor(true);
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
     if (editor && event.IsDropDownClicked()) {
         wxPoint pt = event.GetItemRect().GetBottomLeft();
         pt.y++;

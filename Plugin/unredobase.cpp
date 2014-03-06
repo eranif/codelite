@@ -28,7 +28,7 @@ wxString GetBestLabel(CLCommand* command)
     return label;
 }
 
-void CommandProcessorBase::ProcessCurrentCommand()
+void CommandProcessorBase::ProcessOpenCommand()
 {
     CLCommand* command = GetOpenCommand();
     wxCHECK_RET(command, "Trying to process a non-existing or non-open command");
@@ -57,10 +57,28 @@ void CommandProcessorBase::CloseOpenCommand()
     command->Close();
 }
 
+void CommandProcessorBase::IncrementCurrentCommand()
+{
+    wxCHECK_RET((m_currentCommand + 1) < GetCommands().size(), "Can't increment the current command");
+    ++m_currentCommand;
+}
+
+void CommandProcessorBase::DecrementCurrentCommand()
+{
+    wxCHECK_RET(m_currentCommand > -1, "Can't decrement the current command");
+
+    // Close any open command. That makes sense anyway if we're undoing and, if we don't, the command doesn't get a sensible label when it's displayed in the dropdown menu 
+    if (GetOpenCommand()) {
+        ProcessOpenCommand();
+    }
+
+    --m_currentCommand;
+}
+
 void CommandProcessorBase::SetUserLabel(const wxString& label)
 {
     if (GetOpenCommand()) {
-        ProcessCurrentCommand(); // We need to make it non-pending, otherwise it may change after the label is set; which probably won't be what the user expects
+        ProcessOpenCommand(); // We need to make it non-pending, otherwise it may change after the label is set; which probably won't be what the user expects
     }
 
     CLCommand* command = GetActiveCommand();
@@ -81,7 +99,7 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
                 CLCommand* command = (CLCommand*)*iter;
                 if (command) {
                     if (!command->GetUserLabel().empty()) {
-                        menu.Append(id++, prefix + command->GetUserLabel());
+                        menu.Append(id++, prefix + command->GetName().BeforeFirst(':') + ": " + command->GetUserLabel());
                     } else {
                         wxString label;
                         if (command == GetOpenCommand()) {
@@ -104,7 +122,7 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
             CLCommand* command = (CLCommand*)*iter;
             if (command) {
                 if (!command->GetUserLabel().empty()) {
-                    menu.Append(id++, prefix + command->GetUserLabel());
+                    menu.Append(id++, prefix + command->GetName().BeforeFirst(':') + ": " + command->GetUserLabel());
                 } else {
                     menu.Append(id++, prefix + command->GetName());
                 }
@@ -161,7 +179,7 @@ void CommandProcessorBase::DoUnBindLabelledStatesMenu(wxMenu* menu)
 void CommandProcessorBase::OnLabelledStatesMenuItem(wxCommandEvent& event)
 {
     if (GetOpenCommand()) {
-        ProcessCurrentCommand();
+        ProcessOpenCommand();
     }
 
     int index = event.GetId() - FIRST_MENU_ID;  // NB index will be -1 if the selection is the initial-command's label. This will always mean *un*dos (or nothing)
@@ -171,14 +189,14 @@ void CommandProcessorBase::OnLabelledStatesMenuItem(wxCommandEvent& event)
         const int count = GetCurrentCommand() - index;
         for (int n=0; n < count; ++n) {
             if (DoUndo()) {
-                --m_currentCommand;
+                DecrementCurrentCommand();
             }
         }
     } else {
         const int count = index - GetCurrentCommand();
         for (int n=0; n < count; ++n) {
             if (DoRedo()) {
-                ++m_currentCommand;
+                IncrementCurrentCommand();
             }
         }
     }
@@ -187,13 +205,13 @@ void CommandProcessorBase::OnLabelledStatesMenuItem(wxCommandEvent& event)
 void CommandProcessorBase::OnUndoDropdownItem(wxCommandEvent& event)
 {//wxLogDebug("::OnUndoDropdownItem: event.GetId() %i  GetNextUndoCommand %i current %i  size %i hasopencommand=%s",event.GetId(),  GetNextUndoCommand(), GetCurrentCommand(), (int)GetCommands().size(), GetOpenCommand() ? "true":"false");
     if (GetOpenCommand()) {
-        ProcessCurrentCommand();
+        ProcessOpenCommand();
     }
 
     const int count = event.GetId() - FIRST_MENU_ID + 1;
     for (int n=0; n < count; ++n) {
         if (DoUndo()) {
-            --m_currentCommand;
+            DecrementCurrentCommand();
         }
     }
 }
@@ -203,7 +221,7 @@ void CommandProcessorBase::OnRedoDropdownItem(wxCommandEvent& event)
     const int count = event.GetId() - FIRST_MENU_ID + 1;
     for (int n=0; n < count; ++n) {
         if (DoRedo()) {
-            ++m_currentCommand;
+            IncrementCurrentCommand();
         }
     }
 }
@@ -230,7 +248,7 @@ bool CommandProcessorBase::GetIsCurrentStateSaved() const
 void CommandProcessorBase::SetCurrentStateIsSaved(bool saved/*=true*/)
 {
     if (GetOpenCommand()) {
-        ProcessCurrentCommand(); // There's no sense setting a 'saved' state on a moving target
+        ProcessOpenCommand(); // There's no sense setting a 'saved' state on a moving target
     }
 
     if (GetActiveCommand()) {

@@ -106,16 +106,23 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
 
     } else if (event.GetId() == wxID_UNDO) {
         editor->Undo();
+        editor->GetCommandsProcessor().DecrementCurrentCommand();
 
     } else if (event.GetId() == wxID_REDO) {
         editor->Redo();
+        editor->GetCommandsProcessor().IncrementCurrentCommand();
+
+    } else if (event.GetId() == XRCID("label_current_state")) {
+        wxString label = wxGetTextFromUser("What would you like to call the current state?", "Label current state", "", editor);
+        if (!label.empty()) {
+            editor->GetCommandsProcessor().SetUserLabel(label);
+        }
 
     } else if (event.GetId() == wxID_SELECTALL) {
         editor->SelectAll();
 
     } else if (event.GetId() == wxID_DUPLICATE) {
         editor->SelectionDuplicate();
-
     } else if (event.GetId() == XRCID("delete_line_end")) {
         editor->DelLineRight();
 

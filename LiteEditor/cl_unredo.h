@@ -51,7 +51,7 @@ public:
 
     void AppendToTextCommand(const wxString& text, int position);
     
-    virtual void ProcessCurrentCommand();
+    virtual void ProcessOpenCommand();
 
     LEditor* GetParent() const {
         return m_parent;

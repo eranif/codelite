@@ -78,7 +78,7 @@ public:
         return GetOpenCommand()->GetIsAppendable() && GetOpenCommand()->GetCommandType() == type;
     }
 
-    virtual void ProcessCurrentCommand();
+    virtual void ProcessOpenCommand();
 
     void PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool undoing);
 
@@ -94,6 +94,9 @@ public:
     int GetCurrentCommand() const {
         return m_currentCommand;
     }
+
+    void IncrementCurrentCommand();
+    void DecrementCurrentCommand();
 
     int GetNextUndoCommand() const {
         return GetCommands().size() - m_currentCommand - 1;

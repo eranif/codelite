@@ -382,6 +382,7 @@
       <File Name="wxcDownloadDlg.cpp"/>
       <File Name="NewVirtualFolderDlg.h"/>
       <File Name="NewVirtualFolderDlg.cpp"/>
+      <File Name="depend_dlg_page.wxcp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Plugins">
       <File Name="pluginmgrdlg.h"/>
@@ -857,6 +858,7 @@
       <File Name="plugindlgbase_liteeditor_bitmaps.cpp"/>
       <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>
       <File Name="advance_settings_liteeditor_bitmaps.cpp"/>
+      <File Name="depend_dlg_page_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>

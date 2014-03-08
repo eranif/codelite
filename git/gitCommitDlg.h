@@ -24,7 +24,10 @@ public:
 
     wxArrayString GetSelectedFiles();
     wxString GetCommitMessage();
-
+    bool IsAmending() const {
+        return m_checkBoxAmend->IsChecked();
+    }
+    
 private:
     void OnChangeFile(wxCommandEvent& e);
 protected:

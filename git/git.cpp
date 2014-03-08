@@ -51,7 +51,7 @@ extern "C" EXPORT IPlugin *CreatePlugin(IManager *manager)
 extern "C" EXPORT PluginInfo GetPluginInfo()
 {
     PluginInfo info;
-    info.SetAuthor(wxT("RenÃ© Kraus"));
+    info.SetAuthor(wxT("RenÃÂ© Kraus"));
     info.SetName(wxT("git"));
     info.SetDescription(wxT("Simple GIT plugin"));
     info.SetVersion(wxT("v1.1.0"));
@@ -1359,16 +1359,32 @@ void GitPlugin::OnProcessTerminated(wxCommandEvent &event)
         dlg.AppendDiff(m_commandOutput);
         if(dlg.ShowModal() == wxID_OK) {
             wxString message = dlg.GetCommitMessage();
-            if(!message.IsEmpty()) {
+            if(!message.IsEmpty() || dlg.IsAmending() ) {
+                
+                // amending?
+                wxString arg;
+                if ( dlg.IsAmending() ) {
+                    arg << " --amend ";
+                }
+                
+                // Add the message
+                if ( !message.IsEmpty() ) {
+                    arg << "-m \"";
+                    arg << message;
+                    arg << "\" ";
+                     
+                } else {
+                    // we are amending previous commit, use the previous commit message 
+                    // by passing the --no-edit switch
+                    arg << " --no-edit ";
+                }
+                
                 wxArrayString files = dlg.GetSelectedFiles();
-                wxString arg = wxT("-m \"");
-                arg << message;
-                arg << wxT("\" ");
                 if(files.GetCount() != 0) {
                     for(unsigned i=0; i < files.GetCount(); ++i)
-                        arg << files[i] << wxT(" ");
+                        arg << files.Item(i) << wxT(" ");
                 }
-                gitAction ga(gitCommit,arg);
+                gitAction ga(gitCommit, arg);
                 m_gitActionQueue.push(ga);
                 AddDefaultActions();
 

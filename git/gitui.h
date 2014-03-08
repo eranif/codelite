@@ -88,6 +88,7 @@ protected:
     wxPanel* m_panel4;
     wxStaticText* m_staticText8;
     wxStyledTextCtrl* m_stcCommitMessage;
+    wxCheckBox* m_checkBoxAmend;
     wxStdDialogButtonSizer* m_stdBtnSizer278;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;

@@ -277,6 +277,12 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     
     bSizer13->Add(m_stcCommitMessage, 1, wxALL|wxEXPAND, 5);
     
+    m_checkBoxAmend = new wxCheckBox(m_panel4, wxID_ANY, _("Amend the previous commit"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxAmend->SetValue(false);
+    m_checkBoxAmend->SetToolTip(_("The 'git commit --amend' command is a convenient way to fix up the most recent commit. It lets you combine staged changes with the previous commit instead of committing it as an entirely new snapshot. It can also be used to simply edit the previous commit message without changing its snapshot"));
+    
+    bSizer13->Add(m_checkBoxAmend, 0, wxALL, 5);
+    
     m_stdBtnSizer278 = new wxStdDialogButtonSizer();
     
     bSizer4->Add(m_stdBtnSizer278, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);

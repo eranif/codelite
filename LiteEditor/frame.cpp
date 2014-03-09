@@ -1086,30 +1086,11 @@ void clMainFrame::CreateViewAsSubMenu()
 
 void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 {
-    // First remove any current labelled-state submenu, which will almost certainly hold stale data
-    wxMenu* editmenu = event.GetMenu();
-    wxMenuItem* menuitem = editmenu->FindItem(XRCID("goto_labelled_state"));
-    if (menuitem) {
-        editmenu->Delete(menuitem);
-    }
-
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if (!editor) {
-        return;
-    }
-
-    // Find the item we want to insert _after_
-    size_t pos;
-    menuitem = editmenu->FindChildItem(XRCID("label_current_state"), &pos);
-    wxCHECK_RET(menuitem, "Failed to find the 'label_current_state' item");
-
-    // Get any labelled undo/redo states into the submenu. If none, abort.
-    wxMenu* submenu = new wxMenu;
-    editor->GetCommandsProcessor().PopulateLabelledStatesMenu(submenu);
-    if (submenu->GetMenuItemCount()) {
-        editmenu->Insert(pos+2, XRCID("goto_labelled_state"), "Undo/Redo to a pre&viously labelled state", submenu);
+    if (editor) {
+        editor->GetCommandsProcessor().PrepareLabelledStatesMenu(event.GetMenu());
     } else {
-        delete submenu;
+        event.Skip();
     }
 }
 
@@ -1629,11 +1610,15 @@ void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 {
-    LEditor* editor = GetMainBook()->GetActiveEditor(true);
-    if (editor && event.IsDropDownClicked()) {
-        wxPoint pt = event.GetItemRect().GetBottomLeft();
-        pt.y++;
-        editor->GetCommandsProcessor().PopulateUnRedoMenu(this, pt, event.GetId() == wxID_UNDO);
+    if (event.IsDropDownClicked()) {
+        LEditor* editor = GetMainBook()->GetActiveEditor(true);
+        if (editor) {
+            editor->GetCommandsProcessor().ProcessEvent(event);
+
+        } else if (GetMainBook()->GetCurrentPage()) {
+            event.StopPropagation(); // Otherwise we'll infinitely loop if the active page doesn't handle this event
+            GetMainBook()->GetCurrentPage()->GetEventHandler()->ProcessEvent(event); // Let the active plugin have a go
+        }
     }
 
     else {

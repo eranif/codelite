@@ -105,12 +105,16 @@ void EditHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &event)
         }
 
     } else if (event.GetId() == wxID_UNDO) {
-        editor->Undo();
-        editor->GetCommandsProcessor().DecrementCurrentCommand();
+        if (editor->GetCommandsProcessor().CanUndo()) {
+            editor->Undo();
+            editor->GetCommandsProcessor().DecrementCurrentCommand();
+        }
 
     } else if (event.GetId() == wxID_REDO) {
-        editor->Redo();
-        editor->GetCommandsProcessor().IncrementCurrentCommand();
+        if (editor->GetCommandsProcessor().CanRedo()) {
+            editor->Redo();
+            editor->GetCommandsProcessor().IncrementCurrentCommand();
+        }
 
     } else if (event.GetId() == XRCID("label_current_state")) {
         wxString label = wxGetTextFromUser("What would you like to call the current state?", "Label current state", "", editor);

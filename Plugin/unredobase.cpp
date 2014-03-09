@@ -28,6 +28,17 @@ wxString GetBestLabel(CLCommand* command)
     return label;
 }
 
+CommandProcessorBase::CommandProcessorBase() : m_currentCommand(-1)
+{
+    Connect(wxID_UNDO, wxID_REDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(CommandProcessorBase::OnTBUnRedo), NULL, this);
+}
+
+CommandProcessorBase::~CommandProcessorBase()
+{
+    Clear();
+    Disconnect(wxID_UNDO, wxID_REDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(CommandProcessorBase::OnTBUnRedo), NULL, this);
+}
+
 void CommandProcessorBase::ProcessOpenCommand()
 {
     CLCommand* command = GetOpenCommand();
@@ -87,6 +98,13 @@ void CommandProcessorBase::SetUserLabel(const wxString& label)
     }
 }
 
+void CommandProcessorBase::OnTBUnRedo(wxAuiToolBarEvent& event)
+{
+    wxPoint pt = event.GetItemRect().GetBottomLeft();
+    pt.y++;
+    PopulateUnRedoMenu(wxTheApp->GetTopWindow(), pt, event.GetId() == wxID_UNDO);
+}
+
 void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool undoing)
 {
     wxMenu menu;
@@ -98,17 +116,20 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
             for (vCLCommands::const_reverse_iterator iter = GetCommands().rbegin() + GetNextUndoCommand(); iter != GetCommands().rend(); ++iter) {
                 CLCommand* command = (CLCommand*)*iter;
                 if (command) {
+                    wxString label;
                     if (!command->GetUserLabel().empty()) {
-                        menu.Append(id++, prefix + command->GetName().BeforeFirst(':') + ": " + command->GetUserLabel());
+                        if (command->GetName().Contains(":")) {
+                            label = command->GetName().BeforeFirst(':') + ": ";
+                        }
+                        label << command->GetUserLabel();
                     } else {
-                        wxString label;
                         if (command == GetOpenCommand()) {
                             label = GetBestLabel(command); // If the command's still open, there won't otherwise be a name string
                         } else {
                             label = command->GetName();
                         }
-                        menu.Append(id++, prefix + label);
                     }
+                    menu.Append(id++, prefix + label);
                 }
             }
         }
@@ -121,17 +142,45 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
         for (vCLCommands::const_iterator iter = GetCommands().begin() + GetCurrentCommand() + 1; iter != GetCommands().end(); ++iter) {
             CLCommand* command = (CLCommand*)*iter;
             if (command) {
+                wxString label;
                 if (!command->GetUserLabel().empty()) {
-                    menu.Append(id++, prefix + command->GetName().BeforeFirst(':') + ": " + command->GetUserLabel());
+                    if (command->GetName().Contains(":")) {
+                        label = command->GetName().BeforeFirst(':') + ": ";
+                    }
+                    label << command->GetUserLabel();
                 } else {
-                    menu.Append(id++, prefix + command->GetName());
+                    label = command->GetName();
                 }
+                menu.Append(id++, prefix + label);
             }
         }
         
         menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), this, FIRST_MENU_ID, FIRST_MENU_ID + (id-1));
         win->PopupMenu(&menu, pt);
         menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), this, FIRST_MENU_ID, FIRST_MENU_ID + (id-1));
+    }
+}
+
+void CommandProcessorBase::PrepareLabelledStatesMenu(wxMenu* editmenu)
+{
+    // First remove any current labelled-state submenu, which will almost certainly hold stale data
+    wxMenuItem* menuitem = editmenu->FindItem(XRCID("goto_labelled_state"));
+    if (menuitem) {
+        editmenu->Delete(menuitem);
+    }
+
+    // Find the item we want to insert _after_
+    size_t pos;
+    menuitem = editmenu->FindChildItem(XRCID("label_current_state"), &pos);
+    wxCHECK_RET(menuitem, "Failed to find the 'label_current_state' item");
+
+    // Get any labelled undo/redo states into the submenu. If none, abort.
+    wxMenu* submenu = new wxMenu;
+    PopulateLabelledStatesMenu(submenu);
+    if (submenu->GetMenuItemCount()) {
+        editmenu->Insert(pos+2, XRCID("goto_labelled_state"), "Undo/Redo to a pre&viously labelled state", submenu);
+    } else {
+        delete submenu;
     }
 }
 

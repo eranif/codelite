@@ -5,6 +5,8 @@
 #include <vector>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
+#include <wx/bitmap.h>
+#include <wx/aui/auibar.h>
 
 
 enum CLC_types { CLC_insert, CLC_delete, CLC_unknown };
@@ -71,8 +73,8 @@ typedef std::vector<CLCommand*> vCLCommands;
 class CommandProcessorBase : public wxEvtHandler
 {
 public:
-    CommandProcessorBase() : m_currentCommand(-1) {}
-    virtual ~CommandProcessorBase() { Clear(); }
+    CommandProcessorBase();
+    virtual ~CommandProcessorBase();
 
     bool CanAppend(CLC_types type) {
         return GetOpenCommand()->GetIsAppendable() && GetOpenCommand()->GetCommandType() == type;
@@ -82,6 +84,7 @@ public:
 
     void PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool undoing);
 
+    void PrepareLabelledStatesMenu(wxMenu* menu);
     void PopulateLabelledStatesMenu(wxMenu* menu);
 
     void UnBindLabelledStatesMenu(wxMenu* menu);
@@ -122,9 +125,7 @@ public:
         return m_commands;
     }
 
-/*    bool Undo();
-
-    bool Redo();*/
+    void OnTBUnRedo(wxAuiToolBarEvent& event);
 
     virtual bool DoUndo() = 0;
 
@@ -163,10 +164,11 @@ protected:
     void Clear() {
         m_commands.clear();
         delete m_initialCommand;
+        m_initialCommand = NULL;
     }
 
-    void OnUndoDropdownItem(wxCommandEvent& event);
-    void OnRedoDropdownItem(wxCommandEvent& event);
+    virtual void OnUndoDropdownItem(wxCommandEvent& event);
+    virtual void OnRedoDropdownItem(wxCommandEvent& event);
     void OnLabelledStatesMenuItem(wxCommandEvent& event);
 
     CLCommand* m_initialCommand;    // A command to hold any initial-state user-label, and to store any initial state if we're state-storing

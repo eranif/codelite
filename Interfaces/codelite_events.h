@@ -512,5 +512,13 @@
 // -------------------Debugger events end------------------------------------------------
 #define wxEVT_CMD_OPEN_PROJ_SETTINGS   3580 // clCommandEvent. Use event.GetString() to get the project name
 
+// Workspace reload started
+// event type: clCommandEvent
+#define wxEVT_WORKSPACE_RELOAD_STARTED 3581
+
+// Workspace reload is done
+// event type: clCommandEvent
+#define wxEVT_WORKSPACE_RELOAD_ENDED   3582
+
 #endif // CODELITE_EVENTS_H
 

@@ -84,3 +84,17 @@ void EventNotifier::PostFileRemovedEvent(const wxArrayString& files)
     filesRemovedEvent.SetStrings( files );
     AddPendingEvent( filesRemovedEvent );
 }
+
+void EventNotifier::NotifyWorkspaceReloadEndEvent(const wxString& workspaceFile)
+{
+    clCommandEvent event(wxEVT_WORKSPACE_RELOAD_ENDED);
+    event.SetFileName( workspaceFile );
+    ProcessEvent( event );
+}
+
+void EventNotifier::NotifyWorkspaceReloadStartEvet(const wxString& workspaceFile)
+{
+    clCommandEvent event(wxEVT_WORKSPACE_RELOAD_STARTED);
+    event.SetFileName( workspaceFile );
+    ProcessEvent( event );
+}

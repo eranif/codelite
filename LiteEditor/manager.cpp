@@ -306,9 +306,15 @@ void Manager::ReloadWorkspace()
 {
     if ( !IsWorkspaceOpen() )
         return;
+    
+    // Save the current session before re-loading
+    EventNotifier::Get()->NotifyWorkspaceReloadStartEvet( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
+    
     DbgStop();
     WorkspaceST::Get()->ReloadWorkspace();
     DoSetupWorkspace ( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
+    
+    EventNotifier::Get()->NotifyWorkspaceReloadEndEvent( WorkspaceST::Get()->GetWorkspaceFileName().GetFullPath() );
 }
 
 void Manager::DoSetupWorkspace ( const wxString &path )

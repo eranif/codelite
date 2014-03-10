@@ -49,6 +49,8 @@ private:
     MessagePane  *      m_messagePane;
     bool                m_useBuffereLimit;
     EditorFrame::List_t m_detachedEditors;
+    bool                m_isWorkspaceReloading;
+    
 public:
     enum {
         kGetAll_Default         = 0x00000000, // booked editors only
@@ -81,7 +83,8 @@ private:
     void DoPositionFindBar(int where);
     void DoHandleFrameMenu(LEditor *editor);
     void DoEraseDetachedEditor(IEditor* editor);
-
+    void OnWorkspaceReloadStarted(clCommandEvent &e);
+    void OnWorkspaceReloadEnded(clCommandEvent &e);
 public:
     MainBook(wxWindow *parent);
     ~MainBook();

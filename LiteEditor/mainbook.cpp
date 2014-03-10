@@ -55,6 +55,7 @@ MainBook::MainBook(wxWindow *parent)
     , m_book           (NULL)
     , m_quickFindBar   (NULL)
     , m_useBuffereLimit(true)
+    , m_isWorkspaceReloading(false)
 {
     CreateGuiControls();
     ConnectEvents();
@@ -725,9 +726,14 @@ bool MainBook::SaveAll(bool askUser, bool includeUntitled)
 
 void MainBook::ReloadExternallyModified(bool prompt)
 {
+    if ( m_isWorkspaceReloading )
+        return;
+
     LEditor::Vec_t editors;
     GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
-
+    
+    time_t workspaceModifiedTimeBefore = WorkspaceST::Get()->GetFileLastModifiedTime();
+    
     // filter list of editors for any whose files have been modified
     std::vector<std::pair<wxFileName, bool> > files;
     size_t n = 0;
@@ -748,6 +754,12 @@ void MainBook::ReloadExternallyModified(bool prompt)
         UserSelectFiles(files, _("Reload Modified Files"), _("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
     }
 
+    time_t workspaceModifiedTimeAfter = WorkspaceST::Get()->GetFileLastModifiedTime();
+    if ( workspaceModifiedTimeBefore != workspaceModifiedTimeAfter ) {
+        // a workspace reload occured between the "Reload Modified Files" and
+        // the "Reload WOrkspace" dialog, cancel this it's not needed anymore
+        return;
+    }
     
     std::vector<wxFileName> filesToRetag;
     for (size_t i = 0; i < files.size(); i++) {
@@ -1185,5 +1197,17 @@ void MainBook::DoEraseDetachedEditor(IEditor* editor)
             break;
         }
     }
+}
+
+void MainBook::OnWorkspaceReloadEnded(clCommandEvent& e)
+{
+    e.Skip();
+    m_isWorkspaceReloading = false;
+}
+
+void MainBook::OnWorkspaceReloadStarted(clCommandEvent& e)
+{
+    e.Skip();
+    m_isWorkspaceReloading = true;
 }
 

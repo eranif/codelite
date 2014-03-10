@@ -341,7 +341,7 @@ private:
     void CreateViewAsSubMenu();
     void CreateRecentlyOpenedFilesMenu();
     void CreateWelcomePage();
-    void ReloadExternallyModifiedProjectFiles();
+    bool ReloadExternallyModifiedProjectFiles();
     void DoEnableWorkspaceViewFlag(bool enable, int flag);
     void DoUpdatePerspectiveMenu();
     bool IsWorkspaceViewFlagEnabled(int flag);

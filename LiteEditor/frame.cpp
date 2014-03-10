@@ -3376,8 +3376,11 @@ void clMainFrame::OnAppActivated(wxActivateEvent &e)
 #endif
     if (m_theFrame && e.GetActive()) {
 
-        m_theFrame->ReloadExternallyModifiedProjectFiles();
-        m_theFrame->GetMainBook()->ReloadExternallyModified(true);
+        // if workspace or project was modified, don't prompt for 
+        // file(s) reload
+        if ( !m_theFrame->ReloadExternallyModifiedProjectFiles() ) {
+            m_theFrame->GetMainBook()->ReloadExternallyModified(true);
+        }
         
         // Notify plugins that we got the focus.
         // Some plugins want to hide some frames etc
@@ -3842,9 +3845,9 @@ void clMainFrame::OnReloadWorkspace(wxCommandEvent& event)
         return;
     }
 
-    // Save the current session before re-loading
     SaveLayoutAndSession();
     ManagerST::Get()->ReloadWorkspace();
+
 }
 
 void clMainFrame::OnReloadWorkspaceUI(wxUpdateUIEvent& event)
@@ -4342,10 +4345,10 @@ void clMainFrame::OnReloadExternallModifiedNoPrompt(wxCommandEvent& e)
     GetMainBook()->ReloadExternallyModified(false);
 }
 
-void clMainFrame::ReloadExternallyModifiedProjectFiles()
+bool clMainFrame::ReloadExternallyModifiedProjectFiles()
 {
     if ( ManagerST::Get()->IsWorkspaceOpen() == false ) {
-        return;
+        return false;
     }
 
     Workspace *workspace = WorkspaceST::Get();
@@ -4379,7 +4382,7 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
     }
 
     if (!project_modified && !workspace_modified)
-        return;
+        return false;
     
     // Make sure we don't have the mouse captured in any editor or we might get a crash somewhere
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(  _("Workspace or project settings have been modified outside of CodeLite\nWould you like to reload the workspace?"), 
@@ -4390,7 +4393,7 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
     if ( res != wxID_CANCEL ) {
         if ( res == wxID_YES ) {
             wxCommandEvent evtReload(wxEVT_COMMAND_MENU_SELECTED, XRCID("reload_workspace"));
-            GetEventHandler()->AddPendingEvent( evtReload );
+            GetEventHandler()->ProcessEvent( evtReload );
 
         } else {
             // user cancelled the dialog or chosed not to reload the workspace
@@ -4399,6 +4402,7 @@ void clMainFrame::ReloadExternallyModifiedProjectFiles()
             }
         }
     }
+    return true;
 }
 
 void clMainFrame::SaveLayoutAndSession()

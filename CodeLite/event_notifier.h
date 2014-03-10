@@ -30,6 +30,15 @@ public:
     void PostCommandEvent(int eventId, void *clientData);
     bool SendCommandEvent(int eventId, void *clientData, const wxString &s);
     
+    // --------------------------------------------------------
+    // About the following functions:
+    // the below functions are meant to provide an easy 
+    // way to fire codelite's plugins events without the need
+    // to create the event on the stack.
+    // Post* are meant as Asnyc event ("AddPendingEvent")
+    // While Notify* are synchronous event ("ProcessEvent")
+    //---------------------------------------------------------
+    
     /**
      * @brief post a wxEVT_FILE_SAVED event
      */
@@ -45,6 +54,16 @@ public:
      * @brief post a wxEVT_PROJ_FILE_REMOVED event
      */
     void PostFileRemovedEvent( const wxArrayString &files );
+    
+    /**
+     * @brief send a wxEVT_WORKSPACE_RELOAD_STARTED event (sync event)
+     */
+    void NotifyWorkspaceReloadStartEvet(const wxString &workspaceFile);
+    
+    /**
+     * @brief send a wxEVT_WORKSPACE_RELOAD_ENDED event (sync event)
+     */
+    void NotifyWorkspaceReloadEndEvent(const wxString &workspaceFile);
 };
 
 #endif // EVENTNOTIFIER_H

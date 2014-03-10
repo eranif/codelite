@@ -3940,8 +3940,9 @@ void clMainFrame::SetFrameTitle(LEditor* editor)
     
     pattern.Replace("$workspace", workspace);
     pattern.Replace("$user",      username);
-    pattern.Replace("$fullname",  fullname);
+    pattern.Replace("$filename",  fullname);
     pattern.Replace("$fullpath",  fullpath);
+    
     pattern.Trim().Trim(false);
     if ( pattern.IsEmpty() ) {
         pattern << "CodeLite";

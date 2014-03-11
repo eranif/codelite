@@ -206,9 +206,9 @@ void wxTerminal::OnReadProcessOutput(wxCommandEvent& event)
     wxDELETE(ped);
     
     // Incase we hit the limit of the output buffer, flush it now
-    if ( m_outputBuffer.length() > OUTPUT_BUFFER_MAX_SIZE ) {
-        DoFlushOutputBuffer();
-    }
+    // if ( m_outputBuffer.length() > OUTPUT_BUFFER_MAX_SIZE ) {
+    //     DoFlushOutputBuffer();
+    // }
 }
 
 void wxTerminal::DoCtrlC()

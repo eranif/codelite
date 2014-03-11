@@ -327,6 +327,8 @@ void wxTerminal::StopTTY()
     m_slave = -1;
 }
 
+#endif
+
 void wxTerminal::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
@@ -343,4 +345,3 @@ void wxTerminal::DoFlushOutputBuffer()
         m_outputBuffer.Clear();
     }
 }
-#endif

@@ -39,12 +39,6 @@ public:
     void Close() {
         m_isOpen = false;
     }
-    const wxString GetMd5Sum() const {
-        return m_md5;
-    }
-    void SetMd5Sum(const wxString& md5) {
-        m_md5 = md5;
-    }
     wxString GetUserLabel() const {
         return m_userLabel;
     }
@@ -65,7 +59,6 @@ protected:
     wxString m_text;
     wxString m_userLabel;
     bool     m_isOpen;
-    wxString m_md5;
 };
 
 typedef std::vector<CLCommand*> vCLCommands;
@@ -149,17 +142,6 @@ public:
 
     CLCommand* GetActiveCommand() const; // The command indexed by m_currentCommand
 
-    bool GetIsCurrentStateSaved() const;
-    void SetCurrentStateIsSaved(bool saved = true);
-
-    wxString CalculateMd5sum(const wxString& text) const;
-    const wxString GetSavedMd5Sum() const {
-        return m_savedMd5;
-    }
-    void SetSavedMd5Sum(const wxString& md5) {
-        m_savedMd5 = md5;
-    }
-
 protected:
     void Clear() {
         m_commands.clear();
@@ -169,13 +151,11 @@ protected:
 
     virtual void OnUndoDropdownItem(wxCommandEvent& event);
     virtual void OnRedoDropdownItem(wxCommandEvent& event);
-    void OnLabelledStatesMenuItem(wxCommandEvent& event);
+    virtual void OnLabelledStatesMenuItem(wxCommandEvent& event);
 
     CLCommand* m_initialCommand;    // A command to hold any initial-state user-label, and to store any initial state if we're state-storing
     vCLCommands m_commands;
-    int m_currentCommand;           // The next one to be undone
-    wxString m_savedMd5;
-    
+    int m_currentCommand;           // The next one to be undone   
 };
 
 #endif // UNREDOBASE_H

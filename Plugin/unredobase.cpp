@@ -1,7 +1,8 @@
 
 #include "unredobase.h"
-#include <wxmd5.h>
 #include <wx/menu.h>
+#include <wx/app.h>
+#include <wx/xrc/xmlres.h>
 
 
 const int FIRST_MENU_ID = 10000;
@@ -110,7 +111,7 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
     wxMenu menu;
     wxString prefix(undoing ? "Undo " : "Redo ");
     int id = FIRST_MENU_ID;
-//wxLogDebug("::PopulateUnRedoMenu: GetNextUndoCommand %i current %i  size %i hasopencommand=%s",  GetNextUndoCommand(), GetCurrentCommand(), (int)GetCommands().size(), GetOpenCommand() ? "true":"false");
+
     if (undoing) {
         if (GetCommands().size() > 0) {
             for (vCLCommands::const_reverse_iterator iter = GetCommands().rbegin() + GetNextUndoCommand(); iter != GetCommands().rend(); ++iter) {
@@ -172,13 +173,17 @@ void CommandProcessorBase::PrepareLabelledStatesMenu(wxMenu* editmenu)
     // Find the item we want to insert _after_
     size_t pos;
     menuitem = editmenu->FindChildItem(XRCID("label_current_state"), &pos);
-    wxCHECK_RET(menuitem, "Failed to find the 'label_current_state' item");
+    wxCHECK_RET(menuitem && (int)pos > wxNOT_FOUND, "Failed to find the 'label_current_state' item");
+    int kludge = 0;
+    if (pos == 2) { // For some reason, the insertion point of the CL edit menu is otherwise off-by-1. The wxC frame one isn't :/
+        kludge = 1;
+    }
 
     // Get any labelled undo/redo states into the submenu. If none, abort.
     wxMenu* submenu = new wxMenu;
     PopulateLabelledStatesMenu(submenu);
     if (submenu->GetMenuItemCount()) {
-        editmenu->Insert(pos+2, XRCID("goto_labelled_state"), "Undo/Redo to a pre&viously labelled state", submenu);
+        editmenu->Insert(pos+1 + kludge, XRCID("goto_labelled_state"), "Undo/Redo to a pre&viously labelled state", submenu);
     } else {
         delete submenu;
     }
@@ -252,7 +257,7 @@ void CommandProcessorBase::OnLabelledStatesMenuItem(wxCommandEvent& event)
 }
 
 void CommandProcessorBase::OnUndoDropdownItem(wxCommandEvent& event)
-{//wxLogDebug("::OnUndoDropdownItem: event.GetId() %i  GetNextUndoCommand %i current %i  size %i hasopencommand=%s",event.GetId(),  GetNextUndoCommand(), GetCurrentCommand(), (int)GetCommands().size(), GetOpenCommand() ? "true":"false");
+{
     if (GetOpenCommand()) {
         ProcessOpenCommand();
     }
@@ -287,30 +292,5 @@ CLCommand* CommandProcessorBase::GetActiveCommand() const
 
     return command;
 }
-    
-bool CommandProcessorBase::GetIsCurrentStateSaved() const
-{
-    CLCommand* command = GetActiveCommand();
-    return (command && !command->IsOpen() && (GetSavedMd5Sum() == command->GetMd5Sum()));
-}
 
-void CommandProcessorBase::SetCurrentStateIsSaved(bool saved/*=true*/)
-{
-    if (GetOpenCommand()) {
-        ProcessOpenCommand(); // There's no sense setting a 'saved' state on a moving target
-    }
 
-    if (GetActiveCommand()) {
-        SetSavedMd5Sum(GetActiveCommand()->GetMd5Sum());
-    }
-}
-
-wxString CommandProcessorBase::CalculateMd5sum(const wxString& text) const
-{
-    if (text.empty()) {
-        return text; // The md5 implementation returns garbage when passed thin air
-    }
-    
-    wxString md5 = wxMD5::GetDigest(text);
-    return md5;
-}

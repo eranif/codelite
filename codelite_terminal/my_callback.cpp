@@ -12,9 +12,7 @@ MyCallback::~MyCallback()
 
 void MyCallback::OnProcessOutput(const wxString& str)
 {
-    wxStyledTextCtrl *stc = m_frame->m_stc;
-    stc->AppendText( str );
-    m_frame->SetCartAtEnd();
+    m_frame->AppendOutputText( str );
 }
 
 void MyCallback::OnProcessTerminated()

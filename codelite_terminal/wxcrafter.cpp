@@ -56,7 +56,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     
     m_auibar17->AddTool(wxID_CLEAR, _("Clear"), wxXmlResource::Get()->LoadBitmap(wxT("stop")), wxNullBitmap, wxITEM_NORMAL, _("Clear view"), _("Clear view"), NULL);
     
-    m_auibar17->AddTool(ID_KILL_INFIRIOR, _("Send inferior process signal"), wxXmlResource::Get()->LoadBitmap(wxT("signal")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Send inferior process signal"), NULL)->SetHasDropDown(true);
+    m_auibar17->AddTool(ID_KILL_INFIRIOR, _("Send inferior process signal"), wxXmlResource::Get()->LoadBitmap(wxT("signal")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Send inferior process signal"), NULL);
+    wxAuiToolBarItem* m_toolbarItemKillInfiriorProcess = m_auibar17->FindToolByIndex(m_auibar17->GetToolCount()-1);
+    if (m_toolbarItemKillInfiriorProcess) {
+        m_toolbarItemKillInfiriorProcess->SetHasDropDown(true);
+    }
     
     m_auibar17->AddTool(ID_SETTINGS, _("Settings..."), wxXmlResource::Get()->LoadBitmap(wxT("settings")), wxNullBitmap, wxITEM_NORMAL, _("Settings..."), _("Settings..."), NULL);
     
@@ -138,6 +142,7 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     }
     Centre(wxBOTH);
     // Connect events
+    this->Connect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnClearViewUI), NULL, this);
     this->Connect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
@@ -152,10 +157,12 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     m_timerMarker->Connect(wxEVT_TIMER, wxTimerEventHandler(MainFrameBaseClass::OnAddMarker), NULL, this);
     
+    this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::ShowAuiToolMenu), NULL, this);
 }
 
 MainFrameBaseClass::~MainFrameBaseClass()
 {
+    this->Disconnect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBaseClass::OnClearViewUI), NULL, this);
     this->Disconnect(ID_KILL_INFIRIOR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MainFrameBaseClass::OnTerminateInfirior), NULL, this);
@@ -170,11 +177,38 @@ MainFrameBaseClass::~MainFrameBaseClass()
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
     m_timerMarker->Disconnect(wxEVT_TIMER, wxTimerEventHandler(MainFrameBaseClass::OnAddMarker), NULL, this);
     
+    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
+    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
+        wxDELETE( menuIter->second );
+    }
+    m_dropdownMenus.clear();
+
     m_timerMarker->Stop();
     wxDELETE( m_timerMarker );
 
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(MainFrameBaseClass::ShowAuiToolMenu), NULL, this);
 }
 
+
+void MainFrameBaseClass::ShowAuiToolMenu(wxAuiToolBarEvent& event)
+{
+    event.Skip();
+    if (event.IsDropDownClicked()) {
+        wxAuiToolBar* toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
+        if (toolbar) {
+            wxAuiToolBarItem* item = toolbar->FindTool(event.GetId());
+            if (item) {
+                std::map<int, wxMenu*>::iterator iter = m_dropdownMenus.find(item->GetId());
+                if (iter != m_dropdownMenus.end()) {
+                    event.Skip(false);
+                    wxPoint pt = event.GetItemRect().GetBottomLeft();
+                    pt.y++;
+                    toolbar->PopupMenu(iter->second, pt);
+                }
+            }
+        }
+    }
+}
 SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {

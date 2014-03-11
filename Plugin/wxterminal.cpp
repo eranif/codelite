@@ -5,6 +5,8 @@
 #include "processreaderthread.h"
 #include "drawingutils.h"
 
+#define OUTPUT_BUFFER_MAX_SIZE 1024*1024 /* 1MB of buffer */
+
 #ifdef __WXMSW__
 #include "windows.h"
 #define SHELL_PREFIX  wxT("cmd /c ")
@@ -47,6 +49,7 @@ static wxString WrapInShell(const wxString &cmd)
 BEGIN_EVENT_TABLE(wxTerminal, wxTerminalBase)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  wxTerminal::OnReadProcessOutput)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, wxTerminal::OnProcessEnd       )
+    EVT_IDLE(wxTerminal::OnIdle)
 END_EVENT_TABLE()
 
 wxTerminal::wxTerminal( wxWindow* parent )
@@ -184,10 +187,11 @@ void wxTerminal::OnProcessEnd(wxCommandEvent& event)
 {
     ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
     delete ped;
-    if( m_process ) {
-        delete m_process;
-        m_process = NULL;
-    }
+    wxDELETE(m_process);
+    
+    // Make sure we flush everything
+    DoFlushOutputBuffer();
+
     if(m_exitWhenProcessDies) {
         m_textCtrl->SetInsertionPointEnd();
         m_textCtrl->AppendText(wxString(wxT("\n")) +_("Press any key to continue..."));
@@ -198,14 +202,13 @@ void wxTerminal::OnProcessEnd(wxCommandEvent& event)
 void wxTerminal::OnReadProcessOutput(wxCommandEvent& event)
 {
     ProcessEventData *ped = (ProcessEventData *)event.GetClientData();
-    m_textCtrl->SetInsertionPointEnd();
-
-    wxString s;
-    s = ped->GetData();
-    m_textCtrl->AppendText(s);
-    m_textCtrl->SetSelection(m_textCtrl->GetLastPosition(), m_textCtrl->GetLastPosition());
-    m_inferiorEnd = m_textCtrl->GetLastPosition();
-    delete ped;
+    m_outputBuffer << ped->GetData();
+    wxDELETE(ped);
+    
+    // Incase we hit the limit of the output buffer, flush it now
+    if ( m_outputBuffer.length() > OUTPUT_BUFFER_MAX_SIZE ) {
+        DoFlushOutputBuffer();
+    }
 }
 
 void wxTerminal::DoCtrlC()
@@ -222,7 +225,6 @@ void wxTerminal::DoCtrlC()
 #else
     //int status(0); Commented out as 'Unused variable'
     wxKill(m_process->GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
-//	waitpid(m_process->GetPid(), &status, 0);
 #endif
 }
 
@@ -323,5 +325,22 @@ void wxTerminal::StopTTY()
     m_tty.Clear();
     close(m_slave);
     m_slave = -1;
+}
+
+void wxTerminal::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    DoFlushOutputBuffer();
+}
+
+void wxTerminal::DoFlushOutputBuffer()
+{
+    if ( !m_outputBuffer.IsEmpty() ) {
+        m_textCtrl->SetInsertionPointEnd();
+        m_textCtrl->AppendText( m_outputBuffer );
+        m_textCtrl->SetSelection(m_textCtrl->GetLastPosition(), m_textCtrl->GetLastPosition());
+        m_inferiorEnd = m_textCtrl->GetLastPosition();
+        m_outputBuffer.Clear();
+    }
 }
 #endif

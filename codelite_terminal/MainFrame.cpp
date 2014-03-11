@@ -82,9 +82,9 @@ MainFrame::~MainFrame()
     m_config.SetBgColour( m_stc->StyleGetBackground(0) );
     m_config.SetFgColour( m_stc->StyleGetForeground(0) );
     m_config.Save();
-    
+
     // Call this so the clipboard is still available after codelite-terminal exits
-    wxTheClipboard->Flush(); 
+    wxTheClipboard->Flush();
 }
 
 void MainFrame::OnExit(wxCommandEvent& event)
@@ -107,18 +107,18 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 void MainFrame::OnKeyDown(wxKeyEvent& event)
 {
     if ( m_exitOnNextKey ) {
-        
+
         if ( event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER ) {
             Close();
-            
+
         } else if ( event.GetModifiers() == wxMOD_CONTROL && event.GetKeyCode() == 'C') {
             // allow copy
             event.Skip();
-            
+
         } else {
             return;
         }
-        
+
     }
 
     if ( event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER ) {
@@ -443,4 +443,29 @@ void MainFrame::OnSaveContent(wxCommandEvent& event)
 void MainFrame::OnSaveContentUI(wxUpdateUIEvent& event)
 {
     event.Enable( !m_stc->IsEmpty() );
+}
+
+void MainFrame::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    FlushOutputBuffer();
+}
+
+#define wxMEGA_BYTE 1024*1024
+
+void MainFrame::AppendOutputText(const wxString& text)
+{
+    m_outoutBuffer << text;
+    if ( m_outoutBuffer.length() > wxMEGA_BYTE ) {
+        FlushOutputBuffer();
+    }
+}
+
+void MainFrame::FlushOutputBuffer()
+{
+    if ( !m_outoutBuffer.IsEmpty() ) {
+        m_stc->AppendText( m_outoutBuffer );
+        SetCartAtEnd();
+        m_outoutBuffer.Clear();
+    }
 }

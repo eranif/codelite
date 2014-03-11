@@ -68,11 +68,13 @@ protected:
     int                 m_slave;
 #endif
     bool                m_interactive;
-
+    wxString            m_outputBuffer;
+    
 protected:
     void     DoProcessCommand(const wxString &command);
     void     DoCtrlC();
-
+    void DoFlushOutputBuffer();
+    
 protected:
     // Handlers for wxTerminalBase events.
     DECLARE_EVENT_TABLE()
@@ -82,6 +84,7 @@ protected:
     virtual void OnKey              (wxKeyEvent    & event);
     virtual void OnReadProcessOutput(wxCommandEvent& event);
     virtual void OnProcessEnd       (wxCommandEvent& event);
+    virtual void OnIdle(wxIdleEvent &event);
     void OnEdit                     (wxCommandEvent& event);
 
 public:

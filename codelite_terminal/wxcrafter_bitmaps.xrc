@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
-  <object class="wxBitmap" name="save">resources\save.png</object>
-  <object class="wxBitmap" name="settings">resources\settings.png</object>
-  <object class="wxBitmap" name="signal">resources\signal.png</object>
-  <object class="wxBitmap" name="stop">resources\stop.png</object>
+  <object class="wxBitmap" name="save">resources/save.png</object>
+  <object class="wxBitmap" name="settings">resources/settings.png</object>
+  <object class="wxBitmap" name="signal">resources/signal.png</object>
+  <object class="wxBitmap" name="stop">resources/stop.png</object>
   <object class="wxBitmap" name="terminal-16">terminal-16.png</object>
   <object class="wxBitmap" name="terminal-32">terminal-32.png</object>
 </resource>

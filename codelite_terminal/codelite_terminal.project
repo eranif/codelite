@@ -71,6 +71,7 @@
     <File Name="win_resources.rc"/>
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -128,7 +129,7 @@
         <Library Value="util"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelitegit/codelite_terminal/Debug/codelite-terminal" CommandArguments="--exit  --wait --cmd ./TestWXC_Grid" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/TestArea/TestWXC_Grid/Debug" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite_terminal/Debug/codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/TestArea/TestWXC_Grid/Debug" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -200,5 +201,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>

@@ -17,6 +17,7 @@
 #include <wx/panel.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
+#include <map>
 #include <wx/toolbar.h>
 #include <wx/stc/stc.h>
 #include <wx/menu.h>
@@ -37,6 +38,7 @@ protected:
 protected:
     wxPanel* m_mainPanel;
     wxAuiToolBar* m_auibar17;
+    std::map<int, wxMenu*> m_dropdownMenus;
     wxStyledTextCtrl* m_stc;
     wxMenuBar* m_menuBar;
     wxMenu* m_name6;
@@ -45,7 +47,10 @@ protected:
     wxMenuItem* m_menuItem9;
     wxTimer* m_timerMarker;
 
+    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
+
 protected:
+    virtual void OnIdle(wxIdleEvent& event) { event.Skip(); }
     virtual void OnClearView(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearViewUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnTerminateInfirior(wxCommandEvent& event) { event.Skip(); }

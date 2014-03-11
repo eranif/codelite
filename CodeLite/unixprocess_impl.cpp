@@ -298,7 +298,7 @@ bool UnixProcessImpl::Read(wxString& buff)
     memset(&rs, 0, sizeof(rs));
     FD_SET(GetReadHandle(), &rs);
     timeout.tv_sec  = 0;      // 0 seconds
-    timeout.tv_usec = 150000; // 150 ms
+    timeout.tv_usec = 50000;  // 50 ms
 
     int errCode(0);
     errno = 0;

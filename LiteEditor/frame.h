@@ -364,6 +364,7 @@ protected:
     void OnSaveAs(wxCommandEvent& event);
     void OnFileReload(wxCommandEvent& event);
     void OnFileLoadTabGroup(wxCommandEvent& event);
+    void OnTBUnRedo(wxAuiToolBarEvent& event);
     void OnCompleteWord(wxCommandEvent& event);
     void OnCompleteWordRefreshList(wxCommandEvent &event);
     void OnFunctionCalltip(wxCommandEvent& event);
@@ -561,6 +562,7 @@ protected:
     void OnChangeActiveBookmarkType(wxCommandEvent &e);
     void OnShowBookmarkMenu(wxAuiToolBarEvent &e);
     void OnSettingsChanged(wxCommandEvent &e);
+    void OnEditMenuOpened(wxMenuEvent& e);
     
     DECLARE_EVENT_TABLE()
 };

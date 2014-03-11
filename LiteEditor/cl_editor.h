@@ -44,6 +44,7 @@
 #include "globals.h"
 #include "cl_defs.h"
 #include "bookmark_manager.h"
+#include "cl_unredo.h"
 
 #define DEBUGGER_INDICATOR          11
 #define MATCH_INDICATOR             10
@@ -138,6 +139,7 @@ class LEditor : public wxStyledTextCtrl, public IEditor
     std::vector< std::pair<int,int> >           m_savedMarkers;
     bool                                        m_findBookmarksActive;
     std::map<int, wxString>                     m_compilerMessagesMap;
+    CLCommandProcessor                          m_commandsProcessor;
     
 public:
     static bool                                 m_ccShowPrivateMembers;
@@ -168,6 +170,10 @@ public:
 
     bool IsFullLineCopyCut() const {
         return m_fullLineCopyCut;
+    }
+
+    CLCommandProcessor& GetCommandsProcessor() {
+        return m_commandsProcessor;
     }
 
 public:

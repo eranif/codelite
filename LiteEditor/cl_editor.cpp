@@ -166,6 +166,8 @@ LEditor::LEditor(wxWindow* parent)
     , m_fullLineCopyCut          (false)
     , m_findBookmarksActive      (false)
 {
+    m_commandsProcessor.SetParent(this);
+    
     ms_bookmarkShapes[wxT("Small Rectangle")]   = wxSTC_MARK_SMALLRECT;
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
     ms_bookmarkShapes[wxT("Small Arrow")]       = wxSTC_MARK_ARROW;
@@ -3061,7 +3063,6 @@ void LEditor::OnPopupMenuUpdateUI(wxUpdateUIEvent &event)
     m_context->ProcessEvent(event);
 }
 
-
 BrowseRecord LEditor::CreateBrowseRecord()
 {
     // Remember this position before skipping to the next one
@@ -4037,6 +4038,12 @@ void LEditor::SetEOL()
 
 void LEditor::OnChange(wxStyledTextEvent& event)
 {
+    bool isCoalesceStart =  event.GetModificationType() & wxSTC_STARTACTION;
+    bool isInsert =         event.GetModificationType() & wxSTC_MOD_INSERTTEXT;
+    bool isDelete =         event.GetModificationType() & wxSTC_MOD_DELETETEXT;
+    bool isUndo   =         event.GetModificationType() & wxSTC_PERFORMED_UNDO;
+    bool isRedo   =         event.GetModificationType() & wxSTC_PERFORMED_REDO;
+
     if ( (m_autoAddNormalBraces && !m_disableSmartIndent) || GetOptions()->GetAutoCompleteDoubleQuotes() ) {
         if ( (event.GetModificationType() & wxSTC_MOD_BEFOREDELETE) && (event.GetModificationType() & wxSTC_PERFORMED_USER) ) {
             wxString deletedText = GetTextRange(event.GetPosition(), event.GetPosition() + event.GetLength());
@@ -4078,7 +4085,31 @@ void LEditor::OnChange(wxStyledTextEvent& event)
 #endif
     }
 
-    if (event.GetModificationType() & wxSTC_MOD_INSERTTEXT || event.GetModificationType() & wxSTC_MOD_DELETETEXT) {
+    if (isCoalesceStart && GetCommandsProcessor().HasOpenCommand()) {
+        // The user has changed mode e.g. from inserting to deleting, so the current command must be closed
+        GetCommandsProcessor().CommandProcessorBase::ProcessOpenCommand(); // Use the base-class method, as this time we don't need to tell scintilla too
+    }
+
+    if (isInsert || isDelete) {
+
+        if (!GetReloadingFile() && !isUndo && !isRedo) {
+            CLCommand* currentOpen = GetCommandsProcessor().GetOpenCommand();
+            if (!currentOpen) {
+                GetCommandsProcessor().StartNewTextCommand(isInsert ? CLC_insert : CLC_delete);
+            } 
+            // We need to cope with a selection being deleted by typing; this results in 0x2012 followed immediately by 0x11 i.e. with no intervening wxSTC_STARTACTION
+              else if (isInsert && currentOpen->GetCommandType() != CLC_insert) {
+                GetCommandsProcessor().ProcessOpenCommand();
+                GetCommandsProcessor().StartNewTextCommand(CLC_insert);
+            } else if (isDelete && currentOpen->GetCommandType() != CLC_delete) {
+                GetCommandsProcessor().ProcessOpenCommand();
+                GetCommandsProcessor().StartNewTextCommand(CLC_delete);
+            }
+
+            wxCHECK_RET(GetCommandsProcessor().HasOpenCommand(), "Trying to add to a non-existent or closed command");
+            wxCHECK_RET(GetCommandsProcessor().CanAppend(isInsert ? CLC_insert : CLC_delete), "Trying to add to the wrong type of command");
+            GetCommandsProcessor().AppendToTextCommand(event.GetText(), event.GetPosition());
+        }
 
         // Cache details of the number of lines added/removed
         // This is used to 'update' any affected FindInFiles result. See bug 3153847

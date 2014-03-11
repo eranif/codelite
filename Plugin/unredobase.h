@@ -8,6 +8,7 @@
 #include <wx/bitmap.h>
 #include <wx/aui/auibar.h>
 #include "codelite_exports.h"
+#include <wx/sharedptr.h>
 
 enum CLC_types { CLC_insert, CLC_delete, CLC_unknown };
 

@@ -138,13 +138,16 @@ wxColor DrawingUtils::LightColour(const wxColour& color, float percent)
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 
-void DrawingUtils::TruncateText(wxDC& dc, const wxString& text, const int &maxWidth, wxString& fixedText)
+void DrawingUtils::TruncateText(const wxString& text, const int& maxWidth, wxString& fixedText)
 {
     int textH, textW;
     int rectSize = maxWidth + 4; //error size
     int textLen = (int)text.Length();
     wxString tempText = text;
-
+    
+    wxBitmap bmp(1, 1);
+    wxMemoryDC dc(bmp);
+    
     fixedText = wxT("");
     dc.GetTextExtent(text, &textW, &textH);
     if (rectSize >= textW) {

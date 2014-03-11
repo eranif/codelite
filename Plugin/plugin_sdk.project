@@ -58,6 +58,8 @@
     <File Name="VirtualDirectorySelectorDlg.cpp"/>
     <File Name="bookmark_manager.h"/>
     <File Name="bookmark_manager.cpp"/>
+    <File Name="unredobase.cpp"/>
+    <File Name="unredobase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

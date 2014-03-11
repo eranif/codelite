@@ -7,13 +7,16 @@
 #include <wx/gdicmn.h>
 #include <wx/bitmap.h>
 #include <wx/aui/auibar.h>
-
+#include "codelite_exports.h"
 
 enum CLC_types { CLC_insert, CLC_delete, CLC_unknown };
 
-class CLCommand
+class WXDLLIMPEXP_SDK CLCommand
 {
 public:
+    typedef wxSharedPtr<CLCommand> Ptr_t;
+    typedef std::vector<CLCommand::Ptr_t> Vec_t;
+    
     CLCommand(CLC_types type = CLC_unknown, const wxString& name="") : m_commandType(type), m_commandName(name), m_isOpen(true)
     {}
     virtual ~CLCommand() {}
@@ -27,7 +30,7 @@ public:
     void SetName(const wxString& name) {
         m_commandName = name;
     }
-    wxString GetText() const {
+    const wxString& GetText() const {
         return m_text;
     }
     void SetText(const wxString& text) {
@@ -50,8 +53,8 @@ public:
     }
 
     virtual bool GetIsAppendable() const = 0;
-    virtual bool Do() {}
-    virtual bool Undo() {}
+    virtual bool Do() { return true; }
+    virtual bool Undo() { return true; }
 
 protected:
     const int m_commandType;
@@ -61,9 +64,7 @@ protected:
     bool     m_isOpen;
 };
 
-typedef std::vector<CLCommand*> vCLCommands;
-
-class CommandProcessorBase : public wxEvtHandler
+class WXDLLIMPEXP_SDK CommandProcessorBase : public wxEvtHandler
 {
 public:
     CommandProcessorBase();
@@ -83,7 +84,7 @@ public:
     void UnBindLabelledStatesMenu(wxMenu* menu);
     void DoUnBindLabelledStatesMenu(wxMenu* menu);
 
-    CLCommand* GetInitialCommand() const {
+    CLCommand::Ptr_t GetInitialCommand() const {
         return m_initialCommand;
     }
 
@@ -98,23 +99,23 @@ public:
         return GetCommands().size() - m_currentCommand - 1;
     }
 
-    void Add(CLCommand* command) {
+    void Add(CLCommand::Ptr_t command) {
         m_commands.push_back(command);
         m_currentCommand = m_commands.size()-1;
     }
 
-    CLCommand* GetOpenCommand();
+    CLCommand::Ptr_t GetOpenCommand();
     bool HasOpenCommand() {
         return (GetOpenCommand() != NULL);
     }
 
     virtual void CloseOpenCommand();
 
-    vCLCommands& GetCommands() {
+    CLCommand::Vec_t& GetCommands() {
         return m_commands;
     }
 
-    const vCLCommands& GetCommands() const {
+    const CLCommand::Vec_t& GetCommands() const {
         return m_commands;
     }
 
@@ -140,12 +141,11 @@ public:
 
     void SetUserLabel(const wxString& label);
 
-    CLCommand* GetActiveCommand() const; // The command indexed by m_currentCommand
+    CLCommand::Ptr_t GetActiveCommand() const; // The command indexed by m_currentCommand
 
 protected:
     void Clear() {
         m_commands.clear();
-        delete m_initialCommand;
         m_initialCommand = NULL;
     }
 
@@ -153,8 +153,8 @@ protected:
     virtual void OnRedoDropdownItem(wxCommandEvent& event);
     virtual void OnLabelledStatesMenuItem(wxCommandEvent& event);
 
-    CLCommand* m_initialCommand;    // A command to hold any initial-state user-label, and to store any initial state if we're state-storing
-    vCLCommands m_commands;
+    CLCommand::Ptr_t m_initialCommand;    // A command to hold any initial-state user-label, and to store any initial state if we're state-storing
+    CLCommand::Vec_t m_commands;
     int m_currentCommand;           // The next one to be undone   
 };
 

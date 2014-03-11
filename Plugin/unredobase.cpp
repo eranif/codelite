@@ -8,7 +8,7 @@
 const int FIRST_MENU_ID = 10000;
 
 
-wxString GetBestLabel(CLCommand* command)
+wxString GetBestLabel(CLCommand::Ptr_t command)
 {
     wxString label;
     if (command) {
@@ -42,16 +42,16 @@ CommandProcessorBase::~CommandProcessorBase()
 
 void CommandProcessorBase::ProcessOpenCommand()
 {
-    CLCommand* command = GetOpenCommand();
+    CLCommand::Ptr_t command = GetOpenCommand();
     wxCHECK_RET(command, "Trying to process a non-existing or non-open command");
 
     command->SetName( GetBestLabel(command) );  // Update the item's label
     CloseOpenCommand();
 }
 
-CLCommand* CommandProcessorBase::GetOpenCommand()
+CLCommand::Ptr_t CommandProcessorBase::GetOpenCommand()
 {
-    CLCommand* command = NULL;
+    CLCommand::Ptr_t command(NULL);
 
     size_t size = GetCommands().size();
     if (size && GetCommands().at(size-1)->IsOpen()) {
@@ -63,7 +63,7 @@ CLCommand* CommandProcessorBase::GetOpenCommand()
 
 void CommandProcessorBase::CloseOpenCommand()
 {
-    CLCommand* command = GetOpenCommand();
+    CLCommand::Ptr_t command = GetOpenCommand();
     wxCHECK_RET(command, "Trying to close to a non-existent or already-closed command");
 
     command->Close();
@@ -71,7 +71,7 @@ void CommandProcessorBase::CloseOpenCommand()
 
 void CommandProcessorBase::IncrementCurrentCommand()
 {
-    wxCHECK_RET((m_currentCommand + 1) < GetCommands().size(), "Can't increment the current command");
+    wxCHECK_RET((m_currentCommand + 1) < (int)GetCommands().size(), "Can't increment the current command");
     ++m_currentCommand;
 }
 
@@ -93,7 +93,7 @@ void CommandProcessorBase::SetUserLabel(const wxString& label)
         ProcessOpenCommand(); // We need to make it non-pending, otherwise it may change after the label is set; which probably won't be what the user expects
     }
 
-    CLCommand* command = GetActiveCommand();
+    CLCommand::Ptr_t command = GetActiveCommand();
     if (command) {
         command->SetUserLabel(label);
     }
@@ -114,8 +114,8 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
 
     if (undoing) {
         if (GetCommands().size() > 0) {
-            for (vCLCommands::const_reverse_iterator iter = GetCommands().rbegin() + GetNextUndoCommand(); iter != GetCommands().rend(); ++iter) {
-                CLCommand* command = (CLCommand*)*iter;
+            for (CLCommand::Vec_t::const_reverse_iterator iter = GetCommands().rbegin() + GetNextUndoCommand(); iter != GetCommands().rend(); ++iter) {
+                CLCommand::Ptr_t command = *iter;
                 if (command) {
                     wxString label;
                     if (!command->GetUserLabel().empty()) {
@@ -140,8 +140,8 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
         menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), this, FIRST_MENU_ID, FIRST_MENU_ID + (id-1));
         
     } else {
-        for (vCLCommands::const_iterator iter = GetCommands().begin() + GetCurrentCommand() + 1; iter != GetCommands().end(); ++iter) {
-            CLCommand* command = (CLCommand*)*iter;
+        for (CLCommand::Vec_t::const_iterator iter = GetCommands().begin() + GetCurrentCommand() + 1; iter != GetCommands().end(); ++iter) {
+            CLCommand::Ptr_t command = *iter;
             if (command) {
                 wxString label;
                 if (!command->GetUserLabel().empty()) {
@@ -206,8 +206,8 @@ void CommandProcessorBase::PopulateLabelledStatesMenu(wxMenu* menu)
     }
 
     int id = FIRST_MENU_ID;
-    for (vCLCommands::const_iterator iter = GetCommands().begin(); iter != GetCommands().end(); ++iter) {
-        CLCommand* command = (CLCommand*)*iter;
+    for (CLCommand::Vec_t::const_iterator iter = GetCommands().begin(); iter != GetCommands().end(); ++iter) {
+        CLCommand::Ptr_t command = *iter;
         if (command && !command->GetUserLabel().empty()) {
             menu->Append(id, command->GetUserLabel());
         }
@@ -280,15 +280,17 @@ void CommandProcessorBase::OnRedoDropdownItem(wxCommandEvent& event)
     }
 }
     
-CLCommand* CommandProcessorBase::GetActiveCommand() const
+CLCommand::Ptr_t CommandProcessorBase::GetActiveCommand() const
 {
-    CLCommand* command = NULL;
+    CLCommand::Ptr_t command(NULL);
 
     if (GetCurrentCommand() == -1) {
         command = GetInitialCommand();
+        
     } else if (GetCommands().size() > 0) {
         command = GetCommands().at(GetCurrentCommand());
-    } 
+        
+    }
 
     return command;
 }

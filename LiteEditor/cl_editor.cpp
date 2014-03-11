@@ -4093,7 +4093,7 @@ void LEditor::OnChange(wxStyledTextEvent& event)
     if (isInsert || isDelete) {
 
         if (!GetReloadingFile() && !isUndo && !isRedo) {
-            CLCommand* currentOpen = GetCommandsProcessor().GetOpenCommand();
+            CLCommand::Ptr_t currentOpen = GetCommandsProcessor().GetOpenCommand();
             if (!currentOpen) {
                 GetCommandsProcessor().StartNewTextCommand(isInsert ? CLC_insert : CLC_delete);
             } 
@@ -4101,9 +4101,11 @@ void LEditor::OnChange(wxStyledTextEvent& event)
               else if (isInsert && currentOpen->GetCommandType() != CLC_insert) {
                 GetCommandsProcessor().ProcessOpenCommand();
                 GetCommandsProcessor().StartNewTextCommand(CLC_insert);
+                
             } else if (isDelete && currentOpen->GetCommandType() != CLC_delete) {
                 GetCommandsProcessor().ProcessOpenCommand();
                 GetCommandsProcessor().StartNewTextCommand(CLC_delete);
+                
             }
 
             wxCHECK_RET(GetCommandsProcessor().HasOpenCommand(), "Trying to add to a non-existent or closed command");

@@ -528,6 +528,8 @@
     <File Name="context_html.cpp"/>
     <File Name="editorframe.h"/>
     <File Name="editorframe.cpp"/>
+    <File Name="cl_unredo.cpp"/>
+    <File Name="cl_unredo.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Manager">
     <File Name="manager.h"/>

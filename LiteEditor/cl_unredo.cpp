@@ -26,9 +26,9 @@ void CLCommandProcessor::StartNewTextCommand(CLC_types type, const wxString& tex
     }
 
     if (type == CLC_delete) {
-        Add(new CLDeleteTextCommand);
+        Add( CLCommand::Ptr_t(new CLDeleteTextCommand) );
     } else {
-        Add(new CLInsertTextCommand);
+        Add( CLCommand::Ptr_t(new CLInsertTextCommand) );
     }
 
     GetOpenCommand()->SetText(text);
@@ -37,7 +37,7 @@ void CLCommandProcessor::StartNewTextCommand(CLC_types type, const wxString& tex
 void CLCommandProcessor::AppendToTextCommand(const wxString& text, int position)
 {
     wxCHECK_RET(GetOpenCommand(), "Trying to add to a non-existent or non-open command");
-    CLCommand* command = GetOpenCommand();
+    CLCommand::Ptr_t command = GetOpenCommand();
     if (command->GetCommandType() == CLC_delete) {
         // Reverse any incrementally-added string here, so that undoing an insertion of "abcd" gets displayed as: delete "abcd", not "dcba"
         command->SetText(text + command->GetText());

@@ -10,19 +10,24 @@ const int FIRST_MENU_ID = 10000;
 
 wxString GetBestLabel(CLCommand::Ptr_t command)
 {
-    wxString label;
+    wxString label, text;
     if (command) {
         if (!command->GetUserLabel().empty()) {
             label = command->GetUserLabel();
         } else {
             label = command->GetName();
-            size_t len = command->GetText().Len();
+            text =  command->GetText();
+            size_t len = text.Len();
             if (len) {
-                if (len < 6) {
-                    label << " \"" << command->GetText() << "\"";
-                } else {
-                    label << " (" << command->GetText().Len() << "chars)";
+                text.Replace("\r\n", "\\n"); // Otherwise newlines result in a multiline display!
+                text.Replace("\n", "\\n");
+                // Truncate long pastes
+                if (len > 50) {
+                    wxString shorter = text.Left(24);
+                    shorter << " ... " << text.Right(24);
+                    text = shorter;
                 }
+                label << " \"" << text << "\"";
             }
         }
     }

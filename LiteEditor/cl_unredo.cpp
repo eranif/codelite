@@ -34,7 +34,7 @@ void CLCommandProcessor::StartNewTextCommand(CLC_types type, const wxString& tex
     GetOpenCommand()->SetText(text);
 }
 
-void CLCommandProcessor::AppendToTextCommand(const wxString& text, int position)
+void CLCommandProcessor::AppendToTextCommand(const wxString& text, int WXUNUSED(position))
 {
     wxCHECK_RET(GetOpenCommand(), "Trying to add to a non-existent or non-open command");
     CLCommand::Ptr_t command = GetOpenCommand();

@@ -351,7 +351,7 @@ LEditor *MainBook::GetActiveEditor(bool includeDetachedEditors)
         }
     }
     
-    if ( !GetCurrentPage() || !GetCurrentPage()->HasFocus() ) {
+    if ( !GetCurrentPage() ) {
         return NULL;
     }
     return dynamic_cast<LEditor*>(GetCurrentPage());

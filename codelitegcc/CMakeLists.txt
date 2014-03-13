@@ -5,15 +5,6 @@ cmake_minimum_required(VERSION 2.6.2)
 # visual studio, and in our makefiles. 
 project(codelite-cc)
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-#find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
-
-# wxWidgets include (this will do all the magic to configure everything)
-#include( "${wxWidgets_USE_FILE}" )
-
-# Include paths
-#include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
-
 # Add RPATH
 set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 
@@ -24,4 +15,3 @@ add_executable(codelite-cc ${SRCS})
 target_link_libraries(codelite-cc ${LINKER_OPTIONS})
 
 install(TARGETS codelite-cc DESTINATION ${CL_PREFIX}/bin)
-

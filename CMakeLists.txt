@@ -27,7 +27,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
 #################################################################################################################################################################
 
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/") No, this breaks finding gtk2, so set this locally
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 #############################################
 ## Defaults
@@ -186,6 +186,8 @@ set( PLUGINS_DIR "${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite")
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
 add_definitions(-DINSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
 add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
+
+message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
 
 ## Allow user to use wxAuiNotebook instead of the native notebook
 if ( GTK_USE_AUIBOOK )
@@ -465,6 +467,12 @@ add_dependencies(wxshapeframework wxsqlite3)
 add_dependencies(libcodelite wxshapeframework databaselayersqlite wxsqlite3)
 add_dependencies(plugin libcodelite)
 add_dependencies(codelite plugin)
+
+## Include our custom plugin.cmake module
+include(plugin)
+
+## Scan for user plugins
+CL_SCAN_FOR_PLUGINS()
 
 # Don't unset this earlier: it would affect the plugins' CMakeLists.txts
 unset(PREFIX CACHE)

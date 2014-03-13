@@ -45,7 +45,7 @@
   </Environment>
   <Project Name="CodeLiteDiff" Path="CodeLiteDiff/CodeLiteDiff.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win Release Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Release Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinReleaseUnicode"/>
       <Project Name="CallGraph" ConfigName="WinReleaseUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinReleaseUnicode"/>
@@ -117,7 +117,7 @@
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>

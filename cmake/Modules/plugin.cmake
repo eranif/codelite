@@ -1,18 +1,15 @@
-#
 # CodeLite plugin function.
 # Usage:
 #
-# include(plugin)
 # CL_PLUGIN( "MyPlugin" )
-# 
-# 
 
 cmake_minimum_required(VERSION 2.8)
+message("-- Including plugin.cmake module")
 
 function( CL_PLUGIN PLUGIN_NAME )
     message("-- CL_SRC_ROOT is set to ${CL_SRC_ROOT}")
-    message("-- USE_PCH is set to ${CL_SRC_ROOT}")
-    message("-- PLUGINS_DIR is set to ${CL_SRC_ROOT}")
+    message("-- USE_PCH is set to ${USE_PCH}")
+    message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
     ##
     ## Include wxWidgets
     ##
@@ -56,6 +53,42 @@ function( CL_PLUGIN PLUGIN_NAME )
     set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
     
     ## By default, use the sources under the current folder
-    FILE(GLOB SRCS "*.cpp" "*.c")
+    FILE(GLOB_RECURSE PLUGIN_SRCS "${CMAKE_CURRENT_LIST_DIR}/*.cpp" "${CMAKE_CURRENT_LIST_DIR}/*.c")
     
+    # Define the output - shared library
+    add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRCS})
+    
+    # Codelite plugins doesn't use the "lib" prefix.
+    set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+    target_link_libraries(${PLUGIN_NAME}
+        ${LINKER_OPTIONS}
+        ${wxWidgets_LIBRARIES}
+        -L"${CL_LIBPATH}"
+        -llibcodelite
+        -lplugin
+        -lwxsqlite3 
+        -lsqlite3lib
+    )
+
+    # The plugin library is required
+    add_dependencies(${PLUGIN_NAME} plugin)
+
+    # Installation destination
+    install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
+endfunction()
+
+
+# Scan the top level folders of the source tree, if a folder exists and it contains the a file 
+# named "codelite-plugin.cmake" in it, automatically include it
+function( CL_SCAN_FOR_PLUGINS )
+    message("-- CMAKE_SOURCE_DIR is set to ${CMAKE_SOURCE_DIR}")
+    file(GLOB files RELATIVE ${CMAKE_SOURCE_DIR} "*")
+    foreach(dir ${files})
+        if ( IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${dir} ) 
+            if ( EXISTS ${CMAKE_SOURCE_DIR}/${dir}/codelite-plugin.cmake )
+                message("-- Found user plugin at ${CMAKE_SOURCE_DIR}/${dir}")
+                include(${CMAKE_SOURCE_DIR}/${dir}/codelite-plugin.cmake)
+            endif ()
+        endif ()
+    endforeach()
 endfunction()

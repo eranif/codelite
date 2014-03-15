@@ -1011,6 +1011,7 @@ void clMainFrame::CreateGUIControls(void)
         } else {
             nativeToolbar ? CreateNativeToolbar24() : CreateToolbars24();
         }
+        Bind(wxEVT_TOOL_DROPDOWN, wxCommandEventHandler(clMainFrame::OnNativeTBUnRedoDropdown), this, wxID_UNDO, wxID_REDO);
     } else {
         CreateToolbars24();
     }
@@ -1094,6 +1095,29 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
     } else {
         event.Skip();
     }
+}
+
+void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
+{    
+    LEditor* editor = GetMainBook()->GetActiveEditor(true);
+    if (editor && GetToolBar()) {
+        bool undoing = event.GetId()==wxID_UNDO;
+        wxMenu* menu = new wxMenu;
+        editor->GetCommandsProcessor().DoPopulateUnRedoMenu(*menu, undoing);
+        if (!menu->GetMenuItemCount()) {
+            delete menu;
+            return;
+        }
+
+        if (undoing) {
+            menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), &editor->GetCommandsProcessor());
+        } else {
+            menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), &editor->GetCommandsProcessor());
+        }
+        GetToolBar()->SetDropdownMenu(event.GetId(), menu);
+    }
+    
+    event.Skip();
 }
 
 wxString clMainFrame::GetViewAsLanguageById(int id) const

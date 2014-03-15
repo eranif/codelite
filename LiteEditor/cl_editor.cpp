@@ -4425,6 +4425,11 @@ wxString LEditor::GetTextRange(int startPos, int endPos)
     return wxStyledTextCtrl::GetTextRange(startPos, endPos);
 }
 
+void LEditor::DelayedSetActive()
+{
+    CallAfter(&LEditor::SetActive);
+}
+
 void LEditor::OnSetActive(wxCommandEvent& e)
 {
     wxUnusedVar(e);

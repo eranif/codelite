@@ -373,6 +373,11 @@ public:
      * @brief set the focus to the current editor
      */
     virtual void SetActive() = 0;
+ 
+    /**
+     * @brief set the focus to the current editor, after a delay
+     */
+    virtual void DelayedSetActive() = 0;
 };
 
 #endif //IEDITOR_H

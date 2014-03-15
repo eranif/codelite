@@ -265,6 +265,9 @@ public:
     // page to this one
     virtual void SetActive();
 
+    // Ditto, but asynchronously
+    virtual void DelayedSetActive();
+
     // Perform FindNext operation based on the data stored in the FindReplaceData class
     void FindNext(const FindReplaceData &data);
 

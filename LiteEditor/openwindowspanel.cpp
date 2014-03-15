@@ -105,6 +105,7 @@ void OpenWindowsPanel::DoOpenSelectedItem(int item)
             clMainFrame::Get()->GetMainBook()->SelectPage(editor);
         } else {
             clMainFrame::Get()->GetMainBook()->OpenFile(data->GetData(), wxEmptyString);
+            editor->DelayedSetActive(); // At least in wxGTK, this won't work synchronously
         }
     }
 }

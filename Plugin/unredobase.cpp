@@ -117,6 +117,25 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
     wxString prefix(undoing ? "Undo " : "Redo ");
     int id = FIRST_MENU_ID;
 
+    DoPopulateUnRedoMenu(menu, undoing);
+
+    if (undoing) {
+        menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), this);
+        win->PopupMenu(&menu, pt);
+        menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), this);
+        
+    } else {
+        menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), this);
+        win->PopupMenu(&menu, pt);
+        menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), this);
+    }
+}
+
+void CommandProcessorBase::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
+{
+    wxString prefix(undoing ? "Undo " : "Redo ");
+    int id = FIRST_MENU_ID;
+
     if (undoing) {
         if (GetCommands().size() > 0) {
             for (CLCommand::Vec_t::const_reverse_iterator iter = GetCommands().rbegin() + GetNextUndoCommand(); iter != GetCommands().rend(); ++iter) {
@@ -139,11 +158,6 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
                 }
             }
         }
-
-        menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), this, FIRST_MENU_ID, FIRST_MENU_ID + (id-1));
-        win->PopupMenu(&menu, pt);
-        menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), this, FIRST_MENU_ID, FIRST_MENU_ID + (id-1));
-        
     } else {
         for (CLCommand::Vec_t::const_iterator iter = GetCommands().begin() + GetCurrentCommand() + 1; iter != GetCommands().end(); ++iter) {
             CLCommand::Ptr_t command = *iter;
@@ -160,10 +174,6 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
                 menu.Append(id++, prefix + label);
             }
         }
-        
-        menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), this, FIRST_MENU_ID, FIRST_MENU_ID + (id-1));
-        win->PopupMenu(&menu, pt);
-        menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), this, FIRST_MENU_ID, FIRST_MENU_ID + (id-1));
     }
 }
 

@@ -22,9 +22,9 @@ wxString GetBestLabel(CLCommand::Ptr_t command)
                 text.Replace("\r\n", "\\n"); // Otherwise newlines result in a multiline display!
                 text.Replace("\n", "\\n");
                 // Truncate long pastes
-                if (len > 50) {
-                    wxString shorter = text.Left(24);
-                    shorter << " ... " << text.Right(24);
+                if (len > 70) {
+                    wxString shorter = text.Left(34);
+                    shorter << " ... " << text.Right(34);
                     text = shorter;
                 }
                 label << " \"" << text << "\"";

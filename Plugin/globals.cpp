@@ -64,6 +64,7 @@
 #include <wx/settings.h>
 #include <wx/dcmemory.h>
 #include "environmentconfig.h"
+#include "wxmd5.h"
 #include <wx/graphics.h>
 #include <wx/dcmemory.h>
 #include <wx/richmsgdlg.h>
@@ -559,6 +560,19 @@ bool WriteFileUTF8(const wxString& fileName, const wxString& content)
     //first try the Utf8
     return file.Write(content, wxConvUTF8) == content.Length();
 }
+
+bool CompareFileWithString(const wxString& filePath, const wxString& str)
+{
+    wxString content;
+    if (!ReadFileWithConversion(filePath, content)) {
+        return false;
+    }
+
+    wxString diskMD5 = wxMD5::GetDigest(content);
+    wxString mem_MD5 = wxMD5::GetDigest(str);
+    return diskMD5 == mem_MD5;
+}
+
 bool CopyDir(const wxString& src, const wxString& target)
 {
     wxString SLASH = wxFileName::GetPathSeparator();

@@ -741,11 +741,15 @@ void MainBook::ReloadExternallyModified(bool prompt)
         time_t diskTime = editors[i]->GetFileLastModifiedTime();
         time_t editTime = editors[i]->GetEditorLastModifiedTime();
         if (diskTime != editTime) {
-            files.push_back(std::make_pair(editors[i]->GetFileName(), !editors[i]->GetModify()));
             // update editor last mod time so that we don't keep bugging the user over the same file,
             // unless it gets changed again
             editors[i]->SetEditorLastModifiedTime(diskTime);
-            editors[n++] = editors[i];
+
+            // A last check: see if the content of the file has actually changed. This avoids unnecessary reload offers after e.g. git stash
+            if (!CompareFileWithString(editors[i]->GetFileName().GetFullPath(), editors[i]->GetText())) {
+                files.push_back(std::make_pair(editors[i]->GetFileName(), !editors[i]->GetModify()));
+                editors[n++] = editors[i];
+            }
         }
     }
     editors.resize(n);

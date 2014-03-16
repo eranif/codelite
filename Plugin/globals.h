@@ -129,10 +129,18 @@ WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString &fileName, wxString &
 /**
  * \brief write file using UTF8 converter
  * \param fileName file path
- * \param content file's conent
+ * \param content file's content
  * \return true on success, false otherwise
  */
 WXDLLIMPEXP_SDK bool WriteFileUTF8(const wxString &fileName, const wxString &content);
+
+/**
+ * \brief compare a file with a wxString using md5
+ * \param filePath file's full path
+ * \param str a wxString, perhaps containing an editor's content
+ * \return true if the current content of the file is identical to str, false otherwise
+ */
+WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxString& str);
 
 /**
  * \brief delete directory using shell command

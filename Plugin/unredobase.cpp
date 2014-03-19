@@ -114,9 +114,6 @@ void CommandProcessorBase::OnTBUnRedo(wxAuiToolBarEvent& event)
 void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool undoing)
 {
     wxMenu menu;
-    wxString prefix(undoing ? _("Undo ") : _("Redo "));
-    int id = FIRST_MENU_ID;
-
     DoPopulateUnRedoMenu(menu, undoing);
 
     if (undoing) {

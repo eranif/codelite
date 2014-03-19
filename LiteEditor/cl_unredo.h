@@ -61,6 +61,10 @@ public:
         m_parent = parent;
     }
 
+    void Reset() { // Like Clear() but retain m_initialCommand. Used when an editor is reloaded
+       m_commands.clear();
+    }
+
     virtual bool DoUndo();
 
     virtual bool DoRedo();

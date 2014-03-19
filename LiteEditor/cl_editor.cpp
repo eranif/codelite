@@ -2687,7 +2687,7 @@ void LEditor::ReloadFile()
 
     SetSavePoint();
     EmptyUndoBuffer();
-    GetCommandsProcessor().Clear();
+    GetCommandsProcessor().Reset();
 
     // remove breakpoints belongs to this file
     DelAllBreakpointMarkers();

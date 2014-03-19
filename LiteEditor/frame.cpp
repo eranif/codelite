@@ -1090,6 +1090,11 @@ void clMainFrame::CreateViewAsSubMenu()
 void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 {
     LEditor* editor = GetMainBook()->GetActiveEditor(true);
+    wxMenuItem* labelCurrentState = event.GetMenu()->FindChildItem(XRCID("label_current_state"));
+    if (labelCurrentState) { // Here seems to be the only reliable place to do 'updateui' for this; a real UpdateUI handler is only hit when there's no editor :/
+        labelCurrentState->Enable(editor != NULL);
+    }
+
     if (editor) {
         editor->GetCommandsProcessor().PrepareLabelledStatesMenu(event.GetMenu());
     } else {

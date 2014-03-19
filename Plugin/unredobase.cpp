@@ -114,7 +114,7 @@ void CommandProcessorBase::OnTBUnRedo(wxAuiToolBarEvent& event)
 void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool undoing)
 {
     wxMenu menu;
-    wxString prefix(undoing ? "Undo " : "Redo ");
+    wxString prefix(undoing ? _("Undo ") : _("Redo "));
     int id = FIRST_MENU_ID;
 
     DoPopulateUnRedoMenu(menu, undoing);
@@ -133,7 +133,7 @@ void CommandProcessorBase::PopulateUnRedoMenu(wxWindow* win, wxPoint& pt, bool u
 
 void CommandProcessorBase::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
 {
-    wxString prefix(undoing ? "Undo " : "Redo ");
+    wxString prefix(undoing ? _("Undo ") : _("Redo "));
     int id = FIRST_MENU_ID;
 
     if (undoing) {
@@ -198,7 +198,7 @@ void CommandProcessorBase::PrepareLabelledStatesMenu(wxMenu* editmenu)
     wxMenu* submenu = new wxMenu;
     PopulateLabelledStatesMenu(submenu);
     if (submenu->GetMenuItemCount()) {
-        editmenu->Insert(pos+1 + kludge, XRCID("goto_labelled_state"), "Undo/Redo to a pre&viously labelled state", submenu);
+        editmenu->Insert(pos+1 + kludge, XRCID("goto_labelled_state"), _("Undo/Redo to a pre&viously labelled state"), submenu);
     } else {
         delete submenu;
     }

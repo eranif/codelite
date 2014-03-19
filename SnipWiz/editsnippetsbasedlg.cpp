@@ -58,7 +58,7 @@ EditSnippetsBaseDlg::EditSnippetsBaseDlg( wxWindow* parent, wxWindowID id, const
 	
 	bSizer6->Add( fgSizer1, 1, wxEXPAND, 5 );
 	
-	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Use $ as placeholder for the selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)\nNOTE:\nIf you snippet contains @ or $, you can escape the placeholders with a backslash: \\@ OR \\$ "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText2 = new wxStaticText( m_panel2, wxID_ANY, _("Use $ as placeholder for the selection and @ to set the caret position.\ne.g. for($ = 0; $ < @; $++)\nNOTE:\nIf your snippet contains @ or $, you can escape the placeholders with a backslash: \\@ OR \\$ "), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText2->Wrap( -1 );
 	bSizer6->Add( m_staticText2, 0, wxALL, 5 );
 	

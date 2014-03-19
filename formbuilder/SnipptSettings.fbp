@@ -550,7 +550,7 @@
                                                             <property name="font" />
                                                             <property name="hidden">0</property>
                                                             <property name="id">wxID_ANY</property>
-                                                            <property name="label">Use $ as placeholder for the selection and @ to set the caret position.&#x0A;e.g. for($ = 0; $ &lt; @; $++)&#x0A;NOTE:&#x0A;If you snippet contains @ or $, you can escape the placeholders with a backslash: \@ OR \$ </property>
+                                                            <property name="label">Use $ as placeholder for the selection and @ to set the caret position.&#x0A;e.g. for($ = 0; $ &lt; @; $++)&#x0A;NOTE:&#x0A;If your snippet contains @ or $, you can escape the placeholders with a backslash: \@ OR \$ </property>
                                                             <property name="maximum_size" />
                                                             <property name="minimum_size" />
                                                             <property name="name">m_staticText2</property>

@@ -148,12 +148,12 @@ public:
     virtual void OnUndoDropdownItem(wxCommandEvent& event);
     virtual void OnRedoDropdownItem(wxCommandEvent& event);
 
-protected:
     void Clear() {
         m_commands.clear();
         m_initialCommand = NULL;
     }
 
+protected:
     virtual void OnLabelledStatesMenuItem(wxCommandEvent& event);
 
     CLCommand::Ptr_t m_initialCommand;    // A command to hold any initial-state user-label, and to store any initial state if we're state-storing

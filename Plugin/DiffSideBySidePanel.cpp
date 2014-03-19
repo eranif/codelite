@@ -27,9 +27,6 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     , m_flags(0)
 {
     m_config.Load();
-    if ( m_config.IsSingleViewMode() ) {
-        m_splitter->Unsplit();
-    }
 
 #ifdef __WXMSW__
     m_ribbonBar->SetArtProvider( new wxRibbonMetroArtProvider );
@@ -40,6 +37,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     Connect(ID_COPY_LEFT_TO_RIGHT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyLeft2Right));
     Connect(ID_COPY_RIGHT_TO_LEFT, wxEVT_COMMAND_MENU_SELECTED,          wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
     Connect(ID_COPY_RIGHT_TO_LEFT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
+    CallAfter( &DiffSideBySidePanel::DoLayout );
 }
 
 DiffSideBySidePanel::~DiffSideBySidePanel()
@@ -720,4 +718,13 @@ void DiffSideBySidePanel::OnSingleView(wxRibbonButtonBarEvent& event)
     m_config.SetViewMode( DiffConfig::kViewSingle );
     m_splitter->Unsplit();
     Diff();
+}
+
+void DiffSideBySidePanel::DoLayout()
+{
+    if ( m_config.IsSingleViewMode() ) {
+        m_splitter->Unsplit();
+    }
+    GetSizer()->Layout();
+    Refresh();
 }

@@ -120,7 +120,8 @@ protected:
 public:
     DiffSideBySidePanel(wxWindow* parent);
     virtual ~DiffSideBySidePanel();
-
+    
+    void DoLayout();
     /**
      * @brief display a diff view for 2 files left and right
      */

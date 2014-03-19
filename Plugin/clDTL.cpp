@@ -151,7 +151,7 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode m
     } else {
         ///////////////////////////////////////////////////////////////////
         // One pane diff view
-        // designed for displayed on a single
+        // designed for displayed on a single editor
         ///////////////////////////////////////////////////////////////////
         std::vector<sesElem> seq = diff.getSes().getSequence();
         m_resultLeft.reserve( seq.size() );
@@ -185,6 +185,11 @@ void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode m
                 break;
             }
             }
+        }
+        
+        if ( seqStartLine != wxNOT_FOUND ) {
+            m_sequences.push_back( std::make_pair(seqStartLine, m_resultLeft.size()) );
+            seqStartLine = wxNOT_FOUND;
         }
     }
 }

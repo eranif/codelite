@@ -1120,9 +1120,10 @@ void clMainFrame::OnNativeTBUnRedoDropdown(wxCommandEvent& event)
             menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnRedoDropdownItem), &editor->GetCommandsProcessor());
         }
         GetToolBar()->SetDropdownMenu(event.GetId(), menu);
+        
+        event.Skip();
     }
-    
-    event.Skip();
+    // Don't skip if there's no active editor/toolbar, otherwise a stale menu will show
 }
 
 wxString clMainFrame::GetViewAsLanguageById(int id) const

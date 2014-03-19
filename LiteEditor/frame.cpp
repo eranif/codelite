@@ -1097,7 +1097,13 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
 
     if (editor) {
         editor->GetCommandsProcessor().PrepareLabelledStatesMenu(event.GetMenu());
+
     } else {
+        // There's no active editor, so remove any stale submenu; otherwise it'll display but the contents won't work
+        wxMenuItem* menuitem = event.GetMenu()->FindChildItem(XRCID("goto_labelled_state"));
+        if (menuitem) {
+            event.GetMenu()->Delete(menuitem);
+        }
         event.Skip();
     }
 }

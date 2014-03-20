@@ -2869,8 +2869,10 @@ void LEditor::OnContextMenu(wxContextMenuEvent &event)
 
 void LEditor::OnKeyDown(wxKeyEvent &event)
 {
-    // allways cancel the tip
+    // always cancel the tip
     CodeCompletionBox::Get().CancelTip();
+
+    bool escapeUsed = false; // If the quickfind bar is open we'll use an ESC to close it; but only if we've not already used it for something else
 
     // Hide tooltip dialog if its ON
     IDebugger *   dbgr                = DebuggerMgr::Get().GetActiveDebugger();
@@ -2882,6 +2884,7 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
         // If any key is pressed, but the CONTROL key hide the
         // debugger tip
         ManagerST::Get()->GetDebuggerTip()->HideDialog();
+        escapeUsed = true;
 
     } else if(dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract() && keyIsControl) {
 
@@ -2900,8 +2903,10 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
     }
 
     //let the context process it as well
-    if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE)
+    if (GetFunctionTip()->IsActive() && event.GetKeyCode() == WXK_ESCAPE) {
         GetFunctionTip()->Deactivate();
+        escapeUsed = true;
+    }
 
     if (IsCompletionBoxShown()) {
         switch (event.GetKeyCode()) {
@@ -2955,6 +2960,12 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
             break;
         }
     }
+
+    // If we've not already used ESC, there's a reasonable chance that the user wants to close the QuickFind bar
+    if (event.GetKeyCode() == WXK_ESCAPE && !escapeUsed) {
+        clMainFrame::Get()->GetMainBook()->ShowQuickBar(false); // There's no easy way to tell if it's actually showing, so just do a Close
+    }
+
     m_context->OnKeyDown(event);
 }
 

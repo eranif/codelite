@@ -68,11 +68,13 @@
 #include <wx/graphics.h>
 #include <wx/dcmemory.h>
 #include <wx/richmsgdlg.h>
+#include "asyncprocess.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
 #else
 #include <unistd.h>
+#include <sys/wait.h>
 #endif
 
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
@@ -1674,3 +1676,57 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
     }
     return static_cast<wxStandardID>(res);
 }
+
+#ifndef __WXMSW__
+
+static void ChildTerminatedSingalHandler(int signo)
+{
+    int status;
+    while( true ) {
+        pid_t pid = ::waitpid(-1, &status, WNOHANG);
+        if(pid > 0) {
+            // waitpid succeeded
+            IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
+            //::wxPrintf(wxT("Child terminatd %d\n"), pid);
+
+        } else {
+            break;
+
+        }
+    }
+}
+
+// Block/Restore sigchild
+static struct sigaction old_behvior;
+static struct sigaction new_behvior;
+static bool sigchild_installed = false;
+void CodeLiteBlockSigChild()
+{
+    if ( !sigchild_installed ) {
+        sigfillset(&new_behvior.sa_mask);
+        new_behvior.sa_handler = ChildTerminatedSingalHandler;
+        new_behvior.sa_flags = 0;
+        sigaction(SIGCHLD, &new_behvior, &old_behvior);
+        sigchild_installed = true;
+    }
+}
+
+void CodeLiteRestoreSigChild()
+{
+    if ( sigchild_installed ) {
+        // restore the old behavior
+        sigaction(SIGCHLD, &old_behvior, NULL);
+        sigchild_installed = false;
+    }
+}
+
+#else 
+// MSW
+void CodeLiteBlockSigChild()
+{
+}
+
+void CodeLiteRestoreSigChild()
+{
+}
+#endif

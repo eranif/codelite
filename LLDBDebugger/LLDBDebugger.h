@@ -27,31 +27,30 @@
 #   include "lldb/API/SBListener.h"
 #endif
 
+class LLDBDebuggerThread;
 class LLDBDebugger : public wxEvtHandler
 {
+    friend class LLDBDebuggerThread;
+    
     lldb::SBDebugger m_debugger;
     lldb::SBTarget   m_target;
-    wxTimer*         m_timer;
     bool             m_isRunning;
     wxString         m_tty;
-
-protected:
     LLDBBreakpoint::Vec_t m_breakpoints;
-
+    LLDBDebuggerThread *m_thread;
+    
+protected:
+    
 
     void NotifyBacktrace();
     void NotifyStopped();
     void NotifyExited();
     void NotifyStarted();
+    void NotifyStoppedOnFirstEntry();
     void Cleanup();
-
-    // Event handlers
-    void OnTimer(wxTimerEvent &e);
-    void OnStarted(LLDBEvent &e);
-    void OnTerminated(LLDBEvent &e);
-
     bool IsValid() const;
     bool IsBreakpointExists(const LLDBBreakpoint& bp) const;
+    
 public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
@@ -144,14 +143,6 @@ public:
      * @brief delete all breakpoints
      */
     void DeleteAllBreakpoints();
-
-    /**
-     * @brief
-     * @return
-     */
-    bool IsRunning() const {
-        return m_isRunning;
-    }
 };
 
 #endif // LLDBDEBUGGER_H

@@ -8,6 +8,9 @@
 #include <wx/filename.h>
 #include <wx/stc/stc.h>
 #include "file_logger.h"
+#include "environmentconfig.h"
+#include "clcommandlineparser.h"
+#include "dirsaver.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
@@ -44,11 +47,12 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     LLDBDebugger::Initialize();
     m_longName = wxT("LLDB Debugger for CodeLite");
     m_shortName = wxT("LLDBDebuggerPlugin");
-    
-    m_debugger.Bind(wxEVT_LLDB_STARTED, &LLDBDebuggerPlugin::OnLLDBStarted, this);
-    m_debugger.Bind(wxEVT_LLDB_EXITED,  &LLDBDebuggerPlugin::OnLLDBExited,  this);
-    m_debugger.Bind(wxEVT_LLDB_STOPPED, &LLDBDebuggerPlugin::OnLLDBStopped, this);
-    
+
+    m_debugger.Bind(wxEVT_LLDB_STARTED,                &LLDBDebuggerPlugin::OnLLDBStarted, this);
+    m_debugger.Bind(wxEVT_LLDB_EXITED,                 &LLDBDebuggerPlugin::OnLLDBExited,  this);
+    m_debugger.Bind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
+    m_debugger.Bind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
+
     // UI events
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStart), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugNext), NULL, this);
@@ -87,10 +91,12 @@ void LLDBDebuggerPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 
 void LLDBDebuggerPlugin::UnPlug()
 {
-    m_debugger.Unbind(wxEVT_LLDB_STARTED, &LLDBDebuggerPlugin::OnLLDBStarted, this);
-    m_debugger.Unbind(wxEVT_LLDB_EXITED,  &LLDBDebuggerPlugin::OnLLDBExited,  this);
-    m_debugger.Unbind(wxEVT_LLDB_STOPPED, &LLDBDebuggerPlugin::OnLLDBStopped, this);
-    
+    m_debugger.Unbind(wxEVT_LLDB_STARTED,                &LLDBDebuggerPlugin::OnLLDBStarted, this);
+    m_debugger.Unbind(wxEVT_LLDB_EXITED,                 &LLDBDebuggerPlugin::OnLLDBExited,  this);
+    m_debugger.Unbind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
+    m_debugger.Unbind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
+
+
     // UI events
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStart), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugNext), NULL, this);
@@ -100,43 +106,85 @@ void LLDBDebuggerPlugin::UnPlug()
 
 void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 {
-    event.Skip();
-    return;
-    
-    if ( ::PromptForYesNoDialogWithCheckbox(_("Would you like to use LLDB debugger as your primary debugger?"), "UseLLDB") != wxID_YES ) {
-        event.Skip();
-        return;
-    }
-    
-    // Get the executable to debug
-    wxString errMsg;
-    ProjectPtr pProject = WorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
-    if ( !pProject ) {
-        event.Skip();
-        return;
-    }
-    
-    wxSetWorkingDirectory ( pProject->GetFileName().GetPath() );
-    BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( pProject->GetName(), wxEmptyString );
-    if ( !bldConf ) {
-        event.Skip();
-        return;
-    }
-    
-    // Show the terminal
-    ShowTerminal("LLDB Console Window");
-    if ( m_debugger.Start("/home/eran/devl/TestArea/TestHang/Debug/TestHang") ) {
-        m_debugger.AddBreakpoint("main");
-        m_debugger.ApplyBreakpoints();
-        m_debugger.Run("/tmp/in", "/tmp/out", "/tmp/err", wxArrayString(), wxArrayString(), ::wxGetCwd());
+    if ( !m_isRunning ) {
+        CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
+        {
+            if ( ::PromptForYesNoDialogWithCheckbox(_("Would you like to use LLDB debugger as your primary debugger?"), "UseLLDB") != wxID_YES ) {
+                event.Skip();
+                return;
+            }
+
+            // Get the executable to debug
+            wxString errMsg;
+            ProjectPtr pProject = WorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
+            if ( !pProject ) {
+                event.Skip();
+                return;
+            }
+
+            DirSaver ds;
+            ::wxSetWorkingDirectory ( pProject->GetFileName().GetPath() );
+
+            BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( pProject->GetName(), wxEmptyString );
+            if ( !bldConf ) {
+                event.Skip();
+                return;
+            }
+
+            // In order to be able to interact properly with lldb, we need to remove our SIGCHLD handler
+            // and restore it to the default
+            ::CodeLiteRestoreSigChild();
+
+            // Determine the executable to debug, working directory and arguments
+            EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString());
+            wxString exepath = bldConf->GetCommand();
+            wxString args;
+            wxString wd;
+            // Get the debugging arguments.
+            if(bldConf->GetUseSeparateDebugArgs()) {
+                args = bldConf->GetDebugArgs();
+            } else {
+                args = bldConf->GetCommandArguments();
+            }
+
+            wd      = ::ExpandVariables ( bldConf->GetWorkingDirectory(), pProject, m_mgr->GetActiveEditor() );
+            exepath = ::ExpandVariables ( exepath, pProject, m_mgr->GetActiveEditor() );
+
+            clCommandLineParser parser(args);
+            {
+                DirSaver ds;
+                ::wxSetWorkingDirectory(wd);
+                wxFileName execToDebug( exepath );
+                if ( execToDebug.IsRelative() ) {
+                    execToDebug.MakeAbsolute();
+                }
+
+                CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
+                CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
+                if ( m_debugger.Start(execToDebug.GetFullPath()) ) {
+                    m_debugger.AddBreakpoint("main");
+                    ShowTerminal("LLDB Console Window");
+                    m_isRunning = true;
+                    m_debugger.Run(m_debugger.GetTty(), m_debugger.GetTty(), m_debugger.GetTty(), parser.ToArray(), wxArrayString(), ::wxGetCwd());
+                }
+
+            }
+        }
+        CL_DEBUG("LLDB: Working directory is restored to: " + ::wxGetCwd());
+
+    } else {
+        CL_DEBUG("CODELITE>> continue...");
+        m_debugger.Continue();
     }
 }
 
 void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
+    ::CodeLiteBlockSigChild();
     m_isRunning = false;
     CL_DEBUG("CODELITE>> LLDB exited");
+
     // Also notify codelite's event
     wxCommandEvent e2(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent( e2 );
@@ -145,8 +193,6 @@ void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
 {
     event.Skip();
-    m_isRunning = true;
-    
     CL_DEBUG("CODELITE>> LLDB started");
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
     EventNotifier::Get()->AddPendingEvent( e2 );
@@ -155,6 +201,7 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
 void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
 {
     event.Skip();
+
     wxFileName fn( event.GetFileName() );
     CL_DEBUG(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() );
     if ( fn.FileExists() ) {
@@ -167,6 +214,15 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
     }
 }
 
+void LLDBDebuggerPlugin::OnLLDBStoppedOnEntry(LLDBEvent& event)
+{
+    event.Skip();
+    CL_DEBUG("CODELITE>> Applying breakpoints...");
+    m_debugger.ApplyBreakpoints();
+    CL_DEBUG("CODELITE>> continue...");
+    m_debugger.Continue();
+}
+
 void LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
 {
 #ifndef __WXMSW__
@@ -176,7 +232,7 @@ void LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
     ConsoleFrame *console = new ConsoleFrame(EventNotifier::Get()->TopFrame(), m_mgr);
     ttyString = console->StartTTY();
     consoleTitle << " (" << ttyString << ")";
-    
+
     wxAuiPaneInfo paneInfo;
     wxAuiManager* dockManager = m_mgr->GetDockingManager();
     paneInfo.Name(wxT("LLDB Console")).Caption(consoleTitle).Dockable().FloatingSize(300, 200).CloseButton(false);
@@ -191,8 +247,8 @@ void LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
     wxAuiPaneInfo &info = dockManager->GetPane(wxT("LLDB Console"));
     if(info.IsShown() == false) {
         info.Show();
-        dockManager->Update();
     }
+    dockManager->Update();
     CL_DEBUG("CODELITE>> Using TTY: " + ttyString );
     m_debugger.SetTty( ttyString );
 #endif

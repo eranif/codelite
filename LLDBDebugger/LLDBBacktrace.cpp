@@ -19,7 +19,7 @@ LLDBBacktrace::LLDBBacktrace(lldb::SBThread &thread)
                     lldb::SBFileSpec fileSepc = frame.GetLineEntry().GetFileSpec();
                     entry.filename      = wxFileName(fileSepc.GetDirectory(), fileSepc.GetFilename()).GetFullPath();
                     entry.functionName  = frame.GetFunctionName();
-                    entry.line          = frame.GetLineEntry().GetLine();
+                    entry.line          = frame.GetLineEntry().GetLine()-1;
                     entry.id            = frame.GetFrameID();
                     entry.address << wxString::Format("%p", (void*)frame.GetFP());
                     m_callstack.push_back( entry );

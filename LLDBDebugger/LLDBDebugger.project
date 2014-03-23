@@ -9,9 +9,13 @@
     <File Name="LLDBDebugger.h"/>
     <File Name="LLDBEvent.cpp"/>
     <File Name="LLDBEvent.h"/>
+    <File Name="LLDBBacktrace.cpp"/>
+    <File Name="LLDBBacktrace.h"/>
+    <File Name="LLDBDebuggerThread.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="lldbdebugger-plugin.h"/>
+    <File Name="LLDBDebuggerThread.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Dynamic Library">

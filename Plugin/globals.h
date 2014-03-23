@@ -67,6 +67,10 @@ public:
     ~clEventDisabler();
 };
 
+
+WXDLLIMPEXP_SDK void CodeLiteBlockSigChild();
+WXDLLIMPEXP_SDK void CodeLiteRestoreSigChild();
+
 /**
  * \brief send command event to the application (wxTheApp),
  * \param eventId

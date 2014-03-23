@@ -28,6 +28,7 @@ protected:
     void OnLLDBStarted(LLDBEvent& event);
     void OnLLDBExited(LLDBEvent& event);
     void OnLLDBStopped(LLDBEvent &event);
+    void OnLLDBStoppedOnEntry(LLDBEvent &event);
 
 public:    
     //--------------------------------------------

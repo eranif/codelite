@@ -8,6 +8,7 @@
 #include "lldb/API/SBTarget.h"
 #include "LLDBEvent.h"
 #include <algorithm>
+#include "LLDBDebuggerThread.h"
 
 #define CHECK_RUNNING_RET_FALSE() if ( !IsValid() ) return false
 #define CHECK_RUNNING_RET() if ( !IsValid() ) return
@@ -33,23 +34,22 @@ static void _deleteCharPtrPtr(char** argv)
 }
 
 LLDBDebugger::LLDBDebugger()
+    : m_thread(NULL)
 {
-    m_timer = new wxTimer(this);
-    Bind(wxEVT_TIMER,        &LLDBDebugger::OnTimer,      this, m_timer->GetId());
-    Bind(wxEVT_LLDB_STARTED, &LLDBDebugger::OnStarted,    this);
-    Bind(wxEVT_LLDB_EXITED,  &LLDBDebugger::OnTerminated, this);
 }
 
 LLDBDebugger::~LLDBDebugger()
 {
-    Unbind(wxEVT_TIMER,        &LLDBDebugger::OnTimer,      this, m_timer->GetId());
-    Unbind(wxEVT_LLDB_STARTED, &LLDBDebugger::OnStarted,    this);
-    Unbind(wxEVT_LLDB_EXITED,  &LLDBDebugger::OnTerminated, this);
-    wxDELETE( m_timer );
 }
 
 bool LLDBDebugger::Start(const wxString& filename)
 {
+    if ( m_thread ) {
+        // another instance is already running
+        ::wxMessageBox(_("A Debug session is already in progress!"));
+        return false;
+    }
+    
     m_debugger = lldb::SBDebugger::Create();
     m_target = m_debugger.CreateTarget(filename.mb_str().data());
     if ( !m_target.IsValid() ) {
@@ -58,11 +58,9 @@ bool LLDBDebugger::Start(const wxString& filename)
     }
 
     m_debugger.SetAsync(true);
-    m_timer->Start(50);
 
     // Notify successful start of the debugger
     NotifyStarted();
-
     return true;
 }
 
@@ -81,6 +79,10 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
                         const wxArrayString& envArr,
                         const wxString &workingDirectory)
 {
+    if ( m_thread ) {
+        return false;
+    }
+    
     if ( m_debugger.IsValid() ) {
         // Construct char** arrays
         const char** argv = (const char**)_wxArrayStringToCharPtrPtr(argvArr);
@@ -93,13 +95,15 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
 
         lldb::SBError error;
         lldb::SBListener listener = m_debugger.GetListener();
-        bool isOk = m_target.Launch(listener, argv, envp, pin, pout, perr, wd, 0, false, error).IsValid();
+        bool isOk = m_target.Launch(listener, argv, envp, pin, pout, perr, wd, lldb::eLaunchFlagDebug|lldb::eLaunchFlagStopAtEntry, false, error).IsValid();
         _deleteCharPtrPtr( const_cast<char**>(argv) );
         _deleteCharPtrPtr( const_cast<char**>(envp) );
         if ( !isOk ) {
             Cleanup();
             NotifyExited();
         }
+        m_thread = new LLDBDebuggerThread(this, listener, m_target.GetProcess());
+        m_thread->Start();
         return isOk;
     }
     return false;
@@ -128,42 +132,9 @@ bool LLDBDebugger::IsValid() const
     return m_target.IsValid() && m_debugger.IsValid();
 }
 
-void LLDBDebugger::OnTimer(wxTimerEvent& e)
-{
-    if ( m_debugger.IsValid() ) {
-        lldb::SBEvent lldbEvent;
-        if ( m_debugger.GetListener().WaitForEvent(0, lldbEvent) ) {
-            if ( lldbEvent.IsValid() ) {
-                lldb::StateType state = m_target.GetProcess().GetStateFromEvent( lldbEvent );
-                switch ( state ) {
-                case lldb::eStateStopped:
-                    NotifyBacktrace();
-                    NotifyStopped();
-                    break;
-
-                case lldb::eStateConnected:
-                    break;
-
-                case lldb::eStateLaunching:
-                    break;
-
-                case lldb::eStateRunning:
-                    break;
-
-                case lldb::eStateExited:
-                    Cleanup();
-                    NotifyExited();
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-}
-
 void LLDBDebugger::Stop()
 {
+    wxDELETE(m_thread);
     m_target.GetProcess().Kill();
     Cleanup();
     NotifyExited();
@@ -197,6 +168,7 @@ void LLDBDebugger::NotifyStopped()
 
 void LLDBDebugger::NotifyExited()
 {
+    wxDELETE(m_thread);
     LLDBEvent event(wxEVT_LLDB_EXITED);
     AddPendingEvent( event );
 }
@@ -207,16 +179,10 @@ void LLDBDebugger::NotifyStarted()
     AddPendingEvent( event );
 }
 
-void LLDBDebugger::OnStarted(LLDBEvent& e)
+void LLDBDebugger::NotifyStoppedOnFirstEntry()
 {
-    e.Skip();
-    m_isRunning = true;
-}
-
-void LLDBDebugger::OnTerminated(LLDBEvent& e)
-{
-    e.Skip();
-    m_isRunning = false;
+    LLDBEvent event(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY);
+    AddPendingEvent( event );
 }
 
 bool LLDBDebugger::StepIn()
@@ -323,11 +289,9 @@ void LLDBDebugger::DeleteAllBreakpoints()
 
 void LLDBDebugger::Cleanup()
 {
-    m_timer->Stop();
     if ( m_target.IsValid() ) {
         m_debugger.DeleteTarget( m_target );
     }
-    
     if ( m_debugger.IsValid() ) {
         lldb::SBDebugger::Destroy( m_debugger );
     }

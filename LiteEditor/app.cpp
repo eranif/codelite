@@ -46,6 +46,7 @@
 #include "asyncprocess.h" // IProcess
 #include "new_build_tab.h"
 #include "cl_config.h"
+#include "globals.h"
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -181,29 +182,6 @@ static void WaitForDebugger(int signo)
 }
 #endif
 
-#if defined(__WXGTK__) || defined(__WXMAC__)
-static void ChildTerminatedSingalHandler(int signo)
-{
-    int status;
-    while( true ) {
-        pid_t pid = waitpid(-1, &status, WNOHANG);
-        if(pid > 0) {
-            // waitpid succeeded
-            IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-            //::wxPrintf(wxT("Child terminatd %d\n"), pid);
-
-        } else {
-            break;
-
-        }
-    }
-
-    // reinstall the handler
-    //signal(SIGCHLD, ChildTerminatedSingalHandler);
-}
-
-#endif
-
 IMPLEMENT_APP(CodeLiteApp)
 
 //BEGIN_EVENT_TABLE(CodeLiteApp, wxApp)
@@ -244,13 +222,9 @@ bool CodeLiteApp::OnInit()
     sigemptyset( &mask_set );
     sigaddset(&mask_set, SIGPIPE);
     sigprocmask(SIG_SETMASK, &mask_set, NULL);
-
+    
     // Handle sigchld
-    struct sigaction sa;
-    sigfillset(&sa.sa_mask);
-    sa.sa_handler = ChildTerminatedSingalHandler;
-    sa.sa_flags = 0;
-    sigaction(SIGCHLD, &sa, NULL);
+    CodeLiteBlockSigChild();
 
 #ifdef __WXGTK__
     // Insall signal handlers

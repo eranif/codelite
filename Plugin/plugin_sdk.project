@@ -267,6 +267,8 @@
     <File Name="wxterminal.cpp"/>
     <File Name="wxterminal.h"/>
     <File Name="wxterminalbase.cpp"/>
+    <File Name="console_frame.cpp"/>
+    <File Name="console_frame.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="md5">
     <File Name="md5.cpp"/>

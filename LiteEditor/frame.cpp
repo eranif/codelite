@@ -3164,9 +3164,14 @@ void clMainFrame::OnImportMSVS(wxCommandEvent &e)
 void clMainFrame::OnDebug(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-
+    if ( !WorkspaceST::Get()->IsOpen() ) {
+        wxLogMessage(_("Attempting to debug workspace with no active project? Ignoring."));
+        return;
+    }
+    
     // Let the plugin know that we are about to start debugging
     clDebugEvent dbgEvent(wxEVT_DBG_UI_START_OR_CONT);
+    dbgEvent.SetProjectName( WorkspaceST::Get()->GetActiveProjectName() );
     if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) {
         return;
     }
@@ -4958,7 +4963,7 @@ wxString clMainFrame::StartTTY(const wxString &title)
 #ifndef __WXMSW__
 
     // Create a new TTY Console and place it in the AUI
-    ConsoleFrame *console = new ConsoleFrame(this);
+    ConsoleFrame *console = new ConsoleFrame(this, PluginManager::Get());
     wxAuiPaneInfo paneInfo;
     paneInfo.Name(wxT("Debugger Console")).Caption(title).Dockable().FloatingSize(300, 200).CloseButton(false);
     m_mgr.AddPane(console, paneInfo);

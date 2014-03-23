@@ -23,13 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec 21 2009)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
-
 #ifndef __console_frame__
 #define __console_frame__
 
@@ -43,6 +36,7 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include "codelite_exports.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -50,22 +44,22 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ConsoleFrame
 ///////////////////////////////////////////////////////////////////////////////
-class ConsoleFrame : public wxPanel
+class IManager;
+class WXDLLIMPEXP_SDK ConsoleFrame : public wxPanel
 {
 private:
-	wxTerminal *m_terminal;
+    IManager* m_manager;
+    wxTerminal *m_terminal;
+
 protected:
 
-	// Virtual event handlers, overide them in your derived class
-	virtual void OnDebuggerEnded(wxCommandEvent &e);
-	virtual void OnEditorGotControl(wxCommandEvent &e);
-	virtual void OnEditorLostControl(wxCommandEvent &e);
+    // Virtual event handlers, overide them in your derived class
+    virtual void OnDebuggerEnded(wxCommandEvent &e);
+    
 public:
-
-	ConsoleFrame( wxWindow* parent, wxWindowID id = wxID_ANY );
-	~ConsoleFrame();
-
-	wxString StartTTY();
+    ConsoleFrame(wxWindow* parent, IManager* manager, wxWindowID id = wxNOT_FOUND);
+    ~ConsoleFrame();
+    wxString StartTTY();
 };
 
 #endif //__console_frame__

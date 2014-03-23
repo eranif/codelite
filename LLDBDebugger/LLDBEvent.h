@@ -1,10 +1,10 @@
 #ifndef LLDBEVENT_H
 #define LLDBEVENT_H
 
-#include <wx/event.h>
+#include "cl_command_event.h"
 #include "LLDBBacktrace.h"
 
-class LLDBEvent : public wxCommandEvent
+class LLDBEvent : public clCommandEvent
 {
     LLDBBacktrace m_backtrace;
     wxString      m_filename;
@@ -24,14 +24,8 @@ public:
     const LLDBBacktrace& GetBacktrace() const {
         return m_backtrace;
     }
-    void SetFilename(const wxString& filename) {
-        this->m_filename = filename;
-    }
     void SetLinenumber(int linenumber) {
         this->m_linenumber = linenumber;
-    }
-    const wxString& GetFilename() const {
-        return m_filename;
     }
     int GetLinenumber() const {
         return m_linenumber;

@@ -76,8 +76,7 @@ void LLDBDebugger::Terminate()
     lldb::SBDebugger::Terminate();
 }
 
-bool LLDBDebugger::Run( const wxString& outfile, const wxString &errfile, const wxString &infile,
-                        const wxArrayString& argvArr,
+bool LLDBDebugger::Run( const wxArrayString& argvArr,
                         const wxArrayString& envArr,
                         const wxString &workingDirectory)
 {
@@ -85,9 +84,9 @@ bool LLDBDebugger::Run( const wxString& outfile, const wxString &errfile, const 
         // Construct char** arrays
         const char** argv = (const char**)_wxArrayStringToCharPtrPtr(argvArr);
         const char** envp = (const char**)_wxArrayStringToCharPtrPtr(envArr);
-        const char* in = infile.mb_str(wxConvUTF8).data();
-        const char* er = errfile.mb_str(wxConvUTF8).data();
-        const char* ou = outfile.mb_str(wxConvUTF8).data();
+        const char* in = GetTty().mb_str(wxConvUTF8).data();
+        const char* er = GetTty().mb_str(wxConvUTF8).data();
+        const char* ou = GetTty().mb_str(wxConvUTF8).data();
 
         const char* wd = workingDirectory.mb_str(wxConvUTF8).data();
 
@@ -164,8 +163,8 @@ void LLDBDebugger::OnTimer(wxTimerEvent& e)
 
 void LLDBDebugger::Stop()
 {
-    Cleanup();
     m_target.GetProcess().Kill();
+    Cleanup();
     NotifyExited();
 }
 
@@ -188,7 +187,7 @@ void LLDBDebugger::NotifyStopped()
         LLDBBacktrace bt( thread );
         if ( !bt.GetCallstack().empty() ) {
             LLDBEvent event(wxEVT_LLDB_STOPPED);
-            event.SetFilename(bt.GetCallstack().at(0).filename);
+            event.SetFileName(bt.GetCallstack().at(0).filename);
             event.SetLinenumber(bt.GetCallstack().at(0).line);
             AddPendingEvent( event );
         }

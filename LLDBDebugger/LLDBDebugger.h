@@ -33,6 +33,7 @@ class LLDBDebugger : public wxEvtHandler
     lldb::SBTarget   m_target;
     wxTimer*         m_timer;
     bool             m_isRunning;
+    wxString         m_tty;
 
 protected:
     LLDBBreakpoint::Vec_t m_breakpoints;
@@ -43,7 +44,7 @@ protected:
     void NotifyExited();
     void NotifyStarted();
     void Cleanup();
-    
+
     // Event handlers
     void OnTimer(wxTimerEvent &e);
     void OnStarted(LLDBEvent &e);
@@ -55,13 +56,19 @@ public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
 
+    void SetTty(const wxString& tty) {
+        this->m_tty = tty;
+    }
+    const wxString& GetTty() const {
+        return m_tty;
+    }
     /**
      * @brief return list of all breakpoints
      */
     const LLDBBreakpoint::Vec_t& GetBreakpoints() const {
         return m_breakpoints;
     }
-    
+
     static void Initialize();
     static void Terminate();
 
@@ -73,7 +80,7 @@ public:
     /**
      * @brief issue a "run" command
      */
-    bool Run(const wxString& outfile, const wxString &errfile, const wxString &infile, const wxArrayString& argvArr, const wxArrayString& envArr, const wxString& workingDirectory);
+    bool Run(const wxArrayString& argvArr, const wxArrayString& envArr, const wxString& workingDirectory);
 
     /**
      * @brief stop the debugger

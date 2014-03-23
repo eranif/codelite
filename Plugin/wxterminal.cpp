@@ -305,7 +305,8 @@ wxString wxTerminal::StartTTY()
     tcsetattr(master, TCSANOW, &termio);
 
     m_tty = wxString(__name, wxConvUTF8);
-
+    m_tty = ptsname(master);
+    
     // Start a listener on the tty
     m_dummyProcess = new UnixProcessImpl(this);
     static_cast<UnixProcessImpl*>(m_dummyProcess)->SetReadHandle  (master);

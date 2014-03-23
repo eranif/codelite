@@ -106,8 +106,6 @@
       <File Name="new_quick_watch_dlg.cpp"/>
       <File Name="debugger_predefined_types_page.h"/>
       <File Name="debugger_predefined_types_page.cpp"/>
-      <File Name="console_frame.cpp"/>
-      <File Name="console_frame.h"/>
       <File Name="clDebuggerEditItemDlg.h"/>
       <File Name="clDebuggerEditItemDlg.cpp"/>
       <File Name="BuildTabSettings.wxcp"/>

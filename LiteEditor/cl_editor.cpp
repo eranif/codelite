@@ -2028,6 +2028,11 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
     return DoFindAndSelect(_pattern, name, 0, NavMgr::Get());
 }
 
+void LEditor::FindAndSelectV(const wxString &_pattern, const wxString &name) // The same but returns void, so callable with CallAfter()
+{
+    DoFindAndSelect(_pattern, name, 0, NavMgr::Get());
+}
+
 bool LEditor::Replace(const FindReplaceData &data)
 {
     // the string to be replaced should be selected

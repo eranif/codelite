@@ -428,6 +428,7 @@ public:
     bool FindAndSelect();
     bool FindAndSelect(const FindReplaceData &data);
     bool FindAndSelect(const wxString &pattern, const wxString &name);
+    void FindAndSelectV(const wxString &pattern, const wxString &name); // The same but returns void, so callable with CallAfter()
 
     bool Replace();
     bool Replace(const FindReplaceData &data);

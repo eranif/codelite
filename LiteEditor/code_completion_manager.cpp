@@ -217,7 +217,8 @@ bool CodeCompletionManager::DoCtagsGotoImpl(LEditor* editor)
         if(!editor) {
             return false;
         }
-        editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+        // Use CallAfter() here. Synchronously usually works but, if the file wasn't loaded, sometimes the EnsureVisible code is called too early and fails
+        editor->CallAfter(&LEditor::FindAndSelectV, tag->GetPattern(), tag->GetName());
         return true;
     }
     return false;
@@ -239,7 +240,8 @@ bool CodeCompletionManager::DoCtagsGotoDecl(LEditor* editor)
         if(!editor) {
             return false;
         }
-        editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+        // Use CallAfter() here. Synchronously usually works but, if the file wasn't loaded, sometimes the EnsureVisible code is called too early and fails
+        editor->CallAfter(&LEditor::FindAndSelectV, tag->GetPattern(), tag->GetName());
         return true;
     }
     return false;

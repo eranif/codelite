@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="LLDBDebugger">
   <VirtualDirectory Name="src">
-    <File Name="lldbdebugger.cpp"/>
     <File Name="codelite-plugin.cmake"/>
+    <File Name="lldbdebugger-plugin.cpp"/>
+    <File Name="LLDBBreakpoint.cpp"/>
+    <File Name="LLDBBreakpoint.h"/>
+    <File Name="LLDBDebugger.cpp"/>
+    <File Name="LLDBDebugger.h"/>
+    <File Name="LLDBEvent.cpp"/>
+    <File Name="LLDBEvent.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
-    <File Name="lldbdebugger.h"/>
+    <File Name="lldbdebugger-plugin.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Dynamic Library">

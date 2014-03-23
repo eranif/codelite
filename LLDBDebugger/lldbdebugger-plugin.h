@@ -3,11 +3,11 @@
 
 #include "plugin.h"
 
-class LLDBDebugger : public IPlugin
+class LLDBDebuggerPlugin : public IPlugin
 {
 public:
-    LLDBDebugger(IManager *manager);
-    ~LLDBDebugger();
+    LLDBDebuggerPlugin(IManager *manager);
+    ~LLDBDebuggerPlugin();
 
     //--------------------------------------------
     //Abstract methods
@@ -19,4 +19,4 @@ public:
     virtual void UnPlug();
 };
 
-#endif //LLDBDebugger
+#endif //LLDBDebuggerPlugin

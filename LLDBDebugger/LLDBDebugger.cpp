@@ -58,7 +58,7 @@ bool LLDBDebugger::Start(const wxString& filename)
     }
 
     m_debugger.SetAsync(true);
-    m_timer->Start(20);
+    m_timer->Start(50);
 
     // Notify successful start of the debugger
     NotifyStarted();
@@ -76,7 +76,8 @@ void LLDBDebugger::Terminate()
     lldb::SBDebugger::Terminate();
 }
 
-bool LLDBDebugger::Run( const wxArrayString& argvArr,
+bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString &err, 
+                        const wxArrayString& argvArr,
                         const wxArrayString& envArr,
                         const wxString &workingDirectory)
 {
@@ -84,15 +85,15 @@ bool LLDBDebugger::Run( const wxArrayString& argvArr,
         // Construct char** arrays
         const char** argv = (const char**)_wxArrayStringToCharPtrPtr(argvArr);
         const char** envp = (const char**)_wxArrayStringToCharPtrPtr(envArr);
-        const char* in = GetTty().mb_str(wxConvUTF8).data();
-        const char* er = GetTty().mb_str(wxConvUTF8).data();
-        const char* ou = GetTty().mb_str(wxConvUTF8).data();
+        const char* pin  = in.mb_str(wxConvUTF8).data();
+        const char* pout = out.mb_str(wxConvUTF8).data();
+        const char* perr = err.mb_str(wxConvUTF8).data();
 
         const char* wd = workingDirectory.mb_str(wxConvUTF8).data();
 
         lldb::SBError error;
         lldb::SBListener listener = m_debugger.GetListener();
-        bool isOk = m_target.Launch(listener, argv, envp, in, ou, er, wd, 0, false, error).IsValid();
+        bool isOk = m_target.Launch(listener, argv, envp, pin, pout, perr, wd, 0, false, error).IsValid();
         _deleteCharPtrPtr( const_cast<char**>(argv) );
         _deleteCharPtrPtr( const_cast<char**>(envp) );
         if ( !isOk ) {

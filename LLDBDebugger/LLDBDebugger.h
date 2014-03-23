@@ -80,7 +80,12 @@ public:
     /**
      * @brief issue a "run" command
      */
-    bool Run(const wxArrayString& argvArr, const wxArrayString& envArr, const wxString& workingDirectory);
+    bool Run(const wxString &in, 
+             const wxString& out, 
+             const wxString &err,
+             const wxArrayString& argvArr, 
+             const wxArrayString& envArr, 
+             const wxString& workingDirectory);
 
     /**
      * @brief stop the debugger

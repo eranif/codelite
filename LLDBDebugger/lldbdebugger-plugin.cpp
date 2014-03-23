@@ -7,6 +7,7 @@
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
 #include <wx/stc/stc.h>
+#include "file_logger.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
@@ -69,14 +70,19 @@ clToolBar *LLDBDebuggerPlugin::CreateToolBar(wxWindow *parent)
 
 void LLDBDebuggerPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
+    wxUnusedVar(pluginsMenu);
 }
 
 void LLDBDebuggerPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
 {
+    wxUnusedVar(menu);
+    wxUnusedVar(type);
 }
 
 void LLDBDebuggerPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
 {
+    wxUnusedVar(menu);
+    wxUnusedVar(type);
 }
 
 void LLDBDebuggerPlugin::UnPlug()
@@ -94,6 +100,9 @@ void LLDBDebuggerPlugin::UnPlug()
 
 void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 {
+    event.Skip();
+    return;
+    
     if ( ::PromptForYesNoDialogWithCheckbox(_("Would you like to use LLDB debugger as your primary debugger?"), "UseLLDB") != wxID_YES ) {
         event.Skip();
         return;
@@ -119,7 +128,7 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
     if ( m_debugger.Start("/home/eran/devl/TestArea/TestHang/Debug/TestHang") ) {
         m_debugger.AddBreakpoint("main");
         m_debugger.ApplyBreakpoints();
-        m_debugger.Run(wxArrayString(), wxArrayString(), ::wxGetCwd());
+        m_debugger.Run("/tmp/in", "/tmp/out", "/tmp/err", wxArrayString(), wxArrayString(), ::wxGetCwd());
     }
 }
 
@@ -127,7 +136,7 @@ void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
     m_isRunning = false;
-    
+    CL_DEBUG("CODELITE>> LLDB exited");
     // Also notify codelite's event
     wxCommandEvent e2(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent( e2 );
@@ -138,6 +147,7 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
     event.Skip();
     m_isRunning = true;
     
+    CL_DEBUG("CODELITE>> LLDB started");
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
     EventNotifier::Get()->AddPendingEvent( e2 );
 }
@@ -146,6 +156,7 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
 {
     event.Skip();
     wxFileName fn( event.GetFileName() );
+    CL_DEBUG(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() );
     if ( fn.FileExists() ) {
         if ( m_mgr->OpenFile( fn.GetFullPath(), "", event.GetLinenumber() ) ) {
             IEditor* editor = m_mgr->GetActiveEditor();
@@ -182,6 +193,7 @@ void LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
         info.Show();
         dockManager->Update();
     }
+    CL_DEBUG("CODELITE>> Using TTY: " + ttyString );
     m_debugger.SetTty( ttyString );
 #endif
 }
@@ -189,12 +201,14 @@ void LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
 void LLDBDebuggerPlugin::OnDebugNext(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
+    CL_DEBUG("LLDB    >> Next");
     m_debugger.StepOver();
 }
 
 void LLDBDebuggerPlugin::OnDebugStop(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
+    CL_DEBUG("LLDB    >> Stop");
     m_debugger.Stop();
 }
 

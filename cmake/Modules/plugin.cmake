@@ -10,6 +10,8 @@ function( CL_PLUGIN PLUGIN_NAME )
     message("-- CL_SRC_ROOT is set to ${CL_SRC_ROOT}")
     message("-- USE_PCH is set to ${USE_PCH}")
     message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
+    
+    set ( PLUGIN_EXTRA_LIBS ${ARGV1} )
     ##
     ## Include wxWidgets
     ##
@@ -62,6 +64,7 @@ function( CL_PLUGIN PLUGIN_NAME )
     set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
     target_link_libraries(${PLUGIN_NAME}
         ${LINKER_OPTIONS}
+        ${PLUGIN_EXTRA_LIBS}
         ${wxWidgets_LIBRARIES}
         -L"${CL_LIBPATH}"
         -llibcodelite

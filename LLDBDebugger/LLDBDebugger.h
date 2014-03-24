@@ -31,16 +31,16 @@ class LLDBDebuggerThread;
 class LLDBDebugger : public wxEvtHandler
 {
     friend class LLDBDebuggerThread;
-    
+
     lldb::SBDebugger m_debugger;
     lldb::SBTarget   m_target;
-    bool             m_isRunning;
+    bool             m_canInteract;
     wxString         m_tty;
     LLDBBreakpoint::Vec_t m_breakpoints;
     LLDBDebuggerThread *m_thread;
-    
+
 protected:
-    
+
 
     void NotifyBacktrace();
     void NotifyStopped();
@@ -50,7 +50,7 @@ protected:
     void Cleanup();
     bool IsValid() const;
     bool IsBreakpointExists(const LLDBBreakpoint& bp) const;
-    
+
 public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
@@ -60,6 +60,12 @@ public:
     }
     const wxString& GetTty() const {
         return m_tty;
+    }
+    void SetCanInteract(bool canInteract) {
+        this->m_canInteract = canInteract;
+    }
+    bool IsCanInteract() const {
+        return m_canInteract;
     }
     /**
      * @brief return list of all breakpoints
@@ -79,11 +85,11 @@ public:
     /**
      * @brief issue a "run" command
      */
-    bool Run(const wxString &in, 
-             const wxString& out, 
+    bool Run(const wxString &in,
+             const wxString& out,
              const wxString &err,
-             const wxArrayString& argvArr, 
-             const wxArrayString& envArr, 
+             const wxArrayString& argvArr,
+             const wxArrayString& envArr,
              const wxString& workingDirectory);
 
     /**

@@ -142,6 +142,8 @@ public:
     virtual void                   RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files);
     virtual IEditor*               FindEditor(const wxString &filename) const;
     virtual size_t                 GetAllEditors(IEditor::List_t& editors, bool inOrder = false);
+    virtual size_t                 GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints);
+    virtual void                   DeleteAllBreakpoints();
     
     //------------------------------------
     //End of IManager interface

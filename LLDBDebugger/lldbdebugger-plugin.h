@@ -4,11 +4,13 @@
 #include "plugin.h"
 #include "cl_command_event.h"
 #include "LLDBDebugger.h"
+#include <wx/stc/stc.h>
 
 class LLDBDebuggerPlugin : public IPlugin
 {
     LLDBDebugger m_debugger;
     bool m_isRunning;
+    bool m_canInteract;
     
 public:
     LLDBDebuggerPlugin(IManager *manager);
@@ -17,12 +19,20 @@ public:
 private:
     void ShowTerminal(const wxString& title);
     
+    // Set/clear debugger line marker
+    void ClearDebuggerMarker();
+    void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
+
 protected:
     // UI debugger events
+    void OnIsDebugger(clDebugEvent& event);
     void OnDebugStart(clDebugEvent& event);
     void OnDebugNext(clDebugEvent& event);
     void OnDebugStop(clDebugEvent& event);
     void OnDebugIsRunning(clDebugEvent& event);
+    void OnDebugCanInteract(clDebugEvent& event);
+    void OnDebugStepIn(clDebugEvent& event);
+    void OnDebugStepOut(clDebugEvent& event);
 
     // LLDB events
     void OnLLDBStarted(LLDBEvent& event);

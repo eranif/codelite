@@ -52,6 +52,7 @@
 #include "cl_config.h"
 #include "FileExplorerTab.h"
 #include "clang_code_completion.h"
+#include "debugger.h"
 
 PluginManager *PluginManager::Get()
 {
@@ -797,4 +798,16 @@ size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
     clMainFrame::Get()->GetMainBook()->GetAllEditors( tmpEditors, flags );
     editors.insert(editors.end(), tmpEditors.begin(), tmpEditors.end() );
     return editors.size();
+}
+
+size_t PluginManager::GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints)
+{
+    breakpoints.clear();
+    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints( breakpoints );
+    return breakpoints.size();
+}
+
+void PluginManager::DeleteAllBreakpoints()
+{
+    ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
 }

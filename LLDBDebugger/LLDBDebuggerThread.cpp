@@ -28,6 +28,7 @@ void* LLDBDebuggerThread::Entry()
             lldb::StateType state = m_process.GetStateFromEvent( event );
             switch ( state ) {
             case lldb::eStateStopped: 
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, true );
                 if ( first_time_stopped ) {
                     first_time_stopped = false;
                     CL_DEBUG("LLDBDebuggerThread: eStateStopped - first time");
@@ -42,6 +43,7 @@ void* LLDBDebuggerThread::Entry()
                 break;
 
             case lldb::eStateConnected:
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, true );
                 CL_DEBUG("LLDBDebuggerThread: eStateConnected");
                 break;
 
@@ -50,10 +52,12 @@ void* LLDBDebuggerThread::Entry()
                 break;
 
             case lldb::eStateRunning:
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, false );
                 CL_DEBUG("LLDBDebuggerThread: eStateRunning");
                 break;
 
             case lldb::eStateExited:
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, true );
                 CL_DEBUG("LLDBDebuggerThread: eStateExited");
                 m_owner->CallAfter( &LLDBDebugger::NotifyExited );
                 break;
@@ -63,18 +67,22 @@ void* LLDBDebuggerThread::Entry()
                 break;
                 
             case lldb::eStateStepping:
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, true );
                 CL_DEBUG("LLDBDebuggerThread: eStateStepping");
                 break;
                 
             case lldb::eStateCrashed:
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, true );
                 CL_DEBUG("LLDBDebuggerThread: eStateCrashed");
                 break;
                 
             case lldb::eStateDetached:
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, false );
                 CL_DEBUG("LLDBDebuggerThread: eStateDetached");
                 break;
                 
             case lldb::eStateSuspended:
+                m_owner->CallAfter( &LLDBDebugger::SetCanInteract, false );
                 CL_DEBUG("LLDBDebuggerThread: eStateSuspended");
                 break;
             }

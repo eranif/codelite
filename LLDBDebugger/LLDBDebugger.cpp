@@ -35,6 +35,7 @@ static void _deleteCharPtrPtr(char** argv)
 
 LLDBDebugger::LLDBDebugger()
     : m_thread(NULL)
+    , m_canInteract(false)
 {
 }
 

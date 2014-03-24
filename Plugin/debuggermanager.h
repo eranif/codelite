@@ -71,6 +71,7 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR;
 class WXDLLIMPEXP_SDK DebuggerMgr
 {
     std::map<wxString, IDebugger*>   m_debuggers;
+    wxArrayString                    m_pluginsDebuggers;
     wxString                         m_baseDir;
     std::vector< clDynamicLibrary* > m_dl;
     wxString                         m_activeDebuggerName;
@@ -91,6 +92,9 @@ public:
         m_env = env;
     }
 
+    const wxString& GetActiveDebuggerName() const {
+        return m_activeDebuggerName;
+    }
     /**
      * Load all available debuggers. This functions searches for dll/so/sl
      * which are located udner $(HOME)/.liteeditor/debuggers/ on Linux, and on Windows

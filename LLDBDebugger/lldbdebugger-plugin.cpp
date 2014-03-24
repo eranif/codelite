@@ -11,9 +11,11 @@
 #include "environmentconfig.h"
 #include "clcommandlineparser.h"
 #include "dirsaver.h"
+#include "bookmark_manager.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
+#define DEBUGGER_NAME "LLDB Debugger"
 #define CHECK_IS_LLDB_SESSION() if ( !m_isRunning ) { event.Skip(); return; }
 
 //Define the plugin entry point
@@ -43,6 +45,7 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     : IPlugin(manager)
     , m_isRunning(false)
+    , m_canInteract(false)
 {
     LLDBDebugger::Initialize();
     m_longName = wxT("LLDB Debugger for CodeLite");
@@ -54,10 +57,32 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     m_debugger.Bind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
 
     // UI events
+    EventNotifier::Get()->Connect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBDebuggerPlugin::OnIsDebugger), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStart), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugNext), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepIn), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepOut), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_STOP, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStop), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugIsRunning), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugCanInteract), NULL, this);
+}
+
+void LLDBDebuggerPlugin::UnPlug()
+{
+    m_debugger.Unbind(wxEVT_LLDB_STARTED,                &LLDBDebuggerPlugin::OnLLDBStarted, this);
+    m_debugger.Unbind(wxEVT_LLDB_EXITED,                 &LLDBDebuggerPlugin::OnLLDBExited,  this);
+    m_debugger.Unbind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
+    m_debugger.Unbind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
+
+    // UI events
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBDebuggerPlugin::OnIsDebugger), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStart), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugNext), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STOP, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStop), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugIsRunning), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugCanInteract), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepIn), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepOut), NULL, this);
 }
 
 LLDBDebuggerPlugin::~LLDBDebuggerPlugin()
@@ -89,36 +114,42 @@ void LLDBDebuggerPlugin::UnHookPopupMenu(wxMenu *menu, MenuType type)
     wxUnusedVar(type);
 }
 
-void LLDBDebuggerPlugin::UnPlug()
+
+void LLDBDebuggerPlugin::ClearDebuggerMarker()
 {
-    m_debugger.Unbind(wxEVT_LLDB_STARTED,                &LLDBDebuggerPlugin::OnLLDBStarted, this);
-    m_debugger.Unbind(wxEVT_LLDB_EXITED,                 &LLDBDebuggerPlugin::OnLLDBExited,  this);
-    m_debugger.Unbind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
-    m_debugger.Unbind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
+    IEditor::List_t editors;
+    m_mgr->GetAllEditors( editors );
+    IEditor::List_t::iterator iter = editors.begin();
+    for(; iter != editors.end(); ++iter ) {
+        (*iter)->GetSTC()->MarkerDeleteAll(smt_indicator);
+    }
+}
 
-
-    // UI events
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStart), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugNext), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STOP, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStop), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugIsRunning), NULL, this);
+void LLDBDebuggerPlugin::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
+{
+    stc->MarkerDeleteAll(smt_indicator);
+    stc->MarkerAdd(lineno, smt_indicator);
+    int caretPos = stc->PositionFromLine(lineno);
+    stc->SetSelection(caretPos, caretPos);
+    stc->SetCurrentPos( caretPos );
+    stc->EnsureCaretVisible();
 }
 
 void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 {
+    if ( event.GetString() != DEBUGGER_NAME ) {
+        event.Skip();
+        return;
+    }
+    
     if ( !m_isRunning ) {
         CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
         {
-            if ( ::PromptForYesNoDialogWithCheckbox(_("Would you like to use LLDB debugger as your primary debugger?"), "UseLLDB") != wxID_YES ) {
-                event.Skip();
-                return;
-            }
-
             // Get the executable to debug
             wxString errMsg;
             ProjectPtr pProject = WorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
             if ( !pProject ) {
-                event.Skip();
+                ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
                 return;
             }
 
@@ -127,7 +158,7 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 
             BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( pProject->GetName(), wxEmptyString );
             if ( !bldConf ) {
-                event.Skip();
+                ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
                 return;
             }
 
@@ -181,10 +212,14 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
+    
+    // Perform some cleanup upon exit
     ::CodeLiteBlockSigChild();
     m_isRunning = false;
-    CL_DEBUG("CODELITE>> LLDB exited");
+    m_canInteract = false;
+    ClearDebuggerMarker();
 
+    CL_DEBUG("CODELITE>> LLDB exited");
     // Also notify codelite's event
     wxCommandEvent e2(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent( e2 );
@@ -209,6 +244,8 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
             IEditor* editor = m_mgr->GetActiveEditor();
             if ( editor ) {
                 editor->GetSTC()->ScrollToLine( event.GetLinenumber() );
+                ClearDebuggerMarker();
+                SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() );
             }
         }
     }
@@ -270,5 +307,31 @@ void LLDBDebuggerPlugin::OnDebugStop(clDebugEvent& event)
 
 void LLDBDebuggerPlugin::OnDebugIsRunning(clDebugEvent& event)
 {
+    CHECK_IS_LLDB_SESSION();
     event.SetAnswer( m_isRunning );
+}
+
+void LLDBDebuggerPlugin::OnDebugCanInteract(clDebugEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+    event.SetAnswer( m_debugger.IsCanInteract() );
+}
+
+void LLDBDebuggerPlugin::OnDebugStepIn(clDebugEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+    m_debugger.StepIn();
+}
+
+void LLDBDebuggerPlugin::OnDebugStepOut(clDebugEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+    m_debugger.Finish();
+}
+
+void LLDBDebuggerPlugin::OnIsDebugger(clDebugEvent& event)
+{
+    event.Skip();
+    // register us as a debugger
+    event.GetStrings().Add(DEBUGGER_NAME);
 }

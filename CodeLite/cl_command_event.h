@@ -54,6 +54,9 @@ public:
     const wxArrayString& GetStrings() const {
         return m_strings;
     }
+    wxArrayString& GetStrings() {
+        return m_strings;
+    }
 };
 
 typedef void (wxEvtHandler::*clCommandEventFunction)(clCommandEvent&);

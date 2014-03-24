@@ -509,6 +509,11 @@
                                             // and it will use the event.IsAnswer() as the answer to the question to : CanDbgInteract()
 #define wxEVT_DBG_EXPR_TOOLTIP         3560 // Provide a tooltip for the expression under the caret. user event.GetString() to get the expression
 
+#define wxEVT_DBG_IS_PLUGIN_DEBUGGER   3570 // This event is sent by codelite to all plugins to determine whether a plugin is actually a debugger.
+                                            // A plugin should *always* call event.Skip() when handling this event. If the plugin is actually a debugger
+                                            // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
+                                            // This string is later will be availe for codelite to display it in various dialogs (e.g. Quick Debug, project settings etc)
+
 // -------------------Debugger events end------------------------------------------------
 #define wxEVT_CMD_OPEN_PROJ_SETTINGS   3580 // clCommandEvent. Use event.GetString() to get the project name
 

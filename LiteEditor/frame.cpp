@@ -1029,10 +1029,6 @@ void clMainFrame::CreateGUIControls(void)
     m_mgr.Update();
     SetAutoLayout (true);
 
-    //load debuggers
-    DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());
-    DebuggerMgr::Get().LoadDebuggers();
-
     wxString sessConfFile;
     sessConfFile << clStandardPaths::Get().GetUserDataDir() << wxT("/config/sessions.xml");
     SessionManager::Get().Load(sessConfFile);
@@ -3164,18 +3160,27 @@ void clMainFrame::OnImportMSVS(wxCommandEvent &e)
 void clMainFrame::OnDebug(wxCommandEvent &e)
 {
     wxUnusedVar(e);
-    if ( !WorkspaceST::Get()->IsOpen() ) {
-        wxLogMessage(_("Attempting to debug workspace with no active project? Ignoring."));
-        return;
-    }
     
     // Let the plugin know that we are about to start debugging
     clDebugEvent dbgEvent(wxEVT_DBG_UI_START_OR_CONT);
-    dbgEvent.SetProjectName( WorkspaceST::Get()->GetActiveProjectName() );
+    if ( WorkspaceST::Get()->IsOpen() ) {
+        // Pass as much as info as we can (i.e. project name and the selected debugger)
+        dbgEvent.SetProjectName( WorkspaceST::Get()->GetActiveProjectName() );
+        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf( dbgEvent.GetProjectName() , "" );
+        if ( bldConf ) {
+            dbgEvent.SetString( bldConf->GetDebuggerType() );
+        }
+    }
+
     if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) {
         return;
     }
     
+    if ( !WorkspaceST::Get()->IsOpen() ) {
+        wxLogMessage(_("Attempting to debug workspace with no active project? Ignoring."));
+        return;
+    }
+
     Manager *mgr = ManagerST::Get();
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if (dbgr && dbgr->IsRunning()) {
@@ -3442,7 +3447,12 @@ void clMainFrame::OnShowWelcomePage(wxCommandEvent &event)
 
 void clMainFrame::CompleteInitialization()
 {
+    // Load the plugins
     PluginManager::Get()->Load();
+
+    // Load debuggers (*must* be after the plugins)
+    DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());
+    DebuggerMgr::Get().LoadDebuggers();
 
     // Connect some system events
     m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(clMainFrame::OnDockablePaneClosed), NULL, this);
@@ -4230,6 +4240,10 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             // Layout management
             ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
             ManagerST::Get()->GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
+            
+        } else if ( !dbgr ) {
+            // FIXME: a plugin debugger was selected
+            // send an event to start a quick debug
         }
     }
     dlg->Destroy();
@@ -4319,6 +4333,10 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             // Finally, get the call-stack and 'continue' gdb (which seems to be necessary for things to work...)
             dbgr->ListFrames();
             dbgr->Continue();
+            
+        } else if ( !dbgr ) {
+            // FIXME:  send a core-debug event here
+            
         }
     }
     dlg->Destroy();

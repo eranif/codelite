@@ -173,7 +173,7 @@ public:
             return m_filename == bp.file && m_line == bp.lineno;
         }
     };
-    
+    typedef std::vector<BreakpointInfo> Vec_t;
 public:
     // Where the bp is: file/lineno, function name (e.g. main()) or the memory location
     wxString               file;

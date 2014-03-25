@@ -36,6 +36,7 @@ static void _deleteCharPtrPtr(char** argv)
 LLDBDebugger::LLDBDebugger()
     : m_thread(NULL)
     , m_canInteract(false)
+    , m_debugeePid(wxNOT_FOUND)
 {
 }
 
@@ -51,6 +52,7 @@ bool LLDBDebugger::Start(const wxString& filename)
         return false;
     }
     
+    m_debugeePid = wxNOT_FOUND;
     m_debugger = lldb::SBDebugger::Create();
     m_target = m_debugger.CreateTarget(filename.mb_str().data());
     if ( !m_target.IsValid() ) {
@@ -96,13 +98,24 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
 
         lldb::SBError error;
         lldb::SBListener listener = m_debugger.GetListener();
-        bool isOk = m_target.Launch(listener, argv, envp, pin, pout, perr, wd, lldb::eLaunchFlagDebug|lldb::eLaunchFlagStopAtEntry, false, error).IsValid();
+        bool isOk = m_target.Launch(listener, 
+                                    argv, 
+                                    envp, 
+                                    pin, 
+                                    pout, 
+                                    perr, 
+                                    wd, 
+                                    lldb::eLaunchFlagStopAtEntry|lldb::eLaunchFlagLaunchInShell|lldb::eLaunchFlagLaunchInSeparateProcessGroup, 
+                                    false, 
+                                    error).IsValid();
         _deleteCharPtrPtr( const_cast<char**>(argv) );
         _deleteCharPtrPtr( const_cast<char**>(envp) );
         if ( !isOk ) {
             Cleanup();
             NotifyExited();
         }
+        
+        m_debugeePid = m_target.GetProcess().GetProcessID();
         m_thread = new LLDBDebuggerThread(this, listener, m_target.GetProcess());
         m_thread->Start();
         return isOk;
@@ -133,12 +146,14 @@ bool LLDBDebugger::IsValid() const
     return m_target.IsValid() && m_debugger.IsValid();
 }
 
-void LLDBDebugger::Stop()
+void LLDBDebugger::Stop(bool notifyExit)
 {
     wxDELETE(m_thread);
     m_target.GetProcess().Kill();
     Cleanup();
-    NotifyExited();
+    if ( notifyExit ) {
+        NotifyExited();
+    }
 }
 
 void LLDBDebugger::NotifyBacktrace()

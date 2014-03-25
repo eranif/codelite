@@ -38,6 +38,7 @@ class LLDBDebugger : public wxEvtHandler
     wxString         m_tty;
     LLDBBreakpoint::Vec_t m_breakpoints;
     LLDBDebuggerThread *m_thread;
+    int                 m_debugeePid;
 
 protected:
 
@@ -55,6 +56,9 @@ public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
 
+    int GetDebugeePid() const {
+        return m_debugeePid;
+    }
     void SetTty(const wxString& tty) {
         this->m_tty = tty;
     }
@@ -95,7 +99,7 @@ public:
     /**
      * @brief stop the debugger
      */
-    void Stop();
+    void Stop(bool notifyExit);
 
     /**
      * @brief resume execution until exit or next breakpoint is hit (or crash...)

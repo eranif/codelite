@@ -213,6 +213,9 @@ void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
     
+    // Stop the debugger ( do not notify about it, since we are in the handler...)
+    m_debugger.Stop(false);
+
     // Perform some cleanup upon exit
     ::CodeLiteBlockSigChild();
     m_isRunning = false;
@@ -302,7 +305,7 @@ void LLDBDebuggerPlugin::OnDebugStop(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
     CL_DEBUG("LLDB    >> Stop");
-    m_debugger.Stop();
+    m_debugger.Stop(true);
 }
 
 void LLDBDebuggerPlugin::OnDebugIsRunning(clDebugEvent& event)

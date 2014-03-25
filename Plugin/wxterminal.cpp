@@ -304,7 +304,6 @@ wxString wxTerminal::StartTTY()
     termio.c_oflag = ONOCR | ONLRET;
     tcsetattr(master, TCSANOW, &termio);
 
-    m_tty = wxString(__name, wxConvUTF8);
     m_tty = ptsname(master);
     
     // Start a listener on the tty
@@ -318,11 +317,7 @@ wxString wxTerminal::StartTTY()
 
 void wxTerminal::StopTTY()
 {
-    if(m_dummyProcess) {
-        delete m_dummyProcess;
-    }
-
-    m_dummyProcess = NULL;
+    wxDELETE(m_dummyProcess);
     m_tty.Clear();
     close(m_slave);
     m_slave = -1;

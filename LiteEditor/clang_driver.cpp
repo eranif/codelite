@@ -744,7 +744,7 @@ void ClangDriver::DoGotoDefinition(ClangThreadReply* reply)
     LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(reply->filename, wxEmptyString, reply->line);
     if(editor) {
         int pos = editor->PositionFromLine(reply->line - 1);
-        editor->FindAndSelect(reply->filterWord,
+        editor->FindAndSelectV(reply->filterWord,
                               reply->filterWord,
                               pos,
                               NULL);

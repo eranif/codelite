@@ -904,7 +904,7 @@ void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
     if (tag) {
         LEditor *editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine()-1);
         if (editor) {
-            editor->FindAndSelect(tag->GetPattern(), tag->GetName());
+            editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
         }
     }
 }

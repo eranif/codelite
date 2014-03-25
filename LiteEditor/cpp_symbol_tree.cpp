@@ -224,5 +224,5 @@ wxTreeItemId CppSymbolTree::TryGetPrevItem(wxTreeItemId item)
 
 void CppSymbolTree::FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name)
 {
-    editor->FindAndSelect(pattern, name);
+    editor->FindAndSelectV(pattern, name);
 }

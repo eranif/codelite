@@ -295,7 +295,7 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
     if ( manager && manager->OpenFile(selection.m_file, wxEmptyString, selection.m_line) ) {
         IEditor *editor = manager->GetActiveEditor();
         if ( editor && !selection.m_name.IsEmpty() && !selection.m_pattern.IsEmpty()) {
-            editor->FindAndSelect(selection.m_pattern, selection.m_name, 0, manager->GetNavigationMgr());
+            editor->FindAndSelectV(selection.m_pattern, selection.m_name);
         }
     }
 }

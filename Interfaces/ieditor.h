@@ -307,6 +307,10 @@ public:
      * @return return true if a match was found, false otherwise
      */
     virtual bool FindAndSelect(const wxString &pattern, const wxString &what, int from_pos, NavMgr *navmgr) = 0;
+    /**
+     * @brief Similar to the above but returns void, and is implemented asynchronously
+     */
+    virtual void FindAndSelectV(const wxString &pattern, const wxString &what, int from_pos = 0, NavMgr *navmgr = NULL) = 0;
 
     /**
      * @brief set a lexer to the editor

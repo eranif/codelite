@@ -2028,9 +2028,21 @@ bool LEditor::FindAndSelect(const wxString &_pattern, const wxString &name)
     return DoFindAndSelect(_pattern, name, 0, NavMgr::Get());
 }
 
-void LEditor::FindAndSelectV(const wxString &_pattern, const wxString &name) // The same but returns void, so callable with CallAfter()
+void LEditor::FindAndSelectV(const wxString &_pattern, const wxString &name, int pos/*=0*/, NavMgr* WXUNUSED(unused)) // Similar but returns void, so can be async
 {
-    DoFindAndSelect(_pattern, name, 0, NavMgr::Get());
+    // Use CallAfter() here. With wxGTK-3.1 (perhaps due to its scintilla update) if the file wasn't already loaded, EnsureVisible() is called too early and fails
+    wxArrayString strings; // CallAfter can only cope with 2 parameters, so combine the wxStrings
+    strings.Add(_pattern);
+    strings.Add(name);
+    CallAfter(&LEditor::DoFindAndSelectV, strings, pos);
+}
+
+void LEditor::DoFindAndSelectV(const wxArrayString& strings, int pos) // Called with CallAfter()
+{
+    wxCHECK_RET(strings.Count() == 2, "Unexpected number of wxStrings supplied");
+    wxString _pattern(strings.Item(0));
+    wxString name(strings.Item(1));
+    DoFindAndSelect(_pattern, name, pos, NavMgr::Get());
 }
 
 bool LEditor::Replace(const FindReplaceData &data)

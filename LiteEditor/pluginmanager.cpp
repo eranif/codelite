@@ -494,7 +494,7 @@ void PluginManager::FindAndSelect(const wxString& pattern, const wxString& name,
 {
     LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if (editor) {
-        editor->FindAndSelect(pattern, name, pos, NavMgr::Get());
+        editor->FindAndSelectV(pattern, name, pos, NavMgr::Get());
         editor->SetActive();
     }
 }

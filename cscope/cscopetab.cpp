@@ -167,7 +167,7 @@ void CscopeTab::DoItemActivated(const wxDataViewItem& item )
                 int end = editor->LineEnd(line);
                 wxString searchline(editor->GetTextRange(start, end));
                 // Find and select the entry in the file
-                editor->FindAndSelect(searchline, GetFindWhat(), start, m_mgr->GetNavigationMgr());
+                editor->FindAndSelectV(searchline, GetFindWhat(), start); // The async version of FindAndSelect()
                 editor->DelayedSetActive(); // We need to SetActive() editor. At least in wxGTK, this won't work synchronously
             }
         }

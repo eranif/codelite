@@ -428,7 +428,8 @@ public:
     bool FindAndSelect();
     bool FindAndSelect(const FindReplaceData &data);
     bool FindAndSelect(const wxString &pattern, const wxString &name);
-    void FindAndSelectV(const wxString &pattern, const wxString &name); // The same but returns void, so callable with CallAfter()
+    void FindAndSelectV(const wxString &pattern, const wxString &name, int pos = 0, NavMgr* unused = NULL); // The same but returns void, so usable with CallAfter()
+    void DoFindAndSelectV(const wxArrayString& strings, int pos); // Called with CallAfter()
 
     bool Replace();
     bool Replace(const FindReplaceData &data);

@@ -192,13 +192,19 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 
                 CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
                 CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
+                m_debugger.AddBreakpoint("main");
                 if ( m_debugger.Start(execToDebug.GetFullPath()) ) {
-                    m_debugger.AddBreakpoint("main");
-                    ShowTerminal("LLDB Console Window");
                     m_isRunning = true;
-                    m_debugger.Run(m_debugger.GetTty(), m_debugger.GetTty(), m_debugger.GetTty(), parser.ToArray(), wxArrayString(), ::wxGetCwd());
+                    ShowTerminal("LLDB Console Window");
+                    if ( m_debugger.Run(m_debugger.GetTty(), 
+                                        m_debugger.GetTty(), 
+                                        m_debugger.GetTty(), 
+                                        parser.ToArray(), 
+                                        wxArrayString(), 
+                                        ::wxGetCwd()) ) {
+                        int pid = m_debugger.GetDebugeePid();
+                    }
                 }
-
             }
         }
         CL_DEBUG("LLDB: Working directory is restored to: " + ::wxGetCwd());

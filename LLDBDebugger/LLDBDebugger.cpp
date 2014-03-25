@@ -9,6 +9,7 @@
 #include "LLDBEvent.h"
 #include <algorithm>
 #include "LLDBDebuggerThread.h"
+#include <lldb/API/SBTarget.h>
 
 #define CHECK_RUNNING_RET_FALSE() if ( !IsValid() ) return false
 #define CHECK_RUNNING_RET() if ( !IsValid() ) return
@@ -93,21 +94,25 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
         const char* pin  = in.mb_str(wxConvUTF8).data();
         const char* pout = out.mb_str(wxConvUTF8).data();
         const char* perr = err.mb_str(wxConvUTF8).data();
-
         const char* wd = workingDirectory.mb_str(wxConvUTF8).data();
-
+        
+        wxUnusedVar(pin);
+        wxUnusedVar(pout);
+        wxUnusedVar(perr);
+        
+        lldb::SBLaunchInfo launchInfo(argv);
         lldb::SBError error;
-        lldb::SBListener listener = m_debugger.GetListener();
-        bool isOk = m_target.Launch(listener, 
-                                    argv, 
-                                    envp, 
-                                    pin, 
-                                    pout, 
-                                    perr, 
-                                    wd, 
-                                    lldb::eLaunchFlagStopAtEntry|lldb::eLaunchFlagLaunchInShell|lldb::eLaunchFlagLaunchInSeparateProcessGroup, 
-                                    false, 
-                                    error).IsValid();
+        
+        // Set the launch flags
+        launchInfo.SetLaunchFlags(lldb::eLaunchFlagStopAtEntry | lldb::eLaunchFlagLaunchInSeparateProcessGroup);
+        launchInfo.SetEnvironmentEntries(envp, false);
+        launchInfo.SetWorkingDirectory(wd);
+        launchInfo.AddOpenFileAction(STDIN_FILENO,  pin,  true, false);
+        launchInfo.AddOpenFileAction(STDERR_FILENO, perr, false, true);
+        launchInfo.AddOpenFileAction(STDOUT_FILENO, pout, false, true);
+        bool isOk = m_target.Launch(launchInfo, error).IsValid();
+        
+        //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
         _deleteCharPtrPtr( const_cast<char**>(argv) );
         _deleteCharPtrPtr( const_cast<char**>(envp) );
         if ( !isOk ) {
@@ -116,7 +121,7 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
         }
         
         m_debugeePid = m_target.GetProcess().GetProcessID();
-        m_thread = new LLDBDebuggerThread(this, listener, m_target.GetProcess());
+        m_thread = new LLDBDebuggerThread(this, m_debugger.GetListener(), m_target.GetProcess());
         m_thread->Start();
         return isOk;
     }

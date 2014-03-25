@@ -288,24 +288,25 @@ void wxTerminal::Clear()
 wxString wxTerminal::StartTTY()
 {
     m_process = NULL;
+    // Open the master side of a pseudo terminal
+    int master = ::posix_openpt (O_RDWR|O_NOCTTY);
+    if (master < 0) {
+        return "";
+    }
 
-    char __name[128];
-    memset(__name, 0, sizeof(__name));
+    // Grant access to the slave pseudo terminal
+    if (::grantpt (master) < 0) {
+        ::close(master);
+        return "";
+    }
 
-    int master(-1);
-    m_slave = -1;
-    if(openpty(&master, &m_slave, __name, NULL, NULL) != 0)
-        return wxT("");
-
-    // disable ECHO
-    struct termios termio;
-    tcgetattr(master, &termio);
-    termio.c_lflag = ICANON;
-    termio.c_oflag = ONOCR | ONLRET;
-    tcsetattr(master, TCSANOW, &termio);
-
-    m_tty = ptsname(master);
+    // Clear the lock flag on the slave pseudo terminal
+    if (::unlockpt (master) < 0) {
+        ::close(master);
+        return "";
+    }
     
+    m_tty = ::ptsname(master);
     // Start a listener on the tty
     m_dummyProcess = new UnixProcessImpl(this);
     static_cast<UnixProcessImpl*>(m_dummyProcess)->SetReadHandle  (master);
@@ -319,8 +320,8 @@ void wxTerminal::StopTTY()
 {
     wxDELETE(m_dummyProcess);
     m_tty.Clear();
-    close(m_slave);
-    m_slave = -1;
+    // close(m_slave);
+    // m_slave = -1;
 }
 
 #endif

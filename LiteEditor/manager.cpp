@@ -2537,7 +2537,7 @@ void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )
         editor = clMainFrame::Get()->GetMainBook()->OpenFile (fn.GetFullPath(), wxEmptyString, lineno-1, wxNOT_FOUND);
         if ( editor && lineno > 0 ) {
             editor->HighlightLine(lineno);
-            editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1), false);
+            editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno-1), false, true); // The 'true' says to delay; needed with wxGTK-3.1 else EnsureVisible() fails
         }
     }
 }

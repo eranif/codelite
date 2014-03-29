@@ -6,7 +6,6 @@
 #include "LLDBDebugger.h"
 #include <wx/stc/stc.h>
 
-class m_console;
 class ConsoleFrame;
 class LLDBCallStackPane;
 class LLDBDebuggerPlugin : public IPlugin

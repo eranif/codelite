@@ -37,7 +37,7 @@ public:
         
         Entry() : id(0), line(0) {}
     };
-    typedef std::vector<Entry> EntryVec_t;
+    typedef std::vector<LLDBBacktrace::Entry> EntryVec_t;
 
 protected:
     int m_threadId;

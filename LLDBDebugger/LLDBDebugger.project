@@ -12,10 +12,10 @@
     <File Name="LLDBBacktrace.cpp"/>
     <File Name="LLDBBacktrace.h"/>
     <File Name="LLDBDebuggerThread.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="include">
+    <File Name="LLDBSettings.cpp"/>
     <File Name="lldbdebugger-plugin.h"/>
     <File Name="LLDBDebuggerThread.h"/>
+    <File Name="LLDBSettings.h"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Dynamic Library">
@@ -158,4 +158,18 @@
       </AdditionalRules>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="wxcrafter">
+    <File Name="UI.wxcp"/>
+    <VirtualDirectory Name="resources">
+      <File Name="UI_lldbdebugger_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="UI.h"/>
+      <File Name="UI.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="UI">
+    <File Name="LLDBCallStack.cpp"/>
+    <File Name="LLDBCallStack.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

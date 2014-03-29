@@ -1186,7 +1186,7 @@
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
         <ThirdPartyToolName/>
-        <WorkingDirectory>$(WorkspacePath)/build-debug</WorkingDirectory>
+        <WorkingDirectory>$(WorkspacePath)build-debug</WorkingDirectory>
       </CustomBuild>
       <AdditionalRules>
         <CustomPostBuild/>

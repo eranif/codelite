@@ -12,10 +12,15 @@
 #include "clcommandlineparser.h"
 #include "dirsaver.h"
 #include "bookmark_manager.h"
+#include <wx/msgdlg.h>
+#include "LLDBCallStack.h"
+#include "LLDBSettings.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
 #define DEBUGGER_NAME "LLDB Debugger"
+#define LLDB_CALLSTACK_PANE_NAME "LLDB Callstack"
+
 #define CHECK_IS_LLDB_SESSION() if ( !m_isRunning ) { event.Skip(); return; }
 
 //Define the plugin entry point
@@ -46,6 +51,8 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     : IPlugin(manager)
     , m_isRunning(false)
     , m_canInteract(false)
+    , m_callstack(NULL)
+    , m_console(NULL)
 {
     LLDBDebugger::Initialize();
     m_longName = wxT("LLDB Debugger for CodeLite");
@@ -54,6 +61,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     m_debugger.Bind(wxEVT_LLDB_STARTED,                &LLDBDebuggerPlugin::OnLLDBStarted, this);
     m_debugger.Bind(wxEVT_LLDB_EXITED,                 &LLDBDebuggerPlugin::OnLLDBExited,  this);
     m_debugger.Bind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
+    m_debugger.Bind(wxEVT_LLDB_RUNNING,                &LLDBDebuggerPlugin::OnLLDBRunning, this);
     m_debugger.Bind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
 
     // UI events
@@ -72,6 +80,7 @@ void LLDBDebuggerPlugin::UnPlug()
     m_debugger.Unbind(wxEVT_LLDB_STARTED,                &LLDBDebuggerPlugin::OnLLDBStarted, this);
     m_debugger.Unbind(wxEVT_LLDB_EXITED,                 &LLDBDebuggerPlugin::OnLLDBExited,  this);
     m_debugger.Unbind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
+    m_debugger.Unbind(wxEVT_LLDB_RUNNING,                &LLDBDebuggerPlugin::OnLLDBRunning, this);
     m_debugger.Unbind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
 
     // UI events
@@ -218,15 +227,25 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
-    
+
     // Stop the debugger ( do not notify about it, since we are in the handler...)
     m_debugger.Stop(false);
+
+    // Save current perspective before destroying the session
+    SaveLLDBPerspective();
+
+    // Restore the old perspective
+    RestoreDefaultPerspective();
+    DestroyUI();
 
     // Perform some cleanup upon exit
     ::CodeLiteBlockSigChild();
     m_isRunning = false;
     m_canInteract = false;
     ClearDebuggerMarker();
+
+    // nullify the console terminal
+    m_console = NULL;
 
     CL_DEBUG("CODELITE>> LLDB exited");
     // Also notify codelite's event
@@ -237,6 +256,9 @@ void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
 {
     event.Skip();
+    InitializeUI();
+    LoadLLDBPerspective();
+    
     CL_DEBUG("CODELITE>> LLDB started");
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
     EventNotifier::Get()->AddPendingEvent( e2 );
@@ -274,15 +296,18 @@ void LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
 #ifndef __WXMSW__
     wxString consoleTitle = title;
     wxString ttyString;
+    
     // Create a new TTY Console and place it in the AUI
-    ConsoleFrame *console = new ConsoleFrame(EventNotifier::Get()->TopFrame(), m_mgr);
-    ttyString = console->StartTTY();
+    // Note that 'm_console' will call to Destroy() when the debug session
+    // is terminated. In other words: don't worry about memory leaks here
+    m_console = new ConsoleFrame(EventNotifier::Get()->TopFrame(), m_mgr);
+    ttyString = m_console->StartTTY();
     consoleTitle << " (" << ttyString << ")";
 
     wxAuiPaneInfo paneInfo;
     wxAuiManager* dockManager = m_mgr->GetDockingManager();
     paneInfo.Name(wxT("LLDB Console")).Caption(consoleTitle).Dockable().FloatingSize(300, 200).CloseButton(false);
-    dockManager->AddPane(console, paneInfo);
+    dockManager->AddPane(m_console, paneInfo);
 
     // Re-set the title (it might be modified by 'LoadPerspective'
     wxAuiPaneInfo& pi = dockManager->GetPane(wxT("LLDB Console"));
@@ -343,4 +368,84 @@ void LLDBDebuggerPlugin::OnIsDebugger(clDebugEvent& event)
     event.Skip();
     // register us as a debugger
     event.GetStrings().Add(DEBUGGER_NAME);
+}
+
+void LLDBDebuggerPlugin::LoadLLDBPerspective()
+{
+    // store the previous perspective before we continue
+    m_defaultPerspective = m_mgr->GetDockingManager()->SavePerspective();
+    
+    LLDBSettings settings;
+    wxString perspective = settings.Load().LoadPerspective();
+    if ( !perspective.IsEmpty() ) {
+        m_mgr->GetDockingManager()->LoadPerspective( perspective, false );
+    }
+    
+    // Make sure that all the panes are visible
+    ShowLLDBPane("LLDB Console");
+    ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);
+    m_mgr->GetDockingManager()->Update();
+}
+
+void LLDBDebuggerPlugin::SaveLLDBPerspective()
+{
+    LLDBSettings settings;
+    settings.Load();
+    settings.SavePerspective( m_mgr->GetDockingManager()->SavePerspective() );
+    settings.Save();
+}
+
+void LLDBDebuggerPlugin::ShowLLDBPane(const wxString& paneName, bool show)
+{
+    wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
+    if ( pi.IsOk() ) {
+        if ( show ) {
+            if ( !pi.IsShown() ) {
+                pi.Show();
+            }
+        } else {
+            if ( pi.IsShown() ) {
+                pi.Hide();
+            }
+        }
+    }
+}
+
+void LLDBDebuggerPlugin::RestoreDefaultPerspective()
+{
+    if ( !m_defaultPerspective.IsEmpty() ) {
+        m_mgr->GetDockingManager()->LoadPerspective( m_defaultPerspective, true );
+        m_defaultPerspective.Clear();
+    }
+}
+
+void LLDBDebuggerPlugin::DestroyUI()
+{
+    // Destroy the callstack window
+    if ( m_callstack ) {
+        wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_CALLSTACK_PANE_NAME);
+        if ( pi.IsOk() ) {
+            m_mgr->GetDockingManager()->DetachPane(m_callstack);
+        }
+        m_callstack->Destroy();
+        m_callstack = NULL;
+    }
+}
+
+void LLDBDebuggerPlugin::InitializeUI()
+{
+    if ( !m_callstack ) {
+        m_callstack = new LLDBCallStackPane(EventNotifier::Get()->TopFrame(), &m_debugger);
+        m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo().Bottom().CloseButton().Caption("Callstack").Name(LLDB_CALLSTACK_PANE_NAME));
+    }
+}
+
+void LLDBDebuggerPlugin::OnLLDBRunning(LLDBEvent& event)
+{
+    event.Skip();
+    // When the IDE loses the focus - clear the debugger marker
+    ClearDebuggerMarker();
+    
+    // set the focus to the terminal (incase a user input is requested)
+    m_console->SetFocus();
 }

@@ -6,11 +6,21 @@
 #include "LLDBDebugger.h"
 #include <wx/stc/stc.h>
 
+class m_console;
+class ConsoleFrame;
+class LLDBCallStackPane;
 class LLDBDebuggerPlugin : public IPlugin
 {
     LLDBDebugger m_debugger;
     bool m_isRunning;
     bool m_canInteract;
+    wxString m_defaultPerspective;
+    
+    /// ------------------------------------
+    /// UI elements
+    /// ------------------------------------
+    LLDBCallStackPane*  m_callstack;
+    ConsoleFrame *      m_console;
     
 public:
     LLDBDebuggerPlugin(IManager *manager);
@@ -19,10 +29,15 @@ public:
 private:
     void ShowTerminal(const wxString& title);
     
-    // Set/clear debugger line marker
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
-
+    void LoadLLDBPerspective();
+    void SaveLLDBPerspective();
+    void ShowLLDBPane(const wxString &paneName, bool show = true);
+    void RestoreDefaultPerspective();
+    void InitializeUI();
+    void DestroyUI();
+    
 protected:
     // UI debugger events
     void OnIsDebugger(clDebugEvent& event);
@@ -39,6 +54,7 @@ protected:
     void OnLLDBExited(LLDBEvent& event);
     void OnLLDBStopped(LLDBEvent &event);
     void OnLLDBStoppedOnEntry(LLDBEvent &event);
+    void OnLLDBRunning(LLDBEvent &event);
 
 public:    
     //--------------------------------------------

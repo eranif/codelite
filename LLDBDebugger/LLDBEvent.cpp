@@ -5,6 +5,7 @@ wxDEFINE_EVENT(wxEVT_LLDB_BACKTRACE, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_EXITED,    LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_STARTED,   LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY,   LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_RUNNING,   LLDBEvent);
 
 LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     : clCommandEvent(eventType, windid)

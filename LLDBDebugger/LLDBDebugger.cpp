@@ -317,3 +317,9 @@ void LLDBDebugger::Cleanup()
         lldb::SBDebugger::Destroy( m_debugger );
     }
 }
+
+void LLDBDebugger::NotifyRunning()
+{
+    LLDBEvent event(wxEVT_LLDB_RUNNING);
+    AddPendingEvent( event );
+}

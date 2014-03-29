@@ -13,20 +13,35 @@ else()
         set ( LLDB_LIB liblldb.dylib )
     endif()
     
+    set( LLDB_BUILD_DIRS "" )
+    # define the search order of the folder
+    if(DEBUG_BUILD MATCHES 1)
+        message("-- Will search for LLBM Debug build first")
+        LIST(APPEND LLDB_BUILD_DIRS "build-debug")
+        LIST(APPEND LLDB_BUILD_DIRS "build")
+        LIST(APPEND LLDB_BUILD_DIRS "build-release")
+    else ()
+        message("-- Will search for LLBM Release build first")
+        LIST(APPEND LLDB_BUILD_DIRS "build-release")
+        LIST(APPEND LLDB_BUILD_DIRS "build")
+        LIST(APPEND LLDB_BUILD_DIRS "build-debug")
+    endif()
+    
     ## determine the build folder
     set( LLDB_BUILD_DIR "" )
-    if ( EXISTS ${LLVM_HOME}/build-release AND EXISTS ${LLVM_HOME}/build-release/lib/${LLDB_LIB})
-        set( LLDB_BUILD_DIR ${LLVM_HOME}/build-release )
-        
-    elseif ( EXISTS ${LLVM_HOME}/build-debug AND EXISTS ${LLVM_HOME}/build-debug/lib/${LLDB_LIB} )
-        set( LLDB_BUILD_DIR ${LLVM_HOME}/build-debug )
-        
-    elseif ( EXISTS ${LLVM_HOME}/build AND EXISTS ${LLVM_HOME}/build/lib/${LLDB_LIB} )
-        set( LLDB_BUILD_DIR ${LLVM_HOME}/build )
-        
-    else ()
+    set ( BUILD_DIR_FOUND 0 )
+    foreach(build_tmp_dir ${LLDB_BUILD_DIRS})
+        if ( BUILD_DIR_FOUND MATCHES 0 ) 
+            if ( EXISTS ${LLVM_HOME}/${build_tmp_dir} AND EXISTS ${LLVM_HOME}/${build_tmp_dir}/lib/${LLDB_LIB} )
+                set( LLDB_BUILD_DIR ${LLVM_HOME}/${build_tmp_dir} )
+                set( BUILD_DIR_FOUND 1 )
+                message("-- ${LLVM_HOME}/${build_tmp_dir} Found!")
+            endif()
+        endif()
+    endforeach()
+
+    if ( BUILD_DIR_FOUND MATCHES 0 )
         message("**** NOTICE: Could not locate LLVM build folder")
-        
     endif()
     
     if ( LLDB_BUILD_DIR STREQUAL "" )

@@ -307,6 +307,14 @@ wxString wxTerminal::StartTTY()
     }
     
     m_tty = ::ptsname(master);
+    
+    // disable ECHO
+    struct termios termio;
+    tcgetattr(master, &termio);
+    termio.c_lflag = ICANON;
+    termio.c_oflag = ONOCR | ONLRET;
+    tcsetattr(master, TCSANOW, &termio);
+
     // Start a listener on the tty
     m_dummyProcess = new UnixProcessImpl(this);
     static_cast<UnixProcessImpl*>(m_dummyProcess)->SetReadHandle  (master);

@@ -48,6 +48,7 @@ protected:
     void NotifyExited();
     void NotifyStarted();
     void NotifyStoppedOnFirstEntry();
+    void NotifyRunning();
     void Cleanup();
     bool IsValid() const;
     bool IsBreakpointExists(const LLDBBreakpoint& bp) const;

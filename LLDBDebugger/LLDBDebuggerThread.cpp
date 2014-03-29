@@ -53,6 +53,7 @@ void* LLDBDebuggerThread::Entry()
 
             case lldb::eStateRunning:
                 m_owner->CallAfter( &LLDBDebugger::SetCanInteract, false );
+                m_owner->CallAfter( &LLDBDebugger::NotifyRunning );
                 CL_DEBUG("LLDBDebuggerThread: eStateRunning");
                 break;
 

@@ -310,6 +310,7 @@ void LLDBDebugger::DeleteAllBreakpoints()
 
 void LLDBDebugger::Cleanup()
 {
+    InvalidateBreakpoints();
     if ( m_target.IsValid() ) {
         m_debugger.DeleteTarget( m_target );
     }
@@ -322,4 +323,19 @@ void LLDBDebugger::NotifyRunning()
 {
     LLDBEvent event(wxEVT_LLDB_RUNNING);
     AddPendingEvent( event );
+}
+
+void LLDBDebugger::AddBreakpoints(const BreakpointInfo::Vec_t& breakpoints)
+{
+    LLDBBreakpoint::Vec_t bps = LLDBBreakpoint::FromBreakpointInfoVector( breakpoints );
+    AddBreakpoints ( bps );
+}
+
+void LLDBDebugger::AddBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints)
+{
+    for(size_t i=0; i<breakpoints.size(); ++i) {
+        if ( !IsBreakpointExists(breakpoints.at(i)) )  {
+            m_breakpoints.push_back( breakpoints.at(i) );
+        }
+    }
 }

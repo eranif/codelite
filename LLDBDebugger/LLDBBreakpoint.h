@@ -4,6 +4,8 @@
 #include <wx/string.h>
 #include <vector>
 #include <wx/filename.h>
+#include "debugger.h"
+#include "json_node.h"
 
 class LLDBBreakpoint
 {
@@ -33,12 +35,25 @@ public:
         }
     };
     
+    JSONElement ToJSON() const;
+    void FromJSON(const JSONElement& element);
+    
 public:
     LLDBBreakpoint() : m_id(wxNOT_FOUND), m_type(kInvalid), m_lineNumber(wxNOT_FOUND) {}
     LLDBBreakpoint(const wxString &name);
     LLDBBreakpoint(const wxFileName& filename, int line);
     bool operator==(const LLDBBreakpoint& other) const;
     virtual ~LLDBBreakpoint();
+    
+    /**
+     * @brief convert list of gdb breakpoints into LLDBBreakpoint vector
+     */
+    static BreakpointInfo::Vec_t ToBreakpointInfoVector(const LLDBBreakpoint::Vec_t& breakpoints);
+    /**
+     * @brief convert list of lldb breakpoints into gdb's breakpoint list
+     * @param breakpoints
+     */
+    static LLDBBreakpoint::Vec_t FromBreakpointInfoVector(const BreakpointInfo::Vec_t& breakpoints);
     
     bool IsApplied() const {
         return m_id != wxNOT_FOUND;
@@ -78,6 +93,23 @@ public:
     int GetId() const {
         return m_id;
     }
+    
+    // ---------------------------------------
+    // serialization
+    // ---------------------------------------
+    static wxFileName GetBreakpointsConfigFile();
+    
+    /**
+     * @brief load breakpoints from the file system.
+     * The path searched is always the workspace-path/.codelite/lldb-breakpoints.conf
+     * If no workspace is opened, return empty array
+     */
+    static LLDBBreakpoint::Vec_t LoadFromDisk();
+    /**
+     * @brief save breakpoints to the file system. If no workspace is opened, this function
+     * does nothing
+     */
+    static void SaveToDisk(const LLDBBreakpoint::Vec_t& breakpoints);
 };
 
 #endif // LLDBBREAKPOINT_H

@@ -51,12 +51,12 @@ protected:
     void NotifyRunning();
     void Cleanup();
     bool IsValid() const;
-    bool IsBreakpointExists(const LLDBBreakpoint& bp) const;
 
 public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
 
+    bool IsBreakpointExists(const LLDBBreakpoint& bp) const;
     int GetDebugeePid() const {
         return m_debugeePid;
     }
@@ -127,7 +127,17 @@ public:
      * Note that this function does not apply the breakpoints, it only keeps them in memory
      */
     void AddBreakpoint(const wxFileName& filename, int line);
-
+    
+    /**
+     * @brief add list of breakpoints
+     */
+    void AddBreakpoints(const BreakpointInfo::Vec_t& breakpoints);
+    
+    /**
+     * @brief add list of breakpoints
+     */
+    void AddBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints);
+    
     /**
      * @brief add a named breakpoint ( e.g. break main )
      * * Note that this function does not apply the breakpoints, it only keeps them in memory

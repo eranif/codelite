@@ -15,6 +15,7 @@
 #include <wx/msgdlg.h>
 #include "LLDBCallStack.h"
 #include "LLDBSettings.h"
+#include "bookmark_manager.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
@@ -73,6 +74,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_STOP, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStop), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugIsRunning), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugCanInteract), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
 }
 
 void LLDBDebuggerPlugin::UnPlug()
@@ -92,6 +94,7 @@ void LLDBDebuggerPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugCanInteract), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepIn), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepOut), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
 }
 
 LLDBDebuggerPlugin::~LLDBDebuggerPlugin()
@@ -150,7 +153,7 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
         event.Skip();
         return;
     }
-    
+
     if ( !m_isRunning ) {
         CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
         {
@@ -201,15 +204,22 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 
                 CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
                 CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
-                m_debugger.AddBreakpoint("main");
+
+                // Get list of breakpoints
+                BreakpointInfo::Vec_t gdbBps;
+                m_mgr->GetAllBreakpoints(gdbBps);
+
+                // Apply the breakpoints before the session starts
+                m_debugger.AddBreakpoints( gdbBps );
+
                 if ( m_debugger.Start(execToDebug.GetFullPath()) ) {
                     m_isRunning = true;
                     ShowTerminal("LLDB Console Window");
-                    if ( m_debugger.Run(m_debugger.GetTty(), 
-                                        m_debugger.GetTty(), 
-                                        m_debugger.GetTty(), 
-                                        parser.ToArray(), 
-                                        wxArrayString(), 
+                    if ( m_debugger.Run(m_debugger.GetTty(),
+                                        m_debugger.GetTty(),
+                                        m_debugger.GetTty(),
+                                        parser.ToArray(),
+                                        wxArrayString(),
                                         ::wxGetCwd()) ) {
                         int pid = m_debugger.GetDebugeePid();
                     }
@@ -258,7 +268,7 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
     event.Skip();
     InitializeUI();
     LoadLLDBPerspective();
-    
+
     CL_DEBUG("CODELITE>> LLDB started");
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
     EventNotifier::Get()->AddPendingEvent( e2 );
@@ -296,7 +306,7 @@ void LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
 #ifndef __WXMSW__
     wxString consoleTitle = title;
     wxString ttyString;
-    
+
     // Create a new TTY Console and place it in the AUI
     // Note that 'm_console' will call to Destroy() when the debug session
     // is terminated. In other words: don't worry about memory leaks here
@@ -374,13 +384,13 @@ void LLDBDebuggerPlugin::LoadLLDBPerspective()
 {
     // store the previous perspective before we continue
     m_defaultPerspective = m_mgr->GetDockingManager()->SavePerspective();
-    
+
     LLDBSettings settings;
     wxString perspective = settings.Load().LoadPerspective();
     if ( !perspective.IsEmpty() ) {
         m_mgr->GetDockingManager()->LoadPerspective( perspective, false );
     }
-    
+
     // Make sure that all the panes are visible
     ShowLLDBPane("LLDB Console");
     ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);
@@ -445,7 +455,37 @@ void LLDBDebuggerPlugin::OnLLDBRunning(LLDBEvent& event)
     event.Skip();
     // When the IDE loses the focus - clear the debugger marker
     ClearDebuggerMarker();
-    
+
     // set the focus to the terminal (incase a user input is requested)
     m_console->SetFocus();
+}
+
+void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
+{
+    // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serilization in the session file )
+    event.Skip();
+
+    // check to see if we are removing a breakpoint or adding one
+    LLDBBreakpoint bp(event.GetFileName(), event.GetInt());
+    IEditor * editor = m_mgr->GetActiveEditor();
+
+    if ( editor ) {
+        // get the marker type set on the line
+        int markerType = editor->GetSTC()->MarkerGet(bp.GetLineNumber()-1);
+        for (size_t type=smt_FIRST_BP_TYPE; type <= smt_LAST_BP_TYPE; ++type) {
+            int markerMask = ( 1 << type );
+            if ( markerType & markerMask ) {
+                // removing a breakpoint
+                m_debugger.DeleteBreakpoint( bp );
+                return;
+            }
+        }
+        
+        // if we got here, its a new breakpoint, add it
+        // Add the breakpoint to the list of breakpoints
+        m_debugger.AddBreakpoint(bp.GetFilename(), bp.GetLineNumber());
+
+        // apply it ( does nothing if the debugger is not running )
+        m_debugger.ApplyBreakpoints();
+    }
 }

@@ -47,6 +47,7 @@ protected:
     void OnDebugCanInteract(clDebugEvent& event);
     void OnDebugStepIn(clDebugEvent& event);
     void OnDebugStepOut(clDebugEvent& event);
+    void OnToggleBreakpoint(clDebugEvent& event);
 
     // LLDB events
     void OnLLDBStarted(LLDBEvent& event);

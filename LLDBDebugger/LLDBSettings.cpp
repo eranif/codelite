@@ -1,6 +1,7 @@
 #include "LLDBSettings.h"
 #include <wx/filename.h>
 #include "cl_standard_paths.h"
+#include <wx/ffile.h>
 
 LLDBSettings::LLDBSettings()
     : clConfigItem("lldb")

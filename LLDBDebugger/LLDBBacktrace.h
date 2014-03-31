@@ -4,9 +4,6 @@
 #include <wx/string.h>
 #include <vector>
 
-#if defined(__APPLE__)
-#   include <LLDB/LLDB.h>
-#else
 #   include "lldb/API/SBBlock.h"
 #   include "lldb/API/SBCompileUnit.h"
 #   include "lldb/API/SBDebugger.h"
@@ -19,7 +16,6 @@
 #   include "lldb/API/SBProcess.h"
 #   include "lldb/API/SBBreakpoint.h"
 #   include "lldb/API/SBListener.h"
-#endif
 
 /**
  * @class LLDBBacktrace

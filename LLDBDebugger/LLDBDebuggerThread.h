@@ -5,13 +5,9 @@
 #include <list>
 #include <wx/string.h>
 
-#if defined(__APPLE__)
-#   include <LLDB/LLDB.h>
-#else
 #   include "lldb/API/SBListener.h"
 #   include "lldb/API/SBEvent.h"
 #   include "lldb/API/SBProcess.h"
-#endif
 
 class LLDBDebugger;
 class LLDBDebuggerThread : public wxThread

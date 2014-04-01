@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "LLDBDebuggerThread.h"
 #include <lldb/API/SBTarget.h>
+#include "file_logger.h"
 
 #define CHECK_RUNNING_RET_FALSE() if ( !IsValid() ) return false
 #define CHECK_RUNNING_RET() if ( !IsValid() ) return
@@ -24,7 +25,7 @@ static char** _wxArrayStringToCharPtrPtr(const wxArrayString &arr)
     return argv;
 }
 
-static void _deleteCharPtrPtr(char** argv)
+static void DELETE_CHAR_PTR_PTR(char** argv)
 {
     size_t i=0;
     while ( argv[i] ) {
@@ -96,34 +97,38 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
         const char* perr = err.mb_str(wxConvUTF8).data();
         const char* wd = workingDirectory.mb_str(wxConvUTF8).data();
         
-        wxUnusedVar(pin);
-        wxUnusedVar(pout);
-        wxUnusedVar(perr);
-        
-        lldb::SBLaunchInfo launchInfo(argv);
         lldb::SBError error;
-        
-        // Set the launch flags
-        launchInfo.SetLaunchFlags(lldb::eLaunchFlagStopAtEntry | lldb::eLaunchFlagLaunchInSeparateProcessGroup);
-        launchInfo.SetEnvironmentEntries(envp, false);
-        launchInfo.SetWorkingDirectory(wd);
-        launchInfo.AddOpenFileAction(STDIN_FILENO,  pin,  true, false);
-        launchInfo.AddOpenFileAction(STDERR_FILENO, perr, false, true);
-        launchInfo.AddOpenFileAction(STDOUT_FILENO, pout, false, true);
-        bool isOk = m_target.Launch(launchInfo, error).IsValid();
-        
+        lldb::SBListener listener = m_debugger.GetListener();
+        lldb::SBProcess process = m_target.Launch(
+                                    listener, 
+                                    argv, 
+                                    envp, 
+                                    pin, 
+                                    pout, 
+                                    perr, 
+                                    wd, 
+                                    lldb::eLaunchFlagLaunchInSeparateProcessGroup, 
+                                    false, 
+                                    error);
+
         //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
-        _deleteCharPtrPtr( const_cast<char**>(argv) );
-        _deleteCharPtrPtr( const_cast<char**>(envp) );
-        if ( !isOk ) {
+        DELETE_CHAR_PTR_PTR( const_cast<char**>(argv) );
+        DELETE_CHAR_PTR_PTR( const_cast<char**>(envp) );
+
+        if ( !process.IsValid() ) {
+            CL_WARNING("LLDB>> Failed to launch debuggee process");
             Cleanup();
             NotifyExited();
+            return false;
+            
+        } else {
+            m_debugeePid = process.GetProcessID();
+            CL_DEBUG(wxString() << "LLDB>> Debugee process launched successfully. PID=" << m_debugeePid);
+            m_thread = new LLDBDebuggerThread(this, m_debugger.GetListener(), process);
+            m_thread->Start();
+            return true;
+            
         }
-        
-        m_debugeePid = m_target.GetProcess().GetProcessID();
-        m_thread = new LLDBDebuggerThread(this, m_debugger.GetListener(), m_target.GetProcess());
-        m_thread->Start();
-        return isOk;
     }
     return false;
 }

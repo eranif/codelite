@@ -22,11 +22,20 @@ LLDBDebuggerThread::~LLDBDebuggerThread()
 void* LLDBDebuggerThread::Entry()
 {
     bool first_time_stopped = true;
+    CL_DEBUG("LLDB Thread: started");
     while ( !TestDestroy() ) {
         lldb::SBEvent event;
         if ( m_listener.WaitForEvent(1, event) && event.IsValid() ) {
             lldb::StateType state = m_process.GetStateFromEvent( event );
             switch ( state ) {
+            case lldb::eStateInvalid:
+                CL_DEBUG("LLDBDebuggerThread: eStateInvalid");
+                break;
+            
+            case lldb::eStateUnloaded:
+                CL_DEBUG("LLDBDebuggerThread: eStateUnloaded");
+                break;
+
             case lldb::eStateStopped: 
                 m_owner->CallAfter( &LLDBDebugger::SetCanInteract, true );
                 if ( first_time_stopped ) {

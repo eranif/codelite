@@ -50,10 +50,20 @@ bool LLDBDebugger::Start(const wxString& filename)
 {
     if ( m_thread ) {
         // another instance is already running
-        ::wxMessageBox(_("A Debug session is already in progress!"));
+        ::wxMessageBox(_("A Debug session is already in progress!"), "CodeLite", wxICON_WARNING|wxOK|wxCENTER);
         return false;
     }
     
+#ifdef __WXMAC__
+    // On OSX, debugserver executable must exists otherwise lldb will not work properly
+    // we ensure that it exists by checking the environment variable LLDB_DEBUGSERVER_PATH
+    wxString lldbDebugServer;
+    if ( !::wxGetEnv("LLDB_DEBUGSERVER_PATH", &lldbDebugServer) || !wxFileName::Exists(lldbDebugServer) ) {
+        ::wxMessageBox(_("LLDB_DEBUGSERVER_PATH environment does not exist or contains a path to a non existent file"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+        return false;
+    }
+#endif
+
     m_debugeePid = wxNOT_FOUND;
     m_debugger = lldb::SBDebugger::Create();
     m_target = m_debugger.CreateTarget(filename.mb_str().data());
@@ -62,7 +72,7 @@ bool LLDBDebugger::Start(const wxString& filename)
         return false;
     }
 
-    m_debugger.SetAsync(false);
+    m_debugger.SetAsync(true);
 
     // Notify successful start of the debugger
     NotifyStarted();
@@ -107,7 +117,7 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
                                     pout, 
                                     perr, 
                                     wd, 
-                                    lldb::eLaunchFlagLaunchInSeparateProcessGroup, 
+                                    lldb::eLaunchFlagLaunchInSeparateProcessGroup|lldb::eLaunchFlagStopAtEntry, 
                                     true, 
                                     error);
 
@@ -124,15 +134,10 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
         } else {
             m_debugeePid = process.GetProcessID();
             CL_DEBUG(wxString() << "LLDB>> Debugee process launched successfully. PID=" << m_debugeePid);
-            m_thread = new LLDBDebuggerThread(this, m_debugger.GetListener(), process);
+            m_thread = new LLDBDebuggerThread(this, listener, process);
             m_thread->Start();
-
-#ifdef __WXMAC__
-            ApplyBreakpoints();
-            Continue();
-#endif
             return true;
-            
+
         }
     }
     return false;

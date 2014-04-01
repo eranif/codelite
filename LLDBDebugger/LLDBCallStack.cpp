@@ -25,10 +25,10 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
     for(size_t i=0; i<entries.size(); ++i) {
         wxVector<wxVariant> cols;
         const LLDBBacktrace::Entry& entry = entries.at(i);
-        cols.push_back( entry.id );
+        cols.push_back( wxString::Format("%d", entry.id) );
         cols.push_back( entry.functionName );
         cols.push_back( entry.filename );
-        cols.push_back( entry.line + 1 );
+        cols.push_back( wxString::Format("%d", (int)(entry.line + 1) );
         m_dvListCtrlBacktrace->AppendItem(cols);
     }
 }

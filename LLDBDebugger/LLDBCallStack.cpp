@@ -28,7 +28,7 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
         cols.push_back( wxString::Format("%d", entry.id) );
         cols.push_back( entry.functionName );
         cols.push_back( entry.filename );
-        cols.push_back( wxString::Format("%d", (int)(entry.line + 1) );
+        cols.push_back( wxString::Format("%d", (int)(entry.line + 1) ));
         m_dvListCtrlBacktrace->AppendItem(cols);
     }
 }

@@ -62,7 +62,7 @@ bool LLDBDebugger::Start(const wxString& filename)
         return false;
     }
 
-    m_debugger.SetAsync(true);
+    m_debugger.SetAsync(false);
 
     // Notify successful start of the debugger
     NotifyStarted();
@@ -108,7 +108,7 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
                                     perr, 
                                     wd, 
                                     lldb::eLaunchFlagLaunchInSeparateProcessGroup, 
-                                    false, 
+                                    true, 
                                     error);
 
         //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
@@ -126,6 +126,11 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
             CL_DEBUG(wxString() << "LLDB>> Debugee process launched successfully. PID=" << m_debugeePid);
             m_thread = new LLDBDebuggerThread(this, m_debugger.GetListener(), process);
             m_thread->Start();
+
+#ifdef __WXMAC__
+            ApplyBreakpoints();
+            Continue();
+#endif
             return true;
             
         }
@@ -136,6 +141,7 @@ bool LLDBDebugger::Run( const wxString &in, const wxString& out, const wxString 
 bool LLDBDebugger::Continue()
 {
     CHECK_RUNNING_RET_FALSE();
+    CL_DEBUG("LLDB>> Continue...");
     return m_target.GetProcess().Continue().Success();
 }
 
@@ -254,6 +260,7 @@ void LLDBDebugger::AddBreakpoint(const wxString& name)
 void LLDBDebugger::ApplyBreakpoints()
 {
     CHECK_RUNNING_RET();
+    CL_DEBUG("Applying breakpoints...");
     // Apply all breakpoints with an-invalid breakpoint ID
     for(size_t i=0; i<m_breakpoints.size(); ++i) {
         LLDBBreakpoint& breakPoint = m_breakpoints.at(i);
@@ -263,6 +270,7 @@ void LLDBDebugger::ApplyBreakpoints()
                 lldb::SBBreakpoint bp = m_target.BreakpointCreateByName(breakPoint.GetName().mb_str().data(), NULL);
                 if ( bp.IsValid() ) {
                     breakPoint.SetId( bp.GetID() );
+                    CL_DEBUG("Successfully placed breakpoint at " + breakPoint.GetName());
                 }
                 break;
             }
@@ -270,6 +278,7 @@ void LLDBDebugger::ApplyBreakpoints()
                 lldb::SBBreakpoint bp = m_target.BreakpointCreateByLocation(breakPoint.GetFilename().mb_str().data(), breakPoint.GetLineNumber());
                 if ( bp.IsValid() ) {
                     breakPoint.SetId( bp.GetID() );
+                    CL_DEBUG(wxString() << "Successfully placed breakpoint at " << breakPoint.GetFilename() << "," << breakPoint.GetLineNumber());
                 }
                 break;
             }

@@ -6,6 +6,7 @@
 #include "LLDBDebugger.h"
 #include <wx/stc/stc.h>
 
+class LLDBBreakpointsPane;
 class ConsoleFrame;
 class LLDBCallStackPane;
 class LLDBDebuggerPlugin : public IPlugin
@@ -18,8 +19,9 @@ class LLDBDebuggerPlugin : public IPlugin
     /// ------------------------------------
     /// UI elements
     /// ------------------------------------
-    LLDBCallStackPane*  m_callstack;
-    ConsoleFrame *      m_console;
+    LLDBCallStackPane*   m_callstack;
+    ConsoleFrame *       m_console;
+    LLDBBreakpointsPane* m_breakpointsView;
     
 public:
     LLDBDebuggerPlugin(IManager *manager);

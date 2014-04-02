@@ -171,5 +171,7 @@
   <VirtualDirectory Name="UI">
     <File Name="LLDBCallStack.cpp"/>
     <File Name="LLDBCallStack.h"/>
+    <File Name="LLDBBreakpointsPane.h"/>
+    <File Name="LLDBBreakpointsPane.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

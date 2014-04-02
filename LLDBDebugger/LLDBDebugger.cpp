@@ -11,6 +11,7 @@
 #include "LLDBDebuggerThread.h"
 #include <lldb/API/SBTarget.h>
 #include "file_logger.h"
+#include "lldb/API/SBBreakpointLocation.h"
 
 #define CHECK_RUNNING_RET_FALSE() if ( !IsValid() ) return false
 #define CHECK_RUNNING_RET() if ( !IsValid() ) return
@@ -250,7 +251,7 @@ void LLDBDebugger::AddBreakpoint(const wxFileName& filename, int line)
 {
     LLDBBreakpoint breakpoint(filename, line);
     if ( !IsBreakpointExists(breakpoint) ) {
-        m_breakpoints.push_back( breakpoint );
+        DoAddBreakpoint( breakpoint );
     }
 }
 
@@ -258,7 +259,7 @@ void LLDBDebugger::AddBreakpoint(const wxString& name)
 {
     LLDBBreakpoint breakpoint(name);
     if ( !IsBreakpointExists(breakpoint) ) {
-        m_breakpoints.push_back( breakpoint );
+        DoAddBreakpoint( breakpoint );
     }
 }
 
@@ -266,16 +267,24 @@ void LLDBDebugger::ApplyBreakpoints()
 {
     CHECK_RUNNING_RET();
     CL_DEBUG("Applying breakpoints...");
+    
     // Apply all breakpoints with an-invalid breakpoint ID
-    for(size_t i=0; i<m_breakpoints.size(); ++i) {
-        LLDBBreakpoint& breakPoint = m_breakpoints.at(i);
+    LLDBBreakpoint::Vec_t updatedList;
+    while( !m_breakpoints.empty() ) {
+        LLDBBreakpoint& breakPoint = m_breakpoints.at(0);
         if ( !breakPoint.IsApplied() ) {
             switch( breakPoint.GetType() ) {
             case LLDBBreakpoint::kFunction: {
                 lldb::SBBreakpoint bp = m_target.BreakpointCreateByName(breakPoint.GetName().mb_str().data(), NULL);
                 if ( bp.IsValid() ) {
-                    breakPoint.SetId( bp.GetID() );
-                    CL_DEBUG("Successfully placed breakpoint at " + breakPoint.GetName());
+                    // A breakpoint by location can actually create numerous breakpoints, add them all
+                    for(size_t i=0; i<bp.GetNumLocations(); ++i) {
+                        LLDBBreakpoint new_bp = breakPoint;
+                        lldb::SBBreakpointLocation loc = bp.GetLocationAtIndex(i);
+                        new_bp.SetId( loc.GetID() );
+                        updatedList.push_back( new_bp );
+                        CL_DEBUG("Successfully placed breakpoint at " + new_bp.GetName());
+                    }
                 }
                 break;
             }
@@ -283,13 +292,21 @@ void LLDBDebugger::ApplyBreakpoints()
                 lldb::SBBreakpoint bp = m_target.BreakpointCreateByLocation(breakPoint.GetFilename().mb_str().data(), breakPoint.GetLineNumber());
                 if ( bp.IsValid() ) {
                     breakPoint.SetId( bp.GetID() );
+                    updatedList.push_back( breakPoint );
                     CL_DEBUG(wxString() << "Successfully placed breakpoint at " << breakPoint.GetFilename() << "," << breakPoint.GetLineNumber());
                 }
                 break;
             }
             }
+        } else {
+            updatedList.push_back( breakPoint );
         }
+        m_breakpoints.erase(m_breakpoints.begin());
     }
+    
+    m_breakpoints.swap( updatedList );
+    // Notify that breakpoints were updated (their ID at least got modified)
+    NotifyBreakpointsUpdated();
 }
 
 void LLDBDebugger::InvalidateBreakpoints()
@@ -297,6 +314,7 @@ void LLDBDebugger::InvalidateBreakpoints()
     for(size_t i=0; i<m_breakpoints.size(); ++i) {
         m_breakpoints.at(i).Invalidate();
     }
+    NotifyBreakpointsUpdated();
 }
 
 bool LLDBDebugger::IsBreakpointExists(const LLDBBreakpoint& bp) const
@@ -306,15 +324,7 @@ bool LLDBDebugger::IsBreakpointExists(const LLDBBreakpoint& bp) const
 
 void LLDBDebugger::DeleteBreakpoint(const LLDBBreakpoint& breakpoint)
 {
-    LLDBBreakpoint::Vec_t::iterator iter = std::find( m_breakpoints.begin(), m_breakpoints.end(), breakpoint );
-    if ( iter != m_breakpoints.end() ) {
-        // If the debugger is active and the breakpoint was applied, delete it
-        if ( iter->IsApplied() && m_debugger.IsValid() && m_target.IsValid() ) {
-            m_target.BreakpointDelete( iter->GetId() );
-        }
-        // and remove it from the list of breakpoints
-        m_breakpoints.erase( iter );
-    }
+    DoDeleteBreakpoint( breakpoint );
 }
 
 void LLDBDebugger::DeleteAllBreakpoints()
@@ -325,6 +335,7 @@ void LLDBDebugger::DeleteAllBreakpoints()
         }
         m_breakpoints.erase(m_breakpoints.begin());
     }
+    NotifyBreakpointsUpdated();
 }
 
 void LLDBDebugger::Cleanup()
@@ -354,7 +365,34 @@ void LLDBDebugger::AddBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints)
 {
     for(size_t i=0; i<breakpoints.size(); ++i) {
         if ( !IsBreakpointExists(breakpoints.at(i)) )  {
-            m_breakpoints.push_back( breakpoints.at(i) );
+            DoAddBreakpoint( breakpoints.at(i) );
         }
     }
+}
+
+void LLDBDebugger::DoAddBreakpoint(const LLDBBreakpoint& bp)
+{
+    m_breakpoints.push_back( bp );
+    // Notify about breakpoint added
+    NotifyBreakpointsUpdated();
+}
+
+void LLDBDebugger::DoDeleteBreakpoint(const LLDBBreakpoint& bp)
+{
+    LLDBBreakpoint::Vec_t::iterator iter = std::find( m_breakpoints.begin(), m_breakpoints.end(), bp );
+    if ( iter != m_breakpoints.end() ) {
+        // If the debugger is active and the breakpoint was applied, delete it
+        if ( iter->IsApplied() && m_debugger.IsValid() && m_target.IsValid() ) {
+            m_target.BreakpointDelete( iter->GetId() );
+        }
+        // and remove it from the list of breakpoints
+        m_breakpoints.erase( iter );
+    }
+    NotifyBreakpointsUpdated();
+}
+
+void LLDBDebugger::NotifyBreakpointsUpdated()
+{
+    LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_UPDATED);
+    AddPendingEvent( event );
 }

@@ -45,9 +45,13 @@ protected:
     void NotifyStarted();
     void NotifyStoppedOnFirstEntry();
     void NotifyRunning();
+    void NotifyBreakpointsUpdated();
+    
     void Cleanup();
     bool IsValid() const;
-
+    void DoAddBreakpoint(const LLDBBreakpoint& bp);
+    void DoDeleteBreakpoint(const LLDBBreakpoint& bp);
+    
 public:
     LLDBDebugger();
     virtual ~LLDBDebugger();

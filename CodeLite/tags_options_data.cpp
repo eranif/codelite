@@ -249,7 +249,8 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add(wxT("_GLIBCXX_PURE"));
     m_tokens.Add(wxT("_GLIBCXX_THROW(%0)"));
     m_tokens.Add(wxT("_GLIBCXX_DEPRECATED"));
-
+    m_tokens.Add("LLDB_API");
+    m_tokens.Add("PYTHON_API");
 
     m_types.Add(wxT("std::vector::reference=_Tp"));
     m_types.Add(wxT("std::vector::const_reference=_Tp"));

@@ -16,11 +16,13 @@
 #include "LLDBCallStack.h"
 #include "LLDBSettings.h"
 #include "bookmark_manager.h"
+#include "LLDBBreakpointsPane.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
 #define DEBUGGER_NAME "LLDB Debugger"
 #define LLDB_CALLSTACK_PANE_NAME "LLDB Callstack"
+#define LLDB_BREAKPOINTS_PANE_NAME "LLDB Breakpoints"
 
 #define CHECK_IS_LLDB_SESSION() if ( !m_isRunning ) { event.Skip(); return; }
 
@@ -54,6 +56,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     , m_canInteract(false)
     , m_callstack(NULL)
     , m_console(NULL)
+    , m_breakpointsView(NULL)
 {
     LLDBDebugger::Initialize();
     m_longName = wxT("LLDB Debugger for CodeLite");
@@ -79,6 +82,8 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
 
 void LLDBDebuggerPlugin::UnPlug()
 {
+    DestroyUI();
+    
     m_debugger.Unbind(wxEVT_LLDB_STARTED,                &LLDBDebuggerPlugin::OnLLDBStarted, this);
     m_debugger.Unbind(wxEVT_LLDB_EXITED,                 &LLDBDebuggerPlugin::OnLLDBExited,  this);
     m_debugger.Unbind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
@@ -394,6 +399,7 @@ void LLDBDebuggerPlugin::LoadLLDBPerspective()
     // Make sure that all the panes are visible
     ShowLLDBPane("LLDB Console");
     ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);
+    ShowLLDBPane(LLDB_BREAKPOINTS_PANE_NAME);
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -440,13 +446,26 @@ void LLDBDebuggerPlugin::DestroyUI()
         m_callstack->Destroy();
         m_callstack = NULL;
     }
+    if ( m_breakpointsView ) {
+        wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_BREAKPOINTS_PANE_NAME);
+        if ( pi.IsOk() ) {
+            m_mgr->GetDockingManager()->DetachPane(m_breakpointsView);
+        }
+        m_breakpointsView->Destroy();
+        m_breakpointsView = NULL;
+    }
 }
 
 void LLDBDebuggerPlugin::InitializeUI()
 {
     if ( !m_callstack ) {
         m_callstack = new LLDBCallStackPane(EventNotifier::Get()->TopFrame(), &m_debugger);
-        m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo().Bottom().CloseButton().Caption("Callstack").Name(LLDB_CALLSTACK_PANE_NAME));
+        m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo().Bottom().Position(0).CloseButton().Caption("Callstack").Name(LLDB_CALLSTACK_PANE_NAME));
+    }
+    
+    if ( !m_breakpointsView ) {
+        m_breakpointsView = new LLDBBreakpointsPane(EventNotifier::Get()->TopFrame(), &m_debugger);
+        m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo().Bottom().Position(1).CloseButton().Caption("Breakpoints").Name(LLDB_BREAKPOINTS_PANE_NAME));
     }
 }
 

@@ -30,9 +30,9 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
     
     boxSizer2->Add(m_dvListCtrlBacktrace, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrlBacktrace->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlBacktrace->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dvListCtrlBacktrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dvListCtrlBacktrace->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlBacktrace->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dvListCtrlBacktrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
     m_dvListCtrlBacktrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
     
     SetSizeHints(500,300);
@@ -44,4 +44,70 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
 
 LLDBCallStackBase::~LLDBCallStackBase()
 {
+}
+
+LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxHORIZONTAL);
+    this->SetSizer(boxSizer10);
+    
+    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer10->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer12 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer10->Add(boxSizer12, 0, wxEXPAND, 5);
+    
+    m_buttonNew = new wxButton(this, wxID_NEW, _("New..."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonNew->SetDefault();
+    
+    boxSizer12->Add(m_buttonNew, 0, wxALL|wxEXPAND, 5);
+    
+    m_buttonDelete = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer12->Add(m_buttonDelete, 0, wxALL|wxEXPAND, 5);
+    
+    m_buttonDeleteAll = new wxButton(this, wxID_ANY, _("Delete All"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer12->Add(m_buttonDeleteAll, 0, wxALL|wxEXPAND, 5);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
+    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
+    m_buttonNew->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
+    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
+    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
+    m_buttonDeleteAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpoints), NULL, this);
+    m_buttonDeleteAll->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpointsUI), NULL, this);
+    
+}
+
+LLDBBreakpointsPaneBase::~LLDBBreakpointsPaneBase()
+{
+    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
+    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
+    m_buttonNew->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
+    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
+    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
+    m_buttonDeleteAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpoints), NULL, this);
+    m_buttonDeleteAll->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpointsUI), NULL, this);
+    
 }

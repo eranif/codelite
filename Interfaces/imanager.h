@@ -455,6 +455,9 @@ public:
      */
     virtual size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false) = 0;
     
+    // ---------------------------------------------
+    // Breakpoint management
+    // ---------------------------------------------
     /**
      * @brief return a vector of all the current breakpoints set by the user
      */
@@ -464,6 +467,12 @@ public:
      * @brief delete all breakpoints assigned by the user
      */
     virtual void DeleteAllBreakpoints() = 0;
+    
+    /**
+     * @brief set breakpoints (override any existing breakpoints)
+     * this function also refreshes the editors markers
+     */
+    virtual void SetBreakpoints(BreakpointInfo::Vec_t& breakpoints) = 0;
 };
 
 #endif //IMANAGER_H

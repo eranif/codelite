@@ -144,6 +144,7 @@ public:
     virtual size_t                 GetAllEditors(IEditor::List_t& editors, bool inOrder = false);
     virtual size_t                 GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints);
     virtual void                   DeleteAllBreakpoints();
+    virtual void                   SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints);
     
     //------------------------------------
     //End of IManager interface

@@ -811,3 +811,11 @@ void PluginManager::DeleteAllBreakpoints()
 {
     ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
 }
+
+void PluginManager::SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints)
+{
+    ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
+    for(size_t i=0; i<breakpoints.size(); ++i) {
+        ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint( breakpoints.at(i) );
+    }
+}

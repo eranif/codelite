@@ -26,14 +26,23 @@
 class LLDBDebuggerThread;
 class LLDBDebugger : public wxEvtHandler
 {
+public:
+    enum eInterruptReason {
+        kInterruptReasonNone,
+        kInterruptReasonApplyBreakpoints,
+        kInterruptReasonDeleteAllBreakpoints,
+    };
     friend class LLDBDebuggerThread;
 
+protected:
     lldb::SBDebugger m_debugger;
     lldb::SBTarget   m_target;
     wxString         m_tty;
     LLDBBreakpoint::Vec_t m_breakpoints;
     LLDBDebuggerThread *m_thread;
     int                 m_debugeePid;
+    eInterruptReason    m_interruptReason;
+    bool                m_canInteract;
 
 protected:
 
@@ -45,12 +54,13 @@ protected:
     void NotifyStoppedOnFirstEntry();
     void NotifyRunning();
     void NotifyBreakpointsUpdated();
-    
+    void NotifyAllBreakpointsDeleted();
+
     void Cleanup();
     bool IsValid() const;
     void DoAddBreakpoint(const LLDBBreakpoint& bp);
     void DoDeleteBreakpoint(const LLDBBreakpoint& bp);
-    
+
 public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
@@ -65,7 +75,10 @@ public:
     const wxString& GetTty() const {
         return m_tty;
     }
-    
+
+    bool CanInteract() const {
+        return m_canInteract;
+    }
     /**
      * @brief return list of all breakpoints
      */
@@ -121,17 +134,17 @@ public:
      * Note that this function does not apply the breakpoints, it only keeps them in memory
      */
     void AddBreakpoint(const wxFileName& filename, int line);
-    
+
     /**
      * @brief add list of breakpoints
      */
     void AddBreakpoints(const BreakpointInfo::Vec_t& breakpoints);
-    
+
     /**
      * @brief add list of breakpoints
      */
     void AddBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints);
-    
+
     /**
      * @brief add a named breakpoint ( e.g. break main )
      * * Note that this function does not apply the breakpoints, it only keeps them in memory
@@ -158,11 +171,11 @@ public:
      * @brief delete all breakpoints
      */
     void DeleteAllBreakpoints();
-    
+
     /**
      * @brief interrupt the inferior process
      */
-    void Interrupt();
+    void Interrupt(LLDBDebugger::eInterruptReason reason);
 };
 
 #endif // LLDBDEBUGGER_H

@@ -14,7 +14,9 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/dataview.h>
-#include <wx/button.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <wx/toolbar.h>
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -32,19 +34,17 @@ public:
 class LLDBBreakpointsPaneBase : public wxPanel
 {
 protected:
+    wxAuiToolBar* m_auibar;
     wxDataViewListCtrl* m_dvListCtrlBreakpoints;
-    wxButton* m_buttonNew;
-    wxButton* m_buttonDelete;
-    wxButton* m_buttonDeleteAll;
 
 protected:
-    virtual void OnBreakpointActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnNewBreakpoint(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNewBreakpointUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDeleteBreakpoint(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteBreakpointUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDeleteAllBreakpoints(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteAllBreakpointsUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDeleteBreakpoint(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteAllUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBreakpointActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);

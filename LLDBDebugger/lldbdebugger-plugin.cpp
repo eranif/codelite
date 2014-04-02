@@ -53,8 +53,6 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     : IPlugin(manager)
     , m_isRunning(false)
-    , m_canInteract(false)
-    , m_stopReason(0x0)
     , m_callstack(NULL)
     , m_console(NULL)
     , m_breakpointsView(NULL)
@@ -68,7 +66,8 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     m_debugger.Bind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
     m_debugger.Bind(wxEVT_LLDB_RUNNING,                &LLDBDebuggerPlugin::OnLLDBRunning, this);
     m_debugger.Bind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
-
+    m_debugger.Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL,&LLDBDebuggerPlugin::OnLLDBDeletedAllBreakpoints, this);
+    
     // UI events
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBDebuggerPlugin::OnIsDebugger), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStart), NULL, this);
@@ -90,6 +89,7 @@ void LLDBDebuggerPlugin::UnPlug()
     m_debugger.Unbind(wxEVT_LLDB_STOPPED,                &LLDBDebuggerPlugin::OnLLDBStopped, this);
     m_debugger.Unbind(wxEVT_LLDB_RUNNING,                &LLDBDebuggerPlugin::OnLLDBRunning, this);
     m_debugger.Unbind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
+    m_debugger.Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL,&LLDBDebuggerPlugin::OnLLDBDeletedAllBreakpoints, this);
 
     // UI events
     EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBDebuggerPlugin::OnIsDebugger), NULL, this);
@@ -281,8 +281,6 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
 void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
 {
     event.Skip();
-    
-    m_canInteract = true;
     CL_DEBUG(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() );
 
     // Mark the debugger line / file
@@ -300,11 +298,16 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
         SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() );
     }
     
-    // Try and apply any breakpoints if requested
-    if ( m_stopReason & kStopReasonApplyBreakpoints ) {
+    // If the debugger stopped due to user request
+    // perform that action and continue
+    if ( event.GetStopReason() == LLDBDebugger::kInterruptReasonApplyBreakpoints ) {
         CL_DEBUG("Applying breakpoints and continue...");
         m_debugger.ApplyBreakpoints();
-        m_stopReason = kStopReasonNone;
+        m_debugger.Continue();
+
+    } else if ( event.GetStopReason() == LLDBDebugger::kInterruptReasonDeleteAllBreakpoints) {
+        CL_DEBUG("Deleting all breakpoints");
+        m_debugger.DeleteAllBreakpoints();
         m_debugger.Continue();
     }
 }
@@ -375,7 +378,7 @@ void LLDBDebuggerPlugin::OnDebugIsRunning(clDebugEvent& event)
 void LLDBDebuggerPlugin::OnDebugCanInteract(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
-    event.SetAnswer( m_canInteract );
+    event.SetAnswer( m_debugger.CanInteract() );
 }
 
 void LLDBDebuggerPlugin::OnDebugStepIn(clDebugEvent& event)
@@ -484,9 +487,6 @@ void LLDBDebuggerPlugin::InitializeUI()
 void LLDBDebuggerPlugin::OnLLDBRunning(LLDBEvent& event)
 {
     event.Skip();
-    
-    // If the debugger is running - no interaction is available
-    m_canInteract = false;
 
     // When the IDE loses the focus - clear the debugger marker
     ClearDebuggerMarker();
@@ -521,22 +521,25 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
         m_debugger.AddBreakpoint(bp.GetFilename(), bp.GetLineNumber());
 
         // apply it ( does nothing if the debugger is not running )
-        if ( m_canInteract ) {
+        if ( m_debugger.CanInteract() ) {
             m_debugger.ApplyBreakpoints();
             
         } else if ( m_isRunning ) {
             // Interrupt the debugger and the breakpoints will be applied in the "OnLLDBStopped" callback
-            m_debugger.Interrupt();
-            m_stopReason = kStopReasonApplyBreakpoints;
+            m_debugger.Interrupt(LLDBDebugger::kInterruptReasonApplyBreakpoints);
         }
     }
 }
 
 void LLDBDebuggerPlugin::DoCleanup()
 {
-    m_stopReason = 0x0;
     m_isRunning = false;
-    m_canInteract = false;
     ClearDebuggerMarker();
     m_console = NULL;
+}
+
+void LLDBDebuggerPlugin::OnLLDBDeletedAllBreakpoints(LLDBEvent& event)
+{
+    event.Skip();
+    m_mgr->DeleteAllBreakpoints();
 }

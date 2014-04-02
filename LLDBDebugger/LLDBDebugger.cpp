@@ -40,6 +40,8 @@ static void DELETE_CHAR_PTR_PTR(char** argv)
 LLDBDebugger::LLDBDebugger()
     : m_thread(NULL)
     , m_debugeePid(wxNOT_FOUND)
+    , m_interruptReason(kInterruptReasonNone)
+    , m_canInteract(false)
 {
 }
 
@@ -192,20 +194,24 @@ void LLDBDebugger::NotifyBacktrace()
 
 void LLDBDebugger::NotifyStopped()
 {
+    m_canInteract = true;
     lldb::SBThread thread = m_target.GetProcess().GetSelectedThread();
     if ( thread.IsValid() ) {
+        LLDBEvent event(wxEVT_LLDB_STOPPED);
         LLDBBacktrace bt( thread );
         if ( !bt.GetCallstack().empty() ) {
-            LLDBEvent event(wxEVT_LLDB_STOPPED);
             event.SetFileName(bt.GetCallstack().at(0).filename);
             event.SetLinenumber(bt.GetCallstack().at(0).line);
-            AddPendingEvent( event );
         }
+        event.SetStopReason( m_interruptReason );
+        AddPendingEvent( event );
     }
+    m_interruptReason = kInterruptReasonNone;
 }
 
 void LLDBDebugger::NotifyExited()
 {
+    m_canInteract = false;
     wxDELETE(m_thread);
     LLDBEvent event(wxEVT_LLDB_EXITED);
     AddPendingEvent( event );
@@ -335,11 +341,12 @@ void LLDBDebugger::DeleteAllBreakpoints()
         }
         m_breakpoints.erase(m_breakpoints.begin());
     }
-    NotifyBreakpointsUpdated();
+    NotifyAllBreakpointsDeleted();
 }
 
 void LLDBDebugger::Cleanup()
 {
+    m_canInteract = false;
     InvalidateBreakpoints();
     if ( m_target.IsValid() ) {
         m_debugger.DeleteTarget( m_target );
@@ -351,6 +358,7 @@ void LLDBDebugger::Cleanup()
 
 void LLDBDebugger::NotifyRunning()
 {
+    m_canInteract = false;
     LLDBEvent event(wxEVT_LLDB_RUNNING);
     AddPendingEvent( event );
 }
@@ -397,8 +405,15 @@ void LLDBDebugger::NotifyBreakpointsUpdated()
     AddPendingEvent( event );
 }
 
-void LLDBDebugger::Interrupt()
+void LLDBDebugger::Interrupt(LLDBDebugger::eInterruptReason reason)
 {
     CHECK_RUNNING_RET();
+    m_interruptReason = reason;
     m_target.GetProcess().SendAsyncInterrupt();
+}
+
+void LLDBDebugger::NotifyAllBreakpointsDeleted()
+{
+    LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL);
+    AddPendingEvent( event );
 }

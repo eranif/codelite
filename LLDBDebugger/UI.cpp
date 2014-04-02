@@ -56,8 +56,20 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
     
-    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
+    
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
+    
+    boxSizer10->Add(m_auibar, 0, wxEXPAND, 5);
+    
+    m_auibar->AddTool(wxID_NEW, _("New breakpoint"), wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("New breakpoint"), _("New breakpoint"), NULL);
+    
+    m_auibar->AddTool(wxID_DELETE, _("Delete Selected Breakpoint"), wxArtProvider::GetBitmap(wxART_MINUS, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete Selected Breakpoint"), _("Delete Selected Breakpoint"), NULL);
+    
+    m_auibar->AddTool(wxID_CLEAR, _("Delete All Breakpoints"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete All Breakpoints"), _("Delete All Breakpoints"), NULL);
+    m_auibar->Realize();
     
     m_dvListCtrlBreakpoints = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
@@ -67,22 +79,6 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer12 = new wxBoxSizer(wxVERTICAL);
-    
-    boxSizer10->Add(boxSizer12, 0, wxEXPAND, 5);
-    
-    m_buttonNew = new wxButton(this, wxID_NEW, _("New..."), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_buttonNew->SetDefault();
-    
-    boxSizer12->Add(m_buttonNew, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonDelete = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer12->Add(m_buttonDelete, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonDeleteAll = new wxButton(this, wxID_ANY, _("Delete All"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer12->Add(m_buttonDeleteAll, 0, wxALL|wxEXPAND, 5);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -90,24 +86,24 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     }
     Centre(wxBOTH);
     // Connect events
+    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
+    this->Connect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
+    this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAll), NULL, this);
+    this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllUI), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
-    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
-    m_buttonNew->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
-    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
-    m_buttonDeleteAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpoints), NULL, this);
-    m_buttonDeleteAll->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpointsUI), NULL, this);
     
 }
 
 LLDBBreakpointsPaneBase::~LLDBBreakpointsPaneBase()
 {
+    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
+    this->Disconnect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
+    this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAll), NULL, this);
+    this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllUI), NULL, this);
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
-    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpoint), NULL, this);
-    m_buttonNew->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnNewBreakpointUI), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpointUI), NULL, this);
-    m_buttonDeleteAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpoints), NULL, this);
-    m_buttonDeleteAll->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllBreakpointsUI), NULL, this);
     
 }

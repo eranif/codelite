@@ -11,15 +11,8 @@ class ConsoleFrame;
 class LLDBCallStackPane;
 class LLDBDebuggerPlugin : public IPlugin
 {
-    enum {
-        kStopReasonNone             = 0x00000000,
-        kStopReasonApplyBreakpoints = 0x00000001,
-    };
-    
     LLDBDebugger m_debugger;
     bool   m_isRunning;
-    bool   m_canInteract;
-    size_t m_stopReason;
     wxString m_defaultPerspective;
     
     /// ------------------------------------
@@ -64,7 +57,8 @@ protected:
     void OnLLDBStopped(LLDBEvent &event);
     void OnLLDBStoppedOnEntry(LLDBEvent &event);
     void OnLLDBRunning(LLDBEvent &event);
-
+    void OnLLDBDeletedAllBreakpoints(LLDBEvent &event);
+    
 public:    
     //--------------------------------------------
     //Abstract methods

@@ -19,13 +19,13 @@ public:
     void OnBreakpointsUpdated(LLDBEvent &event);
     
 protected:
-    virtual void OnBreakpointActivated(wxDataViewEvent& event);
-    virtual void OnDeleteAllBreakpoints(wxCommandEvent& event);
-    virtual void OnDeleteAllBreakpointsUI(wxUpdateUIEvent& event);
+    virtual void OnDeleteAll(wxCommandEvent& event);
+    virtual void OnDeleteAllUI(wxUpdateUIEvent& event);
     virtual void OnDeleteBreakpoint(wxCommandEvent& event);
     virtual void OnDeleteBreakpointUI(wxUpdateUIEvent& event);
     virtual void OnNewBreakpoint(wxCommandEvent& event);
     virtual void OnNewBreakpointUI(wxUpdateUIEvent& event);
+    virtual void OnBreakpointActivated(wxDataViewEvent& event);
 };
 
 #endif // LLDBBREAKPOINTSPANE_H

@@ -12,6 +12,7 @@
 #include <lldb/API/SBTarget.h>
 #include "file_logger.h"
 #include "lldb/API/SBBreakpointLocation.h"
+#include <wx/utils.h>
 
 #define CHECK_RUNNING_RET_FALSE() if ( !IsValid() ) return false
 #define CHECK_RUNNING_RET() if ( !IsValid() ) return
@@ -38,7 +39,6 @@ static void DELETE_CHAR_PTR_PTR(char** argv)
 
 LLDBDebugger::LLDBDebugger()
     : m_thread(NULL)
-    , m_canInteract(false)
     , m_debugeePid(wxNOT_FOUND)
 {
 }
@@ -395,4 +395,10 @@ void LLDBDebugger::NotifyBreakpointsUpdated()
 {
     LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_UPDATED);
     AddPendingEvent( event );
+}
+
+void LLDBDebugger::Interrupt()
+{
+    CHECK_RUNNING_RET();
+    m_target.GetProcess().SendAsyncInterrupt();
 }

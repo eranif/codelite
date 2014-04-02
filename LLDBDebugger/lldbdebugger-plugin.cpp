@@ -54,6 +54,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     : IPlugin(manager)
     , m_isRunning(false)
     , m_canInteract(false)
+    , m_stopReason(0x0)
     , m_callstack(NULL)
     , m_console(NULL)
     , m_breakpointsView(NULL)
@@ -255,14 +256,12 @@ void LLDBDebuggerPlugin::OnLLDBExited(LLDBEvent& event)
 
     // Perform some cleanup upon exit
     ::CodeLiteBlockSigChild();
-    m_isRunning = false;
-    m_canInteract = false;
-    ClearDebuggerMarker();
-
-    // nullify the console terminal
-    m_console = NULL;
-
+    
+    // Reset various state variables
+    DoCleanup();
+    
     CL_DEBUG("CODELITE>> LLDB exited");
+    
     // Also notify codelite's event
     wxCommandEvent e2(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent( e2 );
@@ -282,18 +281,31 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
 void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
 {
     event.Skip();
-
-    wxFileName fn( event.GetFileName() );
+    
+    m_canInteract = true;
     CL_DEBUG(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() );
-    if ( fn.FileExists() ) {
-        if ( m_mgr->OpenFile( fn.GetFullPath(), "", event.GetLinenumber() ) ) {
-            IEditor* editor = m_mgr->GetActiveEditor();
-            if ( editor ) {
-                editor->GetSTC()->ScrollToLine( event.GetLinenumber() );
-                ClearDebuggerMarker();
-                SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() );
-            }
+
+    // Mark the debugger line / file
+    IEditor *editor = m_mgr->FindEditor( event.GetFileName() );
+    if ( !editor && wxFileName::Exists(event.GetFileName()) ) {
+        // Try to open the editor
+        if ( m_mgr->OpenFile(event.GetFileName(), "", event.GetLinenumber()) ) {
+            editor = m_mgr->GetActiveEditor();
         }
+    }
+    
+    if ( editor ) {
+        m_mgr->SelectPage( editor->GetSTC() );
+        ClearDebuggerMarker();
+        SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() );
+    }
+    
+    // Try and apply any breakpoints if requested
+    if ( m_stopReason & kStopReasonApplyBreakpoints ) {
+        CL_DEBUG("Applying breakpoints and continue...");
+        m_debugger.ApplyBreakpoints();
+        m_stopReason = kStopReasonNone;
+        m_debugger.Continue();
     }
 }
 
@@ -363,7 +375,7 @@ void LLDBDebuggerPlugin::OnDebugIsRunning(clDebugEvent& event)
 void LLDBDebuggerPlugin::OnDebugCanInteract(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
-    event.SetAnswer( m_debugger.IsCanInteract() );
+    event.SetAnswer( m_canInteract );
 }
 
 void LLDBDebuggerPlugin::OnDebugStepIn(clDebugEvent& event)
@@ -472,6 +484,10 @@ void LLDBDebuggerPlugin::InitializeUI()
 void LLDBDebuggerPlugin::OnLLDBRunning(LLDBEvent& event)
 {
     event.Skip();
+    
+    // If the debugger is running - no interaction is available
+    m_canInteract = false;
+
     // When the IDE loses the focus - clear the debugger marker
     ClearDebuggerMarker();
 
@@ -487,7 +503,7 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
     // check to see if we are removing a breakpoint or adding one
     LLDBBreakpoint bp(event.GetFileName(), event.GetInt());
     IEditor * editor = m_mgr->GetActiveEditor();
-
+    
     if ( editor ) {
         // get the marker type set on the line
         int markerType = editor->GetSTC()->MarkerGet(bp.GetLineNumber()-1);
@@ -505,6 +521,22 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
         m_debugger.AddBreakpoint(bp.GetFilename(), bp.GetLineNumber());
 
         // apply it ( does nothing if the debugger is not running )
-        m_debugger.ApplyBreakpoints();
+        if ( m_canInteract ) {
+            m_debugger.ApplyBreakpoints();
+            
+        } else if ( m_isRunning ) {
+            // Interrupt the debugger and the breakpoints will be applied in the "OnLLDBStopped" callback
+            m_debugger.Interrupt();
+            m_stopReason = kStopReasonApplyBreakpoints;
+        }
     }
+}
+
+void LLDBDebuggerPlugin::DoCleanup()
+{
+    m_stopReason = 0x0;
+    m_isRunning = false;
+    m_canInteract = false;
+    ClearDebuggerMarker();
+    m_console = NULL;
 }

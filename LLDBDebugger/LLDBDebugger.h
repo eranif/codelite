@@ -30,7 +30,6 @@ class LLDBDebugger : public wxEvtHandler
 
     lldb::SBDebugger m_debugger;
     lldb::SBTarget   m_target;
-    bool             m_canInteract;
     wxString         m_tty;
     LLDBBreakpoint::Vec_t m_breakpoints;
     LLDBDebuggerThread *m_thread;
@@ -66,12 +65,7 @@ public:
     const wxString& GetTty() const {
         return m_tty;
     }
-    void SetCanInteract(bool canInteract) {
-        this->m_canInteract = canInteract;
-    }
-    bool IsCanInteract() const {
-        return m_canInteract;
-    }
+    
     /**
      * @brief return list of all breakpoints
      */
@@ -164,6 +158,11 @@ public:
      * @brief delete all breakpoints
      */
     void DeleteAllBreakpoints();
+    
+    /**
+     * @brief interrupt the inferior process
+     */
+    void Interrupt();
 };
 
 #endif // LLDBDEBUGGER_H

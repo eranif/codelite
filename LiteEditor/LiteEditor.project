@@ -1317,7 +1317,7 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <Target Name="cmake">cd build-release &amp;&amp; cmake -G "Unix Makefiles" -DWITH_PCH=1 -DWITH_WXC=1 -DWITH_MYSQL=1 ..</Target>
+        <Target Name="cmake">cd build-release &amp;&amp; cmake -DWITH_PCH=1 -DWITH_WXC=1 -DWITH_MYSQL=1 .. -DMAKE_DEB=1 -DCOPY_WX_LIBS=1</Target>
         <RebuildCommand>cd build-release &amp;&amp; make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>cd build-release &amp;&amp; make clean</CleanCommand>
         <BuildCommand>cd build-release &amp;&amp; make -e -j 8</BuildCommand>
@@ -1331,7 +1331,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

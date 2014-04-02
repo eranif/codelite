@@ -472,7 +472,7 @@ public:
      * @brief set breakpoints (override any existing breakpoints)
      * this function also refreshes the editors markers
      */
-    virtual void SetBreakpoints(BreakpointInfo::Vec_t& breakpoints) = 0;
+    virtual void SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints) = 0;
 };
 
 #endif //IMANAGER_H

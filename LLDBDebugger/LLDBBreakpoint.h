@@ -42,7 +42,9 @@ public:
     LLDBBreakpoint() : m_id(wxNOT_FOUND), m_type(kInvalid), m_lineNumber(wxNOT_FOUND) {}
     LLDBBreakpoint(const wxString &name);
     LLDBBreakpoint(const wxFileName& filename, int line);
+    LLDBBreakpoint(const LLDBBreakpoint& other);
     bool operator==(const LLDBBreakpoint& other) const;
+    LLDBBreakpoint& operator=(const LLDBBreakpoint& other);
     virtual ~LLDBBreakpoint();
     
     /**
@@ -54,6 +56,11 @@ public:
      * @param breakpoints
      */
     static LLDBBreakpoint::Vec_t FromBreakpointInfoVector(const BreakpointInfo::Vec_t& breakpoints);
+    
+    /**
+     * @brief return a string representation for this breakpoint
+     */
+    wxString ToString() const;
     
     bool IsApplied() const {
         return m_id != wxNOT_FOUND;

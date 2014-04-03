@@ -333,6 +333,17 @@ void LLDBDebugger::DeleteBreakpoint(const LLDBBreakpoint& breakpoint)
     DoDeleteBreakpoint( breakpoint );
 }
 
+void LLDBDebugger::DeleteBreakpoints(const LLDBBreakpoint::Vec_t& bps)
+{
+    m_pendingDeletionBps.insert(m_pendingDeletionBps.end(), bps.begin(), bps.end());
+    if ( CanInteract() ) {
+        DoDeletePendingDeletionBreakpoints();
+        
+    } else {
+        Interrupt(kInterruptReasonDeleteBreakpoints);
+    }
+}
+
 void LLDBDebugger::DeleteAllBreakpoints()
 {
     while ( !m_breakpoints.empty() ) {
@@ -347,6 +358,8 @@ void LLDBDebugger::DeleteAllBreakpoints()
 void LLDBDebugger::Cleanup()
 {
     m_canInteract = false;
+    m_pendingDeletionBps.clear();
+    
     InvalidateBreakpoints();
     if ( m_target.IsValid() ) {
         m_debugger.DeleteTarget( m_target );
@@ -389,6 +402,7 @@ void LLDBDebugger::DoDeleteBreakpoint(const LLDBBreakpoint& bp)
 {
     LLDBBreakpoint::Vec_t::iterator iter = std::find( m_breakpoints.begin(), m_breakpoints.end(), bp );
     if ( iter != m_breakpoints.end() ) {
+        CL_DEBUG("Deleting breakpoint: " + iter->ToString());
         // If the debugger is active and the breakpoint was applied, delete it
         if ( iter->IsApplied() && m_debugger.IsValid() && m_target.IsValid() ) {
             m_target.BreakpointDelete( iter->GetId() );
@@ -416,4 +430,32 @@ void LLDBDebugger::NotifyAllBreakpointsDeleted()
 {
     LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL);
     AddPendingEvent( event );
+}
+
+void LLDBDebugger::DoDeletePendingDeletionBreakpoints()
+{
+    if ( m_pendingDeletionBps.empty() )
+        return;
+
+
+    while ( !m_pendingDeletionBps.empty() ) {
+        LLDBBreakpoint bp = *m_pendingDeletionBps.begin();
+        LLDBBreakpoint::Vec_t::iterator iter = std::find( m_breakpoints.begin(), m_breakpoints.end(), bp );
+        if ( iter != m_breakpoints.end() ) {
+            CL_DEBUG("Deleting breakpoint: " + bp.ToString());
+            // If the debugger is active and the breakpoint was applied, delete it
+            if ( iter->IsApplied() && m_debugger.IsValid() && m_target.IsValid() ) {
+                m_target.BreakpointDelete( iter->GetId() );
+            }
+            // and remove it from the list of breakpoints
+            m_breakpoints.erase( iter );
+        }
+        m_pendingDeletionBps.erase(m_pendingDeletionBps.begin());
+    }
+    NotifyBreakpointsUpdated();
+}
+
+void LLDBDebugger::DeletePendingDeletionBreakpoints()
+{
+    DoDeletePendingDeletionBreakpoints();
 }

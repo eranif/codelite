@@ -67,6 +67,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     m_debugger.Bind(wxEVT_LLDB_RUNNING,                &LLDBDebuggerPlugin::OnLLDBRunning, this);
     m_debugger.Bind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
     m_debugger.Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL,&LLDBDebuggerPlugin::OnLLDBDeletedAllBreakpoints, this);
+    m_debugger.Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED,    &LLDBDebuggerPlugin::OnLLDBBreakpointsUpdated, this);
     
     // UI events
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBDebuggerPlugin::OnIsDebugger), NULL, this);
@@ -90,7 +91,8 @@ void LLDBDebuggerPlugin::UnPlug()
     m_debugger.Unbind(wxEVT_LLDB_RUNNING,                &LLDBDebuggerPlugin::OnLLDBRunning, this);
     m_debugger.Unbind(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY, &LLDBDebuggerPlugin::OnLLDBStoppedOnEntry, this);
     m_debugger.Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL,&LLDBDebuggerPlugin::OnLLDBDeletedAllBreakpoints, this);
-
+    m_debugger.Unbind(wxEVT_LLDB_BREAKPOINTS_UPDATED,    &LLDBDebuggerPlugin::OnLLDBBreakpointsUpdated, this);
+    
     // UI events
     EventNotifier::Get()->Disconnect(wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEventHandler(LLDBDebuggerPlugin::OnIsDebugger), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_START_OR_CONT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStart), NULL, this);
@@ -308,6 +310,11 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
     } else if ( event.GetStopReason() == LLDBDebugger::kInterruptReasonDeleteAllBreakpoints) {
         CL_DEBUG("Deleting all breakpoints");
         m_debugger.DeleteAllBreakpoints();
+        m_debugger.Continue();
+        
+    } else if ( event.GetStopReason() == LLDBDebugger::kInterruptReasonDeleteBreakpoints ) {
+        CL_DEBUG("Deleting all pending deletion breakpoints");
+        m_debugger.DeletePendingDeletionBreakpoints();
         m_debugger.Continue();
     }
 }
@@ -542,4 +549,12 @@ void LLDBDebuggerPlugin::OnLLDBDeletedAllBreakpoints(LLDBEvent& event)
 {
     event.Skip();
     m_mgr->DeleteAllBreakpoints();
+}
+
+void LLDBDebuggerPlugin::OnLLDBBreakpointsUpdated(LLDBEvent& event)
+{
+    event.Skip();
+    // update the ui (mainly editors)
+    // this is done by replacing the breakpoints list with a new one (the updated one we take from LLDB)
+    m_mgr->SetBreakpoints( LLDBBreakpoint::ToBreakpointInfoVector( m_debugger.GetBreakpoints()) );
 }

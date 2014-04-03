@@ -31,6 +31,7 @@ public:
         kInterruptReasonNone,
         kInterruptReasonApplyBreakpoints,
         kInterruptReasonDeleteAllBreakpoints,
+        kInterruptReasonDeleteBreakpoints,
     };
     friend class LLDBDebuggerThread;
 
@@ -39,6 +40,7 @@ protected:
     lldb::SBTarget   m_target;
     wxString         m_tty;
     LLDBBreakpoint::Vec_t m_breakpoints;
+    LLDBBreakpoint::Vec_t m_pendingDeletionBps;
     LLDBDebuggerThread *m_thread;
     int                 m_debugeePid;
     eInterruptReason    m_interruptReason;
@@ -60,7 +62,8 @@ protected:
     bool IsValid() const;
     void DoAddBreakpoint(const LLDBBreakpoint& bp);
     void DoDeleteBreakpoint(const LLDBBreakpoint& bp);
-
+    void DoDeletePendingDeletionBreakpoints();
+    
 public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
@@ -166,7 +169,17 @@ public:
      * @brief delete a breakpoint. The breakpoint is removed from the debugger and from the list
      */
     void DeleteBreakpoint(const LLDBBreakpoint& breakpoint);
-
+    
+    /**
+     * @brief delete an array of breakpoints
+     */
+    void DeleteBreakpoints(const LLDBBreakpoint::Vec_t& bps);
+    
+    /**
+     * @brief remove all breakpoints that are pending deletion
+     */
+    void DeletePendingDeletionBreakpoints();
+    
     /**
      * @brief delete all breakpoints
      */

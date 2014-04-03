@@ -23,12 +23,30 @@ LLDBBreakpoint::LLDBBreakpoint(const wxString& name)
 {
 }
 
+LLDBBreakpoint::LLDBBreakpoint(const LLDBBreakpoint& other)
+{
+    *this = other;
+}
+
 bool LLDBBreakpoint::operator==(const LLDBBreakpoint& other) const 
 {
     return  m_type == other.m_type &&
             m_name == other.m_name &&
             m_filename == other.m_filename &&
             m_lineNumber == other.m_lineNumber;
+}
+
+LLDBBreakpoint& LLDBBreakpoint::operator=(const LLDBBreakpoint& other)
+{
+    if ( &other == this ) 
+        return *this;
+
+    m_id = other.m_id;
+    m_type = other.m_type;
+    m_name = other.m_name;
+    m_filename = other.m_filename;
+    m_lineNumber = other.m_lineNumber;
+    return *this;
 }
 
 LLDBBreakpoint::Vec_t LLDBBreakpoint::FromBreakpointInfoVector(const BreakpointInfo::Vec_t& breakpoints)
@@ -125,4 +143,16 @@ JSONElement LLDBBreakpoint::ToJSON() const
     element.addProperty("m_filename", m_filename);
     element.addProperty("m_lineNumber", m_lineNumber);
     return element;
+}
+
+wxString LLDBBreakpoint::ToString() const
+{
+    wxString str;
+    if ( GetType() == kFileLine ) {
+        str << "Normal breakpoint. " << GetFilename() << "," << GetLineNumber();
+    } else if ( GetType() == kFunction ) {
+        str << "Normal breakpoint. " << GetName() << "()";
+    }
+    
+    return str;
 }

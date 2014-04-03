@@ -23,6 +23,11 @@ void LLDBBreakpointsPane::OnBreakpointActivated(wxDataViewEvent& event)
 
 void LLDBBreakpointsPane::Clear()
 {
+    // free all user data from the list
+    for(size_t i=0; i<m_dvListCtrlBreakpoints->GetItemCount(); ++i) {
+        LLDBBreakpoint* bp = GetBreakpoint( m_dvListCtrlBreakpoints->RowToItem(i) );
+        wxDELETE( bp );
+    }
     m_dvListCtrlBreakpoints->DeleteAllItems();
 }
 
@@ -37,7 +42,7 @@ void LLDBBreakpointsPane::Initialize()
         cols.push_back( bp.GetFilename() );
         cols.push_back( wxString() << bp.GetLineNumber() );
         cols.push_back( bp.GetName() );
-        m_dvListCtrlBreakpoints->AppendItem( cols );
+        m_dvListCtrlBreakpoints->AppendItem( cols, (wxUIntPtr)new LLDBBreakpoint(bp) );
     }
 }
 
@@ -73,8 +78,26 @@ void LLDBBreakpointsPane::OnDeleteAllUI(wxUpdateUIEvent& event)
 
 void LLDBBreakpointsPane::OnDeleteBreakpoint(wxCommandEvent& event)
 {
+    // get the breakpoint we want to delete
+    LLDBBreakpoint::Vec_t bps;
+    wxDataViewItemArray items;
+    m_dvListCtrlBreakpoints->GetSelections( items );
+    for(size_t i=0; i<items.GetCount(); ++i) {
+        bps.push_back( *GetBreakpoint( items.Item(i) ) );
+    }
+    
+    if ( !bps.empty() ) {
+        m_lldb->DeleteBreakpoints( bps );
+    }
 }
 
 void LLDBBreakpointsPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
 {
+    event.Enable( m_dvListCtrlBreakpoints->GetSelectedItemsCount() );
+}
+
+LLDBBreakpoint* LLDBBreakpointsPane::GetBreakpoint(const wxDataViewItem& item)
+{
+    LLDBBreakpoint* bp = reinterpret_cast<LLDBBreakpoint*>(m_dvListCtrlBreakpoints->GetItemData( item ));
+    return bp;
 }

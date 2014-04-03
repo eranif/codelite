@@ -3,6 +3,7 @@
 
 #include "UI.h"
 #include "LLDBEvent.h"
+#include "LLDBBreakpoint.h"
 
 class LLDBDebugger;
 class LLDBBreakpointsPane : public LLDBBreakpointsPaneBase
@@ -17,6 +18,7 @@ public:
     
     // Event handlers
     void OnBreakpointsUpdated(LLDBEvent &event);
+    LLDBBreakpoint* GetBreakpoint(const wxDataViewItem& item);
     
 protected:
     virtual void OnDeleteAll(wxCommandEvent& event);

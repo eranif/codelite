@@ -71,7 +71,7 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     m_auibar->AddTool(wxID_CLEAR, _("Delete All Breakpoints"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete All Breakpoints"), _("Delete All Breakpoints"), NULL);
     m_auibar->Realize();
     
-    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
     
     boxSizer10->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, 5);
     

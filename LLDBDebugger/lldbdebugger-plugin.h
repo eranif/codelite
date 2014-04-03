@@ -58,6 +58,7 @@ protected:
     void OnLLDBStoppedOnEntry(LLDBEvent &event);
     void OnLLDBRunning(LLDBEvent &event);
     void OnLLDBDeletedAllBreakpoints(LLDBEvent &event);
+    void OnLLDBBreakpointsUpdated(LLDBEvent &event);
     
 public:    
     //--------------------------------------------

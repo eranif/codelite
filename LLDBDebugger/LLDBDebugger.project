@@ -173,5 +173,7 @@
     <File Name="LLDBCallStack.h"/>
     <File Name="LLDBBreakpointsPane.h"/>
     <File Name="LLDBBreakpointsPane.cpp"/>
+    <File Name="LLDBNewBreakpointDlg.h"/>
+    <File Name="LLDBNewBreakpointDlg.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

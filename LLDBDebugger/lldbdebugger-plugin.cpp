@@ -506,7 +506,8 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
 {
     // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serilization in the session file )
     event.Skip();
-
+    CHECK_IS_LLDB_SESSION();
+    
     // check to see if we are removing a breakpoint or adding one
     LLDBBreakpoint bp(event.GetFileName(), event.GetInt());
     IEditor * editor = m_mgr->GetActiveEditor();
@@ -517,12 +518,13 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
         for (size_t type=smt_FIRST_BP_TYPE; type <= smt_LAST_BP_TYPE; ++type) {
             int markerMask = ( 1 << type );
             if ( markerType & markerMask ) {
-                // removing a breakpoint
+                // removing a breakpoint. "DeleteBreakpoint" will handle the interactive/non-interactive mode 
+                // of the debugger
                 m_debugger.DeleteBreakpoint( bp );
                 return;
             }
         }
-        
+
         // if we got here, its a new breakpoint, add it
         // Add the breakpoint to the list of breakpoints
         m_debugger.AddBreakpoint(bp.GetFilename(), bp.GetLineNumber());
@@ -557,4 +559,15 @@ void LLDBDebuggerPlugin::OnLLDBBreakpointsUpdated(LLDBEvent& event)
     // update the ui (mainly editors)
     // this is done by replacing the breakpoints list with a new one (the updated one we take from LLDB)
     m_mgr->SetBreakpoints( LLDBBreakpoint::ToBreakpointInfoVector( m_debugger.GetBreakpoints()) );
+}
+
+void LLDBDebuggerPlugin::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    m_debugger.Clear();
+}
+
+void LLDBDebuggerPlugin::OnWorkspaceLoaded(wxCommandEvent& event)
+{
+    event.Skip();
 }

@@ -156,3 +156,16 @@ wxString LLDBBreakpoint::ToString() const
     
     return str;
 }
+
+bool LLDBBreakpoint::IsValid() const
+{
+    switch ( GetType() ) {
+    case kFileLine:
+        return m_lineNumber != wxNOT_FOUND && !m_filename.IsEmpty();
+    case kFunction:
+        return !m_name.IsEmpty();
+    case kInvalid:
+    default:
+        return false;
+    }
+}

@@ -17,6 +17,7 @@ LLDBDebuggerThread::~LLDBDebuggerThread()
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
     }
+    CL_DEBUG("LLDB>> Process Thread Exited");
 }
 
 void* LLDBDebuggerThread::Entry()

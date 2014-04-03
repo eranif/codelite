@@ -1,6 +1,8 @@
 #include "LLDBBreakpointsPane.h"
 #include "LLDBBreakpoint.h"
 #include "LLDBDebugger.h"
+#include "event_notifier.h"
+#include "LLDBNewBreakpointDlg.h"
 
 LLDBBreakpointsPane::LLDBBreakpointsPane(wxWindow* parent, LLDBDebugger* lldb)
     : LLDBBreakpointsPaneBase(parent)
@@ -54,6 +56,26 @@ void LLDBBreakpointsPane::OnBreakpointsUpdated(LLDBEvent& event)
 
 void LLDBBreakpointsPane::OnNewBreakpoint(wxCommandEvent& event)
 {
+    LLDBNewBreakpointDlg dlg(EventNotifier::Get()->TopFrame());
+    if ( dlg.ShowModal() == wxID_OK ) {
+        LLDBBreakpoint bp = dlg.GetBreakpoint();
+        if ( bp.IsValid() ) {
+
+            // Add the breakpoint
+            LLDBBreakpoint::Vec_t bps;
+            bps.push_back( bp );
+            m_lldb->AddBreakpoints( bps );
+            
+            // If we can't interact with the debugger atm, interrupt it
+            if ( !m_lldb->CanInteract() ) {
+                m_lldb->Interrupt(LLDBDebugger::kInterruptReasonApplyBreakpoints);
+                
+            } else {
+                // Apply the breakpoints now
+                m_lldb->ApplyBreakpoints();
+            }
+        }
+    }
 }
 
 void LLDBBreakpointsPane::OnNewBreakpointUI(wxUpdateUIEvent& event)

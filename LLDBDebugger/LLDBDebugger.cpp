@@ -172,6 +172,7 @@ bool LLDBDebugger::IsValid() const
 
 void LLDBDebugger::Stop(bool notifyExit)
 {
+    // Abort the current debug session
     wxDELETE(m_thread);
     m_target.GetProcess().Kill();
     Cleanup();
@@ -330,7 +331,13 @@ bool LLDBDebugger::IsBreakpointExists(const LLDBBreakpoint& bp) const
 
 void LLDBDebugger::DeleteBreakpoint(const LLDBBreakpoint& breakpoint)
 {
-    DoDeleteBreakpoint( breakpoint );
+    m_pendingDeletionBps.push_back( breakpoint );
+    if ( CanInteract() ) {
+        DoDeletePendingDeletionBreakpoints();
+        
+    } else {
+        Interrupt(kInterruptReasonDeleteBreakpoints);
+    }
 }
 
 void LLDBDebugger::DeleteBreakpoints(const LLDBBreakpoint::Vec_t& bps)
@@ -359,7 +366,9 @@ void LLDBDebugger::Cleanup()
 {
     m_canInteract = false;
     m_pendingDeletionBps.clear();
+    m_interruptReason = kInterruptReasonNone;
     
+    wxDELETE(m_thread);
     InvalidateBreakpoints();
     if ( m_target.IsValid() ) {
         m_debugger.DeleteTarget( m_target );
@@ -395,21 +404,6 @@ void LLDBDebugger::DoAddBreakpoint(const LLDBBreakpoint& bp)
 {
     m_breakpoints.push_back( bp );
     // Notify about breakpoint added
-    NotifyBreakpointsUpdated();
-}
-
-void LLDBDebugger::DoDeleteBreakpoint(const LLDBBreakpoint& bp)
-{
-    LLDBBreakpoint::Vec_t::iterator iter = std::find( m_breakpoints.begin(), m_breakpoints.end(), bp );
-    if ( iter != m_breakpoints.end() ) {
-        CL_DEBUG("Deleting breakpoint: " + iter->ToString());
-        // If the debugger is active and the breakpoint was applied, delete it
-        if ( iter->IsApplied() && m_debugger.IsValid() && m_target.IsValid() ) {
-            m_target.BreakpointDelete( iter->GetId() );
-        }
-        // and remove it from the list of breakpoints
-        m_breakpoints.erase( iter );
-    }
     NotifyBreakpointsUpdated();
 }
 
@@ -458,4 +452,10 @@ void LLDBDebugger::DoDeletePendingDeletionBreakpoints()
 void LLDBDebugger::DeletePendingDeletionBreakpoints()
 {
     DoDeletePendingDeletionBreakpoints();
+}
+
+void LLDBDebugger::Clear()
+{
+    Cleanup();
+    m_breakpoints.clear();
 }

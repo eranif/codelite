@@ -40,6 +40,10 @@ private:
     void DoCleanup();
     
 protected:
+    // Other codelite events
+    void OnWorkspaceLoaded(wxCommandEvent &event);
+    void OnWorkspaceClosed(wxCommandEvent &event);
+    
     // UI debugger events
     void OnIsDebugger(clDebugEvent& event);
     void OnDebugStart(clDebugEvent& event);

@@ -66,6 +66,11 @@ public:
         return m_id != wxNOT_FOUND;
     }
     
+    /**
+     * @brief return true if this is a valid breakpoint
+     */
+    bool IsValid() const;
+    
     void Invalidate() {
         m_id = wxNOT_FOUND;
     }

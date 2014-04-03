@@ -61,7 +61,6 @@ protected:
     void Cleanup();
     bool IsValid() const;
     void DoAddBreakpoint(const LLDBBreakpoint& bp);
-    void DoDeleteBreakpoint(const LLDBBreakpoint& bp);
     void DoDeletePendingDeletionBreakpoints();
     
 public:
@@ -69,6 +68,12 @@ public:
     virtual ~LLDBDebugger();
 
     bool IsBreakpointExists(const LLDBBreakpoint& bp) const;
+    
+    /**
+     * @brief clear all states/cached breakpoints etc
+     */
+    void Clear();
+    
     int GetDebugeePid() const {
         return m_debugeePid;
     }
@@ -111,7 +116,7 @@ public:
      * @brief stop the debugger
      */
     void Stop(bool notifyExit);
-
+    
     /**
      * @brief resume execution until exit or next breakpoint is hit (or crash...)
      */

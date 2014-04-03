@@ -17,6 +17,11 @@
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/checkbox.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -49,6 +54,30 @@ protected:
 public:
     LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBBreakpointsPaneBase();
+};
+
+
+class LLDBNewBreakpointDlgBase : public wxDialog
+{
+protected:
+    wxCheckBox* m_checkBoxFileLine;
+    wxTextCtrl* m_textCtrlFile;
+    wxTextCtrl* m_textCtrlLine;
+    wxCheckBox* m_checkBoxFuncName;
+    wxTextCtrl* m_textCtrlFunctionName;
+    wxStdDialogButtonSizer* m_stdBtnSizer34;
+    wxButton* m_button36;
+    wxButton* m_button38;
+
+protected:
+    virtual void OnCheckFileAndLine(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFileLineEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCheckFuncName(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFuncNameUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Breakpoint"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~LLDBNewBreakpointDlgBase();
 };
 
 #endif

@@ -288,6 +288,10 @@ void LLDBDebugger::ApplyBreakpoints()
                     for(size_t i=0; i<bp.GetNumLocations(); ++i) {
                         LLDBBreakpoint new_bp = breakPoint;
                         lldb::SBBreakpointLocation loc = bp.GetLocationAtIndex(i);
+                        lldb::SBFileSpec fileLoc = loc.GetAddress().GetLineEntry().GetFileSpec();
+                        wxFileName bpFile( fileLoc.GetDirectory(), fileLoc.GetFilename() );
+                        new_bp.SetFilename( bpFile.GetFullPath() );
+                        new_bp.SetLineNumber( loc.GetAddress().GetLineEntry().GetLine() );
                         new_bp.SetId( loc.GetID() );
                         updatedList.push_back( new_bp );
                         CL_DEBUG("Successfully placed breakpoint at " + new_bp.GetName());

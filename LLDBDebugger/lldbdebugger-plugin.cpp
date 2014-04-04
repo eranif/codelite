@@ -486,7 +486,7 @@ void LLDBDebuggerPlugin::InitializeUI()
     }
     
     if ( !m_breakpointsView ) {
-        m_breakpointsView = new LLDBBreakpointsPane(EventNotifier::Get()->TopFrame(), &m_debugger);
+        m_breakpointsView = new LLDBBreakpointsPane(EventNotifier::Get()->TopFrame(), this);
         m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo().Bottom().Position(1).CloseButton().Caption("Breakpoints").Name(LLDB_BREAKPOINTS_PANE_NAME));
     }
 }

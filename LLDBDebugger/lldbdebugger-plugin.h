@@ -25,7 +25,15 @@ class LLDBDebuggerPlugin : public IPlugin
 public:
     LLDBDebuggerPlugin(IManager *manager);
     ~LLDBDebuggerPlugin();
-
+    
+    LLDBDebugger* GetLLDB() {
+        return &m_debugger;
+    }
+    
+    IManager* GetManager() {
+        return m_mgr;
+    }
+    
 private:
     void ShowTerminal(const wxString& title);
     

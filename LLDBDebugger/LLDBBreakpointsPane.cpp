@@ -3,10 +3,13 @@
 #include "LLDBDebugger.h"
 #include "event_notifier.h"
 #include "LLDBNewBreakpointDlg.h"
+#include "lldbdebugger-plugin.h"
+#include "ieditor.h"
 
-LLDBBreakpointsPane::LLDBBreakpointsPane(wxWindow* parent, LLDBDebugger* lldb)
+LLDBBreakpointsPane::LLDBBreakpointsPane(wxWindow* parent, LLDBDebuggerPlugin* plugin)
     : LLDBBreakpointsPaneBase(parent)
-    , m_lldb(lldb)
+    , m_plugin(plugin)
+    , m_lldb(plugin->GetLLDB())
 {
     Initialize();
     m_lldb->Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
@@ -21,6 +24,8 @@ LLDBBreakpointsPane::~LLDBBreakpointsPane()
 
 void LLDBBreakpointsPane::OnBreakpointActivated(wxDataViewEvent& event)
 {
+    event.Skip();
+    CallAfter( &LLDBBreakpointsPane::GotoBreakpoint, GetBreakpoint(event.GetItem()));
 }
 
 void LLDBBreakpointsPane::Clear()
@@ -80,6 +85,7 @@ void LLDBBreakpointsPane::OnNewBreakpoint(wxCommandEvent& event)
 
 void LLDBBreakpointsPane::OnNewBreakpointUI(wxUpdateUIEvent& event)
 {
+    event.Enable(true);
 }
 
 void LLDBBreakpointsPane::OnDeleteAll(wxCommandEvent& event)
@@ -122,4 +128,18 @@ LLDBBreakpoint* LLDBBreakpointsPane::GetBreakpoint(const wxDataViewItem& item)
 {
     LLDBBreakpoint* bp = reinterpret_cast<LLDBBreakpoint*>(m_dvListCtrlBreakpoints->GetItemData( item ));
     return bp;
+}
+
+void LLDBBreakpointsPane::GotoBreakpoint(LLDBBreakpoint* bp)
+{
+    if ( !bp ) return;
+    wxFileName fileLoc(bp->GetFilename());
+    if ( fileLoc.Exists() ) {
+        if ( m_plugin->GetManager()->OpenFile(fileLoc.GetFullPath(), "", bp->GetLineNumber()-1) ) {
+            IEditor* editor = m_plugin->GetManager()->GetActiveEditor();
+            if ( editor ) {
+                editor->SetActive();
+            }
+        }
+    }
 }

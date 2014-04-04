@@ -6,11 +6,14 @@
 #include "LLDBBreakpoint.h"
 
 class LLDBDebugger;
+class LLDBDebuggerPlugin;
 class LLDBBreakpointsPane : public LLDBBreakpointsPaneBase
 {
+    LLDBDebuggerPlugin *m_plugin;
     LLDBDebugger* m_lldb;
+    
 public:
-    LLDBBreakpointsPane(wxWindow* parent, LLDBDebugger* lldb);
+    LLDBBreakpointsPane(wxWindow* parent, LLDBDebuggerPlugin *plugin);
     virtual ~LLDBBreakpointsPane();
     
     void Initialize();
@@ -19,6 +22,8 @@ public:
     // Event handlers
     void OnBreakpointsUpdated(LLDBEvent &event);
     LLDBBreakpoint* GetBreakpoint(const wxDataViewItem& item);
+protected:
+    void GotoBreakpoint(LLDBBreakpoint* bp);
     
 protected:
     virtual void OnDeleteAll(wxCommandEvent& event);

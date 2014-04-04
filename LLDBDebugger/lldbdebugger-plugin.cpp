@@ -509,12 +509,12 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
     CHECK_IS_LLDB_SESSION();
     
     // check to see if we are removing a breakpoint or adding one
-    LLDBBreakpoint bp(event.GetFileName(), event.GetInt());
+    LLDBBreakpoint::Ptr_t bp( new LLDBBreakpoint(event.GetFileName(), event.GetInt() ) );
     IEditor * editor = m_mgr->GetActiveEditor();
     
     if ( editor ) {
         // get the marker type set on the line
-        int markerType = editor->GetSTC()->MarkerGet(bp.GetLineNumber()-1);
+        int markerType = editor->GetSTC()->MarkerGet(bp->GetLineNumber()-1);
         for (size_t type=smt_FIRST_BP_TYPE; type <= smt_LAST_BP_TYPE; ++type) {
             int markerMask = ( 1 << type );
             if ( markerType & markerMask ) {
@@ -527,7 +527,7 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
 
         // if we got here, its a new breakpoint, add it
         // Add the breakpoint to the list of breakpoints
-        m_debugger.AddBreakpoint(bp.GetFilename(), bp.GetLineNumber());
+        m_debugger.AddBreakpoint(bp->GetFilename(), bp->GetLineNumber());
 
         // apply it ( does nothing if the debugger is not running )
         if ( m_debugger.CanInteract() ) {

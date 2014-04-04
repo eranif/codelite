@@ -17,6 +17,7 @@
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
+#include "lldbbreakpointmodel.h"
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/checkbox.h>
@@ -40,7 +41,9 @@ class LLDBBreakpointsPaneBase : public wxPanel
 {
 protected:
     wxAuiToolBar* m_auibar;
-    wxDataViewListCtrl* m_dvListCtrlBreakpoints;
+    wxDataViewCtrl* m_dataview;
+    wxObjectDataPtr<LLDBBreakpointModel> m_dataviewModel;
+
 
 protected:
     virtual void OnNewBreakpoint(wxCommandEvent& event) { event.Skip(); }

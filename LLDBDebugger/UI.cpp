@@ -71,14 +71,18 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     m_auibar->AddTool(wxID_CLEAR, _("Delete All Breakpoints"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete All Breakpoints"), _("Delete All Breakpoints"), NULL);
     m_auibar->Realize();
     
-    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer10->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, 5);
+    m_dataviewModel = new LLDBBreakpointModel;
+    m_dataviewModel->SetColCount( 4 );
+    m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    boxSizer10->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
+    
+    m_dataview->AppendTextColumn(_("#"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("File"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Line"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {
@@ -92,7 +96,7 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAll), NULL, this);
     this->Connect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllUI), NULL, this);
-    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
+    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
     
 }
 
@@ -104,7 +108,7 @@ LLDBBreakpointsPaneBase::~LLDBBreakpointsPaneBase()
     this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteBreakpoint), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBBreakpointsPaneBase::OnDeleteAll), NULL, this);
     this->Disconnect(wxID_CLEAR, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBBreakpointsPaneBase::OnDeleteAllUI), NULL, this);
-    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
+    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBBreakpointsPaneBase::OnBreakpointActivated), NULL, this);
     
 }
 

@@ -9,7 +9,7 @@ class LLDBNewBreakpointDlg : public LLDBNewBreakpointDlgBase
 public:
     LLDBNewBreakpointDlg(wxWindow* parent);
     virtual ~LLDBNewBreakpointDlg();
-    LLDBBreakpoint GetBreakpoint();
+    LLDBBreakpoint::Ptr_t GetBreakpoint();
     
 protected:
     virtual void OnCheckFileAndLine(wxCommandEvent& event);

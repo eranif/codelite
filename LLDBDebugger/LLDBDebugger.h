@@ -60,14 +60,14 @@ protected:
 
     void Cleanup();
     bool IsValid() const;
-    void DoAddBreakpoint(const LLDBBreakpoint& bp);
+    void DoAddBreakpoint(LLDBBreakpoint::Ptr_t);
     void DoDeletePendingDeletionBreakpoints();
     
 public:
     LLDBDebugger();
     virtual ~LLDBDebugger();
 
-    bool IsBreakpointExists(const LLDBBreakpoint& bp) const;
+    bool IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const;
     
     /**
      * @brief clear all states/cached breakpoints etc
@@ -173,7 +173,7 @@ public:
     /**
      * @brief delete a breakpoint. The breakpoint is removed from the debugger and from the list
      */
-    void DeleteBreakpoint(const LLDBBreakpoint& breakpoint);
+    void DeleteBreakpoint(LLDBBreakpoint::Ptr_t bp);
     
     /**
      * @brief delete an array of breakpoints

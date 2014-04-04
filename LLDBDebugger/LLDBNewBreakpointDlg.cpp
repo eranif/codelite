@@ -30,21 +30,21 @@ void LLDBNewBreakpointDlg::OnCheckFuncName(wxCommandEvent& event)
     m_checkBoxFileLine->SetValue( !event.IsChecked() );
 }
 
-LLDBBreakpoint LLDBNewBreakpointDlg::GetBreakpoint()
+LLDBBreakpoint::Ptr_t LLDBNewBreakpointDlg::GetBreakpoint()
 {
     if ( m_checkBoxFileLine->IsChecked() ) {
         
         long nLine = 0;
         wxString strLine( m_textCtrlLine->GetValue() );
         strLine.ToCLong( &nLine );
-        LLDBBreakpoint bp(m_textCtrlFile->GetValue(), nLine);
+        LLDBBreakpoint::Ptr_t bp( new LLDBBreakpoint(m_textCtrlFile->GetValue(), nLine) );
         return bp;
         
     } else if ( m_checkBoxFuncName->IsChecked() ) {
-        LLDBBreakpoint bp(m_textCtrlFunctionName->GetValue());
+        LLDBBreakpoint::Ptr_t  bp( new LLDBBreakpoint(m_textCtrlFunctionName->GetValue()) );
         return bp;
         
     } else {
-        return LLDBBreakpoint();
+        return LLDBBreakpoint::Ptr_t( NULL );
     }
 }

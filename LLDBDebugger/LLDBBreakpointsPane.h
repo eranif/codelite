@@ -21,9 +21,9 @@ public:
     
     // Event handlers
     void OnBreakpointsUpdated(LLDBEvent &event);
-    LLDBBreakpoint* GetBreakpoint(const wxDataViewItem& item);
+    LLDBBreakpoint::Ptr_t GetBreakpoint(const wxDataViewItem& item);
 protected:
-    void GotoBreakpoint(LLDBBreakpoint* bp);
+    void GotoBreakpoint(LLDBBreakpoint::Ptr_t bp);
     
 protected:
     virtual void OnDeleteAll(wxCommandEvent& event);

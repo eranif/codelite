@@ -14,38 +14,72 @@ public:
     enum {
         kInvalid = -1,
         kFileLine,
-        kFunction
+        kFunction,
+        kLocation,
     };
-    typedef std::vector<LLDBBreakpoint> Vec_t;
-    
+    typedef wxSharedPtr<LLDBBreakpoint> Ptr_t;
+    typedef std::vector<LLDBBreakpoint::Ptr_t> Vec_t;
+
 protected:
     int      m_id;
     int      m_type;
     wxString m_name;
     wxString m_filename;
     int      m_lineNumber;
-    
+    LLDBBreakpoint::Ptr_t m_parentBP;
+    LLDBBreakpoint::Vec_t m_children;
+
 public:
-    class Equal {
-        const LLDBBreakpoint& m_src;
+    class Equal
+    {
+        LLDBBreakpoint::Ptr_t m_src;
     public:
-        Equal(const LLDBBreakpoint& src) : m_src(src) {}
-        bool operator()(const LLDBBreakpoint& other) const {
-            return m_src == other;
+        Equal(LLDBBreakpoint::Ptr_t src) : m_src(src) {}
+        bool operator()(LLDBBreakpoint::Ptr_t other) const {
+            return m_src->SameAs(other);
         }
     };
-    
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& element);
-    
+
 public:
     LLDBBreakpoint() : m_id(wxNOT_FOUND), m_type(kInvalid), m_lineNumber(wxNOT_FOUND) {}
     LLDBBreakpoint(const wxString &name);
     LLDBBreakpoint(const wxFileName& filename, int line);
-    LLDBBreakpoint(const LLDBBreakpoint& other);
-    bool operator==(const LLDBBreakpoint& other) const;
-    LLDBBreakpoint& operator=(const LLDBBreakpoint& other);
+    bool SameAs(LLDBBreakpoint::Ptr_t other) const;
     virtual ~LLDBBreakpoint();
+    
+    /**
+     * @brief copy breakpoint from other
+     * @param other
+     */
+    void Copy(LLDBBreakpoint::Ptr_t other);
+    
+    bool IsLocation() const {
+        return m_type == kLocation;
+    }
+    
+    size_t GetNumChildren() const {
+        return m_children.size();
+    }
+    
+    LLDBBreakpoint::Ptr_t GetParentBreakpoint() {
+        return m_parentBP;
+    }
+    
+    LLDBBreakpoint::Ptr_t GetParentBreakpoint() const {
+        return m_parentBP;
+    }
+    
+    void SetParentBreakpoint(LLDBBreakpoint::Ptr_t bp) {
+        m_parentBP = bp;
+    }
+    
+    LLDBBreakpoint::Vec_t& GetChildren() {
+        return m_children;
+    }
+    
+    const LLDBBreakpoint::Vec_t& GetChildren() const {
+        return m_children;
+    }
     
     /**
      * @brief convert list of gdb breakpoints into LLDBBreakpoint vector
@@ -56,25 +90,23 @@ public:
      * @param breakpoints
      */
     static LLDBBreakpoint::Vec_t FromBreakpointInfoVector(const BreakpointInfo::Vec_t& breakpoints);
-    
+
     /**
      * @brief return a string representation for this breakpoint
      */
     wxString ToString() const;
-    
+
     bool IsApplied() const {
         return m_id != wxNOT_FOUND;
     }
-    
+
     /**
      * @brief return true if this is a valid breakpoint
      */
     bool IsValid() const;
-    
-    void Invalidate() {
-        m_id = wxNOT_FOUND;
-    }
-    
+
+    void Invalidate() ;
+
     void SetFilename(const wxString& filename) {
         this->m_filename = filename;
     }
@@ -105,23 +137,7 @@ public:
     int GetId() const {
         return m_id;
     }
-    
-    // ---------------------------------------
-    // serialization
-    // ---------------------------------------
-    static wxFileName GetBreakpointsConfigFile();
-    
-    /**
-     * @brief load breakpoints from the file system.
-     * The path searched is always the workspace-path/.codelite/lldb-breakpoints.conf
-     * If no workspace is opened, return empty array
-     */
-    static LLDBBreakpoint::Vec_t LoadFromDisk();
-    /**
-     * @brief save breakpoints to the file system. If no workspace is opened, this function
-     * does nothing
-     */
-    static void SaveToDisk(const LLDBBreakpoint::Vec_t& breakpoints);
+
 };
 
 #endif // LLDBBREAKPOINT_H

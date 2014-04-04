@@ -166,6 +166,8 @@
     <VirtualDirectory Name="base">
       <File Name="UI.h"/>
       <File Name="UI.cpp"/>
+      <File Name="lldbbreakpointmodel.cpp"/>
+      <File Name="lldbbreakpointmodel.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">

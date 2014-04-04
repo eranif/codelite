@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	57,
+		"m_objCounter":	63,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafternz79PnInitBitmapResources",
 		"m_bitmapsFile":	"UI_lldbdebugger_bitmaps.cpp",
@@ -674,12 +674,12 @@
 									"m_children":	[]
 								}]
 						}, {
-							"m_type":	4469,
+							"m_type":	4473,
 							"proportion":	1,
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxDV_SINGLE"],
+							"m_styles":	["wxDV_ROW_LINES", "wxDV_SINGLE"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -696,7 +696,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_dvListCtrlBreakpoints"
+									"m_value":	"m_dataview"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
@@ -737,6 +737,14 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Generated Model Class Name",
+									"m_value":	"LLDBBreakpointModel"
+								}, {
+									"type":	"bool",
+									"m_label":	"Container Item Has Columns",
+									"m_value":	true
 								}],
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",

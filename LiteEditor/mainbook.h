@@ -50,6 +50,7 @@ private:
     bool                m_useBuffereLimit;
     EditorFrame::List_t m_detachedEditors;
     bool                m_isWorkspaceReloading;
+    bool                m_reloadingDoRaise;   // Prevents multiple Raises() during RestoreSession() 
     
 public:
     enum {

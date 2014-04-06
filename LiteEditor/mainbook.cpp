@@ -56,6 +56,7 @@ MainBook::MainBook(wxWindow *parent)
     , m_quickFindBar   (NULL)
     , m_useBuffereLimit(true)
     , m_isWorkspaceReloading(false)
+    , m_reloadingDoRaise(true)
 {
     CreateGuiControls();
     ConnectEvents();
@@ -317,6 +318,7 @@ void MainBook::RestoreSession(SessionEntry &session)
     const std::vector<TabInfo> &vTabInfoArr = session.GetTabInfoArr();
     for (size_t i = 0; i < vTabInfoArr.size(); i++) {
         const TabInfo &ti = vTabInfoArr[i];
+        m_reloadingDoRaise = (i == vTabInfoArr.size()-1); // Raise() when opening only the last editor
         LEditor *editor = OpenFile(ti.GetFileName());
         if (!editor) {
             if (i < sel) {
@@ -589,10 +591,12 @@ LEditor *MainBook::OpenFile(const wxString &file_name, const wxString &projectNa
 
     }
 
-    if (GetActiveEditor() == editor) {
-        editor->SetActive();
-    } else {
-        SelectPage(editor);
+    if (m_reloadingDoRaise) {
+        if (GetActiveEditor() == editor) {
+            editor->SetActive();
+        } else {
+            SelectPage(editor);
+        }
     }
 
     // Add this file to the history. Don't check for uniqueness:
@@ -848,7 +852,9 @@ bool MainBook::CloseAll(bool cancellable)
 
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 
+    m_reloadingDoRaise = false;
     m_book->DeleteAllPages(false);
+    m_reloadingDoRaise = true;
     
     // Delete all detached editors
     EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
@@ -1041,8 +1047,8 @@ void MainBook::ShowMessage( const wxString &message,
 
 void MainBook::OnPageChanged(NotebookEvent& e)
 {
-    int newSel = e.GetSelection();
-    if(newSel != wxNOT_FOUND) {
+    int newSel = e.GetSelection();wxLogDebug("m_reloadingDoRaise = %i", (int)m_reloadingDoRaise);
+    if (newSel != wxNOT_FOUND && m_reloadingDoRaise) {
         wxWindow *win = m_book->GetPage((size_t)newSel);
         if(win) {
             SelectPage(win);

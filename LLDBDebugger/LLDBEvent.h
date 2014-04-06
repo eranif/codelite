@@ -10,6 +10,8 @@ class LLDBEvent : public clCommandEvent
     wxString      m_filename;
     int           m_linenumber;
     int           m_stopReason;
+    int           m_frameId;
+    int           m_threadId;
 
 public:
     LLDBEvent(wxEventType eventType, int winid = 0);
@@ -31,14 +33,26 @@ public:
     int GetLinenumber() const {
         return m_linenumber;
     }
-    
+
+    void SetFrameId(int frameId) {
+        this->m_frameId = frameId;
+    }
+    void SetThreadId(int threadId) {
+        this->m_threadId = threadId;
+    }
+    int GetFrameId() const {
+        return m_frameId;
+    }
+    int GetThreadId() const {
+        return m_threadId;
+    }
     /**
      * @brief return the Interrupt reason (wxEVT_LLDB_STOPPED)
      */
     int GetStopReason() const {
         return m_stopReason;
     }
-    
+
     void SetStopReason(int stopReason) {
         this->m_stopReason = stopReason;
     }
@@ -52,6 +66,7 @@ wxDECLARE_EVENT(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY,   LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_RUNNING,   LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_BREAKPOINTS_UPDATED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, LLDBEvent);
+wxDECLARE_EVENT(wxEVT_LLDB_FRAME_SELECTED, LLDBEvent);
 
 typedef void (wxEvtHandler::*LLDBEventFunction)(LLDBEvent&);
 #define LLDBEventHandler(func) \

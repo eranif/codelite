@@ -13,6 +13,8 @@
 #include "file_logger.h"
 #include "lldb/API/SBBreakpointLocation.h"
 #include <wx/utils.h>
+#include "lldb/API/SBValueList.h"
+#include "lldb/API/SBValue.h"
 
 #define CHECK_RUNNING_RET_FALSE() if ( !IsValid() ) return false
 #define CHECK_RUNNING_RET() if ( !IsValid() ) return
@@ -340,7 +342,7 @@ void LLDBDebugger::InvalidateBreakpoints()
 
 bool LLDBDebugger::IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const
 {
-    return std::find( m_breakpoints.begin(), m_breakpoints.end(), bp ) != m_breakpoints.end();
+    return FindBreakpoint(bp) != m_breakpoints.end();
 }
 
 void LLDBDebugger::DeleteBreakpoint(LLDBBreakpoint::Ptr_t breakpoint)
@@ -452,7 +454,7 @@ void LLDBDebugger::DoDeletePendingDeletionBreakpoints()
 
     while ( !m_pendingDeletionBps.empty() ) {
         LLDBBreakpoint::Ptr_t bp = *m_pendingDeletionBps.begin();
-        LLDBBreakpoint::Vec_t::iterator iter = std::find( m_breakpoints.begin(), m_breakpoints.end(), bp );
+        LLDBBreakpoint::Vec_t::iterator iter = FindBreakpoint( bp );
         if ( iter != m_breakpoints.end() ) {
             CL_DEBUG("Deleting breakpoint: " + bp->ToString());
             // If the debugger is active and the breakpoint was applied, delete it
@@ -478,4 +480,68 @@ void LLDBDebugger::Clear()
 {
     Cleanup();
     m_breakpoints.clear();
+}
+
+void LLDBDebugger::SelectFrame(int frameId)
+{
+    CHECK_RUNNING_RET();
+    
+    lldb::SBFrame frame = m_target.GetProcess().GetSelectedThread().SetSelectedFrame( frameId );
+    if ( frame.IsValid() ) {
+        CL_DEBUG(wxString() << "LLDB>> Selected frame is now set to" << frame.GetFrameID() );
+        NotifyFrameSelected( frame.GetFrameID() );
+    }
+}
+
+void LLDBDebugger::NotifyFrameSelected(int frameId)
+{
+    LLDBEvent event(wxEVT_LLDB_FRAME_SELECTED);
+    event.SetFrameId( frameId );
+    AddPendingEvent( event );
+}
+
+LLDBLocalVariable::Vect_t LLDBDebugger::GetLocalVariables()
+{
+    LLDBLocalVariable::Vect_t locals;
+    if ( !IsValid() ) {
+        return locals;
+    }
+    
+    lldb::SBFrame frame = m_target.GetProcess().GetSelectedThread().GetSelectedFrame();
+    if ( !frame.IsValid() ) {
+        return locals;
+    }
+    
+    // get list of locals
+    lldb::SBValueList args = frame.GetBlock().GetVariables(m_target, true, true, false);
+    for(size_t i=0; i<args.GetSize(); ++i) {
+        lldb::SBValue value = args.GetValueAtIndex(i);
+        if ( value.IsValid() ) {
+            LLDBLocalVariable::Ptr_t var( new LLDBLocalVariable(value) );
+            locals.push_back( var );
+        }
+    }
+    return locals;
+}
+
+LLDBBreakpoint::Vec_t::iterator LLDBDebugger::FindBreakpoint(LLDBBreakpoint::Ptr_t bp)
+{
+    LLDBBreakpoint::Vec_t::iterator iter = m_breakpoints.begin();
+    for(; iter != m_breakpoints.end(); ++iter ) {
+        if ( (*iter)->SameAs( bp ) ) {
+            return iter;
+        }
+    }
+    return m_breakpoints.end();
+}
+
+LLDBBreakpoint::Vec_t::const_iterator LLDBDebugger::FindBreakpoint(LLDBBreakpoint::Ptr_t bp) const
+{
+    LLDBBreakpoint::Vec_t::const_iterator iter = m_breakpoints.begin();
+    for(; iter != m_breakpoints.end(); ++iter ) {
+        if ( (*iter)->SameAs( bp ) ) {
+            return iter;
+        }
+    }
+    return m_breakpoints.end();
 }

@@ -8,6 +8,7 @@
 #include <wx/timer.h>
 #include "LLDBEvent.h"
 #include "LLDBBreakpoint.h"
+#include "LLDBLocalVariable.h"
 
 // LLDB headers
 #   include "lldb/API/SBBlock.h"
@@ -47,7 +48,8 @@ protected:
     bool                m_canInteract;
 
 protected:
-
+    LLDBBreakpoint::Vec_t::iterator FindBreakpoint(LLDBBreakpoint::Ptr_t bp);
+    LLDBBreakpoint::Vec_t::const_iterator FindBreakpoint(LLDBBreakpoint::Ptr_t bp) const;
 
     void NotifyBacktrace();
     void NotifyStopped();
@@ -57,7 +59,8 @@ protected:
     void NotifyRunning();
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
-
+    void NotifyFrameSelected(int frameId = 0);
+    
     void Cleanup();
     bool IsValid() const;
     void DoAddBreakpoint(LLDBBreakpoint::Ptr_t);
@@ -194,6 +197,16 @@ public:
      * @brief interrupt the inferior process
      */
     void Interrupt(LLDBDebugger::eInterruptReason reason);
+    
+    /**
+     * @brief select a frame by ID
+     */
+    void SelectFrame(int frameId);
+    
+    /**
+     * @brief return list of local variables for the selected frame
+     */
+    LLDBLocalVariable::Vect_t GetLocalVariables();
 };
 
 #endif // LLDBDEBUGGER_H

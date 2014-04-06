@@ -8,10 +8,13 @@ wxDEFINE_EVENT(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY,   LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_RUNNING,   LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_BREAKPOINTS_UPDATED,   LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL,   LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_FRAME_SELECTED,   LLDBEvent);
 
 LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     : clCommandEvent(eventType, windid)
     , m_stopReason(0)
+    , m_frameId(0)
+    , m_threadId(0)
 {
 }
 
@@ -31,5 +34,7 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_filename = src.m_filename;
     m_linenumber = src.m_linenumber;
     m_stopReason = src.m_stopReason;
+    m_frameId = src.m_frameId;
+    m_threadId = src.m_threadId;
     return *this;
 }

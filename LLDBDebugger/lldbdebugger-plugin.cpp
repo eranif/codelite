@@ -17,12 +17,14 @@
 #include "LLDBSettings.h"
 #include "bookmark_manager.h"
 #include "LLDBBreakpointsPane.h"
+#include "LLDBLocalsView.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
-#define DEBUGGER_NAME "LLDB Debugger"
-#define LLDB_CALLSTACK_PANE_NAME "LLDB Callstack"
-#define LLDB_BREAKPOINTS_PANE_NAME "LLDB Breakpoints"
+#define DEBUGGER_NAME               "LLDB Debugger"
+#define LLDB_CALLSTACK_PANE_NAME    "LLDB Callstack"
+#define LLDB_BREAKPOINTS_PANE_NAME  "LLDB Breakpoints"
+#define LLDB_LOCALS_PANE_NAME       "LLDB Locals"
 
 #define CHECK_IS_LLDB_SESSION() if ( !m_isRunning ) { event.Skip(); return; }
 
@@ -56,6 +58,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     , m_callstack(NULL)
     , m_console(NULL)
     , m_breakpointsView(NULL)
+    , m_localsView(NULL)
 {
     LLDBDebugger::Initialize();
     m_longName = wxT("LLDB Debugger for CodeLite");
@@ -422,6 +425,7 @@ void LLDBDebuggerPlugin::LoadLLDBPerspective()
     ShowLLDBPane("LLDB Console");
     ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);
     ShowLLDBPane(LLDB_BREAKPOINTS_PANE_NAME);
+    ShowLLDBPane(LLDB_LOCALS_PANE_NAME);
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -476,6 +480,14 @@ void LLDBDebuggerPlugin::DestroyUI()
         m_breakpointsView->Destroy();
         m_breakpointsView = NULL;
     }
+    if ( m_localsView ) {
+        wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_LOCALS_PANE_NAME);
+        if ( pi.IsOk() ) {
+            m_mgr->GetDockingManager()->DetachPane(m_localsView);
+        }
+        m_localsView->Destroy();
+        m_localsView = NULL;
+    }
 }
 
 void LLDBDebuggerPlugin::InitializeUI()
@@ -488,6 +500,11 @@ void LLDBDebuggerPlugin::InitializeUI()
     if ( !m_breakpointsView ) {
         m_breakpointsView = new LLDBBreakpointsPane(EventNotifier::Get()->TopFrame(), this);
         m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo().Bottom().Position(1).CloseButton().Caption("Breakpoints").Name(LLDB_BREAKPOINTS_PANE_NAME));
+    }
+    
+    if ( !m_localsView ) {
+        m_localsView = new LLDBLocalsView(EventNotifier::Get()->TopFrame(), this);
+        m_mgr->GetDockingManager()->AddPane(m_localsView, wxAuiPaneInfo().Top().Position(0).CloseButton().Caption("Locals").Name(LLDB_LOCALS_PANE_NAME));
     }
 }
 

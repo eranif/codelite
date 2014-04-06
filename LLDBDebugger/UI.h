@@ -23,6 +23,7 @@
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include "lldblocalsmodel.h"
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -81,6 +82,21 @@ protected:
 public:
     LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Breakpoint"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~LLDBNewBreakpointDlgBase();
+};
+
+
+class LLDBLocalsViewBase : public wxPanel
+{
+protected:
+    wxDataViewCtrl* m_dataview;
+    wxObjectDataPtr<LLDBLocalsModel> m_dataviewModel;
+
+
+protected:
+
+public:
+    LLDBLocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~LLDBLocalsViewBase();
 };
 
 #endif

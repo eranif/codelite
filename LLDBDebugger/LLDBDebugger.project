@@ -16,6 +16,8 @@
     <File Name="lldbdebugger-plugin.h"/>
     <File Name="LLDBDebuggerThread.h"/>
     <File Name="LLDBSettings.h"/>
+    <File Name="LLDBLocalVariable.h"/>
+    <File Name="LLDBLocalVariable.cpp"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Dynamic Library">
@@ -168,6 +170,8 @@
       <File Name="UI.cpp"/>
       <File Name="lldbbreakpointmodel.cpp"/>
       <File Name="lldbbreakpointmodel.h"/>
+      <File Name="lldblocalsmodel.cpp"/>
+      <File Name="lldblocalsmodel.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
@@ -177,5 +181,7 @@
     <File Name="LLDBBreakpointsPane.cpp"/>
     <File Name="LLDBNewBreakpointDlg.h"/>
     <File Name="LLDBNewBreakpointDlg.cpp"/>
+    <File Name="LLDBLocalsView.h"/>
+    <File Name="LLDBLocalsView.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

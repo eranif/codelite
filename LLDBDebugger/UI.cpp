@@ -28,7 +28,7 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
     
     m_dvListCtrlBacktrace = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
     
-    boxSizer2->Add(m_dvListCtrlBacktrace, 1, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(m_dvListCtrlBacktrace, 1, wxALL|wxEXPAND, 2);
     
     m_dvListCtrlBacktrace->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     m_dvListCtrlBacktrace->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
@@ -77,7 +77,7 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     m_dataviewModel->SetColCount( 4 );
     m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    boxSizer10->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
+    boxSizer10->Add(m_dataview, 1, wxALL|wxEXPAND, 2);
     
     m_dataview->AppendTextColumn(_("#"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("File"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
@@ -192,4 +192,40 @@ LLDBNewBreakpointDlgBase::~LLDBNewBreakpointDlgBase()
     m_checkBoxFuncName->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(LLDBNewBreakpointDlgBase::OnCheckFuncName), NULL, this);
     m_textCtrlFunctionName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFuncNameUI), NULL, this);
     
+}
+
+LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer67 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer67);
+    
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    m_dataviewModel = new LLDBLocalsModel;
+    m_dataviewModel->SetColCount( 3 );
+    m_dataview->AssociateModel(m_dataviewModel.get() );
+    
+    boxSizer67->Add(m_dataview, 1, wxALL|wxEXPAND, 2);
+    
+    m_dataview->AppendTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Value"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 300, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+LLDBLocalsViewBase::~LLDBLocalsViewBase()
+{
 }

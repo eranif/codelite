@@ -1,13 +1,18 @@
 #include "LLDBNewBreakpointDlg.h"
+#include "windowattrmanager.h"
 
 LLDBNewBreakpointDlg::LLDBNewBreakpointDlg(wxWindow* parent)
     : LLDBNewBreakpointDlgBase(parent)
 {
     m_checkBoxFileLine->SetValue(true);
+    m_textCtrlFile->CallAfter( &wxTextCtrl::SetFocus );
+    
+    WindowAttrManager::Load(this, "LLDBNewBpDlg");
 }
 
 LLDBNewBreakpointDlg::~LLDBNewBreakpointDlg()
 {
+    WindowAttrManager::Save(this, "LLDBNewBpDlg");
 }
 
 void LLDBNewBreakpointDlg::OnFileLineEnabledUI(wxUpdateUIEvent& event)
@@ -22,12 +27,29 @@ void LLDBNewBreakpointDlg::OnFuncNameUI(wxUpdateUIEvent& event)
 
 void LLDBNewBreakpointDlg::OnCheckFileAndLine(wxCommandEvent& event)
 {
-    m_checkBoxFuncName->SetValue( !event.IsChecked() );
+    event.Skip();
+    if ( event.IsChecked() ) {
+        m_checkBoxFuncName->SetValue( false );
+        m_textCtrlLine->CallAfter( &wxTextCtrl::SetFocus );
+        
+    } else {
+        m_checkBoxFuncName->SetValue( true );
+        m_textCtrlFunctionName->CallAfter( &wxTextCtrl::SetFocus );
+    }
 }
 
 void LLDBNewBreakpointDlg::OnCheckFuncName(wxCommandEvent& event)
 {
-    m_checkBoxFileLine->SetValue( !event.IsChecked() );
+    event.Skip();
+    if ( event.IsChecked() ) {
+        m_checkBoxFileLine->SetValue( false );
+        m_textCtrlFunctionName->CallAfter( &wxTextCtrl::SetFocus );
+        
+    } else {
+        m_checkBoxFileLine->SetValue( true );
+        m_textCtrlLine->CallAfter( &wxTextCtrl::SetFocus );
+        
+    }
 }
 
 LLDBBreakpoint::Ptr_t LLDBNewBreakpointDlg::GetBreakpoint()

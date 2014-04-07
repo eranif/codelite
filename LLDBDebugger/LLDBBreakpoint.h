@@ -4,6 +4,7 @@
 #include <wx/string.h>
 #include <vector>
 #include <wx/filename.h>
+#include <wx/sharedptr.h>
 #include "debugger.h"
 #include "json_node.h"
 

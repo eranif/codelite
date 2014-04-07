@@ -1047,7 +1047,7 @@ void MainBook::ShowMessage( const wxString &message,
 
 void MainBook::OnPageChanged(NotebookEvent& e)
 {
-    int newSel = e.GetSelection();wxLogDebug("m_reloadingDoRaise = %i", (int)m_reloadingDoRaise);
+    int newSel = e.GetSelection();
     if (newSel != wxNOT_FOUND && m_reloadingDoRaise) {
         wxWindow *win = m_book->GetPage((size_t)newSel);
         if(win) {

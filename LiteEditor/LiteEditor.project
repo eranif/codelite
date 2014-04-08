@@ -1156,7 +1156,7 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="CMake_Debug" CompilerType="gnu g++" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="CMake_Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g -Wall" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
@@ -1178,7 +1178,7 @@
       <PostBuild/>
       <CustomBuild Enabled="yes">
         <Target Name="install">make install</Target>
-        <Target Name="cmake">cmake -DWITH_PCH=1 -DWITH_WXC=1 -DPREFIX=/home/eran/root  -DWITH_MYSQL=1 -DCMAKE_BUILD_TYPE=Debug ..</Target>
+        <Target Name="cmake">cmake -DWITH_WXC=1 -DPREFIX=/home/eran/root  -DWITH_MYSQL=1 -DCMAKE_BUILD_TYPE=Debug ..</Target>
         <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
         <BuildCommand>make -j8</BuildCommand>

@@ -226,11 +226,11 @@ bool CodeLiteApp::OnInit()
     // Handle sigchld
     CodeLiteBlockSigChild();
 
-#ifdef __WXGTK__
-    // Insall signal handlers
-    signal(SIGSEGV, WaitForDebugger);
-    signal(SIGABRT, WaitForDebugger);
-#endif
+// #ifdef __WXGTK__
+//     // Insall signal handlers
+//     signal(SIGSEGV, WaitForDebugger);
+//     signal(SIGABRT, WaitForDebugger);
+// #endif
 
 #endif
 

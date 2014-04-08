@@ -69,6 +69,8 @@ void LLDBLocalsView::OnLLDBStarted(LLDBEvent& event)
 
 void LLDBLocalsView::OnLLDBStopped(LLDBEvent& event)
 {
+    // FIXME: optimize this to only retrieve the top levle variables
+    // the children should be obtained in the 'OnItemExpading' event handler
     event.Skip();
     m_dataviewModel->Clear();
     LLDBLocalVariable::Vect_t locals = m_plugin->GetLLDB()->GetLocalVariables();
@@ -81,6 +83,7 @@ void LLDBLocalsView::DoAddVariableToView(LLDBLocalVariable::Ptr_t variable, cons
 {
     wxVector<wxVariant> cols;
     cols.push_back( variable->GetName() );
+    cols.push_back( variable->GetSummary() );
     cols.push_back( variable->GetValue() );
     cols.push_back( variable->GetType() );
     wxDataViewItem item = m_dataviewModel->AppendItem(parent, cols, new LLDBLocalVariableClientData(variable) );

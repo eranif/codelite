@@ -17,18 +17,25 @@ public:
 protected:
     wxString m_name;
     wxString m_value;
+    wxString m_summary;
     wxString m_type;
     lldb::SBValue m_lldbValue;
     LLDBLocalVariable::Vect_t m_children;
-    
+
 private:
     void DoInitFromLLDBValue(lldb::SBValue value);
-    
+
 public:
     LLDBLocalVariable(lldb::SBValue value);
     LLDBLocalVariable() {}
     virtual ~LLDBLocalVariable();
 
+    void SetSummary(const wxString& summary) {
+        this->m_summary = summary;
+    }
+    const wxString& GetSummary() const {
+        return m_summary;
+    }
     void SetType(const wxString& type) {
         this->m_type = type;
     }

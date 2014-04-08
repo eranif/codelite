@@ -1,6 +1,7 @@
 #include "LLDBCallStack.h"
 #include "LLDBEvent.h"
 #include "LLDBDebugger.h"
+#include <wx/wupdlock.h>
 
 LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBDebugger* lldb)
     : LLDBCallStackBase(parent)
@@ -19,6 +20,7 @@ LLDBCallStackPane::~LLDBCallStackPane()
 void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
 {
     event.Skip();
+    wxWindowUpdateLocker locker( m_dvListCtrlBacktrace );
     m_dvListCtrlBacktrace->DeleteAllItems();
     const LLDBBacktrace& bt = event.GetBacktrace();
     const LLDBBacktrace::EntryVec_t& entries =  bt.GetCallstack();

@@ -1,10 +1,40 @@
 #include "LLDBLocalsView.h"
 #include "lldbdebugger-plugin.h"
 
+// Use custom renderer
+class LLDBLocalsModelReal : public LLDBLocalsModel
+{
+    wxDataViewCtrl* m_view;
+    
+private:
+    wxDataViewCtrl* GetView() const {
+        return m_view;
+    }
+    
+public:
+    LLDBLocalsModelReal() {}
+    virtual ~LLDBLocalsModelReal() {}
+    
+    bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const {
+        
+        LLDBLocalVariableClientData* cd = dynamic_cast<LLDBLocalVariableClientData*>(this->GetClientObject(item));
+        if ( cd && cd->GetVariable()->GetLLDBValue().GetValueDidChange() ) {
+            attr.SetColour("RED");
+        }
+        return true;
+    }
+};
+
 LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBDebuggerPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
 {
+    // Replace the model with custom one
+    int colCount = m_dataviewModel->GetColCount();
+    m_dataviewModel.reset( new LLDBLocalsModelReal );
+    m_dataviewModel->SetColCount( colCount );
+    m_dataview->AssociateModel(m_dataviewModel.get() );
+
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STARTED, &LLDBLocalsView::OnLLDBStarted, this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_EXITED,  &LLDBLocalsView::OnLLDBExited,  this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STOPPED, &LLDBLocalsView::OnLLDBStopped, this);
@@ -34,6 +64,7 @@ void LLDBLocalsView::OnLLDBRunning(LLDBEvent& event)
 void LLDBLocalsView::OnLLDBStarted(LLDBEvent& event)
 {
     event.Skip();
+    m_dataviewModel->Clear();
 }
 
 void LLDBLocalsView::OnLLDBStopped(LLDBEvent& event)

@@ -176,7 +176,6 @@ void LLDBDebugger::Stop(bool notifyExit)
 {
     // Abort the current debug session
     wxDELETE(m_thread);
-    m_target.GetProcess().Kill();
     Cleanup();
     if ( notifyExit ) {
         NotifyExited();
@@ -384,6 +383,7 @@ void LLDBDebugger::DeleteAllBreakpoints()
 
 void LLDBDebugger::Cleanup()
 {
+    m_debugeePid = wxNOT_FOUND;
     m_canInteract = false;
     m_pendingDeletionBps.clear();
     m_interruptReason = kInterruptReasonNone;
@@ -513,7 +513,7 @@ LLDBLocalVariable::Vect_t LLDBDebugger::GetLocalVariables()
     }
     
     // get list of locals
-    lldb::SBValueList args = frame.GetBlock().GetVariables(m_target, true, true, false);
+    lldb::SBValueList args = frame.GetVariables(true, true, true, true);
     for(size_t i=0; i<args.GetSize(); ++i) {
         lldb::SBValue value = args.GetValueAtIndex(i);
         if ( value.IsValid() ) {

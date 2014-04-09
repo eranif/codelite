@@ -3,6 +3,7 @@
 
 #include <string>
 #include <wx/sharedptr.h>
+#include <wx/string.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -44,9 +45,18 @@ public:
     virtual ~clSocketBase();
     
     /**
+     * @brief return the descriptor and clear this socket.
+     */
+    socket_t Release() ;
+    
+    /**
      * @brief initialize the socket library
      */
     static void Initialize();
+    
+    socket_t GetSocket() const {
+        return m_socket;
+    }
     
     /**
      * @brief 
@@ -64,7 +74,22 @@ public:
      * @return 
      */
     int SelectRead(long seconds = -1) throw (clSocketException);
+
+    /**
+     * @brief read a full message that was sent with 'SendMessage' 
+     * @param message
+     * @param timeout seconds to wait
+     * @return kSuccess, kTimeout or kError
+     */
+    int ReadMessage(wxString &message, int timeout) throw (clSocketException);
     
+    /**
+     * @brief write a full message
+     * @param message
+     */
+    void WriteMessage(const wxString &message) throw (clSocketException);
+
+protected:
     /**
      * @brief 
      */

@@ -1,4 +1,4 @@
-project(codelite-lldb)
+project(codelite-lldb-tester)
 if ( APPLE )
     ## Under Apple, we only support monolithic build of wxWidgets
     find_package(wxWidgets COMPONENTS std REQUIRED)
@@ -8,8 +8,8 @@ endif ( APPLE )
 
 FILE(GLOB SRC "*.cpp")
 include_directories(${CL_SRC_ROOT}/LLDBDebugger)
-add_executable(codelite-lldb ${SRC})
-target_link_libraries(  codelite-lldb
+add_executable(codelite-lldb-tester ${SRC})
+target_link_libraries(  codelite-lldb-tester
                         ${LINKER_OPTIONS}
                         ${LLDB_LIB}
                         ${wxWidgets_LIBRARIES}
@@ -20,5 +20,5 @@ target_link_libraries(  codelite-lldb
                         -lwxsqlite3 
                         -lsqlite3lib
                     )
-add_dependencies(codelite-lldb plugin)
+add_dependencies(codelite-lldb-tester plugin)
 

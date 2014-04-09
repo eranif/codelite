@@ -127,9 +127,13 @@ else()
         
         message("-- Will install file ${LLDB_LIB_ABS}")
         install(FILES ${LLDB_LIB_ABS} DESTINATION ${PLUGINS_DIR} PERMISSIONS ${EXE_PERM})
+        
         add_subdirectory(LLDBProtocol)
         add_subdirectory(codelite-lldb)
+        add_subdirectory(codelite-lldb-tester)
+        
         add_dependencies(codelite-lldb LLDBProtocol)
+        add_dependencies(codelite-lldb-tester LLDBProtocol)
         add_dependencies(LLDBDebugger LLDBProtocol)
         
     endif()

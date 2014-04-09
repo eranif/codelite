@@ -440,6 +440,7 @@ add_subdirectory(CodeLiteDiff)
 if (WITH_SFTP)
     add_subdirectory(SFTP)
 endif(WITH_SFTP)
+add_subdirectory(LLDBDebugger)
 
 ## Executables
 add_subdirectory(LiteEditor)

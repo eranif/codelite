@@ -16,6 +16,7 @@
 #   include "lldb/API/SBProcess.h"
 #   include "lldb/API/SBBreakpoint.h"
 #   include "lldb/API/SBListener.h"
+#include "json_node.h"
 
 /**
  * @class LLDBBacktrace
@@ -31,6 +32,9 @@ public:
         wxString functionName;
         wxString address;
         
+        JSONElement ToJSON() const;
+        void FromJSON( const JSONElement& json );
+        
         Entry() : id(0), line(0) {}
     };
     typedef std::vector<LLDBBacktrace::Entry> EntryVec_t;
@@ -43,6 +47,8 @@ public:
     LLDBBacktrace(lldb::SBThread &thread);
     LLDBBacktrace() : m_threadId (0) {}
     virtual ~LLDBBacktrace();
+    
+        
     void SetCallstack(const LLDBBacktrace::EntryVec_t& callstack) {
         this->m_callstack = callstack;
     }
@@ -57,6 +63,10 @@ public:
     }
     
     wxString ToString() const;
+    
+    // Serialization API
+    JSONElement ToJSON() const;
+    void FromJSON( const JSONElement& json );
 };
 
 #endif // LLDBBACKTRACE_H

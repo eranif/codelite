@@ -1,7 +1,4 @@
 #include "LLDBLocalVariable.h"
-#include <lldb/API/SBError.h>
-#include <lldb/API/SBAddress.h>
-#include <lldb/API/SBDeclaration.h>
 
 LLDBLocalVariable::LLDBLocalVariable(lldb::SBValue value)
 {
@@ -14,12 +11,12 @@ LLDBLocalVariable::~LLDBLocalVariable()
 
 void LLDBLocalVariable::DoInitFromLLDBValue(lldb::SBValue value)
 {
-    m_lldbValue = value;
     SetName( value.GetName() );
     SetType( value.GetTypeName() );
     SetSummary( value.GetSummary() );
     SetValue( value.GetValue() );
-
+    SetValueChanged( value.GetValueDidChange() );
+    
     // if this value has children, add them recursievly
     if ( value.GetNumChildren() ) {
         for(size_t i=0; i<value.GetNumChildren(); ++i) {

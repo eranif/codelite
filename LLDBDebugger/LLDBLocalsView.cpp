@@ -18,7 +18,7 @@ public:
     bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const {
         
         LLDBLocalVariableClientData* cd = dynamic_cast<LLDBLocalVariableClientData*>(this->GetClientObject(item));
-        if ( cd && cd->GetVariable()->GetLLDBValue().GetValueDidChange() ) {
+        if ( cd && cd->GetVariable()->IsValueChanged()) {
             attr.SetColour("RED");
         }
         return true;

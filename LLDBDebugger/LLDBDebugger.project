@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="LLDBDebugger">
   <VirtualDirectory Name="src">
-    <File Name="codelite-plugin.cmake"/>
     <File Name="lldbdebugger-plugin.cpp"/>
     <File Name="LLDBBreakpoint.cpp"/>
     <File Name="LLDBBreakpoint.h"/>
@@ -18,6 +17,7 @@
     <File Name="LLDBSettings.h"/>
     <File Name="LLDBLocalVariable.h"/>
     <File Name="LLDBLocalVariable.cpp"/>
+    <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Dynamic Library">
@@ -183,5 +183,23 @@
     <File Name="LLDBNewBreakpointDlg.cpp"/>
     <File Name="LLDBLocalsView.h"/>
     <File Name="LLDBLocalsView.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="socket">
+    <File Name="cl_socket_base.cpp"/>
+    <File Name="cl_socket_base.h"/>
+    <File Name="cl_socket_server.cpp"/>
+    <File Name="cl_socket_server.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="codelite-lldb">
+    <File Name="codelite-lldb/codelite-lldb-app.cpp"/>
+    <File Name="codelite-lldb/codelite-lldb-app.h"/>
+    <File Name="codelite-lldb/CMakeLists.txt"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="LLDBProtocol">
+    <File Name="LLDBProtocol/CMakeLists.txt"/>
+    <File Name="LLDBProtocol/cl_socket_base.cpp"/>
+    <File Name="LLDBProtocol/cl_socket_base.h"/>
+    <File Name="LLDBProtocol/cl_socket_server.cpp"/>
+    <File Name="LLDBProtocol/cl_socket_server.h"/>
   </VirtualDirectory>
 </CodeLite_Project>

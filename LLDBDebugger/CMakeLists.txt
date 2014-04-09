@@ -61,9 +61,60 @@ else()
         
         include_directories(${LLDB_INCLUDE_PATH})
         link_directories(${LLDB_LIB_PATH})
+        
+        ## lldb requires C++11
         add_definitions(-std=c++11)
-        ## We are good to go - include this plugin
-        CL_PLUGIN(LLDBDebugger "${LLDB_LIB}")
+        set(PLUGIN_NAME "LLDBDebugger")
+        project(LLDBDebugger)
+        
+        if ( APPLE )
+            ## Under Apple, we only support monolithic build of wxWidgets
+            find_package(wxWidgets COMPONENTS std REQUIRED)
+        else ( APPLE )
+            find_package(wxWidgets COMPONENTS std aui propgrid stc richtext ribbon REQUIRED)
+        endif ( APPLE )
+        
+        # wxWidgets include (this will do all the magic to configure everything)
+        include( "${wxWidgets_USE_FILE}" )
+
+        # Include paths
+        include_directories("${CL_SRC_ROOT}/Plugin"
+                            "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
+                            "${CL_SRC_ROOT}/CodeLite" 
+                            "${CL_SRC_ROOT}/PCH" 
+                            "${CL_SRC_ROOT}/Interfaces")
+        ## Definitions
+        add_definitions(-DWXUSINGDLL_WXSQLITE3)
+        add_definitions(-DWXUSINGDLL_CL)
+        add_definitions(-DWXUSINGDLL_SDK)
+
+        # Add RPATH
+        set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
+        
+        ## By default, use the sources under the current folder
+        FILE(GLOB PLUGIN_SRCS "*.cpp")
+        
+        # Define the output - shared library
+        add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRCS})
+        
+        # Codelite plugins doesn't use the "lib" prefix.
+        set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+        target_link_libraries(${PLUGIN_NAME}
+            ${LINKER_OPTIONS}
+            ${PLUGIN_EXTRA_LIBS}
+            ${wxWidgets_LIBRARIES}
+            -L"${CL_LIBPATH}"
+            -llibcodelite
+            -lplugin
+            -lwxsqlite3 
+            -lsqlite3lib
+        )
+
+        # The plugin library is required
+        add_dependencies(${PLUGIN_NAME} plugin)
+
+        # Installation destination
+        install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
         
         ## Since lldb.so is a symlink, make sure we install the actual file and not 
         ## the symbolic file name
@@ -76,5 +127,10 @@ else()
         
         message("-- Will install file ${LLDB_LIB_ABS}")
         install(FILES ${LLDB_LIB_ABS} DESTINATION ${PLUGINS_DIR} PERMISSIONS ${EXE_PERM})
+        add_subdirectory(LLDBProtocol)
+        add_subdirectory(codelite-lldb)
+        add_dependencies(codelite-lldb LLDBProtocol)
+        add_dependencies(LLDBDebugger LLDBProtocol)
+        
     endif()
 endif()

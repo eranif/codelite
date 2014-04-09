@@ -3,10 +3,9 @@
 
 #include <vector>
 #include <wx/string.h>
-#include "lldb/API/SBValue.h"
-#include "lldb/API/SBValueList.h"
 #include <wx/clntdata.h>
 #include <wx/sharedptr.h>
+#include <lldb/API/SBValue.h>
 
 class LLDBLocalVariable
 {
@@ -19,7 +18,8 @@ protected:
     wxString m_value;
     wxString m_summary;
     wxString m_type;
-    lldb::SBValue m_lldbValue;
+    bool     m_valueChanged;
+
     LLDBLocalVariable::Vect_t m_children;
 
 private:
@@ -27,9 +27,15 @@ private:
 
 public:
     LLDBLocalVariable(lldb::SBValue value);
-    LLDBLocalVariable() {}
+    LLDBLocalVariable() : m_valueChanged(false) {}
     virtual ~LLDBLocalVariable();
 
+    void SetValueChanged(bool valueChanged) {
+        this->m_valueChanged = valueChanged;
+    }
+    bool IsValueChanged() const {
+        return m_valueChanged;
+    }
     void SetSummary(const wxString& summary) {
         this->m_summary = summary;
     }
@@ -41,9 +47,6 @@ public:
     }
     const wxString& GetType() const {
         return m_type;
-    }
-    lldb::SBValue GetLLDBValue() const {
-        return m_lldbValue;
     }
 
     void SetName(const wxString& name) {

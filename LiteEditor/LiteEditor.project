@@ -1331,7 +1331,8 @@ LD_LIBRARY_PATH=/home/eran/root/lib/codelite/]]>
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc -c -v -o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc -c -v -o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no">
         <ClangCmpFlagsC/>

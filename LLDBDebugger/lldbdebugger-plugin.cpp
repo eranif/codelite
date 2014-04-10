@@ -2,7 +2,7 @@
 #include <wx/xrc/xmlres.h>
 #include "globals.h"
 #include "event_notifier.h"
-#include "LLDBEvent.h"
+#include "LLDBProtocol/LLDBEvent.h"
 #include "console_frame.h"
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
@@ -305,17 +305,17 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
     
     // If the debugger stopped due to user request
     // perform that action and continue
-    if ( event.GetStopReason() == LLDBDebugger::kInterruptReasonApplyBreakpoints ) {
+    if ( event.GetInterruptReason() == kInterruptReasonApplyBreakpoints ) {
         CL_DEBUG("Applying breakpoints and continue...");
         m_debugger.ApplyBreakpoints();
         m_debugger.Continue();
 
-    } else if ( event.GetStopReason() == LLDBDebugger::kInterruptReasonDeleteAllBreakpoints) {
+    } else if ( event.GetInterruptReason() == kInterruptReasonDeleteAllBreakpoints) {
         CL_DEBUG("Deleting all breakpoints");
         m_debugger.DeleteAllBreakpoints();
         m_debugger.Continue();
         
-    } else if ( event.GetStopReason() == LLDBDebugger::kInterruptReasonDeleteBreakpoints ) {
+    } else if ( event.GetInterruptReason() == kInterruptReasonDeleteBreakpoints ) {
         CL_DEBUG("Deleting all pending deletion breakpoints");
         m_debugger.DeletePendingDeletionBreakpoints();
         m_debugger.Continue();
@@ -552,7 +552,7 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
             
         } else if ( m_isRunning ) {
             // Interrupt the debugger and the breakpoints will be applied in the "OnLLDBStopped" callback
-            m_debugger.Interrupt(LLDBDebugger::kInterruptReasonApplyBreakpoints);
+            m_debugger.Interrupt( kInterruptReasonApplyBreakpoints );
         }
     }
 }

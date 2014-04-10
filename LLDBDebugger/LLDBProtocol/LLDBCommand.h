@@ -17,7 +17,6 @@ public:
 
 protected:
     int m_commandType;
-    int m_transcationId;
     wxString m_commandArguments;
     wxString m_workingDirectory;
     wxString m_executable;
@@ -27,7 +26,7 @@ public:
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement &json);
 
-    LLDBCommand() : m_commandType(kCommandInvalid), m_transcationId(0) {}
+    LLDBCommand() : m_commandType(kCommandInvalid) {}
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 
@@ -49,12 +48,6 @@ public:
     }
     int GetCommandType() const {
         return m_commandType;
-    }
-    void SetTranscationId(int transcationId) {
-        this->m_transcationId = transcationId;
-    }
-    int GetTranscationId() const {
-        return m_transcationId;
     }
     void SetWorkingDirectory(const wxString& workingDirectory) {
         this->m_workingDirectory = workingDirectory;

@@ -11,10 +11,10 @@ include_directories(${CL_SRC_ROOT}/LLDBDebugger)
 add_executable(codelite-lldb-tester ${SRC})
 target_link_libraries(  codelite-lldb-tester
                         ${LINKER_OPTIONS}
-                        ${LLDB_LIB}
-                        ${wxWidgets_LIBRARIES}
                         -L"${CL_LIBPATH}"
                         -lLLDBProtocol
+                        ${LLDB_LIB}
+                        ${wxWidgets_LIBRARIES}
                         -llibcodelite
                         -lplugin
                         -lwxsqlite3 

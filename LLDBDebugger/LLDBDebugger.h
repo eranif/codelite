@@ -6,9 +6,11 @@
 #include <vector>
 #include <wx/event.h>
 #include <wx/timer.h>
-#include "LLDBEvent.h"
+#include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBBreakpoint.h"
 #include "LLDBLocalVariable.h"
+#include "LLDBProtocol/LLDBEnums.h"
+#include "LLDBProtocol/LLDBEnums.h"
 
 // LLDB headers
 #   include "lldb/API/SBBlock.h"
@@ -28,12 +30,6 @@ class LLDBDebuggerThread;
 class LLDBDebugger : public wxEvtHandler
 {
 public:
-    enum eInterruptReason {
-        kInterruptReasonNone,
-        kInterruptReasonApplyBreakpoints,
-        kInterruptReasonDeleteAllBreakpoints,
-        kInterruptReasonDeleteBreakpoints,
-    };
     friend class LLDBDebuggerThread;
 
 protected:
@@ -196,7 +192,7 @@ public:
     /**
      * @brief interrupt the inferior process
      */
-    void Interrupt(LLDBDebugger::eInterruptReason reason);
+    void Interrupt(eInterruptReason reason);
     
     /**
      * @brief select a frame by ID

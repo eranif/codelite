@@ -12,7 +12,7 @@ wxDEFINE_EVENT(wxEVT_LLDB_FRAME_SELECTED,   LLDBEvent);
 
 LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     : clCommandEvent(eventType, windid)
-    , m_stopReason(0)
+    , m_interruptReason(0)
     , m_frameId(0)
     , m_threadId(0)
 {
@@ -33,7 +33,7 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_backtrace = src.m_backtrace;
     m_filename = src.m_filename;
     m_linenumber = src.m_linenumber;
-    m_stopReason = src.m_stopReason;
+    m_interruptReason = src.m_interruptReason;
     m_frameId = src.m_frameId;
     m_threadId = src.m_threadId;
     return *this;

@@ -6,7 +6,7 @@
 #include "lldb/API/SBCommandInterpreter.h"
 #include "lldb/API/SBCommandReturnObject.h"
 #include "lldb/API/SBTarget.h"
-#include "LLDBEvent.h"
+#include "LLDBProtocol/LLDBEvent.h"
 #include <algorithm>
 #include "LLDBDebuggerThread.h"
 #include <lldb/API/SBTarget.h>
@@ -205,7 +205,7 @@ void LLDBDebugger::NotifyStopped()
             event.SetFileName(bt.GetCallstack().at(0).filename);
             event.SetLinenumber(bt.GetCallstack().at(0).line);
         }
-        event.SetStopReason( m_interruptReason );
+        event.SetInterruptReason( m_interruptReason );
         AddPendingEvent( event );
     }
     m_interruptReason = kInterruptReasonNone;
@@ -433,7 +433,7 @@ void LLDBDebugger::NotifyBreakpointsUpdated()
     AddPendingEvent( event );
 }
 
-void LLDBDebugger::Interrupt(LLDBDebugger::eInterruptReason reason)
+void LLDBDebugger::Interrupt(eInterruptReason reason)
 {
     CHECK_RUNNING_RET();
     m_interruptReason = reason;

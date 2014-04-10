@@ -1,5 +1,5 @@
 #include "LLDBCallStack.h"
-#include "LLDBEvent.h"
+#include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBDebugger.h"
 #include <wx/wupdlock.h>
 

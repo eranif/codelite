@@ -5,6 +5,7 @@
 #include "LLDBNewBreakpointDlg.h"
 #include "lldbdebugger-plugin.h"
 #include "ieditor.h"
+#include "LLDBProtocol/LLDBEnums.h"
 
 class LLDBBreakpointClientData : public wxClientData
 {
@@ -95,7 +96,7 @@ void LLDBBreakpointsPane::OnNewBreakpoint(wxCommandEvent& event)
 
             // If we can't interact with the debugger atm, interrupt it
             if ( !m_lldb->CanInteract() ) {
-                m_lldb->Interrupt(LLDBDebugger::kInterruptReasonApplyBreakpoints);
+                m_lldb->Interrupt(kInterruptReasonApplyBreakpoints);
 
             } else {
                 // Apply the breakpoints now
@@ -117,7 +118,7 @@ void LLDBBreakpointsPane::OnDeleteAll(wxCommandEvent& event)
         m_lldb->DeleteAllBreakpoints();
 
     } else {
-        m_lldb->Interrupt(LLDBDebugger::kInterruptReasonDeleteAllBreakpoints);
+        m_lldb->Interrupt(kInterruptReasonDeleteAllBreakpoints);
     }
 }
 

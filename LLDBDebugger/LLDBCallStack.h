@@ -2,7 +2,8 @@
 #define LLDBCALLSTACK_H
 
 #include "UI.h"
-#include "LLDBEvent.h"
+#include "LLDBProtocol/LLDBBacktrace.h"
+#include "LLDBProtocol/LLDBEvent.h"
 
 class LLDBDebugger;
 class LLDBCallStackPane : public LLDBCallStackBase

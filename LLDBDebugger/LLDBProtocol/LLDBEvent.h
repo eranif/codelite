@@ -9,7 +9,7 @@ class LLDBEvent : public clCommandEvent
     LLDBBacktrace m_backtrace;
     wxString      m_filename;
     int           m_linenumber;
-    int           m_stopReason;
+    int           m_interruptReason;
     int           m_frameId;
     int           m_threadId;
 
@@ -49,12 +49,12 @@ public:
     /**
      * @brief return the Interrupt reason (wxEVT_LLDB_STOPPED)
      */
-    int GetStopReason() const {
-        return m_stopReason;
+    int GetInterruptReason() const {
+        return m_interruptReason;
     }
 
-    void SetStopReason(int stopReason) {
-        this->m_stopReason = stopReason;
+    void SetInterruptReason(int stopReason) {
+        this->m_interruptReason = stopReason;
     }
 };
 

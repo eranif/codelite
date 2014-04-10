@@ -104,6 +104,7 @@ else()
             ${PLUGIN_EXTRA_LIBS}
             ${wxWidgets_LIBRARIES}
             -L"${CL_LIBPATH}"
+            -lLLDBProtocol
             -llibcodelite
             -lplugin
             -lwxsqlite3 

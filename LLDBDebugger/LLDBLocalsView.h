@@ -2,7 +2,7 @@
 #define LLDBLOCALSVIEW_H
 
 #include "UI.h"
-#include "LLDBEvent.h"
+#include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBLocalVariable.h"
 
 class LLDBDebuggerPlugin;

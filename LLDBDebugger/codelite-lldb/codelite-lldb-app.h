@@ -10,16 +10,29 @@
 
 #include <lldb/API/SBDebugger.h>
 #include <lldb/API/SBTarget.h>
+#include "LLDBProtocol/LLDBEnums.h"
+#include "LLDBHandlerThread.h"
 
 class CodeLiteLLDBApp : public wxAppConsole
 {
     LLDBNetworkServerThread *m_networkThread;
-    
-    lldb::SBDebugger m_debugger;
-    lldb::SBTarget   m_target;
-    int m_debuggeePid;
-    clSocketBase::Ptr_t m_replySocket;
-    
+    LLDBHandlerThread*       m_lldbProcessEventThread;
+    lldb::SBDebugger         m_debugger;
+    lldb::SBTarget           m_target;
+    int                      m_debuggeePid;
+    clSocketBase::Ptr_t      m_replySocket;
+    eInterruptReason         m_interruptReason;
+
+public:
+    void NotifyStoppedOnFirstEntry();
+    void NotifyBacktrace();
+    void NotifyStopped();
+    void NotifyExited();
+    void NotifyStarted();
+    void NotifyRunning();
+    void NotifyBreakpointsUpdated();
+    void NotifyAllBreakpointsDeleted();
+
 public:
     CodeLiteLLDBApp();
     virtual ~CodeLiteLLDBApp();

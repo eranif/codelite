@@ -3,12 +3,15 @@
 #include <wx/sckaddr.h>
 #include "LLDBProtocol/LLDBReply.h"
 #include "LLDBProtocol/cl_socket_server.h"
+#include "LLDBProtocol/LLDBEnums.h"
 
 IMPLEMENT_APP_CONSOLE(CodeLiteLLDBApp)
 
 CodeLiteLLDBApp::CodeLiteLLDBApp()
     : m_networkThread(NULL)
+    , m_lldbProcessEventThread(NULL)
     , m_debuggeePid(wxNOT_FOUND)
+    , m_interruptReason(kInterruptReasonNone)
 {
     wxSocketBase::Initialize();
     wxPrintf("codelite-lldb: lldb initialized successfully\n");
@@ -17,6 +20,7 @@ CodeLiteLLDBApp::CodeLiteLLDBApp()
 CodeLiteLLDBApp::~CodeLiteLLDBApp()
 {
     wxDELETE( m_networkThread );
+    wxDELETE( m_lldbProcessEventThread );
     m_replySocket.reset(NULL);
 }
 
@@ -90,9 +94,64 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 
     wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
     
+    // Launch the thread that will handle the LLDB process events
+    m_lldbProcessEventThread = new LLDBHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess());
+    m_lldbProcessEventThread->Start();
+    
+    // In any case, reset the interrupt reason
+    m_interruptReason = kInterruptReasonNone;
+    
     // Notify codelite that the debugger started successfully
+    NotifyStarted();
+}
+
+void CodeLiteLLDBApp::NotifyAllBreakpointsDeleted()
+{
+}
+
+void CodeLiteLLDBApp::NotifyBacktrace()
+{
+}
+
+void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
+{
+}
+
+void CodeLiteLLDBApp::NotifyExited()
+{
     LLDBReply reply;
-    reply.SetReasonCode( LLDBReply::kReasonDebuggerStartedSuccessfully );
-    reply.SetTranscationId( command.GetTranscationId() );
+    reply.SetReplyType( kTypeDebuggerExited );
+    m_replySocket->WriteMessage( reply.ToJSON().format() );
+}
+
+void CodeLiteLLDBApp::NotifyRunning()
+{
+    LLDBReply reply;
+    reply.SetReplyType( kTypeDebuggerRunning );
+    m_replySocket->WriteMessage( reply.ToJSON().format() );
+}
+
+void CodeLiteLLDBApp::NotifyStarted()
+{
+    LLDBReply reply;
+    reply.SetReplyType( kTypeDebuggerStartedSuccessfully );
+    m_replySocket->WriteMessage( reply.ToJSON().format() );
+}
+
+void CodeLiteLLDBApp::NotifyStopped()
+{
+    LLDBReply reply;
+    reply.SetReplyType( kTypeDebuggerStartedSuccessfully );
+    reply.SetInterruptResaon( m_interruptReason );
+    m_replySocket->WriteMessage( reply.ToJSON().format() );
+    
+    // reset the interrupt reason
+    m_interruptReason = kInterruptReasonNone;
+}
+
+void CodeLiteLLDBApp::NotifyStoppedOnFirstEntry()
+{
+    LLDBReply reply;
+    reply.SetReplyType( kTypeDebuggerStoppedOnFirstEntry );
     m_replySocket->WriteMessage( reply.ToJSON().format() );
 }

@@ -6,9 +6,11 @@
 #include "clSocketClient.h"
 #include "cl_socket_server.h"
 
+class LLDBNetworkListenerThread;
 class LLDBConnector : public wxEvtHandler
 {
     clSocketClient m_socket;
+    LLDBNetworkListenerThread *m_thread;
     
 public:
     LLDBConnector();

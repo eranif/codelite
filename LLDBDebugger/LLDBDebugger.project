@@ -79,6 +79,8 @@
     <File Name="LLDBProtocol/clSocketClient.cpp"/>
     <File Name="LLDBProtocol/LLDBConnector.h"/>
     <File Name="LLDBProtocol/LLDBConnector.cpp"/>
+    <File Name="LLDBProtocol/LLDBProcessEventThread.h"/>
+    <File Name="LLDBProtocol/LLDBProcessEventThread.cpp"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

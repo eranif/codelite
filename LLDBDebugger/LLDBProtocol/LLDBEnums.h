@@ -21,4 +21,11 @@ enum eReplyType {
     kTypeBacktraceReceived,
 };
 
+enum eCommandType {
+    kCommandInvalid = -1,
+    kCommandStart,
+    kCommandRun,
+    kCommandStop,
+};
+    
 #endif // 

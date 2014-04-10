@@ -5,11 +5,12 @@
 #include "LLDBCommand.h"
 #include "clSocketClient.h"
 #include "cl_socket_server.h"
+#include "LLDBEnums.h"
 
 class LLDBNetworkListenerThread;
 class LLDBConnector : public wxEvtHandler
 {
-    clSocketClient m_socket;
+    clSocketClient::Ptr_t m_socket;
     LLDBNetworkListenerThread *m_thread;
     
 public:

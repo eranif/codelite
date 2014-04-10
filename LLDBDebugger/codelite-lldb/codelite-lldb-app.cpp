@@ -74,9 +74,11 @@ bool CodeLiteLLDBApp::OnInit()
 
 void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 {
+    if ( command.GetWorkingDirectory().IsEmpty() ) {
     ::wxSetWorkingDirectory( command.GetWorkingDirectory() );
+    }
     wxPrintf("codelite-lldb: working directory is set to %s\n", ::wxGetCwd());
-
+    
 #ifdef __WXMAC__
     // On OSX, debugserver executable must exists otherwise lldb will not work properly
     // we ensure that it exists by checking the environment variable LLDB_DEBUGSERVER_PATH
@@ -121,21 +123,21 @@ void CodeLiteLLDBApp::NotifyExited()
 {
     LLDBReply reply;
     reply.SetReplyType( kTypeDebuggerExited );
-    m_replySocket->WriteMessage( reply.ToJSON().format() );
+    SendReply( reply );
 }
 
 void CodeLiteLLDBApp::NotifyRunning()
 {
     LLDBReply reply;
     reply.SetReplyType( kTypeDebuggerRunning );
-    m_replySocket->WriteMessage( reply.ToJSON().format() );
+    SendReply( reply );
 }
 
 void CodeLiteLLDBApp::NotifyStarted()
 {
     LLDBReply reply;
     reply.SetReplyType( kTypeDebuggerStartedSuccessfully );
-    m_replySocket->WriteMessage( reply.ToJSON().format() );
+    SendReply( reply );
 }
 
 void CodeLiteLLDBApp::NotifyStopped()
@@ -143,7 +145,7 @@ void CodeLiteLLDBApp::NotifyStopped()
     LLDBReply reply;
     reply.SetReplyType( kTypeDebuggerStartedSuccessfully );
     reply.SetInterruptResaon( m_interruptReason );
-    m_replySocket->WriteMessage( reply.ToJSON().format() );
+    SendReply( reply );
     
     // reset the interrupt reason
     m_interruptReason = kInterruptReasonNone;
@@ -153,5 +155,61 @@ void CodeLiteLLDBApp::NotifyStoppedOnFirstEntry()
 {
     LLDBReply reply;
     reply.SetReplyType( kTypeDebuggerStoppedOnFirstEntry );
-    m_replySocket->WriteMessage( reply.ToJSON().format() );
+    SendReply( reply );
+}
+
+void CodeLiteLLDBApp::SendReply(const LLDBReply& reply)
+{
+    try {
+        m_replySocket->WriteMessage( reply.ToJSON().format() );
+        
+    } catch (clSocketException &e) {
+        wxPrintf("codelite-lldb: failed to send reply. %s. %s.\n", e.what().c_str(), strerror(errno));
+    }
+}
+
+void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
+{
+    // if ( m_debugger.IsValid() ) {
+    //     // Construct char** arrays
+    //     const char** argv = (const char**)_wxArrayStringToCharPtrPtr(argvArr);
+    //     const char** envp = (const char**)_wxArrayStringToCharPtrPtr(envArr);
+    //     const char* pin  = in.mb_str(wxConvUTF8).data();
+    //     const char* pout = out.mb_str(wxConvUTF8).data();
+    //     const char* perr = err.mb_str(wxConvUTF8).data();
+    //     const char* wd = workingDirectory.mb_str(wxConvUTF8).data();
+    //     
+    //     lldb::SBError error;
+    //     lldb::SBListener listener = m_debugger.GetListener();
+    //     lldb::SBProcess process = m_target.Launch(
+    //                                 listener, 
+    //                                 argv, 
+    //                                 envp, 
+    //                                 pin, 
+    //                                 pout, 
+    //                                 perr, 
+    //                                 wd, 
+    //                                 lldb::eLaunchFlagLaunchInSeparateProcessGroup|lldb::eLaunchFlagStopAtEntry, 
+    //                                 true, 
+    //                                 error);
+    // 
+    //     //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
+    //     DELETE_CHAR_PTR_PTR( const_cast<char**>(argv) );
+    //     DELETE_CHAR_PTR_PTR( const_cast<char**>(envp) );
+    // 
+    //     if ( !process.IsValid() ) {
+    //         CL_WARNING("LLDB>> Failed to launch debuggee process");
+    //         Cleanup();
+    //         NotifyExited();
+    //         return false;
+    //         
+    //     } else {
+    //         m_debugeePid = process.GetProcessID();
+    //         CL_DEBUG(wxString() << "LLDB>> Debugee process launched successfully. PID=" << m_debugeePid);
+    //         m_thread = new LLDBDebuggerThread(this, listener, process);
+    //         m_thread->Start();
+    //         return true;
+    // 
+    //     }
+    // }
 }

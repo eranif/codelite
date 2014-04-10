@@ -277,8 +277,15 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="codelite-lldb-tester">
-    <File Name="codelite-lldb-tester/tester.cpp"/>
     <File Name="codelite-lldb-tester/CMakeLists.txt"/>
+    <File Name="codelite-lldb-tester/MainDialog.cpp"/>
+    <File Name="codelite-lldb-tester/MainDialog.h"/>
+    <File Name="codelite-lldb-tester/main.cpp"/>
+    <File Name="codelite-lldb-tester/win_resources.rc"/>
+    <File Name="codelite-lldb-tester/wxcrafter.cpp"/>
+    <File Name="codelite-lldb-tester/wxcrafter.h"/>
+    <File Name="codelite-lldb-tester/wxcrafter.wxcp"/>
+    <File Name="codelite-lldb-tester/wxcrafter_bitmaps.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">

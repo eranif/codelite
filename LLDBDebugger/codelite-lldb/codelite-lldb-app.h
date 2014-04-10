@@ -12,6 +12,7 @@
 #include <lldb/API/SBTarget.h>
 #include "LLDBProtocol/LLDBEnums.h"
 #include "LLDBProcessEventHandlerThread.h"
+#include "LLDBProtocol/LLDBReply.h"
 
 class CodeLiteLLDBApp : public wxAppConsole
 {
@@ -33,6 +34,8 @@ public:
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
 
+    void SendReply(const LLDBReply& reply);
+    
 public:
     CodeLiteLLDBApp();
     virtual ~CodeLiteLLDBApp();
@@ -48,6 +51,7 @@ public:
     
     // callback from the network thread
     void StartDebugger(const LLDBCommand& command);
+    void RunDebugger(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

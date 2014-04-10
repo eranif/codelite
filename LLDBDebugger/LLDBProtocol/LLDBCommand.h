@@ -5,21 +5,17 @@
 
 #include <wx/string.h>
 #include "json_node.h"
+#include "LLDBEnums.h"
+
 class LLDBCommand
 {
-public:
-    enum {
-        kCommandInvalid = -1,
-        kCommandStart,
-        kCommandRun,
-        kCommandStop,
-    };
-
 protected:
     int m_commandType;
     wxString m_commandArguments;
     wxString m_workingDirectory;
     wxString m_executable;
+    wxString m_redirectTTY;
+
 public:
 
     // Serialization API
@@ -30,7 +26,12 @@ public:
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 
-
+    void SetRedirectTTY(const wxString& redirectTTY) {
+        this->m_redirectTTY = redirectTTY;
+    }
+    const wxString& GetRedirectTTY() const {
+        return m_redirectTTY;
+    }
     void SetExecutable(const wxString& executable) {
         this->m_executable = executable;
     }

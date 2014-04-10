@@ -11,12 +11,12 @@
 #include <lldb/API/SBDebugger.h>
 #include <lldb/API/SBTarget.h>
 #include "LLDBProtocol/LLDBEnums.h"
-#include "LLDBHandlerThread.h"
+#include "LLDBProcessEventHandlerThread.h"
 
 class CodeLiteLLDBApp : public wxAppConsole
 {
     LLDBNetworkServerThread *m_networkThread;
-    LLDBHandlerThread*       m_lldbProcessEventThread;
+    LLDBProcessEventHandlerThread*       m_lldbProcessEventThread;
     lldb::SBDebugger         m_debugger;
     lldb::SBTarget           m_target;
     int                      m_debuggeePid;

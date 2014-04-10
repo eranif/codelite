@@ -1,9 +1,9 @@
-#include "LLDBHandlerThread.h"
+#include "LLDBProcessEventHandlerThread.h"
 #include "file_logger.h"
 #include "codelite-lldb-app.h"
 #include <lldb/API/SBEvent.h>
 
-LLDBHandlerThread::LLDBHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process)
+LLDBProcessEventHandlerThread::LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process)
     : wxThread(wxTHREAD_JOINABLE)
     , m_app(app)
     , m_process(process)
@@ -11,7 +11,7 @@ LLDBHandlerThread::LLDBHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener list
 {
 }
 
-LLDBHandlerThread::~LLDBHandlerThread()
+LLDBProcessEventHandlerThread::~LLDBProcessEventHandlerThread()
 {
     if ( IsAlive() ) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
@@ -20,7 +20,7 @@ LLDBHandlerThread::~LLDBHandlerThread()
     }
 }
 
-void* LLDBHandlerThread::Entry()
+void* LLDBProcessEventHandlerThread::Entry()
 {
     bool first_time_stopped = true;
     CL_DEBUG("LLDB Thread: started");

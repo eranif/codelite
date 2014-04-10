@@ -21,8 +21,8 @@
     <File Name="codelite-lldb/CMakeLists.txt"/>
     <File Name="codelite-lldb/LLDBNetworkServerThread.h"/>
     <File Name="codelite-lldb/LLDBNetworkServerThread.cpp"/>
-    <File Name="codelite-lldb/LLDBHandlerThread.h"/>
-    <File Name="codelite-lldb/LLDBHandlerThread.cpp"/>
+    <File Name="codelite-lldb/LLDBProcessEventHandlerThread.h"/>
+    <File Name="codelite-lldb/LLDBProcessEventHandlerThread.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="LLDBProtocol">
     <File Name="LLDBProtocol/CMakeLists.txt"/>

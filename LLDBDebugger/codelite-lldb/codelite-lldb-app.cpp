@@ -95,7 +95,7 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
     wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
     
     // Launch the thread that will handle the LLDB process events
-    m_lldbProcessEventThread = new LLDBHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess());
+    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess());
     m_lldbProcessEventThread->Start();
     
     // In any case, reset the interrupt reason

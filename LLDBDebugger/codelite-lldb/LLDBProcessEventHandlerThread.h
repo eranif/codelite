@@ -11,15 +11,15 @@
  * @brief Wait for the process events and report any changes to the application
  */
 class CodeLiteLLDBApp;
-class LLDBHandlerThread : public wxThread
+class LLDBProcessEventHandlerThread : public wxThread
 {
     CodeLiteLLDBApp* m_app;
     lldb::SBProcess  m_process;
     lldb::SBListener m_listener;
     
 public:
-    LLDBHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process);
-    virtual ~LLDBHandlerThread();
+    LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process);
+    virtual ~LLDBProcessEventHandlerThread();
     
     void Start() {
         Create();

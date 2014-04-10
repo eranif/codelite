@@ -16,13 +16,13 @@
   </Plugins>
   <Dependencies/>
   <VirtualDirectory Name="codelite-lldb">
-    <File Name="codelite-lldb/codelite-lldb-app.cpp"/>
-    <File Name="codelite-lldb/codelite-lldb-app.h"/>
     <File Name="codelite-lldb/CMakeLists.txt"/>
     <File Name="codelite-lldb/LLDBNetworkServerThread.h"/>
     <File Name="codelite-lldb/LLDBNetworkServerThread.cpp"/>
     <File Name="codelite-lldb/LLDBProcessEventHandlerThread.h"/>
     <File Name="codelite-lldb/LLDBProcessEventHandlerThread.cpp"/>
+    <File Name="codelite-lldb/CodeLiteLLDBApp.cpp"/>
+    <File Name="codelite-lldb/CodeLiteLLDBApp.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="LLDBProtocol">
     <File Name="LLDBProtocol/CMakeLists.txt"/>

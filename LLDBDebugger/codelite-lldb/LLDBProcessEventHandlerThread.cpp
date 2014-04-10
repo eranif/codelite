@@ -1,6 +1,6 @@
 #include "LLDBProcessEventHandlerThread.h"
 #include "file_logger.h"
-#include "codelite-lldb-app.h"
+#include "CodeLiteLLDBApp.h"
 #include <lldb/API/SBEvent.h>
 
 LLDBProcessEventHandlerThread::LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process)

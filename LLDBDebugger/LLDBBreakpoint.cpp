@@ -97,7 +97,6 @@ void LLDBBreakpoint::Copy(LLDBBreakpoint::Ptr_t other)
     m_filename   = other->m_filename;
     m_lineNumber = other->m_lineNumber;
     m_children   = other->m_children;
-    m_parentBP   = other->m_parentBP;
     m_id = wxNOT_FOUND;
 }
 
@@ -106,4 +105,35 @@ void LLDBBreakpoint::Invalidate()
     m_id = wxNOT_FOUND;
     // remove all children for this breakpoint
     m_children.clear();
+}
+
+void LLDBBreakpoint::FromJSON(const JSONElement& json)
+{
+    m_children.clear();
+    m_type = json.namedObject("m_type").toInt(kInvalid);
+    m_name = json.namedObject("m_name").toString();
+    m_filename = json.namedObject("m_filename").toString();
+    m_lineNumber = json.namedObject("m_lineNumber").toInt();
+    JSONElement arr = json.namedObject("m_children");
+    for(int i=0; i<arr.arraySize(); ++i) {
+        LLDBBreakpoint bp;
+        bp.FromJSON( arr.arrayItem(i) );
+        m_children.push_back( bp );
+    }
+}
+
+JSONElement LLDBBreakpoint::ToJSON() const
+{
+    JSONElement json = JSONElement::createObject();
+    json.addProperty("m_type", m_type);
+    json.addProperty("m_name", m_name);
+    json.addProperty("m_filename", m_filename);
+    json.addProperty("m_lineNumber", m_lineNumber);
+    
+    JSONElement arr = JSONElement::createArray("m_children");
+    json.append( arr );
+    for(size_t i=0; i<m_children.size(); ++i) {
+        arr.arrayAppend( m_children.at(i)->ToJSON() );
+    }
+    return json;
 }

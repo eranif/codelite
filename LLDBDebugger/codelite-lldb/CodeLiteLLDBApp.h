@@ -16,14 +16,17 @@
 
 class CodeLiteLLDBApp : public wxAppConsole
 {
-    LLDBNetworkServerThread *m_networkThread;
-    LLDBProcessEventHandlerThread*       m_lldbProcessEventThread;
+    LLDBNetworkServerThread *      m_networkThread;
+    LLDBProcessEventHandlerThread* m_lldbProcessEventThread;
     lldb::SBDebugger         m_debugger;
     lldb::SBTarget           m_target;
     int                      m_debuggeePid;
     clSocketBase::Ptr_t      m_replySocket;
     eInterruptReason         m_interruptReason;
-
+    
+private:
+    void Cleanup();
+    
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyBacktrace();

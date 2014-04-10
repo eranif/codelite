@@ -22,12 +22,11 @@ public:
     typedef std::vector<LLDBBreakpoint::Ptr_t> Vec_t;
 
 protected:
-    int      m_id;
-    int      m_type;
-    wxString m_name;
-    wxString m_filename;
-    int      m_lineNumber;
-    LLDBBreakpoint::Ptr_t m_parentBP;
+    int                   m_id;
+    int                   m_type;
+    wxString              m_name;
+    wxString              m_filename;
+    int                   m_lineNumber;
     LLDBBreakpoint::Vec_t m_children;
 
 public:
@@ -60,18 +59,6 @@ public:
     
     size_t GetNumChildren() const {
         return m_children.size();
-    }
-    
-    LLDBBreakpoint::Ptr_t GetParentBreakpoint() {
-        return m_parentBP;
-    }
-    
-    LLDBBreakpoint::Ptr_t GetParentBreakpoint() const {
-        return m_parentBP;
-    }
-    
-    void SetParentBreakpoint(LLDBBreakpoint::Ptr_t bp) {
-        m_parentBP = bp;
     }
     
     LLDBBreakpoint::Vec_t& GetChildren() {
@@ -138,7 +125,11 @@ public:
     int GetId() const {
         return m_id;
     }
-
+    
+    // Serialization API
+    void FromJSON(const JSONElement& json);
+    JSONElement ToJSON() const;
+    
 };
 
 #endif // LLDBBREAKPOINT_H

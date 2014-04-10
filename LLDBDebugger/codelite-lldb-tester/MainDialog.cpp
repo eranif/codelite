@@ -55,4 +55,7 @@ void MainDialog::OnLLDBStoppedOnFirstEntry(LLDBEvent& e)
 {
     e.Skip();
     m_textCtrlLog->AppendText(wxString() << "LLDB stopped on first entry\n");
+    
+    // place all breakpoints and move on
+    
 }

@@ -10,11 +10,12 @@
 class LLDBCommand
 {
 protected:
-    int m_commandType;
-    wxString m_commandArguments;
-    wxString m_workingDirectory;
-    wxString m_executable;
-    wxString m_redirectTTY;
+    int                   m_commandType;
+    wxString              m_commandArguments;
+    wxString              m_workingDirectory;
+    wxString              m_executable;
+    wxString              m_redirectTTY;
+    LLDBBreakpoint::Vec_t m_breakpoints;
 
 public:
 
@@ -55,6 +56,12 @@ public:
     }
     const wxString& GetWorkingDirectory() const {
         return m_workingDirectory;
+    }
+    void SetBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints) {
+        this->m_breakpoints = breakpoints;
+    }
+    const LLDBBreakpoint::Vec_t& GetBreakpoints() const {
+        return m_breakpoints;
     }
 };
 

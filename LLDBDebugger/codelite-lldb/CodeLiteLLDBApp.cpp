@@ -1,12 +1,39 @@
-#include "codelite-lldb-app.h"
+#include "CodeLiteLLDBApp.h"
 #include <iostream>
 #include <wx/sckaddr.h>
 #include "LLDBProtocol/LLDBReply.h"
 #include "LLDBProtocol/cl_socket_server.h"
 #include "LLDBProtocol/LLDBEnums.h"
+#include "clcommandlineparser.h"
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+static char** _wxArrayStringToCharPtrPtr(const wxArrayString &arr)
+{
+    char** argv = new char*[arr.size()+1]; // for the NULL
+    for(size_t i=0; i<arr.size(); ++i) {
+        argv[i] = strdup(arr.Item(i).mb_str(wxConvUTF8).data());
+    }
+    argv[arr.size()] = NULL;
+    return argv;
+}
+
+static void DELETE_CHAR_PTR_PTR(char** argv)
+{
+    size_t i=0;
+    while ( argv[i] ) {
+        delete [] argv[i];
+        ++i;
+    }
+    delete [] argv;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 IMPLEMENT_APP_CONSOLE(CodeLiteLLDBApp)
-
 CodeLiteLLDBApp::CodeLiteLLDBApp()
     : m_networkThread(NULL)
     , m_lldbProcessEventThread(NULL)
@@ -170,46 +197,60 @@ void CodeLiteLLDBApp::SendReply(const LLDBReply& reply)
 
 void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 {
-    // if ( m_debugger.IsValid() ) {
-    //     // Construct char** arrays
-    //     const char** argv = (const char**)_wxArrayStringToCharPtrPtr(argvArr);
-    //     const char** envp = (const char**)_wxArrayStringToCharPtrPtr(envArr);
-    //     const char* pin  = in.mb_str(wxConvUTF8).data();
-    //     const char* pout = out.mb_str(wxConvUTF8).data();
-    //     const char* perr = err.mb_str(wxConvUTF8).data();
-    //     const char* wd = workingDirectory.mb_str(wxConvUTF8).data();
-    //     
-    //     lldb::SBError error;
-    //     lldb::SBListener listener = m_debugger.GetListener();
-    //     lldb::SBProcess process = m_target.Launch(
-    //                                 listener, 
-    //                                 argv, 
-    //                                 envp, 
-    //                                 pin, 
-    //                                 pout, 
-    //                                 perr, 
-    //                                 wd, 
-    //                                 lldb::eLaunchFlagLaunchInSeparateProcessGroup|lldb::eLaunchFlagStopAtEntry, 
-    //                                 true, 
-    //                                 error);
-    // 
-    //     //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
-    //     DELETE_CHAR_PTR_PTR( const_cast<char**>(argv) );
-    //     DELETE_CHAR_PTR_PTR( const_cast<char**>(envp) );
-    // 
-    //     if ( !process.IsValid() ) {
-    //         CL_WARNING("LLDB>> Failed to launch debuggee process");
-    //         Cleanup();
-    //         NotifyExited();
-    //         return false;
-    //         
-    //     } else {
-    //         m_debugeePid = process.GetProcessID();
-    //         CL_DEBUG(wxString() << "LLDB>> Debugee process launched successfully. PID=" << m_debugeePid);
-    //         m_thread = new LLDBDebuggerThread(this, listener, process);
-    //         m_thread->Start();
-    //         return true;
-    // 
-    //     }
-    // }
+    if ( m_debugger.IsValid() ) {
+
+        // Construct char** arrays
+        clCommandLineParser parser(command.GetCommandArguments());
+        const char** argv = (const char**)_wxArrayStringToCharPtrPtr(parser.ToArray());
+
+        std::string tty_c;
+        if ( !command.GetRedirectTTY().IsEmpty() ) {
+            tty_c = command.GetRedirectTTY().mb_str(wxConvUTF8).data();
+        }
+        const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
+
+        lldb::SBError error;
+        lldb::SBListener listener = m_debugger.GetListener();
+        lldb::SBProcess process = m_target.Launch(
+                                    listener, 
+                                    argv, 
+                                    NULL, 
+                                    ptty, 
+                                    ptty, 
+                                    ptty, 
+                                    NULL, 
+                                    lldb::eLaunchFlagLaunchInSeparateProcessGroup|lldb::eLaunchFlagStopAtEntry, 
+                                    true, 
+                                    error);
+
+        //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
+        DELETE_CHAR_PTR_PTR( const_cast<char**>(argv) );
+
+        if ( !process.IsValid() ) {
+            NotifyExited();
+            Cleanup();
+
+        } else {
+            m_debuggeePid = process.GetProcessID();
+            NotifyRunning();
+        }
+    }
+}
+
+void CodeLiteLLDBApp::Cleanup()
+{
+    m_interruptReason = kInterruptReasonNone;
+    m_debuggeePid = wxNOT_FOUND;
+    if ( m_target.IsValid() ) {
+        m_target.DeleteAllBreakpoints();
+        m_target.DeleteAllWatchpoints();
+        m_debugger.DeleteTarget( m_target );
+    }
+
+    if ( m_debugger.IsValid() ) {
+        lldb::SBDebugger::Destroy( m_debugger );
+    }
+
+    wxDELETE( m_networkThread );
+    wxDELETE( m_lldbProcessEventThread );
 }

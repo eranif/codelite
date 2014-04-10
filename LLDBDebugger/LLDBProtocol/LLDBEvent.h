@@ -3,6 +3,7 @@
 
 #include "cl_command_event.h"
 #include "LLDBBacktrace.h"
+#include "LLDBBreakpoint.h"
 
 class LLDBEvent : public clCommandEvent
 {
@@ -12,6 +13,7 @@ class LLDBEvent : public clCommandEvent
     int           m_interruptReason;
     int           m_frameId;
     int           m_threadId;
+    LLDBBreakpoint::Vec_t m_breakpoints;
 
 public:
     LLDBEvent(wxEventType eventType, int winid = 0);
@@ -55,6 +57,12 @@ public:
 
     void SetInterruptReason(int stopReason) {
         this->m_interruptReason = stopReason;
+    }
+    void SetBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints) {
+        this->m_breakpoints = breakpoints;
+    }
+    const LLDBBreakpoint::Vec_t& GetBreakpoints() const {
+        return m_breakpoints;
     }
 };
 

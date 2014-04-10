@@ -22,7 +22,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"500,300"
+					"m_value":	"800,600"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",

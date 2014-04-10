@@ -2,7 +2,7 @@
 #define LLDBNEWBREAKPOINTDLG_H
 
 #include "UI.h"
-#include "LLDBBreakpoint.h"
+#include "LLDBProtocol/LLDBBreakpoint.h"
 
 class LLDBNewBreakpointDlg : public LLDBNewBreakpointDlgBase
 {

@@ -3,7 +3,7 @@
 
 #include "UI.h"
 #include "LLDBProtocol/LLDBEvent.h"
-#include "LLDBBreakpoint.h"
+#include "LLDBProtocol/LLDBBreakpoint.h"
 
 class LLDBDebugger;
 class LLDBDebuggerPlugin;

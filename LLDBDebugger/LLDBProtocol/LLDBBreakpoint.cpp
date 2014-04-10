@@ -12,7 +12,6 @@ LLDBBreakpoint::LLDBBreakpoint(const wxFileName& filename, int line)
     , m_type(kFileLine)
     , m_filename(filename.GetFullPath())
     , m_lineNumber(line)
-    , m_parentBP(NULL)
 {
 }
 
@@ -21,7 +20,6 @@ LLDBBreakpoint::LLDBBreakpoint(const wxString& name)
     , m_type(kFunction)
     , m_name(name)
     , m_lineNumber(wxNOT_FOUND)
-    , m_parentBP(NULL)
 {
 }
 
@@ -68,11 +66,12 @@ BreakpointInfo::Vec_t LLDBBreakpoint::ToBreakpointInfoVector(const LLDBBreakpoin
 wxString LLDBBreakpoint::ToString() const
 {
     wxString str;
+    str << "Breakpoint ID=" << m_id << ". ";
     if ( GetType() == kFileLine ) {
-        str << "Normal breakpoint. " << GetFilename() << "," << GetLineNumber();
+         str << GetFilename() << "," << GetLineNumber();
 
     } else if ( GetType() == kFunction ) {
-        str << "Normal breakpoint. " << GetName() << "()";
+        str << GetName() << "()";
     }
     return str;
 }
@@ -110,14 +109,15 @@ void LLDBBreakpoint::Invalidate()
 void LLDBBreakpoint::FromJSON(const JSONElement& json)
 {
     m_children.clear();
+    m_id = json.namedObject("m_id").toInt(wxNOT_FOUND);
     m_type = json.namedObject("m_type").toInt(kInvalid);
     m_name = json.namedObject("m_name").toString();
     m_filename = json.namedObject("m_filename").toString();
     m_lineNumber = json.namedObject("m_lineNumber").toInt();
     JSONElement arr = json.namedObject("m_children");
     for(int i=0; i<arr.arraySize(); ++i) {
-        LLDBBreakpoint bp;
-        bp.FromJSON( arr.arrayItem(i) );
+        LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );
+        bp->FromJSON( arr.arrayItem(i) );
         m_children.push_back( bp );
     }
 }
@@ -125,6 +125,7 @@ void LLDBBreakpoint::FromJSON(const JSONElement& json)
 JSONElement LLDBBreakpoint::ToJSON() const
 {
     JSONElement json = JSONElement::createObject();
+    json.addProperty("m_id", m_id);
     json.addProperty("m_type", m_type);
     json.addProperty("m_name", m_name);
     json.addProperty("m_filename", m_filename);

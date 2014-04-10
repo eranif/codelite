@@ -36,5 +36,6 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_interruptReason = src.m_interruptReason;
     m_frameId = src.m_frameId;
     m_threadId = src.m_threadId;
+    m_breakpoints = src.m_breakpoints;
     return *this;
 }

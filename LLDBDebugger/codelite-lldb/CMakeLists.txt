@@ -20,5 +20,6 @@ target_link_libraries(  codelite-lldb
                         -lwxsqlite3 
                         -lsqlite3lib
                     )
+target_link_libraries(codelite-lldb LLDBProtocol)
 add_dependencies(codelite-lldb plugin)
 

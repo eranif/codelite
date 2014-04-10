@@ -20,11 +20,10 @@ void LLDBCommand::FromJSON(const JSONElement& json)
 
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i=0; i<arr.arraySize(); ++i) {
-        LLDBBreakpoint bp;
-        bp.FromJSON( arr.arrayItem(i) );
+        LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );
+        bp->FromJSON( arr.arrayItem(i) );
         m_breakpoints.push_back( bp );
     }
-
 }
 
 JSONElement LLDBCommand::ToJSON() const

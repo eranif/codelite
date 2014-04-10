@@ -59,7 +59,7 @@ MainDialogBaseClass::MainDialogBaseClass(wxWindow* parent, wxWindowID id, const 
     
     boxSizer12->Add(m_buttonCancel, 0, wxALL, 5);
     
-    SetSizeHints(500,300);
+    SetSizeHints(800,600);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

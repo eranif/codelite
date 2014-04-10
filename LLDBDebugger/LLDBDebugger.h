@@ -7,7 +7,7 @@
 #include <wx/event.h>
 #include <wx/timer.h>
 #include "LLDBProtocol/LLDBEvent.h"
-#include "LLDBBreakpoint.h"
+#include "LLDBProtocol/LLDBBreakpoint.h"
 #include "LLDBLocalVariable.h"
 #include "LLDBProtocol/LLDBEnums.h"
 #include "LLDBProtocol/LLDBEnums.h"

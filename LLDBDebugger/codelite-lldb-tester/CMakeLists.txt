@@ -20,5 +20,6 @@ target_link_libraries(  codelite-lldb-tester
                         -lwxsqlite3 
                         -lsqlite3lib
                     )
+target_link_libraries(codelite-lldb-tester LLDBProtocol)
 add_dependencies(codelite-lldb-tester plugin)
 

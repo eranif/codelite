@@ -6,6 +6,7 @@
 #include <wx/string.h>
 #include "json_node.h"
 #include "LLDBEnums.h"
+#include "LLDBBreakpoint.h"
 
 class LLDBCommand
 {

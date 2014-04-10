@@ -18,6 +18,7 @@ LLDBProcessEventHandlerThread::~LLDBProcessEventHandlerThread()
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
     }
+    wxPrintf("codelite-lldb: Process event thread exited\n");
 }
 
 void* LLDBProcessEventHandlerThread::Entry()

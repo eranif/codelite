@@ -3,6 +3,7 @@
 
 #include "json_node.h"
 #include "LLDBEnums.h"
+#include "LLDBBreakpoint.h"
 
 class LLDBReply
 {
@@ -12,12 +13,22 @@ protected:
     int      m_interruptResaon;
     int      m_line;
     wxString m_filename;
+    LLDBBreakpoint::Vec_t m_breakpoints;
 
 public:
     LLDBReply() : m_transcationId(0), m_replyType(kTypeInvalid), m_interruptResaon(kInterruptReasonNone), m_line(wxNOT_FOUND) {}
     LLDBReply(const wxString &str);
     virtual ~LLDBReply();
 
+    void SetBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints) {
+        this->m_breakpoints = breakpoints;
+    }
+    void SetInterruptResaon(int interruptResaon) {
+        this->m_interruptResaon = interruptResaon;
+    }
+    const LLDBBreakpoint::Vec_t& GetBreakpoints() const {
+        return m_breakpoints;
+    }
     void SetReplyType(int replyType) {
         this->m_replyType = replyType;
     }
@@ -36,9 +47,6 @@ public:
     }
     void SetLine(int line) {
         this->m_line = line;
-    }
-    void SetInterruptResaon(int stopResaon) {
-        this->m_interruptResaon = stopResaon;
     }
     const wxString& GetFilename() const {
         return m_filename;

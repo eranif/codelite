@@ -19,6 +19,8 @@ enum eReplyType {
     kTypeDebuggerExited,
     kTypeDebuggerRunning,
     kTypeBacktraceReceived,
+    kTypeAllBreakpointsDeleted,
+    kTypeBreakpointsUpdated,
 };
 
 enum eCommandType {
@@ -26,6 +28,8 @@ enum eCommandType {
     kCommandStart,
     kCommandRun,
     kCommandStop,
+    kCommandApplyBreakpoints,
+    kCommandContinue,
 };
     
 #endif // 

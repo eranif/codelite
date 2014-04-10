@@ -302,9 +302,8 @@ void LLDBDebugger::ApplyBreakpoints()
                         new_bp->SetFilename( bpFile.GetFullPath() );
                         new_bp->SetLineNumber( loc.GetAddress().GetLineEntry().GetLine() );
                         new_bp->SetName( breakPoint->GetName() );
-                        new_bp->SetParentBreakpoint( breakPoint );
                         breakPoint->GetChildren().push_back( new_bp );
-                        
+
                         CL_DEBUG("Successfully placed sub breakpoint. " + new_bp->ToString() );
                     }
                 }

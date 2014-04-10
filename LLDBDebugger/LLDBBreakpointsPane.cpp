@@ -1,5 +1,5 @@
 #include "LLDBBreakpointsPane.h"
-#include "LLDBBreakpoint.h"
+#include "LLDBProtocol/LLDBBreakpoint.h"
 #include "LLDBDebugger.h"
 #include "event_notifier.h"
 #include "LLDBNewBreakpointDlg.h"

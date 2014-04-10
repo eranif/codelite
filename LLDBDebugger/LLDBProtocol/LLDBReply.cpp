@@ -18,6 +18,13 @@ void LLDBReply::FromJSON(const JSONElement& json)
     m_interruptResaon = json.namedObject("m_stopResaon").toInt(kInterruptReasonNone);
     m_line            = json.namedObject("m_line").toInt(wxNOT_FOUND);
     m_filename        = json.namedObject("m_filename").toString();
+    
+    JSONElement arr = json.namedObject("m_breakpoints");
+    for(int i=0; i<arr.arraySize(); ++i) {
+        LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );
+        bp->FromJSON( arr.arrayItem(i) );
+        m_breakpoints.push_back( bp );
+    }
 }
 
 JSONElement LLDBReply::ToJSON() const
@@ -28,6 +35,14 @@ JSONElement LLDBReply::ToJSON() const
     json.addProperty("m_stopResaon",    m_interruptResaon);
     json.addProperty("m_line",          m_line);
     json.addProperty("m_filename",      m_filename);
+    
+    JSONElement bparr = JSONElement::createArray("m_breakpoints");
+    json.append( bparr );
+    
+    for(size_t i=0; i<m_breakpoints.size(); ++i) {
+        bparr.arrayAppend( m_breakpoints.at(i)->ToJSON() );
+    }
+    
     return json;
 }
 

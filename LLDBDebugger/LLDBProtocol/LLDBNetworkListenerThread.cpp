@@ -45,9 +45,29 @@ void* LLDBNetworkListenerThread::Entry()
                 break;
             }
 
+            case kTypeDebuggerRunning: {
+                // notify debugger exited
+                LLDBEvent event(wxEVT_LLDB_RUNNING);
+                m_owner->AddPendingEvent( event );
+                break;
+            }
+
             case kTypeDebuggerStoppedOnFirstEntry: {
                 // notify debugger exited
                 LLDBEvent event(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY);
+                m_owner->AddPendingEvent( event );
+                break;
+            }
+            
+            case kTypeAllBreakpointsDeleted: {
+                LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL);
+                m_owner->AddPendingEvent( event );
+                break;
+            }
+            
+            case kTypeBreakpointsUpdated: {
+                LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_UPDATED);
+                event.SetBreakpoints( reply.GetBreakpoints() );
                 m_owner->AddPendingEvent( event );
                 break;
             }

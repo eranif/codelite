@@ -18,6 +18,7 @@ LLDBNetworkServerThread::~LLDBNetworkServerThread()
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
     }
+    wxPrintf("codelite-lldb: Network server thread exited\n");
 }
 
 void* LLDBNetworkServerThread::Entry()
@@ -37,9 +38,23 @@ void* LLDBNetworkServerThread::Entry()
                 case kCommandStart:
                     m_app->CallAfter( &CodeLiteLLDBApp::StartDebugger, command );
                     break;
+                    
                 case kCommandRun:
                     m_app->CallAfter( &CodeLiteLLDBApp::RunDebugger, command);
                     break;
+                    
+                case kCommandApplyBreakpoints:
+                    m_app->CallAfter( &CodeLiteLLDBApp::ApplyBreakpoints, command);
+                    break;
+                    
+                case kCommandContinue:
+                    m_app->CallAfter( &CodeLiteLLDBApp::Continue, command);
+                    break;
+                    
+                case kCommandStop:
+                    m_app->CallAfter( &CodeLiteLLDBApp::StopDebugger, command);
+                    break;
+                    
                 default:
                     break;
                 }

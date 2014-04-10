@@ -23,7 +23,7 @@ class CodeLiteLLDBApp : public wxAppConsole
     int                      m_debuggeePid;
     clSocketBase::Ptr_t      m_replySocket;
     eInterruptReason         m_interruptReason;
-    
+
 private:
     void Cleanup();
     
@@ -55,6 +55,9 @@ public:
     // callback from the network thread
     void StartDebugger(const LLDBCommand& command);
     void RunDebugger(const LLDBCommand& command);
+    void Continue(const LLDBCommand& command);
+    void ApplyBreakpoints(const LLDBCommand& command);
+    void StopDebugger(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

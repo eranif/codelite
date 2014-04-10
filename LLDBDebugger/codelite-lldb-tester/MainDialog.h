@@ -19,8 +19,11 @@ protected:
     virtual void OnStop(wxCommandEvent& event);
     
     void OnLLDBStarted(LLDBEvent &e);
+    void OnLLDBRunning(LLDBEvent &e);
     void OnLLDBExited(LLDBEvent &e);
     void OnLLDBStoppedOnFirstEntry(LLDBEvent &e);
+    void OnLLDBStopped(LLDBEvent &e);
+    void OnLLDBBreakpointsUpdated(LLDBEvent &e);
     
 };
 #endif // MAINDIALOG_H

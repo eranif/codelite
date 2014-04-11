@@ -4,13 +4,14 @@
 #include "UI.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBBreakpoint.h"
+#include "LLDBProtocol/LLDBConnector.h"
 
 class LLDBDebugger;
 class LLDBDebuggerPlugin;
 class LLDBBreakpointsPane : public LLDBBreakpointsPaneBase
 {
     LLDBDebuggerPlugin *m_plugin;
-    LLDBDebugger* m_lldb;
+    LLDBConnector* m_connector;
     
 public:
     LLDBBreakpointsPane(wxWindow* parent, LLDBDebuggerPlugin *plugin);

@@ -68,6 +68,7 @@ public:
     virtual bool Write(const wxString& buff);
     virtual void Terminate();
     virtual bool WriteToConsole(const wxString& buff);
+    virtual void Detach();
 
 };
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)

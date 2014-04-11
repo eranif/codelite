@@ -13,12 +13,13 @@ LLDBProcessEventHandlerThread::LLDBProcessEventHandlerThread(CodeLiteLLDBApp* ap
 
 LLDBProcessEventHandlerThread::~LLDBProcessEventHandlerThread()
 {
+    wxPrintf("codelite-lldb: Process Event Handler thread is going down...\n");
     if ( IsAlive() ) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
     }
-    wxPrintf("codelite-lldb: Process event thread exited\n");
+    wxPrintf("codelite-lldb: Process Event Handler thread is going down...done\n");
 }
 
 void* LLDBProcessEventHandlerThread::Entry()
@@ -46,7 +47,6 @@ void* LLDBProcessEventHandlerThread::Entry()
                     
                 } else {
                     CL_DEBUG("LLDBHandlerThread: eStateStopped");
-                    m_app->CallAfter( &CodeLiteLLDBApp::NotifyBacktrace );
                     m_app->CallAfter( &CodeLiteLLDBApp::NotifyStopped );
                     
                 }
@@ -71,7 +71,7 @@ void* LLDBProcessEventHandlerThread::Entry()
                 break;
                 
             case lldb::eStateAttaching:
-                CL_DEBUG("LLDBHandlerThread: eStateExited");
+                CL_DEBUG("LLDBHandlerThread: eStateAttaching");
                 break;
                 
             case lldb::eStateStepping:

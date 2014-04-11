@@ -3,8 +3,10 @@
 
 #include "plugin.h"
 #include "cl_command_event.h"
-#include "LLDBDebugger.h"
 #include <wx/stc/stc.h>
+
+#include "LLDBProtocol/LLDBConnector.h"
+#include "LLDBProtocol/LLDBEvent.h"
 
 class LLDBLocalsView;
 class LLDBBreakpointsPane;
@@ -12,8 +14,7 @@ class ConsoleFrame;
 class LLDBCallStackPane;
 class LLDBDebuggerPlugin : public IPlugin
 {
-    LLDBDebugger m_debugger;
-    bool   m_isRunning;
+    LLDBConnector m_connector;
     wxString m_defaultPerspective;
     
     /// ------------------------------------
@@ -28,8 +29,8 @@ public:
     LLDBDebuggerPlugin(IManager *manager);
     ~LLDBDebuggerPlugin();
     
-    LLDBDebugger* GetLLDB() {
-        return &m_debugger;
+    LLDBConnector* GetLLDB() {
+        return &m_connector;
     }
     
     IManager* GetManager() {
@@ -37,7 +38,7 @@ public:
     }
     
 private:
-    void ShowTerminal(const wxString& title);
+    wxString ShowTerminal(const wxString& title);
     
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
@@ -66,6 +67,7 @@ protected:
     void OnToggleBreakpoint(clDebugEvent& event);
 
     // LLDB events
+    void OnLLDBCrashed(LLDBEvent& event);
     void OnLLDBStarted(LLDBEvent& event);
     void OnLLDBExited(LLDBEvent& event);
     void OnLLDBStopped(LLDBEvent &event);

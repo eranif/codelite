@@ -73,7 +73,7 @@ public:
     // still alive
     virtual void Cleanup();
     virtual void Terminate();
-
+    virtual void Detach();
 protected:
     bool RedirectHandle(DWORD id, SECURITY_ATTRIBUTES &saAttr, HANDLE& hSavedHandle, HANDLE& hChildRd, HANDLE& hChildRdDup, HANDLE& hChildWrite, long flags);
 

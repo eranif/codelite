@@ -12,12 +12,13 @@
 
 clSocketBase::clSocketBase(int sockfd)
     : m_socket(sockfd)
+    , m_closeOnExit(true)
 {
 }
 
 clSocketBase::~clSocketBase()
 {
-    CloseSocket();
+    DestroySocket();
 }
 
 void clSocketBase::Initialize()
@@ -90,17 +91,18 @@ std::string clSocketBase::error() const
     return err;
 }
 
-void clSocketBase::CloseSocket()
+void clSocketBase::DestroySocket()
 {
-    if ( m_socket != INVALID_SOCKET ) {
+    if (IsCloseOnExit()) {
+        if ( m_socket != INVALID_SOCKET ) {
 #ifdef _WIN32
-        ::closesocket( m_socket );
+            ::closesocket( m_socket );
 #else
-        ::close(m_socket);
+            ::close(m_socket);
 #endif
-        ::shutdown(m_socket, 2);
+            ::shutdown(m_socket, 2);
+        }
     }
-
     m_socket = INVALID_SOCKET;
 }
 

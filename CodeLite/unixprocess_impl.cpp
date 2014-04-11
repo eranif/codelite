@@ -449,4 +449,14 @@ bool UnixProcessImpl::WriteToConsole(const wxString& buff)
     return bytes == (int)tmpbuf.length();
 }
 
+void UnixProcessImpl::Detach()
+{
+    if ( m_thr ) {
+        // Stop the reader thread
+        m_thr->Stop();
+        delete m_thr;
+    }
+    m_thr = NULL;
+}
+
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)

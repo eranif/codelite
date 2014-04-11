@@ -23,6 +23,7 @@ enum eReplyType {
     kTypeBreakpointsUpdated,
 };
 
+// LLDBCommand types
 enum eCommandType {
     kCommandInvalid = -1,
     kCommandStart,
@@ -32,6 +33,11 @@ enum eCommandType {
     kCommandDeleteBreakpoint,
     kCommandDeleteAllBreakpoints,
     kCommandContinue,
+    kCommandNext,
+    kCommandStepIn,
+    kCommandStepOut,
+    kCommandInterrupt,
 };
-    
-#endif // 
+
+#endif
+

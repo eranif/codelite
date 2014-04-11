@@ -500,4 +500,14 @@ bool WinProcessImpl::WriteToConsole(const wxString& buff)
     CloseHandle(hStdIn);
     return true;
 }
+
+void WinProcessImpl::Detach()
+{
+    if ( m_thr ) {
+        // Stop the reader thread
+        m_thr->Stop();
+        delete m_thr;
+    }
+    m_thr = NULL;
+}
 #endif //__WXMSW__

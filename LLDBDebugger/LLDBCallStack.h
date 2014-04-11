@@ -5,16 +5,16 @@
 #include "LLDBProtocol/LLDBBacktrace.h"
 #include "LLDBProtocol/LLDBEvent.h"
 
-class LLDBDebugger;
+class LLDBConnector;
 class LLDBCallStackPane : public LLDBCallStackBase
 {
-    LLDBDebugger* m_lldb;
+    LLDBConnector* m_connector;
 protected:
     void OnBacktrace(LLDBEvent &event);
     void OnRunning(LLDBEvent &event);
     
 public:
-    LLDBCallStackPane(wxWindow* parent, LLDBDebugger* lldb);
+    LLDBCallStackPane(wxWindow* parent, LLDBConnector* connector);
     virtual ~LLDBCallStackPane();
 };
 #endif // LLDBCALLSTACK_H

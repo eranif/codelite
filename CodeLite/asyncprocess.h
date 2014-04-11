@@ -72,7 +72,12 @@ public:
     // handled by codelite
     static void SetProcessExitCode(int pid, int exitCode);
     static bool GetProcessExitCode(int pid, int &exitCode);
-
+    
+    // Stop notifying the parent window about input/output from the process
+    // this is useful when we wish to terminate the process onExit but we don't want
+    // to know about its termination
+    virtual void Detach() = 0;
+    
     // Read from process stdout - return immediately if no data is available
     virtual bool Read(wxString& buff) = 0;
 

@@ -95,6 +95,8 @@ void MainDialog::OnLLDBStopped(LLDBEvent& e)
     wxString msg;
     msg << "Process stopped. " << e.GetFileName() << ":" << e.GetLinenumber();
     m_textCtrlLog->AppendText(msg + "\n");
+    m_textCtrlLog->AppendText("Backtrace:\n");
+    m_textCtrlLog->AppendText(e.GetBacktrace().ToString() + "\n");
     
     // If we have an "Interrupt reason" set, then the stop was due to user request
     // handle this separately

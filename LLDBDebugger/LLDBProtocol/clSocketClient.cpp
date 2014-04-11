@@ -27,13 +27,13 @@ bool clSocketClient::Connect()
     serv_addr.sin_port = htons(m_port);
     
     if(inet_pton(AF_INET, ip_addr, &serv_addr.sin_addr) <= 0) {
-        perror("inet_pton");
+//        perror("inet_pton");
         return false;
     }
     
     int rc = ::connect(m_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
     if ( rc != 0 ) {
-        perror("connect");
+//        perror("connect");
     }
     return rc == 0;
 }

@@ -133,6 +133,7 @@ else()
         add_subdirectory(LLDBProtocol)
         add_subdirectory(codelite-lldb)
         add_subdirectory(codelite-lldb-tester)
+        target_link_libraries(LLDBDebugger LLDBProtocol)
         
         add_dependencies(codelite-lldb LLDBProtocol)
         add_dependencies(codelite-lldb-tester LLDBProtocol)

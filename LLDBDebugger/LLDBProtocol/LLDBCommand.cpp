@@ -17,6 +17,7 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_workingDirectory = json.namedObject("m_workingDirectory").toString();
     m_executable = json.namedObject("m_executable").toString();
     m_redirectTTY = json.namedObject("m_redirectTTY").toString();
+    m_interruptReason = json.namedObject("m_interruptReason").toInt(kInterruptReasonNone);
     
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i=0; i<arr.arraySize(); ++i) {
@@ -34,7 +35,7 @@ JSONElement LLDBCommand::ToJSON() const
     json.addProperty("m_workingDirectory", m_workingDirectory);
     json.addProperty("m_executable", m_executable);
     json.addProperty("m_redirectTTY", m_redirectTTY);
-    
+    json.addProperty("m_interruptReason", m_interruptReason);
     JSONElement bparr = JSONElement::createArray("m_breakpoints");
     json.append( bparr );
     

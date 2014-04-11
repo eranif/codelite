@@ -6,6 +6,7 @@
 #include "lldbdebugger-plugin.h"
 #include "ieditor.h"
 #include "LLDBProtocol/LLDBEnums.h"
+#include "file_logger.h"
 
 class LLDBBreakpointClientData : public wxClientData
 {
@@ -21,17 +22,17 @@ public:
 LLDBBreakpointsPane::LLDBBreakpointsPane(wxWindow* parent, LLDBDebuggerPlugin* plugin)
     : LLDBBreakpointsPaneBase(parent)
     , m_plugin(plugin)
-    , m_lldb(plugin->GetLLDB())
+    , m_connector(plugin->GetLLDB())
 {
     Initialize();
-    m_lldb->Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
-    m_lldb->Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
+    m_connector->Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
+    m_connector->Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
 }
 
 LLDBBreakpointsPane::~LLDBBreakpointsPane()
 {
-    m_lldb->Unbind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
-    m_lldb->Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
+    m_connector->Unbind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
+    m_connector->Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBBreakpointsPane::OnBreakpointsUpdated, this);
 }
 
 void LLDBBreakpointsPane::OnBreakpointActivated(wxDataViewEvent& event)
@@ -49,7 +50,7 @@ void LLDBBreakpointsPane::Clear()
 void LLDBBreakpointsPane::Initialize()
 {
     Clear();
-    const LLDBBreakpoint::Vec_t &breakpoints = m_lldb->GetBreakpoints();
+    LLDBBreakpoint::Vec_t breakpoints = m_connector->GetAllBreakpoints();
     for(size_t i=0; i<breakpoints.size(); ++i) {
         
         wxVector<wxVariant> cols;
@@ -79,6 +80,11 @@ void LLDBBreakpointsPane::Initialize()
 void LLDBBreakpointsPane::OnBreakpointsUpdated(LLDBEvent& event)
 {
     event.Skip();
+    CL_DEBUG("Setting LLDB breakpoints to:");
+    for(size_t i=0; i<event.GetBreakpoints().size(); ++i) {
+        CL_DEBUG(event.GetBreakpoints().at(i)->ToString());
+    }
+    m_connector->UpdateAppliedBreakpoints( event.GetBreakpoints() );
     Initialize();
 }
 
@@ -88,20 +94,8 @@ void LLDBBreakpointsPane::OnNewBreakpoint(wxCommandEvent& event)
     if ( dlg.ShowModal() == wxID_OK ) {
         LLDBBreakpoint::Ptr_t bp = dlg.GetBreakpoint();
         if ( bp->IsValid() ) {
-
-            // Add the breakpoint
-            LLDBBreakpoint::Vec_t bps;
-            bps.push_back( bp );
-            m_lldb->AddBreakpoints( bps );
-
-            // If we can't interact with the debugger atm, interrupt it
-            if ( !m_lldb->CanInteract() ) {
-                m_lldb->Interrupt(kInterruptReasonApplyBreakpoints);
-
-            } else {
-                // Apply the breakpoints now
-                m_lldb->ApplyBreakpoints();
-            }
+            m_connector->MarkBreakpointForDeletion( bp );
+            m_connector->DeleteBreakpoints();
         }
     }
 }
@@ -114,12 +108,7 @@ void LLDBBreakpointsPane::OnNewBreakpointUI(wxUpdateUIEvent& event)
 void LLDBBreakpointsPane::OnDeleteAll(wxCommandEvent& event)
 {
     wxUnusedVar( event );
-    if ( m_lldb->CanInteract() ) {
-        m_lldb->DeleteAllBreakpoints();
-
-    } else {
-        m_lldb->Interrupt(kInterruptReasonDeleteAllBreakpoints);
-    }
+    m_connector->DeleteAllBreakpoints();
 }
 
 void LLDBBreakpointsPane::OnDeleteAllUI(wxUpdateUIEvent& event)
@@ -130,16 +119,12 @@ void LLDBBreakpointsPane::OnDeleteAllUI(wxUpdateUIEvent& event)
 void LLDBBreakpointsPane::OnDeleteBreakpoint(wxCommandEvent& event)
 {
     // get the breakpoint we want to delete
-    LLDBBreakpoint::Vec_t bps;
     wxDataViewItemArray items;
     m_dataview->GetSelections( items );
     for(size_t i=0; i<items.GetCount(); ++i) {
-        bps.push_back( GetBreakpoint( items.Item(i) ) );
+        m_connector->MarkBreakpointForDeletion( GetBreakpoint( items.Item(i) ) );
     }
-
-    if ( !bps.empty() ) {
-        m_lldb->DeleteBreakpoints( bps );
-    }
+    m_connector->DeleteBreakpoints();
 }
 
 void LLDBBreakpointsPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)

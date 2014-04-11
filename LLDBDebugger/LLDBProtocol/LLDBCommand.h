@@ -17,16 +17,32 @@ protected:
     wxString              m_executable;
     wxString              m_redirectTTY;
     LLDBBreakpoint::Vec_t m_breakpoints;
+    int                   m_interruptReason;
 
 public:
     // Serialization API
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement &json);
 
-    LLDBCommand() : m_commandType(kCommandInvalid) {}
+    LLDBCommand() : m_commandType(kCommandInvalid), m_interruptReason(kInterruptReasonNone) {}
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 
+    void Clear() {
+        m_commandType = kCommandInvalid;
+        m_commandArguments.clear();
+        m_workingDirectory.clear();
+        m_executable.clear();
+        m_redirectTTY.clear();
+        m_breakpoints.clear();
+    }
+
+    void SetInterruptReason(int interruptReason) {
+        this->m_interruptReason = interruptReason;
+    }
+    int GetInterruptReason() const {
+        return m_interruptReason;
+    }
     void SetRedirectTTY(const wxString& redirectTTY) {
         this->m_redirectTTY = redirectTTY;
     }

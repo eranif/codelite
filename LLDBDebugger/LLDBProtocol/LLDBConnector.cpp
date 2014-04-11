@@ -1,31 +1,58 @@
 #include "LLDBConnector.h"
 #include "LLDBNetworkListenerThread.h"
 #include "LLDBEvent.h"
+#include "file_logger.h"
+#include "processreaderthread.h"
+#include <wx/tokenzr.h>
+#include "file_logger.h"
+
+wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
+    EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, LLDBConnector::OnProcessTerminated)
+wxEND_EVENT_TABLE()
 
 LLDBConnector::LLDBConnector()
     : m_thread(NULL)
+    , m_process(NULL)
+    , m_isRunning(false)
+    , m_canInteract(false)
 {
+    Bind(wxEVT_LLDB_EXITED,  &LLDBConnector::OnLLDBExited, this);
+    Bind(wxEVT_LLDB_STARTED, &LLDBConnector::OnLLDBStarted, this);
 }
 
 LLDBConnector::~LLDBConnector()
 {
-    // the order matters here, since both are using the same file descriptor
-    // but only m_socket does the actual socket shutdown
-    wxDELETE( m_thread );
-    m_socket.reset(NULL);
+    StopDebugServer();
+    Unbind(wxEVT_LLDB_EXITED,  &LLDBConnector::OnLLDBExited, this);
+    Unbind(wxEVT_LLDB_STARTED, &LLDBConnector::OnLLDBStarted, this);
+    Cleanup();
 }
 
-bool LLDBConnector::ConnectToDebugger()
+bool LLDBConnector::ConnectToDebugger(int timeout)
 {
     clSocketClient *client = new clSocketClient();
     m_socket.reset( client );
     client->SetIp("127.0.0.1");
     client->SetPort( LLDB_PORT );
-    if ( !client->Connect() )
+    
+    long msTimeout = timeout * 1000;
+    long retriesCount = msTimeout / 250; // We try every 250 ms to connect
+    bool connected = false;
+    for(long i=0; i<retriesCount; ++i) {
+        if ( !client->Connect() ) {
+            wxThread::Sleep(250);
+            continue;
+        }
+        connected = true;
+        break;
+    }
+    
+    if ( !connected ) {
         return false;
-
+    }
+    
     // Start the lldb event thread
-
     // and start a listener thread which will read replies
     // from codelite-lldb and convert them into LLDBEvent
     socket_t fd = m_socket->GetSocket();
@@ -46,10 +73,14 @@ void LLDBConnector::SendCommand(const LLDBCommand& command)
 
 void LLDBConnector::InvalidateBreakpoints()
 {
+    // mark all the breakpoints as "not-applied" (id=-1)
     for(size_t i=0; i<m_breakpoints.size(); ++i) {
         m_breakpoints.at(i)->Invalidate();
     }
     ClearBreakpointDeletionQueue();
+    
+    CL_DEBUG("codelite: InvalidateBreakpoints called");
+    m_pendingDeletionBreakpoints.clear();
 }
 
 bool LLDBConnector::IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const
@@ -80,22 +111,34 @@ LLDBBreakpoint::Vec_t::const_iterator LLDBConnector::FindBreakpoint(LLDBBreakpoi
 }
 
 
-void LLDBConnector::AddBreakpoint(LLDBBreakpoint::Ptr_t breakpoint)
+void LLDBConnector::AddBreakpoint(LLDBBreakpoint::Ptr_t breakpoint, bool notify)
 {
     if ( !IsBreakpointExists(breakpoint) ) {
         m_breakpoints.push_back( breakpoint );
-        LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_UPDATED);
-        event.SetBreakpoints( m_breakpoints );
-        AddPendingEvent( event );
+        
+        if ( notify ) {
+            LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_UPDATED);
+            event.SetBreakpoints( GetAllBreakpoints() );
+            ProcessEvent( event );
+        }
     }
 }
 
 void LLDBConnector::ApplyBreakpoints()
 {
-    LLDBCommand command;
-    command.SetCommandType( kCommandApplyBreakpoints );
-    command.SetBreakpoints( m_breakpoints );
-    SendCommand( command );
+    if ( !m_breakpoints.empty() ) {
+        
+        if ( IsCanInteract() ) {
+            LLDBCommand command;
+            command.SetCommandType( kCommandApplyBreakpoints );
+            command.SetBreakpoints( m_breakpoints );
+            SendCommand( command );
+            m_breakpoints.clear();
+            
+        } else {
+            Interrupt( kInterruptReasonApplyBreakpoints );
+        }
+    }
 }
 
 void LLDBConnector::Continue()
@@ -121,19 +164,202 @@ void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
     LLDBBreakpoint::Vec_t::iterator iter = FindBreakpoint( bp );
     
     // add the breakpoint to the pending deletion breakpoints
+    bp->SetId( (*iter)->GetId() );
     m_pendingDeletionBreakpoints.push_back( bp );
     m_breakpoints.erase( iter );
 }
 
 void LLDBConnector::DeleteBreakpoints()
 {
-    LLDBCommand command;
-    command.SetCommandType( kCommandDeleteBreakpoint );
-    command.SetBreakpoints( m_pendingDeletionBreakpoints );
-    SendCommand( command );
+    if ( IsCanInteract() ) {
+        CL_DEBUG(wxString () << "codelite: deleting breakpoints (total of " << m_breakpoints.size() << " breakpoints)");
+        LLDBCommand command;
+        command.SetCommandType( kCommandDeleteBreakpoint );
+        command.SetBreakpoints( m_pendingDeletionBreakpoints );
+        SendCommand( command );
+        CL_DEBUG(wxString () << "codelite: DeleteBreakpoints celar pending deletionbreakpoints queue");
+        m_pendingDeletionBreakpoints.clear();
+    
+    } else {
+        CL_DEBUG("codelite: interrupting codelite-lldb for kInterruptReasonDeleteBreakpoint");
+        Interrupt( kInterruptReasonDeleteBreakpoint );
+    }
 }
 
 void LLDBConnector::ClearBreakpointDeletionQueue()
 {
+    CL_DEBUG(wxString () << "codelite: ClearBreakpointDeletionQueue called");
     m_pendingDeletionBreakpoints.clear();
+}
+
+void LLDBConnector::Next()
+{
+    LLDBCommand command;
+    command.SetCommandType(kCommandNext);
+    SendCommand( command );
+}
+
+void LLDBConnector::StepIn()
+{
+    LLDBCommand command;
+    command.SetCommandType(kCommandStepIn);
+    SendCommand( command );
+}
+
+void LLDBConnector::StepOut()
+{
+    LLDBCommand command;
+    command.SetCommandType(kCommandStepOut);
+    SendCommand( command );
+}
+
+void LLDBConnector::DeleteAllBreakpoints()
+{
+    // mark all breakpoints for deletion
+    CL_DEBUG(wxString () << "codelite: DeleteAllBreakpoints called");
+    m_pendingDeletionBreakpoints.swap( m_breakpoints );
+    
+    if ( !IsCanInteract() ) {
+        Interrupt( kInterruptReasonDeleteAllBreakpoints );
+        
+    } else {
+        LLDBCommand command;
+        command.SetCommandType(kCommandDeleteAllBreakpoints);
+        SendCommand( command );
+        m_pendingDeletionBreakpoints.clear();
+
+    }
+}
+
+void LLDBConnector::AddBreakpoints(const BreakpointInfo::Vec_t& breakpoints)
+{
+    LLDBBreakpoint::Vec_t bps = LLDBBreakpoint::FromBreakpointInfoVector( breakpoints );
+    AddBreakpoints( bps );
+}
+
+void LLDBConnector::AddBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints)
+{
+    for(size_t i=0; i<breakpoints.size(); ++i) {
+        AddBreakpoint( breakpoints.at(i), false );
+    }
+}
+
+void LLDBConnector::Cleanup()
+{
+    // the order matters here, since both are using the same file descriptor
+    // but only m_socket does the actual socket shutdown
+    wxDELETE( m_thread );
+    m_socket.reset(NULL);
+    InvalidateBreakpoints();
+    m_isRunning = false;
+    m_canInteract = false;
+    m_runCommand.Clear();
+}
+
+void LLDBConnector::OnLLDBExited(LLDBEvent& event)
+{
+    event.Skip();
+    m_isRunning = false;
+}
+
+void LLDBConnector::OnLLDBStarted(LLDBEvent& event)
+{
+    event.Skip();
+    m_isRunning = true;
+}
+
+void LLDBConnector::Start(const LLDBCommand& runCommand)
+{
+    LLDBCommand startCommand;
+    startCommand.SetExecutable( runCommand.GetExecutable() );
+    startCommand.SetCommandType( kCommandStart );
+    SendCommand( startCommand );
+
+    // stash the runCommand for the future 'Run()' call
+    m_runCommand.Clear();
+    m_runCommand = startCommand;
+    m_runCommand.SetCommandType( kCommandRun );
+
+}
+
+void LLDBConnector::Run()
+{
+    if ( m_runCommand.GetCommandType() == kCommandRun ) {
+        SendCommand( m_runCommand );
+        m_runCommand.Clear();
+    }
+}
+
+void LLDBConnector::UpdateAppliedBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints)
+{
+    m_breakpoints = breakpoints;
+}
+
+const LLDBBreakpoint::Vec_t& LLDBConnector::GetAllBreakpoints() const
+{
+    return m_breakpoints;
+}
+
+void LLDBConnector::OnProcessOutput(wxCommandEvent& event)
+{
+    ProcessEventData* ped = (ProcessEventData*) event.GetClientData();
+    wxString output = ped->GetData();
+    wxDELETE(ped);
+    
+    wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+    for(size_t i=0; i<lines.GetCount(); ++i) {
+        CL_DEBUG(lines.Item(i).Trim());
+    }
+}
+
+void LLDBConnector::OnProcessTerminated(wxCommandEvent& event)
+{
+    ProcessEventData* ped = (ProcessEventData*) event.GetClientData();
+    if ( ped ) {
+        wxDELETE(ped);
+    }
+    wxDELETE( m_process );
+    
+    // Notify debug-server terminated
+    LLDBEvent lldb_event(wxEVT_LLDB_CRASHED);
+    AddPendingEvent( lldb_event );
+    LaunchDebugServer();
+}
+
+void LLDBConnector::Interrupt(eInterruptReason reason)
+{
+    LLDBCommand command;
+    command.SetCommandType(kCommandInterrupt);
+    command.SetInterruptReason( reason );
+    SendCommand( command );
+}
+
+void LLDBConnector::LaunchDebugServer()
+{
+    CL_DEBUG("Launching codelite-lldb");
+    // Start the debugger
+    if ( m_process ) {
+        // another debugger process is already running
+        return;
+    }
+
+    wxFileName fnCodeLiteLLDB(wxStandardPaths::Get().GetExecutablePath());
+    fnCodeLiteLLDB.SetFullName( "codelite-lldb" );
+    
+    // FIXME: 
+    // On OSX, make sure we set the environment variable LLDB_DEBUGSERVER_PATH
+    m_process = ::CreateAsyncProcess(this, fnCodeLiteLLDB.GetFullPath());
+    if ( !m_process ) {
+        CL_ERROR("LLDBConnector: failed to launch codelite-lldb: %s", fnCodeLiteLLDB.GetFullPath());
+    }
+}
+
+void LLDBConnector::StopDebugServer()
+{
+    if ( m_process ) {
+        m_process->Detach();
+        m_process->SetHardKill(true); // kill -9
+        m_process->Terminate();
+        m_process = NULL;
+    }
 }

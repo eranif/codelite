@@ -73,10 +73,12 @@ void LLDBLocalsView::OnLLDBStopped(LLDBEvent& event)
     // the children should be obtained in the 'OnItemExpading' event handler
     event.Skip();
     m_dataviewModel->Clear();
-    LLDBLocalVariable::Vect_t locals = m_plugin->GetLLDB()->GetLocalVariables();
-    for(size_t i=0; i<locals.size(); ++i) {
-        DoAddVariableToView(locals.at(i), wxDataViewItem(NULL));
-    }
+    // FIXME: pass the locals in the event
+
+//    LLDBLocalVariable::Vect_t locals = m_plugin->GetLLDB()->GetLocalVariables();
+//    for(size_t i=0; i<locals.size(); ++i) {
+//        DoAddVariableToView(locals.at(i), wxDataViewItem(NULL));
+//    }
 }
 
 void LLDBLocalsView::DoAddVariableToView(LLDBLocalVariable::Ptr_t variable, const wxDataViewItem& parent)

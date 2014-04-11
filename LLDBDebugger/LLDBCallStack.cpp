@@ -1,20 +1,20 @@
 #include "LLDBCallStack.h"
 #include "LLDBProtocol/LLDBEvent.h"
-#include "LLDBDebugger.h"
+#include "LLDBProtocol/LLDBConnector.h"
 #include <wx/wupdlock.h>
 
-LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBDebugger* lldb)
+LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBConnector* connector)
     : LLDBCallStackBase(parent)
-    , m_lldb(lldb)
+    , m_connector(connector)
 {
-    m_lldb->Bind(wxEVT_LLDB_BACKTRACE, &LLDBCallStackPane::OnBacktrace, this);
-    m_lldb->Bind(wxEVT_LLDB_RUNNING, &LLDBCallStackPane::OnRunning, this);
+    m_connector->Bind(wxEVT_LLDB_STOPPED, &LLDBCallStackPane::OnBacktrace, this);
+    m_connector->Bind(wxEVT_LLDB_RUNNING, &LLDBCallStackPane::OnRunning, this);
 }
 
 LLDBCallStackPane::~LLDBCallStackPane()
 {
-    m_lldb->Unbind(wxEVT_LLDB_BACKTRACE, &LLDBCallStackPane::OnBacktrace, this);
-    m_lldb->Unbind(wxEVT_LLDB_RUNNING, &LLDBCallStackPane::OnRunning, this);
+    m_connector->Unbind(wxEVT_LLDB_STOPPED, &LLDBCallStackPane::OnBacktrace, this);
+    m_connector->Unbind(wxEVT_LLDB_RUNNING, &LLDBCallStackPane::OnRunning, this);
 }
 
 void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)

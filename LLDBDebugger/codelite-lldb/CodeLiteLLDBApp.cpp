@@ -7,6 +7,9 @@
 #include "clcommandlineparser.h"
 #include <lldb/API/SBBreakpointLocation.h>
 #include <lldb/API/SBFileSpec.h>
+#include <lldb/API/SBCommandReturnObject.h>
+#include <lldb/API/SBCommandInterpreter.h>
+#include <wx/socket.h>
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -35,6 +38,8 @@ static void DELETE_CHAR_PTR_PTR(char** argv)
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#define CHECK_DEBUG_SESSION_RUNNING() if ( !IsDebugSessionInProgress() ) return
+
 IMPLEMENT_APP_CONSOLE(CodeLiteLLDBApp)
 CodeLiteLLDBApp::CodeLiteLLDBApp()
     : m_networkThread(NULL)
@@ -43,7 +48,12 @@ CodeLiteLLDBApp::CodeLiteLLDBApp()
     , m_interruptReason(kInterruptReasonNone)
 {
     wxSocketBase::Initialize();
+    lldb::SBDebugger::Initialize();
+    m_debugger = lldb::SBDebugger::Create();
     wxPrintf("codelite-lldb: lldb initialized successfully\n");
+    
+    m_acceptSocket.CreateServer("127.0.0.1", LLDB_PORT);
+    
 }
 
 CodeLiteLLDBApp::~CodeLiteLLDBApp()
@@ -55,46 +65,16 @@ CodeLiteLLDBApp::~CodeLiteLLDBApp()
 
 int CodeLiteLLDBApp::OnExit()
 {
+    if ( m_debugger.IsValid() ) {
+        lldb::SBDebugger::Destroy( m_debugger );
+    }
     lldb::SBDebugger::Terminate();
     return TRUE;
 }
 
 bool CodeLiteLLDBApp::OnInit()
 {
-    // Start the network thread. This thread is waiting for commands coming
-    // from codeite -> lldb
-
-    // Start the socket server and wait for connection
-    clSocketServer server;
-    wxPrintf("codelite-lldb: waiting for new connection\n");
-    server.CreateServer("127.0.0.1", LLDB_PORT);
-    clSocketBase::Ptr_t conn(NULL);
-    try {
-        while( true ) {
-            conn = server.WaitForNewConnection(1);
-            if ( conn ) {
-                break;
-            }
-        }
-
-    } catch (clSocketException &e) {
-        wxPrintf("Error occured while waiting for connection. %s\n", e.what().c_str());
-        Cleanup();
-        return false;
-    }
-
-    // release the fd from the connection
-    socket_t socketFd = conn->Release();
-
-    // handle the connection to the thread
-    m_networkThread = new LLDBNetworkServerThread(this, socketFd);
-    m_networkThread->Start();
-
-    // Establish the replies connection
-    m_replySocket.reset( new clSocketBase(socketFd) );
-
-    lldb::SBDebugger::Initialize();
-    m_debugger = lldb::SBDebugger::Create();
+    AcceptNewConnection();
 
     // We got both ends connected
     wxPrintf("codelite-lldb: successfully established connection to codelite\n");
@@ -104,6 +84,10 @@ bool CodeLiteLLDBApp::OnInit()
 
 void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 {
+    if ( IsDebugSessionInProgress() ) {
+        wxPrintf("codelite-lldb: another session is already in progress\n");
+        return;
+    }
     if ( !command.GetWorkingDirectory().IsEmpty() ) {
         ::wxSetWorkingDirectory( command.GetWorkingDirectory() );
     }
@@ -144,14 +128,11 @@ void CodeLiteLLDBApp::NotifyAllBreakpointsDeleted()
     SendReply( reply );
 }
 
-void CodeLiteLLDBApp::NotifyBacktrace()
-{
-}
-
 void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
 {
     LLDBBreakpoint::Vec_t breakpoints;
     int num = m_target.GetNumBreakpoints();
+    wxPrintf("codelite-lldb: Calling NotifyBreakpointsUpdated(). Got %d breakpoints\n", num);
     for(int i=0; i<num; ++i) {
         lldb::SBBreakpoint bp = m_target.GetBreakpointAtIndex(i);
         if ( bp.IsValid() ) {
@@ -198,10 +179,12 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
 
 void CodeLiteLLDBApp::NotifyExited()
 {
+    wxPrintf("codelite-lldb: NotifyExited called\n");
     LLDBReply reply;
     reply.SetReplyType( kTypeDebuggerExited );
     SendReply( reply );
     Cleanup();
+    CallAfter( &CodeLiteLLDBApp::AcceptNewConnection );
 }
 
 void CodeLiteLLDBApp::NotifyRunning()
@@ -221,6 +204,7 @@ void CodeLiteLLDBApp::NotifyStarted()
 void CodeLiteLLDBApp::NotifyStopped()
 {
     LLDBReply reply;
+    wxPrintf("codelite-lldb: NotifyStopped() called. m_interruptReason=%d\n", (int)m_interruptReason);
     reply.SetReplyType( kTypeDebuggerStopped );
     reply.SetInterruptResaon( m_interruptReason );
     
@@ -263,6 +247,11 @@ void CodeLiteLLDBApp::SendReply(const LLDBReply& reply)
 
 void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 {
+    if ( m_debuggeePid != wxNOT_FOUND) {
+        wxPrintf("codelite-lldb: another session is already in progress\n");
+        return;
+    }
+    
     if ( m_debugger.IsValid() ) {
 
         // Construct char** arrays
@@ -294,7 +283,6 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 
         if ( !process.IsValid() ) {
             NotifyExited();
-            Cleanup();
 
         } else {
             m_debuggeePid = process.GetProcessID();
@@ -305,6 +293,7 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::Cleanup()
 {
+    wxPrintf("codelite-lldb: Cleanup() called...\n");
     wxDELETE( m_networkThread );
     wxDELETE( m_lldbProcessEventThread );
     
@@ -314,40 +303,40 @@ void CodeLiteLLDBApp::Cleanup()
     if ( m_target.IsValid() ) {
         m_target.DeleteAllBreakpoints();
         m_target.DeleteAllWatchpoints();
-        m_debugger.DeleteTarget( m_target );
+        m_target.Clear();
     }
-
-    if ( m_debugger.IsValid() ) {
-        lldb::SBDebugger::Destroy( m_debugger );
-    }
+    wxPrintf("codelite-lldb: Cleanup() called... done\n");
 }
 
 void CodeLiteLLDBApp::ApplyBreakpoints(const LLDBCommand& command)
 {
+    wxPrintf("codelite-lldb: ApplyBreakpoints called\n");
     if ( m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        wxPrintf("codelite-lldb: ApplyBreakpoints: process state is Stopped - will apply them now\n");
         // we can apply the breakpoints
         // Apply all breakpoints with an-invalid breakpoint ID
         LLDBBreakpoint::Vec_t breakpoints = command.GetBreakpoints();
         while( !breakpoints.empty() ) {
-            
             LLDBBreakpoint::Ptr_t breakPoint = breakpoints.at(0);
-            
-            switch( breakPoint->GetType() ) {
-            case LLDBBreakpoint::kFunction: {
-                m_target.BreakpointCreateByName(breakPoint->GetName().mb_str().data(), NULL);
-                break;
-            }
-            case LLDBBreakpoint::kFileLine: {
-                m_target.BreakpointCreateByLocation(breakPoint->GetFilename().mb_str().data(), breakPoint->GetLineNumber());
-                break;
-            }
+            wxPrintf("codelite-lldb: applying breakpoint: %s\n", breakPoint->ToString());
+            if ( !breakPoint->IsApplied() ) {
+                switch( breakPoint->GetType() ) {
+                case LLDBBreakpoint::kFunction: {
+                    m_target.BreakpointCreateByName(breakPoint->GetName().mb_str().data(), NULL);
+                    break;
+                }
+                case LLDBBreakpoint::kFileLine: {
+                    m_target.BreakpointCreateByLocation(breakPoint->GetFilename().mb_str().data(), breakPoint->GetLineNumber());
+                    break;
+                }
+                }
             }
             breakpoints.erase(breakpoints.begin());
         }
         NotifyBreakpointsUpdated();
 
     } else {
-        
+        wxPrintf("codelite-lldb: ApplyBreakpoints: process state is _NOT_ Stopped - interrupting process\n");
         // interrupt the process
         m_interruptReason = kInterruptReasonApplyBreakpoints;
         m_target.GetProcess().SendAsyncInterrupt();
@@ -356,18 +345,21 @@ void CodeLiteLLDBApp::ApplyBreakpoints(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::Continue(const LLDBCommand& command)
 {
+    CHECK_DEBUG_SESSION_RUNNING();
     wxUnusedVar( command );
     m_target.GetProcess().Continue();
 }
 
 void CodeLiteLLDBApp::StopDebugger(const LLDBCommand& command)
 {
+    CHECK_DEBUG_SESSION_RUNNING();
     NotifyExited();
     Cleanup();
 }
 
 void CodeLiteLLDBApp::DeleteAllBreakpoints(const LLDBCommand& command)
 {
+    CHECK_DEBUG_SESSION_RUNNING();
     wxUnusedVar(command);
     if ( m_target.GetProcess().GetState() == lldb::eStateStopped ) {
         m_target.DeleteAllBreakpoints();
@@ -381,32 +373,100 @@ void CodeLiteLLDBApp::DeleteAllBreakpoints(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::DeleteBreakpoints(const LLDBCommand& command)
 {
+    CHECK_DEBUG_SESSION_RUNNING();
+    
+    
     const LLDBBreakpoint::Vec_t& bps = command.GetBreakpoints();
     if ( bps.empty() ) {
         return;
     }
     
-    bool notifySuccess = false;
+    wxPrintf("codelite-lldb: DeleteBreakpoints called\n");
     if ( m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        wxPrintf("codelite-lldb: DeleteBreakpoints: process state is Stopped - will apply them now\n");
         for(size_t i=0; i<bps.size(); ++i) {
             LLDBBreakpoint::Ptr_t breakpoint = bps.at(i);
+            wxPrintf("codelite-lldb: deleting breakpoint: %s\n", breakpoint->ToString());
             if ( breakpoint->IsApplied() ) {
                 lldb::SBBreakpoint lldbBreakpoint = m_target.FindBreakpointByID(breakpoint->GetId());
                 if ( lldbBreakpoint.IsValid() ) {
                     lldbBreakpoint.ClearAllBreakpointSites();
                     m_target.BreakpointDelete( lldbBreakpoint.GetID() );
-                    notifySuccess = true;
                 }
             }
         }
-        
-        if ( notifySuccess ) {
-            NotifyBreakpointsUpdated();
-        }
-        
+        NotifyBreakpointsUpdated();
+
     } else {
+        wxPrintf("codelite-lldb: DeleteBreakpoints: process is Busy - will interrupt it\n");
         m_interruptReason = kInterruptReasonDeleteBreakpoint;
         m_target.GetProcess().SendAsyncInterrupt();
+    }
+}
 
+void CodeLiteLLDBApp::Next(const LLDBCommand& command)
+{
+    CHECK_DEBUG_SESSION_RUNNING();
+    lldb::SBCommandReturnObject ret;
+    m_debugger.GetCommandInterpreter().HandleCommand("next", ret);
+    wxUnusedVar( ret );
+}
+
+void CodeLiteLLDBApp::StepIn(const LLDBCommand& command)
+{
+    CHECK_DEBUG_SESSION_RUNNING();
+    lldb::SBCommandReturnObject ret;
+    m_debugger.GetCommandInterpreter().HandleCommand("step", ret);
+    wxUnusedVar( ret );
+}
+
+void CodeLiteLLDBApp::StepOut(const LLDBCommand& command)
+{
+    CHECK_DEBUG_SESSION_RUNNING();
+    lldb::SBCommandReturnObject ret;
+    m_debugger.GetCommandInterpreter().HandleCommand("finish", ret);
+    wxUnusedVar( ret );
+}
+
+bool CodeLiteLLDBApp::CanInteract()
+{
+    return IsDebugSessionInProgress() && (m_target.GetProcess().GetState() == lldb::eStateStopped);
+}
+
+bool CodeLiteLLDBApp::IsDebugSessionInProgress()
+{
+    return m_debugger.IsValid() && m_target.IsValid();
+}
+
+void CodeLiteLLDBApp::Interrupt(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: interrupting debugee process\n");
+    m_interruptReason = (eInterruptReason)command.GetInterruptReason();
+    m_target.GetProcess().SendAsyncInterrupt();
+}
+
+void CodeLiteLLDBApp::AcceptNewConnection()
+{
+    m_replySocket.reset( NULL );
+    wxPrintf("codelite-lldb: waiting for new connection\n");
+    try {
+        while( true ) {
+            m_replySocket = m_acceptSocket.WaitForNewConnection(1);
+            if ( m_replySocket ) {
+                break;
+            }
+        }
+
+        // handle the connection to the thread
+        m_networkThread = new LLDBNetworkServerThread(this, m_replySocket->GetSocket());
+        m_networkThread->Start();
+
+    } catch (clSocketException &e) {
+        wxPrintf("codelite-lldb: an error occured while waiting for connection. %s\n", e.what().c_str());
+        Cleanup();
+        
+        // exit
+        ExitMainLoop();
+        return;
     }
 }

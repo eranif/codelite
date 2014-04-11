@@ -30,7 +30,6 @@ void* LLDBNetworkServerThread::Entry()
         // we got connection, enter the main loop
         while ( !TestDestroy() ) {
             wxString str;
-            wxPrintf("codelite-lldb: waiting for message\n");
             if ( m_socket->ReadMessage( str, 1 ) == clSocketBase::kSuccess ) {
                 // Process command
                 LLDBCommand command(str);

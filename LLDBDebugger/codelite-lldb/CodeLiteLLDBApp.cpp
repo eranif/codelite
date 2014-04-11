@@ -303,7 +303,7 @@ void CodeLiteLLDBApp::Cleanup()
     if ( m_target.IsValid() ) {
         m_target.DeleteAllBreakpoints();
         m_target.DeleteAllWatchpoints();
-        m_target.Clear();
+        m_debugger.DeleteTarget( m_target );
     }
     wxPrintf("codelite-lldb: Cleanup() called... done\n");
 }

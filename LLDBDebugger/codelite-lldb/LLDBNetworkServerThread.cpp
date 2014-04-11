@@ -54,7 +54,15 @@ void* LLDBNetworkServerThread::Entry()
                 case kCommandStop:
                     m_app->CallAfter( &CodeLiteLLDBApp::StopDebugger, command);
                     break;
-                    
+                
+                case kCommandDeleteBreakpoint:
+                    m_app->CallAfter( &CodeLiteLLDBApp::DeleteBreakpoints, command);
+                    break;
+
+                case kCommandDeleteAllBreakpoints:
+                    m_app->CallAfter( &CodeLiteLLDBApp::DeleteAllBreakpoints, command);
+                    break;
+
                 default:
                     break;
                 }

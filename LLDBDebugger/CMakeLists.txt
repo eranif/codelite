@@ -103,6 +103,7 @@ else()
             ${LINKER_OPTIONS}
             ${PLUGIN_EXTRA_LIBS}
             ${wxWidgets_LIBRARIES}
+            ${LLDB_LIB}
             -L"${CL_LIBPATH}"
             -lLLDBProtocol
             -llibcodelite

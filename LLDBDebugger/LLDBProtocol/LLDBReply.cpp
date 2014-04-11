@@ -25,6 +25,10 @@ void LLDBReply::FromJSON(const JSONElement& json)
         bp->FromJSON( arr.arrayItem(i) );
         m_breakpoints.push_back( bp );
     }
+    
+    m_backtrace.Clear();
+    JSONElement backtrace = json.namedObject("m_backtrace");
+    m_backtrace.FromJSON( backtrace );
 }
 
 JSONElement LLDBReply::ToJSON() const
@@ -43,6 +47,7 @@ JSONElement LLDBReply::ToJSON() const
         bparr.arrayAppend( m_breakpoints.at(i)->ToJSON() );
     }
     
+    json.addProperty("m_backtrace", m_backtrace.ToJSON());
     return json;
 }
 

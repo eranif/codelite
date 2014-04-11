@@ -42,6 +42,10 @@ MainDialogBaseClass::MainDialogBaseClass(wxWindow* parent, wxWindowID id, const 
     
     boxSizer19->Add(m_button25, 0, wxALL, 5);
     
+    m_button27 = new wxButton(this, wxID_ANY, _("Continue"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer19->Add(m_button27, 0, wxALL, 5);
+    
     m_textCtrlLog = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_RICH|wxTE_MULTILINE);
     
     mainSizer->Add(m_textCtrlLog, 1, wxALL|wxEXPAND, 5);
@@ -67,6 +71,7 @@ MainDialogBaseClass::MainDialogBaseClass(wxWindow* parent, wxWindowID id, const 
     // Connect events
     m_button23->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainDialogBaseClass::OnStart), NULL, this);
     m_button25->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainDialogBaseClass::OnStop), NULL, this);
+    m_button27->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainDialogBaseClass::OnContinue), NULL, this);
     
 }
 
@@ -74,5 +79,6 @@ MainDialogBaseClass::~MainDialogBaseClass()
 {
     m_button23->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainDialogBaseClass::OnStart), NULL, this);
     m_button25->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainDialogBaseClass::OnStop), NULL, this);
+    m_button27->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainDialogBaseClass::OnContinue), NULL, this);
     
 }

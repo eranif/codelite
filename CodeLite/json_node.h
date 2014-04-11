@@ -104,6 +104,7 @@ public:
     JSONElement& addProperty(const wxString &name, const wxColour& colour);
     JSONElement& addProperty(const wxString &name, const wxArrayString &arr);
     JSONElement& addProperty(const wxString &name, const JSONElement::wxStringMap_t& stringMap);
+    JSONElement& addProperty(const wxString &name, const JSONElement& element);
     
     /**
      * @brief delete property by name

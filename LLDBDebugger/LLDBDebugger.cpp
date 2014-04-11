@@ -350,7 +350,7 @@ void LLDBDebugger::DeleteBreakpoint(LLDBBreakpoint::Ptr_t breakpoint)
         DoDeletePendingDeletionBreakpoints();
         
     } else {
-        Interrupt(kInterruptReasonDeleteBreakpoints);
+        Interrupt(kInterruptReasonDeleteBreakpoint);
     }
 }
 
@@ -361,7 +361,7 @@ void LLDBDebugger::DeleteBreakpoints(const LLDBBreakpoint::Vec_t& bps)
         DoDeletePendingDeletionBreakpoints();
         
     } else {
-        Interrupt(kInterruptReasonDeleteBreakpoints);
+        Interrupt(kInterruptReasonDeleteBreakpoint);
     }
 }
 

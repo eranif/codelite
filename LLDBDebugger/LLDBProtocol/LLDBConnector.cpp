@@ -49,6 +49,7 @@ void LLDBConnector::InvalidateBreakpoints()
     for(size_t i=0; i<m_breakpoints.size(); ++i) {
         m_breakpoints.at(i)->Invalidate();
     }
+    ClearBreakpointDeletionQueue();
 }
 
 bool LLDBConnector::IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const
@@ -109,4 +110,30 @@ void LLDBConnector::Stop()
     LLDBCommand command;
     command.SetCommandType( kCommandStop );
     SendCommand( command );
+}
+
+void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
+{
+    if ( !IsBreakpointExists(bp) ) {
+        return;
+    }
+    
+    LLDBBreakpoint::Vec_t::iterator iter = FindBreakpoint( bp );
+    
+    // add the breakpoint to the pending deletion breakpoints
+    m_pendingDeletionBreakpoints.push_back( bp );
+    m_breakpoints.erase( iter );
+}
+
+void LLDBConnector::DeleteBreakpoints()
+{
+    LLDBCommand command;
+    command.SetCommandType( kCommandDeleteBreakpoint );
+    command.SetBreakpoints( m_pendingDeletionBreakpoints );
+    SendCommand( command );
+}
+
+void LLDBConnector::ClearBreakpointDeletionQueue()
+{
+    m_pendingDeletionBreakpoints.clear();
 }

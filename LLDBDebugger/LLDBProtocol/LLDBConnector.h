@@ -14,6 +14,7 @@ class LLDBConnector : public wxEvtHandler
     clSocketClient::Ptr_t m_socket;
     LLDBNetworkListenerThread *m_thread;
     LLDBBreakpoint::Vec_t m_breakpoints;
+    LLDBBreakpoint::Vec_t m_pendingDeletionBreakpoints;
     
 protected:
     bool IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const;
@@ -57,6 +58,21 @@ public:
         LLDBBreakpoint::Ptr_t bp( new LLDBBreakpoint(filename, line) );
         AddBreakpoint( bp );
     }
+    
+    /**
+     * @brief delete a single breakpoint
+     */
+    void MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp);
+    
+    /**
+     * @brief delete all breakpoints which are marked for deletion
+     */
+    void DeleteBreakpoints();
+    
+    /**
+     * @brief clear the breakpoint pending deletion queue
+     */
+    void ClearBreakpointDeletionQueue();
     
     /**
      * @brief send command to codelite-lldb

@@ -95,5 +95,25 @@ void MainDialog::OnLLDBStopped(LLDBEvent& e)
     wxString msg;
     msg << "Process stopped. " << e.GetFileName() << ":" << e.GetLinenumber();
     m_textCtrlLog->AppendText(msg + "\n");
+    
+    // If we have an "Interrupt reason" set, then the stop was due to user request
+    // handle this separately
+    if ( e.GetInterruptReason() == kInterruptReasonApplyBreakpoints ) {
+        // Apply breakpoints failed, due to debugger can not interact
+        // now that we stopped - try it again
+        m_connector.ApplyBreakpoints();
+        m_connector.Continue();
+
+    } else if ( e.GetInterruptReason() == kInterruptReasonDeleteAllBreakpoints ) {
+        // Could not delete all breakpoints because the debugger was not 
+        // in an interactive mode - do it now
+        m_connector.DeleteBreakpoints();
+        m_connector.Continue();
+
+    }
+}
+
+void MainDialog::OnContinue(wxCommandEvent& event)
+{
     m_connector.Continue();
 }

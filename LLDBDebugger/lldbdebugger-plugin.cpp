@@ -315,7 +315,7 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
         m_debugger.DeleteAllBreakpoints();
         m_debugger.Continue();
         
-    } else if ( event.GetInterruptReason() == kInterruptReasonDeleteBreakpoints ) {
+    } else if ( event.GetInterruptReason() == kInterruptReasonDeleteBreakpoint ) {
         CL_DEBUG("Deleting all pending deletion breakpoints");
         m_debugger.DeletePendingDeletionBreakpoints();
         m_debugger.Continue();

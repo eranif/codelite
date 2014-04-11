@@ -24,6 +24,7 @@ protected:
     wxFilePickerCtrl* m_filePickerExe;
     wxButton* m_button23;
     wxButton* m_button25;
+    wxButton* m_button27;
     wxTextCtrl* m_textCtrlLog;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
@@ -31,6 +32,7 @@ protected:
 protected:
     virtual void OnStart(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnContinue(wxCommandEvent& event) { event.Skip(); }
 
 public:
     MainDialogBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("My Dialog"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

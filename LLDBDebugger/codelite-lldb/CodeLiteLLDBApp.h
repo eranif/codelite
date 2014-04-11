@@ -58,6 +58,8 @@ public:
     void Continue(const LLDBCommand& command);
     void ApplyBreakpoints(const LLDBCommand& command);
     void StopDebugger(const LLDBCommand& command);
+    void DeleteBreakpoints(const LLDBCommand& command);
+    void DeleteAllBreakpoints(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

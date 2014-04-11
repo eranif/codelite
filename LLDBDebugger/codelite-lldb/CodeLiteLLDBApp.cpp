@@ -223,8 +223,23 @@ void CodeLiteLLDBApp::NotifyStopped()
     LLDBReply reply;
     reply.SetReplyType( kTypeDebuggerStopped );
     reply.SetInterruptResaon( m_interruptReason );
+    
+    lldb::SBThread thread = m_target.GetProcess().GetSelectedThread();
+    LLDBBacktrace bt( thread );
+    reply.SetBacktrace( bt );
+    
+    // set the selected frame file:line
+    if ( thread.IsValid() && thread.GetSelectedFrame().IsValid() ) {
+        lldb::SBFrame frame = thread.GetSelectedFrame();
+        lldb::SBLineEntry lineEntry = thread.GetSelectedFrame().GetLineEntry();
+        if ( lineEntry.IsValid() ) {
+            reply.SetLine(lineEntry.GetLine());
+            lldb::SBFileSpec fileSepc = frame.GetLineEntry().GetFileSpec();
+            reply.SetFilename( wxFileName(fileSepc.GetDirectory(), fileSepc.GetFilename()).GetFullPath() );
+        }
+    }
     SendReply( reply );
- 
+
     // reset the interrupt reason
     m_interruptReason = kInterruptReasonNone;
 }
@@ -290,8 +305,12 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::Cleanup()
 {
+    wxDELETE( m_networkThread );
+    wxDELETE( m_lldbProcessEventThread );
+    
     m_interruptReason = kInterruptReasonNone;
     m_debuggeePid = wxNOT_FOUND;
+    
     if ( m_target.IsValid() ) {
         m_target.DeleteAllBreakpoints();
         m_target.DeleteAllWatchpoints();
@@ -301,9 +320,6 @@ void CodeLiteLLDBApp::Cleanup()
     if ( m_debugger.IsValid() ) {
         lldb::SBDebugger::Destroy( m_debugger );
     }
-
-    wxDELETE( m_networkThread );
-    wxDELETE( m_lldbProcessEventThread );
 }
 
 void CodeLiteLLDBApp::ApplyBreakpoints(const LLDBCommand& command)
@@ -348,4 +364,49 @@ void CodeLiteLLDBApp::StopDebugger(const LLDBCommand& command)
 {
     NotifyExited();
     Cleanup();
+}
+
+void CodeLiteLLDBApp::DeleteAllBreakpoints(const LLDBCommand& command)
+{
+    wxUnusedVar(command);
+    if ( m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        m_target.DeleteAllBreakpoints();
+        NotifyAllBreakpointsDeleted();
+        
+    } else {
+        m_interruptReason = kInterruptReasonDeleteAllBreakpoints;
+        m_target.GetProcess().SendAsyncInterrupt();
+    }
+}
+
+void CodeLiteLLDBApp::DeleteBreakpoints(const LLDBCommand& command)
+{
+    const LLDBBreakpoint::Vec_t& bps = command.GetBreakpoints();
+    if ( bps.empty() ) {
+        return;
+    }
+    
+    bool notifySuccess = false;
+    if ( m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        for(size_t i=0; i<bps.size(); ++i) {
+            LLDBBreakpoint::Ptr_t breakpoint = bps.at(i);
+            if ( breakpoint->IsApplied() ) {
+                lldb::SBBreakpoint lldbBreakpoint = m_target.FindBreakpointByID(breakpoint->GetId());
+                if ( lldbBreakpoint.IsValid() ) {
+                    lldbBreakpoint.ClearAllBreakpointSites();
+                    m_target.BreakpointDelete( lldbBreakpoint.GetID() );
+                    notifySuccess = true;
+                }
+            }
+        }
+        
+        if ( notifySuccess ) {
+            NotifyBreakpointsUpdated();
+        }
+        
+    } else {
+        m_interruptReason = kInterruptReasonDeleteBreakpoint;
+        m_target.GetProcess().SendAsyncInterrupt();
+
+    }
 }

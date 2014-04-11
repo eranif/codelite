@@ -19,7 +19,6 @@ protected:
     LLDBBreakpoint::Vec_t m_breakpoints;
 
 public:
-
     // Serialization API
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement &json);

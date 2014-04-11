@@ -15,6 +15,7 @@ public:
     void LogCommand( const LLDBCommand & command );
     
 protected:
+    virtual void OnContinue(wxCommandEvent& event);
     virtual void OnStart(wxCommandEvent& event);
     virtual void OnStop(wxCommandEvent& event);
     

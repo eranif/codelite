@@ -17,7 +17,7 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_workingDirectory = json.namedObject("m_workingDirectory").toString();
     m_executable = json.namedObject("m_executable").toString();
     m_redirectTTY = json.namedObject("m_redirectTTY").toString();
-
+    
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i=0; i<arr.arraySize(); ++i) {
         LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );

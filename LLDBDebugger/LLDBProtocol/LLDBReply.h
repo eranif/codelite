@@ -4,6 +4,7 @@
 #include "json_node.h"
 #include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
+#include "LLDBBacktrace.h"
 
 class LLDBReply
 {
@@ -14,12 +15,19 @@ protected:
     int      m_line;
     wxString m_filename;
     LLDBBreakpoint::Vec_t m_breakpoints;
+    LLDBBacktrace m_backtrace;
 
 public:
     LLDBReply() : m_transcationId(0), m_replyType(kTypeInvalid), m_interruptResaon(kInterruptReasonNone), m_line(wxNOT_FOUND) {}
     LLDBReply(const wxString &str);
     virtual ~LLDBReply();
 
+    void SetBacktrace(const LLDBBacktrace& backtrace) {
+        this->m_backtrace = backtrace;
+    }
+    const LLDBBacktrace& GetBacktrace() const {
+        return m_backtrace;
+    }
     void SetBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints) {
         this->m_breakpoints = breakpoints;
     }

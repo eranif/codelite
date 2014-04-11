@@ -417,6 +417,15 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxSize& sz)
 
 }
 
+JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element) 
+{
+    if(!_json) {
+        return *this;
+    }
+    cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
+    return *this;
+}
+
 wxPoint JSONElement::toPoint() const
 {
     if(!_json) {

@@ -48,7 +48,11 @@ public:
     LLDBBacktrace() : m_threadId (0) {}
     virtual ~LLDBBacktrace();
     
-        
+    void Clear() {
+        m_threadId = 0;
+        m_callstack.clear();
+    }
+    
     void SetCallstack(const LLDBBacktrace::EntryVec_t& callstack) {
         this->m_callstack = callstack;
     }

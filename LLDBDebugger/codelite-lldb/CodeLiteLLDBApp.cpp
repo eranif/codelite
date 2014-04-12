@@ -9,7 +9,9 @@
 #include <lldb/API/SBFileSpec.h>
 #include <lldb/API/SBCommandReturnObject.h>
 #include <lldb/API/SBCommandInterpreter.h>
+#include <lldb/API/SBFrame.h>
 #include <wx/socket.h>
+#include "LLDBProtocol/LLDBLocalVariable.h"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -124,7 +126,7 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 void CodeLiteLLDBApp::NotifyAllBreakpointsDeleted()
 {
     LLDBReply reply;
-    reply.SetReplyType( kTypeAllBreakpointsDeleted );
+    reply.SetReplyType( kReplyTypeAllBreakpointsDeleted );
     SendReply( reply );
 }
 
@@ -145,6 +147,7 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
                 // add all the children locations to the main breakpoint
                 for(size_t i=0; i<bp.GetNumLocations(); ++i) {
                     lldb::SBBreakpointLocation loc = bp.GetLocationAtIndex(i);
+                    
                     lldb::SBFileSpec fileLoc = loc.GetAddress().GetLineEntry().GetFileSpec();
                     wxFileName bpFile( fileLoc.GetDirectory(), fileLoc.GetFilename() );
 
@@ -153,7 +156,7 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
                     new_bp->SetType( LLDBBreakpoint::kLocation );
                     new_bp->SetFilename( bpFile.GetFullPath() );
                     new_bp->SetLineNumber( loc.GetAddress().GetLineEntry().GetLine() );
-                    new_bp->SetName( mainBreakpoint->GetName() );
+                    new_bp->SetName( loc.GetAddress().GetFunction().GetName() );
                     mainBreakpoint->GetChildren().push_back( new_bp );
             }
                 
@@ -163,6 +166,7 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
                 wxFileName bpFile( fileLoc.GetDirectory(), fileLoc.GetFilename() );
                 
                 mainBreakpoint->SetType( LLDBBreakpoint::kFileLine );
+                mainBreakpoint->SetName( loc.GetAddress().GetFunction().GetName() );
                 mainBreakpoint->SetFilename( bpFile.GetFullPath() );
                 mainBreakpoint->SetLineNumber( loc.GetAddress().GetLineEntry().GetLine() );
                 
@@ -172,7 +176,7 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
     }
     
     LLDBReply reply;
-    reply.SetReplyType( kTypeBreakpointsUpdated );
+    reply.SetReplyType( kReplyTypeBreakpointsUpdated );
     reply.SetBreakpoints( breakpoints );
     SendReply( reply );
 }
@@ -181,7 +185,7 @@ void CodeLiteLLDBApp::NotifyExited()
 {
     wxPrintf("codelite-lldb: NotifyExited called\n");
     LLDBReply reply;
-    reply.SetReplyType( kTypeDebuggerExited );
+    reply.SetReplyType( kReplyTypeDebuggerExited );
     SendReply( reply );
     Cleanup();
     CallAfter( &CodeLiteLLDBApp::AcceptNewConnection );
@@ -189,23 +193,26 @@ void CodeLiteLLDBApp::NotifyExited()
 
 void CodeLiteLLDBApp::NotifyRunning()
 {
+    m_variables.clear();
     LLDBReply reply;
-    reply.SetReplyType( kTypeDebuggerRunning );
+    reply.SetReplyType( kReplyTypeDebuggerRunning );
     SendReply( reply );
 }
 
 void CodeLiteLLDBApp::NotifyStarted()
 {
+    m_variables.clear();
     LLDBReply reply;
-    reply.SetReplyType( kTypeDebuggerStartedSuccessfully );
+    reply.SetReplyType( kReplyTypeDebuggerStartedSuccessfully );
     SendReply( reply );
 }
 
 void CodeLiteLLDBApp::NotifyStopped()
 {
+    m_variables.clear();
     LLDBReply reply;
     wxPrintf("codelite-lldb: NotifyStopped() called. m_interruptReason=%d\n", (int)m_interruptReason);
-    reply.SetReplyType( kTypeDebuggerStopped );
+    reply.SetReplyType( kReplyTypeDebuggerStopped );
     reply.SetInterruptResaon( m_interruptReason );
     
     lldb::SBThread thread = m_target.GetProcess().GetSelectedThread();
@@ -230,8 +237,9 @@ void CodeLiteLLDBApp::NotifyStopped()
 
 void CodeLiteLLDBApp::NotifyStoppedOnFirstEntry()
 {
+    m_variables.clear();
     LLDBReply reply;
-    reply.SetReplyType( kTypeDebuggerStoppedOnFirstEntry );
+    reply.SetReplyType( kReplyTypeDebuggerStoppedOnFirstEntry );
     SendReply( reply );
 }
 
@@ -253,7 +261,7 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
     }
     
     if ( m_debugger.IsValid() ) {
-
+        m_variables.clear();
         // Construct char** arrays
         clCommandLineParser parser(command.GetCommandArguments());
         const char** argv = (const char**)_wxArrayStringToCharPtrPtr(parser.ToArray());
@@ -294,6 +302,7 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 void CodeLiteLLDBApp::Cleanup()
 {
     wxPrintf("codelite-lldb: Cleanup() called...\n");
+    m_variables.clear();
     wxDELETE( m_networkThread );
     wxDELETE( m_lldbProcessEventThread );
     
@@ -312,20 +321,21 @@ void CodeLiteLLDBApp::ApplyBreakpoints(const LLDBCommand& command)
 {
     wxPrintf("codelite-lldb: ApplyBreakpoints called\n");
     if ( m_target.GetProcess().GetState() == lldb::eStateStopped ) {
-        wxPrintf("codelite-lldb: ApplyBreakpoints: process state is Stopped - will apply them now\n");
+        wxPrintf("codelite-lldb: ApplyBreakpoints: process state is stopped - will apply them now\n");
         // we can apply the breakpoints
         // Apply all breakpoints with an-invalid breakpoint ID
         LLDBBreakpoint::Vec_t breakpoints = command.GetBreakpoints();
         while( !breakpoints.empty() ) {
             LLDBBreakpoint::Ptr_t breakPoint = breakpoints.at(0);
-            wxPrintf("codelite-lldb: applying breakpoint: %s\n", breakPoint->ToString());
             if ( !breakPoint->IsApplied() ) {
                 switch( breakPoint->GetType() ) {
                 case LLDBBreakpoint::kFunction: {
+                    wxPrintf("codelite-lldb: creating breakpoint by name: %s\n", breakPoint->GetName());
                     m_target.BreakpointCreateByName(breakPoint->GetName().mb_str().data(), NULL);
                     break;
                 }
                 case LLDBBreakpoint::kFileLine: {
+                    wxPrintf("codelite-lldb: creating breakpoint by location: %s,%d\n", breakPoint->GetFilename(), breakPoint->GetLineNumber());
                     m_target.BreakpointCreateByLocation(breakPoint->GetFilename().mb_str().data(), breakPoint->GetLineNumber());
                     break;
                 }
@@ -468,5 +478,80 @@ void CodeLiteLLDBApp::AcceptNewConnection()
         // exit
         ExitMainLoop();
         return;
+    }
+}
+
+void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
+{
+    wxUnusedVar( command );
+    LLDBLocalVariable::Vect_t locals;
+    
+    wxPrintf("codelite-lldb: fetching local variables for selected frame\n");
+    lldb::SBFrame frame = m_target.GetProcess().GetSelectedThread().GetSelectedFrame();
+    if ( !frame.IsValid() ) {
+        NotifyLocals(locals);
+    }
+
+    // get list of locals
+    lldb::SBValueList args = frame.GetVariables(true, true, false, true);
+    for(size_t i=0; i<args.GetSize(); ++i) {
+        lldb::SBValue value = args.GetValueAtIndex(i);
+        if ( value.IsValid() ) {
+            LLDBLocalVariable::Ptr_t var( new LLDBLocalVariable(value) );
+            m_variables.insert( std::make_pair(value.GetID(), value) );
+            locals.push_back( var );
+        }
+    }
+    NotifyLocals( locals );
+}
+
+void CodeLiteLLDBApp::NotifyLocals(LLDBLocalVariable::Vect_t locals)
+{
+    wxPrintf("codelite-lldb: NotifyLocals called. with %d locals\n", (int)locals.size());
+    LLDBReply reply;
+    reply.SetReplyType( kReplyTypeLocalsUpdated );
+    reply.SetLocals( locals );
+    SendReply( reply );
+}
+
+// we need to return list of children for a variable
+// we stashed the variables we got so far inside a map
+void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: ExpandVariable called for variableId=%d\n", command.GetLldbId());
+    int variableId = command.GetLldbId();
+    if ( variableId == wxNOT_FOUND ) {
+        return;
+    }
+    
+    wxPrintf("codelite-lldb: ExpandVariable called for variableId=%d\n", variableId);
+    static const int MAX_ARRAY_SIZE = 50;
+    
+    LLDBLocalVariable::Vect_t children;
+    std::map<int, lldb::SBValue>::iterator iter = m_variables.find(variableId);
+    if ( iter != m_variables.end() ) {
+        lldb::SBValue value = iter->second;
+        int size = value.GetNumChildren();
+        
+        lldb::TypeClass typeClass = value.GetType().GetTypeClass();
+        if ( typeClass == lldb::eTypeClassArray ) {
+            size > MAX_ARRAY_SIZE ? size = MAX_ARRAY_SIZE : size = size;
+            wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", value.GetName());
+        }
+        
+        for(int i=0; i<size; ++i) {
+            lldb::SBValue child = value.GetChildAtIndex(i);
+            if ( child.IsValid() ) {
+                LLDBLocalVariable::Ptr_t var( new LLDBLocalVariable(child) );
+                children.push_back( var );
+                m_variables.insert( std::make_pair(child.GetID(), child) );
+            }
+        }
+        
+        LLDBReply reply;
+        reply.SetReplyType( kReplyTypeVariableExpanded );
+        reply.SetLocals( children );
+        reply.SetLldbId( variableId );
+        SendReply( reply );
     }
 }

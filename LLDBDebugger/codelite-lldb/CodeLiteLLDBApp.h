@@ -12,6 +12,8 @@
 #include "LLDBProcessEventHandlerThread.h"
 #include "LLDBProtocol/LLDBReply.h"
 #include "LLDBProtocol/cl_socket_server.h"
+#include "LLDBProtocol/LLDBLocalVariable.h"
+#include <lldb/API/SBValue.h>
 
 class CodeLiteLLDBApp : public wxAppConsole
 {
@@ -23,7 +25,8 @@ class CodeLiteLLDBApp : public wxAppConsole
     int                            m_debuggeePid;
     clSocketBase::Ptr_t            m_replySocket;
     eInterruptReason               m_interruptReason;
-
+    std::map<int, lldb::SBValue>   m_variables;
+    
 private:
     void Cleanup();
     void AcceptNewConnection();
@@ -36,7 +39,8 @@ public:
     void NotifyRunning();
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
-
+    void NotifyLocals(LLDBLocalVariable::Vect_t locals);
+    
     void SendReply(const LLDBReply& reply);
     bool CanInteract();
     bool IsDebugSessionInProgress();
@@ -66,6 +70,8 @@ public:
     void StepIn(const LLDBCommand& command);
     void StepOut(const LLDBCommand& command);
     void Interrupt(const LLDBCommand& command);
+    void LocalVariables(const LLDBCommand& command);
+    void ExpandVariable(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

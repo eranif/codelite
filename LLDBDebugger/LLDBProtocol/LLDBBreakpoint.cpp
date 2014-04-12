@@ -3,6 +3,8 @@
 #include <wx/filename.h>
 #include "workspace.h"
 
+static int s_internalGdbBpId = 50000;
+
 LLDBBreakpoint::~LLDBBreakpoint()
 {
 }
@@ -25,10 +27,16 @@ LLDBBreakpoint::LLDBBreakpoint(const wxString& name)
 
 bool LLDBBreakpoint::SameAs(LLDBBreakpoint::Ptr_t other) const
 {
-    return  m_type == other->m_type &&
-            m_name == other->m_name &&
-            m_filename == other->m_filename &&
-            m_lineNumber == other->m_lineNumber;
+    if ( m_type == kFunction ) {
+        return  m_type == other->m_type && 
+                m_filename == other->m_filename && 
+                m_lineNumber == other->m_lineNumber 
+                && m_name == other->m_name;
+    } else {
+        return  m_type == other->m_type && 
+                m_filename == other->m_filename && 
+                m_lineNumber == other->m_lineNumber;
+    }
 }
 
 LLDBBreakpoint::Vec_t LLDBBreakpoint::FromBreakpointInfoVector(const BreakpointInfo::Vec_t& breakpoints)
@@ -41,7 +49,7 @@ LLDBBreakpoint::Vec_t LLDBBreakpoint::FromBreakpointInfoVector(const BreakpointI
             bp->SetName( gdbBp.function_name );
             bp->SetFilename( gdbBp.file );
             bp->SetLineNumber( gdbBp.lineno );
-            bp->SetType( gdbBp.function_name.IsEmpty() ? kFileLine : kFunction );
+            bp->SetType( kFileLine );
             bps.push_back( bp );
         }
     }
@@ -52,12 +60,13 @@ BreakpointInfo::Vec_t LLDBBreakpoint::ToBreakpointInfoVector(const LLDBBreakpoin
 {
     BreakpointInfo::Vec_t bps;
     for(size_t i=0; i<breakpoints.size(); ++i) {
+
         LLDBBreakpoint::Ptr_t bp = breakpoints.at(i);
         BreakpointInfo gdbBp;
-        gdbBp.function_name = bp->GetName();
-        gdbBp.lineno = bp->GetLineNumber();
-        gdbBp.file = bp->GetFilename();
+        gdbBp.Create(bp->GetFilename(), bp->GetLineNumber(), ++ s_internalGdbBpId);
         gdbBp.bp_type = BP_type_break;
+
+        // dont add breakpoints to a non existent location
         bps.push_back( gdbBp );
     }
     return bps;
@@ -68,10 +77,10 @@ wxString LLDBBreakpoint::ToString() const
     wxString str;
     str << "Breakpoint ID=" << m_id << ". ";
     if ( GetType() == kFileLine ) {
-         str << GetFilename() << "," << GetLineNumber();
+         str << "kFileLine " << GetFilename() << "," << GetLineNumber();
 
     } else if ( GetType() == kFunction ) {
-        str << GetName() << "()";
+        str << "kFunction " << GetName() << "()";
     }
     return str;
 }

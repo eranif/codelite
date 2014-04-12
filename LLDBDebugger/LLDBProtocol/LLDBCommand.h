@@ -18,6 +18,7 @@ protected:
     wxString              m_redirectTTY;
     LLDBBreakpoint::Vec_t m_breakpoints;
     int                   m_interruptReason;
+    int                   m_lldbId;
 
 public:
     // Serialization API
@@ -35,8 +36,16 @@ public:
         m_executable.clear();
         m_redirectTTY.clear();
         m_breakpoints.clear();
+        m_interruptReason = kInterruptReasonNone;
+        m_lldbId = wxNOT_FOUND;
     }
 
+    void SetLldbId(int lldbId) {
+        this->m_lldbId = lldbId;
+    }
+    int GetLldbId() const {
+        return m_lldbId;
+    }
     void SetInterruptReason(int interruptReason) {
         this->m_interruptReason = interruptReason;
     }

@@ -47,6 +47,8 @@
     <File Name="LLDBProtocol/LLDBBacktrace.h"/>
     <File Name="LLDBProtocol/LLDBBreakpoint.cpp"/>
     <File Name="LLDBProtocol/LLDBBreakpoint.h"/>
+    <File Name="LLDBProtocol/LLDBLocalVariable.cpp"/>
+    <File Name="LLDBProtocol/LLDBLocalVariable.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -294,12 +296,6 @@
       <File Name="CMakeLists.txt"/>
       <File Name="lldbdebugger-plugin.cpp"/>
       <File Name="lldbdebugger-plugin.h"/>
-      <File Name="LLDBDebugger.cpp"/>
-      <File Name="LLDBDebugger.h"/>
-      <File Name="LLDBDebuggerThread.cpp"/>
-      <File Name="LLDBDebuggerThread.h"/>
-      <File Name="LLDBLocalVariable.cpp"/>
-      <File Name="LLDBLocalVariable.h"/>
       <File Name="LLDBSettings.cpp"/>
       <File Name="LLDBSettings.h"/>
     </VirtualDirectory>

@@ -221,6 +221,11 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
                     m_mgr->GetAllBreakpoints(gdbBps);
+                    
+                    // remove all breakpoints from previous session
+                    m_connector.DeleteAllBreakpoints();
+
+                    // apply the serialized breakpoints
                     m_connector.AddBreakpoints( gdbBps );
 
                     LLDBCommand startCommand;
@@ -284,24 +289,26 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
     CL_DEBUG(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() );
     m_connector.SetCanInteract(true);
     
-    // Mark the debugger line / file
-    IEditor *editor = m_mgr->FindEditor( event.GetFileName() );
-    if ( !editor && wxFileName::Exists(event.GetFileName()) ) {
-        // Try to open the editor
-        if ( m_mgr->OpenFile(event.GetFileName(), "", event.GetLinenumber()-1) ) {
-            editor = m_mgr->GetActiveEditor();
+    if ( event.GetInterruptReason() == kInterruptReasonNone ) {
+        // Mark the debugger line / file
+        IEditor *editor = m_mgr->FindEditor( event.GetFileName() );
+        if ( !editor && wxFileName::Exists(event.GetFileName()) ) {
+            // Try to open the editor
+            if ( m_mgr->OpenFile(event.GetFileName(), "", event.GetLinenumber()-1) ) {
+                editor = m_mgr->GetActiveEditor();
+            }
         }
-    }
-    
-    if ( editor ) {
-        m_mgr->SelectPage( editor->GetSTC() );
-        ClearDebuggerMarker();
-        SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() -1 );
-    }
-    
-    // If the debugger stopped due to user request
-    // perform that action and continue
-    if ( event.GetInterruptReason() == kInterruptReasonApplyBreakpoints ) {
+        
+        if ( editor ) {
+            m_mgr->SelectPage( editor->GetSTC() );
+            ClearDebuggerMarker();
+            SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() -1 );
+        }
+        
+        // request for local variables
+        m_connector.RequestLocals();
+        
+    } else if ( event.GetInterruptReason() == kInterruptReasonApplyBreakpoints ) {
         CL_DEBUG("Applying breakpoints and continue...");
         m_connector.ApplyBreakpoints();
         m_connector.Continue();
@@ -520,7 +527,6 @@ void LLDBDebuggerPlugin::OnLLDBRunning(LLDBEvent& event)
 void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
 {
     // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serilization in the session file )
-    event.Skip();
     CHECK_IS_LLDB_SESSION();
     
     // check to see if we are removing a breakpoint or adding one

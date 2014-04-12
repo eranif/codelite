@@ -30,7 +30,8 @@ protected:
     bool IsBreakpointExists(LLDBBreakpoint::Ptr_t bp) const;
     LLDBBreakpoint::Vec_t::const_iterator FindBreakpoint(LLDBBreakpoint::Ptr_t bp) const;
     LLDBBreakpoint::Vec_t::iterator FindBreakpoint(LLDBBreakpoint::Ptr_t bp);
-
+    LLDBBreakpoint::Vec_t GetUnappliedBreakpoints();
+    
     void OnLLDBStarted(LLDBEvent &event);
     void OnLLDBExited(LLDBEvent &event);
 
@@ -86,7 +87,7 @@ public:
      * @param breakpoints
      */
     void AddBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints);
-
+    
     /**
      * @brief add list of breakpoints ( do not add apply them just yet)
      * @param breakpoints
@@ -142,7 +143,18 @@ public:
      * @brief issue a 'Continue' command
      */
     void Continue();
-
+    
+    /**
+     * @brief send request to the debugger to request the local varibles
+     */
+    void RequestLocals();
+    
+    /**
+     * @brief request lldb to expand a variable and return its children
+     * @param lldbId the unique identifier that identifies this variable 
+     * at the debug server side
+     */
+    void RequestVariableChildren(int lldbId);
     /**
      * @brief stop the debugger
      */

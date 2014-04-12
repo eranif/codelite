@@ -1,6 +1,5 @@
 #include "LLDBBreakpointsPane.h"
 #include "LLDBProtocol/LLDBBreakpoint.h"
-#include "LLDBDebugger.h"
 #include "event_notifier.h"
 #include "LLDBNewBreakpointDlg.h"
 #include "lldbdebugger-plugin.h"
@@ -94,8 +93,8 @@ void LLDBBreakpointsPane::OnNewBreakpoint(wxCommandEvent& event)
     if ( dlg.ShowModal() == wxID_OK ) {
         LLDBBreakpoint::Ptr_t bp = dlg.GetBreakpoint();
         if ( bp->IsValid() ) {
-            m_connector->MarkBreakpointForDeletion( bp );
-            m_connector->DeleteBreakpoints();
+            m_connector->AddBreakpoint( bp );
+            m_connector->ApplyBreakpoints();
         }
     }
 }

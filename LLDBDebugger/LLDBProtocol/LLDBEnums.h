@@ -12,15 +12,17 @@ enum eInterruptReason {
 
 // the various network LLDBReply type
 enum eReplyType {
-    kTypeInvalid,
-    kTypeDebuggerStartedSuccessfully,
-    kTypeDebuggerStopped,
-    kTypeDebuggerStoppedOnFirstEntry,
-    kTypeDebuggerExited,
-    kTypeDebuggerRunning,
-    kTypeBacktraceReceived,
-    kTypeAllBreakpointsDeleted,
-    kTypeBreakpointsUpdated,
+    kReplyTypeInvalid,
+    kReplyTypeDebuggerStartedSuccessfully,
+    kReplyTypeDebuggerStopped,
+    kReplyTypeDebuggerStoppedOnFirstEntry,
+    kReplyTypeDebuggerExited,
+    kReplyTypeDebuggerRunning,
+    kReplyTypeBacktraceReceived,
+    kReplyTypeAllBreakpointsDeleted,
+    kReplyTypeBreakpointsUpdated,
+    kReplyTypeLocalsUpdated,
+    kReplyTypeVariableExpanded,
 };
 
 // LLDBCommand types
@@ -37,6 +39,8 @@ enum eCommandType {
     kCommandStepIn,
     kCommandStepOut,
     kCommandInterrupt,
+    kCommandGetLocals,
+    kCommandExpandVariable,
 };
 
 #endif

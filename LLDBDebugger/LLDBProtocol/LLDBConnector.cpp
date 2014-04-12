@@ -64,7 +64,9 @@ bool LLDBConnector::ConnectToDebugger(int timeout)
 void LLDBConnector::SendCommand(const LLDBCommand& command)
 {
     try {
-        m_socket->WriteMessage( command.ToJSON().format() );
+        if ( m_socket ) {
+            m_socket->WriteMessage( command.ToJSON().format() );
+        }
 
     } catch ( clSocketException &e ) {
         wxUnusedVar( e );
@@ -74,9 +76,16 @@ void LLDBConnector::SendCommand(const LLDBCommand& command)
 void LLDBConnector::InvalidateBreakpoints()
 {
     // mark all the breakpoints as "not-applied" (id=-1)
+    LLDBBreakpoint::Vec_t updatedList;
+    
     for(size_t i=0; i<m_breakpoints.size(); ++i) {
         m_breakpoints.at(i)->Invalidate();
+        if ( wxFileName::Exists(m_breakpoints.at(i)->GetFilename()) ) {
+            updatedList.push_back( m_breakpoints.at(i) );
+        }
     }
+    // we keep only breakpoints with valid filename
+    m_breakpoints.swap( updatedList );
     ClearBreakpointDeletionQueue();
     
     CL_DEBUG("codelite: InvalidateBreakpoints called");
@@ -131,7 +140,7 @@ void LLDBConnector::ApplyBreakpoints()
         if ( IsCanInteract() ) {
             LLDBCommand command;
             command.SetCommandType( kCommandApplyBreakpoints );
-            command.SetBreakpoints( m_breakpoints );
+            command.SetBreakpoints( GetUnappliedBreakpoints() );
             SendCommand( command );
             m_breakpoints.clear();
             
@@ -172,7 +181,7 @@ void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
 void LLDBConnector::DeleteBreakpoints()
 {
     if ( IsCanInteract() ) {
-        CL_DEBUG(wxString () << "codelite: deleting breakpoints (total of " << m_breakpoints.size() << " breakpoints)");
+        CL_DEBUG(wxString () << "codelite: deleting breakpoints (total of " << m_pendingDeletionBreakpoints.size() << " breakpoints)");
         LLDBCommand command;
         command.SetCommandType( kCommandDeleteBreakpoint );
         command.SetBreakpoints( m_pendingDeletionBreakpoints );
@@ -215,6 +224,16 @@ void LLDBConnector::StepOut()
 
 void LLDBConnector::DeleteAllBreakpoints()
 {
+    if ( !IsRunning() ) {
+        m_pendingDeletionBreakpoints.clear();
+        m_breakpoints.clear();
+        
+        LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_UPDATED);
+        event.SetBreakpoints( GetAllBreakpoints() );
+        ProcessEvent( event );
+        return;
+     }
+
     // mark all breakpoints for deletion
     CL_DEBUG(wxString () << "codelite: DeleteAllBreakpoints called");
     m_pendingDeletionBreakpoints.swap( m_breakpoints );
@@ -361,5 +380,35 @@ void LLDBConnector::StopDebugServer()
         m_process->SetHardKill(true); // kill -9
         m_process->Terminate();
         m_process = NULL;
+    }
+}
+
+LLDBBreakpoint::Vec_t LLDBConnector::GetUnappliedBreakpoints()
+{
+    LLDBBreakpoint::Vec_t unappliedBreakpoints;
+    for(size_t i=0; i<m_breakpoints.size(); ++i) {
+        if ( !m_breakpoints.at(i)->IsApplied() ) {
+            unappliedBreakpoints.push_back( m_breakpoints.at(i) );
+        }
+    }
+    return unappliedBreakpoints;
+}
+
+void LLDBConnector::RequestLocals()
+{
+    if ( IsCanInteract() ) {
+        LLDBCommand command;
+        command.SetCommandType( kCommandGetLocals );
+        SendCommand( command );
+    }
+}
+
+void LLDBConnector::RequestVariableChildren(int lldbId)
+{
+    if ( IsCanInteract() ) {
+        LLDBCommand command;
+        command.SetCommandType(kCommandExpandVariable);
+        command.SetLldbId( lldbId );
+        SendCommand( command );
     }
 }

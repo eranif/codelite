@@ -21,21 +21,21 @@ void* LLDBNetworkListenerThread::Entry()
         if ( m_socket->ReadMessage(msg, 1) == clSocketBase::kSuccess ) {
             LLDBReply reply(msg);
             switch( reply.GetReplyType() ) {
-            case kTypeDebuggerStartedSuccessfully: {
+            case kReplyTypeDebuggerStartedSuccessfully: {
                 // notify debugger started successfully
                 LLDBEvent event(wxEVT_LLDB_STARTED);
                 m_owner->AddPendingEvent( event );
                 break;
             }
 
-            case kTypeDebuggerExited: {
+            case kReplyTypeDebuggerExited: {
                 // notify debugger exited
                 LLDBEvent event(wxEVT_LLDB_EXITED);
                 m_owner->AddPendingEvent( event );
                 break;
             }
 
-            case kTypeDebuggerStopped: {
+            case kReplyTypeDebuggerStopped: {
                 // notify debugger exited
                 LLDBEvent event(wxEVT_LLDB_STOPPED);
                 event.SetFileName( reply.GetFilename() );
@@ -46,29 +46,44 @@ void* LLDBNetworkListenerThread::Entry()
                 break;
             }
 
-            case kTypeDebuggerRunning: {
+            case kReplyTypeDebuggerRunning: {
                 // notify debugger exited
                 LLDBEvent event(wxEVT_LLDB_RUNNING);
                 m_owner->AddPendingEvent( event );
                 break;
             }
 
-            case kTypeDebuggerStoppedOnFirstEntry: {
+            case kReplyTypeDebuggerStoppedOnFirstEntry: {
                 // notify debugger exited
                 LLDBEvent event(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY);
                 m_owner->AddPendingEvent( event );
                 break;
             }
             
-            case kTypeAllBreakpointsDeleted: {
+            case kReplyTypeAllBreakpointsDeleted: {
                 LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL);
                 m_owner->AddPendingEvent( event );
                 break;
             }
             
-            case kTypeBreakpointsUpdated: {
+            case kReplyTypeBreakpointsUpdated: {
                 LLDBEvent event(wxEVT_LLDB_BREAKPOINTS_UPDATED);
                 event.SetBreakpoints( reply.GetBreakpoints() );
+                m_owner->AddPendingEvent( event );
+                break;
+            }
+            
+            case kReplyTypeLocalsUpdated: {
+                LLDBEvent event(wxEVT_LLDB_LOCALS_UPDATED);
+                event.SetLocals( reply.GetLocals() );
+                m_owner->AddPendingEvent( event );
+                break;
+            }
+            
+            case kReplyTypeVariableExpanded: {
+                LLDBEvent event(wxEVT_LLDB_VARIABLE_EXPANDED);
+                event.SetLocals( reply.GetLocals() );
+                event.SetVariableId( reply.GetLldbId() );
                 m_owner->AddPendingEvent( event );
                 break;
             }

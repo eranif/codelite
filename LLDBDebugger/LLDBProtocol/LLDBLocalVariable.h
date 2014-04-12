@@ -6,6 +6,8 @@
 #include <wx/clntdata.h>
 #include <wx/sharedptr.h>
 #include <lldb/API/SBValue.h>
+#include "json_node.h"
+#include <wx/treebase.h>
 
 class LLDBLocalVariable
 {
@@ -19,16 +21,28 @@ protected:
     wxString m_summary;
     wxString m_type;
     bool     m_valueChanged;
-
-    LLDBLocalVariable::Vect_t m_children;
-
+    int      m_lldbId;
+    bool     m_hasChildren;
+    
 private:
     void DoInitFromLLDBValue(lldb::SBValue value);
 
 public:
     LLDBLocalVariable(lldb::SBValue value);
-    LLDBLocalVariable() : m_valueChanged(false) {}
+    LLDBLocalVariable() : m_valueChanged(false), m_lldbId(wxNOT_FOUND), m_hasChildren(false) {}
     virtual ~LLDBLocalVariable();
+
+    void SetLldbId(int lldbId) {
+        this->m_lldbId = lldbId;
+    }
+
+    int GetLldbId() const {
+        return m_lldbId;
+    }
+    
+    // Seriliazation API
+    void FromJSON(const JSONElement& json);
+    JSONElement ToJSON() const;
 
     void SetValueChanged(bool valueChanged) {
         this->m_valueChanged = valueChanged;
@@ -64,21 +78,13 @@ public:
     const wxString& GetValue() const {
         return m_value;
     }
-
-    const LLDBLocalVariable::Vect_t& GetChildren() const {
-        return m_children;
-    }
-
-    LLDBLocalVariable::Vect_t& GetChildren() {
-        return m_children;
-    }
-
+    
     bool HasChildren() const {
-        return !m_children.empty();
+        return m_hasChildren;
     }
 };
 
-class LLDBLocalVariableClientData : public wxClientData
+class LLDBLocalVariableClientData : public wxTreeItemData
 {
     LLDBLocalVariable::Ptr_t m_variable;
 public:

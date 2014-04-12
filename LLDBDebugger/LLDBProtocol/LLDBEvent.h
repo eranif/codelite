@@ -4,6 +4,7 @@
 #include "cl_command_event.h"
 #include "LLDBBacktrace.h"
 #include "LLDBBreakpoint.h"
+#include "LLDBLocalVariable.h"
 
 class LLDBEvent : public clCommandEvent
 {
@@ -14,6 +15,8 @@ class LLDBEvent : public clCommandEvent
     int           m_frameId;
     int           m_threadId;
     LLDBBreakpoint::Vec_t m_breakpoints;
+    LLDBLocalVariable::Vect_t m_locals;
+    int           m_variableId;
 
 public:
     LLDBEvent(wxEventType eventType, int winid = 0);
@@ -22,6 +25,22 @@ public:
     LLDBEvent& operator=(const LLDBEvent& src);
     virtual wxEvent* Clone() const {
         return new LLDBEvent(*this);
+    }
+
+    void SetLocals(const LLDBLocalVariable::Vect_t& locals) {
+        this->m_locals.clear();
+        this->m_locals.reserve( locals.size() );
+        this->m_locals.insert(this->m_locals.end(), locals.begin(), locals.end());
+    }
+
+    void SetVariableId(int variableId) {
+        this->m_variableId = variableId;
+    }
+    int GetVariableId() const {
+        return m_variableId;
+    }
+    const LLDBLocalVariable::Vect_t& GetLocals() const {
+        return m_locals;
     }
     void SetBacktrace(const LLDBBacktrace& backtrace) {
         this->m_backtrace = backtrace;
@@ -76,6 +95,8 @@ wxDECLARE_EVENT(wxEVT_LLDB_BREAKPOINTS_UPDATED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_FRAME_SELECTED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_CRASHED, LLDBEvent);
+wxDECLARE_EVENT(wxEVT_LLDB_LOCALS_UPDATED, LLDBEvent);
+wxDECLARE_EVENT(wxEVT_LLDB_VARIABLE_EXPANDED, LLDBEvent);
 
 typedef void (wxEvtHandler::*LLDBEventFunction)(LLDBEvent&);
 #define LLDBEventHandler(func) \

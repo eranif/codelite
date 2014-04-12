@@ -31,6 +31,8 @@ void* LLDBNetworkServerThread::Entry()
         while ( !TestDestroy() ) {
             wxString str;
             if ( m_socket->ReadMessage( str, 1 ) == clSocketBase::kSuccess ) {
+                wxPrintf("codelite-lldb: received command\n%s\n", str);
+                
                 // Process command
                 LLDBCommand command(str);
                 switch( command.GetCommandType() ) {
@@ -77,7 +79,15 @@ void* LLDBNetworkServerThread::Entry()
                 case kCommandInterrupt:
                     m_app->CallAfter( &CodeLiteLLDBApp::Interrupt, command);
                     break;
-
+                
+                case kCommandGetLocals:
+                    m_app->CallAfter( &CodeLiteLLDBApp::LocalVariables, command);
+                    break;
+                
+                case kCommandExpandVariable:
+                    m_app->CallAfter( &CodeLiteLLDBApp::ExpandVariable, command);
+                    break;
+                    
                 default:
                     break;
                 }

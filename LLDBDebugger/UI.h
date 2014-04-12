@@ -23,7 +23,6 @@
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
-#include "lldblocalsmodel.h"
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -88,9 +87,6 @@ public:
 class LLDBLocalsViewBase : public wxPanel
 {
 protected:
-    wxDataViewCtrl* m_dataview;
-    wxObjectDataPtr<LLDBLocalsModel> m_dataviewModel;
-
 
 protected:
 

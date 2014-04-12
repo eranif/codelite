@@ -1,98 +1,140 @@
 #include "LLDBLocalsView.h"
 #include "lldbdebugger-plugin.h"
-
-// Use custom renderer
-class LLDBLocalsModelReal : public LLDBLocalsModel
-{
-    wxDataViewCtrl* m_view;
-    
-private:
-    wxDataViewCtrl* GetView() const {
-        return m_view;
-    }
-    
-public:
-    LLDBLocalsModelReal() {}
-    virtual ~LLDBLocalsModelReal() {}
-    
-    bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const {
-        
-        LLDBLocalVariableClientData* cd = dynamic_cast<LLDBLocalVariableClientData*>(this->GetClientObject(item));
-        if ( cd && cd->GetVariable()->IsValueChanged()) {
-            attr.SetColour("RED");
-        }
-        return true;
-    }
-};
+#include "file_logger.h"
+#include <wx/treelist.h>
+#include <wx/wupdlock.h>
 
 LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBDebuggerPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
 {
-    // Replace the model with custom one
-    int colCount = m_dataviewModel->GetColCount();
-    m_dataviewModel.reset( new LLDBLocalsModelReal );
-    m_dataviewModel->SetColCount( colCount );
-    m_dataview->AssociateModel(m_dataviewModel.get() );
+    m_treeList = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT|wxTR_HAS_BUTTONS|wxTR_FULL_ROW_HIGHLIGHT);
+    
+    m_treeList->AddColumn(_("Name"), 150);
+    m_treeList->AddColumn(_("Summary"), 300);
+    m_treeList->AddColumn(_("Value"), 300);
+    m_treeList->AddColumn(_("Type"), 300);
+    
+    m_treeList->AddRoot(_("Local Vairables"));
+    GetSizer()->Add(m_treeList, 1, wxEXPAND|wxALL, 2);
 
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STARTED, &LLDBLocalsView::OnLLDBStarted, this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_EXITED,  &LLDBLocalsView::OnLLDBExited,  this);
-    m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STOPPED, &LLDBLocalsView::OnLLDBStopped, this);
+    m_plugin->GetLLDB()->Bind(wxEVT_LLDB_LOCALS_UPDATED, &LLDBLocalsView::OnLLDBLocalsUpdated, this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_RUNNING, &LLDBLocalsView::OnLLDBRunning, this);
+    m_plugin->GetLLDB()->Bind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBLocalsView::OnLLDBVariableExpanded, this);
+    
+    m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_EXPANDING, &LLDBLocalsView::OnItemExpanding, this);
+    GetSizer()->Layout();
 }
 
 LLDBLocalsView::~LLDBLocalsView()
 {
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_STARTED, &LLDBLocalsView::OnLLDBStarted, this);
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_EXITED,  &LLDBLocalsView::OnLLDBExited,  this);
-    m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_STOPPED, &LLDBLocalsView::OnLLDBStopped, this);
+    m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_LOCALS_UPDATED, &LLDBLocalsView::OnLLDBLocalsUpdated, this);
     m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_RUNNING, &LLDBLocalsView::OnLLDBRunning, this);
+    m_plugin->GetLLDB()->Unbind(wxEVT_LLDB_VARIABLE_EXPANDED, &LLDBLocalsView::OnLLDBVariableExpanded, this);
+    m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_EXPANDING, &LLDBLocalsView::OnItemExpanding, this);
 }
 
 void LLDBLocalsView::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
-    m_dataviewModel->Clear();
+    Cleanup();
 }
 
 void LLDBLocalsView::OnLLDBRunning(LLDBEvent& event)
 {
     event.Skip();
-    m_dataviewModel->Clear();
+    Cleanup();
 }
 
 void LLDBLocalsView::OnLLDBStarted(LLDBEvent& event)
 {
     event.Skip();
-    m_dataviewModel->Clear();
+    Cleanup();
 }
 
-void LLDBLocalsView::OnLLDBStopped(LLDBEvent& event)
+void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
 {
     // FIXME: optimize this to only retrieve the top levle variables
     // the children should be obtained in the 'OnItemExpading' event handler
     event.Skip();
-    m_dataviewModel->Clear();
-    // FIXME: pass the locals in the event
-
-//    LLDBLocalVariable::Vect_t locals = m_plugin->GetLLDB()->GetLocalVariables();
-//    for(size_t i=0; i<locals.size(); ++i) {
-//        DoAddVariableToView(locals.at(i), wxDataViewItem(NULL));
-//    }
+    wxWindowUpdateLocker locker(m_treeList);
+    Enable(true);
+    
+    m_treeList->DeleteChildren( m_treeList->GetRootItem() );
+    CL_DEBUG("Updating locals view");
+    DoAddVariableToView( event.GetLocals(), m_treeList->GetRootItem() );
 }
 
-void LLDBLocalsView::DoAddVariableToView(LLDBLocalVariable::Ptr_t variable, const wxDataViewItem& parent)
+void LLDBLocalsView::DoAddVariableToView(const LLDBLocalVariable::Vect_t& variables, wxTreeItemId parent)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back( variable->GetName() );
-    cols.push_back( variable->GetSummary() );
-    cols.push_back( variable->GetValue() );
-    cols.push_back( variable->GetType() );
-    wxDataViewItem item = m_dataviewModel->AppendItem(parent, cols, new LLDBLocalVariableClientData(variable) );
-    if ( variable->HasChildren() ) {
-        LLDBLocalVariable::Vect_t& children = variable->GetChildren();
-        for(size_t i=0; i<children.size(); ++i) {
-            DoAddVariableToView(children.at(i), item);
+    for(size_t i=0; i<variables.size(); ++i) {
+        LLDBLocalVariable::Ptr_t variable = variables.at(i);
+        wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, new LLDBLocalVariableClientData(variable));
+        m_treeList->SetItemText(item, 1, variable->GetSummary());
+        m_treeList->SetItemText(item, 2, variable->GetValue());
+        m_treeList->SetItemText(item, 3, variable->GetType());
+        if ( variable->IsValueChanged() ) {
+            m_treeList->SetItemTextColour( item, "RED" );
+        }
+        if ( variable->HasChildren() ) {
+            // insert dummy item here
+            m_treeList->AppendItem(item, "<dummy>");
         }
     }
+    
+    if ( !variables.empty() ) {
+        m_treeList->Expand( parent );
+    }
+}
+
+void LLDBLocalsView::OnItemExpanding(wxTreeEvent& event)
+{
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = m_treeList->GetFirstChild(event.GetItem(), cookie);
+    if ( m_treeList->GetItemText(child) == "<dummy>") {
+        event.Veto();
+        m_treeList->DeleteChildren( event.GetItem() );
+        
+        // query the debugger about the children of this node
+        if ( m_plugin->GetLLDB()->IsCanInteract() ) {
+            int variableId = GetItemData(event.GetItem())->GetVariable()->GetLldbId();
+            m_plugin->GetLLDB()->RequestVariableChildren( variableId );
+            m_pendingExpandItems.insert( std::make_pair(variableId, event.GetItem()) );
+        }
+        
+    } else {
+        event.Skip();
+    }
+}
+
+LLDBLocalVariableClientData* LLDBLocalsView::GetItemData(const wxTreeItemId& id)
+{
+    LLDBLocalVariableClientData* cd = dynamic_cast<LLDBLocalVariableClientData*>(m_treeList->GetItemData(id));
+    return cd;
+}
+
+void LLDBLocalsView::Cleanup()
+{
+    m_treeList->DeleteChildren( m_treeList->GetRootItem() );
+    m_pendingExpandItems.clear();
+}
+
+void LLDBLocalsView::OnLLDBVariableExpanded(LLDBEvent& event)
+{
+    int variableId = event.GetVariableId();
+    // try to locate this item in our map
+    LLDBLocalsView::IntItemMap_t::iterator iter = m_pendingExpandItems.find(variableId);
+    if ( iter == m_pendingExpandItems.end() ) {
+        // does not belong to us - skip it
+        event.Skip();
+        return;
+    }
+    
+    // add the variables 
+    DoAddVariableToView( event.GetLocals(), iter->second);
+    m_pendingExpandItems.erase( iter );
 }

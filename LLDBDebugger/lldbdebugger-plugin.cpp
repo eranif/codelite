@@ -300,7 +300,16 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
         }
         
         if ( editor ) {
-            m_mgr->SelectPage( editor->GetSTC() );
+            // select it first
+            if ( editor != m_mgr->GetActiveEditor() ) {
+                m_mgr->SelectPage( editor->GetSTC() );
+                
+            } else {
+                // just make sure that the page has the focus
+                editor->SetActive();
+            }
+            
+            // clear the markers
             ClearDebuggerMarker();
             SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() -1 );
         }

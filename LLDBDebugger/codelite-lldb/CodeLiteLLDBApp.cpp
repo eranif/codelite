@@ -54,8 +54,12 @@ CodeLiteLLDBApp::CodeLiteLLDBApp()
     m_debugger = lldb::SBDebugger::Create();
     wxPrintf("codelite-lldb: lldb initialized successfully\n");
     
+    // register our summary
+    lldb::SBCommandReturnObject ret;
+    m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"" , ret);
+    m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"" , ret);
+    m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"" , ret);
     m_acceptSocket.CreateServer("127.0.0.1", LLDB_PORT);
-    
 }
 
 CodeLiteLLDBApp::~CodeLiteLLDBApp()
@@ -111,7 +115,7 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
     m_debugger.SetAsync(true);
 
     wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
-
+    
     // Launch the thread that will handle the LLDB process events
     m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess());
     m_lldbProcessEventThread->Start();

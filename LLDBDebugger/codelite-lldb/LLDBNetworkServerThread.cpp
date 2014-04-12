@@ -31,7 +31,7 @@ void* LLDBNetworkServerThread::Entry()
         while ( !TestDestroy() ) {
             wxString str;
             if ( m_socket->ReadMessage( str, 1 ) == clSocketBase::kSuccess ) {
-                wxPrintf("codelite-lldb: received command\n%s\n", str);
+                //wxPrintf("codelite-lldb: received command\n%s\n", str);
                 
                 // Process command
                 LLDBCommand command(str);

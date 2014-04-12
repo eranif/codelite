@@ -8,7 +8,7 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBDebuggerPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
 {
-    m_treeList = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT|wxTR_HAS_BUTTONS|wxTR_FULL_ROW_HIGHLIGHT);
+    m_treeList = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT|wxTR_HAS_BUTTONS|wxTR_FULL_ROW_HIGHLIGHT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_TWIST_BUTTONS);
     
     m_treeList->AddColumn(_("Name"), 150);
     m_treeList->AddColumn(_("Summary"), 300);

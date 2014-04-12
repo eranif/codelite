@@ -104,6 +104,8 @@ bool CodeLiteLLDBApp::OnInit()
 
 void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
 {
+    wxPrintf("codelite-lldb: StartDebugger Called\n");
+    
     if ( IsDebugSessionInProgress() ) {
         wxPrintf("codelite-lldb: another session is already in progress\n");
         return;
@@ -117,7 +119,7 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
     // we ensure that it exists by checking the environment variable LLDB_DEBUGSERVER_PATH
     wxString lldbDebugServer;
     if ( !::wxGetEnv("LLDB_DEBUGSERVER_PATH", &lldbDebugServer) || !wxFileName::Exists(lldbDebugServer) ) {
-        std::cerr << "LLDB_DEBUGSERVER_PATH environment does not exist or contains a path to a non existent file" << std::endl;
+        wxPrintf("codelite-lldb: LLDB_DEBUGSERVER_PATH environment does not exist or contains a path to a non existent file\n");
         Cleanup();
         return;
     }

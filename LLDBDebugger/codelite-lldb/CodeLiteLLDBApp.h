@@ -15,7 +15,12 @@
 #include "LLDBProtocol/LLDBLocalVariable.h"
 #include <lldb/API/SBValue.h>
 
-class CodeLiteLLDBApp : public wxAppConsole
+class CodeLiteLLDBApp 
+#ifdef __WXMAC__
+    : public wxApp
+#else
+    : public wxAppConsole
+#endif
 {
     clSocketServer                 m_acceptSocket;
     LLDBNetworkServerThread *      m_networkThread;

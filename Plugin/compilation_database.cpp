@@ -276,10 +276,6 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
             CL_DEBUG("CompilationDatabase: found file: " + fn.GetFullPath());
             files.push_back( fn );
         }
-        else
-        {
-            CL_DEBUG("CompilationDatabase: will NOT use file: " + fn.GetFullPath() + " . File is older than the database");
-        }
 
         // Check to see if there are more directories to recurse
         wxDir dir;
@@ -369,7 +365,6 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
         
         wxFileName fn(compile_file.GetPath(), "compile_commands.json");
         root.save( fn );
-        CL_DEBUG("CompilationDatabase: saved file: " + fn.GetFullPath());
         // Delete the old file
         {
             wxLogNull nl;

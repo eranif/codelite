@@ -7,6 +7,7 @@
 #include "file_logger.h"
 #include <wx/filefn.h>
 #include <wx/log.h>
+#include "environmentconfig.h"
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
@@ -37,6 +38,8 @@ bool LLDBConnector::ConnectToDebugger(int timeout)
     m_socket.reset( client );
     client->SetPath( GetDebugServerPath() );
     
+    CL_DEBUG("Connecting to codelite-lldb on %s", GetDebugServerPath());
+    
     long msTimeout = timeout * 1000;
     long retriesCount = msTimeout / 250; // We try every 250 ms to connect
     bool connected = false;
@@ -59,6 +62,7 @@ bool LLDBConnector::ConnectToDebugger(int timeout)
     socket_t fd = m_socket->GetSocket();
     m_thread = new LLDBNetworkListenerThread(this, fd);
     m_thread->Start();
+    CL_DEBUG("Successfully connected to codelite-lldb");
     return true;
 }
 
@@ -362,10 +366,21 @@ void LLDBConnector::LaunchDebugServer()
         // another debugger process is already running
         return;
     }
-
+    
+    // Apply the environment before we start
+    EnvSetter es;
+    
     wxFileName fnCodeLiteLLDB(wxStandardPaths::Get().GetExecutablePath());
     fnCodeLiteLLDB.SetFullName( "codelite-lldb" );
     
+#ifdef __WXMAC__
+    wxFileName debugserver(wxStandardPaths::Get().GetExecutablePath());
+    debugserver.SetFullName( "debugserver" );
+    debugserver.RemoveLastDir();
+    debugserver.AppendDir("SharedSupport");
+    ::wxSetEnv("LLDB_DEBUGSERVER_PATH", debugserver.GetFullPath());
+#endif
+
     wxString command;
     command << fnCodeLiteLLDB.GetFullPath() << " " << ::wxGetProcessId();
     
@@ -375,6 +390,9 @@ void LLDBConnector::LaunchDebugServer()
     if ( !m_process ) {
         CL_ERROR("LLDBConnector: failed to launch codelite-lldb: %s", fnCodeLiteLLDB.GetFullPath());
     }
+#ifdef __WXMAC__
+    ::wxUnsetEnv("LLDB_DEBUGSERVER_PATH");
+#endif
 }
 
 void LLDBConnector::StopDebugServer()

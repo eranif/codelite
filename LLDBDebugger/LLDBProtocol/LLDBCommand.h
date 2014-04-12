@@ -23,7 +23,7 @@ public:
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement &json);
 
-    LLDBCommand() : m_commandType(kCommandInvalid), m_interruptReason(kInterruptReasonNone) {}
+    LLDBCommand() : m_commandType(kCommandInvalid), m_interruptReason(kInterruptReasonNone), m_lldbId(0) {}
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 

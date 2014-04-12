@@ -50,6 +50,46 @@
     <File Name="LLDBProtocol/LLDBLocalVariable.cpp"/>
     <File Name="LLDBProtocol/LLDBLocalVariable.h"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="codelite-lldb-tester">
+    <File Name="codelite-lldb-tester/CMakeLists.txt"/>
+    <File Name="codelite-lldb-tester/MainDialog.cpp"/>
+    <File Name="codelite-lldb-tester/MainDialog.h"/>
+    <File Name="codelite-lldb-tester/main.cpp"/>
+    <File Name="codelite-lldb-tester/win_resources.rc"/>
+    <File Name="codelite-lldb-tester/wxcrafter.cpp"/>
+    <File Name="codelite-lldb-tester/wxcrafter.h"/>
+    <File Name="codelite-lldb-tester/wxcrafter.wxcp"/>
+    <File Name="codelite-lldb-tester/wxcrafter_bitmaps.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Plugin">
+    <VirtualDirectory Name="src">
+      <File Name="CMakeLists.txt"/>
+      <File Name="lldbdebugger-plugin.cpp"/>
+      <File Name="lldbdebugger-plugin.h"/>
+      <File Name="LLDBSettings.cpp"/>
+      <File Name="LLDBSettings.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="UI">
+      <File Name="LLDBBreakpointsPane.cpp"/>
+      <File Name="LLDBBreakpointsPane.h"/>
+      <File Name="LLDBCallStack.cpp"/>
+      <File Name="LLDBCallStack.h"/>
+      <File Name="LLDBLocalsView.cpp"/>
+      <File Name="LLDBLocalsView.h"/>
+      <File Name="LLDBNewBreakpointDlg.cpp"/>
+      <File Name="LLDBNewBreakpointDlg.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="wxcrafter">
+      <File Name="UI.wxcp"/>
+      <File Name="lldbbreakpointmodel.cpp"/>
+      <File Name="lldbbreakpointmodel.h"/>
+      <File Name="lldblocalsmodel.cpp"/>
+      <File Name="lldblocalsmodel.h"/>
+      <File Name="UI.cpp"/>
+      <File Name="UI.h"/>
+      <File Name="UI_lldbdebugger_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -81,7 +121,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/LLDBDebugger.so" IntermediateDirectory="./DebugUnicode" Command="/home/eran/devl/codelite/build-debug/bin/codelite-lldb" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/LLDBDebugger.so" IntermediateDirectory="./DebugUnicode" Command="/home/eran/devl/codelite/build-debug/bin/codelite-lldb" CommandArguments="1234" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -280,44 +320,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="codelite-lldb-tester">
-    <File Name="codelite-lldb-tester/CMakeLists.txt"/>
-    <File Name="codelite-lldb-tester/MainDialog.cpp"/>
-    <File Name="codelite-lldb-tester/MainDialog.h"/>
-    <File Name="codelite-lldb-tester/main.cpp"/>
-    <File Name="codelite-lldb-tester/win_resources.rc"/>
-    <File Name="codelite-lldb-tester/wxcrafter.cpp"/>
-    <File Name="codelite-lldb-tester/wxcrafter.h"/>
-    <File Name="codelite-lldb-tester/wxcrafter.wxcp"/>
-    <File Name="codelite-lldb-tester/wxcrafter_bitmaps.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="Plugin">
-    <VirtualDirectory Name="src">
-      <File Name="CMakeLists.txt"/>
-      <File Name="lldbdebugger-plugin.cpp"/>
-      <File Name="lldbdebugger-plugin.h"/>
-      <File Name="LLDBSettings.cpp"/>
-      <File Name="LLDBSettings.h"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="UI">
-      <File Name="LLDBBreakpointsPane.cpp"/>
-      <File Name="LLDBBreakpointsPane.h"/>
-      <File Name="LLDBCallStack.cpp"/>
-      <File Name="LLDBCallStack.h"/>
-      <File Name="LLDBLocalsView.cpp"/>
-      <File Name="LLDBLocalsView.h"/>
-      <File Name="LLDBNewBreakpointDlg.cpp"/>
-      <File Name="LLDBNewBreakpointDlg.h"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="wxcrafter">
-      <File Name="UI.wxcp"/>
-      <File Name="lldbbreakpointmodel.cpp"/>
-      <File Name="lldbbreakpointmodel.h"/>
-      <File Name="lldblocalsmodel.cpp"/>
-      <File Name="lldblocalsmodel.h"/>
-      <File Name="UI.cpp"/>
-      <File Name="UI.h"/>
-      <File Name="UI_lldbdebugger_bitmaps.cpp"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
 </CodeLite_Project>

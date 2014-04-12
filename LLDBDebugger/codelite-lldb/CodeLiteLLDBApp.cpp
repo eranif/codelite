@@ -59,7 +59,6 @@ CodeLiteLLDBApp::CodeLiteLLDBApp()
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"" , ret);
-    m_acceptSocket.CreateServer("127.0.0.1", LLDB_PORT);
 }
 
 CodeLiteLLDBApp::~CodeLiteLLDBApp()
@@ -80,6 +79,21 @@ int CodeLiteLLDBApp::OnExit()
 
 bool CodeLiteLLDBApp::OnInit()
 {
+    if ( argc < 2 ) {
+        return false;
+    }
+    
+    wxString strSocketPath;
+    strSocketPath << "/tmp/codelite-lldb." << argv[1] << ".sock";
+    wxPrintf("codelite-lldb: starting server on %s\n", strSocketPath);
+    try {
+        m_acceptSocket.CreateServer(strSocketPath.mb_str(wxConvUTF8).data());
+        
+    } catch (clSocketException &e) {
+        wxPrintf("codelite-lldb: failed to create server on %s. %s\n", strSocketPath, strerror(errno));
+        return false;
+    }
+
     AcceptNewConnection();
 
     // We got both ends connected

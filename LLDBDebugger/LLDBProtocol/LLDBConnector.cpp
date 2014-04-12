@@ -5,6 +5,8 @@
 #include "processreaderthread.h"
 #include <wx/tokenzr.h>
 #include "file_logger.h"
+#include <wx/filefn.h>
+#include <wx/log.h>
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
@@ -33,8 +35,7 @@ bool LLDBConnector::ConnectToDebugger(int timeout)
 {
     clSocketClient *client = new clSocketClient();
     m_socket.reset( client );
-    client->SetIp("127.0.0.1");
-    client->SetPort( LLDB_PORT );
+    client->SetPath( GetDebugServerPath() );
     
     long msTimeout = timeout * 1000;
     long retriesCount = msTimeout / 250; // We try every 250 ms to connect
@@ -365,9 +366,12 @@ void LLDBConnector::LaunchDebugServer()
     wxFileName fnCodeLiteLLDB(wxStandardPaths::Get().GetExecutablePath());
     fnCodeLiteLLDB.SetFullName( "codelite-lldb" );
     
+    wxString command;
+    command << fnCodeLiteLLDB.GetFullPath() << " " << ::wxGetProcessId();
+    
     // FIXME: 
     // On OSX, make sure we set the environment variable LLDB_DEBUGSERVER_PATH
-    m_process = ::CreateAsyncProcess(this, fnCodeLiteLLDB.GetFullPath());
+    m_process = ::CreateAsyncProcess(this, command);
     if ( !m_process ) {
         CL_ERROR("LLDBConnector: failed to launch codelite-lldb: %s", fnCodeLiteLLDB.GetFullPath());
     }
@@ -381,6 +385,9 @@ void LLDBConnector::StopDebugServer()
         m_process->Terminate();
         m_process = NULL;
     }
+    
+    wxLogNull noLog;
+    wxRemoveFile(GetDebugServerPath());
 }
 
 LLDBBreakpoint::Vec_t LLDBConnector::GetUnappliedBreakpoints()
@@ -412,3 +419,11 @@ void LLDBConnector::RequestVariableChildren(int lldbId)
         SendCommand( command );
     }
 }
+
+wxString LLDBConnector::GetDebugServerPath() const
+{
+    wxString path;
+    path << "/tmp/codelite-lldb." << ::wxGetProcessId() << ".sock";
+    return path;
+}
+

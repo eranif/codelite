@@ -6,25 +6,18 @@
 
 class clSocketClient : public clSocketBase
 {
-    wxString m_ip;
-    int m_port;
+    wxString m_path;
 
 public:
-    clSocketClient(const wxString &ip, int port);
-    clSocketClient() : m_port(wxNOT_FOUND) {}
+    clSocketClient(const wxString &pipePath);
+    clSocketClient() {}
     virtual ~clSocketClient();
 
-    void SetIp(const wxString& ip) {
-        this->m_ip = ip;
+    void SetPath(const wxString& path) {
+        this->m_path = path;
     }
-    void SetPort(int port) {
-        this->m_port = port;
-    }
-    const wxString& GetIp() const {
-        return m_ip;
-    }
-    int GetPort() const {
-        return m_port;
+    const wxString& GetPath() const {
+        return m_path;
     }
     bool Connect();
 };

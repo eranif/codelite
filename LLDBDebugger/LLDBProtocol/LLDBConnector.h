@@ -34,7 +34,8 @@ protected:
     
     void OnLLDBStarted(LLDBEvent &event);
     void OnLLDBExited(LLDBEvent &event);
-
+    wxString GetDebugServerPath() const;
+    
 public:
     LLDBConnector();
     virtual ~LLDBConnector();

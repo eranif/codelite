@@ -9,7 +9,7 @@ public:
     clSocketServer();
     virtual ~clSocketServer();
     
-    void CreateServer(const std::string& host, int port) throw (clSocketException);
+    void CreateServer(const std::string &pipPath) throw (clSocketException);
     clSocketBase::Ptr_t WaitForNewConnection( long timeout = -1 ) throw (clSocketException);
 };
 

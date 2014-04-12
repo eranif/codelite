@@ -1,8 +1,6 @@
 #ifndef LLDBCOMMAND_H
 #define LLDBCOMMAND_H
 
-#define LLDB_PORT  45674
-
 #include <wx/string.h>
 #include "json_node.h"
 #include "LLDBEnums.h"

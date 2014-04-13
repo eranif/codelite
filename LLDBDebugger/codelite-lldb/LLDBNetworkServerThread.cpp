@@ -2,6 +2,7 @@
 #include "LLDBProtocol/cl_socket_server.h"
 #include "LLDBProtocol/LLDBCommand.h"
 #include "codelite-lldb/CodeLiteLLDBApp.h"
+#include <wx/wxcrtvararg.h>
 
 LLDBNetworkServerThread::LLDBNetworkServerThread(CodeLiteLLDBApp* app, socket_t fd)
     : wxThread(wxTHREAD_JOINABLE)

@@ -2,6 +2,7 @@
 #include "file_logger.h"
 #include "CodeLiteLLDBApp.h"
 #include <lldb/API/SBEvent.h>
+#include <wx/wxcrtvararg.h>
 
 LLDBProcessEventHandlerThread::LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process)
     : wxThread(wxTHREAD_JOINABLE)

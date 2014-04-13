@@ -69,6 +69,7 @@
 #include <wx/dcmemory.h>
 #include <wx/richmsgdlg.h>
 #include "asyncprocess.h"
+#include "file_logger.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1687,7 +1688,7 @@ static void ChildTerminatedSingalHandler(int signo)
         if(pid > 0) {
             // waitpid succeeded
             IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-            //::wxPrintf(wxT("Child terminatd %d\n"), pid);
+            CL_DEBUG("Child process exited. PID: %d. Exit Code: %d", pid, WEXITSTATUS(status));
 
         } else {
             break;

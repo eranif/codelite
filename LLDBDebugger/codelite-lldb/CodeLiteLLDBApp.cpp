@@ -12,7 +12,7 @@
 #include <lldb/API/SBFrame.h>
 #include <wx/socket.h>
 #include "LLDBProtocol/LLDBLocalVariable.h"
-
+#include <wx/msgqueue.h>
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -42,12 +42,13 @@ static void DELETE_CHAR_PTR_PTR(char** argv)
 
 #define CHECK_DEBUG_SESSION_RUNNING() if ( !IsDebugSessionInProgress() ) return
 
-IMPLEMENT_APP_CONSOLE(CodeLiteLLDBApp)
-CodeLiteLLDBApp::CodeLiteLLDBApp()
+CodeLiteLLDBApp::CodeLiteLLDBApp(const wxString& socketPath)
     : m_networkThread(NULL)
     , m_lldbProcessEventThread(NULL)
     , m_debuggeePid(wxNOT_FOUND)
     , m_interruptReason(kInterruptReasonNone)
+    , m_debuggerSocketPath(socketPath)
+    , m_exitMainLoop(false)
 {
     wxSocketBase::Initialize();
     lldb::SBDebugger::Initialize();
@@ -59,6 +60,7 @@ CodeLiteLLDBApp::CodeLiteLLDBApp()
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"" , ret);
+    OnInit();
 }
 
 CodeLiteLLDBApp::~CodeLiteLLDBApp()
@@ -66,6 +68,7 @@ CodeLiteLLDBApp::~CodeLiteLLDBApp()
     wxDELETE( m_networkThread );
     wxDELETE( m_lldbProcessEventThread );
     m_replySocket.reset(NULL);
+    OnExit();
 }
 
 int CodeLiteLLDBApp::OnExit()
@@ -79,27 +82,14 @@ int CodeLiteLLDBApp::OnExit()
 
 bool CodeLiteLLDBApp::OnInit()
 {
-    if ( argc < 2 ) {
-        return false;
-    }
-    
-    wxString strSocketPath;
-    strSocketPath << "/tmp/codelite-lldb." << argv[1] << ".sock";
-    wxPrintf("codelite-lldb: starting server on %s\n", strSocketPath);
+    wxPrintf("codelite-lldb: starting server on %s\n", m_debuggerSocketPath);
     try {
-        m_acceptSocket.CreateServer(strSocketPath.mb_str(wxConvUTF8).data());
+        m_acceptSocket.CreateServer(m_debuggerSocketPath.mb_str(wxConvUTF8).data());
         
     } catch (clSocketException &e) {
-        wxPrintf("codelite-lldb: failed to create server on %s. %s\n", strSocketPath, strerror(errno));
+        wxPrintf("codelite-lldb: failed to create server on %s. %s\n", m_debuggerSocketPath, strerror(errno));
         return false;
     }
-
-    AcceptNewConnection();
-
-    // We got both ends connected
-    wxPrintf("codelite-lldb: successfully established connection to codelite\n");
-    // place your initialization code here
-    return true;
 }
 
 void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
@@ -208,7 +198,7 @@ void CodeLiteLLDBApp::NotifyExited()
     reply.SetReplyType( kReplyTypeDebuggerExited );
     SendReply( reply );
     Cleanup();
-    CallAfter( &CodeLiteLLDBApp::AcceptNewConnection );
+    m_exitMainLoop = true;
 }
 
 void CodeLiteLLDBApp::NotifyRunning()
@@ -475,7 +465,7 @@ void CodeLiteLLDBApp::Interrupt(const LLDBCommand& command)
     m_target.GetProcess().SendAsyncInterrupt();
 }
 
-void CodeLiteLLDBApp::AcceptNewConnection()
+void CodeLiteLLDBApp::AcceptNewConnection() throw(clSocketException)
 {
     m_replySocket.reset( NULL );
     wxPrintf("codelite-lldb: waiting for new connection\n");
@@ -496,8 +486,7 @@ void CodeLiteLLDBApp::AcceptNewConnection()
         Cleanup();
         
         // exit
-        ExitMainLoop();
-        return;
+        throw clSocketException("Failed to accept new connection");
     }
 }
 
@@ -573,5 +562,47 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
         reply.SetLocals( children );
         reply.SetLldbId( variableId );
         SendReply( reply );
+    }
+}
+
+void CodeLiteLLDBApp::CallAfter(CodeLiteLLDBApp::CommandFunc_t func, const LLDBCommand& command)
+{
+    m_commands_queue.Post( std::make_pair(func, command) );
+}
+
+void CodeLiteLLDBApp::MainLoop()
+{
+    try {
+        AcceptNewConnection();
+        // We got both ends connected
+        wxPrintf("codelite-lldb: successfully established connection to codelite\n");
+        
+        while ( !m_exitMainLoop ) {
+            CodeLiteLLDBApp::QueueItem_t msg;
+            CodeLiteLLDBApp::NotifyFunc_t notify_func = NULL;
+            bool got_something = false;
+            if ( m_commands_queue.ReceiveTimeout(1, msg ) == wxMSGQUEUE_NO_ERROR ) {
+                // Process the command
+                CodeLiteLLDBApp::CommandFunc_t pFunc = msg.first;
+                LLDBCommand command = msg.second;
+                (this->*pFunc)( command );
+                
+                got_something = true;
+            }
+            
+            if ( m_notify_queue.ReceiveTimeout(1, notify_func) == wxMSGQUEUE_NO_ERROR ) {
+                (this->*notify_func)();
+                got_something = true;
+            }
+            
+            if ( !got_something ) {
+                wxThread::Sleep(10);
+            }
+        }
+        
+        wxPrintf("codelite-lldb: terminaing\n");
+        
+    } catch (clSocketException &e) {
+        wxPrintf("codelite-lldb: an error occured during MainLoop(). %s. strerror=%s\n", e.what().c_str(), strerror(errno));
     }
 }

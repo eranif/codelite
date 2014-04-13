@@ -4,7 +4,7 @@
 MainDialog::MainDialog(wxWindow* parent)
     : MainDialogBaseClass(parent)
 {
-    m_connector.ConnectToDebugger();
+    m_connector.ConnectToDebugger(10, "/tmp/codelite-lldb.1234.sock");
     m_connector.Bind(wxEVT_LLDB_STARTED, &MainDialog::OnLLDBStarted, this);
     m_connector.Bind(wxEVT_LLDB_RUNNING, &MainDialog::OnLLDBRunning, this);
     m_connector.Bind(wxEVT_LLDB_EXITED,  &MainDialog::OnLLDBExited, this);

@@ -32,11 +32,11 @@ LLDBConnector::~LLDBConnector()
     Cleanup();
 }
 
-bool LLDBConnector::ConnectToDebugger(int timeout)
+bool LLDBConnector::ConnectToDebugger(int timeout, const wxString &socketPath)
 {
     clSocketClient *client = new clSocketClient();
     m_socket.reset( client );
-    client->SetPath( GetDebugServerPath() );
+    client->SetPath( socketPath.IsEmpty() ? GetDebugServerPath() : socketPath );
     
     CL_DEBUG("Connecting to codelite-lldb on %s", GetDebugServerPath());
     
@@ -278,6 +278,8 @@ void LLDBConnector::Cleanup()
     m_isRunning = false;
     m_canInteract = false;
     m_runCommand.Clear();
+    
+    StopDebugServer();
 }
 
 void LLDBConnector::OnLLDBExited(LLDBEvent& event)
@@ -393,6 +395,7 @@ void LLDBConnector::LaunchDebugServer()
 #ifdef __WXMAC__
     ::wxUnsetEnv("LLDB_DEBUGSERVER_PATH");
 #endif
+    CL_DEBUG("codelite-lldb launcged successfully. PID=%d\n", m_process->GetPid());
 }
 
 void LLDBConnector::StopDebugServer()

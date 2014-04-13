@@ -23,6 +23,7 @@
     <File Name="codelite-lldb/LLDBProcessEventHandlerThread.cpp"/>
     <File Name="codelite-lldb/CodeLiteLLDBApp.cpp"/>
     <File Name="codelite-lldb/CodeLiteLLDBApp.h"/>
+    <File Name="codelite-lldb/CodeLiteLLDB.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="LLDBProtocol">
     <File Name="LLDBProtocol/CMakeLists.txt"/>

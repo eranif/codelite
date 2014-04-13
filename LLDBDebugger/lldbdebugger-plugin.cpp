@@ -81,9 +81,6 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugIsRunning), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugCanInteract), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
-    
-    // Launch codelite-lldb
-    m_connector.LaunchDebugServer();
 }
 
 void LLDBDebuggerPlugin::UnPlug()
@@ -167,8 +164,12 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
         event.Skip();
         return;
     }
-
+    
     if ( !m_connector.IsRunning() ) {
+        
+        // Launch codelite-lldb
+        m_connector.LaunchDebugServer();
+        
         CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
         {
             // Get the executable to debug
@@ -214,7 +215,7 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                 CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
                 CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
 
-                if ( m_connector.ConnectToDebugger(3) ) {
+                if ( m_connector.ConnectToDebugger(5) ) {
                     // display the terminal panel
                     wxString tty = ShowTerminal("LLDB Console Window");
                     

@@ -1576,6 +1576,35 @@ wxArrayString SplitString(const wxString &inString, bool trim)
     return lines;
 }
 
+IProcess* LaunchTerminal(const wxString &title, IProcessCallback *processCB)
+{
+#ifdef __WXMSW__
+    // Windows
+    tty.Clear();
+    pid = wxNOT_FOUND;
+    wxUnusedVar( processCB );
+    return NULL;
+    
+#else
+    wxString command;
+    wxFileName fnCodeliteTerminal(wxStandardPaths::Get().GetExecutablePath());
+    
+#if defined(__WXMAC__)
+    command << "/usr/bin/open \"" << fnCodeliteTerminal.GetPath(true) << "codelite-terminal.app\" --args ";
+#else 
+    command << fnCodeliteTerminal.GetPath(true) << "codelite-terminal ";
+#endif
+    command << " --print-info ";
+    // command << " --always-on-top ";
+    command << " --title \"" << title << "\"";
+    
+    CL_DEBUG("Launching Terminal: %s", command);
+    IProcess *handle = ::CreateAsyncProcessCB(NULL, processCB, command);
+    return handle;
+
+#endif
+}
+
 wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey)
 {
     //execute command & cmdArgs

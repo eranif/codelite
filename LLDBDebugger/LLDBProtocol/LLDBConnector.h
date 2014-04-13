@@ -10,9 +10,33 @@
 #include "asyncprocess.h"
 #include "LLDBEvent.h"
 
+class LLDBConnector;
 class LLDBNetworkListenerThread;
+class LLDBTerminalCallback : public IProcessCallback
+{
+    LLDBConnector* m_connector;
+    IProcess* m_process;
+
+public:
+    LLDBTerminalCallback(LLDBConnector* connector) : m_connector(connector), m_process(NULL) {}
+    virtual void OnProcessOutput(const wxString &str);
+    virtual void OnProcessTerminated();
+    void SetProcess(IProcess* process) {
+        this->m_process = process;
+    }
+};
+
 class LLDBConnector : public wxEvtHandler
 {
+public:
+    struct TerminalInfo {
+        int terminalProcessID;
+        wxString tty;
+
+        TerminalInfo() : terminalProcessID(wxNOT_FOUND) {}
+    };
+
+protected:
     clSocketClient::Ptr_t       m_socket;
     LLDBNetworkListenerThread * m_thread;
     LLDBBreakpoint::Vec_t       m_breakpoints;
@@ -21,6 +45,7 @@ class LLDBConnector : public wxEvtHandler
     bool                        m_isRunning;
     bool                        m_canInteract;
     LLDBCommand                 m_runCommand;
+    TerminalInfo                m_terminalInfo;
 
     wxDECLARE_EVENT_TABLE();
     void OnProcessOutput(wxCommandEvent &event);
@@ -31,14 +56,18 @@ protected:
     LLDBBreakpoint::Vec_t::const_iterator FindBreakpoint(LLDBBreakpoint::Ptr_t bp) const;
     LLDBBreakpoint::Vec_t::iterator FindBreakpoint(LLDBBreakpoint::Ptr_t bp);
     LLDBBreakpoint::Vec_t GetUnappliedBreakpoints();
-    
+
     void OnLLDBStarted(LLDBEvent &event);
     void OnLLDBExited(LLDBEvent &event);
     wxString GetDebugServerPath() const;
-    
+
 public:
     LLDBConnector();
     virtual ~LLDBConnector();
+
+    TerminalInfo& GetTerminalInfo() {
+        return m_terminalInfo;
+    }
 
     bool IsCanInteract() const {
         return m_canInteract;
@@ -88,7 +117,7 @@ public:
      * @param breakpoints
      */
     void AddBreakpoints(const LLDBBreakpoint::Vec_t& breakpoints);
-    
+
     /**
      * @brief add list of breakpoints ( do not add apply them just yet)
      * @param breakpoints
@@ -144,15 +173,15 @@ public:
      * @brief issue a 'Continue' command
      */
     void Continue();
-    
+
     /**
      * @brief send request to the debugger to request the local varibles
      */
     void RequestLocals();
-    
+
     /**
      * @brief request lldb to expand a variable and return its children
-     * @param lldbId the unique identifier that identifies this variable 
+     * @param lldbId the unique identifier that identifies this variable
      * at the debug server side
      */
     void RequestVariableChildren(int lldbId);
@@ -194,7 +223,7 @@ public:
      * @brief instruct the debugger to 'run'
      * using the arguments passed in the Start() command
      */
-    void Run();
+    void Run(const wxString &tty);
 
     /**
      * @brief

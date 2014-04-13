@@ -38,6 +38,8 @@
 #include <wx/dcgraph.h>
 #include <wx/dc.h>
 
+class IProcess;
+class IProcessCallback;
 class wxListCtrl;
 class IEditor;
 class IManager;
@@ -404,6 +406,11 @@ WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString &inString, bool trim = 
  * @brief make an execution command for running cmd under a shell and optionally prompt the user with the 'press any to key to continue...' message
  */
 WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey);
+
+/**
+ * @brief launch codelite terminal and return its TTY
+ */
+WXDLLIMPEXP_SDK  IProcess* LaunchTerminal(const wxString &title, IProcessCallback* processCB);
 
 /**
  * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"

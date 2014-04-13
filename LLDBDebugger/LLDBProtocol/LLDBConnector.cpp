@@ -8,6 +8,7 @@
 #include <wx/filefn.h>
 #include <wx/log.h>
 #include "environmentconfig.h"
+#include "json_node.h"
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
@@ -303,13 +304,13 @@ void LLDBConnector::Start(const LLDBCommand& runCommand)
 
     // stash the runCommand for the future 'Run()' call
     m_runCommand.Clear();
-    m_runCommand = startCommand;
+    m_runCommand = runCommand;
     m_runCommand.SetCommandType( kCommandRun );
-
 }
 
-void LLDBConnector::Run()
+void LLDBConnector::Run(const wxString& tty)
 {
+    m_runCommand.SetRedirectTTY( tty );
     if ( m_runCommand.GetCommandType() == kCommandRun ) {
         SendCommand( m_runCommand );
         m_runCommand.Clear();
@@ -346,11 +347,6 @@ void LLDBConnector::OnProcessTerminated(wxCommandEvent& event)
     }
     wxDELETE( m_process );
     Cleanup();
-    
-//    // Notify debug-server terminated
-//    LLDBEvent lldb_event(wxEVT_LLDB_CRASHED);
-//    AddPendingEvent( lldb_event );
-//    LaunchDebugServer();
 }
 
 void LLDBConnector::Interrupt(eInterruptReason reason)
@@ -449,3 +445,15 @@ wxString LLDBConnector::GetDebugServerPath() const
     return path;
 }
 
+
+void LLDBTerminalCallback::OnProcessOutput(const wxString& str)
+{
+    wxUnusedVar( str );
+}
+
+void LLDBTerminalCallback::OnProcessTerminated()
+{
+    wxDELETE( m_process );
+    delete this;
+    CL_DEBUG("LLDB terminal process terminated. Cleaning up");
+}

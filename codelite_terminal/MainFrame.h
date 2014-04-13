@@ -54,7 +54,7 @@ protected:
     void FlushOutputBuffer();
     
 public:
-    MainFrame(wxWindow* parent, const TerminalOptions &options);
+    MainFrame(wxWindow* parent, const TerminalOptions &options, long style = wxDEFAULT_FRAME_STYLE);
     virtual ~MainFrame();
 
     void OnExit(wxCommandEvent& event);

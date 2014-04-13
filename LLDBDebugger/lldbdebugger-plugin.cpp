@@ -55,9 +55,9 @@ extern "C" EXPORT int GetPluginInterfaceVersion()
 LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     : IPlugin(manager)
     , m_callstack(NULL)
-    , m_console(NULL)
     , m_breakpointsView(NULL)
     , m_localsView(NULL)
+    , m_terminalPID(wxNOT_FOUND)
 {
     m_longName = wxT("LLDB Debugger for CodeLite");
     m_shortName = wxT("LLDBDebuggerPlugin");
@@ -81,6 +81,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_IS_RUNNING, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugIsRunning), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugCanInteract), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleInerrupt), NULL, this);
 }
 
 void LLDBDebuggerPlugin::UnPlug()
@@ -107,6 +108,7 @@ void LLDBDebuggerPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_IN, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepIn), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepOut), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleInerrupt), NULL, this);
 }
 
 LLDBDebuggerPlugin::~LLDBDebuggerPlugin()
@@ -158,6 +160,15 @@ void LLDBDebuggerPlugin::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
     stc->EnsureCaretVisible();
 }
 
+void LLDBDebuggerPlugin::TerminateTerminal()
+{
+    if ( m_terminalPID != wxNOT_FOUND ) {
+        CL_DEBUG("Killing Terminal Process PID: %d", m_terminalPID);
+        ::wxKill(m_terminalPID, wxSIGKILL);
+        m_terminalPID = wxNOT_FOUND;
+    }
+}
+
 void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
 {
     if ( event.GetString() != DEBUGGER_NAME ) {
@@ -167,8 +178,12 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
     
     if ( !m_connector.IsRunning() ) {
         
-        // Launch codelite-lldb
-        m_connector.LaunchDebugServer();
+        {
+            // delete any left overs before we start the debug session
+            wxLogNull noLog;
+            wxFileName fnTerminalFile(wxFileName::GetTempDir(), "codelite-terminal.txt");
+            ::wxRemoveFile( fnTerminalFile.GetFullPath() );
+        }
         
         CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
         {
@@ -188,7 +203,10 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                 ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
                 return;
             }
-
+            
+            // Launch codelite-lldb
+            m_connector.LaunchDebugServer();
+        
             // Determine the executable to debug, working directory and arguments
             EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString());
             wxString exepath = bldConf->GetCommand();
@@ -211,14 +229,26 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                 if ( execToDebug.IsRelative() ) {
                     execToDebug.MakeAbsolute();
                 }
+                
+                // terminate any old terminal that we have 
+                TerminateTerminal();
+                
+                LLDBTerminalCallback* terminalCallback = new LLDBTerminalCallback(&m_connector);
+                IProcess* handle = ::LaunchTerminal(execToDebug.GetFullPath(), terminalCallback);
+                if ( !handle ) {
+                    CL_DEBUG("Failed to launch debugger terminal!");
+                    DoCleanup();
+                    return;
+                }
+                CL_DEBUG("Successfully launched terminal");
+                
+                // terminalCallback will delete itself once the process is terminated
+                terminalCallback->SetProcess( handle );
 
                 CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
                 CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
 
                 if ( m_connector.ConnectToDebugger(5) ) {
-                    // display the terminal panel
-                    wxString tty = ShowTerminal("LLDB Console Window");
-                    
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
                     m_mgr->GetAllBreakpoints(gdbBps);
@@ -232,7 +262,6 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                     LLDBCommand startCommand;
                     startCommand.SetExecutable( execToDebug.GetFullPath() );
                     startCommand.SetCommandArguments( args );
-                    startCommand.SetRedirectTTY( tty );
                     startCommand.SetWorkingDirectory( wd );
                     m_connector.Start( startCommand );
                 }
@@ -277,7 +306,34 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
     LoadLLDBPerspective();
     
     // instruct the debugger to 'Run'
-    m_connector.Run();
+    wxFileName fnTerminalOutout( wxFileName::GetTempDir(), "codelite-terminal.txt");
+    CL_DEBUG("Searching for terminal info file: %s", fnTerminalOutout.GetFullPath());
+    
+    // wait up to 2 secs for the terminal file to appear
+    wxThread::Sleep(100);
+    
+    const int maxRetriesCount = 20; // 100 ms between retries = 2 seconds
+    int retries = 0;
+    while ( !fnTerminalOutout.Exists() && retries < maxRetriesCount ) {
+        CL_DEBUG("Still waiting for the terminal file to show up...");
+        ++retries;
+        wxThread::Sleep(100);
+    }
+    
+    if ( fnTerminalOutout.Exists() ) {
+        CL_DEBUG("File %s has arrived", fnTerminalOutout.GetFullPath());
+    } else {
+        CL_DEBUG("File %s did _NOT_ arrive", fnTerminalOutout.GetFullPath());
+        ::wxMessageBox(_("Could not launch Terminal!"), "LLDB", wxICON_ERROR|wxOK|wxCENTER);
+        DoCleanup();
+        return;
+    }
+
+    JSONRoot root( fnTerminalOutout );
+    wxString tty = root.toElement().namedObject("tty").toString();
+    m_terminalPID = root.toElement().namedObject("ProcessID").toInt(wxNOT_FOUND);
+    CL_DEBUG("Redirecting terminal output to: %s", tty);
+    m_connector.Run( tty );
 
     CL_DEBUG("CODELITE>> LLDB started");
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
@@ -347,38 +403,6 @@ void LLDBDebuggerPlugin::OnLLDBStoppedOnEntry(LLDBEvent& event)
     m_connector.Continue();
 }
 
-wxString LLDBDebuggerPlugin::ShowTerminal(const wxString &title)
-{
-    wxString consoleTitle = title;
-    wxString ttyString;
-
-    // Create a new TTY Console and place it in the AUI
-    // Note that 'm_console' will call to Destroy() when the debug session
-    // is terminated. In other words: don't worry about memory leaks here
-    m_console = new ConsoleFrame(EventNotifier::Get()->TopFrame(), m_mgr);
-    ttyString = m_console->StartTTY();
-    consoleTitle << " (" << ttyString << ")";
-
-    wxAuiPaneInfo paneInfo;
-    wxAuiManager* dockManager = m_mgr->GetDockingManager();
-    paneInfo.Name(wxT("LLDB Console")).Caption(consoleTitle).Dockable().FloatingSize(300, 200).CloseButton(false);
-    dockManager->AddPane(m_console, paneInfo);
-
-    // Re-set the title (it might be modified by 'LoadPerspective'
-    wxAuiPaneInfo& pi = dockManager->GetPane(wxT("LLDB Console"));
-    if(pi.IsOk()) {
-        pi.Caption(consoleTitle);
-    }
-
-    wxAuiPaneInfo &info = dockManager->GetPane(wxT("LLDB Console"));
-    if(info.IsShown() == false) {
-        info.Show();
-    }
-    dockManager->Update();
-    CL_DEBUG("CODELITE>> Using TTY: " + ttyString );
-    return ttyString;
-}
-
 void LLDBDebuggerPlugin::OnDebugNext(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
@@ -436,7 +460,6 @@ void LLDBDebuggerPlugin::LoadLLDBPerspective()
     }
 
     // Make sure that all the panes are visible
-    ShowLLDBPane("LLDB Console");
     ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);
     ShowLLDBPane(LLDB_BREAKPOINTS_PANE_NAME);
     ShowLLDBPane(LLDB_LOCALS_PANE_NAME);
@@ -502,6 +525,7 @@ void LLDBDebuggerPlugin::DestroyUI()
         m_localsView->Destroy();
         m_localsView = NULL;
     }
+    m_mgr->GetDockingManager()->Update();
 }
 
 void LLDBDebuggerPlugin::InitializeUI()
@@ -529,9 +553,6 @@ void LLDBDebuggerPlugin::OnLLDBRunning(LLDBEvent& event)
     
     // When the IDE loses the focus - clear the debugger marker
     ClearDebuggerMarker();
-
-    // set the focus to the terminal (incase a user input is requested)
-    m_console->SetFocus();
 }
 
 void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
@@ -570,7 +591,7 @@ void LLDBDebuggerPlugin::OnToggleBreakpoint(clDebugEvent& event)
 void LLDBDebuggerPlugin::DoCleanup()
 {
     ClearDebuggerMarker();
-    m_console = NULL;
+    TerminateTerminal();
 }
 
 void LLDBDebuggerPlugin::OnLLDBDeletedAllBreakpoints(LLDBEvent& event)
@@ -606,4 +627,14 @@ void LLDBDebuggerPlugin::OnLLDBCrashed(LLDBEvent& event)
     event.Skip();
     ::wxMessageBox(_("LLDB crashed! Terminating debug session"), "CodeLite", wxOK|wxICON_ERROR|wxCENTER);
     OnLLDBExited( event );
+}
+
+void LLDBDebuggerPlugin::OnToggleInerrupt(clDebugEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+    event.Skip();
+    CL_DEBUG("CODELITE: interrupting debuggee");
+    if ( !m_connector.IsCanInteract() ) {
+        m_connector.Interrupt( kInterruptReasonNone );
+    }
 }

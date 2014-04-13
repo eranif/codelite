@@ -20,10 +20,10 @@ class LLDBDebuggerPlugin : public IPlugin
     /// ------------------------------------
     /// UI elements
     /// ------------------------------------
-    LLDBCallStackPane*   m_callstack;
-    ConsoleFrame *       m_console;
-    LLDBBreakpointsPane* m_breakpointsView;
-    LLDBLocalsView*      m_localsView;
+    LLDBCallStackPane*      m_callstack;
+    LLDBBreakpointsPane*    m_breakpointsView;
+    LLDBLocalsView*         m_localsView;
+    int                     m_terminalPID;
     
 public:
     LLDBDebuggerPlugin(IManager *manager);
@@ -38,7 +38,7 @@ public:
     }
     
 private:
-    wxString ShowTerminal(const wxString& title);
+    void TerminateTerminal();
     
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
@@ -65,6 +65,7 @@ protected:
     void OnDebugStepIn(clDebugEvent& event);
     void OnDebugStepOut(clDebugEvent& event);
     void OnToggleBreakpoint(clDebugEvent& event);
+    void OnToggleInerrupt(clDebugEvent& event);
 
     // LLDB events
     void OnLLDBCrashed(LLDBEvent& event);

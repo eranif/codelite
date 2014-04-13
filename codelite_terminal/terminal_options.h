@@ -9,6 +9,8 @@ public:
     enum {
         kPauseBeforeExit            = 0x00000001,
         kExitWhenInfiriorTerminates = 0x00000002,
+        kPrintInfo                  = 0x00000004,
+        kAlwaysOnTop                = 0x00000008,
     };
 
 protected:

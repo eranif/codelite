@@ -7,6 +7,8 @@
 #include "SettingsDlg.h"
 #include <wx/filedlg.h>
 #include <wx/clipbrd.h>
+#include <wx/ffile.h>
+#include <wx/filename.h>
 
 #ifndef __WXMSW__
 #if defined(__WXGTK__)
@@ -44,8 +46,8 @@ static void WrapInShell(wxString& cmd)
 
 #define MARKER_ID 1
 
-MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
-    : MainFrameBaseClass(parent)
+MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options, long style)
+    : MainFrameBaseClass(parent, wxID_ANY, "codelite-terminal", wxDefaultPosition, wxDefaultSize, style)
     , m_process(NULL)
     , m_ptyCllback(this)
     , m_fromPos(0)
@@ -54,7 +56,21 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options)
 {
     SetTitle( m_options.GetTitle() );
     m_stc->SetFont( wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT) );
-    StartTTY();
+    wxString tty = StartTTY();
+
+    if ( options.HasFlag( TerminalOptions::kPrintInfo ) ) {
+        // we writ the info to file, since on OSX we use 
+        // a mediator to launch the process /usr/bin/open
+        wxFileName fnTmp( wxFileName::GetTempDir(), "codelite-terminal.txt" );
+        wxFFile fp( fnTmp.GetFullPath(), "w+a" );
+        if ( fp.IsOpened() ) {
+            wxString infoStr;
+            infoStr << "{\"tty\" : \"" << tty << "\", \"ProcessID\" : " << ::wxGetProcessId() << "}";
+            fp.Write( infoStr + "\n" );
+            fp.Close();
+        }
+    }
+
     SetCartAtEnd();
     m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_DOTDOTDOT);
     m_stc->MarkerSetBackground(MARKER_ID, *wxBLACK);
@@ -282,7 +298,7 @@ void MainFrame::DoExecStartCommand()
 void MainFrame::Exit()
 {
     if ( m_options.HasFlag( TerminalOptions::kPauseBeforeExit ) ) {
-        m_stc->AppendText("Hit ENTER to continue...");
+        m_stc->AppendText("\nHit ENTER to continue...");
         SetCartAtEnd();
         m_exitOnNextKey = true;
 

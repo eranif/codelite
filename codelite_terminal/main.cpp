@@ -27,6 +27,8 @@ public:
         wxPrintf("-e | --exit              Exit when execution of command terminates\n");
         wxPrintf("-w | --wait              Wait for any key to be pressed before exiting\n");
         wxPrintf("-d | --working-directory Set the working directory\n");
+        wxPrintf("-p | --print-info        Print terminal info to stdout\n");
+        wxPrintf("-z | --always-on-top     The terminal is always on top of all windows\n");
         wxPrintf("\n");
         exit(1);
     }
@@ -40,6 +42,8 @@ public:
         parser.AddOption("d", "working-directory", CommandLineParser::kOptionWithValue|CommandLineParser::kOptional);
         parser.AddOption("e", "exit"); // optional, no value
         parser.AddOption("w", "wait"); // optional, no value
+        parser.AddOption("p", "print-info"); // optional
+        parser.AddOption("z", "always-on-top"); // optional
         parser.Parse();
 
         {
@@ -63,16 +67,23 @@ public:
         } else if ( !parser.GetCommand().IsEmpty() ) {
             options.SetTitle( parser.GetCommand() );
         }
-
+        
         if ( !workingDirectory.IsEmpty() ) {
             ::wxSetWorkingDirectory( workingDirectory );
         }
-
+        
         options.EnableFlag( TerminalOptions::kExitWhenInfiriorTerminates,   parser.HasOption("e", "exit") );
         options.EnableFlag( TerminalOptions::kPauseBeforeExit,              parser.HasOption("w", "wait") );
+        options.EnableFlag( TerminalOptions::kPrintInfo,                    parser.HasOption("p", "print-info") );
+        options.EnableFlag( TerminalOptions::kAlwaysOnTop,                  parser.HasOption("z", "always-on-top") );
         options.SetCommand( commandToRun );
 
-        MainFrame *mainFrame = new MainFrame(NULL, options);
+        long style = wxDEFAULT_FRAME_STYLE;
+        if ( options.HasFlag(TerminalOptions::kAlwaysOnTop) ) {
+            style = wxSTAY_ON_TOP;
+        }
+        
+        MainFrame *mainFrame = new MainFrame(NULL, options, style);
         SetTopWindow(mainFrame);
 
 #ifdef __WXMAC__

@@ -20,13 +20,15 @@ LLDBBacktrace::LLDBBacktrace(lldb::SBThread &thread)
                     entry.filename      = wxFileName(fileSepc.GetDirectory(), fileSepc.GetFilename()).GetFullPath();
                     entry.functionName  = frame.GetFunctionName();
                     entry.line          = frame.GetLineEntry().GetLine()-1;
-                    entry.id            = frame.GetFrameID();
+                    entry.id            = j;
                     entry.address << wxString::Format("%p", (void*)frame.GetFP());
                     m_callstack.push_back( entry );
 
                 } else {
                     // FIXME: if we dont have a debug symbol, we should learn how to construct a proper entry
                     // for now, we add an empty entry
+                    entry.functionName = "??";
+                    entry.id = j;
                     m_callstack.push_back( entry );
                 }
 

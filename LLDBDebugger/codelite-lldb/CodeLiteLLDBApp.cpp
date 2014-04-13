@@ -282,7 +282,8 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
             tty_c = command.GetRedirectTTY().mb_str(wxConvUTF8).data();
         }
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
-
+        wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
+        
         lldb::SBError error;
         lldb::SBListener listener = m_debugger.GetListener();
         lldb::SBProcess process = m_target.Launch(

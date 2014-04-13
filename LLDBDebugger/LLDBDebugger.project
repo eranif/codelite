@@ -84,8 +84,6 @@
       <File Name="UI.wxcp"/>
       <File Name="lldbbreakpointmodel.cpp"/>
       <File Name="lldbbreakpointmodel.h"/>
-      <File Name="lldblocalsmodel.cpp"/>
-      <File Name="lldblocalsmodel.h"/>
       <File Name="UI.cpp"/>
       <File Name="UI.h"/>
       <File Name="UI_lldbdebugger_bitmaps.cpp"/>

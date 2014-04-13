@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- 
+
 #include "precompiled_header.h"
 #include "cl_registry.h"
 #include "file_logger.h"
@@ -87,8 +87,8 @@ void EnableDebugPriv()
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
 
-//On Mac we determine the base path using system call
-//_NSGetExecutablePath(path, &path_len);
+// On Mac we determine the base path using system call
+// _NSGetExecutablePath(path, &path_len);
 wxString MacGetBasePath()
 {
     char path[257];
@@ -134,6 +134,35 @@ static void massCopy(const wxString &sourceDir, const wxString &spec, const wxSt
 }
 
 #ifdef __WXGTK__
+
+static void ChildTerminatedSingalHandler(int signo)
+{
+    int status;
+    while( true ) {
+        pid_t pid = ::waitpid(-1, &status, WNOHANG);
+        if(pid > 0) {
+            // waitpid succeeded
+            IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
+            // CL_DEBUG("Process terminated. PID: %d, Exit Code: %d", pid, WEXITSTATUS(status));
+
+        } else {
+            break;
+
+        }
+    }
+}
+
+// Block/Restore sigchild
+static struct sigaction old_behvior;
+static struct sigaction new_behvior;
+static void CodeLiteBlockSigChild()
+{
+    sigfillset(&new_behvior.sa_mask);
+    new_behvior.sa_handler = ChildTerminatedSingalHandler;
+    new_behvior.sa_flags = 0;
+    sigaction(SIGCHLD, &new_behvior, &old_behvior);
+}
+
 //-------------------------------------------
 // Signal Handlers for GTK
 //-------------------------------------------
@@ -222,7 +251,7 @@ bool CodeLiteApp::OnInit()
     sigemptyset( &mask_set );
     sigaddset(&mask_set, SIGPIPE);
     sigprocmask(SIG_SETMASK, &mask_set, NULL);
-    
+
     // Handle sigchld
     CodeLiteBlockSigChild();
 
@@ -304,17 +333,17 @@ bool CodeLiteApp::OnInit()
         wxLogDebug("Ignoring the Windows-only --basedir option as not running Windows");
 #endif
     }
- 
+
     wxString newDataDir(wxEmptyString);
     if (parser.Found(wxT("d"), &newDataDir)) {
         clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
-    
+
     // Copy gdb pretty printers from the installation folder to a writeable location
     // this is  needed because python complies the files and in most cases the user
     // running codelite has no write permissions to /usr/share/codelite/...
     DoCopyGdbPrinters();
-    
+
     // Since GCC 4.8.2 gcc has a default colored output
     // which breaks codelite output parsing
     // to disable this, we need to set GCC_COLORS to an empty
@@ -322,7 +351,7 @@ bool CodeLiteApp::OnInit()
     // https://sourceforge.net/p/codelite/bugs/946/
     // http://gcc.gnu.org/onlinedocs/gcc/Language-Independent-Options.html
     ::wxSetEnv("GCC_COLORS", "");
-    
+
 #if defined (__WXGTK__)
     if (homeDir.IsEmpty()) {
         SetAppName(wxT("codelite"));
@@ -380,7 +409,7 @@ bool CodeLiteApp::OnInit()
     ManagerST::Get()->SetInstallDir( installPath );
     //copy the settings from the global location if needed
     CopySettings(homeDir, installPath);
-    
+
 #else //__WXMSW__
     if (homeDir.IsEmpty()) { //did we got a basedir from user?
         homeDir = ::wxGetCwd();
@@ -487,7 +516,7 @@ bool CodeLiteApp::OnInit()
     EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 
     //---------------------------------------------------------
-    
+
 #ifdef __WXMSW__
 
     // Read registry values
@@ -799,7 +828,7 @@ void CodeLiteApp::DoCopyGdbPrinters()
 #else
     printersInstallDir = wxFileName(wxStandardPaths::Get().GetDataDir(), "gdb_printers");
 #endif
-    
+
     // copy the files to ~/.codelite/gdb_printers
     wxLogNull nolog;
     wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "gdb_printers");

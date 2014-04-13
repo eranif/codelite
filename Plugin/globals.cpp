@@ -1588,6 +1588,18 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
 
     //change directory to the working directory
 #if defined(__WXMAC__)
+    wxString newCommand;
+    newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
+    if ( waitForAnyKey ) {
+        newCommand << " --wait ";
+    }
+    newCommand << " --cmd " << title;
+    execLine = newCommand;
+
+#elif defined(__WXGTK__)
+
+    // Set a console to the execute target
+    if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
         wxString newCommand;
         newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
         if ( waitForAnyKey ) {
@@ -1596,71 +1608,59 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
         newCommand << " --cmd " << title;
         execLine = newCommand;
 
-#elif defined(__WXGTK__)
+    } else {
+        wxString term;
+        term = opts->GetProgramConsoleCommand();
+        term.Replace(wxT("$(TITLE)"), title);
 
-        // Set a console to the execute target
-        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
-            wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-            if ( waitForAnyKey ) {
-                newCommand << " --wait ";
-            }
-            newCommand << " --cmd " << title;
-            execLine = newCommand;
+        // build the command
+        wxString command;
+        wxString ld_lib_path;
+        wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
+        wxFileName exeWrapper ( exePath.GetPath(), wxT ( "codelite_exec" ) );
 
+        if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
+            command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
         } else {
-            wxString term;
-            term = opts->GetProgramConsoleCommand();
-            term.Replace(wxT("$(TITLE)"), title);
-
-            // build the command
-            wxString command;
-            wxString ld_lib_path;
-            wxFileName exePath ( wxStandardPaths::Get().GetExecutablePath() );
-            wxFileName exeWrapper ( exePath.GetPath(), wxT ( "codelite_exec" ) );
-
-            if ( wxGetEnv ( wxT ( "LD_LIBRARY_PATH" ), &ld_lib_path ) && ld_lib_path.IsEmpty() == false ) {
-                command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " LD_LIBRARY_PATH=" ) << ld_lib_path << wxT ( " " );
-            } else {
-                command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
-            }
-            command << execLine;
-            term.Replace(wxT("$(CMD)"), command);
-            execLine = term;
+            command << wxT ( "/bin/sh -f " ) << exeWrapper.GetFullPath() << wxT ( " " );
         }
+        command << execLine;
+        term.Replace(wxT("$(CMD)"), command);
+        execLine = term;
+    }
 #elif defined (__WXMSW__)
 
-        if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
+    if ( opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) ) {
 
-            // codelite-terminal does not like forward slashes...
-            wxString commandToRun;
-            commandToRun << cmd << " ";
-            commandToRun.Replace("/", "\\");
-            commandToRun.Trim().Trim(false);
+        // codelite-terminal does not like forward slashes...
+        wxString commandToRun;
+        commandToRun << cmd << " ";
+        commandToRun.Replace("/", "\\");
+        commandToRun.Trim().Trim(false);
 
-            wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-            if ( waitForAnyKey ) {
-                newCommand << " --wait";
-            }
-
-            newCommand << " --cmd " << commandToRun;
-            execLine = newCommand;
-
-        } else if ( waitForAnyKey ) {
-            execLine.Prepend ("le_exec.exe ");
+        wxString newCommand;
+        newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
+        if ( waitForAnyKey ) {
+            newCommand << " --wait";
         }
+
+        newCommand << " --cmd " << commandToRun;
+        execLine = newCommand;
+
+    } else if ( waitForAnyKey ) {
+        execLine.Prepend ("le_exec.exe ");
+    }
 #endif
     return execLine;
 }
 
-wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, 
-                                              const wxString& dlgId, 
-                                              const wxString& yesLabel, 
-                                              const wxString& noLabel, 
-                                              const wxString& checkboxLabel, 
-                                              long style, 
-                                              bool checkboxInitialValue)
+wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
+        const wxString& dlgId,
+        const wxString& yesLabel,
+        const wxString& noLabel,
+        const wxString& checkboxLabel,
+        long style,
+        bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
     if ( res == wxNOT_FOUND ) {
@@ -1677,57 +1677,3 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
     }
     return static_cast<wxStandardID>(res);
 }
-
-#ifndef __WXMSW__
-
-static void ChildTerminatedSingalHandler(int signo)
-{
-    int status;
-    while( true ) {
-        pid_t pid = ::waitpid(-1, &status, WNOHANG);
-        if(pid > 0) {
-            // waitpid succeeded
-            IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-            CL_DEBUG("Child process exited. PID: %d. Exit Code: %d", pid, WEXITSTATUS(status));
-
-        } else {
-            break;
-
-        }
-    }
-}
-
-// Block/Restore sigchild
-static struct sigaction old_behvior;
-static struct sigaction new_behvior;
-static bool sigchild_installed = false;
-void CodeLiteBlockSigChild()
-{
-    if ( !sigchild_installed ) {
-        sigfillset(&new_behvior.sa_mask);
-        new_behvior.sa_handler = ChildTerminatedSingalHandler;
-        new_behvior.sa_flags = 0;
-        sigaction(SIGCHLD, &new_behvior, &old_behvior);
-        sigchild_installed = true;
-    }
-}
-
-void CodeLiteRestoreSigChild()
-{
-    if ( sigchild_installed ) {
-        // restore the old behavior
-        sigaction(SIGCHLD, &old_behvior, NULL);
-        sigchild_installed = false;
-    }
-}
-
-#else 
-// MSW
-void CodeLiteBlockSigChild()
-{
-}
-
-void CodeLiteRestoreSigChild()
-{
-}
-#endif

@@ -68,9 +68,6 @@ public:
 };
 
 
-WXDLLIMPEXP_SDK void CodeLiteBlockSigChild();
-WXDLLIMPEXP_SDK void CodeLiteRestoreSigChild();
-
 /**
  * \brief send command event to the application (wxTheApp),
  * \param eventId
@@ -419,12 +416,12 @@ WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxSt
  * @param checkboxInitialValue
  * @return wxRichMessageDialog::ShowModal() return value
  */
-WXDLLIMPEXP_SDK  wxStandardID PromptForYesNoDialogWithCheckbox( const wxString &message, 
-                                                                const wxString &dlgId,
-                                                                const wxString &yesLabel = _("Yes"), 
-                                                                const wxString &noLabel  = _("No"), 
-                                                                const wxString &checkboxLabel = _("Remember my answer and don't ask me again"),
-                                                                long style = wxYES_NO|wxICON_QUESTION|wxYES_DEFAULT, 
-                                                                bool checkboxInitialValue = false);
+WXDLLIMPEXP_SDK  wxStandardID PromptForYesNoDialogWithCheckbox( const wxString &message,
+        const wxString &dlgId,
+        const wxString &yesLabel = _("Yes"),
+        const wxString &noLabel  = _("No"),
+        const wxString &checkboxLabel = _("Remember my answer and don't ask me again"),
+        long style = wxYES_NO|wxICON_QUESTION|wxYES_DEFAULT,
+        bool checkboxInitialValue = false);
 
 #endif //GLOBALS_H

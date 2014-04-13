@@ -132,9 +132,7 @@ static void massCopy(const wxString &sourceDir, const wxString &spec, const wxSt
         wxCopyFile(files.Item(i), destDir + wxT("/") + fn.GetFullName());
     }
 }
-
-#ifdef __WXGTK__
-
+#ifndef __WXMSW__
 static void ChildTerminatedSingalHandler(int signo)
 {
     int status;
@@ -162,7 +160,9 @@ static void CodeLiteBlockSigChild()
     new_behvior.sa_flags = 0;
     sigaction(SIGCHLD, &new_behvior, &old_behvior);
 }
+#endif
 
+#ifdef __WXGTK__
 //-------------------------------------------
 // Signal Handlers for GTK
 //-------------------------------------------

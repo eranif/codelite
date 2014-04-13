@@ -1801,17 +1801,6 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     wxString msg;
     bool boDoNotClose = false;
 
-    //// Check for running retag thread
-    //if (ManagerST::Get()->GetRetagInProgress()) {
-    //    msg << wxT("The retag of the Workspace is currently in progress.\n")
-    //        << wxT("Do you want to close any way?");
-    //
-    //    int rc = wxMessageBox(msg, wxT("Retag of the Workspace in progress..."), wxYES_NO|wxCENTER|wxICON_QUESTION);
-    //    if (rc == wxNO) {
-    //        boDoNotClose = true;
-    //    }
-    // }
-
     if (!boDoNotClose) {
         ManagerST::Get()->SetShutdownInProgress(true);
 
@@ -2083,8 +2072,10 @@ void clMainFrame::OnFileOpen(wxCommandEvent & WXUNUSED(event))
 void clMainFrame::OnFileClose(wxCommandEvent &event)
 {
     wxUnusedVar( event );
-    clWindowUpdateLocker locker(this);
-    GetMainBook()->ClosePage(GetMainBook()->GetCurrentPage());
+    if ( GetMainBook()->GetCurrentPage() ) {
+        wxWindow *winToClose = GetMainBook()->GetCurrentPage();
+        GetMainBook()->CallAfter( &MainBook::ClosePageVoid, winToClose);
+    }
 }
 
 void clMainFrame::OnFileSaveAll(wxCommandEvent &event)
@@ -2855,7 +2846,7 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
 void clMainFrame::OnFileCloseAll(wxCommandEvent &event)
 {
     wxUnusedVar(event);
-    GetMainBook()->CloseAll(true);
+    GetMainBook()->CallAfter( &MainBook::CloseAllVoid, true );
 }
 
 void clMainFrame::OnQuickOutline(wxCommandEvent &event)
@@ -3541,7 +3532,7 @@ void clMainFrame::OnCloseAllButThis(wxCommandEvent &e)
     wxUnusedVar(e);
     wxWindow *win = GetMainBook()->GetCurrentPage();
     if (win != NULL) {
-        GetMainBook()->CloseAllButThis(win);
+        GetMainBook()->CallAfter( &MainBook::CloseAllButThisVoid, win );
     }
 }
 

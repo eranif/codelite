@@ -345,11 +345,12 @@ void LLDBConnector::OnProcessTerminated(wxCommandEvent& event)
         wxDELETE(ped);
     }
     wxDELETE( m_process );
+    Cleanup();
     
-    // Notify debug-server terminated
-    LLDBEvent lldb_event(wxEVT_LLDB_CRASHED);
-    AddPendingEvent( lldb_event );
-    LaunchDebugServer();
+//    // Notify debug-server terminated
+//    LLDBEvent lldb_event(wxEVT_LLDB_CRASHED);
+//    AddPendingEvent( lldb_event );
+//    LaunchDebugServer();
 }
 
 void LLDBConnector::Interrupt(eInterruptReason reason)

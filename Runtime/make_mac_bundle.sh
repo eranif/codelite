@@ -258,7 +258,8 @@ if test -f ${LLVM_HOME}/build-release/lib/liblldb.3.5.0.dylib; then
     
     ## copy our debug server
     cp ../bin/codelite-lldb  ./codelite.app/Contents/MacOS/
-
+    fix_codelite_lldb_deps
+    
     ## Copy Apple's debugserver (its signed)
     echo cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
     cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/

@@ -156,7 +156,20 @@ public:
     bool ClosePage      (wxWindow *win);
     bool CloseAllButThis(wxWindow *win);
     bool CloseAll       (bool cancellable);
-
+    
+    // These 3 functions are meant to be used with CallAfter
+    void ClosePageVoid (wxWindow *win) {
+        ClosePage(win);
+    }
+    
+    void CloseAllButThisVoid (wxWindow *win) {
+        CloseAllButThis(win);
+    }
+    
+    void CloseAllVoid (bool cancellable) {
+        CloseAll(cancellable);
+    }
+    
     wxString GetPageTitle(wxWindow *win) const;
     void     SetPageTitle(wxWindow *page, const wxString &name);
     long     GetBookStyle();

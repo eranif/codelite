@@ -7,7 +7,6 @@ fi
 
 fix_shared_object_depends() {
     search_string=$1
-
     ## Get list of files to work on
     dylibs=`ls ./codelite.app/Contents/MacOS/*.dylib`
     sos2=`ls ./codelite.app/Contents/SharedSupport/plugins/*.dylib`
@@ -38,17 +37,22 @@ fix_non_plugins_depends() {
     sos2=`ls ./codelite.app/Contents/SharedSupport/plugins/*.dylib`
     sos3=`ls ./codelite.app/Contents/SharedSupport/debuggers/*.dylib`
     file_list="${dylibs} ${sos2} ${sos3} ./codelite.app/Contents/MacOS/codelite "
- 
+    
+    ## add codelite-lldb if it exists
+    if test -f ./codelite.app/Contents/MacOS/codelite-lldb ; then
+        file_list="${file_list} ./codelite.app/Contents/MacOS/codelite-lldb"
+    fi
+
     for SO in ${file_list}
     do   
     orig_path=`otool -L ${SO}  | grep ${search_string} | awk '{print $1;}'`
     if [ ! -z ${orig_path} ]; then
-    ## Loop over the files, and update the path of the wx library
-    for file in ${file_list}
-    do
-        new_path=`echo ${orig_path} | xargs basename`
-        install_name_tool -change ${orig_path} @executable_path/../MacOS/${new_path} ${file}
-    done
+        ## Loop over the files, and update the path of the wx library
+        for file in ${file_list}
+        do
+            new_path=`echo ${orig_path} | xargs basename`
+            install_name_tool -change ${orig_path} @executable_path/../MacOS/${new_path} ${file}
+        done
     fi
     done
 }
@@ -67,6 +71,27 @@ fix_codelite_clang_deps() {
         install_name_tool -change @rpath/libclang.dylib @executable_path/../MacOS/libclang.dylib ./codelite.app/Contents/SharedSupport/codelite-clang
     fi
 }
+
+fix_codelite_lldb_deps() {
+    if test -f ./codelite.app/Contents/MacOS/codelite-lldb ; then
+        orig_path=`otool -L ./codelite.app/Contents/MacOS/codelite-lldb  | grep libwx_* | awk '{print $1;}'`
+        
+        ## Fix wxWidgets dependencies
+        ## Loop over the files, and update the path of the wx library
+        for path in ${orig_path}
+        do
+            new_path=`echo ${path} | xargs basename`
+            install_name_tool -change ${path} @executable_path/../MacOS/${new_path} ./codelite.app/Contents/MacOS/codelite-lldb
+        done
+
+        echo install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/MacOS/codelite-lldb
+        install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/MacOS/codelite-lldb
+        
+        ## Fix libcodelite, libplugin and libwxsqlite
+        
+    fi
+}
+
 
 fix_codelite_indexer_deps() {
 
@@ -230,16 +255,16 @@ if test -f ${LLVM_HOME}/build-release/lib/liblldb.3.5.0.dylib; then
     echo "Installing LLDBDebugger..."
     echo cp ../lib/LLDBDebugger.dylib ./codelite.app/Contents/SharedSupport/plugins/
     cp ../lib/LLDBDebugger.dylib ./codelite.app/Contents/SharedSupport/plugins/
-    echo cp ../bin/codelite-lldb  ./codelite.app/Contents/MacOS/
-    cp ../bin/codelite-lldb  ./codelite.app/Contents/MacOS/
     
+    ## copy our debug server
+    cp ../bin/codelite-lldb  ./codelite.app/Contents/MacOS/
+
     ## Copy Apple's debugserver (its signed)
     echo cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
     cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
     
     cp ${LLVM_HOME}/build-release/lib/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/
     install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/plugins/LLDBDebugger.dylib
-    install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/MacOS/codelite-lldb
 fi
 
 if [ -f ../lib/wxcrafter.dylib ]; then
@@ -282,6 +307,9 @@ fix_codelite_terminal_deps
 fix_wxrc_deps
 fix_codelite_clang_deps
 fix_shared_object_depends libwx_
+
+## the blow fixes the paths embedded in the executable located under codelite.app/Contents/MacOS/
+## the function fix_non_plugins_depends accepts search string 
 fix_non_plugins_depends lib/liblibcodelite.dylib
 fix_non_plugins_depends lib/libplugin.dylib
 fix_non_plugins_depends lib/libwxsqlite3.dylib

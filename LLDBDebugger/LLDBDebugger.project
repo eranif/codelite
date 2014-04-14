@@ -89,8 +89,6 @@
       <File Name="LLDBLocalsView.h"/>
       <File Name="LLDBNewBreakpointDlg.cpp"/>
       <File Name="LLDBNewBreakpointDlg.h"/>
-      <File Name="LLDBSettingsPage.h"/>
-      <File Name="LLDBSettingsPage.cpp"/>
       <File Name="LLDBSettingDialog.h"/>
       <File Name="LLDBSettingDialog.cpp"/>
     </VirtualDirectory>

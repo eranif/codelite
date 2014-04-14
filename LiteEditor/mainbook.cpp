@@ -1223,7 +1223,6 @@ void MainBook::OnWorkspaceReloadStarted(clCommandEvent& e)
 
 void MainBook::ClosePageVoid(wxWindow* win)
 {
-    wxWindowUpdateLocker locker( this );
     ClosePage(win);
 }
 

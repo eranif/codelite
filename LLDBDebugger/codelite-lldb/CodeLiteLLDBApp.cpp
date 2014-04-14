@@ -18,6 +18,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief print c-array to the stdout
+ */
+static void print_c_array(const char** arr ) {
+    if ( arr ) {
+        size_t index(0);
+        while ( arr[index] ) {
+            wxPrintf("%s\n", arr[index]);
+            ++index;
+        }
+    }
+}
+
 static char** _wxArrayStringToCharPtrPtr(const wxArrayString &arr)
 {
     char** argv = new char*[arr.size()+1]; // for the NULL
@@ -91,6 +104,7 @@ bool CodeLiteLLDBApp::OnInit()
         wxPrintf("codelite-lldb: failed to create server on %s. %s\n", m_debuggerSocketPath, strerror(errno));
         return false;
     }
+    return true;
 }
 
 void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
@@ -276,7 +290,8 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         // Construct char** arrays
         clCommandLineParser parser(command.GetCommandArguments());
         const char** argv = (const char**)_wxArrayStringToCharPtrPtr(parser.ToArray());
-
+        char **penv = command.GetEnvArray();
+        
         std::string tty_c;
         if ( !command.GetRedirectTTY().IsEmpty() ) {
             tty_c = command.GetRedirectTTY().mb_str(wxConvUTF8).data();
@@ -284,12 +299,18 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
         wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
         
+        wxPrintf("codeltie-lldb: Environment is set to:\n");
+        print_c_array( (const char**)penv );
+        
+        wxPrintf("codeltie-lldb: Arguments are set to:\n");
+        print_c_array( argv );
+        
         lldb::SBError error;
         lldb::SBListener listener = m_debugger.GetListener();
         lldb::SBProcess process = m_target.Launch(
                                       listener,
                                       argv,
-                                      NULL,
+                                      (const char**)penv,
                                       ptty,
                                       ptty,
                                       ptty,
@@ -300,7 +321,8 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
 
         //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
         DELETE_CHAR_PTR_PTR( const_cast<char**>(argv) );
-
+        DELETE_CHAR_PTR_PTR( penv );
+        
         if ( !process.IsValid() ) {
             NotifyExited();
 

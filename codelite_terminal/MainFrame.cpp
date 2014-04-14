@@ -61,7 +61,12 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options, long styl
     if ( options.HasFlag( TerminalOptions::kPrintInfo ) ) {
         // we writ the info to file, since on OSX we use 
         // a mediator to launch the process /usr/bin/open
+#ifdef __WXMSW__
         wxFileName fnTmp( wxFileName::GetTempDir(), "codelite-terminal.txt" );
+#else
+        wxFileName fnTmp( "/tmp/codelite-terminal.txt" );
+#endif
+
         wxFFile fp( fnTmp.GetFullPath(), "w+a" );
         if ( fp.IsOpened() ) {
             wxString infoStr;

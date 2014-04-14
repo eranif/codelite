@@ -18,6 +18,7 @@
 #include "bookmark_manager.h"
 #include "LLDBBreakpointsPane.h"
 #include "LLDBLocalsView.h"
+#include "json_node.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
@@ -82,6 +83,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_CAN_INTERACT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugCanInteract), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleInerrupt), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBDebuggerPlugin::OnBuildStarting), NULL, this);
 }
 
 void LLDBDebuggerPlugin::UnPlug()
@@ -109,6 +111,7 @@ void LLDBDebuggerPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_STEP_OUT, clDebugEventHandler(LLDBDebuggerPlugin::OnDebugStepOut), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleInerrupt), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBDebuggerPlugin::OnBuildStarting), NULL, this);
 }
 
 LLDBDebuggerPlugin::~LLDBDebuggerPlugin()
@@ -181,8 +184,12 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
         {
             // delete any left overs before we start the debug session
             wxLogNull noLog;
-            wxFileName fnTerminalFile(wxFileName::GetTempDir(), "codelite-terminal.txt");
-            ::wxRemoveFile( fnTerminalFile.GetFullPath() );
+#ifdef __WXMSW__
+            wxFileName fnTerminalOutout( wxFileName::GetTempDir(), "codelite-terminal.txt" );
+#else
+            wxFileName fnTerminalOutout( "/tmp/codelite-terminal.txt" );
+#endif
+            ::wxRemoveFile( fnTerminalOutout.GetFullPath() );
         }
         
         CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
@@ -260,6 +267,7 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                     m_connector.AddBreakpoints( gdbBps );
 
                     LLDBCommand startCommand;
+                    startCommand.FillEnvFromMemory();
                     startCommand.SetExecutable( execToDebug.GetFullPath() );
                     startCommand.SetCommandArguments( args );
                     startCommand.SetWorkingDirectory( wd );
@@ -306,7 +314,11 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
     LoadLLDBPerspective();
     
     // instruct the debugger to 'Run'
-    wxFileName fnTerminalOutout( wxFileName::GetTempDir(), "codelite-terminal.txt");
+#ifdef __WXMSW__
+        wxFileName fnTerminalOutout( wxFileName::GetTempDir(), "codelite-terminal.txt" );
+#else
+        wxFileName fnTerminalOutout( "/tmp/codelite-terminal.txt" );
+#endif
     CL_DEBUG("Searching for terminal info file: %s", fnTerminalOutout.GetFullPath());
     
     // wait up to 2 secs for the terminal file to appear
@@ -636,5 +648,24 @@ void LLDBDebuggerPlugin::OnToggleInerrupt(clDebugEvent& event)
     CL_DEBUG("CODELITE: interrupting debuggee");
     if ( !m_connector.IsCanInteract() ) {
         m_connector.Interrupt( kInterruptReasonNone );
+    }
+}
+
+void LLDBDebuggerPlugin::OnBuildStarting(clBuildEvent& event)
+{
+    if ( m_connector.IsRunning() ) {
+        // lldb session is active, prompt the user
+        if ( ::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"), 
+                            "CodeLite", 
+                            wxICON_QUESTION|wxYES_NO|wxYES_DEFAULT|wxCENTER) == wxYES ) {
+            clDebugEvent dummy;
+            OnDebugStop( dummy );
+            event.Skip();
+        } else {
+            // do nothing - this will cancel the build
+        }
+        
+    } else {
+        event.Skip();
     }
 }

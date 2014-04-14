@@ -66,6 +66,7 @@ protected:
     void OnDebugStepOut(clDebugEvent& event);
     void OnToggleBreakpoint(clDebugEvent& event);
     void OnToggleInerrupt(clDebugEvent& event);
+    void OnBuildStarting(clBuildEvent& event);
 
     // LLDB events
     void OnLLDBCrashed(LLDBEvent& event);

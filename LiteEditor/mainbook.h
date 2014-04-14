@@ -158,17 +158,11 @@ public:
     bool CloseAll       (bool cancellable);
     
     // These 3 functions are meant to be used with CallAfter
-    void ClosePageVoid (wxWindow *win) {
-        ClosePage(win);
-    }
+    void ClosePageVoid (wxWindow *win) ;
     
-    void CloseAllButThisVoid (wxWindow *win) {
-        CloseAllButThis(win);
-    }
+    void CloseAllButThisVoid (wxWindow *win) ;
     
-    void CloseAllVoid (bool cancellable) {
-        CloseAll(cancellable);
-    }
+    void CloseAllVoid (bool cancellable) ;
     
     wxString GetPageTitle(wxWindow *win) const;
     void     SetPageTitle(wxWindow *page, const wxString &name);

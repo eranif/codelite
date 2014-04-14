@@ -106,9 +106,9 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
-    
+
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
-    
+
     // Highlight Job
     Connect(wxEVT_CMD_JOB_STATUS_VOID_PTR,         wxCommandEventHandler(MainBook::OnStringHighlight),      NULL, this);
 }
@@ -128,7 +128,7 @@ MainBook::~MainBook()
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,  wxCommandEventHandler(MainBook::OnWorkspaceClosed),    NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED,       wxCommandEventHandler(MainBook::OnDebugEnded),         NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE,         wxCommandEventHandler(MainBook::OnInitDone),           NULL, this);
-    
+
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     Disconnect(wxEVT_CMD_JOB_STATUS_VOID_PTR,         wxCommandEventHandler(MainBook::OnStringHighlight),      NULL, this);
 }
@@ -352,7 +352,7 @@ LEditor *MainBook::GetActiveEditor(bool includeDetachedEditors)
             }
         }
     }
-    
+
     if ( !GetCurrentPage() ) {
         return NULL;
     }
@@ -374,7 +374,7 @@ void MainBook::GetAllEditors(LEditor::Vec_t& editors, size_t flags)
             }
         } else {
             std::vector<wxWindow*> windows;
-    #if !CL_USE_NATIVEBOOK
+#if !CL_USE_NATIVEBOOK
             m_book->GetEditorsInOrder(windows);
             for (size_t i = 0; i < windows.size(); i++) {
                 LEditor *editor = dynamic_cast<LEditor*>(windows.at(i));
@@ -382,14 +382,14 @@ void MainBook::GetAllEditors(LEditor::Vec_t& editors, size_t flags)
                     editors.push_back(editor);
                 }
             }
-    #else
+#else
             for(size_t i=0; i<m_book->GetPageCount(); i++) {
                 LEditor *editor = dynamic_cast<LEditor*>(m_book->GetPage(i));
                 if(editor) {
                     editors.push_back(editor);
                 }
             }
-    #endif
+#endif
         }
     }
     if ( (flags & kGetAll_IncludeDetached) || (flags & kGetAll_DetachedOnly) ) {
@@ -431,7 +431,7 @@ LEditor *MainBook::FindEditor(const wxString &fileName)
 #endif
         }
     }
-    
+
     // try the detached editors
     EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
     for(; iter != m_detachedEditors.end(); ++iter ) {
@@ -490,9 +490,9 @@ LEditor *MainBook::NewEditor()
 static bool IsFileExists(const wxFileName &filename)
 {
 #ifdef __WXMSW__
-/*    wxString drive  = filename.GetVolume();
-    if(drive.Length()>1)
-        return false;*/
+    /*    wxString drive  = filename.GetVolume();
+        if(drive.Length()>1)
+            return false;*/
 
     return filename.FileExists();
 #else
@@ -735,9 +735,9 @@ void MainBook::ReloadExternallyModified(bool prompt)
 
     LEditor::Vec_t editors;
     GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
-    
+
     time_t workspaceModifiedTimeBefore = WorkspaceST::Get()->GetFileLastModifiedTime();
-    
+
     // filter list of editors for any whose files have been modified
     std::vector<std::pair<wxFileName, bool> > files;
     size_t n = 0;
@@ -768,7 +768,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
         // the "Reload WOrkspace" dialog, cancel this it's not needed anymore
         return;
     }
-    
+
     std::vector<wxFileName> filesToRetag;
     for (size_t i = 0; i < files.size(); i++) {
         if (files[i].second) {
@@ -855,7 +855,7 @@ bool MainBook::CloseAll(bool cancellable)
     m_reloadingDoRaise = false;
     m_book->DeleteAllPages(false);
     m_reloadingDoRaise = true;
-    
+
     // Delete all detached editors
     EditorFrame::List_t::iterator iter = m_detachedEditors.begin();
     for(; iter != m_detachedEditors.end(); ++iter ) {
@@ -912,7 +912,7 @@ void MainBook::ApplySettingsChanges()
     }
 
     clMainFrame::Get()->UpdateAUI();
-    
+
     // Last: reposition the findBar
     DoPositionFindBar(2);
 }
@@ -1007,7 +1007,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
     if ( editor ) {
         editor->SetActive();
         m_quickFindBar->SetEditor( editor );
-        
+
     } else {
         m_quickFindBar->ShowForPlugins();
     }
@@ -1221,3 +1221,18 @@ void MainBook::OnWorkspaceReloadStarted(clCommandEvent& e)
     m_isWorkspaceReloading = true;
 }
 
+void MainBook::ClosePageVoid(wxWindow* win)
+{
+    wxWindowUpdateLocker locker( this );
+    ClosePage(win);
+}
+
+void MainBook::CloseAllButThisVoid(wxWindow* win)
+{
+    CloseAllButThis(win);
+}
+
+void MainBook::CloseAllVoid(bool cancellable)
+{
+    CloseAll(cancellable);
+}

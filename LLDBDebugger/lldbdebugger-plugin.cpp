@@ -554,7 +554,8 @@ void LLDBDebuggerPlugin::InitializeUI()
     
     if ( !m_localsView ) {
         m_localsView = new LLDBLocalsView(EventNotifier::Get()->TopFrame(), this);
-        m_mgr->GetDockingManager()->AddPane(m_localsView, wxAuiPaneInfo().Top().Position(0).CloseButton().Caption("Locals").Name(LLDB_LOCALS_PANE_NAME));
+        m_mgr->GetDockingManager()->AddPane(m_localsView, 
+                                            wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(0).CloseButton().Caption("Locals").Name(LLDB_LOCALS_PANE_NAME));
     }
 }
 

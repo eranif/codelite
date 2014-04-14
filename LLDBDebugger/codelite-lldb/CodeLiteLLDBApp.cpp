@@ -73,7 +73,8 @@ CodeLiteLLDBApp::CodeLiteLLDBApp(const wxString& socketPath)
     lldb::SBCommandReturnObject ret;
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"" , ret);
-    m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"" , ret);
+    m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxRect --summary-string \"x = ${var.x}, y = ${var.y}, width = ${var.width}, height = ${var.height}\"" , ret);
+    m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxSize --summary-string \"height = ${var.y}, width = ${var.x}\"" , ret);
     OnInit();
 }
 
@@ -551,15 +552,12 @@ void CodeLiteLLDBApp::NotifyLocals(LLDBLocalVariable::Vect_t locals)
 // we stashed the variables we got so far inside a map
 void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
 {
+    static const int MAX_ARRAY_SIZE = 50;
     wxPrintf("codelite-lldb: ExpandVariable called for variableId=%d\n", command.GetLldbId());
     int variableId = command.GetLldbId();
     if ( variableId == wxNOT_FOUND ) {
         return;
     }
-    
-    wxPrintf("codelite-lldb: ExpandVariable called for variableId=%d\n", variableId);
-    static const int MAX_ARRAY_SIZE = 50;
-    
     LLDBLocalVariable::Vect_t children;
     std::map<int, lldb::SBValue>::iterator iter = m_variables.find(variableId);
     if ( iter != m_variables.end() ) {
@@ -571,6 +569,13 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
             size > MAX_ARRAY_SIZE ? size = MAX_ARRAY_SIZE : size = size;
             wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", value.GetName());
         }
+        
+        /* else if ( typeClass == lldb::eTypeClassMemberPointer && value.GetType().GetBasicType() == lldb::eBasicTypeInvalid ) {
+            // pointer of non primitive
+            // derefernce the current value
+            wxPrintf("codelite-lldb: value is a member pointer of non primitive type - dereferecing it\n");
+            value = value.Dereference();
+        }*/
         
         for(int i=0; i<size; ++i) {
             lldb::SBValue child = value.GetChildAtIndex(i);

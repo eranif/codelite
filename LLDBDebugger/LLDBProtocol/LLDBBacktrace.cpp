@@ -1,6 +1,7 @@
 #include "LLDBBacktrace.h"
 #include <wx/filename.h>
 
+#ifndef __WXMSW__
 LLDBBacktrace::LLDBBacktrace(lldb::SBThread &thread)
 {
     m_callstack.clear();
@@ -36,6 +37,7 @@ LLDBBacktrace::LLDBBacktrace(lldb::SBThread &thread)
         }
     }
 }
+#endif
 
 LLDBBacktrace::~LLDBBacktrace()
 {

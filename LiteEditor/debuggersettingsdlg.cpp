@@ -281,19 +281,13 @@ void DebuggerSettingsDlg::Initialize()
 {
     MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
 
-    DebuggerMgr &mgr = DebuggerMgr::Get();
-    wxArrayString debuggers = mgr.GetAvailableDebuggers();
-    for (size_t i=0; i<debuggers.GetCount(); i++) {
+    //create page per-debugger
+    m_treebook2->AddPage(0, "GNU gdb debugger", true);
 
-        //create page per-debugger
-        m_treebook2->AddPage(0, debuggers.Item(i), false);
-
-        // for each debugger, add page
-        m_treebook2->AddSubPage(new DebuggerPage           (m_treebook2, debuggers.Item(i)), wxT("General"),          true);
-        m_treebook2->AddSubPage(new DebuggerPageMisc       (m_treebook2, debuggers.Item(i)), wxT("Misc"),             false);
-        m_treebook2->AddSubPage(new DebuggerPageStartupCmds(m_treebook2, debuggers.Item(i)), wxT("Startup Commands"), false);
-    }
-
+    // for each debugger, add page
+    m_treebook2->AddSubPage(new DebuggerPage           (m_treebook2, "GNU gdb debugger"), wxT("General"),          true);
+    m_treebook2->AddSubPage(new DebuggerPageMisc       (m_treebook2, "GNU gdb debugger"), wxT("Misc"),             false);
+    m_treebook2->AddSubPage(new DebuggerPageStartupCmds(m_treebook2, "GNU gdb debugger"), wxT("Startup Commands"), false);
     m_treebook2->AddPage(new DbgPagePreDefTypes(m_treebook2), wxT("Pre Defined Types"), false);
 }
 

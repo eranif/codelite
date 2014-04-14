@@ -93,12 +93,12 @@ public:
      * @param timeout number of seconds to wait until successfull connect
      * @return
      */
-    bool ConnectToDebugger(int timeout = 10, const wxString &socketPath = "");
+    bool ConnectToLocalDebugger(int timeout = 10, const wxString &socketPath = "");
 
     /**
      * @brief start codelite-lldb if not running
      */
-    void LaunchDebugServer();
+    bool LaunchDebugServer();
 
     /**
      * @brief terminate the debug server

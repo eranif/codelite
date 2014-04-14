@@ -66,6 +66,7 @@
       <Project Name="Gizmos" ConfigName="WinReleaseUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="LiteEditor" ConfigName="WinReleaseUnicode"/>
+      <Project Name="LLDBDebugger" ConfigName="WinReleaseUnicode"/>
       <Project Name="MacBundler" ConfigName="WinReleaseUnicode"/>
       <Project Name="Outline" ConfigName="WinReleaseUnicode"/>
       <Project Name="PCH" ConfigName="Release"/>
@@ -81,9 +82,8 @@
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
-      <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
@@ -103,6 +103,7 @@
       <Project Name="Gizmos" ConfigName="WinDebugUnicode"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="LiteEditor" ConfigName="WinDebugUnicode"/>
+      <Project Name="LLDBDebugger" ConfigName="WinDebugUnicode"/>
       <Project Name="MacBundler" ConfigName="WinDebugUnicode"/>
       <Project Name="Outline" ConfigName="WinDebugUnicode"/>
       <Project Name="PCH" ConfigName="Debug"/>
@@ -118,7 +119,6 @@
       <Project Name="wxshapeframework" ConfigName="WinDebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinDebugUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinDebugUnicode"/>
-      <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>

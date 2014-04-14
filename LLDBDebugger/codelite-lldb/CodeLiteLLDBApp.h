@@ -1,6 +1,8 @@
 #ifndef CODELITE_LLDB_APP_H
 #define CODELITE_LLDB_APP_H
 
+#ifndef __WXMSW__
+
 #include <wx/app.h>
 #include <wx/cmdline.h>
 #include "LLDBProtocol/LLDBCommand.h"
@@ -101,5 +103,5 @@ public:
 };
 
 DECLARE_APP(CodeLiteLLDBApp)
-
+#endif // !__WXMSW__
 #endif // CODELITE_LLDB_APP_H

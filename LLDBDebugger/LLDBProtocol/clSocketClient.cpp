@@ -9,8 +9,7 @@
 #include <unistd.h>
 #endif
 
-clSocketClient::clSocketClient(const wxString& pipePath)
-    : m_path(pipePath)
+clSocketClient::clSocketClient()
 {
 }
 
@@ -18,31 +17,38 @@ clSocketClient::~clSocketClient()
 {
 }
 
-bool clSocketClient::Connect()
+bool clSocketClient::ConnectLocal(const wxString &socketPath)
 {
-    // TCP / IP implementation
-    // ============================================================
-    // m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
-    // const char* ip_addr = m_ip.mb_str(wxConvUTF8).data();
-    // struct sockaddr_in serv_addr; 
-    // serv_addr.sin_family = AF_INET;
-    // serv_addr.sin_port = htons(m_port);
-    // 
-    // if(inet_pton(AF_INET, ip_addr, &serv_addr.sin_addr) <= 0) {
-    //     return false;
-    // }
-    // 
-    // int rc = ::connect(m_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-    // if ( rc != 0 ) {
-    // }
-    // return rc == 0;
-    
+#ifndef __WXMSW__
     struct sockaddr_un server;
     m_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     server.sun_family = AF_UNIX;
-    strcpy(server.sun_path, m_path.mb_str(wxConvUTF8).data());
+    strcpy(server.sun_path, socketPath.mb_str(wxConvUTF8).data());
     if (::connect(m_socket, (struct sockaddr *) &server, sizeof(struct sockaddr_un)) < 0) {
         return false;
     }
     return true;
+#else
+    return false;
+#endif
+}
+
+bool clSocketClient::ConnectRemote(const wxString& address, int port)
+{
+    m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
+    const char* ip_addr = address.mb_str(wxConvUTF8).data();
+    struct sockaddr_in serv_addr; 
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
+    
+#ifndef __WXMSW__
+    if(inet_pton(AF_INET, ip_addr, &serv_addr.sin_addr) <= 0) {
+        return false;
+    }
+#else
+    serv_addr.sin_addr.s_addr = inet_addr( ip_addr );
+#endif
+
+    int rc = ::connect(m_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+    return rc == 0;
 }

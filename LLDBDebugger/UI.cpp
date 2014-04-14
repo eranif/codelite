@@ -66,7 +66,7 @@ LLDBBreakpointsPaneBase::LLDBBreakpointsPaneBase(wxWindow* parent, wxWindowID id
     
     m_auibar->AddTool(wxID_NEW, _("New breakpoint"), wxArtProvider::GetBitmap(wxART_PLUS, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("New breakpoint"), _("New breakpoint"), NULL);
     
-    m_auibar->AddTool(wxID_DELETE, _("Delete Selected Breakpoints"), wxArtProvider::GetBitmap(wxART_MINUS, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete Selected Breakpoints"), _("Delete Selected Breakpoints"), NULL);
+    m_auibar->AddTool(wxID_DELETE, _("Delete Selected Breakpoint"), wxArtProvider::GetBitmap(wxART_MINUS, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete Selected Breakpoint"), _("Delete Selected Breakpoint"), NULL);
     
     m_auibar->AddTool(wxID_CLEAR, _("Delete All Breakpoints"), wxArtProvider::GetBitmap(wxART_DELETE, wxART_TOOLBAR, wxSize(16, 16)), wxNullBitmap, wxITEM_NORMAL, _("Delete All Breakpoints"), _("Delete All Breakpoints"), NULL);
     m_auibar->Realize();
@@ -207,7 +207,8 @@ LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer67 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer67);
     
-    SetSizeHints(500,300);
+    SetMinSize( wxSize(200,200) );
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
@@ -215,5 +216,41 @@ LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wx
 }
 
 LLDBLocalsViewBase::~LLDBLocalsViewBase()
+{
+}
+
+LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer77 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer77);
+    
+    m_stdBtnSizer79 = new wxStdDialogButtonSizer();
+    
+    boxSizer77->Add(m_stdBtnSizer79, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button81 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer79->AddButton(m_button81);
+    
+    m_button83 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button83->SetDefault();
+    m_stdBtnSizer79->AddButton(m_button83);
+    m_stdBtnSizer79->Realize();
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+LLDBSettingDialogBase::~LLDBSettingDialogBase()
 {
 }

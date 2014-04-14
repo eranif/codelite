@@ -9,17 +9,17 @@ class clSocketClient : public clSocketBase
     wxString m_path;
 
 public:
-    clSocketClient(const wxString &pipePath);
-    clSocketClient() {}
+    clSocketClient();
     virtual ~clSocketClient();
 
-    void SetPath(const wxString& path) {
-        this->m_path = path;
-    }
-    const wxString& GetPath() const {
-        return m_path;
-    }
-    bool Connect();
+    /**
+     * @brief connect to a remote socket, using unix-domain socket
+     */
+    bool ConnectLocal(const wxString &socketPath);
+    /**
+     * @brief connect to a remote server using ip/port
+     */
+    bool ConnectRemote(const wxString &address, int port);
 };
 
 #endif // CLSOCKETCLIENT_H

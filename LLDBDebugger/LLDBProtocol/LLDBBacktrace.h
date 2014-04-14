@@ -4,6 +4,7 @@
 #include <wx/string.h>
 #include <vector>
 
+#ifndef __WXMSW__
 #   include "lldb/API/SBBlock.h"
 #   include "lldb/API/SBCompileUnit.h"
 #   include "lldb/API/SBDebugger.h"
@@ -16,6 +17,8 @@
 #   include "lldb/API/SBProcess.h"
 #   include "lldb/API/SBBreakpoint.h"
 #   include "lldb/API/SBListener.h"
+#endif
+
 #include "json_node.h"
 
 /**
@@ -44,7 +47,11 @@ protected:
     LLDBBacktrace::EntryVec_t m_callstack;
 
 public:
+
+#ifndef __WXMSW__
     LLDBBacktrace(lldb::SBThread &thread);
+#endif
+
     LLDBBacktrace() : m_threadId (0) {}
     virtual ~LLDBBacktrace();
     

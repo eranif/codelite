@@ -91,8 +91,23 @@ protected:
 protected:
 
 public:
-    LLDBLocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    LLDBLocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBLocalsViewBase();
+};
+
+
+class LLDBSettingDialogBase : public wxDialog
+{
+protected:
+    wxStdDialogButtonSizer* m_stdBtnSizer79;
+    wxButton* m_button81;
+    wxButton* m_button83;
+
+protected:
+
+public:
+    LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~LLDBSettingDialogBase();
 };
 
 #endif

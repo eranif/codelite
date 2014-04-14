@@ -1,6 +1,8 @@
 #ifndef LLDBNETWORKSERVERTHREAD_H
 #define LLDBNETWORKSERVERTHREAD_H
 
+#ifndef __WXMSW__
+
 #include <wx/thread.h>
 #include "LLDBProtocol/cl_socket_base.h"
 
@@ -21,5 +23,5 @@ public:
         Run();
     }
 };
-
+#endif // !__WXMSW__
 #endif // LLDBNETWORKSERVERTHREAD_H

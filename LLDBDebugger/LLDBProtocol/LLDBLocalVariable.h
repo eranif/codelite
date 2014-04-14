@@ -5,9 +5,11 @@
 #include <wx/string.h>
 #include <wx/clntdata.h>
 #include <wx/sharedptr.h>
-#include <lldb/API/SBValue.h>
 #include "json_node.h"
 #include <wx/treebase.h>
+#ifndef __WXMSW__
+#include <lldb/API/SBValue.h>
+#endif
 
 class LLDBLocalVariable
 {
@@ -25,10 +27,15 @@ protected:
     bool     m_hasChildren;
     
 private:
+#ifndef __WXMSW__
     void DoInitFromLLDBValue(lldb::SBValue value);
+#endif
 
 public:
+#ifndef __WXMSW__
     LLDBLocalVariable(lldb::SBValue value);
+#endif
+
     LLDBLocalVariable() : m_valueChanged(false), m_lldbId(wxNOT_FOUND), m_hasChildren(false) {}
     virtual ~LLDBLocalVariable();
 

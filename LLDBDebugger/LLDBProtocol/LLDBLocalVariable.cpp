@@ -1,15 +1,12 @@
 #include "LLDBLocalVariable.h"
+
+#ifndef __WXMSW__
 #include <lldb/API/SBValue.h>
 
 LLDBLocalVariable::LLDBLocalVariable(lldb::SBValue value)
 {
     DoInitFromLLDBValue( value );
 }
-
-LLDBLocalVariable::~LLDBLocalVariable()
-{
-}
-
 void LLDBLocalVariable::DoInitFromLLDBValue(lldb::SBValue value)
 {
     SetName( value.GetName() );
@@ -23,6 +20,12 @@ void LLDBLocalVariable::DoInitFromLLDBValue(lldb::SBValue value)
         m_hasChildren = true;
     }
 }
+#endif
+
+LLDBLocalVariable::~LLDBLocalVariable()
+{
+}
+
 
 void LLDBLocalVariable::FromJSON(const JSONElement& json)
 {

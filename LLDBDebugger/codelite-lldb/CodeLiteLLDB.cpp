@@ -1,3 +1,5 @@
+#ifndef __WXMSW__
+
 #include <wx/init.h>
 #include "CodeLiteLLDBApp.h"
 
@@ -16,3 +18,5 @@ int main(int argc, char** argv)
     app.MainLoop();
     return 0;
 }
+
+#endif

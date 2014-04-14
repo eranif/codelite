@@ -19,6 +19,7 @@
 #include "LLDBBreakpointsPane.h"
 #include "LLDBLocalsView.h"
 #include "json_node.h"
+#include <wx/msgdlg.h>
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
@@ -211,9 +212,19 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                 return;
             }
             
-            // Launch codelite-lldb
-            m_connector.LaunchDebugServer();
-        
+            // Launch codelite-lldb now. 
+            // Choose wether we need to debug a local or remote target
+            if ( bldConf->GetIsDbgRemoteTarget() ) {
+                // FIXME: connect to a remote debugger server
+                ::wxMessageBox(_("Remote debugging is not supported by LLDB"), "CodeLite", wxICON_WARNING|wxCENTER|wxOK);
+                return;
+
+            } else {
+                if ( !m_connector.LaunchDebugServer() ) {
+                    return;
+                }
+            }
+
             // Determine the executable to debug, working directory and arguments
             EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString());
             wxString exepath = bldConf->GetCommand();
@@ -255,7 +266,10 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                 CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
                 CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
 
-                if ( m_connector.ConnectToDebugger(5) ) {
+                if ( m_connector.ConnectToLocalDebugger(5) ) {
+                    // display the terminal panel
+                    wxString tty = ShowTerminal("LLDB Console Window");
+                    
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
                     m_mgr->GetAllBreakpoints(gdbBps);

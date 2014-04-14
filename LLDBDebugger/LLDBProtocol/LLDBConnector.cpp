@@ -9,6 +9,7 @@
 #include <wx/log.h>
 #include "environmentconfig.h"
 #include "json_node.h"
+#include <wx/msgdlg.h>
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
@@ -33,19 +34,19 @@ LLDBConnector::~LLDBConnector()
     Cleanup();
 }
 
-bool LLDBConnector::ConnectToDebugger(int timeout, const wxString &socketPath)
+bool LLDBConnector::ConnectToLocalDebugger(int timeout, const wxString &socketPath)
 {
+    
+#ifndef __WXMSW__1
     clSocketClient *client = new clSocketClient();
     m_socket.reset( client );
-    client->SetPath( socketPath.IsEmpty() ? GetDebugServerPath() : socketPath );
-    
     CL_DEBUG("Connecting to codelite-lldb on %s", GetDebugServerPath());
     
     long msTimeout = timeout * 1000;
     long retriesCount = msTimeout / 250; // We try every 250 ms to connect
     bool connected = false;
     for(long i=0; i<retriesCount; ++i) {
-        if ( !client->Connect() ) {
+        if ( !client->ConnectLocal( socketPath ) ) {
             wxThread::Sleep(250);
             continue;
         }
@@ -65,6 +66,10 @@ bool LLDBConnector::ConnectToDebugger(int timeout, const wxString &socketPath)
     m_thread->Start();
     CL_DEBUG("Successfully connected to codelite-lldb");
     return true;
+#else
+    CL_WARNING("LLDB Debugger: can't connect to local debugger - this is not support on MSW");
+    return false;
+#endif
 }
 
 void LLDBConnector::SendCommand(const LLDBCommand& command)
@@ -357,13 +362,19 @@ void LLDBConnector::Interrupt(eInterruptReason reason)
     SendCommand( command );
 }
 
-void LLDBConnector::LaunchDebugServer()
+bool LLDBConnector::LaunchDebugServer()
 {
+#ifdef __WXMSW__
+    // Not supported :(
+    ::wxMessageBox(_("Locally debugging with LLDB on Windows is not supported by LLDB"), "CodeLite", wxICON_WARNING|wxOK|wxCENTER);
+    return false;
+#endif
+
     CL_DEBUG("Launching codelite-lldb");
     // Start the debugger
     if ( m_process ) {
         // another debugger process is already running
-        return;
+        return false;
     }
     
     // Apply the environment before we start
@@ -388,11 +399,16 @@ void LLDBConnector::LaunchDebugServer()
     m_process = ::CreateAsyncProcess(this, command);
     if ( !m_process ) {
         CL_ERROR("LLDBConnector: failed to launch codelite-lldb: %s", fnCodeLiteLLDB.GetFullPath());
+        return false;
+        
+    } else {
+        CL_DEBUG("codelite-lldb launcged successfully. PID=%d\n", m_process->GetPid());
+        
     }
 #ifdef __WXMAC__
     ::wxUnsetEnv("LLDB_DEBUGSERVER_PATH");
 #endif
-    CL_DEBUG("codelite-lldb launcged successfully. PID=%d\n", m_process->GetPid());
+    return true;
 }
 
 void LLDBConnector::StopDebugServer()

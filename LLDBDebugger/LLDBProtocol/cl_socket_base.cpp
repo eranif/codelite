@@ -145,7 +145,7 @@ void clSocketBase::WriteMessage(const wxString& message) throw (clSocketExceptio
     std::string c_str = message.mb_str(wxConvUTF8).data();
     size_t len = c_str.length();
 
-    ::send(m_socket, &len, sizeof(len), 0);
+    ::send(m_socket, (const char*)&len, sizeof(len), 0);
 
     // now send the actual data
     Send(c_str);

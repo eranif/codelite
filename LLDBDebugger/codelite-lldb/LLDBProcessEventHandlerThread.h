@@ -1,6 +1,8 @@
 #ifndef LLDBHANDLERTHREAD_H
 #define LLDBHANDLERTHREAD_H
 
+#ifndef __WXMSW__
+
 #include <wx/thread.h>
 #include <lldb/API/SBListener.h>
 #include <lldb/API/SBProcess.h>
@@ -29,5 +31,5 @@ public:
 protected:
     virtual void* Entry();
 };
-
+#endif // !__WXMSW__
 #endif // LLDBHANDLERTHREAD_H

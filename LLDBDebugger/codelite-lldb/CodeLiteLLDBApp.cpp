@@ -1,3 +1,5 @@
+#ifndef __WXMSW__
+
 #include "CodeLiteLLDBApp.h"
 #include <iostream>
 #include <wx/sckaddr.h>
@@ -635,3 +637,5 @@ void CodeLiteLLDBApp::MainLoop()
         wxPrintf("codelite-lldb: an error occured during MainLoop(). %s. strerror=%s\n", e.what().c_str(), strerror(errno));
     }
 }
+
+#endif 

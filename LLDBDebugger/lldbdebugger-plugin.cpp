@@ -89,6 +89,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleInerrupt), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBDebuggerPlugin::OnBuildStarting), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBDebuggerPlugin::OnInitDone), NULL, this);
 }
 
 void LLDBDebuggerPlugin::UnPlug()
@@ -117,6 +118,7 @@ void LLDBDebuggerPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleBreakpoint), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_INTERRUPT, clDebugEventHandler(LLDBDebuggerPlugin::OnToggleInerrupt), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBDebuggerPlugin::OnBuildStarting), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBDebuggerPlugin::OnInitDone), NULL, this);
 }
 
 LLDBDebuggerPlugin::~LLDBDebuggerPlugin()
@@ -136,15 +138,16 @@ void LLDBDebuggerPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
     // Menu Bar > Settings > LLDB Settings
     
     // Get the main fram's menubar
-    wxMenuBar* mb = EventNotifier::Get()->TopFrame()->GetMenuBar();
-    
-    wxMenu *settingsMenu (NULL);
-    int menuPos = mb->FindMenu(_("Settings"));
-    if ( menuPos != wxNOT_FOUND ) {
-        settingsMenu = mb->GetMenu(menuPos);
-        if ( settingsMenu ) {
-            settingsMenu->Append(XRCID("lldb_settings"), _("LLDB Settings..."));
-            settingsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBDebuggerPlugin::OnSettings, this, XRCID("lldb_settings"));
+    wxMenuBar* mb = pluginsMenu->GetMenuBar();
+    if ( mb ) {
+        wxMenu *settingsMenu (NULL);
+        int menuPos = mb->FindMenu(_("Settings"));
+        if ( menuPos != wxNOT_FOUND ) {
+            settingsMenu = mb->GetMenu(menuPos);
+            if ( settingsMenu ) {
+                settingsMenu->Append(XRCID("lldb_settings"), _("LLDB Settings..."));
+                settingsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBDebuggerPlugin::OnSettings, this, XRCID("lldb_settings"));
+            }
         }
     }
 }
@@ -729,3 +732,7 @@ void LLDBDebuggerPlugin::OnSettings(wxCommandEvent& event)
     }
 }
 
+void LLDBDebuggerPlugin::OnInitDone(wxCommandEvent& event)
+{
+    event.Skip();
+}

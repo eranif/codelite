@@ -57,6 +57,7 @@ protected:
     void OnWorkspaceLoaded(wxCommandEvent &event);
     void OnWorkspaceClosed(wxCommandEvent &event);
     void OnSettings(wxCommandEvent &event);
+    void OnInitDone(wxCommandEvent &event);
     
     // UI debugger events
     void OnIsDebugger(clDebugEvent& event);

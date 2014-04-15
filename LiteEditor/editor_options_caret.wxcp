@@ -581,7 +581,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	"Auto adjust the borizontal toolbar to fit to the page content"
+											"m_value":	"Auto adjust the horizontal toolbar to fit to the page content"
 										}, {
 											"type":	"colour",
 											"m_label":	"Bg Colour:",

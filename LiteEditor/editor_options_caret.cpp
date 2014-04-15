@@ -58,7 +58,7 @@ EditorSettingsCaretBase::EditorSettingsCaretBase(wxWindow* parent, wxWindowID id
     
     m_checkBoxAdjustScrollbarSize = new wxCheckBox(this, wxID_ANY, _("Auto-adjust horizontal scrollbar width"), wxDefaultPosition, wxSize(-1, -1), 0);
     m_checkBoxAdjustScrollbarSize->SetValue(false);
-    m_checkBoxAdjustScrollbarSize->SetToolTip(_("Auto adjust the borizontal toolbar to fit to the page content"));
+    m_checkBoxAdjustScrollbarSize->SetToolTip(_("Auto adjust the horizontal toolbar to fit to the page content"));
     
     fgSizer1->Add(m_checkBoxAdjustScrollbarSize, 0, wxALL, 5);
     

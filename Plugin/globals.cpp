@@ -1580,8 +1580,7 @@ IProcess* LaunchTerminal(const wxString &title, IProcessCallback *processCB)
 {
 #ifdef __WXMSW__
     // Windows
-    tty.Clear();
-    pid = wxNOT_FOUND;
+    wxUnusedVar( title );
     wxUnusedVar( processCB );
     return NULL;
     

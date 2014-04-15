@@ -282,9 +282,6 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                 CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
 
                 if ( m_connector.ConnectToLocalDebugger(5) ) {
-                    // display the terminal panel
-                    wxString tty = ShowTerminal("LLDB Console Window");
-                    
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
                     m_mgr->GetAllBreakpoints(gdbBps);

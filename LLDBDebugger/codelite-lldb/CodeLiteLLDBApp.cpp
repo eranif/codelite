@@ -16,6 +16,7 @@
 #include "LLDBProtocol/LLDBLocalVariable.h"
 #include <wx/msgqueue.h>
 #include <wx/wxcrtvararg.h>
+#include <wx/tokenzr.h>
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -72,11 +73,14 @@ CodeLiteLLDBApp::CodeLiteLLDBApp(const wxString& socketPath)
     wxPrintf("codelite-lldb: lldb initialized successfully\n");
     
     // register our summary
+<<<<<<< HEAD
     lldb::SBCommandReturnObject ret;
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxRect --summary-string \"x = ${var.x}, y = ${var.y}, width = ${var.width}, height = ${var.height}\"" , ret);
     m_debugger.GetCommandInterpreter().HandleCommand("type summary add wxSize --summary-string \"height = ${var.y}, width = ${var.x}\"" , ret);
+=======
+>>>>>>> LLDB Debugger: added settings dialog: Settings > LLDB Settings
     OnInit();
 }
 
@@ -137,7 +141,19 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
     m_debugger = lldb::SBDebugger::Create();
     m_target = m_debugger.CreateTarget(command.GetExecutable().mb_str().data());
     m_debugger.SetAsync(true);
-
+    
+    // Keep the settings
+    m_settings = command.GetSettings();
+    
+    // Apply the types 
+    wxArrayString commands = ::wxStringTokenize(m_settings.GetTypes(), "\n", wxTOKEN_STRTOK);
+    for(size_t i=0; i<commands.GetCount(); ++i) {
+        lldb::SBCommandReturnObject ret;
+        std::string c_command = commands.Item(i).Trim().mb_str(wxConvUTF8).data();
+        wxPrintf("codelite-lldb: executing: '%s'\n", c_command.c_str());
+        m_debugger.GetCommandInterpreter().HandleCommand(c_command.c_str() , ret);
+    }
+    
     wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
     
     // Launch the thread that will handle the LLDB process events

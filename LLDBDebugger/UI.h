@@ -23,6 +23,13 @@
 #include <wx/checkbox.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
+#include <wx/stc/stc.h>
+#include <wx/hyperlink.h>
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -99,14 +106,27 @@ public:
 class LLDBSettingDialogBase : public wxDialog
 {
 protected:
+    wxNotebook* m_notebook87;
+    wxPanel* m_panel89;
+    wxPropertyGridManager* m_pgMgrDisplayProperties;
+    wxPGProperty* m_pgPropCatGeneral;
+    wxPGProperty* m_pgPropRaiseCodeLite;
+    wxPGProperty* m_pgPropArraySize;
+    wxPGProperty* m_pgPropCallStackSize;
+    wxPanel* m_panel91;
+    wxStyledTextCtrl* m_stcTypes;
+    wxHyperlinkCtrl* m_hyperLink111;
     wxStdDialogButtonSizer* m_stdBtnSizer79;
     wxButton* m_button81;
     wxButton* m_button83;
 
 protected:
+    virtual void OnGeneralValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE);
+    LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~LLDBSettingDialogBase();
 };
 

@@ -232,6 +232,100 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer77 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer77);
     
+    m_notebook87 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    
+    boxSizer77->Add(m_notebook87, 1, wxALL|wxEXPAND, 5);
+    
+    m_panel89 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_panel89, _("Display"), true);
+    
+    wxBoxSizer* boxSizer93 = new wxBoxSizer(wxVERTICAL);
+    m_panel89->SetSizer(boxSizer93);
+    
+    wxArrayString m_pgMgrDisplayPropertiesArr;
+    wxUnusedVar(m_pgMgrDisplayPropertiesArr);
+    wxArrayInt m_pgMgrDisplayPropertiesIntArr;
+    wxUnusedVar(m_pgMgrDisplayPropertiesIntArr);
+    m_pgMgrDisplayProperties = new wxPropertyGridManager(m_panel89, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    
+    boxSizer93->Add(m_pgMgrDisplayProperties, 1, wxALL|wxEXPAND, 5);
+    
+    m_pgPropCatGeneral = m_pgMgrDisplayProperties->Append(  new wxPropertyCategory( _("General") ) );
+    m_pgPropCatGeneral->SetHelpString(wxT(""));
+    
+    m_pgPropRaiseCodeLite = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxBoolProperty( _("Raise CodeLite when breakpoint hit"), wxPG_LABEL, 1) );
+    m_pgPropRaiseCodeLite->SetHelpString(_("When a breakpoint is hit, notify the user raising CodeLite"));
+    
+    m_pgPropArraySize = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxIntProperty( _("Max number of array elements"), wxPG_LABEL, 50) );
+    m_pgPropArraySize->SetHelpString(_("The maximum number of eleements to display in arrays"));
+    
+    m_pgPropCallStackSize = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxIntProperty( _("Backtrace frames"), wxPG_LABEL, 100) );
+    m_pgPropCallStackSize->SetHelpString(_("Maximum number of frames to show in the callstack window"));
+    
+    m_panel91 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_panel91, _("Types"), false);
+    
+    wxBoxSizer* boxSizer107 = new wxBoxSizer(wxVERTICAL);
+    m_panel91->SetSizer(boxSizer107);
+    
+    m_stcTypes = new wxStyledTextCtrl(m_panel91, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    #ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+    wxFont m_stcTypesFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_stcTypesFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #else
+    wxFont m_stcTypesFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    m_stcTypesFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    #endif
+    m_stcTypes->SetFont(m_stcTypesFont);
+    m_stcTypes->SetToolTip(_("LLDB has a data formatters subsystem that allows users to define custom display options for their variables\nYou can set here the types to pass to LLDB"));
+    // Configure the fold margin
+    m_stcTypes->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_stcTypes->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcTypes->SetMarginSensitive(4, true);
+    m_stcTypes->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_stcTypes->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_stcTypes->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_stcTypes->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcTypes->SetMarginWidth(2, 0);
+    m_stcTypes->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_stcTypes->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcTypes->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_stcTypes->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcTypes->SetMarginMask(3, 0);
+    m_stcTypes->SetMarginWidth(3,0);
+    // Select the lexer
+    m_stcTypes->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcTypes->StyleClearAll();
+    for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
+        m_stcTypes->StyleSetFont(i, m_stcTypesFont);
+    }
+    m_stcTypes->SetWrapMode(0);
+    m_stcTypes->SetIndentationGuides(0);
+    m_stcTypes->SetKeyWords(0, wxT(""));
+    m_stcTypes->SetKeyWords(1, wxT(""));
+    m_stcTypes->SetKeyWords(2, wxT(""));
+    m_stcTypes->SetKeyWords(3, wxT(""));
+    m_stcTypes->SetKeyWords(4, wxT(""));
+    
+    boxSizer107->Add(m_stcTypes, 1, wxALL|wxEXPAND, 5);
+    
+    m_hyperLink111 = new wxHyperlinkCtrl(m_panel91, wxID_ANY, _("Learn more about LLDB types"), wxT("http://lldb.llvm.org/varformats.html"), wxDefaultPosition, wxSize(-1,-1), wxHL_DEFAULT_STYLE);
+    m_hyperLink111->SetNormalColour(wxColour(wxT("#0000FF")));
+    m_hyperLink111->SetHoverColour(wxColour(wxT("#0000FF")));
+    m_hyperLink111->SetVisitedColour(wxColour(wxT("#FF0000")));
+    
+    boxSizer107->Add(m_hyperLink111, 0, wxALL, 5);
+    
     m_stdBtnSizer79 = new wxStdDialogButtonSizer();
     
     boxSizer77->Add(m_stdBtnSizer79, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -244,13 +338,22 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_stdBtnSizer79->AddButton(m_button83);
     m_stdBtnSizer79->Realize();
     
-    SetSizeHints(500,300);
+    SetSizeHints(-1,-1);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_pgMgrDisplayProperties->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
+    m_stcTypes->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(LLDBSettingDialogBase::OnStcUpdateUI), NULL, this);
+    m_button83->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
+    
 }
 
 LLDBSettingDialogBase::~LLDBSettingDialogBase()
 {
+    m_pgMgrDisplayProperties->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
+    m_stcTypes->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(LLDBSettingDialogBase::OnStcUpdateUI), NULL, this);
+    m_button83->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
+    
 }

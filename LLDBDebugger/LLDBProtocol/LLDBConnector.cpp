@@ -10,6 +10,7 @@
 #include "environmentconfig.h"
 #include "json_node.h"
 #include <wx/msgdlg.h>
+#include "LLDBSettings.h"
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
@@ -305,6 +306,11 @@ void LLDBConnector::Start(const LLDBCommand& runCommand)
     LLDBCommand startCommand;
     startCommand.SetExecutable( runCommand.GetExecutable() );
     startCommand.SetCommandType( kCommandStart );
+    
+    // send the settings as well
+    LLDBSettings settings;
+    settings.Load();
+    startCommand.SetSettings( settings );
     SendCommand( startCommand );
 
     // stash the runCommand for the future 'Run()' call

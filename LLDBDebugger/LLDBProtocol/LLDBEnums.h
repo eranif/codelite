@@ -43,5 +43,8 @@ enum eCommandType {
     kCommandExpandVariable,
 };
 
+enum eLLDBOptions {
+    kLLDBOptionRaiseCodeLite = 0x00000001,
+};
 #endif
 

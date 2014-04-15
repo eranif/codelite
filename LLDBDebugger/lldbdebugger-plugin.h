@@ -54,6 +54,7 @@ protected:
     // Other codelite events
     void OnWorkspaceLoaded(wxCommandEvent &event);
     void OnWorkspaceClosed(wxCommandEvent &event);
+    void OnSettings(wxCommandEvent &event);
     
     // UI debugger events
     void OnIsDebugger(clDebugEvent& event);

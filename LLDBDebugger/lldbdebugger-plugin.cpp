@@ -14,12 +14,13 @@
 #include "bookmark_manager.h"
 #include <wx/msgdlg.h>
 #include "LLDBCallStack.h"
-#include "LLDBSettings.h"
+#include "LLDBProtocol/LLDBSettings.h"
 #include "bookmark_manager.h"
 #include "LLDBBreakpointsPane.h"
 #include "LLDBLocalsView.h"
 #include "json_node.h"
 #include <wx/msgdlg.h>
+#include "LLDBSettingDialog.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
@@ -128,7 +129,21 @@ clToolBar *LLDBDebuggerPlugin::CreateToolBar(wxWindow *parent)
 
 void LLDBDebuggerPlugin::CreatePluginMenu(wxMenu *pluginsMenu)
 {
-    wxUnusedVar(pluginsMenu);
+    // We want to add an entry in the global settings mene
+    // Menu Bar > Settings > LLDB Settings
+    
+    // Get the main fram's menubar
+    wxMenuBar* mb = EventNotifier::Get()->TopFrame()->GetMenuBar();
+    
+    wxMenu *settingsMenu (NULL);
+    int menuPos = mb->FindMenu(_("Settings"));
+    if ( menuPos != wxNOT_FOUND ) {
+        settingsMenu = mb->GetMenu(menuPos);
+        if ( settingsMenu ) {
+            settingsMenu->Append(XRCID("lldb_settings"), _("LLDB Settings..."));
+            settingsMenu->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBDebuggerPlugin::OnSettings, this, XRCID("lldb_settings"));
+        }
+    }
 }
 
 void LLDBDebuggerPlugin::HookPopupMenu(wxMenu *menu, MenuType type)
@@ -478,9 +493,7 @@ void LLDBDebuggerPlugin::LoadLLDBPerspective()
 {
     // store the previous perspective before we continue
     m_defaultPerspective = m_mgr->GetDockingManager()->SavePerspective();
-
-    LLDBSettings settings;
-    wxString perspective = settings.Load().LoadPerspective();
+    wxString perspective = LLDBSettings::LoadPerspective();
     if ( !perspective.IsEmpty() ) {
         m_mgr->GetDockingManager()->LoadPerspective( perspective, false );
     }
@@ -494,10 +507,7 @@ void LLDBDebuggerPlugin::LoadLLDBPerspective()
 
 void LLDBDebuggerPlugin::SaveLLDBPerspective()
 {
-    LLDBSettings settings;
-    settings.Load();
-    settings.SavePerspective( m_mgr->GetDockingManager()->SavePerspective() );
-    settings.Save();
+    LLDBSettings::SavePerspective( m_mgr->GetDockingManager()->SavePerspective() );
 }
 
 void LLDBDebuggerPlugin::ShowLLDBPane(const wxString& paneName, bool show)
@@ -684,3 +694,13 @@ void LLDBDebuggerPlugin::OnBuildStarting(clBuildEvent& event)
         event.Skip();
     }
 }
+
+void LLDBDebuggerPlugin::OnSettings(wxCommandEvent& event)
+{
+    event.Skip();
+    LLDBSettingDialog dlg(EventNotifier::Get()->TopFrame());
+    if ( dlg.ShowModal() == wxID_OK ) {
+        dlg.Save();
+    }
+}
+

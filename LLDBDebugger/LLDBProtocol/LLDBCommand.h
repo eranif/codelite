@@ -5,6 +5,7 @@
 #include "json_node.h"
 #include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
+#include "LLDBSettings.h"
 
 class LLDBCommand
 {
@@ -18,6 +19,7 @@ protected:
     int                        m_interruptReason;
     int                        m_lldbId;
     JSONElement::wxStringMap_t m_env;
+    LLDBSettings          m_settings;
 
 public:
     // Serialization API
@@ -53,6 +55,12 @@ public:
     }
     const JSONElement::wxStringMap_t& GetEnv() const {
         return m_env;
+    }
+    void SetSettings(const LLDBSettings& settings) {
+        this->m_settings = settings;
+    }
+    const LLDBSettings& GetSettings() const {
+        return m_settings;
     }
     void SetLldbId(int lldbId) {
         this->m_lldbId = lldbId;

@@ -17,6 +17,7 @@
 #include "LLDBProtocol/LLDBLocalVariable.h"
 #include <lldb/API/SBValue.h>
 #include <wx/msgqueue.h>
+#include "LLDBProtocol/LLDBSettings.h"
 
 class CodeLiteLLDBApp 
 {
@@ -40,6 +41,8 @@ protected:
     wxMessageQueue<CodeLiteLLDBApp::NotifyFunc_t>   m_notify_queue;
     wxString                                        m_debuggerSocketPath;
     bool                                            m_exitMainLoop;
+    LLDBSettings                                    m_settings;
+    
 private:
     void Cleanup();
     void AcceptNewConnection() throw(clSocketException);

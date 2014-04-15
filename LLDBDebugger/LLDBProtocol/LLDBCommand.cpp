@@ -27,6 +27,11 @@ void LLDBCommand::FromJSON(const JSONElement& json)
         bp->FromJSON( arr.arrayItem(i) );
         m_breakpoints.push_back( bp );
     }
+    
+    if ( m_commandType == kCommandStart ) {
+        // In the "Start" command we should also receive the settings data
+        m_settings.FromJSON( json.namedObject("m_settings") );
+    }
 }
 
 JSONElement LLDBCommand::ToJSON() const
@@ -46,6 +51,11 @@ JSONElement LLDBCommand::ToJSON() const
     
     for(size_t i=0; i<m_breakpoints.size(); ++i) {
         bparr.arrayAppend( m_breakpoints.at(i)->ToJSON() );
+    }
+    
+    if ( m_commandType == kCommandStart ) {
+        // In the "Start" command we should also send the settings data
+        json.addProperty("m_settings", m_settings.ToJSON());
     }
     return json;
 }

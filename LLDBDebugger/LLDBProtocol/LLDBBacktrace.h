@@ -3,6 +3,7 @@
 
 #include <wx/string.h>
 #include <vector>
+#include "LLDBSettings.h"
 
 #ifndef __WXMSW__
 #   include "lldb/API/SBBlock.h"
@@ -49,7 +50,7 @@ protected:
 public:
 
 #ifndef __WXMSW__
-    LLDBBacktrace(lldb::SBThread &thread);
+    LLDBBacktrace(lldb::SBThread &thread, const LLDBSettings& settings);
 #endif
 
     LLDBBacktrace() : m_threadId (0) {}

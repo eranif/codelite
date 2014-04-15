@@ -2,12 +2,16 @@
 #include <wx/filename.h>
 
 #ifndef __WXMSW__
-LLDBBacktrace::LLDBBacktrace(lldb::SBThread &thread)
+LLDBBacktrace::LLDBBacktrace(lldb::SBThread &thread, const LLDBSettings& settings)
 {
     m_callstack.clear();
     if ( thread.IsValid() ) {
+        
         m_threadId = thread.GetIndexID();
-        int nFrames = thread.GetNumFrames();
+        int nFrames(0);
+        
+        // limit the number of frames to display
+        thread.GetNumFrames() > settings.GetMaxCallstackFrames() ? nFrames = settings.GetMaxCallstackFrames() : nFrames = thread.GetNumFrames();
         for(int j=0; j<nFrames; ++j) {
             
             lldb::SBFrame frame = thread.GetFrameAtIndex(j);

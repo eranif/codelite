@@ -252,7 +252,7 @@ void CodeLiteLLDBApp::NotifyStopped()
     reply.SetInterruptResaon( m_interruptReason );
     
     lldb::SBThread thread = m_target.GetProcess().GetSelectedThread();
-    LLDBBacktrace bt( thread );
+    LLDBBacktrace bt( thread, m_settings );
     reply.SetBacktrace( bt );
     
     // set the selected frame file:line
@@ -562,7 +562,6 @@ void CodeLiteLLDBApp::NotifyLocals(LLDBLocalVariable::Vect_t locals)
 // we stashed the variables we got so far inside a map
 void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
 {
-    static const int MAX_ARRAY_SIZE = 50;
     wxPrintf("codelite-lldb: ExpandVariable called for variableId=%d\n", command.GetLldbId());
     int variableId = command.GetLldbId();
     if ( variableId == wxNOT_FOUND ) {
@@ -574,20 +573,13 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
     if ( iter != m_variables.end() ) {
         lldb::SBValue value = iter->second;
         int size = value.GetNumChildren();
-        
+
         lldb::TypeClass typeClass = value.GetType().GetTypeClass();
         if ( typeClass == lldb::eTypeClassArray ) {
-            size > MAX_ARRAY_SIZE ? size = MAX_ARRAY_SIZE : size = size;
+            size > m_settings.GetMaxArrayElements() ? size = m_settings.GetMaxArrayElements() : size = size;
             wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", value.GetName());
         }
-        
-        /* else if ( typeClass == lldb::eTypeClassMemberPointer && value.GetType().GetBasicType() == lldb::eBasicTypeInvalid ) {
-            // pointer of non primitive
-            // derefernce the current value
-            wxPrintf("codelite-lldb: value is a member pointer of non primitive type - dereferecing it\n");
-            value = value.Dereference();
-        }*/
-        
+
         for(int i=0; i<size; ++i) {
             lldb::SBValue child = value.GetChildAtIndex(i);
             if ( child.IsValid() ) {

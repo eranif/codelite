@@ -29,6 +29,7 @@ public:
         wxPrintf("-d | --working-directory Set the working directory\n");
         wxPrintf("-p | --print-info        Print terminal info to stdout\n");
         wxPrintf("-z | --always-on-top     The terminal is always on top of all windows\n");
+        wxPrintf("-g | --dbg-terminal      The terminal is for debugging redirection purposes\n");
         wxPrintf("\n");
         exit(1);
     }
@@ -44,6 +45,7 @@ public:
         parser.AddOption("w", "wait"); // optional, no value
         parser.AddOption("p", "print-info"); // optional
         parser.AddOption("z", "always-on-top"); // optional
+        parser.AddOption("g", "dbg-terminal"); // optional
         parser.Parse();
 
         {
@@ -76,6 +78,7 @@ public:
         options.EnableFlag( TerminalOptions::kPauseBeforeExit,              parser.HasOption("w", "wait") );
         options.EnableFlag( TerminalOptions::kPrintInfo,                    parser.HasOption("p", "print-info") );
         options.EnableFlag( TerminalOptions::kAlwaysOnTop,                  parser.HasOption("z", "always-on-top") );
+        options.EnableFlag( TerminalOptions::kDebuggerTerminal,             parser.HasOption("g", "dbg-terminal") );
         options.SetCommand( commandToRun );
 
         long style = wxDEFAULT_FRAME_STYLE;

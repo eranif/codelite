@@ -75,16 +75,22 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options, long styl
             fp.Close();
         }
     }
-
+    
     SetCartAtEnd();
-    m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_DOTDOTDOT);
+    m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_ARROWS);
     m_stc->MarkerSetBackground(MARKER_ID, *wxBLACK);
     //m_stc->MarkerSetAlpha(MARKER_ID, 5);
     SetSize( m_config.GetTerminalSize() );
     SetPosition( m_config.GetTerminalPosition() );
 
     DoApplySettings();
-    CallAfter( &MainFrame::DoExecStartCommand );
+    
+    if ( options.HasFlag( TerminalOptions::kDebuggerTerminal) ) {
+        
+    } else {
+        CallAfter( &MainFrame::DoExecStartCommand );
+        
+    }
 
     // Connect color menu items
     Connect(ID_BG_COLOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSelectBgColour), NULL, this);
@@ -143,7 +149,13 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
     }
 
     if ( event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER ) {
-        if ( m_process ) {
+        if ( m_dummyProcess && m_options.HasFlag( TerminalOptions::kDebuggerTerminal ) ) {
+            // write the output to the dummy process
+            wxString cmd = GetCurrentLine();
+            AppendNewLine();
+            m_dummyProcess->Write( cmd );
+
+        } else if ( m_process ) {
             wxString cmd = GetCurrentLine();
             AppendNewLine();
             m_process->Write( cmd );

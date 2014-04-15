@@ -1576,12 +1576,13 @@ wxArrayString SplitString(const wxString &inString, bool trim)
     return lines;
 }
 
-IProcess* LaunchTerminal(const wxString &title, IProcessCallback *processCB)
+IProcess* LaunchTerminal(const wxString &title, bool forDebugger, IProcessCallback *processCB)
 {
 #ifdef __WXMSW__
     // Windows
     wxUnusedVar( title );
     wxUnusedVar( processCB );
+    wxUnusedVar( forDebugger );
     return NULL;
     
 #else
@@ -1593,8 +1594,12 @@ IProcess* LaunchTerminal(const wxString &title, IProcessCallback *processCB)
 #else 
     command << fnCodeliteTerminal.GetPath(true) << "codelite-terminal ";
 #endif
-    command << " --print-info ";
     // command << " --always-on-top ";
+    command << " --print-info ";
+    
+    if ( forDebugger ) {
+        command << " --dbg-terminal ";
+    }
     command << " --title \"" << title << "\"";
     
     CL_DEBUG("Launching Terminal: %s", command);

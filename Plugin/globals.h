@@ -410,7 +410,7 @@ WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxSt
 /**
  * @brief launch codelite terminal and return its TTY
  */
-WXDLLIMPEXP_SDK  IProcess* LaunchTerminal(const wxString &title, IProcessCallback* processCB);
+WXDLLIMPEXP_SDK  IProcess* LaunchTerminal(const wxString &title, bool forDebugger, IProcessCallback* processCB);
 
 /**
  * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"

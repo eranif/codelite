@@ -11,6 +11,7 @@ public:
         kExitWhenInfiriorTerminates = 0x00000002,
         kPrintInfo                  = 0x00000004,
         kAlwaysOnTop                = 0x00000008,
+        kDebuggerTerminal           = 0x00000010,
     };
 
 protected:

@@ -267,7 +267,7 @@ void LLDBDebuggerPlugin::OnDebugStart(clDebugEvent& event)
                 TerminateTerminal();
                 
                 LLDBTerminalCallback* terminalCallback = new LLDBTerminalCallback(&m_connector);
-                IProcess* handle = ::LaunchTerminal(execToDebug.GetFullPath(), terminalCallback);
+                IProcess* handle = ::LaunchTerminal(execToDebug.GetFullPath(), true, terminalCallback);
                 if ( !handle ) {
                     CL_DEBUG("Failed to launch debugger terminal!");
                     DoCleanup();

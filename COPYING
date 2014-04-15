@@ -356,5 +356,12 @@ and the plugin is NOT one of the official plugins (see list below):
 - Subversion
 - UnitTestPP
 - wxFormBuilder plugin
+- Tweaks
+- CMakePlugin
+- CodeLiteDiff
+- SFTP
+- ZoomNavigator
+- git
+- LLDB Debugger
 
 Can be distributed under a license other than the GPL

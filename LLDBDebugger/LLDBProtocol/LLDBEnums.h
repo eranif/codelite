@@ -41,6 +41,7 @@ enum eCommandType {
     kCommandInterrupt,
     kCommandGetLocals,
     kCommandExpandVariable,
+    kCommandSelectFrame,
 };
 
 enum eLLDBOptions {

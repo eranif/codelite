@@ -341,9 +341,9 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
     
     // instruct the debugger to 'Run'
 #ifdef __WXMSW__
-        wxFileName fnTerminalOutout( wxFileName::GetTempDir(), "codelite-terminal.txt" );
+    wxFileName fnTerminalOutout( wxFileName::GetTempDir(), "codelite-terminal.txt" );
 #else
-        wxFileName fnTerminalOutout( "/tmp/codelite-terminal.txt" );
+    wxFileName fnTerminalOutout( "/tmp/codelite-terminal.txt" );
 #endif
     CL_DEBUG("Searching for terminal info file: %s", fnTerminalOutout.GetFullPath());
     
@@ -366,7 +366,7 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
         DoCleanup();
         return;
     }
-
+    
     JSONRoot root( fnTerminalOutout );
     wxString tty = root.toElement().namedObject("tty").toString();
     m_terminalPID = root.toElement().namedObject("ProcessID").toInt(wxNOT_FOUND);
@@ -376,6 +376,11 @@ void LLDBDebuggerPlugin::OnLLDBStarted(LLDBEvent& event)
     CL_DEBUG("CODELITE>> LLDB started");
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
     EventNotifier::Get()->AddPendingEvent( e2 );
+    
+    {
+        wxLogNull noLog;
+        ::wxRemoveFile( fnTerminalOutout.GetFullPath() );
+    }
 }
 
 void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
@@ -426,6 +431,7 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
         CL_DEBUG("Deleting all pending deletion breakpoints");
         m_connector.DeleteBreakpoints();
         m_connector.Continue();
+        
     }
 }
 

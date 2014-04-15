@@ -103,6 +103,7 @@ public:
     void Interrupt(const LLDBCommand& command);
     void LocalVariables(const LLDBCommand& command);
     void ExpandVariable(const LLDBCommand& command);
+    void SelectFrame(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

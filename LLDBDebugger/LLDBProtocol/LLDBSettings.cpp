@@ -10,7 +10,7 @@ static const wxString s_DefaultTypes =
 
 LLDBSettings::LLDBSettings()
     : m_arrItems(50)
-    , m_flags(0)
+    , m_flags(kLLDBOptionRaiseCodeLite)
     , m_stackFrames(100)
 {
     m_types = s_DefaultTypes;

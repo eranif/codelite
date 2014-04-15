@@ -467,6 +467,16 @@ wxString LLDBConnector::GetDebugServerPath() const
     return path;
 }
 
+void LLDBConnector::SelectFrame(int frameID)
+{
+    if ( IsCanInteract() ) {
+        LLDBCommand command;
+        command.SetCommandType( kCommandSelectFrame );
+        command.SetFrameId( frameID );
+        SendCommand( command );
+    }
+}
+
 
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str)
 {

@@ -10,6 +10,7 @@ class LLDBCallStackPane : public LLDBCallStackBase
 {
     LLDBConnector* m_connector;
 protected:
+    virtual void OnItemActivated(wxDataViewEvent& event);
     void OnBacktrace(LLDBEvent &event);
     void OnRunning(LLDBEvent &event);
     

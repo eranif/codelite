@@ -230,6 +230,11 @@ public:
      * @param reason
      */
     void Interrupt(eInterruptReason reason);
+    
+    /**
+     * @brief select a given frame
+     */
+    void SelectFrame(int frameID);
 };
 
 #endif // LLDBCONNECTOR_H

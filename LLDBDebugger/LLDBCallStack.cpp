@@ -2,6 +2,7 @@
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBConnector.h"
 #include <wx/wupdlock.h>
+#include "macros.h"
 
 LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBConnector* connector)
     : LLDBCallStackBase(parent)
@@ -39,4 +40,12 @@ void LLDBCallStackPane::OnRunning(LLDBEvent& event)
 {
     event.Skip();
     m_dvListCtrlBacktrace->DeleteAllItems();
+}
+
+void LLDBCallStackPane::OnItemActivated(wxDataViewEvent& event)
+{
+    // Activate the selected frame
+    CHECK_ITEM_RET(event.GetItem());
+    int rowNum = m_dvListCtrlBacktrace->ItemToRow( event.GetItem() );
+    m_connector->SelectFrame( rowNum );
 }

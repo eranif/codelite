@@ -19,7 +19,8 @@ protected:
     int                        m_interruptReason;
     int                        m_lldbId;
     JSONElement::wxStringMap_t m_env;
-    LLDBSettings          m_settings;
+    LLDBSettings               m_settings;
+    int                        m_frameId;
 
 public:
     // Serialization API
@@ -29,16 +30,17 @@ public:
     LLDBCommand() : m_commandType(kCommandInvalid), m_interruptReason(kInterruptReasonNone), m_lldbId(0) {}
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
-    
+
     void FillEnvFromMemory();
     /**
      * @brief return an environment array
-     * The environment array is allocated on the heap and should be deleted 
+     * The environment array is allocated on the heap and should be deleted
      * by the caller
      */
     char **GetEnvArray() const;
-    
+
     void Clear() {
+        m_frameId = wxNOT_FOUND;
         m_env.clear();
         m_commandType = kCommandInvalid;
         m_commandArguments.clear();
@@ -50,6 +52,12 @@ public:
         m_lldbId = wxNOT_FOUND;
     }
 
+    void SetFrameId(int frameId) {
+        this->m_frameId = frameId;
+    }
+    int GetFrameId() const {
+        return m_frameId;
+    }
     void SetEnv(const JSONElement::wxStringMap_t& env) {
         this->m_env = env;
     }

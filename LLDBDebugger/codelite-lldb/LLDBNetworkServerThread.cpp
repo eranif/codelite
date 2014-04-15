@@ -90,6 +90,10 @@ void* LLDBNetworkServerThread::Entry()
                 case kCommandExpandVariable:
                     m_app->CallAfter( &CodeLiteLLDBApp::ExpandVariable, command);
                     break;
+                
+                case kCommandSelectFrame:
+                    m_app->CallAfter( &CodeLiteLLDBApp::SelectFrame, command );
+                    break;
                     
                 default:
                     break;

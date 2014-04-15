@@ -37,6 +37,7 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlBacktrace;
 
 protected:
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     LLDBCallStackBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);

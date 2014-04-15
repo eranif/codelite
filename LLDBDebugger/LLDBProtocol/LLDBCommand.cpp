@@ -20,6 +20,7 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_interruptReason = json.namedObject("m_interruptReason").toInt(kInterruptReasonNone);
     m_lldbId = json.namedObject("m_lldbId").toInt(wxNOT_FOUND);
     m_env = json.namedObject("m_env").toStringMap();
+    m_frameId = json.namedObject("m_frameId").toInt(wxNOT_FOUND);
     
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i=0; i<arr.arraySize(); ++i) {
@@ -45,6 +46,7 @@ JSONElement LLDBCommand::ToJSON() const
     json.addProperty("m_interruptReason", m_interruptReason);
     json.addProperty("m_lldbId", m_lldbId);
     json.addProperty("m_env", m_env);
+    json.addProperty("m_frameId", m_frameId);
     
     JSONElement bparr = JSONElement::createArray("m_breakpoints");
     json.append( bparr );

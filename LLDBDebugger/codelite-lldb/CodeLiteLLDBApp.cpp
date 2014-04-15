@@ -639,4 +639,14 @@ void CodeLiteLLDBApp::MainLoop()
     }
 }
 
+void CodeLiteLLDBApp::SelectFrame(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: selecting frame %d\n", command.GetFrameId());
+    if ( CanInteract() ) {
+        m_target.GetProcess().GetSelectedThread().SetSelectedFrame( command.GetFrameId() );
+        m_interruptReason = kInterruptReasonNone;
+        NotifyStopped();
+    }
+}
+
 #endif 

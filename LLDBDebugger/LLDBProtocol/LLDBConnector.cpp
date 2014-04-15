@@ -35,10 +35,10 @@ LLDBConnector::~LLDBConnector()
     Cleanup();
 }
 
-bool LLDBConnector::ConnectToLocalDebugger(int timeout, const wxString &socketPath)
+bool LLDBConnector::ConnectToLocalDebugger(int timeout)
 {
     
-#ifndef __WXMSW__1
+#ifndef __WXMSW__
     clSocketClient *client = new clSocketClient();
     m_socket.reset( client );
     CL_DEBUG("Connecting to codelite-lldb on %s", GetDebugServerPath());
@@ -47,7 +47,7 @@ bool LLDBConnector::ConnectToLocalDebugger(int timeout, const wxString &socketPa
     long retriesCount = msTimeout / 250; // We try every 250 ms to connect
     bool connected = false;
     for(long i=0; i<retriesCount; ++i) {
-        if ( !client->ConnectLocal( socketPath ) ) {
+        if ( !client->ConnectLocal( GetDebugServerPath() ) ) {
             wxThread::Sleep(250);
             continue;
         }

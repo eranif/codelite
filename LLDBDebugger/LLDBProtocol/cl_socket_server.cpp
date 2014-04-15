@@ -3,9 +3,11 @@
 #ifndef _WIN32
 #   include <unistd.h>
 #include <sys/stat.h>
+#include <arpa/inet.h>
 #   include <sys/types.h>
 #   include <sys/socket.h>
 #   include <sys/un.h>
+#   include <netinet/in.h>
 #   include <stdio.h>
 #endif
 
@@ -83,7 +85,11 @@ void clSocketServer::CreateServer(const std::string &address, int port) throw (c
     // Prepare the sockaddr_in structure
     struct sockaddr_in server;
     server.sin_family = AF_INET;
+#ifdef __WXMSW__
     server.sin_addr.s_addr = inet_addr( address.c_str() );
+#else
+    inet_pton(AF_INET, address.c_str(), &server.sin_addr);
+#endif
     server.sin_port = htons( port );
 
     // Bind

@@ -8,6 +8,7 @@
 #include "LLDBProtocol/LLDBConnector.h"
 #include "LLDBProtocol/LLDBEvent.h"
 
+class LLDBThreadsView;
 class LLDBLocalsView;
 class LLDBBreakpointsPane;
 class ConsoleFrame;
@@ -23,6 +24,7 @@ class LLDBDebuggerPlugin : public IPlugin
     LLDBCallStackPane*      m_callstack;
     LLDBBreakpointsPane*    m_breakpointsView;
     LLDBLocalsView*         m_localsView;
+    LLDBThreadsView*        m_threadsView;
     int                     m_terminalPID;
     
 public:

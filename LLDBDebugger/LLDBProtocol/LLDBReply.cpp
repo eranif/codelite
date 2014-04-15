@@ -39,6 +39,8 @@ void LLDBReply::FromJSON(const JSONElement& json)
     m_backtrace.Clear();
     JSONElement backtrace = json.namedObject("m_backtrace");
     m_backtrace.FromJSON( backtrace );
+    
+    m_threads = LLDBThread::FromJSON( json, "m_threads" );
 }
 
 JSONElement LLDBReply::ToJSON() const
@@ -63,6 +65,7 @@ JSONElement LLDBReply::ToJSON() const
     }
 
     json.addProperty("m_backtrace", m_backtrace.ToJSON());
+    json.append( LLDBThread::ToJSON(m_threads, "m_threads") );
     return json;
 }
 

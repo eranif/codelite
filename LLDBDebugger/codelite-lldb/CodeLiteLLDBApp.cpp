@@ -255,6 +255,8 @@ void CodeLiteLLDBApp::NotifyStopped()
     LLDBBacktrace bt( thread, m_settings );
     reply.SetBacktrace( bt );
     
+    int selectedThreadId = thread.GetThreadID();
+    
     // set the selected frame file:line
     if ( thread.IsValid() && thread.GetSelectedFrame().IsValid() ) {
         lldb::SBFrame frame = thread.GetSelectedFrame();
@@ -265,6 +267,27 @@ void CodeLiteLLDBApp::NotifyStopped()
             reply.SetFilename( wxFileName(fileSepc.GetDirectory(), fileSepc.GetFilename()).GetFullPath() );
         }
     }
+    
+    // Prepare list of threads
+    LLDBThread::Vect_t threads;
+    int threadCount = m_target.GetProcess().GetNumThreads();
+    for(int i=0; i<threadCount; ++i) {
+        LLDBThread t;
+        lldb::SBThread thr = m_target.GetProcess().GetThreadAtIndex(i);
+        t.SetId( thr.GetThreadID() );
+        t.SetActive( selectedThreadId == thr.GetThreadID() );
+        lldb::SBFrame frame = thr.GetSelectedFrame();
+        t.SetFunc( frame.GetFunctionName() ? frame.GetFunctionName() : "" );
+        lldb::SBLineEntry lineEntry = thr.GetSelectedFrame().GetLineEntry();
+        if ( lineEntry.IsValid() ) {
+            t.SetLine(lineEntry.GetLine());
+            lldb::SBFileSpec fileSepc = frame.GetLineEntry().GetFileSpec();
+            t.SetFile( wxFileName(fileSepc.GetDirectory(), fileSepc.GetFilename()).GetFullPath() );
+        }
+        threads.push_back( t );
+    }
+
+    reply.SetThreads( threads );
     SendReply( reply );
 
     // reset the interrupt reason
@@ -642,10 +665,23 @@ void CodeLiteLLDBApp::MainLoop()
 void CodeLiteLLDBApp::SelectFrame(const LLDBCommand& command)
 {
     wxPrintf("codelite-lldb: selecting frame %d\n", command.GetFrameId());
-    if ( CanInteract() ) {
+    if ( CanInteract() && command.GetFrameId() != wxNOT_FOUND ) {
         m_target.GetProcess().GetSelectedThread().SetSelectedFrame( command.GetFrameId() );
         m_interruptReason = kInterruptReasonNone;
         NotifyStopped();
+    }
+}
+
+void CodeLiteLLDBApp::SelectThread(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: selecting thread %d\n", command.GetThreadId());
+    if ( CanInteract() && command.GetThreadId() != wxNOT_FOUND) {
+        lldb::SBThread thr = m_target.GetProcess().GetThreadByID( command.GetThreadId() );
+        if ( thr.IsValid() ) {
+            m_target.GetProcess().SetSelectedThread( thr );
+            m_interruptReason = kInterruptReasonNone;
+            NotifyStopped();
+        }
     }
 }
 

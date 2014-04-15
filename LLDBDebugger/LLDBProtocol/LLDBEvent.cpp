@@ -44,5 +44,6 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_locals.clear();
     m_locals.reserve( src.m_locals.size() );
     this->m_locals.insert(m_locals.end(), src.m_locals.begin(), src.m_locals.end());
+    m_threads = src.m_threads;
     return *this;
 }

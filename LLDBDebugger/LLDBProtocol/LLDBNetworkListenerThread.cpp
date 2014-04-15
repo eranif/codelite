@@ -42,6 +42,7 @@ void* LLDBNetworkListenerThread::Entry()
                 event.SetLinenumber( reply.GetLine() );
                 event.SetInterruptReason( reply.GetInterruptResaon() );
                 event.SetBacktrace( reply.GetBacktrace() );
+                event.SetThreads( reply.GetThreads() );
                 m_owner->AddPendingEvent( event );
                 break;
             }

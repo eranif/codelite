@@ -235,6 +235,11 @@ public:
      * @brief select a given frame
      */
     void SelectFrame(int frameID);
+    
+    /**
+     * @brief select a given thread by its ID
+     */
+    void SelectThread(int threadID);
 };
 
 #endif // LLDBCONNECTOR_H

@@ -131,4 +131,18 @@ public:
     virtual ~LLDBSettingDialogBase();
 };
 
+
+class LLDBThreadsViewBase : public wxPanel
+{
+protected:
+    wxDataViewListCtrl* m_dvListCtrlThreads;
+
+protected:
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+
+public:
+    LLDBThreadsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    virtual ~LLDBThreadsViewBase();
+};
+
 #endif

@@ -5,6 +5,7 @@
 #include "LLDBBacktrace.h"
 #include "LLDBBreakpoint.h"
 #include "LLDBLocalVariable.h"
+#include "LLDBThread.h"
 
 class LLDBEvent : public clCommandEvent
 {
@@ -17,6 +18,7 @@ class LLDBEvent : public clCommandEvent
     LLDBBreakpoint::Vec_t m_breakpoints;
     LLDBLocalVariable::Vect_t m_locals;
     int           m_variableId;
+    LLDBThread::Vect_t m_threads;
 
 public:
     LLDBEvent(wxEventType eventType, int winid = 0);
@@ -33,6 +35,12 @@ public:
         this->m_locals.insert(this->m_locals.end(), locals.begin(), locals.end());
     }
 
+    void SetThreads(const LLDBThread::Vect_t& threads) {
+        this->m_threads = threads;
+    }
+    const LLDBThread::Vect_t& GetThreads() const {
+        return m_threads;
+    }
     void SetVariableId(int variableId) {
         this->m_variableId = variableId;
     }

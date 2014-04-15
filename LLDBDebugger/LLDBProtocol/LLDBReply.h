@@ -6,6 +6,7 @@
 #include "LLDBBreakpoint.h"
 #include "LLDBBacktrace.h"
 #include "LLDBLocalVariable.h"
+#include "LLDBThread.h"
 
 class LLDBReply
 {
@@ -17,6 +18,7 @@ protected:
     LLDBBreakpoint::Vec_t       m_breakpoints;
     LLDBBacktrace               m_backtrace;
     LLDBLocalVariable::Vect_t   m_locals;
+    LLDBThread::Vect_t          m_threads;
     int                         m_lldbId;
 
 public:
@@ -24,6 +26,12 @@ public:
     LLDBReply(const wxString &str);
     virtual ~LLDBReply();
 
+    void SetThreads(const LLDBThread::Vect_t& threads) {
+        this->m_threads = threads;
+    }
+    const LLDBThread::Vect_t& GetThreads() const {
+        return m_threads;
+    }
     void SetLldbId(int lldbId) {
         this->m_lldbId = lldbId;
     }

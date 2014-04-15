@@ -104,6 +104,7 @@ public:
     void LocalVariables(const LLDBCommand& command);
     void ExpandVariable(const LLDBCommand& command);
     void SelectFrame(const LLDBCommand& command);
+    void SelectThread(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

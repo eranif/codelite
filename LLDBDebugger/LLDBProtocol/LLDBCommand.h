@@ -21,6 +21,7 @@ protected:
     JSONElement::wxStringMap_t m_env;
     LLDBSettings               m_settings;
     int                        m_frameId;
+    int                        m_threadId;
 
 public:
     // Serialization API
@@ -39,7 +40,14 @@ public:
      */
     char **GetEnvArray() const;
 
+    void SetThreadId(int threadId) {
+        this->m_threadId = threadId;
+    }
+    int GetThreadId() const {
+        return m_threadId;
+    }
     void Clear() {
+        m_threadId = wxNOT_FOUND;
         m_frameId = wxNOT_FOUND;
         m_env.clear();
         m_commandType = kCommandInvalid;

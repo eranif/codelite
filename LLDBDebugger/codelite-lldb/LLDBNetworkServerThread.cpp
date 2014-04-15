@@ -95,6 +95,10 @@ void* LLDBNetworkServerThread::Entry()
                     m_app->CallAfter( &CodeLiteLLDBApp::SelectFrame, command );
                     break;
                     
+                case kCommandSelectThread:
+                    m_app->CallAfter( &CodeLiteLLDBApp::SelectThread, command );
+                    break;
+                    
                 default:
                     break;
                 }

@@ -362,3 +362,41 @@ LLDBSettingDialogBase::~LLDBSettingDialogBase()
     m_button83->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
     
 }
+
+LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer115 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer115);
+    
+    m_dvListCtrlThreads = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer115->Add(m_dvListCtrlThreads, 1, wxALL|wxEXPAND, 2);
+    
+    m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    
+    SetSizeHints(500,300);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_dvListCtrlThreads->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBThreadsViewBase::OnItemActivated), NULL, this);
+    
+}
+
+LLDBThreadsViewBase::~LLDBThreadsViewBase()
+{
+    m_dvListCtrlThreads->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBThreadsViewBase::OnItemActivated), NULL, this);
+    
+}

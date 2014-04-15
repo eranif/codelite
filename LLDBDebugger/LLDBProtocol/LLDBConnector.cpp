@@ -477,6 +477,15 @@ void LLDBConnector::SelectFrame(int frameID)
     }
 }
 
+void LLDBConnector::SelectThread(int threadID)
+{
+    if ( IsCanInteract() ) {
+        LLDBCommand command;
+        command.SetCommandType( kCommandSelectThread );
+        command.SetThreadId( threadID );
+        SendCommand( command );
+    }
+}
 
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str)
 {

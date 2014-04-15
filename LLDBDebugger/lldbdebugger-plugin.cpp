@@ -21,6 +21,7 @@
 #include "json_node.h"
 #include <wx/msgdlg.h>
 #include "LLDBSettingDialog.h"
+#include "LLDBThreadsView.h"
 
 static LLDBDebuggerPlugin* thePlugin = NULL;
 
@@ -28,6 +29,7 @@ static LLDBDebuggerPlugin* thePlugin = NULL;
 #define LLDB_CALLSTACK_PANE_NAME    "LLDB Callstack"
 #define LLDB_BREAKPOINTS_PANE_NAME  "LLDB Breakpoints"
 #define LLDB_LOCALS_PANE_NAME       "LLDB Locals"
+#define LLDB_THREADS_PANE_NAME      "LLDB Threads"
 
 #define CHECK_IS_LLDB_SESSION() if ( !m_connector.IsRunning() ) { event.Skip(); return; }
 
@@ -60,6 +62,7 @@ LLDBDebuggerPlugin::LLDBDebuggerPlugin(IManager *manager)
     , m_callstack(NULL)
     , m_breakpointsView(NULL)
     , m_localsView(NULL)
+    , m_threadsView(NULL)
     , m_terminalPID(wxNOT_FOUND)
 {
     m_longName = wxT("LLDB Debugger for CodeLite");
@@ -412,6 +415,9 @@ void LLDBDebuggerPlugin::OnLLDBStopped(LLDBEvent& event)
             // clear the markers
             ClearDebuggerMarker();
             SetDebuggerMarker(editor->GetSTC(), event.GetLinenumber() -1 );
+            
+        } else {
+            ClearDebuggerMarker();
         }
         
         // request for local variables
@@ -505,6 +511,7 @@ void LLDBDebuggerPlugin::LoadLLDBPerspective()
     ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);
     ShowLLDBPane(LLDB_BREAKPOINTS_PANE_NAME);
     ShowLLDBPane(LLDB_LOCALS_PANE_NAME);
+    ShowLLDBPane(LLDB_THREADS_PANE_NAME);
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -564,6 +571,15 @@ void LLDBDebuggerPlugin::DestroyUI()
         m_localsView->Destroy();
         m_localsView = NULL;
     }
+    
+    if ( m_threadsView ) {
+        wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(LLDB_THREADS_PANE_NAME);
+        if ( pi.IsOk() ) {
+            m_mgr->GetDockingManager()->DetachPane(m_threadsView);
+        }
+        m_threadsView->Destroy();
+        m_threadsView = NULL;
+    }
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -576,13 +592,19 @@ void LLDBDebuggerPlugin::InitializeUI()
     
     if ( !m_breakpointsView ) {
         m_breakpointsView = new LLDBBreakpointsPane(EventNotifier::Get()->TopFrame(), this);
-        m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo().Bottom().Position(1).CloseButton().Caption("Breakpoints").Name(LLDB_BREAKPOINTS_PANE_NAME));
-    }
-    
+        m_mgr->GetDockingManager()->AddPane(m_breakpointsView, wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(1).CloseButton().Caption("Breakpoints").Name(LLDB_BREAKPOINTS_PANE_NAME));
+    } 
+
     if ( !m_localsView ) {
         m_localsView = new LLDBLocalsView(EventNotifier::Get()->TopFrame(), this);
         m_mgr->GetDockingManager()->AddPane(m_localsView, 
                                             wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(0).CloseButton().Caption("Locals").Name(LLDB_LOCALS_PANE_NAME));
+    }
+    
+    if ( !m_threadsView ) {
+        m_threadsView = new LLDBThreadsView(EventNotifier::Get()->TopFrame(), this);
+        m_mgr->GetDockingManager()->AddPane(m_threadsView, 
+                                            wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(0).CloseButton().Caption("Threads").Name(LLDB_THREADS_PANE_NAME));
     }
 }
 

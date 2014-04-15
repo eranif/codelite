@@ -73,6 +73,8 @@
     <File Name="LLDBProtocol/LLDBLocalVariable.h"/>
     <File Name="LLDBProtocol/LLDBSettings.h"/>
     <File Name="LLDBProtocol/LLDBSettings.cpp"/>
+    <File Name="LLDBProtocol/LLDBThread.h"/>
+    <File Name="LLDBProtocol/LLDBThread.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">
@@ -91,6 +93,8 @@
       <File Name="LLDBNewBreakpointDlg.h"/>
       <File Name="LLDBSettingDialog.h"/>
       <File Name="LLDBSettingDialog.cpp"/>
+      <File Name="LLDBThreadsView.h"/>
+      <File Name="LLDBThreadsView.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxcrafter">
       <File Name="UI.wxcp"/>

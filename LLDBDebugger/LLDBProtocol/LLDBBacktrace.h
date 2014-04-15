@@ -35,17 +35,18 @@ public:
         wxString filename;
         wxString functionName;
         wxString address;
-        
+
         JSONElement ToJSON() const;
         void FromJSON( const JSONElement& json );
-        
+
         Entry() : id(0), line(0) {}
     };
     typedef std::vector<LLDBBacktrace::Entry> EntryVec_t;
 
 protected:
-    int m_threadId;
-    LLDBBacktrace::EntryVec_t m_callstack;
+    int                         m_threadId;
+    int                         m_selectedFrameId;
+    LLDBBacktrace::EntryVec_t   m_callstack;
 
 public:
 
@@ -53,14 +54,21 @@ public:
     LLDBBacktrace(lldb::SBThread &thread, const LLDBSettings& settings);
 #endif
 
-    LLDBBacktrace() : m_threadId (0) {}
+    LLDBBacktrace() : m_threadId(0), m_selectedFrameId(0) {}
     virtual ~LLDBBacktrace();
-    
+
     void Clear() {
+        m_selectedFrameId = 0;
         m_threadId = 0;
         m_callstack.clear();
     }
-    
+
+    void SetSelectedFrameId(int selectedFrameId) {
+        this->m_selectedFrameId = selectedFrameId;
+    }
+    int GetSelectedFrameId() const {
+        return m_selectedFrameId;
+    }
     void SetCallstack(const LLDBBacktrace::EntryVec_t& callstack) {
         this->m_callstack = callstack;
     }
@@ -73,9 +81,9 @@ public:
     int GetThreadId() const {
         return m_threadId;
     }
-    
+
     wxString ToString() const;
-    
+
     // Serialization API
     JSONElement ToJSON() const;
     void FromJSON( const JSONElement& json );

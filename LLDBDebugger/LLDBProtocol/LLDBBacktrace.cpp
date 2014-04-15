@@ -5,11 +5,13 @@
 LLDBBacktrace::LLDBBacktrace(lldb::SBThread &thread, const LLDBSettings& settings)
 {
     m_callstack.clear();
+    m_selectedFrameId = 0;
     if ( thread.IsValid() ) {
         
         m_threadId = thread.GetIndexID();
-        int nFrames(0);
+        m_selectedFrameId = thread.GetSelectedFrame().GetFrameID();
         
+        int nFrames(0);
         // limit the number of frames to display
         thread.GetNumFrames() > settings.GetMaxCallstackFrames() ? nFrames = settings.GetMaxCallstackFrames() : nFrames = thread.GetNumFrames();
         for(int j=0; j<nFrames; ++j) {
@@ -65,6 +67,7 @@ void LLDBBacktrace::FromJSON(const JSONElement& json)
 {
     m_callstack.clear();
     m_threadId = json.namedObject("m_threadId").toInt(0);
+    m_selectedFrameId = json.namedObject("m_selectedFrameId").toInt(0);
     JSONElement arr = json.namedObject("m_callstack");
     for(int i=0; i<arr.arraySize(); ++i) {
         LLDBBacktrace::Entry entry;
@@ -77,6 +80,8 @@ JSONElement LLDBBacktrace::ToJSON() const
 {
     JSONElement json = JSONElement::createObject();
     json.addProperty("m_threadId", m_threadId);
+    json.addProperty("m_selectedFrameId", m_selectedFrameId);
+    
     JSONElement arr = JSONElement::createArray("m_callstack");
     json.append( arr );
     

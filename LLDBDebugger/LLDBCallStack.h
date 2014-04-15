@@ -9,13 +9,21 @@ class LLDBConnector;
 class LLDBCallStackPane : public LLDBCallStackBase
 {
     LLDBConnector* m_connector;
+    int m_selectedFrame;
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event);
     void OnBacktrace(LLDBEvent &event);
     void OnRunning(LLDBEvent &event);
-    
+
 public:
     LLDBCallStackPane(wxWindow* parent, LLDBConnector* connector);
     virtual ~LLDBCallStackPane();
+    
+    void SetSelectedFrame(int selectedFrame) {
+        this->m_selectedFrame = selectedFrame;
+    }
+    int GetSelectedFrame() const {
+        return m_selectedFrame;
+    }
 };
 #endif // LLDBCALLSTACK_H

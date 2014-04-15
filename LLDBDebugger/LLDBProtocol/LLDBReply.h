@@ -10,14 +10,14 @@
 class LLDBReply
 {
 protected:
-    int      m_replyType;
-    int      m_interruptResaon;
-    int      m_line;
-    wxString m_filename;
-    LLDBBreakpoint::Vec_t m_breakpoints;
-    LLDBBacktrace m_backtrace;
-    LLDBLocalVariable::Vect_t m_locals;
-    int      m_lldbId;
+    int                         m_replyType;
+    int                         m_interruptResaon;
+    int                         m_line;
+    wxString                    m_filename;
+    LLDBBreakpoint::Vec_t       m_breakpoints;
+    LLDBBacktrace               m_backtrace;
+    LLDBLocalVariable::Vect_t   m_locals;
+    int                         m_lldbId;
 
 public:
     LLDBReply() : m_replyType(kReplyTypeInvalid), m_interruptResaon(kInterruptReasonNone), m_line(wxNOT_FOUND), m_lldbId(wxNOT_FOUND) {}

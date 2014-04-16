@@ -70,6 +70,8 @@
 #include <wx/richmsgdlg.h>
 #include "asyncprocess.h"
 #include "file_logger.h"
+#include <wx/stc/stc.h>
+#include "cpp_scanner.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1576,6 +1578,65 @@ wxArrayString SplitString(const wxString &inString, bool trim)
     return lines;
 }
 
+void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
+{
+    pid = wxNOT_FOUND;
+    tty.Clear();
+    
+#ifdef __WXMSW__
+    wxUnusedVar(title);
+    
+#elif defined(__WXMAC__)
+
+#else
+    static wxString SLEEP_COMMAND = "sleep 85765";
+    wxString consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+    consoleCommand.Replace("$(CMD)", SLEEP_COMMAND);
+    consoleCommand.Replace("$(TITLE)", title);
+    
+    ::wxExecute( consoleCommand );
+    wxThread::Sleep(500);
+    
+    // Run "ps -A -o pid,tty,command" to locate the terminal ID
+    wxString psCommand;
+    wxArrayString arrOutput;
+    psCommand << "ps -A -o pid,tty,command --no-heading|grep sleep";
+    WrapInShell( psCommand );
+    
+    ProcUtils::SafeExecuteCommand(psCommand, arrOutput);
+    for(size_t i=0; i<arrOutput.GetCount(); ++i) {
+        wxString curline = arrOutput.Item(i).Trim().Trim(false);
+        wxArrayString tokens = ::wxStringTokenize( curline, " ", wxTOKEN_STRTOK );
+        if ( tokens.GetCount() < 3 ) {
+            continue;
+        }
+        
+        // replace tabs with spaces
+        curline.Replace("\t", " ");
+        
+        // remove any duplicate spaces
+        while ( curline.Replace("  ", " ") ) {}
+        
+        wxString tmp_pid = curline.BeforeFirst(' ');
+        curline = curline.AfterFirst(' ');
+        
+        wxString tmp_tty = curline.BeforeFirst(' ');
+        curline = curline.AfterFirst(' ');
+        wxString command = curline; // the remainder
+        
+        command.Trim().Trim(false);
+        if ( command == SLEEP_COMMAND ) {
+            // we got our match
+            tmp_tty = tmp_tty.AfterLast('/');
+            tmp_tty.Prepend("/dev/pts/");
+            tty = tmp_tty;
+            tmp_pid.Trim().Trim(false).ToCLong( &pid );
+            return;
+        }
+    }
+#endif
+}
+
 IProcess* LaunchTerminal(const wxString &title, bool forDebugger, IProcessCallback *processCB)
 {
 #ifdef __WXMSW__
@@ -1709,4 +1770,177 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
         }
     }
     return static_cast<wxStandardID>(res);
+}
+
+static wxChar sPreviousChar(wxStyledTextCtrl *ctrl, int pos, int &foundPos, bool wantWhitespace)
+{
+    wxChar ch = 0;
+    long curpos = ctrl->PositionBefore( pos );
+    if (curpos == 0) {
+        foundPos = curpos;
+        return ch;
+    }
+
+    while ( true ) {
+        ch = ctrl->GetCharAt( curpos );
+        if (ch == wxT('\t') || ch == wxT(' ') || ch == wxT('\r') || ch == wxT('\v') || ch == wxT('\n')) {
+            //if the caller is intrested in whitepsaces,
+            //simply return it
+            if (wantWhitespace) {
+                foundPos = curpos;
+                return ch;
+            }
+
+            long tmpPos = curpos;
+            curpos = ctrl->PositionBefore( curpos );
+            if (curpos == 0 && tmpPos == curpos)
+                break;
+        } else {
+            foundPos = curpos;
+            return ch;
+        }
+    }
+    foundPos = -1;
+    return ch;
+}
+
+wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl *ctrl, bool forCC)
+{
+    bool cont(true);
+    int depth(0);
+
+    int position( pos );
+    int at(position);
+    bool prevGt(false);
+    while (cont && depth >= 0) {
+        wxChar ch = sPreviousChar(ctrl, position, at, true);
+        position = at;
+        //Eof?
+        if (ch == 0) {
+            at = 0;
+            break;
+        }
+
+        //Comment?
+        int style = ctrl->GetStyleAt(position);
+        if (style == wxSTC_C_COMMENT                    ||
+            style == wxSTC_C_COMMENTLINE            ||
+            style == wxSTC_C_COMMENTDOC             ||
+            style == wxSTC_C_COMMENTLINEDOC         ||
+            style == wxSTC_C_COMMENTDOCKEYWORD      ||
+            style == wxSTC_C_COMMENTDOCKEYWORDERROR ||
+            style == wxSTC_C_STRING                 ||
+            style == wxSTC_C_STRINGEOL              ||
+            style == wxSTC_C_CHARACTER) {
+            continue;
+        }
+
+        switch (ch) {
+        case wxT(';'):
+            // dont include this token
+            at = ctrl->PositionAfter(at);
+            cont = false;
+            break;
+        case wxT('-'):
+            if (prevGt) {
+                prevGt = false;
+                //if previous char was '>', we found an arrow so reduce the depth
+                //which was increased
+                depth--;
+            } else {
+                if (depth <= 0) {
+                    //dont include this token
+                    at =ctrl->PositionAfter(at);
+                    cont = false;
+                }
+            }
+            break;
+        case wxT(' '):
+        case wxT('\n'):
+        case wxT('\v'):
+        case wxT('\t'):
+        case wxT('\r'):
+            prevGt = false;
+            if (depth <= 0) {
+                cont = false;
+                break;
+            }
+            break;
+        case wxT('{'):
+        case wxT('='):
+            prevGt = false;
+            cont = false;
+            break;
+        case wxT('('):
+        case wxT('['):
+            depth--;
+            prevGt = false;
+            if (depth < 0) {
+                //dont include this token
+                at =ctrl->PositionAfter(at);
+                cont = false;
+            }
+            break;
+        case wxT(','):
+        case wxT('*'):
+        case wxT('&'):
+        case wxT('!'):
+        case wxT('~'):
+        case wxT('+'):
+        case wxT('^'):
+        case wxT('|'):
+        case wxT('%'):
+        case wxT('?'):
+            prevGt = false;
+            if (depth <= 0) {
+
+                //dont include this token
+                at =ctrl->PositionAfter(at);
+                cont = false;
+            }
+            break;
+        case wxT('>'):
+            prevGt = true;
+            depth++;
+            break;
+        case wxT('<'):
+            prevGt = false;
+            depth--;
+            if (depth < 0) {
+
+                //dont include this token
+                at =ctrl->PositionAfter( at );
+                cont = false;
+            }
+            break;
+        case wxT(')'):
+        case wxT(']'):
+            prevGt = false;
+            depth++;
+            break;
+        default:
+            prevGt = false;
+            break;
+        }
+    }
+
+    if (at < 0) at = 0;
+    wxString expr = ctrl->GetTextRange( at, pos );
+    if ( !forCC ) {
+        // If we do not require the expression for CodeCompletion
+        // return the un-touched buffer
+        return expr;
+    }
+
+    //remove comments from it
+    CppScanner sc;
+    sc.SetText(_C(expr));
+    wxString expression;
+    int type=0;
+    while ( (type = sc.yylex()) != 0 ) {
+        wxString token = _U(sc.YYText());
+        expression += token;
+        expression += wxT(" ");
+    }
+    return expression;
 }

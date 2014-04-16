@@ -22,7 +22,7 @@ protected:
     LLDBSettings               m_settings;
     int                        m_frameId;
     int                        m_threadId;
-
+    wxString                   m_expression;
 public:
     // Serialization API
     JSONElement ToJSON() const;
@@ -32,6 +32,12 @@ public:
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 
+    void SetExpression(const wxString& expression) {
+        this->m_expression = expression;
+    }
+    const wxString& GetExpression() const {
+        return m_expression;
+    }
     void FillEnvFromMemory();
     /**
      * @brief return an environment array

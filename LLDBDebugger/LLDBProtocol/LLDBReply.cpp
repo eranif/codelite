@@ -18,6 +18,7 @@ void LLDBReply::FromJSON(const JSONElement& json)
     m_line            = json.namedObject("m_line").toInt(wxNOT_FOUND);
     m_filename        = json.namedObject("m_filename").toString();
     m_lldbId          = json.namedObject("m_lldbId").toInt();
+    m_expression      = json.namedObject("m_expression").toString();
     
     m_breakpoints.clear();
     JSONElement arr = json.namedObject("m_breakpoints");
@@ -27,13 +28,13 @@ void LLDBReply::FromJSON(const JSONElement& json)
         m_breakpoints.push_back( bp );
     }
     
-    m_locals.clear();
+    m_variables.clear();
     JSONElement localsArr = json.namedObject("m_locals");
-    m_locals.reserve( localsArr.arraySize() );
+    m_variables.reserve( localsArr.arraySize() );
     for(int i=0; i<localsArr.arraySize(); ++i) {
-        LLDBLocalVariable::Ptr_t variable(new LLDBLocalVariable() );
+        LLDBVariable::Ptr_t variable(new LLDBVariable() );
         variable->FromJSON( localsArr.arrayItem(i) );
-        m_locals.push_back( variable );
+        m_variables.push_back( variable );
     }
     
     m_backtrace.Clear();
@@ -51,6 +52,7 @@ JSONElement LLDBReply::ToJSON() const
     json.addProperty("m_line",          m_line);
     json.addProperty("m_filename",      m_filename);
     json.addProperty("m_lldbId",        m_lldbId);
+    json.addProperty("m_expression",    m_expression);
     
     JSONElement bparr = JSONElement::createArray("m_breakpoints");
     json.append( bparr );
@@ -60,8 +62,8 @@ JSONElement LLDBReply::ToJSON() const
 
     JSONElement localsArr = JSONElement::createArray("m_locals");
     json.append( localsArr );
-    for(size_t i=0; i<m_locals.size(); ++i) {
-        localsArr.arrayAppend( m_locals.at(i)->ToJSON() );
+    for(size_t i=0; i<m_variables.size(); ++i) {
+        localsArr.arrayAppend( m_variables.at(i)->ToJSON() );
     }
 
     json.addProperty("m_backtrace", m_backtrace.ToJSON());

@@ -5,7 +5,7 @@
 #include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
 #include "LLDBBacktrace.h"
-#include "LLDBLocalVariable.h"
+#include "LLDBVariable.h"
 #include "LLDBThread.h"
 
 class LLDBReply
@@ -17,15 +17,22 @@ protected:
     wxString                    m_filename;
     LLDBBreakpoint::Vec_t       m_breakpoints;
     LLDBBacktrace               m_backtrace;
-    LLDBLocalVariable::Vect_t   m_locals;
+    LLDBVariable::Vect_t        m_variables;
     LLDBThread::Vect_t          m_threads;
     int                         m_lldbId;
+    wxString                    m_expression;
 
 public:
     LLDBReply() : m_replyType(kReplyTypeInvalid), m_interruptResaon(kInterruptReasonNone), m_line(wxNOT_FOUND), m_lldbId(wxNOT_FOUND) {}
     LLDBReply(const wxString &str);
     virtual ~LLDBReply();
 
+    void SetExpression(const wxString& expression) {
+        this->m_expression = expression;
+    }
+    const wxString& GetExpression() const {
+        return m_expression;
+    }
     void SetThreads(const LLDBThread::Vect_t& threads) {
         this->m_threads = threads;
     }
@@ -38,11 +45,11 @@ public:
     int GetLldbId() const {
         return m_lldbId;
     }
-    void SetLocals(const LLDBLocalVariable::Vect_t& locals) {
-        this->m_locals = locals;
+    void SetVariables(const LLDBVariable::Vect_t& locals) {
+        this->m_variables = locals;
     }
-    const LLDBLocalVariable::Vect_t& GetLocals() const {
-        return m_locals;
+    const LLDBVariable::Vect_t& GetVariables() const {
+        return m_variables;
     }
     void SetBacktrace(const LLDBBacktrace& backtrace) {
         this->m_backtrace = backtrace;

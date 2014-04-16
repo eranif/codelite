@@ -400,3 +400,35 @@ LLDBThreadsViewBase::~LLDBThreadsViewBase()
     m_dvListCtrlThreads->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(LLDBThreadsViewBase::OnItemActivated), NULL, this);
     
 }
+
+LLDBTooltipBase::LLDBTooltipBase(wxWindow* parent,long style)
+    : wxPopupWindow(parent, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer121 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer121);
+    
+    m_treeCtrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE);
+    m_treeCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_treeCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    
+    boxSizer121->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 0);
+    
+    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    SetSizeHints(300,200);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+}
+
+LLDBTooltipBase::~LLDBTooltipBase()
+{
+}

@@ -14,7 +14,7 @@
 #include "LLDBProcessEventHandlerThread.h"
 #include "LLDBProtocol/LLDBReply.h"
 #include "LLDBProtocol/cl_socket_server.h"
-#include "LLDBProtocol/LLDBLocalVariable.h"
+#include "LLDBProtocol/LLDBVariable.h"
 #include <lldb/API/SBValue.h>
 #include <wx/msgqueue.h>
 #include "LLDBProtocol/LLDBSettings.h"
@@ -56,7 +56,7 @@ public:
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
     
-    void NotifyLocals(LLDBLocalVariable::Vect_t locals);
+    void NotifyLocals(LLDBVariable::Vect_t locals);
     
     void SendReply(const LLDBReply& reply);
     bool CanInteract();
@@ -105,6 +105,7 @@ public:
     void ExpandVariable(const LLDBCommand& command);
     void SelectFrame(const LLDBCommand& command);
     void SelectThread(const LLDBCommand& command);
+    void EvalExpression(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

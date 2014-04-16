@@ -3,21 +3,21 @@
 
 #include "UI.h"
 #include "LLDBProtocol/LLDBEvent.h"
-#include "LLDBProtocol/LLDBLocalVariable.h"
+#include "LLDBProtocol/LLDBVariable.h"
 #include "cl_treelistctrl.h"
 #include <map>
 
-class LLDBDebuggerPlugin;
+class LLDBPlugin;
 class LLDBLocalsView : public LLDBLocalsViewBase
 {
     typedef std::map<int, wxTreeItemId> IntItemMap_t;
     
-    LLDBDebuggerPlugin *m_plugin;
+    LLDBPlugin *m_plugin;
     clTreeListCtrl* m_treeList;
     LLDBLocalsView::IntItemMap_t m_pendingExpandItems;
     
 private:
-    void DoAddVariableToView(const LLDBLocalVariable::Vect_t& variables, wxTreeItemId parent);
+    void DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent);
     LLDBLocalVariableClientData *GetItemData(const wxTreeItemId &id);
     void Cleanup();
     
@@ -33,7 +33,7 @@ protected:
     void OnItemExpanding(wxTreeEvent &event);
     
 public:
-    LLDBLocalsView(wxWindow* parent, LLDBDebuggerPlugin* plugin);
+    LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin);
     virtual ~LLDBLocalsView();
 };
 #endif // LLDBLOCALSVIEW_H

@@ -1,10 +1,10 @@
 #include "LLDBLocalsView.h"
-#include "lldbdebugger-plugin.h"
+#include "LLDBPlugin.h"
 #include "file_logger.h"
 #include <wx/treelist.h>
 #include <wx/wupdlock.h>
 
-LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBDebuggerPlugin* plugin)
+LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
 {
@@ -69,10 +69,10 @@ void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
     DoAddVariableToView( event.GetLocals(), m_treeList->GetRootItem() );
 }
 
-void LLDBLocalsView::DoAddVariableToView(const LLDBLocalVariable::Vect_t& variables, wxTreeItemId parent)
+void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent)
 {
     for(size_t i=0; i<variables.size(); ++i) {
-        LLDBLocalVariable::Ptr_t variable = variables.at(i);
+        LLDBVariable::Ptr_t variable = variables.at(i);
         wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, new LLDBLocalVariableClientData(variable));
         m_treeList->SetItemText(item, 1, variable->GetSummary());
         m_treeList->SetItemText(item, 2, variable->GetValue());

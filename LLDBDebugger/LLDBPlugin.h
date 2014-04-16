@@ -13,7 +13,7 @@ class LLDBLocalsView;
 class LLDBBreakpointsPane;
 class ConsoleFrame;
 class LLDBCallStackPane;
-class LLDBDebuggerPlugin : public IPlugin
+class LLDBPlugin : public IPlugin
 {
     LLDBConnector m_connector;
     wxString m_defaultPerspective;
@@ -25,11 +25,11 @@ class LLDBDebuggerPlugin : public IPlugin
     LLDBBreakpointsPane*    m_breakpointsView;
     LLDBLocalsView*         m_localsView;
     LLDBThreadsView*        m_threadsView;
-    int                     m_terminalPID;
+    long                    m_terminalPID;
     
 public:
-    LLDBDebuggerPlugin(IManager *manager);
-    ~LLDBDebuggerPlugin();
+    LLDBPlugin(IManager *manager);
+    ~LLDBPlugin();
     
     LLDBConnector* GetLLDB() {
         return &m_connector;
@@ -70,6 +70,8 @@ protected:
     void OnDebugStepOut(clDebugEvent& event);
     void OnToggleBreakpoint(clDebugEvent& event);
     void OnToggleInerrupt(clDebugEvent& event);
+    void OnDebugTooltip(clDebugEvent& event);
+    
     void OnBuildStarting(clBuildEvent& event);
 
     // LLDB events
@@ -81,6 +83,7 @@ protected:
     void OnLLDBRunning(LLDBEvent &event);
     void OnLLDBDeletedAllBreakpoints(LLDBEvent &event);
     void OnLLDBBreakpointsUpdated(LLDBEvent &event);
+    void OnLLDBExpressionEvaluated(LLDBEvent &event);
     
 public:    
     //--------------------------------------------

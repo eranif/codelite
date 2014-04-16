@@ -4,21 +4,22 @@
 #include "cl_command_event.h"
 #include "LLDBBacktrace.h"
 #include "LLDBBreakpoint.h"
-#include "LLDBLocalVariable.h"
+#include "LLDBVariable.h"
 #include "LLDBThread.h"
 
 class LLDBEvent : public clCommandEvent
 {
-    LLDBBacktrace m_backtrace;
-    wxString      m_filename;
-    int           m_linenumber;
-    int           m_interruptReason;
-    int           m_frameId;
-    int           m_threadId;
-    LLDBBreakpoint::Vec_t m_breakpoints;
-    LLDBLocalVariable::Vect_t m_locals;
-    int           m_variableId;
-    LLDBThread::Vect_t m_threads;
+    LLDBBacktrace           m_backtrace;
+    wxString                m_filename;
+    int                     m_linenumber;
+    int                     m_interruptReason;
+    int                     m_frameId;
+    int                     m_threadId;
+    LLDBBreakpoint::Vec_t   m_breakpoints;
+    LLDBVariable::Vect_t    m_locals;
+    int                     m_variableId;
+    LLDBThread::Vect_t      m_threads;
+    wxString                m_expression;
 
 public:
     LLDBEvent(wxEventType eventType, int winid = 0);
@@ -29,7 +30,13 @@ public:
         return new LLDBEvent(*this);
     }
 
-    void SetLocals(const LLDBLocalVariable::Vect_t& locals) {
+    void SetExpression(const wxString& expression) {
+        this->m_expression = expression;
+    }
+    const wxString& GetExpression() const {
+        return m_expression;
+    }
+    void SetVariables(const LLDBVariable::Vect_t& locals) {
         this->m_locals.clear();
         this->m_locals.reserve( locals.size() );
         this->m_locals.insert(this->m_locals.end(), locals.begin(), locals.end());
@@ -47,7 +54,7 @@ public:
     int GetVariableId() const {
         return m_variableId;
     }
-    const LLDBLocalVariable::Vect_t& GetLocals() const {
+    const LLDBVariable::Vect_t& GetLocals() const {
         return m_locals;
     }
     void SetBacktrace(const LLDBBacktrace& backtrace) {
@@ -105,6 +112,7 @@ wxDECLARE_EVENT(wxEVT_LLDB_FRAME_SELECTED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_CRASHED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_LOCALS_UPDATED, LLDBEvent);
 wxDECLARE_EVENT(wxEVT_LLDB_VARIABLE_EXPANDED, LLDBEvent);
+wxDECLARE_EVENT(wxEVT_LLDB_EXPRESSION_EVALUATED, LLDBEvent);
 
 typedef void (wxEvtHandler::*LLDBEventFunction)(LLDBEvent&);
 #define LLDBEventHandler(func) \

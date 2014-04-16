@@ -38,6 +38,7 @@
 #include <wx/dcgraph.h>
 #include <wx/dc.h>
 
+class wxStyledTextCtrl;
 class IProcess;
 class IProcessCallback;
 class wxListCtrl;
@@ -413,6 +414,11 @@ WXDLLIMPEXP_SDK  wxString MakeExecInShellCommand(const wxString& cmd, const wxSt
 WXDLLIMPEXP_SDK  IProcess* LaunchTerminal(const wxString &title, bool forDebugger, IProcessCallback* processCB);
 
 /**
+ * @brief launch terminal for debugging purposes and return its TTY. This function does nothing under Windows
+ */
+WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid);
+
+/**
  * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"
  * @param message the message to show to the user
  * @param checkboxLabel the message to display next to the checkbox
@@ -431,4 +437,11 @@ WXDLLIMPEXP_SDK  wxStandardID PromptForYesNoDialogWithCheckbox( const wxString &
         long style = wxYES_NO|wxICON_QUESTION|wxYES_DEFAULT,
         bool checkboxInitialValue = false);
 
+/**
+ * @brief return an expression from a given position.
+ * e.g. if the caret is on a line:
+ * variable.m_name.m_value|
+ * the | represents the cart, this function will return the entire expression: variable.m_name.m_value
+ */
+WXDLLIMPEXP_SDK wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl *ctrl, bool forCC);
 #endif //GLOBALS_H

@@ -23,6 +23,7 @@ enum eReplyType {
     kReplyTypeBreakpointsUpdated,
     kReplyTypeLocalsUpdated,
     kReplyTypeVariableExpanded,
+    kReplyTypeExprEvaluated,
 };
 
 // LLDBCommand types
@@ -43,6 +44,7 @@ enum eCommandType {
     kCommandExpandVariable,
     kCommandSelectFrame,
     kCommandSelectThread,
+    kCommandEvalExpression,
 };
 
 enum eLLDBOptions {

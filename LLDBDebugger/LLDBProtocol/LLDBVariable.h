@@ -11,11 +11,11 @@
 #include <lldb/API/SBValue.h>
 #endif
 
-class LLDBLocalVariable
+class LLDBVariable
 {
 public:
-    typedef wxSharedPtr<LLDBLocalVariable> Ptr_t;
-    typedef std::vector<LLDBLocalVariable::Ptr_t> Vect_t;
+    typedef wxSharedPtr<LLDBVariable> Ptr_t;
+    typedef std::vector<LLDBVariable::Ptr_t> Vect_t;
 
 protected:
     wxString m_name;
@@ -33,11 +33,11 @@ private:
 
 public:
 #ifndef __WXMSW__
-    LLDBLocalVariable(lldb::SBValue value);
+    LLDBVariable(lldb::SBValue value);
 #endif
 
-    LLDBLocalVariable() : m_valueChanged(false), m_lldbId(wxNOT_FOUND), m_hasChildren(false) {}
-    virtual ~LLDBLocalVariable();
+    LLDBVariable() : m_valueChanged(false), m_lldbId(wxNOT_FOUND), m_hasChildren(false) {}
+    virtual ~LLDBVariable();
 
     void SetLldbId(int lldbId) {
         this->m_lldbId = lldbId;
@@ -93,10 +93,10 @@ public:
 
 class LLDBLocalVariableClientData : public wxTreeItemData
 {
-    LLDBLocalVariable::Ptr_t m_variable;
+    LLDBVariable::Ptr_t m_variable;
 public:
-    LLDBLocalVariableClientData(LLDBLocalVariable::Ptr_t variable) : m_variable(variable) {}
-    LLDBLocalVariable::Ptr_t GetVariable() const {
+    LLDBLocalVariableClientData(LLDBVariable::Ptr_t variable) : m_variable(variable) {}
+    LLDBVariable::Ptr_t GetVariable() const {
         return m_variable;
     }
 };

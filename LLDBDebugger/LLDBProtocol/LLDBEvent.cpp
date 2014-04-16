@@ -12,6 +12,7 @@ wxDEFINE_EVENT(wxEVT_LLDB_FRAME_SELECTED,   LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_CRASHED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_LOCALS_UPDATED, LLDBEvent);
 wxDEFINE_EVENT(wxEVT_LLDB_VARIABLE_EXPANDED, LLDBEvent);
+wxDEFINE_EVENT(wxEVT_LLDB_EXPRESSION_EVALUATED, LLDBEvent);
 
 LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     : clCommandEvent(eventType, windid)
@@ -45,5 +46,6 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_locals.reserve( src.m_locals.size() );
     this->m_locals.insert(m_locals.end(), src.m_locals.begin(), src.m_locals.end());
     m_threads = src.m_threads;
+    m_expression = src.m_expression;
     return *this;
 }

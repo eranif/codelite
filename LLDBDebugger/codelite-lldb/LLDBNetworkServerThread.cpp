@@ -39,6 +39,7 @@ void* LLDBNetworkServerThread::Entry()
                 // Process command
                 LLDBCommand command(str);
                 switch( command.GetCommandType() ) {
+
                 case kCommandStart:
                     m_app->CallAfter( &CodeLiteLLDBApp::StartDebugger, command );
                     break;
@@ -97,6 +98,10 @@ void* LLDBNetworkServerThread::Entry()
                     
                 case kCommandSelectThread:
                     m_app->CallAfter( &CodeLiteLLDBApp::SelectThread, command );
+                    break;
+                    
+                case kCommandEvalExpression:
+                    m_app->CallAfter( &CodeLiteLLDBApp::EvalExpression, command );
                     break;
                     
                 default:

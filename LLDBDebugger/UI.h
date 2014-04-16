@@ -30,6 +30,8 @@
 #include <wx/propgrid/advprops.h>
 #include <wx/stc/stc.h>
 #include <wx/hyperlink.h>
+#include <wx/popupwin.h>
+#include <wx/treectrl.h>
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -143,6 +145,19 @@ protected:
 public:
     LLDBThreadsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBThreadsViewBase();
+};
+
+
+class LLDBTooltipBase : public wxPopupWindow
+{
+protected:
+    wxTreeCtrl* m_treeCtrl;
+
+protected:
+
+public:
+    LLDBTooltipBase(wxWindow* parent, long style = wxBORDER_NONE);
+    virtual ~LLDBTooltipBase();
 };
 
 #endif

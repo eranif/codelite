@@ -2,7 +2,7 @@
 #include "LLDBProtocol/LLDBBreakpoint.h"
 #include "event_notifier.h"
 #include "LLDBNewBreakpointDlg.h"
-#include "lldbdebugger-plugin.h"
+#include "LLDBPlugin.h"
 #include "ieditor.h"
 #include "LLDBProtocol/LLDBEnums.h"
 #include "file_logger.h"
@@ -18,7 +18,7 @@ public:
     }
 };
 
-LLDBBreakpointsPane::LLDBBreakpointsPane(wxWindow* parent, LLDBDebuggerPlugin* plugin)
+LLDBBreakpointsPane::LLDBBreakpointsPane(wxWindow* parent, LLDBPlugin* plugin)
     : LLDBBreakpointsPaneBase(parent)
     , m_plugin(plugin)
     , m_connector(plugin->GetLLDB())

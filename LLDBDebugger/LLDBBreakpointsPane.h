@@ -7,14 +7,14 @@
 #include "LLDBProtocol/LLDBConnector.h"
 
 class LLDBDebugger;
-class LLDBDebuggerPlugin;
+class LLDBPlugin;
 class LLDBBreakpointsPane : public LLDBBreakpointsPaneBase
 {
-    LLDBDebuggerPlugin *m_plugin;
+    LLDBPlugin *m_plugin;
     LLDBConnector* m_connector;
     
 public:
-    LLDBBreakpointsPane(wxWindow* parent, LLDBDebuggerPlugin *plugin);
+    LLDBBreakpointsPane(wxWindow* parent, LLDBPlugin *plugin);
     virtual ~LLDBBreakpointsPane();
     
     void Initialize();

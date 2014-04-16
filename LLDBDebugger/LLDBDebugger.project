@@ -69,18 +69,18 @@
     <File Name="LLDBProtocol/LLDBBacktrace.h"/>
     <File Name="LLDBProtocol/LLDBBreakpoint.cpp"/>
     <File Name="LLDBProtocol/LLDBBreakpoint.h"/>
-    <File Name="LLDBProtocol/LLDBLocalVariable.cpp"/>
-    <File Name="LLDBProtocol/LLDBLocalVariable.h"/>
     <File Name="LLDBProtocol/LLDBSettings.h"/>
     <File Name="LLDBProtocol/LLDBSettings.cpp"/>
     <File Name="LLDBProtocol/LLDBThread.h"/>
     <File Name="LLDBProtocol/LLDBThread.cpp"/>
+    <File Name="LLDBProtocol/LLDBVariable.cpp"/>
+    <File Name="LLDBProtocol/LLDBVariable.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">
       <File Name="CMakeLists.txt"/>
-      <File Name="lldbdebugger-plugin.cpp"/>
-      <File Name="lldbdebugger-plugin.h"/>
+      <File Name="LLDBPlugin.cpp"/>
+      <File Name="LLDBPlugin.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="UI">
       <File Name="LLDBBreakpointsPane.cpp"/>
@@ -95,6 +95,8 @@
       <File Name="LLDBSettingDialog.cpp"/>
       <File Name="LLDBThreadsView.h"/>
       <File Name="LLDBThreadsView.cpp"/>
+      <File Name="LLDBTooltip.h"/>
+      <File Name="LLDBTooltip.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxcrafter">
       <File Name="UI.wxcp"/>

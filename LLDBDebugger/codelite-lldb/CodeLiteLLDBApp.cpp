@@ -12,8 +12,9 @@
 #include <lldb/API/SBCommandReturnObject.h>
 #include <lldb/API/SBCommandInterpreter.h>
 #include <lldb/API/SBFrame.h>
+#include <lldb/API/SBExpressionOptions.h>
 #include <wx/socket.h>
-#include "LLDBProtocol/LLDBLocalVariable.h"
+#include "LLDBProtocol/LLDBVariable.h"
 #include <wx/msgqueue.h>
 #include <wx/wxcrtvararg.h>
 #include <wx/tokenzr.h>
@@ -551,7 +552,7 @@ void CodeLiteLLDBApp::AcceptNewConnection() throw(clSocketException)
 void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
 {
     wxUnusedVar( command );
-    LLDBLocalVariable::Vect_t locals;
+    LLDBVariable::Vect_t locals;
     
     wxPrintf("codelite-lldb: fetching local variables for selected frame\n");
     lldb::SBFrame frame = m_target.GetProcess().GetSelectedThread().GetSelectedFrame();
@@ -564,7 +565,7 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
     for(size_t i=0; i<args.GetSize(); ++i) {
         lldb::SBValue value = args.GetValueAtIndex(i);
         if ( value.IsValid() ) {
-            LLDBLocalVariable::Ptr_t var( new LLDBLocalVariable(value) );
+            LLDBVariable::Ptr_t var( new LLDBVariable(value) );
             m_variables.insert( std::make_pair(value.GetID(), value) );
             locals.push_back( var );
         }
@@ -572,12 +573,12 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
     NotifyLocals( locals );
 }
 
-void CodeLiteLLDBApp::NotifyLocals(LLDBLocalVariable::Vect_t locals)
+void CodeLiteLLDBApp::NotifyLocals(LLDBVariable::Vect_t locals)
 {
     wxPrintf("codelite-lldb: NotifyLocals called. with %d locals\n", (int)locals.size());
     LLDBReply reply;
     reply.SetReplyType( kReplyTypeLocalsUpdated );
-    reply.SetLocals( locals );
+    reply.SetVariables( locals );
     SendReply( reply );
 }
 
@@ -591,7 +592,7 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
         return;
     }
     
-    LLDBLocalVariable::Vect_t children;
+    LLDBVariable::Vect_t children;
     std::map<int, lldb::SBValue>::iterator iter = m_variables.find(variableId);
     if ( iter != m_variables.end() ) {
         lldb::SBValue value = iter->second;
@@ -606,7 +607,7 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
         for(int i=0; i<size; ++i) {
             lldb::SBValue child = value.GetChildAtIndex(i);
             if ( child.IsValid() ) {
-                LLDBLocalVariable::Ptr_t var( new LLDBLocalVariable(child) );
+                LLDBVariable::Ptr_t var( new LLDBVariable(child) );
                 children.push_back( var );
                 m_variables.insert( std::make_pair(child.GetID(), child) );
             }
@@ -614,7 +615,7 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
         
         LLDBReply reply;
         reply.SetReplyType( kReplyTypeVariableExpanded );
-        reply.SetLocals( children );
+        reply.SetVariables( children );
         reply.SetLldbId( variableId );
         SendReply( reply );
     }
@@ -681,6 +682,29 @@ void CodeLiteLLDBApp::SelectThread(const LLDBCommand& command)
             m_target.GetProcess().SetSelectedThread( thr );
             m_interruptReason = kInterruptReasonNone;
             NotifyStopped();
+        }
+    }
+}
+
+void CodeLiteLLDBApp::EvalExpression(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: evaluating expression '%s'\n", command.GetExpression());
+    
+    if ( CanInteract() ) {
+        lldb::SBExpressionOptions options;
+        lldb::SBValue value = m_target.EvaluateExpression( command.GetExpression().mb_str(wxConvUTF8).data(), options);
+        if ( value.IsValid() ) {
+            
+            LLDBReply reply;
+            reply.SetReplyType( kReplyTypeExprEvaluated );
+            reply.SetExpression( command.GetExpression() );
+            
+            LLDBVariable::Vect_t vars;
+            LLDBVariable::Ptr_t var( new LLDBVariable( value ) );
+            vars.push_back( var );
+            reply.SetVariables( vars );
+            
+            SendReply( reply );
         }
     }
 }

@@ -1,13 +1,13 @@
-#include "LLDBLocalVariable.h"
+#include "LLDBVariable.h"
 
 #ifndef __WXMSW__
 #include <lldb/API/SBValue.h>
 
-LLDBLocalVariable::LLDBLocalVariable(lldb::SBValue value)
+LLDBVariable::LLDBVariable(lldb::SBValue value)
 {
     DoInitFromLLDBValue( value );
 }
-void LLDBLocalVariable::DoInitFromLLDBValue(lldb::SBValue value)
+void LLDBVariable::DoInitFromLLDBValue(lldb::SBValue value)
 {
     SetName( value.GetName() );
     SetType( value.GetTypeName() );
@@ -22,12 +22,12 @@ void LLDBLocalVariable::DoInitFromLLDBValue(lldb::SBValue value)
 }
 #endif
 
-LLDBLocalVariable::~LLDBLocalVariable()
+LLDBVariable::~LLDBVariable()
 {
 }
 
 
-void LLDBLocalVariable::FromJSON(const JSONElement& json)
+void LLDBVariable::FromJSON(const JSONElement& json)
 {
     m_name = json.namedObject("m_name").toString();
     m_value = json.namedObject("m_value").toString();
@@ -38,7 +38,7 @@ void LLDBLocalVariable::FromJSON(const JSONElement& json)
     m_hasChildren = json.namedObject("m_hasChildren").toBool(false);
 }
 
-JSONElement LLDBLocalVariable::ToJSON() const
+JSONElement LLDBVariable::ToJSON() const
 {
     JSONElement json = JSONElement::createObject();
     json.addProperty("m_name", m_name);

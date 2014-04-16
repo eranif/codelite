@@ -1,10 +1,10 @@
 #include "LLDBThreadsView.h"
-#include "lldbdebugger-plugin.h"
+#include "LLDBPlugin.h"
 
 // -------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------
 
-LLDBThreadsView::LLDBThreadsView(wxWindow* parent, LLDBDebuggerPlugin* plugin)
+LLDBThreadsView::LLDBThreadsView(wxWindow* parent, LLDBPlugin* plugin)
     : LLDBThreadsViewBase(parent)
     , m_plugin(plugin)
     , m_selectedThread(wxNOT_FOUND)

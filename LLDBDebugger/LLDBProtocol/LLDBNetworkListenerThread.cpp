@@ -76,15 +76,23 @@ void* LLDBNetworkListenerThread::Entry()
             
             case kReplyTypeLocalsUpdated: {
                 LLDBEvent event(wxEVT_LLDB_LOCALS_UPDATED);
-                event.SetLocals( reply.GetLocals() );
+                event.SetVariables( reply.GetVariables() );
                 m_owner->AddPendingEvent( event );
                 break;
             }
             
             case kReplyTypeVariableExpanded: {
                 LLDBEvent event(wxEVT_LLDB_VARIABLE_EXPANDED);
-                event.SetLocals( reply.GetLocals() );
+                event.SetVariables( reply.GetVariables() );
                 event.SetVariableId( reply.GetLldbId() );
+                m_owner->AddPendingEvent( event );
+                break;
+            }
+            
+            case kReplyTypeExprEvaluated: {
+                LLDBEvent event(wxEVT_LLDB_EXPRESSION_EVALUATED);
+                event.SetVariables( reply.GetVariables() );
+                event.SetExpression( reply.GetExpression() );
                 m_owner->AddPendingEvent( event );
                 break;
             }

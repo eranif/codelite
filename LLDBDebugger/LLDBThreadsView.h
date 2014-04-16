@@ -5,7 +5,7 @@
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBThread.h"
 
-class LLDBDebuggerPlugin;
+class LLDBPlugin;
 
 //-------------------------------------------------------------
 //-------------------------------------------------------------
@@ -48,12 +48,12 @@ public:
 
 class LLDBThreadsView : public LLDBThreadsViewBase
 {
-    LLDBDebuggerPlugin *m_plugin;
+    LLDBPlugin *m_plugin;
     int m_selectedThread;
     wxObjectDataPtr<ThreadsModel> m_model;
     
 public:
-    LLDBThreadsView(wxWindow* parent, LLDBDebuggerPlugin* plugin);
+    LLDBThreadsView(wxWindow* parent, LLDBPlugin* plugin);
     virtual ~LLDBThreadsView();
 private:
     void DoCleanup();

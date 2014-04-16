@@ -11,6 +11,7 @@
 #include "json_node.h"
 #include <wx/msgdlg.h>
 #include "LLDBSettings.h"
+#include <sys/wait.h>
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
@@ -287,6 +288,15 @@ void LLDBConnector::Cleanup()
     m_runCommand.Clear();
     
     StopDebugServer();
+    
+    int status = 0;
+    int pid(0);
+    do {
+       pid = ::waitpid(-1, &status, WNOHANG); 
+       if ( pid ) {
+           CL_DEBUG("Process %d exited with status code %d", pid, WEXITSTATUS(status));
+       }
+    } while( pid ); 
 }
 
 void LLDBConnector::OnLLDBExited(LLDBEvent& event)
@@ -319,9 +329,8 @@ void LLDBConnector::Start(const LLDBCommand& runCommand)
     m_runCommand.SetCommandType( kCommandRun );
 }
 
-void LLDBConnector::Run(const wxString& tty)
+void LLDBConnector::Run()
 {
-    m_runCommand.SetRedirectTTY( tty );
     if ( m_runCommand.GetCommandType() == kCommandRun ) {
         SendCommand( m_runCommand );
         m_runCommand.Clear();
@@ -420,12 +429,11 @@ bool LLDBConnector::LaunchDebugServer()
 void LLDBConnector::StopDebugServer()
 {
     if ( m_process ) {
-        m_process->Detach();
         m_process->SetHardKill(true); // kill -9
         m_process->Terminate();
         m_process = NULL;
     }
-    
+
     wxLogNull noLog;
     wxRemoveFile(GetDebugServerPath());
 }
@@ -483,6 +491,16 @@ void LLDBConnector::SelectThread(int threadID)
         LLDBCommand command;
         command.SetCommandType( kCommandSelectThread );
         command.SetThreadId( threadID );
+        SendCommand( command );
+    }
+}
+
+void LLDBConnector::EvaluateExpression(const wxString& expression)
+{
+    if ( IsCanInteract() ) {
+        LLDBCommand command;
+        command.SetCommandType( kCommandEvalExpression );
+        command.SetExpression( expression );
         SendCommand( command );
     }
 }

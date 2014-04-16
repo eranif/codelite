@@ -221,9 +221,8 @@ public:
 
     /**
      * @brief instruct the debugger to 'run'
-     * using the arguments passed in the Start() command
      */
-    void Run(const wxString &tty);
+    void Run();
 
     /**
      * @brief
@@ -240,6 +239,11 @@ public:
      * @brief select a given thread by its ID
      */
     void SelectThread(int threadID);
+    
+    /**
+     * @brief evaluate an expression
+     */
+    void EvaluateExpression(const wxString &expression);
 };
 
 #endif // LLDBCONNECTOR_H

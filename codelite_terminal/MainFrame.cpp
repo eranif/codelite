@@ -291,8 +291,9 @@ void MainFrame::DoExecStartCommand()
 void MainFrame::Exit()
 {
     if ( m_options.HasFlag( TerminalOptions::kPauseBeforeExit ) ) {
-        m_stc->AppendText("\nHit ENTER to continue...");
-        SetCartAtEnd();
+        
+        m_outoutBuffer << "\nHit ENTER to continue...";
+        FlushOutputBuffer();
         m_exitOnNextKey = true;
 
     } else {

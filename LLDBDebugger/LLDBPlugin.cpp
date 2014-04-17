@@ -708,5 +708,12 @@ void LLDBPlugin::OnDebugTooltip(clDebugEvent& event)
 
 void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 {
-    // hide any tooltip 
+    // hide any tooltip
+    if ( !event.GetLocals().empty() && m_mgr->GetActiveEditor() ) {
+        wxString tooltip;
+        tooltip << "<code><b>Expression</b></code>: " << event.GetExpression() << "\n"
+                << "<code><b>Value     </b></code>: " << event.GetLocals().at(0)->GetValue() << "\n"
+                << "<code><b>Summary   </b></code>: " << event.GetLocals().at(0)->GetSummary();
+        m_mgr->GetActiveEditor()->ShowRichTooltip( tooltip );
+    }
 }

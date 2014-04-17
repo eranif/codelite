@@ -350,7 +350,6 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     Centre(wxBOTH);
     // Connect events
     m_pgMgrDisplayProperties->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
-    m_stcTypes->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(LLDBSettingDialogBase::OnStcUpdateUI), NULL, this);
     m_button83->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
     
 }
@@ -358,7 +357,6 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
 LLDBSettingDialogBase::~LLDBSettingDialogBase()
 {
     m_pgMgrDisplayProperties->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
-    m_stcTypes->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(LLDBSettingDialogBase::OnStcUpdateUI), NULL, this);
     m_button83->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
     
 }

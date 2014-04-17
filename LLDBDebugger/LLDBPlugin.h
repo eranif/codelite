@@ -28,6 +28,7 @@ class LLDBPlugin : public IPlugin
     long                    m_terminalPID;
     wxString                m_terminalTTY;
     bool                    m_stopReasonPrompted;
+    bool                    m_raisOnBpHit;
     
 public:
     LLDBPlugin(IManager *manager);

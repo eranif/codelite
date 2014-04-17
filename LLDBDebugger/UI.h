@@ -125,7 +125,6 @@ protected:
 
 protected:
     virtual void OnGeneralValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
-    virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:

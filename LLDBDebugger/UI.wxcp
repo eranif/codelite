@@ -2642,14 +2642,7 @@
 															"m_label":	"Keywords Set 5",
 															"m_value":	""
 														}],
-													"m_events":	[{
-															"m_eventName":	"wxEVT_STC_UPDATEUI",
-															"m_eventClass":	"wxStyledTextEvent",
-															"m_eventHandler":	"wxStyledTextEventHandler",
-															"m_functionNameAndSignature":	"OnStcUpdateUI(wxStyledTextEvent& event)",
-															"m_description":	"Update UI",
-															"m_noBody":	false
-														}],
+													"m_events":	[],
 													"m_children":	[]
 												}, {
 													"m_type":	4438,

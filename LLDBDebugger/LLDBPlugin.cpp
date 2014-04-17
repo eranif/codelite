@@ -65,6 +65,7 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     , m_threadsView(NULL)
     , m_terminalPID(wxNOT_FOUND)
     , m_stopReasonPrompted(false)
+    , m_raisOnBpHit(false)
 {
     m_longName = wxT("LLDB Debugger for CodeLite");
     m_shortName = wxT("LLDBDebuggerPlugin");
@@ -350,6 +351,8 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
         CL_DEBUG("CODELITE>> LLDB started (core file)");
 
     } else {
+        LLDBSettings settings;
+        m_raisOnBpHit = settings.Load().IsRaiseWhenBreakpointHit();
         CL_DEBUG("CODELITE>> LLDB started");
         m_connector.Run();
     }
@@ -365,6 +368,10 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
     m_connector.SetCanInteract(true);
     
     if ( event.GetInterruptReason() == kInterruptReasonNone ) {
+        
+        if ( m_raisOnBpHit ) {
+            EventNotifier::Get()->TopFrame()->Raise();
+        }
         
         // Mark the debugger line / file
         IEditor *editor = m_mgr->FindEditor( event.GetFileName() );
@@ -398,10 +405,10 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
         
         wxString message;
         if ( !m_stopReasonPrompted && event.ShouldPromptStopReason( message ) ) {
+            m_stopReasonPrompted = true; // show this message only once per debug session
             wxString msg;
             msg << "Program stopped\nStop reason: " << message;
             ::wxMessageBox(msg, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
-            m_stopReasonPrompted = true; // show this message only once per debug session
         }
 
     } else if ( event.GetInterruptReason() == kInterruptReasonApplyBreakpoints ) {
@@ -638,6 +645,7 @@ void LLDBPlugin::DoCleanup()
     m_connector.StopDebugServer();
     m_terminalTTY.Clear();
     m_stopReasonPrompted = false;
+    m_raisOnBpHit = false;
 }
 
 void LLDBPlugin::OnLLDBDeletedAllBreakpoints(LLDBEvent& event)
@@ -735,9 +743,17 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
     // hide any tooltip
     if ( !event.GetVariables().empty() && m_mgr->GetActiveEditor() ) {
         wxString tooltip;
-        tooltip << "<code><b>Expression</b></code>: " << event.GetExpression() << "\n"
-                << "<code><b>Value     </b></code>: " << event.GetVariables().at(0)->GetValue() << "\n"
-                << "<code><b>Summary   </b></code>: " << event.GetVariables().at(0)->GetSummary();
+        LLDBVariable::Ptr_t var = event.GetVariables().at(0);
+        
+        tooltip << "<i>" << event.GetExpression() << "</i>\n<hr>";
+        if ( !var->GetValue().IsEmpty() ) {
+            tooltip << var->GetValue() << "\n";
+        }
+        
+        if ( var->GetSummary().IsEmpty() ) {
+            tooltip << var->GetSummary();
+        }
+        
         m_mgr->GetActiveEditor()->ShowRichTooltip( tooltip );
     }
 }

@@ -13,7 +13,7 @@ LLDBSettingDialog::LLDBSettingDialog(wxWindow* parent)
     m_pgPropCallStackSize->SetValue( (int)settings.GetMaxCallstackFrames() );
     m_pgPropRaiseCodeLite->SetValue( settings.IsRaiseWhenBreakpointHit() );
     m_stcTypes->SetText( settings.GetTypes() );
-    
+    m_stcTypes->SetModified(false);
     WindowAttrManager::Load(this, "LLDBSettingDialog");
 }
 
@@ -35,16 +35,10 @@ void LLDBSettingDialog::Save()
 
 void LLDBSettingDialog::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable( m_modified );
+    event.Enable( m_modified || m_stcTypes->IsModified() );
 }
 
 void LLDBSettingDialog::OnGeneralValueChanged(wxPropertyGridEvent& event)
-{
-    event.Skip();
-    m_modified = true;
-}
-
-void LLDBSettingDialog::OnStcUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
     m_modified = true;

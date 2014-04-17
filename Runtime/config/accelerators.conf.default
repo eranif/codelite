@@ -99,21 +99,21 @@ stop_active_project_build|Build|Stop Build|
 rebuild_active_project|Build|Rebuild Project|
 build_n_run_active_project|Build|Build and Run Project|Ctrl-F9
 next_build_error|Build|Next Build Error|F4
-start_debugger|GDB|Start/Continue Debugger|F5
-restart_debugger|GDB|Restart Debugger|Ctrl-Shift-F5
-attach_debugger|GDB|Attach to process...|
-pause_debugger|GDB|Pause debugger|
-stop_debugger|GDB|Stop debugger|Shift-F5
-dbg_stepin|GDB|Step Into|F11
-dbg_next|GDB|Next|F10
-dbg_nexti|GDB|Next Instruction|Ctrl-F10
-dbg_stepout|GDB|Step Out|Shift-F11
-show_cursor|GDB|Show Cursor|
-insert_breakpoint|GDB|Toggle Breakpoint|F9
-disable_all_breakpoints|GDB|Disable All Breakpoints|
-enable_all_breakpoints|GDB|Enable All Breakpoints|
-delete_all_breakpoints|GDB|Delete All Breakpoints|
-quick_debug|GDB|Quick Debug...|
+start_debugger|Debugger|Start/Continue Debugger|F5
+restart_debugger|Debugger|Restart Debugger|Ctrl-Shift-F5
+attach_debugger|Debugger|Attach to process...|
+pause_debugger|Debugger|Pause debugger|
+stop_debugger|Debugger|Stop debugger|Shift-F5
+dbg_stepin|Debugger|Step Into|F11
+dbg_next|Debugger|Next|F10
+dbg_nexti|Debugger|Next Instruction|Ctrl-F10
+dbg_stepout|Debugger|Step Out|Shift-F11
+show_cursor|Debugger|Show Cursor|
+insert_breakpoint|Debugger|Toggle Breakpoint|F9
+disable_all_breakpoints|Debugger|Disable All Breakpoints|
+enable_all_breakpoints|Debugger|Enable All Breakpoints|
+delete_all_breakpoints|Debugger|Delete All Breakpoints|
+quick_debug|Debugger|Quick Debug...|
 create_ext_database|Tags|Create external tags database...|
 open_ext_database|Tags|Attach external tags database...|
 close_ext_database|Tags|Close external tags database|

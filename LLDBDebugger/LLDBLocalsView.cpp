@@ -66,7 +66,7 @@ void LLDBLocalsView::OnLLDBLocalsUpdated(LLDBEvent& event)
     
     m_treeList->DeleteChildren( m_treeList->GetRootItem() );
     CL_DEBUG("Updating locals view");
-    DoAddVariableToView( event.GetLocals(), m_treeList->GetRootItem() );
+    DoAddVariableToView( event.GetVariables(), m_treeList->GetRootItem() );
 }
 
 void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent)
@@ -135,6 +135,6 @@ void LLDBLocalsView::OnLLDBVariableExpanded(LLDBEvent& event)
     }
     
     // add the variables 
-    DoAddVariableToView( event.GetLocals(), iter->second);
+    DoAddVariableToView( event.GetVariables(), iter->second);
     m_pendingExpandItems.erase( iter );
 }

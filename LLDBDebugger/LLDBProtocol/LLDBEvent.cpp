@@ -42,9 +42,7 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_threadId = src.m_threadId;
     m_breakpoints = src.m_breakpoints;
     m_variableId = src.m_variableId;
-    m_locals.clear();
-    m_locals.reserve( src.m_locals.size() );
-    this->m_locals.insert(m_locals.end(), src.m_locals.begin(), src.m_locals.end());
+    m_variables = src.m_variables;
     m_threads = src.m_threads;
     m_expression = src.m_expression;
     return *this;

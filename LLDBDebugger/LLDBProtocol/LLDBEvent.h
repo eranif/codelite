@@ -16,7 +16,7 @@ class LLDBEvent : public clCommandEvent
     int                     m_frameId;
     int                     m_threadId;
     LLDBBreakpoint::Vec_t   m_breakpoints;
-    LLDBVariable::Vect_t    m_locals;
+    LLDBVariable::Vect_t    m_variables;
     int                     m_variableId;
     LLDBThread::Vect_t      m_threads;
     wxString                m_expression;
@@ -37,9 +37,9 @@ public:
         return m_expression;
     }
     void SetVariables(const LLDBVariable::Vect_t& locals) {
-        this->m_locals.clear();
-        this->m_locals.reserve( locals.size() );
-        this->m_locals.insert(this->m_locals.end(), locals.begin(), locals.end());
+        this->m_variables.clear();
+        this->m_variables.reserve( locals.size() );
+        this->m_variables.insert(this->m_variables.end(), locals.begin(), locals.end());
     }
 
     void SetThreads(const LLDBThread::Vect_t& threads) {
@@ -54,8 +54,8 @@ public:
     int GetVariableId() const {
         return m_variableId;
     }
-    const LLDBVariable::Vect_t& GetLocals() const {
-        return m_locals;
+    const LLDBVariable::Vect_t& GetVariables() const {
+        return m_variables;
     }
     void SetBacktrace(const LLDBBacktrace& backtrace) {
         this->m_backtrace = backtrace;

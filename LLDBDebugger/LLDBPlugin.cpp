@@ -64,6 +64,7 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     , m_localsView(NULL)
     , m_threadsView(NULL)
     , m_terminalPID(wxNOT_FOUND)
+    , m_stopReasonPrompted(false)
 {
     m_longName = wxT("LLDB Debugger for CodeLite");
     m_shortName = wxT("LLDBDebuggerPlugin");
@@ -364,6 +365,7 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
     m_connector.SetCanInteract(true);
     
     if ( event.GetInterruptReason() == kInterruptReasonNone ) {
+        
         // Mark the debugger line / file
         IEditor *editor = m_mgr->FindEditor( event.GetFileName() );
         if ( !editor && wxFileName::Exists(event.GetFileName()) ) {
@@ -394,6 +396,14 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
         // request for local variables
         m_connector.RequestLocals();
         
+        wxString message;
+        if ( !m_stopReasonPrompted && event.ShouldPromptStopReason( message ) ) {
+            wxString msg;
+            msg << "Program stopped\nStop reason: " << message;
+            ::wxMessageBox(msg, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+            m_stopReasonPrompted = true; // show this message only once per debug session
+        }
+
     } else if ( event.GetInterruptReason() == kInterruptReasonApplyBreakpoints ) {
         CL_DEBUG("Applying breakpoints and continue...");
         m_connector.ApplyBreakpoints();
@@ -627,6 +637,7 @@ void LLDBPlugin::DoCleanup()
     TerminateTerminal();
     m_connector.StopDebugServer();
     m_terminalTTY.Clear();
+    m_stopReasonPrompted = false;
 }
 
 void LLDBPlugin::OnLLDBDeletedAllBreakpoints(LLDBEvent& event)

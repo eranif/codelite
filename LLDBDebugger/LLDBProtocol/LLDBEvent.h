@@ -30,7 +30,9 @@ public:
     virtual wxEvent* Clone() const {
         return new LLDBEvent(*this);
     }
-
+    
+    bool ShouldPromptStopReason(wxString &message) const;
+    
     void SetSessionType(int sessionType) {
         this->m_sessionType = sessionType;
     }

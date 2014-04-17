@@ -57,4 +57,17 @@ enum eLLDBDebugSessionType {
     kDebugSessionTypeCore,
     kDebugSessionTypeAttach,
 };
+
+enum eLLDBStopReason {
+    kStopReasonInvalid = 0,
+    kStopReasonNone,
+    kStopReasonTrace,
+    kStopReasonBreakpoint,
+    kStopReasonWatchpoint,
+    kStopReasonSignal,
+    kStopReasonException,
+    kStopReasonExec,        // Program was re-exec'ed
+    kStopReasonPlanComplete,
+    kStopReasonThreadExiting,
+};
 #endif

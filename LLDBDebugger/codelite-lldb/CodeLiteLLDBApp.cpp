@@ -304,11 +304,18 @@ void CodeLiteLLDBApp::NotifyStopped()
     for(int i=0; i<threadCount; ++i) {
         LLDBThread t;
         lldb::SBThread thr = m_target.GetProcess().GetThreadAtIndex(i);
+        t.SetStopReason(thr.GetStopReason());
         t.SetId( thr.GetThreadID() );
         t.SetActive( selectedThreadId == thr.GetThreadID() );
         lldb::SBFrame frame = thr.GetSelectedFrame();
         t.SetFunc( frame.GetFunctionName() ? frame.GetFunctionName() : "" );
         lldb::SBLineEntry lineEntry = thr.GetSelectedFrame().GetLineEntry();
+        char buffer[1024];
+        memset(buffer, 0x0, sizeof(buffer));
+        thr.GetStopDescription( buffer, sizeof( buffer ) );
+        t.SetStopReasonString( buffer );
+        
+        wxPrintf("codelite-lldb: thread %d stop reason is %s\n", t.GetId(), t.GetStopReasonString());
         if ( lineEntry.IsValid() ) {
             t.SetLine(lineEntry.GetLine());
             lldb::SBFileSpec fileSepc = frame.GetLineEntry().GetFileSpec();

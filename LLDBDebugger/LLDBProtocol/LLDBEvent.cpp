@@ -49,3 +49,15 @@ LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
     m_expression = src.m_expression;
     return *this;
 }
+
+bool LLDBEvent::ShouldPromptStopReason(wxString &message) const
+{
+    LLDBThread::Vect_t::const_iterator iter = m_threads.begin();
+    for(; iter != m_threads.end(); ++iter ) {
+        if ( iter->GetStopReason() == kStopReasonSignal || iter->GetStopReason() == kStopReasonException ) {
+            message = iter->GetStopReasonString();
+            return true;
+        }
+    }
+    return false;
+}

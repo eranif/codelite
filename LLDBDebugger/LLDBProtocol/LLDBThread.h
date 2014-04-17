@@ -12,6 +12,8 @@ class LLDBThread
     wxString m_file;
     int      m_line;
     bool     m_active;
+    int      m_stopReason;
+    wxString m_stopReasonString;
 
 public:
     typedef std::vector<LLDBThread> Vect_t;
@@ -21,6 +23,18 @@ public:
     virtual ~LLDBThread();
 
 
+    void SetStopReasonString(const wxString& stopReasonString) {
+        this->m_stopReasonString = stopReasonString;
+    }
+    const wxString& GetStopReasonString() const {
+        return m_stopReasonString;
+    }
+    void SetStopReason(int stopReason) {
+        this->m_stopReason = stopReason;
+    }
+    int GetStopReason() const {
+        return m_stopReason;
+    }
     void SetFile(const wxString& file) {
         this->m_file = file;
     }

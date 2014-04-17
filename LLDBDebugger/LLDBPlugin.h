@@ -27,6 +27,7 @@ class LLDBPlugin : public IPlugin
     LLDBThreadsView*        m_threadsView;
     long                    m_terminalPID;
     wxString                m_terminalTTY;
+    bool                    m_stopReasonPrompted;
     
 public:
     LLDBPlugin(IManager *manager);

@@ -23,14 +23,15 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_frameId = json.namedObject("m_frameId").toInt(wxNOT_FOUND);
     m_threadId = json.namedObject("m_threadId").toInt(wxNOT_FOUND);
     m_expression = json.namedObject("m_expression").toString();
-    
+    m_startupCommands = json.namedObject("m_startupCommands").toString();
+
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i=0; i<arr.arraySize(); ++i) {
         LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );
         bp->FromJSON( arr.arrayItem(i) );
         m_breakpoints.push_back( bp );
     }
-    
+
     if ( m_commandType == kCommandStart ) {
         // In the "Start" command we should also receive the settings data
         m_settings.FromJSON( json.namedObject("m_settings") );
@@ -51,14 +52,15 @@ JSONElement LLDBCommand::ToJSON() const
     json.addProperty("m_frameId", m_frameId);
     json.addProperty("m_threadId", m_threadId);
     json.addProperty("m_expression", m_expression);
-    
+    json.addProperty("m_startupCommands", m_startupCommands);
+
     JSONElement bparr = JSONElement::createArray("m_breakpoints");
     json.append( bparr );
-    
+
     for(size_t i=0; i<m_breakpoints.size(); ++i) {
         bparr.arrayAppend( m_breakpoints.at(i)->ToJSON() );
     }
-    
+
     if ( m_commandType == kCommandStart ) {
         // In the "Start" command we should also send the settings data
         json.addProperty("m_settings", m_settings.ToJSON());
@@ -68,12 +70,12 @@ JSONElement LLDBCommand::ToJSON() const
 
 void LLDBCommand::FillEnvFromMemory()
 {
-    // get an environment map from memory and copy into 
+    // get an environment map from memory and copy into
     // m_env variable.
     m_env.clear();
     wxEnvVariableHashMap tmpEnvMap;
     ::wxGetEnvMap( &tmpEnvMap );
-    
+
     wxEnvVariableHashMap::iterator iter = tmpEnvMap.begin();
     for(; iter != tmpEnvMap.end(); ++iter ) {
         m_env.insert( std::make_pair(iter->first, iter->second) );
@@ -85,9 +87,9 @@ char** LLDBCommand::GetEnvArray() const
     if ( m_env.empty() ) {
         return NULL;
     }
-    
+
     char **penv = new char*[m_env.size()+1];
-    
+
     JSONElement::wxStringMap_t::const_iterator iter = m_env.begin();
     size_t index(0);
     for(; iter != m_env.end(); ++iter ) {

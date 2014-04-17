@@ -3159,7 +3159,7 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         dbgEvent.SetProjectName( WorkspaceST::Get()->GetActiveProjectName() );
         BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf( dbgEvent.GetProjectName() , "" );
         if ( bldConf ) {
-            dbgEvent.SetString( bldConf->GetDebuggerType() );
+            dbgEvent.SetDebuggerName( bldConf->GetDebuggerType() );
         }
     }
 
@@ -4233,8 +4233,16 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             ManagerST::Get()->GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
             
         } else if ( !dbgr ) {
-            // FIXME: a plugin debugger was selected
-            // send an event to start a quick debug
+            
+            // Fire an event, maybe a plugin wants to process this
+            clDebugEvent event( wxEVT_DBG_QUICK_DEBUG);
+            event.SetDebuggerName(dlg->GetDebuggerName());
+            event.SetExecutableName( dlg->GetExe() );
+            event.SetWorkingDirectory( dlg->GetWorkingDirectory() );
+            event.SetStartupCommands( wxJoin(dlg->GetStartupCmds(), '\n') );
+            event.SetArguments( dlg->GetArguments() );
+            EventNotifier::Get()->AddPendingEvent( event );
+            
         }
     }
     dlg->Destroy();
@@ -4336,8 +4344,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 void clMainFrame::OnQuickDebugUI(wxUpdateUIEvent& e)   // (Also used by DebugCoreDump)
 {
     CHECK_SHUTDOWN();
-    IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
-    e.Enable(dbgr && !dbgr->IsRunning());
+    e.Enable(true);
 }
 
 void clMainFrame::OnShowWhitespaceUI(wxUpdateUIEvent& e)

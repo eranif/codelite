@@ -514,6 +514,9 @@
                                             // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
                                             // This string is later will be availe for codelite to display it in various dialogs (e.g. Quick Debug, project settings etc)
 
+#define wxEVT_DBG_QUICK_DEBUG          3571 // User clicked on the 'Quick Debug' button. Event type is clDebugEvent
+#define wxEVT_DBG_CORE_FILE            3572 // User selected to debug a core file. Event type is clDebugEvent
+
 // -------------------Debugger events end------------------------------------------------
 #define wxEVT_CMD_OPEN_PROJ_SETTINGS   3580 // clCommandEvent. Use event.GetString() to get the project name
 

@@ -25,7 +25,7 @@
 
 static LLDBPlugin* thePlugin = NULL;
 
-#define DEBUGGER_NAME               "LLDB Debugger"
+#define LLDB_DEBUGGER_NAME               "LLDB Debugger"
 #define LLDB_CALLSTACK_PANE_NAME    "LLDB Callstack"
 #define LLDB_BREAKPOINTS_PANE_NAME  "LLDB Breakpoints"
 #define LLDB_LOCALS_PANE_NAME       "LLDB Locals"
@@ -92,6 +92,7 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
 }
 
 void LLDBPlugin::UnPlug()
@@ -123,6 +124,7 @@ void LLDBPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
 }
 
 LLDBPlugin::~LLDBPlugin()
@@ -200,12 +202,11 @@ void LLDBPlugin::TerminateTerminal()
 
 void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 {
-    if ( event.GetString() != DEBUGGER_NAME ) {
-        event.Skip();
-        return;
-    }
-    
     if ( !m_connector.IsRunning() ) {
+        if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
+            event.Skip();
+            return;
+        }
         CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
         {
             // Get the executable to debug
@@ -454,7 +455,7 @@ void LLDBPlugin::OnIsDebugger(clDebugEvent& event)
 {
     event.Skip();
     // register us as a debugger
-    event.GetStrings().Add(DEBUGGER_NAME);
+    event.GetStrings().Add(LLDB_DEBUGGER_NAME);
 }
 
 void LLDBPlugin::LoadLLDBPerspective()
@@ -715,5 +716,59 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
                 << "<code><b>Value     </b></code>: " << event.GetVariables().at(0)->GetValue() << "\n"
                 << "<code><b>Summary   </b></code>: " << event.GetVariables().at(0)->GetSummary();
         m_mgr->GetActiveEditor()->ShowRichTooltip( tooltip );
+    }
+}
+
+void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
+{
+    if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
+        event.Skip();
+        return;
+    }
+    
+    if ( m_connector.IsRunning() ) {
+        // Another debug session is already in progress
+        ::wxMessageBox(_("Another debug sessiokn is already in progress. Please stop it first"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
+        return;
+    }
+    
+    TerminateTerminal();
+    wxString tty;
+    ::LaunchTerminalForDebugger(event.GetExecutableName(), tty, m_terminalPID);
+    
+    if ( m_terminalPID != wxNOT_FOUND ) {
+        CL_DEBUG("Successfully launched terminal");
+    
+    } else {
+        // Failed to launch it...
+        DoCleanup();
+        ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+        return;
+    }
+    
+    m_connector.LaunchDebugServer();
+    if ( m_connector.ConnectToLocalDebugger(5) ) {
+        
+        // Apply the environment
+        EnvSetter env;
+        
+        // Get list of breakpoints and add them ( we will apply them later on )
+        BreakpointInfo::Vec_t gdbBps;
+        m_mgr->GetAllBreakpoints(gdbBps);
+        
+        // remove all breakpoints from previous session
+        m_connector.DeleteAllBreakpoints();
+
+        // apply the serialized breakpoints
+        m_connector.AddBreakpoints( gdbBps );
+
+        LLDBCommand startCommand;
+        startCommand.FillEnvFromMemory();
+        startCommand.SetExecutable( event.GetExecutableName() );
+        startCommand.SetCommandArguments( event.GetArguments() );
+        startCommand.SetWorkingDirectory( event.GetWorkingDirectory() );
+        startCommand.SetStartupCommands( event.GetStartupCommands() );
+        startCommand.SetRedirectTTY( tty );
+        m_connector.Start( startCommand );
     }
 }

@@ -252,19 +252,61 @@ typedef void (wxEvtHandler::*clBuildEventFunction)(clBuildEvent&);
 // -------------------------------------------------------------------------
 class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
 {
-    wxString m_projectName;
-    wxString m_configurationName;
+    wxString m_projectName;         // wxEVT_DBG_UI_START_OR_CONT
+    wxString m_configurationName;   // wxEVT_DBG_UI_START_OR_CONT
+    wxString m_debuggerName;        // holds the selected debugger name. wxEVT_DBG_UI_START_OR_CONT, wxEVT_DBG_QUICK_DEBUG, wxEVT_DBG_CORE_FILE
+    wxString m_executableName;      // This will be set for wxEVT_DBG_QUICK_DEBUG and wxEVT_DBG_CORE_FILE
+    wxString m_coreFile;            // wxEVT_DBG_CORE_FILE
+    wxString m_workingDirectory;    // wxEVT_DBG_CORE_FILE, wxEVT_DBG_QUICK_DEBUG
+    wxString m_arguments;           // wxEVT_DBG_QUICK_DEBUG
+    wxString m_startupCommands;     // wxEVT_DBG_QUICK_DEBUG
 
 public:
     clDebugEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     clDebugEvent(const clDebugEvent& event);
-    clDebugEvent& operator=(const clDebugEvent& src);
-    
+    clDebugEvent& operator=(const clDebugEvent& other);
+
     virtual ~clDebugEvent();
     virtual wxEvent *Clone() const {
         return new clDebugEvent(*this);
     };
 
+    void SetDebuggerName(const wxString& debuggerName) {
+        this->m_debuggerName = debuggerName;
+    }
+    const wxString& GetDebuggerName() const {
+        return m_debuggerName;
+    }
+    void SetArguments(const wxString& arguments) {
+        this->m_arguments = arguments;
+    }
+    void SetCoreFile(const wxString& coreFile) {
+        this->m_coreFile = coreFile;
+    }
+    void SetExecutableName(const wxString& executableName) {
+        this->m_executableName = executableName;
+    }
+    void SetStartupCommands(const wxString& startupCommands) {
+        this->m_startupCommands = startupCommands;
+    }
+    void SetWorkingDirectory(const wxString& workingDirectory) {
+        this->m_workingDirectory = workingDirectory;
+    }
+    const wxString& GetArguments() const {
+        return m_arguments;
+    }
+    const wxString& GetCoreFile() const {
+        return m_coreFile;
+    }
+    const wxString& GetExecutableName() const {
+        return m_executableName;
+    }
+    const wxString& GetStartupCommands() const {
+        return m_startupCommands;
+    }
+    const wxString& GetWorkingDirectory() const {
+        return m_workingDirectory;
+    }
     void SetConfigurationName(const wxString& configurationName) {
         this->m_configurationName = configurationName;
     }

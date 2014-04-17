@@ -23,6 +23,8 @@ protected:
     int                        m_frameId;
     int                        m_threadId;
     wxString                   m_expression;
+    wxString                   m_startupCommands;
+
 public:
     // Serialization API
     JSONElement ToJSON() const;
@@ -32,6 +34,12 @@ public:
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 
+    void SetStartupCommands(const wxString& startupCommands) {
+        this->m_startupCommands = startupCommands;
+    }
+    const wxString& GetStartupCommands() const {
+        return m_startupCommands;
+    }
     void SetExpression(const wxString& expression) {
         this->m_expression = expression;
     }

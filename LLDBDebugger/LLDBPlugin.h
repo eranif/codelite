@@ -71,6 +71,7 @@ protected:
     void OnToggleBreakpoint(clDebugEvent& event);
     void OnToggleInerrupt(clDebugEvent& event);
     void OnDebugTooltip(clDebugEvent& event);
+    void OnDebugQuickDebug(clDebugEvent& event);
     
     void OnBuildStarting(clBuildEvent& event);
 

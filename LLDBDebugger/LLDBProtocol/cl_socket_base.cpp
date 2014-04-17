@@ -113,6 +113,7 @@ int clSocketBase::ReadMessage(wxString& message, int timeout) throw (clSocketExc
     int rc = Read( (char*)&message_len, sizeof(message_len), bytesRead, timeout);
 
     if ( rc != kSuccess ) {
+        // timeout
         return rc;
     }
 
@@ -124,8 +125,13 @@ int clSocketBase::ReadMessage(wxString& message, int timeout) throw (clSocketExc
         wxDELETEA( buff );
         return rc;
     }
-
-    if ( bytesRead != message_len ) {
+    
+    if ( bytesRead == 0 ) {
+        // session was closed
+        wxDELETEA( buff );
+        throw clSocketException("connection closed by peer");
+        
+    } else if ( bytesRead != message_len ) {
         wxDELETEA( buff );
         throw clSocketException("Wrong message length received");
     }

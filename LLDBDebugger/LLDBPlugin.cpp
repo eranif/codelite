@@ -750,7 +750,7 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
             tooltip << var->GetValue() << "\n";
         }
         
-        if ( var->GetSummary().IsEmpty() ) {
+        if ( !var->GetSummary().IsEmpty() ) {
             tooltip << var->GetSummary();
         }
         

@@ -72,6 +72,7 @@
 #include "file_logger.h"
 #include <wx/stc/stc.h>
 #include "cpp_scanner.h"
+#include "macros.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1578,32 +1579,19 @@ wxArrayString SplitString(const wxString &inString, bool trim)
     return lines;
 }
 
-void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
+static bool search_process_by_command(const wxString &name, wxString &tty, long& pid)
 {
-    pid = wxNOT_FOUND;
+    CL_DEBUG("search_process_by_command is called");
     tty.Clear();
-    
-#ifdef __WXMSW__
-    wxUnusedVar(title);
-    
-#elif defined(__WXMAC__)
-
-#else
-    static wxString SLEEP_COMMAND = "sleep 85765";
-    wxString consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
-    consoleCommand.Replace("$(CMD)", SLEEP_COMMAND);
-    consoleCommand.Replace("$(TITLE)", title);
-    
-    ::wxExecute( consoleCommand );
-    wxThread::Sleep(500);
+    pid = wxNOT_FOUND;
     
     // Run "ps -A -o pid,tty,command" to locate the terminal ID
     wxString psCommand;
     wxArrayString arrOutput;
-    psCommand << "ps -A -o pid,tty,command --no-heading|grep sleep";
-    WrapInShell( psCommand );
+    psCommand << "ps -A -o pid,tty,command";
     
-    ProcUtils::SafeExecuteCommand(psCommand, arrOutput);
+    wxArrayString arrErr;
+    ::wxExecute(psCommand, arrOutput, arrErr);
     for(size_t i=0; i<arrOutput.GetCount(); ++i) {
         wxString curline = arrOutput.Item(i).Trim().Trim(false);
         wxArrayString tokens = ::wxStringTokenize( curline, " ", wxTOKEN_STRTOK );
@@ -1622,20 +1610,73 @@ void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
         
         wxString tmp_tty = curline.BeforeFirst(' ');
         curline = curline.AfterFirst(' ');
+
         wxString command = curline; // the remainder
-        
         command.Trim().Trim(false);
-        if ( command == SLEEP_COMMAND ) {
+        CL_DEBUG("Checking command '%s'", command);
+        
+        if ( command == name ) {
             // we got our match
             tmp_tty = tmp_tty.AfterLast('/');
+#ifdef __WXMAC__
+            tmp_tty.Prepend("/dev/");
+#else
             tmp_tty.Prepend("/dev/pts/");
+#endif
             tty = tmp_tty;
             tmp_pid.Trim().Trim(false).ToCLong( &pid );
-            return;
+            return true;
         }
     }
-#endif
+    return false;
 }
+
+void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
+{
+    pid = wxNOT_FOUND;
+    tty.Clear();
+    
+#ifdef __WXMSW__
+    // Windows
+    wxUnusedVar(title);
+    
+#else
+    // Non Windows machines
+    static wxString SLEEP_COMMAND = "sleep 85765";
+    
+#if defined(__WXMAC__)
+    wxString consoleCommand;
+    wxString codelite_terminal;
+    wxFileName fnCodeLiteTerminal(wxStandardPaths::Get().GetExecutablePath());
+    fnCodeLiteTerminal.AppendDir("codelite-terminal.app");
+    
+    consoleCommand  << "/usr/bin/open "
+                    << fnCodeLiteTerminal.GetPath()
+                    << " --args "
+                    << "--dbg-terminal "
+                    << "--exit "
+                    << "--title \"" << title << "\" "
+                    << "--cmd " 
+                    << SLEEP_COMMAND;
+
+#else // Linux / FreeBSD
+    wxString consoleCommand = TERMINAL_CMD;
+    consoleCommand.Replace("$(CMD)", SLEEP_COMMAND);
+    consoleCommand.Replace("$(TITLE)", title);
+#endif
+
+    ::wxExecute( consoleCommand );
+    
+    // Let it start ...
+    for(size_t i=0; i<10; ++i) {
+        if ( search_process_by_command(SLEEP_COMMAND, tty, pid) ) {
+            return;
+        }
+        wxSleep(1);
+    }
+#endif // !__WXMSW__
+}
+
 
 IProcess* LaunchTerminal(const wxString &title, bool forDebugger, IProcessCallback *processCB)
 {

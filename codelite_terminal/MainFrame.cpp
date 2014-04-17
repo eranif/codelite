@@ -57,25 +57,6 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options, long styl
     SetTitle( m_options.GetTitle() );
     m_stc->SetFont( wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT) );
     wxString tty = StartTTY();
-
-    if ( options.HasFlag( TerminalOptions::kPrintInfo ) ) {
-        // we writ the info to file, since on OSX we use 
-        // a mediator to launch the process /usr/bin/open
-#ifdef __WXMSW__
-        wxFileName fnTmp( wxFileName::GetTempDir(), "codelite-terminal.txt" );
-#else
-        wxFileName fnTmp( "/tmp/codelite-terminal.txt" );
-#endif
-
-        wxFFile fp( fnTmp.GetFullPath(), "w+a" );
-        if ( fp.IsOpened() ) {
-            wxString infoStr;
-            infoStr << "{\"tty\" : \"" << tty << "\", \"ProcessID\" : " << ::wxGetProcessId() << "}";
-            fp.Write( infoStr + "\n" );
-            fp.Close();
-        }
-    }
-    
     SetCartAtEnd();
     m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_ARROWS);
     m_stc->MarkerSetBackground(MARKER_ID, *wxBLACK);
@@ -84,13 +65,7 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions &options, long styl
     SetPosition( m_config.GetTerminalPosition() );
 
     DoApplySettings();
-    
-    if ( options.HasFlag( TerminalOptions::kDebuggerTerminal) ) {
-        
-    } else {
-        CallAfter( &MainFrame::DoExecStartCommand );
-        
-    }
+    CallAfter( &MainFrame::DoExecStartCommand );
 
     // Connect color menu items
     Connect(ID_BG_COLOR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSelectBgColour), NULL, this);
@@ -154,12 +129,13 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
             wxString cmd = GetCurrentLine();
             AppendNewLine();
             m_dummyProcess->Write( cmd );
-
-        } else if ( m_process ) {
+        }
+        
+        if ( m_process ) {
             wxString cmd = GetCurrentLine();
             AppendNewLine();
             m_process->Write( cmd );
-
+            
         } else {
             DoExecuteCurrentLine();
 

@@ -13,13 +13,14 @@ LLDBReply::LLDBReply(const wxString& str)
 
 void LLDBReply::FromJSON(const JSONElement& json)
 {
-    m_replyType       = json.namedObject("m_replyType").toInt(kReplyTypeInvalid);
-    m_interruptResaon = json.namedObject("m_stopResaon").toInt(kInterruptReasonNone);
-    m_line            = json.namedObject("m_line").toInt(wxNOT_FOUND);
-    m_filename        = json.namedObject("m_filename").toString();
-    m_lldbId          = json.namedObject("m_lldbId").toInt();
-    m_expression      = json.namedObject("m_expression").toString();
-    
+    m_replyType         = json.namedObject("m_replyType").toInt(kReplyTypeInvalid);
+    m_interruptResaon   = json.namedObject("m_stopResaon").toInt(kInterruptReasonNone);
+    m_line              = json.namedObject("m_line").toInt(wxNOT_FOUND);
+    m_filename          = json.namedObject("m_filename").toString();
+    m_lldbId            = json.namedObject("m_lldbId").toInt();
+    m_expression        = json.namedObject("m_expression").toString();
+    m_debugSessionType  = json.namedObject("m_debugSessionType").toInt(kDebugSessionTypeNormal);
+
     m_breakpoints.clear();
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i=0; i<arr.arraySize(); ++i) {
@@ -47,12 +48,13 @@ void LLDBReply::FromJSON(const JSONElement& json)
 JSONElement LLDBReply::ToJSON() const
 {
     JSONElement json = JSONElement::createObject();
-    json.addProperty("m_replyType",     m_replyType);
-    json.addProperty("m_stopResaon",    m_interruptResaon);
-    json.addProperty("m_line",          m_line);
-    json.addProperty("m_filename",      m_filename);
-    json.addProperty("m_lldbId",        m_lldbId);
-    json.addProperty("m_expression",    m_expression);
+    json.addProperty("m_replyType",         m_replyType);
+    json.addProperty("m_stopResaon",        m_interruptResaon);
+    json.addProperty("m_line",              m_line);
+    json.addProperty("m_filename",          m_filename);
+    json.addProperty("m_lldbId",            m_lldbId);
+    json.addProperty("m_expression",        m_expression);
+    json.addProperty("m_debugSessionType",  m_debugSessionType);
     
     JSONElement bparr = JSONElement::createArray("m_breakpoints");
     json.append( bparr );

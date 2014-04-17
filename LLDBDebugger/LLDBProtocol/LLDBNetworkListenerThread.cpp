@@ -26,6 +26,7 @@ void* LLDBNetworkListenerThread::Entry()
                 case kReplyTypeDebuggerStartedSuccessfully: {
                     // notify debugger started successfully
                     LLDBEvent event(wxEVT_LLDB_STARTED);
+                    event.SetSessionType( reply.GetDebugSessionType() );
                     m_owner->AddPendingEvent( event );
                     break;
                 }

@@ -1613,7 +1613,6 @@ static bool search_process_by_command(const wxString &name, wxString &tty, long&
 
         wxString command = curline; // the remainder
         command.Trim().Trim(false);
-        CL_DEBUG("Checking command '%s'", command);
         
         if ( command == name ) {
             // we got our match
@@ -1667,13 +1666,14 @@ void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
 
     ::wxExecute( consoleCommand );
     
-    // Let it start ...
-    for(size_t i=0; i<10; ++i) {
+    // Let it start ... (wait for it up to 5 seconds)
+    for(size_t i=0; i<20; ++i) {
         if ( search_process_by_command(SLEEP_COMMAND, tty, pid) ) {
             return;
         }
-        wxSleep(1);
+        wxThread::Sleep(250);
     }
+
 #endif // !__WXMSW__
 }
 

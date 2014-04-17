@@ -45,9 +45,16 @@ enum eCommandType {
     kCommandSelectFrame,
     kCommandSelectThread,
     kCommandEvalExpression,
+    kCommandDebugCoreFile,
 };
 
 enum eLLDBOptions {
     kLLDBOptionRaiseCodeLite = 0x00000001,
+};
+
+enum eLLDBDebugSessionType {
+    kDebugSessionTypeNormal,
+    kDebugSessionTypeCore,
+    kDebugSessionTypeAttach,
 };
 #endif

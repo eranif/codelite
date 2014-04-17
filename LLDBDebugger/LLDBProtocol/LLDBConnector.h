@@ -218,7 +218,12 @@ public:
      * @param runCommand
      */
     void Start(const LLDBCommand& runCommand);
-
+    
+    /**
+     * @brief debug a core file
+     */
+    void OpenCoreFile(const LLDBCommand& runCommand);
+    
     /**
      * @brief instruct the debugger to 'run'
      */

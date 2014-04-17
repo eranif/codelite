@@ -6,6 +6,8 @@
 #include <wx/thread.h>
 #include <lldb/API/SBListener.h>
 #include <lldb/API/SBProcess.h>
+#include "LLDBProtocol/LLDBEnums.h"
+
 
 /**
  * @class LLDBHandlerThread
@@ -18,9 +20,10 @@ class LLDBProcessEventHandlerThread : public wxThread
     CodeLiteLLDBApp* m_app;
     lldb::SBProcess  m_process;
     lldb::SBListener m_listener;
+    eLLDBDebugSessionType m_sessionType;
     
 public:
-    LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process);
+    LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process, eLLDBDebugSessionType sessionType);
     virtual ~LLDBProcessEventHandlerThread();
     
     void Start() {

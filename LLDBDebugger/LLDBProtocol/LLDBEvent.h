@@ -20,6 +20,7 @@ class LLDBEvent : public clCommandEvent
     int                     m_variableId;
     LLDBThread::Vect_t      m_threads;
     wxString                m_expression;
+    int                     m_sessionType;
 
 public:
     LLDBEvent(wxEventType eventType, int winid = 0);
@@ -30,6 +31,12 @@ public:
         return new LLDBEvent(*this);
     }
 
+    void SetSessionType(int sessionType) {
+        this->m_sessionType = sessionType;
+    }
+    int GetSessionType() const {
+        return m_sessionType;
+    }
     void SetExpression(const wxString& expression) {
         this->m_expression = expression;
     }

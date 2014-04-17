@@ -19,6 +19,7 @@ LLDBEvent::LLDBEvent(wxEventType eventType, int windid)
     , m_interruptReason(0)
     , m_frameId(0)
     , m_threadId(0)
+    , m_sessionType(kDebugSessionTypeNormal)
 {
 }
 
@@ -34,6 +35,7 @@ LLDBEvent::LLDBEvent(const LLDBEvent& src)
 LLDBEvent& LLDBEvent::operator=(const LLDBEvent& src)
 {
     clCommandEvent::operator =(src);
+    m_sessionType = src.m_sessionType;
     m_backtrace = src.m_backtrace;
     m_filename = src.m_filename;
     m_linenumber = src.m_linenumber;

@@ -4334,8 +4334,13 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             dbgr->Continue();
             
         } else if ( !dbgr ) {
-            // FIXME:  send a core-debug event here
-            
+            clDebugEvent event( wxEVT_DBG_CORE_FILE);
+            event.SetDebuggerName(dlg->GetDebuggerName());
+            event.SetExecutableName( dlg->GetExe());
+            event.SetCoreFile( dlg->GetCore() );
+            event.SetWorkingDirectory( dlg->GetWorkingDirectory() );
+            EventNotifier::Get()->AddPendingEvent( event );
+
         }
     }
     dlg->Destroy();

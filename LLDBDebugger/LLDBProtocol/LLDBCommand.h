@@ -24,6 +24,7 @@ protected:
     int                        m_threadId;
     wxString                   m_expression;
     wxString                   m_startupCommands;
+    wxString                   m_corefile;
 
 public:
     // Serialization API
@@ -34,6 +35,12 @@ public:
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 
+    void SetCorefile(const wxString& corefile) {
+        this->m_corefile = corefile;
+    }
+    const wxString& GetCorefile() const {
+        return m_corefile;
+    }
     void SetStartupCommands(const wxString& startupCommands) {
         this->m_startupCommands = startupCommands;
     }

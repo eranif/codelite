@@ -505,6 +505,11 @@ void LLDBConnector::EvaluateExpression(const wxString& expression)
     }
 }
 
+void LLDBConnector::OpenCoreFile(const LLDBCommand& runCommand)
+{
+    SendCommand( runCommand );
+}
+
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str)
 {
     wxUnusedVar( str );

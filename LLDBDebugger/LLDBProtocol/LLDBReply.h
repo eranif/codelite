@@ -21,12 +21,26 @@ protected:
     LLDBThread::Vect_t          m_threads;
     int                         m_lldbId;
     wxString                    m_expression;
+    int                         m_debugSessionType;
 
 public:
-    LLDBReply() : m_replyType(kReplyTypeInvalid), m_interruptResaon(kInterruptReasonNone), m_line(wxNOT_FOUND), m_lldbId(wxNOT_FOUND) {}
+    LLDBReply()
+        : m_replyType(kReplyTypeInvalid)
+        , m_interruptResaon(kInterruptReasonNone)
+        , m_line(wxNOT_FOUND)
+        , m_lldbId(wxNOT_FOUND)
+        , m_debugSessionType(kDebugSessionTypeNormal)
+    {}
+
     LLDBReply(const wxString &str);
     virtual ~LLDBReply();
 
+    void SetDebugSessionType(int debugSessionType) {
+        this->m_debugSessionType = debugSessionType;
+    }
+    int GetDebugSessionType() const {
+        return m_debugSessionType;
+    }
     void SetExpression(const wxString& expression) {
         this->m_expression = expression;
     }

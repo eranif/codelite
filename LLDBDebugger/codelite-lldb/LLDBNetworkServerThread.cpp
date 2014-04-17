@@ -43,7 +43,11 @@ void* LLDBNetworkServerThread::Entry()
                 case kCommandStart:
                     m_app->CallAfter( &CodeLiteLLDBApp::StartDebugger, command );
                     break;
-
+                    
+                case kCommandDebugCoreFile: 
+                    m_app->CallAfter( &CodeLiteLLDBApp::OpenCoreFile, command );
+                    break;
+                    
                 case kCommandRun:
                     m_app->CallAfter( &CodeLiteLLDBApp::RunDebugger, command);
                     break;

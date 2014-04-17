@@ -107,17 +107,17 @@ bool CodeLiteLLDBApp::OnInit()
     return true;
 }
 
-void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
+bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
 {
-    wxPrintf("codelite-lldb: StartDebugger Called\n");
-    
     if ( IsDebugSessionInProgress() ) {
         wxPrintf("codelite-lldb: another session is already in progress\n");
-        return;
+        return false;
     }
+    
     if ( !command.GetWorkingDirectory().IsEmpty() ) {
         ::wxSetWorkingDirectory( command.GetWorkingDirectory() );
     }
+    
     wxPrintf("codelite-lldb: working directory is set to %s\n", ::wxGetCwd());
 #ifdef __WXMAC__
     // On OSX, debugserver executable must exists otherwise lldb will not work properly
@@ -125,14 +125,20 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
     wxString lldbDebugServer;
     if ( !::wxGetEnv("LLDB_DEBUGSERVER_PATH", &lldbDebugServer) || !wxFileName::Exists(lldbDebugServer) ) {
         wxPrintf("codelite-lldb: LLDB_DEBUGSERVER_PATH environment does not exist or contains a path to a non existent file\n");
-        Cleanup();
-        return;
+        NotifyExited();
+        return false;
     }
 #endif
 
     m_debuggeePid = wxNOT_FOUND;
     m_debugger = lldb::SBDebugger::Create();
     m_target = m_debugger.CreateTarget(command.GetExecutable().mb_str().data());
+    if ( !m_target.IsValid() ) {
+        wxPrintf("codelite-lldb: could not create target for file '%'\n", command.GetExecutable());
+        NotifyExited();
+        return false;
+    }
+    
     m_debugger.SetAsync(true);
     
     // Keep the settings
@@ -148,16 +154,25 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
     }
     
     wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
-    
+    return true;
+}
+
+void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: StartDebugger Called\n");
+    if ( !InitializeLLDB( command ) ) {
+        return;
+    }
+
     // Launch the thread that will handle the LLDB process events
-    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess());
+    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess(), kDebugSessionTypeNormal);
     m_lldbProcessEventThread->Start();
 
     // In any case, reset the interrupt reason
     m_interruptReason = kInterruptReasonNone;
 
     // Notify codelite that the debugger started successfully
-    NotifyStarted();
+    NotifyStarted( kDebugSessionTypeNormal );
 }
 
 void CodeLiteLLDBApp::NotifyAllBreakpointsDeleted()
@@ -236,10 +251,24 @@ void CodeLiteLLDBApp::NotifyRunning()
     SendReply( reply );
 }
 
-void CodeLiteLLDBApp::NotifyStarted()
+void CodeLiteLLDBApp::NotifyStarted(eLLDBDebugSessionType sessionType)
 {
+    switch( sessionType ) {
+    case kDebugSessionTypeAttach:
+        wxPrintf("codelite-lldb: NotifyStarted called (kDebugSessionTypeAttach)\n");
+        break;
+    case kDebugSessionTypeCore:
+        wxPrintf("codelite-lldb: NotifyStarted called (kDebugSessionTypeCore)\n");
+        break;
+    case kDebugSessionTypeNormal:
+        wxPrintf("codelite-lldb: NotifyStarted called (kDebugSessionTypeNormal)\n");
+        break;
+        
+    }
+    
     m_variables.clear();
     LLDBReply reply;
+    reply.SetDebugSessionType( sessionType );
     reply.SetReplyType( kReplyTypeDebuggerStartedSuccessfully );
     SendReply( reply );
 }
@@ -707,6 +736,38 @@ void CodeLiteLLDBApp::EvalExpression(const LLDBCommand& command)
             SendReply( reply );
         }
     }
+}
+
+void CodeLiteLLDBApp::OpenCoreFile(const LLDBCommand& command)
+{
+    wxPrintf("codeite-lldb: debugging core file '%s'\n", command.GetCorefile());
+    wxPrintf("codeite-lldb: executable file '%s'\n", command.GetExecutable());
+    
+    if ( !InitializeLLDB( command ) ) {
+        return;
+    }
+    
+    lldb::SBProcess process = m_target.LoadCore( command.GetCorefile().mb_str(wxConvUTF8).data() );
+    if ( !process.IsValid() ) {
+        wxPrintf("codeite-lldb: error loading core file '%s'\n", command.GetCorefile());
+        NotifyExited();
+        return;
+    }
+    
+    // Launch the thread that will handle the LLDB process events
+    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess(), kDebugSessionTypeCore);
+    m_lldbProcessEventThread->Start();
+
+
+    // Notify codelite that the debugger started successfully
+    NotifyStarted( kDebugSessionTypeCore );
+    
+    // In any case, reset the interrupt reason
+    m_interruptReason = kInterruptReasonNone;
+    
+    // Since we are in 'core' session
+    // immediately notify about 'stop'
+    NotifyStopped();
 }
 
 #endif 

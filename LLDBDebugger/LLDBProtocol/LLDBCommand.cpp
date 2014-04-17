@@ -32,9 +32,13 @@ void LLDBCommand::FromJSON(const JSONElement& json)
         m_breakpoints.push_back( bp );
     }
 
-    if ( m_commandType == kCommandStart ) {
+    if ( m_commandType == kCommandStart || m_commandType == kCommandDebugCoreFile ) {
         // In the "Start" command we should also receive the settings data
         m_settings.FromJSON( json.namedObject("m_settings") );
+    }
+    
+    if ( m_commandType == kCommandDebugCoreFile ) {
+        m_corefile = json.namedObject("m_corefile").toString();
     }
 }
 
@@ -61,9 +65,13 @@ JSONElement LLDBCommand::ToJSON() const
         bparr.arrayAppend( m_breakpoints.at(i)->ToJSON() );
     }
 
-    if ( m_commandType == kCommandStart ) {
+    if ( m_commandType == kCommandStart || m_commandType == kCommandDebugCoreFile ) {
         // In the "Start" command we should also send the settings data
         json.addProperty("m_settings", m_settings.ToJSON());
+    }
+    
+    if ( m_commandType == kCommandDebugCoreFile ) {
+        json.addProperty("m_corefile", m_corefile);
     }
     return json;
 }

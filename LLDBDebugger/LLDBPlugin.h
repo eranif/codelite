@@ -26,6 +26,7 @@ class LLDBPlugin : public IPlugin
     LLDBLocalsView*         m_localsView;
     LLDBThreadsView*        m_threadsView;
     long                    m_terminalPID;
+    wxString                m_terminalTTY;
     
 public:
     LLDBPlugin(IManager *manager);
@@ -51,6 +52,7 @@ private:
     void InitializeUI();
     void DestroyUI();
     void DoCleanup();
+    bool DoInitializeDebugger(clDebugEvent &event);
     
 protected:
     // Other codelite events
@@ -72,6 +74,7 @@ protected:
     void OnToggleInerrupt(clDebugEvent& event);
     void OnDebugTooltip(clDebugEvent& event);
     void OnDebugQuickDebug(clDebugEvent& event);
+    void OnDebugCoreFile(clDebugEvent& event);
     
     void OnBuildStarting(clBuildEvent& event);
 

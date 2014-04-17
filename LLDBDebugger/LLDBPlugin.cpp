@@ -93,6 +93,7 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
 }
 
 void LLDBPlugin::UnPlug()
@@ -125,6 +126,7 @@ void LLDBPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
 }
 
 LLDBPlugin::~LLDBPlugin()
@@ -198,6 +200,7 @@ void LLDBPlugin::TerminateTerminal()
         ::wxKill(m_terminalPID, wxSIGKILL);
         m_terminalPID = wxNOT_FOUND;
     }
+    m_terminalTTY.Clear();
 }
 
 void LLDBPlugin::OnDebugStart(clDebugEvent& event)
@@ -339,9 +342,17 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
     event.Skip();
     InitializeUI();
     LoadLLDBPerspective();
-    m_connector.Run();
+    
+    // If this is a normal debug session, a start notification
+    // should follow a 'Run' command
+    if ( event.GetSessionType() == kDebugSessionTypeCore ) {
+        CL_DEBUG("CODELITE>> LLDB started (core file)");
 
-    CL_DEBUG("CODELITE>> LLDB started");
+    } else {
+        CL_DEBUG("CODELITE>> LLDB started");
+        m_connector.Run();
+    }
+
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
     EventNotifier::Get()->AddPendingEvent( e2 );
 }
@@ -615,6 +626,7 @@ void LLDBPlugin::DoCleanup()
     ClearDebuggerMarker();
     TerminateTerminal();
     m_connector.StopDebugServer();
+    m_terminalTTY.Clear();
 }
 
 void LLDBPlugin::OnLLDBDeletedAllBreakpoints(LLDBEvent& event)
@@ -721,32 +733,10 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 
 void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 {
-    if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
-        event.Skip();
+    if ( !DoInitializeDebugger( event ) ) {
         return;
     }
     
-    if ( m_connector.IsRunning() ) {
-        // Another debug session is already in progress
-        ::wxMessageBox(_("Another debug sessiokn is already in progress. Please stop it first"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
-        return;
-    }
-    
-    TerminateTerminal();
-    wxString tty;
-    ::LaunchTerminalForDebugger(event.GetExecutableName(), tty, m_terminalPID);
-    
-    if ( m_terminalPID != wxNOT_FOUND ) {
-        CL_DEBUG("Successfully launched terminal");
-    
-    } else {
-        // Failed to launch it...
-        DoCleanup();
-        ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
-        return;
-    }
-    
-    m_connector.LaunchDebugServer();
     if ( m_connector.ConnectToLocalDebugger(5) ) {
         
         // Apply the environment
@@ -768,7 +758,66 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         startCommand.SetCommandArguments( event.GetArguments() );
         startCommand.SetWorkingDirectory( event.GetWorkingDirectory() );
         startCommand.SetStartupCommands( event.GetStartupCommands() );
-        startCommand.SetRedirectTTY( tty );
+        startCommand.SetRedirectTTY( m_terminalTTY );
         m_connector.Start( startCommand );
     }
+}
+
+void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
+{
+    if ( !DoInitializeDebugger(event) ) {
+        return;
+    }
+    
+    if ( m_connector.ConnectToLocalDebugger(5) ) {
+        
+        // Apply the environment
+        EnvSetter env;
+        
+        // remove all breakpoints from previous session
+        m_connector.DeleteAllBreakpoints();
+
+        LLDBCommand startCommand;
+        startCommand.FillEnvFromMemory();
+        startCommand.SetCommandType( kCommandDebugCoreFile );
+        startCommand.SetExecutable( event.GetExecutableName() );
+        startCommand.SetCorefile( event.GetCoreFile() );
+        startCommand.SetWorkingDirectory( event.GetWorkingDirectory() );
+        startCommand.SetRedirectTTY( m_terminalTTY );
+        m_connector.OpenCoreFile( startCommand );
+    }
+}
+
+bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event)
+{
+    if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
+        event.Skip();
+        return false;
+    }
+
+    if ( m_connector.IsRunning() ) {
+        // Another debug session is already in progress
+        ::wxMessageBox(_("Another debug session is already in progress. Please stop it first"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
+        return false;
+    }
+    
+    TerminateTerminal();
+    ::LaunchTerminalForDebugger(event.GetExecutableName(), m_terminalTTY, m_terminalPID);
+    
+    if ( m_terminalPID != wxNOT_FOUND ) {
+        CL_DEBUG("Successfully launched terminal");
+    
+    } else {
+        // Failed to launch it...
+        DoCleanup();
+        ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+        return false;
+    }
+    
+    if ( !m_connector.LaunchDebugServer() ) {
+        DoCleanup();
+        return false;
+    }
+    
+    return true;
 }

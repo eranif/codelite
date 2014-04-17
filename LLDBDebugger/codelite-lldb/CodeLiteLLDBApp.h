@@ -46,12 +46,12 @@ protected:
 private:
     void Cleanup();
     void AcceptNewConnection() throw(clSocketException);
-    
+    bool InitializeLLDB(const LLDBCommand &command);
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();
     void NotifyExited();
-    void NotifyStarted();
+    void NotifyStarted(eLLDBDebugSessionType sessionType);
     void NotifyRunning();
     void NotifyBreakpointsUpdated();
     void NotifyAllBreakpointsDeleted();
@@ -106,6 +106,7 @@ public:
     void SelectFrame(const LLDBCommand& command);
     void SelectThread(const LLDBCommand& command);
     void EvalExpression(const LLDBCommand& command);
+    void OpenCoreFile(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

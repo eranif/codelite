@@ -11,7 +11,10 @@
 #include "json_node.h"
 #include <wx/msgdlg.h>
 #include "LLDBSettings.h"
-#include <sys/wait.h>
+
+#ifndef __WXMSW__
+#   include <sys/wait.h>
+#endif
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
@@ -306,7 +309,8 @@ void LLDBConnector::Cleanup()
     m_runCommand.Clear();
     m_attachedToProcess = false;
     StopDebugServer();
-    
+
+#ifndef __WXMSW__
     int status = 0;
     int pid(0);
     do {
@@ -315,6 +319,8 @@ void LLDBConnector::Cleanup()
            CL_DEBUG("Process %d exited with status code %d", pid, WEXITSTATUS(status));
        }
     } while( pid ); 
+#endif
+
 }
 
 void LLDBConnector::OnLLDBExited(LLDBEvent& event)

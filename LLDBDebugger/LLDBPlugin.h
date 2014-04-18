@@ -54,7 +54,7 @@ private:
     void InitializeUI();
     void DestroyUI();
     void DoCleanup();
-    bool DoInitializeDebugger(clDebugEvent &event);
+    bool DoInitializeDebugger(clDebugEvent &event, const wxString &terminalTitle = wxEmptyString);
     
 protected:
     // Other codelite events
@@ -77,6 +77,10 @@ protected:
     void OnDebugTooltip(clDebugEvent& event);
     void OnDebugQuickDebug(clDebugEvent& event);
     void OnDebugCoreFile(clDebugEvent& event);
+    void OnDebugAttachToProcess(clDebugEvent& event);
+    void OnDebugDeleteAllBreakpoints(clDebugEvent& event);
+    void OnDebugEnableAllBreakpoints(clDebugEvent& event);
+    void OnDebugDisableAllBreakpoints(clDebugEvent& event);
     
     void OnBuildStarting(clBuildEvent& event);
 

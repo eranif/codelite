@@ -48,6 +48,10 @@ void* LLDBNetworkServerThread::Entry()
                     m_app->CallAfter( &CodeLiteLLDBApp::OpenCoreFile, command );
                     break;
                     
+                case kCommandAttachProcess: 
+                    m_app->CallAfter( &CodeLiteLLDBApp::AttachProcess, command );
+                    break;
+                    
                 case kCommandRun:
                     m_app->CallAfter( &CodeLiteLLDBApp::RunDebugger, command);
                     break;
@@ -62,6 +66,10 @@ void* LLDBNetworkServerThread::Entry()
 
                 case kCommandStop:
                     m_app->CallAfter( &CodeLiteLLDBApp::StopDebugger, command);
+                    break;
+                    
+                case kCommandDetach:
+                    m_app->CallAfter( &CodeLiteLLDBApp::DetachDebugger, command);
                     break;
 
                 case kCommandDeleteBreakpoint:

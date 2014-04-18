@@ -46,6 +46,7 @@ protected:
     bool                        m_canInteract;
     LLDBCommand                 m_runCommand;
     TerminalInfo                m_terminalInfo;
+    bool                        m_attachedToProcess;
 
     wxDECLARE_EVENT_TABLE();
     void OnProcessOutput(wxCommandEvent &event);
@@ -65,6 +66,12 @@ public:
     LLDBConnector();
     virtual ~LLDBConnector();
 
+    void SetAttachedToProcess(bool attachedToProcess) {
+        this->m_attachedToProcess = attachedToProcess;
+    }
+    bool IsAttachedToProcess() const {
+        return m_attachedToProcess;
+    }
     TerminalInfo& GetTerminalInfo() {
         return m_terminalInfo;
     }
@@ -189,7 +196,12 @@ public:
      * @brief stop the debugger
      */
     void Stop();
-
+    
+    /**
+     * @brief detach from the process
+     */
+    void Detach();
+    
     /**
      * @brief send a next command
      */
@@ -218,12 +230,16 @@ public:
      * @param runCommand
      */
     void Start(const LLDBCommand& runCommand);
-    
+
     /**
      * @brief debug a core file
      */
     void OpenCoreFile(const LLDBCommand& runCommand);
-    
+
+    /**
+     * @brief attach to process with PID
+     */
+    void AttachProcessWithPID(const LLDBCommand& runCommand);
     /**
      * @brief instruct the debugger to 'run'
      */
@@ -234,17 +250,17 @@ public:
      * @param reason
      */
     void Interrupt(eInterruptReason reason);
-    
+
     /**
      * @brief select a given frame
      */
     void SelectFrame(int frameID);
-    
+
     /**
      * @brief select a given thread by its ID
      */
     void SelectThread(int threadID);
-    
+
     /**
      * @brief evaluate an expression
      */

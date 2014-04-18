@@ -94,8 +94,12 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DBG_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_ATTACH_TO_PROCESS, clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
 }
 
 void LLDBPlugin::UnPlug()
@@ -127,8 +131,13 @@ void LLDBPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(LLDBPlugin::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(LLDBPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_EXPR_TOOLTIP, clDebugEventHandler(LLDBPlugin::OnDebugTooltip), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DBG_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_QUICK_DEBUG, clDebugEventHandler(LLDBPlugin::OnDebugQuickDebug), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_CORE_FILE, clDebugEventHandler(LLDBPlugin::OnDebugCoreFile), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDeleteAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_ATTACH_TO_PROCESS, clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
+
 }
 
 LLDBPlugin::~LLDBPlugin()
@@ -347,16 +356,28 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
     
     // If this is a normal debug session, a start notification
     // should follow a 'Run' command
-    if ( event.GetSessionType() == kDebugSessionTypeCore ) {
+    switch( event.GetSessionType() ) {
+    case kDebugSessionTypeCore:
         CL_DEBUG("CODELITE>> LLDB started (core file)");
-
-    } else {
+        break;
+        
+    case kDebugSessionTypeAttach: {
         LLDBSettings settings;
         m_raisOnBpHit = settings.Load().IsRaiseWhenBreakpointHit();
-        CL_DEBUG("CODELITE>> LLDB started");
-        m_connector.Run();
+        CL_DEBUG("CODELITE>> LLDB started (attached)");
+        m_connector.SetAttachedToProcess( event.GetSessionType() == kDebugSessionTypeAttach );
+        //m_connector.Continue();
+        break;
     }
-
+    case kDebugSessionTypeNormal: {
+        LLDBSettings settings;
+        m_raisOnBpHit = settings.Load().IsRaiseWhenBreakpointHit();
+        CL_DEBUG("CODELITE>> LLDB started (normal)");
+        m_connector.Run();
+        break;
+    }
+    }
+    
     wxCommandEvent e2(wxEVT_DEBUG_STARTED);
     EventNotifier::Get()->AddPendingEvent( e2 );
 }
@@ -426,6 +447,9 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
         m_connector.DeleteBreakpoints();
         m_connector.Continue();
         
+    } else if ( event.GetInterruptReason() == kInterruptReasonDetaching ) {
+        CL_DEBUG("Detaching from process");
+        m_connector.Detach();
     }
 }
 
@@ -815,7 +839,7 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
     }
 }
 
-bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event)
+bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, const wxString& terminalTitle)
 {
     if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
         event.Skip();
@@ -829,7 +853,7 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event)
     }
     
     TerminateTerminal();
-    ::LaunchTerminalForDebugger(event.GetExecutableName(), m_terminalTTY, m_terminalPID);
+    ::LaunchTerminalForDebugger(terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle , m_terminalTTY, m_terminalPID);
     
     if ( m_terminalPID != wxNOT_FOUND ) {
         CL_DEBUG("Successfully launched terminal");
@@ -847,4 +871,46 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event)
     }
     
     return true;
+}
+
+void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
+{
+    wxString terminalTitle;
+    terminalTitle << "Console PID " << event.GetInt();
+    if ( !DoInitializeDebugger( event, terminalTitle ) )
+        return;
+    
+    if ( m_connector.ConnectToLocalDebugger(5) ) {
+        
+        // Apply the environment
+        EnvSetter env;
+        
+        // remove all breakpoints from previous session
+        m_connector.DeleteAllBreakpoints();
+        LLDBSettings settings;
+        settings.Load();
+        
+        // Attach to the process
+        LLDBCommand command;
+        command.SetCommandType( kCommandAttachProcess );
+        command.SetProcessID( event.GetInt() );
+        command.SetSettings( settings );
+        m_connector.AttachProcessWithPID( command );
+    }
+}
+
+void LLDBPlugin::OnDebugDeleteAllBreakpoints(clDebugEvent& event)
+{
+    event.Skip();
+    m_connector.DeleteAllBreakpoints();
+}
+
+void LLDBPlugin::OnDebugDisableAllBreakpoints(clDebugEvent& event)
+{
+    event.Skip();
+}
+
+void LLDBPlugin::OnDebugEnableAllBreakpoints(clDebugEvent& event)
+{
+    event.Skip();
 }

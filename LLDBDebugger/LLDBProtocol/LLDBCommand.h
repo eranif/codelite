@@ -25,16 +25,23 @@ protected:
     wxString                   m_expression;
     wxString                   m_startupCommands;
     wxString                   m_corefile;
+    int                        m_processID;
 
 public:
     // Serialization API
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement &json);
 
-    LLDBCommand() : m_commandType(kCommandInvalid), m_interruptReason(kInterruptReasonNone), m_lldbId(0) {}
+    LLDBCommand() : m_commandType(kCommandInvalid), m_interruptReason(kInterruptReasonNone), m_lldbId(0), m_processID(wxNOT_FOUND) {}
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
 
+    void SetProcessID(int processID) {
+        this->m_processID = processID;
+    }
+    int GetProcessID() const {
+        return m_processID;
+    }
     void SetCorefile(const wxString& corefile) {
         this->m_corefile = corefile;
     }

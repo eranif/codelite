@@ -30,6 +30,7 @@
 #include "frame.h"
 #include "breakpointpropertiesdlg.h"
 #include "breakpointdlg.h"
+#include "event_notifier.h"
 
 //---------------------------------------------------------
 
@@ -456,7 +457,7 @@ void BreakptMgr::SetAllBreakpointsEnabledState(bool enabled)
     unsigned int successes = 0;
     bool debuggerIsRunning = false;
     bool contIsNeeded = false;
-
+    
     IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if (dbgr && dbgr->IsRunning()) {
         debuggerIsRunning = true;

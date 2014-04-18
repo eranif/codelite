@@ -24,6 +24,7 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_threadId = json.namedObject("m_threadId").toInt(wxNOT_FOUND);
     m_expression = json.namedObject("m_expression").toString();
     m_startupCommands = json.namedObject("m_startupCommands").toString();
+    
 
     JSONElement arr = json.namedObject("m_breakpoints");
     for(int i=0; i<arr.arraySize(); ++i) {
@@ -32,13 +33,18 @@ void LLDBCommand::FromJSON(const JSONElement& json)
         m_breakpoints.push_back( bp );
     }
 
-    if ( m_commandType == kCommandStart || m_commandType == kCommandDebugCoreFile ) {
-        // In the "Start" command we should also receive the settings data
+    if (    m_commandType == kCommandStart          || 
+            m_commandType == kCommandDebugCoreFile  ||
+            m_commandType == kCommandAttachProcess  )
+    {
         m_settings.FromJSON( json.namedObject("m_settings") );
     }
     
     if ( m_commandType == kCommandDebugCoreFile ) {
         m_corefile = json.namedObject("m_corefile").toString();
+    }
+    if ( m_commandType == kCommandAttachProcess ) {
+        m_processID = json.namedObject("m_processID").toInt();
     }
 }
 
@@ -65,13 +71,19 @@ JSONElement LLDBCommand::ToJSON() const
         bparr.arrayAppend( m_breakpoints.at(i)->ToJSON() );
     }
 
-    if ( m_commandType == kCommandStart || m_commandType == kCommandDebugCoreFile ) {
-        // In the "Start" command we should also send the settings data
+    if (    m_commandType == kCommandStart          || 
+            m_commandType == kCommandDebugCoreFile  ||
+            m_commandType == kCommandAttachProcess  )
+    {
         json.addProperty("m_settings", m_settings.ToJSON());
     }
     
     if ( m_commandType == kCommandDebugCoreFile ) {
         json.addProperty("m_corefile", m_corefile);
+    }
+    
+    if ( m_commandType == kCommandAttachProcess ) {
+        json.addProperty("m_processID", m_processID);
     }
     return json;
 }

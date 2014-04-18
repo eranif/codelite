@@ -18,6 +18,7 @@
 #include <wx/msgqueue.h>
 #include <wx/wxcrtvararg.h>
 #include <wx/tokenzr.h>
+#include <lldb/API/SBError.h>
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -67,6 +68,7 @@ CodeLiteLLDBApp::CodeLiteLLDBApp(const wxString& socketPath)
     , m_interruptReason(kInterruptReasonNone)
     , m_debuggerSocketPath(socketPath)
     , m_exitMainLoop(false)
+    , m_sessionType(kDebugSessionTypeNormal)
 {
     wxSocketBase::Initialize();
     lldb::SBDebugger::Initialize();
@@ -265,7 +267,7 @@ void CodeLiteLLDBApp::NotifyStarted(eLLDBDebugSessionType sessionType)
         break;
         
     }
-    
+    m_sessionType = sessionType;
     m_variables.clear();
     LLDBReply reply;
     reply.SetDebugSessionType( sessionType );
@@ -417,8 +419,15 @@ void CodeLiteLLDBApp::Cleanup()
     if ( m_target.IsValid() ) {
         m_target.DeleteAllBreakpoints();
         m_target.DeleteAllWatchpoints();
+        
+        // detach from the process
+        if ( m_sessionType == kDebugSessionTypeAttach ) {
+            wxPrintf("codelite-lldb: detaching from process ID %d\n", (int)m_target.GetProcess().GetProcessID());
+            m_target.GetProcess().Detach();
+        }
         m_debugger.DeleteTarget( m_target );
     }
+    m_sessionType = kDebugSessionTypeNormal;
     wxPrintf("codelite-lldb: Cleanup() called... done\n");
 }
 
@@ -775,6 +784,49 @@ void CodeLiteLLDBApp::OpenCoreFile(const LLDBCommand& command)
     // Since we are in 'core' session
     // immediately notify about 'stop'
     NotifyStopped();
+}
+
+void CodeLiteLLDBApp::AttachProcess(const LLDBCommand& command)
+{
+    wxPrintf("codeite-lldb: attaching to process with PID %d\n", command.GetProcessID());
+    if ( !InitializeLLDB( command ) ) {
+        return;
+    }
+    
+    lldb::SBError errorCode;
+    lldb::SBListener listener;
+    lldb::SBProcess process = m_target.AttachToProcessWithID(listener, (lldb::pid_t)command.GetProcessID(), errorCode);
+    if ( !errorCode.Success() ) {
+        wxPrintf("codeite-lldb: error attaching process %d. '%s'\n", command.GetProcessID(), errorCode.GetCString());
+        NotifyExited();
+        return;
+    }
+    wxPrintf("codeite-lldb: process attached successfully\n");
+    
+    // Launch the thread that will handle the LLDB process events
+    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess(), kDebugSessionTypeAttach);
+    m_lldbProcessEventThread->Start();
+    
+    // In any case, reset the interrupt reason
+    m_interruptReason = kInterruptReasonNone;
+    
+    // Notify codelite that the debugger started successfully
+    NotifyStarted( kDebugSessionTypeAttach );
+}
+
+void CodeLiteLLDBApp::DetachDebugger(const LLDBCommand& command)
+{
+    // detach from the process
+    wxPrintf("codelite-lldb: detaching from process\n");
+    
+    m_target.DeleteAllBreakpoints();
+    m_target.DeleteAllWatchpoints();
+    if ( m_target.GetProcess().IsValid() ) {
+        // detch and 'continue'
+        m_target.GetProcess().Detach( false );
+    }
+    NotifyExited();
+    Cleanup();
 }
 
 #endif 

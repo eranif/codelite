@@ -42,6 +42,7 @@ protected:
     wxString                                        m_debuggerSocketPath;
     bool                                            m_exitMainLoop;
     LLDBSettings                                    m_settings;
+    eLLDBDebugSessionType                           m_sessionType;
     
 private:
     void Cleanup();
@@ -95,6 +96,7 @@ public:
     void Continue(const LLDBCommand& command);
     void ApplyBreakpoints(const LLDBCommand& command);
     void StopDebugger(const LLDBCommand& command);
+    void DetachDebugger(const LLDBCommand& command);
     void DeleteBreakpoints(const LLDBCommand& command);
     void DeleteAllBreakpoints(const LLDBCommand& command);
     void Next(const LLDBCommand& command);
@@ -107,6 +109,7 @@ public:
     void SelectThread(const LLDBCommand& command);
     void EvalExpression(const LLDBCommand& command);
     void OpenCoreFile(const LLDBCommand& command);
+    void AttachProcess(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

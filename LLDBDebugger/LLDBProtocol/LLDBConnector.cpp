@@ -172,9 +172,27 @@ void LLDBConnector::Continue()
 
 void LLDBConnector::Stop()
 {
-    LLDBCommand command;
-    command.SetCommandType( kCommandStop );
-    SendCommand( command );
+    if ( IsAttachedToProcess() ) {
+        Detach();
+        
+    } else {
+        LLDBCommand command;
+        command.SetCommandType( kCommandStop );
+        SendCommand( command );
+    }
+}
+
+void LLDBConnector::Detach()
+{
+    if ( IsCanInteract() ) {
+        CL_DEBUG("Sending 'Detach' command");
+        LLDBCommand command;
+        command.SetCommandType( kCommandDetach );
+        SendCommand( command );
+
+    } else {
+        Interrupt( kInterruptReasonDetaching );
+    }
 }
 
 void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
@@ -286,7 +304,7 @@ void LLDBConnector::Cleanup()
     m_isRunning = false;
     m_canInteract = false;
     m_runCommand.Clear();
-    
+    m_attachedToProcess = false;
     StopDebugServer();
     
     int status = 0;
@@ -507,6 +525,12 @@ void LLDBConnector::EvaluateExpression(const wxString& expression)
 
 void LLDBConnector::OpenCoreFile(const LLDBCommand& runCommand)
 {
+    SendCommand( runCommand );
+}
+
+void LLDBConnector::AttachProcessWithPID(const LLDBCommand& runCommand)
+{
+    m_attachedToProcess = true;
     SendCommand( runCommand );
 }
 

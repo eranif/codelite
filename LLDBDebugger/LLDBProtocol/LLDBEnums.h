@@ -8,6 +8,7 @@ enum eInterruptReason {
     kInterruptReasonApplyBreakpoints,
     kInterruptReasonDeleteAllBreakpoints,
     kInterruptReasonDeleteBreakpoint,
+    kInterruptReasonDetaching,
 };
 
 // the various network LLDBReply type
@@ -32,6 +33,7 @@ enum eCommandType {
     kCommandStart,
     kCommandRun,
     kCommandStop,
+    kCommandDetach,
     kCommandApplyBreakpoints,
     kCommandDeleteBreakpoint,
     kCommandDeleteAllBreakpoints,
@@ -46,6 +48,7 @@ enum eCommandType {
     kCommandSelectThread,
     kCommandEvalExpression,
     kCommandDebugCoreFile,
+    kCommandAttachProcess,
 };
 
 enum eLLDBOptions {

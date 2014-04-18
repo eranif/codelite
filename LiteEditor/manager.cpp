@@ -2184,27 +2184,36 @@ void Manager::DbgStart ( long attachPid )
 #endif
 
     if ( attachPid == 1 ) { //attach to process
-        AttachDbgProcDlg *dlg = new AttachDbgProcDlg ( NULL );
-        if ( dlg->ShowModal() == wxID_OK ) {
-            wxString processId = dlg->GetProcessId();
-            exepath   = dlg->GetExeName();
-            debuggerName = dlg->GetDebugger();
-            DebuggerMgr::Get().SetActiveDebugger ( debuggerName );
-
-            processId.ToLong ( &PID );
-            if ( exepath.IsEmpty() == false ) {
-                wxFileName fn ( exepath );
-                wxSetWorkingDirectory ( fn.GetPath() );
-                exepath = fn.GetFullName();
-
-            }
-            dlg->Destroy();
-
-            startup_info.pid = PID;
-        } else {
-            dlg->Destroy();
+        AttachDbgProcDlg dlg(NULL);
+        if (dlg.ShowModal() != wxID_OK ) {
             return;
         }
+        
+        wxString processId  = dlg.GetProcessId();
+        exepath             = dlg.GetExeName();
+        debuggerName        = dlg.GetDebugger();
+        DebuggerMgr::Get().SetActiveDebugger ( debuggerName );
+        
+        long processID(wxNOT_FOUND);
+        if ( !processId.ToCLong( &processID ) ) {
+            processID = wxNOT_FOUND;
+        }
+        
+        // Let the plugins process this first
+        clDebugEvent event(wxEVT_DBG_UI_ATTACH_TO_PROCESS);
+        event.SetInt( processID );
+        event.SetDebuggerName( debuggerName );
+        if ( EventNotifier::Get()->ProcessEvent( event ) ) {
+            return;
+        }
+
+        if ( exepath.IsEmpty() == false ) {
+            wxFileName fn ( exepath );
+            wxSetWorkingDirectory ( fn.GetPath() );
+            exepath = fn.GetFullName();
+
+        }
+        startup_info.pid = PID;
     }
 
     if ( attachPid == wxNOT_FOUND ) {

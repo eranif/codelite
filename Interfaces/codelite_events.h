@@ -493,29 +493,33 @@
 // If a plugin wishes to override codelite's default debugger (gdb)
 // it simply needs to connect the event and avoid calling 'event.Skip();
 //----------------------------------------------------------------------
-#define wxEVT_DBG_UI_START_OR_CONT     3547 // Start the debugger or continue
-#define wxEVT_DBG_UI_STOP              3549 // Stop the debugger
-#define wxEVT_DBG_UI_STEP_IN           3550 // Step into function
-#define wxEVT_DBG_UI_STEP_OUT          3551 // Step out of current frame
-#define wxEVT_DBG_UI_NEXT              3552 // Next line
-#define wxEVT_DBG_UI_NEXT_INST         3553 // Next instruction
-#define wxEVT_DBG_UI_INTERRUPT         3554 // Interrupt the debugger execution
-#define wxEVT_DBG_UI_SHOW_CURSOR       3555 // Set the focus to the current debugger file/line
-#define wxEVT_DBG_UI_RESTART           3556 // Restart the debug session
-#define wxEVT_DBG_IS_RUNNING           3557 // Use evet.SetAnswer() method to reply
-#define wxEVT_DBG_UI_TOGGLE_BREAKPOINT 3558 // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
-#define wxEVT_DBG_CAN_INTERACT         3559 // Can CodeLite interact with the debugger? use event.SetAnswer(true); 
-                                            // Note: by avoid calling Skip() CodeLite will assume that the plugin is controlling the debug session
-                                            // and it will use the event.IsAnswer() as the answer to the question to : CanDbgInteract()
-#define wxEVT_DBG_EXPR_TOOLTIP         3560 // Provide a tooltip for the expression under the caret. user event.GetString() to get the expression
-
-#define wxEVT_DBG_IS_PLUGIN_DEBUGGER   3570 // This event is sent by codelite to all plugins to determine whether a plugin is actually a debugger.
-                                            // A plugin should *always* call event.Skip() when handling this event. If the plugin is actually a debugger
-                                            // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
-                                            // This string is later will be availe for codelite to display it in various dialogs (e.g. Quick Debug, project settings etc)
-
-#define wxEVT_DBG_QUICK_DEBUG          3571 // User clicked on the 'Quick Debug' button. Event type is clDebugEvent
-#define wxEVT_DBG_CORE_FILE            3572 // User selected to debug a core file. Event type is clDebugEvent
+#define wxEVT_DBG_UI_START_OR_CONT              3547 // Start the debugger or continue
+#define wxEVT_DBG_UI_STOP                       3549 // Stop the debugger
+#define wxEVT_DBG_UI_STEP_IN                    3550 // Step into function
+#define wxEVT_DBG_UI_STEP_OUT                   3551 // Step out of current frame
+#define wxEVT_DBG_UI_NEXT                       3552 // Next line
+#define wxEVT_DBG_UI_NEXT_INST                  3553 // Next instruction
+#define wxEVT_DBG_UI_INTERRUPT                  3554 // Interrupt the debugger execution
+#define wxEVT_DBG_UI_SHOW_CURSOR                3555 // Set the focus to the current debugger file/line
+#define wxEVT_DBG_UI_RESTART                    3556 // Restart the debug session
+#define wxEVT_DBG_IS_RUNNING                    3557 // Use evet.SetAnswer() method to reply
+#define wxEVT_DBG_UI_TOGGLE_BREAKPOINT          3558 // Toggle breakpoint. Use event.GetFileName() / event.GetInt() for the file:line
+#define wxEVT_DBG_CAN_INTERACT                  3559 // Can CodeLite interact with the debugger? use event.SetAnswer(true); 
+                                                        // Note: by avoid calling Skip() CodeLite will assume that the plugin is controlling the debug session
+                                                        // and it will use the event.IsAnswer() as the answer to the question to : CanDbgInteract()
+#define wxEVT_DBG_EXPR_TOOLTIP                  3560 // Provide a tooltip for the expression under the caret. user event.GetString() to get the expression
+            
+#define wxEVT_DBG_IS_PLUGIN_DEBUGGER            3570 // This event is sent by codelite to all plugins to determine whether a plugin is actually a debugger.
+                                                        // A plugin should *always* call event.Skip() when handling this event. If the plugin is actually a debugger
+                                                        // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
+                                                        // This string is later will be availe for codelite to display it in various dialogs (e.g. Quick Debug, project settings etc)
+            
+#define wxEVT_DBG_UI_QUICK_DEBUG                3571 // User clicked on the 'Quick Debug' button. Event type is clDebugEvent
+#define wxEVT_DBG_UI_CORE_FILE                  3572 // User selected to debug a core file. Event type is clDebugEvent
+#define wxEVT_DBG_UI_ATTACH_TO_PROCESS          3573 // Attach to process. Use clDebugEvent::GetInt() to get the process ID
+#define wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS      3574 // Delete all breakpoints
+#define wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS     3575 // Enable all breakpoints
+#define wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS    3576 // Disable all breakpoints
 
 // -------------------Debugger events end------------------------------------------------
 #define wxEVT_CMD_OPEN_PROJ_SETTINGS   3580 // clCommandEvent. Use event.GetString() to get the project name

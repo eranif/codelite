@@ -181,10 +181,10 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_debuggerName      = other.m_debuggerName;
     m_projectName       = other.m_projectName;
     m_configurationName = other.m_configurationName;
-    m_executableName    = other.m_executableName;      // This will be set for wxEVT_DBG_QUICK_DEBUG and wxEVT_DBG_CORE_FILE
-    m_coreFile          = other.m_coreFile;            // wxEVT_DBG_CORE_FILE
-    m_workingDirectory  = other.m_workingDirectory;    // wxEVT_DBG_CORE_FILE, wxEVT_DBG_QUICK_DEBUG
-    m_arguments         = other.m_arguments;           // wxEVT_DBG_QUICK_DEBUG
-    m_startupCommands   = other.m_startupCommands;     // wxEVT_DBG_QUICK_DEBUG
+    m_executableName    = other.m_executableName;      // This will be set for wxEVT_DBG_UI_QUICK_DEBUG and wxEVT_DBG_UI_CORE_FILE
+    m_coreFile          = other.m_coreFile;            // wxEVT_DBG_UI_CORE_FILE
+    m_workingDirectory  = other.m_workingDirectory;    // wxEVT_DBG_UI_CORE_FILE, wxEVT_DBG_UI_QUICK_DEBUG
+    m_arguments         = other.m_arguments;           // wxEVT_DBG_UI_QUICK_DEBUG
+    m_startupCommands   = other.m_startupCommands;     // wxEVT_DBG_UI_QUICK_DEBUG
     return *this;
 }

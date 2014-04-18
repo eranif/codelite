@@ -254,12 +254,12 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
 {
     wxString m_projectName;         // wxEVT_DBG_UI_START_OR_CONT
     wxString m_configurationName;   // wxEVT_DBG_UI_START_OR_CONT
-    wxString m_debuggerName;        // holds the selected debugger name. wxEVT_DBG_UI_START_OR_CONT, wxEVT_DBG_QUICK_DEBUG, wxEVT_DBG_CORE_FILE
-    wxString m_executableName;      // This will be set for wxEVT_DBG_QUICK_DEBUG and wxEVT_DBG_CORE_FILE
-    wxString m_coreFile;            // wxEVT_DBG_CORE_FILE
-    wxString m_workingDirectory;    // wxEVT_DBG_CORE_FILE, wxEVT_DBG_QUICK_DEBUG
-    wxString m_arguments;           // wxEVT_DBG_QUICK_DEBUG
-    wxString m_startupCommands;     // wxEVT_DBG_QUICK_DEBUG
+    wxString m_debuggerName;        // holds the selected debugger name. wxEVT_DBG_UI_START_OR_CONT, wxEVT_DBG_UI_QUICK_DEBUG, wxEVT_DBG_UI_CORE_FILE
+    wxString m_executableName;      // This will be set for wxEVT_DBG_UI_QUICK_DEBUG and wxEVT_DBG_UI_CORE_FILE
+    wxString m_coreFile;            // wxEVT_DBG_UI_CORE_FILE
+    wxString m_workingDirectory;    // wxEVT_DBG_UI_CORE_FILE, wxEVT_DBG_UI_QUICK_DEBUG
+    wxString m_arguments;           // wxEVT_DBG_UI_QUICK_DEBUG
+    wxString m_startupCommands;     // wxEVT_DBG_UI_QUICK_DEBUG
 
 public:
     clDebugEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);

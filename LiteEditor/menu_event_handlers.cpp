@@ -26,6 +26,9 @@
 #include "manager.h"
 #include "cl_editor.h"
 #include "frame.h"
+#include "cl_command_event.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 //------------------------------------
 // Handle copy events
@@ -521,14 +524,24 @@ void DebuggerMenuHandler::ProcessCommandEvent(wxWindow *owner, wxCommandEvent &e
     }
 
     if (event.GetId() == XRCID("disable_all_breakpoints")) {
+        clDebugEvent event(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS);
+        EventNotifier::Get()->ProcessEvent( event );
         ManagerST::Get()->GetBreakpointsMgr()->SetAllBreakpointsEnabledState(false);
     }
 
     if (event.GetId() == XRCID("enable_all_breakpoints")) {
+        clDebugEvent event(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS );
+        EventNotifier::Get()->ProcessEvent( event );
         ManagerST::Get()->GetBreakpointsMgr()->SetAllBreakpointsEnabledState(true);
     }
 
     if (event.GetId() == XRCID("delete_all_breakpoints")) {
+        
+        // First let the plugins do this thing
+        clDebugEvent event(wxEVT_DBG_UI_DELTE_ALL_BREAKPOINTS);
+        EventNotifier::Get()->AddPendingEvent( event );
+        
+        // Now clear the manager
         ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
     }
 }

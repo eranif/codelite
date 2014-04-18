@@ -4235,7 +4235,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
         } else if ( !dbgr ) {
             
             // Fire an event, maybe a plugin wants to process this
-            clDebugEvent event( wxEVT_DBG_QUICK_DEBUG);
+            clDebugEvent event( wxEVT_DBG_UI_QUICK_DEBUG);
             event.SetDebuggerName(dlg->GetDebuggerName());
             event.SetExecutableName( dlg->GetExe() );
             event.SetWorkingDirectory( dlg->GetWorkingDirectory() );
@@ -4334,7 +4334,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             dbgr->Continue();
             
         } else if ( !dbgr ) {
-            clDebugEvent event( wxEVT_DBG_CORE_FILE);
+            clDebugEvent event( wxEVT_DBG_UI_CORE_FILE);
             event.SetDebuggerName(dlg->GetDebuggerName());
             event.SetExecutableName( dlg->GetExe());
             event.SetCoreFile( dlg->GetCore() );

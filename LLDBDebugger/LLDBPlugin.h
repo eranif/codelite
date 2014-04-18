@@ -54,7 +54,7 @@ private:
     void InitializeUI();
     void DestroyUI();
     void DoCleanup();
-    bool DoInitializeDebugger(clDebugEvent &event, const wxString &terminalTitle = wxEmptyString);
+    bool DoInitializeDebugger(clDebugEvent &event, bool redirectOutput, const wxString &terminalTitle = wxEmptyString);
     
 protected:
     // Other codelite events

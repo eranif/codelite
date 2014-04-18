@@ -3,10 +3,17 @@
 #include "cl_standard_paths.h"
 #include <wx/ffile.h>
 
-static const wxString s_DefaultTypes =
-"type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"\n"
-"type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"\n"
-"type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"\n";
+#ifdef __WXMAC__
+    static const wxString s_DefaultTypes =
+    "type summary add wxString --summary-string \"${var.m_impl}\"\n"
+    "type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"\n"
+    "type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"\n";
+#else
+    static const wxString s_DefaultTypes =
+    "type summary add wxString --summary-string \"${var.m_impl._M_dataplus._M_p}\"\n"
+    "type summary add wxPoint --summary-string \"x = ${var.x}, y = ${var.y}\"\n"
+    "type summary add wxRect --summary-string \"(x = ${var.x}, y = ${var.y}) (width = ${var.width}, height = ${var.height})\"\n";
+#endif
 
 LLDBSettings::LLDBSettings()
     : m_arrItems(50)

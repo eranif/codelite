@@ -383,12 +383,21 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
         wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
         
-        wxPrintf("codeltie-lldb: Environment is set to:\n");
-        print_c_array( (const char**)penv );
+//        wxPrintf("codeltie-lldb: Environment is set to:\n");
+//        print_c_array( (const char**)penv );
         
-        wxPrintf("codeltie-lldb: Arguments are set to:\n");
+        wxPrintf("codelite-lldb: Arguments are set to:\n");
         print_c_array( argv );
         
+        // Execute startup commands
+        wxArrayString startupCommands = ::wxStringTokenize(command.GetStartupCommands(), "\n", wxTOKEN_STRTOK);
+        for(size_t i=0; i<startupCommands.GetCount(); ++i) {
+            lldb::SBCommandReturnObject ret;
+            std::string c_command = startupCommands.Item(i).Trim().mb_str(wxConvUTF8).data();
+            wxPrintf("codelite-lldb: executing: '%s'\n", c_command.c_str());
+            m_debugger.GetCommandInterpreter().HandleCommand(c_command.c_str() , ret);
+        }
+
         lldb::SBError error;
         lldb::SBListener listener = m_debugger.GetListener();
         lldb::SBProcess process = m_target.Launch(

@@ -283,17 +283,18 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 // terminate any old terminal that we have 
                 TerminateTerminal();
                 
-                wxString tty;
-                ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), tty, m_terminalPID);
-                
-                if ( m_terminalPID != wxNOT_FOUND ) {
-                    CL_DEBUG("Successfully launched terminal");
-                
-                } else {
-                    // Failed to launch it...
-                    DoCleanup();
-                    ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
-                    return;
+                if ( !bldConf->IsGUIProgram() ) {
+                    ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), m_terminalTTY, m_terminalPID);
+                    
+                    if ( m_terminalPID != wxNOT_FOUND ) {
+                        CL_DEBUG("Successfully launched terminal");
+                    
+                    } else {
+                        // Failed to launch it...
+                        DoCleanup();
+                        ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+                        return;
+                    }
                 }
                 
                 CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
@@ -315,7 +316,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                     startCommand.SetExecutable( execToDebug.GetFullPath() );
                     startCommand.SetCommandArguments( args );
                     startCommand.SetWorkingDirectory( wd );
-                    startCommand.SetRedirectTTY( tty );
+                    startCommand.SetRedirectTTY( m_terminalTTY );
                     m_connector.Start( startCommand );
                 }
             }
@@ -707,7 +708,7 @@ void LLDBPlugin::OnWorkspaceLoaded(wxCommandEvent& event)
 void LLDBPlugin::OnLLDBCrashed(LLDBEvent& event)
 {
     event.Skip();
-    ::wxMessageBox(_("LLDB crashed! Terminating debug session"), "CodeLite", wxOK|wxICON_ERROR|wxCENTER);
+    // ::wxMessageBox(_("LLDB crashed! Terminating debug session"), "CodeLite", wxOK|wxICON_ERROR|wxCENTER);
     OnLLDBExited( event );
 }
 
@@ -790,7 +791,7 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 
 void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 {
-    if ( !DoInitializeDebugger( event ) ) {
+    if ( !DoInitializeDebugger( event, true ) ) {
         return;
     }
     
@@ -807,6 +808,8 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         m_connector.DeleteAllBreakpoints();
 
         // apply the serialized breakpoints
+        // In 'Quick Debug' we stop on main
+        m_connector.AddBreakpoint("main");
         m_connector.AddBreakpoints( gdbBps );
 
         LLDBCommand startCommand;
@@ -822,7 +825,7 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 
 void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
 {
-    if ( !DoInitializeDebugger(event) ) {
+    if ( !DoInitializeDebugger(event, false) ) {
         return;
     }
     
@@ -845,7 +848,7 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
     }
 }
 
-bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, const wxString& terminalTitle)
+bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle)
 {
     if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
         event.Skip();
@@ -859,16 +862,20 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, const wxString& termi
     }
     
     TerminateTerminal();
-    ::LaunchTerminalForDebugger(terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle , m_terminalTTY, m_terminalPID);
     
-    if ( m_terminalPID != wxNOT_FOUND ) {
-        CL_DEBUG("Successfully launched terminal");
+    // If terminal is required, launch it now
+    if ( redirectOutput ) {
+        ::LaunchTerminalForDebugger(terminalTitle.IsEmpty() ? event.GetExecutableName() : terminalTitle , m_terminalTTY, m_terminalPID);
     
-    } else {
-        // Failed to launch it...
-        DoCleanup();
-        ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
-        return false;
+        if ( m_terminalPID != wxNOT_FOUND ) {
+            CL_DEBUG("Successfully launched terminal");
+        
+        } else {
+            // Failed to launch it...
+            DoCleanup();
+            ::wxMessageBox(_("Failed to start terminal for debugger"), "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+            return false;
+        }
     }
     
     if ( !m_connector.LaunchDebugServer() ) {
@@ -883,7 +890,7 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
 {
     wxString terminalTitle;
     terminalTitle << "Console PID " << event.GetInt();
-    if ( !DoInitializeDebugger( event, terminalTitle ) )
+    if ( !DoInitializeDebugger( event, true, terminalTitle ) )
         return;
     
     if ( m_connector.ConnectToLocalDebugger(5) ) {

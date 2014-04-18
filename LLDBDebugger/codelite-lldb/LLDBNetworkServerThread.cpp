@@ -39,7 +39,14 @@ void* LLDBNetworkServerThread::Entry()
                 // Process command
                 LLDBCommand command(str);
                 switch( command.GetCommandType() ) {
-
+                case kCommandNextInstruction:
+                    m_app->CallAfter( &CodeLiteLLDBApp::NextInstruction, command);
+                    break;
+                    
+                case kCommandCurrentFileLine:
+                    m_app->CallAfter( &CodeLiteLLDBApp::ShowCurrentFileLine, command);
+                    break;
+                    
                 case kCommandStart:
                     m_app->CallAfter( &CodeLiteLLDBApp::StartDebugger, command );
                     break;

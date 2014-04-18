@@ -81,6 +81,8 @@ protected:
     void OnDebugDeleteAllBreakpoints(clDebugEvent& event);
     void OnDebugEnableAllBreakpoints(clDebugEvent& event);
     void OnDebugDisableAllBreakpoints(clDebugEvent& event);
+    void OnDebugNextInst(clDebugEvent& event);
+    void OnDebugShowCursor(clDebugEvent& event);
     
     void OnBuildStarting(clBuildEvent& event);
 

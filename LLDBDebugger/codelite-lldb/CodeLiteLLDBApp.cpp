@@ -842,5 +842,20 @@ void CodeLiteLLDBApp::DetachDebugger(const LLDBCommand& command)
     Cleanup();
 }
 
+void CodeLiteLLDBApp::NextInstruction(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: NextInstruction called\n");
+    if ( m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        m_target.GetProcess().GetSelectedThread().StepInstruction(true);
+    }
+}
+
+void CodeLiteLLDBApp::ShowCurrentFileLine(const LLDBCommand& command)
+{
+    wxPrintf("codelite-lldb: ShowCurrentFileLine called\n");
+    if ( m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        NotifyStopped();
+    }
+}
 
 #endif 

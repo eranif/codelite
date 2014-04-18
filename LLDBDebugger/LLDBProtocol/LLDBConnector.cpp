@@ -534,6 +534,25 @@ void LLDBConnector::AttachProcessWithPID(const LLDBCommand& runCommand)
     SendCommand( runCommand );
 }
 
+void LLDBConnector::NextInstruction()
+{
+    if ( IsCanInteract() ) {
+        LLDBCommand command;
+        command.SetCommandType( kCommandNextInstruction );
+        SendCommand ( command );
+    }
+
+}
+
+void LLDBConnector::ShowCurrentFileLine()
+{
+    if ( IsCanInteract() ) {
+        LLDBCommand command;
+        command.SetCommandType( kCommandCurrentFileLine );
+        SendCommand ( command );
+    }
+}
+
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str)
 {
     wxUnusedVar( str );

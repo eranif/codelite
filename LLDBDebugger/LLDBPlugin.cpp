@@ -100,6 +100,8 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_ATTACH_TO_PROCESS, clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
 }
 
 void LLDBPlugin::UnPlug()
@@ -137,6 +139,8 @@ void LLDBPlugin::UnPlug()
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_ATTACH_TO_PROCESS, clDebugEventHandler(LLDBPlugin::OnDebugAttachToProcess), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugEnableAllBreakpoints), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, clDebugEventHandler(LLDBPlugin::OnDebugDisableAllBreakpoints), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_NEXT_INST, clDebugEventHandler(LLDBPlugin::OnDebugNextInst), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL, this);
 
 }
 
@@ -764,6 +768,8 @@ void LLDBPlugin::OnDebugTooltip(clDebugEvent& event)
 
 void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 {
+    CHECK_IS_LLDB_SESSION();
+    
     // hide any tooltip
     if ( !event.GetVariables().empty() && m_mgr->GetActiveEditor() ) {
         wxString tooltip;
@@ -913,4 +919,20 @@ void LLDBPlugin::OnDebugDisableAllBreakpoints(clDebugEvent& event)
 void LLDBPlugin::OnDebugEnableAllBreakpoints(clDebugEvent& event)
 {
     event.Skip();
+}
+
+void LLDBPlugin::OnDebugNextInst(clDebugEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+    if ( m_connector.IsCanInteract()) {
+        m_connector.NextInstruction();
+    }
+}
+
+void LLDBPlugin::OnDebugShowCursor(clDebugEvent& event)
+{
+    CHECK_IS_LLDB_SESSION();
+    if ( m_connector.IsCanInteract()) {
+        m_connector.ShowCurrentFileLine();
+    }
 }

@@ -101,6 +101,7 @@ public:
     void DeleteBreakpoints(const LLDBCommand& command);
     void DeleteAllBreakpoints(const LLDBCommand& command);
     void Next(const LLDBCommand& command);
+    void NextInstruction(const LLDBCommand& command);
     void StepIn(const LLDBCommand& command);
     void StepOut(const LLDBCommand& command);
     void Interrupt(const LLDBCommand& command);
@@ -111,6 +112,7 @@ public:
     void EvalExpression(const LLDBCommand& command);
     void OpenCoreFile(const LLDBCommand& command);
     void AttachProcess(const LLDBCommand& command);
+    void ShowCurrentFileLine(const LLDBCommand& command);
 };
 
 DECLARE_APP(CodeLiteLLDBApp)

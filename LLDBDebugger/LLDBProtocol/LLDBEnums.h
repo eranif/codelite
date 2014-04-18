@@ -49,6 +49,8 @@ enum eCommandType {
     kCommandEvalExpression,
     kCommandDebugCoreFile,
     kCommandAttachProcess,
+    kCommandNextInstruction,
+    kCommandCurrentFileLine,
 };
 
 enum eLLDBOptions {

@@ -265,6 +265,16 @@ public:
      * @brief evaluate an expression
      */
     void EvaluateExpression(const wxString &expression);
+    
+    /**
+     * @brief step over to next instruction
+     */
+    void NextInstruction();
+    
+    /**
+     * @brief step over to next instruction
+     */
+    void ShowCurrentFileLine();
 };
 
 #endif // LLDBCONNECTOR_H

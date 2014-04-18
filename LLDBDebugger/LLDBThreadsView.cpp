@@ -66,6 +66,7 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
         }
         wxVector<wxVariant> cols;
         cols.push_back( thr.GetId() == wxNOT_FOUND ? wxString() : wxString() << thr.GetId() );
+        cols.push_back( thr.GetStopReasonString() );
         cols.push_back( thr.GetFunc() );
         cols.push_back( thr.GetFile() );
         cols.push_back( thr.GetLine() == wxNOT_FOUND ? wxString() : wxString() << thr.GetLine() );

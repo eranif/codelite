@@ -283,6 +283,16 @@ void CodeLiteLLDBApp::NotifyStopped()
     reply.SetReplyType( kReplyTypeDebuggerStopped );
     reply.SetInterruptResaon( m_interruptReason );
     
+    // If we find a thread that was stopped due to breakpoint, make it the active one
+    int threadCount = m_target.GetProcess().GetNumThreads();
+    for(int i=0; i<threadCount; ++i) {
+        lldb::SBThread thr = m_target.GetProcess().GetThreadAtIndex(i);
+        if ( thr.GetStopReason() == lldb::eStopReasonBreakpoint ) {
+            m_target.GetProcess().SetSelectedThread( thr );
+            break;
+        }
+    }
+    
     lldb::SBThread thread = m_target.GetProcess().GetSelectedThread();
     LLDBBacktrace bt( thread, m_settings );
     reply.SetBacktrace( bt );
@@ -302,7 +312,6 @@ void CodeLiteLLDBApp::NotifyStopped()
     
     // Prepare list of threads
     LLDBThread::Vect_t threads;
-    int threadCount = m_target.GetProcess().GetNumThreads();
     for(int i=0; i<threadCount; ++i) {
         LLDBThread t;
         lldb::SBThread thr = m_target.GetProcess().GetThreadAtIndex(i);
@@ -312,6 +321,8 @@ void CodeLiteLLDBApp::NotifyStopped()
         lldb::SBFrame frame = thr.GetSelectedFrame();
         t.SetFunc( frame.GetFunctionName() ? frame.GetFunctionName() : "" );
         lldb::SBLineEntry lineEntry = thr.GetSelectedFrame().GetLineEntry();
+        
+        // get the stop reason string
         char buffer[1024];
         memset(buffer, 0x0, sizeof(buffer));
         thr.GetStopDescription( buffer, sizeof( buffer ) );
@@ -470,8 +481,9 @@ void CodeLiteLLDBApp::ApplyBreakpoints(const LLDBCommand& command)
 void CodeLiteLLDBApp::Continue(const LLDBCommand& command)
 {
     CHECK_DEBUG_SESSION_RUNNING();
-    wxUnusedVar( command );
-    m_target.GetProcess().Continue();
+    if ( m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        m_target.GetProcess().Continue();
+    }
 }
 
 void CodeLiteLLDBApp::StopDebugger(const LLDBCommand& command)
@@ -531,25 +543,25 @@ void CodeLiteLLDBApp::DeleteBreakpoints(const LLDBCommand& command)
 void CodeLiteLLDBApp::Next(const LLDBCommand& command)
 {
     CHECK_DEBUG_SESSION_RUNNING();
-    lldb::SBCommandReturnObject ret;
-    m_debugger.GetCommandInterpreter().HandleCommand("next", ret);
-    wxUnusedVar( ret );
+    if ( m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        m_target.GetProcess().GetSelectedThread().StepOver();
+    }
 }
 
 void CodeLiteLLDBApp::StepIn(const LLDBCommand& command)
 {
     CHECK_DEBUG_SESSION_RUNNING();
-    lldb::SBCommandReturnObject ret;
-    m_debugger.GetCommandInterpreter().HandleCommand("step", ret);
-    wxUnusedVar( ret );
+    if ( m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        m_target.GetProcess().GetSelectedThread().StepInto();
+    }
 }
 
 void CodeLiteLLDBApp::StepOut(const LLDBCommand& command)
 {
     CHECK_DEBUG_SESSION_RUNNING();
-    lldb::SBCommandReturnObject ret;
-    m_debugger.GetCommandInterpreter().HandleCommand("finish", ret);
-    wxUnusedVar( ret );
+    if ( m_target.GetProcess().IsValid() && m_target.GetProcess().GetState() == lldb::eStateStopped ) {
+        m_target.GetProcess().GetSelectedThread().StepOut();
+    }
 }
 
 bool CodeLiteLLDBApp::CanInteract()
@@ -681,6 +693,7 @@ void CodeLiteLLDBApp::MainLoop()
         while ( !m_exitMainLoop ) {
             CodeLiteLLDBApp::QueueItem_t msg;
             CodeLiteLLDBApp::NotifyFunc_t notify_func = NULL;
+            
             bool got_something = false;
             if ( m_commands_queue.ReceiveTimeout(1, msg ) == wxMSGQUEUE_NO_ERROR ) {
                 // Process the command
@@ -692,6 +705,7 @@ void CodeLiteLLDBApp::MainLoop()
             }
             
             if ( m_notify_queue.ReceiveTimeout(1, notify_func) == wxMSGQUEUE_NO_ERROR ) {
+                
                 (this->*notify_func)();
                 got_something = true;
             }
@@ -700,7 +714,6 @@ void CodeLiteLLDBApp::MainLoop()
                 wxThread::Sleep(10);
             }
         }
-        
         wxPrintf("codelite-lldb: terminaing\n");
         
     } catch (clSocketException &e) {
@@ -828,5 +841,6 @@ void CodeLiteLLDBApp::DetachDebugger(const LLDBCommand& command)
     NotifyExited();
     Cleanup();
 }
+
 
 #endif 

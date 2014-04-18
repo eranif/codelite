@@ -4,6 +4,11 @@
 #include <wx/treelist.h>
 #include <wx/wupdlock.h>
 
+#define LOCALS_VIEW_NAME_COL_IDX    0
+#define LOCALS_VIEW_VALUE_COL_IDX   1
+#define LOCALS_VIEW_SUMMARY_COL_IDX 2
+#define LOCALS_VIEW_TYPE_COL_IDX    3
+
 LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
@@ -11,8 +16,8 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     m_treeList = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT|wxTR_HAS_BUTTONS|wxTR_FULL_ROW_HIGHLIGHT|wxTR_COLUMN_LINES|wxTR_ROW_LINES|wxTR_TWIST_BUTTONS);
     
     m_treeList->AddColumn(_("Name"), 150);
-    m_treeList->AddColumn(_("Summary"), 300);
     m_treeList->AddColumn(_("Value"), 300);
+    m_treeList->AddColumn(_("Summary"), 300);
     m_treeList->AddColumn(_("Type"), 300);
     
     m_treeList->AddRoot(_("Local Vairables"));
@@ -74,9 +79,9 @@ void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, 
     for(size_t i=0; i<variables.size(); ++i) {
         LLDBVariable::Ptr_t variable = variables.at(i);
         wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, new LLDBLocalVariableClientData(variable));
-        m_treeList->SetItemText(item, 1, variable->GetSummary());
-        m_treeList->SetItemText(item, 2, variable->GetValue());
-        m_treeList->SetItemText(item, 3, variable->GetType());
+        m_treeList->SetItemText(item, LOCALS_VIEW_VALUE_COL_IDX,   variable->GetValue());
+        m_treeList->SetItemText(item, LOCALS_VIEW_SUMMARY_COL_IDX, variable->GetSummary());
+        m_treeList->SetItemText(item, LOCALS_VIEW_TYPE_COL_IDX, variable->GetType());
         if ( variable->IsValueChanged() ) {
             m_treeList->SetItemTextColour( item, "RED" );
         }

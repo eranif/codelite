@@ -378,7 +378,8 @@ LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer115->Add(m_dvListCtrlThreads, 1, wxALL|wxEXPAND, 2);
     
-    m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 50, wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("Stop Reason"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, 40, wxALIGN_LEFT);

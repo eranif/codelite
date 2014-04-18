@@ -48,6 +48,7 @@ private:
     void Cleanup();
     void AcceptNewConnection() throw(clSocketException);
     bool InitializeLLDB(const LLDBCommand &command);
+    
 public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();

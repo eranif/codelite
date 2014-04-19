@@ -12,9 +12,10 @@ set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
 FILE(GLOB SRC "*.cpp")
 include_directories(${CL_SRC_ROOT}/LLDBDebugger)
 add_executable(codelite-lldb ${SRC})
+link_directories(${LLDB_LIB_PATH})
+target_link_libraries(codelite-lldb ${LIBLLDB})
 target_link_libraries(  codelite-lldb
                         ${LINKER_OPTIONS}
-                        ${LLDB_LIB}
                         ${wxWidgets_LIBRARIES}
                         -L"${CL_LIBPATH}"
                         -lLLDBProtocol

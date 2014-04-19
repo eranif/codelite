@@ -1669,6 +1669,17 @@ void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
     // Let it start ... (wait for it up to 5 seconds)
     for(size_t i=0; i<20; ++i) {
         if ( search_process_by_command(SLEEP_COMMAND, tty, pid) ) {
+#ifdef __WXGTK__
+            // On GTK, redirection to TTY does not work with lldb
+            // as a workaround, we create a symlink with different name
+            wxString symlinkName = tty;
+            symlinkName.Replace("/dev/pts/", "/tmp/pts");
+            wxString lnCommand;
+            lnCommand << "ln -sf " << tty << " " << symlinkName;
+            if ( ::system( lnCommand.mb_str(wxConvUTF8).data() ) == 0 ) {
+                tty.swap( symlinkName );
+            }
+#endif
             return;
         }
         wxThread::Sleep(250);

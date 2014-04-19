@@ -215,6 +215,12 @@ void LLDBPlugin::TerminateTerminal()
         ::wxKill(m_terminalPID, wxSIGKILL);
         m_terminalPID = wxNOT_FOUND;
     }
+#ifdef __WXGTK__
+    if ( m_terminalTTY.StartsWith("/tmp/pts") ) {
+        // this is a fake symlink - remove it
+        ::unlink( m_terminalTTY.mb_str(wxConvUTF8).data() );
+    }
+#endif
     m_terminalTTY.Clear();
 }
 
@@ -672,14 +678,6 @@ void LLDBPlugin::DoCleanup()
     ClearDebuggerMarker();
     TerminateTerminal();
     m_connector.StopDebugServer();
-
-#ifdef __WXGTK__
-    if ( m_terminalTTY.StartsWith("/tmp/pts") ) {
-        // this is a fake symlink - remove it
-        ::unlink( m_terminalTTY.mb_str(wxConvUTF8).data() );
-    }
-#endif
-
     m_terminalTTY.Clear();
     m_stopReasonPrompted = false;
     m_raisOnBpHit = false;

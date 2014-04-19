@@ -15,7 +15,7 @@ void LLDBVariable::DoInitFromLLDBValue(lldb::SBValue value)
     SetValue( value.GetValue() );
     SetValueChanged( value.GetValueDidChange() );
     SetLldbId( value.GetID() );
-    
+
     if ( value.MightHaveChildren() ) {
         m_hasChildren = true;
     }
@@ -48,6 +48,33 @@ JSONElement LLDBVariable::ToJSON() const
     json.addProperty("m_valueChanged", m_valueChanged);
     json.addProperty("m_lldbId", m_lldbId);
     json.addProperty("m_hasChildren", m_hasChildren);
-    
+
     return json;
+}
+
+wxString LLDBVariable::ToString(const wxString &alternateName) const
+{
+    wxString asString;
+    if ( alternateName.IsEmpty() ) {
+        asString << GetName();
+    } else {
+        asString << alternateName;
+    }
+    
+    wxString v;
+    if ( !GetSummary().IsEmpty() ) {
+        v << GetSummary();
+    }
+    
+    if ( !GetValue().IsEmpty() ) {
+        if ( !v.IsEmpty() ) {
+            v << " ";
+        }
+        v << GetValue();
+    }
+    
+    if ( !v.IsEmpty() ) {
+        asString << " = " << v;
+    }
+    return asString;
 }

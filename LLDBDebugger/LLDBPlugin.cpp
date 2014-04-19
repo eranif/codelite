@@ -22,6 +22,7 @@
 #include <wx/msgdlg.h>
 #include "LLDBSettingDialog.h"
 #include "LLDBThreadsView.h"
+#include "LLDBTooltip.h"
 
 static LLDBPlugin* thePlugin = NULL;
 
@@ -66,6 +67,7 @@ LLDBPlugin::LLDBPlugin(IManager *manager)
     , m_terminalPID(wxNOT_FOUND)
     , m_stopReasonPrompted(false)
     , m_raisOnBpHit(false)
+    , m_tooltip(NULL)
 {
     m_longName = wxT("LLDB Debugger for CodeLite");
     m_shortName = wxT("LLDBDebuggerPlugin");
@@ -338,6 +340,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
 {
     event.Skip();
+    m_connector.SetGoingDown( true );
     
     // Stop the debugger ( do not notify about it, since we are in the handler...)
     m_connector.Cleanup();
@@ -603,6 +606,11 @@ void LLDBPlugin::DestroyUI()
         m_threadsView->Destroy();
         m_threadsView = NULL;
     }
+    if ( m_tooltip ) {
+        m_tooltip->Destroy();
+        m_tooltip = NULL;
+    }
+    ClearDebuggerMarker();
     m_mgr->GetDockingManager()->Update();
 }
 
@@ -714,7 +722,10 @@ void LLDBPlugin::OnWorkspaceLoaded(wxCommandEvent& event)
 void LLDBPlugin::OnLLDBCrashed(LLDBEvent& event)
 {
     event.Skip();
-    // ::wxMessageBox(_("LLDB crashed! Terminating debug session"), "CodeLite", wxOK|wxICON_ERROR|wxCENTER);
+    // Report it as crash only if not going down (i.e. we got an LLDBExit event)
+    if ( !m_connector.IsGoingDown() ) {
+        ::wxMessageBox(_("LLDB crashed! Terminating debug session"), "CodeLite", wxOK|wxICON_ERROR|wxCENTER);
+    }
     OnLLDBExited( event );
 }
 
@@ -779,19 +790,10 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
     
     // hide any tooltip
     if ( !event.GetVariables().empty() && m_mgr->GetActiveEditor() ) {
-        wxString tooltip;
-        LLDBVariable::Ptr_t var = event.GetVariables().at(0);
-        
-        tooltip << "<i>" << event.GetExpression() << "</i>\n<hr>";
-        if ( !var->GetValue().IsEmpty() ) {
-            tooltip << var->GetValue() << "\n";
+        if ( !m_tooltip ) {
+            m_tooltip = new LLDBTooltip(EventNotifier::Get()->TopFrame(), this);
         }
-        
-        if ( !var->GetSummary().IsEmpty() ) {
-            tooltip << var->GetSummary();
-        }
-        
-        m_mgr->GetActiveEditor()->ShowRichTooltip( tooltip );
+        m_tooltip->Show( event.GetExpression(), event.GetVariables().at(0) );
     }
 }
 
@@ -947,5 +949,13 @@ void LLDBPlugin::OnDebugShowCursor(clDebugEvent& event)
     CHECK_IS_LLDB_SESSION();
     if ( m_connector.IsCanInteract()) {
         m_connector.ShowCurrentFileLine();
+    }
+}
+
+void LLDBPlugin::DestroyTooltip()
+{
+    if ( m_tooltip ) {
+        m_tooltip->Destroy();
+        m_tooltip = NULL;
     }
 }

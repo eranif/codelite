@@ -89,13 +89,15 @@ public:
     bool HasChildren() const {
         return m_hasChildren;
     }
+    
+    wxString ToString(const wxString &alternateName = wxEmptyString) const ;
 };
 
-class LLDBLocalVariableClientData : public wxTreeItemData
+class LLDBVariableClientData : public wxTreeItemData
 {
     LLDBVariable::Ptr_t m_variable;
 public:
-    LLDBLocalVariableClientData(LLDBVariable::Ptr_t variable) : m_variable(variable) {}
+    LLDBVariableClientData(LLDBVariable::Ptr_t variable) : m_variable(variable) {}
     LLDBVariable::Ptr_t GetVariable() const {
         return m_variable;
     }

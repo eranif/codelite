@@ -18,7 +18,7 @@ class LLDBLocalsView : public LLDBLocalsViewBase
     
 private:
     void DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent);
-    LLDBLocalVariableClientData *GetItemData(const wxTreeItemId &id);
+    LLDBVariableClientData *GetItemData(const wxTreeItemId &id);
     void Cleanup();
     
 protected:

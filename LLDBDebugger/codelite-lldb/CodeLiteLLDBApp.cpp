@@ -241,6 +241,10 @@ void CodeLiteLLDBApp::NotifyExited()
     LLDBReply reply;
     reply.SetReplyType( kReplyTypeDebuggerExited );
     SendReply( reply );
+    
+    // Let codelite 200 ms head start before starting the cleanup process
+    // by doing this, codelite can mark the debugger in "normal" shutdown
+    wxThread::Sleep(200); 
     Cleanup();
     m_exitMainLoop = true;
 }
@@ -499,7 +503,6 @@ void CodeLiteLLDBApp::StopDebugger(const LLDBCommand& command)
 {
     CHECK_DEBUG_SESSION_RUNNING();
     NotifyExited();
-    Cleanup();
 }
 
 void CodeLiteLLDBApp::DeleteAllBreakpoints(const LLDBCommand& command)
@@ -652,7 +655,6 @@ void CodeLiteLLDBApp::NotifyLocals(LLDBVariable::Vect_t locals)
 // we stashed the variables we got so far inside a map
 void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
 {
-    wxPrintf("codelite-lldb: ExpandVariable called for variableId=%d\n", command.GetLldbId());
     int variableId = command.GetLldbId();
     if ( variableId == wxNOT_FOUND ) {
         return;
@@ -661,23 +663,39 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
     LLDBVariable::Vect_t children;
     std::map<int, lldb::SBValue>::iterator iter = m_variables.find(variableId);
     if ( iter != m_variables.end() ) {
-        lldb::SBValue value = iter->second;
-        int size = value.GetNumChildren();
+        lldb::SBValue *pvalue = &(iter->second);
+        lldb::SBValue deReferencedValue;
+        
+        wxPrintf("codelite-lldb: ExpandVariable called for '%s'\n. variableId=%d", pvalue->GetName(), variableId);
+        int size = pvalue->GetNumChildren();
 
-        lldb::TypeClass typeClass = value.GetType().GetTypeClass();
-        if ( typeClass == lldb::eTypeClassArray ) {
+        lldb::TypeClass typeClass = pvalue->GetType().GetTypeClass();
+        if ( typeClass & lldb::eTypeClassArray ) {
             size > m_settings.GetMaxArrayElements() ? size = m_settings.GetMaxArrayElements() : size = size;
-            wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", value.GetName());
+            wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", pvalue->GetName());
+            
+        } else if ( typeClass & lldb::eTypeClassPointer ) {
+            // dereference is needed
+            wxPrintf("codelite-lldb: value '%s' is a class pointer, dereferecning it\n", pvalue->GetName());
+            deReferencedValue = pvalue->Dereference();
+            
+            // and update the number of children
+            pvalue = &deReferencedValue;
+            
+            wxPrintf("codelite-lldb: new number of children is set to %d\n", size);
+            size = pvalue->GetNumChildren();
         }
 
         for(int i=0; i<size; ++i) {
-            lldb::SBValue child = value.GetChildAtIndex(i);
+            lldb::SBValue child = pvalue->GetChildAtIndex(i);
             if ( child.IsValid() ) {
                 LLDBVariable::Ptr_t var( new LLDBVariable(child) );
                 children.push_back( var );
                 m_variables.insert( std::make_pair(child.GetID(), child) );
             }
         }
+        
+        wxPrintf("codelite-lldb: Send reply for variable expand. variableId=%d", variableId);
         
         LLDBReply reply;
         reply.SetReplyType( kReplyTypeVariableExpanded );
@@ -771,6 +789,9 @@ void CodeLiteLLDBApp::EvalExpression(const LLDBCommand& command)
             vars.push_back( var );
             reply.SetVariables( vars );
             
+            // Cache the expanded variable (we will need it later for tooltip expansion
+            m_variables.insert( std::make_pair(value.GetID(), value) );
+            
             SendReply( reply );
         }
     }
@@ -848,7 +869,6 @@ void CodeLiteLLDBApp::DetachDebugger(const LLDBCommand& command)
         m_target.GetProcess().Detach( false );
     }
     NotifyExited();
-    Cleanup();
 }
 
 void CodeLiteLLDBApp::NextInstruction(const LLDBCommand& command)

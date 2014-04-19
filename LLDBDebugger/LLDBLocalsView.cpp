@@ -78,7 +78,7 @@ void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, 
 {
     for(size_t i=0; i<variables.size(); ++i) {
         LLDBVariable::Ptr_t variable = variables.at(i);
-        wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, new LLDBLocalVariableClientData(variable));
+        wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, new LLDBVariableClientData(variable));
         m_treeList->SetItemText(item, LOCALS_VIEW_VALUE_COL_IDX,   variable->GetValue());
         m_treeList->SetItemText(item, LOCALS_VIEW_SUMMARY_COL_IDX, variable->GetSummary());
         m_treeList->SetItemText(item, LOCALS_VIEW_TYPE_COL_IDX, variable->GetType());
@@ -116,9 +116,9 @@ void LLDBLocalsView::OnItemExpanding(wxTreeEvent& event)
     }
 }
 
-LLDBLocalVariableClientData* LLDBLocalsView::GetItemData(const wxTreeItemId& id)
+LLDBVariableClientData* LLDBLocalsView::GetItemData(const wxTreeItemId& id)
 {
-    LLDBLocalVariableClientData* cd = dynamic_cast<LLDBLocalVariableClientData*>(m_treeList->GetItemData(id));
+    LLDBVariableClientData* cd = dynamic_cast<LLDBVariableClientData*>(m_treeList->GetItemData(id));
     return cd;
 }
 

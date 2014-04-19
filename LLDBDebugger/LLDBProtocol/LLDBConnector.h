@@ -47,6 +47,7 @@ protected:
     LLDBCommand                 m_runCommand;
     TerminalInfo                m_terminalInfo;
     bool                        m_attachedToProcess;
+    bool                        m_goingDown;
 
     wxDECLARE_EVENT_TABLE();
     void OnProcessOutput(wxCommandEvent &event);
@@ -66,6 +67,12 @@ public:
     LLDBConnector();
     virtual ~LLDBConnector();
 
+    void SetGoingDown(bool goingDown) {
+        this->m_goingDown = goingDown;
+    }
+    bool IsGoingDown() const {
+        return m_goingDown;
+    }
     void SetAttachedToProcess(bool attachedToProcess) {
         this->m_attachedToProcess = attachedToProcess;
     }
@@ -196,12 +203,12 @@ public:
      * @brief stop the debugger
      */
     void Stop();
-    
+
     /**
      * @brief detach from the process
      */
     void Detach();
-    
+
     /**
      * @brief send a next command
      */
@@ -265,12 +272,12 @@ public:
      * @brief evaluate an expression
      */
     void EvaluateExpression(const wxString &expression);
-    
+
     /**
      * @brief step over to next instruction
      */
     void NextInstruction();
-    
+
     /**
      * @brief step over to next instruction
      */

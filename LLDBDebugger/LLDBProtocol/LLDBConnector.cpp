@@ -26,6 +26,7 @@ LLDBConnector::LLDBConnector()
     , m_process(NULL)
     , m_isRunning(false)
     , m_canInteract(false)
+    , m_goingDown(false)
 {
     Bind(wxEVT_LLDB_EXITED,  &LLDBConnector::OnLLDBExited, this);
     Bind(wxEVT_LLDB_STARTED, &LLDBConnector::OnLLDBStarted, this);

@@ -419,6 +419,13 @@ LLDBTooltipBase::LLDBTooltipBase(wxWindow* parent,long style)
     
     boxSizer121->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 0);
     
+    m_panelStatus = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,15), wxTAB_TRAVERSAL);
+    
+    boxSizer121->Add(m_panelStatus, 0, wxEXPAND, 5);
+    
+    m_timerCheckMousePos = new wxTimer;
+    m_timerCheckMousePos->Start(25, false);
+    
     SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     SetSizeHints(300,200);
@@ -426,8 +433,28 @@ LLDBTooltipBase::LLDBTooltipBase(wxWindow* parent,long style)
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LLDBTooltipBase::OnItemExpanding), NULL, this);
+    m_panelStatus->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(LLDBTooltipBase::OnStatusBarLeftDown), NULL, this);
+    m_panelStatus->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(LLDBTooltipBase::OnStatusBarLeftUp), NULL, this);
+    m_panelStatus->Connect(wxEVT_MOTION, wxMouseEventHandler(LLDBTooltipBase::OnStatusBarMotion), NULL, this);
+    m_panelStatus->Connect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(LLDBTooltipBase::OnStatusEnterWindow), NULL, this);
+    m_panelStatus->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(LLDBTooltipBase::OnStatusLeaveWindow), NULL, this);
+    m_timerCheckMousePos->Connect(wxEVT_TIMER, wxTimerEventHandler(LLDBTooltipBase::OnCheckMousePosition), NULL, this);
+    
 }
 
 LLDBTooltipBase::~LLDBTooltipBase()
 {
+    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LLDBTooltipBase::OnItemExpanding), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(LLDBTooltipBase::OnStatusBarLeftDown), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(LLDBTooltipBase::OnStatusBarLeftUp), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_MOTION, wxMouseEventHandler(LLDBTooltipBase::OnStatusBarMotion), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(LLDBTooltipBase::OnStatusEnterWindow), NULL, this);
+    m_panelStatus->Disconnect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(LLDBTooltipBase::OnStatusLeaveWindow), NULL, this);
+    m_timerCheckMousePos->Disconnect(wxEVT_TIMER, wxTimerEventHandler(LLDBTooltipBase::OnCheckMousePosition), NULL, this);
+    
+    m_timerCheckMousePos->Stop();
+    wxDELETE( m_timerCheckMousePos );
+
 }

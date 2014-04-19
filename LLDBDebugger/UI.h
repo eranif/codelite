@@ -32,6 +32,7 @@
 #include <wx/hyperlink.h>
 #include <wx/popupwin.h>
 #include <wx/treectrl.h>
+#include <wx/timer.h>
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -151,8 +152,17 @@ class LLDBTooltipBase : public wxPopupWindow
 {
 protected:
     wxTreeCtrl* m_treeCtrl;
+    wxPanel* m_panelStatus;
+    wxTimer* m_timerCheckMousePos;
 
 protected:
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnStatusBarLeftDown(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarLeftUp(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusBarMotion(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusEnterWindow(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnStatusLeaveWindow(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
 
 public:
     LLDBTooltipBase(wxWindow* parent, long style = wxBORDER_NONE);

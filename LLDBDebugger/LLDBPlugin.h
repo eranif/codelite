@@ -8,6 +8,7 @@
 #include "LLDBProtocol/LLDBConnector.h"
 #include "LLDBProtocol/LLDBEvent.h"
 
+class LLDBTooltip;
 class LLDBThreadsView;
 class LLDBLocalsView;
 class LLDBBreakpointsPane;
@@ -29,7 +30,8 @@ class LLDBPlugin : public IPlugin
     wxString                m_terminalTTY;
     bool                    m_stopReasonPrompted;
     bool                    m_raisOnBpHit;
-    
+    LLDBTooltip*            m_tooltip;
+    friend class LLDBTooltip;
 public:
     LLDBPlugin(IManager *manager);
     ~LLDBPlugin();
@@ -55,6 +57,7 @@ private:
     void DestroyUI();
     void DoCleanup();
     bool DoInitializeDebugger(clDebugEvent &event, bool redirectOutput, const wxString &terminalTitle = wxEmptyString);
+    void DestroyTooltip();
     
 protected:
     // Other codelite events
@@ -96,7 +99,7 @@ protected:
     void OnLLDBDeletedAllBreakpoints(LLDBEvent &event);
     void OnLLDBBreakpointsUpdated(LLDBEvent &event);
     void OnLLDBExpressionEvaluated(LLDBEvent &event);
-    
+
 public:    
     //--------------------------------------------
     //Abstract methods

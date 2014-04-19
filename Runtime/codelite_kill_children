@@ -1,7 +1,6 @@
 #!/bin/sh
 
-## let the user an option to pass -9 or anything 
-## for "hard kills"
+## let the user pass an option if e.g. -9 for "hard kills"
 
 sig_options=$2
 osname=$(uname -o)

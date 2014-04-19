@@ -111,6 +111,9 @@ install(FILES ${CL_SRC_ROOT}/Runtime/codelite-icons.zip DESTINATION ${CL_PREFIX}
 ## License file
 install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_PREFIX}/share/codelite)
 
+## Manual pages
+install(DIRECTORY ${CL_SRC_ROOT}/Runtime/man1 DESTINATION ${CL_PREFIX}/share/man)
+
 ## Copy default configuration files
 install(FILES ${CL_SRC_ROOT}/Runtime/config/accelerators.conf.default DESTINATION ${CL_PREFIX}/share/codelite/config)
 install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default DESTINATION ${CL_PREFIX}/share/codelite/config)

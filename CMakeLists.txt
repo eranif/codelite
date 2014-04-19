@@ -224,7 +224,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
     message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
-    set(CMAKE_CXX_FLAGS "-g -O0")        ## No optimization, debug info
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")        ## No optimization, debug info
 
     ## In debug, only add NDEBUG if the user says so
     if (PREVENT_WX_ASSERTS MATCHES 1)
@@ -251,7 +251,7 @@ else ()
     message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
     message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
-    set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")        ## Optimize
     if(CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
     endif(CMAKE_COMPILER_IS_GNUCXX)

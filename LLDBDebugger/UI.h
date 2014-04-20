@@ -151,6 +151,7 @@ public:
 class LLDBTooltipBase : public wxPopupWindow
 {
 protected:
+    wxPanel* m_panel134;
     wxTreeCtrl* m_treeCtrl;
     wxPanel* m_panelStatus;
     wxTimer* m_timerCheckMousePos;

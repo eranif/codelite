@@ -378,7 +378,7 @@ LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const 
     
     boxSizer115->Add(m_dvListCtrlThreads, 1, wxALL|wxEXPAND, 2);
     
-    m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 50, wxALIGN_LEFT);
+    m_dvListCtrlThreads->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, 70, wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("Stop Reason"), wxDATAVIEW_CELL_INERT, 100, wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     m_dvListCtrlThreads->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
@@ -413,21 +413,26 @@ LLDBTooltipBase::LLDBTooltipBase(wxWindow* parent,long style)
     wxBoxSizer* boxSizer121 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer121);
     
-    m_treeCtrl = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE);
-    m_treeCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    m_treeCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
+    m_panel134 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL|wxBORDER_SIMPLE);
     
-    boxSizer121->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 0);
+    boxSizer121->Add(m_panel134, 1, wxEXPAND, 5);
     
-    m_panelStatus = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1,15), wxTAB_TRAVERSAL);
+    wxBoxSizer* boxSizer136 = new wxBoxSizer(wxVERTICAL);
+    m_panel134->SetSizer(boxSizer136);
     
-    boxSizer121->Add(m_panelStatus, 0, wxEXPAND, 5);
+    m_treeCtrl = new wxTreeCtrl(m_panel134, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE);
+    m_treeCtrl->SetBackgroundColour(wxColour(wxT("rgb(0,0,0)")));
+    m_treeCtrl->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    
+    boxSizer136->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 1);
+    
+    m_panelStatus = new wxPanel(m_panel134, wxID_ANY, wxDefaultPosition, wxSize(-1,15), wxTAB_TRAVERSAL);
+    
+    boxSizer136->Add(m_panelStatus, 0, wxEXPAND, 1);
     
     m_timerCheckMousePos = new wxTimer;
     m_timerCheckMousePos->Start(25, false);
     
-    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     SetSizeHints(300,200);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);

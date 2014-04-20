@@ -48,6 +48,19 @@ if (UNIX AND NOT APPLE)
 
 endif (UNIX AND NOT APPLE)
 
+# Additional libraries for UNIX-like systems
+set( ADDITIONAL_LIBRARIES "" )
+
+if (UNIX)
+    if ( IS_FREEBSD )
+        set(ADDITIONAL_LIBRARIES "-lkvm")
+    elseif ( UNIX AND NOT APPLE )
+        set(ADDITIONAL_LIBRARIES "-ldl -lutil")
+    else ( )
+        set(ADDITIONAL_LIBRARIES "-ldl")
+    endif ( )
+endif (UNIX)
+
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 
@@ -67,11 +80,11 @@ FILE(GLOB SRCS "*.cpp")
 # Define the output
 add_library(plugin SHARED ${SRCS})
 if(GTK2_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
 elseif (GTK3_FOUND)
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${GTK3_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${GTK3_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
 else()
-    target_link_libraries(plugin ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
+    target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite)
 endif()
 
 install(TARGETS plugin DESTINATION ${PLUGINS_DIR})

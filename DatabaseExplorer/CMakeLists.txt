@@ -75,7 +75,11 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${LIBMYSQLCLIENT} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin -ldatabaselayersqlite -lwxshapeframework)
+if (GTK3_FOUND)
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${GTK3_LIBRARIES} ${LIBMYSQLCLIENT} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin -ldatabaselayersqlite -lwxshapeframework)
+else()
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${GTK2_LIBRARIES} ${LIBMYSQLCLIENT} -L"${CL_LIBPATH}" -lwxsqlite3 -lsqlite3lib -llibcodelite -lplugin -ldatabaselayersqlite -lwxshapeframework)
+endif()
 # Make sure that the plugin will not start build before 'plugin.so' is ready
 add_dependencies(${PLUGIN_NAME} plugin)
 install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})

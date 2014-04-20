@@ -240,7 +240,7 @@ LexerConfPtr EditorConfig::GetLexer(const wxString &lexerName)
 wxString EditorConfig::GetCurrentOutputviewFgColour() const
 {
     if (m_activeThemeLexers == NULL || m_activeThemeLexers->outputpane_fg_colour.IsEmpty()) {
-        return DrawingUtils::GetTextCtrlTextColour().GetAsString(wxC2S_HTML_SYNTAX);
+        return DrawingUtils::GetTextCtrlTextColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
     }
 
     return m_activeThemeLexers->outputpane_fg_colour;
@@ -249,7 +249,7 @@ wxString EditorConfig::GetCurrentOutputviewFgColour() const
 wxString EditorConfig::GetCurrentOutputviewBgColour() const
 {
     if (m_activeThemeLexers == NULL || m_activeThemeLexers->outputpane_bg_colour.IsEmpty()) {
-        return DrawingUtils::GetTextCtrlBgColour().GetAsString(wxC2S_HTML_SYNTAX);
+        return DrawingUtils::GetTextCtrlBgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
     }
 
     return m_activeThemeLexers->outputpane_bg_colour;
@@ -571,12 +571,12 @@ void EditorConfig::LoadLexers(bool loadDefault)
                 pLexersInfo->filename = fileToLoad;
                 pLexersInfo->theme    = themeName;
                 if (ovFgColour.IsEmpty()) {
-                    pLexersInfo->outputpane_fg_colour = DrawingUtils::GetOutputPaneFgColour().GetAsString(wxC2S_HTML_SYNTAX);
+                    pLexersInfo->outputpane_fg_colour = DrawingUtils::GetOutputPaneFgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
                 } else {
                     pLexersInfo->outputpane_fg_colour = ovFgColour;
                 }
                 if (ovBgColour.IsEmpty()) {
-                    pLexersInfo->outputpane_bg_colour = DrawingUtils::GetOutputPaneBgColour().GetAsString(wxC2S_HTML_SYNTAX);
+                    pLexersInfo->outputpane_bg_colour = DrawingUtils::GetOutputPaneBgColour().GetAsString(wxC2S_HTML_SYNTAX | wxC2S_CSS_SYNTAX);
                 } else {
                     pLexersInfo->outputpane_bg_colour = ovBgColour;
                 }

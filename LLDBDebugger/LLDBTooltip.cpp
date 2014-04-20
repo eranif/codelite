@@ -74,6 +74,7 @@ void LLDBTooltip::Show(const wxString &displayName, LLDBVariable::Ptr_t variable
     
     Move( ::wxGetMousePosition() );
     wxPopupWindow::Show();
+    m_treeCtrl->SetFocus();
 }
 
 void LLDBTooltip::DoCleanup()

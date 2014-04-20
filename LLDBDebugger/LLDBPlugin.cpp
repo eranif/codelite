@@ -972,5 +972,15 @@ void LLDBPlugin::DestroyTooltip()
     if ( m_tooltip ) {
         m_tooltip->Destroy();
         m_tooltip = NULL;
+        
+        
+        // Raise codelite back
+        EventNotifier::Get()->TopFrame()->Raise();
+        
+        // If we destroyed the tooltip, set the focus back to the active editor
+        IEditor *editor = m_mgr->GetActiveEditor();
+        if ( editor ) {
+            editor->SetActive();
+        }
     }
 }

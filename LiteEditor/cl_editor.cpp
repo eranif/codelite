@@ -1477,15 +1477,6 @@ void LEditor::OnDwellStart(wxStyledTextEvent & event)
         }
 
     } else if (ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
-        
-        // debugger is running and responsive, query it about the current token
-        clDebugEvent evt(wxEVT_DBG_EXPR_TOOLTIP, GetId());
-        evt.SetEventObject(this);
-        evt.SetString( GetWordAtMousePointer() );
-        
-        if(EventNotifier::Get()->ProcessEvent(evt))
-            return;
-
         m_context->OnDbgDwellStart(event);
 
     } else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
@@ -2895,6 +2886,16 @@ void LEditor::OnKeyDown(wxKeyEvent &event)
     IDebugger *   dbgr                = DebuggerMgr::Get().GetActiveDebugger();
     bool          dbgTipIsShown       = ManagerST::Get()->GetDebuggerTip()->IsShown();
     bool          keyIsControl        = event.GetKeyCode() == WXK_CONTROL;
+    
+    if ( keyIsControl ) {
+        // Debugger tooltip is shown when clicking 'Control/CMD'
+        // while the mouse is over a word
+        clDebugEvent event(wxEVT_DBG_EXPR_TOOLTIP);
+        event.SetString( this->GetWordAtMousePointer() );
+        if ( EventNotifier::Get()->ProcessEvent( event ) ) {
+            return;
+        }
+    }
 
     if(dbgTipIsShown && !keyIsControl) {
 

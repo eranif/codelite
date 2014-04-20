@@ -799,6 +799,11 @@ void LLDBPlugin::OnLLDBExpressionEvaluated(LLDBEvent& event)
 
 void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 {
+#ifdef __WXMSW__
+    ::wxMessageBox(_("Quick Debug with LLDB is not supported under Windows"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
+    return;
+#endif
+
     if ( !DoInitializeDebugger( event, true ) ) {
         return;
     }
@@ -833,6 +838,11 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 
 void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
 {
+#ifdef __WXMSW__
+    ::wxMessageBox(_("Debug core file with LLDB is not supported under Windows"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
+    return;
+#endif
+
     if ( !DoInitializeDebugger(event, false) ) {
         return;
     }
@@ -896,6 +906,11 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
 
 void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
 {
+#ifdef __WXMSW__
+    ::wxMessageBox(_("Attach to process with LLDB is not supported under Windows"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
+    return;
+#endif
+
     wxString terminalTitle;
     terminalTitle << "Console PID " << event.GetInt();
     if ( !DoInitializeDebugger( event, true, terminalTitle ) )

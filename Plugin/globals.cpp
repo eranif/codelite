@@ -1242,11 +1242,11 @@ wxFontEncoding BOM::Encoding(const char* buff)
     //----------------------------------
     wxFontEncoding encoding = wxFONTENCODING_SYSTEM; /* -1 */
 
-    static const char UTF32be[]= { 0x00, 0x00, 0xfe, 0xff};
-    static const char UTF32le[]= { 0xff, 0xfe, 0x00, 0x00};
-    static const char UTF16be[]= { 0xfe, 0xff            };
-    static const char UTF16le[]= { 0xff, 0xfe            };
-    static const char UTF8[]   = { 0xef, 0xbb, 0xbf      };
+    static const char UTF32be[]= { 0x00, 0x00, (char)0xfe, (char)0xff};
+    static const char UTF32le[]= { (char)0xff, (char)0xfe, 0x00, 0x00};
+    static const char UTF16be[]= { (char)0xfe, (char)0xff            };
+    static const char UTF16le[]= { (char)0xff, (char)0xfe            };
+    static const char UTF8[]   = { (char)0xef, (char)0xbb, (char)0xbf      };
 
     if(memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
         encoding = wxFONTENCODING_UTF32BE;

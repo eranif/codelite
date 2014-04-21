@@ -250,23 +250,20 @@ cp ../lib/CMakePlugin.dylib ./codelite.app/Contents/SharedSupport/plugins/
 cp ../lib/CodeLiteDiff.dylib ./codelite.app/Contents/SharedSupport/plugins/
 
 ## Fix LLDB
-echo "Checking for LLDB Debugger..."
-if test -f ${LLVM_HOME}/build-release/lib/liblldb.3.5.0.dylib; then
-    echo "Installing LLDBDebugger..."
-    echo cp ../lib/LLDBDebugger.dylib ./codelite.app/Contents/SharedSupport/plugins/
-    cp ../lib/LLDBDebugger.dylib ./codelite.app/Contents/SharedSupport/plugins/
-    
-    ## copy our debug server
-    cp ../bin/codelite-lldb  ./codelite.app/Contents/MacOS/
-    fix_codelite_lldb_deps
-    
-    ## Copy Apple's debugserver (its signed)
-    echo cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
-    cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
-    
-    cp ${LLVM_HOME}/build-release/lib/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/
-    install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/plugins/LLDBDebugger.dylib
-fi
+echo "Installing LLDBDebugger..."
+echo cp ../lib/LLDBDebugger.dylib ./codelite.app/Contents/SharedSupport/plugins/
+cp ../lib/LLDBDebugger.dylib ./codelite.app/Contents/SharedSupport/plugins/
+
+## copy our debug server
+cp ../bin/codelite-lldb  ./codelite.app/Contents/MacOS/
+fix_codelite_lldb_deps
+
+## Copy Apple's debugserver (its signed)
+echo cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
+cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
+
+cp ../../sdk/lldb/osx/lib/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/
+install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/plugins/LLDBDebugger.dylib
 
 if [ -f ../lib/wxcrafter.dylib ]; then
     cp ../lib/wxcrafter.dylib ./codelite.app/Contents/SharedSupport/plugins/

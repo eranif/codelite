@@ -68,6 +68,14 @@ set( LIBLLDB "" )
 set( LIBLLDB_INCLUDE "" )
 set(LIBLLDB_INSTALL_NEEDED 0)
 
+if ( APPLE )
+    set ( LIBLLDB ${CL_SRC_ROOT}/sdk/lldb/osx/lib/liblldb.3.5.0.dylib )
+    set ( LIBLLDB_INCLUDE ${CL_SRC_ROOT}/sdk/lldb/osx/include )
+    set ( BUILD_LLDB 1 )
+    set ( LIBLLDB_INSTALL_NEEDED 1 )
+    ## update search path to include C++11 headers
+    include_directories(/usr/lib/c++/v1/)
+else()
 ## could not locate an official package, try custom build
 FIND_LLDB_CUSTOM_BUILD()
 
@@ -83,6 +91,7 @@ if ( LIBLLDB STREQUAL "LIBLLDB-NOTFOUND")
     endif()
 else()
     set( BUILD_LLDB 1 )
+endif()
 endif()
 
 if ( BUILD_LLDB MATCHES 1 )
@@ -127,6 +136,7 @@ if ( BUILD_LLDB MATCHES 1 )
     add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRCS})
 
     target_link_libraries(${PLUGIN_NAME} ${LIBLLDB})
+    target_link_libraries(LLDBDebugger LLDBProtocol)
 
     # Codelite plugins doesn't use the "lib" prefix.
     set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
@@ -162,7 +172,6 @@ if ( BUILD_LLDB MATCHES 1 )
 
     add_subdirectory(LLDBProtocol)
     add_subdirectory(codelite-lldb)
-    target_link_libraries(LLDBDebugger LLDBProtocol)
 
     add_dependencies(codelite-lldb LLDBProtocol)
     add_dependencies(LLDBDebugger LLDBProtocol)

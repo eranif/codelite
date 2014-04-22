@@ -504,7 +504,11 @@ void Manager::CreateProject ( ProjectData &data )
 
         bldConf->SetLinkOptions(linkoptions);
 #endif
+        // Update the compiler according to the user selection
         bldConf->SetCompilerType ( data.m_cmpType );
+        
+        // Update the debugger according to the user selection
+        bldConf->SetDebuggerType( data.m_debuggerType );
         
         // Make sure that the build configuration has a project type associated with it
         if ( bldConf->GetProjectType().IsEmpty() ) {

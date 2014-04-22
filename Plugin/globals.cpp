@@ -1578,7 +1578,7 @@ wxArrayString SplitString(const wxString &inString, bool trim)
     }
     return lines;
 }
-
+#ifndef __WXMSW__
 static bool search_process_by_command(const wxString &name, wxString &tty, long& pid)
 {
     CL_DEBUG("search_process_by_command is called");
@@ -1629,6 +1629,7 @@ static bool search_process_by_command(const wxString &name, wxString &tty, long&
     }
     return false;
 }
+#endif
 
 void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
 {

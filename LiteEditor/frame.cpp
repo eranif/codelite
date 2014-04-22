@@ -54,6 +54,7 @@
 #include "code_completion_manager.h"
 #include "clang_compilation_db_thread.h"
 #include "cl_unredo.h"
+#include "NewProjectWizard.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -80,7 +81,6 @@
 #include "jobqueue.h"
 #include "acceltabledlg.h"
 #include "drawingutils.h"
-#include "newprojectdlg.h"
 #include "newworkspacedlg.h"
 #include "replaceinfilespanel.h"
 #include "pluginmgrdlg.h"
@@ -2201,9 +2201,9 @@ void clMainFrame::OnProjectNewProject(wxCommandEvent &event)
     }
 
     wxUnusedVar(event);
-    NewProjectDlg dlg(this);
-    if (dlg.ShowModal() == wxID_OK) {
-        ProjectData data = dlg.GetProjectData();
+    NewProjectWizard wiz(this);
+    if ( wiz.RunWizard( wiz.GetFirstPage() ) ) {
+        ProjectData data = wiz.GetProjectData();
         ManagerST::Get()->CreateProject(data);
     }
 }

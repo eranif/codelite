@@ -375,8 +375,6 @@
       <File Name="newworkspacebasedlg.cpp"/>
       <File Name="newworkspacebasedlg.h"/>
       <File Name="newworkspacedlg.cpp"/>
-      <File Name="newprojectdlg.h"/>
-      <File Name="newprojectdlg.cpp"/>
       <File Name="new_item_base_dlg.h"/>
       <File Name="new_item_base_dlg.cpp"/>
       <File Name="workspacesettingsbase.cpp"/>
@@ -390,6 +388,8 @@
       <File Name="NewVirtualFolderDlg.h"/>
       <File Name="NewVirtualFolderDlg.cpp"/>
       <File Name="depend_dlg_page.wxcp"/>
+      <File Name="NewProjectWizard.h"/>
+      <File Name="NewProjectWizard.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Plugins">
       <File Name="pluginmgrdlg.h"/>

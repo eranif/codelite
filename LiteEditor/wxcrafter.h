@@ -16,14 +16,10 @@
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 #include <wx/panel.h>
-#include <wx/dataview.h>
-#include "dvtemplatesmodel.h"
-#include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/checkbox.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <wx/toolbar.h>
@@ -34,39 +30,29 @@
 #include <wx/bannerwindow.h>
 #include <wx/commandlinkbutton.h>
 #include <wx/filepicker.h>
+#include <wx/dataview.h>
 #include "addfunctionsmodel.h"
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include <wx/dirctrl.h>
 #include <wx/frame.h>
+#include <wx/wizard.h>
+#include <vector>
+#include "dvtemplatesmodel.h"
+#include <wx/stattext.h>
+#include <wx/checkbox.h>
 
 class NewProjectDlgBaseClass : public wxDialog
 {
 protected:
     wxSplitterWindow* m_splitter5;
     wxPanel* m_splitterPageRight;
-    wxDataViewCtrl* m_dataviewTemplates;
-    wxObjectDataPtr<DVTemplatesModel> m_dataviewTemplatesModel;
-
     wxPanel* m_splitterPageLeft;
-    wxStaticText* m_staticText16;
-    wxTextCtrl* m_txtProjName;
-    wxStaticText* m_staticText18;
-    wxTextCtrl* m_textCtrlProjectPath;
-    wxButton* m_buttonBrowse;
-    wxStaticText* m_staticText21;
-    wxChoice* m_chCompiler;
-    wxCheckBox* m_cbSeparateDir;
-    wxStaticText* m_stxtFullFileName;
     wxTextCtrl* m_txtDescription;
     wxButton* m_button3;
     wxButton* m_button4;
 
 protected:
-    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnProjectNameChanged(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnProjectPathUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnBrowseProjectPath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCreate(wxCommandEvent& event) { event.Skip(); }
 
@@ -280,6 +266,47 @@ protected:
 public:
     EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_NO_TASKBAR|wxFRAME_FLOAT_ON_PARENT);
     virtual ~EditorFrameBase();
+};
+
+
+class NewProjectWizardBase : public wxWizard
+{
+protected:
+    std::vector<wxWizardPageSimple*> m_pages;
+
+    wxWizardPageSimple* m_wizardPageTemplate;
+    wxBannerWindow* m_banner386;
+    wxDataViewCtrl* m_dataviewTemplates;
+    wxObjectDataPtr<DVTemplatesModel> m_dataviewTemplatesModel;
+
+    wxWizardPageSimple* m_wizardPageDetails;
+    wxBannerWindow* m_banner398;
+    wxStaticText* m_staticText16;
+    wxTextCtrl* m_txtProjName;
+    wxStaticText* m_staticText18;
+    wxTextCtrl* m_textCtrlProjectPath;
+    wxButton* m_buttonBrowse;
+    wxCheckBox* m_cbSeparateDir;
+    wxStaticText* m_stxtFullFileName;
+    wxWizardPageSimple* m_wizardPageToolchain;
+    wxBannerWindow* m_banner390;
+    wxStaticText* m_staticText414;
+    wxChoice* m_choiceCompiler;
+    wxStaticText* m_staticText418;
+    wxChoice* m_choiceDebugger;
+
+protected:
+    virtual void OnPageChanging(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnFinish(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnProjectNameChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnProjectPathUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBrowseProjectPath(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    NewProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project Wizard"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
+    virtual ~NewProjectWizardBase();
 };
 
 #endif

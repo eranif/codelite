@@ -1,0 +1,38 @@
+.TH CODELITE 1 2014-04-11
+.SH NAME
+codelite \- a lightweight and powerful C/C++ IDE
+.SH SYNOPSIS
+.B codelite
+[\fB\-n\fR] [\fB\-p\fR \fIplugins\fR] [\fB\-d\fR \fIdata dir\fR]
+[\fB\-l\fR \fIline\fR] [\fIfiles\fR]...
+.br
+.B codelite \-h
+.br
+.B codelite \-v
+.SH OPTIONS
+.TP
+.BR \-d ", " \-\-datadir =\fIdirectory\fR
+Use a directory as the main CodeLite data directory
+(defaults to \fI~/.codelite\fR).
+.TP
+.BR \-l ", " \-\-line =\fIline\fR
+Opens all input files at a specific line number.
+.TP
+.BR \-n ", " \-\-no\-plugins
+Disable all plugins for this session.
+.TP
+.BR \-p ", " \-\-with\-plugins =\fIplugins\fR
+Enable only the listed plugins for this session. Multiple plugins can be given
+by separating them with commas.
+.TP
+.BR \-h ", " \-\-help
+Print a brief usage summary.
+.TP
+.BR \-v ", " \-\-version
+Print the current version of CodeLite.
+.SH SEE ALSO
+.BR codelite-make (1),
+.BR codelite_fix_files (1)
+.PP
+CodeLite online documentation
+\(lahttp://codelite.org/LiteEditor/Documentation\(ra

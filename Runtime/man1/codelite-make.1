@@ -1,0 +1,41 @@
+.TH CODELITE-MAKE 1 2014-04-11
+.SH NAME
+codelite-make \- a makefile generator based on CodeLite's workspace
+.SH SYNOPSIS
+.B codelite-make
+\fB\-w\fR \fIworkspace\fR \fB\-c\fR \fIconfiguration\fR
+[\fB\-p\fR \fIproject\fR]
+[\fB\-e\fR] [\fB\-v\fR]
+.br
+.B codelite-make
+[\fB\-h\fR]
+.SH DESCRIPTION
+.B codelite-make
+generates a makefile to build a CodeLite project. The command which can be used
+to build the project is printed.
+.SH OPTIONS
+.TP
+.BR \-w ", " \-\-workspace =\fIworkspace-file\fR
+Set the CodeLite workspace file to read the list of projects from.
+.TP
+.BR \-c ", " \-\-config =\fIconfiguration\fR
+Set the workspace configuration to generate a makefile for.
+.TP
+.BR \-p ", " \-\-project =\fIproject\fR
+Set the project to generate a makefile for. If omitted, a makefile for
+the active project is generated.
+.TP
+.BR \-e ", " \-\-execute
+Build the project after the makefile is generated.
+.TP
+.BR \-v ", " \-\-verbose
+Enable verbose messages.
+.TP
+.BR \-h ", " \-\-help
+Print a brief usage summary.
+.SH SEE ALSO
+.BR codelite (1),
+.BR make (1)
+.PP
+CodeLite online documentation
+\(lahttp://codelite.org/LiteEditor/Documentation\(ra

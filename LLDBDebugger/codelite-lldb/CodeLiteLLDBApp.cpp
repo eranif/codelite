@@ -674,7 +674,7 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
             size > m_settings.GetMaxArrayElements() ? size = m_settings.GetMaxArrayElements() : size = size;
             wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", pvalue->GetName());
             
-        } else if ( typeClass & lldb::eTypeClassPointer ) {
+        } /*else if ( typeClass & lldb::eTypeClassPointer ) {
             // dereference is needed
             wxPrintf("codelite-lldb: value '%s' is a class pointer, dereferecning it\n", pvalue->GetName());
             deReferencedValue = pvalue->Dereference();
@@ -684,7 +684,7 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
             
             wxPrintf("codelite-lldb: new number of children is set to %d\n", size);
             size = pvalue->GetNumChildren();
-        }
+        }*/
 
         for(int i=0; i<size; ++i) {
             lldb::SBValue child = pvalue->GetChildAtIndex(i);

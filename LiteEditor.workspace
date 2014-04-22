@@ -83,7 +83,7 @@
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="ZoomNavigator" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="yes">
+    <WorkspaceConfiguration Name="Win Debug Unicode" Selected="no">
       <Project Name="abbreviation" ConfigName="WinDebugUnicode"/>
       <Project Name="CallGraph" ConfigName="WinDebugUnicode"/>
       <Project Name="CMakePlugin" ConfigName="WinDebugUnicode"/>
@@ -231,7 +231,7 @@
       <Project Name="CodeLiteDiff" ConfigName="DebugUnicode"/>
       <Project Name="LLDBDebugger" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="WinReleaseUnicode"/>
       <Project Name="wxshapeframework" ConfigName="WinReleaseUnicode"/>

@@ -242,7 +242,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     boxSizer77->Add(m_notebook87, 1, wxALL|wxEXPAND, 5);
     
     m_panel89 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_notebook87->AddPage(m_panel89, _("Display"), true);
+    m_notebook87->AddPage(m_panel89, _("General"), true);
     
     wxBoxSizer* boxSizer93 = new wxBoxSizer(wxVERTICAL);
     m_panel89->SetSizer(boxSizer93);
@@ -255,16 +255,26 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer93->Add(m_pgMgrDisplayProperties, 1, wxALL|wxEXPAND, 5);
     
-    m_pgPropCatGeneral = m_pgMgrDisplayProperties->Append(  new wxPropertyCategory( _("General") ) );
+    m_pgPropCatGeneral = m_pgMgrDisplayProperties->Append(  new wxPropertyCategory( _("Behaviour") ) );
     m_pgPropCatGeneral->SetHelpString(wxT(""));
     
     m_pgPropRaiseCodeLite = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxBoolProperty( _("Raise CodeLite when breakpoint hit"), wxPG_LABEL, 1) );
     m_pgPropRaiseCodeLite->SetHelpString(_("When a breakpoint is hit, notify the user raising CodeLite"));
     
-    m_pgPropArraySize = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxIntProperty( _("Max number of array elements"), wxPG_LABEL, 50) );
+    m_pgMgrDisplayPropertiesArr.Clear();
+    m_pgMgrDisplayPropertiesIntArr.Clear();
+    m_pgMgrDisplayPropertiesArr.Add(_("Current user"));
+    m_pgMgrDisplayPropertiesArr.Add(_("Superuser (root)"));
+    m_pgPropDebugUser = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxEnumProperty( _("Debug as user"), wxPG_LABEL, m_pgMgrDisplayPropertiesArr, m_pgMgrDisplayPropertiesIntArr, 0) );
+    m_pgPropDebugUser->SetHelpString(_("Debugger will run as the current user or as superuser (root)\nIf superuser is selected, you will be prompted for password before the debug session starts"));
+    
+    m_pgProp138 = m_pgMgrDisplayProperties->Append(  new wxPropertyCategory( _("Display") ) );
+    m_pgProp138->SetHelpString(wxT(""));
+    
+    m_pgPropArraySize = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxIntProperty( _("Max number of array elements"), wxPG_LABEL, 50) );
     m_pgPropArraySize->SetHelpString(_("The maximum number of eleements to display in arrays"));
     
-    m_pgPropCallStackSize = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxIntProperty( _("Backtrace frames"), wxPG_LABEL, 100) );
+    m_pgPropCallStackSize = m_pgMgrDisplayProperties->AppendIn( m_pgProp138,  new wxIntProperty( _("Backtrace frames"), wxPG_LABEL, 100) );
     m_pgPropCallStackSize->SetHelpString(_("Maximum number of frames to show in the callstack window"));
     
     m_panel91 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
@@ -343,7 +353,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_stdBtnSizer79->AddButton(m_button83);
     m_stdBtnSizer79->Realize();
     
-    SetSizeHints(-1,-1);
+    SetSizeHints(500,400);
     if ( GetSizer() ) {
          GetSizer()->Fit(this);
     }

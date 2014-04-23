@@ -50,6 +50,8 @@ public:
         return m_types;
     }
     
+    bool IsDebugAsSuperuser() const;
+    
     LLDBSettings& Load();
     LLDBSettings& Save();
     

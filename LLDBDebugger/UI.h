@@ -115,6 +115,8 @@ protected:
     wxPropertyGridManager* m_pgMgrDisplayProperties;
     wxPGProperty* m_pgPropCatGeneral;
     wxPGProperty* m_pgPropRaiseCodeLite;
+    wxPGProperty* m_pgPropDebugUser;
+    wxPGProperty* m_pgProp138;
     wxPGProperty* m_pgPropArraySize;
     wxPGProperty* m_pgPropCallStackSize;
     wxPanel* m_panel91;
@@ -129,7 +131,7 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~LLDBSettingDialogBase();
 };
 

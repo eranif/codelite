@@ -99,3 +99,12 @@ LLDBSettings& LLDBSettings::Save()
     }
     return *this;
 }
+
+bool LLDBSettings::IsDebugAsSuperuser() const
+{
+#ifdef __WXMSW__
+    return false;
+#else
+    return m_flags & kLLDBOptionDebugAsSuperuser;
+#endif
+}

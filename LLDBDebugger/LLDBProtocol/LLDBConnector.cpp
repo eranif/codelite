@@ -418,20 +418,40 @@ bool LLDBConnector::LaunchDebugServer()
     }
     
     // Apply the environment before we start
-    EnvSetter es;
+    wxStringMap_t om;
     
-    wxFileName fnCodeLiteLLDB(wxStandardPaths::Get().GetExecutablePath());
-    fnCodeLiteLLDB.SetFullName( "codelite-lldb" );
+    LLDBSettings settings;
+    settings.Load();
+    if ( settings.IsDebugAsSuperuser() ) {
+#ifdef __WXGTK__
+        om["SSH_ASKPASS"] = "/usr/bin/ssh-askpass";
+
+#elif defined(__WXMAC__)
+        // Use our script for this purpose
+        wxFileName scriptPath( wxStandardPaths::Get().GetExecutablePath() );
+        scriptPath.SetFullName("ssh-askpass");
+        om["SSH_ASKPASS"] = scriptPath.GetFullPath();
+#endif
+    }
     
 #ifdef __WXMAC__
+    // set the LLDB_DEBUGSERVER_PATH env variable
     wxFileName debugserver(wxStandardPaths::Get().GetExecutablePath());
     debugserver.SetFullName( "debugserver" );
     debugserver.RemoveLastDir();
     debugserver.AppendDir("SharedSupport");
-    ::wxSetEnv("LLDB_DEBUGSERVER_PATH", debugserver.GetFullPath());
+    om["LLDB_DEBUGSERVER_PATH"] = debugserver.GetFullPath();
 #endif
 
+    EnvSetter es(NULL, &om);
+    
+    wxFileName fnCodeLiteLLDB(wxStandardPaths::Get().GetExecutablePath());
+    fnCodeLiteLLDB.SetFullName( "codelite-lldb" );
+    
     wxString command;
+    if ( settings.IsDebugAsSuperuser() ) {
+        command << "sudo -A -E ";
+    }
     command << fnCodeLiteLLDB.GetFullPath() << " " << ::wxGetProcessId();
     
     // FIXME: 
@@ -442,12 +462,9 @@ bool LLDBConnector::LaunchDebugServer()
         return false;
         
     } else {
-        CL_DEBUG("codelite-lldb launcged successfully. PID=%d\n", m_process->GetPid());
+        CL_DEBUG("codelite-lldb launched successfully. PID=%d\n", m_process->GetPid());
         
     }
-#ifdef __WXMAC__
-    ::wxUnsetEnv("LLDB_DEBUGSERVER_PATH");
-#endif
     return true;
 }
 

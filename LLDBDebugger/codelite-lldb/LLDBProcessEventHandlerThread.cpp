@@ -59,7 +59,7 @@ void* LLDBProcessEventHandlerThread::Entry()
                 } else {
                     DEBUG_MSG("LLDBHandlerThread: eStateStopped");
                     m_app->CallAfter( &CodeLiteLLDBApp::NotifyStopped );
-
+                    m_app->CallAfter( &CodeLiteLLDBApp::NotifyBreakpointsUpdated );
                 }
                 break;
 

@@ -115,7 +115,6 @@ protected:
     wxPropertyGridManager* m_pgMgrDisplayProperties;
     wxPGProperty* m_pgPropCatGeneral;
     wxPGProperty* m_pgPropRaiseCodeLite;
-    wxPGProperty* m_pgPropDebugUser;
     wxPGProperty* m_pgProp138;
     wxPGProperty* m_pgPropArraySize;
     wxPGProperty* m_pgPropCallStackSize;

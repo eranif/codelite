@@ -112,7 +112,7 @@ public:
     /**
      * @brief start codelite-lldb if not running
      */
-    bool LaunchDebugServer();
+    bool LaunchLocalDebugServer();
 
     /**
      * @brief terminate the debug server

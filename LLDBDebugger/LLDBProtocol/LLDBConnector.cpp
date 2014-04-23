@@ -11,9 +11,11 @@
 #include "json_node.h"
 #include <wx/msgdlg.h>
 #include "LLDBSettings.h"
+#include "globals.h"
 
 #ifndef __WXMSW__
 #   include <sys/wait.h>
+#   include <unistd.h>
 #endif
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
@@ -402,7 +404,7 @@ void LLDBConnector::Interrupt(eInterruptReason reason)
     SendCommand( command );
 }
 
-bool LLDBConnector::LaunchDebugServer()
+bool LLDBConnector::LaunchLocalDebugServer()
 {
 #ifdef __WXMSW__
     // Not supported :(
@@ -420,20 +422,6 @@ bool LLDBConnector::LaunchDebugServer()
     // Apply the environment before we start
     wxStringMap_t om;
     
-    LLDBSettings settings;
-    settings.Load();
-    if ( settings.IsDebugAsSuperuser() ) {
-#ifdef __WXGTK__
-        om["SSH_ASKPASS"] = "/usr/bin/ssh-askpass";
-
-#elif defined(__WXMAC__)
-        // Use our script for this purpose
-        wxFileName scriptPath( wxStandardPaths::Get().GetExecutablePath() );
-        scriptPath.SetFullName("ssh-askpass");
-        om["SSH_ASKPASS"] = scriptPath.GetFullPath();
-#endif
-    }
-    
 #ifdef __WXMAC__
     // set the LLDB_DEBUGSERVER_PATH env variable
     wxFileName debugserver(wxStandardPaths::Get().GetExecutablePath());
@@ -449,13 +437,8 @@ bool LLDBConnector::LaunchDebugServer()
     fnCodeLiteLLDB.SetFullName( "codelite-lldb" );
     
     wxString command;
-    if ( settings.IsDebugAsSuperuser() ) {
-        command << "sudo -A -E ";
-    }
-    command << fnCodeLiteLLDB.GetFullPath() << " " << ::wxGetProcessId();
+    command << fnCodeLiteLLDB.GetFullPath() << " -s " << GetDebugServerPath();
     
-    // FIXME: 
-    // On OSX, make sure we set the environment variable LLDB_DEBUGSERVER_PATH
     m_process = ::CreateAsyncProcess(this, command);
     if ( !m_process ) {
         CL_ERROR("LLDBConnector: failed to launch codelite-lldb: %s", fnCodeLiteLLDB.GetFullPath());
@@ -513,7 +496,8 @@ void LLDBConnector::RequestVariableChildren(int lldbId)
 wxString LLDBConnector::GetDebugServerPath() const
 {
     wxString path;
-    path << "/tmp/codelite-lldb." << ::wxGetProcessId() << ".sock";
+    path << "/tmp/codelite-lldb.";
+    path << ::wxGetProcessId() << ".sock";
     return path;
 }
 

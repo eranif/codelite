@@ -251,6 +251,7 @@ void CodeLiteLLDBApp::NotifyExited()
 
 void CodeLiteLLDBApp::NotifyRunning()
 {
+    wxPrintf("codelite-lldb: NotifyRunning. Target Process ID %d\n", m_debuggeePid);
     m_variables.clear();
     LLDBReply reply;
     reply.SetReplyType( kReplyTypeDebuggerRunning );
@@ -350,6 +351,7 @@ void CodeLiteLLDBApp::NotifyStopped()
 
 void CodeLiteLLDBApp::NotifyStoppedOnFirstEntry()
 {
+    wxPrintf("codelite-lldb: NotifyStoppedOnFirstEntry()\n");
     m_variables.clear();
     LLDBReply reply;
     reply.SetReplyType( kReplyTypeDebuggerStoppedOnFirstEntry );
@@ -387,8 +389,8 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
         wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
         
-//        wxPrintf("codeltie-lldb: Environment is set to:\n");
-//        print_c_array( (const char**)penv );
+        wxPrintf("codeltie-lldb: Environment is set to:\n");
+        print_c_array( (const char**)penv );
         
         wxPrintf("codelite-lldb: Arguments are set to:\n");
         print_c_array( argv );
@@ -402,7 +404,7 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
             m_debugger.GetCommandInterpreter().HandleCommand(c_command.c_str() , ret);
         }
 
-        lldb::SBError error;
+        lldb::SBError lldbError;
         lldb::SBListener listener = m_debugger.GetListener();
         lldb::SBProcess process = m_target.Launch(
                                       listener,
@@ -414,13 +416,14 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
                                       NULL,
                                       lldb::eLaunchFlagLaunchInSeparateProcessGroup|lldb::eLaunchFlagStopAtEntry,
                                       true,
-                                      error);
+                                      lldbError);
 
         //bool isOk = m_target.LaunchSimple(argv, envp, wd).IsValid();
         DELETE_CHAR_PTR_PTR( const_cast<char**>(argv) );
         DELETE_CHAR_PTR_PTR( penv );
         
-        if ( !process.IsValid() ) {
+        if ( !process.IsValid() || !lldbError.Success()) {
+            wxPrintf("codelite-lldb: error while launching process. %s\n", lldbError.GetCString());
             NotifyExited();
 
         } else {

@@ -260,7 +260,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 return;
 
             } else {
-                if ( !m_connector.LaunchDebugServer() ) {
+                if ( !m_connector.LaunchLocalDebugServer() ) {
                     return;
                 }
             }
@@ -896,7 +896,7 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
         }
     }
     
-    if ( !m_connector.LaunchDebugServer() ) {
+    if ( !m_connector.LaunchLocalDebugServer() ) {
         DoCleanup();
         return false;
     }

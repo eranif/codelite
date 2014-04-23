@@ -30,17 +30,16 @@ LLDBProcessEventHandlerThread::~LLDBProcessEventHandlerThread()
     wxPrintf("codelite-lldb: Process Event Handler thread is going down...done\n");
 }
 
-#define DEBUG_MSG(s) wxPrintf("%s\n", s)
+#define DEBUG_MSG(s) wxPrintf("codelite-lldb: %s\n", s)
 
 void* LLDBProcessEventHandlerThread::Entry()
 {
     bool first_time_stopped = true;
     DEBUG_MSG("LLDB Thread: started");
-    m_listener.StartListeningForEventClass(m_debugger, lldb::SBTarget::GetBroadcasterClassName(), lldb::SBTarget::eBroadcastBitBreakpointChanged);
+    //m_listener.StartListeningForEventClass(m_debugger, lldb::SBTarget::GetBroadcasterClassName(), lldb::SBTarget::eBroadcastBitBreakpointChanged);
     while ( !TestDestroy() ) {
         lldb::SBEvent event;
         if ( m_listener.WaitForEvent(1, event) && event.IsValid() ) {
-            wxPrintf("codelite-lldb: Got an event of type: %s\n", event.GetBroadcasterClass());
             lldb::StateType state = m_process.GetStateFromEvent( event );
             switch ( state ) {
             case lldb::eStateInvalid:

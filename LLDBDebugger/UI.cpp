@@ -261,13 +261,6 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_pgPropRaiseCodeLite = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxBoolProperty( _("Raise CodeLite when breakpoint hit"), wxPG_LABEL, 1) );
     m_pgPropRaiseCodeLite->SetHelpString(_("When a breakpoint is hit, notify the user raising CodeLite"));
     
-    m_pgMgrDisplayPropertiesArr.Clear();
-    m_pgMgrDisplayPropertiesIntArr.Clear();
-    m_pgMgrDisplayPropertiesArr.Add(_("Current user"));
-    m_pgMgrDisplayPropertiesArr.Add(_("Superuser (root)"));
-    m_pgPropDebugUser = m_pgMgrDisplayProperties->AppendIn( m_pgPropCatGeneral,  new wxEnumProperty( _("Debug as user"), wxPG_LABEL, m_pgMgrDisplayPropertiesArr, m_pgMgrDisplayPropertiesIntArr, 0) );
-    m_pgPropDebugUser->SetHelpString(_("Debugger will run as the current user or as superuser (root)\nIf superuser is selected, you will be prompted for password before the debug session starts"));
-    
     m_pgProp138 = m_pgMgrDisplayProperties->Append(  new wxPropertyCategory( _("Display") ) );
     m_pgProp138->SetHelpString(wxT(""));
     

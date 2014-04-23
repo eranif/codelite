@@ -46,6 +46,7 @@
 #include <set>
 #include "theme_handler.h"
 #include "cl_command_event.h"
+#include "ZombieReaperPOSIX.h"
 
 // forward decls
 class TagEntry;
@@ -119,7 +120,10 @@ class clMainFrame : public wxFrame
     wxMenu*                               m_bookmarksDropDownMenu;
     ThemeHandler                          m_themeHandler;
     static clSplashScreen*                m_splashScreen;
-    
+#ifndef __WXMSW__
+    ZombieReaperPOSIX                     m_zombieReaper;
+#endif
+
 protected:
     bool IsEditorEvent(wxEvent &event);
     void DoCreateBuildDropDownMenu(wxMenu *menu);

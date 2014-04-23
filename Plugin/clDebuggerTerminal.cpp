@@ -40,16 +40,4 @@ void clDebuggerTerminalPOSIX::Clear()
     m_pid = wxNOT_FOUND;
     m_tty.Clear();
     m_title.Clear();
-    
-//#ifndef __WXMSW__
-//    int status = 0;
-//    int pid(0);
-//    do {
-//       pid = ::waitpid(-1, &status, WNOHANG); 
-//       if ( pid > 0 ) {
-//           CL_DEBUG("clDebuggerTerminalPOSIX Process %d exited with status code %d", pid, WEXITSTATUS(status));
-//           wxThread::Sleep(50);
-//       }
-//    } while( pid ); 
-//#endif
 }

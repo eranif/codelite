@@ -564,6 +564,8 @@
     <File Name="manageperspectivesbasedlg.h"/>
     <File Name="manage_perspective_dlg.h"/>
     <File Name="manage_perspective_dlg.cpp"/>
+    <File Name="ZombieReaperPOSIX.h"/>
+    <File Name="ZombieReaperPOSIX.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="code_parser.rc"/>

@@ -702,6 +702,10 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 
 clMainFrame::~clMainFrame(void)
 {
+#ifdef __WMXSW__
+    m_zombieReaper.Stop();
+#endif
+
     // Free the code completion manager
     CodeCompletionManager::Release();
     
@@ -3466,6 +3470,9 @@ void clMainFrame::CompleteInitialization()
     // make sure SIGCHILD is not blocked
     sigprocmask (SIG_UNBLOCK, &child_set, NULL);
     
+    // Start the Zombie Reaper thread
+    m_zombieReaper.Stop();
+
 #endif
 }
 

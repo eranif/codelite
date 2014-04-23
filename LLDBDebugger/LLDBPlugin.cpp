@@ -214,7 +214,7 @@ void LLDBPlugin::TerminateTerminal()
 {
     if ( m_terminalPID != wxNOT_FOUND ) {
         CL_DEBUG("Killing Terminal Process PID: %d", (int)m_terminalPID);
-        ::wxKill(m_terminalPID, wxSIGKILL, NULL, wxKILL_CHILDREN);
+        ::wxKill(m_terminalPID, wxSIGKILL);
         m_terminalPID = wxNOT_FOUND;
     }
 #ifdef __WXGTK__

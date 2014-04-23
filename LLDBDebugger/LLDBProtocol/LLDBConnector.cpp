@@ -311,16 +311,16 @@ void LLDBConnector::Cleanup()
     m_attachedToProcess = false;
     StopDebugServer();
 
-#ifndef __WXMSW__
-    int status = 0;
-    int pid(0);
-    do {
-       pid = ::waitpid(-1, &status, WNOHANG); 
-       if ( pid ) {
-           CL_DEBUG("Process %d exited with status code %d", pid, WEXITSTATUS(status));
-       }
-    } while( pid ); 
-#endif
+//#ifndef __WXMSW__
+//    int status = 0;
+//    int pid(0);
+//    do {
+//       pid = ::waitpid(-1, &status, WNOHANG); 
+//       if ( pid ) {
+//           CL_DEBUG("Process %d exited with status code %d", pid, WEXITSTATUS(status));
+//       }
+//    } while( pid ); 
+//#endif
 
 }
 

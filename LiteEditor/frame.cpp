@@ -3457,6 +3457,16 @@ void clMainFrame::CompleteInitialization()
 
     wxCommandEvent evt(wxEVT_CL_THEME_CHANGED);
     EventNotifier::Get()->AddPendingEvent( evt );
+    
+#ifndef __WXMSW__
+    sigset_t child_set;
+    sigemptyset (&child_set);
+    sigaddset (&child_set, SIGCHLD);
+    
+    // make sure SIGCHILD is not blocked
+    sigprocmask (SIG_UNBLOCK, &child_set, NULL);
+    
+#endif
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent &e)

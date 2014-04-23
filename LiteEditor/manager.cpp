@@ -93,6 +93,11 @@
 #include "tabgroupspane.h"
 #include "editorframe.h"
 #include "clang_compilation_db_thread.h"
+#include "file_logger.h"
+
+#ifndef __WXMSW__
+#   include <sys/wait.h>
+#endif
 
 const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 
@@ -2354,14 +2359,22 @@ void Manager::DbgStart ( long attachPid )
     GetBreakpointsMgr()->GetBreakpoints ( bps );
     // Take the opportunity to store them in the pending array too
     GetBreakpointsMgr()->SetPendingBreakpoints( bps );
+    
+    // Launch the terminal 
+    if ( bldConf && !bldConf->IsGUIProgram() )  // debugging a project and the project is not considered a "GUI" program
+    {
+        m_debuggerTerminal.Clear();
+        m_debuggerTerminal.Launch(wxString() << _("Debugging: ") << exepath << wxT(" ") << args);
+        if ( !m_debuggerTerminal.IsValid() ) {
+            ::wxMessageBox(_("Could not launch terminal for debugger"), "CodeLite", wxOK|wxCENTER|wxICON_ERROR, clMainFrame::Get());
+            return;
+        }
+    }
 
     // notify plugins that we're about to start debugging
     if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
         // plugin stopped debugging
         return;
-
-    wxString title;
-    title << _("Debugging: ") << exepath << wxT(" ") << args;
 
     // read
     wxArrayString dbg_cmds;
@@ -2370,7 +2383,7 @@ void Manager::DbgStart ( long attachPid )
     si.exeName = exepath;
     si.cwd = wd;
     si.bpList = bps;
-    si.ttyName = clMainFrame::Get()->StartTTY(title);
+    si.ttyName = m_debuggerTerminal.GetTty();
     si.PID = PID;
     si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
     si.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
@@ -2456,11 +2469,11 @@ void Manager::DbgStart ( long attachPid )
 
     GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
 
-    // Re-set the title (it might be modified by 'LoadPerspective')
+    // Hide the "Debugger Console" pane since we dont need it anymore
     wxAuiManager& aui = clMainFrame::Get()->GetDockingManager();
     wxAuiPaneInfo& pi = aui.GetPane(wxT("Debugger Console"));
-    if(pi.IsOk() && pi.caption != title) {
-        pi.Caption(title);
+    if(pi.IsOk() && pi.IsShown()) {
+        pi.Hide();
         aui.Update();
     }
 }
@@ -2484,7 +2497,9 @@ void Manager::DbgStop()
         m_watchDlg->Destroy();
         m_watchDlg = NULL;
     }
-
+    
+    m_debuggerTerminal.Clear();
+    
     // remove all debugger markers
     DbgUnMarkDebuggerLine();
 
@@ -2530,6 +2545,17 @@ void Manager::DbgStop()
 
     // notify plugins that the debugger stopped
     SendCmdEvent(wxEVT_DEBUG_ENDED);
+
+//#ifndef __WXMSW__
+//    while ( true ) {
+//        int pid = ::waitpid((pid_t)(-1), 0, WNOHANG);
+//        if ( pid > 0 ) {
+//            CL_DEBUG("Process %d exited", pid);
+//            continue;
+//        }
+//        break;
+//    }
+//#endif
 }
 
 void Manager::DbgMarkDebuggerLine ( const wxString &fileName, int lineno )

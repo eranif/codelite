@@ -211,7 +211,11 @@ bool DbgGdb::Start( const DebugSessionInfo& si)
 
     wxString cmd;
 #if defined (__WXGTK__) || defined (__WXMAC__)
-    cmd << dbgExeName << wxT( " --tty=" ) << si.ttyName << wxT( " --interpreter=mi " ) << si.exeName;
+    cmd << dbgExeName;
+    if ( !si.ttyName.IsEmpty() ) {
+        cmd << wxT( " --tty=" ) << si.ttyName;
+    }
+    cmd << wxT( " --interpreter=mi " ) << si.exeName;
 #else
     cmd << dbgExeName << wxT( " --interpreter=mi " ) << si.exeName;
 #endif
@@ -1382,9 +1386,12 @@ bool DbgGdb::Attach(const DebugSessionInfo& si)
     }
 
     wxString cmd;
-
 #if defined (__WXGTK__) || defined (__WXMAC__)
-    cmd << dbgExeName << wxT( " --tty=" ) << si.ttyName << wxT( " --interpreter=mi " );
+    cmd << dbgExeName;
+    if ( !si.ttyName.IsEmpty() ) {
+        cmd << wxT( " --tty=" ) << si.ttyName;
+    }
+    cmd << wxT( " --interpreter=mi " ) << si.exeName;
 #else
     cmd << dbgExeName << wxT( " --interpreter=mi " );
     cmd << ProcUtils::GetProcessNameByPid( si.PID ) << wxT( " " );

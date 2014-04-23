@@ -39,6 +39,7 @@
 #include "breakpointsmgr.h"
 #include "perspectivemanager.h"
 #include "ctags_manager.h"
+#include "clDebuggerTerminal.h"
 
 class LEditor;
 
@@ -118,7 +119,8 @@ protected:
     bool                    m_repositionEditor; //flag used for debugging, should editor be repositioned after user updates like "add watch"
     DbgStackInfo            m_dbgCurrentFrameInfo;
     PerspectiveManager      m_perspectiveManager;
-
+    clDebuggerTerminalPOSIX m_debuggerTerminal;
+    
 protected:
     Manager(void);
     virtual ~Manager(void);

@@ -17,13 +17,17 @@
 class CodeLiteLLDBApp;
 class LLDBProcessEventHandlerThread : public wxThread
 {
-    CodeLiteLLDBApp* m_app;
-    lldb::SBProcess  m_process;
-    lldb::SBListener m_listener;
+    CodeLiteLLDBApp*      m_app;
+    lldb::SBProcess       m_process;
+    lldb::SBDebugger&     m_debugger;
+    lldb::SBListener      m_listener;
     eLLDBDebugSessionType m_sessionType;
-    
+
 public:
-    LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, lldb::SBListener listener, lldb::SBProcess process, eLLDBDebugSessionType sessionType);
+    LLDBProcessEventHandlerThread(CodeLiteLLDBApp* app, 
+                                  lldb::SBDebugger& debugger,
+                                  lldb::SBProcess process, 
+                                  eLLDBDebugSessionType sessionType);
     virtual ~LLDBProcessEventHandlerThread();
     
     void Start() {

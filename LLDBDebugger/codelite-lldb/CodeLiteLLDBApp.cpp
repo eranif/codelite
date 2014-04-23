@@ -167,7 +167,7 @@ void CodeLiteLLDBApp::StartDebugger(const LLDBCommand& command)
     }
 
     // Launch the thread that will handle the LLDB process events
-    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess(), kDebugSessionTypeNormal);
+    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger, m_target.GetProcess(), kDebugSessionTypeNormal);
     m_lldbProcessEventThread->Start();
 
     // In any case, reset the interrupt reason
@@ -191,13 +191,13 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
     wxPrintf("codelite-lldb: Calling NotifyBreakpointsUpdated(). Got %d breakpoints\n", num);
     for(int i=0; i<num; ++i) {
         lldb::SBBreakpoint bp = m_target.GetBreakpointAtIndex(i);
-        if ( bp.IsValid() ) {
+        if ( bp.IsValid() && bp.GetNumResolvedLocations() ) {
             
             // Add the parent breakpoint
             LLDBBreakpoint::Ptr_t mainBreakpoint( new LLDBBreakpoint() );
             mainBreakpoint->SetId( bp.GetID() );
             if ( bp.GetNumLocations() >  1 ) {
-                
+
                 // add all the children locations to the main breakpoint
                 for(size_t i=0; i<bp.GetNumLocations(); ++i) {
                     lldb::SBBreakpointLocation loc = bp.GetLocationAtIndex(i);
@@ -213,7 +213,7 @@ void CodeLiteLLDBApp::NotifyBreakpointsUpdated()
                     new_bp->SetName( loc.GetAddress().GetFunction().GetName() );
                     mainBreakpoint->GetChildren().push_back( new_bp );
             }
-                
+
             } else {
                 lldb::SBBreakpointLocation loc = bp.GetLocationAtIndex(0);
                 lldb::SBFileSpec fileLoc = loc.GetAddress().GetLineEntry().GetFileSpec();
@@ -814,7 +814,7 @@ void CodeLiteLLDBApp::OpenCoreFile(const LLDBCommand& command)
     }
     
     // Launch the thread that will handle the LLDB process events
-    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess(), kDebugSessionTypeCore);
+    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger, m_target.GetProcess(), kDebugSessionTypeCore);
     m_lldbProcessEventThread->Start();
 
 
@@ -847,7 +847,7 @@ void CodeLiteLLDBApp::AttachProcess(const LLDBCommand& command)
     wxPrintf("codeite-lldb: process attached successfully\n");
     
     // Launch the thread that will handle the LLDB process events
-    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger.GetListener(), m_target.GetProcess(), kDebugSessionTypeAttach);
+    m_lldbProcessEventThread = new LLDBProcessEventHandlerThread(this, m_debugger, m_target.GetProcess(), kDebugSessionTypeAttach);
     m_lldbProcessEventThread->Start();
     
     // In any case, reset the interrupt reason

@@ -381,17 +381,17 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         clCommandLineParser parser(command.GetCommandArguments());
         const char** argv = (const char**)_wxArrayStringToCharPtrPtr(parser.ToArray());
         char **penv = command.GetEnvArray();
-        
+
         std::string tty_c;
         if ( !command.GetRedirectTTY().IsEmpty() ) {
             tty_c = command.GetRedirectTTY().mb_str(wxConvUTF8).data();
         }
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
         wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
-        
-        wxPrintf("codeltie-lldb: Environment is set to:\n");
-        print_c_array( (const char**)penv );
-        
+
+        // wxPrintf("codelite-lldb: Environment is set to:\n");
+        // print_c_array( (const char**)penv );
+
         wxPrintf("codelite-lldb: Arguments are set to:\n");
         print_c_array( argv );
         

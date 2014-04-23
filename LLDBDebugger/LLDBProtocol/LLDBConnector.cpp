@@ -382,7 +382,7 @@ void LLDBConnector::OnProcessOutput(wxCommandEvent& event)
     
     wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
     for(size_t i=0; i<lines.GetCount(); ++i) {
-        CL_DEBUG(lines.Item(i).Trim());
+        CL_DEBUG("%s", lines.Item(i).Trim());
     }
 }
 

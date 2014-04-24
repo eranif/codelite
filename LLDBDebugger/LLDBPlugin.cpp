@@ -399,7 +399,7 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
 void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
 {
     event.Skip();
-    CL_DEBUG(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() );
+    CL_DEBUGS(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() );
     m_connector.SetCanInteract(true);
     
     if ( event.GetInterruptReason() == kInterruptReasonNone ) {

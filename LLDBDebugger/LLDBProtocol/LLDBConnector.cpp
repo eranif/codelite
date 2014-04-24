@@ -218,12 +218,12 @@ void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
 void LLDBConnector::DeleteBreakpoints()
 {
     if ( IsCanInteract() ) {
-        CL_DEBUG(wxString () << "codelite: deleting breakpoints (total of " << m_pendingDeletionBreakpoints.size() << " breakpoints)");
+        CL_DEBUGS(wxString () << "codelite: deleting breakpoints (total of " << m_pendingDeletionBreakpoints.size() << " breakpoints)");
         LLDBCommand command;
         command.SetCommandType( kCommandDeleteBreakpoint );
         command.SetBreakpoints( m_pendingDeletionBreakpoints );
         SendCommand( command );
-        CL_DEBUG(wxString () << "codelite: DeleteBreakpoints celar pending deletionbreakpoints queue");
+        CL_DEBUGS(wxString () << "codelite: DeleteBreakpoints celar pending deletionbreakpoints queue");
         m_pendingDeletionBreakpoints.clear();
     
     } else {
@@ -234,7 +234,7 @@ void LLDBConnector::DeleteBreakpoints()
 
 void LLDBConnector::ClearBreakpointDeletionQueue()
 {
-    CL_DEBUG(wxString () << "codelite: ClearBreakpointDeletionQueue called");
+    CL_DEBUGS(wxString () << "codelite: ClearBreakpointDeletionQueue called");
     m_pendingDeletionBreakpoints.clear();
 }
 
@@ -272,7 +272,7 @@ void LLDBConnector::DeleteAllBreakpoints()
      }
 
     // mark all breakpoints for deletion
-    CL_DEBUG(wxString () << "codelite: DeleteAllBreakpoints called");
+    CL_DEBUGS(wxString () << "codelite: DeleteAllBreakpoints called");
     m_pendingDeletionBreakpoints.swap( m_breakpoints );
     
     if ( !IsCanInteract() ) {

@@ -81,7 +81,7 @@ void LLDBBreakpointsPane::OnBreakpointsUpdated(LLDBEvent& event)
     event.Skip();
     CL_DEBUG("Setting LLDB breakpoints to:");
     for(size_t i=0; i<event.GetBreakpoints().size(); ++i) {
-        CL_DEBUG(event.GetBreakpoints().at(i)->ToString());
+        CL_DEBUG("%s", event.GetBreakpoints().at(i)->ToString());
     }
     m_connector->UpdateAppliedBreakpoints( event.GetBreakpoints() );
     Initialize();

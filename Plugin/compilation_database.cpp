@@ -273,7 +273,7 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
         if ( fn.Exists() &&                                                                          // file exists
             (fn.GetModificationTime().GetTicks() > databaseFile.GetModificationTime().GetTicks() ) ) // and its newer than the database file
         {
-            CL_DEBUG("CompilationDatabase: found file: " + fn.GetFullPath());
+            CL_DEBUGS("CompilationDatabase: found file: " + fn.GetFullPath());
             files.push_back( fn );
         }
 

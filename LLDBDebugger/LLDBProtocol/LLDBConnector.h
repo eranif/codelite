@@ -3,8 +3,8 @@
 
 #include <wx/event.h>
 #include "LLDBCommand.h"
-#include "clSocketClient.h"
-#include "clSocketServer.h"
+#include "SocketAPI/clSocketClient.h"
+#include "SocketAPI/clSocketServer.h"
 #include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
 #include "asyncprocess.h"

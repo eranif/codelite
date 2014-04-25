@@ -6,14 +6,14 @@
 #include <wx/app.h>
 #include <wx/cmdline.h>
 #include "LLDBProtocol/LLDBCommand.h"
-#include "LLDBProtocol/clSocketClient.h"
+#include "SocketAPI/clSocketClient.h"
 #include "codelite-lldb/LLDBNetworkServerThread.h"
 #include <lldb/API/SBDebugger.h>
 #include <lldb/API/SBTarget.h>
 #include "LLDBProtocol/LLDBEnums.h"
 #include "LLDBProcessEventHandlerThread.h"
 #include "LLDBProtocol/LLDBReply.h"
-#include "LLDBProtocol/clSocketServer.h"
+#include "SocketAPI/clSocketServer.h"
 #include "LLDBProtocol/LLDBVariable.h"
 #include <lldb/API/SBValue.h>
 #include <wx/msgqueue.h>

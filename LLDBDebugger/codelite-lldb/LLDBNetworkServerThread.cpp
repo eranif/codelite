@@ -1,7 +1,7 @@
 #ifndef __WXMSW__
 
 #include "LLDBNetworkServerThread.h"
-#include "LLDBProtocol/clSocketServer.h"
+#include "SocketAPI/clSocketServer.h"
 #include "LLDBProtocol/LLDBCommand.h"
 #include "codelite-lldb/CodeLiteLLDBApp.h"
 #include <wx/wxcrtvararg.h>

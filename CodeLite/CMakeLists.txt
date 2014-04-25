@@ -49,7 +49,7 @@ else ( WXC_APP )
     set (LINKER_OPTIONS -Wl,-rpath,"${PLUGINS_DIR}")
     message( "-- libcodelite.so is using RPATH set to ${PLUGINS_DIR}")
 endif ( WXC_APP )
-FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" )
+FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp")
 
 # Define the output
 add_library(libcodelite SHARED ${SRCS})

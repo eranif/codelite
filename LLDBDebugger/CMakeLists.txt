@@ -1,12 +1,17 @@
 macro( FIND_LLDB_OFFICIAL )
+
     ## Locate the official packages
     find_library(LIBLLDB_T
                  NAMES liblldb.so
                  HINTS  /usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib)
 
     find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
-                HINTS /usr/lib/llvm-3.5/include /usr/lib/llvm-3.4/include /usr/include/llvm-3.5 /usr/include/llvm-3.4
+              HINTS 
+              /usr/lib/llvm-3.5/include 
+              /usr/include/llvm-3.5 
+              /usr/include/llvm
               )
+
     if ( LIBLLDB_T STREQUAL "LIBLLDB_T-NOTFOUND" OR LIBLLDB_INCLUDE_T STREQUAL "LIBLLDB_INCLUDE_T-NOTFOUND" )
         set(LIBLLDB "LIBLLDB-NOTFOUND")
         set(LIBLLDB_INCLUDE "LIBLLDB_INCLUDE-NOTFOUND")
@@ -66,7 +71,8 @@ endmacro ()
 set( BUILD_LLDB 0 )
 set( LIBLLDB "" )
 set( LIBLLDB_INCLUDE "" )
-set(LIBLLDB_INSTALL_NEEDED 0)
+set( LIBLLDB_INSTALL_NEEDED 0)
+set( LLDB_OFFICIAL_FOUND 0)
 
 if ( APPLE )
     set ( LIBLLDB ${CL_SRC_ROOT}/sdk/lldb/osx/lib/liblldb.3.5.0.dylib )
@@ -80,14 +86,14 @@ else()
 FIND_LLDB_CUSTOM_BUILD()
 
 if ( LIBLLDB STREQUAL "LIBLLDB-NOTFOUND")
-	## locate the official package
-	FIND_LLDB_OFFICIAL()
+    ## locate the official package
+    FIND_LLDB_OFFICIAL()
 
     if ( LIBLLDB STREQUAL "LIBLLDB-NOTFOUND" )
         message(" **** NOTICE: could not locate lldb devel package. LLDBDebugger is skipped")
     else()
         set( BUILD_LLDB 1 )
-        message("-- LIBLLDB is set to ${LIBLLDB}")
+        set( LLDB_OFFICIAL_FOUND 1 ) ## this means that we need to add lldb-3.5-dev package to the list of dependencies
     endif()
 else()
     set( BUILD_LLDB 1 )

@@ -1,4 +1,6 @@
 project(codelite-lldb)
+message("-- Processing target codelite-lldb")
+
 if ( APPLE )
     ## Under Apple, we only support monolithic build of wxWidgets
     find_package(wxWidgets COMPONENTS std REQUIRED)
@@ -27,3 +29,8 @@ target_link_libraries(  codelite-lldb
 target_link_libraries(codelite-lldb LLDBProtocol)
 add_dependencies(codelite-lldb plugin)
 install(TARGETS codelite-lldb DESTINATION ${CL_PREFIX}/bin)
+
+if ( MAKE_DEB AND LLDB_OFFICIAL_FOUND MATCHES 1 )
+    message("-- Adding lldb-3.5-dev to deb dependencies")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS  "${CPACK_DEBIAN_PACKAGE_DEPENDS} lldb-3.5-dev")
+endif()

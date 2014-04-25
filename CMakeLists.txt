@@ -312,7 +312,7 @@ if ( MAKE_DEB )
 
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "codelite")
-    set(CPACK_PACKAGE_VERSION             "5.3")
+    set(CPACK_PACKAGE_VERSION             "6.0")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>") #required
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "codelite IDE for C/C++")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")

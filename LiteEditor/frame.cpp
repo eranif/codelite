@@ -702,7 +702,7 @@ clMainFrame::clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title
 
 clMainFrame::~clMainFrame(void)
 {
-#ifndef __WMXSW__
+#ifndef __WXMSW__
     m_zombieReaper.Stop();
 #endif
 

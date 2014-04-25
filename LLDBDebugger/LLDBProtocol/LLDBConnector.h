@@ -4,7 +4,7 @@
 #include <wx/event.h>
 #include "LLDBCommand.h"
 #include "clSocketClient.h"
-#include "cl_socket_server.h"
+#include "clSocketServer.h"
 #include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
 #include "asyncprocess.h"

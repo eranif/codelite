@@ -4,7 +4,7 @@
 #ifndef __WXMSW__
 
 #include <wx/thread.h>
-#include "LLDBProtocol/cl_socket_base.h"
+#include "LLDBProtocol/clSocketBase.h"
 
 class CodeLiteLLDBApp;
 class LLDBNetworkServerThread : public wxThread

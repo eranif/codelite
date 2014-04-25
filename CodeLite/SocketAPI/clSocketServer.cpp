@@ -1,4 +1,4 @@
-#include "cl_socket_server.h"
+#include "clSocketServer.h"
 
 #ifndef _WIN32
 #   include <unistd.h>
@@ -19,10 +19,10 @@ clSocketServer::~clSocketServer()
 {
 }
 
-#ifndef __WXMSW__
-void clSocketServer::CreateServer(const std::string &pipPath) throw (clSocketException)
+void clSocketServer::CreateServer(const std::string &pipePath) throw (clSocketException)
 {
-    unlink(pipPath.c_str());
+#ifndef __WXMSW__
+    unlink(pipePath.c_str());
 
     // Create a socket
     if((m_socket = ::socket(AF_UNIX , SOCK_STREAM , 0 )) == INVALID_SOCKET) {
@@ -39,7 +39,7 @@ void clSocketServer::CreateServer(const std::string &pipPath) throw (clSocketExc
     // Prepare the sockaddr_in structure
     struct sockaddr_un server;
     server.sun_family = AF_UNIX;
-    strcpy(server.sun_path, pipPath.c_str());
+    strcpy(server.sun_path, pipePath.c_str());
     
     // Bind
     if( ::bind(m_socket ,(struct sockaddr *)&server , sizeof(server)) == -1) {
@@ -48,12 +48,15 @@ void clSocketServer::CreateServer(const std::string &pipPath) throw (clSocketExc
     
     char mode[] = "0777";
     int newMode = ::strtol(mode, 0, 8);
-    ::chmod(pipPath.c_str(), newMode);
+    ::chmod(pipePath.c_str(), newMode);
     
     // define the accept queue size
     ::listen(m_socket, 10);
-}
+#else
+    int port = ::atoi( pipePath.c_str() );
+    CreateServer( "127.0.0.1", port );
 #endif
+}
 
 clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout) throw (clSocketException)
 {

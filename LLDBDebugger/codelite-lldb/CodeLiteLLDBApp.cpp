@@ -4,7 +4,7 @@
 #include <iostream>
 #include <wx/sckaddr.h>
 #include "LLDBProtocol/LLDBReply.h"
-#include "LLDBProtocol/cl_socket_server.h"
+#include "LLDBProtocol/clSocketServer.h"
 #include "LLDBProtocol/LLDBEnums.h"
 #include "clcommandlineparser.h"
 #include <lldb/API/SBBreakpointLocation.h>

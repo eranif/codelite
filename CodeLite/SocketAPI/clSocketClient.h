@@ -4,7 +4,7 @@
 #include "clSocketBase.h"
 #include <wx/string.h>
 
-class clSocketClient : public clSocketBase
+class WXDLLIMPEXP_CL clSocketClient : public clSocketBase
 {
     wxString m_path;
 

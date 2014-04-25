@@ -13,7 +13,7 @@
 #include "LLDBProtocol/LLDBEnums.h"
 #include "LLDBProcessEventHandlerThread.h"
 #include "LLDBProtocol/LLDBReply.h"
-#include "LLDBProtocol/cl_socket_server.h"
+#include "LLDBProtocol/clSocketServer.h"
 #include "LLDBProtocol/LLDBVariable.h"
 #include <lldb/API/SBValue.h>
 #include <wx/msgqueue.h>

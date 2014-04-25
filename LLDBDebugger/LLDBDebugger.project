@@ -48,10 +48,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="LLDBProtocol">
     <File Name="LLDBProtocol/CMakeLists.txt"/>
-    <File Name="LLDBProtocol/cl_socket_base.cpp"/>
-    <File Name="LLDBProtocol/cl_socket_base.h"/>
-    <File Name="LLDBProtocol/cl_socket_server.cpp"/>
-    <File Name="LLDBProtocol/cl_socket_server.h"/>
     <File Name="LLDBProtocol/LLDBCommand.h"/>
     <File Name="LLDBProtocol/LLDBCommand.cpp"/>
     <File Name="LLDBProtocol/LLDBReply.h"/>
@@ -75,6 +71,10 @@
     <File Name="LLDBProtocol/LLDBThread.cpp"/>
     <File Name="LLDBProtocol/LLDBVariable.cpp"/>
     <File Name="LLDBProtocol/LLDBVariable.h"/>
+    <File Name="LLDBProtocol/clSocketServer.cpp"/>
+    <File Name="LLDBProtocol/clSocketServer.h"/>
+    <File Name="LLDBProtocol/clSocketBase.h"/>
+    <File Name="LLDBProtocol/clSocketBase.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">

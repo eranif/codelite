@@ -3,7 +3,7 @@
 
 #include <wx/thread.h>
 #include <wx/event.h>
-#include "cl_socket_base.h"
+#include "clSocketBase.h"
 
 /**
  * @class LLDBNetworkListenerThread

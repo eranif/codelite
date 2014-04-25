@@ -12,7 +12,10 @@ find_package(wxWidgets COMPONENTS std REQUIRED)
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/sdk/codelite_indexer/network" "${CL_SRC_ROOT}/PCH")
+include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
+                    "${CL_SRC_ROOT}/sdk/codelite_indexer/network" 
+                    "${CL_SRC_ROOT}/CodeLite" 
+                    "${CL_SRC_ROOT}/PCH")
 
 set( ADDITIONAL_LIBRARIES "" )
 

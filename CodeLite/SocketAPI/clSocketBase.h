@@ -97,17 +97,12 @@ public:
      * @param message
      */
     void WriteMessage(const wxString &message) throw (clSocketException);
-    
-    /**
-     * @brief destroy the socket and close the session if opened
-     */
-    void Destroy();
-    
+
 protected:
     /**
      * @brief
      */
-    void DoDestroySocket();
+    void DestroySocket();
 };
 
 #endif // CLSOCKETBASE_H

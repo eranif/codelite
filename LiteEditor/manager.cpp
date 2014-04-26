@@ -2364,11 +2364,13 @@ void Manager::DbgStart ( long attachPid )
     if ( bldConf && !bldConf->IsGUIProgram() )  // debugging a project and the project is not considered a "GUI" program
     {
         m_debuggerTerminal.Clear();
+#ifndef __WXMSW__
         m_debuggerTerminal.Launch(wxString() << _("Debugging: ") << exepath << wxT(" ") << args);
         if ( !m_debuggerTerminal.IsValid() ) {
             ::wxMessageBox(_("Could not launch terminal for debugger"), "CodeLite", wxOK|wxCENTER|wxICON_ERROR, clMainFrame::Get());
             return;
         }
+#endif
     }
 
     // notify plugins that we're about to start debugging

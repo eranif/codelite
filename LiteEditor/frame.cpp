@@ -4305,6 +4305,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 
             wxString tty;
 #ifndef __WXMSW__
+            // FIXME: Replace the below code with clDebuggerTerminalPOSIX
             wxString title;
             title << _("Debugging: '") << dlg->GetCore() << _("' from '") << dlg->GetExe() << wxT("'");
             tty = StartTTY(title);

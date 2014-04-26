@@ -1590,8 +1590,8 @@ static bool search_process_by_command(const wxString &name, wxString &tty, long&
     wxArrayString arrOutput;
     psCommand << "ps -A -o pid,tty,command";
     
-    wxArrayString arrErr;
-    ::wxExecute(psCommand, arrOutput, arrErr);
+    ProcUtils::SafeExecuteCommand(psCommand, arrOutput);
+    
     for(size_t i=0; i<arrOutput.GetCount(); ++i) {
         wxString curline = arrOutput.Item(i).Trim().Trim(false);
         wxArrayString tokens = ::wxStringTokenize( curline, " ", wxTOKEN_STRTOK );
@@ -1668,7 +1668,7 @@ void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
     ::wxExecute( consoleCommand );
     
     // Let it start ... (wait for it up to 5 seconds)
-    for(size_t i=0; i<20; ++i) {
+    for(size_t i=0; i<100; ++i) {
         if ( search_process_by_command(SLEEP_COMMAND, tty, pid) ) {
 #ifdef __WXGTK__
             // On GTK, redirection to TTY does not work with lldb
@@ -1683,7 +1683,7 @@ void LaunchTerminalForDebugger(const wxString &title, wxString &tty, long &pid)
 #endif
             return;
         }
-        wxThread::Sleep(250);
+        wxThread::Sleep(50);
     }
 
 #endif // !__WXMSW__

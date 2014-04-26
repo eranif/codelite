@@ -19,6 +19,7 @@ clSocketClient::~clSocketClient()
 
 bool clSocketClient::ConnectLocal(const wxString &socketPath)
 {
+    DestroySocket();
 #ifndef __WXMSW__
     struct sockaddr_un server;
     m_socket = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -35,6 +36,7 @@ bool clSocketClient::ConnectLocal(const wxString &socketPath)
 
 bool clSocketClient::ConnectRemote(const wxString& address, int port)
 {
+    DestroySocket();
     m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
     const char* ip_addr = address.mb_str(wxConvUTF8).data();
     struct sockaddr_in serv_addr; 

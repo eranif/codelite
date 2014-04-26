@@ -2222,7 +2222,8 @@ void Manager::DbgStart ( long attachPid )
             exepath = fn.GetFullName();
 
         }
-        startup_info.pid = PID;
+        PID = processID;
+        startup_info.pid = processID;
     }
 
     if ( attachPid == wxNOT_FOUND ) {

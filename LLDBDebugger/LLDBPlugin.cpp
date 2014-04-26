@@ -838,6 +838,11 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 
 void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
 {
+    if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
+        event.Skip();
+        return;
+    }
+    
 #ifdef __WXMSW__
     ::wxMessageBox(_("Debug core file with LLDB is not supported under Windows"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
     return;
@@ -906,6 +911,11 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
 
 void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
 {
+    if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
+        event.Skip();
+        return;
+    }
+    
 #ifdef __WXMSW__
     ::wxMessageBox(_("Attach to process with LLDB is not supported under Windows"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING);
     return;

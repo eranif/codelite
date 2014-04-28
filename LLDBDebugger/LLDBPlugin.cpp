@@ -934,7 +934,10 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
         }
     }
     
-    if ( !m_connector.LaunchLocalDebugServer() ) {
+    // Launch local server if needed
+    LLDBSettings settings;
+    settings.Load();
+    if ( !settings.IsUsingRemoteProxy() && !m_connector.LaunchLocalDebugServer() ) {
         DoCleanup();
         return false;
     }

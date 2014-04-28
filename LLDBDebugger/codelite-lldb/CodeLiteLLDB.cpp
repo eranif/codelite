@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <lldb/API/SBDebugger.h>
 #include <wx/filename.h>
+#include <wx/wxcrtvararg.h>
 
 static wxString s_localSocket;
 void OnTerminate(int signo)

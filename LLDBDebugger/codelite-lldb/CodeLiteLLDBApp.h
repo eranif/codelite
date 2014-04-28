@@ -43,11 +43,14 @@ protected:
     bool                                            m_exitMainLoop;
     LLDBSettings                                    m_settings;
     eLLDBDebugSessionType                           m_sessionType;
+    wxString                                        m_ip;
+    int                                             m_port;
     
 private:
     void Cleanup();
     void AcceptNewConnection() throw(clSocketException);
     bool InitializeLLDB(const LLDBCommand &command);
+    void DoInitializeApp();
     
 public:
     void NotifyStoppedOnFirstEntry();
@@ -80,6 +83,7 @@ public:
     
 public:
     CodeLiteLLDBApp(const wxString &socketPath);
+    CodeLiteLLDBApp(const wxString &ip, int port);
     virtual ~CodeLiteLLDBApp();
     
     /**

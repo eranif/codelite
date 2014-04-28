@@ -62,14 +62,28 @@ static void DELETE_CHAR_PTR_PTR(char** argv)
 #define CHECK_DEBUG_SESSION_RUNNING() if ( !IsDebugSessionInProgress() ) return
 
 CodeLiteLLDBApp::CodeLiteLLDBApp(const wxString& socketPath)
-    : m_networkThread(NULL)
-    , m_lldbProcessEventThread(NULL)
-    , m_debuggeePid(wxNOT_FOUND)
-    , m_interruptReason(kInterruptReasonNone)
-    , m_debuggerSocketPath(socketPath)
-    , m_exitMainLoop(false)
-    , m_sessionType(kDebugSessionTypeNormal)
+    : m_debuggerSocketPath(socketPath)
+    , m_port(wxNOT_FOUND)
 {
+    DoInitializeApp();
+}
+
+CodeLiteLLDBApp::CodeLiteLLDBApp(const wxString& ip, int port)
+    : m_ip(ip)
+    , m_port(port)
+{
+    DoInitializeApp();
+}
+
+void CodeLiteLLDBApp::DoInitializeApp()
+{
+    m_networkThread             = NULL;
+    m_lldbProcessEventThread    = NULL;
+    m_debuggeePid               = wxNOT_FOUND;
+    m_interruptReason           = kInterruptReasonNone;
+    m_exitMainLoop              = false;
+    m_sessionType               = kDebugSessionTypeNormal;
+    
     wxSocketBase::Initialize();
     lldb::SBDebugger::Initialize();
     m_debugger = lldb::SBDebugger::Create();
@@ -100,10 +114,22 @@ bool CodeLiteLLDBApp::OnInit()
 {
     wxPrintf("codelite-lldb: starting server on %s\n", m_debuggerSocketPath);
     try {
-        m_acceptSocket.CreateServer(m_debuggerSocketPath.mb_str(wxConvUTF8).data());
+        if ( m_port != wxNOT_FOUND ) {
+            m_acceptSocket.CreateServer(m_ip.mb_str(wxConvUTF8).data(), m_port);
+            
+        } else {
+            m_acceptSocket.CreateServer(m_debuggerSocketPath.mb_str(wxConvUTF8).data());
+            
+        }
         
     } catch (clSocketException &e) {
-        wxPrintf("codelite-lldb: failed to create server on %s. %s\n", m_debuggerSocketPath, strerror(errno));
+        if ( m_port == wxNOT_FOUND ) {
+            wxPrintf("codelite-lldb: failed to create server on %s. %s\n", m_debuggerSocketPath, strerror(errno));
+            
+        } else {
+            wxPrintf("codelite-lldb: failed to create server on %s. %s\n", (wxString() << m_ip << ":" << m_port), strerror(errno));
+            
+        }
         return false;
     }
     return true;
@@ -889,5 +915,7 @@ void CodeLiteLLDBApp::ShowCurrentFileLine(const LLDBCommand& command)
         NotifyStopped();
     }
 }
+
+
 
 #endif 

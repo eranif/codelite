@@ -3,8 +3,10 @@
 #include <wx/init.h>
 #include "CodeLiteLLDBApp.h"
 #include <unistd.h>
+#include <sys/wait.h>
 
 static wxString s_localSocket;
+static pid_t childProcess = 0;
 void OnTerminate(int signo)
 {
     // Remove the socket path
@@ -13,7 +15,20 @@ void OnTerminate(int signo)
         ::remove( s_localSocket.mb_str(wxConvUTF8).data() );
         wxPrintf("codelite-lldb: bye\n");
         exit(0);
+        
+    } else if ( childProcess ) {
+        // Kill our child process and exit
+        ::kill(childProcess, 9);
+        exit(0);
     }
+}
+
+void PrintUsage()
+{
+    printf("Usage:\n");
+    printf("codelite-lldb -s </path/to/socket>\n");
+    printf("codelite-lldb -t <ip:port>\n");
+    printf("codelite-lldb -h\n");
 }
 
 int main(int argc, char** argv)
@@ -29,7 +44,7 @@ int main(int argc, char** argv)
     // Parse command line
     int c;
     wxString tcpConnectString;
-    while ((c = getopt (argc, argv, "s:t:")) != -1) {
+    while ((c = getopt (argc, argv, "hs:t:")) != -1) {
         switch(c) {
         case 's':
             s_localSocket = optarg;
@@ -39,14 +54,18 @@ int main(int argc, char** argv)
             tcpConnectString = optarg;
             break;
 
+        case 'h':
+            PrintUsage();
+            exit(EXIT_SUCCESS);
+
         default:
             break;
         }
     }
 
     if (s_localSocket.IsEmpty() && tcpConnectString.IsEmpty() ) {
-        wxPrintf("codelite-lldb: error: usage: codelite-lldb -s <unique-string>\n");
-        exit(1);
+        PrintUsage();
+        exit(EXIT_FAILURE);
     }
 
     if ( !s_localSocket.IsEmpty() ) {
@@ -59,8 +78,33 @@ int main(int argc, char** argv)
         wxPrintf("codelite-lldb: bye\n");
         
     } else if ( !tcpConnectString.IsEmpty() ) {
+        // parse the connect string
+        long portNum;
+        wxString ip_addr    = tcpConnectString.BeforeFirst(':');
+        wxString port_str   = tcpConnectString.AfterFirst(':');
+        port_str.ToCLong( &portNum );
+        
         // Connect using tcp-ip
         // When using tcp-ip we fork the child process and wait until it terminates
+        while ( true ) {
+            childProcess = fork();
+            if ( childProcess == 0 ) {
+                
+                // Child code
+                CodeLiteLLDBApp app(ip_addr, portNum);
+                app.MainLoop();
+                exit(0);
+                
+            } else if ( childProcess ) {
+                int status (0);
+                ::wait( &status );
+                
+            } else {
+                // fork error:
+                perror("fork error");
+                exit(EXIT_FAILURE);
+            }
+        }
     }
     return 0;
 }

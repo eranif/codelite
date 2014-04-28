@@ -594,6 +594,19 @@ void LLDBConnector::ShowCurrentFileLine()
     }
 }
 
+wxString LLDBConnector::GetConnectString() const
+{
+    wxString connectString;
+    LLDBSettings settings;
+    bool useTcp = settings.Load().IsUsingRemoteProxy();
+    if ( useTcp ) {
+        connectString << settings.GetProxyIp() << ":" << settings.GetProxyPort();
+    } else {
+        connectString << GetDebugServerPath();
+    }
+    return connectString;
+}
+
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str)
 {
     wxUnusedVar( str );

@@ -66,7 +66,13 @@ protected:
 public:
     LLDBConnector();
     virtual ~LLDBConnector();
-
+    
+    /**
+     * @brief return the connect string that is used to connect to codelite-lldb
+     * @return 
+     */
+    wxString GetConnectString() const;
+    
     void SetGoingDown(bool goingDown) {
         this->m_goingDown = goingDown;
     }

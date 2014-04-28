@@ -345,6 +345,14 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                     startCommand.SetWorkingDirectory( wd );
                     startCommand.SetRedirectTTY( m_terminalTTY );
                     m_connector.Start( startCommand );
+                    
+                } else {
+                    // Failed to connect, notify and perform cleanup
+                    DoCleanup();
+                    wxString message;
+                    message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
+                    ::wxMessageBox(message, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+                    return;
                 }
             }
         }

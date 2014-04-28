@@ -121,13 +121,23 @@ protected:
     wxPanel* m_panel91;
     wxStyledTextCtrl* m_stcTypes;
     wxHyperlinkCtrl* m_hyperLink111;
+    wxPanel* m_panel142;
+    wxPropertyGridManager* m_pgMgrAdvanced;
+    wxPGProperty* m_pgProp165;
+    wxPGProperty* m_pgPropProxyType;
+    wxPGProperty* m_pgProp169;
+    wxPGProperty* m_pgPropProxyIP;
+    wxPGProperty* m_pgPropProxyPort;
     wxStdDialogButtonSizer* m_stdBtnSizer79;
     wxButton* m_button81;
     wxButton* m_button83;
+    wxButton* m_button175;
 
 protected:
     virtual void OnGeneralValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnAdvancedValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
 
 public:
     LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

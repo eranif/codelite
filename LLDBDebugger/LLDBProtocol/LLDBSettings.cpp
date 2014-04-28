@@ -19,6 +19,8 @@ LLDBSettings::LLDBSettings()
     : m_arrItems(50)
     , m_flags(kLLDBOptionRaiseCodeLite)
     , m_stackFrames(100)
+    , m_proxyIp("127.0.0.1")
+    , m_proxyPort(13610)
 {
     m_types = s_DefaultTypes;
 }
@@ -59,6 +61,8 @@ void LLDBSettings::FromJSON(const JSONElement& json)
     m_stackFrames = json.namedObject("m_maxCallstackFrames").toSize_t(m_stackFrames);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_types = json.namedObject("m_types").toString(s_DefaultTypes);
+    m_proxyPort = json.namedObject("m_proxyPort").toInt(13610);
+    m_proxyIp = json.namedObject("m_proxyIp").toString("127.0.0.1");
 }
 
 JSONElement LLDBSettings::ToJSON() const
@@ -68,6 +72,8 @@ JSONElement LLDBSettings::ToJSON() const
     json.addProperty("m_maxCallstackFrames", m_stackFrames);
     json.addProperty("m_flags", m_flags);
     json.addProperty("m_types", m_types);
+    json.addProperty("m_proxyPort", m_proxyPort);
+    json.addProperty("m_proxyIp", m_proxyIp);
     return json;
 }
 

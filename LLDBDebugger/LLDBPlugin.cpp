@@ -245,7 +245,11 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
             DirSaver ds;
             ::wxSetWorkingDirectory ( pProject->GetFileName().GetPath() );
-
+            
+            // Load LLDB settings
+            LLDBSettings settings;
+            settings.Load();
+            
             BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf ( pProject->GetName(), wxEmptyString );
             if ( !bldConf ) {
                 ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger", wxICON_ERROR|wxOK|wxCENTER);
@@ -259,7 +263,8 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 ::wxMessageBox(_("Remote debugging is not supported by LLDB"), "CodeLite", wxICON_WARNING|wxCENTER|wxOK);
                 return;
 
-            } else {
+            } else if ( !settings.IsUsingRemoteProxy() ) {
+                // Not using a remote proxy, launch the debug server
                 if ( !m_connector.LaunchLocalDebugServer() ) {
                     return;
                 }
@@ -288,7 +293,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                     execToDebug.MakeAbsolute();
                 }
                 
-                // terminate any old terminal that we have 
+                //////////////////////////////////////////////////////////////////////
+                // Launch terminal for IO redirection
+                //////////////////////////////////////////////////////////////////////
                 TerminateTerminal();
                 
                 if ( !bldConf->IsGUIProgram() ) {
@@ -307,8 +314,20 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 
                 CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
                 CL_DEBUG("LLDB: Working directory: " + ::wxGetCwd());
-
-                if ( m_connector.ConnectToLocalDebugger(5) ) {
+                
+                //////////////////////////////////////////////////////////////////////
+                // Initiate the connection to codelite-lldb
+                //////////////////////////////////////////////////////////////////////
+                bool bConnectOK (false);
+                if ( settings.IsUsingRemoteProxy() ) {
+                    bConnectOK = m_connector.ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), 5);
+                    
+                } else {
+                    bConnectOK = m_connector.ConnectToLocalDebugger(5);
+                    
+                }
+                
+                if ( bConnectOK ) {
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
                     m_mgr->GetAllBreakpoints(gdbBps);

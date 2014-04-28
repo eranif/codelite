@@ -42,6 +42,7 @@ LLDBConnector::~LLDBConnector()
     Cleanup();
 }
 
+
 bool LLDBConnector::ConnectToLocalDebugger(int timeout)
 {
     
@@ -78,6 +79,38 @@ bool LLDBConnector::ConnectToLocalDebugger(int timeout)
     CL_WARNING("LLDB Debugger: can't connect to local debugger - this is not support on MSW");
     return false;
 #endif
+}
+
+bool LLDBConnector::ConnectToRemoteDebugger(const wxString &ip, int port, int timeout)
+{
+    clSocketClient *client = new clSocketClient();
+    m_socket.reset( client );
+    CL_DEBUG("Connecting to codelite-lldb on %s:%d", ip, port);
+    
+    long msTimeout = timeout * 1000;
+    long retriesCount = msTimeout / 250; // We try every 250 ms to connect
+    bool connected = false;
+    for(long i=0; i<retriesCount; ++i) {
+        if ( !client->ConnectRemote( ip, port ) ) {
+            wxThread::Sleep(250);
+            continue;
+        }
+        connected = true;
+        break;
+    }
+    
+    if ( !connected ) {
+        return false;
+    }
+    
+    // Start the lldb event thread
+    // and start a listener thread which will read replies
+    // from codelite-lldb and convert them into LLDBEvent
+    socket_t fd = m_socket->GetSocket();
+    m_thread = new LLDBNetworkListenerThread(this, fd);
+    m_thread->Start();
+    CL_DEBUG("Successfully connected to codelite-lldb");
+    return true;
 }
 
 void LLDBConnector::SendCommand(const LLDBCommand& command)

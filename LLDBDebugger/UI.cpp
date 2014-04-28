@@ -332,7 +332,40 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_hyperLink111->SetHoverColour(wxColour(wxT("#0000FF")));
     m_hyperLink111->SetVisitedColour(wxColour(wxT("#FF0000")));
     
-    boxSizer107->Add(m_hyperLink111, 0, wxALL, 5);
+    boxSizer107->Add(m_hyperLink111, 0, wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_panel142 = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_notebook87->AddPage(m_panel142, _("Advanced"), false);
+    
+    wxBoxSizer* boxSizer160 = new wxBoxSizer(wxVERTICAL);
+    m_panel142->SetSizer(boxSizer160);
+    
+    wxArrayString m_pgMgrAdvancedArr;
+    wxUnusedVar(m_pgMgrAdvancedArr);
+    wxArrayInt m_pgMgrAdvancedIntArr;
+    wxUnusedVar(m_pgMgrAdvancedIntArr);
+    m_pgMgrAdvanced = new wxPropertyGridManager(m_panel142, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    
+    boxSizer160->Add(m_pgMgrAdvanced, 1, wxALL|wxEXPAND, 5);
+    
+    m_pgProp165 = m_pgMgrAdvanced->Append(  new wxPropertyCategory( _("Debugger Proxy") ) );
+    m_pgProp165->SetHelpString(wxT(""));
+    
+    m_pgMgrAdvancedArr.Clear();
+    m_pgMgrAdvancedIntArr.Clear();
+    m_pgMgrAdvancedArr.Add(_("Local proxy process (default)"));
+    m_pgMgrAdvancedArr.Add(_("Remote proxy process over TCP/IP"));
+    m_pgPropProxyType = m_pgMgrAdvanced->AppendIn( m_pgProp165,  new wxEnumProperty( _("Proxy type"), wxPG_LABEL, m_pgMgrAdvancedArr, m_pgMgrAdvancedIntArr, 0) );
+    m_pgPropProxyType->SetHelpString(_("Debugging using LLDB is always done over a proxy process (i.e. codelite-lldb)\nHere you can select the type of the proxy to use (local or remote):\n* Local proxy is used by default to debug local processes (this is the default)\n* Remote proxy: use this method to connect to a remote codelite-lldb proxy server over TCP/IP"));
+    
+    m_pgProp169 = m_pgMgrAdvanced->Append(  new wxPropertyCategory( _("Remote proxy settings") ) );
+    m_pgProp169->SetHelpString(wxT(""));
+    
+    m_pgPropProxyIP = m_pgMgrAdvanced->AppendIn( m_pgProp169,  new wxStringProperty( _("Address"), wxPG_LABEL, _("127.0.0.1")) );
+    m_pgPropProxyIP->SetHelpString(_("The IP address on which the remote proxy server is accepting connections"));
+    
+    m_pgPropProxyPort = m_pgMgrAdvanced->AppendIn( m_pgProp169,  new wxIntProperty( _("Port"), wxPG_LABEL, 13610) );
+    m_pgPropProxyPort->SetHelpString(_("The port number on which the remote proxy server is accepting connections"));
     
     m_stdBtnSizer79 = new wxStdDialogButtonSizer();
     
@@ -344,6 +377,9 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     m_button83 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_button83->SetDefault();
     m_stdBtnSizer79->AddButton(m_button83);
+    
+    m_button175 = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer79->AddButton(m_button175);
     m_stdBtnSizer79->Realize();
     
     SetSizeHints(500,400);
@@ -353,14 +389,20 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
     Centre(wxBOTH);
     // Connect events
     m_pgMgrDisplayProperties->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
+    m_pgMgrAdvanced->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnAdvancedValueChanged), NULL, this);
     m_button83->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
+    m_button175->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBSettingDialogBase::OnApply), NULL, this);
+    m_button175->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
     
 }
 
 LLDBSettingDialogBase::~LLDBSettingDialogBase()
 {
     m_pgMgrDisplayProperties->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
+    m_pgMgrAdvanced->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnAdvancedValueChanged), NULL, this);
     m_button83->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
+    m_button175->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBSettingDialogBase::OnApply), NULL, this);
+    m_button175->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
     
 }
 

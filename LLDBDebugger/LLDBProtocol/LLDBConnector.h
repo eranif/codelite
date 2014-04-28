@@ -105,10 +105,19 @@ public:
     /**
      * @brief establish connection to codelite-lldb server
      * @param timeout number of seconds to wait until successfull connect
-     * @return
+     * @return true on success, false otherwise
      */
     bool ConnectToLocalDebugger(int timeout = 10);
-
+    
+    /**
+     * @brief established connection to codelite-lldb over TCP/IP
+     * @param ip codelite-lldb listen IP
+     * @param port codelite-lldb listen port
+     * @param timeout number of seconds to wait until successfull connect
+     * @return true on success, false otherwise
+     */
+    bool ConnectToRemoteDebugger(const wxString &ip, int port, int timeout = 10);
+    
     /**
      * @brief start codelite-lldb if not running
      */

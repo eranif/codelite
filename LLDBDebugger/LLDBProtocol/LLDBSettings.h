@@ -11,6 +11,8 @@ class LLDBSettings
     size_t m_stackFrames;
     size_t m_flags;
     wxString m_types;
+    wxString m_proxyIp;
+    int      m_proxyPort;
 
 public:
     LLDBSettings();
@@ -31,6 +33,7 @@ public:
             m_flags &= ~flag;
         }
     }
+
     void SetMaxArrayElements(size_t maxArrayElements) {
         this->m_arrItems = maxArrayElements;
     }
@@ -49,10 +52,30 @@ public:
     const wxString& GetTypes() const {
         return m_types;
     }
-    
+
+    bool IsUsingRemoteProxy() const {
+        return HasFlag( kLLDBOptionUseRemoteProxy );
+    }
+
+    void SetUseRemoteProxy( bool b ) {
+        EnableFlag( kLLDBOptionUseRemoteProxy, b );
+    }
+
+    void SetProxyIp(const wxString& proxyIp) {
+        this->m_proxyIp = proxyIp;
+    }
+    void SetProxyPort(int proxyPort) {
+        this->m_proxyPort = proxyPort;
+    }
+    const wxString& GetProxyIp() const {
+        return m_proxyIp;
+    }
+    int GetProxyPort() const {
+        return m_proxyPort;
+    }
     LLDBSettings& Load();
     LLDBSettings& Save();
-    
+
     // Helpers
     static wxString LoadPerspective();
     static void SavePerspective(const wxString &perspective);

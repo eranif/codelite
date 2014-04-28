@@ -96,11 +96,12 @@ void clSocketBase::DestroySocket()
     if (IsCloseOnExit()) {
         if ( m_socket != INVALID_SOCKET ) {
 #ifdef _WIN32
-            ::closesocket( m_socket );
+        ::shutdown(m_socket, 2);
+        ::closesocket( m_socket );
 #else
-            ::close(m_socket);
+        ::shutdown(m_socket, 2);
+        ::close(m_socket);
 #endif
-            ::shutdown(m_socket, 2);
         }
     }
     m_socket = INVALID_SOCKET;

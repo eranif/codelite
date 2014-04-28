@@ -17,6 +17,7 @@ clSocketServer::clSocketServer()
 
 clSocketServer::~clSocketServer()
 {
+    DestroySocket();
 }
 
 void clSocketServer::CreateServer(const std::string &pipePath) throw (clSocketException)

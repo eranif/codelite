@@ -85,7 +85,6 @@ void CodeLiteLLDBApp::DoInitializeApp()
     m_sessionType               = kDebugSessionTypeNormal;
     
     wxSocketBase::Initialize();
-    lldb::SBDebugger::Initialize();
     m_debugger = lldb::SBDebugger::Create();
     wxPrintf("codelite-lldb: lldb initialized successfully\n");
     
@@ -103,6 +102,10 @@ CodeLiteLLDBApp::~CodeLiteLLDBApp()
 
 int CodeLiteLLDBApp::OnExit()
 {
+    if ( m_target.IsValid() && m_debugger.IsValid() ) {
+        m_debugger.DeleteTarget( m_target );
+    }
+    
     if ( m_debugger.IsValid() ) {
         lldb::SBDebugger::Destroy( m_debugger );
     }
@@ -159,14 +162,16 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
 #endif
 
     m_debuggeePid = wxNOT_FOUND;
+    wxPrintf("codelite-lldb: creatig target for file '%s'\n", command.GetExecutable());
     m_debugger = lldb::SBDebugger::Create();
-    m_target = m_debugger.CreateTarget(command.GetExecutable().mb_str().data());
+    lldb::SBError lldbError;
+    m_target = m_debugger.CreateTarget(command.GetExecutable().mb_str().data(), NULL, NULL, true, lldbError);
     if ( !m_target.IsValid() ) {
-        wxPrintf("codelite-lldb: could not create target for file '%'\n", command.GetExecutable());
+        wxPrintf("codelite-lldb: could not create target for file %s. %s\n", command.GetExecutable(), lldbError.GetCString());
         NotifyExited();
         return false;
     }
-    
+
     m_debugger.SetAsync(true);
     
     // Keep the settings
@@ -415,8 +420,8 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
         wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
 
-        // wxPrintf("codelite-lldb: Environment is set to:\n");
-        // print_c_array( (const char**)penv );
+        wxPrintf("codelite-lldb: Environment is set to:\n");
+        print_c_array( (const char**)penv );
 
         wxPrintf("codelite-lldb: Arguments are set to:\n");
         print_c_array( argv );

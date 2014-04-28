@@ -229,6 +229,23 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
     return result;
 }
 
+wxArrayString EnvironmentConfig::GetActiveSetEnvNames(bool includeWorkspace, const wxString& project)
+{
+    //read the environments variables
+    EvnVarList vars;
+    ReadObject(wxT("Variables"), &vars);
+    
+    wxArrayString envnames;
+    // get the active environment variables set
+    EnvMap variables = vars.GetVariables(wxEmptyString, includeWorkspace, project);
+    for(size_t i=0; i<variables.GetCount(); ++i) {
+        wxString key, val;
+        variables.Get(i, key, val);
+        envnames.Add( key );
+    }
+    return envnames;
+}
+
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------

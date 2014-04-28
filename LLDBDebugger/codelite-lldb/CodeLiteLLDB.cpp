@@ -4,9 +4,10 @@
 #include "CodeLiteLLDBApp.h"
 #include <unistd.h>
 #include <sys/wait.h>
+#include <lldb/API/SBDebugger.h>
+#include <wx/filename.h>
 
 static wxString s_localSocket;
-static pid_t childProcess = 0;
 void OnTerminate(int signo)
 {
     // Remove the socket path
@@ -16,9 +17,9 @@ void OnTerminate(int signo)
         wxPrintf("codelite-lldb: bye\n");
         exit(0);
         
-    } else if ( childProcess ) {
+    } else {
         // Kill our child process and exit
-        ::kill(childProcess, 9);
+        wxPrintf("codelite-lldb: bye\n");
         exit(0);
     }
 }
@@ -67,7 +68,10 @@ int main(int argc, char** argv)
         PrintUsage();
         exit(EXIT_FAILURE);
     }
-
+    
+    // Initialize SBDebugger
+    lldb::SBDebugger::Initialize();
+    
     if ( !s_localSocket.IsEmpty() ) {
         // Start on local socket
         CodeLiteLLDBApp app(s_localSocket);
@@ -78,34 +82,37 @@ int main(int argc, char** argv)
         wxPrintf("codelite-lldb: bye\n");
         
     } else if ( !tcpConnectString.IsEmpty() ) {
+        // TCP/IP mode, redirect stdout/err
+        
+        wxFileName stdout_err("~/.codelite-lldb-stdout-stderr.log");
+        FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "w+b", stdout);
+        FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "w+b", stderr);
+        wxUnusedVar(new_stderr);
+        wxUnusedVar(new_stdout);
+        
         // parse the connect string
         long portNum;
         wxString ip_addr    = tcpConnectString.BeforeFirst(':');
         wxString port_str   = tcpConnectString.AfterFirst(':');
         port_str.ToCLong( &portNum );
         
+        wxString invocationLine;
+        invocationLine << argv[0] << " -t " << tcpConnectString << "'";
+        
         // Connect using tcp-ip
         // When using tcp-ip we fork the child process and wait until it terminates
-        while ( true ) {
-            childProcess = fork();
-            if ( childProcess == 0 ) {
-                
-                // Child code
-                CodeLiteLLDBApp app(ip_addr, portNum);
-                app.MainLoop();
-                exit(0);
-                
-            } else if ( childProcess ) {
-                int status (0);
-                ::wait( &status );
-                
-            } else {
-                // fork error:
-                perror("fork error");
-                exit(EXIT_FAILURE);
-            }
+        // Child code
+        {
+            // this must be in a scope so that 'app' will get destroyed before we create new instance
+            CodeLiteLLDBApp app(ip_addr, portNum);
+            app.MainLoop();
         }
+
+        // Restart ourslef ( lldb does not clear nicely :( )
+        ::wxExecute(invocationLine);
+        exit(EXIT_SUCCESS);
     }
+
     return 0;
 }
 #endif

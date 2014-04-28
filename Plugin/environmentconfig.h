@@ -65,7 +65,12 @@ public:
     wxString    ExpandVariables(const wxString &in, bool applyEnvironment);
     EvnVarList  GetSettings();
     void        SetSettings(EvnVarList &vars);
-
+    /**
+     * @brief return a list of the environment variabels as defined by the user
+     * in the global environment table + workspace + project (this function only return the names of the variable, not its value)
+     */
+    wxArrayString GetActiveSetEnvNames(bool includeWorkspace = true, const wxString &project = wxEmptyString);
+    
 private:
     EnvironmentConfig();
     virtual ~EnvironmentConfig();

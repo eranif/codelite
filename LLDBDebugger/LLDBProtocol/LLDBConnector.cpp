@@ -607,6 +607,19 @@ wxString LLDBConnector::GetConnectString() const
     return connectString;
 }
 
+bool LLDBConnector::Connect(int timeout)
+{
+    LLDBSettings settings;
+    settings.Load();
+    
+    if ( settings.IsUsingRemoteProxy() ) {
+        return ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), timeout);
+        
+    } else {
+        return ConnectToLocalDebugger(timeout);
+    }
+}
+
 void LLDBTerminalCallback::OnProcessOutput(const wxString& str)
 {
     wxUnusedVar( str );

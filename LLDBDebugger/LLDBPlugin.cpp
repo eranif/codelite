@@ -318,16 +318,8 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 //////////////////////////////////////////////////////////////////////
                 // Initiate the connection to codelite-lldb
                 //////////////////////////////////////////////////////////////////////
-                bool bConnectOK (false);
-                if ( settings.IsUsingRemoteProxy() ) {
-                    bConnectOK = m_connector.ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), 5);
-                    
-                } else {
-                    bConnectOK = m_connector.ConnectToLocalDebugger(5);
-                    
-                }
                 
-                if ( bConnectOK ) {
+                if ( m_connector.Connect(5) ) {
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
                     m_mgr->GetAllBreakpoints(gdbBps);
@@ -835,7 +827,7 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         return;
     }
     
-    if ( m_connector.ConnectToLocalDebugger(5) ) {
+    if ( m_connector.Connect(5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -860,6 +852,13 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         startCommand.SetStartupCommands( event.GetStartupCommands() );
         startCommand.SetRedirectTTY( m_terminalTTY );
         m_connector.Start( startCommand );
+    } else {
+        // Failed to connect, notify and perform cleanup
+        DoCleanup();
+        wxString message;
+        message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
+        ::wxMessageBox(message, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+        return;
     }
 }
 
@@ -879,7 +878,7 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
         return;
     }
     
-    if ( m_connector.ConnectToLocalDebugger(5) ) {
+    if ( m_connector.Connect(5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -895,6 +894,13 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
         startCommand.SetWorkingDirectory( event.GetWorkingDirectory() );
         startCommand.SetRedirectTTY( m_terminalTTY );
         m_connector.OpenCoreFile( startCommand );
+    } else {
+        // Failed to connect, notify and perform cleanup
+        DoCleanup();
+        wxString message;
+        message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
+        ::wxMessageBox(message, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+        return;
     }
 }
 
@@ -953,7 +959,7 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
     if ( !DoInitializeDebugger( event, true, terminalTitle ) )
         return;
     
-    if ( m_connector.ConnectToLocalDebugger(5) ) {
+    if ( m_connector.Connect(5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -969,6 +975,14 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
         command.SetProcessID( event.GetInt() );
         command.SetSettings( settings );
         m_connector.AttachProcessWithPID( command );
+        
+    } else {
+        // Failed to connect, notify and perform cleanup
+        DoCleanup();
+        wxString message;
+        message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
+        ::wxMessageBox(message, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
+        return;
     }
 }
 

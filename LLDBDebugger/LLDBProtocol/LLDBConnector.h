@@ -109,20 +109,9 @@ public:
     void InvalidateBreakpoints();
 
     /**
-     * @brief establish connection to codelite-lldb server
-     * @param timeout number of seconds to wait until successfull connect
-     * @return true on success, false otherwise
+     * @brief connect to the debugger (automatically decides if it is a local debugger or remote)
      */
-    bool ConnectToLocalDebugger(int timeout = 10);
-    
-    /**
-     * @brief established connection to codelite-lldb over TCP/IP
-     * @param ip codelite-lldb listen IP
-     * @param port codelite-lldb listen port
-     * @param timeout number of seconds to wait until successfull connect
-     * @return true on success, false otherwise
-     */
-    bool ConnectToRemoteDebugger(const wxString &ip, int port, int timeout = 10);
+    bool Connect(int timeout);
     
     /**
      * @brief start codelite-lldb if not running
@@ -297,6 +286,23 @@ public:
      * @brief step over to next instruction
      */
     void ShowCurrentFileLine();
+    
+protected:
+    /**
+     * @brief establish connection to codelite-lldb server
+     * @param timeout number of seconds to wait until successfull connect
+     * @return true on success, false otherwise
+     */
+    bool ConnectToLocalDebugger(int timeout = 10);
+    
+    /**
+     * @brief established connection to codelite-lldb over TCP/IP
+     * @param ip codelite-lldb listen IP
+     * @param port codelite-lldb listen port
+     * @param timeout number of seconds to wait until successfull connect
+     * @return true on success, false otherwise
+     */
+    bool ConnectToRemoteDebugger(const wxString &ip, int port, int timeout = 10);
 };
 
 #endif // LLDBCONNECTOR_H

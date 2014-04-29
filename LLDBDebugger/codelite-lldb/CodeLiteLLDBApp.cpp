@@ -19,6 +19,10 @@
 #include <wx/wxcrtvararg.h>
 #include <wx/tokenzr.h>
 #include <lldb/API/SBError.h>
+#include <lldb/API/SBTypeSummary.h>
+#include <lldb/API/SBTypeNameSpecifier.h>
+#include <lldb/API/SBTypeCategory.h>
+#include <wx/filename.h>
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -85,7 +89,9 @@ void CodeLiteLLDBApp::DoInitializeApp()
     m_sessionType               = kDebugSessionTypeNormal;
     
     wxSocketBase::Initialize();
-    m_debugger = lldb::SBDebugger::Create();
+    wxPrintf("codelite-lldb: starting\n");
+    // lldbinit file to source
+    m_debugger = lldb::SBDebugger::Create(true); // source init file
     wxPrintf("codelite-lldb: lldb initialized successfully\n");
     
     // register our summary
@@ -115,7 +121,6 @@ int CodeLiteLLDBApp::OnExit()
 
 bool CodeLiteLLDBApp::OnInit()
 {
-    wxPrintf("codelite-lldb: starting server on %s\n", m_debuggerSocketPath);
     try {
         if ( m_port != wxNOT_FOUND ) {
             m_acceptSocket.CreateServer(m_ip.mb_str(wxConvUTF8).data(), m_port);
@@ -124,7 +129,7 @@ bool CodeLiteLLDBApp::OnInit()
             m_acceptSocket.CreateServer(m_debuggerSocketPath.mb_str(wxConvUTF8).data());
             
         }
-        
+
     } catch (clSocketException &e) {
         if ( m_port == wxNOT_FOUND ) {
             wxPrintf("codelite-lldb: failed to create server on %s. %s\n", m_debuggerSocketPath, strerror(errno));
@@ -178,13 +183,27 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
     m_settings = command.GetSettings();
     
     // Apply the types 
+    lldb::SBCommandReturnObject ret;
     wxArrayString commands = ::wxStringTokenize(m_settings.GetTypes(), "\n", wxTOKEN_STRTOK);
     for(size_t i=0; i<commands.GetCount(); ++i) {
-        lldb::SBCommandReturnObject ret;
+        commands.Item(i).Trim();
+        if ( commands.Item(i).IsEmpty() ) 
+            continue;
+        
         std::string c_command = commands.Item(i).Trim().mb_str(wxConvUTF8).data();
         wxPrintf("codelite-lldb: executing: '%s'\n", c_command.c_str());
         m_debugger.GetCommandInterpreter().HandleCommand(c_command.c_str() , ret);
     }
+    
+    // {
+    //     lldb::SBTypeSummary summary = lldb::SBTypeSummary::CreateWithFunctionName("qstring.utf16string_summary", lldb::eTypeOptionHideChildren); 
+    //     if ( summary.IsValid() ) {
+    //         lldb::SBTypeNameSpecifier qStringSpecifier("QString");
+    //         if ( m_debugger.GetDefaultCategory().AddTypeSummary(qStringSpecifier, summary) ) {
+    //             wxPrintf("codelite-lldb: successfully registerd QString type summary\n");
+    //         }
+    //     }
+    // }
     
     wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
     return true;
@@ -420,8 +439,8 @@ void CodeLiteLLDBApp::RunDebugger(const LLDBCommand& command)
         const char *ptty = tty_c.empty() ? NULL : tty_c.c_str();
         wxPrintf("codelite-lldb: running debugger. tty=%s\n", ptty);
 
-        wxPrintf("codelite-lldb: Environment is set to:\n");
-        print_c_array( (const char**)penv );
+        // wxPrintf("codelite-lldb: Environment is set to:\n");
+        // print_c_array( (const char**)penv );
 
         wxPrintf("codelite-lldb: Arguments are set to:\n");
         print_c_array( argv );
@@ -699,15 +718,12 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
     if ( iter != m_variables.end() ) {
         lldb::SBValue *pvalue = &(iter->second);
         lldb::SBValue deReferencedValue;
-        
-        wxPrintf("codelite-lldb: ExpandVariable called for '%s'\n. variableId=%d", pvalue->GetName(), variableId);
         int size = pvalue->GetNumChildren();
 
         lldb::TypeClass typeClass = pvalue->GetType().GetTypeClass();
         if ( typeClass & lldb::eTypeClassArray ) {
             size > m_settings.GetMaxArrayElements() ? size = m_settings.GetMaxArrayElements() : size = size;
             wxPrintf("codelite-lldb: value %s is an array. Limiting its size\n", pvalue->GetName());
-            
         } /*else if ( typeClass & lldb::eTypeClassPointer ) {
             // dereference is needed
             wxPrintf("codelite-lldb: value '%s' is a class pointer, dereferecning it\n", pvalue->GetName());
@@ -728,8 +744,6 @@ void CodeLiteLLDBApp::ExpandVariable(const LLDBCommand& command)
                 m_variables.insert( std::make_pair(child.GetID(), child) );
             }
         }
-        
-        wxPrintf("codelite-lldb: Send reply for variable expand. variableId=%d", variableId);
         
         LLDBReply reply;
         reply.SetReplyType( kReplyTypeVariableExpanded );

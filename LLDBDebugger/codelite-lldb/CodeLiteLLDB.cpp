@@ -84,13 +84,12 @@ int main(int argc, char** argv)
         
     } else if ( !tcpConnectString.IsEmpty() ) {
         // TCP/IP mode, redirect stdout/err
-        
-        wxFileName stdout_err("~/.codelite-lldb-stdout-stderr.log");
-        FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "w+b", stdout);
-        FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "w+b", stderr);
-        wxUnusedVar(new_stderr);
-        wxUnusedVar(new_stdout);
-        
+        // wxFileName stdout_err(::wxGetHomeDir(), ".codelite-lldb-stdout-stderr.log");
+        // FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "w+b", stdout);
+        // FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "w+b", stderr);
+        // wxUnusedVar(new_stderr);
+        // wxUnusedVar(new_stdout);
+
         // parse the connect string
         long portNum;
         wxString ip_addr    = tcpConnectString.BeforeFirst(':');

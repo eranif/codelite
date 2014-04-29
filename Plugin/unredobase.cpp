@@ -132,6 +132,7 @@ void CommandProcessorBase::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
 {
     wxString prefix(undoing ? _("Undo ") : _("Redo "));
     int id = FIRST_MENU_ID;
+    int count = 0;
 
     if (undoing) {
         if (GetCommands().size() > 0) {
@@ -151,7 +152,7 @@ void CommandProcessorBase::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
                             label = command->GetName();
                         }
                     }
-                    menu.Append(id++, prefix + label);
+                    menu.Append(id++, wxString::Format("%i ", ++count) + prefix + label);
                 }
             }
         }
@@ -168,7 +169,7 @@ void CommandProcessorBase::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
                 } else {
                     label = command->GetName();
                 }
-                menu.Append(id++, prefix + label);
+                menu.Append(id++, wxString::Format("%i ", ++count) + prefix + label);
             }
         }
     }

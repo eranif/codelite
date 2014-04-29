@@ -6485,7 +6485,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Title:",
-											"m_value":	"Template Selection"
+											"m_value":	"New Project"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Message:",
@@ -6502,11 +6502,11 @@
 										}, {
 											"type":	"colour",
 											"m_label":	"Gradient Start",
-											"colour":	"(0,128,255)"
+											"colour":	"(0,128,0)"
 										}, {
 											"type":	"colour",
 											"m_label":	"Gradient End",
-											"colour":	"(0,128,255)"
+											"colour":	"(0,128,64)"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -6792,11 +6792,11 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Title:",
-											"m_value":	"Project Details"
+											"m_value":	"New Project"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Message:",
-											"m_value":	""
+											"m_value":	"Set the project path and name"
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
@@ -6809,11 +6809,11 @@
 										}, {
 											"type":	"colour",
 											"m_label":	"Gradient Start",
-											"colour":	"(0,128,255)"
+											"colour":	"(0,128,0)"
 										}, {
 											"type":	"colour",
 											"m_label":	"Gradient End",
-											"colour":	"(0,128,255)"
+											"colour":	"(0,128,64)"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -7642,7 +7642,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Title:",
-											"m_value":	"Toolchain"
+											"m_value":	"New Project"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Message:",
@@ -7659,11 +7659,11 @@
 										}, {
 											"type":	"colour",
 											"m_label":	"Gradient Start",
-											"colour":	"(0,128,255)"
+											"colour":	"(0,128,0)"
 										}, {
 											"type":	"colour",
 											"m_label":	"Gradient End",
-											"colour":	"(0,128,255)"
+											"colour":	"(0,128,64)"
 										}],
 									"m_events":	[],
 									"m_children":	[]

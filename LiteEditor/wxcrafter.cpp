@@ -779,8 +779,8 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     m_banner386 = new wxBannerWindow(m_wizardPageTemplate, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner386->SetBitmap(wxNullBitmap);
-    m_banner386->SetText(_("Template Selection"), _("Select the project template from the list below"));
-    m_banner386->SetGradient(wxColour(wxT("rgb(0,128,255)")), wxColour(wxT("rgb(0,128,255)")));
+    m_banner386->SetText(_("New Project"), _("Select the project template from the list below"));
+    m_banner386->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,64)")));
     m_banner386->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer383->Add(m_banner386, 0, wxALL|wxEXPAND, 2);
@@ -803,8 +803,8 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     m_banner398 = new wxBannerWindow(m_wizardPageDetails, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner398->SetBitmap(wxNullBitmap);
-    m_banner398->SetText(_("Project Details"), wxT(""));
-    m_banner398->SetGradient(wxColour(wxT("rgb(0,128,255)")), wxColour(wxT("rgb(0,128,255)")));
+    m_banner398->SetText(_("New Project"), _("Set the project path and name"));
+    m_banner398->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,64)")));
     m_banner398->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer396->Add(m_banner398, 0, wxALL|wxEXPAND, 2);
@@ -870,8 +870,8 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     
     m_banner390 = new wxBannerWindow(m_wizardPageToolchain, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
     m_banner390->SetBitmap(wxNullBitmap);
-    m_banner390->SetText(_("Toolchain"), _("Select the project toolchain"));
-    m_banner390->SetGradient(wxColour(wxT("rgb(0,128,255)")), wxColour(wxT("rgb(0,128,255)")));
+    m_banner390->SetText(_("New Project"), _("Select the project toolchain"));
+    m_banner390->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,64)")));
     m_banner390->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
     
     boxSizer388->Add(m_banner390, 0, wxALL|wxEXPAND, 2);

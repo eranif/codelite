@@ -44,6 +44,13 @@ public:
 
     std::string error() const;
 public:
+    
+    /**
+     * @brief set the socket into blocking/non-blocking mode
+     * @param blocking
+     */
+    void MakeSocketBlocking(bool blocking);
+
     clSocketBase(int sockfd = INVALID_SOCKET);
     virtual ~clSocketBase();
 
@@ -79,11 +86,17 @@ public:
     int Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout = -1) throw (clSocketException);
     /**
      * @brief
-     * @param milliseconds
+     * @param seconds
      * @return
      */
     int SelectRead(long seconds = -1) throw (clSocketException);
-
+    
+    /**
+     * @brief select for write
+     * @return 
+     */
+    int SelectWrite(long seconds = -1) throw (clSocketException);
+    
     /**
      * @brief read a full message that was sent with 'SendMessage'
      * @param message

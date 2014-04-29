@@ -164,3 +164,52 @@ socket_t clSocketBase::Release()
     m_socket = INVALID_SOCKET;
     return fd;
 }
+
+void clSocketBase::MakeSocketBlocking(bool blocking)
+{
+#ifndef __WXMSW__
+    // set socket to non-blocking mode
+    int flags;
+    flags = ::fcntl( m_socket, F_GETFL );
+    if ( blocking ) {
+        flags |= O_NONBLOCK;
+    } else {
+        flags &= ~O_NONBLOCK;
+    }
+    ::fcntl( m_socket, F_SETFL, flags );
+#else
+    u_long iMode = blocking ? 0 : 1;
+    ::ioctlsocket(m_socket, FIONBIO, &iMode);
+#endif
+}
+
+int clSocketBase::SelectWrite(long seconds) throw (clSocketException)
+{
+    if ( seconds == -1 ) {
+        return kSuccess;
+    }
+
+    if ( m_socket == INVALID_SOCKET ) {
+        throw clSocketException("Invalid socket!");
+    }
+
+    struct timeval tv = {seconds, 0};
+
+    fd_set write_set;
+    FD_ZERO(&write_set);
+    FD_SET(m_socket, &write_set);
+    errno = 0;
+    int rc = select(m_socket+1, NULL, &write_set, NULL, &tv);
+    if ( rc == 0 ) {
+        // timeout
+        return kTimeout;
+
+    } else if ( rc < 0 ) {
+        // an error occured
+        throw clSocketException( "SelectRead failed: " + error() );
+
+    } else {
+        // we got something to read
+        return kSuccess;
+    }
+}

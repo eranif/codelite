@@ -18,6 +18,14 @@
 #   include <unistd.h>
 #endif
 
+#ifdef __WXMSW__
+#   define RESET_ERRNO() WSASetLastError(0)
+#   define IS_CONNECT_IN_PROGRESS() WSAGetLastError() == WSAEWOULDBLOCK
+#else
+#   define RESET_ERRNO() errno = 0
+#   define IS_CONNECT_IN_PROGRESS() errno == EINPROGRESS
+#endif
+
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_DATA_READ,  LLDBConnector::OnProcessOutput)
     EVT_COMMAND(wxID_ANY, wxEVT_PROC_TERMINATED, LLDBConnector::OnProcessTerminated)
@@ -83,25 +91,27 @@ bool LLDBConnector::ConnectToLocalDebugger(int timeout)
 
 bool LLDBConnector::ConnectToRemoteDebugger(const wxString &ip, int port, int timeout)
 {
+    m_socket.reset( NULL );
     clSocketClient *client = new clSocketClient();
     m_socket.reset( client );
     CL_DEBUG("Connecting to codelite-lldb on %s:%d", ip, port);
     
-    long msTimeout = timeout * 1000;
-    long retriesCount = msTimeout / 250; // We try every 250 ms to connect
-    bool connected = false;
-    for(long i=0; i<retriesCount; ++i) {
-        if ( !client->ConnectRemote( ip, port ) ) {
-            wxThread::Sleep(250);
-            continue;
+    RESET_ERRNO();
+    if ( !client->ConnectRemote( ip, port, true ) ) {
+        // select the socket
+        if (  !IS_CONNECT_IN_PROGRESS() ) {
+            return false;
         }
-        connected = true;
-        break;
+        try {
+            if ( client->SelectWrite(timeout) == clSocketBase::kTimeout ) {
+                return false;
+            }
+        } catch (clSocketException &e) {
+            CL_DEBUG("SelectWrite error: %s", e.what());
+        }
     }
     
-    if ( !connected ) {
-        return false;
-    }
+    // Connected!
     
     // Start the lldb event thread
     // and start a listener thread which will read replies

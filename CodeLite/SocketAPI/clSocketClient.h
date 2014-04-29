@@ -19,7 +19,7 @@ public:
     /**
      * @brief connect to a remote server using ip/port
      */
-    bool ConnectRemote(const wxString &address, int port);
+    bool ConnectRemote(const wxString &address, int port, bool nonBlockingMode = false);
 };
 
 #endif // CLSOCKETCLIENT_H

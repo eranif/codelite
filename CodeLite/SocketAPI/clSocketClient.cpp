@@ -34,10 +34,14 @@ bool clSocketClient::ConnectLocal(const wxString &socketPath)
 #endif
 }
 
-bool clSocketClient::ConnectRemote(const wxString& address, int port)
+bool clSocketClient::ConnectRemote(const wxString& address, int port, bool nonBlockingMode)
 {
     DestroySocket();
     m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
+    if ( nonBlockingMode ) {
+        MakeSocketBlocking(false);
+    }
+    
     const char* ip_addr = address.mb_str(wxConvUTF8).data();
     struct sockaddr_in serv_addr; 
     serv_addr.sin_family = AF_INET;
@@ -45,12 +49,23 @@ bool clSocketClient::ConnectRemote(const wxString& address, int port)
     
 #ifndef __WXMSW__
     if(inet_pton(AF_INET, ip_addr, &serv_addr.sin_addr) <= 0) {
+        // restore socket to blocking mode
+        if ( nonBlockingMode ) {
+            MakeSocketBlocking(true);
+        }
         return false;
     }
 #else
     serv_addr.sin_addr.s_addr = inet_addr( ip_addr );
 #endif
-
+    
+    errno = 0;
     int rc = ::connect(m_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+    int tmpErrnor = errno;
+    // restore socket to blocking mode
+    if ( nonBlockingMode ) {
+        MakeSocketBlocking(true);
+    }
+    errno = tmpErrnor;
     return rc == 0;
 }

@@ -91,9 +91,8 @@ void CodeLiteLLDBApp::DoInitializeApp()
     wxSocketBase::Initialize();
     wxPrintf("codelite-lldb: starting\n");
     // lldbinit file to source
-    m_debugger = lldb::SBDebugger::Create(true); // source init file
+    m_debugger = lldb::SBDebugger::Create(false); // source init file
     wxPrintf("codelite-lldb: lldb initialized successfully\n");
-    
     // register our summary
     OnInit();
 }
@@ -182,29 +181,19 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
     // Keep the settings
     m_settings = command.GetSettings();
     
+    // First, source the .lldbinit file
+    wxString source_command;
+    source_command << "command source '" << ::wxGetHomeDir() << "/.lldbinit" << "'";
+    DoExecutueShellCommand( source_command, true );
+    
     // Apply the types 
     lldb::SBCommandReturnObject ret;
     wxArrayString commands = ::wxStringTokenize(m_settings.GetTypes(), "\n", wxTOKEN_STRTOK);
     for(size_t i=0; i<commands.GetCount(); ++i) {
-        commands.Item(i).Trim();
-        if ( commands.Item(i).IsEmpty() ) 
-            continue;
-        
-        std::string c_command = commands.Item(i).Trim().mb_str(wxConvUTF8).data();
-        wxPrintf("codelite-lldb: executing: '%s'\n", c_command.c_str());
-        m_debugger.GetCommandInterpreter().HandleCommand(c_command.c_str() , ret);
+        DoExecutueShellCommand(commands.Item(i));
     }
     
-    // {
-    //     lldb::SBTypeSummary summary = lldb::SBTypeSummary::CreateWithFunctionName("qstring.utf16string_summary", lldb::eTypeOptionHideChildren); 
-    //     if ( summary.IsValid() ) {
-    //         lldb::SBTypeNameSpecifier qStringSpecifier("QString");
-    //         if ( m_debugger.GetDefaultCategory().AddTypeSummary(qStringSpecifier, summary) ) {
-    //             wxPrintf("codelite-lldb: successfully registerd QString type summary\n");
-    //         }
-    //     }
-    // }
-    
+    // Print the content of the summaries (for debugging purposes)
     wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
     return true;
 }
@@ -333,6 +322,7 @@ void CodeLiteLLDBApp::NotifyStarted(eLLDBDebugSessionType sessionType)
 void CodeLiteLLDBApp::NotifyStopped()
 {
     m_variables.clear();
+    
     LLDBReply reply;
     wxPrintf("codelite-lldb: NotifyStopped() called. m_interruptReason=%d\n", (int)m_interruptReason);
     reply.SetReplyType( kReplyTypeDebuggerStopped );
@@ -935,6 +925,19 @@ void CodeLiteLLDBApp::ShowCurrentFileLine(const LLDBCommand& command)
     }
 }
 
-
+void CodeLiteLLDBApp::DoExecutueShellCommand(const wxString& command, bool printOutput)
+{
+    wxString cmd = command;
+    cmd.Trim().Trim(false);
+    
+    if ( cmd.IsEmpty() ) 
+        return;
+    
+    lldb::SBCommandReturnObject ret;
+    m_debugger.GetCommandInterpreter().HandleCommand(command.mb_str(wxConvUTF8).data(), ret);
+    if ( printOutput && ret.GetOutput() ) {
+        wxPrintf("codelite-lldb: output of command '%s':\n%s\n", command, ret.GetOutput());
+    }
+}
 
 #endif 

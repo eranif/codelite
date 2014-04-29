@@ -51,6 +51,7 @@ private:
     void AcceptNewConnection() throw(clSocketException);
     bool InitializeLLDB(const LLDBCommand &command);
     void DoInitializeApp();
+    void DoExecutueShellCommand(const wxString &command, bool printOutput = true);
     
 public:
     void NotifyStoppedOnFirstEntry();

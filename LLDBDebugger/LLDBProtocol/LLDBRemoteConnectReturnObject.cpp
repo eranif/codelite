@@ -1,15 +1,15 @@
 #include "LLDBRemoteConnectReturnObject.h"
 
-LLDBRemoteConnectReturnObject::LLDBRemoteConnectReturnObject()
+LLDBConnectReturnObject::LLDBConnectReturnObject()
     : m_pivotNeeded(false)
 {
 }
 
-LLDBRemoteConnectReturnObject::~LLDBRemoteConnectReturnObject()
+LLDBConnectReturnObject::~LLDBConnectReturnObject()
 {
 }
 
-void LLDBRemoteConnectReturnObject::Clear()
+void LLDBConnectReturnObject::Clear()
 {
     m_pivotNeeded = false;
     m_remoteHostName.Clear();

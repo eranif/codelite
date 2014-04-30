@@ -6,6 +6,7 @@
 #include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
 #include "LLDBSettings.h"
+#include "LLDBPivot.h"
 
 class LLDBCommand
 {
@@ -26,7 +27,7 @@ protected:
     wxString                   m_startupCommands;
     wxString                   m_corefile;
     int                        m_processID;
-
+    
 public:
     // Serialization API
     JSONElement ToJSON() const;
@@ -35,7 +36,9 @@ public:
     LLDBCommand() : m_commandType(kCommandInvalid), m_interruptReason(kInterruptReasonNone), m_lldbId(0), m_processID(wxNOT_FOUND) {}
     LLDBCommand(const wxString &jsonString);
     virtual ~LLDBCommand();
-
+    
+    void UpdatePaths(const LLDBPivot &pivot);
+    
     void SetProcessID(int processID) {
         this->m_processID = processID;
     }

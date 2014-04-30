@@ -125,3 +125,20 @@ char** LLDBCommand::GetEnvArray() const
     penv[m_env.size()] = NULL;
     return penv;
 }
+
+void LLDBCommand::UpdatePaths(const LLDBPivot& pivot)
+{
+    if ( pivot.IsValid() ) {
+        
+        // Convert all paths:
+        // m_workingDirectory
+        // m_executable
+        // m_breakpoints
+        m_workingDirectory = pivot.ToRemote( m_workingDirectory );
+        m_executable       = pivot.ToRemote( m_executable );
+        
+        for(size_t i=0; m_breakpoints.size(); ++i) {
+            m_breakpoints.at(i)->SetFilename( pivot.ToRemote( m_breakpoints.at(i)->GetFilename() ) );
+        }
+    }
+}

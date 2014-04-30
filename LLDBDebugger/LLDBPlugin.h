@@ -7,6 +7,7 @@
 
 #include "LLDBProtocol/LLDBConnector.h"
 #include "LLDBProtocol/LLDBEvent.h"
+#include "LLDBProtocol/LLDBRemoteConnectReturnObject.h"
 
 class LLDBTooltip;
 class LLDBThreadsView;
@@ -46,7 +47,7 @@ public:
     
 private:
     void TerminateTerminal();
-    
+    void SetupPivotFolder(const LLDBConnectReturnObject& ret);
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
     void LoadLLDBPerspective();

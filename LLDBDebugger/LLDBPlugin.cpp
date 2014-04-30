@@ -23,6 +23,7 @@
 #include "LLDBSettingDialog.h"
 #include "LLDBThreadsView.h"
 #include "LLDBTooltip.h"
+#include <wx/platinfo.h>
 
 static LLDBPlugin* thePlugin = NULL;
 
@@ -229,10 +230,12 @@ void LLDBPlugin::TerminateTerminal()
 void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 {
     if ( !m_connector.IsRunning() ) {
+        
         if ( event.GetDebuggerName() != LLDB_DEBUGGER_NAME ) {
             event.Skip();
             return;
         }
+        
         CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
         {
             // Get the executable to debug
@@ -298,7 +301,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 //////////////////////////////////////////////////////////////////////
                 TerminateTerminal();
                 
-                if ( !bldConf->IsGUIProgram() ) {
+                if ( !bldConf->IsGUIProgram() && !(wxPlatformInfo::Get().GetOperatingSystemId() & wxOS_WINDOWS) ) {
                     ::LaunchTerminalForDebugger(execToDebug.GetFullPath(), m_terminalTTY, m_terminalPID);
                     
                     if ( m_terminalPID != wxNOT_FOUND ) {
@@ -319,7 +322,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 // Initiate the connection to codelite-lldb
                 //////////////////////////////////////////////////////////////////////
                 
-                if ( m_connector.Connect(5) ) {
+                LLDBConnectReturnObject retObj;
+                if ( m_connector.Connect(retObj, 5) ) {
+                    
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
                     m_mgr->GetAllBreakpoints(gdbBps);
@@ -329,6 +334,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
                     // apply the serialized breakpoints
                     m_connector.AddBreakpoints( gdbBps );
+
+                    // Setup pivot folder if needed
+                    SetupPivotFolder( retObj );
 
                     LLDBCommand startCommand;
                     startCommand.FillEnvFromMemory();
@@ -827,7 +835,8 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         return;
     }
     
-    if ( m_connector.Connect(5) ) {
+    LLDBConnectReturnObject retObj;
+    if ( m_connector.Connect(retObj, 5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -878,7 +887,8 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
         return;
     }
     
-    if ( m_connector.Connect(5) ) {
+    LLDBConnectReturnObject retObj;
+    if ( m_connector.Connect(retObj, 5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -962,7 +972,8 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
     if ( !DoInitializeDebugger( event, true, terminalTitle ) )
         return;
     
-    if ( m_connector.Connect(5) ) {
+    LLDBConnectReturnObject retObj;
+    if ( m_connector.Connect(retObj, 5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -1037,4 +1048,13 @@ void LLDBPlugin::DestroyTooltip()
             editor->SetActive();
         }
     }
+}
+
+void LLDBPlugin::SetupPivotFolder(const LLDBConnectReturnObject& ret)
+{
+    if ( !ret.IsPivotNeeded() ) {
+        return;
+    }
+    
+    // FIXME: prompt the user for pivot
 }

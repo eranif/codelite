@@ -10,6 +10,7 @@
 #include "asyncprocess.h"
 #include "LLDBEvent.h"
 #include "LLDBRemoteConnectReturnObject.h"
+#include "LLDBPivot.h"
 
 class LLDBConnector;
 class LLDBNetworkListenerThread;
@@ -48,7 +49,8 @@ protected:
     TerminalInfo                m_terminalInfo;
     bool                        m_attachedToProcess;
     bool                        m_goingDown;
-
+    LLDBPivot                   m_pivot;
+    
     wxDECLARE_EVENT_TABLE();
     void OnProcessOutput(wxCommandEvent &event);
     void OnProcessTerminated(wxCommandEvent &event);
@@ -111,7 +113,7 @@ public:
     /**
      * @brief connect to the debugger (automatically decides if it is a local debugger or remote)
      */
-    bool Connect(int timeout);
+    bool Connect(LLDBConnectReturnObject& ret, int timeout);
     
     /**
      * @brief start codelite-lldb if not running
@@ -293,7 +295,7 @@ protected:
      * @param timeout number of seconds to wait until successfull connect
      * @return true on success, false otherwise
      */
-    bool ConnectToLocalDebugger(int timeout = 10);
+    bool ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int timeout = 10);
     
     /**
      * @brief established connection to codelite-lldb over TCP/IP
@@ -302,7 +304,7 @@ protected:
      * @param timeout number of seconds to wait until successfull connect
      * @return true on success, false otherwise
      */
-    bool ConnectToRemoteDebugger(const wxString &ip, int port, LLDBRemoteConnectReturnObject& ret, int timeout = 10);
+    bool ConnectToRemoteDebugger(const wxString &ip, int port, LLDBConnectReturnObject& ret, int timeout = 10);
 };
 
 #endif // LLDBCONNECTOR_H

@@ -3,14 +3,14 @@
 
 #include <wx/string.h>
 
-class LLDBRemoteConnectReturnObject
+class LLDBConnectReturnObject
 {
     bool     m_pivotNeeded;
     wxString m_remoteHostName;
 
 public:
-    LLDBRemoteConnectReturnObject();
-    ~LLDBRemoteConnectReturnObject();
+    LLDBConnectReturnObject();
+    ~LLDBConnectReturnObject();
     
     void Clear();
     

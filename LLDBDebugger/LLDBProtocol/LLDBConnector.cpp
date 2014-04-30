@@ -52,7 +52,7 @@ LLDBConnector::~LLDBConnector()
 }
 
 
-bool LLDBConnector::ConnectToLocalDebugger(int timeout)
+bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int timeout)
 {
     
 #ifndef __WXMSW__
@@ -90,7 +90,7 @@ bool LLDBConnector::ConnectToLocalDebugger(int timeout)
 #endif
 }
 
-bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBRemoteConnectReturnObject& ret, int timeout)
+bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBConnectReturnObject& ret, int timeout)
 {
     m_socket.reset( NULL );
     clSocketClient *client = new clSocketClient();
@@ -148,7 +148,10 @@ void LLDBConnector::SendCommand(const LLDBCommand& command)
 {
     try {
         if ( m_socket ) {
-            m_socket->WriteMessage( command.ToJSON().format() );
+            // Convert local paths to remote paths if needed
+            LLDBCommand updatedCommand = command;
+            updatedCommand.UpdatePaths( m_pivot );
+            m_socket->WriteMessage( updatedCommand.ToJSON().format() );
         }
 
     } catch ( clSocketException &e ) {
@@ -376,18 +379,7 @@ void LLDBConnector::Cleanup()
     m_runCommand.Clear();
     m_attachedToProcess = false;
     StopDebugServer();
-
-//#ifndef __WXMSW__
-//    int status = 0;
-//    int pid(0);
-//    do {
-//       pid = ::waitpid(-1, &status, WNOHANG); 
-//       if ( pid ) {
-//           CL_DEBUG("Process %d exited with status code %d", pid, WEXITSTATUS(status));
-//       }
-//    } while( pid ); 
-//#endif
-
+    m_pivot.Clear();
 }
 
 void LLDBConnector::OnLLDBExited(LLDBEvent& event)
@@ -638,17 +630,17 @@ wxString LLDBConnector::GetConnectString() const
     return connectString;
 }
 
-bool LLDBConnector::Connect(int timeout)
+bool LLDBConnector::Connect(LLDBConnectReturnObject &ret, int timeout)
 {
     LLDBSettings settings;
     settings.Load();
     
+    ret.Clear();
     if ( settings.IsUsingRemoteProxy() ) {
-        LLDBRemoteConnectReturnObject ret;
         return ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), ret, timeout);
         
     } else {
-        return ConnectToLocalDebugger(timeout);
+        return ConnectToLocalDebugger(ret, timeout);
     }
 }
 

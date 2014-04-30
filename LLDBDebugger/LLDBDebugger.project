@@ -73,6 +73,8 @@
     <File Name="LLDBProtocol/LLDBRemoteHandshakePacket.cpp"/>
     <File Name="LLDBProtocol/LLDBRemoteConnectReturnObject.h"/>
     <File Name="LLDBProtocol/LLDBRemoteConnectReturnObject.cpp"/>
+    <File Name="LLDBProtocol/LLDBPivot.h"/>
+    <File Name="LLDBProtocol/LLDBPivot.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">

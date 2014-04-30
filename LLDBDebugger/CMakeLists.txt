@@ -10,6 +10,7 @@ macro( FIND_LLDB_OFFICIAL )
               /usr/lib/llvm-3.5/include 
               /usr/include/llvm-3.5 
               /usr/include/llvm
+              /usr/local/include
               )
 
     if ( LIBLLDB_T STREQUAL "LIBLLDB_T-NOTFOUND" OR LIBLLDB_INCLUDE_T STREQUAL "LIBLLDB_INCLUDE_T-NOTFOUND" )

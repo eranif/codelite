@@ -1,6 +1,7 @@
 #include "clSocketBase.h"
 #include <cerrno>
 #include <cstdio>
+#include <sstream>
 
 #ifndef _WIN32
 #include <fcntl.h>
@@ -128,22 +129,28 @@ int clSocketBase::ReadMessage(wxString& message, int timeout) throw (clSocketExc
     bytesRead = 0;
     char *buff = new char[message_len+1];
     memset(buff, 0, message_len+1);
-    rc = Read(buff, message_len, bytesRead, timeout);
-    if ( rc != kSuccess ) {
-        wxDELETEA( buff );
-        return rc;
+    
+    // read the entire amount we need
+    int bytesLeft = message_len;
+    int totalRead = 0;
+    while ( bytesLeft > 0 ) {
+        rc = Read(buff + totalRead, bytesLeft, bytesRead, timeout);
+        if ( rc != kSuccess ) {
+            wxDELETEA( buff );
+            return rc;
+
+        } else if ( rc == 0 ) {
+            // session was closed
+            wxDELETEA( buff );
+            throw clSocketException("connection closed by peer");
+
+        } else {
+            bytesLeft -= bytesRead;
+            totalRead += bytesRead;
+            bytesRead = 0;
+        }
     }
     
-    if ( bytesRead == 0 ) {
-        // session was closed
-        wxDELETEA( buff );
-        throw clSocketException("connection closed by peer");
-        
-    } else if ( bytesRead != message_len ) {
-        wxDELETEA( buff );
-        throw clSocketException("Wrong message length received");
-    }
-
     buff[message_len] = '\0';
     message = buff;
     return kSuccess;

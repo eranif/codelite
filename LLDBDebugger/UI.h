@@ -33,6 +33,8 @@
 #include <wx/popupwin.h>
 #include <wx/treectrl.h>
 #include <wx/timer.h>
+#include <wx/stattext.h>
+#include <wx/filepicker.h>
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -179,6 +181,27 @@ protected:
 public:
     LLDBTooltipBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~LLDBTooltipBase();
+};
+
+
+class FolderMappingBaseDlg : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText197;
+    wxStaticText* m_staticText189;
+    wxDirPickerCtrl* m_dirPickerLocal;
+    wxStaticText* m_staticText193;
+    wxTextCtrl* m_textCtrlRemote;
+    wxStdDialogButtonSizer* m_stdBtnSizer181;
+    wxButton* m_button183;
+    wxButton* m_button185;
+
+protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    FolderMappingBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Folder Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~FolderMappingBaseDlg();
 };
 
 #endif

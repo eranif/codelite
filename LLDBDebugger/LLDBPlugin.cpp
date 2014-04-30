@@ -24,6 +24,7 @@
 #include "LLDBThreadsView.h"
 #include "LLDBTooltip.h"
 #include <wx/platinfo.h>
+#include "FolderMappingDlg.h"
 
 static LLDBPlugin* thePlugin = NULL;
 
@@ -1053,8 +1054,15 @@ void LLDBPlugin::DestroyTooltip()
 void LLDBPlugin::SetupPivotFolder(const LLDBConnectReturnObject& ret)
 {
     if ( !ret.IsPivotNeeded() ) {
+        m_connector.StartNetworkThread();
         return;
     }
-    
-    // FIXME: prompt the user for pivot
+
+    FolderMappingDlg dlg( NULL );
+    LLDBPivot pivot;
+    if ( dlg.ShowModal() == wxID_OK ) {
+        m_connector.SetPivot( dlg.GetPivot() );
+    }
+    // Now that we got the pivot - start the network thread
+    m_connector.StartNetworkThread();
 }

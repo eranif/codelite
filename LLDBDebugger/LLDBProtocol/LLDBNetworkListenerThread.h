@@ -4,6 +4,7 @@
 #include <wx/thread.h>
 #include <wx/event.h>
 #include "SocketAPI/clSocketBase.h"
+#include "LLDBPivot.h"
 
 /**
  * @class LLDBNetworkListenerThread
@@ -16,9 +17,9 @@ class LLDBNetworkListenerThread : public wxThread
 {
     wxEvtHandler *m_owner;
     clSocketBase::Ptr_t m_socket;
-    
+    LLDBPivot m_pivot;
 public:
-    LLDBNetworkListenerThread(wxEvtHandler *owner, int fd);
+    LLDBNetworkListenerThread(wxEvtHandler *owner, const LLDBPivot& pivot, int fd);
     virtual ~LLDBNetworkListenerThread();
 
     /**

@@ -131,6 +131,7 @@ void* LLDBNetworkServerThread::Entry()
 
     } catch ( clSocketException& e ) {
         wxPrintf("codelite-lldb: error while reading message. %s\n", e.what().c_str());
+        m_app->CallAfter( &CodeLiteLLDBApp::NotifyAborted );
         return NULL;
     }
 

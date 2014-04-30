@@ -80,7 +80,8 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
     // and start a listener thread which will read replies
     // from codelite-lldb and convert them into LLDBEvent
     socket_t fd = m_socket->GetSocket();
-    m_thread = new LLDBNetworkListenerThread(this, fd);
+    m_pivot.Clear();
+    m_thread = new LLDBNetworkListenerThread(this, m_pivot, fd);
     m_thread->Start();
     CL_DEBUG("Successfully connected to codelite-lldb");
     return true;
@@ -133,13 +134,6 @@ bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBCo
         m_socket.reset( NULL );
         return false;
     }
-    
-    // Start the lldb event thread
-    // and start a listener thread which will read replies
-    // from codelite-lldb and convert them into LLDBEvent
-    socket_t fd = m_socket->GetSocket();
-    m_thread = new LLDBNetworkListenerThread(this, fd);
-    m_thread->Start();
     CL_DEBUG("Successfully connected to codelite-lldb");
     return true;
 }
@@ -641,6 +635,15 @@ bool LLDBConnector::Connect(LLDBConnectReturnObject &ret, int timeout)
         
     } else {
         return ConnectToLocalDebugger(ret, timeout);
+    }
+}
+
+void LLDBConnector::StartNetworkThread()
+{
+    if ( !m_thread && m_socket ) {
+        socket_t fd = m_socket->GetSocket();
+        m_thread = new LLDBNetworkListenerThread(this, m_pivot, fd);
+        m_thread->Start();
     }
 }
 

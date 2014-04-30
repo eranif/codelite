@@ -63,6 +63,8 @@ void LLDBSettings::FromJSON(const JSONElement& json)
     m_types = json.namedObject("m_types").toString(s_DefaultTypes);
     m_proxyPort = json.namedObject("m_proxyPort").toInt(13610);
     m_proxyIp = json.namedObject("m_proxyIp").toString("127.0.0.1");
+    m_lastLocalFolder = json.namedObject("m_lastLocalFolder").toString();
+    m_lastRemoteFolder = json.namedObject("m_lastRemoteFolder").toString();
 }
 
 JSONElement LLDBSettings::ToJSON() const
@@ -74,6 +76,8 @@ JSONElement LLDBSettings::ToJSON() const
     json.addProperty("m_types", m_types);
     json.addProperty("m_proxyPort", m_proxyPort);
     json.addProperty("m_proxyIp", m_proxyIp);
+    json.addProperty("m_lastLocalFolder", m_lastLocalFolder);
+    json.addProperty("m_lastRemoteFolder", m_lastRemoteFolder);
     return json;
 }
 

@@ -13,11 +13,25 @@ class LLDBSettings
     wxString m_types;
     wxString m_proxyIp;
     int      m_proxyPort;
+    wxString m_lastLocalFolder;
+    wxString m_lastRemoteFolder;
 
 public:
     LLDBSettings();
     virtual ~LLDBSettings();
 
+    void SetLastLocalFolder(const wxString& lastLocalFolder) {
+        this->m_lastLocalFolder = lastLocalFolder;
+    }
+    void SetLastRemoteFolder(const wxString& lastRemoteFolder) {
+        this->m_lastRemoteFolder = lastRemoteFolder;
+    }
+    const wxString& GetLastLocalFolder() const {
+        return m_lastLocalFolder;
+    }
+    const wxString& GetLastRemoteFolder() const {
+        return m_lastRemoteFolder;
+    }
     bool IsRaiseWhenBreakpointHit() const {
         return m_flags & kLLDBOptionRaiseCodeLite;
     }

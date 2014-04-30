@@ -508,3 +508,77 @@ LLDBTooltipBase::~LLDBTooltipBase()
     wxDELETE( m_timerCheckMousePos );
 
 }
+
+FolderMappingBaseDlg::FolderMappingBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer179 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer179);
+    
+    m_staticText197 = new wxStaticText(this, wxID_ANY, _("You are debugging on a remote machine. In order for codelite\nto be able to load files into the editor, codelite needs to map the folders on\nyour local machine to the folders on the remote machine"), wxDefaultPosition, wxSize(-1,-1), wxALIGN_CENTRE);
+    m_staticText197->SetForegroundColour(wxColour(wxT("rgb(0,64,0)")));
+    wxFont m_staticText197Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText197Font.SetWeight(wxFONTWEIGHT_BOLD);
+    m_staticText197->SetFont(m_staticText197Font);
+    
+    boxSizer179->Add(m_staticText197, 0, wxALL|wxEXPAND, 5);
+    
+    wxFlexGridSizer* flexGridSizer187 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer187->SetFlexibleDirection( wxBOTH );
+    flexGridSizer187->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer187->AddGrowableCol(1);
+    
+    boxSizer179->Add(flexGridSizer187, 1, wxALL|wxEXPAND, 5);
+    
+    m_staticText189 = new wxStaticText(this, wxID_ANY, _("Local Folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer187->Add(m_staticText189, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_dirPickerLocal = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+    m_dirPickerLocal->SetToolTip(_("Local Folder"));
+    
+    flexGridSizer187->Add(m_dirPickerLocal, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText193 = new wxStaticText(this, wxID_ANY, _("Remote Folder:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer187->Add(m_staticText193, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlRemote = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlRemote->SetToolTip(_("Remote Folder"));
+    
+    flexGridSizer187->Add(m_textCtrlRemote, 0, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer181 = new wxStdDialogButtonSizer();
+    
+    boxSizer179->Add(m_stdBtnSizer181, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_button183 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button183->SetDefault();
+    m_stdBtnSizer181->AddButton(m_button183);
+    
+    m_button185 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer181->AddButton(m_button185);
+    m_stdBtnSizer181->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_button183->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FolderMappingBaseDlg::OnOKUI), NULL, this);
+    
+}
+
+FolderMappingBaseDlg::~FolderMappingBaseDlg()
+{
+    m_button183->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FolderMappingBaseDlg::OnOKUI), NULL, this);
+    
+}

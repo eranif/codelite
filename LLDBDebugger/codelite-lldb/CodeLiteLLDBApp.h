@@ -57,6 +57,7 @@ public:
     void NotifyStoppedOnFirstEntry();
     void NotifyStopped();
     void NotifyExited();
+    void NotifyAborted();
     void NotifyStarted(eLLDBDebugSessionType sessionType);
     void NotifyRunning();
     void NotifyBreakpointsUpdated();

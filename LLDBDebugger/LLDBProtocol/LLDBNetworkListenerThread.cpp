@@ -3,11 +3,12 @@
 #include "LLDBEvent.h"
 #include "file_logger.h"
 
-LLDBNetworkListenerThread::LLDBNetworkListenerThread(wxEvtHandler* owner, int fd)
+LLDBNetworkListenerThread::LLDBNetworkListenerThread(wxEvtHandler* owner, const LLDBPivot& pivot, int fd)
     : wxThread(wxTHREAD_JOINABLE)
     , m_owner(owner)
 {
     m_socket.reset( new clSocketBase(fd) );
+    m_pivot = pivot;
 }
 
 LLDBNetworkListenerThread::~LLDBNetworkListenerThread()
@@ -22,6 +23,7 @@ void* LLDBNetworkListenerThread::Entry()
         try {
             if ( m_socket->ReadMessage(msg, 1) == clSocketBase::kSuccess ) {
                 LLDBReply reply(msg);
+                reply.UpdatePaths( m_pivot );
                 switch( reply.GetReplyType() ) {
                 case kReplyTypeDebuggerStartedSuccessfully: {
                     // notify debugger started successfully

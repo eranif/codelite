@@ -73,3 +73,29 @@ JSONElement LLDBReply::ToJSON() const
     return json;
 }
 
+void LLDBReply::UpdatePaths(const LLDBPivot& pivot)
+{
+    if ( pivot.IsValid() ) {
+        
+        // Update the file name
+        m_filename = pivot.ToLocal( m_filename );
+        
+        // Update the breakpoint list
+        for(size_t i=0; i<m_breakpoints.size(); ++i) {
+            m_breakpoints.at(i)->SetFilename( pivot.ToLocal( m_breakpoints.at(i)->GetFilename() ) );
+        }
+        
+        // Update the call stack entries
+        LLDBBacktrace::EntryVec_t callstack = m_backtrace.GetCallstack();
+        for(size_t i=0; i<callstack.size(); ++i) {
+            callstack.at(i).filename = pivot.ToLocal( callstack.at(i).filename );
+        }
+        m_backtrace.SetCallstack( callstack );
+        
+        // Update the thread stack
+        for(size_t i=0; i<m_threads.size(); ++i) {
+            m_threads.at(i).SetFile( pivot.ToLocal(m_threads.at(i).GetFile()) );
+        }
+    }
+}
+

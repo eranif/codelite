@@ -97,6 +97,8 @@
       <File Name="LLDBThreadsView.cpp"/>
       <File Name="LLDBTooltip.h"/>
       <File Name="LLDBTooltip.cpp"/>
+      <File Name="FolderMappingDlg.h"/>
+      <File Name="FolderMappingDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxcrafter">
       <File Name="UI.wxcp"/>

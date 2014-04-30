@@ -7,6 +7,7 @@
 #include "LLDBBacktrace.h"
 #include "LLDBVariable.h"
 #include "LLDBThread.h"
+#include "LLDBPivot.h"
 
 class LLDBReply
 {
@@ -34,7 +35,8 @@ public:
 
     LLDBReply(const wxString &str);
     virtual ~LLDBReply();
-
+    
+    void UpdatePaths(const LLDBPivot& pivot);
     void SetDebugSessionType(int debugSessionType) {
         this->m_debugSessionType = debugSessionType;
     }

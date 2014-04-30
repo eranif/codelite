@@ -11,13 +11,15 @@ LLDBPivot::~LLDBPivot()
 
 wxString LLDBPivot::ToLocal(const wxString& remotePath) const
 {
-    wxFileName fn(remotePath);
-    wxString pathInNativeSeparators = fn.GetFullPath();
+    wxString pathInNativeSeparators = remotePath;
     if ( pathInNativeSeparators.StartsWith(m_remoteFolder) ) {
         pathInNativeSeparators.Replace(m_remoteFolder, m_localFolder, false);
+        wxFileName fn(pathInNativeSeparators);
+        return fn.GetFullPath();
+    } else {
+        return remotePath;
     }
-    fn = wxFileName(pathInNativeSeparators);
-    return fn.GetFullPath();
+    
 }
 
 wxString LLDBPivot::ToRemote(const wxString& localPath) const
@@ -26,9 +28,11 @@ wxString LLDBPivot::ToRemote(const wxString& localPath) const
     wxString pathInNativeSeparators = fn.GetFullPath();
     if ( pathInNativeSeparators.StartsWith(m_localFolder) ) {
         pathInNativeSeparators.Replace(m_localFolder, m_remoteFolder, false);
+        pathInNativeSeparators.Replace("\\", "/");
+        return pathInNativeSeparators;
+    } else {
+        return localPath;
     }
-    pathInNativeSeparators.Replace("\\", "/");
-    return pathInNativeSeparators;
 }
 
 bool LLDBPivot::IsValid() const

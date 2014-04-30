@@ -288,6 +288,16 @@ void CodeLiteLLDBApp::NotifyExited()
     m_exitMainLoop = true;
 }
 
+void CodeLiteLLDBApp::NotifyAborted()
+{
+    wxPrintf("codelite-lldb: Connection Aborted\n");
+    // Let codelite 200 ms head start before starting the cleanup process
+    // by doing this, codelite can mark the debugger in "normal" shutdown
+    wxThread::Sleep(200); 
+    Cleanup();
+    m_exitMainLoop = true;
+}
+
 void CodeLiteLLDBApp::NotifyRunning()
 {
     wxPrintf("codelite-lldb: NotifyRunning. Target Process ID %d\n", m_debuggeePid);

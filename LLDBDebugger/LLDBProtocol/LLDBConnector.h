@@ -50,7 +50,7 @@ protected:
     bool                        m_attachedToProcess;
     bool                        m_goingDown;
     LLDBPivot                   m_pivot;
-    
+
     wxDECLARE_EVENT_TABLE();
     void OnProcessOutput(wxCommandEvent &event);
     void OnProcessTerminated(wxCommandEvent &event);
@@ -69,12 +69,16 @@ public:
     LLDBConnector();
     virtual ~LLDBConnector();
     
+    void StartNetworkThread();
+    void SetPivot(const LLDBPivot& pivot) {
+        this->m_pivot = pivot;
+    }
     /**
      * @brief return the connect string that is used to connect to codelite-lldb
-     * @return 
+     * @return
      */
     wxString GetConnectString() const;
-    
+
     void SetGoingDown(bool goingDown) {
         this->m_goingDown = goingDown;
     }
@@ -114,7 +118,7 @@ public:
      * @brief connect to the debugger (automatically decides if it is a local debugger or remote)
      */
     bool Connect(LLDBConnectReturnObject& ret, int timeout);
-    
+
     /**
      * @brief start codelite-lldb if not running
      */
@@ -288,7 +292,7 @@ public:
      * @brief step over to next instruction
      */
     void ShowCurrentFileLine();
-    
+
 protected:
     /**
      * @brief establish connection to codelite-lldb server
@@ -296,7 +300,7 @@ protected:
      * @return true on success, false otherwise
      */
     bool ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int timeout = 10);
-    
+
     /**
      * @brief established connection to codelite-lldb over TCP/IP
      * @param ip codelite-lldb listen IP

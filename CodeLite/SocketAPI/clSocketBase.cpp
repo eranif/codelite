@@ -110,15 +110,21 @@ void clSocketBase::DestroySocket()
 
 int clSocketBase::ReadMessage(wxString& message, int timeout) throw (clSocketException)
 {
+    // send the length in string form to avoid binary / arch differences between remote and local machine
+    char msglen[11];
+    memset(msglen, 0, sizeof(msglen));
+
     size_t message_len(0);
     size_t bytesRead(0);
-    int rc = Read( (char*)&message_len, sizeof(message_len), bytesRead, timeout);
-
+    int rc = Read( (char*)msglen, sizeof(msglen)-1, bytesRead, timeout);
     if ( rc != kSuccess ) {
         // timeout
         return rc;
     }
-
+    
+    // convert the string to int
+    message_len = ::atoi(msglen);
+    
     bytesRead = 0;
     char *buff = new char[message_len+1];
     memset(buff, 0, message_len+1);
@@ -151,9 +157,13 @@ void clSocketBase::WriteMessage(const wxString& message) throw (clSocketExceptio
 
     // Write the message length
     std::string c_str = message.mb_str(wxConvUTF8).data();
-    size_t len = c_str.length();
-
-    ::send(m_socket, (const char*)&len, sizeof(len), 0);
+    int len = c_str.length();
+    
+    // send the length in string form to avoid binary / arch differences between remote and local machine
+    char msglen[11];
+    memset(msglen, 0, sizeof(msglen));
+    sprintf(msglen, "%010d", len);
+    ::send(m_socket, msglen, sizeof(msglen)-1, 0); // send it without the NULL byte
 
     // now send the actual data
     Send(c_str);

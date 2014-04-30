@@ -176,7 +176,8 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
         NotifyExited();
         return false;
     }
-
+    // Print the content of the summaries (for debugging purposes)
+    wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
     m_debugger.SetAsync(true);
     
     // Keep the settings
@@ -185,7 +186,7 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
     // First, source the .lldbinit file
     wxString source_command;
     source_command << "command source '" << ::wxGetHomeDir() << "/.lldbinit" << "'";
-    DoExecutueShellCommand( source_command, true );
+    DoExecutueShellCommand( source_command );
     
     // Apply the types 
     lldb::SBCommandReturnObject ret;
@@ -193,9 +194,7 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
     for(size_t i=0; i<commands.GetCount(); ++i) {
         DoExecutueShellCommand(commands.Item(i));
     }
-    
-    // Print the content of the summaries (for debugging purposes)
-    wxPrintf("codelite-lldb: created target for %s\n", command.GetExecutable());
+    //DoExecutueShellCommand("type summary list");
     return true;
 }
 
@@ -945,7 +944,11 @@ void CodeLiteLLDBApp::DoExecutueShellCommand(const wxString& command, bool print
     lldb::SBCommandReturnObject ret;
     m_debugger.GetCommandInterpreter().HandleCommand(command.mb_str(wxConvUTF8).data(), ret);
     if ( printOutput && ret.GetOutput() ) {
-        wxPrintf("codelite-lldb: output of command '%s':\n%s\n", command, ret.GetOutput());
+        wxString cmdOutput = ret.GetOutput();
+        cmdOutput.Trim().Trim(false);
+        if ( !cmdOutput.IsEmpty() ) {
+            wxPrintf("codelite-lldb: output of command '%s':\n%s\n", command, cmdOutput);
+        }
     }
 }
 

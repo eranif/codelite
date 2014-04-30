@@ -39,6 +39,7 @@ void LLDBSettingDialog::Save()
     settings.SetTypes( m_stcTypes->GetText() );
     settings.Save();
     m_modified = false;
+    m_stcTypes->SetModified( false );
 }
 
 void LLDBSettingDialog::OnOKUI(wxUpdateUIEvent& event)

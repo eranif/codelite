@@ -69,6 +69,10 @@
     <File Name="LLDBProtocol/LLDBThread.cpp"/>
     <File Name="LLDBProtocol/LLDBVariable.cpp"/>
     <File Name="LLDBProtocol/LLDBVariable.h"/>
+    <File Name="LLDBProtocol/LLDBRemoteHandshakePacket.h"/>
+    <File Name="LLDBProtocol/LLDBRemoteHandshakePacket.cpp"/>
+    <File Name="LLDBProtocol/LLDBRemoteConnectReturnObject.h"/>
+    <File Name="LLDBProtocol/LLDBRemoteConnectReturnObject.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">

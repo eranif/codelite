@@ -23,6 +23,7 @@
 #include <lldb/API/SBTypeNameSpecifier.h>
 #include <lldb/API/SBTypeCategory.h>
 #include <wx/filename.h>
+#include "LLDBProtocol/LLDBRemoteHandshakePacket.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -647,7 +648,15 @@ void CodeLiteLLDBApp::AcceptNewConnection() throw(clSocketException)
                 break;
             }
         }
-
+        
+        // Remote connection, send the 'handshake' packet
+        if ( m_port != wxNOT_FOUND ) {
+            wxPrintf("codelite-lldb: sending handshake packet\n");
+            LLDBRemoteHandshakePacket handshake;
+            handshake.SetHost( ::wxGetHostName() );
+            m_replySocket->WriteMessage( handshake.ToJSON().format() );
+        }
+        
         // handle the connection to the thread
         m_networkThread = new LLDBNetworkServerThread(this, m_replySocket->GetSocket());
         m_networkThread->Start();

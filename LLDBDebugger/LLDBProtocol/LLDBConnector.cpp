@@ -12,6 +12,7 @@
 #include <wx/msgdlg.h>
 #include "LLDBSettings.h"
 #include "globals.h"
+#include "LLDBRemoteHandshakePacket.h"
 
 #ifndef __WXMSW__
 #   include <sys/wait.h>
@@ -89,29 +90,49 @@ bool LLDBConnector::ConnectToLocalDebugger(int timeout)
 #endif
 }
 
-bool LLDBConnector::ConnectToRemoteDebugger(const wxString &ip, int port, int timeout)
+bool LLDBConnector::ConnectToRemoteDebugger(const wxString& ip, int port, LLDBRemoteConnectReturnObject& ret, int timeout)
 {
     m_socket.reset( NULL );
     clSocketClient *client = new clSocketClient();
     m_socket.reset( client );
     CL_DEBUG("Connecting to codelite-lldb on %s:%d", ip, port);
     
-    RESET_ERRNO();
-    if ( !client->ConnectRemote( ip, port, true ) ) {
-        // select the socket
-        if (  !IS_CONNECT_IN_PROGRESS() ) {
-            return false;
-        }
-        try {
-            if ( client->SelectWrite(timeout) == clSocketBase::kTimeout ) {
+    try {
+        RESET_ERRNO();
+        if ( !client->ConnectRemote( ip, port, true ) ) {
+            // select the socket
+            if (  !IS_CONNECT_IN_PROGRESS() ) {
+                m_socket.reset( NULL );
                 return false;
             }
-        } catch (clSocketException &e) {
-            CL_DEBUG("SelectWrite error: %s", e.what());
+            
+            try {
+                if ( client->SelectWrite(timeout) == clSocketBase::kTimeout ) {
+                    m_socket.reset( NULL );
+                    return false;
+                }
+            } catch (clSocketException &e) {
+                CL_DEBUG("SelectWrite error: %s", e.what());
+            }
         }
+        
+        // Connected!
+        // Read the negotiation packet (part of the protocol only when doing remote connection)
+        wxString message;
+        if ( m_socket->ReadMessage( message, 2 ) != clSocketBase::kSuccess ) {
+            m_socket.reset( NULL );
+            return false;
+        }
+        
+        LLDBRemoteHandshakePacket handshake( message );
+        ret.SetRemoteHostName( handshake.GetHost() );
+        ret.SetPivotNeeded( handshake.GetHost() != ::wxGetHostName() );
+
+    } catch (clSocketException &e) {
+        CL_WARNING("LLDBConnector::ConnectToRemoteDebugger: %s", e.what());
+        m_socket.reset( NULL );
+        return false;
     }
-    
-    // Connected!
     
     // Start the lldb event thread
     // and start a listener thread which will read replies
@@ -623,7 +644,8 @@ bool LLDBConnector::Connect(int timeout)
     settings.Load();
     
     if ( settings.IsUsingRemoteProxy() ) {
-        return ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), timeout);
+        LLDBRemoteConnectReturnObject ret;
+        return ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), ret, timeout);
         
     } else {
         return ConnectToLocalDebugger(timeout);

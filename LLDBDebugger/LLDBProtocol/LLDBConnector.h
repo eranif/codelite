@@ -9,6 +9,7 @@
 #include "LLDBBreakpoint.h"
 #include "asyncprocess.h"
 #include "LLDBEvent.h"
+#include "LLDBRemoteConnectReturnObject.h"
 
 class LLDBConnector;
 class LLDBNetworkListenerThread;
@@ -32,7 +33,6 @@ public:
     struct TerminalInfo {
         int terminalProcessID;
         wxString tty;
-
         TerminalInfo() : terminalProcessID(wxNOT_FOUND) {}
     };
 
@@ -302,7 +302,7 @@ protected:
      * @param timeout number of seconds to wait until successfull connect
      * @return true on success, false otherwise
      */
-    bool ConnectToRemoteDebugger(const wxString &ip, int port, int timeout = 10);
+    bool ConnectToRemoteDebugger(const wxString &ip, int port, LLDBRemoteConnectReturnObject& ret, int timeout = 10);
 };
 
 #endif // LLDBCONNECTOR_H

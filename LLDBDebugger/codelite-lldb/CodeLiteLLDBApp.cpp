@@ -801,6 +801,8 @@ void CodeLiteLLDBApp::MainLoop()
         
     } catch (clSocketException &e) {
         wxPrintf("codelite-lldb: an error occured during MainLoop(). %s. strerror=%s\n", e.what().c_str(), strerror(errno));
+        // exit now
+        exit(0);
     }
 }
 

@@ -85,9 +85,22 @@ void LLDBTooltip::DoCleanup()
 
 void LLDBTooltip::OnCheckMousePosition(wxTimerEvent& event)
 {
+#ifdef __WXMSW__
+    // On Windows, wxPopupWindow does not return a correct position 
+    // in screen coordinates. So we use the inside tree-ctrl to 
+    // calc our position and size
+    wxPoint tipPoint = m_treeCtrl->GetPosition();
+    tipPoint = m_treeCtrl->ClientToScreen(tipPoint);
+    wxSize  tipSize  = GetSize();
+    // Construct a wxRect from the tip size/position
+    wxRect rect( tipPoint, tipSize );
+#else
+    // Linux and OSX it works
     wxRect rect( GetRect() );
+#endif
+
+    // and increase it by 15 pixels
     rect.Inflate(15, 15);
-    
     if ( !rect.Contains( ::wxGetMousePosition() ) ) {
         if ( m_panelStatus->HasCapture() ) {
             m_panelStatus->ReleaseMouse();

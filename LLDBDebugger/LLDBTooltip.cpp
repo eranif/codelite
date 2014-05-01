@@ -131,6 +131,11 @@ void LLDBTooltip::OnLLDBVariableExpanded(LLDBEvent& event)
         DoAddVariable( parentItem, event.GetVariables().at(i));
     }
     
+    // Expand the parent item
+    if ( m_treeCtrl->HasChildren(parentItem) ) {
+        m_treeCtrl->Expand( parentItem );
+    }
+
     // remove it
     m_itemsPendingExpansion.erase( iter );
 }

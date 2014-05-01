@@ -466,8 +466,8 @@ LLDBTooltipBase::LLDBTooltipBase(wxWindow* parent,long style)
     m_panel134->SetSizer(boxSizer136);
     
     m_treeCtrl = new wxTreeCtrl(m_panel134, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTR_DEFAULT_STYLE);
-    m_treeCtrl->SetBackgroundColour(wxColour(wxT("rgb(0,0,0)")));
-    m_treeCtrl->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
+    m_treeCtrl->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_treeCtrl->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     boxSizer136->Add(m_treeCtrl, 1, wxALL|wxEXPAND, 1);
     

@@ -4089,11 +4089,11 @@
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",
-													"colour":	"(0,0,0)"
+													"colour":	"Tooltip"
 												}, {
 													"type":	"colour",
 													"m_label":	"Fg Colour:",
-													"colour":	"(255,255,255)"
+													"colour":	"TooltipText"
 												}, {
 													"type":	"font",
 													"m_label":	"Font:",

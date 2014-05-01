@@ -73,8 +73,17 @@ wxString LLDBVariable::ToString(const wxString &alternateName) const
         v << GetValue();
     }
     
+    v.Trim().Trim(false);
+    if ( v == "unable to read data" ) {
+        v.Clear();
+    }
+    
     if ( !v.IsEmpty() ) {
         asString << " = " << v;
+    }
+    
+    if ( !m_type.IsEmpty() ) {
+        asString << " [" << GetType() << "]";
     }
     return asString;
 }

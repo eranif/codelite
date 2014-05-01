@@ -21,10 +21,10 @@
 
 #ifdef __WXMSW__
 #   define RESET_ERRNO() WSASetLastError(0)
-#   define IS_CONNECT_IN_PROGRESS() WSAGetLastError() == WSAEWOULDBLOCK
+#   define IS_CONNECT_IN_PROGRESS() (WSAGetLastError() == WSAEWOULDBLOCK)
 #else
 #   define RESET_ERRNO() errno = 0
-#   define IS_CONNECT_IN_PROGRESS() errno == EINPROGRESS
+#   define IS_CONNECT_IN_PROGRESS() (errno == EINPROGRESS)
 #endif
 
 wxBEGIN_EVENT_TABLE(LLDBConnector, wxEvtHandler)

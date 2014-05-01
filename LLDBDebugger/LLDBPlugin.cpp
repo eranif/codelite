@@ -262,11 +262,15 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             
             // Launch codelite-lldb now. 
             // Choose wether we need to debug a local or remote target
+            
+            
+            // Honour the project settings
             if ( bldConf->GetIsDbgRemoteTarget() ) {
                 long nPort(wxNOT_FOUND);
                 bldConf->GetDbgHostPort().ToCLong( &nPort );
                 settings.SetProxyIp( bldConf->GetDbgHostName() );
                 settings.SetProxyPort( nPort );
+                settings.EnableFlag( kLLDBOptionUseRemoteProxy, true );
             }
 
             if ( !settings.IsUsingRemoteProxy() ) {
@@ -353,7 +357,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                     // Failed to connect, notify and perform cleanup
                     DoCleanup();
                     wxString message;
-                    message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
+                    message << _("Could not connect to codelite-lldb at '") 
+                            << (settings.IsUsingRemoteProxy() ? settings.GetTcpConnectString() : m_connector.GetConnectString()) 
+                            << "'";
                     ::wxMessageBox(message, "CodeLite", wxICON_ERROR|wxOK|wxCENTER);
                     return;
                 }

@@ -89,7 +89,11 @@ public:
     }
     LLDBSettings& Load();
     LLDBSettings& Save();
-
+    
+    wxString GetTcpConnectString() const {
+        return (wxString() << m_proxyIp << ":" << m_proxyPort);
+    }
+    
     // Helpers
     static wxString LoadPerspective();
     static void SavePerspective(const wxString &perspective);

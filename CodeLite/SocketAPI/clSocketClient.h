@@ -7,7 +7,6 @@
 class WXDLLIMPEXP_CL clSocketClient : public clSocketBase
 {
     wxString m_path;
-
 public:
     clSocketClient();
     virtual ~clSocketClient();
@@ -18,8 +17,10 @@ public:
     bool ConnectLocal(const wxString &socketPath);
     /**
      * @brief connect to a remote server using ip/port
+     * when using non-blocking mode, wouldBlock will be set to true
+     * incase the connect fails
      */
-    bool ConnectRemote(const wxString &address, int port, bool nonBlockingMode = false);
+    bool ConnectRemote(const wxString &address, int port, bool &wouldBlock, bool nonBlockingMode = false);
 };
 
 #endif // CLSOCKETCLIENT_H

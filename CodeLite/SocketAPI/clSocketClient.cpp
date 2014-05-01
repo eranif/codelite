@@ -10,6 +10,12 @@
 #include <unistd.h>
 #endif
 
+#ifdef __WXMSW__
+#   define RESET_ERRNO() WSASetLastError(0)
+#else
+#   define RESET_ERRNO() errno = 0
+#endif
+
 clSocketClient::clSocketClient()
 {
 }
@@ -35,8 +41,9 @@ bool clSocketClient::ConnectLocal(const wxString &socketPath)
 #endif
 }
 
-bool clSocketClient::ConnectRemote(const wxString& address, int port, bool nonBlockingMode)
+bool clSocketClient::ConnectRemote(const wxString& address, int port, bool& wouldBlock, bool nonBlockingMode)
 {
+    wouldBlock = false;
     DestroySocket();
     m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
     if ( nonBlockingMode ) {
@@ -60,13 +67,17 @@ bool clSocketClient::ConnectRemote(const wxString& address, int port, bool nonBl
     serv_addr.sin_addr.s_addr = inet_addr( ip_addr );
 #endif
     
-    errno = 0;
+    RESET_ERRNO();
     int rc = ::connect(m_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-    int tmpErrnor = errno;
+#ifdef __WXMSW__    
+    wouldBlock = (WSAGetLastError() == WSAEWOULDBLOCK);
+#else
+    wouldBlock = (errno == EINPROGRESS);
+#endif
+
     // restore socket to blocking mode
     if ( nonBlockingMode ) {
         MakeSocketBlocking(true);
     }
-    errno = tmpErrnor;
     return rc == 0;
 }

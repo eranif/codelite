@@ -263,11 +263,13 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             // Launch codelite-lldb now. 
             // Choose wether we need to debug a local or remote target
             if ( bldConf->GetIsDbgRemoteTarget() ) {
-                // FIXME: connect to a remote debugger server
-                ::wxMessageBox(_("Remote debugging is not supported by LLDB"), "CodeLite", wxICON_WARNING|wxCENTER|wxOK);
-                return;
+                long nPort(wxNOT_FOUND);
+                bldConf->GetDbgHostPort().ToCLong( &nPort );
+                settings.SetProxyIp( bldConf->GetDbgHostName() );
+                settings.SetProxyPort( nPort );
+            }
 
-            } else if ( !settings.IsUsingRemoteProxy() ) {
+            if ( !settings.IsUsingRemoteProxy() ) {
                 // Not using a remote proxy, launch the debug server
                 if ( !m_connector.LaunchLocalDebugServer() ) {
                     return;
@@ -324,7 +326,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 //////////////////////////////////////////////////////////////////////
                 
                 LLDBConnectReturnObject retObj;
-                if ( m_connector.Connect(retObj, 5) ) {
+                if ( m_connector.Connect(retObj, settings, 5) ) {
                     
                     // Get list of breakpoints and add them ( we will apply them later on )
                     BreakpointInfo::Vec_t gdbBps;
@@ -837,7 +839,9 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
     }
     
     LLDBConnectReturnObject retObj;
-    if ( m_connector.Connect(retObj, 5) ) {
+    LLDBSettings settings;
+    settings.Load();
+    if ( m_connector.Connect(retObj, settings, 5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -889,7 +893,10 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
     }
     
     LLDBConnectReturnObject retObj;
-    if ( m_connector.Connect(retObj, 5) ) {
+    LLDBSettings settings;
+    settings.Load();
+    
+    if ( m_connector.Connect(retObj, settings, 5) ) {
         
         // Apply the environment
         EnvSetter env;
@@ -974,7 +981,10 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
         return;
     
     LLDBConnectReturnObject retObj;
-    if ( m_connector.Connect(retObj, 5) ) {
+    LLDBSettings settings;
+    settings.Load();
+    
+    if ( m_connector.Connect(retObj, settings, 5) ) {
         
         // Apply the environment
         EnvSetter env;

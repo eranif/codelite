@@ -624,11 +624,8 @@ wxString LLDBConnector::GetConnectString() const
     return connectString;
 }
 
-bool LLDBConnector::Connect(LLDBConnectReturnObject &ret, int timeout)
+bool LLDBConnector::Connect(LLDBConnectReturnObject &ret, const LLDBSettings& settings, int timeout)
 {
-    LLDBSettings settings;
-    settings.Load();
-    
     ret.Clear();
     if ( settings.IsUsingRemoteProxy() ) {
         return ConnectToRemoteDebugger(settings.GetProxyIp(), settings.GetProxyPort(), ret, timeout);

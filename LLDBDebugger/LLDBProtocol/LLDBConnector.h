@@ -117,7 +117,7 @@ public:
     /**
      * @brief connect to the debugger (automatically decides if it is a local debugger or remote)
      */
-    bool Connect(LLDBConnectReturnObject& ret, int timeout);
+    bool Connect(LLDBConnectReturnObject& ret, const LLDBSettings& settings, int timeout);
 
     /**
      * @brief start codelite-lldb if not running

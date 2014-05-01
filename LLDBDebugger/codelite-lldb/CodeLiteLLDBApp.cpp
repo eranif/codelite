@@ -132,9 +132,11 @@ bool CodeLiteLLDBApp::OnInit()
 
     } catch (clSocketException &e) {
         if ( m_port == wxNOT_FOUND ) {
+            wxPrintf("codelite-lldb: caught exception: %s\n", e.what());
             wxPrintf("codelite-lldb: failed to create server on %s. %s\n", m_debuggerSocketPath, strerror(errno));
             
         } else {
+            wxPrintf("codelite-lldb: caught exception: %s\n", e.what());
             wxPrintf("codelite-lldb: failed to create server on %s. %s\n", (wxString() << m_ip << ":" << m_port), strerror(errno));
             
         }

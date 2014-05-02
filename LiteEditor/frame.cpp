@@ -2198,16 +2198,32 @@ void clMainFrame::OnProjectNewWorkspace(wxCommandEvent &event)
 void clMainFrame::OnProjectNewProject(wxCommandEvent &event)
 {
     // Let the plugin process this request first
-    wxCommandEvent newProjectEvent(wxEVT_CMD_CREATE_NEW_PROJECT, GetId());
+    clNewProjectEvent newProjectEvent(wxEVT_NEW_PROJECT_WIZARD_SHOWING);
     newProjectEvent.SetEventObject(this);
-    if(EventNotifier::Get()->ProcessEvent(newProjectEvent)) {
+    if( EventNotifier::Get()->ProcessEvent( newProjectEvent ) ) {
         return;
     }
 
+    
     wxUnusedVar(event);
-    NewProjectWizard wiz(this);
+    NewProjectWizard wiz(this, newProjectEvent.GetTemplates());
     if ( wiz.RunWizard( wiz.GetFirstPage() ) ) {
+        
         ProjectData data = wiz.GetProjectData();
+        
+        // Try the plugins first
+        clNewProjectEvent finishEvent(wxEVT_NEW_PROJECT_WIZARD_FINISHED);
+        finishEvent.SetEventObject(this);
+        finishEvent.SetToolchain( data.m_cmpType );
+        finishEvent.SetDebugger( data.m_debuggerType );
+        finishEvent.SetProjectName( data.m_name );
+        finishEvent.SetProjectFolder( data.m_path );
+        finishEvent.SetTemplateName( data.m_sourceTemplate );
+        if( EventNotifier::Get()->ProcessEvent( finishEvent ) ) {
+            return;
+        }
+        
+        // Carry on with the default behaviour
         ManagerST::Get()->CreateProject(data);
     }
 }

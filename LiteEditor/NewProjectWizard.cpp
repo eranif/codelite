@@ -68,11 +68,19 @@ public:
 class NewProjectClientData : public wxClientData
 {
     ProjectPtr m_project;
+    wxString m_templateName;
 
 public:
-    NewProjectClientData(ProjectPtr project) {
+    NewProjectClientData(ProjectPtr project, const wxString & templateName = wxEmptyString)
+        : m_templateName(templateName)
+    {
         m_project = project;
+        if (m_project && m_templateName.IsEmpty() ) {
+            // use the project name
+            m_templateName = m_project->GetName();
+        }
     }
+    
     virtual ~NewProjectClientData() {
         m_project = NULL;
     }
@@ -82,14 +90,21 @@ public:
     const ProjectPtr& getProject() const {
         return m_project;
     }
+    void SetTemplate(const wxString& templateName) {
+        this->m_templateName = templateName;
+    }
+    const wxString& GetTemplate() const {
+        return m_templateName;
+    }
 };
 
 // ------------------------------------------------------------
 // ------------------------------------------------------------
 
-NewProjectWizard::NewProjectWizard(wxWindow* parent)
+NewProjectWizard::NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Template::Vec_t& additionalTemplates)
     : NewProjectWizardBase(parent)
 {
+    m_additionalTemplates = additionalTemplates;
     NewProjectDlgData info;
     EditorConfigST::Get()->ReadObject(wxT("NewProjectDlgData"), &info);
 
@@ -101,12 +116,53 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent)
 
     // Populate the dataview model
     m_dataviewTemplatesModel->Clear();
-    std::list<ProjectPtr>::iterator iter = m_list.begin();
-    wxVector<wxVariant> cols;
     std::map<wxString, wxDataViewItem> categoryMap;
+    
+    // list of compilers
+    wxArrayString compilerChoices;
+    
+    // list of debuggers
+    wxArrayString debuggerChoices;
+    
+    // Place the plugins on top
+    for ( size_t i=0; i<m_additionalTemplates.size(); ++i ) {
+        
+        // Add the category if not exists
+        const clNewProjectEvent::Template& newTemplate = m_additionalTemplates.at(i);
+        if ( !newTemplate.m_toolchain.IsEmpty() ) {
+            compilerChoices.Add( newTemplate.m_toolchain );
+        }
+        
+        if ( !newTemplate.m_debugger.IsEmpty() ) {
+            debuggerChoices.Add( newTemplate.m_debugger );
+        }
+        
+        wxString category = newTemplate.m_category;
+        if ( categoryMap.count( category ) == 0 ) {
+            wxVector<wxVariant> cols;
+            wxBitmap bmp = wxXmlResource::Get()->LoadBitmap( newTemplate.m_categoryPng );
+            if ( !bmp.IsOk() ) {
+                bmp = images.Bitmap("gear16");
+            }
+            cols.push_back( DVTemplatesModel::CreateIconTextVariant(category, bmp) );
+            categoryMap[category] = m_dataviewTemplatesModel->AppendItem(wxDataViewItem(0), cols);
+        }
+        
+        {
+            wxVector<wxVariant> cols;
+            wxBitmap bmp = wxXmlResource::Get()->LoadBitmap( newTemplate.m_templatePng );
+            if ( !bmp.IsOk() ) {
+                bmp = images.Bitmap("gear16");
+            }
+            cols.push_back( DVTemplatesModel::CreateIconTextVariant(newTemplate.m_template, bmp) );
+            m_dataviewTemplatesModel->AppendItem(categoryMap[category], cols, new NewProjectClientData(NULL, newTemplate.m_template));
+        }
+    }
 
     wxDataViewItem selection;
+    std::list<ProjectPtr>::iterator iter = m_list.begin();
     for (; iter != m_list.end(); ++iter) {
+        wxVector<wxVariant> cols;
         wxString internalType = (*iter)->GetProjectInternalType();
         if (internalType.IsEmpty()) internalType = _("Others");
 
@@ -131,32 +187,31 @@ NewProjectWizard::NewProjectWizard(wxWindow* parent)
         v << ict;
 
         cols.push_back( v );
-        wxDataViewItem item = m_dataviewTemplatesModel->AppendItem(categoryMap[internalType], cols, new NewProjectClientData((*iter)));
+        wxDataViewItem item = m_dataviewTemplatesModel->AppendItem(categoryMap[internalType], cols, new NewProjectClientData( *iter ) );
         if ( (*iter)->GetName() == info.GetLastSelection() ) {
             selection = item;
         }
     }
-
-    // Append list of compilers
-    wxArrayString choices;
-
+    
     // Aet list of compilers from configuration file
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
     while (cmp) {
-        choices.Add(cmp->GetName());
+        compilerChoices.Add(cmp->GetName());
         cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
     }
-
-    m_choiceCompiler->Append( choices );
-    if (choices.IsEmpty() == false) {
+    
+    m_choiceCompiler->Append( compilerChoices );
+    if (compilerChoices.IsEmpty() == false) {
         m_choiceCompiler->SetSelection(0);
     }
 
     m_textCtrlProjectPath->SetValue( WorkspaceST::Get()->GetWorkspaceFileName().GetPath());
 
     // Get list of debuggers
-    m_choiceDebugger->Append( DebuggerMgr::Get().GetAvailableDebuggers() );
+    wxArrayString knownDebuggers = DebuggerMgr::Get().GetAvailableDebuggers();
+    debuggerChoices.insert( debuggerChoices.end(), knownDebuggers.begin(), knownDebuggers.end());
+    m_choiceDebugger->Append( debuggerChoices );
     if ( !m_choiceDebugger->IsEmpty() ) {
         m_choiceDebugger->SetSelection( 0 );
     }
@@ -189,8 +244,10 @@ NewProjectWizard::~NewProjectWizard()
     wxDataViewItem sel = m_dataviewTemplates->GetSelection();
     if ( sel.IsOk() ) {
         NewProjectClientData *cd =  dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel));
-        if ( cd ) {
+        if ( cd && cd->getProject() ) {
             info.SetLastSelection( cd->getProject()->GetName() ) ;
+        } else if ( cd ) {
+            info.SetLastSelection( cd->GetTemplate() );
         }
     }
 
@@ -272,11 +329,12 @@ void NewProjectWizard::OnItemSelected(wxDataViewEvent& event)
     NewProjectClientData* cd = dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(event.GetItem()));
     if ( cd ) {
         m_projectData.m_srcProject = cd->getProject();
+        m_projectData.m_sourceTemplate = cd->GetTemplate();
         UpdateProjectPage();
     }
 }
 
-void NewProjectWizard::OnProjectNameChanged(wxCommandEvent& event)
+    void NewProjectWizard::OnProjectNameChanged(wxCommandEvent& event)
 {
     wxUnusedVar( event );
     UpdateFullFileName();
@@ -291,10 +349,10 @@ void NewProjectWizard::OnProjectPathUpdated(wxCommandEvent& event)
 void NewProjectWizard::OnFinish(wxWizardEvent& event)
 {
     wxFileName fn( m_stxtFullFileName->GetLabel() );
-    
+
     // Ensure that the target folder exists
     fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    
+
     // make sure that there is no conflict in files between the template project and the selected path
     if (m_projectData.m_srcProject) {
         ProjectPtr p = m_projectData.m_srcProject;
@@ -376,7 +434,7 @@ bool NewProjectWizard::CheckProjectTemplate()
     if ( !sel.IsOk() || !dynamic_cast<NewProjectClientData*>(m_dataviewTemplatesModel->GetClientObject(sel) ) ) {
         ::wxMessageBox(_("Please select a template from the list"), "CodeLite", wxOK|wxCENTER|wxICON_WARNING, this);
         return false;
-        
+
     }
     return true;
 }

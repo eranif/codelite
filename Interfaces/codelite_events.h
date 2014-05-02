@@ -283,9 +283,6 @@
 // User selected an option to create a new workspace
 #define wxEVT_CMD_CREATE_NEW_WORKSPACE 3506
 
-// User selected an option to create a new project
-#define wxEVT_CMD_CREATE_NEW_PROJECT 3507
-    
 // a _plugin_ sends this event to codelite to request adding 
 // a workspace to the recetly used list
 // The workspace path is sent in the evt.SetString()/GetString() 
@@ -531,6 +528,18 @@
 // Workspace reload is done
 // event type: clCommandEvent
 #define wxEVT_WORKSPACE_RELOAD_ENDED   3582
+
+// event type: clNewProjectEvent
+// Use this event to add new templates / categories to the wizard
+// If you don't call event.Skip() codelite will assume that the plugin
+// is replacing the dialog with its own and will do nothing
+#define wxEVT_NEW_PROJECT_WIZARD_SHOWING 3590
+
+// event type: clNewProjectEvent
+// User clicked on the 'Finish' button of the new project wizard dialog
+// call event.Skip( false ) if the plugin wants to handle the new project, otherwise
+// call event.Skip( true ) for codelite to run the default behvior
+#define wxEVT_NEW_PROJECT_WIZARD_FINISHED 3591
 
 #endif // CODELITE_EVENTS_H
 

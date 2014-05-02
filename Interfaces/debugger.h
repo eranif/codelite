@@ -304,17 +304,26 @@ protected:
         arch.Read(wxT("lineno"), lineno);
         arch.Read(wxT("function_name"), function_name);
         arch.Read(wxT("memory_address"), memory_address);
-        arch.Read(wxT("bp_type"), (int&)bp_type);
-        arch.Read(wxT("watchpoint_type"), (int&)watchpoint_type);
+        
+        int tmpint;
+        arch.Read(wxT("bp_type"), tmpint);
+        bp_type = (BreakpointType)tmpint;
+        
+        arch.Read(wxT("watchpoint_type"), tmpint);
+        watchpoint_type = (WatchpointType)tmpint;
         arch.Read(wxT("watchpt_data"), watchpt_data);
         arch.ReadCData(wxT("commandlist"), commandlist);
         commandlist.Trim().Trim(false); // ReadCData tends to add white-space to the commands e.g. a terminal \n
         arch.Read(wxT("regex"), regex);
         arch.Read(wxT("is_temp"), is_temp);
         arch.Read(wxT("is_enabled"), is_enabled);
-        arch.Read(wxT("ignore_number"), (int&)ignore_number);
+        
+        arch.Read(wxT("ignore_number"), tmpint);
+        ignore_number = (unsigned int)tmpint;
         arch.Read(wxT("conditions"), conditions);
-        arch.Read(wxT("origin"),     (int&)origin);
+        
+        arch.Read(wxT("origin"), tmpint);
+        origin = (BreakpointOrigin)tmpint;
     }
 };
 typedef std::vector<BreakpointInfo> BreakpointInfoVec_t;

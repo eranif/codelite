@@ -5,15 +5,17 @@
 #include <list>
 #include <map>
 #include "project.h"
+#include "cl_command_event.h"
 
 class NewProjectWizard : public NewProjectWizardBase
 {
     std::list<ProjectPtr>   m_list;
     std::map<wxString, int> m_mapImages;
     ProjectData             m_projectData;
-
+    clNewProjectEvent::Template::Vec_t m_additionalTemplates;
+    
 public:
-    NewProjectWizard(wxWindow* parent);
+    NewProjectWizard(wxWindow* parent, const clNewProjectEvent::Template::Vec_t& additionalTemplates);
     virtual ~NewProjectWizard();
     
     const ProjectData& GetProjectData() const {

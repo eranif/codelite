@@ -188,3 +188,34 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_startupCommands   = other.m_startupCommands;     // wxEVT_DBG_UI_QUICK_DEBUG
     return *this;
 }
+
+//-------------------------------------------------------------------------
+// clNewProjectEvent
+//-------------------------------------------------------------------------
+
+clNewProjectEvent::clNewProjectEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clNewProjectEvent::clNewProjectEvent(const clNewProjectEvent& event)
+{
+    *this = event;
+}
+
+clNewProjectEvent::~clNewProjectEvent()
+{
+}
+
+clNewProjectEvent& clNewProjectEvent::operator=(const clNewProjectEvent& other)
+{
+    clCommandEvent::operator =(other);
+    m_templates = other.m_templates;
+    m_toolchain = other.m_toolchain;
+    m_debugger = other.m_debugger;
+    m_projectName = other.m_projectName;
+    m_projectFolder = other.m_projectFolder;
+    m_templateName = other.m_templateName;
+    return *this;
+}
+

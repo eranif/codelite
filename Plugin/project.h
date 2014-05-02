@@ -652,11 +652,12 @@ private:
 class WXDLLIMPEXP_SDK ProjectData
 {
 public:
-    wxString m_name;         //< project name
-    wxString m_path;         //< project directoy
-    ProjectPtr m_srcProject; //< source project 
-    wxString m_cmpType;      //< Project compiler type
-    wxString m_debuggerType; //< Selected debugger
+    wxString m_name;            //< project name
+    wxString m_path;            //< project directoy
+    ProjectPtr m_srcProject;    //< source project 
+    wxString m_cmpType;         //< Project compiler type
+    wxString m_debuggerType;    //< Selected debugger
+    wxString m_sourceTemplate;  //< The template selected by the user in the wizard
 };
 
 //-----------------------------------------------------------------

@@ -6,6 +6,7 @@
 #include "codelite_exports.h"
 #include "entry.h"
 #include <wx/arrstr.h>
+#include <vector>
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -324,5 +325,83 @@ public:
 typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);
 #define clDebugEventHandler(func) \
     wxEVENT_HANDLER_CAST(clDebugEventFunction, func)
+
+// ------------------------------------------------------------------
+// clNewProjectEvent
+// ------------------------------------------------------------------
+class WXDLLIMPEXP_CL clNewProjectEvent : public clCommandEvent
+{
+public:
+    struct Template {
+        wxString m_category;
+        wxString m_categoryPng;
+        wxString m_template;
+        wxString m_templatePng;
+        wxString m_toolchain;
+        wxString m_debugger;
+        typedef std::vector<clNewProjectEvent::Template> Vec_t;
+    };
+
+protected:
+    clNewProjectEvent::Template::Vec_t m_templates;
+    wxString m_toolchain;
+    wxString m_debugger;
+    wxString m_projectName;
+    wxString m_projectFolder;
+    wxString m_templateName;
+public:
+    clNewProjectEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clNewProjectEvent(const clNewProjectEvent& event);
+    clNewProjectEvent& operator=(const clNewProjectEvent& src);
+    virtual ~clNewProjectEvent();
+    virtual wxEvent *Clone() const {
+        return new clNewProjectEvent(*this);
+    };
+
+    void SetTemplates(const clNewProjectEvent::Template::Vec_t& templates) {
+        this->m_templates = templates;
+    }
+    const clNewProjectEvent::Template::Vec_t& GetTemplates() const {
+        return m_templates;
+    }
+    clNewProjectEvent::Template::Vec_t& GetTemplates() {
+        return m_templates;
+    }
+
+    void SetDebugger(const wxString& debugger) {
+        this->m_debugger = debugger;
+    }
+    void SetProjectFolder(const wxString& projectFolder) {
+        this->m_projectFolder = projectFolder;
+    }
+    void SetProjectName(const wxString& projectName) {
+        this->m_projectName = projectName;
+    }
+    void SetToolchain(const wxString& toolchain) {
+        this->m_toolchain = toolchain;
+    }
+    const wxString& GetDebugger() const {
+        return m_debugger;
+    }
+    const wxString& GetProjectFolder() const {
+        return m_projectFolder;
+    }
+    const wxString& GetProjectName() const {
+        return m_projectName;
+    }
+    const wxString& GetToolchain() const {
+        return m_toolchain;
+    }
+    void SetTemplateName(const wxString& templateName) {
+        this->m_templateName = templateName;
+    }
+    const wxString& GetTemplateName() const {
+        return m_templateName;
+    }
+};
+
+typedef void (wxEvtHandler::*clNewProjectEventFunction)(clNewProjectEvent&);
+#define clNewProjectEventHandler(func) \
+    wxEVENT_HANDLER_CAST(clNewProjectEventFunction, func)
 
 #endif // CLCOMMANDEVENT_H

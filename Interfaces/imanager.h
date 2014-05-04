@@ -473,6 +473,22 @@ public:
      * this function also refreshes the editors markers
      */
     virtual void SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints) = 0;
+    
+    // ----------------------------------------------
+    // Perspective management
+    // ----------------------------------------------
+    
+    /**
+     * @brief load perspective by name. If no such perspective exists
+     * this function does nothing
+     */
+    virtual void LoadPerspective(const wxString &perspectiveName)  = 0;
+    
+    /**
+     * @brief Save the current perspective by name
+     * this function also makes sure that the 'Perspective' menu is updated
+     */
+    virtual void SavePerspective(const wxString &perspectiveName) = 0;
 };
 
 #endif //IMANAGER_H

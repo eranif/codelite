@@ -51,9 +51,7 @@ private:
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
     void LoadLLDBPerspective();
-    void SaveLLDBPerspective();
     void ShowLLDBPane(const wxString &paneName, bool show = true);
-    void RestoreDefaultPerspective();
     void InitializeUI();
     void DestroyUI();
     void DoCleanup();

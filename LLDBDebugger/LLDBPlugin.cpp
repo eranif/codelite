@@ -382,10 +382,11 @@ void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
     m_connector.Cleanup();
 
     // Save current perspective before destroying the session
-    SaveLLDBPerspective();
+    m_mgr->SavePerspective("LLDB-debugger");
 
     // Restore the old perspective
-    RestoreDefaultPerspective();
+    m_mgr->LoadPerspective("Default");
+    
     DestroyUI();
     
     // Reset various state variables
@@ -562,12 +563,11 @@ void LLDBPlugin::OnIsDebugger(clDebugEvent& event)
 
 void LLDBPlugin::LoadLLDBPerspective()
 {
-    // store the previous perspective before we continue
-    m_defaultPerspective = m_mgr->GetDockingManager()->SavePerspective();
-    wxString perspective = LLDBSettings::LoadPerspective();
-    if ( !perspective.IsEmpty() ) {
-        m_mgr->GetDockingManager()->LoadPerspective( perspective, false );
-    }
+    // Save the current persepctive we start debguging
+    m_mgr->SavePerspective("Default");
+    
+    // Load the LLDB perspective
+    m_mgr->LoadPerspective("LLDB-Debugger");
 
     // Make sure that all the panes are visible
     ShowLLDBPane(LLDB_CALLSTACK_PANE_NAME);
@@ -575,11 +575,6 @@ void LLDBPlugin::LoadLLDBPerspective()
     ShowLLDBPane(LLDB_LOCALS_PANE_NAME);
     ShowLLDBPane(LLDB_THREADS_PANE_NAME);
     m_mgr->GetDockingManager()->Update();
-}
-
-void LLDBPlugin::SaveLLDBPerspective()
-{
-    LLDBSettings::SavePerspective( m_mgr->GetDockingManager()->SavePerspective() );
 }
 
 void LLDBPlugin::ShowLLDBPane(const wxString& paneName, bool show)
@@ -595,14 +590,6 @@ void LLDBPlugin::ShowLLDBPane(const wxString& paneName, bool show)
                 pi.Hide();
             }
         }
-    }
-}
-
-void LLDBPlugin::RestoreDefaultPerspective()
-{
-    if ( !m_defaultPerspective.IsEmpty() ) {
-        m_mgr->GetDockingManager()->LoadPerspective( m_defaultPerspective, true );
-        m_defaultPerspective.Clear();
     }
 }
 
@@ -654,7 +641,7 @@ void LLDBPlugin::InitializeUI()
 {
     if ( !m_callstack ) {
         m_callstack = new LLDBCallStackPane(EventNotifier::Get()->TopFrame(), &m_connector);
-        m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo().Bottom().Position(0).CloseButton().Caption("Callstack").Name(LLDB_CALLSTACK_PANE_NAME));
+        m_mgr->GetDockingManager()->AddPane(m_callstack, wxAuiPaneInfo().MinSize(200, 200).Bottom().Position(0).CloseButton().Caption("Callstack").Name(LLDB_CALLSTACK_PANE_NAME));
     }
     
     if ( !m_breakpointsView ) {

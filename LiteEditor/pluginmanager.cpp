@@ -819,3 +819,13 @@ void PluginManager::SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints)
         ManagerST::Get()->GetBreakpointsMgr()->AddBreakpoint( breakpoints.at(i) );
     }
 }
+
+void PluginManager::LoadPerspective(const wxString& perspectiveName)
+{
+    ManagerST::Get()->GetPerspectiveManager().LoadPerspective(perspectiveName);
+}
+
+void PluginManager::SavePerspective(const wxString& perspectiveName)
+{
+    ManagerST::Get()->GetPerspectiveManager().SavePerspective(perspectiveName, true);
+}

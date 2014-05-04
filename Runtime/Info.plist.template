@@ -38,5 +38,7 @@
         <false/>
       </dict>
     </array>
+    <key>NSHighResolutionCapable</key>
+    <true/>
   </dict>
 </plist>

@@ -376,8 +376,8 @@ void LEditor::SetProperties()
     // Mark current line
     SetCaretLineVisible(options->GetHighlightCaretLine());
     SetCaretLineBackground(options->GetCaretLineColour());
-
-    //SetCaretLineBackAlpha(options->GetCaretLineAlpha());
+    SetCaretLineBackAlpha( 30 );
+    
     //MarkerSetAlpha(smt_bookmark, 30);
 
     SetFoldFlags(options->GetUnderlineFoldLine() ? 16 : 0);
@@ -504,6 +504,7 @@ void LEditor::SetProperties()
 
     if ( options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line) ) {
         MarkerDefine(smt_indicator, wxSTC_MARK_BACKGROUND, wxNullColour, options->GetDebuggerMarkerLine());
+        MarkerSetAlpha(smt_indicator, 50);
 
     } else {
 
@@ -528,18 +529,18 @@ void LEditor::SetProperties()
 #if defined(__WXMAC__)
     // turning off these two greatly improves performance
     // on Mac
-    SetTwoPhaseDraw(false);
+    SetTwoPhaseDraw(true);
     SetBufferedDraw(false);
 
-    // Using BufferedDraw as 'false'
-    // improves performance *alot*, however
-    // the downside is that the word hightlight does
-    // not work...
-    // this is why we enable / disable it according to the "highlight word" toggle state
-    long highlightWord(1);
-    EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
-    SetBufferedDraw(highlightWord == 1 ? true : false);
-    //wxLogMessage("Buffered draw is set to %d", (int)highlightWord);
+//    // Using BufferedDraw as 'false'
+//    // improves performance *alot*, however
+//    // the downside is that the word hightlight does
+//    // not work...
+//    // this is why we enable / disable it according to the "highlight word" toggle state
+//    long highlightWord(1);
+//    EditorConfigST::Get()->GetLongValue(wxT("highlight_word"), highlightWord);
+//    SetBufferedDraw(highlightWord == 1 ? true : false);
+//    //wxLogMessage("Buffered draw is set to %d", (int)highlightWord);
 
 #elif defined(__WXGTK__)
     SetTwoPhaseDraw(true);
@@ -558,7 +559,7 @@ void LEditor::SetProperties()
     SetIndent(options->GetIndentWidth());
     SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);
 
-    SetLayoutCache(wxSTC_CACHE_DOCUMENT);
+    SetLayoutCache(wxSTC_CACHE_PAGE);
 
     size_t frame_flags = clMainFrame::Get()->GetFrameGeneralInfo().GetFlags();
     SetViewEOL(frame_flags & CL_SHOW_EOL ? true : false);

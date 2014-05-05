@@ -813,11 +813,15 @@ void CCBox::DoShowTagTip()
     } // gotAComment = true
 
     // Update all "doxy" comments and surround them with <green> tags
-    static wxRegEx reDoxyParam ("([@\\\\]{1}param)[ \\t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT|wxRE_ICASE);
-    static wxRegEx reDoxyBrief ("([@\\\\]{1}brief)[ \\t]*",                    wxRE_DEFAULT|wxRE_ICASE);
-    static wxRegEx reDoxyThrow ("([@\\\\]{1}throw)[ \\t]*",                    wxRE_DEFAULT|wxRE_ICASE);
-    static wxRegEx reDoxyReturn("([@\\\\]{1}return)[ \\t]*",                   wxRE_DEFAULT|wxRE_ICASE);
-        
+    static wxRegEx reDoxyParam ("([@\\\\]{1}param)[ \\t]+([_a-z][a-z0-9_]*)?",  wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyBrief ("([@\\\\]{1}(brief|details))[ \\t]*",           wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyThrow ("([@\\\\]{1}(throw|throws))[ \\t]*",            wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyReturn("([@\\\\]{1}(return|retval|returns))[ \\t]*",   wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyToDo  ("([@\\\\]{1}todo)[ \\t]*",                      wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDoxyRemark("([@\\\\]{1}(remarks|remark))[ \\t]*",          wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reDate      ("([@\\\\]{1}date)[ \\t]*",                      wxRE_DEFAULT|wxRE_ICASE);
+    static wxRegEx reFN        ("([@\\\\]{1}fn)[ \\t]*",                           wxRE_DEFAULT|wxRE_ICASE);
+    
     if ( reDoxyParam.IsValid() && reDoxyParam.Matches(prefix) ) {
         reDoxyParam.ReplaceAll(&prefix, "\n<b>Parameter</b>\n<i>\\2</i>");
     }
@@ -832,6 +836,29 @@ void CCBox::DoShowTagTip()
     
     if ( reDoxyReturn.IsValid() && reDoxyReturn.Matches(prefix) ) {
         reDoxyReturn.ReplaceAll(&prefix, "\n<b>Returns</b>\n");
+    }
+    
+    if ( reDoxyToDo.IsValid() && reDoxyToDo.Matches(prefix) ) {
+        reDoxyToDo.ReplaceAll(&prefix, "\n<b>TODO</b>\n");
+    }
+    
+    if ( reDoxyRemark.IsValid() && reDoxyRemark.Matches(prefix) ) {
+        reDoxyRemark.ReplaceAll(&prefix, "\n  ");
+    }
+    
+    if ( reDate.IsValid() && reDate.Matches(prefix) ) {
+        reDate.ReplaceAll(&prefix, "<b>Date</b> ");
+    }
+    
+    if ( reFN.IsValid() && reFN.Matches(prefix) ) {
+        size_t fnStart, fnLen, fnEnd;
+        if ( reFN.GetMatch(&fnStart, &fnLen) ) {
+            fnEnd = prefix.find('\n', fnStart);
+            if ( fnEnd != wxString::npos ) {
+                // remove the string from fnStart -> fnEnd (including ther terminating \n)
+                prefix.Remove(fnStart, (fnEnd - fnStart) + 1);
+            }
+        }
     }
     
     if( m_tipWindow ) {

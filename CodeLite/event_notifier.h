@@ -16,7 +16,10 @@ private:
 public:
     static EventNotifier* Get();
     static void Release();
-
+    
+    virtual void AddPendingEvent(const wxEvent& event);
+    virtual bool ProcessEvent(wxEvent &event);
+    
     void DisableEvents(bool b) {
         _eventsDiabled = b;
     }

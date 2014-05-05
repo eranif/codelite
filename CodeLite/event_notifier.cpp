@@ -66,6 +66,8 @@ wxFrame* EventNotifier::TopFrame()
 
 void EventNotifier::PostFileSavedEvent(const wxString& filename)
 {
+    if(_eventsDiabled)
+        return;
     clCommandEvent event( wxEVT_FILE_SAVED );
     event.SetString( filename );
     event.SetFileName( filename );
@@ -74,12 +76,16 @@ void EventNotifier::PostFileSavedEvent(const wxString& filename)
 
 void EventNotifier::PostReloadExternallyModifiedEvent(bool prompt)
 {
+    if(_eventsDiabled)
+        return;
     wxCommandEvent event( prompt ? wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED : wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT );
     AddPendingEvent( event );
 }
 
 void EventNotifier::PostFileRemovedEvent(const wxArrayString& files)
 {
+    if(_eventsDiabled)
+        return;
     clCommandEvent filesRemovedEvent(wxEVT_PROJ_FILE_REMOVED);
     filesRemovedEvent.SetStrings( files );
     AddPendingEvent( filesRemovedEvent );
@@ -87,6 +93,8 @@ void EventNotifier::PostFileRemovedEvent(const wxArrayString& files)
 
 void EventNotifier::NotifyWorkspaceReloadEndEvent(const wxString& workspaceFile)
 {
+    if(_eventsDiabled)
+        return;
     clCommandEvent event(wxEVT_WORKSPACE_RELOAD_ENDED);
     event.SetFileName( workspaceFile );
     ProcessEvent( event );
@@ -94,7 +102,25 @@ void EventNotifier::NotifyWorkspaceReloadEndEvent(const wxString& workspaceFile)
 
 void EventNotifier::NotifyWorkspaceReloadStartEvet(const wxString& workspaceFile)
 {
+    if(_eventsDiabled)
+        return;
     clCommandEvent event(wxEVT_WORKSPACE_RELOAD_STARTED);
     event.SetFileName( workspaceFile );
     ProcessEvent( event );
+}
+
+void EventNotifier::AddPendingEvent(const wxEvent& event)
+{
+    if ( _eventsDiabled ) {
+        return;
+    }
+    wxEvtHandler::AddPendingEvent( event );
+}
+
+bool EventNotifier::ProcessEvent(wxEvent& event)
+{
+    if ( _eventsDiabled ) {
+        return false;
+    }
+    return wxEvtHandler::ProcessEvent( event );
 }

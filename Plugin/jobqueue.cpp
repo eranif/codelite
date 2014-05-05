@@ -22,13 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "jobqueue.h"
+#include "jobqueue.h"
 #include "job.h"
 
-JobQueueWorker::JobQueueWorker(wxCriticalSection *cs, std::deque<Job*> *queue)
-		: wxThread(wxTHREAD_JOINABLE)
-		, m_cs(cs)
-		, m_queue(queue)
+JobQueueWorker::JobQueueWorker(wxMessageQueue<Job*>* queue)
+    : wxThread(wxTHREAD_JOINABLE)
+    , m_queue( queue )
 {
 }
 
@@ -37,71 +36,45 @@ JobQueueWorker::~JobQueueWorker()
 }
 void JobQueueWorker::Stop()
 {
-#if wxVERSION_NUMBER < 2904
-    if(IsAlive()) {
-        Delete();
-    }
-    Wait();
-#else    
-    // Notify the thread to exit and 
-    // wait for it
     if ( IsAlive() ) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
-        
+
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
-        
+
     }
-#endif
 }
 
 void JobQueueWorker::Start(int priority)
 {
-	Create();
-	SetPriority(priority);
-	Run();
-}
-
-Job *JobQueueWorker::GetJob()
-{
-	wxCriticalSectionLocker locker(*m_cs);
-	Job *req(NULL);
-	if ( !m_queue->empty() ) {
-		req = m_queue->front();
-		m_queue->pop_front();
-	}
-	return req;
+    Create();
+    SetPriority(priority);
+    Run();
 }
 
 void* JobQueueWorker::Entry()
 {
-	while ( true ) {
-		// Did we get a request to terminate?
-		if (TestDestroy())
-			break;
+    while ( !TestDestroy() ) {
+        Job *job (NULL);
+        if ( (m_queue->ReceiveTimeout(50, job) == wxMSGQUEUE_NO_ERROR) && job ) {
 
-		Job *job = GetJob();
-		if ( job ) {
-			// Call user's implementation for processing request
-			ProcessJob( job );
+            // Call user's implementation for processing request
+            ProcessJob( job );
 
-			wxThread::Sleep(10);  // Allow other threads to work as well
-			delete job;
-			job = NULL;
-			continue; // to avoid the sleep
-		}
-
-		// Sleep for 200ms , and then try again
-		wxThread::Sleep(200);
-	}
-	return NULL;
+            wxThread::Sleep(10);  // Allow other threads to work as well
+            delete job;
+            job = NULL;
+            continue; // to avoid the sleep
+        }
+    }
+    return NULL;
 }
 
 void JobQueueWorker::ProcessJob(Job *job)
 {
-	if ( job ) {
-		job->Process(this);
-	}
+    if ( job ) {
+        job->Process(this);
+    }
 }
 
 //--------------------------------------------------------------
@@ -114,43 +87,40 @@ JobQueue::JobQueue()
 
 JobQueue::~JobQueue()
 {
-	if ( !m_queue.empty() ) {
-		std::deque<Job*>::iterator iter = m_queue.begin();
-		for (; iter != m_queue.end(); iter++) {
-			delete (*iter);
-		}
-		m_queue.clear();
-	}
+    // Clear the queue and release it memory
+    Job* pJob(NULL);
+    while ( m_queue.ReceiveTimeout(1, pJob) == wxMSGQUEUE_NO_ERROR ) {
+        wxDELETE( pJob );
+    }
 }
 
 void JobQueue::PushJob(Job *job)
 {
-	wxCriticalSectionLocker locker(m_cs);
-	m_queue.push_front(job);
+    m_queue.Post( job );
 }
 
 void JobQueue::Start(size_t poolSize, int priority)
 {
-	size_t maxPoolSize = poolSize > 250 ? 250 : poolSize;
-	for(size_t i=0; i<maxPoolSize; i++) {
-		//create new thread
-		JobQueueWorker *worker = new JobQueueWorker(&m_cs, &m_queue);
-		worker->Start(priority);
-		m_threads.push_back(worker);
-	}
+    size_t maxPoolSize = poolSize > 250 ? 250 : poolSize;
+    for(size_t i=0; i<maxPoolSize; i++) {
+        //create new thread
+        JobQueueWorker *worker = new JobQueueWorker( &m_queue );
+        worker->Start(priority);
+        m_threads.push_back(worker);
+    }
 }
 
 void JobQueue::Stop()
 {
-	//first loop and stop all running threads
-	for(size_t i=0; i<m_threads.size(); i++){
-		JobQueueWorker *worker = m_threads.at(i);
-		//stop it
-		worker->Stop();
-		//delete it
-		delete worker;
-	}
-	m_threads.clear();
+    //first loop and stop all running threads
+    for(size_t i=0; i<m_threads.size(); i++) {
+        JobQueueWorker *worker = m_threads.at(i);
+        //stop it
+        worker->Stop();
+        //delete it
+        delete worker;
+    }
+    m_threads.clear();
 }
 
 //-----------------------------------------------------
@@ -168,13 +138,13 @@ JobQueueSingleton::~JobQueueSingleton()
 
 JobQueue* JobQueueSingleton::Instance()
 {
-	return ms_instance;
+    return ms_instance;
 }
 
 void JobQueueSingleton::Release()
 {
-	if (ms_instance) {
-		delete ms_instance;
-	}
-	ms_instance = 0;
+    if (ms_instance) {
+        delete ms_instance;
+    }
+    ms_instance = 0;
 }

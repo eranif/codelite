@@ -4408,9 +4408,15 @@ void LEditor::HighlightWord(StringHighlightOutput* highlightOutput)
     // clear the old markers
     IndicatorClearRange(0, GetLength());
 
+    int selStart = GetSelectionStart();
+    
     for (size_t i=0; i<matches->size(); i++) {
         std::pair<int, int> p = matches->at(i);
-        IndicatorFillRange(p.first, p.second);
+        
+        // Dont highlight the current selection
+        if ( p.first != selStart ) {
+            IndicatorFillRange(p.first, p.second);
+        }
     }
 }
 

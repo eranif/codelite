@@ -396,9 +396,7 @@ void Project::RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeN
     } else if ( xmlNode->GetName() == wxT("File") ) {
         wxFileName filename(xmlNode->GetPropVal(wxT("Name"), wxEmptyString));
         //convert this file name to absolute path
-        DirSaver ds;
-        ::wxSetWorkingDirectory(m_fileName.GetPath());
-        filename.MakeAbsolute();
+        filename.MakeAbsolute(m_fileName.GetPath());
         item = ProjectItem(key, filename.GetFullName(), filename.GetFullPath(), ProjectItem::TypeFile);
     } else {
         // un-recognised or not viewable item in the tree,

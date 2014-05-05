@@ -331,11 +331,6 @@ bool Project::RemoveFile(const wxString &fileName, const wxString &virtualDir)
         return false;
     }
 
-    // Convert the file path to be relative to
-    // the project path
-    DirSaver ds;
-
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
     wxFileName tmp(fileName);
     tmp.MakeRelativeTo(m_fileName.GetPath());
 
@@ -343,6 +338,7 @@ bool Project::RemoveFile(const wxString &fileName, const wxString &virtualDir)
     if ( node ) {
         node->GetParent()->RemoveChild( node );
         delete node;
+
     } else {
         wxLogMessage(wxT("Failed to remove file %s from project"), tmp.GetFullPath(wxPATH_UNIX).c_str());
     }
@@ -1475,6 +1471,8 @@ void Project::GetFilesMetadata(Project::FileInfoVector_t& files)
         return;
 
     elements.push( m_doc.GetRoot() );
+    files.reserve( 1000 ); // make room for at least for 1000 files (should be enough for most projects)
+    
     while ( !elements.empty() ) {
         wxXmlNode *element = elements.front();
         elements.pop();
@@ -1483,7 +1481,7 @@ void Project::GetFilesMetadata(Project::FileInfoVector_t& files)
             if ( element->GetName() == wxT("File") ) {
 
                 // files are kept relative to the project file
-                wxString fileName = element->GetPropVal(wxT("Name"), wxEmptyString);
+                wxString fileName = element->GetAttribute(wxT("Name"), wxEmptyString);
                 wxFileName tmp(fileName);
                 tmp.MakeAbsolute(m_fileName.GetPath());
                 FileInfo fi;
@@ -1502,6 +1500,9 @@ void Project::GetFilesMetadata(Project::FileInfoVector_t& files)
             element = element->GetNext();
         }
     }
+    
+    // releaes any un-needed memory
+    Project::FileInfoVector_t( files ).swap( files );
 }
 
 wxString Project::DoFormatVirtualFolderName(const wxXmlNode* node) const

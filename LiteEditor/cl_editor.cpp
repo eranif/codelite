@@ -554,7 +554,14 @@ void LEditor::SetProperties()
     //indentation settings
     SetTabIndents(true);
     SetBackSpaceUnIndents (true);
-    SetUseTabs(options->GetIndentUsesTabs());
+    
+    // Should we use spaces or tabs for indenting?
+    // Usually we will ask the configuration, however
+    // when using Makefile we _must_ use the TABS
+    wxString contextName = GetContext()->GetName();
+    contextName.MakeLower();
+    SetUseTabs( (contextName == "makefile") ? true : options->GetIndentUsesTabs() );
+
     SetTabWidth(options->GetTabWidth());
     SetIndent(options->GetIndentWidth());
     SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);

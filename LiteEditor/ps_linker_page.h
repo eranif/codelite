@@ -45,6 +45,7 @@ class PSLinkerPage : public PSLinkPageBase, public IProjectSettingsPage
     PSGeneralPage*      m_gp;
 
 protected:
+    virtual void OnPropertyChanged(wxPropertyGridEvent& event);
     virtual void OnCheckLinkerNeeded(wxCommandEvent& event);
     virtual void OnLinkerNotNeededUI(wxUpdateUIEvent& event);
     virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event);

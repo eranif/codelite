@@ -81,3 +81,9 @@ void PSLinkerPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_dlg->IsProjectEnabled() );
 }
+
+void PSLinkerPage::OnPropertyChanged(wxPropertyGridEvent& event)
+{
+    event.Skip();
+    m_dlg->SetIsDirty(true);
+}

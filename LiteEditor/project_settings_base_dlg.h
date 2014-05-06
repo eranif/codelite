@@ -142,6 +142,7 @@ protected:
     virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLinkerNotNeededUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnPropertyChanged(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
     PSLinkPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);

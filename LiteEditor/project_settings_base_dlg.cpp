@@ -353,6 +353,7 @@ PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_checkLinkerNeeded->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI), NULL, this);
     m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked), NULL, this);
     m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
+    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSLinkPageBase::OnPropertyChanged), NULL, this);
     
 }
 
@@ -363,6 +364,7 @@ PSLinkPageBase::~PSLinkPageBase()
     m_checkLinkerNeeded->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI), NULL, this);
     m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked), NULL, this);
     m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSLinkPageBase::OnPropertyChanged), NULL, this);
     
 }
 

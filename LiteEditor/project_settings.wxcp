@@ -3253,6 +3253,13 @@
 									"m_functionNameAndSignature":	"OnLinkerNotNeededUI(wxUpdateUIEvent& event)",
 									"m_description":	"Process a wxEVT_UPDATE_UI event",
 									"m_noBody":	false
+								}, {
+									"m_eventName":	"wxEVT_PG_CHANGED",
+									"m_eventClass":	"wxPropertyGridEvent",
+									"m_eventHandler":	"wxPropertyGridEventHandler",
+									"m_functionNameAndSignature":	"OnPropertyChanged(wxPropertyGridEvent& event)",
+									"m_description":	"Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
+									"m_noBody":	false
 								}],
 							"m_children":	[{
 									"m_type":	4486,

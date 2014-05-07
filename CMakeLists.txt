@@ -25,6 +25,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/   #
 ##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                  #
 ##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
+##      -DENABLE_LLDB=1|0                          // When set to 0 codelite won't try to build or link to the lldb debugger. Default is 1 on Unix platforms    #
 #################################################################################################################################################################
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -119,6 +120,18 @@ else()
         set( CL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR} )
     endif()
 endif(PREFIX)
+
+## Try to link-to or build lldb?
+if (UNIX)
+    set(WITH_LLDB 1)
+else()
+    set(WITH_LLDB 0)
+endif()
+if(ENABLE_LLDB MATCHES 0)
+    set(WITH_LLDB 0)
+    message("-- Disabling lldb support")
+endif ()
+unset(ENABLE_LLDB CACHE)
 
 #######################################
 ## Locate libssh
@@ -439,7 +452,10 @@ add_subdirectory(CodeLiteDiff)
 if (WITH_SFTP)
     add_subdirectory(SFTP)
 endif(WITH_SFTP)
-add_subdirectory(LLDBDebugger)
+
+if (WITH_LLDB)
+    add_subdirectory(LLDBDebugger)
+endif()
 
 ## Executables
 add_subdirectory(LiteEditor)

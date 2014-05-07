@@ -287,6 +287,10 @@ bool RefactoringStorage::IsFileUpToDate(const wxString& filename)
     return false;
 }
 
+/**
+ * @brief 
+ * @param files
+ */
 void RefactoringStorage::InitializeCache(const wxFileList_t& files)
 {
     if ( m_thread == NULL ) {

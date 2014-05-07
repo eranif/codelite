@@ -12,6 +12,8 @@
 
 static CodeCompletionManager *ms_CodeCompletionManager = NULL;
 
+wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
+
 CodeCompletionManager::CodeCompletionManager()
     : m_options(CC_CTAGS_ENABLED)
     , m_wordCompletionRefreshNeeded(false)
@@ -19,6 +21,7 @@ CodeCompletionManager::CodeCompletionManager()
 {
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
     
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this );
 }
@@ -27,6 +30,7 @@ CodeCompletionManager::~CodeCompletionManager()
 {
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
     
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this );
 }
@@ -290,4 +294,11 @@ void CodeCompletionManager::OnBuildStarted(clBuildEvent& e)
 {
     e.Skip();
     m_buildInProgress = true;
+}
+
+void CodeCompletionManager::OnCompileCommandsFileGenerated(clCommandEvent& event)
+{
+    event.Skip();
+    CompilationDatabase db;
+    ClangCompilationDbThreadST::Get()->AddFile( db.GetFileName().GetFullPath() );
 }

@@ -829,3 +829,24 @@ wxFileName Workspace::GetTagsFileName() const
     fn_tags.SetExt("tags");
     return fn_tags;
 }
+
+void Workspace::CreateCompileCommandsJSON(JSONElement& compile_commands) const
+{
+    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    if ( !matrix )
+        return;
+        
+    wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
+    Workspace::ProjectMap_t::const_iterator iter = m_projects.begin();
+    
+    for( ; iter != m_projects.end(); ++iter ) {
+        BuildConfigPtr buildConf = iter->second->GetBuildConfiguration();
+        if ( buildConf && 
+             buildConf->IsProjectEnabled() && 
+             !buildConf->IsCustomBuild() && 
+             buildConf->IsCompilerRequired() ) 
+        {
+            iter->second->CreateCompileCommandsJSON( compile_commands );
+        }
+    }
+}

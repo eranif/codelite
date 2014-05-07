@@ -629,6 +629,13 @@ public:
      */
     void CreateCompileCommandsJSON( JSONElement &compile_commands ) const;
     
+    /**
+     * @brief return the build configuration
+     * @param configName configuration name. If non provided, returns the build configuration
+     * that matches the current workspace configuration
+     */
+    BuildConfigPtr GetBuildConfiguration(const wxString &configName = "") const;
+    
 private:
     wxString DoFormatVirtualFolderName(const wxXmlNode* node) const;
 

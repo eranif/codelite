@@ -31,6 +31,7 @@
 #include "wx/filename.h"
 #include "project.h"
 #include <map>
+#include "json_node.h"
 //#include "ctags_manager.h"
 #include "configuration_mapping.h"
 #include "optionsconfig.h"
@@ -46,9 +47,13 @@
 class WXDLLIMPEXP_SDK Workspace
 {
     friend class WorkspaceST;
+public:
+    typedef std::map<wxString, ProjectPtr> ProjectMap_t;
+
+protected:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
-    std::map<wxString, ProjectPtr> m_projects;
+    Workspace::ProjectMap_t m_projects;
     wxString m_startupDir;
     time_t m_modifyTime;
 
@@ -60,8 +65,13 @@ private:
     /// Destructor
     virtual ~Workspace();
 
-public:
-
+    public:
+    
+    /**
+     * @brief createa 'compile_commands' json object for the workspace projects (only the enabled ones)
+     */
+    void CreateCompileCommandsJSON(JSONElement &compile_commands) const;
+    
     void SetStartupDir(const wxString& startupDir) {
         this->m_startupDir = startupDir;
     }

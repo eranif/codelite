@@ -32,6 +32,8 @@
 #include "cl_command_event.h"
 #include <wx/event.h>
 
+wxDECLARE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
+
 class CodeCompletionManager : public wxEvtHandler
 {
 protected:
@@ -62,6 +64,7 @@ protected:
     void OnBuildEnded(clBuildEvent &e);
     void OnBuildStarted(clBuildEvent &e);
     void OnAppActivated(wxActivateEvent &e);
+    void OnCompileCommandsFileGenerated(clCommandEvent &event);
     
 public:
     CodeCompletionManager();

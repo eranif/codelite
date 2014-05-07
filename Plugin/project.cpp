@@ -1648,7 +1648,7 @@ wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, 
 
         // expand backticks, if the option is not a backtick the value remains
         // unchanged
-        commandLine << " " << DoExpandBacktick(cmpOption);
+        commandLine << " " << DoExpandBacktick(cmpOption) << " ";
     }
     
     // Add the macros
@@ -1663,13 +1663,18 @@ wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, 
     wxArrayString inclPathArr = ::wxStringTokenize(inclPathAsString, ";", wxTOKEN_STRTOK);
     for(size_t i=0; i<inclPathArr.GetCount(); ++i) {
         wxString incl_path = inclPathArr.Item(i);
-        
+        incl_path.Trim().Trim(false);
+        if ( incl_path.IsEmpty() ) 
+            continue;
+            
         if ( incl_path.Contains(" ") ) {
             incl_path.Prepend("\"").Append("\"");
         }
         
         commandLine << "-I" << incl_path << " ";
     }
+    
+    commandLine.Trim().Trim(false);
     return commandLine;
 }
 
@@ -1697,6 +1702,7 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
             cmpOption = s_backticks.find(cmpOption)->second;
         }
     }
+    cmpOption.Trim().Trim(false);
     return cmpOption;
 }
 
@@ -1734,4 +1740,17 @@ void Project::CreateCompileCommandsJSON(JSONElement& compile_commands) const
         json.addProperty("command", pattern);
         compile_commands.append( json );
     }
+}
+
+BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const
+{
+    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    if( !matrix ) {
+        return NULL;
+    }
+    
+    wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
+    wxString projectSelConf   = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
+    BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(this->GetName(), projectSelConf);
+    return buildConf;
 }

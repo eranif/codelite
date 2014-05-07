@@ -240,14 +240,11 @@ void FileViewTree::BuildTree()
         wxArrayString list;
         ManagerST::Get()->GetProjectList( list );
 
-        Freeze();
         for ( size_t n=0; n<list.GetCount(); n++ ) {
             BuildProjectNode( list.Item( n ) );
         }
-
         SortTree();
-        Thaw();
-
+        
         //set selection to first item
         SelectItem( root, HasFlag(wxTR_MULTIPLE) ? false : true );
     }
@@ -352,9 +349,13 @@ void FileViewTree::BuildProjectNode( const wxString &projectName )
                                         projectIconIndex,    // item image index
                                         projectIconIndex,    // selected item image
                                         new FilewViewTreeItemData( node->GetData() ) );
-        if ( IsFileExcludedFromBuild(hti) ) {
-            SetItemTextColour(hti, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
-        }
+        
+        // FIXME :: 
+        // Use a more efficient way for checking if a file is 'Excluded' from the build
+        
+        //if ( IsFileExcludedFromBuild(hti) ) {
+        //    SetItemTextColour(hti, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) );
+        //}
         m_itemsToSort[parentHti.m_pItem] = true;
 
         // Set active project with bold

@@ -42,6 +42,7 @@
 #include <wx/ffile.h>
 #include "cl_command_event.h"
 #include "environmentconfig.h"
+#include "file_logger.h"
 
 const wxString Project::STATIC_LIBRARY = wxT("Static Library");
 const wxString Project::DYNAMIC_LIBRARY = wxT("Dynamic Library");
@@ -481,58 +482,71 @@ wxString Project::GetFiles(bool absPath)
 
 void Project::GetFiles(wxStringSet_t& files)
 {
-    DirSaver ds;
-    FileNameVector_t v;
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    GetFiles(m_doc.GetRoot(), v, true);
-    for(size_t i=0; i<v.size(); i++) {
-        files.insert(v.at(i).GetFullPath());
-    }
-}
-
-void Project::GetFiles(wxStringSet_t& files, const wxString& relativePath)
-{
-    DirSaver ds;
-    FileNameVector_t v;
-    ::wxSetWorkingDirectory(relativePath);
-    GetFiles(m_doc.GetRoot(), v, false);
-    for(size_t i=0; i<v.size(); i++) {
-        v.at(i).MakeRelativeTo(relativePath);
-        files.insert(v.at(i).GetFullPath());
-    }
+    DoGetFiles( files );
 }
 
 void Project::GetFiles(std::vector<wxFileName> &files, bool absPath)
 {
-    if (absPath) {
-        DirSaver ds;
-        ::wxSetWorkingDirectory(m_fileName.GetPath());
-
-        GetFiles(m_doc.GetRoot(), files, true);
-    } else {
-        GetFiles(m_doc.GetRoot(), files, false);
-    }
+    DoGetFiles(files, absPath ? m_fileName.GetPath() : wxString("") );
 }
 
-void Project::GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath)
+void Project::DoGetFiles( FileNameVector_t &files, const wxString &makeRelativeToMe ) const
 {
-    if ( !parent ) {
-        return;
-    }
-
-    wxXmlNode *child = parent->GetChildren();
-    while (child) {
-        if (child->GetName() == wxT("File")) {
-            wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
-            wxFileName tmp(fileName);
-            if (absPath) {
-                tmp.MakeAbsolute();
+    std::queue<wxXmlNode*> elements;
+    elements.push( m_doc.GetRoot() );
+    
+    // use temporary list since its cheaper to save the matches in it
+    FileNameList_t list;
+    while ( !elements.empty() ) {
+        wxXmlNode* element = elements.front();
+        elements.pop();
+        
+        // Loop over the children of this node
+        wxXmlNode* child = element->GetChildren();
+        while ( child ) {
+            if (child->GetName() == wxT("File")) {
+                wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
+                wxFileName tmp(fileName);
+                if ( !makeRelativeToMe.IsEmpty() ) {
+                    tmp.MakeAbsolute( makeRelativeToMe );
+                }
+                list.push_back( tmp );
+                
+            } else if ( child->GetName() == wxT("VirtualDirectory") ) {
+                elements.push( child );
             }
-            files.push_back(tmp);
-        } else if (child->GetChildren()) {// we could also add a check for VirtualDirectory only
-            GetFiles(child, files, absPath);
+            child = child->GetNext();
         }
-        child = child->GetNext();
+    }
+    
+    files.reserve( list.size() );
+    files.insert( files.end(), list.begin(), list.end() );
+}
+
+void Project::DoGetFiles( wxStringSet_t &files ) const
+{
+    std::queue<wxXmlNode*> elements;
+    elements.push( m_doc.GetRoot() );
+    
+    wxString cwd = m_fileName.GetPath();
+    while ( !elements.empty() ) {
+        wxXmlNode* element = elements.front();
+        elements.pop();
+        
+        // Loop over the children of this node
+        wxXmlNode* child = element->GetChildren();
+        while ( child ) {
+            if (child->GetName() == wxT("File")) {
+                wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
+                wxFileName tmp(fileName);
+                tmp.MakeAbsolute( cwd );
+                files.insert( tmp.GetFullPath() );
+                
+            } else if ( child->GetName() == wxT("VirtualDirectory") ) {
+                elements.push( child );
+            }
+            child = child->GetNext();
+        }
     }
 }
 
@@ -755,36 +769,6 @@ void Project::SetFiles(ProjectPtr src)
     SaveXmlFile();
 }
 
-bool Project::RenameFile(const wxString& oldName, const wxString& virtualDir, const wxString& newName)
-{
-    wxXmlNode *vd = GetVirtualDir(virtualDir);
-    if ( !vd ) {
-        return false;
-    }
-
-    // Convert the file path to be relative to
-    // the project path
-    DirSaver ds;
-
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    wxFileName tmp(oldName);
-    tmp.MakeRelativeTo(m_fileName.GetPath());
-
-    wxXmlNode *node = XmlUtils::FindNodeByName(vd, wxT("File"), tmp.GetFullPath(wxPATH_UNIX));
-    if ( node ) {
-        // update the new name
-        tmp.SetFullName(newName);
-        XmlUtils::UpdateProperty(node, wxT("Name"), tmp.GetFullPath(wxPATH_UNIX));
-    }
-
-    SetModified(true);
-
-    if ( InTransaction() )
-        return true;
-    else
-        return SaveXmlFile();
-}
-
 wxString Project::GetVDByFileName(const wxString& file)
 {
     //find the file under this node
@@ -905,35 +889,8 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
 
 void Project::GetFiles(std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles)
 {
-    DirSaver ds;
-    ::wxSetWorkingDirectory(m_fileName.GetPath());
-    GetFiles(m_doc.GetRoot(), files, absFiles);
-}
-
-void Project::GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles)
-{
-    if ( !parent ) {
-        return;
-    }
-
-    wxXmlNode *child = parent->GetChildren();
-    while (child) {
-        if (child->GetName() == wxT("File")) {
-            wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
-            wxFileName tmp(fileName);
-
-            // append the file as it appears
-            files.push_back(tmp);
-
-            // convert to absolute path
-            tmp.MakeAbsolute();
-            absFiles.push_back(tmp);
-
-        } else if (child->GetChildren()) {// we could also add a check for VirtualDirectory only
-            GetFiles(child, files, absFiles);
-        }
-        child = child->GetNext();
-    }
+    DoGetFiles(absFiles, m_fileName.GetPath());
+    DoGetFiles(files);
 }
 
 bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
@@ -1459,32 +1416,35 @@ void Project::GetFilesMetadata(Project::FileInfoVector_t& files) const
 
     elements.push( m_doc.GetRoot() );
     files.reserve( 1000 ); // make room for at least for 1000 files (should be enough for most projects)
-    
+    wxString cwd = m_fileName.GetPath();
     while ( !elements.empty() ) {
         wxXmlNode *element = elements.front();
         elements.pop();
-
-        while ( element ) {
-            if ( element->GetName() == wxT("File") ) {
+        
+        // Loop over the children of this element
+        wxXmlNode *child = element->GetChildren();
+        while ( child ) {
+            if ( child->GetName() == wxT("File") ) {
 
                 // files are kept relative to the project file
-                wxString fileName = element->GetAttribute(wxT("Name"), wxEmptyString);
+                wxString fileName = child->GetAttribute(wxT("Name"), wxEmptyString);
                 wxFileName tmp(fileName);
-                tmp.MakeAbsolute(m_fileName.GetPath());
+                tmp.MakeAbsolute( cwd );
+                
                 FileInfo fi;
                 fi.SetFilenameRelpath(fileName);
                 fi.SetFilename( tmp.GetFullPath() );
-                fi.SetFlags( XmlUtils::ReadLong(element, "Flags", 0) );
+                fi.SetFlags( XmlUtils::ReadLong(child, "Flags", 0) );
                 
-                wxString excludeConfigs = XmlUtils::ReadString(element, EXCLUDE_FROM_BUILD_FOR_CONFIG);
+                wxString excludeConfigs = XmlUtils::ReadString(child, EXCLUDE_FROM_BUILD_FOR_CONFIG);
                 fi.SetExcludeConfigs( ::wxStringTokenize(excludeConfigs, ";", wxTOKEN_STRTOK) );
-                fi.SetVirtualFolder( DoFormatVirtualFolderName(element) );
+                fi.SetVirtualFolder( DoFormatVirtualFolderName(child) );
                 files.push_back( fi );
 
-            } else if ( element->GetChildren() ) {
-                elements.push( element->GetChildren() );
+            } else if ( child->GetName() == "VirtualDirectory" ) {
+                elements.push( child );
             }
-            element = element->GetNext();
+            child = child->GetNext();
         }
     }
     
@@ -1637,8 +1597,8 @@ wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, 
     EnvSetter es(NULL, NULL, GetName());
     
     // Clear the backticks cache
-    s_backticks.clear();
-    
+    // s_backticks.clear();
+
     // Get the compile options
     wxString projectCompileOptions = cxxFile ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
     wxArrayString projectCompileOptionsArr = ::wxStringTokenize(projectCompileOptions, ";", wxTOKEN_STRTOK);
@@ -1708,16 +1668,26 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
 
 void Project::CreateCompileCommandsJSON(JSONElement& compile_commands) const
 {
-    Project::FileInfoVector_t files;
-    GetFilesMetadata(files);
+    CL_DEBUG("Creating JSON for project: %s", GetName());
     
+    CL_DEBUG("    Loading files...");
+    FileNameVector_t files;
+    DoGetFiles(files, m_fileName.GetPath());
+    CL_DEBUG("    Loading files...done");
+    
+    CL_DEBUG("    Generating patterns...");
     wxString cFilePattern   = GetCompileLineForCXXFile("$FileName", false);
     wxString cxxFilePattern = GetCompileLineForCXXFile("$FileName", true);
     wxString workingDirectory = m_fileName.GetPath();
+    CL_DEBUG("    Generating patterns...done");
     
+    CL_DEBUG("    Constructing JSON...");
     for(size_t i=0; i<files.size(); ++i) {
+        const wxFileName& fn = files.at(i);
+        wxString full_path = fn.GetFullPath();
+        
         wxString pattern;
-        FileExtManager::FileType fileType = FileExtManager::GetType( files.at(i).GetFilename());
+        FileExtManager::FileType fileType = FileExtManager::GetType( full_path );
         if ( fileType == FileExtManager::TypeSourceC ) {
             pattern = cFilePattern;
             
@@ -1728,18 +1698,20 @@ void Project::CreateCompileCommandsJSON(JSONElement& compile_commands) const
             continue;
         }
         
-        wxString file_name = files.at(i).GetFilename();
+        wxString file_name = full_path;
         if ( file_name.Contains(" ") ) {
             file_name.Prepend("\"").Append("\"");
         }
         pattern.Replace("$FileName", file_name);
         
+        
         JSONElement json = JSONElement::createObject();
-        json.addProperty("file", files.at(i).GetFilename());
+        json.addProperty("file", full_path);
         json.addProperty("directory", workingDirectory);
         json.addProperty("command", pattern);
         compile_commands.append( json );
     }
+    CL_DEBUG("    Constructing JSON...done");
 }
 
 BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const

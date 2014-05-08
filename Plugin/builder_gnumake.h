@@ -30,6 +30,7 @@
 #include "codelite_exports.h"
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include "project.h"
 /*
  * Build using a generated (Gnu) Makefile - this is made as a traditional multistep build :
  *  sources -> (preprocess) -> compile -> link -> exec/lib.
@@ -37,6 +38,8 @@
 class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
 {
     size_t m_objectChunks;
+    Project::FileInfoVector_t m_projectFilesMetadata;
+    
 public:
     BuilderGnuMake();
     BuilderGnuMake(const wxString &name, const wxString &buildTool, const wxString &buildToolOptions);

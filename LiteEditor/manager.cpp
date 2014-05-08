@@ -95,6 +95,7 @@
 #include "clang_compilation_db_thread.h"
 #include "file_logger.h"
 #include "code_completion_manager.h"
+#include "CompileCommandsCreateor.h"
 
 #ifndef __WXMSW__
 #   include <sys/wait.h>
@@ -203,14 +204,12 @@ Manager::Manager ( void )
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Manager::OnWorkspaceLoaded), NULL, this);
 }
 
 Manager::~Manager ( void )
 {
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Manager::OnWorkspaceLoaded), NULL, this);
     //stop background processes
     IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -377,6 +376,8 @@ void Manager::DoSetupWorkspace ( const wxString &path )
         wxFileName dbfn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
         JobQueueSingleton::Instance()->PushJob( new DbContentCacher(this, dbfn.GetFullPath().c_str()) );
     }
+    
+    CallAfter( &Manager::GenerateCompileCommands );
 }
 
 void Manager::CloseWorkspace()
@@ -3819,18 +3820,10 @@ void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)
     }
 }
 
-void Manager::OnWorkspaceLoaded(wxCommandEvent& event)
+void Manager::GenerateCompileCommands()
 {
-    event.Skip();
     if ( WorkspaceST::Get()->IsOpen() ) {
-        JSONRoot compile_commands(cJSON_Array);
-        JSONElement json = compile_commands.toElement();
-        WorkspaceST::Get()->CreateCompileCommandsJSON( json );
-        
-        wxFileName compileCommandsFile(WorkspaceST::Get()->GetWorkspaceFileName().GetPath(), "compile_commands.json");
-        compile_commands.save( compileCommandsFile );
-        
-        clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-        EventNotifier::Get()->AddPendingEvent( eventCompileCommandsGenerated );
+        CompileCommandsCreateor* job = new CompileCommandsCreateor( WorkspaceST::Get()->GetWorkspaceFileName() );
+        JobQueueSingleton::Instance()->PushJob( job );
     }
 }

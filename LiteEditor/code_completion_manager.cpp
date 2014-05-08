@@ -12,8 +12,6 @@
 
 static CodeCompletionManager *ms_CodeCompletionManager = NULL;
 
-wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
-
 CodeCompletionManager::CodeCompletionManager()
     : m_options(CC_CTAGS_ENABLED)
     , m_wordCompletionRefreshNeeded(false)

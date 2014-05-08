@@ -45,24 +45,7 @@
 #include "globals.h"
 #include "cl_command_event.h"
 
-wxStopWatch g_sw;
-
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
-
-#if PERFORMANCE
-# define TIMER_START(){\
-        g_sw.Start();\
-    }
-
-# define PRINT_TIMESTAMP(msg) {\
-        wxString log_msg(msg);\
-        wxPrintf(wxT("%08d: %s"), g_sw.Time(), log_msg.c_str());\
-    }
-#else
-# define TIMER_START()
-# define PRINT_TIMESTAMP(msg)
-#endif
-
 
 static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString &relPath = wxEmptyString)
 {
@@ -106,13 +89,10 @@ BuilderGnuMake::~BuilderGnuMake()
 
 bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force, wxString &errMsg)
 {
-    TIMER_START();
-    PRINT_TIMESTAMP(_("Exporting makefile...\n"));
+    m_projectFilesMetadata.clear();
     if (project.IsEmpty()) {
         return false;
     }
-    PRINT_TIMESTAMP(_("Exporting makefile...done\n"));
-
     ProjectPtr proj = WorkspaceST::Get()->FindProjectByName(project, errMsg);
     if (!proj) {
         errMsg << _("Cant open project '") << project << wxT("'");
@@ -141,9 +121,7 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
         return false;
     }
     
-    PRINT_TIMESTAMP(_("Reading project dependencies...\n"));
     wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
-    PRINT_TIMESTAMP(_("Reading project dependencies...done\n"));
     
     // Filter all disabled projects from the dependencies array
     wxArrayString updatedDepsArr;
@@ -213,7 +191,6 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
     wxFileName wspfile(WorkspaceST::Get()->GetWorkspaceFileName());
 
-    PRINT_TIMESTAMP(_("Generating makefile...\n"));
     text << wxT(".PHONY: clean All\n\n");
     text << wxT("All:\n");
 
@@ -302,7 +279,6 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
                 CreateCustomPostBuildEvents(dependProjbldConf, text);
 
             } else {
-                PRINT_TIMESTAMP(wxString::Format(_("Generating makefile for project %s...\n"), dependProj->GetName().c_str()));
                 // generate the dependency project makefile
                 wxString dep_file = DoGetMarkerFileDir(wxT(""));
                 dep_file << wxFileName::GetPathSeparator() << dependProj->GetName();
@@ -310,7 +286,6 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
 
                 GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true, wxArrayString());
                 text << GetProjectMakeCommand(wspfile, fn, dependProj, projectSelConf);
-                PRINT_TIMESTAMP(wxString::Format(_("Generating makefile for project %s...done\n"), dependProj->GetName().c_str()));
             }
         }
     }
@@ -456,14 +431,11 @@ bool BuilderGnuMake::Export(const wxString &project, const wxString &confToBuild
         text << wxT("\t") << GetCdCmd(wspfile, projectPath) << buildTool << wxT(" \"") << proj->GetName() << wxT(".mk\" clean\n") ;
     }
 
-    PRINT_TIMESTAMP(_("Generating makefile...done\n"));
 
     //dump the content to file
-    PRINT_TIMESTAMP(_("Writing makefile...\n"));
     wxFileOutputStream output(fn);
     wxStringInputStream content(text);
     output << content;
-    PRINT_TIMESTAMP(_("Writing makefile...done\n"));
 
     return true;
 }
@@ -518,6 +490,10 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj, const wxString &confToBui
             }
         }
     }
+    
+    // Load the current project files
+    m_projectFilesMetadata.clear();
+    proj->GetFilesMetadata( m_projectFilesMetadata );
 
     //generate the selected configuration for this project
     //wxTextOutputStream text(output);
@@ -603,11 +579,9 @@ void BuilderGnuMake::CreateMakeDirsTarget(BuildConfigPtr bldConf, const wxString
 void BuilderGnuMake::CreateSrcList(ProjectPtr proj, const wxString &confToBuild, wxString &text)
 {
     std::vector<wxFileName> files;
-    Project::FileInfoVector_t filesMetadata;
-    proj->GetFilesMetadata(filesMetadata);
     
-    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
-    for(; iterFile != filesMetadata.end(); ++iterFile) {
+    Project::FileInfoVector_t::const_iterator iterFile = m_projectFilesMetadata.begin();
+    for(; iterFile != m_projectFilesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
         if ( ! iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             files.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
@@ -658,10 +632,9 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 {
     m_objectChunks = 1;
     std::vector<wxFileName> files;
-    Project::FileInfoVector_t filesMetadata;
-    proj->GetFilesMetadata(filesMetadata);
-    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
-    for(; iterFile != filesMetadata.end(); ++iterFile) {
+
+    Project::FileInfoVector_t::const_iterator iterFile = m_projectFilesMetadata.begin();
+    for(; iterFile != m_projectFilesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
         if ( !iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             files.push_back( wxFileName(iterFile->GetFilename()) );
@@ -750,7 +723,6 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 
 void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text)
 {
-    PRINT_TIMESTAMP(wxT("Creating file targets...\n"));
     //get the project specific build configuration for the workspace active
     //configuration
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
@@ -764,16 +736,11 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
     std::vector<wxFileName> abs_files, rel_paths;
 
-    // support for full path
-    PRINT_TIMESTAMP(wxT("Loading file list...\n"));
-    Project::FileInfoVector_t filesMetadata;
-    proj->GetFilesMetadata(filesMetadata);
+    abs_files.reserve( m_projectFilesMetadata.size() );
+    rel_paths.reserve( m_projectFilesMetadata.size() );
     
-    abs_files.reserve( filesMetadata.size() );
-    rel_paths.reserve( filesMetadata.size() );
-    
-    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
-    for(; iterFile != filesMetadata.end(); ++iterFile) {
+    Project::FileInfoVector_t::const_iterator iterFile = m_projectFilesMetadata.begin();
+    for(; iterFile != m_projectFilesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
         if ( !iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             abs_files.push_back( wxFileName(iterFile->GetFilename()) );
@@ -781,7 +748,6 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
         }
     }
     
-    PRINT_TIMESTAMP(wxT("Loading file list...done\n"));
 
     text << wxT("\n\n");
     // create rule per object
@@ -796,7 +762,6 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
     wxString cwd = proj->GetFileName().GetPath();
 
-    PRINT_TIMESTAMP(wxT("Looping over the file list...\n"));
     for (size_t i=0; i<abs_files.size(); i++) {
         // is this file interests the compiler?
         if (cmp->GetCmpFileType(abs_files.at(i).GetExt().Lower(), ft) ) {
@@ -912,13 +877,10 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
         text << wxT("-include ") << wxT("$(IntermediateDirectory)/*$(DependSuffix)\n");
     }
 
-    PRINT_TIMESTAMP(_("Looping over the file list...done\n"));
-    PRINT_TIMESTAMP(_("Creating file targets...done\n"));
 }
 
 void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToBuild, wxString &text)
 {
-    PRINT_TIMESTAMP(_("Creating clean targets...\n"));
     //get the project specific build configuration for the workspace active
     //configuration
     BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(proj->GetName(), confToBuild);
@@ -936,22 +898,17 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
     bool useAsterisk = ((imd.IsEmpty() == false) && asterisk);
 
     // support for full path
-    PRINT_TIMESTAMP(_("Loading file list for clean...\n"));
-    Project::FileInfoVector_t filesMetadata;
-    proj->GetFilesMetadata(filesMetadata);
+    abs_files.reserve( m_projectFilesMetadata.size() );
+    rel_paths.reserve( m_projectFilesMetadata.size() );
     
-    abs_files.reserve( filesMetadata.size() );
-    rel_paths.reserve( filesMetadata.size() );
-    
-    Project::FileInfoVector_t::const_iterator iterFile = filesMetadata.begin();
-    for(; iterFile != filesMetadata.end(); ++iterFile) {
+    Project::FileInfoVector_t::const_iterator iterFile = m_projectFilesMetadata.begin();
+    for(; iterFile != m_projectFilesMetadata.end(); ++iterFile) {
         // Include only files that don't have the 'exclude from build' flag set
         if ( !iterFile->IsExcludeFromConfiguration(confToBuild) ) {
             abs_files.push_back( wxFileName(iterFile->GetFilename()) );
             rel_paths.push_back( wxFileName(iterFile->GetFilenameRelpath()) );
         }
     }
-    PRINT_TIMESTAMP(_("Loading file list...done\n"));
 
     //add clean target
     text << wxT("##\n");
@@ -1058,7 +1015,6 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
     }
 
     text << wxT("\n\n");
-    PRINT_TIMESTAMP(wxT("Creating clean targets...done\n"));
 }
 
 void BuilderGnuMake::CreateListMacros(ProjectPtr proj, const wxString &confToBuild, wxString &text)
@@ -1075,7 +1031,6 @@ void BuilderGnuMake::CreateLinkTargets(const wxString &type, BuildConfigPtr bldC
     //this is to workaround bug in the generated makefiles
     //which causes the makefile to report 'nothing to be done'
     //even when a dependency was modified
-
     text << wxT(".PHONY: all clean PreBuild PrePreBuild PostBuild\n");
 
     wxString extraDeps;

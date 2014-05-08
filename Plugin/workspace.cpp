@@ -76,6 +76,37 @@ void Workspace::CloseWorkspace()
 }
 
 
+bool Workspace::OpenWorkspace2(const wxString &fileName, wxString &errMsg)
+{
+    wxFileName workSpaceFile(fileName);
+    if ( !workSpaceFile.FileExists() ) {
+        return false;
+    }
+    m_fileName = workSpaceFile;
+    m_doc.Load(m_fileName.GetFullPath());
+    if ( !m_doc.IsOk() ) {
+        return false;
+    }
+    // Make sure we have the WORKSPACE/.codelite folder exists
+    {
+        wxLogNull nolog;
+        wxMkdir( GetPrivateFolder() );
+    }
+    
+    // Load all projects
+    wxXmlNode *child = m_doc.GetRoot()->GetChildren();
+    std::vector<wxXmlNode*> removedChildren;
+    wxString tmperr;
+    while (child) {
+        if (child->GetName() == wxT("Project")) {
+            wxString projectPath = child->GetPropVal(wxT("Path"), wxEmptyString);
+            DoAddProject(projectPath, errMsg);
+        }
+        child = child->GetNext();
+    }
+    return true;
+}
+
 bool Workspace::OpenWorkspace(const wxString &fileName, wxString &errMsg)
 {
     CloseWorkspace();
@@ -431,10 +462,12 @@ bool Workspace::AddProject(const wxString & path, wxString &errMsg)
 
 ProjectPtr Workspace::DoAddProject(ProjectPtr proj)
 {
-    if(!proj)
+    if( !proj ) {
         return NULL;
-
-    m_projects[proj->GetName()] = proj;
+    }
+    
+    m_projects.insert( std::make_pair(proj->GetName(), proj) );
+    proj->AssociateToWorkspace( this );
     return proj;
 }
 
@@ -442,13 +475,22 @@ ProjectPtr Workspace::DoAddProject(const wxString &path, wxString &errMsg)
 {
     // Add the project
     ProjectPtr proj(new Project());
-    if ( !proj->Load(path) ) {
+    
+    // Convert the path to absolute path
+    wxFileName projectFile( path );
+    if ( projectFile.IsRelative() ) {
+        projectFile.MakeAbsolute( m_fileName.GetPath() );
+    }
+    
+    if ( !proj->Load( projectFile.GetFullPath() ) ) {
         errMsg = wxT("Corrupted project file '");
-        errMsg << path << wxT("'");
+        errMsg << projectFile.GetFullPath() << wxT("'");
         return NULL;
     }
+    
     // Add an entry to the projects map
-    m_projects[proj->GetName()] = proj;
+    m_projects.insert( std::make_pair(proj->GetName(), proj) );
+    proj->AssociateToWorkspace( this );
     return proj;
 }
 

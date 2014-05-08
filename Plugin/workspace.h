@@ -44,9 +44,12 @@
  * Workspace manager class
  *
  */
+class CompileCommandsCreateor;
 class WXDLLIMPEXP_SDK Workspace
 {
     friend class WorkspaceST;
+    friend class CompileCommandsCreateor;
+    
 public:
     typedef std::map<wxString, ProjectPtr> ProjectMap_t;
 
@@ -112,7 +115,16 @@ private:
      * true on success false otherwise
      */
     bool OpenWorkspace(const wxString &fileName, wxString &errMsg);
-
+    
+    /**
+     * @brief this function opens the workspace, but does not open the tags 
+     * completion database etc. It only loads the XML and then adds all the 
+     * projects XML. It is mainly needed when you just need to explore the 
+     * workspace from a secondary thread with no events / UI to get in the
+     * way
+     */
+    bool OpenWorkspace2(const wxString &fileName, wxString &errMsg);
+    
     /**
      * Close the currently opened workspace
      */

@@ -1231,14 +1231,14 @@ wxString Project::GetBestPathForVD(const wxString& vdPath)
 wxArrayString Project::GetIncludePaths(bool clearCache)
 {
     wxArrayString paths;
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if(!matrix) {
         return paths;
     }
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
 
     wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
-    BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(this->GetName(), projectSelConf);
+    BuildConfigPtr buildConf = GetWorkspace()->GetProjBuildConf(this->GetName(), projectSelConf);
     
     // for non custom projects, take the settings from the build configuration
     if(buildConf && !buildConf->IsCustomBuild()) {
@@ -1612,13 +1612,13 @@ void Project::SetExcludeConfigForFile(const wxString& filename, const wxString& 
 wxString Project::GetCompileLineForCXXFile(const wxString& filenamePlaceholder, bool cxxFile) const
 {
     // Return a compilation line for a CXX file
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if(!matrix) {
         return "";
     }
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
     wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
-    BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(this->GetName(), projectSelConf);
+    BuildConfigPtr buildConf = GetWorkspace()->GetProjBuildConf(this->GetName(), projectSelConf);
     if ( !buildConf || buildConf->IsCustomBuild() || !buildConf->IsCompilerRequired()) {
         return "";
     }
@@ -1706,18 +1706,21 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
     return cmpOption;
 }
 
-void Project::CreateCompileCommandsJSON(JSONElement& compile_commands) const
+void Project::CreateCompileCommandsJSON(JSONElement& compile_commands)
 {
-    Project::FileInfoVector_t files;
-    GetFilesMetadata(files);
+    FileNameVector_t files;
+    GetFiles(files, true);
     
     wxString cFilePattern   = GetCompileLineForCXXFile("$FileName", false);
     wxString cxxFilePattern = GetCompileLineForCXXFile("$FileName", true);
     wxString workingDirectory = m_fileName.GetPath();
     
     for(size_t i=0; i<files.size(); ++i) {
+        const wxFileName &fn = files.at(i);
+        const wxString fullpath = fn.GetFullPath();
+        
         wxString pattern;
-        FileExtManager::FileType fileType = FileExtManager::GetType( files.at(i).GetFilename());
+        FileExtManager::FileType fileType = FileExtManager::GetType( fullpath );
         if ( fileType == FileExtManager::TypeSourceC ) {
             pattern = cFilePattern;
             
@@ -1728,14 +1731,14 @@ void Project::CreateCompileCommandsJSON(JSONElement& compile_commands) const
             continue;
         }
         
-        wxString file_name = files.at(i).GetFilename();
+        wxString file_name = fullpath;
         if ( file_name.Contains(" ") ) {
             file_name.Prepend("\"").Append("\"");
         }
         pattern.Replace("$FileName", file_name);
         
         JSONElement json = JSONElement::createObject();
-        json.addProperty("file", files.at(i).GetFilename());
+        json.addProperty("file", fullpath);
         json.addProperty("directory", workingDirectory);
         json.addProperty("command", pattern);
         compile_commands.append( json );
@@ -1744,13 +1747,38 @@ void Project::CreateCompileCommandsJSON(JSONElement& compile_commands) const
 
 BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const
 {
-    BuildMatrixPtr matrix = WorkspaceST::Get()->GetBuildMatrix();
+    BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if( !matrix ) {
         return NULL;
     }
     
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
     wxString projectSelConf   = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
-    BuildConfigPtr buildConf = WorkspaceST::Get()->GetProjBuildConf(this->GetName(), projectSelConf);
+    BuildConfigPtr buildConf = GetWorkspace()->GetProjBuildConf(this->GetName(), projectSelConf);
     return buildConf;
+}
+
+void Project::AssociateToWorkspace(Workspace* workspace)
+{
+    m_workspace = workspace;
+}
+
+Workspace* Project::GetWorkspace()
+{
+    if ( !m_workspace ) {
+        return WorkspaceST::Get();
+        
+    } else {
+        return m_workspace;
+    }
+}
+
+const Workspace* Project::GetWorkspace() const
+{
+    if ( !m_workspace ) {
+        return WorkspaceST::Get();
+        
+    } else {
+        return m_workspace;
+    }
 }

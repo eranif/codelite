@@ -178,7 +178,7 @@ public:
 
     void SetCodeLiteLauncherPath(const wxString &path);
     void OnRestart(wxCommandEvent &event);
-    void OnWorkspaceLoaded(wxCommandEvent &event);
+    void GenerateCompileCommands();
     
 protected:
     void DoRestartCodeLite();

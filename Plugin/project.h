@@ -186,7 +186,8 @@ private:
     bool          m_isModified;
     NodeMap_t     m_vdCache;
     time_t        m_modifyTime;
-
+    Workspace*    m_workspace;
+    
 public:
     // -----------------------------------------
     // File meta data
@@ -248,10 +249,20 @@ public:
     typedef std::vector<Project::FileInfo> FileInfoVector_t;
 
 public:
+    /**
+     * @brief return the workspace associated with the project
+     * If no workspace is associated, then the global workspace is returned
+     */
+    Workspace* GetWorkspace();
+    
+    /**
+     * @brief the const version of the above 
+     */
+    const Workspace* GetWorkspace() const;
     const wxFileName &GetFileName() const {
         return m_fileName;
     }
-
+    
     /**
      * \brief copy this project and all the files under to new_path
      * \param file_name the new path of the project
@@ -627,7 +638,7 @@ public:
     /**
      * @brief add this project files into the 'compile_commands' json object
      */
-    void CreateCompileCommandsJSON( JSONElement &compile_commands ) const;
+    void CreateCompileCommandsJSON( JSONElement &compile_commands );
     
     /**
      * @brief return the build configuration
@@ -637,6 +648,11 @@ public:
     BuildConfigPtr GetBuildConfiguration(const wxString &configName = "") const;
     
 private:
+    /**
+     * @brief associate this project with a workspace
+     */
+    void AssociateToWorkspace( Workspace *workspace );
+
     wxString DoFormatVirtualFolderName(const wxXmlNode* node) const;
 
     void DoDeleteVDFromCache(const wxString &vd);

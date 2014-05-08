@@ -31,8 +31,7 @@
 #include "cl_editor.h"
 #include "cl_command_event.h"
 #include <wx/event.h>
-
-wxDECLARE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
+#include "CompileCommandsCreateor.h"
 
 class CodeCompletionManager : public wxEvtHandler
 {

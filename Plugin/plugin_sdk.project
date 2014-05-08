@@ -60,6 +60,8 @@
     <File Name="bookmark_manager.cpp"/>
     <File Name="unredobase.cpp"/>
     <File Name="unredobase.h"/>
+    <File Name="CompileCommandsCreateor.h"/>
+    <File Name="CompileCommandsCreateor.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="async_executable_cmd.h"/>

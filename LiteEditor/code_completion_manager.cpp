@@ -9,6 +9,7 @@
 #include "compilation_database.h"
 #include "event_notifier.h"
 #include "plugin.h"
+#include "file_logger.h"
 
 static CodeCompletionManager *ms_CodeCompletionManager = NULL;
 
@@ -297,6 +298,7 @@ void CodeCompletionManager::OnBuildStarted(clBuildEvent& e)
 void CodeCompletionManager::OnCompileCommandsFileGenerated(clCommandEvent& event)
 {
     event.Skip();
+    CL_DEBUG("-- Code Completion Manager: process file 'compile_commands.json' file" );
     CompilationDatabase db;
     ClangCompilationDbThreadST::Get()->AddFile( db.GetFileName().GetFullPath() );
 }

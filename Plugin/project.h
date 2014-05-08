@@ -147,7 +147,6 @@ class Workspace;
 typedef SmartPtr<Project>       ProjectPtr;
 typedef std::set<wxFileName>    FileNameSet_t;
 typedef std::vector<wxFileName> FileNameVector_t;
-typedef std::list<wxFileName>   FileNameList_t;
 
 /**
  * \ingroup LiteEditor
@@ -334,6 +333,14 @@ public:
     bool RemoveFile(const wxString &fileName, const wxString &virtualDir = wxEmptyString);
 
     /**
+     * Rename file from the project
+     * \param fileName file full path
+     * \param virtualDir owner virtual directory
+     * \return true on success, false otherwise
+     */
+    bool RenameFile(const wxString &oldName, const wxString &virtualDir, const wxString &newName);
+
+    /**
      * \brief change the name of a virtual folder
      * \param oldVdPath full path of the virtual folder
      * \param newName the new name *only* of the virtual folder (without the path)
@@ -389,8 +396,8 @@ public:
 
     /**
      * Return list of files in this project - in both absolute and relative path
-     * @param files relative paths
-     * @param absFiles absolute paths
+     * \param files relative paths
+     * \param absFiles absolute paths
      */
     void GetFiles(std::vector<wxFileName> &files, std::vector<wxFileName> &absFiles);
 
@@ -398,6 +405,13 @@ public:
      * @brief return a filename set of all the project files (in absolute paths)
      */
     void GetFiles(wxStringSet_t& files);
+
+    /**
+     * @brief return a relative filename set of all the project files
+     * \param files the set in which to return the paths
+     * \param relativePath the path to which to make-relative
+     */
+    void GetFiles(wxStringSet_t& files, const wxString& relativePath);
 
     /**
      * Return a node pointing to any project-wide editor preferences
@@ -641,9 +655,8 @@ private:
     // Create virtual dir and return its xml node
     wxXmlNode *CreateVD(const wxString &vdFullPath, bool mkpath = false);
 
-    void DoGetFiles(FileNameVector_t &files, const wxString &makeRelativeToMe = "") const;
-    void DoGetFiles( wxStringSet_t &files ) const;
-    
+    void GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool absPath = false);
+    void GetFiles(wxXmlNode *parent, std::vector<wxFileName>& files, std::vector<wxFileName>& absFiles);
     /**
      * Return list of projects that this projects depends on
      */

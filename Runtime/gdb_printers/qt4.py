@@ -65,6 +65,10 @@ class QByteArrayPrinter:
             self.count = self.count + 1
             return ('[%d]' % count, self.data[count])
 
+         # Python3 version
+        def __next__(self):
+            return self.next()
+
     def children(self):
         return self._iterator(self.val['d']['data'], self.val['d']['size'])
 
@@ -118,6 +122,10 @@ class QListPrinter:
                 node = array.cast(gdb.lookup_type('QList<%s>::Node' % self.nodetype))
             self.count = self.count + 1
             return ('[%d]' % count, node['v'].cast(self.nodetype))
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
 
     def __init__(self, val, itype):
         self.val = val
@@ -184,6 +192,10 @@ class QMapPrinter:
             result = ('[%d]' % self.count, item)
             self.count = self.count + 1
             return result
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
 
 
     def __init__(self, val):
@@ -297,6 +309,10 @@ class QHashPrinter:
             self.count = self.count + 1
             return ('[%d]' % self.count, item)
 
+         # Python3 version
+        def __next__(self):
+            return self.next()
+
     def __init__(self, val):
         self.val = val
 
@@ -399,7 +415,7 @@ class QUrlPrinter:
     def to_string(self):
         try:
             return self.val['d']['encodedOriginal']
-        except RuntimeError, error:
+        except RuntimeError as error:
             #if no debug information is avaliable for Qt, try guessing the correct address for encodedOriginal
             #problem with this is that if QUrlPrivate members get changed, this fails
             offset = gdb.lookup_type('int').sizeof
@@ -438,6 +454,10 @@ class QSetPrinter:
             self.count = self.count + 1
             return ('[%d]' % (self.count-1), item)
 
+         # Python3 version
+        def __next__(self):
+            return self.next()
+
     def children(self):
         hashPrinter = QHashPrinter(self.val['q_hash'])
         hashIterator = hashPrinter._iterator(self.val['q_hash'])
@@ -453,7 +473,7 @@ class QCharPrinter:
         self.val = val
 
     def to_string(self):
-        return unichr(self.val['ucs'])
+        return chr(self.val['ucs'])
 
     def display_hint (self):
         return 'string'

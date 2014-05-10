@@ -51,7 +51,7 @@ def find_type(orig, name):
         # anything fancier here.
         field = typ.fields()[0]
         if not field.is_base_class:
-            raise ValueError, "Cannot find type %s::%s" % (str(orig), name)
+            raise ValueError("Cannot find type %s::%s" % (str(orig), name))
         typ = field.type
 
 class SharedPointerPrinter:
@@ -106,6 +106,10 @@ class StdListPrinter:
             self.count = self.count + 1
             return ('[%d]' % count, elt['_M_data'])
 
+         # Python3 version
+        def __next__(self):
+            return self.next()
+
     def __init__(self, typename, val):
         self.typename = typename
         self.val = val
@@ -152,6 +156,10 @@ class StdSlistPrinter:
             count = self.count
             self.count = self.count + 1
             return ('[%d]' % count, elt['_M_data'])
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
 
     def __init__(self, typename, val):
         self.val = val
@@ -221,6 +229,10 @@ class StdVectorPrinter:
                 self.item = self.item + 1
                 return ('[%d]' % count, elt)
 
+         # Python3 version
+        def __next__(self):
+            return self.next()
+
     def __init__(self, typename, val):
         self.typename = typename
         self.val = val
@@ -276,20 +288,20 @@ class StdTuplePrinter:
                 # Set the actual head to the first pair.
                 self.head  = self.head.cast (nodes[0].type)
             elif len (nodes) != 0:
-                raise ValueError, "Top of tuple tree does not consist of a single node."
+                raise ValueError("Top of tuple tree does not consist of a single node.")
             self.count = 0
 
         def __iter__ (self):
             return self
 
-        def next (self):
+        def next(self):
             nodes = self.head.type.fields ()
             # Check for further recursions in the inheritance tree.
             if len (nodes) == 0:
                 raise StopIteration
             # Check that this iteration has an expected structure.
             if len (nodes) != 2:
-                raise ValueError, "Cannot parse more than 2 nodes in a tuple tree."
+                raise ValueError("Cannot parse more than 2 nodes in a tuple tree.")
 
             # - Left node is the next recursion parent.
             # - Right node is the actual class contained in the tuple.
@@ -309,6 +321,10 @@ class StdTuplePrinter:
                 return ('[%d]' % self.count, impl)
             else:
                 return ('[%d]' % self.count, impl['_M_head_impl'])
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
 
     def __init__ (self, typename, val):
         self.typename = typename
@@ -375,6 +391,10 @@ class RbtreeIterator:
             self.node = node
         return result
 
+      # Python3 version
+    def __next__(self):
+        return self.next()
+
 # This is a pretty printer for std::_Rb_tree_iterator (which is
 # std::map::iterator), and has nothing to do with the RbtreeIterator
 # class above.
@@ -416,7 +436,7 @@ class StdMapPrinter:
 
         def next(self):
             if self.count % 2 == 0:
-                n = self.rbiter.next()
+                n = next(self.rbiter)
                 n = n.cast(self.type).dereference()['_M_value_field']
                 self.pair = n
                 item = n['first']
@@ -425,6 +445,10 @@ class StdMapPrinter:
             result = ('[%d]' % self.count, item)
             self.count = self.count + 1
             return result
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
 
     def __init__ (self, typename, val):
         self.typename = typename
@@ -457,13 +481,17 @@ class StdSetPrinter:
             return self
 
         def next(self):
-            item = self.rbiter.next()
+            item = next(self.rbiter)
             item = item.cast(self.type).dereference()['_M_value_field']
             # FIXME: this is weird ... what to do?
             # Maybe a 'set' display hint?
             result = ('[%d]' % self.count, item)
             self.count = self.count + 1
             return result
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
 
     def __init__ (self, typename, val):
         self.typename = typename
@@ -552,6 +580,10 @@ class StdDequePrinter:
 
             return result
 
+         # Python3 version
+        def __next__(self):
+            return self.next()
+
     def __init__(self, typename, val):
         self.typename = typename
         self.val = val
@@ -572,7 +604,7 @@ class StdDequePrinter:
 
         size = self.buffer_size * delta_n + delta_s + delta_e
 
-        return '%s with %d elements' % (self.typename, long (size))
+        return '%s with %d elements' % (self.typename, int (size))
 
     def children(self):
         start = self.val['_M_impl']['_M_start']
@@ -627,13 +659,17 @@ class Tr1HashtableIterator:
     def __iter__ (self):
         return self
 
-    def next (self):
+    def next(self):
         if self.node == 0:
             raise StopIteration
         node = self.node.cast(self.node_type)
         result = node.dereference()['_M_v']
         self.node = node.dereference()['_M_nxt']
         return result
+
+      # Python3 version
+    def __next__(self):
+        return self.next()
 
 class Tr1UnorderedSetPrinter:
     "Print a tr1::unordered_set"
@@ -655,8 +691,8 @@ class Tr1UnorderedSetPrinter:
         return '[%d]' % i
 
     def children (self):
-        counter = itertools.imap (self.format_count, itertools.count())
-        return itertools.izip (counter, Tr1HashtableIterator (self.hashtable()))
+        counter = map (self.format_count, itertools.count())
+        return zip (counter, Tr1HashtableIterator (self.hashtable()))
 
 class Tr1UnorderedMapPrinter:
     "Print a tr1::unordered_map"
@@ -688,11 +724,11 @@ class Tr1UnorderedMapPrinter:
         return '[%d]' % i
 
     def children (self):
-        counter = itertools.imap (self.format_count, itertools.count())
+        counter = map (self.format_count, itertools.count())
         # Map over the hash table and flatten the result.
-        data = self.flatten (itertools.imap (self.format_one, Tr1HashtableIterator (self.hashtable())))
+        data = self.flatten (map (self.format_one, Tr1HashtableIterator (self.hashtable())))
         # Zip the two iterators together.
-        return itertools.izip (counter, data)
+        return zip (counter, data)
 
     def display_hint (self):
         return 'map'
@@ -719,6 +755,10 @@ class StdForwardListPrinter:
             valptr = elt['_M_storage'].address
             valptr = valptr.cast(elt.type.template_argument(0).pointer())
             return ('[%d]' % count, valptr.dereference())
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
 
     def __init__(self, typename, val):
         self.val = val
@@ -764,7 +804,7 @@ class Printer(object):
         # A small sanity check.
         # FIXME
         if not self.compiled_rx.match(name + '<>'):
-            raise ValueError, 'libstdc++ programming error: "%s" does not match' % name
+            raise ValueError('libstdc++ programming error: "%s" does not match' % name)
         printer = RxPrinter(name, function)
         self.subprinters.append(printer)
         self.lookup[name] = printer

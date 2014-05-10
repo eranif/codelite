@@ -56,6 +56,11 @@ class wxArrayFooPrinter:
                 # The wx2.8 way
                 elt = self.items[count]
             return ('[%d]' % count, elt)
+
+         # Python3 version
+        def __next__(self):
+            return self.next()
+
     def __init__(self, val):
         self.val = val
 

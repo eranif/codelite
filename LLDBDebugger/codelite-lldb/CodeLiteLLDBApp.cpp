@@ -169,7 +169,7 @@ bool CodeLiteLLDBApp::InitializeLLDB(const LLDBCommand &command)
 #endif
 
     m_debuggeePid = wxNOT_FOUND;
-    wxPrintf("codelite-lldb: creatig target for file '%s'\n", command.GetExecutable());
+    wxPrintf("codelite-lldb: creating target for file '%s'\n", command.GetExecutable());
     m_debugger = lldb::SBDebugger::Create();
     lldb::SBError lldbError;
     m_target = m_debugger.CreateTarget(command.GetExecutable().mb_str().data(), NULL, NULL, true, lldbError);
@@ -707,7 +707,7 @@ void CodeLiteLLDBApp::LocalVariables(const LLDBCommand& command)
 
 void CodeLiteLLDBApp::NotifyLocals(LLDBVariable::Vect_t locals)
 {
-    wxPrintf("codelite-lldb: NotifyLocals called. with %d locals\n", (int)locals.size());
+    wxPrintf("codelite-lldb: NotifyLocals called with %d locals\n", (int)locals.size());
     LLDBReply reply;
     reply.SetReplyType( kReplyTypeLocalsUpdated );
     reply.SetVariables( locals );
@@ -799,7 +799,7 @@ void CodeLiteLLDBApp::MainLoop()
                 wxThread::Sleep(10);
             }
         }
-        wxPrintf("codelite-lldb: terminaing\n");
+        wxPrintf("codelite-lldb: terminating\n");
         
     } catch (clSocketException &e) {
         wxPrintf("codelite-lldb: an error occured during MainLoop(). %s. strerror=%s\n", e.what().c_str(), strerror(errno));

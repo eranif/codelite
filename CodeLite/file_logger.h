@@ -23,7 +23,12 @@ protected:
 public:
     FileLogger();
     ~FileLogger();
-
+    
+    /**
+     * @brief open the log file
+     */
+    static void OpenLog(const wxString& fullName, int verbosity);
+    
     static FileLogger *Get();
 
     void AddLogLine(const wxString &msg, int verbosity);

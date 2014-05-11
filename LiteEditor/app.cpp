@@ -497,7 +497,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
     // Set the log file verbosity
-    FileLogger::Get()->SetVerbosity( clConfig::Get().Read("LogVerbosity", FileLogger::Error) );
+    FileLogger::OpenLog("codelite.log", clConfig::Get().Read("LogVerbosity", FileLogger::Error));
     CL_DEBUG(wxT("Starting codelite..."));
 
     // check for single instance

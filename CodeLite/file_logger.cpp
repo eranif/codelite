@@ -74,12 +74,6 @@ void FileLogger::AddLogLine(const wxString &msg, int verbosity)
 
 FileLogger* FileLogger::Get()
 {
-    if(!initialized) {
-        wxString filename;
-        filename << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << wxT("codelite.log");
-        theLogger.m_fp = wxFopen(filename, wxT("a+"));
-        initialized = true;
-    }
     return &theLogger;
 }
 
@@ -135,4 +129,15 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
 void FileLogger::SetVerbosity(const wxString& verbosity)
 {
     SetVerbosity( FileLogger::GetVerbosityAsNumber(verbosity) );
+}
+
+void FileLogger::OpenLog(const wxString& fullName, int verbosity)
+{
+    if ( !initialized ) {
+        wxString filename;
+        filename << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
+        theLogger.m_fp = wxFopen(filename, wxT("a+"));
+        theLogger.m_verbosity = verbosity;
+        initialized = true;
+    }
 }

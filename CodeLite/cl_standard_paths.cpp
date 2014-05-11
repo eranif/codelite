@@ -26,11 +26,12 @@ wxString clStandardPaths::GetUserDataDir() const
 #ifdef __WXGTK__
 
 #ifndef NDEBUG
+
     // Debug mode
     wxFileName fn(wxStandardPaths::Get().GetUserDataDir());
-    fn.SetFullName(".codelite-dbg");
+    fn.SetFullName( fn.GetFullName() + "-dbg" );
     return fn.GetFullPath();
-    
+
 #else
     // Release mode
     return wxStandardPaths::Get().GetUserDataDir();

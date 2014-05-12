@@ -506,8 +506,6 @@ protected:
     void OnCleanWorkspaceUI(wxUpdateUIEvent &e);
     void OnReBuildWorkspace(wxCommandEvent &e);
     void OnReBuildWorkspaceUI(wxUpdateUIEvent &e);
-    void OnUpdateParserPath(wxCommandEvent &e);
-    void OnNeverUpdateParserPath(wxCommandEvent &e);
 
     // Perspectives management
     void OnChangePerspective  (wxCommandEvent &e);

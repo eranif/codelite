@@ -569,7 +569,7 @@ bool Workspace::RemoveProject(const wxString &name, wxString &errMsg)
     return SaveXmlFile();
 }
 
-wxString Workspace::GetActiveProjectName()
+wxString Workspace::GetActiveProjectName() const
 {
     if ( !m_doc.IsOk() ) {
         return wxEmptyString;
@@ -895,4 +895,18 @@ void Workspace::CreateCompileCommandsJSON(JSONElement& compile_commands) const
             iter->second->CreateCompileCommandsJSON( compile_commands );
         }
     }
+}
+
+ProjectPtr Workspace::GetActiveProject() const
+{
+    return GetProject( GetActiveProjectName() );
+}
+
+ProjectPtr Workspace::GetProject(const wxString& name) const
+{
+    Workspace::ProjectMap_t::const_iterator iter = m_projects.find( name );
+    if ( iter == m_projects.end() ) {
+        return NULL;
+    }
+    return iter->second;
 }

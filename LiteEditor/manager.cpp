@@ -3591,9 +3591,23 @@ bool Manager::UpdateParserPaths(bool notify)
     wxArrayString localIncludePaths;
     wxArrayString localExcludePaths;
     wxArrayString projectIncludePaths;
-
+    
+    wxStringSet_t compileIncludePaths;
+    
     // If we have an opened workspace, get its search paths
     if(IsWorkspaceOpen()) {
+        
+        wxArrayString projects;
+        WorkspaceST::Get()->GetProjectList( projects );
+        for(size_t i=0; i<projects.GetCount(); ++i) {
+            ProjectPtr pProj = WorkspaceST::Get()->GetProject( projects.Item(i) );
+            if ( pProj ) {
+                wxArrayString compilerIncPaths = pProj->GetIncludePaths();
+                for(size_t index=0; index<compilerIncPaths.GetCount(); ++index) {
+                    compileIncludePaths.insert( compilerIncPaths.Item(index) );
+                }
+            }
+        }
         LocalWorkspaceST::Get()->GetParserPaths(localIncludePaths, localExcludePaths);
 
         BuildConfigPtr buildConf = GetCurrentBuildConf();
@@ -3605,7 +3619,7 @@ bool Manager::UpdateParserPaths(bool notify)
 
     for(size_t i=0; i<projectIncludePaths.GetCount(); i++) {
         projectIncludePaths.Item(i) = MacroManager::Instance()->Expand(projectIncludePaths.Item(i),
-                                      PluginManager::Get(), GetActiveProjectName());
+                                                                       PluginManager::Get(), GetActiveProjectName());
     }
 
     // Update the parser thread with the new paths
@@ -3634,9 +3648,23 @@ bool Manager::UpdateParserPaths(bool notify)
             uniExcludePath.Add( localExcludePaths.Item(i) );
         }
     }
-
+    
+    wxStringSet_t::iterator iter = compileIncludePaths.begin(); 
+    for(; iter != compileIncludePaths.end(); ++iter ) {
+        if ( localIncludePaths.Index(*iter) == wxNOT_FOUND ) {
+            localIncludePaths.Add( *iter );
+        }
+    }
+    
+    for(size_t i=0; i<localIncludePaths.GetCount(); ++i) {
+        CL_DEBUG("Parser thread include path: %s", localIncludePaths.Item(i));
+    }
+    
+    for(size_t i=0; i<localExcludePaths.GetCount(); ++i) {
+        CL_DEBUG("Parser thread exclude path: %s", localExcludePaths.Item(i));
+    }
+    
     ParseThreadST::Get()->SetSearchPaths( localIncludePaths, uniExcludePath );
-
     if(notify) {
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace") );
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent( event );

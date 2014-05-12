@@ -604,10 +604,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
     EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU,          clMainFrame::OnRefreshPerspectiveMenu)
     EVT_MENU   (XRCID("update_num_builders_count"),                clMainFrame::OnUpdateNumberOfBuildProcesses)
     EVT_MENU   (XRCID("goto_codelite_download_url"),               clMainFrame::OnGotoCodeLiteDownloadPage)
-
-    EVT_MENU   (XRCID("never_update_parser_paths"),                clMainFrame::OnNeverUpdateParserPath)
-    EVT_MENU   (XRCID("update_parser_paths"),                      clMainFrame::OnUpdateParserPath)
-
     EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, clMainFrame::OnSingleInstanceOpenFiles)
     EVT_COMMAND(wxID_ANY, wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP,  clMainFrame::OnSingleInstanceRaise)
 
@@ -4833,29 +4829,6 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
     wxUnusedVar(e);
     wxLaunchDefaultBrowser(m_codeliteDownloadPageURL);
     m_codeliteDownloadPageURL.Clear();
-}
-
-void clMainFrame::OnUpdateParserPath(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    wxArrayString paths;
-    wxArrayString excudePaths;
-    IncludePathLocator locator(PluginManager::Get());
-    locator.Locate( paths, excudePaths );
-
-    m_tagsOptionsData.SetParserSearchPaths ( paths       );
-    m_tagsOptionsData.SetParserExcludePaths( excudePaths );
-
-    // Update the parser thread
-    ParseThreadST::Get()->SetSearchPaths( paths, excudePaths );
-    clConfig ccConfig("code-completion.conf");
-    ccConfig.WriteItem( &m_tagsOptionsData );
-}
-
-void clMainFrame::OnNeverUpdateParserPath(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    EditorConfigST::Get()->SaveLongValue(wxT("UpdateParserPaths"), 0);
 }
 
 void clMainFrame::DoSuggestRestart()

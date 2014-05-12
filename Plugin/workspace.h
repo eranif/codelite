@@ -193,7 +193,7 @@ private:
     /**
      * \return The active project name or wxEmptyString
      */
-    wxString GetActiveProjectName();
+    wxString GetActiveProjectName() const;
 
     /**
      * @brief return the paths of all projects in the workspace (full paths)
@@ -341,6 +341,16 @@ private:
      * @brief return the tags database full path
      */
     wxFileName GetTagsFileName() const;
+    
+    /**
+     * @brief return project by name
+     */
+    ProjectPtr GetProject( const wxString &name ) const;
+    
+    /**
+     * @brief return the active project
+     */
+    ProjectPtr GetActiveProject() const;
     
 private:
     /**

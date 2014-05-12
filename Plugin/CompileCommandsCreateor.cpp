@@ -18,7 +18,7 @@ void CompileCommandsCreateor::Process(wxThread* thread)
     wxString errMsg;
     wxUnusedVar(thread);
     Workspace workspace;
-    workspace.OpenWorkspace2(m_filename.GetFullPath(), errMsg);
+    workspace.OpenReadOnly(m_filename.GetFullPath(), errMsg);
     
     JSONRoot json(cJSON_Array);
     JSONElement compile_commands = json.toElement();

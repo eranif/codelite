@@ -43,12 +43,13 @@
 #include "cl_command_event.h"
 
 Workspace::Workspace()
+    : m_saveOnExit( true )
 {
 }
 
 Workspace::~Workspace()
 {
-    if ( m_doc.IsOk() ) {
+    if ( m_saveOnExit && m_doc.IsOk() ) {
         SaveXmlFile();
     }
 }
@@ -76,7 +77,7 @@ void Workspace::CloseWorkspace()
 }
 
 
-bool Workspace::OpenWorkspace2(const wxString &fileName, wxString &errMsg)
+bool Workspace::OpenReadOnly(const wxString &fileName, wxString &errMsg)
 {
     wxFileName workSpaceFile(fileName);
     if ( !workSpaceFile.FileExists() ) {
@@ -87,6 +88,9 @@ bool Workspace::OpenWorkspace2(const wxString &fileName, wxString &errMsg)
     if ( !m_doc.IsOk() ) {
         return false;
     }
+    
+    m_saveOnExit = false;
+    
     // Make sure we have the WORKSPACE/.codelite folder exists
     {
         wxLogNull nolog;

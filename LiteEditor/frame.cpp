@@ -2552,6 +2552,7 @@ void clMainFrame::OnAdvanceSettings(wxCommandEvent &event)
 void clMainFrame::OnBuildEnded(clCommandEvent& event)
 {
     event.Skip();
+    
     if (m_buildAndRun) {
         //If the build process was part of a 'Build and Run' command, check whether an erros
         //occured during build process, if non, launch the output

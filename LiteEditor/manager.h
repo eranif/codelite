@@ -40,6 +40,7 @@
 #include "perspectivemanager.h"
 #include "ctags_manager.h"
 #include "clDebuggerTerminal.h"
+#include "cl_command_event.h"
 
 class LEditor;
 
@@ -616,7 +617,8 @@ public:
 
 protected:
     void OnProcessEnd(wxProcessEvent &event);
-
+    void OnBuildEnded(clBuildEvent &event);
+    
 
     //--------------------------- Debugger Support -----------------------------
 protected:

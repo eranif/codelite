@@ -204,12 +204,14 @@ Manager::Manager ( void )
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
 }
 
 Manager::~Manager ( void )
 {
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
     //stop background processes
     IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -3826,4 +3828,10 @@ void Manager::GenerateCompileCommands()
         CompileCommandsCreateor* job = new CompileCommandsCreateor( WorkspaceST::Get()->GetWorkspaceFileName() );
         JobQueueSingleton::Instance()->PushJob( job );
     }
+}
+
+void Manager::OnBuildEnded(clBuildEvent& event)
+{
+    event.Skip();
+    CallAfter( &Manager::GenerateCompileCommands );
 }

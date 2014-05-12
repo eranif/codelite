@@ -59,7 +59,8 @@ protected:
     Workspace::ProjectMap_t m_projects;
     wxString m_startupDir;
     time_t m_modifyTime;
-
+    bool  m_saveOnExit;
+    
 private:
 
     /// Constructor
@@ -123,7 +124,7 @@ private:
      * workspace from a secondary thread with no events / UI to get in the
      * way
      */
-    bool OpenWorkspace2(const wxString &fileName, wxString &errMsg);
+    bool OpenReadOnly(const wxString &fileName, wxString &errMsg);
     
     /**
      * Close the currently opened workspace

@@ -654,6 +654,7 @@ public:
 
     void         DbgStart(long pid = wxNOT_FOUND);
     void         DbgStop();
+    void         DbgContinue();
     void         DbgMarkDebuggerLine(const wxString &fileName, int lineno);
     void         DbgUnMarkDebuggerLine();
     void         DbgDoSimpleCommand(int cmd);

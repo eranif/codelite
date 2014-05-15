@@ -3179,9 +3179,15 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
             dbgEvent.SetDebuggerName( bldConf->GetDebuggerType() );
         }
     }
-
-    if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) {
-        return;
+    
+    // If a built-in debugger is already running, don't fire an event to the 
+    // plugins
+    // We know that it is a built-in debugger if 'dbgr' is not NULL
+    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if ( !(dbgr && dbgr->IsRunning()) ) {
+        if ( EventNotifier::Get()->ProcessEvent(dbgEvent) ) {
+            return;
+        }
     }
     
     if ( !WorkspaceST::Get()->IsOpen() ) {
@@ -3190,11 +3196,11 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
     }
 
     Manager *mgr = ManagerST::Get();
-    IDebugger *dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    
     if (dbgr && dbgr->IsRunning()) {
         
         // Debugger is already running -> probably a continue command
-        mgr->DbgStart();
+        mgr->DbgContinue();
         
     } else if (mgr->IsWorkspaceOpen()) {
 

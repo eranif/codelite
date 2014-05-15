@@ -2260,16 +2260,6 @@ void Manager::DbgStart ( long attachPid )
     }
     startup_info.debugger = dbgr;
 
-    if ( dbgr->IsRunning() ) {
-
-        //debugger is already running, so issue a 'cont' command
-        clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
-        clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
-
-        dbgr->Continue();
-        return;
-    }
-
     // Save the current layout
     GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
 
@@ -3867,4 +3857,15 @@ void Manager::OnBuildEnded(clBuildEvent& event)
 {
     event.Skip();
     CallAfter( &Manager::GenerateCompileCommands );
+}
+
+void Manager::DbgContinue()
+{
+    IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
+    if ( debugger && debugger->IsRunning() ) {
+        //debugger is already running, so issue a 'cont' command
+        clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
+        clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
+        debugger->Continue();
+    }
 }

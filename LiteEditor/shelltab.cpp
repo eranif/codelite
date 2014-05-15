@@ -243,7 +243,7 @@ bool DebugTab::DoSendInput(const wxString &cmd)
     bool contIsNeeded = ManagerST::Get()->GetBreakpointsMgr()->PauseDebuggerIfNeeded();
     dbgr->ExecuteCmd(cmd);
     if (contIsNeeded) {
-        ManagerST::Get()->DbgStart();
+        ManagerST::Get()->DbgContinue();
     }
     return true;
 }

@@ -38,6 +38,7 @@
 #include "procutils.h"
 #include "wx/tokenzr.h"
 #include <algorithm>
+#include "file_logger.h"
 
 #ifdef __WXMSW__
 #include "windows.h"
@@ -1174,7 +1175,8 @@ void DbgGdb::OnDataRead( wxCommandEvent& e )
 
     if( !m_gdbProcess || !m_gdbProcess->IsAlive() )
         return;
-
+    
+    CL_DEBUG("GDB>> %s", bufferRead);
     wxArrayString lines = wxStringTokenize( bufferRead, wxT( "\n" ), wxTOKEN_STRTOK );
     if(lines.IsEmpty())
         return;
@@ -1391,7 +1393,7 @@ bool DbgGdb::Attach(const DebugSessionInfo& si)
     if ( !si.ttyName.IsEmpty() ) {
         cmd << wxT( " --tty=" ) << si.ttyName;
     }
-    cmd << wxT( " --interpreter=mi " ) << si.exeName;
+    cmd << wxT( " --interpreter=mi " );
 #else
     cmd << dbgExeName << wxT( " --interpreter=mi " );
     cmd << ProcUtils::GetProcessNameByPid( si.PID ) << wxT( " " );

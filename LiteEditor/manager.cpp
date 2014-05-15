@@ -3658,8 +3658,8 @@ bool Manager::UpdateParserPaths(bool notify)
     
     wxArrayString existingPaths;
     for(size_t i=0; i<localIncludePaths.GetCount(); ++i) {
-        if ( wxFileName::DirExists( localExcludePaths.Item(i)) ) {
-            existingPaths.Add( localExcludePaths.Item(i) );
+        if ( wxFileName::DirExists( localIncludePaths.Item(i)) ) {
+            existingPaths.Add( localIncludePaths.Item(i) );
             CL_DEBUG("Parser thread include path: %s", localIncludePaths.Item(i));
         }
     }

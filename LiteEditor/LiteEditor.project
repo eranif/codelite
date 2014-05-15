@@ -246,6 +246,9 @@
       <File Name="editor_options_bookmarks.wxcp"/>
       <File Name="editor_options_bookmarks_liteeditor_bitmaps.cpp"/>
       <File Name="syntaxhighlightbasedlg_liteeditor_bitmaps.cpp"/>
+      <File Name="filechecklistbase.wxcp"/>
+      <File Name="FilesModifiedDlg.h"/>
+      <File Name="FilesModifiedDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
       <File Name="quickoutlinedlg.cpp"/>
@@ -870,6 +873,7 @@
       <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>
       <File Name="advance_settings_liteeditor_bitmaps.cpp"/>
       <File Name="depend_dlg_page_liteeditor_bitmaps.cpp"/>
+      <File Name="filechecklistbase_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -1179,7 +1183,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

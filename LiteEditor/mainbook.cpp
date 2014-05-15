@@ -38,6 +38,7 @@
 #include "message_pane.h"
 #include "theme_handler.h"
 #include "editorframe.h"
+#include "FilesModifiedDlg.h"
 
 #if CL_USE_NATIVEBOOK
 #ifdef __WXGTK20__
@@ -757,9 +758,31 @@ void MainBook::ReloadExternallyModified(bool prompt)
         }
     }
     editors.resize(n);
+    if ( n == 0 )
+        return;
 
     if(prompt) {
-        UserSelectFiles(files, _("Reload Modified Files"), _("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+
+        int res = clConfig::Get().GetAnnoyingDlgAnswer("FilesModifiedDlg", wxNOT_FOUND);
+        if ( res == wxNOT_FOUND ) {
+            // User did not ticked the 'Remember my answer' checkbox
+            // Show the dialog
+            FilesModifiedDlg dlg( EventNotifier::Get()->TopFrame() );
+            res = dlg.ShowModal();
+            
+            if ( res == wxID_CANCEL ) {
+                return;
+            }
+            
+            if ( dlg.GetRememberMyAnswer() ) {
+                clConfig::Get().SetAnnoyingDlgAnswer("FilesModifiedDlg", res);
+            }
+        }
+
+        if ( res == FilesModifiedDlg::kID_BUTTON_CHOOSE ) {
+            UserSelectFiles(files, _("Reload Modified Files"), _("Files have been modified outside the editor.\nChoose which files you would like to reload."), false);
+        }
+
     }
 
     time_t workspaceModifiedTimeAfter = WorkspaceST::Get()->GetFileLastModifiedTime();

@@ -86,11 +86,11 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Inherited Class",
 					"m_value":	"ImportFilesDialogNew"
 				}, {
 					"type":	"string",
-					"m_label":	"Inherited Class",
+					"m_label":	"File:",
 					"m_value":	"ImportFilesDialogNew"
 				}, {
 					"type":	"string",
@@ -239,7 +239,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxDIRP_DEFAULT_STYLE"],
+							"m_styles":	["wxDIRP_DEFAULT_STYLE", "wxDIRP_USE_TEXTCTRL"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -311,7 +311,8 @@
 									"m_eventClass":	"wxFileDirPickerEvent",
 									"m_eventHandler":	"wxFileDirPickerEventHandler",
 									"m_functionNameAndSignature":	"OnDirChanged(wxFileDirPickerEvent& event)",
-									"m_description":	"The user changed the directory selected in the control either using the button or using text control\n(see wxDIRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, e.g. an existing directory path)."
+									"m_description":	"The user changed the directory selected in the control either using the button or using text control\n(see wxDIRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, e.g. an existing directory path).",
+									"m_noBody":	false
 								}],
 							"m_children":	[]
 						}, {
@@ -392,13 +393,15 @@
 									"m_eventClass":	"wxDataViewEvent",
 									"m_eventHandler":	"wxDataViewEventHandler",
 									"m_functionNameAndSignature":	"OnValueChanged(wxDataViewEvent& event)",
-									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED event"
+									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED event",
+									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING",
 									"m_eventClass":	"wxDataViewEvent",
 									"m_eventHandler":	"wxDataViewEventHandler",
 									"m_functionNameAndSignature":	"OnItemExpanding(wxDataViewEvent& event)",
-									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING event"
+									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING event",
+									"m_noBody":	false
 								}],
 							"m_children":	[{
 									"m_type":	4472,

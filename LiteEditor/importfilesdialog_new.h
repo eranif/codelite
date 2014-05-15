@@ -27,7 +27,6 @@
 class ImportFilesDialogNewBase : public wxDialog
 {
 protected:
-    wxBoxSizer* mainSizer;
     wxBannerWindow* m_banner1;
     wxDirPickerCtrl* m_dirPicker;
     wxDataViewCtrl* m_dataview;
@@ -37,7 +36,6 @@ protected:
     wxTextCtrl* m_textCtrSpec;
     wxCheckBox* m_checkBoxFilesWOExt;
     wxStaticLine* m_staticline1;
-    wxBoxSizer* buttonSizer;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 

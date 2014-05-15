@@ -23,7 +23,7 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
     
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
     m_banner1 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
@@ -34,7 +34,7 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     
     mainSizer->Add(m_banner1, 0, wxALL|wxEXPAND, 5);
     
-    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE);
+    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
     m_dirPicker->SetToolTip(_("Select the base folder for importing"));
     m_dirPicker->SetFocus();
     
@@ -69,7 +69,7 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     
     mainSizer->Add(m_staticline1, 0, wxALL|wxEXPAND, 5);
     
-    buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     
     mainSizer->Add(buttonSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     

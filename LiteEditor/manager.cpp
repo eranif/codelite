@@ -3656,9 +3656,14 @@ bool Manager::UpdateParserPaths(bool notify)
         }
     }
     
+    wxArrayString existingPaths;
     for(size_t i=0; i<localIncludePaths.GetCount(); ++i) {
-        CL_DEBUG("Parser thread include path: %s", localIncludePaths.Item(i));
+        if ( wxFileName::DirExists( localExcludePaths.Item(i)) ) {
+            existingPaths.Add( localExcludePaths.Item(i) );
+            CL_DEBUG("Parser thread include path: %s", localIncludePaths.Item(i));
+        }
     }
+    localIncludePaths.swap( existingPaths );
     
     for(size_t i=0; i<localExcludePaths.GetCount(); ++i) {
         CL_DEBUG("Parser thread exclude path: %s", localExcludePaths.Item(i));

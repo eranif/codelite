@@ -178,10 +178,9 @@ void SFTP::OnSettings(wxCommandEvent& e)
     if ( dlg.ShowModal() == wxID_OK ) {
         
         SFTPSettings settings;
-        SFTPSettings::Load( settings );
-        
+        settings.Load();
         settings.SetAccounts( dlg.GetAccounts() );
-        SFTPSettings::Save( settings );
+        settings.Save();
     }
 }
 
@@ -249,7 +248,7 @@ void SFTP::OnFileSaved(clCommandEvent& e)
         wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
         
         SFTPSettings settings;
-        SFTPSettings::Load( settings );
+        settings.Load();
         
         SSHAccountInfo account;
         if ( settings.GetAccount(m_workspaceSettings.GetAccount(), account) ) {
@@ -313,7 +312,7 @@ void SFTP::OnSaveFile(clCommandEvent& e)
     }
     
     SFTPSettings settings;
-    SFTPSettings::Load( settings );
+    settings.Load();
     
     wxString accName    = element.namedObject("account").toString();
     wxString localFile  = element.namedObject("local_file").toString();

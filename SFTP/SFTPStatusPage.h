@@ -25,6 +25,8 @@
 
 #ifndef SFTPSTATUSPAGE_H
 #define SFTPSTATUSPAGE_H
+
+#include <wx/menu.h>
 #include "UI.h"
 
 class SFTPThreadMessage;

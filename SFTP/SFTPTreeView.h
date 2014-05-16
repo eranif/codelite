@@ -45,10 +45,21 @@ class SFTPTreeView : public SFTPTreeViewBase
     SFTP*          m_plugin;
 
 public:
+    enum {
+        ID_SFTP_BOOKMARK_FIRST    = 13000,
+        ID_SFTP_BOOKMARK_LAST     = 13100,
+        ID_SFTP_BOOKMARK_SETTINGS = 13101,
+    };
+    
+public:
     SFTPTreeView(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPTreeView();
 
 protected:
+    virtual void OnGotoLocation(wxCommandEvent& event);
+    virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
+    virtual void OnAddBookmark(wxAuiToolBarEvent& event);
+    virtual void OnAddBookmarkUI(wxUpdateUIEvent& event);
     virtual void OnContextMenu(wxTreeListEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);
     virtual void OnDisconnectUI(wxUpdateUIEvent& event);
@@ -61,6 +72,9 @@ protected:
 
     void DoCloseSession();
     bool DoExpandItem(const wxTreeListItem& item);
+    void DoBuildTree(const wxString &initialFolder);
+    void ManageBookmarks();
+    
     wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString &path);
 
     MyClientData* GetItemData(const wxTreeListItem& item);

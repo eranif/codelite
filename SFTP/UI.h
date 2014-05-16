@@ -20,15 +20,21 @@
 #include <wx/icon.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
+#include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
 #include <wx/treelist.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/listbox.h>
+#include <wx/button.h>
 
 class SFTPStatusPageBase : public wxPanel
 {
 protected:
-    wxBoxSizer* boxSizer2;
     wxDataViewListCtrl* m_dvListCtrl;
 
 protected:
@@ -64,16 +70,20 @@ class SFTPTreeViewBase : public wxPanel
 {
 protected:
     enum {
-        ID_OPEN_ACCOUNT_MANAGER = 1001,
-        ID_SFTP_CONNECT = 1002,
-        ID_SFTP_DISCONNECT = 1003,
+        ID_ADD_BOOKMARK = 1001,
+        ID_OPEN_ACCOUNT_MANAGER = 1002,
+        ID_SFTP_CONNECT = 1003,
+        ID_SFTP_DISCONNECT = 1004,
     };
 protected:
-    wxBoxSizer* boxSizer16;
-    wxAuiToolBar* m_auibar28;
+    wxAuiToolBar* m_auibar;
+    std::map<int, wxMenu*> m_dropdownMenus;
     wxChoice* m_choiceAccount;
-    wxBoxSizer* boxSizer20;
+    wxStaticText* m_staticText49;
+    wxTextCtrl* m_textCtrlQuickJump;
     wxTreeListCtrl* m_treeListCtrl;
+
+    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
 
 protected:
     virtual void OnOpenAccountManager(wxCommandEvent& event) { event.Skip(); }
@@ -81,6 +91,10 @@ protected:
     virtual void OnConnectUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDisconnect(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDisconnectUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnAddBookmark(wxAuiToolBarEvent& event) { event.Skip(); }
+    virtual void OnAddBookmarkUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnGotoLocationUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnGotoLocation(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemExpanding(wxTreeListEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeListEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxTreeListEvent& event) { event.Skip(); }
@@ -88,6 +102,25 @@ protected:
 public:
     SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPTreeViewBase();
+};
+
+
+class SFTPManageBookmarkDlgBase : public wxDialog
+{
+protected:
+    wxListBox* m_listBoxBookmarks;
+    wxButton* m_button70;
+    wxStdDialogButtonSizer* m_stdBtnSizer58;
+    wxButton* m_buttonOk;
+    wxButton* m_buttonCancel;
+
+protected:
+    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Bookmarks"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~SFTPManageBookmarkDlgBase();
 };
 
 #endif

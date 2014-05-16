@@ -724,19 +724,19 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     m_toolbar = this->CreateToolBar(wxTB_NOALIGN|wxTB_FLAT, wxID_ANY);
     m_toolbar->SetToolBitmapSize(wxSize(24,24));
     
-    m_toolbar->AddTool(XRCID("save_file"), _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("document-save")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
+    m_toolbar->AddTool(XRCID("save_file"), _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("document-save-24")), wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
     
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("document-close")), wxNullBitmap, wxITEM_NORMAL, _("Close"), _("Close"), NULL);
+    m_toolbar->AddTool(wxID_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("document-close-24")), wxNullBitmap, wxITEM_NORMAL, _("Close"), _("Close"), NULL);
     
-    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload File"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert")), wxNullBitmap, wxITEM_NORMAL, _("Reload File"), _("Reload File"), NULL);
+    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload File"), wxXmlResource::Get()->LoadBitmap(wxT("document-revert-24")), wxNullBitmap, wxITEM_NORMAL, _("Reload File"), _("Reload File"), NULL);
     
-    m_toolbar->AddTool(wxID_FIND, _("Find"), wxXmlResource::Get()->LoadBitmap(wxT("edit-find")), wxNullBitmap, wxITEM_NORMAL, _("Find"), _("Find"), NULL);
+    m_toolbar->AddTool(wxID_FIND, _("Find"), wxXmlResource::Get()->LoadBitmap(wxT("edit-find-24")), wxNullBitmap, wxITEM_NORMAL, _("Find"), _("Find"), NULL);
     
-    m_toolbar->AddTool(wxID_UNDO, _("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("edit-undo")), wxNullBitmap, wxITEM_NORMAL, _("Undo"), wxT(""), NULL);
+    m_toolbar->AddTool(wxID_UNDO, _("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("edit-undo-24")), wxNullBitmap, wxITEM_NORMAL, _("Undo"), wxT(""), NULL);
     
-    m_toolbar->AddTool(wxID_REDO, _("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("edit-redo")), wxNullBitmap, wxITEM_NORMAL, _("Redo"), wxT(""), NULL);
+    m_toolbar->AddTool(wxID_REDO, _("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("edit-redo-24")), wxNullBitmap, wxITEM_NORMAL, _("Redo"), wxT(""), NULL);
     
-    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark")), wxNullBitmap, wxITEM_DROPDOWN, _("Toggle Bookmark"), _("Toggle Bookmark"), NULL);
+    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark-24")), wxNullBitmap, wxITEM_DROPDOWN, _("Toggle Bookmark"), _("Toggle Bookmark"), NULL);
     m_toolbar->Realize();
     
     SetSizeHints(-1,-1);

@@ -27,32 +27,44 @@ JSONElement SFTPSettings::ToJSON() const
     JSONElement element = JSONElement::createObject(GetName());
     JSONElement arrAccounts = JSONElement::createArray("accounts");
     element.append(arrAccounts);
-
-    SSHAccountInfo::List_t::const_iterator iter = m_accounts.begin();
-    for(; iter != m_accounts.end(); ++iter ) {
-        arrAccounts.append( iter->ToJSON() );
+    for(size_t i=0; i<m_accounts.size(); ++i) {
+        arrAccounts.append( m_accounts.at(i).ToJSON() );
     }
     return element;
 }
 
-void SFTPSettings::Load(SFTPSettings& settings)
+SFTPSettings& SFTPSettings::Load()
 {
     clConfig config("sftp-settings.conf");
-    config.ReadItem( &settings );
+    config.ReadItem( this );
+    return *this;
 }
 
-void SFTPSettings::Save(const SFTPSettings& settings)
+SFTPSettings& SFTPSettings::Save()
 {
     clConfig config("sftp-settings.conf");
-    config.WriteItem( &settings );
+    config.WriteItem( this );
+    return *this;
 }
 
 bool SFTPSettings::GetAccount(const wxString& name, SSHAccountInfo &account) const
 {
-    SSHAccountInfo::List_t::const_iterator iter = m_accounts.begin();
-    for(; iter != m_accounts.end(); ++iter ) {
-        if ( name == iter->GetAccountName() ) {
-            account = (*iter);
+    for( size_t i=0; i<m_accounts.size(); ++i ) {
+        const SSHAccountInfo& currentAccount = m_accounts.at(i);
+        if ( name == currentAccount.GetAccountName() ) {
+            account = currentAccount;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool SFTPSettings::UpdateAccount(const SSHAccountInfo& account)
+{
+    for( size_t i=0; i<m_accounts.size(); ++i ) {
+        SSHAccountInfo& currentAccount = m_accounts.at(i);
+        if ( account.GetAccountName() == currentAccount.GetAccountName() ) {
+            currentAccount = account;
             return true;
         }
     }

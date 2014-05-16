@@ -32,22 +32,27 @@
 
 class WXDLLIMPEXP_SDK SFTPSettings : public clConfigItem
 {
-    SSHAccountInfo::List_t m_accounts;
+    SSHAccountInfo::Vect_t m_accounts;
 
 public:
     SFTPSettings();
     virtual ~SFTPSettings();
 
-    void SetAccounts(const SSHAccountInfo::List_t& accounts) {
+    void SetAccounts(const SSHAccountInfo::Vect_t& accounts) {
         this->m_accounts = accounts;
     }
-    const SSHAccountInfo::List_t& GetAccounts() const {
+    const SSHAccountInfo::Vect_t& GetAccounts() const {
         return m_accounts;
     }
-
+    
+    /**
+     * @brief update account details
+     */
+    bool UpdateAccount(const SSHAccountInfo& account);
+    
     bool GetAccount(const wxString &name, SSHAccountInfo &account) const;
-    static void Load(SFTPSettings& settings);
-    static void Save(const SFTPSettings& settings);
+    SFTPSettings& Load();
+    SFTPSettings& Save();
 
 public:
     virtual void FromJSON(const JSONElement& json);

@@ -28,25 +28,35 @@
 
 #if USE_SFTP
 #include "cl_config.h" // Base class: clConfigItem
-#include <list>
+#include <vector>
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK SSHAccountInfo : public clConfigItem
 {
-    wxString m_accountName;
-    wxString m_username;
-    wxString m_password;
-    int      m_port;
-    wxString m_host;
+    wxString      m_accountName;
+    wxString      m_username;
+    wxString      m_password;
+    int           m_port;
+    wxString      m_host;
+    wxArrayString m_bookmarks;
+
 public:
-    typedef std::list<SSHAccountInfo> List_t;
+    typedef std::vector<SSHAccountInfo> Vect_t;
 
 public:
     SSHAccountInfo();
 
     virtual ~SSHAccountInfo();
     SSHAccountInfo& operator=(const SSHAccountInfo& other);
-
+    
+    void AddBookmark(const wxString &location);
+    
+    void SetBookmarks(const wxArrayString& bookmarks) {
+        this->m_bookmarks = bookmarks;
+    }
+    const wxArrayString& GetBookmarks() const {
+        return m_bookmarks;
+    }
     void SetAccountName(const wxString& accountName) {
         this->m_accountName = accountName;
     }

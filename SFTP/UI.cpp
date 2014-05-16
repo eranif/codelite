@@ -23,7 +23,7 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
     
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
     m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), wxDV_SINGLE);
@@ -113,29 +113,46 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
         bBitmapLoaded = true;
     }
     
-    boxSizer16 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
-    m_auibar28 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar28->SetToolBitmapSize(wxSize(16,16));
+    m_auibar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer16->Add(m_auibar28, 0, wxEXPAND, 5);
+    boxSizer16->Add(m_auibar, 0, wxEXPAND, 5);
     
-    m_auibar28->AddTool(ID_OPEN_ACCOUNT_MANAGER, _("Open account manager..."), wxXmlResource::Get()->LoadBitmap(wxT("ssh-16")), wxNullBitmap, wxITEM_NORMAL, _("Open account manager..."), _("Open account manager..."), NULL);
+    m_auibar->AddTool(ID_OPEN_ACCOUNT_MANAGER, _("Open account manager..."), wxXmlResource::Get()->LoadBitmap(wxT("ssh-16")), wxNullBitmap, wxITEM_NORMAL, _("Open account manager..."), _("Open account manager..."), NULL);
     
-    m_auibar28->AddTool(ID_SFTP_CONNECT, _("Connect"), wxXmlResource::Get()->LoadBitmap(wxT("connect")), wxNullBitmap, wxITEM_NORMAL, _("Establish connection to the selected account"), _("Establish connection to the selected account"), NULL);
+    m_auibar->AddTool(ID_SFTP_CONNECT, _("Connect"), wxXmlResource::Get()->LoadBitmap(wxT("connect")), wxNullBitmap, wxITEM_NORMAL, _("Establish connection to the selected account"), _("Establish connection to the selected account"), NULL);
     
-    m_auibar28->AddTool(ID_SFTP_DISCONNECT, _("Disconnect"), wxXmlResource::Get()->LoadBitmap(wxT("disconnect")), wxNullBitmap, wxITEM_NORMAL, _("Close the current connection"), _("Close the current connection"), NULL);
-    m_auibar28->Realize();
+    m_auibar->AddTool(ID_SFTP_DISCONNECT, _("Disconnect"), wxXmlResource::Get()->LoadBitmap(wxT("disconnect")), wxNullBitmap, wxITEM_NORMAL, _("Close the current connection"), _("Close the current connection"), NULL);
+    
+    m_auibar->AddTool(ID_ADD_BOOKMARK, _("Add Bookmark"), wxXmlResource::Get()->LoadBitmap(wxT("bookmark")), wxNullBitmap, wxITEM_NORMAL, _("Add Bookmark"), _("Add Bookmark"), NULL);
+    wxAuiToolBarItem* m_toolbarItemAddBookmark = m_auibar->FindToolByIndex(m_auibar->GetToolCount()-1);
+    if (m_toolbarItemAddBookmark) {
+        m_toolbarItemAddBookmark->SetHasDropDown(true);
+    }
+    m_auibar->Realize();
     
     wxArrayString m_choiceAccountArr;
     m_choiceAccount = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceAccountArr, 0);
     
     boxSizer16->Add(m_choiceAccount, 0, wxALL|wxEXPAND, 2);
     
-    boxSizer20 = new wxBoxSizer(wxHORIZONTAL);
+    wxFlexGridSizer* flexGridSizer43 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer43->SetFlexibleDirection( wxBOTH );
+    flexGridSizer43->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer43->AddGrowableCol(1);
     
-    boxSizer16->Add(boxSizer20, 0, wxALL|wxEXPAND, 2);
+    boxSizer16->Add(flexGridSizer43, 0, wxEXPAND, 5);
+    
+    m_staticText49 = new wxStaticText(this, wxID_ANY, _("Go to:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    flexGridSizer43->Add(m_staticText49, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    
+    m_textCtrlQuickJump = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    
+    flexGridSizer43->Add(m_textCtrlQuickJump, 0, wxALL|wxEXPAND, 5);
     
     m_treeListCtrl = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(200,200), wxTL_DEFAULT_STYLE|wxTL_MULTIPLE);
     
@@ -156,10 +173,16 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     this->Connect(ID_SFTP_CONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnConnectUI), NULL, this);
     this->Connect(ID_SFTP_DISCONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnDisconnect), NULL, this);
     this->Connect(ID_SFTP_DISCONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnDisconnectUI), NULL, this);
+    this->Connect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
+    this->Connect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
+    m_staticText49->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
+    m_textCtrlQuickJump->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
+    m_textCtrlQuickJump->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
     
+    this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::ShowAuiToolMenu), NULL, this);
 }
 
 SFTPTreeViewBase::~SFTPTreeViewBase()
@@ -169,8 +192,100 @@ SFTPTreeViewBase::~SFTPTreeViewBase()
     this->Disconnect(ID_SFTP_CONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnConnectUI), NULL, this);
     this->Disconnect(ID_SFTP_DISCONNECT, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPTreeViewBase::OnDisconnect), NULL, this);
     this->Disconnect(ID_SFTP_DISCONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnDisconnectUI), NULL, this);
+    this->Disconnect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
+    this->Disconnect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
+    m_staticText49->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
+    m_textCtrlQuickJump->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
+    m_textCtrlQuickJump->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
+    
+    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
+    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
+        wxDELETE( menuIter->second );
+    }
+    m_dropdownMenus.clear();
+
+    this->Disconnect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::ShowAuiToolMenu), NULL, this);
+}
+
+
+void SFTPTreeViewBase::ShowAuiToolMenu(wxAuiToolBarEvent& event)
+{
+    event.Skip();
+    if (event.IsDropDownClicked()) {
+        wxAuiToolBar* toolbar = wxDynamicCast(event.GetEventObject(), wxAuiToolBar);
+        if (toolbar) {
+            wxAuiToolBarItem* item = toolbar->FindTool(event.GetId());
+            if (item) {
+                std::map<int, wxMenu*>::iterator iter = m_dropdownMenus.find(item->GetId());
+                if (iter != m_dropdownMenus.end()) {
+                    event.Skip(false);
+                    wxPoint pt = event.GetItemRect().GetBottomLeft();
+                    pt.y++;
+                    toolbar->PopupMenu(iter->second, pt);
+                }
+            }
+        }
+    }
+}
+SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC32BEInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer56 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer56);
+    
+    wxBoxSizer* boxSizer64 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer56->Add(boxSizer64, 1, wxALL|wxEXPAND, 5);
+    
+    wxArrayString m_listBoxBookmarksArr;
+    m_listBoxBookmarks = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxBookmarksArr, wxLB_SINGLE);
+    
+    boxSizer64->Add(m_listBoxBookmarks, 1, wxALL|wxEXPAND, 5);
+    
+    wxBoxSizer* boxSizer68 = new wxBoxSizer(wxVERTICAL);
+    
+    boxSizer64->Add(boxSizer68, 0, wxEXPAND, 5);
+    
+    m_button70 = new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer68->Add(m_button70, 0, wxALL|wxEXPAND, 5);
+    
+    m_stdBtnSizer58 = new wxStdDialogButtonSizer();
+    
+    boxSizer56->Add(m_stdBtnSizer58, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOk->SetDefault();
+    m_stdBtnSizer58->AddButton(m_buttonOk);
+    
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer58->AddButton(m_buttonCancel);
+    m_stdBtnSizer58->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_button70->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPManageBookmarkDlgBase::OnDelete), NULL, this);
+    m_button70->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPManageBookmarkDlgBase::OnDeleteUI), NULL, this);
+    
+}
+
+SFTPManageBookmarkDlgBase::~SFTPManageBookmarkDlgBase()
+{
+    m_button70->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPManageBookmarkDlgBase::OnDelete), NULL, this);
+    m_button70->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPManageBookmarkDlgBase::OnDeleteUI), NULL, this);
     
 }

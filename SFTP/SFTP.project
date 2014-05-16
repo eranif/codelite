@@ -10,6 +10,8 @@
     <File Name="remote_file_info.cpp"/>
     <File Name="sftp_item_comparator.h"/>
     <File Name="sftp_item_comparator.cpp"/>
+    <File Name="SFTPBookmark.h"/>
+    <File Name="SFTPBookmark.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="sftp.h"/>
@@ -20,6 +22,8 @@
     <File Name="SFTPStatusPage.cpp"/>
     <File Name="SFTPTreeView.h"/>
     <File Name="SFTPTreeView.cpp"/>
+    <File Name="SFTPManageBookmarkDlg.h"/>
+    <File Name="SFTPManageBookmarkDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="wxcrafter">
     <File Name="UI.wxcp"/>

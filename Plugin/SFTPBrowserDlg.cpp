@@ -71,10 +71,10 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wx
     m_bitmaps = bl.MakeStandardMimeMap();
 
     SFTPSettings settings;
-    SFTPSettings::Load( settings );
+    settings.Load();
 
-    const SSHAccountInfo::List_t& accounts = settings.GetAccounts();
-    SSHAccountInfo::List_t::const_iterator iter = accounts.begin();
+    const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
+    SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
     for(; iter != accounts.end(); ++iter ) {
         m_choiceAccount->Append( iter->GetAccountName() );
     }
@@ -97,8 +97,8 @@ void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)
     wxString accountName = m_choiceAccount->GetStringSelection();
 
     SFTPSettings settings;
-    SFTPSettings::Load( settings );
-
+    settings.Load();
+    
     SSHAccountInfo account;
     if ( !settings.GetAccount( accountName, account) ) {
         ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR|wxOK, this);
@@ -360,22 +360,20 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
     if ( dlg.ShowModal() == wxID_OK ) {
 
         SFTPSettings settings;
-        SFTPSettings::Load( settings );
-
-        settings.SetAccounts( dlg.GetAccounts() );
-        SFTPSettings::Save( settings );
-
+        settings.Load().SetAccounts( dlg.GetAccounts() );
+        settings.Save();
+        
         // Update the selections at the top
         wxString curselection = m_choiceAccount->GetStringSelection();
 
         m_choiceAccount->Clear();
-        const SSHAccountInfo::List_t& accounts = settings.GetAccounts();
+        const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
         if ( accounts.empty() ) {
             DoCloseSession();
             return;
 
         } else {
-            SSHAccountInfo::List_t::const_iterator iter = accounts.begin();
+            SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
             for(; iter != accounts.end(); ++iter ) {
                 m_choiceAccount->Append( iter->GetAccountName() );
             }

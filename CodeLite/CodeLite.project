@@ -151,6 +151,8 @@
     <File Name="unixprocess_impl.h"/>
     <File Name="winprocess_impl.cpp"/>
     <File Name="winprocess_impl.h"/>
+    <File Name="ZombieReaperPOSIX.cpp"/>
+    <File Name="ZombieReaperPOSIX.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include_finder">
     <File Name="include_finder.h"/>

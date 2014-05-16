@@ -40,7 +40,7 @@ protected:
     void DoAddAccount( const SSHAccountInfo& account );
 
 public:
-    SSHAccountInfo::List_t GetAccounts() const;
+    SSHAccountInfo::Vect_t GetAccounts() const;
 
 protected:
     virtual void OnAddAccount(wxCommandEvent& event);

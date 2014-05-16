@@ -5865,7 +5865,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../codelite-icons/toolbars/24/standard/document-save.png"
+									"m_path":	"DetachedEditorImages/document-save-24.png"
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Disabled-Bitmap File",
@@ -5913,7 +5913,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../codelite-icons/toolbars/24/standard/document-close.png"
+									"m_path":	"DetachedEditorImages/document-close-24.png"
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Disabled-Bitmap File",
@@ -5975,7 +5975,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../codelite-icons/toolbars/24/standard/document-revert.png"
+									"m_path":	"DetachedEditorImages/document-revert-24.png"
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Disabled-Bitmap File",
@@ -6023,7 +6023,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../codelite-icons/toolbars/24/search/edit-find.png"
+									"m_path":	"DetachedEditorImages/edit-find-24.png"
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Disabled-Bitmap File",
@@ -6085,7 +6085,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../codelite-icons/toolbars/24/standard/edit-undo.png"
+									"m_path":	"DetachedEditorImages/edit-undo-24.png"
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Disabled-Bitmap File",
@@ -6133,7 +6133,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../codelite-icons/toolbars/24/standard/edit-redo.png"
+									"m_path":	"DetachedEditorImages/edit-redo-24.png"
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Disabled-Bitmap File",
@@ -6181,7 +6181,7 @@
 								}, {
 									"type":	"bitmapPicker",
 									"m_label":	"Bitmap File:",
-									"m_path":	"../codelite-icons/toolbars/24/standard/bookmark.png"
+									"m_path":	"DetachedEditorImages/bookmark-24.png"
 								}, {
 									"type":	"filePicker",
 									"m_label":	"Disabled-Bitmap File",

@@ -57,7 +57,14 @@ public:
 public:
     clSFTP(clSSH::Ptr_t ssh);
     virtual ~clSFTP();
-
+    
+    /**
+     * @brief return the underlying ssh session
+     */
+    clSSH::Ptr_t GetSsh() const {
+        return m_ssh;
+    }
+    
     bool IsConnected() const {
         return m_connected;
     }

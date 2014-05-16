@@ -11,10 +11,10 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     : SSHAccountManagerDlgBase(parent)
 {
     SFTPSettings settings;
-    SFTPSettings::Load( settings );
+    settings.Load();
 
-    const SSHAccountInfo::List_t& accounts = settings.GetAccounts();
-    SSHAccountInfo::List_t::const_iterator iter = accounts.begin();
+    const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
+    SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
     for(; iter != accounts.end(); ++iter) {
         DoAddAccount( *iter );
     }
@@ -83,9 +83,9 @@ void SSHAccountManagerDlg::DoAddAccount(const SSHAccountInfo& account)
     m_dvListCtrlAccounts->AppendItem( cols, (wxUIntPtr)(new SSHAccountInfo(account)));
 }
 
-SSHAccountInfo::List_t SSHAccountManagerDlg::GetAccounts() const
+SSHAccountInfo::Vect_t SSHAccountManagerDlg::GetAccounts() const
 {
-    SSHAccountInfo::List_t accounts;
+    SSHAccountInfo::Vect_t accounts;
     for(int i=0; i<m_dvListCtrlAccounts->GetItemCount(); ++i) {
         accounts.push_back( *(SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData( m_dvListCtrlAccounts->RowToItem(i))) );
     }

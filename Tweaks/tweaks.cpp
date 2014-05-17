@@ -125,8 +125,8 @@ void Tweaks::OnColourTab(clColourEvent& e)
         
         if ( m_settings.GetGlobalFgColour().IsOk() && m_settings.GetGlobalBgColour().IsOk() ) {
             // Non editor tab
-            e.SetBgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : m_settings.GetGlobalBgColour() );
-            e.SetFgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : m_settings.GetGlobalFgColour() );
+            e.SetBgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : */m_settings.GetGlobalBgColour() );
+            e.SetFgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : */m_settings.GetGlobalFgColour() );
             
         } else {
             e.Skip();
@@ -136,12 +136,12 @@ void Tweaks::OnColourTab(clColourEvent& e)
         
         const ProjectTweaks& tw = m_settings.GetProjectTweaks( editor->GetProjectName() );
         if ( tw.IsOk() ) {
-            e.SetBgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : tw.GetTabBgColour() );
-            e.SetFgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : tw.GetTabFgColour() );
+            e.SetBgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : */tw.GetTabBgColour() );
+            e.SetFgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : */tw.GetTabFgColour() );
             
         } else if ( m_settings.GetGlobalBgColour().IsOk() && m_settings.GetGlobalFgColour().IsOk() ) {
-            e.SetBgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : m_settings.GetGlobalBgColour() );
-            e.SetFgColour( e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : m_settings.GetGlobalFgColour() );
+            e.SetBgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewBgColour() : */m_settings.GetGlobalBgColour() );
+            e.SetFgColour( /*e.IsActiveTab() ? EditorConfigST::Get()->GetCurrentOutputviewFgColour() : */m_settings.GetGlobalFgColour() );
             
         } else {
             e.Skip();
@@ -242,7 +242,9 @@ void Tweaks::OnTabBorderColour(clColourEvent& e)
 #endif
 #endif
     TWEAKS_ENABLED_EVENT_HANDLER();
-    if ( m_settings.IsEnableTweaks() && m_settings.GetGlobalBgColour().IsOk() ) {
+    
+    if ( m_settings.GetGlobalBgColour().IsOk() ) {
+        // return the tab colour
         e.SetBorderColour( DrawingUtils::DarkColour(m_settings.GetGlobalBgColour(), 1.5) );
     } else {
         e.Skip();

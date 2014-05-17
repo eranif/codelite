@@ -43,6 +43,6 @@ void wxC94E6InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_tweaks_bitmaps.cpp$_home_eran_devl_codelitegit_Tweaks_wxcrafter_tweaks_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_tweaks_bitmaps.cpp$_home_eran_devl_codelitegit_Tweaks_wxcrafter_tweaks_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_tweaks_bitmaps.cpp$C__src_codelite_Tweaks_wxcrafter_tweaks_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_tweaks_bitmaps.cpp$C__src_codelite_Tweaks_wxcrafter_tweaks_bitmaps.xrc"));
 }

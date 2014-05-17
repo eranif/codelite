@@ -86,11 +86,11 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Inherited Class",
 					"m_value":	"TweaksSettingsDlg"
 				}, {
 					"type":	"string",
-					"m_label":	"Inherited Class",
+					"m_label":	"File:",
 					"m_value":	"TweaksSettingsDlg"
 				}, {
 					"type":	"string",
@@ -219,13 +219,15 @@
 									"m_eventClass":	"wxCommandEvent",
 									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnEnableTweaks(wxCommandEvent& event)",
-									"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."
+									"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
+									"m_noBody":	false
 								}, {
 									"m_eventName":	"wxEVT_UPDATE_UI",
 									"m_eventClass":	"wxUpdateUIEvent",
 									"m_eventHandler":	"wxUpdateUIEventHandler",
 									"m_functionNameAndSignature":	"OnEnableTweaksCheckboxUI(wxUpdateUIEvent& event)",
-									"m_description":	"Process a wxEVT_UPDATE_UI event"
+									"m_description":	"Process a wxEVT_UPDATE_UI event",
+									"m_noBody":	false
 								}],
 							"m_children":	[]
 						}, {
@@ -298,7 +300,8 @@
 									"m_eventClass":	"wxUpdateUIEvent",
 									"m_eventHandler":	"wxUpdateUIEventHandler",
 									"m_functionNameAndSignature":	"OnEnableTweaksUI(wxUpdateUIEvent& event)",
-									"m_description":	"Process a wxEVT_UPDATE_UI event"
+									"m_description":	"Process a wxEVT_UPDATE_UI event",
+									"m_noBody":	false
 								}],
 							"m_children":	[{
 									"m_type":	4441,
@@ -500,7 +503,8 @@
 															"m_eventClass":	"wxUpdateUIEvent",
 															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnEnableColoursTableUI(wxUpdateUIEvent& event)",
-															"m_description":	"Process a wxEVT_UPDATE_UI event"
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
 														}],
 													"m_children":	[]
 												}, {
@@ -567,19 +571,25 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"integer",
+															"m_label":	"Sash Position:",
+															"m_value":	-1
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_PG_CHANGED",
 															"m_eventClass":	"wxPropertyGridEvent",
 															"m_eventHandler":	"wxPropertyGridEventHandler",
 															"m_functionNameAndSignature":	"OnColourChanged(wxPropertyGridEvent& event)",
-															"m_description":	"Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user"
+															"m_description":	"Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
+															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
 															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnEnableColoursTableUI(wxUpdateUIEvent& event)",
-															"m_description":	"Process a wxEVT_UPDATE_UI event"
+															"m_description":	"Process a wxEVT_UPDATE_UI event",
+															"m_noBody":	false
 														}],
 													"m_children":	[{
 															"m_type":	4486,
@@ -605,6 +615,11 @@
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
 																	"colour":	"<Default>"
+																}, {
+																	"type":	"choice",
+																	"m_label":	"Property Editor Control",
+																	"m_selection":	0,
+																	"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Kind:",
@@ -655,7 +670,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Label:",
-																			"m_value":	"File background colour"
+																			"m_value":	"Tab Label Background Colour"
 																		}, {
 																			"type":	"multi-string",
 																			"m_label":	"Tooltip:",
@@ -664,6 +679,11 @@
 																			"type":	"colour",
 																			"m_label":	"Bg Colour:",
 																			"colour":	"<Default>"
+																		}, {
+																			"type":	"choice",
+																			"m_label":	"Property Editor Control",
+																			"m_selection":	0,
+																			"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 																		}, {
 																			"type":	"choice",
 																			"m_label":	"Kind:",
@@ -715,7 +735,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Label:",
-																			"m_value":	"File text colour"
+																			"m_value":	"Tab Label Text Colour"
 																		}, {
 																			"type":	"multi-string",
 																			"m_label":	"Tooltip:",
@@ -724,6 +744,11 @@
 																			"type":	"colour",
 																			"m_label":	"Bg Colour:",
 																			"colour":	"<Default>"
+																		}, {
+																			"type":	"choice",
+																			"m_label":	"Property Editor Control",
+																			"m_selection":	0,
+																			"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 																		}, {
 																			"type":	"choice",
 																			"m_label":	"Kind:",
@@ -785,6 +810,11 @@
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
 																	"colour":	"<Default>"
+																}, {
+																	"type":	"choice",
+																	"m_label":	"Property Editor Control",
+																	"m_selection":	0,
+																	"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Kind:",
@@ -931,7 +961,8 @@
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_eventHandler":	"wxCommandEventHandler",
 																	"m_functionNameAndSignature":	"OnResetColours(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."
+																	"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																	"m_noBody":	false
 																}],
 															"m_children":	[]
 														}]
@@ -1198,13 +1229,18 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"integer",
+															"m_label":	"Sash Position:",
+															"m_value":	-1
 														}],
 													"m_events":	[{
 															"m_eventName":	"wxEVT_PG_CHANGED",
 															"m_eventClass":	"wxPropertyGridEvent",
 															"m_eventHandler":	"wxPropertyGridEventHandler",
 															"m_functionNameAndSignature":	"OnImageSelected(wxPropertyGridEvent& event)",
-															"m_description":	"Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user"
+															"m_description":	"Respond to wxEVT_PG_CHANGED event, generated when property value has been changed by the user",
+															"m_noBody":	false
 														}],
 													"m_children":	[{
 															"m_type":	4486,
@@ -1230,6 +1266,11 @@
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
 																	"colour":	"<Default>"
+																}, {
+																	"type":	"choice",
+																	"m_label":	"Property Editor Control",
+																	"m_selection":	0,
+																	"m_options":	["", "TextCtrl", "Choice", "ComboBox", "CheckBox", "TextCtrlAndButton", "ChoiceAndButton", "SpinCtrl", "DatePickerCtrl"]
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Kind:",

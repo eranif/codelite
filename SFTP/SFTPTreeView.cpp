@@ -213,13 +213,15 @@ bool SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
     wxTreeListItem dummyItem = m_treeListCtrl->GetFirstChild(item);
     m_treeListCtrl->DeleteItem( dummyItem );
     cd->SetInitialized( true );
-
+    
+    int nNumOfRealChildren = 0;
     SFTPAttribute::List_t::iterator iter = attributes.begin();
     for( ; iter != attributes.end(); ++iter ) {
         SFTPAttribute::Ptr_t attr = (*iter);
         if ( attr->GetName() == "." || attr->GetName() == ".." )
             continue;
-
+            
+        ++nNumOfRealChildren;
         // determine the icon index
         int imgIdx = wxNOT_FOUND;
         if ( attr->IsFolder() ) {
@@ -249,7 +251,8 @@ bool SFTPTreeView::DoExpandItem(const wxTreeListItem& item)
             m_treeListCtrl->AppendItem(child, "<dummy>");
         }
     }
-    return true;
+    
+    return nNumOfRealChildren > 0;
 }
 
 MyClientData* SFTPTreeView::GetItemData(const wxTreeListItem& item)

@@ -29,11 +29,15 @@
 #include <wx/aui/auibook.h>
 #include <wx/pen.h>
 #include "codelite_exports.h"
+#include <wx/dcgraph.h>
 
 // -- GUI helper classes and functions --
 
 class WXDLLIMPEXP_SDK clAuiGlossyTabArt : public wxAuiDefaultTabArt
 {
+protected:
+    void DoDrawInactiveTabSeparator(wxGCDC& gdc, const wxRect& tabRect);
+    
 public:
     clAuiGlossyTabArt();
     virtual ~clAuiGlossyTabArt();

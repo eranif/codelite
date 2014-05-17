@@ -60,11 +60,11 @@ TweaksSettingsDlgBase::TweaksSettingsDlgBase(wxWindow* parent, wxWindowID id, co
     m_pgProp114 = m_pgMgrTabColours->Append(  new wxPropertyCategory( _("Global Tab Colours") ) );
     m_pgProp114->SetHelpString(wxT(""));
     
-    m_pgPropGlobalTabBG = m_pgMgrTabColours->AppendIn( m_pgProp114,  new wxSystemColourProperty( _("File background colour")) );
+    m_pgPropGlobalTabBG = m_pgMgrTabColours->AppendIn( m_pgProp114,  new wxSystemColourProperty( _("Tab Label Background Colour")) );
     m_pgPropGlobalTabBG->SetValueToUnspecified();
     m_pgPropGlobalTabBG->SetHelpString(wxT(""));
     
-    m_pgPropGlobalTabFG = m_pgMgrTabColours->AppendIn( m_pgProp114,  new wxSystemColourProperty( _("File text colour")) );
+    m_pgPropGlobalTabFG = m_pgMgrTabColours->AppendIn( m_pgProp114,  new wxSystemColourProperty( _("Tab Label Text Colour")) );
     m_pgPropGlobalTabFG->SetValueToUnspecified();
     m_pgPropGlobalTabFG->SetHelpString(wxT(""));
     

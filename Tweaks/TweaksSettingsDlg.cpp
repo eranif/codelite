@@ -59,11 +59,12 @@ void TweaksSettingsDlg::DoPopulateList()
         // Colours table
         wxPGProperty *parentProject = m_pgMgrTabColours->AppendIn(m_pgPropProjectsColours, new wxPropertyCategory(projects.Item(i)));
         wxString labelBG, labelFG;
-        labelBG << projects.Item(i) << " background colour";
-        labelFG << projects.Item(i) << " text colour";
+        labelBG << projects.Item(i) << " tab label background colour";
+        labelFG << projects.Item(i) << " tab label text colour";
         if ( pt.IsOk() ) {
             m_colourProperties.push_back( m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelBG, wxPG_LABEL, pt.GetTabBgColour() )) );
             m_colourProperties.push_back( m_pgMgrTabColours->AppendIn(parentProject, new wxSystemColourProperty(labelFG, wxPG_LABEL, pt.GetTabFgColour() )) );
+            
         } else {
             wxPGProperty* prop(NULL);
 

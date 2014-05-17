@@ -649,7 +649,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
 
     int counter = 1;
     Compiler::CmpFileTypeInfo ft;
-    wxString cwd = ::wxGetCwd();
+    wxString projectPath = proj->GetFileName().GetPath();
 
     wxString objectsList;
     size_t   objCounter = 0;
@@ -688,14 +688,8 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString &confToBui
             continue;
         }
 
-        wxString objPrefix = DoGetTargetPrefix(files.at(i), cwd, cmp);
-        if (ft.kind == Compiler::CmpFileKindResource) {
-            // resource files are handled differently
-            curChunk << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
-        } else {
-            // Compiler::CmpFileKindSource file
-            curChunk << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetName() << wxT("$(ObjectSuffix) ");
-        }
+        wxString objPrefix = DoGetTargetPrefix(files.at(i), projectPath, cmp);
+        curChunk << wxT("$(IntermediateDirectory)/") << objPrefix << files[i].GetFullName() << wxT("$(ObjectSuffix) ");
         
         // for readability, break every 10 objects and start a new line
         if (counter % 10 == 0) {
@@ -789,12 +783,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
             compilationLine.Replace(wxT("$(FilePath)"),     relPath);
             
             // The object name is handled differently when using resource files
-            if(ft.kind == Compiler::CmpFileKindResource)
-                compilationLine.Replace(wxT("$(ObjectName)"),   objPrefix + fullnameOnly);
-            else
-                compilationLine.Replace(wxT("$(ObjectName)"),   objPrefix + filenameOnly);
-
-            compilationLine.Replace(wxT("$(ObjectName)"),   objPrefix + filenameOnly);
+            compilationLine.Replace(wxT("$(ObjectName)"),   objPrefix + fullnameOnly);
             compilationLine.Replace(wxT("\\"),              wxT("/"));
 
             if (ft.kind == Compiler::CmpFileKindSource) {
@@ -804,12 +793,12 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
 
                 bool isCFile = FileExtManager::GetType(rel_paths.at(i).GetFullName()) == FileExtManager::TypeSourceC;
 
-                objectName << wxT("$(IntermediateDirectory)/") << objPrefix << filenameOnly << wxT("$(ObjectSuffix)");
+                objectName << wxT("$(IntermediateDirectory)/") << objPrefix << fullnameOnly << wxT("$(ObjectSuffix)");
                 if (generateDependenciesFiles) {
-                    dependFile << wxT("$(IntermediateDirectory)/") << objPrefix << filenameOnly << wxT("$(DependSuffix)");
+                    dependFile << wxT("$(IntermediateDirectory)/") << objPrefix << fullnameOnly << wxT("$(DependSuffix)");
                 }
                 if (supportPreprocessOnlyFiles) {
-                    preprocessedFile << wxT("$(IntermediateDirectory)/") << objPrefix << filenameOnly << wxT("$(PreprocessSuffix)");
+                    preprocessedFile << wxT("$(IntermediateDirectory)/") << objPrefix << fullnameOnly << wxT("$(PreprocessSuffix)");
                 }
 
                 if(!isCFile) {
@@ -1841,9 +1830,12 @@ wxString BuilderGnuMake::DoGetCompilerMacro(const wxString& filename)
 wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxString &cwd, CompilerPtr cmp)
 {
     size_t        count = filename.GetDirCount();
-    wxArrayString dirs  = filename.GetDirs();
+    const wxArrayString &dirs  = filename.GetDirs();
     wxString      lastDir;
-
+    
+    if ( cwd == filename.GetPath() )
+        return wxEmptyString;
+        
     if(cmp && cmp->GetObjectNameIdenticalToFileName())
         return wxEmptyString;
 

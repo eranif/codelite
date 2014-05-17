@@ -1438,8 +1438,8 @@ wxString BuilderGnuMake::ParseLibs(const wxString &libs)
         }
 
         //remove known suffixes
-        if (	lib.EndsWith(wxT(".a")) ||
-                lib.EndsWith(wxT(".so")) ||
+        if (    lib.EndsWith(wxT(".a"))     ||
+                lib.EndsWith(wxT(".so"))    ||
                 lib.EndsWith(wxT(".dylib")) ||
                 lib.EndsWith(wxT(".dll"))
            ) {
@@ -1549,7 +1549,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString &project, const wxStrin
 
     wxString relPath = fn.GetPath(true, wxPATH_UNIX);
     wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
-    target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetName() << cmp->GetObjectSuffix();
+    target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetFullName() << cmp->GetObjectSuffix();
 
     target = ExpandAllVariables(target, WorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
     cmd    = GetProjectMakeCommand(proj, confToBuild, target, false, false);

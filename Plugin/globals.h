@@ -438,6 +438,11 @@ WXDLLIMPEXP_SDK  wxStandardID PromptForYesNoDialogWithCheckbox( const wxString &
         bool checkboxInitialValue = false);
 
 /**
+ * @brief wrap string with quotes if needed
+ */
+WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString &str);
+
+/**
  * @brief return an expression from a given position.
  * e.g. if the caret is on a line:
  * variable.m_name.m_value|

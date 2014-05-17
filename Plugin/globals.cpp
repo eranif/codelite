@@ -1997,3 +1997,10 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl *ctrl, bool forCC)
     }
     return expression;
 }
+wxString& WrapWithQuotes(wxString& str)
+{
+    if ( str.Contains(" ") ) {
+        str.Prepend("\"").Append("\"");
+    }
+    return str;
+}

@@ -321,23 +321,32 @@ void TagsStorageSQLite::SelectTagsByFile(const wxString& file, std::vector<TagEn
     OpenDatabase(databaseFileName);
 
     wxString query;
-    query << wxT("select * from tags where file='") << file << wxT("' order by line asc");
-
+    query << wxT("select * from tags where file='") << file << "' ";
+#ifdef __WXMSW__
+    // Under Windows, the file-crawler changes the file path
+    // to lowercase. However, the database matches the file name
+    // by case-sensitive
+    query << "COLLATE NOCASE ";
+#endif
+    query << wxT("order by line asc");
     DoFetchTags(query, tags);
 }
 
 void TagsStorageSQLite::DeleteByFileName(const wxFileName& path, const wxString& fileName, bool autoCommit)
 {
     // make sure database is open
-
-
     try {
         OpenDatabase(path);
 
         if ( autoCommit )
             m_db->Begin();
-
-        m_db->ExecuteUpdate(wxString::Format(wxT("Delete from tags where File='%s'"), fileName.GetData()));
+        
+        wxString sql = wxString::Format(wxT("Delete from tags where File='%s'"), fileName.GetData());
+#ifdef __WXMSW__
+        sql << " COLLATE NOCASE ";
+#endif
+        CL_DEBUG("TagsStorageSQLite: DeleteByFileName: '%s'", sql);
+        m_db->ExecuteUpdate( sql );
 
         if ( autoCommit )
             m_db->Commit();

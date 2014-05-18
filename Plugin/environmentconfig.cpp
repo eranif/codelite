@@ -31,6 +31,7 @@
 #include "wx_xml_compatibility.h"
 #include <wx/log.h>
 #include "macromanager.h"
+#include "file_logger.h"
 
 const wxString __NO_SUCH_ENV__ = wxT("__NO_SUCH_ENV__");
 
@@ -105,23 +106,30 @@ wxString EnvironmentConfig::ExpandVariables(const wxString &in, bool applyEnviro
 {
     EnvSetter *env = NULL;
     if(applyEnvironment) {
-        env = new EnvSetter(this);
+        env = new EnvSetter();
     }
-
     wxString expandedValue = DoExpandVariables(in);
 
-    delete env;
+    wxDELETE(env);
     return expandedValue;
 }
 
 void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &project)
 {
-    // Dont allow recursive apply of the environment
-    m_envApplied++;
-
-    if(m_envApplied > 1)
+    // We lock the CS here and it will be released in UnApplyEnv
+    // this is safe to call without Locker since the UnApplyEnv 
+    // will always be called after ApplyEnv (ApplyEnv and UnApplyEnv are 
+    // protected functions that can only be called from EnvSetter class
+    // which always call UnApplyEnv in its destructor)
+    m_cs.Enter();
+    ++m_envApplied;
+    
+    if ( m_envApplied > 1 ) {
+        CL_DEBUG("Thread-%d: Applying environment variables... (not needed)", (int)wxThread::GetCurrentId());
         return;
+    }
 
+    CL_DEBUG("Thread-%d: Applying environment variables...", (int)wxThread::GetCurrentId());
     //read the environments variables
     EvnVarList vars;
     ReadObject(wxT("Variables"), &vars);
@@ -170,9 +178,9 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t *overrideMap, const wxString &pro
 
 void EnvironmentConfig::UnApplyEnv()
 {
-    m_envApplied--;
-
-    if(m_envApplied == 0) {
+    --m_envApplied;
+    if ( m_envApplied == 0 ) {
+        CL_DEBUG("Thread-%d: Un-Applying environment variables", (int)wxThread::GetCurrentId());
         //loop over the old values and restore them
         wxStringMap_t::iterator iter = m_envSnapshot.begin();
         for ( ; iter != m_envSnapshot.end(); iter++ ) {
@@ -188,6 +196,7 @@ void EnvironmentConfig::UnApplyEnv()
         }
         m_envSnapshot.clear();
     }
+    m_cs.Leave();
 }
 
 EvnVarList EnvironmentConfig::GetSettings()

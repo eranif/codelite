@@ -3847,10 +3847,12 @@ void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)
 
 void Manager::GenerateCompileCommands()
 {
-    if ( WorkspaceST::Get()->IsOpen() ) {
-        CompileCommandsCreateor* job = new CompileCommandsCreateor( WorkspaceST::Get()->GetWorkspaceFileName() );
-        JobQueueSingleton::Instance()->PushJob( job );
-    }
+    // FIXME: temporarly disable this
+
+    // if ( WorkspaceST::Get()->IsOpen() ) {
+    //     CompileCommandsCreateor* job = new CompileCommandsCreateor( WorkspaceST::Get()->GetWorkspaceFileName() );
+    //     JobQueueSingleton::Instance()->PushJob( job );
+    // }
 }
 
 void Manager::OnBuildEnded(clBuildEvent& event)

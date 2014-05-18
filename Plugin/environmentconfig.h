@@ -30,6 +30,7 @@
 #include "evnvarlist.h"
 #include <wx/utils.h>
 #include "macros.h"
+#include <wx/thread.h>
 
 class EnvSetter;
 
@@ -50,9 +51,10 @@ class WXDLLIMPEXP_SDK EnvironmentConfig : public ConfigurationToolBase
     // Allow access to Apply/UnApply Env
     friend class EnvSetter;
     
-    wxStringMap_t m_envSnapshot;
-    int           m_envApplied;
-
+    wxStringMap_t     m_envSnapshot;
+    wxCriticalSection m_cs;
+    int               m_envApplied;
+    
 protected:
     wxString    DoExpandVariables(const wxString &in);
     void        ApplyEnv(wxStringMap_t *overrideMap, const wxString &project);
@@ -87,22 +89,31 @@ class EnvSetter
     bool               m_restoreOldValue;
     
 public:
-    EnvSetter(wxStringMap_t *om = NULL) : m_env(EnvironmentConfig::Instance()) {
+    EnvSetter(wxStringMap_t *om = NULL) 
+        : m_env(EnvironmentConfig::Instance())
+        , m_restoreOldValue(false) 
+    {
         m_env->ApplyEnv(om, wxEmptyString);
     }
 
-    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om = NULL) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
-        if (m_env) {
-            m_env->ApplyEnv(om, wxEmptyString);
-        }
+    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om = NULL) 
+        : m_env(EnvironmentConfig::Instance())
+        , m_restoreOldValue(false) 
+    {
+        wxUnusedVar(conf);
+        m_env->ApplyEnv(om, wxEmptyString);
     }
-    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om, const wxString &project) : m_env(conf ? conf : EnvironmentConfig::Instance()) {
-        if (m_env) {
-            m_env->ApplyEnv(om, project);
-        }
+    EnvSetter(EnvironmentConfig *conf, wxStringMap_t *om, const wxString &project) 
+        : m_env(EnvironmentConfig::Instance())
+        , m_restoreOldValue(false) 
+    {
+        wxUnusedVar(conf);
+        m_env->ApplyEnv(om, project);
     }
     
-    EnvSetter(const wxString &var, const wxString &value) {
+    EnvSetter(const wxString &var, const wxString &value) 
+        : m_env(NULL) 
+    {
         m_envName = var;
         // keep old value
         m_restoreOldValue = ::wxGetEnv(m_envName, &m_oldEnvValue);

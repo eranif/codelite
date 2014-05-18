@@ -3,6 +3,7 @@
 
 #include <compiler.h>
 #include <wx/sharedptr.h>
+#include <vector>
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK ICompilerLocator

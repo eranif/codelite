@@ -47,6 +47,7 @@
 #include "new_build_tab.h"
 #include "cl_config.h"
 #include "globals.h"
+#include <CompilerLocatorMinGW.h>
 
 #define __PERFORMANCE
 #include "performance.h"
@@ -585,7 +586,9 @@ bool CodeLiteApp::OnInit()
     // a file, this is done to reduce the load time
 //    if(parser.GetParamCount() > 0)
 //        showSplash = false;
-
+    
+    //CompilerLocatorMinGW mg;
+    //mg.Locate();
     // Create the main application window
     clMainFrame::Initialize( parser.GetParamCount() == 0 );
     m_pMainFrame = clMainFrame::Get();

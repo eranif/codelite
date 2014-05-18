@@ -558,4 +558,10 @@
     </Configuration>
   </Settings>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="Compilers">
+    <File Name="ICompilerLocator.h"/>
+    <File Name="ICompilerLocator.cpp"/>
+    <File Name="CompilerLocatorMinGW.h"/>
+    <File Name="CompilerLocatorMinGW.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

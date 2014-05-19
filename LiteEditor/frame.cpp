@@ -4431,8 +4431,6 @@ void clMainFrame::OnIncrementalSearch(wxCommandEvent& event)
 
 void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 {
-    wxUnusedVar( event );
-
     // See if any of the plugins want to handle this event by itself
     bool fullRetag = !(event.GetId() == XRCID("retag_workspace"));
     wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());
@@ -4450,8 +4448,12 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
     else if(event.GetId() == XRCID("retag_workspace_no_includes"))
         type = TagsManager::Retag_Quick_No_Scan;
     
-    // Generate the compile_commands files (needed for Clang)
-    ManagerST::Get()->GenerateCompileCommands();
+    wxMenu *menu = dynamic_cast<wxMenu*>(event.GetEventObject());
+    if ( menu ) {
+        // the event was fired from the menu bar, trigger a compile_commands.json file generation
+        // Generate the compile_commands files (needed for Clang)
+        ManagerST::Get()->GenerateCompileCommands();
+    }
     ManagerST::Get()->RetagWorkspace(type);
 }
 

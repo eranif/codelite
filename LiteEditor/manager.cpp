@@ -3850,6 +3850,7 @@ void Manager::GenerateCompileCommands()
     if ( WorkspaceST::Get()->IsOpen() ) {
         CompileCommandsCreateor* job = new CompileCommandsCreateor( WorkspaceST::Get()->GetWorkspaceFileName() );
         JobQueueSingleton::Instance()->PushJob( job );
+        clMainFrame::Get()->SetStatusMessage(_("Generating compile_commands.json file..."), 0);
     }
 }
 

@@ -2688,7 +2688,7 @@ void LEditor::ReloadFile()
 
     int lineNumber = GetCurrentLine();
 
-    clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0, 1);
+    clMainFrame::Get()->SetStatusMessage(_("Loading file..."), 0);
 
     wxString text;
 
@@ -2726,6 +2726,7 @@ void LEditor::ReloadFile()
     ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(this);
     LoadMarkersFromArray(bookmarks);
     LoadCollapsedFoldsFromArray(folds);
+    clMainFrame::Get()->SetStatusMessage(_("Ready"), 0);
 }
 
 void LEditor::SetEditorText(const wxString &text)

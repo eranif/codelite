@@ -96,17 +96,17 @@ bool CompilerLocatorMinGW::Locate()
     }
     
     for(size_t i=0; i<mingwFolderArr.GetCount(); ++i) {
-        wxFileName gcc(mingwFolderArr.Item(i), "gcc.exe");
-        gcc.AppendDir("bin");
+        wxString binFolder = FindBinFolder( mingwFolderArr.Item(i) );
+        if ( binFolder.IsEmpty() )
+            continue;
+        
+        wxFileName gcc(binFolder, "gcc.exe");
         if( gcc.FileExists() ) {
             CompilerPtr compiler( new Compiler(NULL) );
             m_compilers.push_back( compiler );
             AddTools(compiler, gcc.GetPath());
         }
     }
-    
-    // FIXME: remove duplicate compilers
-    // FIXME: search for 'bin' folder recursively inside the folder
 #endif
     return !m_compilers.empty();
 }
@@ -115,6 +115,11 @@ void CompilerLocatorMinGW::AddTools(CompilerPtr compiler, const wxString& binFol
 {
     wxFileName masterPath(binFolder, "");
     masterPath.RemoveLastDir();
+    if ( m_locatedFolders.count(masterPath.GetPath()) ) {
+        return;
+    }
+    m_locatedFolders.insert( masterPath.GetPath() );
+    
     if ( name.IsEmpty() ) {
         compiler->SetName("MinGW ( " + masterPath.GetDirs().Last() + " )");
 
@@ -159,4 +164,37 @@ void CompilerLocatorMinGW::AddTool(CompilerPtr compiler, const wxString& toolnam
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
     compiler->SetTool(toolname, toolpath + " " + extraArgs);
+}
+
+wxString CompilerLocatorMinGW::FindBinFolder(const wxString& parentPath)
+{
+    std::queue<wxString> dirs;
+    dirs.push( parentPath );
+    
+    while ( !dirs.empty() ) {
+        wxString curdir = dirs.front();
+        dirs.pop();
+        
+        wxFileName fn(curdir, "" );
+        fn.AppendDir("bin");
+        
+        if ( fn.DirExists() && fn.GetDirCount() && fn.GetDirs().Last() == "bin") {
+            return fn.GetPath();
+        }
+        
+        // Check to see if there are more directories to recurse
+        wxDir dir;
+        if ( dir.Open( curdir ) ) {
+            wxString dirname;
+            bool cont = dir.GetFirst( &dirname, "", wxDIR_DIRS );
+            while ( cont ) {
+                wxString new_dir;
+                new_dir << curdir << wxFileName::GetPathSeparator() << dirname;
+                dirs.push( new_dir );
+                dirname.Clear();
+                cont = dir.GetNext( &dirname );
+            }
+        }
+    }
+    return wxEmptyString;
 }

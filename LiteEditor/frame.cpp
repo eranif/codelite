@@ -4449,7 +4449,9 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 
     else if(event.GetId() == XRCID("retag_workspace_no_includes"))
         type = TagsManager::Retag_Quick_No_Scan;
-
+    
+    // Generate the compile_commands files (needed for Clang)
+    ManagerST::Get()->GenerateCompileCommands();
     ManagerST::Get()->RetagWorkspace(type);
 }
 
@@ -4965,22 +4967,16 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
     wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
     tagEndEvent.SetClientData(e.GetClientData()); // pass the pointer to the original caller
     EventNotifier::Get()->AddPendingEvent(tagEndEvent);
-    
-    // Generate a compile_commands.json file
-    ManagerST::Get()->CallAfter( &Manager::GenerateCompileCommands );
 }
 
 void clMainFrame::OnRetaggingProgress(wxCommandEvent& e)
 {
     e.Skip();
-#if USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
     if(e.GetInt() == 1) {
         // parsing started
         gStopWatch.Start();
     }
-
     GetWorkspacePane()->UpdateProgress( e.GetInt() );
-#endif
 }
 
 void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)

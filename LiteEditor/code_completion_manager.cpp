@@ -301,4 +301,5 @@ void CodeCompletionManager::OnCompileCommandsFileGenerated(clCommandEvent& event
     CL_DEBUG("-- Code Completion Manager: process file 'compile_commands.json' file" );
     CompilationDatabase db;
     ClangCompilationDbThreadST::Get()->AddFile( db.GetFileName().GetFullPath() );
+    clMainFrame::Get()->SetStatusText("Ready");
 }

@@ -4965,6 +4965,9 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
     wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
     tagEndEvent.SetClientData(e.GetClientData()); // pass the pointer to the original caller
     EventNotifier::Get()->AddPendingEvent(tagEndEvent);
+    
+    // Generate a compile_commands.json file
+    ManagerST::Get()->CallAfter( &Manager::GenerateCompileCommands );
 }
 
 void clMainFrame::OnRetaggingProgress(wxCommandEvent& e)

@@ -151,6 +151,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer43->Add(m_staticText49, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_textCtrlQuickJump = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_textCtrlQuickJump->SetToolTip(_("Type a path and hit ENTER"));
     
     flexGridSizer43->Add(m_textCtrlQuickJump, 0, wxALL|wxEXPAND, 5);
     
@@ -175,12 +176,15 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     this->Connect(ID_SFTP_DISCONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnDisconnectUI), NULL, this);
     this->Connect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
     this->Connect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
+    m_choiceAccount->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnChoiceAccount), NULL, this);
+    m_choiceAccount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnChoiceAccountUI), NULL, this);
     m_staticText49->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_textCtrlQuickJump->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
     m_textCtrlQuickJump->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
     m_treeListCtrl->Connect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
+    m_treeListCtrl->Connect(wxEVT_TREELIST_SELECTION_CHANGED, wxTreeListEventHandler(SFTPTreeViewBase::OnSelectionChanged), NULL, this);
     
     this->Connect(wxID_ANY, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::ShowAuiToolMenu), NULL, this);
 }
@@ -194,12 +198,15 @@ SFTPTreeViewBase::~SFTPTreeViewBase()
     this->Disconnect(ID_SFTP_DISCONNECT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnDisconnectUI), NULL, this);
     this->Disconnect(ID_ADD_BOOKMARK, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(SFTPTreeViewBase::OnAddBookmark), NULL, this);
     this->Disconnect(ID_ADD_BOOKMARK, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnAddBookmarkUI), NULL, this);
+    m_choiceAccount->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(SFTPTreeViewBase::OnChoiceAccount), NULL, this);
+    m_choiceAccount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnChoiceAccountUI), NULL, this);
     m_staticText49->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_textCtrlQuickJump->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation), NULL, this);
     m_textCtrlQuickJump->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_EXPANDING, wxTreeListEventHandler(SFTPTreeViewBase::OnItemExpanding), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_ACTIVATED, wxTreeListEventHandler(SFTPTreeViewBase::OnItemActivated), NULL, this);
     m_treeListCtrl->Disconnect(wxEVT_TREELIST_ITEM_CONTEXT_MENU, wxTreeListEventHandler(SFTPTreeViewBase::OnContextMenu), NULL, this);
+    m_treeListCtrl->Disconnect(wxEVT_TREELIST_SELECTION_CHANGED, wxTreeListEventHandler(SFTPTreeViewBase::OnSelectionChanged), NULL, this);
     
     std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();
     for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {
@@ -248,7 +255,7 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
     boxSizer56->Add(boxSizer64, 1, wxALL|wxEXPAND, 5);
     
     wxArrayString m_listBoxBookmarksArr;
-    m_listBoxBookmarks = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxBookmarksArr, wxLB_SINGLE);
+    m_listBoxBookmarks = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxBookmarksArr, wxLB_NEEDED_SB|wxLB_SINGLE);
     
     boxSizer64->Add(m_listBoxBookmarks, 1, wxALL|wxEXPAND, 5);
     

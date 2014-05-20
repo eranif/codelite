@@ -332,13 +332,13 @@ void wxC32BEInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_bookmark.png"), xml_res_file_0, xml_res_size_0, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._codelite-icons_db-explorer_16_connect.png"), xml_res_file_1, xml_res_size_1, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._codelite-icons_db-explorer_16_disconnect.png"), xml_res_file_2, xml_res_size_2, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$sftp_error.png"), xml_res_file_3, xml_res_size_3, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$sftp_info.png"), xml_res_file_4, xml_res_size_4, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$sftp_ok.png"), xml_res_file_5, xml_res_size_5, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._Plugin_ssh-16.png"), xml_res_file_6, xml_res_size_6, wxT("image/x-apple-ios-png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$_home_eran_devl_codelite_SFTP_UI_sftp_bitmaps.xrc"), xml_res_file_7, xml_res_size_7, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_sftp_bitmaps.cpp$_home_eran_devl_codelite_SFTP_UI_sftp_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._codelite-icons_toolbars_16_standard_bookmark.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._codelite-icons_db-explorer_16_connect.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._codelite-icons_db-explorer_16_disconnect.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$sftp_error.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$sftp_info.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$sftp_ok.png"), xml_res_file_5, xml_res_size_5, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$.._Plugin_ssh-16.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_sftp_bitmaps.cpp$C__src_codelite_SFTP_UI_sftp_bitmaps.xrc"), xml_res_file_7, xml_res_size_7, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_sftp_bitmaps.cpp$C__src_codelite_SFTP_UI_sftp_bitmaps.xrc"));
 }

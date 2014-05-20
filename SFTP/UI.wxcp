@@ -919,7 +919,21 @@
 									"m_label":	"Selection:",
 									"m_value":	""
 								}],
-							"m_events":	[],
+							"m_events":	[{
+									"m_eventName":	"wxEVT_COMMAND_CHOICE_SELECTED",
+									"m_eventClass":	"wxCommandEvent",
+									"m_eventHandler":	"wxCommandEventHandler",
+									"m_functionNameAndSignature":	"OnChoiceAccount(wxCommandEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
+									"m_noBody":	false
+								}, {
+									"m_eventName":	"wxEVT_UPDATE_UI",
+									"m_eventClass":	"wxUpdateUIEvent",
+									"m_eventHandler":	"wxUpdateUIEventHandler",
+									"m_functionNameAndSignature":	"OnChoiceAccountUI(wxUpdateUIEvent& event)",
+									"m_description":	"Process a wxEVT_UPDATE_UI event",
+									"m_noBody":	false
+								}],
 							"m_children":	[]
 						}, {
 							"m_type":	4403,
@@ -1072,7 +1086,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	""
+											"m_value":	"Type a path and hit ENTER"
 										}, {
 											"type":	"colour",
 											"m_label":	"Bg Colour:",
@@ -1229,6 +1243,13 @@
 									"m_functionNameAndSignature":	"OnContextMenu(wxTreeListEvent& event)",
 									"m_description":	"Process wxEVT_TREELIST_ITEM_CONTEXT_MENU event indicating that the popup menu for the given item should be displayed.",
 									"m_noBody":	false
+								}, {
+									"m_eventName":	"wxEVT_TREELIST_SELECTION_CHANGED",
+									"m_eventClass":	"wxTreeListEvent",
+									"m_eventHandler":	"wxTreeListEventHandler",
+									"m_functionNameAndSignature":	"OnSelectionChanged(wxTreeListEvent& event)",
+									"m_description":	"Process wxEVT_TREELIST_SELECTION_CHANGED event and notifies about the selection change in the control. In the single selection case the item indicated by the event has been selected and previously selected item, if any, was deselected. In multiple selection case, the selection of this item has just changed (it may have been either selected or deselected) but notice that the selection of other items could have changed as well, use wxTreeListCtrl::GetSelections() to retrieve the new selection if necessary.",
+									"m_noBody":	false
 								}],
 							"m_children":	[{
 									"m_type":	4510,
@@ -1323,7 +1344,7 @@
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxDEFAULT_DIALOG_STYLE"],
+			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -1476,7 +1497,7 @@
 									"border":	5,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxLB_SINGLE"],
+									"m_styles":	["wxLB_NEEDED_SB", "wxLB_SINGLE"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 									"m_properties":	[{
 											"type":	"winid",

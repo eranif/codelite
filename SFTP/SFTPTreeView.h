@@ -56,6 +56,9 @@ public:
     virtual ~SFTPTreeView();
 
 protected:
+    virtual void OnSelectionChanged(wxTreeListEvent& event);
+    virtual void OnChoiceAccount(wxCommandEvent& event);
+    virtual void OnChoiceAccountUI(wxUpdateUIEvent& event);
     virtual void OnGotoLocation(wxCommandEvent& event);
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
     virtual void OnAddBookmark(wxAuiToolBarEvent& event);

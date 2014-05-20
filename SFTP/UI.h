@@ -93,11 +93,14 @@ protected:
     virtual void OnDisconnectUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnAddBookmark(wxAuiToolBarEvent& event) { event.Skip(); }
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnChoiceAccount(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoiceAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGotoLocation(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemExpanding(wxTreeListEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeListEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxTreeListEvent& event) { event.Skip(); }
+    virtual void OnSelectionChanged(wxTreeListEvent& event) { event.Skip(); }
 
 public:
     SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
@@ -119,7 +122,7 @@ protected:
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Bookmarks"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Bookmarks"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SFTPManageBookmarkDlgBase();
 };
 

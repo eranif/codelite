@@ -484,12 +484,11 @@ void SFTPTreeView::OnAddBookmark(wxAuiToolBarEvent& event)
             }
             
             // Get the current selection
-            wxTreeListItems items;
-            m_treeListCtrl->GetSelections(items);
-            if ( items.size() != 1 )
+            MyClientDataVect_t selections = GetSelectionsItemData();
+            if ( selections.size() != 1 )
                 return;
-            
-            MyClientData* cd = GetItemData( items.at(0) );
+
+            MyClientData* cd = selections.at(0);
             CHECK_PTR_RET( cd );
             
             if ( !cd->IsFolder() )
@@ -510,7 +509,6 @@ void SFTPTreeView::OnAddBookmark(wxAuiToolBarEvent& event)
 void SFTPTreeView::OnAddBookmarkUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_sftp && m_sftp->IsConnected() );
-
 }
 
 void SFTPTreeView::OnGotoLocation(wxCommandEvent& event)
@@ -532,5 +530,26 @@ void SFTPTreeView::ManageBookmarks()
         settings.Load();
         settings.UpdateAccount( m_account );
         settings.Save();
+    }
+}
+
+void SFTPTreeView::OnChoiceAccount(wxCommandEvent& event)
+{
+    event.Skip();
+}
+
+void SFTPTreeView::OnChoiceAccountUI(wxUpdateUIEvent& event)
+{
+    event.Enable( !(m_sftp && m_sftp->IsConnected()) );
+}
+void SFTPTreeView::OnSelectionChanged(wxTreeListEvent& event)
+{
+    MyClientDataVect_t items = GetSelectionsItemData();
+    if ( items.size() != 1 )
+        return;
+    
+    MyClientData* cd = items.at(0);
+    if ( cd->IsFolder() ) {
+        m_textCtrlQuickJump->ChangeValue( cd->GetFullPath() );
     }
 }

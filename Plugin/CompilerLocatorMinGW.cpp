@@ -1,4 +1,5 @@
 #include "CompilerLocatorMinGW.h"
+#include <wx/dir.h>
 #include <wx/filefn.h>
 #include <wx/tokenzr.h>
 #include <globals.h>

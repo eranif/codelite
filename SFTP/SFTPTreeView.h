@@ -72,6 +72,7 @@ protected:
     virtual void OnMenuOpen(wxCommandEvent &event);
     virtual void OnMenuDelete(wxCommandEvent &event);
     virtual void OnMenuRename(wxCommandEvent &event);
+    virtual void OnMenuNewFile(wxCommandEvent &event);
 
     void DoCloseSession();
     bool DoExpandItem(const wxTreeListItem& item);
@@ -79,6 +80,7 @@ protected:
     void ManageBookmarks();
     
     wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString &path);
+    wxTreeListItem DoAddFile(const wxTreeListItem& parent, const wxString &path);
 
     MyClientData* GetItemData(const wxTreeListItem& item);
     MyClientDataVect_t GetSelectionsItemData();

@@ -76,7 +76,7 @@ private:
     static std::map<wxString, FileType> m_map;
 
 public:
-    static FileType GetType(const wxString &filename);
+    static FileType GetType(const wxString &filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
     static void     Init();
 };
 #endif // __fileextmanager__

@@ -148,7 +148,7 @@ void clAuiGlossyTabArt::DrawTab(wxDC& dc,
     gdc.SetPen( penColour );
     
     if ( page.active ) {
-        path.AddRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 6.0);
+        path.AddRoundedRectangle(rr.x, rr.y, rr.width-1, rr.height, 7.5);
         gdc.GetGraphicsContext()->FillPath( path );
         gdc.GetGraphicsContext()->StrokePath( path );
         

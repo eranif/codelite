@@ -93,13 +93,13 @@ void FileExtManager::Init()
     }
 }
 
-FileExtManager::FileType FileExtManager::GetType(const wxString& filename)
+FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileExtManager::FileType defaultType)
 {
     Init();
 
     wxFileName fn( filename );
     if ( fn.IsOk() == false ) {
-        return TypeOther;
+        return defaultType;
     }
 
     wxString e ( fn.GetExt() );
@@ -112,7 +112,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename)
         if(fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
             return TypeMakefile;
         }
-        return TypeOther;
+        return defaultType;
     }
     return iter->second;
 }

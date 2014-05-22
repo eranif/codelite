@@ -127,7 +127,7 @@ void CompilerLocatorMinGW::AddTools(CompilerPtr compiler, const wxString& binFol
     } else {
         compiler->SetName("MinGW ( " + name + " )");
     }
-    
+    compiler->SetCompilerFamily("MinGW");
     CL_DEBUG("Found MinGW compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());
     wxFileName toolFile(binFolder, "");
     

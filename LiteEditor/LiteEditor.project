@@ -837,6 +837,10 @@
       <File Name="editor_options_caret.cpp"/>
       <File Name="advance_settings_base.h"/>
       <File Name="advance_settings_base.cpp"/>
+      <File Name="CompilersFoundDlg.h"/>
+      <File Name="CompilersFoundDlg.cpp"/>
+      <File Name="compilersfoundmodel.cpp"/>
+      <File Name="compilersfoundmodel.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
@@ -872,6 +876,7 @@
       <File Name="advance_settings_liteeditor_bitmaps.cpp"/>
       <File Name="depend_dlg_page_liteeditor_bitmaps.cpp"/>
       <File Name="filechecklistbase_liteeditor_bitmaps.cpp"/>
+      <File Name="CompilersFoundDlg_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="../formbuilder/editorsettingslocalbase.wxcp"/>
     <File Name="../formbuilder/findinfiles_dlg.wxcp"/>
@@ -883,6 +888,7 @@
     <File Name="editor_options_copy_paste.wxcp"/>
     <File Name="new_virtual_folder.wxcp"/>
     <File Name="quickfindbarbase.wxcp"/>
+    <File Name="CompilersFoundDlg.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">
     <Project Name="sqlite3"/>

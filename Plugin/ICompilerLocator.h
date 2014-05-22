@@ -8,12 +8,13 @@
 
 class WXDLLIMPEXP_SDK ICompilerLocator
 {
-protected:
-    typedef std::vector<CompilerPtr> CompilerVec_t;
-    ICompilerLocator::CompilerVec_t m_compilers;
-
 public:
-    typedef wxSharedPtr<ICompilerLocator> Ptr_t;
+    typedef wxSharedPtr<ICompilerLocator>        Ptr_t;
+    typedef std::vector<ICompilerLocator::Ptr_t> Vect_t;
+    typedef std::vector<CompilerPtr>             CompilerVec_t;
+    
+protected:
+    ICompilerLocator::CompilerVec_t m_compilers;
 
 public:
     ICompilerLocator();

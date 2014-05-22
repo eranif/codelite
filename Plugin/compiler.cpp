@@ -32,6 +32,7 @@
 
 Compiler::Compiler(wxXmlNode *node)
     : m_objectNameIdenticalToFileName(false)
+    , m_isDefault(false)
 {
     // ensure all relevant entries exist in switches map (makes sure they show up in build settings dlg)
     SetSwitch("Include",       "");
@@ -58,6 +59,9 @@ Compiler::Compiler(wxXmlNode *node)
     m_fileTypes.clear();
     if (node) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
+        m_compilerFamily = XmlUtils::ReadString(node, "CompilerFamily");
+        m_isDefault = XmlUtils::ReadBool(node, "IsDefault");
+        
         if (!node->HasProp(wxT("GenerateDependenciesFiles"))) {
             if (m_name == wxT("gnu g++") || m_name == wxT("gnu gcc")) {
                 m_generateDependeciesFile = true;
@@ -173,6 +177,8 @@ Compiler::Compiler(wxXmlNode *node)
     } else {
         // Create a default compiler: g++
         m_name = "gnu g++";
+        m_compilerFamily = "gnu g++";
+        m_isDefault = false;
         SetSwitch("Include",        "-I");
         SetSwitch("Debug",          "-g ");
         SetSwitch("Preprocessor",   "-D");
@@ -199,7 +205,12 @@ Compiler::Compiler(wxXmlNode *node)
         AddPattern(eWarningPattern, "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?", 2, 4);
 
         SetTool("LinkerName",             "g++");
+#ifdef __WXMAC__
+        SetTool("SharedObjectLinkerName", "g++ -dynamiclib -fPIC");
+#else
         SetTool("SharedObjectLinkerName", "g++ -shared -fPIC");
+#endif
+
         SetTool("CXX",                    "g++");
         SetTool("CC",                     "gcc");
         SetTool("AR",                     "ar rcu");
@@ -255,10 +266,12 @@ Compiler::~Compiler()
 wxXmlNode *Compiler::ToXml() const
 {
     wxXmlNode *node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
-    node->AddProperty(wxT("Name"), m_name);
+    node->AddProperty(wxT("Name"),                          m_name);
     node->AddProperty(wxT("GenerateDependenciesFiles"),     BoolToString(m_generateDependeciesFile));
     node->AddProperty(wxT("ReadObjectsListFromFile"),       BoolToString(m_readObjectFilesFromList));
     node->AddProperty(wxT("ObjectNameIdenticalToFileName"), BoolToString(m_objectNameIdenticalToFileName));
+    node->AddProperty("CompilerFamily",                     m_compilerFamily);
+    node->AddProperty("IsDefault",                          BoolToString(m_isDefault));
 
     std::map<wxString, wxString>::const_iterator iter = m_switches.begin();
     for (; iter != m_switches.end(); iter++) {

@@ -149,13 +149,18 @@ void CompilerLocatorMinGW::AddTools(CompilerPtr compiler, const wxString& binFol
     AddTool(compiler, "AS", toolFile.GetFullPath());
     
     toolFile.SetFullName("make.exe");
+    wxString makeExtraArgs;
+    if ( wxThread::GetCPUCount() > 1 ) {
+        makeExtraArgs << "-j" << wxThread::GetCPUCount();
+    }
+    
     if ( toolFile.FileExists() ) {
-        AddTool(compiler, "MAKE", toolFile.GetFullPath());
+        AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
         
     } else {
         toolFile.SetFullName("mingw32-make.exe");
         if ( toolFile.FileExists() ) {
-            AddTool(compiler, "MAKE", toolFile.GetFullPath());
+            AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
         }
     }
 }
@@ -164,7 +169,7 @@ void CompilerLocatorMinGW::AddTool(CompilerPtr compiler, const wxString& toolnam
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
-    compiler->SetTool(toolname, toolpath + " " + extraArgs);
+    compiler->SetTool(toolname, tool + " " + extraArgs);
 }
 
 wxString CompilerLocatorMinGW::FindBinFolder(const wxString& parentPath)

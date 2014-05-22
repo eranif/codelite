@@ -1,5 +1,6 @@
 #include "CompilersDetectorManager.h"
-#include <CompilerLocatorMinGW.h>
+#include "CompilerLocatorMinGW.h"
+#include "CompilerLocatorGCC.h"
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
@@ -7,6 +8,7 @@ CompilersDetectorManager::CompilersDetectorManager()
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMinGW()) );
     
 #elif defined(__WXGTK__)
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorGCC()) );
 #elif defined(__WXMAC__)
 #endif
 }

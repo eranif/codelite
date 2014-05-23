@@ -25,6 +25,7 @@
 #ifndef BUILD_CONFIG_SETTINGS_H
 #define BUILD_CONFIG_SETTINGS_H
 
+#include <vector>
 #include "wx/string.h"
 #include "builder.h"
 #include "codelite_exports.h"

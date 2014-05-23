@@ -51,7 +51,7 @@
 #include "advance_settings_base.h"
 #include "NewCompilerDlg.h"
 #include <CompilersDetectorManager.h>
-#include <CompilersFoundDlg.h>
+#include "CompilersFoundDlg.h"
 
 BEGIN_EVENT_TABLE(AdvancedDlg, AdvancedDlgBase)
     EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)

@@ -3698,12 +3698,9 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
     projectFiles.clear();
     std::set<std::string>::iterator iter = fileSet->begin();
     for (; iter != fileSet->end(); iter++ ) {
-        wxFileName fn(wxString((*iter).c_str(), wxConvUTF8));
+        wxFileName fn( iter->c_str() );
         fn.MakeAbsolute();
-
-//		const wxCharBuffer cfile = _C(fn.GetFullPath());
-//		fprintf(stderr, "%s\n", cfile.data());
-
+        //CL_DEBUG("Will parse file: %s", fn.GetFullPath());
         projectFiles.push_back( fn );
     }
 

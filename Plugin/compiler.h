@@ -100,6 +100,7 @@ protected:
     bool                                          m_objectNameIdenticalToFileName;
     wxString                                      m_compilerFamily;
     bool                                          m_isDefault;
+    wxString                                      m_installationPath;
 
 public:
     typedef std::map<wxString, wxString>::const_iterator ConstIterator;
@@ -111,6 +112,12 @@ public:
     void SetTool(const wxString &toolname, const wxString &cmd);
     void SetSwitch(const wxString &switchName, const wxString &switchValue);
 
+    void SetInstallationPath(const wxString& installationPath) {
+        this->m_installationPath = installationPath;
+    }
+    const wxString& GetInstallationPath() const {
+        return m_installationPath;
+    }
     void SetCompilerFamily(const wxString& compilerFamily) {
         this->m_compilerFamily = compilerFamily;
     }

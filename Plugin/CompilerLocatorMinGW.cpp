@@ -30,9 +30,7 @@ bool CompilerLocatorMinGW::Locate()
             wxFileName gccComp( pathArray.Item(i), "gcc.exe" );
             if ( gccComp.GetDirs().Last() == "bin" && gccComp.Exists() ) {
                 // We found gcc.exe
-                CompilerPtr compiler( new Compiler(NULL) );
-                m_compilers.push_back( compiler );
-                AddTools( compiler, gccComp.GetPath() );
+                AddTools( gccComp.GetPath() );
             }
         }
     }
@@ -45,9 +43,7 @@ bool CompilerLocatorMinGW::Locate()
     if ( regTDM.QueryValue("InstallLocation", tdmInstallFolder) ) {
         wxFileName fnTDMBinFolder( tdmInstallFolder, "" );
         fnTDMBinFolder.AppendDir("bin");
-        CompilerPtr compiler( new Compiler(NULL) );
-        m_compilers.push_back( compiler );
-        AddTools(compiler, fnTDMBinFolder.GetPath(), "TDM-GCC");
+        AddTools(fnTDMBinFolder.GetPath(), "TDM-GCC");
     }
     
     // 64 bit
@@ -56,9 +52,7 @@ bool CompilerLocatorMinGW::Locate()
     if ( regTDM_64.QueryValue("InstallLocation", tdmInstallFolder) ) {
         wxFileName fnTDMBinFolder( tdmInstallFolder, "" );
         fnTDMBinFolder.AppendDir("bin");
-        CompilerPtr compiler( new Compiler(NULL) );
-        m_compilers.push_back( compiler );
-        AddTools(compiler, fnTDMBinFolder.GetPath(), "TDM-GCC-64");
+        AddTools(fnTDMBinFolder.GetPath(), "TDM-GCC-64");
     }
     
     // locate codeblock's MinGW
@@ -69,9 +63,7 @@ bool CompilerLocatorMinGW::Locate()
         mingwBinFolder.AppendDir("MinGW");
         mingwBinFolder.AppendDir("bin");
         if ( mingwBinFolder.DirExists() && wxFileName(mingwBinFolder.GetFullPath(), "gcc.exe").FileExists() ) {
-            CompilerPtr compiler( new Compiler(NULL) );
-            m_compilers.push_back( compiler );
-            AddTools(compiler, mingwBinFolder.GetPath(), "Code::Blocks MinGW");
+            AddTools(mingwBinFolder.GetPath(), "Code::Blocks");
         }
     }
     
@@ -103,22 +95,26 @@ bool CompilerLocatorMinGW::Locate()
         
         wxFileName gcc(binFolder, "gcc.exe");
         if( gcc.FileExists() ) {
-            CompilerPtr compiler( new Compiler(NULL) );
-            m_compilers.push_back( compiler );
-            AddTools(compiler, gcc.GetPath());
+            AddTools(gcc.GetPath());
         }
     }
 #endif
     return !m_compilers.empty();
 }
 
-void CompilerLocatorMinGW::AddTools(CompilerPtr compiler, const wxString& binFolder, const wxString& name)
+void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& name)
 {
     wxFileName masterPath(binFolder, "");
     masterPath.RemoveLastDir();
     if ( m_locatedFolders.count(masterPath.GetPath()) ) {
         return;
     }
+    
+    // Create an empty compiler
+    CompilerPtr compiler( new Compiler(NULL) );
+    compiler->SetCompilerFamily("MinGW");
+    compiler->SetGenerateDependeciesFile(true);
+    m_compilers.push_back( compiler );
     m_locatedFolders.insert( masterPath.GetPath() );
     
     if ( name.IsEmpty() ) {
@@ -127,7 +123,8 @@ void CompilerLocatorMinGW::AddTools(CompilerPtr compiler, const wxString& binFol
     } else {
         compiler->SetName("MinGW ( " + name + " )");
     }
-    compiler->SetCompilerFamily("MinGW");
+    compiler->SetInstallationPath( masterPath.GetPath() );
+    
     CL_DEBUG("Found MinGW compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());
     wxFileName toolFile(binFolder, "");
     

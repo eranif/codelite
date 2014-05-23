@@ -541,5 +541,13 @@
 // call event.Skip( true ) for codelite to run the default behvior
 #define wxEVT_NEW_PROJECT_WIZARD_FINISHED 3591
 
+// --------------------------------------------------------------
+// Compiler events
+// --------------------------------------------------------------
+
+// The compiler list was updated (e.g. a compiler was deleted, renamed etc)
+// Event type: clCompilerEvent
+#define wxEVT_COMPILER_LIST_UPDATED 3600
+
 #endif // CODELITE_EVENTS_H
 

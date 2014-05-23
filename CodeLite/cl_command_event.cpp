@@ -219,3 +219,25 @@ clNewProjectEvent& clNewProjectEvent::operator=(const clNewProjectEvent& other)
     return *this;
 }
 
+// --------------------------------------------------------------
+// Compiler event
+// --------------------------------------------------------------
+clCompilerEvent::~clCompilerEvent()
+{
+}
+
+clCompilerEvent::clCompilerEvent(const clCompilerEvent& event)
+{
+    *this = event;
+}
+
+clCompilerEvent::clCompilerEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clCompilerEvent& clCompilerEvent::operator=(const clCompilerEvent& src)
+{
+    clCommandEvent::operator =(src);
+    return *this;
+}

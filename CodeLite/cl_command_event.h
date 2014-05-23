@@ -404,4 +404,24 @@ typedef void (wxEvtHandler::*clNewProjectEventFunction)(clNewProjectEvent&);
 #define clNewProjectEventHandler(func) \
     wxEVENT_HANDLER_CAST(clNewProjectEventFunction, func)
 
+
+// --------------------------------------------------------------
+// Compiler event
+// --------------------------------------------------------------
+class WXDLLIMPEXP_CL clCompilerEvent : public clCommandEvent
+{
+public:
+    clCompilerEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clCompilerEvent(const clCompilerEvent& event);
+    clCompilerEvent& operator=(const clCompilerEvent& src);
+    virtual ~clCompilerEvent();
+    virtual wxEvent *Clone() const {
+        return new clCompilerEvent(*this);
+    } 
+};
+
+typedef void (wxEvtHandler::*clCompilerEventFunction)(clCompilerEvent&);
+#define clCompilerEventHandler(func) \
+    wxEVENT_HANDLER_CAST(clCompilerEventFunction, func)
+    
 #endif // CLCOMMANDEVENT_H

@@ -36,11 +36,11 @@ bool CompilerLocatorGCC::Locate()
         if ( gccFile.FileExists() ) {
             // add this compiler
             CompilerPtr compiler( new Compiler(NULL) );
-            compiler->SetIsDefault(true);
             m_compilers.push_back( compiler );
             AddTools(compiler, "/usr/bin", gcc_versions.Item(i));
         }
     }
+    return !m_compilers.empty();
 }
 
 void CompilerLocatorGCC::AddTools(CompilerPtr compiler, const wxString& binFolder, const wxString& suffix)
@@ -54,6 +54,7 @@ void CompilerLocatorGCC::AddTools(CompilerPtr compiler, const wxString& binFolde
     }
     compiler->SetName( toolchainName );
     compiler->SetCompilerFamily("GNU GCC");
+    compiler->SetInstallationPath( binFolder );
     
     CL_DEBUG("Found GNU GCC compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());
     wxFileName toolFile(binFolder, "");

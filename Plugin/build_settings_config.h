@@ -73,7 +73,17 @@ public:
      * codelite to override the user version
      */
     bool Load(const wxString &version);
-
+    
+    /**
+     * @brief delete all compilers
+     */
+    void DeleteAllCompilers(bool notify = true);
+    
+    /**
+     * @brief replace the current compilers list with a new one
+     */
+    void SetCompilers( const std::vector<CompilerPtr> &compilers );
+    
     /**
      * Set or update a given compiler using its name as the index
      */

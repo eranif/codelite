@@ -9,7 +9,9 @@ CompilersDetectorManager::CompilersDetectorManager()
     
 #elif defined(__WXGTK__)
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorGCC()) );
+    
 #elif defined(__WXMAC__)
+    
 #endif
 }
 

@@ -397,8 +397,14 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
     }
     m_sw.Start();
     
+    m_cmp.Reset( NULL );
     BuildEventDetails* bed = dynamic_cast<BuildEventDetails*>(e.GetClientObject());
     if ( bed ) {
+        BuildConfigPtr buildConfig = WorkspaceST::Get()->GetProjBuildConf(bed->GetProjectName(), bed->GetConfiguration());
+        if ( buildConfig ) {
+            m_cmp = buildConfig->GetCompiler();
+        }
+        
         // notify the plugins that the build had started
         clBuildEvent buildEvent(wxEVT_BUILD_STARTED);
         buildEvent.SetProjectName( bed->GetProjectName() );
@@ -433,9 +439,12 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
 
     } else {
 
-        DoUpdateCurrentCompiler(line); // Usering the current line, update the active compiler based on the current project being compiled
         // Find *warnings* first
         bool isWarning = false;
+        
+        if ( !m_cmp ) {
+            return buildLineInfo;
+        }
 
         CmpPatterns cmpPatterns;
         if(!DoGetCompilerPatterns(m_cmp->GetName(), cmpPatterns)) {
@@ -482,39 +491,6 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line, bool isSummaryLi
         }
     }
     return buildLineInfo;
-}
-
-void NewBuildTab::DoUpdateCurrentCompiler(const wxString& line)
-{
-    wxString projectName, configuration;
-    if ( line.Contains ( wxGetTranslation(BUILD_PROJECT_PREFIX) ) ) {
-        // now building the next project
-
-        wxString prj  = line.AfterFirst ( wxT ( '[' ) ).BeforeFirst ( wxT ( ']' ) );
-        projectName   = prj.BeforeFirst ( wxT ( '-' ) ).Trim ( false ).Trim();
-        configuration = prj.AfterFirst ( wxT ( '-' ) ).Trim ( false ).Trim();
-
-        m_cmp.Reset ( NULL );
-        // need to know the compiler in use for this project to extract
-        // file/line and error/warning status from the text
-        BuildConfigPtr bldConf = WorkspaceST::Get()->GetProjBuildConf(projectName, configuration);
-        if ( bldConf ) {
-            m_cmp = BuildSettingsConfigST::Get()->GetCompiler ( bldConf->GetCompilerType() );
-
-        } else {
-            // probably custom build with project names incorret
-            // assign the default compiler for this purpose
-            if ( BuildSettingsConfigST::Get()->IsCompilerExist(wxT("gnu g++")) ) {
-                m_cmp = BuildSettingsConfigST::Get()->GetCompiler( wxT("gnu g++") );
-            }
-        }
-    }
-
-    if( !m_cmp ) {
-        if ( BuildSettingsConfigST::Get()->IsCompilerExist(wxT("gnu g++")) ) {
-            m_cmp = BuildSettingsConfigST::Get()->GetCompiler( wxT("gnu g++") );
-        }
-    }
 }
 
 void NewBuildTab::DoCacheRegexes()

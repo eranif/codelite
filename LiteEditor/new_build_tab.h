@@ -206,7 +206,6 @@ protected:
     BuildLineInfo* DoProcessLine(const wxString &line, bool isSummaryLine);
     void DoProcessOutput(bool compilationEnded, bool isSummaryLine);
     void DoSearchForDirectory(const wxString &line);
-    void DoUpdateCurrentCompiler(const wxString &line);
     bool DoGetCompilerPatterns(const wxString& compilerName, CmpPatterns& patterns);
     void DoClear();
     void MarkEditor(LEditor *editor);

@@ -156,7 +156,11 @@ Compiler::Compiler(wxXmlNode *node)
                 cmpOption.help = child->GetNodeContent();
                 m_linkerOptions[cmpOption.name] = cmpOption;
             }
-
+            
+            else if (child->GetName() == wxT("InstallationPath")) {
+                m_installationPath = child->GetNodeContent();
+            }
+            
             child = child->GetNext();
         }
         
@@ -272,6 +276,10 @@ wxXmlNode *Compiler::ToXml() const
     node->AddProperty(wxT("ObjectNameIdenticalToFileName"), BoolToString(m_objectNameIdenticalToFileName));
     node->AddProperty("CompilerFamily",                     m_compilerFamily);
     node->AddProperty("IsDefault",                          BoolToString(m_isDefault));
+    
+    wxXmlNode* installPath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "InstallationPath");
+    node->AddChild( installPath );
+    XmlUtils::SetCDATANodeContent(installPath, m_installationPath);
 
     std::map<wxString, wxString>::const_iterator iter = m_switches.begin();
     for (; iter != m_switches.end(); iter++) {

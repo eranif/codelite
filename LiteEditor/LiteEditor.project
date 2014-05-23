@@ -314,6 +314,8 @@
       <File Name="advance_settings.wxcp"/>
       <File Name="NewCompilerDlg.h"/>
       <File Name="NewCompilerDlg.cpp"/>
+      <File Name="CompilersFoundDlg.h"/>
+      <File Name="CompilersFoundDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>
@@ -837,10 +839,10 @@
       <File Name="editor_options_caret.cpp"/>
       <File Name="advance_settings_base.h"/>
       <File Name="advance_settings_base.cpp"/>
-      <File Name="CompilersFoundDlg.h"/>
-      <File Name="CompilersFoundDlg.cpp"/>
       <File Name="compilersfoundmodel.cpp"/>
       <File Name="compilersfoundmodel.h"/>
+      <File Name="CompilersFoundDlgBase.h"/>
+      <File Name="CompilersFoundDlgBase.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>

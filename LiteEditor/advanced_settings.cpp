@@ -51,6 +51,7 @@
 #include "advance_settings_base.h"
 #include "NewCompilerDlg.h"
 #include <CompilersDetectorManager.h>
+#include <CompilersFoundDlg.h>
 
 BEGIN_EVENT_TABLE(AdvancedDlg, AdvancedDlgBase)
     EVT_MENU(XRCID("delete_compiler"), AdvancedDlg::OnDeleteCompiler)
@@ -329,4 +330,14 @@ void AdvancedDlg::OnAutoDetectCompilers(wxCommandEvent&)
 
 void AdvancedDlg::OnCompilersDetected(const ICompilerLocator::CompilerVec_t& compilers)
 {
+    CompilersFoundDlg dlg(this, compilers);
+    if ( dlg.ShowModal() == wxID_OK ) {
+        // Replace the current compilers with a new one
+        BuildSettingsConfigST::Get()->SetCompilers( compilers );
+        
+        // Dismiss this dialog and reload it
+        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("advance_settings"));
+        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+        EndModal(wxID_OK);
+    }
 }

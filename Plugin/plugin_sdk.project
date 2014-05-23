@@ -565,8 +565,6 @@
     <File Name="CompilerLocatorMinGW.cpp"/>
     <File Name="CompilersDetectorManager.h"/>
     <File Name="CompilersDetectorManager.cpp"/>
-    <File Name="clCompilerEvent.h"/>
-    <File Name="clCompilerEvent.cpp"/>
     <File Name="CompilerLocatorGCC.h"/>
     <File Name="CompilerLocatorGCC.cpp"/>
   </VirtualDirectory>

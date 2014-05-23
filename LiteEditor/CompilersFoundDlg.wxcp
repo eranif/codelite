@@ -6,7 +6,7 @@
 		"m_bitmapFunction":	"wxCFE1CInitBitmapResources",
 		"m_bitmapsFile":	"CompilersFoundDlg_liteeditor_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"CompilersFoundDlgBase",
 		"m_firstWindowId":	1000,
 		"m_useEnum":	false,
 		"m_templateClasses":	[]
@@ -176,7 +176,7 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Fg Colour:",
-									"colour":	"(255,255,255)"
+									"colour":	"ButtonText"
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
@@ -225,11 +225,11 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Gradient Start",
-									"colour":	"(0,128,0)"
+									"colour":	"ButtonFace"
 								}, {
 									"type":	"colour",
 									"m_label":	"Gradient End",
-									"colour":	"(0,128,0)"
+									"colour":	"ButtonFace"
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -248,7 +248,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"-1,-1"
+									"m_value":	"-1,200"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -322,7 +322,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Width:",
-											"m_value":	"-2"
+											"m_value":	"200"
 										}, {
 											"type":	"choice",
 											"m_label":	"Column Type",

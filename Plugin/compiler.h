@@ -101,7 +101,7 @@ protected:
     wxString                                      m_compilerFamily;
     bool                                          m_isDefault;
     wxString                                      m_installationPath;
-
+    
 public:
     typedef std::map<wxString, wxString>::const_iterator ConstIterator;
 

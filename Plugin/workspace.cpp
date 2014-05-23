@@ -41,6 +41,7 @@
 #include "plugin.h"
 #include "event_notifier.h"
 #include "cl_command_event.h"
+#include <wx/thread.h>
 
 Workspace::Workspace()
     : m_saveOnExit( true )
@@ -909,4 +910,20 @@ ProjectPtr Workspace::GetProject(const wxString& name) const
         return NULL;
     }
     return iter->second;
+}
+
+void Workspace::GetCompilers(wxStringSet_t& compilers)
+{
+    Workspace::ProjectMap_t::iterator iter = m_projects.begin();
+    for (; iter != m_projects.end(); ++iter ) {
+        iter->second->GetCompilers( compilers );
+    }
+}
+
+void Workspace::ReplaceCompilers(wxStringMap_t& compilers)
+{
+    Workspace::ProjectMap_t::iterator iter = m_projects.begin();
+    for (; iter != m_projects.end(); ++iter ) {
+        iter->second->ReplaceCompilers( compilers );
+    }
 }

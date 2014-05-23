@@ -18,6 +18,7 @@
 #include <wx/dataview.h>
 #include "compilersfoundmodel.h"
 #include <wx/button.h>
+#include <wx/stattext.h>
 
 class CompilersFoundDlgBase : public wxDialog
 {
@@ -35,6 +36,24 @@ protected:
 public:
     CompilersFoundDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Compilers Found"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CompilersFoundDlgBase();
+};
+
+
+class CompilersModifiedDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText27;
+    wxDataViewListCtrl* m_dvListCtrl;
+    wxStdDialogButtonSizer* m_stdBtnSizer18;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
+
+protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    CompilersModifiedDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Compilers Modified"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~CompilersModifiedDlgBase();
 };
 
 #endif

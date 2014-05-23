@@ -66,3 +66,53 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
 CompilersFoundDlgBase::~CompilersFoundDlgBase()
 {
 }
+
+CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if ( !bBitmapLoaded ) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCFE1CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    
+    wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer16);
+    
+    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist\nPlease select a compiler to replace them from the list below"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer16->Add(m_staticText27, 0, wxALL, 5);
+    
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer16->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
+    
+    m_dvListCtrl->AppendTextColumn(_("Old Compiler Name"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_stdBtnSizer18 = new wxStdDialogButtonSizer();
+    
+    boxSizer16->Add(m_stdBtnSizer18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer18->AddButton(m_buttonOK);
+    
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_stdBtnSizer18->AddButton(m_buttonCancel);
+    m_stdBtnSizer18->Realize();
+    
+    SetSizeHints(-1,-1);
+    if ( GetSizer() ) {
+         GetSizer()->Fit(this);
+    }
+    Centre(wxBOTH);
+    // Connect events
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilersModifiedDlgBase::OnOKUI), NULL, this);
+    
+}
+
+CompilersModifiedDlgBase::~CompilersModifiedDlgBase()
+{
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilersModifiedDlgBase::OnOKUI), NULL, this);
+    
+}

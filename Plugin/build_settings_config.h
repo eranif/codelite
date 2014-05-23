@@ -81,6 +81,11 @@ public:
     void DeleteAllCompilers(bool notify = true);
     
     /**
+     * @brief return list of all compiler names
+     */
+    wxArrayString GetAllCompilers() const;
+    
+    /**
      * @brief replace the current compilers list with a new one
      */
     void SetCompilers( const std::vector<CompilerPtr> &compilers );

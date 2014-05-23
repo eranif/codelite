@@ -316,6 +316,8 @@
       <File Name="NewCompilerDlg.cpp"/>
       <File Name="CompilersFoundDlg.h"/>
       <File Name="CompilersFoundDlg.cpp"/>
+      <File Name="CompilersModifiedDlg.h"/>
+      <File Name="CompilersModifiedDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_base_dlg.cpp"/>

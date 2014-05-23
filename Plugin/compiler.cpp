@@ -181,7 +181,7 @@ Compiler::Compiler(wxXmlNode *node)
     } else {
         // Create a default compiler: g++
         m_name = "gnu g++";
-        m_compilerFamily = "gnu g++";
+        m_compilerFamily = "GCC";
         m_isDefault = false;
         SetSwitch("Include",        "-I");
         SetSwitch("Debug",          "-g ");

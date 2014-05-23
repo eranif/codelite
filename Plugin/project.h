@@ -256,6 +256,18 @@ public:
     Workspace* GetWorkspace();
     
     /**
+     * @brief return set of compilers used by this project
+     * This is done by scanning all build configurations
+     */
+    void GetCompilers(wxStringSet_t &compilers);
+    
+    /**
+     * @brief replace compilers by name. compilers contains a map of the "olbd" compiler
+     * name and the new compiler name
+     */
+    void ReplaceCompilers(wxStringMap_t &compilers);
+    
+    /**
      * @brief the const version of the above 
      */
     const Workspace* GetWorkspace() const;

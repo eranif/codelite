@@ -1782,3 +1782,34 @@ const Workspace* Project::GetWorkspace() const
         return m_workspace;
     }
 }
+
+void Project::GetCompilers(wxStringSet_t& compilers)
+{
+    ProjectSettingsPtr pSettings = GetSettings();
+    CHECK_PTR_RET( pSettings );
+    
+    ProjectSettingsCookie cookie;
+    BuildConfigPtr buildConf = pSettings->GetFirstBuildConfiguration( cookie );
+    while ( buildConf ) {
+        compilers.insert( buildConf->GetCompilerType() );
+        buildConf = pSettings->GetNextBuildConfiguration( cookie );
+    }
+}
+
+void Project::ReplaceCompilers(wxStringMap_t& compilers)
+{
+    ProjectSettingsPtr pSettings = GetSettings();
+    CHECK_PTR_RET( pSettings );
+    
+    ProjectSettingsCookie cookie;
+    BuildConfigPtr buildConf = pSettings->GetFirstBuildConfiguration( cookie );
+    while ( buildConf ) {
+        if ( compilers.count(buildConf->GetCompilerType()) ) {
+            buildConf->SetCompilerType( compilers.find(buildConf->GetCompilerType())->second );
+        }
+        buildConf = pSettings->GetNextBuildConfiguration( cookie );
+    }
+    
+    // and update the settings (+ save the XML file)
+    SetSettings( pSettings );
+}

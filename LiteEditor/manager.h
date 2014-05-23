@@ -619,6 +619,11 @@ protected:
     void OnProcessEnd(wxProcessEvent &event);
     void OnBuildEnded(clBuildEvent &event);
     
+    /**
+     * @brief react to a build starting event
+     */
+    void OnBuildStarting(clBuildEvent &event);
+    
 
     //--------------------------- Debugger Support -----------------------------
 protected:

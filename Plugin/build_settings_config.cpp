@@ -99,9 +99,6 @@ void BuildSettingsConfig::SetCompiler(CompilerPtr cmp)
     }
 
     m_doc->Save(m_fileName.GetFullPath());
-    
-    clCommandEvent event(wxEVT_COMPILER_LIST_UPDATED);
-    EventNotifier::Get()->AddPendingEvent( event );
 }
 
 CompilerPtr BuildSettingsConfig::GetCompiler(const wxString &name) const
@@ -161,9 +158,6 @@ void BuildSettingsConfig::DeleteCompiler(const wxString &name)
         node->GetParent()->RemoveChild(node);
         delete node;
         m_doc->Save(m_fileName.GetFullPath());
-        
-        clCommandEvent event(wxEVT_COMPILER_LIST_UPDATED);
-        EventNotifier::Get()->AddPendingEvent( event );
     }
 }
 
@@ -265,6 +259,22 @@ void BuildSettingsConfig::SetCompilers(const std::vector<CompilerPtr>& compilers
     EventNotifier::Get()->AddPendingEvent( event );
 }
 
+wxArrayString BuildSettingsConfig::GetAllCompilers() const
+{
+    wxArrayString allCompilers;
+    wxXmlNode* compilersNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), "Compilers");
+    if ( compilersNode ) {
+        wxXmlNode* child = compilersNode->GetChildren();
+        while ( child ) {
+            if ( child->GetName() == "Compiler") {
+                allCompilers.Add( XmlUtils::ReadString(child, "Name") );
+            }
+            child = child->GetNext();
+        }
+    }
+    return allCompilers;
+}
+
 static BuildSettingsConfig* gs_buildSettingsInstance = NULL;
 void BuildSettingsConfigST::Free()
 {
@@ -280,5 +290,3 @@ BuildSettingsConfig* BuildSettingsConfigST::Get()
         gs_buildSettingsInstance = new BuildSettingsConfig;
     return gs_buildSettingsInstance;
 }
-
-

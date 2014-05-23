@@ -32,6 +32,8 @@
 #include "project.h"
 #include <map>
 #include "json_node.h"
+#include <wx/event.h>
+#include <cl_command_event.h>
 //#include "ctags_manager.h"
 #include "configuration_mapping.h"
 #include "optionsconfig.h"
@@ -62,14 +64,13 @@ protected:
     bool  m_saveOnExit;
     
 private:
-
     /// Constructor
     Workspace();
 
     /// Destructor
     virtual ~Workspace();
-
-    public:
+    
+public:
     
     /**
      * @brief createa 'compile_commands' json object for the workspace projects (only the enabled ones)
@@ -82,7 +83,18 @@ private:
     const wxString& GetStartupDir() const {
         return m_startupDir;
     }
-
+    
+    /**
+     * @brief return list of compilers used by all the projects
+     */
+    void GetCompilers(wxStringSet_t& compilers);
+    
+    /**
+     * @brief replace compilers for all projects and build configurations
+     * @param compilers a map of compilers where the key is the old compiler and the value is the new compiler
+     */
+    void ReplaceCompilers(wxStringMap_t &compilers);
+    
     /**
      * Returns the workspace file name
      */

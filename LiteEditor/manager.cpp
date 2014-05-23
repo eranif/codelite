@@ -96,6 +96,7 @@
 #include "file_logger.h"
 #include "code_completion_manager.h"
 #include "CompileCommandsCreateor.h"
+#include "CompilersModifiedDlg.h"
 
 #ifndef __WXMSW__
 #   include <sys/wait.h>
@@ -205,6 +206,7 @@ Manager::Manager ( void )
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
 }
 
 Manager::~Manager ( void )
@@ -212,6 +214,7 @@ Manager::~Manager ( void )
     EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,  wxCommandEventHandler(Manager::OnProjectSettingsModified     ),     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ADD_WORKSPACE_TO_RECENT_LIST, wxCommandEventHandler(Manager::OnAddWorkspaceToRecentlyUsedList), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
     //stop background processes
     IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
 
@@ -3864,5 +3867,47 @@ void Manager::DbgContinue()
         clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->ResetTableColors();
         clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->ResetTableColors();
         debugger->Continue();
+    }
+}
+
+void Manager::OnBuildStarting(clBuildEvent& event)
+{
+    // Always Skip it
+    event.Skip();
+    
+    if ( !WorkspaceST::Get()->IsOpen() )
+        return;
+
+    wxStringSet_t usedCompilers, deletedCompilers;
+    WorkspaceST::Get()->GetCompilers( usedCompilers );
+    
+    // Check to see if any of the compilers were deleted
+    wxStringSet_t::iterator iter = usedCompilers.begin();
+    for(; iter != usedCompilers.end(); ++iter ) {
+        if ( !BuildSettingsConfigST::Get()->IsCompilerExist( *iter ) ) {
+            deletedCompilers.insert( *iter );
+        }
+    }
+    
+    if ( deletedCompilers.empty() )
+        // nothing more to be done here
+        return;
+    
+    // Prompt the user and suggest an alternative
+    CompilersModifiedDlg dlg(NULL, deletedCompilers);
+    if ( dlg.ShowModal() != wxID_OK ) {
+        event.Skip(false);
+    } else {
+        
+        // User mapped the old compilers with new ones -> create an alias between the actual compiler and the
+        wxStringMap_t table = dlg.GetReplacementTable();
+        
+        // Clone each compiler
+        wxStringMap_t::iterator iterTable = table.begin();
+        for(; iterTable != table.end(); ++iterTable ) {
+            CompilerPtr pCompiler = BuildSettingsConfigST::Get()->GetCompiler(iterTable->second);
+            pCompiler->SetName( iterTable->first );
+            BuildSettingsConfigST::Get()->SetCompiler( pCompiler );
+        }
     }
 }

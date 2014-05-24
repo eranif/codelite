@@ -567,5 +567,7 @@
     <File Name="CompilersDetectorManager.cpp"/>
     <File Name="CompilerLocatorGCC.h"/>
     <File Name="CompilerLocatorGCC.cpp"/>
+    <File Name="CompilerLocatorMSVC.h"/>
+    <File Name="CompilerLocatorMSVC.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

@@ -11,6 +11,7 @@ CompilersDetectorManager::CompilersDetectorManager()
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorGCC()) );
     
 #elif defined(__WXMAC__)
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorGCC()) );
     
 #endif
 }

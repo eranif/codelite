@@ -262,7 +262,7 @@ fix_codelite_lldb_deps
 echo cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
 cp ../../Runtime/debugserver  ./codelite.app/Contents/SharedSupport/
 
-cp ../../sdk/lldb/osx/lib/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/
+cp ../../sdk/lldb/unix/lib/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/
 install_name_tool -change @rpath/liblldb.3.5.0.dylib @executable_path/../SharedSupport/liblldb.3.5.0.dylib ./codelite.app/Contents/SharedSupport/plugins/LLDBDebugger.dylib
 
 if [ -f ../lib/wxcrafter.dylib ]; then

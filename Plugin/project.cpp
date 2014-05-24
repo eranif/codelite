@@ -107,6 +107,7 @@ static wxArrayString Explode(const wxString& in)
 Project::Project()
     : m_tranActive(false)
     , m_isModified(false)
+    , m_workspace(NULL)
 {
 }
 

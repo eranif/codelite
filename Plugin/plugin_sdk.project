@@ -567,7 +567,13 @@
     <File Name="CompilersDetectorManager.cpp"/>
     <File Name="CompilerLocatorGCC.h"/>
     <File Name="CompilerLocatorGCC.cpp"/>
-    <File Name="CompilerLocatorMSVC.h"/>
-    <File Name="CompilerLocatorMSVC.cpp"/>
+    <File Name="CompilerLocatorMSVC10.cpp"/>
+    <File Name="CompilerLocatorMSVC10.h"/>
+    <File Name="CompilerLocatorMSVCBase.h"/>
+    <File Name="CompilerLocatorMSVCBase.cpp"/>
+    <File Name="CompilerLocatorMSVC11.h"/>
+    <File Name="CompilerLocatorMSVC11.cpp"/>
+    <File Name="CompilerLocatorMSVC12.h"/>
+    <File Name="CompilerLocatorMSVC12.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

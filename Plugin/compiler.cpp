@@ -180,7 +180,7 @@ Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
         }
     } else {
         // Create a default compiler: g++
-        m_name = "gnu g++";
+        m_name = "";
         m_compilerFamily = "GCC";
         m_isDefault = false;
         SetSwitch("Include",        "-I");

@@ -80,7 +80,7 @@ CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist\nPlease select a compiler to replace them from the list below"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist\nYou can select to define the compiler by cloning an existing compiler"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer16->Add(m_staticText27, 0, wxALL, 5);
     
@@ -88,7 +88,7 @@ CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID 
     
     boxSizer16->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrl->AppendTextColumn(_("Old Compiler Name"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_dvListCtrl->AppendTextColumn(_("Missing Compiler"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     m_stdBtnSizer18 = new wxStdDialogButtonSizer();
     
     boxSizer16->Add(m_stdBtnSizer18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);

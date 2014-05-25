@@ -85,7 +85,7 @@ public:
     }
     
     /**
-     * @brief return list of compilers used by all the projects
+     * @brief return list of compilers used by all the projects (this is done for the active configuration only)
      */
     void GetCompilers(wxStringSet_t& compilers);
     

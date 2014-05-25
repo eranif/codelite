@@ -1754,7 +1754,7 @@ BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const
     }
     
     wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
-    wxString projectSelConf   = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
+    wxString projectSelConf   = configName.IsEmpty() ? matrix->GetProjectSelectedConf(workspaceSelConf, GetName()) : configName;
     BuildConfigPtr buildConf = GetWorkspace()->GetProjBuildConf(this->GetName(), projectSelConf);
     return buildConf;
 }
@@ -1789,11 +1789,9 @@ void Project::GetCompilers(wxStringSet_t& compilers)
     ProjectSettingsPtr pSettings = GetSettings();
     CHECK_PTR_RET( pSettings );
     
-    ProjectSettingsCookie cookie;
-    BuildConfigPtr buildConf = pSettings->GetFirstBuildConfiguration( cookie );
-    while ( buildConf ) {
+    BuildConfigPtr buildConf = GetBuildConfiguration();
+    if ( buildConf ) {
         compilers.insert( buildConf->GetCompilerType() );
-        buildConf = pSettings->GetNextBuildConfiguration( cookie );
     }
 }
 

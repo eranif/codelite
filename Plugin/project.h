@@ -256,8 +256,7 @@ public:
     Workspace* GetWorkspace();
     
     /**
-     * @brief return set of compilers used by this project
-     * This is done by scanning all build configurations
+     * @brief return set of compilers used by this project for the active build configuraion
      */
     void GetCompilers(wxStringSet_t &compilers);
     

@@ -3883,9 +3883,11 @@ void Manager::OnBuildStarting(clBuildEvent& event)
     
     // Check to see if any of the compilers were deleted
     wxStringSet_t::iterator iter = usedCompilers.begin();
+    wxString strDeletedCompilers;
     for(; iter != usedCompilers.end(); ++iter ) {
         if ( !BuildSettingsConfigST::Get()->IsCompilerExist( *iter ) ) {
             deletedCompilers.insert( *iter );
+            strDeletedCompilers << "'" << *iter << "'\n";
         }
     }
     
@@ -3893,10 +3895,19 @@ void Manager::OnBuildStarting(clBuildEvent& event)
         // nothing more to be done here
         return;
     
+    strDeletedCompilers.RemoveLast(); // remove last \n
+    
     // Prompt the user and suggest an alternative
     CompilersModifiedDlg dlg(NULL, deletedCompilers);
     if ( dlg.ShowModal() != wxID_OK ) {
         event.Skip(false);
+        wxString message;
+        message << _("Build cancelled. The following compilers referred by the workspace could not be found:\n")
+                << strDeletedCompilers << "\n"
+                << _("Please fix your project settings by selecting a valid compiler");
+        ::wxMessageBox(message, "Build Aborted", wxOK|wxCENTER|wxICON_ERROR, EventNotifier::Get()->TopFrame());
+        return;
+        
     } else {
         
         // User mapped the old compilers with new ones -> create an alias between the actual compiler and the

@@ -706,7 +706,7 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Label:",
-									"m_value":	"Some of the compilers referred  by the workspace no longer exist\\nPlease select a compiler to replace them from the list below"
+									"m_value":	"Some of the compilers referred  by the workspace no longer exist\\nYou can select to define the compiler by cloning an existing compiler"
 								}, {
 									"type":	"string",
 									"m_label":	"Wrap:",
@@ -791,7 +791,7 @@
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"Old Compiler Name"
+											"m_value":	"Missing Compiler"
 										}, {
 											"type":	"string",
 											"m_label":	"Width:",

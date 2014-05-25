@@ -10,7 +10,7 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
     compilers = BuildSettingsConfigST::Get()->GetAllCompilers();
     compilers.Insert(SELECT_COMPILER, 0);
     
-    m_dvListCtrl->AppendColumn( new wxDataViewColumn( _("New Compiler Name"), 
+    m_dvListCtrl->AppendColumn( new wxDataViewColumn( _("Copy Settings From"), 
                                 new wxDataViewChoiceRenderer( compilers, wxDATAVIEW_CELL_EDITABLE, wxDVR_DEFAULT_ALIGNMENT), 
                                 m_dvListCtrl->GetColumnCount(), 
                                 150, 

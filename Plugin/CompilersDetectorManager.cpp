@@ -4,20 +4,24 @@
 #include <CompilerLocatorMSVC10.h>
 #include <CompilerLocatorMSVC11.h>
 #include <CompilerLocatorMSVC12.h>
+#include "CompilerLocatorCLANG.h"
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
 #ifdef __WXMSW__
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMinGW()) );
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC10()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC11()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC12()) );
     
 #elif defined(__WXGTK__)
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorGCC()) );
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()) );
     
 #elif defined(__WXMAC__)
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorGCC()) );
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()) );
     
 #endif
 }

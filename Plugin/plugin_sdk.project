@@ -575,5 +575,7 @@
     <File Name="CompilerLocatorMSVC11.cpp"/>
     <File Name="CompilerLocatorMSVC12.h"/>
     <File Name="CompilerLocatorMSVC12.cpp"/>
+    <File Name="CompilerLocatorCLANG.h"/>
+    <File Name="CompilerLocatorCLANG.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

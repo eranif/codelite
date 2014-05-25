@@ -30,7 +30,7 @@ void CompilerLocatorMSVCBase::AddTools(const wxString& masterFolder, const wxStr
     installPath.RemoveLastDir();
     installPath.RemoveLastDir();
 
-    CompilerPtr compiler( new Compiler(NULL) );
+    CompilerPtr compiler( new Compiler(NULL, Compiler::kRegexVC) );
     compiler->SetCompilerFamily("Visual C++");
     compiler->SetName( name );
     compiler->SetInstallationPath(installPath.GetPath());

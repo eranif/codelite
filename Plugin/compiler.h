@@ -73,6 +73,11 @@ public:
         wxString lineNumberIndex;
         wxString fileNameIndex;
     };
+    
+    enum eRegexType {
+        kRegexVC = 0,
+        kRegexGNU
+    };
     typedef std::list<CmpInfoPattern> CmpListInfoPattern;
 
 
@@ -105,7 +110,7 @@ protected:
 public:
     typedef std::map<wxString, wxString>::const_iterator ConstIterator;
 
-    Compiler(wxXmlNode *node);
+    Compiler(wxXmlNode *node, Compiler::eRegexType regexType = Compiler::kRegexGNU );
     virtual ~Compiler();
 
     wxXmlNode *ToXml() const;

@@ -30,7 +30,7 @@
 #include "build_system.h"
 #include "build_settings_config.h"
 
-Compiler::Compiler(wxXmlNode *node)
+Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
     : m_objectNameIdenticalToFileName(false)
     , m_isDefault(false)
 {
@@ -197,17 +197,29 @@ Compiler::Compiler(wxXmlNode *node)
         m_objectSuffix = ".o";
         m_preprocessSuffix = ".i";
         
-        AddPattern(eErrorPattern, "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))", 1, 3);
-        AddPattern(eErrorPattern, "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)(\\(\\.text\\+[0-9a-fx]*\\))", 3, 1);
-        AddPattern(eErrorPattern, "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+)(:)", 3, 1);
-        AddPattern(eErrorPattern, "undefined reference to", -1, -1);
-        AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1);
+        if ( regexType == kRegexGNU ) {
+            AddPattern(eErrorPattern, "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal error)|(error)|(undefined reference))", 1, 3);
+            AddPattern(eErrorPattern, "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)(\\(\\.text\\+[0-9a-fx]*\\))", 3, 1);
+            AddPattern(eErrorPattern, "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+)(:)", 3, 1);
+            AddPattern(eErrorPattern, "undefined reference to", -1, -1);
+            AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1);
+            
+            AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)", 1, 3);
+            AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)", 1, 3);
+            AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1, 3);
+            AddPattern(eWarningPattern, "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?", 2, 4);
+            
+        } else {
+            
+            AddPattern(eErrorPattern,   "^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error", 1, 2);
+            AddPattern(eErrorPattern,   "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(error)", 1, 3);
+            AddPattern(eErrorPattern,   "(LINK : fatal error)", 1, 1);
+            AddPattern(eErrorPattern,   "(NMAKE : fatal error)", 1, 1);
+            AddPattern(eWarningPattern, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(warning)", 1, 3);
+            AddPattern(eWarningPattern, "([a-z_A-Z]*\\.obj)( : warning)", 1, 1);
+            AddPattern(eWarningPattern, "(cl : Command line warning)", 1, 1);
+        }
         
-        AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)", 1, 3);
-        AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)", 1, 3);
-        AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1, 3);
-        AddPattern(eWarningPattern, "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?", 2, 4);
-
         SetTool("LinkerName",             "g++");
 #ifdef __WXMAC__
         SetTool("SharedObjectLinkerName", "g++ -dynamiclib -fPIC");

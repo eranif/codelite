@@ -88,8 +88,11 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
 
     toolFile.SetName("llvm-ar");
     AddTool(compiler, "AR", toolFile.GetFullPath(), "rcu");
+#ifdef __WXMSW__
     AddTool(compiler, "ResourceCompiler", "windres.exe");
-    
+#else
+    AddTool(compiler, "ResourceCompiler", "");
+#endif
     toolFile.SetName("llvm-as");
     AddTool(compiler, "AS", toolFile.GetFullPath());
     
@@ -99,5 +102,9 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
     }
 
     // FIXME: make this fullpath to the MinGW installation
+#ifdef __WXMSW__
     AddTool(compiler, "MAKE", "mingw32-make.exe", makeExtraArgs);
+#else
+    AddTool(compiler, "MAKE", "make", makeExtraArgs);
+#endif
 }

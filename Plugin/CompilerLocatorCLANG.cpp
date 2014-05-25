@@ -1,5 +1,6 @@
 #include "CompilerLocatorCLANG.h"
 #include <globals.h>
+#include "procutils.h"
 #ifdef __WXMSW__
 #   include <wx/msw/registry.h>
 #endif
@@ -16,6 +17,17 @@ CompilerLocatorCLANG::~CompilerLocatorCLANG()
 bool CompilerLocatorCLANG::Locate()
 {
     MSWLocate();
+    
+    // POSIX locate
+    wxFileName clang("/usr/bin", "clang");
+    if ( clang.FileExists() ) {
+        CompilerPtr compiler( new Compiler(NULL) );
+        compiler->SetCompilerFamily("LLVM/Clang");
+        // get the compiler version
+        compiler->SetName( GetCompilerFullName(clang.GetFullPath() ) );
+        m_compilers.push_back( compiler );
+        AddTools(compiler, clang.GetPath());
+    }
     return true;
 }
 
@@ -55,6 +67,7 @@ void CompilerLocatorCLANG::MSWLocate()
         }
     }
 #endif
+
 }
 
 void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs)
@@ -107,4 +120,30 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
 #else
     AddTool(compiler, "MAKE", "make", makeExtraArgs);
 #endif
+}
+
+wxString CompilerLocatorCLANG::GetClangVersion(const wxString& clangBinary)
+{
+    wxString command;
+    wxArrayString stdoutArr;
+    command << clangBinary << " --version";
+    ProcUtils::SafeExecuteCommand(command, stdoutArr);
+    if ( !stdoutArr.IsEmpty() ) {
+        wxString versionString = stdoutArr.Item(0);
+        versionString = versionString.AfterLast('(');
+        versionString = versionString.BeforeLast(')');
+        return versionString;
+    }
+    return "";
+}
+
+wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
+{
+    wxString version = GetClangVersion( clangBinary );
+    wxString fullname;
+    fullname << "clang";
+    if ( !version.IsEmpty() ) {
+        fullname << "( " << version << " )";
+    }
+    return fullname;
 }

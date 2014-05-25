@@ -9,6 +9,8 @@ protected:
     void MSWLocate();
     void AddTools(CompilerPtr compiler, const wxString &installFolder);
     void AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs = "");
+    wxString GetClangVersion(const wxString &clangBinary);
+    wxString GetCompilerFullName(const wxString &clangBinary);
     
 public:
     CompilerLocatorCLANG();

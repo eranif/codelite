@@ -1,4 +1,5 @@
 #include "CompilerLocatorMSVC10.h"
+#include <wx/filename.h>
 
 CompilerLocatorMSVC10::CompilerLocatorMSVC10()
 {

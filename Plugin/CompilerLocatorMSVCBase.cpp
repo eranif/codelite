@@ -1,6 +1,7 @@
 #include "CompilerLocatorMSVCBase.h"
 #include "compiler.h"
 #include <globals.h>
+#include <wx/tokenzr.h>
 #ifdef __WXMSW__
 #   include <wx/msw/registry.h>
 #endif

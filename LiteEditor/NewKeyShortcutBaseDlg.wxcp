@@ -86,11 +86,11 @@
 					"m_options":	["", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"]
 				}, {
 					"type":	"string",
-					"m_label":	"File:",
+					"m_label":	"Inherited Class",
 					"m_value":	""
 				}, {
 					"type":	"string",
-					"m_label":	"Inherited Class",
+					"m_label":	"File:",
 					"m_value":	""
 				}, {
 					"type":	"string",
@@ -524,7 +524,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
-															"m_value":	"Hit any keyboard key"
+															"m_value":	"Hit any keyboard key. Don't use the modifier keys (e.g. 'Shift') here, use the checkboxes below"
 														}, {
 															"type":	"colour",
 															"m_label":	"Bg Colour:",
@@ -583,7 +583,8 @@
 															"m_eventClass":	"wxKeyEvent",
 															"m_eventHandler":	"wxKeyEventHandler",
 															"m_functionNameAndSignature":	"OnKeyDown(wxKeyEvent& event)",
-															"m_description":	"Process a wxEVT_KEY_DOWN event (any key has been pressed)"
+															"m_description":	"Process a wxEVT_KEY_DOWN event (any key has been pressed)",
+															"m_noBody":	false
 														}],
 													"m_children":	[]
 												}, {

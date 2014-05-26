@@ -1283,9 +1283,9 @@ void Subversion2::OnSync(wxCommandEvent& event)
         return;
     }
 
-    wxString rawData = proj->GetPluginData(_("subversion2"));
+    wxString rawData = proj->GetPluginData("subversion2");
     
-    wxArrayString options = wxStringTokenize(rawData, _("\n"));    
+    wxArrayString options = wxStringTokenize(rawData, "\n");    
     bool excludeBinary = true;
     wxString rootDir;
     wxString excludeExtensions;
@@ -1310,7 +1310,7 @@ void Subversion2::OnSync(wxCommandEvent& event)
     excludeExtensions = dlg.GetExcludeExtensions();
     excludeBinary = dlg.GetExcludeBin();
 
-    wxLogMessage (_("excludeBinary=%d\n"), excludeBinary);
+    wxLogMessage ("excludeBinary=%d\n", excludeBinary);
     
     // attempt to update the project files
     wxString workDir(dlg.GetRootDir());
@@ -1388,8 +1388,8 @@ void Subversion2::FinishSyncProcess(ProjectPtr& proj,
         }
         wxString rawData = excludeBinTF + delim
                            + workDir + delim + excludeExtensions;
-        wxLogMessage(_("rawData=%s\n"), rawData.c_str());
-        projRefreshed->SetPluginData(_("subversion2"), rawData);    
+        wxLogMessage("rawData=%s\n", rawData.c_str());
+        projRefreshed->SetPluginData("subversion2", rawData);    
     }
 }
 

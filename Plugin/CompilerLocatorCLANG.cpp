@@ -22,9 +22,10 @@ bool CompilerLocatorCLANG::Locate()
     wxFileName clang("/usr/bin", "clang");
     if ( clang.FileExists() ) {
         CompilerPtr compiler( new Compiler(NULL) );
-        compiler->SetCompilerFamily("LLVM/Clang");
+        compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
         // get the compiler version
         compiler->SetName( GetCompilerFullName(clang.GetFullPath() ) );
+        compiler->SetGenerateDependeciesFile(true);
         m_compilers.push_back( compiler );
         AddTools(compiler, clang.GetPath());
     }
@@ -45,7 +46,8 @@ void CompilerLocatorCLANG::MSWLocate()
             reg.QueryValue("DisplayVersion", llvmVersion);
             
             CompilerPtr compiler( new Compiler(NULL) );
-            compiler->SetCompilerFamily("LLVM/Clang");
+            compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
+            compiler->SetGenerateDependeciesFile(true);
             compiler->SetName( wxString() << "clang ( " << llvmVersion << " )");
             m_compilers.push_back( compiler );
             AddTools(compiler, llvmInstallPath);
@@ -60,7 +62,8 @@ void CompilerLocatorCLANG::MSWLocate()
             reg.QueryValue("DisplayVersion", llvmVersion);
             
             CompilerPtr compiler( new Compiler(NULL) );
-            compiler->SetCompilerFamily("LLVM/Clang");
+            compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
+            compiler->SetGenerateDependeciesFile(true);
             compiler->SetName( wxString() << "clang ( " << llvmVersion << " )");
             m_compilers.push_back( compiler );
             AddTools(compiler, llvmInstallPath);
@@ -114,7 +117,6 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString &instal
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
 
-    // FIXME: make this fullpath to the MinGW installation
 #ifdef __WXMSW__
     AddTool(compiler, "MAKE", "mingw32-make.exe", makeExtraArgs);
 #else

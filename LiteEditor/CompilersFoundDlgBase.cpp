@@ -26,13 +26,17 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    m_banner10 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_banner10 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_SIMPLE);
     m_banner10->SetBitmap(wxNullBitmap);
-    m_banner10->SetText(_("Compilers Scan Completed"), _("Below is a list of compilers located on your computer.\nClick OK to accept this list and replace the current list of compilers with this list, or Cancel to abort."));
-    m_banner10->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-    m_banner10->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+    m_banner10->SetText(_("Found Installed Compilers"), _("Below is a list of compilers found on your computer.\nClick OK to replace the current list of compilers with this list. Cancel to abort."));
+    m_banner10->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK), wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+    m_banner10->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     boxSizer2->Add(m_banner10, 0, wxALL|wxEXPAND, 5);
+    
+    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Bold font indicates that a compiler is marked as default for its compiler family\nDouble click to change the default"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer2->Add(m_staticText29, 0, wxALL|wxEXPAND, 5);
     
     m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,200), wxDV_ROW_LINES|wxDV_SINGLE);
     
@@ -61,10 +65,15 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
          GetSizer()->Fit(this);
     }
     Centre(wxBOTH);
+    // Connect events
+    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CompilersFoundDlgBase::OnItemActivated), NULL, this);
+    
 }
 
 CompilersFoundDlgBase::~CompilersFoundDlgBase()
 {
+    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CompilersFoundDlgBase::OnItemActivated), NULL, this);
+    
 }
 
 CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)

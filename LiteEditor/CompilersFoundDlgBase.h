@@ -15,15 +15,16 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/bannerwindow.h>
+#include <wx/stattext.h>
 #include <wx/dataview.h>
 #include "compilersfoundmodel.h"
 #include <wx/button.h>
-#include <wx/stattext.h>
 
 class CompilersFoundDlgBase : public wxDialog
 {
 protected:
     wxBannerWindow* m_banner10;
+    wxStaticText* m_staticText29;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<CompilersFoundModel> m_dataviewModel;
 
@@ -32,9 +33,10 @@ protected:
     wxButton* m_buttonOK;
 
 protected:
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    CompilersFoundDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Compilers Found"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CompilersFoundDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find Installed Compilers"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~CompilersFoundDlgBase();
 };
 

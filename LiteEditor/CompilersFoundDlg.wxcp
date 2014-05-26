@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	27,
+		"m_objCounter":	29,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCFE1CInitBitmapResources",
 		"m_bitmapsFile":	"CompilersFoundDlg_liteeditor_bitmaps.cpp",
@@ -74,7 +74,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
-					"m_value":	"Compilers Found"
+					"m_value":	"Find Installed Compilers"
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
@@ -147,7 +147,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	[],
+							"m_styles":	["wxBORDER_SIMPLE"],
 							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",
@@ -176,7 +176,7 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Fg Colour:",
-									"colour":	"ButtonText"
+									"colour":	"TooltipText"
 								}, {
 									"type":	"font",
 									"m_label":	"Font:",
@@ -208,11 +208,11 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Title:",
-									"m_value":	"Compilers Scan Completed"
+									"m_value":	"Found Installed Compilers"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Message:",
-									"m_value":	"Below is a list of compilers located on your computer.\\nClick OK to accept this list and replace the current list of compilers with this list, or Cancel to abort."
+									"m_value":	"Below is a list of compilers found on your computer.\\nClick OK to replace the current list of compilers with this list. Cancel to abort."
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -225,11 +225,86 @@
 								}, {
 									"type":	"colour",
 									"m_label":	"Gradient Start",
-									"colour":	"ButtonFace"
+									"colour":	"Tooltip"
 								}, {
 									"type":	"colour",
 									"m_label":	"Gradient End",
-									"colour":	"ButtonFace"
+									"colour":	"Tooltip"
+								}],
+							"m_events":	[],
+							"m_children":	[]
+						}, {
+							"m_type":	4405,
+							"proportion":	0,
+							"border":	5,
+							"gbSpan":	"1,1",
+							"gbPosition":	"0,0",
+							"m_styles":	[],
+							"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+							"m_properties":	[{
+									"type":	"winid",
+									"m_label":	"ID:",
+									"m_winid":	"wxID_ANY"
+								}, {
+									"type":	"string",
+									"m_label":	"Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Minimum Size:",
+									"m_value":	"-1,-1"
+								}, {
+									"type":	"string",
+									"m_label":	"Name:",
+									"m_value":	"m_staticText29"
+								}, {
+									"type":	"multi-string",
+									"m_label":	"Tooltip:",
+									"m_value":	""
+								}, {
+									"type":	"colour",
+									"m_label":	"Bg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"colour",
+									"m_label":	"Fg Colour:",
+									"colour":	"<Default>"
+								}, {
+									"type":	"font",
+									"m_label":	"Font:",
+									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Hidden",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Disabled",
+									"m_value":	false
+								}, {
+									"type":	"bool",
+									"m_label":	"Focused",
+									"m_value":	false
+								}, {
+									"type":	"string",
+									"m_label":	"Class Name:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Include File:",
+									"m_value":	""
+								}, {
+									"type":	"string",
+									"m_label":	"Style:",
+									"m_value":	""
+								}, {
+									"type":	"multi-string",
+									"m_label":	"Label:",
+									"m_value":	"Bold font indicates that a compiler is marked as default for its compiler family\\nDouble click to change the default"
+								}, {
+									"type":	"string",
+									"m_label":	"Wrap:",
+									"m_value":	"-1"
 								}],
 							"m_events":	[],
 							"m_children":	[]
@@ -306,7 +381,14 @@
 									"m_label":	"Container Item Has Columns",
 									"m_value":	false
 								}],
-							"m_events":	[],
+							"m_events":	[{
+									"m_eventName":	"wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+									"m_eventClass":	"wxDataViewEvent",
+									"m_eventHandler":	"wxDataViewEventHandler",
+									"m_functionNameAndSignature":	"OnItemActivated(wxDataViewEvent& event)",
+									"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
+									"m_noBody":	false
+								}],
 							"m_children":	[{
 									"m_type":	4472,
 									"proportion":	0,

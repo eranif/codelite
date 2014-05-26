@@ -29,6 +29,7 @@
 #include "wx_xml_compatibility.h"
 #include "build_system.h"
 #include "build_settings_config.h"
+#include <ICompilerLocator.h>
 
 Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
     : m_objectNameIdenticalToFileName(false)
@@ -181,7 +182,7 @@ Compiler::Compiler(wxXmlNode *node, Compiler::eRegexType regexType)
     } else {
         // Create a default compiler: g++
         m_name = "";
-        m_compilerFamily = "GCC";
+        m_compilerFamily = COMPILER_FAMILY_GCC;
         m_isDefault = false;
         SetSwitch("Include",        "-I");
         SetSwitch("Debug",          "-g ");

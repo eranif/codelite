@@ -42,6 +42,8 @@ bool CompilerLocatorGCC::Locate()
                 toolchainName << " ( " << gcc_versions.Item(i) << " )";
             }
             compiler->SetName( toolchainName );
+            compiler->SetGenerateDependeciesFile(true);
+            compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
             m_compilers.push_back( compiler );
             AddTools(compiler, "/usr/bin", gcc_versions.Item(i));
         }
@@ -52,8 +54,9 @@ bool CompilerLocatorGCC::Locate()
     if ( xcodeGcc.FileExists() ) {
         // add this compiler
         CompilerPtr compiler( new Compiler(NULL) );
-        m_compilers.push_back( compiler );
+        compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
         compiler->SetName("GCC ( XCode )");
+        m_compilers.push_back( compiler );
         AddTools(compiler, xcodeGcc.GetPath());
     }
     

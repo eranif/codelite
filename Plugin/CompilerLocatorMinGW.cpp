@@ -112,7 +112,7 @@ void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& n
     
     // Create an empty compiler
     CompilerPtr compiler( new Compiler(NULL) );
-    compiler->SetCompilerFamily("MinGW");
+    compiler->SetCompilerFamily(COMPILER_FAMILY_MINGW);
     compiler->SetGenerateDependeciesFile(true);
     m_compilers.push_back( compiler );
     m_locatedFolders.insert( masterPath.GetPath() );

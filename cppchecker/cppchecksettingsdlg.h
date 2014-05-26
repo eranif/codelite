@@ -15,7 +15,7 @@ class CppCheckSettingsDialog : public CppCheckSettingsDialogBase
 	wxArrayString     m_SuppressionsKeys;
 
 public:
-	CppCheckSettingsDialog(wxWindow* parent, CppCheckSettings* settings, IConfigTool *conf, const wxString& defaultpath);
+	CppCheckSettingsDialog(wxWindow* parent, CppCheckSettings* settings, IConfigTool *conf, const wxString& defaultpath, bool showDefsTab);
 	virtual ~CppCheckSettingsDialog();
 
 protected:
@@ -41,7 +41,19 @@ protected:
 	virtual void OnRemoveSuppressionUI(wxUpdateUIEvent& e);
 	virtual void OnSuppressTickAllUI(wxUpdateUIEvent& e);
 	virtual void OnSuppressUntickAllUI(wxUpdateUIEvent& e);
-	
+
+	// Definitions page
+	virtual void OnAddDefinition(wxCommandEvent& e);
+	virtual void OnRemoveDefinition(wxCommandEvent& e);
+	virtual void OnClearDefinitions(wxCommandEvent& e);
+	virtual void OnRemoveDefinitionUI(wxUpdateUIEvent& e);
+	virtual void OnClearDefinitionsUI(wxUpdateUIEvent& e);
+	virtual void OnAddUndefine(wxCommandEvent& e);
+	virtual void OnRemoveUndefine(wxCommandEvent& e);
+	virtual void OnClearUndefines(wxCommandEvent& e);
+	virtual void OnRemoveUndefineUI(wxUpdateUIEvent& e);
+	virtual void OnClearUndefinesUI(wxUpdateUIEvent& e);
+
 	virtual void OnBtnOK(wxCommandEvent& e);
 };
 

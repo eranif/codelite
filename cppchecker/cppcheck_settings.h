@@ -3,6 +3,7 @@
 
 #include "job.h"
 #include "serialized_object.h"
+#include "project.h"
 
 // Define the events needed by this job
 extern const wxEventType wxEVT_CPPCHECKJOB_STATUS_MESSAGE;
@@ -32,6 +33,8 @@ class CppCheckSettings : public SerializedObject
 	StrStrMap     m_SuppressedWarningsOrig0; // Ditto, containing the original values
 	StrStrMap     m_SuppressedWarningsOrig1;
 	bool          m_saveSuppressedWarnings;
+	wxArrayString m_definitions;
+	wxArrayString m_undefines;
 
 public:
 	CppCheckSettings();
@@ -75,7 +78,12 @@ public:
 	const StrStrMap* GetSuppressedWarningsStrings1() const {
 		return &m_SuppressedWarnings1;
 	}
-
+	const wxArrayString& GetDefinitions() const {
+		return m_definitions;
+	}
+	const wxArrayString& GetUndefines() const {
+		return m_undefines;
+	}
 
 	void SetStyle(bool Style)                     { m_Style = Style; }
 	void SetPerformance(bool Performance)         { m_Performance = Performance; }
@@ -95,11 +103,18 @@ public:
 	void SetSuppressedWarnings(wxCheckListBox* clb, const wxArrayString& keys);
 	void SetSaveSuppressedWarnings(bool save) { m_saveSuppressedWarnings = save; }
 	void SetDefaultSuppressedWarnings();
+	void SetDefinitions(const wxArrayString& definitions) {
+		m_definitions = definitions;
+	}
+	void SetUndefines(const wxArrayString& undefines) {
+		m_undefines = undefines;
+	}
 
 	virtual void Serialize(Archive& arch);
 	virtual void DeSerialize(Archive& arch);
 
 	wxString GetOptions() const;
+    void LoadProjectSpecificSettings(ProjectPtr proj);
 };
 
 #endif // __cppcheckjob__

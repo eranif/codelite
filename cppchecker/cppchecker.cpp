@@ -23,6 +23,7 @@
 #include <wx/xml/xml.h>
 #include <wx/sstream.h>
 #include <wx/log.h>
+#include <wx/tokenzr.h>
 
 static CppCheckPlugin* thePlugin = NULL;
 
@@ -74,12 +75,14 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
     m_shortName = wxT("CppCheck");
 
     // Load settings
-    m_mgr->GetConfigTool()->ReadObject(wxT("CppCheck"), &m_settings);
+    m_mgr->GetConfigTool()->ReadObject("CppCheck", &m_settings);
     // Now set default suppressions if none have been serialised
     m_settings.SetDefaultSuppressedWarnings();
+    // NB we can't load any project-specific settings here, as the workspace won't yet have loaded. We do it just before they're used
 
     // Connect events
     m_mgr->GetTheApp()->Connect(XRCID("cppcheck_settings_item"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnSettingsItem),          NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("cppcheck_settings_item_project"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnSettingsItemProject), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("cppcheck_fileexplorer_item"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnCheckFileExplorerItem), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("cppcheck_workspace_item"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnCheckWorkspaceItem),    NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("cppcheck_project_item"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnCheckProjectItem),      NULL, (wxEvtHandler*)this);
@@ -95,6 +98,7 @@ CppCheckPlugin::CppCheckPlugin(IManager *manager)
 CppCheckPlugin::~CppCheckPlugin()
 {
     m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_settings_item"),     wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnSettingsItem),          NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_settings_item_project"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnSettingsItemProject), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_fileexplorer_item"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnCheckFileExplorerItem), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_workspace_item"),    wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnCheckWorkspaceItem),    NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("cppcheck_project_item"),      wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CppCheckPlugin::OnCheckProjectItem),      NULL, (wxEvtHandler*)this);
@@ -166,7 +170,7 @@ void CppCheckPlugin::UnPlug()
 wxMenu* CppCheckPlugin::CreateFileExplorerPopMenu()
 {
     //Create the popup menu for the file explorer
-    //The only menu that we are interseted is the file explorer menu
+    //The only menu that we are interested in is the file explorer menu
     wxMenu* menu = new wxMenu();
     wxMenuItem *item(NULL);
 
@@ -188,7 +192,7 @@ wxMenu* CppCheckPlugin::CreateProjectPopMenu()
     item = new wxMenuItem(menu, XRCID("cppcheck_project_item"), _("Run CppCheck"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("cppcheck_settings_item_project"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
     return menu;
@@ -266,6 +270,24 @@ void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
     DoStartTest();
 }
 
+ProjectPtr CppCheckPlugin::FindSelectedProject()
+{
+    ProjectPtr proj = NULL;
+
+    if ( !m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen() ) {
+        return proj;
+    }
+
+    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
+    if ( item.m_itemType == ProjectItem::TypeProject) {
+        wxString                  project_name (item.m_text);
+        wxString                  err_msg;
+        proj = m_mgr->GetWorkspace()->FindProjectByName(project_name, err_msg);
+    }
+
+    return proj;
+}
+
 void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
 {
     if ( m_cppcheckProcess ) {
@@ -273,34 +295,24 @@ void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
         return;
     }
 
-    if ( !m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen() ) {
+    ProjectPtr proj = FindSelectedProject();
+    if ( !proj ) {
         return;
     }
 
-    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    if ( item.m_itemType == ProjectItem::TypeProject) {
+    // retrieve complete list of source files of the workspace
+    std::vector< wxFileName > tmpfiles;
+    proj->GetFiles(tmpfiles, true);
 
-        // retrieve complete list of source files of the workspace
-        wxString                  project_name (item.m_text);
-        wxString                  err_msg;
-        std::vector< wxFileName > tmpfiles;
-
-        ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project_name, err_msg);
-        if ( !proj ) {
-            return;
-        }
-
-        proj->GetFiles(tmpfiles, true);
-
-        // only C/C++ files
-        for (size_t i=0; i< tmpfiles.size(); i++) {
-            if (FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceC ||
-                FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceCpp) {
-                m_filelist.Add(tmpfiles.at(i).GetFullPath());
-            }
+    // only C/C++ files
+    for (size_t i=0; i< tmpfiles.size(); i++) {
+        if (FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceC ||
+            FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceCpp) {
+            m_filelist.Add(tmpfiles.at(i).GetFullPath());
         }
     }
-    DoStartTest();
+        
+    DoStartTest(proj);
 }
 
 void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
@@ -317,10 +329,19 @@ void CppCheckPlugin::OnCppCheckTerminated(wxCommandEvent& e)
     m_view->PrintStatusMessage();
 }
 
-/**
- *
- */
-void CppCheckPlugin::OnSettingsItem(wxCommandEvent &e)
+
+void CppCheckPlugin::OnSettingsItem(wxCommandEvent& WXUNUSED(e))
+{
+    DoSettingsItem();
+}
+
+void CppCheckPlugin::OnSettingsItemProject(wxCommandEvent& WXUNUSED(e))
+{
+    ProjectPtr proj = FindSelectedProject();
+    DoSettingsItem(proj);
+}
+
+void CppCheckPlugin::DoSettingsItem(ProjectPtr project/*= NULL*/)
 {
     // Find the default path for the CppCheckSettingsDialog's wxFileDialog
     wxString defaultpath;
@@ -328,9 +349,24 @@ void CppCheckPlugin::OnSettingsItem(wxCommandEvent &e)
     if (ed && ed->GetFileName().IsOk()) {
         defaultpath = ed->GetFileName().GetPath();
     }
-    CppCheckSettingsDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), &m_settings, m_mgr->GetConfigTool(), defaultpath);
+
+    // If there's an active project, first load any project-specific settings: definitions and undefines
+    // (We couldn't do that with the rest of the settings as the workspace hadn't yet been loaded)
+    m_settings.LoadProjectSpecificSettings(project); // NB we still do this if !project, as that will clear any stale settings
+
+    CppCheckSettingsDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), &m_settings, m_mgr->GetConfigTool(), defaultpath, project.Get() != NULL);
     if (dlg.ShowModal() == wxID_OK) {
         m_mgr->GetConfigTool()->WriteObject(wxT("CppCheck"), &m_settings);
+        if (project) {
+            // Also save any project-specific settings: definitions and undefines
+            wxString definitions = wxJoin(m_settings.GetDefinitions(), ',');
+            wxString undefines   = wxJoin(m_settings.GetUndefines(), ',');
+            if (!(definitions.empty() && undefines.empty())) {
+                project->SetPluginData("CppCheck", definitions + ';' + undefines);
+            } else {
+                project->SetPluginData("CppCheck", "");
+            }
+        }
     }
 }
 
@@ -439,12 +475,21 @@ void CppCheckPlugin::OnWorkspaceClosed(wxCommandEvent& e)
     e.Skip();
 }
 
-void CppCheckPlugin::DoStartTest()
+void CppCheckPlugin::DoStartTest(ProjectPtr proj /*=NULL*/)
 {
     RemoveExcludedFiles();
+    if (!m_filelist.GetCount()) {
+        wxMessageBox(_("No files to check"), "CppCheck", wxOK|wxCENTRE, m_mgr->GetTheApp()->GetTopWindow());
+        return;
+    }
     SetTabVisible(true);
     m_view->Clear();
     m_view->SetGaugeRange(m_filelist.GetCount());
+    
+    // We need to load any project-specific settings: definitions and undefines
+    // (We couldn't do that with the rest of the settings as the workspace hadn't yet been loaded)
+    m_settings.LoadProjectSpecificSettings(proj); // NB we still do this if !proj, as that will clear any stale settings
+
     // Start the test
     DoProcess();
 }

@@ -2,8 +2,9 @@
 #include "windowattrmanager.h"
 #include <wx/msgdlg.h>
 #include <wx/filedlg.h>
+#include <wx/textdlg.h>
 
-CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSettings* settings, IConfigTool *conf, const wxString& defaultpath)
+CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSettings* settings, IConfigTool *conf, const wxString& defaultpath, bool showDefsTab)
 		: CppCheckSettingsDialogBase(parent)
 		, m_settings(settings)
 		, m_conf(conf)
@@ -40,6 +41,13 @@ CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent, CppCheckSetting
 		m_checkListSuppress->Check(index, false);
 		m_SuppressionsKeys.Add((*iter).first);
 	}
+    
+    if (showDefsTab) {
+        m_listBoxDefinelist->Append(settings->GetDefinitions());
+        m_listBoxUndefineList->Append(settings->GetUndefines());
+    } else {
+        m_DefinesPanel->Hide(); // Don't show this panel unless its contents are valid i.e. we got here via a rt-click over a project
+    }
 
 	WindowAttrManager::Load(this, wxT("CppCheckSettingsDialog"), m_conf);
 }
@@ -61,6 +69,9 @@ void CppCheckSettingsDialog::OnBtnOK(wxCommandEvent& e)
 
 	m_settings->SetSuppressedWarnings(m_checkListSuppress, m_SuppressionsKeys);
 	m_settings->SetSaveSuppressedWarnings(m_checkBoxSerialise->IsChecked());
+
+    m_settings->SetDefinitions(m_listBoxDefinelist->GetStrings());
+    m_settings->SetUndefines(m_listBoxUndefineList->GetStrings());
 	
 	e.Skip();
 }
@@ -175,6 +186,50 @@ void CppCheckSettingsDialog::OnSuppressUntickAll(wxCommandEvent& WXUNUSED(e))
 	}
 }
 
+void CppCheckSettingsDialog::OnAddDefinition(wxCommandEvent& WXUNUSED(e))
+{
+	wxString newitem = wxGetTextFromUser("Enter a definition e.g. 'FOO' or 'BAR=1' (not '-DFoo')", "CodeLite", "", this);
+    if (!newitem.empty()) {
+        m_listBoxDefinelist->Append(newitem);
+	}
+}
+
+void CppCheckSettingsDialog::OnRemoveDefinition(wxCommandEvent& WXUNUSED(e))
+{
+	int sel = m_listBoxDefinelist->GetSelection();
+	if ( sel != wxNOT_FOUND ) {
+		m_listBoxDefinelist->Delete((unsigned int) sel);
+	}
+}
+
+void CppCheckSettingsDialog::OnClearDefinitions(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_listBoxDefinelist->Clear();
+}
+
+void CppCheckSettingsDialog::OnAddUndefine(wxCommandEvent& WXUNUSED(e))
+{
+	wxString newitem = wxGetTextFromUser("Enter a definition NOT to check e.g. 'FOO' or 'BAR=1' (not '-UFoo')", "CodeLite", "", this);
+    if (!newitem.empty()) {
+        m_listBoxUndefineList->Append(newitem);
+	}
+}
+
+void CppCheckSettingsDialog::OnRemoveUndefine(wxCommandEvent& WXUNUSED(e))
+{
+	int sel = m_listBoxUndefineList->GetSelection();
+	if ( sel != wxNOT_FOUND ) {
+		m_listBoxUndefineList->Delete((unsigned int) sel);
+	}
+}
+
+void CppCheckSettingsDialog::OnClearUndefines(wxCommandEvent& e)
+{
+	wxUnusedVar(e);
+	m_listBoxUndefineList->Clear();
+}
+
 void CppCheckSettingsDialog::OnChecksTickAllUI(wxUpdateUIEvent& e)
 {
 	for (size_t n=0; n < m_checkListExtraWarnings->GetCount(); ++n) {
@@ -232,6 +287,26 @@ void CppCheckSettingsDialog::OnSuppressUntickAllUI(wxUpdateUIEvent& e)
 		}
 	}
 	e.Enable(false);
+}
+
+void CppCheckSettingsDialog::OnRemoveDefinitionUI(wxUpdateUIEvent& e)
+{
+	e.Enable( m_listBoxDefinelist->GetSelection() != wxNOT_FOUND );
+}
+
+void CppCheckSettingsDialog::OnClearDefinitionsUI(wxUpdateUIEvent& e)
+{
+	e.Enable( !m_listBoxDefinelist->IsEmpty() );
+}
+
+void CppCheckSettingsDialog::OnRemoveUndefineUI(wxUpdateUIEvent& e)
+{
+	e.Enable( m_listBoxUndefineList->GetSelection() != wxNOT_FOUND );
+}
+
+void CppCheckSettingsDialog::OnClearUndefinesUI(wxUpdateUIEvent& e)
+{
+	e.Enable( !m_listBoxUndefineList->IsEmpty() );
 }
 
 void CppCheckAddSuppressionDialog::OnOKButtonUpdateUI(wxUpdateUIEvent& e)

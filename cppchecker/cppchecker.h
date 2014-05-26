@@ -37,7 +37,9 @@ protected:
 	void             RemoveExcludedFiles();
 	void             SetTabVisible(bool clearContent);
 	void             DoProcess();
-	void             DoStartTest();
+	void             DoStartTest(ProjectPtr proj = NULL);
+    ProjectPtr       FindSelectedProject();
+    void             DoSettingsItem(ProjectPtr project = NULL);
 
 protected:
 	/**
@@ -80,6 +82,11 @@ protected:
 	 * @param e event
 	 */
 	void OnSettingsItem         (wxCommandEvent &e);
+	/**
+	 * @brief handle the settings item from a project context menu
+	 * @param e event
+	 */
+	void OnSettingsItemProject  (wxCommandEvent &e);
 public:
 	CppCheckPlugin(IManager *manager);
 	~CppCheckPlugin();

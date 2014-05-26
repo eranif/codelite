@@ -2,9 +2,11 @@
 #include "wx/checklst.h"
 #include <memory>
 #include <wx/stdpaths.h>
+#include <wx/tokenzr.h>
 #include "cppcheck_settings.h"
 #include "plugin.h"
 #include <stdio.h>
+#include "workspace.h"
 
 // Some macros needed
 #ifdef __WXMSW__
@@ -159,6 +161,44 @@ wxString CppCheckSettings::GetOptions() const
 		options << wxT(" --suppress=") << (*iter).first;
 	}
 
+    // (Un)Definitions
+    for (size_t n=0; n < m_definitions.GetCount(); ++n) {
+        wxString item = m_definitions.Item(n);
+        item.Trim().Trim(false);
+        if (!item.empty()) {
+            options << " -D" << item;
+        }
+    }
+    for (size_t n=0; n < m_undefines.GetCount(); ++n) {
+        wxString item = m_undefines.Item(n);
+        item.Trim().Trim(false);
+        if (!item.empty()) {
+            options << " -U" << item;
+        }
+    }
+
 	options << wxT(" --template gcc ");
 	return options;
+}
+
+void CppCheckSettings::LoadProjectSpecificSettings(ProjectPtr project)
+{
+    wxString rawData;
+    wxArrayString definitions, undefines;
+    if (project) {
+        rawData = project->GetPluginData("CppCheck");
+    }
+
+    wxArrayString configurations = wxStringTokenize(rawData, ";", wxTOKEN_RET_EMPTY_ALL);
+    if (configurations.GetCount() == 2) { // It'll either be empty or 2
+        if (!configurations.Item(0).empty()) {
+           definitions = wxStringTokenize(configurations.Item(0), ",");
+        }
+        if (!configurations.Item(1).empty()) {
+            undefines = wxStringTokenize(configurations.Item(1), ",");
+        }
+    }
+    // Note that we set these even if project == NULL, as this will clear any stale values
+    SetDefinitions(definitions);
+    SetUndefines(undefines);
 }

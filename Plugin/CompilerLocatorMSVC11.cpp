@@ -11,6 +11,8 @@ CompilerLocatorMSVC11::~CompilerLocatorMSVC11()
 
 bool CompilerLocatorMSVC11::Locate()
 {
+    m_compilers.clear();
+    
     // We locate it by searching for the environment variable
     // %VS120COMNTOOLS%
     wxString path = ::wxGetenv("VS110COMNTOOLS");

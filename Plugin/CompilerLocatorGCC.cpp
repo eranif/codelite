@@ -14,6 +14,7 @@ CompilerLocatorGCC::~CompilerLocatorGCC()
 bool CompilerLocatorGCC::Locate()
 {
     // Locate GCC under /usr/bin
+    m_compilers.clear();
     
     wxArrayString gcc_versions;
     gcc_versions.Add(""); // Default gcc

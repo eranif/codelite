@@ -16,6 +16,7 @@ CompilerLocatorCLANG::~CompilerLocatorCLANG()
 
 bool CompilerLocatorCLANG::Locate()
 {
+    m_compilers.clear();
     MSWLocate();
     
     // POSIX locate

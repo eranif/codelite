@@ -19,7 +19,9 @@ CompilerLocatorMinGW::~CompilerLocatorMinGW()
 }
 
 bool CompilerLocatorMinGW::Locate()
-{
+{   
+    m_compilers.clear();
+    
     // try to find MinGW in environment variable PATH first
     wxString pathValues;
     wxGetEnv("PATH", &pathValues);

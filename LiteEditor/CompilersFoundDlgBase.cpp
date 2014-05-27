@@ -28,13 +28,13 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
     
     m_banner10 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_SIMPLE);
     m_banner10->SetBitmap(wxNullBitmap);
-    m_banner10->SetText(_("Found Installed Compilers"), _("Below is a list of compilers found on your computer.\nClick OK to replace the current list of compilers with this list. Cancel to abort."));
+    m_banner10->SetText(_("Found Compilers"), _("Below is a list of compilers found on your computer.\nClick 'OK' to replace the current list of compilers with this list. 'Cancel' to abort."));
     m_banner10->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK), wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     m_banner10->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     
     boxSizer2->Add(m_banner10, 0, wxALL|wxEXPAND, 5);
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,200), wxDV_ROW_LINES|wxDV_SINGLE);
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new CompilersFoundModel;
     m_dataviewModel->SetColCount( 2 );
@@ -42,17 +42,17 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer2->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
     
-    m_dataview->AppendTextColumn(_("Compiler Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dataview->AppendTextColumn(_("Compiler Name / Family"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Installation Path"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
     wxBoxSizer* boxSizer31 = new wxBoxSizer(wxHORIZONTAL);
     
     boxSizer2->Add(boxSizer31, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
     
-    m_staticBitmap35 = new wxStaticBitmap(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("bulb-16")), wxDefaultPosition, wxSize(-1,-1), 0 );
+    m_staticBitmap35 = new wxStaticBitmap(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("bulb")), wxDefaultPosition, wxSize(-1,-1), 0 );
     
     boxSizer31->Add(m_staticBitmap35, 0, wxALL, 5);
     
-    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Double click a compiler to make it the default"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Double click a compiler to make it the default for its compiler family"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer31->Add(m_staticText29, 0, wxALIGN_CENTER_VERTICAL, 5);
     
@@ -97,7 +97,7 @@ CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist\nYou can select to define the compiler by cloning an existing compiler"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist\nDefine the missing compiler by cloning an existing compiler"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer16->Add(m_staticText27, 0, wxALL, 5);
     

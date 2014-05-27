@@ -208,11 +208,11 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Title:",
-									"m_value":	"Found Installed Compilers"
+									"m_value":	"Found Compilers"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Message:",
-									"m_value":	"Below is a list of compilers found on your computer.\\nClick OK to replace the current list of compilers with this list. Cancel to abort."
+									"m_value":	"Below is a list of compilers found on your computer.\\nClick 'OK' to replace the current list of compilers with this list. 'Cancel' to abort."
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -248,7 +248,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"-1,200"
+									"m_value":	"300,300"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -325,7 +325,7 @@
 									"m_properties":	[{
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"Compiler Name"
+											"m_value":	"Compiler Name / Family"
 										}, {
 											"type":	"string",
 											"m_label":	"Width:",
@@ -481,7 +481,7 @@
 										}, {
 											"type":	"bitmapPicker",
 											"m_label":	"Bitmap File:",
-											"m_path":	"res/bulb-16.png"
+											"m_path":	"res/16/bulb.png"
 										}],
 									"m_events":	[],
 									"m_children":	[]
@@ -552,7 +552,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
-											"m_value":	"Double click a compiler to make it the default"
+											"m_value":	"Double click a compiler to make it the default for its compiler family"
 										}, {
 											"type":	"string",
 											"m_label":	"Wrap:",
@@ -749,7 +749,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
-					"m_value":	"Compilers Modified"
+					"m_value":	"Could not find selected compiler..."
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
@@ -883,7 +883,7 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Label:",
-									"m_value":	"Some of the compilers referred  by the workspace no longer exist\\nYou can select to define the compiler by cloning an existing compiler"
+									"m_value":	"Some of the compilers referred  by the workspace no longer exist\\nDefine the missing compiler by cloning an existing compiler"
 								}, {
 									"type":	"string",
 									"m_label":	"Wrap:",

@@ -1,7 +1,7 @@
 #include "CompilersModifiedDlg.h"
 #include <build_settings_config.h>
 
-#define SELECT_COMPILER "<Select A Compiler>"
+#define SELECT_COMPILER "<Click to select a compiler...>"
 
 CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t& deletedCompilers)
     : CompilersModifiedDlgBase(parent)

@@ -1,5 +1,6 @@
 #include "CompilersModifiedDlg.h"
 #include <build_settings_config.h>
+#include <windowattrmanager.h>
 
 #define SELECT_COMPILER "<Click to select a compiler...>"
 
@@ -13,7 +14,7 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
     m_dvListCtrl->AppendColumn( new wxDataViewColumn( _("Copy Settings From"), 
                                 new wxDataViewChoiceRenderer( compilers, wxDATAVIEW_CELL_EDITABLE, wxDVR_DEFAULT_ALIGNMENT), 
                                 m_dvListCtrl->GetColumnCount(), 
-                                150, 
+                                250, 
                                 wxALIGN_LEFT));
 
     wxStringSet_t::const_iterator iter = deletedCompilers.begin();
@@ -23,10 +24,12 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
         cols.push_back( SELECT_COMPILER );
         m_dvListCtrl->AppendItem(cols);
     }
+    WindowAttrManager::Load(this, "CompilersModifiedDlg");
 }
 
 CompilersModifiedDlg::~CompilersModifiedDlg()
 {
+    WindowAttrManager::Save(this, "CompilersModifiedDlg");
 }
 
 void CompilersModifiedDlg::OnOKUI(wxUpdateUIEvent& event)

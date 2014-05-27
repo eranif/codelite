@@ -307,7 +307,9 @@ public:
      */
     void CreateRecentlyOpenedWorkspacesMenu();
     void DoSuggestRestart();
-
+    
+    void LocateCompilersIfNeeded();
+    
 private:
     // make our frame's constructor private
     clMainFrame(wxWindow *pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLIP_CHILDREN);

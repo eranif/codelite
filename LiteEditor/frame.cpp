@@ -55,6 +55,8 @@
 #include "clang_compilation_db_thread.h"
 #include "cl_unredo.h"
 #include "NewProjectWizard.h"
+#include <CompilersDetectorManager.h>
+#include <CompilersFoundDlg.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1575,66 +1577,29 @@ void clMainFrame::CreateToolbars16()
     }
 }
 
+void clMainFrame::LocateCompilersIfNeeded()
+{
+    bool bAutoDetectCompilers = clConfig::Get().Read("AutoDetectCompilerOnStartup", true);
+    if ( bAutoDetectCompilers ) {
+        
+        // Unset the flag so next time we won't get this
+        clConfig::Get().Write("AutoDetectCompilerOnStartup", false);
+        
+        // First time, trigger the auto-compiler detection code
+        CompilersDetectorManager detector;
+        if ( detector.Locate() ) {
+            const ICompilerLocator::CompilerVec_t& compilersFound = detector.GetCompilersFound();
+            CompilersFoundDlg dlg(this, compilersFound);
+            if ( dlg.ShowModal() == wxID_OK ) {
+                // Replace the current compilers with a new one
+                BuildSettingsConfigST::Get()->SetCompilers( compilersFound );
+            }
+        }
+    }
+}
+
 void clMainFrame::UpdateBuildTools()
 {
-/*    BuilderPtr builder = BuildManagerST::Get()->GetBuilder ( wxT ( "GNU makefile for g++/gcc" ) );
-    wxString tool = builder->GetBuildToolName();
-    wxString origTool ( tool );
-
-    //confirm that it exists...
-    wxString path;
-    bool is_ok ( true );
-
-    // Apply the environment
-    EnvSetter env;
-
-    if ( tool.Contains ( wxT ( "$" ) ) ) {
-        //expand
-        tool = EnvironmentConfig::Instance()->ExpandVariables ( tool, false );
-    }
-
-    if ( !ExeLocator::Locate ( tool, path ) ) {
-        is_ok = false;
-        //failed to locate the specified build tool
-        //try some default names which are commonly used on windows
-        if ( !is_ok && ExeLocator::Locate ( wxT ( "mingw32-make" ), path ) ) {
-            tool = path;
-            is_ok = true;
-        }
-
-        if ( !is_ok && ExeLocator::Locate ( wxT ( "make" ), path ) ) {
-            tool = path;
-            is_ok = true;
-        }
-    } else {
-        //we are good, nothing to be done
-        return;
-    }
-
-    wxString message;
-    if ( !is_ok ) {
-        message << wxT ( "Failed to locate make util '" )
-                << tool << wxT ( "' specified by 'Build Settings'" );
-        wxLogMessage ( message );
-        return;
-    } else {
-        wxLogMessage ( wxT ( "Updating build too to '" ) + tool + wxT ( "' from '" ) + origTool + wxT ( "'" ) );
-    }
-
-    //update the cached builders
-    builder->SetBuildTool ( tool );
-    BuildManagerST::Get()->AddBuilder ( builder );
-
-    //update the configuration files
-    BuilderConfigPtr bsptr = BuildSettingsConfigST::Get()->GetBuilderConfig ( wxT ( "GNU makefile for g++/gcc" ) );
-    if ( !bsptr ) {
-        bsptr = new BuilderConfig ( NULL );
-        bsptr->SetName ( wxT ( "GNU makefile for g++/gcc" ) );
-    }
-
-    bsptr->SetToolPath ( tool );
-    BuildSettingsConfigST::Get()->SetBuildSystem ( bsptr );
-     */
 }
 
 void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -2855,8 +2820,9 @@ void clMainFrame::OnTimer(wxTimerEvent &event)
     wxModule::InitializeModules();
 
     // Send initialization end event
-    SendCmdEvent(wxEVT_INIT_DONE);
-
+    EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
+    CallAfter( &clMainFrame::LocateCompilersIfNeeded );
+    
     event.Skip();
 }
 
@@ -5551,3 +5517,4 @@ void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e)
 {
     e.Enable( GetMainBook()->GetActiveEditor() != NULL );
 }
+

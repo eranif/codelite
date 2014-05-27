@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="CppChecker">
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>../cppchecker</Topleveldir>
+  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00060001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
@@ -11,6 +20,9 @@
     <File Name="cppchecksettingsdlg.h"/>
     <File Name="cppchecksettingsdlgbase.cpp"/>
     <File Name="cppchecksettingsdlgbase.h"/>
+    <File Name="cppchecksettingsdlg_cppchecker_bitmaps.cpp"/>
+    <File Name="cppchecktestresults.cpp"/>
+    <File Name="cppchecktestresults.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="cppchecker.h"/>

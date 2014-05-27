@@ -34,10 +34,6 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer2->Add(m_banner10, 0, wxALL|wxEXPAND, 5);
     
-    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Bold font indicates that a compiler is marked as default for its compiler family\nDouble click to change the default"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer2->Add(m_staticText29, 0, wxALL|wxEXPAND, 5);
-    
     m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,200), wxDV_ROW_LINES|wxDV_SINGLE);
     
     m_dataviewModel = new CompilersFoundModel;
@@ -48,6 +44,18 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
     
     m_dataview->AppendTextColumn(_("Compiler Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
     m_dataview->AppendTextColumn(_("Installation Path"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
+    wxBoxSizer* boxSizer31 = new wxBoxSizer(wxHORIZONTAL);
+    
+    boxSizer2->Add(boxSizer31, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    
+    m_staticBitmap35 = new wxStaticBitmap(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("bulb-16")), wxDefaultPosition, wxSize(-1,-1), 0 );
+    
+    boxSizer31->Add(m_staticBitmap35, 0, wxALL, 5);
+    
+    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Double click a compiler to make it the default"), wxDefaultPosition, wxSize(-1,-1), 0);
+    
+    boxSizer31->Add(m_staticText29, 0, wxALIGN_CENTER_VERTICAL, 5);
+    
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
     
     boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);

@@ -15,19 +15,21 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/bannerwindow.h>
-#include <wx/stattext.h>
 #include <wx/dataview.h>
 #include "compilersfoundmodel.h"
+#include <wx/statbmp.h>
+#include <wx/stattext.h>
 #include <wx/button.h>
 
 class CompilersFoundDlgBase : public wxDialog
 {
 protected:
     wxBannerWindow* m_banner10;
-    wxStaticText* m_staticText29;
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<CompilersFoundModel> m_dataviewModel;
 
+    wxStaticBitmap* m_staticBitmap35;
+    wxStaticText* m_staticText29;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_buttonCancel;
     wxButton* m_buttonOK;

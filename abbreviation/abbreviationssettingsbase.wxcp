@@ -212,7 +212,7 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Message:",
-									"m_value":	"You can use the '|' (pipe) character to set the caret position\\nYou can use $(VariableName) to indicate CodeLite to prompt you for suitable replacement\\nOr you can use any of the known macros to CodeLite (click the 'Help' button)"
+									"m_value":	"You can use the '|' (pipe) character to set the caret position\\nYou may also use any of the known macros to CodeLite (click the 'Help' button)"
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -1047,7 +1047,14 @@
 															"m_label":	"Value:",
 															"m_value":	false
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
+															"m_eventClass":	"wxCommandEvent",
+															"m_eventHandler":	"wxCommandEventHandler",
+															"m_functionNameAndSignature":	"OnImmediateInsert(wxCommandEvent& event)",
+															"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}]
 										}]

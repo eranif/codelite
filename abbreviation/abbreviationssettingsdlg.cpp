@@ -88,8 +88,8 @@ void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
         m_currSelection = where;
 
         m_textCtrlName->SetValue(name);
-        m_stc->Clear();
-        m_textCtrlName->SetFocus();
+        m_stc->SetText("");
+        m_stc->SetFocus();
     }
 }
 
@@ -286,4 +286,9 @@ void AbbreviationsSettingsDlg::OnHelp(wxCommandEvent& event)
 {
     MacrosDlg dlg(this, MacrosDlg::MacrosProject, NULL, NULL);
     dlg.ShowModal();
+}
+
+void AbbreviationsSettingsDlg::OnImmediateInsert(wxCommandEvent& event)
+{
+    m_dirty = true;
 }

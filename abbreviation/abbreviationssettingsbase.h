@@ -30,7 +30,7 @@
 
 class AbbreviationsSettingsBase : public wxDialog
 {
-protected:
+public:
     enum {
         ID_TOOL_DELETE = 1001,
         ID_TOOL_EXPORT = 1002,
@@ -59,6 +59,7 @@ protected:
     virtual void OnExport(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnMarkDirty(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnImmediateInsert(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHelp(wxCommandEvent& event) { event.Skip(); }

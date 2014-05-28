@@ -35,6 +35,7 @@
 #include <wx/log.h>
 #include <wx/regex.h>
 #include "cl_config.h"
+#include "macromanager.h"
 
 static AbbreviationPlugin* thePlugin = NULL;
 
@@ -199,13 +200,11 @@ void AbbreviationPlugin::InitDefaults()
         // fill some default abbreviations
         JSONElement::wxStringMap_t entries;
         entries[wxT("main")] = wxT("int main(int argc, char **argv) {\n    |\n}\n");
-        entries[wxT("while")] = wxT("while(|) {\n    \n}\n");
-        entries[wxT("dowhile")] = wxT("do {\n    \n}while ( | );\n");
-        entries[wxT("tryblock")] = wxT("try {\n    |\n} catch ( $(ExceptionType) e ) {\n}\n");
-        entries[wxT("for_size")] = wxT("for ( size_t i=0; i<|; ++i ) {\n}\n");
-        entries[wxT("for_int")] = wxT("for( int i=0; i<|; ++i) {\n}\n");
+        entries[wxT("while")] = wxT("while ( | ) {\n    \n}\n");
+        entries[wxT("dowhile")] = wxT("do {\n    \n} while ( | );\n");
+        entries[wxT("for_size")] = wxT("for ( size_t i=0; i<|; ++i ) {    \n}\n");
+        entries[wxT("for_int")] = wxT("for ( int i=0; i<|; ++i ) {    \n}\n");
         jsonData.SetEntries(entries);
-
         m_config.WriteItem( &jsonData );
     }
 }
@@ -282,15 +281,9 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         //--------------------------------------------
         // replace any place holders
         //--------------------------------------------
-        static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
-
-        while (reVarPattern.Matches(text)) {
-            // add result
-            wxString v = reVarPattern.GetMatch(text);
-            wxString replaceWith = wxGetTextFromUser(wxString::Format(_("Enter replacement for '%s':"), v.c_str()), _("CodeLite"));
-            text.Replace(v, replaceWith);
-        }
-
+        wxString project;
+        text = MacroManager::Instance()->Expand(text, m_mgr, editor->GetProjectName());
+        
         // locate the caret
         int where = text.Find(wxT("|"));
         if (where == wxNOT_FOUND) {

@@ -56,7 +56,7 @@
 #include "cl_unredo.h"
 #include "NewProjectWizard.h"
 #include <CompilersDetectorManager.h>
-#include <CompilersFoundDlg.h>
+#include "CompilersFoundDlg.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash

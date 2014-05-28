@@ -32,6 +32,7 @@
 #include "cl_config.h"
 #include <wx/filedlg.h>
 #include <wx/dirdlg.h>
+#include <macrosdlg.h>
 
 AbbreviationsSettingsDlg::AbbreviationsSettingsDlg( wxWindow* parent, IManager *mgr )
     : AbbreviationsSettingsBase( parent )
@@ -73,7 +74,7 @@ void AbbreviationsSettingsDlg::OnNew(wxCommandEvent& e)
         DoSaveCurrent();
     }
 
-    wxString name = wxGetTextFromUser(_("What is the name of the new abbreviation name:"), _("New abbreviation..."), wxT(""), this);
+    wxString name = wxGetTextFromUser(_("Abbreviation Name:"), _("New abbreviation..."), wxT(""), this);
     if(name.IsEmpty() == false) {
         if( m_listBoxAbbreviations->FindString(name) != wxNOT_FOUND ) {
             wxMessageBox(wxString::Format(_("An abbreviation with this name already exists!")));
@@ -280,4 +281,9 @@ void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
     
     ::wxMessageBox(_("Abbreviations imported successfully!"));
     
+}
+void AbbreviationsSettingsDlg::OnHelp(wxCommandEvent& event)
+{
+    MacrosDlg dlg(this, MacrosDlg::MacrosProject, NULL, NULL);
+    dlg.ShowModal();
 }

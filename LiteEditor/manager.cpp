@@ -3700,20 +3700,24 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
     // recreate the list in the form of vector (the API requirs vector)
     projectFiles.clear();
     std::set<std::string>::iterator iter = fileSet->begin();
+    projectFiles.reserve( fileSet->size() );
+    
     for (; iter != fileSet->end(); iter++ ) {
         wxFileName fn( iter->c_str() );
-        fn.MakeAbsolute();
-        //CL_DEBUG("Will parse file: %s", fn.GetFullPath());
+        if ( fn.IsRelative() ) {
+            fn.MakeAbsolute();
+        }
         projectFiles.push_back( fn );
     }
 
+#if !USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
     wxStopWatch sw;
     sw.Start();
+#endif
 
     // -----------------------------------------------
     // tag them
     // -----------------------------------------------
-
     TagsManagerST::Get()->RetagFiles ( projectFiles, event.GetInt() ? TagsManager::Retag_Quick : TagsManager::Retag_Full);
 
 #if !USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
@@ -3723,7 +3727,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
     SendCmdEvent ( wxEVT_FILE_RETAGGED, ( void* ) &projectFiles );
 #endif
 
-    delete fileSet;
+    wxDELETE(fileSet);
 }
 
 void Manager::DoSaveAllFilesBeforeBuild()

@@ -34,7 +34,7 @@ IF EXIST wxgui.zip ( copy wxgui.zip "%TARGET_DIR%\CodeLite\" )
 if "%WXWIN%" == "" GOTO OTHERS
 xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %WXWIN%\lib\gcc_dll\wxbase*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %WXWIN%\lib\gcc_dll\wxrc.exe "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+:: xcopy %WXWIN%\lib\gcc_dll\wxrc.exe "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%COPY_WXC_RESOURCES%" == "1" (copy ..\wxcrafter\wxcrafter.accelerators  "%TARGET_DIR%\CodeLite\plugins\resources" )
 

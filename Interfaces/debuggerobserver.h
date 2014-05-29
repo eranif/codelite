@@ -115,7 +115,7 @@ public:
     StackEntry                    m_frameInfo;        // DBG_UR_FRAMEINFO
     VariableObjectUpdateInfo      m_varObjUpdateInfo; // DBG_UR_VAROBJUPDATE
     DisassembleEntryVec_t         m_disassembleLines; // None
-    
+    DbgRegistersVec_t             m_registers;        // Sent with event wxEVT_DEBUGGER_LIST_REGISTERS
     DebuggerEventData()
         : m_updateReason  (DBG_UR_INVALID)
         , m_controlReason (DBG_UNKNOWN   )
@@ -132,6 +132,7 @@ public:
         m_bpInfoList.clear();
         m_threads.clear();
         m_varObjChildren.clear();
+        m_registers.clear();
     }
 };
 

@@ -2115,6 +2115,7 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
             //update the locals tree
             pane->GetLocalsTable()->UpdateVariableObjects();
             dbgr->QueryLocals();
+            dbgr->ListRegisters();
         }
 
         if ( curpage == pane->GetWatchesTable() || IsPaneVisible ( wxGetTranslation(DebuggerPane::WATCHES) ) ) {
@@ -3233,7 +3234,7 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
     switch ( event.m_updateReason ) {
 
     case DBG_UR_GOT_CONTROL:
-        // keep the current functin name
+        // keep the current function name
         m_dbgCurrentFrameInfo.func = event.m_frameInfo.function;
         UpdateGotControl(event);
         break;

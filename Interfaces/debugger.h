@@ -155,11 +155,17 @@ public:
     wxString m_inst;
 };
 
+struct DbgRegister {
+    wxString reg_name;
+    wxString reg_value;
+};
+
 typedef std::vector<VariableObjChild> VariableObjChildren;
 typedef std::vector<StackEntry>       StackEntryArray;
 typedef std::vector<ThreadEntry>      ThreadEntryArray;
 typedef std::vector<LocalVariable>    LocalVariables;
 typedef std::vector<DisassembleEntry> DisassembleEntryVec_t;
+typedef std::vector<DbgRegister>      DbgRegistersVec_t;
 
 class BreakpointInfo: public SerializedObject
 {

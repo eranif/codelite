@@ -1553,13 +1553,38 @@ bool DbgCmdHandlerRegisterNames::ProcessOutput(const wxString& line)
 {
     // Sample output:
     // ^done,register-names=["eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","","","","","","","","","al","cl","dl","bl","ah","ch","dh","bh","ax","cx","dx","bx","","bp","si","di","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7"]
-    std::vector<std::string> names;
-    gdbParseRegisterNames( line.mb_str(wxConvUTF8).data(), names);
-    
-    for(size_t i=0; i<names.size(); ++i) {
-        m_numberToName.insert( std::make_pair(i, names.at(i)) );
+    const wxCharBuffer scannerText =  _C(line);
+    setGdbLexerInput(scannerText.data(), true);
+
+    int type;
+    wxString cmd, var_name;
+    wxString type_name, currentToken;
+    wxString err_msg;
+
+    int counter = 0;
+    m_numberToName.clear();
+    // ^done,register-values=[{number="0",value="4195709"},...]
+    if ( line.StartsWith("^done") ) {
+        // ^done,register-values=[
+        GDB_NEXT_TOKEN();       // ^
+        GDB_NEXT_TOKEN();       // done
+        GDB_NEXT_TOKEN();       // ,
+        GDB_NEXT_TOKEN();       // register-names
+        GDB_NEXT_TOKEN();       // =
+        GDB_NEXT_TOKEN();       // [
+            
+        while ( true ) {
+            GDB_NEXT_TOKEN();
+            if ( type == 0 ) {
+                // EOF?
+                break;
+            }
+            wxGDB_STRIP_QUOATES(currentToken);
+            m_numberToName.insert(std::make_pair(counter, currentToken));
+            ++counter;
+        }
     }
-    
+
     // Now trigger the register values call
     return m_gdb->WriteCommand("-data-list-register-values --skip-unavailable N", new DbgCmdHandlerRegisterValues(m_observer, m_gdb, m_numberToName));
 }
@@ -1570,4 +1595,73 @@ bool DbgCmdHandlerRegisterNames::ProcessOutput(const wxString& line)
 bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
 {
     // Process the output and report it back to codelite
+    clCommandEvent event(wxEVT_DEBUGGER_LIST_REGISTERS);
+    DbgRegistersVec_t registers;
+    
+    const wxCharBuffer scannerText =  _C(line);
+    setGdbLexerInput(scannerText.data(), true);
+    int type;
+    wxString cmd, var_name;
+    wxString type_name, currentToken;
+    wxString err_msg;
+    
+    // ^done,register-values=[{number="0",value="4195709"},...]
+    if ( line.StartsWith("^done") ) {
+        DebuggerEventData *data = new DebuggerEventData();
+        
+        // ^done,register-values=[
+        GDB_NEXT_TOKEN();       // ^
+        GDB_NEXT_TOKEN();       // done
+        GDB_NEXT_TOKEN();       // ,
+        GDB_NEXT_TOKEN();       // register-values
+        GDB_NEXT_TOKEN();       // =
+        GDB_NEXT_TOKEN();       // [
+            
+        while ( true ) {
+            DbgRegister reg;
+            
+            GDB_NEXT_TOKEN();   // {
+            GDB_ABORT('{');
+            GDB_NEXT_TOKEN();   // number
+            GDB_NEXT_TOKEN();   // =
+            GDB_NEXT_TOKEN();   // "0"
+            
+            long regId = 0;
+            currentToken.ToCLong( &regId );
+            // find this register in the map
+            std::map<int, wxString>::iterator iter = m_numberToName.find( regId );
+            if ( iter != m_numberToName.end() ) {
+                reg.reg_name = iter->second;
+            }
+            
+            GDB_NEXT_TOKEN();   // ,
+            GDB_NEXT_TOKEN();   // value
+            GDB_NEXT_TOKEN();   // =
+            GDB_NEXT_TOKEN();   // "..."
+            reg.reg_value = currentToken;
+            wxGDB_STRIP_QUOATES( reg.reg_value );
+            
+            // Add the register
+            if ( !reg.reg_name.IsEmpty() ) {
+                registers.push_back( reg );
+            }
+            
+            // Read the next token
+            GDB_NEXT_TOKEN();
+            if ( currentToken != "," ) {
+                // no more registers
+                break;
+            }
+            
+            if ( type == 0 ) {
+                // EOF?
+                break;
+            }
+        }
+
+        data->m_registers = registers;
+        event.SetClientObject( data );
+        EventNotifier::Get()->AddPendingEvent( event );
+    }
+    gdb_result_lex_clean();
 } 

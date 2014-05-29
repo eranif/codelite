@@ -65,6 +65,9 @@ extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE;
 // sent by the debugger in case "ResolveType" command failed (i.e. gdb could not resolve its type)
 extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR;
 
+// sent by the debugger when 'ListRegisters' function completed
+extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS;
+
 //extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FUNCARGS;
 //extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_UPDATE_VAROBJECT;
 

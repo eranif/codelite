@@ -752,6 +752,11 @@ public:
      * \return true on success, false otherwise
      */
     virtual bool ListFrames() = 0;
+    
+    /**
+     * @brief execute the equivalent of gdb's 'info reg' command
+     */
+    virtual bool ListRegisters() = 0;
 
     /**
      * \brief set the frame to be the active frame

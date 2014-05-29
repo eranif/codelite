@@ -158,7 +158,8 @@ public:
     virtual bool UpdateVariableObject(const wxString& name, int userReason);
     virtual void AssignValue(const wxString& expression, const wxString& newValue);
     virtual bool Jump(wxString filename, int line);
-
+    virtual bool ListRegisters();
+    
     /**
      * @brief restart the debugger (execute 'run')
      * @return true on success, false otherwise

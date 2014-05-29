@@ -1544,3 +1544,30 @@ bool DbgCmdHandlerDisassebleCurLine::ProcessOutput(const wxString& line)
     EventNotifier::Get()->AddPendingEvent(event);
     return true;
 }
+
+// +++-----------------------------
+// DbgCmdHandlerRegisterNames
+// +++-----------------------------
+
+bool DbgCmdHandlerRegisterNames::ProcessOutput(const wxString& line)
+{
+    // Sample output:
+    // ^done,register-names=["eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","","","","","","","","","al","cl","dl","bl","ah","ch","dh","bh","ax","cx","dx","bx","","bp","si","di","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7"]
+    std::vector<std::string> names;
+    gdbParseRegisterNames( line.mb_str(wxConvUTF8).data(), names);
+    
+    for(size_t i=0; i<names.size(); ++i) {
+        m_numberToName.insert( std::make_pair(i, names.at(i)) );
+    }
+    
+    // Now trigger the register values call
+    return m_gdb->WriteCommand("-data-list-register-values --skip-unavailable N", new DbgCmdHandlerRegisterValues(m_observer, m_gdb, m_numberToName));
+}
+
+// +++-----------------------------
+// DbgCmdHandlerRegisterValues
+// +++-----------------------------
+bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
+{
+    // Process the output and report it back to codelite
+} 

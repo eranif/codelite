@@ -499,4 +499,47 @@ public:
 
     virtual bool ProcessOutput(const wxString & line);
 };
+
+// +++-----------------------------
+// DbgCmdHandlerRegisterNames
+// +++-----------------------------
+
+class DbgCmdHandlerRegisterNames : public DbgCmdHandler
+{
+    DbgGdb*  m_gdb;
+    std::map<int, wxString> m_numberToName;
+    
+public:
+    DbgCmdHandlerRegisterNames(IDebuggerObserver *observer, DbgGdb* gdbr)
+        : DbgCmdHandler(observer)
+        , m_gdb(gdbr)
+    {}
+
+    virtual ~DbgCmdHandlerRegisterNames()
+    {}
+
+    virtual bool ProcessOutput(const wxString &line);
+};
+
+// +++-----------------------------
+// DbgCmdHandlerRegisterValues
+// +++-----------------------------
+class DbgCmdHandlerRegisterValues : public DbgCmdHandler
+{
+    DbgGdb*  m_gdb;
+    std::map<int, wxString> m_numberToName;
+    
+public:
+    DbgCmdHandlerRegisterValues(IDebuggerObserver *observer, DbgGdb* gdbr, const std::map<int, wxString>& numberToName)
+        : DbgCmdHandler(observer)
+        , m_gdb(gdbr)
+    {
+        m_numberToName = numberToName;
+    }
+
+    virtual ~DbgCmdHandlerRegisterValues()
+    {}
+
+    virtual bool ProcessOutput(const wxString &line);
+};
 #endif //DBGCMD_H

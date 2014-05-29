@@ -42,6 +42,7 @@ struct GdbChildrenInfo {
 
 extern bool setGdbLexerInput(const std::string &in, bool ascii, bool wantWhitespace = false);
 extern void gdbParseListChildren( const std::string &in, GdbChildrenInfo &children);
+extern void gdbParseRegisterNames( const std::string &in, std::vector<std::string>& names );
 extern void gdb_parse_result(const std::string &in);
 extern void gdb_result_push_buffer(const std::string &new_input);
 extern void gdb_result_pop_buffer();

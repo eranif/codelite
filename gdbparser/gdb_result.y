@@ -30,6 +30,7 @@ extern std::string gdb_result_lval;
 static GdbStringMap_t            sg_attributes;
 static GdbChildrenInfo           sg_children;
 static std::vector<std::string>  sg_locals;
+static std::vector<std::string>  sg_currentArrayString;
 %}
 
 %token GDB_DONE
@@ -77,6 +78,7 @@ static std::vector<std::string>  sg_locals;
 %token GDB_NEW_CHILDREN
 %token GDB_FUNC_NAME GDB_OFFSET GDB_INSTRUCTION GDB_ADDRESS GDB_ASM_INSTS
 %token GDB_THREAD_GROUPS
+%token GDB_REGISTER_NAMES
 %%
 
 parse: children_list
@@ -143,6 +145,13 @@ child_pattern :   '^' GDB_DONE ',' GDB_NUMCHILD '=' GDB_STRING ',' GDB_CHILDREN 
                     sg_attributes.clear();
                 }
                 /*
+                 * ^done,register-names=["eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags"]
+                 */
+                | '^' GDB_DONE ',' GDB_REGISTER_NAMES '=' list_open {sg_currentArrayString.clear();} comma_separated_strings list_close
+                {
+                    
+                }
+                /*
                  * ^done,changelist=[{name="var2",in_scope="false",type_changed="false",has_more="0"},{name="var1",in_scope="true"}]
                  */
                 /* */
@@ -172,8 +181,8 @@ bpt_table_hdr : GDB_NR_ROWS '=' GDB_STRING ',' GDB_NR_COLS '=' GDB_STRING ',' GD
               | GDB_HDR '=' list_open comma_separated_strings list_close
               ;
 
-comma_separated_strings: GDB_STRING
-                        | GDB_STRING ',' comma_separated_strings
+comma_separated_strings: GDB_STRING                              { sg_currentArrayString.push_back( $1 ); }
+                        | GDB_STRING ',' comma_separated_strings { sg_currentArrayString.push_back( $1 ); }
                         ;
 
 /** breakpoint related
@@ -274,6 +283,7 @@ void cleanup()
     sg_attributes.clear();
     sg_children.clear();
     sg_locals.clear();
+    sg_currentArrayString.clear();
 }
 
 void gdbConsumeList()
@@ -302,5 +312,16 @@ void gdbParseListChildren( const std::string &in, GdbChildrenInfo &children)
     gdb_result_parse();
 
     children = sg_children;
+    gdb_result_lex_clean();
+}
+
+void gdbParseRegisterNames( const std::string &in, std::vector<std::string>& names )
+{
+    cleanup();
+
+    setGdbLexerInput(in, true, false);
+    gdb_result_parse();
+
+    names = sg_currentArrayString;
     gdb_result_lex_clean();
 }

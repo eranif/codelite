@@ -60,17 +60,33 @@ static void GDB_STRIP_QUOATES(std::string &currentToken)
 bool testParseLocals();
 bool testTokens();
 bool testChildrenParser();
+void testRegisterNames();
 
 int main(int argc, char **argv)
 {
-	testTokens();
+    //testTokens();
 //    testChildrenParser();
+    testRegisterNames();
     return 0;
+}
+
+void testRegisterNames()
+{
+    char *l = loadFile("../test.txt");
+    if( !l ) {
+        return;
+    }
+    std::vector<std::string> names;
+    gdbParseRegisterNames(l, names);
+    for(size_t i=0; i<names.size(); ++i) {
+        printf("%s\n", names.at(i).c_str());
+    }
+    free(l);
 }
 
 bool testChildrenParser()
 {
-    char *l = loadFile("test.txt");
+    char *l = loadFile("../test.txt");
     if( !l ) {
         return false;
     }
@@ -89,7 +105,7 @@ char *loadFile(const char *fileName)
 
     fp = fopen(fileName, "rb");
     if (!fp) {
-        printf("failed to open file 'test.txt': %s\n", strerror(errno));
+        printf("failed to open file '../test.txt': %s\n", strerror(errno));
         return NULL;
     }
 
@@ -115,7 +131,7 @@ char *loadFile(const char *fileName)
 
 bool testTokens()
 {
-    char *l = loadFile("test.txt");
+    char *l = loadFile("../test.txt");
     if (!l) {
         return false;
     }
@@ -127,7 +143,7 @@ bool testTokens()
 
 bool testParseLocals()
 {
-    char *l = loadFile("test.txt");
+    char *l = loadFile("../test.txt");
     if (!l) {
         return false;
     }

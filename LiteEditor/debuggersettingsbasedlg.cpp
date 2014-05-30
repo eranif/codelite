@@ -586,7 +586,18 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     
     flexGridSizer22->Add(m_textCtrlCurFunction, 0, wxALL|wxEXPAND, 5);
     
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_splitter51 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter51->SetSashGravity(0.5);
+    m_splitter51->SetMinimumPaneSize(10);
+    
+    boxSizer14->Add(m_splitter51, 1, wxEXPAND, 5);
+    
+    m_splitterPage55 = new wxPanel(m_splitter51, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    
+    wxBoxSizer* boxSizer61 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage55->SetSizer(boxSizer61);
+    
+    m_stc = new wxStyledTextCtrl(m_splitterPage55, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
     // Configure the fold margin
     m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -622,7 +633,22 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
     
-    boxSizer14->Add(m_stc, 1, wxALL|wxEXPAND, 2);
+    boxSizer61->Add(m_stc, 1, wxALL|wxEXPAND, 2);
+    
+    m_splitterPage59 = new wxPanel(m_splitter51, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitter51->SplitVertically(m_splitterPage55, m_splitterPage59, 0);
+    
+    wxBoxSizer* boxSizer63 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage59->SetSizer(boxSizer63);
+    
+    m_dvListCtrlRegisters = new wxDataViewListCtrl(m_splitterPage59, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer63->Add(m_dvListCtrlRegisters, 1, wxALL|wxEXPAND, 2);
+    
+    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, 80, wxALIGN_LEFT);
+    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, 80, wxALIGN_LEFT);
+    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
     
     SetSizeHints(500,300);
     if ( GetSizer() ) {

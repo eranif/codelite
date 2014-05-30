@@ -22,19 +22,26 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
     : DebuggerDisassemblyTabBase(parent)
     , m_title(label)
 {
+    // associate our custom model
+    m_model.reset( new RegistersViewModel( m_dvListCtrlRegisters ) );
+    m_dvListCtrlRegisters->AssociateModel( m_model.get() );
+
     m_stc->MarkerDefine(CURLINE_MARKER, wxSTC_MARK_BACKGROUND, wxNullColour, EditorConfigST::Get()->GetOptions()->GetDebuggerMarkerLine());
+    m_stc->MarkerSetAlpha(CURLINE_MARKER, 50);
+
     m_stc->SetReadOnly(true);
     m_stc->SetMarginSensitive(2, true); // 2 is the symbol margin
-    
+
     m_stc->MarkerDefineBitmap(BREAKPOINT_MARKER, wxBitmap(wxImage(stop_xpm)));
 
     m_stc->SetYCaretPolicy(wxSTC_CARET_SLOP, 30);
     EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT,  clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_CURLINE, clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUGGER_QUERY_FILELINE,     clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_LIST_REGISTERS,     clCommandEventHandler(DebuggerDisassemblyTab::OnShowRegisters), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(DebuggerDisassemblyTab::OnDebuggerStopped), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED, wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted), NULL, this);
-
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), NULL, this);
     LexerConfPtr lex = EditorConfigST::Get()->GetLexer("Assembly");
     if ( lex ) {
         lex->Apply( m_stc, true );
@@ -48,14 +55,16 @@ DebuggerDisassemblyTab::~DebuggerDisassemblyTab()
     EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_QUERY_FILELINE,     clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DEBUG_ENDED, wxCommandEventHandler(DebuggerDisassemblyTab::OnDebuggerStopped), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_ALL_BREAKPOINTS_DELETED, wxCommandEventHandler(DebuggerDisassemblyTab::OnAllBreakpointsDeleted), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_LIST_REGISTERS,     clCommandEventHandler(DebuggerDisassemblyTab::OnShowRegisters), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), NULL, this);
 }
 
 void DebuggerDisassemblyTab::OnOutput(clCommandEvent& e)
 {
     e.Skip();
-    DoClear();
+    DoClearDisassembleView();
     m_stc->SetReadOnly(false);
-    
+
     BreakpointInfoVec_t memBps;
     wxStringSet_t       addressSet;
     ManagerST::Get()->GetBreakpointsMgr()->GetAllMemoryBreakpoints( memBps );
@@ -112,10 +121,12 @@ void DebuggerDisassemblyTab::OnCurLine(clCommandEvent& e)
 void DebuggerDisassemblyTab::OnDebuggerStopped(wxCommandEvent& e)
 {
     e.Skip();
-    DoClear();
+    DoClearDisassembleView();
+    DoClearRegistersView();
+    m_oldValues.clear();
 }
 
-void DebuggerDisassemblyTab::DoClear()
+void DebuggerDisassemblyTab::DoClearDisassembleView()
 {
     m_stc->SetReadOnly(false);
     m_lines.clear();
@@ -127,22 +138,6 @@ void DebuggerDisassemblyTab::DoClear()
 void DebuggerDisassemblyTab::OnQueryFileLineDone(clCommandEvent& e)
 {
     e.Skip();
-
-    if ( /*IsShown()*/ true ) {
-        wxString file;
-        int line = wxNOT_FOUND;
-
-        DebuggerEventData *ded = dynamic_cast<DebuggerEventData*>(e.GetClientObject());
-        if ( ded ) {
-            file = ded->m_file;
-            line = ded->m_line;
-
-            IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-            if ( dbgr && dbgr->IsRunning() ) {
-                dbgr->Disassemble(file, line);
-            }
-        }
-    }
 }
 
 void DebuggerDisassemblyTab::DoCentrLine(int line)
@@ -165,13 +160,13 @@ void DebuggerDisassemblyTab::OnMarginClicked(wxStyledTextEvent& event)
     int nLine = m_stc->LineFromPosition(event.GetPosition());
     wxString line = m_stc->GetLine(nLine);
     wxString address = line.BeforeFirst(' ').Trim(true).Trim(false);;
-    
+
     if ( m_stc->MarkerGet(nLine) & BREAKPOINT_MARKER_MASK ) {
-        
+
         // we already got a marker there
         m_stc->MarkerDelete(nLine, BREAKPOINT_MARKER);
         ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByAddress( address );
-        
+
     } else {
         m_stc->MarkerAdd(nLine, BREAKPOINT_MARKER);
         ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByAddress( address );
@@ -184,4 +179,72 @@ void DebuggerDisassemblyTab::OnAllBreakpointsDeleted(wxCommandEvent& e)
     e.Skip();
     /// all breakpoints were deleted, update the UI
     m_stc->MarkerDeleteAll(BREAKPOINT_MARKER);
+}
+
+void DebuggerDisassemblyTab::OnShowRegisters(clCommandEvent& e)
+{
+    e.Skip();
+    DoClearRegistersView();
+    DebuggerEventData* ded = dynamic_cast<DebuggerEventData*>(e.GetClientObject());
+    wxStringMap_t curvalues;
+    if ( ded ) {
+        // Split the list into 2
+        size_t i=0;
+        while ( i < ded->m_registers.size() ) {
+            RegistersViewModelClientData *cd = new RegistersViewModelClientData(false, false);
+            
+            wxVector<wxVariant> cols;
+            cols.push_back(ded->m_registers.at(i).reg_name);
+            cols.push_back(ded->m_registers.at(i).reg_value);
+            if ( !m_oldValues.empty() ) {
+                wxStringMap_t::iterator iter = m_oldValues.find(ded->m_registers.at(i).reg_name);
+                if ( iter != m_oldValues.end() && iter->second != ded->m_registers.at(i).reg_value ) {
+                    cd->SetFirstColModified(true);
+                }
+            }
+            curvalues.insert( std::make_pair(ded->m_registers.at(i).reg_name, ded->m_registers.at(i).reg_value) );
+            ++i;
+
+            if ( i < ded->m_registers.size() ) {
+                cols.push_back(ded->m_registers.at(i).reg_name);
+                cols.push_back(ded->m_registers.at(i).reg_value);
+                curvalues.insert( std::make_pair(ded->m_registers.at(i).reg_name, ded->m_registers.at(i).reg_value) );
+                
+                if ( !m_oldValues.empty() ) {
+                    wxStringMap_t::iterator iter = m_oldValues.find(ded->m_registers.at(i).reg_name);
+                    if ( iter != m_oldValues.end() && iter->second != ded->m_registers.at(i).reg_value ) {
+                        cd->SetSecondColModified(true);
+                    }
+                }
+                ++i;
+
+            } else {
+                // no more registeres to display
+                cols.push_back( "" );
+                cols.push_back( "" );
+            }
+
+            m_dvListCtrlRegisters->AppendItem(cols, (wxUIntPtr)cd);
+        }
+    }
+    m_oldValues.swap( curvalues );
+}
+
+void DebuggerDisassemblyTab::OnRefreshView(clCommandEvent& e)
+{
+    e.Skip();
+    IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
+    if ( debugger && debugger->IsRunning() && ManagerST::Get()->DbgCanInteract() ) {
+        debugger->ListRegisters();
+        debugger->Disassemble("", -1);
+    }
+}
+
+void DebuggerDisassemblyTab::DoClearRegistersView()
+{
+    for(int i=0; i<m_dvListCtrlRegisters->GetItemCount(); ++i) {
+        RegistersViewModelClientData *cd = reinterpret_cast<RegistersViewModelClientData*>(m_dvListCtrlRegisters->GetItemData( m_dvListCtrlRegisters->RowToItem(i) ) );
+        wxDELETE( cd );
+    }
+    m_dvListCtrlRegisters->DeleteAllItems();
 }

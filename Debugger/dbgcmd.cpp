@@ -1574,19 +1574,26 @@ bool DbgCmdHandlerRegisterNames::ProcessOutput(const wxString& line)
         GDB_NEXT_TOKEN();       // [
             
         while ( true ) {
+            wxString reg_name;
             GDB_NEXT_TOKEN();
             if ( type == 0 ) {
                 // EOF?
                 break;
             }
-            wxGDB_STRIP_QUOATES(currentToken);
-            m_numberToName.insert(std::make_pair(counter, currentToken));
+            reg_name = currentToken;
+            wxGDB_STRIP_QUOATES(reg_name);
+            m_numberToName.insert(std::make_pair(counter, reg_name));
+            
+            GDB_NEXT_TOKEN(); // remove the ','
+            if ( type != ',') 
+                // end of the list
+                break;
             ++counter;
         }
     }
-
+    gdb_result_lex_clean();
     // Now trigger the register values call
-    return m_gdb->WriteCommand("-data-list-register-values --skip-unavailable N", new DbgCmdHandlerRegisterValues(m_observer, m_gdb, m_numberToName));
+    return m_gdb->WriteCommand("-data-list-register-values N", new DbgCmdHandlerRegisterValues(m_observer, m_gdb, m_numberToName));
 }
 
 // +++-----------------------------
@@ -1627,7 +1634,10 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
             GDB_NEXT_TOKEN();   // "0"
             
             long regId = 0;
+            
+            wxGDB_STRIP_QUOATES(currentToken);
             currentToken.ToCLong( &regId );
+            
             // find this register in the map
             std::map<int, wxString>::iterator iter = m_numberToName.find( regId );
             if ( iter != m_numberToName.end() ) {
@@ -1647,7 +1657,9 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
             }
             
             // Read the next token
+            GDB_NEXT_TOKEN(); // }
             GDB_NEXT_TOKEN();
+            wxGDB_STRIP_QUOATES(currentToken);
             if ( currentToken != "," ) {
                 // no more registers
                 break;
@@ -1664,4 +1676,5 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
         EventNotifier::Get()->AddPendingEvent( event );
     }
     gdb_result_lex_clean();
+    return true;
 } 

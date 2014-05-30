@@ -162,8 +162,6 @@ public:
     }
     void SelectTab(const wxString &tabName);
     void Clear();
-
-    DECLARE_EVENT_TABLE()
     void OnPageChanged(NotebookEvent &event);
 };
 #endif //DEBUGGERPANE_H

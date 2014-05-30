@@ -2,7 +2,6 @@
 <CodeLite_Workspace Name="codelite_utils" Database="./codelite_utils.tags">
   <Project Name="build_all" Path="build_all.project" Active="Yes"/>
   <Project Name="codelite_launcher" Path="../codelite_launcher/codelite_launcher.project" Active="No"/>
-  <Project Name="autorev" Path="../AutoRevision/autorev/autorev.project" Active="No"/>
   <Project Name="makedir" Path="../TestDir/makedir.project" Active="No"/>
   <Project Name="le_exec" Path="../le_exec/le_exec.project" Active="No"/>
   <Project Name="codelite_cppcheck" Path="../sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>

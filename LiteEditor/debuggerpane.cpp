@@ -55,10 +55,6 @@ const wxString DebuggerPane::DISASSEMBLY     = _("Disassemble");
 
 #define IS_DETACHED(name) ( detachedPanes.Index(name) != wxNOT_FOUND ) ? true : false
 
-BEGIN_EVENT_TABLE(DebuggerPane, wxPanel)
-    EVT_BOOK_PAGE_CHANGED(wxID_ANY, DebuggerPane::OnPageChanged)
-END_EVENT_TABLE()
-
 DebuggerPane::DebuggerPane(wxWindow *parent, const wxString &caption, wxAuiManager *mgr)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300))
     , m_caption(caption)
@@ -233,7 +229,7 @@ void DebuggerPane::CreateGUIControls()
         m_disassemble = new DebuggerDisassemblyTab(m_book, wxGetTranslation(DISASSEMBLY));
         m_book->AddPage(m_disassemble, name, false, bmp);
     }
-    
+    m_book->Connect(wxEVT_COMMAND_BOOK_PAGE_CHANGED, NotebookEventHandler(DebuggerPane::OnPageChanged), NULL, this);
     m_initDone = true;
 }
 
@@ -254,7 +250,6 @@ void DebuggerPane::Clear()
     GetFrameListView()->Clear();
     GetThreadsView()->Clear();
     GetMemoryView()->Clear();
-    //GetDebugWindow()->Clear();
 }
 
 //----------------------------------------------------------------

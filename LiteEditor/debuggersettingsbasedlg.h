@@ -26,9 +26,13 @@
 #include <wx/statbox.h>
 #include <wx/spinctrl.h>
 #include <wx/choicebk.h>
+#include <wx/splitter.h>
 #include <wx/stc/stc.h>
+#include <wx/dataview.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/toolbar.h>
 #include <wx/treectrl.h>
 #include "cl_treelistctrl.h"
@@ -181,7 +185,11 @@ class DebuggerDisassemblyTabBase : public wxPanel
 protected:
     wxStaticText* m_staticText24;
     wxTextCtrl* m_textCtrlCurFunction;
+    wxSplitterWindow* m_splitter51;
+    wxPanel* m_splitterPage55;
     wxStyledTextCtrl* m_stc;
+    wxPanel* m_splitterPage59;
+    wxDataViewListCtrl* m_dvListCtrlRegisters;
 
 protected:
     virtual void OnMarginClicked(wxStyledTextEvent& event) { event.Skip(); }

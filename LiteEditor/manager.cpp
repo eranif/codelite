@@ -3925,5 +3925,9 @@ void Manager::OnBuildStarting(clBuildEvent& event)
             pCompiler->SetName( iterTable->first );
             BuildSettingsConfigST::Get()->SetCompiler( pCompiler );
         }
+        
+        // Prompt the user and cancel the build
+        ::wxMessageBox(_("Compilers updated successfully!\nYou can now build your workspace"), "CodeLite", wxOK|wxCENTER|wxICON_INFORMATION);
+        event.Skip(false);
     }
 }

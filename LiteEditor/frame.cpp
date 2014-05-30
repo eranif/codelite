@@ -2693,6 +2693,10 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent &event)
     if ( EventNotifier::Get()->ProcessEvent( evtExecute ) )
         return;
     
+    if ( !WorkspaceST::Get()->IsOpen() ) {
+        return;
+    }
+    
     // Prepare the commands to execute
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox( _("Would you like to build the active project\nbefore executing it?"), 

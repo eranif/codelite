@@ -3157,7 +3157,8 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
     }
     
     if ( !WorkspaceST::Get()->IsOpen() ) {
-        wxLogMessage(_("Attempting to debug workspace with no active project? Ignoring."));
+        // Run the 'Quick Debug'
+        OnQuickDebug( e );
         return;
     }
 

@@ -21,6 +21,7 @@ CompilerLocatorMinGW::~CompilerLocatorMinGW()
 bool CompilerLocatorMinGW::Locate()
 {   
     m_compilers.clear();
+    m_locatedFolders.clear();
     
     // try to find MinGW in environment variable PATH first
     wxString pathValues;

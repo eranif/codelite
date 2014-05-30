@@ -17,7 +17,6 @@ public:
     {
         CompilerPtr compiler = m_dlg->GetCompiler(item);
         if ( compiler && m_dlg->IsDefaultCompiler(compiler) ) {
-            attr.SetColour( "FOREST GREEN" );
             attr.SetBold( true );
             return true;
         }

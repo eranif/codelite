@@ -4154,22 +4154,22 @@ void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
 void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 {
     // launch the debugger
-    QuickDebugDlg *dlg = new QuickDebugDlg(this);
-    if (dlg->ShowModal() == wxID_OK) {
+    QuickDebugDlg dlg(this);
+    if (dlg.ShowModal() == wxID_OK) {
 
-        DebuggerMgr::Get().SetActiveDebugger(dlg->GetDebuggerName());
+        DebuggerMgr::Get().SetActiveDebugger(dlg.GetDebuggerName());
         IDebugger *dbgr =  DebuggerMgr::Get().GetActiveDebugger();
 
         if (dbgr && !dbgr->IsRunning()) {
 
             std::vector<BreakpointInfo> bpList;
-            wxString exepath = dlg->GetExe();
-            wxString wd = dlg->GetWorkingDirectory();
-            wxArrayString cmds = dlg->GetStartupCmds();
+            wxString exepath = dlg.GetExe();
+            wxString wd = dlg.GetWorkingDirectory();
+            wxArrayString cmds = dlg.GetStartupCmds();
 
             // update the debugger information
             DebuggerInformation dinfo;
-            DebuggerMgr::Get().GetDebuggerInformation(dlg->GetDebuggerName(), dinfo);
+            DebuggerMgr::Get().GetDebuggerInformation(dlg.GetDebuggerName(), dinfo);
             dinfo.breakAtWinMain = true;
 
             // read the console command
@@ -4201,7 +4201,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             wxString tty;
 #ifndef __WXMSW__
             wxString title;
-            title << _("Debugging: ") << exepath << wxT(" ") << dlg->GetArguments();
+            title << _("Debugging: ") << exepath << wxT(" ") << dlg.GetArguments();
             tty = StartTTY(title);
             if(tty.IsEmpty()) {
                 wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK|wxCENTER|wxICON_ERROR);
@@ -4224,7 +4224,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             // notify plugins that the debugger just started
             SendCmdEvent(wxEVT_DEBUG_STARTED, &startup_info);
 
-            dbgr->Run(dlg->GetArguments(), wxEmptyString);
+            dbgr->Run(dlg.GetArguments(), wxEmptyString);
 
             // Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
             // so that it uses debugger_ids instead of internal_ids
@@ -4238,16 +4238,15 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
             
             // Fire an event, maybe a plugin wants to process this
             clDebugEvent event( wxEVT_DBG_UI_QUICK_DEBUG);
-            event.SetDebuggerName(dlg->GetDebuggerName());
-            event.SetExecutableName( dlg->GetExe() );
-            event.SetWorkingDirectory( dlg->GetWorkingDirectory() );
-            event.SetStartupCommands( wxJoin(dlg->GetStartupCmds(), '\n') );
-            event.SetArguments( dlg->GetArguments() );
+            event.SetDebuggerName(dlg.GetDebuggerName());
+            event.SetExecutableName( dlg.GetExe() );
+            event.SetWorkingDirectory( dlg.GetWorkingDirectory() );
+            event.SetStartupCommands( wxJoin(dlg.GetStartupCmds(), '\n') );
+            event.SetArguments( dlg.GetArguments() );
             EventNotifier::Get()->AddPendingEvent( event );
             
         }
     }
-    dlg->Destroy();
 }
 
 void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
@@ -4290,15 +4289,10 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 
             wxString tty;
 #ifndef __WXMSW__
-            // FIXME: Replace the below code with clDebuggerTerminalPOSIX
-            wxString title;
-            title << _("Debugging: '") << dlg->GetCore() << _("' from '") << dlg->GetExe() << wxT("'");
-            tty = StartTTY(title);
-            if(tty.IsEmpty()) {
+            if ( !ManagerST::Get()->StartTTY( title, tty ) ) {
                 wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK|wxCENTER|wxICON_ERROR);
             }
 #endif
-
             dbgr->SetIsRemoteDebugging(false);
 
             // The next two are empty, but are required as parameters

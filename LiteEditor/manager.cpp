@@ -2197,7 +2197,7 @@ void Manager::DbgStart ( long attachPid )
         }
     }
     if ( !ExeLocator::Locate ( terminal, where ) ) {
-        wxMessageBox ( _( "Failed to locate the configured and default terminal application required by CodeLite, please install it or check your configuration!" ), _("CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
+        wxMessageBox ( _( "Failed to locate the configured default terminal application required by CodeLite, please install it or check your configuration!" ), _("CodeLite" ), wxOK|wxCENTER|wxICON_WARNING, clMainFrame::Get() );
         return;
     }
     terminal.Clear();

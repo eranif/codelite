@@ -634,7 +634,28 @@ public:
     BreakptMgr* GetBreakpointsMgr() {
         return m_breakptsmgr;
     }
-
+    
+    /**
+     * @brief start a terminal for the debugger and return its TTY
+     * @param title terminal title
+     * @param tty [output] the terminal TTY
+     * @return true on success, false otherwise
+     */
+    bool StartTTY( const wxString &title, wxString &tty ) {
+#ifndef __WXMSW__
+        m_debuggerTerminal.Clear();
+        m_debuggerTerminal.Launch(title);
+        if ( m_debuggerTerminal.IsValid() ) {
+            tty = m_debuggerTerminal.GetTty();
+        }
+        return m_debuggerTerminal.IsValid();
+#else
+        wxUnusedVar( title );
+        wxUnusedVar( tty );
+        return false;
+#endif
+    }
+    
     void UpdateDebuggerPane();
 
     void SetMemory(const wxString &address, size_t count, const wxString &hex_value);

@@ -4202,8 +4202,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 #ifndef __WXMSW__
             wxString title;
             title << _("Debugging: ") << exepath << wxT(" ") << dlg.GetArguments();
-            tty = StartTTY(title);
-            if(tty.IsEmpty()) {
+            if ( !ManagerST::Get()->StartTTY( title, tty ) ) {
                 wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK|wxCENTER|wxICON_ERROR);
             }
 #endif
@@ -4283,11 +4282,14 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             startup_info.debugger = dbgr;
 
             // notify plugins that we're about to start debugging
-            if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info))
+            if (SendCmdEvent(wxEVT_DEBUG_STARTING, &startup_info)) {
+                dlg->Destroy();
                 // plugin stopped debugging
                 return;
-
+            }
             wxString tty;
+            wxString title;
+            title << "Debugging core: " << dlg->GetCore();
 #ifndef __WXMSW__
             if ( !ManagerST::Get()->StartTTY( title, tty ) ) {
                 wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK|wxCENTER|wxICON_ERROR);

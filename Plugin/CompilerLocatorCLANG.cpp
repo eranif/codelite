@@ -28,6 +28,7 @@ bool CompilerLocatorCLANG::Locate()
         compiler->SetName( GetCompilerFullName(clang.GetFullPath() ) );
         compiler->SetGenerateDependeciesFile(true);
         m_compilers.push_back( compiler );
+        clang.RemoveLastDir();
         AddTools(compiler, clang.GetPath());
     }
     return true;

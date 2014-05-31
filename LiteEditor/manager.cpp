@@ -382,7 +382,7 @@ void Manager::DoSetupWorkspace ( const wxString &path )
         JobQueueSingleton::Instance()->PushJob( new DbContentCacher(this, dbfn.GetFullPath().c_str()) );
     }
     
-    CallAfter( &Manager::GenerateCompileCommands );
+    // CallAfter( &Manager::GenerateCompileCommands );
 }
 
 void Manager::CloseWorkspace()

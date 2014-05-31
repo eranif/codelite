@@ -40,21 +40,21 @@ void CompilerLocatorMSVCBase::AddTools(const wxString& masterFolder, const wxStr
     wxFileName cxx(binFolder, "cl.exe");
 
     // CXX
-    AddTool(cxx.GetFullPath(), "/nologo /FC /EHs", "CXX", compiler);
+    AddTool(cxx.GetFullPath(), "-nologo -FC -EHs", "CXX", compiler);
 
     // CC
-    AddTool(cxx.GetFullPath(), "/nologo /FC", "CC", compiler);
+    AddTool(cxx.GetFullPath(), "-nologo -FC", "CC", compiler);
 
     // AR
     cxx.SetFullName("lib.exe");
-    AddTool(cxx.GetFullPath(), "/nologo", "AR", compiler);
+    AddTool(cxx.GetFullPath(), "-nologo", "AR", compiler);
 
     // SharedObjectLinkerName
     cxx.SetFullName("link.exe");
-    AddTool(cxx.GetFullPath(), "/DLL /nologo", "SharedObjectLinkerName", compiler);
+    AddTool(cxx.GetFullPath(), "-DLL -nologo", "SharedObjectLinkerName", compiler);
 
     // LinkerName
-    AddTool(cxx.GetFullPath(), "/nologo", "LinkerName", compiler);
+    AddTool(cxx.GetFullPath(), "-nologo", "LinkerName", compiler);
 
     compiler->SetSwitch("ArchiveOutput", "/OUT:");
     compiler->SetSwitch("Debug", "/Zi ");

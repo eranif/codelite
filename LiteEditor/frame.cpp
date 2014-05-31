@@ -3160,12 +3160,6 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
         }
     }
     
-    if ( !WorkspaceST::Get()->IsOpen() ) {
-        // Run the 'Quick Debug'
-        OnQuickDebug( e );
-        return;
-    }
-
     Manager *mgr = ManagerST::Get();
     
     if (dbgr && dbgr->IsRunning()) {
@@ -3200,6 +3194,9 @@ void clMainFrame::OnDebug(wxCommandEvent &e)
             // trigger the commands queue
             ManagerST::Get()->ProcessCommandQueue();
         }
+    } else if ( !mgr->IsWorkspaceOpen() ) {
+        // Run the 'Quick Debug'
+        OnQuickDebug( e );
     }
 }
 

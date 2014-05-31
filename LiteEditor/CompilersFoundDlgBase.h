@@ -20,6 +20,9 @@
 #include <wx/statbmp.h>
 #include <wx/stattext.h>
 #include <wx/button.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
 
 class CompilersFoundDlgBase : public wxDialog
 {
@@ -47,12 +50,14 @@ class CompilersModifiedDlgBase : public wxDialog
 {
 protected:
     wxStaticText* m_staticText27;
-    wxDataViewListCtrl* m_dvListCtrl;
+    wxPropertyGridManager* m_pgMgrCompilers;
+    wxPGProperty* m_pgPropHeader;
     wxStdDialogButtonSizer* m_stdBtnSizer18;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
 
 protected:
+    virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:

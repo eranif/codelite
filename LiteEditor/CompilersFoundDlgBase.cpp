@@ -101,11 +101,17 @@ CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID 
     
     boxSizer16->Add(m_staticText27, 0, wxALL, 5);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,200), wxDV_ROW_LINES|wxDV_SINGLE);
+    wxArrayString m_pgMgrCompilersArr;
+    wxUnusedVar(m_pgMgrCompilersArr);
+    wxArrayInt m_pgMgrCompilersIntArr;
+    wxUnusedVar(m_pgMgrCompilersIntArr);
+    m_pgMgrCompilers = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer16->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, 5);
+    boxSizer16->Add(m_pgMgrCompilers, 1, wxALL|wxEXPAND, 5);
     
-    m_dvListCtrl->AppendTextColumn(_("Missing Compiler"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
+    m_pgPropHeader = m_pgMgrCompilers->Append(  new wxPropertyCategory( _("Compilers") ) );
+    m_pgPropHeader->SetHelpString(wxT(""));
+    
     m_stdBtnSizer18 = new wxStdDialogButtonSizer();
     
     boxSizer16->Add(m_stdBtnSizer18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
@@ -124,12 +130,14 @@ CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID 
     }
     Centre(wxBOTH);
     // Connect events
+    m_pgMgrCompilers->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilersModifiedDlgBase::OnValueChanged), NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilersModifiedDlgBase::OnOKUI), NULL, this);
     
 }
 
 CompilersModifiedDlgBase::~CompilersModifiedDlgBase()
 {
+    m_pgMgrCompilers->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilersModifiedDlgBase::OnValueChanged), NULL, this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilersModifiedDlgBase::OnOKUI), NULL, this);
     
 }

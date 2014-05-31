@@ -151,86 +151,48 @@ CompilerToolsBase::CompilerToolsBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
     
-    wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer41->SetFlexibleDirection( wxBOTH );
-    fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer41->AddGrowableCol(1);
+    wxArrayString m_pgMgr92Arr;
+    wxUnusedVar(m_pgMgr92Arr);
+    wxArrayInt m_pgMgr92IntArr;
+    wxUnusedVar(m_pgMgr92IntArr);
+    m_pgMgr92 = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer2->Add(fgSizer41, 0, wxALL|wxEXPAND, 5);
+    boxSizer2->Add(m_pgMgr92, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText92 = new wxStaticText(this, wxID_ANY, _("C++ Compiler Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgProp94 = m_pgMgr92->Append(  new wxPropertyCategory( _("Tools") ) );
+    m_pgProp94->SetHelpString(wxT(""));
     
-    fgSizer41->Add(m_staticText92, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropCXX = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("C++ Compiler"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropCXX, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropCXX->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CXX)"));
     
-    m_textCompilerName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropCC = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("C Compiler"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropCC, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropCC->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"));
     
-    fgSizer41->Add(m_textCompilerName, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    m_pgPropAS = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Assembler Name"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropAS, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropAS->SetHelpString(_("The assembler tool path. This tool is referred in the Makefile as $(AS)"));
     
-    m_staticText254 = new wxStaticText(this, wxID_ANY, _("C Compiler Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Linker"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropLD, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropLD->SetHelpString(_("The linker tool. Usually similar to the 'C++ Compiler' tool path"));
     
-    fgSizer41->Add(m_staticText254, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropSharedObjectLD = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Shared Object Linker"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropSharedObjectLD, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropSharedObjectLD->SetHelpString(_("The tool to create shared objects"));
     
-    m_textCtrlCCompilerName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_pgPropAR = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Archive"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropAR, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropAR->SetHelpString(_("The static archive tool \"ar\". This tool is referred in the Makefile as $(AR)"));
     
-    fgSizer41->Add(m_textCtrlCCompilerName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    m_pgPropResourceCompiler = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Resource Compiler"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropResourceCompiler, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropResourceCompiler->SetHelpString(_("The resource compiler. (Windows only)"));
     
-    m_staticText43 = new wxStaticText(this, wxID_ANY, _("Assembler Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer41->Add(m_staticText43, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlAssemblerName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer41->Add(m_textCtrlAssemblerName, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText116 = new wxStaticText(this, wxID_ANY, _("Linker Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_staticText116, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textLinkerName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_textLinkerName, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText128 = new wxStaticText(this, wxID_ANY, _("Shared Object Linker:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_staticText128, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textSOLinker = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_textSOLinker, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText1010 = new wxStaticText(this, wxID_ANY, _("Archive Tool:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_staticText1010, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textArchiveTool = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_textArchiveTool, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText1412 = new wxStaticText(this, wxID_ANY, _("Resource Compiler:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_staticText1412, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textResourceCmp = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_textResourceCmp, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText19 = new wxStaticText(this, wxID_ANY, _("Make:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer41->Add(m_staticText19, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlMake = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer41->Add(m_textCtrlMake, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText2014 = new wxStaticText(this, wxID_ANY, _("PATH environment variable:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_staticText2014->SetToolTip(_("You can set here the PATH environment variable that will be used for this toolset only. The value sets here will override the value set in 'Environement Variables' table. To concatenate a value to the current PATH, use the following format: $(PATH);C:\newpath (Windows) OR $(PATH):/home/eran/bin (*nix)"));
-    
-    fgSizer41->Add(m_staticText2014, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlPathVariable = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_textCtrlPathVariable->SetToolTip(_("You can set here the PATH environment variable that will be used for this toolset only. The value sets here will override the value set in 'Environement Variables' table. To concatenate a value to the current PATH, use the following format: $(PATH);C:\newpath (Windows) OR $(PATH):/home/eran/bin (*nix)"));
-    
-    fgSizer41->Add(m_textCtrlPathVariable, 1, wxALL|wxEXPAND, 5);
+    m_pgPropMAKE = m_pgMgr92->AppendIn( m_pgProp94,  new wxFileProperty( _("Make"), wxPG_LABEL, wxT("")) );
+    m_pgMgr92->SetPropertyAttribute(m_pgPropMAKE, wxPG_FILE_WILDCARD, wxT(""));
+    m_pgPropMAKE->SetHelpString(_("The Make tool. on Windows / MinGW this is usually mingw32-make.exe while on other OSs its simply 'make'"));
     
     SetSizeHints(-1,-1);
     if ( GetSizer() ) {

@@ -17,6 +17,9 @@
 #include <wx/listctrl.h>
 #include <wx/button.h>
 #include <wx/statline.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
 #include <wx/dialog.h>
@@ -60,24 +63,16 @@ public:
 class CompilerToolsBase : public wxPanel
 {
 protected:
-    wxStaticText* m_staticText92;
-    wxTextCtrl* m_textCompilerName;
-    wxStaticText* m_staticText254;
-    wxTextCtrl* m_textCtrlCCompilerName;
-    wxStaticText* m_staticText43;
-    wxTextCtrl* m_textCtrlAssemblerName;
-    wxStaticText* m_staticText116;
-    wxTextCtrl* m_textLinkerName;
-    wxStaticText* m_staticText128;
-    wxTextCtrl* m_textSOLinker;
-    wxStaticText* m_staticText1010;
-    wxTextCtrl* m_textArchiveTool;
-    wxStaticText* m_staticText1412;
-    wxTextCtrl* m_textResourceCmp;
-    wxStaticText* m_staticText19;
-    wxTextCtrl* m_textCtrlMake;
-    wxStaticText* m_staticText2014;
-    wxTextCtrl* m_textCtrlPathVariable;
+    wxPropertyGridManager* m_pgMgr92;
+    wxPGProperty* m_pgProp94;
+    wxPGProperty* m_pgPropCXX;
+    wxPGProperty* m_pgPropCC;
+    wxPGProperty* m_pgPropAS;
+    wxPGProperty* m_pgPropLD;
+    wxPGProperty* m_pgPropSharedObjectLD;
+    wxPGProperty* m_pgPropAR;
+    wxPGProperty* m_pgPropResourceCompiler;
+    wxPGProperty* m_pgPropMAKE;
 
 protected:
 

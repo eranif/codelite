@@ -7,26 +7,24 @@ CompilerToolsPage::CompilerToolsPage( wxWindow* parent, const wxString &cmpname 
     , m_cmpname(cmpname)
 {
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(m_cmpname);
-    m_textArchiveTool->ChangeValue(cmp->GetTool(wxT("AR")));
-    m_textCompilerName->ChangeValue(cmp->GetTool(wxT("CXX")));
-    m_textCtrlCCompilerName->ChangeValue(cmp->GetTool(wxT("CC")));
-    m_textLinkerName->ChangeValue(cmp->GetTool(wxT("LinkerName")));
-    m_textSOLinker->ChangeValue(cmp->GetTool(wxT("SharedObjectLinkerName")));
-    m_textResourceCmp->ChangeValue(cmp->GetTool(wxT("ResourceCompiler")));
-    m_textCtrlPathVariable->ChangeValue(cmp->GetPathVariable());
-    m_textCtrlMake->ChangeValue(cmp->GetTool("MAKE"));
-    m_textCtrlAssemblerName->ChangeValue(cmp->GetTool("AS"));
+    m_pgPropCXX->SetValue( cmp->GetTool(wxT("CXX")) );
+    m_pgPropCC->SetValue( cmp->GetTool(wxT("CC")) );
+    m_pgPropAR->SetValue( cmp->GetTool(wxT("AR")) );
+    m_pgPropLD->SetValue( cmp->GetTool("LinkerName") );
+    m_pgPropSharedObjectLD->SetValue( cmp->GetTool("SharedObjectLinkerName"));
+    m_pgPropAS->SetValue(cmp->GetTool("AS"));
+    m_pgPropMAKE->SetValue(cmp->GetTool("MAKE"));
+    m_pgPropResourceCompiler->SetValue(cmp->GetTool("ResourceCompiler"));
 }
 
 void CompilerToolsPage::Save(CompilerPtr cmp)
 {
-    cmp->SetTool(wxT("AR"),                     m_textArchiveTool->GetValue());
-    cmp->SetTool(wxT("CXX"),                    m_textCompilerName->GetValue());
-    cmp->SetTool(wxT("CC"),                     m_textCtrlCCompilerName->GetValue());
-    cmp->SetTool(wxT("LinkerName"),             m_textLinkerName->GetValue());
-    cmp->SetTool(wxT("SharedObjectLinkerName"), m_textSOLinker->GetValue());
-    cmp->SetTool(wxT("ResourceCompiler"),       m_textResourceCmp->GetValue());
-    cmp->SetTool("MAKE", m_textCtrlMake->GetValue());
-    cmp->SetTool("AS", m_textCtrlAssemblerName->GetValue());
-    cmp->SetPathVariable(m_textCtrlPathVariable->GetValue());
+    cmp->SetTool(wxT("CXX"),                    m_pgPropCXX->GetValueAsString());
+    cmp->SetTool(wxT("CC"),                     m_pgPropCC->GetValueAsString());
+    cmp->SetTool(wxT("AR"),                     m_pgPropAR->GetValueAsString());
+    cmp->SetTool(wxT("LinkerName"),             m_pgPropLD->GetValueAsString());
+    cmp->SetTool(wxT("SharedObjectLinkerName"), m_pgPropSharedObjectLD->GetValueAsString());
+    cmp->SetTool(wxT("ResourceCompiler"),       m_pgPropResourceCompiler->GetValueAsString());
+    cmp->SetTool("MAKE",                        m_pgPropMAKE->GetValueAsString());
+    cmp->SetTool("AS",                          m_pgPropAS->GetValueAsString());
 }

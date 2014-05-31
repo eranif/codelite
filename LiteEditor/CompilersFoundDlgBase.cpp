@@ -97,7 +97,7 @@ CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
     
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist\nDefine the missing compiler by cloning an existing compiler"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist.\nDefine each missing compiler by cloning an existing compiler."), wxDefaultPosition, wxSize(-1,-1), 0);
     
     boxSizer16->Add(m_staticText27, 0, wxALL, 5);
     

@@ -883,7 +883,7 @@
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Label:",
-									"m_value":	"Some of the compilers referred  by the workspace no longer exist\\nDefine the missing compiler by cloning an existing compiler"
+									"m_value":	"Some of the compilers referred  by the workspace no longer exist.\\nDefine each missing compiler by cloning an existing compiler."
 								}, {
 									"type":	"string",
 									"m_label":	"Wrap:",
@@ -914,7 +914,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_pgMgr37"
+									"m_value":	"m_pgMgrCompilers"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",

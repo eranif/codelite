@@ -33,6 +33,7 @@
 #include <wx/icon.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
+#include <wx/menu.h>
 #include <wx/toolbar.h>
 #include "dataviewfilesmodel.h"
 #include <wx/gauge.h>

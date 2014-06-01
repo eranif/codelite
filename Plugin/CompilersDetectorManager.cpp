@@ -1,9 +1,10 @@
 #include "CompilersDetectorManager.h"
 #include "CompilerLocatorMinGW.h"
 #include "CompilerLocatorGCC.h"
-#include <CompilerLocatorMSVC10.h>
-#include <CompilerLocatorMSVC11.h>
-#include <CompilerLocatorMSVC12.h>
+#include "CompilerLocatorMSVC9.h"   // VS 2008
+#include "CompilerLocatorMSVC10.h"  // VS 2010
+#include "CompilerLocatorMSVC11.h"  // VS 2012
+#include "CompilerLocatorMSVC12.h"  // VS 2013
 #include "CompilerLocatorCLANG.h"
 
 CompilersDetectorManager::CompilersDetectorManager()
@@ -11,6 +12,7 @@ CompilersDetectorManager::CompilersDetectorManager()
 #ifdef __WXMSW__
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMinGW()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()) );
+    m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC9()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC10()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC11()) );
     m_detectors.push_back( ICompilerLocator::Ptr_t(new CompilerLocatorMSVC12()) );

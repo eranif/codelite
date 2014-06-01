@@ -151,6 +151,8 @@ Filename: "{app}\registry.ini"; Section: "environment"; Key: "unittestpp"; Strin
 [Registry]
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\plugins"
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "MinGW"; ValueData: "{code:GetMinGWInstallDir}"
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "MinGW_Version"; ValueData: "4.8.1"
 
 [Code]
 var

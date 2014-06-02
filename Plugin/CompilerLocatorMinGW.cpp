@@ -23,21 +23,6 @@ bool CompilerLocatorMinGW::Locate()
     m_compilers.clear();
     m_locatedFolders.clear();
     
-    // try to find MinGW in environment variable PATH first
-    wxString pathValues;
-    wxGetEnv("PATH", &pathValues);
-
-    if ( !pathValues.IsEmpty() ) {
-        wxArrayString pathArray = ::wxStringTokenize(pathValues, wxPATH_SEP, wxTOKEN_STRTOK);
-        for (size_t i = 0; i < pathArray.GetCount(); ++i) {
-            wxFileName gccComp( pathArray.Item(i), "gcc.exe" );
-            if ( gccComp.GetDirs().Last() == "bin" && gccComp.Exists() ) {
-                // We found gcc.exe
-                AddTools( gccComp.GetPath() );
-            }
-        }
-    }
-
 #ifdef __WXMSW__ // for wxRegKey
 
     // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
@@ -116,6 +101,22 @@ bool CompilerLocatorMinGW::Locate()
         }
     }
 #endif
+    
+    // try to find MinGW in environment variable PATH (last)
+    wxString pathValues;
+    wxGetEnv("PATH", &pathValues);
+
+    if ( !pathValues.IsEmpty() ) {
+        wxArrayString pathArray = ::wxStringTokenize(pathValues, wxPATH_SEP, wxTOKEN_STRTOK);
+        for (size_t i = 0; i < pathArray.GetCount(); ++i) {
+            wxFileName gccComp( pathArray.Item(i), "gcc.exe" );
+            if ( gccComp.GetDirs().Last() == "bin" && gccComp.Exists() ) {
+                // We found gcc.exe
+                AddTools( gccComp.GetPath() );
+            }
+        }
+    }
+
     return !m_compilers.empty();
 }
 

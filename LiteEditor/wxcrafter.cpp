@@ -835,7 +835,7 @@ NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer15->Add(boxSizer30, 0, wxEXPAND, 5);
     
     m_textCtrlProjectPath = new wxTextCtrl(m_wizardPageDetails, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlProjectPath->SetToolTip(_("Select the location of the project. The location must exists"));
+    m_textCtrlProjectPath->SetToolTip(_("Select the location of the project. The location must exist."));
     
     boxSizer30->Add(m_textCtrlProjectPath, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     

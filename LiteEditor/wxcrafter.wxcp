@@ -7149,7 +7149,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
-															"m_value":	"Select the location of the project. The location must exists"
+															"m_value":	"Select the location of the project. The location must exist."
 														}, {
 															"type":	"colour",
 															"m_label":	"Bg Colour:",

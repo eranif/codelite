@@ -23,6 +23,7 @@ class CppCheckReportPage : public CppCheckReportBasePage
     CppCheckPlugin*     m_plugin;
 
 protected:
+    virtual void OnStyleNeeded(wxStyledTextEvent& event);
     //static int ColorLine ( int, const char *text, size_t &start, size_t &len );
 
 protected:

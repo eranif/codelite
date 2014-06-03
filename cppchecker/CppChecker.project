@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="CppChecker">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00060001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
+    </Plugin>
+  </Plugins>
   <Reconciliation>
     <Regexes/>
     <Excludepaths/>
@@ -9,11 +14,6 @@
     </Extensions>
     <Topleveldir>../cppchecker</Topleveldir>
   </Reconciliation>
-  <Plugins>
-    <Plugin Name="qmake">
-      <![CDATA[00060001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_29000000000000]]>
-    </Plugin>
-  </Plugins>
   <VirtualDirectory Name="src">
     <File Name="cppchecker.cpp"/>
     <File Name="cppchecksettingsdlg.cpp"/>
@@ -42,6 +42,7 @@
     <File Name="cppcheckreportpage.h"/>
     <File Name="cppcheck_settings.cpp"/>
     <File Name="cppcheck_settings.h"/>
+    <File Name="cppcheckreportbasepage.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
   <Settings Type="Dynamic Library">
@@ -220,4 +221,9 @@
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="WinReleaseUnicode"/>
   <Dependencies Name="WinDebugUnicode"/>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="resources">
+      <File Name="cppcheckreportbasepage_cppchecker_bitmaps.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
 </CodeLite_Project>

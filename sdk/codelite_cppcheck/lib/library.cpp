@@ -45,7 +45,7 @@ Library::Library() : allocid(0)
 {
 }
 
-#ifdef __WXMAC__
+#ifdef __APPLE__
 #include <mach-o/dyld.h>
 
 // On Mac we determine the base path using system call
@@ -98,13 +98,14 @@ bool Library::load(const char exename[], const char path[])
             const std::string cfgfolder(Path::fromNativeSeparators(Path::getPathFromFilename(exename)) + CFGDIR);
              
 #elif defined (__APPLE__)
-            const std::string configFolder = MacGetBaseExecPath();
+            std::string configFolder = MacGetBaseExecPath();
             // remove the executable name
             configFolder = Path::getPathFromFilename(configFolder);
+            // path is currently set to Contents/MacOS
             // move to the SharedSupport/
-            exePath.append("../SharedSupport/");
+            configFolder.append("../SharedSupport/");
             // and append the user CFGDIR 
-            exePath.append(CFGDIR);
+            configFolder.append(CFGDIR);
             const std::string cfgfolder = configFolder;
 #else
             // Linux: absolute path

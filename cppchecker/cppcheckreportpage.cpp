@@ -5,6 +5,8 @@
 #include <wx/regex.h>
 #include <wx/log.h>
 #include "event_notifier.h"
+#include "lexer_configuration.h"
+#include "editor_config.h"
 
 static size_t sErrorCount (0);
 
@@ -181,20 +183,27 @@ void CppCheckReportPage::SetMessage(const wxString& msg)
 void CppCheckReportPage::DoInitStyle()
 {
     m_stc->SetReadOnly(true);
-    // Initialize the output text style
-    m_stc->SetLexer(wxSTC_LEX_NULL);
-    m_stc->StyleClearAll();
-    
-    m_stc->HideSelection(true);
-    
-    // Use font
-    for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
-        wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        defFont.SetFamily(wxFONTFAMILY_TELETYPE);
-        m_stc->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
-        m_stc->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
-        m_stc->StyleSetFont(i, defFont);
-    }
+	LexerConfPtr config = EditorConfigST::Get()->GetLexer("text");
+	if ( config ) {
+		config->Apply( m_stc, true );
+		m_stc->HideSelection(true);
+		
+	} else {
+		// Initialize the output text style
+		m_stc->SetLexer(wxSTC_LEX_NULL);
+		m_stc->StyleClearAll();
+		
+		m_stc->HideSelection(true);
+		
+		// Use font
+		for (int i=0; i<=wxSTC_STYLE_DEFAULT; i++) {
+			wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+			defFont.SetFamily(wxFONTFAMILY_TELETYPE);
+			m_stc->StyleSetBackground(i, DrawingUtils::GetOutputPaneBgColour());
+			m_stc->StyleSetForeground(i, DrawingUtils::GetOutputPaneFgColour());
+			m_stc->StyleSetFont(i, defFont);
+		}
+	}
 }
 
 void CppCheckReportPage::OnThemeChanged(wxCommandEvent& e)

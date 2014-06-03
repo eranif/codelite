@@ -91,12 +91,7 @@ public:
      * @return
      */
     virtual JSONElement ToJSON() const;
-    
-    FindReplaceData()
-        : clConfigItem("FindReplaceData")
-        , m_flags(0)
-        , m_searchScope(1)
-    {}
+    FindReplaceData();
     virtual ~FindReplaceData()
     {}
     

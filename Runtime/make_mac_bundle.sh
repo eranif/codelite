@@ -153,6 +153,7 @@ mkdir -p ./codelite.app/Contents/SharedSupport/plugins
 mkdir -p ./codelite.app/Contents/SharedSupport/plugins/resources/
 mkdir -p ./codelite.app/Contents/SharedSupport/debuggers
 mkdir -p ./codelite.app/Contents/SharedSupport/config
+mkdir -p ./codelite.app/Contents/SharedSupport/config/cppcheck
 
 wx_file_list=`otool -L ../bin/codelite  | grep libwx_* | awk '{print $1;}'`
 
@@ -209,6 +210,7 @@ cp -pr ../../Runtime/codelite-icons-fresh-farm.zip ./codelite.app/Contents/Share
 
 ## copy empty layout file
 cp ../../Runtime/config/codelite.layout.default ./codelite.app/Contents/SharedSupport/config/codelite.layout
+cp ../../sdk/codelite_cppcheck/cfg/*.cfg ./codelite.app/Contents/SharedSupport/config/cppcheck/
 cp ../../Runtime/config/accelerators.conf.default ./codelite.app/Contents/SharedSupport/config/
 cp ../../Runtime/config/build_settings.xml.default.mac ./codelite.app/Contents/SharedSupport/config/build_settings.xml.default
 cp ../../Runtime/config/plugins.xml.default ./codelite.app/Contents/SharedSupport/config

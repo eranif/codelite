@@ -32,6 +32,8 @@
 class FindInFilesDialog : public FindInFilesDialogBase
 {
     FindReplaceData m_data;
+    wxArrayString   m_pluginFileMask;
+    
 protected:
     void       DoSearch();
     void       DoSearchReplace();

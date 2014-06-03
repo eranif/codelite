@@ -17,7 +17,11 @@ FILE(GLOB SRCS "cli/*.cpp" "lib/*.cpp" "externals/*/*.cpp")
 # CppChecker 1.63 requires files stored in cfg/ at run-time.  For some daft reason, it only looks for this by default inside ${BINDIR/},
 # which (at least for Linux) is _not_ the correct location. So we have to set an alternative place, and tell it at *compile-time*.
 # AFAICT you can't just add an env var at run-time :/
-add_definitions(-DCFGDIR=\"${CL_PREFIX}/share/codelite/config/cfg\")
+if ( UNIX AND NOT APPLE )
+    add_definitions(-DCFGDIR=\"${CL_PREFIX}/share/codelite/config/cfg\")
+elseif ( APPLE )
+    add_definitions(-DCFGDIR=\"config/cppcheck\")
+endif()
 
 # Define the output
 add_executable(codelite_cppcheck ${SRCS})

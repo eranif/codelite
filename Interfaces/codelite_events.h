@@ -359,18 +359,12 @@
 // the menu
 #define wxEVT_CMD_EDITOR_MARGIN_CONTEXT_MENU 3520
 
-// codelite is requesting for the find-in-files file masking.
+// Event type: clCommandEvent
+// The Find In Files dialog requests an additional file mask
 // the format should be:
 // *.a;*.b
 // and should be placed at:
-// event.SetString("*.a;*.b");
-// The plugin can also control what codelite will do with its masking by
-// setting the event.SetInt() with the following values (the plugin can use
-// bitwise OR):
-// 0x00000001 -> append the plugins' masking to the default masking
-// 0x00000002 -> prepend the plugins' masking to default masking
-// 0x00000004 -> replace default masking with the one provided by the plugin
-// 0x00000008 -> select the plugin's masking by default
+// event.GetStrings().Add("*.a;*.b");
 #define wxEVT_CMD_GET_FIND_IN_FILES_MASK 3521
 
 /////////////////////////////////////////////////////////

@@ -533,6 +533,10 @@ void FindReplaceData::FromJSON(const JSONElement& json)
     TruncateArray(m_searchPaths,   (size_t)max_value);
     TruncateArray(m_replaceString, (size_t)max_value);
     TruncateArray(m_findString,    (size_t)max_value);
+    
+    if ( m_fileMask.IsEmpty() ) {
+        m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc");
+    }
 }
 
 JSONElement FindReplaceData::ToJSON() const
@@ -569,4 +573,12 @@ wxArrayString FindReplaceData::GetReplaceStringArr() const
         }
     }
     return replaceArr;
+}
+
+FindReplaceData::FindReplaceData()
+        : clConfigItem("FindReplaceData")
+        , m_flags(0)
+        , m_searchScope(1)
+{
+    
 }

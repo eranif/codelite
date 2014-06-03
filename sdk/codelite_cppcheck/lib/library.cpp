@@ -45,6 +45,24 @@ Library::Library() : allocid(0)
 {
 }
 
+#ifdef __WXMAC__
+#include <mach-o/dyld.h>
+
+// On Mac we determine the base path using system call
+// _NSGetExecutablePath(path, &path_len);
+std::string MacGetBaseExecPath()
+{
+    char path[257];
+    uint32_t path_len = 256;
+    _NSGetExecutablePath(path, &path_len);
+    
+    // CodeLite.app/Contents/MacOS/
+    std::string str_path;
+    str_path = path;
+    return str_path;
+}
+#endif
+
 bool Library::load(const char exename[], const char path[])
 {
     if (std::strchr(path,',') != NULL) {
@@ -74,7 +92,25 @@ bool Library::load(const char exename[], const char path[])
         if (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND) {
             // Try to locate the library configuration in the installation folder..
 #ifdef CFGDIR
+#ifdef WIN32
+            // Under Windows search for configuratin file next to the binary 
+            // CFGDIR is relative to the executable path
+            const std::string cfgfolder(Path::fromNativeSeparators(Path::getPathFromFilename(exename)) + CFGDIR);
+             
+#elif defined (__APPLE__)
+            const std::string configFolder = MacGetBaseExecPath();
+            // remove the executable name
+            configFolder = Path::getPathFromFilename(configFolder);
+            // move to the SharedSupport/
+            exePath.append("../SharedSupport/");
+            // and append the user CFGDIR 
+            exePath.append(CFGDIR);
+            const std::string cfgfolder = configFolder;
+#else
+            // Linux: absolute path
             const std::string cfgfolder(CFGDIR);
+#endif
+
 #else
             if (!exename)
                 return false;

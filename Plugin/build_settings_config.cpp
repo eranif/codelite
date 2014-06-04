@@ -37,11 +37,13 @@
 BuildSettingsConfig::BuildSettingsConfig()
 {
     m_doc = new wxXmlDocument();
+    m_compilers.clear();
 }
 
 BuildSettingsConfig::~BuildSettingsConfig()
 {
     wxDELETE(m_doc);
+    m_compilers.clear();
 }
 
 bool BuildSettingsConfig::Load(const wxString &version)
@@ -56,6 +58,10 @@ bool BuildSettingsConfig::Load(const wxString &version)
         loaded = m_doc->Load(ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));
     }
     m_fileName = ConfFileLocator::Instance()->GetLocalCopy(wxT("config/build_settings.xml"));
+    
+    if ( loaded ) {
+        DoUpdateCompilers();
+    }
     return loaded;
 }
 
@@ -99,11 +105,20 @@ void BuildSettingsConfig::SetCompiler(CompilerPtr cmp)
     }
 
     m_doc->Save(m_fileName.GetFullPath());
+    DoUpdateCompilers();
 }
 
 CompilerPtr BuildSettingsConfig::GetCompiler(const wxString &name) const
 {
-    return new Compiler(GetCompilerNode(name));
+    if ( !m_compilers.count(name) ) {
+        
+        // no such compiler...
+        return new Compiler(NULL);
+        
+    } else {
+        
+        return m_compilers.find(name)->second;
+    }
 }
 
 CompilerPtr BuildSettingsConfig::GetFirstCompiler(BuildSettingsConfigCookie &cookie)
@@ -147,8 +162,7 @@ CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie &cook
 
 bool BuildSettingsConfig::IsCompilerExist(const wxString &name) const
 {
-    wxXmlNode *node = GetCompilerNode(name);
-    return node != NULL;
+    return m_compilers.count(name);
 }
 
 void BuildSettingsConfig::DeleteCompiler(const wxString &name)
@@ -158,6 +172,7 @@ void BuildSettingsConfig::DeleteCompiler(const wxString &name)
         node->GetParent()->RemoveChild(node);
         delete node;
         m_doc->Save(m_fileName.GetFullPath());
+        DoUpdateCompilers();
     }
 }
 
@@ -171,6 +186,7 @@ void BuildSettingsConfig::SetBuildSystem(BuilderConfigPtr bs)
     }
     m_doc->GetRoot()->AddChild(bs->ToXml());
     m_doc->Save(m_fileName.GetFullPath());
+    DoUpdateCompilers();
 }
 
 BuilderConfigPtr BuildSettingsConfig::GetBuilderConfig(const wxString &name)
@@ -236,6 +252,7 @@ void BuildSettingsConfig::DeleteAllCompilers(bool notify)
         node = GetCompilerNode("");
     }
     m_doc->Save(m_fileName.GetFullPath());
+    m_compilers.clear();
     
     if ( notify ) {
         clCommandEvent event(wxEVT_COMPILER_LIST_UPDATED);
@@ -254,6 +271,7 @@ void BuildSettingsConfig::SetCompilers(const std::vector<CompilerPtr>& compilers
         }
     }
     m_doc->Save(m_fileName.GetFullPath());
+    DoUpdateCompilers();
 
     clCommandEvent event(wxEVT_COMPILER_LIST_UPDATED);
     EventNotifier::Get()->AddPendingEvent( event );
@@ -273,6 +291,16 @@ wxArrayString BuildSettingsConfig::GetAllCompilers() const
         }
     }
     return allCompilers;
+}
+
+void BuildSettingsConfig::DoUpdateCompilers()
+{
+    m_compilers.clear();
+    wxArrayString compilers = GetAllCompilers();
+    for(size_t i=0; i<compilers.GetCount(); ++i) {
+        CompilerPtr pCompiler( new Compiler(GetCompilerNode(compilers.Item(i) ) ) );
+        m_compilers.insert( std::make_pair(compilers.Item(i), pCompiler) );
+    }
 }
 
 static BuildSettingsConfig* gs_buildSettingsInstance = NULL;

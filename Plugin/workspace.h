@@ -54,7 +54,7 @@ class WXDLLIMPEXP_SDK Workspace
     
 public:
     typedef std::map<wxString, ProjectPtr> ProjectMap_t;
-
+    
 protected:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
@@ -62,13 +62,16 @@ protected:
     wxString m_startupDir;
     time_t m_modifyTime;
     bool  m_saveOnExit;
-    
+    BuildMatrixPtr m_buildMatrix;
+
 private:
     /// Constructor
     Workspace();
 
     /// Destructor
     virtual ~Workspace();
+    
+    void DoUpdateBuildMatrix();
     
 public:
     

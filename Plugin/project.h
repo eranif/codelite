@@ -180,15 +180,19 @@ public:
     friend class Workspace;
 
 private:
-    wxXmlDocument m_doc;
-    wxFileName    m_fileName;
-    wxString      m_projectPath;
-    bool          m_tranActive;
-    bool          m_isModified;
-    NodeMap_t     m_vdCache;
-    time_t        m_modifyTime;
-    Workspace*    m_workspace;
-
+    wxXmlDocument      m_doc;
+    wxFileName         m_fileName;
+    wxString           m_projectPath;
+    bool               m_tranActive;
+    bool               m_isModified;
+    NodeMap_t          m_vdCache;
+    time_t             m_modifyTime;
+    Workspace*         m_workspace;
+    ProjectSettingsPtr m_settings;
+    
+private:
+    void DoUpdateProjectSettings();
+    
 public:
     // -----------------------------------------
     // File meta data
@@ -660,7 +664,7 @@ public:
      * @param configName configuration name. If non provided, returns the build configuration
      * that matches the current workspace configuration
      */
-    BuildConfigPtr GetBuildConfiguration(const wxString &configName = "") const;
+    BuildConfigPtr GetBuildConfiguration(const wxString &configName = "");
 
 private:
     /**

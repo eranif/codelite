@@ -114,6 +114,7 @@ Project::Project()
 Project::~Project()
 {
     m_vdCache.clear();
+    m_settings.Reset( NULL );
 }
 
 bool Project::Create(const wxString &name, const wxString &description, const wxString &path, const wxString &projType)
@@ -146,10 +147,10 @@ bool Project::Create(const wxString &name, const wxString &description, const wx
     //creae dependencies node
     wxXmlNode *depNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Dependencies"));
     root->AddChild(depNode);
-
+    
+    // this will also create settings
     SaveXmlFile();
-    //create build settings
-    SetSettings(new ProjectSettings(NULL));
+    
     ProjectSettingsPtr settings = GetSettings();
     settings->SetProjectType(projType);
     SetSettings(settings);
@@ -179,7 +180,9 @@ bool Project::Load(const wxString &path)
     
     SetModified(true);
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
-
+    
+    DoUpdateProjectSettings();
+    
     return true;
 }
 
@@ -398,13 +401,16 @@ void Project::RecursiveAdd(wxXmlNode *xmlNode, ProjectTreePtr &ptp, ProjectTreeN
     ProjectItem item;
     if ( xmlNode->GetName() == wxT("Project") ) {
         item = ProjectItem(key, xmlNode->GetPropVal(wxT("Name"), wxEmptyString), wxEmptyString, ProjectItem::TypeProject);
+        
     } else if ( xmlNode->GetName() == wxT("VirtualDirectory") ) {
         item = ProjectItem(key, xmlNode->GetPropVal(wxT("Name"), wxEmptyString), wxEmptyString, ProjectItem::TypeVirtualDirectory);
+        
     } else if ( xmlNode->GetName() == wxT("File") ) {
         wxFileName filename(xmlNode->GetPropVal(wxT("Name"), wxEmptyString));
-        //convert this file name to absolute path
+        // Convert this file name to absolute path
         filename.MakeAbsolute(m_fileName.GetPath());
         item = ProjectItem(key, filename.GetFullName(), filename.GetFullPath(), ProjectItem::TypeFile);
+        
     } else {
         // un-recognised or not viewable item in the tree,
         // skip it and its children
@@ -440,14 +446,17 @@ bool Project::SaveXmlFile()
 
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
     EventNotifier::Get()->PostFileSavedEvent( m_fileName.GetFullPath() );
+    
+    DoUpdateProjectSettings();
     return ok;
 }
 
 void Project::Save()
 {
     m_tranActive = false;
-    if ( m_doc.IsOk() )
+    if ( m_doc.IsOk() ) {
         SaveXmlFile();
+    }
 }
 
 void Project::GetFilesByVirtualDir(const wxString &vdFullPath, wxArrayString &files)
@@ -493,18 +502,6 @@ void Project::GetFiles(wxStringSet_t& files)
         files.insert(v.at(i).GetFullPath());
     }
 }
-
-/*void Project::GetFiles(wxStringSet_t& files, const wxString& relativePath)
-{
-    DirSaver ds;
-    FileNameVector_t v;
-    ::wxSetWorkingDirectory(relativePath);
-    GetFiles(m_doc.GetRoot(), v, false);
-    for(size_t i=0; i<v.size(); i++) {
-        v.at(i).MakeRelativeTo(relativePath);
-        files.insert(v.at(i).GetFullPath());
-    }
-}*/
 
 void Project::GetFiles(std::vector<wxFileName> &files, bool absPath)
 {
@@ -558,8 +555,7 @@ void Project::SetProjectEditorOptions(LocalOptionsConfigPtr opts)
 
 ProjectSettingsPtr Project::GetSettings() const
 {
-    wxXmlNode *node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Settings"));
-    return new ProjectSettings(node);
+    return m_settings;
 }
 
 void Project::SetSettings(ProjectSettingsPtr settings)
@@ -570,6 +566,8 @@ void Project::SetSettings(ProjectSettingsPtr settings)
         delete oldSettings;
     }
     m_doc.GetRoot()->AddChild(settings->ToXml());
+    
+    // SaveXmlFile will update the internal pointer
     SaveXmlFile();
 }
 
@@ -1748,7 +1746,7 @@ void Project::CreateCompileCommandsJSON(JSONElement& compile_commands)
     }
 }
 
-BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const
+BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName)
 {
     BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
     if( !matrix ) {
@@ -1813,4 +1811,9 @@ void Project::ReplaceCompilers(wxStringMap_t& compilers)
     
     // and update the settings (+ save the XML file)
     SetSettings( pSettings );
+}
+
+void Project::DoUpdateProjectSettings()
+{
+    m_settings.Reset( new ProjectSettings(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("Settings"))) );
 }

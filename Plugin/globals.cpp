@@ -737,7 +737,9 @@ void StripSemiColons(wxString &str)
 wxString NormalizePath(const wxString &path)
 {
     wxString normalized_path(path);
+    normalized_path.Trim().Trim(false);
     normalized_path.Replace(wxT("\\"), wxT("/"));
+    while ( normalized_path.Replace("//", "/") ) {}
     return normalized_path;
 }
 

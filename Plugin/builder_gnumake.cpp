@@ -883,8 +883,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
     EditorConfigST::Get()->GetLongValue(wxT("CleanTragetWithAsterisk"), asterisk);
 
     wxString imd = bldConf->GetIntermediateDirectory();
-    imd.Trim().Trim(false);
-    bool useAsterisk = ((imd.IsEmpty() == false) && asterisk);
+    bool useAsterisk = (!imd.IsEmpty() && asterisk && imd != "/");
 
     // support for full path
     abs_files.reserve( m_projectFilesMetadata.size() );
@@ -919,9 +918,9 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
                     if (ft.kind == Compiler::CmpFileKindSource) {
 
                         wxString objectName, dependFile, preprocessFile;
-                        objectName     << objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
-                        dependFile     << objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
-                        preprocessFile << objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
+                        objectName     << objPrefix << abs_files[i].GetFullName() << wxT("$(ObjectSuffix)");
+                        dependFile     << objPrefix << abs_files[i].GetFullName() << wxT("$(DependSuffix)");
+                        preprocessFile << objPrefix << abs_files[i].GetFullName() << wxT("$(PreprocessSuffix)");
 
                         text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName     << wxT("\n");
                         text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");
@@ -936,7 +935,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
             }
         } else {
             // We can use asterisk (intermediat directory is not empty)
-            text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/*.*") << wxT("\n");
+            text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/*$(ObjectSuffix)") << wxT("\n");
         }
 
         //delete the output file as well
@@ -975,9 +974,9 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
 
                     wxString objectName, dependFile, preprocessFile;
 
-                    objectName     << objPrefix << abs_files[i].GetName() << wxT("$(ObjectSuffix)");
-                    dependFile     << objPrefix << abs_files[i].GetName() << wxT("$(DependSuffix)");
-                    preprocessFile << objPrefix << abs_files[i].GetName() << wxT("$(PreprocessSuffix)");
+                    objectName     << objPrefix << abs_files[i].GetFullName() << wxT("$(ObjectSuffix)");
+                    dependFile     << objPrefix << abs_files[i].GetFullName() << wxT("$(DependSuffix)");
+                    preprocessFile << objPrefix << abs_files[i].GetFullName() << wxT("$(PreprocessSuffix)");
 
                     text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << objectName     << wxT("\n");
                     text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/") << dependFile     << wxT("\n");
@@ -986,7 +985,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString &confToB
             }
 
         } else {
-            text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/*.*") << wxT("\n");
+            text << wxT("\t") << wxT("$(RM) ") << wxT("$(IntermediateDirectory)/*$(ObjectSuffix)") << wxT("\n");
         }
 
         //delete the output file as well

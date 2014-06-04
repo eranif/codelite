@@ -767,7 +767,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
         if ( res == wxNOT_FOUND ) {
             // User did not ticked the 'Remember my answer' checkbox
             // Show the dialog
-            FilesModifiedDlg dlg( EventNotifier::Get()->TopFrame() );
+            FilesModifiedDlg dlg( clMainFrame::Get() );
             res = dlg.ShowModal();
             
             if ( res == wxID_CANCEL ) {

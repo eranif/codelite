@@ -11,10 +11,10 @@ FilesModifiedDlg::~FilesModifiedDlg()
 
 void FilesModifiedDlg::OnChoose(wxCommandEvent& event)
 {
-    EndModal( ID_BUTTON_CHOOSE );
+    CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_CHOOSE );
 }
 
 void FilesModifiedDlg::OnLoad(wxCommandEvent& event)
 {
-    EndModal( ID_BUTTON_LOAD );
+    CallAfter( &FilesModifiedDlg::EndModal, ID_BUTTON_LOAD );
 }

@@ -122,7 +122,8 @@ bool Project::Create(const wxString &name, const wxString &description, const wx
 
     m_fileName = path + wxFileName::GetPathSeparator() + name + wxT(".project");
     m_fileName.MakeAbsolute();
-
+    m_projectPath = m_fileName.GetPath();
+    
     wxXmlNode *root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Project"));
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddProperty(wxT("Name"), name);
@@ -174,6 +175,8 @@ bool Project::Load(const wxString &path)
 
     m_fileName = path;
     m_fileName.MakeAbsolute();
+    m_projectPath = m_fileName.GetPath();
+    
     SetModified(true);
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
 
@@ -468,7 +471,7 @@ void Project::GetFilesByVirtualDir(const wxString &vdFullPath, wxArrayString &fi
 wxString Project::GetFiles(bool absPath)
 {
     std::vector<wxFileName> files;
-    GetFiles(files,absPath);
+    GetFiles(files, absPath);
 
     wxString temp;
     for (size_t i = 0; i < files.size(); i++)
@@ -491,7 +494,7 @@ void Project::GetFiles(wxStringSet_t& files)
     }
 }
 
-void Project::GetFiles(wxStringSet_t& files, const wxString& relativePath)
+/*void Project::GetFiles(wxStringSet_t& files, const wxString& relativePath)
 {
     DirSaver ds;
     FileNameVector_t v;
@@ -501,15 +504,13 @@ void Project::GetFiles(wxStringSet_t& files, const wxString& relativePath)
         v.at(i).MakeRelativeTo(relativePath);
         files.insert(v.at(i).GetFullPath());
     }
-}
+}*/
 
 void Project::GetFiles(std::vector<wxFileName> &files, bool absPath)
 {
     if (absPath) {
-        DirSaver ds;
-        ::wxSetWorkingDirectory(m_fileName.GetPath());
-
         GetFiles(m_doc.GetRoot(), files, true);
+        
     } else {
         GetFiles(m_doc.GetRoot(), files, false);
     }
@@ -526,9 +527,10 @@ void Project::GetFiles(wxXmlNode *parent, std::vector<wxFileName> &files, bool a
         if (child->GetName() == wxT("File")) {
             wxString fileName = child->GetPropVal(wxT("Name"), wxEmptyString);
             wxFileName tmp(fileName);
-            if (absPath) {
-                tmp.MakeAbsolute();
+            if ( absPath ) {
+                tmp.MakeAbsolute( GetProjectPath() );
             }
+            
             files.push_back(tmp);
         } else if (child->GetChildren()) {// we could also add a check for VirtualDirectory only
             GetFiles(child, files, absPath);
@@ -1471,7 +1473,7 @@ void Project::GetFilesMetadata(Project::FileInfoVector_t& files) const
                 // files are kept relative to the project file
                 wxString fileName = element->GetAttribute(wxT("Name"), wxEmptyString);
                 wxFileName tmp(fileName);
-                tmp.MakeAbsolute(m_fileName.GetPath());
+                tmp.MakeAbsolute( GetProjectPath() );
                 FileInfo fi;
                 fi.SetFilenameRelpath(fileName);
                 fi.SetFilename( tmp.GetFullPath() );
